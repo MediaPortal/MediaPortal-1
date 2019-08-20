@@ -7,6 +7,7 @@ namespace TsPacketChecker
   class PacketChecker
   {
     private long droppedPackets;
+    private long nullPackets;
     private long totalCCErrors;
     private long totalPcrErrors;
     private long totalPtsErrors;
@@ -36,12 +37,17 @@ namespace TsPacketChecker
     #endregion
 
     #region Continuity checks
-    private bool CheckContinuityCounter(byte cc, ref PidInfo pi)
+    private bool CheckContinuityCounter(byte tsPacket3, ref PidInfo pi)
     {
       bool isOk = true;
+      byte cc = (byte)(tsPacket3 & 0xF);
       if (pi.continuityCounter != 0xFF)
       {
-        byte expected = (byte)(pi.continuityCounter + 1);
+        byte afc = (byte)((tsPacket3 >> 4) & 0x3);
+        byte expected;
+        // ISO/IEC 13818-1: "The continuity_counter shall not be incremented when the adaptation_field_control of the packet equals '00' or '10'." (binary)
+        if ((afc.Equals(0)) || (afc.Equals(2))) expected = (byte)(pi.continuityCounter);
+        else expected = (byte)(pi.continuityCounter + 1);
         if (expected == 16) expected = 0;
         if (cc != expected)
         {
@@ -92,6 +98,7 @@ namespace TsPacketChecker
     public PacketChecker(double maxAllowedPcrDiff)
     {
       droppedPackets = 0;
+      nullPackets = 0;
       totalCCErrors = 0;
       totalPcrErrors = 0;
       totalPtsErrors = 0;
@@ -110,7 +117,7 @@ namespace TsPacketChecker
           pids[pid].shouldCheck = true;
       }
     }
-    public void ProcessPacket(byte[] tsPacket,TsHeader header)
+    public void ProcessPacket(byte[] tsPacket, TsHeader header)
     {
       if (header.TransportError)
       {
@@ -121,7 +128,9 @@ namespace TsPacketChecker
         pids.Add(header.Pid, new PidInfo());
 
       PidInfo pi = pids[header.Pid];
-      CheckContinuityCounter((byte)(tsPacket[3] & 0xF), ref pi);
+      // ISO/IEC 13818-1: "In the case of a null packet the value of the continuity_counter is undefined."
+      if (header.Pid == 0x1fff) nullPackets++;
+      else CheckContinuityCounter((byte)(tsPacket[3]), ref pi); // check continuity_counter if no null packet
       if (header.Pid > 0x1f) // don't check pids which contain SI information
       {
         CheckPcr(header, tsPacket, ref pi);
@@ -132,7 +141,7 @@ namespace TsPacketChecker
 
     public string GetStatistics()
     {
-      return "dropped packets=" + droppedPackets.ToString()+" cc errors="+totalCCErrors.ToString()+" pcr holes="+totalPcrErrors.ToString()+" pts holes="+totalPtsErrors.ToString()+" total payloadstart errors="+totalPayloadStartErrors.ToString();
+      return "null packets=" + nullPackets.ToString() + " dropped packets=" + droppedPackets.ToString() + " cc errors=" + totalCCErrors.ToString() + " pcr holes=" + totalPcrErrors.ToString() + " pts holes=" + totalPtsErrors.ToString() + " total payloadstart errors=" + totalPayloadStartErrors.ToString();
     }
     public string GetErrorDetails()
     {
@@ -142,24 +151,24 @@ namespace TsPacketChecker
         if (pids[pid].HasErrors())
         {
           PidInfo pi = pids[pid];
-          log+="Pid 0x" + pid.ToString("x")+Environment.NewLine;
+          log += "Pid 0x" + pid.ToString("x") + Environment.NewLine;
           if (pi.pcrErrorTexts.Count > 0)
           {
-            log+="  - pcr errors=" + pi.pcrErrorTexts.Count.ToString()+Environment.NewLine;
+            log += "  - pcr errors=" + pi.pcrErrorTexts.Count.ToString() + Environment.NewLine;
             foreach (string s in pi.pcrErrorTexts)
-              log="        ->" + s+Environment.NewLine;
+              log = "        ->" + s + Environment.NewLine;
           }
           if (pi.ptsErrorTexts.Count > 0)
           {
-            log+="  - pts errors=" + pi.ptsErrorTexts.Count.ToString()+Environment.NewLine;
+            log += "  - pts errors=" + pi.ptsErrorTexts.Count.ToString() + Environment.NewLine;
             foreach (string s in pi.ptsErrorTexts)
-              log+="        ->" + s+Environment.NewLine;
+              log += "        ->" + s + Environment.NewLine;
           }
           if (pi.payloadStartErrorTexts.Count > 0)
           {
-            log+="  - payloadStart errors=" + pi.payloadStartErrorTexts.Count.ToString()+Environment.NewLine;
+            log += "  - payloadStart errors=" + pi.payloadStartErrorTexts.Count.ToString() + Environment.NewLine;
             foreach (string s in pi.payloadStartErrorTexts)
-              log+="        ->" + s+Environment.NewLine;
+              log += "        ->" + s + Environment.NewLine;
           }
         }
       }
@@ -168,3 +177,4 @@ namespace TsPacketChecker
     #endregion
   }
 }
+
