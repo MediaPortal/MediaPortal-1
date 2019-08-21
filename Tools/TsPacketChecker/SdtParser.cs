@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 
 namespace TsPacketChecker
@@ -87,27 +85,42 @@ namespace TsPacketChecker
           int off = 0;
           while (off < descriptor_loop_len)
           {
-            int descriptor_tag = section.Data[start + off];
-            int descriptor_len = section.Data[start + off + 1];
-            if (descriptor_len > 0)
+             var descriptor = Descriptor.Instance(section.Data, start + off );
+            if(!descriptor.IsEmpty)
             {
-              switch (descriptor_tag)
+              if (descriptor as ComponentDescriptor != null)
               {
-                case 0x48: // service
-                  byte[] desc = new byte[descriptor_len];
-                  Array.Copy(section.Data, start + off + 3, desc, 0, descriptor_len - 1);
-                  string provider; string service;
-                  DecodeServiceDescriptor(desc, out provider, out service);
-                  TreeNode node = _baseNode.Nodes.Add("#" + service_id.ToString() + " " + service + " (" + provider + ")");
-                  node.Nodes.Add("transport_id: " + transport_id.ToString() + " nid: " + network_id.ToString() + " sid: " + service_id.ToString());
-                  if (section.table_id == 0x46)
-                    node.Nodes.Add("Other mux");
-                  else
-                    node.Nodes.Add("Same mux");
-                  break;
+                var componentdescriptor = descriptor as ComponentDescriptor;
+                //node = _baseNode.Nodes.Add("#" + "Component Descriptor" );
+                //node.Nodes.Add(componentdescriptor.StreamContentExt.ToString());
+                //node.Nodes.Add(componentdescriptor.StreamContent.ToString());
+                //node.Nodes.Add(componentdescriptor.ComponentTag.ToString());
+                //node.Nodes.Add(componentdescriptor.ComponentType.ToString());
+                //node.Nodes.Add(componentdescriptor.Iso639LanguageCode.ToString());
+                //node.Nodes.Add(componentdescriptor.Text_char.ToString());
+                //node.Nodes.Add(componentdescriptor.GetComponentDescription(componentdescriptor.StreamContent,componentdescriptor.StreamContentExt,componentdescriptor.ComponentType));
               }
-            }
-            off += descriptor_len + 2;
+              if(descriptor as ServiceDescriptor != null)
+              {
+                var servicedescriptor = descriptor as ServiceDescriptor;
+                TreeNode node = _baseNode.Nodes.Add("#" + service_id.ToString()+" "+ servicedescriptor.ServiceName + " (" + servicedescriptor.ProviderName + ")");
+                node.Nodes.Add("transport_id: " + transport_id.ToString() + " nid: " + network_id.ToString() + " sid: " + service_id.ToString());
+                if (section.table_id == 0x46)
+                  node.Nodes.Add("Other mux");
+                else
+                  node.Nodes.Add("Same mux");
+              }
+              if (descriptor as LinkageDescriptor!=null)
+              {
+                var linkagedescriptor = descriptor as LinkageDescriptor;
+                //node = _baseNode.Nodes.Add("#" + "Linkage Descriptor");
+                //node.Nodes.Add(linkagedescriptor.ServiceId.ToString());
+                //node.Nodes.Add(linkagedescriptor.TransportStreamId.ToString());
+                //node.Nodes.Add(linkagedescriptor.OriginalNetworkId.ToString());
+                //node.Nodes.Add(linkagedescriptor.LinkageType.ToString());
+              }
+            }            
+            off += descriptor.MaximumDescriptorLength;
           }
         }
         start += descriptor_loop_len;

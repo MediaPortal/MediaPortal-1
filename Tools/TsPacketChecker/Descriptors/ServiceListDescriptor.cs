@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 
-namespace WindowsApplication13
+namespace TsPacketChecker
 {
   internal class ServiceListDescriptor : Descriptor
   {

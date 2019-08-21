@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace WindowsApplication13
+namespace TsPacketChecker
 {
   internal class ISO639LanguageDescriptor : Descriptor
   {

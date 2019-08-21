@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace WindowsApplication13
+namespace TsPacketChecker
 {
   public class Descriptor
   {
@@ -13,7 +10,6 @@ namespace WindowsApplication13
     private int _descriptorLength;
     private byte[] _descriptorData;
     private bool _isUndefined;
-
     #endregion
     #region Constructor
     #endregion
@@ -87,27 +83,31 @@ namespace WindowsApplication13
         case 0x4c: // Time Shifted Service Descriptor
           break;
         case 0x4d: // Short Event Descriptor
-          //descriptor = new ShortEventDescriptor();
+          descriptor = new ShortEventDescriptor();
           break;
         case 0x4e: // Extended Event Descriptor
           //descriptor = new ExtendedEventDescriptor();
           break;
         case 0x4f: // Time Shifted Event Descriptor        
           break;
-        case 0x50: // Component Descriptor 
+        case 0x50: // Component Descriptor
+          descriptor = new ComponentDescriptor();
           break;
         case 0x51: // Mosaic Descriptor 
           break;
-        case 0x52: // Stream Identifier Descriptor 
+        case 0x52: // Stream Identifier Descriptor
+          descriptor = new StreamIdentifierDescriptor();
           break;
         case 0x53: // CA Identifier Descriptor
           descriptor = new CaIdentifierDescriptor();
           break;
         case 0x54: // Content Descriptor 
           break;
-        case 0x55: // Parental Rating Descriptor 
+        case 0x55: // Parental Rating Descriptor
+          descriptor = new ParentalRatingDescriptor();
           break;
-        case 0x56: // Teletext Descriptor 
+        case 0x56: // Teletext Descriptor
+          descriptor = new TeletextDescriptor();
           break;
         case 0x57: // Telephone Descriptor 
           break;
@@ -130,7 +130,8 @@ namespace WindowsApplication13
         case 0x5f: // Private Data Specifier Descriptor
           descriptor = new PrivateDataSpecifierDescriptor();
           break;
-        case 0x60: // Service Move Descriptor 
+        case 0x60: // Service Move Descriptor
+          descriptor = new ServiceMoveDescriptor();
           break;
         case 0x61: // Short_smoothing_buffer_descriptor 
           break;
@@ -164,17 +165,19 @@ namespace WindowsApplication13
           break;
         case 0x6e: // Announcement Support Descriptor 
           break;
-        case 0x6f: // Application Signalling Descriptor (see [56]) 
+        case 0x6f: // Application Signalling Descriptor (see [56])          
           break;
-        case 0x70: // Adaptation Field Data Descriptor 
+        case 0x70: // Adaptation Field Data Descriptor
+          descriptor = new AdaptationFieldDataDescriptor();
           break;
         case 0x71: // Service Identifier Descriptor (see [15])
           break;
-        case 0x72: // Service Availability Descriptor 
+        case 0x72: // Service Availability Descriptor
+          descriptor = new ServiceAvailabilityDescriptor();
           break;
         case 0x73: // Default Authority Descriptor (ETSI TS 102 323 [13])
           break;
-        case 0x74: // Related Content Descriptor (ETSI TS 102 323 [13]) 
+        case 0x74: // Related Content Descriptor (ETSI TS 102 323 [13])          
           break;
         case 0x75: // TVA Id Descriptor (ETSI TS 102 323 [13]) 
           break;
@@ -182,7 +185,7 @@ namespace WindowsApplication13
           break;
         case 0x77: // Time Slice Fec Identifier Descriptor (ETSI EN 301 192 [4]) (May also be located in the CAT (ISO/IEC 13818-1 [18]) and INT (ETSI TS 102 006 [11]).) 
           break;
-        case 0x78: // ECM Repetition Rate Descriptor (ETSI EN 301 192 [4])
+        case 0x78: // ECM Repetition Rate Descriptor (ETSI EN 301 192 [4])          
           break;
         case 0x79: // S2 Satellite Delivery System Descriptor
           //descriptor = new S2DeliverySystemDescriptor();
@@ -267,6 +270,7 @@ namespace WindowsApplication13
       }
       _isUndefined = true;
     }
+    
   }
   
 }

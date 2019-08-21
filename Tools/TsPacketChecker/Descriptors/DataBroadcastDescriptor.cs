@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace WindowsApplication13
+namespace TsPacketChecker
 {
   internal class DataBroadcastDescriptor : Descriptor
   {
@@ -51,6 +51,7 @@ namespace WindowsApplication13
           _lastIndex++;
           if (selectorLength != 0)
           {
+            _selectorBytes = new byte[selectorLength];
             Buffer.BlockCopy(buffer, _lastIndex, _selectorBytes, 0, selectorLength);
             _lastIndex += selectorLength;
           }

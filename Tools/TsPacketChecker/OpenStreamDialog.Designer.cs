@@ -1,4 +1,4 @@
-﻿namespace WindowsApplication13
+﻿namespace TsPacketChecker
 {
   partial class OpenStreamDialog
   {

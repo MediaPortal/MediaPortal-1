@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WindowsApplication13
+namespace TsPacketChecker
 {
   internal class CaIdentifierDescriptor : Descriptor
   {

@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Text;
 
-namespace WindowsApplication13
+namespace TsPacketChecker
 {
   internal class CountryAvailabilityDescriptor : Descriptor
   {

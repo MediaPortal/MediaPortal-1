@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace WindowsApplication13
+namespace TsPacketChecker
 {
   internal class SubtitlingDescriptor : Descriptor
   {
@@ -59,13 +59,12 @@ namespace WindowsApplication13
       }
     }
     #endregion
-  }
-
-  internal class Language
-  {
-    public object Iso639LanguageCode { get; set; }
-    public object SubtitlingType { get; set; }
-    public ushort CompositionPageId { get; set; }
-    public ushort AncillaryPageId { get; set; }
-  }
+    internal class Language
+    {
+      public object Iso639LanguageCode { get; set; }
+      public object SubtitlingType { get; set; }
+      public ushort CompositionPageId { get; set; }
+      public ushort AncillaryPageId { get; set; }
+    }
+  }  
 }

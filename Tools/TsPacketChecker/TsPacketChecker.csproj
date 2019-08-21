@@ -7,13 +7,15 @@
     <ProjectGuid>{A527EBDF-32D7-4983-90C4-EAF01CE8BDAC}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WindowsApplication13</RootNamespace>
+    <RootNamespace>TsPacketChecker</RootNamespace>
     <AssemblyName>TsPacketChecker</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,6 +46,7 @@
     <Compile Include="BufferedTsFileReader.cs" />
     <Compile Include="Descriptors\AACDescriptor.cs" />
     <Compile Include="Descriptors\AC3Descriptor.cs" />
+    <Compile Include="Descriptors\AdaptationFieldDataDescriptor.cs" />
     <Compile Include="Descriptors\BouquetNameDescriptor.cs" />
     <Compile Include="Descriptors\C2DeliverySystemDescriptor.cs" />
     <Compile Include="Descriptors\CableDeliverySystemDescriptor.cs" />
@@ -51,6 +54,7 @@
     <Compile Include="CatParser.cs" />
     <Compile Include="ChannelLinkageParser.cs" />
     <Compile Include="Descriptors\CaIdentifierDescriptor.cs" />
+    <Compile Include="Descriptors\ComponentDescriptor.cs" />
     <Compile Include="Descriptors\CountryAvailabilityDescriptor.cs" />
     <Compile Include="Descriptors\DataBroadcastDescriptor.cs" />
     <Compile Include="Descriptors\DataBroadcastIdDescriptor.cs" />
@@ -59,12 +63,17 @@
     <Compile Include="Descriptors\EnhancedAC3Descriptor.cs" />
     <Compile Include="Descriptors\ExtendedEventDescriptor.cs" />
     <Compile Include="Descriptors\LinkageDescriptor.cs" />
+    <Compile Include="Descriptors\ParentalRatingDescriptor.cs" />
     <Compile Include="Descriptors\PrivateDataSpecifierDescriptor.cs" />
     <Compile Include="Descriptors\S2DeliverySystemDescriptor.cs" />
     <Compile Include="Descriptors\ScramblingDescriptor.cs" />
+    <Compile Include="Descriptors\ServiceAvailabilityDescriptor.cs" />
+    <Compile Include="Descriptors\ServiceMoveDescriptor.cs" />
     <Compile Include="Descriptors\ShortEventDescriptor.cs" />
+    <Compile Include="Descriptors\StreamIdentifierDescriptor.cs" />
     <Compile Include="Descriptors\SubtitlingDescriptor.cs" />
     <Compile Include="Descriptors\T2DeliverySystemDescriptor.cs" />
+    <Compile Include="Descriptors\TeletextDescriptor.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -112,6 +121,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

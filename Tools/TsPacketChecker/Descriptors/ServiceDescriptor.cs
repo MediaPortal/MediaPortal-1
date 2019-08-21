@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WindowsApplication13
+namespace TsPacketChecker
 {
   internal class ServiceDescriptor : Descriptor
   {
@@ -68,6 +68,8 @@ namespace WindowsApplication13
         throw (new ArgumentOutOfRangeException("The ServiceDescriptor message is short"));
       }
     }
+
+    
 
     #endregion
   }

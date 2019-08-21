@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WindowsApplication13
+namespace TsPacketChecker
 {
   internal class NetworkNameDescriptor : Descriptor
   {

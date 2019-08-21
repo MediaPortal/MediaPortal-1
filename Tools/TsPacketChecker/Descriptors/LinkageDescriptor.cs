@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WindowsApplication13
+namespace TsPacketChecker
 {
   internal class LinkageDescriptor : Descriptor
   {
@@ -50,6 +50,8 @@ namespace WindowsApplication13
         throw (new ArgumentOutOfRangeException("The Linkage Descriptor message is short"));
       }
     }
+
+    
     #endregion
   }
 }
