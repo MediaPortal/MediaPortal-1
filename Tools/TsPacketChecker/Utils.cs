@@ -6,6 +6,35 @@ namespace TsPacketChecker
 {
   public sealed class Utils
   {
+    public static int Convert4BytesToInt(byte[] byteData, int index)
+    {
+      int temp = (int)byteData[index];
+      temp = (temp * 256) + (int)byteData[index + 1];
+      temp = (temp * 256) + (int)byteData[index + 2];
+      temp = (temp * 256) + (int)byteData[index + 3];
+
+      return (temp);
+    }
+    public static int ConvertBCDToInt(byte[] byteData, int index, int count)
+    {
+      int result = 0;
+      int shift = 4;
+
+      for (int nibbleIndex = 0; nibbleIndex < count; nibbleIndex++)
+      {
+        result = (result * 10) + ((byteData[index] >> shift) & 0x0f);
+
+        if (shift == 4)
+          shift = 0;
+        else
+        {
+          shift = 4;
+          index++;
+        }
+      }
+
+      return (result);
+    }
     public static byte[] GetBytes(byte[] byteData, int offset, int length)
     {
       if (length < 1)

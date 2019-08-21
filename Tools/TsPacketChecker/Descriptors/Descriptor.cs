@@ -57,10 +57,10 @@ namespace TsPacketChecker
         case 0x42: // Stuffing Descriptor
           break;
         case 0x43: // Satellite Delivery System Descriptor
-          //descriptor = new SatelliteDeliverySystemDescriptor();
+          descriptor = new SatelliteDeliverySystemDescriptor();
           break;
         case 0x44: // Cable Delivery System Descriptor
-          //descriptor = new CableDeliverySystemDescriptor();
+          descriptor = new CableDeliverySystemDescriptor();
           break;
         case 0x45: // VBI Data Descriptor
           break;
@@ -117,7 +117,7 @@ namespace TsPacketChecker
           descriptor = new SubtitlingDescriptor();
           break;
         case 0x5a: // Terrestrial Delivery System Descriptor
-          //descriptor = new TerrestrialDeliverySystemDescriptor();
+          descriptor = new TerrestrialDeliverySystemDescriptor();
           break;
         case 0x5b: // Multilingual Network Name Descriptor 
           break;
