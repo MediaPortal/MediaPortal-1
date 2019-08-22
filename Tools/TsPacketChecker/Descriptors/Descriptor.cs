@@ -86,7 +86,7 @@ namespace TsPacketChecker
           descriptor = new ShortEventDescriptor();
           break;
         case 0x4e: // Extended Event Descriptor
-          //descriptor = new ExtendedEventDescriptor();
+          descriptor = new ExtendedEventDescriptor();
           break;
         case 0x4f: // Time Shifted Event Descriptor        
           break;
@@ -101,7 +101,8 @@ namespace TsPacketChecker
         case 0x53: // CA Identifier Descriptor
           descriptor = new CaIdentifierDescriptor();
           break;
-        case 0x54: // Content Descriptor 
+        case 0x54: // Content Descriptor
+          descriptor = new ContentDescriptor();
           break;
         case 0x55: // Parental Rating Descriptor
           descriptor = new ParentalRatingDescriptor();
@@ -111,7 +112,8 @@ namespace TsPacketChecker
           break;
         case 0x57: // Telephone Descriptor 
           break;
-        case 0x58: // Local Time Offset Descriptor  
+        case 0x58: // Local Time Offset Descriptor
+          descriptor = new LocalTimeOffsetDescriptor();
           break;
         case 0x59: // Subtitling Descriptor
           descriptor = new SubtitlingDescriptor();
@@ -171,11 +173,13 @@ namespace TsPacketChecker
           descriptor = new AdaptationFieldDataDescriptor();
           break;
         case 0x71: // Service Identifier Descriptor (see [15])
+          descriptor = new ServiceIdentifierDescriptor();
           break;
         case 0x72: // Service Availability Descriptor
           descriptor = new ServiceAvailabilityDescriptor();
           break;
         case 0x73: // Default Authority Descriptor (ETSI TS 102 323 [13])
+          descriptor = new DefaultAuthorityDescriptor();
           break;
         case 0x74: // Related Content Descriptor (ETSI TS 102 323 [13])          
           break;

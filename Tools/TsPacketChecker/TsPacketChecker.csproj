@@ -14,7 +14,7 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -55,19 +55,23 @@
     <Compile Include="ChannelLinkageParser.cs" />
     <Compile Include="Descriptors\CaIdentifierDescriptor.cs" />
     <Compile Include="Descriptors\ComponentDescriptor.cs" />
+    <Compile Include="Descriptors\ContentDescriptor.cs" />
     <Compile Include="Descriptors\CountryAvailabilityDescriptor.cs" />
     <Compile Include="Descriptors\DataBroadcastDescriptor.cs" />
     <Compile Include="Descriptors\DataBroadcastIdDescriptor.cs" />
+    <Compile Include="Descriptors\DefaultAuthorityDescriptor.cs" />
     <Compile Include="Descriptors\Descriptor.cs" />
     <Compile Include="Descriptors\DTSDescriptor.cs" />
     <Compile Include="Descriptors\EnhancedAC3Descriptor.cs" />
     <Compile Include="Descriptors\ExtendedEventDescriptor.cs" />
     <Compile Include="Descriptors\LinkageDescriptor.cs" />
+    <Compile Include="Descriptors\LocalTimeOffsetDescriptor.cs" />
     <Compile Include="Descriptors\ParentalRatingDescriptor.cs" />
     <Compile Include="Descriptors\PrivateDataSpecifierDescriptor.cs" />
     <Compile Include="Descriptors\S2DeliverySystemDescriptor.cs" />
     <Compile Include="Descriptors\ScramblingDescriptor.cs" />
     <Compile Include="Descriptors\ServiceAvailabilityDescriptor.cs" />
+    <Compile Include="Descriptors\ServiceIdentifierDescriptor.cs" />
     <Compile Include="Descriptors\ServiceMoveDescriptor.cs" />
     <Compile Include="Descriptors\ShortEventDescriptor.cs" />
     <Compile Include="Descriptors\StreamIdentifierDescriptor.cs" />
