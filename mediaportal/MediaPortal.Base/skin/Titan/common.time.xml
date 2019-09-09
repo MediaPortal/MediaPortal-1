@@ -57,7 +57,8 @@
       <width>555</width>
       <font>TitanLight22</font>
       <textcolor>ffffff</textcolor>
-      <label>#(iif(eq(#Dtimeformat,'True'),string.format('{0:HH:mm}',cdate(#time)),string.format('{0:hh:mm}',cdate(#time))))</label>
+      <!--label>#(iif(eq(#Dtimeformat,'True'),string.format('{0:HH:mm}',cdate(#time)),string.format('{0:hh:mm}',cdate(#time))))</label-->
+      <label>#time</label>
       <align>right</align>
       <visible>control.isvisible(3338333)+!control.isvisible(3331333)</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -72,7 +73,8 @@
       <posY>96</posY>
       <font>TitanLight12</font>
       <textcolor>ffffff</textcolor>
-      <label>#(iif(eq(#skin.fullday,'True'),#date,string.format('{0:ddd dd MMM}',cdate(#date.local))))</label>
+      <!--label>#(iif(eq(#skin.fullday,'True'),#date,string.format('{0:ddd dd MMM}',cdate(#date.local))))</label-->
+      <label>#date</label>
       <align>right</align>
       <visible>control.isvisible(3338333)+!control.isvisible(3331333)</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -124,7 +126,8 @@
       <width>555</width>
       <font>TitanLight22</font>
       <textcolor>ffffff</textcolor>
-      <label>#(iif(eq(#Dtimeformat,'True'),string.format('{0:HH:mm}',cdate(#time)),string.format('{0:hh:mm}',cdate(#time))))</label>
+      <!--label>#(iif(eq(#Dtimeformat,'True'),string.format('{0:HH:mm}',cdate(#time)),string.format('{0:hh:mm}',cdate(#time))))</label-->
+      <label>#time</label>
       <align>right</align>
       <visible>control.isvisible(3338333)+control.isvisible(3331333)</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -139,7 +142,8 @@
       <posY>96</posY>
       <font>TitanLight12</font>
       <textcolor>ffffff</textcolor>
-      <label>#(iif(eq(#skin.fullday,'True'),#date,string.format('{0:ddd dd MMM}',cdate(#date.local)))) / #WorldWeather.TodayTemperature</label>
+      <!--label>#(iif(eq(#skin.fullday,'True'),#date,string.format('{0:ddd dd MMM}',cdate(#date.local)))) / #WorldWeather.TodayTemperature</label-->
+      <label>#date / #WorldWeather.TodayTemperature</label>
       <align>right</align>
       <visible>control.isvisible(3338333)+control.isvisible(3331333)</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
