@@ -34,10 +34,13 @@ namespace WindowPlugins.GUISettings
     [SkinControl(2)] protected GUIButtonControl btnDisplayTimeout = null;
     [SkinControl(3)] protected GUIButtonControl btnZapDelay = null;
     [SkinControl(4)] protected GUIButtonControl btnZapTimeOut = null;
+    [SkinControl(5)] protected GUIButtonControl btnZapKeyTimeout = null;
+    
 
     private int _displayTimeout = 0;
     private int _zapDelay= 2;
     private int _zapTimeout = 5;
+    private int _zapKeyTimeout = 1;
 
 
     public GUISettingsGUIOnScreenDisplay()
@@ -59,6 +62,7 @@ namespace WindowPlugins.GUISettings
         _displayTimeout = xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 0);
         _zapDelay = xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2);
         _zapTimeout = xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5);
+        _zapKeyTimeout = xmlreader.GetValueAsInt("movieplayer", "zapKeyTimeout", 1);
       }
     }
 
@@ -69,6 +73,7 @@ namespace WindowPlugins.GUISettings
         xmlwriter.SetValue("movieplayer", "osdtimeout", _displayTimeout);
         xmlwriter.SetValue("movieplayer", "zapdelay", _zapDelay);
         xmlwriter.SetValue("movieplayer", "zaptimeout", _zapTimeout);
+        xmlwriter.SetValue("movieplayer", "zapKeyTimeout", _zapKeyTimeout);
       }
     }
 
@@ -115,6 +120,20 @@ namespace WindowPlugins.GUISettings
         if (Int32.TryParse(getNumber, out number))
         {
           _zapTimeout = number;
+          SettingsChanged(true);
+        }
+        
+        SetProperties();
+      }
+
+      if (control == btnZapKeyTimeout)
+      {
+        getNumber = _zapKeyTimeout.ToString();
+        GetStringFromKeyboard(ref getNumber, 2);
+
+        if (Int32.TryParse(getNumber, out number))
+        {
+          _zapKeyTimeout = number;
           SettingsChanged(true);
         }
         
@@ -192,6 +211,7 @@ namespace WindowPlugins.GUISettings
       GUIPropertyManager.SetProperty("#displayTimeout", _displayTimeout + " " + GUILocalizeStrings.Get(2999));
       GUIPropertyManager.SetProperty("#zapDelay", _zapDelay + " " + GUILocalizeStrings.Get(2999));
       GUIPropertyManager.SetProperty("#zapTimeout", _zapTimeout + " " + GUILocalizeStrings.Get(2999));
+      GUIPropertyManager.SetProperty("#zapKeyTimeout", _zapKeyTimeout + " " + GUILocalizeStrings.Get(2999));
     }
     
     private void SettingsChanged(bool settingsChanged)

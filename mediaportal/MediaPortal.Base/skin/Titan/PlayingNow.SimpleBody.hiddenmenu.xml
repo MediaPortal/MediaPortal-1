@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+	<control>
+		<id>0</id>
+		<type>image</type>
+		<posX>0</posX>
+		<posY>875</posY>
+		<width>30</width>
+		<height>149</height>
+		<texture>basichome_nextpage_left.png</texture>
+		<visible>!Control.IsVisible(70707)</visible>
+		<animation effect="slide" start="-60,0" time="250" delay="400">WindowOpen</animation>
+		<animation effect="slide" start="0,0" end="-60,0" time="250" delay="100">WindowClose</animation>
+        <animation effect="fade" time="1000" start= "100" end= "25" condition="!Control.IsVisible(70707)">conditional</animation>
+	</control>
+
+	<control>
+		<type>actiongroup</type>
+		<description>action menu</description>
+		<defaultcontrol>2</defaultcontrol>
+		<onexit>6101</onexit>
+		<dimColor>00ffffff</dimColor>
+		<buttonX>-460</buttonX>
+		<buttonY>155</buttonY>
+		<buttonwidth>499</buttonwidth>
+		<buttonheight>1080</buttonheight>
+			<control>
+				<type>image</type>
+				<id>0</id>
+				<width>1920</width>
+				<height>1080</height>
+				<texture>semi_trans_back_hidden_menu.png</texture>
+				<visible>Control.IsVisible(70707)</visible>
+				<animation effect="fade" time="450">visible</animation>
+				<animation effect="fade" time="400">hidden</animation>
+			</control>
+			<control>
+				<type>image</type>
+				<id>70707</id>
+				<posY>0</posY>
+				<posX>0</posX>
+				<width>612</width>
+				<height>1074</height>
+				<texture>menu_bg.png</texture>
+				<visible>Control.HasFocus(6100)|Control.HasFocus(6102)|Control.HasFocus(6103)|Control.HasFocus(6104)|Control.HasFocus(6105)</visible>
+	    		<animation effect="fade" time="0">WindowClose</animation>
+	    		<animation effect="slide" start="-150,0" time="100">visible</animation>
+	    		<animation effect="fade" time="50">visible</animation>
+	    		<animation effect="fade" time="0">hidden</animation>
+			</control>
+			<control>
+				<description>Menu label</description>
+				<type>label</type>
+				<id>1</id>
+				<posX>116</posX>
+				<posY>100</posY>
+				<label>924</label>
+				<font>fontB16</font>
+				<textcolor>393939</textcolor>
+				<visible>Control.IsVisible(70707)</visible>
+    	    	<animation effect="fade" time="0">WindowClose</animation>
+    	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
+    	    	<animation effect="fade" time="50">visible</animation>
+    	    	<animation effect="fade" time="0">hidden</animation>
+	        </control>
+
+			<control>
+      	        <type>group</type>
+                <description>group element</description>
+ 				<visible>Control.IsVisible(70707)</visible>
+           		<animation effect="fade" time="0">WindowClose</animation>
+           		<animation effect="slide" start="-150,0" time="100">visible</animation>
+           		<animation effect="fade" time="50">visible</animation>
+           		<animation effect="fade" time="0">hidden</animation>
+                <posX>100</posX>
+                <posY>155</posY>
+                <layout>StackLayout(0, Vertical, true)</layout>
+
+                  <control Style="SettingsCheckButton">
+                    <description>Artist Information</description>
+                    <type>checkbutton</type>
+                    <id>6100</id>
+                    <label>Artist Information</label>
+                    <font>TitanLight12</font>   
+                    <textcolor>ff000000</textcolor>
+                    <textcolorNoFocus>ff000000</textcolorNoFocus>
+                    <selected>#(eq(#skin.mymusic.info,'ArtistInfo'))</selected>
+                    <onclick>#(skin.setstring('#skin.mymusic.info',iif(eq(#skin.mymusic.info,'ArtistInfo'),'None','ArtistInfo')))</onclick>
+                    <onup>6104</onup>
+                    <ondown>6102</ondown>
+                    <onright>6101</onright>
+                    <onleft>6101</onleft>
+                    <visible allowhiddenfocus="true">Control.IsVisible(70707)</visible>
+                  </control>
+
+                  <control Style="SettingsCheckButton">
+                    <description>Album Information</description>
+                    <type>checkbutton</type>
+                    <id>6102</id>
+                    <label>Album Information</label>
+                    <font>TitanLight12</font>           
+                    <textcolor>ff000000</textcolor>
+                    <textcolorNoFocus>ff000000</textcolorNoFocus>
+                    <selected>#(eq(#skin.mymusic.info,'AlbumInfo'))</selected>
+                    <onclick>#(skin.setstring('#skin.mymusic.info',iif(eq(#skin.mymusic.info,'AlbumInfo'),'None','AlbumInfo')))</onclick>
+                    <onup>6100</onup>
+                    <ondown>6103</ondown>
+                    <onright>6101</onright>
+                    <onleft>6101</onleft>
+                    <visible allowhiddenfocus="true">Control.IsVisible(70707)</visible>
+                    <animation effect="fade" time="250">WindowOpen</animation>
+                    <animation effect="fade" time="250">WindowClose</animation>
+                  </control>
+
+                  <control Style="SettingsCheckButton">
+                    <description>Top Albums/Tags</description>
+                    <type>checkbutton</type>
+                    <id>6103</id>
+                    <label>33011</label>
+                    <font>TitanLight12</font>           
+                    <textcolor>ff000000</textcolor>
+                    <textcolorNoFocus>ff000000</textcolorNoFocus>
+                    <selected>#(eq(#skin.mymusic.info,'TopTags'))</selected>
+                    <onclick>#(skin.setstring('#skin.mymusic.info',iif(eq(#skin.mymusic.info,'TopTags'),'None','TopTags')))</onclick>
+                    <onup>6102</onup>
+                    <ondown>6104</ondown>
+                    <onright>155</onright>
+                    <onleft>155</onleft>
+                    <visible allowhiddenfocus="true">Control.IsVisible(70707)</visible>
+                    <animation effect="fade" time="250">WindowOpen</animation>
+                    <animation effect="fade" time="250">WindowClose</animation>
+                  </control>
+
+                  <control Style="SettingsButton">
+                    <description>Lyrics</description>
+                    <type>button</type>
+                    <id>6104</id>
+                    <label>Lyrics</label>
+                    <font>TitanLight12</font>
+                    <textcolor>ff000000</textcolor>
+                    <textcolorNoFocus>ff000000</textcolorNoFocus>
+                    <hyperlink>90478</hyperlink>
+                    <onup>6103</onup>
+                    <ondown>6105</ondown>
+                    <onright>6101</onright>
+                    <onleft>6101</onleft>
+                    <visible allowhiddenfocus="true">plugin.isenabled(My Lyrics)+Control.IsVisible(70707)</visible>
+                    <animation effect="fade" time="250">WindowOpen</animation>
+                    <animation effect="fade" time="250">WindowClose</animation>
+                  </control>      
+
+                  <control Style="SettingsButton">
+                    <description>Playlist</description>
+                    <type>button</type>
+                    <id>6105</id>
+                    <label>4555</label>
+                    <font>TitanLight12</font>           
+                    <textcolor>ff000000</textcolor>
+                    <textcolorNoFocus>ff000000</textcolorNoFocus>
+                    <hyperlink>500</hyperlink>
+                    <onup>6104</onup>
+                    <ondown>6100</ondown>
+                    <onright>6101</onright>
+                    <onleft>6101</onleft>
+                    <visible allowhiddenfocus="true">Control.IsVisible(70707)</visible>
+                    <animation effect="fade" time="250">WindowOpen</animation>
+                    <animation effect="fade" time="250">WindowClose</animation>
+                  </control>
+		       </control>
+		</control>
+</controls>
+</window>

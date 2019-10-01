@@ -679,7 +679,7 @@ namespace MediaPortal.Mixer
           _isInternalVolumeChange = true;
           _isMuted = value;
           if (VolumeDevice != null) VolumeDevice.IsMuted = value;
-          VolumeHandler.Instance.mixer_UpdateVolume();
+          if (VolumeHandler.Instance != null) VolumeHandler.Instance.mixer_UpdateVolume();
           _isInternalVolumeChange = false;
 
           if (OSInfo.OSInfo.Win7OrLater())

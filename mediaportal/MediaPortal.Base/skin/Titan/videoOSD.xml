@@ -36,6 +36,86 @@
 			<height>43</height>
 		</control>
     
+ 	<!-- CD/DVD Disk Logo -->
+
+ 	<control>
+ 		<description>Movie CDArt</description>
+ 		<type>image</type>
+ 		<id>0</id>
+ 	    <posX>275</posX>
+ 		<posY>600</posY>
+     	<width>300</width>
+ 		<height>300</height>
+		<texture>..\..\..\Thumbs\CDArt\Movies\#Play.Current.IMDBNumber.png</texture>
+ 		<keepaspectratio>yes</keepaspectratio>
+ 		<centered>yes</centered>
+   		<align>center</align>
+ 		<zoom>no</zoom>
+ 		<valign>top</valign>
+ 		<visible>!string.equals(#Play.Current.IMDBNumber,)</visible>
+        <animation effect="rotate" delay="0" end="-360" time="8000" loop="true" condition="!player.paused">Conditional</animation>
+		<animation effect="fade" time="500">VisibleChange</animation>
+ 	</control>
+
+ 	<control>
+ 		<description>Series Seasons CDArt</description>
+ 		<type>image</type>
+ 		<id>234832</id>
+ 	    <posX>275</posX>
+ 		<posY>600</posY>
+     	<width>300</width>
+ 		<height>300</height>
+ 		<texture>#TVSeries.Play.CDSeason</texture>
+ 		<keepaspectratio>yes</keepaspectratio>
+ 		<centered>yes</centered>
+   		<align>center</align>
+ 		<zoom>no</zoom>
+ 		<valign>top</valign>
+ 		<visible>!string.equals(#TVSeries.Episode.SeriesName,)</visible>
+        <animation effect="rotate" delay="0" end="-360" time="8000" loop="true" condition="!player.paused">Conditional</animation>
+		<animation effect="fade" time="500">VisibleChange</animation>
+ 	</control>
+
+	<control>
+ 		<description>Series CDArt</description>
+ 		<type>image</type>
+ 		<id>0</id>
+ 	    <posX>275</posX>
+ 		<posY>600</posY>
+     	<width>300</width>
+ 		<height>300</height>
+ 		<texture>#TVSeries.Play.CD</texture>
+ 		<keepaspectratio>yes</keepaspectratio>
+ 		<centered>yes</centered>
+   		<align>center</align>
+ 		<zoom>no</zoom>
+ 		<valign>top</valign>
+ 		<visible>!string.equals(#TVSeries.Episode.SeriesName,)+!control.hasthumb(234832)</visible>
+        <animation effect="rotate" delay="0" end="-360" time="8000" loop="true" condition="!player.paused">Conditional</animation>
+		<animation effect="fade" time="500">VisibleChange</animation>
+ 	</control>
+
+ 	<control>
+ 		<description>mvCentral CDArt</description>
+ 		<type>image</type>
+ 		<id>0</id>
+ 	    <posX>275</posX>
+ 		<posY>600</posY>
+     	<width>300</width>
+ 		<height>300</height>
+		<texture>..\..\..\Thumbs\CDArt\Music\#Play.Current.mvArtist - #Play.Current.mvAlbum.png</texture>
+ 		<keepaspectratio>yes</keepaspectratio>
+ 		<centered>yes</centered>
+   		<align>center</align>
+ 		<zoom>no</zoom>
+ 		<valign>top</valign>
+ 		<visible>!string.equals(#Play.Current.mvArtist,)</visible>
+        <animation effect="rotate" delay="0" end="-360" time="8000" loop="true" condition="!player.paused">Conditional</animation>
+		<animation effect="fade" time="500">VisibleChange</animation>
+ 	</control>
+
+ 	<!-- -->
+
 		<control>
 			<description>background top</description>
 			<type>image</type>
@@ -75,6 +155,167 @@
 		</control>
 
 		<control>
+			<description>Music thumb</description>
+			<type>image</type>
+			<id>0</id>
+    	<posX>275</posX>
+    	<posY>765</posY>
+    	<width>166</width>
+    	<height>242</height>
+			<texture>#fanarthandler.music.artisthumb.play</texture>
+			<keepaspectratio>yes</keepaspectratio>
+			<centered>yes</centered>
+      <align>center</align>
+			<zoom>no</zoom>
+			<valign>top</valign>
+			<visible>!control.hasthumb(102)</visible>
+		</control>
+
+	<!-- Clear Art/Logo -->
+
+ 	<control>
+ 		<description>Series ClearArt</description>
+ 		<type>image</type>
+ 		<id>159357</id>
+ 	    <posX>1430</posX>
+ 		<posY>600</posY>
+     	<width>250</width>
+ 		<height>140</height>
+ 		<texture>#TVSeries.Play.ClearArt</texture>
+ 		<keepaspectratio>yes</keepaspectratio>
+ 		<centered>yes</centered>
+   		<align>center</align>
+ 		<zoom>no</zoom>
+ 		<valign>top</valign>
+ 		<visible>!string.equals(#TVSeries.Episode.SeriesName,)</visible>
+		<animation effect="fade" time="500">VisibleChange</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+ 	</control>
+
+ 	<control>
+ 		<description>Series ClearLogo</description>
+ 		<type>image</type>
+ 		<id>0</id>
+ 	    <posX>1430</posX>
+ 		<posY>600</posY>
+     	<width>250</width>
+ 		<height>140</height>
+ 		<texture>#TVSeries.Play.ClearLogo</texture>
+ 		<keepaspectratio>yes</keepaspectratio>
+ 		<centered>yes</centered>
+   		<align>center</align>
+ 		<zoom>no</zoom>
+ 		<valign>top</valign>
+ 		<visible>!string.equals(#TVSeries.Episode.SeriesName,)+!control.hasthumb(159357)</visible>
+		<animation effect="fade" time="500">VisibleChange</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+ 	</control>
+
+ 	<control>
+ 		<description>Movie ClearArt</description>
+ 		<type>image</type>
+ 		<id>753951</id>
+ 	    <posX>1430</posX>
+ 		<posY>600</posY>
+     	<width>250</width>
+ 		<height>140</height>
+		<texture>..\..\..\Thumbs\ClearArt\Movies\#Play.Current.IMDBNumber.png</texture>
+ 		<keepaspectratio>yes</keepaspectratio>
+ 		<centered>yes</centered>
+   		<align>center</align>
+ 		<zoom>no</zoom>
+ 		<valign>top</valign>
+ 		<visible>!string.equals(#Play.Current.IMDBNumber,)</visible>
+		<animation effect="fade" time="500">VisibleChange</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+ 	</control>
+
+ 	<control>
+ 		<description>Movie ClearLogo</description>
+ 		<type>image</type>
+ 		<id>0</id>
+ 	    <posX>1430</posX>
+ 		<posY>600</posY>
+     	<width>250</width>
+ 		<height>140</height>
+		<texture>..\..\..\Thumbs\ClearLogo\Movies\#Play.Current.IMDBNumber.png</texture>
+ 		<keepaspectratio>yes</keepaspectratio>
+ 		<centered>yes</centered>
+   		<align>center</align>
+ 		<zoom>no</zoom>
+ 		<valign>top</valign>
+ 		<visible>!string.equals(#Play.Current.IMDBNumber,)+!control.hasthumb(753951)</visible>
+		<animation effect="fade" time="500">VisibleChange</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+ 	</control>
+
+ 	<control>
+ 		<description>mvCentral ClearArt</description>
+ 		<type>image</type>
+ 		<id>357951</id>
+ 	    <posX>1455</posX>
+ 		<posY>650</posY>
+     	<width>200</width>
+ 		<height>75</height>
+		<texture>..\..\..\Thumbs\ClearArt\Music\#Play.Current.mvArtist.png</texture>
+ 		<keepaspectratio>yes</keepaspectratio>
+ 		<centered>yes</centered>
+   		<align>center</align>
+ 		<zoom>no</zoom>
+ 		<valign>bottom</valign>
+ 		<visible>!string.equals(#Play.Current.mvArtist,)</visible>
+		<animation effect="fade" time="500">VisibleChange</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+ 	</control>
+ 	
+    <control>
+        <description>Music ClearArt</description>
+        <type>image</type>
+        <id>456852</id>
+ 	    <posX>1455</posX>
+ 		<posY>650</posY>
+     	<width>200</width>
+ 		<height>75</height>
+        <texture>#fanarthandler.music.artistclearart.play</texture>
+ 		<keepaspectratio>yes</keepaspectratio>
+ 		<centered>yes</centered>
+   		<align>center</align>
+ 		<zoom>no</zoom>
+ 		<valign>bottom</valign>
+ 		<visible>!control.hasthumb(357951)+!string.equals(#Play.Current.mvArtist,)</visible>
+		<animation effect="fade" time="500">VisibleChange</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+ 	<control>
+ 		<description>mvCentral ClearLogo</description>
+ 		<type>image</type>
+ 		<id>0</id>
+ 	    <posX>1430</posX>
+ 		<posY>600</posY>
+     	<width>250</width>
+ 		<height>140</height>
+		<texture>..\..\..\Thumbs\ClearLogo\Music\#Play.Current.mvArtist.png</texture>
+ 		<keepaspectratio>yes</keepaspectratio>
+ 		<centered>yes</centered>
+   		<align>center</align>
+ 		<zoom>no</zoom>
+ 		<valign>bottom</valign>
+ 		<visible>!control.hasthumb(357951)+!control.hasthumb(456852)+!string.equals(#Play.Current.mvArtist,)</visible>
+		<animation effect="fade" time="500">VisibleChange</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+ 	</control>
+
+ 	<!-- -->
+
+		<control>
 			<description>Movie Name</description>
 			<id>36</id>
     	<type>fadelabel</type>
@@ -96,6 +337,20 @@
     	<font>TitanLight14</font>
     	<textcolor>ff6b6b6b</textcolor>
 			<label>#Play.Current.Genre - #Play.Current.Year</label>
+		<visible>!string.equals(#mvCentral.isPlaying,true)</visible>
+		</control>
+
+		<control>
+			<description>mvCentral Artist/Album/Year/Genre Info</description>
+			<id>0</id>
+    		<type>fadelabel</type>
+	    	<width>940</width>
+    		<posX>484</posX>
+	    	<posY>835</posY>
+	    	<font>TitanLight14</font>
+	    	<textcolor>ff6b6b6b</textcolor>
+			<label>#Play.Current.mvArtist#(iif(eq(#Play.Current.mvAlbum,''),'',string.format(' - {0}',#Play.Current.mvAlbum)))#(iif(eq(#Play.Current.Year,''),'',string.format(' ({0})',#Play.Current.Year)))#(iif(eq(#Play.Current.Genre,''),'',string.format(' - {0}',#Play.Current.Genre)))</label>
+			<visible>string.equals(#mvCentral.isPlaying,true)</visible>
 		</control>
 
     <control>
@@ -122,6 +377,7 @@
     	<height>221</height>
     	<texture>osd_pause.png</texture>
       <visible>player.paused</visible>
+		<animation effect="fade" time="500">VisibleChange</animation>
     </control>
 
 		<control>

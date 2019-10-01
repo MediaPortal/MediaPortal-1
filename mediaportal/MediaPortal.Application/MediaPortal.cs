@@ -63,6 +63,7 @@ using Microsoft.Win32;
 using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
 using System.Collections.Generic;
+using System.Net;
 
 #endregion
 
@@ -505,6 +506,9 @@ public class MediaPortalApp : D3D, IRender
     //AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
     //Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
 
+    // .NET 4.0: Use TLS v1.2. Many download sources no longer support the older and now insecure TLS v1.0/1.1 and SSL v3.
+    ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00;
+
     using (Settings xmlreader = new MPSettings())
     {
       bool noAutoStartOnRDP = xmlreader.GetValueAsBool("general", "noautostartonrdp", false);
@@ -748,7 +752,7 @@ public class MediaPortalApp : D3D, IRender
       catch {
         Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
       }
-      Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
+      //Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
       Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
 
       #if DEBUG

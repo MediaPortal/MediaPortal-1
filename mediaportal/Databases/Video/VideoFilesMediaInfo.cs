@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -32,6 +32,8 @@ namespace MediaPortal.Video.Database
     private string _audioCodec = string.Empty;
     private string _audioChannels = string.Empty;
     private double _duration = 0;
+    private bool _is3D;
+    private bool _isHDR;
 
     public string VideoCodec
     {
@@ -73,6 +75,18 @@ namespace MediaPortal.Video.Database
     {
       get { return _duration; }
       set { _duration = value; }
+    }
+
+    public bool Is3D
+    {
+      get { return _is3D; }
+      set { _is3D = value; }
+    }
+
+    public bool IsHDR
+    {
+      get { return _isHDR; }
+      set { _isHDR = value; }
     }
   }
 }

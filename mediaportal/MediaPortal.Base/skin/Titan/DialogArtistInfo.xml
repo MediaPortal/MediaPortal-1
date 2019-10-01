@@ -255,9 +255,9 @@
 		<description>Bio/Albums</description>
 		<type>button</type>
 		<id>5</id>
-		<posX>437</posX>
+		<posX>287</posX>
 		<posY>653</posY>
-    <width>261</width>
+    <width>409</width>
     <height>58</height>
 		<onleft>5</onleft>
 		<onright>4</onright>
@@ -278,9 +278,9 @@
 		<description>Refresh</description>
 		<type>button</type>
 		<id>6</id>
-		<posX>437</posX>
+		<posX>287</posX>
 		<posY>720</posY>
-    <width>261</width>
+    <width>409</width>
     <height>58</height>
 		<label>184</label>
 		<onleft>6</onleft>

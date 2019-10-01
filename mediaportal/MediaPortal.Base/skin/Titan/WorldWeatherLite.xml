@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>79770</id>
+  <defaultcontrol>5555</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <disabletopbar>yes</disabletopbar>
+  <define>#header.label:8</define>
+  <controls>
+
+    <import>common.default.background.xml</import>
+    <import>WorldWeather.common.fanart.xml</import>
+    <import>common.time.xml</import>
+    <import>Worldweather.common.header.xml</import>
+    <import>WorldweatherLite.backgrounds.xml</import>
+    <import>WorldWeatherLite.body.xml</import>
+    <import>WorldWeatherLite.buttons.xml</import>
+    <import>WorldWeatherLite.gauge.xml</import>
+    <import>common.overlay.xml</import>
+    <import>WorldWeatherLite.hiddenmenu.xml</import>
+
+  </controls>
+</window>

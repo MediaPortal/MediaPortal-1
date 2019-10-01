@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+  
+    <control>
+      <description>DUMMY CONTROL FOR HOLIDAY FANART 1 VISIBILITY CONDITION</description>
+      <type>label</type>
+      <id>91919285</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <label />
+    </control>
+
+    <control>
+      <description>DUMMY CONTROL FOR HOLIDAY FANART 2 VISIBILITY CONDITION</description>
+      <type>label</type>
+      <id>91919286</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <label />
+    </control>
+
+    <control>
+      <description>DUMMY CONTROL FOR HOLIDAY FANART AVAILABILITY  CONDITION</description>
+      <type>label</type>
+      <id>91919284</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <label />
+    </control>
+
+    <!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::HOLIDAY BACKGROUND IMAGE:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-->	
+  
+    <control Style="HomeBasicFanart">
+      <description>FANART IMAGE 1</description>
+      <id>0</id>
+      <type>image</type>
+      <texture>#fanarthandler.holiday.backdrop1</texture>
+      <visible>control.isvisible(91919285)+control.isvisible(91919284)</visible>
+    </control>
+
+    <control Style="HomeBasicFanart">
+      <description>FANART IMAGE 2</description>
+      <id>0</id>
+      <type>image</type>
+      <texture>#fanarthandler.holiday.backdrop2</texture>
+      <visible>control.isvisible(91919286)+control.isvisible(91919284)</visible>
+    </control>
+  
+  </controls>
+</window>
+
+

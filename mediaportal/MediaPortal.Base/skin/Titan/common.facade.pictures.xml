@@ -2,6 +2,7 @@
 <window>
 <controls>
 	<!--            :: List Scrolling Popup ::            -->
+    
   <control>
     <description>listscroller bg</description>
     <type>image</type>
@@ -15,6 +16,7 @@
     <animation effect="fade" time="250">Visible</animation>
     <animation effect="fade" time="0">Hidden</animation>
   </control>
+    
   <control>
     <type>label</type>
     <id>1</id>
@@ -34,18 +36,19 @@
 	<!--            :: Count ::            -->
 	<control>
 		<description>Number of Files Label</description>
-		<type>label</type>
+        <type>fadelabel</type>
 		<id>1</id>
-	  <posX>96</posX>
-    <posY>998</posY>
+        <posX>80</posX>
+        <posY>996</posY>
     <align>left</align>
     <font>TitanLight12</font>
     <textcolor>000000</textcolor>
 		<label>#currentmodule: #itemcount</label>
-		<visible>!facadeview.smallicons + !facadeview.largeicons</visible>
 	  <animation effect="fade" time="250">WindowOpen</animation>
 	  <animation effect="fade" time="250">WindowClose</animation>
+        <visible>!facadeview.smallicons + !facadeview.largeicons</visible>
 	</control>
+    
   <!--            :: Listview Lines ::            -->
 	<control>
   	<description>List Lines</description>
@@ -60,6 +63,7 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
   </control>
+    
   <control>
 		<description>group element</description>
 		<type>group</type>
@@ -114,8 +118,8 @@
     			<textureHeightBig>202</textureHeightBig>
     			<thumbPosXBig>0</thumbPosXBig>
     			<thumbPosYBig>0</thumbPosYBig>
-    			<zoomXPixels>0</zoomXPixels>
-    			<zoomYPixels>0</zoomYPixels>
+                    <zoomXPixels>30</zoomXPixels>
+                    <zoomYPixels>20</zoomYPixels>
 					<thumbZoom>no</thumbZoom>
 					<hideUnfocusTexture>no</hideUnfocusTexture>
 					<renderFocusText>no</renderFocusText>
@@ -125,11 +129,12 @@
 		    	<frameFocus>recordings_thumb_focus.png</frameFocus>
           <textureMask>recordings_thumb_mask.png</textureMask>
 		    	<shadowDistance>50</shadowDistance>
-					<keepaspectratio>no</keepaspectratio>
+                        <keepaspectratio>yes</keepaspectratio>
 		      <spinPosX>1828</spinPosX>
 		      <spinPosY>1000</spinPosY>
-		    	<unfocusedAlpha>100</unfocusedAlpha>
+                    <unfocusedAlpha>170</unfocusedAlpha>
 				</control>
+                        
 				<control>
     			<description>Filmstrip view</description>
     			<type>filmstrip</type>
@@ -164,7 +169,7 @@
     			<showFolder>no</showFolder>
     			<showBackGround>no</showBackGround>
     			<showInfoImage>no</showInfoImage>
-    			<keepaspectratio>no</keepaspectratio>
+                    <keepaspectratio>yes</keepaspectratio>
      			<scrollbarBackground>scrollbar_bg_hor.png</scrollbarBackground>
     			<scrollbarLeft>scrollbar_left_hor.png</scrollbarLeft>
     			<scrollbarRight>scrollbar_right_hor.png</scrollbarRight>
@@ -176,6 +181,7 @@
     			<thumbAnimation effect="zoom" acceleration="-2" start="100,100" reversible="false" end="135,135" center="0,800" time="200">focus</thumbAnimation>
     			<thumbAnimation effect="zoom" start="135,135" reversible="false" end="100,100" center="0,800" time="100">unfocus</thumbAnimation>
     		</control>
+            
 				<control>
 					<description>Cover Flow view</description>
 					<type>coverflow</type>
@@ -187,12 +193,12 @@
 					<onleft>50</onleft>
 					<onright>50</onright>	
 					<posX>0</posX>
-					<posY>535</posY>
+                        <posY>665</posY>
 					<width>1920</width>
 					<height>768</height>
 					<selectedCard>0</selectedCard>
-					<cardWidth>523</cardWidth>
-					<cardHeight>350</cardHeight>
+                        <cardWidth>338</cardWidth>
+                        <cardHeight>190</cardHeight>
 					<angle>65</angle>
 					<sideShift>410</sideShift>
 					<sideGap>210</sideGap>
@@ -206,7 +212,7 @@
 					<frameWidth>338</frameWidth>
 					<frameHeight>190</frameHeight>
 					<spinSpeed>8</spinSpeed>
-					<unfocusedAlpha>FF</unfocusedAlpha>
+                        <unfocusedAlpha>170</unfocusedAlpha>
 					<folderPrefix></folderPrefix>
 					<folderSuffix></folderSuffix>
 					<font1>font12</font1>
@@ -224,13 +230,13 @@
 					<label1YOff>2405</label1YOff>
 					<label2YOff>2430</label2YOff>
 					<pageSize>5</pageSize>
-					<keepaspectratio>no</keepaspectratio>
+                        <keepaspectratio>yes</keepaspectratio>
 			    <scrollbarBackground>scrollbar_bg_hor.png</scrollbarBackground>
 			    <scrollbarLeft>scrollbar_left_hor.png</scrollbarLeft>
 			    <scrollbarRight>scrollbar_right_hor.png</scrollbarRight>
 			    <scrollbarWidth>717</scrollbarWidth>
 					<scrollbarHeight>8</scrollbarHeight>
-			    <scrollbarYOff>423</scrollbarYOff>
+                  <scrollbarYOff>293</scrollbarYOff>
 					<cards flipY="true" diffuse="Thumb_Mask.png" mask="pictures_filmstrip_mask.png"></cards>
 				</control>
 		</control>

@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Net;
 using MpeMaker.Classes;
 
 namespace MpeMaker
@@ -33,6 +34,8 @@ namespace MpeMaker
     [STAThread]
     private static void Main(string[] args)
     {
+      // .NET 4.0: Use TLS v1.2. Many download sources no longer support the older and now insecure TLS v1.0/1.1 and SSL v3.
+      ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00;
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       if (args.Length > 0)

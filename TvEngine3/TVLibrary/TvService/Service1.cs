@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Net;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -126,6 +127,9 @@ namespace TvService
     {
       // Initialize hosting environment
       IntegrationProviderHelper.Register();
+
+      // .NET 4.0: Use TLS v1.2. Many download sources no longer support the older and now insecure TLS v1.0/1.1 and SSL v3.
+      ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00;
 
       // Init Common logger -> this will enable TVPlugin to write in the Mediaportal.log file
       var loggerName = Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
@@ -942,7 +946,7 @@ namespace TvService
             Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
           }
 
-          Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
+          //Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
           Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
 
           // Warn about unsupported operating systems

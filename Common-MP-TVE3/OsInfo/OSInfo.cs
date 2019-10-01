@@ -799,20 +799,35 @@ namespace OSInfo
     /// Return DateTime of last installed Windows Update
     /// (excluding Security Essentials/Windows Defender definition updates)
     /// </summary>
-    /// <returns>DateTime (in UTC), or DateTime.MinValue if not found</returns>
+    /// <returns>DateTime (in UTC), DateTime.MinValue if not found, or DateTime.MaxValue if exception</returns>
     public static DateTime GetLastInstalledWindowsUpdateTimestamp()
     {
-      var session = new UpdateSession();
-      var updateSearcher = session.CreateUpdateSearcher();
-      updateSearcher.Online = false;
-      int count = updateSearcher.GetTotalHistoryCount();
-      var history = updateSearcher.QueryHistory(0, count);
-      for (int i = 0; i < count; ++i)
+      try
       {
-        if ((history[i].ResultCode == OperationResultCode.orcSucceeded) &&
-            (!history[i].Title.Contains("Security Essentials")) &&
-            (!history[i].Title.Contains("Windows Defender")))
-          return history[i].Date;
+        var session = new UpdateSession();
+        var updateSearcher = session.CreateUpdateSearcher();
+        updateSearcher.Online = false;
+        updateSearcher.ServerSelection = (ServerSelection)2; //ssWindowsUpdate = 2
+        int count = updateSearcher.GetTotalHistoryCount();
+        if (count < 1)
+        {
+          return DateTime.MinValue;
+        }
+        var history = updateSearcher.QueryHistory(0, count);
+        for (int i = 0; (i < count) && (i < 50); ++i)
+        {
+          // if ((history[i].ResultCode == OperationResultCode.orcSucceeded) &&
+          //     (!history[i].Title.Contains("Security Essentials")) &&
+          //     (!history[i].Title.Contains("Windows Defender")))
+          //   return history[i].Date;
+
+          if (history[i].ResultCode == OperationResultCode.orcSucceeded)
+            return history[i].Date;
+        }
+      }
+      catch (Exception) //Can happen if Windows Update service is disabled...
+      {
+        return DateTime.MaxValue;
       }
       return DateTime.MinValue;
     }
@@ -825,9 +840,15 @@ namespace OSInfo
     public static string GetLastInstalledWindowsUpdateTimestampAsString()
     {
       DateTime dt = GetLastInstalledWindowsUpdateTimestamp();
-      return "Last install date from WindowsUpdate is " + ((dt == DateTime.MinValue)
-        ? "unknown"
-        : TimeZone.CurrentTimeZone.ToLocalTime(dt).ToString("yyyy-MM-dd HH:mm:ss"));
+      if (dt == DateTime.MinValue)
+      {
+        return "Last install date from WindowsUpdate is unknown";
+      }
+      else if (dt == DateTime.MaxValue)
+      {
+        return "Last install date from WindowsUpdate is not available (service disabled?)";
+      }
+      return "Last install date from WindowsUpdate is " + TimeZone.CurrentTimeZone.ToLocalTime(dt).ToString("yyyy-MM-dd HH:mm:ss");
     }
 
     #endregion

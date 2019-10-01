@@ -100,7 +100,7 @@
     <Channel id="sport3@viasatsport.se" siteId="198" />
     <Channel id="kanal11@elva.tv" siteId="199" />
     <Channel id="action@tv1000.se" siteId="207" />
-    <Channel id="classic@tv1000.se" siteId="208" />
+    <Channel id="hits@tv1000.se" siteId="208" />
     <Channel id="nordic@tv1000.se" siteId="209" />
     <Channel id="family@tv1000.se" siteId="210" />
     <Channel id="kunskapskanalen@svt.se" siteId="213" />
@@ -121,15 +121,15 @@
     <Channel id="kanal9.se" siteId="246" />
     <Channel id="axess.tv" siteId="247" />
     <Channel id="tnt7.se" siteId="248" />
-    <Channel id="junior@disney.go.com" siteId="251" />
+    <Channel id="ph@disneychannel.co.uk" siteId="251" />
     <Channel id="Guld@tv4.se" siteId="252" />
     <Channel id="Komedi@tv4.se" siteId="253" />
-    <Channel id="emotion@cmore.se" siteId="255" />
+    <Channel id="stars@cmore.se" siteId="255" />
     <Channel id="first@cmore.se" siteId="256" />
     <Channel id="hits@cmore.se" siteId="257" />
     <Channel id="tennis@cmore.se" siteId="258" />
     <Channel id="fmen.tv" siteId="259" />
-    <!--<Channel id="bloomberg.co.uk" siteId="260" /> Empty channel -->
+    <Channel id="bloomberg.co.uk" siteId="260" />
     <Channel id="hitssportweekend@canalplus.se" siteId="261" />
     <Channel id="aljazeera.tv" siteId="262" />
     <Channel id="hd@discoverychannel.co.uk" siteId="263" />
@@ -159,7 +159,7 @@
     <Channel id="bbchd@bbc.co.uk" siteId="333" />
     <Channel id="comedycentral.com" siteId="334" />
     <Channel id="wild@nationalgeographic.co.uk" siteId="335" />
-    <Channel id="drama@tv1000.se" siteId="336" />
+    <Channel id="series@tv1000.se" siteId="336" />
     <Channel id="kanal10.se" siteId="341" />
     <Channel id="classic@vh1.co.uk" siteId="342" />
     <Channel id="investigation@discovery.com" siteId="343" />
@@ -190,6 +190,9 @@
     <Channel id="foxhd@fox.com" siteId="602" />
     <Channel id="brit@bbc.co.uk" siteId="603" />
     <Channel id="earth@bbc.co.uk" siteId="604" />
+    <Channel id="sporthd@tv3.se" siteId="605" />
+    <Channel id="sportpremium@viasat.se" siteId="700" />
+    <Channel id="sportkanalen@cmore.se" siteId="700" />
     <Channel id="tv2charlie@tv2.dk" siteId="906" />
     <Channel id="dk4.dk" siteId="908" />
     <!--<Channel id="nick.co.uk" siteId="909" /> Conflicting name -->

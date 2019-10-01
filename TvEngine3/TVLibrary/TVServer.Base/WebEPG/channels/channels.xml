@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
-    <entry name="TotalChannels">1519</entry>
+    <entry name="TotalChannels">1522</entry>
   </section>
   <section name="0">
     <entry name="ChannelID">1@betv.be</entry>
@@ -1152,8 +1152,8 @@
     <entry name="FullName">TV1000 Classic</entry>
   </section>
   <section name="287">
-    <entry name="ChannelID">classic@tv1000.se</entry>
-    <entry name="FullName">Viasat Film Classic</entry>
+    <entry name="ChannelID">hits@tv1000.se</entry>
+    <entry name="FullName">Viasat Film Hits</entry>
   </section>
   <section name="288">
     <entry name="ChannelID">classic@vh1.co.uk</entry>
@@ -5636,8 +5636,8 @@
     <entry name="FullName">Comedy Central</entry>
   </section>
   <section name="1408">
-    <entry name="ChannelID">drama@tv1000.se</entry>
-    <entry name="FullName">Viasat Film Drama</entry>
+    <entry name="ChannelID">series@tv1000.se</entry>
+    <entry name="FullName">Viasat Series</entry>
   </section>
   <section name="1409">
     <entry name="ChannelID">kanal10.se</entry>
@@ -5796,8 +5796,8 @@
     <entry name="FullName">C More Kids</entry>
   </section>
   <section name="1448">
-    <entry name="ChannelID">emotion@cmore.se</entry>
-    <entry name="FullName">C More Emotion</entry>
+    <entry name="ChannelID">stars@cmore.se</entry>
+    <entry name="FullName">C More Stars</entry>
   </section>
   <section name="1449">
     <entry name="ChannelID">firsthd@cmore.se</entry>
@@ -6078,6 +6078,18 @@
   <section name="1518">
     <entry name="ChannelID">skjareinn@skjareinn.is</entry>
     <entry name="FullName">SkjárEinn</entry>
+  </section>
+  <section name="1519">
+    <entry name="ChannelID">sporthd@tv3.se</entry>
+    <entry name="FullName">TV3 Sport HD</entry>
+  </section>
+  <section name="1520">
+    <entry name="ChannelID">sportpremium@viasat.se</entry>
+    <entry name="FullName">Viasat Sport Premium</entry>
+  </section>
+  <section name="1521">
+    <entry name="ChannelID">sportkanalen@cmore.se</entry>
+    <entry name="FullName">Sportkanalen</entry>
   </section>
   <section name=".svn">
     <entry name="TotalChannels">0</entry>
@@ -7531,7 +7543,7 @@
     <entry name="62">1218</entry>
   </section>
   <section name="SE">
-	<entry name="TotalChannels">235</entry>
+	<entry name="TotalChannels">238</entry>
 	<entry name="0">22</entry>
 	<entry name="1">24</entry>
 	<entry name="2">25</entry>
@@ -7766,8 +7778,11 @@
 	<entry name="230">1496</entry>
 	<entry name="231">1497</entry>
 	<entry name="232">1498</entry>
-	<entry name="232">1499</entry>
-	<entry name="232">1500</entry>
+	<entry name="233">1499</entry>
+	<entry name="234">1500</entry>
+	<entry name="235">1519</entry>
+	<entry name="236">1520</entry>
+	<entry name="237">1521</entry>
   </section>
   <section name="US">
     <entry name="TotalChannels">73</entry>

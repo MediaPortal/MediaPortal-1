@@ -5,31 +5,55 @@
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-  <control>
-    <description>Current recording count</description>
-    <type>fadelabel</type>
-    <id>0</id>
-    <posX>525</posX>
-    <posY>35</posY>
-    <width>50</width>
-    <label>#latestMediaHandler.tvrecordings.active.count</label>
-    <align>center</align>
-    <font>font10</font>
-    <textcolor>ivory</textcolor>
-    <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-    <visible>!window.isvisible(0)+!window.isvisible(34)+!window.isvisible(2007)</visible>
-    </control>
     <control>
       <description>rec logo</description>
       <type>image</type>
       <id>4</id>
+      <posX>930</posX>
+      <posY>15</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>rec.png</texture>
+      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+      <visible>!plugin.isenabled(Latest Media Handler)+!window.isvisible(0)+!window.isvisible(34)+!window.isvisible(2007)</visible>
+    </control>
+    <control>
+      <description>rec logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>930</posX>
+      <posY>15</posY>
+      <width>60</width>
+      <height>60</height>
+      <texture>rec.png</texture>
+      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+      <visible>!plugin.isenabled(Latest Media Handler)+window.isvisible(0)|window.isvisible(34)+!window.isvisible(2007)</visible>
+    </control>
+    <control>
+      <description>Current recording count</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>525</posX>
+      <posY>35</posY>
+      <width>50</width>
+      <label>#latestMediaHandler.tvrecordings.active.count</label>
+      <align>center</align>
+      <font>font10</font>
+      <textcolor>ivory</textcolor>
+      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+      <visible>!window.isvisible(0)+!window.isvisible(34)+!window.isvisible(2007)+plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+    </control>
+    <control>
+      <description>rec logo</description>
+      <type>image</type>
+      <id>0</id>
       <posX>520</posX>
       <posY>5</posY>
       <width>59</width>
       <height>60</height>
       <texture>tb_recordNF_red.png</texture>
       <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-      <visible>!window.isvisible(0)+!window.isvisible(34)+!window.isvisible(2007)</visible>
+      <visible>!window.isvisible(0)+!window.isvisible(34)+!window.isvisible(2007)+plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
     <control>
       <description>Current channel</description>
@@ -44,21 +68,19 @@
       <textcolor>ivory</textcolor>
       <visible>!window.isvisible(0)+!window.isvisible(34)+!window.isvisible(2007)+plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
-    
-    
     <control>
-    <description>Current recording count</description>
-    <type>fadelabel</type>
-    <id>0</id>
-    <posX>665</posX>
-    <posY>35</posY>
-    <width>50</width>
-    <label>#latestMediaHandler.tvrecordings.active.count</label>
-    <align>center</align>
-    <font>font10</font>
-    <textcolor>ivory</textcolor>
-    <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-    <visible>window.isvisible(0)|window.isvisible(34)+!window.isvisible(2007)</visible>
+      <description>Current recording count</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>665</posX>
+      <posY>35</posY>
+      <width>50</width>
+      <label>#latestMediaHandler.tvrecordings.active.count</label>
+      <align>center</align>
+      <font>font10</font>
+      <textcolor>ivory</textcolor>
+      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+      <visible>[window.isvisible(0)|window.isvisible(34)]+!window.isvisible(2007)+plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
     <control>
       <description>rec logo</description>
@@ -70,7 +92,7 @@
       <height>60</height>
       <texture>tb_recordNF_red.png</texture>
       <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-      <visible>window.isvisible(0)|window.isvisible(34)+!window.isvisible(2007)</visible>
+      <visible>[window.isvisible(0)|window.isvisible(34)]+!window.isvisible(2007)+plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
     <control>
       <description>Current channel</description>
@@ -83,8 +105,7 @@
       <align>left</align>
       <font>font9</font>
       <textcolor>ivory</textcolor>
-      <visible>window.isvisible(0)|window.isvisible(34)+!window.isvisible(2007)+plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+      <visible>[window.isvisible(0)|window.isvisible(34)]+!window.isvisible(2007)+plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
-    
   </controls>
 </window>
