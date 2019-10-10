@@ -323,8 +323,8 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_strAlbumArtiststrAlbumstrFileType",
                                  "CREATE INDEX idxtracks_strAlbumArtiststrAlbumstrFileType ON tracks(strAlbumArtist, strAlbum, strFileType)");
         // Indices for Album and Artist Info
-        DatabaseUtility.AddIndex(MusicDbClient, "idxartistinfo_strArtiststrAlbum",
-                                 "CREATE INDEX idxartistinfo_strArtiststrAlbum ON artistinfo(strArtist, strAlbum)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxalbuminfo_strArtiststrAlbum",
+                                 "CREATE INDEX idxalbuminfo_strArtiststrAlbum ON albuminfo(strArtist, strAlbum)");
       }
       catch (Exception ex)
       {
