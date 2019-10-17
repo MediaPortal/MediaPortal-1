@@ -20,6 +20,7 @@
 
 using System;
 using System.Text.RegularExpressions;
+using TvThumbnails;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Log;
@@ -215,9 +216,16 @@ namespace TvService
     /// Create the filename for the recording 
     /// </summary>
     /// <param name="recordingPath"></param>
-    public void MakeFileName(string recordingPath)
+    public bool MakeFileName(string recordingPath)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
+      
+      bool fileNameOK = true;
+      
+      //Actual Windows limit is 260(inc. terminating null), 
+      //using 225 allows space for pre-pending hostname/IPaddress (for remote UNC path access), 
+      //and appending unique numbers and the file extension.  
+      const int FILE_PATH_LIMIT = 225;
 
       Setting setting;
       if (!IsSerie)
@@ -333,14 +341,58 @@ namespace TvService
                                  DateTime.Now.Minute, DateTime.Now.Second);
       }
       fileName = Utils.MakeFileName(fileName);
+      
+      //Check length of full recording and thumbnail file paths against FILE_PATH_LIMIT,
+      //truncate fileName part if necessary and possible.
+      int lenRec = (fullPath + "\\" + fileName).Length;
+      int lenThumb = (Thumbs.ThumbnailFolder + "\\" + fileName).Length;
+      int truncateCnt = Math.Max(lenRec, lenThumb) - FILE_PATH_LIMIT;
+      if (truncateCnt > 0)
+      {
+        if (lenRec > lenThumb)
+        {
+          Log.Error("Scheduler: MakeFileName(): rec file path too long, length = {0}, file path: {1}", 
+                    truncateCnt+FILE_PATH_LIMIT, (fullPath + "\\" + fileName));
+        }
+        else
+        {
+          Log.Error("Scheduler: MakeFileName(): thumb file path too long, length = {0}, file path: {1}", 
+                    truncateCnt+FILE_PATH_LIMIT, (Thumbs.ThumbnailFolder + "\\" + fileName));
+        }
+        
+        if (fileName.Length > truncateCnt)
+        {
+          //Truncate fileName and add '~' to the end, to indicate truncation
+          fileName = fileName.Substring(0, (fileName.Length - truncateCnt)) + "~";
+          Log.Error("Scheduler: MakeFileName(): file path too long, length = {0}, filename truncated to: {1}", 
+                    truncateCnt+FILE_PATH_LIMIT, fileName);
+        }
+        else
+        {
+          Log.Error("Scheduler: MakeFileName(): file path too long, length = {0}, filename too short to truncate, fileName.Length = {1}", 
+                    truncateCnt+FILE_PATH_LIMIT, fileName.Length);
+          fileNameOK = false;
+        }
+      }
+      
+      
       if (DoesFileExist(fullPath + "\\" + fileName))
       {
         int i = 1;
         while (DoesFileExist(fullPath + "\\" + fileName + "_" + i))
+        {
           ++i;
+        }
         fileName += "_" + i;
+        if (i > 99999)
+        {
+          fileNameOK = false;
+          Log.Error("Scheduler: MakeFileName(): fileName number suffix > 99999");          
+        }        
       }
       _fileName = fullPath + "\\" + fileName + recEngineExt;
+      
+      return fileNameOK;
     }
 
     /// <summary>
@@ -357,7 +409,7 @@ namespace TvService
         return true;
       return false;
     }
-
+    
     #endregion
   }
 }

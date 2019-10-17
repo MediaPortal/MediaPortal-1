@@ -63,6 +63,7 @@ using Microsoft.Win32;
 using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
 using System.Collections.Generic;
+using System.Net;
 
 #endregion
 
@@ -505,6 +506,9 @@ public class MediaPortalApp : D3D, IRender
     //AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
     //Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
 
+    // .NET 4.0: Use TLS v1.2. Many download sources no longer support the older and now insecure TLS v1.0/1.1 and SSL v3.
+    ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00;
+
     using (Settings xmlreader = new MPSettings())
     {
       bool noAutoStartOnRDP = xmlreader.GetValueAsBool("general", "noautostartonrdp", false);
@@ -748,7 +752,7 @@ public class MediaPortalApp : D3D, IRender
       catch {
         Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
       }
-      Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
+      //Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
       Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
 
       #if DEBUG
@@ -2393,6 +2397,17 @@ public class MediaPortalApp : D3D, IRender
                 GUIGraphicsContext._guiMsgDbtAudioDeviceArrival = true;
                 GUIGraphicsContext.CurrentAudioDeviceNameArrival = deviceName;
                 Log.Debug("Main: DBT_DEVICEARRIVAL AUDIO " + deviceName);
+
+                Log.Debug("Main: DBT_DEVICEARRIVAL AUDIO play sound workaround");
+                try
+                {
+                  var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) { SoundFileName = "silent.wav"};
+                  GUIGraphicsContext.OnAction(action);
+                }
+                catch (Exception e)
+                {
+                  Log.Error("Main: DBT_DEVICEARRIVAL AUDIO play sound workaround failed");
+                }
               }
               break;
           }
@@ -4649,6 +4664,15 @@ public class MediaPortalApp : D3D, IRender
             return;
           }
           break;
+
+        // play sound 
+        case Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND:
+          if (action.SoundFileName.Length > 0)
+          {
+            Utils.PlaySound(action.SoundFileName, false, true, true);
+            Log.Debug("Main: ACTION_PLAY_INTEL_AUDIO_SOUND");
+          }
+          break;
       }
 
       if (g_Player.Playing)
@@ -5595,20 +5619,19 @@ public class MediaPortalApp : D3D, IRender
                   Thread.Sleep(100);
                 }
               }
-              else
-              {
-                FilterHelper.ReloadFilterCollection();
-                if (g_Player.Playing &&
-                    GUIGraphicsContext.CurrentAudioRendererDevice.Trim().ToLowerInvariant() ==
-                    message.Label.Trim().ToLowerInvariant() && !GUIGraphicsContext.CurrentAudioRendererDone)
-                {
-                  var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_MEDIACONTROL_AUDIO, 0, 0, 0, 0, 0,
-                    null);
-                  GUIWindowManager.SendThreadMessage(msg);
-                  Log.Debug("Main: send message to stop mediacontrol for audio playback");
-                }
-                GUIGraphicsContext.CurrentAudioRendererDone = false;
-              }
+              //else
+              //{
+              //  if (g_Player.Playing &&
+              //      GUIGraphicsContext.CurrentAudioRendererDevice.Trim().ToLowerInvariant() ==
+              //      message.Label.Trim().ToLowerInvariant() && !GUIGraphicsContext.CurrentAudioRendererDone)
+              //  {
+              //    var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REBUILD_AUDIO, 0, 0, 0, 0, 0,
+              //      null);
+              //    GUIWindowManager.SendThreadMessage(msg);
+              //    Log.Debug("Main: send message to stop mediacontrol for audio playback");
+              //  }
+              //  GUIGraphicsContext.CurrentAudioRendererDone = false;
+              //}
 
               // Force MP to refresh screen
               _forceMpAlive = true;
@@ -5648,7 +5671,6 @@ public class MediaPortalApp : D3D, IRender
               }
               else
               {
-                FilterHelper.ReloadFilterCollection();
                 if (g_Player.Playing &&
                     GUIGraphicsContext.CurrentAudioRendererDevice.Trim().ToLowerInvariant() ==
                     message.Label.Trim().ToLowerInvariant() && !GUIGraphicsContext.CurrentAudioRendererDone)
@@ -5666,6 +5688,16 @@ public class MediaPortalApp : D3D, IRender
             {
               Log.Warn("Main: Exception on arrival Audio Renderer {0} exception: {1} ", message.Label,
                 exception.Message);
+            }
+            Log.Error("Main: AUDIODEVICEARRIVAL play sound workaround");
+            try
+            {
+              var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) {SoundFileName = "silent.wav" };
+              GUIGraphicsContext.OnAction(action);
+            }
+            catch (Exception e)
+            {
+              Log.Error("Main: AUDIODEVICEARRIVAL play sound workaround failed");
             }
           }
           break;

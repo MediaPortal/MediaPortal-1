@@ -1,0 +1,1621 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+
+    <!--            :: WEATHER GAUGE ::                -->
+
+    <!--            :: WEATHER WIND ::                -->
+
+    <control>
+      <description>Current Weather Wind Back</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Back.png</texture>
+      <!--visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature#WorldWeather.HistoryDayAverageMaxTemperature#WorldWeather.HistoryDayAverageMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )</visible-->
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Current Wind Speed Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>600</posY>
+      <label>#WorldWeather.TranslationWindSpeed</label>
+      <font>font1</font>
+      <height>30</height>
+      <width>100</width>
+      <align>center</align>
+      <valign>middle</valign>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Current Wind Speed</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <label>#WorldWeather.TodayWindSpeed</label>
+      <font>font1</font>
+      <height>100</height>
+      <width>100</width>
+      <align>center</align>
+      <valign>middle</valign>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-360" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(or(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),355),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),360)),and(gte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),0),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),5)))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-10" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),5),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),15))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-20" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),15),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),25))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-30" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),25),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),35))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-40" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),35),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),45))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-50" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),45),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),55))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-60" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),55),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),65))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-70" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),65),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),75))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-80" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),75),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),85))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-90" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),85),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),95))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-100" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),95),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),105))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-110" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),105),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),115))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-120" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),115),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),125))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-130" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),125),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),135))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-140" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),135),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),145))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-150" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),145),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),155))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-160" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),155),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),165))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-170" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),165),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),175))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-180" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),175),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),185))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-190" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),185),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),195))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-200" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),195),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),205))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-210" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),205),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),215))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-220" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),215),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),225))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-230" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),225),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),235))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-240" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),235),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),245))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-250" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),245),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),255))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-260" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),255),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),265))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-270" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),265),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),275))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-280" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),275),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),285))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-290" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),285),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),295))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-300" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),295),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),305))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-310" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),305),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),315))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-320" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),315),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),325))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-330" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),325),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),335))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-340" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),335),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),345))))</visible>
+    </control>
+
+    <control>
+      <description>Current Weather Wind</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>600</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Wind.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="rotate" delay="0" end="-350" time="1500" loop="false" reversible="false" condition="true">Conditional</animation>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayWindSpeed, )+string.equals(True,#(and(gt(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),345),lte(cint(string.trim(#WorldWeather.TodayWindDirectionDegree,string.trim(#WorldWeather.TodayWindDirectionDegree,'1234567890'))),355))))</visible>
+    </control>
+
+    <!--            :: WEATHER HUMIDITY ::                -->
+
+    <control>
+      <description>Current Humidity Back</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Back.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Current Humidity Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>600</posY>
+      <label>#WorldWeather.TranslationHumidity</label>
+      <font>font1</font>
+      <height>30</height>
+      <width>100</width>
+      <align>center</align>
+      <valign>middle</valign>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Current Humidity</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <label>#WorldWeather.TodayHumidity</label>
+      <font>font1</font>
+      <height>100</height>
+      <width>100</width>
+      <align>center</align>
+      <valign>middle</valign>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_000.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(eq(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),0)))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_005.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),1),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),9))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_010.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),10),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),14))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_015.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),15),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),19))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_020.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),20),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),24))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_025.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),25),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),29))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_030.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),30),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),34))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_035.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),35),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),39))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_040.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),40),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),44))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_045.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),45),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),49))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_050.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),50),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),54))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_055.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),55),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),59))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_060.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),60),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),64))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_065.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),65),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),69))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_070.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),70),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),74))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_075.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),75),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),79))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_080.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),80),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),84))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_085.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),85),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),89))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_090.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),90),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),94))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_095.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),95),lte(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),99))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_100.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayHumidity, )+string.equals(True,#(eq(cint(string.trim(#WorldWeather.TodayHumidity,string.trim(#WorldWeather.TodayHumidity,'1234567890'))),100)))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!--            :: WEATHER UV ::                -->
+
+    <control>
+      <description>Current UV Back</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>880</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Back.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayUVIndex, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Current Humidity Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>880</posX>
+      <posY>600</posY>
+      <label>#WorldWeather.TranslationUVIndex</label>
+      <font>font1</font>
+      <height>30</height>
+      <width>100</width>
+      <align>center</align>
+      <valign>middle</valign>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayUVIndex, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Current UV</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>892</posX>
+      <posY>630</posY>
+      <label>#WorldWeather.TodayUVIndex</label>
+      <font>font1</font>
+      <height>100</height>
+      <width>80</width>
+      <align>center</align>
+      <valign>middle</valign>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>880</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_025.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayUVIndex, )+string.contains(#WorldWeather.TodayUVIndexImage,low.png)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>880</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_050.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayUVIndex, )+string.contains(#WorldWeather.TodayUVIndexImage,medium.png)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>880</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_075.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayUVIndex, )+string.contains(#WorldWeather.TodayUVIndexImage,high.png)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>880</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_100.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayUVIndex, )+string.contains(#WorldWeather.TodayUVIndexImage,veryhigh.png)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!--            :: WEATHER PRECIPITATION ::                -->
+
+    <control>
+      <description>Current Humidity Back</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Back.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Current Humidity Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>600</posY>
+      <label>#WorldWeather.TranslationPrecipitation</label>
+      <font>font1</font>
+      <height>30</height>
+      <width>100</width>
+      <align>center</align>
+      <valign>middle</valign>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Current Humidity</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <label>#WorldWeather.TodayPrecipitation</label>
+      <font>font1</font>
+      <height>100</height>
+      <width>100</width>
+      <align>center</align>
+      <valign>middle</valign>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_000.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(eq(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),0)))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_005.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),1),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),9))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_010.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),10),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),14))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_015.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),15),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),19))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_020.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),20),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),24))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_025.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),25),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),29))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_030.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),30),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),34))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_035.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),35),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),39))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_040.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),40),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),44))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_045.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),45),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),49))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_050.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),50),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),54))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_055.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),55),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),59))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_060.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),60),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),64))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_065.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),65),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),69))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_070.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),70),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),74))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_075.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),75),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),79))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_080.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),80),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),84))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_085.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),85),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),89))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_090.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),90),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),94))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_095.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(and(gte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),95),lte(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),99))))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Weather Percentage</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1020</posX>
+      <posY>630</posY>
+      <width>100</width>
+      <height>100</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Gauge\Weather.Percentage_100.png</texture>
+      <visible>string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature, )+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+!string.equals(#WorldWeather.TodayPrecipitation, )+string.equals(True,#(eq(cint(string.trim(#WorldWeather.TodayPrecipitation,string.trim(#WorldWeather.TodayPrecipitation,'1234567890'))),100)))</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+  </controls>
+</window>

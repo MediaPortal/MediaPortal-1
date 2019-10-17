@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Language name="English" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="My ">Programs</String>
@@ -1728,6 +1728,9 @@
     <String id="14016">Download</String>
     <String id="14017">Rating</String>
     <String id="14018">Install Update</String>
+    <String id="15001">Artist Information</String>
+    <String id="15002">Album Information</String>
+    <String id="15003">Simple Now Playing</String>
     <String id="16001">Party Shuffle</String>
     <String id="19001" prefix="My ">Tetris</String>
     <String id="19002">New Game</String>
@@ -2420,5 +2423,7 @@
     <String id="350038">HTPCinfo</String>
 	<String id="350039">Emulators2</String>
 	<String id="350040">MPsteam</String>
+	<String id="350041">Grab Actor details and photo</String>
+	<String id="350042">Zap Key Timeout</String>
    </Section>
 </Language>

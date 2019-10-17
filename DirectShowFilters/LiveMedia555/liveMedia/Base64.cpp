@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2018 Live Networks, Inc.  All rights reserved.
 // Base64 encoding and decoding
 // implementation
 
@@ -52,7 +52,7 @@ unsigned char* base64Decode(char const* in, unsigned inSize,
     haveInitializedBase64DecodeTable = True;
   }
 
-  unsigned char* out = (unsigned char*)strDupSize(in); // ensures we have enough space
+  unsigned char* out = new unsigned char[inSize+1]; // ensures we have enough space
   int k = 0;
   int paddingCount = 0;
   int const jMax = inSize - 3;

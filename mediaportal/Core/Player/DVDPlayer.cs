@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -33,6 +33,7 @@ using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player.LAV;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using MediaPortal.Player.PostProcessing;
@@ -712,6 +713,18 @@ namespace MediaPortal.Player
             DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
             _mediaCtrl.Run();
             GUIGraphicsContext.CurrentAudioRendererDone = true;
+          }
+
+          // When using LAV Audio
+          //Release and init Post Process Filter
+          if (AudioPostEngine.engine != null)
+          {
+            AudioPostEngine.GetInstance().FreePostProcess();
+          }
+          IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+          if (audioEngine != null && !audioEngine.LoadPostProcessing(_graphBuilder))
+          {
+            AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
           }
         }
       }
@@ -2159,6 +2172,14 @@ namespace MediaPortal.Player
     public override bool HasPostprocessing
     {
       get { return PostProcessingEngine.GetInstance().HasPostProcessing; }
+    }
+
+    /// <summary>
+    /// Property to Get Audio LAV delay engine
+    /// </summary>
+    public override bool HasAudioEngine
+    {
+      get { return AudioPostEngine.GetInstance().HasAudioEngine; }
     }
 
     public bool SupportsCC

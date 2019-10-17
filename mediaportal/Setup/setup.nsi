@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 /*
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -520,6 +520,8 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_DirectShowFilters}\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
   File "${git_MP}\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
+  ; Json Library
+  File "${git_MP}\MediaPortal.Base\Newtonsoft.Json.dll"
   ; iMON VFD/LCD
   File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll"
   File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll"
@@ -576,7 +578,11 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
   ; NuGet binaries MediaInfo
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MediaInfo.0.7.95\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.3\build\native\x86\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.3\build\native\x86\libcrypto-1_1.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.3\build\native\x86\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.3\build\native\x86\libssl-1_1.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Wrapper.18.12.2\lib\net40\MediaInfo.Wrapper.dll"
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\Sqlite.3.21.0\Sqlite.dll"
@@ -623,11 +629,14 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\SharpLibWin32.0.0.9\lib\net20\SharpLibWin32.dll"
   ; SharpLibDisplay
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibDisplay.0.2.6\lib\net40\SharpLibDisplay.dll"
+  File "${git_ROOT}\Packages\SharpLibDisplay.0.3.4\lib\net40\SharpLibDisplay.dll"
   ; Naudio
   File "${git_ROOT}\Packages\NAudio.1.8.3\lib\net35\NAudio.dll" 
   ; CSCore
   File "${git_ROOT}\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll"
+  ; Intel Audio Workaround
+  SetOutPath "$MPdir.Config\Sounds"
+  File /nonfatal "${MEDIAPORTAL.BASE}\Sounds\silent.wav"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
@@ -640,7 +649,11 @@ Section "MediaPortal core files (required)" SecCore
     File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
   !endif
   File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
-  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-1.0.2.jar"
+  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-1.1.2.jar"
+    ; libbluray - Awt file
+   SetOutPath "$MPdir.Base\awt"
+    File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-awt-.jar"
+    SetOutPath "$MPdir.Base"
   ; libbluray - submodul freetype library
   !if ${BUILD_TYPE} == "Debug"       # it's an debug build
     File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Debug\freetype.dll"
@@ -798,6 +811,8 @@ SectionEnd
   Delete "$MPdir.Base\mpcSubs.dll"
   Delete "$MPdir.Base\MiniDisplayLibrary.dll"
   Delete "$MPdir.Base\System.Management.Automation.dll"
+  ; Json Library
+  Delete "$MPdir.Base\Newtonsoft.Json.dll"
   ; iMON VFD/LCD
   Delete "$MPdir.Base\iMONDisplay.dll"
   Delete "$MPdir.Base\iMONDisplayWrapper.dll"
@@ -975,6 +990,8 @@ Section -Post
   ${LOG_TEXT} "INFO" "Removing obsolete libbluray files"
   Delete "$MPdir.Base\libbluray-j2se-0.6.2.jar"
   Delete "$MPdir.Base\libbluray-j2se-1.0.1.jar"
+  Delete "$MPdir.Base\libbluray-j2se-1.0.2.jar"
+  Delete "$MPdir.Base\libbluray-j2se-1.1.1.jar"
 
   ; MP1-4315 Blow windowplugins dll to separate plugin dlls
   ${LOG_TEXT} "INFO" "Removing obsolete WindowPlugins.dll"

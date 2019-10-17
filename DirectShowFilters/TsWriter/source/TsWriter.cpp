@@ -139,7 +139,7 @@ void LogRotate()
           SYSTEMTIME systemTime;
           GetLocalTime(&systemTime);
           
-          if(fileTime.wDay == systemTime.wDay && fileInformation.nFileSizeLow <= 10485760)
+          if(fileTime.wDay == systemTime.wDay && fileInformation.nFileSizeLow <= 10485760 && fileInformation.nFileSizeHigh == 0)
           {
             //file date is today and the file size less then 10MB - no rotation needed
             return;
@@ -184,7 +184,7 @@ UINT CALLBACK LogThread(void* param)
 
 			GetFileAttributesEx(fileName, GetFileExInfoStandard, &fileInformation);
 
-      if(logFileParsed != systemTime.wDay || fileInformation.nFileSizeLow > 10485760)
+      if(logFileParsed != systemTime.wDay || fileInformation.nFileSizeLow > 10485760 || fileInformation.nFileSizeHigh != 0)
       {
         LogRotate();
         logFileParsed=systemTime.wDay;

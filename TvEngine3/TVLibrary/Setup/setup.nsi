@@ -224,7 +224,7 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2011 ${PRODUCT_PUBLISHER}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright ï¿½ 2005-2011 ${PRODUCT_PUBLISHER}"
 ShowUninstDetails show
 
 
@@ -548,11 +548,16 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; MediaInfo
   ;File "${git_ROOT}\Packages\MediaInfo.0.7.95\MediaInfo.dll"
-  File "${git_ROOT}\Packages\MediaInfo.0.7.69\MediaInfo.dll"
+  SetOutPath "$INSTDIR"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.3\build\native\x86\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.3\build\native\x86\libcrypto-1_1.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.3\build\native\x86\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.3\build\native\x86\libssl-1_1.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Wrapper.18.12.2\lib\net40\MediaInfo.Wrapper.dll"
 
   ; thumbnail software
   File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
-  File "${git_TVServer}\TvThumbnails\bin\${BUILD_TYPE}\TvThumbnails.dll"
+  File "${git_TVServer}\TvThumbnails\bin\x86\${BUILD_TYPE}\TvThumbnails.dll"
   
 
   ; protocol implementations for MPIPTVSource.ax

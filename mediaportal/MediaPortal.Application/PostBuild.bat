@@ -16,8 +16,8 @@ REM Check for Microsoft Antispyware .BAT bug
 if exist .\kernel32.dll exit 1
 
 REM Hack to remove dll not needed in root 
-del *.dll
-del *.ax
+REM del *.dll
+REM del *.ax
 REM Support
 xcopy %1\MediaPortal.Support\bin\%2\MediaPortal.Support.* . /Y /D
 
@@ -154,7 +154,7 @@ xcopy %1\MPE\MpeMaker\bin\%2\MpeMaker.* . /Y /D
 
 REM Nuget 
 xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
-xcopy %1\..\Packages\MediaInfo.0.7.95\MediaInfo.dll . /Y /D
+xcopy %1\..\Packages\MediaInfo.Wrapper.18.12.1\lib\net40\MediaInfo.Wrapper.dll . /Y /D
 xcopy %1\..\Packages\Sqlite.3.21.0\sqlite.dll . /Y /D
 
 REM ffmpeg 
@@ -208,7 +208,7 @@ REM System.Management.Automation
 xcopy %1\..\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll . /Y /D
 
 REM SharpLibDisplay
-xcopy %1\..\Packages\SharpLibDisplay.0.2.6\lib\net40\SharpLibDisplay.dll . /Y /D
+xcopy %1\..\Packages\SharpLibDisplay.0.3.4\lib\net40\SharpLibDisplay.dll . /Y /D
 
 REM Naudio
 xcopy %1\..\Packages\NAudio.1.8.3\lib\net35\NAudio.dll . /Y /D

@@ -42,7 +42,7 @@
       // 
       this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonOk.AutoSize = true;
-      this.buttonOk.Location = new System.Drawing.Point(330, 117);
+      this.buttonOk.Location = new System.Drawing.Point(330, 182);
       this.buttonOk.Margin = new System.Windows.Forms.Padding(2);
       this.buttonOk.Name = "buttonOk";
       this.buttonOk.Size = new System.Drawing.Size(92, 29);
@@ -55,7 +55,7 @@
       // 
       this.linkLabelDocumentation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.linkLabelDocumentation.AutoSize = true;
-      this.linkLabelDocumentation.Location = new System.Drawing.Point(8, 134);
+      this.linkLabelDocumentation.Location = new System.Drawing.Point(8, 199);
       this.linkLabelDocumentation.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
       this.linkLabelDocumentation.Name = "linkLabelDocumentation";
       this.linkLabelDocumentation.Size = new System.Drawing.Size(112, 13);
@@ -119,7 +119,7 @@
       // SharpLibDisplaySettingsForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.ClientSize = new System.Drawing.Size(430, 154);
+      this.ClientSize = new System.Drawing.Size(430, 219);
       this.Controls.Add(this.linkLabelDocumentation);
       this.Controls.Add(this.buttonOk);
       this.Controls.Add(this.checkBoxSingleLine);

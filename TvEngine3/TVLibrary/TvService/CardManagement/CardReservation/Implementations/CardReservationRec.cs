@@ -28,7 +28,7 @@ namespace TvService
   public class CardReservationRec : CardReservationBase
   {    
     private CardDetail _cardInfo;
-    private RecordingDetail _recDetail;    
+    private RecordingDetail _recDetail;
 
     public CardReservationRec(TVController tvController) : base(tvController) { }
 
@@ -63,7 +63,12 @@ namespace TvService
 
       if (startRecordingOnDisc)
       {
-        _recDetail.MakeFileName(_cardInfo.Card.RecordingFolder);
+        bool fileNameOK = _recDetail.MakeFileName(_cardInfo.Card.RecordingFolder);
+        if (!fileNameOK)
+        {
+          Log.Error("Scheduler : record to {0} failed due to filename problems", _recDetail.FileName);
+          return false;
+        }
         _recDetail.CardInfo = _cardInfo;
         Log.Write("Scheduler : record to {0}", _recDetail.FileName);
         string fileName = _recDetail.FileName;

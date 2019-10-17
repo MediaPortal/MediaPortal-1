@@ -27,9 +27,9 @@
       <control>
       	<id>0</id>
         <type>image</type>
-        <posX>441</posX>
+        <posX>141</posX>
         <posY>296</posY>
-        <width>1040</width>
+        <width>1640</width>
         <height>679</height>
         <texture>context_background.png</texture>
       </control>
@@ -38,7 +38,7 @@
       	<id>4</id>
         <description>Heading text label</description>
         <type>label</type>
-        <posX>560</posX>
+        <posX>260</posX>
         <posY>386</posY>
 				<width>820</width>
         <font>font22</font>
@@ -52,9 +52,9 @@
         <type>listcontrol</type>
         <onleft>3</onleft>
         <onright>3</onright>
-        <posX>515</posX>
+        <posX>260</posX>
         <posY>475</posY>
-        <width>890</width>
+        <width>1390</width>
         <height>350</height>
         <textXOff2>635</textXOff2>
         <textYOff2>16</textYOff2>

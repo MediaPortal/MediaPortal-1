@@ -511,6 +511,16 @@
         <visible>facadeview.list</visible>
       </control>
       <control>
+        <description>Studio Logo</description>
+        <type>image</type>
+        <id>0</id>
+        <width>85</width>
+        <height>55</height>
+        <texture>#fanarthandler.movie.studios.selected.single</texture>
+        <keepaspectratio>yes</keepaspectratio>
+        <visible>facadeview.list</visible>        
+    </control>
+      <control>
         <description>Video codec</description>
         <type>image</type>
         <id>0</id>

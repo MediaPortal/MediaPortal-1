@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -564,6 +564,7 @@ namespace MediaPortal.GUI.Music
           }
 
           case "disc#":
+          case "filetype":
           case "album":
 
             bool thumbFound = false;
@@ -603,6 +604,16 @@ namespace MediaPortal.GUI.Music
                   }
                 }
               }
+            }
+            break;
+
+          case "year":
+            strThumb = Util.Utils.GetCoverArt(Thumbs.MusicYear, item.Label);
+            if (Util.Utils.FileExistsInCache(strThumb))
+            {
+              item.IconImage = strThumb;
+              item.IconImageBig = strThumb;
+              item.ThumbnailImage = strThumb;
             }
             break;
 
@@ -1004,7 +1015,7 @@ namespace MediaPortal.GUI.Music
             //if (handler != null && handler.CurrentView == "Top100") return;
           }
           string strFile = message.Label;
-          if (strFile.StartsWith(@"http://"))
+          if (strFile.StartsWith(@"http://") || strFile.StartsWith(@"https://"))
           {
             break; // Don't try increasing the Top100 for streams
           }
@@ -1306,6 +1317,9 @@ namespace MediaPortal.GUI.Music
           break;
         case "disc#":
           m_database.GetSongsByAlbumArtistAlbumDisc(s.AlbumArtist, s.Album, s.DiscId, ref songs);
+          break;
+        case "filetype":
+          m_database.GetSongsByAlbumArtistAlbumFileType(s.AlbumArtist, s.Album, s.FileType, ref songs);
           break;
         default:
           Log.Debug("GUIMusicGenres: GetSongsForFolder - could not determine type for {0}", s.ToShortString());

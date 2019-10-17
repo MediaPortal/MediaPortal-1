@@ -693,12 +693,15 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (OSInfo.OSInfo.Win10OrLater())
-        {
-          if (_instance == null)
-            CreateInstance();
-          return _instance;
-        }
+//        if (OSInfo.OSInfo.Win10OrLater())
+//        {
+//          if (_instance == null)
+//            CreateInstance();
+//          return _instance;
+//        }
+
+        if (_instance == null)
+          CreateInstance();
 
         return _instance;
       }

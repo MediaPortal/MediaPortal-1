@@ -327,7 +327,7 @@ namespace MediaPortal.Mixer
   //00685         
   //00686     };
 
-  [Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComImport, Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   interface IMMDeviceEnumerator
   {
     [PreserveSig]
@@ -632,12 +632,23 @@ namespace MediaPortal.Mixer
     int GetVolumeRange(out float pflVolumeMindB, out float pflVolumeMaxdB, out float pflVolumeIncrementdB);
   }
 
-  //    class DECLSPEC_UUID("BCDE0395-E52F-467C-8E3D-C4579291692E")
-  //00914 MMDeviceEnumerator;
+//  class DECLSPEC_UUID("BCDE0395-E52F-467C-8E3D-C4579291692E")
+//  00914 MMDeviceEnumerator;
+//
+//  [ComImport, Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")]
+//  class _AEDeviceEnumerator
+//  {
+//  }
 
-  [ComImport, Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")]
-  class _AEDeviceEnumerator
-  {
+//Code below from https://stackoverflow.com/questions/31928429/com-objects-c-sharp-casting-mmdeviceenumerator-to-immdeviceenumerator-invalidcas
+//due to runtime 'System.InvalidCastException' caused by 'class _AEDeviceEnumerator' code above
+  public static class _AEDeviceEnumeratorFactory {
+      private static readonly Guid _AEDeviceEnumerator = new Guid("BCDE0395-E52F-467C-8E3D-C4579291692E");
+  
+      internal static IMMDeviceEnumerator CreateInstance() {
+          var type = Type.GetTypeFromCLSID(_AEDeviceEnumerator);
+          return (IMMDeviceEnumerator)Activator.CreateInstance(type);
+      }
   }
 
   public class AudioVolumeNotificationData
@@ -749,7 +760,9 @@ namespace MediaPortal.Mixer
     private IMMDevice _RealDevice;
     // private AudEVol _AudioEndpointVolume;
     private static Guid IID_IAudioEndpointVolume = typeof(IAudioEndpointVolume).GUID;
-    private IMMDeviceEnumerator _realEnumerator = new _AEDeviceEnumerator() as IMMDeviceEnumerator;
+    //private IMMDeviceEnumerator _realEnumerator = new _AEDeviceEnumerator() as IMMDeviceEnumerator;
+    private IMMDeviceEnumerator _realEnumerator = _AEDeviceEnumeratorFactory.CreateInstance();
+
     private IAudioEndpointVolume _AudioEndPointVolume;
     private AudioEndpointVolumeCallback _CallBack;
     public event AudioEndpointVolumeNotificationDelegate OnVolumeNotification;
@@ -762,7 +775,8 @@ namespace MediaPortal.Mixer
       if (resetDevice)
         _devId = "";
 
-      _realEnumerator = new _AEDeviceEnumerator() as IMMDeviceEnumerator;
+      //_realEnumerator = new _AEDeviceEnumerator() as IMMDeviceEnumerator;
+      _realEnumerator = _AEDeviceEnumeratorFactory.CreateInstance();
       try
       {
         if (String.IsNullOrEmpty(_devId))

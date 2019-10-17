@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -27,6 +27,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
@@ -38,7 +39,8 @@ using MediaPortal.Util;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
 using Action = MediaPortal.GUI.Library.Action;
-using MediaPortal.Player.Subtitles;
+using MediaInfo;
+using MediaPortal.Services;
 
 namespace MediaPortal.Player
 {
@@ -112,6 +114,8 @@ namespace MediaPortal.Player
 
     private static string _externalPlayerExtensions = string.Empty;
     private static int _titleToDB = 0;
+
+    public static readonly AutoResetEvent SeekFinished = new AutoResetEvent(false);
 
     /// <param name="default Blu-ray remuxed">BdRemuxTitle</param>
     public const int BdRemuxTitle = 900;
@@ -1516,6 +1520,7 @@ namespace MediaPortal.Player
 
         g_Player.SetResumeBDTitleState = title;
         bool UseEVRMadVRForTV = false;
+        bool _NoBDMenu = false;
 
         IsPicture = false;
         IsExtTS = false;
@@ -1538,15 +1543,16 @@ namespace MediaPortal.Player
         {
           if (currentMediaInfoFilePlaying != strFile)
           {
-            _mediaInfo = new MediaInfoWrapper(strFile);
-            _mediaInfo.finished.WaitOne(5000);
+            var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
+            _mediaInfo = new MediaInfoWrapper(strFile, logger);
+            _mediaInfo.WriteInfo();
             currentMediaInfoFilePlaying = strFile;
           }
         }
 
         // back to previous Windows if we are only in video fullscreen to do a proper release when next item is music only
         if (((GUIWindow.Window) (Enum.Parse(typeof (GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) ==
-             GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) && (MediaInfo != null && !MediaInfo.hasVideo) && type == MediaType.Music)
+             GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) && (MediaInfo != null && !MediaInfo.HasVideo) && type == MediaType.Music)
         {
           GUIWindowManager.ShowPreviousWindow();
         }
@@ -1570,7 +1576,7 @@ namespace MediaPortal.Player
             {
               type = MediaType.Music;
             }
-            if (MediaInfo != null && MediaInfo.hasVideo && type == MediaType.Music)
+            if (MediaInfo != null && MediaInfo.HasVideo && type == MediaType.Music)
             {
               type = MediaType.Video;
             }
@@ -1606,7 +1612,7 @@ namespace MediaPortal.Player
           ChangeDriveSpeed(strFile, DriveType.CD);
         }
 
-        if (MediaInfo != null && MediaInfo.hasVideo && type == MediaType.Music)
+        if (MediaInfo != null && MediaInfo.HasVideo && type == MediaType.Music)
         {
           type = MediaType.Video;
         }
@@ -1625,7 +1631,56 @@ namespace MediaPortal.Player
             {
               _BDInternalMenu = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
               UseEVRMadVRForTV = xmlreader.GetValueAsBool("general", "useEVRMadVRForTV", false);
+              _NoBDMenu = xmlreader.GetValueAsBool("bdplayer", "DisableSelectMenuBDPlayer", true);
             }
+
+            if (extension == ".bdmv" && !GUIGraphicsContext.BlurayMenu && !_NoBDMenu)
+            {
+              IDialogbox dialog = (IDialogbox)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+              while (true)
+              {
+                // todo: translation for all string
+                dialog.Reset();
+                dialog.SetHeading("Select blu-ray player mode");
+
+                // Add play with internal BDReader menu
+                //dialog.AddLocalizedString(222);
+                GUIListItem itemBlurayMenu = new GUIListItem("Play blu-ray with menu");
+                dialog.Add(itemBlurayMenu);
+
+                // Add play with normal MP player (LAV)
+                //dialog.AddLocalizedString(222);
+                GUIListItem itemLav = new GUIListItem("Play blu-ray without menu");
+                dialog.Add(itemLav);
+
+                dialog.DoModal(GUIWindowManager.ActiveWindow);
+
+                if (dialog.SelectedId == itemBlurayMenu.ItemId)
+                {
+                  _BDInternalMenu = true;
+                }
+                if (dialog.SelectedId == itemLav.ItemId)
+                {
+                  _BDInternalMenu = false;
+                }
+
+                // Write the new detected settings
+                using (Settings xmlwriter = new MPSettings())
+                {
+                  xmlwriter.SetValueAsBool("bdplayer", "useInternalBDPlayer", _BDInternalMenu);
+                }
+
+                if (dialog.SelectedId < 1)
+                {
+                  // user cancelled so we return
+                  return false;
+                }
+
+                // end dialog
+                break;
+              }
+            }
+
             if (_BDInternalMenu && extension == ".bdmv")
             {
               AskForRefresh = false;
@@ -1639,7 +1694,7 @@ namespace MediaPortal.Player
                 // Make a double check on .ts because it can be recorded TV or Radio
                 if (extension == ".ts")
                 {
-                  if (MediaInfo != null && MediaInfo.hasVideo)
+                  if (MediaInfo != null && MediaInfo.HasVideo)
                   {
                     RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
                   }
@@ -1740,7 +1795,7 @@ namespace MediaPortal.Player
 
                 if (Util.Utils.PlayMovie(strFile))
                 {
-                  if (MediaInfo != null && MediaInfo.hasVideo)
+                  if (MediaInfo != null && MediaInfo.HasVideo)
                   {
                     RefreshRateChanger.AdaptRefreshRate();
                   }
@@ -1806,7 +1861,7 @@ namespace MediaPortal.Player
               // Make a double check on .ts because it can be recorded TV or Radio
               if (extension == ".ts")
               {
-                if (MediaInfo != null && MediaInfo.hasVideo)
+                if (MediaInfo != null && MediaInfo.HasVideo)
                 {
                   RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
                 }
@@ -1841,6 +1896,7 @@ namespace MediaPortal.Player
         _currentMediaForBassEngine = _currentMedia;
         currentMediaInfoFilePlaying = "";
         Starting = false;
+        GUIGraphicsContext.BlurayMenu = false;
       }
       UnableToPlay(strFile, type);
       return false;
@@ -2310,6 +2366,7 @@ namespace MediaPortal.Player
       // Suspending GUIGraphicsContext.State
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
+        Log.Debug("g_Player: StepNow GUIGraphicsContext.State.SUSPENDING");
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
       }
 
@@ -2323,47 +2380,73 @@ namespace MediaPortal.Player
       // Restore GUIGraphicsContext.State
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
       {
+        Log.Debug("g_Player: SeekRelative GUIGraphicsContext.State.RUNNING");
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
       }
     }
 
     public static void StepNow()
     {
-      // Suspending GUIGraphicsContext.State
-      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      // Resume automatic operation
+      if (!_StepNowDone) //_SeekAbsoluteDone
       {
-        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
-      }
+        _StepNowDone = true;
 
-      if (_currentStep != 0 && _player != null)
-      {
-        if (_currentStep < 0 || (_player.CurrentPosition + 4 < _player.Duration) || !IsTV)
+        // Start seek in a thread to avoid deadlock
+        new Thread(() =>
         {
-          double dTime = (int)_currentStep + _player.CurrentPosition;
-          Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}", _player.CurrentPosition, _player.Duration);
-          if (!IsTV && (dTime > _player.Duration)) dTime = _player.Duration - 5;
-          if (IsTV && (dTime + 3 > _player.Duration)) dTime = _player.Duration - 3; // Margin for live Tv
-          if (dTime < 0) dTime = 0d;
+          Thread.CurrentThread.IsBackground = true;
+          Thread.CurrentThread.Name = "StepNow";
 
-          Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2} isTv {3}", (int)(dTime / 3600d),
-                    (int)((dTime % 3600d) / 60d), (int)(dTime % 60d), IsTV);
-          _player.SeekAbsolute(dTime);
-          Speed = Speed;
-          GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0,
-                                                null);
-          GUIGraphicsContext.SendMessage(msgUpdate);
-        }
-      }
-      _currentStep = 0;
-      _currentStepIndex = -1;
-      _seekTimer = DateTime.MinValue;
+          // Suspending GUIGraphicsContext.State
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+          {
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+          }
 
-      // Restore GUIGraphicsContext.State
-      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
-      {
-        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+          if (_currentStep != 0 && _player != null)
+          {
+            if (_currentStep < 0 || (_player.CurrentPosition + 4 < _player.Duration) || !IsTV)
+            {
+              double dTime = (int) _currentStep + _player.CurrentPosition;
+              Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}", _player.CurrentPosition, _player.Duration);
+              if (!IsTV && (dTime > _player.Duration)) dTime = _player.Duration - 5;
+              if (IsTV && (dTime + 3 > _player.Duration)) dTime = _player.Duration - 3; // Margin for live Tv
+              if (dTime < 0) dTime = 0d;
+
+              Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2} isTv {3}", (int) (dTime / 3600d),
+                (int) ((dTime % 3600d) / 60d), (int) (dTime % 60d), IsTV);
+              _player.SeekAbsolute(dTime);
+              Speed = Speed;
+              GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0,
+                0,
+                null);
+              GUIGraphicsContext.SendMessage(msgUpdate);
+            }
+          }
+
+          _currentStep = 0;
+          _currentStepIndex = -1;
+          _seekTimer = DateTime.MinValue;
+
+          // Restore GUIGraphicsContext.State
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+          {
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+          }
+
+          // Wait until is done
+          SeekFinished.Set();
+        }).Start();
+
+        // Reset seek
+        SeekFinished.WaitOne(5000);
+        _StepNowDone = false;
       }
     }
+
+    public static bool _StepNowDone { get; set; }
+    public static bool _SeekAbsoluteDone { get; set; }
 
     /// <summary>
     /// This function returns the localized time units for "Step" (seconds) in human readable format.
@@ -2538,6 +2621,7 @@ namespace MediaPortal.Player
       // Suspending GUIGraphicsContext.State
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
+        Log.Debug("g_Player: SeekRelativePercentage GUIGraphicsContext.State.SUSPENDING");
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
       }
 
@@ -2561,25 +2645,47 @@ namespace MediaPortal.Player
       {
         return;
       }
-      // Suspending GUIGraphicsContext.State
-      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-      {
-        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
-      }
 
-      Log.Debug("g_Player.SeekAbsolute() - Preparing to seek to {0}:{1}:{2}", (int)(dTime / 3600d),
-                (int)((dTime % 3600d) / 60d), (int)(dTime % 60d));
-      _player.SeekAbsolute(dTime);
-      GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
-      GUIGraphicsContext.SendMessage(msgUpdate);
-      _currentStep = 0;
-      _currentStepIndex = -1;
-      _seekTimer = DateTime.MinValue;
-
-      // Restore GUIGraphicsContext.State
-      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+      if (!_SeekAbsoluteDone)
       {
-        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+        _SeekAbsoluteDone = true;
+
+        // Start seek in a thread to avoid deadlock
+        new Thread(() =>
+        {
+          Thread.CurrentThread.IsBackground = true;
+          Thread.CurrentThread.Name = "SeekAbsolute";
+
+          // Suspending GUIGraphicsContext.State
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+          {
+        Log.Debug("g_Player: SeekAbsolute GUIGraphicsContext.State.SUSPENDING");
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+          }
+
+          Log.Debug("g_Player.SeekAbsolute() - Preparing to seek to {0}:{1}:{2}", (int) (dTime / 3600d),
+            (int) ((dTime % 3600d) / 60d), (int) (dTime % 60d));
+          _player.SeekAbsolute(dTime);
+          GUIMessage msgUpdate =
+            new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
+          GUIGraphicsContext.SendMessage(msgUpdate);
+          _currentStep = 0;
+          _currentStepIndex = -1;
+          _seekTimer = DateTime.MinValue;
+
+          // Restore GUIGraphicsContext.State
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+          {
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+          }
+
+          // Wait until is done
+          SeekFinished.Set();
+        }).Start();
+
+        // Reset seek
+        SeekFinished.WaitOne(5000);
+        _SeekAbsoluteDone = false;
       }
     }
 
@@ -2593,6 +2699,7 @@ namespace MediaPortal.Player
       // Suspending GUIGraphicsContext.State
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
+        Log.Debug("g_Player: SeekAsolutePercentage GUIGraphicsContext.State.SUSPENDING");
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
       }
 
@@ -2799,17 +2906,17 @@ namespace MediaPortal.Player
 
     public static void RefreshMadVrVideo()
     {
-      // Enable a new VideoWindow update
-      lock (GUIGraphicsContext.RenderLock)
-      {
-        GUIGraphicsContext.UpdateVideoWindow = true;
-        VMR9Util.g_vmr9?._scene.RenderGuiRefresh(25, 25, 25, 25, true);
-      }
-
       // Disabled for now - seems the workaround is not needed anymore but keep code
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
           (GUIGraphicsContext.Vmr9Active || GUIGraphicsContext.ForceMadVRFirstStart))
       {
+        // Enable a new VideoWindow update
+        lock (GUIGraphicsContext.RenderLock)
+        {
+          GUIGraphicsContext.UpdateVideoWindow = true;
+          VMR9Util.g_vmr9?._scene.RenderGuiRefresh(25, 25, 25, 25, true);
+        }
+
         // TODO find a better way to restore madVR rendering (right now i send an 'X' to force refresh a current window)
         if (GUIGraphicsContext.ForceMadVRFirstStart)
         {
@@ -3032,6 +3139,21 @@ namespace MediaPortal.Player
           return false;
         }
         return _player.HasPostprocessing;
+      }
+    }
+
+    /// <summary>
+    /// Property which returns true if the player is able to perform post audio delay features
+    /// </summary>
+    public static bool HasAudioEngine
+    {
+      get
+      {
+        if (_player == null)
+        {
+          return false;
+        }
+        return _player.HasAudioEngine;
       }
     }
 
@@ -3756,18 +3878,19 @@ namespace MediaPortal.Player
         bool playingRemoteUrl = Util.Utils.IsRemoteUrl(FileName);
         if (_mediaInfo == null && !playingRemoteUrl)
         {
-          _mediaInfo = new MediaInfoWrapper(FileName);
-          _mediaInfo.finished.WaitOne(5000);
+          var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
+          _mediaInfo = new MediaInfoWrapper(FileName, logger);
+          _mediaInfo.WriteInfo();
         }
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CODEC_MISSING, 0, 0, 0, 0, 0, null);
         msg.Label = string.Format("{0}: {1}", GUILocalizeStrings.Get(1451), Util.Utils.GetFilename(FileName));
-        msg.Label2 = _mediaInfo == null || string.IsNullOrEmpty(_mediaInfo.VideoCodec)
+        msg.Label2 = _mediaInfo == null || _mediaInfo.BestVideoStream == null
                        ? string.Empty
-                       : string.Format("Video codec: {0}", _mediaInfo.VideoCodec);
-        msg.Label3 = _mediaInfo == null || string.IsNullOrEmpty(_mediaInfo.AudioCodec)
+                       : $"Video codec: {_mediaInfo.BestVideoStream.Codec}";
+        msg.Label3 = _mediaInfo == null || _mediaInfo.BestAudioStream == null
                        ? string.Empty
-                       : string.Format("Audio codec: {0}", _mediaInfo.AudioCodec);
+                       : $"Audio codec: {_mediaInfo.BestAudioStream.Codec}";
         GUIGraphicsContext.SendMessage(msg);
         _mediaInfo = null;
         PlayListType currentList = PlayListPlayer.SingletonPlayer.CurrentPlaylistType;
@@ -4000,6 +4123,7 @@ namespace MediaPortal.Player
             // Suspending GUIGraphicsContext.State
             if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
             {
+              Log.Debug("g_Player: GUI_MSG_ONDISPLAYMADVRCHANGED GUIGraphicsContext.State.SUSPENDING");
               GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
             }
 
@@ -4110,10 +4234,32 @@ namespace MediaPortal.Player
           g_Player.Player.SetResumeState((byte[])message.Object);
           break;
         case GUIMessage.MessageType.GUI_MSG_REBUILD_AUDIO:
+          FilterHelper.ReloadFilterCollection();
           _player?.AudioRendererRebuild();
+          Log.Debug("g_player: GUI_MSG_REBUILD_AUDIO play sound workaround");
+          try
+          {
+            var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) { SoundFileName = "silent.wav" };
+            GUIGraphicsContext.OnAction(action);
+          }
+          catch (Exception)
+          {
+            Log.Error("g_player: GUI_MSG_REBUILD_AUDIO play sound workaround failed");
+          }
           break;
         case GUIMessage.MessageType.GUI_MSG_STOP_MEDIACONTROL_AUDIO:
+          FilterHelper.ReloadFilterCollection();
           _player?.AudioRendererMediaControlStop();
+          Log.Debug("g_player: GUI_MSG_STOP_MEDIACONTROL_AUDIO play sound workaround");
+          try
+          {
+            var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) { SoundFileName = "silent.wav" };
+            GUIGraphicsContext.OnAction(action);
+          }
+          catch (Exception)
+          {
+            Log.Error("g_player: GUI_MSG_STOP_MEDIACONTROL_AUDIO play sound workaround failed");
+          }
           break;
       }
     }

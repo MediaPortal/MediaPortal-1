@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -793,6 +793,13 @@ namespace MediaPortal.GUI.Library
                 {
                   LoadInclude(node, defines);
                 }
+                else
+                {
+                  if (node.Attributes["otherwise"] != null && !string.IsNullOrEmpty(node.Attributes["otherwise"].Value))
+                  {
+                    LoadInclude(node, defines, true);
+                  }
+                }
                 break;
             }
           }
@@ -860,16 +867,34 @@ namespace MediaPortal.GUI.Library
 
     private bool LoadInclude(XmlNode node, IDictionary<string, string> defines)
     {
+      return LoadInclude(node, defines, false);
+    }
+
+    private bool LoadInclude(XmlNode node, IDictionary<string, string> defines, bool otherwise)
+    {
       if (node == null || Children == null)
       {
         return false;
+      }
+
+      string skinFile = node.InnerText;
+      if (otherwise)
+      {
+        if (node.Attributes["otherwise"] != null && !string.IsNullOrEmpty(node.Attributes["otherwise"].Value))
+        {
+          skinFile = node.Attributes["otherwise"].Value;
+        }
+        else
+        {
+          return false;
+        }
       }
 
       try
       {
         XmlDocument doc = new XmlDocument();
 
-        doc.Load(GUIGraphicsContext.GetThemedSkinFile("\\" + node.InnerText));
+        doc.Load(GUIGraphicsContext.GetThemedSkinFile("\\" + skinFile));
 
         if (doc.DocumentElement == null)
         {

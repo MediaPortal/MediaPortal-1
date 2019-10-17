@@ -2,6 +2,21 @@
 <window>
   <controls>
     <control>
+      <description>DEFAULT BACKGROUND DIMMED</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>background_dimmed.png</texture>
+      <animation effect="fade" time="400" delay="250">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+	  <visible>[control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14)]</visible>
+    </control>
+
+    <control>
       <type>group</type>
       <description>exit menu</description>
       <dimColor>0xffffffff</dimColor>

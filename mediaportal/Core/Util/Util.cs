@@ -1371,35 +1371,30 @@ namespace MediaPortal.Util
     public static string GetNamedDate(DateTime aDateTime)
     {
       DateTime now = DateTime.Now;
+      String timeStr = aDateTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+
       if (aDateTime.Date == now.Date) // Today
       {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6030),
-                             aDateTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6030), timeStr);
       }
       else if (aDateTime.Date == now.Date.AddDays(1)) // Tomorrow
       {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6031), aDateTime.ToString("t"),
-                             CultureInfo.CurrentCulture.DateTimeFormat);
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6031), timeStr);
       }
       else if (aDateTime.Date.AddDays(1) == now.Date) // Yesterday
       {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6040), aDateTime.ToString("t"),
-                             CultureInfo.CurrentCulture.DateTimeFormat);
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6040), timeStr);
       }
       else if (aDateTime.Date.AddDays(2) == now.Date) // Two days ago
       {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6041), aDateTime.ToString("t"),
-                             CultureInfo.CurrentCulture.DateTimeFormat);
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6041), timeStr);
       }
-      return String.Format("{0} {1}",
-                           Utils.GetShortDayString(aDateTime),
-                           aDateTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+      return String.Format("{0} {1}", Utils.GetShortDayString(aDateTime), timeStr);
     }
 
     public static string GetNamedDateStartEnd(DateTime startDateTime, DateTime endDateTime)
     {
-      return String.Format("{0}-{1}", GetNamedDate(startDateTime), endDateTime.ToString("t"),
-                           CultureInfo.CurrentCulture.DateTimeFormat);
+      return String.Format("{0}-{1}", GetNamedDate(startDateTime), endDateTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
     }
 
     public static string GetShortDayString(DateTime dt)
@@ -1431,7 +1426,10 @@ namespace MediaPortal.Util
             day = GUILocalizeStrings.Get(663);
             break;
         }
-        return String.Format("{0} {1}-{2}", day, dt.Day, dt.Month);
+        String mdp = CultureInfo.CurrentCulture.DateTimeFormat.MonthDayPattern;
+        String DateSeparator = CultureInfo.CurrentCulture.DateTimeFormat.DateSeparator;
+        String pattern = mdp.IndexOf('M') < mdp.IndexOf('d') ? " MM"+ DateSeparator+"dd" : " dd" + DateSeparator + "MM";
+        return day + dt.ToString(pattern);
       }
       catch (Exception) {}
       return string.Empty;
@@ -1768,8 +1766,9 @@ namespace MediaPortal.Util
     public static bool IsISOImage(string fileName)
     {
       string extension = Path.GetExtension(fileName).ToLowerInvariant();
-      // check for "http" to prevent exception
-      if (string.IsNullOrEmpty(fileName) || fileName.StartsWith("http://") || !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts")) 
+      // check for "http" and "https" to prevent exception
+      if (string.IsNullOrEmpty(fileName) || fileName.StartsWith("http://") || fileName.StartsWith("https://") || 
+          !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts")) 
         return false;
 
       string vDrive = DaemonTools.GetVirtualDrive();
@@ -2950,17 +2949,24 @@ namespace MediaPortal.Util
       }
     }
 
+    public static int PlaySound(string sSoundFile, bool bSynchronous, bool bIgnoreErrors, bool force)
+    {
+      if (sSoundFile == null) return 0;
+      if (sSoundFile.Length == 0) return 0;
+      return PlaySound(sSoundFile, bSynchronous, bIgnoreErrors, false, false, false, force);
+    }
+
     public static int PlaySound(string sSoundFile, bool bSynchronous, bool bIgnoreErrors)
     {
       if (sSoundFile == null) return 0;
       if (sSoundFile.Length == 0) return 0;
-      return PlaySound(sSoundFile, bSynchronous, bIgnoreErrors, false, false, false);
+      return PlaySound(sSoundFile, bSynchronous, bIgnoreErrors, false, false, false, false);
     }
 
     public static int PlaySound(string sSoundFile, bool bSynchronous, bool bIgnoreErrors,
-                                bool bNoDefault, bool bLoop, bool bNoStop)
+                                bool bNoDefault, bool bLoop, bool bNoStop, bool force)
     {
-      if (!enableGuiSounds)
+      if (!enableGuiSounds && !force)
         return 0;
 
       const int SND_ASYNC = 1;
@@ -2979,6 +2985,10 @@ namespace MediaPortal.Util
         else if (Util.Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile("\\" + sSoundFile + ".wav")))
         {
           sSoundFile = GUIGraphicsContext.GetThemedSkinFile("\\" + sSoundFile + ".wav");
+        }
+        else if (Util.Utils.FileExistsInCache(Config.GetFile(Config.Dir.Config, "Sounds", sSoundFile)))
+        {
+          sSoundFile = Config.GetFile(Config.Dir.Config, "Sounds", sSoundFile);
         }
         else
         {

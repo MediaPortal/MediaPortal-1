@@ -57,37 +57,58 @@ namespace TvService
         if (tvController != null)
         {
           ITvCardHandler card = tvController.CardCollection[cardDetail.Card.IdCard];
-          Log.Info("Controller:    card:{0} type:{1} users: {2}", cardDetail.Card.IdCard, card.Type, cardDetail.NumberOfOtherUsers);              
+          Log.Info("AdvancedCardAllocationTicket.LogNumberOfOtherUsersFound: card:{0} type:{1} users: {2}", cardDetail.Card.IdCard, card.Type, cardDetail.NumberOfOtherUsers);
         }
       }
     }
 
     public IList<CardDetail> UpdateFreeCardsForChannelBasedOnTicket(ICollection<CardDetail> cardsAvailable, IUser user, out TvResult result)
     {
-      var cardetails = new List<CardDetail>();
-
+      if (LogEnabled)
+      {
+        Log.Debug("UpdateFreeCardsForChannelBasedOnTicket: user: {0}", user.Name);
+      }
+      
+      var cardsFree = new List<CardDetail>();
+      
+      // first check if card can be added
+      bool currLogEn = LogEnabled;
+      LogEnabled = false;
       foreach (CardDetail cardDetail in cardsAvailable)
       {
         ICardTuneReservationTicket ticket = GetCardTuneReservationTicket(cardDetail.Card.IdCard);
 
         if (ticket != null)
-        {          
+        {
           cardDetail.SameTransponder = ticket.IsSameTransponder;
           cardDetail.NumberOfOtherUsers = ticket.NumberOfOtherUsersOnCurrentCard;
           LogNumberOfOtherUsersFound(cardDetail);
           IDictionary<int, ITvCardHandler> cards = _controller.CardCollection;
           IChannel tuningDetail = cardDetail.TuningDetail;
-          bool checkTransponder = CheckTransponder(user, 
-                                                   cards[cardDetail.Card.IdCard],                                                    
-                                                   tuningDetail);
-          if (checkTransponder)
-            cardetails.Add(cardDetail);
-          }          
+          
+          for (int i = 0; i <= 2; i++)
+          {
+            // Try up to 3 times with increasing user priority level 
+            bool checkTransponder = CheckTransponder(user, cards[cardDetail.Card.IdCard], tuningDetail, i);
+            if (i == 0)
+            {
+              cardDetail.SameTranspCAMavail = checkTransponder;
+            }
+            if (checkTransponder)                                                                     
+            {                                                                                         
+              cardDetail.TransponderCheckLevel = i;
+              cardsFree.Add(cardDetail);
+              break;                                                         
+            }     
+          }                                                                                              
         }
+      }
+      LogEnabled = currLogEn;
 
-      cardetails.SortStable();
+      //Sort the list so that the 'most preferred' Card Details are at the front (see 'CardDetail.cs' for sort order)
+      cardsFree.SortStable();
 
-      if (cardetails.Count > 0)
+      if (cardsFree.Count > 0)
       {
         result = TvResult.Succeeded;
       }
@@ -95,8 +116,18 @@ namespace TvService
       {
         result = cardsAvailable.Count == 0 ? TvResult.ChannelNotMappedToAnyCard : TvResult.AllCardsBusy;
       }
+      if (LogEnabled)
+      {
+        Log.Info("UpdateFreeCardsForChannelBasedOnTicket found {0} free card(s), user:{1}", cardsFree.Count, user.Name);
+        for (int i = 0; i < cardsFree.Count; i++)
+        {                                                                                           
+          Log.Debug("UpdateFreeCardsForChannelBasedOnTicket, free card:{0}, id:{1}, STCA:{2}, ST:{3}, PRI:{4}, CL:{5}, NOU:{6}",
+                          i, cardsFree[i].Id, cardsFree[i].SameTranspCAMavail, cardsFree[i].SameTransponder, cardsFree[i].Priority, 
+                          cardsFree[i].TransponderCheckLevel, cardsFree[i].NumberOfOtherUsers);
+        }                                                                                                     
+      }
 
-      return cardetails;
+      return cardsFree;
     }
 
     private ICardTuneReservationTicket GetCardTuneReservationTicket(int cardId)
