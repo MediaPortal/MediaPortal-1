@@ -55,8 +55,9 @@ namespace TvService
     private readonly IChannel _detail;
     private readonly int _priority;
     private bool _sameTransponder;
+    private bool _sameTranspCAMavail;
     private int _numberOfOtherUsers;
-    private long? _channelTimeshiftingOnOtherMux;
+    private int _transponderCheckLevel = -1;    
     private readonly long _frequency = -1;
 
     /// <summary>
@@ -71,11 +72,13 @@ namespace TvService
     public CardDetail(int id, Card card, IChannel detail, bool sameTransponder, int numberOfOtherUsers)
     {
       _sameTransponder = sameTransponder;
+      _sameTranspCAMavail = sameTransponder;
       _cardId = id;
       _card = card;
       _detail = detail;
       _priority = _card.Priority;
       _numberOfOtherUsers = numberOfOtherUsers;
+      _transponderCheckLevel = -1;
 
       var dvbTuningDetail = detail as DVBBaseChannel;
       if (dvbTuningDetail != null)
@@ -127,11 +130,34 @@ namespace TvService
 
     /// <summary>
     /// returns if it is the same transponder
+    /// sets both _sameTransponder and _sameTranspCAMavail
     /// </summary>
     public bool SameTransponder
     {
       get { return _sameTransponder; }
-      set { _sameTransponder = value; }
+      set { 
+            _sameTransponder = value;
+            if (value == false)
+            {
+              _sameTranspCAMavail = false;
+            }
+          }
+    }    
+    
+    /// <summary>
+    /// returns if it is the same transponder with CAM slot available
+    /// This cannot be set 'true' if _sameTransponder is 'false'
+    /// </summary>
+    public bool SameTranspCAMavail
+    {
+      get { return _sameTranspCAMavail; }
+      set { 
+            _sameTranspCAMavail = value; 
+            if (value == true)
+            {
+              _sameTransponder = true;
+            }
+          }
     }
 
     /// <summary>
@@ -142,6 +168,15 @@ namespace TvService
       get { return _numberOfOtherUsers; }
       set { _numberOfOtherUsers = value; }
     }
+    
+    /// <summary>
+    /// gets/sets the transponder 'check level'
+    /// </summary>
+    public int TransponderCheckLevel
+    {
+      get { return _transponderCheckLevel; }
+      set { _transponderCheckLevel = value; }
+    }    
 
     public long Frequency
     {
@@ -150,40 +185,65 @@ namespace TvService
 
     #region IComparable<CardInfo> Members
 
-    // higher priority means that this one should be more to the front of the list
+    /// <summary>
+    /// Compare two CardDetails.
+    /// </summary>
+    /// <remarks>
+    /// The preferred CardDetail is the one that should be tried earliest when tuning.
+    /// If this function is used to sort a list, the most preferred CardDetail
+    /// will be the first in the list.
+    /// A return value of -1 => move towards the front of the list
+    /// A return value of +1 => move towards the back of the list
+    /// A return value of  0 => don't change the order
+    /// </remarks>
     public int CompareTo(CardDetail other)
     {
-      if (SameTransponder == other.SameTransponder)
+      //Transponder status different, so favour 'same transponder' card
+      if (SameTranspCAMavail != other.SameTranspCAMavail)
       {
-        if (!SameTransponder && (NumberOfOtherUsers != other.NumberOfOtherUsers))
-        {
-          if (NumberOfOtherUsers > other.NumberOfOtherUsers)
-          {
-            return 1;
-          }
-          if (NumberOfOtherUsers < other.NumberOfOtherUsers)
-          {
-            return -1;
-          }
-          return 0;
-        }
-
-        if (Priority > other.Priority)
+        if (SameTranspCAMavail)
         {
           return -1;
         }
-        if (Priority < other.Priority)
+        return 1;
+      }
+      //...else compare 'other user' counts...
+      //If 'SameTransponder', favour cards with more users to minimise tuner usage,
+      //else favour cards with fewer users to minimise users that may have to be 'kicked off'.
+      //This also means cards with zero users (free cards) move towards the front of the list.
+      //Note: 'epg' users are not included in 'NumberOfOtherUsers' since they can always be 'kicked off'.
+      if (NumberOfOtherUsers > other.NumberOfOtherUsers)
+      {
+        return (SameTranspCAMavail ? -1 : 1);
+      }
+      if (NumberOfOtherUsers < other.NumberOfOtherUsers)
+      {
+        return (SameTranspCAMavail ? 1 : -1);
+      }     
+      //...else we have the same number of 'other users' so 
+      //look for 'CAM limited' same-transponder cards and 
+      //favour cards with more users to minimise tuner usage       
+      if (SameTransponder && !SameTranspCAMavail)
+      {
+        if (NumberOfOtherUsers > other.NumberOfOtherUsers)
+        {
+          return -1;
+        }
+        if (NumberOfOtherUsers < other.NumberOfOtherUsers)
         {
           return 1;
-        }
-        return 0;
-      }
-
-      if (SameTransponder)
+        }     
+      }      
+      //...else compare the card priorities (favour the higher priority card)...
+      if (Priority > other.Priority)
       {
         return -1;
       }
-      return 1;
+      if (Priority < other.Priority)
+      {
+        return 1;
+      }      
+      return 0;
     }
 
     #endregion

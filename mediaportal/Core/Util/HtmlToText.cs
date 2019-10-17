@@ -103,6 +103,8 @@ namespace MediaPortal.Util
 
     public static void Main(string[] args)
     {
+      // .NET 4.0: Use TLS v1.2. Many download sources no longer support the older and now insecure TLS v1.0/1.1 and SSL v3.
+      ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00;
       Thread.CurrentThread.Name = "HtmlToText";
       HttpWebRequest request = (HttpWebRequest)WebRequest.Create(args[0]);
       try

@@ -235,15 +235,29 @@
       <description>Video Watched Count Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>1501</posX>
-      <posY>527</posY>
-      <width>75</width>
+      <posX>1590</posX>
+      <posY>547</posY>
+      <width>200</width>
       <height>75</height>
-      <label>#watchedcount</label>
-      <font>Label</font>
-      <align>center</align>
+      <label>#watchedcountx #(L(527))</label>
+      <font>font9</font>
+      <align>left</align>
       <textcolor>ff6FAFE1</textcolor>
       <visible>facadeview.list+!string.equals(#watchedcount,)+control.hasthumb(500)</visible>
+    </control>
+    <control>
+      <description>Watched Percent Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1500</posX>
+      <posY>526</posY>
+      <align>center</align>
+      <width>75</width>
+      <height>75</height>
+      <textcolor>ff6FAFE1</textcolor>
+      <font>font9</font>
+      <label>#watchedpercent%</label>
+      <visible>facadeview.list+control.hasthumb(500)</visible>
     </control>
     <control>
       <description>Watched Logo</description>

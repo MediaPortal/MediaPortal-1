@@ -120,15 +120,7 @@
 	
 <!--   5-day stuff   -->
 
-	<control>
-		<description>Alternate BG</description>
-		<type>image</type>
-		<id>1</id>
-		<width>1920</width>
-		<height>1080</height>
-		<texture>background.png</texture>
-        <shouldCache>true</shouldCache>
-	</control>
+    <import>common.default.background.xml</import> 
 	
 	<control>
 		<description>Viewport</description>

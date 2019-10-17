@@ -35,6 +35,11 @@ namespace MediaPortal.Player.Teletext
     COMPENSATION_UPDATE = 7
   }
 
+  /// <summary>
+  /// Interface to the TsReader filter wich provides information about the 
+  /// Teletext streams and allows us to set the current Teletext callbacks
+  /// </summary>
+  /// 
   [Guid("3AB7E208-7962-11DC-9F76-850456D89593"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITeletextSource
@@ -42,5 +47,18 @@ namespace MediaPortal.Player.Teletext
     void SetTeletextTSPacketCallback(IntPtr callback);
     void SetTeletextEventCallback(IntPtr callback);
     void SetTeletextServiceInfoCallback(IntPtr callback);
+    void GetTeletextStreamType(Int32 stream, ref Int32 type);
+    void GetTeletextStreamCount(ref Int32 count);
+    void GetTeletextStreamLanguage(Int32 stream, ref TELETEXT_LANGUAGE szLanguage);
+  }
+  
+  /// <summary>
+  /// Structure to pass the Teletext language data from TsReader to this class
+  /// </summary>
+  /// 
+  [StructLayout(LayoutKind.Sequential, Pack = 1)]
+  public struct TELETEXT_LANGUAGE
+  {
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 4)] public string lang;
   }
 }

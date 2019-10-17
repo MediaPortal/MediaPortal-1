@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-	<id>763</id>
-	<defaultcontrol>50</defaultcontrol>
-	<allowoverlay>yes</allowoverlay> 
-	<define>#header.label:811</define>	
-	<controls>
+<id>763</id>
+<defaultcontrol>50</defaultcontrol>
+<allowoverlay>yes</allowoverlay> 
+<define>#header.label:811</define>	
+<controls>
+    <import>common.default.background.xml</import> 
 	<import>common.window.recordings.xml</import>
+
   <control>
     <id>0</id>
     <type>image</type>
@@ -17,8 +19,11 @@
     <animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="250">WindowClose</animation>
   </control>
+
 	<import>common.time.xml</import>
+
   <!--            :: LISTVIEW ::            -->
+
 	<control>
 		<id>0</id>
 		<type>image</type>
@@ -199,6 +204,7 @@
 
 	<import>myradiorecorded.hiddenmenu.xml</import>
 	<import>common.facade.recordings.xml</import>
-  <import>common.overlay.xml</import>
+    <import>common.overlay.xml</import>
+
 </controls>
 </window>

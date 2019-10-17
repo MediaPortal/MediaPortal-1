@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -2354,7 +2354,8 @@ namespace MediaPortal.GUI.Library
             break;
           case PLAYER_RECORDING:
             //bReturn = g_Player.m_pPlayer.IsRecording();
-            bReturn = false;
+            //bReturn = false;
+            bReturn = g_Player.IsTVRecording;
             break;
           case PLAYER_DISPLAY_AFTER_SEEK:
             // bReturn = GetDisplayAfterSeek();

@@ -3,6 +3,9 @@ Release/
 bin_Win32/
 bin_Win32d/
 ipch/
+.vs/
 *.sdf
 *.opensdf
 *.lib
+*.obj
+Core-CC-Parser/cc decode log 1.txt

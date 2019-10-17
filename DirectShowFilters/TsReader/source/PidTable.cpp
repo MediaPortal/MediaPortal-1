@@ -131,13 +131,13 @@ void CPidTable::LogPIDs()
 {
   USES_CONVERSION;
 
-  LogDebug(" pcr      pid: 0x%4x ",PcrPid);
-  LogDebug(" pmt      pid: 0x%4x ",PmtPid);
+  LogDebug(" pcr      pid: 0x%04x ",PcrPid);
+  LogDebug(" pmt      pid: 0x%04x ",PmtPid);
 
   // Log all video streams (Blu-ray can have multiple video streams)
   for(unsigned int i(0) ; i < videoPids.size() ; i++)
   {
-    LogDebug(" Video    pid: 0x%4x type: %s (0x%2x) DescriptorData: 0x%2x",
+    LogDebug(" Video    pid: 0x%04x type: %s (0x%02x) DescriptorData: 0x%02x",
       videoPids[i].Pid, 
       T2A(StreamFormatAsString(videoPids[i].VideoServiceType)),
       videoPids[i].VideoServiceType,
@@ -147,7 +147,7 @@ void CPidTable::LogPIDs()
   // Log all audio streams
   for(unsigned int i(0) ; i < audioPids.size() ; i++)
   {
-	  LogDebug(" Audio    pid: 0x%4x type: %s (0x%2x) language: %3s",
+	  LogDebug(" Audio    pid: 0x%04x type: %s (0x%02x) language: %3s",
       audioPids[i].Pid, 
       T2A(StreamFormatAsString(audioPids[i].AudioServiceType)),
       audioPids[i].AudioServiceType,
@@ -157,11 +157,21 @@ void CPidTable::LogPIDs()
   // Log all subtitle streams
   for(unsigned int i(0) ; i < subtitlePids.size() ; i++)
   {
-	  LogDebug(" Subtitle pid: 0x%4x type: %s (0x%2x) language: %3s",
+	  LogDebug(" Subtitle pid: 0x%04x type: %s (0x%02x) language: %3s",
       subtitlePids[i].Pid, 
       T2A(StreamFormatAsString(subtitlePids[i].SubtitleServiceType)),
       subtitlePids[i].SubtitleServiceType, 
       subtitlePids[i].Lang); 
+  }  
+  
+  // Log all teletext subtitle streams
+  for(unsigned int i(0) ; i < TeletextInfo.size() ; i++)
+  {
+	  LogDebug(" Teletext pid: 0x%04x type: %s (0x%02x) language: %3s",
+      TeletextPid, 
+      T2A(TeletextTypeAsString(TeletextInfo[i].type)),
+      TeletextInfo[i].type, 
+      TeletextInfo[i].lang); 
   }  
 }
 
@@ -225,3 +235,21 @@ LPCTSTR CPidTable::StreamFormatAsString(int streamType)
 	}
 }
 
+LPCTSTR CPidTable::TeletextTypeAsString(int streamType)
+{
+	switch (streamType)
+	{
+	case 0x01:
+		return _T("Teletext - initial");
+	case 0x02:
+		return _T("Teletext - subtitles");
+	case 0x03:
+		return _T("Teletext - additional information");
+	case 0x04:
+		return _T("Teletext - programme schedule");
+	case 0x05:
+		return _T("Teletext - subtitles for hearing impaired");
+	default:
+		return _T("Unknown");
+	}
+}

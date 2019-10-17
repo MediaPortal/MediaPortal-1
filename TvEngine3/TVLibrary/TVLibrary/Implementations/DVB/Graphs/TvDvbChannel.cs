@@ -901,7 +901,7 @@ namespace TvLibrary.Implementations.DVB
         return false;
       _pmtVersion = -1;
       _pmtPid = pmtPid;
-      _pmtRequested = true; // requested      
+      _pmtRequested = true; // requested
       if (_conditionalAccess != null)
         _conditionalAccess.OnRunGraph(serviceId);
 
@@ -1258,8 +1258,7 @@ namespace TvLibrary.Implementations.DVB
                 audioPid = _currentAudioStream.Pid;
               }
 
-              if (_conditionalAccess.SendPMT(_subChannelId, channel, _pmtData, _pmtLength,
-                                             audioPid))
+              if (_conditionalAccess.SendPMT(_subChannelId, channel, _pmtData, _pmtLength, audioPid, !_pmtRequested))
               {
                 Log.Log.WriteFile("subch:{0} cam flags:{1}", _subChannelId, _conditionalAccess.IsCamReady());
                 return true;
@@ -1371,6 +1370,34 @@ namespace TvLibrary.Implementations.DVB
 
     #region IPMTCallback Members
 
+    private void HandlePmtUpdate()
+    {
+      bool updatePids;
+      int waitInterval;
+      if (SendPmtToCam(out updatePids, out waitInterval))
+      {
+        if (!updatePids || _channelInfo == null)
+        {
+          return;
+        }
+        SetMpegPidMapping(_channelInfo);
+        var dvbBaseChannel = _currentChannel as DVBBaseChannel;
+        if (dvbBaseChannel != null && (_mdplugs != null && _channelInfo.scrambled && _mdplugs.IsProviderSelected(dvbBaseChannel.Provider)))
+        {
+          //_mdplugs.SetChannel(_currentChannel, _channelInfo, true);
+          _mdplugs.AddSubChannel(_subChannelId, _currentChannel, _channelInfo, true);
+        }
+        else
+        {
+          Log.Log.Debug("OnPMTReceived: MDAPI disabled. Possible reasons are _mdplugs=null or provider not listed");
+        }
+      }
+      else
+      {
+        Log.Log.Debug("Failed SendPmtToCam in callback handler");
+      }
+    }
+
     /// <summary>
     /// Called when tswriter.ax has received a new pmt
     /// </summary>
@@ -1379,7 +1406,6 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
-        DVBBaseChannel CurrentDVBChannel = _currentChannel as DVBBaseChannel;
         if (_eventPMT != null)
         {
           Log.Log.WriteFile("subch:{0} OnPMTReceived() pmt:{3:X} ran:{1} dynamic:{2}", _subChannelId, GraphRunning(),
@@ -1387,33 +1413,14 @@ namespace TvLibrary.Implementations.DVB
           _eventPMT.Set();
           // PMT callback is done on each new PMT version
           // check if the arrived PMT was _NOT_ requested (WaitForPMT), than it means dynamical change
-          if (_pmtRequested == false)
+          if (!_pmtRequested)
           {
-            bool updatePids;
-            int waitInterval;
-            if (SendPmtToCam(out updatePids, out waitInterval))
+            new Thread(HandlePmtUpdate)
             {
-              if (updatePids)
-              {
-                if (_channelInfo != null)
-                {
-                  SetMpegPidMapping(_channelInfo);
-                  if (_mdplugs != null && _channelInfo.scrambled && _mdplugs.IsProviderSelected(CurrentDVBChannel.Provider))
-                  {
-                    //_mdplugs.SetChannel(_currentChannel, _channelInfo, true);
-                    _mdplugs.AddSubChannel(_subChannelId, _currentChannel, _channelInfo, true);
-                  }
-                  else
-                  {
-                    Log.Log.Debug("OnPMTReceived: MDAPI disabled. Possible reasons are _mdplugs=null or provider not listed");
-                  }
-                }
-              }
-            }
-            else
-            {
-              Log.Log.Debug("Failed SendPmtToCam in callback handler");
-            }
+              Priority = ThreadPriority.Highest,
+              Name = "PMT update",
+              IsBackground = true
+            }.Start();
           }
         }
         PersistPMTtoDataBase(pmtPid);

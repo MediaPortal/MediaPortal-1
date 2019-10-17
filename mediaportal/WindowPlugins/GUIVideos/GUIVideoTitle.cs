@@ -1024,7 +1024,16 @@ namespace MediaPortal.GUI.Video
         item.IsPlayed = movie.Watched > 0;
         item.IsCollection = !string.IsNullOrEmpty(movie.SingleMovieCollection);
         item.IsUserGroup = !string.IsNullOrEmpty(movie.SingleUserGroup);
-        
+        // MP1-4955
+        if (movie.MediaInfo.Is3D)
+        {
+          item.AdditionalData = item.AdditionalData | GUIListItemProperty.Is3D;
+        }
+        if (movie.MediaInfo.IsHDR)
+        {
+          item.AdditionalData = item.AdditionalData | GUIListItemProperty.IsHDR;
+        }
+
         DateTime lastUpdate;
         DateTime.TryParseExact(movie.LastUpdate, "yyyy-MM-dd HH:mm:ss",
                                CultureInfo.CurrentCulture,

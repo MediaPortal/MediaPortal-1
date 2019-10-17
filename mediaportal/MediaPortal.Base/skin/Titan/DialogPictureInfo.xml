@@ -361,7 +361,7 @@
     <animation effect="Fade" time="150">WindowClose</animation>
   </control>
         
-  <control>
+  <!--control>
     <description>shadow</description>
     <type>image</type>
     <id>0</id>
@@ -379,14 +379,31 @@
     <description>Image</description>
     <type>image</type>
     <colordiffuse>ffffffff</colordiffuse>
-    <posX>288</posX>
+    <posX>289</posX>
     <posY>200</posY>
-    <width>558</width>
-    <height>376</height>
+    <width>562</width>
+    <height>377</height>
     <texture>-</texture>
+   	<keepaspectratio>yes</keepaspectratio>
+   	<centered>yes</centered>	
     <animation effect="Fade" time="150">WindowOpen</animation>
     <animation effect="Fade" time="150">WindowClose</animation>
-    <keepaspectratio>no</keepaspectratio>
+  </control-->
+
+  <control>
+    <id>3</id>
+    <description>Image</description>
+    <type>image</type>
+    <colordiffuse>ffffffff</colordiffuse>
+    <posX>283</posX>
+    <posY>194</posY>
+    <width>574</width>
+    <height>389</height>
+    <texture>-</texture>
+   	<keepaspectratio>yes</keepaspectratio>
+   	<centered>yes</centered>	
+    <animation effect="Fade" time="150">WindowOpen</animation>
+    <animation effect="Fade" time="150">WindowClose</animation>
   </control>
 </controls>
 </window>

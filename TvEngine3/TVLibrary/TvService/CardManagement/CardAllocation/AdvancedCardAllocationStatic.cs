@@ -33,9 +33,9 @@ namespace TvService
 
     #region overrides
 
-    public override bool CheckTransponder(IUser user, ITvCardHandler tvcard, IChannel tuningDetail)
+    public override bool CheckTransponder(IUser user, ITvCardHandler tvcard, IChannel tuningDetail, int checkLevel)
     {
-      return true;
+      return (checkLevel != 0);
     }
 
     protected override bool IsSameTransponder(ITvCardHandler tvcard, IChannel tuningDetail)
@@ -47,6 +47,11 @@ namespace TvService
     {
       return 0;
     }   
+
+    protected override bool IsStatic()
+    {
+      return true;
+    }
 
     #endregion
   }

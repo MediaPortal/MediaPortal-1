@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+  
+    <control>
+        <description>DUMMY CONTROL FOR FANART HANDLER IS SCRAPING VISIBILITY CONDITION</description>
+        <type>label</type>
+        <id>91919280</id>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>1</width>
+        <visible>no</visible>
+    </control>       
+
+    <control>
+        <description>Update Progress Control</description>
+        <type>progress</type>
+        <id>0</id>
+        <posX>0</posX>
+        <posY>1077</posY>
+        <width>1920</width>
+        <height>3</height>
+        <label>#fanarthandler.scraper.percent.completed</label>
+        <texturebg>black.png</texturebg>
+        <midtexture>white.png</midtexture>
+        <onlymidtexture>yes</onlymidtexture>
+        <midwidth>1920</midwidth>
+        <midheight>3</midheight>
+        <midoffsetX>-</midoffsetX>
+        <midoffsetY>0</midoffsetY>
+        <visible>control.isvisible(91919280)</visible>
+    </control>
+
+    <control>
+        <description>Update Progress Animation</description>
+        <type>animation</type>
+        <id>0</id>
+        <posX>933</posX>
+        <posY>42</posY>
+        <width>54</width>
+        <height>53</height>
+        <textures>common.waiting.1.png;common.waiting.2.png;common.waiting.3.png;common.waiting.4.png;common.waiting.5.png;common.waiting.6.png;common.waiting.7.png;common.waiting.8.png</textures>
+        <Duration>0:0:01.5</Duration>
+        <visible>control.isvisible(91919280)</visible>
+        <keepaspectratio>yes</keepaspectratio>
+    </control> 	
+        
+  </controls>
+        
+</window>

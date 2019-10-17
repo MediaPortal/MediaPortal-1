@@ -29,10 +29,107 @@
 		<label>#TV.View.channel</label>
 		<visible>Player.HasVideo+!control.hastext(3337)</visible>
 	</control>
-	
+
 <!-- TV/Video -->
 
+    <!-- CD/DVD Disk Logo -->
+
+ 	<control>
+ 		<description>Movie CDArt</description>
+ 		<type>image</type>
+ 		<id>0</id>
+  	    <posX>700</posX>
+	    <posY>70</posY>
+	    <width>200</width>
+	    <height>200</height>
+		<texture>..\..\..\Thumbs\CDArt\Movies\#Play.Current.IMDBNumber.png</texture>
+ 		<keepaspectratio>yes</keepaspectratio>
+ 		<centered>yes</centered>
+   		<align>center</align>
+ 		<zoom>no</zoom>
+ 		<valign>top</valign>
+ 		<visible>player.hasvideo+!control.isvisible(3337)+!string.equals(#Play.Current.IMDBNumber,)</visible>
+        <animation effect="rotate" delay="0" end="-360" time="8000" loop="true" condition="!player.paused">Conditional</animation>
+        <animation effect="rotate" delay="0" end="-360" time="1500" loop="true" reversible="false" condition="player.forwarding">Conditional</animation>
+        <animation effect="rotate" delay="0" end="360" time="500" loop="true" reversible="false" condition="player.rewinding">Conditional</animation>
+        <animation effect="fade" time="300" end="0" reversible="true" condition="player.paused">Conditional</animation>
+		<animation effect="fade" start="0" end="100" time="500" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="350">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+ 	</control>
+
+ 	<control>
+ 		<description>Series Seasons CDArt</description>
+ 		<type>image</type>
+ 		<id>234832</id>
+  	    <posX>700</posX>
+	    <posY>70</posY>
+	    <width>200</width>
+	    <height>200</height>
+ 		<texture>#TVSeries.Play.CDSeason</texture>
+ 		<keepaspectratio>yes</keepaspectratio>
+ 		<centered>yes</centered>
+   		<align>center</align>
+ 		<zoom>no</zoom>
+ 		<valign>top</valign>
+ 		<visible>player.hasvideo+!control.isvisible(3337)+!string.equals(#TVSeries.Episode.SeriesName,)</visible>
+        <animation effect="rotate" delay="0" end="-360" time="8000" loop="true" condition="!player.paused">Conditional</animation>
+        <animation effect="rotate" delay="0" end="-360" time="1500" loop="true" reversible="false" condition="player.forwarding">Conditional</animation>
+        <animation effect="rotate" delay="0" end="360" time="500" loop="true" reversible="false" condition="player.rewinding">Conditional</animation>
+        <animation effect="fade" time="300" end="0" reversible="true" condition="player.paused">Conditional</animation>
+		<animation effect="fade" start="0" end="100" time="500" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="350">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+ 	</control>
+
 	<control>
+ 		<description>Series CDArt</description>
+ 		<type>image</type>
+ 		<id>0</id>
+  	    <posX>700</posX>
+	    <posY>70</posY>
+	    <width>200</width>
+	    <height>200</height>
+ 		<texture>#TVSeries.Play.CD</texture>
+ 		<keepaspectratio>yes</keepaspectratio>
+ 		<centered>yes</centered>
+   		<align>center</align>
+ 		<zoom>no</zoom>
+ 		<valign>top</valign>
+ 		<visible>player.hasvideo+!control.isvisible(3337)+!string.equals(#TVSeries.Episode.SeriesName,)+!control.hasthumb(234832)</visible>
+        <animation effect="rotate" delay="0" end="-360" time="8000" loop="true" condition="!player.paused">Conditional</animation>
+        <animation effect="rotate" delay="0" end="-360" time="1500" loop="true" reversible="false" condition="player.forwarding">Conditional</animation>
+        <animation effect="rotate" delay="0" end="360" time="500" loop="true" reversible="false" condition="player.rewinding">Conditional</animation>
+        <animation effect="fade" time="300" end="0" reversible="true" condition="player.paused">Conditional</animation>
+		<animation effect="fade" start="0" end="100" time="500" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="350">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+ 	</control>
+
+   	<control>
+   		<description>mvCentral CDArt</description>
+   		<type>image</type>
+   		<id>0</id>
+  	    <posX>700</posX>
+	    <posY>70</posY>
+	    <width>200</width>
+	    <height>200</height>
+        <visible>player.hasvideo+string.equals(#mvCentral.isPlaying,true)</visible>
+     	<texture>..\..\..\Thumbs\CDArt\Music\#Play.Current.mvArtist - #Play.Current.mvAlbum.png</texture>
+        <animation effect="rotate" delay="0" end="-360" time="8000" loop="true" condition="!player.paused">Conditional</animation>
+        <animation effect="rotate" delay="0" end="-360" time="1500" loop="true" reversible="false" condition="player.forwarding">Conditional</animation>
+        <animation effect="rotate" delay="0" end="360" time="500" loop="true" reversible="false" condition="player.rewinding">Conditional</animation>
+        <animation effect="fade" time="300" end="0" reversible="true" condition="player.paused">Conditional</animation>
+		<animation effect="fade" start="0" end="100" time="500" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="350">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+   	</control>  
+
+  <control>
     <description>now playing background</description>
     <type>image</type>
     <id>1</id>
@@ -41,19 +138,19 @@
     <width>734</width>
     <height>238</height>
     <texture>now_playing_video_bg.png</texture>
-	  <visible>player.hasvideo+!control.isvisible(3337)</visible>
+    <visible>player.hasvideo+!control.isvisible(3337)</visible>
   </control>
 
-	<control>
+  <control>
     <description>shadow</description>
     <type>image</type>
     <id>1</id>
-	  <posX>666</posX>
-	  <posY>26</posY>
+    <posX>666</posX>
+    <posY>26</posY>
     <width>273</width>
     <height>168</height>
     <texture>now_playing_video_shadow.png</texture>
-	  <visible>player.hasvideo+!control.isvisible(3337)</visible>
+    <visible>player.hasvideo+!control.isvisible(3337)</visible>
   </control>
 
 	<control>
@@ -89,13 +186,14 @@
 		<posX>981</posX>
 		<posY>138</posY>
 		<width>220</width>
-		<label>#currentplaytime / #duration</label>
+		<label>#currentplaytime#(iif(eq(#duration,''),'',string.format(' / {0}',#duration)))</label>
 		<font>TitanLight11</font>
 		<textcolor>393939</textcolor>
 		<visible>player.hasvideo+!control.isvisible(3337)</visible>
 	</control>
 
 <!--Video-->
+
 	<control>
 		<description>scrolling info label</description>
 		<type>fadelabel</type>
@@ -138,7 +236,108 @@
     <visible>player.playing+player.hasvideo</visible>
   </control>
 	
+    <!-- ClearArt -->
+    <control>
+      <description>ClearArt</description>
+      <type>image</type>
+      <id>258456952</id>
+      <posX>1130</posX>
+      <posY>138</posY>
+      <width>100</width>
+      <height>37</height>           
+      <texture>#fanarthandler.music.artistclearart.play</texture>
+      <animation effect="fade" start="0" end="100" time="500" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+      <animation effect="fade" time="350">visible</animation>
+      <animation effect="fade" time="0">hidden</animation>
+      <shouldCache>false</shouldCache>
+      <visible>Player.HasVideo+string.equals(#mvCentral.isPlaying,true)</visible>
+      <align>right</align>
+      <valign>top</valign>
+      <keepaspectratio>false</keepaspectratio>
+    </control>
+    <control>
+      <description>ClearArt</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1130</posX>
+      <posY>138</posY>
+      <width>100</width>
+      <height>37</height>           
+      <texture>..\..\..\Thumbs\ClearArt\Music\#Play.Current.mvArtist.png</texture>
+      <animation effect="fade" start="0" end="100" time="500" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+      <animation effect="fade" time="350">visible</animation>
+      <animation effect="fade" time="0">hidden</animation>
+      <shouldCache>false</shouldCache>
+      <visible>Player.HasVideo+!control.hasthumb(258456952)+string.equals(#mvCentral.isPlaying,true)</visible>
+      <align>right</align>
+      <valign>top</valign>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+
 <!--Audio-->
+
+	<!-- CDArt -->
+   	<control>
+   		<description>CDArt</description>
+   		<type>image</type>
+   		<id>125521</id>
+  	    <posX>732</posX>
+	    <posY>102</posY>
+	    <width>138</width>
+	    <height>138</height>
+        <visible>player.hasaudio+control.isvisible(3337)</visible>
+     	<texture>#fanarthandler.music.albumcd.play</texture>
+        <animation effect="rotate" delay="0" end="-360" time="8000" loop="true" condition="!player.paused">Conditional</animation>
+        <animation effect="rotate" delay="0" end="-360" time="1500" loop="true" reversible="false" condition="player.forwarding">Conditional</animation>
+        <animation effect="rotate" delay="0" end="360" time="500" loop="true" reversible="false" condition="player.rewinding">Conditional</animation>
+        <animation effect="slide" time="300" end="0,-59" reversible="true" condition="player.paused">Conditional</animation>
+		<animation effect="fade" start="0" end="100" time="500" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="350">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+   	</control>  
+
+   	<control>
+   		<description>CDArt</description>
+   		<type>image</type>
+   		<id>123321</id>
+  	    <posX>732</posX>
+	    <posY>102</posY>
+	    <width>138</width>
+	    <height>138</height>
+        <visible>player.hasaudio+control.isvisible(3337)+!control.hasthumb(125521)</visible>
+     	<texture>..\..\..\Thumbs\CDArt\Music\#Play.Current.AlbumArtist - #Play.Current.Album.png</texture>
+        <animation effect="rotate" delay="0" end="-360" time="8000" loop="true" condition="!player.paused">Conditional</animation>
+        <animation effect="rotate" delay="0" end="-360" time="1500" loop="true" reversible="false" condition="player.forwarding">Conditional</animation>
+        <animation effect="rotate" delay="0" end="360" time="500" loop="true" reversible="false" condition="player.rewinding">Conditional</animation>
+        <animation effect="slide" time="300" end="0,-59" reversible="true" condition="player.paused">Conditional</animation>
+		<animation effect="fade" start="0" end="100" time="500" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="350">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+   	</control>  
+
+   	<control>
+   		<description>CDArt</description>
+   		<type>image</type>
+   		<id>0</id>
+  	    <posX>732</posX>
+	    <posY>102</posY>
+	    <width>138</width>
+	    <height>138</height>
+        <visible>player.hasaudio+control.isvisible(3337)+!control.hasthumb(123321)+!control.hasthumb(125521)</visible>
+     	<texture>..\..\..\Thumbs\CDArt\Music\#Play.Current.Artist - #Play.Current.Album.png</texture>
+        <animation effect="rotate" delay="0" end="-360" time="8000" loop="true" condition="!player.paused">Conditional</animation>
+        <animation effect="rotate" delay="0" end="-360" time="1500" loop="true" reversible="false" condition="player.forwarding">Conditional</animation>
+        <animation effect="rotate" delay="0" end="360" time="500" loop="true" reversible="false" condition="player.rewinding">Conditional</animation>
+        <animation effect="slide" time="300" end="0,-59" reversible="true" condition="player.paused">Conditional</animation>
+		<animation effect="fade" start="0" end="100" time="500" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="350">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+   	</control>  
 
 	<control>
     <description>now playing background</description>
@@ -180,7 +379,7 @@
 	  <posY>43</posY>
 	  <width>138</width>
 	  <height>135</height>
-    <texture>#Play.Current.Thumb</texture>
+    <texture>#fanarthandler.music.artisthumb.play</texture>
     <visible>player.hasaudio+control.isvisible(3337)</visible>
 		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
 		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
@@ -188,6 +387,22 @@
 		<animation effect="fade" time="0">hidden</animation>
   </control>
 	
+	<control>
+    <description>album logo</description>
+    <type>image</type>
+    <id>1</id>
+	  <posX>732</posX>
+	  <posY>43</posY>
+	  <width>138</width>
+	  <height>135</height>
+    <texture>#Play.Current.Thumb</texture>
+    <visible>player.hasaudio+control.isvisible(3337)+string.equals(#fanarthandler.music.artisthumb.play,)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+  </control>
+
 	<control>
     <description>no album logo</description>
     <type>image</type>
@@ -197,7 +412,7 @@
 	  <width>138</width>
 	  <height>135</height>
     <texture>audio_nothumb.png</texture>
-    <visible>player.hasaudio+control.isvisible(3337)+string.equals(#Play.Current.Thumb,)</visible>
+    <visible>player.hasaudio+control.isvisible(3337)+string.equals(#Play.Current.Thumb,)+string.equals(#fanarthandler.music.artisthumb.play,)</visible>
 		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
 		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
 		<animation effect="fade" time="250">visible</animation>
@@ -211,7 +426,8 @@
 		<posX>898</posX>
 		<posY>87</posY>
 		<width>290</width>
-		<label>#Play.Current.Title</label>
+		<!--label>#Play.Current.Title</label-->
+		<label>#Play.Current.Artist#(iif(eq(#Play.Current.Album,''),'',string.format(' - {0}',#Play.Current.Album)))#(iif(eq(#Play.Current.Title,''),'',string.format(' - {0}',#Play.Current.Title)))</label>
 		<font>fontB12</font>
 		<textcolor>393939</textcolor>
 		<visible>player.hasaudio+control.hastext(3337)</visible>
@@ -226,7 +442,7 @@
 		<type>label</type>
 		<id>1</id>
 		<posX>898</posX>
-		<posY>59</posY>
+		<posY>53</posY>
 		<width>240</width>
 		<label>4540</label>
 		<font>TitanLight11</font>
@@ -243,9 +459,9 @@
 		<type>label</type>
 		<id>1</id>
 		<posX>927</posX>
-		<posY>138</posY>
+		<posY>142</posY>
 		<width>220</width>
-		<label>#currentplaytime / #duration</label>
+		<label>#currentplaytime#(iif(eq(#duration,''),'',string.format(' / {0}',#duration)))</label>
 		<font>TitanLight11</font>
 		<textcolor>393939</textcolor>
 		<visible>player.hasaudio+control.hastext(3337)</visible>
@@ -280,12 +496,29 @@
 		<type>image</type>
 		<id>1</id>
 		<posX>899</posX>
-		<posY>143</posY>
+		<posY>148</posY>
 		<width>16</width>
 		<height>19</height>
 		<texture>now_playing_play.png</texture>
 		<keepaspectratio>yes</keepaspectratio>
 		<visible>player.playing+control.hastext(3337)</visible>
+		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+		<animation effect="fade" time="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>
+    </control>
+
+	<control>
+		<description>pause icon</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>899</posX>
+		<posY>149</posY>
+		<width>18</width>
+		<height>19</height>
+		<texture>now_playing_pause.png</texture>
+		<keepaspectratio>yes</keepaspectratio>
+		<visible>player.paused+control.hastext(3337)</visible>
 		<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
 		<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
 		<animation effect="fade" time="250">visible</animation>
@@ -365,7 +598,8 @@
 		<posX>898</posX>
 		<posY>87</posY>
 		<width>290</width>
-		<label>#Play.Current.Title</label>
+		<!--label>#Play.Current.Title</label-->
+		<label>#Play.Current.Artist#(iif(eq(#Play.Current.Album,''),'',string.format(' - {0}',#Play.Current.Album)))#(iif(eq(#Play.Current.Title,''),'',string.format(' - {0}',#Play.Current.Title)))</label>
 		<font>fontB12</font>
 		<textcolor>393939</textcolor>
 		<visible>Player.HasAudio+!control.isvisible(3337)+!control.isvisible(3339)</visible>
@@ -399,7 +633,7 @@
 		<posX>927</posX>
 		<posY>138</posY>
 		<width>220</width>
-		<label>#currentplaytime / #duration</label>
+		<label>#currentplaytime#(iif(eq(#duration,''),'',string.format(' / {0}',#duration)))</label>
 		<font>TitanLight11</font>
 		<textcolor>393939</textcolor>
 		<visible>Player.HasAudio+!control.isvisible(3337)+!control.isvisible(3339)</visible>
@@ -445,6 +679,65 @@
 		<animation effect="fade" time="250">visible</animation>
 		<animation effect="fade" time="0">hidden</animation>
   </control>
+
+    <!-- ClearArt -->
+    <control>
+      <description>ClearArt</description>
+      <type>image</type>
+      <id>258456950</id>
+      <posX>1090</posX>
+      <posY>138</posY>
+      <width>100</width>
+      <height>37</height>           
+      <texture>#fanarthandler.music.artistclearart.play</texture>
+      <animation effect="fade" start="0" end="100" time="500" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+      <animation effect="fade" time="350">visible</animation>
+      <animation effect="fade" time="0">hidden</animation>
+      <shouldCache>false</shouldCache>
+      <visible>Player.HasAudio</visible>
+      <align>right</align>
+      <valign>top</valign>
+      <keepaspectratio>false</keepaspectratio>
+    </control>
+    <control>
+      <description>ClearArt</description>
+      <type>image</type>
+      <id>258456951</id>
+      <posX>1090</posX>
+      <posY>138</posY>
+      <width>100</width>
+      <height>37</height>           
+      <texture>..\..\..\Thumbs\ClearArt\Music\#Play.Current.Artist.png</texture>
+      <animation effect="fade" start="0" end="100" time="500" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+      <animation effect="fade" time="350">visible</animation>
+      <animation effect="fade" time="0">hidden</animation>
+      <shouldCache>false</shouldCache>
+      <visible>Player.HasAudio+!control.hasthumb(258456950)</visible>
+      <align>right</align>
+      <valign>top</valign>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+    <control>
+      <description>ClearArt</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1090</posX>
+      <posY>138</posY>
+      <width>100</width>
+      <height>37</height>           
+      <texture>..\..\..\Thumbs\ClearArt\Music\#Play.Current.AlbumArtist.png</texture>
+      <animation effect="fade" start="0" end="100" time="500" delay="350">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+      <animation effect="fade" time="350">visible</animation>
+      <animation effect="fade" time="0">hidden</animation>
+      <visible>Player.HasAudio+!control.hasthumb(258456950)+!control.hasthumb(258456951)</visible>
+      <shouldCache>false</shouldCache>
+      <align>right</align>
+      <valign>top</valign>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
 
 </controls>
 </window>
