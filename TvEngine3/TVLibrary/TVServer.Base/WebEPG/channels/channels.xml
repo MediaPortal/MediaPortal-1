@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
-    <entry name="TotalChannels">1501</entry>
+    <entry name="TotalChannels">1519</entry>
   </section>
   <section name="0">
     <entry name="ChannelID">1@betv.be</entry>
@@ -6007,6 +6007,78 @@
     <entry name="ChannelID">earth@bbc.co.uk</entry>
     <entry name="FullName">BBC Earth</entry>
   </section>
+  <section name="1501">
+    <entry name="ChannelID">ruv@ruv.is</entry>
+    <entry name="FullName">RÚV</entry>
+  </section>
+  <section name="1502">
+    <entry name="ChannelID">ruvplus@ruv.is</entry>
+    <entry name="FullName">RÚV +</entry>
+  </section>
+  <section name="1503">
+    <entry name="ChannelID">ruv2@ruv.is</entry>
+    <entry name="FullName">RÚV 2</entry>
+  </section>
+  <section name="1504">
+    <entry name="ChannelID">ruvhd@ruv.is</entry>
+    <entry name="FullName">RÚV HD</entry>
+  </section>
+  <section name="1505">
+    <entry name="ChannelID">ras1@ruv.is</entry>
+    <entry name="FullName">Rás 1</entry>
+  </section>
+  <section name="1506">
+    <entry name="ChannelID">ras2@ruv.is</entry>
+    <entry name="FullName">Rás 2</entry>
+  </section>
+  <section name="1507">
+    <entry name="ChannelID">stod2@stod2.is</entry>
+    <entry name="FullName">Stöð 2</entry>
+  </section>
+  <section name="1508">
+    <entry name="ChannelID">popptivi@stod2.is</entry>
+    <entry name="FullName">PoppTíví</entry>
+  </section>
+  <section name="1509">
+    <entry name="ChannelID">stod2sport@stod2.is</entry>
+    <entry name="FullName">Stöð 2 Sport</entry>
+  </section>
+  <section name="1510">
+    <entry name="ChannelID">stod3@stod2.is</entry>
+    <entry name="FullName">Stöð 3</entry>
+  </section>
+  <section name="1511">
+    <entry name="ChannelID">stod2sport2@stod2.is</entry>
+    <entry name="FullName">Stöð 2 Sport 2</entry>
+  </section>
+  <section name="1512">
+    <entry name="ChannelID">stod2sport3@stod2.is</entry>
+    <entry name="FullName">Stöð 2 Sport 3</entry>
+  </section>
+  <section name="1513">
+    <entry name="ChannelID">stod2sport4@stod2.is</entry>
+    <entry name="FullName">Stöð 2 Sport 4</entry>
+  </section>
+  <section name="1514">
+    <entry name="ChannelID">stod2sport5@stod2.is</entry>
+    <entry name="FullName">Stöð 2 Sport 5</entry>
+  </section>
+  <section name="1515">
+    <entry name="ChannelID">stod2sport6@stod2.is</entry>
+    <entry name="FullName">Stöð 2 Sport 6</entry>
+  </section>
+  <section name="1516">
+    <entry name="ChannelID">stod2extra@stod2.is</entry>
+    <entry name="FullName">Stöð 2 Extra</entry>
+  </section>
+  <section name="1517">
+    <entry name="ChannelID">stod2bio@stod2.is</entry>
+    <entry name="FullName">Stöð 2 Bíó</entry>
+  </section>
+  <section name="1518">
+    <entry name="ChannelID">skjareinn@skjareinn.is</entry>
+    <entry name="FullName">SkjárEinn</entry>
+  </section>
   <section name=".svn">
     <entry name="TotalChannels">0</entry>
   </section>
@@ -7772,5 +7844,26 @@
     <entry name="70">1232</entry>
     <entry name="71">1240</entry>
     <entry name="72">1242</entry>
+  </section>
+  <section name="IS">
+    <entry name="TotalChannels">17</entry>
+    <entry name="0">1501</entry>
+    <entry name="1">1502</entry>
+    <entry name="2">1503</entry>
+    <entry name="3">1504</entry>
+    <entry name="4">1505</entry>
+    <entry name="5">1506</entry>
+    <entry name="6">1507</entry>
+    <entry name="7">1508</entry>
+    <entry name="8">1509</entry>
+    <entry name="9">1510</entry>
+    <entry name="10">1511</entry>
+    <entry name="11">1512</entry>
+    <entry name="12">1513</entry>
+    <entry name="13">1514</entry>
+    <entry name="14">1515</entry>
+    <entry name="15">1516</entry>
+    <entry name="16">1517</entry>
+    <entry name="17">1518</entry>
   </section>
 </profile>

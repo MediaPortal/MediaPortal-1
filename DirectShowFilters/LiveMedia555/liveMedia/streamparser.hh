@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // Abstract class for parsing a byte stream
 // C++ header
 
@@ -74,12 +74,19 @@ protected: // we're a virtual base class
     fRemainingUnparsedBits = 0;
     return curBank()[fCurParserIndex++];
   }
+  u_int8_t test1Byte() { // as above, but doesn't advance ptr
+    ensureValidBytes(1);
+    return nextToParse()[0];
+  }
 
   void getBytes(u_int8_t* to, unsigned numBytes) {
-    ensureValidBytes(numBytes);
-    memmove(to, nextToParse(), numBytes);
+    testBytes(to, numBytes);
     fCurParserIndex += numBytes;
     fRemainingUnparsedBits = 0;
+  }
+  void testBytes(u_int8_t* to, unsigned numBytes) { // as above, but doesn't advance ptr
+    ensureValidBytes(numBytes);
+    memmove(to, nextToParse(), numBytes);
   }
   void skipBytes(unsigned numBytes) {
     ensureValidBytes(numBytes);
@@ -93,6 +100,10 @@ protected: // we're a virtual base class
   unsigned curOffset() const { return fCurParserIndex; }
 
   unsigned& totNumValidBytes() { return fTotNumValidBytes; }
+
+  Boolean haveSeenEOF() const { return fHaveSeenEOF; }
+
+  unsigned bankSize() const;
 
 private:
   unsigned char* curBank() { return fCurBank; }
@@ -112,11 +123,15 @@ private:
 				unsigned numTruncatedBytes,
 				struct timeval presentationTime,
 				unsigned durationInMicroseconds);
+  void afterGettingBytes1(unsigned numBytesRead, struct timeval presentationTime);
+
+  static void onInputClosure(void* clientData);
+  void onInputClosure1();
 
 private:
   FramedSource* fInputSource; // should be a byte-stream source??
-  FramedSource::onCloseFunc* fOnInputCloseFunc;
-  void* fOnInputCloseClientData;
+  FramedSource::onCloseFunc* fClientOnInputCloseFunc;
+  void* fClientOnInputCloseClientData;
   clientContinueFunc* fClientContinueFunc;
   void* fClientContinueClientData;
 
@@ -135,6 +150,11 @@ private:
 
   // The total number of valid bytes stored in the current bank:
   unsigned fTotNumValidBytes; // <= BANK_SIZE
+
+  // Whether we have seen EOF on the input source:
+  Boolean fHaveSeenEOF;
+
+  struct timeval fLastSeenPresentationTime; // hack used for EOF handling
 };
 
 #endif

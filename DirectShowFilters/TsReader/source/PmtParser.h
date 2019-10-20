@@ -28,9 +28,12 @@ using namespace std;
 #define SERVICE_TYPE_VIDEO_UNKNOWN  -1
 #define SERVICE_TYPE_VIDEO_MPEG1    0x1
 #define SERVICE_TYPE_VIDEO_MPEG2    0x2
+#define SERVICE_TYPE_PRIVATE_DATA   0x6
 #define SERVICE_TYPE_DCII_OR_LPCM   0x80 // can be DC-II MPEG2 Video OR LPCM Audio if registration descriptor=HDMV
 #define SERVICE_TYPE_VIDEO_MPEG4    0x10
 #define SERVICE_TYPE_VIDEO_H264     0x1b
+#define SERVICE_TYPE_VIDEO_HEVC     0x24
+#define SERVICE_TYPE_VIDEO_SHVC     0x27 //SHVC extension to HEVC
 #define SERVICE_TYPE_AUDIO_UNKNOWN  -1
 #define SERVICE_TYPE_AUDIO_MPEG1    0x3
 #define SERVICE_TYPE_AUDIO_MPEG2    0x4
@@ -39,6 +42,9 @@ using namespace std;
 #define SERVICE_TYPE_AUDIO_LATM_AAC 0x11 //LATM AAC audio
 #define SERVICE_TYPE_AUDIO_DD_PLUS  0x84 
 #define SERVICE_TYPE_AUDIO_E_AC3    0x87 //ATSC E-AC3 stream
+#define SERVICE_TYPE_AUDIO_DTS      0x82
+#define SERVICE_TYPE_AUDIO_DTS_HD   0x85
+#define SERVICE_TYPE_AUDIO_DTS_HDMA 0x86 
 
 #define SERVICE_TYPE_DVB_SUBTITLES1 0x5
 #define SERVICE_TYPE_DVB_SUBTITLES2 0x6
@@ -50,6 +56,17 @@ using namespace std;
 #define DESCRIPTOR_DVB_TELETEXT     0x56
 #define DESCRIPTOR_DVB_SUBTITLING   0x59
 #define DESCRIPTOR_MPEG_ISO639_Lang 0x0a
+#define DESCRIPTOR_VIDEO_STREAM     0x02   
+#define DESCRIPTOR_AUDIO_STREAM     0x03   
+#define DESCRIPTOR_AVC_VIDEO        0x28   
+#define DESCRIPTOR_HEVC_VIDEO       0x38   
+#define DESCRIPTOR_DVB_DTS          0x7b
+
+//TsReader/MP player video stream IDs
+#define VIDEO_STREAM_TYPE_MPEG2 		1
+#define VIDEO_STREAM_TYPE_H264 			2
+#define VIDEO_STREAM_TYPE_HEVC 			3
+
 
 class IPmtCallBack
 {
@@ -66,6 +83,7 @@ public:
   void        OnNewSection(CSection& section);
   void        SetPmtCallBack(IPmtCallBack* callback);
   bool        IsReady();
+  void        ClearReady();
   CPidTable&  GetPidInfo();
 
 private:

@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // A simple RTP sink that packs frames into each outgoing
 //     packet, without any fragmentation or special headers.
 // C++ header
@@ -37,9 +37,12 @@ public:
 	    unsigned numChannels = 1,
 	    Boolean allowMultipleFramesPerPacket = True,
 	    Boolean doNormalMBitRule = True);
-  // "doNormalMBitRule" means: If the medium is video, set the RTP "M"
-  // bit on each outgoing packet iff it contains the last (or only)
-  // fragment of a frame.  (Otherwise, leave the "M" bit unset.)
+  // "doNormalMBitRule" means: If the medium (i.e., "sdpMediaTypeString") is other than "audio", set the RTP "M" bit
+  // on each outgoing packet iff it contains the last (or only) fragment of a frame.
+  // Otherwise (i.e., if "doNormalMBitRule" is False, or the medium is "audio"), leave the "M" bit unset.
+
+  void setMBitOnNextPacket() { fSetMBitOnNextPacket = True; } // hack for optionally setting the RTP 'M' bit from outside the class
+
 protected:
   SimpleRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
 		unsigned char rtpPayloadFormat,
@@ -57,7 +60,7 @@ protected: // redefined virtual functions
   virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
                                       unsigned char* frameStart,
                                       unsigned numBytesInFrame,
-                                      struct timeval frameTimestamp,
+                                      struct timeval framePresentationTime,
                                       unsigned numRemainingBytes);
   virtual
   Boolean frameCanAppearAfterPacketStart(unsigned char const* frameStart,
@@ -67,7 +70,7 @@ protected: // redefined virtual functions
 private:
   char const* fSDPMediaTypeString;
   Boolean fAllowMultipleFramesPerPacket;
-  Boolean fSetMBitOnLastFrames;
+  Boolean fSetMBitOnLastFrames, fSetMBitOnNextPacket;
 };
 
 #endif

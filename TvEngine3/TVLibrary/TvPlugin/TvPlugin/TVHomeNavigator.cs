@@ -201,12 +201,10 @@ namespace TvPlugin
 
           bool hideAllChannelsGroup = false;
           using (
-            Settings xmlreader =
-              new MPSettings())
+            Settings xmlreader = new MPSettings())
           {
             hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
           }
-
 
           foreach (ChannelGroup group in groups)
           {
@@ -842,10 +840,13 @@ namespace TvPlugin
       for (int i = 0; i < groupMaps.Count; i++)
       {
         GroupMap gm = (GroupMap)groupMaps[i];
-        Channel chan = (Channel)gm.ReferencedChannel();
-        if (chan.IdChannel == ch.IdChannel)
+        if (gm != null)
         {
-          return i;
+          Channel chan = (Channel)gm.ReferencedChannel();
+          if (ch != null && (chan != null && chan.IdChannel == ch.IdChannel))
+          {
+            return i;
+          }
         }
       }
       return 0; // Not found, return first channel index

@@ -30,6 +30,7 @@
 #include "dshowhelper.h"
 #include "evrcustomPresenter.h"
 #include "dx9allocatorpresenter.h"
+#include "madPresenter.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
@@ -67,12 +68,14 @@ TAvRevertMmThreadCharacteristics*   m_pAvRevertMmThreadCharacteristics = NULL;
 BOOL m_bEVRLoaded    = false;
 TCHAR* m_RenderPrefix = _T("vmr9");
 
-LPDIRECT3DDEVICE9			    m_pDevice       = NULL;
-CVMR9AllocatorPresenter*	m_vmr9Presenter = NULL;
-MPEVRCustomPresenter*	    m_evrPresenter  = NULL;
-IBaseFilter*				      m_pVMR9Filter   = NULL;
-IVMRSurfaceAllocator9*		m_allocator     = NULL;
-LONG						          m_iRecordingId  = 0;
+LPDIRECT3DDEVICE9         m_pDevice       = NULL;
+CVMR9AllocatorPresenter*  m_vmr9Presenter = NULL;
+MPEVRCustomPresenter*     m_evrPresenter  = NULL;
+MPMadPresenter*           m_madPresenter  = NULL;
+IBaseFilter*              m_pVMR9Filter   = NULL;
+IVMRSurfaceAllocator9*    m_allocator     = NULL;
+LONG                      m_iRecordingId  = 0;
+int                       m_pRefCount = 0;
 
 map<int,IStreamBufferRecordControl*> m_mapRecordControl;
 typedef map<int,IStreamBufferRecordControl*>::iterator imapRecordControl;
@@ -143,14 +146,71 @@ CCritSec m_logFileLock;
 std::queue<std::string> m_logQueue;
 BOOL m_bLoggerRunning;
 HANDLE m_hLogger = NULL;
+HANDLE m_hFrameGrabMadVr = NULL;
 CAMEvent m_EndLoggingEvent;
 
 
+
+LONG LogWriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
+{  
+  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, _tcslen(data) * sizeof(TCHAR));
+  
+  return result;
+}
+
+LONG LogReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
+{
+  DWORD dwSize = MAX_PATH * sizeof(TCHAR);
+  DWORD dwType = REG_SZ;
+  LONG result = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)data, &dwSize);
+  
+  if (result != ERROR_SUCCESS)
+  {
+    if (result == ERROR_FILE_NOT_FOUND)
+    {
+      //create default value
+      result = LogWriteRegistryKeyString(hKey, lpSubKey, data);
+    }
+  }
+  
+  return result;
+}
+
 void LogPath(TCHAR* dest, TCHAR* name)
 {
-  TCHAR folder[MAX_PATH];
-  SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  _stprintf(dest, _T("%s\\Team Mediaportal\\MediaPortal\\log\\%s.%s"), folder, m_RenderPrefix, name);
+  CAutoLock lock(&m_logFileLock); 
+  HKEY hKey;
+  //Try to read logging folder path from registry
+  LONG result = RegCreateKeyEx(HKEY_CURRENT_USER, _T("Software\\Team MediaPortal\\Client Common"), 0, NULL, 
+                                    REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL);                                   
+  if (result == ERROR_SUCCESS)
+  {
+    //Get default log folder path
+    TCHAR folder[MAX_PATH];
+    SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+    TCHAR logFolder[MAX_PATH];
+    _stprintf(logFolder, _T("%s\\Team Mediaportal\\MediaPortal\\log"), folder);
+
+    //Read log folder path from registry (or write default path into registry if key doesn't exist)
+    LPCTSTR logFolderC = logFolder;    
+    LPCTSTR logFolderPath = _T("LogFolderPath");
+    result = LogReadRegistryKeyString(hKey, logFolderPath, logFolderC);
+    
+    if (result == ERROR_SUCCESS)
+    {
+      //Get full log file path
+      _stprintf(dest, _T("%s\\%s.%s"), logFolderC, m_RenderPrefix, name);
+    }
+  }
+    
+  if (result != ERROR_SUCCESS)
+  {
+    //Fall back to default log folder path
+    TCHAR folder[MAX_PATH];
+    SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+    //Get full log file path
+    _stprintf(dest, _T("%s\\Team Mediaportal\\MediaPortal\\log\\%s.%s"), folder, m_RenderPrefix, name);
+  }
 }
 
 
@@ -209,6 +269,32 @@ string GetLogLine()
   return ret;
 }
 
+UINT CALLBACK ScreenshotGrabberMadVRThread(void* param)
+{
+  m_madPresenter->GrabScreenshot();
+  return 0;
+}
+
+void StartScreenshotGrabMadVR()
+{
+  //UINT id;
+  //m_hFrameGrabMadVr = reinterpret_cast<HANDLE>(_beginthreadex(nullptr, 0, FrameGrabberMadVRThread, nullptr, 0, &id));
+  //SetThreadPriority(m_hFrameGrabMadVr, THREAD_PRIORITY_BELOW_NORMAL);
+  DWORD tid;
+  CloseHandle(CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(ScreenshotGrabberMadVRThread), nullptr, 0, &tid));
+}
+
+//UINT CALLBACK FrameGrabberMadVRThread(void* param)
+//{
+//  m_madPresenter->GrabFrame();
+//  return 0;
+//}
+//
+//void StartFrameGrabMadVR()
+//{
+//  DWORD tid;
+//  CloseHandle(CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(FrameGrabberMadVRThread), nullptr, 0, &tid));
+//}
 
 UINT CALLBACK LogThread(void* param)
 {
@@ -845,6 +931,204 @@ double EVRGetDisplayFPS()
       displayFPS = 1000.0 / displayFPS; // Convert period into FPS
   }
   return displayFPS;
+}
+
+// madVR frame grabber thread
+bool GrabbingDone = false;
+HANDLE GrabEvent = nullptr;
+HANDLE GrabThread = nullptr;
+
+DWORD WINAPI FrameGrabThread(LPVOID someParameter)
+{
+  while (!GrabbingDone)
+  {
+    WaitForSingleObject(GrabEvent, INFINITE);
+    ResetEvent(GrabEvent);
+    m_madPresenter->GrabFrame(); // here you grab a frame and send it to Ambilight
+    Sleep(10); // TODO
+  }
+  return 0;
+}
+
+void InitFrameGrabbing()
+{
+  GrabbingDone = false;
+  GrabEvent = CreateEvent(nullptr, true, false, nullptr);
+  DWORD tid;
+  GrabThread = CreateThread(nullptr, 0, FrameGrabThread, nullptr, 0, &tid);
+}
+
+void CloseFrameGrabbing()
+{
+  GrabbingDone = true;
+  SetEvent(GrabEvent);
+  WaitForSingleObject(GrabThread, 2000);
+  CloseHandle(GrabThread);
+  CloseHandle(GrabEvent);
+}
+// madVR frame grabber thread end
+
+int MadInit(IVMR9Callback* callback, int xposition, int yposition, int width, int height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter, IGraphBuilder* pMediaControl)
+{
+  m_RenderPrefix = _T("mad");
+
+  m_pDevice = reinterpret_cast<LPDIRECT3DDEVICE9>(dwD3DDevice);
+
+  Log("MPMadDshow::MadInit");
+
+  m_madPresenter = new MPMadPresenter(callback, xposition, yposition, width, height, parent, m_pDevice, pMediaControl);
+
+  Com::SmartPtr<IUnknown> pRenderer;
+  m_madPresenter->CreateRenderer(&pRenderer);
+  m_pVMR9Filter = Com::SmartQIPtr<IBaseFilter>(pRenderer).Detach();
+  m_pVMR9Filter = m_madPresenter->Initialize();
+
+  // Start and init frame grabbing for the new method from madVR but we run into performance issue (so disable it for now)
+  //InitFrameGrabbing();
+  m_madPresenter->SetGrabEvent(GrabEvent);
+
+  // madVR supports calling IVideoWindow::put_Owner before the pins are connected
+  //if (Com::SmartQIPtr<IVideoWindow> pVW = pCAP)
+  //    pVW->put_Owner((OAHWND)CDSPlayer::GetDShWnd());
+
+  *madFilter = m_pVMR9Filter;
+
+  if (!madFilter)
+    return S_FALSE;
+
+  return S_OK;
+}
+
+void MadDeinit(bool releasedFilter)
+{
+  try
+  {
+    if (m_madPresenter)
+    {
+      Log("MPMadDshow::MadDeinit shutdown start");
+      //CAutoLock lock(&m_madPresenter->m_dsLock);
+      //m_madPresenter->m_dsLock.Lock();
+      m_madPresenter->m_pShutdown = true;
+      Sleep(100);
+      if (!releasedFilter)
+      {
+        m_madPresenter->Shutdown(); // When setting IVideoWin on madVR object instead of graphbuilder (instance is destroyed in cleanup)
+      }
+      m_pVMR9Filter = nullptr;
+      //m_madPresenter->m_dsLock.Unlock();
+      Log("MPMadDshow::MadDeinit shutdown done");
+    }
+  }
+  catch(...)
+  {
+  }
+}
+
+void MadStopping()
+{
+  try
+  {
+    if (m_madPresenter)
+    {
+      Log("MPMadDshow::MadStopping start");
+      //CAutoLock lock(&m_madPresenter->m_dsLock);
+      //m_madPresenter->m_dsLock.Lock();
+      m_madPresenter->SetStopEvent();
+      m_madPresenter->m_pShutdown = true;
+      Sleep(100);
+      m_madPresenter->Stopping();
+      //m_madPresenter->m_dsLock.Unlock();
+      CloseFrameGrabbing();
+      Log("MPMadDshow::MadStopping done");
+    }
+  }
+  catch (...)
+  {
+  }
+}
+
+void MadVrPaused(bool paused)
+{
+  if (m_madPresenter)
+  {
+    if (!paused)
+    {
+      // Reset counter
+      m_madPresenter->m_pPausedCount = 0;
+      m_madPresenter->m_pPausedDone = false;
+    }
+    else
+    {
+      m_madPresenter->m_pRunDone = false;
+    }
+
+    m_madPresenter->SetMadVrPaused(paused);
+  }
+}
+
+void MadVrRepeatFrameSend()
+{
+  if (m_madPresenter)
+    m_madPresenter->RepeatFrame();
+}
+
+void MadVrGrabFrameSend()
+{
+  // Use threaded grab
+  //StartFrameGrabMadVR();
+
+  // For Auto3D (need to be in MP main thread)
+  //m_madPresenter->GrabFrame();
+}
+
+void MadVrGrabCurrentFrameSend()
+{
+  try
+  {
+    if (m_madPresenter)
+      m_madPresenter->GrabCurrentFrame();
+  }
+  catch (...)
+  {
+  }
+}
+
+void MadVrGrabScreenshotSend()
+{
+  // Use threaded grab
+  StartScreenshotGrabMadVR();
+  //if (m_madPresenter)
+  //  m_madPresenter->GrabScreenshot();
+}
+
+void MadVrWindowPosition()
+{
+  if (m_madPresenter)
+    m_madPresenter->InitMadVRWindowPosition();
+}
+
+void MadVr3DRight(int x, int y, int width, int height)
+{
+  if (m_madPresenter)
+    m_madPresenter->MadVr3DSizeRight(x, y, width, height);
+}
+
+void MadVr3DLeft(int x, int y, int width, int height)
+{
+  if (m_madPresenter)
+    m_madPresenter->MadVr3DSizeLeft(x, y, width, height);
+}
+
+void MadVrScreenResizeForce(int x, int y, int width, int height, BOOL displayChange)
+{
+  if (m_madPresenter)
+    m_madPresenter->MadVrScreenResize(x, y, width, height, displayChange);
+}
+
+void MadVr3DEnable(bool Enable)
+{
+  if (m_madPresenter)
+    m_madPresenter->MadVr3D(Enable);
 }
 
 void Vmr9SetDeinterlaceMode(int mode)

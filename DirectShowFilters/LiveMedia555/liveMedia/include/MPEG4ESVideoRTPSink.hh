@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // RTP sink for MPEG-4 Elementary Stream video (RFC 3016)
 // C++ header
 
@@ -28,14 +28,17 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 class MPEG4ESVideoRTPSink: public VideoRTPSink {
 public:
   static MPEG4ESVideoRTPSink* createNew(UsageEnvironment& env,
-					Groupsock* RTPgs,
-					unsigned char rtpPayloadFormat,
+					Groupsock* RTPgs, unsigned char rtpPayloadFormat,
 					u_int32_t rtpTimestampFrequency = 90000);
+  static MPEG4ESVideoRTPSink* createNew(UsageEnvironment& env,
+					Groupsock* RTPgs, unsigned char rtpPayloadFormat, u_int32_t rtpTimestampFrequency,
+					u_int8_t profileAndLevelIndication, char const* configStr);
+    // an optional variant of "createNew()", useful if we know, in advance, the stream's 'configuration' info.
+
 
 protected:
-  MPEG4ESVideoRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
-		      unsigned char rtpPayloadFormat,
-		      u_int32_t rtpTimestampFrequency);
+  MPEG4ESVideoRTPSink(UsageEnvironment& env, Groupsock* RTPgs, unsigned char rtpPayloadFormat, u_int32_t rtpTimestampFrequency,
+		      u_int8_t profileAndLevelIndication = 0, char const* configStr = NULL);
 	// called only by createNew()
 
   virtual ~MPEG4ESVideoRTPSink();
@@ -46,7 +49,7 @@ protected: // redefined virtual functions:
   virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
                                       unsigned char* frameStart,
                                       unsigned numBytesInFrame,
-                                      struct timeval frameTimestamp,
+                                      struct timeval framePresentationTime,
                                       unsigned numRemainingBytes);
   virtual Boolean allowFragmentationAfterStart() const;
   virtual Boolean
@@ -59,6 +62,10 @@ protected:
   Boolean fVOPIsPresent;
 
 private:
+  u_int8_t fProfileAndLevelIndication;
+  unsigned char* fConfigBytes;
+  unsigned fNumConfigBytes;
+
   char* fFmtpSDPLine;
 };
 

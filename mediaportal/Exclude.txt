@@ -1,0 +1,1 @@
+\MediaPortal.Base\skin\

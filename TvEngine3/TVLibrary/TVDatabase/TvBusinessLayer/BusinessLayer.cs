@@ -2026,6 +2026,7 @@ namespace TvDatabase
           if (nowStart > DateTime.Now)
           {
             NowAndNext p = new NowAndNext(idChannel, SqlDateTime.MinValue.Value, SqlDateTime.MinValue.Value,
+                                          SqlDateTime.MinValue.Value, SqlDateTime.MinValue.Value,
                                           string.Empty, nowTitle, -1, nowidProgram, episodeName, string.Empty,
                                           seriesNum, string.Empty, episodeNum, string.Empty,
                                           episodePart, string.Empty);
@@ -2039,12 +2040,15 @@ namespace TvDatabase
             if (idChannel == (int)dataSet.Tables[0].Rows[j + 1]["idChannel"])
             {
               int nextidProgram = (int)dataSet.Tables[0].Rows[j + 1]["idProgram"];
+              DateTime nextStart = (DateTime)dataSet.Tables[0].Rows[j + 1]["startTime"];
+              DateTime nextEnd = (DateTime)dataSet.Tables[0].Rows[j + 1]["endTime"];
               string nextTitle = (string)dataSet.Tables[0].Rows[j + 1]["title"];
               string nextEpisodeName = (string)dataSet.Tables[0].Rows[j + 1]["episodeName"];
               string nextSeriesNum = (string)dataSet.Tables[0].Rows[j + 1]["seriesNum"];
               string nextEpisodeNum = (string)dataSet.Tables[0].Rows[j + 1]["episodeNum"];
               string nextEpisodePart = (string)dataSet.Tables[0].Rows[j + 1]["episodePart"];
-              NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, nextTitle, nowidProgram,
+              NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nextStart, nextEnd, 
+                                            nowTitle, nextTitle, nowidProgram,
                                             nextidProgram, episodeName, nextEpisodeName, seriesNum, nextSeriesNum,
                                             episodeNum, nextEpisodeNum, episodePart, nextEpisodePart);
               progList[idChannel] = p;
@@ -2052,7 +2056,8 @@ namespace TvDatabase
             else
             {
               // no "next" info because of holes in EPG data - we want the "now" info nevertheless
-              NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, nowTitle, string.Empty, nowidProgram, -1,
+              NowAndNext p = new NowAndNext(idChannel, nowStart, nowEnd, SqlDateTime.MinValue.Value, SqlDateTime.MinValue.Value,
+                                            nowTitle, string.Empty, nowidProgram, -1,
                                             string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
                                             string.Empty, string.Empty, string.Empty);
               progList[idChannel] = p;

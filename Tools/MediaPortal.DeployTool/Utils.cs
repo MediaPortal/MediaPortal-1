@@ -106,7 +106,8 @@ namespace MediaPortal.DeployTool
     public static void ErrorDlg(string msg)
     {
       MessageBox.Show(msg, "MediaPortal Deploy Tool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-      Environment.Exit(-1);
+      // TODO - When an error happen that doesn't mean that is always a big error (like download abort)
+      // Environment.Exit(-1);
     }
 
     #endregion
@@ -686,8 +687,8 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 13;
-          revision = 0;
+          minor = 18;
+          revision = 100;
           break;
       }
       Version ver = new Version(major, minor, revision);
@@ -707,8 +708,8 @@ namespace MediaPortal.DeployTool
     public static Version GetCurrentPackageVersion()
     {
       int major = 1;
-      int minor = 13;
-      int revision = 100;
+      int minor = 19;
+      int revision = 000;
 
       Version ver = new Version(major, minor, revision);
       return ver;
@@ -781,7 +782,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.14.0 Pre Release";
+      return "1.19.0";
     }
 
     /// <summary>

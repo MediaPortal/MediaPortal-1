@@ -270,7 +270,6 @@ namespace MediaPortal.GUI.Library
 
     public override void Render(float timePassed)
     {
-      //base.Render(timePassed);
       if (!Dimmed)
       {
         if (GUIGraphicsContext.Overlay != _isOverlayAllowed)

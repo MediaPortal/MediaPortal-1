@@ -36,6 +36,7 @@ using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
 using Action = MediaPortal.GUI.Library.Action;
+using System.Globalization;
 
 #endregion
 
@@ -79,6 +80,7 @@ namespace TvPlugin
     private bool _byIndex = false;
     private bool _showChannelNumber = false;
     private int _channelNumberMaxLength = 3;
+    private static bool _forceResetTvGroupChannelListCache = false;
 
     private Dictionary<int, DateTime> _nextEPGupdate = new Dictionary<int, DateTime>();
     private Dictionary<int, Dictionary<int, NowAndNext>> _listNowNext = new Dictionary<int, Dictionary<int, NowAndNext>>();
@@ -447,13 +449,20 @@ namespace TvPlugin
       Log.Debug("TvMiniGuide: FillGroupList finished after {0} ms", benchClock.ElapsedMilliseconds.ToString());
     }
 
+    public static void ResetTvGroupChannelListCache()
+    {
+      _forceResetTvGroupChannelListCache = true;
+      Log.Debug("TvMiniGuide: ResetTvGroupChannelListCache()");
+    }
+
     private List<Channel> GetChannelListByGroup()
     {
       int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
 
-      if (_tvGroupChannelListCache == null)
+      if (_tvGroupChannelListCache == null || _forceResetTvGroupChannelListCache)
       {
         _tvGroupChannelListCache = new Dictionary<int, List<Channel>>();
+        _forceResetTvGroupChannelListCache = false;
       }
 
       List<Channel> channels = null;
@@ -644,6 +653,9 @@ namespace TvPlugin
           {
             if (!string.IsNullOrEmpty(currentNowAndNext.TitleNow))
             {
+              sbTmp.Append(currentNowAndNext.NowStartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+              sbTmp.Append(": ");
+
               TVUtil.TitleDisplay(sbTmp, currentNowAndNext.TitleNow, currentNowAndNext.EpisodeName,
                                               currentNowAndNext.SeriesNum,
                                               currentNowAndNext.EpisodeNum, currentNowAndNext.EpisodePart);
@@ -659,7 +671,7 @@ namespace TvPlugin
           }
 
           item.Label2 = sbTmp.ToString();
-          sbTmp.Insert(0, local789);
+          sbTmp.Insert(0, string.Empty);
           item.Label3 = sbTmp.ToString();
 
           sbTmp.Length = 0;
@@ -684,10 +696,14 @@ namespace TvPlugin
             if (startTime != SqlDateTime.MinValue.Value)
             {
               DateTime endTime = currentNowAndNext.NowEndTime;
+              int percent = (int)CalculateProgress(startTime, endTime);
               sb.Append(" - ");
               sb.Append(
-                CalculateProgress(startTime, endTime).ToString());
+                percent.ToString());
               sb.Append("%");
+
+              item.HasProgressBar = true;
+              item.ProgressBarPercentage = percent;
 
               if (endTime < nextEPGupdate || nextEPGupdate == DateTime.MinValue)
               {
@@ -697,10 +713,12 @@ namespace TvPlugin
             }
           }
 
-
-
           if (hasNowNext && listNowNext[channelID].IdProgramNext != -1)
           {
+            sbTmp.Append(currentNowAndNext.NextStartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            sbTmp.Append(": ");
+
+
             TVUtil.TitleDisplay(sbTmp, currentNowAndNext.TitleNext, currentNowAndNext.EpisodeNameNext,
                                             currentNowAndNext.SeriesNumNext,
                                             currentNowAndNext.EpisodeNumNext,
@@ -713,7 +731,7 @@ namespace TvPlugin
 
           item.Label2 = sb.ToString();
 
-          sbTmp.Insert(0, local790);
+          sbTmp.Insert(0, string.Empty);
 
           item.Label = sbTmp.ToString();
 

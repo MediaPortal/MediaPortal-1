@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // A class encapsulating the state of a MP3 stream
 // C++ header
 
@@ -53,12 +53,11 @@ public:
 
   void getAttributes(char* buffer, unsigned bufferSize) const;
 
-  void writeGetCmd(char const* hostName, unsigned short portNum,
-		   char const* fileName);
-
   float filePlayTime() const; // in seconds
+  unsigned fileSize() const { return fFileSize; }
   void setPresentationTimeScale(unsigned scale) { fPresentationTimeScale = scale; }
-  void seekWithinFile(double seekNPT);
+  unsigned getByteNumberFromPositionFraction(float fraction); // 0.0 <= fraction <= 1.0
+  void seekWithinFile(unsigned seekByteNumber);
 
   void checkForXingHeader(); // hack for Xing VBR files
 

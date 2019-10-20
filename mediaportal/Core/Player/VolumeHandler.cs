@@ -22,6 +22,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
+using CSCore.CoreAudioAPI;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
@@ -30,55 +31,91 @@ using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Player
 {
+  /// <summary>
+  /// Looks like this class is notably taking care of broadcasting various volume change events.
+  /// This is intended to be used as a singleton.
+  /// The singleton instance should be created from MP main thread.
+  /// </summary>
   public class VolumeHandler
   {
     #region Vars
+
+    static HideVolumeOSD.HideVolumeOSDLib VolumeOSD;
+    static MMDeviceEnumerator _MMdeviceEnumerator = new MMDeviceEnumerator();
+    static int _volumeStyle = 0;
 
     #endregion
 
     #region Constructors
 
-    public VolumeHandler() : this(LoadFromRegistry()) {}
+    public VolumeHandler() : this(LoadFromRegistry()) { }
 
     public VolumeHandler(int[] volumeTable)
     {
-      if (GUIGraphicsContext.DeviceAudioConnected > 0)
+      if(_MMdeviceEnumerator == null)
+        _MMdeviceEnumerator = new MMDeviceEnumerator();
+
+      var mMdeviceList = _MMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active);
+
+      if (mMdeviceList.Count > 0)
       {
-        bool isDigital;
 
-        using (Settings reader = new MPSettings())
+        var mMdevice = _MMdeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        if (mMdevice != null)
         {
-          int levelStyle = reader.GetValueAsInt("volume", "startupstyle", 0);
-
-          if (levelStyle == 0)
+          using (Settings reader = new MPSettings())
           {
-            _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "lastknown", 52428)));
+            int levelStyle = reader.GetValueAsInt("volume", "startupstyle", 0);
+
+            if (levelStyle == 0)
+            {
+              _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "lastknown", 52428)));
+            }
+
+            if (levelStyle == 1)
+            {
+            }
+
+            if (levelStyle == 2)
+            {
+              _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
+            }
+
+            isDigital = reader.GetValueAsBool("volume", "digital", false);
+
+            _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
+
+            hideWindowsOSD = reader.GetValueAsBool("volume", "hideWindowsOSD", false);
           }
 
-          if (levelStyle == 1)
+          try
           {
+            _volumeTable = volumeTable;
+            _mixer = new Mixer.Mixer();
+            _mixer.Open(0, isDigital, volumeTable);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("VolumeHandler: Mixer exception during init {0}", ex);
           }
 
-          if (levelStyle == 2)
+          if (OSInfo.OSInfo.Win8OrLater() && hideWindowsOSD)
           {
-            _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
+            try
+            {
+              bool tempShowVolumeOSD = _showVolumeOSD;
+
+              _showVolumeOSD = true;
+
+              VolumeOSD = new HideVolumeOSD.HideVolumeOSDLib(IsMuted);
+              VolumeOSD.HideOSD();
+
+              _showVolumeOSD = tempShowVolumeOSD;
+            }
+            catch
+            {
+            }
           }
-
-          isDigital = reader.GetValueAsBool("volume", "digital", false);
-
-          _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
-        }
-
-        try
-        {
-          _mixer = new Mixer.Mixer();
-          _mixer.Open(0, isDigital);
-          _volumeTable = volumeTable;
-          _mixer.ControlChanged += mixer_ControlChanged;
-        }
-        catch (Exception ex)
-        {
-          Log.Error("VolumeHandler: Mixer exception when init {0}", ex);
         }
       }
       else
@@ -87,52 +124,88 @@ namespace MediaPortal.Player
       }
     }
 
+    public bool hideWindowsOSD { get; set; }
+
     #endregion Constructors
 
     #region Methods
 
-    private static VolumeHandler CreateInstance()
+    /// <summary>
+    /// Create our volume handler singleton.
+    /// </summary>
+    public static void CreateInstance()
     {
-      if (GUIGraphicsContext.DeviceAudioConnected > 0)
-      {
-        using (Settings reader = new MPSettings())
-        {
-          int volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
+      _instance = Create();
+    }
 
-          switch (volumeStyle)
+    /// <summary>
+    /// Create a volume handler.
+    /// </summary>
+    /// <returns>A newly created volume handler.</returns>
+    private static VolumeHandler Create()
+    {
+      if (_MMdeviceEnumerator == null)
+        _MMdeviceEnumerator = new MMDeviceEnumerator();
+
+      var mMdeviceList = _MMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active);
+
+      if (mMdeviceList.Count > 0)
+      {
+        var mMdevice = _MMdeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        if (mMdevice != null)
+        {
+          using (Settings reader = new MPSettings())
           {
+            _volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
+
+            switch (_volumeStyle)
+            {
               // classic volume table
-            case 0:
-              return new VolumeHandler(new[] {0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535});
+              case 0:
+                return new VolumeHandler(new[] {0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535});
               // windows default from registry
-            case 1:
-              return new VolumeHandler();
+              case 1:
+                return new VolumeHandler();
               // logarithmic
-            case 2:
-              return new VolumeHandler(new[]
-                                       {
-                                         0, 1039, 1234, 1467, 1744, 2072, 2463, 2927, 3479, 4135, 4914, 5841, 6942, 8250,
-                                         9806
-                                         , 11654, 13851, 16462, 19565, 23253, 27636, 32845, 39037, 46395, 55141, 65535
-                                       });
+              case 2:
+                return new VolumeHandler(new[]
+                {
+                  0, 1039, 1234, 1467, 1744, 2072, 2463, 2927, 3479, 4135, 4914, 5841, 6942, 8250,
+                  9806
+                  , 11654, 13851, 16462, 19565, 23253, 27636, 32845, 39037, 46395, 55141, 65535
+                });
               // custom user setting
-            case 3:
-              return new VolumeHandlerCustom();
+              case 3:
+                return new VolumeHandlerCustom();
               // defaults to vista safe "0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535"
               // Vista recommended values
-            case 4:
-              return new VolumeHandler(new[]
-                                       {
-                                         0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055,
-                                         49151,
-                                         53247, 57343, 61439, 65535
-                                       });
-            default:
-              return new VolumeHandlerCustom();
+              case 4:
+                return new VolumeHandler(new[]
+                {
+                  0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055,
+                  49151,
+                  53247, 57343, 61439, 65535
+                });
+              // Windows 10
+              case 5:
+                return new VolumeHandler(new[]
+                {
+                  0,1310,2620,3930,5240,6550,7860,9170,10480,11790,13100,14410,15720,17030,18340,19650,20960,22270,23580,24890,26200,27510,28820,30130,31440,
+                  32750,34060,35370,36680,37990,39300,40610,41920,43230,44540,45850,47160,48470,49780,51090,52400,53710,55020,56330,57640,58950,60260,61570,
+                  62880,64190,65535
+                });
+              default:
+                return new VolumeHandlerCustom();
+            }
           }
         }
       }
       return new VolumeHandlerCustom();
+    }
+
+    public virtual int VolumeStyle()
+    {
+      return _volumeStyle;
     }
 
     public static void Dispose()
@@ -147,8 +220,6 @@ namespace MediaPortal.Player
         {
           writer.SetValue("volume", "lastknown", _instance._mixer.Volume);
         }
-
-        _instance._mixer.ControlChanged -= mixer_ControlChanged;
 
         _instance._mixer.SafeDispose();
         _instance._mixer = null;
@@ -236,13 +307,13 @@ namespace MediaPortal.Player
         var showVolume = new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0);
         GUIWindowManager.OnAction(showVolume);
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        Log.Info("VolumeHandler.HandleGUIOnControlChange: {0}", e.ToString());
+        Log.Error($"VolumeHandler: error occured in HandleGUIOnControlChange: {ex}");
       }
     }
 
-    private static void mixer_ControlChanged(object sender, Mixer.MixerEventArgs e)
+    public void mixer_UpdateVolume()
     {
       Instance.HandleGUIOnControlChange();
       GUIGraphicsContext.VolumeOverlay = true;
@@ -368,16 +439,29 @@ namespace MediaPortal.Player
       set { lock (_volumeTable) _volumeTable = value; }
     }
 
+    /// <summary>
+    /// Provide our instance singleton.
+    /// Can be null until explicitly created through CreateInstance.
+    /// </summary>
     public static VolumeHandler Instance
     {
-      get { return _instance ?? (_instance = CreateInstance()); }
+      get
+      {
+        if (_instance == null)
+          CreateInstance();
+
+        return _instance;
+      }
     }
+
 
     #endregion Properties
 
     #region Fields
 
-    private Mixer.Mixer _mixer;
+    public Mixer.Mixer _mixer;
+    public bool isDigital;
+
     private static VolumeHandler _instance;
 
     private static readonly int[] SystemTable = new[]
@@ -391,7 +475,7 @@ namespace MediaPortal.Player
 
     private int[] _volumeTable;
     private int _startupVolume;
-    private bool _showVolumeOSD;
+    private static bool _showVolumeOSD;
 
     #endregion Fields
   }

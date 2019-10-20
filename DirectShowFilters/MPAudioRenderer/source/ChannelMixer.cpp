@@ -20,14 +20,14 @@
 
 #include "alloctracing.h"
 
-CChannelMixer::CChannelMixer(AudioRendererSettings* pSettings) :
-  CBaseAudioSink(true),
+CChannelMixer::CChannelMixer(AudioRendererSettings* pSettings, Logger* pLogger) :
+  CBaseAudioSink(true, pSettings, pLogger),
   m_bPassThrough(false),
   m_rtInSampleTime(0),
-  m_pSettings(pSettings),
-  m_rtNextIncomingSampleTime(0)
+  m_rtNextIncomingSampleTime(0),
+  m_pLogger(pLogger)
 {
-  m_pRemap = new CAERemap();
+  m_pRemap = new CAERemap(pLogger);
 }
 
 CChannelMixer::~CChannelMixer(void)
@@ -63,13 +63,25 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
 
-  if (pwfx->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
+  if (m_pSettings->GetAllowBitStreaming() && CanBitstream(pwfx))
+  {
+    HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
+    if (SUCCEEDED(hr))
+    {
+      m_bNextFormatPassthru = true;
+      m_bPassThrough = true;
+      m_chOrder = *pChOrder;
+    }
+    return hr;
+  }
+
+  if (pwfx->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT && !CanBitstream(pwfx))
     return VFW_E_TYPE_NOT_ACCEPTED;
 
   HRESULT hr = S_OK;
-  bool expandToStereo = pwfx->Format.nChannels == 1 && m_pSettings->m_bExpandMonoToStereo;
+  bool expandToStereo = pwfx->Format.nChannels == 1 && m_pSettings->GetExpandMonoToStereo();
 
-  if (!m_pSettings->m_bForceChannelMixing && !expandToStereo)
+  if (!m_pSettings->GetForceChannelMixing() && !expandToStereo)
   {
     // try the format directly
     hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
@@ -94,10 +106,10 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   WAVEFORMATEXTENSIBLE* pOutWfx;
   CopyWaveFormatEx(&pOutWfx, pwfx);
 
-  if (!expandToStereo || m_pSettings->m_bForceChannelMixing)
+  if (!expandToStereo || m_pSettings->GetForceChannelMixing())
   {
-    pOutWfx->dwChannelMask = m_pSettings->m_lSpeakerConfig;
-    pOutWfx->Format.nChannels = m_pSettings->m_lSpeakerCount;
+    pOutWfx->dwChannelMask = m_pSettings->GetSpeakerConfig();
+    pOutWfx->Format.nChannels = m_pSettings->GetSpeakerCount();
   }
   else // Expand mono to stereo
   {
@@ -145,13 +157,17 @@ HRESULT CChannelMixer::PutSample(IMediaSample *pSample)
   if (!pSample)
     return S_OK;
 
+  WAVEFORMATEXTENSIBLE* pwfe = NULL;
   AM_MEDIA_TYPE *pmt = NULL;
   bool bFormatChanged = false;
   
   HRESULT hr = S_OK;
 
-  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt)
-    bFormatChanged = !FormatsEqual((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, m_pInputFormat);
+  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
+  {
+    pwfe = (WAVEFORMATEXTENSIBLE*)pmt->pbFormat;
+    bFormatChanged = !FormatsEqual(pwfe, m_pInputFormat);
+  }
 
   if (pSample->IsDiscontinuity() == S_OK)
     m_bDiscontinuity = true;
@@ -177,6 +193,8 @@ HRESULT CChannelMixer::PutSample(IMediaSample *pSample)
       Log("CChannelMixer: PutSample failed to change format: 0x%08x", hr);
       return hr;
     }
+
+    SetInputFormat(pwfe);
     m_chOrder = chOrder;
   }
 

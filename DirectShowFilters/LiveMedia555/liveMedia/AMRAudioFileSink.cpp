@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // AMR Audio File sinks
 // Implementation
 
@@ -62,14 +62,15 @@ Boolean AMRAudioFileSink::sourceIsCompatibleWithUs(MediaSource& source) {
   return source.isAMRAudioSource();
 }
 
-void AMRAudioFileSink::afterGettingFrame1(unsigned frameSize,
-					  struct timeval presentationTime) {
+void AMRAudioFileSink::afterGettingFrame(unsigned frameSize,
+					 unsigned numTruncatedBytes,
+					 struct timeval presentationTime) {
   AMRAudioSource* source = (AMRAudioSource*)fSource;
   if (source == NULL) return; // sanity check
 
   if (!fHaveWrittenHeader && fPerFrameFileNameBuffer == NULL) {
     // Output the appropriate AMR header to the start of the file.
-    // This header is defined in RFC 3267, section 5.
+    // This header is defined in RFC 4867, section 5.
     // (However, we don't do this if we're creating one file per frame.)
     char headerBuffer[100];
     sprintf(headerBuffer, "#!AMR%s%s\n",
@@ -96,5 +97,5 @@ void AMRAudioFileSink::afterGettingFrame1(unsigned frameSize,
   }
 
   // Call the parent class to complete the normal file write with the input data:
-  FileSink::afterGettingFrame1(frameSize, presentationTime);
+  FileSink::afterGettingFrame(frameSize, numTruncatedBytes, presentationTime);
 }

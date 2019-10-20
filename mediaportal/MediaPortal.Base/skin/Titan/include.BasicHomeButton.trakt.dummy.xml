@@ -33,7 +33,7 @@
     <textcolor>FFFFFF</textcolor>
 		<textalign>center</textalign>   
     <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
-    <textYOff>88</textYOff>
+    <textYOff>176</textYOff>
 		<onright>300</onright>
 		<onleft>600</onleft>
 		<onup>500</onup>

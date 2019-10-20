@@ -22,8 +22,11 @@
 
 #include "alloctracing.h"
 
+#include <dsound.h>
+
 CVolumeHandler::CVolumeHandler(LPUNKNOWN pUnk)
-  : CBasicAudio(NAME("CBasicAudio"), pUnk)
+  : CBasicAudio(NAME("CBasicAudio"), pUnk),
+  m_lVolume(0)
 {
 }
 
@@ -33,25 +36,39 @@ CVolumeHandler::~CVolumeHandler()
 
 STDMETHODIMP CVolumeHandler::put_Volume(long lVolume)
 {
-  Log("VolumeHandler::put_Volume %d", lVolume);
+  //Log("VolumeHandler::put_Volume %d", lVolume);
+  CAutoLock aLock(&m_csLock);
+
+  if (lVolume > DSBVOLUME_MAX)
+    m_lVolume = DSBVOLUME_MAX;
+  else if (lVolume < DSBVOLUME_MIN)
+    m_lVolume = DSBVOLUME_MIN;
+  else
+    m_lVolume = lVolume;
+
   return S_OK;
 }
 
 STDMETHODIMP CVolumeHandler::get_Volume(long* plVolume)
 {
-  Log("VolumeHandler::get_Volume");
+  //Log("VolumeHandler::get_Volume");
+  CheckPointer(plVolume, E_POINTER);
+  CAutoLock aLock(&m_csLock);
+
+  *plVolume = m_lVolume;
+
   return S_OK;
 }
 
 STDMETHODIMP CVolumeHandler::put_Balance(long lBalance)
 {
-  Log("VolumeHandler::put_Balance %d", lBalance);
+  //Log("VolumeHandler::put_Balance %d", lBalance);
   return S_OK;
 }
 
 STDMETHODIMP CVolumeHandler::get_Balance(long* plBalance)
 {
-  Log("VolumeHandler::get_Balance");
+  //Log("VolumeHandler::get_Balance");
   return S_OK;
 }
 

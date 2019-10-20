@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -39,6 +39,13 @@ namespace MediaPortal.GUI.Video
   {
     private readonly string defaultVideoViews = Path.Combine(DefaultsDirectory, "VideoViews.xml");
     private readonly string customVideoViews = Config.GetFile(Config.Dir.Config, "VideoViews.xml");
+
+    private string _parentWhere = string.Empty;
+
+    public string ParentWhere 
+    {
+      get { return _parentWhere; }
+    }
 
     public VideoViewHandler()
     {
@@ -80,117 +87,53 @@ namespace MediaPortal.GUI.Video
       string whereClause = string.Empty;
       string orderClause = string.Empty;
       string fromClause = string.Empty;
-      
-      if (CurrentLevel == MaxLevels - 1)
-      {
-        whereClause = "WHERE movieinfo.idmovie=movie.idmovie AND movie.idpath=path.idpath";
-        fromClause = "movie,movieinfo,path";
-      }
+
+      string defViewFields = VideoDatabase.DefaultVideoViewFields;
 
       for (int i = 0; i < CurrentLevel; ++i)
       {
         BuildSelect((FilterDefinition)currentView.Filters[i], ref whereClause, ref fromClause);
       }
-      
+
       BuildWhere((FilterDefinition)currentView.Filters[CurrentLevel], ref whereClause);
       BuildRestriction((FilterDefinition)currentView.Filters[CurrentLevel], ref whereClause);
       BuildOrder((FilterDefinition)currentView.Filters[CurrentLevel], ref orderClause);
 
+      _parentWhere = whereClause;
+
       //execute the query
       string sql;
-      
-      if (CurrentLevel == 0)
+
+      if ((CurrentLevel >= 0) && (CurrentLevel < MaxLevels))
       {
         bool useMovieInfoTable = false;
         bool useAlbumTable = false;
         bool useActorsTable = false;
         bool useGenreTable = false;
         bool useUserGroupsTable = false;
-        FilterDefinition defRoot = (FilterDefinition)currentView.Filters[0];
-        string table = GetTable(defRoot.Where, ref useMovieInfoTable, ref useAlbumTable, ref useActorsTable,
-                                ref useGenreTable, ref useUserGroupsTable);
+        bool useMovieCollectionTable = false;
+        string join = string.Empty;
+        string fields = defViewFields;
 
-        if (string.IsNullOrEmpty(table) && defRoot.Where == "actorindex")
+        FilterDefinition defCurrent = (FilterDefinition)currentView.Filters[CurrentLevel];
+        string view = defCurrent.Where;
+
+        // Actor, Director, Title Index
+        if ((view == "actorindex") || (view == "directorindex") || (view == "titleindex"))
         {
-          sql = String.Format("SELECT UPPER(SUBSTR(strActor,1,1)) AS IX, COUNT (strActor) FROM actors WHERE idActor NOT IN (SELECT DISTINCT idDirector FROM movieinfo WHERE strDirector <> 'unknown') AND strActor <> 'unknown' GROUP BY IX ");
+          sql = String.Format("SELECT {0} AS IX, COUNT ({1}) " +
+                              "FROM movieView " +
+                              "WHERE {1} <> 'unknown' AND {1} IS NOT NULL {2} GROUP BY IX ",
+                              GetFieldId(view), GetFieldName(view), (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""));
           VideoDatabase.GetIndexByFilter(sql, true, out movies);
+          return movies;
         }
-        else if (string.IsNullOrEmpty(table) && defRoot.Where == "directorindex")
-        {
-          sql = String.Format("SELECT UPPER(SUBSTR(strActor,1,1)) AS IX, COUNT (strActor) FROM actors WHERE idActor IN (SELECT DISTINCT idDirector FROM movieinfo WHERE strDirector <> 'unknown') GROUP BY IX ");
-          VideoDatabase.GetIndexByFilter(sql, true, out movies);
-        }
-        else if (string.IsNullOrEmpty(table) && defRoot.Where == "titleindex")
-        {
-          sql = String.Format("SELECT UPPER(SUBSTR(strTitle,1,1)) AS IX, COUNT (strTitle) FROM movieinfo GROUP BY IX ");
-          VideoDatabase.GetIndexByFilter(sql, true, out movies);
-        }
-        else if (table == "actors")
-        {
-          if (defRoot.Where == "director")
-          {
-            sql = String.Format("SELECT idActor, strActor, imdbActorId FROM actors WHERE idActor IN (SELECT DISTINCT idDirector FROM movieinfo WHERE strDirector <> 'unknown') AND strActor <> 'unknown' ");
-          }
-          else
-          {
-            sql = String.Format("SELECT * FROM actors WHERE strActor <> 'unknown' ");
-          }
 
-          if (whereClause != string.Empty && defRoot.Where == "director")
-          {
-            sql += "WHERE " + whereClause;
-          }
-          
-          if(whereClause != string.Empty && defRoot.Where == "actor")
-          {
-            sql += "AND " + whereClause;
-          }
-          
-          if (orderClause != string.Empty)
-          {
-            sql += orderClause;
-          }
-          VideoDatabase.GetMoviesByFilter(sql, out movies, true, false, false, false);
-        }
-        else if (table == "genre")
+        // Year
+        if (view == "year")
         {
-          sql = String.Format("SELECT * FROM genre ");
-          if (whereClause != string.Empty)
-          {
-            sql += "WHERE " + whereClause;
-          }
-          
-          if (orderClause != string.Empty)
-          {
-            sql += orderClause;
-          }
-          VideoDatabase.GetMoviesByFilter(sql, out movies, false, false, true, false);
-        }
-        else if (table == "usergroup")
-        {
-          sql = String.Format("SELECT * FROM usergroup ");
-          
-          if (whereClause != string.Empty)
-          {
-            sql += "WHERE " + whereClause;
-          }
-          
-          if (orderClause != string.Empty)
-          {
-            sql += orderClause;
-          }
-          VideoDatabase.GetMoviesByFilter(sql, out movies, false, false, false, true);
-
-          ArrayList moviesExt = new ArrayList();
-          sql = String.Format("SELECT * FROM movieinfo WHERE idMovie NOT IN (SELECT DISTINCT idMovie FROM usergrouplinkmovie) ORDER BY strTitle");
-          VideoDatabase.GetMoviesByFilter(sql, out moviesExt, false, true, false, false);
-          movies.AddRange(moviesExt);
-        }
-        else if (defRoot.Where == "year")
-        {
-          movies = new ArrayList();
-          sql = String.Format("SELECT DISTINCT iYear FROM movieinfo ");
-
+          sql = String.Format("SELECT DISTINCT {0} FROM movieView {1}",
+                              GetFieldId(view), (!string.IsNullOrEmpty(whereClause) ? "WHERE " + whereClause : ""));
           SQLiteResultSet results = VideoDatabase.GetResults(sql);
 
           for (int i = 0; i < results.Rows.Count; i++)
@@ -199,142 +142,95 @@ namespace MediaPortal.GUI.Video
             movie.Year = (int)Math.Floor(0.5d + Double.Parse(DatabaseUtility.Get(results, i, "iYear")));
             movies.Add(movie);
           }
+          return movies;
         }
-        // Recently added
-        else if (defRoot.Where == "recently added")
+
+        string table = GetTable(view, ref useMovieInfoTable, ref useAlbumTable, ref useActorsTable,
+                                      ref useGenreTable, ref useUserGroupsTable, ref useMovieCollectionTable);
+
+        // Recently added, Recently watched
+        if ((view == "recently added") || (view == "recently watched"))
         {
           try
           {
-            if (string.IsNullOrEmpty(defRoot.Restriction))
-              defRoot.Restriction = "7";
+            if (string.IsNullOrEmpty(defCurrent.Restriction))
+            {
+              defCurrent.Restriction = "7";
+            }
 
-            TimeSpan ts = new TimeSpan(Convert.ToInt32(defRoot.Restriction), 0, 0, 0);
+            TimeSpan ts = new TimeSpan(Convert.ToInt32(defCurrent.Restriction), 0, 0, 0);
             DateTime searchDate = DateTime.Today - ts;
 
-            whereClause = String.Format("WHERE movieinfo.dateAdded >= '{0}'",
+            whereClause = String.Format("WHERE {0} >= '{1}'",
+                                        GetFieldName(view),
                                         searchDate.ToString("yyyy-MM-dd" + " 00:00:00"));
-            sql = String.Format("SELECT * FROM movieinfo {0} {1}", whereClause, orderClause);
-
-            VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
+            useMovieInfoTable = true;
           }
           catch (Exception) { }
         }
-        // Recently watched
-        else if (defRoot.Where == "recently watched")
+        // Director
+        else if (view == "director")
         {
-          try
-          {
-            if (string.IsNullOrEmpty(defRoot.Restriction))
-              defRoot.Restriction = "7";
-
-            TimeSpan ts = new TimeSpan(Convert.ToInt32(defRoot.Restriction), 0, 0, 0);
-            DateTime searchDate = DateTime.Today - ts;
-
-            whereClause = String.Format("WHERE movieinfo.dateWatched >= '{0}'",
-                                        searchDate.ToString("yyyy-MM-dd" + " 00:00:00"));
-
-            sql = String.Format("SELECT * FROM movieinfo {0} {1}", whereClause, orderClause);
-
-            VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
-          }
-          catch (Exception) { }
+          fields = "idActorDirector, strActorDirector, strIMDBActorDirectorID";
+          whereClause = "WHERE strActorDirector <> 'unknown' AND strActorDirector IS NOT NULL";
         }
-        else
-        {
-          whereClause =
-            "WHERE movieinfo.idmovie=movie.idmovie AND movie.idpath=path.idpath";
-
-          BuildRestriction(defRoot, ref whereClause);
-
-          sql = String.Format("SELECT * FROM {0} {1} {2}",
-                              fromClause, whereClause, orderClause);
-
-          VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, true, true);
-        }
-      }
-      else if (CurrentLevel < MaxLevels - 1)
-      {
-        bool useMovieInfoTable = false;
-        bool useAlbumTable = false;
-        bool useActorsTable = false;
-        bool useGenreTable = false;
-        bool useUserGroupsTable = false;
-        string join = string.Empty;
-        string fields = "*";
-        
-        FilterDefinition defCurrent = (FilterDefinition)currentView.Filters[CurrentLevel];
-        
-        string table = GetTable(defCurrent.Where, ref useMovieInfoTable, ref useAlbumTable, ref useActorsTable,
-                                ref useGenreTable, ref useUserGroupsTable);
-
-        if (defCurrent.Where == "director")
+        // Actor
+        else if (view == "actor")
         {
           fields = "idActor, strActor, imdbActorId";
-          join = "INNER JOIN movieinfo ON movieinfo.idDirector = actors.idActor";
+          whereClause = "WHERE strActor <> 'unknown' AND strActor IS NOT NULL";
         }
-        
-        if (whereClause != string.Empty)
+        // Genre
+        else if (view == "genre")
         {
-          if (!whereClause.ToUpperInvariant().Trim().StartsWith("WHERE"))
-          {
-            whereClause = "WHERE" + whereClause;
-          }
+          fields = "idSingleGenre, strSingleGenre";
+          whereClause = "WHERE strSingleGenre IS NOT NULL";
+        }
+        // User groups
+        else if (view == "user groups" || view == "user groups only")
+        {
+          fields = "idGroup, strGroup";
+          whereClause = "WHERE strGroup IS NOT NULL";
+        }
+        // Collections
+        else if (view == "movie collections" || view == "movie collections only")
+        {
+          fields = "idCollection, strCollection, strCollectionDescription";
+          whereClause = "WHERE strCollection IS NOT NULL";
+        }
+        // Title
+        else
+        {
+          fields = defViewFields;
+          whereClause = string.Empty; // Already storred in ParentWhere
+          useMovieInfoTable = true;
         }
 
-        if (defCurrent.Where == "actor")
+        table = "movieView"; // MP1-4775
+        if (!string.IsNullOrEmpty(ParentWhere))
         {
-          if (whereClause != string.Empty)
+          if (!string.IsNullOrEmpty(whereClause))
           {
-            whereClause = whereClause + " AND idActor NOT IN (SELECT idDirector FROM movieinfo)";
+            whereClause = whereClause + " AND " + ParentWhere;
           }
           else
           {
-            whereClause = " WHERE idActor NOT IN (SELECT idDirector FROM movieinfo)";
+            whereClause = "WHERE " + ParentWhere;
           }
         }
-       
+
         sql = String.Format("SELECT DISTINCT {0} FROM {1} {2} {3} {4}",
                             fields, table, join, whereClause, orderClause);
-        VideoDatabase.GetMoviesByFilter(sql, out movies, useActorsTable, useMovieInfoTable, useGenreTable, useUserGroupsTable);
-      }
-      else
-      {
-        sql =
-          String.Format(
-            "SELECT DISTINCT movieinfo.idMovie, " + 
-                   "movieinfo.idDirector, " +
-                   "movieinfo.strDirector, " + 
-                   "movieinfo.strPlotOutline, " +
-                   "movieinfo.strPlot, " +
-                   "movieinfo.strTagLine, " +
-                   "movieinfo.strVotes, " +
-                   "movieinfo.fRating, " +
-                   "movieinfo.strCast, " +
-                   "movieinfo.strCredits, " +
-                   "movieinfo.iYear, " +
-                   "movieinfo.strGenre, " +
-                   "movieinfo.strPictureURL, " +
-                   "movieinfo.strTitle, " +
-                   "movieinfo.IMDBID, " +
-                   "movieinfo.mpaa, " +
-                   "movieinfo.runtime, " +
-                   "movieinfo.iswatched, " +
-                   "movieinfo.strUserReview, " +
-                   "movieinfo.strFanartURL, " +
-                   "movieinfo.dateAdded, " +
-                   "movieinfo.dateWatched, " +
-                   "movieinfo.studios, " +
-                   "movieinfo.country, " +
-                   "movieinfo.language, " +
-                   "movieinfo.lastupdate, " +
-                   "movieinfo.strSortTitle, " +
-                   "path.strPath, " +
-                   "movie.discid, " +
-                   "path.cdlabel " +
-                   "FROM {0} {1} {2}",
-            fromClause, whereClause, orderClause);
-        
-        VideoDatabase.GetMoviesByFilter(sql, out movies, true, true, true, true);
+        VideoDatabase.GetMoviesByFilter(sql, out movies, useActorsTable, useMovieInfoTable, useGenreTable, useUserGroupsTable, useMovieCollectionTable);
+
+        if ((view == "user groups") || (view == "movie collections"))
+        {
+          ArrayList moviesExt = new ArrayList();
+          sql = String.Format("SELECT DISTINCT {0} FROM {1} WHERE {2} IS NULL {3} ORDER BY strTitle",
+                              defViewFields, table, GetFieldId(view), (!string.IsNullOrEmpty(ParentWhere) ? "AND " + ParentWhere : ""));
+          VideoDatabase.GetMoviesByFilter(sql, out moviesExt, false, true, false, false, false);
+          movies.AddRange(moviesExt);
+        }
       }
       return movies;
     }
@@ -348,25 +244,10 @@ namespace MediaPortal.GUI.Video
       
       string cleanValue = DatabaseUtility.RemoveInvalidChars(filter.SelectedValue);
       
-      if (filter.Where == "actorindex" || filter.Where == "directorindex" || filter.Where == "titleindex")
+      if (cleanValue == "#" && (filter.Where == "actorindex" || filter.Where == "directorindex" || filter.Where == "titleindex"))
       {
-        if (cleanValue == "#")
-        {
-          string nWordChar = VideoDatabase.NonwordCharacters();
-          
-          if (filter.Where == "actorindex" || filter.Where == "directorindex")
-          {
-            whereClause += @" SUBSTR(strActor,1,1) IN (" + nWordChar +")";
-          }
-          else
-          {
-            whereClause += @" SUBSTR(strTitle,1,1) IN (" + nWordChar +")";
-          }
-        }
-        else
-        {
-          whereClause += String.Format(" {0}='{1}'", GetFieldId(filter.Where), cleanValue);
-        }
+        string nWordChar = VideoDatabase.NonwordCharacters();
+        whereClause += String.Format(" {0} IN ({1})", GetFieldId(filter.Where), nWordChar);
       }
       else
       {
@@ -378,28 +259,32 @@ namespace MediaPortal.GUI.Video
       bool useActorsTable = false;
       bool useGenreTable = false;
       bool useUserGroupsTable = false;
+      bool useMovieCollectionTable = false;
       string table = GetTable(filter.Where, ref useMovieInfoTable, ref useAlbumTable, ref useActorsTable,
-                              ref useGenreTable, ref useUserGroupsTable);
+                                            ref useGenreTable, ref useUserGroupsTable, ref useMovieCollectionTable);
       if (useGenreTable)
       {
-        fromClause += String.Format(",genre,genrelinkmovie");
-        whereClause += " AND genre.idGenre=genrelinkMovie.idGenre AND genrelinkMovie.idMovie=movieinfo.idMovie";
+        whereClause += " AND idSingleGenre IS NOT NULL";
         return;
       }
 
       if (useUserGroupsTable)
       {
-        fromClause += String.Format(",usergroup,usergrouplinkmovie");
-        whereClause += " AND usergroup.idGroup=usergrouplinkmovie.idGroup AND usergrouplinkMovie.idMovie=movieinfo.idMovie";
+        whereClause += " AND idGroup IS NOT NULL";
+        return;
+      }
+
+      if (useMovieCollectionTable)
+      {
+        whereClause += " AND idCollection IS NOT NULL";
         return;
       }
 
       if (useActorsTable)
       {
-        if (CurrentLevel == MaxLevels - 1 && filter.Where == "actor")
+        // if ((CurrentLevel > 0) && (CurrentLevel == MaxLevels - 1))
         {
-          fromClause += String.Format(",actors ,actorlinkmovie");
-          whereClause += " AND actors.idActor=actorlinkmovie.idActor AND actorlinkmovie.idMovie=movieinfo.idMovie";
+          whereClause += string.Format(" AND {0} <> 'unknown' AND {0} IS NOT NULL", GetFieldName(filter.Where));
         }
         return;
       }
@@ -449,13 +334,13 @@ namespace MediaPortal.GUI.Video
         {
           whereClause += " AND ";
         }
-        whereClause += String.Format(" {0}='{1}'", GetField(filter.Where), filter.WhereValue);
+        whereClause += String.Format(" {0}='{1}'", GetFieldName(filter.Where), filter.WhereValue);
       }
     }
 
     private void BuildOrder(FilterDefinition filter, ref string orderClause)
     {
-      orderClause = " ORDER BY " + GetField(filter.Where) + " ";
+      orderClause = " ORDER BY " + GetFieldName(filter.Where) + " ";
       
       if (!filter.SortAscending)
       {
@@ -473,7 +358,7 @@ namespace MediaPortal.GUI.Video
     }
 
     private string GetTable(string where, ref bool useMovieInfoTable, ref bool useAlbumTable, ref bool useActorsTable,
-                            ref bool useGenreTable, ref bool useUserGroupsTable)
+                            ref bool useGenreTable, ref bool useUserGroupsTable, ref bool useMovieCollectionTable)
     {
       if (where == "actor")
       {
@@ -500,6 +385,21 @@ namespace MediaPortal.GUI.Video
         useUserGroupsTable = true;
         return "usergroup";
       }
+      if (where == "user groups only")
+      {
+        useUserGroupsTable = true;
+        return "usergrouponly";
+      }
+      if (where == "movie collections")
+      {
+        useMovieCollectionTable = true;
+        return "moviecollection";
+      }
+      if (where == "movie collections only")
+      {
+        useMovieCollectionTable = true;
+        return "moviecollectiononly";
+      }
       if (where == "year")
       {
         useMovieInfoTable = true;
@@ -523,31 +423,88 @@ namespace MediaPortal.GUI.Video
       return null;
     }
 
-    private string GetField(string where)
+    private string GetFieldId(string where)
+    {
+      if (where == "watched")
+      {
+        return "idMovie";
+      }
+      if (where == "actor")
+      {
+        return "idActor";
+      }
+      if (where == "director")
+      {
+        return "idActorDirector";
+      }
+      if (where == "title")
+      {
+        return "idMovie";
+      }
+      if (where == "genre")
+      {
+        return "idSingleGenre";
+      }
+      if (where == "user groups" || where == "user groups only")
+      {
+        return "idGroup";
+      }
+      if (where == "movie collections" || where == "movie collections only")
+      {
+        return "idCollection";
+      }
+      if (where == "year")
+      {
+        return "iYear";
+      }
+      if (where == "rating")
+      {
+        return "fRating";
+      }
+      if (where == "recently added")
+      {
+        return "idMovie";
+      }
+      if (where == "recently watched")
+      {
+        return "idMovie";
+      }
+      if (where == "actorindex" || where == "directorindex" || where == "titleindex") 
+      {
+        return string.Format("UPPER(SUBSTR({0},1,1))", GetFieldName(where));
+      }
+      return null;
+    }
+
+    private string GetFieldName(string where)
     {
       if (where == "watched")
       {
         return "iswatched";
       }
-      if (where == "actor")
+      if (where == "actor" || where == "actorindex")
       {
         return "strActor";
       }
-      if (where == "director")
+      if (where == "director" || where == "directorindex")
       {
-        return "strActor";
+        return "strActorDirector";
       }
-      if (where == "title")
+      if (where == "title" || where == "titleindex")
       {
         return "strTitle";
       }
       if (where == "genre")
       {
-        return "strGenre";
+        return "strSingleGenre";
       }
-      if (where == "user groups")
+      if (where == "user groups" || where == "user groups only")
       {
         return "strGroup";
+      }
+      if (where == "movie collections" || where == "movie collections only")
+      {
+        return "strCollection";
       }
       if (where == "year")
       {
@@ -564,109 +521,6 @@ namespace MediaPortal.GUI.Video
       if (where == "recently watched")
       {
         return "dateWatched";
-      }
-      
-      return null;
-    }
-
-    private string GetFieldId(string where)
-    {
-      if (where == "watched")
-      {
-        return "movieinfo.idMovie";
-      }
-      if (where == "actor")
-      {
-        return "actors.idActor";
-      }
-      if (where == "director")
-      {
-        return "movieinfo.idDirector";
-      }
-      if (where == "title")
-      {
-        return "movieinfo.idMovie";
-      }
-      if (where == "genre")
-      {
-        return "genre.idGenre";
-      }
-      if (where == "user groups")
-      {
-        return "userGroup.idGroup";
-      }
-      if (where == "year")
-      {
-        return "movieinfo.iYear";
-      }
-      if (where == "rating")
-      {
-        return "movieinfo.fRating";
-      }
-      if (where == "recently added")
-      {
-        return "movieinfo.idMovie";
-      }
-      if (where == "recently watched")
-      {
-        return "movieinfo.idMovie";
-      }
-      if (where == "actorindex")
-      {
-        return "SUBSTR(actors.strActor,1,1)";
-      }
-      if (where == "directorindex")
-      {
-        return "SUBSTR(movieinfo.strDirector,1,1)";
-      }
-      if (where == "titleindex")
-      {
-        return "SUBSTR(movieinfo.strTitle,1,1)";
-      }
-      return null;
-    }
-
-    private string GetFieldName(string where)
-    {
-      if (where == "watched")
-      {
-        return "movieinfo.iswatched";
-      }
-      if (where == "actor")
-      {
-        return "actor.strActor";
-      }
-      if (where == "director")
-      {
-        return "actor.strActor";
-      }
-      if (where == "title")
-      {
-        return "movieinfo.strTitle";
-      }
-      if (where == "genre")
-      {
-        return "genre.strGenre";
-      }
-      if (where == "user groups")
-      {
-        return "usergroup.strGroup";
-      }
-      if (where == "year")
-      {
-        return "movieinfo.iYear";
-      }
-      if (where == "rating")
-      {
-        return "movieinfo.fRating";
-      }
-      if (where == "recently added")
-      {
-        return "movieinfo.dateAdded";
-      }
-      if (where == "recently watched")
-      {
-        return "movieinfo.dateWatched";
       }
       return null;
     }
@@ -693,9 +547,13 @@ namespace MediaPortal.GUI.Video
       {
         return movie.GenreID.ToString();
       }
-      if (where == "user groups")
+      if (where == "user groups" || where == "user groups only")
       {
         return movie.UserGroupID.ToString();
+      }
+      if (where == "movie collections" || where == "movie collections only")
+      {
+        return movie.MovieCollectionID.ToString();
       }
       if (where == "year")
       {
@@ -733,11 +591,20 @@ namespace MediaPortal.GUI.Video
         item.Label2 = string.Empty;
         item.Label3 = string.Empty;
       }
-      if (definition.Where == "user groups")
+      if (definition.Where == "user groups" || definition.Where == "user groups only")
       {
         if (movie.Title == string.Empty)
         {
           item.Label = movie.SingleUserGroup;
+          item.Label2 = string.Empty;
+          item.Label3 = string.Empty;
+        }
+      }
+      if (definition.Where == "movie collections" || definition.Where == "movie collections only")
+      {
+        if (movie.Title == string.Empty)
+        {
+          item.Label = movie.SingleMovieCollection;
           item.Label2 = string.Empty;
           item.Label3 = string.Empty;
         }
@@ -818,6 +685,15 @@ namespace MediaPortal.GUI.Video
           break;
         case "user groups":
           localizedLevelName = GUILocalizeStrings.Get(1265);
+          break;
+        case "user groups only":
+          localizedLevelName = GUILocalizeStrings.Get(1330);
+          break;
+        case "movie collections":
+          localizedLevelName = GUILocalizeStrings.Get(1331);
+          break;
+        case "movie collections only":
+          localizedLevelName = GUILocalizeStrings.Get(1332);
           break;
         default:
           localizedLevelName = lvlName;

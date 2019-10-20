@@ -804,6 +804,10 @@ namespace TvLibrary.Implementations.DVB
             {
               stream.StreamType = VideoStreamType.H264;
             }
+            else if (info.IsHEVCVideo)
+            {
+              stream.StreamType = VideoStreamType.HEVC;
+            }
             else
             {
               stream.StreamType = VideoStreamType.Unknown;

@@ -154,6 +154,20 @@ namespace MediaPortal.Utils.Web
     /// <returns>string found</returns>
     public string SearchRegex(int index, string regex, bool caseinsensitive, bool remove)
     {
+      return SearchRegex(index, regex, false, caseinsensitive, string.Empty);
+    }
+
+    /// <summary>
+    /// Searches the regex.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <param name="regex">The regex.</param>
+    /// <param name="caseinsensitive">if set to <c>true</c> [caseinsensitive].</param>
+    /// <param name="remove">if set to <c>true</c> [remove].</param>
+    /// <param name="replace">the string to [replace] found string if set.</param>
+    /// <returns>string found</returns>
+    public string SearchRegex(int index, string regex, bool caseinsensitive, bool remove, string replace)
+    {
       string sectionSource;
       if (_sectionSource != string.Empty)
       {
@@ -166,16 +180,17 @@ namespace MediaPortal.Utils.Web
 
 
       Match result = null;
+      Regex searchRegex = null;
       try
       {
         if (caseinsensitive)
         {
-          Regex searchRegex = new Regex(regex.ToLower(CultureInfo.CurrentCulture));
+          searchRegex = new Regex(regex.ToLower(CultureInfo.CurrentCulture));
           result = searchRegex.Match(sectionSource.ToLower(CultureInfo.CurrentCulture));
         }
         else
         {
-          Regex searchRegex = new Regex(regex);
+          searchRegex = new Regex(regex);
           result = searchRegex.Match(sectionSource);
         }
       }
@@ -189,7 +204,11 @@ namespace MediaPortal.Utils.Web
       if (result.Success)
       {
         found = sectionSource.Substring(result.Index, result.Length);
-        if (remove)
+        if (!string.IsNullOrEmpty(replace))
+        {
+          _sectionSource = searchRegex.Replace(sectionSource, replace);
+        }
+        else if (remove)
         {
           _sectionSource = sectionSource.Substring(0, result.Index);
 

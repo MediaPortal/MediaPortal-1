@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // RTP sink for H.263+ video (RFC 4629)
 // Implementation
 
@@ -48,7 +48,7 @@ void H263plusVideoRTPSink
 ::doSpecialFrameHandling(unsigned fragmentationOffset,
 			 unsigned char* frameStart,
 			 unsigned numBytesInFrame,
-			 struct timeval frameTimestamp,
+			 struct timeval framePresentationTime,
 			 unsigned numRemainingBytes) {
   if (fragmentationOffset == 0) {
     // This packet contains the first (or only) fragment of the frame.
@@ -63,8 +63,7 @@ void H263plusVideoRTPSink
       return;
     }
     if (frameStart[0] != 0 || frameStart[1] != 0) {
-      envir() << "H263plusVideoRTPSink::doSpecialFrameHandling(): unexpected non-zero first two bytes: "
-	      << (void*)(frameStart[0]) << "," << (void*)(frameStart[1]) << "\n";
+      envir() << "H263plusVideoRTPSink::doSpecialFrameHandling(): unexpected non-zero first two bytes!\n";
     }
     frameStart[0] = specialHeader>>8;
     frameStart[1] = (unsigned char)specialHeader;
@@ -80,7 +79,7 @@ void H263plusVideoRTPSink
   }
 
   // Also set the RTP timestamp:
-  setTimestamp(frameTimestamp);
+  setTimestamp(framePresentationTime);
 }
 
 

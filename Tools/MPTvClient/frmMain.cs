@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2016 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2016 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,19 +19,14 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using TvControl;
-using TvDatabase;
 
 namespace MPTvClient
 {
-  public partial class frmMain : Form
+    public partial class frmMain : Form
   {
     private ServerInterface serverIntf;
     private ExternalPlayer extPlayer;
@@ -43,7 +38,8 @@ namespace MPTvClient
       extPlayer = new ExternalPlayer();
       ClientSettings.Load();
       miAlwaysPerformConnectionChecks.Checked = ClientSettings.alwaysPerformConnectionChecks;
-    }
+      Text = Application.ProductName + " v" + Application.ProductVersion;
+     }
 
     private void SetDisconected()
     {

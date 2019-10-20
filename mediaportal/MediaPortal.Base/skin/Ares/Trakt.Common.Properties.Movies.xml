@@ -1,0 +1,196 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <!-- Movies List Layout -->
+	
+	
+	  <control>
+        <description>Little Poster</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>137</width>
+        <texture mask="CAmask_small.png">#selectedthumb</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>
+
+	  
+    <control>
+      <description>Movie Poster</description>
+      <id>500</id>
+      <type>image</type>
+        <posX>1444</posX>
+        <posY>197</posY>
+        <width>422</width>
+        <height>605</height>
+        <texture mask="CAmask.png">#selectedthumb</texture>
+	  <visible>!facadeview.filmstrip</visible>
+    </control>
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1416</posX>
+        <posY>185</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+		<visible>!facadeview.filmstrip+!facadeview.coverflow</visible>
+      </control>
+	
+	 <control>
+      <type>textbox</type>
+      <id>1</id>
+      <posX>225</posX>
+      <posY>840</posY>
+      <width>1550</width>
+      <height>140</height>
+      <label>#Trakt.Movie.Genres | #Trakt.Movie.Ratings.Percentage% (#Trakt.Movie.Ratings.Votes #Trakt.Translation.Votes.Label) | #Trakt.Movie.Runtime #Trakt.Translation.Minutes.Label</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>eaeaea</textcolor>
+    </control>
+
+	
+    <control Style="NoShadow">
+      <description>Plot value</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <textalign>left</textalign>
+      <posX>225</posX>
+      <posY>900</posY>
+      <width>1550</width>
+      <height>85</height>
+      <label>#Trakt.Movie.Overview</label>
+      <font>font13</font>
+      <textcolor>99ffffff</textcolor>
+    </control>
+<!--
+    <control>
+      <description>Certification Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1240</posX>
+      <posY>760</posY>
+      <width>75</width>
+      <height>32</height>
+      <texture>Logos\#Trakt.Movie.Certification.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list</visible>
+    </control>
+	-->
+
+    <control>
+      <description>Current Page txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>729</posX>
+      <posY>187</posY>
+      <label>#Trakt.Translation.CurrentPage.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>facadeview.list+string.equals(#Trakt.Facade.IsPageItem,true)</visible>
+    </control>
+    <control>
+      <description>Current Page value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>729</posX>
+      <posY>206</posY>
+      <width>266</width>
+      <label>#Trakt.Facade.CurrentPage</label>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+      <visible>facadeview.list+string.equals(#Trakt.Facade.IsPageItem,true)</visible>
+    </control>
+    <control>
+      <description>Total Items Per Page txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>729</posX>
+      <posY>231</posY>
+      <label>#Trakt.Translation.TotalItemsPerPage.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>facadeview.list+string.equals(#Trakt.Facade.IsPageItem,true)</visible>
+    </control>
+    <control>
+      <description>Total Items Per Page value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>729</posX>
+      <posY>250</posY>
+      <label>#Trakt.Facade.TotalItemsPerPage</label>
+      <font>font12</font>
+      <width>280</width>
+      <textcolor>ivory</textcolor>
+      <visible>facadeview.list+string.equals(#Trakt.Facade.IsPageItem,true)</visible>
+    </control>
+    <control>
+      <description>Total Pages txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>729</posX>
+      <posY>275</posY>
+      <label>#Trakt.Translation.TotalPages.Label</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>facadeview.list+string.equals(#Trakt.Facade.IsPageItem,true)+!string.equals(#Trakt.Facade.TotalPages,0)</visible>
+    </control>
+    <control>
+      <description>Total Pages</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>729</posX>
+      <posY>294</posY>
+      <width>280</width>
+      <label>#Trakt.Facade.TotalPages</label>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+      <visible>facadeview.list+string.equals(#Trakt.Facade.IsPageItem,true)+!string.equals(#Trakt.Facade.TotalPages,0)</visible>
+    </control>
+    <control>
+      <description>Separator Line</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>729</posX>
+      <posY>460</posY>
+      <width>500</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>facadeview.list+string.equals(#Trakt.Facade.IsPageItem,true)+window.istopmost(87266)</visible>
+    </control>
+    <control Style="NoShadow">
+      <description>Plot value</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>729</posX>
+      <posY>470</posY>
+      <width>520</width>
+      <height>105</height>
+      <label>#Trakt.Trending.Description</label>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <visible>facadeview.list+string.equals(#Trakt.Facade.IsPageItem,true)+window.istopmost(87266)</visible>
+    </control>
+    <control>
+      <description>Separator Line</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>729</posX>
+      <posY>580</posY>
+      <width>500</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>facadeview.list+string.equals(#Trakt.Facade.IsPageItem,true)+window.istopmost(87266)</visible>
+    </control>
+
+  </controls>
+</window>

@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // MPEG-1 or MPEG-2 Video RTP Sources
 // Implementation
 
@@ -45,14 +45,14 @@ Boolean MPEG1or2VideoRTPSource
   // There's a 4-byte video-specific header
   if (packet->dataSize() < 4) return False;
 
-  u_int32_t header = ntohl(*(unsigned*)(packet->data()));
+  u_int32_t header = ntohl(*(u_int32_t*)(packet->data()));
 
   u_int32_t sBit = header&0x00002000; // sequence-header-present
   u_int32_t bBit = header&0x00001000; // beginning-of-slice
   u_int32_t eBit = header&0x00000800; // end-of-slice
 
   fCurrentPacketBeginsFrame = (sBit|bBit) != 0;
-  fCurrentPacketCompletesFrame = ((sBit&~bBit)|eBit) != 0;
+  fCurrentPacketCompletesFrame = ((sBit != 0) && (bBit == 0)) || (eBit != 0);
 
   resultSpecialHeaderSize = 4;
   return True;
@@ -66,7 +66,7 @@ Boolean MPEG1or2VideoRTPSource
 
   // Extract the "Picture-Type" field from this, to determine whether
   // this packet can be used in jitter calculations:
-  unsigned header = ntohl(*(unsigned*)packet);
+  unsigned header = ntohl(*(u_int32_t*)packet);
 
   unsigned short pictureType = (header>>8)&0x7;
   if (pictureType == 1) { // an I frame

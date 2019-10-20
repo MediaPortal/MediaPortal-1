@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // Bit Vector data structure
 // Implementation
 
@@ -41,6 +41,8 @@ static unsigned char const singleBitMask[8]
 #define MAX_LENGTH 32
 
 void BitVector::putBits(unsigned from, unsigned numBits) {
+  if (numBits == 0) return; 
+
   unsigned char tmpBuf[4];
   unsigned overflowingBits = 0;
 
@@ -63,7 +65,6 @@ void BitVector::putBits(unsigned from, unsigned numBits) {
   fCurBitIndex += numBits - overflowingBits;
 }
 
-
 void BitVector::put1Bit(unsigned bit) {
   // The following is equivalent to "putBits(..., 1)", except faster:
   if (fCurBitIndex >= fTotNumBits) { /* overflow */
@@ -79,8 +80,9 @@ void BitVector::put1Bit(unsigned bit) {
   }
 }
 
-
 unsigned BitVector::getBits(unsigned numBits) {
+  if (numBits == 0) return 0;
+
   unsigned char tmpBuf[4];
   unsigned overflowingBits = 0;
 
@@ -125,10 +127,24 @@ void BitVector::skipBits(unsigned numBits) {
   }
 }
 
+unsigned BitVector::get_expGolomb() {
+  unsigned numLeadingZeroBits = 0;
+  unsigned codeStart = 1;
+
+  while (get1Bit() == 0 && fCurBitIndex < fTotNumBits) {
+    ++numLeadingZeroBits;
+    codeStart *= 2;
+  }
+
+  return codeStart - 1 + getBits(numLeadingZeroBits);
+}
+
 
 void shiftBits(unsigned char* toBasePtr, unsigned toBitOffset,
 	       unsigned char const* fromBasePtr, unsigned fromBitOffset,
 	       unsigned numBits) {
+  if (numBits == 0) return;
+
   /* Note that from and to may overlap, if from>to */
   unsigned char const* fromBytePtr = fromBasePtr + fromBitOffset/8;
   unsigned fromBitRem = fromBitOffset%8;

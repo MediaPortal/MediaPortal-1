@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>749</id>
+  <defaultcontrol>1</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <description>bar</description>
+      <id>0</id>
+      <posX>159</posX>
+      <posY>805</posY>
+      <width>1620</width>
+      <height>280</height>
+      <texture>dialog_background.png</texture>
+    </control>
+    <control>
+      <type>progress</type>
+      <description>Progress Bar</description>
+      <id>1</id>
+      <posX>597</posX>
+      <posY>900</posY>
+      <width>532</width>
+      <height>9</height>
+      <texturebg>osd_progress_background.png</texturebg>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Quality</description>
+      <id>101</id>
+      <posX>340</posX>
+      <posY>885</posY>
+      <label>988</label>
+      <align>left</align>
+	  <textcolor>ff666666</textcolor>
+	  <textcolorNoFocus>ff666666</textcolorNoFocus>
+    </control>
+    <control>
+      <type>label</type>
+      <description>notify</description>
+      <id>102</id>
+      <posX>340</posX>
+      <posY>840</posY>
+      <label>-</label>
+	  <textcolor>ff666666</textcolor>
+	  <textcolorNoFocus>ff666666</textcolorNoFocus>
+    </control>
+    <control>
+      <description>TV Logo</description>
+      <type>image</type>
+      <id>10</id>
+      <posX>1386</posX>
+      <posY>852</posY>
+      <width>186</width>
+      <height>130</height>
+      <texture>#TV.View.thumb</texture>
+      <centered>yes</centered>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+  </controls>
+</window>

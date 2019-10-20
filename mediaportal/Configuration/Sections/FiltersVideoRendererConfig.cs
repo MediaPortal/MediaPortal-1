@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using MediaPortal.Profile;
 using MediaPortal.ServiceImplementations;
 
@@ -67,6 +68,14 @@ namespace MediaPortal.Configuration.Sections
           }
 
           radioButtonEVR.Checked = xmlreader.GetValueAsBool("general", "useEVRenderer", ValueEVR);
+          radioButtonMadVR.Checked = xmlreader.GetValueAsBool("general", "useMadVideoRenderer", false);
+          UseEVRMadVRForTV.Checked = xmlreader.GetValueAsBool("general", "useEVRMadVRForTV", false);
+          DisableLowLatencyMode.Checked = xmlreader.GetValueAsBool("general", "disableLowLatencyMode", false);
+          UseMadVideoRenderer3D.Checked = xmlreader.GetValueAsBool("general", "useMadVideoRenderer3D", false);
+          numericUpDownFrame.Value = xmlreader.GetValueAsInt("general", "reduceMadvrFrame", 0);
+          reduceMadvrFrame.Checked = xmlreader.GetValueAsBool("general", "useReduceMadvrFrame", false);
+          DRCheckBox.Checked = xmlreader.GetValueAsBool("general", "useInternalDRC", false);
+          mpCheck1080p.Checked = xmlreader.GetValueAsBool("general", "useRestoreMadvr1080p", false);
         }
         _init = true;
       }
@@ -89,12 +98,20 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("general", "usevrm9forwebstreams", checkBoxVMRWebStreams.Checked);
         xmlwriter.SetValueAsBool("general", "dx9decimatemask", checkBoxDecimateMask.Checked);
         xmlwriter.SetValueAsBool("general", "useEVRenderer", radioButtonEVR.Checked);
+        xmlwriter.SetValueAsBool("general", "useMadVideoRenderer", radioButtonMadVR.Checked);
+        xmlwriter.SetValueAsBool("general", "useEVRMadVRForTV", UseEVRMadVRForTV.Checked);
+        xmlwriter.SetValueAsBool("general", "disableLowLatencyMode", DisableLowLatencyMode.Checked);
+        xmlwriter.SetValueAsBool("general", "useMadVideoRenderer3D", UseMadVideoRenderer3D.Checked);
+        xmlwriter.SetValue("general", "reduceMadvrFrame", numericUpDownFrame.Value);
+        xmlwriter.SetValueAsBool("general", "useReduceMadvrFrame", reduceMadvrFrame.Checked);
+        xmlwriter.SetValueAsBool("general", "useInternalDRC", DRCheckBox.Checked);
+        xmlwriter.SetValueAsBool("general", "useRestoreMadvr1080p", mpCheck1080p.Checked);
       }
     }
 
     private void radioButtonEVR_CheckedChanged(object sender, EventArgs e)
     {
-      if (radioButtonEVR.Checked == true)
+      if (radioButtonEVR.Checked)
       {
         checkBoxVMRWebStreams.Enabled = false;
         checkboxDXEclusive.Enabled = false;
@@ -102,12 +119,14 @@ namespace MediaPortal.Configuration.Sections
         checkBoxDecimateMask.Enabled = false;
         mpVMR9FilterMethod.Enabled = false;
         labelFilteringHint.Enabled = false;
+        Movies.MadVrInUse = false;
+        Movies.UpdateDecoderSettings();
       }
     }
 
     private void radioButtonVMR9_CheckedChanged(object sender, EventArgs e)
     {
-      if (radioButtonVMR9.Checked == true)
+      if (radioButtonVMR9.Checked)
       {
         checkBoxVMRWebStreams.Enabled = true;
         checkboxDXEclusive.Enabled = true;
@@ -115,7 +134,39 @@ namespace MediaPortal.Configuration.Sections
         checkBoxDecimateMask.Enabled = true;
         mpVMR9FilterMethod.Enabled = true;
         labelFilteringHint.Enabled = true;
+        Movies.MadVrInUse = false;
+        Movies.UpdateDecoderSettings();
       }
+    }
+
+    private void radioButtonMadVR_CheckedChanged(object sender, EventArgs e)
+    {
+      if (radioButtonMadVR.Checked)
+      {
+        checkBoxVMRWebStreams.Enabled = false;
+        checkboxDXEclusive.Enabled = false;
+        checkboxMpNonsquare.Enabled = false;
+        checkBoxDecimateMask.Enabled = false;
+        mpVMR9FilterMethod.Enabled = false;
+        labelFilteringHint.Enabled = false;
+        Movies.MadVrInUse = true;
+        Movies.UpdateDecoderSettings();
+      }
+    }
+
+    private void mpCheckBox1_CheckedChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void DisableLowLatencyMode_CheckedChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void numericUpDownFrame_ValueChanged(object sender, EventArgs e)
+    {
+
     }
   }
 }

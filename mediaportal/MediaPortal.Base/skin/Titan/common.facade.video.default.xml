@@ -134,15 +134,41 @@
 						<showFolder>no</showFolder>
 						<showBackGround>no</showBackGround>
 						<showInfoImage>no</showInfoImage>
-			      <scrollbarBackground>scrollbar_bg_hor.png</scrollbarBackground>
-			      <scrollbarLeft>scrollbar_left_hor.png</scrollbarLeft>
-			      <scrollbarRight>scrollbar_right_hor.png</scrollbarRight>
-			      <scrollbarWidth>717</scrollbarWidth>
+			            <scrollbarBackground>scrollbar_bg_hor.png</scrollbarBackground>
+			            <scrollbarLeft>scrollbar_left_hor.png</scrollbarLeft>
+			            <scrollbarRight>scrollbar_right_hor.png</scrollbarRight>
+			            <scrollbarWidth>717</scrollbarWidth>
 						<scrollbarHeight>8</scrollbarHeight>
-			      <scrollbarYOff>375</scrollbarYOff>
-					 <keepaspectratio>no</keepaspectratio>
+			            <scrollbarYOff>375</scrollbarYOff>
+					    <keepaspectratio>no</keepaspectratio>
 						<thumbAnimation effect="zoom" acceleration="-2" start="100,100" reversible="false" end="120,120" center="0,880" time="200">focus</thumbAnimation>
 						<thumbAnimation effect="zoom" start="120,120" reversible="false" end="100,100" center="0,880" time="100">unfocus</thumbAnimation>
+		                <!-- MP1-4839 -->
+                        <showWatchedImage OnFolder="yes" OnlyOnFocus="no">yes</showWatchedImage>
+                        <WatchedImagePosX>0</WatchedImagePosX>
+                        <WatchedImagePosY>0</WatchedImagePosY>
+                        <WatchedImageWidth>55</WatchedImageWidth>
+                        <WatchedImageHeight>55</WatchedImageHeight>
+                        <WatchedImageWatchedTexture>Watched.png</WatchedImageWatchedTexture>
+                        <WatchedImageUnWatchedTexture>UnWatched.png</WatchedImageUnWatchedTexture>
+
+                        <showFolderStatusImage>yes</showFolderStatusImage>          
+                        <FolderStatusImagePosX>108</FolderStatusImagePosX>          
+                        <FolderStatusImagePosY>0</FolderStatusImagePosY>          
+                        <FolderStatusImageWidth>122</FolderStatusImageWidth>          
+                        <FolderStatusImageHeight>122</FolderStatusImageHeight>        
+                        <FolderStatusImageUserGroupTexture>group.png</FolderStatusImageUserGroupTexture>
+                        <FolderStatusImageCollectionTexture>collection.png</FolderStatusImageCollectionTexture>
+
+                        <showRatingImage UserRating="yes">yes</showRatingImage>
+                        <RatingImagePosX>108</RatingImagePosX>
+                        <RatingImagePosY>0</RatingImagePosY>
+                        <RatingImageWidth>122</RatingImageWidth>
+                        <RatingImageHeight>122</RatingImageHeight>
+                        <RatingImageTexturePrefix>Rating</RatingImageTexturePrefix>
+                        <RatingImageTextureSuffix />
+                        <RatingUserImageTexturePrefix>RatingUser</RatingUserImageTexturePrefix>
+                        <RatingUserImageTextureSuffix />
 					</control>
 
 					<control>
@@ -188,6 +214,32 @@
 						<spinPosX>1828</spinPosX>
 						<spinPosY>1000</spinPosY>
 						<unfocusedAlpha>100</unfocusedAlpha>
+					    <!-- MP1-4839 -->
+                        <showWatchedImage OnFolder="yes" OnlyOnFocus="no">yes</showWatchedImage>
+                        <WatchedImagePosX Big="0">0</WatchedImagePosX>
+                        <WatchedImagePosY Big="0">0</WatchedImagePosY>
+                        <WatchedImageWidth Big="55">25</WatchedImageWidth>
+                        <WatchedImageHeight Big="55">25</WatchedImageHeight>
+                        <WatchedImageWatchedTexture>Watched.png</WatchedImageWatchedTexture>
+                        <WatchedImageUnWatchedTexture>UnWatched.png</WatchedImageUnWatchedTexture>
+
+                        <showFolderStatusImage>yes</showFolderStatusImage>          
+                        <FolderStatusImagePosX Big="82">78</FolderStatusImagePosX>          
+                        <FolderStatusImagePosY Big="0">0</FolderStatusImagePosY>          
+                        <FolderStatusImageWidth Big="122">50</FolderStatusImageWidth>          
+                        <FolderStatusImageHeight Big="122">50</FolderStatusImageHeight>        
+                        <FolderStatusImageUserGroupTexture>group.png</FolderStatusImageUserGroupTexture>
+                        <FolderStatusImageCollectionTexture>collection.png</FolderStatusImageCollectionTexture>
+
+                        <showRatingImage UserRating="yes">yes</showRatingImage>
+                        <RatingImagePosX Big="82">78</RatingImagePosX>
+                        <RatingImagePosY Big="0">0</RatingImagePosY>
+                        <RatingImageWidth Big="122">50</RatingImageWidth>
+                        <RatingImageHeight Big="122">50</RatingImageHeight>
+                        <RatingImageTexturePrefix>Rating</RatingImageTexturePrefix>
+                        <RatingImageTextureSuffix />
+                        <RatingUserImageTexturePrefix>RatingUser</RatingUserImageTexturePrefix>
+                        <RatingUserImageTextureSuffix />
 					</control>
 
 					<control>
@@ -239,13 +291,39 @@
 					  <label1YOff>1430</label1YOff>
 					  <label2YOff>1390</label2YOff>
 					  <pageSize>5</pageSize>
-	          <scrollbarBackground>scrollbar_bg_hor.png</scrollbarBackground>
-	          <scrollbarLeft>scrollbar_left_hor.png</scrollbarLeft>
-	          <scrollbarRight>scrollbar_right_hor.png</scrollbarRight>
-	          <scrollbarWidth>717</scrollbarWidth>
-						<scrollbarHeight>8</scrollbarHeight>
-	          <scrollbarYOff>375</scrollbarYOff>
-						<cards flipY="true" diffuse="Thumb_Mask_test.png" mask="filmstrip_mask.png"></cards>
+                      <scrollbarBackground>scrollbar_bg_hor.png</scrollbarBackground>
+	                  <scrollbarLeft>scrollbar_left_hor.png</scrollbarLeft>
+	                  <scrollbarRight>scrollbar_right_hor.png</scrollbarRight>
+	                  <scrollbarWidth>717</scrollbarWidth>
+					  <scrollbarHeight>8</scrollbarHeight>
+	                  <scrollbarYOff>375</scrollbarYOff>
+					  <cards flipY="true" diffuse="Thumb_Mask_test.png" mask="filmstrip_mask.png"></cards>
+					  <!-- MP1-4839 -->
+                      <showWatchedImage OnFolder="yes" OnlyOnFocus="no">yes</showWatchedImage>
+                      <WatchedImagePosX>0</WatchedImagePosX>
+                      <WatchedImagePosY>0</WatchedImagePosY>
+                      <WatchedImageWidth>55</WatchedImageWidth>
+                      <WatchedImageHeight>55</WatchedImageHeight>
+                      <WatchedImageWatchedTexture>Watched.png</WatchedImageWatchedTexture>
+                      <WatchedImageUnWatchedTexture>UnWatched.png</WatchedImageUnWatchedTexture>
+
+                      <showFolderStatusImage>yes</showFolderStatusImage>          
+                      <FolderStatusImagePosX>116</FolderStatusImagePosX>          
+                      <FolderStatusImagePosY>0</FolderStatusImagePosY>          
+                      <FolderStatusImageWidth>122</FolderStatusImageWidth>          
+                      <FolderStatusImageHeight>122</FolderStatusImageHeight>        
+                      <FolderStatusImageUserGroupTexture>group.png</FolderStatusImageUserGroupTexture>
+                      <FolderStatusImageCollectionTexture>collection.png</FolderStatusImageCollectionTexture>
+
+                      <showRatingImage UserRating="yes">yes</showRatingImage>
+                      <RatingImagePosX>116</RatingImagePosX>
+                      <RatingImagePosY>0</RatingImagePosY>
+                      <RatingImageWidth>122</RatingImageWidth>
+                      <RatingImageHeight>122</RatingImageHeight>
+                      <RatingImageTexturePrefix>Rating</RatingImageTexturePrefix>
+                      <RatingImageTextureSuffix />
+                      <RatingUserImageTexturePrefix>RatingUser</RatingUserImageTexturePrefix>
+                      <RatingUserImageTextureSuffix />
 					</control>
 					
 					<control>

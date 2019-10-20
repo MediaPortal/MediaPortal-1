@@ -1751,6 +1751,11 @@ namespace DirectShowLib
     /// <summary> MEDIASUBTYPE_H264 </summary>
     public static readonly Guid H264 = new Guid(0x34363248, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
                                                 0x71);
+
+    /// <summary> MEDIASUBTYPE_HEVC </summary>
+    public static readonly Guid HEVC = new Guid(0x43564548, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
+                                                0x71);
+
     /// <summary> MEDIASUBTYPE_VC1 </summary>
     public static readonly Guid VC1 = new Guid(0x31435657, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B,
                                                 0x71);

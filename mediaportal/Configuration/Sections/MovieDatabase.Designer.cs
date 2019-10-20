@@ -24,13 +24,13 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MovieDatabase));
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
       this.toolTipMPvdb = new System.Windows.Forms.ToolTip(this.components);
       this.useFanartCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this._fuzzyMatchingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -48,6 +48,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
       this.linkActorMovie = new System.Windows.Forms.LinkLabel();
       this.btnRefreshAllImg = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnRefreshMissingCovers = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnSearchCover = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnDowngradeCovers = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnUpgradeCovers = new MediaPortal.UserInterface.Controls.MPButton();
@@ -79,6 +80,8 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl2 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageTitle = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelUserRating = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbUserRating = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpLabel41 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbSortTitle = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.tbCountry = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -121,6 +124,12 @@ namespace MediaPortal.Configuration.Sections
       this.label13 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbReview = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpLabel16 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tabPageAdditional = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.mpGroupBox13 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.tbMPAARatingText = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel34 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbAwards = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel44 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPageFiles = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox6 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.tbAdded = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -177,6 +186,27 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.listViewAllGenres = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.tabPageCollection = new System.Windows.Forms.TabPage();
+      this.mpGroupBox12 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.gbCollectionThumb = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.btCollectionThumbAdd = new MediaPortal.UserInterface.Controls.MPButton();
+      this.pbCollectionImage = new System.Windows.Forms.PictureBox();
+      this.lbCollectionName = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbNewCollection = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.btCollectionRemove = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btCollectionAdd = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btRemoveCollectionToMovie = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btAddCollectionToMovie = new MediaPortal.UserInterface.Controls.MPButton();
+      this.lvMovieCollections = new MediaPortal.UserInterface.Controls.MPListView();
+      this.chMovieCollections = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.lvAllCollection = new MediaPortal.UserInterface.Controls.MPListView();
+      this.chAvailCollections = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.tabPageCollectionDesc = new System.Windows.Forms.TabPage();
+      this.btCollectionDescSave = new MediaPortal.UserInterface.Controls.MPButton();
+      this.lbDescCollection = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lbDescCollectionDesc = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbCollectionDescription = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.cbCollectionsMisc = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.tabPageUserGroups = new System.Windows.Forms.TabPage();
       this.mpGroupBox8 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpGroupBox9 = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -322,6 +352,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.SuspendLayout();
       this.tabPageReview.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
+      this.tabPageAdditional.SuspendLayout();
+      this.mpGroupBox13.SuspendLayout();
       this.tabPageFiles.SuspendLayout();
       this.groupBox6.SuspendLayout();
       this.tabPageActors.SuspendLayout();
@@ -337,6 +369,11 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.SuspendLayout();
       this.mpGroupBox10.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pbGenreImage)).BeginInit();
+      this.tabPageCollection.SuspendLayout();
+      this.mpGroupBox12.SuspendLayout();
+      this.gbCollectionThumb.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pbCollectionImage)).BeginInit();
+      this.tabPageCollectionDesc.SuspendLayout();
       this.tabPageUserGroups.SuspendLayout();
       this.mpGroupBox8.SuspendLayout();
       this.mpGroupBox9.SuspendLayout();
@@ -589,6 +626,20 @@ namespace MediaPortal.Configuration.Sections
         " IMDB id. If id is invalid\r\nno action will  be taken.");
       this.btnRefreshAllImg.UseVisualStyleBackColor = true;
       this.btnRefreshAllImg.Click += new System.EventHandler(this.btnRefreshAllCovers_Click);
+      // 
+      // btnRefreshMissingCovers
+      // 
+      this.btnRefreshMissingCovers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnRefreshMissingCovers.AutoSize = true;
+      this.btnRefreshMissingCovers.Location = new System.Drawing.Point(325, 205);
+      this.btnRefreshMissingCovers.Name = "btnRefreshMissingCovers";
+      this.btnRefreshMissingCovers.Size = new System.Drawing.Size(126, 23);
+      this.btnRefreshMissingCovers.TabIndex = 43;
+      this.btnRefreshMissingCovers.Text = "Refresh missing covers";
+      this.toolTipMPvdb.SetToolTip(this.btnRefreshMissingCovers, "Refresh missing covers for all movies in your collection.\r\nRefreshing will be don" +
+        "e by remote URL. If URL is invalid or local\r\nno action will  be taken.");
+      this.btnRefreshMissingCovers.UseVisualStyleBackColor = true;
+      this.btnRefreshMissingCovers.Click += new System.EventHandler(this.btnRefreshMissingCovers_Click);
       // 
       // btnSearchCover
       // 
@@ -964,11 +1015,14 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl2.Controls.Add(this.tabPageTitle);
       this.tabControl2.Controls.Add(this.tabPageReview);
+      this.tabControl2.Controls.Add(this.tabPageAdditional);
       this.tabControl2.Controls.Add(this.tabPageFiles);
       this.tabControl2.Controls.Add(this.tabPageActors);
       this.tabControl2.Controls.Add(this.tabPageActorDetails);
       this.tabControl2.Controls.Add(this.tabPageActorMovies);
       this.tabControl2.Controls.Add(this.tabPageGenres);
+      this.tabControl2.Controls.Add(this.tabPageCollection);
+      this.tabControl2.Controls.Add(this.tabPageCollectionDesc);
       this.tabControl2.Controls.Add(this.tabPageUserGroups);
       this.tabControl2.Controls.Add(this.tabPageUserGroupDescription);
       this.tabControl2.Controls.Add(this.tabPageUserGroupRules);
@@ -1000,6 +1054,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Controls.Add(this.labelUserRating);
+      this.groupBox3.Controls.Add(this.tbUserRating);
       this.groupBox3.Controls.Add(this.mpLabel41);
       this.groupBox3.Controls.Add(this.tbSortTitle);
       this.groupBox3.Controls.Add(this.tbCountry);
@@ -1043,6 +1099,25 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Size = new System.Drawing.Size(453, 313);
       this.groupBox3.TabIndex = 0;
       this.groupBox3.TabStop = false;
+      // 
+      // labelUserRating
+      // 
+      this.labelUserRating.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelUserRating.Location = new System.Drawing.Point(298, 286);
+      this.labelUserRating.Name = "labelUserRating";
+      this.labelUserRating.Size = new System.Drawing.Size(68, 22);
+      this.labelUserRating.TabIndex = 46;
+      this.labelUserRating.Text = "User Rating:";
+      this.labelUserRating.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      // 
+      // tbUserRating
+      // 
+      this.tbUserRating.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.tbUserRating.BorderColor = System.Drawing.Color.Empty;
+      this.tbUserRating.Location = new System.Drawing.Point(372, 283);
+      this.tbUserRating.Name = "tbUserRating";
+      this.tbUserRating.Size = new System.Drawing.Size(62, 20);
+      this.tbUserRating.TabIndex = 45;
       // 
       // mpLabel41
       // 
@@ -1463,6 +1538,73 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel16.TabIndex = 37;
       this.mpLabel16.Text = "User review:";
       // 
+      // tabPageAdditional
+      // 
+      this.tabPageAdditional.Controls.Add(this.mpGroupBox13);
+      this.tabPageAdditional.Location = new System.Drawing.Point(4, 22);
+      this.tabPageAdditional.Name = "tabPageAdditional";
+      this.tabPageAdditional.Size = new System.Drawing.Size(459, 320);
+      this.tabPageAdditional.TabIndex = 3;
+      this.tabPageAdditional.Text = "Additional";
+      this.tabPageAdditional.UseVisualStyleBackColor = true;
+      // 
+      // mpGroupBox13
+      // 
+      this.mpGroupBox13.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox13.Controls.Add(this.tbMPAARatingText);
+      this.mpGroupBox13.Controls.Add(this.mpLabel34);
+      this.mpGroupBox13.Controls.Add(this.tbAwards);
+      this.mpGroupBox13.Controls.Add(this.mpLabel44);
+      this.mpGroupBox13.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox13.Location = new System.Drawing.Point(3, 4);
+      this.mpGroupBox13.Name = "mpGroupBox13";
+      this.mpGroupBox13.Size = new System.Drawing.Size(453, 313);
+      this.mpGroupBox13.TabIndex = 2;
+      this.mpGroupBox13.TabStop = false;
+      // 
+      // tbMPAARatingText
+      // 
+      this.tbMPAARatingText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbMPAARatingText.BorderColor = System.Drawing.Color.Empty;
+      this.tbMPAARatingText.Location = new System.Drawing.Point(70, 12);
+      this.tbMPAARatingText.Multiline = true;
+      this.tbMPAARatingText.Name = "tbMPAARatingText";
+      this.tbMPAARatingText.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+      this.tbMPAARatingText.Size = new System.Drawing.Size(375, 132);
+      this.tbMPAARatingText.TabIndex = 40;
+      // 
+      // mpLabel34
+      // 
+      this.mpLabel34.Location = new System.Drawing.Point(0, 12);
+      this.mpLabel34.Name = "mpLabel34";
+      this.mpLabel34.Size = new System.Drawing.Size(64, 21);
+      this.mpLabel34.TabIndex = 39;
+      this.mpLabel34.Text = "MPAA Text:";
+      // 
+      // tbAwards
+      // 
+      this.tbAwards.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbAwards.BorderColor = System.Drawing.Color.Empty;
+      this.tbAwards.Location = new System.Drawing.Point(70, 163);
+      this.tbAwards.Multiline = true;
+      this.tbAwards.Name = "tbAwards";
+      this.tbAwards.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+      this.tbAwards.Size = new System.Drawing.Size(375, 136);
+      this.tbAwards.TabIndex = 38;
+      // 
+      // mpLabel44
+      // 
+      this.mpLabel44.Location = new System.Drawing.Point(0, 163);
+      this.mpLabel44.Name = "mpLabel44";
+      this.mpLabel44.Size = new System.Drawing.Size(64, 33);
+      this.mpLabel44.TabIndex = 37;
+      this.mpLabel44.Text = "Awards:";
+      // 
       // tabPageFiles
       // 
       this.tabPageFiles.Controls.Add(this.groupBox6);
@@ -1864,14 +2006,14 @@ namespace MediaPortal.Configuration.Sections
       this.dgActorMovies.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
       this.dgActorMovies.BackgroundColor = System.Drawing.SystemColors.Window;
       this.dgActorMovies.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-      dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-      dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dgActorMovies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+      dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      dataGridViewCellStyle13.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+      dataGridViewCellStyle13.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle13.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle13.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dgActorMovies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle13;
       this.dgActorMovies.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dgActorMovies.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Year,
@@ -1891,8 +2033,8 @@ namespace MediaPortal.Configuration.Sections
       // Year
       // 
       this.Year.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-      dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      this.Year.DefaultCellStyle = dataGridViewCellStyle2;
+      dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      this.Year.DefaultCellStyle = dataGridViewCellStyle14;
       this.Year.HeaderText = "Year";
       this.Year.MinimumWidth = 60;
       this.Year.Name = "Year";
@@ -1901,8 +2043,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // Title
       // 
-      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.White;
-      this.Title.DefaultCellStyle = dataGridViewCellStyle3;
+      dataGridViewCellStyle15.SelectionForeColor = System.Drawing.Color.White;
+      this.Title.DefaultCellStyle = dataGridViewCellStyle15;
       this.Title.HeaderText = "Title";
       this.Title.MinimumWidth = 220;
       this.Title.Name = "Title";
@@ -2122,6 +2264,266 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.columnHeader2.Text = "Available Genres";
       this.columnHeader2.Width = 228;
+      // 
+      // tabPageCollection
+      // 
+      this.tabPageCollection.Controls.Add(this.mpGroupBox12);
+      this.tabPageCollection.Location = new System.Drawing.Point(4, 22);
+      this.tabPageCollection.Name = "tabPageCollection";
+      this.tabPageCollection.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageCollection.Size = new System.Drawing.Size(459, 320);
+      this.tabPageCollection.TabIndex = 13;
+      this.tabPageCollection.Text = "Collections";
+      this.tabPageCollection.UseVisualStyleBackColor = true;
+      // 
+      // mpGroupBox12
+      // 
+      this.mpGroupBox12.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox12.Controls.Add(this.gbCollectionThumb);
+      this.mpGroupBox12.Controls.Add(this.lbCollectionName);
+      this.mpGroupBox12.Controls.Add(this.tbNewCollection);
+      this.mpGroupBox12.Controls.Add(this.btCollectionRemove);
+      this.mpGroupBox12.Controls.Add(this.btCollectionAdd);
+      this.mpGroupBox12.Controls.Add(this.btRemoveCollectionToMovie);
+      this.mpGroupBox12.Controls.Add(this.btAddCollectionToMovie);
+      this.mpGroupBox12.Controls.Add(this.lvMovieCollections);
+      this.mpGroupBox12.Controls.Add(this.lvAllCollection);
+      this.mpGroupBox12.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox12.Location = new System.Drawing.Point(0, 0);
+      this.mpGroupBox12.Name = "mpGroupBox12";
+      this.mpGroupBox12.Size = new System.Drawing.Size(456, 317);
+      this.mpGroupBox12.TabIndex = 1;
+      this.mpGroupBox12.TabStop = false;
+      // 
+      // gbCollectionThumb
+      // 
+      this.gbCollectionThumb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.gbCollectionThumb.Controls.Add(this.btCollectionThumbAdd);
+      this.gbCollectionThumb.Controls.Add(this.pbCollectionImage);
+      this.gbCollectionThumb.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.gbCollectionThumb.Location = new System.Drawing.Point(221, 222);
+      this.gbCollectionThumb.Name = "gbCollectionThumb";
+      this.gbCollectionThumb.Size = new System.Drawing.Size(228, 89);
+      this.gbCollectionThumb.TabIndex = 51;
+      this.gbCollectionThumb.TabStop = false;
+      this.gbCollectionThumb.Text = "Collection thumb";
+      // 
+      // btCollectionThumbAdd
+      // 
+      this.btCollectionThumbAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btCollectionThumbAdd.Location = new System.Drawing.Point(8, 60);
+      this.btCollectionThumbAdd.Name = "btCollectionThumbAdd";
+      this.btCollectionThumbAdd.Size = new System.Drawing.Size(84, 23);
+      this.btCollectionThumbAdd.TabIndex = 49;
+      this.btCollectionThumbAdd.Text = "Add";
+      this.toolTipMPvdb.SetToolTip(this.btCollectionThumbAdd, "Local image browsing.\r\n(Use local image for collection thumb).");
+      this.btCollectionThumbAdd.UseVisualStyleBackColor = true;
+      this.btCollectionThumbAdd.Click += new System.EventHandler(this.btCollectionThumbAdd_Click);
+      // 
+      // pbCollectionImage
+      // 
+      this.pbCollectionImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.pbCollectionImage.BackgroundImage = global::MediaPortal.Configuration.Properties.Resources.icon_help;
+      this.pbCollectionImage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+      this.pbCollectionImage.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+      this.pbCollectionImage.ErrorImage = null;
+      this.pbCollectionImage.InitialImage = null;
+      this.pbCollectionImage.Location = new System.Drawing.Point(150, 13);
+      this.pbCollectionImage.Name = "pbCollectionImage";
+      this.pbCollectionImage.Size = new System.Drawing.Size(72, 70);
+      this.pbCollectionImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+      this.pbCollectionImage.TabIndex = 50;
+      this.pbCollectionImage.TabStop = false;
+      // 
+      // lbCollectionName
+      // 
+      this.lbCollectionName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.lbCollectionName.Location = new System.Drawing.Point(6, 227);
+      this.lbCollectionName.Name = "lbCollectionName";
+      this.lbCollectionName.Size = new System.Drawing.Size(194, 29);
+      this.lbCollectionName.TabIndex = 45;
+      this.lbCollectionName.Text = "Enter Collection name and press Add button to define new Collection";
+      // 
+      // tbNewCollection
+      // 
+      this.tbNewCollection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.tbNewCollection.BorderColor = System.Drawing.Color.Empty;
+      this.tbNewCollection.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+      this.tbNewCollection.Location = new System.Drawing.Point(5, 263);
+      this.tbNewCollection.Name = "tbNewCollection";
+      this.tbNewCollection.Size = new System.Drawing.Size(169, 20);
+      this.tbNewCollection.TabIndex = 4;
+      this.toolTipMPvdb.SetToolTip(this.tbNewCollection, "Enter Genre name and press \"Add\" button");
+      // 
+      // btCollectionRemove
+      // 
+      this.btCollectionRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.btCollectionRemove.Location = new System.Drawing.Point(93, 290);
+      this.btCollectionRemove.Name = "btCollectionRemove";
+      this.btCollectionRemove.Size = new System.Drawing.Size(80, 22);
+      this.btCollectionRemove.TabIndex = 6;
+      this.btCollectionRemove.Text = "Remove";
+      this.toolTipMPvdb.SetToolTip(this.btCollectionRemove, "Remove selected genre(s) from Available genres list");
+      this.btCollectionRemove.UseVisualStyleBackColor = true;
+      this.btCollectionRemove.Click += new System.EventHandler(this.btCollectionRemove_Click);
+      // 
+      // btCollectionAdd
+      // 
+      this.btCollectionAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.btCollectionAdd.Location = new System.Drawing.Point(6, 290);
+      this.btCollectionAdd.Name = "btCollectionAdd";
+      this.btCollectionAdd.Size = new System.Drawing.Size(80, 22);
+      this.btCollectionAdd.TabIndex = 5;
+      this.btCollectionAdd.Text = "Add";
+      this.btCollectionAdd.UseVisualStyleBackColor = true;
+      this.btCollectionAdd.Click += new System.EventHandler(this.btCollectionAdd_Click);
+      // 
+      // btRemoveCollectionToMovie
+      // 
+      this.btRemoveCollectionToMovie.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+      this.btRemoveCollectionToMovie.Location = new System.Drawing.Point(180, 124);
+      this.btRemoveCollectionToMovie.MaximumSize = new System.Drawing.Size(36, 22);
+      this.btRemoveCollectionToMovie.MinimumSize = new System.Drawing.Size(36, 22);
+      this.btRemoveCollectionToMovie.Name = "btRemoveCollectionToMovie";
+      this.btRemoveCollectionToMovie.Size = new System.Drawing.Size(36, 22);
+      this.btRemoveCollectionToMovie.TabIndex = 2;
+      this.btRemoveCollectionToMovie.Text = "<<";
+      this.toolTipMPvdb.SetToolTip(this.btRemoveCollectionToMovie, "Remove selected Collection(s) from movie");
+      this.btRemoveCollectionToMovie.UseVisualStyleBackColor = true;
+      this.btRemoveCollectionToMovie.Click += new System.EventHandler(this.btRemoveCollectionToMovie_Click);
+      // 
+      // btAddCollectionToMovie
+      // 
+      this.btAddCollectionToMovie.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+      this.btAddCollectionToMovie.Location = new System.Drawing.Point(180, 84);
+      this.btAddCollectionToMovie.MaximumSize = new System.Drawing.Size(36, 22);
+      this.btAddCollectionToMovie.MinimumSize = new System.Drawing.Size(36, 22);
+      this.btAddCollectionToMovie.Name = "btAddCollectionToMovie";
+      this.btAddCollectionToMovie.Size = new System.Drawing.Size(36, 22);
+      this.btAddCollectionToMovie.TabIndex = 1;
+      this.btAddCollectionToMovie.Text = ">>";
+      this.toolTipMPvdb.SetToolTip(this.btAddCollectionToMovie, "Add selected Collection(s) to movie");
+      this.btAddCollectionToMovie.UseVisualStyleBackColor = true;
+      this.btAddCollectionToMovie.Click += new System.EventHandler(this.btAddCollectionToMovie_Click);
+      // 
+      // lvMovieCollections
+      // 
+      this.lvMovieCollections.AllowDrop = true;
+      this.lvMovieCollections.AllowRowReorder = true;
+      this.lvMovieCollections.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.lvMovieCollections.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.chMovieCollections});
+      this.lvMovieCollections.Location = new System.Drawing.Point(221, 12);
+      this.lvMovieCollections.Name = "lvMovieCollections";
+      this.lvMovieCollections.Size = new System.Drawing.Size(228, 204);
+      this.lvMovieCollections.Sorting = System.Windows.Forms.SortOrder.Ascending;
+      this.lvMovieCollections.TabIndex = 3;
+      this.lvMovieCollections.UseCompatibleStateImageBehavior = false;
+      this.lvMovieCollections.View = System.Windows.Forms.View.Details;
+      this.lvMovieCollections.SelectedIndexChanged += new System.EventHandler(this.lvMovieCollections_SelectedIndexChanged);
+      // 
+      // chMovieCollections
+      // 
+      this.chMovieCollections.Text = "Collections for this Movie";
+      this.chMovieCollections.Width = 229;
+      // 
+      // lvAllCollection
+      // 
+      this.lvAllCollection.AllowDrop = true;
+      this.lvAllCollection.AllowRowReorder = true;
+      this.lvAllCollection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+      this.lvAllCollection.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.chAvailCollections});
+      this.lvAllCollection.Location = new System.Drawing.Point(6, 12);
+      this.lvAllCollection.Name = "lvAllCollection";
+      this.lvAllCollection.Size = new System.Drawing.Size(168, 204);
+      this.lvAllCollection.Sorting = System.Windows.Forms.SortOrder.Ascending;
+      this.lvAllCollection.TabIndex = 0;
+      this.lvAllCollection.UseCompatibleStateImageBehavior = false;
+      this.lvAllCollection.View = System.Windows.Forms.View.Details;
+      this.lvAllCollection.SelectedIndexChanged += new System.EventHandler(this.lvCollection_SelectedIndexChanged);
+      // 
+      // chAvailCollections
+      // 
+      this.chAvailCollections.Text = "Available Collections";
+      this.chAvailCollections.Width = 228;
+      // 
+      // tabPageCollectionDesc
+      // 
+      this.tabPageCollectionDesc.Controls.Add(this.btCollectionDescSave);
+      this.tabPageCollectionDesc.Controls.Add(this.lbDescCollection);
+      this.tabPageCollectionDesc.Controls.Add(this.lbDescCollectionDesc);
+      this.tabPageCollectionDesc.Controls.Add(this.tbCollectionDescription);
+      this.tabPageCollectionDesc.Controls.Add(this.cbCollectionsMisc);
+      this.tabPageCollectionDesc.Location = new System.Drawing.Point(4, 22);
+      this.tabPageCollectionDesc.Name = "tabPageCollectionDesc";
+      this.tabPageCollectionDesc.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageCollectionDesc.Size = new System.Drawing.Size(459, 320);
+      this.tabPageCollectionDesc.TabIndex = 14;
+      this.tabPageCollectionDesc.Text = "Collection misc";
+      this.tabPageCollectionDesc.UseVisualStyleBackColor = true;
+      // 
+      // btCollectionDescSave
+      // 
+      this.btCollectionDescSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btCollectionDescSave.Location = new System.Drawing.Point(344, 290);
+      this.btCollectionDescSave.Name = "btCollectionDescSave";
+      this.btCollectionDescSave.Size = new System.Drawing.Size(109, 23);
+      this.btCollectionDescSave.TabIndex = 77;
+      this.btCollectionDescSave.Text = "Save changes";
+      this.toolTipMPvdb.SetToolTip(this.btCollectionDescSave, "Local image browsing.\r\n(Use local image for group thumb).");
+      this.btCollectionDescSave.UseVisualStyleBackColor = true;
+      this.btCollectionDescSave.Click += new System.EventHandler(this.btCollectionDescSave_Click);
+      // 
+      // lbDescCollection
+      // 
+      this.lbDescCollection.AutoSize = true;
+      this.lbDescCollection.Location = new System.Drawing.Point(6, 10);
+      this.lbDescCollection.Name = "lbDescCollection";
+      this.lbDescCollection.Size = new System.Drawing.Size(56, 13);
+      this.lbDescCollection.TabIndex = 74;
+      this.lbDescCollection.Text = "Collection:";
+      // 
+      // lbDescCollectionDesc
+      // 
+      this.lbDescCollectionDesc.AutoSize = true;
+      this.lbDescCollectionDesc.Location = new System.Drawing.Point(6, 42);
+      this.lbDescCollectionDesc.Name = "lbDescCollectionDesc";
+      this.lbDescCollectionDesc.Size = new System.Drawing.Size(110, 13);
+      this.lbDescCollectionDesc.TabIndex = 76;
+      this.lbDescCollectionDesc.Text = "Collection description:";
+      // 
+      // tbCollectionDescription
+      // 
+      this.tbCollectionDescription.AcceptsReturn = true;
+      this.tbCollectionDescription.AcceptsTab = true;
+      this.tbCollectionDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbCollectionDescription.BorderColor = System.Drawing.Color.Empty;
+      this.tbCollectionDescription.Location = new System.Drawing.Point(6, 66);
+      this.tbCollectionDescription.Multiline = true;
+      this.tbCollectionDescription.Name = "tbCollectionDescription";
+      this.tbCollectionDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+      this.tbCollectionDescription.Size = new System.Drawing.Size(447, 218);
+      this.tbCollectionDescription.TabIndex = 75;
+      this.toolTipMPvdb.SetToolTip(this.tbCollectionDescription, "Add optional collection description which will be visible \r\non collection select " +
+        "in movie plot area in GUI.\r\n");
+      // 
+      // cbCollectionsMisc
+      // 
+      this.cbCollectionsMisc.BorderColor = System.Drawing.Color.Empty;
+      this.cbCollectionsMisc.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbCollectionsMisc.Location = new System.Drawing.Point(74, 7);
+      this.cbCollectionsMisc.Name = "cbCollectionsMisc";
+      this.cbCollectionsMisc.Size = new System.Drawing.Size(246, 21);
+      this.cbCollectionsMisc.TabIndex = 73;
+      this.cbCollectionsMisc.SelectedIndexChanged += new System.EventHandler(this.cbCollections_SelectedIndexChanged);
       // 
       // tabPageUserGroups
       // 
@@ -2562,6 +2964,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox7.Controls.Add(this.tbCoverSearchStr);
       this.groupBox7.Controls.Add(this.pbSearchCover);
       this.groupBox7.Controls.Add(this.btnRefreshAllImg);
+      this.groupBox7.Controls.Add(this.btnRefreshMissingCovers);
       this.groupBox7.Controls.Add(this.mpLabel1);
       this.groupBox7.Controls.Add(this.chbIMDBCoverSource);
       this.groupBox7.Controls.Add(this.chbImpAwCoverSource);
@@ -3370,14 +3773,14 @@ namespace MediaPortal.Configuration.Sections
       this.dgShares.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
       this.dgShares.BackgroundColor = System.Drawing.SystemColors.Window;
       this.dgShares.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-      dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-      dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dgShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+      dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      dataGridViewCellStyle16.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+      dataGridViewCellStyle16.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle16.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle16.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dgShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle16;
       this.dgShares.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dgShares.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.shareName,
@@ -3396,8 +3799,8 @@ namespace MediaPortal.Configuration.Sections
       // shareName
       // 
       this.shareName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-      dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      this.shareName.DefaultCellStyle = dataGridViewCellStyle5;
+      dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      this.shareName.DefaultCellStyle = dataGridViewCellStyle17;
       this.shareName.HeaderText = "Name";
       this.shareName.Name = "shareName";
       this.shareName.ReadOnly = true;
@@ -3406,8 +3809,8 @@ namespace MediaPortal.Configuration.Sections
       // sharePath
       // 
       this.sharePath.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-      dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      this.sharePath.DefaultCellStyle = dataGridViewCellStyle6;
+      dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      this.sharePath.DefaultCellStyle = dataGridViewCellStyle18;
       this.sharePath.HeaderText = "Folder";
       this.sharePath.MinimumWidth = 50;
       this.sharePath.Name = "sharePath";
@@ -3848,6 +4251,9 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageReview.ResumeLayout(false);
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();
+      this.tabPageAdditional.ResumeLayout(false);
+      this.mpGroupBox13.ResumeLayout(false);
+      this.mpGroupBox13.PerformLayout();
       this.tabPageFiles.ResumeLayout(false);
       this.groupBox6.ResumeLayout(false);
       this.tabPageActors.ResumeLayout(false);
@@ -3867,6 +4273,13 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.PerformLayout();
       this.mpGroupBox10.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.pbGenreImage)).EndInit();
+      this.tabPageCollection.ResumeLayout(false);
+      this.mpGroupBox12.ResumeLayout(false);
+      this.mpGroupBox12.PerformLayout();
+      this.gbCollectionThumb.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.pbCollectionImage)).EndInit();
+      this.tabPageCollectionDesc.ResumeLayout(false);
+      this.tabPageCollectionDesc.PerformLayout();
       this.tabPageUserGroups.ResumeLayout(false);
       this.mpGroupBox8.ResumeLayout(false);
       this.mpGroupBox8.PerformLayout();
@@ -3920,6 +4333,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageTitle;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageGenres;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageActors;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageAdditional;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageFiles;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageCoverArt;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
@@ -4080,6 +4494,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.DataGridViewTextBoxColumn Role;
     private System.Windows.Forms.DataGridViewTextBoxColumn IMDBID;
     private MediaPortal.UserInterface.Controls.MPButton btnRefreshAllImg;
+    private MediaPortal.UserInterface.Controls.MPButton btnRefreshMissingCovers;
     private MediaPortal.UserInterface.Controls.MPProgressBar pbSearchCover;
     private System.Windows.Forms.TabPage tabPageTools;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox5;
@@ -4196,5 +4611,33 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPLabel mpLabel43;
     private UserInterface.Controls.MPButton btSaveUserGroupMisc;
     private UserInterface.Controls.MPCheckBox chbDoNotUseDatabase;
+    private UserInterface.Controls.MPLabel labelUserRating;
+    private UserInterface.Controls.MPTextBox tbUserRating;
+    private System.Windows.Forms.TabPage tabPageCollection;
+    private UserInterface.Controls.MPGroupBox mpGroupBox12;
+    private UserInterface.Controls.MPGroupBox gbCollectionThumb;
+    private UserInterface.Controls.MPButton btCollectionThumbAdd;
+    private System.Windows.Forms.PictureBox pbCollectionImage;
+    private UserInterface.Controls.MPLabel lbCollectionName;
+    private UserInterface.Controls.MPTextBox tbNewCollection;
+    private UserInterface.Controls.MPButton btCollectionRemove;
+    private UserInterface.Controls.MPButton btCollectionAdd;
+    private UserInterface.Controls.MPButton btRemoveCollectionToMovie;
+    private UserInterface.Controls.MPButton btAddCollectionToMovie;
+    private UserInterface.Controls.MPListView lvMovieCollections;
+    private System.Windows.Forms.ColumnHeader chMovieCollections;
+    private UserInterface.Controls.MPListView lvAllCollection;
+    private System.Windows.Forms.ColumnHeader chAvailCollections;
+    private System.Windows.Forms.TabPage tabPageCollectionDesc;
+    private UserInterface.Controls.MPButton btCollectionDescSave;
+    private UserInterface.Controls.MPLabel lbDescCollection;
+    private UserInterface.Controls.MPLabel lbDescCollectionDesc;
+    private UserInterface.Controls.MPTextBox tbCollectionDescription;
+    private UserInterface.Controls.MPComboBox cbCollectionsMisc;
+    private UserInterface.Controls.MPGroupBox mpGroupBox13;
+    private UserInterface.Controls.MPTextBox tbMPAARatingText;
+    private UserInterface.Controls.MPLabel mpLabel34;
+    private UserInterface.Controls.MPTextBox tbAwards;
+    private UserInterface.Controls.MPLabel mpLabel44;
   }
 }

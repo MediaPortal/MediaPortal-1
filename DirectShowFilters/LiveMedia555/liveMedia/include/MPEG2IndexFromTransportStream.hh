@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // A filter that produces a sequence of I-frame indices from a MPEG-2 Transport Stream
 // C++ header
 
@@ -73,6 +73,8 @@ private:
   void addToTail(IndexRecord* newIndexRecord);
 
 private:
+  Boolean fIsH264; // True iff the video is H.264 (encapsulated in a Transport Stream)
+  Boolean fIsH265; // True iff the video is H.265 (encapsulated in a Transport Stream)
   unsigned long fInputTransportPacketCounter;
   unsigned fClosureNumber;
   u_int8_t fLastContinuityCounter;

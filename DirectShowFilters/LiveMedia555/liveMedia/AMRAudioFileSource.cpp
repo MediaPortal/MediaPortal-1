@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,8 +14,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
-// A source object for AMR audio files (as defined in RFC 3267, section 5)
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
+// A source object for AMR audio files (as defined in RFC 4867, section 5)
 // Implementation
 
 #include "AMRAudioFileSource.hh"
@@ -98,13 +98,13 @@ AMRAudioFileSource::~AMRAudioFileSource() {
 // The mapping from the "FT" field to frame size.
 // Values of 65535 are invalid.
 #define FT_INVALID 65535
-static unsigned short frameSize[16] = {
+static unsigned short const frameSize[16] = {
   12, 13, 15, 17,
   19, 20, 26, 31,
   5, FT_INVALID, FT_INVALID, FT_INVALID,
   FT_INVALID, FT_INVALID, FT_INVALID, 0
 };
-static unsigned short frameSizeWideband[16] = {
+static unsigned short const frameSizeWideband[16] = {
   17, 23, 32, 36,
   40, 46, 50, 58,
   60, 5, FT_INVALID, FT_INVALID,
@@ -115,14 +115,14 @@ static unsigned short frameSizeWideband[16] = {
 // as we now do with ByteStreamFileSource. #####
 void AMRAudioFileSource::doGetNextFrame() {
   if (feof(fFid) || ferror(fFid)) {
-    handleClosure(this);
+    handleClosure();
     return;
   }
 
   // Begin by reading the 1-byte frame header (and checking it for validity)
   while (1) {
     if (fread(&fLastFrameHeader, 1, 1, fFid) < 1) {
-      handleClosure(this);
+      handleClosure();
       return;
     }
     if ((fLastFrameHeader&0x83) != 0) {

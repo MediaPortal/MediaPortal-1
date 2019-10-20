@@ -209,13 +209,13 @@ The PC will then act as a dedicated TV-Server and provide other PC's in your LAN
     <value>SQL server is already present and will be used for TV-Server</value>
   </data>
   <data name="Finished_labelHeading1" xml:space="preserve">
-    <value>Congratulations !</value>
+    <value>Congratulations!</value>
   </data>
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>You successfully completed the setup of MediaPortal</value>
   </data>
   <data name="Finished_labelHeading3_install" xml:space="preserve">
-    <value>Below you can find some useful links that will help you getting started with MediaPortal</value>
+    <value>Below you can find some useful links that will help you getting started with MediaPortal.</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">
     <value>MediaPortal Forum</value>
@@ -377,7 +377,7 @@ The PC will then act as a dedicated TV-Server and provide other PC's in your LAN
     <value>Please select your language before you continue</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
-    <value>MediaPortal is FREE - if you bought it on ebay you have been fooled!</value>
+    <value>MediaPortal is completely FREE - you don't need to pay any money for it!</value>
   </data>
   <data name="Install_actionConfigure" xml:space="preserve">
     <value>Configure</value>

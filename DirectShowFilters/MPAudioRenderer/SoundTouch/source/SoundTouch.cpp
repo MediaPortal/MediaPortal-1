@@ -41,10 +41,10 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2012-06-13 22:29:53 +0300 (Wed, 13 Jun 2012) $
+// Last changed  : $Date: 2014-04-06 18:57:21 +0300 (su, 06 huhti 2014) $
 // File revision : $Revision: 4 $
 //
-// $Id: SoundTouch.cpp 143 2012-06-13 19:29:53Z oparviai $
+// $Id: SoundTouch.cpp 195 2014-04-06 15:57:21Z oparviai $
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -97,7 +97,7 @@ SoundTouch::SoundTouch()
 {
     // Initialize rate transposer and tempo changer instances
 
-    pRateTransposer = RateTransposer::newInstance();
+    pRateTransposer = new RateTransposer();
     pTDStretch = TDStretch::newInstance();
 
     setOutPipe(pTDStretch);
@@ -111,7 +111,7 @@ SoundTouch::SoundTouch()
     calcEffectiveRateAndTempo();
 
     channels = 0;
-    bSrateSet = FALSE;
+    bSrateSet = false;
 }
 
 
@@ -143,10 +143,11 @@ uint SoundTouch::getVersionId()
 // Sets the number of channels, 1 = mono, 2 = stereo
 void SoundTouch::setChannels(uint numChannels)
 {
-    if (numChannels != 1 && numChannels != 2) 
+    /*if (numChannels != 1 && numChannels != 2) 
     {
-        ST_THROW_RT_ERROR("Illegal number of channels");
-    }
+        //ST_THROW_RT_ERROR("Illegal number of channels");
+		return;
+    }*/
     channels = numChannels;
     pRateTransposer->setChannels((int)numChannels);
     pTDStretch->setChannels((int)numChannels);
@@ -254,7 +255,7 @@ void SoundTouch::calcEffectiveRateAndTempo()
             tempoOut = pTDStretch->getOutput();
             tempoOut->moveSamples(*output);
             // move samples in pitch transposer's store buffer to tempo changer's input
-            pTDStretch->moveSamples(*pRateTransposer->getStore());
+            // deprecated : pTDStretch->moveSamples(*pRateTransposer->getStore());
 
             output = pTDStretch;
         }
@@ -282,7 +283,7 @@ void SoundTouch::calcEffectiveRateAndTempo()
 // Sets sample rate.
 void SoundTouch::setSampleRate(uint srate)
 {
-    bSrateSet = TRUE;
+    bSrateSet = true;
     // set sample rate, leave other tempo changer parameters as they are.
     pTDStretch->setParameters((int)srate);
 }
@@ -292,7 +293,7 @@ void SoundTouch::setSampleRate(uint srate)
 // the input of the object.
 void SoundTouch::putSamples(const SAMPLETYPE *samples, uint nSamples)
 {
-    if (bSrateSet == FALSE) 
+    if (bSrateSet == false) 
     {
         ST_THROW_RT_ERROR("SoundTouch : Sample rate not defined");
     } 
@@ -347,7 +348,7 @@ void SoundTouch::flush()
     int i;
     int nUnprocessed;
     int nOut;
-    SAMPLETYPE buff[64*2];   // note: allocate 2*64 to cater 64 sample frames of stereo sound
+    SAMPLETYPE *buff=(SAMPLETYPE*)alloca(64*channels*sizeof(SAMPLETYPE));
 
     // check how many samples still await processing, and scale
     // that by tempo & rate to get expected output sample count
@@ -412,7 +413,7 @@ uint SoundTouch::flushEx()
 
 // Changes a setting controlling the processing system behaviour. See the
 // 'SETTING_...' defines for available setting ID's.
-BOOL SoundTouch::setSetting(int settingId, int value)
+bool SoundTouch::setSetting(int settingId, int value)
 {
     int sampleRate, sequenceMs, seekWindowMs, overlapMs;
 
@@ -423,36 +424,36 @@ BOOL SoundTouch::setSetting(int settingId, int value)
     {
         case SETTING_USE_AA_FILTER :
             // enables / disabless anti-alias filter
-            pRateTransposer->enableAAFilter((value != 0) ? TRUE : FALSE);
-            return TRUE;
+            pRateTransposer->enableAAFilter((value != 0) ? true : false);
+            return true;
 
         case SETTING_AA_FILTER_LENGTH :
             // sets anti-alias filter length
             pRateTransposer->getAAFilter()->setLength(value);
-            return TRUE;
+            return true;
 
         case SETTING_USE_QUICKSEEK :
             // enables / disables tempo routine quick seeking algorithm
-            pTDStretch->enableQuickSeek((value != 0) ? TRUE : FALSE);
-            return TRUE;
+            pTDStretch->enableQuickSeek((value != 0) ? true : false);
+            return true;
 
         case SETTING_SEQUENCE_MS:
             // change time-stretch sequence duration parameter
             pTDStretch->setParameters(sampleRate, value, seekWindowMs, overlapMs);
-            return TRUE;
+            return true;
 
         case SETTING_SEEKWINDOW_MS:
             // change time-stretch seek window length parameter
             pTDStretch->setParameters(sampleRate, sequenceMs, value, overlapMs);
-            return TRUE;
+            return true;
 
         case SETTING_OVERLAP_MS:
             // change time-stretch overlap length parameter
             pTDStretch->setParameters(sampleRate, sequenceMs, seekWindowMs, value);
-            return TRUE;
+            return true;
 
         default :
-            return FALSE;
+            return false;
     }
 }
 

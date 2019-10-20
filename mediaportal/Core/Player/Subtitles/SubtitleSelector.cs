@@ -129,15 +129,8 @@ namespace MediaPortal.Player.Subtitles
                             TeletextSubtitleDecoder subDecoder)
     {
       Log.Debug("SubtitleSelector ctor");
-      if (subRender == null)
-      {
-        throw new Exception("Nullpointer input not allowed ( SubtitleRenderer)");
-      }
-      else
-      {
-        this.dvbStreams = dvbStreams;
-        this.subRender = subRender;
-      }
+      this.dvbStreams = dvbStreams;
+      this.subRender = subRender;
 
       // load preferences
       using (Settings reader = new MPSettings())
@@ -275,7 +268,11 @@ namespace MediaPortal.Player.Subtitles
             currentOption.type = SubtitleType.None;
           }
 
-          subRender.SetSubtitleOption(currentOption);
+          if (subRender != null)
+          {
+            subRender.SetSubtitleOption(currentOption);
+          }
+
           if (currentOption.type == SubtitleType.Bitmap)
           {
             selected_bitmap_index = currentOption.bitmapIndex;
@@ -310,7 +307,11 @@ namespace MediaPortal.Player.Subtitles
               currentOption.language = "None";
             }
 
-            subRender.SetSubtitleOption(currentOption);
+            if (subRender != null)
+            {
+              subRender.SetSubtitleOption(currentOption);
+            }
+
             // we cannot update the bitmap sub stream here
           }
         }
@@ -436,7 +437,11 @@ namespace MediaPortal.Player.Subtitles
         {
           option.type = SubtitleType.None;
           currentOption.language = "None";
-          subRender.SetSubtitleOption(option);
+
+          if (subRender != null)
+          {
+            subRender.SetSubtitleOption(option);
+          }
         }
       }
 
@@ -445,7 +450,11 @@ namespace MediaPortal.Player.Subtitles
         dvbStreams.SetSubtitleStream(option.bitmapIndex);
       }
       Log.Debug("Subtitle is now " + currentOption.ToString());
-      subRender.SetSubtitleOption(option);
+
+      if (subRender != null)
+      {
+        subRender.SetSubtitleOption(option);
+      } 
     }
 
     public string GetLanguage(int option)

@@ -45,6 +45,7 @@ void PidInfo::Clear()
 {
 	vid   = 0;
 	h264  = 0;
+	hevc  = 0;
 	mpeg4 = 0;
 	aud   = 0;
 	aud2  = 0;
@@ -82,6 +83,7 @@ void PidInfo::CopyFrom(PidInfo *pidInfo)
 {
 	vid   = pidInfo->vid;
 	h264  = pidInfo->h264;
+	hevc  = pidInfo->hevc;
 	mpeg4 = pidInfo->mpeg4;
 	aud   = pidInfo->aud;
 	aud2  = pidInfo->aud2;
@@ -120,6 +122,7 @@ void PidInfo::CopyTo(PidInfo *pidInfo)
 {
 	pidInfo->vid = vid;
 	pidInfo->h264 = h264;
+	pidInfo->hevc = hevc;
 	pidInfo->mpeg4 = mpeg4;
 	pidInfo->aud = aud;
 	pidInfo->aud2 = aud2;

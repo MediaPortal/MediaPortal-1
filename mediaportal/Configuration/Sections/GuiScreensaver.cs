@@ -35,7 +35,7 @@ namespace MediaPortal.Configuration.Sections
 {
   public partial class GuiScreensaver : SectionSettings
   {
-    #region ctor    
+    #region ctor
 
     private BindingList<ItemTag> loadedPlugins = new BindingList<ItemTag>();
     public GuiScreensaver()
@@ -84,7 +84,8 @@ namespace MediaPortal.Configuration.Sections
         radioBtnBlankScreen.Checked = xmlreader.GetValueAsBool("general", "IdleBlanking", true);
         radioButtonLoadPlugin.Checked = xmlreader.GetValueAsBool("general", "IdlePlugin", false);
         windowid = xmlreader.GetValueAsInt("general", "IdlePluginWindow", 0);
-      }    
+      }
+      radioBtnFPSReduce.Checked = !radioBtnBlankScreen.Checked && !radioButtonLoadPlugin.Checked;
       pluginsComboBox.DataSource = loadedPlugins;
       pluginsComboBox.DisplayMember = "PluginName";
       pluginsComboBox.ValueMember = "PluginName";
@@ -118,21 +119,11 @@ namespace MediaPortal.Configuration.Sections
     }
     public override void OnSectionDeActivated()
     {
-      using (Settings xmlreader = new MPSettings())
-      {
-        xmlreader.SetValueAsBool("general", "IdleTimer", checkBoxEnableScreensaver.Checked);
-        xmlreader.SetValue("general", "IdleTimeValue", numericUpDownDelay.Value);
-        xmlreader.SetValueAsBool("general", "IdleBlanking", radioBtnBlankScreen.Checked);
-        xmlreader.SetValueAsBool("general", "IdlePlugin", radioButtonLoadPlugin.Checked);
-        if (loadedPlugins.Count > 0 & pluginsComboBox.SelectedIndex > -1)
-        {
-          xmlreader.SetValue("general", "IdlePluginWindow", loadedPlugins[pluginsComboBox.SelectedIndex].WindowId);
-        }
-      }
+      SaveSettings();
       base.OnSectionDeActivated();
     }
 
-    #endregion   
+    #endregion
 
     private void checkBoxEnableScreensaver_CheckedChanged(object sender, System.EventArgs e)
     {

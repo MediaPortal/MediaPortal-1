@@ -1,154 +1,165 @@
-﻿<satellites>
-  <satellite name="3.1°E Eutelsat 3A,3C, Rascom QAF 1R" url="http://install.team-mediaportal.com/tvsetup/DVBS/0031.ini"/>
+<satellites>
+  <satellite name="3.0°E Eutelsat 3B, Rascom QAF 1R" url="http://install.team-mediaportal.com/tvsetup/DVBS/0030.ini"/>
   <satellite name="4.9°E Astra 4A, SES 5" url="http://install.team-mediaportal.com/tvsetup/DVBS/0049.ini"/>
-  <satellite name="7.0°E Eutelsat 7A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0070.ini"/>
-  <satellite name="9.0°E Eutelsat 9A, Ka-Sat 9A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0090.ini"/>
+  <satellite name="7.0°E Eutelsat 7A,7B" url="http://install.team-mediaportal.com/tvsetup/DVBS/0070.ini"/>
+  <satellite name="9.0°E Eutelsat 9B, Ka-Sat 9A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0090.ini"/>
   <satellite name="10.0°E Eutelsat 10A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0100.ini"/>
-  <satellite name="13.0°E Eutelsat Hot Bird 13A,13B,13C" url="http://install.team-mediaportal.com/tvsetup/DVBS/0130.ini"/>
+  <satellite name="13.0°E Eutelsat Hot Bird 13B,13C,13E" url="http://install.team-mediaportal.com/tvsetup/DVBS/0130.ini"/>
   <satellite name="16.0°E Eutelsat 16A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0160.ini"/>
-  <satellite name="17.0°E Amos 5" url="http://install.team-mediaportal.com/tvsetup/DVBS/0170.ini"/>
-  <satellite name="19.2°E Astra 1KR,1L,1M,2C" url="http://install.team-mediaportal.com/tvsetup/DVBS/0192.ini"/>
+  <satellite name="19.2°E Astra 1KR,1L,1M,1N" url="http://install.team-mediaportal.com/tvsetup/DVBS/0192.ini"/>
   <satellite name="20.0°E Arabsat 5C" url="http://install.team-mediaportal.com/tvsetup/DVBS/0200.ini"/>
   <satellite name="21.5°E Eutelsat 21B" url="http://install.team-mediaportal.com/tvsetup/DVBS/0215.ini"/>
-  <satellite name="23.3°E Astra 1D,3B" url="http://install.team-mediaportal.com/tvsetup/DVBS/0233.ini"/>
-  <satellite name="25.5°E Eutelsat 25A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0255.ini"/>
-  <satellite name="26.0°E Badr 4,5,6" url="http://install.team-mediaportal.com/tvsetup/DVBS/0260.ini"/>
-  <satellite name="28.2°E Eutelsat 28A, Astra 1N,2A,2B,2F" url="http://install.team-mediaportal.com/tvsetup/DVBS/0282.ini"/>
+  <satellite name="23.5°E Astra 3B" url="http://install.team-mediaportal.com/tvsetup/DVBS/0235.ini"/>
+  <satellite name="25.5°E Eutelsat 25B,Es'hail 1" url="http://install.team-mediaportal.com/tvsetup/DVBS/0255.ini"/>
+  <satellite name="26.0°E Badr 4,5,6,7" url="http://install.team-mediaportal.com/tvsetup/DVBS/0260.ini"/>
+  <satellite name="28.2°E Astra 2E,2F,2G" url="http://install.team-mediaportal.com/tvsetup/DVBS/0282.ini"/>
   <satellite name="30.5°E Arabsat 5A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0305.ini"/>
-  <satellite name="31.5°E Astra 1G" url="http://install.team-mediaportal.com/tvsetup/DVBS/0315.ini"/>
-  <satellite name="33.0°E Eutelsat 33A, Intelsat 28" url="http://install.team-mediaportal.com/tvsetup/DVBS/0330.ini"/>
-  <satellite name="34.0°E Arabsat 2B" url="http://install.team-mediaportal.com/tvsetup/DVBS/0340.ini"/>
-  <satellite name="36.0°E Eutelsat 36A,36B" url="http://install.team-mediaportal.com/tvsetup/DVBS/0360.ini"/>
+  <satellite name="30.8°E Eutelsat 31A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0308.ini"/>
+  <satellite name="31.5°E Astra 5B" url="http://install.team-mediaportal.com/tvsetup/DVBS/0315.ini"/>
+  <satellite name="33.0°E Eutelsat 33C, Intelsat 28" url="http://install.team-mediaportal.com/tvsetup/DVBS/0330.ini"/>
+  <satellite name="36.0°E Eutelsat 36B, Express AMU1" url="http://install.team-mediaportal.com/tvsetup/DVBS/0360.ini"/>
   <satellite name="38.0°E Paksat 1R" url="http://install.team-mediaportal.com/tvsetup/DVBS/0380.ini"/>
   <satellite name="39.0°E Hellas Sat 2" url="http://install.team-mediaportal.com/tvsetup/DVBS/0390.ini"/>
-  <satellite name="42.0°E Türksat 2A,3A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0420.ini"/>
+  <satellite name="40.0°E Express AM7" url="http://install.team-mediaportal.com/tvsetup/DVBS/0400.ini"/>
+  <satellite name="42.0°E Türksat 3A,4A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0420.ini"/>
   <satellite name="45.0°E Intelsat 12" url="http://install.team-mediaportal.com/tvsetup/DVBS/0450.ini"/>
+  <satellite name="46.0°E AzerSpace 1,Africasat 1a" url="http://install.team-mediaportal.com/tvsetup/DVBS/0460.ini"/>
+  <satellite name="47.5°E Intelsat 10" url="http://install.team-mediaportal.com/tvsetup/DVBS/0475.ini"/>
+  <satellite name="48.0°E Afghansat 1" url="http://install.team-mediaportal.com/tvsetup/DVBS/0480.ini"/>
   <satellite name="49.0°E Yamal 202" url="http://install.team-mediaportal.com/tvsetup/DVBS/0490.ini"/>
-  <satellite name="50.0°E Intelsat 26" url="http://install.team-mediaportal.com/tvsetup/DVBS/0500.ini"/>
+  <satellite name="50.0°E Türksat 4B" url="http://install.team-mediaportal.com/tvsetup/DVBS/0500.ini"/>
   <satellite name="50.5°E NSS 5" url="http://install.team-mediaportal.com/tvsetup/DVBS/0505.ini"/>
-  <satellite name="52.5°E Yahsat 1A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0525.ini"/>
-  <satellite name="53.0°E Express AM22" url="http://install.team-mediaportal.com/tvsetup/DVBS/0530.ini"/>
-  <satellite name="55.0°E Astra 1F, Insat 3E, G-Sat 8" url="http://install.team-mediaportal.com/tvsetup/DVBS/0550.ini"/>
-  <satellite name="56.0°E Bonum 1" url="http://install.team-mediaportal.com/tvsetup/DVBS/0560.ini"/>
+  <satellite name="51.5°E Belintersat 1" url="http://install.team-mediaportal.com/tvsetup/DVBS/0515.ini"/>
+  <satellite name="52.0°E TurkmenÄlem,MonacoSat" url="http://install.team-mediaportal.com/tvsetup/DVBS/0520.ini"/>
+  <satellite name="52.5°E Y1A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0525.ini"/>
+  <satellite name="53.0°E Express AM6" url="http://install.team-mediaportal.com/tvsetup/DVBS/0530.ini"/>
+  <satellite name="54.9°E G-Sat 8, Yamal 402" url="http://install.team-mediaportal.com/tvsetup/DVBS/0549.ini"/>
+  <satellite name="56.0°E Express AT1" url="http://install.team-mediaportal.com/tvsetup/DVBS/0560.ini"/>
   <satellite name="57.0°E NSS 12" url="http://install.team-mediaportal.com/tvsetup/DVBS/0570.ini"/>
-  <satellite name="60.0°E Intelsat 904" url="http://install.team-mediaportal.com/tvsetup/DVBS/0600.ini"/>
+  <satellite name="58.5°E KazSat 3" url="http://install.team-mediaportal.com/tvsetup/DVBS/0585.ini"/>
+  <satellite name="60.0°E Intelsat 33e" url="http://install.team-mediaportal.com/tvsetup/DVBS/0600.ini"/>
   <satellite name="62.0°E Intelsat 902" url="http://install.team-mediaportal.com/tvsetup/DVBS/0620.ini"/>
   <satellite name="64.2°E Intelsat 906" url="http://install.team-mediaportal.com/tvsetup/DVBS/0642.ini"/>
+  <satellite name="65.0°E Amos 4" url="http://install.team-mediaportal.com/tvsetup/DVBS/0650.ini"/>
   <satellite name="66.0°E Intelsat 17" url="http://install.team-mediaportal.com/tvsetup/DVBS/0660.ini"/>
   <satellite name="68.5°E Intelsat 20" url="http://install.team-mediaportal.com/tvsetup/DVBS/0685.ini"/>
-  <satellite name="70.5°E Eutelsat 70A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0705.ini"/>
+  <satellite name="70.5°E Eutelsat 70B" url="http://install.team-mediaportal.com/tvsetup/DVBS/0705.ini"/>
   <satellite name="72.1°E Intelsat 22" url="http://install.team-mediaportal.com/tvsetup/DVBS/0721.ini"/>
-  <satellite name="74.0°E Insat 3C,4CR" url="http://install.team-mediaportal.com/tvsetup/DVBS/0740.ini"/>
-  <satellite name="75.0°E ABS 1" url="http://install.team-mediaportal.com/tvsetup/DVBS/0750.ini"/>
+  <satellite name="75.0°E ABS 2" url="http://install.team-mediaportal.com/tvsetup/DVBS/0750.ini"/>
   <satellite name="76.5°E Apstar 7" url="http://install.team-mediaportal.com/tvsetup/DVBS/0765.ini"/>
-  <satellite name="78.5°E Thaicom 5" url="http://install.team-mediaportal.com/tvsetup/DVBS/0785.ini"/>
-  <satellite name="80.0°E Express AM2,MD1" url="http://install.team-mediaportal.com/tvsetup/DVBS/0800.ini"/>
-  <satellite name="83.0°E Insat 4A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0830.ini"/>
+  <satellite name="78.5°E Thaicom 5,6,8" url="http://install.team-mediaportal.com/tvsetup/DVBS/0785.ini"/>
+  <satellite name="83.0°E Insat 4A, G-Sat 10" url="http://install.team-mediaportal.com/tvsetup/DVBS/0830.ini"/>
   <satellite name="85.0°E Horizons 2, Intelsat 15" url="http://install.team-mediaportal.com/tvsetup/DVBS/0850.ini"/>
   <satellite name="86.5°E KazSat 2" url="http://install.team-mediaportal.com/tvsetup/DVBS/0865.ini"/>
-  <satellite name="87.5°E ChinaSat 5A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0875.ini"/>
+  <satellite name="87.5°E ChinaSat 12" url="http://install.team-mediaportal.com/tvsetup/DVBS/0875.ini"/>
   <satellite name="88.0°E ST 2" url="http://install.team-mediaportal.com/tvsetup/DVBS/0880.ini"/>
-  <satellite name="90.0°E Yamal 201" url="http://install.team-mediaportal.com/tvsetup/DVBS/0900.ini"/>
-  <satellite name="91.5°E Measat 3,3a" url="http://install.team-mediaportal.com/tvsetup/DVBS/0915.ini"/>
+  <satellite name="90.0°E Yamal 401" url="http://install.team-mediaportal.com/tvsetup/DVBS/0900.ini"/>
+  <satellite name="91.5°E Measat 3,3a,3b" url="http://install.team-mediaportal.com/tvsetup/DVBS/0915.ini"/>
   <satellite name="92.2°E ChinaSat 9" url="http://install.team-mediaportal.com/tvsetup/DVBS/0922.ini"/>
-  <satellite name="93.5°E Insat 3A,4B" url="http://install.team-mediaportal.com/tvsetup/DVBS/0935.ini"/>
-  <satellite name="95.0°E NSS 6" url="http://install.team-mediaportal.com/tvsetup/DVBS/0950.ini"/>
+  <satellite name="93.5°E Insat 4B, G-Sat 15" url="http://install.team-mediaportal.com/tvsetup/DVBS/0935.ini"/>
+  <satellite name="95.0°E NSS 6, SES 8" url="http://install.team-mediaportal.com/tvsetup/DVBS/0950.ini"/>
   <satellite name="96.5°E Express AM33" url="http://install.team-mediaportal.com/tvsetup/DVBS/0965.ini"/>
+  <satellite name="98.0°E ChinaSat 11" url="http://install.team-mediaportal.com/tvsetup/DVBS/0980.ini"/>
   <satellite name="100.5°E AsiaSat 5" url="http://install.team-mediaportal.com/tvsetup/DVBS/1005.ini"/>
-  <satellite name="103.0°E Express A2" url="http://install.team-mediaportal.com/tvsetup/DVBS/1030.ini"/>
-  <satellite name="105.5°E AsiaSat 3S" url="http://install.team-mediaportal.com/tvsetup/DVBS/1055.ini"/>
-  <satellite name="108.2°E Telkom 1, NSS 11, SES 7" url="http://install.team-mediaportal.com/tvsetup/DVBS/1082.ini"/>
-  <satellite name="110.0°E N-Sat 110, BSAT 2C,3A, BSAT 3C,JCSAT 110R" url="http://install.team-mediaportal.com/tvsetup/DVBS/1100.ini"/>
+  <satellite name="103.0°E Express AM3" url="http://install.team-mediaportal.com/tvsetup/DVBS/1030.ini"/>
+  <satellite name="105.5°E AsiaSat 7" url="http://install.team-mediaportal.com/tvsetup/DVBS/1055.ini"/>
+  <satellite name="108.2°E Telkom 1, NSS 11, SES 7,9" url="http://install.team-mediaportal.com/tvsetup/DVBS/1082.ini"/>
+  <satellite name="110.0°E N-Sat 110, BSAT 3A, BSAT 3C,JCSAT 110R" url="http://install.team-mediaportal.com/tvsetup/DVBS/1100.ini"/>
   <satellite name="110.5°E ChinaSat 10" url="http://install.team-mediaportal.com/tvsetup/DVBS/1105.ini"/>
   <satellite name="113.0°E Koreasat 5, Palapa D" url="http://install.team-mediaportal.com/tvsetup/DVBS/1130.ini"/>
   <satellite name="115.5°E ChinaSat 6B" url="http://install.team-mediaportal.com/tvsetup/DVBS/1155.ini"/>
   <satellite name="116.0°E ABS 7, Koreasat 6" url="http://install.team-mediaportal.com/tvsetup/DVBS/1160.ini"/>
-  <satellite name="118.0°E Telkom 2" url="http://install.team-mediaportal.com/tvsetup/DVBS/1180.ini"/>
+  <satellite name="119.5°E Thaicom 4" url="http://install.team-mediaportal.com/tvsetup/DVBS/1195.ini"/>
+  <satellite name="120.0°E AsiaSat 6,Thaicom 7" url="http://install.team-mediaportal.com/tvsetup/DVBS/1200.ini"/>
   <satellite name="122.2°E AsiaSat 4" url="http://install.team-mediaportal.com/tvsetup/DVBS/1222.ini"/>
-  <satellite name="124.0°E JCSAT 4A" url="http://install.team-mediaportal.com/tvsetup/DVBS/1240.ini"/>
+  <satellite name="124.0°E JCSAT 4B" url="http://install.team-mediaportal.com/tvsetup/DVBS/1240.ini"/>
   <satellite name="125.0°E ChinaSat 6A" url="http://install.team-mediaportal.com/tvsetup/DVBS/1250.ini"/>
   <satellite name="128.0°E JCSAT 3A" url="http://install.team-mediaportal.com/tvsetup/DVBS/1280.ini"/>
-  <satellite name="132.0°E Vinasat 1, JCSAT 5A" url="http://install.team-mediaportal.com/tvsetup/DVBS/1320.ini"/>
+  <satellite name="128.5°E LaoSat 1" url="http://install.team-mediaportal.com/tvsetup/DVBS/1285.ini"/>
+  <satellite name="132.0°E JCSAT 5A, Vinasat 1,2" url="http://install.team-mediaportal.com/tvsetup/DVBS/1320.ini"/>
   <satellite name="134.0°E Apstar 6" url="http://install.team-mediaportal.com/tvsetup/DVBS/1340.ini"/>
   <satellite name="138.0°E Telstar 18" url="http://install.team-mediaportal.com/tvsetup/DVBS/1380.ini"/>
-  <satellite name="140.0°E Express AM3" url="http://install.team-mediaportal.com/tvsetup/DVBS/1400.ini"/>
+  <satellite name="140.0°E Express AM5,AT2" url="http://install.team-mediaportal.com/tvsetup/DVBS/1400.ini"/>
+  <satellite name="142.0°E Apstar 9" url="http://install.team-mediaportal.com/tvsetup/DVBS/1420.ini"/>
   <satellite name="144.0°E Superbird C2" url="http://install.team-mediaportal.com/tvsetup/DVBS/1440.ini"/>
   <satellite name="150.0°E JCSAT 1B" url="http://install.team-mediaportal.com/tvsetup/DVBS/1500.ini"/>
   <satellite name="152.0°E Optus D2" url="http://install.team-mediaportal.com/tvsetup/DVBS/1520.ini"/>
-  <satellite name="154.0°E JCSAT 2A" url="http://install.team-mediaportal.com/tvsetup/DVBS/1540.ini"/>
+  <satellite name="154.0°E JCSAT 2B" url="http://install.team-mediaportal.com/tvsetup/DVBS/1540.ini"/>
   <satellite name="156.0°E Optus C1,D3" url="http://install.team-mediaportal.com/tvsetup/DVBS/1560.ini"/>
-  <satellite name="157.0°E Intelsat 701" url="http://install.team-mediaportal.com/tvsetup/DVBS/1570.ini"/>
+  <satellite name="159.0°E ABS 6" url="http://install.team-mediaportal.com/tvsetup/DVBS/1590.ini"/>
   <satellite name="160.0°E Optus D1" url="http://install.team-mediaportal.com/tvsetup/DVBS/1600.ini"/>
   <satellite name="162.0°E Superbird B2" url="http://install.team-mediaportal.com/tvsetup/DVBS/1620.ini"/>
-  <satellite name="164.0°E Optus B3" url="http://install.team-mediaportal.com/tvsetup/DVBS/1640.ini"/>
+  <satellite name="164.0°E Optus 10" url="http://install.team-mediaportal.com/tvsetup/DVBS/1640.ini"/>
   <satellite name="166.0°E Intelsat 19" url="http://install.team-mediaportal.com/tvsetup/DVBS/1660.ini"/>
-  <satellite name="169.0°E Intelsat 8" url="http://install.team-mediaportal.com/tvsetup/DVBS/1690.ini"/>
+  <satellite name="169.0°E Intelsat 805" url="http://install.team-mediaportal.com/tvsetup/DVBS/1690.ini"/>
   <satellite name="172.0°E Eutelsat 172A" url="http://install.team-mediaportal.com/tvsetup/DVBS/1720.ini"/>
   <satellite name="180.0°E Intelsat 18" url="http://install.team-mediaportal.com/tvsetup/DVBS/1800.ini"/>
   <satellite name="177.0°W NSS 9" url="http://install.team-mediaportal.com/tvsetup/DVBS/1830.ini"/>
-  <satellite name="0.8°W Thor 5,6, Intelsat 10-02" url="http://install.team-mediaportal.com/tvsetup/DVBS/3592.ini"/>
-  <satellite name="4.0°W Amos 2,3" url="http://install.team-mediaportal.com/tvsetup/DVBS/3560.ini"/>
+  <satellite name="0.8°W Thor 5,6,7, Intelsat 10-02" url="http://install.team-mediaportal.com/tvsetup/DVBS/3592.ini"/>
+  <satellite name="3.0°W ABS 3A" url="http://install.team-mediaportal.com/tvsetup/DVBS/3570.ini"/>
+  <satellite name="4.0°W Amos 2,3,7" url="http://install.team-mediaportal.com/tvsetup/DVBS/3560.ini"/>
   <satellite name="5.0°W Eutelsat 5 West A" url="http://install.team-mediaportal.com/tvsetup/DVBS/3550.ini"/>
-  <satellite name="7.0°W Nilesat 101,102,201, Eutelsat 7 West A" url="http://install.team-mediaportal.com/tvsetup/DVBS/3530.ini"/>
-  <satellite name="8.0°W Eutelsat 8 West A" url="http://install.team-mediaportal.com/tvsetup/DVBS/3520.ini"/>
+  <satellite name="7.0°W Nilesat 201, Eutelsat 7 West A" url="http://install.team-mediaportal.com/tvsetup/DVBS/3530.ini"/>
+  <satellite name="8.0°W Eutelsat 8 West B" url="http://install.team-mediaportal.com/tvsetup/DVBS/3520.ini"/>
   <satellite name="11.0°W Express AM44" url="http://install.team-mediaportal.com/tvsetup/DVBS/3490.ini"/>
-  <satellite name="12.5°W Eutelsat 12 West A" url="http://install.team-mediaportal.com/tvsetup/DVBS/3475.ini"/>
-  <satellite name="14.0°W Express A4" url="http://install.team-mediaportal.com/tvsetup/DVBS/3460.ini"/>
-  <satellite name="15.0°W Telstar 12" url="http://install.team-mediaportal.com/tvsetup/DVBS/3450.ini"/>
+  <satellite name="12.5°W Eutelsat 12 West B" url="http://install.team-mediaportal.com/tvsetup/DVBS/3475.ini"/>
+  <satellite name="14.0°W Express AM8" url="http://install.team-mediaportal.com/tvsetup/DVBS/3460.ini"/>
+  <satellite name="15.0°W Telstar 12 Vantage" url="http://install.team-mediaportal.com/tvsetup/DVBS/3450.ini"/>
   <satellite name="18.0°W Intelsat 901" url="http://install.team-mediaportal.com/tvsetup/DVBS/3420.ini"/>
   <satellite name="20.0°W NSS 7" url="http://install.team-mediaportal.com/tvsetup/DVBS/3400.ini"/>
   <satellite name="22.0°W SES 4" url="http://install.team-mediaportal.com/tvsetup/DVBS/3380.ini"/>
   <satellite name="24.5°W Intelsat 905" url="http://install.team-mediaportal.com/tvsetup/DVBS/3355.ini"/>
   <satellite name="27.5°W Intelsat 907" url="http://install.team-mediaportal.com/tvsetup/DVBS/3325.ini"/>
-  <satellite name="30.0°W Hispasat 1C,1D,1E" url="http://install.team-mediaportal.com/tvsetup/DVBS/3300.ini"/>
+  <satellite name="30.0°W Hispasat 30W-4,30W-5" url="http://install.team-mediaportal.com/tvsetup/DVBS/3300.ini"/>
   <satellite name="31.5°W Intelsat 25" url="http://install.team-mediaportal.com/tvsetup/DVBS/3285.ini"/>
   <satellite name="34.5°W Intelsat 903" url="http://install.team-mediaportal.com/tvsetup/DVBS/3255.ini"/>
+  <satellite name="36.0°W Eutelsat 36 West A" url="http://install.team-mediaportal.com/tvsetup/DVBS/3240.ini"/>
   <satellite name="37.5°W NSS 10, Telstar 11N" url="http://install.team-mediaportal.com/tvsetup/DVBS/3225.ini"/>
-  <satellite name="40.5°W NSS 806" url="http://install.team-mediaportal.com/tvsetup/DVBS/3195.ini"/>
+  <satellite name="40.5°W SES 6" url="http://install.team-mediaportal.com/tvsetup/DVBS/3195.ini"/>
   <satellite name="43.1°W Intelsat 11" url="http://install.team-mediaportal.com/tvsetup/DVBS/3169.ini"/>
   <satellite name="45.0°W Intelsat 14" url="http://install.team-mediaportal.com/tvsetup/DVBS/3150.ini"/>
-  <satellite name="50.0°W Intelsat 1R" url="http://install.team-mediaportal.com/tvsetup/DVBS/3100.ini"/>
-  <satellite name="53.0°W Intelsat 707" url="http://install.team-mediaportal.com/tvsetup/DVBS/3070.ini"/>
-  <satellite name="55.5°W Intelsat 805, Galaxy 11" url="http://install.team-mediaportal.com/tvsetup/DVBS/3045.ini"/>
+  <satellite name="47.5°W NSS 806" url="http://install.team-mediaportal.com/tvsetup/DVBS/3125.ini"/>
+  <satellite name="53.0°W Intelsat 23" url="http://install.team-mediaportal.com/tvsetup/DVBS/3070.ini"/>
+  <satellite name="55.5°W Intelsat 34" url="http://install.team-mediaportal.com/tvsetup/DVBS/3045.ini"/>
   <satellite name="58.0°W Intelsat 21" url="http://install.team-mediaportal.com/tvsetup/DVBS/3020.ini"/>
-  <satellite name="61.0°W Amazonas 1,2" url="http://install.team-mediaportal.com/tvsetup/DVBS/2990.ini"/>
-  <satellite name="61.5°W EchoStar 12,15" url="http://install.team-mediaportal.com/tvsetup/DVBS/2985.ini"/>
+  <satellite name="61.0°W Amazonas 2,3,4" url="http://install.team-mediaportal.com/tvsetup/DVBS/2990.ini"/>
+  <satellite name="61.5°W EchoStar 16" url="http://install.team-mediaportal.com/tvsetup/DVBS/2985.ini"/>
   <satellite name="63.0°W Telstar 14R" url="http://install.team-mediaportal.com/tvsetup/DVBS/2970.ini"/>
-  <satellite name="65.0°W Star One C1" url="http://install.team-mediaportal.com/tvsetup/DVBS/2950.ini"/>
-  <satellite name="70.0°W Star One C2" url="http://install.team-mediaportal.com/tvsetup/DVBS/2900.ini"/>
-  <satellite name="72.0°W AMC 6" url="http://install.team-mediaportal.com/tvsetup/DVBS/2880.ini"/>
+  <satellite name="65.0°W Star One C1, Eutelsat 65 West A" url="http://install.team-mediaportal.com/tvsetup/DVBS/2950.ini"/>
+  <satellite name="67.0°W AMC 4" url="http://install.team-mediaportal.com/tvsetup/DVBS/2930.ini"/>
+  <satellite name="70.0°W Star One C2,C4" url="http://install.team-mediaportal.com/tvsetup/DVBS/2900.ini"/>
+  <satellite name="71.8°W Arsat 1" url="http://install.team-mediaportal.com/tvsetup/DVBS/2882.ini"/>
   <satellite name="72.7°W Nimiq 5" url="http://install.team-mediaportal.com/tvsetup/DVBS/2873.ini"/>
-  <satellite name="75.0°W Brasilsat B3" url="http://install.team-mediaportal.com/tvsetup/DVBS/2850.ini"/>
-  <satellite name="77.0°W EchoStar 1,8" url="http://install.team-mediaportal.com/tvsetup/DVBS/2830.ini"/>
+  <satellite name="75.0°W Star One C3" url="http://install.team-mediaportal.com/tvsetup/DVBS/2850.ini"/>
+  <satellite name="77.0°W QuetzSat 1" url="http://install.team-mediaportal.com/tvsetup/DVBS/2830.ini"/>
   <satellite name="78.0°W Simón Bolívar" url="http://install.team-mediaportal.com/tvsetup/DVBS/2820.ini"/>
+  <satellite name="78.8°W Sky Mexico 1" url="http://install.team-mediaportal.com/tvsetup/DVBS/2812.ini"/>
+  <satellite name="81.0°W Arsat 2" url="http://install.team-mediaportal.com/tvsetup/DVBS/2790.ini"/>
   <satellite name="82.0°W Nimiq 4" url="http://install.team-mediaportal.com/tvsetup/DVBS/2780.ini"/>
   <satellite name="83.0°W AMC 9" url="http://install.team-mediaportal.com/tvsetup/DVBS/2770.ini"/>
-  <satellite name="84.0°W Brasilsat B4" url="http://install.team-mediaportal.com/tvsetup/DVBS/2760.ini"/>
-  <satellite name="85.0°W AMC 16" url="http://install.team-mediaportal.com/tvsetup/DVBS/2750.ini"/>
-  <satellite name="87.0°W SES 2" url="http://install.team-mediaportal.com/tvsetup/DVBS/2730.ini"/>
+  <satellite name="87.1°W SES 2, TKSat 1" url="http://install.team-mediaportal.com/tvsetup/DVBS/2729.ini"/>
   <satellite name="89.0°W Galaxy 28" url="http://install.team-mediaportal.com/tvsetup/DVBS/2710.ini"/>
-  <satellite name="91.0°W Nimiq 1, Galaxy 17" url="http://install.team-mediaportal.com/tvsetup/DVBS/2690.ini"/>
+  <satellite name="91.0°W Galaxy 17, Nimiq 6" url="http://install.team-mediaportal.com/tvsetup/DVBS/2690.ini"/>
   <satellite name="93.1°W Galaxy 25" url="http://install.team-mediaportal.com/tvsetup/DVBS/2669.ini"/>
-  <satellite name="95.0°W Galaxy 3C, Spaceway 3" url="http://install.team-mediaportal.com/tvsetup/DVBS/2650.ini"/>
+  <satellite name="95.0°W Galaxy 3C, Spaceway 3, Intelsat 30" url="http://install.team-mediaportal.com/tvsetup/DVBS/2650.ini"/>
   <satellite name="97.0°W Galaxy 19" url="http://install.team-mediaportal.com/tvsetup/DVBS/2630.ini"/>
   <satellite name="99.2°W Galaxy 16, Spaceway 2, DirecTV 11" url="http://install.team-mediaportal.com/tvsetup/DVBS/2608.ini"/>
   <satellite name="101.0°W SES 1, DirecTV 4S,8" url="http://install.team-mediaportal.com/tvsetup/DVBS/2590.ini"/>
-  <satellite name="103.0°W AMC 1, Spaceway 1, DirecTV 10,12" url="http://install.team-mediaportal.com/tvsetup/DVBS/2570.ini"/>
+  <satellite name="103.0°W Spaceway 1, DirecTV 10,12, SES 3" url="http://install.team-mediaportal.com/tvsetup/DVBS/2570.ini"/>
   <satellite name="105.0°W AMC 15,18" url="http://install.team-mediaportal.com/tvsetup/DVBS/2550.ini"/>
-  <satellite name="107.3°W Anik F1,F1R" url="http://install.team-mediaportal.com/tvsetup/DVBS/2527.ini"/>
+  <satellite name="107.3°W Anik F1R,G1" url="http://install.team-mediaportal.com/tvsetup/DVBS/2527.ini"/>
   <satellite name="110.0°W DirecTV 5, EchoStar 10,11" url="http://install.team-mediaportal.com/tvsetup/DVBS/2500.ini"/>
   <satellite name="111.1°W Anik F2" url="http://install.team-mediaportal.com/tvsetup/DVBS/2489.ini"/>
-  <satellite name="113.0°W SatMex 6" url="http://install.team-mediaportal.com/tvsetup/DVBS/2470.ini"/>
-  <satellite name="116.8°W SatMex 5" url="http://install.team-mediaportal.com/tvsetup/DVBS/2432.ini"/>
+  <satellite name="113.0°W Eutelsat 113 West A" url="http://install.team-mediaportal.com/tvsetup/DVBS/2470.ini"/>
+  <satellite name="116.8°W Eutelsat 117 West A" url="http://install.team-mediaportal.com/tvsetup/DVBS/2432.ini"/>
   <satellite name="119.0°W Anik F3, EchoStar 14, DirecTV 7S" url="http://install.team-mediaportal.com/tvsetup/DVBS/2410.ini"/>
   <satellite name="121.0°W EchoStar 9,Galaxy 23" url="http://install.team-mediaportal.com/tvsetup/DVBS/2390.ini"/>
   <satellite name="123.0°W Galaxy 18" url="http://install.team-mediaportal.com/tvsetup/DVBS/2370.ini"/>
-  <satellite name="125.0°W Galaxy 14, AMC 21" url="http://install.team-mediaportal.com/tvsetup/DVBS/2350.ini"/>
+  <satellite name="125.0°W AMC 21, Galaxy 14" url="http://install.team-mediaportal.com/tvsetup/DVBS/2350.ini"/>
   <satellite name="127.0°W Galaxy 13,Horizons 1" url="http://install.team-mediaportal.com/tvsetup/DVBS/2330.ini"/>
   <satellite name="129.0°W Ciel 2" url="http://install.team-mediaportal.com/tvsetup/DVBS/2310.ini"/>
   <satellite name="131.0°W AMC 11" url="http://install.team-mediaportal.com/tvsetup/DVBS/2290.ini"/>
   <satellite name="133.0°W Galaxy 15" url="http://install.team-mediaportal.com/tvsetup/DVBS/2270.ini"/>
   <satellite name="135.0°W AMC 10" url="http://install.team-mediaportal.com/tvsetup/DVBS/2250.ini"/>
-  <satellite name="137.0°W AMC 7" url="http://install.team-mediaportal.com/tvsetup/DVBS/2230.ini"/>
   <satellite name="139.0°W AMC 8" url="http://install.team-mediaportal.com/tvsetup/DVBS/2210.ini"/>
 </satellites>

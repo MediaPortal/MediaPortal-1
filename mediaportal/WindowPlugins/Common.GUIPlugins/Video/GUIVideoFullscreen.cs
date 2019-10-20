@@ -216,6 +216,10 @@ namespace MediaPortal.GUI.Video
           {
             _allowedArModes.Add(Geometry.Type.Zoom14to9);
           }
+          if (xmlreader.GetValueAsBool(key2, "allowarcinemascope235", true))
+          {
+            _allowedArModes.Add(Geometry.Type.CinemaScope235);
+          }
         }
       }
 
@@ -908,14 +912,14 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_SUBTITLE_DELAY_MIN:
           if (g_Player.EnableSubtitle)
           {
-            SubEngine.GetInstance().DelayMinus();
+            SubEngine.GetInstance().DelayMinus(0);
             ShowSubtitleDelayStatus();
           }
           break;
         case Action.ActionType.ACTION_SUBTITLE_DELAY_PLUS:
           if (g_Player.EnableSubtitle)
           {
-            SubEngine.GetInstance().DelayPlus();
+            SubEngine.GetInstance().DelayPlus(0);
             ShowSubtitleDelayStatus();
           }
           break;
@@ -1220,7 +1224,6 @@ namespace MediaPortal.GUI.Video
               GUIWindowManager.IsOsdVisible = false;
               GUIWindowManager.IsPauseOsdVisible = false;
               GUIGraphicsContext.IsFullScreenVideo = false;
-
               GUILayerManager.UnRegisterLayer(this);
 
               /*imgVolumeMuteIcon.SafeDispose();
@@ -1846,6 +1849,10 @@ namespace MediaPortal.GUI.Video
       {
         dlg.AddLocalizedString(1190); //14:9
       }
+      if (_allowedArModes.Contains(Geometry.Type.CinemaScope235))
+      {
+        dlg.AddLocalizedString(1339); //CinemaScope 2:35
+      }
 
       // set the focus to currently used mode
       dlg.SelectedLabel = dlg.IndexOfItem(Util.Utils.GetAspectRatioLocalizedString(GUIGraphicsContext.ARType));
@@ -2445,9 +2452,29 @@ namespace MediaPortal.GUI.Video
 
     #region IRenderLayer
 
+    private bool CheckScreenState()
+    {
+      return (screenState != null && (screenState.OsdVisible ||
+                                      screenState.PauseOsdVisible || screenState.Paused ||
+                                      screenState.ContextMenuVisible ||
+                                      screenState.ShowStatusLine ||
+                                      screenState.ShowTime ||
+                                      screenState.ShowSkipBar ||
+                                      screenState.wasVMRBitmapVisible ||
+                                      screenState.NotifyDialogVisible ||
+                                      screenState.volumeVisible ||
+                                      screenState.forbiddenVisible || 
+                                      Math.Abs(screenState.Speed - 1) > 0 || 
+                                      screenState.SeekStep != 0));
+    }
+
     public bool ShouldRenderLayer()
     {
-      return true;
+      if (CheckScreenState())
+      {
+        return true;
+      }
+      return false;
     }
 
     public void RenderLayer(float timePassed)

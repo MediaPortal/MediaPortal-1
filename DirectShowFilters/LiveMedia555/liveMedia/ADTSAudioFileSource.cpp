@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // A source object for AAC audio files in ADTS format
 // Implementation
 
@@ -72,7 +72,7 @@ ADTSAudioFileSource::createNew(UsageEnvironment& env, char const* fileName) {
 #ifndef _WIN32_WCE
     rewind(fid);
 #else
-    fseek(fid, SEEK_SET,0);
+    SeekFile64(fid, SEEK_SET,0);
 #endif
 #ifdef DEBUG
     fprintf(stderr, "Read first frame: profile %d, "
@@ -120,7 +120,7 @@ void ADTSAudioFileSource::doGetNextFrame() {
   if (fread(headers, 1, sizeof headers, fFid) < sizeof headers
       || feof(fFid) || ferror(fFid)) {
     // The input source has ended:
-    handleClosure(this);
+    handleClosure();
     return;
   }
 
@@ -138,7 +138,7 @@ void ADTSAudioFileSource::doGetNextFrame() {
 
   // If there's a 'crc_check' field, skip it:
   if (!protection_absent) {
-    fseek(fFid, 2, SEEK_CUR);
+    SeekFile64(fFid, 2, SEEK_CUR);
     numBytesToRead = numBytesToRead > 2 ? numBytesToRead - 2 : 0;
   }
 

@@ -33,7 +33,6 @@
 #include <vector>
 
 #include "IDVBSub.h"
-#include "hdmv\HdmvSub.h"
 
 class CSubtitleInputPin;
 class CDVBSubDecoder;
@@ -106,7 +105,6 @@ private: // data
   int                 m_subtitlePid;
 
   CDVBSubDecoder*     m_pSubDecoder;      // Subtitle decoder
-  CHdmvSub*           m_pHdmvSub;         // Blu-ray subtitle decoder
   IMediaSeeking*      m_pIMediaSeeking;   // Media seeking interface
   CCritSec            m_Lock;				      // Main renderer critical section
   CCritSec            m_ReceiveLock;		  // Sublock for received samples

@@ -11,7 +11,7 @@ public:
   virtual ~CTsDuration(void);
   void SetFileReader(FileReader* reader);
 	void OnTsPacket(byte* tsPacket, int bufferOffset, int bufferLength);
-  void UpdateDuration(bool logging);
+  void UpdateDuration(bool logging, bool background);
   void SetVideoPid(int pid);
   int  GetPid();
   CRefTime Duration();      
@@ -22,6 +22,8 @@ public:
   CRefTime TotalDuration();
   void     Set(CPcr& startPcr, CPcr& endPcr, CPcr& maxPcr);
   void     StopUpdate(bool stopping);
+	void     CloseBufferFiles();
+
 private:
   int          m_pid;
   int          m_videoPid;

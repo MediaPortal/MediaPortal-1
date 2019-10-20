@@ -100,7 +100,6 @@ namespace MediaPortal.Topbar
         }
       }
 
-      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Topbar2);
       return bResult;
     }
 
@@ -119,6 +118,7 @@ namespace MediaPortal.Topbar
 
     protected override bool ShouldFocus(Action action)
     {
+      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Topbar2);
       return (action.wID == Action.ActionType.ACTION_MOVE_UP);
     }
 
@@ -231,6 +231,7 @@ namespace MediaPortal.Topbar
 
       if (GUIGraphicsContext.TopBarHidden)
       {
+        GUILayerManager.UnRegisterLayer(this);
         return;
       }
 
@@ -270,6 +271,7 @@ namespace MediaPortal.Topbar
       CheckFocus();
       if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
       {
+        GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Topbar2);
         // reset autohide timer       
         if (m_bTopBarHide && GUIGraphicsContext.AutoHideTopBar)
         {

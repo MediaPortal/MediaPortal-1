@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 /*
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -107,7 +107,9 @@ Var frominstall
 Var MPTray_Running
 
 Var PREVIOUS_SKINSETTINGS_TITAN_CONFIG
+Var PREVIOUS_SKINSETTINGS_ARES_CONFIG
 Var PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG
+Var PREVIOUS_KEYMAPSETTINGS
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
@@ -311,6 +313,12 @@ ShowUninstDetails show
     ${LOG_TEXT} "INFO" "Backup SkinSettings.xml for Titan (${COMMON_APPDATA}\skin\Titan\SkinSettings.xml)"
     CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml" "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG"
   ${EndIf}
+
+  ${If} ${FileExists} "${COMMON_APPDATA}\skin\Ares\SkinSettings.xml"
+    GetTempFileName $PREVIOUS_SKINSETTINGS_ARES_CONFIG
+    ${LOG_TEXT} "INFO" "Backup SkinSettings.xml for Ares (${COMMON_APPDATA}\skin\Ares\SkinSettings.xml)"
+    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\skin\Ares\SkinSettings.xml" "$PREVIOUS_SKINSETTINGS_ARES_CONFIG"
+  ${EndIf}
 !macroend
 
 !macro RestoreSkinSettings
@@ -323,6 +331,26 @@ ShowUninstDetails show
     ${LOG_TEXT} "INFO" "Restore SkinSettings.xml for Titan (${COMMON_APPDATA}\skin\Titan\SkinSettings.xml)"
     CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG" "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml" 
   ${EndIf}  
+
+  ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_ARES_CONFIG"
+    ${LOG_TEXT} "INFO" "Restore SkinSettings.xml for Ares (${COMMON_APPDATA}\skin\Ares\SkinSettings.xml)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_ARES_CONFIG" "${COMMON_APPDATA}\skin\Ares\SkinSettings.xml" 
+  ${EndIf} 
+!macroend
+
+!macro BackupKeymapSettings
+  ${If} ${FileExists} "${COMMON_APPDATA}\keymap.xml"
+    GetTempFileName $PREVIOUS_KEYMAPSETTINGS
+    ${LOG_TEXT} "INFO" "Backup keymap.xml (${COMMON_APPDATA}\keymap.xml)"
+    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\keymap.xml" "$PREVIOUS_KEYMAPSETTINGS"
+  ${EndIf}
+!macroend
+
+!macro RestoreKeymapSettings
+  ${If} ${FileExists} "$PREVIOUS_KEYMAPSETTINGS"
+    ${LOG_TEXT} "INFO" "Restore keymap.xml (${COMMON_APPDATA}\keymap.xml)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_KEYMAPSETTINGS" "${COMMON_APPDATA}\keymap.xml" 
+  ${EndIf}
 !macroend
 
 Function RunUninstaller
@@ -349,6 +377,7 @@ Section "-prepare" SecPrepare
 
   !insertmacro ShutdownRunningMediaPortalApplications
   !insertmacro BackupSkinSettings
+  !insertmacro BackupKeymapSettings
 
   ${LOG_TEXT} "INFO" "Deleting SkinCache..."
   RMDir /r "$MPdir.Cache"
@@ -547,53 +576,58 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
   ; NuGet binaries MediaInfo
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MediaInfo.0.7.72\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.0.7.95\MediaInfo.dll"
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\Sqlite.3.10.0\Sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.21.0\Sqlite.dll"
   ; Bass Core
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\BASS.2.4.10\bass.dll"
-  File "${git_ROOT}\Packages\BASS.NET.2.4.10.3\lib\net40\Bass.Net.dll"
+  File "${git_ROOT}\Packages\BASS.2.4.12.1\bass.dll"
+  File "${git_ROOT}\Packages\BASS.NET.2.4.12.5\lib\net40\Bass.Net.dll"
+  File "${git_ROOT}\Packages\BassRegistration.2.4.12.5\lib\net40\BassRegistration.dll"
   File "${git_ROOT}\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll"
   ; Bass Addons
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\bass.asio.1.3.0.2\bassasio.dll"
-  File "${git_ROOT}\Packages\bass.fx.2.4.10.1\bass_fx.dll"
-  File "${git_ROOT}\Packages\bass.mix.2.4.7.2\bassmix.dll"
+  File "${git_ROOT}\Packages\bass.asio.1.3.1\bassasio.dll"
+  File "${git_ROOT}\Packages\bass.fx.2.4.11.1\bass_fx.dll"
+  File "${git_ROOT}\Packages\bass.mix.2.4.8.0\bassmix.dll"
   File "${git_ROOT}\Packages\bass.vst.2.4.5\bass_vst.dll"
   File "${git_ROOT}\Packages\bass.wadsp.2.4.1\bass_wadsp.dll"
-  File "${git_ROOT}\Packages\bass.wasapi.2.4.0.2\basswasapi.dll"
+  File "${git_ROOT}\Packages\bass.wasapi.2.4.1.2\basswasapi.dll"
   File "${git_ROOT}\Packages\bass.ofr.2.4.0.2\OptimFROG.dll"
   ; Bass AudioDecoders
   SetOutPath "$MPdir.Base\MusicPlayer\plugins\audio decoders"
-  File "${git_ROOT}\Packages\bass.aac.2.4.4.4\bass_aac.dll"
-  File "${git_ROOT}\Packages\bass.ac3.2.4.0.3\bass_ac3.dll"
+  File "${git_ROOT}\Packages\bass.aac.2.4.5.1\bass_aac.dll"
+  File "${git_ROOT}\Packages\bass.ac3.2.4.0.5\bass_ac3.dll"
   File "${git_ROOT}\Packages\bass.alac.2.4.3\bass_alac.dll"
-  File "${git_ROOT}\Packages\bass.ape.2.4.1\bass_ape.dll"
-  File "${git_ROOT}\Packages\bass.mpc.2.4.1.1\bass_mpc.dll"
+  File "${git_ROOT}\Packages\bass.ape.2.4.2.0\bass_ape.dll"
+  File "${git_ROOT}\Packages\bass.mpc.2.4.1.2\bass_mpc.dll"
   File "${git_ROOT}\Packages\bass.ofr.2.4.0.2\bass_ofr.dll"
-  File "${git_ROOT}\Packages\bass.spx.2.4.2\bass_spx.dll"
-  File "${git_ROOT}\Packages\bass.tta.2.4.0\bass_tta.dll"
-  File "${git_ROOT}\Packages\bass.cd.2.4.5\basscd.dll"
-  File "${git_ROOT}\Packages\bass.flac.2.4.1\bassflac.dll"
-  File "${git_ROOT}\Packages\bass.midi.2.4.8\bassmidi.dll"
-  File "${git_ROOT}\Packages\bass.opus.2.4.1.3\bassopus.dll"
-  File "${git_ROOT}\Packages\bass.wma.2.4.4\basswma.dll"
-  File "${git_ROOT}\Packages\bass.wv.2.4.4\basswv.dll"
-  File "${git_ROOT}\Packages\bass.dsd.0.0.1\bassdsd.dll"
+  File "${git_ROOT}\Packages\bass.spx.2.4.3.2\bass_spx.dll"
+  File "${git_ROOT}\Packages\bass.tta.2.4.0.2\bass_tta.dll"
+  File "${git_ROOT}\Packages\bass.cd.2.4.6.0\basscd.dll"
+  File "${git_ROOT}\Packages\bass.flac.2.4.3.0\bassflac.dll"
+  File "${git_ROOT}\Packages\bass.midi.2.4.10.0\bassmidi.dll"
+  File "${git_ROOT}\Packages\bass.opus.2.4.1.9\bassopus.dll"
+  File "${git_ROOT}\Packages\bass.wma.2.4.5.1\basswma.dll"
+  File "${git_ROOT}\Packages\bass.wv.2.4.6.0\basswv.dll"
+  File "${git_ROOT}\Packages\bass.dsd.2.4.0.2\bassdsd.dll"
   ; taglib-sharp
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.1.0.1\lib\net40\taglib-sharp.dll"
+  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.1.0.2\lib\net40\taglib-sharp.dll"
   ; SharpLibHid
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibHid.1.3.1\lib\net20\SharpLibHid.dll"
+  File "${git_ROOT}\Packages\SharpLibHid.1.4.2\lib\net40\SharpLibHid.dll"
   ; SharpLibWin32
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibWin32.0.0.7\lib\net20\SharpLibWin32.dll"
+  File "${git_ROOT}\Packages\SharpLibWin32.0.0.9\lib\net20\SharpLibWin32.dll"
   ; SharpLibDisplay
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibDisplay.0.2.5\lib\net40\SharpLibDisplay.dll"
+  File "${git_ROOT}\Packages\SharpLibDisplay.0.2.6\lib\net40\SharpLibDisplay.dll"
+  ; Naudio
+  File "${git_ROOT}\Packages\NAudio.1.8.3\lib\net35\NAudio.dll" 
+  ; CSCore
+  File "${git_ROOT}\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
@@ -605,11 +639,23 @@ Section "MediaPortal core files (required)" SecCore
   !else
     File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
   !endif
+  File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
+  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-1.0.2.jar"
+  ; libbluray - submodul freetype library
+  !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+    File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Debug\freetype.dll"
+  !else
+    File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Release\freetype.dll"
+  !endif
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
   ; MediaPortal.exe
   
+  ; libbluray
+  ;SetOutPath "$MPdir.Base\lib"
+  ;File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\lib\*"
+
   ; protocol implementations for MPUrlSourceSplitter.ax
   File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter*"
   File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Parser*"
@@ -662,6 +708,10 @@ Section "MediaPortal core files (required)" SecCore
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeLight.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HELN.TTF"
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HindVadodara-SemiBold.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\MediaPortalDefault.ttf"
 
   ; used for Default and Titan Skin Font
   StrCpy $FONT_DIR $FONTS
@@ -671,9 +721,15 @@ Section "MediaPortal core files (required)" SecCore
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeLight.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HELN.TTF"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HindVadodara-SemiBold.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\MediaPortalDefault.ttf"
+
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
   
   !insertmacro RestoreSkinSettings
+  !insertmacro RestoreKeymapSettings
 
 SectionEnd
 !macro Remove_${SecCore}
@@ -709,6 +765,11 @@ SectionEnd
 		Delete  "$MPdir.Base\mpaudiorenderer.ax"
 	${EndIf}
   ${EndIf}
+  ; Delete filter to be able to be registered with an updated version
+  Delete  "$MPdir.Base\TsReader.ax"
+  Delete  "$MPdir.Base\cccp.ax"
+  Delete  "$MPdir.Base\DVBSub3.ax"
+  Delete  "$MPdir.Base\BDReader.ax"
   ; filter for URL/IPTV support
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\\MPUrlSourceSplitter.ax"
 
@@ -828,6 +889,8 @@ SectionEnd
   RMDir /r "$MPdir.Base\Wizards"
   ; Log
   Delete "$MPdir.Base\log4net.dll"
+  Delete "$MPdir.Base\TsReader.ax"
+  Delete "$MPdir.Base\cccp.ax"
   
 !macroend
 
@@ -939,6 +1002,11 @@ Section -Post
   ${LOG_TEXT} "INFO" "Removing obsolete BASS 2.3 files"
   Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_wv.dll"
 
+  ; Libbluray remove previous release files
+  ${LOG_TEXT} "INFO" "Removing obsolete libbluray files"
+  Delete "$MPdir.Base\libbluray-j2se-0.6.2.jar"
+  Delete "$MPdir.Base\libbluray-j2se-1.0.1.jar"
+
   ; MP1-4315 Blow windowplugins dll to separate plugin dlls
   ${LOG_TEXT} "INFO" "Removing obsolete WindowPlugins.dll"
   Delete "$MPdir.Plugins\Windows\WindowPlugins.dll"
@@ -1004,6 +1072,9 @@ Section -Post
     ${LOG_TEXT} "INFO" "Starting MPTray..."
     Exec '"$MPdir.Base\MPTray.exe"'
   ${EndIf}
+
+  ; run AresBackupRestore.exe
+  Exec '"$MPdir.Base\AresBackupRestore.exe"'
 SectionEnd
 
 #---------------------------------------------------------------------------

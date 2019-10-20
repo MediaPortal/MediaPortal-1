@@ -61,12 +61,12 @@ STDMETHODIMP CSubPicAllocatorPresenterImpl::NonDelegatingQueryInterface(REFIID r
         __super::NonDelegatingQueryInterface(riid, ppv);
 }
 
-void CSubPicAllocatorPresenterImpl::AlphaBltSubPic(CSize size, SubPicDesc* pTarget)
+void CSubPicAllocatorPresenterImpl::AlphaBltSubPic(CSize size, SubPicDesc* pTarget, int xOffsetInPixels /*= 0*/)
 {
     CComPtr<ISubPic> pSubPic;
     if (m_pSubPicQueue->LookupSubPic(m_rtNow, pSubPic)) {
         CRect rcSource, rcDest;
-        if (SUCCEEDED(pSubPic->GetSourceAndDest(&size, rcSource, rcDest))) {
+        if (SUCCEEDED(pSubPic->GetSourceAndDest(&size, rcSource, rcDest, xOffsetInPixels))) {
             pSubPic->AlphaBlt(rcSource, rcDest, pTarget);
         }
         /*SubPicDesc spd;

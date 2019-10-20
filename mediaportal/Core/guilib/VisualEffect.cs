@@ -19,6 +19,8 @@
 #endregion
 
 using System;
+using System.Globalization;
+using System.Threading;
 using System.Xml;
 
 namespace MediaPortal.GUI.Library
@@ -149,7 +151,7 @@ namespace MediaPortal.GUI.Library
       bool useCommas = false;
       float fTest = 123.12f;
       string test = fTest.ToString();
-      if (test.IndexOf(",") >= 0)
+      if (test.IndexOf(",", StringComparison.Ordinal) >= 0)
       {
         useCommas = true;
       }
@@ -176,7 +178,11 @@ namespace MediaPortal.GUI.Library
       text = text.Replace("screencenterx", GUIGraphicsContext.OutputScreenCenter.X.ToString());
       text = text.Replace("screencentery", GUIGraphicsContext.OutputScreenCenter.Y.ToString());
 
-      int pos = text.IndexOf(",");
+      // Take current culture info and set "en-Us" to be able to make the calculation and set it back the current culture
+      CultureInfo current = Thread.CurrentThread.CurrentCulture;
+      Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+
+      int pos = text.IndexOf(",", StringComparison.Ordinal);
       if (pos >= 0)
       {
         x = float.Parse(text.Substring(0, pos));
@@ -186,6 +192,7 @@ namespace MediaPortal.GUI.Library
       {
         x = float.Parse(text);
       }
+      Thread.CurrentThread.CurrentCulture = new CultureInfo(current.ToString());
     }
 
     public bool Create(XmlNode node)

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -73,13 +73,24 @@ namespace MediaPortal.GUI.Library
       _properties["#plotoutline"] = string.Empty; // imdb movie plot outline
       _properties["#userreview"] = string.Empty; // imdb movie user review
       _properties["#rating"] = string.Empty; // imdb movie rating (0-10)
+      _properties["#userrating"] = string.Empty; // user (trakt) movie rating (0-10)
       _properties["#tagline"] = string.Empty; // imdb movie tag line
       _properties["#votes"] = string.Empty; // imdb movie votes
       _properties["#credits"] = string.Empty; // imdb movie writing credits
       _properties["#mpaarating"] = string.Empty; // imdb movie MPAA rating
+      _properties["#mpaatext"] = string.Empty; // imdb movie MPAA rating Text
       _properties["#runtime"] = string.Empty; // imdb movie runtime 
       _properties["#iswatched"] = string.Empty; // boolean indication movie has been watched
       _properties["#watchedpercent"] = string.Empty; // videofile watched percentage
+      _properties["#usergroups"] = string.Empty; // movie User groups
+      _properties["#tmdbnumber"] = string.Empty; // movie TMDB ID
+      _properties["#localdbnumber"] = string.Empty; // movie any Local DB ID
+      _properties["#moviecollection"] = string.Empty; // movie Collestion / Set
+      _properties["#moviepath"] = string.Empty; // Movie path
+      _properties["#isgroup"] = string.Empty; // Is Groups
+      _properties["#iscollection"] = string.Empty; // Is Movie Collection
+      _properties["#groupmovielist"] = string.Empty; // Movie List by ViewHandler
+      _properties["#awards"] = string.Empty; // Movie Awards
       
       _properties["#music.title"] = string.Empty;
       _properties["#music.artist"] = string.Empty;
@@ -253,13 +264,16 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Current.DVDLabel"] = string.Empty;
       _properties["#Play.Current.IMDBNumber"] = string.Empty;
       _properties["#Play.Current.Rating"] = string.Empty;
+      _properties["#Play.Current.UserRating"] = string.Empty;
       _properties["#Play.Current.TagLine"] = string.Empty;
       _properties["#Play.Current.Votes"] = string.Empty;
       _properties["#Play.Current.Credits"] = string.Empty;
       _properties["#Play.Current.Runtime"] = string.Empty;
       _properties["#Play.Current.MPAARating"] = string.Empty;
+      _properties["#Play.Current.MPAAText"] = string.Empty;
       _properties["#Play.Current.IsWatched"] = string.Empty;
       _properties["#Play.Current.WatchedPercent"] = string.Empty;
+      _properties["#Play.Current.MovieCollection"] = string.Empty;
       
       _properties["#Play.Current.ArtistThumb"] = string.Empty;
       _properties["#Play.Current.Lastfm.TrackTags"] = string.Empty;
@@ -323,6 +337,7 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Next.Credits"] = string.Empty;
       _properties["#Play.Next.Runtime"] = string.Empty;
       _properties["#Play.Next.MPAARating"] = string.Empty;
+      _properties["#Play.Next.MPAAText"] = string.Empty;
       _properties["#Play.Next.IsWatched"] = string.Empty;
 
       _properties["#Play.Next.AlbumArtist"] = string.Empty;
@@ -482,12 +497,15 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Current.DVDLabel", string.Empty);
       SetProperty("#Play.Current.IMDBNumber", string.Empty);
       SetProperty("#Play.Current.Rating", string.Empty);
+      SetProperty("#Play.Current.UserRating", string.Empty);
       SetProperty("#Play.Current.TagLine", string.Empty);
       SetProperty("#Play.Current.Votes", string.Empty);
       SetProperty("#Play.Current.Credits", string.Empty);
       SetProperty("#Play.Current.Runtime", string.Empty);
       SetProperty("#Play.Current.MPAARating", string.Empty);
+      SetProperty("#Play.Current.MPAAText", string.Empty);
       SetProperty("#Play.Current.IsWatched", string.Empty);
+      SetProperty("#Play.Current.MovieCollection", string.Empty);
       SetProperty("#Play.Current.watchedpercent", string.Empty);
       SetProperty("#Play.Current.AlbumArtist", string.Empty);
       SetProperty("#Play.Current.BitRate", string.Empty);
@@ -537,6 +555,7 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Next.Credits", string.Empty);
       SetProperty("#Play.Next.Runtime", string.Empty);
       SetProperty("#Play.Next.MPAARating", string.Empty);
+      SetProperty("#Play.Next.MPAAText", string.Empty);
       SetProperty("#Play.Next.IsWatched", string.Empty);
 
       SetProperty("#Play.Next.AlbumArtist", string.Empty);

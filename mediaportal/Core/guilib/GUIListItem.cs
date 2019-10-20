@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -52,12 +52,17 @@ namespace MediaPortal.GUI.Library
     protected GUIImage _imageBigPinIcon = null; // pointer to CImage containing the icon
     protected bool _isSelected = false; // item is selected or not
     protected bool _isFolder = false; // indicated if the item is a folder or a path
+    protected bool _isUserGroup = false; // indicated if the item is a UserGroup
+    protected bool _isCollection = false; // indicated if the item is a Collection
+    protected bool _hasProgressBar = false;
+    protected int _progressBarPercentage = 0;
     protected string _folder = string.Empty; // path + filename of the item
     protected string _dvdLabel = string.Empty; // indicates the disc number of movie
     protected int _duration = 0; // duration (in seconds) of the movie or song
     private FileInformation _fileInfo = null; // file info (size, date/time etc.) of the file
     private bool _shaded = false; // indicates if the item needs to be rendered shaded
     private float _rating = 0; // rating of a movie
+    private int _userrating = 0; // user rating of a movie
     private int _year = 0; // release year of the movie/song
     private object _tagMusic; // object containing the tag info of a music file (e.g., id3 tag)
     private object _tagTv; // object containing the tag info of a tv-recording
@@ -72,6 +77,7 @@ namespace MediaPortal.GUI.Library
     private bool _retrieveCoverArtAllowed = true;
     private int _dimColor = 0x60ffffff;
     private bool _isBdDvdFolder = false; // is DVD or BD rip folder
+    private DateTime _dtUpdated = DateTime.MinValue;
 
     /// <summary>
     /// The (empty) constructor of the GUIListItem.
@@ -99,12 +105,16 @@ namespace MediaPortal.GUI.Library
       _duration = item._duration;
       _fileInfo = item._fileInfo;
       _rating = item._rating;
+      _userrating = item._userrating;
       _year = item._year;
       _idItem = item._idItem;
       _tagMusic = item._tagMusic;
       _tagTv = item._tagTv;
       _tagAlbumInfo = item._tagAlbumInfo;
       _isBdDvdFolder = item._isBdDvdFolder;
+      _isUserGroup = item._isUserGroup;
+      _isCollection = item._isCollection;
+      _dtUpdated = item._dtUpdated;
     }
 
     public GUIListItem(string aLabel, string aLabel2, string aPath, bool aIsFolder, FileInformation aFileInformation)
@@ -416,6 +426,24 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get/set if item is UserGroup
+    /// </summary>
+    public bool IsUserGroup
+    {
+      get { return _isUserGroup; }
+      set { _isUserGroup = value; }
+    }
+
+    /// <summary>
+    /// Get/set if item is Collection
+    /// </summary>
+    public bool IsCollection
+    {
+      get { return _isCollection; }
+      set { _isCollection = value; }
+    }
+
+    /// <summary>
     /// Get/set the path + filename of the item.
     /// </summary>
     public string Path
@@ -518,6 +546,15 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get/set the user rating of a movie.
+    /// </summary>
+    public int UserRating
+    {
+      get { return _userrating; }
+      set { _userrating = value; }
+    }
+
+    /// <summary>
     /// Get/set the object containing the tag info of a tv-recording.
     /// </summary>
     public object TVTag
@@ -551,6 +588,27 @@ namespace MediaPortal.GUI.Library
     {
       get { return _shaded; }
       set { _shaded = value; }
+    }
+
+    public int ProgressBarPercentage
+    {
+      get { return _progressBarPercentage; }
+      set { _progressBarPercentage = value; }
+    }
+
+    public bool HasProgressBar
+    {
+      get { return _hasProgressBar; }
+      set { _hasProgressBar = value; }
+    }
+
+    /// <summary>
+    /// Get/set the last updated date/time of the movie/song.
+    /// </summary>
+    public DateTime Updated
+    {
+      get { return _dtUpdated; }
+      set { _dtUpdated = value; }
     }
 
     /// <summary>

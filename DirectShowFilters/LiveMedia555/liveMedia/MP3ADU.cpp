@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // 'ADU' MP3 streams (for improved loss-tolerance)
 // Implementation
 
@@ -49,7 +49,7 @@ public:
 
 unsigned const Segment::headerSize = 4;
 
-#define SegmentQueueSize 10
+#define SegmentQueueSize 20
 
 class SegmentQueue {
 public:
@@ -162,7 +162,7 @@ void ADUFromMP3Source::doGetNextFrame() {
 
     if (!doGetNextFrame1()) {
       // An internal error occurred; act as if our source went away:
-      FramedSource::handleClosure(this);
+      handleClosure();
     }
   }
 }
@@ -277,8 +277,7 @@ MP3FromADUSource::MP3FromADUSource(UsageEnvironment& env,
   : FramedFilter(env, inputSource),
     fAreEnqueueingADU(False),
     fSegments(new SegmentQueue(False /* because we're ADU->MP3 */,
-			       includeADUdescriptors)),
-    fIncludeADUdescriptors(includeADUdescriptors) {
+			       includeADUdescriptors)) {
 }
 
 MP3FromADUSource::~MP3FromADUSource() {
@@ -513,7 +512,7 @@ void SegmentQueue::enqueueNewSegment(FramedSource* inputSource,
 				     FramedSource* usingSource) {
   if (isFull()) {
     usingSource->envir() << "SegmentQueue::enqueueNewSegment() overflow\n";
-    FramedSource::handleClosure(usingSource);
+    usingSource->handleClosure();
     return;
   }
 

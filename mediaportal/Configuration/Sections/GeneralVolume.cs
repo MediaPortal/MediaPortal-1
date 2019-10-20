@@ -79,15 +79,25 @@ namespace MediaPortal.Configuration.Sections
         string isSettingExist = reader.GetValueAsString("volume", "handler", "");
         int volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
         bool isDigital = reader.GetValueAsBool("volume", "digital", true);
+        mpCBHideWinOSD.Checked = reader.GetValueAsBool("volume", "hideWindowsOSD", false);
 
         _useClassicHandler.Checked = volumeStyle == 0;
         _useWindowsHandler.Checked = volumeStyle == 1;
         _useLogarithmicHandler.Checked = volumeStyle == 2;
         _useCustomHandler.Checked = volumeStyle == 3;
         _useVistaHandler.Checked = volumeStyle == 4;
+        _useWin10Handler.Checked = volumeStyle == 5;
 
         // Force a couple of settings for Vista / Windows 7
-        if (OSInfo.OSInfo.VistaOrLater())
+        if (OSInfo.OSInfo.Win10OrLater())
+        {
+          volumewarnlb.Visible = true;
+          if (string.IsNullOrEmpty(isSettingExist))
+            _useWin10Handler.Checked = true;
+        }
+
+        // Force a couple of settings for Vista / Windows 7
+        else if (OSInfo.OSInfo.VistaOrLater())
         {
           volumewarnlb.Visible = true;
           if (string.IsNullOrEmpty(isSettingExist))
@@ -146,6 +156,10 @@ namespace MediaPortal.Configuration.Sections
         {
           writer.SetValue("volume", "handler", 4);
         }
+        else if (_useWin10Handler.Checked)
+        {
+          writer.SetValue("volume", "handler", 5);
+        }
 
         if (_useLastKnownLevel.Checked)
         {
@@ -166,6 +180,8 @@ namespace MediaPortal.Configuration.Sections
           useDigital = true;
         }
         writer.SetValueAsBool("volume", "digital", useDigital);
+        writer.SetValueAsBool("volume", "hideWindowsOSD", mpCBHideWinOSD.Checked);
+
         writer.SetValue("volume", "table", _customText);
         writer.SetValue("volume", "startuplevel", _customLevel);
         writer.SetValueAsBool("volume", "defaultVolumeOSD", _useVolumeOSD.Checked);
@@ -274,6 +290,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBoxVolumeOsd = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpCBHideWinOSD = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this._useVolumeOSD = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxMixerControl = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.volumewarnlb = new System.Windows.Forms.Label();
@@ -292,6 +309,7 @@ namespace MediaPortal.Configuration.Sections
       this._useWindowsHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this._useClassicHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.mpLabelOs = new MediaPortal.UserInterface.Controls.MPLabel();
+      this._useWin10Handler = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.groupBoxVolumeOsd.SuspendLayout();
       this.groupBoxMixerControl.SuspendLayout();
       this.groupBoxStartup.SuspendLayout();
@@ -302,14 +320,26 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBoxVolumeOsd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxVolumeOsd.Controls.Add(this.mpCBHideWinOSD);
       this.groupBoxVolumeOsd.Controls.Add(this._useVolumeOSD);
       this.groupBoxVolumeOsd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxVolumeOsd.Location = new System.Drawing.Point(0, 287);
+      this.groupBoxVolumeOsd.Location = new System.Drawing.Point(0, 312);
       this.groupBoxVolumeOsd.Name = "groupBoxVolumeOsd";
       this.groupBoxVolumeOsd.Size = new System.Drawing.Size(472, 49);
       this.groupBoxVolumeOsd.TabIndex = 3;
       this.groupBoxVolumeOsd.TabStop = false;
       this.groupBoxVolumeOsd.Text = "OSD";
+      // 
+      // mpCBHideWinOSD
+      // 
+      this.mpCBHideWinOSD.AutoSize = true;
+      this.mpCBHideWinOSD.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCBHideWinOSD.Location = new System.Drawing.Point(254, 19);
+      this.mpCBHideWinOSD.Name = "mpCBHideWinOSD";
+      this.mpCBHideWinOSD.Size = new System.Drawing.Size(119, 17);
+      this.mpCBHideWinOSD.TabIndex = 1;
+      this.mpCBHideWinOSD.Text = "Hide Windows OSD";
+      this.mpCBHideWinOSD.UseVisualStyleBackColor = true;
       // 
       // _useVolumeOSD
       // 
@@ -381,7 +411,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxStartup.Controls.Add(this._useSystemCurrent);
       this.groupBoxStartup.Controls.Add(this._useLastKnownLevel);
       this.groupBoxStartup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxStartup.Location = new System.Drawing.Point(0, 337);
+      this.groupBoxStartup.Location = new System.Drawing.Point(0, 366);
       this.groupBoxStartup.Name = "groupBoxStartup";
       this.groupBoxStartup.Size = new System.Drawing.Size(472, 97);
       this.groupBoxStartup.TabIndex = 0;
@@ -443,6 +473,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBoxScale.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxScale.Controls.Add(this._useWin10Handler);
       this.groupBoxScale.Controls.Add(this._useVistaHandler);
       this.groupBoxScale.Controls.Add(this._customTextbox);
       this.groupBoxScale.Controls.Add(this._useCustomHandler);
@@ -452,7 +483,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxScale.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxScale.Location = new System.Drawing.Point(0, 133);
       this.groupBoxScale.Name = "groupBoxScale";
-      this.groupBoxScale.Size = new System.Drawing.Size(472, 151);
+      this.groupBoxScale.Size = new System.Drawing.Size(472, 173);
       this.groupBoxScale.TabIndex = 1;
       this.groupBoxScale.TabStop = false;
       this.groupBoxScale.Text = "Scale";
@@ -475,7 +506,7 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Right)));
       this._customTextbox.BorderColor = System.Drawing.Color.Empty;
       this._customTextbox.Enabled = false;
-      this._customTextbox.Location = new System.Drawing.Point(168, 115);
+      this._customTextbox.Location = new System.Drawing.Point(168, 137);
       this._customTextbox.Name = "_customTextbox";
       this._customTextbox.Size = new System.Drawing.Size(288, 20);
       this._customTextbox.TabIndex = 5;
@@ -485,7 +516,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this._useCustomHandler.AutoSize = true;
       this._useCustomHandler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this._useCustomHandler.Location = new System.Drawing.Point(16, 116);
+      this._useCustomHandler.Location = new System.Drawing.Point(16, 138);
       this._useCustomHandler.Name = "_useCustomHandler";
       this._useCustomHandler.Size = new System.Drawing.Size(62, 17);
       this._useCustomHandler.TabIndex = 4;
@@ -540,6 +571,17 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabelOs.TabIndex = 4;
       this.mpLabelOs.Text = "Due to different OS behaviours, not all options will be available";
       // 
+      // _useWin10Handler
+      // 
+      this._useWin10Handler.AutoSize = true;
+      this._useWin10Handler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this._useWin10Handler.Location = new System.Drawing.Point(16, 116);
+      this._useWin10Handler.Name = "_useWin10Handler";
+      this._useWin10Handler.Size = new System.Drawing.Size(83, 17);
+      this._useWin10Handler.TabIndex = 6;
+      this._useWin10Handler.Text = "Windows 10";
+      this._useWin10Handler.UseVisualStyleBackColor = true;
+      // 
       // GeneralVolume
       // 
       this.Controls.Add(this.mpLabelOs);
@@ -548,7 +590,7 @@ namespace MediaPortal.Configuration.Sections
       this.Controls.Add(this.groupBoxStartup);
       this.Controls.Add(this.groupBoxScale);
       this.Name = "GeneralVolume";
-      this.Size = new System.Drawing.Size(472, 439);
+      this.Size = new System.Drawing.Size(472, 474);
       this.groupBoxVolumeOsd.ResumeLayout(false);
       this.groupBoxVolumeOsd.PerformLayout();
       this.groupBoxMixerControl.ResumeLayout(false);
@@ -590,7 +632,8 @@ namespace MediaPortal.Configuration.Sections
     private MPRadioButton _useVistaHandler;
     private MPLabel mpLabelOs;
     private Label volumewarnlb;
-
+    private MPCheckBox mpCBHideWinOSD;
+    private MPRadioButton _useWin10Handler;
     private MPRadioButton _useSystemCurrent;
   }
 }

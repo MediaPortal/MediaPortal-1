@@ -33,20 +33,15 @@ namespace MediaPortal.Database
 
     public static void CompactDatabase(SQLiteClient m_db)
     {
-      m_db.Execute("PRAGMA count_changes=0");
       m_db.Execute("vacuum");
-      m_db.Execute("PRAGMA count_changes=1");
     }
 
     public static void SetPragmas(SQLiteClient m_db)
     {
       m_db.Execute("PRAGMA encoding = \"UTF-8\"");
-      m_db.Execute("PRAGMA cache_size=4096");
-      m_db.Execute("PRAGMA page_size=8192");
+      m_db.Execute("PRAGMA cache_size=-5000"); // abs(-5000*1024) Bytes of memory
+      m_db.Execute("PRAGMA page_size=4096"); // Windows fastest value 4096
       m_db.Execute("PRAGMA synchronous='OFF'");
-      m_db.Execute("PRAGMA count_changes=1");
-      m_db.Execute("PRAGMA full_column_names=0");
-      m_db.Execute("PRAGMA short_column_names=0");
       m_db.Execute("PRAGMA auto_vacuum=0");
     }
 
@@ -145,6 +140,46 @@ namespace MediaPortal.Database
       return false;
     }
 
+    /// <summary>
+    /// Check if a view exists
+    /// </summary>
+    /// <param name="table">name of view</param>
+    /// <returns>true: view exists
+    /// false: view does not exist</returns>
+    public static bool ViewExists(SQLiteClient m_db, string view)
+    {
+      SQLiteResultSet results;
+      if (m_db == null)
+      {
+        return false;
+      }
+      if (view == null)
+      {
+        return false;
+      }
+      if (view.Length == 0)
+      {
+        return false;
+      }
+      results = m_db.Execute("SELECT name FROM sqlite_master WHERE name like '" + view + "' and type like 'view'");
+      // UNION ALL SELECT name FROM sqlite_temp_master WHERE type='view' ORDER BY name");
+      if (results != null)
+      {
+        if (results.Rows.Count == 1)
+        {
+          SQLiteResultSet.Row arr = results.Rows[0];
+          if (arr.fields.Count == 1)
+          {
+            if (arr.fields[0] == view)
+            {
+              return true;
+            }
+          }
+        }
+      }
+      return false;
+    }
+
     public static void AddIndex(SQLiteClient dbHandle, string indexName, string strSQL)
     {
       SQLiteResultSet results;
@@ -184,6 +219,31 @@ namespace MediaPortal.Database
         //Log.Info("create table:{0} {1}", strSQL,dbHandle);
         dbHandle.Execute(strSQL);
         //Log.Info("table created");
+      }
+      catch (SQLiteException ex)
+      {
+        Log.Error("DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message, ex.StackTrace, strSQL);
+      }
+      return true;
+    }
+
+    /// <summary>
+    /// Helper function to create a new view in the database
+    /// </summary>
+    /// <param name="strView">name of view</param>
+    /// <param name="strSQL">SQL command to create the new view</param>
+    /// <returns>true if view is created</returns>
+    public static bool AddView(SQLiteClient dbHandle, string strView, string strSQL)
+    {
+      if (ViewExists(dbHandle, strView))
+      {
+        return false;
+      }
+      try
+      {
+        //Log.Info("create view:{0} {1}", strSQL,dbHandle);
+        dbHandle.Execute(strSQL);
+        //Log.Info("view created");
       }
       catch (SQLiteException ex)
       {

@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,24 +14,17 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "mTunnel" multicast access service
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // Network Interfaces
 // Implementation
 
 #include "NetInterface.hh"
 #include "GroupsockHelper.hh"
 
-#ifndef NO_STRSTREAM
-#if (defined(__WIN32__) || defined(_WIN32)) && !defined(__MINGW32__)
-#include <strstrea.h>
-#else
-#if defined(__GNUC__) && (__GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ > 0)
-#include <strstream>
-#else
-#include <strstream.h>
+#ifndef NO_SSTREAM
+#include <sstream>
 #endif
-#endif
-#endif
+#include <stdio.h>
 
 ////////// NetInterface //////////
 
@@ -92,19 +85,38 @@ DirectedNetInterface* DirectedNetInterfaceSet::Iterator::next() {
 
 int Socket::DebugLevel = 1; // default value
 
-Socket::Socket(UsageEnvironment& env, Port port, Boolean setLoopback)
-  : fEnv(DefaultUsageEnvironment != NULL ? *DefaultUsageEnvironment : env), fPort(port), fSetLoopback(setLoopback) {
-  fSocketNum = setupDatagramSocket(fEnv, port, setLoopback);
+Socket::Socket(UsageEnvironment& env, Port port)
+  : fEnv(DefaultUsageEnvironment != NULL ? *DefaultUsageEnvironment : env), fPort(port) {
+  fSocketNum = setupDatagramSocket(fEnv, port);
+}
+
+void Socket::reset() {
+  if (fSocketNum >= 0) closeSocket(fSocketNum);
+  fSocketNum = -1;
 }
 
 Socket::~Socket() {
-  closeSocket(fSocketNum);
+  reset();
 }
 
 Boolean Socket::changePort(Port newPort) {
+  int oldSocketNum = fSocketNum;
+  unsigned oldReceiveBufferSize = getReceiveBufferSize(fEnv, fSocketNum);
+  unsigned oldSendBufferSize = getSendBufferSize(fEnv, fSocketNum);
   closeSocket(fSocketNum);
-  fSocketNum = setupDatagramSocket(fEnv, newPort, fSetLoopback);
-  return fSocketNum >= 0;
+
+  fSocketNum = setupDatagramSocket(fEnv, newPort);
+  if (fSocketNum < 0) {
+    fEnv.taskScheduler().turnOffBackgroundReadHandling(oldSocketNum);
+    return False;
+  }
+
+  setReceiveBufferTo(fEnv, fSocketNum, oldReceiveBufferSize);
+  setSendBufferTo(fEnv, fSocketNum, oldSendBufferSize);
+  if (fSocketNum != oldSocketNum) { // the socket number has changed, so move any event handling for it:
+    fEnv.taskScheduler().moveSocketHandling(oldSocketNum, fSocketNum);
+  }
+  return True;
 }
 
 UsageEnvironment& operator<<(UsageEnvironment& s, const Socket& sock) {

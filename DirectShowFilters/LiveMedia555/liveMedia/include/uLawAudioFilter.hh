@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // Filters for converting between raw PCM audio and uLaw
 // C++ header
 
@@ -162,6 +162,33 @@ protected:
   EndianSwap16(UsageEnvironment& env, FramedSource* inputSource);
       // called only by createNew()
   virtual ~EndianSwap16();
+
+private:
+  // Redefined virtual functions:
+  virtual void doGetNextFrame();
+
+private:
+  static void afterGettingFrame(void* clientData, unsigned frameSize,
+				unsigned numTruncatedBytes,
+				struct timeval presentationTime,
+				unsigned durationInMicroseconds);
+  void afterGettingFrame1(unsigned frameSize,
+			  unsigned numTruncatedBytes,
+			  struct timeval presentationTime,
+			  unsigned durationInMicroseconds);
+};
+
+
+////////// 24-bit values: little-endian <-> big-endian //////////
+
+class EndianSwap24: public FramedFilter {
+public:
+  static EndianSwap24* createNew(UsageEnvironment& env, FramedSource* inputSource);
+
+protected:
+  EndianSwap24(UsageEnvironment& env, FramedSource* inputSource);
+      // called only by createNew()
+  virtual ~EndianSwap24();
 
 private:
   // Redefined virtual functions:

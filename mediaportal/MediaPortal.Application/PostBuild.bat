@@ -1,6 +1,9 @@
 REM %1 = Solution Directory
 REM %2 = $(ConfigurationName) Debug/Release
+REM %3 = Solution Directory with quote
 
+set GIT_ROOT=%~dp0..\..\
+set Build="%GIT_ROOT%\Build"
 
 REM Identify configuration path for <=XP or >=Vista
 if exist %ProgramData%\nul (
@@ -84,7 +87,7 @@ REM Utils
 xcopy %1\Utils\bin\%2\Utils.dll . /Y /D
 
 REM Copy all new files from base
-xcopy %1\MediaPortal.Base\*.* . /E /R /Y /D
+xcopy %1\MediaPortal.Base\*.* . /E /R /Y /D /EXCLUDE:%3\Exclude.txt
 
 REM Language
 xcopy %1\MediaPortal.Base\Language\*.* %ConfigPath%\"Team MediaPortal\MediaPortal\Language\" /E /Y /D
@@ -122,6 +125,17 @@ xcopy %1\..\DirectShowFilters\DXErr9\bin\%2\dxerr9.dll . /Y /D
 
 REM Copy bluray dll from DirectShowFilters folder
 xcopy %1\..\DirectShowFilters\BDReader\libbluray\bluray.dll . /Y /D
+xcopy %1\..\libbluray\src\.libs\libbluray-.jar . /Y /D
+ren libbluray-.jar libbluray-j2se-1.0.2.jar
+
+REM freetype.dll - odd source folder is 
+if /I "%2" EQU "RELEASE" (
+xcopy %1\..\libbluray\3rd_party\freetype2\objs\Win32\Release\freetype.dll . /Y /D
+)
+
+if /I "%2" EQU "DEBUG" (
+xcopy %1\..\libbluray\3rd_party\freetype2\objs\Win32\Debug\freetype.dll . /Y /D
+)
 
 REM mpWatchDog
 xcopy %1\WatchDog\bin\%2\WatchDog.exe . /Y /D
@@ -140,58 +154,67 @@ xcopy %1\MPE\MpeMaker\bin\%2\MpeMaker.* . /Y /D
 
 REM Nuget 
 xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
-xcopy %1\..\Packages\MediaInfo.0.7.72\MediaInfo.dll . /Y /D
-xcopy %1\..\Packages\Sqlite.3.10.0\sqlite.dll . /Y /D
+xcopy %1\..\Packages\MediaInfo.0.7.95\MediaInfo.dll . /Y /D
+xcopy %1\..\Packages\Sqlite.3.21.0\sqlite.dll . /Y /D
 
 REM ffmpeg 
 xcopy %1\..\Packages\ffmpeg.2.7.1\ffmpeg.exe MovieThumbnailer\ /Y /D
 
 REM Bass Core
-xcopy %1\..\Packages\BASS.2.4.10\bass.dll . /Y /D
-xcopy %1\..\Packages\BASS.NET.2.4.10.3\lib\net40\Bass.Net.dll . /Y /D
+xcopy %1\..\Packages\BASS.2.4.12.1\bass.dll . /Y /D
+xcopy %1\..\Packages\BASS.NET.2.4.12.5\lib\net40\Bass.Net.dll . /Y /D
+xcopy %1\..\Packages\BassRegistration.2.4.12.5\lib\net40\BassRegistration.dll . /Y /D
 
 REM Bass AddOns
-xcopy %1\..\Packages\bass.asio.1.3.0.2\bassasio.dll . /Y /D
-xcopy %1\..\Packages\bass.fx.2.4.10.1\bass_fx.dll . /Y /D
-xcopy %1\..\Packages\bass.mix.2.4.7.2\bassmix.dll . /Y /D
+xcopy %1\..\Packages\bass.asio.1.3.1\bassasio.dll . /Y /D
+xcopy %1\..\Packages\bass.fx.2.4.11.1\bass_fx.dll . /Y /D
+xcopy %1\..\Packages\bass.mix.2.4.8.0\bassmix.dll . /Y /D
 xcopy %1\..\Packages\bass.vst.2.4.5\bass_vst.dll . /Y /D
 xcopy %1\..\Packages\bass.wadsp.2.4.1\bass_wadsp.dll . /Y /D
-xcopy %1\..\Packages\bass.wasapi.2.4.0.2\basswasapi.dll . /Y /D
+xcopy %1\..\Packages\bass.wasapi.2.4.1.2\basswasapi.dll . /Y /D
 xcopy %1\..\Packages\bass.ofr.2.4.0.2\OptimFROG.dll . /Y /D
 
 REM Bass AudioDecoders
-xcopy %1\..\Packages\bass.aac.2.4.4.4\bass_aac.dll "MusicPlayer\plugins\audio decoders\" /Y /D
-xcopy %1\..\Packages\bass.ac3.2.4.0.3\bass_ac3.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\bass.aac.2.4.5.1\bass_aac.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\bass.ac3.2.4.0.5\bass_ac3.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.alac.2.4.3\bass_alac.dll "MusicPlayer\plugins\audio decoders\" /Y /D
-xcopy %1\..\Packages\bass.ape.2.4.1\bass_ape.dll "MusicPlayer\plugins\audio decoders\" /Y /D
-xcopy %1\..\Packages\bass.dsd.0.0.1\bassdsd.dll "MusicPlayer\plugins\audio decoders\" /Y /D
-xcopy %1\..\Packages\bass.mpc.2.4.1.1\bass_mpc.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\bass.ape.2.4.2.0\bass_ape.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\bass.dsd.2.4.0.2\bassdsd.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\bass.mpc.2.4.1.2\bass_mpc.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 xcopy %1\..\Packages\bass.ofr.2.4.0.2\bass_ofr.dll "MusicPlayer\plugins\audio decoders\" /Y /D
-xcopy %1\..\Packages\bass.spx.2.4.2\bass_spx.dll "MusicPlayer\plugins\audio decoders\" /Y /D
-xcopy %1\..\Packages\bass.tta.2.4.0\bass_tta.dll "MusicPlayer\plugins\audio decoders\" /Y /D
-xcopy %1\..\Packages\bass.cd.2.4.5\basscd.dll "MusicPlayer\plugins\audio decoders\" /Y /D
-xcopy %1\..\Packages\bass.flac.2.4.1\bassflac.dll "MusicPlayer\plugins\audio decoders\" /Y /D
-xcopy %1\..\Packages\bass.midi.2.4.8\bassmidi.dll "MusicPlayer\plugins\audio decoders\" /Y /D
-xcopy %1\..\Packages\bass.opus.2.4.1.3\bassopus.dll "MusicPlayer\plugins\audio decoders\" /Y /D
-xcopy %1\..\Packages\bass.wma.2.4.4\basswma.dll "MusicPlayer\plugins\audio decoders\" /Y /D
-xcopy %1\..\Packages\bass.wv.2.4.4\basswv.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\bass.spx.2.4.3.2\bass_spx.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\bass.tta.2.4.0.2\bass_tta.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\bass.cd.2.4.6.0\basscd.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\bass.flac.2.4.3.0\bassflac.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\bass.midi.2.4.10.0\bassmidi.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\bass.opus.2.4.1.9\bassopus.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\bass.wma.2.4.5.1\basswma.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\bass.wv.2.4.6.0\basswv.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 
 REM iMON Display 
 xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll . /Y /D
 xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll . /Y /D
 
 REM taglib-sharp
-xcopy %1\..\Packages\MediaPortal.TagLib.2.1.0.1\lib\net40\taglib-sharp.dll ./Y /D
+xcopy %1\..\Packages\MediaPortal.TagLib.2.1.0.2\lib\net40\taglib-sharp.dll ./Y /D
 
 REM SharpLibHid
-xcopy %1\..\Packages\SharpLibHid.1.3.0\lib\net20\SharpLibHid.dll . /Y /D
+xcopy %1\..\Packages\SharpLibHid.1.4.2\lib\net40\SharpLibHid.dll . /Y /D
 
 REM SharpLibWin32
-xcopy %1\..\Packages\SharpLibWin32.0.0.7\lib\net20\SharpLibWin32.dll . /Y /D
+xcopy %1\..\Packages\SharpLibWin32.0.0.9\lib\net20\SharpLibWin32.dll . /Y /D
 
 REM System.Management.Automation
 xcopy %1\..\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll . /Y /D
 
 REM SharpLibDisplay
-xcopy %1\..\Packages\SharpLibDisplay.0.2.5\lib\net40\SharpLibDisplay.dll . /Y /D
+xcopy %1\..\Packages\SharpLibDisplay.0.2.6\lib\net40\SharpLibDisplay.dll . /Y /D
 
+REM Naudio
+xcopy %1\..\Packages\NAudio.1.8.3\lib\net35\NAudio.dll . /Y /D
+
+REM CSCore
+xcopy %1\..\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll . /Y /D
+
+REM Enable >2GB for 32 bit process
+call %Build%\MSBUILD_MP_LargeAddressAware.bat %2

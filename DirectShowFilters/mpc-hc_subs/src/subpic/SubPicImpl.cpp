@@ -113,29 +113,84 @@ STDMETHODIMP CSubPicImpl::GetDirtyRect(RECT* pDirtyRect)
     return pDirtyRect ? *pDirtyRect = m_rcDirty, S_OK : E_POINTER;
 }
 
-STDMETHODIMP CSubPicImpl::GetSourceAndDest(SIZE* pSize, RECT* pRcSource, RECT* pRcDest)
+STDMETHODIMP CSubPicImpl::GetSourceAndDest(SIZE* pSize, RECT* pRcSource, RECT* pRcDest, int xOffsetInPixels /*= 0*/)
 {
     CheckPointer(pRcSource, E_POINTER);
     CheckPointer(pRcDest,   E_POINTER);
 
     if (m_size.cx > 0 && m_size.cy > 0) {
         CRect rcTemp = m_rcDirty;
+        double scaleX, scaleY;
 
         // FIXME
         rcTemp.DeflateRect(1, 1);
 
         *pRcSource = rcTemp;
 
-        rcTemp.OffsetRect(m_VirtualTextureTopLeft);
+        rcTemp.OffsetRect(m_VirtualTextureTopLeft + CPoint(xOffsetInPixels, 0));
         *pRcDest = CRect(rcTemp.left   * pSize->cx / m_VirtualTextureSize.cx,
                          rcTemp.top    * pSize->cy / m_VirtualTextureSize.cy,
                          rcTemp.right  * pSize->cx / m_VirtualTextureSize.cx,
                          rcTemp.bottom * pSize->cy / m_VirtualTextureSize.cy);
 
         return S_OK;
-    } else {
-        return E_INVALIDARG;
     }
+    return E_INVALIDARG;
+}
+
+STDMETHODIMP CSubPicImpl::GetSourceAndDest(RECT rcWindow, RECT rcVideo, BOOL bPositionRelative, CPoint ShiftPos, RECT* pRcSource, RECT* pRcDest, int xOffsetInPixels, const BOOL bUseSpecialCase) const
+{
+	CheckPointer(pRcSource, E_POINTER);
+	CheckPointer(pRcDest, E_POINTER);
+
+	if (m_size.cx > 0 && m_size.cy > 0) {
+		CPoint offset(0, 0);
+		double scaleX = 1.0, scaleY = 1.0;
+
+		const CRect rcTarget = bPositionRelative || m_eSubtitleType == SUBTITLE_TYPE::ST_VOBSUB || m_eSubtitleType == SUBTITLE_TYPE::ST_XSUB || m_eSubtitleType == SUBTITLE_TYPE::ST_XYSUBPIC ? rcVideo : rcWindow;
+		const CSize szTarget = rcTarget.Size();
+		const bool bNeedSpecialCase = !!bUseSpecialCase && (m_eSubtitleType == SUBTITLE_TYPE::ST_HDMV || m_eSubtitleType == SUBTITLE_TYPE::ST_DVB || m_eSubtitleType == SUBTITLE_TYPE::ST_XYSUBPIC) && m_VirtualTextureSize.cx > 720;
+		if (bNeedSpecialCase) {
+			const double subtitleAR	= double(m_VirtualTextureSize.cx) / m_VirtualTextureSize.cy;
+			const double videoAR	= double(szTarget.cx) / szTarget.cy;
+
+			scaleX = scaleY = videoAR < subtitleAR ? double(szTarget.cx) / m_VirtualTextureSize.cx : double(szTarget.cy) / m_VirtualTextureSize.cy;
+		} else {
+			scaleX = double(szTarget.cx) / m_VirtualTextureSize.cx;
+			scaleY = double(szTarget.cy) / m_VirtualTextureSize.cy;
+		}
+		offset += rcTarget.TopLeft();
+
+		CRect rcTemp = m_rcDirty;
+		*pRcSource = rcTemp;
+
+		rcTemp.OffsetRect(m_VirtualTextureTopLeft + CPoint(xOffsetInPixels, 0));
+		rcTemp = CRect(lround(rcTemp.left   * scaleX),
+					   lround(rcTemp.top    * scaleY),
+					   lround(rcTemp.right  * scaleX),
+					   lround(rcTemp.bottom * scaleY));
+		rcTemp.OffsetRect(offset);
+
+		if (bNeedSpecialCase) {
+			offset.SetPoint(0, 0);
+			CSize szSourceScaled(m_VirtualTextureSize.cx * scaleX, m_VirtualTextureSize.cy * scaleY);
+			if (szTarget.cx > szSourceScaled.cx) {
+				offset.x = lround((szTarget.cx - szSourceScaled.cx) / 2.0);
+			}
+
+			if (szTarget.cy > szSourceScaled.cy) {
+				offset.y = lround((szTarget.cy - szSourceScaled.cy) / 2.0);
+			}
+			rcTemp.OffsetRect(offset);
+		}
+
+		rcTemp.OffsetRect(ShiftPos);
+		*pRcDest = rcTemp;
+
+		return S_OK;
+	}
+
+	return E_INVALIDARG;
 }
 
 STDMETHODIMP CSubPicImpl::SetDirtyRect(RECT* pDirtyRect)
@@ -180,6 +235,22 @@ STDMETHODIMP CSubPicImpl::SetVirtualTextureSize(const SIZE pSize, const POINT pT
     m_VirtualTextureTopLeft.SetPoint(pTopLeft.x, pTopLeft.y);
 
     return S_OK;
+}
+
+STDMETHODIMP CSubPicImpl::SetType(SUBTITLE_TYPE subtitleType)
+{
+  m_eSubtitleType = subtitleType;
+
+  return S_OK;
+}
+
+STDMETHODIMP CSubPicImpl::GetType(SUBTITLE_TYPE* pSubtitleType)
+{
+  CheckPointer(pSubtitleType, E_POINTER);
+
+  *pSubtitleType = m_eSubtitleType;
+
+  return S_OK;
 }
 
 //

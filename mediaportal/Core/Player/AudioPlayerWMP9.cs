@@ -635,11 +635,12 @@ namespace MediaPortal.Player
         _isFullScreen = GUIGraphicsContext.IsFullScreenVideo;
         _needUpdate = true;
       }
-      if (!_needUpdate)
+      if (!_needUpdate && !GUIGraphicsContext.UpdateVideoWindow)
       {
         return;
       }
       _needUpdate = false;
+      GUIGraphicsContext.UpdateVideoWindow = false;
 
       if (_isFullScreen)
       {
@@ -843,7 +844,7 @@ namespace MediaPortal.Player
             {
               _wmp10Player.settings.rate = (double)value;
             }
-            catch (Exception) {}
+            catch (Exception) { }
             VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
           }
         }

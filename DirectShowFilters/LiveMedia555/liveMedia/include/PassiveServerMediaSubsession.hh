@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // A 'ServerMediaSubsession' object that represents an existing
 // 'RTPSink', rather than one that creates new 'RTPSink's on demand.
 // C++ header
@@ -43,6 +43,8 @@ protected:
       // called only by createNew();
   virtual ~PassiveServerMediaSubsession();
 
+  virtual Boolean rtcpIsMuxed();
+
 protected: // redefined virtual functions
   virtual char const* sdpLines();
   virtual void getStreamParameters(unsigned clientSessionId,
@@ -62,12 +64,21 @@ protected: // redefined virtual functions
 			   TaskFunc* rtcpRRHandler,
 			   void* rtcpRRHandlerClientData,
                            unsigned short& rtpSeqNum,
-                           unsigned& rtpTimestamp);
+                           unsigned& rtpTimestamp,
+			   ServerRequestAlternativeByteHandler* serverRequestAlternativeByteHandler,
+                           void* serverRequestAlternativeByteHandlerClientData);
+  virtual float getCurrentNPT(void* streamToken);
+  virtual void getRTPSinkandRTCP(void* streamToken,
+				 RTPSink const*& rtpSink, RTCPInstance const*& rtcp);
+  virtual void deleteStream(unsigned clientSessionId, void*& streamToken);
+
+protected:
+  char* fSDPLines;
 
 private:
   RTPSink& fRTPSink;
   RTCPInstance* fRTCPInstance;
-  char* fSDPLines;
+  HashTable* fClientRTCPSourceRecords; // indexed by client session id; used to implement RTCP "RR" handling
 };
 
 #endif

@@ -12,9 +12,13 @@
       <description>splashscreen text</description>
       <type>label</type>
       <id>2</id>
-      <posY>950</posY>
-      <textsize>30</textsize>
-      <textcolor>#87cefa</textcolor>
+      <posX>0</posX>
+      <posY>500</posY>
+      <width>1920</width>
+      <height>40</height>
+      <textsize>25</textsize>
+      <textcolor>#00bfff</textcolor>
+      <align>TopCenter</align>
     </control>
   </controls>
 </window>

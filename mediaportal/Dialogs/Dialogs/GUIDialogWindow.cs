@@ -37,6 +37,7 @@ namespace MediaPortal.Dialogs
     protected int _parentWindowID = -1;
     protected bool _prevOverlay = false;
     protected bool _running = false;
+    protected bool _destroyingPage = false;
     protected IRenderLayer _prevLayer = null;
     // Public Variables
 
@@ -90,24 +91,36 @@ namespace MediaPortal.Dialogs
       {
         return;
       }
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      lock (thisLock)
+
+      try
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, _parentWindowID, 0,
-                                        null);
-        OnMessage(msg);
-        if (GUIWindowManager.RoutedWindow == GetID)
+        GUIWindowManager.IsSwitchingToNewWindow = true;
+        if (!_destroyingPage)
         {
-          GUIWindowManager.UnRoute(); // only unroute if we still the routed window
+          _destroyingPage = true;
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, _parentWindowID, 0,
+                                          null);
+          OnMessage(msg);
+          if (GUIWindowManager.RoutedWindow == GetID)
+          {
+            GUIWindowManager.UnRoute(); // only unroute if we still the routed window
+          }
+          _parentWindow = null;
+          _running = false;
+          _destroyingPage = false;
         }
-        _parentWindow = null;
-        _running = false;
+        GUIWindowManager.IsSwitchingToNewWindow = false;
+        while (IsAnimating(AnimationType.WindowClose) &&
+               GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+        {
+          GUIWindowManager.Process();
+        }
+
       }
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-      while (IsAnimating(AnimationType.WindowClose) &&
-             GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      catch (System.Exception ex)
       {
-        GUIWindowManager.Process();
+        _destroyingPage = false;
+        Log.Error("Error during PageDestroy(): " + ex.Message);
       }
     }
 
@@ -230,7 +243,9 @@ namespace MediaPortal.Dialogs
           {
             _prevLayer = GUILayerManager.GetLayer(GUILayerManager.LayerType.Dialog);
             _prevOverlay = GUIGraphicsContext.Overlay;
+
             GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
+
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
 
             GUIPropertyManager.SetProperty("#currentmoduleid", Convert.ToString(GUIWindowManager.ActiveWindow));

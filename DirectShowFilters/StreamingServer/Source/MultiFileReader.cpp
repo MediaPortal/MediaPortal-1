@@ -23,64 +23,127 @@
 *  nate can be reached on the forums at
 *    http://forums.dvbowners.com/
 */
-#include <windows.h>
+#include "StdAfx.h"
+
 #include "MultiFileReader.h"
 #include <atlbase.h>
+#include <mmsystem.h>
+
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
 
 //Maximum time in msec to wait for the buffer file to become available - Needed for DVB radio (this sometimes takes some time)
 #define MAX_BUFFER_TIMEOUT	1500
 
+//block read sizes for SMB2 data cache workaround
+#define NEXT_READ_SIZE	8192
+#define NEXT_READ_ROLLOVER (NEXT_READ_SIZE*64)
+
+#define INFO_BUFF_SIZE (65536)
+
 extern void LogDebug(const char *fmt, ...) ;
-extern void LogDebug(const wchar_t *fmt, ...) ;
-MultiFileReader::MultiFileReader():
+
+MultiFileReader::MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec* pFilterLock, BOOL useRandomAccess, BOOL extraLogging):
 	m_TSBufferFile(),
-	m_TSFile()
+	m_TSFile(),
+	m_TSFileNext()
 {
+  if (pFilterLock != NULL)
+  {
+    //We may be using 'shared' locking between MultiFileReader instances
+    m_pAccessLock = pFilterLock;
+  }
+  else
+  {
+    m_pAccessLock = &m_accessLock;
+  }
+    
 	m_startPosition = 0;
 	m_endPosition = 0;
 	m_currentPosition = 0;
 	m_filesAdded = 0;
 	m_filesRemoved = 0;
-	m_TSFileId = 0;
-	m_bReadOnly = 1;
-	m_bDelay = 0;
-	m_llBufferPointer = 0;	
-  m_cachedFileSize=0;
+	m_TSFileId = -1;
+	m_TSFileIdNext = -1;
+  m_lastFileNextRead = timeGetTime();
+  m_currPosnFileNext = 0;
+  m_bUseFileNext = useFileNext;
+  m_bIsStopping = false;
+  m_bExtraLogging = extraLogging;
+  m_isTimeshift = true;
+  
+  m_TSBufferFile.SetDummyWrites(useDummyWrites);
+  m_TSFile.SetDummyWrites(useDummyWrites);
+  m_TSFileNext.SetDummyWrites(FALSE);
+
+  m_TSBufferFile.SetRandomAccess(useRandomAccess);
+  m_TSFile.SetRandomAccess(useRandomAccess);
+  m_TSFileNext.SetRandomAccess(useRandomAccess);
+
+  m_pFileReadNextBuffer = NULL;
+  m_pInfoFileBuffer1 = NULL;
+  m_pInfoFileBuffer2 = NULL;
+
+  m_pFileReadNextBuffer = new byte[NEXT_READ_SIZE];
+  m_pInfoFileBuffer1 = new byte[INFO_BUFF_SIZE];
+  m_pInfoFileBuffer2 = new byte[INFO_BUFF_SIZE];
+  
+  LogDebug("MultiFileReader::ctor, useFileNext = %d, useDummyWrites %d, pFilterLock %d, useRandomAccess %d", m_bUseFileNext, useDummyWrites, (pFilterLock != NULL), useRandomAccess);
 }
 
 MultiFileReader::~MultiFileReader()
 {
+  SetStopping(true);
+	m_TSBufferFile.CloseFile();
+	m_TSFile.CloseFile();
+	m_TSFileNext.CloseFile();
+  
+  if (m_pFileReadNextBuffer)
+  {
+    delete [] m_pFileReadNextBuffer;
+    m_pFileReadNextBuffer = NULL;
+  }
+  else
+  {
+    LogDebug("MultiFileReader::dtor - ERROR m_pFileReadBuffer is NULL !!");
+  }
+  
+  if (m_pInfoFileBuffer1)
+  {
+    delete [] m_pInfoFileBuffer1;
+    m_pInfoFileBuffer1 = NULL;
+  }
+  else
+  {
+    LogDebug("MultiFileReader::dtor - ERROR m_pInfoFileBuffer1 is NULL !!");
+  }
+
+  if (m_pInfoFileBuffer2)
+  {
+    delete [] m_pInfoFileBuffer2;
+    m_pInfoFileBuffer2 = NULL;
+  }
+  else
+  {
+    LogDebug("MultiFileReader::dtor - ERROR m_pInfoFileBuffer2 is NULL !!");
+  }
+
+  LogDebug("MultiFileReader::dtor");
 	//CloseFile called by ~FileReader
-/*	USES_CONVERSION;
-
-	std::vector<MultiFileReaderFile *>::iterator it = m_tsFiles.begin();
-	for ( ; it < m_tsFiles.end() ; it++ )
-	{
-		if((*it)->filename)
-		{
-			DeleteFile(W2T((*it)->filename));
-			delete[] (*it)->filename;
-		}
-
-		delete *it;
-	};
-*/
 }
 
-FileReader* MultiFileReader::CreateFileReader()
-{
-	return (FileReader *)new MultiFileReader();
-}
 
 HRESULT MultiFileReader::GetFileName(LPOLESTR *lpszFileName)
 {
 //	CheckPointer(lpszFileName,E_POINTER);
+  CAutoLock rLock (m_pAccessLock);
 	return m_TSBufferFile.GetFileName(lpszFileName);
 }
 
 HRESULT MultiFileReader::SetFileName(LPCOLESTR pszFileName)
 {
 //	CheckPointer(pszFileName,E_POINTER);
+  CAutoLock rLock (m_pAccessLock);
 	return m_TSBufferFile.SetFileName(pszFileName);
 }
 
@@ -89,22 +152,25 @@ HRESULT MultiFileReader::SetFileName(LPCOLESTR pszFileName)
 //
 HRESULT MultiFileReader::OpenFile()
 {
+  CAutoLock rLock (m_pAccessLock);
+  SetStopping(false);
+  
 	HRESULT hr = m_TSBufferFile.OpenFile();
 
 	//For radio the buffer sometimes needs some time to become available, so wait try it more than once
 	DWORD tc=GetTickCount();
 	while (RefreshTSBufferFile()==S_FALSE)
 	{
-		if (GetTickCount()-tc>MAX_BUFFER_TIMEOUT)
+		if (GetTickCount()-tc > MAX_BUFFER_TIMEOUT)
 		{
-			LogDebug("MultiFileReader: timedout while waiting for buffer file to become available");
+			LogDebug("MultiFileReader: timed out while waiting for buffer file to become available");
 			return S_FALSE;
 		}
+		Sleep(50);
 	}
 			
-
 	m_currentPosition = 0;
-	m_llBufferPointer = 0;	
+  //LogDebug("MultiFileReader::OpenFile()");
 
 	return hr;
 }
@@ -114,32 +180,44 @@ HRESULT MultiFileReader::OpenFile()
 //
 HRESULT MultiFileReader::CloseFile()
 {
+  SetStopping(true);
+  CAutoLock rLock (m_pAccessLock);
 	HRESULT hr;
 	hr = m_TSBufferFile.CloseFile();
 	hr = m_TSFile.CloseFile();
-	m_TSFileId = 0;
-	m_llBufferPointer = 0;	
+	m_TSFileId = -1;
+	hr = m_TSFileNext.CloseFile();
+	m_TSFileIdNext = -1;
 	return hr;
+}
+
+//Used by duration measuring code to avoid leaving data files open
+void MultiFileReader::CloseBufferFiles()
+{
+  CAutoLock rLock (m_pAccessLock);    
+	if (!m_TSFile.IsFileInvalid())
+	{
+		m_TSFile.CloseFile();
+    m_TSFileId = -1;
+	}
+	if(!m_TSFileNext.IsFileInvalid())
+  {
+  	m_TSFileNext.CloseFile();
+    m_TSFileIdNext = -1;
+  }
 }
 
 BOOL MultiFileReader::IsFileInvalid()
 {
+  CAutoLock rLock (m_pAccessLock);    
 	return m_TSBufferFile.IsFileInvalid();
-}
-
-HRESULT MultiFileReader::GetFileSize(__int64 *pStartPosition, __int64 *pLength)
-{
-	RefreshTSBufferFile();
-//	CheckPointer(pStartPosition,E_POINTER);
-//	CheckPointer(pLength,E_POINTER);
-	*pStartPosition = m_startPosition;
-	*pLength = (__int64)(m_endPosition - m_startPosition);
-	return S_OK;
 }
 
 DWORD MultiFileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 {
-//	RefreshTSBufferFile();
+  CAutoLock rLock (m_pAccessLock);
+  
+	RefreshTSBufferFile();
 
 	if (dwMoveMethod == FILE_END)
 	{
@@ -158,113 +236,266 @@ DWORD MultiFileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMeth
 		m_currentPosition = m_startPosition;
 
 	if (m_currentPosition > m_endPosition) {
-		LogDebug("Seeking beyond the end position: %I64d > %I64d", m_currentPosition, m_endPosition);
+		LogDebug("MultiFileReader::SetFilePointer() - Seeking beyond the end position: %I64d > %I64d", m_currentPosition, m_endPosition);
 		m_currentPosition = m_endPosition;
 	}
 
-	RefreshTSBufferFile();
 	return S_OK;
 }
 
 __int64 MultiFileReader::GetFilePointer()
 {
-//	RefreshTSBufferFile();
-	return m_currentPosition;
+  CAutoLock rLock (m_pAccessLock);
+  __int64 currentPosition = m_currentPosition - m_startPosition; 
+ 
+  if (currentPosition < 0) 
+    currentPosition = 0;
+    
+	return currentPosition;
 }
 
 HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 {
-	HRESULT hr;
+  CAutoLock rLock (m_pAccessLock);
+  return ReadNoLock(pbData, lDataLength, dwReadBytes, false);
+}
+
+HRESULT MultiFileReader::ReadWithRefresh(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
+{
+  CAutoLock rLock (m_pAccessLock);
+  return ReadNoLock(pbData, lDataLength, dwReadBytes, true);
+}
+
+HRESULT MultiFileReader::ReadNoLock(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, bool refreshFile)
+{
+	HRESULT hr = S_OK;
 
 	// If the file has already been closed, don't continue
 	if (m_TSBufferFile.IsFileInvalid())
-		return S_FALSE;
+	{
+    LogDebug("MultiFileReader::Read() - IsFileInvalid() failure");
+		*dwReadBytes = 0;
+		return E_FAIL;
+	}
 
-	RefreshTSBufferFile();
-  RefreshFileSize();
+  hr = RefreshTSBufferFile();
+  
+	if (hr != S_OK)
+	{
+    //LogDebug("MultiFileReader::Read() - RefreshTSBufferFile() failure, HRESULT = 0x%x", hr);
+		*dwReadBytes = 0;
+		return E_FAIL;
+	}
 
 	if (m_currentPosition < m_startPosition)
 		m_currentPosition = m_startPosition;
+		
+	__int64 oldCurrentPosn = m_currentPosition;
 
-	// Find out which file the currentPosition is in.
+	// Find out which file the currentPosition is in (and the next file, if it exists)
 	MultiFileReaderFile *file = NULL;
+	MultiFileReaderFile *fileNext = NULL;
+	bool fileFound = false;
 	std::vector<MultiFileReaderFile *>::iterator it = m_tsFiles.begin();
 	for ( ; it < m_tsFiles.end() ; it++ )
 	{
-		file = *it;
+	  if (fileFound)
+	  {
+	    fileNext = *it; //This is the next file after the file we need to read
+	    break;
+	  }	 
+	  file = *it; 
 		if (m_currentPosition < (file->startPosition + file->length))
-			break;
+		{
+		  fileFound = true;
+	  }
 	};
 
 	if(!file)
   {
     LogDebug("MultiFileReader::no file");
-		return S_FALSE;
+		*dwReadBytes = 0;
+		return E_FAIL;
   }
-	if (m_currentPosition < (file->startPosition + file->length))
-	{
-		if (m_TSFileId != file->filePositionId)
-		{
-			m_TSFile.CloseFile();
-			m_TSFile.SetFileName(file->filename);
-			m_TSFile.OpenFile();
-
-			m_TSFileId = file->filePositionId;
-
-			if (m_bDebugOutput)
-			{
-				USES_CONVERSION;
-				TCHAR sz[MAX_PATH+128];
-				wsprintf(sz, TEXT("Current File Changed to %s\n"), W2T(file->filename));
-				//::OutputDebugString(sz);
-			}
-		}
-
-		__int64 seekPosition = m_currentPosition - file->startPosition;
-
-		m_TSFile.SetFilePointer(seekPosition, FILE_BEGIN);
-    __int64 posSeeked=m_TSFile.GetFilePointer();
-    if (posSeeked!=seekPosition)
-    {
-      LogDebug("SEEK FAILED");
-    }
-
-		ULONG bytesRead = 0;
-
-		__int64 bytesToRead = file->length - seekPosition;
-		if (lDataLength > bytesToRead)
-		{
-			hr = m_TSFile.Read(pbData, (ULONG)bytesToRead, &bytesRead);
-      if (FAILED(hr))
-      {
-        LogDebug("READ FAILED1");
-      }
-			m_currentPosition += bytesToRead;
-
-			hr = this->Read(pbData + bytesToRead, lDataLength - (ULONG)bytesToRead, dwReadBytes);
-      if (FAILED(hr))
-      {
-        LogDebug("READ FAILED2");
-      }
-			*dwReadBytes += bytesRead;
-		}
-		else
-		{
-			hr = m_TSFile.Read(pbData, lDataLength, dwReadBytes);
-      if (FAILED(hr))
-      {
-        LogDebug("READ FAILED2");
-      }
-			m_currentPosition += lDataLength;
-		}
-	}
-	else
-	{
+  
+  if(!fileFound)
+  {
 		// The current position is past the end of the last file
 		*dwReadBytes = 0;
+		return S_FALSE;
+  }
+  
+	if (m_TSFileId != file->filePositionId)
+	{
+  	if (!m_TSFile.IsFileInvalid())
+  	{
+  		m_TSFile.CloseFile();
+  	}
+		m_TSFile.SetFileName(file->filename);
+		m_TSFile.OpenFile();
+		m_TSFileId = file->filePositionId;		
+  	if (m_TSFile.IsFileInvalid())
+  	{
+      LogDebug("MultiFileReader::new data file, OpenFile() failed");
+  		*dwReadBytes = 0;
+  		m_TSFileId = -1;
+  		return E_FAIL;
+  	}
+	}
+	
+	if (refreshFile)
+	{
+  	// try to clear local / remote SMB file cache. This should happen when we close the filehandle
+  	if (!m_TSFile.IsFileInvalid())
+  	{
+  		m_TSFile.CloseFile();
+  	}
+  	Sleep(5);
+		m_TSFile.OpenFile();
+  	if (m_TSFile.IsFileInvalid())
+  	{
+      LogDebug("MultiFileReader::data file refresh, OpenFile() failed");
+  		*dwReadBytes = 0;
+  		m_TSFileId = -1;
+  		return E_FAIL;
+  	}
+  	Sleep(5);
 	}
 
-	return S_OK;
+  //Start of 'file next' SMB data cache workaround processing
+	if(!fileNext && !m_TSFileNext.IsFileInvalid())
+  {
+  	m_TSFileNext.CloseFile();
+    m_TSFileIdNext = -1;
+  }
+  
+  if (fileNext && m_bUseFileNext && m_pFileReadNextBuffer)
+  {
+  	if (m_TSFileIdNext != fileNext->filePositionId)
+  	{
+    	if (!m_TSFileNext.IsFileInvalid())
+    	{
+    		m_TSFileNext.CloseFile();
+    	}
+  		m_TSFileNext.SetFileName(fileNext->filename);
+  		m_TSFileNext.OpenFile();
+  		m_TSFileIdNext = fileNext->filePositionId;
+  		m_currPosnFileNext = 0;
+  		
+      //char url[MAX_PATH];
+      //WideCharToMultiByte(CP_ACP, 0 ,fileNext->filename, -1, url, MAX_PATH, 0, 0);
+      //LogDebug("MultiFileReader::FileNext Changed to %s", url);
+      
+      if (fileNext->length >= NEXT_READ_SIZE)
+      {
+        //Do a dummy read to try and refresh the SMB cache
+        ULONG bytesNextRead = 0;
+    		m_TSFileNext.SetFilePointer(m_currPosnFileNext, FILE_BEGIN);
+    		m_TSFileNext.Read(m_pFileReadNextBuffer, NEXT_READ_SIZE, &bytesNextRead);
+        m_lastFileNextRead = timeGetTime();
+        if (bytesNextRead != NEXT_READ_SIZE)
+        {
+          char url[MAX_PATH];
+          WideCharToMultiByte(CP_ACP, 0 ,fileNext->filename, -1, url, MAX_PATH, 0, 0);
+          LogDebug("MultiFileReader::FileNext read 1 failed, bytes %d, posn %I64d, file %s", bytesNextRead, m_currPosnFileNext, url);
+        }
+    		m_currPosnFileNext += NEXT_READ_SIZE;
+    		m_currPosnFileNext %= NEXT_READ_ROLLOVER;
+      }
+  	}  	
+    else if ((fileNext->length >= (m_currPosnFileNext+NEXT_READ_SIZE)) && (timeGetTime() > (m_lastFileNextRead+1100)))
+    {
+      //Do a dummy read to try and refresh the SMB data cache
+      ULONG bytesNextRead = 0;
+  		m_TSFileNext.SetFilePointer(m_currPosnFileNext, FILE_BEGIN);
+  		m_TSFileNext.Read(m_pFileReadNextBuffer, NEXT_READ_SIZE, &bytesNextRead);
+      m_lastFileNextRead = timeGetTime();
+      if (bytesNextRead != NEXT_READ_SIZE)
+      {
+        char url[MAX_PATH];
+        WideCharToMultiByte(CP_ACP, 0 ,fileNext->filename, -1, url, MAX_PATH, 0, 0);
+        LogDebug("MultiFileReader::FileNext read 2 failed, bytes %d, posn %I64d, file %s", bytesNextRead, m_currPosnFileNext, url);
+      }
+  		m_currPosnFileNext += NEXT_READ_SIZE;
+  		m_currPosnFileNext %= NEXT_READ_ROLLOVER;
+    }
+  }  
+  //End of 'file next' SMB data cache workaround processing
+
+	__int64 seekPosition = m_currentPosition - file->startPosition;
+
+	m_TSFile.SetFilePointer(seekPosition, FILE_BEGIN);
+  __int64 posSeeked=m_TSFile.GetFilePointer();
+  if (posSeeked!=seekPosition)
+  {
+    LogDebug("MultiFileReader::SEEK FAILED");
+		*dwReadBytes = 0;
+		m_currentPosition = oldCurrentPosn;
+		return E_FAIL;
+  }
+
+	ULONG bytesRead = 0;
+
+	__int64 bytesToRead = file->length - seekPosition;
+	
+	if (lDataLength > bytesToRead)
+	{
+    //LogDebug("MultiFileReader::multi-read 0, pbData=%d, lDataLength=%d, bytesToRead=%I64d, bytesRead=%d, m_currentPosition=%I64d, fileLength=%I64d", pbData, lDataLength, bytesToRead, bytesRead, m_currentPosition, file->length);
+		hr = m_TSFile.Read(pbData, (ULONG)bytesToRead, &bytesRead);
+    if (!SUCCEEDED(hr))
+    {
+      if (!m_bIsStopping)
+      {
+        LogDebug("MultiFileReader::READ FAILED1");
+      }
+	    *dwReadBytes = 0;
+		  m_currentPosition = oldCurrentPosn;
+      return E_FAIL;
+    }
+		m_currentPosition += (__int64)bytesRead;
+    //LogDebug("MultiFileReader::multi-read 1, pbData=%d, lDataLength=%d, bytesToRead=%I64d, bytesRead=%d, m_currentPosition=%I64d, fileLength=%I64d", pbData, lDataLength, bytesToRead, bytesRead, m_currentPosition, file->length);
+    
+    if ((bytesRead < bytesToRead) || !fileNext)
+    {
+      //We haven't got all of the current file segment (so we can't read the next segment), 
+      //or there is no 'next file' to read so just return the data we have...
+      //LogDebug("MultiFileReader::multi-read 1A, pbData=%d, lDataLength=%d, bytesToRead=%I64d, bytesRead=%d, m_currentPosition=%I64d", pbData, lDataLength, bytesToRead, bytesRead, m_currentPosition);
+	    *dwReadBytes = bytesRead;
+      return S_FALSE;
+    }
+
+		hr = this->ReadNoLock(pbData + (ULONG)bytesToRead, lDataLength - (ULONG)bytesToRead, dwReadBytes, refreshFile);
+    if (!SUCCEEDED(hr))
+    {
+      if (!m_bIsStopping)
+      {
+        LogDebug("MultiFileReader::READ FAILED2");
+      }
+	    *dwReadBytes = 0;
+		  m_currentPosition = oldCurrentPosn;
+      return E_FAIL;
+    }
+    //LogDebug("MultiFileReader::multi-read 2, pbData=%d, lDataLength=%d, bytesRead=%d, m_currentPosition=%I64d", (pbData + (ULONG)bytesToRead), (lDataLength - (ULONG)bytesToRead), *dwReadBytes, m_currentPosition);
+		*dwReadBytes += bytesRead;
+	}
+	else
+	{  	
+		hr = m_TSFile.Read(pbData, lDataLength, dwReadBytes);
+    if (!SUCCEEDED(hr))
+    {
+      if (!m_bIsStopping)
+      {
+        LogDebug("MultiFileReader::READ FAILED3");
+      }
+	    *dwReadBytes = 0;
+		  m_currentPosition = oldCurrentPosn;
+      return E_FAIL;
+    }
+		m_currentPosition += (__int64)*dwReadBytes;
+    //LogDebug("MultiFileReader::multi-read 3, pbData=%d, lDataLength=%d, dwReadBytes=%d, m_currentPosition=%I64d, fileLength=%I64d", pbData, lDataLength, *dwReadBytes, m_currentPosition, file->length);
+	}
+
+	return hr;
 }
 
 HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod)
@@ -278,313 +509,333 @@ HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadByte
 	return Read(pbData, lDataLength, dwReadBytes);
 }
 
-HRESULT MultiFileReader::get_ReadOnly(WORD *ReadOnly)
-{
-//	CheckPointer(ReadOnly, E_POINTER);
-
-	if (!m_TSBufferFile.IsFileInvalid())
-		return m_TSBufferFile.get_ReadOnly(ReadOnly);
-
-	*ReadOnly = m_bReadOnly;
-	return S_OK;
-}
-        //ensures that there's always a back slash at the end
-//        wPathName[wcslen(wPathName)] = char(92*(int)(wPathName[wcslen(wPathName)-1]!=char(92)));
-
 HRESULT MultiFileReader::RefreshTSBufferFile()
 {
 	if (m_TSBufferFile.IsFileInvalid())
+	{
 		return S_FALSE;
+  }
 
-	ULONG bytesRead;
+	ULONG bytesRead = 0;
+	ULONG bytesRead2 = 0;
 	MultiFileReaderFile *file;
 
   HRESULT result;
 	__int64 currentPosition;
   long filesAdded, filesRemoved;
   long filesAdded2, filesRemoved2;
-  long Error;
+  long Error=0;
   long Loop=10 ;
-
-  LPWSTR pBuffer ;
-  	 	
+  __int64 fileLength = 0;
+  	
   do
   {
+    if (m_bIsStopping || !m_pInfoFileBuffer1 || !m_pInfoFileBuffer2)
+      return E_FAIL ;
+      
+   	if (Error) //Handle errors from a previous loop iteration
+   	{
+   	  // if (Loop < 9) //An error on the first loop iteration is quasi-normal, so don't log it
+   	  // {
+    	//   LogDebug("MultiFileReader has error 0x%x in Loop %d. Try to clear SMB Cache.", Error, 10-Loop);  	  
+  	  // }
+  	  
+  	  // try to clear local / remote SMB file cache. This should happen when we close the filehandle
+      m_TSBufferFile.CloseFile();
+  	  m_TSBufferFile.OpenFile();
+  	  Sleep(5);
+    }  
+
     Error=0;
-	currentPosition = -1;
-	filesAdded = -1;
-	filesRemoved = -1;
-	filesAdded2 = -2;
-	filesRemoved2 = -2;
+  	currentPosition = -1;
+  	filesAdded = -1;
+  	filesRemoved = -1;
+  	filesAdded2 = -2;
+  	filesRemoved2 = -2;
+    Loop-- ;
 
-  	m_TSBufferFile.SetFilePointer(0, FILE_END);
-	  __int64 fileLength = m_TSBufferFile.GetFilePointer();
+    //Read the 'header' of the file to work out if anything has changed.
+  	int readLength = sizeof(currentPosition) + sizeof(filesAdded) + sizeof(filesRemoved);
+    
+  	m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
+  	result = m_TSBufferFile.Read(m_pInfoFileBuffer1, readLength, &bytesRead);
+		
+    if (!SUCCEEDED(result) || bytesRead != readLength) 
+    {
+		  Error |= 0x02;
+      continue;
+		}
 
-    // Min file length is Header ( __int64 + long + long ) + filelist ( > 0 ) + Footer ( long + long ) 
-    if (fileLength <= (sizeof(__int64) + sizeof(long) + sizeof(long) + sizeof(wchar_t) + sizeof(long) + sizeof(long)))
-		return S_FALSE;
+  	if(Error == 0)
+  	{
+  		currentPosition = *((__int64*)(m_pInfoFileBuffer1 + 0));
+  		filesAdded = *((long*)(m_pInfoFileBuffer1 + sizeof(__int64)));
+  		filesRemoved = *((long*)(m_pInfoFileBuffer1 + sizeof(__int64) + sizeof(long)));
+  	}
 
-	m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
-
-	int readLength = sizeof(currentPosition) + sizeof(filesAdded) + sizeof(filesRemoved);
-
-	LPBYTE readBuffer = new BYTE[readLength];
-
-	result = m_TSBufferFile.Read(readBuffer, readLength, &bytesRead);
+  	m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
+  	result = m_TSBufferFile.Read(m_pInfoFileBuffer2, readLength, &bytesRead);
 
     if (!SUCCEEDED(result) || bytesRead != readLength) 
-		Error |= 0x02;
+    {
+		  Error |= 0x04;
+      continue;
+		}
 
-	if(Error == 0)
-	{
-		currentPosition = *((__int64*)(readBuffer + 0));
-		filesAdded = *((long*)(readBuffer + sizeof(__int64)));
-		filesRemoved = *((long*)(readBuffer + sizeof(__int64) + sizeof(long)));
-	}
-
-	delete[] readBuffer;
-
-    // If no files added or removed, break the loop !
-    if ((m_filesAdded == filesAdded) && (m_filesRemoved == filesRemoved)) 
-			break ;
-
-    __int64 remainingLength = fileLength - sizeof(__int64) - sizeof(long) - sizeof(long) - sizeof(long) - sizeof(long) ;
-
-    // Above 100kb seems stupid and figure out a problem !!!
-	if (remainingLength > 100000) 
-		Error = 0x10;
-  
-    pBuffer = (LPWSTR)new BYTE[(UINT)remainingLength];
-
-	result=m_TSBufferFile.Read((LPBYTE)pBuffer, (ULONG)remainingLength, &bytesRead);
-    if (!SUCCEEDED(result)||  bytesRead != remainingLength) Error=0x20 ;
-
-	
-	readLength = sizeof(filesAdded) + sizeof(filesRemoved);
-
-	readBuffer = new BYTE[readLength];
-
-	result = m_TSBufferFile.Read(readBuffer, readLength, &bytesRead);
-
-    if (!SUCCEEDED(result) || bytesRead != readLength) 
-		Error |= 0x40;
-
-	if(Error == 0)
-	{
-		filesAdded2 = *((long*)(readBuffer + 0));
-		filesRemoved2 = *((long*)(readBuffer + sizeof(long)));
-	}
-
-	delete[] readBuffer;
+  	if(Error == 0)
+  	{
+  		currentPosition = *((__int64*)(m_pInfoFileBuffer2 + 0));
+  		filesAdded2 = *((long*)(m_pInfoFileBuffer2 + sizeof(__int64)));
+  		filesRemoved2 = *((long*)(m_pInfoFileBuffer2 + sizeof(__int64) + sizeof(long)));
+  	}
 
     if ((filesAdded2 != filesAdded) || (filesRemoved2 != filesRemoved))
     {
-      Error = 0x80;
+		  Error |= 0x08;
+      continue;
+    } 
 
-	  LogDebug("MultiFileReader has error 0x80 in Loop %d. Try to clear SMB Cache.", 10-Loop);
-	  
-	  // try to clear local / remote SMB file cache. This should happen when we close the filehandle
-      m_TSBufferFile.CloseFile();
-	  m_TSBufferFile.OpenFile();
-	  Sleep(5);
+    // If no files added or removed, break out of the loop (we don't need to read the rest of the file)
+    if ((m_filesAdded == filesAdded) && (m_filesRemoved == filesRemoved)) 
+			break ;
+
+    //Now read the full file for processing and comparison.
+    //The maximum length is INFO_BUFF_SIZE bytes, but normally
+    //'bytesRead' will be much less than that - it should be the actual file length.
+	        
+  	m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
+  	result=m_TSBufferFile.Read(m_pInfoFileBuffer1, INFO_BUFF_SIZE, &bytesRead);  	
+    if (!SUCCEEDED(result) || (bytesRead == 0))
+    {
+      Error |= 0x20 ;
+      continue;
     }
+      	  
+	  //read it again to a different buffer  
+  	m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
+  	result = m_TSBufferFile.Read(m_pInfoFileBuffer2, INFO_BUFF_SIZE, &bytesRead2);
+    if (!SUCCEEDED(result) || (bytesRead2 != bytesRead) || (bytesRead2 == 0))
+    {
+      Error |= 0x40 ;
+      continue;
+    }
+      
+    fileLength = (__int64)bytesRead2;
 
-    if (Error) delete[] pBuffer;
+		if (fileLength > INFO_BUFF_SIZE)
+      return E_FAIL ;
 
-    Loop-- ;
+    // Min file length is Header ( __int64 + long + long ) + filelist ( > 0 ) + Footer ( long + long ) 
+    if (fileLength <= (sizeof(__int64) + sizeof(long) + sizeof(long) + sizeof(wchar_t) + sizeof(long) + sizeof(long)))
+		  Error |= 0x1000;
+    if (fileLength%2) //Must be a multiple of 2 bytes in length
+		  Error |= 0x2000;
+
+    //Compare the two buffers (except the 'currentPosition' values), and compare the filesAdded/filesRemoved values 
+    //at the beginning and end of the second buffer for integrity checking
+  	if (
+  	    (Error == 0) 
+  	    && (memcmp(m_pInfoFileBuffer1 + sizeof(__int64), m_pInfoFileBuffer2 + sizeof(__int64), (ULONG)(fileLength - sizeof(__int64))) == 0)
+  	    && (memcmp(m_pInfoFileBuffer2 + sizeof(__int64), m_pInfoFileBuffer2 + fileLength - (2*sizeof(long)), 2*sizeof(long)) == 0)
+  	    )
+  	{
+  		currentPosition = *((__int64*)(m_pInfoFileBuffer2 + 0)); //use the most recent value
+  		filesAdded = *((long*)(m_pInfoFileBuffer2 + sizeof(__int64)));
+  		filesRemoved = *((long*)(m_pInfoFileBuffer2 + sizeof(__int64) + sizeof(long)));
+   	}
+   	else
+   	{
+		  Error |= 0x80;
+      continue;
+    }  
+
+    //Rebuild the file list if files have been added or removed
+  	if ((m_filesAdded != filesAdded) || (m_filesRemoved != filesRemoved))
+  	{
+  		long filesToRemove = filesRemoved - m_filesRemoved;
+  		long filesToAdd = filesAdded - m_filesAdded;
+  		long fileID = filesRemoved;
+  		__int64 nextStartPosition = 0;
+  
+  		// Remove files that aren't present anymore.
+  		while ((filesToRemove > 0) && (m_tsFiles.size() > 0))
+  		{  			
+  			file = m_tsFiles.at(0);  			
+  			delete file;
+  			m_tsFiles.erase(m_tsFiles.begin()); 
+  			m_filesRemoved++;  
+  			filesToRemove--;
+  		}  
+  
+  		// Figure out what the start position of the next new file will be
+  		if (m_tsFiles.size() > 0)
+  		{
+  			file = m_tsFiles.back();
+  
+  			if (filesToAdd > 0)
+  			{
+  				// If we're adding files the chances are the one at the back has a partial length
+  				// so we need update it.
+  				result = GetFileLength(file->filename, file->length, true);
+  				if (!SUCCEEDED(result)) 
+  				{
+		        Error |= 0x10;
+          }
+  			}
+  
+  			nextStartPosition = file->startPosition + file->length;
+  		} 
+  
+  		//Get the real path of the buffer file
+  		LPWSTR wfilename;
+  		m_TSBufferFile.GetFileName(&wfilename);
+  		LPWSTR path = NULL;
+  		LPWSTR name = wcsrchr(wfilename, 92); //Find the last backslash character, so we can extract the path to the containing folder
+  		if (name)
+  		{
+  			name++;
+  			long len = name - wfilename;
+  			path = new wchar_t[len+1];
+  			lstrcpynW(path, wfilename, len+1);
+  		}
+  
+  		// Create a list of files in the .tsbuffer file.
+  		std::vector<LPWSTR> filenames;
+  
+  		LPWSTR pCurr = (LPWSTR)(m_pInfoFileBuffer2 + sizeof(__int64) + sizeof(long) + sizeof(long)); //pointer to start of filename section
+  		LPWSTR pEndOfList = (LPWSTR)(m_pInfoFileBuffer2 + fileLength - (2*sizeof(long)));
+  		long length = wcslen(pCurr);
+  		while ((length > 0) && (pCurr < pEndOfList))
+  		{
+  			//modify filename path here to include the real path
+  			LPWSTR pFilename;
+  			LPWSTR temp = wcsrchr(pCurr, 92); //Find the last backslash character, so we can extract just the 'filename' part
+  			if (path && temp)
+  			{
+  				temp++;
+  				pFilename = new wchar_t[wcslen(path)+wcslen(temp)+1];
+  				wcscpy(pFilename, path);
+  				wcscat(pFilename, temp);
+  			}
+  			else
+  			{
+  				pFilename = new wchar_t[length+1];
+  				wcscpy(pFilename, pCurr);
+  			}
+  
+  			filenames.push_back(pFilename);
+  
+  			pCurr += (length + 1);
+  			length = wcslen(pCurr);
+  		}
+  
+  		if (path)
+  			delete[] path;
+
+  	  if ((filesAdded - filesRemoved) != filenames.size())
+  	  {
+        LogDebug("MultiFileReader: expected file count incorrect") ;
+  		  Error |= 0x200;
+  	  }  	   
+  
+  		// Go through existing file list and new filename list
+  		std::vector<MultiFileReaderFile *>::iterator itFiles = m_tsFiles.begin();
+  		std::vector<LPWSTR>::iterator itFilenames = filenames.begin();
+  
+  		while ((itFiles < m_tsFiles.end()) && !Error)
+  		{
+  			file = *itFiles;
+  
+  			itFiles++;
+  			fileID++;
+  
+  			if (itFilenames < filenames.end())
+  			{
+  				itFilenames++;
+  			}
+  			else
+  			{
+          LogDebug("MultiFileReader has missing files!!") ;
+    		  Error |= 0x400;
+  			}
+  		}
+  		  
+  		//Add any new files to the m_tsFiles list i.e. itFilenames > itFiles
+  		while ((itFilenames < filenames.end()) && !Error)
+  		{
+  			LPWSTR pFilename = *itFilenames;
+  
+  			file = new MultiFileReaderFile();
+  			file->filename = pFilename;
+  			file->startPosition = nextStartPosition;
+  
+    	  itFilenames++;
+  			fileID++;
+  			file->filePositionId = fileID;
+    
+        if (itFilenames == filenames.end()) //Latest file
+        {
+          //The 'currentPosition' value is the length of the latest file
+          file->length = currentPosition;
+          result = S_OK;
+        }
+        else
+        {
+          //'double check' the length of any older, closed files that have been added
+  			  result = GetFileLength(pFilename, file->length, true);
+        }
+        
+  		  if (!SUCCEEDED(result)) 
+  		  {
+		      Error |= 0x100;
+		      delete file;
+		    }
+        else
+        {
+          //LogDebug("MultiFileReader: Update file list, filePositionId = %d, length = %d", file->filePositionId, file->length) ;          
+    			m_tsFiles.push_back(file);   
+    			m_filesAdded++;
+    
+    			nextStartPosition = file->startPosition + file->length;    
+  		  }
+  		}
+  		
+  	  if ((m_tsFiles.size() != filenames.size()) && !Error)
+  	  {
+        LogDebug("MultiFileReader: files to filenames mismatch") ;
+  		  Error |= 0x800;
+  	  }
+  	      
+  		if (!Error && m_bExtraLogging)
+  		{
+        LogDebug("MultiFileReader m_filesAdded : %d, m_filesRemoved : %d, file->startPosition : %I64d, currentPosition = %I64d, LatestFileID = %d", m_filesAdded, m_filesRemoved, file->startPosition, currentPosition, fileID) ;
+  	  }
+  	}
+
   } while ( Error && Loop ) ; // If Error is set, try again...until Loop reaches 0.
  
-  if (Loop < 8)
+  if (Error)
   {
-    LogDebug("MultiFileReader has waited %d times for TSbuffer integrity.", 10-Loop) ;
-
-    if(Error)
+    LogDebug("MultiFileReader has failed for TSbuffer integrity after 10 tries. Error: %x:", Error) ;
+    if (Error & ~0x7)  //Integrity errors
     {
-      LogDebug("MultiFileReader has failed for TSbuffer integrity. Error : %x", Error) ;
       return E_FAIL ;
+    }
+    else  //File 'too short' errors (maybe nothing written to it yet)
+    {
+      return S_FALSE;
     }
   }
 
-	//randomly park the file pointer to help minimise HDD clogging
-	if(currentPosition&1)
-		m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
-	else
-		m_TSBufferFile.SetFilePointer(0, FILE_END);
-
-	if ((m_filesAdded != filesAdded) || (m_filesRemoved != filesRemoved))
-	{
-		long filesToRemove = filesRemoved - m_filesRemoved;
-		long filesToAdd = filesAdded - m_filesAdded;
-		long fileID = filesRemoved;
-		__int64 nextStartPosition = 0;
-
-		if (m_bDebugOutput)
-		{
-			TCHAR sz[128];
-			wsprintf(sz, TEXT("Files Added %i, Removed %i\n"), filesToAdd, filesToRemove);
-			::OutputDebugString(sz);
-		}
-
-		// Removed files that aren't present anymore.
-		while ((filesToRemove > 0) && (m_tsFiles.size() > 0))
-		{
-			MultiFileReaderFile *file = m_tsFiles.at(0);
-
-			if (m_bDebugOutput)
-			{
-				wchar_t sz[MAX_PATH+128];
-				wsprintfW(sz, L"Removing file %s\n", file->filename);
-				::OutputDebugStringW(sz);
-			}
-			
-			delete file;
-			m_tsFiles.erase(m_tsFiles.begin());
-
-			filesToRemove--;
-		}
-
-
-		// Figure out what the start position of the next new file will be
-		if (m_tsFiles.size() > 0)
-		{
-			file = m_tsFiles.back();
-
-			if (filesToAdd > 0)
-			{
-				// If we're adding files the changes are the one at the back has a partial length
-				// so we need update it.
-				if (m_bDebugOutput)
-					GetFileLength(file->filename, file->length);
-				else
-					GetFileLength(file->filename, file->length);
-			}
-
-			nextStartPosition = file->startPosition + file->length;
-		}
-
-
-		//Get the real path of the buffer file
-		LPWSTR wfilename;
-		m_TSBufferFile.GetFileName(&wfilename);
-		LPWSTR path = NULL;
-		LPWSTR name = wcsrchr(wfilename, 92);
-		if (name)
-		{
-			name++;
-			long len = name - wfilename;
-			path = new wchar_t[len+1];
-			lstrcpynW(path, wfilename, len+1);
-		}
-
-		// Create a list of files in the .tsbuffer file.
-		std::vector<LPWSTR> filenames;
-
-		LPWSTR pCurr = pBuffer;
-		long length = wcslen(pCurr);
-		while (length > 0)
-		{
-			//modify filename path here to include the real path
-			LPWSTR pFilename;
-			LPWSTR temp = wcsrchr(pCurr, 92);
-			if (path && temp)
-			{
-				temp++;
-				pFilename = new wchar_t[wcslen(path)+wcslen(temp)+1];
-				wcscpy(pFilename, path);
-				wcscat(pFilename, temp);
-			}
-			else
-			{
-				pFilename = new wchar_t[length+1];
-				wcscpy(pFilename, pCurr);
-			}
-
-//			LPWSTR pFilename = new wchar_t[length+1];
-//			wcscpy(pFilename, pCurr);
-			filenames.push_back(pFilename);
-
-			pCurr += (length + 1);
-			length = wcslen(pCurr);
-		}
-
-		if (path)
-			delete[] path;
-
-		// Go through files
-		std::vector<MultiFileReaderFile *>::iterator itFiles = m_tsFiles.begin();
-		std::vector<LPWSTR>::iterator itFilenames = filenames.begin();
-
-		while (itFiles < m_tsFiles.end())
-		{
-			file = *itFiles;
-
-			itFiles++;
-			fileID++;
-
-			if (itFilenames < filenames.end())
-			{
-				// TODO: Check that the filenames match. ( Ambass : With buffer integrity check, probably no need to do this !)
-				itFilenames++;
-			}
-			else
-			{
-				::OutputDebugString(TEXT("Missing files!!\n"));
-			}
-		}
-
-		while (itFilenames < filenames.end())
-		{
-			LPWSTR pFilename = *itFilenames;
-
-			if (m_bDebugOutput)
-			{
-				wchar_t sz[MAX_PATH+128];
-				int nextStPos = (int)nextStartPosition;
-				wsprintfW(sz, L"Adding file %s (%i)\n", pFilename, nextStPos);
-				::OutputDebugStringW(sz);
-			}
-
-			file = new MultiFileReaderFile();
-			file->filename = pFilename;
-			file->startPosition = nextStartPosition;
-
-			fileID++;
-			file->filePositionId = fileID;
-
-			GetFileLength(pFilename, file->length);
-
-			m_tsFiles.push_back(file);
-
-			nextStartPosition = file->startPosition + file->length;
-
-			itFilenames++;
-		}
-
-		m_filesAdded = filesAdded;
-		m_filesRemoved = filesRemoved;
-
-    delete[] pBuffer;
-	}
 
 	if (m_tsFiles.size() > 0)
 	{
 		file = m_tsFiles.front();
 		m_startPosition = file->startPosition;
 
-		file = m_tsFiles.back();
-		file->length = currentPosition;
-		m_endPosition = file->startPosition + currentPosition;
-
-	
-		/*if (m_bDebugOutput)
-		{
-			TCHAR sz[128];
-			int stPos = m_startPosition;
-			int endPos = m_endPosition;
-			int curPos = m_currentPosition;
-			wsprintf(sz, TEXT("StartPosition %i, EndPosition %i, CurrentPosition %i\n"), stPos, endPos, curPos);
-			::OutputDebugString(sz);
-		}*/
+		file = m_tsFiles.back();	
+    file->length = currentPosition;
+		m_endPosition = file->startPosition + currentPosition;	
 	}
 	else
 	{
@@ -595,107 +846,158 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 	return S_OK;
 }
 
-HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length)
-{
-	length = 0;
-
-	// Try to open the file
-  HANDLE hFile = ::CreateFileW(pFilename,   // The filename
-						 (DWORD) GENERIC_READ,          // File access
-						 (DWORD) (FILE_SHARE_READ |
-						 FILE_SHARE_WRITE),       // Share access
-						 NULL,                  // Security
-						 (DWORD) OPEN_EXISTING,         // Open flags
-						 (DWORD) 0,             // More flags
-						 NULL);                 // Template
-	if (hFile != INVALID_HANDLE_VALUE)
-	{
-		LARGE_INTEGER li;
-		li.QuadPart = 0;
-    li.LowPart = ::SetFilePointer(hFile, 0, &li.HighPart, FILE_END);
-    ::CloseHandle(hFile);
-		
-		length = li.QuadPart;
-	}
-	else
-	{
-		wchar_t msg[MAX_PATH];
-		DWORD dwErr = GetLastError();
-		swprintf(msg, MAX_PATH, L"Failed to open file %s : 0x%x\n", pFilename, dwErr);
-		::OutputDebugStringW((LPWSTR)&msg);
-		return HRESULT_FROM_WIN32(dwErr);
-	}
-	return S_OK;
-}
-
-HRESULT MultiFileReader::get_DelayMode(WORD *DelayMode)
-{
-	*DelayMode = m_bDelay;
-	return S_OK;
-}
-
-HRESULT MultiFileReader::set_DelayMode(WORD DelayMode)
-{
-	m_bDelay = DelayMode;
-	return S_OK;
-}
-
-HRESULT MultiFileReader::get_ReaderMode(WORD *ReaderMode)
-{
-	*ReaderMode = TRUE;
-	return S_OK;
-}
-
-DWORD MultiFileReader::setFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
-{
-	//Get the file information
-	__int64 fileStart, fileEnd, fileLength;
-	GetFileSize(&fileStart, &fileLength);
-	fileEnd = (__int64)(fileLength + fileStart);
-	if (dwMoveMethod == FILE_BEGIN)
-		return SetFilePointer((__int64)min(fileEnd,(__int64)(llDistanceToMove + fileStart)), FILE_BEGIN);
-	else
-		return SetFilePointer((__int64)max((__int64)-fileLength, llDistanceToMove), FILE_END);
-}
-
-__int64 MultiFileReader::getFilePointer()
-{
-	__int64 fileStart, fileEnd, fileLength;
-	GetFileSize(&fileStart, &fileLength);
-	fileEnd = fileLength + fileStart;
-	return (__int64)(GetFilePointer() - fileStart);
-}
-
-__int64 MultiFileReader::getBufferPointer()
-{
-	return 	m_llBufferPointer;	
-}
-
-void MultiFileReader::setBufferPointer()
-{
-	m_llBufferPointer = getFilePointer();	
-}
-
 
 __int64 MultiFileReader::GetFileSize()
 {
+  CAutoLock rLock (m_pAccessLock);
+  RefreshTSBufferFile();
   return m_endPosition - m_startPosition;
-  if (m_cachedFileSize==0)
-  {
-    RefreshTSBufferFile();
-    RefreshFileSize();
-  }
-  return m_cachedFileSize;
 }
 
-void MultiFileReader::RefreshFileSize()
+HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length, bool doubleCheck)
 {
-	__int64 fileLength=0;
-	std::vector<MultiFileReaderFile *>::iterator it = m_tsFiles.begin();
-	for ( ; it < m_tsFiles.end() ; it++ )
-	{
-		MultiFileReaderFile *file =*it;
-		fileLength+=file->length;
-	}
-	m_cachedFileSize= fileLength;
+	HRESULT hr = S_OK;
+
+  long Error=0;
+  long Loop=10 ;  
+  __int64 origLength = length;
+  bool useTSFile = false;
+  
+  //Optimisation - find out if the file is the current m_TSFile (and hence already open).
+  //If not, we use a 'FindFirstFile()' based method to avoid having to open and close the file
+  if (!m_TSFile.IsFileInvalid())
+  {
+    LPWSTR tempFileName;
+    m_TSFile.GetFileName(&tempFileName);
+    
+    if (!wcscmp(tempFileName, pFilename))
+    {
+      //The filenames match
+      useTSFile = true;
+    	//LogDebug("MultiFileReader::GetFileLength() - open data file is %ws",tempFileName);
+    }
+  }
+  	
+  do
+  {
+    if (m_bIsStopping)
+    {
+      length = origLength;
+      return E_FAIL ;
+    }
+    
+   	if (Error) //Handle errors from a previous loop iteration
+   	{
+   	  if (Loop < 3)
+   	  {
+  	    LogDebug("MultiFileReader::GetFileLength() has error 0x%x in Loop %d. Trying again", Error, 10-Loop);  
+  	  }	  
+  	  Sleep(10);
+    }  
+
+    Error=0;
+    Loop-- ;
+
+    if (useTSFile)
+    {
+    	length = m_TSFile.GetFileSize();
+    	if (length < 0)
+    	{
+    	  Error |= 0x2;
+    	}
+    	if (doubleCheck)
+    	{
+      	Sleep(10);
+      	if (length != m_TSFile.GetFileSize())
+      	{
+      	  Error |= 0x4;
+      	}
+      }
+    }
+    else
+    {      
+    	length = FindFileLength(pFilename);
+    	if (length < 0)
+    	{
+    	  Error |= 0x2;
+    	}
+    	if (doubleCheck)
+    	{
+      	Sleep(10);
+      	if (length != FindFileLength(pFilename))
+      	{
+      	  Error |= 0x4;
+      	}
+      }
+    }
+  } while ( Error && Loop ) ; // If Error is set, try again...until Loop reaches 0.
+   
+  if (Loop < 2)
+  {
+    LogDebug("MultiFileReader::GetFileLength() has waited %d times for stable length.", 10-Loop) ;
+
+    if(Error)
+    {
+      LogDebug("MultiFileReader::GetFileLength() has failed. Error : %x", Error) ;
+      length = origLength; //Don't change the existing length - it's the safest thing to do.
+      return E_FAIL ;
+    }
+  }
+
+	return hr;
+}
+
+//Enable 'FileNext' file reads to workaround SMB2/SM3 possible 'data cache' problems
+void MultiFileReader::SetFileNext(BOOL useFileNext)
+{
+  CAutoLock rLock (m_pAccessLock);
+	m_bUseFileNext = useFileNext;
+	//LogDebug("FileReader::SetFileNext, useFileNext = %d", useFileNext);
+}
+
+BOOL MultiFileReader::GetFileNext()
+{
+  CAutoLock rLock (m_pAccessLock);
+	return m_bUseFileNext;
+}
+
+void MultiFileReader::SetStopping(BOOL isStopping)
+{
+	m_bIsStopping = isStopping;
+	
+	m_TSBufferFile.SetStopping(isStopping);
+	m_TSFile.SetStopping(isStopping);
+	m_TSFileNext.SetStopping(isStopping);	
+}
+
+__int64 MultiFileReader::FindFileLength(LPWSTR pFilename)
+{  
+  WIN32_FIND_DATA fileinfo;
+  HANDLE hFind = FindFirstFile(pFilename, &fileinfo);  
+  if (hFind == INVALID_HANDLE_VALUE)
+  {
+    HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	 
+    if (lastErr != ERROR_FILE_NOT_FOUND)
+    {  
+  	  LogDebug("MultiFileReader::FindFileLength() failed. Error 0x%x, filename = %ws", lastErr, pFilename);  
+  	}  
+    return -1;
+  }
+  FindClose(hFind);
+
+  //Extract the file size info
+	LARGE_INTEGER li;
+	li.LowPart  = fileinfo.nFileSizeLow;
+	li.HighPart = fileinfo.nFileSizeHigh;
+  return li.QuadPart;  
+}
+
+BOOL MultiFileReader::GetTimeshift()
+{
+  return m_isTimeshift;
+}
+
+void MultiFileReader::SetTimeshift(BOOL isTimeshift)
+{
+  m_isTimeshift = isTimeshift;
 }

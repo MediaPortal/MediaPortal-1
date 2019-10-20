@@ -206,22 +206,46 @@
       <textureFocus>tv_green_border.png</textureFocus>
     </control>
     <control>
+      <description>TV Off image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>615</posX>
+      <posY>135</posY>
+      <width>690</width>
+      <height>388</height>
+      <texture>tv-off.gif</texture>
+      <visible>!player.hasvideo</visible>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Start Time</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>748</posX>
+      <posY>559</posY>
+      <width>100</width>
+      <label>#TV.View.start</label>
+      <font>font10</font>
+      <align>right</align>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
       <description>background</description>
       <type>image</type>
       <id>0</id>
       <posX>765</posX>
-      <posY>570</posY>
+      <posY>564</posY>
       <width>381</width>
-      <height>28</height>
-      <texture>osd_progress_background_medium.png</texture>
+      <height>25</height>
+      <texture>horizontal_bar2.png</texture>
       <visible>yes</visible>
     </control>
     <control>
       <description>Progress Bar</description>
       <type>progress</type>
       <id>1</id>
-      <posX>755</posX>
-      <posY>573</posY>
+      <posX>753</posX>
+      <posY>564</posY>
       <width>417</width>
       <height>25</height>
       <label>#TV.View.Percentage</label>
@@ -231,8 +255,22 @@
       <midheight>25</midheight>
       <midoffsetX>0</midoffsetX>
       <midoffsetY>0</midoffsetY>
-      <midtexture>osd_progress_mid.png</midtexture>
+      <lefttexture>osd_progress_mid_tv2.png</lefttexture>
+      <midtexture>osd_progress_mid_tv2.png</midtexture>
+      <righttexture>osd_progress_right2.png</righttexture>
       <visible>yes</visible>
+    </control>
+    <control>
+      <description>End Time</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1160</posX>
+      <posY>559</posY>
+      <width>100</width>
+      <label>#TV.View.stop</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>ffffffff</textcolor>
     </control>
     <control>
       <description>Seperator</description>

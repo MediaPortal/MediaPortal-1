@@ -6,6 +6,9 @@
 
 static CAutoPtr<CSubManager> g_subManager;
 
+// SetDevice stores device pointer here in case the sub manager is not yet instantiated
+static IDirect3DDevice9* g_d3DDev;
+
 void SetDefaultStyle(const SubtitleStyle* s, BOOL overrideUserStyles)
 {
 	g_style.fontName = s->fontName;
@@ -37,12 +40,27 @@ void SetShowForcedOnly(BOOL onlyShowForcedSubs)
 	}
 }
 
+BOOL SetDevice(IDirect3DDevice9* d3DDev)
+{
+  if (g_subManager)
+  {
+    g_subManager->SetDevice(d3DDev);
+
+    if (d3DDev)
+      g_subManager->SetCurrent(g_subManager->GetCurrent());
+  }
+
+  if (d3DDev)
+    g_d3DDev = d3DDev;
+
+  return TRUE;
+}
 
 BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_t* fn, IGraphBuilder* pGB, const wchar_t* paths, LCID lcidci)
 {
 	g_subManager.Free();
 	HRESULT hr = S_OK;
-	CAutoPtr<CSubManager> subManager(new CSubManager(d3DDev, size, hr));
+  CAutoPtr<CSubManager> subManager(new CSubManager(g_d3DDev ? g_d3DDev : d3DDev, size, hr));
 	if (FAILED(hr))
 	{
 		return FALSE;
@@ -60,12 +78,20 @@ void SetTime(REFERENCE_TIME nsSampleTime)
 	}
 }
 
-void Render(int x, int y, int width, int height)
+void Render(int x, int y, int width, int height, int xOffsetInPixels)
 {
 	if (g_subManager)
 	{
-		g_subManager->Render(x, y, width, height);
+		g_subManager->Render(x, y, width, height, xOffsetInPixels);
 	}
+}
+
+void RenderEx(RECT viewportRect, RECT croppedVideoRect, int xOffsetInPixels, bool posRelativeToFrame)
+{
+  if (g_subManager)
+  {
+    g_subManager->RenderEx(viewportRect, croppedVideoRect, xOffsetInPixels, posRelativeToFrame);
+  }
 }
 
 int GetCount()
@@ -92,6 +118,12 @@ void SetCurrent(int current)
 {
 	if (g_subManager)
 		g_subManager->SetCurrent(current);
+}
+
+void SetCurrent3DSubtitle(int current)
+{
+  if (g_subManager)
+    g_subManager->SetCurrent3DSubtitle(current);
 }
 
 BOOL GetEnable()
@@ -129,5 +161,15 @@ BOOL IsModified()
 
 void FreeSubtitles()
 {
-	g_subManager.Free();
+  try
+  {
+    g_d3DDev = NULL;
+    if (g_subManager)
+    {
+      g_subManager->SetDevice(nullptr);
+      g_subManager.Free();
+    }
+  }
+  catch (...)
+  {}
 }

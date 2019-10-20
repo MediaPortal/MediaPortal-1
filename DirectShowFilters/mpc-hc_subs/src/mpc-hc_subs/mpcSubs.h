@@ -26,6 +26,9 @@ struct SubtitleStyle
 
 extern "C" {
 
+//set/update D3D device pointer used by MPC-HC engine
+MPCSUBS_API BOOL SetDevice(IDirect3DDevice9* d3DDev);
+
 //set default subtitle's style (call before LoadSubtitles to take effect)
 MPCSUBS_API void SetDefaultStyle(const SubtitleStyle* style, BOOL overrideUserStyles);
 MPCSUBS_API void SetAdvancedOptions(int subPicsBufferAhead, SIZE textureSize, BOOL pow2tex, BOOL disableAnim);
@@ -38,7 +41,9 @@ MPCSUBS_API BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_
 MPCSUBS_API void SetTime(REFERENCE_TIME nsSampleTime);
 
 //render subtitles
-MPCSUBS_API void Render(int x, int y, int width, int height);
+MPCSUBS_API void Render(int x, int y, int width, int height, int xOffsetInPixels);
+// Used for madVR and 3D subtitle
+MPCSUBS_API void RenderEx(RECT viewportRect, RECT croppedVideoRect, int xOffsetInPixels, bool posRelativeToFrame);
 
 //save subtitles
 MPCSUBS_API BOOL IsModified(); //timings were modified
@@ -52,6 +57,7 @@ MPCSUBS_API BSTR GetLanguage(int i); //i  range from 0 to GetCount()-1
 MPCSUBS_API BSTR GetTrackName(int i); //i  range from 0 to GetCount()-1
 MPCSUBS_API int GetCurrent(); 
 MPCSUBS_API void SetCurrent(int i);
+MPCSUBS_API void SetCurrent3DSubtitle(int i);
 MPCSUBS_API BOOL GetEnable();
 MPCSUBS_API void SetEnable(BOOL enable);
 MPCSUBS_API int GetDelay(); //in milliseconds

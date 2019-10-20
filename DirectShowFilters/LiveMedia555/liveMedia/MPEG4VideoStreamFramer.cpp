@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // A filter that breaks up an MPEG-4 video elementary stream into
 //   frames for:
 // - Visual Object Sequence (VS) Header + Visual Object (VO) Header
@@ -25,6 +25,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #include "MPEG4VideoStreamFramer.hh"
 #include "MPEGVideoStreamParser.hh"
+#include "MPEG4LATMAudioRTPSource.hh" // for "parseGeneralConfigStr()"
 #include <string.h>
 
 ////////// MPEG4VideoStreamParser definition //////////
@@ -97,6 +98,14 @@ unsigned char* MPEG4VideoStreamFramer
 ::getConfigBytes(unsigned& numBytes) const {
   numBytes = fNumConfigBytes;
   return fConfigBytes;
+}
+
+void MPEG4VideoStreamFramer
+::setConfigInfo(u_int8_t profileAndLevelIndication, char const* configStr) {
+  fProfileAndLevelIndication = profileAndLevelIndication;
+
+  delete[] fConfigBytes;
+  fConfigBytes = parseGeneralConfigStr(configStr, fNumConfigBytes);
 }
 
 MPEG4VideoStreamFramer::MPEG4VideoStreamFramer(UsageEnvironment& env,
@@ -434,7 +443,7 @@ unsigned MPEG4VideoStreamParser::parseVideoObjectLayer() {
   // don't support:
   u_int32_t next4Bytes = get4Bytes();
   if (!isVideoObjectLayerStartCode(next4Bytes)) {
-    usingSource()->envir() << "MPEG4VideoStreamParser::parseVideoObjectLayer(): This appears to be a 'short video header', which we current don't support\n";
+    usingSource()->envir() << "MPEG4VideoStreamParser::parseVideoObjectLayer(): This appears to be a 'short video header', which we currently don't support\n";
   }
 
   // Now, copy all bytes that we see, up until we reach

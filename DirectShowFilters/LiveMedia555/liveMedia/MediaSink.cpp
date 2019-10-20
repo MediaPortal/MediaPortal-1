@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // Media Sinks
 // Implementation
 
@@ -84,7 +84,6 @@ void MediaSink::stopPlaying() {
 
   // Cancel any pending tasks:
   envir().taskScheduler().unscheduleDelayedTask(nextTask());
-  nextTask() = NULL;
 
   fSource = NULL; // indicates that we can be played again
   fAfterFunc = NULL;
@@ -92,9 +91,16 @@ void MediaSink::stopPlaying() {
 
 void MediaSink::onSourceClosure(void* clientData) {
   MediaSink* sink = (MediaSink*)clientData;
-  sink->fSource = NULL; // indicates that we can be played again
-  if (sink->fAfterFunc != NULL) {
-    (*(sink->fAfterFunc))(sink->fAfterClientData);
+  sink->onSourceClosure();
+}
+
+void MediaSink::onSourceClosure() {
+  // Cancel any pending tasks:
+  envir().taskScheduler().unscheduleDelayedTask(nextTask());
+
+  fSource = NULL; // indicates that we can be played again
+  if (fAfterFunc != NULL) {
+    (*fAfterFunc)(fAfterClientData);
   }
 }
 
@@ -106,11 +112,12 @@ Boolean MediaSink::isRTPSink() const {
 
 unsigned OutPacketBuffer::maxSize = 60000; // by default
 
-OutPacketBuffer::OutPacketBuffer(unsigned preferredPacketSize,
-				 unsigned maxPacketSize)
+OutPacketBuffer
+::OutPacketBuffer(unsigned preferredPacketSize, unsigned maxPacketSize, unsigned maxBufferSize)
   : fPreferred(preferredPacketSize), fMax(maxPacketSize),
     fOverflowDataSize(0) {
-  unsigned maxNumPackets = (maxSize + (maxPacketSize-1))/maxPacketSize;
+  if (maxBufferSize == 0) maxBufferSize = maxSize;
+  unsigned maxNumPackets = (maxBufferSize + (maxPacketSize-1))/maxPacketSize;
   fLimit = maxNumPackets*maxPacketSize;
   fBuf = new unsigned char[fLimit];
   resetPacketStart();
@@ -134,8 +141,8 @@ void OutPacketBuffer::enqueue(unsigned char const* from, unsigned numBytes) {
   increment(numBytes);
 }
 
-void OutPacketBuffer::enqueueWord(unsigned word) {
-  unsigned nWord = htonl(word);
+void OutPacketBuffer::enqueueWord(u_int32_t word) {
+  u_int32_t nWord = htonl(word);
   enqueue((unsigned char*)&nWord, 4);
 }
 
@@ -153,8 +160,8 @@ void OutPacketBuffer::insert(unsigned char const* from, unsigned numBytes,
   }
 }
 
-void OutPacketBuffer::insertWord(unsigned word, unsigned toPosition) {
-  unsigned nWord = htonl(word);
+void OutPacketBuffer::insertWord(u_int32_t word, unsigned toPosition) {
+  u_int32_t nWord = htonl(word);
   insert((unsigned char*)&nWord, 4, toPosition);
 }
 
@@ -169,8 +176,8 @@ void OutPacketBuffer::extract(unsigned char* to, unsigned numBytes,
   memmove(to, &fBuf[realFromPosition], numBytes);
 }
 
-unsigned OutPacketBuffer::extractWord(unsigned fromPosition) {
-  unsigned nWord;
+u_int32_t OutPacketBuffer::extractWord(unsigned fromPosition) {
+  u_int32_t nWord;
   extract((unsigned char*)&nWord, 4, fromPosition);
   return ntohl(nWord);
 }

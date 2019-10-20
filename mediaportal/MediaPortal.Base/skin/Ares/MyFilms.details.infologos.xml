@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file should contain the details view
+-->
+<window>
+  <controls>
+
+	<!-- Listview info -->
+    <control>
+      <description>Label</description>
+      <type>fadelabel</type>
+      <id>909090</id>
+      <posX>-50</posX>
+      <posY>50</posY>
+      <label></label>
+      <textcolor>ffe3e3e3</textcolor>
+      <font>font10</font>
+      <width>1600</width>
+      <visible>string.contains(#myfilms.logos_id2001,1080p)</visible>
+    </control>	
+    <control>
+      <description>Label</description>
+      <type>fadelabel</type>
+      <id>909091</id>
+      <posX>-50</posX>
+      <posY>50</posY>
+      <label></label>
+      <textcolor>ffe3e3e3</textcolor>
+      <font>font10</font>
+      <width>1600</width>
+      <visible>string.contains(#myfilms.logos_id2001,720p)</visible>
+    </control>	
+    <control>
+      <description>Label</description>
+      <type>fadelabel</type>
+      <id>909092</id>
+      <posX>-50</posX>
+      <posY>50</posY>
+      <label></label>
+      <textcolor>ffe3e3e3</textcolor>
+      <font>font10</font>
+      <width>1600</width>
+      <visible>string.contains(#myfilms.logos_id2001,SD)</visible>
+    </control>		
+	
+	
+	
+	
+	
+	
+	
+    <control>
+      <description>TV Channel Logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>75</posX>
+      <posY>611</posY>
+      <width>508</width>
+      <height>33</height>
+      <texture>Einfo.png</texture>
+      <visible>control.hasfocus(10000)|control.hasfocus(109)</visible>	  
+    </control>
+	<control>
+      <description>summery</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>115</posX>
+      <posY>610</posY>
+      <width>50</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>center</align>	  
+      <label>#(string.toupper(#myfilms.db.length.value))</label>
+      <visible>control.hasfocus(10000)|control.hasfocus(109)</visible>	  
+    </control>	
+	
+	<!-- ************************************************************************************************* -->	
+	  <!-- WORK AROUND FOR DISPLAYING RESOLUTION IE. 1080P = FHD AS THERE IS NO PROPERTY TO CALCULATE IT -->
+	<!-- ************************************************************************************************* -->	
+	<control>
+      <description>fhd</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>178</posX>
+      <posY>610</posY>
+      <width>75</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>center</align>
+      <label>FHD</label>
+      <visible>[control.isvisible(909090)]+[control.hasfocus(10000)|control.hasfocus(109)]</visible>	  
+    </control>	
+	<control>
+      <description>hd</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>178</posX>
+      <posY>610</posY>
+      <width>75</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>center</align>
+      <label>HD</label>
+      <visible>[control.isvisible(909091)]+[control.hasfocus(10000)|control.hasfocus(109)]</visible>	  
+    </control>	
+	<control>
+      <description>sd</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>178</posX>
+      <posY>610</posY>
+      <width>75</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>center</align>
+      <label>SD</label>
+      <visible>[control.isvisible(909092)]+[control.hasfocus(10000)|control.hasfocus(109)]</visible>	  
+    </control>	
+	<control>
+      <description>unknown</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>178</posX>
+      <posY>610</posY>
+      <width>75</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>center</align>
+      <label>?</label>
+      <visible>[!control.isvisible(909092)+!control.isvisible(909091)+!control.isvisible(909090)]+[control.hasfocus(10000)|control.hasfocus(109)]</visible>	  
+    </control>	
+	
+	<!-- ************************************************************************************************* -->
+	<!-- END WORK AROUND FOR DISPLAYING RESOLUTION IE. 1080P = FHD AS THERE IS NO PROPERTY TO CALCULATE IT -->
+	<!-- ************************************************************************************************* -->
+	
+	<control>
+      <description>summery</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>263</posX>
+      <posY>610</posY>
+      <width>50</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>center</align>
+      <label>#(string.toupper(switch( eq(#myfilms.db.audiochannelcount.value,'2'),'2.0', eq(#myfilms.db.audiochannelcount.value,'1'),'1.0', eq(#myfilms.db.audiochannelcount.value,'5'),'5.0', eq(#myfilms.db.audiochannelcount.value,'6'),'5.1', eq(#myfilms.db.audioformat.value,'8'),'7.1', eq(#myfilms.db.audiochannelcount.value,'9'),'7.2', eq(#myfilms.db.audiochannelcount.value,'4'),'4.0', eq(1,1),'na')))</label>
+      <visible>control.hasfocus(10000)|control.hasfocus(109)</visible>	  
+    </control>	
+	<control>
+      <description>summery</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>310</posX>
+      <posY>610</posY>
+      <width>100</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>center</align>	  
+      <label>#(string.toupper(iif(eq(#myfilms.db.subtitles.value,''),'NA','cc')))</label>
+      <visible>control.hasfocus(10000)|control.hasfocus(109)</visible>	  
+    </control>	
+	<control>
+      <description>summery</description>
+      <type>label</type>
+      <id>0</id>
+	  <textalign>left</textalign>
+      <posX>428</posX>
+      <posY>610</posY>
+      <width>50</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>center</align>
+      <label>#myfilms.db.rating.value</label>
+      <visible>control.hasfocus(10000)|control.hasfocus(109)</visible>	  
+    </control>	
+	<control>
+      <description>summery</description>
+      <type>label</type>
+      <id>0</id>
+	  <textalign>left</textalign>
+      <posX>488</posX>
+      <posY>610</posY>
+      <width>100</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>center</align>
+      <label>#(iif(neq(#myfilms.user.rating.value,''),'(#myfilms.user.rating.value)','-'))</label>
+      <visible>control.hasfocus(10000)|control.hasfocus(109)</visible>	  
+    </control>	
+	<control>
+      <description>TV Channel Logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>592</posX>
+      <posY>611</posY>
+      <width>260</width>
+      <height>33</height>
+      <texture>#(string.toupper(switch( eq(#myfilms.db.audioformat.value,'AC-3 TrueHD'),'Einfoaudio_long1.png', eq(#myfilms.db.audioformat.value,'dolbytruehd'),'Einfoaudio_long1.png', eq(#myfilms.db.audioformat.value,'dtmsa-1'),'Einfoaudio_long1.png', eq(#myfilms.db.audioformat.value,'dts 96'),'Einfoaudio_long1.png', eq(#myfilms.db.audioformat.value,'dts 96_24'),'Einfoaudio_long1.png', eq(#myfilms.db.audioformat.value,'dts es 96_24'),'Einfoaudio_long1.png', eq(#myfilms.db.audioformat.value,'dts_96_24'),'Einfoaudio_long1.png', eq(#myfilms.db.audioformat.value,'dts es 96_24'),'Einfoaudio_long1.png', eq(#myfilms.db.audioformat.value,'eac3'),'Einfoaudio_long1.png', eq(1,1),'Einfoaudio_SHORT1.png')))</texture>
+      <visible>control.hasfocus(10000)|control.hasfocus(109)</visible>	  
+    </control>
+	<control>
+      <description>summery</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>627</posX>
+      <posY>610</posY>
+      <width>120</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>CENTER</align>
+      <label>#(string.toupper(switch( eq(#myfilms.db.audioformat.value,'aac he-aac'),'AAC', eq(#myfilms.db.audioformat.value,'aac lc-sbr-ps'),'AAC', eq(#myfilms.db.audioformat.value,'MPEG-1 Audio Layer 3'),'MP3', eq(#myfilms.db.audioformat.value,'AAC LC'),'AAC', eq(#myfilms.db.audioformat.value,'AAC VERSION 4 LC'),'AAC', eq(#myfilms.db.audioformat.value,'aac version 4 main'),'AAC', eq(#myfilms.db.audioformat.value,'AAC'),'AAC', eq(#myfilms.db.audioformat.value,'ac-3 dolby digital'),'DTS AC3', eq(#myfilms.db.audioformat.value,'AC3'),'DTS AC3', eq(#myfilms.db.audioformat.value,'AC-3'),'DTS AC3', eq(#myfilms.db.audioformat.value,'AC-3Plus'),'DTS+', eq(#myfilms.db.audioformat.value,'AMR'),'AMR', eq(#myfilms.db.audioformat.value,'ASF'),'ASF', eq(#myfilms.db.audioformat.value,'DCA'),'DTS', eq(#myfilms.db.audioformat.value,'dolbydigital'),'DTS', eq(#myfilms.db.audioformat.value,'dolbydigitalplus'),'DTS+', eq(#myfilms.db.audioformat.value,'dolbypro'),'DTS pro', eq(#myfilms.db.audioformat.value,'DTS ES'),'DTS ES', eq(#myfilms.db.audioformat.value,'DTS HRA'),'DTS HRA', eq(#myfilms.db.audioformat.value,'DTS MA'),'DTS MA', eq(#myfilms.db.audioformat.value,'DTS'),'DTS', eq(#myfilms.db.audioformat.value,'dtsex'),'dts ex', eq(#myfilms.db.audioformat.value,'DTSHD'),'DTS HD', eq(#myfilms.db.audioformat.value,'dtshd_hra'),'dts hra', eq(#myfilms.db.audioformat.value,'dtshd_ma'),'DTS MA', eq(#myfilms.db.audioformat.value,'dtshra'),'dts hra', eq(#myfilms.db.audioformat.value,'dtsma'),'DTS MA', eq(#myfilms.db.audioformat.value,'E-AC-3'),'DTS EX', eq(#myfilms.db.audioformat.value,'mp3'),'mp3', eq(#myfilms.db.audioformat.value,'MPEG AUDIO VERSION 1 LAYER 2'),'MPEG2', eq(#myfilms.db.audioformat.value,'MPEG AUDIO VERSION 1 LAYER 3'),'MP3', eq(#myfilms.db.audioformat.value,'PCM'),'PCM', eq(#myfilms.db.audioformat.value,'realaudio'),'REAL', eq(#myfilms.db.audioformat.value,'stereo'),'stereo', eq(1,1),'')))</label>
+      <visible>control.hasfocus(10000)|control.hasfocus(109)</visible>	  
+    </control>	
+	<control>
+      <description>summery</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>630</posX>
+      <posY>610</posY>
+      <width>165</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>CENTER</align>
+      <label>#(string.toupper(switch( eq(#myfilms.db.audioformat.value,'AC-3 TrueHD'),'DTS TrueHD', eq(#myfilms.db.audioformat.value,'dolbytruehd'),'DTS truehd', eq(#myfilms.db.audioformat.value,'dtmsa-1'),'DTS MASTER', eq(#myfilms.db.audioformat.value,'dts 96'),'DTS 96.24', eq(#myfilms.db.audioformat.value,'dts 96_24'),'DTS 96.24', eq(#myfilms.db.audioformat.value,'dts es 96_24'),'DTS 96.24', eq(#myfilms.db.audioformat.value,'dts_96_24'),'DTS 96.24', eq(#myfilms.db.audioformat.value,'eac3'),'DTS PLUS+', eq(1,1),'')))</label>
+      <visible>control.hasfocus(10000)|control.hasfocus(109)</visible>	  
+    </control>	
+	
+	<!-- TEST VALUES -->
+	<!--
+	<control>
+      <description>summery</description>
+      <type>label</type>
+      <id>0</id>
+	  <textalign>left</textalign>
+      <posX>630</posX>
+      <posY>610</posY>
+      <width>365</width>
+      <height>35</height>
+      <textcolor>ffb9bcc0</textcolor>
+      <font>fontBold2</font>
+	  <align>center</align>
+      <label>#myfilms.db.audioformat.value</label>
+      <visible>control.hasfocus(10000)|control.hasfocus(109)</visible>	  
+    </control>	
+    -->	
+
+	
+  
+  </controls>
+</window>
+

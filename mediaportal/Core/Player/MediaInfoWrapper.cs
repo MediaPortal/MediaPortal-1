@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
@@ -49,6 +50,7 @@ namespace MediaPortal.Player
     private string _videoResolution = string.Empty;
     private int _videoDuration = 0;
     private bool _DVDenabled = false;
+    private bool _BDenabled = false;
     private string _ParseSpeed;
 
     //Audio
@@ -64,6 +66,7 @@ namespace MediaPortal.Player
     //Subtitles
     private int _numsubtitles = 0;
     private bool _hasSubtitles = false;
+    private List<string> _subtitleFormatsDetected = new List<string>();
     private static HashSet<string> _subTitleExtensions = new HashSet<string>();
 
     private bool _mediaInfoNotloaded = false;
@@ -94,6 +97,7 @@ namespace MediaPortal.Player
       using (Settings xmlreader = new MPSettings())
       {
         _DVDenabled = xmlreader.GetValueAsBool("dvdplayer", "mediainfoused", false);
+        _BDenabled = xmlreader.GetValueAsBool("bdplayer", "mediainfoused", false);
         _ParseSpeed = xmlreader.GetValueAsString("debug", "MediaInfoParsespeed", "0.3");
         // fix delay introduced after 0.7.26: http://sourceforge.net/tracker/?func=detail&aid=3013548&group_id=86862&atid=581181
       }
@@ -129,7 +133,7 @@ namespace MediaPortal.Player
         isDVD = false;
 
       //currently mediainfo is only used for local video related material (if enabled)
-      if ((!isVideo && !isDVD) || (isDVD && !_DVDenabled))
+      if ((!isVideo && !isDVD) || (isDVD && !_DVDenabled) || (isDVD && _BDenabled))
       {
         Log.Debug("MediaInfoWrapper: isVideo:{0}, isDVD:{1}[enabled:{2}]", isVideo, isDVD, _DVDenabled);
         Log.Debug("MediaInfoWrapper: disabled for this content");
@@ -350,6 +354,14 @@ namespace MediaPortal.Player
         else
         {
           _hasSubtitles = _numsubtitles > 0;
+        }
+
+        var sct = _mI.Count_Get(StreamKind.Text);
+
+        for (var i = 0; i < sct; ++i)
+        {
+          var format = _mI.Get(StreamKind.Text, i, "Format").ToLowerInvariant();
+          _subtitleFormatsDetected.Add(format.ToLowerInvariant());
         }
 
         Log.Debug("MediaInfoWrapper.MediaInfoWrapper: DLL Version      : {0}", _mI.Option("Info_Version"));
@@ -616,6 +628,11 @@ namespace MediaPortal.Player
     public bool HasSubtitles
     {
       get { return _hasSubtitles; }
+    }
+
+    public List<string> SubtitleFormatsDetected
+    {
+      get { return _subtitleFormatsDetected; }
     }
 
     public bool MediaInfoNotloaded

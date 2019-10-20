@@ -65,15 +65,16 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Bass.Net">
-      <HintPath>..\..\Packages\BASS.NET.2.4.10.3\lib\net40\Bass.Net.dll</HintPath>
+    <Reference Include="Bass.Net, Version=2.4.12.5, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\BASS.NET.2.4.12.5\lib\net40\Bass.Net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="LibDriverCoreClient">
       <Name>LibDriverCoreClient</Name>
       <HintPath>..\MediaPortal.Base\LibDriverCoreClient.dll</HintPath>
     </Reference>
     <Reference Include="SharpLibDisplay, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\SharpLibDisplay.0.2.5\lib\net40\SharpLibDisplay.dll</HintPath>
+      <HintPath>..\..\Packages\SharpLibDisplay.0.2.6\lib\net40\SharpLibDisplay.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System">

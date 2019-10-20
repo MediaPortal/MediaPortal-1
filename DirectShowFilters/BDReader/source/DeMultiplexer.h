@@ -53,15 +53,11 @@ public:
   // TODO - not all of these should be puclic!
 
   HRESULT    Start();
-  void       Flush(bool pDiscardData, bool pSeeking, REFERENCE_TIME rtSeekTime);
-  HRESULT    FlushToChapter(UINT32 nChapter);
+  void       Flush(bool bClearclips);
   Packet*    GetVideo();
   Packet*    GetAudio();
-  Packet*    GetAudio(int playlist, int clip);
-  Packet*    GetSubtitle();
   void       OnTsPacket(byte* tsPacket);
 
-  void       FillSubtitle(CTsHeader& header, byte* tsPacket);
   void       FillAudio(CTsHeader& header, byte* tsPacket);
   void       FillVideo(CTsHeader& header, byte* tsPacket);
   void       FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> p, bool pFlushBuffers = false);
@@ -86,34 +82,30 @@ public:
   int        GetCurrentAudioStreamType();
   void       GetAudioStreamPMT(CMediaType& pmt);
   void       GetVideoStreamPMT(CMediaType &pmt);
+  void       GetSubtitleStreamPMT(CMediaType& pmt);
   int        GetAudioStreamCount();
+  void       AudioStreamMediaType(int stream, CMediaType& type);
 
-  // BDReader::ISubtitleStream uses these
-  bool       SetSubtitleStream(__int32 stream);
-  bool       GetSubtitleStreamType(__int32 stream, __int32& count);
+  REFERENCE_TIME TitleDuration();
+
   bool       GetSubtitleStreamCount(__int32 &count);
-  bool       GetCurrentSubtitleStream(__int32 &stream);
   bool       GetSubtitleStreamLanguage(__int32 stream, char* szLanguage);
-  bool       SetSubtitleResetCallback( int (CALLBACK *pSubUpdateCallback)(int c, void* opts, int* select));
-
+  
   bool       EndOfFile();
   bool       HoldAudio();
   void       SetHoldAudio(bool onOff);
   void       SetHoldVideo(bool onOff);
-  void       SetHoldSubtitle(bool onOff);
   bool       HoldVideo();
-  bool       HoldSubtitle();
   void       ThreadProc();
   void       FlushVideo();
   void       FlushAudio();
-  void       FlushSubtitle();
   int        GetVideoServiceType();
 
   void SetMediaChanging(bool onOff);
   bool IsMediaChanging();
 
   // From BDEventObserver
-  void HandleBDEvent(BD_EVENT& pEv, UINT64 pPos);
+  void HandleBDEvent(BD_EVENT& pEv);
   void HandleOSDUpdate(OSDTexture& pTexture);
 
   CAMEvent* m_eAudioClipSeen;
@@ -125,14 +117,19 @@ public:
   bool m_bAudioWaitForSeek;
   bool m_bAudioResetStreamPosition;
 
+  bool m_bTitleChanged;
+  REFERENCE_TIME m_rtStallTime;
+  REFERENCE_TIME m_rtTitleChangeStarted;
+
   CCritSec m_sectionRead;
 
+    REFERENCE_TIME m_rtOffset;
 
 private:
   void PacketDelivery(CAutoPtr<Packet> p);
 
   bool AudioStreamsAvailable(BLURAY_CLIP_INFO* pClip);
-  LPCTSTR StreamFormatAsString(int pStreamType);
+  char* StreamFormatAsString(int pStreamType);
   LPCTSTR StreamAudioFormatAsString(int pStreamAudioChannel);
 
   struct stAudioStream
@@ -155,18 +152,16 @@ private:
 
   int m_nVideoPid;
 
-  int ReadFromFile();
+  int ReadFromFile(bool pollEvents = false);
   bool m_bEndOfFile;
   
   CCritSec m_sectionAudio;
   CCritSec m_sectionVideo;
-  CCritSec m_sectionSubtitle;
   CCritSec m_sectionMediaChanging;
 
   StreamParser* m_videoParser;
   StreamParser* m_audioParser;
 
-  vector<Packet*> m_vecSubtitleBuffers;
   UINT32 m_nAudioPesLenght;
   
   typedef vector<Packet*>::iterator ivecVBuffers;
@@ -178,7 +173,6 @@ private:
   bool m_VideoValidPES;
   int  m_WaitHeaderPES;
 
-  Packet* m_pCurrentSubtitleBuffer;
   Packet* m_pCurrentVideoBuffer;
   Packet* m_pCurrentAudioBuffer;
 
@@ -189,24 +183,17 @@ private:
   int m_videoServiceType;
 
   unsigned int m_audioPid;
-  unsigned int m_currentSubtitlePid;
-  unsigned int m_iSubtitleStream;
 
-  void FlushPESBuffers(bool pDiscardData);
+  void FlushPESBuffers(bool bDiscardData, bool bSetCurrentClipFilled);
 
   bool m_bHoldAudio;
   bool m_bHoldVideo;
-  bool m_bHoldSubtitle;
   int m_iAudioIdx;
 
   int m_loopLastSearch;
 
-  bool  m_bWaitForMediaChange;
-
-  bool m_bStarting;
+  bool m_bWaitForMediaChange;
   bool m_bReadFailed;
-
-  int (CALLBACK *m_pSubUpdateCallback)(int c, void* opts, int* bi);
 
   // Used only for H.264 stream demuxing
   CAutoPtr<Packet> m_p;
@@ -234,11 +221,10 @@ private:
   bool m_bVideoFormatParsed;
   bool m_bAudioFormatParsed;
   
-  bool m_bUpdateSubtitleOffset;
-
-  REFERENCE_TIME m_rtOffset;
   REFERENCE_TIME m_rtTitleDuration;
   REFERENCE_TIME m_nMPEG2LastTitleDuration;
+
+  bool m_bLibRequestedFlush;
 
   unsigned int m_iReadErrors;
   // Used for playlist/clip tracking

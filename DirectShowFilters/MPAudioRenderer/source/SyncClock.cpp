@@ -25,11 +25,9 @@
 
 #include "alloctracing.h"
 
-extern void Log(const char* fmt, ...);
-
-CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT* phr, CMPAudioRenderer* pRenderer, AudioRendererSettings* pSettings)
+CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT* phr, CMPAudioRenderer* pRenderer, AudioRendererSettings* pSettings, Logger* pLogger)
   : CBaseReferenceClock(NAME("SyncClock"), pUnk, phr),
-  m_SynchCorrection(pSettings),
+  m_SynchCorrection(pSettings, pLogger),
   m_pCurrentRefClock(0),
   m_pPrevRefClock(0),
   m_dAdjustment(1.0),
@@ -49,7 +47,8 @@ CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT* phr, CMPAudioRenderer* pRenderer
   m_ullHWPrivateTime(0),
   m_bDiscontinuity(false),
   m_clockSource(NOT_SET),
-  m_pSettings(pSettings)
+  m_pSettings(pSettings),
+  m_pLogger(pLogger)
 {
 }
 
@@ -156,7 +155,7 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
 
   //UINT64 start1 = GetCurrentTimestamp();
 
-  if (m_pSettings->m_bHWBasedRefClock)
+  if (m_pSettings->GetHWBasedRefClock())
     hr = m_pAudioRenderer->AudioClock(hwClock, hwQpc, qpcNow);
 
   //UINT64 end1 = GetCurrentTimestamp();

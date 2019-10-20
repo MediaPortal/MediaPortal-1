@@ -1,7 +1,7 @@
 /**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation; either version 2.1 of the License, or (at your
+Free Software Foundation; either version 3 of the License, or (at your
 option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
 
 This library is distributed in the hope that it will be useful, but WITHOUT
@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "mTunnel" multicast access service
-// Copyright (c) 1996-2009 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2017 Live Networks, Inc.  All rights reserved.
 // Network Interfaces
 // C++ header
 
@@ -80,6 +80,7 @@ private:
 class Socket: public NetInterface {
 public:
   virtual ~Socket();
+  void reset(); // closes the socket, and sets "fSocketNum" to -1
 
   virtual Boolean handleRead(unsigned char* buffer, unsigned bufferMaxSize,
 			     unsigned& bytesRead,
@@ -97,8 +98,7 @@ public:
   static int DebugLevel;
 
 protected:
-  Socket(UsageEnvironment& env, Port port,
-	 Boolean setLoopback = True); // virtual base class
+  Socket(UsageEnvironment& env, Port port); // virtual base class
 
   Boolean changePort(Port newPort); // will also cause socketNum() to change
 
@@ -106,7 +106,6 @@ private:
   int fSocketNum;
   UsageEnvironment& fEnv;
   Port fPort;
-  Boolean fSetLoopback;
 };
 
 UsageEnvironment& operator<<(UsageEnvironment& s, const Socket& sock);

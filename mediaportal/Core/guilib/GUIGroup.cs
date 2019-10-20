@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,12 +20,11 @@
 
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows;
 using System.Windows.Serialization;
-using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 using MediaPortal.ExtensionMethods;
 using Point = MediaPortal.Drawing.Point;
+using Size = MediaPortal.Drawing.Size;
 
 namespace MediaPortal.GUI.Library
 {
@@ -46,6 +45,12 @@ namespace MediaPortal.GUI.Library
       HasCamera = _hasCamera;
       Camera = new System.Drawing.Point(_cameraXPos, _cameraYPos);
       base.FinalizeConstruction();
+      // if (Width > 0 && Height > 0)
+      if (base.Width > 0 && base.Height > 0)
+      {
+        // _sizefromSkin = new Size(Width, Height);
+        this._sizefromSkin = new Size(base.Width, base.Height);
+      }
     }
 
     #endregion Constructors
@@ -56,6 +61,28 @@ namespace MediaPortal.GUI.Library
     {
       _startAnimation = true;
       _animator = new Animator(_animatorType);
+    }
+
+    /// <summary>
+    /// Does any scaling on the inital size\position values to fit them to screen 
+    /// resolution. 
+    /// </summary>
+    public override void ScaleToScreenResolution()
+    {
+      base.ScaleToScreenResolution();
+
+      if (_layout == null)
+      {
+        return;
+      }
+
+      int width = (int)System.Math.Round(_layout.Spacing.Width);
+      int height = (int)System.Math.Round(_layout.Spacing.Height);
+
+      GUIGraphicsContext.ScaleHorizontal(ref width);
+      GUIGraphicsContext.ScaleVertical(ref height);
+
+      _layout.Spacing = new Size(width, height);
     }
 
     public void AddControl(GUIControl control)
@@ -77,6 +104,11 @@ namespace MediaPortal.GUI.Library
 
     public override void Render(float timePassed)
     {
+      if (!IsAnimating && CheckChildrenModifiedSizes())
+      {
+        Arrange();
+      }
+
       if (GUIGraphicsContext.Animations)
       {
         if (_animator != null)
@@ -95,7 +127,7 @@ namespace MediaPortal.GUI.Library
             }
           }
 
-          _animator.Advance(timePassed);
+          if (_animator != null) _animator.Advance(timePassed);
         }
       }
 
@@ -317,6 +349,21 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Get/set the alignment of the Group
+    /// </summary>
+    public Alignment GroupAlignment
+    {
+      get { return _groupAlignment; }
+      set
+      {
+        if (_groupAlignment != value)
+        {
+          _groupAlignment = value;
+        }
+      }
+    }
+    
     #endregion Properties
 
     ////////////////////////////
@@ -353,10 +400,27 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      this.Size = _layout.Measure(this, this.Size);
+      if (_isArrange)
+      {
+        return;
+      }
 
+      _isArrange = true;
+      
+      if (_sizefromSkin != Size.Empty)
+      {
+        this.Size = _layout.Measure(this, _sizefromSkin);
+      }
+      else
+      {
+        this.Size = _layout.Measure(this, this.Size);
+      }
       _layout.Arrange(this);
       DoUpdate();
+
+      StoreChildrenSizes();
+
+      _isArrange = false;
     }
 
     //protected override Size ArrangeOverride(Rect finalRect)
@@ -447,7 +511,9 @@ namespace MediaPortal.GUI.Library
     private Point[] _positions = null;
     private Point[] _modPositions = null;
     private bool[] _visibilityState = null;
+    private Size[] _childredSizes = null;
     private bool _first = true;
+    private bool _isArrange = false;
 
     [XMLSkinElement("layout")] private ILayout _layout;
 
@@ -457,7 +523,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("camera", "xpos")] protected int _cameraXPos = 0;
     [XMLSkin("camera", "ypos")] protected int _cameraYPos = 0;
 
+    [XMLSkinElement("align")] private Alignment _groupAlignment = Alignment.ALIGN_LEFT;
+
     private bool _startAnimation;
+    private Size _sizefromSkin = Size.Empty;
 
     #endregion Fields
 
@@ -729,6 +798,35 @@ namespace MediaPortal.GUI.Library
       for (int i = 0; i < Children.Count; i++)
       {
         if (_modPositions[i].X != Children[i].XPosition || _modPositions[i].Y != Children[i].YPosition)
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    private void StoreChildrenSizes()
+    {
+      if (_childredSizes == null)
+      {
+        _childredSizes = new Size[Children.Count];
+      }
+      for (int i = 0; i < Children.Count; i++)
+      {
+        _childredSizes[i] = new Size(Children[i].Width, Children[i].Height);
+      }
+    }
+
+    private bool CheckChildrenModifiedSizes()
+    {
+      if (_childredSizes == null)
+      {
+        StoreChildrenSizes();
+        return false;
+      }
+      for (int i = 0; i < Children.Count; i++)
+      {
+        if (_childredSizes[i] != new Size(Children[i].Width, Children[i].Height))
         {
           return true;
         }

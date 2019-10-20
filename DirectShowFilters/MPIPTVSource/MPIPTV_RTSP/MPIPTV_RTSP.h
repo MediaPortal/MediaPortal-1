@@ -26,7 +26,7 @@
 #include "MPIPTV_RTSP_Exports.h"
 #include "MPIPTV_UDP.h"
 
-#include "RTSPClient.hh"
+#include "MPRTSPClient.h"
 #include "BasicUsageEnvironment.hh"
 #include "MPEG2TransportStreamFromESSource.hh"
 #include "Groupsock.hh"
@@ -36,21 +36,24 @@
 // we should get data in ten seconds
 #define RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT                   10000
 #define RTSP_PORT_DEFAULT                                   554
+#define RTSP_MAX_RESPONSE_BYTE_COUNT                        4096
+#define RTSP_RTP_CLIENT_PORT_RANGE_START_DEFAULT            0
+#define RTSP_RTP_CLIENT_PORT_RANGE_END_DEFAULT              0
 #define RTSP_UDP_SINK_MAX_PAYLOAD_SIZE_DEFAULT              12288
 #define RTSP_UDP_PORT_RANGE_START_DEFAULT                   45000
 #define RTSP_UDP_PORT_RANGE_END_DEFAULT                     46000
-#define RTSP_TEARDOWN_REQUEST_MAXIMUM_COUNT_DEFAULT         5
-#define RTSP_TEARDOWN_REQUEST_TIMEOUT_DEFAULT               100
+#define RTSP_COMMAND_RESPONSE_TIMEOUT_DEFAULT               500
 #define RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT       3
 
 #define CONFIGURATION_SECTION_RTSP                          _T("RTSP")
 
 #define CONFIGURATION_RTSP_RECEIVE_DATA_TIMEOUT             _T("RtspReceiveDataTimeout")
+#define CONFIGURATION_RTSP_RTP_CLIENT_PORT_RANGE_START      _T("RtspRtpClientPortRangeStart")
+#define CONFIGURATION_RTSP_RTP_CLIENT_PORT_RANGE_END        _T("RtspRtpClientPortRangeEnd")
 #define CONFIGURATION_RTSP_UDP_SINK_MAX_PAYLOAD_SIZE        _T("RtspUdpSinkMaxPayloadSize")
 #define CONFIGURATION_RTSP_UDP_PORT_RANGE_START             _T("RtspUdpPortRangeStart")
 #define CONFIGURATION_RTSP_UDP_PORT_RANGE_END               _T("RtspUdpPortRangeEnd")
-#define CONFIGURATION_RTSP_TEARDOWN_REQUEST_MAXIMUM_COUNT   _T("RtspTeardownRequestMaximumCount")
-#define CONFIGURATION_RTSP_TEARDOWN_REQUEST_TIMEOUT         _T("RtspTeardownRequestTimeout")
+#define CONFIGURATION_RTSP_COMMAND_RESPONSE_TIMEOUT         _T("RtspCommandResponseTimeout")
 #define CONFIGURATION_RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS _T("RtspOpenConnectionMaximumAttempts")
 
 // returns protocol class instance
@@ -89,22 +92,36 @@ protected:
   TCHAR *rtspUrl;
 
   // RTSP variables
-  TaskScheduler* rtspScheduler;
-  UsageEnvironment* rtspEnvironment; 
-  RTSPClient* rtspClient;
-  MediaSession* rtspSession;
-  FramedSource *rtspSource;
+  TaskScheduler *rtspScheduler;
+  UsageEnvironment *rtspEnvironment; 
+  MPRTSPClient *rtspClient;
+  HANDLE rtspResponseEvent;
+  int rtspResponseResultCode;
+  char rtspResponseResultString[RTSP_MAX_RESPONSE_BYTE_COUNT];
+  MediaSession *rtspSession;
+  bool isRtspSessionSetup;
+  unsigned int rtspRtpClientPortRangeStart;
+  unsigned int rtspRtpClientPortRangeEnd;
   Groupsock *rtspUdpGroupsock;
   MediaSink *rtspUdpSink;
   unsigned int rtspUdpSinkMaxPayloadSize;
   unsigned int rtspUdpPortRangeStart;
   unsigned int rtspUdpPortRangeEnd;
+  unsigned int rtspCommandResponseTimeout;
 
   // variable for signaling exit for rtspScheduler
   char rtspThreadShouldExit;
   // variables for RTSP scheduler thread
   DWORD rtspSchedulerThreadId;
   HANDLE rtspSchedulerThreadHandle;
+
+  int SendRtspCommand(const TCHAR *method, const TCHAR *command, MediaSubsession *subsession = NULL);
+
+  // RTSP request asynchronous response handler.
+  static void OnRtspResponseReceived(RTSPClient *client, int resultCode, char *resultString);
+
+  // log RTSP message
+  void LogRtspMessage(unsigned int loggerLevel, const TCHAR *method, const TCHAR *message);
 
   // RTSP scheduler worker method
   // @param lpParam : reference to instance of CMPIPTV_RTSP class
@@ -113,47 +130,10 @@ protected:
   // RTSP subsession 'Bye' handler
   static void SubsessionByeHandler(void *lpCMPIPTV_RTSP);
 
-  // close all media sinks
-  void CloseSinks();
-
   // tear down media session
   // @param forceTeardown : if true than session and client will be deleted in any case
-  // @result : true if succesfull, false otherwise
+  // @result : true if successful, false otherwise
   bool TeardownMediaSession(bool forceTeardown);
-
-  // result of RtspTearDownSessionWorker()
-  bool rtspTearDownSessionWorkerResult;
-
-  // RTSP tear down session worker method
-  // @param lpParam : reference to instance of CMPIPTV_RTSP class
-  static DWORD WINAPI RtspTearDownSessionWorker(LPVOID lpParam);
-
-  // RTSP tear down request maximum count
-  unsigned int rtspTeardownRequestMaximumCount;
-  // RTSP tear down request timeout (in ms)
-  unsigned int rtspTeardownRequestTimeout;
-
-  // log RTSP message
-  void LogRtspMessage(unsigned int loggerLevel, const TCHAR *messagePrefix);
-
-  // log RTSP full message (not from environment)
-  void LogFullRtspMessage(unsigned int loggerLevel, const TCHAR *messagePrefix, const char *rtspMessage);
-
-  // get last RTSP message
-  // caller have to free result from memory
-  // @result : reference to null-terminated string or NULL if error
-  char *GetLastRtspMessageA(void);
-
-  // get last RTSP message
-  // caller have to free result from memory
-  // @result : reference to null-terminated string or NULL if error
-  wchar_t *GetLastRtspMessageW(void);
-
-#ifdef _MBCS
-#define GetLastRtspMessage GetLastRtspMessageA
-#else
-#define GetLastRtspMessage GetLastRtspMessageW
-#endif
 
 };
 

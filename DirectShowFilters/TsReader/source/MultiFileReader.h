@@ -34,16 +34,16 @@ class MultiFileReaderFile
 {
 public:
 	LPWSTR filename;
-	__int64 startPosition;
-	__int64 length;
-	long filePositionId;
+	__int64 startPosition = 0;
+	__int64 length = 0;
+	long filePositionId = 0;
 };
 
 class MultiFileReader : public FileReader
 {
 public:
 
-	MultiFileReader(BOOL useFileNext, BOOL useDummyWrites);
+	MultiFileReader(BOOL useFileNext, BOOL useDummyWrites, CCritSec* pFilterLock, BOOL useRandomAccess, BOOL extraLogging);
 	virtual ~MultiFileReader();
 
 	virtual HRESULT GetFileName(LPOLESTR *lpszFileName);
@@ -52,6 +52,7 @@ public:
 	virtual HRESULT CloseFile();
 	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
 	virtual HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
+	virtual HRESULT ReadWithRefresh(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
 
 	virtual BOOL IsFileInvalid();
 
@@ -62,11 +63,13 @@ public:
 	virtual void SetFileNext(BOOL useFileNext);
 	virtual BOOL GetFileNext();
 	virtual void SetStopping(BOOL isStopping);
+	virtual void CloseBufferFiles();
 
 protected:
 	HRESULT RefreshTSBufferFile();
 	HRESULT GetFileLength(LPWSTR pFilename, __int64 &length, bool doubleCheck);
-	HRESULT ReadNoLock(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
+	HRESULT ReadNoLock(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, bool refreshFile);
+__int64 FindFileLength(LPWSTR pFilename);
 
 //	SharedMemory* m_pSharedMemory;
 	FileReader m_TSBufferFile;
@@ -91,11 +94,13 @@ protected:
 	BOOL     m_bDebugOutput;
 	BOOL     m_bUseFileNext;
 	BOOL     m_bIsStopping;
+	BOOL     m_bExtraLogging;
 
   byte*    m_pFileReadNextBuffer;
   byte*    m_pInfoFileBuffer1;
   byte*    m_pInfoFileBuffer2;
   CCritSec  m_accessLock;
+  CCritSec* m_pAccessLock;
 };
 
 #endif

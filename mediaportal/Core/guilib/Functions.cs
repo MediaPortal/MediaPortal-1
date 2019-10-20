@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2017 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2017 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -32,15 +32,41 @@ namespace MediaPortal.GUI.Library
     private static void MakeBoolean(string funcName, int paramIndex, ref object param)
     {
       // The parameter must be a boolean; attempt coersion if it is a string.
-      if (param.GetType() != typeof(bool))
+      if (param != null && param.GetType() != typeof(bool))
       {
-        bool value = false;
+        var value = false;
         if (!bool.TryParse((string)param, out value))
         {
           Log.Error("Condition for {0}() function is not a boolean; paramIndex={1}, value={2}. Condition is being forced to 'false'.  You must correct your skin function.", funcName, paramIndex, param);
         }
         param = value;
       }
+    }
+
+    #endregion
+
+    #region  System functions
+
+    [XMLSkinFunction("system.idletime")]
+    public static bool IdleTime(int value)
+    {
+      if (value < 0)
+      {
+        return false;
+      }
+      int condition = GUIInfoManager.TranslateSingleString("system.idletime(" + value.ToString() + ")");
+      return GUIInfoManager.GetBool(condition, 0);
+    }
+
+    [XMLSkinFunction("system.idletime")]
+    public static bool IdleTime(string text)
+    {
+      if ((text == null))
+      {
+        return false;
+      }
+      int condition = GUIInfoManager.TranslateSingleString("system.idletime(" + text + ")");
+      return GUIInfoManager.GetBool(condition, 0);
     }
 
     #endregion
@@ -231,6 +257,59 @@ namespace MediaPortal.GUI.Library
       return ((CultureInfo.InvariantCulture.CompareInfo.IndexOf(text, part, CompareOptions.IgnoreCase) >= 0) ? "true" : "false");
     }
 
+    [XMLSkinFunction("string.starts")]
+    public static string StartsString(string text, string part)
+    {
+      if ((text == null) || (part == null))
+      {
+        return "false";
+      }
+      return ((CultureInfo.InvariantCulture.CompareInfo.IndexOf(text, part, CompareOptions.IgnoreCase) == 0) ? "true" : "false");
+    }
+
+    [XMLSkinFunction("string.valueequals")]
+    public static string EqualsStringV(string text, string part)
+    {
+      if ((text == null) || (part == null))
+      {
+        return "false";
+      }
+      int condition = GUIInfoManager.TranslateSingleString("string.valueequals(" + text + "," + part + ")");
+      return GUIInfoManager.GetBool(condition, 0) ? "true" : "false";
+    }
+
+    [XMLSkinFunction("string.valuecontains")]
+    public static string ContainsStringV(string text, string part)
+    {
+      if ((text == null) || (part == null))
+      {
+        return "false";
+      }
+      int condition = GUIInfoManager.TranslateSingleString("string.valuecontains(" + text + "," + part + ")");
+      return GUIInfoManager.GetBool(condition, 0) ? "true" : "false";
+    }
+
+    [XMLSkinFunction("string.valuestarts")]
+    public static string StartsStringV(string text, string part)
+    {
+      if ((text == null) || (part == null))
+      {
+        return "false";
+      }
+      int condition = GUIInfoManager.TranslateSingleString("string.valuestarts(" + text + "," + part + ")");
+      return GUIInfoManager.GetBool(condition, 0) ? "true" : "false";
+    }
+
+    [XMLSkinFunction("string.length")]
+    public static int LengthString(string text)
+    {
+      if ((text == null))
+      {
+        return 0;
+      }
+      return text.Length;
+    }
+
     #endregion
 
     #region Conversions
@@ -261,6 +340,32 @@ namespace MediaPortal.GUI.Library
       return ((value is string) && (DateTime.TryParse((string)value, out result))) ? result : DateTime.MinValue;
     }
 
+    [XMLSkinFunction("cdate")]
+    public static DateTime ConvertToDate(object value, string frmt)
+    {
+      if (string.IsNullOrEmpty(frmt)) return DateTime.MinValue;
+      if (value is DateTime) return (DateTime)value;
+      DateTime result;
+      return ((value is string) && (DateTime.TryParseExact((string)value, frmt, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))) ? result : DateTime.MinValue;
+    }
+
+    [XMLSkinFunction("ctimespan")]
+    public static TimeSpan ConvertToTimeSpan(object value)
+    {
+      if (value is TimeSpan) return (TimeSpan)value;
+      TimeSpan result;
+      return ((value is string) && (TimeSpan.TryParse((string)value, out result))) ? result : TimeSpan.Zero;
+    }
+
+    [XMLSkinFunction("ctimespan")]
+    public static TimeSpan ConvertToTimeSpan(object value, string frmt)
+    {
+      if (string.IsNullOrEmpty(frmt)) return TimeSpan.Zero;
+      if (value is TimeSpan) return (TimeSpan)value;
+      TimeSpan result;
+      return ((value is string) && (TimeSpan.TryParseExact((string)value, frmt, CultureInfo.InvariantCulture, out result))) ? result : TimeSpan.Zero;
+    }
+
     #endregion
 
     #region Conditionals
@@ -269,7 +374,7 @@ namespace MediaPortal.GUI.Library
     public static object Iif(object condition, object truePart, object falsePart)
     {
       MakeBoolean("iif", 0, ref condition);
-      return (bool)condition ? truePart : falsePart;
+      return condition != null && (bool)condition ? truePart : falsePart;
     }
 
     [XMLSkinFunction("choose")]
@@ -936,18 +1041,27 @@ namespace MediaPortal.GUI.Library
     {
       // args[0] - skin window id
       // args[1] - skin control id
-      if (args.Length == 2)
-      {
-        int windowId = (int)args[0];
-        int controlId = (int)args[1];
-        GUIControl.FocusControl(windowId, controlId);
-      }
+      if (args.Length != 2) return;
+      int windowId = (int)args[0];
+      int controlId = (int)args[1];
+      GUIControl.FocusControl(windowId, controlId);
     }
 
     [XMLSkinFunction("plugin.isenabled")]
     public static bool PluginIsEnabled(string name)
     {
       int condition = GUIInfoManager.TranslateString("plugin.isenabled(" + name + ")");
+      return GUIInfoManager.GetBool(condition, 0);
+    }
+
+    [XMLSkinFunction("window.isvisible")]
+    public static bool WindowIsVisible(string id)
+    {
+      if ((id == null))
+      {
+        return false;
+      }
+      int condition = GUIInfoManager.TranslateSingleString("window.isvisible(" + id + ")");
       return GUIInfoManager.GetBool(condition, 0);
     }
 

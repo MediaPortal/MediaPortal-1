@@ -1,0 +1,249 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>49851</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:724</define>
+  <define>#header.hover:-</define>
+  <define>#selecteditem:</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>#backgroundcolour</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+	
+    <control>
+      <description></description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#overlaycolour</texture>
+	</control>	
+	
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>190</posY>
+        <width>1845</width>
+        <height>624</height>
+        <texture>D_over1.png</texture>
+      </control>	
+
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>821</posY>
+        <width>1845</width>
+        <height>209</height>
+        <texture>Inf_gfx.png</texture>
+      </control>		  
+	  
+	<import>custom\Allscreens\user_dialog.xml</import>	
+	
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <id>24</id>
+	  <posX>57</posX>
+	  <posY>225</posY>
+      <layout>StackLayout</layout>
+      <control>
+        <type>button</type>
+        <description>Search</description>
+        <id>2</id>
+		<width>663</width>
+        <onleft>2</onleft>
+        <onright>10</onright>
+        <onup>17</onup>
+        <ondown>6</ondown>
+        <font>font13</font>
+        <label>137</label>
+      </control>
+      <control>
+        <type>button</type>
+        <id>6</id>
+        <onleft>2</onleft>
+        <onright>10</onright>
+        <onup>2</onup>
+        <ondown>7</ondown>
+        <label>search method:</label>
+		<width>663</width>
+      </control>
+      <control>
+        <type>button</type>
+        <id>7</id>
+        <onleft>2</onleft>
+        <onright>10</onright>
+        <onup>6</onup>
+        <ondown>8</ondown>
+        <label>602</label>
+		<width>663</width>
+      </control>
+      <control>
+        <type>button</type>
+        <id>8</id>
+        <onleft>2</onleft>
+        <onright>10</onright>
+        <onup>7</onup>
+        <ondown>3</ondown>
+        <label>174</label>
+		<width>663</width>
+      </control>
+      <control>
+        <type>button</type>
+        <id>3</id>
+        <onleft>2</onleft>
+        <onright>10</onright>
+        <onup>8</onup>
+        <ondown>4</ondown>
+        <label>192</label>
+		<width>663</width>
+      </control>
+      <control>
+        <type>sortbutton</type>
+        <id>4</id>
+        <onleft>3</onleft>
+        <onright>10</onright>
+        <onup>3</onup>
+        <ondown>99</ondown>
+        <label>620</label>
+		<width>663</width>
+	    <textureFocus>btn_list.png</textureFocus>
+        <textureNoFocus></textureNoFocus>	
+		<textXOff>27</textXOff>
+		<offsetSortButtonX>600</offsetSortButtonX>
+		<offsetSortButtonY>0</offsetSortButtonY>
+      </control>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <id>0</id>
+      <posX>682</posX>
+      <posY>174</posY>
+      <width>1167</width>
+      <height>874</height>
+      <mpe>
+        <layout>Grid</layout>
+        <spring>no</spring>
+        <spacing>0</spacing>
+        <padding>
+          <top>0</top>
+          <right>0</right>
+          <bottom>0</bottom>
+          <left>0</left>
+        </padding>
+      </mpe>
+      <control>
+        <description>search results listcontrol</description>
+        <type>listcontrol</type>
+        <id>10</id>
+        <onleft>2</onleft>
+        <onright>2</onright>
+	     <posX>720</posX>
+	     <posY>225</posY>
+	     <height>620</height>
+	     <width>1145</width>
+		 <textureFocus>btn_list.png</textureFocus>
+	     <textXOff>-15</textXOff>
+	     <textYOff>3</textYOff>
+		 <textYOff2>3</textYOff2>
+		 <textYOff3>3</textYOff3>
+        <textXOff2>1012</textXOff2>
+		<textXOff3>1050</textXOff3>
+        <PinIconXOff>4050</PinIconXOff>
+      </control>
+	  <control>
+        <description>Cover Art</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>692</posX>
+        <posY>182</posY>
+        <width>28</width>
+        <height>619</height>
+        <texture>D_side.png</texture>
+      </control>	
+	  
+    <control>
+      <description>TV Channel Logo</description>
+      <type>image</type>
+      <id>1</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">blue.png</texture>
+    </control>
+    <control>
+      <description>TV Channel Logo</description>
+      <type>image</type>
+      <id>1</id>
+        <posX>56</posX>
+        <posY>828</posY>
+		<height>190</height>
+		<width>190</width>
+        <texture mask="MAmask.png">#Radio.Search.thumb</texture>
+    </control>
+	
+      <control>
+        <description>channel</description>
+        <id>0</id>
+        <type>fadelabel</type>
+        <posX>3240</posX>
+        <posY>660</posY>
+        <width>1590</width>
+        <textcolor>ff6FAFE1</textcolor>
+        <label>#Radio.Search.Channel  |  #Radio.Search.Time  |  #Radio.Search.Genre</label>
+        <font>font12</font>
+      </control>
+      <control>
+        <description>Program Title</description>
+        <id>14</id>
+        <type>fadelabel</type>
+        <posX>264</posX>
+        <posY>850</posY>
+        <width>1365</width>
+        <font>font13</font>
+        <textcolor>eaeaea</textcolor>
+        <label>#Radio.Search.Title</label>
+        <align>left</align>
+      </control>
+      <control>
+        <description>Current program Genre</description>
+        <type>fadelabel</type>
+        <id>13</id>
+        <posX>3828</posX>
+        <posY>849</posY>
+        <width>1020</width>
+        <label>#Radio.Search.Genre</label>
+        <font>font10</font>
+        <textcolor>ff6FAFE1</textcolor>
+        <visible>!string.equals(#Radio.Search.Genre,-)</visible>
+      </control>
+      <control>
+        <description>Description1</description>
+        <type>textboxscrollup</type>
+        <id>15</id>
+        <posX>264</posX>
+        <posY>900</posY>
+        <width>1600</width>
+        <height>85</height>
+        <font>font13</font>
+        <label>#Radio.Search.Description</label>
+        <textcolor>FFFFFFFF</textcolor>
+      </control>
+    </control>
+  </controls>
+</window>

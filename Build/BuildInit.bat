@@ -24,6 +24,7 @@ set CommonMPTV="%GIT_ROOT%\Common-MP-TVE3"
 set DirectShowFilters="%GIT_ROOT%\DirectShowFilters"
 set MediaPortal="%GIT_ROOT%\mediaportal"
 set TVLibrary="%GIT_ROOT%\TvEngine3\TVLibrary"
+set LibblurayJAR="%GIT_ROOT%\libbluray\src\libbluray\bdj\build.xml"
 
 
 REM set log file
@@ -49,4 +50,4 @@ REM copy BuildReport resources
 xcopy /I /Y .\BuildReport\_BuildReport_Files .\_BuildReport_Files
 
 REM Download NuGet packages
-@"%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" RestorePackages.targets
+@"%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" RestorePackages.targets
