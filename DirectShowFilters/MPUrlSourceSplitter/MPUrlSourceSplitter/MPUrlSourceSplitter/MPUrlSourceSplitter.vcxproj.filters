@@ -111,9 +111,6 @@
     <ClInclude Include="OutputPinMetadataBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CrashRpt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CrashReport.h">
       <Filter>Header Files</Filter>
     </ClInclude>

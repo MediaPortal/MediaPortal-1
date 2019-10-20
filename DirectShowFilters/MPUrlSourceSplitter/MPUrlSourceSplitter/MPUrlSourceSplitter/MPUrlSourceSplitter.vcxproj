@@ -176,7 +176,6 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
   <ItemGroup>
     <ClInclude Include="ByteParser.h" />
     <ClInclude Include="CrashReport.h" />
-    <ClInclude Include="CrashRpt.h" />
     <ClInclude Include="Demuxer.h" />
     <ClInclude Include="DemuxerAudioHelper.h" />
     <ClInclude Include="DemuxerCollection.h" />
