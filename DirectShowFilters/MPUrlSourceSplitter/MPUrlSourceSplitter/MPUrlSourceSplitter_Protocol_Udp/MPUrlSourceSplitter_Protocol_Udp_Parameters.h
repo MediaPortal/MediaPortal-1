@@ -44,4 +44,35 @@
 #define UDP_RECEIVE_DATA_CHECK_INTERVAL_DEFAULT_SPLITTER              500
 #define UDP_RECEIVE_DATA_CHECK_INTERVAL_DEFAULT_IPTV                  500
 
+// very specific UDP options, all of them requires that user is member or Administrators group (due to using raw sockets)
+
+#define PARAMETER_NAME_UDP_IPV4_DSCP                                  L"UdpDscp"
+#define PARAMETER_NAME_UDP_IPV4_ECN                                   L"UdpEcn"
+#define PARAMETER_NAME_UDP_IPV4_IDENTIFICATION                        L"UdpIdentification"
+#define PARAMETER_NAME_UDP_IPV4_FLAGS                                 L"UdpFlags"
+#define PARAMETER_NAME_UDP_IPV4_TTL                                   L"UdpTtl"
+#define PARAMETER_NAME_UDP_IPV4_PROTOCOL                              L"UdpProtocol"
+#define PARAMETER_NAME_UDP_IPV4_OPTIONS                               L"UdpOptions"
+
+#define UDP_IPV4_DSCP_MIN                                             0x00
+#define UDP_IPV4_DSCP_MAX                                             0x3F
+#define UDP_IPV4_DSCP_DEFAULT                                         0x00
+
+#define UDP_IPV4_ECN_MIN                                              0x00
+#define UDP_IPV4_ECN_MAX                                              0x03
+#define UDP_IPV4_ECN_DEFAULT                                          0x00
+
+#define UDP_IPV4_IDENTIFICATION_MIN                                   0x0000
+#define UDP_IPV4_IDENTIFICATION_MAX                                   0xFFFF
+
+#define UDP_IPV4_FLAGS_MIN                                            0x00
+#define UDP_IPV4_FLAGS_MAX                                            0x07
+
+#define UDP_IPV4_TTL_MIN                                              0x00
+#define UDP_IPV4_TTL_MAX                                              0xFF
+#define UDP_IPV4_TTL_DEFAULT                                          0x01
+
+#define UDP_IPV4_PROTOCOL_MIN                                         0x00
+#define UDP_IPV4_PROTOCOL_MAX                                         0xFF
+
 #endif

@@ -126,7 +126,7 @@ public:
   // updates indexes by using specified item
   // @param itemIndex : index of item to update indexes
   // @param count : the count of items to updates indexes
-  // @retur : true if successful, false otherwise
+  // @return : true if successful, false otherwise
   virtual bool UpdateIndexes(unsigned int itemIndex, unsigned int count);
 
   // ensures that in internal buffer of indexes is enough space

@@ -76,7 +76,6 @@ public:
 
 protected:
 
-  //bool subscribedToMulticastGroup;
   CIpAddress *multicastAddress;
   CIpAddress *sourceAddress;
   CNetworkInterface *networkInterface;

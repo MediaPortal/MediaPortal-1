@@ -35,6 +35,7 @@
 #include "ErrorCodes.h"
 #include "StreamPackageDataRequest.h"
 #include "StreamPackageDataResponse.h"
+#include "conversions.h"
 
 #include <Shlwapi.h>
 
@@ -337,6 +338,21 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
           request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? UDP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : UDP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
           request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
           request->SetCheckInterval(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_RECEIVE_DATA_CHECK_INTERVAL, true, this->IsIptv() ? UDP_RECEIVE_DATA_CHECK_INTERVAL_DEFAULT_IPTV : UDP_RECEIVE_DATA_CHECK_INTERVAL_DEFAULT_SPLITTER));
+
+          CHECK_CONDITION_EXECUTE(this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_DSCP, true), request->SetIpv4Dscp((uint8_t)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_IPV4_DSCP, true, UDP_IPV4_DSCP_DEFAULT)));
+          CHECK_CONDITION_EXECUTE(this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_ECN, true), request->SetIpv4Ecn((uint8_t)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_IPV4_ECN, true, UDP_IPV4_ECN_DEFAULT)));
+          CHECK_CONDITION_EXECUTE(this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_FLAGS, true), request->SetIpv4Flags((uint8_t)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_IPV4_FLAGS, true, 0x00)));
+          CHECK_CONDITION_EXECUTE(this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_IDENTIFICATION, true), request->SetIpv4Identification((uint16_t)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_IPV4_IDENTIFICATION, true, 0x0000)));
+          CHECK_CONDITION_EXECUTE(this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_PROTOCOL, true), request->SetIpv4Protocol((uint8_t)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_IPV4_PROTOCOL, true, 0x00)));
+          CHECK_CONDITION_EXECUTE(this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_TTL, true), request->SetIpv4Ttl((uint8_t)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_IPV4_TTL, true, UDP_IPV4_TTL_DEFAULT)));
+
+          if (this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_OPTIONS, true))
+          {
+            uint8_t *options = HexToDec(this->configuration->GetValue(PARAMETER_NAME_UDP_IPV4_OPTIONS, true, NULL));
+            size_t optionsLength = wcslen(this->configuration->GetValue(PARAMETER_NAME_UDP_IPV4_OPTIONS, true, NULL));
+
+            request->SetIpv4Options(options, (uint8_t)(optionsLength / 2));
+          }
 
           if (SUCCEEDED(this->mainCurlInstance->Initialize(request)))
           {

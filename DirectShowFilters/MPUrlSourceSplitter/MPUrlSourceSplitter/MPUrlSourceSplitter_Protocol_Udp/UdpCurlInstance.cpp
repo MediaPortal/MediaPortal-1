@@ -24,6 +24,7 @@
 #include "UdpServer.h"
 #include "UdpSocketContext.h"
 #include "MulticastUdpServer.h"
+#include "MulticastUdpRawServer.h"
 #include "LockMutex.h"
 #include "conversions.h"
 #include "Dns.h"
@@ -182,7 +183,7 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
     {
       CIpAddress *localIpAddress = localIpAddresses->GetItem(0);
 
-      server = localIpAddress->IsMulticast() ? new CMulticastUdpServer(&result) : new CUdpServer(&result);
+      server = localIpAddress->IsMulticast() ? (this->udpDownloadRequest->IsRawSocket() ? new CMulticastUdpRawServer(&result) : new CMulticastUdpServer(&result)) : new CUdpServer(&result);
       CHECK_POINTER_HRESULT(result, server, result, E_OUTOFMEMORY);
 
       CNetworkInterfaceCollection *interfaces = new CNetworkInterfaceCollection(&result);
@@ -214,9 +215,18 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
 
       if (SUCCEEDED(result) && (localIpAddress->IsMulticast()))
       {
-        CMulticastUdpServer *multicastServer = dynamic_cast<CMulticastUdpServer *>(server);
+        if (this->udpDownloadRequest->IsRawSocket())
+        {
+          CMulticastUdpRawServer *multicastServer = dynamic_cast<CMulticastUdpRawServer *>(server);
 
-        result = multicastServer->Initialize(AF_UNSPEC, localIpAddress, (this->sourceAddress != NULL) ? sourceIpAddresses->GetItem(0) : NULL, interfaces);
+          result = multicastServer->Initialize(AF_UNSPEC, localIpAddress, (this->sourceAddress != NULL) ? sourceIpAddresses->GetItem(0) : NULL, interfaces);
+        }
+        else
+        {
+          CMulticastUdpServer *multicastServer = dynamic_cast<CMulticastUdpServer *>(server);
+
+          result = multicastServer->Initialize(AF_UNSPEC, localIpAddress, (this->sourceAddress != NULL) ? sourceIpAddresses->GetItem(0) : NULL, interfaces);
+        }
       }
       else if (SUCCEEDED(result) && (!localIpAddress->IsMulticast()))
       {
