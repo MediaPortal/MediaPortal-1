@@ -82,6 +82,8 @@
     <ClInclude Include="Dns.h" />
     <ClInclude Include="IpAddress.h" />
     <ClInclude Include="IpAddressCollection.h" />
+    <ClInclude Include="Ipv4Header.h" />
+    <ClInclude Include="Ipv4Header_Constants.h" />
     <ClInclude Include="MulticastUdpRawServer.h" />
     <ClInclude Include="MulticastUdpRawSocketContext.h" />
     <ClInclude Include="MulticastUdpSocketContext.h" />
@@ -102,6 +104,7 @@
     <ClCompile Include="Dns.cpp" />
     <ClCompile Include="IpAddress.cpp" />
     <ClCompile Include="IpAddressCollection.cpp" />
+    <ClCompile Include="Ipv4Header.cpp" />
     <ClCompile Include="MulticastUdpRawServer.cpp" />
     <ClCompile Include="MulticastUdpRawSocketContext.cpp" />
     <ClCompile Include="MulticastUdpSocketContext.cpp" />

@@ -23,6 +23,8 @@
 #ifndef __MP_URL_SOURCE_SPLITTER_PROTOCOL_UDP_PARAMETERS_DEFINED
 #define __MP_URL_SOURCE_SPLITTER_PROTOCOL_UDP_PARAMETERS_DEFINED
 
+#include "Ipv4Header_Constants.h"
+
 #define PARAMETER_NAME_UDP_OPEN_CONNECTION_TIMEOUT                    L"UdpOpenConnectionTimeout"
 #define PARAMETER_NAME_UDP_OPEN_CONNECTION_SLEEP_TIME                 L"UdpOpenConnectionSleepTime"
 #define PARAMETER_NAME_UDP_TOTAL_REOPEN_CONNECTION_TIMEOUT            L"UdpTotalReopenConnectionTimeout"
@@ -31,7 +33,7 @@
 #define PARAMETER_NAME_UDP_RECEIVE_DATA_CHECK_INTERVAL                L"UdpReceiveDataCheckInterval"
 
 // we should get data in two seconds (splitter)
-#define UDP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER                  2000
+#define UDP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER                  20000
 #define UDP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER               0
 #define UDP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER          60000
 
@@ -49,30 +51,28 @@
 #define PARAMETER_NAME_UDP_IPV4_DSCP                                  L"UdpDscp"
 #define PARAMETER_NAME_UDP_IPV4_ECN                                   L"UdpEcn"
 #define PARAMETER_NAME_UDP_IPV4_IDENTIFICATION                        L"UdpIdentification"
-#define PARAMETER_NAME_UDP_IPV4_FLAGS                                 L"UdpFlags"
+#define PARAMETER_NAME_UDP_IPV4_DONT_FRAGMENT                         L"UdpDontFragment"
+#define PARAMETER_NAME_UDP_IPV4_MORE_FRAGMNETS                        L"UdpMoreFragments"
 #define PARAMETER_NAME_UDP_IPV4_TTL                                   L"UdpTtl"
 #define PARAMETER_NAME_UDP_IPV4_PROTOCOL                              L"UdpProtocol"
 #define PARAMETER_NAME_UDP_IPV4_OPTIONS                               L"UdpOptions"
 
-#define UDP_IPV4_DSCP_MIN                                             0x00
-#define UDP_IPV4_DSCP_MAX                                             0x3F
-#define UDP_IPV4_DSCP_DEFAULT                                         0x00
+#define UDP_IPV4_DSCP_MIN                                             IPV4_HEADER_DSCP_MIN
+#define UDP_IPV4_DSCP_MAX                                             IPV4_HEADER_DSCP_MAX
+#define UDP_IPV4_DSCP_DEFAULT                                         IPV4_HEADER_DSCP_DEFAULT
 
-#define UDP_IPV4_ECN_MIN                                              0x00
-#define UDP_IPV4_ECN_MAX                                              0x03
-#define UDP_IPV4_ECN_DEFAULT                                          0x00
+#define UDP_IPV4_ECN_MIN                                              IPV4_HEADER_ECN_MIN
+#define UDP_IPV4_ECN_MAX                                              IPV4_HEADER_ECN_MAX
+#define UDP_IPV4_ECN_DEFAULT                                          IPV4_HEADER_ECN_DEFAULT
 
-#define UDP_IPV4_IDENTIFICATION_MIN                                   0x0000
-#define UDP_IPV4_IDENTIFICATION_MAX                                   0xFFFF
+#define UDP_IPV4_IDENTIFICATION_MIN                                   IPV4_HEADER_IDENTIFICATION_MIN
+#define UDP_IPV4_IDENTIFICATION_MAX                                   IPV4_HEADER_IDENTIFICATION_MAX
 
-#define UDP_IPV4_FLAGS_MIN                                            0x00
-#define UDP_IPV4_FLAGS_MAX                                            0x07
+#define UDP_IPV4_TTL_MIN                                              IPV4_HEADER_TTL_MIN
+#define UDP_IPV4_TTL_MAX                                              IPV4_HEADER_TTL_MAX
+#define UDP_IPV4_TTL_DEFAULT                                          IPV4_HEADER_TTL_DEFAULT
 
-#define UDP_IPV4_TTL_MIN                                              0x00
-#define UDP_IPV4_TTL_MAX                                              0xFF
-#define UDP_IPV4_TTL_DEFAULT                                          0x01
-
-#define UDP_IPV4_PROTOCOL_MIN                                         0x00
-#define UDP_IPV4_PROTOCOL_MAX                                         0xFF
+#define UDP_IPV4_PROTOCOL_MIN                                         IPV4_HEADER_PROTOCOL_MIN
+#define UDP_IPV4_PROTOCOL_MAX                                         IPV4_HEADER_PROTOCOL_MAX
 
 #endif

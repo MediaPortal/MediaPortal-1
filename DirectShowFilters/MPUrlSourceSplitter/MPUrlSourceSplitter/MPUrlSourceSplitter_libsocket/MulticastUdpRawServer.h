@@ -24,6 +24,7 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 #define __MULTICAST_UDP_RAW_SERVER_DEFINED
 
 #include "MulticastUdpServer.h"
+#include "Ipv4Header.h"
 
 #define MULTICAST_UDP_RAW_SERVER_FLAG_NONE                                    MULTICAST_UDP_SERVER_FLAG_NONE
 
@@ -41,6 +42,15 @@ public:
   /* set methods */
 
   /* other methods */
+
+  // initializes multicast UDP server on specified interfaces
+  // @param family : socket family (AF_INET, AF_INET6, ...)
+  // @param multicastAddress : multicast IP address to bind server
+  // @param sourceAddress : the IP address of source (can be NULL if not specified)
+  // @param networkInterfaces : network interfaces to initialize multicast UDP server
+  // @param header : the IPV4 header
+  // @return : S_OK if successful, error code otherwise (can be system or WSA)
+  virtual HRESULT Initialize(int family, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterfaceCollection *networkInterfaces, CIpv4Header *header);
 };
 
 #endif

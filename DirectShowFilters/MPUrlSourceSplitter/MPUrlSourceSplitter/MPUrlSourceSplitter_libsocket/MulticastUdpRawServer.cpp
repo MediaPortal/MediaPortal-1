@@ -41,4 +41,55 @@ CMulticastUdpRawServer::~CMulticastUdpRawServer(void)
 
 /* other methods */
 
+HRESULT CMulticastUdpRawServer::Initialize(int family, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterfaceCollection *networkInterfaces, CIpv4Header *header)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->servers);
+  CHECK_POINTER_DEFAULT_HRESULT(result, networkInterfaces);
+  CHECK_POINTER_DEFAULT_HRESULT(result, header);
+
+  if (SUCCEEDED(result))
+  {
+    this->servers->Clear();
+
+    for (unsigned int i = 0; (SUCCEEDED(result) && (i < networkInterfaces->Count())); i++)
+    {
+      CNetworkInterface *nic = networkInterfaces->GetItem(i);
+      CHECK_POINTER_HRESULT(result, nic, result, E_POINTER);
+
+      if (SUCCEEDED(result))
+      {
+        if (nic->GetOperationalStatus() == IfOperStatusUp)
+        {
+          for (unsigned int j = 0; (SUCCEEDED(result) && (j < nic->GetUnicastAddresses()->Count())); j++)
+          {
+            CIpAddress *ipAddr = nic->GetUnicastAddresses()->GetItem(j)->Clone();
+            CHECK_POINTER_HRESULT(result, nic, result, E_OUTOFMEMORY);
+
+            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = ipAddr->SetPort(multicastAddress->GetPort()) ? result : E_INVALIDARG);
+
+            if (SUCCEEDED(result) && (ipAddr->GetFamily() == multicastAddress->GetFamily()))
+            {
+              ipAddr->SetSockType(SOCK_RAW);
+              ipAddr->SetProtocol(IPPROTO_UDP);
+
+              CMulticastUdpRawSocketContext *server = new CMulticastUdpRawSocketContext(&result, multicastAddress, sourceAddress, nic, header);
+              CHECK_POINTER_HRESULT(result, server, result, E_OUTOFMEMORY);
+
+              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->SetIpAddress(ipAddr), result);
+
+              CHECK_CONDITION_HRESULT(result, this->servers->Add(server), result, E_OUTOFMEMORY);
+
+              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(server));
+            }
+
+            FREE_MEM_CLASS(ipAddr);
+          }
+        }
+      }
+    }
+  }
+
+  return result;
+}
 

@@ -219,7 +219,7 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
         {
           CMulticastUdpRawServer *multicastServer = dynamic_cast<CMulticastUdpRawServer *>(server);
 
-          result = multicastServer->Initialize(AF_UNSPEC, localIpAddress, (this->sourceAddress != NULL) ? sourceIpAddresses->GetItem(0) : NULL, interfaces);
+          result = multicastServer->Initialize(AF_UNSPEC, localIpAddress, (this->sourceAddress != NULL) ? sourceIpAddresses->GetItem(0) : NULL, interfaces, this->udpDownloadRequest->GetIpv4Header());
         }
         else
         {

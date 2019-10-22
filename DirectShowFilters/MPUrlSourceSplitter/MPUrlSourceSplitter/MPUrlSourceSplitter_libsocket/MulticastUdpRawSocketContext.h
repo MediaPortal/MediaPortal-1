@@ -25,16 +25,25 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "MulticastUdpSocketContext.h"
 #include "NetworkInterface.h"
+#include "Ipv4Header.h"
 
 #define MULTICAST_UDP_RAW_SOCKET_CONTEXT_FLAG_NONE                            MULTICAST_UDP_SOCKET_CONTEXT_FLAG_NONE
 
 #define MULTICAST_UDP_RAW_SOCKET_CONTEXT_FLAG_LAST                            (MULTICAST_UDP_SOCKET_CONTEXT_FLAG_LAST + 0)
 
+#define IGMP_TYPE_MEMBERSHIP_QUERY                                            0x11
+#define IGMP_TYPE_MEMBERSHIP_REPORT_V1                                        0x12
+#define IGMP_TYPE_MEMBERSHIP_REPORT_V2                                        0x16
+#define IGMP_TYPE_MEMBERSHIP_REPORT_V3                                        0x22
+#define IGMP_TYPE_MEMBERSHIP_LEAVE                                            0x17
+
+#define IGMP_PACKET_LENGTH_V2                                                 0x08
+
 class CMulticastUdpRawSocketContext : public CMulticastUdpSocketContext
 {
 public:
-  CMulticastUdpRawSocketContext(HRESULT *result, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface);
-  CMulticastUdpRawSocketContext(HRESULT *result, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface, SOCKET socket);
+  CMulticastUdpRawSocketContext(HRESULT *result, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface, CIpv4Header *header);
+  CMulticastUdpRawSocketContext(HRESULT *result, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface, CIpv4Header *header, SOCKET socket);
   virtual ~CMulticastUdpRawSocketContext(void);
 
   /* get methods */
@@ -71,10 +80,18 @@ public:
   // @return : S_OK if successful, false otherwise
   virtual HRESULT LeaveMulticastGroupIPv6(void);
 
-  // sets reusing address
-  // @param reuseAddress : true if address can be reused, false otherwise
-  // @return : S_OK if successful, false otherwise
-  virtual HRESULT SetReuseAddress(bool reuseAddress);
+protected:
+
+  // holds requested IPV4 header
+  CIpv4Header *header;
+
+  /* methods */
+
+  // calculates 1's complement checksum for payload
+  // @param payload : the payload to calculate checksum
+  // @param length : the length of payload to calculate checksum
+  // @return : the checksum of payload
+  static uint16_t CalculateChecksum(uint8_t *payload, uint16_t length);
 };
 
 #endif
