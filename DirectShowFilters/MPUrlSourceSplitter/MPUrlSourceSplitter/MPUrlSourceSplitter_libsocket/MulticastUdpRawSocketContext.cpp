@@ -87,6 +87,7 @@ HRESULT CMulticastUdpRawSocketContext::CreateSocket(void)
       int dwLen = sizeof(dw);
 
       CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), this->SetOption(IPPROTO_IP, IP_HDRINCL, (const char*)&dw, dwLen), result);
+      CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), this->SetOption(SOL_SOCKET, SO_BROADCAST, (const char*)&dw, dwLen), result);
 
       // set socket buffer size
       dw = BUFFER_LENGTH_DEFAULT;
@@ -144,6 +145,7 @@ HRESULT CMulticastUdpRawSocketContext::SubscribeToMulticastGroup(void)
     // IGMPv2 group address
     memcpy(igmpPacket + 4, &this->multicastAddress->GetAddressIPv4()->sin_addr.S_un.S_addr, 4);
 
+    // calculate IGMPv2 payload checksum
     uint16_t checksum = CMulticastUdpRawSocketContext::CalculateChecksum(igmpPacket, IGMP_PACKET_LENGTH_V2);
 
     // update IGMPv2 checksum
@@ -152,19 +154,21 @@ HRESULT CMulticastUdpRawSocketContext::SubscribeToMulticastGroup(void)
   }
 
   // the length of IPv4 packet is 20 bytes + IPv4 options length + IGMP packet length
-  uint16_t ipv4PacketLength = IPV4_HEADER_LENGTH_MIN + this->header->GetOptionsLength() + IGMP_PACKET_LENGTH_V2;
+  uint16_t ipv4PacketHeaderLength = IPV4_HEADER_LENGTH_MIN + this->header->GetOptionsLength();
+  uint16_t ipv4PacketLength = ipv4PacketHeaderLength + IGMP_PACKET_LENGTH_V2;
+
   ALLOC_MEM_DEFINE_SET(ipv4packet, uint8_t, ipv4PacketLength, 0);
   CHECK_POINTER_HRESULT(result, ipv4packet, result, E_OUTOFMEMORY);
 
   if (SUCCEEDED(result))
   {
-    uint8_t ihl = (IPV4_HEADER_LENGTH_MIN + this->header->GetOptionsLength()) / 4;
+    uint8_t ihl = ipv4PacketHeaderLength / 4;
 
     // version field is always 4
     *(ipv4packet) = (0x40 + ihl);
 
     // DSCP and ECN fields
-    *(ipv4packet + 1) = ((this->header->GetDscp() << 6) + this->header->GetEcn());
+    *(ipv4packet + 1) = ((this->header->GetDscp() << 2) + this->header->GetEcn());
 
     // total length of IPV4 packet
     *(ipv4packet + 2) = (ipv4PacketLength >> 8);
@@ -176,16 +180,41 @@ HRESULT CMulticastUdpRawSocketContext::SubscribeToMulticastGroup(void)
 
     // IPV4 flags and fragment offset (always 0)
     *(ipv4packet + 6) |= this->header->IsDontFragment() ? 0x40 : 0x00;
-    *(ipv4packet + 6) |= this->header->IsDontFragment() ? 0x20 : 0x00;
+    *(ipv4packet + 6) |= this->header->IsMoreFragments() ? 0x20 : 0x00;
 
     *(ipv4packet + 8) = this->header->GetTtl();
     *(ipv4packet + 9) = this->header->GetProtocol();
 
     // IPV4 source address
     memcpy(ipv4packet + 12, &this->ipAddress->GetAddressIPv4()->sin_addr.S_un.S_addr, 4);
-    
+
     // IPV4 destination address
     memcpy(ipv4packet + 16, &this->multicastAddress->GetAddressIPv4()->sin_addr.S_un.S_addr, 4);
+
+    // IPV4 options
+    memcpy(ipv4packet + 20, this->header->GetOptions(), this->header->GetOptionsLength());
+
+    // calculate IPv4 header checksum
+    uint16_t checksum = CMulticastUdpRawSocketContext::CalculateChecksum(ipv4packet, ipv4PacketHeaderLength);
+
+    // update IPv4 header checksum
+    *(ipv4packet + 10) = ((checksum & 0xFF00) >> 8);
+    *(ipv4packet + 11) = (checksum & 0x00FF);
+
+    // add IGMPv2 payload
+    memcpy(ipv4packet + ipv4PacketHeaderLength, igmpPacket, IGMP_PACKET_LENGTH_V2);
+  }
+
+  // try to send IPv4 packet
+  if (SUCCEEDED(result))
+  {
+    int sent_length = sendto(this->internalSocket, (const char *)ipv4packet, ipv4PacketLength, 0, this->multicastAddress->GetAddressIP(), this->multicastAddress->GetAddressLength());
+
+    if (sent_length == SOCKET_ERROR)
+    {
+      int res = WSAGetLastError();
+      result = HRESULT_FROM_WIN32(res);
+   } 
   }
 
   FREE_MEM(ipv4packet);

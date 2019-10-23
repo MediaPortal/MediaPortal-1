@@ -33,8 +33,11 @@ CIpv4Header::CIpv4Header(HRESULT *result)
   this->identification = (uint16_t)GetTickCount();
   this->ttl = IPV4_HEADER_TTL_DEFAULT;
   this->protocol = IPV4_HEADER_PROTOCOL_DEFAULT;
-  this->options = NULL;
   this->optionsLength = 0;
+  this->options = NULL;
+
+  this->options = ALLOC_MEM_SET(this->options, uint8_t, this->optionsLength, 0);
+  CHECK_POINTER_HRESULT(*result, this->options, *result, E_OUTOFMEMORY);
 }
 
 CIpv4Header::~CIpv4Header()
@@ -166,8 +169,6 @@ CIpv4Header *CIpv4Header::Clone(void)
   clone->identification = this->identification;
   clone->ttl = this->ttl;
   clone->protocol = this->protocol;
-  clone->options = NULL;
-  clone->optionsLength = 0;
 
   if (SUCCEEDED(result))
   {
