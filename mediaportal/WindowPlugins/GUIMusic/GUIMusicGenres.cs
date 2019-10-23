@@ -241,6 +241,7 @@ namespace MediaPortal.GUI.Music
             sortStrings.Add("Disc#");
             sortStrings.Add("Composer");
             sortStrings.Add("Times Played");
+            sortStrings.Add("File Type");
 
             for (int i = 0; i < handler.Views.Count; ++i)
             {
@@ -905,6 +906,18 @@ namespace MediaPortal.GUI.Music
           item.IsFolder = true;
           item.Label = MusicViewHandler.GetFieldValue(song, handler.CurrentLevelWhere);
 
+          if (handler.CurrentLevelWhere == "filetype")
+          {
+            if (!string.IsNullOrEmpty(song.Codec))
+            {
+              item.Label = song.Codec;
+            }
+            else
+            {
+              item.Label = item.Label.ToUpper();
+            }
+          }
+
           // If we are grouping on a specific value, we have in the Duration field the number of items
           // Use this in the sort field
           if (currentFilter.SqlOperator == "group")
@@ -1104,6 +1117,9 @@ namespace MediaPortal.GUI.Music
         case MusicSort.SortMethod.DiscID:
           item.Label = tag.Album;
           item.Label2 = tag.DiscID > 0 ? tag.DiscID.ToString() : string.Empty;
+          break;
+        case MusicSort.SortMethod.FileType:
+          item.Label2 = tag.FileType.ToUpper();
           break;
         default:
           item.Label2 = string.Empty;
