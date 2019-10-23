@@ -71,7 +71,7 @@ HRESULT CMulticastUdpRawServer::Initialize(int family, CIpAddress *multicastAddr
             if (SUCCEEDED(result) && (ipAddr->GetFamily() == multicastAddress->GetFamily()))
             {
               ipAddr->SetSockType(SOCK_RAW);
-              ipAddr->SetProtocol(IPPROTO_UDP);
+              ipAddr->SetProtocol(header->GetProtocol());
 
               CMulticastUdpRawSocketContext *server = new CMulticastUdpRawSocketContext(&result, multicastAddress, sourceAddress, nic, header);
               CHECK_POINTER_HRESULT(result, server, result, E_OUTOFMEMORY);
