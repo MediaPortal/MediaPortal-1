@@ -59,6 +59,12 @@
     <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\..\Packages\Castle.Core.3.2.2\lib\net40-client\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor">
+      <HintPath>..\..\..\Packages\Castle.Windsor.3.2.1\lib\net40\Castle.Windsor.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\TVDatabase\references\log4net.dll</HintPath>
     </Reference>
@@ -91,6 +97,8 @@
     <Compile Include="Implementations\Channels\DVBIPChannel.cs" />
     <Compile Include="Implementations\Channels\RadioWebStreamChannel.cs" />
     <Compile Include="Implementations\VideoStream\VideoStream.cs" />
+    <Compile Include="Instantiator.cs" />
+    <Compile Include="Integration\IntegrationProviderHelper.cs" />
     <Compile Include="Interfaces\ICiMenuActions.cs" />
     <Compile Include="Interfaces\ICiMenuCallbacks.cs" />
     <Compile Include="Interfaces\IDeviceEventListener.cs" />
@@ -151,6 +159,13 @@
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TvLibrary.IntegrationProvider.Interfaces\TvLibrary.IntegrationProvider.Interfaces.csproj">
+      <Project>{34BCC448-B298-463E-B3B1-C031EBF0B4DB}</Project>
+      <Name>TvLibrary.IntegrationProvider.Interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

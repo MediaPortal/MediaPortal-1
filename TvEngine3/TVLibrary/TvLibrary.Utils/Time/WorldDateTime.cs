@@ -30,6 +30,8 @@ namespace MediaPortal.Utils.Time
 
     #region Variables
 
+    public static readonly DateTime EPOCH_START_TIME = new DateTime(1970, 1, 1, 12, 0, 0);
+
     //private DateTime _dt;
     private int _year;
     private int _month;
@@ -349,7 +351,7 @@ namespace MediaPortal.Utils.Time
       DateTime dt = this.DateTime;
       if (_timeZone != null)
         dt = _timeZone.ToUniversalTime(dt);
-      DateTime dtEpochStartTime = Convert.ToDateTime("1/1/1970 12:00:00 AM");
+      DateTime dtEpochStartTime = EPOCH_START_TIME;
       TimeSpan ts = dt.Subtract(dtEpochStartTime);
 
       //long epochtime = ((((((ts.Days * 24) + ts.Hours) * 60) + ts.Minutes) * 60) + ts.Seconds);
@@ -362,7 +364,7 @@ namespace MediaPortal.Utils.Time
       DateTime dt = this.DateTime;
       if (_timeZone != null)
         dt = _timeZone.ToUniversalTime(dt);
-      DateTime dtEpochStartTime = Convert.ToDateTime("1/1/1970 12:00:00 AM");
+      DateTime dtEpochStartTime = EPOCH_START_TIME;
       TimeSpan ts = dt.Subtract(dtEpochStartTime);
 
       return ts.Days;

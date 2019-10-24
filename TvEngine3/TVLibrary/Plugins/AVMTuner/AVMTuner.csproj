@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DC7F745C-02BB-46A2-8437-076EDA7439BA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AVMTuner</RootNamespace>
+    <AssemblyName>AVMTuner</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Gentle.Common">
+      <HintPath>..\..\TVDatabase\references\Gentle.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Gentle.Framework">
+      <HintPath>..\..\TVDatabase\references\Gentle.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UPnP">
+      <HintPath>..\..\TVServer.Base\UPnP.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="AvmProxy.cs" />
+    <Compile Include="AVMTuner.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AVMTuner.Designer.cs">
+      <DependentUpon>AVMTuner.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AVMTunerPlugin.cs" />
+    <Compile Include="UPnPNodeDescriptors.cs" />
+    <Compile Include="UPnPServiceProxyBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AVMTuner.resx">
+      <DependentUpon>AVMTuner.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SetupControls\SetupControls.csproj">
+      <Project>{a2792d3c-04c1-4a92-9383-a33d59c54d8d}</Project>
+      <Name>SetupControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SetupTv\SetupTv.csproj">
+      <Project>{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}</Project>
+      <Name>SetupTv</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TvControl\TvControl.csproj">
+      <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
+      <Name>TvControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
+      <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>
+      <Name>TvBusinessLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TVDatabase\TVDatabase.csproj">
+      <Project>{0FD8DEAE-37A4-49CC-A7BE-E86E0E0D85BD}</Project>
+      <Name>TVDatabase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
+      <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
+      <Name>TvLibrary.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PluginBase\PluginBase.csproj">
+      <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
+      <Name>PluginBase</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Logo.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy  $(TargetPath) "C:\Program Files (x86)\Team MediaPortal\MP2-Server\Plugins\SlimTv.Service3\Plugins" /y
+exit 0</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

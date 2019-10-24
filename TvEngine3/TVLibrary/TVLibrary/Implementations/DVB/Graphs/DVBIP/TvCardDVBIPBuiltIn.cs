@@ -21,6 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
+using TVLibrary.Implementations;
 using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
@@ -54,8 +55,9 @@ namespace TvLibrary.Implementations.DVB
     protected override void AddStreamSourceFilter(string url)
     {
       Log.Log.WriteFile("dvbip:Add MediaPortal IPTV Source Filter");
-      _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, typeof (MPIPTVSource).GUID,
-                                                                "MediaPortal IPTV Source Filter");
+      _filterStreamSource = FilterLoader.LoadFilterFromDll("MPIPTVSource.ax", typeof(MPIPTVSource).GUID, true);
+      _graphBuilder.AddFilter(_filterStreamSource, "MediaPortal IPTV Source Filter");
+
       AMMediaType mpeg2ProgramStream = new AMMediaType();
       mpeg2ProgramStream.majorType = MediaType.Stream;
       mpeg2ProgramStream.subType = MediaSubType.Mpeg2Transport;

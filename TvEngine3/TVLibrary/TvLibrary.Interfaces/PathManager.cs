@@ -1,4 +1,6 @@
-﻿using System;
+﻿using System.IO;
+using System.Reflection;
+using Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces;
 
 namespace TvLibrary.Interfaces
 {
@@ -12,11 +14,19 @@ namespace TvLibrary.Interfaces
     {
       get
       {
-        return String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server",
-                 Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-        ;
+        return GlobalServiceProvider.Instance.Get<IIntegrationProvider>().PathManager.GetPath("<TVCORE>");
       }
     }
 
+    /// <summary>
+    /// Builds a full path for a given <paramref name="fileName"/> that is located in the same folder as the <see cref="Assembly.GetCallingAssembly"/>.
+    /// </summary>
+    /// <param name="fileName">File name</param>
+    /// <returns>Combined path</returns>
+    public static string BuildAssemblyRelativePath(string fileName)
+    {
+      string executingPath = Assembly.GetCallingAssembly().Location;
+      return Path.Combine(Path.GetDirectoryName(executingPath), fileName);
+    }
   }
 }

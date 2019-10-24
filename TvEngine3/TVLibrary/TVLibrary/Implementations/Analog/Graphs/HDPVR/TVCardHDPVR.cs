@@ -26,6 +26,7 @@ using DirectShowLib;
 using TvLibrary.ChannelLinkage;
 using TvLibrary.Channels;
 using TvLibrary.Epg;
+using TVLibrary.Implementations;
 using TvLibrary.Implementations.Analog.QualityControl;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
@@ -56,7 +57,7 @@ namespace TvLibrary.Implementations.Analog
     #region imports
 
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
-    private class MpTsAnalyzer {}
+    private class TsWriter { }
 
     #endregion
 
@@ -800,8 +801,8 @@ namespace TvLibrary.Implementations.Analog
       if (_filterTsWriter == null)
       {
         Log.Log.WriteFile("HDPVR: Add Mediaportal TsWriter filter");
-        _filterTsWriter = (IBaseFilter)new MpTsAnalyzer();
-        int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal Ts Analyzer");
+        _filterTsWriter = FilterLoader.LoadFilterFromDll("TsWriter.ax", typeof(TsWriter).GUID, true);
+        int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal Ts Writer");
         if (hr != 0)
         {
           Log.Log.Error("HDPVR:  Add main Ts Analyzer returns:0x{0:X}", hr);

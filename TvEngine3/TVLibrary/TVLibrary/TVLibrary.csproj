@@ -145,6 +145,8 @@
     <Compile Include="Implementations\Dri\Service\FdcService.cs" />
     <Compile Include="Implementations\Dri\Service\TunerService.cs" />
     <Compile Include="Implementations\Dri\TunerDri.cs" />
+    <Compile Include="Implementations\FilterLoader.cs" />
+    <Compile Include="Implementations\Helper\COMHelper.cs" />
     <Compile Include="Implementations\Pbda\TunerPbdaCableCard.cs" />
     <Compile Include="Implementations\DVB\QAM\GenericATSC.cs" />
     <Compile Include="Implementations\DVB\DisEqC\GenericBDAS.cs" />
@@ -234,6 +236,10 @@
     <Compile Include="TimeShiftingEPGGrabber.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{f6eda1f3-3dcd-43f4-8a90-e32da70c8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>

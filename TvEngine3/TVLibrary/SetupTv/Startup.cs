@@ -31,6 +31,7 @@ using System.Diagnostics;
 using MediaPortal.Common.Utils.Logger;
 using TvControl;
 using TvDatabase;
+using TvLibrary.Interfaces.Integration;
 using TvLibrary.Log;
 using TvLibrary.Interfaces;
 
@@ -101,8 +102,12 @@ namespace SetupTv
     [STAThread]
     public static void Main(string[] arguments)
     {
+      // Initialize hosting environment
+      IntegrationProviderHelper.Register(PathManager.BuildAssemblyRelativePath("Integration"));
+
       // .NET 4.0: Use TLS v1.2. Many download sources no longer support the older and now insecure TLS v1.0/1.1 and SSL v3.
       ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00;
+
       // Init Common logger -> this will enable TVPlugin to write in the Mediaportal.log file
       var loggerName = Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
       var dataPath = Log.GetPathName();
@@ -110,7 +115,7 @@ namespace SetupTv
 #if DEBUG
       if (loggerName != null) loggerName = loggerName.Replace(".vshost", "");
 #endif
-      CommonLogger.Instance = new CommonLog4NetLogger(loggerName, dataPath, loggerPath);
+      //CommonLogger.Instance = new CommonLog4NetLogger(loggerName, dataPath, loggerPath);
       
       
       Thread.CurrentThread.Name = "SetupTv";

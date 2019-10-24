@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using TvLibrary.ChannelLinkage;
 using TvLibrary.Epg;
+using TVLibrary.Implementations;
 using TvLibrary.Implementations.Analog.GraphComponents;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
@@ -688,7 +689,7 @@ namespace TvLibrary.Implementations.Analog
       if (!CheckThreadId())
         return false;
       Log.Log.WriteFile("analog:AddTsFileSink");
-      _tsFileSink = (IBaseFilter)new MpFileWriter();
+      _tsFileSink = FilterLoader.LoadFilterFromDll("MpFileWriter.ax", typeof(MpFileWriter).GUID, true);
       int hr = _graphBuilder.AddFilter(_tsFileSink, "TsFileSink");
       if (hr != 0)
       {

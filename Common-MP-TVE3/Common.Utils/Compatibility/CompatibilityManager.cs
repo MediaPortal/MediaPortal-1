@@ -165,6 +165,7 @@ namespace MediaPortal.Common.Utils
     /// and the MP version it was built against.
     /// </summary>
     /// <param name="plugin">The plugin to check</param>
+    /// <param name="checkAgainstCaller">If <c>true</c>, the version gets compared to the calling assembly, instead of the <see cref="AppVersion"/>.</param>
     /// <returns>True if the plugin is compatible with this version of the application</returns>
     /// <remarks>
     /// A plugin is compatible with this version of the application if
@@ -178,7 +179,7 @@ namespace MediaPortal.Common.Utils
     /// and CompatibleVersionAttribute. If an attribute is not specified on the plugin,
     /// its defining assembly is searched for the same attribute.
     /// </remarks>
-    public static bool IsPluginCompatible(Type plugin)
+    public static bool IsPluginCompatible(Type plugin, bool checkAgainstCaller = false)
     {
       var mpVersions =
         (CompatibleVersionAttribute[])plugin.GetCustomAttributes(typeof(CompatibleVersionAttribute), true);
@@ -205,8 +206,9 @@ namespace MediaPortal.Common.Utils
 
       CheckLoadedAssemblies();
       Version lastFullyBreakingVersion;
+      Version version = checkAgainstCaller ? Assembly.GetCallingAssembly().GetName().Version : AppVersion;
 
-      if (CompareVersions(AppVersion, minRequiredVersion) < 0 ||                 // MP version is too old
+      if (CompareVersions(version, minRequiredVersion) < 0 ||                 // MP version is too old
           (SubSystemVersions.TryGetValue("*", out lastFullyBreakingVersion) &&   
             CompareVersions(lastFullyBreakingVersion, designedForVersion) > 0))  // MP breaking version after plugin released
       {

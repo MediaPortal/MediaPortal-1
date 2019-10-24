@@ -27,10 +27,12 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
+using Gentle.Framework;
 using MySql.Data.MySqlClient;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
@@ -45,6 +47,7 @@ namespace SetupTv
     {
       SqlServer,
       MySql,
+      Sqlite
     }
 
     private readonly StartupMode _dialogMode = StartupMode.Normal;
@@ -131,6 +134,10 @@ namespace SetupTv
             provider = ProviderType.MySql;
             rbMySQL.Checked = true;
             break;
+          case "sqlite":
+            provider = ProviderType.Sqlite;
+            rbSqlite.Checked = true;
+            break;
           case "sqlserver":
             provider = ProviderType.SqlServer;
             rbSQLServer.Checked = true;
@@ -175,7 +182,10 @@ namespace SetupTv
             }
             else
             {
-              tbServerHostName.Text = keyValue[1];
+              if (provider == ProviderType.Sqlite)
+                txtSqliteFileName.Text = keyValue[1];
+              else
+                tbServerHostName.Text = keyValue[1];
             }
           }
         }
@@ -208,6 +218,8 @@ namespace SetupTv
           if (database == "") database = "mysql";
           return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};",
                                server, userid, password, database, timeout);
+        case ProviderType.Sqlite:
+          return String.Format("Data Source={0};Pooling=true;FailIfMissing=false;Version=3", server);
       }
       return "";
     }
@@ -221,11 +233,11 @@ namespace SetupTv
           LoadConnectionDetailsFromConfig(true);
         }
 
-        if (string.IsNullOrEmpty(tbServerHostName.Text) || string.IsNullOrEmpty(tbPassword.Text))
+        if (provider == ProviderType.Sqlite && string.IsNullOrEmpty(txtSqliteFileName.Text) ||
+          provider != ProviderType.Sqlite && (string.IsNullOrEmpty(tbServerHostName.Text) || string.IsNullOrEmpty(tbPassword.Text)))
           return false;
 
-        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "",
-                                                          false, 15);
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false, 15);
 
         switch (provider)
         {
@@ -235,6 +247,7 @@ namespace SetupTv
               connect.Open();
               connect.Close();
             }
+            SqlConnection.ClearAllPools();
             break;
           case ProviderType.MySql:
             using (MySqlConnection connect = new MySqlConnection(connectionString))
@@ -243,6 +256,8 @@ namespace SetupTv
               connect.Close();
             }
             break;
+          case ProviderType.Sqlite:
+            return File.Exists(txtSqliteFileName.Text);
           default:
             throw (new Exception("Unsupported provider!"));
         }
@@ -251,8 +266,6 @@ namespace SetupTv
       {
         return false;
       }
-
-      SqlConnection.ClearAllPools();
 
       //database server is found
       return true;
@@ -277,6 +290,9 @@ namespace SetupTv
           case ProviderType.MySql:
             stream = assm.GetManifestResourceStream("SetupTv." + prefix + "_mysql_database.sql");
             break;
+          case ProviderType.Sqlite:
+            stream = assm.GetManifestResourceStream("SetupTv." + prefix + "_sqlite_database.sql");
+            break;
         }
 
         schemaName = tbDatabaseName.Text;
@@ -292,6 +308,7 @@ namespace SetupTv
             CommandScript = CleanMsSqlStatement(sql);
             break;
 
+          case ProviderType.Sqlite:
           case ProviderType.MySql:
             CommandScript = CleanMySqlStatement(sql);
             break;
@@ -426,6 +443,14 @@ namespace SetupTv
       btnTest.Enabled = false;
       try
       {
+        if (provider == ProviderType.Sqlite && !string.IsNullOrEmpty(txtSqliteFileName.Text))
+        {
+          // Do not allow to "use" incorrect data
+          if (_dialogMode != StartupMode.DbConfig)
+            btnSave.Enabled = btnDrop.Enabled = true;
+          return;
+        }
+
         if (string.IsNullOrEmpty(tbUserID.Text))
         {
           tbUserID.BackColor = Color.Red;
@@ -609,7 +634,7 @@ namespace SetupTv
       XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
       XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
       XmlNode nodeName = nodeKey.Attributes.GetNamedItem("name");
-      nodeName.InnerText = rbSQLServer.Checked ? "SQLServer" : "MySQL";
+      nodeName.InnerText = rbSQLServer.Checked ? "SQLServer" : rbMySQL.Checked ? "MySQL" : "SQLite";
       node.InnerText = connectionString;
 
       string ServerName = ParseServerHostName(tbServerHostName.Text);
@@ -657,66 +682,16 @@ namespace SetupTv
       }
       try
       {
-        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text,
-                                                          tbDatabaseName.Text, false, 15);
-        switch (provider)
-        {
-          case ProviderType.SqlServer:
-            {
-              using (SqlConnection connect = new SqlConnection(connectionString))
-              {
-                connect.Open();
-                using (SqlCommand cmd = connect.CreateCommand())
-                {
-                  cmd.CommandType = CommandType.Text;
-                  cmd.CommandText = "select * from Version";
-                  using (IDataReader reader = cmd.ExecuteReader())
-                  {
-                    if (reader != null)
-                      if (reader.Read())
-                      {
-                        currentSchemaVersion = (int)reader["versionNumber"];
-                        reader.Close();
-                        connect.Close();
-                      }
-                  }
-                }
-              }
-            }
-            break;
+        var dbProvider = ProviderFactory.GetDefaultProvider();
+        var result = dbProvider.Broker.Execute("select versionNumber from Version");
+        if (result.RowsAffected > 0)
+          currentSchemaVersion = result.GetInt(0, 0);
 
-          case ProviderType.MySql:
-            {
-              using (MySqlConnection connect = new MySqlConnection(connectionString))
-              {
-                connect.Open();
-                using (MySqlCommand cmd = connect.CreateCommand())
-                {
-                  cmd.CommandType = CommandType.Text;
-                  cmd.CommandText = "select * from Version";
-                  using (IDataReader reader = cmd.ExecuteReader())
-                  {
-                    if (reader.Read())
-                    {
-                      currentSchemaVersion = (int)reader["versionNumber"];
-                      reader.Close();
-                      connect.Close();
-                    }
-                  }
-                }
-              }
-            }
-            break;
-        }
         return currentSchemaVersion;
       }
       catch (Exception)
       {
         return -1;
-      }
-      finally
-      {
-        SqlConnection.ClearAllPools();
       }
     }
 
@@ -856,8 +831,9 @@ namespace SetupTv
 
     private void OnDBTypeSelected()
     {
-      gbServerLocation.Enabled = true;
-      gbDbLogon.Enabled = true;
+      gbServerLocation.Enabled = provider != ProviderType.Sqlite;
+      gbDbLogon.Enabled = provider != ProviderType.Sqlite;
+      gbSqlite.Enabled = provider == ProviderType.Sqlite;
       tbPassword.Focus();
     }
 
@@ -889,6 +865,18 @@ namespace SetupTv
           tbServiceDependency.Enabled = true;
           tbServiceDependency.BackColor = tbServerHostName.BackColor;
           tbServiceDependency.Text = @"SQLBrowser";
+        }
+      }
+    }
+
+    private void rbSqlite_CheckedChanged(object sender, EventArgs e)
+    {
+      if (rbSqlite.Checked)
+      {
+        if (string.IsNullOrWhiteSpace(txtSqliteFileName.Text))
+        {
+          OnDBTypeSelected();
+          txtSqliteFileName.Text = @"C:\ProgramData\Team MediaPortal\MP2-Server\Database\MP2TVE_3.sqlite";
         }
       }
     }
@@ -949,5 +937,6 @@ namespace SetupTv
     }
 
     #endregion
+
   }
 }

@@ -1205,9 +1205,10 @@ namespace TvService
             recDetail.User.CardId = user.CardId;
             SetRecordingProgramState(recDetail);
             _recordingsInProgressList.Add(recDetail);
-            RecordingStartedNotification(recDetail);
             SetupQualityControl(recDetail);
-            //WriteMatroskaFile(recDetail); moved to StopRecord()
+            WriteMatroskaFile(recDetail);
+            // Morpheus_xx, 2015-04-20: make sure that all recording details (including .xml file) are available before we fire the event
+            RecordingStartedNotification(recDetail);
           }
           catch (Exception ex)
           {
@@ -1509,6 +1510,8 @@ namespace TvService
         info.episodePart = recDetail.Program.EpisodePart;
         info.startTime = recDetail.RecordingStartDateTime;
         info.endTime = DateTime.Now;
+        info.ProgramStartTime = recDetail.Program.StartTime;
+        info.ProgramEndTime = recDetail.Program.EndTime;
 
         MatroskaTagHandler.WriteTag(System.IO.Path.ChangeExtension(fileName, ".xml"), info);
       }

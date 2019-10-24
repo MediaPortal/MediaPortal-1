@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -363,8 +364,8 @@ namespace TvEngine
         try
         {
           TimeSpan restTime = new TimeSpan(Convert.ToInt32(TvBLayer.GetSetting("TvMovieRestPeriod", "24").Value), 0, 0);
-          DateTime lastUpdated = Convert.ToDateTime(TvBLayer.GetSetting("TvMovieLastUpdate", "0").Value);
-          //        if (Convert.ToInt64(TvBLayer.GetSetting("TvMovieLastUpdate", "0").Value) == LastUpdate)
+          DateTime lastUpdated;
+          DateTime.TryParse(TvBLayer.GetSetting("TvMovieLastUpdate", "").Value, CultureInfo.InvariantCulture, DateTimeStyles.None, out lastUpdated);
           if (lastUpdated >= (DateTime.Now - restTime))
           {
             return false;
@@ -416,7 +417,7 @@ namespace TvEngine
       // setting update time of epg import to avoid that the background thread triggers another import
       // if the process lasts longer than the timer's update check interval
       Setting setting = TvBLayer.GetSetting("TvMovieLastUpdate");
-      setting.Value = DateTime.Now.ToString();
+      setting.Value = DateTime.Now.ToString(CultureInfo.InvariantCulture);
       setting.Persist();
 
       Log.Debug("TVMovie: Mapped {0} stations for EPG import", Convert.ToString(maximum));
@@ -490,7 +491,7 @@ namespace TvEngine
         try
         {
           setting = TvBLayer.GetSetting("TvMovieLastUpdate");
-          setting.Value = DateTime.Now.ToString();
+          setting.Value = DateTime.Now.ToString(CultureInfo.InvariantCulture);
           setting.Persist();
 
           TimeSpan ImportDuration = (DateTime.Now - ImportStartTime);

@@ -22,6 +22,7 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 //using DShowNET.TsFileSink;
 using TvLibrary;
+using TVLibrary.Implementations;
 using TvLibrary.Log;
 using System.Windows.Forms;
 
@@ -48,8 +49,7 @@ namespace SetupTv.Sections
       _graphBuilder = (IFilterGraph2)new FilterGraph();
       _rotEntry = new DsROTEntry(_graphBuilder);
 
-      TsReader reader = new TsReader();
-      _tsReader = (IBaseFilter)reader;
+      _tsReader = FilterLoader.LoadFilterFromDll("TsReader.ax", typeof(TsReader).GUID, true);
       Log.Info("TSReaderPlayer:add TsReader to graph");
       _graphBuilder.AddFilter(_tsReader, "TsReader");
 
