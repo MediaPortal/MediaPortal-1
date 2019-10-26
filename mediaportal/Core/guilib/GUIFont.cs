@@ -1223,10 +1223,10 @@ namespace MediaPortal.GUI.Library
           {
             needsCreation = true;
           }
-          catch (Exception)
+          catch (Exception ex)
           {
             // Deserialisation failed. Maybe the language changed or the font cache got manipulated.
-            Log.Error("GUIFont: Failed to load font {0} from cache. Trying to recreate it...", _fontName);
+            Log.Error("GUIFont: Failed to load font {0} from cache. {1} Trying to recreate it...", _fontName,ex.Message);
             MediaPortal.Util.Utils.FileDelete(strCache);
             MediaPortal.Util.Utils.FileDelete(strCache + ".bxml");
             needsCreation = true;
@@ -1280,7 +1280,10 @@ namespace MediaPortal.GUI.Library
               }
             }
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("GUIFont (InitializeDeviceObjects) Exception:{0}", ex.Message);
+          }
         }
 
         try
@@ -1290,9 +1293,9 @@ namespace MediaPortal.GUI.Library
           SetFontEgine();
           _d3dxFont = new Microsoft.DirectX.Direct3D.Font(GUIGraphicsContext.DX9Device, _systemFont);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Error("GUIFont: Failed to D3D...");
+          Log.Error("GUIFont: Failed to D3D... {0}", ex.Message);
         }
       }
       finally

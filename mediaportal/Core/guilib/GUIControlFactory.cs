@@ -362,8 +362,9 @@ namespace MediaPortal.GUI.Library
           return 0;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("ConvertXmlStringToObject.sort: Exception" + ex.Message);
         return 0;
       }
 

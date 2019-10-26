@@ -3290,7 +3290,10 @@ namespace MediaPortal.GUI.Library
       {
         _listItems.Sort(comparer);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GuiFilmstrip.sort: Exception" + ex.Message);
+      }
       _refresh = true;
     }
 
