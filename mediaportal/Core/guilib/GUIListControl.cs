@@ -3454,7 +3454,11 @@ namespace MediaPortal.GUI.Library
         _listItems.Sort(comparer);
         _enableScrollLabel = false;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GUIListControl sort: " + ex.Message);
+      }
+
       _refresh = true;
     }
 

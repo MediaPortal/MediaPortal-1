@@ -608,9 +608,10 @@ namespace MediaPortal.GUI.Library
         string fontCache = String.Format(@"{0}\fonts", GUIGraphicsContext.SkinCacheFolder);
         MediaPortal.Util.Utils.DirectoryDelete(fontCache, true);
       }
-      // ReSharper disable EmptyGeneralCatchClause
-      catch (Exception) {}
-      // ReSharper restore EmptyGeneralCatchClause
+      catch (Exception ex)
+      {
+        Log.Error("GUIFontManager: ClearFontCache() {0}", ex.Message);
+      }
     }
 
     /// <summary>

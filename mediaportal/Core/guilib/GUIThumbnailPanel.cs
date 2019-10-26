@@ -3252,7 +3252,10 @@ namespace MediaPortal.GUI.Library
       {
         _listItems.Sort(comparer);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GUIThumbnailPanel Sort: " + ex.Message);
+      }
       _refresh = true;
     }
 
