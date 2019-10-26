@@ -391,8 +391,9 @@ namespace MediaPortal.GUI.Settings
               }
             }
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            Log.Error("FolderScanThread exception {0}", ex.Message);
             // Drive not ready, etc
           }
         }
