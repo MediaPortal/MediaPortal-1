@@ -27,12 +27,12 @@
 CSimpleServer::CSimpleServer(HRESULT *result)
   : CFlags()
 {
-  this->servers = NULL;
+  this->sockets = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    this->servers = new CSocketContextCollection(result);
-    CHECK_POINTER_HRESULT(*result, this->servers, *result, E_OUTOFMEMORY);
+    this->sockets = new CSocketContextCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->sockets, *result, E_OUTOFMEMORY);
   }
 }
 
@@ -40,14 +40,14 @@ CSimpleServer::~CSimpleServer(void)
 {
   this->StopListening();
 
-  FREE_MEM_CLASS(this->servers);
+  FREE_MEM_CLASS(this->sockets);
 }
 
 /* get methods */
 
-CSocketContextCollection *CSimpleServer::GetServers(void)
+CSocketContextCollection *CSimpleServer::GetSockets(void)
 {
-  return this->servers;
+  return this->sockets;
 }
 
 /* set methods */
@@ -71,7 +71,7 @@ HRESULT CSimpleServer::Initialize(int family, WORD port)
 HRESULT CSimpleServer::Initialize(int family, WORD port, CNetworkInterfaceCollection *networkInterfaces)
 {
   HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, this->servers);
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->sockets);
   CHECK_POINTER_DEFAULT_HRESULT(result, networkInterfaces);
 
   return result;
@@ -84,6 +84,7 @@ HRESULT CSimpleServer::StartListening(void)
 
 HRESULT CSimpleServer::StopListening(void)
 {
-  this->servers->Clear();
+  this->sockets->Clear();
+
   return S_OK;
 }

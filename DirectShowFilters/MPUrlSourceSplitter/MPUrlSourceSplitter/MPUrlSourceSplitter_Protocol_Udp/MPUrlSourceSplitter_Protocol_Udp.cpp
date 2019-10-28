@@ -344,7 +344,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
             this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_DONT_FRAGMENT, true) ||
             this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_MORE_FRAGMNETS, true) ||
             this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_IDENTIFICATION, true) ||
-            this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_PROTOCOL, true) ||
             this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_TTL, true) ||
             this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_OPTIONS, true))
           {
@@ -357,7 +356,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
               header->SetEcn((uint8_t)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_IPV4_ECN, true, UDP_IPV4_ECN_DEFAULT));
               header->SetDontFragment(this->configuration->GetValueBool(PARAMETER_NAME_UDP_IPV4_DONT_FRAGMENT, true, false));
               header->SetMoreFragments(this->configuration->GetValueBool(PARAMETER_NAME_UDP_IPV4_MORE_FRAGMNETS, true, false));
-              header->SetProtocol((uint8_t)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_IPV4_PROTOCOL, true, IPV4_HEADER_UNSPECIFIED_PROTOCOL));
               header->SetTtl((uint8_t)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_IPV4_TTL, true, UDP_IPV4_TTL_DEFAULT));
               header->SetIdentification((uint16_t)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_IPV4_IDENTIFICATION, true, GetTickCount()));
 

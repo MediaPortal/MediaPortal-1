@@ -43,7 +43,6 @@ class CMulticastUdpRawSocketContext : public CMulticastUdpSocketContext
 {
 public:
   CMulticastUdpRawSocketContext(HRESULT *result, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface, CIpv4Header *header);
-  CMulticastUdpRawSocketContext(HRESULT *result, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface, CIpv4Header *header, SOCKET socket);
   virtual ~CMulticastUdpRawSocketContext(void);
 
   /* get methods */

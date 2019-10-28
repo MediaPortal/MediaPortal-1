@@ -33,7 +33,6 @@ class CUdpSocketContext : public CSocketContext
 {
 public:
   CUdpSocketContext(HRESULT *result);
-  CUdpSocketContext(HRESULT * result, SOCKET socket);
   virtual ~CUdpSocketContext(void);
 
   /* get methods */

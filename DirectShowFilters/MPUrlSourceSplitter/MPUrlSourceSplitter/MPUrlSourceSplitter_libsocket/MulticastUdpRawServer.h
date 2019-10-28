@@ -51,6 +51,17 @@ public:
   // @param header : the IPV4 header
   // @return : S_OK if successful, error code otherwise (can be system or WSA)
   virtual HRESULT Initialize(int family, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterfaceCollection *networkInterfaces, CIpv4Header *header);
+
+  // starts listening to incoming connections
+  // @return : S_OK if successful, error code otherwise (can be system or WSA)
+  virtual HRESULT StartListening(void);
+
+  // stops listening to incoming connections
+  // @return : S_OK if successful, error code otherwise (can be system or WSA)
+  virtual HRESULT StopListening(void);
+protected:
+  // holds IGMP socket contexts
+  CSocketContextCollection *igmpSockets;
 };
 
 #endif

@@ -1777,11 +1777,11 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
               CUdpServer *server = (k == 0) ? (CUdpServer *)dataServer : (CUdpServer *)controlServer;
 
               // check only data servers, check only in case of not consolidated servers (not consolidated servers have more contexts)
-              if ((k == 0) && (dataServer->GetServers()->Count() != 1))
+              if ((k == 0) && (dataServer->GetSockets()->Count() != 1))
               {
-                for (unsigned int j = 0; (SUCCEEDED(result) && (j < dataServer->GetServers()->Count())); j++)
+                for (unsigned int j = 0; (SUCCEEDED(result) && (j < dataServer->GetSockets()->Count())); j++)
                 {
-                  CUdpSocketContext *udpContext = (CUdpSocketContext *)(dataServer->GetServers()->GetItem(j));
+                  CUdpSocketContext *udpContext = (CUdpSocketContext *)(dataServer->GetSockets()->GetItem(j));
                   unsigned int pendingIncomingDataLength = 0;
 
                   if (SUCCEEDED(udpContext->GetPendingIncomingDataLength(&pendingIncomingDataLength)))
@@ -1793,16 +1793,16 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
 
                       // remove all data and control server contexts except 'j'
                       // server contexts are created in same order for data and control servers
-                      unsigned int count = dataServer->GetServers()->Count() - 1;
+                      unsigned int count = dataServer->GetSockets()->Count() - 1;
                       for (unsigned int m = 0; m < (count - j); m++)
                       {
-                        dataServer->GetServers()->Remove(dataServer->GetServers()->Count() - 1);
-                        controlServer->GetServers()->Remove(controlServer->GetServers()->Count() - 1);
+                        dataServer->GetSockets()->Remove(dataServer->GetSockets()->Count() - 1);
+                        controlServer->GetSockets()->Remove(controlServer->GetSockets()->Count() - 1);
                       }
                       for (unsigned int m = 0; m < j; m++)
                       {
-                        dataServer->GetServers()->Remove(0);
-                        controlServer->GetServers()->Remove(0);
+                        dataServer->GetSockets()->Remove(0);
+                        controlServer->GetSockets()->Remove(0);
                       }
                       break;
                     }
@@ -1810,9 +1810,9 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                 }
               }
 
-              for (unsigned int j = 0; (SUCCEEDED(result) && (j < server->GetServers()->Count())); j++)
+              for (unsigned int j = 0; (SUCCEEDED(result) && (j < server->GetSockets()->Count())); j++)
               {
-                CUdpSocketContext *udpContext = (CUdpSocketContext *)(server->GetServers()->GetItem(j));
+                CUdpSocketContext *udpContext = (CUdpSocketContext *)(server->GetSockets()->GetItem(j));
 
                 unsigned int pendingIncomingDataLength = 0;
                 unsigned int interleavedPacketLength = 0;
@@ -2082,14 +2082,14 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
 
                 if (udpControlServer != NULL)
                 {
-                  if (udpControlServer->GetServers()->Count() != 0)
+                  if (udpControlServer->GetSockets()->Count() != 0)
                   {
                     CUdpSocketContext *udpContext = NULL;
 
                     // get control UDP socket context with set last sender IP address
-                    for (unsigned int j = 0; j < udpControlServer->GetServers()->Count(); j++)
+                    for (unsigned int j = 0; j < udpControlServer->GetSockets()->Count(); j++)
                     {
-                      CUdpSocketContext *server = (CUdpSocketContext *)udpControlServer->GetServers()->GetItem(j);
+                      CUdpSocketContext *server = (CUdpSocketContext *)udpControlServer->GetSockets()->GetItem(j);
 
                       if (server->GetLastSenderIpAddress() != NULL)
                       {
@@ -2114,9 +2114,9 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                       {
                         CUdpSocketContext *udpDataServerContext = NULL;
 
-                        for (unsigned int j = 0; i < udpDataServer->GetServers()->Count(); j++)
+                        for (unsigned int j = 0; i < udpDataServer->GetSockets()->Count(); j++)
                         {
-                          CUdpSocketContext *server = (CUdpSocketContext *)udpDataServer->GetServers()->GetItem(j);
+                          CUdpSocketContext *server = (CUdpSocketContext *)udpDataServer->GetSockets()->GetItem(j);
 
                           if (server->GetLastSenderIpAddress() != NULL)
                           {
@@ -2138,12 +2138,12 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                           if (ipAddress != NULL)
                           {
                             // set port to control port
-                            ipAddress->SetPort(udpControlServer->GetServers()->GetItem(0)->GetIpAddress()->GetPort());
+                            ipAddress->SetPort(udpControlServer->GetSockets()->GetItem(0)->GetIpAddress()->GetPort());
 
                             // get control UDP socket context with same IP address and port
-                            for (unsigned int j = 0; j < udpControlServer->GetServers()->Count(); j++)
+                            for (unsigned int j = 0; j < udpControlServer->GetSockets()->Count(); j++)
                             {
-                              CUdpSocketContext *server = (CUdpSocketContext *)udpControlServer->GetServers()->GetItem(j);
+                              CUdpSocketContext *server = (CUdpSocketContext *)udpControlServer->GetSockets()->GetItem(j);
 
                               if (server->GetIpAddress()->GetAddressLength() == ipAddress->GetAddressLength())
                               {
@@ -2304,9 +2304,9 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
         {
           CSimpleServer *server = (k == 0) ? dataServer : controlServer;
 
-          for (unsigned int j = 0; (j < server->GetServers()->Count()); j++)
+          for (unsigned int j = 0; (j < server->GetSockets()->Count()); j++)
           {
-            CSocketContext *context = server->GetServers()->GetItem(j);
+            CSocketContext *context = server->GetSockets()->GetItem(j);
 
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: address: %s, received bytes: %lld, sent bytes: %lld", this->protocolName, METHOD_CURL_WORKER_NAME, (context->GetIpAddress()->GetAddressString() == NULL) ? L"unknown" : context->GetIpAddress()->GetAddressString(), context->GetReceivedDataLength(), context->GetSentDataLength());
           }

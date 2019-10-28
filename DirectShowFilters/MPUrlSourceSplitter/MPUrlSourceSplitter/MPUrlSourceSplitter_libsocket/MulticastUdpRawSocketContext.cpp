@@ -37,20 +37,6 @@ CMulticastUdpRawSocketContext::CMulticastUdpRawSocketContext(HRESULT *result, CI
   }
 }
 
-CMulticastUdpRawSocketContext::CMulticastUdpRawSocketContext(HRESULT *result, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface, CIpv4Header *header, SOCKET socket)
-  : CMulticastUdpSocketContext(result, multicastAddress, sourceAddress, networkInterface, socket)
-{
-  this->header = NULL;
-
-  CHECK_POINTER_DEFAULT_HRESULT(*result, header);
-
-  if (SUCCEEDED(*result))
-  {
-    this->header = header->Clone();
-    CHECK_CONDITION_HRESULT(*result, this->header, *result, E_OUTOFMEMORY);
-  }
-}
-
 CMulticastUdpRawSocketContext::~CMulticastUdpRawSocketContext()
 {
   if (this->IsSetFlags(MULTICAST_UDP_SOCKET_CONTEXT_FLAG_SUBSCRIBED_TO_GROUP))
@@ -185,7 +171,7 @@ HRESULT CMulticastUdpRawSocketContext::SubscribeToMulticastGroup(void)
     *(ipv4packet + 7) = 0x00;
 
     *(ipv4packet + 8) = this->header->GetTtl();
-    *(ipv4packet + 9) = this->header->GetProtocol();
+    *(ipv4packet + 9) = IPV4_HEADER_IGMP_PROTOCOL;
 
     // IPV4 source address
     memcpy(ipv4packet + 12, &this->ipAddress->GetAddressIPv4()->sin_addr.S_un.S_addr, 4);
@@ -307,7 +293,7 @@ HRESULT CMulticastUdpRawSocketContext::UnsubscribeFromMulticastGroup(void)
     *(ipv4packet + 7) = 0x00;
 
     *(ipv4packet + 8) = this->header->GetTtl();
-    *(ipv4packet + 9) = this->header->GetProtocol();
+    *(ipv4packet + 9) = IPV4_HEADER_IGMP_PROTOCOL;
 
     // IPV4 source address
     memcpy(ipv4packet + 12, &this->ipAddress->GetAddressIPv4()->sin_addr.S_un.S_addr, 4);

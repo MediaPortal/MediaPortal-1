@@ -36,10 +36,21 @@ class CMulticastUdpSocketContext : public CUdpSocketContext
 {
 public:
   CMulticastUdpSocketContext(HRESULT *result, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface);
-  CMulticastUdpSocketContext(HRESULT *result, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface, SOCKET socket);
   virtual ~CMulticastUdpSocketContext(void);
 
   /* get methods */
+
+  // gets multicast address
+  // @return : multicast address
+  virtual CIpAddress *GetMulticastAddress(void);
+
+  // gets source address
+  // @return : source address or NULL if not specified
+  virtual CIpAddress *GetSourceAddress(void);
+
+  // gets network interface
+  // @return : network interface
+  virtual CNetworkInterface *GetNetworkInterface(void);
 
   /* set methods */
 
@@ -75,7 +86,6 @@ public:
   virtual HRESULT SetReuseAddress(bool reuseAddress);
 
 protected:
-
   CIpAddress *multicastAddress;
   CIpAddress *sourceAddress;
   CNetworkInterface *networkInterface;

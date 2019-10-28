@@ -23,16 +23,26 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 #include "MulticastUdpRawServer.h"
 #include "Dns.h"
 #include "MulticastUdpRawSocketContext.h"
+#include "Ipv4Header_Constants.h"
 
 
 CMulticastUdpRawServer::CMulticastUdpRawServer(HRESULT *result)
   : CMulticastUdpServer(result)
 {
+  this->igmpSockets = NULL;
+
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->igmpSockets = new CSocketContextCollection(result);
+    CHECK_POINTER_HRESULT(*result, this->igmpSockets, *result, E_OUTOFMEMORY);
+  }
 }
 
 CMulticastUdpRawServer::~CMulticastUdpRawServer(void)
 {
   this->StopListening();
+
+  FREE_MEM_CLASS(this->igmpSockets);
 }
 
 /* get methods */
@@ -43,53 +53,80 @@ CMulticastUdpRawServer::~CMulticastUdpRawServer(void)
 
 HRESULT CMulticastUdpRawServer::Initialize(int family, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterfaceCollection *networkInterfaces, CIpv4Header *header)
 {
-  HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, this->servers);
-  CHECK_POINTER_DEFAULT_HRESULT(result, networkInterfaces);
+  HRESULT result = __super::Initialize(family, multicastAddress, sourceAddress, networkInterfaces);
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->igmpSockets);
   CHECK_POINTER_DEFAULT_HRESULT(result, header);
 
   if (SUCCEEDED(result))
   {
-    this->servers->Clear();
+    this->igmpSockets->Clear();
 
-    for (unsigned int i = 0; (SUCCEEDED(result) && (i < networkInterfaces->Count())); i++)
+    for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->sockets->Count())); i++)
     {
-      CNetworkInterface *nic = networkInterfaces->GetItem(i);
-      CHECK_POINTER_HRESULT(result, nic, result, E_POINTER);
+      CMulticastUdpSocketContext *socket = dynamic_cast<CMulticastUdpSocketContext *>(this->sockets->GetItem(i));
+      CMulticastUdpRawSocketContext *igmpSocket = new CMulticastUdpRawSocketContext(&result, socket->GetMulticastAddress(), socket->GetSourceAddress(), socket->GetNetworkInterface(), header);
+      CHECK_POINTER_HRESULT(result, igmpSocket, result, E_OUTOFMEMORY);
+
+      CIpAddress *ipAddr = socket->GetIpAddress()->Clone();
+      CHECK_POINTER_HRESULT(result, ipAddr, result, E_OUTOFMEMORY);
 
       if (SUCCEEDED(result))
       {
-        if (nic->GetOperationalStatus() == IfOperStatusUp)
-        {
-          for (unsigned int j = 0; (SUCCEEDED(result) && (j < nic->GetUnicastAddresses()->Count())); j++)
-          {
-            CIpAddress *ipAddr = nic->GetUnicastAddresses()->GetItem(j)->Clone();
-            CHECK_POINTER_HRESULT(result, nic, result, E_OUTOFMEMORY);
+        ipAddr->SetSockType(SOCK_RAW);
+        ipAddr->SetProtocol(IPV4_HEADER_IGMP_PROTOCOL);
 
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = ipAddr->SetPort(multicastAddress->GetPort()) ? result : E_INVALIDARG);
+        CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), igmpSocket->SetIpAddress(ipAddr), result);
 
-            if (SUCCEEDED(result) && (ipAddr->GetFamily() == multicastAddress->GetFamily()))
-            {
-              ipAddr->SetSockType(SOCK_RAW);
-              ipAddr->SetProtocol(header->GetProtocol());
+        CHECK_CONDITION_HRESULT(result, this->igmpSockets->Add(igmpSocket), result, E_OUTOFMEMORY);
 
-              CMulticastUdpRawSocketContext *server = new CMulticastUdpRawSocketContext(&result, multicastAddress, sourceAddress, nic, header);
-              CHECK_POINTER_HRESULT(result, server, result, E_OUTOFMEMORY);
-
-              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->SetIpAddress(ipAddr), result);
-
-              CHECK_CONDITION_HRESULT(result, this->servers->Add(server), result, E_OUTOFMEMORY);
-
-              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(server));
-            }
-
-            FREE_MEM_CLASS(ipAddr);
-          }
-        }
+        CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(igmpSocket));
       }
+
+      FREE_MEM_CLASS(ipAddr);
     }
   }
 
   return result;
 }
 
+HRESULT CMulticastUdpRawServer::StartListening(void)
+{
+  // we ignore base StartListening, we do whole procedure by its own
+  HRESULT result = S_OK;
+  CHECK_POINTER_HRESULT(result, this->sockets, result, E_POINTER);
+
+  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->sockets->Count())); i++)
+  {
+    CMulticastUdpSocketContext *socket = dynamic_cast<CMulticastUdpSocketContext *>(this->sockets->GetItem(i));
+    CMulticastUdpRawSocketContext *igmpSocket = dynamic_cast<CMulticastUdpRawSocketContext *>(this->igmpSockets->GetItem(i));
+
+    // create server socket
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->CreateSocket(), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), igmpSocket->CreateSocket(), result);
+
+    // set non-blocking mode
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->SetBlockingMode(false), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), igmpSocket->SetBlockingMode(false), result);
+
+    // set reuse address
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->SetReuseAddress(true), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), igmpSocket->SetReuseAddress(true), result);
+
+    // bind socket to local address and port
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->Bind(), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), igmpSocket->Bind(), result);
+
+    // subscribe to multicast group
+    //CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->SubscribeToMulticastGroup(), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), igmpSocket->SubscribeToMulticastGroup(), result);
+  }
+
+  return result;
+}
+
+HRESULT CMulticastUdpRawServer::StopListening(void)
+{
+  this->igmpSockets->Clear();
+
+  return __super::StopListening();
+}

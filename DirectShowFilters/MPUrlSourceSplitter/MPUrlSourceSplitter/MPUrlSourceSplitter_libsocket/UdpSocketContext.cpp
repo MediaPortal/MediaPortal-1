@@ -28,12 +28,6 @@ CUdpSocketContext::CUdpSocketContext(HRESULT *result)
   this->lastSenderIpAddress = NULL;
 }
 
-CUdpSocketContext::CUdpSocketContext(HRESULT *result, SOCKET socket)
-  : CSocketContext(result, socket)
-{
-  this->lastSenderIpAddress = NULL;
-}
-
 CUdpSocketContext::~CUdpSocketContext(void)
 {
   FREE_MEM_CLASS(this->lastSenderIpAddress);

@@ -58,10 +58,6 @@ public:
   // @return : IPV4 header TTL value
   virtual uint8_t GetTtl(void);
 
-  // gets IPV4 header protocol value
-  // @return : IPV4 header protocol value
-  virtual uint8_t GetProtocol(void);
-
   // gets IPV4 header options value
   // @return : IPV4 header options value
   virtual uint8_t *GetOptions(void);
@@ -96,10 +92,6 @@ public:
   // @param ttl : IPV4 header TTL value
   virtual void SetTtl(uint8_t ttl);
 
-  // sets IPV4 header protocol field 
-  // @param protocol : protocol header value
-  virtual void SetProtocol(uint8_t protocol);
-
   // sets IPV4 header OPTIONS fields
   // @param options : the array of uint8_t representing OPTIONS fields
   // @param optionsLength : the length of options parameter
@@ -126,7 +118,6 @@ protected:
   uint8_t ecn;
   uint16_t identification;
   uint8_t ttl;
-  uint8_t protocol;
   uint8_t *options;
   uint8_t optionsLength;
 

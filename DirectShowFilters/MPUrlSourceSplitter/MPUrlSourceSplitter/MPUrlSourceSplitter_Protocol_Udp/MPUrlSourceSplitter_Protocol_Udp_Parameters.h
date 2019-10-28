@@ -54,7 +54,6 @@
 #define PARAMETER_NAME_UDP_IPV4_DONT_FRAGMENT                         L"UdpDontFragment"
 #define PARAMETER_NAME_UDP_IPV4_MORE_FRAGMNETS                        L"UdpMoreFragments"
 #define PARAMETER_NAME_UDP_IPV4_TTL                                   L"UdpTtl"
-#define PARAMETER_NAME_UDP_IPV4_PROTOCOL                              L"UdpProtocol"
 #define PARAMETER_NAME_UDP_IPV4_OPTIONS                               L"UdpOptions"
 
 #define UDP_IPV4_DSCP_MIN                                             IPV4_HEADER_DSCP_MIN
@@ -71,8 +70,5 @@
 #define UDP_IPV4_TTL_MIN                                              IPV4_HEADER_TTL_MIN
 #define UDP_IPV4_TTL_MAX                                              IPV4_HEADER_TTL_MAX
 #define UDP_IPV4_TTL_DEFAULT                                          IPV4_HEADER_TTL_DEFAULT
-
-#define UDP_IPV4_PROTOCOL_MIN                                         IPV4_HEADER_PROTOCOL_MIN
-#define UDP_IPV4_PROTOCOL_MAX                                         IPV4_HEADER_PROTOCOL_MAX
 
 #endif

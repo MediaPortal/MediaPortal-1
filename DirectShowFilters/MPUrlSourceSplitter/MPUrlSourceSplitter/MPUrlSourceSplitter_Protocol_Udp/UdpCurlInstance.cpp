@@ -298,9 +298,9 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
           // only one thread can work with UDP data in one time
           LOCK_MUTEX(this->mutex, INFINITE)
 
-          for (unsigned int i = 0; (SUCCEEDED(result) && (i < server->GetServers()->Count())); i++)
+          for (unsigned int i = 0; (SUCCEEDED(result) && (i < server->GetSockets()->Count())); i++)
           {
-            CUdpSocketContext *udpContext = (CUdpSocketContext *)(server->GetServers()->GetItem(i));
+            CUdpSocketContext *udpContext = (CUdpSocketContext *)(server->GetSockets()->GetItem(i));
 
             unsigned int pendingIncomingDataLength = 0;
             HRESULT res = S_OK;
@@ -436,9 +436,9 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
   {
     LOCK_MUTEX(this->mutex, INFINITE)
 
-    for (unsigned int i = 0; ((server != NULL) && (i < server->GetServers()->Count())); i++)
+    for (unsigned int i = 0; ((server != NULL) && (i < server->GetSockets()->Count())); i++)
     {
-      CSocketContext *context = server->GetServers()->GetItem(i);
+      CSocketContext *context = server->GetSockets()->GetItem(i);
 
       this->logger->Log(LOGGER_VERBOSE, L"%s: %s: address: %s, received bytes: %lld, sent bytes: %lld", this->protocolName, METHOD_CURL_WORKER_NAME, (context->GetIpAddress()->GetAddressString() == NULL) ? L"unknown" : context->GetIpAddress()->GetAddressString(), context->GetReceivedDataLength(), context->GetSentDataLength());
     }

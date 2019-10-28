@@ -32,7 +32,6 @@ CIpv4Header::CIpv4Header(HRESULT *result)
   this->ecn = IPV4_HEADER_ECN_DEFAULT;
   this->identification = (uint16_t)GetTickCount();
   this->ttl = IPV4_HEADER_TTL_DEFAULT;
-  this->protocol = IPV4_HEADER_PROTOCOL_DEFAULT;
   this->optionsLength = 0;
   this->options = NULL;
 
@@ -65,11 +64,6 @@ uint16_t CIpv4Header::GetIdentification(void)
 uint8_t CIpv4Header::GetTtl(void)
 {
   return this->ttl;
-}
-
-uint8_t CIpv4Header::GetProtocol(void)
-{
-  return this->protocol;
 }
 
 uint8_t *CIpv4Header::GetOptions(void)
@@ -118,11 +112,6 @@ void CIpv4Header::SetTtl(uint8_t ttl)
   this->ttl = ttl;
 }
 
-void CIpv4Header::SetProtocol(uint8_t protocol)
-{
-  this->protocol = protocol;
-}
-
 bool CIpv4Header::SetOptions(uint8_t *options, uint8_t optionsLength)
 {
   FREE_MEM(this->options);
@@ -168,7 +157,6 @@ CIpv4Header *CIpv4Header::Clone(void)
   clone->ecn = this->ecn;
   clone->identification = this->identification;
   clone->ttl = this->ttl;
-  clone->protocol = this->protocol;
 
   if (SUCCEEDED(result))
   {

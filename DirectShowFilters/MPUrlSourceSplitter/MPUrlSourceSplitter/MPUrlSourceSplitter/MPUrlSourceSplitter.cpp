@@ -615,7 +615,6 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         this->configuration->Add(L"UdpIdentification", L"1234");
         this->configuration->Add(L"UdpDontFragment", L"1");
         this->configuration->Add(L"UdpTtl", L"3");
-        this->configuration->Add(L"UdpProtocol", L"2");
         this->configuration->Add(L"UdpOptions", L"94040000");
 
         if (!this->configuration->Contains(PARAMETER_NAME_URL, true))

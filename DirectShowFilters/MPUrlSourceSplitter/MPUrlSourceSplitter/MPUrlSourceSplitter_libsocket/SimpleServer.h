@@ -39,9 +39,9 @@ public:
 
   /* get methods */
 
-  // gets all servers
-  // @return : all servers
-  virtual CSocketContextCollection *GetServers(void);
+  // gets all sockets
+  // @return : all sockets
+  virtual CSocketContextCollection *GetSockets(void);
 
   /* set methods */
 
@@ -70,7 +70,7 @@ public:
 
 protected:
   // holds socket contexts
-  CSocketContextCollection *servers;
+  CSocketContextCollection *sockets;
 
   /* methods */
 };
