@@ -829,8 +829,9 @@ namespace MediaPortal.Player
           eModeCommand?.SendCommand("restoreDisplayModeNow");
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("MadvrInterface: restoreDisplayModeNow: {0}", ex.Message);
       }
     }
 

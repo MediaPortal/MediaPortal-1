@@ -79,7 +79,10 @@ namespace MediaPortal.Player
           subkey.SetValue("MetadataRetrieval", (Int32)dwValue);
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("AdioPlayerWMP9: CreateInstance {0}", ex.Message);
+      }
 
       _wmp10Player = new AxWindowsMediaPlayer();
 
@@ -375,7 +378,10 @@ namespace MediaPortal.Player
           {
             return _wmp10Player.currentMedia.duration;
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("AdioPlayerWMP9: Duration {0}", ex.Message);
+          }
         }
         return 0.0d;
       }
@@ -389,7 +395,10 @@ namespace MediaPortal.Player
         {
           return _wmp10Player.Ctlcontrols.currentPosition;
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("AdioPlayerWMP9: CurrentPosition {0}", ex.Message);
+        }
         return 0.0d;
       }
     }
@@ -508,7 +517,7 @@ namespace MediaPortal.Player
       {
         GUIGraphicsContext.form.Controls.Remove(_wmp10Player);
       }
-      catch (Exception) { }
+      catch (Exception ex) { }
       _wmp10Player.SafeDispose();
       _wmp10Player = null;
        * */
@@ -844,7 +853,10 @@ namespace MediaPortal.Player
             {
               _wmp10Player.settings.rate = (double)value;
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+              Log.Error("AdioPlayerWMP9: Speed {0}", ex.Message);
+            }
             VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
           }
         }

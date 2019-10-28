@@ -1020,7 +1020,11 @@ namespace MediaPortal.MusicPlayer.BASS
             BassWaDsp.BASS_WADSP_Stop(waDspPlugin);
           }
         }
-        catch (Exception) { }
+        catch (Exception ex)
+        {
+          Log.Error("MusicStream: Dispose {0}", ex.Message);
+        }
+
       }
     }
 

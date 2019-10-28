@@ -1201,7 +1201,10 @@ namespace MediaPortal.MusicPlayer.BASS
         // Some Winamp dsps might raise an exception when closing
         BassWaDsp.BASS_WADSP_Free();
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("BassAudioEngine: DisposeAndCleanUp {0}", ex.Message);
+      }
 
       if (Config.MusicPlayer == AudioPlayer.Asio)
       {

@@ -218,7 +218,11 @@ namespace MediaPortal.GUI.Library
             File.Delete(file);
           }
         }
-        catch (Exception) {}
+        catch (Exception ex) 
+        {
+          Log.Error("TexturePacker: Cleanup {0}", ex.Message);
+        }
+
       }
     }
 
@@ -367,8 +371,9 @@ namespace MediaPortal.GUI.Library
         _maxTextureHeight = capabilities.MaxTextureHeight;
         Log.Info("TexturePacker: D3D device does support {0}x{1} textures", _maxTextureWidth, _maxTextureHeight);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("TexturePacker: PackSkinGraphics {0}", ex.Message);
         _maxTextureWidth = MAXTEXTUREDIMENSION;
         _maxTextureHeight = MAXTEXTUREDIMENSION;
       }
@@ -522,9 +527,9 @@ namespace MediaPortal.GUI.Library
       {
         bmp = ImageFast.FromFile(file);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Warn("TexturePacker: Fast loading of texture {0} failed - trying safe fallback now", file);
+        Log.Warn("TexturePacker: Fast loading of texture {0} failed - trying safe fallback now: {1}", file, ex.Message);
         bmp = Image.FromFile(file);
       }
 
@@ -688,7 +693,10 @@ namespace MediaPortal.GUI.Library
                 bigOne.texture.Disposing -= TextureDisposing;
                 bigOne.texture.SafeDispose();
               }
-              catch (Exception) {}
+              catch (Exception ex)
+              {
+                Log.Error("TexturePacker: Dispose {0}", ex.Message);
+              }
             }
             bigOne.texture = null;
           }

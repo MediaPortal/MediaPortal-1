@@ -290,8 +290,9 @@ namespace MediaPortal.Player
         {
           streamLAVSelection = xmlreader.GetValueAsBool("movieplayer", "streamlavselection", false);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("VideoPlayerVMR7: {0}", ex.Message);
         }
       }
       _mediaType = g_Player.MediaType.Video;

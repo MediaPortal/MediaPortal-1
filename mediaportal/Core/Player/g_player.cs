@@ -484,7 +484,10 @@ namespace MediaPortal.Player
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("g_player: ChangeDriveSpeed: {0}", ex.Message);
+      }
     }
 
     #endregion
@@ -4242,9 +4245,9 @@ namespace MediaPortal.Player
             var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) { SoundFileName = "silent.wav" };
             GUIGraphicsContext.OnAction(action);
           }
-          catch (Exception)
+          catch (Exception ex)
           {
-            Log.Error("g_player: GUI_MSG_REBUILD_AUDIO play sound workaround failed");
+            Log.Error("g_player: GUI_MSG_REBUILD_AUDIO play sound workaround failed {0}", ex.Message);
           }
           break;
         case GUIMessage.MessageType.GUI_MSG_STOP_MEDIACONTROL_AUDIO:
@@ -4256,9 +4259,9 @@ namespace MediaPortal.Player
             var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) { SoundFileName = "silent.wav" };
             GUIGraphicsContext.OnAction(action);
           }
-          catch (Exception)
+          catch (Exception ex)
           {
-            Log.Error("g_player: GUI_MSG_STOP_MEDIACONTROL_AUDIO play sound workaround failed");
+            Log.Error("g_player: GUI_MSG_STOP_MEDIACONTROL_AUDIO play sound workaround failed {0}", ex.Message);
           }
           break;
       }

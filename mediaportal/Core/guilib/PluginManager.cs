@@ -248,9 +248,10 @@ namespace MediaPortal.GUI.Library
         Directory.CreateDirectory(Config.GetFolder(Config.Dir.Plugins));
         Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Plugins, "process"));
       }
-      // ReSharper disable EmptyGeneralCatchClause
-      catch (Exception) { }
-      // ReSharper restore EmptyGeneralCatchClause
+      catch (Exception ex)
+      {
+        Log.Error("PlugInManager: LoadProcessPlugins() {0}", ex.Message);
+      }
 
       string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "process"), "dll");
 
@@ -298,9 +299,10 @@ namespace MediaPortal.GUI.Library
         Directory.CreateDirectory(Config.GetFolder(Config.Dir.Plugins));
         Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Plugins, "windows"));
       }
-      // ReSharper disable EmptyGeneralCatchClause
-      catch (Exception) { }
-      // ReSharper restore EmptyGeneralCatchClause
+      catch (Exception ex)
+      {
+        Log.Error("PlugInManager: LoadWindowPluginsNonThreaded() {0}", ex.Message);
+      }
 
       string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "windows"), "dll");
 

@@ -623,18 +623,18 @@ namespace MediaPortal.GUI.Library
         {
           _windowId = Int32.Parse(nodeId.InnerText);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Error("LoadSkin: error converting nodeid <{0}> to int", nodeId.InnerText);
+          Log.Error("LoadSkin: error converting nodeid <{0}> to int {1}", nodeId.InnerText, ex.Message);
         }
         // Convert the id of the default control to an int
         try
         {
           _defaultControlId = Int32.Parse(nodeDefault.InnerText);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Error("LoadSkin: error converting nodeDefault <{0}> to int", nodeDefault.InnerText);
+          Log.Error("LoadSkin: error converting nodeDefault <{0}> to int {1}", nodeDefault.InnerText, ex.Message);
         }
 
         // find any XAML complex/compound properties

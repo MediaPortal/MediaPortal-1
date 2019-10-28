@@ -489,11 +489,13 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         return Bass.BASS_ChannelGetData(_mixer, buffer, length);
       }
-      catch (AccessViolationException)
+      catch (AccessViolationException ex)
       {
+        Log.Error("MixerStream: WasApiCallback {0}", ex.Message);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("MixerStream: WasApiCallback {0}", ex.Message);
       }
       return 0;
     }

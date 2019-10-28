@@ -356,8 +356,9 @@ namespace MediaPortal.Player
           _posRelativeToFrame = xmlreader.GetValueAsBool("subtitles", "subPosRelative", false);
           _useRestoreMadvr1080P = xmlreader.GetValueAsBool("general", "useRestoreMadvr1080p", false);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("PlaceScene: Init: {0}", ex.Message);
         }
       }
     }
@@ -1313,8 +1314,9 @@ namespace MediaPortal.Player
           // is it only increases the UI rendering time.
           //return visible ? 0 : 1; // S_OK, S_FALSE
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("PlaceScene: RenderLayers: {0}", ex.Message);
         }
         finally
         {
