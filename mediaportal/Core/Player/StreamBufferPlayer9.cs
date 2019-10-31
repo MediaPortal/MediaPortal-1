@@ -466,5 +466,10 @@ namespace MediaPortal.Player
       }
       //CloseInterfaces();
     }
+
+    public override bool IsTV
+    {
+      get { return false; }
+    }
   }
 }
