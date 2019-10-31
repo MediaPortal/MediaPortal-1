@@ -56,7 +56,8 @@ namespace MediaPortal.GUI.Music
       Year = 11, // Used Internally, when Sorting by Date is selected from GUI and Year defined as DefaultSort
       DiscID = 12,
       Composer = 13,
-      TimesPlayed = 14
+      TimesPlayed = 14,
+      FileType = 15
     }
 
     public int Compare(GUIListItem item1, GUIListItem item2)
@@ -462,6 +463,18 @@ namespace MediaPortal.GUI.Music
           else
           {
             return iTimesPlayed2.CompareTo(iTimesPlayed1);
+          }
+
+        case SortMethod.FileType:
+          string strFileType1 = tag1.FileType;
+          string strFileType2 = tag2.FileType;
+          if (bAscending)
+          {
+            return Util.StringLogicalComparer.Compare(strFileType1, strFileType2);
+          }
+          else
+          {
+            return Util.StringLogicalComparer.Compare(strFileType2, strFileType1);
           }
 
       }
