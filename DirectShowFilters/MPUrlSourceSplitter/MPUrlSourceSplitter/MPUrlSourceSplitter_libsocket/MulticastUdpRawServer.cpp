@@ -97,28 +97,32 @@ HRESULT CMulticastUdpRawServer::StartListening(void)
 
   for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->sockets->Count())); i++)
   {
+    HRESULT temp = S_OK;
     CMulticastUdpSocketContext *socket = dynamic_cast<CMulticastUdpSocketContext *>(this->sockets->GetItem(i));
     CMulticastUdpRawSocketContext *igmpSocket = dynamic_cast<CMulticastUdpRawSocketContext *>(this->igmpSockets->GetItem(i));
 
     // create server socket
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->CreateSocket(), result);
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), igmpSocket->CreateSocket(), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(temp), socket->CreateSocket(), temp);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(temp), igmpSocket->CreateSocket(), temp);
 
     // set non-blocking mode
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->SetBlockingMode(false), result);
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), igmpSocket->SetBlockingMode(false), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(temp), socket->SetBlockingMode(false), temp);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(temp), igmpSocket->SetBlockingMode(false), temp);
 
     // set reuse address
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->SetReuseAddress(true), result);
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), igmpSocket->SetReuseAddress(true), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(temp), socket->SetReuseAddress(true), temp);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(temp), igmpSocket->SetReuseAddress(true), temp);
 
     // bind socket to local address and port
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->Bind(), result);
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), igmpSocket->Bind(), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(temp), socket->Bind(), temp);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(temp), igmpSocket->Bind(), temp);
 
     // subscribe to multicast group
-    //CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->SubscribeToMulticastGroup(), result);
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), igmpSocket->SubscribeToMulticastGroup(), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(temp), igmpSocket->SubscribeToMulticastGroup(), temp);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(temp), socket->SubscribeToMulticastGroup(), temp);
+
+    result = (i == 0) ? temp : result;
+    result = SUCCEEDED(temp) ? temp : result;
   }
 
   return result;

@@ -33,7 +33,7 @@
 #define PARAMETER_NAME_UDP_RECEIVE_DATA_CHECK_INTERVAL                L"UdpReceiveDataCheckInterval"
 
 // we should get data in two seconds (splitter)
-#define UDP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER                  20000
+#define UDP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER                  2000
 #define UDP_OPEN_CONNECTION_SLEEP_TIME_DEFAULT_SPLITTER               0
 #define UDP_TOTAL_REOPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER          60000
 
