@@ -1101,9 +1101,8 @@ namespace MediaPortal.GUI.Library
             // Measure the alphabet
             PaintAlphabet(g, true);
           }
-          catch (InvalidOperationException ex)
+          catch (InvalidOperationException)
           {
-            Log.Error("GUIFont: CreateFontBitmap {0}", ex.Message);
             // Scale up the texture size and try again
             if (width)
             {
