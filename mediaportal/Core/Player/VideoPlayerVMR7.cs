@@ -375,7 +375,7 @@ namespace MediaPortal.Player
           // Show the frame on the primary surface.
           GUIGraphicsContext.DX9Device.Present();
         }
-        catch(DeviceLostException)
+        catch(DeviceLostException ex)
         {
         }*/
         DirectShowUtil.SetARMode(graphBuilder, AspectRatioMode.Stretched);

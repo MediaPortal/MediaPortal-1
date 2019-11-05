@@ -1264,8 +1264,9 @@ namespace MediaPortal.GUI.Library
           {
             item_OnThumbnailRefresh(i, gotFocus);
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            Log.Warn("GUIListControl: Render {0}", ex.Message);
             continue;
           }
 

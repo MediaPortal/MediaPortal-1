@@ -590,7 +590,10 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
         return IsPlayListExtension(extensionFile);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("Util:IsPlayList: {0}", ex.Message);
+      }
       return false;
     }
 
@@ -1673,8 +1676,9 @@ namespace MediaPortal.Util
       {
         dirs = Directory.GetDirectories(path);
       }
-      catch (DirectoryNotFoundException)
+      catch (DirectoryNotFoundException ex)
       {
+        Log.Debug("Util:GetDirectories: {0}", ex.Message);
         if (Utils.IsPersistentNetwork(path))
         {
           if (Utils.TryReconnectNetwork(path))
@@ -1706,8 +1710,9 @@ namespace MediaPortal.Util
       {
         files = Directory.GetFiles(path);
       }
-      catch (DirectoryNotFoundException)
+      catch (DirectoryNotFoundException ex)
       {
+        Log.Debug("Util:GetFiles: {0}", ex.Message);
         if (Utils.IsPersistentNetwork(path))
         {
           if (Utils.TryReconnectNetwork(path))
@@ -4310,10 +4315,10 @@ namespace MediaPortal.Util
             }
           }
           catch
-            (OutOfMemoryException)
+            (OutOfMemoryException ex)
           {
-            Log.Warn("Utils: Damaged picture file found: {0}. Try to repair or delete this file please!",
-                     strFileName);
+            Log.Warn("Utils: Damaged picture file found: {0}. Try to repair or delete this file please! {1}",
+                     strFileName, ex.Message);
           }
         }
         catch (Exception ex)
@@ -4474,9 +4479,9 @@ namespace MediaPortal.Util
             }
           }
         }
-        catch (FileNotFoundException)
+        catch (FileNotFoundException ex)
         {
-          Log.Warn("Utils: Your skin does not supply previewbackground.png to create folder preview thumbs!");
+          Log.Warn("Utils: Your skin does not supply previewbackground.png to create folder preview thumbs! {0}", ex.Message);
         }
         catch (Exception exm)
         {
@@ -4705,9 +4710,9 @@ namespace MediaPortal.Util
                       File.Delete(aPictureList[i]);
                     }
                   }
-                  catch (FileNotFoundException)
+                  catch (FileNotFoundException ex)
                   {
-                    Log.Debug("CreateTileThumb: {0} file not found.", pictureListName);
+                    Log.Debug("CreateTileThumb: {0} file not found. {1}", pictureListName, ex.Message);
                   }
                 }
 
@@ -4727,9 +4732,9 @@ namespace MediaPortal.Util
             }
           }
         }
-        catch (FileNotFoundException)
+        catch (FileNotFoundException ex)
         {
-          Log.Warn("Utils: Your skin does not supply previewbackground.png to create CreateTileThumb!");
+          Log.Warn("Utils: Your skin does not supply previewbackground.png to create CreateTileThumb! {0}", ex.Message);
         }
         catch (Exception exm)
         {

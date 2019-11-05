@@ -307,9 +307,9 @@ namespace MediaPortal.Util
             File.Delete(ShareThumbTemp);
           }
         }
-        catch (FileNotFoundException)
+        catch (FileNotFoundException ex)
         {
-          // No need to log
+          Log.Debug("VideoThumbCreator: {0}", ex.Message);
         }
       }
       catch (Exception ex)

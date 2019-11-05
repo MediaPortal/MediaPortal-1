@@ -824,9 +824,9 @@ namespace MediaPortal.MusicPlayer.BASS
                        Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, 0,
                                                        Config.CrossFadeIntervalMs);
                      }
-                     catch (AccessViolationException)
+                     catch (AccessViolationException ex)
                      {
-                       Log.Error("BASS: Caught AccessViolationException in Crossfade Proc");
+                       Log.Error("BASS: Caught AccessViolationException in Crossfade Proc {0}", ex.Message);
                      }
                    }
       ) { Name = "BASS X-Fade" }.Start();

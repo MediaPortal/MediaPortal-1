@@ -107,9 +107,9 @@ namespace MediaPortal.Music.Database
           {
             File.Delete(file);
           }
-          catch (IOException)
+          catch (IOException ex)
           {
-            // Don't need to report anything, if we couldn't delete a temp file
+            Log.Debug("MusicDatabase: {0}", ex.Message);
           }
         }
       }

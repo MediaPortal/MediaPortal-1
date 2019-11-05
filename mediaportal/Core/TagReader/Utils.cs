@@ -600,8 +600,9 @@ namespace MediaPortal.TagReader
                 retry = true;
               }
             }
-            catch (ArgumentException)
+            catch (ArgumentException ex)
             {
+              Log.Debug("Utils:GetImageFile: {0}", ex.Message);
               retry = true;
             }
 

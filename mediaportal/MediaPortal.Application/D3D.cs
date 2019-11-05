@@ -721,27 +721,27 @@ namespace MediaPortal
                     GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
                   }
                 }
-                catch (InvalidCallException)
+                catch (InvalidCallException ex)
                 {
-                  Log.Error("D3D: D3DERR_INVALIDCALL - presentation parameters might contain an invalid value");
+                  Log.Error("D3D: D3DERR_INVALIDCALL - presentation parameters might contain an invalid value {0}", ex.Message);
                   Util.Utils.RestartMePo();
                 }
-                catch (DeviceLostException)
+                catch (DeviceLostException ex)
                 {
-                  Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+                  Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time {0}", ex.Message);
                 }
-                catch (DriverInternalErrorException)
+                catch (DriverInternalErrorException ex)
                 {
-                  Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
+                  Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error {0}", ex.Message);
                 }
-                catch (OutOfVideoMemoryException)
+                catch (OutOfVideoMemoryException ex)
                 {
                   Log.Error(
-                    "D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
+                    "D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation {0}", ex.Message);
                 }
-                catch (OutOfMemoryException)
+                catch (OutOfMemoryException ex)
                 {
-                  Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+                  Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call {0}", ex.Message);
                 }
                 catch (Exception ex)
                 {
@@ -760,27 +760,27 @@ namespace MediaPortal
                     GUIGraphicsContext.DX9Device.Reset(_presentParams);
                   }
                 }
-                catch (InvalidCallException)
+                catch (InvalidCallException ex)
                 {
-                  Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
+                  Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value {0}", ex.Message);
                 }
-                catch (DeviceLostException)
+                catch (DeviceLostException ex)
                 {
                   // Indicate that the device has been lost
-                  Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+                  Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time {0}", ex.Message);
                 }
-                catch (DriverInternalErrorException)
+                catch (DriverInternalErrorException ex)
                 {
-                  Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
+                  Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error {0}", ex.Message);
                 }
-                catch (OutOfVideoMemoryException)
+                catch (OutOfVideoMemoryException ex)
                 {
                   Log.Error(
-                    "D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
+                    "D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation {0}", ex.Message);
                 }
-                catch (OutOfMemoryException)
+                catch (OutOfMemoryException ex)
                 {
-                  Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+                  Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call {0}", ex.Message);
                 }
                 catch (Exception ex)
                 {
@@ -954,14 +954,14 @@ namespace MediaPortal
         {
           if (GUIGraphicsContext.DX9Device != null) GUIGraphicsContext.DX9Device.TestCooperativeLevel();
         }
-        catch (DeviceLostException)
+        catch (DeviceLostException ex)
         {
-          Log.Warn("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+          Log.Warn("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time {0}", ex.Message);
           return;
         }
-        catch (DeviceNotResetException)
+        catch (DeviceNotResetException ex)
         {
-          Log.Warn("D3D: D3DERR_DEVICENOTRESET - device is lost but can be reset at this time");
+          Log.Warn("D3D: D3DERR_DEVICENOTRESET - device is lost but can be reset at this time {0}", ex.Message);
         }
       }
 

@@ -1949,10 +1949,10 @@ namespace MediaPortal.Player
 
         _debugStep = 20;
       }
-      catch (DeviceLostException)
+      catch (DeviceLostException ex)
       {
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
-        Log.Warn("Planescene caught DeviceLostException in InternalPresentImage");
+        Log.Warn("Planescene caught DeviceLostException in InternalPresentImage {0}", ex.Message);
       }
       catch (DirectXException dex)
       {
@@ -1962,6 +1962,8 @@ namespace MediaPortal.Player
           Log.Info("Planescene caught GPU_HUNG in InternalPresentImage");
           GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
         }
+        else
+          Log.Debug("Planescene: {0}", dex.Message);
       }
       catch (Exception ex)
       {

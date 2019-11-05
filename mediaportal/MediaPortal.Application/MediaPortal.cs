@@ -3844,14 +3844,14 @@ public class MediaPortalApp : D3D, IRender
       {
         if (GUIGraphicsContext.DX9Device != null) GUIGraphicsContext.DX9Device.TestCooperativeLevel();
       }
-      catch (DeviceLostException)
+      catch (DeviceLostException ex)
       {
-        Log.Debug("Main: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+        Log.Debug("Main: D3DERR_DEVICELOST - device is lost but cannot be reset at this time {0}", ex.Message);
         return;
       }
-      catch (DeviceNotResetException)
+      catch (DeviceNotResetException ex)
       {
-        Log.Debug("Main: D3DERR_DEVICENOTRESET - device is lost but can be reset at this time");
+        Log.Debug("Main: D3DERR_DEVICENOTRESET - device is lost but can be reset at this time {0}", ex.Message);
         return;
       }
       catch
@@ -6247,13 +6247,13 @@ public class MediaPortalApp : D3D, IRender
         }
       }
     }
-    catch (SecurityException)
+    catch (SecurityException ex)
     {
-      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0}", key);
+      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0} {1}", key, ex.Message);
     }
-    catch (UnauthorizedAccessException)
+    catch (UnauthorizedAccessException ex)
     {
-      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0}", key);
+      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0} {1}", key, ex.Message);
     }
   }
 
@@ -6277,13 +6277,13 @@ public class MediaPortalApp : D3D, IRender
         }
       }
     }
-    catch (SecurityException)
+    catch (SecurityException ex)
     {
-      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0}", key);
+      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0} {1}", key, ex.Message);
     }
-    catch (UnauthorizedAccessException)
+    catch (UnauthorizedAccessException ex)
     {
-      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0}", key);
+      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0} {1}", key, ex.Message);
     }
   }
 

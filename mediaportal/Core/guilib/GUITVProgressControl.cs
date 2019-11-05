@@ -1101,8 +1101,9 @@ namespace MediaPortal.GUI.Library
             {
               MarkerStartsPercent.Add(float.Parse(strMarkerStarts[i]));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+              Log.Warn("GUITVProgressControl: parseMarkerValues {0}", ex.Message);
               break;
             }
             if (MarkerStartsPercent.Count > i)
@@ -1127,8 +1128,9 @@ namespace MediaPortal.GUI.Library
             {
               MarkerEndsPercent.Add(float.Parse(strMarkerEnds[i]));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+              Log.Warn("GUITVProgressControl: parseMarkerValues {0}", ex.Message);
               break;
             }
             if (MarkerEndsPercent.Count > i)

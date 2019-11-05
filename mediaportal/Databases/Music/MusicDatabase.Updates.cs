@@ -1218,9 +1218,9 @@ namespace MediaPortal.Music.Database
           fileinCluded = true;
         }
       }
-      catch (UnauthorizedAccessException)
+      catch (UnauthorizedAccessException ex)
       {
-        Log.Warn("Musicdatabasereorg: Not enough permissions to include file {0}", file);
+        Log.Warn("Musicdatabasereorg: Not enough permissions to include file {0} {1}", file, ex.Message);
       }
       catch (Exception ex)
       {

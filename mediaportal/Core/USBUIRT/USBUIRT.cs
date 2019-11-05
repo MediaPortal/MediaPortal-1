@@ -445,10 +445,10 @@ namespace MediaPortal.IR
         }
       }
 
-      catch (DllNotFoundException)
+      catch (DllNotFoundException ex)
       {
         //most users don't have the dll on their system so will get a exception here
-        Log.Info("USBUIRT:uuirtdrv.dll not found");
+        Log.Info("USBUIRT:uuirtdrv.dll not found {0}", ex.Message);
       }
       catch (Exception ex)
       {
@@ -983,9 +983,10 @@ namespace MediaPortal.IR
 
         return drvAPIVersionName;
       }
-      catch (DllNotFoundException)
+      catch (DllNotFoundException ex)
       {
         // most users don't have the dll on their system so will get a exception here
+        Log.Debug("USBUIRT:GetAPIVersions: {0}", ex.Message);
         return "Driver not installed";
       }
     }
@@ -1004,9 +1005,10 @@ namespace MediaPortal.IR
 
         return drvDLLVersionName;
       }
-      catch (DllNotFoundException)
+      catch (DllNotFoundException ex)
       {
         // most users don't have the dll on their system so will get a exception here
+        Log.Debug("USBUIRT:GetDLLVersions: {0}", ex.Message);
         return "DLL uuirtdrv.dll not found";
       }
     }
@@ -1116,10 +1118,10 @@ namespace MediaPortal.IR
         }
       }
 
-      catch (DllNotFoundException)
+      catch (DllNotFoundException ex)
       {
         // most users don't have the dll on their system so will get a exception here
-        Log.Info("USBUIRT:uuirtdrv.dll not found");
+        Log.Info("USBUIRT:uuirtdrv.dll not found {0}", ex.Message);
       }
 
       catch (Exception ex)

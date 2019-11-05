@@ -346,9 +346,10 @@ namespace MediaPortal.GUI.Library
         string[] themeFiles = Directory.GetFiles(String.Format(@"{0}\themes", skinName), "*.png", SearchOption.AllDirectories);
         files.AddRange(themeFiles);
       }
-      catch (DirectoryNotFoundException)
+      catch (DirectoryNotFoundException ex)
       {
         // The themes directory is not required to exist.
+        Log.Debug("TexurePacker:PackSkinGraphics: {0}", ex.Message);
       }
 
       string[] tvLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), "*.png", SearchOption.AllDirectories);

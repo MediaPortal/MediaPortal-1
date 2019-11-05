@@ -68,7 +68,10 @@ namespace MediaPortal.GUI.Video
         {
           strDirs = Directory.GetDirectories(path, "bdmv");
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("SelectBDHandler: GetFolderVideoFile {0}", ex.Message);
+        }
         if (strDirs != null)
         {
           if (strDirs.Length == 1)
@@ -87,7 +90,10 @@ namespace MediaPortal.GUI.Video
         {
           strFiles = Directory.GetFiles(path);
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("SelectBDHandler: GetFolderVideoFile {0}", ex.Message);
+        }
         if (strFiles != null)
         {
           for (int i = 0; i < strFiles.Length; ++i)

@@ -225,9 +225,9 @@ namespace MediaPortal.GUI.Library
           {
             theImage = ImageFast.FromFile(fileName);
           }
-          catch (FileNotFoundException)
+          catch (FileNotFoundException ex)
           {
-            Log.Warn("TextureManager: texture: {0} does not exist", fileName);
+            Log.Warn("TextureManager: texture: {0} does not exist {1}", fileName, ex.Message);
             return 0;
           }
           catch (Exception ex)

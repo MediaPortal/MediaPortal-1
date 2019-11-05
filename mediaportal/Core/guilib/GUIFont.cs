@@ -1101,8 +1101,9 @@ namespace MediaPortal.GUI.Library
             // Measure the alphabet
             PaintAlphabet(g, true);
           }
-          catch (InvalidOperationException)
+          catch (InvalidOperationException ex)
           {
+            Log.Error("GUIFont: CreateFontBitmap {0}", ex.Message);
             // Scale up the texture size and try again
             if (width)
             {
@@ -1141,8 +1142,9 @@ namespace MediaPortal.GUI.Library
               // Measure the alphabet
               PaintAlphabet(g, true);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
+              Log.Error("GUIFont: CreateFontBitmap {0}", ex.Message);
               // If that still doesn't fit, scale down again and continue
               _textureScale *= 0.9F;
               continue;
@@ -1219,8 +1221,9 @@ namespace MediaPortal.GUI.Library
                       _fontHeight,
                       _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
           }
-          catch (InvalidDataException) // weird : should have been FileNotFoundException when file is missing ??
+          catch (InvalidDataException ex) // weird : should have been FileNotFoundException when file is missing ??
           {
+            Log.Warn("GUIFont: InitializeDeviceObjects {0}", ex.Message);
             needsCreation = true;
           }
           catch (Exception ex)
@@ -1416,8 +1419,9 @@ namespace MediaPortal.GUI.Library
               g.DrawString(str, _systemFont, Brushes.White, new Point((int)x, (int)y));
             }
           }
-          catch (ExternalException)
+          catch (ExternalException ex)
           {
+            Log.Warn("GUIFont: PaintAlphabet {0}", ex.Message);
             // If GDI+ throws a generic exception (Interop ExternalException) because the requested character (str) isn't defined, ignore it and move on.
             continue;
           }

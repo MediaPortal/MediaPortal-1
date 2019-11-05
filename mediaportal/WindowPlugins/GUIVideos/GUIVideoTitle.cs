@@ -1060,7 +1060,10 @@ namespace MediaPortal.GUI.Video
             item.Label3 = movie.WatchedPercent + "% #" + movie.WatchedCount;
           }
         }
-        catch (Exception){}
+        catch (Exception ex)
+        {
+          Log.Error("GUIVideoTitle: LoadDirectory {0}", ex.Message);
+        }
         
         item.OnItemSelected += OnItemSelected;
         SetLabel(item);
@@ -1718,7 +1721,10 @@ namespace MediaPortal.GUI.Video
           SetDefaultIcon(aItem);
         }
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("GUIVideoTitle: SetItemThumb {0}", ex.Message);
+      }
     }
 
     private void SetDefaultIcon(GUIListItem listItem)
@@ -2344,7 +2350,10 @@ namespace MediaPortal.GUI.Video
             File.Copy(oldSmallThumb, newSmallThumb);
             File.Delete(oldSmallThumb);
           }
-          catch (Exception) { }
+          catch (Exception ex)
+          {
+            Log.Error("GUIVideoTitle: OnRenameTitle {0}", ex.Message);
+          }
         }
         if (File.Exists(oldLargeThumb))
         {
@@ -2353,7 +2362,10 @@ namespace MediaPortal.GUI.Video
             File.Copy(oldLargeThumb, newLargeThumb);
             File.Delete(oldLargeThumb);
           }
-          catch (Exception) { }
+          catch (Exception ex)
+          {
+            Log.Error("GUIVideoTitle: OnRenameTitle {0}", ex.Message);
+          }
         }
 
         movie.Title = movieTitle;
@@ -2830,7 +2842,10 @@ namespace MediaPortal.GUI.Video
         {
           iPincode = Int32.Parse(msgGetPassword.Label);
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("GUIVideoTitle: RequestPin {0}", ex.Message);
+        }
 
         foreach (string p in _protectedShares)
         {
@@ -3024,8 +3039,9 @@ namespace MediaPortal.GUI.Video
           GUIPropertyManager.SetProperty("#movieid", "-1");
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GUIVideoTitle: SetRandomMovieId {0}", ex.Message);
         GUIPropertyManager.SetProperty("#movieid", "-1");
       }
     }

@@ -104,7 +104,10 @@ namespace MediaPortal.Player
       {
         _wmp10Player.EndInit();
       }
-      catch (COMException) {}
+      catch (COMException ex)
+      {
+        Log.Error("AudioPlayerWMP9:CreateInstance: {0}", ex.Message);
+      }
 
       _wmp10Player.uiMode = "none";
       _wmp10Player.windowlessVideo = true;
