@@ -1281,8 +1281,9 @@ namespace MediaPortal
               Log.Debug("D3D: ForceMpAlive MP Successfully switched focus.");
             }
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            Log.Debug("D3D: ForceMpAlive {0}", ex.Message);
             // Make MediaPortal window normal ( if minimized )
             if (GUIGraphicsContext.form.WindowState == FormWindowState.Minimized)
             {
@@ -1818,16 +1819,16 @@ namespace MediaPortal
             capabilities = Manager.GetDeviceCaps(AdapterInfo.AdapterOrdinal, DeviceType.Hardware);
             successful = true;
           }
-          catch (Exception)
+          catch (Exception ex)
           {
             retries++;
             if (AdapterInfo != null)
             {
-              Log.Warn("Main: Failed to get capabilities for adapter #{0}: {1} (retry in {2}ms) try reinit #{3}", AdapterInfo.AdapterOrdinal, AdapterInfo.ToString(), delayBetweenTries, retries);
+              Log.Warn("Main: Failed to get capabilities for adapter #{0}: {1} (retry in {2}ms) try reinit #{3} {4}", AdapterInfo.AdapterOrdinal, AdapterInfo.ToString(), delayBetweenTries, retries, ex.Message);
             }
             else
             {
-              Log.Warn("Main: Failed to get capabilities for adapter (retry in {0}ms) try reinit #{1}", delayBetweenTries, retries);
+              Log.Warn("Main: Failed to get capabilities for adapter (retry in {0}ms) try reinit #{1} {2}", delayBetweenTries, retries, ex.Message);
             }
             Thread.Sleep(delayBetweenTries);
 
@@ -2108,8 +2109,9 @@ namespace MediaPortal
       {
         isOverForm = ClientRectangle.Contains(PointToClient(MousePosition));
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("D3D: UpdateMouseCursor {0}", ex.Message);
         isOverForm = false;
       }
 
@@ -2119,8 +2121,9 @@ namespace MediaPortal
       { 
         focused = GetForegroundWindow() == Handle; 
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("D3D: UpdateMouseCursor {0}", ex.Message);
         focused = false;
       }
 

@@ -183,8 +183,9 @@ namespace MediaPortal.Music.Database
           string lastImport = xmlreader.GetValueAsString("musicfiles", "lastImport", "1900-01-01 00:00:00");
           _lastImport = DateTime.ParseExact(lastImport, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("MusicDatabase:LoadDBSettings: {0}", ex.Message);
           _lastImport = DateTime.ParseExact("1900-01-01 00:00:00", "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
           ;
         }
@@ -202,7 +203,10 @@ namespace MediaPortal.Music.Database
         {
           Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("MusicDatabase:Open: {0}", ex.Message);
+        }
 
         if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3")))
         {

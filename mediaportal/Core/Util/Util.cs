@@ -353,7 +353,10 @@ namespace MediaPortal.Util
         if (Convert.ToUInt32(mo["DriveType"]) == 4)
           return Convert.ToString(mo["ProviderName"]);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GetUNCPath: {0}", ex.Message);
+      }
       return sFilePath;
     }
 
@@ -390,8 +393,9 @@ namespace MediaPortal.Util
           diskSize = Int64.Parse(disk["Size"].ToString());
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GetDiskSize: {0}", ex.Message);
         return -1;
       }
       return diskSize;
@@ -490,7 +494,10 @@ namespace MediaPortal.Util
           return true;
         return m_VideoExtensions.Contains(extensionFile, StringComparer.InvariantCultureIgnoreCase);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("IsVideo: {0}", ex.Message);
+      }
       return false;
     }
 
@@ -540,7 +547,10 @@ namespace MediaPortal.Util
         if (IsPlayListExtension(extensionFile)) return false;
         return m_AudioExtensions.Contains(extensionFile);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("IsAudio: {0}", ex.Message);
+      }
       return false;
     }
 
@@ -554,7 +564,10 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
         return m_PictureExtensions.Contains(extensionFile);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("IsPicture: {0}", ex.Message);
+      }
       return false;
     }
 
@@ -590,7 +603,10 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
         if (extensionFile == ".exe") return true;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("IsProgram: {0}", ex.Message);
+      }
       return false;
     }
 
@@ -603,7 +619,10 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
         if (extensionFile == ".lnk") return true;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("IsShortcut: {0}", ex.Message);
+      }
       return false;
     }
 
@@ -1108,8 +1127,9 @@ namespace MediaPortal.Util
         }
         return equal;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("AreEqual: {0}", ex.Message);
         return false;
       }
     }
@@ -1431,7 +1451,10 @@ namespace MediaPortal.Util
         String pattern = mdp.IndexOf('M') < mdp.IndexOf('d') ? " MM"+ DateSeparator+"dd" : " dd" + DateSeparator + "MM";
         return day + dt.ToString(pattern);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GetShortDayString: {0}", ex.Message);
+      }
       return string.Empty;
     }
 
@@ -1564,8 +1587,9 @@ namespace MediaPortal.Util
           result = Path.GetFullPath(result);
           return result;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("FindNetworkPath: {0}", ex.Message);
           return path;
         }
       }
@@ -1580,7 +1604,10 @@ namespace MediaPortal.Util
         RegistryKey regKey = Registry.CurrentUser.OpenSubKey(string.Format(@"Network\{0}", strPath.Substring(0, 1)));
         return (regKey != null);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("IsPersistentNetwork: {0}", ex.Message);
+      }
       return false;
     }
 
@@ -1934,7 +1961,10 @@ namespace MediaPortal.Util
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("ShouldStack: {0}", ex.Message);
+      }
 
       // No matches were found, so no stacking
       return false;
@@ -1964,7 +1994,10 @@ namespace MediaPortal.Util
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("PathShouldStack: {0}", ex.Message);
+      }
 
       // No matches were found, so no stacking
       return false;
@@ -2024,7 +2057,10 @@ namespace MediaPortal.Util
         string strRet = Path.GetFullPath(String.Format("{0}{1}.jpg", Config.GetFolder(Config.Dir.Thumbs), dwcrc));
         return strRet;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GetThumb: {0}", ex.Message);
+      }
       return "000";
     }
 
@@ -2064,8 +2100,9 @@ namespace MediaPortal.Util
           strFileName = strFileNameAndPath;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("Split: {0}", ex.Message);
         strPath = "";
         strFileName = strFileNameAndPath;
       }
@@ -2089,7 +2126,10 @@ namespace MediaPortal.Util
           CloseHandle(fHandle);
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("EjectCDROM: {0}", ex.Message);
+      }
 
       return result;
     }
@@ -2322,13 +2362,17 @@ namespace MediaPortal.Util
                 process.Kill();
               }
             }
-            catch (Exception)
+            catch (Exception ex1)
             {
+              Log.Warn("CheckForRunningProcess: {0}", ex1.Message);
               try
               {
                 process.Kill();
               }
-              catch (Exception) {}
+              catch (Exception ex)
+              {
+                Log.Error("CheckForRunningProcess: {0}", ex.Message);
+              }
             }
 
             mpRunning = CheckForRunningProcess(aProcessName, false);
@@ -2540,7 +2584,10 @@ namespace MediaPortal.Util
         DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
         return dt;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("longtodate: {0}", ex.Message);
+      }
       return DateTime.Now;
     }
 
@@ -2563,7 +2610,10 @@ namespace MediaPortal.Util
         lRet = lRet * 100L + iSec;
         return lRet;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("datetolong: {0}", ex.Message);
+      }
       return 0;
     }
 
@@ -2665,7 +2715,10 @@ namespace MediaPortal.Util
         Directory.Delete(aDirectory, aRecursive);
         return true;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("DirectoryDelete: {0}", ex.Message);
+      }
       return false;
     }
 
@@ -2867,7 +2920,10 @@ namespace MediaPortal.Util
         else
           return Path.GetFileName(strPath);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GetFilename: {0}", ex.Message);
+      }
       return strPath;
     }
 
@@ -2878,7 +2934,10 @@ namespace MediaPortal.Util
       {
         return Path.GetFileName(strPath);
       }
-      catch { }
+      catch (Exception ex)
+      {
+        Log.Error("GetFileNameWithExtension: {0}", ex.Message);
+      }
       return strPath;
     }
 
@@ -2889,7 +2948,10 @@ namespace MediaPortal.Util
       {
         return Path.GetExtension(strPath);
       }
-      catch { }
+      catch (Exception ex)
+      {
+        Log.Error("GetFileExtension: {0}", ex.Message);
+      }
       return string.Empty;
     }
 
@@ -2938,6 +3000,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
+        Log.Error("PlaySound: {0}", ex.Message);
         if (!bIgnoreErrors)
         {
           throw ex;
@@ -3199,7 +3262,10 @@ namespace MediaPortal.Util
                 break;
               }
             }
-            catch (Exception) {}
+            catch (Exception ex)
+            {
+              Log.Error("TryEverythingToGetFolderThumbByFilename: {0}", ex.Message);
+            }
           }
           if (FileExistsInCache(strRemoteFolderThumb))
           {
@@ -3358,8 +3424,9 @@ namespace MediaPortal.Util
         }
         AddFoldersLookedUp(sDir);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Warn("DirSearch: {0}", ex.Message);
         AddFoldersLookedUp(sDir); //lets tag the invalid folder as have looked-up
         //Log.Error("DirSearch failed in dir={0}, with err={1}", sDir, e.Message);        
         //ignore
@@ -3512,8 +3579,9 @@ namespace MediaPortal.Util
           return f.Substring(0, posOfDirSep);
         else return string.Empty;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GetDirectoryName: {0}", ex.Message);
         return string.Empty;
       }
     }
@@ -3547,8 +3615,9 @@ namespace MediaPortal.Util
                 }*/
             }
           }
-          catch (ArgumentException)
+          catch (ArgumentException ex)
           {
+            Log.Warn("FileExistsInCache: {0}", ex.Message);
             //ignore
           }
           found = DoFileExistsInCache(filename);
@@ -3558,8 +3627,9 @@ namespace MediaPortal.Util
           found = File.Exists(filename);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("FileExistsInCache: {0}", ex.Message);
       }
       return found;
     }
@@ -3624,8 +3694,9 @@ namespace MediaPortal.Util
           _fileExistsCacheThreadEvt?.WaitOne(5000);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("FileExistsCacheThread: {0}", ex.Message);
       }
     }
 
@@ -3684,8 +3755,9 @@ namespace MediaPortal.Util
           Thread.Sleep(FileLookUpCacheThreadScanningIntervalMSecs);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("FileSystemWatchManagerThread: {0}", ex.Message);
       }
     }
 
@@ -4011,8 +4083,9 @@ namespace MediaPortal.Util
           _fileExistsCacheThread = null;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("DisposeFileExistsCacheThread: {0}", ex.Message);
       }
     }
 
@@ -4777,7 +4850,10 @@ namespace MediaPortal.Util
           {
             File.Delete(strFile);
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("DeleteFiles: {0}", ex.Message);
+          }
         }
         if (recursive)
         {
@@ -4788,12 +4864,18 @@ namespace MediaPortal.Util
             {
               DeleteFiles(subDir, strPattern, true);
               Directory.Delete(subDir);
-      }
-      catch (Exception) {}
-    }
+            }
+            catch (Exception ex)
+            {
+              Log.Error("DeleteFiles: {0}", ex.Message);
+            }
+          }
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("DeleteFiles: {0}", ex.Message);
+      }
     }
 
     public static bool UsingTvServer
@@ -4804,8 +4886,9 @@ namespace MediaPortal.Util
         {
           return (Util.Utils.FileExistsInCache(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"));
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("UsingTvServer: {0}", ex.Message);
           return false;
         }
       }
@@ -4831,7 +4914,10 @@ namespace MediaPortal.Util
         sec = Int32.Parse(parts[5]);
         return new DateTime(year, month, day, hour, min, sec, 0);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("ParseDateTimeString: {0}", ex.Message);
+      }
       return DateTime.Now;
     }
 
@@ -4940,11 +5026,17 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) {}
+            catch (Exception ex)
+            {
+              Log.Error("DeleteOldTimeShiftFiles: {0}", ex.Message);
+            }
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("DeleteOldTimeShiftFiles: {0}", ex.Message);
+      }
 
       // clean the TempSBE\ folder
       try
@@ -4959,11 +5051,17 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) {}
+            catch (Exception ex)
+            {
+              Log.Error("DeleteOldTimeShiftFiles: {0}", ex.Message);
+            }
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("DeleteOldTimeShiftFiles: {0}", ex.Message);
+      }
 
       // delete *.tv
       try
@@ -4978,11 +5076,17 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) {}
+            catch (Exception ex)
+            {
+              Log.Error("DeleteOldTimeShiftFiles: {0}", ex.Message);
+            }
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("DeleteOldTimeShiftFiles: {0}", ex.Message);
+      }
     }
 
     public static void DeleteRecording(string recordingFilename)
@@ -5027,10 +5131,16 @@ namespace MediaPortal.Util
               }
             }
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("DeleteRecording: {0}", ex.Message);
+          }
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("DeleteRecording: {0}", ex.Message);
+      }
     }
 
     /// <summary>

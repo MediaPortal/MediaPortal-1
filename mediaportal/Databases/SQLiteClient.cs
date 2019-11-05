@@ -207,8 +207,9 @@ namespace SQLite.NET
 
         validFile = file.Length > 0;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("SqliteClient:WaitForFile: {0}", ex.Message);
         validFile = false;
       }
 

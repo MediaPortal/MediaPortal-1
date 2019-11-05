@@ -312,9 +312,9 @@ namespace MediaPortal.Utils.Time
           _hour = int.Parse(strTime.Substring(start, sepPos - start));
           _minute = int.Parse(strTime.Substring(sepPos + 1, 2));
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          throw (new ArgumentException("Invalid Time Argument"));
+          throw (new ArgumentException("Invalid Time Argument " + ex.Message));
         }
       }
       else
@@ -325,9 +325,9 @@ namespace MediaPortal.Utils.Time
         {
           time = int.Parse(strTime);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          throw (new ArgumentException("Invalid Time Argument"));
+          throw (new ArgumentException("Invalid Time Argument " + ex.Message));
         }
 
         if (time > 0 && time < 2400)

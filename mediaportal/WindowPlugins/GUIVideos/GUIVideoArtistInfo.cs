@@ -926,7 +926,10 @@ namespace MediaPortal.GUI.Video
         string errorMessage = string.Empty;
         VideoDatabase.ExecuteSql(sql, out error, out errorMessage);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GUIVideoArtistInfo: ExecuteSql {0}", ex.Message);
+      }
     }
 
     private void SaveCover(string fileImgSource, string fileImgTargetL)

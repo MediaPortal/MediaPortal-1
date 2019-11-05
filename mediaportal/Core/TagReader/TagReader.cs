@@ -281,8 +281,9 @@ namespace MediaPortal.TagReader
               {
                 musictag.Rating = Convert.ToInt32(rating[0]);
               }
-              catch (Exception)
+              catch (Exception ex)
               {
+                Log.Error("TagReader:ReadTag {0}", ex.Message);
               }
             }
           }

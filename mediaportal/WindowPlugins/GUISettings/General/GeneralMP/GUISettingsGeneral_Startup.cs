@@ -90,9 +90,10 @@ namespace MediaPortal.GUI.Settings
             }
           }
         }
-        // ReSharper disable EmptyGeneralCatchClause
-        catch (Exception) { }
-        // ReSharper restore EmptyGeneralCatchClause
+        catch (Exception ex)
+        {
+          Log.Error("GUISettingsGeneral: SaveSettings {0}", ex.Message);
+        }
 
         xmlwriter.SetValueAsBool("general", "hidetaskbar", _cmHidetaskbar.Selected);
         xmlwriter.SetValueAsBool("general", "autostart", _cmAutostart.Selected);
@@ -121,9 +122,10 @@ namespace MediaPortal.GUI.Settings
             }
           }
         }
-        // ReSharper disable EmptyGeneralCatchClause
-        catch (Exception) { }
-        // ReSharper restore EmptyGeneralCatchClause
+        catch (Exception ex)
+        {
+          Log.Error("GUISettingsGeneral: SaveSettings {0}", ex.Message);
+        }
 
         xmlwriter.SetValueAsBool("general", "minimizeonstartup", _cmMinimizeonstartup.Selected);
         xmlwriter.SetValueAsBool("general", "minimizeonexit", _cmMinimizeonexit.Selected);

@@ -623,8 +623,9 @@ namespace MediaPortal.TagReader
           var fi = new FileInfo(fileSavePath);
           return (fi.Length > 0) ? fileSavePath : String.Empty;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("Utils:GetImageFile {0}", ex.Message);
           return String.Empty;
         }
       }

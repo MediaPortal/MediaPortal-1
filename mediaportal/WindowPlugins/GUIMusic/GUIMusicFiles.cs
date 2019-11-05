@@ -2169,7 +2169,10 @@ namespace MediaPortal.GUI.Music
         int iTrack = Convert.ToInt32(strTrack);
         return iTrack;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GUIMusicFiles: GetCDATrackNumber {0}", ex.Message);
+      }
       return 1;
     }
 
@@ -2323,8 +2326,9 @@ namespace MediaPortal.GUI.Music
               cdInfoSuccessful = false;
             }
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            Log.Error("GUIMusicFiles: GetCDInfo {0}", ex.Message);
             MusicCD = null;
             cdInfoSuccessful = false;
           }

@@ -223,9 +223,9 @@ namespace MediaPortal.Util
             }
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Warn("Picture: exception loading {0}", strPic);
+          Log.Warn("Picture: exception loading {0} {1}", strPic, ex.Message);
         }
       }
       catch (ThreadAbortException ext)
@@ -839,8 +839,9 @@ namespace MediaPortal.Util
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("Picture:BitmapFromSource {0}", ex.Message);
         return false;
       }
     }
@@ -881,14 +882,15 @@ namespace MediaPortal.Util
             }
           }
         }
-        catch (FileNotFoundException)
+        catch (FileNotFoundException ex)
         {
+          Log.Warn("Picture:CreateThumbnailVideo {0}", ex.Message);
           result = false;
         }
       }
-      catch (Exception)
+      catch (Exception ex1)
       {
-        Log.Warn("Picture: Fast loading of thumbnail {0} failed - trying safe fallback now", aInputFilename);
+        Log.Warn("Picture: Fast loading of thumbnail {0} failed - trying safe fallback now {1}", aInputFilename, ex1.Message);
 
         try
         {
@@ -902,17 +904,19 @@ namespace MediaPortal.Util
               }
             }
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            Log.Error("Picture:CreateThumbnailVideo {0}", ex.Message);
           }
         }
-        catch (FileNotFoundException)
+        catch (FileNotFoundException ex)
         {
+          Log.Warn("Picture:CreateThumbnailVideo {0}", ex.Message);
           result = false;
         }
-        catch (OutOfMemoryException)
+        catch (OutOfMemoryException ex)
         {
-          Log.Warn("Picture: Creating thumbnail failed - image format is not supported of {0}", aInputFilename);
+          Log.Warn("Picture: Creating thumbnail failed - image format is not supported of {0} {1}", aInputFilename, ex.Message);
           result = false;
         }
         catch (Exception ex)
@@ -1158,8 +1162,10 @@ namespace MediaPortal.Util
         }
 
       }
-      catch (Exception)
+      catch (Exception ex1)
       {
+        Log.Warn("Picture:ReCreateThumbnail {0}", ex1.Message);
+
         try
         {
           try
@@ -1172,14 +1178,15 @@ namespace MediaPortal.Util
               }
             }
           }
-          catch (FileNotFoundException)
+          catch (FileNotFoundException ex)
           {
+            Log.Warn("Picture:ReCreateThumbnail {0}", ex.Message);
             result = false;
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Warn("Picture: Fast loading of thumbnail {0} failed - trying safe fallback now", thumbnailImageDest);
+          Log.Warn("Picture: Fast loading of thumbnail {0} failed - trying safe fallback now {1}", thumbnailImageDest, ex.Message);
 
           try
           {
@@ -1193,22 +1200,24 @@ namespace MediaPortal.Util
                 }
               }
             }
-            catch (Exception)
+            catch (Exception ex2)
             {
+              Log.Error("Picture:ReCreateThumbnail {0}", ex2.Message);
             }
           }
-          catch (FileNotFoundException)
+          catch (FileNotFoundException ex2)
           {
+            Log.Warn("Picture:ReCreateThumbnail {0}", ex2.Message);
             result = false;
           }
-          catch (OutOfMemoryException)
+          catch (OutOfMemoryException ex2)
           {
-            Log.Warn("Picture: Creating thumbnail failed - image format is not supported of {0}", thumbnailImageSource);
+            Log.Warn("Picture: Creating thumbnail failed - image format is not supported of {0} {1}", thumbnailImageSource, ex2.Message);
             result = false;
           }
-          catch (Exception)
+          catch (Exception ex2)
           {
-            Log.Info("Pictures: No thumbnail created for -- {0}", thumbnailImageSource);
+            Log.Info("Pictures: No thumbnail created for -- {0} {1}", thumbnailImageSource, ex2.Message);
             result = false;
           }
         }
@@ -1337,8 +1346,9 @@ namespace MediaPortal.Util
 
         result = SaveThumbnail(aThumbTargetPath, myTargetThumb);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Warn("Picture:CreateThumbnail {0}", ex.Message);
         result = false;
       }
       finally

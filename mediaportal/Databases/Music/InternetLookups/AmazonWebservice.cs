@@ -163,12 +163,19 @@ namespace MediaPortal.Music.Amazon
           // wr.Proxy = WebProxy.GetDefaultProxy();
           webReq.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("AmazonWebService:GetImageFromURL: {0}", ex.Message);
+        }
+
         WebResponse webResp = webReq.GetResponse();
         img = Image.FromStream(webResp.GetResponseStream());
       }
 
-      catch {}
+      catch (Exception ex)
+      {
+        Log.Error("AmazonWebService:GetImageFromURL: {0}", ex.Message);
+      }
 
       return img;
     }
@@ -232,7 +239,10 @@ namespace MediaPortal.Music.Amazon
             // Use the current user in case an NTLM Proxy or similar is used.
             request.Proxy.Credentials = CredentialCache.DefaultCredentials;
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("AmazonWebService:GetAlbumInfo: {0}", ex.Message);
+          }
         }
         catch (Exception e)
         {

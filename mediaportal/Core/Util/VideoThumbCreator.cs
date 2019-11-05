@@ -292,9 +292,9 @@ namespace MediaPortal.Util
               File.Copy(aThumbPath, ShareThumb);
               File.SetAttributes(ShareThumb, File.GetAttributes(ShareThumb) & ~FileAttributes.Hidden);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-              Log.Debug("TvThumbnails.VideoThumbCreator: Exception on File.Copy({0}, {1})", ShareThumbTemp, ShareThumb);
+              Log.Debug("TvThumbnails.VideoThumbCreator: Exception on File.Copy({0}, {1}) {2}", ShareThumbTemp, ShareThumb, ex.Message);
             }
           }
         }
