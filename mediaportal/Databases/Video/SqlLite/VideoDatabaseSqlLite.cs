@@ -78,7 +78,10 @@ namespace MediaPortal.Video.Database
         {
           Directory.CreateDirectory(strPath);
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("VideoDatabaseSqLite:Open: {0}", ex.Message);
+        }
         m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, @"VideoDatabaseV5.db3"));
 
         _dbHealth = DatabaseUtility.IntegrityCheck(m_db);
@@ -698,7 +701,10 @@ namespace MediaPortal.Video.Database
       {
         // Will be logged in thread main code
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("VideoDatabaseSqLite:MovieDuration: {0}", ex.Message);
+      }
 
       return totalMovieDuration;
     }
@@ -1202,7 +1208,10 @@ namespace MediaPortal.Video.Database
         {
           // Will be logged in thread main code
         }
-        catch (Exception) { }
+        catch (Exception ex)
+        {
+          Log.Error("VideoDatabaseSqLite:GetFilesForMovie: {0}", ex.Message);
+        }
       }
     }
 
@@ -1239,7 +1248,10 @@ namespace MediaPortal.Video.Database
             CheckMediaInfo(string.Empty, strFilenameAndPath, -1, fileID, refresh);
             results = m_db.Execute(strSQL);
           }
-          catch (Exception) { }
+          catch (Exception ex)
+          {
+            Log.Error("VideoDatabaseSqLite:GetVideoFilesMediaInfo: {0}", ex.Message);
+          }
         }
 
         mediaInfo.VideoCodec = DatabaseUtility.Get(results, 0, "videoCodec");
@@ -8003,8 +8015,9 @@ namespace MediaPortal.Video.Database
           details.DirectorID = -1;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("VideoDatabaseSqLite:SetMovieDetails: {0}", ex.Message);
         details.DirectorID = -1;
       }
       

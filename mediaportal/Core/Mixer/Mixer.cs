@@ -292,9 +292,10 @@ namespace MediaPortal.Mixer
           return new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         // Catch exception when audio device is disconnected
+        Log.Error("Mixer: GetControl {0}", ex.Message);
       }
       return null;
     }
@@ -330,9 +331,10 @@ namespace MediaPortal.Mixer
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         // Catch exception when audio device is disconnected
+        Log.Error("Mixer: GetValue {0}", ex.Message);
       }
       // Set Volume to 30000 when audio recover
       return 30000;

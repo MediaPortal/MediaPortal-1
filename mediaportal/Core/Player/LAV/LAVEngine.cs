@@ -73,8 +73,9 @@ namespace MediaPortal.Player.LAV
           }
           return delay;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Warn("GetAudioDelayLav: {0}", ex.Message);
           if (_baseFilterLavAudio != null)
           {
             DirectShowUtil.ReleaseComObject(_baseFilterLavAudio);
@@ -95,8 +96,9 @@ namespace MediaPortal.Player.LAV
             DsError.ThrowExceptionForHR(hr);
           }
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
+          Log.Warn("SetAudioDelayLav: {0}", ex.Message);
           if (_baseFilterLavAudio != null)
           {
             DirectShowUtil.ReleaseComObject(_baseFilterLavAudio);
@@ -132,8 +134,9 @@ namespace MediaPortal.Player.LAV
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("LAVEngine: AudioDelayMinus: {0}", ex.Message);
         if (_baseFilterLavAudio != null)
         {
           DirectShowUtil.ReleaseComObject(_baseFilterLavAudio);
@@ -178,8 +181,9 @@ namespace MediaPortal.Player.LAV
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("LAVEngine: AudioDelayPlus: {0}", ex.Message);
         if (_baseFilterLavAudio != null)
         {
           DirectShowUtil.ReleaseComObject(_baseFilterLavAudio);

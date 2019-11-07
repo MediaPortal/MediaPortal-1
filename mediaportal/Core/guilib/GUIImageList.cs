@@ -94,7 +94,10 @@ namespace MediaPortal.GUI.Library
         {
           Percentage = (int)(Math.Round(Double.Parse(percent)) * 10d);
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("GUIImageList(Render): " + ex.Message);
+        }
       }
       if (_orientation == eOrientation.Horizontal)
       {

@@ -1141,8 +1141,9 @@ namespace MediaPortal.GUI.Library
               // Measure the alphabet
               PaintAlphabet(g, true);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
+              Log.Error("GUIFont: CreateFontBitmap {0}", ex.Message);
               // If that still doesn't fit, scale down again and continue
               _textureScale *= 0.9F;
               continue;
@@ -1219,14 +1220,15 @@ namespace MediaPortal.GUI.Library
                       _fontHeight,
                       _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
           }
-          catch (InvalidDataException) // weird : should have been FileNotFoundException when file is missing ??
+          catch (InvalidDataException ex) // weird : should have been FileNotFoundException when file is missing ??
           {
+            Log.Warn("GUIFont: InitializeDeviceObjects {0}", ex.Message);
             needsCreation = true;
           }
-          catch (Exception)
+          catch (Exception ex)
           {
             // Deserialisation failed. Maybe the language changed or the font cache got manipulated.
-            Log.Error("GUIFont: Failed to load font {0} from cache. Trying to recreate it...", _fontName);
+            Log.Error("GUIFont: Failed to load font {0} from cache. {1} Trying to recreate it...", _fontName,ex.Message);
             MediaPortal.Util.Utils.FileDelete(strCache);
             MediaPortal.Util.Utils.FileDelete(strCache + ".bxml");
             needsCreation = true;
@@ -1280,7 +1282,10 @@ namespace MediaPortal.GUI.Library
               }
             }
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("GUIFont (InitializeDeviceObjects) Exception:{0}", ex.Message);
+          }
         }
 
         try
@@ -1290,9 +1295,9 @@ namespace MediaPortal.GUI.Library
           SetFontEgine();
           _d3dxFont = new Microsoft.DirectX.Direct3D.Font(GUIGraphicsContext.DX9Device, _systemFont);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Error("GUIFont: Failed to D3D...");
+          Log.Error("GUIFont: Failed to D3D... {0}", ex.Message);
         }
       }
       finally
@@ -1413,8 +1418,9 @@ namespace MediaPortal.GUI.Library
               g.DrawString(str, _systemFont, Brushes.White, new Point((int)x, (int)y));
             }
           }
-          catch (ExternalException)
+          catch (ExternalException ex)
           {
+            Log.Warn("GUIFont: PaintAlphabet {0}", ex.Message);
             // If GDI+ throws a generic exception (Interop ExternalException) because the requested character (str) isn't defined, ignore it and move on.
             continue;
           }

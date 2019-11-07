@@ -188,7 +188,10 @@ namespace MediaPortal.Util
         Directory.CreateDirectory(News);
         Directory.CreateDirectory(Trailers);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("CreateFolders: {0}", ex.Message);
+      }
     }
 
     #region Public getters and setters

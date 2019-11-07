@@ -274,7 +274,10 @@ namespace MediaPortal.GUI.Video
               {
                 strFiles = Directory.GetFiles(pItem.Path);
               }
-              catch (Exception) { }
+              catch (Exception ex)
+              {
+                Log.Error("GUIVideoSelectDVDHandler: SetIMDBThumbs {0}", ex.Message);
+              }
 
               if (strFiles != null)
               {
@@ -459,7 +462,10 @@ namespace MediaPortal.GUI.Video
         {
           strDirs = Directory.GetDirectories(path, "video_ts");
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("GUIVideoSelectDVDHandler: GetFolderVideoFile {0}", ex.Message);
+        }
         if (strDirs != null)
         {
           if (strDirs.Length == 1)

@@ -623,18 +623,18 @@ namespace MediaPortal.GUI.Library
         {
           _windowId = Int32.Parse(nodeId.InnerText);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Error("LoadSkin: error converting nodeid <{0}> to int", nodeId.InnerText);
+          Log.Error("LoadSkin: error converting nodeid <{0}> to int {1}", nodeId.InnerText, ex.Message);
         }
         // Convert the id of the default control to an int
         try
         {
           _defaultControlId = Int32.Parse(nodeDefault.InnerText);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Error("LoadSkin: error converting nodeDefault <{0}> to int", nodeDefault.InnerText);
+          Log.Error("LoadSkin: error converting nodeDefault <{0}> to int {1}", nodeDefault.InnerText, ex.Message);
         }
 
         // find any XAML complex/compound properties
@@ -780,12 +780,12 @@ namespace MediaPortal.GUI.Library
                       bool.Parse(GUIPropertyManager.Parse(node.Attributes["condition"].Value,
                         GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
                   }
-                  catch (FormatException)
+                  catch (FormatException ex)
                   {
                     // The include will not be loaded if the expression could not be evaluated.
                     loadInclude = false;
-                    Log.Debug("LoadSkin: {0}, could not evaluate include expression '{1}' ", _windowXmlFileName,
-                      node.Attributes["condition"].Value);
+                    Log.Debug("LoadSkin: {0}, could not evaluate include expression '{1}' {2}", _windowXmlFileName,
+                      node.Attributes["condition"].Value, ex.Message);
                   }
                 }
 
@@ -963,9 +963,9 @@ namespace MediaPortal.GUI.Library
               {
                 createAsProperty = bool.Parse(node.Attributes["property"].Value);
               }
-              catch (FormatException)
+              catch (FormatException ex)
               {
-                Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'property'; {0} is not a boolean value", node.Attributes["property"].Value);
+                Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'property'; {0} is not a boolean value {1}", node.Attributes["property"].Value, ex.Message);
               }
             }
 
@@ -977,9 +977,9 @@ namespace MediaPortal.GUI.Library
               {
                 evaluateNow = bool.Parse(node.Attributes["evaluateNow"].Value);
               }
-              catch (FormatException)
+              catch (FormatException ex)
               {
-                Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'evaluateNow'; {0} is not a boolean value", node.Attributes["evaluateNow"].Value);
+                Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'evaluateNow'; {0} is not a boolean value {1}", node.Attributes["evaluateNow"].Value, ex.Message);
               }
             }
 
@@ -2057,9 +2057,9 @@ namespace MediaPortal.GUI.Library
             _previousFocusedControlId = id;
           }
         }
-        catch (ThreadAbortException)
+        catch (ThreadAbortException ex)
         {
-          Log.Debug("OnMessage.ThreadAbortException exception.");
+          Log.Debug("OnMessage.ThreadAbortException exception. {0}", ex.Message);
         }
         catch (Exception ex)
         {

@@ -114,8 +114,9 @@ namespace MediaPortal.TagReader
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        GUI.Library.Log.Error("CueUtil:CueFakeTrackFile2MusicTag {0}", ex.Message);
         return false;
       }
       return true;

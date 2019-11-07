@@ -595,7 +595,10 @@ namespace MediaPortal.GUI.Settings
           // request.Proxy = WebProxy.GetDefaultProxy();
           request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception ex)
+        {
+          Log.Error("GUISettingsMyVideos: DownloadFile {0}", ex.Message);
+        }
 
         using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
         {
@@ -949,8 +952,9 @@ namespace MediaPortal.GUI.Settings
             DeleteVideoThumbs(files, configDir);
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("GUISettingsMyVideos: OnResetDatabase {0}", ex.Message);
           GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
           dlgOk.SetHeading(GUILocalizeStrings.Get(257));
           dlgOk.SetLine(1, GUILocalizeStrings.Get(300040)); // VDB can't be cleared
@@ -1027,8 +1031,9 @@ namespace MediaPortal.GUI.Settings
           File.Delete(file);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GUISettingsMyVideos: DeleteVideoThumbs {0}", ex.Message);
       }
     }
 

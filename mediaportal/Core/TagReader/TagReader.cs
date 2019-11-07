@@ -281,8 +281,9 @@ namespace MediaPortal.TagReader
               {
                 musictag.Rating = Convert.ToInt32(rating[0]);
               }
-              catch (Exception)
+              catch (Exception ex)
               {
+                Log.Error("TagReader:ReadTag {0}", ex.Message);
               }
             }
           }
@@ -297,9 +298,9 @@ namespace MediaPortal.TagReader
 
         return musictag;
       }
-      catch (UnsupportedFormatException)
+      catch (UnsupportedFormatException ex)
       {
-        Log.Warn("Tagreader: Unsupported File Format {0}", strFile);
+        Log.Warn("Tagreader: Unsupported File Format {0} {1}", strFile, ex.Message);
       }
       catch (Exception ex)
       {
@@ -323,9 +324,9 @@ namespace MediaPortal.TagReader
         tag.Save();
         return true;
       }
-      catch (UnsupportedFormatException)
+      catch (UnsupportedFormatException ex)
       {
-        Log.Warn("Tagreader: Unsupported File Format {0}", strFile);
+        Log.Warn("Tagreader: Unsupported File Format {0} {1}", strFile, ex.Message);
       }
       catch (Exception ex)
       {

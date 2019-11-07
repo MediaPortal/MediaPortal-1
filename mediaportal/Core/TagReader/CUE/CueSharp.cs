@@ -414,8 +414,9 @@ namespace MediaPortal.TagReader
           {
             temp = line.Substring(0, line.IndexOf(' ')).ToUpperInvariant();
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            Log.Error("CueSharp:ParseFlags {0}", ex.Message);
             temp = line.ToUpperInvariant();
           }
 
@@ -450,8 +451,9 @@ namespace MediaPortal.TagReader
           {
             temp = line.Substring(line.IndexOf(' '), line.Length - line.IndexOf(' '));
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            Log.Error("CueSharp:ParseFlags {0}", ex.Message);
             temp = line.Substring(0, line.Length);
           }
 
@@ -603,14 +605,7 @@ namespace MediaPortal.TagReader
 
       tempString = line.Substring(line.IndexOf(' '), line.Length - line.IndexOf(' ')).Trim();
 
-      try
-      {
-        trackNumber = Convert.ToInt32(tempString.Substring(0, tempString.IndexOf(' ')));
-      }
-      catch (Exception)
-      {
-        throw;
-      }
+      trackNumber = Convert.ToInt32(tempString.Substring(0, tempString.IndexOf(' ')));
 
       //find the data type.
       tempString = tempString.Substring(tempString.IndexOf(' '), tempString.Length - tempString.IndexOf(' ')).Trim();

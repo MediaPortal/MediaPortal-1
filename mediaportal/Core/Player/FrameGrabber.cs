@@ -214,7 +214,7 @@ namespace MediaPortal
           //      return b;
           //    }
           //  }
-          //  catch (Exception)
+          //  catch (Exception ex)
           //  {
           //    backbuffer?.Dispose();
           //    b?.Dispose();
@@ -359,8 +359,9 @@ namespace MediaPortal
                 //raise event to any subcribers for event NewFrameHandler
                 OnNewFrameMadVr(width, height, arWidth, arHeight, GUIGraphicsContext.madVRFrameBitmap, FrameSource);
               }
-              catch (Exception)
+              catch (Exception ex)
               {
+                Log.Error("FrameGrabber: OnFrame: {0}", ex.Message);
               }
             }
             // MP1-4248 :End* Ambilight Capture code
@@ -418,8 +419,9 @@ namespace MediaPortal
           //raise event to any subcribers for event NewFrameHandler
           OnNewFrame(width, height, arWidth, arHeight, pSurface, FrameSource);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("FrameGrabber: OnFrame: {0}", ex.Message);
         }
       }
       // MP1-4248 :End* Ambilight Capture code

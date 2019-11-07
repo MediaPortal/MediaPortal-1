@@ -1661,7 +1661,10 @@ namespace MediaPortal.Video.Database
                   int pathId = VideoDatabase.AddPath(path);
                   VideoDatabase.AddFile(movieId, pathId, filename);
                 }
-                catch (Exception){}
+                catch (Exception ex)
+                {
+                  Log.Error("IMDBFetcher:ScanIMDB: {0}", ex.Message);
+                }
               }
             }
           }
@@ -1772,7 +1775,10 @@ namespace MediaPortal.Video.Database
                 int pathId = VideoDatabase.AddPath(path);
                 VideoDatabase.AddFile(movieId, pathId, filename);
               }
-              catch (Exception) { }
+              catch (Exception ex)
+              {
+                Log.Error("IMDBFetcher:ScanIMDB: {0}", ex.Message);
+              }
             }
           }
         }
