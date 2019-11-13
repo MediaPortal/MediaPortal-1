@@ -25,6 +25,7 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         private Boolean moreFragments = UdpRtpUrl.DefaultUdpMoreFragments;
         private int ttl = UdpRtpUrl.DefaultUdpTtl;
         private String options = UdpRtpUrl.DefaultUdpOptions;
+        private int igmpInterval = UdpRtpUrl.DefaultUdpIgmpInterval;
 
         #endregion
 
@@ -282,6 +283,27 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             }
         }
 
+        /// <summary>
+        /// Gets or sets the UDP multicast IGMP interval.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>The <see cref="IgmpInterval"/> is lower than zero.</para>
+        /// </exception>
+        [Category("UDP or RTP (raw)"), Description("IGMP interval"), DefaultValue(UdpRtpUrl.DefaultUdpIgmpInterval)]
+        public int IgmpInterval
+        {
+            get { return this.igmpInterval; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("IgmpInterval", value, "Cannot be less than 0.");
+                }
+
+                this.igmpInterval = value;
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -340,6 +362,10 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
             if (String.CompareOrdinal(this.Options, UdpRtpUrl.DefaultUdpOptions) != 0)
             {
                 parameters.Add(new Parameter(UdpRtpUrl.ParameterUdpOptions, this.Options));
+            }
+            if (this.IgmpInterval != UdpRtpUrl.DefaultUdpIgmpInterval)
+            {
+                parameters.Add(new Parameter(UdpRtpUrl.ParameterUdpIgmpInterval, this.IgmpInterval.ToString()));
             }
 
             // return formatted connection string
@@ -409,6 +435,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
                 if (String.CompareOrdinal(param.Name, UdpRtpUrl.ParameterUdpOptions) == 0)
                 {
                     this.Options = param.Value;
+                }
+
+                if (String.CompareOrdinal(param.Name, UdpRtpUrl.ParameterUdpIgmpInterval) == 0)
+                {
+                    this.IgmpInterval = int.Parse(param.Value);
                 }
             }
         }
@@ -520,6 +551,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// </summary>
         protected static readonly String ParameterUdpOptions = "UdpOptions";
 
+        /// <summary>
+        /// Specifies IGMP interval.
+        /// </summary>
+        protected static readonly String ParameterUdpIgmpInterval = "UdpIgmpInterval";
+
         /* default values */
 
         /// <summary>
@@ -578,6 +614,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter.Url
         /// Default value for <see cref="ParameterUdpOptions"/>.
         /// </summary>
         public const String DefaultUdpOptions = "";
+
+        /// <summary>
+        /// Default value for <see cref="ParameterUdpIgmpInterval"/>.
+        /// </summary>
+        public const int DefaultUdpIgmpInterval = 30000;
 
         #endregion
     }

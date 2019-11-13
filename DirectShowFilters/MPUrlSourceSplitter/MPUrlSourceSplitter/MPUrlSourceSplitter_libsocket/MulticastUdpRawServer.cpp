@@ -30,6 +30,7 @@ CMulticastUdpRawServer::CMulticastUdpRawServer(HRESULT *result)
   : CMulticastUdpServer(result)
 {
   this->igmpSockets = NULL;
+  this->igmpInterval = UINT_MAX;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -51,15 +52,17 @@ CMulticastUdpRawServer::~CMulticastUdpRawServer(void)
 
 /* other methods */
 
-HRESULT CMulticastUdpRawServer::Initialize(int family, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterfaceCollection *networkInterfaces, CIpv4Header *header)
+HRESULT CMulticastUdpRawServer::Initialize(int family, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterfaceCollection *networkInterfaces, CIpv4Header *header, unsigned int igmpInterval)
 {
   HRESULT result = __super::Initialize(family, multicastAddress, sourceAddress, networkInterfaces);
   CHECK_POINTER_DEFAULT_HRESULT(result, this->igmpSockets);
   CHECK_POINTER_DEFAULT_HRESULT(result, header);
+  CHECK_CONDITION_HRESULT(result, igmpInterval > 0, result, E_INVALIDARG);
 
   if (SUCCEEDED(result))
   {
     this->igmpSockets->Clear();
+    this->igmpInterval = igmpInterval;
 
     for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->sockets->Count())); i++)
     {
@@ -133,4 +136,29 @@ HRESULT CMulticastUdpRawServer::StopListening(void)
   this->igmpSockets->Clear();
 
   return __super::StopListening();
+}
+
+HRESULT CMulticastUdpRawServer::MaintainConnections(void)
+{
+  HRESULT result = __super::MaintainConnections();
+  DWORD current = GetTickCount();
+
+  if (SUCCEEDED(result))
+  {
+    for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->igmpSockets->Count())); i++)
+    {
+      HRESULT temp = S_OK;
+      CMulticastUdpRawSocketContext *igmpSocket = dynamic_cast<CMulticastUdpRawSocketContext *>(this->igmpSockets->GetItem(i));
+
+      if (current > (igmpSocket->GetLastIgmpPacket() + this->igmpInterval))
+      {
+        temp = igmpSocket->SubscribeToMulticastGroup();
+      }
+
+      result = (i == 0) ? temp : result;
+      result = SUCCEEDED(temp) ? temp : result;
+    }
+  }
+
+  return result;
 }

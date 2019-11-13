@@ -27,6 +27,7 @@ CMulticastUdpRawSocketContext::CMulticastUdpRawSocketContext(HRESULT *result, CI
   : CMulticastUdpSocketContext(result, multicastAddress, sourceAddress, networkInterface)
 {
   this->header = NULL;
+  this->lastIgmpPacket = 0;
 
   CHECK_POINTER_DEFAULT_HRESULT(*result, header);
 
@@ -48,6 +49,11 @@ CMulticastUdpRawSocketContext::~CMulticastUdpRawSocketContext()
 }
 
 /* get methods */
+
+DWORD CMulticastUdpRawSocketContext::GetLastIgmpPacket(void)
+{
+  return this->lastIgmpPacket;
+}
 
 /* set methods */
 
@@ -199,6 +205,8 @@ HRESULT CMulticastUdpRawSocketContext::SubscribeToMulticastGroup(void)
     unsigned int sent = 0;
 
     result = this->Send((const char *)ipv4packet, ipv4PacketLength, &sent, this->multicastAddress);
+
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->lastIgmpPacket = GetTickCount());
   }
 
   FREE_MEM(ipv4packet);
@@ -265,54 +273,54 @@ HRESULT CMulticastUdpRawSocketContext::UnsubscribeFromMulticastGroup(void)
   uint16_t ipv4PacketHeaderLength = IPV4_HEADER_LENGTH_MIN + this->header->GetOptionsLength();
   uint16_t ipv4PacketLength = ipv4PacketHeaderLength + IGMP_PACKET_LENGTH_V2;
 
-  ALLOC_MEM_DEFINE_SET(ipv4packet, uint8_t, ipv4PacketLength, 0xFF);
-  CHECK_POINTER_HRESULT(result, ipv4packet, result, E_OUTOFMEMORY);
+  ALLOC_MEM_DEFINE_SET(ipv4Packet, uint8_t, ipv4PacketLength, 0xFF);
+  CHECK_POINTER_HRESULT(result, ipv4Packet, result, E_OUTOFMEMORY);
 
   if (SUCCEEDED(result))
   {
     uint8_t ihl = ipv4PacketHeaderLength / 4;
 
     // version field is always 4
-    *(ipv4packet) = (0x40 + ihl);
+    *(ipv4Packet) = (0x40 + ihl);
 
     // DSCP and ECN fields
-    *(ipv4packet + 1) = ((this->header->GetDscp() << 2) + this->header->GetEcn());
+    *(ipv4Packet + 1) = ((this->header->GetDscp() << 2) + this->header->GetEcn());
 
     // total length of IPV4 packet
-    *(ipv4packet + 2) = (ipv4PacketLength >> 8);
-    *(ipv4packet + 3) = (ipv4PacketLength & 0x00FF);
+    *(ipv4Packet + 2) = (ipv4PacketLength >> 8);
+    *(ipv4Packet + 3) = (ipv4PacketLength & 0x00FF);
 
     // IPV4 packet identification
-    *(ipv4packet + 4) = (this->header->GetIdentification() >> 8);
-    *(ipv4packet + 5) = (this->header->GetIdentification() & 0x00FF);
+    *(ipv4Packet + 4) = (this->header->GetIdentification() >> 8);
+    *(ipv4Packet + 5) = (this->header->GetIdentification() & 0x00FF);
 
     // IPV4 flags and fragment offset (always 0)
-    *(ipv4packet + 6) = this->header->IsDontFragment() ? 0x40 : 0x00;
-    *(ipv4packet + 6) |= this->header->IsMoreFragments() ? 0x20 : 0x00;
+    *(ipv4Packet + 6) = this->header->IsDontFragment() ? 0x40 : 0x00;
+    *(ipv4Packet + 6) |= this->header->IsMoreFragments() ? 0x20 : 0x00;
 
-    *(ipv4packet + 7) = 0x00;
+    *(ipv4Packet + 7) = 0x00;
 
-    *(ipv4packet + 8) = this->header->GetTtl();
-    *(ipv4packet + 9) = IPV4_HEADER_IGMP_PROTOCOL;
+    *(ipv4Packet + 8) = this->header->GetTtl();
+    *(ipv4Packet + 9) = IPV4_HEADER_IGMP_PROTOCOL;
 
     // IPV4 source address
-    memcpy(ipv4packet + 12, &this->ipAddress->GetAddressIPv4()->sin_addr.S_un.S_addr, 4);
+    memcpy(ipv4Packet + 12, &this->ipAddress->GetAddressIPv4()->sin_addr.S_un.S_addr, 4);
 
     // IPV4 destination address
-    memcpy(ipv4packet + 16, &this->multicastAddress->GetAddressIPv4()->sin_addr.S_un.S_addr, 4);
+    memcpy(ipv4Packet + 16, &this->multicastAddress->GetAddressIPv4()->sin_addr.S_un.S_addr, 4);
 
     // IPV4 options
-    memcpy(ipv4packet + 20, this->header->GetOptions(), this->header->GetOptionsLength());
+    memcpy(ipv4Packet + 20, this->header->GetOptions(), this->header->GetOptionsLength());
 
     // calculate IPv4 header checksum
-    uint16_t checksum = CMulticastUdpRawSocketContext::CalculateChecksum(ipv4packet, ipv4PacketHeaderLength);
+    uint16_t checksum = CMulticastUdpRawSocketContext::CalculateChecksum(ipv4Packet, ipv4PacketHeaderLength);
 
     // update IPv4 header checksum
-    *(ipv4packet + 10) = ((checksum & 0xFF00) >> 8);
-    *(ipv4packet + 11) = (checksum & 0x00FF);
+    *(ipv4Packet + 10) = ((checksum & 0xFF00) >> 8);
+    *(ipv4Packet + 11) = (checksum & 0x00FF);
 
     // add IGMPv2 payload
-    memcpy(ipv4packet + ipv4PacketHeaderLength, igmpPacket, IGMP_PACKET_LENGTH_V2);
+    memcpy(ipv4Packet + ipv4PacketHeaderLength, igmpPacket, IGMP_PACKET_LENGTH_V2);
   }
 
   // try to send IPv4 packet
@@ -320,10 +328,10 @@ HRESULT CMulticastUdpRawSocketContext::UnsubscribeFromMulticastGroup(void)
   {
     unsigned int sent = 0;
 
-    result = this->Send((const char *)ipv4packet, ipv4PacketLength, &sent, this->multicastAddress);
+    result = this->Send((const char *)ipv4Packet, ipv4PacketLength, &sent, this->multicastAddress);
   }
 
-  FREE_MEM(ipv4packet);
+  FREE_MEM(ipv4Packet);
   FREE_MEM(igmpPacket);
 
   this->flags &= ~MULTICAST_UDP_SOCKET_CONTEXT_FLAG_SUBSCRIBED_TO_GROUP;

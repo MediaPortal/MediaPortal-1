@@ -88,3 +88,8 @@ HRESULT CSimpleServer::StopListening(void)
 
   return S_OK;
 }
+
+HRESULT CSimpleServer::MaintainConnections(void)
+{
+  return S_OK;
+}

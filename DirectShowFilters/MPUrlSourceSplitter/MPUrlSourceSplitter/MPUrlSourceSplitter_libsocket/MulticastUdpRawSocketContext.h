@@ -47,6 +47,10 @@ public:
 
   /* get methods */
 
+  // gets last IGMP packet ticks (in ms)
+  // @return : last IGMP packet ticks (in ms)
+  virtual DWORD GetLastIgmpPacket(void);
+
   /* set methods */
 
   /* other methods */
@@ -83,6 +87,9 @@ protected:
 
   // holds requested IPV4 header
   CIpv4Header *header;
+
+  // holds time when last IGMP packet was send
+  DWORD lastIgmpPacket;
 
   /* methods */
 

@@ -49,8 +49,9 @@ public:
   // @param sourceAddress : the IP address of source (can be NULL if not specified)
   // @param networkInterfaces : network interfaces to initialize multicast UDP server
   // @param header : the IPV4 header
+  // @param igmpInterval : the IGMP packet interval
   // @return : S_OK if successful, error code otherwise (can be system or WSA)
-  virtual HRESULT Initialize(int family, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterfaceCollection *networkInterfaces, CIpv4Header *header);
+  virtual HRESULT Initialize(int family, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterfaceCollection *networkInterfaces, CIpv4Header *header, unsigned int igmpInterval);
 
   // starts listening to incoming connections
   // @return : S_OK if successful, error code otherwise (can be system or WSA)
@@ -59,9 +60,17 @@ public:
   // stops listening to incoming connections
   // @return : S_OK if successful, error code otherwise (can be system or WSA)
   virtual HRESULT StopListening(void);
+
+  // maintains connections
+  // @return : S_OK if successful, error code otherwise (can be system or WSA)
+  virtual HRESULT MaintainConnections(void);
+
 protected:
   // holds IGMP socket contexts
   CSocketContextCollection *igmpSockets;
+
+  // holds IGMP packet interval
+  unsigned int igmpInterval;
 };
 
 #endif

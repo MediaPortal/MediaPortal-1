@@ -369,6 +369,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
             }
 
             CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), request->SetIpv4Header(header), result);
+            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), request->SetIgmpInterval(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_IGMP_INTERVAL, true, UDP_IGMP_INTERVAL_DEFAULT)));
 
             FREE_MEM_CLASS(header);
           }

@@ -28,6 +28,7 @@ CUdpDownloadRequest::CUdpDownloadRequest(HRESULT *result)
 {
   this->checkInterval = 0;
   this->ipv4Header = NULL;
+  this->igmpInterval = UINT_MAX;
 }
 
 CUdpDownloadRequest::~CUdpDownloadRequest(void)
@@ -45,6 +46,11 @@ unsigned int CUdpDownloadRequest::GetCheckInterval(void)
 CIpv4Header *CUdpDownloadRequest::GetIpv4Header(void)
 {
   return this->ipv4Header;
+}
+
+unsigned int CUdpDownloadRequest::GetIgmpInterval(void)
+{
+  return this->igmpInterval;
 }
 
 /* set methods */
@@ -66,6 +72,11 @@ HRESULT CUdpDownloadRequest::SetIpv4Header(CIpv4Header *header)
   }
 
   return result;
+}
+
+void CUdpDownloadRequest::SetIgmpInterval(unsigned int igmpInterval)
+{
+  this->igmpInterval = igmpInterval;
 }
 
 /* other methods */
@@ -99,6 +110,7 @@ bool CUdpDownloadRequest::CloneInternal(CDownloadRequest *clone)
     if (result)
     {
       request->checkInterval = this->checkInterval;
+      request->igmpInterval = this->igmpInterval;
 
       if (this->ipv4Header != NULL)
       {

@@ -219,7 +219,7 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
         {
           CMulticastUdpRawServer *multicastServer = dynamic_cast<CMulticastUdpRawServer *>(server);
 
-          result = multicastServer->Initialize(AF_UNSPEC, localIpAddress, (this->sourceAddress != NULL) ? sourceIpAddresses->GetItem(0) : NULL, interfaces, this->udpDownloadRequest->GetIpv4Header());
+          result = multicastServer->Initialize(AF_UNSPEC, localIpAddress, (this->sourceAddress != NULL) ? sourceIpAddresses->GetItem(0) : NULL, interfaces, this->udpDownloadRequest->GetIpv4Header(), this->udpDownloadRequest->GetIgmpInterval());
         }
         else
         {
@@ -297,6 +297,9 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
         {
           // only one thread can work with UDP data in one time
           LOCK_MUTEX(this->mutex, INFINITE)
+
+          // maintain connections (if needed)
+          server->MaintainConnections();
 
           for (unsigned int i = 0; (SUCCEEDED(result) && (i < server->GetSockets()->Count())); i++)
           {

@@ -28,15 +28,7 @@
 
 #define UDP_DOWNLOAD_REQUEST_FLAG_NONE                                DOWNLOAD_REQUEST_FLAG_NONE
 
-#define UDP_DOWNLOAD_REQUEST_FLAG_IPV4_DSCP                           (1 << (DOWNLOAD_REQUEST_FLAG_LAST + 0))
-#define UDP_DOWNLOAD_REQUEST_FLAG_IPV4_ECN                            (1 << (DOWNLOAD_REQUEST_FLAG_LAST + 1))
-#define UDP_DOWNLOAD_REQUEST_FLAG_IPV4_IDENTIFICATION                 (1 << (DOWNLOAD_REQUEST_FLAG_LAST + 2))
-#define UDP_DOWNLOAD_REQUEST_FLAG_IPV4_FLAGS                          (1 << (DOWNLOAD_REQUEST_FLAG_LAST + 3))
-#define UDP_DOWNLOAD_REQUEST_FLAG_IPV4_TTL                            (1 << (DOWNLOAD_REQUEST_FLAG_LAST + 4))
-#define UDP_DOWNLOAD_REQUEST_FLAG_IPV4_PROTOCOL                       (1 << (DOWNLOAD_REQUEST_FLAG_LAST + 5))
-#define UDP_DOWNLOAD_REQUEST_FLAG_IPV4_OPTIONS                        (1 << (DOWNLOAD_REQUEST_FLAG_LAST + 6))
-
-#define UDP_DOWNLOAD_REQUEST_FLAG_LAST                                (DOWNLOAD_REQUEST_FLAG_LAST + 7)
+#define UDP_DOWNLOAD_REQUEST_FLAG_LAST                                (DOWNLOAD_REQUEST_FLAG_LAST + 0)
 
 class CUdpDownloadRequest : public CDownloadRequest
 {
@@ -54,6 +46,10 @@ public:
   // @return : IPV4 header or NULL if not specified
   virtual CIpv4Header *GetIpv4Header(void);
 
+  // gets IGMP packet interval (in ms)
+  // @return : IGMP packet interval (in ms)
+  virtual unsigned int GetIgmpInterval(void);
+
   /* set methods */
 
   // sets receive data check interval (in ms)
@@ -64,6 +60,10 @@ public:
   // @param header : the IPV4 header
   // @result : S_OK if successful, error code otherwise
   virtual HRESULT SetIpv4Header(CIpv4Header *header);
+
+  // sets IGMP packet interval (in ms)
+  // @param checkInterval : the IGMP packet interval (in ms)
+  virtual void SetIgmpInterval(unsigned int igmpInterval);
 
   /* other methods */
 
@@ -78,6 +78,9 @@ protected:
 
   // specific IPV4 fields
   CIpv4Header *ipv4Header;
+
+  // holds IGMP interval
+  unsigned int igmpInterval;
 
   /* methods */
 
