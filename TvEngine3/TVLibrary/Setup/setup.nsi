@@ -549,11 +549,11 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; MediaInfo
   ;File "${git_ROOT}\Packages\MediaInfo.0.7.95\MediaInfo.dll"
   SetOutPath "$INSTDIR"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.4.0\build\native\x86\MediaInfo.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.4.0\build\native\x86\libcrypto-1_1.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.4.0\build\native\x86\libcurl.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.4.0\build\native\x86\libssl-1_1.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Wrapper.19.4.1\lib\net40\MediaInfo.Wrapper.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.3\build\native\x86\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.3\build\native\x86\libcrypto-1_1.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.3\build\native\x86\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.18.12.3\build\native\x86\libssl-1_1.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Wrapper.18.12.2\lib\net40\MediaInfo.Wrapper.dll"
 
   ; thumbnail software
   File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
@@ -744,10 +744,6 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\ffmpeg.exe"
   Delete "$INSTDIR\TvThumbnails.dll"
   Delete "$INSTDIR\MediaInfo.dll"
-  Delete "$INSTDIR\libcrypto-1_1.dll"
-  Delete "$INSTDIR\libcurl.dll"
-  Delete "$INSTDIR\libssl-1_1.dll"
-  Delete "$INSTDIR\MediaInfo.Wrapper.dll"
 
   ; protocol implementations for MPIPTVSource.ax
   Delete "$INSTDIR\MPIPTV_FILE.dll"
