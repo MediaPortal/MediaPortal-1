@@ -3237,16 +3237,8 @@ public class MediaPortalApp : D3D, IRender
     }
     try
     {
-      GUIPropertyManager.SetProperty("#date", GetDate());
+      GetDate(); // this sets all of the date-related skin variables
       GUIPropertyManager.SetProperty("#time", GetTime());
-      GUIPropertyManager.SetProperty("#Day", GetDay()); // 01
-      GUIPropertyManager.SetProperty("#SDOW", GetShortDayOfWeek()); // Sun
-      GUIPropertyManager.SetProperty("#DOW", GetDayOfWeek()); // Sunday
-      GUIPropertyManager.SetProperty("#Month", GetMonth()); // 01
-      GUIPropertyManager.SetProperty("#SMOY", GetShortMonthOfYear()); // Jan
-      GUIPropertyManager.SetProperty("#MOY", GetMonthOfYear()); // January
-      GUIPropertyManager.SetProperty("#SY", GetShortYear()); // 80
-      GUIPropertyManager.SetProperty("#Year", GetYear()); // 1980
 
       // TODO: remove internal screen saver, there is no need for it anymore as MP bugs have been fixed
       // disable screen saver when MP running and internal selected
@@ -4024,7 +4016,7 @@ public class MediaPortalApp : D3D, IRender
     if (DateTime.Now.Second != _updateTimer.Second)
     {
       _updateTimer = DateTime.Now;
-      GUIPropertyManager.SetProperty("#date", GetDate());
+      GetDate(); // this sets all of the date-related skin variables
       GUIPropertyManager.SetProperty("#time", GetTime());
     }
 
@@ -5928,9 +5920,17 @@ public class MediaPortalApp : D3D, IRender
       dateString = Utils.ReplaceTag(dateString, "<MM>", cur.Month.ToString(CultureInfo.InvariantCulture), "unknown");
       dateString = Utils.ReplaceTag(dateString, "<Year>", cur.Year.ToString(CultureInfo.InvariantCulture), "unknown");
       dateString = Utils.ReplaceTag(dateString, "<YY>", (cur.Year - 2000).ToString("00"), "unknown");
-      GUIPropertyManager.SetProperty("#date", dateString);
 
+      GUIPropertyManager.SetProperty("#date", dateString);
       GUIPropertyManager.SetProperty("#date.local", cur.ToString("d")); // format usable for parsing in string expressions
+      GUIPropertyManager.SetProperty("#Day", GetDay()); // 01
+      GUIPropertyManager.SetProperty("#SDOW", GetShortDayOfWeek()); // Sun
+      GUIPropertyManager.SetProperty("#DOW", day); // Sunday
+      GUIPropertyManager.SetProperty("#Month", GetMonth()); // 01
+      GUIPropertyManager.SetProperty("#SMOY", GetShortMonthOfYear()); // Jan
+      GUIPropertyManager.SetProperty("#MOY", month); // January
+      GUIPropertyManager.SetProperty("#SY", GetShortYear()); // 80
+      GUIPropertyManager.SetProperty("#Year", GetYear()); // 1980
 
       return dateString;
     }
