@@ -106,7 +106,11 @@ namespace MediaPortal.Video.Database
           }
         }
       }
-      catch (Exception) { } // loading the XML doc could fail
+      catch (Exception ex)
+      {
+        // loading the XML doc could fail
+        Log.Error("IMDBMovie:Fetch: {0}", ex.Message);
+      }
       return info;
     }
 
@@ -135,7 +139,10 @@ namespace MediaPortal.Video.Database
         doc.InsertBefore(xmldecl, tagsNode);
         doc.Save(filename);
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("IMDBMovie:Persist: {0}", ex.Message);
+      }
     }
 
     #endregion
@@ -951,7 +958,7 @@ namespace MediaPortal.Video.Database
         {
           hasSubtitles = "true";
         }
-        
+
         GUIPropertyManager.SetProperty("#VideoMediaSource", videoMediaSource);
         GUIPropertyManager.SetProperty("#VideoCodec", Util.Utils.MakeFileName(MediaInfo.VideoCodec));
         GUIPropertyManager.SetProperty("#VideoResolution", MediaInfo.VideoResolution);
@@ -962,7 +969,10 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#Is3D", MediaInfo.Is3D ? "true" : "false");
         GUIPropertyManager.SetProperty("#IsHDR", MediaInfo.IsHDR ? "true" : "false");
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("IMDBMovie:SetMediaInfoProperties: {0}", ex.Message);
+      }
     }
 
     private string GetStrThumb()
@@ -1299,7 +1309,10 @@ namespace MediaPortal.Video.Database
           movie.Genre = minfo.Genre;
         }
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("IMDBMovie:FetchMatroskaInfo: {0}", ex.Message);
+      }
     }
 
     /// <summary>
@@ -1356,9 +1369,9 @@ namespace MediaPortal.Video.Database
         {
           doc.Load(nfoFile);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Info("GUIVideoFiles.Load nfo file error: {0} is not a valid XML document", nfoFile);
+          Log.Info("GUIVideoFiles.Load nfo file error: {0} is not a valid XML document {1}", nfoFile, ex.Message);
           return;
         }
 

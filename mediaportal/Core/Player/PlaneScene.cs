@@ -356,8 +356,9 @@ namespace MediaPortal.Player
           _posRelativeToFrame = xmlreader.GetValueAsBool("subtitles", "subPosRelative", false);
           _useRestoreMadvr1080P = xmlreader.GetValueAsBool("general", "useRestoreMadvr1080p", false);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("PlaceScene: Init: {0}", ex.Message);
         }
       }
     }
@@ -1313,8 +1314,9 @@ namespace MediaPortal.Player
           // is it only increases the UI rendering time.
           //return visible ? 0 : 1; // S_OK, S_FALSE
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("PlaceScene: RenderLayers: {0}", ex.Message);
         }
         finally
         {
@@ -1947,10 +1949,10 @@ namespace MediaPortal.Player
 
         _debugStep = 20;
       }
-      catch (DeviceLostException)
+      catch (DeviceLostException ex)
       {
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
-        Log.Warn("Planescene caught DeviceLostException in InternalPresentImage");
+        Log.Warn("Planescene caught DeviceLostException in InternalPresentImage {0}", ex.Message);
       }
       catch (DirectXException dex)
       {
@@ -1960,6 +1962,8 @@ namespace MediaPortal.Player
           Log.Info("Planescene caught GPU_HUNG in InternalPresentImage");
           GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
         }
+        else
+          Log.Debug("Planescene: {0}", dex.Message);
       }
       catch (Exception ex)
       {

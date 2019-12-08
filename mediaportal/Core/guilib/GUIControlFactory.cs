@@ -142,8 +142,10 @@ namespace MediaPortal.GUI.Library
           Log.Info("Original skin size: {0}x{1}", iWidth, iHeight);
           GUIGraphicsContext.SkinSize = new Size(iWidth, iHeight);
         }
-        catch (FormatException) // Size values were invalid.
-        {}
+        catch (FormatException ex) // Size values were invalid.
+        {
+          Log.Error("GUIControlFactory: ReadSkinSizeFromReferenceFile {0}", ex.Message);
+        }
       }
     }
 
@@ -362,8 +364,9 @@ namespace MediaPortal.GUI.Library
           return 0;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("ConvertXmlStringToObject.sort: Exception" + ex.Message);
         return 0;
       }
 

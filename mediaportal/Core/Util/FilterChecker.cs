@@ -83,7 +83,10 @@ namespace MediaPortal.Util
             else
               Log.Debug("FilterChecker: Invalid path info for {0}", aFilterName);
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("FilterChecker:LogRegisteredFilter {0}", ex.Message);
+          }
         }
       }
       else if (aLogMissing)
@@ -113,7 +116,10 @@ namespace MediaPortal.Util
             aCurrentVersion = new System.Version(fileVersion.ProductVersion.Replace(',', '.'));
             return true;
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("FilterChecker:CheckFileVersion {0}", ex.Message);
+          }
         }
 
         if (!string.IsNullOrEmpty(fileVersion.FileVersion))
@@ -125,13 +131,17 @@ namespace MediaPortal.Util
             aCurrentVersion = new System.Version(fileVersion.FileVersion.Replace(',', '.'));
             return true;
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("FilterChecker:CheckFileVersion {0}", ex.Message);
+          }
         }
 
         return false;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("FilterChecker:CheckFileVersion {0}", ex.Message);
         return false;
       }
     }
@@ -158,8 +168,9 @@ namespace MediaPortal.Util
         else
           return false;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("FilterChecker:CheckFileVersion {0}", ex.Message);
         return false;
       }
     }

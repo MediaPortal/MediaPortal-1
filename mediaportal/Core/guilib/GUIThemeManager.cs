@@ -271,8 +271,9 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-      catch (DirectoryNotFoundException)
+      catch (DirectoryNotFoundException ex)
       {
+        Log.Warn("GUIThemeManager: GetSkinThemesForSkin {0}", ex.Message);
         // The Themes directory was not found.  Returns on the skin default.
       }
       return themes;

@@ -367,8 +367,9 @@ namespace MediaPortal.Configuration.Sections
         {
           def.Limit = Int32.Parse(row[3].ToString());
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("BaseViews:StoreGridInView: {0}", ex.Message);
           def.Limit = -1;
         }
         def.DefaultView = row[4].ToString();
@@ -464,7 +465,10 @@ namespace MediaPortal.Configuration.Sections
             fileStream.Close();
           }
         }
-        catch (Exception) { }
+        catch (Exception ex)
+        {
+          Log.Error("BaseViews:btnSetDefaults_Click: {0}", ex.Message);
+        }
         LoadViews();
       }
     }
@@ -760,9 +764,9 @@ namespace MediaPortal.Configuration.Sections
             }
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          MediaPortal.GUI.Library.Log.Error("Views: Exception reading view {0}. Copying default views.", customViews);
+          MediaPortal.GUI.Library.Log.Error("Views: Exception reading view {0}. Copying default views. {1}", customViews, ex.Message);
           File.Copy(defaultViews, customViews, true);
         }
       }
@@ -778,7 +782,10 @@ namespace MediaPortal.Configuration.Sections
           fileStream.Close();
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("BaseViews:LoadSettings: {0}", ex.Message);
+      }
 
       SetupGrid();
       LoadViews();
@@ -818,7 +825,10 @@ namespace MediaPortal.Configuration.Sections
             fileStream.Close();
           }
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("BaseViews:SaveSettings: {0}", ex.Message);
+        }
       }
     }
     

@@ -839,8 +839,9 @@ namespace MediaPortal.Player
             }
             UseMadVideoRenderer3D = false;
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            Log.Error("VMR9 SetMpFullscreenWindow: {0}", ex.Message);
             UseMadVideoRenderer3D = false;
           }
           Log.Debug("VMR9: madVR SetMpFullscreenWindow()");
@@ -863,8 +864,9 @@ namespace MediaPortal.Player
             DirectShowUtil.ReleaseComObject(outpout);
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("VMR9 ShutdownMadVr: {0}", ex.Message);
           // filter already released
           releasedFilter = true;
           _vmr9Filter = null;
@@ -1120,8 +1122,9 @@ namespace MediaPortal.Player
                 DirectShowUtil.ReleaseComObject(outpout);
               }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+              Log.Error("VMR9 AddVMR9: {0}", ex.Message);
               // filter already released
               releasedFilter = true;
               _vmr9Filter = null;
@@ -1237,8 +1240,9 @@ namespace MediaPortal.Player
         g_vmr9 = this;
         Log.Debug("VMR9: Renderer successfully added");
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("VMR9 AddVMR9: {0}", ex.Message);
         _scene.Stop();
         _scene.Deinit();
         _scene = null;
@@ -1803,9 +1807,9 @@ namespace MediaPortal.Player
             }
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Debug("VMR9: Settings LAVAudio delay to 0 failed");
+          Log.Debug("VMR9: Settings LAVAudio delay to 0 failed {0}", ex.Message);
         }
 
         var hr = mediaCtrl.Run();
@@ -2181,9 +2185,9 @@ namespace MediaPortal.Player
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Info("VMR9: madVr CommandThread aborded");
+        Log.Info("VMR9: madVr CommandThread aborded {0}", ex.Message);
       }
     }
 
@@ -2252,9 +2256,10 @@ namespace MediaPortal.Player
               DirectShowUtil.ReleaseComObject(output);
             }
           }
-          catch (Exception)
+          catch (Exception ex)
           {
             // filter already released
+            Log.Error("VMR9 Dispose: {0}", ex.Message);
             releasedFilter = true;
             _vmr9Filter = null;
           }
@@ -2273,8 +2278,9 @@ namespace MediaPortal.Player
               DirectShowUtil.CleanUpInterface(g_vmr9?._vmr9Filter);
             }
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            Log.Error("VMR9 Dispose: {0}", ex.Message);
             // _vmr9Filter already released on player side by basicvideo
           }
           Log.Debug("VMR9: Dispose 2.3");
@@ -2308,8 +2314,9 @@ namespace MediaPortal.Player
         GUIGraphicsContext.DX9DeviceMadVr = null;
         Log.Debug("VMR9: Dispose 4");
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("VMR9 Dispose: {0}", ex.Message);
         _commandNotify?.Dispose();
         _vmr9Filter = null;
         _scene = null;

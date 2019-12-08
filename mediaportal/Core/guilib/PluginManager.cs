@@ -312,9 +312,10 @@ namespace MediaPortal.GUI.Library
         Directory.CreateDirectory(Config.GetFolder(Config.Dir.Plugins));
         Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Plugins, "process"));
       }
-      // ReSharper disable EmptyGeneralCatchClause
-      catch (Exception) { }
-      // ReSharper restore EmptyGeneralCatchClause
+      catch (Exception ex)
+      {
+        Log.Error("PlugInManager: LoadProcessPlugins() {0}", ex.Message);
+      }
 
       string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "process"), "dll");
 
@@ -372,9 +373,10 @@ namespace MediaPortal.GUI.Library
         Directory.CreateDirectory(Config.GetFolder(Config.Dir.Plugins));
         Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Plugins, "windows"));
       }
-      // ReSharper disable EmptyGeneralCatchClause
-      catch (Exception) { }
-      // ReSharper restore EmptyGeneralCatchClause
+      catch (Exception ex)
+      {
+        Log.Error("PlugInManager: LoadWindowPluginsNonThreaded() {0}", ex.Message);
+      }
 
       string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "windows"), "dll");
 
@@ -705,7 +707,10 @@ namespace MediaPortal.GUI.Library
                   _incompatibilities.Add(t);
                 }
               }
-              catch (NullReferenceException) {}
+              catch (NullReferenceException ex)
+              {
+                Log.Warn("PluginManager: CheckPluginCompatibility {0}", ex.Message);
+              }
             }
           }
         }
@@ -805,7 +810,7 @@ namespace MediaPortal.GUI.Library
                       {
                         newObj = Activator.CreateInstance(t);
                       }
-                      var setup = (ISetupForm) newObj;
+                      var setup = (ISetupForm)newObj;
                       // don't activate plugins that have NO entry at all in MediaPortal.xml
                       if (!PluginEntryExists(setup.PluginName()))
                       {
@@ -873,7 +878,10 @@ namespace MediaPortal.GUI.Library
                   }
                 }
               }
-              catch (NullReferenceException) {}
+              catch (NullReferenceException ex)
+              {
+                Log.Error("PluginManager:LoadPlugin: {0}", t.FullName);
+              }
             }
           }
         }
@@ -1013,15 +1021,16 @@ namespace MediaPortal.GUI.Library
               }
               catch (NullReferenceException ex)
               {
-                Log.Error("Exception while loading IWakeable instances: {0}", t.FullName);
-                Log.Error(ex.Message);
-                Log.Error(ex.StackTrace);
+                Log.Error("PluginManager:LoadPlugin: {0}", t.FullName);
               }
             }
           }
         }
       }
-      catch (BadImageFormatException) { }
+      catch (BadImageFormatException ex)
+      {
+        Log.Error("PluginManager:LoadWindowPlugin: {0}", ex.Message);
+      }
       catch (Exception ex)
       {
         Log.Info("PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!", strFile.Substring(strFile.LastIndexOf(@"\", StringComparison.Ordinal) + 1));

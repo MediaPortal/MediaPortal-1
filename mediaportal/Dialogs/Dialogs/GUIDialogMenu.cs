@@ -99,8 +99,9 @@ namespace MediaPortal.Dialogs
       {
         selected = int.Parse(keySelected) - 1;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GUIDialogMenu:selectOption {0}", ex.Message);
         selected = -1;
       }
       if (selected >= 0 && selected < listItems.Count)

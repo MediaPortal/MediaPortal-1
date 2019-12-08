@@ -241,7 +241,7 @@ namespace MediaPortal.Player
         // Show the frame on the primary surface.
         GUIGraphicsContext.DX9Device.Present();
       }
-      catch(DeviceLostException)
+      catch(DeviceLostException ex)
       {
       }*/
       SetVideoWindow();
@@ -678,8 +678,9 @@ namespace MediaPortal.Player
 
         return true;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("DVDPlayer: Could not get interfaces: {0}", ex.Message);
         //MessageBox.Show( this, "Could not get interfaces\r\n" + ee.Message, "DVDPlayer.NET", MessageBoxButtons.OK, MessageBoxIcon.Stop );
         CloseInterfaces();
         return false;
@@ -1175,8 +1176,9 @@ namespace MediaPortal.Player
               _dvdCtrl.PlayBackwards((double)-_speed, DvdCmdFlags.Flush, out _cmdOption);
             }
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            Log.Error("DVDPlayer: Speed: {0}", ex.Message);
             _speed = 1;
           }
           VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)_speed);
@@ -1289,8 +1291,9 @@ namespace MediaPortal.Player
               //SetDefaultLanguages();
               Log.Info("DVDPlayer:Seek to {0}:{1}:{2} done", hours, minutes, seconds);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+              Log.Error("DVDPlayer: SeekAbsolute: {0}", ex.Message);
               //sometimes we get a DivideByZeroException  in _dvdCtrl.PlayAtTime()
             }
           }
@@ -1393,8 +1396,9 @@ namespace MediaPortal.Player
         DirectShowUtil.ReleaseComObject(dvdStatePersistMemory);
         DirectShowUtil.ReleaseComObject(dvdState);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("DVDPlayer: GetResumeState: {0}", ex.Message);
         resumeData = null;
       }
       return true;

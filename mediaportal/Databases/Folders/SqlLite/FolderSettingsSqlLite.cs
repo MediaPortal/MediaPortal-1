@@ -380,7 +380,10 @@ namespace Databases.Folders
                 XmlSerializer serializer = new XmlSerializer(type);
                 Value = serializer.Deserialize(r);
               }
-              catch (Exception) {}
+              catch (Exception ex)
+              {
+                Log.Error("FolderSettingsSqLite:GetFolderSetting: {0}", ex.Message);
+              }
             }
           }
         }
@@ -447,7 +450,10 @@ namespace Databases.Folders
                 XmlSerializer serializer = new XmlSerializer(type);
                 Value = serializer.Deserialize(r);
               }
-              catch (Exception) {}
+              catch (Exception ex)
+              {
+                Log.Error("FolderSettingsSqLite:GetViewSetting: {0}", ex.Message);
+              }
             }
           }
         }

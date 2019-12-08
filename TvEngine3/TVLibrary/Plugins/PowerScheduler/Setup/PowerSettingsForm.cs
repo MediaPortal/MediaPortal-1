@@ -274,9 +274,9 @@ namespace PowerScheduler.Setup
         }
 
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        MessageBox.Show("Could not load Windows Power Settings", "Set Windows Power Settings",
+        MessageBox.Show("Could not load Windows Power Settings " + ex.Message, "Set Windows Power Settings",
           MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
         this.Close();
       }

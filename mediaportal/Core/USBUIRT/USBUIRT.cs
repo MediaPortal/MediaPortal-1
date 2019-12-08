@@ -381,7 +381,10 @@ namespace MediaPortal.IR
         {
           IsUsbUirtLoaded = UUIRTGetUUIRTConfig(_usbUirtHandle, ref puConfig);
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Warn("IsUsbUirtConnected: {0}", ex.Message);
+        }
 
         return IsUsbUirtLoaded;
       }
@@ -442,14 +445,15 @@ namespace MediaPortal.IR
         }
       }
 
-      catch (DllNotFoundException)
+      catch (DllNotFoundException ex)
       {
         //most users don't have the dll on their system so will get a exception here
-        Log.Info("USBUIRT:uuirtdrv.dll not found");
+        Log.Info("USBUIRT:uuirtdrv.dll not found {0}", ex.Message);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         //most users don't have the dll on their system so will get a exception here
+        Log.Error("USBUIRT: {0}", ex.Message);
       }
     }
 
@@ -771,7 +775,10 @@ namespace MediaPortal.IR
         result = true;
       }
 
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("USBUIRT:SaveTunerValues {0}", ex.Message);
+      }
 
       finally
       {
@@ -945,7 +952,10 @@ namespace MediaPortal.IR
           Instance = new USBUIRT(remoteCommandCallback);
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("USBUIRT:Create {0}", ex.Message);
+      }
 
       return Instance;
     }
@@ -973,9 +983,10 @@ namespace MediaPortal.IR
 
         return drvAPIVersionName;
       }
-      catch (DllNotFoundException)
+      catch (DllNotFoundException ex)
       {
         // most users don't have the dll on their system so will get a exception here
+        Log.Debug("USBUIRT:GetAPIVersions: {0}", ex.Message);
         return "Driver not installed";
       }
     }
@@ -994,9 +1005,10 @@ namespace MediaPortal.IR
 
         return drvDLLVersionName;
       }
-      catch (DllNotFoundException)
+      catch (DllNotFoundException ex)
       {
         // most users don't have the dll on their system so will get a exception here
+        Log.Debug("USBUIRT:GetDLLVersions: {0}", ex.Message);
         return "DLL uuirtdrv.dll not found";
       }
     }
@@ -1106,15 +1118,16 @@ namespace MediaPortal.IR
         }
       }
 
-      catch (DllNotFoundException)
+      catch (DllNotFoundException ex)
       {
         // most users don't have the dll on their system so will get a exception here
-        Log.Info("USBUIRT:uuirtdrv.dll not found");
+        Log.Info("USBUIRT:uuirtdrv.dll not found {0}", ex.Message);
       }
 
-      catch (Exception)
+      catch (Exception ex)
       {
         // most users don't have the dll on their system so will get a exception here
+        Log.Error("USBUIRT:Reconnect {0}", ex.Message);
       }
 
       return IsUsbUirtLoaded;
@@ -1193,8 +1206,9 @@ namespace MediaPortal.IR
         }
       }
 
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("USBUIRT:IRLearn {0}", ex.Message);
         return false;
       }
 

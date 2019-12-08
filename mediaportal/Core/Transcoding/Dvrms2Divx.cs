@@ -101,7 +101,7 @@ namespace MediaPortal.Core.Transcoding
 						}
 					}
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
 				}*/
       //Type comtype = null;

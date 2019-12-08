@@ -85,7 +85,10 @@ namespace MediaPortal.GUI.Music
           fileStream.Close();
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("MusicViewHandler: MusicViewHandler {0}", ex.Message);
+      }
 
       database = MusicDatabase.Instance;
     }
@@ -227,8 +230,9 @@ namespace MediaPortal.GUI.Music
                 {
                   song.Year = (int)Math.Floor(0.5d + Double.Parse(DatabaseUtility.Get(results, i, "iYear")));
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                  Log.Error("MusicViewHandler: Execute {0}", ex.Message);
                   song.Year = 0;
                 }
                 if (song.Year > 1000)
@@ -252,7 +256,10 @@ namespace MediaPortal.GUI.Music
                 whereClause = String.Format("where {0} > '{1}'", searchField, searchDate.ToString("yyyy-MM-dd hh:mm:ss"));
                 sql = String.Format("select * from tracks {0} {1}", whereClause, orderClause);
               }
-              catch (Exception) {}
+              catch (Exception ex)
+              {
+                Log.Error("MusicViewHandler: Execute {0}", ex.Message);
+              }
             }
             else if (defRoot.Where == "conductor")
             {

@@ -327,7 +327,10 @@ namespace Databases.Folders.SqlServer
                 XmlSerializer serializer = new XmlSerializer(type);
                 valueObject = serializer.Deserialize(r);
               }
-              catch (Exception) {}
+              catch (Exception ex)
+              {
+                Log.Error("FolderSettingAdo:GetFolderSetting: {0}", ex.Message);
+              }
             }
           }
         }
@@ -406,7 +409,10 @@ namespace Databases.Folders.SqlServer
                 XmlSerializer serializer = new XmlSerializer(type);
                 Value = serializer.Deserialize(r);
               }
-              catch (Exception) { }
+              catch (Exception ex)
+              {
+                Log.Error("FolderSettingAdo:GetViewSetting: {0}", ex.Message);
+              }
             }
           }
         }

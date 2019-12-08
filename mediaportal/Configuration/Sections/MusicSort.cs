@@ -38,20 +38,20 @@ namespace MediaPortal.Configuration.Sections
 
     private string[] sortModes = {
                                    "Name", "Date", "Size", "Track", "Duration", "Title", "Artist", "Album", "Filename",
-                                   "Rating", "Album Artist", "Year", "DiscID", "Composer", "Times Played"
+                                   "Rating", "Album Artist", "Year", "DiscID", "Composer", "Times Played", "File Type"
                                  };
 
     private string[] defaultSortTags1 = {
                                           defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag,
                                           defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultAlbumTrackTag,
                                           defaultFileTag, defaultTrackTag, defaultTrackTag, defaultTrackTag,
-                                          defaultTrackTag, defaultTrackTag, defaultTrackTag
+                                          defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag
                                         };
 
     private string[] defaultSortTags2 = {
                                           "%duration%", "%date%", "%filesize%", "%duration%", "%duration%",
                                           "%duration%", "%duration%", "%album%", "%filesize%", "%rating%",
-                                          "%duration%", "%year%", "%disc#%", "%duration%", "%timesplayed%"
+                                          "%duration%", "%year%", "%disc#%", "%duration%", "%timesplayed%", "%filetype%"
                                         };
 
     private string[] sortTags1 = new string[20];
@@ -125,6 +125,7 @@ namespace MediaPortal.Configuration.Sections
       string filename = "comfortably numb.mp3";
       string rating = "8.2";
       string timesPlayed = "3";
+      string fileType = "FLAC";
 
       string line1 = tbSortLeft.Text;
       string line2 = tbSortRight.Text;
@@ -158,6 +159,8 @@ namespace MediaPortal.Configuration.Sections
       line2 = Util.Utils.ReplaceTag(line2, "%composer%", composer);
       line1 = Util.Utils.ReplaceTag(line1, "%timesplayed%", timesPlayed);
       line2 = Util.Utils.ReplaceTag(line2, "%timesplayed%", timesPlayed);
+      line1 = Util.Utils.ReplaceTag(line1, "%filetype%", fileType);
+      line2 = Util.Utils.ReplaceTag(line2, "%filetype%", fileType);
 
       while (line1.Length < 25)
       {

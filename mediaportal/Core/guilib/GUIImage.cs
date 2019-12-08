@@ -326,9 +326,15 @@ namespace MediaPortal.GUI.Library
                 }
               }
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+              Log.Error("ScaleToScreenResolution: {0}", ex.Message);
+            }
           }
-          catch (Exception) { }
+          catch (Exception ex)
+          {
+            Log.Error("ScaleToScreenResolution2: {0}", ex.Message);
+          }
         }
       }
 

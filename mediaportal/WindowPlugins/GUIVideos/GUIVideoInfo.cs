@@ -1035,7 +1035,7 @@ namespace MediaPortal.GUI.Video
       }
     }
     
-    private void  RenameTitle ()
+    private void RenameTitle ()
     {
       if (!_addToDatabase)
       {
@@ -1076,7 +1076,10 @@ namespace MediaPortal.GUI.Video
           File.Copy(oldSmallThumb, newSmallThumb);
           File.Delete(oldSmallThumb);
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("GUIVideoInfo: RenameTitle {0}", ex.Message);
+        }
       }
       if (File.Exists(oldLargeThumb))
       {
@@ -1085,7 +1088,10 @@ namespace MediaPortal.GUI.Video
           File.Copy(oldLargeThumb, newLargeThumb);
           File.Delete(oldLargeThumb);
         }
-        catch (Exception) { }
+        catch (Exception ex)
+        {
+          Log.Error("GUIVideoInfo: RenameTitle {0}", ex.Message);
+        }
       }
       
       _currentMovie.Title = movieTitle;
@@ -1492,8 +1498,9 @@ namespace MediaPortal.GUI.Video
             Util.Utils.RemoveStackEndings(ref filename);
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("GUIVideoInfo: OnRequestMovieTitle {0}", ex.Message);
         }
 
         strMovieName = filename;
@@ -1547,8 +1554,9 @@ namespace MediaPortal.GUI.Video
             Util.Utils.RemoveStackEndings(ref filename);
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("GUIVideoInfo: OnSelectMovie {0}", ex.Message);
         }
       }
       else
@@ -1769,7 +1777,10 @@ namespace MediaPortal.GUI.Video
           dlgNotify.DoModal(GetID);
         }
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("GUIVideoInfo: ThreadFanartRefresh {0}", ex.Message);
+      }
     }
 
     // Images fetch thread
@@ -1987,7 +1998,10 @@ namespace MediaPortal.GUI.Video
         DateTime.TryParseExact(_currentMovie.LastUpdate, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out lastUpdate);
         GUIPropertyManager.SetProperty("#lastupdate", lastUpdate.ToShortDateString());
       }
-      catch (Exception){}
+      catch (Exception ex)
+      {
+        Log.Error("GUIVideoInfo: RefreshImdbData {0}", ex.Message);
+      }
     }
 
     // Get videoinfo parser strings
@@ -2017,7 +2031,10 @@ namespace MediaPortal.GUI.Video
           req.UserAgent = "Mozilla/8.0 (compatible; MSIE 9.0; Windows NT 6.1; .NET CLR 1.0.3705;)";
           req.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception ex)
+        {
+          Log.Error("GUIVideoInfo: GetPage {0}", ex.Message);
+        }
         result = req.GetResponse();
         receiveStream = result.GetResponseStream();
 
@@ -2031,8 +2048,9 @@ namespace MediaPortal.GUI.Video
 
         absoluteUri = result.ResponseUri.AbsoluteUri;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GUIVideoInfo: GetPage {0}", ex.Message);
         //Log.Error("Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message, ex.StackTrace);
       }
       finally
@@ -2043,7 +2061,10 @@ namespace MediaPortal.GUI.Video
           {
             sr.Close();
           }
-          catch (Exception) { }
+          catch (Exception ex)
+          {
+            Log.Error("GUIVideoInfo: GetPage {0}", ex.Message);
+          }
         }
         if (receiveStream != null)
         {
@@ -2051,7 +2072,10 @@ namespace MediaPortal.GUI.Video
           {
             receiveStream.Close();
           }
-          catch (Exception) { }
+          catch (Exception ex)
+          {
+            Log.Error("GUIVideoInfo: GetPage {0}", ex.Message);
+          }
         }
         if (result != null)
         {
@@ -2059,13 +2083,16 @@ namespace MediaPortal.GUI.Video
           {
             result.Close();
           }
-          catch (Exception) { }
+          catch (Exception ex)
+          {
+            Log.Error("GUIVideoInfo: GetPage {0}", ex.Message);
+          }
         }
       }
       return strBody;
     }
 
-    private bool CheckForNfoFile (string videoFile)
+    private bool CheckForNfoFile(string videoFile)
     {
       try
       {
@@ -2121,8 +2148,9 @@ namespace MediaPortal.GUI.Video
         doc.Load(nfoFile);
         doc = null;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GUIVideoInfo: CheckForNfoFile {0}", ex.Message);
         return false;
       }
 

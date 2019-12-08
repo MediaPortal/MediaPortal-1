@@ -516,7 +516,10 @@ namespace MediaPortal.GUI.Library
         {
           _fileInfo = value;
         }
-        catch (Exception) {}
+        catch (Exception ex) 
+        {
+          Log.Error("GUIListItem: " + ex.Message);
+        }
       }
     }
 
