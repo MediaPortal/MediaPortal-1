@@ -52,7 +52,7 @@
     <control>
       <description>TV Logo</description>
       <type>image</type>
-      <id>0</id>
+      <id>10</id>
       <posX>54</posX>
       <posY>805</posY>
       <width>137</width>
@@ -63,29 +63,15 @@
     </control>
     <control>
       <description>Current channelname black</description>
-      <type>fadelabel</type>
-      <id>1</id>
+      <type>label</type>
+      <id>35</id>
       <posX>227</posX>
       <posY>815</posY>
       <width>440</width>
-      <label>#TV.View.channel</label>
+      <label>-</label>
       <align>left</align>
       <font>Label</font>
       <textcolor>black</textcolor>
-      <visible>!control.isvisible(39)</visible>
-    </control>
-    <control>
-      <description>Current channelname black</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>265</posX>
-      <posY>815</posY>
-      <width>440</width>
-      <label>#TV.View.channel</label>
-      <align>left</align>
-      <font>Label</font>
-      <textcolor>black</textcolor>
-      <visible>control.isvisible(39)</visible>
     </control>
     <control>
       <type>image</type>
@@ -113,62 +99,79 @@
       <label>#TV.View.Percentage</label>
       <visible>yes</visible>
     </control>
-    <!--control>
-    <description>Start Time Info</description>
-    <type>label</type>
-    <id>101</id>
-    <posX>227</posX>
-    <posY>890</posY>
-    <width>1107</width>>
-    <label>#TV.View.start</label>
-    <align>left</align>
-    <font>Label</font>
-    <textcolor>ivory</textcolor>
-  </control-->
-  <control>
-    <description>On tv NOW</description>
-    <id>1</id>
-    <type>fadelabel</type>
-    <posX>227</posX>
-    <posY>890</posY>
-    <width>1278</width>
-    <label>#TV.View.start   #TV.View.title</label>
-    <font>Label</font>
-    <textcolor>ivory</textcolor>
-  </control>
-  <control>
-    <description>End Time Info</description>
-    <type>fadelabel</type>
-    <id>1</id>
-    <posX>227</posX>
-    <posY>965</posY>
-    <width>1278</width>
-    <label>#TV.Next.start   #TV.Next.title</label>
-    <align>left</align>
-    <textcolor>ivory</textcolor>
-    <font>Label</font>
-  </control>
-  <control>
-    <description>rec logo</description>
-    <type>image</type>
-    <id>39</id>
-    <posX>202</posX>
-    <posY>810</posY>
-    <width>58</width>
+    <control>
+      <description>Start Time Info</description>
+      <type>label</type>
+      <id>101</id>
+      <posX>227</posX>
+      <posY>880</posY>
+      <label>#TV.View.start</label>
+      <align>left</align>
+      <font>Menutitle</font>
+      <textcolor>dodgerblue</textcolor>
+    </control>
+    <control>
+      <description>On tv NOW</description>
+      <id>36</id>
+      <type>textbox</type>
+      <posX>353</posX>
+      <posY>880</posY>
+      <width>978</width>
+      <height>42</height>
+      <label>#TV.View.title</label>
+      <font>Menutitle</font>
+      <textcolor>dodgerblue</textcolor>
+    </control>
+    <control>
+      <description>End Time Info</description>
+      <type>label</type>
+      <id>102</id>
+      <posX>227</posX>
+      <posY>965</posY>
+      <label>#TV.View.Stop</label>
+      <align>left</align>
+      <textcolor>ivory</textcolor>
+      <font>Label</font>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <shadowColor />
+    </control>
+    <control>
+      <description>On tv NEXT</description>
+      <id>37</id>
+      <type>textbox</type>
+      <posX>353</posX>
+      <posY>963</posY>
+      <height>42</height>
+      <width>978</width>
+      <align>left</align>
+      <font>Label</font>
+      <textcolor>ivory</textcolor>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+      <shadowColor />
+    </control>
+    <control>
+      <description>rec logo</description>
+      <type>image</type>
+      <id>39</id>
+      <posX>592</posX>
+      <posY>810</posY>
+      <width>58</width>
       <height>56</height>
-    <texture>tv_is_recording.png</texture>
-  </control>
-  <control>
-    <description>background</description>
-    <type>image</type>
-    <id>1</id>
-    <posX>-450</posX>
-    <posY>13</posY>
-    <height>110</height>
-    <width>670</width>
-    <texture>OSDBG3.png</texture>
-    <colordiffuse>bb000000</colordiffuse>
-    <!--visible>yes</visible-->
+      <texture>tv_is_recording.png</texture>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-450</posX>
+      <posY>13</posY>
+      <height>110</height>
+      <width>670</width>
+      <texture>OSDBG3.png</texture>
+      <colordiffuse>bb000000</colordiffuse>
+      <!--visible>yes</visible-->
   </control>
   <control>
     <description>Zap to channel no</description>
@@ -181,94 +184,48 @@
     <textcolor>lightskyblue</textcolor>
     <visible>no</visible>
     <!--animation effect="zoom" start="100,100" end="160,160" time="0">visible</animation-->
-  </control>
-  <!-- ***************************************************************************************************** -->
-  <!-- *****************************         RECORDING INFO LATESTMEDIA       ****************************** -->
-  <!-- ***************************************************************************************************** -->
-  <control>
-    <description>Current recording count</description>
-    <type>fadelabel</type>
-    <id>0</id>
-    <posX>225</posX>
-    <posY>1040</posY>
-    <width>50</width>
-    <label>#latestMediaHandler.tvrecordings.active.count</label>
-    <align>center</align>
-    <font>font10</font>
-    <textcolor>ivory</textcolor>
-    <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-    <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
-  </control>
-  <control>
-    <description>rec logo</description>
-    <type>image</type>
-    <id>0</id>
-    <posX>223</posX>
-    <posY>1012</posY>
-    <width>54</width>
-    <height>55</height>
-    <texture>tb_recordNF_red.png</texture>
-    <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-    <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
-  </control>
-  <control>
-    <description>Current channel</description>
-    <type>fadelabel</type>
-    <id>0</id>
-    <posX>280</posX>
-    <posY>1025</posY>
-    <width>1400</width>
-    <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
-    <align>left</align>
-    <font>font9</font>
-    <textcolor>ivory</textcolor>
-    <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
-  </control>
-  <!-- ***************************** THESE CONTROLS ARE NOT USED IN THIS OSD  ****************************** -->
-  <!-- ***************************** BUT ARE ESSENTIAL TO KEEP COMPATABILITY  ****************************** -->
-  <!-- ***************************** AND KEEP ERROR.LOG FREE OF ERRORS  ************************************ -->
-  <control>
-    <description>On tv NEXT</description>
-    <id>37</id>
-    <type>textbox</type>
-    <posX>3393</posX>
-  </control>
-  <control>
-    <description>On tv NEXT</description>
-    <id>10</id>
-    <type>image</type>
-    <posX>3393</posX>
-  </control>
-  <control>
-    <description>On tv NEXT</description>
-    <id>36</id>
-    <type>textbox</type>
-    <posX>3393</posX>
-  </control>
-  <control>
-    <description>On tv NEXT</description>
-    <id>35</id>
-    <type>label</type>
-    <posX>3393</posX>
-  </control>
-  <control>
-    <description>On tv NEXT</description>
-    <id>100</id>
-    <type>label</type>
-    <posX>3393</posX>
-  </control>
-  <control>
-    <description>On tv NEXT</description>
-    <id>101</id>
-    <type>label</type>
-    <posX>3393</posX>
-    <label>#TV.View.start</label>
-  </control>
-  <control>
-    <description>On tv NEXT</description>
-    <id>102</id>
-    <type>label</type>
-    <posX>3393</posX>
-  </control>
+</control>
+<!-- ***************************************************************************************************** -->
+<!-- *****************************         RECORDING INFO LATESTMEDIA       ****************************** -->
+<!-- ***************************************************************************************************** -->
+<control>
+  <description>Current recording count</description>
+  <type>fadelabel</type>
+  <id>0</id>
+  <posX>225</posX>
+  <posY>1040</posY>
+  <width>50</width>
+  <label>#latestMediaHandler.tvrecordings.active.count</label>
+  <align>center</align>
+  <font>font10</font>
+  <textcolor>ivory</textcolor>
+  <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+  <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+</control>
+<control>
+  <description>rec logo</description>
+  <type>image</type>
+  <id>0</id>
+  <posX>223</posX>
+  <posY>1012</posY>
+  <width>54</width>
+  <height>55</height>
+  <texture>tb_recordNF_red.png</texture>
+  <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+  <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+</control>
+<control>
+  <description>Current channel</description>
+  <type>fadelabel</type>
+  <id>0</id>
+  <posX>280</posX>
+  <posY>1025</posY>
+  <width>1400</width>
+  <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
+  <align>left</align>
+  <font>font9</font>
+  <textcolor>ivory</textcolor>
+  <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+</control>
 </controls>
 </window>

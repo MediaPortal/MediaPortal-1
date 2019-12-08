@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- PSB1 -->
+  <DVBTTuning>
+    <Frequency>530000</Frequency><!-- C28 -->
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- PSB2 -->
+  <DVBTTuning>
+    <Frequency>506000</Frequency><!-- C25 -->
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- PSB3 -->
+  <DVBTTuning>
+    <Frequency>482000</Frequency><!-- C22 -->
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- COM4 -->
+  <DVBTTuning>
+    <Frequency>490000</Frequency><!-- C23 -->
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- COM5 -->
+  <DVBTTuning>
+    <Frequency>514000</Frequency><!-- C26 -->
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- COM6 -->
+  <DVBTTuning>
+    <Frequency>538000</Frequency><!-- C29 -->
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- LOC1 -->
+  <DVBTTuning>
+    <Frequency>546000</Frequency><!-- C30 -->
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- PSB1 Wales -->
+  <DVBTTuning>
+    <Frequency>666000</Frequency><!-- C45 -->
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- PSB2 Wales -->
+  <DVBTTuning>
+    <Frequency>618000</Frequency><!-- C39 -->
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+  <!-- PSB3 Wales -->
+  <DVBTTuning>
+    <Frequency>642000</Frequency><!-- C42 -->
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
+</ArrayOfDVBTTuning>
