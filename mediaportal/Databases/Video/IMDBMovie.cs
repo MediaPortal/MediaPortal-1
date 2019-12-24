@@ -50,10 +50,10 @@ namespace MediaPortal.Video.Database
 
     private static XmlNode AddSimpleTag(string tagName, string value, XmlDocument doc)
     {
-      XmlNode rootNode = doc.CreateElement("SimpleTag");
-      XmlNode nameNode = doc.CreateElement("name");
+      XmlNode rootNode = doc.CreateElement("Simple");
+      XmlNode nameNode = doc.CreateElement("Name");
       nameNode.InnerText = tagName;
-      XmlNode valueNode = doc.CreateElement("value");
+      XmlNode valueNode = doc.CreateElement("String");
       valueNode.InnerText = value;
       rootNode.AppendChild(nameNode);
       rootNode.AppendChild(valueNode);
@@ -76,7 +76,7 @@ namespace MediaPortal.Video.Database
 
         XmlDocument doc = new XmlDocument();
         doc.Load(filename);
-        XmlNodeList simpleTags = doc.SelectNodes("/tags/tag/SimpleTag");
+        XmlNodeList simpleTags = doc.SelectNodes("/Tags/Tag/Simple");
         foreach (XmlNode simpleTag in simpleTags)
         {
           string tagName = simpleTag.ChildNodes[0].InnerText;
@@ -121,8 +121,8 @@ namespace MediaPortal.Video.Database
 
         XmlDocument doc = new XmlDocument();
         XmlDeclaration xmldecl = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
-        XmlNode tagsNode = doc.CreateElement("tags");
-        XmlNode tagNode = doc.CreateElement("tag");
+        XmlNode tagsNode = doc.CreateElement("Tags");
+        XmlNode tagNode = doc.CreateElement("Tag");
         tagNode.AppendChild(AddSimpleTag("TITLE", taginfo.Title, doc));
         tagNode.AppendChild(AddSimpleTag("COMMENT", taginfo.Description, doc));
         tagNode.AppendChild(AddSimpleTag("GENRE", taginfo.Genre, doc));
