@@ -79,29 +79,30 @@ namespace MediaPortal.Video.Database
         XmlNodeList simpleTags = doc.SelectNodes("/Tags/Tag/Simple");
         foreach (XmlNode simpleTag in simpleTags)
         {
-          string tagName = simpleTag.ChildNodes[0].InnerText;
+          string tagName = simpleTag.SelectSingleNode("Name").InnerText;
+          string value = simpleTag.SelectSingleNode("String")?.InnerText;
           switch (tagName)
           {
             case "TITLE":
-              info.Title = simpleTag.ChildNodes[1].InnerText;
+              info.Title = value;
               break;
             case "COMMENT":
-              info.Description = simpleTag.ChildNodes[1].InnerText;
+              info.Description = value;
               break;
             case "GENRE":
-              info.Genre = simpleTag.ChildNodes[1].InnerText;
+              info.Genre = value;
               break;
             case "CHANNEL_NAME":
-              info.ChannelName = simpleTag.ChildNodes[1].InnerText;
+              info.ChannelName = value;
               break;
             case "EPISODE_NAME":
-              info.EpisodeName = simpleTag.ChildNodes[1].InnerText;
+              info.EpisodeName = value;
               break;
             case "START_TIME":
-              info.StartTime = new DateTime(long.Parse(simpleTag.ChildNodes[1].InnerText));
+              info.StartTime = new DateTime(long.Parse(value));
               break;
             case "END_TIME":
-              info.EndTime = new DateTime(long.Parse(simpleTag.ChildNodes[1].InnerText));
+              info.EndTime = new DateTime(long.Parse(value));
               break;
           }
         }
