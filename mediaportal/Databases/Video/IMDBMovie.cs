@@ -46,22 +46,6 @@ namespace MediaPortal.Video.Database
 
   public class MatroskaTagHandler
   {
-    #region Private members
-
-    private static XmlNode AddSimpleTag(string tagName, string value, XmlDocument doc)
-    {
-      XmlNode rootNode = doc.CreateElement("Simple");
-      XmlNode nameNode = doc.CreateElement("Name");
-      nameNode.InnerText = tagName;
-      XmlNode valueNode = doc.CreateElement("String");
-      valueNode.InnerText = value;
-      rootNode.AppendChild(nameNode);
-      rootNode.AppendChild(valueNode);
-      return rootNode;
-    }
-
-    #endregion
-
     #region Public members
 
     public static MatroskaTagInfo Fetch(string filename)
@@ -116,6 +100,7 @@ namespace MediaPortal.Video.Database
       }
       return info;
     }
+    #endregion
 
     private static MatroskaTagInfo FetchOldVersion(XmlDocument doc)
     {
@@ -160,35 +145,6 @@ namespace MediaPortal.Video.Database
       return info;
     }
 
-    public static void Persist(string filename, MatroskaTagInfo taginfo)
-    {
-      try
-      {
-        if (!Directory.Exists(Path.GetDirectoryName(filename)))
-        {
-          Directory.CreateDirectory(Path.GetDirectoryName(filename));
-        }
-
-        XmlDocument doc = new XmlDocument();
-        XmlDeclaration xmldecl = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
-        XmlNode tagsNode = doc.CreateElement("Tags");
-        XmlNode tagNode = doc.CreateElement("Tag");
-        tagNode.AppendChild(AddSimpleTag("TITLE", taginfo.Title, doc));
-        tagNode.AppendChild(AddSimpleTag("COMMENT", taginfo.Description, doc));
-        tagNode.AppendChild(AddSimpleTag("GENRE", taginfo.Genre, doc));
-        tagNode.AppendChild(AddSimpleTag("CHANNEL_NAME", taginfo.ChannelName, doc));
-        tagNode.AppendChild(AddSimpleTag("EPISODE_NAME", taginfo.EpisodeName, doc));
-        tagNode.AppendChild(AddSimpleTag("START_TIME", taginfo.StartTime.Ticks.ToString(), doc));
-        tagNode.AppendChild(AddSimpleTag("END_TIME", taginfo.EndTime.Ticks.ToString(), doc));
-        tagsNode.AppendChild(tagNode);
-        doc.AppendChild(tagsNode);
-        doc.InsertBefore(xmldecl, tagsNode);
-        doc.Save(filename);
-      }
-      catch (Exception) { }
-    }
-
-    #endregion
   }
 
   /// <summary>
