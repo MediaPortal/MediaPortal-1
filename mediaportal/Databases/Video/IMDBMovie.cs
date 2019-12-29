@@ -76,6 +76,9 @@ namespace MediaPortal.Video.Database
 
         XmlDocument doc = new XmlDocument();
         doc.Load(filename);
+        if (doc.DocumentElement.Name == "tags")
+           return FetchOldVersion(doc);
+
         XmlNodeList simpleTags = doc.SelectNodes("/Tags/Tag/Simple");
         foreach (XmlNode simpleTag in simpleTags)
         {
@@ -107,7 +110,53 @@ namespace MediaPortal.Video.Database
           }
         }
       }
-      catch (Exception) { } // loading the XML doc could fail
+      catch (Exception ex)
+      {
+        Log.Error("Error reading MatroskaTagInfo:" + ex.Message);
+      }
+      return info;
+    }
+
+    private static MatroskaTagInfo FetchOldVersion(XmlDocument doc)
+    {
+      MatroskaTagInfo info = new MatroskaTagInfo();
+      try
+      {
+        XmlNodeList simpleTags = doc.SelectNodes("/tags/tag/SimpleTag");
+        foreach (XmlNode simpleTag in simpleTags)
+        {
+          string tagName = simpleTag.SelectSingleNode("name").InnerText;
+          string value = simpleTag.SelectSingleNode("value")?.InnerText;
+          switch (tagName)
+          {
+            case "TITLE":
+              info.Title = value;
+              break;
+            case "COMMENT":
+              info.Description = value;
+              break;
+            case "GENRE":
+              info.Genre = value;
+              break;
+            case "CHANNEL_NAME":
+              info.ChannelName = value;
+              break;
+            case "EPISODE_NAME":
+              info.EpisodeName = value;
+              break;
+            case "START_TIME":
+              info.StartTime = new DateTime(long.Parse(value));
+              break;
+            case "END_TIME":
+              info.EndTime = new DateTime(long.Parse(value));
+              break;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Error reading MatroskaTagInfo:" + ex.Message);
+      }
       return info;
     }
 
