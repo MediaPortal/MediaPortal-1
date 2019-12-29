@@ -71,6 +71,7 @@ namespace MediaPortal.Video.Database
               info.Title = value;
               break;
             case "COMMENT":
+            case "DESCRIPTION":
               info.Description = value;
               break;
             case "GENRE":
