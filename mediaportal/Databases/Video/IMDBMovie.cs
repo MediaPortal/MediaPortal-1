@@ -39,9 +39,6 @@ namespace MediaPortal.Video.Database
     public string Description;
     public string Genre;
     public string ChannelName;
-    public string EpisodeName;
-    public DateTime StartTime;
-    public DateTime EndTime;
   }
 
   public class MatroskaTagHandler
@@ -82,15 +79,6 @@ namespace MediaPortal.Video.Database
             case "CHANNEL_NAME":
               info.ChannelName = value;
               break;
-            case "EPISODE_NAME":
-              info.EpisodeName = value;
-              break;
-            case "START_TIME":
-              info.StartTime = new DateTime(long.Parse(value));
-              break;
-            case "END_TIME":
-              info.EndTime = new DateTime(long.Parse(value));
-              break;
           }
         }
       }
@@ -125,15 +113,6 @@ namespace MediaPortal.Video.Database
               break;
             case "CHANNEL_NAME":
               info.ChannelName = value;
-              break;
-            case "EPISODE_NAME":
-              info.EpisodeName = value;
-              break;
-            case "START_TIME":
-              info.StartTime = new DateTime(long.Parse(value));
-              break;
-            case "END_TIME":
-              info.EndTime = new DateTime(long.Parse(value));
               break;
           }
         }
