@@ -26,9 +26,9 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
     string regexPattern = string.Empty;
 
     // If string contains tt number use it
-    if (Regex.Match(strSearch, @"tt\d{7}").Success)
+    if (Regex.Match(strSearch, @"tt\d{7,8}").Success)
     {
-      string ttNumber = Regex.Match(strSearch, @"(?<imdbID>tt\d{7})").Groups["imdbID"].Value;
+      string ttNumber = Regex.Match(strSearch, @"(?<imdbID>tt\d{7,8})").Groups["imdbID"].Value;
       string imdbUrl = string.Format("http://www.imdb.com/title/{0}", ttNumber);
       IMDB.IMDBUrl url = new IMDB.IMDBUrl(imdbUrl, ttNumber, _dbVersion);
       elements.Add(url);
@@ -251,8 +251,8 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 
       // Director
       regexBlockPattern = @"<h4[^>]*>[^D]*Director[s]?:[^<]*</h4>[^<]*(?<directors_block>.*?)</div>";
-      // regexPattern = @"href=""/name/nm\d{7}/[^>]*>(?<movieDirectors>.*?)</a>";
-      regexPattern = @"href=.\/name\/nm\d{7}(?:\/|\?)[^>]+?>(?:<span[^>]+?>)?(?<movieDirectors>.*?)(?:<\/span>)?<\/a>";
+      // regexPattern = @"href=""/name/nm\d{7,8}/[^>]*>(?<movieDirectors>.*?)</a>";
+      regexPattern = @"href=.\/name\/nm\d{7,8}(?:\/|\?)[^>]+?>(?:<span[^>]+?>)?(?<movieDirectors>.*?)(?:<\/span>)?<\/a>";
       block = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline).Groups["directors_block"].Value;
       movieDetails.Director =
         Utils.stripHTMLtags(HttpUtility.HtmlDecode(Regex.Match(block, regexPattern, RegexOptions.Singleline).Groups["movieDirectors"].Value));
@@ -289,8 +289,8 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 
       // Actors
       regexBlockPattern = @"<table class=.cast.>.*?<\/table>|<table class=.cast_list.>.*?<\/table>";
-      // regexPattern =  @"href=""/name/nm\d{7}/.*?alt=""(?<actor>.*?)"".*?<td.class=""character"">.*?<div>(?<role>.*?)</div>";
-      regexPattern =  @"href=.\/name\/nm\d{7}\/.*?alt=""(?<actor>.*?)"".*?<td.class=.character.>.*?<a[^>]+?>(?<role>.*?)<\/a>";
+      // regexPattern =  @"href=""/name/nm\d{7,8}/.*?alt=""(?<actor>.*?)"".*?<td.class=""character"">.*?<div>(?<role>.*?)</div>";
+      regexPattern =  @"href=.\/name\/nm\d{7,8}\/.*?alt=""(?<actor>.*?)"".*?<td.class=.character.>.*?<a[^>]+?>(?<role>.*?)<\/a>";
       Match castBlock = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline);
       string strCastBlock = HttpUtility.HtmlDecode(castBlock.Value);
 
