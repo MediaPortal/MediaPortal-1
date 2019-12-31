@@ -119,7 +119,7 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
             wc.Dispose();
           }
           // Check if IMDB number on poster page is equal to  IMDB ttnumber, if not-> next link
-          Match ttcheck = Regex.Match(resultImpAw, @"tt\d{7}");
+          Match ttcheck = Regex.Match(resultImpAw, @"tt\d{7,8}");
 
           if (ttcheck.Value != imdbMovieID)
           {
