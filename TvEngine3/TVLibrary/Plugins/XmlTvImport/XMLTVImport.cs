@@ -90,6 +90,7 @@ namespace TvEngine
     private TvBusinessLayer layer = new TvBusinessLayer();
 
     private static bool _isImporting = false;
+    private bool _skipTextProcessing;
 
     public XMLTVImport()
       : this(0) {}
@@ -200,6 +201,7 @@ namespace TvEngine
       int hours = Int32.Parse(layer.GetSetting("xmlTvTimeZoneHours", "0").Value);
       int mins = Int32.Parse(layer.GetSetting("xmlTvTimeZoneMins", "0").Value);
       int timeZoneCorrection = hours * 60 + mins;
+      _skipTextProcessing = layer.GetSetting("xmlTvNoTextMod", "false").Value == "true";
 
       ArrayList Programs = new ArrayList();
       Dictionary<int, ChannelPrograms> dChannelPrograms = new Dictionary<int, ChannelPrograms>();
@@ -328,6 +330,7 @@ namespace TvEngine
 
           SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
           sb.AddOrderByField(true, "externalId");
+          sb.AddConstraint("visibleInGuide = 1");
           sb.AddConstraint("externalId IS NOT null");
           sb.AddConstraint(Operator.NotEquals, "externalId", "");
 
@@ -523,6 +526,7 @@ namespace TvEngine
                     startDate = 100 * Int64.Parse(nodeStart.Substring(0, 12)); //200403312220
                   }
 
+                  bool hasStopDate = false;
                   long stopDate = startDate;
                   if (nodeStop != null)
                   {
@@ -532,10 +536,12 @@ namespace TvEngine
                         stopDate = Int64.Parse(nodeStop.Substring(0, 14)); //20040331222000
                       else
                         stopDate = 100 * Int64.Parse(nodeStop.Substring(0, 12)); //200403312220
+                      hasStopDate = true;
                     }
                     else if (nodeStop.Length >= 12)
                     {
                       stopDate = 100 * Int64.Parse(nodeStop.Substring(0, 12)); //200403312220
+                      hasStopDate = true;
                     }
                   }
 
@@ -684,28 +690,15 @@ namespace TvEngine
                         // get the channel program
                         channelPrograms = dChannelPrograms[chan.IdChannel];
 
-                        if (chan.IdChannel < 0)
+                        // skip invalid programs with same start/end date
+                        if (chan.IdChannel < 0 || hasStopDate && startDate == stopDate)
                         {
                           continue;
                         }
 
-                        title = title.Replace("\r\n", " ");
-                        title = title.Replace("\n\r", " ");
-                        title = title.Replace("\r", " ");
-                        title = title.Replace("\n", " ");
-                        title = title.Replace("  ", " ");
-
-                        description = description.Replace("\r\n", " ");
-                        description = description.Replace("\n\r", " ");
-                        description = description.Replace("\r", " ");
-                        description = description.Replace("\n", " ");
-                        description = description.Replace("  ", " ");
-
-                        episodeName = episodeName.Replace("\r\n", " ");
-                        episodeName = episodeName.Replace("\n\r", " ");
-                        episodeName = episodeName.Replace("\r", " ");
-                        episodeName = episodeName.Replace("\n", " ");
-                        episodeName = episodeName.Replace("  ", " ");
+                        title = ProcessText(title);
+                        description = ProcessText(description);
+                        episodeName = ProcessText(episodeName);
 
                         Program prog = new Program(chan.IdChannel, longtodate(startDate), longtodate(stopDate), title,
                                                    description, category, Program.ProgramState.None,
@@ -856,6 +849,24 @@ namespace TvEngine
         xmlReader = null;
       }
       return result;
+    }
+
+    /// <summary>
+    /// Removes newlines and duplicated spaces from given <paramref name="text"/>. This method only modifies content if
+    /// setting "xmlTvNoTextMod" is <c>false</c>.
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    protected string ProcessText(string text)
+    {
+      if (_skipTextProcessing)
+        return text;
+      text = text.Replace("\r\n", " ");
+      text = text.Replace("\n\r", " ");
+      text = text.Replace("\r", " ");
+      text = text.Replace("\n", " ");
+      text = text.Replace("  ", " ");
+      return text;
     }
 
     /// <summary>
