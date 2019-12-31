@@ -39,29 +39,10 @@ namespace MediaPortal.Video.Database
     public string Description;
     public string Genre;
     public string ChannelName;
-    public string EpisodeName;
-    public DateTime StartTime;
-    public DateTime EndTime;
   }
 
   public class MatroskaTagHandler
   {
-    #region Private members
-
-    private static XmlNode AddSimpleTag(string tagName, string value, XmlDocument doc)
-    {
-      XmlNode rootNode = doc.CreateElement("SimpleTag");
-      XmlNode nameNode = doc.CreateElement("name");
-      nameNode.InnerText = tagName;
-      XmlNode valueNode = doc.CreateElement("value");
-      valueNode.InnerText = value;
-      rootNode.AppendChild(nameNode);
-      rootNode.AppendChild(valueNode);
-      return rootNode;
-    }
-
-    #endregion
-
     #region Public members
 
     public static MatroskaTagInfo Fetch(string filename)
@@ -76,76 +57,74 @@ namespace MediaPortal.Video.Database
 
         XmlDocument doc = new XmlDocument();
         doc.Load(filename);
-        XmlNodeList simpleTags = doc.SelectNodes("/tags/tag/SimpleTag");
+        if (doc.DocumentElement.Name == "tags")
+           return FetchOldVersion(doc);
+
+        XmlNodeList simpleTags = doc.SelectNodes("/Tags/Tag/Simple");
         foreach (XmlNode simpleTag in simpleTags)
         {
-          string tagName = simpleTag.ChildNodes[0].InnerText;
+          string tagName = simpleTag.SelectSingleNode("Name").InnerText;
+          string value = simpleTag.SelectSingleNode("String")?.InnerText;
           switch (tagName)
           {
             case "TITLE":
-              info.Title = simpleTag.ChildNodes[1].InnerText;
+              info.Title = value;
               break;
             case "COMMENT":
-              info.Description = simpleTag.ChildNodes[1].InnerText;
+            case "DESCRIPTION":
+              info.Description = value;
               break;
             case "GENRE":
-              info.Genre = simpleTag.ChildNodes[1].InnerText;
+              info.Genre = value;
               break;
             case "CHANNEL_NAME":
-              info.ChannelName = simpleTag.ChildNodes[1].InnerText;
-              break;
-            case "EPISODE_NAME":
-              info.EpisodeName = simpleTag.ChildNodes[1].InnerText;
-              break;
-            case "START_TIME":
-              info.StartTime = new DateTime(long.Parse(simpleTag.ChildNodes[1].InnerText));
-              break;
-            case "END_TIME":
-              info.EndTime = new DateTime(long.Parse(simpleTag.ChildNodes[1].InnerText));
+              info.ChannelName = value;
               break;
           }
         }
       }
       catch (Exception ex)
       {
-        // loading the XML doc could fail
-        Log.Error("IMDBMovie:Fetch: {0}", ex.Message);
+        Log.Error("IMDBMovie: Error reading MatroskaTagInfo:" + ex.Message);
+      }
+      return info;
+    }
+    #endregion
+
+    private static MatroskaTagInfo FetchOldVersion(XmlDocument doc)
+    {
+      MatroskaTagInfo info = new MatroskaTagInfo();
+      try
+      {
+        XmlNodeList simpleTags = doc.SelectNodes("/tags/tag/SimpleTag");
+        foreach (XmlNode simpleTag in simpleTags)
+        {
+          string tagName = simpleTag.SelectSingleNode("name").InnerText;
+          string value = simpleTag.SelectSingleNode("value")?.InnerText;
+          switch (tagName)
+          {
+            case "TITLE":
+              info.Title = value;
+              break;
+            case "COMMENT":
+              info.Description = value;
+              break;
+            case "GENRE":
+              info.Genre = value;
+              break;
+            case "CHANNEL_NAME":
+              info.ChannelName = value;
+              break;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("IMDBMovie: Error reading MatroskaTagInfo:" + ex.Message);
       }
       return info;
     }
 
-    public static void Persist(string filename, MatroskaTagInfo taginfo)
-    {
-      try
-      {
-        if (!Directory.Exists(Path.GetDirectoryName(filename)))
-        {
-          Directory.CreateDirectory(Path.GetDirectoryName(filename));
-        }
-
-        XmlDocument doc = new XmlDocument();
-        XmlDeclaration xmldecl = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
-        XmlNode tagsNode = doc.CreateElement("tags");
-        XmlNode tagNode = doc.CreateElement("tag");
-        tagNode.AppendChild(AddSimpleTag("TITLE", taginfo.Title, doc));
-        tagNode.AppendChild(AddSimpleTag("COMMENT", taginfo.Description, doc));
-        tagNode.AppendChild(AddSimpleTag("GENRE", taginfo.Genre, doc));
-        tagNode.AppendChild(AddSimpleTag("CHANNEL_NAME", taginfo.ChannelName, doc));
-        tagNode.AppendChild(AddSimpleTag("EPISODE_NAME", taginfo.EpisodeName, doc));
-        tagNode.AppendChild(AddSimpleTag("START_TIME", taginfo.StartTime.Ticks.ToString(), doc));
-        tagNode.AppendChild(AddSimpleTag("END_TIME", taginfo.EndTime.Ticks.ToString(), doc));
-        tagsNode.AppendChild(tagNode);
-        doc.AppendChild(tagsNode);
-        doc.InsertBefore(xmldecl, tagsNode);
-        doc.Save(filename);
-      }
-      catch (Exception ex)
-      {
-        Log.Error("IMDBMovie:Persist: {0}", ex.Message);
-      }
-    }
-
-    #endregion
   }
 
   /// <summary>
@@ -1371,7 +1350,7 @@ namespace MediaPortal.Video.Database
         }
         catch (Exception ex)
         {
-          Log.Info("GUIVideoFiles.Load nfo file error: {0} is not a valid XML document {1}", nfoFile, ex.Message);
+          Log.Info("IMDBMovie: GUIVideoFiles.Load nfo file error: {0} is not a valid XML document {1}", nfoFile, ex.Message);
           return;
         }
 
@@ -1960,7 +1939,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        Log.Error("GUIVideoFiles. Error in nfo xml document: {0}", ex.Message);
+        Log.Error("IMDBMovie: GUIVideoFiles. Error in nfo xml document: {0}", ex.Message);
       }
     }
 
