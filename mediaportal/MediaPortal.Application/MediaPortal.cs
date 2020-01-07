@@ -3661,7 +3661,8 @@ public class MediaPortalApp : D3D, IRender
     catch (Exception exs)
     {
       // ReSharper disable LocalizableElement
-      MessageBox.Show(String.Format("Failed to load your skin! Aborting startup...\n\n{0}", exs.Message), "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+      // MessageBox.Show(String.Format("Failed to load your skin! Aborting startup...\n\n{0}", exs.Message), "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+      Log.Error("Startup: Failed to Caching Graphics! {0}", exs.Message);
       // ReSharper restore LocalizableElement
       Close();
     }

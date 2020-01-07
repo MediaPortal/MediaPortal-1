@@ -352,17 +352,45 @@ namespace MediaPortal.GUI.Library
         Log.Debug("TexurePacker:PackSkinGraphics: {0}", ex.Message);
       }
 
-      string[] tvLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), "*.png", SearchOption.AllDirectories);
-      files.AddRange(tvLogos);
+      try
+      {
+        string[] tvLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), "*.png", SearchOption.AllDirectories);
+        files.AddRange(tvLogos);
+      }
+      catch (DirectoryNotFoundException)
+      {
+        Log.Warn("TexturePacker: Folder not found: " + Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"));
+      }
 
-      string[] radioLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, "Radio"), "*.png", SearchOption.AllDirectories);
-      files.AddRange(radioLogos);
+      try
+      {
+        string[] radioLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, "Radio"), "*.png", SearchOption.AllDirectories);
+        files.AddRange(radioLogos);
+      }
+      catch (DirectoryNotFoundException)
+      {
+        Log.Warn("TexturePacker: Folder not found: " + Config.GetSubFolder(Config.Dir.Thumbs, "Radio"));
+      }
 
-      string[] weatherFiles = Directory.GetFiles(String.Format(@"{0}\media\weather", skinName), "*.png");
-      files.AddRange(weatherFiles);
+      try
+      {
+        string[] weatherFiles = Directory.GetFiles(String.Format(@"{0}\media\weather", skinName), "*.png");
+        files.AddRange(weatherFiles);
+      }
+      catch (DirectoryNotFoundException)
+      {
+        Log.Warn("TexturePacker: Folder not found: " + String.Format(@"{0}\media\weather", skinName));
+      }
 
-      string[] tetrisFiles = Directory.GetFiles(String.Format(@"{0}\media\tetris", skinName), "*.png");
-      files.AddRange(tetrisFiles);
+      try
+      {
+        string[] tetrisFiles = Directory.GetFiles(String.Format(@"{0}\media\tetris", skinName), "*.png");
+        files.AddRange(tetrisFiles);
+      }
+      catch (DirectoryNotFoundException)
+      {
+        Log.Warn("TexturePacker: Folder not found: " + String.Format(@"{0}\media\tetris", skinName));
+      }
 
       // Determine maximum texture dimensions
       try
