@@ -265,7 +265,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       // Director
       string rxDirectorsBlock = @"<h\d[^>]*>[^D]*Director[s]?:[^<]*<\/h\d>[^<]*(?<director>.*?)<\/div>";
       string directorsBlock = Regex.Match(_strBody, rxDirectorsBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value;
-      // regex = @"href=.\/name\/nm\d{7}(?:\/|\?)[^>]+?>(?:<span[^>]+?>)?(?<director>.*?)(?:<\/span>)?<\/a>";
+      // regex = @"href=.\/name\/nm\d{7,8}(?:\/|\?)[^>]+?>(?:<span[^>]+?>)?(?<director>.*?)(?:<\/span>)?<\/a>";
       regex = @"<span[^>]+?>(?<director>.*?)?<\/span>";
       string director = Regex.Match(directorsBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["director"].Value;
 
@@ -531,7 +531,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
         {
           foreach (string actor in lstActors)
           {
-            Regex regexActor = new Regex(@"\|(.+)\|(nm\d{7})");
+            Regex regexActor = new Regex(@"\|(.+)\|(nm\d{7,8})");
             Match matchActor = regexActor.Match(actor);
             if (match.Success)
             {
@@ -1387,7 +1387,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     string strDirectorImdbId = string.Empty;
     string strDirectorName = string.Empty;
     string regexBlockPattern = @"name=.directors?.(?<directors_block>.*?)<h\d";
-    string regexPattern = @"<a\s+href=.\/name\/(?<idDirector>nm\d{7})\/.[^>]*>(?<movieDirectors>[^<]+)<\/a>";
+    string regexPattern = @"<a\s+href=.\/name\/(?<idDirector>nm\d{7,8})\/.[^>]*>(?<movieDirectors>[^<]+)<\/a>";
     string regexBlock = Regex.Match(HttpUtility.HtmlDecode(strBodyActors),
       regexBlockPattern, RegexOptions.Singleline).Groups["directors_block"].Value;
     strDirectorImdbId = Regex.Match(regexBlock, regexPattern, RegexOptions.Singleline).Groups["idDirector"].Value;
@@ -1404,7 +1404,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     regexBlock = Regex.Match(HttpUtility.HtmlDecode(strBodyActors),
       regexBlockPattern, RegexOptions.Singleline).Groups["writers_block"].Value;
 
-    regexPattern = @"href=.\/name\/(?<imdbWriterId>nm\d{7})\/[^>]*>(?<writer>[^<]+)<\/a>[^(]*(?<wrole>[^)]*\))|href=.\/name\/(?<imdbWriterId>nm\d{7})\/[^>]*>(?<writer>[^<]+)<\/a>(?<wrole>)";
+    regexPattern = @"href=.\/name\/(?<imdbWriterId>nm\d{7,8})\/[^>]*>(?<writer>[^<]+)<\/a>[^(]*(?<wrole>[^)]*\))|href=.\/name\/(?<imdbWriterId>nm\d{7,8})\/[^>]*>(?<writer>[^<]+)<\/a>(?<wrole>)";
     MatchCollection mc = Regex.Matches(regexBlock, regexPattern);
 
     if (mc.Count != 0)
@@ -1462,8 +1462,8 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
     // cast
     regexBlockPattern = @"<table class=.cast(?:_list)?"">.*?<\/table>";
-    // regexPattern = @"<td[^<]*<a\s+href=.\/name\/(?<imdbActorID>nm\d{7})\/[^>]*?>[\s\S]+?itemprop=.name.>(?<actor>[^<]*)<\/span>[\s\S]+?<td.class=.char(?:acter)?.>(?<role>.+?)<*?<\/td>";
-    regexPattern = @"<td[^<]*itemprop=""actor""[^<]*<a\s+href=""\/name\/(?<imdbActorID>nm\d{7})\/[^>]*>[^<]*?<span[^>]*?>(?<actor>[^<]*)<\/span>.*?<td.class=""character"">(?<role>.*?)<*?<\/td>";
+    // regexPattern = @"<td[^<]*<a\s+href=.\/name\/(?<imdbActorID>nm\d{7,8})\/[^>]*?>[\s\S]+?itemprop=.name.>(?<actor>[^<]*)<\/span>[\s\S]+?<td.class=.char(?:acter)?.>(?<role>.+?)<*?<\/td>";
+    regexPattern = @"<td[^<]*itemprop=""actor""[^<]*<a\s+href=""\/name\/(?<imdbActorID>nm\d{7,8})\/[^>]*>[^<]*?<span[^>]*?>(?<actor>[^<]*)<\/span>.*?<td.class=""character"">(?<role>.*?)<*?<\/td>";
     Match castBlock = Regex.Match(strBodyActors, regexBlockPattern, RegexOptions.Singleline);
     string strCastBlock = HttpUtility.HtmlDecode(castBlock.Value);
 

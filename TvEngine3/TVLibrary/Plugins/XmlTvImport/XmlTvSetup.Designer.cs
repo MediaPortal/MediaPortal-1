@@ -130,6 +130,7 @@ namespace SetupTv.Sections
       this.label6 = new System.Windows.Forms.Label();
       this.saveFileExport = new System.Windows.Forms.SaveFileDialog();
       this.folderBrowserDialogTVGuide = new System.Windows.Forms.FolderBrowserDialog();
+      this.cbNoTextMod = new System.Windows.Forms.CheckBox();
       this.groupBox_Kazer.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
       this.groupBox_ZguideTV.SuspendLayout();
@@ -212,8 +213,8 @@ namespace SetupTv.Sections
       this.label29.Name = "label29";
       this.label29.Size = new System.Drawing.Size(340, 26);
       this.label29.TabIndex = 7;
-      this.label29.Text = "Pour utiliser Kazer, vous devez au préalable vous inscrire sur le site de \r\npour " +
-    "définir les chaînes que vous souhaitez récupérer.\r\n";
+      this.label29.Text = "Pour utiliser Kazer, vous devez au prÃ©alable vous inscrire sur le site de \r\npour " +
+    "dÃ©finir les chaÃ®nes que vous souhaitez rÃ©cupÃ©rer.\r\n";
       // 
       // groupBox_ZguideTV
       // 
@@ -261,7 +262,7 @@ namespace SetupTv.Sections
       this.label31.Name = "label31";
       this.label31.Size = new System.Drawing.Size(188, 13);
       this.label31.TabIndex = 11;
-      this.label31.Text = "Lien sur la page de téléchargement de";
+      this.label31.Text = "Lien sur la page de tÃ©lÃ©chargement de";
       // 
       // Bouton_ZguideTV_complet
       // 
@@ -270,7 +271,7 @@ namespace SetupTv.Sections
       this.Bouton_ZguideTV_complet.Name = "Bouton_ZguideTV_complet";
       this.Bouton_ZguideTV_complet.Size = new System.Drawing.Size(117, 17);
       this.Bouton_ZguideTV_complet.TabIndex = 10;
-      this.Bouton_ZguideTV_complet.Text = "Guide Télé complet";
+      this.Bouton_ZguideTV_complet.Text = "Guide TÃ©lÃ© complet";
       this.Bouton_ZguideTV_complet.UseVisualStyleBackColor = true;
       this.Bouton_ZguideTV_complet.CheckedChanged += new System.EventHandler(this.Bouton_ZguideTV_complet_CheckedChanged);
       // 
@@ -283,7 +284,7 @@ namespace SetupTv.Sections
       this.Bouton_ZguideTV_TNT.Size = new System.Drawing.Size(137, 17);
       this.Bouton_ZguideTV_TNT.TabIndex = 9;
       this.Bouton_ZguideTV_TNT.TabStop = true;
-      this.Bouton_ZguideTV_TNT.Text = "Guide Télé pour la TNT";
+      this.Bouton_ZguideTV_TNT.Text = "Guide TÃ©lÃ© pour la TNT";
       this.Bouton_ZguideTV_TNT.UseVisualStyleBackColor = true;
       this.Bouton_ZguideTV_TNT.CheckedChanged += new System.EventHandler(this.Bouton_ZguideTV_TNT_CheckedChanged);
       // 
@@ -341,7 +342,7 @@ namespace SetupTv.Sections
       this.label28.Name = "label28";
       this.label28.Size = new System.Drawing.Size(362, 26);
       this.label28.TabIndex = 10;
-      this.label28.Text = "\r\nChoisissez votre préférence concernant le site de téléchargement à utiliser :";
+      this.label28.Text = "\r\nChoisissez votre prÃ©fÃ©rence concernant le site de tÃ©lÃ©chargement Ã  utiliser :";
       // 
       // Bouton_ZguideTV
       // 
@@ -421,6 +422,7 @@ namespace SetupTv.Sections
       this.panel1.Controls.Add(this.label23);
       this.panel1.Controls.Add(this.buttonManualImport);
       this.panel1.Controls.Add(this.cbImportLST);
+      this.panel1.Controls.Add(this.cbNoTextMod);
       this.panel1.Controls.Add(this.cbImportXML);
       this.panel1.Controls.Add(this.groupBox1);
       this.panel1.Controls.Add(this.label13);
@@ -447,7 +449,7 @@ namespace SetupTv.Sections
       this.label1.Size = new System.Drawing.Size(274, 32);
       this.label1.TabIndex = 35;
       this.label1.Text = "Note: Could take quite some time to execute depending on how many days forward yo" +
-          "u grab.";
+    "u grab.";
       // 
       // checkBoxDeleteBeforeImport
       // 
@@ -896,7 +898,7 @@ namespace SetupTv.Sections
       this.matchType.Name = "matchType";
       this.matchType.ReadOnly = true;
       this.matchType.ToolTipText = "Type of match. White = already mapped, Green = exact, Yellow = partial, Red = non" +
-          "e";
+    "e";
       this.matchType.Width = 36;
       // 
       // ShowInGuide
@@ -1047,7 +1049,7 @@ namespace SetupTv.Sections
       this.label27.Size = new System.Drawing.Size(399, 13);
       this.label27.TabIndex = 35;
       this.label27.Text = "The scheduler will download the remote tvguide.xml once a day at the time defined" +
-          ".";
+    ".";
       // 
       // dateTimePickerScheduler
       // 
@@ -1098,7 +1100,7 @@ namespace SetupTv.Sections
       this.label3.Size = new System.Drawing.Size(374, 13);
       this.label3.TabIndex = 30;
       this.label3.Text = "The retrieved file will be copied to the local folder specified in the \'Settings\'" +
-          " tab";
+    " tab";
       // 
       // label32
       // 
@@ -1177,6 +1179,16 @@ namespace SetupTv.Sections
       // 
       this.saveFileExport.Title = "Export the mapped guidechannels";
       this.saveFileExport.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileExport_FileOk);
+      // 
+      // cbNoTextMod
+      // 
+      this.cbNoTextMod.AutoSize = true;
+      this.cbNoTextMod.Location = new System.Drawing.Point(195, 121);
+      this.cbNoTextMod.Name = "cbNoTextMod";
+      this.cbNoTextMod.Size = new System.Drawing.Size(124, 17);
+      this.cbNoTextMod.TabIndex = 31;
+      this.cbNoTextMod.Text = "No text modifications";
+      this.cbNoTextMod.UseVisualStyleBackColor = true;
       // 
       // XmlTvSetup
       // 
@@ -1324,5 +1336,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label36;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioDownloadOnWakeUp;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioDownloadOnSchedule;
+    private System.Windows.Forms.CheckBox cbNoTextMod;
+
+
   }
 }

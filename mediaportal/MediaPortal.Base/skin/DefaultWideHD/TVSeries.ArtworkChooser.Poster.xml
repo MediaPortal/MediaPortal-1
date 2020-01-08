@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <!-- Facade: Series and Season Posters -->
+		<control>
+			<description>group element</description>
+			<type>group</type>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+			<control>
+			  <type>facadeview</type>
+				<id>50</id>
+				<control>
+					<description>listcontrol</description>
+					<type>listcontrol</type>
+					<id>50</id>
+					<onleft>2</onleft>
+					<onright>50</onright>
+					<width>825</width>
+          <textXOff2>825</textXOff2>
+          <textYOff2>3</textYOff2>
+          <textXOff3>3817</textXOff3>
+          <textYOff3>12</textYOff3>
+          <textalign3>right</textalign3>
+          <font3>font9</font3>
+          <scrollOffset>2</scrollOffset>
+					<IconXOff>5</IconXOff>
+					<IconYOff>2</IconYOff>
+					<itemWidth>32</itemWidth>
+					<itemHeight>48</itemHeight>
+					<spinPosX>3626</spinPosX>
+          <spinPosY>984</spinPosY>
+          <texturebg>osd_progress_background.png</texturebg>
+          <lefttexture>green.png</lefttexture>
+          <midtexture>green.png</midtexture>
+          <righttexture>green.png</righttexture>
+          <ProgressBarWidth>775</ProgressBarWidth>
+          <ProgressBarHeight>1</ProgressBarHeight>
+          <ProgressBarXOffset>45</ProgressBarXOffset>
+          <ProgressBarYOffset>47</ProgressBarYOffset>
+          <scrollbarHeight>400</scrollbarHeight>
+          <scrollbarbg>bar_vert.png</scrollbarbg>
+          <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+          <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+          <scrollbarXOff>15</scrollbarXOff>
+          <scrollbarYOff>0</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <scrollbarwidth>25</scrollbarwidth>
+          <explicitlyEnableScrollLabel>yes</explicitlyEnableScrollLabel>
+          <unfocusedAlpha applyToAll="true">130</unfocusedAlpha>
+				</control>
+				<control>
+          <description>Thumbnail Panel</description>
+          <type>thumbnailpanel</type>
+          <id>50</id>
+          <posX>112</posX>
+          <posY>290</posY>
+          <width>1756</width>
+          <height>671</height>
+          <itemWidth>126</itemWidth>
+          <itemHeight>175</itemHeight>
+          <textureWidth>112</textureWidth>
+          <textureHeight>161</textureHeight>
+          <thumbWidth>112</thumbWidth>
+          <thumbHeight>161</thumbHeight>
+          <thumbPosX>0</thumbPosX>
+          <thumbPosY>0</thumbPosY>
+          <itemWidthBig>182</itemWidthBig>
+          <itemHeightBig>253</itemHeightBig>
+          <textureWidthBig>165</textureWidthBig>
+          <textureHeightBig>239</textureHeightBig>
+          <thumbWidthBig>165</thumbWidthBig>
+          <thumbHeightBig>239</thumbHeightBig>
+          <thumbPosXBig>0</thumbPosXBig>
+          <thumbPosYBig>0</thumbPosYBig>
+          <hideUnfocusTexture>no</hideUnfocusTexture>
+          <renderFocusText>no</renderFocusText>
+          <renderUnfocusText>no</renderUnfocusText>
+          <imageFolder>black.png</imageFolder>
+          <imageFolderFocus>black.png</imageFolderFocus>
+          <showFrame>true</showFrame>
+          <showFolder>true</showFolder>
+          <frameNoFocus mask="dvdcase_mask.png">dvdcase_focus.png</frameNoFocus>
+          <frameFocus mask="dvdcase_mask.png">dvdcase_focus.png</frameFocus>
+          <textureMask>dvdcase_mask.png</textureMask>
+          <spinPosX>3865</spinPosX>
+          <spinPosY>998</spinPosY>
+          <onleft>2</onleft>
+          <onright>2</onright>
+          <folderPrefix />
+          <folderSuffix />
+          <keepaspectratio>no</keepaspectratio>
+          <enableFocusZoom>yes</enableFocusZoom>
+          <zoomXPixels>30</zoomXPixels>
+          <zoomYPixels>40</zoomYPixels>
+          <hideUnfocusTexture>no</hideUnfocusTexture>
+          <scrollbarHeight>380</scrollbarHeight>
+          <scrollbarbg>bar_vert.png</scrollbarbg>
+          <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+          <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+          <scrollbarXOff>-45</scrollbarXOff>
+          <scrollbarYOff>0</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <scrollbarwidth>20</scrollbarwidth>
+        </control>
+        <control>
+          <description>Filmstrip view</description>
+          <type>filmstrip</type>
+          <id>50</id>
+          <posX>112</posX>
+          <posY>400</posY>
+          <width>1686</width>
+          <height>703</height>
+          <spinPosX>-800</spinPosX>
+          <spinPosY>780</spinPosY>
+          <onleft>2</onleft>
+          <onright>2</onright>
+          <onup>2</onup>
+          <ondown>2</ondown>
+          <frame mask="dvdcase_mask.png">dvdcase_focus.png</frame>
+          <frameFocus mask="dvdcase_mask.png">dvdcase_focus.png</frameFocus>
+          <itemWidth>210</itemWidth>
+          <itemHeight>562</itemHeight>
+          <textureWidth>234</textureWidth>
+          <textureHeight>338</textureHeight>
+          <thumbWidth>234</thumbWidth>
+          <thumbHeight>338</thumbHeight>
+          <thumbPosX>0</thumbPosX>
+          <thumbPosY>0</thumbPosY>
+          <showFrame>yes</showFrame>
+          <showFolder>yes</showFolder>
+          <showBackGround>no</showBackGround>
+          <showInfoImage>no</showInfoImage>
+          <enableFocusZoom>no</enableFocusZoom>
+          <scrollOffset>5</scrollOffset>
+          <keepaspectratio>no</keepaspectratio>
+          <suffix>|</suffix>
+          <folderPrefix />
+          <folderSuffix />
+          <spinCanFocus>no</spinCanFocus>
+          <scrollbarBackground>bar_hor.png</scrollbarBackground>
+          <scrollbarLeft>mouse_left_horizontal.png</scrollbarLeft>
+          <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
+          <scrollbarYOff>450</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <thumbs mask="dvdcase_mask.png"></thumbs>
+          <thumbAnimation effect="zoom" start="100,100" end="150,150" time="300" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="150,150" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
+          </control>
+			</control>
+		</control>
+    <!-- Selected Poster Image -->
+    <control>
+  		<description>Poster</description>
+  		<type>image</type>
+  		<id>1</id>
+  		<posX>1095</posX>
+      <posY>300</posY>
+  		<width>379</width>
+  		<height>563</height>
+  		<texture mask="dvdcase_mask.png">#selectedthumb</texture>
+  		<visible>facadeview.list</visible>
+  		<animation effect="fade" time="250">WindowOpen</animation>
+  		<animation effect="fade" time="250">WindowClose</animation>
+  	</control>
+  </controls>
+</window>

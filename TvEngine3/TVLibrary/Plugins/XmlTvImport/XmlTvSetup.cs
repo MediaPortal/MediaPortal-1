@@ -70,6 +70,10 @@ namespace SetupTv.Sections
       setting.Value = cbImportLST.Checked ? "true" : "false";
       setting.Persist();
 
+      setting = layer.GetSetting("xmlTvNoTextMod", "true");
+      setting.Value = cbNoTextMod.Checked ? "true" : "false";
+      setting.Persist();
+
       setting = layer.GetSetting("xmlTvTimeZoneHours", "0");
       setting.Value = textBoxHours.Text;
       setting.Persist();
@@ -381,6 +385,78 @@ namespace SetupTv.Sections
       }
     }
 
+    public override void OnSectionActivated()
+    {
+      UpdateRadioButtonsState();
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      textBoxFolder.Text = layer.GetSetting("xmlTv", XmlTvImporter.DefaultOutputFolder).Value;
+      checkBox1.Checked = layer.GetSetting("xmlTvUseTimeZone", "false").Value == "true";
+      cbImportXML.Checked = layer.GetSetting("xmlTvImportXML", "true").Value == "true";
+      cbImportLST.Checked = layer.GetSetting("xmlTvImportLST", "false").Value == "true";
+      cbNoTextMod.Checked = layer.GetSetting("xmlTvNoTextMod", "false").Value == "true";
+      checkBoxDeleteBeforeImport.Checked = layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true";
+
+      textBoxHours.Text = layer.GetSetting("xmlTvTimeZoneHours", "0").Value;
+      textBoxMinutes.Text = layer.GetSetting("xmlTvTimeZoneMins", "0").Value;
+      labelLastImport.Text = layer.GetSetting("xmlTvResultLastImport", "").Value;
+      labelChannels.Text = layer.GetSetting("xmlTvResultChannels", "").Value;
+      labelPrograms.Text = layer.GetSetting("xmlTvResultPrograms", "").Value;
+      labelStatus.Text = layer.GetSetting("xmlTvResultStatus", "").Value;
+
+      chkScheduler.Checked = (layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
+      radioDownloadOnWakeUp.Checked = (layer.GetSetting("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", "false").Value ==
+                                       "true");
+      radioDownloadOnSchedule.Checked = !radioDownloadOnWakeUp.Checked;
+
+      txtRemoteURL.Text = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml").Value;
+
+      DateTime dt = DateTime.Now;
+      DateTimeFormatInfo DTFI = new DateTimeFormatInfo();
+      DTFI.ShortDatePattern = _shortTimePattern24Hrs;
+
+      try
+      {
+        dt = DateTime.Parse(layer.GetSetting("xmlTvRemoteScheduleTime", "06:30").Value, DTFI);
+      }
+      catch
+      {
+        // maybe 12 hr time (us) instead. lets re-parse it.
+        try
+        {
+          DTFI.ShortDatePattern = _shortTimePattern12Hrs;
+          dt = DateTime.Parse(layer.GetSetting("xmlTvRemoteScheduleTime", "06:30").Value, DTFI);
+        }
+        catch
+        {
+          //ignore
+        }
+      }
+
+      dateTimePickerScheduler.Value = dt;
+
+      lblLastTransferAt.Text = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "").Value;
+      lblTransferStatus.Text = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "").Value;
+
+      // load all distinct groups
+      try
+      {
+        comboBoxGroup.Items.Clear();
+        comboBoxGroup.Items.Add(new CBChannelGroup("", -1));
+        comboBoxGroup.Tag = "";
+
+        IList<ChannelGroup> channelGroups = ChannelGroup.ListAll();
+        foreach (ChannelGroup cg in channelGroups)
+        {
+          comboBoxGroup.Items.Add(new CBChannelGroup(cg.GroupName, cg.IdGroup));
+        }
+      }
+      catch (Exception e)
+      {
+        Log.Error("Failed to load groups {0}", e.Message);
+      }
+    }
+
     private void XmlSetup_Load(object sender, EventArgs e) {}
 
     private void buttonBrowse_Click(object sender, EventArgs e)
@@ -450,7 +526,7 @@ namespace SetupTv.Sections
                                                         String.Format(
                                                           "select c.* from Channel c join GroupMap g on c.idChannel=g.idChannel where " +
                                                           (loadRadio ? "" : " c.isTv = 1 and ") +
-                                                          " g.idGroup = '{0}' order by g.sortOrder", chGroup.idGroup),
+                                                          " g.idGroup = '{0}' and c.visibleInGuide = 1 order by g.sortOrder", chGroup.idGroup),
                                                         typeof (Channel));
           channels = ObjectFactory.GetCollection<Channel>(ManualJoinSQL.Execute());
         }
@@ -460,6 +536,7 @@ namespace SetupTv.Sections
           sb.AddOrderByField(true, "sortOrder");
           if (!loadRadio)
             sb.AddConstraint(" isTv = 1");
+          sb.AddConstraint(" visibleInGuide = 1");
           SqlStatement stmt = sb.GetStatement(true);
           channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
         }
