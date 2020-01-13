@@ -324,8 +324,10 @@ namespace MediaPortal
             GUIGraphicsContext.SkinSize = new Size(iWidth, iHeight);
             return;
           }
-          catch (FormatException) // Size values were invalid.
-          {  }
+          catch (FormatException ex) // Size values were invalid.
+          {
+            Log.Debug("FullScreenSplash:InitSkinSizeFromReferenceXML: {0}", ex.Message);
+          }
         }
       }
       Log.Debug("FullScreenSplash: Fallback to Default skin size: 1920x1080");

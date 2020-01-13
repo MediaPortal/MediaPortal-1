@@ -278,8 +278,9 @@ namespace MediaPortal.TagReader
             musicTagCache.Duration = tagCache.Duration - cueIndexToIntTime(track.Indices[0]);
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("CueUtil:CueFakeTrackFile2MusicTag {0}", ex.Message);
           // If we end up here this means that we were not able to read the file
           // Most probably because of taglib-sharp not supporting the audio file
           // For example DTS file format has no Tags, but can be replayed by BASS

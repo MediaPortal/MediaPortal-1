@@ -316,8 +316,9 @@ namespace MediaPortal.GUI.Settings
           dlgNotify.DoModal(GetID);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GUISettingsPictures: OnScanDatabaseThread {0}", ex.Message);
       }
     }
 
@@ -498,7 +499,10 @@ namespace MediaPortal.GUI.Settings
             {
               File.Delete(database);
             }
-            catch (Exception) {}
+            catch (Exception ex)
+            {
+              Log.Error("GUISettingsPictures: OnResetDatabase {0}", ex.Message);
+            }
             finally
             {
               PictureDatabase.ReOpen();

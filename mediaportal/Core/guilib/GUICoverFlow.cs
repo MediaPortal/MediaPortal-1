@@ -2773,7 +2773,10 @@ namespace MediaPortal.GUI.Library
       {
         _listItems.Sort(comparer);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GuiCoverFlow.sort: Exception" + ex.Message);
+      }
     }
 
     public void Add(GUIListItem item)

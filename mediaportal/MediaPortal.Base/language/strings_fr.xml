@@ -2141,7 +2141,7 @@
     <String id="300007">Ne pas lire</String>
     <String id="300008">Demandez ce qu'il faut faire</String>
     <String id="300009">Nom</String>
-    <String id="300010">Taux d'image(s) par seconde</String>
+    <String id="300010">Taux IMS</String>
     <String id="300011">taux de rafraîchissement</String>
     <String id="300012">Action</String>
     <String id="300013">Nom ne peut pas être vide ou doit être unique !</String>

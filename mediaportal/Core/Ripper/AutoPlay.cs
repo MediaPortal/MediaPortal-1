@@ -320,7 +320,10 @@ namespace MediaPortal.Ripper
 
         GetMediaTypeFromFiles(Path.GetPathRoot(strDrive));
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("AutoPlay DetectMediaType: {0}", ex.Message);
+      }
     }
 
     private static void GetMediaTypeFromFiles(string strFolder)
@@ -379,7 +382,10 @@ namespace MediaPortal.Ripper
           mediaFiles = photoFiles;
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("AutoPlay GetMediaTypeFromFiles: {0}", ex.Message);
+      }
     }
 
     #endregion

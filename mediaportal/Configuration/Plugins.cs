@@ -86,9 +86,9 @@ namespace MediaPortal.Configuration
           Log.Debug("PluginsNew: loadPlugins {0}", pluginFile);
           pluginAssembly = Assembly.LoadFrom(pluginFile);
         }
-        catch (BadImageFormatException)
+        catch (BadImageFormatException ex)
         {
-          Log.Warn("PluginsNew: {0} has a bad image format", pluginFile);
+          Log.Warn("PluginsNew: {0} has a bad image format {1}", pluginFile, ex.Message);
         }
 
         if (pluginAssembly != null)

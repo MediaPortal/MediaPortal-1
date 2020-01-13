@@ -103,9 +103,9 @@ namespace MediaPortal.GUI.Library
           {
             File.Delete(FileName);
           }
-          catch (Exception)
+          catch (Exception ex)
           {
-            Log.Info("DownloadedImage:Download() Delete failed:{0}", FileName);
+            Log.Info("DownloadedImage:Download() Delete failed:{0}, {1}", FileName,ex.Message);
           }
 
           client.Proxy.Credentials = CredentialCache.DefaultCredentials;
@@ -139,18 +139,18 @@ namespace MediaPortal.GUI.Library
                 {
                   File.Delete(newFile);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                  Log.Info("DownloadedImage:Download() Delete failed:{0}", newFile);
+                  Log.Info("DownloadedImage:Download() Delete failed:{0}, {1}", newFile, ex.Message);
                 }
                 File.Move(FileName, newFile);
                 FileName = newFile;
               }
             }
           }
-          catch (Exception)
+          catch (Exception ex)
           {
-            Log.Info("DownloadedImage:Download() DownloadFile failed:{0}->{1}", URL, FileName);
+            Log.Info("DownloadedImage:Download() DownloadFile failed:{0}->{1}, {2}", URL, FileName, ex.Message);
           }
           _dateDownloaded = DateTime.Now;
           return true;

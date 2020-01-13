@@ -1042,7 +1042,7 @@ namespace MediaPortal.Music.Database
 
         string sql =
           string.Format(
-            "SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}' AND strFileType = {2} order by strFileType asc, iTrack asc",
+            "SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}' AND strFileType = '{2}' order by strFileType asc, iTrack asc",
             strAlbumArtist, strAlbum, fileType);
         GetSongsByFilter(sql, out aSongList, "tracks");
 

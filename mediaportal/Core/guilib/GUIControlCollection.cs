@@ -201,7 +201,10 @@ namespace MediaPortal.GUI.Library
         knownIDs.Add(id, control);
         return true;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GuiControlCollection.TryAdd.sort: Exception" + ex.Message);
+      }
 
       return false;
     }

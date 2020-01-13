@@ -251,7 +251,10 @@ namespace MediaPortal.Player
             {
               mediaPos.put_Rate((double)value);
             }
-            catch (Exception) {}
+            catch (Exception ex)
+            {
+              Log.Error("AdioPlayerVMR: Speed {0}", ex.Message);
+            }
           }
         }
       }
@@ -480,7 +483,10 @@ namespace MediaPortal.Player
 
         m_state = PlayState.Init;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("AdioPlayerVMR: CloseInterfaces {0}", ex.Message);
+      }
     }
 
     public override void WndProc(ref Message m)

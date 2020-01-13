@@ -414,7 +414,10 @@ namespace MediaPortal.GUI.Library
         {
           GUIGraphicsContext.form.Text = "MediaPortal - " + tagvalue;
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("PropertyManager: SetProperty {0}", ex.Message);
+        }
       }
 
       bool changed = false;

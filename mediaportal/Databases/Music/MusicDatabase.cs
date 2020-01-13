@@ -107,9 +107,9 @@ namespace MediaPortal.Music.Database
           {
             File.Delete(file);
           }
-          catch (IOException)
+          catch (IOException ex)
           {
-            // Don't need to report anything, if we couldn't delete a temp file
+            Log.Debug("MusicDatabase: {0}", ex.Message);
           }
         }
       }
@@ -183,8 +183,9 @@ namespace MediaPortal.Music.Database
           string lastImport = xmlreader.GetValueAsString("musicfiles", "lastImport", "1900-01-01 00:00:00");
           _lastImport = DateTime.ParseExact(lastImport, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("MusicDatabase:LoadDBSettings: {0}", ex.Message);
           _lastImport = DateTime.ParseExact("1900-01-01 00:00:00", "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
           ;
         }
@@ -202,7 +203,10 @@ namespace MediaPortal.Music.Database
         {
           Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("MusicDatabase:Open: {0}", ex.Message);
+        }
 
         if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3")))
         {
@@ -323,8 +327,8 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_strAlbumArtiststrAlbumstrFileType",
                                  "CREATE INDEX idxtracks_strAlbumArtiststrAlbumstrFileType ON tracks(strAlbumArtist, strAlbum, strFileType)");
         // Indices for Album and Artist Info
-        DatabaseUtility.AddIndex(MusicDbClient, "idxartistinfo_strArtiststrAlbum",
-                                 "CREATE INDEX idxartistinfo_strArtiststrAlbum ON artistinfo(strArtist, strAlbum)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxalbuminfo_strArtiststrAlbum",
+                                 "CREATE INDEX idxalbuminfo_strArtiststrAlbum ON albuminfo(strArtist, strAlbum)");
       }
       catch (Exception ex)
       {

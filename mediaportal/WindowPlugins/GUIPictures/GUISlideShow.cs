@@ -102,9 +102,9 @@ namespace MediaPortal.GUI.Pictures
               return _currentSlide;
             }
           }
-          catch (Exception)
+          catch (Exception ex)
           {
-            Log.Debug("GUISlideShow: catch exception when LoadSlide on stop");
+            Log.Debug("GUISlideShow: catch exception when LoadSlide on stop {0}", ex.Message);
             return _currentSlide;
           }
 
@@ -2995,8 +2995,9 @@ namespace MediaPortal.GUI.Pictures
                     currentSong = (MusicTag) plI.MusicTag;
                   }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                  Log.Error("GUISlideShow: ShowSong {0}", ex.Message);
                   // Catch the COM execption but continue code with Music Database instead.
                 }
               }

@@ -484,7 +484,10 @@ namespace MediaPortal.Player
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("g_player: ChangeDriveSpeed: {0}", ex.Message);
+      }
     }
 
     #endregion
@@ -2387,61 +2390,104 @@ namespace MediaPortal.Player
 
     public static void StepNow()
     {
-      // Resume automatic operation
-      if (!_StepNowDone) //_SeekAbsoluteDone
+      if (_player is StreamBufferPlayer9 || _player is DVDPlayer9)
       {
-        _StepNowDone = true;
-
-        // Start seek in a thread to avoid deadlock
-        new Thread(() =>
+        // Suspending GUIGraphicsContext.State
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
         {
-          Thread.CurrentThread.IsBackground = true;
-          Thread.CurrentThread.Name = "StepNow";
+          GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+        }
 
-          // Suspending GUIGraphicsContext.State
-          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+        if (_currentStep != 0 && _player != null)
+        {
+          if (_currentStep < 0 || (_player.CurrentPosition + 4 < _player.Duration) || !IsTV)
           {
-            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+            double dTime = (int) _currentStep + _player.CurrentPosition;
+            Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}", _player.CurrentPosition, _player.Duration);
+            if (!IsTV && (dTime > _player.Duration)) dTime = _player.Duration - 5;
+            if (IsTV && (dTime + 3 > _player.Duration)) dTime = _player.Duration - 3; // Margin for live Tv
+            if (dTime < 0) dTime = 0d;
+
+            Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2} isTv {3}", (int) (dTime / 3600d),
+              (int) ((dTime % 3600d) / 60d), (int) (dTime % 60d), IsTV);
+            _player.SeekAbsolute(dTime);
+            Speed = Speed;
+            GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0,
+              null);
+            GUIGraphicsContext.SendMessage(msgUpdate);
           }
+        }
 
-          if (_currentStep != 0 && _player != null)
+        _currentStep = 0;
+        _currentStepIndex = -1;
+        _seekTimer = DateTime.MinValue;
+
+        // Restore GUIGraphicsContext.State
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+        {
+          GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+        }
+      }
+      else
+      {
+        // Resume automatic operation
+        if (!_StepNowDone) //_SeekAbsoluteDone
+        {
+          _StepNowDone = true;
+
+          // Start seek in a thread to avoid deadlock
+          new Thread(() =>
           {
-            if (_currentStep < 0 || (_player.CurrentPosition + 4 < _player.Duration) || !IsTV)
+            Thread.CurrentThread.IsBackground = true;
+            Thread.CurrentThread.Name = "StepNow";
+
+            // Suspending GUIGraphicsContext.State
+            if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
             {
-              double dTime = (int) _currentStep + _player.CurrentPosition;
-              Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}", _player.CurrentPosition, _player.Duration);
-              if (!IsTV && (dTime > _player.Duration)) dTime = _player.Duration - 5;
-              if (IsTV && (dTime + 3 > _player.Duration)) dTime = _player.Duration - 3; // Margin for live Tv
-              if (dTime < 0) dTime = 0d;
-
-              Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2} isTv {3}", (int) (dTime / 3600d),
-                (int) ((dTime % 3600d) / 60d), (int) (dTime % 60d), IsTV);
-              _player.SeekAbsolute(dTime);
-              Speed = Speed;
-              GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0,
-                0,
-                null);
-              GUIGraphicsContext.SendMessage(msgUpdate);
+              GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
             }
-          }
 
-          _currentStep = 0;
-          _currentStepIndex = -1;
-          _seekTimer = DateTime.MinValue;
+            if (_currentStep != 0 && _player != null)
+            {
+              if (_currentStep < 0 || (_player.CurrentPosition + 4 < _player.Duration) || !IsTV)
+              {
+                double dTime = (int) _currentStep + _player.CurrentPosition;
+                Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}", _player.CurrentPosition,
+                  _player.Duration);
+                if (!IsTV && (dTime > _player.Duration)) dTime = _player.Duration - 5;
+                if (IsTV && (dTime + 3 > _player.Duration)) dTime = _player.Duration - 3; // Margin for live Tv
+                if (dTime < 0) dTime = 0d;
 
-          // Restore GUIGraphicsContext.State
-          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
-          {
-            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
-          }
+                Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2} isTv {3}", (int) (dTime / 3600d),
+                  (int) ((dTime % 3600d) / 60d), (int) (dTime % 60d), IsTV);
+                _player.SeekAbsolute(dTime);
+                Speed = Speed;
+                GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0,
+                  0,
+                  0,
+                  null);
+                GUIGraphicsContext.SendMessage(msgUpdate);
+              }
+            }
 
-          // Wait until is done
-          SeekFinished.Set();
-        }).Start();
+            _currentStep = 0;
+            _currentStepIndex = -1;
+            _seekTimer = DateTime.MinValue;
 
-        // Reset seek
-        SeekFinished.WaitOne(5000);
-        _StepNowDone = false;
+            // Restore GUIGraphicsContext.State
+            if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+            {
+              GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+            }
+
+            // Wait until is done
+            SeekFinished.Set();
+          }).Start();
+
+          // Reset seek
+          SeekFinished.WaitOne(5000);
+          _StepNowDone = false;
+        }
       }
     }
 
@@ -2642,12 +2688,28 @@ namespace MediaPortal.Player
     public static void SeekAbsolute(double dTime)
     {
       if (_player == null)
-      {
         return;
-      }
-
-      if (!_SeekAbsoluteDone)
+      if (_player is StreamBufferPlayer9 || _player is DVDPlayer9)
       {
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+        {
+          Log.Debug("g_Player: SeekAbsolute GUIGraphicsContext.State.SUSPENDING");
+          GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+        }
+        Log.Debug("g_Player.SeekAbsolute() - Preparing to seek to {0}:{1}:{2}", (object) (int) (dTime / 3600.0), (object) (int) (dTime % 3600.0 / 60.0), (object) (int) (dTime % 60.0));
+        _player.SeekAbsolute(dTime);
+        GUIGraphicsContext.SendMessage(new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, (object) null));
+        _currentStep = 0;
+        _currentStepIndex = -1;
+        _seekTimer = DateTime.MinValue;
+        if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.SUSPENDING)
+          return;
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+      }
+      else
+      {
+        if (_SeekAbsoluteDone)
+          return;
         _SeekAbsoluteDone = true;
 
         // Start seek in a thread to avoid deadlock
@@ -2659,7 +2721,7 @@ namespace MediaPortal.Player
           // Suspending GUIGraphicsContext.State
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
           {
-        Log.Debug("g_Player: SeekAbsolute GUIGraphicsContext.State.SUSPENDING");
+            Log.Debug("g_Player: SeekAbsolute GUIGraphicsContext.State.SUSPENDING");
             GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
           }
 
@@ -4242,9 +4304,9 @@ namespace MediaPortal.Player
             var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) { SoundFileName = "silent.wav" };
             GUIGraphicsContext.OnAction(action);
           }
-          catch (Exception)
+          catch (Exception ex)
           {
-            Log.Error("g_player: GUI_MSG_REBUILD_AUDIO play sound workaround failed");
+            Log.Error("g_player: GUI_MSG_REBUILD_AUDIO play sound workaround failed {0}", ex.Message);
           }
           break;
         case GUIMessage.MessageType.GUI_MSG_STOP_MEDIACONTROL_AUDIO:
@@ -4256,9 +4318,9 @@ namespace MediaPortal.Player
             var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) { SoundFileName = "silent.wav" };
             GUIGraphicsContext.OnAction(action);
           }
-          catch (Exception)
+          catch (Exception ex)
           {
-            Log.Error("g_player: GUI_MSG_STOP_MEDIACONTROL_AUDIO play sound workaround failed");
+            Log.Error("g_player: GUI_MSG_STOP_MEDIACONTROL_AUDIO play sound workaround failed {0}", ex.Message);
           }
           break;
       }

@@ -1264,8 +1264,9 @@ namespace MediaPortal.GUI.Library
           {
             item_OnThumbnailRefresh(i, gotFocus);
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            Log.Warn("GUIListControl: Render {0}", ex.Message);
             continue;
           }
 
@@ -3454,7 +3455,11 @@ namespace MediaPortal.GUI.Library
         _listItems.Sort(comparer);
         _enableScrollLabel = false;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GUIListControl sort: " + ex.Message);
+      }
+
       _refresh = true;
     }
 

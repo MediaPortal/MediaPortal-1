@@ -84,8 +84,9 @@ namespace MediaPortal.GUI.Library
             {
               File.Delete(file);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+              Log.Error("GUITextureManager DisposeInternal: " + ex.Message);
             }
           }
         }
@@ -186,8 +187,9 @@ namespace MediaPortal.GUI.Library
         }
         return fileName;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GUITextureManager GetFileName: " + ex.Message);
         // ignored
         return "";
       }
@@ -223,14 +225,14 @@ namespace MediaPortal.GUI.Library
           {
             theImage = ImageFast.FromFile(fileName);
           }
-          catch (FileNotFoundException)
+          catch (FileNotFoundException ex)
           {
-            Log.Warn("TextureManager: texture: {0} does not exist", fileName);
+            Log.Warn("TextureManager: texture: {0} does not exist {1}", fileName, ex.Message);
             return 0;
           }
-          catch (Exception)
+          catch (Exception ex)
           {
-            Log.Warn("TextureManager: Fast loading texture {0} failed using safer fallback", fileName);
+            Log.Warn("TextureManager: Fast loading texture {0} failed using safer fallback {1}", fileName, ex.Message);
             theImage = Image.FromFile(fileName);
           }
           if (theImage != null)
@@ -261,7 +263,10 @@ namespace MediaPortal.GUI.Library
                 }
               }
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+              Log.Error("GUITextureManager Load: " + ex.Message);
+            }
 
             for (int i = 0; i < newCache.Frames; ++i)
             {
@@ -341,8 +346,9 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GUITextureManager Load2: " + ex.Message);
         return 0;
       }
       return 0;
@@ -596,9 +602,9 @@ namespace MediaPortal.GUI.Library
         //we need to catch this on higer level.         
         throw e1;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Error("TextureManager: LoadGraphic - invalid thumb({0})", fileName);
+        Log.Error("TextureManager: LoadGraphic - invalid thumb({0}) {1}", fileName, ex.Message);
         Format fmt = Format.A8R8G8B8;
         string fallback = GUIGraphicsContext.GetThemedSkinFile(@"\media\" + "black.png");
 

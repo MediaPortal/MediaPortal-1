@@ -178,8 +178,9 @@ namespace MediaPortal.Util
             return;
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("FtpConnectionCache:Download {0}", ex.Message);
           return;
         }
 

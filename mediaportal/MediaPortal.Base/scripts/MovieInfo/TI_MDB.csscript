@@ -21,7 +21,7 @@ using System.Web;
 internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabber
 {
   const string strGrabber = "TI_MDB";
-  const string strGrabberVersion = "20180227.I";
+  const string strGrabberVersion = "20191230.I";
 
   public Grabber()
   {
@@ -291,7 +291,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     if (GRABBER_ID_LOOKUP)
     {
       // Get IMDB ID from search string
-      Regex rximdbid = new Regex(@"(?:\s|\+|^)(?<imdbid>tt\d{7})\b");
+      Regex rximdbid = new Regex(@"(?:\s|\+|^)(?<imdbid>tt\d{7,8})\b");
       Match matchimdbid = rximdbid.Match(searchStr);
       if (matchimdbid.Success)
       {

@@ -296,7 +296,10 @@ namespace MediaPortal.GUI.Library
           {
             Percentage1 = float.Parse(m_strText);
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("GUITVProgressControl: Render() {0}", ex.Message);
+          }
           if (Percentage1 < 0 || Percentage1 > 100)
           {
             Percentage1 = 0;
@@ -312,7 +315,11 @@ namespace MediaPortal.GUI.Library
           {
             Percentage1 = float.Parse(strText);
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("GUITVProgressControl: Render2() {0}", ex.Message);
+          }
+
           if (Percentage1 < 0 || Percentage1 > 100)
           {
             Percentage1 = 0;
@@ -329,7 +336,10 @@ namespace MediaPortal.GUI.Library
           {
             Percentage2 = float.Parse(strText);
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("GUITVProgressControl: Render3() {0}", ex.Message);
+          }
           if (Percentage2 < 0 || Percentage2 > 100)
           {
             Percentage2 = 0;
@@ -345,7 +355,10 @@ namespace MediaPortal.GUI.Library
           {
             Percentage3 = float.Parse(strText);
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("GUITVProgressControl: Render4() {0}", ex.Message);
+          }
           if (Percentage3 < 0 || Percentage3 > 100)
           {
             Percentage3 = 0;
@@ -1088,8 +1101,9 @@ namespace MediaPortal.GUI.Library
             {
               MarkerStartsPercent.Add(float.Parse(strMarkerStarts[i]));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+              Log.Warn("GUITVProgressControl: parseMarkerValues {0}", ex.Message);
               break;
             }
             if (MarkerStartsPercent.Count > i)
@@ -1114,8 +1128,9 @@ namespace MediaPortal.GUI.Library
             {
               MarkerEndsPercent.Add(float.Parse(strMarkerEnds[i]));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+              Log.Warn("GUITVProgressControl: parseMarkerValues {0}", ex.Message);
               break;
             }
             if (MarkerEndsPercent.Count > i)

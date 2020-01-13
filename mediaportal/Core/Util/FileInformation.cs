@@ -47,7 +47,10 @@ namespace MediaPortal.Util
           CreationTime = info.CreationTime;
           ModificationTime = info.LastWriteTime;
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          GUI.Library.Log.Error("FileInformation {0}", ex.Message);
+        }
       }
       else
       {
@@ -59,7 +62,10 @@ namespace MediaPortal.Util
           CreationTime = info.CreationTime;
           ModificationTime = info.LastWriteTime;
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          GUI.Library.Log.Error("FileInformation {0}", ex.Message);
+        }
       }
     }
 

@@ -899,9 +899,10 @@ namespace MediaPortal.Player
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         // RefreshRate failed
+        Log.Error("RefreshRate failed: {0}", ex.Message);
       }
     }
 

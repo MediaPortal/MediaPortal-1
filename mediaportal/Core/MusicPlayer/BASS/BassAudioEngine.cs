@@ -1201,7 +1201,10 @@ namespace MediaPortal.MusicPlayer.BASS
         // Some Winamp dsps might raise an exception when closing
         BassWaDsp.BASS_WADSP_Free();
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("BassAudioEngine: DisposeAndCleanUp {0}", ex.Message);
+      }
 
       if (Config.MusicPlayer == AudioPlayer.Asio)
       {
@@ -1382,10 +1385,10 @@ namespace MediaPortal.MusicPlayer.BASS
           _currentCueSheet = null;
         }
       }
-      catch (System.IO.FileNotFoundException)
+      catch (System.IO.FileNotFoundException ex)
       {
         // The CUE File may have been moved
-        Log.Error("BASS: Cue File cannot be found at the expected location. aborting playback.");
+        Log.Error("BASS: Cue File cannot be found at the expected location. aborting playback. {0}", ex.Message);
       }
       return false;
     }
@@ -2181,8 +2184,9 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         tag.Year = Convert.ToInt32(_tagInfo.year);
       }
-      catch (FormatException)
+      catch (FormatException ex)
       {
+        Log.Error("BASS:GetStreamTags: {0}", ex.Message);
         tag.Year = 0;
       }
       return tag;

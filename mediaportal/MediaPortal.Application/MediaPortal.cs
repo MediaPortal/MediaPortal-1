@@ -826,8 +826,9 @@ public class MediaPortalApp : D3D, IRender
             skin = string.IsNullOrEmpty(SkinOverride) ? xmlreader.GetValueAsString("skin", "name", "Titan") : SkinOverride;
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("MediaPortal: Main {0}", ex.Message);
           skin = "Titan";
         }
 
@@ -859,10 +860,10 @@ public class MediaPortalApp : D3D, IRender
           {
             ctrl = new ServiceController("TVService");
           }
-          catch (Exception)
+          catch (Exception ex)
           {
             ctrl = null;
-            Log.Debug("Main: Create ServiceController for TV service failed - proceeding...");
+            Log.Debug("Main: Create ServiceController for TV service failed - proceeding... {0}", ex.Message);
           }
 
           if (ctrl != null)
@@ -873,9 +874,9 @@ public class MediaPortalApp : D3D, IRender
             {
               status = ctrl.Status;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-              Log.Debug("Main: Failed to retrieve TV service status");
+              Log.Debug("Main: Failed to retrieve TV service status {0}", ex.Message);
               ctrl.Close();
               ctrl = null;
             }
@@ -899,9 +900,9 @@ public class MediaPortalApp : D3D, IRender
                 {
                   ctrl.Start();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                  Log.Info("TvService seems to be already starting up.");
+                  Log.Info("TvService seems to be already starting up. {0}", ex.Message);
                 }
               }
 
@@ -909,9 +910,10 @@ public class MediaPortalApp : D3D, IRender
               {
                 ctrl.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 45));
               }
-              // ReSharper disable EmptyGeneralCatchClause
-              catch (Exception) {}
-              // ReSharper restore EmptyGeneralCatchClause
+              catch (Exception ex)
+              {
+                Log.Error("MediaPortal: WaitForStatus {0}", ex.Message);
+              }
               
               if (ctrl.Status == ServiceControllerStatus.Running)
               {
@@ -982,9 +984,10 @@ public class MediaPortalApp : D3D, IRender
           #endif
 
         }
-        // ReSharper disable EmptyGeneralCatchClause
-        catch (Exception) {}
-        // ReSharper restore EmptyGeneralCatchClause
+        catch (Exception ex)
+        {
+          Log.Error("MediaPortal: {0}", ex.Message);
+        }
 
         try
         {
@@ -1074,12 +1077,12 @@ public class MediaPortalApp : D3D, IRender
                         @"\Team MediaPortal\MediaPortalDirs.xml");
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         // ReSharper disable LocalizableElement
         MessageBox.Show(
           "Error opening file " + Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) +
-          @"\Team MediaPortal\MediaPortalDirs.xml using notepad.exe", "Error", MessageBoxButtons.OK,
+          @"\Team MediaPortal\MediaPortalDirs.xml using notepad.exe "+ex.Message, "Error", MessageBoxButtons.OK,
           MessageBoxIcon.Error);
         // ReSharper restore LocalizableElement
       }
@@ -3237,16 +3240,8 @@ public class MediaPortalApp : D3D, IRender
     }
     try
     {
-      GUIPropertyManager.SetProperty("#date", GetDate());
+      GetDate(); // this sets all of the date-related skin variables
       GUIPropertyManager.SetProperty("#time", GetTime());
-      GUIPropertyManager.SetProperty("#Day", GetDay()); // 01
-      GUIPropertyManager.SetProperty("#SDOW", GetShortDayOfWeek()); // Sun
-      GUIPropertyManager.SetProperty("#DOW", GetDayOfWeek()); // Sunday
-      GUIPropertyManager.SetProperty("#Month", GetMonth()); // 01
-      GUIPropertyManager.SetProperty("#SMOY", GetShortMonthOfYear()); // Jan
-      GUIPropertyManager.SetProperty("#MOY", GetMonthOfYear()); // January
-      GUIPropertyManager.SetProperty("#SY", GetShortYear()); // 80
-      GUIPropertyManager.SetProperty("#Year", GetYear()); // 1980
 
       // TODO: remove internal screen saver, there is no need for it anymore as MP bugs have been fixed
       // disable screen saver when MP running and internal selected
@@ -3666,7 +3661,8 @@ public class MediaPortalApp : D3D, IRender
     catch (Exception exs)
     {
       // ReSharper disable LocalizableElement
-      MessageBox.Show(String.Format("Failed to load your skin! Aborting startup...\n\n{0}", exs.Message), "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+      // MessageBox.Show(String.Format("Failed to load your skin! Aborting startup...\n\n{0}", exs.Message), "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+      Log.Error("Startup: Failed to Caching Graphics! {0}", exs.Message);
       // ReSharper restore LocalizableElement
       Close();
     }
@@ -3841,14 +3837,14 @@ public class MediaPortalApp : D3D, IRender
       {
         if (GUIGraphicsContext.DX9Device != null) GUIGraphicsContext.DX9Device.TestCooperativeLevel();
       }
-      catch (DeviceLostException)
+      catch (DeviceLostException ex)
       {
-        Log.Debug("Main: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+        Log.Debug("Main: D3DERR_DEVICELOST - device is lost but cannot be reset at this time {0}", ex.Message);
         return;
       }
-      catch (DeviceNotResetException)
+      catch (DeviceNotResetException ex)
       {
-        Log.Debug("Main: D3DERR_DEVICENOTRESET - device is lost but can be reset at this time");
+        Log.Debug("Main: D3DERR_DEVICENOTRESET - device is lost but can be reset at this time {0}", ex.Message);
         return;
       }
       catch
@@ -4024,7 +4020,7 @@ public class MediaPortalApp : D3D, IRender
     if (DateTime.Now.Second != _updateTimer.Second)
     {
       _updateTimer = DateTime.Now;
-      GUIPropertyManager.SetProperty("#date", GetDate());
+      GetDate(); // this sets all of the date-related skin variables
       GUIPropertyManager.SetProperty("#time", GetTime());
     }
 
@@ -5563,7 +5559,11 @@ public class MediaPortalApp : D3D, IRender
                 {
                   GUIGraphicsContext.MadVrRenderTargetVmr9 = surface;
                 }
-                g_Player.RefreshMadVrVideo();
+
+                if (!g_Player.IsPicture && !g_Player.IsPicturePlaylist)
+                {
+                  g_Player.RefreshMadVrVideo();
+                }
               }
 
               if (message.Param1 == 2)
@@ -5577,9 +5577,10 @@ public class MediaPortalApp : D3D, IRender
 
               Log.Debug("Main: recreate swap chain for madVR done");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
               // ignored
+              Log.Error("MediaPortal: {0}", ex.Message);
             }
 
             // Set here Vmr9Active to false to inform plugins that all stop is fully done.
@@ -5928,9 +5929,17 @@ public class MediaPortalApp : D3D, IRender
       dateString = Utils.ReplaceTag(dateString, "<MM>", cur.Month.ToString(CultureInfo.InvariantCulture), "unknown");
       dateString = Utils.ReplaceTag(dateString, "<Year>", cur.Year.ToString(CultureInfo.InvariantCulture), "unknown");
       dateString = Utils.ReplaceTag(dateString, "<YY>", (cur.Year - 2000).ToString("00"), "unknown");
-      GUIPropertyManager.SetProperty("#date", dateString);
 
+      GUIPropertyManager.SetProperty("#date", dateString);
       GUIPropertyManager.SetProperty("#date.local", cur.ToString("d")); // format usable for parsing in string expressions
+      GUIPropertyManager.SetProperty("#Day", GetDay()); // 01
+      GUIPropertyManager.SetProperty("#SDOW", GetShortDayOfWeek()); // Sun
+      GUIPropertyManager.SetProperty("#DOW", day); // Sunday
+      GUIPropertyManager.SetProperty("#Month", GetMonth()); // 01
+      GUIPropertyManager.SetProperty("#SMOY", GetShortMonthOfYear()); // Jan
+      GUIPropertyManager.SetProperty("#MOY", month); // January
+      GUIPropertyManager.SetProperty("#SY", GetShortYear()); // 80
+      GUIPropertyManager.SetProperty("#Year", GetYear()); // 1980
 
       return dateString;
     }
@@ -6243,13 +6252,13 @@ public class MediaPortalApp : D3D, IRender
         }
       }
     }
-    catch (SecurityException)
+    catch (SecurityException ex)
     {
-      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0}", key);
+      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0} {1}", key, ex.Message);
     }
-    catch (UnauthorizedAccessException)
+    catch (UnauthorizedAccessException ex)
     {
-      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0}", key);
+      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0} {1}", key, ex.Message);
     }
   }
 
@@ -6273,13 +6282,13 @@ public class MediaPortalApp : D3D, IRender
         }
       }
     }
-    catch (SecurityException)
+    catch (SecurityException ex)
     {
-      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0}", key);
+      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0} {1}", key, ex.Message);
     }
-    catch (UnauthorizedAccessException)
+    catch (UnauthorizedAccessException ex)
     {
-      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0}", key);
+      Log.Error(@"User does not have sufficient rights to modify registry key HKLM\{0} {1}", key, ex.Message);
     }
   }
 

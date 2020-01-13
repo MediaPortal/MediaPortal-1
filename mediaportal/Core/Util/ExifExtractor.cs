@@ -195,7 +195,10 @@ namespace MediaPortal.GUI.Pictures
           item.DisplayValue = Value.GetString(propItem.Value);
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("ExifExtracter:setStuff {0}", ex.Message);
+      }
     }
 
 
@@ -264,7 +267,10 @@ namespace MediaPortal.GUI.Pictures
                                                                                 System.Threading.Thread.CurrentThread.
                                                                                   CurrentCulture);
                   }
-                  catch (Exception) {}
+                  catch (Exception ex)
+                  {
+                    Log.Error("ExifExtracter:GetExifMetadata {0}", ex.Message);
+                  }
                 }
               }
 
@@ -353,7 +359,10 @@ namespace MediaPortal.GUI.Pictures
           MyMetadata.ImageDimensions.Caption = "Dimensions";
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("ExifExtracter:GetExifMetadata {0}", ex.Message);
+      }
       return MyMetadata;
     }
   }

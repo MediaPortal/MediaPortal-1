@@ -265,8 +265,9 @@ namespace MediaPortal.Util
           }
 
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("UNCFileFolderExists: {0}", ex.Message);
         }
 
         if (!VirtualDirectory.detectedItemsPath.Contains(strFile))

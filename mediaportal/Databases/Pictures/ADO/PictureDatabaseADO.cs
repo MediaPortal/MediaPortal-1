@@ -120,7 +120,10 @@ namespace MediaPortal.Picture.Database
 
               dateTaken = DateTime.ParseExact(metaData.DatePictureTaken.DisplayValue, "d", dateTimeFormat);
             }
-            catch (Exception) {}
+            catch (Exception ex)
+            {
+              Log.Error("MediaPortal.Picture.Database: {0}", ex.Message);
+            }
             // Smirnoff: Query the orientation information
             //						if(iRotation == -1)
             iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
