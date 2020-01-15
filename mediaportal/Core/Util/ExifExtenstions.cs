@@ -33,7 +33,7 @@ namespace MediaPortal.Util
       { ExifDirectoryBase.TagDateTime, "Date Picture Taken" },
       { ExifDirectoryBase.TagMake, "Equipment Make" },
       { ExifDirectoryBase.TagModel, "Camera Model" },
-      { ExifDirectoryBase.TagArtist, "Artist" },
+      { ExifDirectoryBase.TagArtist, "Author" },
       { ExifDirectoryBase.TagSoftware, "Application Name" },
       { ExifDirectoryBase.TagCopyright, "Copyright" },
       { ExifDirectoryBase.TagOrientation, "Orientation" },
@@ -76,6 +76,23 @@ namespace MediaPortal.Util
     {
       string result;
       return _exif.TryGetValue(tag, out result) ? result : string.Empty;
+    }
+
+    public static int ToRotation(this int orientation)
+    {
+      if (orientation == 6)
+      {
+        return 1; // 90 degree:  112/03/06 00
+      }
+      if (orientation == 3)
+      {
+        return 2; // 180 degree: 112/03/03 00
+      }
+      if (orientation == 8)
+      {
+        return 3; // 270 degree: 112/03/08 00
+      }
+      return 0; // not rotated
     }
   }
 }

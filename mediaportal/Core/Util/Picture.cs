@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1514,16 +1514,7 @@ namespace MediaPortal.Util
         if (propItem.Id == 0x112)
         {
           int iType = Convert.ToInt16(propItem.Value[0]);
-          switch (iType)
-          {
-            case 06:
-              return 1; // 90 degree:  112/03/06 00
-            case 03:
-              return 2; // 180 degree: 112/03/03 00
-            case 08:
-              return 3; // 270 degree: 112/03/08 00
-          }
-          break;
+          return iType.ToRotation();
         }
       }
       return 0; // not rotated

@@ -70,11 +70,35 @@ namespace MediaPortal.GUI.Pictures
       public MetadataItem Resolution;
       public MetadataItem ImageDimensions;
       public MetadataItem Orientation;
+      public MetadataItem ISO;
+      public MetadataItem Author;
+      public MetadataItem Copyright;
+      public MetadataItem ExposureProgram;
+      public MetadataItem ExposureMode;
+      public MetadataItem SensingMethod;
+      public MetadataItem SceneType;
+      public MetadataItem SceneCaptureType;
+      public MetadataItem WhiteBalance;
+      public MetadataItem Lens;
+      public MetadataItem FocalLength;
+      public MetadataItem FocalLength35MM;
+      public MetadataItem Comment;
+      public MetadataItem CountryCode;
+      public MetadataItem CountryName;
+      public MetadataItem ProvinceOrState;
+      public MetadataItem City;
+      public MetadataItem SubLocation;
+      public MetadataItem Keywords;
+      public MetadataItem ByLine;
+      public MetadataItem CopyrightNotice;
+      public MetadataItem Latitude;
+      public MetadataItem Longitude;
+      public MetadataItem Altitude;
     }
 
     public int Count()
     {
-      return 13; // TODO fix hard code later
+      return 37; // TODO fix hard code later
     }
 
     private void SetStuff(ref MetadataItem item, Directory directory, int tag)
@@ -113,6 +137,80 @@ namespace MediaPortal.GUI.Pictures
             }
             break;
           }
+          case ExifDirectoryBase.TagLensModel:
+          {
+            string lensMake = directory.GetDescription(ExifDirectoryBase.TagLensMake);
+            if (!string.IsNullOrEmpty(lensMake))
+            {
+              item.Value = lensMake;
+            }
+            break;
+          }
+          case IptcDirectory.TagKeywords:
+          {
+            string keywords = string.Empty;
+            var keywordsArray = directory.GetStringArray(tag);
+            if (keywordsArray != null)
+            {
+              foreach (string keyword in keywordsArray)
+              {
+                keywords += keyword + "; ";
+              }
+            }
+            if (!string.IsNullOrEmpty(keywords))
+            {
+              item.DisplayValue = keywords;
+            }
+            break;
+          }
+          case GpsDirectory.TagLatitude:
+          {
+            string latitudeRef = directory.GetDescription(GpsDirectory.TagLatitudeRef);
+            if (!string.IsNullOrEmpty(latitudeRef))
+            {
+              item.DisplayValue = latitudeRef + " " +item.DisplayValue;
+            }
+            break;
+          }
+          case GpsDirectory.TagLongitude:
+          {
+            string longitudeRef = directory.GetDescription(GpsDirectory.TagLongitudeRef);
+            if (!string.IsNullOrEmpty(longitudeRef))
+            {
+              item.DisplayValue = longitudeRef + " " +item.DisplayValue;
+            }
+            break;
+          }
+          case GpsDirectory.TagAltitude:
+          {
+            string altitudeRef = directory.GetDescription(GpsDirectory.TagAltitudeRef);
+            if (!string.IsNullOrEmpty(altitudeRef))
+            {
+              item.DisplayValue = altitudeRef + " " +item.DisplayValue;
+            }
+            break;
+          }
+        }
+
+        if (item.Tag == "unknown")
+        {
+          item.Tag = string.Empty;
+        }
+        if (item.Caption == "unknown")
+        {
+          item.Caption = string.Empty;
+        }
+        if (item.Name == "unknown")
+        {
+          item.Name = string.Empty;
+        }
+        if (item.DisplayValue == "unknown")
+        {
+          item.DisplayValue = string.Empty;
+        }
+        if (item.Value == "unknown")
+        {
+          item.Value = string.Empty;
         }
       }
       catch (Exception) { }
@@ -141,13 +239,13 @@ namespace MediaPortal.GUI.Pictures
           SetStuff(ref MyMetadata.CameraModel, exifDirectory, ExifDirectoryBase.TagModel);
 
           // [Exif IFD0] Artist: Author: Andrew J.Swan 
-          // = exifDirectory.GetDescription(ExifDirectoryBase.TagArtist);
+          SetStuff(ref MyMetadata.Author, exifDirectory, ExifDirectoryBase.TagArtist);
 
           // [Exif IFD0] Software: ApplicationName: Adobe Photoshop CC (Windows)
           SetStuff(ref MyMetadata.ViewerComments, exifDirectory, ExifDirectoryBase.TagSoftware);
 
           // [Exif IFD0] Copyright: Copyright: Copyright (c) 2014 by Andrew J.Swan
-          // = exifDirectory.GetDescription(ExifDirectoryBase.TagCopyright);
+          SetStuff(ref MyMetadata.Copyright, exifDirectory, ExifDirectoryBase.TagCopyright);
 
           // [Exif IFD0] Orientation: Orientation: 1 - Normal
           SetStuff(ref MyMetadata.Orientation, exifDirectory, ExifDirectoryBase.TagOrientation);
@@ -169,7 +267,7 @@ namespace MediaPortal.GUI.Pictures
             SetStuff(ref MyMetadata.DatePictureTaken, subIfdDirectory, ExifDirectoryBase.TagDateTimeOriginal);
 
             // [Exif SubIFD] ISO Speed Ratings: ISO: 200
-            string ISO = subIfdDirectory.GetDescription(ExifDirectoryBase.TagIsoEquivalent);
+            SetStuff(ref MyMetadata.ISO, subIfdDirectory, ExifDirectoryBase.TagIsoEquivalent);
 
             // [Exif SubIFD] Metering Mode: Metering Mode: 5 - Multi-segment
             SetStuff(ref MyMetadata.MeteringMode, subIfdDirectory, ExifDirectoryBase.TagMeteringMode);
@@ -181,9 +279,10 @@ namespace MediaPortal.GUI.Pictures
             SetStuff(ref MyMetadata.ExposureTime, subIfdDirectory, ExifDirectoryBase.TagExposureTime);
 
             // [Exif SubIFD] Exposure Program: Exposure Program: 2 - Normal program
-            string exposureProgram = subIfdDirectory.GetDescription(ExifDirectoryBase.TagExposureProgram);
+            SetStuff(ref MyMetadata.ExposureProgram, subIfdDirectory, ExifDirectoryBase.TagExposureProgram);
+
             // [Exif SubIFD] Exposure Mode:
-            string exposureMode = subIfdDirectory.GetDescription(ExifDirectoryBase.TagExposureMode);
+            SetStuff(ref MyMetadata.ExposureMode, subIfdDirectory, ExifDirectoryBase.TagExposureMode);
 
             // [Exif SubIFD] Exposure Bias Value: Exposure Compensation: 0/6
             SetStuff(ref MyMetadata.ExposureCompensation, subIfdDirectory, ExifDirectoryBase.TagExposureBias);
@@ -195,89 +294,76 @@ namespace MediaPortal.GUI.Pictures
             SetStuff(ref MyMetadata.ShutterSpeed, subIfdDirectory, ExifDirectoryBase.TagShutterSpeed);
 
             // [Exif SubIFD] Sensing Method: 
-            string sensingMethod = subIfdDirectory.GetDescription(ExifDirectoryBase.TagSensingMethod);
+            SetStuff(ref MyMetadata.SensingMethod, subIfdDirectory, ExifDirectoryBase.TagSensingMethod);
+
             // [Exif SubIFD] Scene Type:
-            string sceneType = subIfdDirectory.GetDescription(ExifDirectoryBase.TagSceneType);
+            SetStuff(ref MyMetadata.SceneType, subIfdDirectory, ExifDirectoryBase.TagSceneType);
+
             // [Exif SubIFD] Scene Capture Type:
-            string sceneCaptureType = subIfdDirectory.GetDescription(ExifDirectoryBase.TagSceneCaptureType);
+            SetStuff(ref MyMetadata.SceneCaptureType, subIfdDirectory, ExifDirectoryBase.TagSceneCaptureType);
+
             // [Exif SubIFD] White Balance Mode:
-            string whiteBalanceMode = subIfdDirectory.GetDescription(ExifDirectoryBase.TagWhiteBalanceMode);
-            // [Exif SubIFD] Lens Make:
-            string lensMake = subIfdDirectory.GetDescription(ExifDirectoryBase.TagLensMake);
+            SetStuff(ref MyMetadata.WhiteBalance, subIfdDirectory, ExifDirectoryBase.TagWhiteBalanceMode);
+
+            // [Exif SubIFD] Lens Make: NIKON
             // [Exif SubIFD] Lens Model: Lens Model: 35.0 mm f/1.8
-            string lensModel = subIfdDirectory.GetDescription(ExifDirectoryBase.TagLensModel);
+            SetStuff(ref MyMetadata.Lens, subIfdDirectory, ExifDirectoryBase.TagLensModel);
+
             // [Exif SubIFD] Focal Length: Focal Length: 35 (350/10)
-            string focalLength = subIfdDirectory.GetDescription(ExifDirectoryBase.TagFocalLength);
+            SetStuff(ref MyMetadata.FocalLength, subIfdDirectory, ExifDirectoryBase.TagFocalLength);
+
             // [Exif SubIFD] Focal Length 35: Focal Length (35mm film): 52
-            string focalLength35 = subIfdDirectory.GetDescription(ExifDirectoryBase.Tag35MMFilmEquivFocalLength);
+            SetStuff(ref MyMetadata.FocalLength35MM, subIfdDirectory, ExifDirectoryBase.Tag35MMFilmEquivFocalLength);
+
             // [Exif SubIFD] User Comment: Comment: Copyright (C) by Andrew J.Swan
-            string comment = subIfdDirectory.GetDescription(ExifDirectoryBase.TagUserComment);
+            SetStuff(ref MyMetadata.Comment, subIfdDirectory, ExifDirectoryBase.TagUserComment);
           }
         }
 
-        /*
-        var xmpDirectory = directories.OfType<XmpDirectory>().FirstOrDefault();
-        if (xmpDirectory != null)
-        {
-          // [XMP] Lens: 18.0-105.0 mm f/3.5-5.6
-          string lensModel = xmpDirectory.GetDescription(XmpDirectory.TagLens);
-        }
-        */
-
-        foreach (var directory in directories)
-        {
-          if (directory.Name.Contains("Nikon Makernote"))
-          {
-            // [Nikon Makernote] Lens: 18.0-105.0 mm f/3.5-5.6
-            string lensModel = directory.GetDescription(NikonType2MakernoteDirectory.TagLens);
-            break;
-          }
-        }
+        GetMakerNoteLens(ref MyMetadata.Lens, directories) ;
 
         var iptcDirectory = directories.OfType<IptcDirectory>().FirstOrDefault();
         if (iptcDirectory != null)
         {
           // [IPTC] Country/Primary Location Code:
-          string countryCode = iptcDirectory.GetDescription(IptcDirectory.TagCountryOrPrimaryLocationCode);
+          SetStuff(ref MyMetadata.CountryCode, iptcDirectory, IptcDirectory.TagCountryOrPrimaryLocationCode);
+
           // [IPTC] Country/Primary Location Name: Country: Украина
-          string countryName = iptcDirectory.GetDescription(IptcDirectory.TagCountryOrPrimaryLocationName);
+          SetStuff(ref MyMetadata.CountryName, iptcDirectory, IptcDirectory.TagCountryOrPrimaryLocationName);
+
           // [IPTC] Province/State: State: Киев
-          string state = iptcDirectory.GetDescription(IptcDirectory.TagProvinceOrState);
+          SetStuff(ref MyMetadata.ProvinceOrState, iptcDirectory, IptcDirectory.TagProvinceOrState);
+
           // [IPTC] City: City: Киев
-          string city = iptcDirectory.GetDescription(IptcDirectory.TagCity);
+          SetStuff(ref MyMetadata.City, iptcDirectory, IptcDirectory.TagCity);
+
           // [IPTC] Sub-location: Sublocation: Мамаева слобода
-          string sublocation = iptcDirectory.GetDescription(IptcDirectory.TagSubLocation);
+          SetStuff(ref MyMetadata.SubLocation, iptcDirectory, IptcDirectory.TagSubLocation);
+
           // [IPTC] Keywords: Keywords: 2014, UKR, Академгородок, Киев, Леонардо, Новоселье, Украина
-          // string keywords = iptcDirectory.GetDescription(IptcDirectory.TagKeywords);
-          string keywords = string.Empty;
-          var keywordsArray = iptcDirectory.GetStringArray(IptcDirectory.TagKeywords);
-          if (keywordsArray != null)
-          {
-            foreach (string keyword in keywordsArray)
-            {
-              keywords += keyword + "; ";
-            }
-          }
+          SetStuff(ref MyMetadata.Keywords, iptcDirectory, IptcDirectory.TagKeywords);
+
           // [IPTC] By-line: Jason P. Odell
-          string byLine = iptcDirectory.GetDescription(IptcDirectory.TagByLine);
+          SetStuff(ref MyMetadata.ByLine, iptcDirectory, IptcDirectory.TagByLine);
+
           // [IPTC] Copyright Notice: © Jason P. Odell
-          string copyrightNotice = iptcDirectory.GetDescription(IptcDirectory.TagCopyrightNotice);
+          SetStuff(ref MyMetadata.CopyrightNotice, iptcDirectory, IptcDirectory.TagCopyrightNotice);
+
           // [IPTC] Caption/Abstract: For Educational Use Only
-          string captionAbstract = iptcDirectory.GetDescription(IptcDirectory.TagCaption);
+          // string captionAbstract = iptcDirectory.GetDescription(IptcDirectory.TagCaption);
         }
 
         var gpsDirectory = directories.OfType<GpsDirectory>().FirstOrDefault();
         if (gpsDirectory != null)
         {
           // [GPS] GPS Latitude Ref: + [GPS] GPS Latitude:
-          string latitudeRef = gpsDirectory.GetDescription(GpsDirectory.TagLatitudeRef);
-          string latitude = gpsDirectory.GetDescription(GpsDirectory.TagLatitude);
+          SetStuff(ref MyMetadata.Latitude, gpsDirectory, GpsDirectory.TagLatitude);
+
           // [GPS] GPS Longitude Ref: + [GPS] GPS Longitude:
-          string longitudeRef = gpsDirectory.GetDescription(GpsDirectory.TagLongitudeRef);
-          string longitude = gpsDirectory.GetDescription(GpsDirectory.TagLongitude);
+          SetStuff(ref MyMetadata.Longitude, gpsDirectory, GpsDirectory.TagLongitude);
+
           // [GPS] GPS Altitude Ref: + [GPS] GPS Altitude:
-          string altitudeRef = gpsDirectory.GetDescription(GpsDirectory.TagAltitudeRef);
-          string altitude = gpsDirectory.GetDescription(GpsDirectory.TagAltitude);
+          SetStuff(ref MyMetadata.Altitude, gpsDirectory, GpsDirectory.TagAltitude);
         }
 
         // Create an instance of the image to gather metadata from 
@@ -292,9 +378,45 @@ namespace MediaPortal.GUI.Pictures
       }
       catch (Exception ex)
       {
-        Log.Error("ExifExtracter: GetExifMetadata {0}", ex.Message);
+        Log.Error("ExifExtractor: GetExifMetadata {0}", ex.Message);
       }
       return MyMetadata;
+    }
+    
+    private void GetMakerNoteLens(ref MetadataItem item, IEnumerable<Directory> directory)
+    {
+      if (!string.IsNullOrEmpty(item.DisplayValue))
+      {
+        return;
+      }
+
+      string lensModel = string.Empty;
+
+      var xmpDirectory = directory.OfType<XmpDirectory>().FirstOrDefault();
+      if (xmpDirectory != null)
+      {
+        var xmpDictionary = xmpDirectory.GetXmpProperties();
+        // [XMPMeta] Lens: 18.0-105.0 mm f/3.5-5.6
+        if (xmpDictionary.TryGetValue("aux:Lens", out lensModel))
+        {
+          item.DisplayValue = lensModel;
+          return;
+        }
+      }
+
+      foreach (var _directory in directory)
+      {
+        if (_directory.Name.Contains("Nikon Makernote"))
+        {
+          // [Nikon Makernote] Lens: 18.0-105.0 mm f/3.5-5.6
+          lensModel = _directory.GetDescription(NikonType2MakernoteDirectory.TagLens);
+          if (!string.IsNullOrEmpty(lensModel))
+          {
+            item.DisplayValue = lensModel;
+            return;
+          }
+        }
+      }
     }
   }
 
