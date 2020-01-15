@@ -190,11 +190,8 @@ namespace MediaPortal.Picture.Database
         // Transactions are a special case for SQLite - they speed things up quite a bit
         strSQL = "begin";
         results = m_db.Execute(strSQL);
-        strSQL =
-          String.Format(
-            "insert into picture (idPicture, strFile, iRotation, strDateTaken) values(null, '{0}',{1},'{2}')", strPic,
-            iRotation, strDateTaken);
-
+        strSQL = String.Format("insert into picture (idPicture, strFile, iRotation, strDateTaken) values(null, '{0}',{1},'{2}')",
+                                strPic, iRotation, strDateTaken);
         results = m_db.Execute(strSQL);
         if (results.Rows.Count > 0)
         {
@@ -228,33 +225,32 @@ namespace MediaPortal.Picture.Database
     {
       // Continue only if it's a picture files
       if (!Util.Utils.IsPicture(strPicture))
+      {
         return false;
+      }
 
       using (ExifMetadata extractor = new ExifMetadata())
       {
         ExifMetadata.Metadata metaData = extractor.GetExifMetadata(strPicture);
         try
         {
-          string picExifDate = metaData.DatePictureTaken.DisplayValue;
-          if (!String.IsNullOrEmpty(picExifDate))
-            // If the image contains a valid exif date store it in the database, otherwise use the file date
+          strDateTaken = metaData.DatePictureTaken.Value;
+          if (!String.IsNullOrEmpty(strDateTaken))
+          // If the image contains a valid exif date store it in the database, otherwise use the file date
           {
-            DateTime dat;
-            DateTime.TryParseExact(picExifDate, "G", Thread.CurrentThread.CurrentCulture, DateTimeStyles.None, out dat);
-            strDateTaken = dat.ToString("yyyy-MM-dd HH:mm:ss");
             if (_useExif)
             {
-              iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
+              iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Value));
             }
             return true;
           }
         }
         catch (FormatException ex)
         {
-          Log.Error("PictureDatabaseSqlLite: Exif date conversion exception err:{0} stack:{1}", ex.Message,
-                    ex.StackTrace);
+          Log.Error("PictureDatabaseSqlLite: Exif conversion exception err: {0} stack:{1}", ex.Message, ex.StackTrace);
         }
       }
+      strDateTaken = string.Empty;
       return false;
     }
 

@@ -116,9 +116,9 @@ namespace MediaPortal.Picture.Database
             try
             {
               DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
-              dateTimeFormat.ShortDatePattern = "yyyy:MM:dd HH:mm:ss";
+              dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
 
-              dateTaken = DateTime.ParseExact(metaData.DatePictureTaken.DisplayValue, "d", dateTimeFormat);
+              dateTaken = DateTime.ParseExact(metaData.DatePictureTaken.Value, "d", dateTimeFormat);
             }
             catch (Exception ex)
             {
@@ -126,7 +126,7 @@ namespace MediaPortal.Picture.Database
             }
             // Smirnoff: Query the orientation information
             //						if(iRotation == -1)
-            iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
+            iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Value));
           }
           strSQL = String.Format("insert into tblPicture (strFile, iRotation, strDateTaken) values('{0}',{1},'{2}')",
                                  strPic, iRotation, dateTaken);
@@ -193,7 +193,7 @@ namespace MediaPortal.Picture.Database
 
         ExifMetadata extractor = new ExifMetadata();
         ExifMetadata.Metadata metaData = extractor.GetExifMetadata(strPicture);
-        iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
+        iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Value));
 
         AddPicture(strPicture, iRotation);
         return 0;
@@ -259,9 +259,9 @@ namespace MediaPortal.Picture.Database
         using (ExifMetadata extractor = new ExifMetadata())
         {
           ExifMetadata.Metadata metaData = extractor.GetExifMetadata(strPic);
-          strDateTime = DateTime.Parse(metaData.DatePictureTaken.DisplayValue).ToString("yyyy-MM-dd HH:mm:ss");
+          strDateTime = metaData.DatePictureTaken.Value;
         }
-        if (strDateTime != string.Empty && strDateTime != "")
+        if (!string.IsNullOrEmpty(strDateTime))
         {
           DateTime dtDateTime = DateTime.ParseExact(strDateTime, "yyyy-MM-dd HH:mm:ss", new CultureInfo(""));
           return dtDateTime;
