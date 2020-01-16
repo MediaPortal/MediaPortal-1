@@ -890,13 +890,6 @@ namespace MediaPortal.Player
           }
           Log.Info("RefreshRateChanger.SwitchFocus");
           Util.Utils.SwitchFocus();
-
-          // stop the workerthread
-          if (_workerThread != null && _workerThread.IsAlive)
-          {
-            _workerThread.Abort();
-            _workerThread = null;
-          }
         }
       }
       catch (Exception ex)

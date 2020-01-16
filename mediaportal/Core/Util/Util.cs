@@ -1080,7 +1080,8 @@ namespace MediaPortal.Util
     /// <returns>true: paths are equal, false: paths do not match</returns>
     public static bool AreEqual(string dir1, string dir2)
     {
-      if (dir1 == string.Empty | dir2 == string.Empty)
+      Uri dummy;
+      if (dir1 == string.Empty | dir2 == string.Empty | Uri.TryCreate(dir2, UriKind.Absolute, out dummy))
         return false;
 
       try
