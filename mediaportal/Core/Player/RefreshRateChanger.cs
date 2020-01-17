@@ -483,8 +483,7 @@ namespace MediaPortal.Player
     private static double _workerFps;
     private static string _workerStrFile;
     private static MediaType _workerType;
-    private static Thread _workerThread { get; set; }
-
+    
     #endregion
 
     #region public enums
@@ -770,13 +769,13 @@ namespace MediaPortal.Player
       _workerFps = fps;
       _workerStrFile = strFile;
       _workerType = type;
-      _workerThread = new Thread(new ThreadStart(SetRefreshRateBasedOnFpsThread))
+      Thread workerThread = new Thread(new ThreadStart(SetRefreshRateBasedOnFpsThread))
       {
         IsBackground = true,
         Name = "SetRefreshRateBasedOnFPS thread",
         Priority = ThreadPriority.AboveNormal
       };
-      _workerThread.Start();
+      workerThread.Start();
     }
 
     public static void SetRefreshRateBasedOnFpsThread()
