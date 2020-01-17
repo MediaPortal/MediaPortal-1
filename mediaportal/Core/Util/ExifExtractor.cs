@@ -19,13 +19,11 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Globalization;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -53,47 +51,102 @@ namespace MediaPortal.GUI.Pictures
       public string Name;
       public string Value;
       public string DisplayValue;
+
+      public bool IsEmpty ()
+      {
+        return string.IsNullOrWhiteSpace(DisplayValue);
+      }
     }
 
     public struct Metadata
     {
-      public MetadataItem ViewerComments;
+      public MetadataItem DatePictureTaken;
+      public MetadataItem Orientation;
       public MetadataItem EquipmentMake;
       public MetadataItem CameraModel;
-      public MetadataItem ExposureTime;
+      public MetadataItem Lens;
       public MetadataItem Fstop;
-      public MetadataItem DatePictureTaken;
       public MetadataItem ShutterSpeed;
+      public MetadataItem ExposureTime;
       public MetadataItem ExposureCompensation;
+      public MetadataItem ExposureProgram;
+      public MetadataItem ExposureMode;
       public MetadataItem MeteringMode;
       public MetadataItem Flash;
       public MetadataItem Resolution;
-      public MetadataItem ImageDimensions;
-      public MetadataItem Orientation;
       public MetadataItem ISO;
-      public MetadataItem Author;
-      public MetadataItem Copyright;
-      public MetadataItem ExposureProgram;
-      public MetadataItem ExposureMode;
+      public MetadataItem WhiteBalance;
       public MetadataItem SensingMethod;
       public MetadataItem SceneType;
       public MetadataItem SceneCaptureType;
-      public MetadataItem WhiteBalance;
-      public MetadataItem Lens;
       public MetadataItem FocalLength;
       public MetadataItem FocalLength35MM;
-      public MetadataItem Comment;
       public MetadataItem CountryCode;
       public MetadataItem CountryName;
       public MetadataItem ProvinceOrState;
       public MetadataItem City;
       public MetadataItem SubLocation;
       public MetadataItem Keywords;
-      public MetadataItem ByLine;
+      public MetadataItem Author;
+      public MetadataItem Copyright;
       public MetadataItem CopyrightNotice;
+      public MetadataItem Comment;
+      public MetadataItem ViewerComments;
+      public MetadataItem ByLine;
       public MetadataItem Latitude;
       public MetadataItem Longitude;
       public MetadataItem Altitude;
+      public MetadataItem ImageDimensions;
+
+      public bool IsEmpty ()
+      {
+        Type type = typeof(Metadata);
+        bool result = true;
+
+        foreach (FieldInfo prop in type.GetFields())
+        {
+            if (prop.Name == "DatePictureTaken" || prop.Name == "Orientation" ||
+                prop.Name == "ImageDimensions" || prop.Name == "Resolution")
+            {
+                continue;
+            }
+            Type fieldtype = prop.FieldType;
+            MethodInfo info = fieldtype.GetMethod("IsEmpty");
+            result &= (bool)info.Invoke(prop.GetValue(this), null);
+        }
+        return result;
+      }
+
+      public bool IsExifEmpty()
+      {
+        Type type = typeof(Metadata);
+        bool result = true;
+
+        foreach (FieldInfo prop in type.GetFields())
+        {
+          if (prop.Name == "DatePictureTaken" || prop.Name == "Orientation" ||
+              prop.Name == "ImageDimensions" || prop.Name == "Resolution" ||
+              prop.Name == "CameraModel" || prop.Name == "EquipmentMake" ||
+              prop.Name == "Lens" || prop.Name == "Flash" ||
+              prop.Name == "MeteringMode" || prop.Name == "ExposureProgram" ||
+              prop.Name == "ExposureMode" || prop.Name == "SensingMethod" ||
+              prop.Name == "SceneType" || prop.Name == "SceneCaptureType" ||
+              prop.Name == "WhiteBalance" || prop.Name == "Author" ||
+              prop.Name == "ByLine" || prop.Name == "ViewerComments" ||
+              prop.Name == "CountryCode" || prop.Name == "CountryName" ||
+              prop.Name == "ProvinceOrState" || prop.Name == "City" ||
+              prop.Name == "SubLocation" || prop.Name == "Keywords" ||
+              prop.Name == "Comment" || 
+              prop.Name == "Copyright" || prop.Name == "CopyrightNotice")
+          {
+            continue;
+          }
+          Type fieldtype = prop.FieldType;
+          MethodInfo info = fieldtype.GetMethod("IsEmpty");
+          result &= (bool)info.Invoke(prop.GetValue(this), null);
+        }
+        return result;
+      }
     }
 
     public int Count()
@@ -154,10 +207,13 @@ namespace MediaPortal.GUI.Pictures
             {
               foreach (string keyword in keywordsArray)
               {
-                keywords += keyword + "; ";
+                if (!string.IsNullOrWhiteSpace(keyword))
+                {
+                  keywords += keyword.Trim() + "; ";
+                }
               }
             }
-            if (!string.IsNullOrEmpty(keywords))
+            if (!string.IsNullOrWhiteSpace(keywords))
             {
               item.DisplayValue = keywords;
             }
@@ -190,27 +246,6 @@ namespace MediaPortal.GUI.Pictures
             }
             break;
           }
-        }
-
-        if (item.Tag == "unknown")
-        {
-          item.Tag = string.Empty;
-        }
-        if (item.Caption == "unknown")
-        {
-          item.Caption = string.Empty;
-        }
-        if (item.Name == "unknown")
-        {
-          item.Name = string.Empty;
-        }
-        if (item.DisplayValue == "unknown")
-        {
-          item.DisplayValue = string.Empty;
-        }
-        if (item.Value == "unknown")
-        {
-          item.Value = string.Empty;
         }
       }
       catch (Exception) { }

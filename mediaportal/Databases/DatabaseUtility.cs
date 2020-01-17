@@ -481,7 +481,7 @@ namespace MediaPortal.Database
 
     private static string FilterText(string strTxt)
     {
-      if (string.IsNullOrEmpty(strTxt))
+      if (string.IsNullOrWhiteSpace(strTxt))
       {
         return Strings.Unknown;
       }
