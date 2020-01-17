@@ -997,7 +997,7 @@ namespace MediaPortal.Util
             string shareDir = xmlreader.GetValueAsString("movies", sharePath, "");
             // Get item dir
             string itemDir = string.Empty;
-            if (!item.IsRemote)
+            if (!item.IsRemote && item.Path != null && !item.Path.Contains(@"://"))
             {
               itemDir = (GetParentDirectory(item.Path));
             }
@@ -1080,8 +1080,7 @@ namespace MediaPortal.Util
     /// <returns>true: paths are equal, false: paths do not match</returns>
     public static bool AreEqual(string dir1, string dir2)
     {
-      Uri dummy;
-      if (dir1 == string.Empty | dir2 == string.Empty | Uri.TryCreate(dir2, UriKind.Absolute, out dummy))
+      if (dir1 == string.Empty | dir2 == string.Empty)
         return false;
 
       try
