@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -51,6 +51,11 @@ namespace MediaPortal.Picture.Database
       return _database.AddPicture(strPicture, iRotation);
     }
 
+    public int UpdatePicture(string strPicture, int iRotation)
+    {
+      return _database.UpdatePicture(strPicture, iRotation);
+    }
+
     public static void DeletePicture(string strPicture)
     {
       _database.DeletePicture(strPicture);
@@ -74,6 +79,21 @@ namespace MediaPortal.Picture.Database
     public static int EXIFOrientationToRotation(int orientation)
     {
       return _database.EXIFOrientationToRotation(orientation);
+    }
+
+    public int ListKeywords(ref List<string> Keywords)
+    {
+      return _database.ListKeywords(ref Keywords);
+    }
+
+    public int ListPicsByKeyword(string Keyword, ref List<string> Pics)
+    {
+      return _database.ListPicsByKeyword(Keyword, ref Pics);
+    }
+
+    public int CountPicsByKeyword(string Keyword)
+    {
+      return _database.CountPicsByKeyword(Keyword);
     }
 
     public static int ListYears(ref List<string> Years)

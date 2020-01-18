@@ -478,7 +478,72 @@ namespace MediaPortal.Picture.Database
       {
         Log.Error("Picture.DB.SQLite: AddPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
         RollbackTransaction();
-        Open();
+        // Open();
+      }
+      return -1;
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public int UpdatePicture(string strPicture, int iRotation)
+    {
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+      {
+        return -1;
+      }
+      if (String.IsNullOrEmpty(strPicture))
+      {
+        return -1;
+      }
+      if (m_db == null)
+      {
+        return -1;
+      }
+
+      try
+      {
+        int lPicId = -1;
+        string strPic = strPicture;
+        string strDateTaken = String.Empty;
+
+        DatabaseUtility.RemoveInvalidChars(ref strPic);
+        string strSQL = String.Format("SELECT * FROM picture WHERE strFile LIKE '{0}'", strPic);
+        SQLiteResultSet results = m_db.Execute(strSQL);
+        if (results != null && results.Rows.Count > 0)
+        {
+          lPicId = Int32.Parse(DatabaseUtility.Get(results, 0, "idPicture"));
+  
+          ExifMetadata.Metadata exifData = new ExifMetadata.Metadata();
+          if (GetExifDetails(strPicture, ref iRotation, ref strDateTaken, ref exifData))
+          {
+            // Save potential performance penalty
+            if (_usePicasa)
+            {
+              if (GetPicasaRotation(strPic, ref iRotation))
+              {
+                Log.Debug("Picture.DB.SQLite: Changed rotation of image {0} based on picasa file to {1}", strPic, iRotation);
+              }
+            }
+
+            AddPictureExifData(lPicId, exifData) ; 
+          }
+
+          if (g_Player.Playing)
+          {
+            Thread.Sleep(50);
+          }
+          else
+          {
+            Thread.Sleep(1);
+          }
+          return lPicId;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: UpdatePicture: {0} stack:{1}", ex.Message, ex.StackTrace);
+        RollbackTransaction();
+        // Open();
       }
       return -1;
     }
@@ -539,7 +604,7 @@ namespace MediaPortal.Picture.Database
       {
         Log.Error("Picture.DB.SQLite: AddPictureExifData: {0} stack:{1}", ex.Message, ex.StackTrace);
         RollbackTransaction();
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -587,7 +652,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddCamera: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -635,7 +700,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddLens: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -679,7 +744,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddOrienatation: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -723,7 +788,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddFlash: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -767,7 +832,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddMeteringMode: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -809,7 +874,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddExposureProgram: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -851,7 +916,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddExposureMode: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -893,7 +958,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddSensingMethod: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -935,7 +1000,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddSceneType: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -977,7 +1042,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddSceneCaptureType: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -1019,7 +1084,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddWhiteBalance: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -1061,7 +1126,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddAuthor: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -1103,7 +1168,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddByline: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -1145,7 +1210,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddSoftware: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -1187,7 +1252,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddUserComment: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -1229,7 +1294,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddCopyright: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -1271,7 +1336,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddCopyrightNotice: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -1319,7 +1384,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddCountry: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -1361,7 +1426,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddState: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -1403,7 +1468,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddCity: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -1445,7 +1510,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddSubLocation: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -1487,7 +1552,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddKeyword: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -1514,7 +1579,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddKeywords: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1540,7 +1605,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddKeywords: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1563,7 +1628,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddCameraToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return;
     }
@@ -1587,7 +1652,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddLensToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1610,7 +1675,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddOrientationToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1633,7 +1698,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddFlashnToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1656,7 +1721,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddMeteringModeToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1679,7 +1744,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddExposureProgramToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1702,7 +1767,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddExposureModeToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1725,7 +1790,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddSensingMethodToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1748,7 +1813,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddSceneTypeToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1771,7 +1836,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddSceneCaptureTypeToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1794,7 +1859,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddWhiteBalanceToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1817,7 +1882,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddAuthorToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1840,7 +1905,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddBylineToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1863,7 +1928,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddSoftwareToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1886,7 +1951,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddUserCommentToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1909,7 +1974,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddCopyrightToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1932,7 +1997,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddCopyrightNoticeToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1955,7 +2020,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddCountryToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -1978,7 +2043,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddStateToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -2001,7 +2066,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddCityToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -2024,7 +2089,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddSubLocationToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return;
     }
@@ -2048,7 +2113,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddKeywordToPicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -2131,7 +2196,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddExif: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return -1;
     }
@@ -2261,7 +2326,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
       return 0;
     }
@@ -2291,7 +2356,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: {0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
+        // Open();
       }
     }
 
@@ -2320,13 +2385,13 @@ namespace MediaPortal.Picture.Database
         catch (Exception ex)
         {
           Log.Error("Picture.DB.SQLite: Deleting picture err: {0} stack:{1}", ex.Message, ex.StackTrace);
-          Open();
+          // Open();
         }
         return;
       }
     }
 
-    public int ListKeywords(ref List<string> Kewords)
+    public int ListKeywords(ref List<string> Keywords)
     {
       int Count = 0;
       lock (typeof (PictureDatabase))
@@ -2344,14 +2409,14 @@ namespace MediaPortal.Picture.Database
           {
             for (Count = 0; Count < result.Rows.Count; Count++)
             {
-              Kewords.Add(DatabaseUtility.Get(result, Count, 0));
+              Keywords.Add(DatabaseUtility.Get(result, Count, 0));
             }
           }
         }
         catch (Exception ex)
         {
           Log.Error("Picture.DB.SQLite: Getting Keywords err: {0} stack:{1}", ex.Message, ex.StackTrace);
-          Open();
+          // Open();
         }
         return Count;
       }
@@ -2382,7 +2447,7 @@ namespace MediaPortal.Picture.Database
         catch (Exception ex)
         {
           Log.Error("Picture.DB.SQLite: Getting Picture by Keyword err: {0} stack:{1}", ex.Message, ex.StackTrace);
-          Open();
+          // Open();
         }
         return Count;
       }
@@ -2410,7 +2475,7 @@ namespace MediaPortal.Picture.Database
         catch (Exception ex)
         {
           Log.Error("Picture.DB.SQLite: Getting Count of Picture by Keyword err: {0} stack:{1}", ex.Message, ex.StackTrace);
-          Open();
+          // Open();
         }
         return Count;
       }
@@ -2441,7 +2506,7 @@ namespace MediaPortal.Picture.Database
         catch (Exception ex)
         {
           Log.Error("Picture.DB.SQLite: Getting Years err: {0} stack:{1}", ex.Message, ex.StackTrace);
-          Open();
+          // Open();
         }
         return Count;
       }
@@ -2472,7 +2537,7 @@ namespace MediaPortal.Picture.Database
         catch (Exception ex)
         {
           Log.Error("Picture.DB.SQLite: Getting Months err: {0} stack:{1}", ex.Message, ex.StackTrace);
-          Open();
+          // Open();
         }
         return Count;
       }
@@ -2503,7 +2568,7 @@ namespace MediaPortal.Picture.Database
         catch (Exception ex)
         {
           Log.Error("Picture.DB.SQLite: Getting Days err: {0} stack:{1}", ex.Message, ex.StackTrace);
-          Open();
+          // Open();
         }
         return Count;
       }
@@ -2534,7 +2599,7 @@ namespace MediaPortal.Picture.Database
         catch (Exception ex)
         {
           Log.Error("Picture.DB.SQLite: Getting Picture by Date err: {0} stack:{1}", ex.Message, ex.StackTrace);
-          Open();
+          // Open();
         }
         return Count;
       }
@@ -2562,7 +2627,7 @@ namespace MediaPortal.Picture.Database
         catch (Exception ex)
         {
           Log.Error("Picture.DB.SQLite: Getting Count Picture by Date err: {0} stack:{1}", ex.Message, ex.StackTrace);
-          Open();
+          // Open();
         }
         return Count;
       }
@@ -2602,7 +2667,8 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: Commit failed exception err: {0} ", ex.Message);
-        Open();
+        RollbackTransaction();
+        // Open();
       }
     }
 

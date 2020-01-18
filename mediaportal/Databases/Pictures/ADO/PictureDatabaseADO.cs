@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -138,6 +138,11 @@ namespace MediaPortal.Picture.Database
         }
         return -1;
       }
+    }
+
+    public int UpdatePicture(string strPicture, int iRotation)
+    {
+      throw (new NotImplementedException("Update Picture not yet implemented for ADO Database"));
     }
 
     public void DeletePicture(string strPicture)
@@ -296,6 +301,21 @@ namespace MediaPortal.Picture.Database
       }
 
       return 0;
+    }
+
+    public int ListKeywords(ref List<string> Keywords)
+    {
+      throw (new NotImplementedException("List Keywords not yet implemented for ADO Database"));
+    }
+
+    public int ListPicsByKeyword(string Keyword, ref List<string> Pics)
+    {
+      throw (new NotImplementedException("List Pics by Keywords not yet implemented for ADO Database"));
+    }
+
+    public int CountPicsByKeyword(string Keyword)
+    {
+      throw (new NotImplementedException("List Count Pics by Keywords not yet implemented for ADO Database"));
     }
 
     public int ListYears(ref List<string> Years)

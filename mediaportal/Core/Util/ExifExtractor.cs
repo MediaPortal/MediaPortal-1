@@ -427,6 +427,78 @@ namespace MediaPortal.GUI.Pictures
 
       string lensModel = string.Empty;
 
+      var nikonDirectory = directory.OfType<NikonType2MakernoteDirectory>().FirstOrDefault();
+      if (nikonDirectory != null)
+      {
+        // [Nikon Makernote] Lens Type: AF, D
+        string lensType = nikonDirectory.GetDescription(NikonType2MakernoteDirectory.TagLensType);
+        if (string.IsNullOrWhiteSpace(lensModel))
+        {
+          lensType = string.Empty;
+        }
+        else
+        {
+          lensType = " " + lensType.Trim();
+        }
+        // [Nikon Makernote] Lens: 18.0-105.0 mm f/3.5-5.6
+        lensModel = nikonDirectory.GetDescription(NikonType2MakernoteDirectory.TagLens);
+        if (!string.IsNullOrEmpty(lensModel))
+        {
+          item.DisplayValue = lensModel + lensType;
+          return;
+        }
+      }
+
+      var canonDirectory = directory.OfType<CanonMakernoteDirectory>().FirstOrDefault();
+      if (canonDirectory != null)
+      {
+        // [Canon Makernote] Lens Type: Canon EF-S 18-135mm f/3.5-5.6 IS
+        lensModel = canonDirectory.GetDescription(CanonMakernoteDirectory.CameraSettings.TagLensType);
+        if (!string.IsNullOrEmpty(lensModel))
+        {
+          item.DisplayValue = lensModel;
+          return;
+        }
+        // [Canon Makernote] Lens Model: EF-S18-135mm f/3.5-5.6 IS
+        lensModel = canonDirectory.GetDescription(CanonMakernoteDirectory.TagLensModel);
+        if (!string.IsNullOrEmpty(lensModel))
+        {
+          item.DisplayValue = lensModel;
+          return;
+        }
+      }
+
+      var panasonicDirectory = directory.OfType<PanasonicMakernoteDirectory>().FirstOrDefault();
+      if (panasonicDirectory != null)
+      {
+        // [Panasonic Makernote] Lens Type: 14-150mm F/3.5-5.8 DiIII C001
+        lensModel = panasonicDirectory.GetDescription(PanasonicMakernoteDirectory.TagLensType);
+        if (!string.IsNullOrEmpty(lensModel))
+        {
+          item.DisplayValue = lensModel;
+          return;
+        }
+      }
+
+      var olympusDirectory = directory.OfType<OlympusEquipmentMakernoteDirectory>().FirstOrDefault();
+      if (olympusDirectory != null)
+      {
+        // [Olympus Equipment] Lens Type: Olympus M.Zuiko Digital ED 12-50mm F3.5-6.3 EZ
+        lensModel = olympusDirectory.GetDescription(OlympusEquipmentMakernoteDirectory.TagLensType);
+        if (!string.IsNullOrEmpty(lensModel))
+        {
+          item.DisplayValue = lensModel;
+          return;
+        }
+        // [Olympus Equipment] Lens Model: OLYMPUS M.75mm F1.8
+        lensModel = olympusDirectory.GetDescription(OlympusEquipmentMakernoteDirectory.TagLensModel);
+        if (!string.IsNullOrEmpty(lensModel))
+        {
+          item.DisplayValue = lensModel;
+          return;
+        }
+      }
+
       var xmpDirectory = directory.OfType<XmpDirectory>().FirstOrDefault();
       if (xmpDirectory != null)
       {
@@ -439,19 +511,6 @@ namespace MediaPortal.GUI.Pictures
         }
       }
 
-      foreach (var _directory in directory)
-      {
-        if (_directory.Name.Contains("Nikon Makernote"))
-        {
-          // [Nikon Makernote] Lens: 18.0-105.0 mm f/3.5-5.6
-          lensModel = _directory.GetDescription(NikonType2MakernoteDirectory.TagLens);
-          if (!string.IsNullOrEmpty(lensModel))
-          {
-            item.DisplayValue = lensModel;
-            return;
-          }
-        }
-      }
     }
   }
 

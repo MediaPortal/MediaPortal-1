@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,12 +25,16 @@ namespace MediaPortal.Picture.Database
   public interface IPictureDatabase
   {
     int AddPicture(string strPicture, int iRotation);
+    int UpdatePicture(string strPicture, int iRotation);
     void DeletePicture(string strPicture);
     int GetRotation(string strPicture);
     void SetRotation(string strPicture, int iRotation);
     //DateTime GetDateTaken(string strPicture);
     int EXIFOrientationToRotation(int orientation);
     void Dispose();
+    int ListKeywords(ref List<string> Keywords);
+    int ListPicsByKeyword(string Keyword, ref List<string> Pics);
+    int CountPicsByKeyword(string Keyword);
     int ListYears(ref List<string> Years);
     int ListMonths(string Year, ref List<string> Months);
     int ListDays(string Month, string Year, ref List<string> Days);
