@@ -1452,6 +1452,7 @@ namespace MediaPortal.GUI.Pictures
               disp = Display.Files;
               // Have the menu select the currently selected view.
               btnViews.SetSelectedItemByValue((int)disp);
+              UpdateButtonStates();
               LoadDirectory(folder);
             }
           }
@@ -1792,7 +1793,7 @@ namespace MediaPortal.GUI.Pictures
       }
       if (null != btnSearch)
       {
-        btnSearch.Visible = (disp == Display.Keyword);
+        btnSearch.Visible = disp == Display.Keyword;
       }
     }
 
@@ -2556,6 +2557,7 @@ namespace MediaPortal.GUI.Pictures
           disp = Display.Keyword;
           // Have the menu select the currently selected view.
           btnViews.SetSelectedItemByValue((int)disp);
+          UpdateButtonStates();
           _searchMode = true;
           LoadDirectory(strKeyword);
         }
