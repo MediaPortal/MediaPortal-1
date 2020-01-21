@@ -18,8 +18,11 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+
 using MediaPortal.Database;
+using MediaPortal.GUI.Pictures;
 
 namespace MediaPortal.Picture.Database
 {
@@ -51,7 +54,7 @@ namespace MediaPortal.Picture.Database
       return _database.AddPicture(strPicture, iRotation);
     }
 
-    public int UpdatePicture(string strPicture, int iRotation)
+    public static int UpdatePicture(string strPicture, int iRotation)
     {
       return _database.UpdatePicture(strPicture, iRotation);
     }
@@ -59,6 +62,26 @@ namespace MediaPortal.Picture.Database
     public static void DeletePicture(string strPicture)
     {
       _database.DeletePicture(strPicture);
+    }
+
+    public static string GetDateTaken(string strPicture)
+    {
+      return _database.GetDateTaken(strPicture);
+    }
+
+    public static DateTime GetDateTimeTaken(string strPicture)
+    {
+      return _database.GetDateTimeTaken(strPicture);
+    }
+
+    public static ExifMetadata.Metadata GetExifDBData(string strPicture)
+    {
+      return _database.GetExifDBData(strPicture);
+    }
+
+    public static ExifMetadata.Metadata GetExifData(string strPicture)
+    {
+      return _database.GetExifData(strPicture);
     }
 
     public static int GetRotation(string strPicture)
@@ -71,29 +94,34 @@ namespace MediaPortal.Picture.Database
       _database.SetRotation(strPicture, iRotation);
     }
 
-    //public static DateTime GetDateTaken(string strPicture)
-    //{
-    //  return _database.GetDateTaken(strPicture);
-    //}
-
     public static int EXIFOrientationToRotation(int orientation)
     {
       return _database.EXIFOrientationToRotation(orientation);
     }
 
-    public int ListKeywords(ref List<string> Keywords)
+    public static int ListKeywords(ref List<string> Keywords)
     {
       return _database.ListKeywords(ref Keywords);
     }
 
-    public int ListPicsByKeyword(string Keyword, ref List<string> Pics)
+    public static int ListPicsByKeyword(string Keyword, ref List<string> Pics)
     {
       return _database.ListPicsByKeyword(Keyword, ref Pics);
     }
 
-    public int CountPicsByKeyword(string Keyword)
+    public static int CountPicsByKeyword(string Keyword)
     {
       return _database.CountPicsByKeyword(Keyword);
+    }
+
+    public static int ListPicsByKeywordSearch(string Keyword, ref List<string> Pics)
+    {
+      return _database.ListPicsByKeywordSearch(Keyword, ref Pics);
+    }
+
+    public static int CountPicsByKeywordSearch(string Keyword)
+    {
+      return _database.CountPicsByKeywordSearch(Keyword);
     }
 
     public static int ListYears(ref List<string> Years)

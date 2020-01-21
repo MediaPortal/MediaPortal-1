@@ -1353,6 +1353,9 @@
 		<String id="2149">Вопрос</String>
 		<String id="2160">Обновить медиаинформацию в выбранной папке</String>
 		<String id="2161">Остановить обновление медиаинформации</String>
+		<String id="2167">Ключевое слово</String>
+    	<String id="2168">Обновить Exif</String>
+    	<String id="2169">Перейти к папке</String>
 		<String id="2200" prefix="Мой ">Проводник</String>
 		<String id="2201">Выберите источник</String>
 		<String id="2202">Выберите назначение</String>

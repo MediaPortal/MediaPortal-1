@@ -1334,10 +1334,11 @@
 		<String id="2145">Aktuelle Wiedergabeliste verwenden</String>
 		<String id="2146">Nicht genug Platz auf der CD</String>
 		<String id="2147">Nicht genug Platz auf der DVD</String>
-    <String id="2162">Sender löschen</String>
-    <String id="2163">Sender zu einer Gruppe hinzufügen</String>
-    <String id="2164">Sender aus Gruppe entfernen</String>
-    <String id="2166">Alle Aufnahmen in diesem Ordner löschen?</String>
+    	<String id="2162">Sender löschen</String>
+    	<String id="2163">Sender zu einer Gruppe hinzufügen</String>
+    	<String id="2164">Sender aus Gruppe entfernen</String>
+    	<String id="2166">Alle Aufnahmen in diesem Ordner löschen?</String>
+		<String id="2167">Stichwort</String>
 		<String id="2200" prefix="Mein ">Explorer</String>
 		<String id="2201">Quelle wählen</String>
 		<String id="2202">Ziel wählen</String>

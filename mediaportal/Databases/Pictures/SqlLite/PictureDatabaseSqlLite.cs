@@ -29,8 +29,10 @@ using SQLite.NET;
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace MediaPortal.Picture.Database
@@ -341,6 +343,31 @@ namespace MediaPortal.Picture.Database
       DatabaseUtility.AddIndex(m_db, "idxcopyrightnoticelinkpicture_idCopyrightNotice", "CREATE INDEX idxcopyrightnoticelinkpicture_idCopyrightNotice ON copyrightnoticelinkpicture(idCopyrightNotice);");
       DatabaseUtility.AddIndex(m_db, "idxcopyrightnoticelinkpicture_idPicture", "CREATE INDEX idxcopyrightnoticelinkpicture_idPicture ON copyrightnoticelinkpicture(idPicture);");
       */
+      DatabaseUtility.AddIndex(m_db, "idxcamera_idCamera", "CREATE INDEX idxcamera_idCamera ON camera(idCamera);");
+      DatabaseUtility.AddIndex(m_db, "idxlens_idLens", "CREATE INDEX idxlens_idLens ON lens(idLens);");
+      DatabaseUtility.AddIndex(m_db, "idxorientation_idOrientation", "CREATE INDEX idxorientation_idOrientation ON orientation(idOrientation);");
+      DatabaseUtility.AddIndex(m_db, "idxflash_idFlash", "CREATE INDEX idxflash_idFlash ON flash(idFlash);");
+      DatabaseUtility.AddIndex(m_db, "idxmeteringmode_idMeteringMode", "CREATE INDEX idxmeteringmode_idMeteringMode ON meteringmode(idMeteringMode);");
+      DatabaseUtility.AddIndex(m_db, "idxcountry_idCountry", "CREATE INDEX idxcountry_idCountry ON country(idCountry);");
+      DatabaseUtility.AddIndex(m_db, "idxstate_idState", "CREATE INDEX idxstate_idState ON state(idState);");
+      DatabaseUtility.AddIndex(m_db, "idxcity_idCity", "CREATE INDEX idxcity_idCity ON city(idCity);");
+      DatabaseUtility.AddIndex(m_db, "idxsublocation_idSublocation", "CREATE INDEX idxsublocation_idSublocation ON sublocation(idSublocation);");
+      DatabaseUtility.AddIndex(m_db, "idxexposureprogram_idExposureProgram", "CREATE INDEX idxexposureprogram_idExposureProgram ON exposureprogram(idExposureProgram);");
+      DatabaseUtility.AddIndex(m_db, "idxexposuremode_idExposureMode", "CREATE INDEX idxexposuremode_idExposureMode ON exposuremode(idExposureMode);");
+      DatabaseUtility.AddIndex(m_db, "idxsensingmethod_idSensingMethod", "CREATE INDEX idxsensingmethod_idSensingMethod ON sensingmethod(idSensingMethod);");
+      DatabaseUtility.AddIndex(m_db, "idxscenetype_idSceneType", "CREATE INDEX idxscenetype_idSceneType ON scenetype(idSceneType);");
+      DatabaseUtility.AddIndex(m_db, "idxscenecapturetype_idSceneCaptureType", "CREATE INDEX idxscenecapturetype_idSceneCaptureType ON scenecapturetype(idSceneCaptureType);");
+      DatabaseUtility.AddIndex(m_db, "idxwhitebalance_idWhiteBalance", "CREATE INDEX idxwhitebalance_idWhiteBalance ON whitebalance(idWhiteBalance);");
+      DatabaseUtility.AddIndex(m_db, "idxauthor_idAuthor", "CREATE INDEX idxauthor_idAuthor ON author(idAuthor);");
+      DatabaseUtility.AddIndex(m_db, "idxbyline_idByline", "CREATE INDEX idxbyline_idByline ON byline(idByline);");
+      DatabaseUtility.AddIndex(m_db, "idxsoftware_idSoftware", "CREATE INDEX idxsoftware_idSoftware ON software(idSoftware);");
+      DatabaseUtility.AddIndex(m_db, "idxusercomment_idUserComment", "CREATE INDEX idxusercomment_idUserComment ON usercomment(idUserComment);");
+      DatabaseUtility.AddIndex(m_db, "idxcopyright_idCopyright", "CREATE INDEX idxcopyright_idCopyright ON copyright(idCopyright);");
+      DatabaseUtility.AddIndex(m_db, "idxcopyrightnotice_idCopyrightNotice", "CREATE INDEX idxcopyrightnotice_idCopyrightNotice ON copyrightnotice(idCopyrightNotice);");
+
+      DatabaseUtility.AddIndex(m_db, "idxkeywords_idKeyword", "CREATE INDEX idxkeywords_idKeyword ON keywords(idKeyword);");
+      DatabaseUtility.AddIndex(m_db, "idxkeywords_strKeyword", "CREATE INDEX idxkeywords_strKeyword ON keywords(strKeyword);");
+
       DatabaseUtility.AddIndex(m_db, "idxkeywordslinkpicture_idKeyword", "CREATE INDEX idxkeywordslinkpicture_idKeyword ON keywordslinkpicture(idKeyword);");
       DatabaseUtility.AddIndex(m_db, "idxkeywordslinkpicture_idPicture", "CREATE INDEX idxkeywordslinkpicture_idPicture ON keywordslinkpicture(idPicture);");
 
@@ -2365,6 +2392,170 @@ namespace MediaPortal.Picture.Database
       }
     }
 
+    public ExifMetadata.Metadata GetExifData(string strPicture)
+    {
+      ExifMetadata.Metadata metaData = new ExifMetadata.Metadata();
+
+      if (!Util.Utils.IsPicture(strPicture))
+      {
+        return metaData;
+      }
+      if (string.IsNullOrEmpty(strPicture))
+      {
+        return metaData;
+      }
+
+      using (ExifMetadata extractor = new ExifMetadata())
+      {
+        metaData = extractor.GetExifMetadata(strPicture);
+      }
+      return metaData;
+    }
+
+    private string GetExifDBKeywords(int idPicture)
+    {
+      if (idPicture < 1)
+      {
+        return string.Empty;
+      }
+      if (m_db == null)
+      {
+        return string.Empty;
+      }
+      
+      try
+      {
+        string SQL = String.Format("SELECT strKeyword FROM picturekeywords WHERE idPicture = {0}", idPicture);
+        SQLiteResultSet results = m_db.Execute(SQL);
+        if (results != null && results.Rows.Count > 0)
+        {
+          string result = string.Empty;
+          for (int i = 0; i < results.Rows.Count; i++)
+          {
+            result = result + (string.IsNullOrEmpty(result) ? "" : "; ") + results.Rows[i].fields[0].Trim();
+          }
+          return result;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: GetExifDBKeywords: {0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+      return string.Empty;
+    }
+
+    private bool AssignAllExifFieldsFromResultSet (ref ExifMetadata.Metadata aExif, SQLiteResultSet aResult, int aRow)
+    {
+      if (aExif.IsEmpty() || aResult == null || aResult.Rows.Count < 1)
+      {
+        return false;
+      }
+
+      aExif.DatePictureTaken.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strDateTaken");
+      aExif.Orientation.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strOrientation");
+      aExif.EquipmentMake.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strEquipmentMake");
+      aExif.CameraModel.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCameraModel");
+      aExif.Lens.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strLens");
+      aExif.Fstop.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strFstop");
+      aExif.ShutterSpeed.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strShutterSpeed");
+      aExif.ExposureTime.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strExposureTime");
+      aExif.ExposureCompensation.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strExposureCompensation");
+      aExif.ExposureProgram.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strExposureProgram");
+      aExif.ExposureMode.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strExposureMode");
+      aExif.MeteringMode.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strMeteringMode");
+      aExif.Flash.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strFlash");
+      aExif.Resolution.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strResolution");
+      aExif.ISO.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strISO");
+      aExif.WhiteBalance.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strWhiteBalance");
+      aExif.SensingMethod.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strSensingMethod");
+      aExif.SceneType.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strSceneType");
+      aExif.SceneCaptureType.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strSceneCaptureType");
+      aExif.FocalLength.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strFocalLength");
+      aExif.FocalLength35MM.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strFocalLength35MM");
+      aExif.CountryCode.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCountryCode");
+      aExif.CountryName.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCountryName");
+      aExif.ProvinceOrState.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strProvinceOrState");
+      aExif.City.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCity");
+      aExif.SubLocation.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strSubLocation");
+      aExif.Author.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strAuthor");
+      aExif.Copyright.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCopyright");
+      aExif.CopyrightNotice.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCopyrightNotice");
+      aExif.Comment.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strComment");
+      aExif.ViewerComments.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strViewerComments");
+      aExif.ByLine.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strByLine");
+      aExif.Latitude.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strLatitude");
+      aExif.Longitude.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strLongitude");
+      aExif.Altitude.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strAltitude");
+
+      try
+      {
+        aExif.Orientation.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idOrientation").ToString();
+        aExif.MeteringMode.Value = DatabaseUtility.GetAsInt(aResult, aRow, "iMeteringMode").ToString();
+        aExif.Flash.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idFlash").ToString();
+      }
+      catch (Exception ex)
+      {
+        Log.Warn("Picture.DB.SQLite: Exception parsing integer fields: {0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+
+      try
+      {
+        aExif.DatePictureTaken.Value = DatabaseUtility.GetAsDateTime(aResult, aRow, "strDateTaken").ToString();
+      }
+      catch (Exception ex)
+      {
+        Log.Warn("Picture.DB.SQLite: Exception parsing date fields: {0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+      return true;
+    }
+
+    public ExifMetadata.Metadata GetExifDBData(string strPicture)
+    {
+      ExifMetadata.Metadata metaData = new ExifMetadata.Metadata();
+
+      if (!Util.Utils.IsPicture(strPicture))
+      {
+        return metaData;
+      }
+      if (string.IsNullOrEmpty(strPicture))
+      {
+        return metaData;
+      }
+      if (m_db == null)
+      {
+        return metaData;
+      }
+
+      try
+      {
+        string strPic = strPicture;
+        DatabaseUtility.RemoveInvalidChars(ref strPic);
+        string SQL = String.Format("SELECT idPicture, strFile FROM picture WHERE strFile LIKE '{0}'", strPic);
+
+        SQLiteResultSet results = m_db.Execute(SQL);
+        if (results != null && results.Rows.Count > 0)
+        {
+          int idPicture = DatabaseUtility.GetAsInt(results, 0, "idPicture");
+          if (idPicture > 0)
+          {
+            SQL = String.Format("SELECT * FROM picturedata WHERE idPicture = {0}", idPicture);
+            results = m_db.Execute(SQL);
+            if (results != null && results.Rows.Count > 0)
+            {
+              AssignAllExifFieldsFromResultSet(ref metaData, results, 0);
+              metaData.Keywords.DisplayValue = GetExifDBKeywords(idPicture);
+              // metaData.ImageDimensions.DisplayValue = DatabaseUtility.Get(results, 0, "");
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: GetExifDBData: {0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+      return metaData;
+    }
+
     private bool GetExifDetails(string strPicture, ref int iRotation, ref string strDateTaken, ref ExifMetadata.Metadata metaData)
     {
       // Continue only if it's a picture files
@@ -2372,27 +2563,33 @@ namespace MediaPortal.Picture.Database
       {
         return false;
       }
-
-      using (ExifMetadata extractor = new ExifMetadata())
+      if (string.IsNullOrEmpty(strPicture))
       {
-        metaData = extractor.GetExifMetadata(strPicture);
-        try
+        return false;
+      }
+
+      metaData = GetExifData(strPicture); 
+      if (metaData.IsEmpty())
+      {
+        return false;
+      }
+
+      try
+      {
+        strDateTaken = metaData.DatePictureTaken.Value;
+        if (!String.IsNullOrWhiteSpace(strDateTaken))
+        // If the image contains a valid exif date store it in the database, otherwise use the file date
         {
-          strDateTaken = metaData.DatePictureTaken.Value;
-          if (!String.IsNullOrWhiteSpace(strDateTaken))
-          // If the image contains a valid exif date store it in the database, otherwise use the file date
+          if (_useExif)
           {
-            if (_useExif)
-            {
-              iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Value));
-            }
-            return true;
+            iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Value));
           }
+          return true;
         }
-        catch (FormatException ex)
-        {
-          Log.Error("Picture.DB.SQLite: Exif details: {0} stack:{1}", ex.Message, ex.StackTrace);
-        }
+      }
+      catch (FormatException ex)
+      {
+        Log.Error("Picture.DB.SQLite: Exif details: {0} stack:{1}", ex.Message, ex.StackTrace);
       }
       strDateTaken = string.Empty;
       return false;
@@ -2451,6 +2648,61 @@ namespace MediaPortal.Picture.Database
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
+    public string GetDateTaken(string strPicture)
+    {
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+      {
+        return string.Empty;
+      }
+      if (m_db == null)
+      {
+        return string.Empty;
+      }
+
+      string result = string.Empty;
+
+      try
+      {
+        string strPic = strPicture;
+        DatabaseUtility.RemoveInvalidChars(ref strPic);
+
+        SQLiteResultSet results = m_db.Execute(String.Format("SELECT strDateTaken FROM picture WHERE strFile LIKE '{0}'", strPic));
+        if (results != null && results.Rows.Count > 0)
+        {
+           result = DatabaseUtility.Get(results, 0, "strDateTaken");
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: GetDateTaken: {0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+      return result;
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public DateTime GetDateTimeTaken(string strPicture)
+    {
+      string dbDateTime = GetDateTaken(strPicture);
+      if (string.IsNullOrEmpty(dbDateTime))
+      {
+        return DateTime.MinValue;
+      }
+
+      try
+      {
+        DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
+        dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
+        return DateTime.ParseExact(dbDateTime, "d", dateTimeFormat);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: GetDateTaken Date parse Error: {0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+      return DateTime.MinValue;
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public int GetRotation(string strPicture)
     {
       // Continue only if it's a picture files
@@ -2458,7 +2710,6 @@ namespace MediaPortal.Picture.Database
       {
         return -1;
       }
-
       if (m_db == null)
       {
         return -1;
@@ -2489,7 +2740,7 @@ namespace MediaPortal.Picture.Database
       }
       catch (Exception ex)
       {
-        Log.Error("Picture.DB.SQLite: {0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("Picture.DB.SQLite: GetRotation: {0} stack:{1}", ex.Message, ex.StackTrace);
         // Open();
       }
       return 0;
@@ -2500,12 +2751,14 @@ namespace MediaPortal.Picture.Database
     {
       // Continue only if it's a picture files
       if (!Util.Utils.IsPicture(strPicture))
+      {
         return;
-
+      }
       if (m_db == null)
       {
         return;
       }
+
       try
       {
         string strPic = strPicture;
@@ -2526,18 +2779,18 @@ namespace MediaPortal.Picture.Database
 
     public void DeletePicture(string strPicture)
     {
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+      {
+        return;
+      }
+      if (m_db == null)
+      {
+        return;
+      }
+
       lock (typeof (PictureDatabase))
       {
-        // Continue only if it's a picture files
-        if (!Util.Utils.IsPicture(strPicture))
-        {
-          return;
-        }
-        if (m_db == null)
-        {
-          return;
-        }
-
         try
         {
           string strPic = strPicture;
@@ -2555,20 +2808,115 @@ namespace MediaPortal.Picture.Database
       }
     }
 
+    private string GetSearchQuery (string find)
+    {
+      string result = string.Empty;
+      MatchCollection matches = Regex.Matches(find, @"([+|]?[^+|;]+;?)");
+      foreach (Match match in matches)
+      {
+        foreach (Capture capture in match.Captures)
+        {
+          if (!string.IsNullOrEmpty(capture.Value))
+          {
+            string part = capture.Value;
+            if (part.Contains("+"))
+            {
+              part = part.Replace("+", " AND {0} = '") + "'";
+            }
+            if (part.Contains("|"))
+            {
+              part = part.Replace("|", " OR {0} = '") + "'";
+            }
+            if (part.Contains(";"))
+            {
+              part = "{0} = '" + part.Replace(";", "' AND ");
+            }
+            if (!part.Contains("{0}"))
+            {
+              part = "{0} = '" + part + "'";
+            }
+            if (part.Contains("%"))
+            {
+              part = part.Replace("{0} = '", "{0} LIKE '");
+            }
+            result = result + part;
+          }
+        }
+      }
+      Log.Debug ("Picture.DB.SQLite: Search -> Where: {0} -> {1}", find, result);
+      // Picture.DB.SQLite: Search -> Where: word;word1+word2|word3|%like% -> {0} = 'word' AND {0} = 'word1' AND {0} = 'word2' OR {0} = 'word3' OR {0} LIKE '%like%'
+      // Picture.DB.SQLite: Search -> Where: word -> {0} = 'word'
+      // Picture.DB.SQLite: Search -> Where: word%|word2 -> {0} LIKE 'word%' OR {0} = 'word2'
+      return result;
+    }
+/*
+    private string GetSearchQuery (string find)
+    {
+      string result = string.Empty;
+      MatchCollection matches = Regex.Matches(find, @"([|]?[^|]+)");
+      foreach (Match match in matches)
+      {
+        foreach (Capture capture in match.Captures)
+        {
+          if (!string.IsNullOrEmpty(capture.Value))
+          {
+            string part = capture.Value;
+            if (part.Contains("+") || part.Contains(";"))
+            {
+              part = part.Replace("+", ",");
+              part = part.Replace(";", ",");
+              part = part.Replace(",", "','");
+            }
+            if (part.Contains("|"))
+            {
+              part = part.Replace("|", " OR {0} = '") + "'";
+            }
+            if (!part.Contains("{0}"))
+            {
+              part = "{0} = '" + part + "'";
+            }
+            if (part.Contains(","))
+            {
+              part = part.Replace("{0} = ", " {0} IN (") + ")";
+            }
+            if (part.Contains("%"))
+            {
+              part = part.Replace("{0} = '", "{0} LIKE '");
+            }
+            result = result + part;
+          }
+        }
+      }
+      Log.Debug ("Picture.DB.SQLite: Search -> Where: {0} -> {1}", find, result);
+      // Picture.DB.SQLite: Search -> Where: word;word1+word2|word3|%like% ->  {0} IN ('word','word1','word2') OR {0} = 'word3' OR {0} LIKE '%like%'
+      // Picture.DB.SQLite: Search -> Where: word -> {0} = 'word'
+      // Picture.DB.SQLite: Search -> Where: word%|word2 -> {0} LIKE 'word%' OR {0} = 'word2'
+      return result;
+    }
+*/        
+    private string GetSearchWhere (string keyword, string where)
+    {
+      if (string.IsNullOrEmpty(keyword) || string.IsNullOrEmpty(where))
+      {
+        return string.Empty;
+      }
+      return "WHERE " + string.Format(GetSearchQuery(where), keyword);
+    }    
+
     public int ListKeywords(ref List<string> Keywords)
     {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
       int Count = 0;
       lock (typeof (PictureDatabase))
       {
-        if (m_db == null)
-        {
-          return 0;
-        }
         string strSQL = "SELECT DISTINCT strKeyword FROM keywords ORDER BY 1";
-        SQLiteResultSet result;
         try
         {
-          result = m_db.Execute(strSQL);
+          SQLiteResultSet result = m_db.Execute(strSQL);
           if (result != null)
           {
             for (Count = 0; Count < result.Rows.Count; Count++)
@@ -2580,7 +2928,6 @@ namespace MediaPortal.Picture.Database
         catch (Exception ex)
         {
           Log.Error("Picture.DB.SQLite: Getting Keywords err: {0} stack:{1}", ex.Message, ex.StackTrace);
-          // Open();
         }
         return Count;
       }
@@ -2588,18 +2935,18 @@ namespace MediaPortal.Picture.Database
 
     public int ListPicsByKeyword(string Keyword, ref List<string> Pics)
     {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
       int Count = 0;
       lock (typeof (PictureDatabase))
       {
-        if (m_db == null)
-        {
-          return 0;
-        }
-        string strSQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = '" + Keyword + "' ORDER BY 1";
-        SQLiteResultSet result;
+        string strSQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = '" + Keyword + "' ORDER BY strDateTaken";
         try
         {
-          result = m_db.Execute(strSQL);
+          SQLiteResultSet result = m_db.Execute(strSQL);
           if (result != null)
           {
             for (Count = 0; Count < result.Rows.Count; Count++)
@@ -2611,7 +2958,6 @@ namespace MediaPortal.Picture.Database
         catch (Exception ex)
         {
           Log.Error("Picture.DB.SQLite: Getting Picture by Keyword err: {0} stack:{1}", ex.Message, ex.StackTrace);
-          // Open();
         }
         return Count;
       }
@@ -2619,14 +2965,103 @@ namespace MediaPortal.Picture.Database
 
     public int CountPicsByKeyword(string Keyword)
     {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
       int Count = 0;
       lock (typeof (PictureDatabase))
       {
-        if (m_db == null)
+        string strSQL = "SELECT COUNT(strFile) FROM picturekeywords WHERE strKeyword = '" + Keyword + "' ORDER BY strDateTaken";
+        try
         {
-          return 0;
+          SQLiteResultSet result = m_db.Execute(strSQL);
+          if (result != null)
+          {
+            Count = DatabaseUtility.GetAsInt(result, 0, 0);
+          }
         }
-        string strSQL = "SELECT COUNT(strFile) FROM picturekeywords WHERE strKeyword = '" + Keyword + "' ORDER BY 1";
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: Getting Count of Picture by Keyword err: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+        return Count;
+      }
+    }
+
+    public int ListPicsByKeywordSearch(string Keyword, ref List<string> Pics)
+    {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
+      int Count = 0;
+      lock (typeof (PictureDatabase))
+      {
+        string strSQL;
+        int iPos = Keyword.IndexOf('#');
+        if (iPos > 0)
+        {
+          string leftPart = Keyword.Substring(0, iPos);
+          string rightPart = Keyword.Substring(iPos + 1);
+
+          Log.Debug("Picture.DB.SQLite: Multisearch: {0} -> {1}", leftPart, rightPart);
+
+          strSQL = "SELECT DISTINCT strFile FROM picturekeywords " + GetSearchWhere("strKeyword", leftPart) +
+                   " AND idPicture in (SELECT DISTINCT idPicture FROM picturekeywords " + GetSearchWhere("strKeyword", rightPart) +
+                   " ORDER BY strDateTaken";
+        }
+        else
+        {
+          strSQL = "SELECT DISTINCT strFile FROM picturekeywords " + GetSearchWhere("strKeyword", Keyword) + " ORDER BY strDateTaken";
+        }
+
+        try
+        {
+          SQLiteResultSet result = m_db.Execute(strSQL);
+          if (result != null)
+          {
+            for (Count = 0; Count < result.Rows.Count; Count++)
+            {
+              Pics.Add(DatabaseUtility.Get(result, Count, 0));
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: Getting Picture by Keyword Search err: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+        return Count;
+      }
+    }
+
+    public int CountPicsByKeywordSearch(string Keyword)
+    {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
+      int Count = 0;
+      lock (typeof (PictureDatabase))
+      {
+        string strSQL;
+        int iPos = Keyword.IndexOf('#');
+        if (iPos > 0)
+        {
+          string leftPart = Keyword.Substring(0, iPos);
+          string rightPart = Keyword.Substring(iPos + 1);
+
+          strSQL = "SELECT DISTINCT COUNT(strFile) FROM picturekeywords " + GetSearchWhere("strKeyword", leftPart) +
+                   " AND idPicture in (SELECT DISTINCT idPicture FROM picturekeywords " + GetSearchWhere("strKeyword", rightPart) +
+                   " ORDER BY strDateTaken";
+        }
+        else
+        {
+          strSQL = "SELECT DISTINCT COUNT(strFile) FROM picturekeywords " + GetSearchWhere("strKeyword", Keyword) + " ORDER BY strDateTaken";
+        }
         SQLiteResultSet result;
         try
         {
@@ -2638,8 +3073,7 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          Log.Error("Picture.DB.SQLite: Getting Count of Picture by Keyword err: {0} stack:{1}", ex.Message, ex.StackTrace);
-          // Open();
+          Log.Error("Picture.DB.SQLite: Getting Count of Picture by Keyword Search err: {0} stack:{1}", ex.Message, ex.StackTrace);
         }
         return Count;
       }
@@ -2647,13 +3081,14 @@ namespace MediaPortal.Picture.Database
 
     public int ListYears(ref List<string> Years)
     {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
       int Count = 0;
       lock (typeof (PictureDatabase))
       {
-        if (m_db == null)
-        {
-          return 0;
-        }
         string strSQL = "SELECT DISTINCT SUBSTR(strDateTaken,1,4) FROM picture ORDER BY 1";
         SQLiteResultSet result;
         try
@@ -2678,14 +3113,15 @@ namespace MediaPortal.Picture.Database
 
     public int ListMonths(string Year, ref List<string> Months)
     {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
       int Count = 0;
       lock (typeof (PictureDatabase))
       {
-        if (m_db == null)
-        {
-          return 0;
-        }
-        string strSQL = "SELECT DISTINCT SUBSTR(strDateTaken,6,2) FROM picture WHERE strDateTaken LIKE '" + Year + "%' ORDER BY 1";
+        string strSQL = "SELECT DISTINCT SUBSTR(strDateTaken,6,2) FROM picture WHERE strDateTaken LIKE '" + Year + "%' ORDER BY strDateTaken";
         SQLiteResultSet result;
         try
         {
@@ -2709,14 +3145,15 @@ namespace MediaPortal.Picture.Database
 
     public int ListDays(string Month, string Year, ref List<string> Days)
     {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
       int Count = 0;
       lock (typeof (PictureDatabase))
       {
-        if (m_db == null)
-        {
-          return 0;
-        }
-        string strSQL = "SELECT DISTINCT SUBSTR(strDateTaken,9,2) FROM picture WHERE strDateTaken LIKE '" + Year + "-" + Month + "%' ORDER BY 1";
+        string strSQL = "SELECT DISTINCT SUBSTR(strDateTaken,9,2) FROM picture WHERE strDateTaken LIKE '" + Year + "-" + Month + "%' ORDER BY strDateTaken";
         SQLiteResultSet result;
         try
         {
@@ -2740,14 +3177,15 @@ namespace MediaPortal.Picture.Database
 
     public int ListPicsByDate(string Date, ref List<string> Pics)
     {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
       int Count = 0;
       lock (typeof (PictureDatabase))
       {
-        if (m_db == null)
-        {
-          return 0;
-        }
-        string strSQL = "SELECT strFile FROM picture WHERE strDateTaken LIKE '" + Date + "%' ORDER BY 1";
+        string strSQL = "SELECT strFile FROM picture WHERE strDateTaken LIKE '" + Date + "%' ORDER BY strDateTaken";
         SQLiteResultSet result;
         try
         {
@@ -2771,14 +3209,15 @@ namespace MediaPortal.Picture.Database
 
     public int CountPicsByDate(string Date)
     {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
       int Count = 0;
       lock (typeof (PictureDatabase))
       {
-        if (m_db == null)
-        {
-          return 0;
-        }
-        string strSQL = "SELECT COUNT(strFile) FROM picture WHERE strDateTaken LIKE '" + Date + "%' ORDER BY 1";
+        string strSQL = "SELECT COUNT(strFile) FROM picture WHERE strDateTaken LIKE '" + Date + "%' ORDER BY strDateTaken";
         SQLiteResultSet result;
         try
         {

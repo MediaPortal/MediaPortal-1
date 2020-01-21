@@ -254,7 +254,7 @@
 					<control>
 						<description>Slideshow Settings</description>
 						<type>button</type>
-						<id>8</id>
+						<id>9</id>
 						<label>Slideshow Settings</label>
 						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
 						<textureNoFocus>-</textureNoFocus>
@@ -265,8 +265,24 @@
 						<onright>50</onright>
 						<onleft>50</onleft>
 			      <onup>7</onup>				
-			      <ondown>2</ondown>
+			      <ondown>8</ondown>
 						<hyperlink>12</hyperlink>				
+					</control>				
+					<control>
+						<description>Search</description>
+						<type>button</type>
+						<id>8</id>
+						<label>Search</label>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<width>499</width>
+						<height>64</height>
+						<textXOff>62</textXOff>
+						<textYOff>16</textYOff>
+						<onright>50</onright>
+						<onleft>50</onleft>
+			            <onup>9</onup>				
+			            <ondown>2</ondown>
 					</control>				
 			</control>
 		</control>

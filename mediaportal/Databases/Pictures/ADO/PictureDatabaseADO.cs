@@ -166,6 +166,16 @@ namespace MediaPortal.Picture.Database
       }
     }
 
+    public ExifMetadata.Metadata GetExifDBData(string strPicture)
+    {
+      throw (new NotImplementedException("Exif Date Taken from DB not yet implemented for ADO Database"));
+    }
+
+    public ExifMetadata.Metadata GetExifData(string strPicture)
+    {
+      throw (new NotImplementedException("Exif Date Taken from DB not yet implemented for ADO Database"));
+    }
+
     public int GetRotation(string strPicture)
     {
       // Continue only if it's a picture files
@@ -235,7 +245,12 @@ namespace MediaPortal.Picture.Database
       }
     }
 
-    public DateTime GetDateTaken(string strPicture)
+    public string GetDateTaken(string strPicture)
+    {
+      throw (new NotImplementedException("String Date Taken not yet implemented for ADO Database"));
+    }
+
+    public DateTime GetDateTimeTaken(string strPicture)
     {
       string strSQL = "";
       try
@@ -316,6 +331,16 @@ namespace MediaPortal.Picture.Database
     public int CountPicsByKeyword(string Keyword)
     {
       throw (new NotImplementedException("List Count Pics by Keywords not yet implemented for ADO Database"));
+    }
+
+    public int ListPicsByKeywordSearch(string Keyword, ref List<string> Pics)
+    {
+      throw (new NotImplementedException("List Pics by Keywords Search not yet implemented for ADO Database"));
+    }
+
+    public int CountPicsByKeywordSearch(string Keyword)
+    {
+      throw (new NotImplementedException("List Count Pics by Keywords Search not yet implemented for ADO Database"));
     }
 
     public int ListYears(ref List<string> Years)

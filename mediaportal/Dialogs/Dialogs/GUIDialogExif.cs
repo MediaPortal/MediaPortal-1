@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -108,7 +108,6 @@ namespace MediaPortal.Dialogs
       }
     }
 
-
     public string FileName
     {
       get { return fileName; }
@@ -121,11 +120,6 @@ namespace MediaPortal.Dialogs
       {
         m_pTexture.Dispose();
       }
-
-      int iRotate = PictureDatabase.GetRotation(FileName);
-
-      m_pTexture = Util.Picture.Load(FileName, iRotate, 1024, 1024, true, false, out m_iTextureWidth,
-                                     out m_iTextureHeight);
 
       lblCameraModel.Label = string.Empty;
       lblDateTakenLabel.Label = string.Empty;
@@ -141,10 +135,18 @@ namespace MediaPortal.Dialogs
       lblShutterSpeed.Label = string.Empty;
       lblViewComments.Label = string.Empty;
 
-      using (ExifMetadata extractor = new ExifMetadata())
-      {
-        ExifMetadata.Metadata metaData = extractor.GetExifMetadata(FileName);
+      int iRotate = PictureDatabase.GetRotation(FileName);
+      m_pTexture = Util.Picture.Load(FileName, iRotate, 1024, 1024, true, false, out m_iTextureWidth,
+                                     out m_iTextureHeight);
 
+      ExifMetadata.Metadata metaData;
+      metaData = PictureDatabase.GetExifDBData(FileName);
+      if (metaData.IsEmpty())
+      {
+        metaData = PictureDatabase.GetExifData(FileName);
+      }
+      if (!metaData.IsEmpty())
+      {
         lblCameraModel.Label = metaData.CameraModel.DisplayValue;
         lblDateTakenLabel.Label = metaData.DatePictureTaken.DisplayValue;
         lblEquipmentMake.Label = metaData.EquipmentMake.DisplayValue;
@@ -161,6 +163,7 @@ namespace MediaPortal.Dialogs
 
         imgPicture.IsVisible = false;
       }
+
       if (File.Exists(FileName))
       {
         GUIPropertyManager.SetProperty("#selectedthumb", FileName);

@@ -18,7 +18,10 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+
+using MediaPortal.GUI.Pictures;
 
 namespace MediaPortal.Picture.Database
 {
@@ -27,14 +30,19 @@ namespace MediaPortal.Picture.Database
     int AddPicture(string strPicture, int iRotation);
     int UpdatePicture(string strPicture, int iRotation);
     void DeletePicture(string strPicture);
+    string GetDateTaken(string strPicture);
+    DateTime GetDateTimeTaken(string strPicture);
+    ExifMetadata.Metadata GetExifData(string strPicture);
+    ExifMetadata.Metadata GetExifDBData(string strPicture);
     int GetRotation(string strPicture);
     void SetRotation(string strPicture, int iRotation);
-    //DateTime GetDateTaken(string strPicture);
     int EXIFOrientationToRotation(int orientation);
     void Dispose();
     int ListKeywords(ref List<string> Keywords);
     int ListPicsByKeyword(string Keyword, ref List<string> Pics);
     int CountPicsByKeyword(string Keyword);
+    int ListPicsByKeywordSearch(string Keyword, ref List<string> Pics);
+    int CountPicsByKeywordSearch(string Keyword);
     int ListYears(ref List<string> Years);
     int ListMonths(string Year, ref List<string> Months);
     int ListDays(string Month, string Year, ref List<string> Days);
