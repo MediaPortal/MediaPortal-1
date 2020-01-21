@@ -1791,10 +1791,6 @@ namespace MediaPortal.GUI.Pictures
       {
         facadeLayout.EnableScrollLabel = method == SortMethod.Name;
       }
-      if (null != btnSearch)
-      {
-        btnSearch.Visible = disp == Display.Keyword;
-      }
     }
 
     private void ShowThumbPanel()
