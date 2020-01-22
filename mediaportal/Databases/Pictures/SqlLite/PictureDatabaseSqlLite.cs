@@ -18,15 +18,6 @@
 
 #endregion
 
-using MediaPortal.Configuration;
-using MediaPortal.Database;
-using MediaPortal.GUI.Library;
-using MediaPortal.GUI.Pictures;
-using MediaPortal.Player;
-using MediaPortal.Util;
-
-using SQLite.NET;
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -34,6 +25,15 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
+
+using SQLite.NET;
+
+using MediaPortal.Configuration;
+using MediaPortal.Database;
+using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Pictures;
+using MediaPortal.Player;
+using MediaPortal.Util;
 
 namespace MediaPortal.Picture.Database
 {
@@ -2637,7 +2637,6 @@ namespace MediaPortal.Picture.Database
       return DateTime.MinValue;
     }
 
-    [MethodImpl(MethodImplOptions.Synchronized)]
     public int GetRotation(string strPicture)
     {
       if (m_db == null)
@@ -2838,6 +2837,49 @@ namespace MediaPortal.Picture.Database
       return "WHERE " + string.Format(GetSearchQuery(where), keyword);
     }    
 
+    private string GetSelect(string search)
+    {
+      if (string.IsNullOrEmpty(search))
+      {
+        return string.Empty;
+      }
+      
+      string result = string.Empty;
+      string[] lines = search.Split(new char[] { '#' }, StringSplitOptions.RemoveEmptyEntries);
+      if (lines.Length == 0)
+      {
+        return string.Empty;
+      }
+      
+      string firstPart = string.Format("SELECT DISTINCT strFile FROM picturekeywords {0}", GetSearchWhere("strKeyword", lines[0]));
+      string debug = string.Empty;
+      for (int i = 1; i < lines.Length; i++)
+      {
+        debug = debug + (string.IsNullOrEmpty(debug) ? string.Empty : " <- ") + lines[i];
+        string sql = string.Format("SELECT DISTINCT idPicture FROM picturekeywords {0}", GetSearchWhere("strKeyword", lines[i]));
+        result += string.Format(string.IsNullOrEmpty(result) ? "{0}" : " AND idPicture IN ({0}", sql);
+      }
+      if (!string.IsNullOrEmpty(result))
+      {
+        debug = lines[0] + (string.IsNullOrEmpty(debug) ? string.Empty : " <- ") + debug;
+        result = result + new String(')', lines.Length-2);
+        result = string.Format("{0} AND idPicture IN ({1})", firstPart, result);
+      }
+      else
+      {
+        result = firstPart;
+      }
+
+      if (lines.Length > 1)
+      {
+        Log.Debug("Multi search: " + debug);
+      }
+      return result + " ORDER BY strDateTaken";
+      // GetSelect("qwe") -> SELECT DISTINCT strFile FROM picturekeywords WHERE strKeyword = 'qwe' ORDER BY strDateTaken
+      // GetSelect("qwe#aaa") -> SELECT DISTINCT strFile FROM picturekeywords WHERE strKeyword = 'qwe' AND idPicture IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'aaa') ORDER BY strDateTaken
+      // GetSelect("q1#q2#q3.1|q3.2#q4%#q5") -> SELECT DISTINCT strFile FROM picturekeywords WHERE strKeyword = 'q1' AND idPicture IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'q2' AND idPicture IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'q3.1' OR strKeyword = 'q3.2' AND idPicture IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword LIKE 'q4%' AND idPicture IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'q5')))) ORDER BY strDateTaken
+    }
+
     public int ListKeywords(ref List<string> Keywords)
     {
       if (m_db == null)
@@ -2935,24 +2977,7 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof (PictureDatabase))
       {
-        string strSQL;
-        int iPos = Keyword.IndexOf('#');
-        if (iPos > 0)
-        {
-          string leftPart = Keyword.Substring(0, iPos);
-          string rightPart = Keyword.Substring(iPos + 1);
-
-          Log.Debug("Picture.DB.SQLite: Multisearch: {0} -> {1}", leftPart, rightPart);
-
-          strSQL = "SELECT DISTINCT strFile FROM picturekeywords " + GetSearchWhere("strKeyword", leftPart) +
-                   " AND idPicture in (SELECT DISTINCT idPicture FROM picturekeywords " + GetSearchWhere("strKeyword", rightPart) + ")" +
-                   " ORDER BY strDateTaken";
-        }
-        else
-        {
-          strSQL = "SELECT DISTINCT strFile FROM picturekeywords " + GetSearchWhere("strKeyword", Keyword) + " ORDER BY strDateTaken";
-        }
-
+        string strSQL = GetSelect(Keyword);
         try
         {
           SQLiteResultSet result = m_db.Execute(strSQL);

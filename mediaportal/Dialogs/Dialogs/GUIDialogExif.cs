@@ -19,9 +19,11 @@
 #endregion
 
 using System.IO;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
 using MediaPortal.Picture.Database;
+
 using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.Dialogs

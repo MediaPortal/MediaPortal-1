@@ -19,6 +19,7 @@
 #endregion
 
 using System.Collections.Generic;
+
 using MetadataExtractor.Formats.Exif;
 using MetadataExtractor.Formats.Iptc;
 

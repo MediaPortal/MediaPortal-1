@@ -28,7 +28,9 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+
 using Common.GUIPlugins;
+
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
@@ -39,6 +41,7 @@ using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.Util;
 using MediaPortal.Profile;
+
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 using ThreadPool = System.Threading.ThreadPool;
@@ -463,6 +466,8 @@ namespace MediaPortal.GUI.Pictures
     private static bool _autoCreateThumbs = true;
     private static bool _searchMode = false;
     private static string _searchString = string.Empty;
+    private Thread _threadSetPicturesInfo;
+    private ArrayList _threadGUIItems = new ArrayList();
 
     #endregion
 
@@ -931,6 +936,11 @@ namespace MediaPortal.GUI.Pictures
 
     protected override void OnPageDestroy(int newWindowId)
     {
+      if (_threadSetPicturesInfo != null && _threadSetPicturesInfo.IsAlive)
+      {
+        _threadSetPicturesInfo.Abort();
+      }
+
       selectedItemIndex = GetSelectedItemNo();
       SaveSettings();
       SaveFolderSettings(currentFolder);
@@ -1205,12 +1215,9 @@ namespace MediaPortal.GUI.Pictures
           dlg.AddLocalizedString(923); // show
           dlg.AddLocalizedString(108); // start slideshow
           dlg.AddLocalizedString(940); // properties
-
-          // TODO Add to strings.xml
           dlg.AddLocalizedString(2168); // Update Exif
           if (disp != Display.Files)
           {
-            // TODO Add to strings.xml
             dlg.AddLocalizedString(2169); // Go to Folder
           }
         }
@@ -1580,12 +1587,12 @@ namespace MediaPortal.GUI.Pictures
               if (method == SortMethod.Modified)
               {
                 item.Label2 = item.FileInfo.ModificationTime.ToShortDateString() + " " +
-                               item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+                              item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
               }
               else
               {
                 item.Label2 = item.FileInfo.CreationTime.ToShortDateString() + " " +
-                               item.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+                              item.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
               }
               break;
             case SortMethod.Size:
@@ -3316,6 +3323,7 @@ namespace MediaPortal.GUI.Pictures
             string year = strNewDirectory.Substring(0, 4);
             string month = strNewDirectory.Substring(5, 2);
 
+            ArrayList itemlist = new ArrayList();
             GUIListItem item = new GUIListItem("..");
             item.Path = year;
             item.IsFolder = true;
@@ -3351,25 +3359,15 @@ namespace MediaPortal.GUI.Pictures
                   return;
                 }
 
+                itemlist.Add(item);
                 facadeLayout.Add(item);
                 Thread.Sleep(0);
-
-                // Add Picture info
-                ThreadPool.QueueUserWorkItem(delegate {
-                                                        try
-                                                          {
-                                                            GetPictureInfo(ref item);
-                                                          }
-                                                          catch (Exception ex)
-                                                          {
-                                                            Log.Error("GUIPictures: Error loading item (GetPictureInfo) {0}", ex.Message);
-                                                          }
-                                                       });
               }
               catch (Exception ex)
               {
                 Log.Warn("GUIPictures: There is no file for this database entry: {0} {1}", item.Path, ex.Message);
               }
+              SetPicturesInfo(itemlist);
             }
           }
         }
@@ -3598,6 +3596,8 @@ namespace MediaPortal.GUI.Pictures
 
     private void LoadKeywordView(string strNewDirectory)
     {
+      ArrayList itemlist = new ArrayList();
+
       try
       {
         CountOfNonImageItems = 0;
@@ -3659,25 +3659,15 @@ namespace MediaPortal.GUI.Pictures
                 return;
               }
 
+              itemlist.Add(item);
               facadeLayout.Add(item);
               Thread.Sleep(0);
-
-              // Add Picture info
-              ThreadPool.QueueUserWorkItem(delegate {
-                                                      try
-                                                        {
-                                                          GetPictureInfo(ref item);
-                                                        }
-                                                        catch (Exception ex)
-                                                        {
-                                                          Log.Error("GUIPictures: Error loading item (GetPictureInfo) {0}", ex.Message);
-                                                        }
-                                                     });
             }
             catch (Exception ex)
             {
               Log.Warn("GUIPictures: There is no file for this keyword / search: {0} {1}", strNewDirectory, ex.Message);
             }
+            SetPicturesInfo(itemlist);
           }
         }
 
@@ -3697,30 +3687,57 @@ namespace MediaPortal.GUI.Pictures
 
     #endregion
 
-    public void GetPictureInfo(ref GUIListItem itemObject)
+    protected void SetPicturesInfo(ArrayList itemlist)
     {
-      Thread.CurrentThread.Name = "GUIPictures PictureInfo";
-      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+      if (_threadSetPicturesInfo != null && _threadSetPicturesInfo.IsAlive)
       {
-        return;
+        _threadSetPicturesInfo.Abort();
+        _threadSetPicturesInfo = null;
       }
 
-      string item = itemObject.Path;
-      if (String.IsNullOrEmpty(item))
-      {
-        return;
-      }
+      _threadGUIItems.Clear();
+      _threadGUIItems.AddRange(itemlist);
+      _threadSetPicturesInfo = new Thread(ThreadSetPicturesInfo);
+      _threadSetPicturesInfo.Priority = ThreadPriority.Lowest;
+      _threadSetPicturesInfo.IsBackground = true;
+      _threadSetPicturesInfo.Name = "GUIPictures Thumbnail";
+      _threadSetPicturesInfo.Start();
+    }
 
-      itemObject.Label2 = PictureDatabase.GetDateTaken(item);
-
-      VirtualDirectory vDir = new VirtualDirectory();
-      vDir.SetExtensions(Util.Utils.PictureExtensions);
-      if (!vDir.IsRemote(item))
+    private void ThreadSetPicturesInfo()
+    {
+      try
       {
-        if (File.Exists(item))
+        VirtualDirectory vDir = new VirtualDirectory();
+        vDir.SetExtensions(Util.Utils.PictureExtensions);
+
+        foreach (GUIListItem item in _threadGUIItems)
         {
-          itemObject.FileInfo = new FileInformation(item, false);
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+          {
+            return;
+          }
+
+          string file = item.Path;
+          if (String.IsNullOrEmpty(file))
+          {
+            continue;
+          }
+
+          item.Label2 = PictureDatabase.GetDateTaken(file);
+
+          if (!vDir.IsRemote(file))
+          {
+            if (File.Exists(file))
+            {
+              item.FileInfo = new FileInformation(file, false);
+            }
+          }
         }
+      }
+      catch (ThreadAbortException)
+      {
+        Log.Info("GUIPictures: Thread SetPicturesInfo aborted.");
       }
     }
 
