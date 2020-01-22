@@ -36,9 +36,11 @@
         <posX>121</posX>
         <posY>362</posY>
         <width>556</width>
-        <height>371</height>
+        <height>556</height>
         <texture>#selectedthumb</texture>
         <keepaspectratio>yes</keepaspectratio>
+        <align>center</align>
+        <valign>top</valign>
         <visible>facadeview.list+Control.IsVisible(50)</visible>
         <animation effect="fade" time="250">WindowOpen</animation>
         <animation effect="fade" time="250">WindowClose</animation>

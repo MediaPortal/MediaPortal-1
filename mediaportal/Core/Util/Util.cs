@@ -287,7 +287,11 @@ namespace MediaPortal.Util
 
     public static string GetDriveSerial(string drive)
     {
-      if (drive == null) return string.Empty;
+      if (string.IsNullOrWhiteSpace(drive))
+      {
+        return string.Empty;
+      }
+
       //receives volume name of drive
       StringBuilder volname = new StringBuilder(256);
       //receives serial number of drive,not in case of network drive(win95/98)
@@ -304,12 +308,16 @@ namespace MediaPortal.Util
       {
         return String.Format("{0:X}", sn);
       }
-      else return "";
+      else return string.Empty;
     }
 
     public static string GetDriveName(string drive)
     {
-      if (drive == null) return string.Empty;
+      if (string.IsNullOrWhiteSpace(drive))
+      {
+        return string.Empty;
+      }
+
       //receives volume name of drive
       StringBuilder volname = new StringBuilder(256);
       //receives serial number of drive,not in case of network drive(win95/98)
@@ -325,7 +333,7 @@ namespace MediaPortal.Util
       {
         return volname.ToString();
       }
-      else return "";
+      else return string.Empty;
     }
 
     public static int getDriveType(string drive)
@@ -429,7 +437,10 @@ namespace MediaPortal.Util
     /// <returns>Whether file is TV</returns>
     public static bool IsLiveTv(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
 
       Match ex = Regex.Match(strPath, @"(live\d+-\d+\.ts(\.tsbuffer(\d+\.ts)?)?)$");
       return ex.Success;
@@ -437,7 +448,10 @@ namespace MediaPortal.Util
 
     public static bool IsRTSP(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
 
       return strPath.Contains("rtsp:");
     }
@@ -450,7 +464,10 @@ namespace MediaPortal.Util
     /// <returns>Whether file is radio</returns>
     public static bool IsLiveRadio(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
       //
       // Bugged implementation: files are named "live3-0.ts.tsbuffer" as for LiveTv
       //
@@ -467,7 +484,10 @@ namespace MediaPortal.Util
     /// <returns>Whether file is a video file</returns>
     public static bool IsVideo(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
       if (IsLastFMStream(strPath)) return false;
       if (strPath.ToLowerInvariant().StartsWith("rtsp:")) return true;
       if (strPath.ToLowerInvariant().StartsWith("mms:")
@@ -519,7 +539,10 @@ namespace MediaPortal.Util
 
     public static bool IsAVStream(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
       if (strPath.StartsWith("http:")) return true;
       if (strPath.StartsWith("https:")) return true;
       if (strPath.StartsWith("mms:")) return true;
@@ -538,7 +561,11 @@ namespace MediaPortal.Util
 
     public static bool IsAudio(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
+
       if (IsLastFMStream(strPath)) return true;
       try
       {
@@ -556,7 +583,11 @@ namespace MediaPortal.Util
 
     public static bool IsPicture(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
+
       try
       {
         if (!Path.HasExtension(strPath)) return false;
@@ -583,7 +614,11 @@ namespace MediaPortal.Util
 
     public static bool IsPlayList(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
+
       try
       {
         if (!Path.HasExtension(strPath)) return false;
@@ -599,7 +634,11 @@ namespace MediaPortal.Util
 
     public static bool IsProgram(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
+
       try
       {
         if (!Path.HasExtension(strPath)) return false;
@@ -615,7 +654,11 @@ namespace MediaPortal.Util
 
     public static bool IsShortcut(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
+
       try
       {
         if (!Path.HasExtension(strPath)) return false;
@@ -1513,15 +1556,20 @@ namespace MediaPortal.Util
 
     public static string stripHTMLtags(string strHTML)
     {
-      if (strHTML == null) return string.Empty;
-      if (strHTML.Length == 0) return string.Empty;
+      if (string.IsNullOrWhiteSpace(strHTML))
+      {
+        return string.Empty;
+      }
       string stripped = Regex.Replace(strHTML, @"<(.|\n)*?>", string.Empty);
       return stripped.Trim();
     }
 
     public static bool IsNetwork(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
       if (strPath.Length < 2) return false;
       if (strPath.StartsWith(@"\\")) return true;
       string strDrive = strPath.Substring(0, 2);
@@ -1531,7 +1579,10 @@ namespace MediaPortal.Util
 
     public static bool IsUNCNetwork(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
       if (strPath.Length < 2) return false;
       if (strPath.StartsWith(@"\\")) return true;
       return false;
@@ -1559,7 +1610,10 @@ namespace MediaPortal.Util
 
     public static string FindNetworkPath(string path)
     {
-      if (string.IsNullOrEmpty(path)) return path;
+      if (string.IsNullOrWhiteSpace(path))
+      {
+        return string.Empty;
+      }
       string pathRoot = Path.GetPathRoot(path);
       if (string.IsNullOrEmpty(pathRoot)) return path;
       ProcessStartInfo pinfo = new ProcessStartInfo("net", "use");
@@ -1738,7 +1792,10 @@ namespace MediaPortal.Util
 
     public static bool IsHD(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
       if (strPath.Length < 2) return false;
       string strDrive = strPath.Substring(0, 2);
       if (getDriveType(strDrive) == 3) return true;
@@ -1747,7 +1804,10 @@ namespace MediaPortal.Util
 
     public static bool IsCDDA(string strFile)
     {
-      if (String.IsNullOrEmpty(strFile)) return false;
+      if (string.IsNullOrWhiteSpace(strFile))
+      {
+        return false;
+      }
       if (strFile.StartsWith("cdda:")) return true;
       string extension = Path.GetExtension(strFile).ToLowerInvariant();
       if (extension.Equals(".cda")) return true;
@@ -1756,7 +1816,10 @@ namespace MediaPortal.Util
 
     public static bool IsDVD(string strFile)
     {
-      if (strFile == null) return false;
+      if (string.IsNullOrWhiteSpace(strFile))
+      {
+        return false;
+      }
       if (strFile.Length < 2) return false;
       string strDrive = strFile.Substring(0, 2);
       if (getDriveType(strDrive) == 5) return true;
@@ -1765,7 +1828,10 @@ namespace MediaPortal.Util
 
     public static bool IsRemovable(string strFile)
     {
-      if (strFile == null) return false;
+      if (string.IsNullOrWhiteSpace(strFile))
+      {
+        return false;
+      }
       if (strFile.Length < 2) return false;
       string strDrive = strFile.Substring(0, 2);
       if (getDriveType(strDrive) == 2) return true;
@@ -1774,7 +1840,10 @@ namespace MediaPortal.Util
 
     public static bool IsUsbHdd(string path)
     {
-      if (path == null) return false;
+      if (string.IsNullOrWhiteSpace(path))
+      {
+        return false;
+      }
       if (path.Length < 2) return false;
       List<string> usbHdds = new List<string>();
       usbHdds = GetAvailableUsbHardDisks();
@@ -1785,7 +1854,10 @@ namespace MediaPortal.Util
 
     public static bool IsRemovableUsbDisk(string path)
     {
-      if (path == null) return false;
+      if (string.IsNullOrWhiteSpace(path))
+      {
+        return false;
+      }
       if (path.Length < 2) return false;
       List<string> usbDisks = new List<string>();
       usbDisks = GetRemovableUsbDisks();
@@ -1927,8 +1999,10 @@ namespace MediaPortal.Util
     public static bool GetDVDLabel(string strFile, out string strLabel)
     {
       strLabel = "";
-      if (strFile == null) return false;
-      if (strFile.Length == 0) return false;
+      if (string.IsNullOrWhiteSpace(strFile))
+      {
+        return false;
+      }
       string strDrive = strFile.Substring(0, 2);
       strLabel = GetDriveName(strDrive);
       return true;
@@ -1936,8 +2010,14 @@ namespace MediaPortal.Util
 
     public static bool ShouldStack(string strFile1, string strFile2)
     {
-      if (strFile1 == null) return false;
-      if (strFile2 == null) return false;
+      if (string.IsNullOrWhiteSpace(strFile1))
+      {
+        return false;
+      }
+      if (string.IsNullOrWhiteSpace(strFile2))
+      {
+        return false;
+      }
       try
       {
         var stackReg = StackExpression();
@@ -1977,8 +2057,14 @@ namespace MediaPortal.Util
 
     public static bool PathShouldStack(string strPath1, string strPath2)
     {
-      if (strPath1 == null) return false;
-      if (strPath2 == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath1))
+      {
+        return false;
+      }
+      if (string.IsNullOrWhiteSpace(strPath2))
+      {
+        return false;
+      }
       try
       {
         var stackReg = StackExpression();
@@ -2010,7 +2096,10 @@ namespace MediaPortal.Util
 
     public static void RemoveStackEndings(ref string strFileName)
     {
-      if (strFileName == null) return;
+      if (string.IsNullOrWhiteSpace(strFileName))
+      {
+        return;
+      }
       var stackReg = StackExpression();
       for (int i = 0; i < stackReg.Length; i++)
       {
@@ -2079,10 +2168,13 @@ namespace MediaPortal.Util
 
     public static void Split(string strFileNameAndPath, out string strPath, out string strFileName)
     {
-      strFileName = "";
-      strPath = "";
-      if (strFileNameAndPath == null) return;
-      if (strFileNameAndPath.Length == 0) return;
+      strFileName = string.Empty;
+      strPath = string.Empty;
+      if (string.IsNullOrWhiteSpace(strFileNameAndPath))
+      {
+        return;
+      }
+
       try
       {
         strFileNameAndPath = strFileNameAndPath.Trim();
@@ -2190,8 +2282,10 @@ namespace MediaPortal.Util
 
     public static Process StartProcess(string strProgram, string strParams, bool bWaitForExit, bool bHidden)
     {
-      if (strProgram == null) return null;
-      if (strProgram.Length == 0) return null;
+      if (string.IsNullOrWhiteSpace(strProgram))
+      {
+        return null;
+      }
 
       string strWorkingDir = Path.GetFullPath(strProgram);
       string strFileName = Path.GetFileName(strProgram);

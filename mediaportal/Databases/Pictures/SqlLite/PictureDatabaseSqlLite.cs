@@ -495,10 +495,6 @@ namespace MediaPortal.Picture.Database
       {
         return -1;
       }
-      if (String.IsNullOrEmpty(strPicture))
-      {
-        return -1;
-      }
       if (m_db == null)
       {
         return -1;
@@ -592,61 +588,13 @@ namespace MediaPortal.Picture.Database
       {
         return -1;
       }
-      if (String.IsNullOrEmpty(strPicture))
-      {
-        return -1;
-      }
       if (m_db == null)
       {
         return -1;
       }
 
-      try
-      {
-        int lPicId = -1;
-        string strPic = strPicture;
-        string strDateTaken = String.Empty;
-
-        DatabaseUtility.RemoveInvalidChars(ref strPic);
-        string strSQL = String.Format("SELECT * FROM picture WHERE strFile LIKE '{0}'", strPic);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results != null && results.Rows.Count > 0)
-        {
-          lPicId = Int32.Parse(DatabaseUtility.Get(results, 0, "idPicture"));
-  
-          ExifMetadata.Metadata exifData = new ExifMetadata.Metadata();
-          if (GetExifDetails(strPicture, ref iRotation, ref strDateTaken, ref exifData))
-          {
-            // Save potential performance penalty
-            if (_usePicasa)
-            {
-              if (GetPicasaRotation(strPic, ref iRotation))
-              {
-                Log.Debug("Picture.DB.SQLite: Changed rotation of image {0} based on picasa file to {1}", strPic, iRotation);
-              }
-            }
-
-            AddPictureExifData(lPicId, exifData) ; 
-          }
-
-          if (g_Player.Playing)
-          {
-            Thread.Sleep(50);
-          }
-          else
-          {
-            Thread.Sleep(1);
-          }
-          return lPicId;
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: UpdatePicture: {0} stack:{1}", ex.Message, ex.StackTrace);
-        RollbackTransaction();
-        // Open();
-      }
-      return -1;
+      DeletePicture(strPicture);
+      return AddPicture(strPicture, iRotation);
     }
 
     #region EXIF
@@ -2400,10 +2348,6 @@ namespace MediaPortal.Picture.Database
       {
         return metaData;
       }
-      if (string.IsNullOrEmpty(strPicture))
-      {
-        return metaData;
-      }
 
       using (ExifMetadata extractor = new ExifMetadata())
       {
@@ -2517,10 +2461,6 @@ namespace MediaPortal.Picture.Database
       {
         return metaData;
       }
-      if (string.IsNullOrEmpty(strPicture))
-      {
-        return metaData;
-      }
       if (m_db == null)
       {
         return metaData;
@@ -2560,10 +2500,6 @@ namespace MediaPortal.Picture.Database
     {
       // Continue only if it's a picture files
       if (!Util.Utils.IsPicture(strPicture))
-      {
-        return false;
-      }
-      if (string.IsNullOrEmpty(strPicture))
       {
         return false;
       }
@@ -2647,15 +2583,14 @@ namespace MediaPortal.Picture.Database
       return foundValue;
     }
 
-    [MethodImpl(MethodImplOptions.Synchronized)]
     public string GetDateTaken(string strPicture)
     {
-      // Continue only if it's a picture files
-      if (!Util.Utils.IsPicture(strPicture))
+      if (m_db == null)
       {
         return string.Empty;
       }
-      if (m_db == null)
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
       {
         return string.Empty;
       }
@@ -2667,7 +2602,8 @@ namespace MediaPortal.Picture.Database
         string strPic = strPicture;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
 
-        SQLiteResultSet results = m_db.Execute(String.Format("SELECT strDateTaken FROM picture WHERE strFile LIKE '{0}'", strPic));
+        string SQL = String.Format("SELECT strDateTaken FROM picture WHERE strFile LIKE '{0}'", strPic);
+        SQLiteResultSet results = m_db.Execute(SQL);
         if (results != null && results.Rows.Count > 0)
         {
            result = DatabaseUtility.Get(results, 0, "strDateTaken");
@@ -2680,7 +2616,6 @@ namespace MediaPortal.Picture.Database
       return result;
     }
 
-    [MethodImpl(MethodImplOptions.Synchronized)]
     public DateTime GetDateTimeTaken(string strPicture)
     {
       string dbDateTime = GetDateTaken(strPicture);
@@ -2705,12 +2640,12 @@ namespace MediaPortal.Picture.Database
     [MethodImpl(MethodImplOptions.Synchronized)]
     public int GetRotation(string strPicture)
     {
-      // Continue only if it's a picture files
-      if (!Util.Utils.IsPicture(strPicture))
+      if (m_db == null)
       {
         return -1;
       }
-      if (m_db == null)
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
       {
         return -1;
       }
@@ -2749,12 +2684,12 @@ namespace MediaPortal.Picture.Database
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void SetRotation(string strPicture, int iRotation)
     {
-      // Continue only if it's a picture files
-      if (!Util.Utils.IsPicture(strPicture))
+      if (m_db == null)
       {
         return;
       }
-      if (m_db == null)
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
       {
         return;
       }
@@ -3010,7 +2945,7 @@ namespace MediaPortal.Picture.Database
           Log.Debug("Picture.DB.SQLite: Multisearch: {0} -> {1}", leftPart, rightPart);
 
           strSQL = "SELECT DISTINCT strFile FROM picturekeywords " + GetSearchWhere("strKeyword", leftPart) +
-                   " AND idPicture in (SELECT DISTINCT idPicture FROM picturekeywords " + GetSearchWhere("strKeyword", rightPart) +
+                   " AND idPicture in (SELECT DISTINCT idPicture FROM picturekeywords " + GetSearchWhere("strKeyword", rightPart) + ")" +
                    " ORDER BY strDateTaken";
         }
         else
@@ -3055,7 +2990,7 @@ namespace MediaPortal.Picture.Database
           string rightPart = Keyword.Substring(iPos + 1);
 
           strSQL = "SELECT DISTINCT COUNT(strFile) FROM picturekeywords " + GetSearchWhere("strKeyword", leftPart) +
-                   " AND idPicture in (SELECT DISTINCT idPicture FROM picturekeywords " + GetSearchWhere("strKeyword", rightPart) +
+                   " AND idPicture in (SELECT DISTINCT idPicture FROM picturekeywords " + GetSearchWhere("strKeyword", rightPart) + ")" +
                    " ORDER BY strDateTaken";
         }
         else
