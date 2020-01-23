@@ -2381,6 +2381,9 @@ namespace MediaPortal.Picture.Database
           return result;
         }
       }
+      catch (ThreadAbortException)
+      {
+      }
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: GetExifDBKeywords: {0} stack:{1}", ex.Message, ex.StackTrace);
@@ -2489,6 +2492,9 @@ namespace MediaPortal.Picture.Database
           }
         }
       }
+      catch (ThreadAbortException)
+      {
+      }
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: GetExifDBData: {0} stack:{1}", ex.Message, ex.StackTrace);
@@ -2522,6 +2528,9 @@ namespace MediaPortal.Picture.Database
           }
           return true;
         }
+      }
+      catch (ThreadAbortException)
+      {
       }
       catch (FormatException ex)
       {
@@ -2609,6 +2618,9 @@ namespace MediaPortal.Picture.Database
            result = DatabaseUtility.Get(results, 0, "strDateTaken");
         }
       }
+      catch (ThreadAbortException)
+      {
+      }
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: GetDateTaken: {0} stack:{1}", ex.Message, ex.StackTrace);
@@ -2629,6 +2641,9 @@ namespace MediaPortal.Picture.Database
         DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
         dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
         return DateTime.ParseExact(dbDateTime, "d", dateTimeFormat);
+      }
+      catch (ThreadAbortException)
+      {
       }
       catch (Exception ex)
       {
@@ -2671,6 +2686,9 @@ namespace MediaPortal.Picture.Database
         AddPicture(strPicture, iRotation);
 
         return iRotation;
+      }
+      catch (ThreadAbortException)
+      {
       }
       catch (Exception ex)
       {

@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -146,11 +147,31 @@ namespace MediaPortal.GUI.Pictures
         }
         return result;
       }
+
+      public void SetExifProperties()
+      {
+        string full = string.Empty;
+        Type type = typeof(Metadata);
+        foreach (FieldInfo prop in type.GetFields())
+        {
+          string name = ((MetadataItem)prop.GetValue(this)).Caption;
+          string value = ((MetadataItem)prop.GetValue(this)).DisplayValue;
+          if (!string.IsNullOrEmpty(value))
+          {
+            value = name + ": " + value;
+            full = full + value + "\n";
+          }
+          GUIPropertyManager.SetProperty("#pictures.exif." + prop.Name.ToLower(), value);
+        }
+        GUIPropertyManager.SetProperty("#pictures.exif.full", full);
+      }
     }
 
     public int Count()
     {
-      return 37; // TODO fix hard code later
+      Type type = typeof(Metadata);
+      FieldInfo[] fields = type.GetFields();
+      return fields.Length;
     }
 
     private void SetStuff(ref MetadataItem item, Directory directory, int tag)
