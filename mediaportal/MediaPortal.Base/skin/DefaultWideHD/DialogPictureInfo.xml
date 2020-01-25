@@ -29,7 +29,7 @@
       </control>
       <control>
         <description>Image label</description>
-        <type>label</type>
+        <type>fadelabel</type>
         <id>20</id>
         <posX>129</posX>
         <posY>154</posY>
@@ -136,7 +136,7 @@
         <posY>682</posY>
         <control>
           <description>Image Dimensions value</description>
-          <type>label</type>
+          <type>fadelabel</type>
           <id>21</id>
           <width>365</width>
           <height>41</height>
@@ -146,7 +146,7 @@
         </control>
         <control>
           <description>Resolutions value</description>
-          <type>label</type>
+          <type>fadelabel</type>
           <id>22</id>
           <width>365</width>
           <height>41</height>
@@ -258,7 +258,7 @@
         <posY>682</posY>
         <control>
           <description>Date Taken value</description>
-          <type>label</type>
+          <type>fadelabel</type>
           <id>27</id>
           <width>420</width>
           <height>41</height>
@@ -268,7 +268,7 @@
         </control>
         <control>
           <description>Fstop value</description>
-          <type>label</type>
+          <type>fadelabel</type>
           <id>28</id>
           <width>420</width>
           <height>41</height>
@@ -278,7 +278,7 @@
         </control>
         <control>
           <description>Exposure Time value</description>
-          <type>label</type>
+          <type>fadelabel</type>
           <id>29</id>
           <width>420</width>
           <height>41</height>
@@ -308,7 +308,7 @@
         </control>
         <control>
           <description>View Comments value</description>
-          <type>label</type>
+          <type>fadelabel</type>
           <id>32</id>
           <width>420</width>
           <height>41</height>

@@ -504,7 +504,7 @@ namespace MediaPortal.Picture.Database
       {
         int lPicId = -1;
         string strPic = strPicture;
-        string strDateTaken = String.Empty;
+        string strDateTaken = string.Empty;
 
         DatabaseUtility.RemoveInvalidChars(ref strPic);
         string strSQL = String.Format("SELECT * FROM picture WHERE strFile LIKE '{0}'", strPic);
@@ -938,7 +938,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO exposureprogram (idExposureProgram,strExposureProgram) VALUES (NULL, '{0}')", strName);
+          strSQL = String.Format("INSERT INTO exposureprogram (idExposureProgram, strExposureProgram) VALUES (NULL, '{0}')", strName);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -980,7 +980,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO exposuremode (idExposureMode,strExposureMode) VALUES (NULL, '{0}')", strName);
+          strSQL = String.Format("INSERT INTO exposuremode (idExposureMode, strExposureMode) VALUES (NULL, '{0}')", strName);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -1022,7 +1022,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO sensingmethod (idSensingMethod,strSensingMethod) VALUES (NULL, '{0}')", strName);
+          strSQL = String.Format("INSERT INTO sensingmethod (idSensingMethod, strSensingMethod) VALUES (NULL, '{0}')", strName);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -1030,7 +1030,7 @@ namespace MediaPortal.Picture.Database
         else
         {
           int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idExposureMode"), out iID))
+          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idSensingMethod"), out iID))
           {
             return iID;
           }
@@ -1064,7 +1064,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO scenetype (idSceneType,strSceneType) VALUES (NULL, '{0}')", strName);
+          strSQL = String.Format("INSERT INTO scenetype (idSceneType, strSceneType) VALUES (NULL, '{0}')", strName);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -1106,7 +1106,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO scenecapturetype (idSceneCaptureType,strSceneCaptureType) VALUES (NULL, '{0}')", strName);
+          strSQL = String.Format("INSERT INTO scenecapturetype (idSceneCaptureType, strSceneCaptureType) VALUES (NULL, '{0}')", strName);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -1148,7 +1148,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO whitebalance (idWhiteBalance,strWhiteBalance) VALUES (NULL, '{0}')", strName);
+          strSQL = String.Format("INSERT INTO whitebalance (idWhiteBalance, strWhiteBalance) VALUES (NULL, '{0}')", strName);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -1190,7 +1190,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO author (idAuthor,strAuthor) VALUES (NULL, '{0}')", strName);
+          strSQL = String.Format("INSERT INTO author (idAuthor, strAuthor) VALUES (NULL, '{0}')", strName);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -1232,7 +1232,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO byline (idByline,strByline) VALUES (NULL, '{0}')", strName);
+          strSQL = String.Format("INSERT INTO byline (idByline, strByline) VALUES (NULL, '{0}')", strName);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -1274,7 +1274,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO software (idSoftware,strSoftware) VALUES (NULL, '{0}')", strName);
+          strSQL = String.Format("INSERT INTO software (idSoftware, strSoftware) VALUES (NULL, '{0}')", strName);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -1316,7 +1316,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO usercomment (idUserComment,strUserComment) VALUES (NULL, '{0}')", strName);
+          strSQL = String.Format("INSERT INTO usercomment (idUserComment, strUserComment) VALUES (NULL, '{0}')", strName);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -1358,7 +1358,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO copyright (idCopyright,strCopyright) VALUES (NULL, '{0}')", strName);
+          strSQL = String.Format("INSERT INTO copyright (idCopyright, strCopyright) VALUES (NULL, '{0}')", strName);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -1400,7 +1400,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO copyrightnotice (idCopyrightNotice,strCopyrightNotice) VALUES (NULL, '{0}')", strName);
+          strSQL = String.Format("INSERT INTO copyrightnotice (idCopyrightNotice, strCopyrightNotice) VALUES (NULL, '{0}')", strName);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -2310,28 +2310,28 @@ namespace MediaPortal.Picture.Database
                                  "VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, " + 
                                          "{12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22});",
                                           idPicture, 
-                                          idCamera <= 0 ? "NULL" :  idCamera.ToString(), 
-                                          idLens <= 0 ? "NULL" :  idLens.ToString(), 
-                                          idExif <= 0 ? "NULL" :  idExif.ToString(), 
-                                          idOrientation <= 0 ? "NULL" : idOrientation.ToString(), 
-                                          idFlash <= 0 ? "NULL" :  idFlash.ToString(), 
-                                          idMeteringMode <= 0 ? "NULL" :  idMeteringMode.ToString(), 
-                                          idExposureProgram <= 0 ? "NULL" :  idExposureProgram.ToString(), 
-                                          idExposureMode <= 0 ? "NULL" :  idExposureMode.ToString(), 
-                                          idSensingMethod <= 0 ? "NULL" :  idSensingMethod.ToString(), 
-                                          idSceneType <= 0 ? "NULL" :  idSceneType.ToString(), 
-                                          idSceneCaptureType <= 0 ? "NULL" :  idSceneCaptureType.ToString(), 
-                                          idWhiteBalance <= 0 ? "NULL" : idWhiteBalance.ToString(), 
-                                          idAuthor <= 0 ? "NULL" : idAuthor.ToString(), 
-                                          idByline <= 0 ? "NULL" :  idByline.ToString(), 
-                                          idSoftware <= 0 ? "NULL" :  idSoftware.ToString(), 
-                                          idUserComment <= 0 ? "NULL" :  idUserComment.ToString(), 
-                                          idCopyright <= 0 ? "NULL" :  idCopyright.ToString(), 
-                                          idCopyrightNotice <= 0 ? "NULL" :  idCopyrightNotice.ToString(), 
-                                          idCountry <= 0 ? "NULL" : idCountry.ToString(), 
-                                          idState <= 0 ? "NULL" :  idState.ToString(), 
-                                          idCity <= 0 ? "NULL" :  idCity.ToString(), 
-                                          idSubLocation <= 0 ? "NULL" :  idSubLocation.ToString());
+                                          idCamera < 0 ? "NULL" :  idCamera.ToString(), 
+                                          idLens < 0 ? "NULL" :  idLens.ToString(), 
+                                          idExif < 0 ? "NULL" :  idExif.ToString(), 
+                                          idOrientation < 0 ? "NULL" : idOrientation.ToString(), 
+                                          idFlash < 0 ? "NULL" :  idFlash.ToString(), 
+                                          idMeteringMode < 0 ? "NULL" :  idMeteringMode.ToString(), 
+                                          idExposureProgram < 0 ? "NULL" :  idExposureProgram.ToString(), 
+                                          idExposureMode < 0 ? "NULL" :  idExposureMode.ToString(), 
+                                          idSensingMethod < 0 ? "NULL" :  idSensingMethod.ToString(), 
+                                          idSceneType < 0 ? "NULL" :  idSceneType.ToString(), 
+                                          idSceneCaptureType < 0 ? "NULL" :  idSceneCaptureType.ToString(), 
+                                          idWhiteBalance < 0 ? "NULL" : idWhiteBalance.ToString(), 
+                                          idAuthor < 0 ? "NULL" : idAuthor.ToString(), 
+                                          idByline < 0 ? "NULL" :  idByline.ToString(), 
+                                          idSoftware < 0 ? "NULL" :  idSoftware.ToString(), 
+                                          idUserComment < 0 ? "NULL" :  idUserComment.ToString(), 
+                                          idCopyright < 0 ? "NULL" :  idCopyright.ToString(), 
+                                          idCopyrightNotice < 0 ? "NULL" :  idCopyrightNotice.ToString(), 
+                                          idCountry < 0 ? "NULL" : idCountry.ToString(), 
+                                          idState < 0 ? "NULL" :  idState.ToString(), 
+                                          idCity < 0 ? "NULL" :  idCity.ToString(), 
+                                          idSubLocation < 0 ? "NULL" :  idSubLocation.ToString());
         m_db.Execute(strSQL);
       }
       catch (Exception ex)
@@ -2381,9 +2381,6 @@ namespace MediaPortal.Picture.Database
           return result;
         }
       }
-      catch (ThreadAbortException)
-      {
-      }
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: GetExifDBKeywords: {0} stack:{1}", ex.Message, ex.StackTrace);
@@ -2393,17 +2390,17 @@ namespace MediaPortal.Picture.Database
 
     private bool AssignAllExifFieldsFromResultSet (ref ExifMetadata.Metadata aExif, SQLiteResultSet aResult, int aRow)
     {
-      if (aExif.IsEmpty() || aResult == null || aResult.Rows.Count < 1)
+      if (aResult == null || aResult.Rows.Count < 1)
       {
         return false;
       }
 
       aExif.DatePictureTaken.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strDateTaken");
       aExif.Orientation.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strOrientation");
-      aExif.EquipmentMake.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strEquipmentMake");
-      aExif.CameraModel.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCameraModel");
+      aExif.EquipmentMake.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCameraMake");
+      aExif.CameraModel.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCamera");
       aExif.Lens.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strLens");
-      aExif.Fstop.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strFstop");
+      aExif.Fstop.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strFStop");
       aExif.ShutterSpeed.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strShutterSpeed");
       aExif.ExposureTime.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strExposureTime");
       aExif.ExposureCompensation.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strExposureCompensation");
@@ -2418,21 +2415,21 @@ namespace MediaPortal.Picture.Database
       aExif.SceneType.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strSceneType");
       aExif.SceneCaptureType.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strSceneCaptureType");
       aExif.FocalLength.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strFocalLength");
-      aExif.FocalLength35MM.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strFocalLength35MM");
+      aExif.FocalLength35MM.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strFocalLength35");
       aExif.CountryCode.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCountryCode");
-      aExif.CountryName.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCountryName");
-      aExif.ProvinceOrState.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strProvinceOrState");
+      aExif.CountryName.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCountry");
+      aExif.ProvinceOrState.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strState");
       aExif.City.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCity");
       aExif.SubLocation.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strSubLocation");
       aExif.Author.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strAuthor");
       aExif.Copyright.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCopyright");
       aExif.CopyrightNotice.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCopyrightNotice");
-      aExif.Comment.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strComment");
-      aExif.ViewerComments.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strViewerComments");
+      aExif.Comment.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strUserComment");
+      aExif.ViewerComments.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strSoftware");
       aExif.ByLine.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strByLine");
-      aExif.Latitude.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strLatitude");
-      aExif.Longitude.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strLongitude");
-      aExif.Altitude.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strAltitude");
+      aExif.Latitude.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strGPSLatitude");
+      aExif.Longitude.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strGPSLongitude");
+      aExif.Altitude.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strGPSAltitude");
 
       try
       {
@@ -2448,6 +2445,11 @@ namespace MediaPortal.Picture.Database
       try
       {
         aExif.DatePictureTaken.Value = DatabaseUtility.GetAsDateTime(aResult, aRow, "strDateTaken").ToString();
+        /*
+        DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
+        dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
+        aExif.DatePictureTaken.Value = DateTime.ParseExact(aExif.DatePictureTaken.DisplayValue, "d", dateTimeFormat).ToString();
+        */
       }
       catch (Exception ex)
       {
@@ -2473,8 +2475,8 @@ namespace MediaPortal.Picture.Database
       {
         string strPic = strPicture;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
-        string SQL = String.Format("SELECT idPicture, strFile FROM picture WHERE strFile LIKE '{0}'", strPic);
 
+        string SQL = String.Format("SELECT idPicture FROM picture WHERE strFile LIKE '{0}'", strPic);
         SQLiteResultSet results = m_db.Execute(SQL);
         if (results != null && results.Rows.Count > 0)
         {
@@ -2487,13 +2489,10 @@ namespace MediaPortal.Picture.Database
             {
               AssignAllExifFieldsFromResultSet(ref metaData, results, 0);
               metaData.Keywords.DisplayValue = GetExifDBKeywords(idPicture);
-              // metaData.ImageDimensions.DisplayValue = DatabaseUtility.Get(results, 0, "");
+              Util.Picture.GetImageSizes(strPicture, ref metaData.Resolution.DisplayValue, ref metaData.ImageDimensions.DisplayValue);
             }
           }
         }
-      }
-      catch (ThreadAbortException)
-      {
       }
       catch (Exception ex)
       {
@@ -2519,7 +2518,7 @@ namespace MediaPortal.Picture.Database
       try
       {
         strDateTaken = metaData.DatePictureTaken.Value;
-        if (!String.IsNullOrWhiteSpace(strDateTaken))
+        if (!string.IsNullOrWhiteSpace(strDateTaken))
         // If the image contains a valid exif date store it in the database, otherwise use the file date
         {
           if (_useExif)
@@ -2528,9 +2527,6 @@ namespace MediaPortal.Picture.Database
           }
           return true;
         }
-      }
-      catch (ThreadAbortException)
-      {
       }
       catch (FormatException ex)
       {
@@ -2618,9 +2614,6 @@ namespace MediaPortal.Picture.Database
            result = DatabaseUtility.Get(results, 0, "strDateTaken");
         }
       }
-      catch (ThreadAbortException)
-      {
-      }
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: GetDateTaken: {0} stack:{1}", ex.Message, ex.StackTrace);
@@ -2641,9 +2634,6 @@ namespace MediaPortal.Picture.Database
         DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
         dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
         return DateTime.ParseExact(dbDateTime, "d", dateTimeFormat);
-      }
-      catch (ThreadAbortException)
-      {
       }
       catch (Exception ex)
       {
@@ -2686,9 +2676,6 @@ namespace MediaPortal.Picture.Database
         AddPicture(strPicture, iRotation);
 
         return iRotation;
-      }
-      catch (ThreadAbortException)
-      {
       }
       catch (Exception ex)
       {
@@ -2855,9 +2842,9 @@ namespace MediaPortal.Picture.Database
       return "WHERE " + string.Format(GetSearchQuery(where), keyword);
     }    
 
-    private string GetSelect(string search)
+    private string GetSelect(string field, string search)
     {
-      if (string.IsNullOrEmpty(search))
+      if (string.IsNullOrEmpty(search) || string.IsNullOrEmpty(field))
       {
         return string.Empty;
       }
@@ -2869,7 +2856,7 @@ namespace MediaPortal.Picture.Database
         return string.Empty;
       }
       
-      string firstPart = string.Format("SELECT DISTINCT strFile FROM picturekeywords {0}", GetSearchWhere("strKeyword", lines[0]));
+      string firstPart = string.Format("SELECT DISTINCT {0} FROM picturekeywords {1}", field, GetSearchWhere("strKeyword", lines[0]));
       string debug = string.Empty;
       for (int i = 1; i < lines.Length; i++)
       {
@@ -2908,7 +2895,7 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof (PictureDatabase))
       {
-        string strSQL = "SELECT DISTINCT strKeyword FROM keywords ORDER BY 1";
+        string strSQL = "SELECT DISTINCT strKeyword FROM keywords WHERE strKeyword <> 'Private' ORDER BY 1";
         try
         {
           SQLiteResultSet result = m_db.Execute(strSQL);
@@ -2995,7 +2982,7 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof (PictureDatabase))
       {
-        string strSQL = GetSelect(Keyword);
+        string strSQL = GetSelect("strFile", Keyword);
         try
         {
           SQLiteResultSet result = m_db.Execute(strSQL);
@@ -3025,25 +3012,10 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof (PictureDatabase))
       {
-        string strSQL;
-        int iPos = Keyword.IndexOf('#');
-        if (iPos > 0)
-        {
-          string leftPart = Keyword.Substring(0, iPos);
-          string rightPart = Keyword.Substring(iPos + 1);
-
-          strSQL = "SELECT DISTINCT COUNT(strFile) FROM picturekeywords " + GetSearchWhere("strKeyword", leftPart) +
-                   " AND idPicture in (SELECT DISTINCT idPicture FROM picturekeywords " + GetSearchWhere("strKeyword", rightPart) + ")" +
-                   " ORDER BY strDateTaken";
-        }
-        else
-        {
-          strSQL = "SELECT DISTINCT COUNT(strFile) FROM picturekeywords " + GetSearchWhere("strKeyword", Keyword) + " ORDER BY strDateTaken";
-        }
-        SQLiteResultSet result;
+        string strSQL = GetSelect("COUNT(strFile)", Keyword);
         try
         {
-          result = m_db.Execute(strSQL);
+          SQLiteResultSet result = m_db.Execute(strSQL);
           if (result != null)
           {
             Count = DatabaseUtility.GetAsInt(result, 0, 0);

@@ -19,7 +19,7 @@
 #endregion
 
 using System.Collections.Generic;
-
+using MediaPortal.GUI.Library;
 using MetadataExtractor.Formats.Exif;
 using MetadataExtractor.Formats.Iptc;
 
@@ -46,6 +46,7 @@ namespace MediaPortal.Util
       { ExifDirectoryBase.TagExposureTime, "Exposure Time" },
       { ExifDirectoryBase.TagExposureProgram, "Exposure Program" },
       { ExifDirectoryBase.TagExposureMode, "Exposure Mode" },
+      { ExifDirectoryBase.TagExposureBias, "Exposure Compensation" },
       { ExifDirectoryBase.TagFNumber, "FStop" },
       { ExifDirectoryBase.TagShutterSpeed, "Shutter Speed" },
       { ExifDirectoryBase.TagSensingMethod, "Sensing Method" },
@@ -71,12 +72,59 @@ namespace MediaPortal.Util
       { GpsDirectory.TagAltitude, "GPS Altitude" },
     };
 
+    private static readonly Dictionary<string, string> _fieldname = new Dictionary<string, string>()
+    {
+      { "DatePictureTaken", GUILocalizeStrings.Get(9006) },
+      { "EquipmentMake", GUILocalizeStrings.Get(9010) },
+      { "CameraModel", GUILocalizeStrings.Get(9009) },
+      { "Author", "Author" },
+      { "ViewerComments", GUILocalizeStrings.Get(9011) },
+      { "Copyright", "Copyright" },
+      { "Orientation", "Orientation" },
+      { "ISO", "ISO" },
+      { "MeteringMode", GUILocalizeStrings.Get(9003) },
+      { "Flash", GUILocalizeStrings.Get(9002) },
+      { "ExposureTime", GUILocalizeStrings.Get(9008) },
+      { "ExposureProgram", "Exposure Program" },
+      { "ExposureMode", "Exposure Mode" },
+      { "ExposureCompensation", "Exposure Compensation" },
+      { "Fstop", GUILocalizeStrings.Get(9007) },
+      { "ShutterSpeed", GUILocalizeStrings.Get(9005) },
+      { "SensingMethod", "Sensing Method" },
+      { "SceneType", "Scene Type" },
+      { "SceneCaptureType", "Scene Capture Type" },
+      { "WhiteBalance", "White Balance Mode" },
+      { "Lens", "Lens Model" },
+      { "FocalLength", "Focal Length" },
+      { "FocalLength35MM", "Focal Length (35mm film)" },
+      { "Comment", GUILocalizeStrings.Get(9018) },
+      { "CountryCode", GUILocalizeStrings.Get(9013) },
+      { "CountryName", GUILocalizeStrings.Get(9014) },
+      { "ProvinceOrState", GUILocalizeStrings.Get(9015) },
+      { "City", GUILocalizeStrings.Get(9016) },
+      { "SubLocation", GUILocalizeStrings.Get(9017) },
+      { "Keywords", GUILocalizeStrings.Get(9012) },
+      { "ByLine", "By-line" },
+      { "CopyrightNotice", "Copyright Notice" },
+      { "Latitude", "GPS Latitude" },
+      { "Longitude", "GPS Longitude" },
+      { "Altitude", "GPS Altitude" },
+      { "Resolution", GUILocalizeStrings.Get(9001) },
+      { "ImageDimensions", GUILocalizeStrings.Get(9000) },
+    };
+
     #endregion
 
     public static string ToExifString(this int tag)
     {
       string result;
       return _exif.TryGetValue(tag, out result) ? result : string.Empty;
+    }
+
+    public static string ToCaption(this string tag)
+    {
+      string result;
+      return _fieldname.TryGetValue(tag, out result) ? result : string.Empty;
     }
 
     public static int ToRotation(this int orientation)

@@ -36,7 +36,7 @@
     </control>
     <control>
       <description>GFX-Heading "menu" text label</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>20</id>
       <posX>1020</posX>
       <posY>195</posY>
@@ -167,7 +167,7 @@
     </control>
     <control>
       <description>Image Dimensions value</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>21</id>
       <posX>330</posX>
       <posY>123</posY>
@@ -178,7 +178,7 @@
     </control>
     <control>
       <description>Resolutions value</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>22</id>
       <posX>330</posX>
       <posY>198</posY>
@@ -234,7 +234,7 @@
     </control>
     <control>
       <description>Date Taken value</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>27</id>
       <posX>330</posX>
       <posY>573</posY>
@@ -245,7 +245,7 @@
     </control>
     <control>
       <description>Fstop value</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>28</id>
       <posX>330</posX>
       <posY>648</posY>
@@ -256,7 +256,7 @@
     </control>
     <control>
       <description>Exposure Time value</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>29</id>
       <posX>330</posX>
       <posY>723</posY>
@@ -289,7 +289,7 @@
     </control>
     <control>
       <description>View Comments value</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>32</id>
       <posX>330</posX>
       <posY>948</posY>

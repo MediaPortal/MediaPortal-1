@@ -61,9 +61,8 @@ namespace MediaPortal.GUI.Pictures
     public struct Metadata
     {
       public MetadataItem DatePictureTaken;
-      public MetadataItem Orientation;
-      public MetadataItem EquipmentMake;
       public MetadataItem CameraModel;
+      public MetadataItem EquipmentMake;
       public MetadataItem Lens;
       public MetadataItem Fstop;
       public MetadataItem ShutterSpeed;
@@ -72,21 +71,21 @@ namespace MediaPortal.GUI.Pictures
       public MetadataItem ExposureProgram;
       public MetadataItem ExposureMode;
       public MetadataItem MeteringMode;
+      public MetadataItem ISO;
       public MetadataItem Flash;
       public MetadataItem Resolution;
-      public MetadataItem ISO;
       public MetadataItem WhiteBalance;
       public MetadataItem SensingMethod;
       public MetadataItem SceneType;
       public MetadataItem SceneCaptureType;
       public MetadataItem FocalLength;
       public MetadataItem FocalLength35MM;
+      public MetadataItem Orientation;
       public MetadataItem CountryCode;
       public MetadataItem CountryName;
       public MetadataItem ProvinceOrState;
       public MetadataItem City;
       public MetadataItem SubLocation;
-      public MetadataItem Keywords;
       public MetadataItem Author;
       public MetadataItem Copyright;
       public MetadataItem CopyrightNotice;
@@ -97,6 +96,7 @@ namespace MediaPortal.GUI.Pictures
       public MetadataItem Longitude;
       public MetadataItem Altitude;
       public MetadataItem ImageDimensions;
+      public MetadataItem Keywords;
 
       public bool IsEmpty ()
       {
@@ -154,11 +154,14 @@ namespace MediaPortal.GUI.Pictures
         Type type = typeof(Metadata);
         foreach (FieldInfo prop in type.GetFields())
         {
-          string name = ((MetadataItem)prop.GetValue(this)).Caption;
+          string caption = ((MetadataItem)prop.GetValue(this)).Caption;
+          string name = ((MetadataItem)prop.GetValue(this)).Name;
+          string localcaption = prop.Name.ToCaption() ?? string.Empty;
+
           string value = ((MetadataItem)prop.GetValue(this)).DisplayValue;
           if (!string.IsNullOrEmpty(value))
           {
-            value = name + ": " + value;
+            value = (!string.IsNullOrEmpty(localcaption) ? localcaption : (!string.IsNullOrEmpty(caption) ? caption : name)) + ": " + value;
             full = full + value + "\n";
           }
           GUIPropertyManager.SetProperty("#pictures.exif." + prop.Name.ToLower(), value);
@@ -421,15 +424,9 @@ namespace MediaPortal.GUI.Pictures
           SetStuff(ref MyMetadata.Altitude, gpsDirectory, GpsDirectory.TagAltitude);
         }
 
-        // Create an instance of the image to gather metadata from 
-        using (Image MyImage = Image.FromFile(photoName))
-        {
-          MyMetadata.Resolution.DisplayValue = MyImage.HorizontalResolution.ToString() + "x" + MyImage.VerticalResolution.ToString();
-          MyMetadata.Resolution.Caption = "Resolution ";
-
-          MyMetadata.ImageDimensions.DisplayValue = MyImage.Width.ToString() + "x" + MyImage.Height.ToString();
-          MyMetadata.ImageDimensions.Caption = "Dimensions";
-        }
+        MyMetadata.Resolution.Caption = "Resolution ";
+        MyMetadata.ImageDimensions.Caption = "Dimensions";
+        Picture.GetImageSizes(photoName, ref MyMetadata.Resolution.DisplayValue, ref MyMetadata.ImageDimensions.DisplayValue);
       }
       catch (Exception ex)
       {

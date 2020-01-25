@@ -1599,18 +1599,27 @@
 		<String id="8031">Загрузка заголовков писем</String>
 		<String id="8033">Прогресс</String>
 		<String id="8034">Показать HTML</String>
-		<String id="9000">Размер:</String>
-		<String id="9001">Разрешение:</String>
-		<String id="9002">Вспышка:</String>
-		<String id="9003">Режим измерения:</String>
-		<String id="9004">Компенсация:</String>
-		<String id="9005">Выдержка:</String>
-		<String id="9006">Снято:</String>
-		<String id="9007">Диафрагма:</String>
-		<String id="9008">Время экспозиции:</String>
-		<String id="9009">Модель фотоаппарата:</String>
-		<String id="9010">Оборудование:</String>
-		<String id="9011">Показать комментарии:</String>
+		<!-- EXIF -->
+		<String id="9000">Размер</String>
+		<String id="9001">Разрешение</String>
+		<String id="9002">Вспышка</String>
+		<String id="9003">Режим измерения</String>
+		<String id="9004">Компенсация</String>
+		<String id="9005">Выдержка</String>
+		<String id="9006">Снято</String>
+		<String id="9007">Диафрагма</String>
+		<String id="9008">Время экспозиции</String>
+		<String id="9009">Модель фотоаппарата</String>
+		<String id="9010">Оборудование</String>
+    	<String id="9011">Программа</String>
+    	<String id="9012">Ключевые слова</String>
+    	<String id="9013">Код страны</String>
+    	<String id="9014">Страна</String>
+    	<String id="9015">Область</String>
+    	<String id="9016">Город</String>
+    	<String id="9017">Регион</String>
+    	<String id="9018">Комментарий</String>
+		<!-- EXIF -->
 		<String id="9100" prefix="Мой ">Минидисплей</String>
 		<String id="9101">Плагин не настроен</String>
 		<String id="9102">Пожалуйста, запустите сначала Конфигуратор Медиапортала!</String>

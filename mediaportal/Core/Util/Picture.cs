@@ -1519,6 +1519,23 @@ namespace MediaPortal.Util
       }
       return 0; // not rotated
     }
+
+    public static void GetImageSizes(string strFile, ref string strResolution, ref string strDimensions)
+    {
+      strResolution = string.Empty;
+      strDimensions = string.Empty;
+
+      if (!File.Exists(strFile))
+      {
+        return;
+      }
+
+      using (Image MyImage = Image.FromFile(strFile))
+      {
+        strResolution = MyImage.HorizontalResolution.ToString() + "x" + MyImage.VerticalResolution.ToString();
+        strDimensions = MyImage.Width.ToString() + "x" + MyImage.Height.ToString();
+      }
+    }
   }
 
 //public class Picture

@@ -19,11 +19,9 @@
 #endregion
 
 using System.IO;
-
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
 using MediaPortal.Picture.Database;
-
 using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.Dialogs
@@ -35,19 +33,19 @@ namespace MediaPortal.Dialogs
   {
     [SkinControl(2)] protected GUILabelControl lblHeading = null;
     [SkinControl(3)] protected GUIImage imgPicture = null;
-    [SkinControl(20)] protected GUILabelControl lblImgTitle = null;
-    [SkinControl(21)] protected GUILabelControl lblImgDimensions = null;
-    [SkinControl(22)] protected GUILabelControl lblResolutions = null;
+    [SkinControl(20)] protected GUIFadeLabel lblImgTitle = null;
+    [SkinControl(21)] protected GUIFadeLabel lblImgDimensions = null;
+    [SkinControl(22)] protected GUIFadeLabel lblResolutions = null;
     [SkinControl(23)] protected GUIFadeLabel lblFlash = null;
     [SkinControl(24)] protected GUIFadeLabel lblMeteringMode = null;
     [SkinControl(25)] protected GUIFadeLabel lblExposureCompensation = null;
     [SkinControl(26)] protected GUIFadeLabel lblShutterSpeed = null;
-    [SkinControl(27)] protected GUILabelControl lblDateTakenLabel = null;
-    [SkinControl(28)] protected GUILabelControl lblFstop = null;
-    [SkinControl(29)] protected GUILabelControl lblExposureTime = null;
+    [SkinControl(27)] protected GUIFadeLabel lblDateTakenLabel = null;
+    [SkinControl(28)] protected GUIFadeLabel lblFstop = null;
+    [SkinControl(29)] protected GUIFadeLabel lblExposureTime = null;
     [SkinControl(30)] protected GUIFadeLabel lblCameraModel = null;
     [SkinControl(31)] protected GUIFadeLabel lblEquipmentMake = null;
-    [SkinControl(32)] protected GUILabelControl lblViewComments = null;
+    [SkinControl(32)] protected GUIFadeLabel lblViewComments = null;
 
     private int m_iTextureWidth, m_iTextureHeight;
     private string fileName;
@@ -137,12 +135,17 @@ namespace MediaPortal.Dialogs
       lblShutterSpeed.Label = string.Empty;
       lblViewComments.Label = string.Empty;
 
+      if (!File.Exists(FileName))
+      {
+        GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
+        return;
+      }
+
       int iRotate = PictureDatabase.GetRotation(FileName);
       m_pTexture = Util.Picture.Load(FileName, iRotate, 1024, 1024, true, false, out m_iTextureWidth,
                                      out m_iTextureHeight);
 
-      ExifMetadata.Metadata metaData;
-      metaData = PictureDatabase.GetExifDBData(FileName);
+      ExifMetadata.Metadata metaData = PictureDatabase.GetExifDBData(FileName);
       if (metaData.IsEmpty())
       {
         metaData = PictureDatabase.GetExifData(FileName);
@@ -165,15 +168,8 @@ namespace MediaPortal.Dialogs
 
         imgPicture.IsVisible = false;
       }
-
-      if (File.Exists(FileName))
-      {
-        GUIPropertyManager.SetProperty("#selectedthumb", FileName);
-      }
-      else
-      {
-        GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
-      }
+      metaData.SetExifProperties();
+      GUIPropertyManager.SetProperty("#selectedthumb", FileName);
     }
 
     public override void Render(float timePassed)

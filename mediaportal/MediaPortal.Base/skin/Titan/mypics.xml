@@ -47,6 +47,20 @@
     </control>
     
     <control>
+        <description>Keywords</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>121</posX>
+        <posY>940</posY>
+        <width>556</width>
+        <height>55</height>
+        <label>#pictures.exif.keywords</label>
+        <visible>facadeview.list+Control.IsVisible(50)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
         <id>1</id>
         <type>image</type>
         <posX>0</posX>

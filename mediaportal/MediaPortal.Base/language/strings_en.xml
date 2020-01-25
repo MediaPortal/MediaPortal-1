@@ -1609,18 +1609,27 @@
     <String id="8031">Getting mail number</String>
     <String id="8033">Progress</String>
     <String id="8034">Show HTML</String>
-    <String id="9000">Image dimensions:</String>
-    <String id="9001">Resolution:</String>
-    <String id="9002">Flash:</String>
-    <String id="9003">Metering Mode:</String>
-    <String id="9004">Compensation:</String>
-    <String id="9005">Shutter Speed:</String>
-    <String id="9006">Date taken:</String>
-    <String id="9007">F-stop:</String>
-    <String id="9008">Exposure time:</String>
-    <String id="9009">Camera Model:</String>
-    <String id="9010">Equipment make:</String>
-    <String id="9011">View comments:</String>
+    <!-- EXIF -->
+    <String id="9000">Image dimensions</String>
+    <String id="9001">Resolution</String>
+    <String id="9002">Flash</String>
+    <String id="9003">Metering Mode</String>
+    <String id="9004">Compensation</String>
+    <String id="9005">Shutter Speed</String>
+    <String id="9006">Date taken</String>
+    <String id="9007">F-stop</String>
+    <String id="9008">Exposure time</String>
+    <String id="9009">Camera Model</String>
+    <String id="9010">Equipment make</String>
+    <String id="9011">Application Name</String>
+    <String id="9012">Keywords</String>
+    <String id="9013">Country Code</String>
+    <String id="9014">Country</String>
+    <String id="9015">Province/State</String>
+    <String id="9016">City</String>
+    <String id="9017">Sublocation</String>
+    <String id="9018">Comment</String>
+    <!-- EXIF -->
     <String id="9100" prefix="My ">MiniDisplay</String>
     <String id="9101">Plugin is not configured.</String>
     <String id="9102">Please run MediaPortal Configuration first!</String>
