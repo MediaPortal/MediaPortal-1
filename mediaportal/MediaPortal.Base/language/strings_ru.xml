@@ -1619,6 +1619,25 @@
     	<String id="9016">Город</String>
     	<String id="9017">Регион</String>
     	<String id="9018">Комментарий</String>
+		<String id="9019">Автор</String>
+		<String id="9020">Copyright</String>
+		<String id="9021">Ориентация</String>
+		<String id="9022">ISO</String>
+		<String id="9023">Программа экспозиции</String>
+		<String id="9024">Режим экспозиции</String>
+		<String id="9025">Компенсация экспозиции</String>
+		<String id="9026">Тип сенсора</String>
+		<String id="9027">Тип сцены</String>
+		<String id="9028">Сюжетная программа</String>
+		<String id="9029">Замер баланса белого</String>
+    	<String id="9030">Объектив</String>
+    	<String id="9031">Фокусное расстояние</String>
+    	<String id="9032">Фокусное расстояние (35mm эквивалент)</String>
+    	<String id="9033">Подпись</String>
+    	<String id="9034">Copyright Notice</String>
+    	<String id="9035">Широта</String>
+    	<String id="9036">Долгота</String>
+    	<String id="9037">Высота над уровнем моря</String>
 		<!-- EXIF -->
 		<String id="9100" prefix="Мой ">Минидисплей</String>
 		<String id="9101">Плагин не настроен</String>

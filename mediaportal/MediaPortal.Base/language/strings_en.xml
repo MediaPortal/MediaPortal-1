@@ -1629,6 +1629,25 @@
     <String id="9016">City</String>
     <String id="9017">Sublocation</String>
     <String id="9018">Comment</String>
+    <String id="9019">Author</String>
+    <String id="9020">Copyright</String>
+    <String id="9021">Orientation</String>
+    <String id="9022">ISO</String>
+    <String id="9023">Exposure Program</String>
+    <String id="9024">Exposure Mode</String>
+    <String id="9025">Exposure Compensation</String>
+    <String id="9026">Sensing Method</String>
+    <String id="9027">Scene Type</String>
+    <String id="9028">Scene Capture Type</String>
+    <String id="9029">White Balance Mode</String>
+    <String id="9030">Lens Model</String>
+    <String id="9031">Focal Length</String>
+    <String id="9032">Focal Length (35mm film)</String>
+    <String id="9033">By-line</String>
+    <String id="9034">Copyright Notice</String>
+    <String id="9035">Latitude</String>
+    <String id="9036">Longitude</String>
+    <String id="9037">Altitude</String>
     <!-- EXIF -->
     <String id="9100" prefix="My ">MiniDisplay</String>
     <String id="9101">Plugin is not configured.</String>

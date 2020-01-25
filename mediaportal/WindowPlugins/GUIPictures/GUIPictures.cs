@@ -3220,6 +3220,7 @@ namespace MediaPortal.GUI.Pictures
           }
           else
           {
+            _queueItems.Enqueue(item);
             _queuePictures.Enqueue(item.Path);
           }
         }
@@ -3788,7 +3789,10 @@ namespace MediaPortal.GUI.Pictures
             }
 
             DateTime datetime = PictureDatabase.GetDateTimeTaken(file);
-            item.Label2 = datetime.ToString();
+            if (disp != Display.Files)
+            {
+              item.Label2 = datetime.ToString();
+            }
             // item.Label3 = datetime.ToString();
             item.AlbumInfoTag = PictureDatabase.GetExifDBData(file);
 
@@ -3829,6 +3833,7 @@ namespace MediaPortal.GUI.Pictures
           {
             PictureDatabase.AddPicture(file, -1);
           }
+          _queueItemsEvent.Set();
           _queuePicturesEvent.WaitOne();
         }
       }
