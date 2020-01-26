@@ -1571,6 +1571,13 @@ namespace MediaPortal.Picture.Database
       {
         return;
       }
+      if (idExif < 0 && idCamera < 0 && idLens < 0 && idOrientation < 0 && idFlash < 0 && idMeteringMode < 0 && idExposureProgram < 0 &&
+          idExposureMode < 0 && idSensingMethod < 0 && idSceneType < 0 && idSceneCaptureType < 0 && idWhiteBalance < 0 && idAuthor < 0 &&
+          idByline < 0 && idSoftware < 0 && idUserComment < 0 && idCopyright < 0 && idCopyrightNotice < 0 && idCountry < 0 && idState < 0 &&
+          idCity < 0 && idSubLocation < 0)
+      {
+        return;
+      }
       if (null == m_db)
       {
         return;
