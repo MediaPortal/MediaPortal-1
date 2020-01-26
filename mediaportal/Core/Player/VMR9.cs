@@ -2259,7 +2259,7 @@ namespace MediaPortal.Player
           catch (Exception ex)
           {
             // filter already released
-            Log.Error("VMR9 Dispose: {0}", ex.Message);
+            Log.Debug("VMR9 Dispose: madVR filter already released");
             releasedFilter = true;
             _vmr9Filter = null;
           }
