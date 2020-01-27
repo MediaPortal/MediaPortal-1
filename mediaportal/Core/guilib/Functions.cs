@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2019 Team MediaPortal
+﻿#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1056,9 +1056,24 @@ namespace MediaPortal.GUI.Library
       GUIControl.FocusControl(windowId, controlId);
     }
 
+    [XMLSkinFunction("control.isvisible")]
+    public static bool ControlIsVisible(string id)
+    {
+      if (string.IsNullOrEmpty(id))
+      {
+        return false;
+      }
+      int condition = GUIInfoManager.TranslateString("control.isvisible(" + id + ")");
+      return GUIInfoManager.GetBool(condition, 0);
+    }
+    
     [XMLSkinFunction("plugin.isenabled")]
     public static bool PluginIsEnabled(string name)
     {
+      if (string.IsNullOrEmpty(name))
+      {
+        return false;
+      }
       int condition = GUIInfoManager.TranslateString("plugin.isenabled(" + name + ")");
       return GUIInfoManager.GetBool(condition, 0);
     }
@@ -1066,7 +1081,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("window.isvisible")]
     public static bool WindowIsVisible(string id)
     {
-      if ((id == null))
+      if (string.IsNullOrEmpty(id))
       {
         return false;
       }
