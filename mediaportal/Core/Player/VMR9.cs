@@ -546,6 +546,18 @@ namespace MediaPortal.Player
       Log.Debug("VMR9: Delayed OSD Callback");
       RegisterOsd();
       if (VMR9Util.g_vmr9 != null) VMR9Util.g_vmr9.SetMpFullscreenWindow();
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+      {
+        // Reset 3D needed when changing resolution
+        GUIGraphicsContext.NoneDone = false;
+        GUIGraphicsContext.TopAndBottomDone = false;
+        GUIGraphicsContext.SideBySideDone = false;
+        GUIGraphicsContext.SBSLeftDone = false;
+        GUIGraphicsContext.SBSRightDone = false;
+        GUIGraphicsContext.TABTopDone = false;
+        GUIGraphicsContext.TABBottomDone = false;
+        Log.Debug("VMR9: Delayed OSD Callback init OSD position when using 3D");
+      }
     }
 
     /// <summary>
