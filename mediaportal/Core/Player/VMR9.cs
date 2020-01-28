@@ -1934,9 +1934,12 @@ namespace MediaPortal.Player
 
     public void RestoreGuiForMadVr()
     {
+      // Stop rendering GUI on stop to avoid blankscreen when window is displayed on stop
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       //if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
       {
+        Log.Debug("g_Player: RestoreGuiForMadVr() GUIGraphicsContext.State.SUSPENDING");
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
         // We are stopping here (need to alert to avoid block in loop)
         GUIWindow._loadSkinDone = true;
 
@@ -2259,7 +2262,7 @@ namespace MediaPortal.Player
           catch (Exception ex)
           {
             // filter already released
-            Log.Debug("VMR9 Dispose: madVR filter already released");
+            Log.Debug("VMR9: Dispose: madVR filter already released");
             releasedFilter = true;
             _vmr9Filter = null;
           }
