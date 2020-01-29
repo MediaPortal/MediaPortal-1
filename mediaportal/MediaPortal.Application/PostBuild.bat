@@ -127,7 +127,13 @@ xcopy %1\..\DirectShowFilters\DXErr9\bin\%2\dxerr9.dll . /Y /D
 REM Copy bluray dll from DirectShowFilters folder
 xcopy %1\..\DirectShowFilters\BDReader\libbluray\bluray.dll . /Y /D
 xcopy %1\..\libbluray\src\.libs\libbluray-.jar . /Y /D
-ren libbluray-.jar libbluray-j2se-1.0.2.jar
+ren libbluray-.jar libbluray.jar
+copy libbluray.jar libbluray-j2se-1.1.2.jar /Y
+
+REM Copy bluray awt extension from DirectShowFilters folder
+if not exist .\awt\ mkdir awt
+xcopy %1\..\libbluray\src\.libs\libbluray-awt-.jar .\awt\ /Y /D
+ren .\awt\libbluray-awt-.jar libbluray.jar
 
 REM freetype.dll - odd source folder is 
 if /I "%2" EQU "RELEASE" (
