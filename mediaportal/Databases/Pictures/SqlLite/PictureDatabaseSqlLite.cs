@@ -1127,6 +1127,7 @@ namespace MediaPortal.Picture.Database
 
     private int AddUserComment(string name)
     {
+      if (name != null) name = Regex.Replace(name, @"[\u0000-\u001F]+", string.Empty);
       if (string.IsNullOrWhiteSpace(name))
       {
         return -1;
