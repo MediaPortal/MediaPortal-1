@@ -73,7 +73,7 @@ namespace MediaPortal.GUI.Pictures
       public MetadataItem MeteringMode;
       public MetadataItem ISO;
       public MetadataItem Flash;
-      public MetadataItem Resolution;
+      public Size Resolution;
       public MetadataItem WhiteBalance;
       public MetadataItem SensingMethod;
       public MetadataItem SceneType;
@@ -95,7 +95,7 @@ namespace MediaPortal.GUI.Pictures
       public MetadataItem Latitude;
       public MetadataItem Longitude;
       public MetadataItem Altitude;
-      public MetadataItem ImageDimensions;
+      public Size ImageDimensions;
       public MetadataItem Keywords;
 
       public bool IsEmpty()
@@ -154,19 +154,38 @@ namespace MediaPortal.GUI.Pictures
         Type type = typeof(Metadata);
         foreach (FieldInfo prop in type.GetFields())
         {
-          string caption = ((MetadataItem)prop.GetValue(this)).Caption;
-          string name = ((MetadataItem)prop.GetValue(this)).Name;
-          string localcaption = prop.Name.ToCaption() ?? string.Empty;
-
-          string value = ((MetadataItem)prop.GetValue(this)).DisplayValue;
+          string value;
+          switch (prop.Name)
+          {
+            case "ImageDimensions": value = "Dimensions: "+ImageDimensionsAsString(); break;
+            case "Resolution": value = "Resolution: " + ResolutionAsString(); break;
+            default:
+              MetadataItem metadataItem = ((MetadataItem)prop.GetValue(this));
+              string caption = metadataItem.Caption;
+              string name = metadataItem.Name;
+              string localcaption = prop.Name.ToCaption() ?? string.Empty;
+              value = ((MetadataItem)prop.GetValue(this)).DisplayValue; 
+              if (!string.IsNullOrEmpty(value))
+                value = (!string.IsNullOrEmpty(localcaption) ? localcaption : (!string.IsNullOrEmpty(caption) ? caption : name)) + ": " + value;
+              break;
+          }
           if (!string.IsNullOrEmpty(value))
           {
-            value = (!string.IsNullOrEmpty(localcaption) ? localcaption : (!string.IsNullOrEmpty(caption) ? caption : name)) + ": " + value;
             full = full + value + "\n";
           }
           GUIPropertyManager.SetProperty("#pictures.exif." + prop.Name.ToLower(), value);
         }
         GUIPropertyManager.SetProperty("#pictures.exif.full", full);
+      }
+
+      public string ImageDimensionsAsString()
+      {
+        return ImageDimensions.Width.ToString() + "x" + ImageDimensions.Height.ToString();
+      }
+
+      public string ResolutionAsString()
+      {
+        return Resolution.Width.ToString() + "x" + Resolution.Height.ToString();
       }
     }
 
@@ -192,7 +211,7 @@ namespace MediaPortal.GUI.Pictures
           case ExifDirectoryBase.TagOrientation:
           case ExifDirectoryBase.TagMeteringMode:
           case ExifDirectoryBase.TagFlash:
-          {
+            {
             if (directory.TryGetInt32(tag, out var intValue))
               {
                 item.Value = intValue.ToString();
@@ -424,10 +443,38 @@ namespace MediaPortal.GUI.Pictures
           SetStuff(ref MyMetadata.Altitude, gpsDirectory, GpsDirectory.TagAltitude);
         }
 
-        MyMetadata.Resolution.Caption = "Resolution ";
-        MyMetadata.ImageDimensions.Caption = "Dimensions";
-        Picture.GetImageSizes(photoName, ref MyMetadata.Resolution.DisplayValue, ref MyMetadata.ImageDimensions.DisplayValue);
+        foreach (var directory in directories)
+        {
+          if (MyMetadata.ImageDimensions.IsEmpty)
+          {
+            var wTag = directory.Tags.Where((x) => x.Name == "Image Width" || x.Name == "Exif Image Width").FirstOrDefault();
+            var hTag = directory.Tags.Where((x) => x.Name == "Image Height" || x.Name == "Exif Image Height").FirstOrDefault();
+            if (wTag != null && hTag != null)
+            {
+              MyMetadata.ImageDimensions.Width = directory.GetInt32(wTag.Type);
+              MyMetadata.ImageDimensions.Height = directory.GetInt32(hTag.Type);
             }
+          }
+
+          if (MyMetadata.Resolution.IsEmpty)
+          {
+            var wTag = directory.Tags.Where((x) => x.Name == "X Resolution").FirstOrDefault();
+            var hTag = directory.Tags.Where((x) => x.Name == "Y Resolution").FirstOrDefault();
+            if (wTag != null && hTag != null)
+            {
+              MyMetadata.Resolution.Width = directory.GetInt32(wTag.Type);
+              MyMetadata.Resolution.Height = directory.GetInt32(hTag.Type);
+            }
+          }
+
+        }
+
+        if (MyMetadata.Resolution.IsEmpty || MyMetadata.ImageDimensions.IsEmpty)
+        {
+          //only fetch them if they were not present in exif data
+          Picture.GetImageSizes(photoName, out MyMetadata.Resolution, out MyMetadata.ImageDimensions);
+        }
+      }
       catch (Exception ex)
       {
         Log.Error("ExifExtractor: GetExifMetadata {0}", ex.Message);

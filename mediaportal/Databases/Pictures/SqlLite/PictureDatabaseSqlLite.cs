@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -124,7 +125,9 @@ namespace MediaPortal.Picture.Database
 
       #region Tables
       DatabaseUtility.AddTable(m_db, "picture",
-                               "CREATE TABLE picture (idPicture INTEGER PRIMARY KEY, strFile TEXT, iRotation INTEGER, strDateTaken TEXT)");
+                               "CREATE TABLE picture (idPicture INTEGER PRIMARY KEY, strFile TEXT, iRotation INTEGER, strDateTaken TEXT, " +
+                                                      "iImageWidth INTEGER, iImageHeight INTEGER, " +
+                                                      "iImageXReso INTEGER, iImageYReso INTEGER);");
       #endregion
 
       #region Indexes
@@ -277,7 +280,8 @@ namespace MediaPortal.Picture.Database
                                                           "SELECT picture.*, camera.*, lens.*, exif.*, orientation.*, flash.*, meteringmode.*, country.*, " +
                                                                  "state.*, city.*, sublocation.*, exposureprogram.*, exposuremode.*, sensingmethod.*, " +
                                                                  "scenetype.*, scenecapturetype.*, whitebalance.*, author.*, byline.*, software.*, " +
-                                                                 "usercomment.*, copyright.*, copyrightnotice.* " +
+                                                                 "usercomment.*, copyright.*, copyrightnotice.*, " +
+                                                                 "iImageWidth||'x'||iImageHeight as strImageDimension, iImageXReso||'x'||iImageYReso as strImageResolution "+
                                                           "FROM picture " +
                                                           "LEFT JOIN exiflinkpicture ON picture.idPicture = exiflinkpicture.idPicture " +
                                                           "LEFT JOIN camera ON camera.idCamera = exiflinkpicture.idCamera " +
@@ -372,8 +376,9 @@ namespace MediaPortal.Picture.Database
         // Transactions are a special case for SQLite - they speed things up quite a bit
         BeginTransaction();
 
-        strSQL = String.Format("INSERT INTO picture (idPicture, strFile, iRotation, strDateTaken) VALUES (NULL, '{0}',{1},'{2}')",
-                                strPic, iRotation, strDateTaken);
+        strSQL = String.Format("INSERT INTO picture (idPicture, strFile, iRotation, strDateTaken, iImageWidth, iImageHeight, iImageXReso, iImageYReso) VALUES " +
+          "(NULL, '{0}',{1},'{2}','{3}','{4}','{5}','{6}')",
+                                strPic, iRotation, strDateTaken, exifData.ImageDimensions.Width, exifData.ImageDimensions.Height, exifData.Resolution.Width, exifData.Resolution.Height);
         results = m_db.Execute(strSQL);
         if (results.Rows.Count > 0)
         {
@@ -1701,7 +1706,6 @@ namespace MediaPortal.Picture.Database
       aExif.ExposureMode.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strExposureMode");
       aExif.MeteringMode.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strMeteringMode");
       aExif.Flash.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strFlash");
-      aExif.Resolution.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strResolution");
       aExif.ISO.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strISO");
       aExif.WhiteBalance.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strWhiteBalance");
       aExif.SensingMethod.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strSensingMethod");
@@ -1723,6 +1727,10 @@ namespace MediaPortal.Picture.Database
       aExif.Latitude.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strGPSLatitude");
       aExif.Longitude.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strGPSLongitude");
       aExif.Altitude.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strGPSAltitude");
+      aExif.ImageDimensions.Width = DatabaseUtility.GetAsInt(aResult, aRow, "iImageWidth");
+      aExif.ImageDimensions.Height = DatabaseUtility.GetAsInt(aResult, aRow, "iImageHeight");
+      aExif.Resolution.Width = DatabaseUtility.GetAsInt(aResult, aRow, "iImageXReso");
+      aExif.Resolution.Height = DatabaseUtility.GetAsInt(aResult, aRow, "iImageYReso");
 
       try
       {
@@ -1782,7 +1790,6 @@ namespace MediaPortal.Picture.Database
             {
               AssignAllExifFieldsFromResultSet(ref metaData, results, 0);
               metaData.Keywords.DisplayValue = GetExifDBKeywords(idPicture);
-              Util.Picture.GetImageSizes(strPicture, ref metaData.Resolution.DisplayValue, ref metaData.ImageDimensions.DisplayValue);
             }
           }
         }
