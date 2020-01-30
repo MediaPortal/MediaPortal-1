@@ -344,10 +344,10 @@ namespace MediaPortal.Picture.Database
           return lPicId;
         }
 
-        ExifMetadata.Metadata exifData = new ExifMetadata.Metadata();
+        ExifMetadata.Metadata exifData;
 
         // We need the date nevertheless for database view / sorting
-        if (!GetExifDetails(strPicture, ref iRotation, ref strDateTaken, ref exifData))
+        if (!GetExifDetails(strPicture, ref iRotation, ref strDateTaken, out exifData))
         {
           try
           {
@@ -1505,28 +1505,6 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string strISO = exifData.ISO.DisplayValue;
-        string strExposureTime = exifData.ExposureTime.DisplayValue;
-        string strExposureCompensation = exifData.ExposureCompensation.DisplayValue;
-        string strFStop = exifData.Fstop.DisplayValue;
-        string strShutterSpeed = exifData.ShutterSpeed.DisplayValue;
-        string strFocalLength = exifData.FocalLength.DisplayValue;
-        string strFocalLength35 = exifData.FocalLength35MM.DisplayValue;
-        string strGPSLatitude = exifData.Latitude.DisplayValue;
-        string strGPSLongitude = exifData.Longitude.DisplayValue;
-        string strGPSAltitude = exifData.Altitude.DisplayValue;
-
-        DatabaseUtility.RemoveInvalidChars(ref strISO);
-        DatabaseUtility.RemoveInvalidChars(ref strExposureTime);
-        DatabaseUtility.RemoveInvalidChars(ref strExposureCompensation);
-        DatabaseUtility.RemoveInvalidChars(ref strFStop);
-        DatabaseUtility.RemoveInvalidChars(ref strShutterSpeed);
-        DatabaseUtility.RemoveInvalidChars(ref strFocalLength);
-        DatabaseUtility.RemoveInvalidChars(ref strFocalLength35);
-        DatabaseUtility.RemoveInvalidChars(ref strGPSLatitude);
-        DatabaseUtility.RemoveInvalidChars(ref strGPSLongitude);
-        DatabaseUtility.RemoveInvalidChars(ref strGPSAltitude);
-
         int iID = 0;
         string strSQL = String.Format("SELECT * FROM exif WHERE idPicture = '{0}'", iDbID);
         SQLiteResultSet results = m_db.Execute(strSQL);
@@ -1545,11 +1523,17 @@ namespace MediaPortal.Picture.Database
                                                             "strGPSLatitude, strGPSLongitude, strGPSAltitude) " +
                                  "VALUES ({0}, '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}');",
                                   iID == 0 ? "NULL" : iID.ToString(),
-                                  iDbID, strISO, 
-                                  strExposureTime, strExposureCompensation,
-                                  strFStop, strShutterSpeed,
-                                  strFocalLength, strFocalLength35,
-                                  strGPSLatitude, strGPSLongitude, strGPSAltitude);
+                                  iDbID, 
+                                  DatabaseUtility.RemoveInvalidChars(exifData.ISO.DisplayValue), 
+                                  DatabaseUtility.RemoveInvalidChars(exifData.ExposureTime.DisplayValue), 
+                                  DatabaseUtility.RemoveInvalidChars(exifData.ExposureCompensation.DisplayValue),
+                                  DatabaseUtility.RemoveInvalidChars(exifData.Fstop.DisplayValue), 
+                                  DatabaseUtility.RemoveInvalidChars(exifData.ShutterSpeed.DisplayValue),
+                                  DatabaseUtility.RemoveInvalidChars(exifData.FocalLength.DisplayValue), 
+                                  DatabaseUtility.RemoveInvalidChars(exifData.FocalLength35MM.DisplayValue),
+                                  DatabaseUtility.RemoveInvalidChars(exifData.Latitude.DisplayValue), 
+                                  DatabaseUtility.RemoveInvalidChars(exifData.Longitude.DisplayValue), 
+                                  DatabaseUtility.RemoveInvalidChars(exifData.Altitude.DisplayValue));
         m_db.Execute(strSQL);
         if (iID == 0)
         {
@@ -1640,18 +1624,16 @@ namespace MediaPortal.Picture.Database
 
     public ExifMetadata.Metadata GetExifData(string strPicture)
     {
-      ExifMetadata.Metadata metaData = new ExifMetadata.Metadata();
 
       if (!Util.Utils.IsPicture(strPicture))
       {
-        return metaData;
+        return new ExifMetadata.Metadata();
       }
 
       using (ExifMetadata extractor = new ExifMetadata())
       {
-        metaData = extractor.GetExifMetadata(strPicture);
+        return extractor.GetExifMetadata(strPicture);
       }
-      return metaData;
     }
 
     private string GetExifDBKeywords(int idPicture)
@@ -1671,12 +1653,18 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(SQL);
         if (results != null && results.Rows.Count > 0)
         {
-          string result = string.Empty;
+          StringBuilder result = new StringBuilder();
           for (int i = 0; i < results.Rows.Count; i++)
           {
-            result = result + (string.IsNullOrEmpty(result) ? "" : "; ") + results.Rows[i].fields[0].Trim();
+            string keyw = results.Rows[i].fields[0].Trim();
+            if (!String.IsNullOrEmpty(keyw))
+            {
+              if (result.Length > 0)
+                result.Append("; ");
+              result.Append(keyw);
+            }
           }
-          return result;
+          return result.ToString();
         }
       }
       catch (Exception ex)
@@ -1761,17 +1749,12 @@ namespace MediaPortal.Picture.Database
 
     public ExifMetadata.Metadata GetExifDBData(string strPicture)
     {
+      if (m_db == null || !Util.Utils.IsPicture(strPicture))
+      {
+        return new ExifMetadata.Metadata();
+      }
+
       ExifMetadata.Metadata metaData = new ExifMetadata.Metadata();
-
-      if (!Util.Utils.IsPicture(strPicture))
-      {
-        return metaData;
-      }
-      if (m_db == null)
-      {
-        return metaData;
-      }
-
       try
       {
         string strPic = strPicture;
@@ -1801,11 +1784,12 @@ namespace MediaPortal.Picture.Database
       return metaData;
     }
 
-    private bool GetExifDetails(string strPicture, ref int iRotation, ref string strDateTaken, ref ExifMetadata.Metadata metaData)
+    private bool GetExifDetails(string strPicture, ref int iRotation, ref string strDateTaken, out ExifMetadata.Metadata metaData)
     {
       // Continue only if it's a picture files
       if (!Util.Utils.IsPicture(strPicture))
       {
+        metaData = new ExifMetadata.Metadata();
         return false;
       }
 

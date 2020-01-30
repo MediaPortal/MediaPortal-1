@@ -333,68 +333,66 @@ namespace MediaPortal.GUI.Pictures
 
         foreach (var subIfdDirectory in directories.OfType<ExifSubIfdDirectory>())
         {
-          if (subIfdDirectory != null)
+          // [Exif SubIFD] Date/Time Original: Date Picture Taken: 23/11/2014 17:09:41
+          string dateTime = subIfdDirectory.GetDescription(ExifDirectoryBase.TagDateTimeOriginal);
+          if (string.IsNullOrEmpty(dateTime))
           {
-            // [Exif SubIFD] Date/Time Original: Date Picture Taken: 23/11/2014 17:09:41
-            string dateTime = subIfdDirectory.GetDescription(ExifDirectoryBase.TagDateTimeOriginal);
-            if (string.IsNullOrEmpty(dateTime))
-            {
-              continue;
-            }
-            SetStuff(ref MyMetadata.DatePictureTaken, subIfdDirectory, ExifDirectoryBase.TagDateTimeOriginal);
-
-            // [Exif SubIFD] ISO Speed Ratings: ISO: 200
-            SetStuff(ref MyMetadata.ISO, subIfdDirectory, ExifDirectoryBase.TagIsoEquivalent);
-
-            // [Exif SubIFD] Metering Mode: Metering Mode: 5 - Multi-segment
-            SetStuff(ref MyMetadata.MeteringMode, subIfdDirectory, ExifDirectoryBase.TagMeteringMode);
-
-            // [Exif SubIFD] Flash: Flash: 15 - Flash fired, compulsory flash mode, return light detected
-            SetStuff(ref MyMetadata.Flash, subIfdDirectory, ExifDirectoryBase.TagFlash);
-
-            // [Exif SubIFD] Exposure Time: Exposure Time: 1/60(s)
-            SetStuff(ref MyMetadata.ExposureTime, subIfdDirectory, ExifDirectoryBase.TagExposureTime);
-
-            // [Exif SubIFD] Exposure Program: Exposure Program: 2 - Normal program
-            SetStuff(ref MyMetadata.ExposureProgram, subIfdDirectory, ExifDirectoryBase.TagExposureProgram);
-
-            // [Exif SubIFD] Exposure Mode:
-            SetStuff(ref MyMetadata.ExposureMode, subIfdDirectory, ExifDirectoryBase.TagExposureMode);
-
-            // [Exif SubIFD] Exposure Bias Value: Exposure Compensation: 0/6
-            SetStuff(ref MyMetadata.ExposureCompensation, subIfdDirectory, ExifDirectoryBase.TagExposureBias);
-
-            // [Exif SubIFD] F-Number: FStop: F4
-            SetStuff(ref MyMetadata.Fstop, subIfdDirectory, ExifDirectoryBase.TagFNumber);
-
-            // [Exif SubIFD] Shutter Speed Value: Shutter Speed: 5,906891 (5906891/1000000)
-            SetStuff(ref MyMetadata.ShutterSpeed, subIfdDirectory, ExifDirectoryBase.TagShutterSpeed);
-
-            // [Exif SubIFD] Sensing Method: 
-            SetStuff(ref MyMetadata.SensingMethod, subIfdDirectory, ExifDirectoryBase.TagSensingMethod);
-
-            // [Exif SubIFD] Scene Type:
-            SetStuff(ref MyMetadata.SceneType, subIfdDirectory, ExifDirectoryBase.TagSceneType);
-
-            // [Exif SubIFD] Scene Capture Type:
-            SetStuff(ref MyMetadata.SceneCaptureType, subIfdDirectory, ExifDirectoryBase.TagSceneCaptureType);
-
-            // [Exif SubIFD] White Balance Mode:
-            SetStuff(ref MyMetadata.WhiteBalance, subIfdDirectory, ExifDirectoryBase.TagWhiteBalanceMode);
-
-            // [Exif SubIFD] Lens Make: NIKON
-            // [Exif SubIFD] Lens Model: Lens Model: 35.0 mm f/1.8
-            SetStuff(ref MyMetadata.Lens, subIfdDirectory, ExifDirectoryBase.TagLensModel);
-
-            // [Exif SubIFD] Focal Length: Focal Length: 35 (350/10)
-            SetStuff(ref MyMetadata.FocalLength, subIfdDirectory, ExifDirectoryBase.TagFocalLength);
-
-            // [Exif SubIFD] Focal Length 35: Focal Length (35mm film): 52
-            SetStuff(ref MyMetadata.FocalLength35MM, subIfdDirectory, ExifDirectoryBase.Tag35MMFilmEquivFocalLength);
-
-            // [Exif SubIFD] User Comment: Comment: Copyright (C) by Andrew J.Swan
-            SetStuff(ref MyMetadata.Comment, subIfdDirectory, ExifDirectoryBase.TagUserComment);
+            continue;
           }
+          SetStuff(ref MyMetadata.DatePictureTaken, subIfdDirectory, ExifDirectoryBase.TagDateTimeOriginal);
+
+          // [Exif SubIFD] ISO Speed Ratings: ISO: 200
+          SetStuff(ref MyMetadata.ISO, subIfdDirectory, ExifDirectoryBase.TagIsoEquivalent);
+
+          // [Exif SubIFD] Metering Mode: Metering Mode: 5 - Multi-segment
+          SetStuff(ref MyMetadata.MeteringMode, subIfdDirectory, ExifDirectoryBase.TagMeteringMode);
+
+          // [Exif SubIFD] Flash: Flash: 15 - Flash fired, compulsory flash mode, return light detected
+          SetStuff(ref MyMetadata.Flash, subIfdDirectory, ExifDirectoryBase.TagFlash);
+
+          // [Exif SubIFD] Exposure Time: Exposure Time: 1/60(s)
+          SetStuff(ref MyMetadata.ExposureTime, subIfdDirectory, ExifDirectoryBase.TagExposureTime);
+
+          // [Exif SubIFD] Exposure Program: Exposure Program: 2 - Normal program
+          SetStuff(ref MyMetadata.ExposureProgram, subIfdDirectory, ExifDirectoryBase.TagExposureProgram);
+
+          // [Exif SubIFD] Exposure Mode:
+          SetStuff(ref MyMetadata.ExposureMode, subIfdDirectory, ExifDirectoryBase.TagExposureMode);
+
+          // [Exif SubIFD] Exposure Bias Value: Exposure Compensation: 0/6
+          SetStuff(ref MyMetadata.ExposureCompensation, subIfdDirectory, ExifDirectoryBase.TagExposureBias);
+
+          // [Exif SubIFD] F-Number: FStop: F4
+          SetStuff(ref MyMetadata.Fstop, subIfdDirectory, ExifDirectoryBase.TagFNumber);
+
+          // [Exif SubIFD] Shutter Speed Value: Shutter Speed: 5,906891 (5906891/1000000)
+          SetStuff(ref MyMetadata.ShutterSpeed, subIfdDirectory, ExifDirectoryBase.TagShutterSpeed);
+
+          // [Exif SubIFD] Sensing Method: 
+          SetStuff(ref MyMetadata.SensingMethod, subIfdDirectory, ExifDirectoryBase.TagSensingMethod);
+
+          // [Exif SubIFD] Scene Type:
+          SetStuff(ref MyMetadata.SceneType, subIfdDirectory, ExifDirectoryBase.TagSceneType);
+
+          // [Exif SubIFD] Scene Capture Type:
+          SetStuff(ref MyMetadata.SceneCaptureType, subIfdDirectory, ExifDirectoryBase.TagSceneCaptureType);
+
+          // [Exif SubIFD] White Balance Mode:
+          SetStuff(ref MyMetadata.WhiteBalance, subIfdDirectory, ExifDirectoryBase.TagWhiteBalanceMode);
+
+          // [Exif SubIFD] Lens Make: NIKON
+          // [Exif SubIFD] Lens Model: Lens Model: 35.0 mm f/1.8
+          SetStuff(ref MyMetadata.Lens, subIfdDirectory, ExifDirectoryBase.TagLensModel);
+
+          // [Exif SubIFD] Focal Length: Focal Length: 35 (350/10)
+          SetStuff(ref MyMetadata.FocalLength, subIfdDirectory, ExifDirectoryBase.TagFocalLength);
+
+          // [Exif SubIFD] Focal Length 35: Focal Length (35mm film): 52
+          SetStuff(ref MyMetadata.FocalLength35MM, subIfdDirectory, ExifDirectoryBase.Tag35MMFilmEquivFocalLength);
+
+          // [Exif SubIFD] User Comment: Comment: Copyright (C) by Andrew J.Swan
+          SetStuff(ref MyMetadata.Comment, subIfdDirectory, ExifDirectoryBase.TagUserComment);
+
         }
 
         GetMakerNoteLens(ref MyMetadata.Lens, directories);
