@@ -222,16 +222,6 @@ namespace MediaPortal.GUI.Pictures
               }
               break;
             }
-          case ExifDirectoryBase.TagDateTime:
-          case ExifDirectoryBase.TagDateTimeOriginal:
-          {
-            if (directory.TryGetDateTime(tag, out var dateTime))
-            {
-              item.Value = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
-              item.DisplayValue = dateTime.ToString(System.Threading.Thread.CurrentThread.CurrentCulture);
-            }
-            break;
-          }
           case ExifDirectoryBase.TagLensModel:
             {
               string lensMake = directory.GetDescription(ExifDirectoryBase.TagLensMake);
@@ -306,9 +296,6 @@ namespace MediaPortal.GUI.Pictures
 
         if (exifDirectory != null)
         {
-          // DateTime
-          SetStuff(ref MyMetadata.DatePictureTaken, exifDirectory, ExifDirectoryBase.TagDateTime);
-
           // [Exif IFD0] Make: Equipment Make: NIKON CORPORATION
           SetStuff(ref MyMetadata.EquipmentMake, exifDirectory, ExifDirectoryBase.TagMake);
 
@@ -333,14 +320,6 @@ namespace MediaPortal.GUI.Pictures
 
         foreach (var subIfdDirectory in directories.OfType<ExifSubIfdDirectory>())
         {
-          // [Exif SubIFD] Date/Time Original: Date Picture Taken: 23/11/2014 17:09:41
-          string dateTime = subIfdDirectory.GetDescription(ExifDirectoryBase.TagDateTimeOriginal);
-          if (string.IsNullOrEmpty(dateTime))
-          {
-            continue;
-          }
-          SetStuff(ref MyMetadata.DatePictureTaken, subIfdDirectory, ExifDirectoryBase.TagDateTimeOriginal);
-
           // [Exif SubIFD] ISO Speed Ratings: ISO: 200
           SetStuff(ref MyMetadata.ISO, subIfdDirectory, ExifDirectoryBase.TagIsoEquivalent);
 
@@ -465,6 +444,19 @@ namespace MediaPortal.GUI.Pictures
             }
           }
 
+          if (MyMetadata.DatePictureTaken.IsEmpty())
+          {
+            var tag = directory.Tags.Where((x) => x.Name.StartsWith("Date/Time")).FirstOrDefault();
+            if (tag != null)
+            {
+              DateTime dateTime;
+              if (directory.TryGetDateTime(tag.Type, out dateTime))
+              {
+                MyMetadata.DatePictureTaken.Value = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                MyMetadata.DatePictureTaken.DisplayValue = dateTime.ToString(System.Threading.Thread.CurrentThread.CurrentCulture);
+              }
+            }
+          }
         }
 
         if (MyMetadata.Resolution.IsEmpty || MyMetadata.ImageDimensions.IsEmpty)
