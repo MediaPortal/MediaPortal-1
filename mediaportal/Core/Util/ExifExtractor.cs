@@ -40,9 +40,9 @@ namespace MediaPortal.GUI.Pictures
 
   public class ExifMetadata : IDisposable
   {
-    public ExifMetadata() {}
+    public ExifMetadata() { }
 
-    public void Dispose() {}
+    public void Dispose() { }
 
     public struct MetadataItem
     {
@@ -52,7 +52,7 @@ namespace MediaPortal.GUI.Pictures
       public string Value;
       public string DisplayValue;
 
-      public bool IsEmpty ()
+      public bool IsEmpty()
       {
         return string.IsNullOrWhiteSpace(DisplayValue);
       }
@@ -98,21 +98,21 @@ namespace MediaPortal.GUI.Pictures
       public MetadataItem ImageDimensions;
       public MetadataItem Keywords;
 
-      public bool IsEmpty ()
+      public bool IsEmpty()
       {
         Type type = typeof(Metadata);
         bool result = true;
 
         foreach (FieldInfo prop in type.GetFields())
         {
-            if (prop.Name == "DatePictureTaken" || prop.Name == "Orientation" ||
-                prop.Name == "ImageDimensions" || prop.Name == "Resolution")
-            {
-                continue;
-            }
-            Type fieldtype = prop.FieldType;
-            MethodInfo info = fieldtype.GetMethod("IsEmpty");
-            result &= (bool)info.Invoke(prop.GetValue(this), null);
+          if (prop.Name == "DatePictureTaken" || prop.Name == "Orientation" ||
+              prop.Name == "ImageDimensions" || prop.Name == "Resolution")
+          {
+            continue;
+          }
+          Type fieldtype = prop.FieldType;
+          MethodInfo info = fieldtype.GetMethod("IsEmpty");
+          result &= (bool)info.Invoke(prop.GetValue(this), null);
         }
         return result;
       }
@@ -136,7 +136,7 @@ namespace MediaPortal.GUI.Pictures
               prop.Name == "CountryCode" || prop.Name == "CountryName" ||
               prop.Name == "ProvinceOrState" || prop.Name == "City" ||
               prop.Name == "SubLocation" || prop.Name == "Keywords" ||
-              prop.Name == "Comment" || 
+              prop.Name == "Comment" ||
               prop.Name == "Copyright" || prop.Name == "CopyrightNotice")
           {
             continue;
@@ -194,15 +194,15 @@ namespace MediaPortal.GUI.Pictures
           case ExifDirectoryBase.TagFlash:
           {
             if (directory.TryGetInt32(tag, out var intValue))
-            {
-              item.Value = intValue.ToString();
+              {
+                item.Value = intValue.ToString();
+              }
+              else
+              {
+                item.Value = "0";
+              }
+              break;
             }
-            else
-            {
-              item.Value = "0";
-            }
-            break;
-          }
           case ExifDirectoryBase.TagDateTime:
           case ExifDirectoryBase.TagDateTimeOriginal:
           {
@@ -214,61 +214,61 @@ namespace MediaPortal.GUI.Pictures
             break;
           }
           case ExifDirectoryBase.TagLensModel:
-          {
-            string lensMake = directory.GetDescription(ExifDirectoryBase.TagLensMake);
-            if (!string.IsNullOrEmpty(lensMake))
             {
-              item.Value = lensMake;
-            }
-            break;
-          }
-          case IptcDirectory.TagKeywords:
-          {
-            string keywords = string.Empty;
-            var keywordsArray = directory.GetStringArray(tag);
-            if (keywordsArray != null)
-            {
-              foreach (string keyword in keywordsArray)
+              string lensMake = directory.GetDescription(ExifDirectoryBase.TagLensMake);
+              if (!string.IsNullOrEmpty(lensMake))
               {
-                if (!string.IsNullOrWhiteSpace(keyword))
+                item.Value = lensMake;
+              }
+              break;
+            }
+          case IptcDirectory.TagKeywords:
+            {
+              string keywords = string.Empty;
+              var keywordsArray = directory.GetStringArray(tag);
+              if (keywordsArray != null)
+              {
+                foreach (string keyword in keywordsArray)
                 {
-                  keywords += keyword.Trim() + "; ";
+                  if (!string.IsNullOrWhiteSpace(keyword))
+                  {
+                    keywords += keyword.Trim() + "; ";
+                  }
                 }
               }
+              if (!string.IsNullOrWhiteSpace(keywords))
+              {
+                item.DisplayValue = keywords;
+              }
+              break;
             }
-            if (!string.IsNullOrWhiteSpace(keywords))
-            {
-              item.DisplayValue = keywords;
-            }
-            break;
-          }
           case GpsDirectory.TagLatitude:
-          {
-            string latitudeRef = directory.GetDescription(GpsDirectory.TagLatitudeRef);
-            if (!string.IsNullOrEmpty(latitudeRef))
             {
-              item.DisplayValue = latitudeRef + " " +item.DisplayValue;
+              string latitudeRef = directory.GetDescription(GpsDirectory.TagLatitudeRef);
+              if (!string.IsNullOrEmpty(latitudeRef))
+              {
+                item.DisplayValue = latitudeRef + " " + item.DisplayValue;
+              }
+              break;
             }
-            break;
-          }
           case GpsDirectory.TagLongitude:
-          {
-            string longitudeRef = directory.GetDescription(GpsDirectory.TagLongitudeRef);
-            if (!string.IsNullOrEmpty(longitudeRef))
             {
-              item.DisplayValue = longitudeRef + " " +item.DisplayValue;
+              string longitudeRef = directory.GetDescription(GpsDirectory.TagLongitudeRef);
+              if (!string.IsNullOrEmpty(longitudeRef))
+              {
+                item.DisplayValue = longitudeRef + " " + item.DisplayValue;
+              }
+              break;
             }
-            break;
-          }
           case GpsDirectory.TagAltitude:
-          {
-            string altitudeRef = directory.GetDescription(GpsDirectory.TagAltitudeRef);
-            if (!string.IsNullOrEmpty(altitudeRef))
             {
-              item.DisplayValue = altitudeRef + " " +item.DisplayValue;
+              string altitudeRef = directory.GetDescription(GpsDirectory.TagAltitudeRef);
+              if (!string.IsNullOrEmpty(altitudeRef))
+              {
+                item.DisplayValue = altitudeRef + " " + item.DisplayValue;
+              }
+              break;
             }
-            break;
-          }
         }
       }
       catch (Exception) { }
@@ -378,7 +378,7 @@ namespace MediaPortal.GUI.Pictures
           }
         }
 
-        GetMakerNoteLens(ref MyMetadata.Lens, directories) ;
+        GetMakerNoteLens(ref MyMetadata.Lens, directories);
 
         var iptcDirectory = directories.OfType<IptcDirectory>().FirstOrDefault();
         if (iptcDirectory != null)
@@ -427,14 +427,14 @@ namespace MediaPortal.GUI.Pictures
         MyMetadata.Resolution.Caption = "Resolution ";
         MyMetadata.ImageDimensions.Caption = "Dimensions";
         Picture.GetImageSizes(photoName, ref MyMetadata.Resolution.DisplayValue, ref MyMetadata.ImageDimensions.DisplayValue);
-      }
+            }
       catch (Exception ex)
       {
         Log.Error("ExifExtractor: GetExifMetadata {0}", ex.Message);
       }
       return MyMetadata;
     }
-    
+
     private void GetMakerNoteLens(ref MetadataItem item, IEnumerable<Directory> directory)
     {
       if (!string.IsNullOrEmpty(item.DisplayValue))
