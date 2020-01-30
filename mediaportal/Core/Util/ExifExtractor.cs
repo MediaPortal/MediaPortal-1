@@ -212,7 +212,8 @@ namespace MediaPortal.GUI.Pictures
           case ExifDirectoryBase.TagMeteringMode:
           case ExifDirectoryBase.TagFlash:
             {
-            if (directory.TryGetInt32(tag, out var intValue))
+              Int32 intValue;
+              if (directory.TryGetInt32(tag, out intValue))
               {
                 item.Value = intValue.ToString();
               }
