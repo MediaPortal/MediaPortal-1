@@ -310,6 +310,11 @@ namespace MediaPortal.Picture.Database
             "  DELETE FROM city WHERE idCity NOT IN (SELECT DISTINCT idCity FROM exiflinkpicture); " +
             "  DELETE FROM sublocation WHERE idSublocation NOT IN (SELECT DISTINCT idSublocation FROM exiflinkpicture); " +
             "END;" );
+      DatabaseUtility.AddTrigger(m_db, "Delete_ExtraKeywords",
+            "CREATE TRIGGER Delete_ExtraKeywords AFTER DELETE ON keywordslinkpicture " +
+            "BEGIN " +
+            "  DELETE FROM keywords WHERE idKeyword NOT IN (SELECT DISTINCT idKeyword FROM keywordslinkpicture); " +
+            "END;" );
       #endregion
 
       #region Exif Views

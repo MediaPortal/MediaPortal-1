@@ -176,6 +176,9 @@ namespace MediaPortal.GUI.Pictures
           GUIPropertyManager.SetProperty("#pictures.exif." + prop.Name.ToLower(), value);
         }
         GUIPropertyManager.SetProperty("#pictures.exif.full", full);
+
+        GUIPropertyManager.SetProperty("#pictures.haveexif", IsExifEmpty() ? "false" : "true");
+        GUIPropertyManager.SetProperty("#pictures.geotagged", (string.IsNullOrEmpty(Latitude.DisplayValue) && string.IsNullOrEmpty(Longitude.DisplayValue)) ? "false" : "true");
       }
 
       public string ImageDimensionsAsString()
