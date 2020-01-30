@@ -424,6 +424,8 @@ namespace MediaPortal.GUI.Pictures
           SetStuff(ref MyMetadata.Altitude, gpsDirectory, GpsDirectory.TagAltitude);
         }
 
+        DateTime dateTime = DateTime.MinValue;
+        DateTime dateTimeOriginal = DateTime.MinValue;
         foreach (var directory in directories)
         {
           if (MyMetadata.ImageDimensions.IsEmpty)
@@ -448,20 +450,32 @@ namespace MediaPortal.GUI.Pictures
             }
           }
 
-          if (MyMetadata.DatePictureTaken.IsEmpty())
+          if (dateTime == DateTime.MinValue)
           {
             var tag = directory.Tags.Where((x) => x.Name.StartsWith("Date/Time")).FirstOrDefault();
             if (tag != null)
             {
-              DateTime dateTime;
-              if (directory.TryGetDateTime(tag.Type, out dateTime))
-              {
-                MyMetadata.DatePictureTaken.Value = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
-                MyMetadata.DatePictureTaken.DisplayValue = dateTime.ToString(System.Threading.Thread.CurrentThread.CurrentCulture);
-              }
+              directory.TryGetDateTime(tag.Type, out dateTime);
             }
           }
+
+          if (dateTimeOriginal == DateTime.MinValue)
+          {
+            var tag = directory.Tags.Where((x) => x.Name.StartsWith("Date/Time Original")).FirstOrDefault();
+            if (tag != null)
+            {
+              directory.TryGetDateTime(tag.Type, out dateTimeOriginal);
+            }
+          }
+
         }
+
+        if (dateTimeOriginal != DateTime.MinValue)
+          dateTime = dateTimeOriginal;
+
+        MyMetadata.DatePictureTaken.Value = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+        MyMetadata.DatePictureTaken.DisplayValue = dateTime.ToString(System.Threading.Thread.CurrentThread.CurrentCulture);
+
 
         if (MyMetadata.Resolution.IsEmpty || MyMetadata.ImageDimensions.IsEmpty)
         {
