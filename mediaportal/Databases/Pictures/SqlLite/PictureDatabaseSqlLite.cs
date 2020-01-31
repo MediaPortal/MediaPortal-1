@@ -203,8 +203,8 @@ namespace MediaPortal.Picture.Database
       DatabaseUtility.AddTable(m_db, "keywordslinkpicture",
                                "CREATE TABLE keywordslinkpicture (idKeyword INTEGER REFERENCES keyword(idKeyword) ON DELETE CASCADE, idPicture INTEGER REFERENCES picture(idPicture) ON DELETE CASCADE);");
 
-      DatabaseUtility.AddTable(m_db, "exiflinkpicture",
-                               "CREATE TABLE exiflinkpicture (idPicture INTEGER PRIMARY KEY REFERENCES picture(idPicture) ON DELETE CASCADE, " +
+      DatabaseUtility.AddTable(m_db, "exifdata",
+                               "CREATE TABLE exifdata (idPicture INTEGER PRIMARY KEY REFERENCES picture(idPicture) ON DELETE CASCADE, " +
                                                        "idCamera INTEGER REFERENCES camera(idCamera) ON DELETE CASCADE, " +
                                                        "idLens INTEGER REFERENCES lens(idLens) ON DELETE CASCADE, " +
                                                        "idISO INTEGER REFERENCES iso(idIso) ON DELETE CASCADE, " +
@@ -273,70 +273,69 @@ namespace MediaPortal.Picture.Database
       DatabaseUtility.AddIndex(m_db, "idxkeywordslinkpicture_idKeyword", "CREATE INDEX idxkeywordslinkpicture_idKeyword ON keywordslinkpicture(idKeyword);");
       DatabaseUtility.AddIndex(m_db, "idxkeywordslinkpicture_idPicture", "CREATE INDEX idxkeywordslinkpicture_idPicture ON keywordslinkpicture(idPicture);");
 
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idCamera", "CREATE INDEX idxexiflinkpicture_idCamera ON exiflinkpicture(idCamera);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idLens", "CREATE INDEX idxexiflinkpicture_idLens ON exiflinkpicture(idLens);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idExif", "CREATE INDEX idxexiflinkpicture_idExif ON exiflinkpicture(idExif);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idOrientation", "CREATE INDEX idxexiflinkpicture_idOrientation ON exiflinkpicture(idOrientation);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idFlash", "CREATE INDEX idxexiflinkpicture_idFlash ON exiflinkpicture(idFlash);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idMeteringMode", "CREATE INDEX idxexiflinkpicture_idMeteringMode ON exiflinkpicture(idMeteringMode);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idExposureProgram", "CREATE INDEX idxexiflinkpicture_idExposureProgram ON exiflinkpicture(idExposureProgram);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idExposureMode", "CREATE INDEX idxexiflinkpicture_idExposureMode ON exiflinkpicture(idExposureMode);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idSensingMethod", "CREATE INDEX idxexiflinkpicture_idSensingMethod ON exiflinkpicture(idSensingMethod);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idSceneType", "CREATE INDEX idxexiflinkpicture_idSceneType ON exiflinkpicture(idSceneType);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idSceneCaptureType", "CREATE INDEX idxexiflinkpicture_idSceneCaptureType ON exiflinkpicture(idSceneCaptureType);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idWhiteBalance", "CREATE INDEX idxexiflinkpicture_idWhiteBalance ON exiflinkpicture(idWhiteBalance);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idAuthor", "CREATE INDEX idxexiflinkpicture_idAuthor ON exiflinkpicture(idAuthor);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idByline", "CREATE INDEX idxexiflinkpicture_idByline ON exiflinkpicture(idByline);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idSoftware", "CREATE INDEX idxexiflinkpicture_idSoftware ON exiflinkpicture(idSoftware);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idUserComment", "CREATE INDEX idxexiflinkpicture_idUserComment ON exiflinkpicture(idUserComment);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idCopyright", "CREATE INDEX idxexiflinkpicture_idCopyright ON exiflinkpicture(idCopyright);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idCopyrightNotice", "CREATE INDEX idxexiflinkpicture_idCopyrightNotice ON exiflinkpicture(idCopyrightNotice);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idCountry", "CREATE INDEX idxexiflinkpicture_idCountry ON exiflinkpicture(idCountry);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idState", "CREATE INDEX idxexiflinkpicture_idState ON exiflinkpicture(idState);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idCity", "CREATE INDEX idxexiflinkpicture_idCity ON exiflinkpicture(idCity);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idSublocation", "CREATE INDEX idxexiflinkpicture_idSublocation ON exiflinkpicture(idSublocation);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idIso", "CREATE INDEX idxexiflinkpicture_idIso ON exiflinkpicture(idIso);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idExposureTime", "CREATE INDEX idxexiflinkpictureidExposureTime ON exiflinkpicture(idExposureTime);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idExposureCompensation", "CREATE INDEX idxexiflinkpictureidExposureCompensation ON exiflinkpicture(idExposureCompensation);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idFStop", "CREATE INDEX idxexiflinkpictureidFStop ON exiflinkpicture(idFStop);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idShutterSpeed", "CREATE INDEX idxexiflinkpictureidShutterSpeed ON exiflinkpicture(idShutterSpeed);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idFocalLength", "CREATE INDEX idxexiflinkpictureidFocalLength ON exiflinkpicture(idFocalLength);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idFocalLength35mm", "CREATE INDEX idxexiflinkpictureidFocalLength35mm ON exiflinkpicture(idFocalLength35mm);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idCamera", "CREATE INDEX idxexifdata_idCamera ON exifdata(idCamera);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idLens", "CREATE INDEX idxexifdata_idLens ON exifdata(idLens);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idOrientation", "CREATE INDEX idxexifdata_idOrientation ON exifdata(idOrientation);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idFlash", "CREATE INDEX idxexifdata_idFlash ON exifdata(idFlash);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idMeteringMode", "CREATE INDEX idxexifdata_idMeteringMode ON exifdata(idMeteringMode);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idExposureProgram", "CREATE INDEX idxexifdata_idExposureProgram ON exifdata(idExposureProgram);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idExposureMode", "CREATE INDEX idxexifdata_idExposureMode ON exifdata(idExposureMode);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idSensingMethod", "CREATE INDEX idxexifdata_idSensingMethod ON exifdata(idSensingMethod);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idSceneType", "CREATE INDEX idxexifdata_idSceneType ON exifdata(idSceneType);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idSceneCaptureType", "CREATE INDEX idxexifdata_idSceneCaptureType ON exifdata(idSceneCaptureType);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idWhiteBalance", "CREATE INDEX idxexifdata_idWhiteBalance ON exifdata(idWhiteBalance);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idAuthor", "CREATE INDEX idxexifdata_idAuthor ON exifdata(idAuthor);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idByline", "CREATE INDEX idxexifdata_idByline ON exifdata(idByline);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idSoftware", "CREATE INDEX idxexifdata_idSoftware ON exifdata(idSoftware);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idUserComment", "CREATE INDEX idxexifdata_idUserComment ON exifdata(idUserComment);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idCopyright", "CREATE INDEX idxexifdata_idCopyright ON exifdata(idCopyright);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idCopyrightNotice", "CREATE INDEX idxexifdata_idCopyrightNotice ON exifdata(idCopyrightNotice);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idCountry", "CREATE INDEX idxexifdata_idCountry ON exifdata(idCountry);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idState", "CREATE INDEX idxexifdata_idState ON exifdata(idState);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idCity", "CREATE INDEX idxexifdata_idCity ON exifdata(idCity);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idSublocation", "CREATE INDEX idxexifdata_idSublocation ON exifdata(idSublocation);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idIso", "CREATE INDEX idxexifdata_idIso ON exifdata(idIso);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idExposureTime", "CREATE INDEX idxexifdata_idExposureTime ON exifdata(idExposureTime);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idExposureCompensation", "CREATE INDEX idxexifdata_idExposureCompensation ON exifdata(idExposureCompensation);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idFStop", "CREATE INDEX idxexifdata_idFStop ON exifdata(idFStop);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idShutterSpeed", "CREATE INDEX idxexifdata_idShutterSpeed ON exifdata(idShutterSpeed);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idFocalLength", "CREATE INDEX idxexifdata_idFocalLength ON exifdata(idFocalLength);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idFocalLength35mm", "CREATE INDEX idxexifdata_idFocalLength35mm ON exifdata(idFocalLength35mm);");
 
       #endregion
 
       #region Exif Triggers
       DatabaseUtility.AddTrigger(m_db, "Delete_ExtraData",
-            "CREATE TRIGGER Delete_ExtraData AFTER DELETE ON exiflinkpicture " +
+            "CREATE TRIGGER Delete_ExtraData AFTER DELETE ON exifdata " +
             "BEGIN " +
-            "  DELETE FROM camera WHERE idCamera NOT IN (SELECT DISTINCT idCamera FROM exiflinkpicture); " +
-            "  DELETE FROM lens WHERE idLens NOT IN (SELECT DISTINCT idLens FROM exiflinkpicture); " +
-            "  DELETE FROM orientation WHERE idOrientation NOT IN (SELECT DISTINCT idOrientation FROM exiflinkpicture); " +
-            "  DELETE FROM flash WHERE idFlash NOT IN (SELECT DISTINCT idFlash FROM exiflinkpicture); " +
-            "  DELETE FROM meteringmode WHERE idMeteringMode NOT IN (SELECT DISTINCT idMeteringMode FROM exiflinkpicture); " +
-            "  DELETE FROM exposureprogram WHERE idExposureProgram NOT IN (SELECT DISTINCT idExposureProgram FROM exiflinkpicture); " +
-            "  DELETE FROM exposuremode WHERE idExposureMode NOT IN (SELECT DISTINCT idExposureMode FROM exiflinkpicture); " +
-            "  DELETE FROM sensingmethod WHERE idSensingMethod NOT IN (SELECT DISTINCT idSensingMethod FROM exiflinkpicture); " +
-            "  DELETE FROM scenetype WHERE idSceneType NOT IN (SELECT DISTINCT idSceneType FROM exiflinkpicture); " +
-            "  DELETE FROM scenecapturetype WHERE idSceneCaptureType NOT IN (SELECT DISTINCT idSceneCaptureType FROM exiflinkpicture); " +
-            "  DELETE FROM whitebalance WHERE idWhiteBalance NOT IN (SELECT DISTINCT idWhiteBalance FROM exiflinkpicture); " +
-            "  DELETE FROM author WHERE idAuthor NOT IN (SELECT DISTINCT idAuthor FROM exiflinkpicture); " +
-            "  DELETE FROM byline WHERE idByline NOT IN (SELECT DISTINCT idByline FROM exiflinkpicture); " +
-            "  DELETE FROM software WHERE idSoftware NOT IN (SELECT DISTINCT idSoftware FROM exiflinkpicture); " +
-            "  DELETE FROM usercomment WHERE idUserComment NOT IN (SELECT DISTINCT idUserComment FROM exiflinkpicture); " +
-            "  DELETE FROM copyright WHERE idCopyright NOT IN (SELECT DISTINCT idCopyright FROM exiflinkpicture); " +
-            "  DELETE FROM copyrightnotice WHERE idCopyrightNotice NOT IN (SELECT DISTINCT idCopyrightNotice FROM exiflinkpicture); " +
-            "  DELETE FROM country WHERE idCountry NOT IN (SELECT DISTINCT idCountry FROM exiflinkpicture); " +
-            "  DELETE FROM state WHERE idState NOT IN (SELECT DISTINCT idState FROM exiflinkpicture); " +
-            "  DELETE FROM city WHERE idCity NOT IN (SELECT DISTINCT idCity FROM exiflinkpicture); " +
-            "  DELETE FROM sublocation WHERE idSublocation NOT IN (SELECT DISTINCT idSublocation FROM exiflinkpicture); " +
-            "  DELETE FROM iso WHERE idIso NOT IN (SELECT DISTINCT idIso FROM exiflinkpicture); " +
-            "  DELETE FROM exposureTime WHERE idExposureTime NOT IN (SELECT DISTINCT idExposureTime FROM exiflinkpicture); " +
-            "  DELETE FROM exposureCompensation WHERE idExposureCompensation NOT IN (SELECT DISTINCT idExposureCompensation FROM exiflinkpicture); " +
-            "  DELETE FROM fStop WHERE idFStop NOT IN (SELECT DISTINCT idFStop FROM exiflinkpicture); " +
-            "  DELETE FROM shutterSpeed WHERE idShutterSpeed NOT IN (SELECT DISTINCT idShutterSpeed FROM exiflinkpicture); " +
-            "  DELETE FROM focalLength WHERE idFocalLength NOT IN (SELECT DISTINCT idFocalLength FROM exiflinkpicture); " +
-            "  DELETE FROM focalLength35mm WHERE idFocalLength35mm NOT IN (SELECT DISTINCT idFocalLength35mm FROM exiflinkpicture); " +
+            "  DELETE FROM camera WHERE idCamera NOT IN (SELECT DISTINCT idCamera FROM exifdata); " +
+            "  DELETE FROM lens WHERE idLens NOT IN (SELECT DISTINCT idLens FROM exifdata); " +
+            "  DELETE FROM orientation WHERE idOrientation NOT IN (SELECT DISTINCT idOrientation FROM exifdata); " +
+            "  DELETE FROM flash WHERE idFlash NOT IN (SELECT DISTINCT idFlash FROM exifdata); " +
+            "  DELETE FROM meteringmode WHERE idMeteringMode NOT IN (SELECT DISTINCT idMeteringMode FROM exifdata); " +
+            "  DELETE FROM exposureprogram WHERE idExposureProgram NOT IN (SELECT DISTINCT idExposureProgram FROM exifdata); " +
+            "  DELETE FROM exposuremode WHERE idExposureMode NOT IN (SELECT DISTINCT idExposureMode FROM exifdata); " +
+            "  DELETE FROM sensingmethod WHERE idSensingMethod NOT IN (SELECT DISTINCT idSensingMethod FROM exifdata); " +
+            "  DELETE FROM scenetype WHERE idSceneType NOT IN (SELECT DISTINCT idSceneType FROM exifdata); " +
+            "  DELETE FROM scenecapturetype WHERE idSceneCaptureType NOT IN (SELECT DISTINCT idSceneCaptureType FROM exifdata); " +
+            "  DELETE FROM whitebalance WHERE idWhiteBalance NOT IN (SELECT DISTINCT idWhiteBalance FROM exifdata); " +
+            "  DELETE FROM author WHERE idAuthor NOT IN (SELECT DISTINCT idAuthor FROM exifdata); " +
+            "  DELETE FROM byline WHERE idByline NOT IN (SELECT DISTINCT idByline FROM exifdata); " +
+            "  DELETE FROM software WHERE idSoftware NOT IN (SELECT DISTINCT idSoftware FROM exifdata); " +
+            "  DELETE FROM usercomment WHERE idUserComment NOT IN (SELECT DISTINCT idUserComment FROM exifdata); " +
+            "  DELETE FROM copyright WHERE idCopyright NOT IN (SELECT DISTINCT idCopyright FROM exifdata); " +
+            "  DELETE FROM copyrightnotice WHERE idCopyrightNotice NOT IN (SELECT DISTINCT idCopyrightNotice FROM exifdata); " +
+            "  DELETE FROM country WHERE idCountry NOT IN (SELECT DISTINCT idCountry FROM exifdata); " +
+            "  DELETE FROM state WHERE idState NOT IN (SELECT DISTINCT idState FROM exifdata); " +
+            "  DELETE FROM city WHERE idCity NOT IN (SELECT DISTINCT idCity FROM exifdata); " +
+            "  DELETE FROM sublocation WHERE idSublocation NOT IN (SELECT DISTINCT idSublocation FROM exifdata); " +
+            "  DELETE FROM iso WHERE idIso NOT IN (SELECT DISTINCT idIso FROM exifdata); " +
+            "  DELETE FROM exposureTime WHERE idExposureTime NOT IN (SELECT DISTINCT idExposureTime FROM exifdata); " +
+            "  DELETE FROM exposureCompensation WHERE idExposureCompensation NOT IN (SELECT DISTINCT idExposureCompensation FROM exifdata); " +
+            "  DELETE FROM fStop WHERE idFStop NOT IN (SELECT DISTINCT idFStop FROM exifdata); " +
+            "  DELETE FROM shutterSpeed WHERE idShutterSpeed NOT IN (SELECT DISTINCT idShutterSpeed FROM exifdata); " +
+            "  DELETE FROM focalLength WHERE idFocalLength NOT IN (SELECT DISTINCT idFocalLength FROM exifdata); " +
+            "  DELETE FROM focalLength35mm WHERE idFocalLength35mm NOT IN (SELECT DISTINCT idFocalLength35mm FROM exifdata); " +
             "END;");
       DatabaseUtility.AddTrigger(m_db, "Delete_ExtraKeywords",
             "CREATE TRIGGER Delete_ExtraKeywords AFTER DELETE ON keywordslinkpicture " +
@@ -350,40 +349,40 @@ namespace MediaPortal.Picture.Database
                                                           "SELECT picture.idPicture, strDateTaken, iImageWidth, iImageHeight, iImageXReso, iImageYReso, " +
                                                           "strCamera, strCameraMake, strLens, strISO, strExposureTime, strExposureCompensation, strFStop, strShutterSpeed, " +
                                                           "strFocalLength, strFocalLength35mm, strGPSLatitude, strGPSLongitude, strGPSAltitude, " +
-                                                          "exiflinkpicture.idOrientation, strOrientation, exiflinkpicture.idFlash, strFlash, exiflinkpicture.idMeteringMode, strMeteringMode, " +
+                                                          "exifdata.idOrientation, strOrientation, exifdata.idFlash, strFlash, exifdata.idMeteringMode, strMeteringMode, " +
                                                           "strCountryCode, strCountry, strState, strCity, strSubLocation, strExposureProgram, strExposureMode, strSensingMethod, strSceneType, " +
                                                           "strSceneCaptureType, strWhiteBalance, strAuthor, strByLine, strSoftware, strUserComment, strCopyright, strCopyrightNotice, " +
                                                           "iImageWidth||'x'||iImageHeight as strImageDimension, iImageXReso||'x'||iImageYReso as strImageResolution " +
                                                           "FROM picture " +
-                                                          "LEFT JOIN exiflinkpicture ON picture.idPicture = exiflinkpicture.idPicture " +
-                                                          "LEFT JOIN camera ON camera.idCamera = exiflinkpicture.idCamera " +
-                                                          "LEFT JOIN lens ON lens.idLens = exiflinkpicture.idLens " +
-                                                          "LEFT JOIN orientation ON orientation.idOrientation = exiflinkpicture.idOrientation " +
-                                                          "LEFT JOIN flash ON flash.idFlash = exiflinkpicture.idFlash " +
-                                                          "LEFT JOIN meteringmode ON meteringmode.idMeteringMode = exiflinkpicture.idMeteringMode " +
-                                                          "LEFT JOIN country ON country.idCountry = exiflinkpicture.idCountry " +
-                                                          "LEFT JOIN state ON state.idState = exiflinkpicture.idState " +
-                                                          "LEFT JOIN city ON city.idCity = exiflinkpicture.idCity " +
-                                                          "LEFT JOIN sublocation ON sublocation.idSublocation = exiflinkpicture.idSublocation " +
-                                                          "LEFT JOIN exposureprogram ON exposureprogram.idExposureProgram = exiflinkpicture.idExposureProgram " +
-                                                          "LEFT JOIN exposuremode ON exposuremode.idExposureMode = exiflinkpicture.idExposureMode " +
-                                                          "LEFT JOIN sensingmethod ON sensingmethod.idSensingMethod = exiflinkpicture.idSensingMethod " +
-                                                          "LEFT JOIN scenetype ON scenetype.idSceneType = exiflinkpicture.idSceneType " +
-                                                          "LEFT JOIN scenecapturetype ON scenecapturetype.idSceneCaptureType = exiflinkpicture.idSceneCaptureType " +
-                                                          "LEFT JOIN whitebalance ON whitebalance.idWhiteBalance = exiflinkpicture.idWhiteBalance " +
-                                                          "LEFT JOIN author ON author.idAuthor = exiflinkpicture.idAuthor " +
-                                                          "LEFT JOIN byline ON byline.idByline = exiflinkpicture.idByline " +
-                                                          "LEFT JOIN software ON software.idSoftware = exiflinkpicture.idSoftware " +
-                                                          "LEFT JOIN usercomment ON usercomment.idUserComment = exiflinkpicture.idUserComment " +
-                                                          "LEFT JOIN copyright ON copyright.idCopyright = exiflinkpicture.idCopyright " +
-                                                          "LEFT JOIN copyrightnotice ON copyrightnotice.idCopyrightNotice = exiflinkpicture.idCopyrightNotice " +
-                                                          "LEFT JOIN iso ON iso.idISO = exiflinkpicture.idISO " +
-                                                          "LEFT JOIN exposureTime ON exposureTime.idExposureTime = exiflinkpictureta.idExposureTime " +
-                                                          "LEFT JOIN exposureCompensation ON exposureCompensation.idExposureCompensation = exiflinkpicture.idExposureCompensation " +
-                                                          "LEFT JOIN fStop ON fStop.idFStop = exiflinkpicture.idFStop " +
-                                                          "LEFT JOIN shutterSpeed ON shutterSpeed.idShutterSpeed = exiflinkpicture.idShutterSpeed " +
-                                                          "LEFT JOIN focalLength ON focalLength.idFocalLength = exiflinkpicture.idFocalLength " +
-                                                          "LEFT JOIN focalLength35mm ON focalLength35mm.idFocalLength35mm = exiflinkpicture.idFocalLength35mm;");
+                                                          "LEFT JOIN exifdata ON picture.idPicture = exifdata.idPicture " +//use using!
+                                                          "LEFT JOIN camera ON camera.idCamera = exifdata.idCamera " +
+                                                          "LEFT JOIN lens ON lens.idLens = exifdata.idLens " +
+                                                          "LEFT JOIN orientation ON orientation.idOrientation = exifdata.idOrientation " +
+                                                          "LEFT JOIN flash ON flash.idFlash = exifdata.idFlash " +
+                                                          "LEFT JOIN meteringmode ON meteringmode.idMeteringMode = exifdata.idMeteringMode " +
+                                                          "LEFT JOIN country ON country.idCountry = exifdata.idCountry " +
+                                                          "LEFT JOIN state ON state.idState = exifdata.idState " +
+                                                          "LEFT JOIN city ON city.idCity = exifdata.idCity " +
+                                                          "LEFT JOIN sublocation ON sublocation.idSublocation = exifdata.idSublocation " +
+                                                          "LEFT JOIN exposureprogram ON exposureprogram.idExposureProgram = exifdata.idExposureProgram " +
+                                                          "LEFT JOIN exposuremode ON exposuremode.idExposureMode = exifdata.idExposureMode " +
+                                                          "LEFT JOIN sensingmethod ON sensingmethod.idSensingMethod = exifdata.idSensingMethod " +
+                                                          "LEFT JOIN scenetype ON scenetype.idSceneType = exifdata.idSceneType " +
+                                                          "LEFT JOIN scenecapturetype ON scenecapturetype.idSceneCaptureType = exifdata.idSceneCaptureType " +
+                                                          "LEFT JOIN whitebalance ON whitebalance.idWhiteBalance = exifdata.idWhiteBalance " +
+                                                          "LEFT JOIN author ON author.idAuthor = exifdata.idAuthor " +
+                                                          "LEFT JOIN byline ON byline.idByline = exifdata.idByline " +
+                                                          "LEFT JOIN software ON software.idSoftware = exifdata.idSoftware " +
+                                                          "LEFT JOIN usercomment ON usercomment.idUserComment = exifdata.idUserComment " +
+                                                          "LEFT JOIN copyright ON copyright.idCopyright = exifdata.idCopyright " +
+                                                          "LEFT JOIN copyrightnotice ON copyrightnotice.idCopyrightNotice = exifdata.idCopyrightNotice " +
+                                                          "LEFT JOIN iso ON iso.idISO = exifdata.idISO " +
+                                                          "LEFT JOIN exposureTime ON exposureTime.idExposureTime = exifdata.idExposureTime " +
+                                                          "LEFT JOIN exposureCompensation ON exposureCompensation.idExposureCompensation = exifdata.idExposureCompensation " +
+                                                          "LEFT JOIN fStop ON fStop.idFStop = exifdata.idFStop " +
+                                                          "LEFT JOIN shutterSpeed ON shutterSpeed.idShutterSpeed = exifdata.idShutterSpeed " +
+                                                          "LEFT JOIN focalLength ON focalLength.idFocalLength = exifdata.idFocalLength " +
+                                                          "LEFT JOIN focalLength35mm ON focalLength35mm.idFocalLength35mm = exifdata.idFocalLength35mm;");
 
       DatabaseUtility.AddView(m_db, "picturekeywords", "CREATE VIEW picturekeywords AS " +
                                                        "SELECT picture.*, keyword.strKeyword FROM picture " +
@@ -532,7 +531,7 @@ namespace MediaPortal.Picture.Database
 
         try
         {
-          string strSQL = String.Format("INSERT OR REPLACE INTO exiflinkpicture (idPicture, " +
+          string strSQL = String.Format("INSERT OR REPLACE INTO exifdata (idPicture, " +
                                                                          "idCamera, " +
                                                                          "idLens, " +
                                                                          "idOrientation, " +
