@@ -687,10 +687,6 @@ namespace MediaPortal.Picture.Database
       {
         return -1;
       }
-      if (null == m_db)
-      {
-        return -1;
-      }
       if (string.IsNullOrWhiteSpace(make))
       {
         make = string.Empty;
@@ -734,10 +730,6 @@ namespace MediaPortal.Picture.Database
       {
         return -1;
       }
-      if (null == m_db)
-      {
-        return -1;
-      }
 
       try
       {
@@ -774,10 +766,6 @@ namespace MediaPortal.Picture.Database
     private int AddFlash(string id, string name)
     {
       if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
       {
         return -1;
       }
@@ -820,10 +808,6 @@ namespace MediaPortal.Picture.Database
       {
         return -1;
       }
-      if (null == m_db)
-      {
-        return -1;
-      }
 
       try
       {
@@ -862,10 +846,6 @@ namespace MediaPortal.Picture.Database
     private int AddCountry(string code, string name)
     {
       if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
       {
         return -1;
       }
@@ -937,10 +917,6 @@ namespace MediaPortal.Picture.Database
       {
         return;
       }
-      if (null == m_db)
-      {
-        return;
-      }
 
       try
       {
@@ -970,10 +946,6 @@ namespace MediaPortal.Picture.Database
     private string GetExifDBKeywords(int idPicture)
     {
       if (idPicture < 1)
-      {
-        return string.Empty;
-      }
-      if (m_db == null)
       {
         return string.Empty;
       }
@@ -1810,11 +1782,6 @@ namespace MediaPortal.Picture.Database
 
     private void BeginTransaction()
     {
-      if (m_db == null)
-      {
-        return;
-      }
-
       try
       {
         m_db.Execute("BEGIN");
@@ -1828,11 +1795,6 @@ namespace MediaPortal.Picture.Database
 
     private void CommitTransaction()
     {
-      if (m_db == null)
-      {
-        return;
-      }
-
       try
       {
         m_db.Execute("COMMIT");
@@ -1846,11 +1808,6 @@ namespace MediaPortal.Picture.Database
 
     private void RollbackTransaction()
     {
-      if (m_db == null)
-      {
-        return;
-      }
-
       try
       {
         m_db.Execute("ROLLBACK");
