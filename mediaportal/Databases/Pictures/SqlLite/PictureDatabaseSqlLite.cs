@@ -354,40 +354,40 @@ namespace MediaPortal.Picture.Database
                                                           "strSceneCaptureType, strWhiteBalance, strAuthor, strByLine, strSoftware, strUserComment, strCopyright, strCopyrightNotice, " +
                                                           "iImageWidth||'x'||iImageHeight as strImageDimension, iImageXReso||'x'||iImageYReso as strImageResolution " +
                                                           "FROM picture " +
-                                                          "LEFT JOIN exifdata ON picture.idPicture = exifdata.idPicture " +//use using!
-                                                          "LEFT JOIN camera ON camera.idCamera = exifdata.idCamera " +
-                                                          "LEFT JOIN lens ON lens.idLens = exifdata.idLens " +
-                                                          "LEFT JOIN orientation ON orientation.idOrientation = exifdata.idOrientation " +
-                                                          "LEFT JOIN flash ON flash.idFlash = exifdata.idFlash " +
-                                                          "LEFT JOIN meteringmode ON meteringmode.idMeteringMode = exifdata.idMeteringMode " +
-                                                          "LEFT JOIN country ON country.idCountry = exifdata.idCountry " +
-                                                          "LEFT JOIN state ON state.idState = exifdata.idState " +
-                                                          "LEFT JOIN city ON city.idCity = exifdata.idCity " +
-                                                          "LEFT JOIN sublocation ON sublocation.idSublocation = exifdata.idSublocation " +
-                                                          "LEFT JOIN exposureprogram ON exposureprogram.idExposureProgram = exifdata.idExposureProgram " +
-                                                          "LEFT JOIN exposuremode ON exposuremode.idExposureMode = exifdata.idExposureMode " +
-                                                          "LEFT JOIN sensingmethod ON sensingmethod.idSensingMethod = exifdata.idSensingMethod " +
-                                                          "LEFT JOIN scenetype ON scenetype.idSceneType = exifdata.idSceneType " +
-                                                          "LEFT JOIN scenecapturetype ON scenecapturetype.idSceneCaptureType = exifdata.idSceneCaptureType " +
-                                                          "LEFT JOIN whitebalance ON whitebalance.idWhiteBalance = exifdata.idWhiteBalance " +
-                                                          "LEFT JOIN author ON author.idAuthor = exifdata.idAuthor " +
-                                                          "LEFT JOIN byline ON byline.idByline = exifdata.idByline " +
-                                                          "LEFT JOIN software ON software.idSoftware = exifdata.idSoftware " +
-                                                          "LEFT JOIN usercomment ON usercomment.idUserComment = exifdata.idUserComment " +
-                                                          "LEFT JOIN copyright ON copyright.idCopyright = exifdata.idCopyright " +
-                                                          "LEFT JOIN copyrightnotice ON copyrightnotice.idCopyrightNotice = exifdata.idCopyrightNotice " +
-                                                          "LEFT JOIN iso ON iso.idISO = exifdata.idISO " +
-                                                          "LEFT JOIN exposureTime ON exposureTime.idExposureTime = exifdata.idExposureTime " +
-                                                          "LEFT JOIN exposureCompensation ON exposureCompensation.idExposureCompensation = exifdata.idExposureCompensation " +
-                                                          "LEFT JOIN fStop ON fStop.idFStop = exifdata.idFStop " +
-                                                          "LEFT JOIN shutterSpeed ON shutterSpeed.idShutterSpeed = exifdata.idShutterSpeed " +
-                                                          "LEFT JOIN focalLength ON focalLength.idFocalLength = exifdata.idFocalLength " +
-                                                          "LEFT JOIN focalLength35mm ON focalLength35mm.idFocalLength35mm = exifdata.idFocalLength35mm;");
+                                                          "LEFT JOIN exifdata USING (idPicture) " +
+                                                          "LEFT JOIN camera USING (idCamera) " +
+                                                          "LEFT JOIN lens USING (idLens) " +
+                                                          "LEFT JOIN orientation USING (idOrientation) " +
+                                                          "LEFT JOIN flash USING (idFlash) " +
+                                                          "LEFT JOIN meteringmode USING (idMeteringMode) " +
+                                                          "LEFT JOIN country USING (idCountry) " +
+                                                          "LEFT JOIN state USING (idState) " +
+                                                          "LEFT JOIN city USING (idCity) " +
+                                                          "LEFT JOIN sublocation USING (idSublocation) " +
+                                                          "LEFT JOIN exposureprogram USING (idExposureProgram) " +
+                                                          "LEFT JOIN exposuremode USING (idExposureMode) " +
+                                                          "LEFT JOIN sensingmethod USING (idSensingMethod) " +
+                                                          "LEFT JOIN scenetype USING (idSceneType) " +
+                                                          "LEFT JOIN scenecapturetype USING (idSceneCaptureType) " +
+                                                          "LEFT JOIN whitebalance USING (idWhiteBalance) " +
+                                                          "LEFT JOIN author USING (idAuthor) " +
+                                                          "LEFT JOIN byline USING (idByline) " +
+                                                          "LEFT JOIN software USING (idSoftware) " +
+                                                          "LEFT JOIN usercomment USING (idUserComment) " +
+                                                          "LEFT JOIN copyright USING (idCopyright) " +
+                                                          "LEFT JOIN copyrightnotice USING (idCopyrightNotice) " +
+                                                          "LEFT JOIN iso USING (idISO) " +
+                                                          "LEFT JOIN exposureTime USING (idExposureTime) " +
+                                                          "LEFT JOIN exposureCompensation USING (idExposureCompensation) " +
+                                                          "LEFT JOIN fStop USING (idFStop) " +
+                                                          "LEFT JOIN shutterSpeed USING (idShutterSpeed) " +
+                                                          "LEFT JOIN focalLength USING (idFocalLength) " +
+                                                          "LEFT JOIN focalLength35mm USING (idFocalLength35mm);");
 
       DatabaseUtility.AddView(m_db, "picturekeywords", "CREATE VIEW picturekeywords AS " +
                                                        "SELECT picture.*, keyword.strKeyword FROM picture " +
-                                                       "JOIN keywordslinkpicture ON picture.idPicture = keywordslinkpicture.idPicture " + //use using!
-                                                       "JOIN keyword ON keywordslinkpicture.idKeyword = keyword.idKeyword;");
+                                                       "JOIN keywordslinkpicture USING (idPicture) " +
+                                                       "JOIN keyword USING (idKeyword);");
       #endregion
 
       return true;
