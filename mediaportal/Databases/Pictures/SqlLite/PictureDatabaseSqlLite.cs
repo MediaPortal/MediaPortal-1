@@ -1175,6 +1175,7 @@ namespace MediaPortal.Picture.Database
       return foundValue;
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public string GetDateTaken(string strPicture)
     {
       if (m_db == null)
@@ -1229,6 +1230,7 @@ namespace MediaPortal.Picture.Database
       return DateTime.MinValue;
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public int GetRotation(string strPicture)
     {
       if (m_db == null)
