@@ -320,6 +320,8 @@ namespace MediaPortal.GUI.Pictures
 
           // [Exif IFD0] Resolution Unit: Resolution Unit: 2 - Inch
           // = exifDirectory.GetDescription(ExifDirectoryBase.TagResolutionUnit);
+          MyMetadata.Resolution.Width = exifDirectory.GetInt32(ExifDirectoryBase.TagXResolution);
+          MyMetadata.Resolution.Height = exifDirectory.GetInt32(ExifDirectoryBase.TagYResolution);
         }
 
         foreach (var subIfdDirectory in directories.OfType<ExifSubIfdDirectory>())
