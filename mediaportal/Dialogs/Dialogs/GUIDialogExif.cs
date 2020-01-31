@@ -22,6 +22,7 @@ using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
 using MediaPortal.Picture.Database;
+using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.Dialogs
@@ -150,13 +151,13 @@ namespace MediaPortal.Dialogs
       }
 
       int iRotate = PictureDatabase.GetRotation(FileName);
-      m_pTexture = Util.Picture.Load(FileName, iRotate, 1024, 1024, true, false, out m_iTextureWidth,
-                                     out m_iTextureHeight);
+      m_pTexture = Util.Picture.Load(FileName, iRotate, (int)Thumbs.LargeThumbSize.uhd, (int)Thumbs.LargeThumbSize.uhd, 
+                                     true, false, out m_iTextureWidth, out m_iTextureHeight);
 
-      ExifMetadata.Metadata metaData = PictureDatabase.GetExifDBData(FileName);
+      ExifMetadata.Metadata metaData = PictureDatabase.GetExifFromDB(FileName);
       if (metaData.IsEmpty())
       {
-        metaData = PictureDatabase.GetExifData(FileName);
+        metaData = PictureDatabase.GetExifFromFile(FileName);
       }
       if (!metaData.IsEmpty())
       {
@@ -194,10 +195,10 @@ namespace MediaPortal.Dialogs
       GUIGraphicsContext.Correct(ref x, ref y);
 
       GUIFontManager.Present();
-      GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight, imgPicture.Width, imgPicture.Height, out width,
-                                       out height);
-      Util.Picture.RenderImage(m_pTexture, (int)x, (int)y, width, height, m_iTextureWidth, m_iTextureHeight, 0, 0,
-                               true);
+      GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight, imgPicture.Width, imgPicture.Height, 
+                                       out width, out height);
+      Util.Picture.RenderImage(m_pTexture, (int)x, (int)y, width, height, m_iTextureWidth, m_iTextureHeight, 
+                               0, 0, true);
     }
   }
 }
