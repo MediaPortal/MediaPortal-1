@@ -132,7 +132,6 @@ namespace MediaPortal.Picture.Database
       #endregion
 
       #region Indexes
-      DatabaseUtility.AddIndex(m_db, "idxpicture_idPicture", "CREATE INDEX idxpicture_idPicture ON picture(idPicture)");
       DatabaseUtility.AddIndex(m_db, "idxpicture_strFile", "CREATE INDEX idxpicture_strFile ON picture (strFile ASC)");
       DatabaseUtility.AddIndex(m_db, "idxpicture_strDateTaken", "CREATE INDEX idxpicture_strDateTaken ON picture (strDateTaken ASC)");
       DatabaseUtility.AddIndex(m_db, "idxpicture_strDateTaken_Year", "CREATE INDEX idxpicture_strDateTaken_Year ON picture (SUBSTR(strDateTaken,1,4))");
@@ -199,13 +198,13 @@ namespace MediaPortal.Picture.Database
       DatabaseUtility.AddTable(m_db, "focalLength35mm",
                                "CREATE TABLE focalLength35mm (idFocalLength35mm INTEGER PRIMARY KEY, strFocalLength35mm TEXT);");
 
-      DatabaseUtility.AddTable(m_db, "keywords",
-                               "CREATE TABLE keywords (idKeyword INTEGER PRIMARY KEY, strKeyword TEXT);");
+      DatabaseUtility.AddTable(m_db, "keyword",
+                               "CREATE TABLE keyword (idKeyword INTEGER PRIMARY KEY, strKeyword TEXT);");
       DatabaseUtility.AddTable(m_db, "keywordslinkpicture",
-                               "CREATE TABLE keywordslinkpicture (idKeyword INTEGER REFERENCES keywords(idKeyword) ON DELETE CASCADE, idPicture INTEGER REFERENCES picture(idPicture) ON DELETE CASCADE);");
+                               "CREATE TABLE keywordslinkpicture (idKeyword INTEGER REFERENCES keyword(idKeyword) ON DELETE CASCADE, idPicture INTEGER REFERENCES picture(idPicture) ON DELETE CASCADE);");
 
       DatabaseUtility.AddTable(m_db, "exiflinkpicture",
-                               "CREATE TABLE exiflinkpicture (idPicture INTEGER REFERENCES picture(idPicture) ON DELETE CASCADE, " +
+                               "CREATE TABLE exiflinkpicture (idPicture INTEGER PRIMARY KEY REFERENCES picture(idPicture) ON DELETE CASCADE, " +
                                                        "idCamera INTEGER REFERENCES camera(idCamera) ON DELETE CASCADE, " +
                                                        "idLens INTEGER REFERENCES lens(idLens) ON DELETE CASCADE, " +
                                                        "idISO INTEGER REFERENCES iso(idIso) ON DELETE CASCADE, " +
@@ -268,13 +267,12 @@ namespace MediaPortal.Picture.Database
       DatabaseUtility.AddIndex(m_db, "idxfocalLength_idFocalLength", "CREATE INDEX idxfocalLength_idFocalLength ON focalLength(idFocalLength);");
       DatabaseUtility.AddIndex(m_db, "idxfocalLength35mm_idFocalLength35mm", "CREATE INDEX idxfocalLength35mm_idFocalLength35mm ON focalLength35mm(idFocalLength35mm);");
 
-      DatabaseUtility.AddIndex(m_db, "idxkeywords_idKeyword", "CREATE INDEX idxkeywords_idKeyword ON keywords(idKeyword);");
-      DatabaseUtility.AddIndex(m_db, "idxkeywords_strKeyword", "CREATE INDEX idxkeywords_strKeyword ON keywords(strKeyword);");
+      DatabaseUtility.AddIndex(m_db, "idxkeyword_idKeyword", "CREATE INDEX idxkeyword_idKeyword ON keyword(idKeyword);");
+      DatabaseUtility.AddIndex(m_db, "idxkeyword_strKeyword", "CREATE INDEX idxkeyword_strKeyword ON keyword(strKeyword);");
 
       DatabaseUtility.AddIndex(m_db, "idxkeywordslinkpicture_idKeyword", "CREATE INDEX idxkeywordslinkpicture_idKeyword ON keywordslinkpicture(idKeyword);");
       DatabaseUtility.AddIndex(m_db, "idxkeywordslinkpicture_idPicture", "CREATE INDEX idxkeywordslinkpicture_idPicture ON keywordslinkpicture(idPicture);");
 
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idPicture", "CREATE INDEX idxexiflinkpicture_idPicture ON exiflinkpicture(idPicture);");
       DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idCamera", "CREATE INDEX idxexiflinkpicture_idCamera ON exiflinkpicture(idCamera);");
       DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idLens", "CREATE INDEX idxexiflinkpicture_idLens ON exiflinkpicture(idLens);");
       DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idExif", "CREATE INDEX idxexiflinkpicture_idExif ON exiflinkpicture(idExif);");
@@ -343,7 +341,7 @@ namespace MediaPortal.Picture.Database
       DatabaseUtility.AddTrigger(m_db, "Delete_ExtraKeywords",
             "CREATE TRIGGER Delete_ExtraKeywords AFTER DELETE ON keywordslinkpicture " +
             "BEGIN " +
-            "  DELETE FROM keywords WHERE idKeyword NOT IN (SELECT DISTINCT idKeyword FROM keywordslinkpicture); " +
+            "  DELETE FROM keyword WHERE idKeyword NOT IN (SELECT DISTINCT idKeyword FROM keywordslinkpicture); " +
             "END;");
       #endregion
 
@@ -388,9 +386,9 @@ namespace MediaPortal.Picture.Database
                                                           "LEFT JOIN focalLength35mm ON focalLength35mm.idFocalLength35mm = exiflinkpicture.idFocalLength35mm;");
 
       DatabaseUtility.AddView(m_db, "picturekeywords", "CREATE VIEW picturekeywords AS " +
-                                                       "SELECT picture.*, keywords.strKeyword FROM picture " +
-                                                       "JOIN keywordslinkpicture ON picture.idPicture = keywordslinkpicture.idPicture " +
-                                                       "JOIN keywords ON keywordslinkpicture.idKeyword = keywords.idKeyword;");
+                                                       "SELECT picture.*, keyword.strKeyword FROM picture " +
+                                                       "JOIN keywordslinkpicture ON picture.idPicture = keywordslinkpicture.idPicture " + //use using!
+                                                       "JOIN keyword ON keywordslinkpicture.idKeyword = keyword.idKeyword;");
       #endregion
 
       return true;
@@ -1515,7 +1513,7 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT DISTINCT strKeyword FROM keywords WHERE strKeyword <> 'Private' ORDER BY 1";
+        string strSQL = "SELECT DISTINCT strKeyword FROM keyword WHERE strKeyword <> 'Private' ORDER BY 1";
         try
         {
           SQLiteResultSet result = m_db.Execute(strSQL);
