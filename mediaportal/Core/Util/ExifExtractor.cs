@@ -320,11 +320,18 @@ namespace MediaPortal.GUI.Pictures
 
           // [Exif IFD0] Resolution Unit: Resolution Unit: 2 - Inch
           // = exifDirectory.GetDescription(ExifDirectoryBase.TagResolutionUnit);
-          MyMetadata.Resolution.Width = exifDirectory.GetInt32(ExifDirectoryBase.TagXResolution);
-          MyMetadata.Resolution.Height = exifDirectory.GetInt32(ExifDirectoryBase.TagYResolution);
+          if (exifDirectory.GetDescription(ExifDirectoryBase.TagXResolution) != null && exifDirectory.GetDescription(ExifDirectoryBase.TagYResolution) != null)
+          {
+            MyMetadata.Resolution.Width = exifDirectory.GetInt32(ExifDirectoryBase.TagXResolution);
+            MyMetadata.Resolution.Height = exifDirectory.GetInt32(ExifDirectoryBase.TagYResolution);
+          }
         }
 
-        foreach (var subIfdDirectory in directories.OfType<ExifSubIfdDirectory>())
+        DateTime dateTime = DateTime.MinValue;
+        DateTime dateTimeOriginal = DateTime.MinValue;
+
+        Directory subIfdDirectory = directories.OfType<ExifSubIfdDirectory>().Where((x) => x.TryGetDateTime(ExifDirectoryBase.TagDateTimeOriginal, out dateTimeOriginal)).FirstOrDefault();
+        if (subIfdDirectory != null)
         {
           // [Exif SubIFD] ISO Speed Ratings: ISO: 200
           SetStuff(ref MyMetadata.ISO, subIfdDirectory, ExifDirectoryBase.TagIsoEquivalent);
@@ -426,8 +433,6 @@ namespace MediaPortal.GUI.Pictures
           SetStuff(ref MyMetadata.Altitude, gpsDirectory, GpsDirectory.TagAltitude);
         }
 
-        DateTime dateTime = DateTime.MinValue;
-        DateTime dateTimeOriginal = DateTime.MinValue;
         foreach (var directory in directories)
         {
           if (MyMetadata.ImageDimensions.IsEmpty)
