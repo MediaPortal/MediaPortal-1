@@ -1520,10 +1520,10 @@ namespace MediaPortal.Util
       return 0; // not rotated
     }
 
-    public static void GetImageSizes(string strFile, ref string strResolution, ref string strDimensions)
+    public static void GetImageSizes(string strFile, out Size resolution, out Size dimensions)
     {
-      strResolution = string.Empty;
-      strDimensions = string.Empty;
+      resolution = Size.Empty;
+      dimensions = Size.Empty;
 
       if (!File.Exists(strFile))
       {
@@ -1532,8 +1532,9 @@ namespace MediaPortal.Util
 
       using (Image MyImage = Image.FromFile(strFile))
       {
-        strResolution = MyImage.HorizontalResolution.ToString() + "x" + MyImage.VerticalResolution.ToString();
-        strDimensions = MyImage.Width.ToString() + "x" + MyImage.Height.ToString();
+        resolution.Width = Convert.ToInt32(MyImage.HorizontalResolution);
+        resolution.Height = Convert.ToInt32(MyImage.VerticalResolution);
+        dimensions = MyImage.Size;
       }
     }
   }

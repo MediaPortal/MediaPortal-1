@@ -252,6 +252,34 @@ namespace MediaPortal.Database
       return true;
     }
 
+    /// <summary>
+    /// Helper function to create a new trigger in the database
+    /// </summary>
+    /// <param name="triggerName">name of trigger</param>
+    /// <param name="strSQL">SQL command to create the new view</param>
+    /// <returns>true if view is created</returns>
+    public static void AddTrigger(SQLiteClient dbHandle, string triggerName, string strSQL)
+    {
+      SQLiteResultSet results;
+      results =
+        dbHandle.Execute("SELECT name FROM sqlite_master WHERE name='" + triggerName + "' and type='trigger' " +
+                         "UNION " +
+                         "SELECT name FROM sqlite_temp_master WHERE name ='" + triggerName + "' and type='trigger'");
+      if (results != null && results.Rows.Count == 1)
+      {
+        return;
+      }
+      try
+      {
+        dbHandle.Execute(strSQL);
+      }
+      catch (SQLiteException ex)
+      {
+        Log.Error("DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message, ex.StackTrace, strSQL);
+      }
+      return;
+    }
+
     public static int GetAsInt(SQLiteResultSet results, int iRecord, string strColum)
     {
       string result = Get(results, iRecord, strColum);

@@ -40,9 +40,9 @@ namespace MediaPortal.GUI.Pictures
 
   public class ExifMetadata : IDisposable
   {
-    public ExifMetadata() {}
+    public ExifMetadata() { }
 
-    public void Dispose() {}
+    public void Dispose() { }
 
     public struct MetadataItem
     {
@@ -52,7 +52,7 @@ namespace MediaPortal.GUI.Pictures
       public string Value;
       public string DisplayValue;
 
-      public bool IsEmpty ()
+      public bool IsEmpty()
       {
         return string.IsNullOrWhiteSpace(DisplayValue);
       }
@@ -73,7 +73,7 @@ namespace MediaPortal.GUI.Pictures
       public MetadataItem MeteringMode;
       public MetadataItem ISO;
       public MetadataItem Flash;
-      public MetadataItem Resolution;
+      public Size Resolution;
       public MetadataItem WhiteBalance;
       public MetadataItem SensingMethod;
       public MetadataItem SceneType;
@@ -95,24 +95,24 @@ namespace MediaPortal.GUI.Pictures
       public MetadataItem Latitude;
       public MetadataItem Longitude;
       public MetadataItem Altitude;
-      public MetadataItem ImageDimensions;
+      public Size ImageDimensions;
       public MetadataItem Keywords;
 
-      public bool IsEmpty ()
+      public bool IsEmpty()
       {
         Type type = typeof(Metadata);
         bool result = true;
 
         foreach (FieldInfo prop in type.GetFields())
         {
-            if (prop.Name == "DatePictureTaken" || prop.Name == "Orientation" ||
-                prop.Name == "ImageDimensions" || prop.Name == "Resolution")
-            {
-                continue;
-            }
-            Type fieldtype = prop.FieldType;
-            MethodInfo info = fieldtype.GetMethod("IsEmpty");
-            result &= (bool)info.Invoke(prop.GetValue(this), null);
+          if (prop.Name == "DatePictureTaken" || prop.Name == "Orientation" ||
+              prop.Name == "ImageDimensions" || prop.Name == "Resolution")
+          {
+            continue;
+          }
+          Type fieldtype = prop.FieldType;
+          MethodInfo info = fieldtype.GetMethod("IsEmpty");
+          result &= (bool)info.Invoke(prop.GetValue(this), null);
         }
         return result;
       }
@@ -136,7 +136,7 @@ namespace MediaPortal.GUI.Pictures
               prop.Name == "CountryCode" || prop.Name == "CountryName" ||
               prop.Name == "ProvinceOrState" || prop.Name == "City" ||
               prop.Name == "SubLocation" || prop.Name == "Keywords" ||
-              prop.Name == "Comment" || 
+              prop.Name == "Comment" ||
               prop.Name == "Copyright" || prop.Name == "CopyrightNotice")
           {
             continue;
@@ -154,19 +154,41 @@ namespace MediaPortal.GUI.Pictures
         Type type = typeof(Metadata);
         foreach (FieldInfo prop in type.GetFields())
         {
-          string caption = ((MetadataItem)prop.GetValue(this)).Caption;
-          string name = ((MetadataItem)prop.GetValue(this)).Name;
-          string localcaption = prop.Name.ToCaption() ?? string.Empty;
-
-          string value = ((MetadataItem)prop.GetValue(this)).DisplayValue;
+          string value;
+          switch (prop.Name)
+          {
+            case "ImageDimensions": value = "Dimensions: "+ImageDimensionsAsString(); break;
+            case "Resolution": value = "Resolution: " + ResolutionAsString(); break;
+            default:
+              MetadataItem metadataItem = ((MetadataItem)prop.GetValue(this));
+              string caption = metadataItem.Caption;
+              string name = metadataItem.Name;
+              string localcaption = prop.Name.ToCaption() ?? string.Empty;
+              value = ((MetadataItem)prop.GetValue(this)).DisplayValue; 
+              if (!string.IsNullOrEmpty(value))
+                value = (!string.IsNullOrEmpty(localcaption) ? localcaption : (!string.IsNullOrEmpty(caption) ? caption : name)) + ": " + value;
+              break;
+          }
           if (!string.IsNullOrEmpty(value))
           {
-            value = (!string.IsNullOrEmpty(localcaption) ? localcaption : (!string.IsNullOrEmpty(caption) ? caption : name)) + ": " + value;
             full = full + value + "\n";
           }
           GUIPropertyManager.SetProperty("#pictures.exif." + prop.Name.ToLower(), value);
         }
         GUIPropertyManager.SetProperty("#pictures.exif.full", full);
+
+        GUIPropertyManager.SetProperty("#pictures.haveexif", IsExifEmpty() ? "false" : "true");
+        GUIPropertyManager.SetProperty("#pictures.geotagged", (string.IsNullOrEmpty(Latitude.DisplayValue) && string.IsNullOrEmpty(Longitude.DisplayValue)) ? "false" : "true");
+      }
+
+      public string ImageDimensionsAsString()
+      {
+        return ImageDimensions.Width.ToString() + "x" + ImageDimensions.Height.ToString();
+      }
+
+      public string ResolutionAsString()
+      {
+        return Resolution.Width.ToString() + "x" + Resolution.Height.ToString();
       }
     }
 
@@ -192,86 +214,80 @@ namespace MediaPortal.GUI.Pictures
           case ExifDirectoryBase.TagOrientation:
           case ExifDirectoryBase.TagMeteringMode:
           case ExifDirectoryBase.TagFlash:
-          {
-            if (directory.TryGetInt32(tag, out var intValue))
             {
-              item.Value = intValue.ToString();
-            }
-            else
-            {
-              item.Value = "0";
-            }
-            break;
-          }
-          case ExifDirectoryBase.TagDateTime:
-          case ExifDirectoryBase.TagDateTimeOriginal:
-          {
-            if (directory.TryGetDateTime(tag, out var dateTime))
-            {
-              item.Value = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
-              item.DisplayValue = dateTime.ToString(System.Threading.Thread.CurrentThread.CurrentCulture);
-            }
-            break;
-          }
-          case ExifDirectoryBase.TagLensModel:
-          {
-            string lensMake = directory.GetDescription(ExifDirectoryBase.TagLensMake);
-            if (!string.IsNullOrEmpty(lensMake))
-            {
-              item.Value = lensMake;
-            }
-            break;
-          }
-          case IptcDirectory.TagKeywords:
-          {
-            string keywords = string.Empty;
-            var keywordsArray = directory.GetStringArray(tag);
-            if (keywordsArray != null)
-            {
-              foreach (string keyword in keywordsArray)
+              Int32 intValue;
+              if (directory.TryGetInt32(tag, out intValue))
               {
-                if (!string.IsNullOrWhiteSpace(keyword))
+                item.Value = intValue.ToString();
+              }
+              else
+              {
+                item.Value = "0";
+              }
+              break;
+            }
+          case ExifDirectoryBase.TagLensModel:
+            {
+              string lensMake = directory.GetDescription(ExifDirectoryBase.TagLensMake);
+              if (!string.IsNullOrEmpty(lensMake))
+              {
+                item.Value = lensMake;
+              }
+              break;
+            }
+          case IptcDirectory.TagKeywords:
+            {
+              string keywords = string.Empty;
+              var keywordsArray = directory.GetStringArray(tag);
+              if (keywordsArray != null)
+              {
+                foreach (string keyword in keywordsArray)
                 {
-                  keywords += keyword.Trim() + "; ";
+                  if (!string.IsNullOrWhiteSpace(keyword))
+                  {
+                    keywords += keyword.Trim() + "; ";
+                  }
                 }
               }
+              if (!string.IsNullOrWhiteSpace(keywords))
+              {
+                item.DisplayValue = keywords;
+              }
+              break;
             }
-            if (!string.IsNullOrWhiteSpace(keywords))
-            {
-              item.DisplayValue = keywords;
-            }
-            break;
-          }
           case GpsDirectory.TagLatitude:
-          {
-            string latitudeRef = directory.GetDescription(GpsDirectory.TagLatitudeRef);
-            if (!string.IsNullOrEmpty(latitudeRef))
             {
-              item.DisplayValue = latitudeRef + " " +item.DisplayValue;
+              string latitudeRef = directory.GetDescription(GpsDirectory.TagLatitudeRef);
+              if (!string.IsNullOrEmpty(latitudeRef))
+              {
+                item.DisplayValue = latitudeRef + " " + item.DisplayValue;
+              }
+              break;
             }
-            break;
-          }
           case GpsDirectory.TagLongitude:
-          {
-            string longitudeRef = directory.GetDescription(GpsDirectory.TagLongitudeRef);
-            if (!string.IsNullOrEmpty(longitudeRef))
             {
-              item.DisplayValue = longitudeRef + " " +item.DisplayValue;
+              string longitudeRef = directory.GetDescription(GpsDirectory.TagLongitudeRef);
+              if (!string.IsNullOrEmpty(longitudeRef))
+              {
+                item.DisplayValue = longitudeRef + " " + item.DisplayValue;
+              }
+              break;
             }
-            break;
-          }
           case GpsDirectory.TagAltitude:
-          {
-            string altitudeRef = directory.GetDescription(GpsDirectory.TagAltitudeRef);
-            if (!string.IsNullOrEmpty(altitudeRef))
             {
-              item.DisplayValue = altitudeRef + " " +item.DisplayValue;
+              string altitudeRef = directory.GetDescription(GpsDirectory.TagAltitudeRef);
+              if (!string.IsNullOrEmpty(altitudeRef))
+              {
+                item.DisplayValue = altitudeRef + " " + item.DisplayValue;
+              }
+              break;
             }
-            break;
-          }
         }
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("SetStuff " + ex.Message);
+      }
     }
 
     public Metadata GetExifMetadata(string photoName)
@@ -287,9 +303,6 @@ namespace MediaPortal.GUI.Pictures
 
         if (exifDirectory != null)
         {
-          // DateTime
-          SetStuff(ref MyMetadata.DatePictureTaken, exifDirectory, ExifDirectoryBase.TagDateTime);
-
           // [Exif IFD0] Make: Equipment Make: NIKON CORPORATION
           SetStuff(ref MyMetadata.EquipmentMake, exifDirectory, ExifDirectoryBase.TagMake);
 
@@ -310,75 +323,74 @@ namespace MediaPortal.GUI.Pictures
 
           // [Exif IFD0] Resolution Unit: Resolution Unit: 2 - Inch
           // = exifDirectory.GetDescription(ExifDirectoryBase.TagResolutionUnit);
-        }
-
-        foreach (var subIfdDirectory in directories.OfType<ExifSubIfdDirectory>())
-        {
-          if (subIfdDirectory != null)
+          if (exifDirectory.GetDescription(ExifDirectoryBase.TagXResolution) != null && exifDirectory.GetDescription(ExifDirectoryBase.TagYResolution) != null)
           {
-            // [Exif SubIFD] Date/Time Original: Date Picture Taken: 23/11/2014 17:09:41
-            string dateTime = subIfdDirectory.GetDescription(ExifDirectoryBase.TagDateTimeOriginal);
-            if (string.IsNullOrEmpty(dateTime))
-            {
-              continue;
-            }
-            SetStuff(ref MyMetadata.DatePictureTaken, subIfdDirectory, ExifDirectoryBase.TagDateTimeOriginal);
-
-            // [Exif SubIFD] ISO Speed Ratings: ISO: 200
-            SetStuff(ref MyMetadata.ISO, subIfdDirectory, ExifDirectoryBase.TagIsoEquivalent);
-
-            // [Exif SubIFD] Metering Mode: Metering Mode: 5 - Multi-segment
-            SetStuff(ref MyMetadata.MeteringMode, subIfdDirectory, ExifDirectoryBase.TagMeteringMode);
-
-            // [Exif SubIFD] Flash: Flash: 15 - Flash fired, compulsory flash mode, return light detected
-            SetStuff(ref MyMetadata.Flash, subIfdDirectory, ExifDirectoryBase.TagFlash);
-
-            // [Exif SubIFD] Exposure Time: Exposure Time: 1/60(s)
-            SetStuff(ref MyMetadata.ExposureTime, subIfdDirectory, ExifDirectoryBase.TagExposureTime);
-
-            // [Exif SubIFD] Exposure Program: Exposure Program: 2 - Normal program
-            SetStuff(ref MyMetadata.ExposureProgram, subIfdDirectory, ExifDirectoryBase.TagExposureProgram);
-
-            // [Exif SubIFD] Exposure Mode:
-            SetStuff(ref MyMetadata.ExposureMode, subIfdDirectory, ExifDirectoryBase.TagExposureMode);
-
-            // [Exif SubIFD] Exposure Bias Value: Exposure Compensation: 0/6
-            SetStuff(ref MyMetadata.ExposureCompensation, subIfdDirectory, ExifDirectoryBase.TagExposureBias);
-
-            // [Exif SubIFD] F-Number: FStop: F4
-            SetStuff(ref MyMetadata.Fstop, subIfdDirectory, ExifDirectoryBase.TagFNumber);
-
-            // [Exif SubIFD] Shutter Speed Value: Shutter Speed: 5,906891 (5906891/1000000)
-            SetStuff(ref MyMetadata.ShutterSpeed, subIfdDirectory, ExifDirectoryBase.TagShutterSpeed);
-
-            // [Exif SubIFD] Sensing Method: 
-            SetStuff(ref MyMetadata.SensingMethod, subIfdDirectory, ExifDirectoryBase.TagSensingMethod);
-
-            // [Exif SubIFD] Scene Type:
-            SetStuff(ref MyMetadata.SceneType, subIfdDirectory, ExifDirectoryBase.TagSceneType);
-
-            // [Exif SubIFD] Scene Capture Type:
-            SetStuff(ref MyMetadata.SceneCaptureType, subIfdDirectory, ExifDirectoryBase.TagSceneCaptureType);
-
-            // [Exif SubIFD] White Balance Mode:
-            SetStuff(ref MyMetadata.WhiteBalance, subIfdDirectory, ExifDirectoryBase.TagWhiteBalanceMode);
-
-            // [Exif SubIFD] Lens Make: NIKON
-            // [Exif SubIFD] Lens Model: Lens Model: 35.0 mm f/1.8
-            SetStuff(ref MyMetadata.Lens, subIfdDirectory, ExifDirectoryBase.TagLensModel);
-
-            // [Exif SubIFD] Focal Length: Focal Length: 35 (350/10)
-            SetStuff(ref MyMetadata.FocalLength, subIfdDirectory, ExifDirectoryBase.TagFocalLength);
-
-            // [Exif SubIFD] Focal Length 35: Focal Length (35mm film): 52
-            SetStuff(ref MyMetadata.FocalLength35MM, subIfdDirectory, ExifDirectoryBase.Tag35MMFilmEquivFocalLength);
-
-            // [Exif SubIFD] User Comment: Comment: Copyright (C) by Andrew J.Swan
-            SetStuff(ref MyMetadata.Comment, subIfdDirectory, ExifDirectoryBase.TagUserComment);
+            MyMetadata.Resolution.Width = exifDirectory.GetInt32(ExifDirectoryBase.TagXResolution);
+            MyMetadata.Resolution.Height = exifDirectory.GetInt32(ExifDirectoryBase.TagYResolution);
           }
         }
 
-        GetMakerNoteLens(ref MyMetadata.Lens, directories) ;
+        DateTime dateTime = DateTime.MinValue;
+        DateTime dateTimeOriginal = DateTime.MinValue;
+
+        Directory subIfdDirectory = directories.OfType<ExifSubIfdDirectory>().Where((x) => x.TryGetDateTime(ExifDirectoryBase.TagDateTimeOriginal, out dateTimeOriginal)).FirstOrDefault();
+        if (subIfdDirectory != null)
+        {
+          // [Exif SubIFD] ISO Speed Ratings: ISO: 200
+          SetStuff(ref MyMetadata.ISO, subIfdDirectory, ExifDirectoryBase.TagIsoEquivalent);
+
+          // [Exif SubIFD] Metering Mode: Metering Mode: 5 - Multi-segment
+          SetStuff(ref MyMetadata.MeteringMode, subIfdDirectory, ExifDirectoryBase.TagMeteringMode);
+
+          // [Exif SubIFD] Flash: Flash: 15 - Flash fired, compulsory flash mode, return light detected
+          SetStuff(ref MyMetadata.Flash, subIfdDirectory, ExifDirectoryBase.TagFlash);
+
+          // [Exif SubIFD] Exposure Time: Exposure Time: 1/60(s)
+          SetStuff(ref MyMetadata.ExposureTime, subIfdDirectory, ExifDirectoryBase.TagExposureTime);
+
+          // [Exif SubIFD] Exposure Program: Exposure Program: 2 - Normal program
+          SetStuff(ref MyMetadata.ExposureProgram, subIfdDirectory, ExifDirectoryBase.TagExposureProgram);
+
+          // [Exif SubIFD] Exposure Mode:
+          SetStuff(ref MyMetadata.ExposureMode, subIfdDirectory, ExifDirectoryBase.TagExposureMode);
+
+          // [Exif SubIFD] Exposure Bias Value: Exposure Compensation: 0/6
+          SetStuff(ref MyMetadata.ExposureCompensation, subIfdDirectory, ExifDirectoryBase.TagExposureBias);
+
+          // [Exif SubIFD] F-Number: FStop: F4
+          SetStuff(ref MyMetadata.Fstop, subIfdDirectory, ExifDirectoryBase.TagFNumber);
+
+          // [Exif SubIFD] Shutter Speed Value: Shutter Speed: 5,906891 (5906891/1000000)
+          SetStuff(ref MyMetadata.ShutterSpeed, subIfdDirectory, ExifDirectoryBase.TagShutterSpeed);
+
+          // [Exif SubIFD] Sensing Method: 
+          SetStuff(ref MyMetadata.SensingMethod, subIfdDirectory, ExifDirectoryBase.TagSensingMethod);
+
+          // [Exif SubIFD] Scene Type:
+          SetStuff(ref MyMetadata.SceneType, subIfdDirectory, ExifDirectoryBase.TagSceneType);
+
+          // [Exif SubIFD] Scene Capture Type:
+          SetStuff(ref MyMetadata.SceneCaptureType, subIfdDirectory, ExifDirectoryBase.TagSceneCaptureType);
+
+          // [Exif SubIFD] White Balance Mode:
+          SetStuff(ref MyMetadata.WhiteBalance, subIfdDirectory, ExifDirectoryBase.TagWhiteBalanceMode);
+
+          // [Exif SubIFD] Lens Make: NIKON
+          // [Exif SubIFD] Lens Model: Lens Model: 35.0 mm f/1.8
+          SetStuff(ref MyMetadata.Lens, subIfdDirectory, ExifDirectoryBase.TagLensModel);
+
+          // [Exif SubIFD] Focal Length: Focal Length: 35 (350/10)
+          SetStuff(ref MyMetadata.FocalLength, subIfdDirectory, ExifDirectoryBase.TagFocalLength);
+
+          // [Exif SubIFD] Focal Length 35: Focal Length (35mm film): 52
+          SetStuff(ref MyMetadata.FocalLength35MM, subIfdDirectory, ExifDirectoryBase.Tag35MMFilmEquivFocalLength);
+
+          // [Exif SubIFD] User Comment: Comment: Copyright (C) by Andrew J.Swan
+          SetStuff(ref MyMetadata.Comment, subIfdDirectory, ExifDirectoryBase.TagUserComment);
+
+        }
+
+        GetMakerNoteLens(ref MyMetadata.Lens, directories);
 
         var iptcDirectory = directories.OfType<IptcDirectory>().FirstOrDefault();
         if (iptcDirectory != null)
@@ -424,9 +436,62 @@ namespace MediaPortal.GUI.Pictures
           SetStuff(ref MyMetadata.Altitude, gpsDirectory, GpsDirectory.TagAltitude);
         }
 
-        MyMetadata.Resolution.Caption = "Resolution ";
-        MyMetadata.ImageDimensions.Caption = "Dimensions";
-        Picture.GetImageSizes(photoName, ref MyMetadata.Resolution.DisplayValue, ref MyMetadata.ImageDimensions.DisplayValue);
+        foreach (var directory in directories)
+        {
+          if (MyMetadata.ImageDimensions.IsEmpty)
+          {
+            var wTag = directory.Tags.Where((x) => x.Name == "Image Width" || x.Name == "Exif Image Width").FirstOrDefault();
+            var hTag = directory.Tags.Where((x) => x.Name == "Image Height" || x.Name == "Exif Image Height").FirstOrDefault();
+            if (wTag != null && hTag != null)
+            {
+              MyMetadata.ImageDimensions.Width = directory.GetInt32(wTag.Type);
+              MyMetadata.ImageDimensions.Height = directory.GetInt32(hTag.Type);
+            }
+          }
+
+          if (MyMetadata.Resolution.IsEmpty)
+          {
+            var wTag = directory.Tags.Where((x) => x.Name == "X Resolution").FirstOrDefault();
+            var hTag = directory.Tags.Where((x) => x.Name == "Y Resolution").FirstOrDefault();
+            if (wTag != null && hTag != null)
+            {
+              MyMetadata.Resolution.Width = directory.GetInt32(wTag.Type);
+              MyMetadata.Resolution.Height = directory.GetInt32(hTag.Type);
+            }
+          }
+
+          if (dateTime == DateTime.MinValue)
+          {
+            var tag = directory.Tags.Where((x) => x.Name.StartsWith("Date/Time")).FirstOrDefault();
+            if (tag != null)
+            {
+              directory.TryGetDateTime(tag.Type, out dateTime);
+            }
+          }
+
+          if (dateTimeOriginal == DateTime.MinValue)
+          {
+            var tag = directory.Tags.Where((x) => x.Name.StartsWith("Date/Time Original")).FirstOrDefault();
+            if (tag != null)
+            {
+              directory.TryGetDateTime(tag.Type, out dateTimeOriginal);
+            }
+          }
+
+        }
+
+        if (dateTimeOriginal != DateTime.MinValue)
+          dateTime = dateTimeOriginal;
+
+        MyMetadata.DatePictureTaken.Value = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+        MyMetadata.DatePictureTaken.DisplayValue = dateTime.ToString(System.Threading.Thread.CurrentThread.CurrentCulture);
+
+
+        if (MyMetadata.Resolution.IsEmpty || MyMetadata.ImageDimensions.IsEmpty)
+        {
+          //only fetch them if they were not present in exif data
+          Picture.GetImageSizes(photoName, out MyMetadata.Resolution, out MyMetadata.ImageDimensions);
+        }
       }
       catch (Exception ex)
       {
@@ -434,7 +499,7 @@ namespace MediaPortal.GUI.Pictures
       }
       return MyMetadata;
     }
-    
+
     private void GetMakerNoteLens(ref MetadataItem item, IEnumerable<Directory> directory)
     {
       if (!string.IsNullOrEmpty(item.DisplayValue))

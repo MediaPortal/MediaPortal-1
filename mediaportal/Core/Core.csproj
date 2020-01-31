@@ -585,7 +585,7 @@
     <Compile Include="guilib\DXEnums.cs" />
     <Compile Include="Util\CodecExtenstions.cs" />
     <Compile Include="Util\EncryptDecrypt.cs" />
-    <Compile Include="Util\ExifExtenstions.cs" />
+    <Compile Include="Util\ExifExtensions.cs" />
     <Compile Include="Util\FanArt.cs" />
     <Compile Include="Util\FastImage.cs" />
     <Compile Include="Util\FilterChecker.cs" />

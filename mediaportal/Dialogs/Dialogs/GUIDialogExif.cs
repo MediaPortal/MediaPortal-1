@@ -33,19 +33,19 @@ namespace MediaPortal.Dialogs
   {
     [SkinControl(2)] protected GUILabelControl lblHeading = null;
     [SkinControl(3)] protected GUIImage imgPicture = null;
-    [SkinControl(20)] protected GUIFadeLabel lblImgTitle = null;
-    [SkinControl(21)] protected GUIFadeLabel lblImgDimensions = null;
-    [SkinControl(22)] protected GUIFadeLabel lblResolutions = null;
-    [SkinControl(23)] protected GUIFadeLabel lblFlash = null;
-    [SkinControl(24)] protected GUIFadeLabel lblMeteringMode = null;
-    [SkinControl(25)] protected GUIFadeLabel lblExposureCompensation = null;
-    [SkinControl(26)] protected GUIFadeLabel lblShutterSpeed = null;
-    [SkinControl(27)] protected GUIFadeLabel lblDateTakenLabel = null;
-    [SkinControl(28)] protected GUIFadeLabel lblFstop = null;
-    [SkinControl(29)] protected GUIFadeLabel lblExposureTime = null;
-    [SkinControl(30)] protected GUIFadeLabel lblCameraModel = null;
-    [SkinControl(31)] protected GUIFadeLabel lblEquipmentMake = null;
-    [SkinControl(32)] protected GUIFadeLabel lblViewComments = null;
+    [SkinControl(20)] protected GUIControl lblImgTitle = null;//
+    [SkinControl(21)] protected GUIControl lblImgDimensions = null;//
+    [SkinControl(22)] protected GUIControl lblResolutions = null;//
+    [SkinControl(23)] protected GUIControl lblFlash = null;
+    [SkinControl(24)] protected GUIControl lblMeteringMode = null;
+    [SkinControl(25)] protected GUIControl lblExposureCompensation = null;
+    [SkinControl(26)] protected GUIControl lblShutterSpeed = null;
+    [SkinControl(27)] protected GUIControl lblDateTakenLabel = null;//
+    [SkinControl(28)] protected GUIControl lblFstop = null;//
+    [SkinControl(29)] protected GUIControl lblExposureTime = null;//
+    [SkinControl(30)] protected GUIControl lblCameraModel = null;
+    [SkinControl(31)] protected GUIControl lblEquipmentMake = null;
+    [SkinControl(32)] protected GUIControl lblViewComments = null;//
 
     private int m_iTextureWidth, m_iTextureHeight;
     private string fileName;
@@ -114,6 +114,14 @@ namespace MediaPortal.Dialogs
       set { fileName = value; }
     }
 
+    private void setLabel(GUIControl control, string value)
+    {
+      var cf = control as GUIFadeLabel;
+      if (cf != null) cf.Label = value;
+      var cl = control as GUILabelControl;
+      if (cl != null) cl.Label = value;
+    }
+
     private void Update()
     {
       if (m_pTexture != null)
@@ -121,19 +129,19 @@ namespace MediaPortal.Dialogs
         m_pTexture.Dispose();
       }
 
-      lblCameraModel.Label = string.Empty;
-      lblDateTakenLabel.Label = string.Empty;
-      lblEquipmentMake.Label = string.Empty;
-      lblExposureCompensation.Label = string.Empty;
-      lblExposureTime.Label = string.Empty;
-      lblFlash.Label = string.Empty;
-      lblFstop.Label = string.Empty;
-      lblImgDimensions.Label = string.Empty;
-      lblImgTitle.Label = string.Empty;
-      lblMeteringMode.Label = string.Empty;
-      lblResolutions.Label = string.Empty;
-      lblShutterSpeed.Label = string.Empty;
-      lblViewComments.Label = string.Empty;
+      setLabel(lblCameraModel, string.Empty);
+      setLabel(lblDateTakenLabel, string.Empty);
+      setLabel(lblEquipmentMake, string.Empty);
+      setLabel(lblExposureCompensation, string.Empty);
+      setLabel(lblExposureTime, string.Empty);
+      setLabel(lblFlash, string.Empty);
+      setLabel(lblFstop, string.Empty);
+      setLabel(lblImgDimensions, string.Empty);
+      setLabel(lblImgTitle, string.Empty);
+      setLabel(lblMeteringMode, string.Empty);
+      setLabel(lblResolutions, string.Empty);
+      setLabel(lblShutterSpeed, string.Empty);
+      setLabel(lblViewComments, string.Empty);
 
       if (!File.Exists(FileName))
       {
@@ -152,19 +160,19 @@ namespace MediaPortal.Dialogs
       }
       if (!metaData.IsEmpty())
       {
-        lblCameraModel.Label = metaData.CameraModel.DisplayValue;
-        lblDateTakenLabel.Label = metaData.DatePictureTaken.DisplayValue;
-        lblEquipmentMake.Label = metaData.EquipmentMake.DisplayValue;
-        lblExposureCompensation.Label = metaData.ExposureCompensation.DisplayValue;
-        lblExposureTime.Label = metaData.ExposureTime.DisplayValue;
-        lblFlash.Label = metaData.Flash.DisplayValue;
-        lblFstop.Label = metaData.Fstop.DisplayValue;
-        lblImgDimensions.Label = metaData.ImageDimensions.DisplayValue;
-        lblImgTitle.Label = Path.GetFileNameWithoutExtension(FileName);
-        lblMeteringMode.Label = metaData.MeteringMode.DisplayValue;
-        lblResolutions.Label = metaData.Resolution.DisplayValue;
-        lblShutterSpeed.Label = metaData.ShutterSpeed.DisplayValue;
-        lblViewComments.Label = metaData.ViewerComments.DisplayValue;
+        setLabel(lblCameraModel, metaData.CameraModel.DisplayValue);
+        setLabel(lblDateTakenLabel, metaData.DatePictureTaken.DisplayValue);
+        setLabel(lblEquipmentMake, metaData.EquipmentMake.DisplayValue);
+        setLabel(lblExposureCompensation, metaData.ExposureCompensation.DisplayValue);
+        setLabel(lblExposureTime, metaData.ExposureTime.DisplayValue);
+        setLabel(lblFlash, metaData.Flash.DisplayValue);
+        setLabel(lblFstop, metaData.Fstop.DisplayValue);
+        setLabel(lblImgDimensions, metaData.ImageDimensionsAsString());
+        setLabel(lblImgTitle, Path.GetFileNameWithoutExtension(FileName));
+        setLabel(lblMeteringMode, metaData.MeteringMode.DisplayValue);
+        setLabel(lblResolutions, metaData.ResolutionAsString());
+        setLabel(lblShutterSpeed, metaData.ShutterSpeed.DisplayValue);
+        setLabel(lblViewComments, metaData.ViewerComments.DisplayValue);
 
         imgPicture.IsVisible = false;
       }

@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -93,6 +94,7 @@ namespace MediaPortal.Picture.Database
         _dbHealth = DatabaseUtility.IntegrityCheck(m_db);
 
         DatabaseUtility.SetPragmas(m_db);
+        m_db.Execute("PRAGMA foreign_keys=ON");
 
         CreateTables();
         InitSettings();
@@ -124,7 +126,9 @@ namespace MediaPortal.Picture.Database
 
       #region Tables
       DatabaseUtility.AddTable(m_db, "picture",
-                               "CREATE TABLE picture (idPicture INTEGER PRIMARY KEY, strFile TEXT, iRotation INTEGER, strDateTaken TEXT)");
+                               "CREATE TABLE picture (idPicture INTEGER PRIMARY KEY, strFile TEXT, iRotation INTEGER, strDateTaken TEXT, " +
+                                                      "iImageWidth INTEGER, iImageHeight INTEGER, " +
+                                                      "iImageXReso INTEGER, iImageYReso INTEGER);");
       #endregion
 
       #region Indexes
@@ -183,10 +187,10 @@ namespace MediaPortal.Picture.Database
       DatabaseUtility.AddTable(m_db, "keywords",
                                "CREATE TABLE keywords (idKeyword INTEGER PRIMARY KEY, strKeyword TEXT);");
       DatabaseUtility.AddTable(m_db, "keywordslinkpicture",
-                               "CREATE TABLE keywordslinkpicture (idKeyword INTEGER, idPicture REFERENCES picture(idPicture) ON DELETE CASCADE);");
+                               "CREATE TABLE keywordslinkpicture (idKeyword INTEGER REFERENCES keywords(idKeyword) ON DELETE CASCADE, idPicture INTEGER REFERENCES picture(idPicture) ON DELETE CASCADE);");
 
       DatabaseUtility.AddTable(m_db, "exif",
-                               "CREATE TABLE exif (idExif INTEGER PRIMARY KEY, idPicture REFERENCES picture(idPicture) ON DELETE CASCADE, " +
+                               "CREATE TABLE exif (idExif INTEGER PRIMARY KEY, idPicture INTEGER REFERENCES picture(idPicture) ON DELETE CASCADE, " +
                                                   "strISO TEXT, " +
                                                   "strExposureTime TEXT, " +
                                                   "strExposureCompensation TEXT, " +
@@ -199,21 +203,29 @@ namespace MediaPortal.Picture.Database
                                                   "strGPSAltitude TEXT);");
 
       DatabaseUtility.AddTable(m_db, "exiflinkpicture",
-                               "CREATE TABLE exiflinkpicture (idPicture REFERENCES picture(idPicture) ON DELETE CASCADE, " +
-                                                             "idCamera INTEGER, " +
-                                                             "idLens INTEGER, " +
-                                                             "idExif INTEGER, " +
-                                                             "idOrientation INTEGER, " +
-                                                             "idFlash INTEGER, " +
-                                                             "idMeteringMode INTEGER, " +
-                                                             "idExposureProgram INTEGER, idExposureMode INTEGER, " +
-                                                             "idSensingMethod INTEGER, " +
-                                                             "idSceneType INTEGER, idSceneCaptureType INTEGER, " +
-                                                             "idWhiteBalance INTEGER," +
-                                                             "idAuthor INTEGER, idByline INTEGER, " +
-                                                             "idSoftware INTEGER, idUserComment INTEGER, " +
-                                                             "idCopyright INTEGER, idCopyrightNotice INTEGER, " +
-                                                             "idCountry INTEGER, idState INTEGER, idCity INTEGER, idSublocation INTEGER);");
+                               "CREATE TABLE exiflinkpicture (idPicture INTEGER REFERENCES picture(idPicture) ON DELETE CASCADE, " +
+                                                             "idCamera INTEGER REFERENCES camera(idCamera) ON DELETE CASCADE, " +
+                                                             "idLens INTEGER REFERENCES lens(idLens) ON DELETE CASCADE, " +
+                                                             "idExif INTEGER REFERENCES exif(idExif) ON DELETE CASCADE, " +
+                                                             "idOrientation INTEGER REFERENCES orientation(idOrientation) ON DELETE CASCADE, " +
+                                                             "idFlash INTEGER REFERENCES flash(idFlash) ON DELETE CASCADE, " +
+                                                             "idMeteringMode INTEGER REFERENCES meteringmode(idMeteringMode) ON DELETE CASCADE, " +
+                                                             "idExposureProgram INTEGER REFERENCES exposureprogram(idExposureProgram) ON DELETE CASCADE, " +
+                                                             "idExposureMode INTEGER REFERENCES exposuremode(idExposureMode) ON DELETE CASCADE, " +
+                                                             "idSensingMethod INTEGER REFERENCES sensingmethod(idSensingMethod) ON DELETE CASCADE, " +
+                                                             "idSceneType INTEGER REFERENCES scenetype(idSceneType) ON DELETE CASCADE, " +
+                                                             "idSceneCaptureType INTEGER REFERENCES scenecapturetype(idSceneCaptureType) ON DELETE CASCADE, " +
+                                                             "idWhiteBalance INTEGER REFERENCES whitebalance(idWhiteBalance) ON DELETE CASCADE," +
+                                                             "idAuthor INTEGER REFERENCES author(idAuthor) ON DELETE CASCADE, " +
+                                                             "idByline INTEGER REFERENCES byline(idByline) ON DELETE CASCADE, " +
+                                                             "idSoftware INTEGER REFERENCES software(idSoftware) ON DELETE CASCADE, " +
+                                                             "idUserComment INTEGER REFERENCES usercomment(idUserComment) ON DELETE CASCADE, " +
+                                                             "idCopyright INTEGER REFERENCES copyright(idCopyright) ON DELETE CASCADE, " +
+                                                             "idCopyrightNotice INTEGER REFERENCES copyrightnotice(idCopyrightNotice) ON DELETE CASCADE, " +
+                                                             "idCountry INTEGER REFERENCES country(idCountry) ON DELETE CASCADE, " +
+                                                             "idState INTEGER REFERENCES state(idState) ON DELETE CASCADE, " + 
+                                                             "idCity INTEGER REFERENCES city(idCity) ON DELETE CASCADE, " +
+                                                             "idSublocation INTEGER REFERENCES sublocation(idSublocation) ON DELETE CASCADE);");
       #endregion
 
       #region Exif Indexes
@@ -272,12 +284,48 @@ namespace MediaPortal.Picture.Database
       DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idSublocation", "CREATE INDEX idxexiflinkpicture_idSublocation ON exiflinkpicture(idSublocation);");
       #endregion
 
+      #region Exif Triggers
+      DatabaseUtility.AddTrigger(m_db, "Delete_ExtraData",
+            "CREATE TRIGGER Delete_ExtraData AFTER DELETE ON exiflinkpicture " +
+            "BEGIN " +
+            "  DELETE FROM camera WHERE idCamera NOT IN (SELECT DISTINCT idCamera FROM exiflinkpicture); " +
+            "  DELETE FROM lens WHERE idLens NOT IN (SELECT DISTINCT idLens FROM exiflinkpicture); " +
+            "  DELETE FROM orientation WHERE idOrientation NOT IN (SELECT DISTINCT idOrientation FROM exiflinkpicture); " +
+            "  DELETE FROM flash WHERE idFlash NOT IN (SELECT DISTINCT idFlash FROM exiflinkpicture); " +
+            "  DELETE FROM meteringmode WHERE idMeteringMode NOT IN (SELECT DISTINCT idMeteringMode FROM exiflinkpicture); " +
+            "  DELETE FROM exposureprogram WHERE idExposureProgram NOT IN (SELECT DISTINCT idExposureProgram FROM exiflinkpicture); " +
+            "  DELETE FROM exposuremode WHERE idExposureMode NOT IN (SELECT DISTINCT idExposureMode FROM exiflinkpicture); " +
+            "  DELETE FROM sensingmethod WHERE idSensingMethod NOT IN (SELECT DISTINCT idSensingMethod FROM exiflinkpicture); " +
+            "  DELETE FROM scenetype WHERE idSceneType NOT IN (SELECT DISTINCT idSceneType FROM exiflinkpicture); " +
+            "  DELETE FROM scenecapturetype WHERE idSceneCaptureType NOT IN (SELECT DISTINCT idSceneCaptureType FROM exiflinkpicture); " +
+            "  DELETE FROM whitebalance WHERE idWhiteBalance NOT IN (SELECT DISTINCT idWhiteBalance FROM exiflinkpicture); " +
+            "  DELETE FROM author WHERE idAuthor NOT IN (SELECT DISTINCT idAuthor FROM exiflinkpicture); " +
+            "  DELETE FROM byline WHERE idByline NOT IN (SELECT DISTINCT idByline FROM exiflinkpicture); " +
+            "  DELETE FROM software WHERE idSoftware NOT IN (SELECT DISTINCT idSoftware FROM exiflinkpicture); " +
+            "  DELETE FROM usercomment WHERE idUserComment NOT IN (SELECT DISTINCT idUserComment FROM exiflinkpicture); " +
+            "  DELETE FROM copyright WHERE idCopyright NOT IN (SELECT DISTINCT idCopyright FROM exiflinkpicture); " +
+            "  DELETE FROM copyrightnotice WHERE idCopyrightNotice NOT IN (SELECT DISTINCT idCopyrightNotice FROM exiflinkpicture); " +
+            "  DELETE FROM country WHERE idCountry NOT IN (SELECT DISTINCT idCountry FROM exiflinkpicture); " +
+            "  DELETE FROM state WHERE idState NOT IN (SELECT DISTINCT idState FROM exiflinkpicture); " +
+            "  DELETE FROM city WHERE idCity NOT IN (SELECT DISTINCT idCity FROM exiflinkpicture); " +
+            "  DELETE FROM sublocation WHERE idSublocation NOT IN (SELECT DISTINCT idSublocation FROM exiflinkpicture); " +
+            "END;" );
+      DatabaseUtility.AddTrigger(m_db, "Delete_ExtraKeywords",
+            "CREATE TRIGGER Delete_ExtraKeywords AFTER DELETE ON keywordslinkpicture " +
+            "BEGIN " +
+            "  DELETE FROM keywords WHERE idKeyword NOT IN (SELECT DISTINCT idKeyword FROM keywordslinkpicture); " +
+            "END;" );
+      #endregion
+
       #region Exif Views
       DatabaseUtility.AddView(m_db, "picturedata", "CREATE VIEW picturedata AS " +
-                                                          "SELECT picture.*, camera.*, lens.*, exif.*, orientation.*, flash.*, meteringmode.*, country.*, " +
-                                                                 "state.*, city.*, sublocation.*, exposureprogram.*, exposuremode.*, sensingmethod.*, " +
-                                                                 "scenetype.*, scenecapturetype.*, whitebalance.*, author.*, byline.*, software.*, " +
-                                                                 "usercomment.*, copyright.*, copyrightnotice.* " +
+                                                          "SELECT picture.idPicture, strDateTaken, iImageWidth, iImageHeight, iImageXReso, iImageYReso, " +
+                                                          "strCamera, strCameraMake, strLens, strISO, strExposureTime, strExposureCompensation, strFStop, strShutterSpeed, " +
+                                                          "strFocalLength, strFocalLength35, strGPSLatitude, strGPSLongitude, strGPSAltitude, " +
+                                                          "exiflinkpicture.idOrientation, strOrientation, exiflinkpicture.idFlash, strFlash, exiflinkpicture.idMeteringMode, strMeteringMode, " +
+                                                          "strCountryCode, strCountry, strState, strCity, strSubLocation, strExposureProgram, strExposureMode, strSensingMethod, strSceneType, " +
+                                                          "strSceneCaptureType, strWhiteBalance, strAuthor, strByLine, strSoftware, strUserComment, strCopyright, strCopyrightNotice, " +
+                                                          "iImageWidth||'x'||iImageHeight as strImageDimension, iImageXReso||'x'||iImageYReso as strImageResolution "+
                                                           "FROM picture " +
                                                           "LEFT JOIN exiflinkpicture ON picture.idPicture = exiflinkpicture.idPicture " +
                                                           "LEFT JOIN camera ON camera.idCamera = exiflinkpicture.idCamera " +
@@ -304,7 +352,7 @@ namespace MediaPortal.Picture.Database
                                                           "LEFT JOIN copyrightnotice ON copyrightnotice.idCopyrightNotice = exiflinkpicture.idCopyrightNotice;");
 
       DatabaseUtility.AddView(m_db, "picturekeywords", "CREATE VIEW picturekeywords AS " +
-                                                       "SELECT picture.*, keywords.* FROM picture " +
+                                                       "SELECT picture.*, keywords.strKeyword FROM picture " +
                                                        "JOIN keywordslinkpicture ON picture.idPicture = keywordslinkpicture.idPicture " +
                                                        "JOIN keywords ON keywordslinkpicture.idKeyword = keywords.idKeyword;");
       #endregion
@@ -340,10 +388,10 @@ namespace MediaPortal.Picture.Database
           return lPicId;
         }
 
-        ExifMetadata.Metadata exifData = new ExifMetadata.Metadata();
+        ExifMetadata.Metadata exifData;
 
         // We need the date nevertheless for database view / sorting
-        if (!GetExifDetails(strPicture, ref iRotation, ref strDateTaken, ref exifData))
+        if (!GetExifDetails(strPicture, ref iRotation, ref strDateTaken, out exifData))
         {
           try
           {
@@ -372,8 +420,9 @@ namespace MediaPortal.Picture.Database
         // Transactions are a special case for SQLite - they speed things up quite a bit
         BeginTransaction();
 
-        strSQL = String.Format("INSERT INTO picture (idPicture, strFile, iRotation, strDateTaken) VALUES (NULL, '{0}',{1},'{2}')",
-                                strPic, iRotation, strDateTaken);
+        strSQL = String.Format("INSERT INTO picture (idPicture, strFile, iRotation, strDateTaken, iImageWidth, iImageHeight, iImageXReso, iImageYReso) VALUES " +
+          "(NULL, '{0}',{1},'{2}','{3}','{4}','{5}','{6}')",
+                                strPic, iRotation, strDateTaken, exifData.ImageDimensions.Width, exifData.ImageDimensions.Height, exifData.Resolution.Width, exifData.Resolution.Height);
         results = m_db.Execute(strSQL);
         if (results.Rows.Count > 0)
         {
@@ -1083,6 +1132,7 @@ namespace MediaPortal.Picture.Database
 
     private int AddUserComment(string name)
     {
+      if (name != null) name = Regex.Replace(name, @"[\u0000-\u001F]+", string.Empty);
       if (string.IsNullOrWhiteSpace(name))
       {
         return -1;
@@ -1500,28 +1550,6 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string strISO = exifData.ISO.DisplayValue;
-        string strExposureTime = exifData.ExposureTime.DisplayValue;
-        string strExposureCompensation = exifData.ExposureCompensation.DisplayValue;
-        string strFStop = exifData.Fstop.DisplayValue;
-        string strShutterSpeed = exifData.ShutterSpeed.DisplayValue;
-        string strFocalLength = exifData.FocalLength.DisplayValue;
-        string strFocalLength35 = exifData.FocalLength35MM.DisplayValue;
-        string strGPSLatitude = exifData.Latitude.DisplayValue;
-        string strGPSLongitude = exifData.Longitude.DisplayValue;
-        string strGPSAltitude = exifData.Altitude.DisplayValue;
-
-        DatabaseUtility.RemoveInvalidChars(ref strISO);
-        DatabaseUtility.RemoveInvalidChars(ref strExposureTime);
-        DatabaseUtility.RemoveInvalidChars(ref strExposureCompensation);
-        DatabaseUtility.RemoveInvalidChars(ref strFStop);
-        DatabaseUtility.RemoveInvalidChars(ref strShutterSpeed);
-        DatabaseUtility.RemoveInvalidChars(ref strFocalLength);
-        DatabaseUtility.RemoveInvalidChars(ref strFocalLength35);
-        DatabaseUtility.RemoveInvalidChars(ref strGPSLatitude);
-        DatabaseUtility.RemoveInvalidChars(ref strGPSLongitude);
-        DatabaseUtility.RemoveInvalidChars(ref strGPSAltitude);
-
         int iID = 0;
         string strSQL = String.Format("SELECT * FROM exif WHERE idPicture = '{0}'", iDbID);
         SQLiteResultSet results = m_db.Execute(strSQL);
@@ -1540,11 +1568,17 @@ namespace MediaPortal.Picture.Database
                                                             "strGPSLatitude, strGPSLongitude, strGPSAltitude) " +
                                  "VALUES ({0}, '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}');",
                                   iID == 0 ? "NULL" : iID.ToString(),
-                                  iDbID, strISO, 
-                                  strExposureTime, strExposureCompensation,
-                                  strFStop, strShutterSpeed,
-                                  strFocalLength, strFocalLength35,
-                                  strGPSLatitude, strGPSLongitude, strGPSAltitude);
+                                  iDbID, 
+                                  DatabaseUtility.RemoveInvalidChars(exifData.ISO.DisplayValue), 
+                                  DatabaseUtility.RemoveInvalidChars(exifData.ExposureTime.DisplayValue), 
+                                  DatabaseUtility.RemoveInvalidChars(exifData.ExposureCompensation.DisplayValue),
+                                  DatabaseUtility.RemoveInvalidChars(exifData.Fstop.DisplayValue), 
+                                  DatabaseUtility.RemoveInvalidChars(exifData.ShutterSpeed.DisplayValue),
+                                  DatabaseUtility.RemoveInvalidChars(exifData.FocalLength.DisplayValue), 
+                                  DatabaseUtility.RemoveInvalidChars(exifData.FocalLength35MM.DisplayValue),
+                                  DatabaseUtility.RemoveInvalidChars(exifData.Latitude.DisplayValue), 
+                                  DatabaseUtility.RemoveInvalidChars(exifData.Longitude.DisplayValue), 
+                                  DatabaseUtility.RemoveInvalidChars(exifData.Altitude.DisplayValue));
         m_db.Execute(strSQL);
         if (iID == 0)
         {
@@ -1635,18 +1669,16 @@ namespace MediaPortal.Picture.Database
 
     public ExifMetadata.Metadata GetExifData(string strPicture)
     {
-      ExifMetadata.Metadata metaData = new ExifMetadata.Metadata();
 
       if (!Util.Utils.IsPicture(strPicture))
       {
-        return metaData;
+        return new ExifMetadata.Metadata();
       }
 
       using (ExifMetadata extractor = new ExifMetadata())
       {
-        metaData = extractor.GetExifMetadata(strPicture);
+        return extractor.GetExifMetadata(strPicture);
       }
-      return metaData;
     }
 
     private string GetExifDBKeywords(int idPicture)
@@ -1662,16 +1694,22 @@ namespace MediaPortal.Picture.Database
       
       try
       {
-        string SQL = String.Format("SELECT strKeyword FROM picturekeywords WHERE idPicture = {0} ORFER BY 1", idPicture);
+        string SQL = String.Format("SELECT strKeyword FROM picturekeywords WHERE idPicture = {0} ORDER BY 1", idPicture);
         SQLiteResultSet results = m_db.Execute(SQL);
         if (results != null && results.Rows.Count > 0)
         {
-          string result = string.Empty;
+          StringBuilder result = new StringBuilder();
           for (int i = 0; i < results.Rows.Count; i++)
           {
-            result = result + (string.IsNullOrEmpty(result) ? "" : "; ") + results.Rows[i].fields[0].Trim();
+            string keyw = results.Rows[i].fields[0].Trim();
+            if (!String.IsNullOrEmpty(keyw))
+            {
+              if (result.Length > 0)
+                result.Append("; ");
+              result.Append(keyw);
+            }
           }
-          return result;
+          return result.ToString();
         }
       }
       catch (Exception ex)
@@ -1701,7 +1739,6 @@ namespace MediaPortal.Picture.Database
       aExif.ExposureMode.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strExposureMode");
       aExif.MeteringMode.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strMeteringMode");
       aExif.Flash.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strFlash");
-      aExif.Resolution.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strResolution");
       aExif.ISO.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strISO");
       aExif.WhiteBalance.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strWhiteBalance");
       aExif.SensingMethod.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strSensingMethod");
@@ -1713,21 +1750,25 @@ namespace MediaPortal.Picture.Database
       aExif.CountryName.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCountry");
       aExif.ProvinceOrState.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strState");
       aExif.City.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCity");
-      aExif.SubLocation.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strSubLocation");
+      aExif.SubLocation.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strSublocation");
       aExif.Author.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strAuthor");
       aExif.Copyright.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCopyright");
       aExif.CopyrightNotice.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCopyrightNotice");
       aExif.Comment.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strUserComment");
       aExif.ViewerComments.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strSoftware");
-      aExif.ByLine.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strByLine");
+      aExif.ByLine.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strByline");
       aExif.Latitude.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strGPSLatitude");
       aExif.Longitude.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strGPSLongitude");
       aExif.Altitude.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strGPSAltitude");
+      aExif.ImageDimensions.Width = DatabaseUtility.GetAsInt(aResult, aRow, "iImageWidth");
+      aExif.ImageDimensions.Height = DatabaseUtility.GetAsInt(aResult, aRow, "iImageHeight");
+      aExif.Resolution.Width = DatabaseUtility.GetAsInt(aResult, aRow, "iImageXReso");
+      aExif.Resolution.Height = DatabaseUtility.GetAsInt(aResult, aRow, "iImageYReso");
 
       try
       {
         aExif.Orientation.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idOrientation").ToString();
-        aExif.MeteringMode.Value = DatabaseUtility.GetAsInt(aResult, aRow, "iMeteringMode").ToString();
+        aExif.MeteringMode.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idMeteringMode").ToString();
         aExif.Flash.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idFlash").ToString();
       }
       catch (Exception ex)
@@ -1753,17 +1794,12 @@ namespace MediaPortal.Picture.Database
 
     public ExifMetadata.Metadata GetExifDBData(string strPicture)
     {
+      if (m_db == null || !Util.Utils.IsPicture(strPicture))
+      {
+        return new ExifMetadata.Metadata();
+      }
+
       ExifMetadata.Metadata metaData = new ExifMetadata.Metadata();
-
-      if (!Util.Utils.IsPicture(strPicture))
-      {
-        return metaData;
-      }
-      if (m_db == null)
-      {
-        return metaData;
-      }
-
       try
       {
         string strPic = strPicture;
@@ -1782,7 +1818,6 @@ namespace MediaPortal.Picture.Database
             {
               AssignAllExifFieldsFromResultSet(ref metaData, results, 0);
               metaData.Keywords.DisplayValue = GetExifDBKeywords(idPicture);
-              Util.Picture.GetImageSizes(strPicture, ref metaData.Resolution.DisplayValue, ref metaData.ImageDimensions.DisplayValue);
             }
           }
         }
@@ -1794,11 +1829,12 @@ namespace MediaPortal.Picture.Database
       return metaData;
     }
 
-    private bool GetExifDetails(string strPicture, ref int iRotation, ref string strDateTaken, ref ExifMetadata.Metadata metaData)
+    private bool GetExifDetails(string strPicture, ref int iRotation, ref string strDateTaken, out ExifMetadata.Metadata metaData)
     {
       // Continue only if it's a picture files
       if (!Util.Utils.IsPicture(strPicture))
       {
+        metaData = new ExifMetadata.Metadata();
         return false;
       }
 
@@ -2432,7 +2468,7 @@ namespace MediaPortal.Picture.Database
       lock (typeof (PictureDatabase))
       {
         string strSQL = "SELECT strFile FROM picture WHERE strDateTaken LIKE '" + Date + "%' " +
-                        "AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" +
+                        "AND idPicture NOT IN (SELECT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" +
                         "ORDER BY strDateTaken";
         SQLiteResultSet result;
         try
@@ -2465,7 +2501,7 @@ namespace MediaPortal.Picture.Database
       lock (typeof (PictureDatabase))
       {
         string strSQL = "SELECT COUNT(strFile) FROM picture WHERE strDateTaken LIKE '" + Date + "%' " +
-                        "AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" +
+                        "AND idPicture NOT IN (SELECT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" +
                         "ORDER BY strDateTaken";
         SQLiteResultSet result;
         try
