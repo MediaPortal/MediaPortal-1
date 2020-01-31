@@ -32,8 +32,8 @@ namespace MediaPortal.Picture.Database
     void DeletePicture(string strPicture);
     string GetDateTaken(string strPicture);
     DateTime GetDateTimeTaken(string strPicture);
-    ExifMetadata.Metadata GetExifData(string strPicture);
-    ExifMetadata.Metadata GetExifDBData(string strPicture);
+    ExifMetadata.Metadata GetExifFromFile(string strPicture);
+    ExifMetadata.Metadata GetExifFromDB(string strPicture);
     int GetRotation(string strPicture);
     void SetRotation(string strPicture, int iRotation);
     int EXIFOrientationToRotation(int orientation);
