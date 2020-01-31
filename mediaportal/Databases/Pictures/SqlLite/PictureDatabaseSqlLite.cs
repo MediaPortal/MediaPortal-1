@@ -1023,30 +1023,16 @@ namespace MediaPortal.Picture.Database
       aExif.Resolution.Width = DatabaseUtility.GetAsInt(aResult, aRow, "iImageXReso");
       aExif.Resolution.Height = DatabaseUtility.GetAsInt(aResult, aRow, "iImageYReso");
 
-      try
-      {
-        aExif.Orientation.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idOrientation").ToString();
-        aExif.MeteringMode.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idMeteringMode").ToString();
-        aExif.Flash.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idFlash").ToString();
-      }
-      catch (Exception ex)
-      {
-        Log.Warn("Picture.DB.SQLite: Exception parsing integer fields: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
+      aExif.Orientation.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idOrientation").ToString();
+      aExif.MeteringMode.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idMeteringMode").ToString();
+      aExif.Flash.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idFlash").ToString();
 
-      try
-      {
-        aExif.DatePictureTaken.Value = DatabaseUtility.GetAsDateTime(aResult, aRow, "strDateTaken").ToString();
-        /*
-        DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
-        dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
-        aExif.DatePictureTaken.Value = DateTime.ParseExact(aExif.DatePictureTaken.DisplayValue, "d", dateTimeFormat).ToString();
-        */
-      }
-      catch (Exception ex)
-      {
-        Log.Warn("Picture.DB.SQLite: Exception parsing date fields: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
+      aExif.DatePictureTaken.Value = DatabaseUtility.GetAsDateTime(aResult, aRow, "strDateTaken").ToString();
+      /*
+      DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
+      dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
+      aExif.DatePictureTaken.Value = DateTime.ParseExact(aExif.DatePictureTaken.DisplayValue, "d", dateTimeFormat).ToString();
+      */
       return true;
     }
 
