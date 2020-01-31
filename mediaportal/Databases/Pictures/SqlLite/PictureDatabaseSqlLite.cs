@@ -567,7 +567,7 @@ namespace MediaPortal.Picture.Database
                                             GetValueForQuery(AddItem("UserComment", exifData.Comment.DisplayValue)),
                                             GetValueForQuery(AddItem("Copyright", exifData.Copyright.DisplayValue)),
                                             GetValueForQuery(AddItem("CopyrightNotice", exifData.CopyrightNotice.DisplayValue)),
-                                            GetValueForQuery(AddCountryo(exifData.CountryCode.DisplayValue, exifData.CountryName.DisplayValue)),
+                                            GetValueForQuery(AddCountry(exifData.CountryCode.DisplayValue, exifData.CountryName.DisplayValue)),
                                             GetValueForQuery(AddItem("State", exifData.ProvinceOrState.DisplayValue)),
                                             GetValueForQuery(AddItem("City", exifData.City.DisplayValue)),
                                             GetValueForQuery(AddItem("SubLocation", exifData.SubLocation.DisplayValue)),
