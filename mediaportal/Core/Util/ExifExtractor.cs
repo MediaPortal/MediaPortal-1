@@ -284,7 +284,10 @@ namespace MediaPortal.GUI.Pictures
             }
         }
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("SetStuff " + ex.Message);
+      }
     }
 
     public Metadata GetExifMetadata(string photoName)
