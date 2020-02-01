@@ -929,7 +929,7 @@ namespace MediaPortal.Picture.Database
       }
     }
 
-    public ExifMetadata.Metadata GetExifData(string strPicture)
+    public ExifMetadata.Metadata GetExifFromFile(string strPicture)
     {
 
       if (!Util.Utils.IsPicture(strPicture))
@@ -1036,7 +1036,7 @@ namespace MediaPortal.Picture.Database
       return true;
     }
 
-    public ExifMetadata.Metadata GetExifDBData(string strPicture)
+    public ExifMetadata.Metadata GetExifFromDB(string strPicture)
     {
       if (m_db == null || !Util.Utils.IsPicture(strPicture))
       {
@@ -1082,7 +1082,7 @@ namespace MediaPortal.Picture.Database
         return false;
       }
 
-      metaData = GetExifData(strPicture);
+      metaData = GetExifFromFile(strPicture);
       if (metaData.IsEmpty())
       {
         return false;

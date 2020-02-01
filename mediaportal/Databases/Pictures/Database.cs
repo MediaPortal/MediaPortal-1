@@ -74,14 +74,14 @@ namespace MediaPortal.Picture.Database
       return _database.GetDateTimeTaken(strPicture);
     }
 
-    public static ExifMetadata.Metadata GetExifDBData(string strPicture)
+    public static ExifMetadata.Metadata GetExifFromDB(string strPicture)
     {
-      return _database.GetExifDBData(strPicture);
+      return _database.GetExifFromDB(strPicture);
     }
 
-    public static ExifMetadata.Metadata GetExifData(string strPicture)
+    public static ExifMetadata.Metadata GetExifFromFile(string strPicture)
     {
-      return _database.GetExifData(strPicture);
+      return _database.GetExifFromFile(strPicture);
     }
 
     public static int GetRotation(string strPicture)

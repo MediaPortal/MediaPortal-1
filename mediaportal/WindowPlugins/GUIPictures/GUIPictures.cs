@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -45,7 +46,6 @@ using MediaPortal.Profile;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 using ThreadPool = System.Threading.ThreadPool;
-using System.Collections.Concurrent;
 
 namespace MediaPortal.GUI.Pictures
 {
@@ -773,6 +773,7 @@ namespace MediaPortal.GUI.Pictures
       StartProcessPictures();
 
       GUITextureManager.CleanupThumbs();
+      GUIImageAllocator.ClearCachedAllocatorImages();
       // LoadSettings();
 
       if (!IsPictureWindow(PreviousWindowId))
@@ -951,6 +952,8 @@ namespace MediaPortal.GUI.Pictures
         _queueItemsEvent.Set();
         _queuePicturesEvent.Set();
       }
+
+      GUIImageAllocator.ClearCachedAllocatorImages();
 
       selectedItemIndex = GetSelectedItemNo();
       SaveSettings();
@@ -1481,6 +1484,8 @@ namespace MediaPortal.GUI.Pictures
         case 2168: // Update Exif
           {
             Log.Debug("GUIPictures: Update Exif {0}: {1}", PictureDatabase.UpdatePicture(item.Path, -1), item.Path);
+            _queueItems.Enqueue(item);
+            _queueItemsEvent.Set();
           }
           break;
         case 2169: // Go to Folder
@@ -3051,6 +3056,9 @@ namespace MediaPortal.GUI.Pictures
       }
 
       GUIWaitCursor.Show();
+
+      ExifMetadata.Metadata metadata = new ExifMetadata.Metadata();
+      metadata.SetExifProperties();
       _queueItems = new ConcurrentQueue<GUIListItem>();
 
       if (_pictureFolderWatcher != null)
@@ -3794,7 +3802,7 @@ namespace MediaPortal.GUI.Pictures
               item.Label2 = datetime.ToString();
             }
             // item.Label3 = datetime.ToString();
-            item.AlbumInfoTag = PictureDatabase.GetExifDBData(file);
+            item.AlbumInfoTag = PictureDatabase.GetExifFromDB(file);
 
             if (item.FileInfo == null || string.IsNullOrEmpty(item.FileInfo.Name))
             {
@@ -3811,6 +3819,7 @@ namespace MediaPortal.GUI.Pictures
               item.FileInfo.CreationTime = datetime;
             }
           }
+          SelectCurrentItem();
           _queueItemsEvent.WaitOne();
         }
       }
@@ -3940,6 +3949,28 @@ namespace MediaPortal.GUI.Pictures
       return false;
     }
 
+    #region Picture Properties
+
+    private void SetPicturePropertys(ExifMetadata.Metadata metadata)
+    {
+      metadata.SetExifProperties();
+
+      int width = 96; // 0
+      int height = 0; // 96
+
+      List<GUIOverlayImage> exifIconImages = metadata.GetExifInfoOverlayImage(ref width, ref height);
+      if (exifIconImages != null && exifIconImages.Count > 0)
+      {
+        GUIPropertyManager.SetProperty("#pictures.exif.images", GUIImageAllocator.BuildConcatImage("Exif:Icons", string.Empty, width, height, exifIconImages));
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#pictures.exif.images", string.Empty);
+      }
+    }
+
+    #endregion
+
     #region callback events
 
     public bool ThumbnailCallback()
@@ -3952,7 +3983,7 @@ namespace MediaPortal.GUI.Pictures
       OnRetrieveThumbnailFiles(item);
       if (item.AlbumInfoTag != null)
       {
-        ((ExifMetadata.Metadata)item.AlbumInfoTag).SetExifProperties();
+        SetPicturePropertys((ExifMetadata.Metadata)item.AlbumInfoTag);
       }
 
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;

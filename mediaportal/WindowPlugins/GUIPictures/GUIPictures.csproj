@@ -230,6 +230,7 @@
       <Link>SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="FolderSetting.cs" />
+    <Compile Include="GUIPictureExif.cs" />
     <Compile Include="GUIPictures.cs" />
     <Compile Include="GUISlidePicture.cs" />
     <Compile Include="GUISlideShow.cs" />

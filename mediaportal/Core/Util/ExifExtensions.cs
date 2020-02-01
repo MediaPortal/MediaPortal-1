@@ -18,59 +18,20 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Text.RegularExpressions;
+
 using MediaPortal.GUI.Library;
-using MetadataExtractor.Formats.Exif;
-using MetadataExtractor.Formats.Iptc;
+using MediaPortal.GUI.Pictures;
 
 namespace MediaPortal.Util
 {
-  public static class ExifExtensions
+  public static class ExifExtenstions
   {
-    #region mappings
-
-    private static readonly Dictionary<int, string> _exif = new Dictionary<int, string>()
-    {
-      { ExifDirectoryBase.TagDateTime, "Date Picture Taken" },
-      { ExifDirectoryBase.TagMake, "Equipment Make" },
-      { ExifDirectoryBase.TagModel, "Camera Model" },
-      { ExifDirectoryBase.TagArtist, "Author" },
-      { ExifDirectoryBase.TagSoftware, "Application Name" },
-      { ExifDirectoryBase.TagCopyright, "Copyright" },
-      { ExifDirectoryBase.TagOrientation, "Orientation" },
-      { ExifDirectoryBase.TagResolutionUnit, "Resolution Unit" },
-      { ExifDirectoryBase.TagDateTimeOriginal, "Date/Time Original" },
-      { ExifDirectoryBase.TagIsoEquivalent, "ISO" },
-      { ExifDirectoryBase.TagMeteringMode, "Metering Mode" },
-      { ExifDirectoryBase.TagFlash, "Flash" },
-      { ExifDirectoryBase.TagExposureTime, "Exposure Time" },
-      { ExifDirectoryBase.TagExposureProgram, "Exposure Program" },
-      { ExifDirectoryBase.TagExposureMode, "Exposure Mode" },
-      { ExifDirectoryBase.TagExposureBias, "Exposure Compensation" },
-      { ExifDirectoryBase.TagFNumber, "FStop" },
-      { ExifDirectoryBase.TagShutterSpeed, "Shutter Speed" },
-      { ExifDirectoryBase.TagSensingMethod, "Sensing Method" },
-      { ExifDirectoryBase.TagSceneType, "Scene Type" },
-      { ExifDirectoryBase.TagSceneCaptureType, "Scene Capture Type" },
-      { ExifDirectoryBase.TagWhiteBalanceMode, "White Balance Mode" },
-      { ExifDirectoryBase.TagLensMake, "Lens Make" },
-      { ExifDirectoryBase.TagLensModel, "Lens Model" },
-      { ExifDirectoryBase.TagFocalLength, "Focal Length" },
-      { ExifDirectoryBase.Tag35MMFilmEquivFocalLength, "Focal Length (35mm film)" },
-      { ExifDirectoryBase.TagUserComment, "Comment" },
-      { IptcDirectory.TagCountryOrPrimaryLocationCode, "Country/Primary Location Code" },
-      { IptcDirectory.TagCountryOrPrimaryLocationName, "Country/Primary Location Name" },
-      { IptcDirectory.TagProvinceOrState, "Province/State" },
-      { IptcDirectory.TagCity, "City" },
-      { IptcDirectory.TagSubLocation, "Sublocation" },
-      { IptcDirectory.TagKeywords, "Keywords" },
-      { IptcDirectory.TagByLine, "By-line" },
-      { IptcDirectory.TagCopyrightNotice, "Copyright Notice" },
-      { IptcDirectory.TagCaption, "Caption/Abstract" },
-      { GpsDirectory.TagLatitude, "GPS Latitude" },
-      { GpsDirectory.TagLongitude, "GPS Longitude" },
-      { GpsDirectory.TagAltitude, "GPS Altitude" },
-    };
+    #region Exif mappings
 
     private static readonly Dictionary<string, string> _fieldname = new Dictionary<string, string>()
     {
@@ -115,12 +76,6 @@ namespace MediaPortal.Util
 
     #endregion
 
-    public static string ToExifString(this int tag)
-    {
-      string result;
-      return _exif.TryGetValue(tag, out result) ? result : string.Empty;
-    }
-
     public static string ToCaption(this string tag)
     {
       string result;
@@ -143,5 +98,214 @@ namespace MediaPortal.Util
       }
       return 0; // not rotated
     }
+
+    #region Exif Properties
+
+    public static void SetExifProperties(this ExifMetadata.Metadata metadata)
+    {
+      string full = string.Empty;
+      Type type = typeof(ExifMetadata.Metadata);
+      foreach (FieldInfo prop in type.GetFields())
+      {
+        string value;
+        string caption = prop.Name.ToCaption() ?? prop.Name;
+        switch (prop.Name)
+        {
+          case "ImageDimensions": 
+            value = metadata.ImageDimensionsAsString(); 
+            break;
+          case "Resolution": 
+            value = metadata.ResolutionAsString(); 
+            break;
+          default:
+            value = ((ExifMetadata.MetadataItem)prop.GetValue(metadata)).DisplayValue; 
+            break;
+        }
+        if (!string.IsNullOrEmpty(value))
+        {
+          value = caption + ": " + value;
+          full = full + value + "\n";
+        }
+        GUIPropertyManager.SetProperty("#pictures.exif." + prop.Name.ToLower(), value);
+      }
+      GUIPropertyManager.SetProperty("#pictures.exif.full", full);
+      GUIPropertyManager.SetProperty("#pictures.haveexif", metadata.IsEmpty() ? "false" : "true");
+      GUIPropertyManager.SetProperty("#pictures.geotagged", (metadata.Latitude.IsEmpty() && metadata.Longitude.IsEmpty()) ? "false" : "true");
+    }
+
+    public static List<string> GetExifInfoList(this ExifMetadata.Metadata metadata)
+    {
+      List<string> infoList = new List<string>();
+
+      if (!metadata.EquipmentMake.IsEmpty())
+      {
+        infoList.Add(@"maker\" + metadata.EquipmentMake.DisplayValue + ".png");
+      }
+
+      if (!metadata.CameraModel.IsEmpty())
+      {
+        infoList.Add(@"camera\" + metadata.CameraModel.DisplayValue + ".png");
+      }
+
+      if (!metadata.ISO.IsEmpty())
+      {
+        infoList.Add(@"iso\" + metadata.ISO.DisplayValue + ".png");
+      }
+
+      if (!metadata.Fstop.IsEmpty())
+      {
+        string fstop = Regex.Replace(metadata.Fstop.DisplayValue, @"f\/((\d)(\.?(\d+?))?)", "$2$4");
+        if (!string.IsNullOrEmpty(fstop))
+        {
+          infoList.Add(@"fstop\" + fstop + ".png");
+        }
+      }
+
+      string focal = (!metadata.FocalLength35MM.IsEmpty() ? metadata.FocalLength35MM.DisplayValue : metadata.FocalLength.DisplayValue);
+      if (!string.IsNullOrEmpty(focal))
+      {
+        int intValue;
+        if (int.TryParse(Regex.Replace(focal, @"(\d+?)(\s.*)?", "$1"), out intValue))
+        {
+          string lensType = string.Empty;
+          if (intValue > 0 && intValue < 14)
+          {
+            lensType = "fisheye";
+          }
+          else if (intValue >= 14 && intValue < 40)
+          {
+            lensType = "wide";
+          }
+          else if (intValue >= 40 && intValue < 85)
+          {
+            lensType = "normal";
+          }
+          else if (intValue >= 86 && intValue < 400)
+          {
+            lensType = "telephoto";
+          }
+          else if (intValue >= 400)
+          {
+            lensType = "supertelephoto";
+          }
+          if (!string.IsNullOrEmpty(lensType))
+          {
+            infoList.Add(@"lens\" + lensType + ".png");
+          }
+        }
+      }
+
+      if (!metadata.ImageDimensions.IsEmpty)
+      {
+        if (metadata.ImageDimensions.Width > 0 && metadata.ImageDimensions.Height > 0)
+        {
+          double dRatio = (double)Math.Max(metadata.ImageDimensions.Width, metadata.ImageDimensions.Height) / (double)Math.Min(metadata.ImageDimensions.Width, metadata.ImageDimensions.Height);
+          string aspect = string.Empty;
+          if (dRatio >= 1.00 && dRatio < 3.00) // 1:1
+          {
+            // 1:1 - 1, 5:4 - 1.25, 4:3 - 1.33, 3:2 - 1.5, 5:3 - 1.67, 16:9 - 1.78
+            aspect = Math.Round(dRatio, 2).ToString().Replace(",","."); 
+          }
+          else if (dRatio >= 3) // 3:1 ... Panorama
+          {
+            aspect = @"panorama"; 
+          }
+
+          if (!string.IsNullOrEmpty(aspect))
+          {
+            infoList.Add(@"aspect\" + aspect + ".png");
+          }
+        }
+      }
+
+      if (!metadata.Flash.IsEmpty())
+      {
+        string flash = string.Empty;
+        if (metadata.Flash.DisplayValue.Contains("red-eye"))
+        {
+          flash = "redeye";
+        }
+        else if (metadata.Flash.DisplayValue.Contains("fired"))
+        {
+          flash = "flash";
+        }
+        else if (metadata.Flash.DisplayValue.Contains("not fire"))
+        {
+          flash = "noflash";
+        }
+        else if (metadata.Flash.DisplayValue.ToLowerInvariant().Contains("strobe"))
+        {
+          flash = "strobe";
+        }
+        if (!string.IsNullOrEmpty(flash))
+        {
+          infoList.Add(@"flash\" + flash + ".png");
+        }
+      }
+
+      if (!metadata.Latitude.IsEmpty() || !metadata.Longitude.IsEmpty())
+      {
+        if (!metadata.Latitude.IsEmpty() && !metadata.Longitude.IsEmpty())
+        {
+          infoList.Add(@"geo\" + metadata.Latitude.DisplayValue[0] + metadata.Longitude.DisplayValue[0] + ".png");
+        }
+        else
+        {
+          infoList.Add(@"geo\tagged.png");
+        }
+      }
+
+      if (!metadata.CountryCode.IsEmpty())
+      {
+        infoList.Add(@"country\" + metadata.CountryCode.DisplayValue + ".png");
+      }
+      return infoList;
+    }
+
+    public static List<GUIOverlayImage> GetExifInfoOverlayImage(this ExifMetadata.Metadata metadata, ref int width, ref int height)
+    {
+      List<GUIOverlayImage> iconList = new List<GUIOverlayImage>();
+      List<string> infoList = metadata.GetExifInfoList();
+
+      bool vertical = height == 0;
+
+      int i = 0;
+      int step = 2;
+      foreach (string info in infoList)
+      {
+        string image = GUIGraphicsContext.GetThemedSkinFile(@"\media\exif\" + info);
+        if (!File.Exists(image))
+        {
+          image = Thumbs.Pictures + @"\exif\" + info;
+          if (!File.Exists(image))
+          {
+            continue;
+          }
+        }
+
+        if (vertical)
+        {
+          if (height > 0)
+          {
+            height += step;
+          }
+          iconList.Add (new GUIOverlayImage(0, (width + step) * i, width, width, image));
+          height += width;
+        }
+        else
+        {
+          if (width > 0)
+          {
+            width += step;
+          }
+          iconList.Add (new GUIOverlayImage((height + step) * i, 0, height, height, image));
+          width += height;
+        }
+        i++;
+      }
+      return iconList;
+    }
+
+    #endregion
   }
 }

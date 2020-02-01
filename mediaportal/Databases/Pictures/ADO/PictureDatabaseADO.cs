@@ -166,12 +166,12 @@ namespace MediaPortal.Picture.Database
       }
     }
 
-    public ExifMetadata.Metadata GetExifDBData(string strPicture)
+    public ExifMetadata.Metadata GetExifFromDB(string strPicture)
     {
       throw (new NotImplementedException("Exif Date Taken from DB not yet implemented for ADO Database"));
     }
 
-    public ExifMetadata.Metadata GetExifData(string strPicture)
+    public ExifMetadata.Metadata GetExifFromFile(string strPicture)
     {
       throw (new NotImplementedException("Exif Date Taken from DB not yet implemented for ADO Database"));
     }
