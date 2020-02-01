@@ -164,21 +164,21 @@ xcopy %1\..\Packages\ffmpeg.2.7.1\ffmpeg.exe MovieThumbnailer\ /Y /D
 REM Bass Core
 xcopy %1\core\bin\%2\Bass.Net.dll . /Y /D
 xcopy %1\core\bin\%2\BassRegistration.dll . /Y /D
-xcopy %1\core\x86\bass.dll . /Y /D
+xcopy %1\core\bin\%2\x86\bass.dll . /Y /D
 
 REM Bass AddOns
-xcopy %1\core\x86\bass_fx.dll . /Y /D
-xcopy %1\core\x86\bass_vst.dll . /Y /D
-xcopy %1\core\x86\bass_wadsp.dll . /Y /D
-xcopy %1\core\x86\bassasio.dll . /Y /D
-xcopy %1\core\x86\basscd.dll . /Y /D
-xcopy %1\core\x86\bassmix.dll . /Y /D
-xcopy %1\core\x86\basswasapi.dll . /Y /D
-xcopy %1\core\x86\plugins\OptimFROG.dll . /Y /D
+xcopy %1\core\bin\%2\x86\bass_fx.dll . /Y /D
+xcopy %1\core\bin\%2\x86\bass_vst.dll . /Y /D
+xcopy %1\core\bin\%2\x86\bass_wadsp.dll . /Y /D
+xcopy %1\core\bin\%2\x86\bassasio.dll . /Y /D
+xcopy %1\core\bin\%2\x86\basscd.dll . /Y /D
+xcopy %1\core\bin\%2\x86\bassmix.dll . /Y /D
+xcopy %1\core\bin\%2\x86\basswasapi.dll . /Y /D
+xcopy %1\core\bin\%2\x86\plugins\OptimFROG.dll . /Y /D
 
 REM Bass AudioDecoders
-xcopy %1\core\x86\plugins\bass*.* "MusicPlayer\plugins\audio decoders\" /Y /D
-xcopy %1\core\x86\plugins\tags.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\core\bin\%2\x86\plugins\bass*.* "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\core\bin\%2\x86\plugins\tags.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 
 REM iMON Display 
 xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll . /Y /D
