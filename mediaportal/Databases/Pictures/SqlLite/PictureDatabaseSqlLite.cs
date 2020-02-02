@@ -368,11 +368,7 @@ namespace MediaPortal.Picture.Database
     public int AddPicture(string strPicture, int iRotation)
     {
       // Continue only if it's a picture files
-      if (!Util.Utils.IsPicture(strPicture))
-      {
-        return -1;
-      }
-      if (m_db == null)
+      if (!Util.Utils.IsPicture(strPicture) || m_db == null)
       {
         return -1;
       }
