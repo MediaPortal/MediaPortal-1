@@ -317,13 +317,13 @@ namespace MediaPortal.Picture.Database
 
       #region Exif Views
       DatabaseUtility.AddView(m_db, "picturedata", "CREATE VIEW picturedata AS " +
-                                                          "SELECT picture.idPicture, strDateTaken, iImageWidth, iImageHeight, iImageXReso, iImageYReso, " +
+                                                          "SELECT picture.idPicture, strFile, strDateTaken, iImageWidth, iImageHeight, iImageXReso, iImageYReso, " +
                                                           "strCamera, strCameraMake, strLens, strISO, strExposureTime, strExposureCompensation, strFStop, strShutterSpeed, " +
                                                           "strFocalLength, strFocalLength35mm, strGPSLatitude, strGPSLongitude, strGPSAltitude, " +
-                                                          "exifdata.idOrientation, strOrientation, exifdata.idFlash, strFlash, exifdata.idMeteringMode, strMeteringMode, " +
+                                                          "strOrientation, strFlash, strMeteringMode, " +
                                                           "strCountryCode, strCountry, strState, strCity, strSubLocation, strExposureProgram, strExposureMode, strSensingMethod, strSceneType, " +
                                                           "strSceneCaptureType, strWhiteBalance, strAuthor, strByLine, strSoftware, strUserComment, strCopyright, strCopyrightNotice, " +
-                                                          "iImageWidth||'x'||iImageHeight as strImageDimension, iImageXReso||'x'||iImageYReso as strImageResolution " +
+                                                          "iImageWidth||'x'||iImageHeight as strImageDimension, iImageXReso||'x'||iImageYReso as strImageResolution, exifdata.* " +
                                                           "FROM picture " +
                                                           "LEFT JOIN exifdata USING (idPicture) " +
                                                           "LEFT JOIN camera USING (idCamera) " +
