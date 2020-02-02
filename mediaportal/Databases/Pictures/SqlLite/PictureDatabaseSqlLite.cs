@@ -201,73 +201,44 @@ namespace MediaPortal.Picture.Database
       DatabaseUtility.AddTable(m_db, "keyword",
                                "CREATE TABLE keyword (idKeyword INTEGER PRIMARY KEY, strKeyword TEXT);");
       DatabaseUtility.AddTable(m_db, "keywordslinkpicture",
-                               "CREATE TABLE keywordslinkpicture (idKeyword INTEGER REFERENCES keyword(idKeyword) ON DELETE CASCADE, idPicture INTEGER REFERENCES picture(idPicture) ON DELETE CASCADE);");
+                               "CREATE TABLE keywordslinkpicture (idKeyword INTEGER REFERENCES keyword(idKeyword) ON DELETE CASCADE, idPicture INTEGER REFERENCES picture(idPicture) ON DELETE CASCADE," +
+                                 "PRIMARY KEY (idKeyword, idPicture));");
 
       DatabaseUtility.AddTable(m_db, "exifdata",
-                               "CREATE TABLE exifdata (idPicture INTEGER PRIMARY KEY REFERENCES picture(idPicture) ON DELETE CASCADE, " +
-                                                       "idCamera INTEGER REFERENCES camera(idCamera) ON DELETE CASCADE, " +
-                                                       "idLens INTEGER REFERENCES lens(idLens) ON DELETE CASCADE, " +
-                                                       "idISO INTEGER REFERENCES iso(idIso) ON DELETE CASCADE, " +
-                                                       "idExposureTime INTEGER REFERENCES exposureTime(idExposureTime) ON DELETE CASCADE, " +
-                                                       "idExposureCompensation INTEGER REFERENCES exposureCompensation(idExposureCompensation) ON DELETE CASCADE, " +
-                                                       "idFStop INTEGER REFERENCES fStop(idFStop) ON DELETE CASCADE, " +
-                                                       "idShutterSpeed INTEGER REFERENCES shutterSpeed(idShutterSpeed) ON DELETE CASCADE, " +
-                                                       "idFocalLength INTEGER REFERENCES focalLength(idFocalLength) ON DELETE CASCADE, " +
-                                                       "idFocalLength35mm INTEGER REFERENCES focalLength35mm(idFocalLength35mm) ON DELETE CASCADE, " +
+                               "CREATE TABLE exifdata (idPicture INTEGER PRIMARY KEY REFERENCES picture(idPicture) ON DELETE SET NULL, " +
+                                                       "idCamera INTEGER REFERENCES camera(idCamera) ON DELETE SET NULL, " +
+                                                       "idLens INTEGER REFERENCES lens(idLens) ON DELETE SET NULL, " +
+                                                       "idISO INTEGER REFERENCES iso(idIso) ON DELETE SET NULL, " +
+                                                       "idExposureTime INTEGER REFERENCES exposureTime(idExposureTime) ON DELETE SET NULL, " +
+                                                       "idExposureCompensation INTEGER REFERENCES exposureCompensation(idExposureCompensation) ON DELETE SET NULL, " +
+                                                       "idFStop INTEGER REFERENCES fStop(idFStop) ON DELETE SET NULL, " +
+                                                       "idShutterSpeed INTEGER REFERENCES shutterSpeed(idShutterSpeed) ON DELETE SET NULL, " +
+                                                       "idFocalLength INTEGER REFERENCES focalLength(idFocalLength) ON DELETE SET NULL, " +
+                                                       "idFocalLength35mm INTEGER REFERENCES focalLength35mm(idFocalLength35mm) ON DELETE SET NULL, " +
                                                        "strGPSLatitude TEXT, strGPSLongitude TEXT, strGPSAltitude TEXT, " +
-                                                       "idOrientation INTEGER REFERENCES orientation(idOrientation) ON DELETE CASCADE, " +
-                                                       "idFlash INTEGER REFERENCES flash(idFlash) ON DELETE CASCADE, " +
-                                                       "idMeteringMode INTEGER REFERENCES meteringmode(idMeteringMode) ON DELETE CASCADE, " +
-                                                       "idExposureProgram INTEGER REFERENCES exposureprogram(idExposureProgram) ON DELETE CASCADE, " +
-                                                       "idExposureMode INTEGER REFERENCES exposuremode(idExposureMode) ON DELETE CASCADE, " +
-                                                       "idSensingMethod INTEGER REFERENCES sensingmethod(idSensingMethod) ON DELETE CASCADE, " +
-                                                       "idSceneType INTEGER REFERENCES scenetype(idSceneType) ON DELETE CASCADE, " +
-                                                       "idSceneCaptureType INTEGER REFERENCES scenecapturetype(idSceneCaptureType) ON DELETE CASCADE, " +
-                                                       "idWhiteBalance INTEGER REFERENCES whitebalance(idWhiteBalance) ON DELETE CASCADE," +
-                                                       "idAuthor INTEGER REFERENCES author(idAuthor) ON DELETE CASCADE, " +
-                                                       "idByline INTEGER REFERENCES byline(idByline) ON DELETE CASCADE, " +
-                                                       "idSoftware INTEGER REFERENCES software(idSoftware) ON DELETE CASCADE, " +
-                                                       "idUserComment INTEGER REFERENCES usercomment(idUserComment) ON DELETE CASCADE, " +
-                                                       "idCopyright INTEGER REFERENCES copyright(idCopyright) ON DELETE CASCADE, " +
-                                                       "idCopyrightNotice INTEGER REFERENCES copyrightnotice(idCopyrightNotice) ON DELETE CASCADE, " +
-                                                       "idCountry INTEGER REFERENCES country(idCountry) ON DELETE CASCADE, " +
-                                                       "idState INTEGER REFERENCES state(idState) ON DELETE CASCADE, " +
-                                                       "idCity INTEGER REFERENCES city(idCity) ON DELETE CASCADE, " +
-                                                       "idSublocation INTEGER REFERENCES sublocation(idSublocation) ON DELETE CASCADE);");
+                                                       "idOrientation INTEGER REFERENCES orientation(idOrientation) ON DELETE SET NULL, " +
+                                                       "idFlash INTEGER REFERENCES flash(idFlash) ON DELETE SET NULL, " +
+                                                       "idMeteringMode INTEGER REFERENCES meteringmode(idMeteringMode) ON DELETE SET NULL, " +
+                                                       "idExposureProgram INTEGER REFERENCES exposureprogram(idExposureProgram) ON DELETE SET NULL, " +
+                                                       "idExposureMode INTEGER REFERENCES exposuremode(idExposureMode) ON DELETE SET NULL, " +
+                                                       "idSensingMethod INTEGER REFERENCES sensingmethod(idSensingMethod) ON DELETE SET NULL, " +
+                                                       "idSceneType INTEGER REFERENCES scenetype(idSceneType) ON DELETE SET NULL, " +
+                                                       "idSceneCaptureType INTEGER REFERENCES scenecapturetype(idSceneCaptureType) ON DELETE SET NULL, " +
+                                                       "idWhiteBalance INTEGER REFERENCES whitebalance(idWhiteBalance) ON DELETE SET NULL," +
+                                                       "idAuthor INTEGER REFERENCES author(idAuthor) ON DELETE SET NULL, " +
+                                                       "idByline INTEGER REFERENCES byline(idByline) ON DELETE SET NULL, " +
+                                                       "idSoftware INTEGER REFERENCES software(idSoftware) ON DELETE SET NULL, " +
+                                                       "idUserComment INTEGER REFERENCES usercomment(idUserComment) ON DELETE SET NULL, " +
+                                                       "idCopyright INTEGER REFERENCES copyright(idCopyright) ON DELETE SET NULL, " +
+                                                       "idCopyrightNotice INTEGER REFERENCES copyrightnotice(idCopyrightNotice) ON DELETE SET NULL, " +
+                                                       "idCountry INTEGER REFERENCES country(idCountry) ON DELETE SET NULL, " +
+                                                       "idState INTEGER REFERENCES state(idState) ON DELETE SET NULL, " +
+                                                       "idCity INTEGER REFERENCES city(idCity) ON DELETE SET NULL, " +
+                                                       "idSublocation INTEGER REFERENCES sublocation(idSublocation) ON DELETE SET NULL);");
       #endregion
 
       #region Exif Indexes
-      DatabaseUtility.AddIndex(m_db, "idxcamera_idCamera", "CREATE INDEX idxcamera_idCamera ON camera(idCamera);");
-      DatabaseUtility.AddIndex(m_db, "idxlens_idLens", "CREATE INDEX idxlens_idLens ON lens(idLens);");
-      DatabaseUtility.AddIndex(m_db, "idxorientation_idOrientation", "CREATE INDEX idxorientation_idOrientation ON orientation(idOrientation);");
-      DatabaseUtility.AddIndex(m_db, "idxflash_idFlash", "CREATE INDEX idxflash_idFlash ON flash(idFlash);");
-      DatabaseUtility.AddIndex(m_db, "idxmeteringmode_idMeteringMode", "CREATE INDEX idxmeteringmode_idMeteringMode ON meteringmode(idMeteringMode);");
-      DatabaseUtility.AddIndex(m_db, "idxcountry_idCountry", "CREATE INDEX idxcountry_idCountry ON country(idCountry);");
-      DatabaseUtility.AddIndex(m_db, "idxstate_idState", "CREATE INDEX idxstate_idState ON state(idState);");
-      DatabaseUtility.AddIndex(m_db, "idxcity_idCity", "CREATE INDEX idxcity_idCity ON city(idCity);");
-      DatabaseUtility.AddIndex(m_db, "idxsublocation_idSublocation", "CREATE INDEX idxsublocation_idSublocation ON sublocation(idSublocation);");
-      DatabaseUtility.AddIndex(m_db, "idxexposureprogram_idExposureProgram", "CREATE INDEX idxexposureprogram_idExposureProgram ON exposureprogram(idExposureProgram);");
-      DatabaseUtility.AddIndex(m_db, "idxexposuremode_idExposureMode", "CREATE INDEX idxexposuremode_idExposureMode ON exposuremode(idExposureMode);");
-      DatabaseUtility.AddIndex(m_db, "idxsensingmethod_idSensingMethod", "CREATE INDEX idxsensingmethod_idSensingMethod ON sensingmethod(idSensingMethod);");
-      DatabaseUtility.AddIndex(m_db, "idxscenetype_idSceneType", "CREATE INDEX idxscenetype_idSceneType ON scenetype(idSceneType);");
-      DatabaseUtility.AddIndex(m_db, "idxscenecapturetype_idSceneCaptureType", "CREATE INDEX idxscenecapturetype_idSceneCaptureType ON scenecapturetype(idSceneCaptureType);");
-      DatabaseUtility.AddIndex(m_db, "idxwhitebalance_idWhiteBalance", "CREATE INDEX idxwhitebalance_idWhiteBalance ON whitebalance(idWhiteBalance);");
-      DatabaseUtility.AddIndex(m_db, "idxauthor_idAuthor", "CREATE INDEX idxauthor_idAuthor ON author(idAuthor);");
-      DatabaseUtility.AddIndex(m_db, "idxbyline_idByline", "CREATE INDEX idxbyline_idByline ON byline(idByline);");
-      DatabaseUtility.AddIndex(m_db, "idxsoftware_idSoftware", "CREATE INDEX idxsoftware_idSoftware ON software(idSoftware);");
-      DatabaseUtility.AddIndex(m_db, "idxusercomment_idUserComment", "CREATE INDEX idxusercomment_idUserComment ON usercomment(idUserComment);");
-      DatabaseUtility.AddIndex(m_db, "idxcopyright_idCopyright", "CREATE INDEX idxcopyright_idCopyright ON copyright(idCopyright);");
-      DatabaseUtility.AddIndex(m_db, "idxcopyrightnotice_idCopyrightNotice", "CREATE INDEX idxcopyrightnotice_idCopyrightNotice ON copyrightnotice(idCopyrightNotice);");
 
-      DatabaseUtility.AddIndex(m_db, "idxiso_idIso", "CREATE INDEX idxiso_idIso ON iso(idIso);");
-      DatabaseUtility.AddIndex(m_db, "idxexposureTime_idExposureTime", "CREATE INDEX idxexposureTime_idExposureTime ON exposureTime(idExposureTime);");
-      DatabaseUtility.AddIndex(m_db, "idxexposureCompensation_idExposureCompensation", "CREATE INDEX idxexposureCompensation_idExposureCompensation ON exposureCompensation(idExposureCompensation);");
-      DatabaseUtility.AddIndex(m_db, "idxfStop_idFStop", "CREATE INDEX idxfStop_idFStop ON fStop(idFStop);");
-      DatabaseUtility.AddIndex(m_db, "idxshutterSpeed_idShutterSpeed", "CREATE INDEX idxshutterSpeed_idShutterSpeed ON shutterSpeed(idShutterSpeed);");
-      DatabaseUtility.AddIndex(m_db, "idxfocalLength_idFocalLength", "CREATE INDEX idxfocalLength_idFocalLength ON focalLength(idFocalLength);");
-      DatabaseUtility.AddIndex(m_db, "idxfocalLength35mm_idFocalLength35mm", "CREATE INDEX idxfocalLength35mm_idFocalLength35mm ON focalLength35mm(idFocalLength35mm);");
-
-      DatabaseUtility.AddIndex(m_db, "idxkeyword_idKeyword", "CREATE INDEX idxkeyword_idKeyword ON keyword(idKeyword);");
       DatabaseUtility.AddIndex(m_db, "idxkeyword_strKeyword", "CREATE INDEX idxkeyword_strKeyword ON keyword(strKeyword);");
 
       DatabaseUtility.AddIndex(m_db, "idxkeywordslinkpicture_idKeyword", "CREATE INDEX idxkeywordslinkpicture_idKeyword ON keywordslinkpicture(idKeyword);");
