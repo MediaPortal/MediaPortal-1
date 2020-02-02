@@ -311,6 +311,8 @@ namespace MediaPortal.GUI.Pictures
           {
             MyMetadata.Resolution.Height = value;
           }
+          if (MyMetadata.Resolution.Width == 1 || MyMetadata.Resolution.Height == 1)
+            MyMetadata.Resolution = Size.Empty;
         }
 
         DateTime dateTime;
@@ -440,6 +442,8 @@ namespace MediaPortal.GUI.Pictures
             {
               MyMetadata.Resolution.Width = directory.GetInt32(wTag.Type);
               MyMetadata.Resolution.Height = directory.GetInt32(hTag.Type);
+              if (MyMetadata.Resolution.Width == 1 || MyMetadata.Resolution.Height == 1)
+                MyMetadata.Resolution = Size.Empty;
             }
           }
         }
