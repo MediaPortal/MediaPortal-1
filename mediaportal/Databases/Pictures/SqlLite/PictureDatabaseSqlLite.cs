@@ -365,6 +365,24 @@ namespace MediaPortal.Picture.Database
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
+    public void Optimize()
+    {
+      if (m_db == null)
+      {
+        Log.Error("Database not initialized");
+        return;
+      }
+      try
+      {
+        m_db.Execute("analyze;");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: Analyze {0}", ex.Message);
+      }
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public int AddPicture(string strPicture, int iRotation)
     {
       // Continue only if it's a picture files

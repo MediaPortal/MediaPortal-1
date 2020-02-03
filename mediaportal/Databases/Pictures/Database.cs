@@ -157,6 +157,11 @@ namespace MediaPortal.Picture.Database
       }
     }
 
+    public static void Optimize()
+    {
+      _database.Optimize();
+    }
+
     public static string DatabaseName
     {
       get
