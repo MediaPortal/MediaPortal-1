@@ -398,7 +398,7 @@ namespace MediaPortal.Picture.Database
         string strDateTaken = string.Empty;
 
         DatabaseUtility.RemoveInvalidChars(ref strPic);
-        string strSQL = String.Format("SELECT * FROM picture WHERE strFile LIKE '{0}'", strPic);
+        string strSQL = String.Format("SELECT * FROM picture WHERE strFile = '{0}'", strPic);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results != null && results.Rows.Count > 0)
         {
@@ -1034,7 +1034,7 @@ namespace MediaPortal.Picture.Database
         string strPic = strPicture;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
 
-        string SQL = String.Format("SELECT idPicture FROM picture WHERE strFile LIKE '{0}'", strPic);
+        string SQL = String.Format("SELECT idPicture FROM picture WHERE strFile = '{0}'", strPic);
         SQLiteResultSet results = m_db.Execute(SQL);
         if (results != null && results.Rows.Count > 0)
         {
@@ -1166,7 +1166,7 @@ namespace MediaPortal.Picture.Database
         string strPic = strPicture;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
 
-        string SQL = String.Format("SELECT strDateTaken FROM picture WHERE strFile LIKE '{0}'", strPic);
+        string SQL = String.Format("SELECT strDateTaken FROM picture WHERE strFile = '{0}'", strPic);
         SQLiteResultSet results = m_db.Execute(SQL);
         if (results != null && results.Rows.Count > 0)
         {
@@ -1220,10 +1220,10 @@ namespace MediaPortal.Picture.Database
         int iRotation = 0;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
 
-        SQLiteResultSet results = m_db.Execute(String.Format("SELECT strFile, iRotation FROM picture WHERE strFile LIKE '{0}'", strPic));
+        SQLiteResultSet results = m_db.Execute(String.Format("SELECT iRotation FROM picture WHERE strFile = '{0}'", strPic));
         if (results != null && results.Rows.Count > 0)
         {
-          iRotation = Int32.Parse(DatabaseUtility.Get(results, 0, 1));
+          iRotation = DatabaseUtility.GetAsInt(results, 0, "iRotation");
           return iRotation;
         }
 
@@ -1265,7 +1265,7 @@ namespace MediaPortal.Picture.Database
         long lPicId = AddPicture(strPicture, iRotation);
         if (lPicId >= 0)
         {
-          m_db.Execute(String.Format("UPDATE picture SET iRotation={0} WHERE strFile LIKE '{1}'", iRotation, strPic));
+          m_db.Execute(String.Format("UPDATE picture SET iRotation={0} WHERE strFile = '{1}'", iRotation, strPic));
         }
       }
       catch (Exception ex)
@@ -1293,7 +1293,7 @@ namespace MediaPortal.Picture.Database
           string strPic = strPicture;
           DatabaseUtility.RemoveInvalidChars(ref strPic);
 
-          string strSQL = String.Format("DELETE FROM picture WHERE strFile LIKE '{0}'", strPic);
+          string strSQL = String.Format("DELETE FROM picture WHERE strFile = '{0}'", strPic);
           m_db.Execute(strSQL);
         }
         catch (Exception ex)
@@ -1488,7 +1488,7 @@ namespace MediaPortal.Picture.Database
       lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = '" + Keyword + "' " +
-                               "AND idPicture NOT IN (SELECT idPicture FROM picturekeywords WHERE strKeyword = 'Private') " +
+                               "AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private') " +
                                "ORDER BY strDateTaken";
         try
         {
@@ -1520,7 +1520,7 @@ namespace MediaPortal.Picture.Database
       lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT COUNT(strFile) FROM picturekeywords WHERE strKeyword = '" + Keyword + "' " +
-                               "AND idPicture NOT IN (SELECT idPicture FROM picturekeywords WHERE strKeyword = 'Private') " +
+                               "AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private') " +
                                "ORDER BY strDateTaken";
         try
         {
@@ -1636,7 +1636,7 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT DISTINCT SUBSTR(strDateTaken,6,2) FROM picture WHERE strDateTaken LIKE '" + Year + "%' ORDER BY strDateTaken";
+        string strSQL = "SELECT DISTINCT SUBSTR(strDateTaken,6,2) FROM picture WHERE SUBSTR(strDateTaken,1,4) = '" + Year + "' ORDER BY strDateTaken";
         SQLiteResultSet result;
         try
         {
@@ -1667,7 +1667,7 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT DISTINCT SUBSTR(strDateTaken,9,2) FROM picture WHERE strDateTaken LIKE '" + Year + "-" + Month + "%' ORDER BY strDateTaken";
+        string strSQL = "SELECT DISTINCT SUBSTR(strDateTaken,9,2) FROM picture WHERE SUBSTR(strDateTaken,1,7) = '" + Year + "-" + Month + "' ORDER BY strDateTaken";
         SQLiteResultSet result;
         try
         {
@@ -1699,7 +1699,7 @@ namespace MediaPortal.Picture.Database
       lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT strFile FROM picture WHERE strDateTaken LIKE '" + Date + "%' " +
-                        "AND idPicture NOT IN (SELECT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" +
+                        "AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" +
                         "ORDER BY strDateTaken";
         SQLiteResultSet result;
         try
@@ -1732,7 +1732,7 @@ namespace MediaPortal.Picture.Database
       lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT COUNT(strFile) FROM picture WHERE strDateTaken LIKE '" + Date + "%' " +
-                        "AND idPicture NOT IN (SELECT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" +
+                        "AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" +
                         "ORDER BY strDateTaken";
         SQLiteResultSet result;
         try
