@@ -1671,61 +1671,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="UserInterfaceControls\Resources\mp.ico" />
-    <Content Include="x64\bass.dll" />
-    <Content Include="x64\bassasio.dll" />
-    <Content Include="x64\basscd.dll" />
-    <Content Include="x64\bassenc.dll" />
-    <Content Include="x64\bassmix.dll" />
-    <Content Include="x64\basswasapi.dll" />
-    <Content Include="x64\bass_fx.dll" />
-    <Content Include="x64\bass_vst.dll" />
-    <Content Include="x64\Plugins\bassalac.dll" />
-    <Content Include="x64\Plugins\bassdsd.dll" />
-    <Content Include="x64\Plugins\bassflac.dll" />
-    <Content Include="x64\Plugins\basshls.dll" />
-    <Content Include="x64\Plugins\bassmidi.dll" />
-    <Content Include="x64\Plugins\bassopus.dll" />
-    <Content Include="x64\Plugins\basswebm.dll" />
-    <Content Include="x64\Plugins\basswma.dll" />
-    <Content Include="x64\Plugins\basswv.dll" />
-    <Content Include="x64\Plugins\bass_aac.dll" />
-    <Content Include="x64\Plugins\bass_ac3.dll" />
-    <Content Include="x64\Plugins\bass_ape.dll" />
-    <Content Include="x64\Plugins\bass_mpc.dll" />
-    <Content Include="x64\Plugins\bass_ofr.dll" />
-    <Content Include="x64\Plugins\bass_spx.dll" />
-    <Content Include="x64\Plugins\bass_tta.dll" />
-    <Content Include="x64\Plugins\OptimFROG.dll" />
-    <Content Include="x64\Plugins\tags.dll" />
-    <Content Include="x86\bass.dll" />
-    <Content Include="x86\bassasio.dll" />
-    <Content Include="x86\basscd.dll" />
-    <Content Include="x86\bassenc.dll" />
-    <Content Include="x86\bassmix.dll" />
-    <Content Include="x86\basswasapi.dll" />
-    <Content Include="x86\bass_fx.dll" />
-    <Content Include="x86\bass_vst.dll" />
-    <Content Include="x86\bass_wadsp.dll" />
-    <Content Include="x86\Plugins\bassalac.dll" />
-    <Content Include="x86\Plugins\bassdsd.dll" />
-    <Content Include="x86\Plugins\bassflac.dll" />
-    <Content Include="x86\Plugins\basshls.dll" />
-    <Content Include="x86\Plugins\bassmidi.dll" />
-    <Content Include="x86\Plugins\bassopus.dll" />
-    <Content Include="x86\Plugins\basswebm.dll" />
-    <Content Include="x86\Plugins\basswma.dll" />
-    <Content Include="x86\Plugins\basswv.dll" />
-    <Content Include="x86\Plugins\bass_aac.dll" />
-    <Content Include="x86\Plugins\bass_ac3.dll" />
-    <Content Include="x86\Plugins\bass_adx.dll" />
-    <Content Include="x86\Plugins\bass_aix.dll" />
-    <Content Include="x86\Plugins\bass_ape.dll" />
-    <Content Include="x86\Plugins\bass_mpc.dll" />
-    <Content Include="x86\Plugins\bass_ofr.dll" />
-    <Content Include="x86\Plugins\bass_spx.dll" />
-    <Content Include="x86\Plugins\bass_tta.dll" />
-    <Content Include="x86\Plugins\OptimFROG.dll" />
-    <Content Include="x86\Plugins\tags.dll" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
