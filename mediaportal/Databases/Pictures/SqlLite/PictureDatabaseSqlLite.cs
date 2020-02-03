@@ -585,10 +585,18 @@ namespace MediaPortal.Picture.Database
       }
     }
 
+    private string CleanupString(string value)
+    {
+      if (string.IsNullOrWhiteSpace(value))
+        return String.Empty;
+      value = Regex.Replace(value, @"[\u0000-\u001F]+", string.Empty);
+      return Regex.Replace(value, @"\s*unknown\s*(?:\(\d*\))?\s*", string.Empty,RegexOptions.IgnoreCase);
+    }
+
     private int AddItem(string tableName, string value)
     {
-      if (value != null) value = Regex.Replace(value, @"[\u0000-\u001F]+", string.Empty);
-      if (string.IsNullOrWhiteSpace(value))
+      value = CleanupString(value);
+      if (value==String.Empty)
       {
         return -1;
       }
@@ -621,15 +629,14 @@ namespace MediaPortal.Picture.Database
 
     private int AddCamera(string camera, string make)
     {
-      if (string.IsNullOrWhiteSpace(camera))
+      camera = CleanupString(camera);
+
+      if (camera==String.Empty)
       {
         return -1;
       }
-      if (string.IsNullOrWhiteSpace(make))
-      {
-        make = string.Empty;
-      }
 
+      make = CleanupString(make);
       try
       {
         string strCamera = DatabaseUtility.RemoveInvalidChars(camera.Trim());
@@ -657,15 +664,14 @@ namespace MediaPortal.Picture.Database
 
     private int AddLens(string lens, string make)
     {
-      if (string.IsNullOrWhiteSpace(lens))
+      lens = CleanupString(lens);
+
+      if (lens==String.Empty)
       {
         return -1;
       }
-      if (string.IsNullOrWhiteSpace(make))
-      {
-        make = string.Empty;
-      }
 
+      make = CleanupString(make);
       try
       {
         string strLens = DatabaseUtility.RemoveInvalidChars(lens.Trim());
@@ -693,7 +699,8 @@ namespace MediaPortal.Picture.Database
 
     private int AddOrienatation(string id, string name)
     {
-      if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(name))
+      name = CleanupString(name);
+      if (string.IsNullOrWhiteSpace(id) || name == String.Empty)
       {
         return -1;
       }
