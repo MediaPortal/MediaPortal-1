@@ -596,7 +596,7 @@ namespace MediaPortal.Picture.Database
       try
       {
         string strValue = DatabaseUtility.RemoveInvalidChars(value.Trim());
-        string strSQL = String.Format("SELECT * FROM {0} WHERE str{0} = '{1}'", tableName, strValue);
+        string strSQL = String.Format("SELECT id{0} FROM {0} WHERE str{0} = '{1}'", tableName, strValue);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
@@ -607,11 +607,7 @@ namespace MediaPortal.Picture.Database
         }
         else
         {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "id" + tableName), out iID))
-          {
-            return iID;
-          }
+          return DatabaseUtility.GetAsInt(results, 0, "id" + tableName);
         }
       }
       catch (Exception ex)
@@ -636,27 +632,20 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string strCamera = camera.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strCamera);
-        string strMake = make.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strMake);
+        string strCamera = DatabaseUtility.RemoveInvalidChars(camera.Trim());
 
-        string strSQL = String.Format("SELECT * FROM camera WHERE strCamera = '{0}'", strCamera);
+        string strSQL = String.Format("SELECT idCamera FROM camera WHERE strCamera = '{0}'", strCamera);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO camera (idCamera, strCamera, strCameraMake) VALUES (NULL, '{0}', '{1}')", strCamera, strMake);
+          strSQL = String.Format("INSERT INTO camera (idCamera, strCamera, strCameraMake) VALUES (NULL, '{0}', '{1}')", strCamera, DatabaseUtility.RemoveInvalidChars(make.Trim()));
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
         }
         else
         {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idCamera"), out iID))
-          {
-            return iID;
-          }
+          return DatabaseUtility.GetAsInt(results, 0, "idCamera");
         }
       }
       catch (Exception ex)
@@ -679,27 +668,20 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string strLens = lens.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strLens);
-        string strMake = make.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strMake);
+        string strLens = DatabaseUtility.RemoveInvalidChars(lens.Trim());
 
-        string strSQL = String.Format("SELECT * FROM lens WHERE strLens = '{0}'", strLens);
+        string strSQL = String.Format("SELECT idLens FROM lens WHERE strLens = '{0}'", strLens);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO lens (idLens, strLens, strLensMake) VALUES (NULL, '{0}', '{1}')", strLens, strMake);
+          strSQL = String.Format("INSERT INTO lens (idLens, strLens, strLensMake) VALUES (NULL, '{0}', '{1}')", strLens, DatabaseUtility.RemoveInvalidChars(make.Trim()));
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
         }
         else
         {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idLens"), out iID))
-          {
-            return iID;
-          }
+          return DatabaseUtility.GetAsInt(results, 0, "idLens");
         }
       }
       catch (Exception ex)
@@ -718,27 +700,20 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string strId = id.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strId);
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
+        string strId = DatabaseUtility.RemoveInvalidChars(id.Trim());
 
-        string strSQL = String.Format("SELECT * FROM orientation WHERE idOrientation = '{0}'", strId);
+        string strSQL = String.Format("SELECT idOrientation FROM orientation WHERE idOrientation = '{0}'", strId);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO orientation (idOrientation, strOrientation) VALUES ('{0}', '{1}')", strId, strName);
+          strSQL = String.Format("INSERT INTO orientation (idOrientation, strOrientation) VALUES ('{0}', '{1}')", strId, DatabaseUtility.RemoveInvalidChars(name.Trim()));
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
         }
         else
         {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idOrientation"), out iID))
-          {
-            return iID;
-          }
+          return DatabaseUtility.GetAsInt(results, 0, "idOrientation");
         }
       }
       catch (Exception ex)
@@ -757,27 +732,20 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string strId = id.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strId);
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
+        string strId = DatabaseUtility.RemoveInvalidChars(id.Trim());
 
-        string strSQL = String.Format("SELECT * FROM flash WHERE idFlash = '{0}'", strId);
+        string strSQL = String.Format("SELECT idFlash FROM flash WHERE idFlash = '{0}'", strId);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO flash (idFlash, strFlash) VALUES ('{0}', '{1}')", strId, strName);
+          strSQL = String.Format("INSERT INTO flash (idFlash, strFlash) VALUES ('{0}', '{1}')", strId, DatabaseUtility.RemoveInvalidChars(name.Trim()));
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
         }
         else
         {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idFlash"), out iID))
-          {
-            return iID;
-          }
+          return DatabaseUtility.GetAsInt(results, 0, "idFlash");
         }
       }
       catch (Exception ex)
@@ -796,27 +764,20 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string strId = id.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strId);
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
+        string strId = DatabaseUtility.RemoveInvalidChars(id.Trim());
 
-        string strSQL = String.Format("SELECT * FROM meteringmode WHERE idMeteringMode = '{0}'", strId);
+        string strSQL = String.Format("SELECT idMeteringMode FROM meteringmode WHERE idMeteringMode = '{0}'", strId);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO meteringmode (idMeteringMode, strMeteringMode) VALUES ('{0}', '{1}')", strId, strName);
+          strSQL = String.Format("INSERT INTO meteringmode (idMeteringMode, strMeteringMode) VALUES ('{0}', '{1}')", strId, DatabaseUtility.RemoveInvalidChars(name.Trim()));
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
         }
         else
         {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idMeteringMode"), out iID))
-          {
-            return iID;
-          }
+          return DatabaseUtility.GetAsInt(results, 0, "idMeteringMode");
         }
       }
       catch (Exception ex)
@@ -841,27 +802,20 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string strCode = code.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strCode);
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
+        string strName = DatabaseUtility.RemoveInvalidChars(name.Trim());
 
-        string strSQL = String.Format("SELECT * FROM country WHERE strCountry = '{0}'", strName);
+        string strSQL = String.Format("SELECT idCountry FROM country WHERE strCountry = '{0}'", strName);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO country (idCountry, strCountryCode, strCountry) VALUES (NULL, '{0}', '{1}')", strCode, strName);
+          strSQL = String.Format("INSERT INTO country (idCountry, strCountryCode, strCountry) VALUES (NULL, '{0}', '{1}')",  DatabaseUtility.RemoveInvalidChars(code.Trim()), strName);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
         }
         else
         {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idCountry"), out iID))
-          {
-            return iID;
-          }
+          return DatabaseUtility.GetAsInt(results, 0, "idCountry");
         }
       }
       catch (Exception ex)
