@@ -600,7 +600,9 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_vst.dll"
   File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_wadsp.dll"
   File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\basswasapi.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\plugins\OptimFROG.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bassenc.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\basscd.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\Plugins\OptimFROG.dll"
   ; Bass AudioDecoders
   SetOutPath "$MPdir.Base\MusicPlayer\plugins\audio decoders"
   File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\plugins\bass*.dll"
@@ -971,6 +973,11 @@ Section -Post
   ; BASS 2.3  to   2.4   Update - requested by hwahrmann (2009-01-26)
   ${LOG_TEXT} "INFO" "Removing obsolete BASS 2.3 files"
   Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_wv.dll"
+  
+  ; BASS Update - requested by hwahrmann MP1-4966 
+  ${LOG_TEXT} "INFO" "Removing obsolete various BASS files"
+  Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\basscd.dll"
+  Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_alac.dll"
 
   ; Libbluray remove previous release files
   ${LOG_TEXT} "INFO" "Removing obsolete libbluray files"
