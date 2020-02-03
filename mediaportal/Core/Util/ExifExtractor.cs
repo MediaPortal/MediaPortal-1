@@ -311,7 +311,7 @@ namespace MediaPortal.GUI.Pictures
           {
             MyMetadata.Resolution.Height = value;
           }
-          if (MyMetadata.Resolution.Width == 1 || MyMetadata.Resolution.Height == 1)
+          if (MyMetadata.Resolution.Width <= 1 || MyMetadata.Resolution.Height <= 1)
             MyMetadata.Resolution = Size.Empty;
         }
 
@@ -422,31 +422,32 @@ namespace MediaPortal.GUI.Pictures
         }
 
         foreach (var directory in directories)
-        {
-          if (MyMetadata.ImageDimensions.IsEmpty)
+          if (!directory.Name.Contains("Thumbnail"))
           {
-            var wTag = directory.Tags.Where((x) => x.Name == "Image Width" || x.Name == "Exif Image Width").FirstOrDefault();
-            var hTag = directory.Tags.Where((x) => x.Name == "Image Height" || x.Name == "Exif Image Height").FirstOrDefault();
-            if (wTag != null && hTag != null)
+            if (MyMetadata.ImageDimensions.IsEmpty)
             {
-              MyMetadata.ImageDimensions.Width = directory.GetInt32(wTag.Type);
-              MyMetadata.ImageDimensions.Height = directory.GetInt32(hTag.Type);
+              var wTag = directory.Tags.Where((x) => x.Name == "Image Width" || x.Name == "Exif Image Width").FirstOrDefault();
+              var hTag = directory.Tags.Where((x) => x.Name == "Image Height" || x.Name == "Exif Image Height").FirstOrDefault();
+              if (wTag != null && hTag != null)
+              {
+                MyMetadata.ImageDimensions.Width = directory.GetInt32(wTag.Type);
+                MyMetadata.ImageDimensions.Height = directory.GetInt32(hTag.Type);
+              }
             }
-          }
 
-          if (MyMetadata.Resolution.IsEmpty)
-          {
-            var wTag = directory.Tags.Where((x) => x.Name == "X Resolution").FirstOrDefault();
-            var hTag = directory.Tags.Where((x) => x.Name == "Y Resolution").FirstOrDefault();
-            if (wTag != null && hTag != null)
+            if (MyMetadata.Resolution.IsEmpty)
             {
-              MyMetadata.Resolution.Width = directory.GetInt32(wTag.Type);
-              MyMetadata.Resolution.Height = directory.GetInt32(hTag.Type);
-              if (MyMetadata.Resolution.Width == 1 || MyMetadata.Resolution.Height == 1)
-                MyMetadata.Resolution = Size.Empty;
+              var wTag = directory.Tags.Where((x) => x.Name == "X Resolution").FirstOrDefault();
+              var hTag = directory.Tags.Where((x) => x.Name == "Y Resolution").FirstOrDefault();
+              if (wTag != null && hTag != null)
+              {
+                MyMetadata.Resolution.Width = directory.GetInt32(wTag.Type);
+                MyMetadata.Resolution.Height = directory.GetInt32(hTag.Type);
+                if (MyMetadata.Resolution.Width <= 1 || MyMetadata.Resolution.Height <= 1)
+                  MyMetadata.Resolution = Size.Empty;
+              }
             }
           }
-        }
 
         if (MyMetadata.Resolution.IsEmpty || MyMetadata.ImageDimensions.IsEmpty)
         {
