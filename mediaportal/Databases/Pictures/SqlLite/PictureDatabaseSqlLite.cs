@@ -320,7 +320,7 @@ namespace MediaPortal.Picture.Database
       DatabaseUtility.AddView(m_db, "picturedata", "CREATE VIEW picturedata AS " +
                                                           "SELECT picture.idPicture, strFile, strDateTaken, iImageWidth, iImageHeight, iImageXReso, iImageYReso, " +
                                                           "strCamera, strCameraMake, strLens, strISO, strExposureTime, strExposureCompensation, strFStop, strShutterSpeed, " +
-                                                          "strFocalLength, strFocalLength35mm, strGPSLatitude, strGPSLongitude, strGPSAltitude, " +
+                                                          "strFocalLength, strFocalLength35mm, " +
                                                           "strOrientation, strFlash, strMeteringMode, " +
                                                           "strCountryCode, strCountry, strState, strCity, strSubLocation, strExposureProgram, strExposureMode, strSensingMethod, strSceneType, " +
                                                           "strSceneCaptureType, strWhiteBalance, strAuthor, strByLine, strSoftware, strUserComment, strCopyright, strCopyrightNotice, " +
@@ -498,7 +498,7 @@ namespace MediaPortal.Picture.Database
 
     private string GetGPSValueForQuery(string value)
     {
-      return (String.IsNullOrEmpty(value) || value.Equals("unknown", StringComparison.InvariantCultureIgnoreCase)) ? "NULL" : value.ToString();
+      return (String.IsNullOrEmpty(value) || value.Equals("unknown", StringComparison.InvariantCultureIgnoreCase)) ? "NULL" : "'" + value.ToString()+ "'";
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
@@ -534,7 +534,7 @@ namespace MediaPortal.Picture.Database
                                                                          "idIso, idExposureTime, idExposureCompensation, idFstop, idShutterSpeed, idFocalLength, idFocalLength35mm, " +
                                                                          "strGPSLatitude, strGPSLongitude, strGPSAltitude) " +
                                    "VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, " +
-                                           "{12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, '{29}', '{30}', '{31}');",
+                                           "{12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29}, {30}, {31});",
                                             iDbID,
                                             GetValueForQuery(AddItem("Camera", exifData.CameraModel.DisplayValue, "strCameraMake", exifData.EquipmentMake.DisplayValue)),
                                             GetValueForQuery(AddItem("Lens", exifData.Lens.DisplayValue, "strLensMake", exifData.Lens.Value)),
