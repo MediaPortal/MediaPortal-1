@@ -95,6 +95,7 @@ namespace MediaPortal.Picture.Database
 
         DatabaseUtility.SetPragmas(m_db);
         m_db.Execute("PRAGMA foreign_keys=ON");
+        m_db.Execute("PRAGMA optimize;");
 
         CreateTables();
         InitSettings();
@@ -535,8 +536,8 @@ namespace MediaPortal.Picture.Database
                                    "VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, " +
                                            "{12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, '{29}', '{30}', '{31}');",
                                             iDbID,
-                                            GetValueForQuery(AddCamera(exifData.CameraModel.DisplayValue, exifData.EquipmentMake.DisplayValue)),
-                                            GetValueForQuery(AddLens(exifData.Lens.DisplayValue, exifData.Lens.Value)),
+                                            GetValueForQuery(AddItem("Camera", exifData.CameraModel.DisplayValue, "strCameraMake", exifData.EquipmentMake.DisplayValue)),
+                                            GetValueForQuery(AddItem("Lens", exifData.Lens.DisplayValue, "strLensMake", exifData.Lens.Value)),
                                             GetValueForQuery(AddOrienatation(exifData.Orientation.Value, exifData.Orientation.DisplayValue)),
                                             GetValueForQuery(AddFlash(exifData.Flash.Value, exifData.Flash.DisplayValue)),
                                             GetValueForQuery(AddMeteringMode(exifData.MeteringMode.Value, exifData.MeteringMode.DisplayValue)),
@@ -552,7 +553,7 @@ namespace MediaPortal.Picture.Database
                                             GetValueForQuery(AddItem("UserComment", exifData.Comment.DisplayValue)),
                                             GetValueForQuery(AddItem("Copyright", exifData.Copyright.DisplayValue)),
                                             GetValueForQuery(AddItem("CopyrightNotice", exifData.CopyrightNotice.DisplayValue)),
-                                            GetValueForQuery(AddCountry(exifData.CountryCode.DisplayValue, exifData.CountryName.DisplayValue)),
+                                            GetValueForQuery(AddItem("Country", exifData.CountryName.DisplayValue, "strCountryCode", exifData.CountryCode.DisplayValue)),
                                             GetValueForQuery(AddItem("State", exifData.ProvinceOrState.DisplayValue)),
                                             GetValueForQuery(AddItem("City", exifData.City.DisplayValue)),
                                             GetValueForQuery(AddItem("SubLocation", exifData.SubLocation.DisplayValue)),
@@ -588,9 +589,12 @@ namespace MediaPortal.Picture.Database
     private string CleanupString(string value)
     {
       if (string.IsNullOrWhiteSpace(value))
+      {
         return String.Empty;
+      }
       value = Regex.Replace(value, @"[\u0000-\u001F]+", string.Empty);
-      return Regex.Replace(value, @"\s*unknown\s*(?:\(\d*\))?\s*", string.Empty,RegexOptions.IgnoreCase);
+      value = DatabaseUtility.RemoveInvalidChars(value);
+      return Regex.Replace(value, @"\s*unknown\s*(?:\(\d*\))?\s*", string.Empty,RegexOptions.IgnoreCase).Trim();
     }
 
     private int AddItem(string tableName, string value)
@@ -603,12 +607,11 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string strValue = DatabaseUtility.RemoveInvalidChars(value.Trim());
-        string strSQL = String.Format("SELECT id{0} FROM {0} WHERE str{0} = '{1}'", tableName, strValue);
+        string strSQL = String.Format("SELECT id{0} FROM {0} WHERE str{0} = '{1}'", tableName, value);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO {0} (id{0}, str{0}) VALUES (NULL, '{1}')", tableName, strValue);
+          strSQL = String.Format("INSERT INTO {0} (id{0}, str{0}) VALUES (NULL, '{1}')", tableName, value);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -625,74 +628,34 @@ namespace MediaPortal.Picture.Database
       return -1;
     }
 
-
-
-    private int AddCamera(string camera, string make)
+    private int AddItem(string tableName, string value, string additionalName, string additionalValue)
     {
-      camera = CleanupString(camera);
-
-      if (camera==String.Empty)
+      value = CleanupString(value);
+      if (value==String.Empty)
       {
         return -1;
       }
 
-      make = CleanupString(make);
+      additionalValue = CleanupString(additionalValue);
       try
       {
-        string strCamera = DatabaseUtility.RemoveInvalidChars(camera.Trim());
-
-        string strSQL = String.Format("SELECT idCamera FROM camera WHERE strCamera = '{0}'", strCamera);
+        string strSQL = String.Format("SELECT id{0} FROM {0} WHERE str{0} = '{1}'", tableName, value);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO camera (idCamera, strCamera, strCameraMake) VALUES (NULL, '{0}', '{1}')", strCamera, DatabaseUtility.RemoveInvalidChars(make.Trim()));
+          strSQL = String.Format("INSERT INTO {0} (id{0}, str{0}, {1}) VALUES (NULL, '{2}', '{3}')", tableName, additionalName, value, additionalValue);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
         }
         else
         {
-          return DatabaseUtility.GetAsInt(results, 0, "idCamera");
+          return DatabaseUtility.GetAsInt(results, 0, "id" + tableName);
         }
       }
       catch (Exception ex)
       {
-        Log.Error("Picture.DB.SQLite: AddCamera: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddLens(string lens, string make)
-    {
-      lens = CleanupString(lens);
-
-      if (lens==String.Empty)
-      {
-        return -1;
-      }
-
-      make = CleanupString(make);
-      try
-      {
-        string strLens = DatabaseUtility.RemoveInvalidChars(lens.Trim());
-
-        string strSQL = String.Format("SELECT idLens FROM lens WHERE strLens = '{0}'", strLens);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO lens (idLens, strLens, strLensMake) VALUES (NULL, '{0}', '{1}')", strLens, DatabaseUtility.RemoveInvalidChars(make.Trim()));
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          return DatabaseUtility.GetAsInt(results, 0, "idLens");
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddLens: {0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("Picture.DB.SQLite: Add{0}: {1} stack:{2}", tableName, ex.Message, ex.StackTrace);
       }
       return -1;
     }
@@ -790,44 +753,6 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddMeteringMode: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-
-
-    private int AddCountry(string code, string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (string.IsNullOrWhiteSpace(code))
-      {
-        code = string.Empty;
-      }
-
-      try
-      {
-        string strName = DatabaseUtility.RemoveInvalidChars(name.Trim());
-
-        string strSQL = String.Format("SELECT idCountry FROM country WHERE strCountry = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO country (idCountry, strCountryCode, strCountry) VALUES (NULL, '{0}', '{1}')",  DatabaseUtility.RemoveInvalidChars(code.Trim()), strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          return DatabaseUtility.GetAsInt(results, 0, "idCountry");
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddCountry: {0} stack:{1}", ex.Message, ex.StackTrace);
       }
       return -1;
     }
