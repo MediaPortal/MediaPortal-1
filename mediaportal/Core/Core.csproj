@@ -233,8 +233,8 @@
     <Reference Include="MediaInfo.Wrapper, Version=19.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Packages\MediaInfo.Wrapper.19.4.1\lib\net40\MediaInfo.Wrapper.dll</HintPath>
     </Reference>
-    <Reference Include="MetadataExtractor, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\MetadataExtractor.2.2.0\lib\net35\MetadataExtractor.dll</HintPath>
+    <Reference Include="MetadataExtractor, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\MetadataExtractor.2.3.0\lib\net35\MetadataExtractor.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>

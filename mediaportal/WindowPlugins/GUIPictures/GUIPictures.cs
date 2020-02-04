@@ -469,7 +469,7 @@ namespace MediaPortal.GUI.Pictures
     private static string _searchString = string.Empty;
 
     private ConcurrentQueue<GUIListItem> _queueItems;
-    private ConcurrentQueue<string> _queuePictures;
+    private ConcurrentQueue<GUIListItem> _queuePictures;
     private AutoResetEvent _queueItemsEvent;
     private AutoResetEvent _queuePicturesEvent;
     private Thread _threadAddPictures;
@@ -940,6 +940,12 @@ namespace MediaPortal.GUI.Pictures
           GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
         }
       }
+      else if (PreviousWindowId == (int)Window.WINDOW_PICTURE_EXIF)
+      {
+        LoadSelected();
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
+      }
+
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
     }
 
@@ -1645,10 +1651,7 @@ namespace MediaPortal.GUI.Pictures
         }
         else
         {
-          _queueItems.Enqueue(item);
-          _queuePictures.Enqueue(path);
-
-          _queueItemsEvent.Set();
+          _queuePictures.Enqueue(item);
           _queuePicturesEvent.Set();
         }
 
@@ -1957,6 +1960,27 @@ namespace MediaPortal.GUI.Pictures
       }
 
       FolderSettings.AddFolderSetting(folder, "Pictures", typeof (MapSettings), mapSettings);
+    }
+
+    #endregion
+
+    #region Save selected
+
+    private void LoadSelected()
+    {
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        facadeLayout.SelectedListItemIndex = xmlreader.GetValueAsInt("pictures", "selected", -1);
+      }
+      SelectCurrentItem();
+    }
+
+    private void SaveSelected()
+    {
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        xmlreader.SetValue("pictures", "selected", facadeLayout.SelectedListItemIndex);
+      }
     }
 
     #endregion
@@ -2287,14 +2311,25 @@ namespace MediaPortal.GUI.Pictures
       {
         return;
       }
-      GUIDialogExif exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_EXIF);
-      // Needed to set GUIDialogExif
-      exifDialog.Restore();
-      exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_EXIF);
-      exifDialog.FileName = item.Path;
-      exifDialog.DoModal(GetID);
-      // Fix for Mantis issue: 0001709: Background not correct after viewing pictures properties twice
-      exifDialog.Restore();
+
+      if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\PictureExifInfo.xml")))
+      {
+        SaveSelected();
+        GUIPicureExif pictureExif= (GUIPicureExif)GUIWindowManager.GetWindow((int)Window.WINDOW_PICTURE_EXIF);
+        pictureExif.Picture = item.Path;
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_PICTURE_EXIF);
+      }
+      else
+      {
+        GUIDialogExif exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_EXIF);
+        // Needed to set GUIDialogExif
+        exifDialog.Restore();
+        exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_EXIF);
+        exifDialog.FileName = item.Path;
+        exifDialog.DoModal(GetID);
+        // Fix for Mantis issue: 0001709: Background not correct after viewing pictures properties twice
+        exifDialog.Restore();
+      }
     }
 
     private void OnRotatePicture(int degrees)
@@ -3228,8 +3263,7 @@ namespace MediaPortal.GUI.Pictures
           }
           else
           {
-            _queueItems.Enqueue(item);
-            _queuePictures.Enqueue(item.Path);
+            _queuePictures.Enqueue(item);
           }
         }
         OnSort();
@@ -3764,12 +3798,43 @@ namespace MediaPortal.GUI.Pictures
       _threadGetPicturesInfo.Name = "GUIPictures GetPicturesInfo";
       _threadGetPicturesInfo.Start();
 
-      _queuePictures = new ConcurrentQueue<string>();
+      _queuePictures = new ConcurrentQueue<GUIListItem>();
       _threadAddPictures = new Thread(ThreadAddPictures);
       _threadAddPictures.Priority = ThreadPriority.Lowest;
       _threadAddPictures.IsBackground = true;
       _threadAddPictures.Name = "GUIPictures AddPictures";
       _threadAddPictures.Start();
+    }
+
+    private void SetItemExifData(GUIListItem item)
+    {
+      VirtualDirectory vDir = new VirtualDirectory();
+      vDir.SetExtensions(Util.Utils.PictureExtensions);
+
+      string file = item.Path;
+
+      DateTime datetime = PictureDatabase.GetDateTimeTaken(file);
+      if (disp != Display.Files)
+      {
+        item.Label2 = datetime.ToString();
+      }
+      // item.Label3 = datetime.ToString();
+      item.AlbumInfoTag = PictureDatabase.GetExifFromDB(file);
+
+      if (item.FileInfo == null || string.IsNullOrEmpty(item.FileInfo.Name))
+      {
+        if (!vDir.IsRemote(file))
+        {
+          if (File.Exists(file))
+          {
+            item.FileInfo = new FileInformation(file, false);
+          }
+        }
+      }
+      if (item.FileInfo != null && datetime != DateTime.MinValue && item.FileInfo.CreationTime != datetime)
+      {
+        item.FileInfo.CreationTime = datetime;
+      }
     }
 
     private void ThreadGetPicturesInfo()
@@ -3787,37 +3852,11 @@ namespace MediaPortal.GUI.Pictures
           GUIListItem item;
           while (!_threadProcessPicturesStop && _queueItems.TryDequeue(out item))
           {
-            VirtualDirectory vDir = new VirtualDirectory();
-            vDir.SetExtensions(Util.Utils.PictureExtensions);
-
-            string file = item.Path;
-            if (string.IsNullOrEmpty(file))
+            if (string.IsNullOrEmpty(item.Path))
             {
               continue;
             }
-
-            DateTime datetime = PictureDatabase.GetDateTimeTaken(file);
-            if (disp != Display.Files)
-            {
-              item.Label2 = datetime.ToString();
-            }
-            // item.Label3 = datetime.ToString();
-            item.AlbumInfoTag = PictureDatabase.GetExifFromDB(file);
-
-            if (item.FileInfo == null || string.IsNullOrEmpty(item.FileInfo.Name))
-            {
-              if (!vDir.IsRemote(file))
-              {
-                if (File.Exists(file))
-                {
-                  item.FileInfo = new FileInformation(file, false);
-                }
-              }
-            }
-            if (item.FileInfo != null && datetime != DateTime.MinValue && item.FileInfo.CreationTime != datetime)
-            {
-              item.FileInfo.CreationTime = datetime;
-            }
+            SetItemExifData(item);
           }
           SelectCurrentItem();
           _queueItemsEvent.WaitOne();
@@ -3837,12 +3876,20 @@ namespace MediaPortal.GUI.Pictures
       {
         while (!_threadProcessPicturesStop)
         {
-          string file = string.Empty;
-          while (!_threadProcessPicturesStop && _queuePictures.TryDequeue(out file))
+          GUIListItem item;
+          while (!_threadProcessPicturesStop && _queuePictures.TryDequeue(out item))
           {
-            PictureDatabase.AddPicture(file, -1);
+            if (string.IsNullOrEmpty(item.Path))
+            {
+              continue;
+            }
+
+            if (PictureDatabase.AddPicture(item.Path, -1) > 0)
+            {
+              SetItemExifData(item);
+            }
           }
-          _queueItemsEvent.Set();
+          SelectCurrentItem();
           _queuePicturesEvent.WaitOne();
         }
       }

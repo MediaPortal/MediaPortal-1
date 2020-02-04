@@ -85,6 +85,25 @@
     </control>
     
     <import>common.facade.pictures.xml</import>
+
+    <control>
+  	  <description>EXIF Logo</description>
+      <type>image</type>
+      <id>0</id>
+   	  <posX>70</posX>
+      <posY>360</posY>
+      <width>30</width>
+      <height>560</height>
+      <align>center</align>
+      <valign>top</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <shouldCache>true</shouldCache>
+      <texture>#pictures.exif.images</texture>
+      <visible>facadeview.list+Control.IsVisible(50)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
     <import>mypics.hiddenmenu.xml</import>
     <import>mypics.folderchanged.xml</import>
     <import>common.overlay.xml</import>
