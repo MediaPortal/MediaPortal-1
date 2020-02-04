@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+  <exif name="Unknown">Неизвестно</exif>
+  <exif name="Not defined">Не определено</exif>
+  <!-- Exposure Program -->
+  <exif name="Manual">Ручной режим</exif>
+  <exif name="Manual control">Ручной режим</exif>
+  <exif name="Normal program">Обычная программа</exif>
+  <exif name="Program normal">Обычная программа</exif>
+  <exif name="Aperture priority">Приоритет диафрагмы</exif>
+  <exif name="Shutter priority">Приоритет затвора</exif>
+  <exif name="Portrait mode">Портретный режим</exif>
+  <exif name="Landscape mode">Пейзажный режим</exif>
+  <exif name="Program action (high-speed program)">Творческая программа (высокоскоростная выдержка)</exif>
+  <exif name="Program creative (slow program)">Творческая программа (медленная выдержка)</exif>
+  <exif name="Creative program (biased toward depth of field)">Творческая программа (смещена в сторону глубины резкости)</exif>
+  <exif name="Action program (biased toward fast shutter speed)">Программа действий (смещена в сторону быстрой выдержки)</exif>
+  <exif name="Portrait mode (for closeup photos with the background out of focus)">Портретный режим (для фотографий крупным планом с фоном не в фокусе)</exif>
+  <exif name="Landscape mode (for landscape photos with the background in focus)">Пейзажный режим (для пейзажных фотографий с фоном в фокусе)</exif>
+  <!-- Metering Mode -->
+  <exif name="Average">Средний</exif>
+  <exif name="Center weighted average">Средневзвешенный по центру</exif>
+  <exif name="Spot">По точке</exif>
+  <exif name="Multi-spot">По точкам</exif>
+  <exif name="Multi-segment">Многосегментный</exif>
+  <exif name="Pattern">По шаблону</exif>
+  <exif name="Partial">Частичный</exif>
+  <exif name="Other">Другой</exif>
+  <!-- Sensing Method -->
+  <exif name="One-chip color area sensor">Однокристальный датчик площади цвета</exif>
+  <exif name="Two-chip color area sensor">Двухкристальный датчик площади цвета</exif>
+  <exif name="Three-chip color area sensor">Трехкристальный датчик площади цвета</exif>
+  <exif name="Color sequential area sensor">Цветной последовательный датчик площади</exif>
+  <exif name="Trilinear sensor">Трилинейный датчик</exif>
+  <exif name="Color sequential linear sensor">Цветной последовательный линейный датчик</exif>
+  <!-- Scene Capture Type -->
+  <exif name="Standard">Стандартный</exif>
+  <exif name="Landscape">Пейзаж</exif>
+  <exif name="Portrait">Портрет</exif>
+  <exif name="Night scene">Ночная сцена</exif>
+  <!-- Exposure Mode -->
+  <exif name="Auto exposure">Автоматическая экспозиция</exif>
+  <exif name="Manual exposure">Ручная экспозиция</exif>
+  <exif name="Auto bracket">Авто брекет</exif>
+  <!-- White Balance -->
+  <exif name="Auto white balance">Автоматический баланс белого</exif>
+  <exif name="Manual white balance">Ручной баланс белого</exif>
+  <!-- Flash -->
+  <exif name="Flash did not fire">Вспышка выключена</exif>
+  <exif name="Flash fired">Вспышка сработала</exif>
+  <exif name="Strobe return light not detected">Обратный свет стробоскопа не обнаружен</exif>
+  <exif name="Strobe return light detected">Обнаружен обратный свет стробоскопа</exif>
+  <exif name="Flash fired, return not detected">Вспышка сработала, обратный свет не обнаружен</exif>
+  <exif name="Flash fired, return detected">Вспышка сработала, обнаружен обратный свет</exif>
+  <exif name="Flash fired, compulsory flash mode">Вспышка сработала, режим обязательной вспышки</exif>
+  <exif name="Flash fired, compulsory flash mode, return light not detected">Вспышка сработала, режим принудительной вспышки, обратный свет не обнаружен</exif>
+  <exif name="Flash fired, compulsory flash mode, return light detected">Вспышка сработала, режим принудительной вспышки, обнаружен обратный свет</exif>
+  <exif name="Flash did not fire, compulsory flash mode">Вспышка не сработала, режим принудительной вспышки</exif>
+  <exif name="Flash did not fire, auto">Вспышка не сработала, автоматический режим</exif>
+  <exif name="Flash did not fire, auto mode">Вспышка не сработала, автоматический режим</exif>
+  <exif name="Flash did not fire, auto, red-eye reduction">Вспышка не сработала, автоматический режим, режим уменьшения эффекта красных глаз</exif>
+  <exif name="Flash fired, auto">Сработала вспышка, автоматический режим</exif>
+  <exif name="Flash fired, auto mode">Сработала вспышка, автоматический режим</exif>
+  <exif name="Flash fired, auto mode, return light not detected">Вспышка сработала, автоматический режим, обратный свет не обнаружен</exif>
+  <exif name="Flash fired, return not detected, auto">Вспышка сработала, автоматический режим, обратный свет не обнаружен</exif>
+  <exif name="Flash fired, return detected, auto">Вспышка сработала, автоматический режим, обратный свет не обнаружен</exif>
+  <exif name="Flash fired, return detected, auto">Вспышка сработала, автоматический режим, обнаружен обратный свет</exif>
+  <exif name="Flash fired, auto mode, return light detected">Вспышка сработала, автоматический режим, обнаружен обратный свет</exif>
+  <exif name="No flash function">Нет функции вспышки</exif>
+  <exif name="Flash fired, red-eye reduction">Вспышка сработала, режим подавления эффекта красных глаз</exif>
+  <exif name="Flash fired, red-eye reduction mode">Вспышка сработала, режим подавления эффекта красных глаз</exif>
+  <exif name="Flash fired, return not detected, red-eye reduction">Вспышка сработала, режим уменьшения эффекта красных глаз, обратный свет не обнаружен</exif>
+  <exif name="Flash fired, red-eye reduction mode, return light not detected">Вспышка сработала, режим уменьшения эффекта красных глаз, обратный свет не обнаружен</exif>
+  <exif name="Flash fired, return detected, red-eye reduction">Сработала вспышка, режим уменьшения эффекта красных глаз, обнаружен обратный свет</exif>
+  <exif name="Flash fired, red-eye reduction mode, return light detected">Сработала вспышка, режим уменьшения эффекта красных глаз, обнаружен обратный свет</exif>
+  <exif name="Flash fired, compulsory flash mode, red-eye reduction mode">Сработала вспышка, режим принудительной вспышки, режим уменьшения эффекта красных глаз</exif>
+  <exif name="Flash fired, compulsory flash mode, red-eye reduction mode, return light not detected">Вспышка сработала, режим принудительной вспышки, режим подавления эффекта красных глаз, обратный свет не обнаружен</exif>
+  <exif name="Flash fired, compulsory flash mode, red-eye reduction mode, return light detected">Вспышка сработала, режим принудительной вспышки, режим уменьшения эффекта красных глаз, обнаружен обратный свет</exif>
+  <exif name="Flash fired, auto, red-eye reduction">Сработала вспышка, автоматический режим, режим уменьшения эффекта красных глаз</exif>
+  <exif name="Flash fired, auto mode, red-eye reduction mode">Сработала вспышка, автоматический режим, режим уменьшения эффекта красных глаз</exif>
+  <exif name="Flash fired, return not detected, auto, red-eye reduction">Вспышка сработала, автоматический режим, обратный свет не обнаружен, режим устранения эффекта красных глаз</exif>
+  <exif name="Flash fired, auto mode, return light not detected, red-eye reduction mode">Вспышка сработала, автоматический режим, обратный свет не обнаружен, режим устранения эффекта красных глаз</exif>
+  <exif name="Flash fired, return detected, auto, red-eye reduction">Вспышка сработала, автоматический режим, режим уменьшения эффекта красных глаз</exif>
+  <exif name="Flash fired, auto mode, return light detected, red-eye reduction mode">Вспышка сработала, автоматический режим, обнаружен обратный свет, режим уменьшения эффекта красных глаз</exif>
+  <!-- Light Source -->
+  <exif name="Daylight">Дневной свет</exif>
+  <exif name="Fluorescent">Флуоресцентный</exif>
+  <exif name="Tungsten (incandescent light)">Вольфрам (лампа накаливания)</exif>
+  <exif name="Flash">Вспышка</exif>
+  <exif name="Fine weather">Хорошая погода</exif>
+  <exif name="Cloudy weather">Пасмурная погода</exif>
+  <exif name="Shade">Тень</exif>
+  <exif name="Daylight fluorescent (D 5700 - 7100K)">Дневной свет (D 5700 - 7100K)</exif>
+  <exif name="Day white fluorescent (N 4600 - 5400K)">Дневной белый флуоресцентный свет (N 4600 - 5400K)</exif>
+  <exif name="Cool white fluorescent (W 3900 - 4500K)">Холодный белый флуоресцентный (W 3900 - 4500K)</exif>
+  <exif name="White fluorescent (WW 3200 - 3700K)">Белый флуоресцентный (WW3200 - 3700K)</exif>
+  <exif name="Standard light A">Стандартный свет А</exif>
+  <exif name="Standard light B">Стандартный свет B</exif>
+  <exif name="Standard light C">Стандартный свет C</exif>
+  <exif name="ISO studio tungsten">ISO студийный вольфрама</exif>
+  <exif name="Other light source">Другой источник света</exif>
+  <!-- Orienatation -->
+  <exif name="Top, left side (Horizontal / normal)">Горизонтальная / нормальная</exif>
+  <exif name="Bottom, right side (Rotate 180)">Поворот 180*</exif>
+  <exif name="Right side, top (Rotate 90 CW)">Поворот на 90* по часовой</exif>
+  <exif name="Left side, bottom (Rotate 270 CW)">Поворот 270* по часовой</exif>
+  <!-- Sscene Type -->
+  <exif name="Directly photographed image">Сфотографированное изображение</exif>
+</data>

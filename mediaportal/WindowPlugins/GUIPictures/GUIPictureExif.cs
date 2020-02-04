@@ -32,7 +32,7 @@ namespace MediaPortal.GUI.Pictures
   /// <summary>
   /// 
   /// </summary>
-  public class GUIVideoInfo : GUIInternalWindow, IRenderLayer
+  public class GUIPicureExif : GUIInternalWindow, IRenderLayer
   {
     #region Skin controls
 
@@ -49,7 +49,7 @@ namespace MediaPortal.GUI.Pictures
 
     #endregion
 
-    public GUIVideoInfo()
+    public GUIPicureExif()
     {
       GetID = (int)Window.WINDOW_PICTURE_EXIF;
     }
@@ -58,7 +58,7 @@ namespace MediaPortal.GUI.Pictures
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogExifInfo.xml"));
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\PictureExifInfo.xml"));
     }
 
     public override void PreInit() { }
@@ -176,7 +176,7 @@ namespace MediaPortal.GUI.Pictures
           imgPicture.FileName = _currentPicture;
         }
 
-        GUIPropertyManager.SetProperty("#selectedthumb", _currentPicture);
+        GUIPropertyManager.SetProperty("#currentpicture", _currentPicture);
       }
       catch (Exception ex)
       {
@@ -229,7 +229,15 @@ namespace MediaPortal.GUI.Pictures
         {
           return;
         }
-      
+        
+        GUIListItem fileitem = new GUIListItem();
+        fileitem.Label = Path.GetFileNameWithoutExtension(_currentPicture);
+        fileitem.Label2 = GUILocalizeStrings.Get(863);
+        fileitem.IconImage = Thumbs.Pictures + @"\exif\data\file.png";
+        fileitem.ThumbnailImage = fileitem.IconImage;
+        fileitem.OnItemSelected += OnItemSelected;
+        listExifProperties.Add(fileitem);
+
         Type type = typeof(ExifMetadata.Metadata);
         foreach (FieldInfo prop in type.GetFields())
         {
@@ -250,7 +258,7 @@ namespace MediaPortal.GUI.Pictures
           if (!string.IsNullOrEmpty(value))
           {
              GUIListItem item = new GUIListItem();
-             item.Label = value;
+             item.Label = value.ToValue() ?? value;
              item.Label2 = caption;
              item.IconImage = Thumbs.Pictures + @"\exif\data\" + prop.Name + ".png";
              item.ThumbnailImage = item.IconImage;

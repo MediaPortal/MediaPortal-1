@@ -20,16 +20,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Xml;
 
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
 
 namespace MediaPortal.Util
 {
-  public static class ExifExtenstions
+  public static class ExifExtensions
   {
     #region Exif mappings
 
@@ -74,12 +77,25 @@ namespace MediaPortal.Util
       { "ImageDimensions", GUILocalizeStrings.Get(9000) },
     };
 
+    private static Dictionary<string, string> _translated = new Dictionary<string, string>();
+
     #endregion
+
+    static ExifExtensions()
+    {
+      LoadTranslations();
+    }
 
     public static string ToCaption(this string tag)
     {
       string result;
-      return _fieldname.TryGetValue(tag, out result) ? result : string.Empty;
+      return _fieldname.TryGetValue(tag, out result) ? result : tag;
+    }
+
+    public static string ToValue(this string tag)
+    {
+      string result;
+      return _translated.TryGetValue(tag, out result) ? result : tag;
     }
 
     public static int ToRotation(this int orientation)
@@ -123,14 +139,15 @@ namespace MediaPortal.Util
         }
         if (!string.IsNullOrEmpty(value))
         {
-          value = caption + ": " + value;
-          full = full + value + "\n";
+          value = value.ToValue() ?? value;
+          // value = caption + ": " + value;
+          // full = full + value + "\n";
+          full = full + caption + ": " + value + "\n";
         }
         GUIPropertyManager.SetProperty("#pictures.exif." + prop.Name.ToLower(), value);
       }
       GUIPropertyManager.SetProperty("#pictures.exif.full", full);
       GUIPropertyManager.SetProperty("#pictures.haveexif", metadata.IsEmpty() ? "false" : "true");
-      GUIPropertyManager.SetProperty("#pictures.geotagged", (metadata.Latitude.IsEmpty() && metadata.Longitude.IsEmpty()) ? "false" : "true");
     }
 
     public static List<string> GetExifInfoList(this ExifMetadata.Metadata metadata)
@@ -269,7 +286,7 @@ namespace MediaPortal.Util
       bool vertical = height == 0;
 
       int i = 0;
-      int step = 2;
+      int step = 50;
       foreach (string info in infoList)
       {
         string image = GUIGraphicsContext.GetThemedSkinFile(@"\media\exif\" + info);
@@ -303,6 +320,68 @@ namespace MediaPortal.Util
         i++;
       }
       return iconList;
+    }
+
+    #endregion
+
+    #region Translation
+
+    public static void LoadTranslations()
+    {
+      string _path = Config.GetSubFolder(Config.Dir.Language, "Exif");
+      if (!System.IO.Directory.Exists(_path))
+      {
+        return;
+      }
+
+      string lang = string.Empty;
+      try
+      {
+        lang = GUILocalizeStrings.GetCultureName(GUILocalizeStrings.CurrentLanguage());
+      }
+      catch (Exception)
+      {
+        lang = CultureInfo.CurrentUICulture.Name;
+      }
+      if (lang == "en")
+      {
+        return;
+      }
+
+      string langPath = Path.Combine(_path, lang + ".xml");
+      if (!File.Exists(langPath))
+      {
+        return;
+      }
+
+      XmlDocument doc = new XmlDocument();
+      try
+      {
+        Log.Debug(string.Format("EXIF Translation: Try load Translation file {0}.", langPath));
+        doc.Load(langPath);
+        Log.Info( string.Format("EXIF Translation: Translation file loaded {0}.", langPath));
+      }
+      catch (Exception e)
+      {
+        Log.Info(string.Format("EXIF Translation: Error in translation xml file: {0}. Failing back to English", lang));
+        Log.Debug("EXIF Translation:" + e.ToString());
+        return;
+      }
+
+      foreach (XmlNode stringEntry in doc.DocumentElement.ChildNodes)
+      {
+        if (stringEntry.NodeType == XmlNodeType.Element)
+        {
+          try
+          {
+            _translated.Add(stringEntry.Attributes.GetNamedItem("name").Value, stringEntry.InnerText);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("EXIF Translation:" + ex.ToString());
+          }
+        }
+      }
     }
 
     #endregion
