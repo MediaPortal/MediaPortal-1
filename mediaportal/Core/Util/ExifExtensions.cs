@@ -340,8 +340,9 @@ namespace MediaPortal.Util
       {
         lang = GUILocalizeStrings.GetCultureName(GUILocalizeStrings.CurrentLanguage());
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Debug("Loadtranslations: {0}", ex.Message);
         lang = CultureInfo.CurrentUICulture.Name;
       }
       if (lang == "en")
