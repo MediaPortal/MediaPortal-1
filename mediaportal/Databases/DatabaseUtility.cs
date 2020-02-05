@@ -29,7 +29,7 @@ namespace MediaPortal.Database
   /// </summary>
   public class DatabaseUtility
   {
-    private DatabaseUtility() {}
+    private DatabaseUtility() { }
 
     public static void CompactDatabase(SQLiteClient m_db)
     {
