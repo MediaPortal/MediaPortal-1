@@ -190,8 +190,8 @@ namespace MediaPortal.Picture.Database
                                "CREATE TABLE exposureTime (idExposureTime INTEGER PRIMARY KEY, strExposureTime TEXT);");
       DatabaseUtility.AddTable(m_db, "exposureCompensation",
                                "CREATE TABLE exposureCompensation (idExposureCompensation INTEGER PRIMARY KEY, strExposureCompensation TEXT);");
-      DatabaseUtility.AddTable(m_db, "fStop",
-                               "CREATE TABLE fStop (idFStop INTEGER PRIMARY KEY, strFStop TEXT);");
+      DatabaseUtility.AddTable(m_db, "fstop",
+                               "CREATE TABLE fstop (idFStop INTEGER PRIMARY KEY, strFStop TEXT);");
       DatabaseUtility.AddTable(m_db, "shutterSpeed",
                                "CREATE TABLE shutterSpeed (idShutterSpeed INTEGER PRIMARY KEY, strShutterSpeed TEXT);");
       DatabaseUtility.AddTable(m_db, "focalLength",
@@ -212,7 +212,7 @@ namespace MediaPortal.Picture.Database
                                                        "idISO INTEGER REFERENCES iso(idIso) ON DELETE SET NULL, " +
                                                        "idExposureTime INTEGER REFERENCES exposureTime(idExposureTime) ON DELETE SET NULL, " +
                                                        "idExposureCompensation INTEGER REFERENCES exposureCompensation(idExposureCompensation) ON DELETE SET NULL, " +
-                                                       "idFStop INTEGER REFERENCES fStop(idFStop) ON DELETE SET NULL, " +
+                                                       "idFStop INTEGER REFERENCES fstop(idFStop) ON DELETE SET NULL, " +
                                                        "idShutterSpeed INTEGER REFERENCES shutterSpeed(idShutterSpeed) ON DELETE SET NULL, " +
                                                        "idFocalLength INTEGER REFERENCES focalLength(idFocalLength) ON DELETE SET NULL, " +
                                                        "idFocalLength35mm INTEGER REFERENCES focalLength35mm(idFocalLength35mm) ON DELETE SET NULL, " +
@@ -304,7 +304,7 @@ namespace MediaPortal.Picture.Database
             "  DELETE FROM iso WHERE idIso NOT IN (SELECT DISTINCT idIso FROM exifdata); " +
             "  DELETE FROM exposureTime WHERE idExposureTime NOT IN (SELECT DISTINCT idExposureTime FROM exifdata); " +
             "  DELETE FROM exposureCompensation WHERE idExposureCompensation NOT IN (SELECT DISTINCT idExposureCompensation FROM exifdata); " +
-            "  DELETE FROM fStop WHERE idFStop NOT IN (SELECT DISTINCT idFStop FROM exifdata); " +
+            "  DELETE FROM fstop WHERE idFStop NOT IN (SELECT DISTINCT idFStop FROM exifdata); " +
             "  DELETE FROM shutterSpeed WHERE idShutterSpeed NOT IN (SELECT DISTINCT idShutterSpeed FROM exifdata); " +
             "  DELETE FROM focalLength WHERE idFocalLength NOT IN (SELECT DISTINCT idFocalLength FROM exifdata); " +
             "  DELETE FROM focalLength35mm WHERE idFocalLength35mm NOT IN (SELECT DISTINCT idFocalLength35mm FROM exifdata); " +
@@ -351,7 +351,7 @@ namespace MediaPortal.Picture.Database
                                                           "LEFT JOIN iso USING (idISO) " +
                                                           "LEFT JOIN exposureTime USING (idExposureTime) " +
                                                           "LEFT JOIN exposureCompensation USING (idExposureCompensation) " +
-                                                          "LEFT JOIN fStop USING (idFStop) " +
+                                                          "LEFT JOIN fstop USING (idFStop) " +
                                                           "LEFT JOIN shutterSpeed USING (idShutterSpeed) " +
                                                           "LEFT JOIN focalLength USING (idFocalLength) " +
                                                           "LEFT JOIN focalLength35mm USING (idFocalLength35mm);");
