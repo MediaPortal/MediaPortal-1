@@ -298,7 +298,7 @@ namespace MediaPortal.Util
       int step = 50;
       foreach (string info in infoList)
       {
-        string image = GUIGraphicsContext.GetThemedSkinFile(@"\media\exif\" + info);
+        string image = GUIGraphicsContext.GetThemedSkinFile(@"\media\logos\exif\" + info);
         if (!File.Exists(image))
         {
           image = Thumbs.Pictures + @"\exif\" + info;

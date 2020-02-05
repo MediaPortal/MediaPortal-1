@@ -151,7 +151,7 @@
     <control>
   	  <description>EXIF Logo</description>
       <type>image</type>
-      <id>0</id>
+      <id>5</id>
    	  <posX>70</posX>
       <posY>360</posY>
       <width>30</width>
@@ -161,6 +161,7 @@
       <keepaspectratio>yes</keepaspectratio>
       <shouldCache>true</shouldCache>
       <texture>#pictures.exif.images</texture>
+      <visible>facadeview.list+Control.IsVisible(50)</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
 	  <animation effect="fade" time="250">WindowClose</animation>
     </control>
