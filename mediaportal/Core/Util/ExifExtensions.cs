@@ -171,7 +171,7 @@ namespace MediaPortal.Util
 
       if (!metadata.Fstop.IsEmpty())
       {
-        string fstop = Regex.Replace(metadata.Fstop.DisplayValue, @"f\/((\d)(\.?(\d+?))?)", "$2$4");
+        string fstop = Regex.Replace(metadata.Fstop.DisplayValue, @"f\/(\d+?)[\.,](\d+?)", "$1.$2");
         if (!string.IsNullOrEmpty(fstop))
         {
           infoList.Add(@"fstop\" + fstop + ".png");
@@ -237,21 +237,29 @@ namespace MediaPortal.Util
       if (!metadata.Flash.IsEmpty())
       {
         string flash = string.Empty;
-        if (metadata.Flash.DisplayValue.Contains("red-eye"))
+        if (metadata.Flash.DisplayValue.Contains("red-eye") && metadata.Flash.DisplayValue.Contains("auto"))
+        {
+          flash = "autoredeye";
+        }
+        else if (metadata.Flash.DisplayValue.Contains("red-eye"))
         {
           flash = "redeye";
+        }
+        else if (metadata.Flash.DisplayValue.Contains("auto"))
+        {
+          flash = "auto";
         }
         else if (metadata.Flash.DisplayValue.Contains("fired"))
         {
           flash = "flash";
         }
-        else if (metadata.Flash.DisplayValue.Contains("not fire"))
-        {
-          flash = "noflash";
-        }
         else if (metadata.Flash.DisplayValue.ToLowerInvariant().Contains("strobe"))
         {
           flash = "strobe";
+        }
+        else if (metadata.Flash.DisplayValue.Contains("not fire"))
+        {
+          flash = "noflash";
         }
         if (!string.IsNullOrEmpty(flash))
         {

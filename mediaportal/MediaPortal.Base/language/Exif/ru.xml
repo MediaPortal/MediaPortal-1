@@ -46,42 +46,27 @@
   <exif name="Auto white balance">Автоматический баланс белого</exif>
   <exif name="Manual white balance">Ручной баланс белого</exif>
   <!-- Flash -->
+  <exif name="No flash function">Нет функции вспышки</exif>
   <exif name="Flash did not fire">Вспышка выключена</exif>
+  <exif name="Flash did not fire, auto">Вспышка не работала, автоматический режим</exif>
+  <exif name="Flash did not fire, auto, red-eye reduction">Вспышка не работала, автоматический режим, режим уменьшения эффекта красных глаз</exif>
   <exif name="Flash fired">Вспышка сработала</exif>
+  <exif name="Flash fired, auto">Сработала вспышка, автоматический режим</exif>
+  <exif name="Flash fired, auto, red-eye reduction">Сработала вспышка, автоматический режим, режим уменьшения эффекта красных глаз</exif>
+  <exif name="Flash fired, red-eye reduction">Вспышка сработала, режим подавления эффекта красных глаз</exif>
+  <exif name="Flash fired, return detected">Вспышка сработала, обнаружен обратный свет</exif>
+  <exif name="Flash fired, return detected, auto">Вспышка сработала, автоматический режим, обнаружен обратный свет</exif>
+  <exif name="Flash fired, return detected, auto, red-eye reduction">Вспышка сработала, автоматический режим, режим уменьшения эффекта красных глаз</exif>
+  <exif name="Flash fired, return detected, red-eye reduction">Сработала вспышка, режим уменьшения эффекта красных глаз, обнаружен обратный свет</exif>
+  <exif name="Flash fired, return not detected">Вспышка сработала, обратный свет не обнаружен</exif>
+  <exif name="Flash fired, return not detected, auto">Вспышка сработала, автоматический режим, обратный свет не обнаружен</exif>
+  <exif name="Flash fired, return not detected, auto, red-eye reduction">Вспышка сработала, автоматический режим, режим уменьшения эффекта красных глаз, обратный свет не обнаружен</exif>
+  <exif name="Flash fired, return not detected, red-eye reduction">Вспышка сработала, режим уменьшения эффекта красных глаз, обратный свет не обнаружен</exif>
   <exif name="Strobe return light not detected">Обратный свет стробоскопа не обнаружен</exif>
   <exif name="Strobe return light detected">Обнаружен обратный свет стробоскопа</exif>
-  <exif name="Flash fired, return not detected">Вспышка сработала, обратный свет не обнаружен</exif>
-  <exif name="Flash fired, return detected">Вспышка сработала, обнаружен обратный свет</exif>
-  <exif name="Flash fired, compulsory flash mode">Вспышка сработала, режим обязательной вспышки</exif>
-  <exif name="Flash fired, compulsory flash mode, return light not detected">Вспышка сработала, режим принудительной вспышки, обратный свет не обнаружен</exif>
-  <exif name="Flash fired, compulsory flash mode, return light detected">Вспышка сработала, режим принудительной вспышки, обнаружен обратный свет</exif>
-  <exif name="Flash did not fire, compulsory flash mode">Вспышка не сработала, режим принудительной вспышки</exif>
-  <exif name="Flash did not fire, auto">Вспышка не сработала, автоматический режим</exif>
-  <exif name="Flash did not fire, auto mode">Вспышка не сработала, автоматический режим</exif>
-  <exif name="Flash did not fire, auto, red-eye reduction">Вспышка не сработала, автоматический режим, режим уменьшения эффекта красных глаз</exif>
-  <exif name="Flash fired, auto">Сработала вспышка, автоматический режим</exif>
-  <exif name="Flash fired, auto mode">Сработала вспышка, автоматический режим</exif>
-  <exif name="Flash fired, auto mode, return light not detected">Вспышка сработала, автоматический режим, обратный свет не обнаружен</exif>
-  <exif name="Flash fired, return not detected, auto">Вспышка сработала, автоматический режим, обратный свет не обнаружен</exif>
-  <exif name="Flash fired, return detected, auto">Вспышка сработала, автоматический режим, обратный свет не обнаружен</exif>
-  <exif name="Flash fired, return detected, auto">Вспышка сработала, автоматический режим, обнаружен обратный свет</exif>
-  <exif name="Flash fired, auto mode, return light detected">Вспышка сработала, автоматический режим, обнаружен обратный свет</exif>
-  <exif name="No flash function">Нет функции вспышки</exif>
-  <exif name="Flash fired, red-eye reduction">Вспышка сработала, режим подавления эффекта красных глаз</exif>
-  <exif name="Flash fired, red-eye reduction mode">Вспышка сработала, режим подавления эффекта красных глаз</exif>
-  <exif name="Flash fired, return not detected, red-eye reduction">Вспышка сработала, режим уменьшения эффекта красных глаз, обратный свет не обнаружен</exif>
-  <exif name="Flash fired, red-eye reduction mode, return light not detected">Вспышка сработала, режим уменьшения эффекта красных глаз, обратный свет не обнаружен</exif>
-  <exif name="Flash fired, return detected, red-eye reduction">Сработала вспышка, режим уменьшения эффекта красных глаз, обнаружен обратный свет</exif>
-  <exif name="Flash fired, red-eye reduction mode, return light detected">Сработала вспышка, режим уменьшения эффекта красных глаз, обнаружен обратный свет</exif>
   <exif name="Flash fired, compulsory flash mode, red-eye reduction mode">Сработала вспышка, режим принудительной вспышки, режим уменьшения эффекта красных глаз</exif>
   <exif name="Flash fired, compulsory flash mode, red-eye reduction mode, return light not detected">Вспышка сработала, режим принудительной вспышки, режим подавления эффекта красных глаз, обратный свет не обнаружен</exif>
   <exif name="Flash fired, compulsory flash mode, red-eye reduction mode, return light detected">Вспышка сработала, режим принудительной вспышки, режим уменьшения эффекта красных глаз, обнаружен обратный свет</exif>
-  <exif name="Flash fired, auto, red-eye reduction">Сработала вспышка, автоматический режим, режим уменьшения эффекта красных глаз</exif>
-  <exif name="Flash fired, auto mode, red-eye reduction mode">Сработала вспышка, автоматический режим, режим уменьшения эффекта красных глаз</exif>
-  <exif name="Flash fired, return not detected, auto, red-eye reduction">Вспышка сработала, автоматический режим, обратный свет не обнаружен, режим устранения эффекта красных глаз</exif>
-  <exif name="Flash fired, auto mode, return light not detected, red-eye reduction mode">Вспышка сработала, автоматический режим, обратный свет не обнаружен, режим устранения эффекта красных глаз</exif>
-  <exif name="Flash fired, return detected, auto, red-eye reduction">Вспышка сработала, автоматический режим, режим уменьшения эффекта красных глаз</exif>
-  <exif name="Flash fired, auto mode, return light detected, red-eye reduction mode">Вспышка сработала, автоматический режим, обнаружен обратный свет, режим уменьшения эффекта красных глаз</exif>
   <!-- Light Source -->
   <exif name="Daylight">Дневной свет</exif>
   <exif name="Fluorescent">Флуоресцентный</exif>
@@ -105,5 +90,5 @@
   <exif name="Right side, top (Rotate 90 CW)">Поворот на 90* по часовой</exif>
   <exif name="Left side, bottom (Rotate 270 CW)">Поворот 270* по часовой</exif>
   <!-- Sscene Type -->
-  <exif name="Directly photographed image">Сфотографированное изображение</exif>
+  <exif name="Directly photographed image">Изображение с фотоаппарата</exif>
 </data>

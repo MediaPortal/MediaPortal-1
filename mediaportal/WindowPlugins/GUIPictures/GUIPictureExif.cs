@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
@@ -38,6 +39,7 @@ namespace MediaPortal.GUI.Pictures
 
     [SkinControl(2)] protected GUIImage imgPicture = null;
     [SkinControl(3)] protected GUIListControl listExifProperties = null;
+    [SkinControl(5)] protected GUIImage imgExif = null;
 
     #endregion
 
@@ -133,10 +135,11 @@ namespace MediaPortal.GUI.Pictures
       switch (dlg.SelectedId)
       {
         case 2168: // Update Exif
-            Log.Debug("GUIPicturesExif: Update Exif {0}: {1}", PictureDatabase.UpdatePicture(_currentPicture, -1), _currentPicture);
-            _currentMetaData = PictureDatabase.GetExifFromDB(_currentPicture);
-            SetExifGUIListItems();
-            Update();
+          Log.Debug("GUIPicturesExif: Update Exif {0}: {1}", PictureDatabase.UpdatePicture(_currentPicture, -1), _currentPicture);
+          _currentMetaData = PictureDatabase.GetExifFromDB(_currentPicture);
+          Refresh();
+          SetExifGUIListItems();
+          Update();
           break;
       }
     }
@@ -175,6 +178,12 @@ namespace MediaPortal.GUI.Pictures
           imgPicture.AllocResources();
           imgPicture.FileName = _currentPicture;
         }
+        if (imgExif != null)
+        {
+          imgExif.Dispose();
+          imgExif.AllocResources();
+          imgExif.FileName = "#pictures.exif.images";
+        }
 
         GUIPropertyManager.SetProperty("#currentpicture", _currentPicture);
       }
@@ -200,8 +209,20 @@ namespace MediaPortal.GUI.Pictures
     private void SetProperties()
     {
       _currentMetaData.SetExifProperties();
+      int width = imgExif != null ? imgExif.Width < imgExif.Height ? 96 : 0 : 96;
+      int height = imgExif != null ? imgExif.Width < imgExif.Height ? 0 : 96 : 0;
+
+      List<GUIOverlayImage> exifIconImages = _currentMetaData.GetExifInfoOverlayImage(ref width, ref height);
+      if (exifIconImages != null && exifIconImages.Count > 0)
+      {
+        GUIPropertyManager.SetProperty("#pictures.exif.images", GUIImageAllocator.BuildConcatImage("Exif:Icons", string.Empty, width, height, exifIconImages));
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#pictures.exif.images", string.Empty);
+      }
     }
-    
+
     private void OnItemSelected(GUIListItem item, GUIControl parent)
     {
       try 
@@ -303,6 +324,10 @@ namespace MediaPortal.GUI.Pictures
       if (imgPicture != null)
       {
         imgPicture.Dispose();
+      }
+      if (imgExif != null)
+      {
+        imgExif.Dispose();
       }
     }
 

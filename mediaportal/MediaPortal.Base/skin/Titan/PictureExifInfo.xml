@@ -148,6 +148,23 @@
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
 
+    <control>
+  	  <description>EXIF Logo</description>
+      <type>image</type>
+      <id>0</id>
+   	  <posX>70</posX>
+      <posY>360</posY>
+      <width>30</width>
+      <height>560</height>
+      <align>center</align>
+      <valign>top</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <shouldCache>true</shouldCache>
+      <texture>#pictures.exif.images</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
     <import>common.overlay.xml</import>
 </controls>
 </window>
