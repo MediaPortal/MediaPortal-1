@@ -218,17 +218,24 @@ namespace MediaPortal.Configuration.Sections
         Log.Info("PictureDatabase: Beginning picture database reorganization and thumbnail generation...");
 
         // treat each picture file one by one
+        int iScanned = 0;
         foreach (string file in availableFiles)
         {
+          iScanned++; 
           Log.Info("Scanning file: {0}", file);
           // create thumb if not created and add file to db if not already there
           CreateThumbsAndAddPictureToDB(file);
+          if (iScanned % 50 == 0)
+          {
+            SetStatus(String.Format("Picture thumbnail generation and database additions, processed {0}/{1}...", iScanned, availableFiles.Count));
+          }
         }
         benchclockfile.Stop();
-        Log.Debug("Pictures Configuration : Creation of selected thumb for '{0}' files, took {1} seconds",
+        Log.Debug("Pictures Configuration : Creation of selected thumb for {0} files, took {2} seconds. Generated {1} thumbnails.",
+                  availableFiles.Count,
                   totalFiles,
                   benchclockfile.Elapsed.TotalSeconds);
-        Log.Info("PictureDatabase: Database reorganization and thumbnail generation finished");
+        Log.Info("PictureDatabase: Database reorganization and thumbnail generation finished.");
 
         SetStatus(String.Format("Finished. {0} files processsed", totalFiles));
       }

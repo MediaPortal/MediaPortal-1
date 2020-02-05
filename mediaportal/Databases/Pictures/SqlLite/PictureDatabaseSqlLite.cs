@@ -528,15 +528,16 @@ namespace MediaPortal.Picture.Database
                                                                          "idExposureProgram, idExposureMode, " +
                                                                          "idSensingMethod, " +
                                                                          "idSceneType, idSceneCaptureType, " +
-                                                                         "idWhiteBalance," +
+                                                                         "idWhiteBalance, " +
                                                                          "idAuthor, idByline, " +
                                                                          "idSoftware, idUserComment, " +
                                                                          "idCopyright, idCopyrightNotice, " +
                                                                          "idCountry, idState, idCity, idSublocation, " +
-                                                                         "idIso, idExposureTime, idExposureCompensation, idFstop, idShutterSpeed, idFocalLength, idFocalLength35mm, " +
+                                                                         "idIso, idExposureTime, idExposureCompensation, idFstop, " +
+                                                                         "idShutterSpeed, idFocalLength, idFocalLength35mm, " +
                                                                          "strGPSLatitude, strGPSLongitude, strGPSAltitude) " +
-                                   "VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, " +
-                                           "{12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29}, {30}, {31});",
+                                   "VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, " +
+                                           "{16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29}, {30}, {31});",
                                             iDbID,
                                             GetValueForQuery(AddItem("Camera", exifData.CameraModel.DisplayValue, "strCameraMake", exifData.EquipmentMake.DisplayValue)),
                                             GetValueForQuery(AddItem("Lens", exifData.Lens.DisplayValue, "strLensMake", exifData.Lens.Value)),
@@ -558,7 +559,7 @@ namespace MediaPortal.Picture.Database
                                             GetValueForQuery(AddItem("Country", exifData.CountryName.DisplayValue, "strCountryCode", exifData.CountryCode.DisplayValue)),
                                             GetValueForQuery(AddItem("State", exifData.ProvinceOrState.DisplayValue)),
                                             GetValueForQuery(AddItem("City", exifData.City.DisplayValue)),
-                                            GetValueForQuery(AddItem("SubLocation", exifData.SubLocation.DisplayValue)),
+                                            GetValueForQuery(AddItem("Sublocation", exifData.SubLocation.DisplayValue)),
                                             GetValueForQuery(AddItem("ISO", exifData.ISO.DisplayValue)),
                                             GetValueForQuery(AddItem("ExposureTime", exifData.ExposureTime.DisplayValue)),
                                             GetValueForQuery(AddItem("ExposureCompensation", exifData.ExposureCompensation.DisplayValue)),
@@ -620,7 +621,7 @@ namespace MediaPortal.Picture.Database
         }
         else
         {
-          return DatabaseUtility.GetAsInt(results, 0, "id" + tableName);
+          return DatabaseUtility.GetAsInt(results, 0, 0);
         }
       }
       catch (Exception ex)
@@ -793,7 +794,7 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string strSQL = String.Format("INSERT INTO keywordslinkpicture (idKeyword, idPicture) VALUES ('{0}', '{1}')", keyID, picID);
+        string strSQL = String.Format("INSERT INTO keywordslinkpicture (idKeyword, idPicture) VALUES ({0}, {1})", keyID, picID);
         m_db.Execute(strSQL);
       }
       catch (Exception ex)
