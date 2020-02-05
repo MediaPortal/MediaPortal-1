@@ -89,7 +89,7 @@
     <control>
   	  <description>EXIF Logo</description>
       <type>image</type>
-      <id>0</id>
+      <id>55</id>
    	  <posX>70</posX>
       <posY>360</posY>
       <width>30</width>

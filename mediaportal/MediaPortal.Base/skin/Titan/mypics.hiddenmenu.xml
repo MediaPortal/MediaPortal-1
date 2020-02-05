@@ -296,7 +296,23 @@
           <onright>50</onright>
           <onleft>50</onleft>
           <onup>9</onup>
+          <ondown>9876</ondown>
+        </control>
+        <control>
+          <description>Picture Settings</description>
+          <type>button</type>
+          <id>9876</id>
+          <label>5</label>
+          <hyperlink>12</hyperlink>
+          <onup>8</onup>
           <ondown>2</ondown>
+          <onright>50</onright>
+          <textureFocus>hiddenmenu_item_selected.png</textureFocus>
+          <textureNoFocus>-</textureNoFocus>
+          <width>499</width>
+          <height>64</height>
+          <textXOff>62</textXOff>
+          <textYOff>16</textYOff>
         </control>
       </control>
     </control>

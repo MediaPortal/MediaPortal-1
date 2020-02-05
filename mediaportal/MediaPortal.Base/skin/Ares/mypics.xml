@@ -185,13 +185,27 @@
 	<textureFocus>btn_list_blue2.png</textureFocus>
         <textureNoFocus></textureNoFocus>
       </control>
+        <control>
+          <description>Search</description>
+          <type>button</type>
+          <id>8</id>
+          <label>137</label>
+	<textYOff>7</textYOff>
+	<width>820</width>
+	<height>50</height>
+	<textureFocus>btn_list_blue2.png</textureFocus>
+        <textureNoFocus></textureNoFocus>
+          <onright>50</onright>
+          <onup>7</onup>
+          <ondown>9876</ondown>
+        </control>
       <control>
         <description>Picture Settings</description>
         <type>button</type>
         <id>9876</id>
         <label>5</label>
         <hyperlink>12</hyperlink>
-        <onup>7</onup>
+        <onup>8</onup>
         <ondown>2</ondown>
         <onright>50</onright>
 	<textYOff>7</textYOff>

@@ -424,6 +424,7 @@ namespace MediaPortal.GUI.Pictures
     [SkinControl(6)] protected GUIButtonControl btnSlideShow = null;
     [SkinControl(7)] protected GUIButtonControl btnSlideShowRecursive = null;
     [SkinControl(8)] protected GUIButtonControl btnSearch = null;
+    [SkinControl(55)] protected GUIImage imgExif = null;
 
     private const int MAX_PICS_PER_DATE = 1000;
     private PicturesFolderWatcherHelper _pictureFolderWatcher;
@@ -957,6 +958,11 @@ namespace MediaPortal.GUI.Pictures
 
         _queueItemsEvent.Set();
         _queuePicturesEvent.Set();
+      }
+
+      if (imgExif != null)
+      {
+        imgExif.Dispose();
       }
 
       GUIImageAllocator.ClearCachedAllocatorImages();
@@ -4002,8 +4008,8 @@ namespace MediaPortal.GUI.Pictures
     {
       metadata.SetExifProperties();
 
-      int width = 96; // 0
-      int height = 0; // 96
+      int width = imgExif != null ? imgExif.Width < imgExif.Height ? 96 : 0 : 96;
+      int height = imgExif != null ? imgExif.Width < imgExif.Height ? 0 : 96 : 0;
 
       List<GUIOverlayImage> exifIconImages = metadata.GetExifInfoOverlayImage(ref width, ref height);
       if (exifIconImages != null && exifIconImages.Count > 0)
