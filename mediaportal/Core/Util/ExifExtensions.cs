@@ -181,7 +181,8 @@ namespace MediaPortal.Util
       string focal = (!metadata.FocalLength35MM.IsEmpty() ? metadata.FocalLength35MM.DisplayValue : metadata.FocalLength.DisplayValue);
       if (!string.IsNullOrEmpty(focal))
       {
-        if (int.TryParse(Regex.Replace(focal, @"(\d+?)(\s.*)?", "$1"), out int intValue))
+        int intValue;
+        if (int.TryParse(Regex.Replace(focal, @"(\d+?)(\s.*)?", "$1"), out intValue))
         {
           string lensType = string.Empty;
           if (intValue > 0 && intValue < 14)
@@ -347,8 +348,9 @@ namespace MediaPortal.Util
       {
         lang = GUILocalizeStrings.GetCultureName(GUILocalizeStrings.CurrentLanguage());
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Debug("Loadtranslations: {0}", ex.Message);
         lang = CultureInfo.CurrentUICulture.Name;
       }
       if (lang == "en")

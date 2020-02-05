@@ -476,6 +476,7 @@ namespace MediaPortal.GUI.Settings
               }
             }
           }
+          PictureDatabase.Optimize();
         }
       }
     }

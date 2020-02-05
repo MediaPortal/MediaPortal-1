@@ -95,6 +95,7 @@ namespace MediaPortal.Picture.Database
 
         DatabaseUtility.SetPragmas(m_db);
         m_db.Execute("PRAGMA foreign_keys=ON");
+        m_db.Execute("PRAGMA optimize;");
 
         CreateTables();
         InitSettings();
@@ -132,7 +133,6 @@ namespace MediaPortal.Picture.Database
       #endregion
 
       #region Indexes
-      DatabaseUtility.AddIndex(m_db, "idxpicture_idPicture", "CREATE INDEX idxpicture_idPicture ON picture(idPicture)");
       DatabaseUtility.AddIndex(m_db, "idxpicture_strFile", "CREATE INDEX idxpicture_strFile ON picture (strFile ASC)");
       DatabaseUtility.AddIndex(m_db, "idxpicture_strDateTaken", "CREATE INDEX idxpicture_strDateTaken ON picture (strDateTaken ASC)");
       DatabaseUtility.AddIndex(m_db, "idxpicture_strDateTaken_Year", "CREATE INDEX idxpicture_strDateTaken_Year ON picture (SUBSTR(strDateTaken,1,4))");
@@ -184,191 +184,210 @@ namespace MediaPortal.Picture.Database
       DatabaseUtility.AddTable(m_db, "copyrightnotice",
                                "CREATE TABLE copyrightnotice (idCopyrightNotice INTEGER PRIMARY KEY, strCopyrightNotice TEXT);");
 
-      DatabaseUtility.AddTable(m_db, "keywords",
-                               "CREATE TABLE keywords (idKeyword INTEGER PRIMARY KEY, strKeyword TEXT);");
+      DatabaseUtility.AddTable(m_db, "iso",
+                               "CREATE TABLE iso (idISO INTEGER PRIMARY KEY, strISO TEXT);");
+      DatabaseUtility.AddTable(m_db, "exposureTime",
+                               "CREATE TABLE exposureTime (idExposureTime INTEGER PRIMARY KEY, strExposureTime TEXT);");
+      DatabaseUtility.AddTable(m_db, "exposureCompensation",
+                               "CREATE TABLE exposureCompensation (idExposureCompensation INTEGER PRIMARY KEY, strExposureCompensation TEXT);");
+      DatabaseUtility.AddTable(m_db, "fStop",
+                               "CREATE TABLE fStop (idFStop INTEGER PRIMARY KEY, strFStop TEXT);");
+      DatabaseUtility.AddTable(m_db, "shutterSpeed",
+                               "CREATE TABLE shutterSpeed (idShutterSpeed INTEGER PRIMARY KEY, strShutterSpeed TEXT);");
+      DatabaseUtility.AddTable(m_db, "focalLength",
+                               "CREATE TABLE focalLength (idFocalLength INTEGER PRIMARY KEY, strFocalLength TEXT);");
+      DatabaseUtility.AddTable(m_db, "focalLength35mm",
+                               "CREATE TABLE focalLength35mm (idFocalLength35mm INTEGER PRIMARY KEY, strFocalLength35mm TEXT);");
+
+      DatabaseUtility.AddTable(m_db, "keyword",
+                               "CREATE TABLE keyword (idKeyword INTEGER PRIMARY KEY, strKeyword TEXT);");
       DatabaseUtility.AddTable(m_db, "keywordslinkpicture",
-                               "CREATE TABLE keywordslinkpicture (idKeyword INTEGER REFERENCES keywords(idKeyword) ON DELETE CASCADE, idPicture INTEGER REFERENCES picture(idPicture) ON DELETE CASCADE);");
+                               "CREATE TABLE keywordslinkpicture (idKeyword INTEGER REFERENCES keyword(idKeyword) ON DELETE CASCADE, idPicture INTEGER REFERENCES picture(idPicture) ON DELETE CASCADE," +
+                                 "PRIMARY KEY (idKeyword, idPicture));");
 
-      DatabaseUtility.AddTable(m_db, "exif",
-                               "CREATE TABLE exif (idExif INTEGER PRIMARY KEY, idPicture INTEGER REFERENCES picture(idPicture) ON DELETE CASCADE, " +
-                                                  "strISO TEXT, " +
-                                                  "strExposureTime TEXT, " +
-                                                  "strExposureCompensation TEXT, " +
-                                                  "strFStop TEXT, " +
-                                                  "strShutterSpeed TEXT, " +
-                                                  "strFocalLength TEXT, " +
-                                                  "strFocalLength35 TEXT, " +
-                                                  "strGPSLatitude TEXT, " +
-                                                  "strGPSLongitude TEXT, " +
-                                                  "strGPSAltitude TEXT);");
-
-      DatabaseUtility.AddTable(m_db, "exiflinkpicture",
-                               "CREATE TABLE exiflinkpicture (idPicture INTEGER REFERENCES picture(idPicture) ON DELETE CASCADE, " +
-                                                             "idCamera INTEGER REFERENCES camera(idCamera) ON DELETE CASCADE, " +
-                                                             "idLens INTEGER REFERENCES lens(idLens) ON DELETE CASCADE, " +
-                                                             "idExif INTEGER REFERENCES exif(idExif) ON DELETE CASCADE, " +
-                                                             "idOrientation INTEGER REFERENCES orientation(idOrientation) ON DELETE CASCADE, " +
-                                                             "idFlash INTEGER REFERENCES flash(idFlash) ON DELETE CASCADE, " +
-                                                             "idMeteringMode INTEGER REFERENCES meteringmode(idMeteringMode) ON DELETE CASCADE, " +
-                                                             "idExposureProgram INTEGER REFERENCES exposureprogram(idExposureProgram) ON DELETE CASCADE, " +
-                                                             "idExposureMode INTEGER REFERENCES exposuremode(idExposureMode) ON DELETE CASCADE, " +
-                                                             "idSensingMethod INTEGER REFERENCES sensingmethod(idSensingMethod) ON DELETE CASCADE, " +
-                                                             "idSceneType INTEGER REFERENCES scenetype(idSceneType) ON DELETE CASCADE, " +
-                                                             "idSceneCaptureType INTEGER REFERENCES scenecapturetype(idSceneCaptureType) ON DELETE CASCADE, " +
-                                                             "idWhiteBalance INTEGER REFERENCES whitebalance(idWhiteBalance) ON DELETE CASCADE," +
-                                                             "idAuthor INTEGER REFERENCES author(idAuthor) ON DELETE CASCADE, " +
-                                                             "idByline INTEGER REFERENCES byline(idByline) ON DELETE CASCADE, " +
-                                                             "idSoftware INTEGER REFERENCES software(idSoftware) ON DELETE CASCADE, " +
-                                                             "idUserComment INTEGER REFERENCES usercomment(idUserComment) ON DELETE CASCADE, " +
-                                                             "idCopyright INTEGER REFERENCES copyright(idCopyright) ON DELETE CASCADE, " +
-                                                             "idCopyrightNotice INTEGER REFERENCES copyrightnotice(idCopyrightNotice) ON DELETE CASCADE, " +
-                                                             "idCountry INTEGER REFERENCES country(idCountry) ON DELETE CASCADE, " +
-                                                             "idState INTEGER REFERENCES state(idState) ON DELETE CASCADE, " + 
-                                                             "idCity INTEGER REFERENCES city(idCity) ON DELETE CASCADE, " +
-                                                             "idSublocation INTEGER REFERENCES sublocation(idSublocation) ON DELETE CASCADE);");
+      DatabaseUtility.AddTable(m_db, "exifdata",
+                               "CREATE TABLE exifdata (idPicture INTEGER PRIMARY KEY REFERENCES picture(idPicture) ON DELETE SET NULL, " +
+                                                       "idCamera INTEGER REFERENCES camera(idCamera) ON DELETE SET NULL, " +
+                                                       "idLens INTEGER REFERENCES lens(idLens) ON DELETE SET NULL, " +
+                                                       "idISO INTEGER REFERENCES iso(idIso) ON DELETE SET NULL, " +
+                                                       "idExposureTime INTEGER REFERENCES exposureTime(idExposureTime) ON DELETE SET NULL, " +
+                                                       "idExposureCompensation INTEGER REFERENCES exposureCompensation(idExposureCompensation) ON DELETE SET NULL, " +
+                                                       "idFStop INTEGER REFERENCES fStop(idFStop) ON DELETE SET NULL, " +
+                                                       "idShutterSpeed INTEGER REFERENCES shutterSpeed(idShutterSpeed) ON DELETE SET NULL, " +
+                                                       "idFocalLength INTEGER REFERENCES focalLength(idFocalLength) ON DELETE SET NULL, " +
+                                                       "idFocalLength35mm INTEGER REFERENCES focalLength35mm(idFocalLength35mm) ON DELETE SET NULL, " +
+                                                       "strGPSLatitude TEXT, strGPSLongitude TEXT, strGPSAltitude TEXT, " +
+                                                       "idOrientation INTEGER REFERENCES orientation(idOrientation) ON DELETE SET NULL, " +
+                                                       "idFlash INTEGER REFERENCES flash(idFlash) ON DELETE SET NULL, " +
+                                                       "idMeteringMode INTEGER REFERENCES meteringmode(idMeteringMode) ON DELETE SET NULL, " +
+                                                       "idExposureProgram INTEGER REFERENCES exposureprogram(idExposureProgram) ON DELETE SET NULL, " +
+                                                       "idExposureMode INTEGER REFERENCES exposuremode(idExposureMode) ON DELETE SET NULL, " +
+                                                       "idSensingMethod INTEGER REFERENCES sensingmethod(idSensingMethod) ON DELETE SET NULL, " +
+                                                       "idSceneType INTEGER REFERENCES scenetype(idSceneType) ON DELETE SET NULL, " +
+                                                       "idSceneCaptureType INTEGER REFERENCES scenecapturetype(idSceneCaptureType) ON DELETE SET NULL, " +
+                                                       "idWhiteBalance INTEGER REFERENCES whitebalance(idWhiteBalance) ON DELETE SET NULL," +
+                                                       "idAuthor INTEGER REFERENCES author(idAuthor) ON DELETE SET NULL, " +
+                                                       "idByline INTEGER REFERENCES byline(idByline) ON DELETE SET NULL, " +
+                                                       "idSoftware INTEGER REFERENCES software(idSoftware) ON DELETE SET NULL, " +
+                                                       "idUserComment INTEGER REFERENCES usercomment(idUserComment) ON DELETE SET NULL, " +
+                                                       "idCopyright INTEGER REFERENCES copyright(idCopyright) ON DELETE SET NULL, " +
+                                                       "idCopyrightNotice INTEGER REFERENCES copyrightnotice(idCopyrightNotice) ON DELETE SET NULL, " +
+                                                       "idCountry INTEGER REFERENCES country(idCountry) ON DELETE SET NULL, " +
+                                                       "idState INTEGER REFERENCES state(idState) ON DELETE SET NULL, " +
+                                                       "idCity INTEGER REFERENCES city(idCity) ON DELETE SET NULL, " +
+                                                       "idSublocation INTEGER REFERENCES sublocation(idSublocation) ON DELETE SET NULL);");
       #endregion
 
       #region Exif Indexes
-      DatabaseUtility.AddIndex(m_db, "idxcamera_idCamera", "CREATE INDEX idxcamera_idCamera ON camera(idCamera);");
-      DatabaseUtility.AddIndex(m_db, "idxlens_idLens", "CREATE INDEX idxlens_idLens ON lens(idLens);");
-      DatabaseUtility.AddIndex(m_db, "idxorientation_idOrientation", "CREATE INDEX idxorientation_idOrientation ON orientation(idOrientation);");
-      DatabaseUtility.AddIndex(m_db, "idxflash_idFlash", "CREATE INDEX idxflash_idFlash ON flash(idFlash);");
-      DatabaseUtility.AddIndex(m_db, "idxmeteringmode_idMeteringMode", "CREATE INDEX idxmeteringmode_idMeteringMode ON meteringmode(idMeteringMode);");
-      DatabaseUtility.AddIndex(m_db, "idxcountry_idCountry", "CREATE INDEX idxcountry_idCountry ON country(idCountry);");
-      DatabaseUtility.AddIndex(m_db, "idxstate_idState", "CREATE INDEX idxstate_idState ON state(idState);");
-      DatabaseUtility.AddIndex(m_db, "idxcity_idCity", "CREATE INDEX idxcity_idCity ON city(idCity);");
-      DatabaseUtility.AddIndex(m_db, "idxsublocation_idSublocation", "CREATE INDEX idxsublocation_idSublocation ON sublocation(idSublocation);");
-      DatabaseUtility.AddIndex(m_db, "idxexposureprogram_idExposureProgram", "CREATE INDEX idxexposureprogram_idExposureProgram ON exposureprogram(idExposureProgram);");
-      DatabaseUtility.AddIndex(m_db, "idxexposuremode_idExposureMode", "CREATE INDEX idxexposuremode_idExposureMode ON exposuremode(idExposureMode);");
-      DatabaseUtility.AddIndex(m_db, "idxsensingmethod_idSensingMethod", "CREATE INDEX idxsensingmethod_idSensingMethod ON sensingmethod(idSensingMethod);");
-      DatabaseUtility.AddIndex(m_db, "idxscenetype_idSceneType", "CREATE INDEX idxscenetype_idSceneType ON scenetype(idSceneType);");
-      DatabaseUtility.AddIndex(m_db, "idxscenecapturetype_idSceneCaptureType", "CREATE INDEX idxscenecapturetype_idSceneCaptureType ON scenecapturetype(idSceneCaptureType);");
-      DatabaseUtility.AddIndex(m_db, "idxwhitebalance_idWhiteBalance", "CREATE INDEX idxwhitebalance_idWhiteBalance ON whitebalance(idWhiteBalance);");
-      DatabaseUtility.AddIndex(m_db, "idxauthor_idAuthor", "CREATE INDEX idxauthor_idAuthor ON author(idAuthor);");
-      DatabaseUtility.AddIndex(m_db, "idxbyline_idByline", "CREATE INDEX idxbyline_idByline ON byline(idByline);");
-      DatabaseUtility.AddIndex(m_db, "idxsoftware_idSoftware", "CREATE INDEX idxsoftware_idSoftware ON software(idSoftware);");
-      DatabaseUtility.AddIndex(m_db, "idxusercomment_idUserComment", "CREATE INDEX idxusercomment_idUserComment ON usercomment(idUserComment);");
-      DatabaseUtility.AddIndex(m_db, "idxcopyright_idCopyright", "CREATE INDEX idxcopyright_idCopyright ON copyright(idCopyright);");
-      DatabaseUtility.AddIndex(m_db, "idxcopyrightnotice_idCopyrightNotice", "CREATE INDEX idxcopyrightnotice_idCopyrightNotice ON copyrightnotice(idCopyrightNotice);");
 
-      DatabaseUtility.AddIndex(m_db, "idxkeywords_idKeyword", "CREATE INDEX idxkeywords_idKeyword ON keywords(idKeyword);");
-      DatabaseUtility.AddIndex(m_db, "idxkeywords_strKeyword", "CREATE INDEX idxkeywords_strKeyword ON keywords(strKeyword);");
+      DatabaseUtility.AddIndex(m_db, "idxkeyword_strKeyword", "CREATE INDEX idxkeyword_strKeyword ON keyword(strKeyword);");
 
       DatabaseUtility.AddIndex(m_db, "idxkeywordslinkpicture_idKeyword", "CREATE INDEX idxkeywordslinkpicture_idKeyword ON keywordslinkpicture(idKeyword);");
       DatabaseUtility.AddIndex(m_db, "idxkeywordslinkpicture_idPicture", "CREATE INDEX idxkeywordslinkpicture_idPicture ON keywordslinkpicture(idPicture);");
 
-      DatabaseUtility.AddIndex(m_db, "idxexif_idPicture", "CREATE INDEX idxexif_idPicture ON exif(idPicture);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idCamera", "CREATE INDEX idxexifdata_idCamera ON exifdata(idCamera);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idLens", "CREATE INDEX idxexifdata_idLens ON exifdata(idLens);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idOrientation", "CREATE INDEX idxexifdata_idOrientation ON exifdata(idOrientation);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idFlash", "CREATE INDEX idxexifdata_idFlash ON exifdata(idFlash);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idMeteringMode", "CREATE INDEX idxexifdata_idMeteringMode ON exifdata(idMeteringMode);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idExposureProgram", "CREATE INDEX idxexifdata_idExposureProgram ON exifdata(idExposureProgram);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idExposureMode", "CREATE INDEX idxexifdata_idExposureMode ON exifdata(idExposureMode);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idSensingMethod", "CREATE INDEX idxexifdata_idSensingMethod ON exifdata(idSensingMethod);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idSceneType", "CREATE INDEX idxexifdata_idSceneType ON exifdata(idSceneType);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idSceneCaptureType", "CREATE INDEX idxexifdata_idSceneCaptureType ON exifdata(idSceneCaptureType);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idWhiteBalance", "CREATE INDEX idxexifdata_idWhiteBalance ON exifdata(idWhiteBalance);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idAuthor", "CREATE INDEX idxexifdata_idAuthor ON exifdata(idAuthor);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idByline", "CREATE INDEX idxexifdata_idByline ON exifdata(idByline);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idSoftware", "CREATE INDEX idxexifdata_idSoftware ON exifdata(idSoftware);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idUserComment", "CREATE INDEX idxexifdata_idUserComment ON exifdata(idUserComment);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idCopyright", "CREATE INDEX idxexifdata_idCopyright ON exifdata(idCopyright);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idCopyrightNotice", "CREATE INDEX idxexifdata_idCopyrightNotice ON exifdata(idCopyrightNotice);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idCountry", "CREATE INDEX idxexifdata_idCountry ON exifdata(idCountry);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idState", "CREATE INDEX idxexifdata_idState ON exifdata(idState);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idCity", "CREATE INDEX idxexifdata_idCity ON exifdata(idCity);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idSublocation", "CREATE INDEX idxexifdata_idSublocation ON exifdata(idSublocation);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idIso", "CREATE INDEX idxexifdata_idIso ON exifdata(idIso);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idExposureTime", "CREATE INDEX idxexifdata_idExposureTime ON exifdata(idExposureTime);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idExposureCompensation", "CREATE INDEX idxexifdata_idExposureCompensation ON exifdata(idExposureCompensation);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idFStop", "CREATE INDEX idxexifdata_idFStop ON exifdata(idFStop);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idShutterSpeed", "CREATE INDEX idxexifdata_idShutterSpeed ON exifdata(idShutterSpeed);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idFocalLength", "CREATE INDEX idxexifdata_idFocalLength ON exifdata(idFocalLength);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idFocalLength35mm", "CREATE INDEX idxexifdata_idFocalLength35mm ON exifdata(idFocalLength35mm);");
 
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idPicture", "CREATE INDEX idxexiflinkpicture_idPicture ON exiflinkpicture(idPicture);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idCamera", "CREATE INDEX idxexiflinkpicture_idCamera ON exiflinkpicture(idCamera);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idLens", "CREATE INDEX idxexiflinkpicture_idLens ON exiflinkpicture(idLens);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idExif", "CREATE INDEX idxexiflinkpicture_idExif ON exiflinkpicture(idExif);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idOrientation", "CREATE INDEX idxexiflinkpicture_idOrientation ON exiflinkpicture(idOrientation);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idFlash", "CREATE INDEX idxexiflinkpicture_idFlash ON exiflinkpicture(idFlash);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idMeteringMode", "CREATE INDEX idxexiflinkpicture_idMeteringMode ON exiflinkpicture(idMeteringMode);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idExposureProgram", "CREATE INDEX idxexiflinkpicture_idExposureProgram ON exiflinkpicture(idExposureProgram);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idExposureMode", "CREATE INDEX idxexiflinkpicture_idExposureMode ON exiflinkpicture(idExposureMode);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idSensingMethod", "CREATE INDEX idxexiflinkpicture_idSensingMethod ON exiflinkpicture(idSensingMethod);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idSceneType", "CREATE INDEX idxexiflinkpicture_idSceneType ON exiflinkpicture(idSceneType);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idSceneCaptureType", "CREATE INDEX idxexiflinkpicture_idSceneCaptureType ON exiflinkpicture(idSceneCaptureType);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idWhiteBalance", "CREATE INDEX idxexiflinkpicture_idWhiteBalance ON exiflinkpicture(idWhiteBalance);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idAuthor", "CREATE INDEX idxexiflinkpicture_idAuthor ON exiflinkpicture(idAuthor);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idByline", "CREATE INDEX idxexiflinkpicture_idByline ON exiflinkpicture(idByline);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idSoftware", "CREATE INDEX idxexiflinkpicture_idSoftware ON exiflinkpicture(idSoftware);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idUserComment", "CREATE INDEX idxexiflinkpicture_idUserComment ON exiflinkpicture(idUserComment);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idCopyright", "CREATE INDEX idxexiflinkpicture_idCopyright ON exiflinkpicture(idCopyright);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idCopyrightNotice", "CREATE INDEX idxexiflinkpicture_idCopyrightNotice ON exiflinkpicture(idCopyrightNotice);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idCountry", "CREATE INDEX idxexiflinkpicture_idCountry ON exiflinkpicture(idCountry);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idState", "CREATE INDEX idxexiflinkpicture_idState ON exiflinkpicture(idState);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idCity", "CREATE INDEX idxexiflinkpicture_idCity ON exiflinkpicture(idCity);");
-      DatabaseUtility.AddIndex(m_db, "idxexiflinkpicture_idSublocation", "CREATE INDEX idxexiflinkpicture_idSublocation ON exiflinkpicture(idSublocation);");
       #endregion
 
       #region Exif Triggers
       DatabaseUtility.AddTrigger(m_db, "Delete_ExtraData",
-            "CREATE TRIGGER Delete_ExtraData AFTER DELETE ON exiflinkpicture " +
+            "CREATE TRIGGER Delete_ExtraData AFTER DELETE ON exifdata " +
             "BEGIN " +
-            "  DELETE FROM camera WHERE idCamera NOT IN (SELECT DISTINCT idCamera FROM exiflinkpicture); " +
-            "  DELETE FROM lens WHERE idLens NOT IN (SELECT DISTINCT idLens FROM exiflinkpicture); " +
-            "  DELETE FROM orientation WHERE idOrientation NOT IN (SELECT DISTINCT idOrientation FROM exiflinkpicture); " +
-            "  DELETE FROM flash WHERE idFlash NOT IN (SELECT DISTINCT idFlash FROM exiflinkpicture); " +
-            "  DELETE FROM meteringmode WHERE idMeteringMode NOT IN (SELECT DISTINCT idMeteringMode FROM exiflinkpicture); " +
-            "  DELETE FROM exposureprogram WHERE idExposureProgram NOT IN (SELECT DISTINCT idExposureProgram FROM exiflinkpicture); " +
-            "  DELETE FROM exposuremode WHERE idExposureMode NOT IN (SELECT DISTINCT idExposureMode FROM exiflinkpicture); " +
-            "  DELETE FROM sensingmethod WHERE idSensingMethod NOT IN (SELECT DISTINCT idSensingMethod FROM exiflinkpicture); " +
-            "  DELETE FROM scenetype WHERE idSceneType NOT IN (SELECT DISTINCT idSceneType FROM exiflinkpicture); " +
-            "  DELETE FROM scenecapturetype WHERE idSceneCaptureType NOT IN (SELECT DISTINCT idSceneCaptureType FROM exiflinkpicture); " +
-            "  DELETE FROM whitebalance WHERE idWhiteBalance NOT IN (SELECT DISTINCT idWhiteBalance FROM exiflinkpicture); " +
-            "  DELETE FROM author WHERE idAuthor NOT IN (SELECT DISTINCT idAuthor FROM exiflinkpicture); " +
-            "  DELETE FROM byline WHERE idByline NOT IN (SELECT DISTINCT idByline FROM exiflinkpicture); " +
-            "  DELETE FROM software WHERE idSoftware NOT IN (SELECT DISTINCT idSoftware FROM exiflinkpicture); " +
-            "  DELETE FROM usercomment WHERE idUserComment NOT IN (SELECT DISTINCT idUserComment FROM exiflinkpicture); " +
-            "  DELETE FROM copyright WHERE idCopyright NOT IN (SELECT DISTINCT idCopyright FROM exiflinkpicture); " +
-            "  DELETE FROM copyrightnotice WHERE idCopyrightNotice NOT IN (SELECT DISTINCT idCopyrightNotice FROM exiflinkpicture); " +
-            "  DELETE FROM country WHERE idCountry NOT IN (SELECT DISTINCT idCountry FROM exiflinkpicture); " +
-            "  DELETE FROM state WHERE idState NOT IN (SELECT DISTINCT idState FROM exiflinkpicture); " +
-            "  DELETE FROM city WHERE idCity NOT IN (SELECT DISTINCT idCity FROM exiflinkpicture); " +
-            "  DELETE FROM sublocation WHERE idSublocation NOT IN (SELECT DISTINCT idSublocation FROM exiflinkpicture); " +
-            "END;" );
+            "  DELETE FROM camera WHERE idCamera NOT IN (SELECT DISTINCT idCamera FROM exifdata); " +
+            "  DELETE FROM lens WHERE idLens NOT IN (SELECT DISTINCT idLens FROM exifdata); " +
+            "  DELETE FROM orientation WHERE idOrientation NOT IN (SELECT DISTINCT idOrientation FROM exifdata); " +
+            "  DELETE FROM flash WHERE idFlash NOT IN (SELECT DISTINCT idFlash FROM exifdata); " +
+            "  DELETE FROM meteringmode WHERE idMeteringMode NOT IN (SELECT DISTINCT idMeteringMode FROM exifdata); " +
+            "  DELETE FROM exposureprogram WHERE idExposureProgram NOT IN (SELECT DISTINCT idExposureProgram FROM exifdata); " +
+            "  DELETE FROM exposuremode WHERE idExposureMode NOT IN (SELECT DISTINCT idExposureMode FROM exifdata); " +
+            "  DELETE FROM sensingmethod WHERE idSensingMethod NOT IN (SELECT DISTINCT idSensingMethod FROM exifdata); " +
+            "  DELETE FROM scenetype WHERE idSceneType NOT IN (SELECT DISTINCT idSceneType FROM exifdata); " +
+            "  DELETE FROM scenecapturetype WHERE idSceneCaptureType NOT IN (SELECT DISTINCT idSceneCaptureType FROM exifdata); " +
+            "  DELETE FROM whitebalance WHERE idWhiteBalance NOT IN (SELECT DISTINCT idWhiteBalance FROM exifdata); " +
+            "  DELETE FROM author WHERE idAuthor NOT IN (SELECT DISTINCT idAuthor FROM exifdata); " +
+            "  DELETE FROM byline WHERE idByline NOT IN (SELECT DISTINCT idByline FROM exifdata); " +
+            "  DELETE FROM software WHERE idSoftware NOT IN (SELECT DISTINCT idSoftware FROM exifdata); " +
+            "  DELETE FROM usercomment WHERE idUserComment NOT IN (SELECT DISTINCT idUserComment FROM exifdata); " +
+            "  DELETE FROM copyright WHERE idCopyright NOT IN (SELECT DISTINCT idCopyright FROM exifdata); " +
+            "  DELETE FROM copyrightnotice WHERE idCopyrightNotice NOT IN (SELECT DISTINCT idCopyrightNotice FROM exifdata); " +
+            "  DELETE FROM country WHERE idCountry NOT IN (SELECT DISTINCT idCountry FROM exifdata); " +
+            "  DELETE FROM state WHERE idState NOT IN (SELECT DISTINCT idState FROM exifdata); " +
+            "  DELETE FROM city WHERE idCity NOT IN (SELECT DISTINCT idCity FROM exifdata); " +
+            "  DELETE FROM sublocation WHERE idSublocation NOT IN (SELECT DISTINCT idSublocation FROM exifdata); " +
+            "  DELETE FROM iso WHERE idIso NOT IN (SELECT DISTINCT idIso FROM exifdata); " +
+            "  DELETE FROM exposureTime WHERE idExposureTime NOT IN (SELECT DISTINCT idExposureTime FROM exifdata); " +
+            "  DELETE FROM exposureCompensation WHERE idExposureCompensation NOT IN (SELECT DISTINCT idExposureCompensation FROM exifdata); " +
+            "  DELETE FROM fStop WHERE idFStop NOT IN (SELECT DISTINCT idFStop FROM exifdata); " +
+            "  DELETE FROM shutterSpeed WHERE idShutterSpeed NOT IN (SELECT DISTINCT idShutterSpeed FROM exifdata); " +
+            "  DELETE FROM focalLength WHERE idFocalLength NOT IN (SELECT DISTINCT idFocalLength FROM exifdata); " +
+            "  DELETE FROM focalLength35mm WHERE idFocalLength35mm NOT IN (SELECT DISTINCT idFocalLength35mm FROM exifdata); " +
+            "END;");
       DatabaseUtility.AddTrigger(m_db, "Delete_ExtraKeywords",
             "CREATE TRIGGER Delete_ExtraKeywords AFTER DELETE ON keywordslinkpicture " +
             "BEGIN " +
-            "  DELETE FROM keywords WHERE idKeyword NOT IN (SELECT DISTINCT idKeyword FROM keywordslinkpicture); " +
-            "END;" );
+            "  DELETE FROM keyword WHERE idKeyword NOT IN (SELECT DISTINCT idKeyword FROM keywordslinkpicture); " +
+            "END;");
       #endregion
 
       #region Exif Views
       DatabaseUtility.AddView(m_db, "picturedata", "CREATE VIEW picturedata AS " +
-                                                          "SELECT picture.idPicture, strDateTaken, iImageWidth, iImageHeight, iImageXReso, iImageYReso, " +
+                                                          "SELECT picture.idPicture, strFile, strDateTaken, iImageWidth, iImageHeight, iImageXReso, iImageYReso, " +
                                                           "strCamera, strCameraMake, strLens, strISO, strExposureTime, strExposureCompensation, strFStop, strShutterSpeed, " +
-                                                          "strFocalLength, strFocalLength35, strGPSLatitude, strGPSLongitude, strGPSAltitude, " +
-                                                          "exiflinkpicture.idOrientation, strOrientation, exiflinkpicture.idFlash, strFlash, exiflinkpicture.idMeteringMode, strMeteringMode, " +
+                                                          "strFocalLength, strFocalLength35mm, " +
+                                                          "strOrientation, strFlash, strMeteringMode, " +
                                                           "strCountryCode, strCountry, strState, strCity, strSubLocation, strExposureProgram, strExposureMode, strSensingMethod, strSceneType, " +
                                                           "strSceneCaptureType, strWhiteBalance, strAuthor, strByLine, strSoftware, strUserComment, strCopyright, strCopyrightNotice, " +
-                                                          "iImageWidth||'x'||iImageHeight as strImageDimension, iImageXReso||'x'||iImageYReso as strImageResolution "+
+                                                          "iImageWidth||'x'||iImageHeight as strImageDimension, iImageXReso||'x'||iImageYReso as strImageResolution, exifdata.* " +
                                                           "FROM picture " +
-                                                          "LEFT JOIN exiflinkpicture ON picture.idPicture = exiflinkpicture.idPicture " +
-                                                          "LEFT JOIN camera ON camera.idCamera = exiflinkpicture.idCamera " +
-                                                          "LEFT JOIN lens ON lens.idLens = exiflinkpicture.idLens " +
-                                                          "LEFT JOIN exif ON exif.idExif = exiflinkpicture.idExif " +
-                                                          "LEFT JOIN orientation ON orientation.idOrientation = exiflinkpicture.idOrientation " +
-                                                          "LEFT JOIN flash ON flash.idFlash = exiflinkpicture.idFlash " +
-                                                          "LEFT JOIN meteringmode ON meteringmode.idMeteringMode = exiflinkpicture.idMeteringMode " +
-                                                          "LEFT JOIN country ON country.idCountry = exiflinkpicture.idCountry " +
-                                                          "LEFT JOIN state ON state.idState = exiflinkpicture.idState " +
-                                                          "LEFT JOIN city ON city.idCity = exiflinkpicture.idCity " +
-                                                          "LEFT JOIN sublocation ON sublocation.idSublocation = exiflinkpicture.idSublocation " +
-                                                          "LEFT JOIN exposureprogram ON exposureprogram.idExposureProgram = exiflinkpicture.idExposureProgram " +
-                                                          "LEFT JOIN exposuremode ON exposuremode.idExposureMode = exiflinkpicture.idExposureMode " +
-                                                          "LEFT JOIN sensingmethod ON sensingmethod.idSensingMethod = exiflinkpicture.idSensingMethod " +
-                                                          "LEFT JOIN scenetype ON scenetype.idSceneType = exiflinkpicture.idSceneType " +
-                                                          "LEFT JOIN scenecapturetype ON scenecapturetype.idSceneCaptureType = exiflinkpicture.idSceneCaptureType " +
-                                                          "LEFT JOIN whitebalance ON whitebalance.idWhiteBalance = exiflinkpicture.idWhiteBalance " +
-                                                          "LEFT JOIN author ON author.idAuthor = exiflinkpicture.idAuthor " +
-                                                          "LEFT JOIN byline ON byline.idByline = exiflinkpicture.idByline " +
-                                                          "LEFT JOIN software ON software.idSoftware = exiflinkpicture.idSoftware " +
-                                                          "LEFT JOIN usercomment ON usercomment.idUserComment = exiflinkpicture.idUserComment " +
-                                                          "LEFT JOIN copyright ON copyright.idCopyright = exiflinkpicture.idCopyright " +
-                                                          "LEFT JOIN copyrightnotice ON copyrightnotice.idCopyrightNotice = exiflinkpicture.idCopyrightNotice;");
+                                                          "LEFT JOIN exifdata USING (idPicture) " +
+                                                          "LEFT JOIN camera USING (idCamera) " +
+                                                          "LEFT JOIN lens USING (idLens) " +
+                                                          "LEFT JOIN orientation USING (idOrientation) " +
+                                                          "LEFT JOIN flash USING (idFlash) " +
+                                                          "LEFT JOIN meteringmode USING (idMeteringMode) " +
+                                                          "LEFT JOIN country USING (idCountry) " +
+                                                          "LEFT JOIN state USING (idState) " +
+                                                          "LEFT JOIN city USING (idCity) " +
+                                                          "LEFT JOIN sublocation USING (idSublocation) " +
+                                                          "LEFT JOIN exposureprogram USING (idExposureProgram) " +
+                                                          "LEFT JOIN exposuremode USING (idExposureMode) " +
+                                                          "LEFT JOIN sensingmethod USING (idSensingMethod) " +
+                                                          "LEFT JOIN scenetype USING (idSceneType) " +
+                                                          "LEFT JOIN scenecapturetype USING (idSceneCaptureType) " +
+                                                          "LEFT JOIN whitebalance USING (idWhiteBalance) " +
+                                                          "LEFT JOIN author USING (idAuthor) " +
+                                                          "LEFT JOIN byline USING (idByline) " +
+                                                          "LEFT JOIN software USING (idSoftware) " +
+                                                          "LEFT JOIN usercomment USING (idUserComment) " +
+                                                          "LEFT JOIN copyright USING (idCopyright) " +
+                                                          "LEFT JOIN copyrightnotice USING (idCopyrightNotice) " +
+                                                          "LEFT JOIN iso USING (idISO) " +
+                                                          "LEFT JOIN exposureTime USING (idExposureTime) " +
+                                                          "LEFT JOIN exposureCompensation USING (idExposureCompensation) " +
+                                                          "LEFT JOIN fStop USING (idFStop) " +
+                                                          "LEFT JOIN shutterSpeed USING (idShutterSpeed) " +
+                                                          "LEFT JOIN focalLength USING (idFocalLength) " +
+                                                          "LEFT JOIN focalLength35mm USING (idFocalLength35mm);");
 
       DatabaseUtility.AddView(m_db, "picturekeywords", "CREATE VIEW picturekeywords AS " +
-                                                       "SELECT picture.*, keywords.strKeyword FROM picture " +
-                                                       "JOIN keywordslinkpicture ON picture.idPicture = keywordslinkpicture.idPicture " +
-                                                       "JOIN keywords ON keywordslinkpicture.idKeyword = keywords.idKeyword;");
+                                                       "SELECT picture.*, keyword.strKeyword FROM picture " +
+                                                       "JOIN keywordslinkpicture USING (idPicture) " +
+                                                       "JOIN keyword USING (idKeyword);");
       #endregion
 
       return true;
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
+    public void Optimize()
+    {
+      if (m_db == null)
+      {
+        Log.Error("Database not initialized");
+        return;
+      }
+      try
+      {
+        m_db.Execute("analyze;");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: Analyze {0}", ex.Message);
+      }
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public int AddPicture(string strPicture, int iRotation)
     {
       // Continue only if it's a picture files
-      if (!Util.Utils.IsPicture(strPicture))
-      {
-        return -1;
-      }
-      if (m_db == null)
+      if (!Util.Utils.IsPicture(strPicture) || m_db == null)
       {
         return -1;
       }
@@ -380,7 +399,7 @@ namespace MediaPortal.Picture.Database
         string strDateTaken = string.Empty;
 
         DatabaseUtility.RemoveInvalidChars(ref strPic);
-        string strSQL = String.Format("SELECT * FROM picture WHERE strFile LIKE '{0}'", strPic);
+        string strSQL = String.Format("SELECT * FROM picture WHERE strFile = '{0}'", strPic);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results != null && results.Rows.Count > 0)
         {
@@ -432,7 +451,7 @@ namespace MediaPortal.Picture.Database
         CommitTransaction();
 
         lPicId = m_db.LastInsertID();
-        AddPictureExifData(lPicId, exifData) ; 
+        AddPictureExifData(lPicId, exifData);
 
         if (g_Player.Playing)
         {
@@ -472,20 +491,22 @@ namespace MediaPortal.Picture.Database
 
     #region EXIF
 
-    [MethodImpl(MethodImplOptions.Synchronized)]
-    private int AddPictureExifData(int iDbID, ExifMetadata.Metadata exifData)
+    private string GetValueForQuery(int value)
     {
-      if (exifData.IsEmpty())
+      return value < 0 ? "NULL" : value.ToString();
+    }
+
+    private string GetGPSValueForQuery(string value)
+    {
+      return (String.IsNullOrEmpty(value) || value.Equals("unknown", StringComparison.InvariantCultureIgnoreCase)) ? "NULL" : "'" + value.ToString()+ "'";
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private void AddPictureExifData(int iDbID, ExifMetadata.Metadata exifData)
+    {
+      if (exifData.IsEmpty() || iDbID <= 0)
       {
-        return -1;
-      }
-      if (iDbID <= 0)
-      {
-        return -1;
-      }
-      if (m_db == null)
-      {
-        return -1;
+        return;
       }
 
       try
@@ -494,178 +515,175 @@ namespace MediaPortal.Picture.Database
 
         AddKeywords(iDbID, exifData.Keywords.DisplayValue);
 
-        int idCamera = AddCamera(exifData.CameraModel.DisplayValue, exifData.EquipmentMake.DisplayValue);
-        int idLens = AddLens(exifData.Lens.DisplayValue, exifData.Lens.Value);
-        int idOrientation = AddOrienatation(exifData.Orientation.Value, exifData.Orientation.DisplayValue);
-        int idFlash = AddFlash(exifData.Flash.Value, exifData.Flash.DisplayValue);
-        int idMeteringMode = AddMeteringMode(exifData.MeteringMode.Value, exifData.MeteringMode.DisplayValue);
-        int idExposureProgram = AddExposureProgram(exifData.ExposureProgram.DisplayValue);
-        int idExposureMode = AddExposureMode(exifData.ExposureMode.DisplayValue);
-        int idSensingMethod = AddSensingMethod(exifData.SensingMethod.DisplayValue);
-        int idSceneType = AddSceneType(exifData.SceneType.DisplayValue);
-        int idSceneCaptureType = AddSceneCaptureType(exifData.SceneCaptureType.DisplayValue);
-        int idWhiteBalance = AddWhiteBalance(exifData.WhiteBalance.DisplayValue);
-        int idAuthor = AddAuthor(exifData.Author.DisplayValue);
-        int idByline = AddByline(exifData.ByLine.DisplayValue);
-        int idSoftware = AddSoftware(exifData.ViewerComments.DisplayValue);
-        int idUserComment = AddUserComment(exifData.Comment.DisplayValue);
-        int idCopyright = AddCopyright(exifData.Copyright.DisplayValue);
-        int idCopyrightNotice = AddCopyrightNotice(exifData.CopyrightNotice.DisplayValue);
-        int idCountry = AddCountry(exifData.CountryCode.DisplayValue, exifData.CountryName.DisplayValue);
-        int idState = AddState(exifData.ProvinceOrState.DisplayValue);
-        int idCity = AddCity(exifData.City.DisplayValue);
-        int idSubLocation = AddSubLocation(exifData.SubLocation.DisplayValue);
+        try
+        {
+          string strSQL = String.Format("INSERT OR REPLACE INTO exifdata (idPicture, " +
+                                                                         "idCamera, " +
+                                                                         "idLens, " +
+                                                                         "idOrientation, " +
+                                                                         "idFlash, " +
+                                                                         "idMeteringMode, " +
+                                                                         "idExposureProgram, idExposureMode, " +
+                                                                         "idSensingMethod, " +
+                                                                         "idSceneType, idSceneCaptureType, " +
+                                                                         "idWhiteBalance," +
+                                                                         "idAuthor, idByline, " +
+                                                                         "idSoftware, idUserComment, " +
+                                                                         "idCopyright, idCopyrightNotice, " +
+                                                                         "idCountry, idState, idCity, idSublocation, " +
+                                                                         "idIso, idExposureTime, idExposureCompensation, idFstop, idShutterSpeed, idFocalLength, idFocalLength35mm, " +
+                                                                         "strGPSLatitude, strGPSLongitude, strGPSAltitude) " +
+                                   "VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, " +
+                                           "{12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29}, {30}, {31});",
+                                            iDbID,
+                                            GetValueForQuery(AddItem("Camera", exifData.CameraModel.DisplayValue, "strCameraMake", exifData.EquipmentMake.DisplayValue)),
+                                            GetValueForQuery(AddItem("Lens", exifData.Lens.DisplayValue, "strLensMake", exifData.Lens.Value)),
+                                            GetValueForQuery(AddOrienatation(exifData.Orientation.Value, exifData.Orientation.DisplayValue)),
+                                            GetValueForQuery(AddFlash(exifData.Flash.Value, exifData.Flash.DisplayValue)),
+                                            GetValueForQuery(AddMeteringMode(exifData.MeteringMode.Value, exifData.MeteringMode.DisplayValue)),
+                                            GetValueForQuery(AddItem("ExposureProgram", exifData.ExposureProgram.DisplayValue)),
+                                            GetValueForQuery(AddItem("ExposureMode", exifData.ExposureMode.DisplayValue)),
+                                            GetValueForQuery(AddItem("SensingMethod", exifData.SensingMethod.DisplayValue)),
+                                            GetValueForQuery(AddItem("SceneType", exifData.SceneType.DisplayValue)),
+                                            GetValueForQuery(AddItem("SceneCaptureType", exifData.SceneCaptureType.DisplayValue)),
+                                            GetValueForQuery(AddItem("WhiteBalance", exifData.WhiteBalance.DisplayValue)),
+                                            GetValueForQuery(AddItem("Author", exifData.Author.DisplayValue)),
+                                            GetValueForQuery(AddItem("Byline", exifData.ByLine.DisplayValue)),
+                                            GetValueForQuery(AddItem("Software", exifData.ViewerComments.DisplayValue)),
+                                            GetValueForQuery(AddItem("UserComment", exifData.Comment.DisplayValue)),
+                                            GetValueForQuery(AddItem("Copyright", exifData.Copyright.DisplayValue)),
+                                            GetValueForQuery(AddItem("CopyrightNotice", exifData.CopyrightNotice.DisplayValue)),
+                                            GetValueForQuery(AddItem("Country", exifData.CountryName.DisplayValue, "strCountryCode", exifData.CountryCode.DisplayValue)),
+                                            GetValueForQuery(AddItem("State", exifData.ProvinceOrState.DisplayValue)),
+                                            GetValueForQuery(AddItem("City", exifData.City.DisplayValue)),
+                                            GetValueForQuery(AddItem("SubLocation", exifData.SubLocation.DisplayValue)),
+                                            GetValueForQuery(AddItem("ISO", exifData.ISO.DisplayValue)),
+                                            GetValueForQuery(AddItem("ExposureTime", exifData.ExposureTime.DisplayValue)),
+                                            GetValueForQuery(AddItem("ExposureCompensation", exifData.ExposureCompensation.DisplayValue)),
+                                            GetValueForQuery(AddItem("FStop", exifData.Fstop.DisplayValue)),
+                                            GetValueForQuery(AddItem("ShutterSpeed", exifData.ShutterSpeed.DisplayValue)),
+                                            GetValueForQuery(AddItem("FocalLength", exifData.FocalLength.DisplayValue)),
+                                            GetValueForQuery(AddItem("FocalLength35mm", exifData.FocalLength35MM.DisplayValue)),
+                                            GetGPSValueForQuery(DatabaseUtility.RemoveInvalidChars(exifData.Latitude.DisplayValue)),
+                                            GetGPSValueForQuery(DatabaseUtility.RemoveInvalidChars(exifData.Longitude.DisplayValue)),
+                                            GetGPSValueForQuery(DatabaseUtility.RemoveInvalidChars(exifData.Altitude.DisplayValue))
+                                            );
 
-        int idExif = AddExif(iDbID, exifData);
-
-        AddExifLinks(iDbID, idExif, idCamera, idLens, idOrientation, idFlash,
-                     idMeteringMode,
-                     idExposureProgram , idExposureMode,
-                     idSensingMethod, idSceneType, idSceneCaptureType, 
-                     idWhiteBalance, 
-                     idAuthor, idByline, idSoftware, idUserComment, idCopyright, idCopyrightNotice, 
-                     idCountry, idState, idCity, idSubLocation);
+          m_db.Execute(strSQL);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: AddExifLinks: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
 
         CommitTransaction();
 
-        return idExif;
       }
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddPictureExifData: {0} stack:{1}", ex.Message, ex.StackTrace);
         RollbackTransaction();
       }
-      return -1;
     }
 
-    private int AddCamera(string camera, string make)
+    private string CleanupString(string value)
     {
-      if (string.IsNullOrWhiteSpace(camera))
+      if (string.IsNullOrWhiteSpace(value))
+      {
+        return String.Empty;
+      }
+      value = Regex.Replace(value, @"[\u0000-\u001F]+", string.Empty);
+      value = DatabaseUtility.RemoveInvalidChars(value);
+      return Regex.Replace(value, @"\s*unknown\s*(?:\(\d*\))?\s*", string.Empty,RegexOptions.IgnoreCase).Trim();
+    }
+
+    private int AddItem(string tableName, string value)
+    {
+      value = CleanupString(value);
+      if (value==String.Empty)
       {
         return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-      if (string.IsNullOrWhiteSpace(make))
-      {
-        make = string.Empty;
       }
 
       try
       {
-        string strCamera = camera.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strCamera);
-        string strMake = make.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strMake);
-
-        string strSQL = String.Format("SELECT * FROM camera WHERE strCamera = '{0}'", strCamera);
+        string strSQL = String.Format("SELECT id{0} FROM {0} WHERE str{0} = '{1}'", tableName, value);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO camera (idCamera, strCamera, strCameraMake) VALUES (NULL, '{0}', '{1}')", strCamera, strMake);
+          strSQL = String.Format("INSERT INTO {0} (id{0}, str{0}) VALUES (NULL, '{1}')", tableName, value);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
         }
         else
         {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idCamera"), out iID))
-          {
-            return iID;
-          }
+          return DatabaseUtility.GetAsInt(results, 0, "id" + tableName);
         }
       }
       catch (Exception ex)
       {
-        Log.Error("Picture.DB.SQLite: AddCamera: {0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("Picture.DB.SQLite: Add{0}: {1} stack:{2}", tableName, ex.Message, ex.StackTrace);
       }
       return -1;
     }
 
-    private int AddLens(string lens, string make)
+    private int AddItem(string tableName, string value, string additionalName, string additionalValue)
     {
-      if (string.IsNullOrWhiteSpace(lens))
+      value = CleanupString(value);
+      if (value==String.Empty)
       {
         return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-      if (string.IsNullOrWhiteSpace(make))
-      {
-        make = string.Empty;
       }
 
+      additionalValue = CleanupString(additionalValue);
       try
       {
-        string strLens = lens.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strLens);
-        string strMake = make.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strMake);
-
-        string strSQL = String.Format("SELECT * FROM lens WHERE strLens = '{0}'", strLens);
+        string strSQL = String.Format("SELECT id{0} FROM {0} WHERE str{0} = '{1}'", tableName, value);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO lens (idLens, strLens, strLensMake) VALUES (NULL, '{0}', '{1}')", strLens, strMake);
+          strSQL = String.Format("INSERT INTO {0} (id{0}, str{0}, {1}) VALUES (NULL, '{2}', '{3}')", tableName, additionalName, value, additionalValue);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
         }
         else
         {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idLens"), out iID))
-          {
-            return iID;
-          }
+          return DatabaseUtility.GetAsInt(results, 0, "id" + tableName);
         }
       }
       catch (Exception ex)
       {
-        Log.Error("Picture.DB.SQLite: AddLens: {0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("Picture.DB.SQLite: Add{0}: {1} stack:{2}", tableName, ex.Message, ex.StackTrace);
       }
       return -1;
     }
 
     private int AddOrienatation(string id, string name)
     {
-      if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
+      name = CleanupString(name);
+      if (string.IsNullOrWhiteSpace(id) || name == String.Empty)
       {
         return -1;
       }
 
       try
       {
-        string strId = id.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strId);
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
+        string strId = DatabaseUtility.RemoveInvalidChars(id.Trim());
 
-        string strSQL = String.Format("SELECT * FROM orientation WHERE idOrientation = '{0}'", strId);
+        string strSQL = String.Format("SELECT idOrientation FROM orientation WHERE idOrientation = '{0}'", strId);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO orientation (idOrientation, strOrientation) VALUES ('{0}', '{1}')", strId, strName);
+          strSQL = String.Format("INSERT INTO orientation (idOrientation, strOrientation) VALUES ('{0}', '{1}')", strId, DatabaseUtility.RemoveInvalidChars(name.Trim()));
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
         }
         else
         {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idOrientation"), out iID))
-          {
-            return iID;
-          }
+          return DatabaseUtility.GetAsInt(results, 0, "idOrientation");
         }
       }
       catch (Exception ex)
@@ -681,34 +699,23 @@ namespace MediaPortal.Picture.Database
       {
         return -1;
       }
-      if (null == m_db)
-      {
-        return -1;
-      }
 
       try
       {
-        string strId = id.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strId);
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
+        string strId = DatabaseUtility.RemoveInvalidChars(id.Trim());
 
-        string strSQL = String.Format("SELECT * FROM flash WHERE idFlash = '{0}'", strId);
+        string strSQL = String.Format("SELECT idFlash FROM flash WHERE idFlash = '{0}'", strId);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO flash (idFlash, strFlash) VALUES ('{0}', '{1}')", strId, strName);
+          strSQL = String.Format("INSERT INTO flash (idFlash, strFlash) VALUES ('{0}', '{1}')", strId, DatabaseUtility.RemoveInvalidChars(name.Trim()));
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
         }
         else
         {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idFlash"), out iID))
-          {
-            return iID;
-          }
+          return DatabaseUtility.GetAsInt(results, 0, "idFlash");
         }
       }
       catch (Exception ex)
@@ -724,34 +731,23 @@ namespace MediaPortal.Picture.Database
       {
         return -1;
       }
-      if (null == m_db)
-      {
-        return -1;
-      }
 
       try
       {
-        string strId = id.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strId);
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
+        string strId = DatabaseUtility.RemoveInvalidChars(id.Trim());
 
-        string strSQL = String.Format("SELECT * FROM meteringmode WHERE idMeteringMode = '{0}'", strId);
+        string strSQL = String.Format("SELECT idMeteringMode FROM meteringmode WHERE idMeteringMode = '{0}'", strId);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO meteringmode (idMeteringMode, strMeteringMode) VALUES ('{0}', '{1}')", strId, strName);
+          strSQL = String.Format("INSERT INTO meteringmode (idMeteringMode, strMeteringMode) VALUES ('{0}', '{1}')", strId, DatabaseUtility.RemoveInvalidChars(name.Trim()));
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
         }
         else
         {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idMeteringMode"), out iID))
-          {
-            return iID;
-          }
+          return DatabaseUtility.GetAsInt(results, 0, "idMeteringMode");
         }
       }
       catch (Exception ex)
@@ -759,735 +755,6 @@ namespace MediaPortal.Picture.Database
         Log.Error("Picture.DB.SQLite: AddMeteringMode: {0} stack:{1}", ex.Message, ex.StackTrace);
       }
       return -1;
-    }
-
-    private int AddExposureProgram(string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM exposureprogram WHERE strExposureProgram = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO exposureprogram (idExposureProgram, strExposureProgram) VALUES (NULL, '{0}')", strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idExposureProgram"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddExposureProgram: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddExposureMode(string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM exposuremode WHERE strExposureMode = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO exposuremode (idExposureMode, strExposureMode) VALUES (NULL, '{0}')", strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idExposureMode"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddExposureMode: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddSensingMethod(string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM sensingmethod WHERE strSensingMethod = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO sensingmethod (idSensingMethod, strSensingMethod) VALUES (NULL, '{0}')", strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idSensingMethod"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddSensingMethod: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddSceneType(string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM scenetype WHERE strSceneType = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO scenetype (idSceneType, strSceneType) VALUES (NULL, '{0}')", strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idSceneType"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddSceneType: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddSceneCaptureType(string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM scenecapturetype WHERE strSceneCaptureType = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO scenecapturetype (idSceneCaptureType, strSceneCaptureType) VALUES (NULL, '{0}')", strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idSceneCaptureType"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddSceneCaptureType: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddWhiteBalance(string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM whitebalance WHERE strWhiteBalance = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO whitebalance (idWhiteBalance, strWhiteBalance) VALUES (NULL, '{0}')", strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idWhiteBalance"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddWhiteBalance: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddAuthor(string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM author WHERE strAuthor = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO author (idAuthor, strAuthor) VALUES (NULL, '{0}')", strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idAuthor"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddAuthor: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddByline(string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM byline WHERE strByline = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO byline (idByline, strByline) VALUES (NULL, '{0}')", strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idByline"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddByline: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddSoftware(string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM software WHERE strSoftware = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO software (idSoftware, strSoftware) VALUES (NULL, '{0}')", strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idSoftware"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddSoftware: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddUserComment(string name)
-    {
-      if (name != null) name = Regex.Replace(name, @"[\u0000-\u001F]+", string.Empty);
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM usercomment WHERE strUserComment = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO usercomment (idUserComment, strUserComment) VALUES (NULL, '{0}')", strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idUserComment"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddUserComment: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddCopyright(string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM copyright WHERE strCopyright = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO copyright (idCopyright, strCopyright) VALUES (NULL, '{0}')", strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idCopyright"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddCopyright: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddCopyrightNotice(string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM copyrightnotice WHERE strCopyrightNotice = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO copyrightnotice (idCopyrightNotice, strCopyrightNotice) VALUES (NULL, '{0}')", strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idCopyrightNotice"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddCopyrightNotice: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddCountry(string code, string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-      if (string.IsNullOrWhiteSpace(code))
-      {
-        code = string.Empty;
-      }
-
-      try
-        {
-        string strCode = code.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strCode);
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM country WHERE strCountry = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO country (idCountry, strCountryCode, strCountry) VALUES (NULL, '{0}', '{1}')", strCode, strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idCountry"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddCountry: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddState(string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM state WHERE strState = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO state (idState, strState) VALUES (NULL, '{0}')", strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idState"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddState: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddCity(string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM city WHERE strCity = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO city (idCity, strCity) VALUES (NULL, '{0}')", strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idCity"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddCity: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddSubLocation(string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM sublocation WHERE strSublocation = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO sublocation (idSublocation, strSublocation) VALUES (NULL, '{0}')", strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idSublocation"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddSubLocation: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddKeyword(string name)
-    {
-      if (string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strName = name.Trim();
-        DatabaseUtility.RemoveInvalidChars(ref strName);
-
-        string strSQL = String.Format("SELECT * FROM keywords WHERE strKeyword = '{0}'", strName);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO keywords (idKeyword, strKeyword) VALUES (NULL, '{0}')", strName);
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          int iID;
-          if (Int32.TryParse(DatabaseUtility.Get(results, 0, "idKeyword"), out iID))
-          {
-            return iID;
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddKeyword: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private void AddKeywords(string keywords)
-    {
-      if (string.IsNullOrWhiteSpace(keywords))
-      {
-        return;
-      }
-      if (null == m_db)
-      {
-        return;
-      }
-
-      try
-      {
-        string[] parts = keywords.Split(new char[] {';'}, StringSplitOptions.RemoveEmptyEntries);
-        foreach (string part in parts)
-        {
-          AddKeyword(part);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddKeywords: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
     }
 
     private void AddKeywords(int picID, string keywords)
@@ -1503,10 +770,10 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string[] parts = keywords.Split(new char[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+        string[] parts = keywords.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
         foreach (string part in parts)
         {
-          AddKeywordToPicture(AddKeyword(part), picID);
+          AddKeywordToPicture(AddItem("Keyword", part), picID);
         }
       }
       catch (Exception ex)
@@ -1518,10 +785,6 @@ namespace MediaPortal.Picture.Database
     private void AddKeywordToPicture(int keyID, int picID)
     {
       if (keyID <= 0 || picID <= 0)
-      {
-        return;
-      }
-      if (null == m_db)
       {
         return;
       }
@@ -1537,133 +800,17 @@ namespace MediaPortal.Picture.Database
       }
     }
 
-    private int AddExif(int iDbID, ExifMetadata.Metadata exifData)
+    public ExifMetadata.Metadata GetExifFromFile(string strPicture)
     {
-      if (iDbID <= 0 || exifData.IsExifEmpty())
+
+      if (!Util.Utils.IsPicture(strPicture))
       {
-        return -1;
-      }
-      if (null == m_db)
-      {
-        return -1;
+        return new ExifMetadata.Metadata();
       }
 
-      try
+      using (ExifMetadata extractor = new ExifMetadata())
       {
-        int iID = 0;
-        string strSQL = String.Format("SELECT * FROM exif WHERE idPicture = '{0}'", iDbID);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count > 0)
-        {
-          if (!Int32.TryParse(DatabaseUtility.Get(results, 0, "idExif"), out iID))
-          {
-            iID = 0;
-          }
-        }
-        strSQL = String.Format("INSERT OR REPLACE INTO exif (idExif, idPicture, " +
-                                                            "strISO, " +
-                                                            "strExposureTime, strExposureCompensation, " + 
-                                                            "strFStop, strShutterSpeed, " +
-                                                            "strFocalLength, strFocalLength35, " +
-                                                            "strGPSLatitude, strGPSLongitude, strGPSAltitude) " +
-                                 "VALUES ({0}, '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}');",
-                                  iID == 0 ? "NULL" : iID.ToString(),
-                                  iDbID, 
-                                  DatabaseUtility.RemoveInvalidChars(exifData.ISO.DisplayValue), 
-                                  DatabaseUtility.RemoveInvalidChars(exifData.ExposureTime.DisplayValue), 
-                                  DatabaseUtility.RemoveInvalidChars(exifData.ExposureCompensation.DisplayValue),
-                                  DatabaseUtility.RemoveInvalidChars(exifData.Fstop.DisplayValue), 
-                                  DatabaseUtility.RemoveInvalidChars(exifData.ShutterSpeed.DisplayValue),
-                                  DatabaseUtility.RemoveInvalidChars(exifData.FocalLength.DisplayValue), 
-                                  DatabaseUtility.RemoveInvalidChars(exifData.FocalLength35MM.DisplayValue),
-                                  DatabaseUtility.RemoveInvalidChars(exifData.Latitude.DisplayValue), 
-                                  DatabaseUtility.RemoveInvalidChars(exifData.Longitude.DisplayValue), 
-                                  DatabaseUtility.RemoveInvalidChars(exifData.Altitude.DisplayValue));
-        m_db.Execute(strSQL);
-        if (iID == 0)
-        {
-          iID = m_db.LastInsertID();
-        }
-        return iID;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddExif: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private void AddExifLinks(int idPicture, int idExif, 
-                              int idCamera, int idLens, 
-                              int idOrientation, int idFlash, int idMeteringMode, int idExposureProgram, int idExposureMode, 
-                              int idSensingMethod, int idSceneType, int idSceneCaptureType, 
-                              int idWhiteBalance, 
-                              int idAuthor, int idByline, int idSoftware, int idUserComment, int idCopyright, int idCopyrightNotice, 
-                              int idCountry, int idState, int idCity, int idSubLocation)
-    {
-      if (idPicture <= 0)
-      {
-        return;
-      }
-      if (idExif < 0 && idCamera < 0 && idLens < 0 && idOrientation < 0 && idFlash < 0 && idMeteringMode < 0 && idExposureProgram < 0 &&
-          idExposureMode < 0 && idSensingMethod < 0 && idSceneType < 0 && idSceneCaptureType < 0 && idWhiteBalance < 0 && idAuthor < 0 &&
-          idByline < 0 && idSoftware < 0 && idUserComment < 0 && idCopyright < 0 && idCopyrightNotice < 0 && idCountry < 0 && idState < 0 &&
-          idCity < 0 && idSubLocation < 0)
-      {
-        return;
-      }
-      if (null == m_db)
-      {
-        return;
-      }
-
-      try
-      {
-        string strSQL = String.Format("INSERT OR REPLACE INTO exiflinkpicture (idPicture, " +
-                                                                              "idCamera, " +
-                                                                              "idLens, " +
-                                                                              "idExif, " +
-                                                                              "idOrientation, " +
-                                                                              "idFlash, " +
-                                                                              "idMeteringMode, " +
-                                                                              "idExposureProgram, idExposureMode, " +
-                                                                              "idSensingMethod, " +
-                                                                              "idSceneType, idSceneCaptureType, " +
-                                                                              "idWhiteBalance," +
-                                                                              "idAuthor, idByline, " +
-                                                                              "idSoftware, idUserComment, " +
-                                                                              "idCopyright, idCopyrightNotice, " +
-                                                                              "idCountry, idState, idCity, idSublocation) " +
-                                 "VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, " + 
-                                         "{12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22});",
-                                          idPicture, 
-                                          idCamera < 0 ? "NULL" :  idCamera.ToString(), 
-                                          idLens < 0 ? "NULL" :  idLens.ToString(), 
-                                          idExif < 0 ? "NULL" :  idExif.ToString(), 
-                                          idOrientation < 0 ? "NULL" : idOrientation.ToString(), 
-                                          idFlash < 0 ? "NULL" :  idFlash.ToString(), 
-                                          idMeteringMode < 0 ? "NULL" :  idMeteringMode.ToString(), 
-                                          idExposureProgram < 0 ? "NULL" :  idExposureProgram.ToString(), 
-                                          idExposureMode < 0 ? "NULL" :  idExposureMode.ToString(), 
-                                          idSensingMethod < 0 ? "NULL" :  idSensingMethod.ToString(), 
-                                          idSceneType < 0 ? "NULL" :  idSceneType.ToString(), 
-                                          idSceneCaptureType < 0 ? "NULL" :  idSceneCaptureType.ToString(), 
-                                          idWhiteBalance < 0 ? "NULL" : idWhiteBalance.ToString(), 
-                                          idAuthor < 0 ? "NULL" : idAuthor.ToString(), 
-                                          idByline < 0 ? "NULL" :  idByline.ToString(), 
-                                          idSoftware < 0 ? "NULL" :  idSoftware.ToString(), 
-                                          idUserComment < 0 ? "NULL" :  idUserComment.ToString(), 
-                                          idCopyright < 0 ? "NULL" :  idCopyright.ToString(), 
-                                          idCopyrightNotice < 0 ? "NULL" :  idCopyrightNotice.ToString(), 
-                                          idCountry < 0 ? "NULL" : idCountry.ToString(), 
-                                          idState < 0 ? "NULL" :  idState.ToString(), 
-                                          idCity < 0 ? "NULL" :  idCity.ToString(), 
-                                          idSubLocation < 0 ? "NULL" :  idSubLocation.ToString());
-        m_db.Execute(strSQL);
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddExifLinks: {0} stack:{1}", ex.Message, ex.StackTrace);
+        return extractor.GetExifMetadata(strPicture);
       }
     }
 
@@ -1673,11 +820,7 @@ namespace MediaPortal.Picture.Database
       {
         return string.Empty;
       }
-      if (m_db == null)
-      {
-        return string.Empty;
-      }
-      
+
       try
       {
         string SQL = String.Format("SELECT strKeyword FROM picturekeywords WHERE idPicture = {0} ORDER BY 1", idPicture);
@@ -1705,7 +848,7 @@ namespace MediaPortal.Picture.Database
       return string.Empty;
     }
 
-    private bool AssignAllExifFieldsFromResultSet (ref ExifMetadata.Metadata aExif, SQLiteResultSet aResult, int aRow)
+    private bool AssignAllExifFieldsFromResultSet(ref ExifMetadata.Metadata aExif, SQLiteResultSet aResult, int aRow)
     {
       if (aResult == null || aResult.Rows.Count < 1)
       {
@@ -1731,7 +874,7 @@ namespace MediaPortal.Picture.Database
       aExif.SceneType.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strSceneType");
       aExif.SceneCaptureType.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strSceneCaptureType");
       aExif.FocalLength.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strFocalLength");
-      aExif.FocalLength35MM.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strFocalLength35");
+      aExif.FocalLength35MM.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strFocalLength35mm");
       aExif.CountryCode.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCountryCode");
       aExif.CountryName.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strCountry");
       aExif.ProvinceOrState.DisplayValue = DatabaseUtility.Get(aResult, aRow, "strState");
@@ -1751,45 +894,17 @@ namespace MediaPortal.Picture.Database
       aExif.Resolution.Width = DatabaseUtility.GetAsInt(aResult, aRow, "iImageXReso");
       aExif.Resolution.Height = DatabaseUtility.GetAsInt(aResult, aRow, "iImageYReso");
 
-      try
-      {
-        aExif.Orientation.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idOrientation").ToString();
-        aExif.MeteringMode.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idMeteringMode").ToString();
-        aExif.Flash.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idFlash").ToString();
-      }
-      catch (Exception ex)
-      {
-        Log.Warn("Picture.DB.SQLite: Exception parsing integer fields: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
+      aExif.Orientation.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idOrientation").ToString();
+      aExif.MeteringMode.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idMeteringMode").ToString();
+      aExif.Flash.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idFlash").ToString();
 
-      try
-      {
-        aExif.DatePictureTaken.Value = DatabaseUtility.GetAsDateTime(aResult, aRow, "strDateTaken").ToString();
-        /*
-        DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
-        dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
-        aExif.DatePictureTaken.Value = DateTime.ParseExact(aExif.DatePictureTaken.DisplayValue, "d", dateTimeFormat).ToString();
-        */
-      }
-      catch (Exception ex)
-      {
-        Log.Warn("Picture.DB.SQLite: Exception parsing date fields: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
+      aExif.DatePictureTaken.Value = DatabaseUtility.GetAsDateTime(aResult, aRow, "strDateTaken").ToString();
+      /*
+      DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
+      dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
+      aExif.DatePictureTaken.Value = DateTime.ParseExact(aExif.DatePictureTaken.DisplayValue, "d", dateTimeFormat).ToString();
+      */
       return true;
-    }
-
-    public ExifMetadata.Metadata GetExifFromFile(string strPicture)
-    {
-
-      if (!Util.Utils.IsPicture(strPicture))
-      {
-        return new ExifMetadata.Metadata();
-      }
-
-      using (ExifMetadata extractor = new ExifMetadata())
-      {
-        return extractor.GetExifMetadata(strPicture);
-      }
     }
 
     public ExifMetadata.Metadata GetExifFromDB(string strPicture)
@@ -1805,7 +920,7 @@ namespace MediaPortal.Picture.Database
         string strPic = strPicture;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
 
-        string SQL = String.Format("SELECT idPicture FROM picture WHERE strFile LIKE '{0}'", strPic);
+        string SQL = String.Format("SELECT idPicture FROM picture WHERE strFile = '{0}'", strPic);
         SQLiteResultSet results = m_db.Execute(SQL);
         if (results != null && results.Rows.Count > 0)
         {
@@ -1838,7 +953,7 @@ namespace MediaPortal.Picture.Database
         return false;
       }
 
-      metaData = GetExifFromFile(strPicture); 
+      metaData = GetExifFromFile(strPicture);
       if (metaData.IsEmpty())
       {
         return false;
@@ -1917,6 +1032,7 @@ namespace MediaPortal.Picture.Database
       return foundValue;
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public string GetDateTaken(string strPicture)
     {
       if (m_db == null)
@@ -1936,11 +1052,11 @@ namespace MediaPortal.Picture.Database
         string strPic = strPicture;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
 
-        string SQL = String.Format("SELECT strDateTaken FROM picture WHERE strFile LIKE '{0}'", strPic);
+        string SQL = String.Format("SELECT strDateTaken FROM picture WHERE strFile = '{0}'", strPic);
         SQLiteResultSet results = m_db.Execute(SQL);
         if (results != null && results.Rows.Count > 0)
         {
-           result = DatabaseUtility.Get(results, 0, "strDateTaken");
+          result = DatabaseUtility.Get(results, 0, "strDateTaken");
         }
       }
       catch (Exception ex)
@@ -1971,6 +1087,7 @@ namespace MediaPortal.Picture.Database
       return DateTime.MinValue;
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public int GetRotation(string strPicture)
     {
       if (m_db == null)
@@ -1989,10 +1106,10 @@ namespace MediaPortal.Picture.Database
         int iRotation = 0;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
 
-        SQLiteResultSet results = m_db.Execute(String.Format("SELECT strFile, iRotation FROM picture WHERE strFile LIKE '{0}'", strPic));
+        SQLiteResultSet results = m_db.Execute(String.Format("SELECT iRotation FROM picture WHERE strFile = '{0}'", strPic));
         if (results != null && results.Rows.Count > 0)
         {
-          iRotation = Int32.Parse(DatabaseUtility.Get(results, 0, 1));
+          iRotation = DatabaseUtility.GetAsInt(results, 0, "iRotation");
           return iRotation;
         }
 
@@ -2034,7 +1151,7 @@ namespace MediaPortal.Picture.Database
         long lPicId = AddPicture(strPicture, iRotation);
         if (lPicId >= 0)
         {
-          m_db.Execute(String.Format("UPDATE picture SET iRotation={0} WHERE strFile LIKE '{1}'", iRotation, strPic));
+          m_db.Execute(String.Format("UPDATE picture SET iRotation={0} WHERE strFile = '{1}'", iRotation, strPic));
         }
       }
       catch (Exception ex)
@@ -2055,14 +1172,14 @@ namespace MediaPortal.Picture.Database
         return;
       }
 
-      lock (typeof (PictureDatabase))
+      lock (typeof(PictureDatabase))
       {
         try
         {
           string strPic = strPicture;
           DatabaseUtility.RemoveInvalidChars(ref strPic);
 
-          string strSQL = String.Format("DELETE FROM picture WHERE strFile LIKE '{0}'", strPic);
+          string strSQL = String.Format("DELETE FROM picture WHERE strFile = '{0}'", strPic);
           m_db.Execute(strSQL);
         }
         catch (Exception ex)
@@ -2073,7 +1190,7 @@ namespace MediaPortal.Picture.Database
       }
     }
 
-    private string GetSearchQuery (string find)
+    private string GetSearchQuery(string find)
     {
       string result = string.Empty;
       MatchCollection matches = Regex.Matches(find, @"([+|]?[^+|;]+;?)");
@@ -2108,65 +1225,65 @@ namespace MediaPortal.Picture.Database
           }
         }
       }
-      Log.Debug ("Picture.DB.SQLite: Search -> Where: {0} -> {1}", find, result);
+      Log.Debug("Picture.DB.SQLite: Search -> Where: {0} -> {1}", find, result);
       // Picture.DB.SQLite: Search -> Where: word;word1+word2|word3|%like% -> {0} = 'word' AND {0} = 'word1' AND {0} = 'word2' OR {0} = 'word3' OR {0} LIKE '%like%'
       // Picture.DB.SQLite: Search -> Where: word -> {0} = 'word'
       // Picture.DB.SQLite: Search -> Where: word%|word2 -> {0} LIKE 'word%' OR {0} = 'word2'
       return result;
     }
-/*
-    private string GetSearchQuery (string find)
-    {
-      string result = string.Empty;
-      MatchCollection matches = Regex.Matches(find, @"([|]?[^|]+)");
-      foreach (Match match in matches)
-      {
-        foreach (Capture capture in match.Captures)
+    /*
+        private string GetSearchQuery (string find)
         {
-          if (!string.IsNullOrEmpty(capture.Value))
+          string result = string.Empty;
+          MatchCollection matches = Regex.Matches(find, @"([|]?[^|]+)");
+          foreach (Match match in matches)
           {
-            string part = capture.Value;
-            if (part.Contains("+") || part.Contains(";"))
+            foreach (Capture capture in match.Captures)
             {
-              part = part.Replace("+", ",");
-              part = part.Replace(";", ",");
-              part = part.Replace(",", "','");
+              if (!string.IsNullOrEmpty(capture.Value))
+              {
+                string part = capture.Value;
+                if (part.Contains("+") || part.Contains(";"))
+                {
+                  part = part.Replace("+", ",");
+                  part = part.Replace(";", ",");
+                  part = part.Replace(",", "','");
+                }
+                if (part.Contains("|"))
+                {
+                  part = part.Replace("|", " OR {0} = '") + "'";
+                }
+                if (!part.Contains("{0}"))
+                {
+                  part = "{0} = '" + part + "'";
+                }
+                if (part.Contains(","))
+                {
+                  part = part.Replace("{0} = ", " {0} IN (") + ")";
+                }
+                if (part.Contains("%"))
+                {
+                  part = part.Replace("{0} = '", "{0} LIKE '");
+                }
+                result = result + part;
+              }
             }
-            if (part.Contains("|"))
-            {
-              part = part.Replace("|", " OR {0} = '") + "'";
-            }
-            if (!part.Contains("{0}"))
-            {
-              part = "{0} = '" + part + "'";
-            }
-            if (part.Contains(","))
-            {
-              part = part.Replace("{0} = ", " {0} IN (") + ")";
-            }
-            if (part.Contains("%"))
-            {
-              part = part.Replace("{0} = '", "{0} LIKE '");
-            }
-            result = result + part;
           }
+          Log.Debug ("Picture.DB.SQLite: Search -> Where: {0} -> {1}", find, result);
+          // Picture.DB.SQLite: Search -> Where: word;word1+word2|word3|%like% ->  {0} IN ('word','word1','word2') OR {0} = 'word3' OR {0} LIKE '%like%'
+          // Picture.DB.SQLite: Search -> Where: word -> {0} = 'word'
+          // Picture.DB.SQLite: Search -> Where: word%|word2 -> {0} LIKE 'word%' OR {0} = 'word2'
+          return result;
         }
-      }
-      Log.Debug ("Picture.DB.SQLite: Search -> Where: {0} -> {1}", find, result);
-      // Picture.DB.SQLite: Search -> Where: word;word1+word2|word3|%like% ->  {0} IN ('word','word1','word2') OR {0} = 'word3' OR {0} LIKE '%like%'
-      // Picture.DB.SQLite: Search -> Where: word -> {0} = 'word'
-      // Picture.DB.SQLite: Search -> Where: word%|word2 -> {0} LIKE 'word%' OR {0} = 'word2'
-      return result;
-    }
-*/        
-    private string GetSearchWhere (string keyword, string where)
+    */
+    private string GetSearchWhere(string keyword, string where)
     {
       if (string.IsNullOrEmpty(keyword) || string.IsNullOrEmpty(where))
       {
         return string.Empty;
       }
       return "WHERE " + string.Format(GetSearchQuery(where), keyword);
-    }    
+    }
 
     private string GetSelect(string field, string search)
     {
@@ -2224,9 +1341,9 @@ namespace MediaPortal.Picture.Database
       }
 
       int Count = 0;
-      lock (typeof (PictureDatabase))
+      lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT DISTINCT strKeyword FROM keywords WHERE strKeyword <> 'Private' ORDER BY 1";
+        string strSQL = "SELECT DISTINCT strKeyword FROM keyword WHERE strKeyword <> 'Private' ORDER BY 1";
         try
         {
           SQLiteResultSet result = m_db.Execute(strSQL);
@@ -2254,10 +1371,10 @@ namespace MediaPortal.Picture.Database
       }
 
       int Count = 0;
-      lock (typeof (PictureDatabase))
+      lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = '" + Keyword + "' " +
-                               "AND idPicture NOT IN (SELECT idPicture FROM picturekeywords WHERE strKeyword = 'Private') " +
+                               "AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private') " +
                                "ORDER BY strDateTaken";
         try
         {
@@ -2286,10 +1403,10 @@ namespace MediaPortal.Picture.Database
       }
 
       int Count = 0;
-      lock (typeof (PictureDatabase))
+      lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT COUNT(strFile) FROM picturekeywords WHERE strKeyword = '" + Keyword + "' " +
-                               "AND idPicture NOT IN (SELECT idPicture FROM picturekeywords WHERE strKeyword = 'Private') " +
+                               "AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private') " +
                                "ORDER BY strDateTaken";
         try
         {
@@ -2315,7 +1432,7 @@ namespace MediaPortal.Picture.Database
       }
 
       int Count = 0;
-      lock (typeof (PictureDatabase))
+      lock (typeof(PictureDatabase))
       {
         string strSQL = GetSelect("strFile", Keyword);
         try
@@ -2345,7 +1462,7 @@ namespace MediaPortal.Picture.Database
       }
 
       int Count = 0;
-      lock (typeof (PictureDatabase))
+      lock (typeof(PictureDatabase))
       {
         string strSQL = GetSelect("COUNT(strFile)", Keyword);
         try
@@ -2372,7 +1489,7 @@ namespace MediaPortal.Picture.Database
       }
 
       int Count = 0;
-      lock (typeof (PictureDatabase))
+      lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT DISTINCT SUBSTR(strDateTaken,1,4) FROM picture ORDER BY 1";
         SQLiteResultSet result;
@@ -2403,9 +1520,9 @@ namespace MediaPortal.Picture.Database
       }
 
       int Count = 0;
-      lock (typeof (PictureDatabase))
+      lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT DISTINCT SUBSTR(strDateTaken,6,2) FROM picture WHERE strDateTaken LIKE '" + Year + "%' ORDER BY strDateTaken";
+        string strSQL = "SELECT DISTINCT SUBSTR(strDateTaken,6,2) FROM picture WHERE SUBSTR(strDateTaken,1,4) = '" + Year + "' ORDER BY strDateTaken";
         SQLiteResultSet result;
         try
         {
@@ -2434,9 +1551,9 @@ namespace MediaPortal.Picture.Database
       }
 
       int Count = 0;
-      lock (typeof (PictureDatabase))
+      lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT DISTINCT SUBSTR(strDateTaken,9,2) FROM picture WHERE strDateTaken LIKE '" + Year + "-" + Month + "%' ORDER BY strDateTaken";
+        string strSQL = "SELECT DISTINCT SUBSTR(strDateTaken,9,2) FROM picture WHERE SUBSTR(strDateTaken,1,7) = '" + Year + "-" + Month + "' ORDER BY strDateTaken";
         SQLiteResultSet result;
         try
         {
@@ -2465,10 +1582,10 @@ namespace MediaPortal.Picture.Database
       }
 
       int Count = 0;
-      lock (typeof (PictureDatabase))
+      lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT strFile FROM picture WHERE strDateTaken LIKE '" + Date + "%' " +
-                        "AND idPicture NOT IN (SELECT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" +
+                        "AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" +
                         "ORDER BY strDateTaken";
         SQLiteResultSet result;
         try
@@ -2498,10 +1615,10 @@ namespace MediaPortal.Picture.Database
       }
 
       int Count = 0;
-      lock (typeof (PictureDatabase))
+      lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT COUNT(strFile) FROM picture WHERE strDateTaken LIKE '" + Date + "%' " +
-                        "AND idPicture NOT IN (SELECT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" +
+                        "AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" +
                         "ORDER BY strDateTaken";
         SQLiteResultSet result;
         try
@@ -2524,11 +1641,6 @@ namespace MediaPortal.Picture.Database
 
     private void BeginTransaction()
     {
-      if (m_db == null)
-      {
-        return;
-      }
-
       try
       {
         m_db.Execute("BEGIN");
@@ -2542,11 +1654,6 @@ namespace MediaPortal.Picture.Database
 
     private void CommitTransaction()
     {
-      if (m_db == null)
-      {
-        return;
-      }
-
       try
       {
         m_db.Execute("COMMIT");
@@ -2560,11 +1667,6 @@ namespace MediaPortal.Picture.Database
 
     private void RollbackTransaction()
     {
-      if (m_db == null)
-      {
-        return;
-      }
-
       try
       {
         m_db.Execute("ROLLBACK");
