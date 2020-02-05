@@ -186,18 +186,18 @@ namespace MediaPortal.Picture.Database
 
       DatabaseUtility.AddTable(m_db, "iso",
                                "CREATE TABLE iso (idISO INTEGER PRIMARY KEY, strISO TEXT);");
-      DatabaseUtility.AddTable(m_db, "exposureTime",
-                               "CREATE TABLE exposureTime (idExposureTime INTEGER PRIMARY KEY, strExposureTime TEXT);");
-      DatabaseUtility.AddTable(m_db, "exposureCompensation",
-                               "CREATE TABLE exposureCompensation (idExposureCompensation INTEGER PRIMARY KEY, strExposureCompensation TEXT);");
+      DatabaseUtility.AddTable(m_db, "exposuretime",
+                               "CREATE TABLE exposuretime (idExposureTime INTEGER PRIMARY KEY, strExposureTime TEXT);");
+      DatabaseUtility.AddTable(m_db, "exposurecompensation",
+                               "CREATE TABLE exposurecompensation (idExposureCompensation INTEGER PRIMARY KEY, strExposureCompensation TEXT);");
       DatabaseUtility.AddTable(m_db, "fstop",
                                "CREATE TABLE fstop (idFStop INTEGER PRIMARY KEY, strFStop TEXT);");
-      DatabaseUtility.AddTable(m_db, "shutterSpeed",
-                               "CREATE TABLE shutterSpeed (idShutterSpeed INTEGER PRIMARY KEY, strShutterSpeed TEXT);");
-      DatabaseUtility.AddTable(m_db, "focalLength",
-                               "CREATE TABLE focalLength (idFocalLength INTEGER PRIMARY KEY, strFocalLength TEXT);");
-      DatabaseUtility.AddTable(m_db, "focalLength35mm",
-                               "CREATE TABLE focalLength35mm (idFocalLength35mm INTEGER PRIMARY KEY, strFocalLength35mm TEXT);");
+      DatabaseUtility.AddTable(m_db, "shutterspeed",
+                               "CREATE TABLE shutterspeed (idShutterSpeed INTEGER PRIMARY KEY, strShutterSpeed TEXT);");
+      DatabaseUtility.AddTable(m_db, "focallength",
+                               "CREATE TABLE focallength (idFocalLength INTEGER PRIMARY KEY, strFocalLength TEXT);");
+      DatabaseUtility.AddTable(m_db, "focallength35mm",
+                               "CREATE TABLE focallength35mm (idFocalLength35mm INTEGER PRIMARY KEY, strFocalLength35mm TEXT);");
 
       DatabaseUtility.AddTable(m_db, "keyword",
                                "CREATE TABLE keyword (idKeyword INTEGER PRIMARY KEY, strKeyword TEXT);");
@@ -206,7 +206,7 @@ namespace MediaPortal.Picture.Database
                                  "PRIMARY KEY (idKeyword, idPicture));");
 
       DatabaseUtility.AddTable(m_db, "exifdata",
-                               "CREATE TABLE exifdata (idPicture INTEGER REFERENCES picture(idPicture) ON DELETE CASCADE, " +
+                               "CREATE TABLE exifdata (idPicture INTEGER PRIMARY KEY REFERENCES picture(idPicture) ON DELETE CASCADE, " +
                                                        "idCamera INTEGER REFERENCES camera(idCamera) ON DELETE SET NULL, " +
                                                        "idLens INTEGER REFERENCES lens(idLens) ON DELETE SET NULL, " +
                                                        "idISO INTEGER REFERENCES iso(idIso) ON DELETE SET NULL, " +
@@ -302,12 +302,12 @@ namespace MediaPortal.Picture.Database
             "  DELETE FROM city WHERE idCity NOT IN (SELECT DISTINCT idCity FROM exifdata); " +
             "  DELETE FROM sublocation WHERE idSublocation NOT IN (SELECT DISTINCT idSublocation FROM exifdata); " +
             "  DELETE FROM iso WHERE idIso NOT IN (SELECT DISTINCT idIso FROM exifdata); " +
-            "  DELETE FROM exposureTime WHERE idExposureTime NOT IN (SELECT DISTINCT idExposureTime FROM exifdata); " +
-            "  DELETE FROM exposureCompensation WHERE idExposureCompensation NOT IN (SELECT DISTINCT idExposureCompensation FROM exifdata); " +
+            "  DELETE FROM exposuretime WHERE idExposureTime NOT IN (SELECT DISTINCT idExposureTime FROM exifdata); " +
+            "  DELETE FROM exposurecompensation WHERE idExposureCompensation NOT IN (SELECT DISTINCT idExposureCompensation FROM exifdata); " +
             "  DELETE FROM fstop WHERE idFStop NOT IN (SELECT DISTINCT idFStop FROM exifdata); " +
-            "  DELETE FROM shutterSpeed WHERE idShutterSpeed NOT IN (SELECT DISTINCT idShutterSpeed FROM exifdata); " +
-            "  DELETE FROM focalLength WHERE idFocalLength NOT IN (SELECT DISTINCT idFocalLength FROM exifdata); " +
-            "  DELETE FROM focalLength35mm WHERE idFocalLength35mm NOT IN (SELECT DISTINCT idFocalLength35mm FROM exifdata); " +
+            "  DELETE FROM shutterspeed WHERE idShutterSpeed NOT IN (SELECT DISTINCT idShutterSpeed FROM exifdata); " +
+            "  DELETE FROM focallength WHERE idFocalLength NOT IN (SELECT DISTINCT idFocalLength FROM exifdata); " +
+            "  DELETE FROM focallength35mm WHERE idFocalLength35mm NOT IN (SELECT DISTINCT idFocalLength35mm FROM exifdata); " +
             "END;");
       DatabaseUtility.AddTrigger(m_db, "Delete_ExtraKeywords",
             "CREATE TRIGGER Delete_ExtraKeywords AFTER DELETE ON keywordslinkpicture " +
@@ -349,12 +349,12 @@ namespace MediaPortal.Picture.Database
                                                           "LEFT JOIN copyright USING (idCopyright) " +
                                                           "LEFT JOIN copyrightnotice USING (idCopyrightNotice) " +
                                                           "LEFT JOIN iso USING (idISO) " +
-                                                          "LEFT JOIN exposureTime USING (idExposureTime) " +
-                                                          "LEFT JOIN exposureCompensation USING (idExposureCompensation) " +
+                                                          "LEFT JOIN exposuretime USING (idExposureTime) " +
+                                                          "LEFT JOIN exposurecompensation USING (idExposureCompensation) " +
                                                           "LEFT JOIN fstop USING (idFStop) " +
-                                                          "LEFT JOIN shutterSpeed USING (idShutterSpeed) " +
-                                                          "LEFT JOIN focalLength USING (idFocalLength) " +
-                                                          "LEFT JOIN focalLength35mm USING (idFocalLength35mm);");
+                                                          "LEFT JOIN shutterspeed USING (idShutterSpeed) " +
+                                                          "LEFT JOIN focallength USING (idFocalLength) " +
+                                                          "LEFT JOIN focallength35mm USING (idFocalLength35mm);");
 
       DatabaseUtility.AddView(m_db, "picturekeywords", "CREATE VIEW picturekeywords AS " +
                                                        "SELECT picture.*, keyword.strKeyword FROM picture " +
