@@ -417,19 +417,23 @@ namespace MediaPortal.Database
     {
       if (null == results)
       {
+        Log.Error("DatabaseUtility.Get: Results=null");
         return string.Empty;
       }
       if (results.Rows.Count < iRecord)
       {
+        Log.Error("DatabaseUtility.Get: Recordnr {0} not found", iRecord);
         return string.Empty;
       }
       if (column < 0 || column >= results.ColumnNames.Count)
       {
+        Log.Error("DatabaseUtility.Get: Columnr {0} out of range", column);
         return string.Empty;
       }
       SQLiteResultSet.Row arr = results.Rows[iRecord];
       if (arr.fields[column] == null)
       {
+        Log.Error("DatabaseUtility.Get: Field {0} = null", column);
         return string.Empty;
       }
       string strLine = (arr.fields[column]).Trim();
@@ -442,14 +446,17 @@ namespace MediaPortal.Database
     {
       if (null == results)
       {
+        Log.Error("DatabaseUtility.Get: Results=null");
         return string.Empty;
       }
       if (results.Rows.Count == 0)
       {
+        Log.Error("DatabaseUtility.Get: Rowcount=0");
         return string.Empty;
       }
       if (results.Rows.Count < iRecord)
       {
+        Log.Error("DatabaseUtility.Get: Recordnr {0} not found", iRecord);
         return string.Empty;
       }
       SQLiteResultSet.Row arr = results.Rows[iRecord];
@@ -459,6 +466,7 @@ namespace MediaPortal.Database
         iCol = (int)results.ColumnIndices[strColum];
         if (arr.fields[iCol] == null)
         {
+          Log.Error("DatabaseUtility.Get: Field {0} not found", strColum);
           return string.Empty;
         }
         string strLine = (arr.fields[iCol]).Trim();
@@ -468,6 +476,7 @@ namespace MediaPortal.Database
       int pos = strColum.IndexOf(".", StringComparison.Ordinal);
       if (pos < 0)
       {
+        Log.Error("DatabaseUtility.Get: Field {0} not found", strColum);
         return string.Empty;
       }
       strColum = strColum.Substring(pos + 1);
@@ -476,6 +485,7 @@ namespace MediaPortal.Database
         iCol = (int)results.ColumnIndices[strColum];
         if (arr.fields[iCol] == null)
         {
+          Log.Error("DatabaseUtility.Get: Field {0} not found", strColum);
           return string.Empty;
         }
         string strLine = (arr.fields[iCol]).Trim();
