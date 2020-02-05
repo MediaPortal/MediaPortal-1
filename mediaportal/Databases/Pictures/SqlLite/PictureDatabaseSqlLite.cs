@@ -206,7 +206,7 @@ namespace MediaPortal.Picture.Database
                                  "PRIMARY KEY (idKeyword, idPicture));");
 
       DatabaseUtility.AddTable(m_db, "exifdata",
-                               "CREATE TABLE exifdata (idPicture INTEGER PRIMARY KEY REFERENCES picture(idPicture) ON DELETE SET NULL, " +
+                               "CREATE TABLE exifdata (idPicture INTEGER PRIMARY KEY REFERENCES picture(idPicture) ON DELETE CASCADE, " +
                                                        "idCamera INTEGER REFERENCES camera(idCamera) ON DELETE SET NULL, " +
                                                        "idLens INTEGER REFERENCES lens(idLens) ON DELETE SET NULL, " +
                                                        "idISO INTEGER REFERENCES iso(idIso) ON DELETE SET NULL, " +
