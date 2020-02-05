@@ -225,23 +225,12 @@ namespace MediaPortal.Configuration.Sections
           CreateThumbsAndAddPictureToDB(file);
         }
         benchclockfile.Stop();
-        if (noLargeThumbnails)
-        {
-          Log.Debug("Pictures Configuration : Creation of selected thumb for '{0}' files, took {1} seconds",
-                    availableFiles.Count,
-                    benchclockfile.Elapsed.TotalSeconds);
-        }
-        else
-        {
-          Log.Debug("Pictures Configuration : Creation of selected thumb for '{0}' files, took {1} seconds",
-                    availableFiles.Count * 2,
-                    benchclockfile.Elapsed.TotalSeconds);
-        }
-
+        Log.Debug("Pictures Configuration : Creation of selected thumb for '{0}' files, took {1} seconds",
+                  totalFiles,
+                  benchclockfile.Elapsed.TotalSeconds);
         Log.Info("PictureDatabase: Database reorganization and thumbnail generation finished");
 
         SetStatus(String.Format("Finished. {0} files processsed", totalFiles));
-
       }
       catch (Exception)
       {

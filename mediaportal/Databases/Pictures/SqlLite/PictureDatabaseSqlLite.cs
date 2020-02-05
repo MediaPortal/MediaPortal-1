@@ -399,7 +399,7 @@ namespace MediaPortal.Picture.Database
         string strDateTaken = string.Empty;
 
         DatabaseUtility.RemoveInvalidChars(ref strPic);
-        string strSQL = String.Format("SELECT * FROM picture WHERE strFile = '{0}'", strPic);
+        string strSQL = String.Format("SELECT idPicture FROM picture WHERE strFile = '{0}'", strPic);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results != null && results.Rows.Count > 0)
         {
@@ -440,8 +440,10 @@ namespace MediaPortal.Picture.Database
         BeginTransaction();
 
         strSQL = String.Format("INSERT INTO picture (idPicture, strFile, iRotation, strDateTaken, iImageWidth, iImageHeight, iImageXReso, iImageYReso) VALUES " +
-          "(NULL, '{0}',{1},'{2}','{3}','{4}','{5}','{6}')",
-                                strPic, iRotation, strDateTaken, exifData.ImageDimensions.Width, exifData.ImageDimensions.Height, exifData.Resolution.Width, exifData.Resolution.Height);
+                                                   "(NULL, '{0}',{1},'{2}','{3}','{4}','{5}','{6}')",
+                                                            strPic, iRotation, strDateTaken,
+                                                            exifData.ImageDimensions.Width, exifData.ImageDimensions.Height,
+                                                            exifData.Resolution.Width, exifData.Resolution.Height);
         results = m_db.Execute(strSQL);
         if (results.Rows.Count > 0)
         {
@@ -1648,7 +1650,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: Begin transaction failed exception err: {0} ", ex.Message);
-        Open();
+        // Open();
       }
     }
 
@@ -1674,7 +1676,7 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: Rollback failed exception err: {0} ", ex.Message);
-        Open();
+        // Open();
       }
     }
 
