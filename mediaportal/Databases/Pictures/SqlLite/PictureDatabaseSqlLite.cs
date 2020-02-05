@@ -440,7 +440,7 @@ namespace MediaPortal.Picture.Database
         BeginTransaction();
 
         strSQL = String.Format("INSERT INTO picture (idPicture, strFile, iRotation, strDateTaken, iImageWidth, iImageHeight, iImageXReso, iImageYReso) VALUES " +
-                                                   "(NULL, '{0}',{1},'{2}','{3}','{4}','{5}','{6}')",
+                                                   "(NULL, '{0}', {1}, '{2}', {3}, {4}, {5}, {6})",
                                                             strPic, iRotation, strDateTaken,
                                                             exifData.ImageDimensions.Width, exifData.ImageDimensions.Height,
                                                             exifData.Resolution.Width, exifData.Resolution.Height);
@@ -653,7 +653,7 @@ namespace MediaPortal.Picture.Database
         }
         else
         {
-          return DatabaseUtility.GetAsInt(results, 0, "id" + tableName);
+          return DatabaseUtility.GetAsInt(results, 0, 0);
         }
       }
       catch (Exception ex)
@@ -675,11 +675,11 @@ namespace MediaPortal.Picture.Database
       {
         string strId = DatabaseUtility.RemoveInvalidChars(id.Trim());
 
-        string strSQL = String.Format("SELECT idOrientation FROM orientation WHERE idOrientation = '{0}'", strId);
+        string strSQL = String.Format("SELECT idOrientation FROM orientation WHERE idOrientation = {0}", strId);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO orientation (idOrientation, strOrientation) VALUES ('{0}', '{1}')", strId, DatabaseUtility.RemoveInvalidChars(name.Trim()));
+          strSQL = String.Format("INSERT INTO orientation (idOrientation, strOrientation) VALUES ({0}, '{1}')", strId, DatabaseUtility.RemoveInvalidChars(name.Trim()));
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -707,11 +707,11 @@ namespace MediaPortal.Picture.Database
       {
         string strId = DatabaseUtility.RemoveInvalidChars(id.Trim());
 
-        string strSQL = String.Format("SELECT idFlash FROM flash WHERE idFlash = '{0}'", strId);
+        string strSQL = String.Format("SELECT idFlash FROM flash WHERE idFlash = {0}", strId);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO flash (idFlash, strFlash) VALUES ('{0}', '{1}')", strId, DatabaseUtility.RemoveInvalidChars(name.Trim()));
+          strSQL = String.Format("INSERT INTO flash (idFlash, strFlash) VALUES ({0}, '{1}')", strId, DatabaseUtility.RemoveInvalidChars(name.Trim()));
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -739,11 +739,11 @@ namespace MediaPortal.Picture.Database
       {
         string strId = DatabaseUtility.RemoveInvalidChars(id.Trim());
 
-        string strSQL = String.Format("SELECT idMeteringMode FROM meteringmode WHERE idMeteringMode = '{0}'", strId);
+        string strSQL = String.Format("SELECT idMeteringMode FROM meteringmode WHERE idMeteringMode = {0}", strId);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO meteringmode (idMeteringMode, strMeteringMode) VALUES ('{0}', '{1}')", strId, DatabaseUtility.RemoveInvalidChars(name.Trim()));
+          strSQL = String.Format("INSERT INTO meteringmode (idMeteringMode, strMeteringMode) VALUES ({0}, '{1}')", strId, DatabaseUtility.RemoveInvalidChars(name.Trim()));
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
