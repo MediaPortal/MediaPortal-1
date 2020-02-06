@@ -118,7 +118,6 @@ namespace MediaPortal.Picture.Database
       }
     }
 
-    [MethodImpl(MethodImplOptions.Synchronized)]
     private bool CreateTables()
     {
       if (m_db == null)
@@ -504,7 +503,6 @@ namespace MediaPortal.Picture.Database
       return (String.IsNullOrEmpty(value) || value.Equals("unknown", StringComparison.InvariantCultureIgnoreCase)) ? "NULL" : "'" + value.ToString()+ "'";
     }
 
-    [MethodImpl(MethodImplOptions.Synchronized)]
     private void AddPictureExifData(int iDbID, ExifMetadata.Metadata exifData)
     {
       if (exifData.IsEmpty() || iDbID <= 0)
@@ -763,19 +761,14 @@ namespace MediaPortal.Picture.Database
 
     private void AddKeywords(int picID, string keywords)
     {
-      if (string.IsNullOrWhiteSpace(keywords))
-      {
-        return;
-      }
-      if (null == m_db)
+      if (string.IsNullOrWhiteSpace(keywords) || m_db == null)
       {
         return;
       }
 
       try
       {
-        string[] parts = keywords.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
-        foreach (string part in parts)
+        foreach (string part in keywords.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Distinct())
         {
           AddKeywordToPicture(AddItem("Keyword", part), picID);
         }
@@ -795,7 +788,7 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string strSQL = String.Format("INSERT OR REPLACE INTO keywordslinkpicture (idKeyword, idPicture) VALUES ({0}, {1})", keyID, picID);
+        string strSQL = String.Format("INSERT OR IGNORE INTO keywordslinkpicture (idKeyword, idPicture) VALUES ({0}, {1})", keyID, picID);
         m_db.Execute(strSQL);
       }
       catch (Exception ex)
