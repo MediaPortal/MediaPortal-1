@@ -174,8 +174,6 @@ namespace MediaPortal.GUI.Pictures
         switch (tag)
         {
           case ExifDirectoryBase.TagOrientation:
-          case ExifDirectoryBase.TagMeteringMode:
-          case ExifDirectoryBase.TagFlash:
             {
               Int32 intValue;
               if (directory.TryGetInt32(tag, out intValue))

@@ -183,7 +183,6 @@ namespace MediaPortal.Picture.Database
                                "CREATE TABLE copyright (idCopyright INTEGER PRIMARY KEY, strCopyright TEXT);");
       DatabaseUtility.AddTable(m_db, "copyrightnotice",
                                "CREATE TABLE copyrightnotice (idCopyrightNotice INTEGER PRIMARY KEY, strCopyrightNotice TEXT);");
-
       DatabaseUtility.AddTable(m_db, "iso",
                                "CREATE TABLE iso (idISO INTEGER PRIMARY KEY, strISO TEXT);");
       DatabaseUtility.AddTable(m_db, "exposuretime",
@@ -541,8 +540,8 @@ namespace MediaPortal.Picture.Database
                                             GetValueForQuery(AddItem("Camera", exifData.CameraModel.DisplayValue, "strCameraMake", exifData.EquipmentMake.DisplayValue)),
                                             GetValueForQuery(AddItem("Lens", exifData.Lens.DisplayValue, "strLensMake", exifData.Lens.Value)),
                                             GetValueForQuery(AddOrienatation(exifData.Orientation.Value, exifData.Orientation.DisplayValue)),
-                                            GetValueForQuery(AddFlash(exifData.Flash.Value, exifData.Flash.DisplayValue)),
-                                            GetValueForQuery(AddMeteringMode(exifData.MeteringMode.Value, exifData.MeteringMode.DisplayValue)),
+                                            GetValueForQuery(AddItem("Flash", exifData.Flash.DisplayValue)),
+                                            GetValueForQuery(AddItem("MeteringMode", exifData.MeteringMode.DisplayValue)),
                                             GetValueForQuery(AddItem("ExposureProgram", exifData.ExposureProgram.DisplayValue)),
                                             GetValueForQuery(AddItem("ExposureMode", exifData.ExposureMode.DisplayValue)),
                                             GetValueForQuery(AddItem("SensingMethod", exifData.SensingMethod.DisplayValue)),
@@ -695,70 +694,6 @@ namespace MediaPortal.Picture.Database
       return -1;
     }
 
-    private int AddFlash(string id, string name)
-    {
-      if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strId = DatabaseUtility.RemoveInvalidChars(id.Trim());
-
-        string strSQL = String.Format("SELECT idFlash FROM flash WHERE idFlash = {0}", strId);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO flash (idFlash, strFlash) VALUES ({0}, '{1}')", strId, DatabaseUtility.RemoveInvalidChars(name.Trim()));
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          return DatabaseUtility.GetAsInt(results, 0, "idFlash");
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddFlash: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
-    private int AddMeteringMode(string id, string name)
-    {
-      if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(name))
-      {
-        return -1;
-      }
-
-      try
-      {
-        string strId = DatabaseUtility.RemoveInvalidChars(id.Trim());
-
-        string strSQL = String.Format("SELECT idMeteringMode FROM meteringmode WHERE idMeteringMode = {0}", strId);
-        SQLiteResultSet results = m_db.Execute(strSQL);
-        if (results.Rows.Count == 0)
-        {
-          strSQL = String.Format("INSERT INTO meteringmode (idMeteringMode, strMeteringMode) VALUES ({0}, '{1}')", strId, DatabaseUtility.RemoveInvalidChars(name.Trim()));
-          m_db.Execute(strSQL);
-          int iID = m_db.LastInsertID();
-          return iID;
-        }
-        else
-        {
-          return DatabaseUtility.GetAsInt(results, 0, "idMeteringMode");
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Picture.DB.SQLite: AddMeteringMode: {0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-      return -1;
-    }
-
     private void AddKeywords(int picID, string keywords)
     {
       if (string.IsNullOrWhiteSpace(keywords) || m_db == null)
@@ -892,15 +827,7 @@ namespace MediaPortal.Picture.Database
       aExif.Resolution.Height = DatabaseUtility.GetAsInt(aResult, aRow, "iImageYReso");
 
       aExif.Orientation.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idOrientation").ToString();
-      aExif.MeteringMode.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idMeteringMode").ToString();
-      aExif.Flash.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idFlash").ToString();
-
       aExif.DatePictureTaken.Value = DatabaseUtility.GetAsDateTime(aResult, aRow, "strDateTaken").ToString();
-      /*
-      DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
-      dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
-      aExif.DatePictureTaken.Value = DateTime.ParseExact(aExif.DatePictureTaken.DisplayValue, "d", dateTimeFormat).ToString();
-      */
       return true;
     }
 
