@@ -2167,7 +2167,9 @@ namespace MediaPortal.Player
                     case StreamType.Subtitle_file:
                     case StreamType.Subtitle_hidden:
                     case StreamType.Subtitle_shown:
-                      if (streamLAVSelection && FSInfos.Filter.ToLowerInvariant().Contains("LAV Splitter".ToLowerInvariant()))
+                      if (streamLAVSelection &&
+                          (FSInfos.Filter.ToLowerInvariant().Contains("LAV Splitter".ToLowerInvariant()) ||
+                           FSInfos.Filter.ToUpperInvariant().Contains(@"\BDMV\INDEX.BDMV")))
                       {
                         if (FSInfos.sFlag == AMStreamSelectInfoFlags.Enabled ||
                             FSInfos.sFlag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))
