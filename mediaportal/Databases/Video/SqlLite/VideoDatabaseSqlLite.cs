@@ -1293,53 +1293,43 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    private void GetVideoFilesMediaInfo(int movieId, ref VideoFilesMediaInfo mediaInfo)
+    private VideoFilesMediaInfo GetVideoFilesMediaInfo(int movieId)
     {
+      VideoFilesMediaInfo mediaInfo = new VideoFilesMediaInfo();
+
       try
       {
         if (movieId < 1)
         {
-          return;
+          return mediaInfo;
         }
 
         int fileID = GetFileId(movieId);
 
         if (fileID < 1 )
         {
-          return;
+          return mediaInfo;
         }
 
         // Get media info from database
         string strSQL = String.Format("SELECT * FROM filesmediainfo WHERE idFile={0}", fileID);
         SQLiteResultSet results = m_db.Execute(strSQL);
 
-        mediaInfo.VideoCodec = DatabaseUtility.Get(results, 0, "videoCodec");
-        mediaInfo.VideoResolution = DatabaseUtility.Get(results, 0, "videoResolution");
-        mediaInfo.AspectRatio = DatabaseUtility.Get(results, 0, "aspectRatio");
-
-        int hasSubtitles;
-        int.TryParse(DatabaseUtility.Get(results, 0, "hasSubtitles"), out hasSubtitles);
-
-        if (hasSubtitles != 0)
+        if (results.Rows.Count != 0)
         {
-          mediaInfo.HasSubtitles = true;
+          mediaInfo.VideoCodec = DatabaseUtility.Get(results, 0, "videoCodec");
+          mediaInfo.VideoResolution = DatabaseUtility.Get(results, 0, "videoResolution");
+          mediaInfo.AspectRatio = DatabaseUtility.Get(results, 0, "aspectRatio");
+          mediaInfo.HasSubtitles = DatabaseUtility.GetAsInt(results, 0, "hasSubtitles") != 0;
+
+          mediaInfo.AudioCodec = DatabaseUtility.Get(results, 0, "audioCodec");
+          mediaInfo.AudioChannels = DatabaseUtility.Get(results, 0, "audioChannels");
+          mediaInfo.Duration = GetVideoDuration(fileID);
+
+          mediaInfo.Is3D = (DatabaseUtility.GetAsInt(results, 0, "is3D") != 0);
+
+          mediaInfo.IsHDR = (DatabaseUtility.GetAsInt(results, 0, "isHDR") != 0);
         }
-        else
-        {
-          mediaInfo.HasSubtitles = false;
-        }
-
-        mediaInfo.AudioCodec = DatabaseUtility.Get(results, 0, "audioCodec");
-        mediaInfo.AudioChannels = DatabaseUtility.Get(results, 0, "audioChannels");
-        mediaInfo.Duration = GetVideoDuration(fileID);
-
-        int is3D;
-        int.TryParse(DatabaseUtility.Get(results, 0, "is3D"), out is3D);
-        mediaInfo.Is3D = (is3D != 0);
-
-        int isHDR;
-        int.TryParse(DatabaseUtility.Get(results, 0, "isHDR"), out isHDR);
-        mediaInfo.IsHDR = (isHDR != 0);
       }
       catch (ThreadAbortException)
       {
@@ -1350,6 +1340,7 @@ namespace MediaPortal.Video.Database
         Log.Error("videodatabase mediainfo exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
+      return mediaInfo;
     }
 
     public bool HasMediaInfo(string fileName)
@@ -3768,7 +3759,6 @@ namespace MediaPortal.Video.Database
         string sql = String.Format("SELECT * FROM resume WHERE idFile={0} AND bdtitle={1}", iFileId, bdtitle);
         SQLiteResultSet results = m_db.Execute(sql);
         int stoptime;
-        int BDTileID;
 
         if (results.Rows.Count != 0)
         {
@@ -3780,8 +3770,8 @@ namespace MediaPortal.Video.Database
         }
         else
         {
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "bdtitle"), out BDTileID);
-          if (bdtitle != BDTileID)
+          //no results here (rows.count=0), so get returns empty string which results in a value of 0 for BDTileID
+          if (bdtitle != 0)
           {
             return 0;
           }
@@ -8094,9 +8084,7 @@ namespace MediaPortal.Video.Database
         details.VideoFileName = movieFilename;
         details.VideoFilePath = details.Path;
 
-        VideoFilesMediaInfo mInfo = new VideoFilesMediaInfo();
-        GetVideoFilesMediaInfo(details.ID, ref mInfo);
-        details.MediaInfo = mInfo;
+        details.MediaInfo = GetVideoFilesMediaInfo(details.ID);
 
         details.Genre = GetGenresForMovie(details.ID);
         details.MovieCollection = GetCollectionsForMovie(details.ID);
