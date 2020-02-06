@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -603,7 +604,7 @@ namespace MediaPortal.Picture.Database
     private int AddItem(string tableName, string value)
     {
       value = CleanupString(value);
-      if (value==String.Empty)
+      if (value.Length == 0)
       {
         return -1;
       }
@@ -634,7 +635,7 @@ namespace MediaPortal.Picture.Database
     private int AddItem(string tableName, string value, string additionalName, string additionalValue)
     {
       value = CleanupString(value);
-      if (value==String.Empty)
+      if (value.Length == 0)
       {
         return -1;
       }
@@ -773,7 +774,7 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string[] parts = keywords.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] parts = keywords.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Distinct();
         foreach (string part in parts)
         {
           AddKeywordToPicture(AddItem("Keyword", part), picID);
