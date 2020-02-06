@@ -774,7 +774,7 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string[] parts = keywords.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Distinct();
+        string[] parts = keywords.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToArray();
         foreach (string part in parts)
         {
           AddKeywordToPicture(AddItem("Keyword", part), picID);
@@ -795,7 +795,7 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string strSQL = String.Format("INSERT INTO keywordslinkpicture (idKeyword, idPicture) VALUES ({0}, {1})", keyID, picID);
+        string strSQL = String.Format("INSERT OR REPLACE INTO keywordslinkpicture (idKeyword, idPicture) VALUES ({0}, {1})", keyID, picID);
         m_db.Execute(strSQL);
       }
       catch (Exception ex)
