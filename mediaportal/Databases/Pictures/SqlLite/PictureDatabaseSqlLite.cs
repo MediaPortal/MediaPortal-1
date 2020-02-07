@@ -244,7 +244,6 @@ namespace MediaPortal.Picture.Database
 
       DatabaseUtility.AddIndex(m_db, "idxkeyword_strKeyword", "CREATE INDEX idxkeyword_strKeyword ON keyword(strKeyword);");
 
-      DatabaseUtility.AddIndex(m_db, "idxkeywordslinkpicture_idKeyword", "CREATE INDEX idxkeywordslinkpicture_idKeyword ON keywordslinkpicture(idKeyword);");
       DatabaseUtility.AddIndex(m_db, "idxkeywordslinkpicture_idPicture", "CREATE INDEX idxkeywordslinkpicture_idPicture ON keywordslinkpicture(idPicture);");
 
       DatabaseUtility.AddIndex(m_db, "idxexifdata_idCamera", "CREATE INDEX idxexifdata_idCamera ON exifdata(idCamera);");
