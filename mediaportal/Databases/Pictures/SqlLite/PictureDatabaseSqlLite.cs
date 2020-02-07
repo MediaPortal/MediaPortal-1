@@ -198,6 +198,9 @@ namespace MediaPortal.Picture.Database
       DatabaseUtility.AddTable(m_db, "focallength35mm",
                                "CREATE TABLE focallength35mm (idFocalLength35mm INTEGER PRIMARY KEY, strFocalLength35mm TEXT);");
 
+      DatabaseUtility.AddTable(m_db, "gpslocation",
+                                     "CREATE TABLE gpslocation (idGPSLocation INTEGER PRIMARY KEY, latitude REAL NOT NULL, longitude REAL NOT NULL, altitude REAL);");
+
       DatabaseUtility.AddTable(m_db, "keyword",
                                "CREATE TABLE keyword (idKeyword INTEGER PRIMARY KEY, strKeyword TEXT);");
       DatabaseUtility.AddTable(m_db, "keywordslinkpicture",
@@ -215,7 +218,7 @@ namespace MediaPortal.Picture.Database
                                                        "idShutterSpeed INTEGER REFERENCES shutterspeed(idShutterSpeed) ON DELETE SET NULL, " +
                                                        "idFocalLength INTEGER REFERENCES focallength(idFocalLength) ON DELETE SET NULL, " +
                                                        "idFocalLength35mm INTEGER REFERENCES focallength35mm(idFocalLength35mm) ON DELETE SET NULL, " +
-                                                       "strGPSLatitude TEXT, strGPSLongitude TEXT, strGPSAltitude TEXT, " +
+                                                       "idGPSLocation INTEGER REFERENCES gpslocation(idGPSLocation) ON DELETE SET NULL, " +
                                                        "idOrientation INTEGER REFERENCES orientation(idOrientation) ON DELETE SET NULL, " +
                                                        "idFlash INTEGER REFERENCES flash(idFlash) ON DELETE SET NULL, " +
                                                        "idMeteringMode INTEGER REFERENCES meteringmode(idMeteringMode) ON DELETE SET NULL, " +
@@ -241,11 +244,11 @@ namespace MediaPortal.Picture.Database
 
       DatabaseUtility.AddIndex(m_db, "idxkeyword_strKeyword", "CREATE INDEX idxkeyword_strKeyword ON keyword(strKeyword);");
 
-      DatabaseUtility.AddIndex(m_db, "idxkeywordslinkpicture_idKeyword", "CREATE INDEX idxkeywordslinkpicture_idKeyword ON keywordslinkpicture(idKeyword);");
       DatabaseUtility.AddIndex(m_db, "idxkeywordslinkpicture_idPicture", "CREATE INDEX idxkeywordslinkpicture_idPicture ON keywordslinkpicture(idPicture);");
 
       DatabaseUtility.AddIndex(m_db, "idxexifdata_idCamera", "CREATE INDEX idxexifdata_idCamera ON exifdata(idCamera);");
       DatabaseUtility.AddIndex(m_db, "idxexifdata_idLens", "CREATE INDEX idxexifdata_idLens ON exifdata(idLens);");
+      DatabaseUtility.AddIndex(m_db, "idxexifdata_idGPSLocation", "CREATE INDEX idxexifdata_idGPSLocation ON gpslocation(idGPSLocation);");
       DatabaseUtility.AddIndex(m_db, "idxexifdata_idOrientation", "CREATE INDEX idxexifdata_idOrientation ON exifdata(idOrientation);");
       DatabaseUtility.AddIndex(m_db, "idxexifdata_idFlash", "CREATE INDEX idxexifdata_idFlash ON exifdata(idFlash);");
       DatabaseUtility.AddIndex(m_db, "idxexifdata_idMeteringMode", "CREATE INDEX idxexifdata_idMeteringMode ON exifdata(idMeteringMode);");
@@ -281,6 +284,7 @@ namespace MediaPortal.Picture.Database
             "BEGIN " +
             "  DELETE FROM camera WHERE idCamera NOT IN (SELECT DISTINCT idCamera FROM exifdata); " +
             "  DELETE FROM lens WHERE idLens NOT IN (SELECT DISTINCT idLens FROM exifdata); " +
+            "  DELETE FROM gpslocation WHERE idGPSLocation NOT IN (SELECT DISTINCT idGPSLocation FROM exifdata); " +
             "  DELETE FROM orientation WHERE idOrientation NOT IN (SELECT DISTINCT idOrientation FROM exifdata); " +
             "  DELETE FROM flash WHERE idFlash NOT IN (SELECT DISTINCT idFlash FROM exifdata); " +
             "  DELETE FROM meteringmode WHERE idMeteringMode NOT IN (SELECT DISTINCT idMeteringMode FROM exifdata); " +
@@ -323,7 +327,8 @@ namespace MediaPortal.Picture.Database
                                                           "strOrientation, strFlash, strMeteringMode, " +
                                                           "strCountryCode, strCountry, strState, strCity, strSubLocation, strExposureProgram, strExposureMode, strSensingMethod, strSceneType, " +
                                                           "strSceneCaptureType, strWhiteBalance, strAuthor, strByLine, strSoftware, strUserComment, strCopyright, strCopyrightNotice, " +
-                                                          "iImageWidth||'x'||iImageHeight as strImageDimension, iImageXReso||'x'||iImageYReso as strImageResolution, exifdata.* " +
+                                                          "iImageWidth||'x'||iImageHeight as strImageDimension, iImageXReso||'x'||iImageYReso as strImageResolution, " +
+                                                          "gpslocation.latitude, gpslocation.longitude, gpslocation.altitude, exifdata.* " +
                                                           "FROM picture " +
                                                           "LEFT JOIN exifdata USING (idPicture) " +
                                                           "LEFT JOIN camera USING (idCamera) " +
@@ -353,7 +358,8 @@ namespace MediaPortal.Picture.Database
                                                           "LEFT JOIN fstop USING (idFStop) " +
                                                           "LEFT JOIN shutterspeed USING (idShutterSpeed) " +
                                                           "LEFT JOIN focallength USING (idFocalLength) " +
-                                                          "LEFT JOIN focallength35mm USING (idFocalLength35mm);");
+                                                          "LEFT JOIN focallength35mm USING (idFocalLength35mm) " +
+                                                          "LEFT JOIN gpslocation USING (idGPSLocation);");
 
       DatabaseUtility.AddView(m_db, "picturekeywords", "CREATE VIEW picturekeywords AS " +
                                                        "SELECT picture.*, keyword.strKeyword FROM picture " +
@@ -393,7 +399,6 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        int lPicId = -1;
         string strPic = strPicture;
         string strDateTaken = string.Empty;
 
@@ -402,8 +407,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results != null && results.Rows.Count > 0)
         {
-          lPicId = Int32.Parse(DatabaseUtility.Get(results, 0, "idPicture"));
-          return lPicId;
+          return DatabaseUtility.GetAsInt(results, 0, "idPicture");
         }
 
         ExifMetadata.Metadata exifData;
@@ -451,7 +455,7 @@ namespace MediaPortal.Picture.Database
 
         CommitTransaction();
 
-        lPicId = m_db.LastInsertID();
+        int lPicId = m_db.LastInsertID();
         AddPictureExifData(lPicId, exifData);
 
         if (g_Player.Playing)
@@ -499,7 +503,7 @@ namespace MediaPortal.Picture.Database
 
     private string GetGPSValueForQuery(string value)
     {
-      return (String.IsNullOrEmpty(value) || value.Equals("unknown", StringComparison.InvariantCultureIgnoreCase)) ? "NULL" : "'" + value.ToString()+ "'";
+       return String.IsNullOrEmpty(value) ? "NULL" : value;
     }
 
     private void AddPictureExifData(int iDbID, ExifMetadata.Metadata exifData)
@@ -533,12 +537,12 @@ namespace MediaPortal.Picture.Database
                                                                          "idCountry, idState, idCity, idSublocation, " +
                                                                          "idIso, idExposureTime, idExposureCompensation, idFstop, " +
                                                                          "idShutterSpeed, idFocalLength, idFocalLength35mm, " +
-                                                                         "strGPSLatitude, strGPSLongitude, strGPSAltitude) " +
+                                                                         "idGPSLocation) " +
                                    "VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, " +
-                                           "{16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29}, {30}, {31});",
+                                           "{16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29});",
                                             iDbID,
-                                            GetValueForQuery(AddItem("Camera", exifData.CameraModel.DisplayValue, "strCameraMake", exifData.EquipmentMake.DisplayValue)),
-                                            GetValueForQuery(AddItem("Lens", exifData.Lens.DisplayValue, "strLensMake", exifData.Lens.Value)),
+                                            GetValueForQuery(AddItem("Camera", exifData.CameraModel.DisplayValue, "CameraMake", exifData.EquipmentMake.DisplayValue)),
+                                            GetValueForQuery(AddItem("Lens", exifData.Lens.DisplayValue, "LensMake", exifData.Lens.Value)),
                                             GetValueForQuery(AddOrienatation(exifData.Orientation.Value, exifData.Orientation.DisplayValue)),
                                             GetValueForQuery(AddItem("Flash", exifData.Flash.DisplayValue)),
                                             GetValueForQuery(AddItem("MeteringMode", exifData.MeteringMode.DisplayValue)),
@@ -554,7 +558,7 @@ namespace MediaPortal.Picture.Database
                                             GetValueForQuery(AddItem("UserComment", exifData.Comment.DisplayValue)),
                                             GetValueForQuery(AddItem("Copyright", exifData.Copyright.DisplayValue)),
                                             GetValueForQuery(AddItem("CopyrightNotice", exifData.CopyrightNotice.DisplayValue)),
-                                            GetValueForQuery(AddItem("Country", exifData.CountryName.DisplayValue, "strCountryCode", exifData.CountryCode.DisplayValue)),
+                                            GetValueForQuery(AddItem("Country", exifData.CountryName.DisplayValue, "CountryCode", exifData.CountryCode.DisplayValue)),
                                             GetValueForQuery(AddItem("State", exifData.ProvinceOrState.DisplayValue)),
                                             GetValueForQuery(AddItem("City", exifData.City.DisplayValue)),
                                             GetValueForQuery(AddItem("Sublocation", exifData.SubLocation.DisplayValue)),
@@ -565,9 +569,7 @@ namespace MediaPortal.Picture.Database
                                             GetValueForQuery(AddItem("ShutterSpeed", exifData.ShutterSpeed.DisplayValue)),
                                             GetValueForQuery(AddItem("FocalLength", exifData.FocalLength.DisplayValue)),
                                             GetValueForQuery(AddItem("FocalLength35mm", exifData.FocalLength35MM.DisplayValue)),
-                                            GetGPSValueForQuery(DatabaseUtility.RemoveInvalidChars(exifData.Latitude.DisplayValue)),
-                                            GetGPSValueForQuery(DatabaseUtility.RemoveInvalidChars(exifData.Longitude.DisplayValue)),
-                                            GetGPSValueForQuery(DatabaseUtility.RemoveInvalidChars(exifData.Altitude.DisplayValue))
+                                            GetValueForQuery(AddLocation(exifData.Latitude.DisplayValue, exifData.Longitude.DisplayValue, exifData.Altitude.DisplayValue))
                                             );
 
           m_db.Execute(strSQL);
@@ -644,7 +646,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO {0} (id{0}, str{0}, {1}) VALUES (NULL, '{2}', '{3}')", tableName, additionalName, value, additionalValue);
+          strSQL = String.Format("INSERT INTO {0} (id{0}, str{0}, str{1}) VALUES (NULL, '{2}', '{3}')", tableName, additionalName, value, additionalValue);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -690,6 +692,34 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: AddOrienatation: {0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+      return -1;
+    }
+
+    private int AddLocation(string latitude, string longitude, string altitude)
+    {
+      if (String.IsNullOrEmpty(latitude) || String.IsNullOrEmpty(longitude))
+        return -1;
+
+      try
+      {
+        string strSQL = String.Format("SELECT idGPSLocation FROM gpslocation WHERE latitude = {0} AND longitude = {1} and altitude = {2}", latitude, longitude, GetGPSValueForQuery(altitude));
+        SQLiteResultSet results = m_db.Execute(strSQL);
+        if (results.Rows.Count == 0)
+        {
+          strSQL = String.Format("INSERT INTO gpslocation (idGPSLocation, latitude, longitude, altitude) VALUES (NULL, {0}, {1}, {2})", latitude, longitude, GetGPSValueForQuery(altitude));
+          m_db.Execute(strSQL);
+          int iID = m_db.LastInsertID();
+          return iID;
+        }
+        else
+        {
+          return DatabaseUtility.GetAsInt(results, 0, 0);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: AddGPSLocation: {1} stack:{2}", ex.Message, ex.StackTrace);
       }
       return -1;
     }
