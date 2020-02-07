@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -226,38 +227,42 @@ namespace MediaPortal.GUI.Pictures
               }
               break;
             }
-          case GpsDirectory.TagLatitude:
-            {
-              string latitudeRef = directory.GetDescription(GpsDirectory.TagLatitudeRef);
-              if (!string.IsNullOrEmpty(latitudeRef))
-              {
-                item.DisplayValue = latitudeRef + " " + item.DisplayValue;
-              }
-              break;
-            }
-          case GpsDirectory.TagLongitude:
-            {
-              string longitudeRef = directory.GetDescription(GpsDirectory.TagLongitudeRef);
-              if (!string.IsNullOrEmpty(longitudeRef))
-              {
-                item.DisplayValue = longitudeRef + " " + item.DisplayValue;
-              }
-              break;
-            }
-          case GpsDirectory.TagAltitude:
-            {
-              string altitudeRef = directory.GetDescription(GpsDirectory.TagAltitudeRef);
-              if (!string.IsNullOrEmpty(altitudeRef))
-              {
-                item.DisplayValue = altitudeRef + " " + item.DisplayValue;
-              }
-              break;
-            }
         }
       }
       catch (Exception ex)
       {
         Log.Error("ExifExtractor: SetStuff " + ex.Message);
+      }
+    }
+
+    private double? GetDecimalFromGps(GpsDirectory gpsDirectory, int valueTag, int refTag, string negValue)
+    {
+      var arr  = gpsDirectory.GetRationalArray(valueTag);
+      if (arr.Length == 3)
+      {
+        var refV = gpsDirectory.GetString(refTag);
+        return GeoLocation.DegreesMinutesSecondsToDecimal(arr[0],  arr[1],  arr[2],  refV.Equals(negValue, StringComparison.OrdinalIgnoreCase));
+      }
+      return null;
+    }
+
+    private void SetGPSData(GpsDirectory gpsDirectory, ref Metadata myMetadata)
+    {
+      double? latitude = GetDecimalFromGps(gpsDirectory, GpsDirectory.TagLatitude, GpsDirectory.TagLatitudeRef, "S");
+      double? longitude = GetDecimalFromGps(gpsDirectory, GpsDirectory.TagLongitude, GpsDirectory.TagLongitudeRef, "W");
+      double? altitude = null;
+      Rational value;
+      if (gpsDirectory.TryGetRational(GpsDirectory.TagAltitude, out value))
+        altitude = value.ToDouble();
+
+      if (latitude.HasValue && longitude.HasValue)
+      {
+        myMetadata.Latitude.DisplayValue = latitude.Value.ToString(CultureInfo.InvariantCulture);
+        myMetadata.Longitude.DisplayValue = longitude.Value.ToString(CultureInfo.InvariantCulture);
+      }
+      if (altitude.HasValue)
+      {
+        myMetadata.Altitude.DisplayValue = altitude.Value.ToString();
       }
     }
 
@@ -409,14 +414,7 @@ namespace MediaPortal.GUI.Pictures
         var gpsDirectory = directories.OfType<GpsDirectory>().FirstOrDefault();
         if (gpsDirectory != null)
         {
-          // [GPS] GPS Latitude Ref: + [GPS] GPS Latitude: N 51° 28' 58.78"
-          SetStuff(ref MyMetadata.Latitude, gpsDirectory, GpsDirectory.TagLatitude);
-
-          // [GPS] GPS Longitude Ref: + [GPS] GPS Longitude: W -3° 11' 7.21"
-          SetStuff(ref MyMetadata.Longitude, gpsDirectory, GpsDirectory.TagLongitude);
-
-          // [GPS] GPS Altitude Ref: + [GPS] GPS Altitude: Below sea level 166 metres
-          SetStuff(ref MyMetadata.Altitude, gpsDirectory, GpsDirectory.TagAltitude);
+          SetGPSData(gpsDirectory, ref MyMetadata);
         }
 
         foreach (var directory in directories)
