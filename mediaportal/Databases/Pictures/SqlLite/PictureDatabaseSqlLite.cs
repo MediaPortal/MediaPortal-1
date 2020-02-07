@@ -399,7 +399,6 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        int lPicId = -1;
         string strPic = strPicture;
         string strDateTaken = string.Empty;
 
@@ -408,8 +407,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results != null && results.Rows.Count > 0)
         {
-          lPicId = Int32.Parse(DatabaseUtility.Get(results, 0, "idPicture"));
-          return lPicId;
+          return DatabaseUtility.GetAsInt(results, 0, "idPicture");
         }
 
         ExifMetadata.Metadata exifData;
@@ -457,7 +455,7 @@ namespace MediaPortal.Picture.Database
 
         CommitTransaction();
 
-        lPicId = m_db.LastInsertID();
+        int lPicId = m_db.LastInsertID();
         AddPictureExifData(lPicId, exifData);
 
         if (g_Player.Playing)
@@ -543,8 +541,8 @@ namespace MediaPortal.Picture.Database
                                    "VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, " +
                                            "{16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29});",
                                             iDbID,
-                                            GetValueForQuery(AddItem("Camera", exifData.CameraModel.DisplayValue, "strCameraMake", exifData.EquipmentMake.DisplayValue)),
-                                            GetValueForQuery(AddItem("Lens", exifData.Lens.DisplayValue, "strLensMake", exifData.Lens.Value)),
+                                            GetValueForQuery(AddItem("Camera", exifData.CameraModel.DisplayValue, "CameraMake", exifData.EquipmentMake.DisplayValue)),
+                                            GetValueForQuery(AddItem("Lens", exifData.Lens.DisplayValue, "LensMake", exifData.Lens.Value)),
                                             GetValueForQuery(AddOrienatation(exifData.Orientation.Value, exifData.Orientation.DisplayValue)),
                                             GetValueForQuery(AddItem("Flash", exifData.Flash.DisplayValue)),
                                             GetValueForQuery(AddItem("MeteringMode", exifData.MeteringMode.DisplayValue)),
@@ -560,7 +558,7 @@ namespace MediaPortal.Picture.Database
                                             GetValueForQuery(AddItem("UserComment", exifData.Comment.DisplayValue)),
                                             GetValueForQuery(AddItem("Copyright", exifData.Copyright.DisplayValue)),
                                             GetValueForQuery(AddItem("CopyrightNotice", exifData.CopyrightNotice.DisplayValue)),
-                                            GetValueForQuery(AddItem("Country", exifData.CountryName.DisplayValue, "strCountryCode", exifData.CountryCode.DisplayValue)),
+                                            GetValueForQuery(AddItem("Country", exifData.CountryName.DisplayValue, "CountryCode", exifData.CountryCode.DisplayValue)),
                                             GetValueForQuery(AddItem("State", exifData.ProvinceOrState.DisplayValue)),
                                             GetValueForQuery(AddItem("City", exifData.City.DisplayValue)),
                                             GetValueForQuery(AddItem("Sublocation", exifData.SubLocation.DisplayValue)),
@@ -648,7 +646,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO {0} (id{0}, str{0}, {1}) VALUES (NULL, '{2}', '{3}')", tableName, additionalName, value, additionalValue);
+          strSQL = String.Format("INSERT INTO {0} (id{0}, str{0}, str{1}) VALUES (NULL, '{2}', '{3}')", tableName, additionalName, value, additionalValue);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
