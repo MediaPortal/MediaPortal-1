@@ -24,7 +24,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-
+using System.Text.RegularExpressions;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 
@@ -215,7 +215,7 @@ namespace MediaPortal.GUI.Pictures
               {
                 foreach (string keyword in keywordsArray)
                 {
-                  if (!string.IsNullOrWhiteSpace(keyword))
+                  if (!string.IsNullOrWhiteSpace(keyword) && !Regex.IsMatch(keyword,@"geo(tagged|\:.+?=\d+?\.\d+)"))
                   {
                     keywords += keyword.Trim() + "; ";
                   }
