@@ -235,34 +235,21 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private double? GetDecimalFromGps(GpsDirectory gpsDirectory, int valueTag, int refTag, string negValue)
-    {
-      var arr  = gpsDirectory.GetRationalArray(valueTag);
-      if (arr.Length == 3)
-      {
-        var refV = gpsDirectory.GetString(refTag);
-        return GeoLocation.DegreesMinutesSecondsToDecimal(arr[0],  arr[1],  arr[2],  refV.Equals(negValue, StringComparison.OrdinalIgnoreCase));
-      }
-      return null;
-    }
-
     private void SetGPSData(GpsDirectory gpsDirectory, ref Metadata myMetadata)
     {
-      double? latitude = GetDecimalFromGps(gpsDirectory, GpsDirectory.TagLatitude, GpsDirectory.TagLatitudeRef, "S");
-      double? longitude = GetDecimalFromGps(gpsDirectory, GpsDirectory.TagLongitude, GpsDirectory.TagLongitudeRef, "W");
-      double? altitude = null;
-      Rational value;
-      if (gpsDirectory.TryGetRational(GpsDirectory.TagAltitude, out value))
-        altitude = value.ToDouble();
-
-      if (latitude.HasValue && longitude.HasValue)
+      // GPS RAW Altitude: 96
+      double altitude;
+      if (gpsDirectory.TryGetDouble(GpsDirectory.TagAltitude, out altitude))
       {
-        myMetadata.Latitude.DisplayValue = latitude.Value.ToString(CultureInfo.InvariantCulture);
-        myMetadata.Longitude.DisplayValue = longitude.Value.ToString(CultureInfo.InvariantCulture);
+        myMetadata.Altitude.DisplayValue = altitude.ToString(CultureInfo.InvariantCulture);
       }
-      if (altitude.HasValue)
+
+      // GPS Location: 50,5323033300363, 30,4931270299872
+      GeoLocation location = gpsDirectory.GetGeoLocation();
+      if (location != null)
       {
-        myMetadata.Altitude.DisplayValue = altitude.Value.ToString();
+        myMetadata.Latitude.DisplayValue = location.Latitude.ToString(CultureInfo.InvariantCulture);
+        myMetadata.Longitude.DisplayValue = location.Longitude.ToString(CultureInfo.InvariantCulture);
       }
     }
 

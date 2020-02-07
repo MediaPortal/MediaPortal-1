@@ -29,6 +29,7 @@ using System.Xml;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
+using MetadataExtractor;
 
 namespace MediaPortal.Util
 {
@@ -96,6 +97,21 @@ namespace MediaPortal.Util
     {
       string result;
       return _translated.TryGetValue(tag, out result) ? result : tag;
+    }
+
+    public static string ToLatitudeString(this double tag)
+    {
+      return (tag >= 0 ? "N" : "S") + GeoLocation.DecimalToDegreesMinutesSecondsString(tag);
+    }
+
+    public static string ToLongitudeString(this double tag)
+    {
+      return (tag >= 0 ? "W" : "E") + GeoLocation.DecimalToDegreesMinutesSecondsString(tag);
+    }
+
+    public static string ToAltitudeString(this double tag)
+    {
+      return tag == 0 ? "Sea level" : String.Format(tag > 0 ? "Sea level {0} metres" : "Below sea level {0} metres", GeoLocation.DecimalToDegreesMinutesSecondsString(tag));
     }
 
     public static int ToRotation(this int orientation)
