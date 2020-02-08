@@ -702,11 +702,17 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string strSQL = String.Format("SELECT idGPSLocation FROM gpslocation WHERE latitude = {0} AND longitude = {1} and altitude = {2}", location.Latitude, location.Longitude, altitude);
+        string strSQL = String.Format("SELECT idGPSLocation FROM gpslocation WHERE latitude = {0} AND longitude = {1} and altitude = {2}",
+                                      location.Latitude.ToString(CultureInfo.InvariantCulture),
+                                      location.Longitude.ToString(CultureInfo.InvariantCulture),
+                                      altitude.ToString(CultureInfo.InvariantCulture));
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO gpslocation (idGPSLocation, latitude, longitude, altitude) VALUES (NULL, {0}, {1}, {2})", location.Latitude, location.Longitude, altitude);
+          strSQL = String.Format("INSERT INTO gpslocation (idGPSLocation, latitude, longitude, altitude) VALUES (NULL, {0}, {1}, {2})",
+                                 location.Latitude.ToString(CultureInfo.InvariantCulture),
+                                 location.Longitude.ToString(CultureInfo.InvariantCulture),
+                                 altitude.ToString(CultureInfo.InvariantCulture));
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
