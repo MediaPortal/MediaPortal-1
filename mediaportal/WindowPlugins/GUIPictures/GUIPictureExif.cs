@@ -98,9 +98,9 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
 
-      Refresh();
       SetExifGUIListItems();
       Update();
+      Refresh();
     }
 
     protected override void OnPageDestroy(int newWindowId)
@@ -137,9 +137,9 @@ namespace MediaPortal.GUI.Pictures
         case 2168: // Update Exif
           Log.Debug("GUIPicturesExif: Update Exif {0}: {1}", PictureDatabase.UpdatePicture(_currentPicture, -1), _currentPicture);
           _currentMetaData = PictureDatabase.GetExifFromDB(_currentPicture);
-          Refresh();
           SetExifGUIListItems();
           Update();
+          Refresh();
           break;
       }
     }
@@ -178,12 +178,6 @@ namespace MediaPortal.GUI.Pictures
           imgPicture.AllocResources();
           imgPicture.FileName = _currentPicture;
         }
-        if (imgExif != null)
-        {
-          imgExif.Dispose();
-          imgExif.AllocResources();
-          imgExif.FileName = "#pictures.exif.images";
-        }
 
         GUIPropertyManager.SetProperty("#currentpicture", _currentPicture);
       }
@@ -209,16 +203,19 @@ namespace MediaPortal.GUI.Pictures
     private void SetProperties()
     {
       _currentMetaData.SetExifProperties();
+
       int width = imgExif != null ? imgExif.Width < imgExif.Height ? 96 : 0 : 96;
       int height = imgExif != null ? imgExif.Width < imgExif.Height ? 0 : 96 : 0;
 
       List<GUIOverlayImage> exifIconImages = _currentMetaData.GetExifInfoOverlayImage(ref width, ref height);
       if (exifIconImages != null && exifIconImages.Count > 0)
       {
+        Log.Debug("*** - 1");
         GUIPropertyManager.SetProperty("#pictures.exif.images", GUIImageAllocator.BuildConcatImage("Exif:Icons", string.Empty, width, height, exifIconImages));
       }
       else
       {
+        Log.Debug("*** - 2");
         GUIPropertyManager.SetProperty("#pictures.exif.images", string.Empty);
       }
     }

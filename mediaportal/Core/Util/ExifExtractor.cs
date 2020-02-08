@@ -256,7 +256,7 @@ namespace MediaPortal.GUI.Pictures
         uint index;
         if (gpsDirectory.TryGetUInt32(GpsDirectory.TagAltitudeRef, out index))
         {
-          myMetadata.Altitude = myMetadata.Altitude * index == 1 ? -1 : 1;
+          myMetadata.Altitude = myMetadata.Altitude * (index == 1 ? -1 : 1);
         }
       }
 

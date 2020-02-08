@@ -199,7 +199,7 @@ namespace MediaPortal.Picture.Database
                                "CREATE TABLE focallength35mm (idFocalLength35mm INTEGER PRIMARY KEY, strFocalLength35mm TEXT);");
 
       DatabaseUtility.AddTable(m_db, "gpslocation",
-                                     "CREATE TABLE gpslocation (idGPSLocation INTEGER PRIMARY KEY, latitude REAL NOT NULL, longitude REAL NOT NULL, altitude REAL);");
+                                     "CREATE TABLE gpslocation (idGPSLocation INTEGER PRIMARY KEY, Latitude REAL NOT NULL, Longitude REAL NOT NULL, Altitude REAL);");
 
       DatabaseUtility.AddTable(m_db, "keyword",
                                "CREATE TABLE keyword (idKeyword INTEGER PRIMARY KEY, strKeyword TEXT);");
@@ -327,7 +327,7 @@ namespace MediaPortal.Picture.Database
                                                           "strOrientation, strFlash, strMeteringMode, " +
                                                           "strCountryCode, strCountry, strState, strCity, strSubLocation, strExposureProgram, strExposureMode, strSensingMethod, strSceneType, " +
                                                           "strSceneCaptureType, strWhiteBalance, strAuthor, strByLine, strSoftware, strUserComment, strCopyright, strCopyrightNotice, " +
-                                                          "gpslocation.latitude, gpslocation.longitude, gpslocation.altitude, exifdata.* " +
+                                                          "gpslocation.Latitude, gpslocation.Longitude, gpslocation.Altitude, exifdata.* " +
                                                           "FROM picture " +
                                                           "LEFT JOIN exifdata USING (idPicture) " +
                                                           "LEFT JOIN camera USING (idCamera) " +
@@ -702,17 +702,17 @@ namespace MediaPortal.Picture.Database
 
       try
       {
-        string strSQL = String.Format("SELECT idGPSLocation FROM gpslocation WHERE latitude = {0} AND longitude = {1} and altitude = {2}",
-                                      location.Latitude.ToString(CultureInfo.InvariantCulture),
-                                      location.Longitude.ToString(CultureInfo.InvariantCulture),
-                                      altitude.ToString(CultureInfo.InvariantCulture));
+        string strLatitude = location.Latitude.ToString(CultureInfo.InvariantCulture);
+        string strLongitude = location.Longitude.ToString(CultureInfo.InvariantCulture);
+        string strAltitude = altitude.ToString(CultureInfo.InvariantCulture);
+
+        string strSQL = String.Format("SELECT idGPSLocation FROM gpslocation WHERE Latitude = {0} AND Longitude = {1} and Altitude = {2}",
+                                       strLatitude, strLongitude, strAltitude);
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
-          strSQL = String.Format("INSERT INTO gpslocation (idGPSLocation, latitude, longitude, altitude) VALUES (NULL, {0}, {1}, {2})",
-                                 location.Latitude.ToString(CultureInfo.InvariantCulture),
-                                 location.Longitude.ToString(CultureInfo.InvariantCulture),
-                                 altitude.ToString(CultureInfo.InvariantCulture));
+          strSQL = String.Format("INSERT INTO gpslocation (idGPSLocation, Latitude, Longitude, Altitude) VALUES (NULL, {0}, {1}, {2})",
+                                  strLatitude, strLongitude, strAltitude);
           m_db.Execute(strSQL);
           int iID = m_db.LastInsertID();
           return iID;
@@ -860,9 +860,9 @@ namespace MediaPortal.Picture.Database
       aExif.Resolution.Width = DatabaseUtility.GetAsInt(aResult, aRow, "iImageXReso");
       aExif.Resolution.Height = DatabaseUtility.GetAsInt(aResult, aRow, "iImageYReso");
 
-      aExif.Location = new MetadataExtractor.GeoLocation(DatabaseUtility.GetAsDouble(aResult, aRow, "strGPSLatitude"),
-                                                         DatabaseUtility.GetAsDouble(aResult, aRow, "strGPSLongitude"));
-      aExif.Altitude = DatabaseUtility.GetAsDouble(aResult, aRow, "strGPSAltitude");
+      aExif.Location = new MetadataExtractor.GeoLocation(DatabaseUtility.GetAsDouble(aResult, aRow, "Latitude"),
+                                                         DatabaseUtility.GetAsDouble(aResult, aRow, "Longitude"));
+      aExif.Altitude = DatabaseUtility.GetAsDouble(aResult, aRow, "Altitude");
 
       aExif.Orientation.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idOrientation").ToString();
       aExif.DatePictureTaken.Value = DatabaseUtility.GetAsDateTime(aResult, aRow, "strDateTaken").ToString();

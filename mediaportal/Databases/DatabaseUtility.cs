@@ -346,15 +346,12 @@ namespace MediaPortal.Database
     public static double GetAsDouble(SQLiteResultSet results, int iRecord, string strColum)
     {
       string result = Get(results, iRecord, strColum);
-      if (result == null)
-      {
-        return 0;
-      }
-      if (result.Length == 0)
+      if (string.IsNullOrEmpty(result))
       {
         return 0;
       }
 
+      // result = result.Replace(",", ".");
       double doubleValue;
       if (double.TryParse(result, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out doubleValue))
       {
@@ -367,7 +364,12 @@ namespace MediaPortal.Database
     public static double GetAsDouble(SQLiteResultSet results, int iRecord, int column)
     {
       string result = Get(results, iRecord, column);
+      if (string.IsNullOrEmpty(result))
+      {
+        return 0;
+      }
 
+      // result = result.Replace(",", ".");
       double doubleValue;
       if (double.TryParse(result, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out doubleValue))
       {
