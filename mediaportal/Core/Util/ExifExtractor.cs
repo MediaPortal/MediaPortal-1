@@ -103,7 +103,8 @@ namespace MediaPortal.GUI.Pictures
         foreach (FieldInfo prop in type.GetFields())
         {
           if (prop.Name == "DatePictureTaken" || prop.Name == "Orientation" ||
-              prop.Name == "ImageDimensions" || prop.Name == "Resolution")
+              prop.Name == "ImageDimensions" || prop.Name == "Resolution" ||
+              prop.Name == "Altitude" || prop.Name == "Location")
           {
             continue;
           }
@@ -134,7 +135,9 @@ namespace MediaPortal.GUI.Pictures
               prop.Name == "ProvinceOrState" || prop.Name == "City" ||
               prop.Name == "SubLocation" || prop.Name == "Keywords" ||
               prop.Name == "Comment" ||
-              prop.Name == "Copyright" || prop.Name == "CopyrightNotice")
+              prop.Name == "Copyright" || prop.Name == "CopyrightNotice" ||
+              prop.Name == "Altitude" || prop.Name == "Location")
+
           {
             continue;
           }
@@ -208,7 +211,7 @@ namespace MediaPortal.GUI.Pictures
             }
           case ExifDirectoryBase.TagUserComment:
             { 
-              if (item.DisplayValue.StartsWith("ALCSII"))
+              if (!string.IsNullOrEmpty(item.DisplayValue) && item.DisplayValue.StartsWith("ALCSII"))
               {
                 item.DisplayValue = string.Empty;
               }
@@ -304,7 +307,9 @@ namespace MediaPortal.GUI.Pictures
             MyMetadata.Resolution.Height = value;
           }
           if (MyMetadata.Resolution.Width <= 1 || MyMetadata.Resolution.Height <= 1)
+          {
             MyMetadata.Resolution = Size.Empty;
+          }
         }
 
         DateTime dateTime;

@@ -406,7 +406,7 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
         if (results != null && results.Rows.Count > 0)
         {
-          return DatabaseUtility.GetAsInt(results, 0, "idPicture");
+          return DatabaseUtility.GetAsInt(results, 0, 0);
         }
 
         ExifMetadata.Metadata exifData;
@@ -685,7 +685,7 @@ namespace MediaPortal.Picture.Database
         }
         else
         {
-          return DatabaseUtility.GetAsInt(results, 0, "idOrientation");
+          return DatabaseUtility.GetAsInt(results, 0, 0);
         }
       }
       catch (Exception ex)

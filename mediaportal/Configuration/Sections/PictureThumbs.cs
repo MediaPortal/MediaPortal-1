@@ -231,10 +231,16 @@ namespace MediaPortal.Configuration.Sections
           }
         }
         benchclockfile.Stop();
-        Log.Debug("Pictures Configuration : Creation of selected thumb for {0} files, took {2} seconds. Generated {1} thumbnails.",
+        TimeSpan t = TimeSpan.FromSeconds(benchclockfile.Elapsed.TotalSeconds);
+        string totalTime = string.Format("{0:D2}h:{1:D2}m:{2:D2}s:{3:D3}ms",
+                                      t.Hours,
+                                      t.Minutes,
+                                      t.Seconds,
+                                      t.Milliseconds);
+        Log.Debug("Pictures Configuration : Creation of selected thumb for {0} files, took {1}. Generated {2} thumbnails.",
                   availableFiles.Count,
-                  totalFiles,
-                  benchclockfile.Elapsed.TotalSeconds);
+                  totalTime,
+                  totalFiles);
         Log.Info("PictureDatabase: Database reorganization and thumbnail generation finished.");
 
         SetStatus(String.Format("Finished. {0} files processsed", totalFiles));

@@ -288,19 +288,16 @@ namespace MediaPortal.GUI.Settings
         }
 
         benchclockfile.Stop();
-
-        if (_noLargeThumbnails)
-        {
-          Log.Debug("GUIPictures Setting : Creation of selected thumb for '{0}' files, took {1} seconds",
-                    availableFiles.Count,
-                    benchclockfile.Elapsed.TotalSeconds);
-        }
-        else
-        {
-          Log.Debug("GUIPictures Setting : Creation of selected thumb for '{0}' files, took {1} seconds",
-                    availableFiles.Count * 2,
-                    benchclockfile.Elapsed.TotalSeconds);
-        }
+        TimeSpan t = TimeSpan.FromSeconds(benchclockfile.Elapsed.TotalSeconds);
+        string totalTime = string.Format("{0:D2}h:{1:D2}m:{2:D2}s:{3:D3}ms",
+                                      t.Hours,
+                                      t.Minutes,
+                                      t.Seconds,
+                                      t.Milliseconds);
+        Log.Debug("GUIPictures Setting : Creation of selected thumb for '{0}' files, took {1}. Generated {2} thumbnails.",
+                  totalFiles,
+                  totalTime,
+                  totalFiles);
 
         Log.Info("GUIPictures Setting : Database reorganization and thumbnail generation finished");
 
