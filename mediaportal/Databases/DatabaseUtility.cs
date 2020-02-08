@@ -356,7 +356,7 @@ namespace MediaPortal.Database
       }
 
       double doubleValue;
-      if (double.TryParse(result, out doubleValue))
+      if (double.TryParse(result, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out doubleValue))
       {
         return doubleValue;
       }
@@ -369,7 +369,7 @@ namespace MediaPortal.Database
       string result = Get(results, iRecord, column);
 
       double doubleValue;
-      if (double.TryParse(result, out doubleValue))
+      if (double.TryParse(result, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out doubleValue))
       {
         return doubleValue;
       }
