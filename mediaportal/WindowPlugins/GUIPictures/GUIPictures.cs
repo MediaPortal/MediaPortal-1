@@ -3892,7 +3892,7 @@ namespace MediaPortal.GUI.Pictures
 
             if (PictureDatabase.AddPicture(item.Path, -1) > 0)
             {
-              SetItemExifData(item);
+              // SetItemExifData(item);
             }
           }
           SelectCurrentItem();
@@ -4036,6 +4036,10 @@ namespace MediaPortal.GUI.Pictures
       OnRetrieveThumbnailFiles(item);
       if (item.AlbumInfoTag != null)
       {
+        if (((ExifMetadata.Metadata)item.AlbumInfoTag).IsEmpty())
+        {
+          SetItemExifData(item);
+        }
         SetPicturePropertys((ExifMetadata.Metadata)item.AlbumInfoTag);
       }
 

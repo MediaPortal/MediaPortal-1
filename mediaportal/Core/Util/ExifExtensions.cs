@@ -160,7 +160,7 @@ namespace MediaPortal.Util
             value = metadata.ResolutionAsString(); 
             break;
           case "Location":
-            if (!metadata.Location.IsZero)
+            if (metadata.Location != null && !metadata.Location.IsZero)
             {
               string latitude = metadata.Location.Latitude.ToLatitudeString() ?? string.Empty;
               string longitude = metadata.Location.Longitude.ToLongitudeString() ?? string.Empty;
@@ -171,7 +171,7 @@ namespace MediaPortal.Util
             }
             break;
           case "Altitude":
-            if (metadata.Altitude != 0 || !metadata.Location.IsZero)
+            if (metadata.Altitude != 0 || (metadata.Location != null && !metadata.Location.IsZero))
             {
               value = metadata.Altitude.ToAltitudeString();
             }

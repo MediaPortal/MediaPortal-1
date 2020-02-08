@@ -252,6 +252,12 @@ namespace MediaPortal.GUI.Pictures
       if (gpsDirectory.TryGetDouble(GpsDirectory.TagAltitude, out altitude))
       {
         myMetadata.Altitude = altitude;
+
+        uint index;
+        if (gpsDirectory.TryGetUInt32(GpsDirectory.TagAltitude, out index))
+        {
+          myMetadata.Altitude = myMetadata.Altitude * index == 1 ? -1 : 1;
+        }
       }
 
       // GPS Location: 50,5323033300363, 30,4931270299872
