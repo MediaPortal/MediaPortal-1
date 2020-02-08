@@ -354,18 +354,11 @@ namespace MediaPortal.Database
       {
         return 0;
       }
-      try
+
+      double doubleValue;
+      if (double.TryParse(result, out doubleValue))
       {
-        double doubleValue;
-        if (double.TryParse(result, out doubleValue))
-        {
-          return doubleValue;
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Info("DatabaseUtility:GetAsDouble() column:{0} record:{1} value:{2} is not an int {3}",
-                 strColum, iRecord, result, ex.Message);
+        return doubleValue;
       }
       return 0;
     }
@@ -374,14 +367,11 @@ namespace MediaPortal.Database
     public static double GetAsDouble(SQLiteResultSet results, int iRecord, int column)
     {
       string result = Get(results, iRecord, column);
-      try
+
+      double doubleValue;
+      if (double.TryParse(result, out doubleValue))
       {
-        double doubleValue = double.Parse(result);
         return doubleValue;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("DatabaseUtility:GetAsDouble: {0}", ex.Message);
       }
       return 0;
     }

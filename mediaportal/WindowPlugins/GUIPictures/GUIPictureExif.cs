@@ -262,8 +262,8 @@ namespace MediaPortal.GUI.Pictures
         Type type = typeof(ExifMetadata.Metadata);
         foreach (FieldInfo prop in type.GetFields())
         {
+          string value = string.Empty;
           string caption = prop.Name.ToCaption() ?? prop.Name;
-          string value;
           switch (prop.Name)
           {
             case "ImageDimensions": 
@@ -273,7 +273,6 @@ namespace MediaPortal.GUI.Pictures
               value = _currentMetaData.ResolutionAsString(); 
               break;
             case "Location":
-              value = string.Empty;
               if (!_currentMetaData.Location.IsZero)
               {
                 string latitude = _currentMetaData.Location.Latitude.ToLatitudeString() ?? string.Empty;
@@ -285,7 +284,10 @@ namespace MediaPortal.GUI.Pictures
               }
               break;
             case "Altitude":
-              value = _currentMetaData.Altitude.ToAltitudeString();
+              if (_currentMetaData.Altitude != 0 || !_currentMetaData.Location.IsZero)
+              {
+                value = _currentMetaData.Altitude.ToAltitudeString();
+              }
               break;
             default:
               value = ((ExifMetadata.MetadataItem)prop.GetValue(_currentMetaData)).DisplayValue;

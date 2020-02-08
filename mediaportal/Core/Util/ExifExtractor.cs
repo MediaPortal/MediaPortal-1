@@ -206,6 +206,14 @@ namespace MediaPortal.GUI.Pictures
               }
               break;
             }
+          case ExifDirectoryBase.TagUserComment:
+            { 
+              if (item.DisplayValue.StartsWith("ALCSII"))
+              {
+                item.DisplayValue = string.Empty;
+              }
+              break;
+            }
           case IptcDirectory.TagKeywords:
             {
               string keywords = string.Empty;
@@ -214,7 +222,7 @@ namespace MediaPortal.GUI.Pictures
               {
                 foreach (string keyword in keywordsArray)
                 {
-                  if (!string.IsNullOrWhiteSpace(keyword) && !Regex.IsMatch(keyword,@"geo(tagged|\:.+?=\d+?\.\d+)"))
+                  if (!string.IsNullOrWhiteSpace(keyword) && !Regex.IsMatch(keyword, @"geo(tagged|\:.+?=\d+?\.\d+)"))
                   {
                     keywords += keyword.Trim() + "; ";
                   }

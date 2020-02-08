@@ -149,7 +149,7 @@ namespace MediaPortal.Util
       Type type = typeof(ExifMetadata.Metadata);
       foreach (FieldInfo prop in type.GetFields())
       {
-        string value;
+        string value = string.Empty;
         string caption = prop.Name.ToCaption() ?? prop.Name;
         switch (prop.Name)
         {
@@ -160,7 +160,6 @@ namespace MediaPortal.Util
             value = metadata.ResolutionAsString(); 
             break;
           case "Location":
-            value = string.Empty;
             if (!metadata.Location.IsZero)
             {
               string latitude = metadata.Location.Latitude.ToLatitudeString() ?? string.Empty;
@@ -172,7 +171,10 @@ namespace MediaPortal.Util
             }
             break;
           case "Altitude":
-            value = metadata.Altitude.ToAltitudeString();
+            if (metadata.Altitude != 0 || !metadata.Location.IsZero)
+            {
+              value = metadata.Altitude.ToAltitudeString();
+            }
             break;
           default:
             value = ((ExifMetadata.MetadataItem)prop.GetValue(metadata)).DisplayValue; 
