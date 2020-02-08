@@ -327,7 +327,6 @@ namespace MediaPortal.Picture.Database
                                                           "strOrientation, strFlash, strMeteringMode, " +
                                                           "strCountryCode, strCountry, strState, strCity, strSubLocation, strExposureProgram, strExposureMode, strSensingMethod, strSceneType, " +
                                                           "strSceneCaptureType, strWhiteBalance, strAuthor, strByLine, strSoftware, strUserComment, strCopyright, strCopyrightNotice, " +
-                                                          "iImageWidth||'x'||iImageHeight as strImageDimension, iImageXReso||'x'||iImageYReso as strImageResolution, " +
                                                           "gpslocation.latitude, gpslocation.longitude, gpslocation.altitude, exifdata.* " +
                                                           "FROM picture " +
                                                           "LEFT JOIN exifdata USING (idPicture) " +
