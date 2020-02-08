@@ -289,7 +289,7 @@ namespace MediaPortal.GUI.Settings
 
         benchclockfile.Stop();
         TimeSpan t = TimeSpan.FromSeconds(benchclockfile.Elapsed.TotalSeconds);
-        string totalTime = string.Format("{0:D2}h:{1:D2}m:{2:D2}s:{3:D3}ms",
+        string totalTime = string.Format("{0:D2}h {1:D2}m {2:D2}s {3:D3}ms",
                                       t.Hours,
                                       t.Minutes,
                                       t.Seconds,
