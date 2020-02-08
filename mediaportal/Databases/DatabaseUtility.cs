@@ -343,6 +343,49 @@ namespace MediaPortal.Database
       return 0;
     }
 
+    public static double GetAsDouble(SQLiteResultSet results, int iRecord, string strColum)
+    {
+      string result = Get(results, iRecord, strColum);
+      if (result == null)
+      {
+        return 0;
+      }
+      if (result.Length == 0)
+      {
+        return 0;
+      }
+      try
+      {
+        double doubleValue;
+        if (double.TryParse(result, out doubleValue))
+        {
+          return doubleValue;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Info("DatabaseUtility:GetAsDouble() column:{0} record:{1} value:{2} is not an int {3}",
+                 strColum, iRecord, result, ex.Message);
+      }
+      return 0;
+    }
+
+
+    public static double GetAsDouble(SQLiteResultSet results, int iRecord, int column)
+    {
+      string result = Get(results, iRecord, column);
+      try
+      {
+        double doubleValue = double.Parse(result);
+        return doubleValue;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("DatabaseUtility:GetAsDouble: {0}", ex.Message);
+      }
+      return 0;
+    }
+
     public static long GetAsInt64(SQLiteResultSet results, int iRecord, int column)
     {
       string result = Get(results, iRecord, column);

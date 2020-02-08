@@ -84,9 +84,8 @@ namespace MediaPortal.GUI.Pictures
       public MetadataItem ProvinceOrState;
       public MetadataItem City;
       public MetadataItem SubLocation;
-      public MetadataItem Latitude;
-      public MetadataItem Longitude;
-      public MetadataItem Altitude;
+      public GeoLocation Location;
+      public double Altitude;
       public MetadataItem Author;
       public MetadataItem Copyright;
       public MetadataItem CopyrightNotice;
@@ -241,16 +240,11 @@ namespace MediaPortal.GUI.Pictures
       double altitude;
       if (gpsDirectory.TryGetDouble(GpsDirectory.TagAltitude, out altitude))
       {
-        myMetadata.Altitude.DisplayValue = altitude.ToString(CultureInfo.InvariantCulture);
+        myMetadata.Altitude = altitude;
       }
 
       // GPS Location: 50,5323033300363, 30,4931270299872
-      GeoLocation location = gpsDirectory.GetGeoLocation();
-      if (location != null)
-      {
-        myMetadata.Latitude.DisplayValue = location.Latitude.ToString(CultureInfo.InvariantCulture);
-        myMetadata.Longitude.DisplayValue = location.Longitude.ToString(CultureInfo.InvariantCulture);
-      }
+      myMetadata.Location = gpsDirectory.GetGeoLocation();
     }
 
     public Metadata GetExifMetadata(string photoName)
@@ -427,7 +421,9 @@ namespace MediaPortal.GUI.Pictures
                 MyMetadata.Resolution.Width = directory.GetInt32(wTag.Type);
                 MyMetadata.Resolution.Height = directory.GetInt32(hTag.Type);
                 if (MyMetadata.Resolution.Width <= 1 || MyMetadata.Resolution.Height <= 1)
+                {
                   MyMetadata.Resolution = Size.Empty;
+                }
               }
             }
           }

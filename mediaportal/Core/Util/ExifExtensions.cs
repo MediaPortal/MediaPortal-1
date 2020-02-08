@@ -77,6 +77,7 @@ namespace MediaPortal.Util
       { "Altitude", GUILocalizeStrings.Get(9037) },
       { "Resolution", GUILocalizeStrings.Get(9001) },
       { "ImageDimensions", GUILocalizeStrings.Get(9000) },
+      { "Location", GUILocalizeStrings.Get(9038) },
     };
 
     private static Dictionary<string, string> _translated = new Dictionary<string, string>();
@@ -102,17 +103,25 @@ namespace MediaPortal.Util
 
     public static string ToLatitudeString(this double tag)
     {
-      return (tag >= 0 ? "N" : "S") + GeoLocation.DecimalToDegreesMinutesSecondsString(tag);
+      if (tag == 0)
+      {
+        return string.Empty;
+      }
+      return (tag > 0 ? GUILocalizeStrings.Get(9093) : GUILocalizeStrings.Get(9094)) + GeoLocation.DecimalToDegreesMinutesSecondsString(tag);
     }
 
     public static string ToLongitudeString(this double tag)
     {
-      return (tag >= 0 ? "W" : "E") + GeoLocation.DecimalToDegreesMinutesSecondsString(tag);
+      if (tag == 0)
+      {
+        return string.Empty;
+      }
+      return (tag > 0 ? GUILocalizeStrings.Get(9095) : GUILocalizeStrings.Get(9096)) + GeoLocation.DecimalToDegreesMinutesSecondsString(tag);
     }
 
     public static string ToAltitudeString(this double tag)
     {
-      return tag == 0 ? "Sea level" : String.Format(tag > 0 ? "Sea level {0} metres" : "Below sea level {0} metres", Math.Round(tag, 2));
+      return tag == 0 ? GUILocalizeStrings.Get(9097) : String.Format(tag > 0 ? GUILocalizeStrings.Get(9098) : GUILocalizeStrings.Get(9099), Math.Round(tag, 2));
     }
 
     public static int ToRotation(this int orientation)
@@ -149,6 +158,21 @@ namespace MediaPortal.Util
             break;
           case "Resolution": 
             value = metadata.ResolutionAsString(); 
+            break;
+          case "Location":
+            value = string.Empty;
+            if (!metadata.Location.IsZero)
+            {
+              string latitude = metadata.Location.Latitude.ToLatitudeString() ?? string.Empty;
+              string longitude = metadata.Location.Longitude.ToLongitudeString() ?? string.Empty;
+              if (!string.IsNullOrEmpty(latitude) && !string.IsNullOrEmpty(longitude))
+              {
+                value = metadata.Location.Latitude.ToLatitudeString() ?? string.Empty + " | " + metadata.Location.Longitude.ToLongitudeString() ?? string.Empty;
+              }
+            }
+            break;
+          case "Altitude":
+            value = metadata.Altitude.ToAltitudeString();
             break;
           default:
             value = ((ExifMetadata.MetadataItem)prop.GetValue(metadata)).DisplayValue; 
@@ -285,11 +309,31 @@ namespace MediaPortal.Util
         }
       }
 
-      if (!metadata.Latitude.IsEmpty() || !metadata.Longitude.IsEmpty())
+      if (metadata.Location != null && !metadata.Location.IsZero)
       {
-        if (!metadata.Latitude.IsEmpty() && !metadata.Longitude.IsEmpty())
+        string latitude = string.Empty;
+        string longitude = string.Empty;
+
+        if (metadata.Location.Latitude > 0)
         {
-          infoList.Add(@"geo\" + metadata.Latitude.DisplayValue[0] + metadata.Longitude.DisplayValue[0] + ".png");
+          latitude = "N";
+        }
+        else if (metadata.Location.Latitude < 0)
+        {
+          latitude = "S";
+        }
+        if (metadata.Location.Longitude > 0)
+        {
+          longitude = "W";
+        }
+        else if (metadata.Location.Longitude < 0)
+        {
+          longitude = "E";
+        }
+
+        if (!string.IsNullOrEmpty(latitude) && !string.IsNullOrEmpty(longitude))
+        {
+          infoList.Add(@"geo\" + latitude[0] + longitude[0] + ".png");
         }
         else
         {

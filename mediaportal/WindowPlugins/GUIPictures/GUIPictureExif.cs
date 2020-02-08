@@ -272,6 +272,21 @@ namespace MediaPortal.GUI.Pictures
             case "Resolution": 
               value = _currentMetaData.ResolutionAsString(); 
               break;
+            case "Location":
+              value = string.Empty;
+              if (!_currentMetaData.Location.IsZero)
+              {
+                string latitude = _currentMetaData.Location.Latitude.ToLatitudeString() ?? string.Empty;
+                string longitude = _currentMetaData.Location.Longitude.ToLongitudeString() ?? string.Empty;
+                if (!string.IsNullOrEmpty(latitude) && !string.IsNullOrEmpty(longitude))
+                {
+                  value = _currentMetaData.Location.Latitude.ToLatitudeString() ?? string.Empty + " | " + _currentMetaData.Location.Longitude.ToLongitudeString() ?? string.Empty;
+                }
+              }
+              break;
+            case "Altitude":
+              value = _currentMetaData.Altitude.ToAltitudeString();
+              break;
             default:
               value = ((ExifMetadata.MetadataItem)prop.GetValue(_currentMetaData)).DisplayValue;
               break;
