@@ -166,7 +166,7 @@ namespace MediaPortal.Util
               string longitude = metadata.Location.Longitude.ToLongitudeString() ?? string.Empty;
               if (!string.IsNullOrEmpty(latitude) && !string.IsNullOrEmpty(longitude))
               {
-                value = metadata.Location.Latitude.ToLatitudeString() ?? string.Empty + " | " + metadata.Location.Longitude.ToLongitudeString() ?? string.Empty;
+                value = latitude + " / " + longitude;
               }
             }
             break;

@@ -773,9 +773,12 @@ namespace MediaPortal.GUI.Pictures
       UpdateButtonStates();
       StartProcessPictures();
 
-      GUITextureManager.CleanupThumbs();
       GUIImageAllocator.ClearCachedAllocatorImages();
+      GUITextureManager.CleanupThumbs();
       // LoadSettings();
+
+      GUIPropertyManager.SetProperty("#pictures.filename", string.Empty);
+      GUIPropertyManager.SetProperty("#pictures.path", string.Empty);
 
       if (!IsPictureWindow(PreviousWindowId))
       {
@@ -789,6 +792,7 @@ namespace MediaPortal.GUI.Pictures
       LoadFolderSettings(currentFolder);
       ShowThumbPanel();
       LoadDirectory(currentFolder);
+
       if (selectedItemIndex >= 0 && (PreviousWindowId == (int)Window.WINDOW_SLIDESHOW || PreviousWindowId == (int)Window.WINDOW_PICTURES))
       {
         GUISlideShow SlideShow = (GUISlideShow) GUIWindowManager.GetWindow((int) Window.WINDOW_SLIDESHOW);
@@ -966,6 +970,7 @@ namespace MediaPortal.GUI.Pictures
       }
 
       GUIImageAllocator.ClearCachedAllocatorImages();
+      GUITextureManager.CleanupThumbs();
 
       selectedItemIndex = GetSelectedItemNo();
       SaveSettings();
@@ -4033,6 +4038,17 @@ namespace MediaPortal.GUI.Pictures
 
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
+      if (item.IsFolder)
+      {
+        GUIPropertyManager.SetProperty("#pictures.filename", string.Empty);
+        GUIPropertyManager.SetProperty("#pictures.path", item.Path);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#pictures.filename", Path.GetFileName(item.Path));
+        GUIPropertyManager.SetProperty("#pictures.path", Path.GetDirectoryName(item.Path));
+      }
+
       OnRetrieveThumbnailFiles(item);
       if (item.AlbumInfoTag != null)
       {
