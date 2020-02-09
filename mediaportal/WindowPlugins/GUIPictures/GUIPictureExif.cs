@@ -219,6 +219,7 @@ namespace MediaPortal.GUI.Pictures
 
     private void SetProperties()
     {
+      GUIPropertyManager.SetProperty("#pictures.exif.images", string.Empty);
       _currentMetaData.SetExifProperties();
 
       int width = imgExif != null ? imgExif.Width < imgExif.Height ? 96 : 0 : 96;
@@ -228,10 +229,6 @@ namespace MediaPortal.GUI.Pictures
       if (exifIconImages != null && exifIconImages.Count > 0)
       {
         GUIPropertyManager.SetProperty("#pictures.exif.images", GUIImageAllocator.BuildConcatImage("Exif:Details", string.Empty, width, height, exifIconImages));
-      }
-      else
-      {
-        GUIPropertyManager.SetProperty("#pictures.exif.images", string.Empty);
       }
     }
 
@@ -248,6 +245,7 @@ namespace MediaPortal.GUI.Pictures
       {
         Log.Error("GUIPicturesExif OnItemSelected exception: {0}", ex.Message);
       }
+      SetProperties();
     }
 
     private void SetExifGUIListItems()
