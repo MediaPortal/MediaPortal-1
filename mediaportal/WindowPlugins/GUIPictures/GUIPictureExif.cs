@@ -98,6 +98,11 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
 
+      GUIImageAllocator.ClearCachedAllocatorImages();
+      GUITextureManager.CleanupThumbs();
+
+      GUIPropertyManager.SetProperty("#pictures.exif.images", string.Empty);
+
       SetExifGUIListItems();
       Update();
       Refresh();
@@ -105,6 +110,9 @@ namespace MediaPortal.GUI.Pictures
 
     protected override void OnPageDestroy(int newWindowId)
     {
+      GUIImageAllocator.ClearCachedAllocatorImages();
+      GUITextureManager.CleanupThumbs();
+
       ReleaseResources();
       base.OnPageDestroy(newWindowId);
     }
@@ -178,6 +186,12 @@ namespace MediaPortal.GUI.Pictures
           imgPicture.AllocResources();
           imgPicture.FileName = _currentPicture;
         }
+        if (imgExif != null)
+        {
+          imgExif.Dispose();
+          imgExif.AllocResources();
+          imgExif.FileName = "#pictures.exif.images";
+        }
 
         GUIPropertyManager.SetProperty("#currentpicture", _currentPicture);
       }
@@ -210,13 +224,16 @@ namespace MediaPortal.GUI.Pictures
       List<GUIOverlayImage> exifIconImages = _currentMetaData.GetExifInfoOverlayImage(ref width, ref height);
       if (exifIconImages != null && exifIconImages.Count > 0)
       {
-        Log.Debug("*** - 1");
-        GUIPropertyManager.SetProperty("#pictures.exif.images", GUIImageAllocator.BuildConcatImage("Exif:Icons", string.Empty, width, height, exifIconImages));
+        GUIPropertyManager.SetProperty("#pictures.exif.images", GUIImageAllocator.BuildConcatImage("Exif:Details", string.Empty, width, height, exifIconImages));
       }
       else
       {
-        Log.Debug("*** - 2");
         GUIPropertyManager.SetProperty("#pictures.exif.images", string.Empty);
+      }
+
+      if (imgExif != null)
+      {
+        imgExif.Refresh();
       }
     }
 
@@ -276,7 +293,7 @@ namespace MediaPortal.GUI.Pictures
                 string longitude = _currentMetaData.Location.Longitude.ToLongitudeString() ?? string.Empty;
                 if (!string.IsNullOrEmpty(latitude) && !string.IsNullOrEmpty(longitude))
                 {
-                  value = _currentMetaData.Location.Latitude.ToLatitudeString() ?? string.Empty + " | " + _currentMetaData.Location.Longitude.ToLongitudeString() ?? string.Empty;
+                  value = latitude + " / " + longitude;
                 }
               }
               break;
