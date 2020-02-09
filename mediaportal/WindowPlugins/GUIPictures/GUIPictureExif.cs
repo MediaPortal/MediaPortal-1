@@ -298,7 +298,7 @@ namespace MediaPortal.GUI.Pictures
               }
               break;
             case nameof(ExifMetadata.Metadata.Altitude):
-              if (_currentMetaData.Altitude != 0 || !_currentMetaData.Location.IsZero)
+              if (_currentMetaData.Altitude != 0 || _currentMetaData.Location != null)
               {
                 value = _currentMetaData.Altitude.ToAltitudeString();
               }

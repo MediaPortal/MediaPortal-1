@@ -84,7 +84,7 @@ namespace MediaPortal.GUI.Pictures
       public MetadataItem ProvinceOrState;
       public MetadataItem City;
       public MetadataItem SubLocation;
-      public GeoLocation Location;
+      public GeoLocation Location; // A location != null always represents a valid value
       public double Altitude;
       public MetadataItem Author;
       public MetadataItem Copyright;
@@ -229,6 +229,8 @@ namespace MediaPortal.GUI.Pictures
 
       // GPS Location: 50,5323033300363, 30,4931270299872
       myMetadata.Location = gpsDirectory.GetGeoLocation();
+      if (myMetadata.Location.IsZero)
+        myMetadata.Location = null;
     }
 
     public void SetGPSDataFromGeotags(string[] keywords, ref Metadata MyMetadata)
@@ -400,7 +402,7 @@ namespace MediaPortal.GUI.Pictures
           SetGPSDataFromGeotags(iptcDirectory.GetStringArray(IptcDirectory.TagKeywords), ref MyMetadata);
         }
 
-        if (MyMetadata.Location == null || MyMetadata.Location.IsZero)
+        if (MyMetadata.Location == null)
         {
           var gpsDirectory = directories.OfType<GpsDirectory>().FirstOrDefault();
           if (gpsDirectory != null)
