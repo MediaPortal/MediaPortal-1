@@ -343,12 +343,12 @@ namespace MediaPortal.Database
       return 0;
     }
 
-    public static double GetAsDouble(SQLiteResultSet results, int iRecord, string strColum)
+    public static double? GetAsDouble(SQLiteResultSet results, int iRecord, string strColum)
     {
       string result = Get(results, iRecord, strColum);
       if (string.IsNullOrEmpty(result))
       {
-        return 0;
+        return null;
       }
 
       // result = result.Replace(",", ".");
@@ -357,16 +357,16 @@ namespace MediaPortal.Database
       {
         return doubleValue;
       }
-      return 0;
+      return null;
     }
 
 
-    public static double GetAsDouble(SQLiteResultSet results, int iRecord, int column)
+    public static double? GetAsDouble(SQLiteResultSet results, int iRecord, int column)
     {
       string result = Get(results, iRecord, column);
       if (string.IsNullOrEmpty(result))
       {
-        return 0;
+        return null;
       }
 
       // result = result.Replace(",", ".");
@@ -375,7 +375,7 @@ namespace MediaPortal.Database
       {
         return doubleValue;
       }
-      return 0;
+      return null;
     }
 
     public static long GetAsInt64(SQLiteResultSet results, int iRecord, int column)
