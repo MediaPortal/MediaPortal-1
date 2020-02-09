@@ -860,9 +860,13 @@ namespace MediaPortal.Picture.Database
       aExif.Resolution.Width = DatabaseUtility.GetAsInt(aResult, aRow, "iImageXReso");
       aExif.Resolution.Height = DatabaseUtility.GetAsInt(aResult, aRow, "iImageYReso");
 
-      aExif.Location = new MetadataExtractor.GeoLocation(DatabaseUtility.GetAsDouble(aResult, aRow, "Latitude"),
-                                                         DatabaseUtility.GetAsDouble(aResult, aRow, "Longitude"));
-      aExif.Altitude = DatabaseUtility.GetAsDouble(aResult, aRow, "Altitude");
+      var lat = DatabaseUtility.GetAsDouble(aResult, aRow, "Latitude");
+      var lon = DatabaseUtility.GetAsDouble(aResult, aRow, "Longitude");
+      if (lat.HasValue && lon.HasValue)
+        aExif.Location = new MetadataExtractor.GeoLocation(lat.Value,lon.Value);
+      var alt = DatabaseUtility.GetAsDouble(aResult, aRow, "Altitude");
+      if (alt.HasValue)
+      aExif.Altitude = alt.Value;
 
       aExif.Orientation.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idOrientation").ToString();
       aExif.DatePictureTaken.Value = DatabaseUtility.GetAsDateTime(aResult, aRow, "strDateTaken").ToString();
