@@ -229,13 +229,13 @@ namespace MediaPortal.GUI.Pictures
 
       // GPS Location: 50,5323033300363, 30,4931270299872
       myMetadata.Location = gpsDirectory.GetGeoLocation();
-      if (myMetadata.Location.IsZero)
+      if (myMetadata.Location != null && myMetadata.Location.IsZero)
         myMetadata.Location = null;
     }
 
     public void SetGPSDataFromGeotags(string[] keywords, ref Metadata MyMetadata)
     {
-      if (keywords.Contains<string>("geotagged"))
+      if (keywords != null && keywords.Contains<string>("geotagged"))
       {
         string lats = keywords.Where(x => x.StartsWith("geo:lat=")).FirstOrDefault();
         string lons = keywords.Where(x => x.StartsWith("geo:lon=")).FirstOrDefault();
@@ -456,7 +456,7 @@ namespace MediaPortal.GUI.Pictures
       }
       catch (Exception ex)
       {
-        Log.Error("ExifExtractor: GetExifMetadata {0}", ex.Message);
+        Log.Error("ExifExtractor: GetExifMetadata for {0}: {1}", photoName, ex.Message);
       }
       return MyMetadata;
     }
