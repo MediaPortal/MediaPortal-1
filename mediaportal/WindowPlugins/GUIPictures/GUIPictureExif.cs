@@ -219,12 +219,12 @@ namespace MediaPortal.GUI.Pictures
 
     private void SetProperties()
     {
-      GUIPropertyManager.SetProperty("#pictures.exif.images", string.Empty);
       _currentMetaData.SetExifProperties();
 
       int width = imgExif != null ? imgExif.Width < imgExif.Height ? 96 : 0 : 96;
       int height = imgExif != null ? imgExif.Width < imgExif.Height ? 0 : 96 : 0;
 
+      GUIPropertyManager.SetProperty("#pictures.exif.images", string.Empty);
       List<GUIOverlayImage> exifIconImages = _currentMetaData.GetExifInfoOverlayImage(ref width, ref height);
       if (exifIconImages != null && exifIconImages.Count > 0)
       {
