@@ -231,6 +231,26 @@ namespace MediaPortal.GUI.Pictures
       myMetadata.Location = gpsDirectory.GetGeoLocation();
     }
 
+    public void SetGPSDataFromGeotags(string[] keywords, ref Metadata MyMetadata)
+    {
+      if (keywords.Contains<string>("geotagged"))
+      {
+        string lats = keywords.Where(x => x.StartsWith("geo:lat=")).FirstOrDefault();
+        string lons = keywords.Where(x => x.StartsWith("geo:lon=")).FirstOrDefault();
+        if (!String.IsNullOrEmpty(lats) && !String.IsNullOrEmpty(lons))
+        {
+          double lat;
+          double lon;
+          if (double.TryParse(lats.Substring(8), System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out lat) &&
+              double.TryParse(lons.Substring(8), System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out lon))
+          {
+            MyMetadata.Location = new GeoLocation(lat, lon);
+          }
+        }
+      }
+    }
+
+
     public Metadata GetExifMetadata(string photoName)
     {
       // Create an instance of Metadata 
@@ -376,12 +396,17 @@ namespace MediaPortal.GUI.Pictures
 
           // [IPTC] Caption/Abstract: For Educational Use Only
           // string captionAbstract = iptcDirectory.GetDescription(IptcDirectory.TagCaption);
+
+          SetGPSDataFromGeotags(iptcDirectory.GetStringArray(IptcDirectory.TagKeywords), ref MyMetadata);
         }
 
-        var gpsDirectory = directories.OfType<GpsDirectory>().FirstOrDefault();
-        if (gpsDirectory != null)
+        if (MyMetadata.Location == null || MyMetadata.Location.IsZero)
         {
-          SetGPSData(gpsDirectory, ref MyMetadata);
+          var gpsDirectory = directories.OfType<GpsDirectory>().FirstOrDefault();
+          if (gpsDirectory != null)
+          {
+            SetGPSData(gpsDirectory, ref MyMetadata);
+          }
         }
 
         foreach (var directory in directories)
