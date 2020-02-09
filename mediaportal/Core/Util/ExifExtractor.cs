@@ -102,42 +102,9 @@ namespace MediaPortal.GUI.Pictures
 
         foreach (FieldInfo prop in type.GetFields())
         {
-          if (prop.Name == "DatePictureTaken" || prop.Name == "Orientation" ||
-              prop.Name == "ImageDimensions" || prop.Name == "Resolution" ||
-              prop.Name == "Altitude" || prop.Name == "Location")
-          {
-            continue;
-          }
-          Type fieldtype = prop.FieldType;
-          MethodInfo info = fieldtype.GetMethod("IsEmpty");
-          result &= (bool)info.Invoke(prop.GetValue(this), null);
-        }
-        return result;
-      }
-
-      public bool IsExifEmpty()
-      {
-        Type type = typeof(Metadata);
-        bool result = true;
-
-        foreach (FieldInfo prop in type.GetFields())
-        {
-          if (prop.Name == "DatePictureTaken" || prop.Name == "Orientation" ||
-              prop.Name == "ImageDimensions" || prop.Name == "Resolution" ||
-              prop.Name == "CameraModel" || prop.Name == "EquipmentMake" ||
-              prop.Name == "Lens" || prop.Name == "Flash" ||
-              prop.Name == "MeteringMode" || prop.Name == "ExposureProgram" ||
-              prop.Name == "ExposureMode" || prop.Name == "SensingMethod" ||
-              prop.Name == "SceneType" || prop.Name == "SceneCaptureType" ||
-              prop.Name == "WhiteBalance" || prop.Name == "Author" ||
-              prop.Name == "ByLine" || prop.Name == "ViewerComments" ||
-              prop.Name == "CountryCode" || prop.Name == "CountryName" ||
-              prop.Name == "ProvinceOrState" || prop.Name == "City" ||
-              prop.Name == "SubLocation" || prop.Name == "Keywords" ||
-              prop.Name == "Comment" ||
-              prop.Name == "Copyright" || prop.Name == "CopyrightNotice" ||
-              prop.Name == "Altitude" || prop.Name == "Location")
-
+          if (prop.Name == nameof(DatePictureTaken) || prop.Name == nameof(Orientation) ||
+              prop.Name == nameof(ImageDimensions) || prop.Name == nameof(Resolution) ||
+              prop.Name == nameof(Altitude) || prop.Name == nameof(Location))
           {
             continue;
           }
