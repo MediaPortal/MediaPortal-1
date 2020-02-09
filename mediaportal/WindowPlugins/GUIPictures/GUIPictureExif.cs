@@ -184,13 +184,11 @@ namespace MediaPortal.GUI.Pictures
         {
           imgPicture.Dispose();
           imgPicture.AllocResources();
-          imgPicture.FileName = _currentPicture;
         }
         if (imgExif != null)
         {
           imgExif.Dispose();
           imgExif.AllocResources();
-          imgExif.FileName = "#pictures.exif.images";
         }
 
         GUIPropertyManager.SetProperty("#currentpicture", _currentPicture);
@@ -212,6 +210,11 @@ namespace MediaPortal.GUI.Pictures
     private void Refresh()
     {
       SetProperties();
+
+      if (imgExif != null)
+      {
+        imgExif.Refresh();
+      }
     }
 
     private void SetProperties()
@@ -229,11 +232,6 @@ namespace MediaPortal.GUI.Pictures
       else
       {
         GUIPropertyManager.SetProperty("#pictures.exif.images", string.Empty);
-      }
-
-      if (imgExif != null)
-      {
-        imgExif.Refresh();
       }
     }
 

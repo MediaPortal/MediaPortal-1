@@ -1620,7 +1620,7 @@
     	<String id="9017">Регион</String>
     	<String id="9018">Комментарий</String>
 		<String id="9019">Автор</String>
-		<String id="9020">Copyright</String>
+		<String id="9020">Авторские права</String>
 		<String id="9021">Ориентация</String>
 		<String id="9022">ISO</String>
 		<String id="9023">Программа экспозиции</String>
@@ -1634,10 +1634,19 @@
     	<String id="9031">Фокусное расстояние</String>
     	<String id="9032">Фокусное расстояние (35mm эквивалент)</String>
     	<String id="9033">Подпись</String>
-    	<String id="9034">Copyright Notice</String>
+    	<String id="9034">Уведомление об авторских правах</String>
     	<String id="9035">Широта</String>
     	<String id="9036">Долгота</String>
     	<String id="9037">Высота над уровнем моря</String>
+		<String id="9038">Местоположение</String>
+		<!-- Location -->
+		<String id="9093">С</String>
+		<String id="9094">Ю</String>
+		<String id="9095">З</String>
+		<String id="9096">В</String>
+		<String id="9097">Уровень моря</String>
+		<String id="9098">Выше уровня моря на {0} метров</String>
+		<String id="9099">Ниже уровня моря на {0} метров</String>
 		<!-- EXIF -->
 		<String id="9100" prefix="Мой ">Минидисплей</String>
 		<String id="9101">Плагин не настроен</String>
