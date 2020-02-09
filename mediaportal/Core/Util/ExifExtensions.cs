@@ -326,11 +326,11 @@ namespace MediaPortal.Util
         }
         if (metadata.Location.Longitude > 0)
         {
-          longitude = "W";
+          longitude = "E";
         }
         else if (metadata.Location.Longitude < 0)
         {
-          longitude = "E";
+          longitude = "W";
         }
 
         if (!string.IsNullOrEmpty(latitude) && !string.IsNullOrEmpty(longitude))
