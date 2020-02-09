@@ -160,7 +160,7 @@ namespace MediaPortal.Util
             value = metadata.ResolutionAsString(); 
             break;
           case nameof(ExifMetadata.Metadata.Location):
-            if (metadata.Location != null && !metadata.Location.IsZero)
+            if (metadata.Location != null)
             {
               string latitude = metadata.Location.Latitude.ToLatitudeString() ?? string.Empty;
               string longitude = metadata.Location.Longitude.ToLongitudeString() ?? string.Empty;
@@ -171,7 +171,7 @@ namespace MediaPortal.Util
             }
             break;
           case nameof(ExifMetadata.Metadata.Altitude):
-            if (metadata.Altitude != 0 || (metadata.Location != null && !metadata.Location.IsZero))
+            if (metadata.Altitude != 0 || metadata.Location != null)
             {
               value = metadata.Altitude.ToAltitudeString();
             }
@@ -311,7 +311,7 @@ namespace MediaPortal.Util
         }
       }
 
-      if (metadata.Location != null && !metadata.Location.IsZero)
+      if (metadata.Location != null)
       {
         string latitude = string.Empty;
         string longitude = string.Empty;

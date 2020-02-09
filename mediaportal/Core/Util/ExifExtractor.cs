@@ -84,7 +84,7 @@ namespace MediaPortal.GUI.Pictures
       public MetadataItem ProvinceOrState;
       public MetadataItem City;
       public MetadataItem SubLocation;
-      public GeoLocation Location;
+      public GeoLocation Location; // A location != null always represents a valid value
       public double Altitude;
       public MetadataItem Author;
       public MetadataItem Copyright;
@@ -229,7 +229,29 @@ namespace MediaPortal.GUI.Pictures
 
       // GPS Location: 50,5323033300363, 30,4931270299872
       myMetadata.Location = gpsDirectory.GetGeoLocation();
+      if (myMetadata.Location != null && myMetadata.Location.IsZero)
+        myMetadata.Location = null;
     }
+
+    public void SetGPSDataFromGeotags(string[] keywords, ref Metadata MyMetadata)
+    {
+      if (keywords != null && keywords.Contains<string>("geotagged"))
+      {
+        string lats = keywords.Where(x => x.StartsWith("geo:lat=")).FirstOrDefault();
+        string lons = keywords.Where(x => x.StartsWith("geo:lon=")).FirstOrDefault();
+        if (!String.IsNullOrEmpty(lats) && !String.IsNullOrEmpty(lons))
+        {
+          double lat;
+          double lon;
+          if (double.TryParse(lats.Substring(8), System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out lat) &&
+              double.TryParse(lons.Substring(8), System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out lon))
+          {
+            MyMetadata.Location = new GeoLocation(lat, lon);
+          }
+        }
+      }
+    }
+
 
     public Metadata GetExifMetadata(string photoName)
     {
@@ -376,12 +398,17 @@ namespace MediaPortal.GUI.Pictures
 
           // [IPTC] Caption/Abstract: For Educational Use Only
           // string captionAbstract = iptcDirectory.GetDescription(IptcDirectory.TagCaption);
+
+          SetGPSDataFromGeotags(iptcDirectory.GetStringArray(IptcDirectory.TagKeywords), ref MyMetadata);
         }
 
-        var gpsDirectory = directories.OfType<GpsDirectory>().FirstOrDefault();
-        if (gpsDirectory != null)
+        if (MyMetadata.Location == null)
         {
-          SetGPSData(gpsDirectory, ref MyMetadata);
+          var gpsDirectory = directories.OfType<GpsDirectory>().FirstOrDefault();
+          if (gpsDirectory != null)
+          {
+            SetGPSData(gpsDirectory, ref MyMetadata);
+          }
         }
 
         foreach (var directory in directories)
@@ -429,7 +456,7 @@ namespace MediaPortal.GUI.Pictures
       }
       catch (Exception ex)
       {
-        Log.Error("ExifExtractor: GetExifMetadata {0}", ex.Message);
+        Log.Error("ExifExtractor: GetExifMetadata for {0}: {1}", photoName, ex.Message);
       }
       return MyMetadata;
     }

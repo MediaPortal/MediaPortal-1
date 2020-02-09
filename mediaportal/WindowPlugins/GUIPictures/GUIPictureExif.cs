@@ -280,13 +280,13 @@ namespace MediaPortal.GUI.Pictures
           string caption = prop.Name.ToCaption() ?? prop.Name;
           switch (prop.Name)
           {
-            case "ImageDimensions": 
+            case nameof(ExifMetadata.Metadata.ImageDimensions):
               value = _currentMetaData.ImageDimensionsAsString(); 
               break;
-            case "Resolution": 
+            case nameof(ExifMetadata.Metadata.Resolution):
               value = _currentMetaData.ResolutionAsString(); 
               break;
-            case "Location":
+            case nameof(ExifMetadata.Metadata.Location):
               if (!_currentMetaData.Location.IsZero)
               {
                 string latitude = _currentMetaData.Location.Latitude.ToLatitudeString() ?? string.Empty;
@@ -297,8 +297,8 @@ namespace MediaPortal.GUI.Pictures
                 }
               }
               break;
-            case "Altitude":
-              if (_currentMetaData.Altitude != 0 || !_currentMetaData.Location.IsZero)
+            case nameof(ExifMetadata.Metadata.Altitude):
+              if (_currentMetaData.Altitude != 0 || _currentMetaData.Location != null)
               {
                 value = _currentMetaData.Altitude.ToAltitudeString();
               }
