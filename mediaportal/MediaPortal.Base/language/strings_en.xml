@@ -1649,6 +1649,8 @@
     <String id="9036">Longitude</String>
     <String id="9037">Altitude</String>
     <String id="9038">Location</String>
+    <!-- Map URL -->
+    <String id="9090">http://tms.visicom.ua/2.0.0/planet3/base/18/{1},{0}/800/800.png?en</String>
     <!-- Location -->
     <String id="9093">N</String>
     <String id="9094">S</String>

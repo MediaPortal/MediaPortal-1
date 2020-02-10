@@ -300,9 +300,9 @@ namespace MediaPortal.GUI.Pictures
                 if (!string.IsNullOrEmpty(latitude) && !string.IsNullOrEmpty(longitude))
                 {
                   value = latitude + " / " + longitude;
-                  mapurl = String.Format("https://tms.visicom.ua/2.0.0/planet3/base/18/{0},{1}/800/800.png?en",
-                                         _currentMetaData.Location.Longitude.ToString().Replace(",","."),
-                                         _currentMetaData.Location.Latitude.ToString().Replace(",","."));
+                  mapurl = String.Format(GUILocalizeStrings.Get(9090),
+                                         _currentMetaData.Location.Latitude.ToString().Replace(",","."),
+                                         _currentMetaData.Location.Longitude.ToString().Replace(",","."));
                 }
               }
               break;
