@@ -507,7 +507,7 @@ namespace MediaPortal.Picture.Database
 
     private void AddPictureExifData(int iDbID, ExifMetadata.Metadata exifData)
     {
-      if (exifData.IsEmpty() || iDbID <= 0)
+      if (exifData.IsEmpty() || iDbID <= 0 || m_db == null)
       {
         return;
       }
@@ -602,7 +602,7 @@ namespace MediaPortal.Picture.Database
     private int AddItem(string tableName, string value)
     {
       value = CleanupString(value);
-      if (value.Length == 0)
+      if (value.Length == 0 || m_db == null)
       {
         return -1;
       }
@@ -633,7 +633,7 @@ namespace MediaPortal.Picture.Database
     private int AddItem(string tableName, string value, string additionalName, string additionalValue)
     {
       value = CleanupString(value);
-      if (value.Length == 0)
+      if (value.Length == 0 || m_db == null)
       {
         return -1;
       }
@@ -665,7 +665,7 @@ namespace MediaPortal.Picture.Database
     private int AddOrienatation(string id, string name)
     {
       name = CleanupString(name);
-      if (string.IsNullOrWhiteSpace(id) || name == String.Empty)
+      if (string.IsNullOrWhiteSpace(id) || name == String.Empty || m_db == null)
       {
         return -1;
       }
@@ -697,8 +697,10 @@ namespace MediaPortal.Picture.Database
 
     private int AddLocation(MetadataExtractor.GeoLocation location, double altitude)
     {
-      if (location == null || location.IsZero)
+      if (location == null || location.IsZero || m_db == null)
+      {
         return -1;
+      }
 
       try
       {
@@ -751,7 +753,7 @@ namespace MediaPortal.Picture.Database
 
     private void AddKeywordToPicture(int keyID, int picID)
     {
-      if (keyID <= 0 || picID <= 0)
+      if (keyID <= 0 || picID <= 0 || m_db == null)
       {
         return;
       }
@@ -783,7 +785,7 @@ namespace MediaPortal.Picture.Database
 
     private string GetExifDBKeywords(int idPicture)
     {
-      if (idPicture < 1)
+      if (idPicture < 1 || m_db == null)
       {
         return string.Empty;
       }
@@ -863,10 +865,14 @@ namespace MediaPortal.Picture.Database
       var lat = DatabaseUtility.GetAsDouble(aResult, aRow, "Latitude");
       var lon = DatabaseUtility.GetAsDouble(aResult, aRow, "Longitude");
       if (lat.HasValue && lon.HasValue)
-        aExif.Location = new MetadataExtractor.GeoLocation(lat.Value,lon.Value);
+      {
+        aExif.Location = new MetadataExtractor.GeoLocation(lat.Value, lon.Value);
+      }
       var alt = DatabaseUtility.GetAsDouble(aResult, aRow, "Altitude");
       if (alt.HasValue)
-      aExif.Altitude = alt.Value;
+      {
+        aExif.Altitude = alt.Value;
+      }
 
       aExif.Orientation.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idOrientation").ToString();
       aExif.DatePictureTaken.Value = DatabaseUtility.GetAsDateTime(aResult, aRow, "strDateTaken").ToString();
@@ -875,7 +881,7 @@ namespace MediaPortal.Picture.Database
 
     public ExifMetadata.Metadata GetExifFromDB(string strPicture)
     {
-      if (m_db == null || !Util.Utils.IsPicture(strPicture))
+      if (m_db == null || !Util.Utils.IsPicture(strPicture) || m_db == null)
       {
         return new ExifMetadata.Metadata();
       }
@@ -1607,6 +1613,11 @@ namespace MediaPortal.Picture.Database
 
     private void BeginTransaction()
     {
+      if (m_db == null)
+      {
+        return;
+      }
+
       try
       {
         m_db.Execute("BEGIN");
@@ -1614,12 +1625,16 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: Begin transaction failed exception err: {0} ", ex.Message);
-        // Open();
       }
     }
 
     private void CommitTransaction()
     {
+      if (m_db == null)
+      {
+        return;
+      }
+
       try
       {
         m_db.Execute("COMMIT");
@@ -1633,6 +1648,11 @@ namespace MediaPortal.Picture.Database
 
     private void RollbackTransaction()
     {
+      if (m_db == null)
+      {
+        return;
+      }
+
       try
       {
         m_db.Execute("ROLLBACK");
@@ -1640,7 +1660,6 @@ namespace MediaPortal.Picture.Database
       catch (Exception ex)
       {
         Log.Error("Picture.DB.SQLite: Rollback failed exception err: {0} ", ex.Message);
-        // Open();
       }
     }
 

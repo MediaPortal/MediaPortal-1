@@ -2885,6 +2885,7 @@ namespace MediaPortal.GUI.Pictures
       if (selectedItemIndex >= 0)
       {
         GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
+        GUIControl.FocusItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
       }
     }
 

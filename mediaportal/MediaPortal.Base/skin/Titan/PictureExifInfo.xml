@@ -15,7 +15,7 @@
       <posY>0</posY>
       <width>1920</width>
       <height>1080</height>
-      <texture>#currentpicture</texture>
+      <texture>#pictures.exif.picture</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -33,7 +33,7 @@
       <texture>panel_list_music.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
-	</control>
+    </control>
     
     <control>
       <id>0</id>
@@ -57,14 +57,31 @@
       <posY>362</posY>
       <width>556</width>
       <height>556</height>
-      <texture>#currentpicture</texture>
+      <texture>#pictures.exif.picture</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <align>center</align>
+      <valign>top</valign>
+      <visible>!control.hasthumb(555)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+      <description>Map Art</description>
+      <type>image</type>
+      <id>555</id>
+      <posX>121</posX>
+      <posY>362</posY>
+      <width>556</width>
+      <height>556</height>
+      <texture>#pictures.exif.map</texture>
       <keepaspectratio>yes</keepaspectratio>
       <align>center</align>
       <valign>top</valign>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
-    
+
     <control>
       <description>listscroller bg</description>
       <type>image</type>
@@ -96,7 +113,7 @@
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
 
-	<control Style="smallTitle">
+    <control Style="smallTitle">
       <description>Selected item Label</description>
       <type>fadelabel</type>
       <id>1</id>
@@ -106,7 +123,7 @@
       <label>#selecteditem</label>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
-	</control>
+    </control>
 
     <!--            :: Listview Lines ::            -->
 
@@ -149,10 +166,10 @@
     </control>
 
     <control>
-  	  <description>EXIF Logo</description>
+      <description>EXIF Logo</description>
       <type>image</type>
       <id>5</id>
-   	  <posX>70</posX>
+      <posX>70</posX>
       <posY>360</posY>
       <width>30</width>
       <height>560</height>
@@ -161,9 +178,8 @@
       <keepaspectratio>yes</keepaspectratio>
       <shouldCache>true</shouldCache>
       <texture>#pictures.exif.images</texture>
-      <visible>facadeview.list+Control.IsVisible(50)</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
-	  <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
 
     <import>common.overlay.xml</import>

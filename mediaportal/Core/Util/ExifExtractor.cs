@@ -230,7 +230,9 @@ namespace MediaPortal.GUI.Pictures
       // GPS Location: 50,5323033300363, 30,4931270299872
       myMetadata.Location = gpsDirectory.GetGeoLocation();
       if (myMetadata.Location != null && myMetadata.Location.IsZero)
+      {
         myMetadata.Location = null;
+      }
     }
 
     public void SetGPSDataFromGeotags(string[] keywords, ref Metadata MyMetadata)
@@ -251,7 +253,6 @@ namespace MediaPortal.GUI.Pictures
         }
       }
     }
-
 
     public Metadata GetExifMetadata(string photoName)
     {
@@ -399,6 +400,7 @@ namespace MediaPortal.GUI.Pictures
           // [IPTC] Caption/Abstract: For Educational Use Only
           // string captionAbstract = iptcDirectory.GetDescription(IptcDirectory.TagCaption);
 
+          // Flickr GEO Tag: geotagged; geo:lat=57.64911; geo:lon=10.40744
           SetGPSDataFromGeotags(iptcDirectory.GetStringArray(IptcDirectory.TagKeywords), ref MyMetadata);
         }
 

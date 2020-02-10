@@ -98,9 +98,6 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
 
-      GUIImageAllocator.ClearCachedAllocatorImages();
-      GUITextureManager.CleanupThumbs();
-
       GUIPropertyManager.SetProperty("#pictures.exif.images", string.Empty);
 
       SetExifGUIListItems();
@@ -110,9 +107,6 @@ namespace MediaPortal.GUI.Pictures
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      GUIImageAllocator.ClearCachedAllocatorImages();
-      GUITextureManager.CleanupThumbs();
-
       ReleaseResources();
       base.OnPageDestroy(newWindowId);
     }
@@ -150,6 +144,19 @@ namespace MediaPortal.GUI.Pictures
           Refresh();
           break;
       }
+    }
+
+    public override bool OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT_DONE:
+        {
+          Refresh();
+        }
+        break;
+      }
+      return base.OnMessage(message);
     }
 
     #endregion
@@ -191,7 +198,7 @@ namespace MediaPortal.GUI.Pictures
           imgExif.AllocResources();
         }
 
-        GUIPropertyManager.SetProperty("#currentpicture", _currentPicture);
+        GUIPropertyManager.SetProperty("#pictures.exif.picture", _currentPicture);
       }
       catch (Exception ex)
       {
@@ -204,6 +211,7 @@ namespace MediaPortal.GUI.Pictures
       if (_currentSelectedItem >= 0 && listExifProperties != null)
       {
         GUIControl.SelectItemControl(GetID, listExifProperties.GetID, _currentSelectedItem);
+        GUIControl.FocusItemControl(GetID, listExifProperties.GetID, _currentSelectedItem);
       }
     }
 
@@ -239,6 +247,7 @@ namespace MediaPortal.GUI.Pictures
         if (item != null)
         {
           GUIPropertyManager.SetProperty("#selecteditem", item.Label2 + ": " + item.Label);
+          GUIPropertyManager.SetProperty("#pictures.exif.map", item.DVDLabel);
         }
       }
       catch (Exception ex)
@@ -274,6 +283,7 @@ namespace MediaPortal.GUI.Pictures
         {
           string value = string.Empty;
           string caption = prop.Name.ToCaption() ?? prop.Name;
+          string mapurl = string.Empty;
           switch (prop.Name)
           {
             case nameof(ExifMetadata.Metadata.ImageDimensions):
@@ -283,18 +293,21 @@ namespace MediaPortal.GUI.Pictures
               value = _currentMetaData.ResolutionAsString(); 
               break;
             case nameof(ExifMetadata.Metadata.Location):
-              if (!_currentMetaData.Location.IsZero)
+              if (_currentMetaData.Location != null)
               {
                 string latitude = _currentMetaData.Location.Latitude.ToLatitudeString() ?? string.Empty;
                 string longitude = _currentMetaData.Location.Longitude.ToLongitudeString() ?? string.Empty;
                 if (!string.IsNullOrEmpty(latitude) && !string.IsNullOrEmpty(longitude))
                 {
                   value = latitude + " / " + longitude;
+                  mapurl = String.Format("https://tms.visicom.ua/2.0.0/planet3/base/18/{0},{1}/800/800.png?en",
+                                         _currentMetaData.Location.Longitude.ToString().Replace(",","."),
+                                         _currentMetaData.Location.Latitude.ToString().Replace(",","."));
                 }
               }
               break;
             case nameof(ExifMetadata.Metadata.Altitude):
-              if (_currentMetaData.Altitude != 0 || _currentMetaData.Location != null)
+              if (_currentMetaData.Location != null)
               {
                 value = _currentMetaData.Altitude.ToAltitudeString();
               }
@@ -310,6 +323,7 @@ namespace MediaPortal.GUI.Pictures
              item.Label2 = caption;
              item.IconImage = Thumbs.Pictures + @"\exif\data\" + prop.Name + ".png";
              item.ThumbnailImage = item.IconImage;
+             item.DVDLabel = mapurl;
              item.OnItemSelected += OnItemSelected;
              listExifProperties.Add(item);
           }

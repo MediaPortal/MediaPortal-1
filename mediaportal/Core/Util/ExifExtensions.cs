@@ -105,7 +105,7 @@ namespace MediaPortal.Util
     {
       if (tag == 0)
       {
-        return string.Empty;
+        return GeoLocation.DecimalToDegreesMinutesSecondsString(tag);
       }
       return (tag > 0 ? GUILocalizeStrings.Get(9093) : GUILocalizeStrings.Get(9094)) + GeoLocation.DecimalToDegreesMinutesSecondsString(tag);
     }
@@ -114,7 +114,7 @@ namespace MediaPortal.Util
     {
       if (tag == 0)
       {
-        return string.Empty;
+        return GeoLocation.DecimalToDegreesMinutesSecondsString(tag);
       }
       return (tag > 0 ? GUILocalizeStrings.Get(9095) : GUILocalizeStrings.Get(9096)) + GeoLocation.DecimalToDegreesMinutesSecondsString(tag);
     }
@@ -171,7 +171,7 @@ namespace MediaPortal.Util
             }
             break;
           case nameof(ExifMetadata.Metadata.Altitude):
-            if (metadata.Altitude != 0 || metadata.Location != null)
+            if (metadata.Location != null)
             {
               value = metadata.Altitude.ToAltitudeString();
             }
@@ -183,8 +183,6 @@ namespace MediaPortal.Util
         if (!string.IsNullOrEmpty(value))
         {
           value = value.ToValue() ?? value;
-          // value = caption + ": " + value;
-          // full = full + value + "\n";
           full = full + caption + ": " + value + "\n";
         }
         GUIPropertyManager.SetProperty("#pictures.exif." + prop.Name.ToLower(), value);
