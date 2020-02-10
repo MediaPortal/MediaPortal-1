@@ -124,6 +124,16 @@ namespace MediaPortal.Picture.Database
       return _database.CountPicsByKeywordSearch(Keyword);
     }
 
+    public static int ListPicsBySearch(string query, ref List<string> Pics)
+    {
+      return _database.ListPicsBySearch(query, ref Pics);
+    }
+
+    public static int CountPicsBySearch(string query)
+    {
+      return _database.CountPicsBySearch(query);
+    }
+
     public static int ListYears(ref List<string> Years)
     {
       return _database.ListYears(ref Years);

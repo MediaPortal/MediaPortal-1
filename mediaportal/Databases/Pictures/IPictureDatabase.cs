@@ -43,6 +43,8 @@ namespace MediaPortal.Picture.Database
     int CountPicsByKeyword(string Keyword);
     int ListPicsByKeywordSearch(string Keyword, ref List<string> Pics);
     int CountPicsByKeywordSearch(string Keyword);
+    int ListPicsBySearch(string query, ref List<string> Pics);
+    int CountPicsBySearch(string query);
     int ListYears(ref List<string> Years);
     int ListMonths(string Year, ref List<string> Months);
     int ListDays(string Month, string Year, ref List<string> Days);

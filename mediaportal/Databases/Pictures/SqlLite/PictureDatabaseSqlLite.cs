@@ -1162,6 +1162,53 @@ namespace MediaPortal.Picture.Database
       }
     }
 
+    private string GetSearchWhere(string query)
+    {
+      // City=Name|Camera=Nikon%+Author!Incognita
+      string where = string.Empty;
+
+      string regPart = @"(.+?)(\+|\||$)";
+      MatchCollection matches = Regex.Matches(query, regPart);
+      foreach (Match match in matches)
+      {
+        string _query = match.Groups[1].ToString();
+        string _sign = match.Groups[2].ToString();
+
+        string regQuery = @"([^=!]+?)([=!])(.+)";
+        MatchCollection _matches = Regex.Matches(_query, regQuery);
+        foreach (Match _match in _matches)
+        {
+          string _field = _match.Groups[1].ToString();
+          string _exp = _match.Groups[2].ToString();
+          string _value = _match.Groups[3].ToString();
+          if (_exp == "!")
+          {
+            _exp = _value.Contains("%") ? "NOT LIKE" : "<>";
+          }
+          else
+          {
+            _exp = _value.Contains("%") ? "LIKE" : "=";
+          }
+          where += string.Format("str{0} {1} '{2}'", _field, _exp, _value);
+        }
+
+        if (!string.IsNullOrEmpty(_sign))
+        {
+          switch (_sign)
+          {
+            case "+":
+              where += " AND ";
+              break;
+            case "|":
+              where += " OR ";
+              break;
+          }
+        }
+      }
+      Log.Debug("Search query: {0} -> {1}", query, where);
+      return where;
+    }
+
     private string GetSearchQuery(string find)
     {
       string result = string.Empty;
@@ -1448,6 +1495,80 @@ namespace MediaPortal.Picture.Database
         catch (Exception ex)
         {
           Log.Error("Picture.DB.SQLite: Getting Count of Picture by Keyword Search err: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+        return Count;
+      }
+    }
+
+    public int ListPicsBySearch(string query, ref List<string> Pics)
+    {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
+      string searchQuery = GetSearchWhere(query);
+      if (string.IsNullOrEmpty(searchQuery))
+      {
+        return 0;
+      }
+
+      int Count = 0;
+      lock (typeof(PictureDatabase))
+      {
+        try
+        {
+          string strSQL = "SELECT strFile FROM picturedata WHERE " + searchQuery +
+                                " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private') " +
+                                "ORDER BY strDateTaken";
+
+          SQLiteResultSet result = m_db.Execute(strSQL);
+          if (result != null)
+          {
+            for (Count = 0; Count < result.Rows.Count; Count++)
+            {
+              Pics.Add(DatabaseUtility.Get(result, Count, 0));
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: Getting Picture by Search err: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+        return Count;
+      }
+    }
+
+    public int CountPicsBySearch(string query)
+    {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
+      string searchQuery = GetSearchWhere(query);
+      if (string.IsNullOrEmpty(searchQuery))
+      {
+        return 0;
+      }
+
+      int Count = 0;
+      lock (typeof(PictureDatabase))
+      {
+        try
+        {
+          string strSQL = "SELECT COUNT(strFile) FROM picturedata WHERE " + searchQuery +
+                                " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private') " +
+                                "ORDER BY strDateTaken";
+          SQLiteResultSet result = m_db.Execute(strSQL);
+          if (result != null)
+          {
+            Count = DatabaseUtility.GetAsInt(result, 0, 0);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: Getting Count of Picture by Search err: {0} stack:{1}", ex.Message, ex.StackTrace);
         }
         return Count;
       }

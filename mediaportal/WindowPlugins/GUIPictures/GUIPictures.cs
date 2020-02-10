@@ -3742,7 +3742,19 @@ namespace MediaPortal.GUI.Pictures
           CountOfNonImageItems++; // necessary to select the right item later from the slideshow
 
           List<string> pics = new List<string>();
-          int Count = _searchMode ? PictureDatabase.ListPicsByKeywordSearch(strNewDirectory, ref pics) : PictureDatabase.ListPicsByKeyword(strNewDirectory, ref pics);
+          int Count = 0;
+          if (_searchMode)
+          {
+            Count = PictureDatabase.ListPicsByKeywordSearch(strNewDirectory, ref pics);
+            if (Count == 0)
+            {
+              PictureDatabase.ListPicsBySearch(strNewDirectory, ref pics);
+            }
+          }
+          else
+          {
+            Count = PictureDatabase.ListPicsByKeyword(strNewDirectory, ref pics);
+          }
 
           VirtualDirectory vDir = new VirtualDirectory();
           vDir.LoadSettings("pictures");
