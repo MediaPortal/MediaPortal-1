@@ -881,7 +881,7 @@ namespace MediaPortal.Picture.Database
 
     public ExifMetadata.Metadata GetExifFromDB(string strPicture)
     {
-      if (m_db == null || !Util.Utils.IsPicture(strPicture) || m_db == null)
+      if (m_db == null || !Util.Utils.IsPicture(strPicture))
       {
         return new ExifMetadata.Metadata();
       }
@@ -1734,11 +1734,6 @@ namespace MediaPortal.Picture.Database
 
     private void BeginTransaction()
     {
-      if (m_db == null)
-      {
-        return;
-      }
-
       try
       {
         m_db.Execute("BEGIN");
@@ -1751,11 +1746,6 @@ namespace MediaPortal.Picture.Database
 
     private void CommitTransaction()
     {
-      if (m_db == null)
-      {
-        return;
-      }
-
       try
       {
         m_db.Execute("COMMIT");
@@ -1769,11 +1759,6 @@ namespace MediaPortal.Picture.Database
 
     private void RollbackTransaction()
     {
-      if (m_db == null)
-      {
-        return;
-      }
-
       try
       {
         m_db.Execute("ROLLBACK");

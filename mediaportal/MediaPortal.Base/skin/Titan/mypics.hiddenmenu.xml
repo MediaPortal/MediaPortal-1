@@ -161,7 +161,7 @@
           <onright>50</onright>
           <onleft>50</onleft>
           <ondown>3</ondown>
-          <onup>8</onup>
+          <onup>9876</onup>
         </control>
         <control>
           <description>Sort</description>
@@ -240,7 +240,7 @@
           <textYOff>16</textYOff>
           <onright>50</onright>
           <onleft>50</onleft>
-          <ondown>8</ondown>
+          <ondown>9</ondown>
           <onup>6</onup>
         </control>
         <control>
