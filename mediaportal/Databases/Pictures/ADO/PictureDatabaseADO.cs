@@ -343,12 +343,12 @@ namespace MediaPortal.Picture.Database
       throw (new NotImplementedException("List Count Pics by Keywords Search not yet implemented for ADO Database"));
     }
 
-    public static int ListPicsBySearch(string query, ref List<string> Pics)
+    public int ListPicsBySearch(string query, ref List<string> Pics)
     {
       throw (new NotImplementedException("List Count Pics by Search not yet implemented for ADO Database"));
     }
 
-    public static int CountPicsBySearch(string query)
+    public int CountPicsBySearch(string query)
     {
       throw (new NotImplementedException("List Count Pics by Search not yet implemented for ADO Database"));
     }
