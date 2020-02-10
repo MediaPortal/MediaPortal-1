@@ -555,6 +555,18 @@ namespace TvPlugin
           SetFocus();
           break;
 
+        case Action.ActionType.ACTION_TVGUIDE_PREV_TIMEBLOCK:
+          _viewingTime = _viewingTime.AddHours(-_timePerBlock * 4);
+          Update(false);
+          SetFocus();
+          break;
+
+        case Action.ActionType.ACTION_TVGUIDE_NEXT_TIMEBLOCK:
+          _viewingTime = _viewingTime.AddHours(_timePerBlock * 4);
+          Update(false);
+          SetFocus();
+          break;
+
         case Action.ActionType.ACTION_DECREASE_TIMEBLOCK:
           {
             if (_timePerBlock > 15)
