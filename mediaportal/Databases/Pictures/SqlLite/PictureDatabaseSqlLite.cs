@@ -507,7 +507,7 @@ namespace MediaPortal.Picture.Database
 
     private void AddPictureExifData(int iDbID, ExifMetadata.Metadata exifData)
     {
-      if (exifData.IsEmpty() || iDbID <= 0 || m_db == null)
+      if (exifData.IsEmpty() || iDbID <= 0)
       {
         return;
       }
@@ -602,7 +602,7 @@ namespace MediaPortal.Picture.Database
     private int AddItem(string tableName, string value)
     {
       value = CleanupString(value);
-      if (value.Length == 0 || m_db == null)
+      if (value.Length == 0)
       {
         return -1;
       }
@@ -633,7 +633,7 @@ namespace MediaPortal.Picture.Database
     private int AddItem(string tableName, string value, string additionalName, string additionalValue)
     {
       value = CleanupString(value);
-      if (value.Length == 0 || m_db == null)
+      if (value.Length == 0)
       {
         return -1;
       }
@@ -665,7 +665,7 @@ namespace MediaPortal.Picture.Database
     private int AddOrienatation(string id, string name)
     {
       name = CleanupString(name);
-      if (string.IsNullOrWhiteSpace(id) || name == String.Empty || m_db == null)
+      if (string.IsNullOrWhiteSpace(id) || name == String.Empty)
       {
         return -1;
       }
@@ -697,7 +697,7 @@ namespace MediaPortal.Picture.Database
 
     private int AddLocation(MetadataExtractor.GeoLocation location, double altitude)
     {
-      if (location == null || location.IsZero || m_db == null)
+      if (location == null || location.IsZero)
       {
         return -1;
       }
@@ -733,7 +733,7 @@ namespace MediaPortal.Picture.Database
 
     private void AddKeywords(int picID, string keywords)
     {
-      if (string.IsNullOrWhiteSpace(keywords) || m_db == null)
+      if (string.IsNullOrWhiteSpace(keywords))
       {
         return;
       }
@@ -753,7 +753,7 @@ namespace MediaPortal.Picture.Database
 
     private void AddKeywordToPicture(int keyID, int picID)
     {
-      if (keyID <= 0 || picID <= 0 || m_db == null)
+      if (keyID <= 0 || picID <= 0)
       {
         return;
       }
@@ -785,7 +785,7 @@ namespace MediaPortal.Picture.Database
 
     private string GetExifDBKeywords(int idPicture)
     {
-      if (idPicture < 1 || m_db == null)
+      if (idPicture < 1)
       {
         return string.Empty;
       }
