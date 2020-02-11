@@ -1730,6 +1730,56 @@ namespace MediaPortal.Picture.Database
       }
     }
 
+    public void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter)
+    {
+      aPictures = new List<PictureData>();
+
+      if (m_db == null || string.IsNullOrEmpty(aSQL))
+      {
+        return;
+      }
+
+      Log.Debug("Picture.DB.SQLite: GetPicturesByFilter - SQL: {0}, Filter: {1}", aSQL, aFilter);
+      try
+      {
+        SQLiteResultSet results = m_db.Execute(aSQL);
+        if (results != null)
+        {
+          int columnIndex = 0;
+          PictureData picture = new PictureData();
+          for (int i = 0; i < results.Rows.Count; i++)
+          {
+            SQLiteResultSet.Row fields = results.Rows[i];
+
+            columnIndex = (int)results.ColumnIndices["strFile"];
+            picture.FileName = fields.fields[columnIndex];
+
+            columnIndex = (int)results.ColumnIndices["strDateTaken"];
+            string dateTaken = fields.fields[columnIndex];
+
+            try
+            {
+              DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
+              dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
+              picture.DateTaken = DateTime.ParseExact(dateTaken, "d", dateTimeFormat);
+            }
+            catch (Exception ex)
+            {
+              Log.Error("Picture.DB.SQLite: GetPicturesByFilter Date parse Error: {0} stack:{1}", ex.Message, ex.StackTrace);
+            }
+
+            // TODO Add AssignAllPicturesFieldsFromResultSet <- exif <- picturedata + keywords
+            aPictures.Add(picture);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: Getting Count Picture by Date err: {0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+
+    }
+
     #region Transactions
 
     private void BeginTransaction()

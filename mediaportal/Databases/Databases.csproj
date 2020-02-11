@@ -276,6 +276,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Pictures\IPictureDatabase.cs" />
+    <Compile Include="Pictures\PictureData.cs" />
     <Compile Include="Pictures\SqlLite\PictureDatabaseSqlLite.cs" />
     <Compile Include="SQLiteClient.cs">
       <SubType>Code</SubType>
