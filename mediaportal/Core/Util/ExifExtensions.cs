@@ -176,6 +176,9 @@ namespace MediaPortal.Util
               value = metadata.Altitude.ToAltitudeString();
             }
             break;
+          case nameof(ExifMetadata.Metadata.HDR):
+            value = metadata.HDR.ToString();
+            break;
           default:
             value = ((ExifMetadata.MetadataItem)prop.GetValue(metadata)).DisplayValue; 
             break;
