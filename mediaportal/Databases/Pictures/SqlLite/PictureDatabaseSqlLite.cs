@@ -238,7 +238,7 @@ namespace MediaPortal.Picture.Database
                                                        "idState INTEGER REFERENCES state(idState) ON DELETE SET NULL, " +
                                                        "idCity INTEGER REFERENCES city(idCity) ON DELETE SET NULL, " +
                                                        "idSublocation INTEGER REFERENCES sublocation(idSublocation) ON DELETE SET NULL, " +
-                                                       "HDR INTEGER NOT NULL);");
+                                                       "HDR BOOLEAN DEFAULT 0);");
       #endregion
 
       #region Exif Indexes
