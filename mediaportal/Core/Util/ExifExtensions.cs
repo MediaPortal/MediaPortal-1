@@ -177,8 +177,7 @@ namespace MediaPortal.Util
             }
             break;
           case nameof(ExifMetadata.Metadata.HDR):
-            value = metadata.HDR.ToString();
-            break;
+            continue;
           default:
             value = ((ExifMetadata.MetadataItem)prop.GetValue(metadata)).DisplayValue; 
             break;

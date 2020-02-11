@@ -3845,6 +3845,11 @@ namespace MediaPortal.GUI.Pictures
       // item.Label3 = datetime.ToString();
       item.AlbumInfoTag = PictureDatabase.GetExifFromDB(file);
 
+      if (item.AlbumInfoTag != null && ((ExifMetadata.Metadata)item.AlbumInfoTag).HDR)
+      {
+        item.AdditionalData = item.AdditionalData | GUIListItemProperty.IsHDR;
+      }
+
       if (item.FileInfo == null || string.IsNullOrEmpty(item.FileInfo.Name))
       {
         if (!vDir.IsRemote(file))
