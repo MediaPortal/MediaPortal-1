@@ -36,25 +36,7 @@
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- COM7 -->
-  <DVBTTuning>
-    <Frequency>554000</Frequency><!-- C31 -->
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- COM8 -->
-  <DVBTTuning>
-    <Frequency>602000</Frequency><!-- C37 -->
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- LOC1 --><!-- [pre-700 23/10/2019] -->
-  <DVBTTuning>
-    <Frequency>746000</Frequency><!-- C55 -->
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- LOC1 --><!-- [post-700 23/10/2019] -->
+  <!-- LOC1 -->
   <DVBTTuning>
     <Frequency>586000</Frequency><!-- C35 -->
     <BandWidth>8</BandWidth>
