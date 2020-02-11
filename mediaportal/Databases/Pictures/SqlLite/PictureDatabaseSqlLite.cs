@@ -237,7 +237,8 @@ namespace MediaPortal.Picture.Database
                                                        "idCountry INTEGER REFERENCES country(idCountry) ON DELETE SET NULL, " +
                                                        "idState INTEGER REFERENCES state(idState) ON DELETE SET NULL, " +
                                                        "idCity INTEGER REFERENCES city(idCity) ON DELETE SET NULL, " +
-                                                       "idSublocation INTEGER REFERENCES sublocation(idSublocation) ON DELETE SET NULL);");
+                                                       "idSublocation INTEGER REFERENCES sublocation(idSublocation) ON DELETE SET NULL, " +
+                                                       "HDR INTEGER NOT NULL);");
       #endregion
 
       #region Exif Indexes
@@ -535,10 +536,10 @@ namespace MediaPortal.Picture.Database
                                                                          "idCopyright, idCopyrightNotice, " +
                                                                          "idCountry, idState, idCity, idSublocation, " +
                                                                          "idIso, idExposureTime, idExposureCompensation, idFstop, " +
-                                                                         "idShutterSpeed, idFocalLength, idFocalLength35mm, " +
+                                                                         "idShutterSpeed, idFocalLength, idFocalLength35mm, HDR, " +
                                                                          "idGPSLocation) " +
                                    "VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, " +
-                                           "{16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29});",
+                                           "{16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29}, {30});",
                                             iDbID,
                                             GetValueForQuery(AddItem("Camera", exifData.CameraModel.DisplayValue, "CameraMake", exifData.EquipmentMake.DisplayValue)),
                                             GetValueForQuery(AddItem("Lens", exifData.Lens.DisplayValue, "LensMake", exifData.Lens.Value)),
@@ -568,6 +569,7 @@ namespace MediaPortal.Picture.Database
                                             GetValueForQuery(AddItem("ShutterSpeed", exifData.ShutterSpeed.DisplayValue)),
                                             GetValueForQuery(AddItem("FocalLength", exifData.FocalLength.DisplayValue)),
                                             GetValueForQuery(AddItem("FocalLength35mm", exifData.FocalLength35MM.DisplayValue)),
+                                            exifData.HDR ? 1 : 0,
                                             GetValueForQuery(AddLocation(exifData.Location, exifData.Altitude))
                                             );
 
@@ -876,6 +878,7 @@ namespace MediaPortal.Picture.Database
 
       aExif.Orientation.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idOrientation").ToString();
       aExif.DatePictureTaken.Value = DatabaseUtility.GetAsDateTime(aResult, aRow, "strDateTaken").ToString();
+      aExif.HDR = DatabaseUtility.GetAsInt(aResult, aRow, "HDR") != 0;
       return true;
     }
 
