@@ -94,6 +94,7 @@ namespace MediaPortal.GUI.Pictures
       public MetadataItem ByLine;
       public Size Resolution;
       public MetadataItem Keywords;
+      public bool HDR;
 
       public bool IsEmpty()
       {
@@ -104,7 +105,7 @@ namespace MediaPortal.GUI.Pictures
         {
           if (prop.Name == nameof(DatePictureTaken) || prop.Name == nameof(Orientation) ||
               prop.Name == nameof(ImageDimensions) || prop.Name == nameof(Resolution) ||
-              prop.Name == nameof(Altitude))
+              prop.Name == nameof(Altitude) || prop.Name == nameof(HDR))
           {
             continue;
           }
@@ -375,7 +376,7 @@ namespace MediaPortal.GUI.Pictures
           SetStuff(ref MyMetadata.Comment, subIfdDirectory, ExifDirectoryBase.TagUserComment);
         }
 
-        GetMakerNoteLens(ref MyMetadata.Lens, directories);
+        GetMakerNoteData(ref MyMetadata, directories);
 
         var iptcDirectory = directories.OfType<IptcDirectory>().FirstOrDefault();
         if (iptcDirectory != null)
@@ -470,18 +471,18 @@ namespace MediaPortal.GUI.Pictures
       return MyMetadata;
     }
 
-    private void GetMakerNoteLens(ref MetadataItem item, IEnumerable<Directory> directory)
+    private void GetMakerNoteData(ref Metadata item, IEnumerable<Directory> directory)
     {
-      if (!item.IsEmpty())
-      {
-        return;
-      }
-
       string lensModel = string.Empty;
 
       var nikonDirectory = directory.OfType<NikonType2MakernoteDirectory>().FirstOrDefault();
       if (nikonDirectory != null)
       {
+        if (!item.Lens.IsEmpty())
+        {
+          return;
+        }
+
         // [Nikon Makernote] Lens Type: AF, D
         string lensType = nikonDirectory.GetDescription(NikonType2MakernoteDirectory.TagLensType);
         if (string.IsNullOrWhiteSpace(lensModel))
@@ -496,7 +497,7 @@ namespace MediaPortal.GUI.Pictures
         lensModel = nikonDirectory.GetDescription(NikonType2MakernoteDirectory.TagLens);
         if (!string.IsNullOrEmpty(lensModel))
         {
-          item.DisplayValue = lensModel + lensType;
+          item.Lens.DisplayValue = lensModel + lensType;
           return;
         }
       }
@@ -504,18 +505,23 @@ namespace MediaPortal.GUI.Pictures
       var canonDirectory = directory.OfType<CanonMakernoteDirectory>().FirstOrDefault();
       if (canonDirectory != null)
       {
+        if (!item.Lens.IsEmpty())
+        {
+          return;
+        }
+
         // [Canon Makernote] Lens Type: Canon EF-S 18-135mm f/3.5-5.6 IS
         lensModel = canonDirectory.GetDescription(CanonMakernoteDirectory.CameraSettings.TagLensType);
         if (!string.IsNullOrEmpty(lensModel))
         {
-          item.DisplayValue = lensModel;
+          item.Lens.DisplayValue = lensModel;
           return;
         }
         // [Canon Makernote] Lens Model: EF-S18-135mm f/3.5-5.6 IS
         lensModel = canonDirectory.GetDescription(CanonMakernoteDirectory.TagLensModel);
         if (!string.IsNullOrEmpty(lensModel))
         {
-          item.DisplayValue = lensModel;
+          item.Lens.DisplayValue = lensModel;
           return;
         }
       }
@@ -523,32 +529,87 @@ namespace MediaPortal.GUI.Pictures
       var panasonicDirectory = directory.OfType<PanasonicMakernoteDirectory>().FirstOrDefault();
       if (panasonicDirectory != null)
       {
+        // [Panasonic Makernote - 0x009e] HDR = On
+        ushort value;
+        if (panasonicDirectory.TryGetUInt16(PanasonicMakernoteDirectory.TagHDR, out value))
+        {
+          item.HDR = value != 0;
+        }
+
+        if (!item.Lens.IsEmpty())
+        {
+          return;
+        }
+
         // [Panasonic Makernote] Lens Type: 14-150mm F/3.5-5.8 DiIII C001
         lensModel = panasonicDirectory.GetDescription(PanasonicMakernoteDirectory.TagLensType);
         if (!string.IsNullOrEmpty(lensModel))
         {
-          item.DisplayValue = lensModel;
+          item.Lens.DisplayValue = lensModel;
           return;
+        }
+      }
+
+      var olympusSettingsDirectory = directory.OfType<OlympusCameraSettingsMakernoteDirectory>().FirstOrDefault();
+      if (olympusSettingsDirectory != null)
+      {
+        // [Olympus Camera Settings - 0x0509] Scene Mode = HDR
+        string sceneMode = olympusSettingsDirectory.GetDescription(OlympusCameraSettingsMakernoteDirectory.TagSceneMode);
+        if (!string.IsNullOrEmpty(sceneMode))
+        {
+          item.HDR = sceneMode == "HDR";
         }
       }
 
       var olympusDirectory = directory.OfType<OlympusEquipmentMakernoteDirectory>().FirstOrDefault();
       if (olympusDirectory != null)
       {
+        if (!item.Lens.IsEmpty())
+        {
+          return;
+        }
+
         // [Olympus Equipment] Lens Type: Olympus M.Zuiko Digital ED 12-50mm F3.5-6.3 EZ
         lensModel = olympusDirectory.GetDescription(OlympusEquipmentMakernoteDirectory.TagLensType);
         if (!string.IsNullOrEmpty(lensModel))
         {
-          item.DisplayValue = lensModel;
+          item.Lens.DisplayValue = lensModel;
           return;
         }
         // [Olympus Equipment] Lens Model: OLYMPUS M.75mm F1.8
         lensModel = olympusDirectory.GetDescription(OlympusEquipmentMakernoteDirectory.TagLensModel);
         if (!string.IsNullOrEmpty(lensModel))
         {
-          item.DisplayValue = lensModel;
+          item.Lens.DisplayValue = lensModel;
           return;
         }
+      }
+
+      var sonyDirectory = directory.OfType<SonyType1MakernoteDirectory>().FirstOrDefault();
+      if (sonyDirectory != null)
+      {
+        // [Sony Makernote - 0x200a] HDR = 0
+        ushort value;
+        if (sonyDirectory.TryGetUInt16(SonyType1MakernoteDirectory.TagHdr, out value))
+        {
+          item.HDR = value != 0;
+        }
+      }
+
+      var appleDirectory = directory.OfType<AppleMakernoteDirectory>().FirstOrDefault();
+      if (appleDirectory != null)
+      {
+        // [Apple Makernote - 0x000a] HDR Image Type = HDR Image
+        string imageType = appleDirectory.GetDescription(AppleMakernoteDirectory.TagHdrImageType);
+        if (!string.IsNullOrEmpty(imageType))
+        {
+          item.HDR = imageType == "HDR Image";
+        }
+      }
+
+      if (!item.Lens.IsEmpty())
+      {
+        return;
       }
 
       var xmpDirectory = directory.OfType<XmpDirectory>().FirstOrDefault();
@@ -558,13 +619,13 @@ namespace MediaPortal.GUI.Pictures
         // [XMPMeta] Lens: 18.0-105.0 mm f/3.5-5.6
         if (xmpDictionary.TryGetValue("aux:Lens", out lensModel))
         {
-          item.DisplayValue = lensModel;
+          item.Lens.DisplayValue = lensModel;
           return;
         }
         // [XMPMeta] LensModel: iPhone 6 Plus back camera 4.15mm f/2.2
         if (xmpDictionary.TryGetValue("exifEX:LensModel", out lensModel))
         {
-          item.DisplayValue = lensModel;
+          item.Lens.DisplayValue = lensModel;
           return;
         }
       }
