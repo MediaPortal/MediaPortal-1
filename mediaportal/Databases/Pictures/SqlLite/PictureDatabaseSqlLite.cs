@@ -1730,6 +1730,7 @@ namespace MediaPortal.Picture.Database
       }
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter)
     {
       aPictures = new List<PictureData>();
