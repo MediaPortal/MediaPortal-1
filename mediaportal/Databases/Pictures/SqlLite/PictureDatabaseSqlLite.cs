@@ -503,7 +503,7 @@ namespace MediaPortal.Picture.Database
 
     private string GetGPSValueForQuery(string value)
     {
-       return String.IsNullOrEmpty(value) ? "NULL" : value;
+      return String.IsNullOrEmpty(value) ? "NULL" : value;
     }
 
     private void AddPictureExifData(int iDbID, ExifMetadata.Metadata exifData)
@@ -598,7 +598,7 @@ namespace MediaPortal.Picture.Database
       }
       value = Regex.Replace(value, @"[\u0000-\u001F]+", string.Empty);
       value = DatabaseUtility.RemoveInvalidChars(value);
-      return Regex.Replace(value, @"\s*unknown\s*(?:\(\d*\))?\s*", string.Empty,RegexOptions.IgnoreCase).Trim();
+      return Regex.Replace(value, @"\s*unknown\s*(?:\(\d*\))?\s*", string.Empty, RegexOptions.IgnoreCase).Trim();
     }
 
     private int AddItem(string tableName, string value)
