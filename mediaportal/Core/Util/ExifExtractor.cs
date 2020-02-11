@@ -104,10 +104,17 @@ namespace MediaPortal.GUI.Pictures
         {
           if (prop.Name == nameof(DatePictureTaken) || prop.Name == nameof(Orientation) ||
               prop.Name == nameof(ImageDimensions) || prop.Name == nameof(Resolution) ||
-              prop.Name == nameof(Altitude) || prop.Name == nameof(Location))
+              prop.Name == nameof(Altitude))
           {
             continue;
           }
+
+          if (prop.Name == nameof(Location))
+          {
+            result &= (prop.GetValue(this) == null);
+            continue;
+          }
+
           Type fieldtype = prop.FieldType;
           MethodInfo info = fieldtype.GetMethod("IsEmpty");
           result &= (bool)info.Invoke(prop.GetValue(this), null);
