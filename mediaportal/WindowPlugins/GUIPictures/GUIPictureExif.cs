@@ -254,7 +254,6 @@ namespace MediaPortal.GUI.Pictures
       {
         Log.Error("GUIPicturesExif OnItemSelected exception: {0}", ex.Message);
       }
-      SetProperties();
     }
 
     private void SetExifGUIListItems()
