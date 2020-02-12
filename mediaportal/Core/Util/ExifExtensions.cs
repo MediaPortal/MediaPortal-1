@@ -159,7 +159,7 @@ namespace MediaPortal.Util
 
     #region Exif Properties
 
-    public static void ToString(this ExifMetadata.Metadata metadata)
+    public static string ToString(this ExifMetadata.Metadata metadata)
     {
       string full = string.Empty;
       Type type = typeof(ExifMetadata.Metadata);
@@ -204,6 +204,16 @@ namespace MediaPortal.Util
           full = full + caption + ": " + value + "\n";
         }
       }
+      return full;
+    }
+
+    public static string ToShortString(this ExifMetadata.Metadata metadata)
+    {
+      string exifoutline = string.Empty;
+      exifoutline = exifoutline + (!string.IsNullOrEmpty(metadata.EquipmentMake.DisplayValue) ? metadata.EquipmentMake.DisplayValue + " " : string.Empty);
+      exifoutline = exifoutline + (!string.IsNullOrEmpty(metadata.CameraModel.DisplayValue) ? metadata.CameraModel.DisplayValue + " " : string.Empty);
+      exifoutline = exifoutline + (!string.IsNullOrEmpty(metadata.ViewerComments.DisplayValue) ? metadata.ViewerComments.DisplayValue + " " : string.Empty);
+      return exifoutline;
     }
 
     public static void SetExifProperties(this ExifMetadata.Metadata metadata)
