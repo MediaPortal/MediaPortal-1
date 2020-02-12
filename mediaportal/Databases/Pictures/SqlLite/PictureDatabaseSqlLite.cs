@@ -238,7 +238,7 @@ namespace MediaPortal.Picture.Database
                                                        "idState INTEGER REFERENCES state(idState) ON DELETE SET NULL, " +
                                                        "idCity INTEGER REFERENCES city(idCity) ON DELETE SET NULL, " +
                                                        "idSublocation INTEGER REFERENCES sublocation(idSublocation) ON DELETE SET NULL, " +
-                                                       "HDR BOOLEAN DEFAULT 0);");
+                                                       "HDR BOOLEAN NOT NULL DEFAULT 0);");
       #endregion
 
       #region Exif Indexes
@@ -878,7 +878,7 @@ namespace MediaPortal.Picture.Database
 
       aExif.Orientation.Value = DatabaseUtility.GetAsInt(aResult, aRow, "idOrientation").ToString();
       aExif.DatePictureTaken.Value = DatabaseUtility.GetAsDateTime(aResult, aRow, "strDateTaken").ToString();
-      aExif.HDR = DatabaseUtility.GetAsInt(aResult, aRow, "HDR") != 0;
+      aExif.HDR = DatabaseUtility.GetAsInt(aResult, aRow, "HDR") == 1;
       return true;
     }
 

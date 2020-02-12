@@ -106,7 +106,7 @@ namespace MediaPortal.Util
 
     public static string ToMapString(this double value)
     {
-      return value.ToString().Replace(",", ".");
+      return value.ToString(CultureInfo.InvariantCulture);
     }
 
     public static string ToFileName(this double value)
