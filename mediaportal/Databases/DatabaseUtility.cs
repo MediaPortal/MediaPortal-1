@@ -304,7 +304,7 @@ namespace MediaPortal.Database
             int slashPos = result.IndexOf(".", StringComparison.Ordinal);
             if (slashPos > 0)
             {
-              result = result.Substring(0, result.IndexOf('.', 0));
+              result = result.Substring(0, slashPos);
             }
           }
         }
