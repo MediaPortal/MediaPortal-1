@@ -307,8 +307,8 @@ namespace MediaPortal.GUI.Pictures
                 if (!string.IsNullOrEmpty(latitude) && !string.IsNullOrEmpty(longitude))
                 {
                   value = latitude + " / " + longitude;
-                  mapurl = String.Format(GUILocalizeStrings.Get(9090), _currentMetaData.Location.Latitude.ToString().Replace(",", "."),
-                                                                       _currentMetaData.Location.Longitude.ToString().Replace(",", "."));
+                  mapurl = String.Format(GUILocalizeStrings.Get(9090), _currentMetaData.Location.Latitude.ToMapString(),
+                                                                       _currentMetaData.Location.Longitude.ToMapString());
                 }
               }
               break;

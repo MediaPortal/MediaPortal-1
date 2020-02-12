@@ -89,6 +89,8 @@ namespace MediaPortal.Util
       LoadTranslations();
     }
 
+    #region Helper Methods
+
     public static string ToCaption(this string tag)
     {
       string result;
@@ -99,6 +101,11 @@ namespace MediaPortal.Util
     {
       string result;
       return _translated.TryGetValue(tag, out result) ? result : tag;
+    }
+
+    public static string ToMapString(this double value)
+    {
+      return value.ToString().Replace(",", ".");
     }
 
     public static string ToLatitudeString(this double tag)
@@ -141,7 +148,56 @@ namespace MediaPortal.Util
       return 0; // not rotated
     }
 
+    #endregion
+
     #region Exif Properties
+
+    public static void ToString(this ExifMetadata.Metadata metadata)
+    {
+      string full = string.Empty;
+      Type type = typeof(ExifMetadata.Metadata);
+      foreach (FieldInfo prop in type.GetFields())
+      {
+        string value = string.Empty;
+        string caption = prop.Name.ToCaption() ?? prop.Name;
+        switch (prop.Name)
+        {
+          case nameof(ExifMetadata.Metadata.ImageDimensions):
+            value = metadata.ImageDimensionsAsString();
+            break;
+          case nameof(ExifMetadata.Metadata.Resolution):
+            value = metadata.ResolutionAsString();
+            break;
+          case nameof(ExifMetadata.Metadata.Location):
+            if (metadata.Location != null)
+            {
+              string latitude = metadata.Location.Latitude.ToLatitudeString() ?? string.Empty;
+              string longitude = metadata.Location.Longitude.ToLongitudeString() ?? string.Empty;
+              if (!string.IsNullOrEmpty(latitude) && !string.IsNullOrEmpty(longitude))
+              {
+                value = latitude + " / " + longitude;
+              }
+            }
+            break;
+          case nameof(ExifMetadata.Metadata.Altitude):
+            if (metadata.Location != null)
+            {
+              value = metadata.Altitude.ToAltitudeString();
+            }
+            break;
+          case nameof(ExifMetadata.Metadata.HDR):
+            continue;
+          default:
+            value = ((ExifMetadata.MetadataItem)prop.GetValue(metadata)).DisplayValue;
+            break;
+        }
+        if (!string.IsNullOrEmpty(value))
+        {
+          value = value.ToValue() ?? value;
+          full = full + caption + ": " + value + "\n";
+        }
+      }
+    }
 
     public static void SetExifProperties(this ExifMetadata.Metadata metadata)
     {
