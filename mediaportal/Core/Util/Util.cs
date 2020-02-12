@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -36,18 +36,18 @@ using System.Text;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.ServiceProcess;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+
 using MediaPortal.ExtensionMethods;
-using MediaPortal.Player;
 using MediaPortal.Profile;
-using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using MediaPortal.Configuration;
 using MediaPortal.Services;
+
+using Microsoft.Win32;
 
 namespace MediaPortal.Util
 {
@@ -2808,7 +2808,11 @@ namespace MediaPortal.Util
 
     public static bool DirectoryDelete(string aDirectory, bool aRecursive)
     {
-      if (String.IsNullOrEmpty(aDirectory)) return false;
+      if (String.IsNullOrEmpty(aDirectory))
+      {
+        return false;
+      }
+
       try
       {
         Directory.Delete(aDirectory, aRecursive);
@@ -2821,16 +2825,18 @@ namespace MediaPortal.Util
       return false;
     }
 
-    public static void DownLoadImage(string strUrl, string strFile, System.Drawing.Imaging.ImageFormat imageFormat)
+    public static void DownLoadImage(string strURL, string strFile, System.Drawing.Imaging.ImageFormat imageFormat)
     {
-      if (string.IsNullOrEmpty(strUrl) || string.IsNullOrEmpty(strFile))
+      if (string.IsNullOrEmpty(strURL) || string.IsNullOrEmpty(strFile))
+      {
         return;
+      }
 
       using (WebClient client = new WebClient())
       {
         try
         {
-          string extensionURL = Path.GetExtension(strUrl);
+          string extensionURL = Path.GetExtension(strURL);
           string extensionFile = Path.GetExtension(strFile);
           if (extensionURL.Length > 0 && extensionFile.Length > 0)
           {
@@ -2838,7 +2844,7 @@ namespace MediaPortal.Util
             extensionFile = extensionFile.ToLowerInvariant();
             string strLogo = Path.ChangeExtension(strFile, extensionURL);
             client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-            client.DownloadFile(strUrl, strLogo);
+            client.DownloadFile(strURL, strLogo);
             if (extensionURL != extensionFile)
             {
               using (Image imgSrc = Image.FromFile(strLogo))
@@ -2851,17 +2857,17 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          Log.Error("Utils: DownLoadImage {1} failed: {0}", ex.Message, strUrl);
+          Log.Error("Utils: DownLoadImage {1} failed: {0}", ex.Message, strURL);
         }
       }
     }
 
     public static void DownLoadAndCacheImage(string strURL, string strFile)
     {
-      if (strURL == null) return;
-      if (strURL.Length == 0) return;
-      if (strFile == null) return;
-      if (strFile.Length == 0) return;
+      if (string.IsNullOrEmpty(strURL) || string.IsNullOrEmpty(strFile))
+      {
+        return;
+      }
       string url = String.Format("mpcache-{0}", EncryptLine(strURL));
 
       string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
@@ -2906,10 +2912,10 @@ namespace MediaPortal.Util
     /// <param name="strFile"></param>
     public static void DownLoadAndOverwriteCachedImage(string strURL, string strFile)
     {
-      if (strURL == null) return;
-      if (strURL.Length == 0) return;
-      if (strFile == null) return;
-      if (strFile.Length == 0) return;
+      if (string.IsNullOrEmpty(strURL) || string.IsNullOrEmpty(strFile))
+      {
+        return;
+      }
       string url = String.Format("mpcache-{0}", EncryptLine(strURL));
 
       string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
@@ -2933,7 +2939,9 @@ namespace MediaPortal.Util
     public static void DownLoadImage(string strUrl, string strFile)
     {
       if (string.IsNullOrEmpty(strUrl) || string.IsNullOrEmpty(strFile))
+      {
         return;
+      }
 
       try
       {
@@ -2949,6 +2957,32 @@ namespace MediaPortal.Util
       {
         Log.Info("Utils: DownLoadImage {1} failed:{0}", ex.Message, strUrl);
       }
+    }
+
+    public static string DownLoadString(string strUrl)
+    {
+      if (string.IsNullOrEmpty(strUrl))
+      {
+        return string.Empty;
+      }
+
+      try
+      {
+        using (WebClient client = new WebClientWithTimeouts { Timeout = TimeSpan.FromMilliseconds(20000) })
+        {
+          client.UseDefaultCredentials = true;
+          client.Encoding = Encoding.UTF8;
+          client.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)");
+          string result = client.DownloadString(strUrl);
+          client.Dispose();
+          return result;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Info("Utils: DownLoadImage {1} failed:{0}", ex.Message, strUrl);
+      }
+      return string.Empty;
     }
 
     public class WebClientWithTimeouts : WebClient

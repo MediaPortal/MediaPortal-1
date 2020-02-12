@@ -1639,6 +1639,7 @@
     	<String id="9036">Долгота</String>
     	<String id="9037">Высота над уровнем моря</String>
 		<String id="9038">Местоположение</String>
+		<String id="9039">Адрес</String>
 		<!-- Location -->
 		<String id="9093">С </String>
 		<String id="9094">Ю </String>

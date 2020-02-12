@@ -78,6 +78,7 @@ namespace MediaPortal.Util
       { "Resolution", GUILocalizeStrings.Get(9001) },
       { "ImageDimensions", GUILocalizeStrings.Get(9000) },
       { "Location", GUILocalizeStrings.Get(9038) },
+      { "Address", GUILocalizeStrings.Get(9039) },
     };
 
     private static Dictionary<string, string> _translated = new Dictionary<string, string>();
@@ -106,6 +107,12 @@ namespace MediaPortal.Util
     public static string ToMapString(this double value)
     {
       return value.ToString().Replace(",", ".");
+    }
+
+    public static string ToFileName(this double value)
+    {
+      byte[] valBytes = BitConverter.GetBytes(value);
+      return BitConverter.ToString(valBytes).Replace("-", string.Empty);
     }
 
     public static string ToLatitudeString(this double tag)

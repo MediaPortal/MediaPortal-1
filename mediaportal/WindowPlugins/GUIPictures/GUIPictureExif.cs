@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 using MediaPortal.Dialogs;
@@ -216,11 +217,97 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private void MapDownload(string url, ref GUIListItem item)
+    private string GetMapURL(double lat, double lon, out string filename)
     {
-      string mFilename = Path.GetTempFileName() + ".png";
-      Util.Utils.DownLoadAndCacheImage(url, mFilename);
+      filename = string.Empty;
+      string mapurl = GUILocalizeStrings.Get(9090);
+      if (string.IsNullOrEmpty(mapurl))
+      {
+        return string.Empty;
+      }
+      if (!mapurl.StartsWith(@"http://") && !mapurl.StartsWith(@"https://"))
+      {
+        return string.Empty;
+      }
+
+      try
+      {
+        mapurl = String.Format(mapurl, lat.ToMapString(), lon.ToMapString());
+        filename = lat.ToFileName() + "-" + lon.ToFileName() + ".png";
+        return mapurl;
+      }
+      catch
+      {
+        Log.Debug("GetMapURL: wrong map URL {0}", GUILocalizeStrings.Get(9090));
+      }
+      return string.Empty;
+    }
+
+    private string GetAddressURL(double lat, double lon)
+    {
+      string addrurl = GUILocalizeStrings.Get(9091);
+      if (string.IsNullOrEmpty(addrurl))
+      {
+        return string.Empty;
+      }
+      if (!addrurl.StartsWith(@"http://") && !addrurl.StartsWith(@"https://"))
+      {
+        return string.Empty;
+      }
+
+      try
+      {
+        addrurl = String.Format(addrurl, lat.ToMapString(), lon.ToMapString(), GUILocalizeStrings.GetCultureName(GUILocalizeStrings.CurrentLanguage()));
+        return addrurl;
+      }
+      catch
+      {
+        Log.Debug("GetAddressURL: wrong Address URL {0}", GUILocalizeStrings.Get(9090));
+      }
+      return string.Empty;
+    }
+
+    private void MapDownload(string url, string filename, ref GUIListItem item)
+    {
+      string mFilename = Path.Combine(Thumbs.PicturesMaps, filename);
+      if (!File.Exists(mFilename))
+      {
+        Util.Utils.DownLoadAndCacheImage(url, mFilename);
+      }
       item.DVDLabel = mFilename;
+    }
+
+    private void GetAddress(string url)
+    {
+      string json = Util.Utils.DownLoadString(url);
+      if (string.IsNullOrEmpty(json))
+      {
+        return;
+      }
+
+      Regex regex = new Regex(@"display_name.:.(.+?)\""");
+      Match match = regex.Match(json);
+      if (!match.Success)
+      {
+        return;
+      }
+
+      string address = match.Groups[1].Value;
+      if (string.IsNullOrWhiteSpace(address))
+      {
+        return;
+      }
+
+      if (listExifProperties != null)
+      {
+        GUIListItem fileitem = new GUIListItem();
+        fileitem.Label = address;
+        fileitem.Label2 = GUILocalizeStrings.Get(9039);
+        fileitem.IconImage = Thumbs.Pictures + @"\exif\data\address.png";
+        fileitem.ThumbnailImage = fileitem.IconImage;
+        fileitem.OnItemSelected += OnItemSelected;
+        listExifProperties.Add(fileitem);
+      }
     }
 
     private void Refresh()
@@ -285,11 +372,14 @@ namespace MediaPortal.GUI.Pictures
         fileitem.OnItemSelected += OnItemSelected;
         listExifProperties.Add(fileitem);
 
+        string addrurl = string.Empty;
+
         Type type = typeof(ExifMetadata.Metadata);
         foreach (FieldInfo prop in type.GetFields())
         {
           string value = string.Empty;
           string mapurl = string.Empty;
+          string mapfile = string.Empty;
           string caption = prop.Name.ToCaption() ?? prop.Name;
           switch (prop.Name)
           {
@@ -307,8 +397,8 @@ namespace MediaPortal.GUI.Pictures
                 if (!string.IsNullOrEmpty(latitude) && !string.IsNullOrEmpty(longitude))
                 {
                   value = latitude + " / " + longitude;
-                  mapurl = String.Format(GUILocalizeStrings.Get(9090), _currentMetaData.Location.Latitude.ToMapString(),
-                                                                       _currentMetaData.Location.Longitude.ToMapString());
+                  mapurl = GetMapURL(_currentMetaData.Location.Latitude, _currentMetaData.Location.Longitude, out mapfile);
+                  addrurl = GetAddressURL(_currentMetaData.Location.Latitude, _currentMetaData.Location.Longitude);
                 }
               }
               break;
@@ -336,9 +426,13 @@ namespace MediaPortal.GUI.Pictures
 
             if (!string.IsNullOrEmpty(mapurl))
             {
-              ThreadPool.QueueUserWorkItem(delegate { MapDownload(mapurl, ref item); });
+              ThreadPool.QueueUserWorkItem(delegate { MapDownload(mapurl, mapfile, ref item); });
             }
           }
+        }
+        if (!string.IsNullOrEmpty(addrurl))
+        {
+          ThreadPool.QueueUserWorkItem(delegate { GetAddress(addrurl); });
         }
 
         if (listExifProperties.Count > 0)
