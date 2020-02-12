@@ -86,6 +86,22 @@
     
     <import>common.facade.pictures.xml</import>
 
+    <!-- HDR -->
+
+    <control>
+        <description>HDR banner</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>381</posX>
+        <posY>360</posY>
+        <width>122</width>
+        <height>122</height>
+        <texture>isHDR.png</texture>                                                  
+        <visible>[facadeview.list]+Control.IsVisible(50)+string.equals(#pictures.exif.ishdr,true)</visible>
+    	<animation effect="fade" time="0">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+
     <control>
   	  <description>EXIF Logo</description>
       <type>image</type>

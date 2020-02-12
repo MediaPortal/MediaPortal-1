@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -215,6 +216,13 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
+    private void MapDownload(string url, ref GUIListItem item)
+    {
+      string mFilename = Path.GetTempFileName() + ".png";
+      Util.Utils.DownLoadAndCacheImage(url, mFilename);
+      item.DVDLabel = mFilename;
+    }
+
     private void Refresh()
     {
       SetProperties();
@@ -270,7 +278,7 @@ namespace MediaPortal.GUI.Pictures
         }
         
         GUIListItem fileitem = new GUIListItem();
-        fileitem.Label = Path.GetFileNameWithoutExtension(_currentPicture);
+        fileitem.Label = Path.GetFileNameWithoutExtension(_currentPicture).ToUpperInvariant();
         fileitem.Label2 = GUILocalizeStrings.Get(863);
         fileitem.IconImage = Thumbs.Pictures + @"\exif\data\file.png";
         fileitem.ThumbnailImage = fileitem.IconImage;
@@ -281,8 +289,8 @@ namespace MediaPortal.GUI.Pictures
         foreach (FieldInfo prop in type.GetFields())
         {
           string value = string.Empty;
-          string caption = prop.Name.ToCaption() ?? prop.Name;
           string mapurl = string.Empty;
+          string caption = prop.Name.ToCaption() ?? prop.Name;
           switch (prop.Name)
           {
             case nameof(ExifMetadata.Metadata.ImageDimensions):
@@ -299,9 +307,8 @@ namespace MediaPortal.GUI.Pictures
                 if (!string.IsNullOrEmpty(latitude) && !string.IsNullOrEmpty(longitude))
                 {
                   value = latitude + " / " + longitude;
-                  mapurl = String.Format(GUILocalizeStrings.Get(9090),
-                                         _currentMetaData.Location.Latitude.ToString().Replace(",","."),
-                                         _currentMetaData.Location.Longitude.ToString().Replace(",","."));
+                  mapurl = String.Format(GUILocalizeStrings.Get(9090), _currentMetaData.Location.Latitude.ToString().Replace(",", "."),
+                                                                       _currentMetaData.Location.Longitude.ToString().Replace(",", "."));
                 }
               }
               break;
@@ -319,14 +326,18 @@ namespace MediaPortal.GUI.Pictures
           }
           if (!string.IsNullOrEmpty(value))
           {
-             GUIListItem item = new GUIListItem();
-             item.Label = value.ToValue() ?? value;
-             item.Label2 = caption;
-             item.IconImage = Thumbs.Pictures + @"\exif\data\" + prop.Name + ".png";
-             item.ThumbnailImage = item.IconImage;
-             item.DVDLabel = mapurl;
-             item.OnItemSelected += OnItemSelected;
-             listExifProperties.Add(item);
+            GUIListItem item = new GUIListItem();
+            item.Label = value.ToValue() ?? value;
+            item.Label2 = caption;
+            item.IconImage = Thumbs.Pictures + @"\exif\data\" + prop.Name + ".png";
+            item.ThumbnailImage = item.IconImage;
+            item.OnItemSelected += OnItemSelected;
+            listExifProperties.Add(item);
+
+            if (!string.IsNullOrEmpty(mapurl))
+            {
+              ThreadPool.QueueUserWorkItem(delegate { MapDownload(mapurl, ref item); });
+            }
           }
         }
 
@@ -334,6 +345,7 @@ namespace MediaPortal.GUI.Pictures
         {
           listExifProperties.SelectedListItemIndex = 0;
           _currentSelectedItem = 0;
+          SelectItem();
         }
       }
       catch (Exception ex)
