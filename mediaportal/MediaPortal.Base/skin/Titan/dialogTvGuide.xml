@@ -23,7 +23,7 @@
 		<id>32</id>
 		<posX>436</posX>
 		<posY>120</posY>
-		<font>font16</font>
+		<font>fontB16</font>
 		<align>left</align>
 		<textcolor>6aa5cb</textcolor>
 		<animation effect="fade" time="800">WindowOpen</animation>
