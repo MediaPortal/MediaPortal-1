@@ -70,15 +70,9 @@ namespace MediaPortal.Music.Database
       aSong.BitRate = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iBitRate");
       aSong.Channels = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iChannels");
       aSong.SampleRate = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iSampleRate");
-      try
-      {
-        aSong.DateTimePlayed = DatabaseUtility.GetAsDateTime(aResult, aRow, "dateLastPlayed");
-        aSong.DateTimeModified = DatabaseUtility.GetAsDateTime(aResult, aRow, "dateAdded");
-      }
-      catch (Exception ex)
-      {
-        Log.Warn("MusicDatabase Lookup: Exception parsing date fields: {0} stack: {1}", ex.Message, ex.StackTrace);
-      }
+
+      aSong.DateTimePlayed = DatabaseUtility.GetAsDateTime(aResult, aRow, "dateLastPlayed");
+      aSong.DateTimeModified = DatabaseUtility.GetAsDateTime(aResult, aRow, "dateAdded");
       return true;
     }
 
@@ -177,13 +171,16 @@ namespace MediaPortal.Music.Database
 
         PseudoRandomNumberGenerator rand = new PseudoRandomNumberGenerator();
 
-        int maxIDSong, rndIDSong;
         string strSQL = String.Format("SELECT max(idTrack) FROM tracks");
 
         SQLiteResultSet results = DirectExecute(strSQL);
 
-        maxIDSong = DatabaseUtility.GetAsInt(results, 0, 0);
-        rndIDSong = rand.Next(0, maxIDSong);
+        int maxIDSong = 0;
+        if (results.Rows.Count > 0)
+        {
+          maxIDSong = DatabaseUtility.GetAsInt(results, 0, 0);
+        }
+        int rndIDSong = rand.Next(0, maxIDSong);
 
         strSQL = String.Format("SELECT * FROM tracks WHERE idTrack={0}", rndIDSong);
 
