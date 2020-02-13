@@ -87,7 +87,7 @@ namespace MediaPortal.Video.Database
         _dbHealth = DatabaseUtility.IntegrityCheck(m_db);
 
         DatabaseUtility.SetPragmas(m_db);
-        
+
         CreateTables();
         //
         // Check and upgrade database with new columns if necessary
@@ -105,8 +105,8 @@ namespace MediaPortal.Video.Database
 
       // Fill default Video fields for Video
       _defaultVideoViewFields = "idMovie, idDirector, strPlotOutline, strPlot, strTagLine, strVotes, fRating, strCast, " +
-                                "strCredits, iYear, strGenre, strPictureURL, strTitle, IMDBID, mpaa, runtime, iswatched, " + 
-                                "strUserReview, strFanartURL, strDirector, dateAdded, dateWatched, studios, country, " + 
+                                "strCredits, iYear, strGenre, strPictureURL, strTitle, IMDBID, mpaa, runtime, iswatched, " +
+                                "strUserReview, strFanartURL, strDirector, dateAdded, dateWatched, studios, country, " +
                                 "language, lastupdate, strSortTitle, TMDBNumber, LocalDBNumber, iUserRating, " +
                                 "MPAAText, Awards, " +
                                 "discid, strPath, cdlabel";
@@ -183,7 +183,7 @@ namespace MediaPortal.Video.Database
           // Add director name from actors
           strSQL = String.Format("SELECT idMovie, idDirector, actors.strActor FROM movieinfo, actors WHERE idDirector = idActor");
           SQLiteResultSet results = m_db.Execute(strSQL);
-          
+
           // Upgrade director name in movieinfo
           for (int i = 0; i < results.Rows.Count; i++)
           {
@@ -263,7 +263,7 @@ namespace MediaPortal.Video.Database
         #region Movie table
 
         bool watchedUpg = false;
-        
+
         if (DatabaseUtility.TableColumnExists(m_db, "movie", "watched") == false)
         {
           string strSQL = "ALTER TABLE \"main\".\"movie\" ADD COLUMN \"watched\" bool DEFAULT 0";
@@ -296,7 +296,7 @@ namespace MediaPortal.Video.Database
           {
             int movieId = Int32.Parse(DatabaseUtility.Get(results, i, "idMovie"));
             int watched = Int32.Parse(DatabaseUtility.Get(results, i, "iswatched"));
-            
+
             if (watched > 0)
             {
               SetMovieWatchedStatus(movieId, true, 100);
@@ -403,7 +403,7 @@ namespace MediaPortal.Video.Database
           string strSQL = "ALTER TABLE \"main\".\"usergroup\" ADD COLUMN \"strGroupDescription\" text DEFAULT ''";
           m_db.Execute(strSQL);
         }
-        
+
         #endregion
 
         #region Movie Collection table
@@ -437,9 +437,9 @@ namespace MediaPortal.Video.Database
         {
           DatabaseUtility.AddView(m_db, "movieView",
                                "CREATE VIEW movieView AS  " +
-                                      "SELECT movieinfo.*, " + 
+                                      "SELECT movieinfo.*, " +
                                              "genre.idGenre as idSingleGenre, genre.strGenre as strSingleGenre, " +
-                                             "moviecollection.*, " + 
+                                             "moviecollection.*, " +
                                              "usergroup.*, " +
                                              "movie.hasSubtitles, movie.discid, movie.watched, movie.iwatchedPercent, movie.timeswatched, movie.iduration, " +
                                              "path.idPath, path.strPath, path.cdlabel, " +
@@ -543,20 +543,20 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddIndex(m_db, "idxactorlinkmovie_idMovie",
                                "CREATE INDEX idxactorlinkmovie_idMovie ON actorlinkmovie(idMovie ASC)");
       // Actors
-      DatabaseUtility.AddIndex(m_db, "idxactors_strActor", 
+      DatabaseUtility.AddIndex(m_db, "idxactors_strActor",
                                "CREATE INDEX idxactors_strActor ON actors(strActor ASC)");
-      DatabaseUtility.AddIndex(m_db, "idxactors_idActor", 
+      DatabaseUtility.AddIndex(m_db, "idxactors_idActor",
                               "CREATE UNIQUE INDEX idxactors_idActor ON actors(idActor ASC)");
       DatabaseUtility.AddIndex(m_db, "idxactors_idIMDB",
                               "CREATE INDEX idxactors_idIMDB ON actors(IMDBActorID ASC)");
       DatabaseUtility.AddIndex(m_db, "idxactors_idxActor",
                               "CREATE INDEX idxactors_idxActor ON actors(UPPER(SUBSTR(strActor,1,1)) ASC)");
       // Files
-      DatabaseUtility.AddIndex(m_db, "idxfiles_idFile", 
+      DatabaseUtility.AddIndex(m_db, "idxfiles_idFile",
                                "CREATE UNIQUE INDEX idxfiles_idFile ON files(idFile ASC)");
-      DatabaseUtility.AddIndex(m_db, "idxfiles_idMovie", 
+      DatabaseUtility.AddIndex(m_db, "idxfiles_idMovie",
                                "CREATE INDEX idxfiles_idMovie ON files(idMovie ASC)");
-      DatabaseUtility.AddIndex(m_db, "idxfiles_idPath", 
+      DatabaseUtility.AddIndex(m_db, "idxfiles_idPath",
                                "CREATE INDEX idxfiles_idPath ON files(idPath ASC)");
       // Genre
       DatabaseUtility.AddIndex(m_db, "idxgenre_idGenre",
@@ -579,12 +579,12 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddIndex(m_db, "idxmoviecollectionlinkmovie_idMovie",
                                "CREATE INDEX idxmoviecollectionlinkmovie_idMovie ON moviecollectionlinkmovie(idMovie ASC)");
       // Movie
-      DatabaseUtility.AddIndex(m_db, "idxmovie_idMovie", 
+      DatabaseUtility.AddIndex(m_db, "idxmovie_idMovie",
                                "CREATE UNIQUE INDEX idxmovie_idMovie ON movie(idMovie ASC)");
-      DatabaseUtility.AddIndex(m_db, "idxmovie_idPath", 
+      DatabaseUtility.AddIndex(m_db, "idxmovie_idPath",
                                "CREATE INDEX idxmovie_idPath ON movie(idPath ASC)");
       // MovieInfo
-      DatabaseUtility.AddIndex(m_db, "idxmovieinfo_iYear", 
+      DatabaseUtility.AddIndex(m_db, "idxmovieinfo_iYear",
                                "CREATE INDEX idxmovieinfo_iYear ON movieinfo(iYear ASC)");
       DatabaseUtility.AddIndex(m_db, "idxmovieinfo_idDirector",
                                "CREATE INDEX idxmovieinfo_idDirector ON movieinfo(idDirector ASC)");
@@ -597,9 +597,9 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddIndex(m_db, "idxmovieinfo_idxTitle",
                                "CREATE INDEX idxmovieinfo_idxTitle ON movieinfo(UPPER(SUBSTR(strTitle,1,1)) ASC)");
       // Path
-      DatabaseUtility.AddIndex(m_db, "idxpath_idPath", 
+      DatabaseUtility.AddIndex(m_db, "idxpath_idPath",
                                "CREATE INDEX idxpath_idPath ON path(idPath ASC)");
-      DatabaseUtility.AddIndex(m_db, "idxpath_strPath", 
+      DatabaseUtility.AddIndex(m_db, "idxpath_strPath",
                                "CREATE INDEX idxpath_strPath ON path(strPath ASC)");
       // VideThumbList
       DatabaseUtility.AddIndex(m_db, "idxVideoThumbBList_strPath",
@@ -650,8 +650,8 @@ namespace MediaPortal.Video.Database
           int lFileId = -1;
           strFileName = strFileName.Trim();
 
-        string strSQL = String.Format("SELECT * FROM files WHERE idmovie={0} AND idpath={1} AND strFileName = '{2}'",
-                                        lMovieId, lPathId, strFileName);
+          string strSQL = String.Format("SELECT * FROM files WHERE idmovie={0} AND idpath={1} AND strFileName = '{2}'",
+                                          lMovieId, lPathId, strFileName);
           SQLiteResultSet results = m_db.Execute(strSQL);
 
           if (results != null && results.Rows.Count > 0)
@@ -677,7 +677,7 @@ namespace MediaPortal.Video.Database
         return -1;
       }
     }
-    
+
     private int MovieDuration(ArrayList files)
     {
       int totalMovieDuration = 0;
@@ -713,21 +713,21 @@ namespace MediaPortal.Video.Database
     {
       lPathId = -1;
       lMovieId = -1;
-      
+
       try
       {
         if (null == m_db)
         {
           return -1;
         }
-        
+
         string strPath, strFileName;
         strFilenameAndPath = strFilenameAndPath.Trim();
         DatabaseUtility.Split(strFilenameAndPath, out strPath, out strFileName);
         DatabaseUtility.RemoveInvalidChars(ref strPath);
         DatabaseUtility.RemoveInvalidChars(ref strFileName);
         lPathId = GetPath(strPath);
-        
+
         if (lPathId < 0)
         {
           return -1;
@@ -735,7 +735,7 @@ namespace MediaPortal.Video.Database
 
         string strSQL = String.Format("SELECT * FROM files WHERE idpath={0} AND strFilename = '{1}'", lPathId, strFileName);
         SQLiteResultSet results = m_db.Execute(strSQL);
-        
+
         if (results.Rows.Count > 0)
         {
                 int lFileId;
@@ -783,35 +783,35 @@ namespace MediaPortal.Video.Database
     public int AddMovieFile(string strFile)
     {
       bool bHassubtitles = false;
-      
+
       if (strFile.ToLowerInvariant().IndexOf(".ifo") >= 0)
       {
         bHassubtitles = true;
       }
-      
+
       if (strFile.ToLowerInvariant().IndexOf(".vob") >= 0)
       {
         bHassubtitles = true;
       }
-      
+
       string strCDLabel = "";
-      
+
       if (Util.Utils.IsDVD(strFile))
       {
         strCDLabel = Util.Utils.GetDriveSerial(strFile);
       }
-      
+
       string[] sub_exts = {
                             ".utf", ".utf8", ".utf-8", ".sub", ".srt", ".smi", ".rt", ".txt", ".ssa", ".aqt", ".jss",
                             ".ass", ".idx", ".ifo"
                           };
-      
+
       // check if movie has subtitles
       for (int i = 0; i < sub_exts.Length; i++)
       {
         string strSubTitleFile = strFile;
         strSubTitleFile = Path.ChangeExtension(strFile, sub_exts[i]);
-        
+
         if (File.Exists(strSubTitleFile))
         {
           bHassubtitles = true;
@@ -836,7 +836,7 @@ namespace MediaPortal.Video.Database
         string strSQL = String.Format("SELECT * FROM path WHERE strPath like '{0}' AND cdlabel like '{1}'", strPath,
                                       cdlabel);
         SQLiteResultSet results = m_db.Execute(strSQL);
-        
+
         if (results.Rows.Count == 0)
         {
           // doesnt exists, add it
@@ -871,11 +871,11 @@ namespace MediaPortal.Video.Database
         {
           return -1;
         }
-        
+
         string cdlabel = string.Empty;
         string strSQL = string.Empty;
         strPath = strPath.Trim();
-        
+
         if (Util.Utils.IsDVD(strPath))
         {
           // It's a DVD! Any drive letter should be OK as long as the label and rest of the path matches
@@ -888,9 +888,9 @@ namespace MediaPortal.Video.Database
         {
           strSQL = String.Format("SELECT * FROM path WHERE strPath = '{0}'", strPath);
         }
-        
+
         SQLiteResultSet results = m_db.Execute(strSQL);
-        
+
         if (results.Rows.Count > 0)
         {
           int lPathId;
@@ -940,7 +940,7 @@ namespace MediaPortal.Video.Database
         {
           return;
         }
-        
+
         // Delete files data from other tables
         string strSQL = string.Empty;
         ArrayList files = new ArrayList();
@@ -1011,12 +1011,12 @@ namespace MediaPortal.Video.Database
       try
       {
         files.Clear();
-        
+
         if (null == m_db)
         {
           return;
         }
-        
+
         if (lMovieId < 0)
         {
           return;
@@ -1026,12 +1026,12 @@ namespace MediaPortal.Video.Database
           "SELECT * FROM path,files WHERE path.idPath=files.idPath AND files.idmovie={0} ORDER BY strFilename ASC",
           lMovieId);
         SQLiteResultSet results = m_db.Execute(strSQL);
-        
+
         if (results.Rows.Count == 0)
         {
           return;
         }
-        
+
         for (int i = 0; i < results.Rows.Count; ++i)
         {
           string strFile = DatabaseUtility.Get(results, i, "files.strFilename");
