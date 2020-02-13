@@ -221,11 +221,7 @@ namespace MediaPortal.GUI.Pictures
     {
       filename = string.Empty;
       string mapurl = GUILocalizeStrings.Get(9090);
-      if (string.IsNullOrEmpty(mapurl))
-      {
-        return string.Empty;
-      }
-      if (!mapurl.StartsWith(@"http://") && !mapurl.StartsWith(@"https://"))
+      if (!Util.Utils.IsURL(mapurl))
       {
         return string.Empty;
       }
@@ -238,7 +234,7 @@ namespace MediaPortal.GUI.Pictures
       }
       catch
       {
-        Log.Debug("GetMapURL: wrong map URL {0}", GUILocalizeStrings.Get(9090));
+        Log.Debug("GetMapURL: Wrong map URL {0}", GUILocalizeStrings.Get(9090));
       }
       return string.Empty;
     }
@@ -246,11 +242,7 @@ namespace MediaPortal.GUI.Pictures
     private string GetAddressURL(double lat, double lon)
     {
       string addrurl = GUILocalizeStrings.Get(9091);
-      if (string.IsNullOrEmpty(addrurl))
-      {
-        return string.Empty;
-      }
-      if (!addrurl.StartsWith(@"http://") && !addrurl.StartsWith(@"https://"))
+      if (!Util.Utils.IsURL(addrurl))
       {
         return string.Empty;
       }
@@ -262,7 +254,7 @@ namespace MediaPortal.GUI.Pictures
       }
       catch
       {
-        Log.Debug("GetAddressURL: wrong Address URL {0}", GUILocalizeStrings.Get(9090));
+        Log.Debug("GetAddressURL: Wrong Address URL {0}", GUILocalizeStrings.Get(9090));
       }
       return string.Empty;
     }
