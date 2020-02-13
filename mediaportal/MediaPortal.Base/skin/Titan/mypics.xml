@@ -89,17 +89,17 @@
     <!-- HDR -->
 
     <control>
-        <description>HDR banner</description>
-        <id>0</id>
-        <type>image</type>
-        <posX>381</posX>
-        <posY>360</posY>
-        <width>122</width>
-        <height>122</height>
-        <texture>isHDR.png</texture>                                                  
-        <visible>[facadeview.list]+Control.IsVisible(50)+string.equals(#pictures.exif.ishdr,true)</visible>
-    	<animation effect="fade" time="0">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
+      <description>HDR banner</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>381</posX>
+      <posY>360</posY>
+      <width>122</width>
+      <height>122</height>
+      <texture>isHDR.png</texture>                                                  
+      <visible>[facadeview.list]+Control.IsVisible(50)+string.equals(#pictures.exif.ishdr,true)</visible>
+      <animation effect="fade" time="0">WindowOpen</animation>
+      <animation effect="fade" time="0">WindowClose</animation>
     </control>
 
     <control>
@@ -116,6 +116,24 @@
       <shouldCache>true</shouldCache>
       <texture>#pictures.exif.images.vertical</texture>
       <visible>facadeview.list+Control.IsVisible(50)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+  	  <description>EXIF Logo</description>
+      <type>image</type>
+      <id>0</id>
+   	  <posX>20</posX>
+      <posY>50</posY>
+      <width>1900</width>
+      <height>30</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <shouldCache>true</shouldCache>
+      <texture>#pictures.exif.images.horizontal</texture>
+      <visible>!facadeview.list+Control.IsVisible(50)</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
 	  <animation effect="fade" time="250">WindowClose</animation>
     </control>
