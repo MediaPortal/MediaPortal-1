@@ -429,6 +429,15 @@ namespace MediaPortal.Util
       return string.Format("{0:f} {1}B", beautySize, sizes[i - 1]);
     }
 
+    public static bool IsURL(string strPath)
+    {
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
+      return (strPath.Length > 10 && (strPath.StartsWith(@"http://") || strPath.StartsWith(@"https://")));
+    }
+    
     /// <summary>
     /// Returns whether a file is TV
     /// Will also return true is file is Radio as both share same format
