@@ -1537,7 +1537,84 @@ namespace MediaPortal.Util
         dimensions = MyImage.Size;
       }
     }
-  }
 
-//public class Picture
+    public static Image CalculateHistogram(string strFile)
+    {
+      if (!File.Exists(strFile))
+      {
+        return new Bitmap(1, 1);
+      }
+
+      using (Image MyImage = Image.FromFile(strFile))
+      {
+        return CalculateHistogram(MyImage);
+      }
+    }
+
+    public static Image CalculateHistogram(Image image)
+    {
+      Bitmap histogram = null;
+      if (image != null) 
+      {
+        int width = 768, height = 600;
+        Bitmap bmp = new Bitmap(image);
+        histogram = new Bitmap(width, height);
+        int[] R = new int[256];
+        int[] G = new int[256];
+        int[] B = new int[256];
+        int i, j;
+        Color color;
+        for (i = 0; i < bmp.Width; ++i)
+        {
+          for (j = 0; j < bmp.Height; ++j) 
+          {
+            color = bmp.GetPixel (i, j);
+            ++R[color.R];
+            ++G[color.G];
+            ++B[color.B];
+          }
+        }
+        int max = 0;
+        for (i = 0; i < 256; ++i)
+        {
+          if (R[i] > max)
+          {
+            max = R[i];
+          }
+          if (G[i] > max)
+          {
+            max = G[i];
+          }
+          if (B[i] > max)
+          {
+            max = B[i];
+          }
+        }
+        double point = (double)max / height;
+        for (i = 0; i < width - 3; ++i) 
+        {
+          for (j = height - 1; j > height - R[i / 3] / point; --j) 
+          {
+            histogram.SetPixel(i, j, Color.Red);
+          }
+          ++i;
+          for (j = height - 1; j > height - G[i / 3] / point; --j) 
+          {
+            histogram.SetPixel(i, j, Color.Green);
+          }
+          ++i;
+          for (j = height - 1; j > height - B[i / 3] / point; --j) 
+          {
+            histogram.SetPixel(i, j, Color.Blue);
+          }
+        }
+      } 
+      else
+      {
+        histogram = new Bitmap(1, 1);
+      }
+      return histogram;    
+    }
+  }
+  // public class Picture
 }
