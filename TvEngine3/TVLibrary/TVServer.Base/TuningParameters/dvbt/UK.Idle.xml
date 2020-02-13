@@ -1,36 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <!-- PSB1 --><!-- [pre-700 13/11/2019] -->
-  <DVBTTuning>
-    <Frequency>498000</Frequency><!-- C24 -->
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- PSB1 --><!-- [post-700 13/11/2019] -->
+  <!-- PSB1 -->
   <DVBTTuning>
     <Frequency>490000</Frequency><!-- C23 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- PSB2 --><!-- [pre-700 13/11/2019] -->
-  <DVBTTuning>
-    <Frequency>474000</Frequency><!-- C21 -->
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- PSB2 --><!-- [post-700 13/11/2019] -->
+  <!-- PSB2 -->
   <DVBTTuning>
     <Frequency>514000</Frequency><!-- C26 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- PSB3 --><!-- [pre-700 13/11/2019] -->
-  <DVBTTuning>
-    <Frequency>522000</Frequency><!-- C27 -->
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- PSB3 --><!-- [post-700 13/11/2019] -->
+  <!-- PSB3 -->
   <DVBTTuning>
     <Frequency>546000</Frequency><!-- C30 -->
     <BandWidth>8</BandWidth>
@@ -38,23 +20,17 @@
   </DVBTTuning>
   <!-- COM4 -->
   <DVBTTuning>
-    <Frequency>642000</Frequency><!-- C42 -->
+    <Frequency>562000</Frequency><!-- C32 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <!-- COM5 -->
   <DVBTTuning>
-    <Frequency>666000</Frequency><!-- C45 -->
+    <Frequency>586000</Frequency><!-- C35 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- COM6 --><!-- [pre-700 23/10/2019] -->
-  <DVBTTuning>
-    <Frequency>618000</Frequency><!-- C39 -->
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- COM6 --><!-- [post-700 23/10/2019] -->
+  <!-- COM6 -->
   <DVBTTuning>
     <Frequency>578000</Frequency><!-- C34 -->
     <BandWidth>8</BandWidth>
