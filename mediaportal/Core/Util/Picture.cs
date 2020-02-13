@@ -23,19 +23,19 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+
 using MediaPortal.ExtensionMethods;
+using MediaPortal.GUI.Library;
+
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.WindowsAPICodePack.Shell;
+
 using Direct3D = Microsoft.DirectX.Direct3D;
-using MediaPortal.GUI.Library;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 using ScaleTransform = System.Windows.Media.ScaleTransform;
-
 
 namespace MediaPortal.Util
 {
@@ -1538,11 +1538,30 @@ namespace MediaPortal.Util
       }
     }
 
+    public static bool GetHistogramImage(string strFile, string strTarget)
+    {
+      Image image = CalculateHistogram(strFile);
+      if (image == null)
+      {
+        return false;
+      }
+      try
+      {
+        image.Save(strTarget, ImageFormat.Png);
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture: Error saving Histogram Image {0} - {1}", strTarget, ex.Message);
+      }
+      return false;
+    }
+
     public static Image CalculateHistogram(string strFile)
     {
       if (!File.Exists(strFile))
       {
-        return new Bitmap(1, 1);
+        return null;
       }
 
       using (Image MyImage = Image.FromFile(strFile))
@@ -1562,8 +1581,9 @@ namespace MediaPortal.Util
         int[] R = new int[256];
         int[] G = new int[256];
         int[] B = new int[256];
+        int[] L = new int[256];
         int i, j;
-        Color color;
+        System.Drawing.Color color;
         for (i = 0; i < bmp.Width; ++i)
         {
           for (j = 0; j < bmp.Height; ++j) 
@@ -1577,6 +1597,11 @@ namespace MediaPortal.Util
         int max = 0;
         for (i = 0; i < 256; ++i)
         {
+          L[i] = Convert.ToInt32(0.3 * R[i] + 0.59 * G[i] + 0.11 * B[i]);
+          if (L[i] > max)
+          {
+            max = L[i];
+          }
           if (R[i] > max)
           {
             max = R[i];
@@ -1591,28 +1616,29 @@ namespace MediaPortal.Util
           }
         }
         double point = (double)max / height;
-        for (i = 0; i < width - 3; ++i) 
+        for (i = 0; i < width - 4; ++i) 
         {
-          for (j = height - 1; j > height - R[i / 3] / point; --j) 
+          for (j = height - 1; j > height - L[i / 4] / point; --j)
           {
-            histogram.SetPixel(i, j, Color.Red);
+            histogram.SetPixel(i, j, System.Drawing.Color.Black);
           }
           ++i;
-          for (j = height - 1; j > height - G[i / 3] / point; --j) 
+          for (j = height - 1; j > height - R[i / 4] / point; --j) 
           {
-            histogram.SetPixel(i, j, Color.Green);
+            histogram.SetPixel(i, j, System.Drawing.Color.Red);
           }
           ++i;
-          for (j = height - 1; j > height - B[i / 3] / point; --j) 
+          for (j = height - 1; j > height - G[i / 4] / point; --j) 
           {
-            histogram.SetPixel(i, j, Color.Blue);
+            histogram.SetPixel(i, j, System.Drawing.Color.Green);
+          }
+          ++i;
+          for (j = height - 1; j > height - B[i / 4] / point; --j) 
+          {
+            histogram.SetPixel(i, j, System.Drawing.Color.Blue);
           }
         }
       } 
-      else
-      {
-        histogram = new Bitmap(1, 1);
-      }
       return histogram;    
     }
   }

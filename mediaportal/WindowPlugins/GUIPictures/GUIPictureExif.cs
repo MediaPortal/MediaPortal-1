@@ -41,7 +41,6 @@ namespace MediaPortal.GUI.Pictures
 
     [SkinControl(2)] protected GUIImage imgPicture = null;
     [SkinControl(3)] protected GUIListControl listExifProperties = null;
-    [SkinControl(5)] protected GUIImage imgExif = null;
 
     #endregion
 
@@ -100,7 +99,8 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
 
-      GUIPropertyManager.SetProperty("#pictures.exif.images", string.Empty);
+      GUIPropertyManager.SetProperty("#pictures.exif.images.vertical", string.Empty);
+      GUIPropertyManager.SetProperty("#pictures.exif.images.horizontal", string.Empty);
 
       SetExifGUIListItems();
       Update();
@@ -193,11 +193,6 @@ namespace MediaPortal.GUI.Pictures
         {
           imgPicture.Dispose();
           imgPicture.AllocResources();
-        }
-        if (imgExif != null)
-        {
-          imgExif.Dispose();
-          imgExif.AllocResources();
         }
 
         GUIPropertyManager.SetProperty("#pictures.exif.picture", _currentPicture);
@@ -302,28 +297,54 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
+    private void GetHistogram()
+    {
+      if (string.IsNullOrEmpty(_currentPicture))
+      {
+        return;
+      }
+
+      string filename = Path.GetTempFileName() + ".png";
+      if (Util.Picture.GetHistogramImage(_currentPicture, filename))
+      {
+        GUIListItem fileitem = new GUIListItem();
+        fileitem.Label = GUILocalizeStrings.Get(9040);
+        fileitem.Label2 = GUILocalizeStrings.Get(9040);
+        fileitem.DVDLabel = filename;
+        fileitem.IconImage = Thumbs.Pictures + @"\exif\data\histogram.png";
+        fileitem.ThumbnailImage = fileitem.IconImage;
+        fileitem.OnItemSelected += OnItemSelected;
+        listExifProperties.Add(fileitem);
+      }
+    }
+
     private void Refresh()
     {
       SetProperties();
-
-      if (imgExif != null)
-      {
-        imgExif.Refresh();
-      }
     }
 
     private void SetProperties()
     {
       _currentMetaData.SetExifProperties();
 
-      int width = imgExif != null ? imgExif.Width < imgExif.Height ? 96 : 0 : 96;
-      int height = imgExif != null ? imgExif.Width < imgExif.Height ? 0 : 96 : 0;
+      int width = 96;
+      int height = 0;
 
-      GUIPropertyManager.SetProperty("#pictures.exif.images", string.Empty);
+      GUIPropertyManager.SetProperty("#pictures.exif.images.vertical", string.Empty);
       List<GUIOverlayImage> exifIconImages = _currentMetaData.GetExifInfoOverlayImage(ref width, ref height);
       if (exifIconImages != null && exifIconImages.Count > 0)
       {
-        GUIPropertyManager.SetProperty("#pictures.exif.images", GUIImageAllocator.BuildConcatImage("Exif:Details", string.Empty, width, height, exifIconImages));
+        GUIPropertyManager.SetProperty("#pictures.exif.images.vertical", GUIImageAllocator.BuildConcatImage("Exif:Icons:V:", string.Empty, width, height, exifIconImages));
+      }
+
+      width = 0;
+      height = 96;
+
+      GUIPropertyManager.SetProperty("#pictures.exif.images.horizontal", string.Empty);
+      exifIconImages = _currentMetaData.GetExifInfoOverlayImage(ref width, ref height);
+      if (exifIconImages != null && exifIconImages.Count > 0)
+      {
+        GUIPropertyManager.SetProperty("#pictures.exif.images.horizontal", GUIImageAllocator.BuildConcatImage("Exif:Icons:H:", string.Empty, width, height, exifIconImages));
       }
     }
 
@@ -334,7 +355,7 @@ namespace MediaPortal.GUI.Pictures
         if (item != null)
         {
           GUIPropertyManager.SetProperty("#selecteditem", item.Label2 + ": " + item.Label);
-          GUIPropertyManager.SetProperty("#pictures.exif.map", item.DVDLabel);
+          GUIPropertyManager.SetProperty("#pictures.exif.additional", item.DVDLabel);
         }
       }
       catch (Exception ex)
@@ -422,11 +443,15 @@ namespace MediaPortal.GUI.Pictures
             }
           }
         }
-        if (!string.IsNullOrEmpty(addrurl))
+        ThreadPool.QueueUserWorkItem(delegate
         {
-          ThreadPool.QueueUserWorkItem(delegate { GetAddress(addrurl); });
-        }
-
+          if (!string.IsNullOrEmpty(addrurl))
+          {
+            GetAddress(addrurl);
+          }
+          GetHistogram();
+        });
+        
         if (listExifProperties.Count > 0)
         {
           listExifProperties.SelectedListItemIndex = 0;
@@ -464,10 +489,6 @@ namespace MediaPortal.GUI.Pictures
       if (imgPicture != null)
       {
         imgPicture.Dispose();
-      }
-      if (imgExif != null)
-      {
-        imgExif.Dispose();
       }
     }
 

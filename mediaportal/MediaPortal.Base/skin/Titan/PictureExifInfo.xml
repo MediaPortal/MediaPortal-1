@@ -74,7 +74,7 @@
       <posY>362</posY>
       <width>556</width>
       <height>556</height>
-      <texture>#pictures.exif.map</texture>
+      <texture>#pictures.exif.additional</texture>
       <keepaspectratio>yes</keepaspectratio>
       <align>center</align>
       <valign>top</valign>
@@ -168,7 +168,7 @@
     <control>
       <description>EXIF Logo</description>
       <type>image</type>
-      <id>5</id>
+      <id>0</id>
       <posX>70</posX>
       <posY>360</posY>
       <width>30</width>
@@ -177,7 +177,7 @@
       <valign>top</valign>
       <keepaspectratio>yes</keepaspectratio>
       <shouldCache>true</shouldCache>
-      <texture>#pictures.exif.images</texture>
+      <texture>#pictures.exif.images.vertical</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>

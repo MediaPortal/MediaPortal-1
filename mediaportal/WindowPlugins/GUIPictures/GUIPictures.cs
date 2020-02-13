@@ -424,7 +424,6 @@ namespace MediaPortal.GUI.Pictures
     [SkinControl(6)] protected GUIButtonControl btnSlideShow = null;
     [SkinControl(7)] protected GUIButtonControl btnSlideShowRecursive = null;
     [SkinControl(8)] protected GUIButtonControl btnSearch = null;
-    [SkinControl(55)] protected GUIImage imgExif = null;
 
     private const int MAX_PICS_PER_DATE = 1000;
     private PicturesFolderWatcherHelper _pictureFolderWatcher;
@@ -779,6 +778,8 @@ namespace MediaPortal.GUI.Pictures
 
       GUIPropertyManager.SetProperty("#pictures.filename", string.Empty);
       GUIPropertyManager.SetProperty("#pictures.path", string.Empty);
+      GUIPropertyManager.SetProperty("#pictures.exif.images.vertical", string.Empty);
+      GUIPropertyManager.SetProperty("#pictures.exif.images.horizontal", string.Empty);
 
       if (!IsPictureWindow(PreviousWindowId))
       {
@@ -962,11 +963,6 @@ namespace MediaPortal.GUI.Pictures
 
         _queueItemsEvent.Set();
         _queuePicturesEvent.Set();
-      }
-
-      if (imgExif != null)
-      {
-        imgExif.Dispose();
       }
 
       GUIImageAllocator.ClearCachedAllocatorImages();
@@ -4031,17 +4027,30 @@ namespace MediaPortal.GUI.Pictures
     {
       metadata.SetExifProperties();
 
-      int width = imgExif != null ? imgExif.Width < imgExif.Height ? 96 : 0 : 96;
-      int height = imgExif != null ? imgExif.Width < imgExif.Height ? 0 : 96 : 0;
+      int width = 96;
+      int height = 0;
 
       List<GUIOverlayImage> exifIconImages = metadata.GetExifInfoOverlayImage(ref width, ref height);
       if (exifIconImages != null && exifIconImages.Count > 0)
       {
-        GUIPropertyManager.SetProperty("#pictures.exif.images", GUIImageAllocator.BuildConcatImage("Exif:Icons", string.Empty, width, height, exifIconImages));
+        GUIPropertyManager.SetProperty("#pictures.exif.images.vertical", GUIImageAllocator.BuildConcatImage("Exif:Icons:V:", string.Empty, width, height, exifIconImages));
       }
       else
       {
-        GUIPropertyManager.SetProperty("#pictures.exif.images", string.Empty);
+        GUIPropertyManager.SetProperty("#pictures.exif.images.vertical", string.Empty);
+      }
+
+      width = 96;
+      height = 0;
+
+      exifIconImages = metadata.GetExifInfoOverlayImage(ref width, ref height);
+      if (exifIconImages != null && exifIconImages.Count > 0)
+      {
+        GUIPropertyManager.SetProperty("#pictures.exif.images.horizontal", GUIImageAllocator.BuildConcatImage("Exif:Icons:H:", string.Empty, width, height, exifIconImages));
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#pictures.exif.images.horizontal", string.Empty);
       }
     }
 
