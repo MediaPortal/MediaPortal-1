@@ -4040,8 +4040,8 @@ namespace MediaPortal.GUI.Pictures
         GUIPropertyManager.SetProperty("#pictures.exif.images.vertical", string.Empty);
       }
 
-      width = 96;
-      height = 0;
+      width = 0;
+      height = 96;
 
       exifIconImages = metadata.GetExifInfoOverlayImage(ref width, ref height);
       if (exifIconImages != null && exifIconImages.Count > 0)
