@@ -1598,6 +1598,7 @@ namespace MediaPortal.Util
         for (i = 0; i < 256; ++i)
         {
           L[i] = Convert.ToInt32(0.3 * R[i] + 0.59 * G[i] + 0.11 * B[i]);
+
           if (L[i] > max)
           {
             max = L[i];
@@ -1615,30 +1616,30 @@ namespace MediaPortal.Util
             max = B[i];
           }
         }
-        double point = (double)max / height;
-        for (i = 0; i < width - 4; ++i) 
+        double point = (double) max / height;
+        for (i = 0; i < width - 4; ++i)
         {
-          for (j = height - 1; j > height - L[i / 4] / point; --j)
-          {
-            histogram.SetPixel(i, j, System.Drawing.Color.Black);
-          }
-          ++i;
-          for (j = height - 1; j > height - R[i / 4] / point; --j) 
+          for (j = height - 1; j > height - R[i / 3] / point; --j)
           {
             histogram.SetPixel(i, j, System.Drawing.Color.Red);
           }
           ++i;
-          for (j = height - 1; j > height - G[i / 4] / point; --j) 
+          for (j = height - 1; j > height - G[i / 3] / point; --j)
           {
             histogram.SetPixel(i, j, System.Drawing.Color.Green);
           }
           ++i;
-          for (j = height - 1; j > height - B[i / 4] / point; --j) 
+          for (j = height - 1; j > height - B[i / 3] / point; --j)
           {
             histogram.SetPixel(i, j, System.Drawing.Color.Blue);
           }
+          ++i;
+          for (j = height - 1; j > height - L[i / 3] / point; --j)
+          {
+            histogram.SetPixel(i, j, System.Drawing.Color.Black);
+          }
         }
-      } 
+      }
       return histogram;    
     }
   }
