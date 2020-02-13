@@ -323,7 +323,7 @@
 		<String id="358">Все альбомы</String>
 		<String id="359">Новые альбомы</String>
 		<String id="360">Заставка</String>
-		<String id="361">Слайд-шоу в случ.порядке</String>
+		<String id="361">Рекурсивное слайд-шоу</String>
 		<String id="362">Уровень затухания заставки (%)</String>
 		<String id="363">имени файла</String>
 		<String id="364">Прямой вывод многоканальных DD/DTS</String>
