@@ -112,19 +112,19 @@ namespace MediaPortal.GUI.Pictures
       ReleaseResources();
       base.OnPageDestroy(newWindowId);
     }
-    
+
     protected override void OnShowContextMenu()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
-      
+
       if (dlg == null)
       {
         return;
       }
-      
+
       dlg.Reset();
       dlg.SetHeading(498); // Menu
-      
+
       // Dialog items
       dlg.AddLocalizedString(2168); // Update Exif
 
@@ -135,7 +135,7 @@ namespace MediaPortal.GUI.Pictures
       {
         return;
       }
-      
+
       switch (dlg.SelectedId)
       {
         case 2168: // Update Exif
@@ -168,7 +168,7 @@ namespace MediaPortal.GUI.Pictures
       get { return _currentPicture; }
       set { _currentPicture = value; }
     }
-    
+
     private void Update()
     {
       try
@@ -294,6 +294,7 @@ namespace MediaPortal.GUI.Pictures
         fileitem.ThumbnailImage = fileitem.IconImage;
         fileitem.OnItemSelected += OnItemSelected;
         listExifProperties.Add(fileitem);
+        GUIPropertyManager.SetProperty("#itemcount", listExifProperties.Count.ToString());
       }
     }
 
@@ -315,6 +316,7 @@ namespace MediaPortal.GUI.Pictures
         fileitem.ThumbnailImage = fileitem.IconImage;
         fileitem.OnItemSelected += OnItemSelected;
         listExifProperties.Add(fileitem);
+        GUIPropertyManager.SetProperty("#itemcount", listExifProperties.Count.ToString());
       }
     }
 
@@ -350,7 +352,7 @@ namespace MediaPortal.GUI.Pictures
 
     private void OnItemSelected(GUIListItem item, GUIControl parent)
     {
-      try 
+      try
       {
         if (item != null)
         {
@@ -366,7 +368,7 @@ namespace MediaPortal.GUI.Pictures
 
     private void SetExifGUIListItems()
     {
-      try 
+      try
       {
         if (listExifProperties != null)
         {
@@ -376,7 +378,7 @@ namespace MediaPortal.GUI.Pictures
         {
           return;
         }
-        
+
         GUIListItem fileitem = new GUIListItem();
         fileitem.Label = Path.GetFileNameWithoutExtension(_currentPicture).ToUpperInvariant();
         fileitem.Label2 = GUILocalizeStrings.Get(863);
@@ -397,10 +399,10 @@ namespace MediaPortal.GUI.Pictures
           switch (prop.Name)
           {
             case nameof(ExifMetadata.Metadata.ImageDimensions):
-              value = _currentMetaData.ImageDimensionsAsString(); 
+              value = _currentMetaData.ImageDimensionsAsString();
               break;
             case nameof(ExifMetadata.Metadata.Resolution):
-              value = _currentMetaData.ResolutionAsString(); 
+              value = _currentMetaData.ResolutionAsString();
               break;
             case nameof(ExifMetadata.Metadata.Location):
               if (_currentMetaData.Location != null)
@@ -451,7 +453,7 @@ namespace MediaPortal.GUI.Pictures
           }
           GetHistogram();
         });
-        
+
         if (listExifProperties.Count > 0)
         {
           listExifProperties.SelectedListItemIndex = 0;
