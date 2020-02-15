@@ -160,15 +160,15 @@ namespace MediaPortal.GUI.Pictures
                       if (autocreateLargeThumbs && (!File.Exists(thumbnailImageL) || recreateThumbs))
                       {
                         thumbRet = Util.Picture.ReCreateThumbnail(item.Path, thumbnailImageL,
-                                                                (int) Thumbs.ThumbLargeResolution,
-                                                                (int) Thumbs.ThumbLargeResolution, iRotate,
+                                                                (int)Thumbs.ThumbLargeResolution,
+                                                                (int)Thumbs.ThumbLargeResolution, iRotate,
                                                                 Thumbs.SpeedThumbsLarge,
                                                                 true, false, recreateThumbs);
                       }
                       if (!File.Exists(thumbnailImage) || recreateThumbs)
                       {
-                        thumbRet = Util.Picture.ReCreateThumbnail(item.Path, thumbnailImage, (int) Thumbs.ThumbResolution,
-                                                                (int) Thumbs.ThumbResolution, iRotate,
+                        thumbRet = Util.Picture.ReCreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution,
+                                                                (int)Thumbs.ThumbResolution, iRotate,
                                                                 Thumbs.SpeedThumbsSmall,
                                                                 false, false, recreateThumbs);
                       }
@@ -325,15 +325,15 @@ namespace MediaPortal.GUI.Pictures
           {
             if (autocreateLargeThumbs && !File.Exists(thumbnailImageL))
             {
-              thumbRet = Util.Picture.CreateThumbnail(item, thumbnailImageL, (int) Thumbs.ThumbLargeResolution,
-                                                      (int) Thumbs.ThumbLargeResolution, iRotate,
+              thumbRet = Util.Picture.CreateThumbnail(item, thumbnailImageL, (int)Thumbs.ThumbLargeResolution,
+                                                      (int)Thumbs.ThumbLargeResolution, iRotate,
                                                       Thumbs.SpeedThumbsLarge,
                                                       true, false);
             }
             if (!File.Exists(thumbnailImage))
             {
-              thumbRet = Util.Picture.CreateThumbnail(item, thumbnailImage, (int) Thumbs.ThumbResolution,
-                                                      (int) Thumbs.ThumbResolution, iRotate,
+              thumbRet = Util.Picture.CreateThumbnail(item, thumbnailImage, (int)Thumbs.ThumbResolution,
+                                                      (int)Thumbs.ThumbResolution, iRotate,
                                                       Thumbs.SpeedThumbsSmall,
                                                       false, false);
             }
@@ -527,13 +527,13 @@ namespace MediaPortal.GUI.Pictures
         if (xmlreader.GetValueAsBool("pictures", "rememberlastfolder", false))
         {
           string lastFolder = xmlreader.GetValueAsString("pictures", "lastfolder", currentFolder);
+          disp = (Display)xmlreader.GetValueAsInt("pictures", "lastview", (int)disp);
+          _searchMode = xmlreader.GetValueAsBool("pictures", "searchmode", false);
+          _searchString = xmlreader.GetValueAsString("pictures", "searchstring", string.Empty);
           if (lastFolder != "root:" + disp.ToString())
           {
             currentFolder = lastFolder;
           }
-          disp = (Display)xmlreader.GetValueAsInt("pictures", "lastview", (int)disp);
-          _searchMode = xmlreader.GetValueAsBool("pictures", "searchmode", false);
-          _searchString = xmlreader.GetValueAsString("pictures", "searchstring", string.Empty);
         }
         _switchRemovableDrives = xmlreader.GetValueAsBool("pictures", "SwitchRemovableDrives", true);
         //_hideExtensions = xmlreader.GetValueAsBool("gui", "hideextensions", true);
@@ -552,7 +552,7 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    protected override void SaveSettings() {}
+    protected override void SaveSettings() { }
 
     #endregion
 
@@ -597,7 +597,7 @@ namespace MediaPortal.GUI.Pictures
         base.Process();
         SlideShow._enableResumeMusic = false;
       }
-      else if (((GUIWindow.Window)(Enum.Parse(typeof(GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) == GUIWindow.Window.WINDOW_PICTURES) && !g_Player.Playing )
+      else if (((GUIWindow.Window)(Enum.Parse(typeof(GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) == GUIWindow.Window.WINDOW_PICTURES) && !g_Player.Playing)
       {
         if (SlideShow.pausedMusic && SlideShow._returnedFromVideoPlayback && !SlideShow._isBackgroundMusicPlaying)
         {
@@ -852,7 +852,7 @@ namespace MediaPortal.GUI.Pictures
       }
 
       object o;
-      FolderSettings.GetFolderSetting(folderName, "Pictures", typeof (MapSettings), out o);
+      FolderSettings.GetFolderSetting(folderName, "Pictures", typeof(MapSettings), out o);
       if (o != null)
       {
         mapSettings = o as MapSettings;
@@ -874,16 +874,8 @@ namespace MediaPortal.GUI.Pictures
           CurrentLayout = (Layout)mapSettings.ViewAs;
         }
       }
-      using (Profile.Settings xmlreader = new Profile.MPSettings())
-      {
-        if (xmlreader.GetValueAsBool("pictures", "rememberlastfolder", false))
-        {
-          xmlreader.SetValue("pictures", "lastfolder", folderName);
-          xmlreader.SetValue("pictures", "lastview", (int)disp);
-          xmlreader.SetValueAsBool("pictures", "searchmode", _searchMode);
-          xmlreader.SetValue("pictures", "searchstring", _searchString);
-        }
-      }
+
+      StoreLastFolder(folderName);
       CurrentSortAsc = mapSettings.SortAscending;
       CurrentLayout = (Layout)mapSettings.ViewAs;
     }
@@ -895,12 +887,48 @@ namespace MediaPortal.GUI.Pictures
         folder = "root:" + disp.ToString();
       }
 
-      FolderSettings.AddFolderSetting(folder, "Pictures", typeof (MapSettings), mapSettings);
+      FolderSettings.AddFolderSetting(folder, "Pictures", typeof(MapSettings), mapSettings);
     }
 
     #endregion
 
-    #region Selected Load/Save
+    #region Mediaportal Load/Save Settings
+
+    private void StoreLastFolder(string folderName)
+    {
+      if (string.IsNullOrEmpty(folderName))
+      {
+        return;
+      }
+
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        if (xmlreader.GetValueAsBool("pictures", "rememberlastfolder", false))
+        {
+          xmlreader.SetValue("pictures", "lastfolder", folderName);
+          xmlreader.SetValue("pictures", "lastview", (int)disp);
+          xmlreader.SetValueAsBool("pictures", "searchmode", _searchMode);
+          xmlreader.SetValue("pictures", "searchstring", _searchString);
+        }
+      }
+    }
+
+    private void ResetLeaveThumbsInFolder()
+    {
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        _tempLeaveThumbsInFolder = xmlreader.GetValueAsBool("thumbnails", "videosharepreview", false);
+        xmlreader.SetValueAsBool("thumbnails", "videosharepreview", false);
+      }
+    }
+
+    private void RestoreLeaveThumbsInFolder()
+    {
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
+      {
+        xmlwriter.SetValueAsBool("thumbnails", "videosharepreview", _tempLeaveThumbsInFolder);
+      }
+    }
 
     private void LoadSelected()
     {
@@ -2035,6 +2063,8 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
 
+      StoreLastFolder(currentFolder);
+
       SlideShow.Reset();
       SlideShow._showRecursive = true;
       if (disp == Display.Files)
@@ -2096,6 +2126,8 @@ namespace MediaPortal.GUI.Pictures
       {
         SlideShow._returnedFromVideoPlayback = false;
       }
+
+      StoreLastFolder(currentFolder);
 
       SlideShow.Reset();
       for (int i = 0; i < GetItemCount(); ++i)
@@ -2319,11 +2351,7 @@ namespace MediaPortal.GUI.Pictures
 
     protected override void OnPageLoad()
     {
-      using (Profile.Settings xmlreader = new Profile.MPSettings())
-      {
-        _tempLeaveThumbsInFolder = xmlreader.GetValueAsBool("thumbnails", "videosharepreview", false);
-        xmlreader.SetValueAsBool("thumbnails", "videosharepreview", false);
-      }
+      ResetLeaveThumbsInFolder();
       base.OnPageLoad();
 
       if (!PictureDatabase.DbHealth)
@@ -2483,10 +2511,7 @@ namespace MediaPortal.GUI.Pictures
       }
 
       // set back videosharepreview value
-      using (Profile.Settings xmlwriter = new Profile.MPSettings())
-      {
-        xmlwriter.SetValueAsBool("thumbnails", "videosharepreview", _tempLeaveThumbsInFolder);
-      }
+      RestoreLeaveThumbsInFolder();
 
       // Wait for thread ended ...
       if (_threadGetPicturesInfo != null)
