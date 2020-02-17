@@ -164,6 +164,11 @@ namespace MediaPortal.Picture.Database
       _database.GetPicturesByFilter(aSQL, out aPicturess, aFilter);
     }
 
+    public static void GetPicturesByFilter(string aSQL, out List<PictureData> aPicturess, string aFilter, bool fullInfo)
+    {
+      _database.GetPicturesByFilter(aSQL, out aPicturess, aFilter, fullInfo);
+    }
+
     public static bool DbHealth
     {
       get

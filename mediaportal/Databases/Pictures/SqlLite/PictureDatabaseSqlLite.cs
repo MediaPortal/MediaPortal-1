@@ -1736,6 +1736,12 @@ namespace MediaPortal.Picture.Database
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter)
     {
+      GetPicturesByFilter(aSQL, out aPictures, aFilter, false);
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter, bool fullInfo)
+    {
       aPictures = new List<PictureData>();
 
       if (m_db == null || string.IsNullOrEmpty(aSQL))
@@ -1778,7 +1784,7 @@ namespace MediaPortal.Picture.Database
               }
             }
 
-            if (!string.IsNullOrEmpty(picture.FileName))
+            if (fullInfo && !string.IsNullOrEmpty(picture.FileName))
             {
               picture.Exif = GetExifFromDB(picture.FileName);
               aPictures.Add(picture);

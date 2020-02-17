@@ -51,6 +51,7 @@ namespace MediaPortal.Picture.Database
     int ListPicsByDate(string Date, ref List<string> Pics);
     int CountPicsByDate(string Date);
     void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter);
+    void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter, bool fullInfo);
     string DatabaseName { get; }
     bool DbHealth { get; }
     void Optimize();

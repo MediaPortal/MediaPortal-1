@@ -2073,11 +2073,24 @@ namespace MediaPortal.GUI.Pictures
       }
       else if (disp == Display.Date)
       {
-        List<string> pics = new List<string>();
-        int totalCount = PictureDatabase.ListPicsByDate(currentFolder.Replace("\\", "-"), ref pics);
-        foreach (string pic in pics)
+        if (string.IsNullOrEmpty(currentFolder))
         {
-          SlideShow.Add(pic);
+          List<PictureData> aPictures = new List<PictureData>();
+          string SQL = "SELECT strFile FROM picture";
+          PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
+          foreach (PictureData pic in aPictures)
+          {
+            SlideShow.Add(pic.FileName);
+          }
+        }
+        else
+        {
+          List<string> pics = new List<string>();
+          int totalCount = PictureDatabase.ListPicsByDate(currentFolder.Replace("\\", "-"), ref pics);
+          foreach (string pic in pics)
+          {
+            SlideShow.Add(pic);
+          }
         }
         if (_autoShuffle)
         {
@@ -2086,11 +2099,24 @@ namespace MediaPortal.GUI.Pictures
       }
       else if (disp == Display.Keyword)
       {
-        List<string> pics = new List<string>();
-        int totalCount = PictureDatabase.ListPicsByKeyword(currentFolder.Replace("\\", string.Empty), ref pics);
-        foreach (string pic in pics)
+        if (string.IsNullOrEmpty(currentFolder))
         {
-          SlideShow.Add(pic);
+          List<PictureData> aPictures = new List<PictureData>();
+          string SQL = "SELECT strFile FROM picture";
+          PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
+          foreach (PictureData pic in aPictures)
+          {
+            SlideShow.Add(pic.FileName);
+          }
+        }
+        else
+        {
+          List<string> pics = new List<string>();
+          int totalCount = PictureDatabase.ListPicsByKeyword(currentFolder.Replace("\\", string.Empty), ref pics);
+          foreach (string pic in pics)
+          {
+            SlideShow.Add(pic);
+          }
         }
         if (_autoShuffle)
         {
