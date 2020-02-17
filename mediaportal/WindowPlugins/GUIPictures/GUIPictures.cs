@@ -2318,7 +2318,7 @@ namespace MediaPortal.GUI.Pictures
       if (item.IsFolder)
       {
         GUIPropertyManager.SetProperty("#pictures.filename", string.Empty);
-        GUIPropertyManager.SetProperty("#pictures.path", item.Path);
+        GUIPropertyManager.SetProperty("#pictures.path", currentFolder);
       }
       else
       {
@@ -2327,7 +2327,7 @@ namespace MediaPortal.GUI.Pictures
       }
 
       OnRetrieveThumbnailFiles(item);
-      if (item.AlbumInfoTag != null)
+      if (!item.IsFolder && item.AlbumInfoTag != null)
       {
         if (((ExifMetadata.Metadata)item.AlbumInfoTag).IsEmpty())
         {
@@ -3176,19 +3176,7 @@ namespace MediaPortal.GUI.Pictures
     /// false: if the specified window should not maintain virtual directory</returns>
     public static bool KeepVirtualDirectory(int windowId)
     {
-      if (windowId == (int)Window.WINDOW_PICTURES)
-      {
-        return true;
-      }
-      if (windowId == (int)Window.WINDOW_SLIDESHOW)
-      {
-        return true;
-      }
-      if (windowId == (int)Window.WINDOW_FULLSCREEN_VIDEO)
-      {
-        return true;
-      }
-      return false;
+      return (IsPictureWindow(windowId) || (windowId == (int)Window.WINDOW_FULLSCREEN_VIDEO))
     }
 
     private static bool ContainsFolderThumb(GUIListItem aItem)
