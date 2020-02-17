@@ -184,7 +184,7 @@ namespace MediaPortal.GUI.Pictures
 
           GUIControl.SelectControl(GetID, listExifProperties.GetID);
           GUIControl.FocusControl(GetID, listExifProperties.GetID);
-          GUIPropertyManager.SetProperty("#itemcount", listExifProperties.Count.ToString());
+          GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(listExifProperties.Count));
           listExifProperties.SelectedListItemIndex = _currentSelectedItem;
           SelectItem();
         }
