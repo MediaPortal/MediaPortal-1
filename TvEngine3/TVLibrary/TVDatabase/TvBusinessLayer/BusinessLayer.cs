@@ -3393,7 +3393,7 @@ namespace TvDatabase
     /// </summary>
     public void SetLogLevel()
     {
-      var logLevel = (LogLevel)int.Parse(GetSetting("loglevel", "5").Value); // debug is "5", info is "4"
+      var logLevel = (LogLevel)int.Parse(GetSetting("loglevel", "4").Value); // debug is "5", info is "4"
       Log.SetLogLevel(logLevel);
     }
   }

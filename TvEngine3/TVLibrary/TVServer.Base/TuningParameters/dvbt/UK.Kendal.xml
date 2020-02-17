@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <!-- PSB1 -->
+  <!-- PSB1 --><!-- [pre-700 29/04/2020] -->
   <DVBTTuning>
-    <Frequency>514000</Frequency><!-- C26 -->
+    <Frequency>786000</Frequency><!-- C60 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- PSB2 -->
+  <!-- PSB1 --><!-- [post-700 29/04/2020] -->
   <DVBTTuning>
-    <Frequency>490000</Frequency><!-- C23 -->
+    <Frequency>618000</Frequency><!-- C39 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- PSB3 -->
+  <!-- PSB2 --><!-- [pre-700 29/04/2020] -->
   <DVBTTuning>
-    <Frequency>538000</Frequency><!-- C29 -->
+    <Frequency>730000</Frequency><!-- C53 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- COM4 -->
+  <!-- PSB2 --><!-- [post-700 29/04/2020] -->
   <DVBTTuning>
-    <Frequency>650000</Frequency><!-- C43 -->
+    <Frequency>642000</Frequency><!-- C42 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- COM5 -->
+  <!-- PSB3 --><!-- [pre-700 29/04/2020] -->
   <DVBTTuning>
-    <Frequency>674000</Frequency><!-- C46 -->
+    <Frequency>762000</Frequency><!-- C57 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- COM6 -->
+  <!-- PSB3 --><!-- [post-700 29/04/2020] -->
   <DVBTTuning>
-    <Frequency>626000</Frequency><!-- C40 -->
+    <Frequency>666000</Frequency><!-- C45 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
