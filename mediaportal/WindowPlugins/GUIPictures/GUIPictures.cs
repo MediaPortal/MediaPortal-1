@@ -3176,7 +3176,7 @@ namespace MediaPortal.GUI.Pictures
     /// false: if the specified window should not maintain virtual directory</returns>
     public static bool KeepVirtualDirectory(int windowId)
     {
-      return (IsPictureWindow(windowId) || (windowId == (int)Window.WINDOW_FULLSCREEN_VIDEO))
+      return (IsPictureWindow(windowId) || (windowId == (int)Window.WINDOW_FULLSCREEN_VIDEO));
     }
 
     private static bool ContainsFolderThumb(GUIListItem aItem)
