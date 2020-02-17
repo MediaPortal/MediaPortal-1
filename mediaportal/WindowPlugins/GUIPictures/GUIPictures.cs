@@ -414,7 +414,7 @@ namespace MediaPortal.GUI.Pictures
       Size = 3
     }
 
-    private enum Display
+    public enum Display
     {
       Files = 0,
       Date = 1,
@@ -2897,6 +2897,11 @@ namespace MediaPortal.GUI.Pictures
     #endregion
 
     #region Various
+
+    public Display GetDisplayMode
+    {
+      get { return disp; }
+    }
 
     public static string GetCurrentFolder
     {
