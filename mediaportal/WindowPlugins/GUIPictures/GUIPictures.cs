@@ -2077,6 +2077,10 @@ namespace MediaPortal.GUI.Pictures
         {
           List<PictureData> aPictures = new List<PictureData>();
           string SQL = "SELECT strFile FROM picture";
+          if (PictureDatabase.FilterPrivate)
+          {
+            SQL = SQL + " WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')";
+          }
           PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
           foreach (PictureData pic in aPictures)
           {
@@ -2103,6 +2107,10 @@ namespace MediaPortal.GUI.Pictures
         {
           List<PictureData> aPictures = new List<PictureData>();
           string SQL = "SELECT strFile FROM picture";
+          if (PictureDatabase.FilterPrivate)
+          {
+            SQL = SQL + " WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')";
+          }
           PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
           foreach (PictureData pic in aPictures)
           {
@@ -2940,6 +2948,12 @@ namespace MediaPortal.GUI.Pictures
       List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(strDir);
       itemlist.Sort(new PictureSort(CurrentSortMethod, CurrentSortAsc));
       Filter(ref itemlist);
+      List<PictureData> aPictures = new List<PictureData>();
+      if (PictureDatabase.FilterPrivate)
+      {
+        string SQL = "SELECT strFile FROM picture WHERE idPicture IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')";
+        PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
+      }
       foreach (GUIListItem item in itemlist)
       {
         if (item.IsFolder)
@@ -2959,6 +2973,13 @@ namespace MediaPortal.GUI.Pictures
         }
         else if (!item.IsRemote)
         {
+          if (aPictures.Count > 0)
+          {
+            if (aPictures.FirstOrDefault(x => x.FileName == item.Path) != null)
+            {
+              continue;
+            }
+          }
           if (_playVideosInSlideshows)
           {
             SlideShow.Add(item.Path);
@@ -3506,10 +3527,25 @@ namespace MediaPortal.GUI.Pictures
           MissingThumbCacher ThumbWorker = new MissingThumbCacher(currentFolder, _autocreateLargeThumbs, false, true);
         }
 
+        List<PictureData> aPictures = new List<PictureData>();
+        if (PictureDatabase.FilterPrivate)
+        {
+          string SQL = "SELECT strFile FROM picture WHERE idPicture IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')";
+          PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
+        }
+
         // int itemIndex = 0;
         CountOfNonImageItems = 0;
         foreach (GUIListItem item in itemlist)
         {
+          if (aPictures.Count > 0)
+          {
+            if (aPictures.FirstOrDefault(x => x.FileName == item.Path) != null)
+            {
+              continue;
+            }
+          }
+
           item.AlbumInfoTag = new ExifMetadata.Metadata();
           item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
           item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
