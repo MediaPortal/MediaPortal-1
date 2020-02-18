@@ -4,6 +4,6 @@
   <defaultcontrol>4</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <include condition="#(eq(window.isvisible(2007,true)))" otherwise="DialogNotify.generic.xml">DialogNotify.slideshow.xml</include>
+    <include condition="#(eq(window.isvisible(2007),true))" otherwise="DialogNotify.generic.xml">DialogNotify.slideshow.xml</include>
   </controls>
 </window>
