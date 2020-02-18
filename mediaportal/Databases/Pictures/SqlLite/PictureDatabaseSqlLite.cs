@@ -1398,8 +1398,8 @@ namespace MediaPortal.Picture.Database
       lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = '" + Keyword + "'" +
-                                _filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty +
-                               " ORDER BY strDateTaken";
+                                (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
+                                " ORDER BY strDateTaken";
         try
         {
           SQLiteResultSet result = m_db.Execute(strSQL);
@@ -1430,8 +1430,8 @@ namespace MediaPortal.Picture.Database
       lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT COUNT(strFile) FROM picturekeywords WHERE strKeyword = '" + Keyword + "'" +
-                                _filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty +
-                               " ORDER BY strDateTaken";
+                                (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
+                                " ORDER BY strDateTaken";
         try
         {
           SQLiteResultSet result = m_db.Execute(strSQL);
@@ -1524,8 +1524,8 @@ namespace MediaPortal.Picture.Database
         try
         {
           string strSQL = "SELECT strFile FROM picturedata WHERE " + searchQuery +
-                                _filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty +
-                                " ORDER BY strDateTaken";
+                                  (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
+                                  " ORDER BY strDateTaken";
 
           SQLiteResultSet result = m_db.Execute(strSQL);
           if (result != null)
@@ -1563,8 +1563,8 @@ namespace MediaPortal.Picture.Database
         try
         {
           string strSQL = "SELECT COUNT(strFile) FROM picturedata WHERE " + searchQuery +
-                                _filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty +
-                                " ORDER BY strDateTaken";
+                                  (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
+                                  " ORDER BY strDateTaken";
           SQLiteResultSet result = m_db.Execute(strSQL);
           if (result != null)
           {
@@ -1683,8 +1683,8 @@ namespace MediaPortal.Picture.Database
       lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT strFile FROM picture WHERE strDateTaken LIKE '" + Date + "%'" +
-                        _filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty +
-                        " ORDER BY strDateTaken";
+                                (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
+                                " ORDER BY strDateTaken";
         SQLiteResultSet result;
         try
         {
@@ -1716,8 +1716,8 @@ namespace MediaPortal.Picture.Database
       lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT COUNT(strFile) FROM picture WHERE strDateTaken LIKE '" + Date + "%'" +
-                        _filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty +
-                        " ORDER BY strDateTaken";
+                                (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
+                                " ORDER BY strDateTaken";
         SQLiteResultSet result;
         try
         {
