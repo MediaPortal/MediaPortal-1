@@ -1589,7 +1589,7 @@ namespace MediaPortal.Util
         using (Graphics g = Graphics.FromImage(histogram))
         {
           Rectangle imageSize = new Rectangle(0, 0, width, height);
-          g.FillRectangle(Brushes.WhiteSmoke, imageSize);
+          g.FillRectangle(System.Drawing.Brushes.WhiteSmoke, imageSize);
         }
         int[] R = new int[256];
         int[] G = new int[256];
