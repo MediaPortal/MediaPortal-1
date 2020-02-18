@@ -1575,13 +1575,14 @@ namespace MediaPortal.Util
       Bitmap histogram = null;
       if (image != null) 
       {
-        int width = 768, height = 600;
+        int width = 768; // 1024
+        int height = 600;
         Bitmap bmp = new Bitmap(image);
         histogram = new Bitmap(width, height);
         int[] R = new int[256];
         int[] G = new int[256];
         int[] B = new int[256];
-        int[] L = new int[256];
+        // int[] L = new int[256];
         int i, j;
         System.Drawing.Color color;
         for (i = 0; i < bmp.Width; ++i)
@@ -1597,12 +1598,15 @@ namespace MediaPortal.Util
         int max = 0;
         for (i = 0; i < 256; ++i)
         {
-          L[i] = Convert.ToInt32(0.3 * R[i] + 0.59 * G[i] + 0.11 * B[i]);
+          /*
+          L[i] = Convert.ToInt32(0.3 * R[i] + 0.59 * G[i] + 0.11 * B[i]); // NTSC RGB
+          L[i] = Convert.ToInt32(0.21 * R[i] + 0.72 * G[i] + 0.7 * B[i]); // sRGB
 
           if (L[i] > max)
           {
             max = L[i];
           }
+          */
           if (R[i] > max)
           {
             max = R[i];
@@ -1617,27 +1621,29 @@ namespace MediaPortal.Util
           }
         }
         double point = (double) max / height;
-        for (i = 0; i < width - 4; ++i)
+        for (i = 0; i < width - 3; ++i) // 4
         {
-          for (j = height - 1; j > height - R[i / 3] / point; --j)
+          for (j = height - 1; j > height - R[i / 3] / point; --j) // 4
           {
             histogram.SetPixel(i, j, System.Drawing.Color.Red);
           }
           ++i;
-          for (j = height - 1; j > height - G[i / 3] / point; --j)
+          for (j = height - 1; j > height - G[i / 3] / point; --j) // 4
           {
             histogram.SetPixel(i, j, System.Drawing.Color.Green);
           }
           ++i;
-          for (j = height - 1; j > height - B[i / 3] / point; --j)
+          for (j = height - 1; j > height - B[i / 3] / point; --j) // 4
           {
             histogram.SetPixel(i, j, System.Drawing.Color.Blue);
           }
+          /*
           ++i;
-          for (j = height - 1; j > height - L[i / 3] / point; --j)
+          for (j = height - 1; j > height - L[i / 4] / point; --j)
           {
             histogram.SetPixel(i, j, System.Drawing.Color.Black);
           }
+          */
         }
       }
       return histogram;    
