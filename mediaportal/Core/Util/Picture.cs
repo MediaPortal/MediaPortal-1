@@ -1575,6 +1575,7 @@ namespace MediaPortal.Util
       {
         Log.Error("Picture: Calculate Histogram error {0} - {1}", strFile, ex.Message);
       }
+      return null;
     }
 
     public static Image CalculateHistogram(Image image)
