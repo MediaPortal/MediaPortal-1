@@ -1577,24 +1577,31 @@ namespace MediaPortal.Util
       {
         int width = 768; // 1024
         int height = 600;
-        Bitmap bmp = new Bitmap(image);
         histogram = new Bitmap(width, height);
+        using (Graphics g = Graphics.FromImage(histogram))
+        {
+          Rectangle imageSize = new Rectangle(0, 0, width, height);
+          g.FillRectangle(Brushes.WhiteSmoke, imageSize);
+        }
         int[] R = new int[256];
         int[] G = new int[256];
         int[] B = new int[256];
         // int[] L = new int[256];
+
+        Bitmap bmp = new Bitmap(image);
         int i, j;
         System.Drawing.Color color;
         for (i = 0; i < bmp.Width; ++i)
         {
           for (j = 0; j < bmp.Height; ++j) 
           {
-            color = bmp.GetPixel (i, j);
+            color = bmp.GetPixel(i, j);
             ++R[color.R];
             ++G[color.G];
             ++B[color.B];
           }
         }
+
         int max = 0;
         for (i = 0; i < 256; ++i)
         {
@@ -1620,6 +1627,7 @@ namespace MediaPortal.Util
             max = B[i];
           }
         }
+
         double point = (double) max / height;
         for (i = 0; i < width - 3; ++i) // 4
         {
