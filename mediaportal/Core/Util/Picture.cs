@@ -1564,9 +1564,16 @@ namespace MediaPortal.Util
         return null;
       }
 
-      using (Image MyImage = Image.FromFile(strFile))
+      try
       {
-        return CalculateHistogram(MyImage);
+        using (Image MyImage = Image.FromFile(strFile))
+        {
+          return CalculateHistogram(MyImage);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture: Calculate Histogram error {0} - {1}", strFile, ex.Message);
       }
     }
 
