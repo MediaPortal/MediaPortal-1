@@ -38,6 +38,7 @@ namespace MediaPortal.Picture.Database
   public class PictureDatabaseADO : IPictureDatabase, IDisposable
   {
     private SqlConnection _connection;
+    private bool _filterPrivate = true;
 
     public PictureDatabaseADO()
     {
@@ -404,6 +405,18 @@ namespace MediaPortal.Picture.Database
     public string DatabaseName
     {
       get { return _connection.ConnectionString; }
+    }
+
+    public bool FilterPrivate
+    {
+      get
+      {
+        return _filterPrivate;
+      }
+      set
+      {
+        _filterPrivate = value;
+      }
     }
   }
 }
