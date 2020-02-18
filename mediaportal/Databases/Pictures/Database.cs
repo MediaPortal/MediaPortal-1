@@ -177,11 +177,6 @@ namespace MediaPortal.Picture.Database
       }
     }
 
-    public static void Optimize()
-    {
-      _database.Optimize();
-    }
-
     public static string DatabaseName
     {
       get
@@ -190,8 +185,25 @@ namespace MediaPortal.Picture.Database
         {
           return _database.DatabaseName;
         }
-        return "";
+        return string.Empty;
       }
+    }
+
+    public static bool FilterPrivate
+    {
+      get
+      {
+        return _database.FilterPrivate;
+      }
+      set
+      {
+        _database.FilterPrivate = value;
+      }
+    }
+
+    public static void Optimize()
+    {
+      _database.Optimize();
     }
   }
 }

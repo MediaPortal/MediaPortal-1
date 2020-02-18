@@ -54,6 +54,7 @@ namespace MediaPortal.Picture.Database
     void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter, bool fullInfo);
     string DatabaseName { get; }
     bool DbHealth { get; }
+    bool FilterPrivate { get; set; }
     void Optimize();
   }
 }
