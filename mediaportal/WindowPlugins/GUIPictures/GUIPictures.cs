@@ -2952,8 +2952,9 @@ namespace MediaPortal.GUI.Pictures
       List<PictureData> aPictures = new List<PictureData>();
       if (PictureDatabase.FilterPrivate)
       {
-        string SQL = "SELECT strFile FROM picture WHERE idPicture IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')";
+        string SQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = 'Private' AND strFile LIKE '" + strDir + "%';";
         PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
+        Log.Debug("GUIPictures: Load {0} private images for filter.", aPictures.Count);
       }
       foreach (GUIListItem item in itemlist)
       {
@@ -3531,15 +3532,16 @@ namespace MediaPortal.GUI.Pictures
         List<PictureData> aPictures = new List<PictureData>();
         if (PictureDatabase.FilterPrivate)
         {
-          string SQL = "SELECT strFile FROM picture WHERE idPicture IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')";
+          string SQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = 'Private' AND strFile LIKE '" + currentFolder + "%';";
           PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
+          Log.Debug("GUIPictures: Load {0} private images for filter.", aPictures.Count);
         }
 
         // int itemIndex = 0;
         CountOfNonImageItems = 0;
         foreach (GUIListItem item in itemlist)
         {
-          if (aPictures.Count > 0)
+          if (!item.IsFolder && aPictures.Count > 0)
           {
             if (aPictures.FirstOrDefault(x => x.FileName == item.Path) != null)
             {
@@ -3668,7 +3670,7 @@ namespace MediaPortal.GUI.Pictures
             string month = strNewDirectory.Substring(5, 2);
             string day = strNewDirectory.Substring(8, 2);
             GUIListItem item = new GUIListItem("..");
-            item.Path = year + "\\" + month + "\\" + day;
+            item.Path = year + "\\" + month;
             item.IsFolder = true;
             Util.Utils.SetDefaultIcons(item);
             item.AlbumInfoTag = new ExifMetadata.Metadata();

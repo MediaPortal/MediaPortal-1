@@ -1758,39 +1758,50 @@ namespace MediaPortal.Picture.Database
         if (results != null)
         {
           int columnIndex = 0;
-          PictureData picture = new PictureData();
           for (int i = 0; i < results.Rows.Count; i++)
           {
-            SQLiteResultSet.Row fields = results.Rows[i];
+            SQLiteResultSet.Row row = results.Rows[i];
 
-            columnIndex = (int)results.ColumnIndices["strFile"];
-            if (columnIndex >= 0)
+            PictureData picture = new PictureData();
+
+            if (results.ColumnIndices.ContainsKey("strFile"))
             {
-              picture.FileName = fields.fields[columnIndex];
-            }
-
-            columnIndex = (int)results.ColumnIndices["strDateTaken"];
-            if (columnIndex >= 0)
-            {
-              string dateTaken = fields.fields[columnIndex];
-
-              try
+              columnIndex = (int)results.ColumnIndices["strFile"];
+              if (columnIndex >= 0)
               {
-                DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
-                dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
-                picture.DateTaken = DateTime.ParseExact(dateTaken, "d", dateTimeFormat);
-              }
-              catch (Exception ex)
-              {
-                Log.Error("Picture.DB.SQLite: GetPicturesByFilter Date parse Error: {0} stack:{1}", ex.Message, ex.StackTrace);
+                picture.FileName = row.fields[columnIndex];
               }
             }
 
-            if (fullInfo && !string.IsNullOrEmpty(picture.FileName))
+            if (results.ColumnIndices.ContainsKey("strDateTaken"))
+            {
+              columnIndex = (int)results.ColumnIndices["strDateTaken"];
+              if (columnIndex >= 0)
+              {
+                string dateTaken = row.fields[columnIndex];
+
+                try
+                {
+                  DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
+                  dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
+                  picture.DateTaken = DateTime.ParseExact(dateTaken, "d", dateTimeFormat);
+                }
+                catch (Exception ex)
+                {
+                  Log.Error("Picture.DB.SQLite: GetPicturesByFilter Date parse Error: {0} stack:{1}", ex.Message, ex.StackTrace);
+                }
+              }
+            }
+            if (string.IsNullOrEmpty(picture.FileName))
+            {
+              continue;
+            }
+
+            if (fullInfo)
             {
               picture.Exif = GetExifFromDB(picture.FileName);
-              aPictures.Add(picture);
             }
+            aPictures.Add(picture);
           }
         }
       }
@@ -1798,7 +1809,6 @@ namespace MediaPortal.Picture.Database
       {
         Log.Error("Picture.DB.SQLite: GetPictureByFilter err: {0} stack:{1}", ex.Message, ex.StackTrace);
       }
-
     }
 
     #region Transactions
