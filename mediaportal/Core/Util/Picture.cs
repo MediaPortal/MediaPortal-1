@@ -1566,7 +1566,7 @@ namespace MediaPortal.Util
 
       try
       {
-        using (Image MyImage = Image.FromFile(strFile))
+        using (Image MyImage = ImageFast.FromFile(strFile))
         {
           return CalculateHistogram(MyImage);
         }
