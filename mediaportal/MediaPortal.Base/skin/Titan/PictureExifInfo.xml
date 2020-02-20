@@ -15,6 +15,7 @@
       <posY>0</posY>
       <width>1920</width>
       <height>1080</height>
+      <exifrotation>true</exifrotation>
       <texture>#pictures.exif.picture</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
