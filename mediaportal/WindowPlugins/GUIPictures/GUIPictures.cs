@@ -3530,7 +3530,7 @@ namespace MediaPortal.GUI.Pictures
         List<PictureData> aPictures = new List<PictureData>();
         if (PictureDatabase.FilterPrivate)
         {
-          string SQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = 'Private' AND strFile LIKE '" + currentFolder + "%';";
+          string SQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = 'Private' AND strFile LIKE '" + currentFolder + "\\%';";
           aPictures = PictureDatabase.GetPicturesByFilter(SQL, "pictures");
           Log.Debug("GUIPictures: Load {0} private images for filter.", aPictures.Count);
         }
