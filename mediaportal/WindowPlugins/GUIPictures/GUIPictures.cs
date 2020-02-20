@@ -3472,7 +3472,7 @@ namespace MediaPortal.GUI.Pictures
 
       if (disp == Display.Files)
       {
-        LoadFileView(strNewDirectory);
+        LoadFileView();
       }
       else if (disp == Display.Date)
       {
@@ -3505,7 +3505,7 @@ namespace MediaPortal.GUI.Pictures
       GUIWaitCursor.Hide();
     }
 
-    private void LoadFileView(string strNewDirectory)
+    private void LoadFileView()
     {
       List<GUIListItem> itemlist;
 

@@ -1764,17 +1764,11 @@ namespace MediaPortal.Picture.Database
 
             PictureData picture = new PictureData();
 
-            if (results.ColumnIndices.ContainsKey("strFile"))
+            columnIndex = (int)results.ColumnIndices["strFile"];
+            if (columnIndex >= 0)
             {
-              columnIndex = (int)results.ColumnIndices["strFile"];
-              if (columnIndex >= 0)
-              {
-                picture.FileName = row.fields[columnIndex];
-              }
-            }
+              picture.FileName = row.fields[columnIndex];
 
-            if (results.ColumnIndices.ContainsKey("strDateTaken"))
-            {
               columnIndex = (int)results.ColumnIndices["strDateTaken"];
               if (columnIndex >= 0)
               {
@@ -1791,17 +1785,13 @@ namespace MediaPortal.Picture.Database
                   Log.Error("Picture.DB.SQLite: GetPicturesByFilter Date parse Error: {0} stack:{1}", ex.Message, ex.StackTrace);
                 }
               }
-            }
-            if (string.IsNullOrEmpty(picture.FileName))
-            {
-              continue;
-            }
 
-            if (fullInfo)
-            {
-              picture.Exif = GetExifFromDB(picture.FileName);
+              if (fullInfo)
+              {
+                picture.Exif = GetExifFromDB(picture.FileName);
+              }
+              pictures.Add(picture);
             }
-            pictures.Add(picture);
           }
         }
       }

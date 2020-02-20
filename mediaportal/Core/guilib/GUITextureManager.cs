@@ -333,11 +333,11 @@ namespace MediaPortal.GUI.Library
 
       try
       {
-        int width = 0;
-        int height = 0;
-
         if (MediaPortal.Util.Utils.FileExistsInCache(fileName))
         {
+          int width = 0;
+          int height = 0;
+
           Texture dxtexture = null;
           if (iRotation != 0)
           {
@@ -555,7 +555,9 @@ namespace MediaPortal.GUI.Library
     {
       width = 0;
       height = 0;
+#if DO_RESAMPLE
       Image imgSrc = null;
+#endif
       Texture texture = null;
       try
       {
@@ -644,6 +646,7 @@ namespace MediaPortal.GUI.Library
         width = info2.Width;
         height = info2.Height;
       }
+#if DO_RESAMPLE
       finally
       {
         if (imgSrc != null)
@@ -651,6 +654,7 @@ namespace MediaPortal.GUI.Library
           imgSrc.SafeDispose();
         }
       }
+#endif
       return texture;
     }
 
@@ -665,12 +669,11 @@ namespace MediaPortal.GUI.Library
       }
 
       Texture texture = null;
-      Image theImage = null;
       try
       {
         using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
         {
-          using (theImage = Image.FromStream(fs, true, false))
+          using (Image theImage = Image.FromStream(fs, true, false))
           {
             Log.Debug("TextureManager: Fast loaded texture {0}", fileName);
             if (theImage == null)
@@ -710,13 +713,6 @@ namespace MediaPortal.GUI.Library
       catch (Exception ex)
       {
         Log.Error("TextureManager: LoadGraphic: exception loading {0} {1}", fileName, ex.Message);
-      }
-      finally
-      {
-        if (theImage != null)
-        {
-          theImage.SafeDispose();
-        }
       }
       return texture;
     }
