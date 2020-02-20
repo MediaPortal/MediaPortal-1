@@ -25,10 +25,12 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.guilib;
 using MediaPortal.Util;
+
 using Microsoft.DirectX.Direct3D;
 using InvalidDataException = Microsoft.DirectX.Direct3D.InvalidDataException;
 
@@ -331,7 +333,8 @@ namespace MediaPortal.GUI.Library
 
       try
       {
-        int width, height;
+        int width = 0;
+        int height = 0;
 
         if (MediaPortal.Util.Utils.FileExistsInCache(fileName))
         {
@@ -662,11 +665,12 @@ namespace MediaPortal.GUI.Library
       }
 
       Texture texture = null;
+      Image theImage = null;
       try
       {
         using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
         {
-          using (Image theImage = Image.FromStream(fs, true, false))
+          using (theImage = Image.FromStream(fs, true, false))
           {
             Log.Debug("TextureManager: Fast loaded texture {0}", fileName);
             if (theImage == null)
@@ -674,10 +678,10 @@ namespace MediaPortal.GUI.Library
               return null;
             }
 
-            if (iRotate > 0)
+            if (iRotation > 0)
             {
               RotateFlipType fliptype;
-              switch (iRotate)
+              switch (iRotation)
               {
                 case 1:
                   fliptype = RotateFlipType.Rotate90FlipNone;
@@ -699,7 +703,7 @@ namespace MediaPortal.GUI.Library
             width = theImage.Size.Width;
             height = theImage.Size.Height;
 
-            texture = Picture.ConvertImageToTexture((Bitmap) theImage, lColorKey, Format.A8R8G8B8, out iWidth, out iHeight);
+            texture = Picture.ConvertImageToTexture((Bitmap) theImage, lColorKey, Format.A8R8G8B8, out width, out height);
           }
         }
       }
