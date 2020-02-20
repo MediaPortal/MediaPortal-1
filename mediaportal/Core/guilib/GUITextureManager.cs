@@ -672,11 +672,11 @@ namespace MediaPortal.GUI.Library
         {
           using (theImage = Image.FromStream(fs, true, false))
           {
-            Log.Debug("TextureManager: Fast loaded texture {0}|{1}", iRotation, fileName);
             if (theImage == null)
             {
               return null;
             }
+            Log.Debug("TextureManager: Fast loaded texture {0}|{1}", iRotation, fileName);
 
             if (iRotation > 0)
             {
