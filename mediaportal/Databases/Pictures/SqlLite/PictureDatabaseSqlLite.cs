@@ -1736,19 +1736,19 @@ namespace MediaPortal.Picture.Database
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
-    public void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter)
+    public List<PictureData> GetPicturesByFilter(string aSQL, string aFilter)
     {
-      GetPicturesByFilter(aSQL, out aPictures, aFilter, false);
+      return GetPicturesByFilter(aSQL, aFilter, false);
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
-    public void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter, bool fullInfo)
+    public List<PictureData> GetPicturesByFilter(string aSQL, string aFilter, bool fullInfo)
     {
-      aPictures = new List<PictureData>();
+      List<PictureData> pictures = new List<PictureData>();
 
       if (m_db == null || string.IsNullOrEmpty(aSQL))
       {
-        return;
+        return pictures;
       }
 
       Log.Debug("Picture.DB.SQLite: GetPicturesByFilter - SQL: {0}, Filter: {1}", aSQL, aFilter);
@@ -1801,7 +1801,7 @@ namespace MediaPortal.Picture.Database
             {
               picture.Exif = GetExifFromDB(picture.FileName);
             }
-            aPictures.Add(picture);
+            pictures.Add(picture);
           }
         }
       }
@@ -1809,6 +1809,7 @@ namespace MediaPortal.Picture.Database
       {
         Log.Error("Picture.DB.SQLite: GetPictureByFilter err: {0} stack:{1}", ex.Message, ex.StackTrace);
       }
+      return pictures;
     }
 
     #region Transactions

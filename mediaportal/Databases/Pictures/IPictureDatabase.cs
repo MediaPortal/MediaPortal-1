@@ -50,8 +50,8 @@ namespace MediaPortal.Picture.Database
     int ListDays(string Month, string Year, ref List<string> Days);
     int ListPicsByDate(string Date, ref List<string> Pics);
     int CountPicsByDate(string Date);
-    void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter);
-    void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter, bool fullInfo);
+    List<PictureData> GetPicturesByFilter(string aSQL, string aFilter);
+    List<PictureData> GetPicturesByFilter(string aSQL, string aFilter, bool fullInfo);
     string DatabaseName { get; }
     bool DbHealth { get; }
     bool FilterPrivate { get; set; }

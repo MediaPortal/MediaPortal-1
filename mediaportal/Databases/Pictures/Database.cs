@@ -159,14 +159,14 @@ namespace MediaPortal.Picture.Database
       return _database.CountPicsByDate(Date);
     }
 
-    public static void GetPicturesByFilter(string aSQL, out List<PictureData> aPicturess, string aFilter)
+    public static List<PictureData> GetPicturesByFilter(string aSQL,string aFilter)
     {
-      _database.GetPicturesByFilter(aSQL, out aPicturess, aFilter);
+      return _database.GetPicturesByFilter(aSQL, aFilter);
     }
 
-    public static void GetPicturesByFilter(string aSQL, out List<PictureData> aPicturess, string aFilter, bool fullInfo)
+    public static List<PictureData> GetPicturesByFilter(string aSQL, string aFilter, bool fullInfo)
     {
-      _database.GetPicturesByFilter(aSQL, out aPicturess, aFilter, fullInfo);
+      return _database.GetPicturesByFilter(aSQL, aFilter, fullInfo);
     }
 
     public static bool DbHealth

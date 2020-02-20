@@ -2076,13 +2076,12 @@ namespace MediaPortal.GUI.Pictures
       {
         if (string.IsNullOrEmpty(currentFolder))
         {
-          List<PictureData> aPictures = new List<PictureData>();
           string SQL = "SELECT strFile FROM picture";
           if (PictureDatabase.FilterPrivate)
           {
             SQL = SQL + " WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')";
           }
-          PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
+          List<PictureData> aPictures = PictureDatabase.GetPicturesByFilter(SQL, "pictures");
           foreach (PictureData pic in aPictures)
           {
             SlideShow.Add(pic.FileName);
@@ -2106,13 +2105,12 @@ namespace MediaPortal.GUI.Pictures
       {
         if (string.IsNullOrEmpty(currentFolder))
         {
-          List<PictureData> aPictures = new List<PictureData>();
           string SQL = "SELECT strFile FROM picture";
           if (PictureDatabase.FilterPrivate)
           {
             SQL = SQL + " WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')";
           }
-          PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
+          List<PictureData> aPictures = PictureDatabase.GetPicturesByFilter(SQL, "pictures");
           foreach (PictureData pic in aPictures)
           {
             SlideShow.Add(pic.FileName);
@@ -2949,11 +2947,11 @@ namespace MediaPortal.GUI.Pictures
       List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(strDir);
       itemlist.Sort(new PictureSort(CurrentSortMethod, CurrentSortAsc));
       Filter(ref itemlist);
-      List<PictureData> aPictures = new List<PictureData>();
+      List<PictureData> aPictures = null;
       if (PictureDatabase.FilterPrivate)
       {
         string SQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = 'Private' AND strFile LIKE '" + strDir + "%';";
-        PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
+        aPictures = PictureDatabase.GetPicturesByFilter(SQL, "pictures");
         Log.Debug("GUIPictures: Load {0} private images for filter.", aPictures.Count);
       }
       foreach (GUIListItem item in itemlist)
@@ -3533,7 +3531,7 @@ namespace MediaPortal.GUI.Pictures
         if (PictureDatabase.FilterPrivate)
         {
           string SQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = 'Private' AND strFile LIKE '" + currentFolder + "%';";
-          PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
+          aPictures = PictureDatabase.GetPicturesByFilter(SQL, "pictures");
           Log.Debug("GUIPictures: Load {0} private images for filter.", aPictures.Count);
         }
 
