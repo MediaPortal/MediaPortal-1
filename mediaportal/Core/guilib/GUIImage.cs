@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -59,20 +59,21 @@ namespace MediaPortal.GUI.Library
 
     /// <summary>The width of the current texture.</summary>
     private int _textureWidth = 0;
-
     private int _textureHeight = 0;
 
     /// <summary>The width of the image containing the textures.</summary>
     private int _imageWidth = 0;
-
     private int _imageHeight = 0;
+
     private int _selectedFrameNumber = 0;
     private int m_dwItems = 0;
     private int _currentAnimationLoop = 0;
     private int _currentFrameNumber = 0;
 
+    private int _iRotation = 0;
+
     [XMLSkinElement("colorkey")] protected long m_dwColorKey = 0;
-    [XMLSkinElement("texture")] protected string _textureFileNameTag = "";
+    [XMLSkinElement("texture")] protected string _textureFileNameTag = string.Empty;
     [XMLSkinElement("keepaspectratio")] protected bool _keepAspectRatio = false;
     [XMLSkinElement("zoom")] protected bool _zoomIn = false;
     [XMLSkinElement("zoomfromtop")] protected bool _zoomFromTop = false;
@@ -80,13 +81,13 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("RepeatBehavior")] protected RepeatBehavior _repeatBehavior = RepeatBehavior.Forever;
     [XMLSkin("texture", "flipX")] protected bool _flipX = false;
     [XMLSkin("texture", "flipY")] protected bool _flipY = false;
-    [XMLSkin("texture", "diffuse")] protected string _diffuseFileName = "";
-    [XMLSkin("texture", "overlay")] protected string _overlayFileName = "";
-    [XMLSkin("texture", "mask")] protected string _maskFileName = "";
+    [XMLSkin("texture", "diffuse")] protected string _diffuseFileName = string.Empty;
+    [XMLSkin("texture", "overlay")] protected string _overlayFileName = string.Empty;
+    [XMLSkin("texture", "mask")] protected string _maskFileName = string.Empty;
     [XMLSkinElement("filtered")] protected bool _filterImage = true;
     [XMLSkinElement("align")] protected Alignment _imageAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("valign")] protected VAlignment _imageVAlignment = VAlignment.ALIGN_TOP;
-    [XMLSkinElement("border")] protected string _strBorder = "";
+    [XMLSkinElement("border")] protected string _strBorder = string.Empty;
     [XMLSkin("border", "position")] protected BorderPosition _borderPosition = BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("border", "textureRepeat")] protected bool _borderTextureRepeat = false;
     [XMLSkin("border", "textureRotate")] protected bool _borderTextureRotate = false;
@@ -97,13 +98,15 @@ namespace MediaPortal.GUI.Library
     // implies use of e.g., "image_border_corner.png"
 
     [XMLSkin("border", "cornerRotate")] protected bool _borderCornerTextureRotate = true;
-    [XMLSkinElement("imagepath")] private string _imagePath = ""; // Image path used to store VUMeter files
+    [XMLSkinElement("imagepath")] private string _imagePath = string.Empty; // Image path used to store VUMeter files
 
     [XMLSkinElement("tileFill")] private bool _tileFill = false;
     // Will tile a texture to the rectangle rather than stretch it
 
     [XMLSkinElement("shouldCache")] private bool _shouldCache = false;
     // hint from the skin that the particular texture should be cached for perf reasons
+
+    [XMLSkinElement("exifrotation")] protected bool _exifRotation = false;
 
     #region Property for X, Y position
 
@@ -124,7 +127,7 @@ namespace MediaPortal.GUI.Library
     private int _blendableTexWidth = 0;
     private int _blendableTexHeight = 0;
     private Texture _blendableTexture = null;
-    private string _blendableFileName = "";
+    private string _blendableFileName = string.Empty;
     private int _maskTexWidth = 0;
     private int _maskTexHeight = 0;
     private Texture _maskTexture = null;
@@ -135,19 +138,18 @@ namespace MediaPortal.GUI.Library
 
     /// <summary>The width of in which the texture will be rendered after scaling texture.</summary>
     private int m_iRenderWidth = 0;
-
     private int m_iRenderHeight = 0;
+
     //private System.Drawing.Image m_image = null;
     private Rectangle m_destRect;
-    private string _cachedTextureFileName = "";
+    private string _cachedTextureFileName = string.Empty;
 
     //using for debugging leaks;
-    //private string _debugCachedTextureFileName = "";
-    //private string _debugCaller = "";
+    //private string _debugCachedTextureFileName = string.Empty;
+    //private string _debugCaller = string.Empty;
     //private bool _debugDisposed = false;
     //private bool _debugAllocResourcesCalled = false;
     private Guid _debugGuid = Guid.NewGuid();
-
 
     private DateTime _animationTimer = DateTime.MinValue;
     private bool _containsProperty = false;
@@ -286,13 +288,13 @@ namespace MediaPortal.GUI.Library
       {
         _textureFileNameTag = string.Empty;
       }
-      if (_textureFileNameTag != "-" && _textureFileNameTag != "")
+      if (_textureFileNameTag != "-" && _textureFileNameTag != string.Empty)
       {
         if (_width == 0 || _height == 0)
         {
           try
           {
-            string strFileNameTemp = "";
+            string strFileNameTemp = string.Empty;
 
             if (!MediaPortal.Util.Utils.FileExistsInCache(_textureFileNameTag))
             {
@@ -395,7 +397,7 @@ namespace MediaPortal.GUI.Library
     {
       // Set the border sizes for user specified values (overrides the default values).
       _strBorder = _strBorder.Trim();
-      if (!"".Equals(_strBorder))
+      if (!string.IsNullOrEmpty(_strBorder))
       {
         int[] valueParameters = ParseParameters(_strBorder);
 
@@ -420,7 +422,7 @@ namespace MediaPortal.GUI.Library
 
     private static int[] ParseParameters(string valueText)
     {
-      if ("".Equals(valueText))
+      if (string.IsNullOrEmpty(valueText))
       {
         return new int[0];
       }
@@ -686,7 +688,7 @@ namespace MediaPortal.GUI.Library
       //used for debugging leaks, comment in when needed-.
       /*_debugAllocResourcesCalled = true;
       _debugCachedTextureFileName = _textureFileNameTag;
-      _debugCaller = ""; //  System.Environment.StackTrace.ToString();
+      _debugCaller = string.Empty; //  System.Environment.StackTrace.ToString();
       */
       try
       {
@@ -719,7 +721,7 @@ namespace MediaPortal.GUI.Library
         BeginAnimation();
         _listTextures = null;
 
-        if (_blendableFileName != "" &&
+        if (_blendableFileName != string.Empty &&
             GUITextureManager.GetPackedTexture(_blendableFileName, out _blendabletexUoff, out _blendabletexVoff,
                                                out _blendabletexUmax, out _blendabletexVmax, out _blendableTexWidth, out _blendableTexHeight,
                                                out _blendableTexture, out _packedBlendableTextureNo))
@@ -732,11 +734,18 @@ namespace MediaPortal.GUI.Library
         if (_containsProperty)
         {
           fileName = _cachedTextureFileName = GUIPropertyManager.Parse(fileName);
+          if (_exifRotation)
+          {
+            if (File.Exists(fileName))
+            {
+              _iRotation = Picture.GetRotateByExif(fileName);
+            }
+          }
         }
 
         if (GUITextureManager.GetPackedTexture(fileName, out _texUoff, out _texVoff, out _texUmax, out _texVmax,
-                                               out _textureWidth, out _textureHeight,
-                                               out _packedTexture, out _packedTextureNo))
+                                                         out _textureWidth, out _textureHeight,
+                                                         out _packedTexture, out _packedTextureNo))
         {
           _reCalculate = true;
           _packedTexture.Disposing -= OnPackedTexturesDisposedEvent;
@@ -761,7 +770,7 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          frameCount = GUITextureManager.Load(fileName, m_dwColorKey, m_iRenderWidth, _textureHeight, _shouldCache);
+          frameCount = GUITextureManager.Load(fileName, m_dwColorKey, _iRotation, m_iRenderWidth, _textureHeight, _shouldCache);
         }
 
         if (frameCount == 0)
@@ -835,8 +844,10 @@ namespace MediaPortal.GUI.Library
         _packedTexture = null;
       }
       if (!App.IsShuttingDown)
+      {
         // if the app is shutting down, this is useless and causes huge delays in case many images have been allocated
         UnsubscribeOnPropertyChanged();
+      }
     }
 
     private void OnListTexturesDisposedEvent(object sender, EventArgs e)
@@ -981,7 +992,7 @@ namespace MediaPortal.GUI.Library
 
     private void Cleanup()
     {
-      _cachedTextureFileName = "";
+      _cachedTextureFileName = string.Empty;
       
       UnsubscribeListTextures();
       
@@ -1748,7 +1759,6 @@ namespace MediaPortal.GUI.Library
             if (frame.Image == null)
             {
               Cleanup();
-
               AllocResources();
               base.Render(timePassed);
               return;
@@ -2548,8 +2558,8 @@ namespace MediaPortal.GUI.Library
       }
       //reallocate & load then new image
       _allocated = false;
-      Cleanup();
 
+      Cleanup();
       AllocResources();
     }
 
@@ -2951,5 +2961,26 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public int Rotation
+    {
+      get { return _iRotation; }
+      set
+      {
+        _iRotation = value;
+        Cleanup();
+        AllocResources();
+      }
+    }
+
+    public bool ExifRotation
+    {
+      get { return _exifRotation; }
+      set
+      {
+        _exifRotation = value;
+        Cleanup();
+        AllocResources();
+      }
+    }
   }
 }
