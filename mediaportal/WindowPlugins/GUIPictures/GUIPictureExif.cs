@@ -49,6 +49,7 @@ namespace MediaPortal.GUI.Pictures
     private string _currentPicture;
     private ExifMetadata.Metadata _currentMetaData ;
     private int _currentSelectedItem = -1;
+    private string _histogramFilename = string.Empty;
 
     #endregion
 
@@ -109,6 +110,10 @@ namespace MediaPortal.GUI.Pictures
 
     protected override void OnPageDestroy(int newWindowId)
     {
+      if (File.Exists(_histogramFilename))
+      {
+        File.Delete(_histogramFilename);
+      }
       ReleaseResources();
       base.OnPageDestroy(newWindowId);
     }
@@ -191,6 +196,7 @@ namespace MediaPortal.GUI.Pictures
 
         if (imgPicture != null)
         {
+          imgPicture.Rotation = PictureDatabase.GetRotation(_currentPicture);
           imgPicture.Dispose();
           imgPicture.AllocResources();
         }
@@ -305,13 +311,19 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
 
-      string filename = Path.GetTempFileName() + ".png";
-      if (Util.Picture.GetHistogramImage(_currentPicture, filename))
+      _histogramFilename = Path.GetTempFileName();
+      if (File.Exists(_histogramFilename))
+      {
+        File.Delete(_histogramFilename);
+      }
+      _histogramFilename = _histogramFilename + ".png";
+
+      if (Util.Picture.GetHistogramImage(_currentPicture, _histogramFilename))
       {
         GUIListItem fileitem = new GUIListItem();
         fileitem.Label = GUILocalizeStrings.Get(9040);
         fileitem.Label2 = GUILocalizeStrings.Get(9040);
-        fileitem.DVDLabel = filename;
+        fileitem.DVDLabel = _histogramFilename;
         fileitem.IconImage = Thumbs.Pictures + @"\exif\data\histogram.png";
         fileitem.ThumbnailImage = fileitem.IconImage;
         fileitem.OnItemSelected += OnItemSelected;
