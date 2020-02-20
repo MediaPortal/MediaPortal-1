@@ -255,11 +255,27 @@ namespace MediaPortal.Util
     /// <returns>Texture with image or null if image could not be loaded</returns>
     public static Texture ConvertImageToTexture(Bitmap theImage, out int iWidth, out int iHeight)
     {
+      return ConvertImageToTexture(theImage, 0, Format.X8R8G8B8, out iWidth, out iHeight);
+    }
+
+    /// <summary>
+    /// This method converts a GDI image to a DirectX Textures
+    /// </summary>
+    /// <param name="theImage">GDI Image</param>
+    /// <param name="lColorKey">A 32-bit ARGB color to replace with transparent black, or 0 to disable the color key</param>
+    /// <param name="fmt">Member of the Format enumerated type that describes the requested pixel format for the cube texture</param>
+    /// <param name="iWidth">width of returned texture</param>
+    /// <param name="iHeight">height of returned texture</param>
+    /// <returns>Texture with image or null if image could not be loaded</returns>
+    public static Texture ConvertImageToTexture(Bitmap theImage, long lColorKey, Format fmt, out int iWidth, out int iHeight)
+    {
       iWidth = 0;
       iHeight = 0;
       if (theImage == null)
+      {
         return null;
-      // Texture texture=null;
+      }
+
       try
       {
         Texture texture = null;
@@ -272,14 +288,14 @@ namespace MediaPortal.Util
           texture = TextureLoader.FromStream(
             GUIGraphicsContext.DX9Device,
             stream,
-            0, 0, //width/height
-            1, //mipslevels
-            0, //Usage.Dynamic,
-            Format.X8R8G8B8,
+            0, 0, // width/height
+            1,    // mipslevels
+            0,    // Usage.Dynamic,
+            fmt,
             GUIGraphicsContext.GetTexturePoolType(),
             Filter.None,
             Filter.None,
-            (int)0,
+            (int)lColorKey,
             ref info2);
           stream.Close();
           iWidth = info2.Width;
@@ -295,7 +311,6 @@ namespace MediaPortal.Util
       }
       return null;
     }
-
 
     /// <summary>
     /// render the image contained in texture onscreen
