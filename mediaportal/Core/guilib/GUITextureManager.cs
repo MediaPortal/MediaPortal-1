@@ -338,7 +338,7 @@ namespace MediaPortal.GUI.Library
           Texture dxtexture = null;
           if (iRotation != 0)
           {
-            dxtexture = LoadGraphic(fileName, lColorKey, iMaxWidth, iMaxHeight, iRotation, out int width, out int height);
+            dxtexture = LoadGraphic(fileName, lColorKey, iMaxWidth, iMaxHeight, iRotation, out width, out height);
           }
           if (dxtexture == null)
           {
