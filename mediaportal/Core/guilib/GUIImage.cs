@@ -737,12 +737,12 @@ namespace MediaPortal.GUI.Library
         if (_containsProperty)
         {
           fileName = _cachedTextureFileName = GUIPropertyManager.Parse(fileName);
-          if (_exifRotation)
+        }
+        if (_exifRotation)
+        {
+          if (File.Exists(fileName))
           {
-            if (File.Exists(fileName))
-            {
-              _iRotation = Picture.GetRotateByExif(fileName);
-            }
+            _iRotation = Picture.GetRotateByExif(fileName);
           }
         }
 
