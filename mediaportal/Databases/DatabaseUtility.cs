@@ -431,13 +431,12 @@ namespace MediaPortal.Database
       try
       {
         SQLiteResultSet.Row arr = results.Rows[iRecord];
-        int iCol = 0;
-        if (results.ColumnIndices.ContainsKey(aTimestampColum))
+        int? iCol = (int?)results.ColumnIndices[aTimestampColum];
+        if (iCol.HasValue)
         {
-          iCol = (int)results.ColumnIndices[aTimestampColum];
-          if (arr.fields[iCol] != null)
+          if (arr.fields[iCol.Value] != null)
           {
-            finalResult = Convert.ToDateTime((arr.fields[iCol]));
+            finalResult = Convert.ToDateTime((arr.fields[iCol.Value]));
           }
         }
       }
@@ -497,16 +496,15 @@ namespace MediaPortal.Database
         return string.Empty;
       }
       SQLiteResultSet.Row arr = results.Rows[iRecord];
-      int iCol = 0;
-      if (results.ColumnIndices.ContainsKey(strColum))
+      int? iCol = (int?)results.ColumnIndices[strColum];
+      if (iCol.HasValue)
       {
-        iCol = (int)results.ColumnIndices[strColum];
-        if (arr.fields[iCol] == null)
+        if (arr.fields[iCol.Value] == null)
         {
           Log.Error("DatabaseUtility.Get: Field {0} not found", strColum);
           return string.Empty;
         }
-        string strLine = (arr.fields[iCol]).Trim();
+        string strLine = (arr.fields[iCol.Value]).Trim();
         //strLine = strLine.Replace("''","'");
         return strLine;
       }
@@ -517,15 +515,16 @@ namespace MediaPortal.Database
         return string.Empty;
       }
       strColum = strColum.Substring(pos + 1);
-      if (results.ColumnIndices.ContainsKey(strColum))
+      iCol = (int?)results.ColumnIndices[strColum];
+      if (iCol.HasValue)
       {
-        iCol = (int)results.ColumnIndices[strColum];
-        if (arr.fields[iCol] == null)
+        ;
+        if (arr.fields[iCol.Value] == null)
         {
           Log.Error("DatabaseUtility.Get: Field {0} not found", strColum);
           return string.Empty;
         }
-        string strLine = (arr.fields[iCol]).Trim();
+        string strLine = (arr.fields[iCol.Value]).Trim();
         //strLine = strLine.Replace("''","'");
         return strLine;
       }

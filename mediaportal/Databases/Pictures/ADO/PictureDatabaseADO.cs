@@ -319,12 +319,12 @@ namespace MediaPortal.Picture.Database
       return 0;
     }
 
-    public int ListKeywords(ref List<string> Keywords)
+    public List<string> ListKeywords()
     {
       throw (new NotImplementedException("List Keywords not yet implemented for ADO Database"));
     }
 
-    public int ListPicsByKeyword(string Keyword, ref List<string> Pics)
+    public List<string> ListPicsByKeyword(string Keyword)
     {
       throw (new NotImplementedException("List Pics by Keywords not yet implemented for ADO Database"));
     }
@@ -334,7 +334,7 @@ namespace MediaPortal.Picture.Database
       throw (new NotImplementedException("List Count Pics by Keywords not yet implemented for ADO Database"));
     }
 
-    public int ListPicsByKeywordSearch(string Keyword, ref List<string> Pics)
+    public List<string> ListPicsByKeywordSearch(string Keyword)
     {
       throw (new NotImplementedException("List Pics by Keywords Search not yet implemented for ADO Database"));
     }
@@ -344,7 +344,7 @@ namespace MediaPortal.Picture.Database
       throw (new NotImplementedException("List Count Pics by Keywords Search not yet implemented for ADO Database"));
     }
 
-    public int ListPicsBySearch(string query, ref List<string> Pics)
+    public List<string> ListPicsBySearch(string query)
     {
       throw (new NotImplementedException("List Count Pics by Search not yet implemented for ADO Database"));
     }
@@ -379,22 +379,22 @@ namespace MediaPortal.Picture.Database
       throw (new NotImplementedException("Count Pics by Date not yet implemented for ADO Database"));
     }
 
-    public int ListValueByMetadata(string Name, ref List<string> Values)
+    public List<string> ListValueByMetadata(string Name)
     {
       throw (new NotImplementedException("List Metadata Values by Metadata not yet implemented for ADO Database"));
     }
 
-    public int ListPicsByMetadata(string Name, string Value, ref List<string> Pics)
+    public List<string> ListPicsByMetadata(string Name, string Value)
     {
       throw (new NotImplementedException("List Pics by Metadata Value not yet implemented for ADO Database"));
     }
 
-    public void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter)
+    public List<PictureData> GetPicturesByFilter(string aSQL, string aFilter)
     {
       throw (new NotImplementedException("List Pics by Filter not yet implemented for ADO Database"));
     }
 
-    public void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter, bool fullInfo)
+    public List<PictureData> GetPicturesByFilter(string aSQL, string aFilter, bool fullInfo)
     {
       throw (new NotImplementedException("List Pics by Filter not yet implemented for ADO Database"));
     }

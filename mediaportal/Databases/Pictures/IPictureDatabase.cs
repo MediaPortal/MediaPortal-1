@@ -38,22 +38,22 @@ namespace MediaPortal.Picture.Database
     void SetRotation(string strPicture, int iRotation);
     int EXIFOrientationToRotation(int orientation);
     void Dispose();
-    int ListKeywords(ref List<string> Keywords);
-    int ListPicsByKeyword(string Keyword, ref List<string> Pics);
+    List<string> ListKeywords();
+    List<string> ListPicsByKeyword(string Keyword);
     int CountPicsByKeyword(string Keyword);
-    int ListPicsByKeywordSearch(string Keyword, ref List<string> Pics);
+    List<string> ListPicsByKeywordSearch(string Keyword);
     int CountPicsByKeywordSearch(string Keyword);
-    int ListPicsBySearch(string query, ref List<string> Pics);
+    List<string> ListPicsBySearch(string query);
     int CountPicsBySearch(string query);
     int ListYears(ref List<string> Years);
     int ListMonths(string Year, ref List<string> Months);
     int ListDays(string Month, string Year, ref List<string> Days);
     int ListPicsByDate(string Date, ref List<string> Pics);
-    int ListValueByMetadata(string Name, ref List<string> Values);
-    int ListPicsByMetadata(string Name, string Value, ref List<string> Pics);
+    List<string> ListValueByMetadata(string Name);
+    List<string> ListPicsByMetadata(string Name, string Value);
     int CountPicsByDate(string Date);
-    void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter);
-    void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter, bool fullInfo);
+    List<PictureData> GetPicturesByFilter(string aSQL,string aFilter);
+    List<PictureData> GetPicturesByFilter(string aSQL, string aFilter, bool fullInfo);
     string DatabaseName { get; }
     bool DbHealth { get; }
     bool FilterPrivate { get; set; }

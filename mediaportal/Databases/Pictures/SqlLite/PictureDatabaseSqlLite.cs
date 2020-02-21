@@ -1356,11 +1356,12 @@ namespace MediaPortal.Picture.Database
       // GetSelect("q1#q2#q3.1|q3.2#q4%#q5") -> SELECT DISTINCT strFile FROM picturekeywords WHERE strKeyword = 'q1' AND idPicture IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'q2' AND idPicture IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'q3.1' OR strKeyword = 'q3.2' AND idPicture IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword LIKE 'q4%' AND idPicture IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'q5')))) ORDER BY strDateTaken
     }
 
-    public int ListKeywords(ref List<string> Keywords)
+    public List<string> ListKeywords()
     {
+      List<string> resultList = new List<string>();
       if (m_db == null)
       {
-        return 0;
+        return resultList;
       }
 
       int Count = 0;
@@ -1375,7 +1376,7 @@ namespace MediaPortal.Picture.Database
           {
             for (Count = 0; Count < result.Rows.Count; Count++)
             {
-              Keywords.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, Count, 0));
             }
           }
         }
@@ -1383,15 +1384,16 @@ namespace MediaPortal.Picture.Database
         {
           Log.Error("Picture.DB.SQLite: Getting Keywords err: {0} stack:{1}", ex.Message, ex.StackTrace);
         }
-        return Count;
+        return resultList;
       }
     }
 
-    public int ListPicsByKeyword(string Keyword, ref List<string> Pics)
+    public List<string> ListPicsByKeyword(string Keyword)
     {
+      List<string> resultList = new List<string>();
       if (m_db == null)
       {
-        return 0;
+        return resultList;
       }
 
       int Count = 0;
@@ -1407,7 +1409,7 @@ namespace MediaPortal.Picture.Database
           {
             for (Count = 0; Count < result.Rows.Count; Count++)
             {
-              Pics.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, Count, 0));
             }
           }
         }
@@ -1415,7 +1417,7 @@ namespace MediaPortal.Picture.Database
         {
           Log.Error("Picture.DB.SQLite: Getting Picture by Keyword err: {0} stack:{1}", ex.Message, ex.StackTrace);
         }
-        return Count;
+        return resultList;
       }
     }
 
@@ -1448,11 +1450,12 @@ namespace MediaPortal.Picture.Database
       }
     }
 
-    public int ListPicsByKeywordSearch(string Keyword, ref List<string> Pics)
+    public List<string> ListPicsByKeywordSearch(string Keyword)
     {
+      List<string> resultList = new List<string>();
       if (m_db == null)
       {
-        return 0;
+        return resultList;
       }
 
       int Count = 0;
@@ -1466,7 +1469,7 @@ namespace MediaPortal.Picture.Database
           {
             for (Count = 0; Count < result.Rows.Count; Count++)
             {
-              Pics.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, Count, 0));
             }
           }
         }
@@ -1474,7 +1477,7 @@ namespace MediaPortal.Picture.Database
         {
           Log.Error("Picture.DB.SQLite: Getting Picture by Keyword Search err: {0} stack:{1}", ex.Message, ex.StackTrace);
         }
-        return Count;
+        return resultList;
       }
     }
 
@@ -1505,17 +1508,18 @@ namespace MediaPortal.Picture.Database
       }
     }
 
-    public int ListPicsBySearch(string query, ref List<string> Pics)
+    public List<string> ListPicsBySearch(string query)
     {
+      List<string> resultList = new List<string>();
       if (m_db == null)
       {
-        return 0;
+        return resultList;
       }
 
       string searchQuery = GetSearchWhere(query);
       if (string.IsNullOrEmpty(searchQuery))
       {
-        return 0;
+        return resultList;
       }
 
       int Count = 0;
@@ -1532,7 +1536,7 @@ namespace MediaPortal.Picture.Database
           {
             for (Count = 0; Count < result.Rows.Count; Count++)
             {
-              Pics.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, Count, 0));
             }
           }
         }
@@ -1540,7 +1544,7 @@ namespace MediaPortal.Picture.Database
         {
           Log.Error("Picture.DB.SQLite: Getting Picture by Search err: {0} stack:{1}", ex.Message, ex.StackTrace);
         }
-        return Count;
+        return resultList;
       }
     }
 
@@ -1735,11 +1739,12 @@ namespace MediaPortal.Picture.Database
       }
     }
 
-    public int ListValueByMetadata(string Name, ref List<string> Values)
+    public List<string> ListValueByMetadata(string Name)
     {
+      List<string> resultList = new List<string>();
       if (m_db == null)
       {
-        return 0;
+        return resultList;
       }
 
       int Count = 0;
@@ -1754,7 +1759,7 @@ namespace MediaPortal.Picture.Database
           {
             for (Count = 0; Count < result.Rows.Count; Count++)
             {
-              Pics.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, Count, 0));
             }
           }
         }
@@ -1762,15 +1767,16 @@ namespace MediaPortal.Picture.Database
         {
           Log.Error("Picture.DB.SQLite: Getting Picture by Metadata err: {0} stack:{1}", ex.Message, ex.StackTrace);
         }
-        return Count;
+        return resultList;
       }
     }
 
-    public int ListPicsByMetadata(string Name, string Value, ref List<string> Pics)
+    public List<string> ListPicsByMetadata(string Name, string Value)
     {
+      List<string> resultList = new List<string>();
       if (m_db == null)
       {
-        return 0;
+        return resultList;
       }
 
       int Count = 0;
@@ -1787,7 +1793,7 @@ namespace MediaPortal.Picture.Database
           {
             for (Count = 0; Count < result.Rows.Count; Count++)
             {
-              Pics.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, Count, 0));
             }
           }
         }
@@ -1795,24 +1801,24 @@ namespace MediaPortal.Picture.Database
         {
           Log.Error("Picture.DB.SQLite: Getting Picture by Metadata err: {0} stack:{1}", ex.Message, ex.StackTrace);
         }
-        return Count;
+        return resultList;
       }
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
-    public void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter)
+    public List<PictureData> GetPicturesByFilter(string aSQL, string aFilter)
     {
-      GetPicturesByFilter(aSQL, out aPictures, aFilter, false);
+      return GetPicturesByFilter(aSQL, aFilter, false);
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
-    public void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter, bool fullInfo)
+    public List<PictureData> GetPicturesByFilter(string aSQL, string aFilter, bool fullInfo)
     {
-      aPictures = new List<PictureData>();
+      List<PictureData> aPictures = new List<PictureData>();
 
       if (m_db == null || string.IsNullOrEmpty(aSQL))
       {
-        return;
+        return aPictures;
       }
 
       Log.Debug("Picture.DB.SQLite: GetPicturesByFilter - SQL: {0}, Filter: {1}", aSQL, aFilter);
@@ -1821,51 +1827,43 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(aSQL);
         if (results != null)
         {
-          int columnIndex = 0;
           for (int i = 0; i < results.Rows.Count; i++)
           {
             SQLiteResultSet.Row row = results.Rows[i];
 
             PictureData picture = new PictureData();
 
-            if (results.ColumnIndices.ContainsKey("strFile"))
+            int? columnIndex;
+            columnIndex = (int?)results.ColumnIndices["strFile"];
+            if (columnIndex.HasValue)
             {
-              columnIndex = (int)results.ColumnIndices["strFile"];
-              if (columnIndex >= 0)
+              picture.FileName = row.fields[columnIndex.Value];
+              if (string.IsNullOrEmpty(picture.FileName))
               {
-                picture.FileName = row.fields[columnIndex];
-              }
-            }
-
-            if (results.ColumnIndices.ContainsKey("strDateTaken"))
-            {
-              columnIndex = (int)results.ColumnIndices["strDateTaken"];
-              if (columnIndex >= 0)
-              {
-                string dateTaken = row.fields[columnIndex];
-
-                try
+                columnIndex = (int?)results.ColumnIndices["strDateTaken"];
+                if (columnIndex.HasValue)
                 {
-                  DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
-                  dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
-                  picture.DateTaken = DateTime.ParseExact(dateTaken, "d", dateTimeFormat);
-                }
-                catch (Exception ex)
-                {
-                  Log.Error("Picture.DB.SQLite: GetPicturesByFilter Date parse Error: {0} stack:{1}", ex.Message, ex.StackTrace);
+                  string dateTaken = row.fields[columnIndex.Value];
+
+                  try
+                  {
+                    DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
+                    dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
+                    picture.DateTaken = DateTime.ParseExact(dateTaken, "d", dateTimeFormat);
+                  }
+                  catch (Exception ex)
+                  {
+                    Log.Error("Picture.DB.SQLite: GetPicturesByFilter Date parse Error: {0} stack:{1}", ex.Message, ex.StackTrace);
+                  }
                 }
               }
-            }
-            if (string.IsNullOrEmpty(picture.FileName))
-            {
-              continue;
-            }
 
-            if (fullInfo)
-            {
-              picture.Exif = GetExifFromDB(picture.FileName);
+              if (fullInfo)
+              {
+                picture.Exif = GetExifFromDB(picture.FileName);
+              }
+              aPictures.Add(picture);
             }
-            aPictures.Add(picture);
           }
         }
       }
@@ -1873,6 +1871,7 @@ namespace MediaPortal.Picture.Database
       {
         Log.Error("Picture.DB.SQLite: GetPictureByFilter err: {0} stack:{1}", ex.Message, ex.StackTrace);
       }
+      return aPictures;
     }
 
     #region Transactions

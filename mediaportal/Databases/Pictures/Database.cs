@@ -99,14 +99,14 @@ namespace MediaPortal.Picture.Database
       return _database.EXIFOrientationToRotation(orientation);
     }
 
-    public static int ListKeywords(ref List<string> Keywords)
+    public static List<string> ListKeywords()
     {
-      return _database.ListKeywords(ref Keywords);
+      return _database.ListKeywords();
     }
 
-    public static int ListPicsByKeyword(string Keyword, ref List<string> Pics)
+    public static List<string> ListPicsByKeyword(string Keyword)
     {
-      return _database.ListPicsByKeyword(Keyword, ref Pics);
+      return _database.ListPicsByKeyword(Keyword);
     }
 
     public static int CountPicsByKeyword(string Keyword)
@@ -114,9 +114,9 @@ namespace MediaPortal.Picture.Database
       return _database.CountPicsByKeyword(Keyword);
     }
 
-    public static int ListPicsByKeywordSearch(string Keyword, ref List<string> Pics)
+    public static List<string> ListPicsByKeywordSearch(string Keyword)
     {
-      return _database.ListPicsByKeywordSearch(Keyword, ref Pics);
+      return _database.ListPicsByKeywordSearch(Keyword);
     }
 
     public static int CountPicsByKeywordSearch(string Keyword)
@@ -124,9 +124,9 @@ namespace MediaPortal.Picture.Database
       return _database.CountPicsByKeywordSearch(Keyword);
     }
 
-    public static int ListPicsBySearch(string query, ref List<string> Pics)
+    public static List<string> ListPicsBySearch(string query)
     {
-      return _database.ListPicsBySearch(query, ref Pics);
+      return _database.ListPicsBySearch(query);
     }
 
     public static int CountPicsBySearch(string query)
@@ -159,24 +159,24 @@ namespace MediaPortal.Picture.Database
       return _database.CountPicsByDate(Date);
     }
 
-    public static int ListValueByMetadata(string Name, ref List<string> Values)
+    public static List<string> ListValueByMetadata(string Name)
     {
-      return _database.ListValueByMetadata(Name, ref Values);
+      return _database.ListValueByMetadata(Name);
     }
 
-    public static int ListPicsByMetadata(string Name, string Value, ref List<string> Pics)
+    public static List<string> ListPicsByMetadata(string Name, string Value)
     {
-      return _database.ListPicsByMetadata(Date, Value, ref Pics);
+      return _database.ListPicsByMetadata(Name, Value);
     }
 
-    public static void GetPicturesByFilter(string aSQL, out List<PictureData> aPicturess, string aFilter)
+    public static List<PictureData> GetPicturesByFilter(string aSQL, string aFilter)
     {
-      _database.GetPicturesByFilter(aSQL, out aPicturess, aFilter);
+      return _database.GetPicturesByFilter(aSQL, aFilter);
     }
 
-    public static void GetPicturesByFilter(string aSQL, out List<PictureData> aPicturess, string aFilter, bool fullInfo)
+    public static List<PictureData> GetPicturesByFilter(string aSQL, string aFilter, bool fullInfo)
     {
-      _database.GetPicturesByFilter(aSQL, out aPicturess, aFilter, fullInfo);
+      return _database.GetPicturesByFilter(aSQL, aFilter, fullInfo);
     }
 
     public static bool DbHealth

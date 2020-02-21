@@ -26,6 +26,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -2086,7 +2087,7 @@ namespace MediaPortal.GUI.Pictures
       {
         if (!string.IsNullOrEmpty(_searchString))
         {
-          disp = searchByKeyword ? Display.Keyword ; Display.Metadata;
+          disp = searchByKeyword ? Display.Keyword : Display.Metadata;
           // Have the menu select the currently selected view.
           btnViews.SetSelectedItemByValue((int)disp);
           UpdateButtonStates();
@@ -2121,13 +2122,12 @@ namespace MediaPortal.GUI.Pictures
       {
         if (string.IsNullOrEmpty(currentFolder))
         {
-          List<PictureData> aPictures = new List<PictureData>();
           string SQL = "SELECT strFile FROM picture";
           if (PictureDatabase.FilterPrivate)
           {
             SQL = SQL + " WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')";
           }
-          PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
+          List<PictureData> aPictures = PictureDatabase.GetPicturesByFilter(SQL, "pictures");
           foreach (PictureData pic in aPictures)
           {
             SlideShow.Add(pic.FileName);
@@ -2151,13 +2151,12 @@ namespace MediaPortal.GUI.Pictures
       {
         if (string.IsNullOrEmpty(currentFolder))
         {
-          List<PictureData> aPictures = new List<PictureData>();
           string SQL = "SELECT strFile FROM picture";
           if (PictureDatabase.FilterPrivate)
           {
             SQL = SQL + " WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')";
           }
-          PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
+          List<PictureData> aPictures = PictureDatabase.GetPicturesByFilter(SQL, "pictures");
           foreach (PictureData pic in aPictures)
           {
             SlideShow.Add(pic.FileName);
@@ -2165,8 +2164,7 @@ namespace MediaPortal.GUI.Pictures
         }
         else
         {
-          List<string> pics = new List<string>();
-          int totalCount = PictureDatabase.ListPicsByKeyword(currentFolder.Replace("\\", string.Empty), ref pics);
+          List<string> pics = PictureDatabase.ListPicsByKeyword(currentFolder.Replace("\\", string.Empty));
           foreach (string pic in pics)
           {
             SlideShow.Add(pic);
@@ -2181,13 +2179,12 @@ namespace MediaPortal.GUI.Pictures
       {
         if (string.IsNullOrEmpty(currentFolder))
         {
-          List<PictureData> aPictures = new List<PictureData>();
           string SQL = "SELECT strFile FROM picture";
           if (PictureDatabase.FilterPrivate)
           {
             SQL = SQL + " WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')";
           }
-          PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
+          List<PictureData> aPictures = PictureDatabase.GetPicturesByFilter(SQL, "pictures");
           foreach (PictureData pic in aPictures)
           {
             SlideShow.Add(pic.FileName);
@@ -2195,13 +2192,12 @@ namespace MediaPortal.GUI.Pictures
         }
         else if (!currentFolder.Contains(@"\"))
         {
-          List<PictureData> aPictures = new List<PictureData>();
           string SQL = "SELECT strFile FROM picturedata WHERE str" + currentFolder + " IS NOT NULL";
           if (PictureDatabase.FilterPrivate)
           {
             SQL = SQL + " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')";
           }
-          PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
+          List<PictureData> aPictures =PictureDatabase.GetPicturesByFilter(SQL, "pictures");
           foreach (PictureData pic in aPictures)
           {
             SlideShow.Add(pic.FileName);
@@ -2209,9 +2205,8 @@ namespace MediaPortal.GUI.Pictures
         }
         else
         {
-          string[] metaWhere = currentFolder.Split('\');
-          List<string> pics = new List<string>();
-          int totalCount = PictureDatabase.ListPicsByMetadata(metaWhere[0].Trim(), metaWhere[1].Trim(), ref pics);
+          string[] metaWhere = currentFolder.Split('\\');
+          List<string> pics = PictureDatabase.ListPicsByMetadata(metaWhere[0].Trim(), metaWhere[1].Trim());
           foreach (string pic in pics)
           {
             SlideShow.Add(pic);
@@ -3047,7 +3042,7 @@ namespace MediaPortal.GUI.Pictures
       if (PictureDatabase.FilterPrivate)
       {
         string SQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = 'Private' AND strFile LIKE '" + strDir.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar + "%';";
-        PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
+        aPictures = PictureDatabase.GetPicturesByFilter(SQL, "pictures");
         Log.Debug("GUIPictures: Load {0} private images for filter.", aPictures.Count);
       }
       foreach (GUIListItem item in itemlist)
@@ -3631,7 +3626,7 @@ namespace MediaPortal.GUI.Pictures
         if (PictureDatabase.FilterPrivate)
         {
           string SQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = 'Private' AND strFile LIKE '" + currentFolder.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar + "%';";
-          PictureDatabase.GetPicturesByFilter(SQL, out aPictures, "pictures");
+          aPictures = PictureDatabase.GetPicturesByFilter(SQL, "pictures");
           Log.Debug("GUIPictures: Load {0} private images for filter.", aPictures.Count);
         }
 
@@ -3867,8 +3862,7 @@ namespace MediaPortal.GUI.Pictures
           _searchMode = false;
 
           // Keywords
-          List<string> Keywords = new List<string>();
-          int Count = PictureDatabase.ListKeywords(ref Keywords);
+          List<string> Keywords = PictureDatabase.ListKeywords();
           foreach (string keyword in Keywords)
           {
             GUIListItem item = new GUIListItem(keyword);
@@ -3896,19 +3890,18 @@ namespace MediaPortal.GUI.Pictures
           facadeLayout.Add(item);
           CountOfNonImageItems++; // necessary to select the right item later from the slideshow
 
-          List<string> pics = new List<string>();
-          int Count = 0;
+          List<string> pics;
           if (_searchMode)
           {
-            Count = PictureDatabase.ListPicsByKeywordSearch(strNewDirectory, ref pics);
-            if (Count == 0)
+            pics = PictureDatabase.ListPicsByKeywordSearch(strNewDirectory);
+            if (pics.Count == 0)
             {
-              PictureDatabase.ListPicsBySearch(strNewDirectory, ref pics);
+              pics = PictureDatabase.ListPicsBySearch(strNewDirectory);
             }
           }
           else
           {
-            Count = PictureDatabase.ListPicsByKeyword(strNewDirectory, ref pics);
+            pics = PictureDatabase.ListPicsByKeyword(strNewDirectory);
           }
 
           VirtualDirectory vDir = new VirtualDirectory();
@@ -3975,14 +3968,14 @@ namespace MediaPortal.GUI.Pictures
           Type type = typeof(ExifMetadata.Metadata);
           foreach (FieldInfo prop in type.GetFields())
           {
-            if (prop.Name == nameof(DatePictureTaken) || prop.Name == nameof(Keywords))
+            if (prop.Name == nameof(ExifMetadata.Metadata.DatePictureTaken) || prop.Name == nameof(ExifMetadata.Metadata.Keywords))
             {
               continue;
             }
 
             string caption = prop.Name.ToCaption() ?? prop.Name;
             GUIListItem item = new GUIListItem();
-            item.Label1 = caption;
+            item.Label = caption;
             item.Path = prop.Name;
             item.IsFolder = true;
             item.IconImage = Thumbs.Pictures + @"\exif\data\" + prop.Name + ".png";
@@ -4008,8 +4001,7 @@ namespace MediaPortal.GUI.Pictures
           facadeLayout.Add(item);
           CountOfNonImageItems++; // necessary to select the right item later from the slideshow
 
-          List<string> metadatavalues = new List<string>();
-          Count = PictureDatabase.ListValueByMetadata(strNewDirectory, ref metadatavalues);
+          List<string> metadatavalues = PictureDatabase.ListValueByMetadata(strNewDirectory);
           foreach (string value in metadatavalues)
           {
             item = new GUIListItem(value.ToValue() ?? value);
@@ -4037,16 +4029,15 @@ namespace MediaPortal.GUI.Pictures
           facadeLayout.Add(item);
           CountOfNonImageItems++; // necessary to select the right item later from the slideshow
 
-          List<string> pics = new List<string>();
-          int Count = 0;
+          List<string> pics;
           if (_searchMode)
           {
-            PictureDatabase.ListPicsBySearch(strNewDirectory, ref pics);
+            pics = PictureDatabase.ListPicsBySearch(strNewDirectory);
           }
           else
           {
-            string[] metaWhere = strNewDirectory.Split('\');
-            Count = PictureDatabase.ListPicsByMetadata(metaWhere[0].Trim(), metaWhere[1].Trim(), ref pics);
+            string[] metaWhere = strNewDirectory.Split('\\');
+            pics = PictureDatabase.ListPicsByMetadata(metaWhere[0].Trim(), metaWhere[1].Trim());
           }
 
           VirtualDirectory vDir = new VirtualDirectory();
