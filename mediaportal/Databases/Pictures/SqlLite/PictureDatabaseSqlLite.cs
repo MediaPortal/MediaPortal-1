@@ -1735,6 +1735,70 @@ namespace MediaPortal.Picture.Database
       }
     }
 
+    public int ListValueByMetadata(string Name, ref List<string> Values)
+    {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
+      int Count = 0;
+      lock (typeof(PictureDatabase))
+      {
+        string strSQL = "SELECT DISTINCT str" + Name + " FROM picturedata WHERE str" + Name + " IS NOT NULL ORDER BY 1";
+        SQLiteResultSet result;
+        try
+        {
+          result = m_db.Execute(strSQL);
+          if (result != null)
+          {
+            for (Count = 0; Count < result.Rows.Count; Count++)
+            {
+              Pics.Add(DatabaseUtility.Get(result, Count, 0));
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: Getting Picture by Metadata err: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+        return Count;
+      }
+    }
+
+    public int ListPicsByMetadata(string Name, string Value, ref List<string> Pics)
+    {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
+      int Count = 0;
+      lock (typeof(PictureDatabase))
+      {
+        string strSQL = "SELECT strFile FROM picturedata WHERE str" + Name + " = '" + Value + "'" +
+                                (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
+                                " ORDER BY strDateTaken";
+        SQLiteResultSet result;
+        try
+        {
+          result = m_db.Execute(strSQL);
+          if (result != null)
+          {
+            for (Count = 0; Count < result.Rows.Count; Count++)
+            {
+              Pics.Add(DatabaseUtility.Get(result, Count, 0));
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: Getting Picture by Metadata err: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+        return Count;
+      }
+    }
+
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter)
     {
