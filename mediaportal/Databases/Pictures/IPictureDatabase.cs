@@ -49,6 +49,8 @@ namespace MediaPortal.Picture.Database
     int ListMonths(string Year, ref List<string> Months);
     int ListDays(string Month, string Year, ref List<string> Days);
     int ListPicsByDate(string Date, ref List<string> Pics);
+    int ListValueByMetadata(string Name, ref List<string> Values);
+    int ListPicsByMetadata(string Name, string Value, ref List<string> Pics);
     int CountPicsByDate(string Date);
     void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter);
     void GetPicturesByFilter(string aSQL, out List<PictureData> aPictures, string aFilter, bool fullInfo);

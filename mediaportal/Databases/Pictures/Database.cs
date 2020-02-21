@@ -159,6 +159,16 @@ namespace MediaPortal.Picture.Database
       return _database.CountPicsByDate(Date);
     }
 
+    public static int ListValueByMetadata(string Name, ref List<string> Values)
+    {
+      return _database.ListValueByMetadata(Name, ref Values);
+    }
+
+    public static int ListPicsByMetadata(string Name, string Value, ref List<string> Pics)
+    {
+      return _database.ListPicsByMetadata(Date, Value, ref Pics);
+    }
+
     public static void GetPicturesByFilter(string aSQL, out List<PictureData> aPicturess, string aFilter)
     {
       _database.GetPicturesByFilter(aSQL, out aPicturess, aFilter);
