@@ -431,13 +431,12 @@ namespace MediaPortal.Database
       try
       {
         SQLiteResultSet.Row arr = results.Rows[iRecord];
-        int iCol = 0;
-        if (results.ColumnIndices.ContainsKey(aTimestampColum))
+        int? iCol = (int?)results.ColumnIndices[aTimestampColum];
+        if (iCol.HasValue)
         {
-          iCol = (int)results.ColumnIndices[aTimestampColum];
-          if (arr.fields[iCol] != null)
+          if (arr.fields[iCol.Value] != null)
           {
-            finalResult = Convert.ToDateTime((arr.fields[iCol]));
+            finalResult = Convert.ToDateTime((arr.fields[iCol.Value]));
           }
         }
       }
