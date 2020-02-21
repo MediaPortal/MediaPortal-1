@@ -1827,23 +1827,23 @@ namespace MediaPortal.Picture.Database
         SQLiteResultSet results = m_db.Execute(aSQL);
         if (results != null)
         {
-          int columnIndex = 0;
           for (int i = 0; i < results.Rows.Count; i++)
           {
             SQLiteResultSet.Row row = results.Rows[i];
 
             PictureData picture = new PictureData();
 
-            columnIndex = (int)results.ColumnIndices["strFile"];
-            if (columnIndex >= 0)
+            int? columnIndex;
+            columnIndex = (int?)results.ColumnIndices["strFile"];
+            if (columnIndex.HasValue)
             {
-              picture.FileName = row.fields[columnIndex];
+              picture.FileName = row.fields[columnIndex.Value];
               if (string.IsNullOrEmpty(picture.FileName))
               {
-                columnIndex = (int)results.ColumnIndices["strDateTaken"];
-                if (columnIndex >= 0)
+                columnIndex = (int?)results.ColumnIndices["strDateTaken"];
+                if (columnIndex.HasValue)
                 {
-                  string dateTaken = row.fields[columnIndex];
+                  string dateTaken = row.fields[columnIndex.Value];
 
                   try
                   {
