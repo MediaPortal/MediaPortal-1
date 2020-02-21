@@ -1742,7 +1742,7 @@ namespace MediaPortal.GUI.Pictures
       }
       else
       {
-        if (item.Label != "..")
+        if (item.Label != ".." && disp == Display.Files)
         {
           string pin;
           if (!_virtualDirectory.IsProtectedShare(item.Path, out pin))
@@ -3519,6 +3519,7 @@ namespace MediaPortal.GUI.Pictures
       }
 
       GUIWaitCursor.Show();
+      Thread.Sleep(0);
 
       ExifMetadata.Metadata metadata = new ExifMetadata.Metadata();
       metadata.SetExifProperties();
@@ -3656,6 +3657,7 @@ namespace MediaPortal.GUI.Pictures
           {
             _queuePictures.Enqueue(item);
           }
+          Thread.Sleep(0);
         }
         OnSort();
         _queuePicturesEvent.Set();
@@ -3719,6 +3721,7 @@ namespace MediaPortal.GUI.Pictures
             item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
             facadeLayout.Add(item);
             CountOfNonImageItems++; // necessary to select the right item later from the slideshow
+            Thread.Sleep(0);
           }
         }
 
@@ -3755,6 +3758,7 @@ namespace MediaPortal.GUI.Pictures
               item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
               facadeLayout.Add(item);
               CountOfNonImageItems++; // necessary to select the right item later from the slideshow
+              Thread.Sleep(0);
             }
           }
           else if (strNewDirectory.Length == 10)
@@ -3836,6 +3840,7 @@ namespace MediaPortal.GUI.Pictures
             {
               Log.Warn("GUIPictures: There is no file for this database entry: {0} {1}", pic, ex.Message);
             }
+            Thread.Sleep(0);
           }
           _queueItemsEvent.Set();
         }
@@ -3876,6 +3881,7 @@ namespace MediaPortal.GUI.Pictures
             item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
             facadeLayout.Add(item);
             CountOfNonImageItems++; // necessary to select the right item later from the slideshow
+            Thread.Sleep(0);
           }
         }
         else
@@ -3895,10 +3901,6 @@ namespace MediaPortal.GUI.Pictures
           if (_searchMode)
           {
             pics = PictureDatabase.ListPicsByKeywordSearch(strNewDirectory);
-            if (pics.Count == 0)
-            {
-              pics = PictureDatabase.ListPicsBySearch(strNewDirectory);
-            }
           }
           else
           {
@@ -3987,6 +3989,7 @@ namespace MediaPortal.GUI.Pictures
             item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
             facadeLayout.Add(item);
             CountOfNonImageItems++; // necessary to select the right item later from the slideshow
+            Thread.Sleep(0);
           }
         }
         else if (!_searchMode && !strNewDirectory.Contains(@"\"))
@@ -4015,6 +4018,7 @@ namespace MediaPortal.GUI.Pictures
             item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
             facadeLayout.Add(item);
             CountOfNonImageItems++; // necessary to select the right item later from the slideshow
+            Thread.Sleep(0);
           }
         }
         else
