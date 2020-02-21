@@ -586,6 +586,7 @@ namespace MediaPortal.GUI.Pictures
       btnViews.AddItem(GUILocalizeStrings.Get(134), index++);  // Shares
       btnViews.AddItem(GUILocalizeStrings.Get(636), index++);  // Date
       btnViews.AddItem(GUILocalizeStrings.Get(2167), index++); // Keyword
+      btnViews.AddItem(GUILocalizeStrings.Get(2170), index++); // Metadata
 
       // Have the menu select the currently selected view.
       btnViews.SetSelectedItemByValue((int)disp);
