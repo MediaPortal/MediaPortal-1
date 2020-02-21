@@ -207,10 +207,7 @@ namespace MediaPortal.GUI.Pictures
                   }
                 }
               }
-              if (!string.IsNullOrWhiteSpace(keywords))
-              {
-                item.DisplayValue = keywords;
-              }
+              item.DisplayValue = keywords;
               break;
             }
         }
