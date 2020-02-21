@@ -4019,9 +4019,11 @@ namespace MediaPortal.GUI.Pictures
         }
         else
         {
+          string[] metaWhere = strNewDirectory.Split('\\');
+
           // Pics from Metadata / Search
           GUIListItem item = new GUIListItem("..");
-          item.Path = _searchMode ? string.Empty : strNewDirectory; // "..";
+          item.Path = _searchMode ? string.Empty : metaWhere[0].Trim(); // "..";
           item.IsFolder = true;
           Util.Utils.SetDefaultIcons(item);
           item.AlbumInfoTag = new ExifMetadata.Metadata();
@@ -4037,7 +4039,6 @@ namespace MediaPortal.GUI.Pictures
           }
           else
           {
-            string[] metaWhere = strNewDirectory.Split('\\');
             pics = PictureDatabase.ListPicsByMetadata(metaWhere[0].Trim(), metaWhere[1].Trim());
           }
 
