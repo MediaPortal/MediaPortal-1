@@ -115,6 +115,7 @@ namespace MediaPortal.GUI.Pictures
         File.Delete(_histogramFilename);
       }
       ReleaseResources();
+      GUIPropertyManager.SetProperty("#pictures.exif.picture", String.Empty);
       base.OnPageDestroy(newWindowId);
     }
 
