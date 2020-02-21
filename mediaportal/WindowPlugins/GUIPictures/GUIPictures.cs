@@ -2448,9 +2448,9 @@ namespace MediaPortal.GUI.Pictures
       }
 
       OnRetrieveThumbnailFiles(item);
-      if (!item.IsFolder && item.AlbumInfoTag != null)
+      if (item.AlbumInfoTag != null)
       {
-        if (((ExifMetadata.Metadata)item.AlbumInfoTag).IsEmpty())
+        if (!item.IsFolder && ((ExifMetadata.Metadata)item.AlbumInfoTag).IsEmpty())
         {
           SetItemExifData(item);
         }
@@ -3888,7 +3888,7 @@ namespace MediaPortal.GUI.Pictures
         {
           // Pics from Keyword / Search
           GUIListItem item = new GUIListItem("..");
-          item.Path = _searchMode ? string.Empty : strNewDirectory; // "..";
+          item.Path = string.Empty;
           item.IsFolder = true;
           Util.Utils.SetDefaultIcons(item);
           item.AlbumInfoTag = new ExifMetadata.Metadata();
@@ -3996,7 +3996,7 @@ namespace MediaPortal.GUI.Pictures
         {
           // Value of Selected Metadata
           GUIListItem item = new GUIListItem("..");
-          item.Path = strNewDirectory;
+          item.Path = string.Empty;
           item.IsFolder = true;
           Util.Utils.SetDefaultIcons(item);
           item.AlbumInfoTag = new ExifMetadata.Metadata();
@@ -4027,7 +4027,7 @@ namespace MediaPortal.GUI.Pictures
 
           // Pics from Metadata / Search
           GUIListItem item = new GUIListItem("..");
-          item.Path = _searchMode ? string.Empty : metaWhere[0].Trim(); // "..";
+          item.Path = _searchMode ? string.Empty : metaWhere[0].Trim();
           item.IsFolder = true;
           Util.Utils.SetDefaultIcons(item);
           item.AlbumInfoTag = new ExifMetadata.Metadata();
@@ -4233,6 +4233,13 @@ namespace MediaPortal.GUI.Pictures
     private void SetPicturePropertys(ExifMetadata.Metadata metadata)
     {
       metadata.SetExifProperties();
+
+      if (metadata.IsEmpty())
+      {
+        GUIPropertyManager.SetProperty("#pictures.exif.images.vertical", string.Empty);
+        GUIPropertyManager.SetProperty("#pictures.exif.images.horizontal", string.Empty);
+        return;
+      }
 
       int width = 96;
       int height = 0;
