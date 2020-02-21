@@ -1754,7 +1754,7 @@ namespace MediaPortal.Picture.Database
           {
             for (Count = 0; Count < result.Rows.Count; Count++)
             {
-              Pics.Add(DatabaseUtility.Get(result, Count, 0));
+              Values.Add(DatabaseUtility.Get(result, Count, 0));
             }
           }
         }

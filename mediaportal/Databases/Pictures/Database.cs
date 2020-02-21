@@ -166,7 +166,7 @@ namespace MediaPortal.Picture.Database
 
     public static int ListPicsByMetadata(string Name, string Value, ref List<string> Pics)
     {
-      return _database.ListPicsByMetadata(Date, Value, ref Pics);
+      return _database.ListPicsByMetadata(Name, Value, ref Pics);
     }
 
     public static void GetPicturesByFilter(string aSQL, out List<PictureData> aPicturess, string aFilter)

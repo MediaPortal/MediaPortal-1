@@ -26,6 +26,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -2086,7 +2087,7 @@ namespace MediaPortal.GUI.Pictures
       {
         if (!string.IsNullOrEmpty(_searchString))
         {
-          disp = searchByKeyword ? Display.Keyword ; Display.Metadata;
+          disp = searchByKeyword ? Display.Keyword : Display.Metadata;
           // Have the menu select the currently selected view.
           btnViews.SetSelectedItemByValue((int)disp);
           UpdateButtonStates();
@@ -2209,7 +2210,7 @@ namespace MediaPortal.GUI.Pictures
         }
         else
         {
-          string[] metaWhere = currentFolder.Split('\');
+          string[] metaWhere = currentFolder.Split('\\');
           List<string> pics = new List<string>();
           int totalCount = PictureDatabase.ListPicsByMetadata(metaWhere[0].Trim(), metaWhere[1].Trim(), ref pics);
           foreach (string pic in pics)
@@ -3975,14 +3976,14 @@ namespace MediaPortal.GUI.Pictures
           Type type = typeof(ExifMetadata.Metadata);
           foreach (FieldInfo prop in type.GetFields())
           {
-            if (prop.Name == nameof(DatePictureTaken) || prop.Name == nameof(Keywords))
+            if (prop.Name == nameof(ExifMetadata.Metadata.DatePictureTaken) || prop.Name == nameof(ExifMetadata.Metadata.Keywords))
             {
               continue;
             }
 
             string caption = prop.Name.ToCaption() ?? prop.Name;
             GUIListItem item = new GUIListItem();
-            item.Label1 = caption;
+            item.Label = caption;
             item.Path = prop.Name;
             item.IsFolder = true;
             item.IconImage = Thumbs.Pictures + @"\exif\data\" + prop.Name + ".png";
@@ -4009,7 +4010,7 @@ namespace MediaPortal.GUI.Pictures
           CountOfNonImageItems++; // necessary to select the right item later from the slideshow
 
           List<string> metadatavalues = new List<string>();
-          Count = PictureDatabase.ListValueByMetadata(strNewDirectory, ref metadatavalues);
+          PictureDatabase.ListValueByMetadata(strNewDirectory, ref metadatavalues);
           foreach (string value in metadatavalues)
           {
             item = new GUIListItem(value);
@@ -4045,7 +4046,7 @@ namespace MediaPortal.GUI.Pictures
           }
           else
           {
-            string[] metaWhere = strNewDirectory.Split('\');
+            string[] metaWhere = strNewDirectory.Split('\\');
             Count = PictureDatabase.ListPicsByMetadata(metaWhere[0].Trim(), metaWhere[1].Trim(), ref pics);
           }
 
