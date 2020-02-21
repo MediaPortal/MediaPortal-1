@@ -4012,7 +4012,7 @@ namespace MediaPortal.GUI.Pictures
           Count = PictureDatabase.ListValueByMetadata(strNewDirectory, ref metadatavalues);
           foreach (string value in metadatavalues)
           {
-            item = new GUIListItem(value);
+            item = new GUIListItem(value.ToValue() ?? value);
             item.Label2 = strNewDirectory.ToCaption() ?? strNewDirectory;
             item.Path = strNewDirectory + @"\" + value;
             item.IsFolder = true;
