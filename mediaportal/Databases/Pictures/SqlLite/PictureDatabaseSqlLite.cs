@@ -1834,44 +1834,36 @@ namespace MediaPortal.Picture.Database
 
             PictureData picture = new PictureData();
 
-            if (results.ColumnIndices.ContainsKey("strFile"))
+            columnIndex = (int)results.ColumnIndices["strFile"];
+            if (columnIndex >= 0)
             {
-              columnIndex = (int)results.ColumnIndices["strFile"];
-              if (columnIndex >= 0)
+              picture.FileName = row.fields[columnIndex];
+              if (string.IsNullOrEmpty(picture.FileName))
               {
-                picture.FileName = row.fields[columnIndex];
-              }
-            }
-
-            if (results.ColumnIndices.ContainsKey("strDateTaken"))
-            {
-              columnIndex = (int)results.ColumnIndices["strDateTaken"];
-              if (columnIndex >= 0)
-              {
-                string dateTaken = row.fields[columnIndex];
-
-                try
+                columnIndex = (int)results.ColumnIndices["strDateTaken"];
+                if (columnIndex >= 0)
                 {
-                  DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
-                  dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
-                  picture.DateTaken = DateTime.ParseExact(dateTaken, "d", dateTimeFormat);
-                }
-                catch (Exception ex)
-                {
-                  Log.Error("Picture.DB.SQLite: GetPicturesByFilter Date parse Error: {0} stack:{1}", ex.Message, ex.StackTrace);
+                  string dateTaken = row.fields[columnIndex];
+
+                  try
+                  {
+                    DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
+                    dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
+                    picture.DateTaken = DateTime.ParseExact(dateTaken, "d", dateTimeFormat);
+                  }
+                  catch (Exception ex)
+                  {
+                    Log.Error("Picture.DB.SQLite: GetPicturesByFilter Date parse Error: {0} stack:{1}", ex.Message, ex.StackTrace);
+                  }
                 }
               }
-            }
-            if (string.IsNullOrEmpty(picture.FileName))
-            {
-              continue;
-            }
 
-            if (fullInfo)
-            {
-              picture.Exif = GetExifFromDB(picture.FileName);
+              if (fullInfo)
+              {
+                picture.Exif = GetExifFromDB(picture.FileName);
+              }
+              aPictures.Add(picture);
             }
-            aPictures.Add(picture);
           }
         }
       }
