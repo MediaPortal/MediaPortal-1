@@ -1028,8 +1028,7 @@ namespace MediaPortal.Util
         else
         {
           //Try generate Bitmap frame : speedy and low memory !
-          frame = BitmapFrame.Create(new Uri(MediaUrl), BitmapCreateOptions.DelayCreation,
-                                     BitmapCacheOption.None);
+          frame = BitmapFrame.Create(new Uri(MediaUrl), BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
         }
 
         if (frame.Thumbnail == null) //If it failed try second method (slower and use more memory)

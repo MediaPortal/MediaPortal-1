@@ -4451,8 +4451,7 @@ namespace MediaPortal.Util
               }
             }
           }
-          catch
-            (OutOfMemoryException ex)
+          catch (OutOfMemoryException ex)
           {
             Log.Warn("Utils: Damaged picture file found: {0}. Try to repair or delete this file please! {1}",
                      strFileName, ex.Message);

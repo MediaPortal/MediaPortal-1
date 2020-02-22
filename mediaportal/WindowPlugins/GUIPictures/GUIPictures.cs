@@ -224,7 +224,16 @@ namespace MediaPortal.GUI.Pictures
         {
           Filter(ref itemlist);
         }
+
         List<string> pictureList = new List<string>();
+        List<PictureData> aPictures = new List<PictureData>();
+        if (PictureDatabase.FilterPrivate)
+        {
+          string SQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = 'Private' AND strFile LIKE '" +
+                               DatabaseUtility.RemoveInvalidChars(path.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar) + "%';";
+          aPictures = PictureDatabase.GetPicturesByFilter(SQL, "pictures");
+          Log.Debug("GUIPictures: Load {0} private images for filter.", aPictures.Count);
+        }
 
         foreach (GUIListItem subitem in itemlist)
         {
@@ -232,6 +241,13 @@ namespace MediaPortal.GUI.Pictures
           {
             if (!subitem.IsRemote && Util.Utils.IsPicture(subitem.Path))
             {
+              if (aPictures.Count > 0)
+              {
+                if (aPictures.FirstOrDefault(x => x.FileName == subitem.Path) != null)
+                {
+                  continue;
+                }
+              }
               pictureList.Add(subitem.Path);
               if (pictureList.Count >= 4)
               {
@@ -258,6 +274,13 @@ namespace MediaPortal.GUI.Pictures
               {
                 if (!subFolderItem.IsFolder && !subFolderItem.IsRemote && Util.Utils.IsPicture(subFolderItem.Path))
                 {
+                  if (aPictures.Count > 0)
+                  {
+                    if (aPictures.FirstOrDefault(x => x.FileName == subFolderItem.Path) != null)
+                    {
+                      continue;
+                    }
+                  }
                   pictureList.Add(subFolderItem.Path);
                   Log.Debug("GUIPictures: CreateFolderThumb: Add file to folder.jpg {0}", subFolderItem.Path);
                   break;
