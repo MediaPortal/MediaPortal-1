@@ -44,7 +44,6 @@ namespace MediaPortal.Util
   /// </summary>
   public class Picture
   {
-    private static ExifOrientations orientation = ExifOrientations.Normal;
     public enum ExifOrientations
     {
         None = 0,
@@ -1386,6 +1385,7 @@ namespace MediaPortal.Util
       double angle = 0;
       if ((meta != null) && (ret != null)) //si on a des meta, tentative de récupération de l'orientation
       {
+        ExifOrientations orientation = ExifOrientations.Normal;
         if (meta.GetQuery("/app1/ifd/{ushort=274}") != null)
         {
           orientation =
