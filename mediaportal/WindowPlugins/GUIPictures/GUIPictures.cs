@@ -3972,8 +3972,7 @@ namespace MediaPortal.GUI.Pictures
           foreach (FieldInfo prop in type.GetFields())
           {
             if (prop.Name == nameof(ExifMetadata.Metadata.DatePictureTaken) ||
-                prop.Name == nameof(ExifMetadata.Metadata.Keywords) ||
-                prop.Name == nameof(ExifMetadata.Metadata.Location))
+                prop.Name == nameof(ExifMetadata.Metadata.Keywords))
             {
               continue;
             }
@@ -4010,20 +4009,50 @@ namespace MediaPortal.GUI.Pictures
           List<string> metadatavalues = PictureDatabase.ListValueByMetadata(strNewDirectory.ToDBField());
           foreach (string value in metadatavalues)
           {
-            item = new GUIListItem();
+            string itemLabel = value.ToValue() ?? value;
+            string thumbFilename = Thumbs.Pictures + @"\exif\data\" + strNewDirectory + ".png";
+
             if (strNewDirectory == nameof(ExifMetadata.Metadata.HDR))
             {
               string hdrValue = (value == "1" ? "Yes" : "No");
-              item.Label = hdrValue.ToValue() ?? hdrValue;
+              itemLabel = hdrValue.ToValue() ?? hdrValue;
             }
-            else
+            else if (strNewDirectory == nameof(ExifMetadata.Metadata.Location))
             {
-              item.Label = value.ToValue() ?? value;
+              string[] geoValues = value.Split('|');
+              double lat = 0;
+              double lon = 0;
+              if (double.TryParse(geoValues[0], NumberStyles.Any, CultureInfo.InvariantCulture, out lat) &&
+                  double.TryParse(geoValues[1], NumberStyles.Any, CultureInfo.InvariantCulture, out lon))
+              {
+                string latitude = lat.ToLatitudeString() ?? string.Empty;
+                string longitude = lon.ToLongitudeString() ?? string.Empty;
+                if (!string.IsNullOrEmpty(latitude) && !string.IsNullOrEmpty(longitude))
+                {
+                  itemLabel = latitude + " / " + longitude;
+                  string geoFile = Path.Combine(Thumbs.PicturesMaps, lat.ToFileName() + "-" + lon.ToFileName() + ".png");
+                  if (File.Exists(geoFile))
+                  {
+                    thumbFilename = geoFile;
+                  }
+                }
+                else
+                {
+                  continue;
+                }
+              }
+              else
+              {
+                continue;
+              }
             }
+
+            item = new GUIListItem();
+            item.Label = itemLabel;
             item.Label2 = strNewDirectory.ToCaption() ?? strNewDirectory;
             item.Path = strNewDirectory + @"\" + value;
             item.IsFolder = true;
-            item.IconImage = Thumbs.Pictures + @"\exif\data\" + strNewDirectory + ".png";
+            item.IconImage = thumbFilename;
             item.ThumbnailImage = item.IconImage;
             // Util.Utils.SetDefaultIcons(item);
             item.AlbumInfoTag = new ExifMetadata.Metadata();
