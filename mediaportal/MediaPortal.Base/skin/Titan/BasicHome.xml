@@ -494,7 +494,7 @@
     <control>
       <description>RSS items</description>
       <type>fadelabel</type>
-      <id>1</id>
+      <id>0</id>
       <posX>70</posX>
       <posY>1000</posY>
       <width>1810</width>

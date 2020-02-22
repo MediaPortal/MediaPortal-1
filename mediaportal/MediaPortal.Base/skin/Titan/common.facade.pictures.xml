@@ -133,6 +133,13 @@
 		      <spinPosX>1828</spinPosX>
 		      <spinPosY>1000</spinPosY>
                     <unfocusedAlpha>170</unfocusedAlpha>
+                        <!-- MP1-4986 -->
+                        <showHDRImage>yes</showHDRImage>          
+                        <IsHDRImagePosX Big="82">78</IsHDRImagePosX>          
+                        <IsHDRImagePosY Big="0">0</IsHDRImagePosY>          
+                        <IsHDRImageWidth Big="122">50</IsHDRImageWidth>          
+                        <IsHDRImageHeight Big="122">50</IsHDRImageHeight>        
+                        <IsHDRImageTexture>isHDR.png</IsHDRImageTexture>
 				</control>
                         
 				<control>
@@ -180,6 +187,13 @@
     		  <spinPosY>1000</spinPosY>
     			<thumbAnimation effect="zoom" acceleration="-2" start="100,100" reversible="false" end="135,135" center="0,800" time="200">focus</thumbAnimation>
     			<thumbAnimation effect="zoom" start="135,135" reversible="false" end="100,100" center="0,800" time="100">unfocus</thumbAnimation>
+                        <!-- MP1-4986 -->
+                        <showHDRImage>yes</showHDRImage>          
+                        <IsHDRImagePosX>108</IsHDRImagePosX>          
+                        <IsHDRImagePosY>0</IsHDRImagePosY>          
+                        <IsHDRImageWidth>122</IsHDRImageWidth>          
+                        <IsHDRImageHeight>122</IsHDRImageHeight>        
+                        <IsHDRImageTexture>isHDR.png</IsHDRImageTexture>
     		</control>
             
 				<control>
@@ -238,6 +252,49 @@
 					<scrollbarHeight>8</scrollbarHeight>
                   <scrollbarYOff>293</scrollbarYOff>
 					<cards flipY="true" diffuse="Thumb_Mask.png" mask="pictures_filmstrip_mask.png"></cards>
+
+                        <!-- MP1-4986 -->
+                      <showHDRImage>yes</showHDRImage>          
+                      <IsHDRImagePosX>116</IsHDRImagePosX>          
+                      <IsHDRImagePosY>0</IsHDRImagePosY>          
+                      <IsHDRImageWidth>122</IsHDRImageWidth>          
+                      <IsHDRImageHeight>122</IsHDRImageHeight>        
+                      <IsHDRImageTexture>isHDR.png</IsHDRImageTexture>
+
+                      <subitems>
+                        <subitem>
+                          <![CDATA[
+                            <controls>
+                              <control>
+                                <description>background</description>
+                                <type>image</type>
+                                <posX>0</posX>
+                                <posY>0</posY>
+                                <width>340</width>
+                                <height>230</height>
+                                <texture flipY="true" diffuse="Thumb_Mask_test.png" mask="filmstrip_mask.png">defaultVideoBack.png</texture>
+                              </control>
+
+                              <control>
+                                <type>textboxscrollup</type>
+                                <id>1</id>
+                                <posX>4</posX>
+                                <posY>5</posY>
+                                <width>340</width>
+                                <height>230</height>
+                                <label>#pictures.exif.full</label>
+                                <align>left</align>
+                                <font>font1</font>
+                                <textcolor>99ffffff</textcolor>
+                                <scrollStartDelaySec>20</scrollStartDelaySec>
+                                <spaceBetweenItems>1</spaceBetweenItems>
+                                <seperator>----------------------------------------------------------------------------------------------------------------------------------</seperator>
+                              </control>
+                            </controls>
+                          ]]>
+                        </subitem>
+                      </subitems>
+
 				</control>
 		</control>
 	</control>
