@@ -1865,7 +1865,7 @@ namespace MediaPortal.GUI.Pictures
       {
         return;
       }
-      if (item.IsFolder || item.IsRemote)
+      if (item.IsFolder || item.IsRemote || !MediaPortal.Util.Utils.IsPicture(item.Path))
       {
         return;
       }
