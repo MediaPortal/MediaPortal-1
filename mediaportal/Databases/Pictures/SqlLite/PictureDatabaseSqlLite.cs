@@ -1367,8 +1367,10 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof(PictureDatabase))
       {
-        string strSQL = _filterPrivate ? "SELECT DISTINCT strKeyword FROM keyword WHERE strKeyword <> 'Private' ORDER BY 1" : 
-                                         "SELECT DISTINCT strKeyword FROM keyword ORDER BY 1";
+        string strSQL = (_filterPrivate ? "SELECT DISTINCT strKeyword FROM picturekeywords WHERE strKeyword <> 'Private' AND " +
+                                                          "idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : 
+                                          "SELECT DISTINCT strKeyword FROM keyword") +
+                                          "ORDER BY 1";
         try
         {
           SQLiteResultSet result = m_db.Execute(strSQL);
@@ -1750,7 +1752,9 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT DISTINCT str" + Name + " FROM picturedata WHERE str" + Name + " IS NOT NULL ORDER BY 1";
+        string strSQL = "SELECT DISTINCT " + Name + " FROM picturedata WHERE " + Name + " IS NOT NULL" +
+                        (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
+                        " ORDER BY 1";
         SQLiteResultSet result;
         try
         {
@@ -1782,7 +1786,7 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT strFile FROM picturedata WHERE str" + Name + " = '" + Value + "'" +
+        string strSQL = "SELECT strFile FROM picturedata WHERE " + Name + " = '" + Value + "'" +
                                 (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
                                 " ORDER BY strDateTaken";
         SQLiteResultSet result;

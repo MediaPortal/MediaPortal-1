@@ -2,6 +2,8 @@
 <data>
   <exif name="Unknown">Неизвестно</exif>
   <exif name="Not defined">Не определено</exif>
+  <exif name="Yes">Да</exif>
+  <exif name="No">Нет</exif>
   <!-- Exposure Program -->
   <exif name="Manual">Ручной режим</exif>
   <exif name="Manual control">Ручной режим</exif>

@@ -3971,7 +3971,9 @@ namespace MediaPortal.GUI.Pictures
           Type type = typeof(ExifMetadata.Metadata);
           foreach (FieldInfo prop in type.GetFields())
           {
-            if (prop.Name == nameof(ExifMetadata.Metadata.DatePictureTaken) || prop.Name == nameof(ExifMetadata.Metadata.Keywords))
+            if (prop.Name == nameof(ExifMetadata.Metadata.DatePictureTaken) ||
+                prop.Name == nameof(ExifMetadata.Metadata.Keywords) ||
+                prop.Name == nameof(ExifMetadata.Metadata.Location))
             {
               continue;
             }
@@ -4005,14 +4007,25 @@ namespace MediaPortal.GUI.Pictures
           facadeLayout.Add(item);
           CountOfNonImageItems++; // necessary to select the right item later from the slideshow
 
-          List<string> metadatavalues = PictureDatabase.ListValueByMetadata(strNewDirectory);
+          List<string> metadatavalues = PictureDatabase.ListValueByMetadata(strNewDirectory.ToDBField());
           foreach (string value in metadatavalues)
           {
-            item = new GUIListItem(value.ToValue() ?? value);
+            item = new GUIListItem();
+            if (strNewDirectory == nameof(ExifMetadata.Metadata.HDR))
+            {
+              string hdrValue = (value == "0" ? "No" : "Yes");
+              item.Label = hdrValue.ToValue() ?? hdrValue;
+            }
+            else
+            {
+              item.Label = value.ToValue() ?? value;
+            }
             item.Label2 = strNewDirectory.ToCaption() ?? strNewDirectory;
             item.Path = strNewDirectory + @"\" + value;
             item.IsFolder = true;
-            Util.Utils.SetDefaultIcons(item);
+            item.IconImage = Thumbs.Pictures + @"\exif\data\" + strNewDirectory + ".png";
+            item.ThumbnailImage = item.IconImage;
+            // Util.Utils.SetDefaultIcons(item);
             item.AlbumInfoTag = new ExifMetadata.Metadata();
             item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
             item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
@@ -4043,7 +4056,7 @@ namespace MediaPortal.GUI.Pictures
           }
           else
           {
-            pics = PictureDatabase.ListPicsByMetadata(metaWhere[0].Trim(), metaWhere[1].Trim());
+            pics = PictureDatabase.ListPicsByMetadata(metaWhere[0].Trim().ToDBField(), metaWhere[1].Trim());
           }
 
           VirtualDirectory vDir = new VirtualDirectory();

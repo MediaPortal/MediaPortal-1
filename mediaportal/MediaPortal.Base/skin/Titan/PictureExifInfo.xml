@@ -15,8 +15,28 @@
       <posY>0</posY>
       <width>1920</width>
       <height>1080</height>
-      <exifrotation>true</exifrotation>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <zoom>yes</zoom>
       <texture>#pictures.exif.picture</texture>
+      <exifrotation>true</exifrotation>
+      <animation effect="fade" time="1000" start= "100" end= "25" condition="true">conditional</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Picture</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <zoom>no</zoom>
+      <texture>#pictures.exif.picture</texture>
+      <exifrotation>true</exifrotation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>

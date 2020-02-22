@@ -104,6 +104,51 @@ namespace MediaPortal.Util
       return _translated.TryGetValue(tag, out result) ? result : tag;
     }
 
+    public static string ToDBField(this string tag)
+    {
+      string result = string.Empty;
+      switch (tag)
+      {
+        case nameof(ExifMetadata.Metadata.CameraModel):
+          result = "strCamera";
+          break;
+        case nameof(ExifMetadata.Metadata.EquipmentMake):
+          result = "strCameraMake";
+          break;
+        case nameof(ExifMetadata.Metadata.CountryName):
+          result = "strCountry";
+          break;
+        case nameof(ExifMetadata.Metadata.ProvinceOrState):
+          result = "strState";
+          break;
+        case nameof(ExifMetadata.Metadata.Comment):
+          result = "strUserComment";
+          break;
+        case nameof(ExifMetadata.Metadata.ViewerComments):
+          result = "strSoftware";
+          break;
+        case nameof(ExifMetadata.Metadata.ImageDimensions):
+          result = "iImageWidth||'x'||iImageHeight";
+          break;
+        case nameof(ExifMetadata.Metadata.Resolution):
+          result = "iImageXReso||'x'||iImageYReso";
+          break;
+        case nameof(ExifMetadata.Metadata.Location):
+          result = "Latitude||'|'||Longitude";
+          break;
+        case nameof(ExifMetadata.Metadata.Altitude):
+          result = "Altitude";
+          break;
+        case nameof(ExifMetadata.Metadata.HDR):
+          result = tag;
+          break;
+        default:
+          result = "str" + tag;
+          break;
+      }
+      return result;
+    }
+
     public static string ToMapString(this double value)
     {
       return value.ToString(CultureInfo.InvariantCulture);
