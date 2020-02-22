@@ -1865,7 +1865,7 @@ namespace MediaPortal.GUI.Pictures
       {
         return;
       }
-      if (item.IsFolder || item.IsRemote)
+      if (item.IsFolder || item.IsRemote || !MediaPortal.Util.Utils.IsPicture(item.Path))
       {
         return;
       }
@@ -3042,7 +3042,7 @@ namespace MediaPortal.GUI.Pictures
       List<PictureData> aPictures = new List<PictureData>();
       if (PictureDatabase.FilterPrivate)
       {
-        string SQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = 'Private' AND strFile LIKE '" + strDir.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar + "%';";
+        string SQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = 'Private' AND strFile LIKE '" + DatabaseUtility.RemoveInvalidChars(strDir.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar) + "%';";
         aPictures = PictureDatabase.GetPicturesByFilter(SQL, "pictures");
         Log.Debug("GUIPictures: Load {0} private images for filter.", aPictures.Count);
       }
@@ -3627,7 +3627,7 @@ namespace MediaPortal.GUI.Pictures
         List<PictureData> aPictures = new List<PictureData>();
         if (PictureDatabase.FilterPrivate)
         {
-          string SQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = 'Private' AND strFile LIKE '" + currentFolder.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar + "%';";
+          string SQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = 'Private' AND strFile LIKE '" + DatabaseUtility.RemoveInvalidChars(currentFolder.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar) + "%';";
           aPictures = PictureDatabase.GetPicturesByFilter(SQL, "pictures");
           Log.Debug("GUIPictures: Load {0} private images for filter.", aPictures.Count);
         }

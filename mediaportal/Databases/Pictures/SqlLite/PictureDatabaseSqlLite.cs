@@ -1193,7 +1193,7 @@ namespace MediaPortal.Picture.Database
           {
             _exp = _value.Contains("%") ? "LIKE" : "=";
           }
-          where += string.Format("str{0} {1} '{2}'", _field, _exp, _value);
+          where += string.Format("str{0} {1} '{2}'", _field, _exp, DatabaseUtility.RemoveInvalidChars(_value));
         }
 
         if (!string.IsNullOrEmpty(_sign))
@@ -1401,7 +1401,7 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = '" + Keyword + "'" +
+        string strSQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = '" + DatabaseUtility.RemoveInvalidChars(Keyword) + "'" +
                                 (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
                                 " ORDER BY strDateTaken";
         try
@@ -1433,7 +1433,7 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT COUNT(strFile) FROM picturekeywords WHERE strKeyword = '" + Keyword + "'" +
+        string strSQL = "SELECT COUNT(strFile) FROM picturekeywords WHERE strKeyword = '" + DatabaseUtility.RemoveInvalidChars(Keyword) + "'" +
                                 (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
                                 " ORDER BY strDateTaken";
         try
@@ -1688,7 +1688,7 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT strFile FROM picture WHERE strDateTaken LIKE '" + Date + "%'" +
+        string strSQL = "SELECT strFile FROM picture WHERE strDateTaken LIKE '" + DatabaseUtility.RemoveInvalidChars(Date) + "%'" +
                                 (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
                                 " ORDER BY strDateTaken";
         SQLiteResultSet result;
@@ -1721,7 +1721,7 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT COUNT(strFile) FROM picture WHERE strDateTaken LIKE '" + Date + "%'" +
+        string strSQL = "SELECT COUNT(strFile) FROM picture WHERE strDateTaken LIKE '" + DatabaseUtility.RemoveInvalidChars(Date) + "%'" +
                                 (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
                                 " ORDER BY strDateTaken";
         SQLiteResultSet result;
@@ -1752,7 +1752,7 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT DISTINCT " + Name + " FROM picturedata WHERE " + Name + " IS NOT NULL" +
+        string strSQL = "SELECT DISTINCT " + DatabaseUtility.RemoveInvalidChars(Name) + " FROM picturedata WHERE " + DatabaseUtility.RemoveInvalidChars(Name) + " IS NOT NULL" +
                         (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
                         " ORDER BY 1";
         SQLiteResultSet result;
@@ -1786,7 +1786,7 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT strFile FROM picturedata WHERE " + Name + " = '" + Value + "'" +
+        string strSQL = "SELECT strFile FROM picturedata WHERE " + DatabaseUtility.RemoveInvalidChars(Name) + " = '" + DatabaseUtility.RemoveInvalidChars(Value) + "'" +
                                 (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
                                 " ORDER BY strDateTaken";
         SQLiteResultSet result;
