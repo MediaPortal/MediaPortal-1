@@ -4013,7 +4013,7 @@ namespace MediaPortal.GUI.Pictures
             item = new GUIListItem();
             if (strNewDirectory == nameof(ExifMetadata.Metadata.HDR))
             {
-              string hdrValue = (value == "0" ? "No" : "Yes");
+              string hdrValue = (value == "1" ? "Yes" : "No");
               item.Label = hdrValue.ToValue() ?? hdrValue;
             }
             else
