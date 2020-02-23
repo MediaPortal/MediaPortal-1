@@ -2473,7 +2473,7 @@ namespace MediaPortal.GUI.Pictures
       int iDisp = 100002;
       if (disp == Display.Date)
       {
-        if ((_useDayGrouping && currentFolder.Length == 10) || (!_useDayGrouping && currentFolder.Length == 7))
+        if ((_useDayGrouping && currentFolder.Length <= 10) || (!_useDayGrouping && currentFolder.Length <= 7))
         {
           iDisp = 636;
         }
