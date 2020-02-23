@@ -137,7 +137,7 @@ namespace MediaPortal.Util
           result = "Latitude||'|'||Longitude";
           break;
         case nameof(ExifMetadata.Metadata.Altitude):
-          result = "Altitude";
+          result = "ROUND(Altitude,2)";
           break;
         case nameof(ExifMetadata.Metadata.HDR):
           result = tag;

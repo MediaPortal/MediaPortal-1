@@ -1786,7 +1786,8 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT strFile FROM picturedata WHERE " + Name + " = '" + DatabaseUtility.RemoveInvalidChars(Value) + "'" +
+        string strValue = Name.Contains("Altitude") ? Value : "'" + DatabaseUtility.RemoveInvalidChars(Value) + "'";
+        string strSQL = "SELECT strFile FROM picturedata WHERE " + Name + " = " + strValue + 
                                 (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
                                 " ORDER BY strDateTaken";
         SQLiteResultSet result;

@@ -830,7 +830,7 @@ namespace MediaPortal.GUI.Pictures
       GUIControl.SelectItemControl(GetID, facadeLayout.GetID, 0);
       string itemName = strName.IndexOf(@"\") > 0 ? Path.GetFileNameWithoutExtension(strName) : strName;
 
-      Log.Debug("GUIPictures: Select item by name {0} - {1}", itemName, strName);
+      // Log.Debug("GUIPictures: Select item by name {0} - {1}", itemName, strName);
       for (int i = 0; i < facadeLayout.Count; i++)
       {
         if (facadeLayout[i].Label == itemName || facadeLayout[i].Path == strName)
@@ -2470,6 +2470,30 @@ namespace MediaPortal.GUI.Pictures
         GUIPropertyManager.SetProperty("#pictures.path", Path.GetDirectoryName(item.Path));
       }
 
+      int iDisp = 100002;
+      if (disp == Display.Date)
+      {
+        if ((_useDayGrouping && currentFolder.Length == 10) || (!_useDayGrouping && currentFolder.Length == 7))
+        {
+          iDisp = 636;
+        }
+      }
+      else if (disp == Display.Keyword)
+      {
+        if (string.IsNullOrEmpty(currentFolder))
+        {
+          iDisp = 2167;
+        }
+      }
+      else if (disp == Display.Metadata)
+      {
+        if (string.IsNullOrEmpty(currentFolder) || (!_searchMode && !currentFolder.Contains(@"\")))
+        {
+          iDisp = 2170;
+        }
+      }
+      GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(iDisp));
+
       OnRetrieveThumbnailFiles(item);
       if (item.AlbumInfoTag != null)
       {
@@ -4067,6 +4091,14 @@ namespace MediaPortal.GUI.Pictures
               else
               {
                 continue;
+              }
+            }
+            else if (strNewDirectory == nameof(ExifMetadata.Metadata.Altitude))
+            {
+              double alt = 0;
+              if (double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out alt))
+              {
+                itemLabel = alt.ToAltitudeString();
               }
             }
 
