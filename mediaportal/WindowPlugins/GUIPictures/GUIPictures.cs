@@ -259,8 +259,9 @@ namespace MediaPortal.GUI.Pictures
 
         // No picture in the folder. Try to find in the subfolders.
         Log.Debug("GUIPictures: CreateFolderThumb: No picture in the {0}", path);
-        if (pictureList.Count == 0)
+        if (pictureList.Count < 4)
         {
+          List<string> subPictureList = new List<string>();
           foreach (GUIListItem subitem in itemlist)
           {
             if (subitem.IsFolder && subitem.Path.Length > path.Length)
@@ -270,6 +271,7 @@ namespace MediaPortal.GUI.Pictures
               {
                 Filter(ref subFolderList);
               }
+              int i = 0;
               foreach (GUIListItem subFolderItem in subFolderList)
               {
                 if (!subFolderItem.IsFolder && !subFolderItem.IsRemote && Util.Utils.IsPicture(subFolderItem.Path))
@@ -281,15 +283,39 @@ namespace MediaPortal.GUI.Pictures
                       continue;
                     }
                   }
-                  pictureList.Add(subFolderItem.Path);
-                  Log.Debug("GUIPictures: CreateFolderThumb: Add file to folder.jpg {0}", subFolderItem.Path);
-                  break;
+                  i++;
+                  if (i == 1)
+                  {
+                    pictureList.Add(subFolderItem.Path);
+                    Log.Debug("GUIPictures: CreateFolderThumb: Add file to folder.jpg {0}", subFolderItem.Path);
+                  }
+                  else
+                  {
+                    subPictureList.Add(subFolderItem.Path);
+                  }
+                  if (i >= 4)
+                  {
+                    break;
+                  }
                 }
               }
             }
             if (pictureList.Count >= 4)
             {
               break;
+            }
+          }
+          if (pictureList.Count < 4)
+          {
+            Util.Utils.Shuffle(ref subPictureList);
+            foreach (string strFile in subPictureList)
+            {
+              pictureList.Add(strFile);
+              Log.Debug("GUIPictures: CreateFolderThumb: Add file to folder.jpg {0}", strFile);
+              if (pictureList.Count >= 4)
+              {
+                break;
+              }
             }
           }
         }
@@ -2473,7 +2499,7 @@ namespace MediaPortal.GUI.Pictures
       int iDisp = 100002;
       if (disp == Display.Date)
       {
-        if ((_useDayGrouping && currentFolder.Length <= 10) || (!_useDayGrouping && currentFolder.Length <= 7))
+        if ((_useDayGrouping && currentFolder.Length <= 7) || (!_useDayGrouping && currentFolder.Length <= 4))
         {
           iDisp = 636;
         }

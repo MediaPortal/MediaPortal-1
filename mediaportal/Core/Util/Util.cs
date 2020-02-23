@@ -4447,7 +4447,9 @@ namespace MediaPortal.Util
                     break;
                 }
                 if (img != null)
+                {
                   g.DrawImage(img, x, y, w, h);
+                }
               }
             }
           }
@@ -4470,6 +4472,31 @@ namespace MediaPortal.Util
           Thread.Sleep(50);
         else
           Thread.Sleep(10);
+      }
+    }
+
+    public static void Shuffle(ref List<string> strList)
+    {
+      if (strList == null)
+      {
+        return;
+      }
+
+      try
+      {
+        int n = strList.Count;
+        while (n > 1)
+        {
+          n--;
+          int k = ThreadSafeRandom.ThisThreadsRandom.Next(n + 1);
+          string value = strList[k];
+          strList[k] = strList[n];
+          strList[n] = value;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Shuffle: " + ex);
       }
     }
 
@@ -4511,7 +4538,6 @@ namespace MediaPortal.Util
             defaultBackground = GUIGraphicsContext.GetThemedSkinFile(@"\media\previewbackground.png");
           }
 
-
           using (FileStream fs = new FileStream(defaultBackground, FileMode.Open, FileAccess.Read))
           {
             using (Image imgFolder = Image.FromStream(fs, true, false))
@@ -4542,32 +4568,36 @@ namespace MediaPortal.Util
                   g.SmoothingMode = Thumbs.Smoothing;
 
                   g.DrawImage(imgFolder, 0, 0, width, height);
-                  int x, y, w, h;
-                  x = 0;
-                  y = 0;
-                  w = thumbnailWidth;
-                  h = thumbnailHeight;
+
                   //Load first of 4 images for the folder thumb.                  
                   try
                   {
-                    AddPicture(g, (string)aPictureList[0], x + border, y + border, w, h);
+                    AddPicture(g, (string)aPictureList[0], border, border, thumbnailWidth, thumbnailHeight);
 
                     //If exists load second of 4 images for the folder thumb.
-                    if (aPictureList.Count > 1)
+                    if (aPictureList.Count == 2)
                     {
-                      AddPicture(g, (string)aPictureList[1], x + thumbnailWidth + border * 2, y + border, w, h);
+                      AddPicture(g, (string)aPictureList[1], thumbnailWidth + border * 2, thumbnailHeight + border * 2, thumbnailWidth, thumbnailHeight);
+                    }
+                    else if (aPictureList.Count > 1)
+                    {
+                      AddPicture(g, (string)aPictureList[1], thumbnailWidth + border * 2, border, thumbnailWidth, thumbnailHeight);
                     }
 
                     //If exists load third of 4 images for the folder thumb.
-                    if (aPictureList.Count > 2)
+                    if (aPictureList.Count == 3)
                     {
-                      AddPicture(g, (string)aPictureList[2], x + border, y + thumbnailHeight + border * 2, w, h);
+                      AddPicture(g, (string)aPictureList[2], width / 2 - thumbnailWidth / 2, thumbnailHeight + border * 2, thumbnailWidth, thumbnailHeight);
+                    }
+                    else if (aPictureList.Count > 2)
+                    {
+                      AddPicture(g, (string)aPictureList[2], border, thumbnailHeight + border * 2, thumbnailWidth, thumbnailHeight);
                     }
 
                     //If exists load fourth of 4 images for the folder thumb.
                     if (aPictureList.Count > 3)
                     {
-                      AddPicture(g, (string)aPictureList[3], x + thumbnailWidth + border * 2, y + thumbnailHeight + border * 2, w, h);
+                      AddPicture(g, (string)aPictureList[3], thumbnailWidth + border * 2, thumbnailHeight + border * 2, thumbnailWidth, thumbnailHeight);
                     }
                   }
                   catch (Exception ex)
@@ -4585,16 +4615,13 @@ namespace MediaPortal.Util
                   // we do not want a folderL.jpg
                   if (aThumbPath.ToLowerInvariant().Contains(@"folder.jpg"))
                   {
-                    Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution,
-                                            (int)Thumbs.ThumbLargeResolution, 0, false);
+                    Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
                     FileDelete(tmpFile);
                   }
-                  else if (Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbResolution,
-                                                   (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                  else if (Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
                   {
                     aThumbPath = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
-                    Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution,
-                                            (int)Thumbs.ThumbLargeResolution, 0, false);
+                    Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
                     FileDelete(tmpFile);
                   }
 
@@ -4604,12 +4631,13 @@ namespace MediaPortal.Util
                     Thread.Sleep(10);
 
                   if (FileExistsInCache(aThumbPath))
+                  {
                     result = true;
+                  }
                 }
                 catch (Exception ex2)
                 {
-                  Log.Error("Utils: An exception occured saving folder preview thumb: {0} - {1}", aThumbPath,
-                            ex2.Message);
+                  Log.Error("Utils: An exception occured saving folder preview thumb: {0} - {1}", aThumbPath, ex2.Message);
                 }
               } //using (Bitmap bmp = new Bitmap(210,210))
             }
@@ -5579,7 +5607,6 @@ namespace MediaPortal.Util
       return languageTranslated;
     }
 
-
     public static string GetCultureRegionLanguage()
     {
       string strLongLanguage = CultureInfo.CurrentCulture.EnglishName;
@@ -5825,7 +5852,7 @@ namespace MediaPortal.Util
       while ((i-=step)>=0 && depth-->0)
       {
         tree += basename.Substring(i, step) + @"\";
-  }
+      }
       return tree;
     }
 
@@ -6023,6 +6050,16 @@ namespace MediaPortal.Util
       if (null == x) return -1;
       if (null == y) return 1;
       return CompareObjects(x, y);
+    }
+  }
+
+  public static class ThreadSafeRandom
+  {
+    [ThreadStatic] private static Random Local;
+
+    public static Random ThisThreadsRandom
+    {
+      get { return Local ?? (Local = new Random(unchecked(Environment.TickCount * 31 + Thread.CurrentThread.ManagedThreadId))); }
     }
   }
 }
