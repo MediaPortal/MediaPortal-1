@@ -4515,7 +4515,7 @@ namespace MediaPortal.Util
           img = Util.Picture.LoadPicture((string)aPictureList[0]);
           if (img != null)
           {
-            bool vertical = img1.Width < img1.Height;
+            bool vertical = img.Width < img.Height;
             if (vertical)
             {
               g.DrawImage(img, border, border, hW, fH);
