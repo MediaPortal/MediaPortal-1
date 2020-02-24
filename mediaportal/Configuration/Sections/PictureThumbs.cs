@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -31,7 +31,9 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
+
 using CSScriptLibrary;
+
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
@@ -252,6 +254,11 @@ namespace MediaPortal.Configuration.Sections
 
     private void CreateThumbsAndAddPictureToDB(string file)
     {
+      if (file.Contains(@"folder.jpg"))
+      {
+        return;
+      }
+
       int iRotate = PictureDatabase.GetRotation(file);
       if (iRotate == -1)
       {
@@ -268,7 +275,8 @@ namespace MediaPortal.Configuration.Sections
                                          true, false))
         {
           Log.Debug("PictureDatabase: Creation of missing large thumb successful for {0}", file);
-          countfiles++;
+          // countfiles++;
+          Interlocked.Increment(ref countfiles);
           SetStatus(String.Format("{0}/{1} thumbnails generated", countfiles, totalFiles));
         }
       }
@@ -279,7 +287,8 @@ namespace MediaPortal.Configuration.Sections
                                          false, false))
         {
           Log.Debug("PictureDatabase: Creation of missing thumb successful for {0}", file);
-          countfiles++;
+          // countfiles++;
+          Interlocked.Increment(ref countfiles);
           SetStatus(String.Format("{0}/{1} thumbnails generated", countfiles, totalFiles));
         }
       }
@@ -290,7 +299,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private bool ClearDatabase()
     {
-      string database = Config.GetFile(Config.Dir.Database, "PictureDatabase.db3");
+      string database = Config.GetFile(Config.Dir.Database, PictureDatabase.DatabaseName);
       if (File.Exists(database))
       {
         PictureDatabase.Dispose();
@@ -369,6 +378,13 @@ namespace MediaPortal.Configuration.Sections
             }
             if (!item.IsFolder)
             {
+              CreateThumbsAndAddPictureToDB(item.Path);
+              /*
+              if (item.Path.Contains(@"folder.jpg"))
+              {
+                continue;
+              }
+
               int iRotate = PictureDatabase.GetRotation(item.Path);
               if (iRotate == -1)
               {
@@ -398,6 +414,7 @@ namespace MediaPortal.Configuration.Sections
                   countfiles++;
                 }
               }
+              */
             }
           }
         }
