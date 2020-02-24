@@ -4414,7 +4414,7 @@ namespace MediaPortal.Util
       {
         try
         {
-          img = Util.Picture.LoadPicture(strFileName) ;
+          img = Util.Picture.LoadPicture(strFileName);
           if (img != null)
           {
             g.DrawImage(img, x, y, w, h);

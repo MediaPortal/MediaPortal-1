@@ -1554,12 +1554,11 @@ namespace MediaPortal.Util
 
     public static Image LoadPicture(string fileName)
     {
-      Image img = null;
       try
       {
         using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
         {
-          using (img = Image.FromStream(fs, true, false))
+          using (Image img = Image.FromStream(fs, true, false))
           {
             int iRotation = GetRotateByExif(img);
             switch (iRotation)
@@ -1576,6 +1575,7 @@ namespace MediaPortal.Util
               default:
                 break;
             }
+            return img;
           }
         }
       }
@@ -1583,7 +1583,7 @@ namespace MediaPortal.Util
       {
         Log.Warn("Picture: LoadPicture: Damaged picture file found: {0}. Try to repair or delete this file please! {1}", fileName, ex.Message);
       }
-      return img;
+      return null;
     }
 
     public static bool GetHistogramImage(string strFile, string strTarget)
