@@ -4412,51 +4412,12 @@ namespace MediaPortal.Util
       Image img = null;
       try
       {
-        // Add a thumbnail of the specified picture file to the image referenced by g, draw it at the given location and size.
-        //try
-        //{
-        //  img = ImageFast.FromFile(strFileName);
-        //  using (FileStream fs = new FileStream(strFileName, FileMode.Open, FileAccess.ReadWrite))
-        //  {
-        //    img = Image.FromStream(fs, true, true);
-        //  }
-        //}
-        //catch (ArgumentException)
-        //{
         try
         {
-          try
+          img = Util.Picture.LoadPicture(strFileName) ;
+          if (img != null)
           {
-            using (FileStream fs = new FileStream(strFileName, FileMode.Open, FileAccess.Read))
-            {
-              using (img = Image.FromStream(fs, true, false))
-              {
-                int iRotation = Util.Picture.GetRotateByExif(img);
-                switch (iRotation)
-                {
-                  case 1:
-                    img.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                    break;
-                  case 2:
-                    img.RotateFlip(RotateFlipType.Rotate180FlipNone);
-                    break;
-                  case 3:
-                    img.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                    break;
-                  default:
-                    break;
-                }
-                if (img != null)
-                {
-                  g.DrawImage(img, x, y, w, h);
-                }
-              }
-            }
-          }
-          catch (OutOfMemoryException ex)
-          {
-            Log.Warn("Utils: Damaged picture file found: {0}. Try to repair or delete this file please! {1}",
-                     strFileName, ex.Message);
+            g.DrawImage(img, x, y, w, h);
           }
         }
         catch (Exception ex)
@@ -4467,11 +4428,128 @@ namespace MediaPortal.Util
       finally
       {
         if (img != null)
+        {
           img.SafeDispose();
+        }
         if (MediaPortal.Player.g_Player.Playing)
+        {
           Thread.Sleep(50);
+        }
         else
+        {
           Thread.Sleep(10);
+        }
+      }
+    }
+
+    private static void AddTwoPicture(Graphics g, List<string> aPictureList, int border, int hW, int hH, int fW, int fH)
+    {
+      Image img1 = null;
+      Image img2 = null;
+      try
+      {
+        try
+        {
+          img1 = Util.Picture.LoadPicture((string)aPictureList[0]);
+          img2 = Util.Picture.LoadPicture((string)aPictureList[1]);
+          if (img1 != null && img2 != null)
+          {
+            bool ver1 = img1.Width < img1.Height;
+            bool ver2 = img2.Width < img2.Height;
+            if (ver1 && ver2)
+            {
+              g.DrawImage(img1, border, border, hW, fH);
+              g.DrawImage(img2, hW + border * 2, border, hW, fH);
+            }
+            else if (!ver1 && !ver2)
+            {
+              g.DrawImage(img1, border, border, fW, hH);
+              g.DrawImage(img2, border, hH + border * 2, fW, hH);
+            }
+            else if (ver1 && !ver2)
+            {
+              g.DrawImage(img1, border, border, hW, fH);
+              g.DrawImage(img2, hW + border * 2, border, hW, hH);
+            }
+            else // (!ver1 && ver2)
+            {
+              g.DrawImage(img1, border, border, fW, hH);
+              g.DrawImage(img2, border, hH + border * 2, hW, hH);
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Info("Utils: An exception occured adding an image to the folder preview thumb: {0}", ex.Message);
+        }
+      }
+      finally
+      {
+        if (img1 != null)
+        {
+          img1.SafeDispose();
+        }
+        if (img2 != null)
+        {
+          img2.SafeDispose();
+        }
+
+        if (MediaPortal.Player.g_Player.Playing)
+        {
+          Thread.Sleep(50);
+        }
+        else
+        {
+          Thread.Sleep(10);
+        }
+      }
+    }
+
+    private static void AddThreePicture(Graphics g, List<string> aPictureList, int border, int hW, int hH, int fW, int fH)
+    {
+      Image img = null;
+      try
+      {
+        try
+        {
+          img = Util.Picture.LoadPicture((string)aPictureList[0]);
+          if (img != null)
+          {
+            bool vertical = img1.Width < img1.Height;
+            if (vertical)
+            {
+              g.DrawImage(img, border, border, hW, fH);
+              AddPicture(g, (string)aPictureList[1], hW + border * 2, border, hW, hH);
+              AddPicture(g, (string)aPictureList[2], hW + border * 2, hH + border * 2, hW, hH);
+            }
+            else
+            {
+              g.DrawImage(img, border, border, fW, hH);
+              AddPicture(g, (string)aPictureList[1], border, hH + border * 2, hW, hH);
+              AddPicture(g, (string)aPictureList[2], hW + border * 2, hH + border * 2, hW, hH);
+            }
+          }
+
+        }
+        catch (Exception ex)
+        {
+          Log.Info("Utils: An exception occured adding an image to the folder preview thumb: {0}", ex.Message);
+        }
+      }
+      finally
+      {
+        if (img != null)
+        {
+          img.SafeDispose();
+        }
+        if (MediaPortal.Player.g_Player.Playing)
+        {
+          Thread.Sleep(50);
+        }
+        else
+        {
+          Thread.Sleep(10);
+        }
       }
     }
 
@@ -4545,19 +4623,10 @@ namespace MediaPortal.Util
               int width = imgFolder.Width;
               int height = imgFolder.Height;
 
-              int thumbnailWidth = (int)Thumbs.ThumbLargeResolution;
-              int thumbnailHeight = (int)Thumbs.ThumbLargeResolution;
-              // draw a fullsize thumb if only 1 pic is available
-              if (aPictureList.Count == 1)
-              {
-                thumbnailWidth = (width - border * 2);
-                thumbnailHeight = (height - border * 2);
-              }
-              else
-              {
-                thumbnailWidth = (width - border * 3) / 2;
-                thumbnailHeight = (height - border * 3) / 2;
-              }
+              int fullWidth = (width - border * 2);
+              int fullHeight = (height - border * 2);
+              int halfWidth = (width - border * 3) / 2;
+              int halfHeight = (height - border * 3) / 2;
 
               using (Bitmap bmp = new Bitmap(width, height))
               {
@@ -4572,32 +4641,28 @@ namespace MediaPortal.Util
                   //Load first of 4 images for the folder thumb.                  
                   try
                   {
-                    AddPicture(g, (string)aPictureList[0], border, border, thumbnailWidth, thumbnailHeight);
-
-                    //If exists load second of 4 images for the folder thumb.
-                    if (aPictureList.Count == 2)
+                    switch (aPictureList.Count)
                     {
-                      AddPicture(g, (string)aPictureList[1], thumbnailWidth + border * 2, thumbnailHeight + border * 2, thumbnailWidth, thumbnailHeight);
-                    }
-                    else if (aPictureList.Count > 1)
-                    {
-                      AddPicture(g, (string)aPictureList[1], thumbnailWidth + border * 2, border, thumbnailWidth, thumbnailHeight);
-                    }
-
-                    //If exists load third of 4 images for the folder thumb.
-                    if (aPictureList.Count == 3)
-                    {
-                      AddPicture(g, (string)aPictureList[2], width / 2 - thumbnailWidth / 2, thumbnailHeight + border * 2, thumbnailWidth, thumbnailHeight);
-                    }
-                    else if (aPictureList.Count > 2)
-                    {
-                      AddPicture(g, (string)aPictureList[2], border, thumbnailHeight + border * 2, thumbnailWidth, thumbnailHeight);
-                    }
-
-                    //If exists load fourth of 4 images for the folder thumb.
-                    if (aPictureList.Count > 3)
-                    {
-                      AddPicture(g, (string)aPictureList[3], thumbnailWidth + border * 2, thumbnailHeight + border * 2, thumbnailWidth, thumbnailHeight);
+                      case 1:
+                        AddPicture(g, (string)aPictureList[0], border, border, fullWidth, fullHeight);
+                        break;
+                      case 2:
+                        // AddPicture(g, (string)aPictureList[0], border, border, halfWidth, halfHeight);
+                        // AddPicture(g, (string)aPictureList[1], halfWidth + border * 2, halfHeight + border * 2, halfWidth, halfHeight);
+                        AddTwoPicture(g, aPictureList, border, halfWidth, halfHeight, fullWidth, fullHeight);
+                        break;
+                      case 3:
+                        // AddPicture(g, (string)aPictureList[0], border, border, halfWidth, halfHeight);
+                        // AddPicture(g, (string)aPictureList[1], halfWidth + border * 2, border, halfWidth, halfHeight);
+                        // AddPicture(g, (string)aPictureList[2], width / 2 - halfWidth / 2, halfHeight + border * 2, halfWidth, halfHeight);
+                        AddThreePicture(g, aPictureList, border, halfWidth, halfHeight, fullWidth, fullHeight);
+                        break;
+                      case 4:
+                        AddPicture(g, (string)aPictureList[0], border, border, halfWidth, halfHeight);
+                        AddPicture(g, (string)aPictureList[1], halfWidth + border * 2, border, halfWidth, halfHeight);
+                        AddPicture(g, (string)aPictureList[2], border, halfHeight + border * 2, halfWidth, halfHeight);
+                        AddPicture(g, (string)aPictureList[3], halfWidth + border * 2, halfHeight + border * 2, halfWidth, halfHeight);
+                        break;
                     }
                   }
                   catch (Exception ex)
@@ -4846,7 +4911,8 @@ namespace MediaPortal.Util
                 bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
                 Log.Debug("CreateTileThumb: Saving thumb!");
 
-                Picture.CreateThumbnail(tmpFile, aThumbPath, (int) Thumbs.ThumbLargeResolution,
+                Picture.CreateThumbnail(tmpFile, aThumbPath, 
+                                        (int) Thumbs.ThumbLargeResolution,
                                         (int) Thumbs.ThumbLargeResolution, 0, false);
                 FileDelete(tmpFile);
 
@@ -4890,8 +4956,7 @@ namespace MediaPortal.Util
               }
               catch (Exception ex2)
               {
-                Log.Error("Utils: An exception occured saving CreateTileThumb: {0} - {1}", aThumbPath,
-                          ex2.Message);
+                Log.Error("Utils: An exception occured saving CreateTileThumb: {0} - {1}", aThumbPath, ex2.Message);
               }
             }
           }

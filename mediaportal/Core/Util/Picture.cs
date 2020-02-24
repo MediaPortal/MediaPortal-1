@@ -1552,6 +1552,40 @@ namespace MediaPortal.Util
       }
     }
 
+    public static Image LoadPicture(string fileName)
+    {
+      Image img = null;
+      try
+      {
+        using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+        {
+          using (img = Image.FromStream(fs, true, false))
+          {
+            int iRotation = GetRotateByExif(img);
+            switch (iRotation)
+            {
+              case 1:
+                img.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                break;
+              case 2:
+                img.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                break;
+              case 3:
+                img.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                break;
+              default:
+                break;
+            }
+          }
+        }
+      }
+      catch (OutOfMemoryException ex)
+      {
+        Log.Warn("Picture: LoadPicture: Damaged picture file found: {0}. Try to repair or delete this file please! {1}", fileName, ex.Message);
+      }
+      return img;
+    }
+
     public static bool GetHistogramImage(string strFile, string strTarget)
     {
       Image image = CalculateHistogram(strFile);
