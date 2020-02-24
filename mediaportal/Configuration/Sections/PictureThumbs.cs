@@ -275,8 +275,7 @@ namespace MediaPortal.Configuration.Sections
                                          true, false))
         {
           Log.Debug("PictureDatabase: Creation of missing large thumb successful for {0}", file);
-          // countfiles++;
-          Interlocked.Increment(ref countfiles);
+          countfiles++;
           SetStatus(String.Format("{0}/{1} thumbnails generated", countfiles, totalFiles));
         }
       }
@@ -287,8 +286,7 @@ namespace MediaPortal.Configuration.Sections
                                          false, false))
         {
           Log.Debug("PictureDatabase: Creation of missing thumb successful for {0}", file);
-          // countfiles++;
-          Interlocked.Increment(ref countfiles);
+          countfiles++;
           SetStatus(String.Format("{0}/{1} thumbnails generated", countfiles, totalFiles));
         }
       }
@@ -378,8 +376,6 @@ namespace MediaPortal.Configuration.Sections
             }
             if (!item.IsFolder)
             {
-              CreateThumbsAndAddPictureToDB(item.Path);
-              /*
               if (item.Path.Contains(@"folder.jpg"))
               {
                 continue;
@@ -414,7 +410,6 @@ namespace MediaPortal.Configuration.Sections
                   countfiles++;
                 }
               }
-              */
             }
           }
         }
