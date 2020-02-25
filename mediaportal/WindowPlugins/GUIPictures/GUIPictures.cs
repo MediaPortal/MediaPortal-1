@@ -3748,12 +3748,20 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private GUIListItem CreateAndAddFolderItem(string strLabel, string path)
+    private GUIListItem CreateAndAddFolderItem(string strLabel, string path, string thumb = null)
     {
       GUIListItem item = new GUIListItem(strLabel);
       item.Path = path;
       item.IsFolder = true;
-      Util.Utils.SetDefaultIcons(item);
+      if (thumb == null)
+      {
+        Util.Utils.SetDefaultIcons(item);
+      }
+      else
+      {
+        item.IconImage = thumb;
+        item.ThumbnailImage = item.IconImage;
+      }
       item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
       item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
       facadeLayout.Add(item);
@@ -3961,9 +3969,7 @@ namespace MediaPortal.GUI.Pictures
             }
 
             string caption = prop.Name.ToCaption() ?? prop.Name;
-            GUIListItem item = CreateAndAddFolderItem(caption, prop.Name);
-            item.IconImage = Thumbs.Pictures + @"\exif\data\" + prop.Name + ".png";
-            item.ThumbnailImage = item.IconImage;
+            CreateAndAddFolderItem(caption, prop.Name, Thumbs.Pictures + @"\exif\data\" + prop.Name + ".png");
           }
         }
         else if (!_searchMode && !strNewDirectory.Contains(@"\"))
@@ -4020,10 +4026,8 @@ namespace MediaPortal.GUI.Pictures
               }
             }
 
-            GUIListItem item = CreateAndAddFolderItem(itemLabel, strNewDirectory + @"\" + value);
+            GUIListItem item = CreateAndAddFolderItem(itemLabel, strNewDirectory + @"\" + value, thumbFilename);
             item.Label2 = strNewDirectory.ToCaption() ?? strNewDirectory;
-            item.IconImage = thumbFilename;
-            item.ThumbnailImage = item.IconImage;
           }
         }
         else
