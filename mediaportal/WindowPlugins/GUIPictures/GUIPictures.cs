@@ -2478,7 +2478,6 @@ namespace MediaPortal.GUI.Pictures
       CreateAllThumbs(item, Regenerate, Recursive);
 
       GUITextureManager.CleanupThumbs();
-      GUIWaitCursor.Hide();
 
       LoadDirectory(currentFolder);
     }
@@ -3592,86 +3591,94 @@ namespace MediaPortal.GUI.Pictures
       }
 
       GUIWaitCursor.Show();
-
-      ExifMetadata.Metadata metadata = new ExifMetadata.Metadata();
-      metadata.SetExifProperties();
-      _queueItems = new ConcurrentQueue<GUIListItem>();
-
-      if (_pictureFolderWatcher != null)
+      ThreadPool.QueueUserWorkItem(delegate
       {
-        _pictureFolderWatcher.ChangeMonitoring(false);
-      }
-
-      if (disp == Display.Files && !string.IsNullOrEmpty(strNewDirectory))
-      {
-        _pictureFolderWatcher = new PicturesFolderWatcherHelper(strNewDirectory);
-        _pictureFolderWatcher.SetMonitoring(true);
-        _pictureFolderWatcher.StartMonitor();
-      }
-
-      if (!returnFromSlideshow)
-      {
-        GUIListItem SelectedItem = GetSelectedItem();
-        if (SelectedItem != null)
+        try
         {
-          if (SelectedItem.IsFolder && SelectedItem.Label != "..")
+          ExifMetadata.Metadata metadata = new ExifMetadata.Metadata();
+          metadata.SetExifProperties();
+          _queueItems = new ConcurrentQueue<GUIListItem>();
+
+          if (_pictureFolderWatcher != null)
           {
-            folderHistory.Set(SelectedItem.Label, currentFolder);
+            _pictureFolderWatcher.ChangeMonitoring(false);
           }
+
+          if (disp == Display.Files && !string.IsNullOrEmpty(strNewDirectory))
+          {
+            _pictureFolderWatcher = new PicturesFolderWatcherHelper(strNewDirectory);
+            _pictureFolderWatcher.SetMonitoring(true);
+            _pictureFolderWatcher.StartMonitor();
+          }
+
+          if (!returnFromSlideshow)
+          {
+            GUIListItem SelectedItem = GetSelectedItem();
+            if (SelectedItem != null)
+            {
+              if (SelectedItem.IsFolder && SelectedItem.Label != "..")
+              {
+                folderHistory.Set(SelectedItem.Label, currentFolder);
+              }
+            }
+          }
+
+          if (strNewDirectory != currentFolder && mapSettings != null)
+          {
+            SaveFolderSettings(currentFolder);
+          }
+
+          if (strNewDirectory != currentFolder || mapSettings == null)
+          {
+            LoadFolderSettings(strNewDirectory);
+          }
+
+          currentFolder = strNewDirectory;
+
+          GUIControl.ClearControl(GetID, facadeLayout.GetID);
+
+          if (disp == Display.Files)
+          {
+            LoadFileView();
+          }
+          else if (disp == Display.Date)
+          {
+            LoadDateView(strNewDirectory);
+          }
+          else if (disp == Display.Keyword)
+          {
+            LoadKeywordView(strNewDirectory);
+          }
+          else if (disp == Display.Metadata)
+          {
+            LoadMetadataView(strNewDirectory);
+          }
+
+          string strSelectedItem = folderHistory.Get(currentFolder);
+          SelectItemByIndex(0);
+          SelectItemByName(strSelectedItem);
+
+          int totalItemCount = facadeLayout.Count;
+          if (totalItemCount > 0)
+          {
+            GUIListItem rootItem = (GUIListItem)facadeLayout[0];
+            if (rootItem.Label == "..")
+            {
+              totalItemCount--;
+            }
+          }
+
+          //set object count label
+          GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(totalItemCount));
+
+          ShowThumbPanel();
         }
-      }
-
-      if (strNewDirectory != currentFolder && mapSettings != null)
-      {
-        SaveFolderSettings(currentFolder);
-      }
-
-      if (strNewDirectory != currentFolder || mapSettings == null)
-      {
-        LoadFolderSettings(strNewDirectory);
-      }
-
-      currentFolder = strNewDirectory;
-
-      GUIControl.ClearControl(GetID, facadeLayout.GetID);
-
-      if (disp == Display.Files)
-      {
-        LoadFileView();
-      }
-      else if (disp == Display.Date)
-      {
-        LoadDateView(strNewDirectory);
-      }
-      else if (disp == Display.Keyword)
-      {
-        LoadKeywordView(strNewDirectory);
-      }
-      else if (disp == Display.Metadata)
-      {
-        LoadMetadataView(strNewDirectory);
-      }
-
-      string strSelectedItem = folderHistory.Get(currentFolder);
-      SelectItemByIndex(0);
-      SelectItemByName(strSelectedItem);
-
-      int totalItemCount = facadeLayout.Count;
-      if (totalItemCount > 0)
-      {
-        GUIListItem rootItem = (GUIListItem)facadeLayout[0];
-        if (rootItem.Label == "..")
+        finally
         {
-          totalItemCount--;
+          GUIWaitCursor.Hide();
         }
-      }
+      });
 
-      //set object count label
-      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(totalItemCount));
-
-      ShowThumbPanel();
-
-      GUIWaitCursor.Hide();
     }
 
     private void LoadFileView()
