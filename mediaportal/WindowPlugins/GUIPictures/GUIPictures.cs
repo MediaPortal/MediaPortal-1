@@ -1922,7 +1922,7 @@ namespace MediaPortal.GUI.Pictures
       if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\PictureExifInfo.xml")))
       {
         SaveSelected();
-        GUIPicureExif pictureExif= (GUIPicureExif)GUIWindowManager.GetWindow((int)Window.WINDOW_PICTURE_EXIF);
+        GUIPicureExif pictureExif = (GUIPicureExif)GUIWindowManager.GetWindow((int)Window.WINDOW_PICTURE_EXIF);
         pictureExif.Picture = item.Path;
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_PICTURE_EXIF);
       }
@@ -2117,7 +2117,7 @@ namespace MediaPortal.GUI.Pictures
         // Show dialog menu
         dlg.DoModal(GetID);
 
-        if (dlg.SelectedId== -1)
+        if (dlg.SelectedId == -1)
         {
           return;
         }
@@ -2132,7 +2132,7 @@ namespace MediaPortal.GUI.Pictures
             break;
         }
       }
-      
+
       if (VirtualKeyboard.GetKeyboard(ref _searchString, GetID))
       {
         if (!string.IsNullOrEmpty(_searchString))
@@ -2247,7 +2247,7 @@ namespace MediaPortal.GUI.Pictures
           {
             SQL = SQL + " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')";
           }
-          List<PictureData> aPictures =PictureDatabase.GetPicturesByFilter(SQL, "pictures");
+          List<PictureData> aPictures = PictureDatabase.GetPicturesByFilter(SQL, "pictures");
           foreach (PictureData pic in aPictures)
           {
             SlideShow.Add(pic.FileName);
@@ -3439,7 +3439,7 @@ namespace MediaPortal.GUI.Pictures
         DateTime now = DateTime.Now;
         TimeSpan ts = now - _prevWolTime;
 
-        if (serverName == _prevServerName && _wolResendTime*60 > ts.TotalSeconds)
+        if (serverName == _prevServerName && _wolResendTime * 60 > ts.TotalSeconds)
         {
           return true;
         }
