@@ -2526,7 +2526,11 @@ namespace MediaPortal.GUI.Pictures
         {
           SetItemExifData(item);
         }
-        SetPicturePropertys((ExifMetadata.Metadata)item.AlbumInfoTag);
+        SetPictureProperties((ExifMetadata.Metadata)item.AlbumInfoTag);
+      }
+      else
+      {
+        SetPictureProperties(new ExifMetadata.Metadata());
       }
 
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
@@ -4189,7 +4193,7 @@ namespace MediaPortal.GUI.Pictures
 
     #region Picture Properties
 
-    private void SetPicturePropertys(ExifMetadata.Metadata metadata)
+    private void SetPictureProperties(ExifMetadata.Metadata metadata)
     {
       metadata.SetExifProperties();
 
