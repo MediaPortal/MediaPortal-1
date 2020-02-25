@@ -107,11 +107,15 @@ namespace MediaPortal.Util
           {
             using (theImage = Image.FromStream(fs, true, false))
             {
-              Log.Debug("Picture: Fast loaded texture {0}", strPic);
               if (theImage == null)
+              {
                 return null;
+              }
+              Log.Debug("Picture: Fast loaded texture {0}", strPic);
               if (iRotate > 0)
               {
+                RotateImage(ref theImage);
+                /*
                 RotateFlipType fliptype;
                 switch (iRotate)
                 {
@@ -131,6 +135,7 @@ namespace MediaPortal.Util
                     fliptype = RotateFlipType.RotateNoneFlipNone;
                     break;
                 }
+                */
               }
               iWidth = theImage.Size.Width;
               iHeight = theImage.Size.Height;
@@ -989,7 +994,8 @@ namespace MediaPortal.Util
     /// /// <param name="needOverride">Override if the file is exist</param>
     /// <returns>Whether the thumb has been successfully created</returns>
     public static bool ReCreateThumbnail(string thumbnailImageSource, string thumbnailImageDest, int aThumbWidth,
-                                       int aThumbHeight, int iRotate, bool aFastMode, bool autocreateLargeThumbs, bool fallBack, bool needOverride)
+                                         int aThumbHeight, int iRotate, bool aFastMode, bool autocreateLargeThumbs, 
+                                         bool fallBack, bool needOverride)
     {
       if (!needOverride && File.Exists(thumbnailImageDest))
       {
@@ -1289,6 +1295,8 @@ namespace MediaPortal.Util
 
       try
       {
+        RotateImage(ref aDrawingImage, aRotation);
+        /*
         switch (aRotation)
         {
           case 1:
@@ -1303,7 +1311,7 @@ namespace MediaPortal.Util
           default:
             break;
         }
-
+        */
         int iWidth = aThumbWidth;
         int iHeight = aThumbHeight;
         float fAR = (aDrawingImage.Width) / ((float)aDrawingImage.Height);
@@ -1354,9 +1362,7 @@ namespace MediaPortal.Util
           }
         }
 
-        if (MediaPortal.Player.g_Player.Playing)
-          Thread.Sleep(30);
-
+        Util.Utils.ThreadSleep(30);
         result = SaveThumbnail(aThumbTargetPath, myTargetThumb);
       }
       catch (Exception ex)
@@ -1430,10 +1436,7 @@ namespace MediaPortal.Util
 
         File.SetAttributes(aThumbTargetPath, File.GetAttributes(aThumbTargetPath) | FileAttributes.Hidden);
         // even if run in background thread wait a little so the main process does not starve on IO
-        if (MediaPortal.Player.g_Player.Playing)
-          Thread.Sleep(100);
-        else
-          Thread.Sleep(1);
+        Util.Utils.ThreadSleep(100);
         return true;
       }
       catch (Exception ex)
@@ -1552,38 +1555,52 @@ namespace MediaPortal.Util
       }
     }
 
-    public static Image LoadPicture(string fileName)
+    public static void RotateImage(ref Image img)
     {
+      if (img == null)
+      {
+        return;
+      }
+
       try
       {
-        using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+        int iRotation = GetRotateByExif(img);
+        RotateImage(ref img, iRotation);
+      }
+      catch (Exception ex)
+      {
+        Log.Warn("Picture: RotateImage: {0}", ex.Message);
+      }
+    }
+
+    public static void RotateImage(ref Image img, int iRotation)
+    {
+      if (img == null)
+      {
+        return;
+      }
+
+      try
+      {
+        switch (iRotation)
         {
-          using (Image img = Image.FromStream(fs, true, false))
-          {
-            int iRotation = GetRotateByExif(img);
-            switch (iRotation)
-            {
-              case 1:
-                img.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                break;
-              case 2:
-                img.RotateFlip(RotateFlipType.Rotate180FlipNone);
-                break;
-              case 3:
-                img.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                break;
-              default:
-                break;
-            }
-            return img;
-          }
+          case 1:
+            img.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            break;
+          case 2:
+            img.RotateFlip(RotateFlipType.Rotate180FlipNone);
+            break;
+          case 3:
+            img.RotateFlip(RotateFlipType.Rotate270FlipNone);
+            break;
+          default:
+            break;
         }
       }
-      catch (OutOfMemoryException ex)
+      catch (Exception ex)
       {
-        Log.Warn("Picture: LoadPicture: Damaged picture file found: {0}. Try to repair or delete this file please! {1}", fileName, ex.Message);
+        Log.Warn("Picture: RotateImage: {0}", ex.Message);
       }
-      return null;
     }
 
     public static bool GetHistogramImage(string strFile, string strTarget)
