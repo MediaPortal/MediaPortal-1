@@ -1354,7 +1354,7 @@ namespace MediaPortal.Util
           }
         }
 
-        Util.Utils.ThreadSleep(30);
+        Utils.ThreadSleep(30);
         result = SaveThumbnail(aThumbTargetPath, myTargetThumb);
       }
       catch (Exception ex)
@@ -1428,7 +1428,7 @@ namespace MediaPortal.Util
 
         File.SetAttributes(aThumbTargetPath, File.GetAttributes(aThumbTargetPath) | FileAttributes.Hidden);
         // even if run in background thread wait a little so the main process does not starve on IO
-        Util.Utils.ThreadSleep(100);
+        Utils.ThreadSleep(100);
         return true;
       }
       catch (Exception ex)
