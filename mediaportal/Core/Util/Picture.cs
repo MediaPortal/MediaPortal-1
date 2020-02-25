@@ -98,14 +98,13 @@ namespace MediaPortal.Util
         return null;
 
       Direct3D.Texture texture = null;
-      Image theImage = null;
       try
       {
         try
         {
           using (FileStream fs = new FileStream(strPic, FileMode.Open, FileAccess.Read))
           {
-            using (theImage = Image.FromStream(fs, true, false))
+            using (Image theImage = Image.FromStream(fs, true, false))
             {
               if (theImage == null)
               {
@@ -114,7 +113,7 @@ namespace MediaPortal.Util
               Log.Debug("Picture: Fast loaded texture {0}", strPic);
               if (iRotate > 0)
               {
-                RotateImage(ref theImage);
+                RotateImage(theImage);
                 /*
                 RotateFlipType fliptype;
                 switch (iRotate)
@@ -239,13 +238,6 @@ namespace MediaPortal.Util
       catch (Exception ex)
       {
         Log.Warn("Picture: exception loading {0} err:{1}", strPic, ex.Message);
-      }
-      finally
-      {
-        if (theImage != null)
-        {
-          theImage.SafeDispose();
-        }
       }
       return texture;
     }
@@ -1295,7 +1287,7 @@ namespace MediaPortal.Util
 
       try
       {
-        RotateImage(ref aDrawingImage, aRotation);
+        RotateImage(aDrawingImage, aRotation);
         /*
         switch (aRotation)
         {
@@ -1362,7 +1354,7 @@ namespace MediaPortal.Util
           }
         }
 
-        Util.Utils.ThreadSleep(30);
+        Utils.ThreadSleep(30);
         result = SaveThumbnail(aThumbTargetPath, myTargetThumb);
       }
       catch (Exception ex)
@@ -1436,7 +1428,7 @@ namespace MediaPortal.Util
 
         File.SetAttributes(aThumbTargetPath, File.GetAttributes(aThumbTargetPath) | FileAttributes.Hidden);
         // even if run in background thread wait a little so the main process does not starve on IO
-        Util.Utils.ThreadSleep(100);
+        Utils.ThreadSleep(100);
         return true;
       }
       catch (Exception ex)
@@ -1555,7 +1547,7 @@ namespace MediaPortal.Util
       }
     }
 
-    public static void RotateImage(ref Image img)
+    public static void RotateImage(Image img)
     {
       if (img == null)
       {
@@ -1565,7 +1557,7 @@ namespace MediaPortal.Util
       try
       {
         int iRotation = GetRotateByExif(img);
-        RotateImage(ref img, iRotation);
+        RotateImage(img, iRotation);
       }
       catch (Exception ex)
       {
@@ -1573,7 +1565,7 @@ namespace MediaPortal.Util
       }
     }
 
-    public static void RotateImage(ref Image img, int iRotation)
+    public static void RotateImage(Image img, int iRotation)
     {
       if (img == null)
       {
