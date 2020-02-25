@@ -4425,10 +4425,9 @@ namespace MediaPortal.Util
       {
         using (FileStream fs = new FileStream(strFileName, FileMode.Open, FileAccess.Read))
         {
-          Image img = null;
-          using (img = Image.FromStream(fs, true, false))
+          using (Image img = Image.FromStream(fs, true, false))
           {
-            Util.Picture.RotateImage(ref img);
+            Picture.RotateImage(img);
             if (img != null)
             {
               g.DrawImage(img, x, y, w, h);
@@ -4455,13 +4454,11 @@ namespace MediaPortal.Util
         using (FileStream fs1 = new FileStream((string)aPictureList[0], FileMode.Open, FileAccess.Read),
                           fs2 = new FileStream((string)aPictureList[1], FileMode.Open, FileAccess.Read))
         {
-          Image img1 = null;
-          Image img2 = null;
-          using (img1 = Image.FromStream(fs1, true, false))
-          using (img2 = Image.FromStream(fs2, true, false))
+          using (Image img1 = Image.FromStream(fs1, true, false))
+          using (Image img2 = Image.FromStream(fs2, true, false))
           {
-            Util.Picture.RotateImage(ref img1);
-            Util.Picture.RotateImage(ref img2);
+            Picture.RotateImage(img1);
+            Picture.RotateImage(img2);
 
             if (img1 != null && img2 != null)
             {
@@ -4509,10 +4506,9 @@ namespace MediaPortal.Util
       {
         using (FileStream fs = new FileStream((string)aPictureList[0], FileMode.Open, FileAccess.Read))
         {
-          Image img = null;
-          using (img = Image.FromStream(fs, true, false))
+          using (Image img = Image.FromStream(fs, true, false))
           {
-            Util.Picture.RotateImage(ref img);
+            Picture.RotateImage(img);
             if (img != null)
             {
               bool vertical = img.Width < img.Height;
