@@ -4407,7 +4407,7 @@ namespace MediaPortal.Util
       return Utils.GetCoverArtName(strFolder, strFileName + "L");
     }
 
-    private static void ThreadSleep(int sleep)
+    public static void ThreadSleep(int sleep)
     {
       if (MediaPortal.Player.g_Player.Playing)
       {
@@ -4425,7 +4425,8 @@ namespace MediaPortal.Util
       {
         using (FileStream fs = new FileStream(strFileName, FileMode.Open, FileAccess.Read))
         {
-          using (Image img = Image.FromStream(fs, true, false))
+          Image img = null;
+          using (img = Image.FromStream(fs, true, false))
           { 
             Util.Picture.RotateImage(ref img);
             if (img != null)
@@ -4454,8 +4455,10 @@ namespace MediaPortal.Util
         using (FileStream fs1 = new FileStream((string)aPictureList[0], FileMode.Open, FileAccess.Read), 
                           fs2 = new FileStream((string)aPictureList[1], FileMode.Open, FileAccess.Read))
         {
-          using (Image img1 = Image.FromStream(fs1, true, false),
-                       img2 = Image.FromStream(fs2, true, false))
+          Image img1 = null;
+          Image img2 = null;
+          using (img1 = Image.FromStream(fs1, true, false),
+                 img2 = Image.FromStream(fs2, true, false))
           { 
             Util.Picture.RotateImage(ref img1);
             Util.Picture.RotateImage(ref img2);
@@ -4506,7 +4509,8 @@ namespace MediaPortal.Util
       {
         using (FileStream fs = new FileStream((string)aPictureList[0], FileMode.Open, FileAccess.Read))
         {
-          using (Image img = Image.FromStream(fs, true, false))
+          Image img = null;
+          using (img = Image.FromStream(fs, true, false))
           { 
             Util.Picture.RotateImage(ref img);
             if (img != null)
