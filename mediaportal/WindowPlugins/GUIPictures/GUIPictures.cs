@@ -307,7 +307,7 @@ namespace MediaPortal.GUI.Pictures
           }
           if (pictureList.Count < 4)
           {
-            Util.Utils.Shuffle(ref subPictureList);
+            Util.Utils.Shuffle(subPictureList);
             foreach (string strFile in subPictureList)
             {
               pictureList.Add(strFile);
