@@ -258,9 +258,13 @@ namespace MediaPortal.GUI.Pictures
         }
 
         // No picture in the folder. Try to find in the subfolders.
-        Log.Debug("GUIPictures: CreateFolderThumb: No picture in the {0}", path);
+        if (pictureList.Count == 0)
+        {
+          Log.Debug("GUIPictures: CreateFolderThumb: No picture in the {0}", path);
+        }
         if (pictureList.Count < 4)
         {
+          Log.Debug("GUIPictures: CreateFolderThumb: Try to find in the subfolders...");
           List<string> subPictureList = new List<string>();
           foreach (GUIListItem subitem in itemlist)
           {
