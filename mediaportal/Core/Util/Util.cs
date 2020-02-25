@@ -155,7 +155,7 @@ namespace MediaPortal.Util
 
     private static string[] _artistNamePrefixes;
     protected static string _artistPrefixes;
-    
+
     private static bool m_bHideExtensions = false;
     private static bool enableGuiSounds;
 
@@ -201,7 +201,7 @@ namespace MediaPortal.Util
         ".wma," +
         // BassWv
         ".wv";
-    
+
     public static string VideoExtensionsDefault =
       ".avi,.bdmv,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo,.flv,.m4v,.3gp,.wtv,.ogv";
 
@@ -437,7 +437,7 @@ namespace MediaPortal.Util
       }
       return (strPath.Length > 10 && (strPath.StartsWith(@"http://") || strPath.StartsWith(@"https://")));
     }
-    
+
     /// <summary>
     /// Returns whether a file is TV
     /// Will also return true is file is Radio as both share same format
@@ -485,7 +485,7 @@ namespace MediaPortal.Util
 
     /// <summary>
     /// This returns whether a file is video or not
-    /// There is an issue in the logic for multi-seat radio 
+    /// There is an issue in the logic for multi-seat radio
     /// => if (strPath.ToLowerInvariant().StartsWith("rtsp:")) return true;
     /// means this will incorrectly return true for multi-seat radio
     /// </summary>
@@ -1034,7 +1034,7 @@ namespace MediaPortal.Util
         //
         bool createVideoThumbs;
         bool getItemThumb = true;
-          
+
         using (Settings xmlreader = new MPSettings())
         {
           createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "videoondemand", true);
@@ -1124,7 +1124,7 @@ namespace MediaPortal.Util
     /// <summary>
     /// Function to check share path and selected item path.
     /// Item path can have deeper subdir level but must begin
-    /// with share path to return TRUE, selected item extra 
+    /// with share path to return TRUE, selected item extra
     /// subdir levels will be ignored
     /// </summary>
     /// <param name="dir1">share path</param>
@@ -1203,7 +1203,7 @@ namespace MediaPortal.Util
           // Get item dir
           string itemDir = string.Empty;
           itemDir = (GetParentDirectory(directory));
-          
+
           // Check if share dir correspond to item dir
           if (AreEqual(shareDir, itemDir))
           {
@@ -1431,7 +1431,7 @@ namespace MediaPortal.Util
           readableMonth = GUILocalizeStrings.Get(29); //September
           break;
         case "10":
-          readableMonth = GUILocalizeStrings.Get(30); //October          
+          readableMonth = GUILocalizeStrings.Get(30); //October
           break;
         case "11":
           readableMonth = GUILocalizeStrings.Get(31); //November
@@ -1880,8 +1880,8 @@ namespace MediaPortal.Util
     {
       string extension = Path.GetExtension(fileName).ToLowerInvariant();
       // check for "http" and "https" to prevent exception
-      if (string.IsNullOrEmpty(fileName) || fileName.StartsWith("http://") || fileName.StartsWith("https://") || 
-          !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts")) 
+      if (string.IsNullOrEmpty(fileName) || fileName.StartsWith("http://") || fileName.StartsWith("https://") ||
+          !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts"))
         return false;
 
       string vDrive = DaemonTools.GetVirtualDrive();
@@ -2244,7 +2244,7 @@ namespace MediaPortal.Util
     {
       mciSendString("set cdaudio door open", null, 0, IntPtr.Zero);
     }
-    
+
     public static void CloseCDROM(string driveLetter)
     {
       mciSendString(string.Format("set CDAudio!{0} door closed", driveLetter), null, 127, IntPtr.Zero);
@@ -2350,12 +2350,12 @@ namespace MediaPortal.Util
       //ProcOptions.StandardOutputEncoding = Encoding.GetEncoding("ISO-8859-1"); // the output contains "Umlaute", etc.
       //ProcOptions.StandardErrorEncoding = Encoding.GetEncoding("ISO-8859-1");
       ProcOptions.WorkingDirectory = aWorkingDir; // set the dir because the binary might depend on cygwin.dll
-      ProcOptions.CreateNoWindow = true; // Do not spawn a "Dos-Box"      
-      ProcOptions.ErrorDialog = false; // Do not open an error box on failure        
+      ProcOptions.CreateNoWindow = true; // Do not spawn a "Dos-Box"
+      ProcOptions.ErrorDialog = false; // Do not open an error box on failure
 
       ExternalProc.OutputDataReceived += new DataReceivedEventHandler(OutputDataHandler);
       ExternalProc.ErrorDataReceived += new DataReceivedEventHandler(ErrorDataHandler);
-      ExternalProc.EnableRaisingEvents = true; // We want to know when and why the process died        
+      ExternalProc.EnableRaisingEvents = true; // We want to know when and why the process died
       ExternalProc.StartInfo = ProcOptions;
       if (File.Exists(ProcOptions.FileName))
       {
@@ -2575,7 +2575,7 @@ namespace MediaPortal.Util
         }
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
         {
-          //using external player checking is now g_player side 
+          //using external player checking is now g_player side
           //bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
           //if (bInternal) return false;
           string strPath = xmlreader.GetValueAsString("movieplayer", "path", string.Empty);
@@ -2620,7 +2620,7 @@ namespace MediaPortal.Util
               // %filename% argument handling
               else if (strParams.IndexOf("%filename%", StringComparison.Ordinal) >= 0)
                 strParams = strParams.Replace("%filename%", "\"" + strFile + "\"");
-              
+
               Process movieplayer = new Process();
               string strWorkingDir = Path.GetFullPath(strPath);
               string strFileName = Path.GetFileName(strPath);
@@ -2931,7 +2931,7 @@ namespace MediaPortal.Util
       FileDelete(file);
       Log.Debug("Util DownLoadImage URL : {0}, file : {1}", strURL, file);
       DownLoadImage(strURL, file);
-      
+
       if (File.Exists(file))
       {
         try
@@ -3098,9 +3098,9 @@ namespace MediaPortal.Util
     }
 
     ///<summary>
-    ///Plays a sound from a byte array. 
-    ///Note: If distortion or corruption of 
-    //     audio playback occurs, 
+    ///Plays a sound from a byte array.
+    ///Note: If distortion or corruption of
+    //     audio playback occurs,
     ///try using synchronous playback, or sa
     //     ve to a temp file and
     ///use the file-based option.
@@ -3112,9 +3112,9 @@ namespace MediaPortal.Util
     }
 
     ///<summary>
-    ///Plays a sound from a byte array. 
-    ///Note: If distortion or corruption of 
-    //     audio playback occurs, 
+    ///Plays a sound from a byte array.
+    ///Note: If distortion or corruption of
+    //     audio playback occurs,
     ///try using synchronous playback, or sa
     //     ve to a temp file and
     ///use the file-based option.
@@ -3570,7 +3570,7 @@ namespace MediaPortal.Util
       {
         Log.Warn("DirSearch: {0}", ex.Message);
         AddFoldersLookedUp(sDir); //lets tag the invalid folder as have looked-up
-        //Log.Error("DirSearch failed in dir={0}, with err={1}", sDir, e.Message);        
+        //Log.Error("DirSearch failed in dir={0}, with err={1}", sDir, e.Message);
         //ignore
       }
       return files;
@@ -3589,12 +3589,12 @@ namespace MediaPortal.Util
     {
       // eg. takes care of this sequence
       // 1:         \\thumbs\tv\recorded
-      // 2:					\\thumbs\tv         
+      // 2:         \\thumbs\tv
 
-      //or 
+      //or
       // eg. takes care of this sequence
       // 1:         \\thumbs\tv
-      // 2:         \\thumbs\tv          
+      // 2:         \\thumbs\tv
       string dirCopy = dir;
 
       HashSet<string> foldersLookedUpCopy = null;
@@ -4044,7 +4044,7 @@ namespace MediaPortal.Util
     }
 
     /// <summary>
-    /// taken from audioscrobbler plugin code to reverse where prefix has been swapped 
+    /// taken from audioscrobbler plugin code to reverse where prefix has been swapped
     /// eg. The Beatles => Beatles, The or Die Toten Hosen => Toten Hosen ,Die
     /// and will change back to the artist name
     /// </summary>
@@ -4255,7 +4255,7 @@ namespace MediaPortal.Util
         }
         /*else
         {
-          Log.Debug("InsertFilesIntoCacheAsynch: dir already pre-scanned : {0}", path);      
+          Log.Debug("InsertFilesIntoCacheAsynch: dir already pre-scanned : {0}", path);
         }*/
       }
     }
@@ -4427,7 +4427,7 @@ namespace MediaPortal.Util
         {
           Image img = null;
           using (img = Image.FromStream(fs, true, false))
-          { 
+          {
             Util.Picture.RotateImage(ref img);
             if (img != null)
             {
@@ -4452,14 +4452,14 @@ namespace MediaPortal.Util
     {
       try
       {
-        using (FileStream fs1 = new FileStream((string)aPictureList[0], FileMode.Open, FileAccess.Read), 
+        using (FileStream fs1 = new FileStream((string)aPictureList[0], FileMode.Open, FileAccess.Read),
                           fs2 = new FileStream((string)aPictureList[1], FileMode.Open, FileAccess.Read))
         {
           Image img1 = null;
           Image img2 = null;
-          using (img1 = Image.FromStream(fs1, true, false),
-                 img2 = Image.FromStream(fs2, true, false))
-          { 
+          using (img1 = Image.FromStream(fs1, true, false))
+          using (img2 = Image.FromStream(fs2, true, false))
+          {
             Util.Picture.RotateImage(ref img1);
             Util.Picture.RotateImage(ref img2);
 
@@ -4511,7 +4511,7 @@ namespace MediaPortal.Util
         {
           Image img = null;
           using (img = Image.FromStream(fs, true, false))
-          { 
+          {
             Util.Picture.RotateImage(ref img);
             if (img != null)
             {
@@ -4629,7 +4629,7 @@ namespace MediaPortal.Util
 
                   g.DrawImage(imgFolder, 0, 0, width, height);
 
-                  //Load first of 4 images for the folder thumb.                  
+                  //Load first of 4 images for the folder thumb.
                   try
                   {
                     switch (aPictureList.Count)
@@ -4899,7 +4899,7 @@ namespace MediaPortal.Util
                 bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
                 Log.Debug("CreateTileThumb: Saving thumb!");
 
-                Picture.CreateThumbnail(tmpFile, aThumbPath, 
+                Picture.CreateThumbnail(tmpFile, aThumbPath,
                                         (int) Thumbs.ThumbLargeResolution,
                                         (int) Thumbs.ThumbLargeResolution, 0, false);
                 FileDelete(tmpFile);
@@ -4978,7 +4978,7 @@ namespace MediaPortal.Util
 
     /// <summary>
     /// Move the Prefix of an artist to the end of the string for better sorting
-    /// i.e. "The Rolling Stones" -> "Rolling Stones, The" 
+    /// i.e. "The Rolling Stones" -> "Rolling Stones, The"
     /// </summary>
     /// <param name="artistName"></param>
     /// <param name="appendPrefix"></param>
@@ -5708,7 +5708,7 @@ namespace MediaPortal.Util
         string[] strFiles = System.IO.Directory.GetFiles(path, "*." + sp);
         foreach (string strFile in strFiles)
         {
-          //this check is needed because GetFiles truncates extension to 3 letters, 
+          //this check is needed because GetFiles truncates extension to 3 letters,
           //therefore "*.htm" would find both htm and html files, together with any other variant (htmshit for example)
           if (!strFile.ToLowerInvariant().EndsWith("." + sp))
           {
@@ -5746,7 +5746,7 @@ namespace MediaPortal.Util
     public static string FormatMultiItemMusicString(string tagValue, bool stripArtistPrefixes)
     {
       string[] strSplit = tagValue.Split(new char[] { ';', '|' });
-      // Can't use a simple String.Join as i need to trim all the elements 
+      // Can't use a simple String.Join as i need to trim all the elements
       string strFormattedString = "| ";
       foreach (string strTmp in strSplit)
       {
@@ -5819,7 +5819,7 @@ namespace MediaPortal.Util
     public static List<string> GetAvailableUsbHardDisks()
     {
       List<string> disks = new List<string>();
-      
+
       try
       {
         // browse all USB WMI physical disks
@@ -6071,7 +6071,7 @@ namespace MediaPortal.Util
         .ToArray();
     }
   }
-  
+
   public class StringLogicalComparer : IComparer, IComparer<string>
   {
     public static int Compare(string x, string y)

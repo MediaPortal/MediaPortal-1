@@ -80,7 +80,7 @@ namespace MediaPortal.Util
     /// <param name="iWidth">width of the returned texture</param>
     /// <param name="iHeight">height of the returned texture</param>
     /// <returns>Texture with image or null if image could not be loaded</returns>
-    /// 
+    ///
     public static Texture Load(string strPic, int iRotate, int iMaxWidth, int iMaxHeight, bool bRGB, bool bZoom,
                                out int iWidth, out int iHeight)
     {
@@ -328,7 +328,7 @@ namespace MediaPortal.Util
     /// <param name="iTextureHeight">height in texture</param>
     /// <param name="iTextureLeft">x (left) offset in texture</param>
     /// <param name="iTextureTop">y (top) offset in texture</param>
-    /// <param name="bHiQuality">true :render in hi quality but slow, 
+    /// <param name="bHiQuality">true :render in hi quality but slow,
     ///                          false:render in lo quality but fast,  </param>
     //public static void RenderImage(ref Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, bool bHiQuality)
     public static void RenderImage(Texture texture, float x, float y, float nw, float nh, float iTextureWidth,
@@ -483,7 +483,7 @@ namespace MediaPortal.Util
     /// <param name="iTextureHeight">height in texture</param>
     /// <param name="iTextureLeft">x (left) offset in texture</param>
     /// <param name="iTextureTop">y (top) offset in texture</param>
-    /// <param name="bHiQuality">true :render in hi quality but slow, 
+    /// <param name="bHiQuality">true :render in hi quality but slow,
     ///                          false:render in lo quality but fast,  </param>
     //public static void RenderImage(ref Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, bool bHiQuality)
     public static void RenderImage(Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight,
@@ -772,7 +772,7 @@ namespace MediaPortal.Util
 
         int g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
         float g_fMipMapLodBias = 0.0f;
-        
+
         DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
         DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
         DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
@@ -994,7 +994,7 @@ namespace MediaPortal.Util
     /// /// <param name="needOverride">Override if the file is exist</param>
     /// <returns>Whether the thumb has been successfully created</returns>
     public static bool ReCreateThumbnail(string thumbnailImageSource, string thumbnailImageDest, int aThumbWidth,
-                                         int aThumbHeight, int iRotate, bool aFastMode, bool autocreateLargeThumbs, 
+                                         int aThumbHeight, int iRotate, bool aFastMode, bool autocreateLargeThumbs,
                                          bool fallBack, bool needOverride)
     {
       if (!needOverride && File.Exists(thumbnailImageDest))
@@ -1646,7 +1646,7 @@ namespace MediaPortal.Util
     public static Image CalculateHistogram(Image image)
     {
       Bitmap histogram = null;
-      if (image != null) 
+      if (image != null)
       {
         int width = 768; // 1024
         int height = 600;
@@ -1666,7 +1666,7 @@ namespace MediaPortal.Util
         System.Drawing.Color color;
         for (i = 0; i < bmp.Width; ++i)
         {
-          for (j = 0; j < bmp.Height; ++j) 
+          for (j = 0; j < bmp.Height; ++j)
           {
             color = bmp.GetPixel(i, j);
             ++R[color.R];
@@ -1727,7 +1727,7 @@ namespace MediaPortal.Util
           */
         }
       }
-      return histogram;    
+      return histogram;
     }
   }
   // public class Picture
