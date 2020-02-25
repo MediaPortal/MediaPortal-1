@@ -2585,6 +2585,9 @@ namespace MediaPortal.GUI.Pictures
       GUIPropertyManager.SetProperty("#pictures.exif.images.vertical", string.Empty);
       GUIPropertyManager.SetProperty("#pictures.exif.images.horizontal", string.Empty);
 
+      ExifMetadata.Metadata metadata = new ExifMetadata.Metadata();
+      metadata.SetExifProperties();
+
       if (!IsPictureWindow(PreviousWindowId))
       {
         _ageConfirmed = false;
@@ -2679,6 +2682,10 @@ namespace MediaPortal.GUI.Pictures
       {
         MakeHistory(pictureFromSlideShow);
         SelectItemByName(pictureFromSlideShow);
+      }
+      else if (folderHistory.Count == 0 && !string.IsNullOrEmpty(currentFolder))
+      {
+        MakeHistory(currentFolder);
       }
       returnFromSlideshow = false;
 
@@ -3598,8 +3605,11 @@ namespace MediaPortal.GUI.Pictures
       {
         try
         {
+          Thread.CurrentThread.Name = "LoadPictures";
+
           ExifMetadata.Metadata metadata = new ExifMetadata.Metadata();
           metadata.SetExifProperties();
+
           _queueItems = new ConcurrentQueue<GUIListItem>();
 
           if (_pictureFolderWatcher != null)
