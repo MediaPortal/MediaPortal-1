@@ -147,13 +147,10 @@ namespace MediaPortal.GUI.Pictures
 
                 if (!item.IsRemote)
                 {
-                  string thumbnailImage = null;
-                  string thumbnailImageL = null;
-
                   if (isPicture)
                   {
-                    thumbnailImage = Util.Utils.GetPicturesThumbPathname(item.Path);
-                    thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item.Path);
+                    string thumbnailImage = Util.Utils.GetPicturesThumbPathname(item.Path);
+                    string thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item.Path);
 
                     if (recreateThumbs || !File.Exists(thumbnailImage) || !Util.Utils.FileExistsInCache(thumbnailImage) ||
                         !File.Exists(thumbnailImageL) || !Util.Utils.FileExistsInCache(thumbnailImageL))
@@ -192,8 +189,8 @@ namespace MediaPortal.GUI.Pictures
                   }
                   else if (_enableVideoPlayback && isVideo)
                   {
-                    thumbnailImage = Util.Utils.GetPicturesThumbPathname(item.Path);
-                    thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item.Path);
+                    string thumbnailImage = Util.Utils.GetPicturesThumbPathname(item.Path);
+                    string thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item.Path);
                     if (!File.Exists(thumbnailImageL))
                     {
                       if (VideoThumbCreator.CreateVideoThumb(item.Path, thumbnailImage, true, false))
@@ -383,13 +380,10 @@ namespace MediaPortal.GUI.Pictures
         bool isPicture = Util.Utils.IsPicture(item);
         bool thumbRet = false;
 
-        string thumbnailImage = null;
-        string thumbnailImageL = null;
-
         if (isPicture)
         {
-          thumbnailImage = Util.Utils.GetPicturesThumbPathname(item);
-          thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item);
+          string thumbnailImage = Util.Utils.GetPicturesThumbPathname(item);
+          string thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item);
 
           if (recreateThumbs || !File.Exists(thumbnailImage) || !Util.Utils.FileExistsInCache(thumbnailImage) ||
               !File.Exists(thumbnailImageL) || !Util.Utils.FileExistsInCache(thumbnailImageL))
@@ -425,8 +419,8 @@ namespace MediaPortal.GUI.Pictures
         }
         else if (_enableVideoPlayback && isVideo)
         {
-          thumbnailImage = Util.Utils.GetPicturesThumbPathname(item);
-          thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item);
+          string thumbnailImage = Util.Utils.GetPicturesThumbPathname(item);
+          string thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item);
 
           if (!File.Exists(thumbnailImageL))
           {
