@@ -2647,7 +2647,8 @@ namespace MediaPortal.GUI.Pictures
         {
           pictureFromSlideShow = SlideShow._folderCurrentItem;
           Log.Debug("GUIPictures: We return - CurrentSlideIndex {0}, File {1}", SlideShow._currentSlideIndex, pictureFromSlideShow);
-          currentFolder = GetCurrentFolderAfterReturn(pictureFromSlideShow);
+          if (disp == Display.Files || disp == Display.Date)
+            currentFolder = GetCurrentFolderAfterReturn(pictureFromSlideShow);
         }
         else
         {
