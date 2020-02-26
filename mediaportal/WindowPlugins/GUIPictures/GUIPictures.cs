@@ -3646,6 +3646,8 @@ namespace MediaPortal.GUI.Pictures
       GUIWaitCursor.Show();
 
       SetPictureProperties(new ExifMetadata.Metadata());
+      GUIListItem dummy;
+      while (_queueItems.TryDequeue(out dummy));
 
       _loadComplete.Reset();
       ThreadPool.QueueUserWorkItem(delegate
@@ -3789,13 +3791,13 @@ namespace MediaPortal.GUI.Pictures
           {
             if (_enableVideoPlayback && Util.Utils.IsVideo(item.Path))
             {
-              string thumbnailImage = Util.Utils.GetPicturesThumbPathname(item);
+              string thumbnailImage = Util.Utils.GetPicturesThumbPathname(item.Path);
               if (File.Exists(thumbnailImage))
               {
                 item.IconImage = thumbnailImage;
               }
 
-              string thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item);
+              string thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item.Path);
               if (File.Exists(thumbnailImageL))
               {
                 item.ThumbnailImage = thumbnailImageL;
