@@ -3649,6 +3649,51 @@ namespace MediaPortal.GUI.Pictures
       GUIListItem dummy;
       while (_queueItems.TryDequeue(out dummy));
 
+      if (_pictureFolderWatcher != null)
+      {
+        _pictureFolderWatcher.ChangeMonitoring(false);
+      }
+
+      if (disp == Display.Files && !string.IsNullOrEmpty(strNewDirectory))
+      {
+        _pictureFolderWatcher = new PicturesFolderWatcherHelper(strNewDirectory);
+        _pictureFolderWatcher.SetMonitoring(true);
+        _pictureFolderWatcher.StartMonitor();
+      }
+
+      if (!returnFromSlideshow)
+      {
+        GUIListItem SelectedItem = GetSelectedItem();
+        if (SelectedItem != null)
+        {
+          if (SelectedItem.IsFolder)
+          {
+            if (SelectedItem.Label == "..")
+            {
+              folderHistory.Set(string.Empty, currentFolder);
+            }
+            else
+            {
+              folderHistory.Set(SelectedItem.Label, currentFolder);
+            }
+          }
+        }
+      }
+
+      if (strNewDirectory != currentFolder && mapSettings != null)
+      {
+        SaveFolderSettings(currentFolder);
+      }
+
+      if (strNewDirectory != currentFolder || mapSettings == null)
+      {
+        LoadFolderSettings(strNewDirectory);
+      }
+
+      currentFolder = strNewDirectory;
+
+      GUIControl.ClearControl(GetID, facadeLayout.GetID);
+
       _loadComplete.Reset();
       ThreadPool.QueueUserWorkItem(delegate
       {
@@ -3656,51 +3701,6 @@ namespace MediaPortal.GUI.Pictures
         {
           Thread.CurrentThread.Name = "LoadPictures:" + disp.ToString();
           Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
-
-          if (_pictureFolderWatcher != null)
-          {
-            _pictureFolderWatcher.ChangeMonitoring(false);
-          }
-
-          if (disp == Display.Files && !string.IsNullOrEmpty(strNewDirectory))
-          {
-            _pictureFolderWatcher = new PicturesFolderWatcherHelper(strNewDirectory);
-            _pictureFolderWatcher.SetMonitoring(true);
-            _pictureFolderWatcher.StartMonitor();
-          }
-
-          if (!returnFromSlideshow)
-          {
-            GUIListItem SelectedItem = GetSelectedItem();
-            if (SelectedItem != null)
-            {
-              if (SelectedItem.IsFolder)
-              {
-                if (SelectedItem.Label == "..")
-                {
-                  folderHistory.Set(string.Empty, currentFolder);
-                }
-                else
-                {
-                  folderHistory.Set(SelectedItem.Label, currentFolder);
-                }
-              }
-            }
-          }
-
-          if (strNewDirectory != currentFolder && mapSettings != null)
-          {
-            SaveFolderSettings(currentFolder);
-          }
-
-          if (strNewDirectory != currentFolder || mapSettings == null)
-          {
-            LoadFolderSettings(strNewDirectory);
-          }
-
-          currentFolder = strNewDirectory;
-
-          GUIControl.ClearControl(GetID, facadeLayout.GetID);
 
           if (disp == Display.Files)
           {
