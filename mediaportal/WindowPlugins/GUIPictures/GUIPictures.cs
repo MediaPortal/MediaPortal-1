@@ -187,7 +187,7 @@ namespace MediaPortal.GUI.Pictures
                       Log.Debug("GUIPictures: Creation of thumb successful for {0}", item.Path);
                     }
                   }
-                  else if (_enableVideoPlayback && isVideo)
+                  else if (isVideo)
                   {
                     string thumbnailImage = Util.Utils.GetPicturesThumbPathname(item.Path);
                     string thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item.Path);
@@ -986,6 +986,21 @@ namespace MediaPortal.GUI.Pictures
 
     #region Mediaportal Load/Save Settings
 
+    private void RestoreLastFolder()
+    {
+      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      {
+        string lastFolder = xmlreader.GetValueAsString("pictures", "lastfolder", currentFolder);
+        disp = (Display)xmlreader.GetValueAsInt("pictures", "lastview", (int)disp);
+        _searchMode = xmlreader.GetValueAsBool("pictures", "searchmode", false);
+        _searchString = xmlreader.GetValueAsString("pictures", "searchstring", string.Empty);
+        if (lastFolder != disp.ToString() + ":root")
+        {
+          currentFolder = lastFolder;
+        }
+      }
+    }
+
     private void StoreLastFolder(string folderName)
     {
       if (string.IsNullOrEmpty(folderName))
@@ -995,13 +1010,10 @@ namespace MediaPortal.GUI.Pictures
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        if (xmlreader.GetValueAsBool("pictures", "rememberlastfolder", false))
-        {
-          xmlreader.SetValue("pictures", "lastfolder", folderName);
-          xmlreader.SetValue("pictures", "lastview", (int)disp);
-          xmlreader.SetValueAsBool("pictures", "searchmode", _searchMode);
-          xmlreader.SetValue("pictures", "searchstring", _searchString);
-        }
+        xmlreader.SetValue("pictures", "lastfolder", folderName);
+        xmlreader.SetValue("pictures", "lastview", (int)disp);
+        xmlreader.SetValueAsBool("pictures", "searchmode", _searchMode);
+        xmlreader.SetValue("pictures", "searchstring", _searchString);
       }
     }
 
@@ -1956,6 +1968,8 @@ namespace MediaPortal.GUI.Pictures
       if (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\PictureExifInfo.xml")))
       {
         SaveSelected();
+        StoreLastFolder(currentFolder);
+
         GUIPicureExif pictureExif = (GUIPicureExif)GUIWindowManager.GetWindow((int)Window.WINDOW_PICTURE_EXIF);
         pictureExif.Picture = item.Path;
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_PICTURE_EXIF);
@@ -2557,18 +2571,25 @@ namespace MediaPortal.GUI.Pictures
 
       if (item.AlbumInfoTag == null)
       {
-        if (!item.IsFolder)
+        if (item.IsFolder)
         {
-          SetItemExifData(item);
+          item.AlbumInfoTag = new ExifMetadata.Metadata();
+          
         }
         else
         {
-          item.AlbumInfoTag = new ExifMetadata.Metadata();
+          SetItemExifData(item);
         }
+      }
+      else if (((ExifMetadata.Metadata)item.AlbumInfoTag).IsEmpty())
+      {
+        SetItemExifData(item);
       }
 
       if (item.AlbumInfoTag is ExifMetadata.Metadata)
+      {
         SetPictureProperties((ExifMetadata.Metadata)item.AlbumInfoTag);
+      }
 
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
       if (filmstrip == null)
@@ -2642,12 +2663,23 @@ namespace MediaPortal.GUI.Pictures
           pictureFromSlideShow = SlideShow._folderCurrentItem;
           Log.Debug("GUIPictures: We return - CurrentSlideIndex {0}, File {1}", SlideShow._currentSlideIndex, pictureFromSlideShow);
           if (disp == Display.Files || disp == Display.Date)
+          {
             currentFolder = GetCurrentFolderAfterReturn(pictureFromSlideShow);
+          }
+          else
+          {
+            RestoreLastFolder();
+          }
         }
         else
         {
           returnFromSlideshow = false;
         }
+      }
+
+      if (PreviousWindowId == (int)Window.WINDOW_PICTURE_EXIF)
+      {
+        RestoreLastFolder();
       }
 
       LoadFolderSettings(currentFolder);
