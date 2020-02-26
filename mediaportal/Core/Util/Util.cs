@@ -4454,8 +4454,8 @@ namespace MediaPortal.Util
         using (FileStream fs1 = new FileStream((string)aPictureList[0], FileMode.Open, FileAccess.Read),
                           fs2 = new FileStream((string)aPictureList[1], FileMode.Open, FileAccess.Read))
         {
-          using (Image img1 = Image.FromStream(fs1, true, false))
-          using (Image img2 = Image.FromStream(fs2, true, false))
+          using (Image img1 = Image.FromStream(fs1, true, false),
+                       img2 = Image.FromStream(fs2, true, false))
           {
             Picture.RotateImage(img1);
             Picture.RotateImage(img2);
@@ -4477,12 +4477,12 @@ namespace MediaPortal.Util
               else if (vertical1 && !vertical2)
               {
                 g.DrawImage(img1, border, border, hW, fH);
-                g.DrawImage(img2, hW + border * 2, border, hW, hH);
+                g.DrawImage(img2, hW + border * 2, border + fH / 2 - hH / 2 , hW, hH);
               }
               else // (!vertical1 && vertical2)
               {
                 g.DrawImage(img1, border, border, fW, hH);
-                g.DrawImage(img2, border, hH + border * 2, hW, hH);
+                g.DrawImage(img2, border + fW / 2 - hW / 2, hH + border * 2, hW, hH);
               }
             }
           }

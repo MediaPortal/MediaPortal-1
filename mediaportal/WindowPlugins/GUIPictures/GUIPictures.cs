@@ -532,6 +532,8 @@ namespace MediaPortal.GUI.Pictures
     private Thread _threadGetPicturesInfo;
     private bool _threadProcessPicturesStop = false;
 
+    AutoResetEvent _loadComplete = new AutoResetEvent(false);
+
     #endregion
 
     #region ctor/dtor
@@ -1164,14 +1166,18 @@ namespace MediaPortal.GUI.Pictures
       base.OnAdded();
       currentFolder = string.Empty;
       LoadSettings();
+
       _virtualDirectory.AddDrives();
       _virtualDirectory.SetExtensions(Util.Utils.PictureExtensions);
       destinationFolder = string.Empty;
+
       thumbCreationPaths.Clear();
       if (_enableVideoPlayback)
       {
         foreach (string ext in Util.Utils.VideoExtensions)
+        {
           _virtualDirectory.AddExtension(ext);
+        }
       }
       GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
 
@@ -1230,7 +1236,7 @@ namespace MediaPortal.GUI.Pictures
       {
         if (facadeLayout.Focus)
         {
-          GUIListItem item = facadeLayout[0];
+          GUIListItem item = GetItem(0);
           if (item != null)
           {
             if (item.IsFolder && item.Label == "..")
@@ -1377,7 +1383,6 @@ namespace MediaPortal.GUI.Pictures
 
         case GUIMessage.MessageType.GUI_MSG_ITEM_SELECT:
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
-
           // Respond to the correct control.  The value is retrived directly from the control by the called handler.
           if (message.TargetControlId == btnViews.GetID)
           {
@@ -1978,6 +1983,10 @@ namespace MediaPortal.GUI.Pictures
       if (item.IsFolder)
       {
         selectedItemIndex = -1;
+        if (item.Path == "..")
+        {
+          folderHistory.Set(string.Empty, currentFolder);
+        }
         LoadDirectory(item.Path);
       }
       else
@@ -2524,6 +2533,7 @@ namespace MediaPortal.GUI.Pictures
       GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(iDisp));
 
       OnRetrieveThumbnailFiles(item);
+
       if (item.AlbumInfoTag is ExifMetadata.Metadata)
       {
         if (!item.IsFolder && ((ExifMetadata.Metadata)item.AlbumInfoTag).IsEmpty())
@@ -2586,11 +2596,8 @@ namespace MediaPortal.GUI.Pictures
 
       GUIPropertyManager.SetProperty("#pictures.filename", string.Empty);
       GUIPropertyManager.SetProperty("#pictures.path", string.Empty);
-      GUIPropertyManager.SetProperty("#pictures.exif.images.vertical", string.Empty);
-      GUIPropertyManager.SetProperty("#pictures.exif.images.horizontal", string.Empty);
 
-      ExifMetadata.Metadata metadata = new ExifMetadata.Metadata();
-      metadata.SetExifProperties();
+      SetPictureProperties(new ExifMetadata.Metadata());
 
       if (!IsPictureWindow(PreviousWindowId))
       {
@@ -2623,6 +2630,7 @@ namespace MediaPortal.GUI.Pictures
       ShowThumbPanel();
 
       LoadDirectory(currentFolder);
+      _loadComplete.WaitOne();
 
       if (selectedItemIndex >= 0 && returnFromSlideshow)
       {
@@ -2689,7 +2697,7 @@ namespace MediaPortal.GUI.Pictures
       }
       else if (folderHistory.Count == 0 && !string.IsNullOrEmpty(currentFolder))
       {
-        MakeHistory(currentFolder);
+        MakeHistory(Path.Combine(currentFolder, "Start.png"));
       }
       returnFromSlideshow = false;
 
@@ -3411,7 +3419,7 @@ namespace MediaPortal.GUI.Pictures
 
     private static bool ContainsFolderThumb(GUIListItem aItem)
     {
-      if (!aItem.IsFolder && aItem.Path.Contains(@"folder.jpg"))
+      if (!aItem.IsFolder && aItem.Path.ToLower().Contains(@"folder.jpg"))
       {
         return true;
       }
@@ -3605,16 +3613,17 @@ namespace MediaPortal.GUI.Pictures
       }
 
       GUIWaitCursor.Show();
+
+      SetPictureProperties(new ExifMetadata.Metadata());
+      _queueItems = new ConcurrentQueue<GUIListItem>();
+
+      _loadComplete.Reset();
       ThreadPool.QueueUserWorkItem(delegate
       {
         try
         {
-          Thread.CurrentThread.Name = "LoadPictures";
-
-          ExifMetadata.Metadata metadata = new ExifMetadata.Metadata();
-          metadata.SetExifProperties();
-
-          _queueItems = new ConcurrentQueue<GUIListItem>();
+          Thread.CurrentThread.Name = "LoadPictures:" + disp.ToString();
+          Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
 
           if (_pictureFolderWatcher != null)
           {
@@ -3678,7 +3687,7 @@ namespace MediaPortal.GUI.Pictures
           int totalItemCount = facadeLayout.Count;
           if (totalItemCount > 0)
           {
-            GUIListItem rootItem = (GUIListItem)facadeLayout[0];
+            GUIListItem rootItem = GetItem(0);
             if (rootItem.Label == "..")
             {
               totalItemCount--;
@@ -3693,9 +3702,9 @@ namespace MediaPortal.GUI.Pictures
         finally
         {
           GUIWaitCursor.Hide();
+          _loadComplete.Set();
         }
       });
-
     }
 
     private void LoadFileView()
@@ -3740,6 +3749,7 @@ namespace MediaPortal.GUI.Pictures
             }
           }
 
+          item.AlbumInfoTag = new ExifMetadata.Metadata();
           item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
           item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
           facadeLayout.Add(item);
@@ -3801,9 +3811,8 @@ namespace MediaPortal.GUI.Pictures
         else if (strNewDirectory.Length == 4)
         {
           // Months
-
           string year = strNewDirectory.Substring(0, 4);
-          CreateAndAddFolderItem("..", String.Empty);
+          CreateAndAddFolderItem("..", string.Empty);
 
           List<string> Months = new List<string>();
           int Count = PictureDatabase.ListMonths(year, ref Months);
@@ -3895,7 +3904,7 @@ namespace MediaPortal.GUI.Pictures
         else
         {
           // Pics from Keyword / Search
-          CreateAndAddFolderItem("..", String.Empty);
+          CreateAndAddFolderItem("..", string.Empty);
 
           List<string> pics;
           if (_searchMode)
@@ -3927,40 +3936,40 @@ namespace MediaPortal.GUI.Pictures
 
     private void AddPictureItems(List<String> pics, string errorMessage)
     {
-        VirtualDirectory vDir = new VirtualDirectory();
-        vDir.LoadSettings("pictures");
+      VirtualDirectory vDir = new VirtualDirectory();
+      vDir.LoadSettings("pictures");
 
-        foreach (string pic in pics)
+      foreach (string pic in pics)
+      {
+        try
         {
-          try
+          GUIListItem item = new GUIListItem(Path.GetFileNameWithoutExtension(pic));
+          item.Path = pic;
+          item.IsFolder = false;
+
+          if (!IsItemPinProtected(item, vDir))
+            continue;
+
+          Util.Utils.SetDefaultIcons(item);
+          item.AlbumInfoTag = new ExifMetadata.Metadata();
+          item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+          item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+
+          if (!WakeUpSrv(pic))
           {
-            GUIListItem item = new GUIListItem(Path.GetFileNameWithoutExtension(pic));
-            item.Path = pic;
-            item.IsFolder = false;
-
-            if (!IsItemPinProtected(item, vDir))
-              continue;
-
-            Util.Utils.SetDefaultIcons(item);
-            item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-            item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-
-            if (!WakeUpSrv(pic))
-            {
-              return;
-            }
-
-            _queueItems.Enqueue(item);
-            facadeLayout.Add(item);
-            _queueItemsEvent.Set();
+            return;
           }
-          catch (Exception ex)
-          {
-            Log.Warn(errorMessage+" @ " + pic + ":" + ex.Message);
-          }
+
+          _queueItems.Enqueue(item);
+          facadeLayout.Add(item);
+          _queueItemsEvent.Set();
         }
-        _queueItemsEvent.Set();
-
+        catch (Exception ex)
+        {
+          Log.Warn(errorMessage + " @ " + pic + ":" + ex.Message);
+        }
+      }
+      _queueItemsEvent.Set();
     }
 
     private void LoadMetadataView(string strNewDirectory)
@@ -3989,7 +3998,7 @@ namespace MediaPortal.GUI.Pictures
         else if (!_searchMode && !strNewDirectory.Contains(@"\"))
         {
           // Value of Selected Metadata
-          CreateAndAddFolderItem("..", String.Empty);
+          CreateAndAddFolderItem("..", string.Empty);
 
           List<string> metadatavalues = PictureDatabase.ListValueByMetadata(strNewDirectory.ToDBField());
           foreach (string value in metadatavalues)
@@ -4121,8 +4130,8 @@ namespace MediaPortal.GUI.Pictures
         item.Label2 = datetime.ToString();
       }
       // item.Label3 = datetime.ToString();
-      item.AlbumInfoTag = PictureDatabase.GetExifFromDB(file);
 
+      item.AlbumInfoTag = PictureDatabase.GetExifFromDB(file);
       if (((ExifMetadata.Metadata)item.AlbumInfoTag).HDR)
       {
         item.AdditionalData = item.AdditionalData | GUIListItemProperty.IsHDR;
@@ -4159,7 +4168,7 @@ namespace MediaPortal.GUI.Pictures
           GUIListItem item;
           while (!_threadProcessPicturesStop && _queueItems.TryDequeue(out item))
           {
-            if (string.IsNullOrEmpty(item.Path))
+            if (string.IsNullOrEmpty(item.Path) || item.IsFolder)
             {
               continue;
             }
@@ -4186,15 +4195,18 @@ namespace MediaPortal.GUI.Pictures
           GUIListItem item;
           while (!_threadProcessPicturesStop && _queuePictures.TryDequeue(out item))
           {
-            if (string.IsNullOrEmpty(item.Path))
+            if (string.IsNullOrEmpty(item.Path) || item.IsFolder)
             {
               continue;
             }
 
+            /*
             if (PictureDatabase.AddPicture(item.Path, -1) > 0)
             {
-              // SetItemExifData(item);
+              SetItemExifData(item);
             }
+            */
+            PictureDatabase.AddPicture(item.Path, -1);
           }
           SelectCurrentItem();
           _queuePicturesEvent.WaitOne();
@@ -4309,7 +4321,7 @@ namespace MediaPortal.GUI.Pictures
 
     public string Author()
     {
-      return "Frodo";
+      return "Frodo, ajs, doskabouter";
     }
 
     public string Description()

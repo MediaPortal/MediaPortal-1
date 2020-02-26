@@ -376,7 +376,7 @@ namespace MediaPortal.Configuration.Sections
             }
             if (!item.IsFolder)
             {
-              if (item.Path.Contains(@"folder.jpg"))
+              if (item.Path.ToLower().Contains(@"folder.jpg"))
               {
                 continue;
               }
