@@ -99,6 +99,10 @@ namespace MediaPortal.GUI.Pictures
         List<GUIListItem> itemlist = null;
 
         vDir.SetExtensions(Util.Utils.PictureExtensions);
+        foreach (string ext in Util.Utils.VideoExtensions)
+        {
+          vDir.AddExtension(ext);
+        }
 
         if (!vDir.IsRemote(path))
         {
@@ -191,14 +195,22 @@ namespace MediaPortal.GUI.Pictures
                   {
                     string thumbnailImage = Util.Utils.GetPicturesThumbPathname(item.Path);
                     string thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item.Path);
-                    if (!File.Exists(thumbnailImageL))
+
+                    thumbRet = File.Exists(thumbnailImage) && File.Exists(thumbnailImageL);
+                    if (!thumbRet)
                     {
-                      if (VideoThumbCreator.CreateVideoThumb(item.Path, thumbnailImage, true, false))
+                      thumbRet = VideoThumbCreator.CreateVideoThumb(item.Path, thumbnailImage, true, false);
+                      if (thumbRet)
                       {
-                        item.IconImage = thumbnailImage;
-                        item.ThumbnailImage = thumbnailImageL;
                         Log.Debug("GUIPictures: Creation of thumb successful for Video {0}", item.Path);
                       }
+                    }
+
+                    if (thumbRet)
+                    {
+                      item.RefreshCoverArt();
+                      item.IconImage = thumbnailImage;
+                      item.ThumbnailImage = thumbnailImageL;
                     }
                   }
                 }
@@ -361,6 +373,10 @@ namespace MediaPortal.GUI.Pictures
       bool recreateThumbs = false;
 
       vDir.SetExtensions(Util.Utils.PictureExtensions);
+      foreach (string ext in Util.Utils.VideoExtensions)
+      {
+        vDir.AddExtension(ext);
+      }
 
       if (!vDir.IsRemote(item))
       {
@@ -417,20 +433,26 @@ namespace MediaPortal.GUI.Pictures
             }
           }
         }
-        else if (_enableVideoPlayback && isVideo)
+        else if (isVideo)
         {
           string thumbnailImage = Util.Utils.GetPicturesThumbPathname(item);
           string thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item);
 
-          if (!File.Exists(thumbnailImageL))
+          thumbRet = File.Exists(thumbnailImage) && File.Exists(thumbnailImageL);
+          if (!thumbRet)
           {
             thumbRet = VideoThumbCreator.CreateVideoThumb(item, thumbnailImage, true, false);
             if (thumbRet)
             {
-              itemObject.IconImage = thumbnailImage;
-              itemObject.ThumbnailImage = thumbnailImageL;
               Log.Debug("GUIPictures: Creation of thumb successful for Video {0}", item);
             }
+          }
+
+          if (thumbRet)
+          {
+            itemObject.RefreshCoverArt();
+            itemObject.IconImage = thumbnailImage;
+            itemObject.ThumbnailImage = thumbnailImageL;
           }
         }
 
@@ -3821,7 +3843,7 @@ namespace MediaPortal.GUI.Pictures
 
           if (!item.IsFolder)
           {
-            if (_enableVideoPlayback && Util.Utils.IsVideo(item.Path))
+            if (Util.Utils.IsVideo(item.Path))
             {
               string thumbnailImage = Util.Utils.GetPicturesThumbPathname(item.Path);
               if (File.Exists(thumbnailImage))
