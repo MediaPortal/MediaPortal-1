@@ -565,8 +565,6 @@ namespace MediaPortal.GUI.Pictures
     private Thread _threadGetPicturesInfo;
     private bool _threadProcessPicturesStop = false;
 
-    AutoResetEvent _loadComplete = new AutoResetEvent(false);
-
     #endregion
 
     #region ctor/dtor
@@ -2660,8 +2658,7 @@ namespace MediaPortal.GUI.Pictures
       LoadFolderSettings(currentFolder);
       ShowThumbPanel();
 
-      LoadDirectory(currentFolder);
-      _loadComplete.WaitOne();
+      LoadDirectory(currentFolder, true);
 
       if (selectedItemIndex >= 0 && returnFromSlideshow)
       {
@@ -3627,6 +3624,11 @@ namespace MediaPortal.GUI.Pictures
 
     protected override void LoadDirectory(string strNewDirectory)
     {
+      LoadDirectory(strNewDirectory, false);
+    }
+
+    private void LoadDirectory(string strNewDirectory, bool waitUntilFinished)
+    {
       if (strNewDirectory == null)
       {
         Log.Warn("GUIPictures: LoadDirectory called with invalid argument. newFolderName is null!");
@@ -3694,13 +3696,13 @@ namespace MediaPortal.GUI.Pictures
 
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
 
-      _loadComplete.Reset();
-      ThreadPool.QueueUserWorkItem(delegate
+      AutoResetEvent _loadComplete = new AutoResetEvent(false);
+    
+      Thread worker = new Thread(() =>
       {
         try
         {
           Thread.CurrentThread.Name = "LoadPictures:" + disp.ToString();
-          Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
 
           if (disp == Display.Files)
           {
@@ -3743,6 +3745,9 @@ namespace MediaPortal.GUI.Pictures
           _loadComplete.Set();
         }
       });
+      worker.Start();
+      if (waitUntilFinished)
+        _loadComplete.WaitOne();
     }
 
     private void LoadFileView()
