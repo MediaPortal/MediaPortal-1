@@ -1983,10 +1983,6 @@ namespace MediaPortal.GUI.Pictures
       if (item.IsFolder)
       {
         selectedItemIndex = -1;
-        if (item.Path == "..")
-        {
-          folderHistory.Set(string.Empty, currentFolder);
-        }
         LoadDirectory(item.Path);
       }
       else
@@ -3642,9 +3638,16 @@ namespace MediaPortal.GUI.Pictures
             GUIListItem SelectedItem = GetSelectedItem();
             if (SelectedItem != null)
             {
-              if (SelectedItem.IsFolder && SelectedItem.Label != "..")
+              if (SelectedItem.IsFolder)
               {
-                folderHistory.Set(SelectedItem.Label, currentFolder);
+                if (SelectedItem.Label == "..")
+                {
+                  folderHistory.Set(string.Empty, currentFolder);
+                }
+                else
+                {
+                  folderHistory.Set(SelectedItem.Label, currentFolder);
+                }
               }
             }
           }
