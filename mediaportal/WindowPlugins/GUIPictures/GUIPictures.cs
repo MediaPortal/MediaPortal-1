@@ -3239,7 +3239,7 @@ namespace MediaPortal.GUI.Pictures
         List<GUIListItem> itemlist = new List<GUIListItem>();
         item.IsFolder = Directory.Exists(path);
 
-        if (!item.IsFolder && path.ToLower().Contains(@"folder.jpg"))
+        if (ContainsFolderThumb(item))
         {
           return;
         }
@@ -3644,7 +3644,6 @@ namespace MediaPortal.GUI.Pictures
       GUIWaitCursor.Show();
 
       SetPictureProperties(new ExifMetadata.Metadata());
-      _queueItems = new ConcurrentQueue<GUIListItem>();
 
       _loadComplete.Reset();
       ThreadPool.QueueUserWorkItem(delegate
@@ -3717,7 +3716,6 @@ namespace MediaPortal.GUI.Pictures
           }
 
           string strSelectedItem = folderHistory.Get(currentFolder);
-          SelectItemByIndex(0);
           SelectItemByName(strSelectedItem);
 
           int totalItemCount = facadeLayout.Count;
