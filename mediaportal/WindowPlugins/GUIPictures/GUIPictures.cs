@@ -2563,18 +2563,20 @@ namespace MediaPortal.GUI.Pictures
 
       OnRetrieveThumbnailFiles(item);
 
-      if (item.AlbumInfoTag is ExifMetadata.Metadata)
+      if (item.AlbumInfoTag == null)
       {
-        if (!item.IsFolder && ((ExifMetadata.Metadata)item.AlbumInfoTag).IsEmpty())
+        if (!item.IsFolder)
         {
           SetItemExifData(item);
         }
+        else
+        {
+          item.AlbumInfoTag = new ExifMetadata.Metadata();
+        }
+      }
+
+      if (item.AlbumInfoTag is ExifMetadata.Metadata)
         SetPictureProperties((ExifMetadata.Metadata)item.AlbumInfoTag);
-      }
-      else
-      {
-        SetPictureProperties(new ExifMetadata.Metadata());
-      }
 
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
       if (filmstrip == null)
@@ -3799,7 +3801,6 @@ namespace MediaPortal.GUI.Pictures
                 item.ThumbnailImage = thumbnailImageL;
               }
             }
-            item.AlbumInfoTag = new ExifMetadata.Metadata();
           }
 
           item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
@@ -4003,7 +4004,6 @@ namespace MediaPortal.GUI.Pictures
             continue;
 
           Util.Utils.SetDefaultIcons(item);
-          item.AlbumInfoTag = new ExifMetadata.Metadata();
           item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
           item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
 
