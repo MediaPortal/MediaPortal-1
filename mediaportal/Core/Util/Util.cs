@@ -4419,8 +4419,9 @@ namespace MediaPortal.Util
       }
     }
 
-    private static void AddPicture(Graphics g, string strFileName, int x, int y, int w, int h)
+    private static bool AddPicture(Graphics g, string strFileName, int x, int y, int w, int h)
     {
+      bool result = false;
       try
       {
         using (FileStream fs = new FileStream(strFileName, FileMode.Open, FileAccess.Read))
@@ -4431,6 +4432,7 @@ namespace MediaPortal.Util
             if (img != null)
             {
               g.DrawImage(img, x, y, w, h);
+              result = true;
             }
           }
         }
@@ -4445,10 +4447,12 @@ namespace MediaPortal.Util
       }
 
       ThreadSleep(50);
+      return result;
     }
 
-    private static void AddTwoPicture(Graphics g, List<string> aPictureList, int border, int hW, int hH, int fW, int fH)
+    private static bool AddTwoPicture(Graphics g, List<string> aPictureList, int border, int hW, int hH, int fW, int fH)
     {
+      bool result = false;
       try
       {
         using (FileStream fs1 = new FileStream((string)aPictureList[0], FileMode.Open, FileAccess.Read),
@@ -4484,6 +4488,7 @@ namespace MediaPortal.Util
                 g.DrawImage(img1, border, border, fW, hH);
                 g.DrawImage(img2, border + fW / 2 - hW / 2, hH + border * 2, hW, hH);
               }
+              result = true;
             }
           }
         }
@@ -4498,10 +4503,12 @@ namespace MediaPortal.Util
       }
 
       ThreadSleep(50);
+      return result;
     }
 
-    private static void AddThreePicture(Graphics g, List<string> aPictureList, int border, int hW, int hH, int fW, int fH)
+    private static bool AddThreePicture(Graphics g, List<string> aPictureList, int border, int hW, int hH, int fW, int fH)
     {
+      bool result = false;
       try
       {
         using (FileStream fs = new FileStream((string)aPictureList[0], FileMode.Open, FileAccess.Read))
@@ -4515,14 +4522,16 @@ namespace MediaPortal.Util
               if (vertical)
               {
                 g.DrawImage(img, border, border, hW, fH);
-                AddPicture(g, (string)aPictureList[1], hW + border * 2, border, hW, hH);
-                AddPicture(g, (string)aPictureList[2], hW + border * 2, hH + border * 2, hW, hH);
+                result = true;
+                result = result && AddPicture(g, (string)aPictureList[1], hW + border * 2, border, hW, hH);
+                result = result && AddPicture(g, (string)aPictureList[2], hW + border * 2, hH + border * 2, hW, hH);
               }
               else
               {
                 g.DrawImage(img, border, border, fW, hH);
-                AddPicture(g, (string)aPictureList[1], border, hH + border * 2, hW, hH);
-                AddPicture(g, (string)aPictureList[2], hW + border * 2, hH + border * 2, hW, hH);
+                result = true;
+                result = result && AddPicture(g, (string)aPictureList[1], border, hH + border * 2, hW, hH);
+                result = result && AddPicture(g, (string)aPictureList[2], hW + border * 2, hH + border * 2, hW, hH);
               }
             }
           }
@@ -4538,6 +4547,7 @@ namespace MediaPortal.Util
       }
 
       ThreadSleep(50);
+      return result;
     }
 
     public static void Shuffle(List<string> strList)
@@ -4573,9 +4583,10 @@ namespace MediaPortal.Util
     public static bool CreateFolderPreviewThumb(List<string> aPictureList, string aThumbPath, bool needBorder)
     {
       bool result = false;
+      int border = 0;
+
       Stopwatch benchClock = new Stopwatch();
       benchClock.Start();
-      int border = 0;
 
       if (needBorder)
       {
@@ -4589,7 +4600,7 @@ namespace MediaPortal.Util
           string defaultBackground;
           string currentSkin = GUIGraphicsContext.Skin;
 
-          // when launched by configuration exe this might be the case
+          // When launched by configuration exe this might be the case
           if (string.IsNullOrEmpty(currentSkin))
           {
             using (Profile.Settings xmlreader = new Profile.MPSettings())
@@ -4631,66 +4642,71 @@ namespace MediaPortal.Util
                     switch (aPictureList.Count)
                     {
                       case 1:
-                        AddPicture(g, (string)aPictureList[0], border, border, fullWidth, fullHeight);
+                        result = AddPicture(g, (string)aPictureList[0], border, border, fullWidth, fullHeight);
                         break;
                       case 2:
                         // AddPicture(g, (string)aPictureList[0], border, border, halfWidth, halfHeight);
                         // AddPicture(g, (string)aPictureList[1], halfWidth + border * 2, halfHeight + border * 2, halfWidth, halfHeight);
-                        AddTwoPicture(g, aPictureList, border, halfWidth, halfHeight, fullWidth, fullHeight);
+                        result = AddTwoPicture(g, aPictureList, border, halfWidth, halfHeight, fullWidth, fullHeight);
                         break;
                       case 3:
                         // AddPicture(g, (string)aPictureList[0], border, border, halfWidth, halfHeight);
                         // AddPicture(g, (string)aPictureList[1], halfWidth + border * 2, border, halfWidth, halfHeight);
                         // AddPicture(g, (string)aPictureList[2], width / 2 - halfWidth / 2, halfHeight + border * 2, halfWidth, halfHeight);
-                        AddThreePicture(g, aPictureList, border, halfWidth, halfHeight, fullWidth, fullHeight);
+                        result = AddThreePicture(g, aPictureList, border, halfWidth, halfHeight, fullWidth, fullHeight);
                         break;
                       default:
-                        AddPicture(g, (string)aPictureList[0], border, border, halfWidth, halfHeight);
-                        AddPicture(g, (string)aPictureList[1], halfWidth + border * 2, border, halfWidth, halfHeight);
-                        AddPicture(g, (string)aPictureList[2], border, halfHeight + border * 2, halfWidth, halfHeight);
-                        AddPicture(g, (string)aPictureList[3], halfWidth + border * 2, halfHeight + border * 2, halfWidth, halfHeight);
+                        result = AddPicture(g, (string)aPictureList[0], border, border, halfWidth, halfHeight);
+                        result = result && AddPicture(g, (string)aPictureList[1], halfWidth + border * 2, border, halfWidth, halfHeight);
+                        result = result && AddPicture(g, (string)aPictureList[2], border, halfHeight + border * 2, halfWidth, halfHeight);
+                        result = result && AddPicture(g, (string)aPictureList[3], halfWidth + border * 2, halfHeight + border * 2, halfWidth, halfHeight);
                         break;
                     }
                   }
                   catch (Exception ex)
                   {
                     Log.Error("Utils: An exception occured creating folder preview thumb: {0}", ex.Message);
+                    result = false;
                   }
-                } //using (Graphics g = Graphics.FromImage(bmp) )
+                } // using (Graphics g = Graphics.FromImage(bmp))
 
-                try
+                if (result)
                 {
-                  string tmpFile = Path.GetTempFileName();
-                  Log.Debug("Saving thumb!");
-                  bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
-
-                  // we do not want a folderL.jpg
-                  if (aThumbPath.ToLowerInvariant().Contains(@"folder.jpg"))
+                  try
                   {
-                    Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
-                    FileDelete(tmpFile);
-                  }
-                  else if (Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
-                  {
-                    aThumbPath = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
-                    Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
-                    FileDelete(tmpFile);
-                  }
+                    result = false;
+                    string tmpFile = Path.GetTempFileName();
+                    bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+                    Log.Debug("Utils: Saving preview folder thumb {0}...", aThumbPath);
 
-                  ThreadSleep(100);
+                    // we do not want a folderL.jpg
+                    if (aThumbPath.ToLowerInvariant().Contains(@"folder.jpg"))
+                    {
+                      Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
+                      FileDelete(tmpFile);
+                    }
+                    else if (Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                    {
+                      aThumbPath = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
+                      Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
+                      FileDelete(tmpFile);
+                    }
 
-                  if (FileExistsInCache(aThumbPath))
-                  {
-                    result = true;
+                    ThreadSleep(100);
+
+                    if (FileExistsInCache(aThumbPath))
+                    {
+                      result = true;
+                    }
                   }
-                }
-                catch (Exception ex2)
-                {
-                  Log.Error("Utils: An exception occured saving folder preview thumb: {0} - {1}", aThumbPath, ex2.Message);
-                }
-              } //using (Bitmap bmp = new Bitmap(210,210))
-            }
-          }
+                  catch (Exception ex2)
+                  {
+                    Log.Error("Utils: An exception occured saving folder preview thumb: {0} - {1}", aThumbPath, ex2.Message);
+                  }
+                } // if (result)
+              } // using (Bitmap bmp = new Bitmap(width, height))
+            } // using (Image imgFolder = Image.FromStream(fs, true, false))
+          } // using (FileStream fs = new FileStream(defaultBackground, FileMode.Open, FileAccess.Read))
         }
         catch (FileNotFoundException ex)
         {
@@ -4700,13 +4716,16 @@ namespace MediaPortal.Util
         {
           Log.Error("Utils: An error occured creating folder preview thumbs: {0}", exm.Message);
         }
-
-        benchClock.Stop();
-        Log.Debug("Utils: CreateFolderPreviewThumb for {0} took {1} ms", aThumbPath, benchClock.ElapsedMilliseconds);
-      } //if (pictureList.Count>0)
+      } // if (pictureList.Count > 0)
       else
       {
         result = false;
+      }
+
+      if (result)
+      {
+        benchClock.Stop();
+        Log.Debug("Utils: CreateFolderPreviewThumb for {0} took {1} ms", aThumbPath, benchClock.ElapsedMilliseconds);
       }
       return result;
     }
@@ -4785,10 +4804,10 @@ namespace MediaPortal.Util
                 thumbnailWidth = width;
                 break;
               case 2:
-                thumbnailWidth = width/2;
+                thumbnailWidth = width / 2;
                 break;
               case 3:
-                thumbnailWidth = width/3;
+                thumbnailWidth = width / 3;
                 break;
             }
             switch (PreviewRows)
@@ -4797,10 +4816,10 @@ namespace MediaPortal.Util
                 thumbnailHeight = height;
                 break;
               case 2:
-                thumbnailHeight = height/2;
+                thumbnailHeight = height / 2;
                 break;
               case 3:
-                thumbnailHeight = height/3;
+                thumbnailHeight = height / 3;
                 break;
             }
 
@@ -4893,7 +4912,7 @@ namespace MediaPortal.Util
               {
                 string tmpFile = Path.GetTempFileName();
                 bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
-                Log.Debug("CreateTileThumb: Saving thumb!");
+                Log.Debug("Utils: CreateTileThumb: Saving thumb for {0}...", aThumbPath);
 
                 Picture.CreateThumbnail(tmpFile, aThumbPath,
                                         (int) Thumbs.ThumbLargeResolution,
@@ -4926,7 +4945,7 @@ namespace MediaPortal.Util
                   }
                   catch (FileNotFoundException ex)
                   {
-                    Log.Debug("CreateTileThumb: {0} file not found. {1}", pictureListName, ex.Message);
+                    Log.Debug("Utils: CreateTileThumb: {0} file not found. {1}", pictureListName, ex.Message);
                   }
                 }
 
