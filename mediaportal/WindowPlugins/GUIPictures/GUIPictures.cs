@@ -142,9 +142,10 @@ namespace MediaPortal.GUI.Pictures
                 Thread.Sleep(5);
 
                 bool isPicture = Util.Utils.IsPicture(item.Path);
+                bool isVideo = Util.Utils.IsVideo(item.Path);
                 bool thumbRet = false;
 
-                if (!item.IsRemote && isPicture)
+                if (!item.IsRemote)
                 {
                   string thumbnailImage = null;
                   string thumbnailImageL = null;
@@ -187,6 +188,20 @@ namespace MediaPortal.GUI.Pictures
                       item.ThumbnailImage = thumbnailImage;
                       item.IconImage = thumbnailImage;
                       Log.Debug("GUIPictures: Creation of thumb successful for {0}", item.Path);
+                    }
+                  }
+                  else if (_enableVideoPlayback && isVideo)
+                  {
+                    thumbnailImage = Util.Utils.GetPicturesThumbPathname(item.Path);
+                    thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item.Path);
+                    if (!File.Exists(thumbnailImageL))
+                    {
+                      if (VideoThumbCreator.CreateVideoThumb(item.Path, thumbnailImage, true, false))
+                      {
+                        item.IconImage = thumbnailImage;
+                        item.ThumbnailImage = thumbnailImageL;
+                        Log.Debug("GUIPictures: Creation of thumb successful for Video {0}", item.Path);
+                      }
                     }
                   }
                 }
@@ -368,10 +383,11 @@ namespace MediaPortal.GUI.Pictures
         bool isPicture = Util.Utils.IsPicture(item);
         bool thumbRet = false;
 
+        string thumbnailImage = null;
+        string thumbnailImageL = null;
+
         if (isPicture)
         {
-          string thumbnailImage;
-          string thumbnailImageL = null;
           thumbnailImage = Util.Utils.GetPicturesThumbPathname(item);
           thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item);
 
@@ -407,6 +423,23 @@ namespace MediaPortal.GUI.Pictures
             }
           }
         }
+        else if (_enableVideoPlayback && isVideo)
+        {
+          thumbnailImage = Util.Utils.GetPicturesThumbPathname(item);
+          thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item);
+
+          if (!File.Exists(thumbnailImageL))
+          {
+            thumbRet = VideoThumbCreator.CreateVideoThumb(item, thumbnailImage, true, false);
+            if (thumbRet)
+            {
+              itemObject.IconImage = thumbnailImage;
+              itemObject.ThumbnailImage = thumbnailImageL;
+              Log.Debug("GUIPictures: Creation of thumb successful for Video {0}", item);
+            }
+          }
+        }
+
         if (thumbRet)
         {
           benchclockfile.Stop();
@@ -3752,7 +3785,25 @@ namespace MediaPortal.GUI.Pictures
             }
           }
 
-          item.AlbumInfoTag = new ExifMetadata.Metadata();
+          if (!item.IsFolder)
+          {
+            if (_enableVideoPlayback && Util.Utils.IsVideo(item.Path))
+            {
+              string thumbnailImage = Util.Utils.GetPicturesThumbPathname(item);
+              if (File.Exists(thumbnailImage))
+              {
+                item.IconImage = thumbnailImage;
+              }
+
+              string thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item);
+              if (File.Exists(thumbnailImageL))
+              {
+                item.ThumbnailImage = thumbnailImageL;
+              }
+            }
+            item.AlbumInfoTag = new ExifMetadata.Metadata();
+          }
+
           item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
           item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
           facadeLayout.Add(item);
