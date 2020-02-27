@@ -2288,7 +2288,7 @@ namespace MediaPortal.GUI.Pictures
         else
         {
           List<string> pics = new List<string>();
-          int totalCount = PictureDatabase.ListPicsByDate(currentFolder.Replace(Path.DirectorySeparatorChar, "-"), ref pics);
+          int totalCount = PictureDatabase.ListPicsByDate(currentFolder.Replace(Path.DirectorySeparatorChar.ToString(), "-"), ref pics);
           foreach (string pic in pics)
           {
             SlideShow.Add(pic);
@@ -2316,7 +2316,7 @@ namespace MediaPortal.GUI.Pictures
         }
         else
         {
-          List<string> pics = PictureDatabase.ListPicsByKeyword(currentFolder.Replace(Path.DirectorySeparatorChar, string.Empty));
+          List<string> pics = PictureDatabase.ListPicsByKeyword(currentFolder.Replace(Path.DirectorySeparatorChar.ToString(), string.Empty));
           foreach (string pic in pics)
           {
             SlideShow.Add(pic);
@@ -2895,7 +2895,7 @@ namespace MediaPortal.GUI.Pictures
       return string.Empty;
     }
 
-    private void MakeHistory(string strPic, bool isFolder)
+    private void MakeHistory(string strPic)
     {
       MakeHistory(strPic, false);
     }
@@ -2923,7 +2923,7 @@ namespace MediaPortal.GUI.Pictures
         if (!string.IsNullOrEmpty(dateTaken))
         {
           string strItemName = Util.Utils.GetFilename(strPic, true);
-          strPic = Path.Combine(dateTaken.Replace("-", Path.DirectorySeparatorChar), strItemName);
+          strPic = Path.Combine(dateTaken.Replace("-", Path.DirectorySeparatorChar.ToString()), strItemName);
         }
         else
         {
@@ -2937,7 +2937,7 @@ namespace MediaPortal.GUI.Pictures
       {
         folderHistory.Set(historyStep[i], prevStep);
         Log.Debug("GUIPictures: Make history for {0}: Folder: {1} Item: {2}", disp.ToString(), prevStep, historyStep[i]);
-        prevStep = prevStep + (string.IsNullOrEmpty(prevStep) ? string.Empty : Path.DirectorySeparatorChar) + historyStep[i];
+        prevStep = prevStep + (string.IsNullOrEmpty(prevStep) ? string.Empty : Path.DirectorySeparatorChar.ToString()) + historyStep[i];
       }
     }
 

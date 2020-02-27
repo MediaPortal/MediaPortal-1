@@ -46,6 +46,38 @@
         <animation effect="fade" time="250">WindowClose</animation>
     </control>
     
+    <!-- MP1-4986 -->
+
+    <!-- Video -->
+
+    <control>
+        <description>Video banner</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>554</posX>
+        <posY>362</posY>
+        <texture>isVideo.png</texture>                                                  
+        <visible>facadeview.list+Control.IsVisible(50)+string.equals(#pictures.IsVideo,true)</visible>
+    	<animation effect="fade" time="0">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+
+    <!-- HDR -->
+
+    <control>
+        <description>HDR banner</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>310</posX>
+        <posY>295</posY>
+        <texture>isHDRPicture.png</texture>
+        <visible>facadeview.list+Control.IsVisible(50)+string.equals(#pictures.IsHDR,true)</visible>
+    	<animation effect="fade" time="0">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+
+    <!-- Keywords -->
+
     <control>
         <description>Keywords</description>
         <type>fadelabel</type>
