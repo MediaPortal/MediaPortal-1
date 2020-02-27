@@ -939,7 +939,7 @@ namespace MediaPortal.GUI.Pictures
       }
 
       GUIControl.SelectItemControl(GetID, facadeLayout.GetID, 0);
-      string itemName = strName.IndexOf(@"\") > 0 ? Path.GetFileNameWithoutExtension(strName) : strName;
+      string itemName = strName.IndexOf(Path.DirectorySeparatorChar) > 0 ? Path.GetFileNameWithoutExtension(strName) : strName;
 
       // Log.Debug("GUIPictures: Select item by name {0} - {1}", itemName, strName);
       for (int i = 0; i < facadeLayout.Count; i++)
@@ -2288,7 +2288,7 @@ namespace MediaPortal.GUI.Pictures
         else
         {
           List<string> pics = new List<string>();
-          int totalCount = PictureDatabase.ListPicsByDate(currentFolder.Replace("\\", "-"), ref pics);
+          int totalCount = PictureDatabase.ListPicsByDate(currentFolder.Replace(Path.DirectorySeparatorChar, "-"), ref pics);
           foreach (string pic in pics)
           {
             SlideShow.Add(pic);
@@ -2316,7 +2316,7 @@ namespace MediaPortal.GUI.Pictures
         }
         else
         {
-          List<string> pics = PictureDatabase.ListPicsByKeyword(currentFolder.Replace("\\", string.Empty));
+          List<string> pics = PictureDatabase.ListPicsByKeyword(currentFolder.Replace(Path.DirectorySeparatorChar, string.Empty));
           foreach (string pic in pics)
           {
             SlideShow.Add(pic);
@@ -2342,7 +2342,7 @@ namespace MediaPortal.GUI.Pictures
             SlideShow.Add(pic.FileName);
           }
         }
-        else if (!currentFolder.Contains(@"\"))
+        else if (!currentFolder.Contains(Path.DirectorySeparatorChar))
         {
           string SQL = "SELECT strFile FROM picturedata WHERE str" + currentFolder + " IS NOT NULL";
           if (PictureDatabase.FilterPrivate)
@@ -2357,7 +2357,7 @@ namespace MediaPortal.GUI.Pictures
         }
         else
         {
-          string[] metaWhere = currentFolder.Split('\\');
+          string[] metaWhere = currentFolder.Split(Path.DirectorySeparatorChar);
           List<string> pics = PictureDatabase.ListPicsByMetadata(metaWhere[0].Trim(), metaWhere[1].Trim());
           foreach (string pic in pics)
           {
@@ -2614,7 +2614,7 @@ namespace MediaPortal.GUI.Pictures
       }
       else if (disp == Display.Metadata)
       {
-        if (string.IsNullOrEmpty(currentFolder) || (!_searchMode && !currentFolder.Contains(@"\")))
+        if (string.IsNullOrEmpty(currentFolder) || (!_searchMode && !currentFolder.Contains(Path.DirectorySeparatorChar)))
         {
           iDisp = 2170;
         }
@@ -2801,7 +2801,7 @@ namespace MediaPortal.GUI.Pictures
       }
       else if (folderHistory.Count == 0 && !string.IsNullOrEmpty(currentFolder))
       {
-        MakeHistory(Path.Combine(currentFolder, "Start.png"));
+        MakeHistory(currentFolder, true);
       }
       returnFromSlideshow = false;
 
@@ -2891,7 +2891,12 @@ namespace MediaPortal.GUI.Pictures
       return string.Empty;
     }
 
-    private void MakeHistory(string strPic)
+    private void MakeHistory(string strPic, bool isFolder)
+    {
+      MakeHistory(strPic, false);
+    }
+
+    private void MakeHistory(string strPic, bool isFolder)
     {
       if (string.IsNullOrEmpty(strPic))
       {
@@ -2899,71 +2904,36 @@ namespace MediaPortal.GUI.Pictures
       }
 
       Log.Debug("GUIPictures: Make history for {0}: {1}", disp.ToString(), strPic);
+      
+      string rootFolder = string.Empty;
 
       if (disp == Display.Files)
       {
-        string strCurrentPath = Path.GetDirectoryName(strPic);
-        string strWorkPath = strCurrentPath;
-        if (!string.IsNullOrEmpty(strCurrentPath))
-        {
-          // Set root directory
-          string rootFolder = _virtualDirectory.GetShare(strCurrentPath).Name;
-          string rootFolderPath = _virtualDirectory.GetShare(strCurrentPath).Path;
-          // currentFolder = strCurrentPath;
-
-          while (true)
-          {
-            if (!string.IsNullOrEmpty(rootFolderPath) && !string.IsNullOrEmpty(strWorkPath))
-            {
-              if (rootFolderPath == strWorkPath)
-              {
-                string strCurrentPicture = Util.Utils.GetFilename(strPic, true);
-                folderHistory.Set(strCurrentPicture, strCurrentPath);
-                break;
-              }
-              string destinationItem = Path.GetFileName(strWorkPath);
-              if (rootFolderPath != strWorkPath)
-              {
-                string sourceCurrentFolder = Path.GetDirectoryName(strWorkPath);
-                folderHistory.Set(destinationItem, sourceCurrentFolder);
-              }
-              else
-              {
-                folderHistory.Set(destinationItem, strWorkPath);
-              }
-              strWorkPath = Path.GetDirectoryName(strWorkPath);
-            }
-            break;
-          }
-          folderHistory.Set(rootFolder, string.Empty);
-        }
+        string strCurrentPath = isFolder ? strPic.TrimEnd(Path.DirectorySeparatorChar) : Path.GetDirectoryName(strPic);
+        rootFolder = _virtualDirectory.GetShare(strCurrentPath).Path.TrimEnd(Path.DirectorySeparatorChar);
+        strPic = strPic.Replace(rootFolder + Path.DirectorySeparatorChar, string.Empty);
       }
-      else if (disp == Display.Date)
+      else if (disp == Display.Date && !isFolder)
       {
         string dateTaken = PictureDatabase.GetDateTaken(strPic);
         if (!string.IsNullOrEmpty(dateTaken))
         {
-          string year = dateTaken.Substring(0, 4);
-          folderHistory.Set(year, string.Empty);
-
-          string month = dateTaken.Substring(5, 2);
-          string upLevel = string.Empty;
-          if (_useDayGrouping)
-          {
-            folderHistory.Set(year + "\\" + month, year);
-            string day = dateTaken.Substring(8, 2);
-            upLevel = year + "\\" + month + "\\" + day;
-            folderHistory.Set(upLevel, year + "\\" + month);
-          }
-          else
-          {
-            upLevel = year + "\\" + month;
-            folderHistory.Set(upLevel, year);
-          }
-
           string strItemName = Util.Utils.GetFilename(strPic, true);
-          folderHistory.Set(strItemName, upLevel);
+          strPic = Path.Combine(dateTaken.Replace("-", Path.DirectorySeparatorChar), strItemName);
         }
+        else
+        {
+          return;
+        }
+      }
+
+      string[] historyStep = strPic.Split(Path.DirectorySeparatorChar);
+      string prevStep = rootFolder;
+      for (int i = 0; i < historyStep.Count(); i++)
+      {
+        folderHistory.Set(historyStep[i], prevStep);
+        Log.Debug("GUIPictures: Make history for {0}: Folder: {1} Item: {2}", disp.ToString(), prevStep, historyStep[i]);
+        prevStep = prevStep + (string.IsNullOrEmpty(prevStep) ? string.Empty : Path.DirectorySeparatorChar) + historyStep[i];
       }
     }
 
@@ -3955,7 +3925,7 @@ namespace MediaPortal.GUI.Pictures
           foreach (string month in Months)
           {
             // show month in a user friendly string
-            CreateAndAddFolderItem(Util.Utils.GetNamedMonth(month), year + "\\" + month);
+            CreateAndAddFolderItem(Util.Utils.GetNamedMonth(month), year + Path.DirectorySeparatorChar + month);
           }
         }
 
@@ -3975,7 +3945,7 @@ namespace MediaPortal.GUI.Pictures
             int Count = PictureDatabase.ListDays(month, year, ref Days);
             foreach (string day in Days)
             {
-              CreateAndAddFolderItem(day, year + "\\" + month + "\\" + day);
+              CreateAndAddFolderItem(day, year + Path.DirectorySeparatorChar + month + Path.DirectorySeparatorChar + day);
             }
           }
           else if (strNewDirectory.Length == 10)
@@ -3984,7 +3954,7 @@ namespace MediaPortal.GUI.Pictures
             string year = strNewDirectory.Substring(0, 4);
             string month = strNewDirectory.Substring(5, 2);
             string day = strNewDirectory.Substring(8, 2);
-            CreateAndAddFolderItem("..", year + "\\" + month);
+            CreateAndAddFolderItem("..", year + Path.DirectorySeparatorChar + month);
             condition = year + "-" + month + "-" + day;
           }
         }
@@ -4130,7 +4100,7 @@ namespace MediaPortal.GUI.Pictures
             CreateAndAddFolderItem(caption, prop.Name, Thumbs.Pictures + @"\exif\data\" + prop.Name + ".png");
           }
         }
-        else if (!_searchMode && !strNewDirectory.Contains(@"\"))
+        else if (!_searchMode && !strNewDirectory.Contains(Path.DirectorySeparatorChar))
         {
           // Value of Selected Metadata
           CreateAndAddFolderItem("..", string.Empty);
@@ -4184,7 +4154,7 @@ namespace MediaPortal.GUI.Pictures
               }
             }
 
-            GUIListItem item = CreateAndAddFolderItem(itemLabel, strNewDirectory + @"\" + value, thumbFilename);
+            GUIListItem item = CreateAndAddFolderItem(itemLabel, strNewDirectory + Path.DirectorySeparatorChar + value, thumbFilename);
             item.Label2 = strNewDirectory.ToCaption() ?? strNewDirectory;
           }
         }
