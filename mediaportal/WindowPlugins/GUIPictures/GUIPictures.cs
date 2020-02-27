@@ -2640,6 +2640,9 @@ namespace MediaPortal.GUI.Pictures
         SetPictureProperties((ExifMetadata.Metadata)item.AlbumInfoTag);
       }
 
+      GUIPropertyManager.SetProperty("#pictures.IsHDR", (item.AdditionalData & GUIListItemProperty.IsHDR) == GUIListItemProperty.IsHDR ? "true" : "false");
+      GUIPropertyManager.SetProperty("#pictures.IsVideo", (item.AdditionalData & GUIListItemProperty.Is3D) == GUIListItemProperty.Is3D ? "true" : "false");
+
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
       if (filmstrip == null)
       {
@@ -2657,6 +2660,11 @@ namespace MediaPortal.GUI.Pictures
     {
       ResetLeaveThumbsInFolder();
       base.OnPageLoad();
+
+      GUIPropertyManager.SetProperty("#pictures.filename", string.Empty);
+      GUIPropertyManager.SetProperty("#pictures.path", string.Empty);
+      GUIPropertyManager.SetProperty("#pictures.IsHDR", string.Empty);
+      GUIPropertyManager.SetProperty("#pictures.IsVideo", string.Empty);
 
       if (!PictureDatabase.DbHealth)
       {
@@ -2685,10 +2693,6 @@ namespace MediaPortal.GUI.Pictures
 
       GUIImageAllocator.ClearCachedAllocatorImages();
       GUITextureManager.CleanupThumbs();
-      // LoadSettings();
-
-      GUIPropertyManager.SetProperty("#pictures.filename", string.Empty);
-      GUIPropertyManager.SetProperty("#pictures.path", string.Empty);
 
       SetPictureProperties(new ExifMetadata.Metadata());
 
@@ -4240,6 +4244,10 @@ namespace MediaPortal.GUI.Pictures
       if (((ExifMetadata.Metadata)item.AlbumInfoTag).HDR)
       {
         item.AdditionalData = item.AdditionalData | GUIListItemProperty.IsHDR;
+      }
+      if (Util.Utils.IsVideo(file))
+      {
+        item.AdditionalData = item.AdditionalData | GUIListItemProperty.Is3D; // Video file
       }
 
       if (item.FileInfo == null || string.IsNullOrEmpty(item.FileInfo.Name))
