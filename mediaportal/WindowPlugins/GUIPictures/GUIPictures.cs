@@ -93,10 +93,12 @@ namespace MediaPortal.GUI.Pictures
       {
         Stopwatch benchclock = new Stopwatch();
         benchclock.Start();
+
         string path = _filepath;
         bool autocreateLargeThumbs = _createLarge;
         bool recreateThumbs = _recreateWithoutCheck;
         List<GUIListItem> itemlist = null;
+        int countVideos = 0;
 
         vDir.SetExtensions(Util.Utils.PictureExtensions);
         foreach (string ext in Util.Utils.VideoExtensions)
@@ -107,7 +109,6 @@ namespace MediaPortal.GUI.Pictures
         if (!vDir.IsRemote(path))
         {
           itemlist = vDir.GetDirectoryUnProtectedExt(path, true);
-
           itemlist.Sort(new PictureSort(PictureSort.SortMethod.Name, true));
 
           foreach (GUIListItem item in itemlist)
@@ -208,7 +209,7 @@ namespace MediaPortal.GUI.Pictures
 
                     if (thumbRet)
                     {
-                      item.RefreshCoverArt();
+                      countVideos++;
                       item.IconImage = thumbnailImage;
                       item.ThumbnailImage = thumbnailImageL;
                     }
@@ -220,7 +221,7 @@ namespace MediaPortal.GUI.Pictures
                 string pin;
                 if ((item.Label != "..") && (!vDir.IsProtectedShare(item.Path, out pin)))
                 {
-                  string thumbnailImage = item.Path + @"\folder.jpg";
+                  string thumbnailImage = Path.Combine(item.Path, @"Folder.jpg");
                   if (recreateThumbs || (!item.IsRemote && !Util.Utils.FileExistsInCache(thumbnailImage)))
                   {
                     Thread.Sleep(10);
@@ -232,12 +233,43 @@ namespace MediaPortal.GUI.Pictures
                   }
                 }
               }
+            } // if (CheckPathForHistory(item.Path, false))
+          } // foreach (GUIListItem item in itemlist)
+
+          // In folder only Video files and "..", create folder thumbs ...
+          if (countVideos == itemlist.Count - 1)
+          {
+            string thumbnailImage = Path.Combine(path, @"Folder.jpg");
+            if (!File.Exists(thumbnailImage))
+            {
+              List<string> pictureList = new List<string>();
+              foreach (GUIListItem item in itemlist)
+              {
+                if (!item.IsFolder && Util.Utils.IsVideo(item.Path))
+                {
+                  string thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item.Path);
+                  if (File.Exists(thumbnailImageL))
+                  {
+                    pictureList.Add(thumbnailImageL);
+                  }
+                }
+              }
+              if (pictureList.Count > 0)
+              {
+                Util.Utils.Shuffle(pictureList);
+                if (pictureList.Count > 4)
+                {
+                  pictureList.RemoveRange(4, pictureList.Count - 4);
+                }
+                // combine those 4 image files into one folder.jpg
+                Util.Utils.CreateFolderPreviewThumb(pictureList, Path.Combine(path, @"Folder.jpg"));
+              }
             }
-          }
-        }
+          } // if (countVideos == itemlist.Count - 1)
+        } // if (!vDir.IsRemote(path))
         benchclock.Stop();
-        Log.Debug("GUIPictures: Creation of all thumbs for dir '{0}' took {1} seconds for {2} files", _filepath,
-                  benchclock.Elapsed.TotalSeconds, itemlist.Count);
+        Log.Debug("GUIPictures: Creation of all thumbs for dir '{0}' took {1} seconds for {2} files", 
+                                _filepath, benchclock.Elapsed.TotalSeconds, itemlist.Count);
       }
 
       private bool CreateFolderThumb(string path, bool recreateAll)
@@ -332,7 +364,7 @@ namespace MediaPortal.GUI.Pictures
             {
               break;
             }
-          }
+          } // foreach (GUIListItem subitem in itemlist)
           if (pictureList.Count < 4)
           {
             Util.Utils.Shuffle(subPictureList);
@@ -346,7 +378,8 @@ namespace MediaPortal.GUI.Pictures
               }
             }
           }
-        }
+        } // if (pictureList.Count < 4)
+
         // combine those 4 image files into one folder.jpg
         if (Util.Utils.CreateFolderPreviewThumb(pictureList, Path.Combine(path, @"Folder.jpg")))
         {
@@ -450,7 +483,6 @@ namespace MediaPortal.GUI.Pictures
 
           if (thumbRet)
           {
-            itemObject.RefreshCoverArt();
             itemObject.IconImage = thumbnailImage;
             itemObject.ThumbnailImage = thumbnailImageL;
           }
@@ -1884,7 +1916,7 @@ namespace MediaPortal.GUI.Pictures
           string thumbnailLargeImage = GetLargeThumbnail(item.Path);
           MediaPortal.Util.Utils.SetDefaultIcons(item);
 
-          if (!Util.Utils.FileExistsInCache(thumbnailImage) && Util.Utils.IsPicture(item.Path) && _autoCreateThumbs)
+          if (!Util.Utils.FileExistsInCache(thumbnailImage) && _autoCreateThumbs && (Util.Utils.IsPicture(item.Path) || Util.Utils.IsVideo(item.Path)))
           {
             ThreadPool.QueueUserWorkItem(delegate
                                            {
@@ -2593,19 +2625,14 @@ namespace MediaPortal.GUI.Pictures
 
       if (item.AlbumInfoTag == null)
       {
-        if (item.IsFolder)
-        {
-          item.AlbumInfoTag = new ExifMetadata.Metadata();
-          
-        }
-        else
+        if (!item.IsFolder)
         {
           SetItemExifData(item);
         }
-      }
-      else if (((ExifMetadata.Metadata)item.AlbumInfoTag).IsEmpty())
-      {
-        SetItemExifData(item);
+        else
+        {
+          item.AlbumInfoTag = new ExifMetadata.Metadata();
+        }
       }
 
       if (item.AlbumInfoTag is ExifMetadata.Metadata)
@@ -3496,7 +3523,7 @@ namespace MediaPortal.GUI.Pictures
 
     private static bool ContainsFolderThumb(GUIListItem aItem)
     {
-      if (!aItem.IsFolder && aItem.Path.ToLower().Contains(@"folder.jpg"))
+      if (!aItem.IsFolder && aItem.Path.ToLowerInvariant().Contains(@"folder.jpg"))
       {
         return true;
       }
