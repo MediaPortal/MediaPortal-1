@@ -2740,6 +2740,25 @@ namespace MediaPortal.GUI.Pictures
       LoadFolderSettings(currentFolder);
       ShowThumbPanel();
 
+      if (_loadParameter != null)
+      {
+        switch (_loadParameter)
+        {
+          case "134":  // Shares
+            SetView(0);
+            break;
+          case "636":  // Date
+            SetView(1);
+            break;
+          case "2167": // Keyword
+            SetView(2);
+            break;
+          case "2170": // Metadata
+            SetView(3);
+            break;
+        }
+      }
+
       LoadDirectory(currentFolder, true);
 
       if (selectedItemIndex >= 0 && returnFromSlideshow)
