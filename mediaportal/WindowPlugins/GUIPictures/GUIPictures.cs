@@ -194,6 +194,8 @@ namespace MediaPortal.GUI.Pictures
                   }
                   else if (isVideo)
                   {
+                    countVideos++;
+
                     string thumbnailImage = Util.Utils.GetPicturesThumbPathname(item.Path);
                     string thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item.Path);
 
@@ -209,7 +211,6 @@ namespace MediaPortal.GUI.Pictures
 
                     if (thumbRet)
                     {
-                      countVideos++;
                       item.IconImage = thumbnailImage;
                       item.ThumbnailImage = thumbnailImageL;
                     }
