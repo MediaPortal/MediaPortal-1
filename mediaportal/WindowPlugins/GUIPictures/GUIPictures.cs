@@ -940,8 +940,9 @@ namespace MediaPortal.GUI.Pictures
 
       GUIControl.SelectItemControl(GetID, facadeLayout.GetID, 0);
       string itemName = strName.IndexOf(Path.DirectorySeparatorChar) > 0 ? Path.GetFileNameWithoutExtension(strName) : strName;
-
-      // Log.Debug("GUIPictures: Select item by name {0} - {1}", itemName, strName);
+#if DEBUG
+      Log.Debug("GUIPictures: Select item by name {0} - {1}", itemName, strName);
+#endif
       for (int i = 0; i < facadeLayout.Count; i++)
       {
         if (facadeLayout[i].Label == itemName || facadeLayout[i].Path == strName)
@@ -2907,14 +2908,16 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
 
-      Log.Debug("GUIPictures: Make history for {0}: {1}", disp.ToString(), strPic);
-      
       string rootFolder = string.Empty;
 
       if (disp == Display.Files)
       {
         string strCurrentPath = isFolder ? strPic.TrimEnd(Path.DirectorySeparatorChar) : Path.GetDirectoryName(strPic);
         rootFolder = _virtualDirectory.GetShare(strCurrentPath).Path.TrimEnd(Path.DirectorySeparatorChar);
+        if (string.IsNullOrEmpty(rootFolder))
+        {
+          return;
+        }
         strPic = strPic.Replace(rootFolder + Path.DirectorySeparatorChar, string.Empty);
       }
       else if (disp == Display.Date && !isFolder)
@@ -2923,7 +2926,15 @@ namespace MediaPortal.GUI.Pictures
         if (!string.IsNullOrEmpty(dateTaken))
         {
           string strItemName = Util.Utils.GetFilename(strPic, true);
-          strPic = Path.Combine(dateTaken.Replace("-", Path.DirectorySeparatorChar.ToString()), strItemName);
+          string year = dateTaken.Substring(0, 4);
+          string month = dateTaken.Substring(5, 2);
+          strPic = year + Path.DirectorySeparatorChar + month;
+          if (_useDayGrouping)
+          {
+            string day = dateTaken.Substring(8, 2);
+            strPic = strPic + Path.DirectorySeparatorChar + day;
+          }
+          strPic = Path.Combine(strPic, strItemName);
         }
         else
         {
@@ -2931,13 +2942,17 @@ namespace MediaPortal.GUI.Pictures
         }
       }
 
-      string[] historyStep = strPic.Split(Path.DirectorySeparatorChar);
-      string prevStep = rootFolder;
+      Log.Debug("GUIPictures: Make history for {0}: {1}\{2}", disp.ToString(), rootFolder, strPic);
+
+      string[] historyStep = strPic.Split(Path.DirectorySeparatorChar.ToString().ToArray(), StringSplitOptions.RemoveEmptyEntries);
+      string historyFolder = rootFolder;
       for (int i = 0; i < historyStep.Count(); i++)
       {
-        folderHistory.Set(historyStep[i], prevStep);
-        Log.Debug("GUIPictures: Make history for {0}: Folder: {1} Item: {2}", disp.ToString(), prevStep, historyStep[i]);
-        prevStep = prevStep + (string.IsNullOrEmpty(prevStep) ? string.Empty : Path.DirectorySeparatorChar.ToString()) + historyStep[i];
+        folderHistory.Set(historyStep[i], disp.ToString() + ":" + historyFolder);
+#if DEBUG
+        Log.Debug("GUIPictures: Make history for {0}: Folder: {1} Item: {2}", disp.ToString(), historyFolder, historyStep[i]);
+#endif
+        historyFolder = historyFolder + (string.IsNullOrEmpty(historyFolder) ? string.Empty : Path.DirectorySeparatorChar.ToString()) + historyStep[i];
       }
     }
 
@@ -3722,11 +3737,11 @@ namespace MediaPortal.GUI.Pictures
           {
             if (SelectedItem.Label == "..")
             {
-              folderHistory.Set(string.Empty, currentFolder);
+              folderHistory.Set(string.Empty, disp.ToString() + ":" + currentFolder);
             }
             else
             {
-              folderHistory.Set(SelectedItem.Label, currentFolder);
+              folderHistory.Set(SelectedItem.Label, disp.ToString() + ":" + currentFolder);
             }
           }
         }
@@ -3771,8 +3786,7 @@ namespace MediaPortal.GUI.Pictures
             LoadMetadataView(strNewDirectory);
           }
 
-          string strSelectedItem = folderHistory.Get(currentFolder);
-          SelectItemByName(strSelectedItem);
+          SelectItemByName(folderHistory.Get(disp.ToString() + ":" + currentFolder));
 
           int totalItemCount = facadeLayout.Count;
           if (totalItemCount > 0)
