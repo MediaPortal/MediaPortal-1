@@ -2290,7 +2290,7 @@ namespace MediaPortal.GUI.Pictures
         else
         {
           List<string> pics = new List<string>();
-          int totalCount = PictureDatabase.ListPicsByDate(currentFolder.Replace(Path.DirectorySeparatorChar.ToString(), "-"), ref pics);
+          int totalCount = PictureDatabase.ListPicsByDate(currentFolder.Replace(Path.DirectorySeparatorChar, '-'), ref pics);
           foreach (string pic in pics)
           {
             SlideShow.Add(pic);
@@ -2962,9 +2962,9 @@ namespace MediaPortal.GUI.Pictures
         }
       }
 
-      Log.Debug("GUIPictures: Make history for {0}: {1}\{2}", disp.ToString(), rootFolder, strPic);
+      Log.Debug("GUIPictures: Make history for {0}: {1}\\{2}", disp.ToString(), rootFolder, strPic);
 
-      string[] historyStep = strPic.Split(Path.DirectorySeparatorChar.ToString().ToArray(), StringSplitOptions.RemoveEmptyEntries);
+      string[] historyStep = strPic.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
       string historyFolder = rootFolder;
       for (int i = 0; i < historyStep.Count(); i++)
       {
@@ -3781,8 +3781,6 @@ namespace MediaPortal.GUI.Pictures
 
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
 
-      AutoResetEvent _loadComplete = new AutoResetEvent(false);
-    
       Thread worker = new Thread(() =>
       {
         try
@@ -3826,12 +3824,11 @@ namespace MediaPortal.GUI.Pictures
         finally
         {
           GUIWaitCursor.Hide();
-          _loadComplete.Set();
         }
       });
       worker.Start();
       if (waitUntilFinished)
-        _loadComplete.WaitOne();
+        worker.Join();
     }
 
     private void LoadFileView()
