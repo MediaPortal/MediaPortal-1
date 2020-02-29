@@ -188,7 +188,7 @@ namespace MediaPortal.Dialogs
                                               selectedItemIndex, 0, null);
               OnMessage(msg);
             }
-            else
+            else if (listItems.Count > 0)
             {
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID,
                                               0, 0, null);
