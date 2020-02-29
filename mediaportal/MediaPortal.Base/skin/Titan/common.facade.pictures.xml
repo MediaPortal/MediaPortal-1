@@ -102,25 +102,25 @@
         <dimColor>90ffffff</dimColor>
         <id>50</id>
         <posX>94</posX>
-        <posY>165</posY>
+        <posY>185</posY>
         <width>1750</width>
         <height>800</height>
         <onleft>2</onleft>
         <onright>50</onright>
         <itemWidth>245</itemWidth>
-        <itemHeight>141</itemHeight>
+        <itemHeight>151</itemHeight>
         <textureWidth>245</textureWidth>
-        <textureHeight>141</textureHeight>
+        <textureHeight>151</textureHeight>
         <thumbWidth>245</thumbWidth>
-        <thumbHeight>141</thumbHeight>
+        <thumbHeight>151</thumbHeight>
         <thumbPosX>0</thumbPosX>
         <thumbPosY>0</thumbPosY>
         <itemWidthBig>350</itemWidthBig>
-        <itemHeightBig>202</itemHeightBig>
+        <itemHeightBig>252</itemHeightBig>
         <thumbWidthBig>350</thumbWidthBig>
-        <thumbHeightBig>202</thumbHeightBig>
+        <thumbHeightBig>252</thumbHeightBig>
         <textureWidthBig>350</textureWidthBig>
-        <textureHeightBig>202</textureHeightBig>
+        <textureHeightBig>252</textureHeightBig>
         <thumbPosXBig>0</thumbPosXBig>
         <thumbPosYBig>0</thumbPosYBig>
         <zoomXPixels>30</zoomXPixels>
@@ -140,17 +140,17 @@
         <unfocusedAlpha>170</unfocusedAlpha>
         <!-- MP1-4986 -->
         <showHDRImage>yes</showHDRImage>          
-        <IsHDRImagePosX Big="82">78</IsHDRImagePosX>          
-        <IsHDRImagePosY Big="0">0</IsHDRImagePosY>          
-        <IsHDRImageWidth Big="122">50</IsHDRImageWidth>          
-        <IsHDRImageHeight Big="122">50</IsHDRImageHeight>        
-        <IsHDRImageTexture>isHDR.png</IsHDRImageTexture>
+        <IsHDRImagePosX Big="290">205</IsHDRImagePosX>          
+        <IsHDRImagePosY Big="10">10</IsHDRImagePosY>          
+        <IsHDRImageWidth Big="50">30</IsHDRImageWidth>          
+        <IsHDRImageHeight Big="50">30</IsHDRImageHeight>        
+        <IsHDRImageTexture>isHDRPicture.png</IsHDRImageTexture>
 
         <show3DImage>yes</show3DImage>          
-        <Is3DImagePosX Big="82">78</Is3DImagePosX>          
-        <Is3DImagePosY Big="0">0</Is3DImagePosY>          
-        <Is3DImageWidth Big="122">50</Is3DImageWidth>          
-        <Is3DImageHeight Big="122">50</Is3DImageHeight>        
+        <Is3DImagePosX Big="290">205</Is3DImagePosX>          
+        <Is3DImagePosY Big="10">10</Is3DImagePosY>          
+        <Is3DImageWidth Big="50">30</Is3DImageWidth>          
+        <Is3DImageHeight Big="50">30</Is3DImageHeight>        
         <Is3DImageTexture>isVideo.png</Is3DImageTexture>
       </control>
                   
@@ -201,17 +201,17 @@
         <thumbAnimation effect="zoom" start="135,135" reversible="false" end="100,100" center="0,800" time="100">unfocus</thumbAnimation>
         <!-- MP1-4986 -->
         <showHDRImage>yes</showHDRImage>          
-        <IsHDRImagePosX>108</IsHDRImagePosX>          
-        <IsHDRImagePosY>0</IsHDRImagePosY>          
-        <IsHDRImageWidth>122</IsHDRImageWidth>          
-        <IsHDRImageHeight>122</IsHDRImageHeight>        
-        <IsHDRImageTexture>isHDR.png</IsHDRImageTexture>
+        <IsHDRImagePosX>285</IsHDRImagePosX>          
+        <IsHDRImagePosY>5</IsHDRImagePosY>          
+        <IsHDRImageWidth>50</IsHDRImageWidth>          
+        <IsHDRImageHeight>50</IsHDRImageHeight>        
+        <IsHDRImageTexture>isHDRPicture.png</IsHDRImageTexture>
 
         <show3DImage>yes</show3DImage>          
-        <Is3DImagePosX>108</Is3DImagePosX>          
-        <Is3DImagePosY>0</Is3DImagePosY>          
-        <Is3DImageWidth>122</Is3DImageWidth>          
-        <Is3DImageHeight>122</Is3DImageHeight>        
+        <Is3DImagePosX>285</Is3DImagePosX>          
+        <Is3DImagePosY>5</Is3DImagePosY>          
+        <Is3DImageWidth>50</Is3DImageWidth>          
+        <Is3DImageHeight>50</Is3DImageHeight>        
         <Is3DImageTexture>isVideo.png</Is3DImageTexture>
       </control>
       
@@ -274,17 +274,17 @@
 
         <!-- MP1-4986 -->
         <showHDRImage>yes</showHDRImage>          
-        <IsHDRImagePosX>116</IsHDRImagePosX>          
-        <IsHDRImagePosY>0</IsHDRImagePosY>          
-        <IsHDRImageWidth>122</IsHDRImageWidth>          
-        <IsHDRImageHeight>122</IsHDRImageHeight>        
-        <IsHDRImageTexture>isHDR.png</IsHDRImageTexture>
+        <IsHDRImagePosX>335</IsHDRImagePosX>          
+        <IsHDRImagePosY>3</IsHDRImagePosY>          
+        <IsHDRImageWidth>50</IsHDRImageWidth>          
+        <IsHDRImageHeight>50</IsHDRImageHeight>        
+        <IsHDRImageTexture>isHDRPicture.png</IsHDRImageTexture>
 
         <show3DImage>yes</show3DImage>          
-        <Is3DImagePosX>116</Is3DImagePosX>          
-        <Is3DImagePosY>0</Is3DImagePosY>          
-        <Is3DImageWidth>122</Is3DImageWidth>          
-        <Is3DImageHeight>122</Is3DImageHeight>        
+        <Is3DImagePosX>335</Is3DImagePosX>          
+        <Is3DImagePosY>3</Is3DImagePosY>          
+        <Is3DImageWidth>50</Is3DImageWidth>          
+        <Is3DImageHeight>50</Is3DImageHeight>        
         <Is3DImageTexture>isVideo.png</Is3DImageTexture>
         <subitems>
           <subitem>
@@ -306,13 +306,13 @@
                   <posX>4</posX>
                   <posY>5</posY>
                   <width>340</width>
-                  <height>230</height>
+                  <height>220</height>
                   <label>#pictures.exif.full</label>
                   <align>left</align>
                   <font>font1</font>
                   <textcolor>99ffffff</textcolor>
                   <scrollStartDelaySec>20</scrollStartDelaySec>
-                  <spaceBetweenItems>1</spaceBetweenItems>
+                  <spaceBetweenItems>10</spaceBetweenItems>
                   <seperator>----------------------------------------------------------------------------------------------------------------------------------</seperator>
                 </control>
               </controls>

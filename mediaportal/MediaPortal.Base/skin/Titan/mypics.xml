@@ -54,8 +54,10 @@
         <description>Video banner</description>
         <id>0</id>
         <type>image</type>
-        <posX>554</posX>
+        <posX>625</posX>
         <posY>362</posY>
+        <width>50</width>
+        <height>50</height>
         <texture>isVideo.png</texture>                                                  
         <visible>facadeview.list+Control.IsVisible(50)+string.equals(#pictures.IsVideo,true)</visible>
     	<animation effect="fade" time="0">WindowOpen</animation>
@@ -68,8 +70,10 @@
         <description>HDR banner</description>
         <id>0</id>
         <type>image</type>
-        <posX>310</posX>
-        <posY>295</posY>
+        <posX>625</posX>
+        <posY>362</posY>
+        <width>50</width>
+        <height>50</height>
         <texture>isHDRPicture.png</texture>
         <visible>facadeview.list+Control.IsVisible(50)+string.equals(#pictures.IsHDR,true)</visible>
     	<animation effect="fade" time="0">WindowOpen</animation>
