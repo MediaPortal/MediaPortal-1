@@ -622,10 +622,8 @@ namespace MediaPortal.Player
           List<double> fpsList = new List<double>();
           foreach (string fpsItem in fpsArray)
           {
-            double fpsAsDouble = -1;
-            double.TryParse(fpsItem, NumberStyles.AllowDecimalPoint, provider, out fpsAsDouble);
-
-            if (fpsAsDouble > -1)
+            double fpsAsDouble;
+            if (double.TryParse(fpsItem, NumberStyles.AllowDecimalPoint, provider, out fpsAsDouble))
             {
               fpsList.Add(fpsAsDouble);
             }
