@@ -494,7 +494,7 @@ namespace MediaPortal.Player
 
     #region public enums
 
-    public enum MediaType
+    public enum MediaType // copy present in g_player
     {
       Video,
       TV,

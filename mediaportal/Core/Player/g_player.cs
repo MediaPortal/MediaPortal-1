@@ -47,7 +47,7 @@ namespace MediaPortal.Player
   {
     #region enums
 
-    public enum MediaType
+    public enum MediaType //copy present in RefreshRateChanger
     {
       Video,
       TV,
