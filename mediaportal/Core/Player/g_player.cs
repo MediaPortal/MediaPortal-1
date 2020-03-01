@@ -57,7 +57,7 @@ namespace MediaPortal.Player
       Music,
       Recording,
       Unknown
-    } ;
+    };
 
     public enum DriveType
     {
@@ -1699,12 +1699,12 @@ namespace MediaPortal.Player
                 {
                   if (MediaInfo != null && MediaInfo.HasVideo)
                   {
-                    RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                    RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)type);
                   }
                 }
                 else
                 {
-                  RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                  RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)type);
                 }
               }
             }
@@ -1789,7 +1789,7 @@ namespace MediaPortal.Player
                   }
                 }
                 // Do refresh rate
-                RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)type);
 
                 if (RefreshRateChangePending())
                 {
@@ -1866,12 +1866,12 @@ namespace MediaPortal.Player
               {
                 if (MediaInfo != null && MediaInfo.HasVideo)
                 {
-                  RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                  RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)type);
                 }
               }
               else
               {
-                RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)type);
               }
             }
           }
