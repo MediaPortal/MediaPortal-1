@@ -734,7 +734,6 @@ namespace MediaPortal.Player
         Log.Info("RefreshRateChanger.RunExternalJob: running external job failed {0}", e.Message);
         return false;
       }
-      finally {}
 
       if (changeRR != null)
       {
