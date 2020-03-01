@@ -25,7 +25,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using System.Collections.Generic;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Microsoft.DirectX.Direct3D;

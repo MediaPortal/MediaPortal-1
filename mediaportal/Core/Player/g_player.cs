@@ -28,7 +28,6 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using DShowNET.Helper;
-using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.MusicPlayer.BASS;
