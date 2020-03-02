@@ -1967,6 +1967,30 @@ namespace MediaPortal.Picture.Database
       return aPictures;
     }
 
+    public int GetCountByFilter(string aSQL, string aFilter)
+    {
+      if (m_db == null || string.IsNullOrEmpty(aSQL))
+      {
+        return 0;
+      }
+
+      Log.Debug("Picture.DB.SQLite: GetCountByFilter - SQL: {0}, Filter: {1}", aSQL, aFilter);
+      int Count = 0;
+      try
+      {
+        SQLiteResultSet results = m_db.Execute(aSQL);
+        if (results != null)
+        {
+          Count = DatabaseUtility.GetAsInt(results, 0, 0);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: GetCountByFilter err: {0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+      return Count;
+    }
+
     #region Transactions
 
     private void BeginTransaction()

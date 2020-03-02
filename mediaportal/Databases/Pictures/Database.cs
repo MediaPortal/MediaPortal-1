@@ -189,6 +189,11 @@ namespace MediaPortal.Picture.Database
       return _database.GetPicturesByFilter(aSQL, aFilter, fullInfo);
     }
 
+    public static int GetCountByFilter(string aSQL, string aFilter)
+    {
+      return _database.GetCountByFilter(aSQL, aFilter);
+    }
+
     public static int Count()
     {
       return _database.Count();

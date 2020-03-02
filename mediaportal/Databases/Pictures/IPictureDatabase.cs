@@ -57,6 +57,7 @@ namespace MediaPortal.Picture.Database
     int Count();
     List<PictureData> GetPicturesByFilter(string aSQL,string aFilter);
     List<PictureData> GetPicturesByFilter(string aSQL, string aFilter, bool fullInfo);
+    int GetCountByFilter(string aSQL, string aFilter);
     string DatabaseName { get; }
     bool DbHealth { get; }
     bool FilterPrivate { get; set; }

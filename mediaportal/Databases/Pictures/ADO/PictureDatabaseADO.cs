@@ -414,6 +414,11 @@ namespace MediaPortal.Picture.Database
       throw (new NotImplementedException("List Pics by Filter not yet implemented for ADO Database"));
     }
 
+    public int GetCountByFilter(string aSQL, string aFilter)
+    {
+      throw (new NotImplementedException("Count Pics by Filter not yet implemented for ADO Database"));
+    }
+
     public void Optimize()
     {
       throw (new NotImplementedException("Optimize not yet implemented for ADO Database"));
