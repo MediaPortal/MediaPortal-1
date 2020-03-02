@@ -164,9 +164,19 @@ namespace MediaPortal.Picture.Database
       return _database.ListValueByMetadata(Name);
     }
 
+    public static int CountPicsByMetadata(string Name)
+    {
+      return _database.CountPicsByMetadata(Name);
+    }
+
     public static List<string> ListPicsByMetadata(string Name, string Value)
     {
       return _database.ListPicsByMetadata(Name, Value);
+    }
+
+    public static int CountPicsByMetadataValue(string Name, string Value)
+    {
+      return _database.CountPicsByMetadataValue(Name, Value);
     }
 
     public static List<PictureData> GetPicturesByFilter(string aSQL, string aFilter)
@@ -177,6 +187,11 @@ namespace MediaPortal.Picture.Database
     public static List<PictureData> GetPicturesByFilter(string aSQL, string aFilter, bool fullInfo)
     {
       return _database.GetPicturesByFilter(aSQL, aFilter, fullInfo);
+    }
+
+    public static int Count()
+    {
+      return _database.Count();
     }
 
     public static bool DbHealth
