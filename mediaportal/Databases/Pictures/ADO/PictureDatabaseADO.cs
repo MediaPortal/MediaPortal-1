@@ -384,9 +384,24 @@ namespace MediaPortal.Picture.Database
       throw (new NotImplementedException("List Metadata Values by Metadata not yet implemented for ADO Database"));
     }
 
+    public int CountPicsByMetadata(string Name)
+    {
+      throw (new NotImplementedException("Count Metadata Values by Metadata not yet implemented for ADO Database"));
+    }
+
     public List<string> ListPicsByMetadata(string Name, string Value)
     {
       throw (new NotImplementedException("List Pics by Metadata Value not yet implemented for ADO Database"));
+    }
+
+    public int CountPicsByMetadataValue(string Name, string Value)
+    {
+      throw (new NotImplementedException("Count Pics by Metadata Value not yet implemented for ADO Database"));
+    }
+
+    public int Count()
+    {
+      throw (new NotImplementedException("Count not yet implemented for ADO Database"));
     }
 
     public List<PictureData> GetPicturesByFilter(string aSQL, string aFilter)
