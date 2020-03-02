@@ -1769,9 +1769,38 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          Log.Error("Picture.DB.SQLite: Getting Picture by Metadata err: {0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Error("Picture.DB.SQLite: Getting Pictures by Metadata err: {0} stack:{1}", ex.Message, ex.StackTrace);
         }
         return resultList;
+      }
+    }
+
+    public int CountPicsByMetadata(string Name)
+    {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
+      int Count = 0;
+      lock (typeof(PictureDatabase))
+      {
+        string strSQL = "SELECT COUNT(DISTINCT strFile) FROM picturedata WHERE " + Name + " IS NOT NULL" +
+                        (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty);
+        SQLiteResultSet result;
+        try
+        {
+          result = m_db.Execute(strSQL);
+          if (result != null)
+          {
+            Count = DatabaseUtility.GetAsInt(result, 0, 0);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: Getting Count by Metadata err: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+        return Count;
       }
     }
 
@@ -1804,9 +1833,68 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          Log.Error("Picture.DB.SQLite: Getting Picture by Metadata err: {0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Error("Picture.DB.SQLite: Getting Pictures by Metadata Value err: {0} stack:{1}", ex.Message, ex.StackTrace);
         }
         return resultList;
+      }
+    }
+
+    public int CountPicsByMetadataValue(string Name, string Value)
+    {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
+      int Count = 0;
+      lock (typeof(PictureDatabase))
+      {
+        string strValue = Name.Contains("Altitude") ? Value : "'" + DatabaseUtility.RemoveInvalidChars(Value) + "'";
+        string strSQL = "SELECT COUNT(strFile) FROM picturedata WHERE " + Name + " = " + strValue + 
+                                (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty);
+        SQLiteResultSet result;
+        try
+        {
+          result = m_db.Execute(strSQL);
+          if (result != null)
+          {
+            Count = DatabaseUtility.GetAsInt(result, 0, 0);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: Getting Count by Metadata Value err: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+        return Count;
+      }
+    }
+
+    public int Count()
+    {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
+      int Count = 0;
+      lock (typeof(PictureDatabase))
+      {
+        string strSQL = "SELECT COUNT(strFile) FROM picture" +
+                                (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty);
+        SQLiteResultSet result;
+        try
+        {
+          result = m_db.Execute(strSQL);
+          if (result != null)
+          {
+            Count = DatabaseUtility.GetAsInt(result, 0, 0);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: Getting Count Picture err: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+        return Count;
       }
     }
 
