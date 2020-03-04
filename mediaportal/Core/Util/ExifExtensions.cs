@@ -240,7 +240,7 @@ namespace MediaPortal.Util
           case nameof(ExifMetadata.Metadata.HDR):
             continue;
           default:
-            value = ((ExifMetadata.MetadataItem)prop.GetValue(metadata)).DisplayValue;
+            value = ((ExifMetadata.MetadataItem)prop.GetValue(metadata)).DisplayValue ?? string.Empty;
             break;
         }
         if (!string.IsNullOrEmpty(value))
