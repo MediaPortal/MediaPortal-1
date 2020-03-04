@@ -143,7 +143,7 @@ namespace MediaPortal.GUI.Pictures
             {
               if (!item.IsFolder)
               {
-                int iRotate = PictureDatabase.GetRotation(item.Path);
+                int iRotate = ContainsFolderThumb(item) ? 0 : PictureDatabase.GetRotation(item.Path);
                 Thread.Sleep(5);
 
                 bool isPicture = Util.Utils.IsPicture(item.Path);
@@ -423,7 +423,7 @@ namespace MediaPortal.GUI.Pictures
           return;
         }
 
-        int iRotate = PictureDatabase.GetRotation(item);
+        int iRotate = ContainsFolderThumb(itemObject) ? 0 : PictureDatabase.GetRotation(item);
         Thread.Sleep(5);
 
         bool isVideo = Util.Utils.IsVideo(item);

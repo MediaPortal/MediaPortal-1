@@ -298,7 +298,7 @@ namespace MediaPortal.Util
             GUIPropertyManager.SetProperty("#pictures.exif.is" + prop.Name.ToLower(), metadata.HDR ? "true" : "false");
             continue;
           default:
-            value = ((ExifMetadata.MetadataItem)prop.GetValue(metadata)).DisplayValue; 
+            value = ((ExifMetadata.MetadataItem)prop.GetValue(metadata)).DisplayValue ?? string.Empty; 
             break;
         }
         if (!string.IsNullOrEmpty(value))
