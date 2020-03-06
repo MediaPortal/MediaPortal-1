@@ -94,6 +94,11 @@
         <textureNoFocus>-</textureNoFocus>
         <spinPosX>1828</spinPosX>
         <spinPosY>1000</spinPosY>
+        <ProgressBarWidth>1070</ProgressBarWidth>
+        <ProgressBarHeight>5</ProgressBarHeight>
+        <ProgressBarXOffset>40</ProgressBarXOffset>
+        <ProgressBarYOffset>50</ProgressBarYOffset>
+        <SelectedProgressOnly>Yes</SelectedProgressOnly>    
       </control>
 
       <control>

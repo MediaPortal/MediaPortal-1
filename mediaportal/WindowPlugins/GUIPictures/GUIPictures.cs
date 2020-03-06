@@ -2966,7 +2966,7 @@ namespace MediaPortal.GUI.Pictures
         }
       }
 
-      Log.Debug("GUIPictures: Make history for {0}: {1}\\{2}", disp.ToString(), rootFolder, strPic);
+      Log.Debug(@"GUIPictures: Make history for {0}: {1}\{2}", disp.ToString(), rootFolder, strPic);
 
       string[] historyStep = strPic.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
       string historyFolder = rootFolder;
@@ -4204,7 +4204,7 @@ namespace MediaPortal.GUI.Pictures
         }
         else
         {
-          string[] metaWhere = strNewDirectory.Split('\\');
+          string[] metaWhere = strNewDirectory.Split(Path.DirectorySeparatorChar);
 
           // Pics from Metadata / Search
           CreateAndAddFolderItem("..", _searchMode ? string.Empty : metaWhere[0].Trim());
@@ -4289,8 +4289,11 @@ namespace MediaPortal.GUI.Pictures
       }
       else if (disp == Display.Metadata)
       {
-        string[] metaWhere = strNewDirectory.Split('\\');
-        picsCount = PictureDatabase.CountPicsByMetadataValue(metaWhere[0].Trim().ToDBField(), metaWhere[1].Trim());
+        string[] metaWhere = item.Path.Split(Path.DirectorySeparatorChar);
+        if (metaWhere.Count() == 2)
+        {
+          picsCount = PictureDatabase.CountPicsByMetadataValue(metaWhere[0].Trim().ToDBField(), metaWhere[1].Trim());
+        }
       }
       if (picsCount == 0)
       {
@@ -4298,8 +4301,8 @@ namespace MediaPortal.GUI.Pictures
       }
       else
       {
-        item.HasProgressBar = true;
-        ProgressBarPercentage = Percent(picsCount, _picturesCount);
+        item.ProgressBarPercentage = Percent(picsCount, _picturesCount);
+        item.HasProgressBar = item.ProgressBarPercentage != 0;
       }
     }
 

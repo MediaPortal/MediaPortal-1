@@ -1880,7 +1880,7 @@ namespace MediaPortal.Picture.Database
       lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT COUNT(strFile) FROM picture" +
-                                (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty);
+                                (_filterPrivate ? " WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty);
         SQLiteResultSet result;
         try
         {
