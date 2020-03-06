@@ -1439,7 +1439,7 @@ namespace MediaPortal.Picture.Database
         try
         {
           SQLiteResultSet result = m_db.Execute(strSQL);
-          if (result != null)
+          if (result != null && result.Rows.Count > 0)
           {
             Count = DatabaseUtility.GetAsInt(result, 0, 0);
           }
@@ -1497,7 +1497,7 @@ namespace MediaPortal.Picture.Database
         try
         {
           SQLiteResultSet result = m_db.Execute(strSQL);
-          if (result != null)
+          if (result != null && result.Rows.Count > 0)
           {
             Count = DatabaseUtility.GetAsInt(result, 0, 0);
           }
@@ -1572,7 +1572,7 @@ namespace MediaPortal.Picture.Database
                                   (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
                                   " ORDER BY strDateTaken";
           SQLiteResultSet result = m_db.Execute(strSQL);
-          if (result != null)
+          if (result != null && result.Rows.Count > 0)
           {
             Count = DatabaseUtility.GetAsInt(result, 0, 0);
           }
@@ -1728,7 +1728,7 @@ namespace MediaPortal.Picture.Database
         try
         {
           result = m_db.Execute(strSQL);
-          if (result != null)
+          if (result != null && result.Rows.Count > 0)
           {
             Count = DatabaseUtility.GetAsInt(result, 0, 0);
           }
@@ -1791,7 +1791,7 @@ namespace MediaPortal.Picture.Database
         try
         {
           result = m_db.Execute(strSQL);
-          if (result != null)
+          if (result != null && result.Rows.Count > 0)
           {
             Count = DatabaseUtility.GetAsInt(result, 0, 0);
           }
@@ -1856,7 +1856,7 @@ namespace MediaPortal.Picture.Database
         try
         {
           result = m_db.Execute(strSQL);
-          if (result != null)
+          if (result != null && result.Rows.Count > 0)
           {
             Count = DatabaseUtility.GetAsInt(result, 0, 0);
           }
@@ -1885,7 +1885,7 @@ namespace MediaPortal.Picture.Database
         try
         {
           result = m_db.Execute(strSQL);
-          if (result != null)
+          if (result != null && result.Rows.Count > 0)
           {
             Count = DatabaseUtility.GetAsInt(result, 0, 0);
           }
@@ -1924,20 +1924,19 @@ namespace MediaPortal.Picture.Database
           {
             SQLiteResultSet.Row row = results.Rows[i];
 
-            PictureData picture = new PictureData();
-
             int? columnIndex;
             columnIndex = (int?)results.ColumnIndices["strFile"];
             if (columnIndex.HasValue)
             {
-              picture.FileName = row.fields[columnIndex.Value];
-              if (string.IsNullOrEmpty(picture.FileName))
+              if (!string.IsNullOrEmpty(row.fields[columnIndex.Value]))
               {
+                PictureData picture = new PictureData();
+                picture.FileName = row.fields[columnIndex.Value];
+
                 columnIndex = (int?)results.ColumnIndices["strDateTaken"];
                 if (columnIndex.HasValue)
                 {
                   string dateTaken = row.fields[columnIndex.Value];
-
                   try
                   {
                     DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
@@ -1949,13 +1948,14 @@ namespace MediaPortal.Picture.Database
                     Log.Error("Picture.DB.SQLite: GetPicturesByFilter Date parse Error: {0} stack:{1}", ex.Message, ex.StackTrace);
                   }
                 }
-              }
 
-              if (fullInfo)
-              {
-                picture.Exif = GetExifFromDB(picture.FileName);
+                if (fullInfo)
+                {
+                  picture.Exif = GetExifFromDB(picture.FileName);
+                }
+
+                aPictures.Add(picture);
               }
-              aPictures.Add(picture);
             }
           }
         }
