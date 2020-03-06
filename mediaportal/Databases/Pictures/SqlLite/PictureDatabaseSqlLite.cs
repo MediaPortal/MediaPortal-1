@@ -1928,7 +1928,7 @@ namespace MediaPortal.Picture.Database
             columnIndex = (int?)results.ColumnIndices["strFile"];
             if (columnIndex.HasValue)
             {
-              if (!string.IsNullOrEmpty(row.fields[columnIndex.Value]))
+              if (!string.IsNullOrWhiteSpace(row.fields[columnIndex.Value]))
               {
                 PictureData picture = new PictureData();
                 picture.FileName = row.fields[columnIndex.Value];
