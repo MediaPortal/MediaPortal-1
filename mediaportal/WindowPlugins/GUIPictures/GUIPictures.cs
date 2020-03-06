@@ -614,6 +614,8 @@ namespace MediaPortal.GUI.Pictures
     private Thread _threadGetPicturesInfo;
     private bool _threadProcessPicturesStop = false;
 
+    private int _picturesCount = 0;
+
     #endregion
 
     #region ctor/dtor
@@ -2758,6 +2760,8 @@ namespace MediaPortal.GUI.Pictures
             break;
         }
       }
+      
+      _picturesCount = PictureDatabase.Count();
 
       LoadDirectory(currentFolder, true);
 
@@ -3913,7 +3917,7 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private GUIListItem CreateAndAddFolderItem(string strLabel, string path, string thumb = null)
+    private GUIListItem CreateAndAddFolderItem(string strLabel, string path, string thumb = null, bool needProgress = false)
     {
       GUIListItem item = new GUIListItem(strLabel);
       item.Path = path;
@@ -3931,6 +3935,11 @@ namespace MediaPortal.GUI.Pictures
       item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
       facadeLayout.Add(item);
       CountOfNonImageItems++; // necessary to select the right item later from the slideshow
+      if (needProgress)
+      {
+        _queueItems.Enqueue(item);
+        _queueItemsEvent.Set();
+      }
       return item;
     }
 
@@ -4039,7 +4048,7 @@ namespace MediaPortal.GUI.Pictures
           List<string> Keywords = PictureDatabase.ListKeywords();
           foreach (string keyword in Keywords)
           {
-            CreateAndAddFolderItem(keyword, keyword);
+            CreateAndAddFolderItem(keyword, keyword, null, true);
           }
         }
         else
@@ -4189,7 +4198,7 @@ namespace MediaPortal.GUI.Pictures
               }
             }
 
-            GUIListItem item = CreateAndAddFolderItem(itemLabel, strNewDirectory + Path.DirectorySeparatorChar + value, thumbFilename);
+            GUIListItem item = CreateAndAddFolderItem(itemLabel, strNewDirectory + Path.DirectorySeparatorChar + value, thumbFilename, true);
             item.Label2 = strNewDirectory.ToCaption() ?? strNewDirectory;
           }
         }
@@ -4229,6 +4238,15 @@ namespace MediaPortal.GUI.Pictures
 
     #endregion
 
+    #region Percent for progressbar
+    
+    private int Percent(int Value, int Max)
+    {
+      return (Max > 0) ? Convert.ToInt32((Value * 100) / Max) : 0;
+    }
+
+    #endregion
+
     #region Fill Pictures Info
 
     protected void StartProcessPictures()
@@ -4252,10 +4270,44 @@ namespace MediaPortal.GUI.Pictures
       _threadAddPictures.Start();
     }
 
+    private void SetFolderProgress(GUIListItem item)
+    {
+      if (item == null)
+      {
+        return;
+      }
+      if (string.IsNullOrEmpty(item.Path))
+      {
+        item.HasProgressBar = false;
+        return;
+      }
+
+      int picsCount = 0;
+      if (disp == Display.Keyword)
+      {
+        picsCount = PictureDatabase.CountPicsByKeyword(item.Path);
+      }
+      else if (disp == Display.Metadata)
+      {
+        string[] metaWhere = strNewDirectory.Split('\\');
+        picsCount = PictureDatabase.CountPicsByMetadataValue(metaWhere[0].Trim().ToDBField(), metaWhere[1].Trim());
+      }
+      if (picsCount == 0)
+      {
+        item.HasProgressBar = false;
+      }
+      else
+      {
+        item.HasProgressBar = true;
+        ProgressBarPercentage = Percent(picsCount, _picturesCount);
+      }
+    }
+
     private void SetItemExifData(GUIListItem item)
     {
       if (item.IsFolder)
       {
+        SetFolderProgress(item);
         return;
       }
 
@@ -4312,7 +4364,7 @@ namespace MediaPortal.GUI.Pictures
           GUIListItem item;
           while (!_threadProcessPicturesStop && _queueItems.TryDequeue(out item))
           {
-            if (string.IsNullOrEmpty(item.Path) || item.IsFolder)
+            if (string.IsNullOrEmpty(item.Path))
             {
               continue;
             }
