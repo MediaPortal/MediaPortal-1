@@ -254,7 +254,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void CreateThumbsAndAddPictureToDB(string file)
     {
-      if (file.Contains(@"folder.jpg"))
+      if (file.ToLowerInvariant().Contains(@"folder.jpg"))
       {
         return;
       }
@@ -376,7 +376,7 @@ namespace MediaPortal.Configuration.Sections
             }
             if (!item.IsFolder)
             {
-              if (item.Path.ToLower().Contains(@"folder.jpg"))
+              if (item.Path.ToLowerInvariant().Contains(@"folder.jpg"))
               {
                 continue;
               }
