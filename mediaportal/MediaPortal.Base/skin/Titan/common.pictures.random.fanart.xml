@@ -37,7 +37,7 @@
       <posY>0</posY>
       <width>1920</width>
       <height>1080</height>
-      <visible>!control.isvisible(91919299)+control.isvisible(91919297)</visible>
+      <visible>control.isvisible(91919299)+control.isvisible(91919297)</visible>
       <texture>#fanarthandler.picture.userdef.backdrop1.any</texture>
       <exifrotation>true</exifrotation>
       <animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
@@ -54,7 +54,7 @@
       <posY>0</posY>
       <width>1920</width>
       <height>1080</height>
-      <visible>!control.isvisible(91919299)+control.isvisible(91919298)</visible>
+      <visible>control.isvisible(91919299)+control.isvisible(91919298)</visible>
       <texture>#fanarthandler.picture.userdef.backdrop2.any</texture>
       <exifrotation>true</exifrotation>
       <animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
