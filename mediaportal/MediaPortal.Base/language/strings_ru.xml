@@ -2,7 +2,7 @@
 <Language name="Russian" characters="1105">
   <Section name="unmapped">
     <String id="0" prefix="Мои ">Программы</String>
-    <String id="1" prefix="Мои ">Изображения</String>
+    <String id="1" prefix="Мои ">Фотографии</String>
     <String id="2" prefix="Моя ">Музыка</String>
     <String id="3" prefix="Моё ">Видео</String>
     <String id="4">ТВ-программа</String>
