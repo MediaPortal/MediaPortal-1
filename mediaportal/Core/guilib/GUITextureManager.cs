@@ -39,7 +39,7 @@ namespace MediaPortal.GUI.Library
     private static readonly ConcurrentDictionary<string, CachedTexture> _cacheTextures =
       new ConcurrentDictionary<string, CachedTexture>();
 
-    private static readonly ConcurrentDictionary<string, bool> _persistentTextures = 
+    private static readonly ConcurrentDictionary<string, bool> _persistentTextures =
       new ConcurrentDictionary<string, bool>();
 
     private static readonly ConcurrentDictionary<string, DownloadedImage> _cacheDownload =
@@ -47,7 +47,7 @@ namespace MediaPortal.GUI.Library
 
     private static TexturePacker _packer = new TexturePacker();
 
-    private GUITextureManager() {}
+    private GUITextureManager() { }
 
     ~GUITextureManager()
     {
@@ -74,7 +74,7 @@ namespace MediaPortal.GUI.Library
         {
           files = Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "MPTemp*.*");
         }
-        catch {}
+        catch { }
 
         if (files != null)
         {
@@ -335,7 +335,7 @@ namespace MediaPortal.GUI.Library
             newCache.Height = height;
             newCache.Texture = new TextureFrame(fileName, dxtexture, 0);
             newCache.Disposed += new EventHandler(cachedTexture_Disposed);
-            
+
             if (persistent && !_persistentTextures.ContainsKey(cacheKey))
             {
               _persistentTextures[cacheKey] = true;
@@ -522,7 +522,7 @@ namespace MediaPortal.GUI.Library
 
           bool removed;
           _persistentTextures.TryRemove(cacheKey, out removed);
-          
+
           CachedTexture removedItem;
           _cacheTextures.TryRemove(cacheKey, out removedItem);
         }
@@ -599,8 +599,38 @@ namespace MediaPortal.GUI.Library
       }
       catch (InvalidDataException e1) // weird : should have been FileNotFoundException when file is missing ??
       {
-        //we need to catch this on higer level.         
-        throw e1;
+        Log.Debug("TextureManager: LoadGraphic - {0} error {1}, trying copy to Image first", fileName, e1.Message);
+        using (Stream str = new MemoryStream())
+        {
+          using (Image image = ImageFast.FromFile(fileName))
+          using (Bitmap result = new Bitmap(image.Width, image.Height))
+          using (Graphics g = Graphics.FromImage(result))
+          {
+            g.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height));
+            result.Save(str, ImageFormat.Png);
+          }
+          str.Position = 0;
+          try
+          {
+            ImageInformation info2 = new ImageInformation();
+            texture = TextureLoader.FromStream(GUIGraphicsContext.DX9Device,
+                                     str,
+                                     0, 0, //width/height
+                                     1, //mipslevels
+                                     0, //Usage.Dynamic,
+                                     Format.A8R8G8B8,
+                                     GUIGraphicsContext.GetTexturePoolType(),
+                                     Filter.None,
+                                     Filter.None,
+                                     (int)lColorKey,
+                                     ref info2);
+          }
+          catch (Exception e2)
+          {
+            //we need to catch this on higer level.         
+            throw e2;
+          }
+        }
       }
       catch (Exception ex)
       {
@@ -633,7 +663,7 @@ namespace MediaPortal.GUI.Library
       return texture;
     }
 
-    internal static TextureFrame GetTexture(string fileNameOrg, int iImage, 
+    internal static TextureFrame GetTexture(string fileNameOrg, int iImage,
                                             out int iTextureWidth, out int iTextureHeight)
     {
       iTextureWidth = 0;
@@ -713,7 +743,7 @@ namespace MediaPortal.GUI.Library
       lock (GUIGraphicsContext.RenderLock)
       {
         Log.Debug("TextureManager: CleanupThumbs()");
-       
+
         CachedTexture[] textures =
           _cacheTextures.Values.Where(t => t.Name != null && IsTemporary(t.Name)).ToArray();
 
@@ -827,7 +857,7 @@ namespace MediaPortal.GUI.Library
     private static void ClearDownloadCache()
     {
       DownloadedImage[] images = _cacheDownload.Values.ToArray();
-      
+
       _cacheDownload.Clear();
 
       foreach (DownloadedImage image in images)
