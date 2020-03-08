@@ -624,6 +624,8 @@ namespace MediaPortal.GUI.Library
                                      Filter.None,
                                      (int)lColorKey,
                                      ref info2);
+            width = info2.Width;
+            height = info2.Height;
           }
           catch (Exception e2)
           {
