@@ -187,10 +187,24 @@ namespace MediaPortal.GUI.Pictures
             }
           case ExifDirectoryBase.TagUserComment:
             { 
-              if (!string.IsNullOrEmpty(item.DisplayValue) && item.DisplayValue.StartsWith("ALCSII"))
+              if (!string.IsNullOrEmpty(item.DisplayValue) && item.DisplayValue.IndexOf("ALCSIIF5") <= 5)
               {
                 item.DisplayValue = string.Empty;
               }
+              break;
+            }
+          case ExifDirectoryBase.TagWinKeywords:
+            {
+              string keywords = string.Empty;
+              if (!string.IsNullOrEmpty(item.DisplayValue))
+              {
+                string[] parts = item.DisplayValue.Split(new char[] { '/', '|', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                for (int i = 0; i < parts.Length; i++)
+                {
+                  keywords += parts[i] + "; ";
+                }
+              }
+              item.DisplayValue = keywords;
               break;
             }
           case IptcDirectory.TagKeywords:
@@ -420,6 +434,7 @@ namespace MediaPortal.GUI.Pictures
         }
 
         foreach (var directory in directories)
+        {
           if (!directory.Name.Contains("Thumbnail"))
           {
             if (MyMetadata.ImageDimensions.IsEmpty)
@@ -448,6 +463,29 @@ namespace MediaPortal.GUI.Pictures
               }
             }
           }
+        }
+
+        // Windows XP Tags
+        if (exifDirectory != null)
+        {
+          if (string.IsNullOrEmpty(MyMetadata.Author.DisplayValue))
+          {
+            // [Exif IFD0] Windows XP Author = Author
+            SetStuff(ref MyMetadata.Author, exifDirectory, ExifDirectoryBase.TagWinAuthor);
+          }
+
+          if (string.IsNullOrEmpty(MyMetadata.Comment.DisplayValue))
+          {
+            // [Exif IFD0] Windows XP Comment = Comment
+            SetStuff(ref MyMetadata.Comment, exifDirectory, ExifDirectoryBase.TagWinComment);
+          }
+
+          if (string.IsNullOrEmpty(MyMetadata.Keywords.DisplayValue))
+          {
+            // [Exif IFD0] Windows XP Keywords: Keywords
+            SetStuff(ref MyMetadata.Keywords, exifDirectory, ExifDirectoryBase.TagWinKeywords);
+          }
+        }
 
         if (MyMetadata.Resolution.IsEmpty || MyMetadata.ImageDimensions.IsEmpty)
         {
