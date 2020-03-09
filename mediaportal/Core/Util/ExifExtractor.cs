@@ -187,9 +187,13 @@ namespace MediaPortal.GUI.Pictures
             }
           case ExifDirectoryBase.TagUserComment:
             { 
-              if (!string.IsNullOrEmpty(item.DisplayValue) && item.DisplayValue.IndexOf("ALCSIIF5") <= 5)
+              if (!string.IsNullOrEmpty(item.DisplayValue))
               {
-                item.DisplayValue = string.Empty;
+                int index = item.DisplayValue.IndexOf("ALCSIIF5");
+                if (index >= 0 && index <= 5)
+                {
+                  item.DisplayValue = string.Empty;
+                }
               }
               break;
             }
