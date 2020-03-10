@@ -34,19 +34,19 @@ namespace MediaPortal.Dialogs
   {
     [SkinControl(2)] protected GUILabelControl lblHeading = null;
     [SkinControl(3)] protected GUIImage imgPicture = null;
-    [SkinControl(20)] protected GUIControl lblImgTitle = null;//
-    [SkinControl(21)] protected GUIControl lblImgDimensions = null;//
-    [SkinControl(22)] protected GUIControl lblResolutions = null;//
+    [SkinControl(20)] protected GUIControl lblImgTitle = null;
+    [SkinControl(21)] protected GUIControl lblImgDimensions = null;
+    [SkinControl(22)] protected GUIControl lblResolutions = null;
     [SkinControl(23)] protected GUIControl lblFlash = null;
     [SkinControl(24)] protected GUIControl lblMeteringMode = null;
     [SkinControl(25)] protected GUIControl lblExposureCompensation = null;
     [SkinControl(26)] protected GUIControl lblShutterSpeed = null;
-    [SkinControl(27)] protected GUIControl lblDateTakenLabel = null;//
-    [SkinControl(28)] protected GUIControl lblFstop = null;//
-    [SkinControl(29)] protected GUIControl lblExposureTime = null;//
+    [SkinControl(27)] protected GUIControl lblDateTakenLabel = null;
+    [SkinControl(28)] protected GUIControl lblFstop = null;
+    [SkinControl(29)] protected GUIControl lblExposureTime = null;
     [SkinControl(30)] protected GUIControl lblCameraModel = null;
     [SkinControl(31)] protected GUIControl lblEquipmentMake = null;
-    [SkinControl(32)] protected GUIControl lblViewComments = null;//
+    [SkinControl(32)] protected GUIControl lblViewComments = null;
 
     private int m_iTextureWidth, m_iTextureHeight;
     private string fileName;
@@ -118,9 +118,9 @@ namespace MediaPortal.Dialogs
     private void setLabel(GUIControl control, string value)
     {
       var cf = control as GUIFadeLabel;
-      if (cf != null) cf.Label = value;
+      if (cf != null) cf.Label = value.ToValue() ?? value;
       var cl = control as GUILabelControl;
-      if (cl != null) cl.Label = value;
+      if (cl != null) cl.Label = value.ToValue() ?? value;
     }
 
     private void Update()
