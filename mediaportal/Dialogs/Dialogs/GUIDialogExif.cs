@@ -19,10 +19,12 @@
 #endregion
 
 using System.IO;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
 using MediaPortal.Picture.Database;
 using MediaPortal.Util;
+
 using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.Dialogs
@@ -115,12 +117,17 @@ namespace MediaPortal.Dialogs
       set { fileName = value; }
     }
 
-    private void setLabel(GUIControl control, string value)
+    private void setLabel(GUIControl control, string value, bool translate = false)
     {
+      if (translate && !string.IsNullOrEmpty(value))
+      {
+        value = value.ToValue() ?? value;
+      }
+
       var cf = control as GUIFadeLabel;
-      if (cf != null) cf.Label = value.ToValue() ?? value;
+      if (cf != null) cf.Label = value;
       var cl = control as GUILabelControl;
-      if (cl != null) cl.Label = value.ToValue() ?? value;
+      if (cl != null) cl.Label = value;
     }
 
     private void Update()
@@ -166,11 +173,11 @@ namespace MediaPortal.Dialogs
         setLabel(lblEquipmentMake, metaData.EquipmentMake.DisplayValue);
         setLabel(lblExposureCompensation, metaData.ExposureCompensation.DisplayValue);
         setLabel(lblExposureTime, metaData.ExposureTime.DisplayValue);
-        setLabel(lblFlash, metaData.Flash.DisplayValue);
+        setLabel(lblFlash, metaData.Flash.DisplayValue, true);
         setLabel(lblFstop, metaData.Fstop.DisplayValue);
         setLabel(lblImgDimensions, metaData.ImageDimensionsAsString());
         setLabel(lblImgTitle, Path.GetFileNameWithoutExtension(FileName));
-        setLabel(lblMeteringMode, metaData.MeteringMode.DisplayValue);
+        setLabel(lblMeteringMode, metaData.MeteringMode.DisplayValue, true);
         setLabel(lblResolutions, metaData.ResolutionAsString());
         setLabel(lblShutterSpeed, metaData.ShutterSpeed.DisplayValue);
         setLabel(lblViewComments, metaData.ViewerComments.DisplayValue);
