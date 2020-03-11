@@ -117,8 +117,13 @@ namespace MediaPortal.Dialogs
       set { fileName = value; }
     }
 
-    private void setLabel(GUIControl control, string value, bool translate = false)
+    private void SetLabel(GUIControl control, string value, bool translate = false)
     {
+      if (control == null)
+      {
+        return;
+      }
+
       if (translate && !string.IsNullOrEmpty(value))
       {
         value = value.ToValue() ?? value;
@@ -137,19 +142,19 @@ namespace MediaPortal.Dialogs
         m_pTexture.Dispose();
       }
 
-      setLabel(lblCameraModel, string.Empty);
-      setLabel(lblDateTakenLabel, string.Empty);
-      setLabel(lblEquipmentMake, string.Empty);
-      setLabel(lblExposureCompensation, string.Empty);
-      setLabel(lblExposureTime, string.Empty);
-      setLabel(lblFlash, string.Empty);
-      setLabel(lblFstop, string.Empty);
-      setLabel(lblImgDimensions, string.Empty);
-      setLabel(lblImgTitle, string.Empty);
-      setLabel(lblMeteringMode, string.Empty);
-      setLabel(lblResolutions, string.Empty);
-      setLabel(lblShutterSpeed, string.Empty);
-      setLabel(lblViewComments, string.Empty);
+      SetLabel(lblCameraModel, string.Empty);
+      SetLabel(lblDateTakenLabel, string.Empty);
+      SetLabel(lblEquipmentMake, string.Empty);
+      SetLabel(lblExposureCompensation, string.Empty);
+      SetLabel(lblExposureTime, string.Empty);
+      SetLabel(lblFlash, string.Empty);
+      SetLabel(lblFstop, string.Empty);
+      SetLabel(lblImgDimensions, string.Empty);
+      SetLabel(lblImgTitle, string.Empty);
+      SetLabel(lblMeteringMode, string.Empty);
+      SetLabel(lblResolutions, string.Empty);
+      SetLabel(lblShutterSpeed, string.Empty);
+      SetLabel(lblViewComments, string.Empty);
 
       if (!File.Exists(FileName))
       {
@@ -168,19 +173,19 @@ namespace MediaPortal.Dialogs
       }
       if (!metaData.IsEmpty())
       {
-        setLabel(lblCameraModel, metaData.CameraModel.DisplayValue);
-        setLabel(lblDateTakenLabel, metaData.DatePictureTaken.DisplayValue);
-        setLabel(lblEquipmentMake, metaData.EquipmentMake.DisplayValue);
-        setLabel(lblExposureCompensation, metaData.ExposureCompensation.DisplayValue);
-        setLabel(lblExposureTime, metaData.ExposureTime.DisplayValue);
-        setLabel(lblFlash, metaData.Flash.DisplayValue, true);
-        setLabel(lblFstop, metaData.Fstop.DisplayValue);
-        setLabel(lblImgDimensions, metaData.ImageDimensionsAsString());
-        setLabel(lblImgTitle, Path.GetFileNameWithoutExtension(FileName));
-        setLabel(lblMeteringMode, metaData.MeteringMode.DisplayValue, true);
-        setLabel(lblResolutions, metaData.ResolutionAsString());
-        setLabel(lblShutterSpeed, metaData.ShutterSpeed.DisplayValue);
-        setLabel(lblViewComments, metaData.ViewerComments.DisplayValue);
+        SetLabel(lblCameraModel, metaData.CameraModel.DisplayValue);
+        SetLabel(lblDateTakenLabel, metaData.DatePictureTaken.DisplayValue);
+        SetLabel(lblEquipmentMake, metaData.EquipmentMake.DisplayValue);
+        SetLabel(lblExposureCompensation, metaData.ExposureCompensation.DisplayValue);
+        SetLabel(lblExposureTime, metaData.ExposureTime.DisplayValue);
+        SetLabel(lblFlash, metaData.Flash.DisplayValue, true);
+        SetLabel(lblFstop, metaData.Fstop.DisplayValue);
+        SetLabel(lblImgDimensions, metaData.ImageDimensionsAsString());
+        SetLabel(lblImgTitle, Path.GetFileNameWithoutExtension(FileName));
+        SetLabel(lblMeteringMode, metaData.MeteringMode.DisplayValue, true);
+        SetLabel(lblResolutions, metaData.ResolutionAsString());
+        SetLabel(lblShutterSpeed, metaData.ShutterSpeed.DisplayValue);
+        SetLabel(lblViewComments, metaData.ViewerComments.DisplayValue);
 
         imgPicture.IsVisible = false;
       }
@@ -195,12 +200,13 @@ namespace MediaPortal.Dialogs
       {
         return;
       }
+
       float x = imgPicture.XPosition;
       float y = imgPicture.YPosition;
       int width;
       int height;
-      GUIGraphicsContext.Correct(ref x, ref y);
 
+      GUIGraphicsContext.Correct(ref x, ref y);
       GUIFontManager.Present();
       GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight, imgPicture.Width, imgPicture.Height, 
                                        out width, out height);
