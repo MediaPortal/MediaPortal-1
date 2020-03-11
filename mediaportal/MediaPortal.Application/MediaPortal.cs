@@ -5529,6 +5529,13 @@ public class MediaPortalApp : D3D, IRender
           break;
 
         case GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH:
+          // We need to restore GUI after madVR restore (need this bug fix when a window is present on stop)
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+          {
+            Log.Debug("Main: GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH - GUIGraphicsContext.State.RUNNING");
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+          }
+
           // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.NeedRecreateSwapChain ||
               message.Param1 == 1 || message.Param1 == 2)
