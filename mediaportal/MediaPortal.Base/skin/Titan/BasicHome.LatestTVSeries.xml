@@ -21,7 +21,7 @@
     <control>
       <description>latestMedia Movie Label</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
 			<posX>544</posX>
 	    <posY>645</posY>
       <width>585</width>
@@ -40,7 +40,7 @@
     <control>
       <description>Poster 1</description>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <posX>81</posX>
 			<posY>641</posY>
 			<width>134</width>
@@ -94,7 +94,7 @@
     <control>
       <description>Poster 2</description>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <posX>226</posX>
 			<posY>641</posY>
 			<width>134</width>
@@ -148,7 +148,7 @@
     <control>
       <description>Poster 3</description>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <posX>370</posX>
 			<posY>641</posY>
 			<width>134</width>

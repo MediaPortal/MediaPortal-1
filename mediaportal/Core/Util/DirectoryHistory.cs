@@ -90,5 +90,10 @@ namespace MediaPortal.Util
       DirectoryItem newItem = new DirectoryItem(strItem, strDir);
       m_history.Add(newItem);
     }
+
+    public int Count
+    {
+      get { return m_history.Count; }
+    }
   }
 }

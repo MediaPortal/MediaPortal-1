@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -38,6 +38,7 @@ namespace MediaPortal.Picture.Database
   public class PictureDatabaseADO : IPictureDatabase, IDisposable
   {
     private SqlConnection _connection;
+    private bool _filterPrivate = true;
 
     public PictureDatabaseADO()
     {
@@ -116,9 +117,9 @@ namespace MediaPortal.Picture.Database
             try
             {
               DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
-              dateTimeFormat.ShortDatePattern = "yyyy:MM:dd HH:mm:ss";
+              dateTimeFormat.ShortDatePattern = "yyyy-MM-dd HH:mm:ss";
 
-              dateTaken = DateTime.ParseExact(metaData.DatePictureTaken.DisplayValue, "d", dateTimeFormat);
+              dateTaken = DateTime.ParseExact(metaData.DatePictureTaken.Value, "d", dateTimeFormat);
             }
             catch (Exception ex)
             {
@@ -126,7 +127,7 @@ namespace MediaPortal.Picture.Database
             }
             // Smirnoff: Query the orientation information
             //						if(iRotation == -1)
-            iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
+            iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Value));
           }
           strSQL = String.Format("insert into tblPicture (strFile, iRotation, strDateTaken) values('{0}',{1},'{2}')",
                                  strPic, iRotation, dateTaken);
@@ -138,6 +139,11 @@ namespace MediaPortal.Picture.Database
         }
         return -1;
       }
+    }
+
+    public int UpdatePicture(string strPicture, int iRotation)
+    {
+      throw (new NotImplementedException("Update Picture not yet implemented for ADO Database"));
     }
 
     public void DeletePicture(string strPicture)
@@ -159,6 +165,16 @@ namespace MediaPortal.Picture.Database
       {
         Log.Error("MediaPortal.Picture.Database exception deleting picture err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
+    }
+
+    public ExifMetadata.Metadata GetExifFromDB(string strPicture)
+    {
+      throw (new NotImplementedException("Exif Date Taken from DB not yet implemented for ADO Database"));
+    }
+
+    public ExifMetadata.Metadata GetExifFromFile(string strPicture)
+    {
+      throw (new NotImplementedException("Exif Date Taken from DB not yet implemented for ADO Database"));
     }
 
     public int GetRotation(string strPicture)
@@ -193,7 +209,7 @@ namespace MediaPortal.Picture.Database
 
         ExifMetadata extractor = new ExifMetadata();
         ExifMetadata.Metadata metaData = extractor.GetExifMetadata(strPicture);
-        iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
+        iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Value));
 
         AddPicture(strPicture, iRotation);
         return 0;
@@ -230,7 +246,12 @@ namespace MediaPortal.Picture.Database
       }
     }
 
-    public DateTime GetDateTaken(string strPicture)
+    public string GetDateTaken(string strPicture)
+    {
+      throw (new NotImplementedException("String Date Taken not yet implemented for ADO Database"));
+    }
+
+    public DateTime GetDateTimeTaken(string strPicture)
     {
       string strSQL = "";
       try
@@ -259,9 +280,9 @@ namespace MediaPortal.Picture.Database
         using (ExifMetadata extractor = new ExifMetadata())
         {
           ExifMetadata.Metadata metaData = extractor.GetExifMetadata(strPic);
-          strDateTime = DateTime.Parse(metaData.DatePictureTaken.DisplayValue).ToString("yyyy-MM-dd HH:mm:ss");
+          strDateTime = metaData.DatePictureTaken.Value;
         }
-        if (strDateTime != string.Empty && strDateTime != "")
+        if (!string.IsNullOrEmpty(strDateTime))
         {
           DateTime dtDateTime = DateTime.ParseExact(strDateTime, "yyyy-MM-dd HH:mm:ss", new CultureInfo(""));
           return dtDateTime;
@@ -298,6 +319,41 @@ namespace MediaPortal.Picture.Database
       return 0;
     }
 
+    public List<string> ListKeywords()
+    {
+      throw (new NotImplementedException("List Keywords not yet implemented for ADO Database"));
+    }
+
+    public List<string> ListPicsByKeyword(string Keyword)
+    {
+      throw (new NotImplementedException("List Pics by Keywords not yet implemented for ADO Database"));
+    }
+
+    public int CountPicsByKeyword(string Keyword)
+    {
+      throw (new NotImplementedException("List Count Pics by Keywords not yet implemented for ADO Database"));
+    }
+
+    public List<string> ListPicsByKeywordSearch(string Keyword)
+    {
+      throw (new NotImplementedException("List Pics by Keywords Search not yet implemented for ADO Database"));
+    }
+
+    public int CountPicsByKeywordSearch(string Keyword)
+    {
+      throw (new NotImplementedException("List Count Pics by Keywords Search not yet implemented for ADO Database"));
+    }
+
+    public List<string> ListPicsBySearch(string query)
+    {
+      throw (new NotImplementedException("List Count Pics by Search not yet implemented for ADO Database"));
+    }
+
+    public int CountPicsBySearch(string query)
+    {
+      throw (new NotImplementedException("List Count Pics by Search not yet implemented for ADO Database"));
+    }
+
     public int ListYears(ref List<string> Years)
     {
       throw (new NotImplementedException("List Years not yet implemented for ADO Database"));
@@ -323,6 +379,51 @@ namespace MediaPortal.Picture.Database
       throw (new NotImplementedException("Count Pics by Date not yet implemented for ADO Database"));
     }
 
+    public List<string> ListValueByMetadata(string Name)
+    {
+      throw (new NotImplementedException("List Metadata Values by Metadata not yet implemented for ADO Database"));
+    }
+
+    public int CountPicsByMetadata(string Name)
+    {
+      throw (new NotImplementedException("Count Metadata Values by Metadata not yet implemented for ADO Database"));
+    }
+
+    public List<string> ListPicsByMetadata(string Name, string Value)
+    {
+      throw (new NotImplementedException("List Pics by Metadata Value not yet implemented for ADO Database"));
+    }
+
+    public int CountPicsByMetadataValue(string Name, string Value)
+    {
+      throw (new NotImplementedException("Count Pics by Metadata Value not yet implemented for ADO Database"));
+    }
+
+    public int Count()
+    {
+      throw (new NotImplementedException("Count not yet implemented for ADO Database"));
+    }
+
+    public List<PictureData> GetPicturesByFilter(string aSQL, string aFilter)
+    {
+      throw (new NotImplementedException("List Pics by Filter not yet implemented for ADO Database"));
+    }
+
+    public List<PictureData> GetPicturesByFilter(string aSQL, string aFilter, bool fullInfo)
+    {
+      throw (new NotImplementedException("List Pics by Filter not yet implemented for ADO Database"));
+    }
+
+    public int GetCountByFilter(string aSQL, string aFilter)
+    {
+      throw (new NotImplementedException("Count Pics by Filter not yet implemented for ADO Database"));
+    }
+
+    public void Optimize()
+    {
+      throw (new NotImplementedException("Optimize not yet implemented for ADO Database"));
+    }
+
     public bool DbHealth
     {
       get
@@ -334,6 +435,18 @@ namespace MediaPortal.Picture.Database
     public string DatabaseName
     {
       get { return _connection.ConnectionString; }
+    }
+
+    public bool FilterPrivate
+    {
+      get
+      {
+        return _filterPrivate;
+      }
+      set
+      {
+        _filterPrivate = value;
+      }
     }
   }
 }

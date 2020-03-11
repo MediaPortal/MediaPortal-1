@@ -132,7 +132,7 @@
   <control>
     <description>now playing background</description>
     <type>image</type>
-    <id>1</id>
+    <id>0</id>
     <posX>593</posX>
     <posY>0</posY>
     <width>734</width>
@@ -144,7 +144,7 @@
   <control>
     <description>shadow</description>
     <type>image</type>
-    <id>1</id>
+    <id>0</id>
     <posX>666</posX>
     <posY>26</posY>
     <width>273</width>
@@ -169,7 +169,7 @@
 	<control>
 		<description>nowplaying label</description>
 		<type>label</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>950</posX>
 		<posY>59</posY>
 		<width>240</width>
@@ -182,7 +182,7 @@
 	<control>
 		<description>nowplaying text</description>
 		<type>label</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>981</posX>
 		<posY>138</posY>
 		<width>220</width>
@@ -197,7 +197,7 @@
 	<control>
 		<description>scrolling info label</description>
 		<type>fadelabel</type>
-		<id>1</id>
+		<id>0</id>
 		<width>290</width>
 		<posX>951</posX>
 		<posY>87</posY>
@@ -210,7 +210,7 @@
 	<control>
 		<description>progress bar</description>
 		<type>progress</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>938</posX>
 		<posY>128</posY>
 		<width>308</width>
@@ -226,7 +226,7 @@
 	<control>
     <description>play icon</description>
     <type>image</type>
-    <id>1</id>
+    <id>0</id>
     <posX>951</posX>
     <posY>143</posY>
     <width>16</width>
@@ -342,7 +342,7 @@
 	<control>
     <description>now playing background</description>
     <type>image</type>
-    <id>1</id>
+    <id>0</id>
     <posX>644</posX>
     <posY>0</posY>
     <width>633</width>
@@ -358,7 +358,7 @@
 	<control>
     <description>shadow</description>
     <type>image</type>
-    <id>1</id>
+    <id>0</id>
 	  <posX>716</posX>
 	  <posY>26</posY>
     <width>170</width>
@@ -374,7 +374,7 @@
 	<control>
     <description>album logo</description>
     <type>image</type>
-    <id>1</id>
+    <id>0</id>
 	  <posX>732</posX>
 	  <posY>43</posY>
 	  <width>138</width>
@@ -390,7 +390,7 @@
 	<control>
     <description>album logo</description>
     <type>image</type>
-    <id>1</id>
+    <id>0</id>
 	  <posX>732</posX>
 	  <posY>43</posY>
 	  <width>138</width>
@@ -406,7 +406,7 @@
 	<control>
     <description>no album logo</description>
     <type>image</type>
-    <id>1</id>
+    <id>0</id>
 	  <posX>732</posX>
 	  <posY>43</posY>
 	  <width>138</width>
@@ -422,7 +422,7 @@
 	<control>
 		<type>fadelabel</type>
 		<description>title label</description>
-		<id>1</id>
+		<id>0</id>
 		<posX>898</posX>
 		<posY>87</posY>
 		<width>290</width>
@@ -440,7 +440,7 @@
 	<control>
 		<description>nowplaying label</description>
 		<type>label</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>898</posX>
 		<posY>53</posY>
 		<width>240</width>
@@ -457,7 +457,7 @@
 	<control>
 		<description>nowplaying text</description>
 		<type>label</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>927</posX>
 		<posY>142</posY>
 		<width>220</width>
@@ -474,7 +474,7 @@
 	<control>
 		<description>progress bar</description>
 		<type>progress</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>886</posX>
 		<posY>128</posY>
 		<width>308</width>
@@ -494,7 +494,7 @@
 	<control>
 		<description>play icon</description>
 		<type>image</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>899</posX>
 		<posY>148</posY>
 		<width>16</width>
@@ -511,7 +511,7 @@
 	<control>
 		<description>pause icon</description>
 		<type>image</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>899</posX>
 		<posY>149</posY>
 		<width>18</width>
@@ -530,7 +530,7 @@
 	<control>
 		<description>now playing background</description>
 		<type>image</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>644</posX>
 		<posY>0</posY>
 		<width>633</width>
@@ -546,7 +546,7 @@
 	<control>
     <description>shadow</description>
     <type>image</type>
-    <id>1</id>
+    <id>0</id>
 	  <posX>716</posX>
 	  <posY>26</posY>
     <width>170</width>
@@ -562,7 +562,7 @@
 	<control>
 		<description>album logo</description>
 		<type>image</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>732</posX>
 		<posY>43</posY>
 		<width>138</width>
@@ -578,7 +578,7 @@
 	<control>
 		<description>no album logo</description>
 		<type>image</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>732</posX>
 		<posY>43</posY>
 		<width>138</width>
@@ -594,7 +594,7 @@
 	<control>
 		<type>fadelabel</type>
 		<description>title label</description>
-		<id>1</id>
+		<id>0</id>
 		<posX>898</posX>
 		<posY>87</posY>
 		<width>290</width>
@@ -612,7 +612,7 @@
 	<control>
 		<description>nowplaying label</description>
 		<type>label</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>898</posX>
 		<posY>59</posY>
 		<width>240</width>
@@ -629,7 +629,7 @@
 	<control>
 		<description>nowplaying text</description>
 		<type>label</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>927</posX>
 		<posY>138</posY>
 		<width>220</width>
@@ -646,7 +646,7 @@
 	<control>
 		<description>progress bar</description>
 		<type>progress</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>886</posX>
 		<posY>128</posY>
 		<width>308</width>
@@ -666,7 +666,7 @@
 	<control>
 		<description>play icon</description>
 		<type>image</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>899</posX>
 		<posY>143</posY>
 		<width>16</width>

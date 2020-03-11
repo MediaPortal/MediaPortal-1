@@ -162,7 +162,7 @@
       <posY>250</posY>
       <width>1200</width>
       <label>-</label>
-      <font>font16</font>
+      <font>fontB16</font>
       <textcolor>ffffffff</textcolor>
     </control>
     <control>
@@ -173,7 +173,7 @@
       <posY>195</posY>
       <width>1200</width>
       <label>-</label>
-      <font>font16</font>
+      <font>fontB16</font>
       <textcolor>ffffffff</textcolor>
     </control>
     <control>
@@ -183,7 +183,7 @@
       <posX>3660</posX>
       <posY>300</posY>
       <label>-</label>
-      <font>font16</font>
+      <font>fontB16</font>
       <textcolor>ffffffff</textcolor>
     </control>
     <control>

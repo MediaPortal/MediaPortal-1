@@ -164,6 +164,10 @@ xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
 xcopy %1\..\Packages\MediaInfo.Wrapper.19.4.1\lib\net40\MediaInfo.Wrapper.dll . /Y /D
 xcopy %1\..\Packages\Sqlite.3.21.0\sqlite.dll . /Y /D
 
+REM Exif
+xcopy %1\..\Packages\MetadataExtractor.2.3.0\lib\net35\MetadataExtractor.dll . /Y /D
+xcopy %1\..\Packages\XmpCore.6.1.10\lib\net35\XmpCore.dll . /Y /D
+
 REM ffmpeg 
 xcopy %1\..\Packages\ffmpeg.2.7.1\ffmpeg.exe MovieThumbnailer\ /Y /D
 
