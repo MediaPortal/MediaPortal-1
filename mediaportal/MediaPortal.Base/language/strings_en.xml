@@ -1655,7 +1655,7 @@
     <!-- Map URL -->
     <!--String id="9090">https://tms.visicom.ua/2.0.0/planet3/base/15/{1},{0}/800/800.png?en</String-->
     <!--String id="9090">https://osm-static-maps.herokuapp.com/?geojson=[{{"type":"Point","coordinates":[{1},{0}]}}]&amp;width=800&amp;height=800&amp;type=png&amp;attribution=Team Mediaportal</String-->
-    <String id="9090">https://maps.wikimedia.org/img/osm-intl,18,{0},{1},800x800.png</String>
+    <String id="9090">https://maps.wikimedia.org/img/osm-intl,19,{0},{1},800x800.png</String>
     <String id="9091">https://nominatim.openstreetmap.org/reverse?format=json&amp;lat={0}&amp;lon={1}&amp;zoom=18&amp;addressdetails=1&amp;accept-language={2}</String>
     <!-- Location -->
     <String id="9093">N</String>
