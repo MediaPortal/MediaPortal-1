@@ -1604,6 +1604,17 @@ namespace TvPlugin
           return 1;
         }
 
+        /* MP1-4996: This code forces folders to the start of the list -- CyberSimian
+        if (item1.IsFolder && !item2.IsFolder)
+        {
+          return -1;
+        }
+        else if (!item1.IsFolder && item2.IsFolder)
+        {
+          return 1;
+        }
+        */
+
         int iComp = 0;
         TimeSpan ts;
         Recording rec1 = (Recording)item1.TVTag;
