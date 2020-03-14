@@ -28,9 +28,11 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
       System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
       System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(XmlTvSetup));
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabSettings = new System.Windows.Forms.TabPage();
       this.panel1 = new System.Windows.Forms.Panel();
@@ -39,6 +41,7 @@ namespace SetupTv.Sections
       this.label23 = new System.Windows.Forms.Label();
       this.buttonManualImport = new System.Windows.Forms.Button();
       this.cbImportLST = new System.Windows.Forms.CheckBox();
+      this.cbNoTextMod = new System.Windows.Forms.CheckBox();
       this.cbImportXML = new System.Windows.Forms.CheckBox();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.labelStatus = new System.Windows.Forms.Label();
@@ -83,6 +86,7 @@ namespace SetupTv.Sections
       this.ShowInGuide = new System.Windows.Forms.DataGridViewCheckBoxColumn();
       this.tabRemote = new System.Windows.Forms.TabPage();
       this.panel3 = new System.Windows.Forms.Panel();
+      this.cbRenameFileInZip = new System.Windows.Forms.CheckBox();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
       this.lblTransferStatus = new System.Windows.Forms.Label();
       this.lblLastTransferAt = new System.Windows.Forms.Label();
@@ -109,7 +113,7 @@ namespace SetupTv.Sections
       this.label6 = new System.Windows.Forms.Label();
       this.saveFileExport = new System.Windows.Forms.SaveFileDialog();
       this.folderBrowserDialogTVGuide = new System.Windows.Forms.FolderBrowserDialog();
-      this.cbNoTextMod = new System.Windows.Forms.CheckBox();
+      this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.tabControl1.SuspendLayout();
       this.tabSettings.SuspendLayout();
       this.panel1.SuspendLayout();
@@ -224,6 +228,16 @@ namespace SetupTv.Sections
       this.cbImportLST.TabIndex = 32;
       this.cbImportLST.Text = "Import files in new tvguide.lst";
       this.cbImportLST.UseVisualStyleBackColor = true;
+      // 
+      // cbNoTextMod
+      // 
+      this.cbNoTextMod.AutoSize = true;
+      this.cbNoTextMod.Location = new System.Drawing.Point(195, 121);
+      this.cbNoTextMod.Name = "cbNoTextMod";
+      this.cbNoTextMod.Size = new System.Drawing.Size(124, 17);
+      this.cbNoTextMod.TabIndex = 31;
+      this.cbNoTextMod.Text = "No text modifications";
+      this.cbNoTextMod.UseVisualStyleBackColor = true;
       // 
       // cbImportXML
       // 
@@ -660,6 +674,7 @@ namespace SetupTv.Sections
       // 
       this.panel3.AutoSize = true;
       this.panel3.BackColor = System.Drawing.Color.Transparent;
+      this.panel3.Controls.Add(this.cbRenameFileInZip);
       this.panel3.Controls.Add(this.groupBox4);
       this.panel3.Controls.Add(this.groupBox3);
       this.panel3.Controls.Add(this.label3);
@@ -672,13 +687,25 @@ namespace SetupTv.Sections
       this.panel3.Size = new System.Drawing.Size(469, 418);
       this.panel3.TabIndex = 23;
       // 
+      // cbRenameFileInZip
+      // 
+      this.cbRenameFileInZip.AutoSize = true;
+      this.cbRenameFileInZip.Location = new System.Drawing.Point(18, 117);
+      this.cbRenameFileInZip.Name = "cbRenameFileInZip";
+      this.cbRenameFileInZip.Size = new System.Drawing.Size(318, 17);
+      this.cbRenameFileInZip.TabIndex = 35;
+      this.cbRenameFileInZip.Text = "Rename xml file present in ZIP during extracting to tvguide.xml";
+      this.toolTip1.SetToolTip(this.cbRenameFileInZip, resources.GetString("cbRenameFileInZip.ToolTip"));
+      this.cbRenameFileInZip.UseVisualStyleBackColor = true;
+      this.cbRenameFileInZip.CheckedChanged += new System.EventHandler(this.cbRenameFileInZip_CheckedChanged);
+      // 
       // groupBox4
       // 
       this.groupBox4.Controls.Add(this.lblTransferStatus);
       this.groupBox4.Controls.Add(this.lblLastTransferAt);
       this.groupBox4.Controls.Add(this.label33);
       this.groupBox4.Controls.Add(this.label36);
-      this.groupBox4.Location = new System.Drawing.Point(9, 248);
+      this.groupBox4.Location = new System.Drawing.Point(9, 285);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(426, 92);
       this.groupBox4.TabIndex = 34;
@@ -730,7 +757,7 @@ namespace SetupTv.Sections
       this.groupBox3.Controls.Add(this.label24);
       this.groupBox3.Controls.Add(this.label25);
       this.groupBox3.Controls.Add(this.label26);
-      this.groupBox3.Location = new System.Drawing.Point(9, 116);
+      this.groupBox3.Location = new System.Drawing.Point(9, 152);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(426, 126);
       this.groupBox3.TabIndex = 33;
@@ -913,16 +940,6 @@ namespace SetupTv.Sections
       this.saveFileExport.Title = "Export the mapped guidechannels";
       this.saveFileExport.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileExport_FileOk);
       // 
-      // cbNoTextMod
-      // 
-      this.cbNoTextMod.AutoSize = true;
-      this.cbNoTextMod.Location = new System.Drawing.Point(195, 121);
-      this.cbNoTextMod.Name = "cbNoTextMod";
-      this.cbNoTextMod.Size = new System.Drawing.Size(124, 17);
-      this.cbNoTextMod.TabIndex = 31;
-      this.cbNoTextMod.Text = "No text modifications";
-      this.cbNoTextMod.UseVisualStyleBackColor = true;
-      // 
       // XmlTvSetup
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1037,7 +1054,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPRadioButton radioDownloadOnWakeUp;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioDownloadOnSchedule;
     private System.Windows.Forms.CheckBox cbNoTextMod;
-
-
+    private System.Windows.Forms.CheckBox cbRenameFileInZip;
+    private System.Windows.Forms.ToolTip toolTip1;
   }
 }

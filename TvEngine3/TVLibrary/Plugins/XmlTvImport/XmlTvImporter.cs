@@ -294,11 +294,6 @@ namespace TvEngine
             FileInfo fI = new FileInfo(filename);
             filename = fI.Name;
 
-/*
-            //check if file can be opened for writing.... TODO Framug change
-            string xmltvPath = layer.GetSetting("xmlTv", "").Value;
-            string path = isZip || isTvGuide ? xmltvPath + "\\" + filename : xmltvPath + "\\tvguide.xml";
-*/
             //check if file can be opened for writing....																		
             string path = layer.GetSetting("xmlTv", "").Value;
 
@@ -343,14 +338,18 @@ namespace TvEngine
 
               if (isZip)
               {
+                bool RenameFileInZIp = (layer.GetSetting("xmlTvRenameFileInZip", "false").Value == "true");
                 try
                 {
                   string newLoc = layer.GetSetting("xmlTv", "").Value + @"\";
                   Log.Info("extracting zip file {0} to location {1}", path, newLoc);
                   ZipFile zip = new ZipFile(path);
                   zip.ExtractAll(newLoc, true);
-                  sourceFileName = newLoc + (zip.EntryFileNames[0]);
-                  destinationFileName = newLoc + "tvguide.xml";
+                  if(RenameFileInZIp == true)
+                   {
+                      sourceFileName = newLoc + (zip.EntryFileNames[0]);
+                      destinationFileName = newLoc + "tvguide.xml";
+                   }
                 }
                 catch (Exception ex2)
                 {
