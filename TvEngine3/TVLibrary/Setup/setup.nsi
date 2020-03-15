@@ -578,9 +578,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_DirectShowFilters}\bin_Win32\avcodec-mpurlsourcesplitter-54.dll"
   File "${git_DirectShowFilters}\bin_Win32\avformat-mpurlsourcesplitter-54.dll"
   File "${git_DirectShowFilters}\bin_Win32\avutil-mpurlsourcesplitter-51.dll"
-  File "${git_DirectShowFilters}\bin_Win32\crashrpt.dll"
-  File "${git_DirectShowFilters}\bin_Win32\dbghelp.dll"
-  File "${git_DirectShowFilters}\bin_Win32\sendrpt.exe"
 
   File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
   
