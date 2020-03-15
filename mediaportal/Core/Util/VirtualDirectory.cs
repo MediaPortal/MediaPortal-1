@@ -546,7 +546,10 @@ namespace MediaPortal.Util
           {
             strRoot = Path.GetFullPath(strDir);
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("VirtualDirectory:GetShare: {0}", ex.Message);
+          }
       }
       Share foundShare = null;
       string foundFullPath = string.Empty;
@@ -611,7 +614,10 @@ namespace MediaPortal.Util
             }
           }
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("VirtualDirectory:GetShare: {0}", ex.Message);
+        }
       }
       return foundShare;
     }
@@ -724,7 +730,7 @@ namespace MediaPortal.Util
     //        {
     //          iPincode = Int32.Parse(msgGetPassword.Label);
     //        }
-    //        catch (Exception)
+    //        catch (Exception ex)
     //        {
     //        }
     //        if (iPincode != iPincodeCorrect)
@@ -842,7 +848,7 @@ namespace MediaPortal.Util
     //      ftp.ChDir(subitems[4]);
     //      files = ftp.DirDetails(); //subitems[4]);
     //    }
-    //    catch (Exception)
+    //    catch (Exception ex)
     //    {
     //      //maybe this socket has timed out, remove it and get a new one
     //      FtpConnectionCache.Remove(ftp);
@@ -1107,8 +1113,9 @@ namespace MediaPortal.Util
           ftp.ChDir(subitems[4]);
           files = ftp.DirDetails(); //subitems[4]);
         }
-        catch (Exception)
+        catch (Exception ex1)
         {
+          Log.Warn("VirtualDirectory:GetDirectoryExt: {0}", ex1.Message);
           //maybe this socket has timed out, remove it and get a new one
           FtpConnectionCache.Remove(ftp);
           ftp = GetFtpClient(strDir);
@@ -1242,7 +1249,10 @@ namespace MediaPortal.Util
             }
             m_Drive.Close();
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("VirtualDirectory:GetDirectoryExt: {0}", ex.Message);
+          }
         }
 
         HandleLocalFilesInDir(strDir, ref items, doesContainRedBookData, loadHidden);
@@ -1319,8 +1329,9 @@ namespace MediaPortal.Util
           ftp.ChDir(subitems[4]);
           files = ftp.DirDetails(); //subitems[4]);
         }
-        catch (Exception)
+        catch (Exception ex1)
         {
+          Log.Warn("VirtualDirectory:GetDirectoryUnProtectedExt: {0}", ex1.Message);
           //maybe this socket has timed out, remove it and get a new one
           FtpConnectionCache.Remove(ftp);
           ftp = GetFtpClient(strDir);
@@ -1694,14 +1705,14 @@ namespace MediaPortal.Util
             GUIListItem item;
             string FileName = aDirectory + @"\" + fd.cFileName;
 
-            long ftCreationTime = (((long)fd.ftCreationTime.dwHighDateTime) << 32) + fd.ftCreationTime.dwLowDateTime;
-            long ftLastWriteTime = (((long)fd.ftLastWriteTime.dwHighDateTime) << 32) + fd.ftLastWriteTime.dwLowDateTime;
+            long ftCreationTime  = (((long)fd.ftCreationTime.dwHighDateTime) << 32) | (uint)fd.ftCreationTime.dwLowDateTime;
+            long ftLastWriteTime = (((long)fd.ftLastWriteTime.dwHighDateTime) << 32) | (uint)fd.ftLastWriteTime.dwLowDateTime;
 
             FileInformation fi = new FileInformation();
 
             fi.CreationTime = DateTime.FromFileTimeUtc(ftCreationTime);
             fi.ModificationTime = DateTime.FromFileTimeUtc(ftLastWriteTime);
-            fi.Length = (((long)fd.nFileSizeHigh) << 32) + fd.nFileSizeLow;
+            fi.Length = (((long)fd.nFileSizeHigh) << 32) | (uint)fd.nFileSizeLow;
 
             if ((fd.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
             {
@@ -1916,7 +1927,10 @@ namespace MediaPortal.Util
 
         return m_extensions.Contains(extensionFile) || m_extensions.Contains("*"); // added for explorer modul by gucky
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("VirtualDirectory:IsValidExtension: {0}", ex.Message);
+      }
 
       return false;
     }
@@ -1946,7 +1960,10 @@ namespace MediaPortal.Util
           if ((extensions[i] as string) == extensionFile) return true;
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("VirtualDirectory:IsValidExtension: {0}", ex.Message);
+      }
 
       return false;
     }

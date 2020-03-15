@@ -123,7 +123,7 @@ namespace MediaPortal
     protected bool                 ShuttingDown;             // set to true if MP is shutting down
     protected bool                 AutoHideMouse;            // Should the mouse cursor be hidden automatically?
     protected bool                 AppActive;                // set to true while MP is active
-    protected bool                 NeedRecreateSwapChain;    // set to true if recreate swap chain is needed
+    //protected bool                 NeedRecreateSwapChain;    // set to true if recreate swap chain is needed
     protected bool                 MouseCursor;              // holds the current mouse cursor state
     protected bool                 Windowed;                 // are we in windowed mode?
     protected bool                 AutoHideTaskbar;          // Should the Task Bar be hidden?
@@ -510,6 +510,13 @@ namespace MediaPortal
         GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
       }
 
+      // Suspending GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+        Log.Debug("D3D: ToggleFullscreen() - set GUIGraphicsContext.State.SUSPENDING");
+      }
+
       // Reset DialogMenu to avoid freeze when going to fullscreen/windowed
       var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dialogMenu != null &&
@@ -619,9 +626,9 @@ namespace MediaPortal
         GUIGraphicsContext.ForceMadVRRefresh = true;
       }
 
-      // Force a madVR refresh to resize MP window
-      // TODO how to handle it better
-      g_Player.RefreshMadVrVideo();
+      //// Force a madVR refresh to resize MP window
+      //// TODO how to handle it better
+      //g_Player.RefreshMadVrVideo();
 
       // madVR resize OSD/Video window
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
@@ -629,7 +636,14 @@ namespace MediaPortal
       {
         GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(message);
-        NeedRecreateSwapChain = true;
+        GUIGraphicsContext.NeedRecreateSwapChain = true;
+      }
+
+      // Restore GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+        Log.Debug("D3D: ToggleFullscreen() - set GUIGraphicsContext.State.RUNNING");
       }
 
       // enable event handlers
@@ -652,17 +666,18 @@ namespace MediaPortal
             GUIGraphicsContext.Vmr9Active)
         {
           GUIGraphicsContext.ForceMadVRRefresh3D = true;
-          //return;
+          return;
         }
 
-        if (AppActive || NeedRecreateSwapChain)
+        if (AppActive || GUIGraphicsContext.NeedRecreateSwapChain)
         {
-          Log.Debug("Main: RecreateSwapChain()");
+          Log.Debug("D3D: RecreateSwapChain()");
 
           // Suspending GUIGraphicsContext.State
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
           {
             GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+            Log.Debug("D3D: RecreateSwapChain() - set GUIGraphicsContext.State.SUSPENDING");
           }
 
           // stop plaback if we are using a a D3D9 device and the device is not lost, meaning we are toggling between fullscreen and windowed mode
@@ -685,8 +700,8 @@ namespace MediaPortal
           GUIFontManager.Dispose();
           GUITextureManager.Dispose();
           // Don't need to resize when using madVR
-          //if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
-          //    !GUIGraphicsContext.Vmr9Active)
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR ||
+              !GUIGraphicsContext.Vmr9Active)
           {
             if (GUIGraphicsContext.DX9Device != null)
             {
@@ -699,34 +714,34 @@ namespace MediaPortal
               {
                 try
                 {
-                  Log.Debug("Main: RecreateSwapChain() by restoring startup DirectX values");
+                  Log.Debug("D3D: RecreateSwapChain() by restoring startup DirectX values");
                   GUIGraphicsContext.DirectXPresentParameters = _presentParamsBackup;
                   lock (GUIGraphicsContext.RenderLock)
                   {
                     GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
                   }
                 }
-                catch (InvalidCallException)
+                catch (InvalidCallException ex)
                 {
-                  Log.Error("D3D: D3DERR_INVALIDCALL - presentation parameters might contain an invalid value");
+                  Log.Error("D3D: D3DERR_INVALIDCALL - presentation parameters might contain an invalid value {0}", ex.Message);
                   Util.Utils.RestartMePo();
                 }
-                catch (DeviceLostException)
+                catch (DeviceLostException ex)
                 {
-                  Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+                  Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time {0}", ex.Message);
                 }
-                catch (DriverInternalErrorException)
+                catch (DriverInternalErrorException ex)
                 {
-                  Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
+                  Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error {0}", ex.Message);
                 }
-                catch (OutOfVideoMemoryException)
+                catch (OutOfVideoMemoryException ex)
                 {
                   Log.Error(
-                    "D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
+                    "D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation {0}", ex.Message);
                 }
-                catch (OutOfMemoryException)
+                catch (OutOfMemoryException ex)
                 {
-                  Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+                  Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call {0}", ex.Message);
                 }
                 catch (Exception ex)
                 {
@@ -736,7 +751,7 @@ namespace MediaPortal
               else
               {
                 // build new D3D presentation parameters and reset device
-                Log.Debug("Main: RecreateSwapChain() by rebuild PresentParams");
+                Log.Debug("D3D: RecreateSwapChain() by rebuild PresentParams");
                 BuildPresentParams(Windowed);
                 try
                 {
@@ -745,27 +760,27 @@ namespace MediaPortal
                     GUIGraphicsContext.DX9Device.Reset(_presentParams);
                   }
                 }
-                catch (InvalidCallException)
+                catch (InvalidCallException ex)
                 {
-                  Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
+                  Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value {0}", ex.Message);
                 }
-                catch (DeviceLostException)
+                catch (DeviceLostException ex)
                 {
                   // Indicate that the device has been lost
-                  Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+                  Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time {0}", ex.Message);
                 }
-                catch (DriverInternalErrorException)
+                catch (DriverInternalErrorException ex)
                 {
-                  Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
+                  Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error {0}", ex.Message);
                 }
-                catch (OutOfVideoMemoryException)
+                catch (OutOfVideoMemoryException ex)
                 {
                   Log.Error(
-                    "D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
+                    "D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation {0}", ex.Message);
                 }
-                catch (OutOfMemoryException)
+                catch (OutOfMemoryException ex)
                 {
-                  Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+                  Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call {0}", ex.Message);
                 }
                 catch (Exception ex)
                 {
@@ -792,7 +807,7 @@ namespace MediaPortal
 
           // continue rendering
           AppActive = true;
-          NeedRecreateSwapChain = false;
+          GUIGraphicsContext.NeedRecreateSwapChain = false;
 
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
@@ -817,6 +832,7 @@ namespace MediaPortal
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
           {
             GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+            Log.Debug("D3D: RecreateSwapChain() - set GUIGraphicsContext.State.RUNNING");
           }
         }
       }
@@ -938,14 +954,14 @@ namespace MediaPortal
         {
           if (GUIGraphicsContext.DX9Device != null) GUIGraphicsContext.DX9Device.TestCooperativeLevel();
         }
-        catch (DeviceLostException)
+        catch (DeviceLostException ex)
         {
-          Log.Warn("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+          Log.Warn("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time {0}", ex.Message);
           return;
         }
-        catch (DeviceNotResetException)
+        catch (DeviceNotResetException ex)
         {
-          Log.Warn("D3D: D3DERR_DEVICENOTRESET - device is lost but can be reset at this time");
+          Log.Warn("D3D: D3DERR_DEVICENOTRESET - device is lost but can be reset at this time {0}", ex.Message);
         }
       }
 
@@ -1130,6 +1146,7 @@ namespace MediaPortal
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
         {
           GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+          Log.Debug("D3D: RestoreFromTray() - set GUIGraphicsContext.State.RUNNING");
         }
       }
     }
@@ -1212,6 +1229,7 @@ namespace MediaPortal
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
         {
           GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+          Log.Debug("D3D: MinimizeToTray() - set GUIGraphicsContext.State.SUSPENDING");
         }
 
         ExitToTray = false;
@@ -1263,8 +1281,9 @@ namespace MediaPortal
               Log.Debug("D3D: ForceMpAlive MP Successfully switched focus.");
             }
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            Log.Debug("D3D: ForceMpAlive {0}", ex.Message);
             // Make MediaPortal window normal ( if minimized )
             if (GUIGraphicsContext.form.WindowState == FormWindowState.Minimized)
             {
@@ -1800,16 +1819,16 @@ namespace MediaPortal
             capabilities = Manager.GetDeviceCaps(AdapterInfo.AdapterOrdinal, DeviceType.Hardware);
             successful = true;
           }
-          catch (Exception)
+          catch (Exception ex)
           {
             retries++;
             if (AdapterInfo != null)
             {
-              Log.Warn("Main: Failed to get capabilities for adapter #{0}: {1} (retry in {2}ms) try reinit #{3}", AdapterInfo.AdapterOrdinal, AdapterInfo.ToString(), delayBetweenTries, retries);
+              Log.Warn("Main: Failed to get capabilities for adapter #{0}: {1} (retry in {2}ms) try reinit #{3} {4}", AdapterInfo.AdapterOrdinal, AdapterInfo.ToString(), delayBetweenTries, retries, ex.Message);
             }
             else
             {
-              Log.Warn("Main: Failed to get capabilities for adapter (retry in {0}ms) try reinit #{1}", delayBetweenTries, retries);
+              Log.Warn("Main: Failed to get capabilities for adapter (retry in {0}ms) try reinit #{1} {2}", delayBetweenTries, retries, ex.Message);
             }
             Thread.Sleep(delayBetweenTries);
 
@@ -2090,8 +2109,9 @@ namespace MediaPortal
       {
         isOverForm = ClientRectangle.Contains(PointToClient(MousePosition));
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("D3D: UpdateMouseCursor {0}", ex.Message);
         isOverForm = false;
       }
 
@@ -2101,8 +2121,9 @@ namespace MediaPortal
       { 
         focused = GetForegroundWindow() == Handle; 
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("D3D: UpdateMouseCursor {0}", ex.Message);
         focused = false;
       }
 
@@ -2214,6 +2235,19 @@ namespace MediaPortal
     /// </summary>
     private void ToggleMiniTV()
     {
+      // disable event handlers
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+      }
+
+      // Restore GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+        Log.Debug("D3D: ToggleMiniTV() - set GUIGraphicsContext.State.SUSPENDING");
+      }
+
       if (Windowed)
       {
         _miniTvMode             = !_miniTvMode;
@@ -2242,20 +2276,34 @@ namespace MediaPortal
         ClientSize = size;
         TopMost = _alwaysOnTop;
 
-        // Force a madVR refresh to resize MP window
-        // TODO how to handle it better
-        g_Player.RefreshMadVrVideo();
+        //// Force a madVR refresh to resize MP window
+        //// TODO how to handle it better
+        //g_Player.RefreshMadVrVideo();
         GUIGraphicsContext.ForceMadVRRefresh3D = true;
+        GUIGraphicsContext.ForceMadVRRefresh = true;
 
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
             GUIGraphicsContext.InVmr9Render && !IsToggleMiniTV)
         {
           GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ONDISPLAYMADVRCHANGED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendMessage(message);
-          NeedRecreateSwapChain = true;
+          GUIGraphicsContext.NeedRecreateSwapChain = true;
         }
         // for madVR resize
         IsToggleMiniTV = false;
+      }
+
+      // Restore GUIGraphicsContext.State
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+      {
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+        Log.Debug("D3D: ToggleMiniTV() - set GUIGraphicsContext.State.RUNNING");
+      }
+
+      // disable event handlers
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
       }
     }
 

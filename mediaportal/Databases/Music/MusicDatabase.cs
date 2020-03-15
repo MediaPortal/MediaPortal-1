@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -107,9 +107,9 @@ namespace MediaPortal.Music.Database
           {
             File.Delete(file);
           }
-          catch (IOException)
+          catch (IOException ex)
           {
-            // Don't need to report anything, if we couldn't delete a temp file
+            Log.Debug("MusicDatabase: {0}", ex.Message);
           }
         }
       }
@@ -183,8 +183,9 @@ namespace MediaPortal.Music.Database
           string lastImport = xmlreader.GetValueAsString("musicfiles", "lastImport", "1900-01-01 00:00:00");
           _lastImport = DateTime.ParseExact(lastImport, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("MusicDatabase:LoadDBSettings: {0}", ex.Message);
           _lastImport = DateTime.ParseExact("1900-01-01 00:00:00", "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
           ;
         }
@@ -202,7 +203,10 @@ namespace MediaPortal.Music.Database
         {
           Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("MusicDatabase:Open: {0}", ex.Message);
+        }
 
         if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3")))
         {
@@ -248,9 +252,10 @@ namespace MediaPortal.Music.Database
             return;
           }
         }
-
         // Get the DB handle or create it if necessary
         MusicDbClient = DbConnection;
+
+        UpgradeDBV13Indexes();
 
         _dbHealth = DatabaseUtility.IntegrityCheck(MusicDbClient);
       }
@@ -293,6 +298,41 @@ namespace MediaPortal.Music.Database
       catch (Exception ex)
       {
         Log.Error("MusicDatabase: exception while renaming table:{0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+    }
+
+    private void UpgradeDBV13Indexes()
+    {
+      try
+      {
+        // Indices for Tracks table
+        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_iYear",
+                                 "CREATE INDEX idxtracks_iYear ON tracks(iYear ASC)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_iRating",
+                                 "CREATE INDEX idxtracks_iRating ON tracks(iRating ASC)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_iFavorite",
+                                 "CREATE INDEX idxtracks_iFavorite ON tracks(iFavorite ASC)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_strTitle",
+                                 "CREATE INDEX idxtracks_strTitle ON tracks(strTitle ASC)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_strAlbumstrTitle",
+                                 "CREATE INDEX idxtracks_strAlbumstrTitle ON tracks(strAlbum, strTitle)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_strArtiststrTitle",
+                                 "CREATE INDEX idxtracks_strArtiststrTitle ON tracks(strArtist, strTitle)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_strArtiststrAlbumstrTitle",
+                                 "CREATE INDEX idxtracks_strArtiststrAlbumstrTitle ON tracks(strArtist, strAlbum, strTitle)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_strAlbumArtiststrAlbum",
+                                 "CREATE INDEX idxtracks_strAlbumArtiststrAlbum ON tracks(strAlbumArtist, strAlbum)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_strAlbumArtiststrAlbumiDisc",
+                                 "CREATE INDEX idxtracks_strAlbumArtiststrAlbumiDisc ON tracks(strAlbumArtist, strAlbum, iDisc)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_strAlbumArtiststrAlbumstrFileType",
+                                 "CREATE INDEX idxtracks_strAlbumArtiststrAlbumstrFileType ON tracks(strAlbumArtist, strAlbum, strFileType)");
+        // Indices for Album and Artist Info
+        DatabaseUtility.AddIndex(MusicDbClient, "idxalbuminfo_strArtiststrAlbum",
+                                 "CREATE INDEX idxalbuminfo_strArtiststrAlbum ON albuminfo(strArtist, strAlbum)");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("MusicDatabase: Upgrade indexes failed. Err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
 

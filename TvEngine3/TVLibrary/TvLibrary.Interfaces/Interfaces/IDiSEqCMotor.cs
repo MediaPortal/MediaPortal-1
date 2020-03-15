@@ -94,7 +94,7 @@ namespace TvLibrary.Interfaces
     void StorePosition(byte position);
 
     /// <summary>
-    /// Goto's the sattelite reference position.
+    /// Goto's the satellite reference position.
     /// </summary>
     void GotoReferencePosition();
 

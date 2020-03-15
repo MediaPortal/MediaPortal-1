@@ -1,6 +1,6 @@
-#region Copyright (C) 2017 Team MediaPortal
+#region Copyright (C) 2017-2018 Team MediaPortal
 
-// Copyright (C) 2017 Team MediaPortal
+// Copyright (C) 2017-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
 
 #endregion
 
-using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using System;
 using System.Collections.Generic;
@@ -158,7 +157,12 @@ namespace MediaPortal.GUI.Library
         string inMemoryFileID = string.Empty;
         foreach (GUIOverlayImage logo in listOverlayImages)
         {
-          inMemoryFileID += Path.GetFileNameWithoutExtension(logo.FileName);
+          string thumbName = Path.GetFileNameWithoutExtension(logo.FileName);
+          if (thumbName.ToUpperInvariant() == "FOLDER")
+          {
+            thumbName = MediaPortal.Util.Utils.MakeFileName(logo.FileName);
+          }
+          inMemoryFileID += thumbName;
         }
         inMemoryFileID = inMemoryFileID.Replace(";", "-").Replace("{", "").Replace("}", "").Replace(" ", ""); //  + ".png"
         inMemoryFileID = "[" + Prefix + ":" + inMemoryFileID + "]";
@@ -203,9 +207,9 @@ namespace MediaPortal.GUI.Library
             continue;
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Debug("GUIImageAllocator: Skip. Could not load Image file... " + listOverlayImages[i].FileName);
+          Log.Debug("GUIImageAllocator: Skip. Could not load Image file... " + listOverlayImages[i].FileName + ":" + ex.Message);
           continue;
         }
 
@@ -249,9 +253,9 @@ namespace MediaPortal.GUI.Library
           _cachedAllocatorImages.Add(inMemoryFileID);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Error("GUIImageAllocator: BuildImages: Unable to add to MP's Graphics memory: " + inMemoryFileID);
+        Log.Error("GUIImageAllocator: BuildImages: Unable to add to MP's Graphics memory: " + inMemoryFileID + ":" + ex.Message);
         return string.Empty;
       }
       return inMemoryFileID;
@@ -278,9 +282,9 @@ namespace MediaPortal.GUI.Library
         {
           imageFile = ImageFast.FromFile(filename);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Debug("GUIImageAllocator: Reverting to slow ImageLoading for: " + filename);
+          Log.Debug("GUIImageAllocator: Reverting to slow ImageLoading for: " + filename + ":" + ex.Message);
           imageFile = Image.FromFile(filename);
         }
       }

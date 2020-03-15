@@ -278,9 +278,10 @@ namespace MediaPortal.Database
             }
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
           // Can't convert or remove decimal from the string
+          Log.Error("DatabaseUtility:GetAsInt: {0}", ex.Message);
         }
 
         int numValue;
@@ -290,10 +291,10 @@ namespace MediaPortal.Database
           returnValue = Int32.Parse(result);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Info("DatabaseUtility:GetAsInt() column:{0} record:{1} value:{2} is not an int",
-                 strColum, iRecord, result);
+        Log.Info("DatabaseUtility:GetAsInt() column:{0} record:{1} value:{2} is not an int {3}",
+                 strColum, iRecord, result, ex.Message);
       }
       return returnValue;
     }
@@ -307,7 +308,10 @@ namespace MediaPortal.Database
         int intValue = Int32.Parse(result);
         return intValue;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("DatabaseUtility:GetAsInt: {0}", ex.Message);
+      }
       return 0;
     }
 
@@ -319,7 +323,10 @@ namespace MediaPortal.Database
         long longValue = Int64.Parse(result);
         return longValue;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("DatabaseUtility:GetAsInt64: {0}", ex.Message);
+      }
       return 0;
     }
 
@@ -339,10 +346,10 @@ namespace MediaPortal.Database
       {
         returnValue = Int64.Parse(result);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Info("DatabaseUtility:GetAsInt64() column:{0} record:{1} value:{2} is not an Int64",
-                 strColum, iRecord, result);
+        Log.Info("DatabaseUtility:GetAsInt64() column:{0} record:{1} value:{2} is not an Int64 {3}",
+                 strColum, iRecord, result, ex.Message);
       }
       return returnValue;
     }
@@ -369,7 +376,10 @@ namespace MediaPortal.Database
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("DatabaseUtility:GetAsDateTime: {0}", ex.Message);
+      }
 
       return finalResult;
     }

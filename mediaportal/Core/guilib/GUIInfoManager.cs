@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1705,6 +1705,7 @@ namespace MediaPortal.GUI.Library
           return i + MULTI_INFO_START;
         }
       }
+
       // return the new offset
       m_multiInfo.Add(info);
       return m_multiInfo.Count + MULTI_INFO_START - 1;
@@ -2132,7 +2133,7 @@ namespace MediaPortal.GUI.Library
         {
           result = false;
         }
-        //CacheBool(condition1, dwContextWindow, result);
+        // CacheBool(condition1, dwContextWindow, result);
         return result;
       }
 
@@ -2152,7 +2153,8 @@ namespace MediaPortal.GUI.Library
       }
       else if (condition == SYSTEM_ETHERNET_LINK_ACTIVE)
       {
-        bReturn = true; //bool result;bReturn = (XNetGetEthernetLinkStatus() & XNET_ETHERNET_LINK_ACTIVE);
+        // bReturn = (XNetGetEthernetLinkStatus() & XNET_ETHERNET_LINK_ACTIVE);
+        bReturn = true;
       }
       else if (condition > SYSTEM_IDLE_TIME_START && condition <= SYSTEM_IDLE_TIME_FINISH)
       {
@@ -2165,8 +2167,8 @@ namespace MediaPortal.GUI.Library
       // }
       else if (condition == WINDOW_IS_MEDIA)
       {
-        //GUIWindow pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-        //bReturn = (pWindow && pWindow.IsMediaWindow());
+        // GUIWindow pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+        // bReturn = (pWindow && pWindow.IsMediaWindow());
         bReturn = false;
       }
       else if (condition == WINDOW_IS_OSD_VISIBLE)
@@ -2179,65 +2181,73 @@ namespace MediaPortal.GUI.Library
       }
       else if (condition == PLAYER_MUTED)
       {
-        bReturn = (g_Player.Volume == 0); //g_stSettings.m_bMute;
+        bReturn = (g_Player.Volume == 0); // g_stSettings.m_bMute;
       }
       else if (condition == SYSTEM_MEDIA_DVD)
       {
-        /*// we must: 1.  Check tray state.
+        // We must: 1.  Check tray state.
         //          2.  Check that we actually have a disc in the drive (detection
         //              of disk type takes a while from a separate thread).
-        CIoSupport TrayIO;
-        int iTrayState = TrayIO.GetTrayState();
-        if (iTrayState == DRIVE_CLOSED_MEDIA_PRESENT || iTrayState == TRAY_CLOSED_MEDIA_PRESENT)
-          bReturn = IsDiscInDrive();
-        else
-          bReturn = false;
-         * */
+        // CIoSupport TrayIO;
+        // int iTrayState = TrayIO.GetTrayState();
+        // if (iTrayState == DRIVE_CLOSED_MEDIA_PRESENT || iTrayState == TRAY_CLOSED_MEDIA_PRESENT)
+        //   bReturn = IsDiscInDrive();
+        // else
+        //   bReturn = false;
         bReturn = false;
       }
       else if (condition == SYSTEM_DVDREADY)
       {
-        bReturn = false; //bReturn = DriveReady() != DRIVE_NOT_READY;
+        // bReturn = DriveReady() != DRIVE_NOT_READY;
+        bReturn = false;
       }
       else if (condition == SYSTEM_TRAYOPEN)
       {
-        bReturn = false; //bReturn = DriveReady() == DRIVE_OPEN;
+        // bReturn = DriveReady() == DRIVE_OPEN;
+        bReturn = false;
       }
       else if (condition == PLAYER_SHOWINFO)
       {
-        bReturn = false; //bReturn = m_playerShowInfo;
+        // bReturn = m_playerShowInfo;
+        bReturn = false;
       }
       else if (condition == PLAYER_SHOWCODEC)
       {
-        bReturn = false; //bReturn = m_playerShowCodec;
+        // bReturn = m_playerShowCodec;
+        bReturn = false;
       }
       else if (condition >= MULTI_INFO_START && condition <= MULTI_INFO_END)
       {
-        // cache return value
         result = GetMultiInfoBool(m_multiInfo[condition - MULTI_INFO_START], dwContextWindow);
-        //CacheBool(condition1, dwContextWindow, result);
+
+        // Cache return value ...
+        // CacheBool(condition1, dwContextWindow, result);
         return result;
       }
       else if (condition == SYSTEM_HASLOCKS)
       {
-        bReturn = false; //bReturn = g_settings.m_vecProfiles[0].getLockMode() != LOCK_MODE_EVERYONE;
+        // bReturn = g_settings.m_vecProfiles[0].getLockMode() != LOCK_MODE_EVERYONE;
+        bReturn = false;
       }
       else if (condition == SYSTEM_ISMASTER)
       {
-        bReturn = false;
         // bReturn = g_settings.m_vecProfiles[0].getLockMode() != LOCK_MODE_EVERYONE && g_passwordManager.bMasterUser;
+        bReturn = false;
       }
       else if (condition == SYSTEM_LOGGEDON)
       {
-        bReturn = false; //bReturn = !(GUIWindowManager.ActiveWindow == WINDOW_LOGIN_SCREEN);
+        // bReturn = !(GUIWindowManager.ActiveWindow == WINDOW_LOGIN_SCREEN);
+        bReturn = false;
       }
       else if (condition == SYSTEM_HAS_LOGINSCREEN)
       {
-        bReturn = false; //bReturn = g_settings.bUseLoginScreen;
+        // bReturn = g_settings.bUseLoginScreen;
+        bReturn = false;
       }
       else if (condition == SYSTEM_INTERNET_STATE)
       {
-        bReturn = false; //bReturn = SystemHasInternet();
+        // bReturn = SystemHasInternet();
+        bReturn = false;
       }
       else if (condition >= FACADEVIEW_ALBUM && condition <= FACADEVIEW_COVERFLOW)
       {
@@ -2274,24 +2284,26 @@ namespace MediaPortal.GUI.Library
       }
       else if (condition == TOPBAR_HAS_FOCUS)
       {
+        bReturn = false;
         if (PluginManager.IsPluginNameEnabled("Topbar"))
         {
           GUIWindow wnd = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBAR);
           if (wnd != null)
           {
             if (!GUIGraphicsContext.TopBarHidden && wnd.GetFocusControlId() > 0)
-              return true;
+            {
+              bReturn = true;
+            }
           }
         }
-        return false;
       }
       else if (condition == TOPBAR_IS_VISIBLE)
       {
-        return !GUIGraphicsContext.TopBarHidden;
+        bReturn = !GUIGraphicsContext.TopBarHidden;
       }
       else if (condition == VOLUMEOVERLAY_IS_VISIBLE)
       {
-        return GUIGraphicsContext.VolumeOverlay;
+        bReturn = GUIGraphicsContext.VolumeOverlay;
       }
       else if (g_Player.Playing)
       {
@@ -2354,33 +2366,34 @@ namespace MediaPortal.GUI.Library
             break;
           case PLAYER_RECORDING:
             //bReturn = g_Player.m_pPlayer.IsRecording();
-            bReturn = false;
+            //bReturn = false;
+            bReturn = g_Player.IsTVRecording;
             break;
           case PLAYER_DISPLAY_AFTER_SEEK:
             // bReturn = GetDisplayAfterSeek();
             bReturn = false;
             break;
           case PLAYER_CACHING:
-            //bReturn = g_Player.m_pPlayer.IsCaching();
+            // bReturn = g_Player.m_pPlayer.IsCaching();
             bReturn = false;
             break;
           case PLAYER_SEEKBAR:
             {
-              //CGUIDialogSeekBar *seekBar = (CGUIDialogSeekBar*)GUIWindowManager.GetWindow(WINDOW_DIALOG_SEEK_BAR);
-              //bReturn = seekBar ? seekBar.IsRunning() : false;
+              // CGUIDialogSeekBar *seekBar = (CGUIDialogSeekBar*)GUIWindowManager.GetWindow(WINDOW_DIALOG_SEEK_BAR);
+              // bReturn = seekBar ? seekBar.IsRunning() : false;
               bReturn = false;
             }
             break;
           case PLAYER_SEEKING:
-            //bReturn = m_playerSeeking;
+            // bReturn = m_playerSeeking;
             bReturn = false;
             break;
           case PLAYER_SHOWTIME:
-            //bReturn = m_playerShowTime;
+            // bReturn = m_playerShowTime;
             bReturn = false;
             break;
           case MUSICPM_ENABLED:
-            //bReturn = g_partyModeManager.IsEnabled();
+            // bReturn = g_partyModeManager.IsEnabled();
             bReturn = false;
             break;
           case VIDEOPLAYER_USING_OVERLAYS:
@@ -2393,16 +2406,15 @@ namespace MediaPortal.GUI.Library
             bReturn = g_Player.IsDVD;
             break;
           case PLAYLIST_ISRANDOM:
-            //bReturn = g_playlistPlayer.IsShuffled(g_playlistPlayer.GetCurrentPlaylist());
-
+            // bReturn = g_playlistPlayer.IsShuffled(g_playlistPlayer.GetCurrentPlaylist());
             bReturn = false;
             break;
           case PLAYLIST_ISREPEAT:
-            //bReturn = g_playlistPlayer.GetRepeat(g_playlistPlayer.GetCurrentPlaylist()) == PLAYLIST::REPEAT_ALL;
+            // bReturn = g_playlistPlayer.GetRepeat(g_playlistPlayer.GetCurrentPlaylist()) == PLAYLIST::REPEAT_ALL;
             bReturn = false;
             break;
           case PLAYLIST_ISREPEATONE:
-            //bReturn = g_playlistPlayer.GetRepeat(g_playlistPlayer.GetCurrentPlaylist()) == PLAYLIST::REPEAT_ONE;
+            // bReturn = g_playlistPlayer.GetRepeat(g_playlistPlayer.GetCurrentPlaylist()) == PLAYLIST::REPEAT_ONE;
             bReturn = false;
             break;
           case PLAYER_HASDURATION:
@@ -2410,30 +2422,31 @@ namespace MediaPortal.GUI.Library
             break;
           case VISUALISATION_LOCKED:
             {
-/*
-        CGUIMessage msg(GUI_MSG_GET_VISUALISATION, 0, 0);
-        g_graphicsContext.SendMessage(msg);
-        if (msg.GetLPVOID())
-        {
-          CVisualisation *pVis = (CVisualisation *)msg.GetLPVOID();
-          bReturn = pVis.IsLocked();
-        }*/
+              // CGUIMessage msg(GUI_MSG_GET_VISUALISATION, 0, 0);
+              // g_graphicsContext.SendMessage(msg);
+              // if (msg.GetLPVOID())
+              // {
+              //   CVisualisation *pVis = (CVisualisation *)msg.GetLPVOID();
+              //   bReturn = pVis.IsLocked();
+              // }
               bReturn = false;
             }
             break;
           case VISUALISATION_ENABLED:
-            //bReturn = g_guiSettings.GetString("mymusic.visualisation") != "None";
+            // bReturn = g_guiSettings.GetString("mymusic.visualisation") != "None";
             bReturn = false;
             break;
         }
       }
 
-      // cache return value
       if (condition1 < 0)
       {
         bReturn = !bReturn;
       }
-      //CacheBool(condition1, dwContextWindow, bReturn);
+
+      // Cache return value
+      // CacheBool(condition1, dwContextWindow, bReturn);
+
       return bReturn;
     }
 

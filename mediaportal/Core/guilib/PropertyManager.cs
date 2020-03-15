@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -149,6 +149,7 @@ namespace MediaPortal.GUI.Library
       _properties["#TV.start"] = string.Empty;
       _properties["#TV.stop"] = string.Empty;
       _properties["#TV.current"] = string.Empty;
+      _properties["#TV.Record.Active"] = string.Empty;
       _properties["#TV.Record.channel"] = string.Empty;
       _properties["#TV.Record.start"] = string.Empty;
       _properties["#TV.Record.stop"] = string.Empty;
@@ -413,7 +414,10 @@ namespace MediaPortal.GUI.Library
         {
           GUIGraphicsContext.form.Text = "MediaPortal - " + tagvalue;
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("PropertyManager: SetProperty {0}", ex.Message);
+        }
       }
 
       bool changed = false;

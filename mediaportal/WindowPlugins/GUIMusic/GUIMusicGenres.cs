@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -241,6 +241,7 @@ namespace MediaPortal.GUI.Music
             sortStrings.Add("Disc#");
             sortStrings.Add("Composer");
             sortStrings.Add("Times Played");
+            sortStrings.Add("File Type");
 
             for (int i = 0; i < handler.Views.Count; ++i)
             {
@@ -564,6 +565,7 @@ namespace MediaPortal.GUI.Music
           }
 
           case "disc#":
+          case "filetype":
           case "album":
 
             bool thumbFound = false;
@@ -603,6 +605,16 @@ namespace MediaPortal.GUI.Music
                   }
                 }
               }
+            }
+            break;
+
+          case "year":
+            strThumb = Util.Utils.GetCoverArt(Thumbs.MusicYear, item.Label);
+            if (Util.Utils.FileExistsInCache(strThumb))
+            {
+              item.IconImage = strThumb;
+              item.IconImageBig = strThumb;
+              item.ThumbnailImage = strThumb;
             }
             break;
 
@@ -894,6 +906,18 @@ namespace MediaPortal.GUI.Music
           item.IsFolder = true;
           item.Label = MusicViewHandler.GetFieldValue(song, handler.CurrentLevelWhere);
 
+          if (handler.CurrentLevelWhere == "filetype")
+          {
+            if (!string.IsNullOrEmpty(song.Codec))
+            {
+              item.Label = song.Codec;
+            }
+            else
+            {
+              item.Label = item.Label.ToUpper();
+            }
+          }
+
           // If we are grouping on a specific value, we have in the Duration field the number of items
           // Use this in the sort field
           if (currentFilter.SqlOperator == "group")
@@ -1004,7 +1028,7 @@ namespace MediaPortal.GUI.Music
             //if (handler != null && handler.CurrentView == "Top100") return;
           }
           string strFile = message.Label;
-          if (strFile.StartsWith(@"http://"))
+          if (strFile.StartsWith(@"http://") || strFile.StartsWith(@"https://"))
           {
             break; // Don't try increasing the Top100 for streams
           }
@@ -1093,6 +1117,9 @@ namespace MediaPortal.GUI.Music
         case MusicSort.SortMethod.DiscID:
           item.Label = tag.Album;
           item.Label2 = tag.DiscID > 0 ? tag.DiscID.ToString() : string.Empty;
+          break;
+        case MusicSort.SortMethod.FileType:
+          item.Label2 = tag.FileType.ToUpper();
           break;
         default:
           item.Label2 = string.Empty;
@@ -1306,6 +1333,9 @@ namespace MediaPortal.GUI.Music
           break;
         case "disc#":
           m_database.GetSongsByAlbumArtistAlbumDisc(s.AlbumArtist, s.Album, s.DiscId, ref songs);
+          break;
+        case "filetype":
+          m_database.GetSongsByAlbumArtistAlbumFileType(s.AlbumArtist, s.Album, s.FileType, ref songs);
           break;
         default:
           Log.Debug("GUIMusicGenres: GetSongsForFolder - could not determine type for {0}", s.ToShortString());

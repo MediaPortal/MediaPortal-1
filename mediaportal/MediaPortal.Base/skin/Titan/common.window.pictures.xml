@@ -1,30 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 <controls>
-	<control>
-		<description>default background</description>
-		<type>image</type>
-		<id>1</id>
-		<posX>0</posX>
-    <posY>0</posY>
-		<width>1920</width>
-		<height>1080</height>
-		<texture>background.png</texture>
-    <shouldCache>true</shouldCache>
-	</control>
-	<!--            :: Overlays ::            -->	
-	<control>
-		<description>fanart overlay</description>
-		<type>image</type>
-		<id>0</id>
-		<posX>0</posX>
-    <posY>0</posY>
-		<width>1920</width>
-		<height>1080</height>
-		<texture>fanart_overlay.png</texture>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
-	</control>
   <control>
 		<description>background listview</description>
 		<type>image</type>

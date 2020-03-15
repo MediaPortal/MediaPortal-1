@@ -80,9 +80,9 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
           MessageBox.Show("User: " + userName + " Added", "User Added", MessageBoxButtons.OK, MessageBoxIcon.Information);  
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        MessageBox.Show("Error adding user.\nUser: " + userName, "Error Adding User", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("Error adding user.\nUser: " + userName + " "+ex.Message, "Error Adding User", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
 
       this.Close();

@@ -88,7 +88,23 @@ namespace MediaPortal.GUI.Library
 
     public void CopyTo(GUIControl[] array, int arrayIndex)
     {
-      list.CopyTo(array, arrayIndex);
+      lock (array)
+      {
+        lock (list)
+        {
+          try
+          {
+            if (array.Length >= list.Count)
+            {
+              list.ToArray().CopyTo(array, arrayIndex);
+            }
+          }
+          catch (Exception e)
+          {
+            // catch exception
+          }
+        }
+      }
     }
 
     public int Count
@@ -185,7 +201,10 @@ namespace MediaPortal.GUI.Library
         knownIDs.Add(id, control);
         return true;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GuiControlCollection.TryAdd.sort: Exception" + ex.Message);
+      }
 
       return false;
     }

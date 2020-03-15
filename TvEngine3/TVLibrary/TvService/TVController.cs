@@ -590,13 +590,11 @@ namespace TvService
         if (_isMaster)
         {
           _epgGrabber = new EpgGrabber(this);
-          _epgGrabber.Start();
+          //Initial EPG timer interval is 30s to allow other things to initialise
+          StartEPGgrabber(30000, 0);
           _scheduler = new Scheduler(this);
           _scheduler.Start();
         }
-
-        _thumbProcessor = new ThumbProcessor();
-        _thumbProcessor.Start();
 
         SetupHeartbeatThread();
         ExecutePendingDeletions();
@@ -605,7 +603,10 @@ namespace TvService
         Log.Info("Controller: recalculating program states");
         TvDatabase.Program.ResetAllStates();
         Schedule.SynchProgramStatesForAll();
-      }
+        
+        _thumbProcessor = new ThumbProcessor();
+        _thumbProcessor.Start();        
+       }
       catch (Exception ex)
       {
         Log.Write("TvControllerException: {0}\r\n{1}", ex.ToString(), ex.StackTrace);
@@ -704,7 +705,7 @@ namespace TvService
           Log.Info("Controller: scheduler stopped...");
         }
         //stop the epg grabber
-        StopEPGgrabber();
+        StopEPGgrabber(0);
         _epgGrabber = null;        
 
         //clean up the tv cards
@@ -1662,7 +1663,7 @@ namespace TvService
         }
 
         Fire(this, new TvServerEventArgs(TvServerEventType.StartTimeShifting, GetVirtualCard(user), (User)user));
-        StopEPGgrabber();        
+        StopEPGgrabber(1);        
 
         bool isTimeShifting;
         try
@@ -1783,7 +1784,7 @@ namespace TvService
           {
             if (IsGrabbingEpg(cardId))
             {              
-              StopEPGgrabber();        
+              StopEPGgrabber(2);        
               // we need this, otherwise tvservice will hang in the event stoptimeshifting is called by heartbeat timeout function
             }
             RemoteControl.HostName = tvcard.DataBaseCard.ReferencedServer().HostName;
@@ -1828,7 +1829,7 @@ namespace TvService
     {
       if (IsGrabbingEpg(cardId))
       {
-        StopEPGgrabber();        
+        StopEPGgrabber(3);        
         // we need this, otherwise tvservice will hang in the event stoptimeshifting is called by heartbeat timeout function
       }
       ITvCardHandler tvcard = _cards[cardId];      
@@ -1847,7 +1848,7 @@ namespace TvService
             int subChannel = user.SubChannel;
             _streamer.Remove(String.Format("stream{0}.{1}", cardId, subChannel));
           }
-          StartEPGgrabber();
+          StartEPGgrabber(3);
           UpdateChannelStatesForUsers();
         }
       }
@@ -1866,7 +1867,7 @@ namespace TvService
       {
         return TvResult.UnknownError;
       }
-      StopEPGgrabber();        
+      StopEPGgrabber(4);        
       TvResult result = _cards[user.CardId].Recorder.Start(ref user, ref fileName);
 
       if (result == TvResult.Succeeded)
@@ -1875,7 +1876,7 @@ namespace TvService
       }
       else
       {
-        StartEPGgrabber();
+        StartEPGgrabber(4);
       }
 
       return result;
@@ -1898,7 +1899,7 @@ namespace TvService
       {
         UpdateChannelStatesForUsers();
       }
-      StartEPGgrabber();
+      StartEPGgrabber(2);
       return result;
     }
 
@@ -2441,7 +2442,7 @@ namespace TvService
         user.Priority = UserFactory.GetDefaultPriority(user.Name, user.Priority);
         Channel channel = Channel.Retrieve(idChannel);
         Log.Write("Controller: StartTimeShifting {0} {1}", channel.DisplayName, channel.IdChannel);
-        StopEPGgrabber();
+        StopEPGgrabber(5);
 
         IDictionary<CardDetail, ICardTuneReservationTicket> tickets = null;
         try
@@ -2473,7 +2474,7 @@ namespace TvService
           CardReservationHelper.CancelAllCardReservations(tickets, CardCollection);
           if (!HasTvSucceeded(result))
           {
-            StartEPGgrabber();
+            StartEPGgrabber(5);
           }
           if (card != null)
           {
@@ -2907,21 +2908,30 @@ namespace TvService
       return intialTimeshiftingFilename;
     }
 
-    private void StopEPGgrabber()
+    private void StopEPGgrabber(int caller)
     {
       if (_epgGrabber != null)
       {
-        Log.Write("Controller: epg stop");
+        Log.Write("Controller: epg stop, caller {0}", caller);
         _epgGrabber.Stop();
       }
     }
 
-    private void StartEPGgrabber()
+    private void StartEPGgrabber(int caller)
     {
       if (_epgGrabber != null && AllCardsIdle)
       {
-        Log.Write("Controller: epg start");
+        Log.Write("Controller: epg start, caller {0}", caller);
         _epgGrabber.Start();
+      }
+    }
+
+    private void StartEPGgrabber(double timerInterval, int caller)
+    {
+      if (_epgGrabber != null && AllCardsIdle)
+      {
+        Log.Write("Controller: epg start, timerInterval {0}s, caller {1}", timerInterval/1000, caller);
+        _epgGrabber.Start(timerInterval);
       }
     }
 
@@ -3148,7 +3158,7 @@ namespace TvService
             {
               if (_layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes")
               {                
-                StartEPGgrabber();
+                StartEPGgrabber(6);
               }
             }
           }
@@ -3158,7 +3168,7 @@ namespace TvService
             {
               if (_layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes")
               {
-                StopEPGgrabber();                
+                StopEPGgrabber(6);                
               }
             }
           }

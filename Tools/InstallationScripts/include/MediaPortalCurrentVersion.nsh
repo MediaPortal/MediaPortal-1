@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 /*
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@
 
 
 !define VER_MAJOR       1
-!define VER_MINOR       19
+!define VER_MINOR       24
 !define VER_REVISION    000
 
 #**********************************************************************************************************#

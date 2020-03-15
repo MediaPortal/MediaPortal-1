@@ -67,7 +67,10 @@ namespace MediaPortal.GUI.Video
           fileStream.Close();
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GUIVideoSelectDVDHandler: VideoViewHandler {0}", ex.Message);
+      }
     }
 
     public void Select(IMDBMovie movie)
@@ -166,7 +169,10 @@ namespace MediaPortal.GUI.Video
                                         searchDate.ToString("yyyy-MM-dd" + " 00:00:00"));
             useMovieInfoTable = true;
           }
-          catch (Exception) { }
+          catch (Exception ex)
+          {
+            Log.Error("GUIVideoSelectDVDHandler: Execute {0}", ex.Message);
+          }
         }
         // Director
         else if (view == "director")

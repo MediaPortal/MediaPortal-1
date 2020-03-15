@@ -521,22 +521,7 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <animation effect="rotatey" start="0" end="-60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
       </control>
       
-      <control>
-        <type>image</type>
-        <posX>#image.posx</posX>
-        <posY>#image.posy</posY>
-        <width>#image.width</width>
-        <height>#image.height</height>
-        <texture>#('basichome_label_overlay.png',#hedit.main.use.1))</texture>
-        <animation effect="rotatey" start="48" end="48" center="960,1500" time="0" condition="true">conditional</animation>
-        <animation effect="fade" start="0" end="100" time="250" reversible="false" condition="string.contains(#hedit.main.calc.nav,b0)">conditional</animation>
-        <animation effect="fade" start="0" end="100" time="250" reversible="false" condition="string.contains(#hedit.main.calc.nav,b1)">conditional</animation>
-        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b0)">conditional</animation>
-        <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b1)">conditional</animation>
-        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f0)">conditional</animation>
-        <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f1)">conditional</animation>
-        <animation effect="rotatey" start="0" end="60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
-      </control>
+      
     </control>
 
 <!-- Focus image and label overlay -->

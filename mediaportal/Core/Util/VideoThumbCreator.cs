@@ -30,6 +30,7 @@ using MediaPortal.Profile;
 using MediaPortal.Services;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using MediaInfo;
 
 namespace MediaPortal.Util
 {
@@ -41,7 +42,7 @@ namespace MediaPortal.Util
     private static int PreviewRows = 2;
     private static int preRecordInterval = 1;
     private static bool LeaveShareThumb = false;
-    private static MediaPortal.Player.MediaInfoWrapper MediaInfo = null;
+    private static MediaInfoWrapper MediaInfo = null;
     private static int TimeBetweenThumbs = 60;
 
     #region Serialisation
@@ -149,11 +150,13 @@ namespace MediaPortal.Util
       Log.Debug("VideoThumbCreator: random value: {0}", intRnd);
       bool Success = false;
 
-      MediaInfo = new MediaPortal.Player.MediaInfoWrapper(aVideoPath);
+      var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
+      MediaInfo = new MediaInfoWrapper(aVideoPath, logger);
+      MediaInfo.WriteInfo();
 
       if (MediaInfo != null)
       {
-        Duration = MediaInfo.VideoDuration/1000;
+        Duration = (int?) MediaInfo.BestVideoStream?.Duration.TotalSeconds ?? 0;
       }
 
       if (Duration == 0)
@@ -289,9 +292,9 @@ namespace MediaPortal.Util
               File.Copy(aThumbPath, ShareThumb);
               File.SetAttributes(ShareThumb, File.GetAttributes(ShareThumb) & ~FileAttributes.Hidden);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-              Log.Debug("TvThumbnails.VideoThumbCreator: Exception on File.Copy({0}, {1})", ShareThumbTemp, ShareThumb);
+              Log.Debug("TvThumbnails.VideoThumbCreator: Exception on File.Copy({0}, {1}) {2}", ShareThumbTemp, ShareThumb, ex.Message);
             }
           }
         }
@@ -304,9 +307,9 @@ namespace MediaPortal.Util
             File.Delete(ShareThumbTemp);
           }
         }
-        catch (FileNotFoundException)
+        catch (FileNotFoundException ex)
         {
-          // No need to log
+          Log.Debug("VideoThumbCreator: {0}", ex.Message);
         }
       }
       catch (Exception ex)

@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -33,6 +33,7 @@ using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player.LAV;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using MediaPortal.Player.PostProcessing;
@@ -240,7 +241,7 @@ namespace MediaPortal.Player
         // Show the frame on the primary surface.
         GUIGraphicsContext.DX9Device.Present();
       }
-      catch(DeviceLostException)
+      catch(DeviceLostException ex)
       {
       }*/
       SetVideoWindow();
@@ -677,8 +678,9 @@ namespace MediaPortal.Player
 
         return true;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("DVDPlayer: Could not get interfaces: {0}", ex.Message);
         //MessageBox.Show( this, "Could not get interfaces\r\n" + ee.Message, "DVDPlayer.NET", MessageBoxButtons.OK, MessageBoxIcon.Stop );
         CloseInterfaces();
         return false;
@@ -712,6 +714,18 @@ namespace MediaPortal.Player
             DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
             _mediaCtrl.Run();
             GUIGraphicsContext.CurrentAudioRendererDone = true;
+          }
+
+          // When using LAV Audio
+          //Release and init Post Process Filter
+          if (AudioPostEngine.engine != null)
+          {
+            AudioPostEngine.GetInstance().FreePostProcess();
+          }
+          IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+          if (audioEngine != null && !audioEngine.LoadPostProcessing(_graphBuilder))
+          {
+            AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
           }
         }
       }
@@ -1162,8 +1176,9 @@ namespace MediaPortal.Player
               _dvdCtrl.PlayBackwards((double)-_speed, DvdCmdFlags.Flush, out _cmdOption);
             }
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            Log.Error("DVDPlayer: Speed: {0}", ex.Message);
             _speed = 1;
           }
           VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)_speed);
@@ -1229,69 +1244,60 @@ namespace MediaPortal.Player
 
     public override void SeekAbsolute(double newTime)
     {
-      if (GUIWindow._mainThreadContext != null)
+      if (_state != PlayState.Init)
       {
-        GUIWindow._mainThreadContext.Send(delegate
+        if (_mediaCtrl != null && _mediaPos != null)
         {
-          if (_state != PlayState.Init)
+          if (newTime < 0.0d)
           {
-            if (_mediaCtrl != null && _mediaPos != null)
+            newTime = 0.0d;
+          }
+          if (newTime < Duration)
+          {
+            int hours = (int)(newTime / 3600d);
+            newTime -= (hours * 3600);
+            int minutes = (int)(newTime / 60d);
+            newTime -= (minutes * 60);
+            int seconds = (int)newTime;
+            Log.Info("DVDPlayer:Seek to {0}:{1}:{2}", hours, minutes, seconds);
+            DvdHMSFTimeCode timeCode = new DvdHMSFTimeCode();
+            timeCode.bHours = (byte)(hours & 0xff);
+            timeCode.bMinutes = (byte)(minutes & 0xff);
+            timeCode.bSeconds = (byte)(seconds & 0xff);
+            timeCode.bFrames = 0;
+            DvdPlaybackLocation2 loc;
+            _currTitle = _dvdInfo.GetCurrentLocation(out loc);
+
+            try
             {
-              if (newTime < 0.0d)
+              int hr = _dvdCtrl.PlayAtTime(timeCode, DvdCmdFlags.Block | DvdCmdFlags.Flush, out _cmdOption);
+              if (hr != 0)
               {
-                newTime = 0.0d;
-              }
-              if (newTime < Duration)
-              {
-                int hours = (int) (newTime/3600d);
-                newTime -= (hours*3600);
-                int minutes = (int) (newTime/60d);
-                newTime -= (minutes*60);
-                int seconds = (int) newTime;
-                Log.Info("DVDPlayer:Seek to {0}:{1}:{2}", hours, minutes, seconds);
-                DvdHMSFTimeCode timeCode = new DvdHMSFTimeCode();
-                timeCode.bHours = (byte) (hours & 0xff);
-                timeCode.bMinutes = (byte) (minutes & 0xff);
-                timeCode.bSeconds = (byte) (seconds & 0xff);
-                timeCode.bFrames = 0;
-                // Use _dvdInfo in sync with MP main thread to avoid exception
-
-                DvdPlaybackLocation2 loc;
-                _currTitle = _dvdInfo.GetCurrentLocation(out loc);
-
-                try
+                if (((uint)hr) == VFW_E_DVD_OPERATION_INHIBITED)
                 {
-                  int hr = _dvdCtrl.PlayAtTime(timeCode, DvdCmdFlags.Block | DvdCmdFlags.Flush, out _cmdOption);
-                  if (hr != 0)
-                  {
-                    if (((uint) hr) == VFW_E_DVD_OPERATION_INHIBITED)
-                    {
-                      Log.Info("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) not allowed at this point", hours,
-                        minutes,
-                        seconds);
-                    }
-                    else if (((uint) hr) == VFW_E_DVD_INVALIDDOMAIN)
-                    {
-                      Log.Info("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) invalid domain", hours, minutes, seconds);
-                    }
-                    else
-                    {
-                      Log.Error("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) failed:0x{3:X}", hours, minutes,
-                        seconds,
-                        hr);
-                    }
-                  }
-                  //SetDefaultLanguages();
-                  Log.Info("DVDPlayer:Seek to {0}:{1}:{2} done", hours, minutes, seconds);
+                  Log.Info("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) not allowed at this point", hours, minutes,
+                           seconds);
                 }
-                catch (Exception)
+                else if (((uint)hr) == VFW_E_DVD_INVALIDDOMAIN)
                 {
-                  //sometimes we get a DivideByZeroException  in _dvdCtrl.PlayAtTime()
+                  Log.Info("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) invalid domain", hours, minutes, seconds);
+                }
+                else
+                {
+                  Log.Error("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) failed:0x{3:X}", hours, minutes, seconds,
+                            hr);
                 }
               }
+              //SetDefaultLanguages();
+              Log.Info("DVDPlayer:Seek to {0}:{1}:{2} done", hours, minutes, seconds);
+            }
+            catch (Exception ex)
+            {
+              Log.Error("DVDPlayer: SeekAbsolute: {0}", ex.Message);
+              //sometimes we get a DivideByZeroException  in _dvdCtrl.PlayAtTime()
             }
           }
-        }, null);
+        }
       }
     }
 
@@ -1390,8 +1396,9 @@ namespace MediaPortal.Player
         DirectShowUtil.ReleaseComObject(dvdStatePersistMemory);
         DirectShowUtil.ReleaseComObject(dvdState);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("DVDPlayer: GetResumeState: {0}", ex.Message);
         resumeData = null;
       }
       return true;
@@ -2171,6 +2178,14 @@ namespace MediaPortal.Player
       get { return PostProcessingEngine.GetInstance().HasPostProcessing; }
     }
 
+    /// <summary>
+    /// Property to Get Audio LAV delay engine
+    /// </summary>
+    public override bool HasAudioEngine
+    {
+      get { return AudioPostEngine.GetInstance().HasAudioEngine; }
+    }
+
     public bool SupportsCC
     {
       get
@@ -2234,6 +2249,8 @@ namespace MediaPortal.Player
 
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
+            // First we need to init rDest.Left and rDest to a fixed value.
+            _basicVideo.SetDestinationPosition(GUIGraphicsContext.RDestLeft, GUIGraphicsContext.RDestTop, destination.Width, destination.Height);
             _basicVideo.SetDestinationPosition(destination.Left, destination.Top, destination.Width, destination.Height);
           }
           else

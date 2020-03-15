@@ -68,7 +68,10 @@ namespace UdpHelper
       {
         udpClient.Close();
       }
-      catch (System.NullReferenceException) {}
+      catch (System.NullReferenceException ex)
+      {
+        Log.Error("UDPHelper:Stop: {0}", ex.Message);
+      }
       udpClient = null;
       socket = null;
     }
@@ -140,8 +143,14 @@ namespace UdpHelper
         OnReceive(strReceived);
         udpClientLoc.BeginReceive(new AsyncCallback(ReceiveCallback), (UdpState)(ar.AsyncState));
       }
-      catch (System.ObjectDisposedException) {}
-      catch (SocketException) {}
+      catch (System.ObjectDisposedException ex)
+      {
+        Log.Error("UDPHelper:ReceiveCallback: {0}", ex.Message);
+      }
+      catch (SocketException ex)
+      {
+        Log.Error("UDPHelper:ReceiveCallback: {0}", ex.Message);
+      }
     }
   }
 }

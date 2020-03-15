@@ -29,6 +29,7 @@ using System.Threading;
 using TvLibrary.Log;
 using System.Drawing.Imaging;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
+using MediaInfo;
 
 namespace TvThumbnails.VideoThumbCreator
 {
@@ -36,7 +37,7 @@ namespace TvThumbnails.VideoThumbCreator
   {
     private static string _extractApp = "ffmpeg.exe";
 
-    private static MediaInfoWrapper.MediaInfoWrapper MediaInfo = null;
+    private static MediaInfoWrapper MediaInfo = null;
 
     private static readonly string _extractorPath = ExtractorPath();
 
@@ -84,13 +85,13 @@ namespace TvThumbnails.VideoThumbCreator
 
       Log.Debug("TvThumbnails.VideoThumbCreator: preGapSec: {0}", preGapSec);
 
-      MediaInfo = new MediaInfoWrapper.MediaInfoWrapper(aVideoPath);
+      MediaInfo = new MediaInfoWrapper(aVideoPath);
 
-      int Duration = MediaInfo.VideoDuration / 1000;
+      int Duration = (int?) MediaInfo.BestVideoStream?.Duration.TotalSeconds ?? 0;
 
       if (Duration == 0)
       {
-        Log.Debug("TvThumbnails.VideoThumbCreator: the {0} is corrupt.", aVideoPath);
+        Log.Debug("TvThumbnails.VideoThumbCreator: video duration is zero for {0} - aborting", aVideoPath);
         return false;
       }
 

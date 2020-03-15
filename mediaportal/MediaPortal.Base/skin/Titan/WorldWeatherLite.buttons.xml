@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+
+  <controls>
+
+    <!--            :: BUTTONS ::                -->
+
+    <control>
+      <description>Dummy Button</description>
+      <type>button</type>
+      <id>5555</id>
+      <posY>-100</posY>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <onup>2</onup>
+      <ondown>2</ondown>
+    </control>
+
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>119</posX>
+      <posY>893</posY>
+      <layout>StackLayout(18, Horizontal, true)</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <control Style="SettingsButton">
+        <description>Location</description>
+        <type>button</type>
+        <id>2</id>
+        <label>Location</label>
+        <onup>3</onup>
+        <ondown>3</ondown>
+        <onleft>55</onleft>
+        <onright>3</onright>
+      </control>
+      <control Style="SettingsButton">
+        <description>Refresh</description>
+        <type>button</type>
+        <id>3</id>
+        <label>Refresh</label>
+        <onup>2</onup>
+        <ondown>2</ondown>
+        <onleft>2</onleft>
+        <onright>2</onright>
+      </control>
+    </control>
+
+  </controls>
+</window>

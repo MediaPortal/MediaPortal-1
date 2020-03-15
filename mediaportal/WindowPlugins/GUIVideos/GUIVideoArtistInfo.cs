@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -96,6 +96,7 @@ namespace MediaPortal.GUI.Video
 
     public override bool Init()
     {
+      GUIPropertyManager.SetProperty("#Actor.Movies.Progress", string.Empty);
       using (Profile.Settings xmlreader = new MPSettings())
       {
         _movieInfoBeforePlay = xmlreader.GetValueAsBool("moviedatabase", "movieinfobeforeplay", false);
@@ -715,7 +716,7 @@ namespace MediaPortal.GUI.Video
             {
               int percCount = (100 * countCurrent) / count;
               countCurrent += 1;
-              GUIPropertyManager.SetProperty("#Actor.Name", _currentActor.Name + "   (" + percCount + @"%)");
+              GUIPropertyManager.SetProperty("#Actor.Movies.Progress", percCount + @"%");
             }
             //
             GetDetails(item);
@@ -728,6 +729,7 @@ namespace MediaPortal.GUI.Video
           }
 
           // Reset variables and save state
+          GUIPropertyManager.SetProperty("#Actor.Movies.Progress", string.Empty);
           GUIPropertyManager.SetProperty("#Actor.Name", _currentActor.Name);
           _forceRefreshAll = false;
           SaveState();
@@ -759,7 +761,7 @@ namespace MediaPortal.GUI.Video
             if (count > 0)
             {
               int percCount = (100 * countCurrent) / count;
-              GUIPropertyManager.SetProperty("#Actor.Name", _currentActor.Name + "   (" + countCurrent + "/" + count + " - " + +percCount + "%" + ")");
+              GUIPropertyManager.SetProperty("#Actor.Movies.Progress", countCurrent + "/" + count + " - " + percCount + "%");
               countCurrent += 1;
             }
             //
@@ -773,6 +775,7 @@ namespace MediaPortal.GUI.Video
           }
           
           // Reset variables and save state
+          GUIPropertyManager.SetProperty("#Actor.Movies.Progress", string.Empty);
           GUIPropertyManager.SetProperty("#Actor.Name", _currentActor.Name);
           _forceRefreshAll = false;
           SaveState();
@@ -829,7 +832,7 @@ namespace MediaPortal.GUI.Video
       }
 
       // Save cover url into db
-      if (cover.StartsWith("http://") || _forceRefreshAll)
+      if (cover.StartsWith("http://") || cover.StartsWith("https://") || _forceRefreshAll)
       {
         SetThumb(ref item, cover);
       }
@@ -923,7 +926,10 @@ namespace MediaPortal.GUI.Video
         string errorMessage = string.Empty;
         VideoDatabase.ExecuteSql(sql, out error, out errorMessage);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GUIVideoArtistInfo: ExecuteSql {0}", ex.Message);
+      }
     }
 
     private void SaveCover(string fileImgSource, string fileImgTargetL)

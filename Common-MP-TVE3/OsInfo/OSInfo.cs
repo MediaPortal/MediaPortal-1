@@ -668,45 +668,40 @@ namespace OSInfo
     /// </summary>
     public static OsSupport GetOSSupported()
     {
-      if (VerifyDesktopOSMinRequirement(5, 1, 2600, (byte) NTProductType.NT_WORKSTATION, 3))
+      if (VerifyOSMinRequirement(5, 1, 2600, 3))
       {
         // XP SP3
         return OsSupport.NotSupported;
       }
-      if (VerifyDesktopOSMinRequirement(6, 0, 6000, (byte) NTProductType.NT_WORKSTATION, 2))
+      if (VerifyOSMinRequirement(5, 2, 3790, 0))
       {
-        // Vista SP2
-        return OsSupport.FullySupported;
-      }
-      if (VerifyDesktopOSMinRequirement(6, 1, 7600, (byte) NTProductType.NT_WORKSTATION, 0))
-      {
-        // Win7 RTM
-        return OsSupport.FullySupported;
-      }
-      if (VerifyDesktopOSMinRequirement(6, 2, 9200, (byte) NTProductType.NT_WORKSTATION, 0))
-      {
-        // Windows 8 RTM
-        return OsSupport.FullySupported;
-      }
-      if (VerifyDesktopOSMinRequirement(6, 3, 9431, (byte) NTProductType.NT_WORKSTATION, 0))
-      {
-        // Windows 8.1 Preview
-        return OsSupport.FullySupported;
-      }
-      if (VerifyDesktopOSMinRequirement(6, 3, 9600, (byte) NTProductType.NT_WORKSTATION, 0))
-      {
-        // Windows 8.1 RTM
-        return OsSupport.FullySupported;
-      }
-      if (VerifyDesktopOSMinRequirement(10, 0, 10240, (byte) NTProductType.NT_WORKSTATION, 0))
-      {
-        // Windows 10 RTM
-        return OsSupport.FullySupported;
-      }
-      if (IsServer())
-      {
-        // any server OS
+        // Server 2003/Windows Home Server
         return OsSupport.NotSupported;
+      }
+      if (VerifyOSMinRequirement(6, 0, 6001, 0))
+      {
+        // Vista SP2/Windows Server 2008
+        return OsSupport.FullySupported;
+      }
+      if (VerifyOSMinRequirement(6, 1, 7600, 0))
+      {
+        // Windows 7/Windows Server 2008 R2/Windows Home Server 2011
+        return OsSupport.FullySupported;
+      }
+      if (VerifyOSMinRequirement(6, 2, 9200, 0))
+      {
+        // Windows 8/Windows Server 2012
+        return OsSupport.FullySupported;
+      }
+      if (VerifyOSMinRequirement(6, 3, 9200, 0))
+      {
+        // Windows 8.1/Windows Server 2012 R2
+        return OsSupport.FullySupported;
+      }
+      if (VerifyOSMinRequirement(10, 0, 10240, 0))
+      {
+        // Windows 10/Windows Server 2016/Windows Server 2019
+        return OsSupport.FullySupported;
       }
       return OsSupport.Blocked;
     }
@@ -801,38 +796,59 @@ namespace OSInfo
     }
 
     /// <summary>
-    /// Return DateTime of last installed Windows Update (excluding Security Essentials definition updates)
+    /// Return DateTime of last installed Windows Update
+    /// (excluding Security Essentials/Windows Defender definition updates)
     /// </summary>
-    /// <returns>DateTime (in UTC), or DateTime.MinValue if not found</returns>
+    /// <returns>DateTime (in UTC), DateTime.MinValue if not found, or DateTime.MaxValue if exception</returns>
     public static DateTime GetLastInstalledWindowsUpdateTimestamp()
     {
-      var session = new UpdateSession();
-      var updateSearcher = session.CreateUpdateSearcher();
-      if (updateSearcher.ClientApplicationID != null)
+      try
       {
+        var session = new UpdateSession();
+        var updateSearcher = session.CreateUpdateSearcher();
         updateSearcher.Online = false;
+        updateSearcher.ServerSelection = (ServerSelection)2; //ssWindowsUpdate = 2
         int count = updateSearcher.GetTotalHistoryCount();
-        var history = updateSearcher.QueryHistory(0, count);
-        for (int i = 0; i < count; ++i)
+        if (count < 1)
         {
-          if ((history[i].ResultCode == OperationResultCode.orcSucceeded) &&
-              (!history[i].Title.Contains("Security Essentials")))
+          return DateTime.MinValue;
+        }
+        var history = updateSearcher.QueryHistory(0, count);
+        for (int i = 0; (i < count) && (i < 50); ++i)
+        {
+          // if ((history[i].ResultCode == OperationResultCode.orcSucceeded) &&
+          //     (!history[i].Title.Contains("Security Essentials")) &&
+          //     (!history[i].Title.Contains("Windows Defender")))
+          //   return history[i].Date;
+
+          if (history[i].ResultCode == OperationResultCode.orcSucceeded)
             return history[i].Date;
         }
+      }
+      catch (Exception) //Can happen if Windows Update service is disabled...
+      {
+        return DateTime.MaxValue;
       }
       return DateTime.MinValue;
     }
 
     /// <summary>
-    /// Return string with last installed Windows Update timestamp (excluding Security Essentials definition updates)
+    /// Return string with last installed Windows Update timestamp
+    /// (excluding Security Essentials/Windows Defender definition updates)
     /// </summary>
-    /// <returns>timestamp (in UTC) as string, or "NEVER !!!" if not found</returns>
+    /// <returns>timestamp (in UTC) as string, or "unknown" if not found</returns>
     public static string GetLastInstalledWindowsUpdateTimestampAsString()
     {
       DateTime dt = GetLastInstalledWindowsUpdateTimestamp();
-      return "Last install from WindowsUpdate is dated " + ((dt == DateTime.MinValue)
-        ? "NEVER !!!"
-        : TimeZone.CurrentTimeZone.ToLocalTime(dt).ToString("yyyy-MM-dd HH:mm:ss"));
+      if (dt == DateTime.MinValue)
+      {
+        return "Last install date from WindowsUpdate is unknown";
+      }
+      else if (dt == DateTime.MaxValue)
+      {
+        return "Last install date from WindowsUpdate is not available (service disabled?)";
+      }
+      return "Last install date from WindowsUpdate is " + TimeZone.CurrentTimeZone.ToLocalTime(dt).ToString("yyyy-MM-dd HH:mm:ss");
     }
 
     #endregion
@@ -964,11 +980,9 @@ namespace OSInfo
     /// <param name="majorVersion">Major OS version</param>
     /// <param name="minorVersion">Minor OS version</param>
     /// <param name="buildVersion">OS Build Version</param>
-    /// <param name="productType">OS Product Type</param>
     /// <param name="servicePack">Minimum Major Service PackVersion</param>
     /// <returns>True if Major / Minor OS versions match and service pack / build version are >= parameters</returns>
-    private static bool VerifyDesktopOSMinRequirement(int majorVersion, int minorVersion, int buildVersion,
-      byte productType, short servicePack)
+    private static bool VerifyOSMinRequirement(int majorVersion, int minorVersion, int buildVersion, short servicePack)
     {
       ulong condition = 0;
       var osVersionInfo = new OSVERSIONINFOEX
@@ -977,17 +991,15 @@ namespace OSInfo
         dwMajorVersion = majorVersion,
         dwMinorVersion = minorVersion,
         dwBuildNumber = buildVersion,
-        wProductType = (NTProductType) productType,
         wServicePackMajor = servicePack
       };
       condition = VerSetConditionMask(condition, VersionTypeFlags.VER_MAJORVERSION, ConditionType.VER_EQUAL);
       condition = VerSetConditionMask(condition, VersionTypeFlags.VER_MINORVERSION, ConditionType.VER_EQUAL);
-      condition = VerSetConditionMask(condition, VersionTypeFlags.VER_PRODUCT_TYPE, ConditionType.VER_EQUAL);
       condition = VerSetConditionMask(condition, VersionTypeFlags.VER_SERVICEPACKMAJOR, ConditionType.VER_GREATER_EQUAL);
       condition = VerSetConditionMask(condition, VersionTypeFlags.VER_BUILDVERSION, ConditionType.VER_GREATER_EQUAL);
       return VerifyVersionInfo(ref osVersionInfo,
         VersionTypeFlags.VER_MAJORVERSION | VersionTypeFlags.VER_MINORVERSION |
-        VersionTypeFlags.VER_PRODUCT_TYPE | VersionTypeFlags.VER_SERVICEPACKMAJOR |
+        VersionTypeFlags.VER_SERVICEPACKMAJOR |
         VersionTypeFlags.VER_BUILDVERSION, condition);
     }
 

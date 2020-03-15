@@ -84,7 +84,13 @@ namespace MediaPortal.GUI.Library
     {
       lock (_lock)
       {
-        FontEngineDrawTexture(textureNo, x, y, nw, nh, uoff, voff, umax, vmax, color, matrix);
+        lock (GUIGraphicsContext.RenderLock)
+        {
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+          {
+            FontEngineDrawTexture(textureNo, x, y, nw, nh, uoff, voff, umax, vmax, color, matrix);
+          }
+        }
       }
     }
 

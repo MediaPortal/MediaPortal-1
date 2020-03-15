@@ -27,6 +27,7 @@
 #define MULTIFILEWRITER
 
 #include "FileWriter.h"
+#include "CDiskBuff.h"
 #include <vector>
 
 //Variable size buffers are used - CDiskBuff::CDiskBuff(int size)
@@ -47,20 +48,6 @@ typedef struct
 	__int64	chunkSize;
 } MultiFileWriterParam;
 
-class CDiskBuff
-{
-public:
-  CDiskBuff(int size);
-  ~CDiskBuff(void);
-  int    Length();
-  byte*  Data();
-  void   Add(byte* data, int len);
-
-private:
-  byte* m_pBuffer;
-  int   m_iLength;
-  int   m_iSize;
-};
 
 class MultiFileWriter
 {
@@ -68,34 +55,22 @@ public:
 	MultiFileWriter(MultiFileWriterParam *pWriterParams);
 	virtual ~MultiFileWriter();
 
-	HRESULT GetFileName(LPWSTR *lpszFileName);
-	HRESULT OpenFile(LPCWSTR pszFileName);
-	HRESULT CloseFile();
-	HRESULT GetFileSize(__int64 *lpllsize);	
-	HRESULT WriteToDisk(PBYTE pbData, ULONG lDataLength);
-  HRESULT Write(PBYTE pbData, ULONG lDataLength);
+	HRESULT Open(LPCWSTR pszFileName);
+	HRESULT Close();
+	HRESULT AddToBuffer(byte* pbData, int len, int newBuffSize);
+	HRESULT DiscardBuffer();
 
-	long getNumbFilesAdded(void);
-	long getNumbFilesRemoved(void);
-	
-	long getCurrentFileId(void);	
-	long getMinTSFiles(void);
-	void setMinTSFiles(long minFiles);
-	long getMaxTSFiles(void);	
-	void setMaxTSFiles(long maxFiles);
-	__int64 getMaxTSFileSize(void);
-	void setMaxTSFileSize(__int64 maxSize);
-	__int64 getChunkReserve(void);
-	void setChunkReserve(__int64 chunkSize);
-	void GetPosition(__int64 * position);
+	void GetPosition(__int64 * position, long * bufferId);
 
 protected:
+  	  
+	HRESULT OpenFile();
+	HRESULT WriteToDisk(PBYTE pbData, ULONG lDataLength);
 	HRESULT GetAvailableDiskSpace(__int64* llAvailableDiskSpace);
-	LPWSTR getBufferFileName(void);
-	void setBufferFileName(LPWSTR fileName);
-	LPTSTR getRegFileName(void);
-	void setRegFileName(LPTSTR fileName);
-	FileWriter* getCurrentTSFile(void);
+
+	HRESULT PushBuffer();
+	HRESULT NewBuffer(int size);
+	void ClearBuffers();
 
 	HRESULT PrepareTSFile();
 	HRESULT CreateNewTSFile();
@@ -104,13 +79,13 @@ protected:
 	HRESULT WriteTSBufferFile();
 	HRESULT CleanupFiles();
 	BOOL IsFileLocked(LPWSTR pFilename);
-	void ClearBuffers();
 
 	HANDLE m_hTSBufferFile;
 	LPWSTR m_pTSBufferFileName;
-	LPTSTR m_pTSRegFileName;
+	CDiskBuff* m_pDiskBuffer;
 
 	CCritSec m_Lock;
+	CCritSec m_posnLock;
 
 	FileWriter *m_pCurrentTSFile;
 	std::vector<LPWSTR> m_tsFileNames;
@@ -138,9 +113,12 @@ protected:
 
 	static unsigned __stdcall thread_function(void* p);
   unsigned __stdcall ThreadProc();
-  void StartThread();
+  HRESULT StartThread();
   void StopThread();
   DWORD m_dwTimerResolution;   //Timer resolution variable
+  
+  UINT m_totalBuffers;
+  UINT m_totalWakes;
 };
 
 #endif

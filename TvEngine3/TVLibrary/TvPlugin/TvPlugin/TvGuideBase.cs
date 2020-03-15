@@ -94,6 +94,7 @@ namespace TvPlugin
     private bool _byIndex = false;
     private bool _showChannelNumber = false;
     private int _channelNumberMaxLength = 3;
+    private long _zapKeyTimeout = 1000;
     private bool _useNewRecordingButtonColor = false;
     private bool _useNewPartialRecordingButtonColor = false;
     private bool _useNewNotifyButtonColor = false;
@@ -101,6 +102,8 @@ namespace TvPlugin
     private bool _useHdProgramIcon = false;
     private string _hdtvProgramText = String.Empty;
     private bool _guideContinuousScroll = false;
+    private string _fileMenuPinCode = String.Empty;
+    private bool _fileMenuEnabled = false;
 
     // current minimum/maximum indexes
     //private int MaxXIndex; // means rows here (channels)
@@ -151,10 +154,13 @@ namespace TvPlugin
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
         _showChannelNumber = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
         _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
+        _zapKeyTimeout = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapKeyTimeout", 1);
         _timePerBlock = xmlreader.GetValueAsInt("tvguide", "timeperblock", 30);
         _hdtvProgramText = xmlreader.GetValueAsString("mytv", "hdtvProgramText", "(HDTV)");
         _guideContinuousScroll = xmlreader.GetValueAsBool("mytv", "continuousScrollGuide", false);
         _loopDelay = xmlreader.GetValueAsInt("gui", "listLoopDelay", 0);
+        _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
+        _fileMenuPinCode = Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
 
         // Load the genre map.
         if (_mpGenres == null)
@@ -861,32 +867,7 @@ namespace TvPlugin
                 for (int iDay = 0; iDay < MaxDaysInGuide; iDay++)
                 {
                   DateTime dtTemp = dtNow.AddDays(iDay);
-                  string day;
-                  switch (dtTemp.DayOfWeek)
-                  {
-                    case DayOfWeek.Monday:
-                      day = GUILocalizeStrings.Get(657);
-                      break;
-                    case DayOfWeek.Tuesday:
-                      day = GUILocalizeStrings.Get(658);
-                      break;
-                    case DayOfWeek.Wednesday:
-                      day = GUILocalizeStrings.Get(659);
-                      break;
-                    case DayOfWeek.Thursday:
-                      day = GUILocalizeStrings.Get(660);
-                      break;
-                    case DayOfWeek.Friday:
-                      day = GUILocalizeStrings.Get(661);
-                      break;
-                    case DayOfWeek.Saturday:
-                      day = GUILocalizeStrings.Get(662);
-                      break;
-                    default:
-                      day = GUILocalizeStrings.Get(663);
-                      break;
-                  }
-                  day = String.Format("{0} {1}-{2}", day, dtTemp.Day, dtTemp.Month);
+                  string day = Utils.GetShortDayString(dtTemp);
                   cntlDay.AddLabel(day, iDay);
                 }
               }
@@ -3572,8 +3553,39 @@ namespace TvPlugin
       }
     }
 
+    private bool UnlockChannelEditor()
+    {
+      if (!_fileMenuEnabled || _fileMenuEnabled && _fileMenuPinCode == String.Empty)
+      {
+        return true;
+      }
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+
+      if (null == keyboard)
+      {
+        return false;
+      }
+
+      keyboard.IsSearchKeyboard = true;
+      keyboard.Reset();
+      keyboard.Password = true;
+      keyboard.Text = string.Empty;
+      keyboard.DoModal(GUIWindowManager.ActiveWindow); // show it...
+
+      if (keyboard.IsConfirmed && keyboard.Text == _fileMenuPinCode)
+      {
+        return true;
+      }
+      return false;
+    }
+
     private void OnRemoveChannel()
     {
+      if (!UnlockChannelEditor())
+      {
+        return;
+      }
+
       GUIDialogYesNo GUIDialogYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
 
       if (GUIDialogYesNo == null)
@@ -3628,6 +3640,11 @@ namespace TvPlugin
 
     private void OnAddChannelToGroup()
     {
+      if (!UnlockChannelEditor())
+      {
+        return;
+      }
+
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
@@ -4192,7 +4209,7 @@ namespace TvPlugin
         return;
       }
       TimeSpan ts = DateTime.Now - _keyPressedTimer;
-      if (ts.TotalMilliseconds >= 1000)
+      if (ts.TotalMilliseconds >= _zapKeyTimeout)
       {
         // change channel
         int iChannel = Int32.Parse(_lineInput);
@@ -4212,7 +4229,7 @@ namespace TvPlugin
       if (chKey >= '0' && chKey <= '9') //Make sure it's only for the remote
       {
         TimeSpan ts = DateTime.Now - _keyPressedTimer;
-        if (_lineInput.Length >= _channelNumberMaxLength || ts.TotalMilliseconds >= 1000)
+        if (_lineInput.Length >= _channelNumberMaxLength || ts.TotalMilliseconds >= _zapKeyTimeout)
         {
           _lineInput = String.Empty;
         }

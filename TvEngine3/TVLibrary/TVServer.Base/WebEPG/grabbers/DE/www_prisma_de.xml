@@ -1,93 +1,93 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Grabber>
-  <Info language="de" availableDays="14" timezone="W. Europe Standard Time" version="2.0" />
+  <Info language="de" availableDays="14" timezone="W. Europe Standard Time" version="2.1"/>
   <Channels>
-    <Channel siteId="29" id="ARD" />
-    <Channel siteId="2008" id="ZDF" />
-    <Channel siteId="13703" id="RTL" />
-    <Channel siteId="13707" id="ProSieben" />
-    <Channel siteId="13705" id="SAT.1" />
-    <Channel siteId="13713" id="VOX" />
-    <Channel siteId="638263" id="KabelEins" />
-    <Channel siteId="13709" id="RTL II" />
-    <Channel siteId="9869466" id="RTLplus" />
-    <Channel siteId="13804" id="DMAX" />
-    <Channel siteId="13771" id="sixx" />
-    <Channel siteId="3584813" id="ProSieben MAXX" />
-    <Channel siteId="3582274" id="ProSieben Fun" />
-    <Channel siteId="13765" id="Servus TV" />
-    <Channel siteId="13769" id="Comedy Central" />
-    <Channel siteId="13774" id="RTL NITRO" />
-    <Channel siteId="10800415" id="Zee.One" />
-    <Channel siteId="755354" id="Sat.1 Gold" />
-    <Channel siteId="3590217" id="kabel eins classics" />
-    <Channel siteId="13717" id="Tele 5" />
-    <Channel siteId="13735" id="arte" />
-    <Channel siteId="13737" id="3sat" />
-    <Channel siteId="13741" id="Phoenix" />
-    <Channel siteId="13794" id="ZDFneo" />
-    <Channel siteId="626386" id="One" />
-    <Channel siteId="779173" id="WDR" />
-    <Channel siteId="664723" id="NDR" />
-    <Channel siteId="13751" id="MDR" />
-    <Channel siteId="633655" id="HR" />
-    <Channel siteId="13747" id="SWR" />
-    <Channel siteId="570537" id="BR" />
-    <Channel siteId="13753" id="RBB" />
-    <Channel siteId="13727" id="Sport1" />
-    <Channel siteId="625762" id="Eurosport" />
-    <Channel siteId="13782" id="n-tv" />
-    <Channel siteId="13784" id="N24" />
-    <Channel siteId="782077" id="ZDFinfo" />
-    <Channel siteId="807854" id="tagesschau24" />
-    <Channel siteId="9062162" id="RTL Passion" />
-    <Channel siteId="13739" id="ARD alpha" />
-    <Channel siteId="13778" id="tv.berlin" />
-    <Channel siteId="9096327" id="Sonnenklar-TV-HD" />
-    <Channel siteId="721631" id="SuperRTL" />
-    <Channel siteId="647429" id="KiKa" />
-    <Channel siteId="13919" id="Disney Channel" />
-    <Channel siteId="13851" id="Sky Cinema" />
-    <Channel siteId="13847" id="Sky Cinema +1" />
-    <Channel siteId="13853" id="Sky Cinema +24" />
-    <Channel siteId="11580811" id="Sky Cinema Family HD" />
-    <Channel siteId="13840" id="Sky Cinema Hits" />
-    <Channel siteId="13849" id="Sky Action" />
-    <Channel siteId="6045584" id="Sky Atlantic HD" />
-    <Channel siteId="12459012" id="Sky 1" />
-    <Channel siteId="13876" id="Sky Krimi" />
-    <Channel siteId="13917" id="Sky Comedy" />
-    <Channel siteId="13907" id="Sky Emotion" />
-    <Channel siteId="13915" id="Sky Nostalgie" />
-    <Channel siteId="13868" id="Disney Cinemagic" />
-    <Channel siteId="615549" id="DISNEY JUNIOR" />
-    <Channel siteId="13881" id="Sky Bundesliga" />
-    <Channel siteId="13887" id="Sky Sport 1" />
-    <Channel siteId="13889" id="Sky Sport 2" />
-    <Channel siteId="630577" id="FOX" />
-    <Channel siteId="13894" id="Syfy" />
-    <Channel siteId="551267" id="13TH STREET" />
-    <Channel siteId="13898" id="MGM" />
-    <Channel siteId="13910" id="TNT Serie" />
-    <Channel siteId="13866" id="Discovery" />
-    <Channel siteId="13905" id="History" />
-    <Channel siteId="13883" id="Spiegel Geschichte" />
-    <Channel siteId="667466" id="nickjr." />
-    <Channel siteId="13857" id="beate-uhse.tv" />
-    <Channel siteId="13879" id="Planet" />
-    <Channel siteId="13833" id="Cartoon Network" />
-    <Channel siteId="13864" id="Classica" />
-    <Channel siteId="13787" id="Euronews" />
-    <Channel siteId="13809" id="ORF1" />
-    <Channel siteId="13811" id="ORF2" />
-    <Channel siteId="736586" id="SF1" />
-    <Channel siteId="13819" id="SF2" />
-    <Channel siteId="13837" id="CNN" />
-    <Channel siteId="566187" id="BBC" />
-    <Channel siteId="13821" id="TV5" />
+    <Channel siteId="29" id="ARD"/>
+    <Channel siteId="2008" id="ZDF"/>
+    <Channel siteId="13703" id="RTL"/>
+    <Channel siteId="13707" id="ProSieben"/>
+    <Channel siteId="13705" id="SAT.1"/>
+    <Channel siteId="13713" id="VOX"/>
+    <Channel siteId="638263" id="KabelEins"/>
+    <Channel siteId="13709" id="RTL II"/>
+    <Channel siteId="9869466" id="RTLplus"/>
+    <Channel siteId="13804" id="DMAX"/>
+    <Channel siteId="13771" id="sixx"/>
+    <Channel siteId="3584813" id="ProSieben MAXX"/>
+    <Channel siteId="3582274" id="ProSieben Fun"/>
+    <Channel siteId="13765" id="Servus TV"/>
+    <Channel siteId="13769" id="Comedy Central"/>
+    <Channel siteId="13774" id="RTL NITRO"/>
+    <Channel siteId="10800415" id="Zee.One"/>
+    <Channel siteId="755354" id="Sat.1 Gold"/>
+    <Channel siteId="3590217" id="kabel eins classics"/>
+    <Channel siteId="13717" id="Tele 5"/>
+    <Channel siteId="13735" id="arte"/>
+    <Channel siteId="13737" id="3sat"/>
+    <Channel siteId="13741" id="Phoenix"/>
+    <Channel siteId="13794" id="ZDFneo"/>
+    <Channel siteId="626386" id="One"/>
+    <Channel siteId="779173" id="WDR"/>
+    <Channel siteId="664723" id="NDR"/>
+    <Channel siteId="13751" id="MDR"/>
+    <Channel siteId="633655" id="HR"/>
+    <Channel siteId="13747" id="SWR"/>
+    <Channel siteId="570537" id="BR"/>
+    <Channel siteId="13753" id="RBB"/>
+    <Channel siteId="13727" id="Sport1"/>
+    <Channel siteId="625762" id="Eurosport"/>
+    <Channel siteId="13782" id="n-tv"/>
+    <Channel siteId="13784" id="N24"/>
+    <Channel siteId="782077" id="ZDFinfo"/>
+    <Channel siteId="807854" id="tagesschau24"/>
+    <Channel siteId="9062162" id="RTL Passion"/>
+    <Channel siteId="13739" id="ARD alpha"/>
+    <Channel siteId="13778" id="tv.berlin"/>
+    <Channel siteId="9096327" id="Sonnenklar-TV-HD"/>
+    <Channel siteId="721631" id="SuperRTL"/>
+    <Channel siteId="647429" id="KiKa"/>
+    <Channel siteId="13919" id="Disney Channel"/>
+    <Channel siteId="13851" id="Sky Cinema"/>
+    <Channel siteId="13847" id="Sky Cinema +1"/>
+    <Channel siteId="13853" id="Sky Cinema +24"/>
+    <Channel siteId="11580811" id="Sky Cinema Family HD"/>
+    <Channel siteId="13840" id="Sky Cinema Hits"/>
+    <Channel siteId="13849" id="Sky Action"/>
+    <Channel siteId="6045584" id="Sky Atlantic HD"/>
+    <Channel siteId="12459012" id="Sky 1"/>
+    <Channel siteId="13876" id="Sky Krimi"/>
+    <Channel siteId="13917" id="Sky Comedy"/>
+    <Channel siteId="13907" id="Sky Emotion"/>
+    <Channel siteId="13915" id="Sky Nostalgie"/>
+    <Channel siteId="13868" id="Disney Cinemagic"/>
+    <Channel siteId="615549" id="DISNEY JUNIOR"/>
+    <Channel siteId="13881" id="Sky Bundesliga"/>
+    <Channel siteId="13887" id="Sky Sport 1"/>
+    <Channel siteId="13889" id="Sky Sport 2"/>
+    <Channel siteId="630577" id="FOX"/>
+    <Channel siteId="13894" id="Syfy"/>
+    <Channel siteId="551267" id="13TH STREET"/>
+    <Channel siteId="13898" id="MGM"/>
+    <Channel siteId="13910" id="TNT Serie"/>
+    <Channel siteId="13866" id="Discovery"/>
+    <Channel siteId="13905" id="History"/>
+    <Channel siteId="13883" id="Spiegel Geschichte"/>
+    <Channel siteId="667466" id="nickjr."/>
+    <Channel siteId="13857" id="beate-uhse.tv"/>
+    <Channel siteId="13879" id="Planet"/>
+    <Channel siteId="13833" id="Cartoon Network"/>
+    <Channel siteId="13864" id="Classica"/>
+    <Channel siteId="13787" id="Euronews"/>
+    <Channel siteId="13809" id="ORF1"/>
+    <Channel siteId="13811" id="ORF2"/>
+    <Channel siteId="736586" id="SF1"/>
+    <Channel siteId="13819" id="SF2"/>
+    <Channel siteId="13837" id="CNN"/>
+    <Channel siteId="566187" id="BBC"/>
+    <Channel siteId="13821" id="TV5"/>
   </Channels>
   <Listing type="Html">
-    <Site url="https://m.prisma.de/tv-programm/programm-nach-sendern/A,[ID]/d/[YYYY]-[MM]-[DD]" external="false" encoding="utf-8" user-agent="Mozilla/5.0 (Linux; U; Android 4.4.4; Nexus 5 Build/KTU84P) AppleWebkit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30" />
+    <Site url="https://m.prisma.de/tv-programm/programm-nach-sendern/A,[ID]/d/[YYYY]-[MM]-[DD]" external="false" encoding="utf-8" user-agent="Mozilla/5.0 (iPhone; CPU OS 11_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Mobile/14A346 Safari Line/6.6.1"/>
     <Html>
       <Template name="default" start="&lt;div class=&quot;box-list&quot;&gt;" end="&lt;div class=&quot;box-foot&quot;&gt;">
         <SectionTemplate tags="AS">
@@ -145,18 +145,18 @@
     </div>
     <div class="box-sharer"></div>
     <div class="c"></div>
-    <div class="page-text show-content"><#DESCRIPTION></div>]]></TemplateText>
+    <div class="page-text show-content"><#DESCRIPTION><div id="medium_rectangle_2"></div></div>]]></TemplateText>
         </SectionTemplate>
       </Template>
       <Sublinks>
         <Sublink search="/tv-programm/" template="Details">
-          <Link url="https://m.prisma.de/[1]" external="false" encoding="utf-8" user-agent="Mozilla/5.0 (Linux; U; Android 4.4.4; Nexus 5 Build/KTU84P) AppleWebkit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30" />
+          <Link url="https://m.prisma.de/[1]" external="false" encoding="utf-8" user-agent="Mozilla/5.0 (iPhone; CPU OS 11_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Mobile/14A346 Safari Line/6.6.1"/>
         </Sublink>
       </Sublinks>
     </Html>
   </Listing>
   <Actions>
-    <Modify channel="*" field="#SUBTITLE" search="^(.*)\d{1,2}\.\d{1,2}\." action="Replace"></Modify>
-    <Modify channel="*" field="#DESCRIPTION" search="Eine Filmkritik sowie weitere Infos(.*)$" action="Replace"></Modify>
+    <Modify channel="*" field="#SUBTITLE" search="^(.*)\d{1,2}\.\d{1,2}\." action="Replace"/>
+    <Modify channel="*" field="#DESCRIPTION" search="Eine Filmkritik sowie weitere Infos(.*)$" action="Replace"/>
   </Actions>
 </Grabber>

@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -25,6 +25,7 @@ using DirectShowLib;
 using System.Drawing;
 using MediaPortal.Profile;
 using MediaPortal.Configuration;
+using MediaPortal.Player.LAV;
 using MediaPortal.Player.Subtitles;
 
 namespace MediaPortal.Player.PostProcessing

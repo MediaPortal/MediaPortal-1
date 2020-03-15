@@ -22,6 +22,8 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -73,9 +75,11 @@
       <Name>LibDriverCoreClient</Name>
       <HintPath>..\MediaPortal.Base\LibDriverCoreClient.dll</HintPath>
     </Reference>
-    <Reference Include="SharpLibDisplay, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\SharpLibDisplay.0.2.6\lib\net40\SharpLibDisplay.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="MediaInfo.Wrapper, Version=19.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\MediaInfo.Wrapper.19.4.1\lib\net40\MediaInfo.Wrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpLibDisplay, Version=0.2.8.23010, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\SharpLibDisplay.0.3.4\lib\net40\SharpLibDisplay.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -406,4 +410,11 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\..\Packages\MediaInfo.Native.19.4.0\build\MediaInfo.Native.targets" Condition="Exists('..\..\Packages\MediaInfo.Native.19.4.0\build\MediaInfo.Native.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\Packages\MediaInfo.Native.19.4.0\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\MediaInfo.Native.19.4.0\build\MediaInfo.Native.targets'))" />
+  </Target>
 </Project>

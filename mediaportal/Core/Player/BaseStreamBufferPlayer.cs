@@ -1518,8 +1518,30 @@ namespace MediaPortal.Player
                         else */
             if (code == EventCode.Complete || code == EventCode.ErrorAbort)
             {
-              //Log.Info("StreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
-              MovieEnded();
+              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+              {
+                try
+                {
+                  Log.Debug("StreamBufferPlayer: EventCode.Complete: {0}", Enum.GetName(typeof(EventCode), code));
+                  Log.Debug("StreamBufferPlayer: VMR9Util.g_vmr9.playbackTimer {0}", VMR9Util.g_vmr9.playbackTimer);
+                  if (VMR9Util.g_vmr9.playbackTimer.Second != 0)
+                  {
+                    //Log.Info("StreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
+                    MovieEnded();
+                  }
+                }
+                catch (Exception ex)
+                {
+                  Log.Error("StreamBufferPlayer: OnGraphNotify exception: {0}", ex);
+                }
+              }
+
+              if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+              {
+                Log.Debug("StreamBufferPlayer.Complete: {0}", Enum.GetName(typeof(EventCode), code));
+                //Log.Info("StreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
+                MovieEnded();
+              }
             }
             //else
             //Log.Info("StreamBufferPlayer: event:{0} 0x{1:X} param1:{2} param2:{3} param1:0x{4:X} param2:0x{5:X}",code.ToString(), (int)code,p1,p2,p1,p2);

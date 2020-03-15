@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -77,6 +77,7 @@ namespace MediaPortal.Util
     public static readonly string MusicAlbum = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Albums");
     public static readonly string MusicArtists = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Artists");
     public static readonly string MusicGenre = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Genre");
+    public static readonly string MusicYear = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Year");
 
     public static readonly string MovieTitle = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\Title");
     public static readonly string MovieActors = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\Actors");
@@ -172,6 +173,7 @@ namespace MediaPortal.Util
         Directory.CreateDirectory(MusicAlbum);
         Directory.CreateDirectory(MusicArtists);
         Directory.CreateDirectory(MusicGenre);
+        Directory.CreateDirectory(MusicYear);
         Directory.CreateDirectory(Pictures);
         Directory.CreateDirectory(Radio);
         Directory.CreateDirectory(TVChannel);
@@ -186,7 +188,10 @@ namespace MediaPortal.Util
         Directory.CreateDirectory(News);
         Directory.CreateDirectory(Trailers);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("CreateFolders: {0}", ex.Message);
+      }
     }
 
     #region Public getters and setters

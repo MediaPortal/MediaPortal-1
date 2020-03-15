@@ -76,7 +76,10 @@ namespace MediaPortal.Util
                 }
               }
             }
-            catch (Exception) {}
+            catch (Exception ex)
+            {
+              Log.Error("GetRegisteredAssemblyPaths: {0}", ex.Message);
+            }
           }
         }
       }

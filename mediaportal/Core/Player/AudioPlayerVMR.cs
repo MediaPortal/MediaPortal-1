@@ -251,7 +251,10 @@ namespace MediaPortal.Player
             {
               mediaPos.put_Rate((double)value);
             }
-            catch (Exception) {}
+            catch (Exception ex)
+            {
+              Log.Error("AdioPlayerVMR: Speed {0}", ex.Message);
+            }
           }
         }
       }
@@ -480,7 +483,10 @@ namespace MediaPortal.Player
 
         m_state = PlayState.Init;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("AdioPlayerVMR: CloseInterfaces {0}", ex.Message);
+      }
     }
 
     public override void WndProc(ref Message m)
@@ -515,7 +521,28 @@ namespace MediaPortal.Player
         hr = mediaEvt.FreeEventParams(code, p1, p2);
         if (code == EventCode.Complete || code == EventCode.ErrorAbort)
         {
-          MovieEnded(false);
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            try
+            {
+              Log.Debug("AudioPlayerVMR: EventCode.Complete: {0}", Enum.GetName(typeof(EventCode), code));
+              Log.Debug("AudioPlayerVMR: VMR9Util.g_vmr9.playbackTimer {0}", VMR9Util.g_vmr9.playbackTimer);
+              if (VMR9Util.g_vmr9.playbackTimer.Second != 0)
+              {
+                MovieEnded(false);
+              }
+            }
+            catch (Exception ex)
+            {
+              Log.Error("AudioPlayerVMR: OnGraphNotify exception: {0}", ex);
+            }
+          }
+
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            Log.Debug("AudioPlayerVMR EventCode.Complete: {0}", Enum.GetName(typeof(EventCode), code));
+            MovieEnded(false);
+          }
         }
       } while (hr == 0);
     }

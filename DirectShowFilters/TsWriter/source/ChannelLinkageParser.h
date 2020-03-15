@@ -26,6 +26,7 @@
 #include "..\..\shared\TsHeader.h"
 #include <string>
 #include "..\..\shared\dvbutil.h"
+#include "TextUtil.h"
 #include <vector>
 #include <map>
 using namespace std;
@@ -58,7 +59,7 @@ typedef struct stPortalChannel
 	typedef map<int,bool>::iterator imapSectionsReceived;
 }PortalChannel;
 
-class CChannelLinkageParser :  public ISectionCallback, public CDvbUtil
+class CChannelLinkageParser :  public ISectionCallback, public CTextUtil
 {
 public:
   CChannelLinkageParser(void);

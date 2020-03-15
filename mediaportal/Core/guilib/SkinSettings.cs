@@ -219,10 +219,10 @@ namespace MediaPortal.GUI.Library
         {
           newBool.Value = bool.Parse(GUIPropertyManager.GetProperty(newBool.Name));
         }
-        catch (FormatException)
+        catch (FormatException ex)
         {
           // Value is set to false.
-          Log.Warn("SkinSettings: Boolean setting value is not a valid boolean name={0} value={1}", newBool.Name, newBool.Value);
+          Log.Warn("SkinSettings: Boolean setting value is not a valid boolean name={0} value={1} {2}", newBool.Name, newBool.Value, ex.Message);
         }
       }
 

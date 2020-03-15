@@ -29,6 +29,7 @@ using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.Profile;
 using System.Runtime.InteropServices;
+using System.Net;
 
 namespace MediaPortal.Configuration
 {
@@ -66,8 +67,15 @@ namespace MediaPortal.Configuration
 
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
-      Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
-      Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
+      try
+      {
+        Log.Info("Main: Configuration v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
+      }
+      catch
+      {
+        Log.Info("Main: Configuration v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
+      }
+      //Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
       Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
 #if DEBUG
       Log.Info("Debug build: " + Application.ProductVersion);
@@ -257,6 +265,8 @@ namespace MediaPortal.Configuration
     {
       try
       {
+        // .NET 4.0: Use TLS v1.2. Many download sources no longer support the older and now insecure TLS v1.0/1.1 and SSL v3.
+        ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00;
         AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
         Application.EnableVisualStyles();
         Application.DoEvents();

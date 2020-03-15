@@ -582,7 +582,10 @@ namespace MediaPortal.GUI.Library
       {
         _itemList.Sort(comparer);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GuiFacadeView.sort: Exception" + ex.Message);
+      }
       if (_layoutAlbum != null)
       {
         if (HasSameItems(_layoutAlbum.ListItems, preSort))

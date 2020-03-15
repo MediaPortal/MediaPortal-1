@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1686,7 +1686,7 @@ namespace MediaPortal.GUI.Video
         case 830: // Reset watched status
           SetMovieWatchStatus(item.Path, item.IsFolder, false);
           int selectedIndex = facadeLayout.SelectedListItemIndex;
-          LoadDirectory(_currentFolder);
+          LoadDirectory(_currentFolder, false);
           UpdateButtonStates();
           facadeLayout.SelectedListItemIndex = selectedIndex;
           break;
@@ -1694,7 +1694,7 @@ namespace MediaPortal.GUI.Video
         case 1260: // Set watched status
           SetMovieWatchStatus(item.Path, item.IsFolder, true);
           selectedIndex = facadeLayout.SelectedListItemIndex;
-          LoadDirectory(_currentFolder);
+          LoadDirectory(_currentFolder, false);
           UpdateButtonStates();
           facadeLayout.SelectedListItemIndex = selectedIndex;
           break;
@@ -2825,8 +2825,9 @@ namespace MediaPortal.GUI.Video
           // request.Proxy = WebProxy.GetDefaultProxy();
           request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("GUIVideoFiles: DownloadFile {0}", ex.Message);
         }
 
         using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
@@ -3626,7 +3627,10 @@ namespace MediaPortal.GUI.Video
             Log.Debug("GetMediaInfoThread: after join.");
           }
         }
-        catch (Exception) { }
+        catch (Exception ex)
+        {
+          Log.Error("GUIVideoFiles: LoadDirectory {0}", ex.Message);
+        }
 
         _getMediaInfoThreadAbort = false;
 
@@ -4209,7 +4213,10 @@ namespace MediaPortal.GUI.Video
         {
           VideoDatabase.DeleteMovieStopTime(idFile);
         }
+        // Update groups with rules
+        VideoDatabase.UpdateUserGroupWithRule(idMovie);
       }
+
       if (_markWatchedFiles)
       {
         // Update db view watched status for played movie
@@ -4348,6 +4355,8 @@ namespace MediaPortal.GUI.Video
           bool wStatus = VideoDatabase.GetmovieWatchedStatus(idMovie, out percent, out timesWatched);
           VideoDatabase.SetMovieWatchedStatus(idMovie, wStatus, playTimePercentage);
         }
+        // Update groups with rules
+        VideoDatabase.UpdateUserGroupWithRule(idMovie);
       }
     }
 
@@ -4795,22 +4804,24 @@ namespace MediaPortal.GUI.Video
         }
 
         VideoDatabase.SetWatched(movieDetails);
+        // Update groups with rules
+        VideoDatabase.UpdateUserGroupWithRule(movieDetails.ID);
       }
 
-      int iPercent = 0;
       int iTimesWatched = 0;
       int movieId = VideoDatabase.GetMovieId(movieFileName);
 
       if (!watched)
       {
-        VideoDatabase.GetmovieWatchedStatus(movieId, out iPercent, out iTimesWatched);
-        VideoDatabase.SetMovieWatchedStatus(movieId, false, iPercent);
+        VideoDatabase.SetMovieWatchedStatus(movieId, false, 0);
+        VideoDatabase.SetMovieStopTime(movieId, 0);
+        VideoDatabase.SetMovieWatchedCount(movieId, 0);
       }
       else
       {
-        iPercent = 100;
+        int iPercent = 100;
         VideoDatabase.GetmovieWatchedStatus(movieId, out iPercent, out iTimesWatched);
-        VideoDatabase.SetMovieWatchedStatus(movieId, true, iPercent);
+        VideoDatabase.SetMovieWatchedStatus(movieId, true, 100);
 
         if (iTimesWatched <= 0)
         {
@@ -5491,7 +5502,10 @@ namespace MediaPortal.GUI.Video
             Util.Utils.RemoveStackEndings(ref filename);
           }
         }
-        catch (Exception){}
+        catch (Exception ex)
+        {
+          Log.Error("GUIVideoFiles: OnRequestMovieTitle {0}", ex.Message);
+        }
       }
       else
       {

@@ -187,14 +187,12 @@ namespace MediaPortal.Util
               if (includeSystemAndHidden ||
                   (findData.dwFileAttributes & ((uint)FileAttributes.Hidden | (uint)FileAttributes.System)) == 0)
               {
-                FileInformation fileInfo = new FileInformation();
-                long ftCreationTime = (((long)findData.ftCreationTime.dwHighDateTime) << 32) +
-                                      findData.ftCreationTime.dwLowDateTime;
-                long ftLastWriteTime = (((long)findData.ftLastWriteTime.dwHighDateTime) << 32) +
-                                       findData.ftLastWriteTime.dwLowDateTime;
+                FileInformation fileInfo = new FileInformation();               
+                long ftCreationTime  = (((long)findData.ftCreationTime.dwHighDateTime) << 32) | (uint)findData.ftCreationTime.dwLowDateTime;
+                long ftLastWriteTime = (((long)findData.ftLastWriteTime.dwHighDateTime) << 32) | (uint)findData.ftLastWriteTime.dwLowDateTime;   
                 fileInfo.Name = Path.Combine(directory, findData.cFileName);
-                if (prefix == UNCPrefix) fileInfo.Name = @"\\" + fileInfo.Name;
-                fileInfo.Length = (((long)findData.nFileSizeHigh) << 32) + findData.nFileSizeLow;
+                if (prefix == UNCPrefix) fileInfo.Name = @"\\" + fileInfo.Name;                               
+                fileInfo.Length = (((long)findData.nFileSizeHigh) << 32) | (uint)findData.nFileSizeLow;
                 fileInfo.CreationTime = DateTime.FromFileTimeUtc(ftCreationTime);
                 fileInfo.ModificationTime = DateTime.FromFileTimeUtc(ftLastWriteTime);
                 fi.Add(fileInfo);

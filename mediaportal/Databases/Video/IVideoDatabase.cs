@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -85,6 +85,8 @@ namespace MediaPortal.Video.Database
     void RemoveUserGroupRule(string groupName);
     bool GetUserGroupWatchedStatus(string group, out int percent);
     bool GetUserGroupWatchedStatus(int group, out int percent);
+    void UpdateUserGroupWithRule(int ID);
+    void UpdateUserGroupWithRule(int ID, string suffix);
     
     // Actors
     int AddActor(string strActorImdbId, string strActorName);

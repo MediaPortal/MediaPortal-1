@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2018 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -24,6 +24,8 @@ public:
 	CAutoString(int len);
 	virtual ~CAutoString();
 	char* GetBuffer() ;
+  char* GetBuffer(int newLength);
 private:
 	char* m_pBuffer;
+	int   m_Len;
 };

@@ -186,6 +186,93 @@
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
   </style>
+  <style Name="SettingsMenuMedium">
+    <width>552</width>
+    <height>58</height>
+    <textXOff>33</textXOff>
+    <textYOff>11</textYOff>
+    <textureFocus>settings_button_medium_focus.png</textureFocus>
+    <textureNoFocus>settings_button_medium_nofocus.png</textureNoFocus>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
+    <textcolor>ff000000</textcolor>
+    <textcolorNoFocus>ffffffff</textcolorNoFocus>
+    <textureUp>page_up_nofocus.png</textureUp>
+    <textureUpFocus>page_up_focus.png</textureUpFocus>
+    <textureDown>page_down_nofocus.png</textureDown>
+    <textureDownFocus>page_down_focus.png</textureDownFocus>
+    <spinWidth>21</spinWidth>
+    <spinHeight>21</spinHeight>
+    <spinXOff>13</spinXOff>
+    <spinTextXOff>7</spinTextXOff>
+    <spinTextYOff>2</spinTextYOff>
+    <spinalign>right</spinalign>
+    <spinvalign>middle</spinvalign>
+    <spintype>text</spintype>
+    <showrange>no</showrange>
+    <reverse>no</reverse>
+    <cycleItems>yes</cycleItems>
+    <dialogTitle></dialogTitle>
+    <dialogShowNumbers>no</dialogShowNumbers>
+    <font>font12</font>
+    <colordiffuse>ffffffff</colordiffuse>
+    <disabledcolor>60ffffff</disabledcolor>
+    <!--dimColor>ffffffff</dimColor-->
+  </style>
+  <style Name="HomeButtonMenuFocus">
+    <height>#home.button.height</height>
+    <width>367</width>
+    <texture>btn\#home.button.type\basichome_button_focus.png</texture>
+    <animation effect="fade" time="100">Hidden</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="100">WindowClose</animation>
+    <!--animation effect="fade" time="350" reversible="false">visible</animation-->
+  </style>
+  <style Name="HomeButtonMenuNew">
+    <height>#home.button.height</height>
+    <width>367</width>
+    <texture>btn\#home.button.type\basichome_menu_item_new_overlay.png</texture>
+    <animation effect="fade" time="100">Hidden</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="100">WindowClose</animation>
+    <!--animation effect="fade" time="350" reversible="false">visible</animation-->
+  </style>
+  <style Name="HomeBasicFanart">
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1920</width>
+    <height>1080</height>
+    <animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
+    <animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
+    <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
+    <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
+  </style>
+  <style Name="BasicHomeButton">
+    <font>font10</font>
+    <textalign>center</textalign>
+    <textcolor>ffffffff</textcolor>
+    <textcolorNoFocus>ff808080</textcolorNoFocus>
+    <disabledcolor>ffffffff</disabledcolor>
+    <dimColor>ffffffff</dimColor>
+    <textYOff>0</textYOff>
+    <textureFocus></textureFocus>
+    <textureNoFocus></textureNoFocus>
+  </style>
+  <style Name="BasicHomeSubmenu">
+    <font>font10</font>
+    <textalign>center</textalign>
+    <textcolor>ffffffff</textcolor>
+    <textcolorNoFocus>ff808080</textcolorNoFocus>
+    <disabledcolor>ff666666</disabledcolor>
+    <dimColor>ffffffff</dimColor>
+    <width>375</width>
+    <height>45</height>
+    <textYOff>3</textYOff>
+    <textureFocus></textureFocus>
+    <textureNoFocus></textureNoFocus>
+  </style>
+  <style Name="BasicHomeFade">
+    <animation effect="slide" start="-1500,0" end="0,0" reversible="true" time="300">visible</animation>
+  </style>
   <control>
     <description>default image</description>
     <type>image</type>
@@ -672,7 +759,7 @@
     <textcolor>ffFFFFFF</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
     <scrollStartDelaySec>10</scrollStartDelaySec>
-		<lineSpacing>0.98</lineSpacing>
+	<lineSpacing>0.98</lineSpacing>
   </control>
   <control>
     <description>default progress control</description>

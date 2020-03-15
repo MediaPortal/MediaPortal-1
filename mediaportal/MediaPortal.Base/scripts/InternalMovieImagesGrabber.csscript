@@ -119,7 +119,7 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
             wc.Dispose();
           }
           // Check if IMDB number on poster page is equal to  IMDB ttnumber, if not-> next link
-          Match ttcheck = Regex.Match(resultImpAw, @"tt\d{7}");
+          Match ttcheck = Regex.Match(resultImpAw, @"tt\d{7,8}");
 
           if (ttcheck.Value != imdbMovieID)
           {
@@ -253,7 +253,7 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
 
             if (!string.IsNullOrEmpty(strBd))
             {
-              strBd = string.Format("http://image.tmdb.org/t/p/w1920/{0}", strBd); // w500 or w1280 or w1920 (image width)
+              strBd = string.Format("http://image.tmdb.org/t/p/original/{0}", strBd); // w500 or w1280 or original (image width)
               fanartList.Add(strBd);
             }
           }

@@ -101,6 +101,8 @@ namespace SetupTv
     [STAThread]
     public static void Main(string[] arguments)
     {
+      // .NET 4.0: Use TLS v1.2. Many download sources no longer support the older and now insecure TLS v1.0/1.1 and SSL v3.
+      ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00;
       // Init Common logger -> this will enable TVPlugin to write in the Mediaportal.log file
       var loggerName = Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
       var dataPath = Log.GetPathName();
@@ -169,8 +171,14 @@ namespace SetupTv
 
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
-      Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
-      Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
+      try
+      {
+        Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
+      } catch (Exception)
+      {
+        Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
+      }
+      //Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
       Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
 
       //Check for unsupported operating systems

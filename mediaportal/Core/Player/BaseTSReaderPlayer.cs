@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -34,6 +34,7 @@ using MediaPortal.Profile;
 using MediaPortal.Player.PostProcessing;
 using System.Collections;
 using System.Collections.Generic;
+using MediaPortal.Player.LAV;
 
 namespace MediaPortal.Player
 {
@@ -205,8 +206,8 @@ namespace MediaPortal.Player
     protected bool CoreCCFilter = false;
     protected bool VideoChange = false;
 
-    protected Dictionary<string, object> PostProcessFilterVideo = new Dictionary<string, object>();
-    protected Dictionary<string, object> PostProcessFilterAudio = new Dictionary<string, object>();
+    protected Dictionary<string, IBaseFilter> PostProcessFilterVideo = new Dictionary<string, IBaseFilter>();
+    protected Dictionary<string, IBaseFilter> PostProcessFilterAudio = new Dictionary<string, IBaseFilter>();
     //protected ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Null);
     //protected ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Null);
 
@@ -214,6 +215,10 @@ namespace MediaPortal.Player
     public FilterCodec filterCodec;
 
     protected object lockObj = new object();
+
+    protected static DateTime ratioTimer;
+
+    protected static bool RatioDetectChange = false;
 
     #endregion
 
@@ -867,13 +872,30 @@ namespace MediaPortal.Player
             {
               if (_basicVideo != null)
               {
-                _basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindowWidth,
+                _basicVideo.SetDestinationPosition(GUIGraphicsContext.VideoWindowWidth, GUIGraphicsContext.VideoWindowHeight, GUIGraphicsContext.VideoWindowWidth,
                   GUIGraphicsContext.VideoWindowHeight);
                 Log.Debug("TsReader: show video window");
               }
             }
           }
         }
+
+        // Keep this code if needed but adding a better hack to fix this "align left top" on playback start
+        //TimeSpan tsRatio = DateTime.Now - ratioTimer;
+        //// Force VideoPosition change after a detected aspect ratio change by delay it by 2 seconds for madVR filter.
+        //if (tsRatio.Seconds >= 5)
+        //{
+        //  if (RatioDetectChange && !GUIGraphicsContext.MadVrOsd)
+        //  {
+        //    RatioDetectChange = false;
+        //    Log.Debug("TSReaderPlayer: Force VideoWindow after aspect ratio detected change");
+        //    // Force VideoWindow to be refreshed with madVR when switching from video size like 16:9 to 4:3
+        //    GUIGraphicsContext.UpdateVideoWindow = true;
+        //    GUIGraphicsContext.VideoWindowChanged();
+        //    // Force a madVR refresh to resize MP window
+        //    g_Player.RefreshMadVrVideo();
+        //  }
+        //}
       }
       else
       {
@@ -1578,6 +1600,8 @@ namespace MediaPortal.Player
 
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
+            // First we need to init rDest.Left and rDest to a fixed value.
+            _basicVideo.SetDestinationPosition(GUIGraphicsContext.RDestLeft, GUIGraphicsContext.RDestTop, rDest.Width, rDest.Height);
             _basicVideo.SetDestinationPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
           }
           else
@@ -1705,6 +1729,11 @@ namespace MediaPortal.Player
           _videoFormat.arY = message.Param5;
           _videoFormat.bitrate = message.Param6;
           _videoFormat.isInterlaced = (message.Param7 == 1);
+          if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            ratioTimer = DateTime.Now;
+            RatioDetectChange = true;
+          }
           Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0}", _videoFormat.ToString());
           break;
       }
@@ -1736,6 +1765,11 @@ namespace MediaPortal.Player
         _videoFormat.arY = aspectRatioY;
         _videoFormat.bitrate = bitrate;
         _videoFormat.isInterlaced = (isInterlaced == 1);
+        if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        {
+          ratioTimer = DateTime.Now;
+          RatioDetectChange = true;
+        }
         Log.Info("TsReaderPlayer: OnVideoFormatChanged - {0} MP main thread", _videoFormat.ToString());
       }
       return 0;
@@ -1873,10 +1907,15 @@ namespace MediaPortal.Player
           }
           DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
 
+          // Clean-post process filter that has been removed from graph
+          PostProcessRemoveVideo();
+          PostProcessRemoveAudio();
+
           try
           {
             var hr = _mediaCtrl.Run();
             DsError.ThrowExceptionForHR(hr);
+
           }
           catch (Exception error)
           {
@@ -1920,9 +1959,24 @@ namespace MediaPortal.Player
               _mediaCtrl.Stop();
               DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
               DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+              // Clean-post process filter that has been removed from graph
+              PostProcessRemoveVideo();
+              PostProcessRemoveAudio();
               _mediaCtrl.Run();
             }
             GUIGraphicsContext.CurrentAudioRendererDone = true;
+          }
+
+          // When using LAV Audio
+          //Release and init Post Process Filter
+          if (AudioPostEngine.engine != null)
+          {
+            AudioPostEngine.GetInstance().FreePostProcess();
+          }
+          IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+          if (audioEngine != null && !audioEngine.LoadPostProcessing(_graphBuilder))
+          {
+            AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
           }
         }
       }
@@ -1977,17 +2031,48 @@ namespace MediaPortal.Player
             hr = _mediaEvt.FreeEventParams(code, p1, p2);
             if (code == EventCode.Complete || code == EventCode.ErrorAbort)
             {
-              Log.Info("TSReaderPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}", code.ToString(),
-                       p1, p2, p1, p2);
-              MovieEnded();
-
-              // Playback was aborted! No sound driver is available!
-              if (code == EventCode.ErrorAbort && p1 == DSERR_NODRIVER)
+              if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
               {
-                CloseInterfaces();
-                ExclusiveMode(false);
-                _state = PlayState.Ended;
-                Log.Error("TSReaderPlayer: No sound driver is available!");
+                try
+                {
+                  Log.Debug("VideoPlayer: EventCode.Complete: {0}", Enum.GetName(typeof(EventCode), code));
+                  Log.Debug("VideoPlayer: VMR9Util.g_vmr9.playbackTimer {0}", VMR9Util.g_vmr9.playbackTimer);
+                  if (VMR9Util.g_vmr9.playbackTimer.Second != 0)
+                  {
+                    Log.Info("TSReaderPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}", code.ToString(),
+                      p1, p2, p1, p2);
+                    MovieEnded();
+
+                    // Playback was aborted! No sound driver is available!
+                    if (code == EventCode.ErrorAbort && p1 == DSERR_NODRIVER)
+                    {
+                      CloseInterfaces();
+                      ExclusiveMode(false);
+                      _state = PlayState.Ended;
+                      Log.Error("TSReaderPlayer: No sound driver is available!");
+                    }
+                  }
+                }
+                catch (Exception ex)
+                {
+                  Log.Error("TSReaderPlayer: OnGraphNotify exception: {0}", ex);
+                }
+              }
+
+              if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+              {
+                Log.Info("TSReaderPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}", code.ToString(),
+                  p1, p2, p1, p2);
+                MovieEnded();
+
+                // Playback was aborted! No sound driver is available!
+                if (code == EventCode.ErrorAbort && p1 == DSERR_NODRIVER)
+                {
+                  CloseInterfaces();
+                  ExclusiveMode(false);
+                  _state = PlayState.Ended;
+                  Log.Error("TSReaderPlayer: No sound driver is available!");
+                }
               }
             }
             //else
@@ -2109,6 +2194,10 @@ namespace MediaPortal.Player
     protected virtual void PostProcessAddVideo() { }
 
     protected virtual void PostProcessAddAudio() { }
+
+    protected virtual void PostProcessRemoveVideo() { }
+
+    protected virtual void PostProcessRemoveAudio() { }
 
     protected virtual void MPAudioSwitcherAdd() { }
 
@@ -2316,6 +2405,13 @@ namespace MediaPortal.Player
         //Add Post Process Audio Codec
         PostProcessAddAudio();
 
+        // When using LAV Audio
+        //Release and init Post Process Filter
+        if (AudioPostEngine.engine != null)
+        {
+          AudioPostEngine.GetInstance().FreePostProcess();
+        }
+
         //Add Audio Codec
         if (filterCodec.AudioCodec != null)
         {
@@ -2323,6 +2419,13 @@ namespace MediaPortal.Player
           filterCodec.AudioCodec = null;
         }
         filterCodec.AudioCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
+
+        // Init Audio delay for LAV Audio
+        IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+        if (audioEngine != null && !audioEngine.LoadPostProcessing(_graphBuilder))
+        {
+          AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
+        }
       }
     }
 

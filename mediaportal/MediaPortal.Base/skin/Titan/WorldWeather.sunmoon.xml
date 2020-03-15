@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+
+  <controls>
+
+    <!-- :: Sun :: -->
+
+    <control>
+      <type>group</type>
+      <description>Sun Icon</description>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <width>410</width>
+      <height>30</height>
+      <posX>100</posX>
+      <posY>640</posY>
+      <dimColor>ffffffff</dimColor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+
+      <control>
+        <description>Current Sunset Image</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <valign>middle</valign>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Weather\Sun\Sunset.png</texture>
+        <visible>!string.equals(#WorldWeather.LocationSunsetTime,)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+      </control>
+
+      <control>
+        <description>Current Sunrise Image</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <valign>middle</valign>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Weather\Sun\Sunrise.png</texture>
+        <visible>!string.equals(#WorldWeather.LocationSunriseTime,)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+      </control>
+    </control>
+
+    <control>
+      <type>group</type>
+      <description>Sun Label</description>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <width>410</width>
+      <height>30</height>
+      <posX>135</posX>
+      <posY>643</posY>
+      <dimColor>ffffffff</dimColor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+
+      <control>
+        <description>Current Sunrise Label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationSunrise</label>
+        <font>font1</font>
+        <height>30</height>
+        <textcolor>00b7ff</textcolor>
+        <width>100</width>
+        <visible>!string.equals(#WorldWeather.LocationSunriseTime,)</visible>
+      </control>
+
+      <control>
+        <description>Current Sunset Label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationSunset</label>
+        <font>font1</font>
+        <height>30</height>
+        <width>100</width>
+        <textcolor>00b7ff</textcolor>
+        <visible>!string.equals(#WorldWeather.LocationSunsetTime,)</visible>
+      </control>
+    </control>
+
+    <control>
+      <type>group</type>
+      <description>Sun Value</description>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <width>410</width>
+      <height>30</height>
+      <posX>230</posX>
+      <posY>643</posY>
+      <dimColor>ffffffff</dimColor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+
+      <control>
+        <description>Current Sunrise Value</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationSunriseTime</label>
+        <font>font1</font>
+        <height>30</height>
+        <width>70</width>
+        <visible>!string.equals(#WorldWeather.LocationSunriseTime,)</visible>
+      </control>
+
+      <control>
+        <description>Current Sunset Value</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationSunsetTime</label>
+        <font>font1</font>
+        <height>30</height>
+        <width>70</width>
+        <visible>!string.equals(#WorldWeather.LocationSunsetTime,)</visible>
+      </control>
+    </control>
+
+    <!-- :: Moon :: -->
+
+    <control>
+      <type>group</type>
+      <description>Moon Icon</description>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <width>410</width>
+      <height>30</height>
+      <posX>335</posX>
+      <posY>640</posY>
+      <dimColor>ffffffff</dimColor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+
+      <control>
+        <description>Current Moonrise Image</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <valign>middle</valign>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Weather\Moon\Moonrise.png</texture>
+        <visible>!string.equals(#WorldWeather.LocationSunsetTime,)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+      </control>
+
+      <control>
+        <description>Current MoonSet Image</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <valign>middle</valign>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Weather\Moon\Moonset.png</texture>
+        <visible>!string.equals(#WorldWeather.LocationSunriseTime,)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+      </control>
+
+      <control>
+        <description>Current MoonPhase Value</description>
+        <type>label</type>
+        <id>0</id>
+        <label></label>
+        <font>font1</font>
+        <height>30</height>
+        <width>300</width>
+        <visible>!string.equals(#WorldWeather.LocationMoonPhase,)</visible>
+      </control>
+
+      <control>
+        <description>Current MoonPhase Value</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationMoonPhase</label>
+        <font>font1</font>
+        <align>center</align>
+        <height>30</height>
+        <width>250</width>
+        <visible>!string.equals(#WorldWeather.LocationMoonPhase,)</visible>
+      </control>
+    </control>
+
+    <control>
+      <type>group</type>
+      <description>Moon Label</description>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <width>410</width>
+      <height>32</height>
+      <posX>370</posX>
+      <posY>643</posY>
+      <dimColor>ffffffff</dimColor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <control>
+        <description>Current Moonrise Label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationMoonrise</label>
+        <font>font1</font>
+        <height>30</height>
+        <width>200</width>
+        <textcolor>00b7ff</textcolor>
+        <visible>!string.equals(#WorldWeather.LocationMoonriseTime,)</visible>
+      </control>
+
+      <control>
+        <description>Current MoonSet Label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationMoonset</label>
+        <font>font1</font>
+        <height>30</height>
+        <width>200</width>
+        <textcolor>00b7ff</textcolor>
+        <visible>!string.equals(#WorldWeather.LocationMoonsetTime,)</visible>
+      </control>
+    </control>
+
+    <!-- :: Moon Phase :: -->
+
+    <control>
+      <description>Current MoonPhase Image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>350</posX>
+      <posY>700</posY>
+      <width>215</width>
+      <height>30</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Weather\Moon\#(switch(eq(string.contains(#WorldWeather.LocationMoonPhaseImage,'0.png'),'true'),'0', eq(string.contains(#WorldWeather.LocationMoonPhaseImage,'1.png'),'true'),'1', eq(string.contains(#WorldWeather.LocationMoonPhaseImage,'2.png'),'true'),'2', eq(string.contains(#WorldWeather.LocationMoonPhaseImage,'3.png'),'true'),'3', eq(string.contains(#WorldWeather.LocationMoonPhaseImage,'4.png'),'true'),'4', eq(string.contains(#WorldWeather.LocationMoonPhaseImage,'5.png'),'true'),'5', eq(string.contains(#WorldWeather.LocationMoonPhaseImage,'6.png'),'true'),'6', eq(string.contains(#WorldWeather.LocationMoonPhaseImage,'7.png'),'true'),'7', eq(1,1),'-')).png</texture>
+      <visible>!string.equals(#WorldWeather.LocationMoonPhaseImage,)+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250" start="100" end="50" condition="true">conditional</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <type>group</type>
+      <description>Moon Value</description>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <width>410</width>
+      <height>30</height>
+      <posX>500</posX>
+      <posY>643</posY>
+      <dimColor>ffffffff</dimColor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+
+      <control>
+        <description>Current Moonrise Value</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationMoonriseTime</label>
+        <font>font1</font>
+        <height>30</height>
+        <width>70</width>
+        <visible>!string.equals(#WorldWeather.LocationMoonriseTime,)</visible>
+      </control>
+
+      <control>
+        <description>Current Moonset Value</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationMoonsetTime</label>
+        <font>font1</font>
+        <height>30</height>
+        <width>70</width>
+        <visible>!string.equals(#WorldWeather.LocationMoonsetTime,)</visible>
+      </control>
+    </control>
+
+  </controls>
+</window>

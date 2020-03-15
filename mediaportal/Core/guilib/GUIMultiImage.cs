@@ -449,12 +449,14 @@ namespace MediaPortal.GUI.Library
           }
         }
           // If there was some other error accessing the folder, exit
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException ex)
         {
+          Log.Warn("GUIMultiImage: LoadDirectory {0}", ex.Message);
           return;
         }
-        catch (IOException)
+        catch (IOException ex)
         {
+          Log.Warn("GUIMultiImage: LoadDirectory {0}", ex.Message);
           return;
         }
       }

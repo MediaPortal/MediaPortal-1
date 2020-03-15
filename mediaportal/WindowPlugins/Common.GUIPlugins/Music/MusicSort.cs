@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -56,7 +56,8 @@ namespace MediaPortal.GUI.Music
       Year = 11, // Used Internally, when Sorting by Date is selected from GUI and Year defined as DefaultSort
       DiscID = 12,
       Composer = 13,
-      TimesPlayed = 14
+      TimesPlayed = 14,
+      FileType = 15
     }
 
     public int Compare(GUIListItem item1, GUIListItem item2)
@@ -326,13 +327,14 @@ namespace MediaPortal.GUI.Music
           }
 
         case SortMethod.AlbumArtist:
+          // sort by AlbumArtist => Album
           if (tag1 != null)
           {
-            strAlbumArtist1 = tag1.AlbumArtist;
+            strAlbumArtist1 = tag1.AlbumArtist + " - " + tag1.Album;
           }
           if (tag2 != null)
           {
-            strAlbumArtist2 = tag2.AlbumArtist;
+            strAlbumArtist2 = tag2.AlbumArtist + " - " + tag2.Album;
           }
           if (bAscending)
           {
@@ -462,6 +464,29 @@ namespace MediaPortal.GUI.Music
           else
           {
             return iTimesPlayed2.CompareTo(iTimesPlayed1);
+          }
+
+        case SortMethod.FileType:
+          // sort by FileType => Album
+          string strFileType1 = "";
+          string strFileType2 = "";
+
+          if (tag1 != null)
+          {
+            strFileType1 = tag1.FileType + " - " + tag1.Album;
+          }
+          if (tag2 != null)
+          {
+            strFileType2 = tag2.FileType + " - " + tag2.Album;
+          }
+
+          if (bAscending)
+          {
+            return Util.StringLogicalComparer.Compare(strFileType1, strFileType2);
+          }
+          else
+          {
+            return Util.StringLogicalComparer.Compare(strFileType2, strFileType1);
           }
 
       }

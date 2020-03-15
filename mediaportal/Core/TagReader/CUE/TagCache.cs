@@ -22,7 +22,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MediaInfo;
 using MediaPortal.Player;
+using MediaPortal.Services;
+using MediaPortal.Util;
 
 namespace MediaPortal.TagReader
 {
@@ -92,40 +95,28 @@ namespace MediaPortal.TagReader
     {
       try
       {
-        MediaInfo mi = new MediaInfo();
-        mi.Open(fname);
-        FileType = mi.Get(StreamKind.Audio, 0, "Format");
-        Codec = mi.Get(StreamKind.Audio, 0, "Format/Info");
-
-        var bitRateKbps = 0;
-        int.TryParse(mi.Get(StreamKind.Audio, 0, "BitRate"), out bitRateKbps);
-        BitRate = bitRateKbps/1000;
-
-        var durationms = 0;
-        int.TryParse(mi.Get(StreamKind.General, 0, "Duration"), out durationms);
-        Duration = durationms/1000;
-
-        var channelString = mi.Get(StreamKind.Audio, 0, "Channel(s)");
-        var index = channelString.IndexOf("/", StringComparison.Ordinal);
-        if (index > 0)
+        var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
+        var mi = new MediaInfoWrapper(fname, logger);
+        if (!mi.MediaInfoNotloaded)
         {
-          Channels = Int32.Parse(channelString.Substring(0, index - 1));
+          mi.WriteInfo();
+          var audioStream = mi.BestAudioStream;
+          if (audioStream != null)
+          {
+            FileType = audioStream.Format;
+            Codec = audioStream.Codec.ToCodecString();
+            BitRate = (int) (audioStream.Bitrate / 1000);
+            Duration = (int) audioStream.Duration.TotalSeconds;
+            Channels = audioStream.Channel;
+            SampleRate = (int) audioStream.SamplingRate;
+            // TODO: Add bitrate mode
+            BitRateMode = string.Empty;
+          }
         }
-        else
-        {
-          Channels = Int32.Parse(channelString);
-        }
-
-        var samplerate = 0;
-        int.TryParse(mi.Get(StreamKind.Audio, 0, "SamplingRate"), out samplerate);
-        SampleRate = samplerate;
-
-        BitRateMode = mi.Get(StreamKind.Audio, 0, "BitRate_Mode");
-
-        mi.Close();
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        GUI.Library.Log.Error("CueUtil:CueFakeTrackFile2MusicTag {0}", ex.Message);
         return false;
       }
       return true;

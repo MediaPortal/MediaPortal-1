@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -190,8 +190,30 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("NewImageWidth", "Big")] protected int _newImageWidthBig = 0;
     [XMLSkinElement("NewImageHeight")] protected int _newImageHeightLow = 0;
     [XMLSkin("NewImageHeight", "Big")] protected int _newImageHeightBig = 0;
-    [XMLSkinElement("NewImageTexture")] protected string _newImageTexture = "hot.png";
-    [XMLSkinElement("NewImageHotTexture")] protected string _newImageTextureHot = "new.png";
+    [XMLSkinElement("NewImageTexture")] protected string _newImageTexture = "new.png";
+    [XMLSkinElement("NewImageHotTexture")] protected string _newImageTextureHot = "hot.png";
+
+    [XMLSkinElement("show3DImage")] protected bool _show3DImage = false;
+    [XMLSkinElement("Is3DImagePosX")] protected int _is3DImagePosXLow = 0;
+    [XMLSkin("Is3DImagePosX", "Big")] protected int _is3DImagePosXBig = 0;
+    [XMLSkinElement("Is3DImagePosY")] protected int _is3DImagePosYLow = 0;
+    [XMLSkin("Is3DImagePosY", "Big")] protected int _is3DImagePosYBig = 0;
+    [XMLSkinElement("Is3DImageWidth")] protected int _is3DImageWidthLow = 0;
+    [XMLSkin("Is3DImageWidth", "Big")] protected int _is3DImageWidthBig = 0;
+    [XMLSkinElement("Is3DImageHeight")] protected int _is3DImageHeightLow = 0;
+    [XMLSkin("Is3DImageHeight", "Big")] protected int _is3DImageHeightBig = 0;
+    [XMLSkinElement("Is3DImageTexture")] protected string _is3DImageTexture = "is3D.png";
+
+    [XMLSkinElement("showHDRImage")] protected bool _showHDRImage = false;
+    [XMLSkinElement("IsHDRImagePosX")] protected int _isHDRImagePosXLow = 0;
+    [XMLSkin("IsHDRImagePosX", "Big")] protected int _isHDRImagePosXBig = 0;
+    [XMLSkinElement("IsHDRImagePosY")] protected int _isHDRImagePosYLow = 0;
+    [XMLSkin("IsHDRImagePosY", "Big")] protected int _isHDRImagePosYBig = 0;
+    [XMLSkinElement("IsHDRImageWidth")] protected int _isHDRImageWidthLow = 0;
+    [XMLSkin("IsHDRImageWidth", "Big")] protected int _isHDRImageWidthBig = 0;
+    [XMLSkinElement("IsHDRImageHeight")] protected int _isHDRImageHeightLow = 0;
+    [XMLSkin("IsHDRImageHeight", "Big")] protected int _isHDRImageHeightBig = 0;
+    [XMLSkinElement("IsHDRImageTexture")] protected string _isHDRImageTexture = "isHDR.png";
 
     #endregion
 
@@ -214,6 +236,16 @@ namespace MediaPortal.GUI.Library
     private int _newImagePosY = 0;
     private int _newImageWidth = 0;
     private int _newImageHeight = 0;
+
+    private int _is3DImagePosX = 0;
+    private int _is3DImagePosY = 0;
+    private int _is3DImageWidth = 0;
+    private int _is3DImageHeight = 0;
+
+    private int _isHDRImagePosX = 0;
+    private int _isHDRImagePosY = 0;
+    private int _isHDRImageWidth = 0;
+    private int _isHDRImageHeight = 0;
 
     protected int _lowItemHeight;
     protected int _lowItemWidth;
@@ -395,6 +427,16 @@ namespace MediaPortal.GUI.Library
       _newImageWidth = _newImageWidthLow;
       _newImageHeight = _newImageHeightLow;
 
+      _is3DImagePosX = _is3DImagePosXLow;
+      _is3DImagePosY = _is3DImagePosYLow;
+      _is3DImageWidth = _is3DImageWidthLow;
+      _is3DImageHeight = _is3DImageHeightLow;
+
+      _isHDRImagePosX = _isHDRImagePosXLow;
+      _isHDRImagePosY = _isHDRImagePosYLow;
+      _isHDRImageWidth = _isHDRImageWidthLow;
+      _isHDRImageHeight = _isHDRImageHeightLow;
+
       GUIImageAllocator.ClearCachedAllocatorImages();
 
       GUIPropertyManager.SetProperty("#facadeview.focus.X", string.Empty);
@@ -435,6 +477,16 @@ namespace MediaPortal.GUI.Library
                                                      ref _ratingImageWidthBig, ref _ratingImageHeightBig);
       GUIGraphicsContext.ScaleRectToScreenResolution(ref _newImagePosXBig, ref _newImagePosYBig,
                                                      ref _newImageWidthBig, ref _newImageHeightBig);
+
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _is3DImagePosXLow, ref _is3DImagePosYLow,
+                                                     ref _is3DImageWidthLow, ref _is3DImageHeightLow);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _is3DImagePosXBig, ref _is3DImagePosYBig,
+                                                     ref _is3DImageWidthBig, ref _is3DImageHeightBig);
+
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _isHDRImagePosXLow, ref _isHDRImagePosYLow,
+                                                     ref _isHDRImageWidthLow, ref _isHDRImageHeightLow);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _isHDRImagePosXBig, ref _isHDRImagePosYBig,
+                                                     ref _isHDRImageWidthBig, ref _isHDRImageHeightBig);
     }
 
     /// <summary>
@@ -555,6 +607,28 @@ namespace MediaPortal.GUI.Library
         if (_overlayImage != null)
         {
           _overlayList.Add(_overlayImage);
+        }
+      }
+
+      // 5. 3D and HDR images for Movies
+      if ((_show3DImage || _showHDRImage) && pItem.AdditionalData != GUIListItemProperty.None)
+      {
+        if (_show3DImage && (pItem.AdditionalData & GUIListItemProperty.Is3D) == GUIListItemProperty.Is3D)
+          {
+            GUIOverlayImage _overlayImage = new GUIOverlayImage(_is3DImagePosX, _is3DImagePosY, _is3DImageWidth, _is3DImageHeight, _is3DImageTexture);
+            if (_overlayImage != null)
+            {
+              _overlayList.Add(_overlayImage);
+            }
+          }
+
+        if (_showHDRImage && (pItem.AdditionalData & GUIListItemProperty.IsHDR) == GUIListItemProperty.IsHDR)
+          {
+            GUIOverlayImage _overlayImage = new GUIOverlayImage(_isHDRImagePosX, _isHDRImagePosY, _isHDRImageWidth, _isHDRImageHeight, _isHDRImageTexture);
+            if (_overlayImage != null)
+            {
+              _overlayList.Add(_overlayImage);
+          }
         }
       }
 
@@ -2831,6 +2905,16 @@ namespace MediaPortal.GUI.Library
         _newImagePosY = _newImagePosYBig;
         _newImageWidth = _newImageWidthBig;
         _newImageHeight = _newImageHeightBig;
+
+        _is3DImagePosX = _is3DImagePosXBig;
+        _is3DImagePosY = _is3DImagePosYBig;
+        _is3DImageWidth = _is3DImageWidthBig;
+        _is3DImageHeight = _is3DImageHeightBig;
+
+        _isHDRImagePosX = _isHDRImagePosXBig;
+        _isHDRImagePosY = _isHDRImagePosYBig;
+        _isHDRImageWidth = _isHDRImageWidthBig;
+        _isHDRImageHeight = _isHDRImageHeightBig;
       }
       else
       {
@@ -2861,6 +2945,16 @@ namespace MediaPortal.GUI.Library
         _newImagePosY = _newImagePosYLow;
         _newImageWidth = _newImageWidthLow;
         _newImageHeight = _newImageHeightLow;
+
+        _is3DImagePosX = _is3DImagePosXLow;
+        _is3DImagePosY = _is3DImagePosYLow;
+        _is3DImageWidth = _is3DImageWidthLow;
+        _is3DImageHeight = _is3DImageHeightLow;
+
+        _isHDRImagePosX = _isHDRImagePosXLow;
+        _isHDRImagePosY = _isHDRImagePosYLow;
+        _isHDRImageWidth = _isHDRImageWidthLow;
+        _isHDRImageHeight = _isHDRImageHeightLow;
       }
       Calculate();
       _refresh = true;
@@ -3158,7 +3252,10 @@ namespace MediaPortal.GUI.Library
       {
         _listItems.Sort(comparer);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GUIThumbnailPanel Sort: " + ex.Message);
+      }
       _refresh = true;
     }
 

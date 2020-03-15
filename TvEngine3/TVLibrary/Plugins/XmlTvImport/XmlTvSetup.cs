@@ -69,6 +69,10 @@ namespace SetupTv.Sections
       setting.Value = cbImportLST.Checked ? "true" : "false";
       setting.Persist();
 
+      setting = layer.GetSetting("xmlTvNoTextMod", "true");
+      setting.Value = cbNoTextMod.Checked ? "true" : "false";
+      setting.Persist();
+
       setting = layer.GetSetting("xmlTvTimeZoneHours", "0");
       setting.Value = textBoxHours.Text;
       setting.Persist();
@@ -130,6 +134,7 @@ namespace SetupTv.Sections
       checkBox1.Checked = layer.GetSetting("xmlTvUseTimeZone", "false").Value == "true";
       cbImportXML.Checked = layer.GetSetting("xmlTvImportXML", "true").Value == "true";
       cbImportLST.Checked = layer.GetSetting("xmlTvImportLST", "false").Value == "true";
+      cbNoTextMod.Checked = layer.GetSetting("xmlTvNoTextMod", "false").Value == "true";
       checkBoxDeleteBeforeImport.Checked = layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true";
 
       textBoxHours.Text = layer.GetSetting("xmlTvTimeZoneHours", "0").Value;
@@ -261,7 +266,7 @@ namespace SetupTv.Sections
                                                         String.Format(
                                                           "select c.* from Channel c join GroupMap g on c.idChannel=g.idChannel where " +
                                                           (loadRadio ? "" : " c.isTv = 1 and ") +
-                                                          " g.idGroup = '{0}' order by g.sortOrder", chGroup.idGroup),
+                                                          " g.idGroup = '{0}' and c.visibleInGuide = 1 order by g.sortOrder", chGroup.idGroup),
                                                         typeof (Channel));
           channels = ObjectFactory.GetCollection<Channel>(ManualJoinSQL.Execute());
         }
@@ -271,6 +276,7 @@ namespace SetupTv.Sections
           sb.AddOrderByField(true, "sortOrder");
           if (!loadRadio)
             sb.AddConstraint(" isTv = 1");
+          sb.AddConstraint(" visibleInGuide = 1");
           SqlStatement stmt = sb.GetStatement(true);
           channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
         }

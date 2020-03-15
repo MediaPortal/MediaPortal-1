@@ -21,8 +21,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using MediaInfo;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Services;
 
 namespace MediaPortal.TagReader
 {
@@ -276,8 +278,9 @@ namespace MediaPortal.TagReader
             musicTagCache.Duration = tagCache.Duration - cueIndexToIntTime(track.Indices[0]);
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("CueUtil:CueFakeTrackFile2MusicTag {0}", ex.Message);
           // If we end up here this means that we were not able to read the file
           // Most probably because of taglib-sharp not supporting the audio file
           // For example DTS file format has no Tags, but can be replayed by BASS
@@ -309,12 +312,13 @@ namespace MediaPortal.TagReader
         {
           try
           {
-            MediaInfo mi = new MediaInfo();
-            mi.Open(fname);
-            int durationms = 0;
-            int.TryParse(mi.Get(StreamKind.General, 0, "Duration"), out durationms);
-            musicTagCache.Duration = durationms / 1000;
-            mi.Close();
+            var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
+            var mi = new MediaInfoWrapper(fname, logger);
+            if (!mi.MediaInfoNotloaded)
+            {
+              mi.WriteInfo();
+              musicTagCache.Duration = (int?) mi.BestAudioStream?.Duration.TotalSeconds ?? 0;
+            }
           }
           catch (Exception ex1)
           {

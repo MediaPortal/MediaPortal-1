@@ -18,16 +18,24 @@
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
-      <description>Number of Files Label</description>
-      <type>label</type>
-      <id>12</id>
-      <posX>693</posX>
-      <posY>1023</posY>
-      <label>#selectedindex/#itemcount #itemtype</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <id>500</id>
+      <type>image</type>
+      <posX>1485</posX>
+      <posY>270</posY>
+      <width>207</width>
+      <height>207</height>
+      <texture mask="Picturethumbmask.png">#selectedthumb</texture>
+      <visible>[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
       <description>General Overlay</description>
@@ -38,6 +46,9 @@
       <width>1920</width>
       <height>1080</height>
       <texture>general_overlay.png</texture>
+      <colordiffuse>99ffffff</colordiffuse>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
     </control>
     <control>
       <type>actiongroup</type>
@@ -130,111 +141,135 @@
           <label>624</label>
         </control>
       </control>
-      <control>
-        <type>image</type>
-        <posX>693</posX>
-        <posY>712</posY>
-        <width>120</width>
-        <height>109</height>
-        <keepaspectratio>yes</keepaspectratio>
-        <centered>yes</centered>
-        <zoom>no</zoom>
-        <texture>#Radio.Recorded.thumb</texture>
       </control>
       <control>
-        <description>channel</description>
-        <id>0</id>
-        <type>fadelabel</type>
-        <posX>828</posX>
-        <posY>700</posY>
-        <align>left</align>
-        <width>1011</width>
-        <textcolor>ff6FAFE1</textcolor>
-        <label>#Radio.Recorded.Channel</label>
-        <font>font12</font>
-      </control>
-      <control>
-        <description>Current program time</description>
-        <id>14</id>
-        <type>label</type>
-        <posX>828</posX>
-        <posY>742</posY>
-        <width>420</width>
-        <label>#Radio.Recorded.Time</label>
-        <align>left</align>
-        <font>font12</font>
-        <textcolor>ff6FAFE1</textcolor>
-      </control>
-      <control>
-        <description>Current program genre</description>
-        <type>label</type>
-        <id>0</id>
-        <posX>1822</posX>
-        <posY>742</posY>
-        <width>570</width>
-        <label>#Radio.Recorded.Genre</label>
-        <align>right</align>
-        <font>font12</font>
-        <textcolor>FFFFFFFF</textcolor>
-        <visible>!string.equals(#Radio.Recorded.Genre,-)</visible>
-      </control>
-      <control>
-        <description>Current program title</description>
-        <type>fadelabel</type>
-        <id>13</id>
-        <posX>828</posX>
-        <posY>784</posY>
-        <width>996</width>
-        <label>#Radio.Recorded.Title</label>
-        <font>font12</font>
-        <textcolor>FFFFFFFF</textcolor>
-      </control>
-      <control>
-        <description>Description1</description>
-        <type>textboxscrollup</type>
-        <id>15</id>
-        <posX>693</posX>
-        <posY>840</posY>
-        <height>127</height>
-        <width>1132</width>
-        <label>#Radio.Recorded.Description</label>
-        <font>font11</font>
-        <textcolor>FFFFFFFF</textcolor>
-      </control>
+      <description>Seperator</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>120</posX>
+      <posY>637</posY>
+      <width>1710</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>control.hasthumb(500)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <posX>120</posX>
+      <posY>660</posY>
+      <width>90</width>
+      <height>90</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <zoom>no</zoom>
+      <texture>#Radio.Recorded.thumb</texture>
+      <visible>control.hasthumb(500)</visible>
+    </control>
+    <control>
+      <description>channel</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <posX>240</posX>
+      <posY>660</posY>
+      <width>1590</width>
+      <textcolor>ff6FAFE1</textcolor>
+      <label>#Radio.Recorded.Channel  |  #Radio.Recorded.Time  |  #Radio.Recorded.Genre</label>
+      <font>font12</font>
+      <visible>control.hasthumb(500)</visible>
+    </control>
+    <control>
+      <description>Program Title</description>
+      <id>14</id>
+      <type>fadelabel</type>
+      <posX>240</posX>
+      <posY>697</posY>
+      <width>1590</width>
+      <label>#Radio.Recorded.Title</label>
+      <align>left</align>
+      <font>font14</font>
+      <textcolor>ivory</textcolor>
+      <visible>control.hasthumb(500)</visible>
+    </control>
+    <control>
+      <description>Current program Genre</description>
+      <type>fadelabel</type>
+      <id>13</id>
+      <posX>3828</posX>
+      <posY>849</posY>
+      <width>1020</width>
+      <label>#Radio.Recorded.Genre</label>
+      <font>font10</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>!string.equals(#Radio.Recorded.Genre,-)</visible>
+    </control>
+    <control>
+      <description>Description1</description>
+      <type>textboxscrollup</type>
+      <id>15</id>
+      <posX>240</posX>
+      <posY>747</posY>
+      <width>1590</width>
+      <height>137</height>
+      <label>#Radio.Recorded.Description</label>
+      <font>font10</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>control.hasthumb(500)</visible>
     </control>
     <import>common.facade.recordings.xml</import>
     <control>
-      <id>1</id>
-      <type>image</type>
-      <posX>1485</posX>
-      <posY>270</posY>
-      <width>322</width>
-      <height>303</height>
-      <texture mask="cdthumbmask.png">missing_coverart_radio.png</texture>
-      <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
-    </control>
-    <control>
-      <id>500</id>
-      <type>image</type>
-      <posX>1485</posX>
-      <posY>270</posY>
-      <width>322</width>
-      <height>303</height>
-      <texture mask="cdthumbmask.png">#selectedthumb</texture>
-      <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
-    </control>
-    <control>
+      <description>BG for watched count/watched percent</description>
       <type>image</type>
       <id>1</id>
-      <posX>1485</posX>
-      <posY>270</posY>
-      <width>322</width>
-      <height>303</height>
-      <texture>cdthumbframe.png</texture>
-      <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <posX>1492</posX>
+      <posY>517</posY>
+      <width>97</width>
+      <height>90</height>
+      <texture>watched_BG.png</texture>
+      <visible>facadeview.list+!string.equals(#watchedcount,)+control.hasthumb(500)</visible>
     </control>
+    <control>
+      <description>Video Watched Count Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1501</posX>
+      <posY>527</posY>
+      <width>75</width>
+      <height>75</height>
+      <label>#watchedcount</label>
+      <font>Label</font>
+      <align>center</align>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>facadeview.list+!string.equals(#watchedcount,)+control.hasthumb(500)</visible>
+    </control>
+    <control>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1500</posX>
+      <posY>525</posY>
+      <width>80</width>
+      <height>80</height>
+      <texture>watched_#(string.format('{0:000}',mul(math.round(div(cint(#watchedpercent),5)),5))).png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>facadeview.list+!string.equals(#watchedcount,)+control.hasthumb(500)</visible>
+    </control>
+    <control>
+      <description>No recordings available</description>
+      <id>0</id>
+      <type>label</type>
+      <posX>0</posX>
+      <posY>500</posY>
+      <width>1920</width>
+      <textcolor>ff6FAFE1</textcolor>
+      <label>769</label>
+      <font>font20</font>
+      <align>center</align>
+      <visible>!control.hasthumb(500)</visible>
+    </control>
+    
+    
+    
+    
   </controls>
 </window>

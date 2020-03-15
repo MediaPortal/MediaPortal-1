@@ -600,8 +600,9 @@ namespace MediaPortal.TagReader
                 retry = true;
               }
             }
-            catch (ArgumentException)
+            catch (ArgumentException ex)
             {
+              Log.Debug("Utils:GetImageFile: {0}", ex.Message);
               retry = true;
             }
 
@@ -623,8 +624,9 @@ namespace MediaPortal.TagReader
           var fi = new FileInfo(fileSavePath);
           return (fi.Length > 0) ? fileSavePath : String.Empty;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("Utils:GetImageFile {0}", ex.Message);
           return String.Empty;
         }
       }

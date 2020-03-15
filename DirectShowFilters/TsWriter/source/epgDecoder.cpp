@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2018 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -24,18 +24,29 @@
 #include <bdatypes.h>
 #include <time.h>
 #include "epgdecoder.h"
-//#include "crc.h"
 #include "autostring.h"
 #include "entercriticalsection.h"
 #include "DN_EIT_Helper.h"
 #include "..\..\shared\dvbutil.h"
-#include "FreesatHuffmanTables.h"
+#include "TextUtil.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 
 #define S_FINISHED (S_OK+1)
+
+//PIDs and ONIDs for TV services (possibly) 
+//using UK-compatible Huffman text encoding.
 #define PID_FREESAT_EPG 0xBBA
 #define PID_FREESAT2_EPG 0xBBB
+
+#define ONID_UK_BBC 0x3B
+#define ONID_UK_DTT 0x233A
+
+#define ONID_NZ_SKY_SAT 0xA9
+#define ONID_NZ_TVNZ 0x2F
+#define ONID_NZ_DTT 0x222A
+#define ONID_NZ_SKY_DTT 0x2B00
+
 
 CEpgDecoder::CEpgDecoder()
 {
@@ -44,6 +55,7 @@ CEpgDecoder::CEpgDecoder()
   m_bEpgDone=false;
   m_bSorted=FALSE;
   m_epgTimeout=time(NULL);
+  //LogDebug("CEpgDecoder::ctor, NoGeneralInGenre = %d", CRegistryUtil::m_bNoGeneralInGenre);
 }
 CEpgDecoder::~CEpgDecoder()
 {
@@ -615,8 +627,8 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 			{
 
 				CAutoString buffer2 (item_length*4);
-				getString468A(&data[pointer+1], item_length, buffer2.GetBuffer(), item_length*4);
-				item = buffer2.GetBuffer();
+				int out_len = DvbTextToString(&data[pointer+1], item_length, buffer2.GetBuffer(), item_length*4, false);
+				item = buffer2.GetBuffer(out_len);
 			}
 
 			pointer += (1 + item_length);
@@ -636,8 +648,8 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 		if (text_length>0)
 		{
 			CAutoString buffer (text_length*4);
-			getString468A(&data[pointer], text_length, buffer.GetBuffer(), text_length*4);
-			text = buffer.GetBuffer();
+			int out_len = DvbTextToString(&data[pointer], text_length, buffer.GetBuffer(), text_length*4, false);
+			text = buffer.GetBuffer(out_len);
 		}
 
 		//find language...
@@ -745,22 +757,10 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 				LogDebug("*** DecodeShortEventDescriptor: check1: %d %d",event_len,descriptor_len);
 				return;
 			}
-
-			// 0x1f is tag for freesat/freeview huffman encoding
-			// buf[7] - huffman table id. Including this reduces the chance of non encoded
-			// text being sent through
-
-			if(buf[6]==0x1f && CanDecodeNetworkOrPID(NetworkID, PID))
-			{
-				eventText=FreesatHuffmanToString(&buf[6],event_len);
-			}
-			else
-			{
-				CAutoString buffer(event_len*4);
-				getString468A(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
-				eventText=buffer.GetBuffer();
-			}
-			//		LogDebug("  event:%s",eventText.c_str());
+			CAutoString buffer(event_len*4);
+			int out_len = DvbTextToString(&buf[6],event_len,buffer.GetBuffer(), event_len*4, IsHuffmanNetworkOrPID(NetworkID, PID));
+			eventText=buffer.GetBuffer(out_len);
+		  //LogDebug("  eventText, inLen:%d, outLen:%d, outStr:%s, outHex:0x%s",event_len, out_len, eventText.c_str(), hexStr(eventText));
 		}
 		else if (event_len<0)
 		{
@@ -791,22 +791,10 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 				LogDebug("*** DecodeShortEventDescriptor: check2: %d %d",event_len,descriptor_len);
 				return;
 			}
-			// Check if huffman encoded.
-			// 0x1f is tag for freesat/freeview huffman encoding
-			// off+2 - huffman table id. Including this reduces the chance of non encoded
-			// text being sent through
-			if(buf[off+1]==0x1f && CanDecodeNetworkOrPID(NetworkID, PID))
-			{
-				eventDescription=FreesatHuffmanToString(&buf[off+1],text_len);
-			}
-			else
-			{
-				CAutoString buffer (text_len*4);
-			  getString468A(&buf[off+1],text_len,buffer.GetBuffer(), text_len*4);
-				eventDescription=buffer.GetBuffer();
-			}
-
-			//		LogDebug("  text:%s",eventDescription.c_str() );
+			CAutoString buffer (text_len*4);
+		  int out_len = DvbTextToString(&buf[off+1],text_len,buffer.GetBuffer(), text_len*4, IsHuffmanNetworkOrPID(NetworkID, PID));
+			eventDescription=buffer.GetBuffer(out_len);
+		  //LogDebug("  eventDescription, inLen:%d, outLen:%d, outStr:%s, outHex:0x%s",text_len, out_len, eventDescription.c_str(), hexStr(eventDescription));				
 		}
 		else if (text_len<0)
 		{
@@ -896,7 +884,9 @@ void CEpgDecoder::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 			nibble=(content_nibble_level_1 << 8) | content_nibble_level_2;
 			switch(nibble)
 			{
-				case 0x0100: strcpy(genreText,"movie/drama (general)" );break;
+				case 0x0100: CRegistryUtil::m_bNoGeneralInGenre ? 
+            				    strcpy(genreText,"movie/drama" ) : 
+            				    strcpy(genreText,"movie/drama (general)" );break;
 				case 0x0101: strcpy(genreText,"detective/thriller" );break;
 				case 0x0102: strcpy(genreText,"adventure/western/war" );break;
 				case 0x0103: strcpy(genreText,"science fiction/fantasy/horror" );break;
@@ -910,7 +900,9 @@ void CEpgDecoder::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 				case 0x010F: strcpy(genreText,"user defined" );break;
 
 					// News Current Affairs
-				case 0x0200: strcpy(genreText,"news/current affairs (general)" );break;
+				case 0x0200: CRegistryUtil::m_bNoGeneralInGenre ? 
+            				    strcpy(genreText,"news/current affairs" ) : 
+            				    strcpy(genreText,"news/current affairs (general)" );break;
 				case 0x0201: strcpy(genreText,"news/weather report" );break;
 				case 0x0202: strcpy(genreText,"news magazine" );break;
 				case 0x0203: strcpy(genreText,"documentary" );break;
@@ -919,7 +911,9 @@ void CEpgDecoder::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 				case 0x020F: strcpy(genreText,"user defined" );break;
 
 					// Show Games show
-				case 0x0300: strcpy(genreText,"show/game show (general)" );break;
+				case 0x0300: CRegistryUtil::m_bNoGeneralInGenre ? 
+            				    strcpy(genreText,"show/game show" ) : 
+            				    strcpy(genreText,"show/game show (general)" );break;
 				case 0x0301: strcpy(genreText,"game show/quiz/contest" );break;
 				case 0x0302: strcpy(genreText,"variety show" );break;
 				case 0x0303: strcpy(genreText,"talk show" );break;
@@ -927,7 +921,9 @@ void CEpgDecoder::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 				case 0x030F: strcpy(genreText,"user defined" );break;
 
 					// Sports
-				case 0x0400: strcpy(genreText,"sports (general)" );break;
+				case 0x0400: CRegistryUtil::m_bNoGeneralInGenre ? 
+            				    strcpy(genreText,"sports" ) : 
+            				    strcpy(genreText,"sports (general)" );break;
 				case 0x0401: strcpy(genreText,"special events" );break;
 				case 0x0402: strcpy(genreText,"sports magazine" );break;
 				case 0x0403: strcpy(genreText,"football/soccer" );break;
@@ -943,7 +939,9 @@ void CEpgDecoder::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 				case 0x040F: strcpy(genreText,"user defined" );break;
 
 					// Children/Youth
-				case 0x0500: strcpy(genreText,"childrens's/youth program (general)" );break;
+				case 0x0500: CRegistryUtil::m_bNoGeneralInGenre ? 
+            				    strcpy(genreText,"childrens's/youth program" ) : 
+            				    strcpy(genreText,"childrens's/youth program (general)" );break;
 				case 0x0501: strcpy(genreText,"pre-school children's program" );break;
 				case 0x0502: strcpy(genreText,"entertainment (6-14 year old)" );break;
 				case 0x0503: strcpy(genreText,"entertainment (10-16 year old)" );break;
@@ -952,7 +950,9 @@ void CEpgDecoder::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 				case 0x050E: strcpy(genreText,"reserved" );break;
 				case 0x050F: strcpy(genreText,"user defined" );break;
 
-				case 0x0600: strcpy(genreText,"music/ballet/dance (general)" );break;
+				case 0x0600: CRegistryUtil::m_bNoGeneralInGenre ? 
+            				    strcpy(genreText,"music/ballet/dance" ) : 
+            				    strcpy(genreText,"music/ballet/dance (general)" );break;
 				case 0x0601: strcpy(genreText,"rock/pop" );break;
 				case 0x0602: strcpy(genreText,"serious music/classic music" );break;
 				case 0x0603: strcpy(genreText,"folk/traditional music" );break;
@@ -962,7 +962,9 @@ void CEpgDecoder::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 				case 0x060E: strcpy(genreText,"reserved" );break;
 				case 0x060F: strcpy(genreText,"user defined" );break;
 
-				case 0x0700: strcpy(genreText,"arts/culture (without music, general)" );break;
+				case 0x0700: CRegistryUtil::m_bNoGeneralInGenre ? 
+            				    strcpy(genreText,"arts/culture (without music)" ) : 
+            				    strcpy(genreText,"arts/culture (without music, general)" );break;
 				case 0x0701: strcpy(genreText,"performing arts" );break;
 				case 0x0702: strcpy(genreText,"fine arts" );break;
 				case 0x0703: strcpy(genreText,"religion" );break;
@@ -977,14 +979,18 @@ void CEpgDecoder::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 				case 0x070E: strcpy(genreText,"reserved" );break;
 				case 0x070F: strcpy(genreText,"user defined" );break;
 
-				case 0x0800: strcpy(genreText,"social/political issues/economics (general)" );break;
+				case 0x0800: CRegistryUtil::m_bNoGeneralInGenre ? 
+            				    strcpy(genreText,"social/political issues/economics" ) : 
+            				    strcpy(genreText,"social/political issues/economics (general)" );break;
 				case 0x0801: strcpy(genreText,"magazines/reports/documentary" );break;
 				case 0x0802: strcpy(genreText,"economics/social advisory" );break;
 				case 0x0803: strcpy(genreText,"remarkable people" );break;
 				case 0x080E: strcpy(genreText,"reserved" );break;
 				case 0x080F: strcpy(genreText,"user defined" );break;
 
-				case 0x0900: strcpy(genreText,"education/science/factual topics (general)" );break;
+				case 0x0900: CRegistryUtil::m_bNoGeneralInGenre ? 
+            				    strcpy(genreText,"education/science/factual topics" ) : 
+            				    strcpy(genreText,"education/science/factual topics (general)" );break;
 				case 0x0901: strcpy(genreText,"nature/animals/environment" );break;
 				case 0x0902: strcpy(genreText,"technology/natural science" );break;
 				case 0x0903: strcpy(genreText,"medicine/physiology/psychology" );break;
@@ -994,7 +1000,10 @@ void CEpgDecoder::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 				case 0x0907: strcpy(genreText,"languages" );break;
 				case 0x090E: strcpy(genreText,"reserved" );break;
 				case 0x090F: strcpy(genreText,"user defined" );break;
-				case 0x0A00: strcpy(genreText,"leisure hobbies (general)" );break;
+				  
+				case 0x0A00: CRegistryUtil::m_bNoGeneralInGenre ? 
+            				    strcpy(genreText,"leisure hobbies" ) : 
+            				    strcpy(genreText,"leisure hobbies (general)" );break;
 				case 0x0A01: strcpy(genreText,"tourism/travel" );break;
 				case 0x0A02: strcpy(genreText,"handicraft" );break;
 				case 0x0A03: strcpy(genreText,"motoring" );break;
@@ -1028,91 +1037,6 @@ void CEpgDecoder::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 	}	
 }
 
-string CEpgDecoder::FreesatHuffmanToString(BYTE *src, int size)
-{
-  string uncompressed;
-  int j,k;
-  unsigned char *data;
-  int uncompressed_size = 0x102;
-  int u;
-  int bit;
-  short offset;
-  unsigned short *base;
-  unsigned char *next_node;
-  unsigned char node;
-  unsigned char prevc;
-  unsigned char nextc;
-
-  if (src[1] == 1 || src[1] == 2) 
-  {
-    if (src[1] == 1) 
-    {
-      data = raw_huffman_data1;
-    }
-    else 
-    {
-      data = raw_huffman_data2;
-    }
-    src += 2;
-    j = 0;
-    u = 0;
-    prevc = START;
-    do
-    {
-      offset = bitrev16(((unsigned short *)data)[prevc]);
-      base = (unsigned short *)&data[offset];
-      node = 0;
-      do
-      {
-        bit = (src[j>>3] >> (7-(j&7))) & 1;
-        j++;
-        next_node = (unsigned char *)&base[node];
-        node = next_node[bit];
-      }
-      while ((next_node[bit] & 0x80) == 0);
-      nextc = next_node[bit] ^ 0x80;
-      if (nextc == 0x1b)
-      {
-        do
-        {
-          nextc = 0;
-          for (k=0; k<8; k++)
-          {
-            bit = (src[j>>3] >> (7-(j&7))) & 1;
-            nextc = (nextc <<1) | bit;
-            j++;
-          }
-          if (u >= uncompressed_size)
-          {
-            return 0;
-          }
-          uncompressed.append(1,nextc);
-        }
-        while (nextc & 0x80);
-      }
-      else
-      {
-        if (u >= uncompressed_size)
-        {
-          LogDebug("need realloc, uncompressed_size=%d", uncompressed_size);
-          return uncompressed;
-        }
-        uncompressed.append(1,nextc);
-      }
-      prevc = nextc;
-    }
-    while(nextc != STOP);
-    prevc = nextc;
-    uncompressed.append(1,'\0');
-    return uncompressed;
-  }
-  else
-  {
-    LogDebug("bad huffman table, %d, only support for 1, 2", src[0]);
-    return uncompressed;
-  }
-  return uncompressed;
-}
 
 void CEpgDecoder::ResetEPG()
 {
@@ -1157,14 +1081,28 @@ bool CEpgDecoder::IsEPGGrabbing()
 	return m_bParseEPG;
 }
 
-bool CEpgDecoder::CanDecodeNetworkOrPID(int NetworkID, int PID)
+bool CEpgDecoder::IsHuffmanNetworkOrPID(int NetworkID, int PID)
 {
-	if(NetworkID == 9018 || NetworkID == 59 || PID==PID_FREESAT_EPG || PID==PID_FREESAT2_EPG)
+	bool result = false;
+	switch(PID)
 	{
-		return true;
+	  case PID_FREESAT_EPG  : result = true; break;
+	  case PID_FREESAT2_EPG : result = true; break;
+	  default:
+    	switch(NetworkID)
+    	{
+    	  case ONID_UK_DTT     : result = true; break;
+    	  case ONID_UK_BBC     : result = true; break;
+    	  case ONID_NZ_DTT     : result = true; break;
+    	  case ONID_NZ_TVNZ    : result = true; break;
+    	  case ONID_NZ_SKY_SAT : result = true; break;
+    	  case ONID_NZ_SKY_DTT : result = true; break;
+    	}
+    	break;
 	}
-	return false;
+	return result;
 }
+
 bool CEpgDecoder::IsEPGReady()
 {
 	return m_bEpgDone;

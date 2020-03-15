@@ -1795,7 +1795,10 @@ namespace MediaPortal.GUI.Pictures
           {
             thumbCreationPaths.Remove(aPath);
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("GUIPictures: CheckPathForHistory {0}", ex.Message);
+          }
         }
         //Log.Debug("GUIPictures: MissingThumbCacher already working on path {0}", aPath);
         return false;
@@ -2062,10 +2065,10 @@ namespace MediaPortal.GUI.Pictures
                                              {
                                                GetThumbnailfile(ref item);
                                              }
-                                             catch (Exception)
+                                             catch (Exception ex)
                                              {
                                                Log.Error(
-                                                 "GUIPictures - Error loading next item (OnRetrieveThumbnailFiles)");
+                                                 "GUIPictures - Error loading next item (OnRetrieveThumbnailFiles) {0}", ex.Message);
                                              }
                                            });
           }
@@ -2424,7 +2427,7 @@ namespace MediaPortal.GUI.Pictures
     private void OnShowPicture(string strFile)
     {
       // Stop video playback before starting show picture to avoid MP freezing
-      if (g_Player.MediaInfo != null && g_Player.MediaInfo.hasVideo || g_Player.IsTV || g_Player.IsVideo)
+      if (g_Player.MediaInfo != null && g_Player.MediaInfo.HasVideo || g_Player.IsTV || g_Player.IsVideo)
       {
         g_Player.Stop();
       }
@@ -2497,7 +2500,7 @@ namespace MediaPortal.GUI.Pictures
     private void OnSlideShowRecursive()
     {
       // Stop video playback before starting show picture to avoid MP freezing
-      if (g_Player.MediaInfo != null && g_Player.MediaInfo.hasVideo || g_Player.IsTV || g_Player.IsVideo)
+      if (g_Player.MediaInfo != null && g_Player.MediaInfo.HasVideo || g_Player.IsTV || g_Player.IsVideo)
       {
         g_Player.Stop();
       }
@@ -2541,7 +2544,7 @@ namespace MediaPortal.GUI.Pictures
     private void OnSlideShow (string strFile)
     {
       // Stop video playback before starting show picture to avoid MP freezing
-      if (g_Player.MediaInfo != null && g_Player.MediaInfo.hasVideo || g_Player.IsTV || g_Player.IsVideo)
+      if (g_Player.MediaInfo != null && g_Player.MediaInfo.HasVideo || g_Player.IsTV || g_Player.IsVideo)
       {
         g_Player.Stop();
       }
@@ -3247,9 +3250,9 @@ namespace MediaPortal.GUI.Pictures
                 item.FileInfo = new FileInformation(pic, false);
                 facadeLayout.Add(item);
               }
-              catch (Exception)
+              catch (Exception ex)
               {
-                Log.Warn("GUIPictures: There is no file for this database entry: {0}", item.Path);
+                Log.Warn("GUIPictures: There is no file for this database entry: {0} {1}", item.Path, ex.Message);
               }
             }
           }
@@ -3303,9 +3306,9 @@ namespace MediaPortal.GUI.Pictures
                   return selectedItem;
                 }
               }
-              catch (Exception)
+              catch (Exception ex)
               {
-                Log.Warn("GUIPictures: can't match item in date view");
+                Log.Warn("GUIPictures: can't match item in date view {0}", ex.Message);
               }
             }
           }
@@ -3349,9 +3352,9 @@ namespace MediaPortal.GUI.Pictures
                       return selectedItem;
                     }
                   }
-                  catch (Exception)
+                  catch (Exception ex)
                   {
-                    Log.Warn("GUIPictures: can't match item in date view");
+                    Log.Warn("GUIPictures: can't match item in date view {0}", ex.Message);
                     returnFromSlideshow = false;
                   }
                 }
@@ -3390,9 +3393,9 @@ namespace MediaPortal.GUI.Pictures
                     return selectedItem;
                   }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                  Log.Warn("GUIPictures: can't match item in date view");
+                  Log.Warn("GUIPictures: can't match item in date view {0}", ex.Message);
                   returnFromSlideshow = false;
                 }
               }
@@ -3459,9 +3462,9 @@ namespace MediaPortal.GUI.Pictures
                   return selectedItem;
                 }
               }
-              catch (Exception)
+              catch (Exception ex)
               {
-                Log.Warn("GUIPictures: can't match item in date view");
+                Log.Warn("GUIPictures: can't match item in date view {0}", ex.Message);
                 returnFromSlideshow = false;
               }
             }

@@ -176,27 +176,19 @@ namespace TvPlugin
     {
       TimeSpan ts = rec.EndTime - rec.StartTime;
       if (rec.StartTime.Year == DateTime.Now.Year)
-        return String.Format("{0} ({1})",
-          Utils.GetNamedDate(rec.StartTime),
-          Utils.SecondsToHMString((int)ts.TotalSeconds));
+        return String.Format("{0} ({1})", Utils.GetNamedDate(rec.StartTime), Utils.SecondsToHMString((int)ts.TotalSeconds));
       else
-        return String.Format("{1}-{2} {0} ({3})", rec.StartTime.Year, rec.StartTime.Day, rec.StartTime.Month,
-          Utils.SecondsToHMString((int)ts.TotalSeconds));
+        return String.Format("{0} {1} ({2})", Utils.GetShortDayString(rec.StartTime), rec.StartTime.Year, Utils.SecondsToHMString((int)ts.TotalSeconds));
     }
 
     private static string GetRecordingDateStringFull(DateTime startTime, DateTime endTime)
     {
-      TimeSpan ts = endTime - startTime;
+      String span = string.Format("{0} - {1}", startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat), endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+
       if (startTime.Year == DateTime.Now.Year)
-        return string.Format("{0} {1} - {2}",
-                                       Utils.GetShortDayString(startTime),
-                                       startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        return String.Format("{0} {1}", Utils.GetShortDayString(startTime), span);
       else
-        return string.Format("{1}-{2} {0} {3} - {4}",
-                                       startTime.Year, startTime.Day, startTime.Month,
-                                       startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        return String.Format("{0} {1} {2}", Utils.GetShortDayString(startTime), startTime.Year, span);
     }
 
     public static string GetRecordingDateStringFull(Recording rec)
@@ -468,9 +460,6 @@ namespace TvPlugin
         g_Player.currentFileName = rec.FileName;
         g_Player.currentTitle = GetDisplayTitle(rec);
         g_Player.currentDescription = rec.Description;
-
-        rec.TimesWatched++;
-        rec.Persist();
 
         return true;
       }

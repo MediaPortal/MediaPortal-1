@@ -247,95 +247,105 @@ namespace MediaPortal.GUI.Library
 
     public override void AllocResources()
     {
-      Dispose();
-      using (Settings xmlreader = new MPSettings())
+      try
       {
-        _hidePngAnimations = (xmlreader.GetValueAsBool("general", "hidepnganimations", false));
-      }
-
-      if (_filenames == null)
-      {
-        _filenames = new ArrayList();
-
-        foreach (string filename in _textureNames.Split(';'))
+        //lock (RenderImageLock)
         {
-          if (filename.IndexOfAny(new char[] {'?', '*'}) != -1)
+          Dispose();
+          using (Settings xmlreader = new MPSettings())
           {
-            foreach (string match in Directory.GetFiles(GUIGraphicsContext.GetThemedSkinFile(@"\media\" + filename)))
+            _hidePngAnimations = (xmlreader.GetValueAsBool("general", "hidepnganimations", false));
+          }
+
+          if (_filenames == null)
+          {
+            _filenames = new ArrayList();
+
+            foreach (string filename in _textureNames.Split(';'))
             {
-              _filenames.Add(Path.GetFileName(match));
+              if (filename.IndexOfAny(new char[] { '?', '*' }) != -1)
+              {
+                foreach (string match in Directory.GetFiles(GUIGraphicsContext.GetThemedSkinFile(@"\media\" + filename)))
+                {
+                  _filenames.Add(Path.GetFileName(match));
+                }
+              }
+              else
+              {
+                _filenames.Add(filename.Trim());
+              }
             }
           }
-          else
+
+          _images = new GUIImage[_filenames.Count];
+
+          int w = 0;
+          int h = 0;
+
+          if (_images != null)
           {
-            _filenames.Add(filename.Trim());
+            for (int index = 0; index < _images.Length; index++)
+            {
+              _imageId++;
+              _images[index] = new GUIImage(ParentID, _imageId + index, 0, 0, Width, Height, (string)_filenames[index], 0);
+              _images[index].ParentControl = this;
+              _images[index].ColourDiffuse = ColourDiffuse;
+              _images[index].DimColor = DimColor;
+              _images[index].KeepAspectRatio = _keepAspectRatio;
+              _images[index].Filtering = Filtering;
+              _images[index].RepeatBehavior = _repeatBehavior;
+              _images[index].DiffuseFileName = _diffuseFileName;
+              _images[index].MaskFileName = _maskFileName;
+              _images[index].OverlayFileName = _overlayFileName;
+              _images[index].FlipX = _flipX;
+              _images[index].FlipY = _flipY;
+              _images[index].SetBorder(_strBorder, _borderPosition, _borderTextureRepeat,
+                _borderTextureRotate, _borderTextureFileName, _borderColorKey, _borderHasCorners,
+                _borderCornerTextureRotate);
+              _images[index].TileFill = _tileFill;
+              _images[index].AllocResources();
+              //_images[index].ScaleToScreenResolution(); -> causes too big images in fullscreen
+
+
+              if (_images.Length > index) w = Math.Max(w, _images[index].Width);
+              if (_images.Length > index) h = Math.Max(h, _images[index].Height);
+              if (_images.Length > index) _renderWidth = Math.Max(_renderWidth, _images[index].RenderWidth);
+              if (_images.Length > index) _renderHeight = Math.Max(_renderHeight, _images[index].RenderHeight);
+              if (_images.Length > index) _textureWidth = Math.Max(_textureWidth, _images[index].TextureWidth);
+              if (_images.Length > index) _textureHeight = Math.Max(_textureHeight, _images[index].TextureHeight);
+            }
+          }
+
+          int x = _positionX;
+          int y = _positionY;
+
+          if (_horizontalAlignment == HorizontalAlignment.Center)
+          {
+            x = x - (w / 2);
+          }
+          else if (_horizontalAlignment == HorizontalAlignment.Right)
+          {
+            x = x - w;
+          }
+
+          if (_verticalAlignment == VerticalAlignment.Center)
+          {
+            y = y - (h / 2);
+          }
+          else if (_verticalAlignment == VerticalAlignment.Bottom)
+          {
+            y = y - h;
+          }
+
+          for (int index = 0; index < _images.Length; index++)
+          {
+            _images[index].SetPosition(x, y);
           }
         }
       }
-
-      _images = new GUIImage[_filenames.Count];
-
-      int w = 0;
-      int h = 0;
-
-      if (_images != null)
+      catch (Exception e)
       {
-        for (int index = 0; index < _images.Length; index++)
-        {
-          _imageId++;
-          _images[index] = new GUIImage(ParentID, _imageId + index, 0, 0, Width, Height, (string) _filenames[index], 0);
-          _images[index].ParentControl = this;
-          _images[index].ColourDiffuse = ColourDiffuse;
-          _images[index].DimColor = DimColor;
-          _images[index].KeepAspectRatio = _keepAspectRatio;
-          _images[index].Filtering = Filtering;
-          _images[index].RepeatBehavior = _repeatBehavior;
-          _images[index].DiffuseFileName = _diffuseFileName;
-          _images[index].MaskFileName = _maskFileName;
-          _images[index].OverlayFileName = _overlayFileName;
-          _images[index].FlipX = _flipX;
-          _images[index].FlipY = _flipY;
-          _images[index].SetBorder(_strBorder, _borderPosition, _borderTextureRepeat,
-            _borderTextureRotate, _borderTextureFileName, _borderColorKey, _borderHasCorners,
-            _borderCornerTextureRotate);
-          _images[index].TileFill = _tileFill;
-          _images[index].AllocResources();
-          //_images[index].ScaleToScreenResolution(); -> causes too big images in fullscreen
-
-
-          if (_images.Length > index) w = Math.Max(w, _images[index].Width);
-          if (_images.Length > index) h = Math.Max(h, _images[index].Height);
-          if (_images.Length > index) _renderWidth = Math.Max(_renderWidth, _images[index].RenderWidth);
-          if (_images.Length > index) _renderHeight = Math.Max(_renderHeight, _images[index].RenderHeight);
-          if (_images.Length > index) _textureWidth = Math.Max(_textureWidth, _images[index].TextureWidth);
-          if (_images.Length > index) _textureHeight = Math.Max(_textureHeight, _images[index].TextureHeight);
-        }
-      }
-
-      int x = _positionX;
-      int y = _positionY;
-
-      if (_horizontalAlignment == HorizontalAlignment.Center)
-      {
-        x = x - (w / 2);
-      }
-      else if (_horizontalAlignment == HorizontalAlignment.Right)
-      {
-        x = x - w;
-      }
-
-      if (_verticalAlignment == VerticalAlignment.Center)
-      {
-        y = y - (h / 2);
-      }
-      else if (_verticalAlignment == VerticalAlignment.Bottom)
-      {
-        y = y - h;
-      }
-
-      for (int index = 0; index < _images.Length; index++)
-      {
-        _images[index].SetPosition(x, y);
+        // catch
       }
     }
 

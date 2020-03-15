@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -495,20 +495,20 @@ namespace MediaPortal.GUI.Library
 
     public bool LoadSkin()
     {
-      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
-      {
-        _loadSkinDone = true;
+      //if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+      //{
+      //  _loadSkinDone = true;
 
-        GUIWindowManager.SendThreadCallbackSkin((p1, p2, result) =>
-        {
-          _loadSkinResult = LoadSkinBool();
-          Log.Debug("LoadSkin() callback done with return value  : {0}", _loadSkinResult);
-          return 0;
-        }, 0, 0, null);
+      //  GUIWindowManager.SendThreadCallbackSkin((p1, p2, result) =>
+      //  {
+      //    _loadSkinResult = LoadSkinBool();
+      //    Log.Debug("LoadSkin() callback done with return value  : {0}", _loadSkinResult);
+      //    return 0;
+      //  }, 0, 0, null);
 
-        Log.Debug("LoadSkin() callback thread done with return value : {0}", _loadSkinResult);
-        return true;
-      }
+      //  Log.Debug("LoadSkin() callback thread done with return value : {0}", _loadSkinResult);
+      //  return true;
+      //}
       return LoadSkinBool();
     }
 
@@ -540,7 +540,7 @@ namespace MediaPortal.GUI.Library
       if (isSkinXMLLoading)
       {
         Log.Error("LoadSkin: Running already so skipping");
-        return false;
+        //return false; // need to be disable to be able to load skin when not in main thread
       }
 
       isSkinXMLLoading = true;
@@ -623,18 +623,18 @@ namespace MediaPortal.GUI.Library
         {
           _windowId = Int32.Parse(nodeId.InnerText);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Error("LoadSkin: error converting nodeid <{0}> to int", nodeId.InnerText);
+          Log.Error("LoadSkin: error converting nodeid <{0}> to int {1}", nodeId.InnerText, ex.Message);
         }
         // Convert the id of the default control to an int
         try
         {
           _defaultControlId = Int32.Parse(nodeDefault.InnerText);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Error("LoadSkin: error converting nodeDefault <{0}> to int", nodeDefault.InnerText);
+          Log.Error("LoadSkin: error converting nodeDefault <{0}> to int {1}", nodeDefault.InnerText, ex.Message);
         }
 
         // find any XAML complex/compound properties
@@ -780,18 +780,25 @@ namespace MediaPortal.GUI.Library
                       bool.Parse(GUIPropertyManager.Parse(node.Attributes["condition"].Value,
                         GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
                   }
-                  catch (FormatException)
+                  catch (FormatException ex)
                   {
                     // The include will not be loaded if the expression could not be evaluated.
                     loadInclude = false;
-                    Log.Debug("LoadSkin: {0}, could not evaluate include expression '{1}' ", _windowXmlFileName,
-                      node.Attributes["condition"].Value);
+                    Log.Debug("LoadSkin: {0}, could not evaluate include expression '{1}' {2}", _windowXmlFileName,
+                      node.Attributes["condition"].Value, ex.Message);
                   }
                 }
 
                 if (loadInclude)
                 {
                   LoadInclude(node, defines);
+                }
+                else
+                {
+                  if (node.Attributes["otherwise"] != null && !string.IsNullOrEmpty(node.Attributes["otherwise"].Value))
+                  {
+                    LoadInclude(node, defines, true);
+                  }
                 }
                 break;
             }
@@ -860,16 +867,34 @@ namespace MediaPortal.GUI.Library
 
     private bool LoadInclude(XmlNode node, IDictionary<string, string> defines)
     {
+      return LoadInclude(node, defines, false);
+    }
+
+    private bool LoadInclude(XmlNode node, IDictionary<string, string> defines, bool otherwise)
+    {
       if (node == null || Children == null)
       {
         return false;
+      }
+
+      string skinFile = node.InnerText;
+      if (otherwise)
+      {
+        if (node.Attributes["otherwise"] != null && !string.IsNullOrEmpty(node.Attributes["otherwise"].Value))
+        {
+          skinFile = node.Attributes["otherwise"].Value;
+        }
+        else
+        {
+          return false;
+        }
       }
 
       try
       {
         XmlDocument doc = new XmlDocument();
 
-        doc.Load(GUIGraphicsContext.GetThemedSkinFile("\\" + node.InnerText));
+        doc.Load(GUIGraphicsContext.GetThemedSkinFile("\\" + skinFile));
 
         if (doc.DocumentElement == null)
         {
@@ -938,9 +963,9 @@ namespace MediaPortal.GUI.Library
               {
                 createAsProperty = bool.Parse(node.Attributes["property"].Value);
               }
-              catch (FormatException)
+              catch (FormatException ex)
               {
-                Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'property'; {0} is not a boolean value", node.Attributes["property"].Value);
+                Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'property'; {0} is not a boolean value {1}", node.Attributes["property"].Value, ex.Message);
               }
             }
 
@@ -952,9 +977,9 @@ namespace MediaPortal.GUI.Library
               {
                 evaluateNow = bool.Parse(node.Attributes["evaluateNow"].Value);
               }
-              catch (FormatException)
+              catch (FormatException ex)
               {
-                Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'evaluateNow'; {0} is not a boolean value", node.Attributes["evaluateNow"].Value);
+                Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'evaluateNow'; {0} is not a boolean value {1}", node.Attributes["evaluateNow"].Value, ex.Message);
               }
             }
 
@@ -1104,7 +1129,7 @@ namespace MediaPortal.GUI.Library
     {
       // reset our info manager caches
       GUIInfoManager.ResetCache();
-      foreach (GUIControl control in Children)
+      foreach (GUIControl control in Children.ToList())
       {
         if (control.GetVisibleCondition() != 0)
         {
@@ -1193,6 +1218,7 @@ namespace MediaPortal.GUI.Library
               GUIWindowManager.Process();
               if (GUIWindow._loadSkinDone)
               {
+                GUIWindow._loadSkinDone = false;
                 break;
               }
             }
@@ -1267,7 +1293,7 @@ namespace MediaPortal.GUI.Library
         // needed when this call is done from a thread
         if (_windowAllocated)
         {
-          return;
+          //return;
         }
 
         HashSet<int> faultyControl = new HashSet<int>();
@@ -1371,7 +1397,7 @@ namespace MediaPortal.GUI.Library
       _windowLoaded = false;
       _listPositions = new List<CPosition>();
 
-      foreach (GUIControl child in Children)
+      foreach (GUIControl child in Children.ToList())
       {
         GUIControl control = child;
         control.StorePosition();
@@ -1469,35 +1495,39 @@ namespace MediaPortal.GUI.Library
     /// <returns>id of control or -1 if no control has the focus</returns>
     public virtual int GetFocusControlId()
     {
-      foreach (GUIControl child in Children.ToList())
+      lock (Children)
       {
-        GUIGroup grp = child as GUIGroup;
-        if (grp != null)
+        foreach (GUIControl child in Children.ToList())
         {
-          int iFocusedControlId = grp.GetFocusControlId();
-          if (iFocusedControlId >= 0)
+          GUIGroup grp = child as GUIGroup;
+          if (grp != null)
           {
-            _previousFocusedControlId = iFocusedControlId;
-            // Store new ID for the rendering optimisation
-            FocusID = iFocusedControlId;
-            return iFocusedControlId;
-          }
-        }
-        else
-        {
-          if (child != null)
-          {
-            var guicontrol = child;
-            if (guicontrol.Focus)
+            int iFocusedControlId = grp.GetFocusControlId();
+            if (iFocusedControlId >= 0)
             {
+              _previousFocusedControlId = iFocusedControlId;
               // Store new ID for the rendering optimisation
-              FocusID = guicontrol.GetID;
-              return guicontrol.GetID;
+              FocusID = iFocusedControlId;
+              return iFocusedControlId;
+            }
+          }
+          else
+          {
+            if (child != null)
+            {
+              var guicontrol = child;
+              if (guicontrol.Focus)
+              {
+                // Store new ID for the rendering optimisation
+                FocusID = guicontrol.GetID;
+                return guicontrol.GetID;
+              }
             }
           }
         }
+
+        return -1;
       }
-      return -1;
     }
 
     /// <summary>
@@ -1580,11 +1610,15 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public virtual void Render(float timePassed)
     {
+      // Disable this hack it break some skin reload (GUIVolumeOverlay)
       // Hack for madVR to avoid freeze
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
           GUIGraphicsContext.InVmr9Render && GUIGraphicsContext.Vmr9Active)
       {
-        _shouldRestore = false;
+        if (!GUIGraphicsContext.NeedRecreateSwapChain || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+        {
+          //_shouldRestore = false;
+        }
       }
 
       if (_shouldRestore)
@@ -1632,8 +1666,8 @@ namespace MediaPortal.GUI.Library
         {
           foreach (GUIControl control in Children.ToList())
           {
-            control.UpdateVisibility();
-            control.DoRender(timePassed, currentTime);
+            control?.UpdateVisibility();
+            control?.DoRender(timePassed, currentTime);
           }
         }
 
@@ -2023,9 +2057,9 @@ namespace MediaPortal.GUI.Library
             _previousFocusedControlId = id;
           }
         }
-        catch (ThreadAbortException)
+        catch (ThreadAbortException ex)
         {
-          Log.Debug("OnMessage.ThreadAbortException exception.");
+          Log.Debug("OnMessage.ThreadAbortException exception. {0}", ex.Message);
         }
         catch (Exception ex)
         {
