@@ -1,0 +1,383 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="RtspRequest">
+      <UniqueIdentifier>{ea172c7e-71c5-4910-b2bf-69070215b253}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RtspRequest\Header Files">
+      <UniqueIdentifier>{9aa1b982-d459-46a0-ad58-ac901554bdf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RtspRequest\Source Files">
+      <UniqueIdentifier>{ee8be88c-c0b2-4721-b67e-06c86f1ea9d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RtspResponse">
+      <UniqueIdentifier>{9a917534-bee8-4c8c-ba5e-01de31f169d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RtspResponse\Header Files">
+      <UniqueIdentifier>{2a50f7f0-d71e-426d-9b68-60239b3136a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RtspResponse\Source Files">
+      <UniqueIdentifier>{efe61cdd-439b-43e8-9e53-ed92135bab18}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MPUrlSourceSplitter_Protocol_Rtsp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MPUrlSourceSplitter_Protocol_Rtsp_Parameters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspDownloadRequest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspCurlInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspDownloadResponse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InterleavedDataPacket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseRtpPacketCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspTrack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspTrackCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspRequest.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspRequestHeader.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspRequestHeaderCollection.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspOptionsRequest.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspResponseHeader.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspResponseHeaderFactory.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspSequenceResponseHeader.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspResponse.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspResponseHeaderCollection.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspPublicResponseHeader.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspLocationResponseHeader.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspServerResponseHeader.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspAllowResponseHeader.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspContentBaseResponseHeader.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspContentLengthResponseHeader.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspContentLocationResponseHeader.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspDescribeRequest.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspAcceptRequestHeader.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspAcceptApplicationSdpRequestHeader.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspContentTypeResponseHeader.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspRefererRequestHeader.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspUserAgentRequestHeader.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspTransportResponseHeader.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspTransportRequestHeader.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspSetupRequest.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspSequenceRequestHeader.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspSessionResponseHeader.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspSessionRequestHeader.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspTeardownRequest.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspPlayRequest.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspRangeRequestHeader.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspNormalPlayTimeRangeRequestHeader.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspTrackStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspStreamFragment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspStreamFragmentCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspStreamTrack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspStreamTrackCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspGetParameterRequest.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspRtpInfoResponseHeader.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpInfoTrack.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpInfoTrackCollection.h">
+      <Filter>RtspResponse\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspPayloadType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspSupportedPayloadTypeCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspDumpBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspMainBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspTrackBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MPUrlSourceSplitter_Protocol_Rtsp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspDownloadRequest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspCurlInstance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspDownloadResponse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InterleavedDataPacket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseRtpPacketCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspTrack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspTrackCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspRequest.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspRequestHeader.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspRequestHeaderCollection.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspOptionsRequest.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspResponseHeader.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspResponseHeaderFactory.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspSequenceResponseHeader.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspResponse.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspResponseHeaderCollection.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspPublicResponseHeader.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspLocationResponseHeader.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspServerResponseHeader.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspAllowResponseHeader.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspContentBaseResponseHeader.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspContentLengthResponseHeader.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspContentLocationResponseHeader.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspDescribeRequest.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspAcceptRequestHeader.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspContentTypeResponseHeader.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspAcceptApplicationSdpRequestHeader.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspRefererRequestHeader.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspUserAgentRequestHeader.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspTransportResponseHeader.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspTransportRequestHeader.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspSetupRequest.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspSequenceRequestHeader.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspSessionResponseHeader.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspSessionRequestHeader.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspTeardownRequest.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspPlayRequest.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspRangeRequestHeader.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspNormalPlayTimeRangeRequestHeader.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspTrackStatistics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspStreamFragment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspStreamFragmentCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspStreamTrack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspStreamTrackCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspGetParameterRequest.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspRtpInfoResponseHeader.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpInfoTrack.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpInfoTrackCollection.cpp">
+      <Filter>RtspResponse\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspPayloadType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspSupportedPayloadTypeCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspDumpBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspMainBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspTrackBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="mpurlsourcesplitter_protocol_Rtsp.def">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

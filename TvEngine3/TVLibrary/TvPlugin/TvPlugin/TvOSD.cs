@@ -2018,7 +2018,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalLevel", TVHome.Card.SignalLevel.ToString());
         GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalQuality", TVHome.Card.SignalQuality.ToString());
       }
-      
+
       if (!g_Player.IsTVRecording)
       {
         double fPercent;
@@ -2078,6 +2078,8 @@ namespace TvPlugin
 
       else
       {
+        GUIPropertyManager.SetProperty("#Play.Current.TSBitRate",
+         ((float)MediaPortal.Player.g_Player.GetVideoFormat().bitrate / 1024 / 1024).ToString("0.00", CultureInfo.InvariantCulture));        
         Recording rec = null;
         string startTime = "";
         string endTime = "";

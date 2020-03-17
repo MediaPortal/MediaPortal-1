@@ -31,7 +31,7 @@ using TvLibrary.Epg;
 
 namespace TvPlugin
 {
-  public abstract class GuideBase : GUIDialogWindow
+  public abstract class GuideBase : GUIInternalWindow
   {
     protected int _previousChannelCount = 0;    
     protected const int MaxDaysInGuide = 30;

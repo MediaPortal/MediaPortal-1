@@ -49,12 +49,16 @@ namespace SetupTv.Sections
       checkboxSameTransponder.Checked = (layer.GetSetting("generalGrapOnlyForSameTransponder", "no").Value == "yes");
 
       checkBoxEnableEPGWhileIdle.Checked = (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes");
+      checkBoxEnableEPGWhileIdleOnAllTuners.Checked = (layer.GetSetting("idleEPGGrabberEnabledOnAllTuners", "no").Value == "yes");
       checkBoxEnableCRCCheck.Checked = !DebugSettings.DisableCRCCheck;
       numericUpDownEpgTimeOut.Value = Convert.ToDecimal(layer.GetSetting("timeoutEPG", "10").Value);
       numericUpDownEpgRefresh.Value = Convert.ToDecimal(layer.GetSetting("timeoutEPGRefresh", "240").Value);
+      numericUpDownEpgTimeshiftRefresh.Value = Convert.ToDecimal(layer.GetSetting("timeoutEPGTimeshiftRefresh", "10").Value);
       checkBoxEnableEpgWhileTimeshifting.Checked = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value ==
                                                     "yes");
       numericUpDownTSEpgTimeout.Value = Convert.ToDecimal(layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value);
+
+      numericEpgCardLimit.Value = Convert.ToDecimal(layer.GetSetting("numericEpgCardLimit", "1").Value);
 
       edTitleTemplate.Text = layer.GetSetting("epgTitleTemplate", "%TITLE%").Value;
       edDescriptionTemplate.Text = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%").Value;
@@ -83,12 +87,20 @@ namespace SetupTv.Sections
       s.Value = checkBoxEnableEPGWhileIdle.Checked ? "yes" : "no";
       s.Persist();
 
+      s = layer.GetSetting("idleEPGGrabberEnabledOnAllTuners", "no");
+      s.Value = checkBoxEnableEPGWhileIdleOnAllTuners.Checked ? "yes" : "no";
+      s.Persist();
+
       s = layer.GetSetting("timeoutEPG", "10");
       s.Value = numericUpDownEpgTimeOut.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("timeoutEPGRefresh", "240");
       s.Value = numericUpDownEpgRefresh.Value.ToString();
+      s.Persist();
+
+      s = layer.GetSetting("timeoutEPGTimeshiftRefresh", "10");
+      s.Value = numericUpDownEpgTimeshiftRefresh.Value.ToString();
       s.Persist();
 
       s = layer.GetSetting("timeshiftingEpgGrabberEnabled", "no");
@@ -105,6 +117,10 @@ namespace SetupTv.Sections
 
       s = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%");
       s.Value = edDescriptionTemplate.Text;
+      s.Persist();
+
+      s = layer.GetSetting("numericEpgCardLimit", "1");
+      s.Value = numericEpgCardLimit.Value.ToString();
       s.Persist();
     }
 
@@ -129,6 +145,26 @@ namespace SetupTv.Sections
       defaults.Add("%NEWLINE%", Environment.NewLine);
       edTitleTest.Text = EvalTemplate(edTitleTemplate.Text, defaults);
       edDescriptionTest.Text = EvalTemplate(edDescriptionTemplate.Text, defaults);
+    }
+
+    private void mpCheckBox1_CheckedChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label23_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label2_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void numericEpgCardLimit_ValueChanged(object sender, EventArgs e)
+    {
+
     }
   }
 }

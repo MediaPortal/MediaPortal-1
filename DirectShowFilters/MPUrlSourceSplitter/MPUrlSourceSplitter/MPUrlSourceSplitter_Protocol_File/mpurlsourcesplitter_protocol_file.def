@@ -1,0 +1,5 @@
+LIBRARY     mpurlsourcesplitter_protocol_file.dll
+
+EXPORTS
+			CreatePluginInstance		PRIVATE
+			DestroyPluginInstance		PRIVATE

@@ -108,10 +108,10 @@ namespace MediaPortal.MusicShareWatcher
   /// </summary>
   public class DelayedFileSystemWatcher
   {
-    private FileSystemWatcher _fileSystemWatcher = null;
+    private readonly FileSystemWatcher _fileSystemWatcher = null;
 
     // Lock order is _enterThread, _events.SyncRoot
-    private object _enterThread = new object(); // Only one timer event is processed at any given moment
+    private readonly object _enterThread = new object(); // Only one timer event is processed at any given moment
     private ArrayList _events = null;
 
     private Timer _serverTimer = null;
@@ -296,7 +296,7 @@ namespace MediaPortal.MusicShareWatcher
     //     unmanaged resources.
     public void Dispose()
     {
-      this.Uninitialize();
+      Uninitialize();
     }
 
     //
@@ -475,18 +475,17 @@ namespace MediaPortal.MusicShareWatcher
       Queue eventsToBeFired = null;
       if (Monitor.TryEnter(this._enterThread))
       {
-        // Only one thread at a time is processing the events                
+        // Only one thread at a time is processing the events
         try
         {
           eventsToBeFired = new Queue(32);
           // Lock the collection while processing the events
           lock (this._events.SyncRoot)
           {
-            DelayedEvent current = null;
             for (int i = 0; i < this._events.Count; i++)
             {
-              current = this._events[i] as DelayedEvent;
-              if (current.Delayed)
+              var current = this._events[i] as DelayedEvent;
+              if (current != null && current.Delayed)
               {
                 // This event has been delayed already so we can fire it
                 // We just need to remove any duplicates
@@ -509,7 +508,7 @@ namespace MediaPortal.MusicShareWatcher
               {
                 // This event was not delayed yet, so we will delay processing
                 // this event for at least one timer interval
-                current.Delayed = true;
+                if (current != null) current.Delayed = true;
               }
             }
           }
@@ -539,25 +538,25 @@ namespace MediaPortal.MusicShareWatcher
     {
       if ((deQueue != null) && (deQueue.Count > 0))
       {
-        DelayedEvent de = null;
         while (deQueue.Count > 0)
         {
-          de = deQueue.Dequeue() as DelayedEvent;
-          switch (de.Args.ChangeType)
-          {
-            case WatcherChangeTypes.Changed:
-              this.OnChanged(de.Args);
-              break;
-            case WatcherChangeTypes.Created:
-              this.OnCreated(de.Args);
-              break;
-            case WatcherChangeTypes.Deleted:
-              this.OnDeleted(de.Args);
-              break;
-            case WatcherChangeTypes.Renamed:
-              this.OnRenamed(de.Args as RenamedEventArgs);
-              break;
-          }
+          var de = deQueue.Dequeue() as DelayedEvent;
+          if (de != null)
+            switch (de.Args.ChangeType)
+            {
+              case WatcherChangeTypes.Changed:
+                this.OnChanged(de.Args);
+                break;
+              case WatcherChangeTypes.Created:
+                this.OnCreated(de.Args);
+                break;
+              case WatcherChangeTypes.Deleted:
+                this.OnDeleted(de.Args);
+                break;
+              case WatcherChangeTypes.Renamed:
+                this.OnRenamed(de.Args as RenamedEventArgs);
+                break;
+            }
         }
       }
     }

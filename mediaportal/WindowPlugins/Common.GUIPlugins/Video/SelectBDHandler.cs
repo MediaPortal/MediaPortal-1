@@ -76,7 +76,7 @@ namespace MediaPortal.GUI.Video
         {
           if (strDirs.Length == 1)
           {
-            Log.Debug("GUIVideoFiles: BD folder detected - {0}", strDirs[0]);
+            //Log.Debug("GUIVideoFiles: BD folder detected - {0}", strDirs[0]); // TODO
             return String.Format(@"{0}\index.bdmv", strDirs[0]);
           }
           else

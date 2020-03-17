@@ -33,7 +33,10 @@ namespace TvLibrary
 
     private readonly ITVCard _card;
     private readonly System.Timers.Timer _epgTimer = new System.Timers.Timer();
+    private readonly System.Timers.Timer _epgTimerRefresh = new System.Timers.Timer();
+    //private readonly System.Timers.Timer _epgTimerTimeshiftRefresh = new System.Timers.Timer();
     private DateTime _grabStartTime;
+    private DateTime _grabStartTimeRefresh;
     private List<EpgChannel> _epg;
     private bool _updateThreadRunning;
     private readonly EpgDBUpdater _dbUpdater;
@@ -46,15 +49,32 @@ namespace TvLibrary
       _dbUpdater = new EpgDBUpdater(epgEvents, "TimeshiftingEpgGrabber", false);
       _updateThreadRunning = false;
       _epgTimer.Elapsed += _epgTimer_Elapsed;
+      _epgTimerRefresh.Elapsed += _epgTimerRefresh_Elapsed;
     }
 
     private void LoadSettings()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       double timeout;
-      if (!double.TryParse(layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value, out timeout))
+      //int _epgReGrabAfter;
+      int _epgReGrabTimeshiftAfter;
+      if (!double.TryParse(layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value, out timeout) || timeout == 0)
+      {
         timeout = 2;
-      _epgTimer.Interval = timeout * 60000;
+      }
+      //Setting s = layer.GetSetting("timeoutEPGRefresh", "240");
+      //if (Int32.TryParse(s.Value, out _epgReGrabAfter) == false)
+      //{
+      //  _epgReGrabAfter = 240;
+      //}
+      Setting s = layer.GetSetting("timeoutEPGTimeshiftRefresh", "10");
+      if (Int32.TryParse(s.Value, out _epgReGrabTimeshiftAfter) == false)
+      {
+        _epgReGrabTimeshiftAfter = 10;
+      }
+      _epgTimer.Interval = _epgReGrabTimeshiftAfter + 5 * 1000;
+      _epgTimerRefresh.Interval = _epgReGrabTimeshiftAfter * 1000;
+      //_epgTimerTimeshiftRefresh.Interval = _epgReGrabAfter * 1000;
     }
 
     public bool StartGrab()
@@ -67,17 +87,41 @@ namespace TvLibrary
       LoadSettings();
       Log.Log.Info("Timeshifting epg grabber started.");
       _grabStartTime = DateTime.Now;
+      _grabStartTimeRefresh = DateTime.Now;
       _epgTimer.Enabled = true;
+      _epgTimerRefresh.Enabled = true;
       return true;
     }
 
     private void _epgTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-      TimeSpan ts = DateTime.Now - _grabStartTime;
-      Log.Log.Epg("TimeshiftingEpgGrabber: timeout after {0} mins", ts.TotalMinutes);
+      var ts = DateTime.Now - _grabStartTime;
+      Log.Log.Epg("TimeshiftingEpgGrabber: timeout after {0} seconds", ts.Seconds);
       _epgTimer.Enabled = false;
-      _card.AbortGrabbing();
+      _card.AbortGrabbing(false);
     }
+
+    private void _epgTimerRefresh_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+      var ts = DateTime.Now - _grabStartTimeRefresh;
+      Log.Log.Epg("TimeshiftingEpgGrabber for current tune : refresh EPG while timeshift after {0} seconds", ts.Seconds);
+      if (!_card.IsEpgGrabbing)
+      {
+        _card.IsEpgGrabbing = true;
+        _card.GrabEpg();
+      }
+    }
+
+    //private void _epgTimerTimeshiftRefresh_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    //{
+    //  var ts = DateTime.Now - _grabStartTimeRefresh;
+    //  Log.Log.Epg("TimeshiftingEpgGrabber: refresh EPG while timeshift after {0} seconds", ts.Seconds);
+    //  if (!_card.IsEpgGrabbing)
+    //  {
+    //    _card.IsEpgGrabbing = true;
+    //    _card.GrabEpg();
+    //  }
+    //}
 
     #region BaseEpgGrabber implementation
 
@@ -90,6 +134,17 @@ namespace TvLibrary
       Log.Log.Info("Timeshifting epg grabber stopped.");
       _card.IsEpgGrabbing = false;
       _epgTimer.Enabled = false;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public void StopTimer()
+    {
+      Log.Log.Info("Timeshifting epg grabber timer stopped.");
+      _epgTimerRefresh.Enabled = false;
+      _card.IsEpgGrabbing = false;
     }
 
     /// <summary>
@@ -119,9 +174,11 @@ namespace TvLibrary
         Log.Log.Epg("TimeshiftingEpgGrabber: No epg received.");
       else
       {
-        Thread workerThread = new Thread(UpdateDatabaseThread);
-        workerThread.IsBackground = true;
-        workerThread.Name = "EPG Update thread";
+        var workerThread = new Thread(UpdateDatabaseThread)
+        {
+          IsBackground = true,
+          Name = "EPG Update thread"
+        };
         workerThread.Start();
       }
       _epgTimer.Enabled = false;
@@ -140,7 +197,7 @@ namespace TvLibrary
       _updateThreadRunning = true;
       Thread.CurrentThread.Priority = ThreadPriority.Lowest;
       _dbUpdater.ReloadConfig();
-      foreach (EpgChannel epgChannel in _epg)
+      foreach (var epgChannel in _epg)
       {
         _dbUpdater.UpdateEpgForChannel(epgChannel);
       }

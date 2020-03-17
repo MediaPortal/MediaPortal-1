@@ -23,7 +23,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Threading;
 using System.Xml;
 using Gentle.Framework;
 using MediaPortal.Configuration;
@@ -75,7 +77,7 @@ namespace TvPlugin
 
     #region Private members
 
-    private List<ChannelGroup> m_groups = new List<ChannelGroup>();
+    internal List<ChannelGroup> m_groups = new List<ChannelGroup>();
     // Contains all channel groups (including an "all channels" group)
 
     private int m_currentgroup = 0;
@@ -86,9 +88,10 @@ namespace TvPlugin
     private int m_zapChannelNr = -1;
     private int m_zapgroup = -1;
     private Channel _lastViewedChannel = null; // saves the last viewed Channel  // mPod    
-    private Channel m_currentChannel = null;
+    internal Channel m_currentChannel = null;
     private IList channels = new ArrayList();
     private bool reentrant = false;
+    private static readonly object OnloadedLock = new object();
 
     #endregion
 
@@ -118,8 +121,6 @@ namespace TvPlugin
 
     public bool SetupDatabaseConnection()
     {
-      string connectionString = null;
-      string provider = null;
       if (!TVHome.Connected)
       {
         return false;
@@ -127,34 +128,66 @@ namespace TvPlugin
 
       try
       {
-        RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
+        RemoteControl.Instance.GetDatabaseConnectionString(out TVHome.connectionString, out TVHome.provider);
       }
       catch (Exception ex)
       {
         return false;
       }
 
+      if (TVHome.connectionStringLoaded)
+      {
+        Log.Info("ChannelNavigator::Reload()");
+        ProviderFactory.ResetGentle(true);
+        ProviderFactory.SetDefaultProvider(TVHome.provider);
+        ProviderFactory.SetDefaultProviderConnectionString(TVHome.connectionString);
+        return true;
+      }
+
       try
       {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(Config.GetFile(Config.Dir.Config, "gentle.config"));
-        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-        XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
-        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
-        node.InnerText = connectionString;
-        nodeProvider.InnerText = provider;
-        doc.Save(Config.GetFile(Config.Dir.Config, "gentle.config"));
+        lock (OnloadedLock)
+        {
+          Log.Debug("SetupDatabaseConnection()");
+          string xmlPath = Config.GetFile(Config.Dir.Config, "Gentle.config");
+          XmlDocument doc = new XmlDocument();
+          doc.Load(new MemoryStream(File.ReadAllBytes(xmlPath)));
+          bool needSave = false;
+          var nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+          if (nodeKey != null)
+          {
+            if (nodeKey.Attributes != null)
+            {
+              var node = nodeKey.Attributes.GetNamedItem("connectionString");
+              var nodeProvider = nodeKey.Attributes.GetNamedItem("name");
+              if (node.InnerText != TVHome.connectionString)
+                if (nodeProvider.InnerText != TVHome.provider)
+                {
+                  node.InnerText = TVHome.connectionString;
+                  nodeProvider.InnerText = TVHome.provider;
+                  needSave = true;
+                }
+            }
+          }
+          if (needSave)
+          {
+            doc.Save(xmlPath);
+            Log.Debug("gentle.config saved");
+          }
+          TVHome.connectionStringLoaded = true;
+        }
       }
       catch (Exception ex)
       {
+        //System.Diagnostics.Debugger.Launch();
         Log.Error("Unable to create/modify gentle.config {0},{1}", ex.Message, ex.StackTrace);
         return false;
       }
 
       Log.Info("ChannelNavigator::Reload()");
       ProviderFactory.ResetGentle(true);
-      ProviderFactory.SetDefaultProvider(provider);
-      ProviderFactory.SetDefaultProviderConnectionString(connectionString);
+      ProviderFactory.SetDefaultProvider(TVHome.provider);
+      ProviderFactory.SetDefaultProviderConnectionString(TVHome.connectionString);
 
       return true;
     }
@@ -164,94 +197,115 @@ namespace TvPlugin
       //System.Diagnostics.Debugger.Launch();
       try
       {
-        bool connectionValid = SetupDatabaseConnection();
-        if (connectionValid)
+        lock (OnloadedLock)
         {
-          Log.Info("get channels from database");
-          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-          sb.AddConstraint(Operator.Equals, "isTv", 1);
-          sb.AddOrderByField(true, "sortOrder");
-          SqlStatement stmt = sb.GetStatement(true);
-          channels = ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
-          Log.Info("found:{0} tv channels", channels.Count);
-          TvNotifyManager.OnNotifiesChanged();
-          m_groups.Clear();
-
-          TvBusinessLayer layer = new TvBusinessLayer();
-          RadioChannelGroup allRadioChannelsGroup =
-            layer.GetRadioChannelGroupByName(TvConstants.RadioGroupNames.AllChannels);
-          IList<Channel> radioChannels = layer.GetAllRadioChannels();
-          if (radioChannels != null)
+          if (!TVHome.Connected)
           {
-            if (radioChannels.Count > allRadioChannelsGroup.ReferringRadioGroupMap().Count)
+            return;
+          }
+
+          string threadName = Thread.CurrentThread.Name;
+          if (!string.IsNullOrEmpty(threadName))
+          {
+            Log.Debug("Reload SetupDatabaseConnection on thread : [{0}]", threadName);
+          }
+          bool connectionValid = SetupDatabaseConnection();
+          if (connectionValid)
+          {
+            Log.Info("get channels from database");
+            SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
+            sb.AddConstraint(Operator.Equals, "isTv", 1);
+            sb.AddOrderByField(true, "sortOrder");
+            SqlStatement stmt = sb.GetStatement(true);
+            channels = ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
+            Log.Info("found:{0} tv channels", channels.Count);
+            TvNotifyManager.OnNotifiesChanged();
+            m_groups.Clear();
+
+            TvBusinessLayer layer = new TvBusinessLayer();
+            RadioChannelGroup allRadioChannelsGroup =
+              layer.GetRadioChannelGroupByName(TvConstants.RadioGroupNames.AllChannels);
+            IList<Channel> radioChannels = layer.GetAllRadioChannels();
+            if (radioChannels != null)
             {
-              foreach (Channel radioChannel in radioChannels)
+              if (radioChannels.Count > allRadioChannelsGroup.ReferringRadioGroupMap().Count)
               {
-                layer.AddChannelToRadioGroup(radioChannel, allRadioChannelsGroup);
+                foreach (Channel radioChannel in radioChannels)
+                {
+                  layer.AddChannelToRadioGroup(radioChannel, allRadioChannelsGroup);
+                }
               }
             }
-          }
-          Log.Info("Done.");
+            Log.Info("Done.");
 
-          Log.Info("get all groups from database");
-          sb = new SqlBuilder(StatementType.Select, typeof (ChannelGroup));
-          sb.AddOrderByField(true, "groupName");
-          stmt = sb.GetStatement(true);
-          IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
-          IList<GroupMap> allgroupMaps = GroupMap.ListAll();
+            Log.Info("get all groups from database");
+            sb = new SqlBuilder(StatementType.Select, typeof (ChannelGroup));
+            sb.AddOrderByField(true, "groupName");
+            stmt = sb.GetStatement(true);
+            IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
+            IList<GroupMap> allgroupMaps = GroupMap.ListAll();
 
-          bool hideAllChannelsGroup = false;
-          using (
-            Settings xmlreader = new MPSettings())
-          {
-            hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
-          }
+            bool hideAllChannelsGroup = false;
+            bool hidePinProtectedChannelsGroup = false;
 
-          foreach (ChannelGroup group in groups)
-          {
-            if (group.GroupName == TvConstants.TvGroupNames.AllChannels)
+            using (
+              Settings xmlreader = new MPSettings())
             {
-              foreach (Channel channel in channels)
+              hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
+              hidePinProtectedChannelsGroup = xmlreader.GetValueAsBool("mytv", "hidePinProtectedChannelsGroup", false);
+            }
+
+            foreach (ChannelGroup group in groups)
+            {
+              if (group.GroupName == TvConstants.TvGroupNames.AllChannels)
               {
-                if (channel.IsTv == false)
+                foreach (Channel channel in channels)
                 {
-                  continue;
-                }
-                bool groupContainsChannel = false;
-                foreach (GroupMap map in allgroupMaps)
-                {
-                  if (map.IdGroup != group.IdGroup)
+                  if (channel.IsTv == false)
                   {
                     continue;
                   }
-                  if (map.IdChannel == channel.IdChannel)
+                  bool groupContainsChannel = false;
+                  foreach (GroupMap map in allgroupMaps)
                   {
-                    groupContainsChannel = true;
-                    break;
+                    if (map.IdGroup != group.IdGroup)
+                    {
+                      continue;
+                    }
+                    if (map.IdChannel == channel.IdChannel)
+                    {
+                      groupContainsChannel = true;
+                      break;
+                    }
+                  }
+                  if (!groupContainsChannel)
+                  {
+                    layer.AddChannelToGroup(channel, TvConstants.TvGroupNames.AllChannels);
                   }
                 }
-                if (!groupContainsChannel)
-                {
-                  layer.AddChannelToGroup(channel, TvConstants.TvGroupNames.AllChannels);
-                }
+                break;
               }
-              break;
             }
-          }
 
-          groups = ChannelGroup.ListAll();
-          foreach (ChannelGroup group in groups)
-          {
-            //group.GroupMaps.ApplySort(new GroupMap.Comparer(), false);
-            if (hideAllChannelsGroup && group.GroupName.Equals(TvConstants.TvGroupNames.AllChannels) && groups.Count > 1)
+            groups = ChannelGroup.ListAll();
+            foreach (ChannelGroup group in groups)
             {
-              continue;
+              //group.GroupMaps.ApplySort(new GroupMap.Comparer(), false);
+              if (hideAllChannelsGroup && group.GroupName.Equals(TvConstants.TvGroupNames.AllChannels) &&
+                  groups.Count > 1)
+              {
+                continue;
+              }
+              if (hidePinProtectedChannelsGroup && !string.IsNullOrEmpty(group.PinCode) && groups.Count > 2)
+              {
+                continue;
+              }
+              m_groups.Add(group);
             }
-            m_groups.Add(group);
-          }
-          Log.Info("loaded {0} tv groups", m_groups.Count);
+            Log.Info("loaded {0} tv groups", m_groups.Count);
 
-          //TVHome.Connected = true;
+            //TVHome.Connected = true;
+          }
         }
       }
       catch (Exception ex)
@@ -281,6 +335,13 @@ namespace TvPlugin
         return m_currentChannel.DisplayName;
       }
     }
+
+    public void setChannel(Channel channel)
+    {
+      m_currentChannel = channel; 
+      return;
+    }
+
 
     public Channel Channel
     {
@@ -911,16 +972,19 @@ namespace TvPlugin
     /// <returns></returns>
     private int GetChannelIndex(Channel ch)
     {
-      IList<GroupMap> groupMaps = CurrentGroup.ReferringGroupMap();
-      for (int i = 0; i < groupMaps.Count; i++)
+      if (CurrentGroup != null)
       {
-        GroupMap gm = (GroupMap)groupMaps[i];
-        if (gm != null)
+        IList<GroupMap> groupMaps = CurrentGroup.ReferringGroupMap();
+        for (int i = 0; i < groupMaps.Count; i++)
         {
-          Channel chan = (Channel)gm.ReferencedChannel();
-          if (ch != null && (chan != null && chan.IdChannel == ch.IdChannel))
+          GroupMap gm = (GroupMap)groupMaps[i];
+          if (gm != null)
           {
-            return i;
+            Channel chan = (Channel)gm.ReferencedChannel();
+            if (ch != null && (chan != null && chan.IdChannel == ch.IdChannel))
+            {
+              return i;
+            }
           }
         }
       }
@@ -978,6 +1042,36 @@ namespace TvPlugin
 
     #region Serialization
 
+    public int CompareChannelGroupSortOrder(ChannelGroup g1, ChannelGroup g2)
+    {
+      int result;
+
+      if (g1.SortOrder> g2.SortOrder)
+      {
+        result = 1;
+      }
+      else if (g1.SortOrder< g2.SortOrder)
+      {
+        result = -1;
+      }
+      else
+      {
+        if (g1.IdGroup > g2.IdGroup)
+        {
+          result = 1;
+        }
+        else if (g1.IdGroup < g2.IdGroup)
+        {
+          result = -1;
+        }
+        else
+        {
+          result = 0;
+        }
+      }
+      return result;
+    }
+
     public void LoadSettings(Settings xmlreader)
     {
       Log.Info("ChannelNavigator::LoadSettings()");
@@ -991,80 +1085,130 @@ namespace TvPlugin
         m_currentgroup = 0;
       }
 
-      m_currentChannel = GetChannel(currentchannelName);
-
-      if (m_currentChannel == null)
+      // check if we need to select a new group instead of a pin protected
+      if (!CheckAndSelectAnUnprotectedGroup())
       {
-        if (m_currentgroup < m_groups.Count)
+        m_currentChannel = GetChannel(currentchannelName);
+
+        if (m_currentChannel == null)
         {
-          ChannelGroup group = (ChannelGroup)m_groups[m_currentgroup];
-          if (group.ReferringGroupMap().Count > 0)
+          if (m_currentgroup < m_groups.Count)
           {
-            GroupMap gm = (GroupMap)group.ReferringGroupMap()[0];
-            m_currentChannel = gm.ReferencedChannel();
+            ChannelGroup group = (ChannelGroup)m_groups[m_currentgroup];
+            if (group.ReferringGroupMap().Count > 0)
+            {
+              GroupMap gm = (GroupMap)group.ReferringGroupMap()[0];
+              m_currentChannel = gm.ReferencedChannel();
+            }
           }
         }
-      }
 
-      //check if the channel does indeed belong to the group read from the XML setup file ?
+        //check if the channel does indeed belong to the group read from the XML setup file ?
 
 
-      bool foundMatchingGroupName = false;
+        bool foundMatchingGroupName = false;
 
-      if (m_currentChannel != null)
-      {
-        foreach (GroupMap groupMap in m_currentChannel.ReferringGroupMap())
+        if (m_currentChannel != null)
         {
-          foundMatchingGroupName = DoesGroupNameContainGroupName(groupMap, groupname);
-          if (foundMatchingGroupName)
+          foreach (GroupMap groupMap in m_currentChannel.ReferringGroupMap())
           {
-            break;
-          }          
-        }
-      }
-
-      //if we still havent found the right group, then iterate through the selected group and find the channelname.      
-      if (!foundMatchingGroupName && m_currentChannel != null && m_groups != null)
-      {
-        foreach (GroupMap groupMap in ((ChannelGroup)m_groups[m_currentgroup]).ReferringGroupMap())
-        {
-          if (groupMap.ReferencedChannel().DisplayName == currentchannelName)
-          {
-            foundMatchingGroupName = true;
-            m_currentChannel = GetChannel(groupMap.ReferencedChannel().IdChannel);
-            break;
+            foundMatchingGroupName = DoesGroupNameContainGroupName(groupMap, groupname);
+            if (foundMatchingGroupName)
+            {
+              break;
+            }
           }
         }
-      }
 
-
-      // if the groupname does not match any of the groups assigned to the channel, then find the last group avail. (avoiding the all "channels group") for that channel and set is as the new currentgroup
-      if (!foundMatchingGroupName && m_currentChannel != null && m_currentChannel.ReferringGroupMap().Count > 0)
-      {
-        GroupMap groupMap =
-          (GroupMap) m_currentChannel.ReferringGroupMap()[m_currentChannel.ReferringGroupMap().Count - 1];
-
-        ChannelGroup group = groupMap.ReferencedChannelGroup();        
-
-        if (group != null)
+        //if we still havent found the right group, then iterate through the selected group and find the channelname.      
+        if (!foundMatchingGroupName && m_currentChannel != null && m_groups != null)
         {
-          m_currentgroup = GetGroupIndex(group.GroupName);
+          foreach (GroupMap groupMap in ((ChannelGroup)m_groups[m_currentgroup]).ReferringGroupMap())
+          {
+            if (groupMap.ReferencedChannel().DisplayName == currentchannelName)
+            {
+              foundMatchingGroupName = true;
+              m_currentChannel = GetChannel(groupMap.ReferencedChannel().IdChannel);
+              break;
+            }
+          }
+        }
 
-          if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count) // Group no longer exists?
+
+        // if the groupname does not match any of the groups assigned to the channel, then find the last group avail. (avoiding the all "channels group") for that channel and set is as the new currentgroup
+        if (!foundMatchingGroupName && m_currentChannel != null && m_currentChannel.ReferringGroupMap().Count > 0)
+        {
+          GroupMap groupMap =
+            (GroupMap)m_currentChannel.ReferringGroupMap()[m_currentChannel.ReferringGroupMap().Count - 1];
+
+          ChannelGroup group = groupMap.ReferencedChannelGroup();
+
+          if (group != null)
+          {
+            m_currentgroup = GetGroupIndex(group.GroupName);
+
+            if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count) // Group no longer exists?
+            {
+              m_currentgroup = 0;
+            }
+          }
+          else
           {
             m_currentgroup = 0;
           }
         }
-        else
-        {
-          m_currentgroup = 0;
-        }        
-      }
 
-      if (m_currentChannel != null)
-      {
-        m_currentChannel.CurrentGroup = CurrentGroup;
+        if (m_currentChannel != null)
+        {
+          m_currentChannel.CurrentGroup = CurrentGroup;
+        }
       }
+    }
+
+    internal bool CheckIfProtectedGroup()
+    {
+      if (string.IsNullOrEmpty(m_groups[m_currentgroup].PinCode))
+      {
+        Log.Debug("ChannelNavigator: The last channelgroup was not pin protected.");
+        return false;
+      }
+      Log.Debug("ChannelNavigator: The last channelgroup was pin protected.");
+      return true;
+    }
+
+    private bool CheckAndSelectAnUnprotectedGroup()
+    {
+      // validate SetProperty to enable RecordedDisAllowed in TvRecorded skin
+      GUIPropertyManager.SetProperty("#TVPinCode.enabled", "true");
+
+      if (string.IsNullOrEmpty(m_groups[m_currentgroup].PinCode))
+      {
+        Log.Debug("ChannelNavigator: The last channelgroup was not pin protected.");
+        return false;
+      }
+      Log.Debug("ChannelNavigator: The last channelgroup was pin protected.");
+
+      m_groups.Sort(CompareChannelGroupSortOrder);
+
+      int i = 0;
+      foreach (ChannelGroup group in m_groups)
+      {
+        if (string.IsNullOrEmpty(group.PinCode))
+        {
+          m_currentgroup = i;
+          ChannelGroup agroup = (ChannelGroup)m_groups[i];
+          if (agroup.ReferringGroupMap().Count > 0)
+          {
+            GroupMap gm = (GroupMap)agroup.ReferringGroupMap()[0];
+            m_currentChannel = gm.ReferencedChannel();
+          }
+          m_currentChannel.CurrentGroup = group;
+          Log.Debug("ChannelNavigator: the selected unprotected group is {0}, ch.name {1}", m_currentChannel.CurrentGroup.GroupName, m_currentChannel.DisplayName);
+          break;
+        }
+        i++;
+      }
+      return true;
     }
 
     public void SaveSettings(Settings xmlwriter)

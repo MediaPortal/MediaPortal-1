@@ -1402,6 +1402,11 @@ namespace TvPlugin
       }
       dlg.AddLocalizedString(368); // IMDB
       dlg.AddLocalizedString(970); // Previous window
+      
+      if (!g_Player.IsTVRecording)
+      {
+        dlg.AddLocalizedString(1986); // Placeshift
+      }
 
       _isDialogVisible = true;
 
@@ -1506,7 +1511,39 @@ namespace TvPlugin
         case 200073:
           ShowPostProcessingMenu();
           break;
+
+        case 1986:
+          StartPlaceshift();
+          break;
       }
+    }
+
+    private void StartPlaceshift()
+    {
+      User myUser = new User();
+      string HostName = myUser.Name;
+
+      if (TVHome.inPlaceShift)
+      {
+        myUser.Name = "Placeshift Virtual User-" + TVHome.vPlaceshiftCard.IdChannel;
+        myUser.CardId = TVHome.vPlaceshiftCard.Id;
+
+        RemoteControl.Instance.ReplaceTimeshiftUser(TVHome.vPlaceshiftCard.Id, myUser, HostName);
+        RemoteControl.Instance.SetTimeshiftPosition(TVHome.vPlaceshiftCard.Id, myUser, g_Player.CurrentPosition);
+
+        Log.Info("StartPlaceshift: myUser.Name: {0}, vPlaceshiftCard.Id: {1}, TimeshiftPosition: {2}", myUser.Name, TVHome.vPlaceshiftCard.Id, g_Player.CurrentPosition);
+      }
+      else
+      {
+        myUser.Name = "Placeshift Virtual User-" + TVHome.Card.IdChannel;
+        myUser.CardId = TVHome.Card.Id;
+
+        RemoteControl.Instance.ReplaceTimeshiftUser(TVHome.Card.Id, myUser, HostName);
+        RemoteControl.Instance.SetTimeshiftPosition(TVHome.Card.Id, myUser, g_Player.CurrentPosition);
+
+        Log.Info("StartPlaceshift: myUser.Name: {0}, Card.Id: {1}, TimeshiftPosition: {2}", myUser.Name, TVHome.Card.Id, g_Player.CurrentPosition);
+      }
+      g_Player.Stop();
     }
 
     private void ShowChapterStreamsMenu()
@@ -2858,7 +2895,6 @@ namespace TvPlugin
       {
         return;
       }
-
       Log.Debug("TvFullScreen.ZapNextChannel()");
       TVHome.Navigator.ZapToNextChannel(true);
       UpdateOSD();
@@ -2935,6 +2971,34 @@ namespace TvPlugin
     {
       _autoZapMode = false;
       _autoZapTimer.Dispose();
+
+      // needs for PIN protection function avoid to start tvhome with a protected group
+      var previousWindowId = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId;
+      if (previousWindowId == (int)Window.WINDOW_HOME ||
+          previousWindowId == (int)Window.WINDOW_SECOND_HOME)
+      {
+        if (TVHome.m_navigator != null && (TVHome.m_navigator.CheckIfProtectedGroup() || TVHome._allowProtectedItem || TVHome._showAllRecording))
+        {
+          TVHome._allowProtectedItem = false;
+          TVHome._showAllRecording = false;
+          TVHome.LoadSettings(true);
+        }
+      }
+      ///@
+      /*
+      if (!GUIGraphicsContext.IsTvWindow(newWindowId))
+      {
+        if (Recorder.IsViewing() && !(Recorder.IsTimeShifting() || Recorder.IsRecording()))
+        {
+          if (GUIGraphicsContext.ShowBackground)
+          {
+            // stop timeshifting & viewing... 
+
+            Recorder.StopViewing();
+          }
+        }
+      }*/
+
       base.OnPageDestroy(newWindowId);
     }
 
@@ -2942,6 +3006,19 @@ namespace TvPlugin
     {
       _autoZapTimer = new Timer();
       base.OnPageLoad();
+
+      // needs for PIN protection function avoid to start tvhome with a protected group
+      var previousWindowId = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId;
+      if (previousWindowId == (int)Window.WINDOW_HOME ||
+          previousWindowId == (int)Window.WINDOW_SECOND_HOME)
+      {
+        if (TVHome.m_navigator != null && (TVHome.m_navigator.CheckIfProtectedGroup() || TVHome._allowProtectedItem || TVHome._showAllRecording))
+        {
+          TVHome._allowProtectedItem = false;
+          TVHome._showAllRecording = false;
+          TVHome.LoadSettings(true);
+        }
+      }
     }
 
     private void RenderVolume(bool show)

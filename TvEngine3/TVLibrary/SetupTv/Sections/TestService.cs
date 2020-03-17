@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 using TvControl;
 using TvDatabase;
@@ -62,13 +63,17 @@ namespace SetupTv.Sections
       mpGroupBox1.Visible = false;
       RemoteControl.Instance.EpgGrabberEnabled = true;
 
-      comboBoxGroups.Items.Clear();
-      IList<ChannelGroup> groups = ChannelGroup.ListAll();
-      foreach (ChannelGroup group in groups)
-        comboBoxGroups.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
-      if (comboBoxGroups.Items.Count == 0)
-        comboBoxGroups.Items.Add(new ComboBoxExItem("(no groups defined)", -1, -1));
-      comboBoxGroups.SelectedIndex = 0;
+      if (comboBoxGroups != null)
+      {
+        comboBoxGroups.Items.Clear();
+        IList<ChannelGroup> groups = ChannelGroup.ListAll();
+        foreach (ChannelGroup group in groups)
+          comboBoxGroups.Items.Add(new ComboBoxExItem(@group.GroupName, -1, @group.IdGroup));
+        if (comboBoxGroups.Items.Count == 0)
+          comboBoxGroups.Items.Add(new ComboBoxExItem("(no groups defined)", -1, -1));
+        if (comboBoxGroups.Items.Count > 0)
+          comboBoxGroups.SelectedIndex = 0;
+      }
 
       timer1.Enabled = true;
 
@@ -106,12 +111,21 @@ namespace SetupTv.Sections
       if (ServiceHelper.IsStopped) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
-
+      IUser currentUser;
       TvServer server = new TvServer();
-      VirtualCard card = GetCardTimeShiftingChannel(id);
+      VirtualCard card = GetCardTimeShiftingChannel(id, out currentUser);
       if (card != null)
       {
-        card.StopTimeShifting();
+        if (card.IsTimeShifting && !_tunePending)
+        {
+          card.StopTimeShifting();
+          _tunePending = false;
+        }
+        else
+        {
+          RemoteControl.Instance.CancelTimeShifting(ref currentUser, _currentChannelIdPendingTune);
+          _tunePending = false; // TODO
+        }
         mpButtonRec.Enabled = false;
       }
       else
@@ -127,70 +141,48 @@ namespace SetupTv.Sections
           }
         }
         IUser user = UserFactory.CreateSchedulerUser();
-        user.Name = "setuptv-" + id + "-" + cardId;        
-        user.CardId = cardId;        
+        // To use for testing async tuning
+        user.Name = "setuptv";
+        //user.Name = "setuptv-" + id + "-" + cardId;
+        user.CardId = cardId;
 
-        TvResult result = server.StartTimeShifting(ref user, id, out card, cardId != -1);
-        if (result != TvResult.Succeeded)
+        if (chkASynch.Checked)
         {
-          switch (result)
+          card = GetCardTimeShiftingChannel(_currentChannelIdPendingTune, out currentUser);
+          if (_tunePending)
           {
-            case TvResult.NoPmtFound:
-              MessageBox.Show(this, "No PMT found");
-              break;
-            case TvResult.NoSignalDetected:
-              MessageBox.Show(this, "No signal");
-              break;
-            case TvResult.CardIsDisabled:
-              MessageBox.Show(this, "Card is not enabled");
-              break;
-            case TvResult.AllCardsBusy:
-              MessageBox.Show(this, "All cards are busy");
-              break;
-            case TvResult.ChannelIsScrambled:
-              MessageBox.Show(this, "Channel is scrambled");
-              break;
-            case TvResult.NoVideoAudioDetected:
-              MessageBox.Show(this, "No Video/Audio detected");
-              break;
-            case TvResult.UnableToStartGraph:
-              MessageBox.Show(this, "Unable to create/start graph");
-              break;
-            case TvResult.ChannelNotMappedToAnyCard:
-              MessageBox.Show(this, "Channel is not mapped to any card");
-              break;
-            case TvResult.NoTuningDetails:
-              MessageBox.Show(this, "No tuning information available for this channel");
-              break;
-            case TvResult.UnknownChannel:
-              MessageBox.Show(this, "Unknown channel");
-              break;
-            case TvResult.UnknownError:
-              MessageBox.Show(this, "Unknown error occured");
-              break;
-            case TvResult.ConnectionToSlaveFailed:
-              MessageBox.Show(this, "Cannot connect to slave server");
-              break;
-            case TvResult.NotTheOwner:
-              MessageBox.Show(this, "Failed since card is in use and we are not the owner");
-              break;
-            case TvResult.GraphBuildingFailed:
-              MessageBox.Show(this, "Unable to create graph");
-              break;
-            case TvResult.SWEncoderMissing:
-              MessageBox.Show(this, "No suppported software encoder installed");
-              break;
-            case TvResult.NoFreeDiskSpace:
-              MessageBox.Show(this, "No free disk space");
-              break;
-            case TvResult.TuneCancelled:
-              MessageBox.Show(this, "Tune cancelled");
-              break;
+            if ((_currentChannelIdPendingTune == id))
+            {
+              return;
+            }
+            RemoteControl.Instance.CancelTimeShifting(ref currentUser, _currentChannelIdPendingTune);
+            mpButtonRec.Enabled = false;
+            _currentChannelIdPendingTune = id;
           }
+
+          if ((_currentChannelIdForTune == id) && card != null)
+          {
+            return;
+          }
+          ThreadStart work = () => DoAsynchTune(ref user, id, cardId);
+          var tuneThread = new Thread(work) {Name = "Async Tune Thread for channel " + id};
+          tuneThread.Start();
         }
         else
         {
-          mpButtonRec.Enabled = true;
+          TvResult result = server.StartTimeShifting(ref user, id, out card, cardId != -1);
+          if (result != TvResult.Succeeded)
+          {
+            //if (_currentChannelIdForTune == id)
+            {
+              HandleTvResult(result);
+            }
+            _currentChannelIdForTune = 0;
+          }
+          else
+          {
+            mpButtonRec.Enabled = true;
+          }
         }
       }
     }
@@ -210,7 +202,8 @@ namespace SetupTv.Sections
       }
       else
       {
-        card = GetCardTimeShiftingChannel(id);
+        IUser currentUser;
+        card = GetCardTimeShiftingChannel(id, out currentUser);
         if (card != null)
         {
           string fileName = String.Format(@"{0}\{1}.mpg", card.RecordingFolder, Utils.MakeFileName(channel));
@@ -261,7 +254,8 @@ namespace SetupTv.Sections
       if (mpComboBoxChannels.SelectedItem != null)
       {
         int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
-        VirtualCard card = GetCardTimeShiftingChannel(id);
+        IUser currentUser;
+        VirtualCard card = GetCardTimeShiftingChannel(id, out currentUser);
         if (card != null)
         {
           mpGroupBox1.Visible = true;
@@ -300,6 +294,66 @@ namespace SetupTv.Sections
       mpButtonRec.Text = "Record";
       mpButtonTimeShift.Text = "Start TimeShift";
       mpButtonTimeShift.Enabled = true;
+    }
+
+    private void HandleTvResult(TvResult result)
+    {
+      switch (result)
+      {
+        case TvResult.NoPmtFound:
+          MessageBox.Show(this, "No PMT found");
+          break;
+        case TvResult.NoSignalDetected:
+          MessageBox.Show(this, "No signal");
+          break;
+        case TvResult.CardIsDisabled:
+          MessageBox.Show(this, "Card is not enabled");
+          break;
+        case TvResult.AllCardsBusy:
+          MessageBox.Show(this, "All cards are busy");
+          break;
+        case TvResult.ChannelIsScrambled:
+          MessageBox.Show(this, "Channel is scrambled");
+          break;
+        case TvResult.NoVideoAudioDetected:
+          MessageBox.Show(this, "No Video/Audio detected");
+          break;
+        case TvResult.UnableToStartGraph:
+          MessageBox.Show(this, "Unable to create/start graph");
+          break;
+        case TvResult.ChannelNotMappedToAnyCard:
+          MessageBox.Show(this, "Channel is not mapped to any card");
+          break;
+        case TvResult.NoTuningDetails:
+          MessageBox.Show(this, "No tuning information available for this channel");
+          break;
+        case TvResult.UnknownChannel:
+          MessageBox.Show(this, "Unknown channel");
+          break;
+        case TvResult.UnknownError:
+          MessageBox.Show(this, "Unknown error occured");
+          break;
+        case TvResult.ConnectionToSlaveFailed:
+          MessageBox.Show(this, "Cannot connect to slave server");
+          break;
+        case TvResult.NotTheOwner:
+          MessageBox.Show(this, "Failed since card is in use and we are not the owner");
+          break;
+        case TvResult.GraphBuildingFailed:
+          MessageBox.Show(this, "Unable to create graph");
+          break;
+        case TvResult.SWEncoderMissing:
+          MessageBox.Show(this, "No suppported software encoder installed");
+          break;
+        case TvResult.NoFreeDiskSpace:
+          MessageBox.Show(this, "No free disk space");
+          break;
+        case TvResult.TuneCancelled:
+          MessageBox.Show(this, "Tune cancelled");
+          break;
+      }
+      _tunePending = false;
+      _currentChannelIdForTune = 0;
     }
 
     private void UpdateCardStatus()
@@ -516,7 +570,11 @@ namespace SetupTv.Sections
         }
         else if (ServiceHelper.IsRunning)
         {
-          if (ServiceHelper.Stop()) {}
+          if (ServiceHelper.Stop())
+          {
+            // just make a small pause to avoid net socket exception :-)
+            Thread.Sleep(3000);
+          }
         }
         RemoteControl.Clear();
         timer1.Enabled = true;
@@ -548,7 +606,7 @@ namespace SetupTv.Sections
     /// </summary>
     /// <param name="channelId">Id of the channel</param>
     /// <returns>virtual card</returns>
-    public VirtualCard GetCardTimeShiftingChannel(int channelId)
+    public VirtualCard GetCardTimeShiftingChannel(int channelId, out IUser users)
     {
       IList<Card> cards = Card.ListAll();
       foreach (Card card in cards)
@@ -566,11 +624,13 @@ namespace SetupTv.Sections
             if (vcard.IsTimeShifting)
             {
               vcard.RecordingFolder = card.RecordingFolder;
+              users = usersForCard[i];
               return vcard;
             }
           }
         }
       }
+      users = null;
       return null;
     }
 
@@ -653,46 +713,110 @@ namespace SetupTv.Sections
       }
       else
       {
-        ChannelGroup group = ChannelGroup.Retrieve(idItem.Id);
-        IList<GroupMap> maps = group.ReferringGroupMap();
-        foreach (GroupMap map in maps)
+        try
         {
-          Channel ch = map.ReferencedChannel();
-          if (ch.IsTv == false) continue;
-          bool hasFta = false;
-          bool hasScrambled = false;
-          IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
-          foreach (TuningDetail detail in tuningDetails)
+          ChannelGroup group = ChannelGroup.Retrieve(idItem.Id);
+          IList<GroupMap> maps = group.ReferringGroupMap();
+          foreach (GroupMap map in maps)
           {
-            if (detail.FreeToAir)
+            Channel ch = map.ReferencedChannel();
+            if (ch == null)
             {
-              hasFta = true;
+              map.Delete();
+              map.IsChanged = true;
+              map.Persist();
+              continue;
             }
-            if (!detail.FreeToAir)
+            if (ch.IsTv == false)
             {
-              hasScrambled = true;
+              continue;
             }
-          }
+            bool hasFta = false;
+            bool hasScrambled = false;
+            IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
+            foreach (TuningDetail detail in tuningDetails)
+            {
+              if (detail.FreeToAir)
+              {
+                hasFta = true;
+              }
+              if (!detail.FreeToAir)
+              {
+                hasScrambled = true;
+              }
+            }
 
-          int imageIndex;
-          if (hasFta && hasScrambled)
-          {
-            imageIndex = 5;
+            int imageIndex;
+            if (hasFta && hasScrambled)
+            {
+              imageIndex = 5;
+            }
+            else if (hasScrambled)
+            {
+              imageIndex = 4;
+            }
+            else
+            {
+              imageIndex = 3;
+            }
+            ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
+            mpComboBoxChannels.Items.Add(item);
           }
-          else if (hasScrambled)
-          {
-            imageIndex = 4;
-          }
-          else
-          {
-            imageIndex = 3;
-          }
-          ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
-          mpComboBoxChannels.Items.Add(item);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("SetupTV catch comboBoxGroups exception {0}", ex);
         }
       }
       if (mpComboBoxChannels.Items.Count > 0)
         mpComboBoxChannels.SelectedIndex = 0;
     }
+
+    private void DoAsynchTune(ref IUser user, int channelId, int cardId)
+    {
+      try
+      {
+        TvServer server = new TvServer();
+        VirtualCard outCard;
+        TvResult result;
+        _tunePending = true;
+
+        _currentChannelIdPendingTune = channelId;
+
+        result = server.StartTimeShifting(ref user, channelId, out outCard, cardId != -1);
+        if (result == TvResult.Succeeded)
+        {
+          if (outCard != null && outCard.IsTimeShifting)
+          {
+            _currentChannelIdForTune = channelId;
+            _tunePending = false;
+          }
+        }
+        else
+        {
+          _currentChannelIdForTune = 0;
+        }
+
+        if (_currentChannelIdPendingTune == channelId)
+        {
+          _mainThreadContext.Send((object state) => HandleTvResult(result), null);
+        }
+      }
+      finally
+      {
+        if (_currentChannelIdForTune == channelId)
+        {
+          //_currentChannelIdForTune = 0;
+        }
+      }
+    }
+
+    private SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
+
+    private int _currentChannelIdForTune = 0;
+
+    private int _currentChannelIdPendingTune = 0;
+
+    private static bool _tunePending = false;
   }
 }

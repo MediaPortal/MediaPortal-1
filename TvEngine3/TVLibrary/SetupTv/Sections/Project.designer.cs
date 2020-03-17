@@ -58,8 +58,8 @@ namespace SetupTv.Sections
       // 
       // groupBoxInfo
       // 
-      this.groupBoxInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxInfo.Controls.Add(this.labelInfo2);
       this.groupBoxInfo.Controls.Add(this.labelInfo1);
       this.groupBoxInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -71,30 +71,30 @@ namespace SetupTv.Sections
       // 
       // labelInfo2
       // 
-      this.labelInfo2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelInfo2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.labelInfo2.Location = new System.Drawing.Point(16, 56);
       this.labelInfo2.Name = "labelInfo2";
       this.labelInfo2.Size = new System.Drawing.Size(440, 30);
       this.labelInfo2.TabIndex = 1;
       this.labelInfo2.Text = "Clients like MediaPortal can use the TV-Server to watch Live-TV/recordings/EPG ov" +
-          "er the network.";
+    "er the network.";
       // 
       // labelInfo1
       // 
-      this.labelInfo1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelInfo1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.labelInfo1.Location = new System.Drawing.Point(16, 24);
       this.labelInfo1.Name = "labelInfo1";
       this.labelInfo1.Size = new System.Drawing.Size(440, 32);
       this.labelInfo1.TabIndex = 0;
       this.labelInfo1.Text = "The TV-Server is an application which allows you to set up a central server with " +
-          "multiple TV cards.";
+    "multiple TV cards.";
       // 
       // groupBoxContact
       // 
-      this.groupBoxContact.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxContact.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxContact.Controls.Add(this.linkLabelSourceforge);
       this.groupBoxContact.Controls.Add(this.labelSourceForge);
       this.groupBoxContact.Controls.Add(this.linkLabelOnlineDocumentation);
@@ -221,8 +221,8 @@ namespace SetupTv.Sections
       // 
       // mpGroupBoxAbout
       // 
-      this.mpGroupBoxAbout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBoxAbout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBoxAbout.Controls.Add(this.labelVersion3);
       this.mpGroupBoxAbout.Controls.Add(this.labelVersion2);
       this.mpGroupBoxAbout.Controls.Add(this.labelVersion1);
@@ -238,25 +238,25 @@ namespace SetupTv.Sections
       // 
       this.labelVersion3.AutoSize = true;
       this.labelVersion3.ForeColor = System.Drawing.Color.Red;
-      this.labelVersion3.Location = new System.Drawing.Point(122, 20);
+      this.labelVersion3.Location = new System.Drawing.Point(14, 33);
       this.labelVersion3.Name = "labelVersion3";
-      this.labelVersion3.Size = new System.Drawing.Size(115, 13);
+      this.labelVersion3.Size = new System.Drawing.Size(174, 13);
       this.labelVersion3.TabIndex = 2;
-      this.labelVersion3.Text = "(Snapshot-Build for testing only!!!)";
+      this.labelVersion3.Text = "(Snapshot-Build for is testing only!!!)";
       // 
       // labelVersion2
       // 
       this.labelVersion2.AutoSize = true;
-      this.labelVersion2.Location = new System.Drawing.Point(59, 20);
+      this.labelVersion2.Location = new System.Drawing.Point(59, 17);
       this.labelVersion2.Name = "labelVersion2";
-      this.labelVersion2.Size = new System.Drawing.Size(62, 13);
+      this.labelVersion2.Size = new System.Drawing.Size(80, 13);
       this.labelVersion2.TabIndex = 1;
-      this.labelVersion2.Text = "1.0.3.XXXX";
+      this.labelVersion2.Text = "1.10.100.XXXX";
       // 
       // labelVersion1
       // 
       this.labelVersion1.AutoSize = true;
-      this.labelVersion1.Location = new System.Drawing.Point(15, 20);
+      this.labelVersion1.Location = new System.Drawing.Point(15, 17);
       this.labelVersion1.Name = "labelVersion1";
       this.labelVersion1.Size = new System.Drawing.Size(45, 13);
       this.labelVersion1.TabIndex = 0;

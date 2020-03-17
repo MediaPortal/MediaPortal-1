@@ -267,6 +267,8 @@ namespace TvLibrary.Implementations.DVB
 
     protected bool _cancelTune;
 
+    private readonly object _lock = new object();
+
     #endregion
 
     #region ctor
@@ -300,9 +302,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="subChannelId">The sub channel id</param>
     /// <param name="channel">The channel.</param>
     /// <returns></returns>
-    public virtual ITvSubChannel Scan(int subChannelId, IChannel channel)
+    public virtual ITvSubChannel Scan(int subChannelId, string userName, IChannel channel)
     {
-      return DoTune(subChannelId, channel, true);
+      return DoTune(subChannelId, userName, channel, true);
     }
 
     public abstract ITVScanning ScanningInterface { get; }
@@ -312,16 +314,17 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="subChannelId">The sub channel id</param>
     /// <param name="channel">The channel.</param>
+    /// <param name="Username">The current User.</param>
     /// <returns></returns>
-    public virtual ITvSubChannel Tune(int subChannelId, IChannel channel)
+    public virtual ITvSubChannel Tune(int subChannelId, string userName, IChannel channel)
     {
-      return DoTune(subChannelId, channel, false);
+      return DoTune(subChannelId, userName, channel, false);
     }
 
-    private ITvSubChannel DoTune(int subChannelId, IChannel channel, bool ignorePMT)
+    private ITvSubChannel DoTune(int subChannelId, string userName, IChannel channel, bool ignorePMT)
     {      
       bool performTune = (_previousChannel == null || _previousChannel.IsDifferentTransponder(channel));
-      ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, performTune);
+      ITvSubChannel ch = SubmitTuneRequest(subChannelId, userName, channel, _tuneRequest, performTune);
       _previousChannel = channel;
 
       try
@@ -393,13 +396,13 @@ namespace TvLibrary.Implementations.DVB
     /// Allocates a new instance of TvDvbChannel which handles the new subchannel
     /// </summary>
     /// <returns>handle for to the subchannel</returns>
-    protected int GetNewSubChannel(IChannel channel)
+    protected int GetNewSubChannel(IChannel channel, string _userName)
     {
       int id = _subChannelId++;
       Log.Log.Info("dvb:GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
 
       TvDvbChannel subChannel = new TvDvbChannel(_graphBuilder, _conditionalAccess, _mdplugs, _filterTIF,
-                                                 _filterTsWriter, id, channel);
+                                                 _filterTsWriter, id, channel, _userName);
       subChannel.Parameters = Parameters;
       subChannel.CurrentChannel = channel;
       _mapSubChannels[id] = subChannel;
@@ -434,7 +437,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tuneRequest">tune requests</param>
     /// <param name="performTune">Indicates if a tune is required</param>
     /// <returns></returns>
-    protected virtual ITvSubChannel SubmitTuneRequest(int subChannelId, IChannel channel, ITuneRequest tuneRequest,
+    protected virtual ITvSubChannel SubmitTuneRequest(int subChannelId, string userName, IChannel channel, ITuneRequest tuneRequest,
                                               bool performTune)
     {
       Log.Log.Info("dvb:Submiting tunerequest Channel:{0} subChannel:{1} ", channel.Name, subChannelId);
@@ -443,7 +446,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Info("dvb:Getting new subchannel");
         newSubChannel = true;
-        subChannelId = GetNewSubChannel(channel);
+        subChannelId = GetNewSubChannel(channel, userName);
       }
       else
       {
@@ -528,7 +531,8 @@ namespace TvLibrary.Implementations.DVB
         _mapSubChannels[subChannelId].OnAfterTune();
       }
       catch (Exception ex)
-      {        
+      {
+        _cancelTune = false;
         if (newSubChannel)
         {
           Log.Log.WriteFile("dvb:SubmitTuneRequest  failed - removing subchannel: {0}, {1} - {2}", subChannelId, ex.Message, ex.StackTrace);
@@ -855,6 +859,7 @@ namespace TvLibrary.Implementations.DVB
           dvbChannel.CancelTune();
         }
       }
+      _cancelTune = false;
     }
 
     //protected Dictionary<int, TvDvbChannel> _mapSubChannels;
@@ -898,17 +903,42 @@ namespace TvLibrary.Implementations.DVB
       _epgGrabbing = false;
       if (_mapSubChannels.ContainsKey(subChannel))
       {
-        LockInOnSignal();        
+        LockInOnSignal();
         _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
         _mapSubChannels[subChannel].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
         _mapSubChannels[subChannel].OnGraphStarted();
       }
     }
 
+    private void InitializePauseGraph()
+    {
+      if (_isInitializedPauseGraph)
+      {
+        return;
+      }
+
+      lock (_lock)
+      {
+        if (!_isInitializedPauseGraph)
+        {
+          _isInitializedPauseGraph = true;
+          StopGraphThread();
+          _isInitializedStopGraph = false;
+        }
+      }
+    }
+
+    private bool _isInitializedPauseGraph = false;
+
+    public override void PauseGraph()
+    {
+      InitializePauseGraph();
+    }
+
     /// <summary>
     /// Methods which pauses the graph
     /// </summary>
-    public override void PauseGraph()
+    public void PauseGraphThread()
     {
       Log.Log.WriteFile("dvb:PauseGraph called");
       if (!CheckThreadId())
@@ -923,29 +953,59 @@ namespace TvLibrary.Implementations.DVB
       if (_graphBuilder == null)
         return;
 
-      FilterState state;
-      ((IMediaControl)_graphBuilder).GetState(10, out state);
+      FilterState state = FilterState.Stopped;
+      var control = _graphBuilder as IMediaControl;
+      if (control != null) control.GetState(10, out state);
       if (state != FilterState.Running)
       {
         Log.Log.WriteFile("dvb:PauseGraph filterstate already paused, returning.");
         return;
       }
       Log.Log.WriteFile("dvb:PauseGraph");
-      int hr = ((IMediaControl)_graphBuilder).Pause();
-      if (hr < 0 || hr > 1)
+      var mediaControl = _graphBuilder as IMediaControl;
+      if (mediaControl != null)
       {
-        Log.Log.Error("dvb:PauseGraph returns:0x{0:X}", hr);
-        throw new TvException("Unable to pause graph");
+        int hr = mediaControl.Pause();
+        if (hr < 0 || hr > 1)
+        {
+          Log.Log.Error("dvb:PauseGraph returns:0x{0:X}", hr);
+          throw new TvException("Unable to pause graph");
+        }
       }
       _graphState = GraphState.Created;
     }
 
     public abstract bool CanTune(IChannel channel);
 
+    private void InitializeStopGraph()
+    {
+      if (_isInitializedStopGraph)
+      {
+        return;
+      }
+
+      lock (_lock)
+      {
+        if (!_isInitializedStopGraph)
+        {
+          _isInitializedStopGraph = true;
+          StopGraphThread();
+          _isInitializedStopGraph = false;
+        }
+      }
+    }
+
+    private bool _isInitializedStopGraph;
+
+    public override void StopGraph()
+    {
+      InitializeStopGraph();
+    }
+
     /// <summary>
     /// Methods which stops the graph
     /// </summary>
-    public override void StopGraph()
+    private void StopGraphThread()
     {
       Log.Log.WriteFile("dvb:StopGraph called");
       if (!CheckThreadId())
@@ -961,20 +1021,25 @@ namespace TvLibrary.Implementations.DVB
         return;
       if (_conditionalAccess.AllowedToStopGraph)
       {
-        FilterState state;
-        ((IMediaControl)_graphBuilder).GetState(10, out state);
+        FilterState state = FilterState.Stopped;
+        var mediaControl = _graphBuilder as IMediaControl;
+        if (mediaControl != null) mediaControl.GetState(10, out state);
         if (state == FilterState.Stopped)
         {
           Log.Log.WriteFile("dvb:StopGraph filterstate already stopped, returning.");
           return;
         }
         Log.Log.WriteFile("dvb:StopGraph");
-        int hr = ((IMediaControl)_graphBuilder).Stop();
-        Log.Log.WriteFile("debug: IMediaControl stopped! hr = 0x{0:x} :)", hr);
-        if (hr < 0 || hr > 1)
+        var control = _graphBuilder as IMediaControl;
+        if (control != null)
         {
-          Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
-          throw new TvException("Unable to stop graph");
+          int hr = control.Stop();
+          Log.Log.WriteFile("debug: IMediaControl stopped! hr = 0x{0:x} :)", hr);
+          if (hr < 0 || hr > 1)
+          {
+            Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
+            throw new TvException("Unable to stop graph");
+          }
         }
         _conditionalAccess.OnStopGraph();
         // *** this should be removed when solution for graph start problem exists
@@ -986,12 +1051,16 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
-        int hr = ((IMediaControl)_graphBuilder).Stop();
-        Log.Log.WriteFile("dvb:StopGraph - conditionalAccess.AllowedToStopGraph = false");
-        if (hr < 0 || hr > 1)
+        var mediaControl = _graphBuilder as IMediaControl;
+        if (mediaControl != null)
         {
-          Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
-          throw new TvException("Unable to stop graph");
+          int hr = mediaControl.Stop();
+          Log.Log.WriteFile("dvb:StopGraph - conditionalAccess.AllowedToStopGraph = false");
+          if (hr < 0 || hr > 1)
+          {
+            Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
+            throw new TvException("Unable to stop graph");
+          }
         }
         _graphState = GraphState.Created;
       }
@@ -2427,13 +2496,19 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Aborts grabbing the epg
     /// </summary>
-    public void AbortGrabbing()
+    public void AbortGrabbing(bool StopTimeshiftTimer)
     {
       Log.Log.Write("dvb:abort grabbing epg");
       if (_interfaceEpgGrabber != null)
         _interfaceEpgGrabber.AbortGrabbing();
       if (_timeshiftingEPGGrabber != null)
         _timeshiftingEPGGrabber.OnEpgCancelled();
+      if (StopTimeshiftTimer)
+      {
+        Log.Log.Write("dvb:abort grabbing timeshift epg");
+        if (_timeshiftingEPGGrabber != null)
+          _timeshiftingEPGGrabber.StopTimer();
+      }
     }
 
     /// <summary>

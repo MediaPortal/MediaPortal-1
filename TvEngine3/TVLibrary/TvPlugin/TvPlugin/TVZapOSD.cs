@@ -412,89 +412,85 @@ namespace TvPlugin
           lblZapToChannelNo.Visible = true;
         }
       }
-      var chan = TVHome.Navigator.GetChannel(idChannel, true);
-      if (chan != null)
+      if (LastError != null)
       {
-        var prog = chan.GetProgramAt(m_dateTime);
-        if (LastError != null)
+        if (lblStartTime != null) lblStartTime.Label = "";
+        if (lblEndTime != null) lblEndTime.Label = "";
+        if (LastError.FailingChannel != null)
         {
-          if (lblStartTime != null) lblStartTime.Label = "";
-          if (lblEndTime != null) lblEndTime.Label = "";
-          if (LastError.FailingChannel != null)
+          if (lblCurrentChannel != null) lblCurrentChannel.Label = LastError.FailingChannel.DisplayName;
+        }
+        if (LastError.Messages.Count > 0)
+        {
+          lblOnTvNow.Label = LastError.Messages[0]; // first line in "NOW"
+          if (LastError.Messages.Count > 1)
           {
-            if (lblCurrentChannel != null) lblCurrentChannel.Label = LastError.FailingChannel.DisplayName;
+            lblOnTvNext.Label = String.Join(", ", LastError.Messages.ToArray(), 1, LastError.Messages.Count - 1);
+            // 2nd and later in "NEXT"
           }
-          if (LastError.Messages.Count > 0)
+        }
+        m_lastError = null; // reset member only, not the failing channel info in Navigator
+      }
+      else
+      {
+        if (lblCurrentChannel != null)
+        {
+          lblCurrentChannel.Label = channelName;
+        }
+        Channel chan = TVHome.Navigator.GetChannel(idChannel, true);
+        Program prog = chan.GetProgramAt(m_dateTime);
+        if (prog != null)
+        {
+          string strTime = String.Format("{0}-{1}",
+                                         prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                         prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+
+          if (lblCurrentTime != null)
           {
-            lblOnTvNow.Label = LastError.Messages[0]; // first line in "NOW"
-            if (LastError.Messages.Count > 1)
+            lblCurrentTime.Label = strTime;
+          }
+
+          if (lblOnTvNow != null)
+          {
+            lblOnTvNow.Label = prog.Title;
+          }
+          if (lblStartTime != null)
+          {
+            strTime = String.Format("{0}", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            lblStartTime.Label = strTime;
+          }
+          if (lblEndTime != null)
+          {
+            strTime = String.Format("{0} ", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            lblEndTime.Label = strTime;
+          }
+
+          // next program
+          prog = chan.GetProgramAt(prog.EndTime.AddMinutes(1));
+          //prog = TVHome.Navigator.GetChannel(channelName).GetProgramAt(prog.EndTime.AddMinutes(1));
+          if (prog != null)
+          {
+            if (lblOnTvNext != null)
             {
-              lblOnTvNext.Label = String.Join(", ", LastError.Messages.ToArray(), 1, LastError.Messages.Count - 1);
-              // 2nd and later in "NEXT"
+              lblOnTvNext.Label = prog.Title;
             }
           }
-          m_lastError = null; // reset member only, not the failing channel info in Navigator
         }
         else
         {
-          if (lblCurrentChannel != null)
+          lblOnTvNow.Label = GUILocalizeStrings.Get(736); // no epg for this channel
+
+          if (lblStartTime != null)
           {
-            lblCurrentChannel.Label = channelName;
+            lblStartTime.Label = String.Empty;
           }
-          if (prog != null)
+          if (lblEndTime != null)
           {
-            string strTime = String.Format("{0}-{1}",
-              prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-              prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
-            if (lblCurrentTime != null)
-            {
-              lblCurrentTime.Label = strTime;
-            }
-
-            if (lblOnTvNow != null)
-            {
-              lblOnTvNow.Label = prog.Title;
-            }
-            if (lblStartTime != null)
-            {
-              strTime = String.Format("{0}", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-              lblStartTime.Label = strTime;
-            }
-            if (lblEndTime != null)
-            {
-              strTime = String.Format("{0} ", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-              lblEndTime.Label = strTime;
-            }
-
-            // next program
-            prog = chan.GetProgramAt(prog.EndTime.AddMinutes(1));
-            //prog = TVHome.Navigator.GetChannel(channelName).GetProgramAt(prog.EndTime.AddMinutes(1));
-            if (prog != null)
-            {
-              if (lblOnTvNext != null)
-              {
-                lblOnTvNext.Label = prog.Title;
-              }
-            }
+            lblEndTime.Label = String.Empty;
           }
-
-          else
+          if (lblCurrentTime != null)
           {
-            lblOnTvNow.Label = GUILocalizeStrings.Get(736); // no epg for this channel
-
-            if (lblStartTime != null)
-            {
-              lblStartTime.Label = String.Empty;
-            }
-            if (lblEndTime != null)
-            {
-              lblEndTime.Label = String.Empty;
-            }
-            if (lblCurrentTime != null)
-            {
-              lblCurrentTime.Label = String.Empty;
-            }
+            lblCurrentTime.Label = String.Empty;
           }
         }
       }
@@ -504,23 +500,19 @@ namespace TvPlugin
     private void UpdateProgressBar()
     {
       double fPercent = 0;
-      var program = TVHome.Navigator.GetChannel(idChannel, true).CurrentProgram;
-      if (program != null)
+      var currentProgram = TVHome.Navigator.GetChannel(idChannel, true).CurrentProgram;
+      if (currentProgram != null)
       {
-        var currentProgram = program;
-        if (currentProgram != null)
-        {
-          Program prog = currentProgram;
-          string strTime = String.Format("{0}-{1}",
-            prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-            prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        Program prog = currentProgram;
+        string strTime = String.Format("{0}-{1}",
+          prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+          prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-          TimeSpan ts = prog.EndTime - prog.StartTime;
-          double iTotalSecs = ts.TotalSeconds;
-          ts = DateTime.Now - prog.StartTime;
-          double iCurSecs = ts.TotalSeconds;
-          fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
-        }
+        TimeSpan ts = prog.EndTime - prog.StartTime;
+        double iTotalSecs = ts.TotalSeconds;
+        ts = DateTime.Now - prog.StartTime;
+        double iCurSecs = ts.TotalSeconds;
+        fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
       }
       fPercent *= 100.0d;
       GUIPropertyManager.SetProperty("#TV.View.Percentage", fPercent.ToString());

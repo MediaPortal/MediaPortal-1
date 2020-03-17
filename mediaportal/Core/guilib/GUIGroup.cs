@@ -127,7 +127,7 @@ namespace MediaPortal.GUI.Library
             }
           }
 
-          if (_animator != null) _animator.Advance(timePassed);
+          _animator?.Advance(timePassed);
         }
       }
 

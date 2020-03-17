@@ -46,16 +46,16 @@ namespace TvLibrary.Log
       /// <summary>
       /// error logging
       /// </summary>
-      Error,
+    Error,
       /// <summary>
       /// epg logging
       /// </summary>
       Epg
-    }
+  }
 
-    /// <summary>
+  /// <summary>
     /// Configure after how many days the log file shall be rotated when a new line is added
-    /// </summary>
+  /// </summary>
     private static readonly TimeSpan _logDaysToKeep = new TimeSpan(1, 0, 0, 0);
 
     /// <summary>
@@ -264,7 +264,7 @@ namespace TvLibrary.Log
           try
           {
             File.SetCreationTime(aFileName, DateTime.Now);
-          }
+    }
           catch (Exception) {}
         }
       }
@@ -391,7 +391,7 @@ namespace TvLibrary.Log
             if (logFi.Length > _maxLogSizeMb * 1000 * 1000)
             {
               result = false;
-            }
+    }
           }
           catch (Exception) {}
           // File is older than today - _logDaysToKeep = rotate

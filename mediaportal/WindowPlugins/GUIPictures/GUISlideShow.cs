@@ -336,6 +336,8 @@ namespace MediaPortal.GUI.Pictures
     private const float KENBURNS_MAXZOOM = 1.30f;
     private const int KENBURNS_XFADE_FRAMES = 60;
 
+    private static SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
+
     #endregion
 
     #region variables
@@ -509,6 +511,7 @@ namespace MediaPortal.GUI.Pictures
           }
           GUIGraphicsContext.Overlay = _showOverlayFlag;
           break;
+
       }
       return base.OnMessage(message);
     }

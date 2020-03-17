@@ -767,7 +767,7 @@ namespace MediaPortal.GUI.Pictures
       LoadDirectory(currentFolder);
       if (selectedItemIndex >= 0 && (PreviousWindowId == (int)Window.WINDOW_SLIDESHOW || PreviousWindowId == (int)Window.WINDOW_PICTURES))
       {
-        GUISlideShow SlideShow = (GUISlideShow) GUIWindowManager.GetWindow((int) Window.WINDOW_SLIDESHOW);
+        GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
         Log.Debug("GUIPictures: currentSlideIndex {0}", SlideShow._currentSlideIndex);
         /*if (SlideShow._currentSlideIndex != -1)
           selectedItemIndex += SlideShow._currentSlideIndex+1;*/
@@ -1070,7 +1070,7 @@ namespace MediaPortal.GUI.Pictures
           if (disp == Display.Files)
           {
             AddItem(message.Label, -1);
-      }
+          }
           break;
 
         case GUIMessage.MessageType.GUI_MSG_PICTURESFILE_DELETED:
@@ -1409,8 +1409,8 @@ namespace MediaPortal.GUI.Pictures
             {
               facadeLayout.SelectedListItemIndex = 0;
               LoadDirectory(currentFolder);
-      }
-    }
+            }
+          }
           break;
       }
     }

@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Types">
+      <UniqueIdentifier>{cd600f7c-53d9-4931-b0cd-1d5a308d54f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Types\Header Files">
+      <UniqueIdentifier>{f9095a53-1fc6-4893-8c62-bd4879f359b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Types\Source Files">
+      <UniqueIdentifier>{cb03764b-a484-4cb2-9b5c-5c6f0f6462a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Collections">
+      <UniqueIdentifier>{d69e3849-120e-4ca0-afaf-e87dfb4d2039}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Collections\Header Files">
+      <UniqueIdentifier>{457e8453-d7ae-482b-baa8-9fff2d935c41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Collections\Source Files">
+      <UniqueIdentifier>{463f613b-bdb0-4ac8-9b85-72d600e09938}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Factories">
+      <UniqueIdentifier>{25e09bfa-ef8a-4b40-bfe7-653aacd26fd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Factories\Header Files">
+      <UniqueIdentifier>{c7515835-f967-421b-b2b8-6d1ebc90fc21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Factories\Source Files">
+      <UniqueIdentifier>{7e6bfbfa-d3f9-4f66-8c64-28cdd4da70e2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionDescription.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtocolVersion.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Bandwidth.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EmailAddress.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Origin.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PhoneNumber.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RepeatInterval.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionName.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionTime.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionUri.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionInformation.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionTimeCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RepeatIntervalCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectionData.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionTag.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionTagFactory.h">
+      <Filter>Factories\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaDescriptionCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaDescription.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Attribute.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryAttribute.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AttributeCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaFormat.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaFormatCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpMapAttribute.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlAttribute.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PayloadType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PayloadTypeCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KnownPayloadTypeCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RangeAttribute.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NormalPlayTimeRangeAttribute.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionDescription.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProtocolVersion.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Bandwidth.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EmailAddress.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Origin.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhoneNumber.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RepeatInterval.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionInformation.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionName.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionTime.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionUri.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RepeatIntervalCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionTimeCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConnectionData.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionTag.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionTagFactory.cpp">
+      <Filter>Factories\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaDescriptionCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaDescription.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Attribute.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryAttribute.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AttributeCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaFormat.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaFormatCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpMapAttribute.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlAttribute.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PayloadType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PayloadTypeCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="KnownPayloadTypeCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RangeAttribute.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NormalPlayTimeRangeAttribute.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

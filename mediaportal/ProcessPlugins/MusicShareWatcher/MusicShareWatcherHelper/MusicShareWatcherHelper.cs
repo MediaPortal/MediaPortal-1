@@ -39,11 +39,11 @@ namespace MediaPortal.MusicShareWatcher
 
     private bool bMonitoring;
     public static MusicDatabase musicDB = null;
-    private ArrayList m_Shares = new ArrayList();
-    private ArrayList m_Watchers = new ArrayList();
+    private readonly ArrayList m_Shares = new ArrayList();
+    private readonly ArrayList m_Watchers = new ArrayList();
 
     // Lock order is _enterThread, _events.SyncRoot
-    private object m_EnterThread = new object(); // Only one timer event is processed at any given moment
+    private readonly object m_EnterThread = new object(); // Only one timer event is processed at any given moment
     private ArrayList m_Events = null;
 
     private Timer m_Timer = null;
@@ -100,7 +100,10 @@ namespace MediaPortal.MusicShareWatcher
         {
           watcher.EnableRaisingEvents = true;
         }
-        m_Timer.Start();
+        if (m_Timer != null)
+        {
+          m_Timer.Start();
+        }
         Log.Info(LogType.MusicShareWatcher, "Monitoring of shares enabled");
       }
       else
@@ -110,7 +113,10 @@ namespace MediaPortal.MusicShareWatcher
         {
           watcher.EnableRaisingEvents = false;
         }
-        m_Timer.Stop();
+        if (m_Timer != null)
+        {
+          m_Timer.Stop();
+        }
         m_Events.Clear();
         Log.Info(LogType.MusicShareWatcher, "Monitoring of shares disabled");
       }
@@ -237,42 +243,42 @@ namespace MediaPortal.MusicShareWatcher
       // Allow only one Timer event to be executed.
       if (Monitor.TryEnter(m_EnterThread))
       {
-        // Only one thread at a time is processing the events                
+        // Only one thread at a time is processing the events
         try
         {
           // Lock the Collection, while processing the Events
           lock (m_Events.SyncRoot)
           {
-            MusicShareWatcherEvent currentEvent = null;
             for (int i = 0; i < m_Events.Count; i++)
             {
-              currentEvent = m_Events[i] as MusicShareWatcherEvent;
-              switch (currentEvent.Type)
-              {
-                case MusicShareWatcherEvent.EventType.Create:
-                case MusicShareWatcherEvent.EventType.Change:
-                  AddUpdateSong(currentEvent.FileName);
-                  break;
-                case MusicShareWatcherEvent.EventType.Delete:
-                  musicDB.DeleteSong(currentEvent.FileName, true);
-                  Log.Info(LogType.MusicShareWatcher, "Deleted Song: {0}", currentEvent.FileName);
-                  break;
-                case MusicShareWatcherEvent.EventType.DeleteDirectory:
-                  musicDB.DeleteSongDirectory(currentEvent.FileName);
-                  Log.Info(LogType.MusicShareWatcher, "Deleted Directory: {0}", currentEvent.FileName);
-                  break;
-                case MusicShareWatcherEvent.EventType.Rename:
-                  if (musicDB.RenameSong(currentEvent.OldFileName, currentEvent.FileName))
-                  {
-                    Log.Info(LogType.MusicShareWatcher, "Song / Directory {0} renamed to {1]", currentEvent.OldFileName,
-                             currentEvent.FileName);
-                  }
-                  else
-                  {
-                    Log.Info(LogType.MusicShareWatcher, "Song / Directory rename failed: {0}", currentEvent.FileName);
-                  }
-                  break;
-              }
+              var currentEvent = m_Events[i] as MusicShareWatcherEvent;
+              if (currentEvent != null)
+                switch (currentEvent.Type)
+                {
+                  case MusicShareWatcherEvent.EventType.Create:
+                  case MusicShareWatcherEvent.EventType.Change:
+                    AddUpdateSong(currentEvent.FileName);
+                    break;
+                  case MusicShareWatcherEvent.EventType.Delete:
+                    musicDB.DeleteSong(currentEvent.FileName, true);
+                    Log.Info(LogType.MusicShareWatcher, "Deleted Song: {0}", currentEvent.FileName);
+                    break;
+                  case MusicShareWatcherEvent.EventType.DeleteDirectory:
+                    musicDB.DeleteSongDirectory(currentEvent.FileName);
+                    Log.Info(LogType.MusicShareWatcher, "Deleted Directory: {0}", currentEvent.FileName);
+                    break;
+                  case MusicShareWatcherEvent.EventType.Rename:
+                    if (musicDB.RenameSong(currentEvent.OldFileName, currentEvent.FileName))
+                    {
+                      Log.Info(LogType.MusicShareWatcher, "Song / Directory {0} renamed to {1]", currentEvent.OldFileName,
+                        currentEvent.FileName);
+                    }
+                    else
+                    {
+                      Log.Info(LogType.MusicShareWatcher, "Song / Directory rename failed: {0}", currentEvent.FileName);
+                    }
+                    break;
+                }
               m_Events.RemoveAt(i);
               i--; // Don't skip next event
             }

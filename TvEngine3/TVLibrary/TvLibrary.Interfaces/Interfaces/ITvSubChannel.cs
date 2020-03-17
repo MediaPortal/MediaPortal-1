@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using TvLibrary.Teletext;
 
 namespace TvLibrary.Interfaces
@@ -36,6 +37,18 @@ namespace TvLibrary.Interfaces
     /// </summary>
     /// <value>The sub channel id.</value>
     int SubChannelId { get; }
+
+    /// <summary>
+    /// Gets the CancelPMT.
+    /// </summary>
+    /// <value>The CancelPMT.</value>
+    bool CancelPMT { get; set; }
+
+    /// <summary>
+    /// Gets the EventPMTCancelled.
+    /// </summary>
+    /// <value>The EventPMTCancelled.</value>
+    ManualResetEvent EventPMTCancelled { get; set; }
 
     /// <summary>
     /// gets the current filename used for timeshifting

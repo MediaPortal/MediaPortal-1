@@ -1,4 +1,50 @@
 @ECHO OFF
+cls
+Title Building MediaPortal
+
+:::::::::::::::::::::::::::::::::::::::::
+:: Automatically check & get admin rights
+:::::::::::::::::::::::::::::::::::::::::
+@echo off
+CLS 
+ECHO.
+ECHO =============================
+ECHO Running Admin shell
+ECHO =============================
+
+SET CURRENTPATH=%~dp0
+SET CURRENTLETTER=%~d0
+cd %~dp0
+rem echo %CURRENTPATH%
+rem echo %CURRENTLETTER%
+
+:checkPrivileges 
+NET FILE 1>NUL 2>NUL
+if '%errorlevel%' == '0' ( goto gotPrivileges ) else ( goto getPrivileges ) 
+
+:getPrivileges 
+if '%1'=='ELEV' (shift & goto gotPrivileges)  
+ECHO. 
+ECHO **************************************
+ECHO Invoking UAC for Privilege Escalation 
+ECHO **************************************
+
+setlocal DisableDelayedExpansion
+set "batchPath=%~0"
+setlocal EnableDelayedExpansion
+ECHO Set UAC = CreateObject^("Shell.Application"^) > "%temp%\OEgetPrivileges.vbs" 
+ECHO UAC.ShellExecute "!batchPath!", "ELEV", "", "runas", 1 >> "%temp%\OEgetPrivileges.vbs" 
+"%temp%\OEgetPrivileges.vbs" 
+exit /B
+
+:gotPrivileges 
+::::::::::::::::::::::::::::
+:START
+::::::::::::::::::::::::::::
+rem setlocal & pushd .
+
+%CURRENTLETTER%
+cd %CURRENTPATH%
 
 rem build init
 set project=MediaPortal
@@ -24,7 +70,7 @@ set xml=Build_Report_%BUILD_TYPE%_MediaPortal.xml
 set html=Build_Report_%BUILD_TYPE%_MediaPortal.html
 set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
 
-"%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%MediaPortal%\MediaPortal.sln" >> %log%
+"%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /m /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%MediaPortal%\MediaPortal.sln" >> %log%
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
 echo.
@@ -65,7 +111,7 @@ set xml=Build_Report_%BUILD_TYPE%_TvLibrary.xml
 set html=Build_Report_%BUILD_TYPE%_TvLibrary.html
 set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
 
-"%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%TVLibrary%\TvLibrary.sln" >> %log%
+"%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /m /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%TVLibrary%\TvLibrary.sln" >> %log%
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
 echo.
@@ -74,7 +120,7 @@ set xml=Build_Report_%BUILD_TYPE%_TvPlugin.xml
 set html=Build_Report_%BUILD_TYPE%_TvPlugin.html
 set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
 
-"%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%TVLibrary%\TvPlugin\TvPlugin.sln" >> %log%
+"%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /m /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%TVLibrary%\TvPlugin\TvPlugin.sln" >> %log%
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
 echo.

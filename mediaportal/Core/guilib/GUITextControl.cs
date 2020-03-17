@@ -760,7 +760,7 @@ namespace MediaPortal.GUI.Library
 
           float fwidth = 0, fheight = 0;
           string wsTmp = szLine;
-          if (_font != null) _font.GetTextExtent(wsTmp, ref fwidth, ref fheight);
+          _font?.GetTextExtent(wsTmp, ref fwidth, ref fheight);
           if (fwidth > _width)
           {
             if (iLastSpace > 0 && iLastSpaceInLine != lpos)

@@ -183,16 +183,16 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="subChannelId">The sub channel id</param>
     /// <param name="channel">The channel.</param>
     /// <returns></returns>
-    public override ITvSubChannel Scan(int subChannelId, IChannel channel)
+    public override ITvSubChannel Scan(int subChannelId, string userName, IChannel channel)
     {
       Log.Log.WriteFile("dvbc: Scan:{0}", channel);
       try
       {
-        if (!BeforeTune(channel, ref subChannelId))
+        if (!BeforeTune(channel, userName, ref subChannelId))
         {
           return null;
         }
-        ITvSubChannel ch = base.Scan(subChannelId, channel);
+        ITvSubChannel ch = base.Scan(subChannelId, userName, channel);
         return ch;
       }
       catch (TvExceptionNoSignal)
@@ -220,16 +220,16 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="subChannelId">The sub channel id</param>
     /// <param name="channel">The channel.</param>
     /// <returns></returns>
-    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
+    public override ITvSubChannel Tune(int subChannelId, string userName, IChannel channel)
     {
       Log.Log.WriteFile("dvbc: Tune:{0}", channel);
       try
       {
-        if (!BeforeTune(channel, ref subChannelId))
+        if (!BeforeTune(channel, userName, ref subChannelId))
         {
           return null;
         }
-        ITvSubChannel ch = base.Tune(subChannelId, channel);
+        ITvSubChannel ch = base.Tune(subChannelId, userName, channel);
         return ch;
       }
       catch (TvExceptionTuneCancelled)
@@ -251,7 +251,7 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    private bool BeforeTune(IChannel channel, ref int subChannelId)
+    private bool BeforeTune(IChannel channel, string userName, ref int subChannelId)
     {
       DVBCChannel dvbcChannel = channel as DVBCChannel;
       if (dvbcChannel == null)
@@ -269,7 +269,7 @@ namespace TvLibrary.Implementations.DVB
         BuildGraph();
         if (_mapSubChannels.ContainsKey(subChannelId) == false)
         {
-          subChannelId = GetNewSubChannel(channel);
+          subChannelId = GetNewSubChannel(channel, userName);
         }
       }
       if (useInternalNetworkProvider)

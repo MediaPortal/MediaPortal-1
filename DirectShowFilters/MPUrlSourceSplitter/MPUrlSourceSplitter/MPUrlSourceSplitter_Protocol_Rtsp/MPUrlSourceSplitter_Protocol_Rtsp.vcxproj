@@ -1,0 +1,301 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{80ED6A45-187D-4E51-BB74-266A0904A395}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>MPUrlSourceSplitter_Protocol_Rtsp</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)bin_$(PlatformName)d\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)bin_$(PlatformName)d\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libsdp;..\MPUrlSourceSplitter_librtp;..\MPUrlSourceSplitter_libsocket;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)d\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;iphlpapi.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libsdp.lib;MPUrlSourceSplitter_librtp.lib;MPUrlSourceSplitter_libsocket.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libdumpfile.lib;MPUrlSourceSplitter_libibmff.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>mpurlsourcesplitter_protocol_rtsp.def</ModuleDefinitionFile>
+    </Link>
+    <PreBuildEvent>
+      <Command>echo /* &gt; VersionInfo.h
+echo     Copyright (C) 2007-2010 Team MediaPortal &gt;&gt; VersionInfo.h
+echo     http://www.team-mediaportal.com &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo     This file is part of MediaPortal 2 &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo     MediaPortal 2 is free software: you can redistribute it and/or modify &gt;&gt; VersionInfo.h
+echo     it under the terms of the GNU General Public License as published by &gt;&gt; VersionInfo.h
+echo     the Free Software Foundation, either version 3 of the License, or &gt;&gt; VersionInfo.h
+echo     (at your option) any later version. &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo     MediaPortal 2 is distributed in the hope that it will be useful, &gt;&gt; VersionInfo.h
+echo     but WITHOUT ANY WARRANTY; without even the implied warranty of &gt;&gt; VersionInfo.h
+echo     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the &gt;&gt; VersionInfo.h
+echo     GNU General Public License for more details. &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo     You should have received a copy of the GNU General Public License &gt;&gt; VersionInfo.h
+echo     along with MediaPortal 2.  If not, see ^&lt;http://www.gnu.org/licenses/^&gt;. &gt;&gt; VersionInfo.h
+echo */ &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo #pragma once &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo #ifndef __VERSIONINFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_DEFINED &gt;&gt; VersionInfo.h
+echo #define __VERSIONINFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_DEFINED &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+(echo.|set /p=#define COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP                                    L^") &gt;&gt; VersionInfo.h
+git log -1 --pretty=format:"%%H" -- . &gt;&gt; VersionInfo.h
+echo ^" &gt;&gt; VersionInfo.h
+(echo.|set /p=#define DATE_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP                                      L^") &gt;&gt; VersionInfo.h
+git log -1 --pretty=format:"%%ci" -- . &gt;&gt; VersionInfo.h
+echo ^" &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo #endif &gt;&gt; VersionInfo.h</Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName).lib" "$(SolutionDir)bin_$(PlatformName)d\lib\$(TargetName).lib"
+copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)d\$(TargetFileName)"
+copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(TargetName).pdb"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libcurl\include;..\MPUrlSourceSplitter_libcurl\include\curl;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libsdp;..\MPUrlSourceSplitter_librtp;..\MPUrlSourceSplitter_libsocket;..\MPUrlSourceSplitter_libcachefile;..\MPUrlSourceSplitter_libplugin;..\MPUrlSourceSplitter_libdumpfile;..\MPUrlSourceSplitter_libibmff;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;iphlpapi.lib;MPUrlSourceSplitter_libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libsdp.lib;MPUrlSourceSplitter_librtp.lib;MPUrlSourceSplitter_libsocket.lib;MPUrlSourceSplitter_libcachefile.lib;MPUrlSourceSplitter_libplugin.lib;MPUrlSourceSplitter_libdumpfile.lib;MPUrlSourceSplitter_libibmff.lib;Shlwapi.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>mpurlsourcesplitter_protocol_rtsp.def</ModuleDefinitionFile>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName).lib" "$(SolutionDir)bin_$(PlatformName)\lib\$(TargetName).lib"
+copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(TargetFileName)"
+copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(TargetName).pdb"</Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>echo /* &gt; VersionInfo.h
+echo     Copyright (C) 2007-2010 Team MediaPortal &gt;&gt; VersionInfo.h
+echo     http://www.team-mediaportal.com &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo     This file is part of MediaPortal 2 &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo     MediaPortal 2 is free software: you can redistribute it and/or modify &gt;&gt; VersionInfo.h
+echo     it under the terms of the GNU General Public License as published by &gt;&gt; VersionInfo.h
+echo     the Free Software Foundation, either version 3 of the License, or &gt;&gt; VersionInfo.h
+echo     (at your option) any later version. &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo     MediaPortal 2 is distributed in the hope that it will be useful, &gt;&gt; VersionInfo.h
+echo     but WITHOUT ANY WARRANTY; without even the implied warranty of &gt;&gt; VersionInfo.h
+echo     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the &gt;&gt; VersionInfo.h
+echo     GNU General Public License for more details. &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo     You should have received a copy of the GNU General Public License &gt;&gt; VersionInfo.h
+echo     along with MediaPortal 2.  If not, see ^&lt;http://www.gnu.org/licenses/^&gt;. &gt;&gt; VersionInfo.h
+echo */ &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo #pragma once &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo #ifndef __VERSIONINFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_DEFINED &gt;&gt; VersionInfo.h
+echo #define __VERSIONINFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_DEFINED &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+(echo.|set /p=#define COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP                                    L^") &gt;&gt; VersionInfo.h
+git log -1 --pretty=format:"%%H" -- . &gt;&gt; VersionInfo.h
+echo ^" &gt;&gt; VersionInfo.h
+(echo.|set /p=#define DATE_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP                                      L^") &gt;&gt; VersionInfo.h
+git log -1 --pretty=format:"%%ci" -- . &gt;&gt; VersionInfo.h
+echo ^" &gt;&gt; VersionInfo.h
+echo. &gt;&gt; VersionInfo.h
+echo #endif &gt;&gt; VersionInfo.h</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="BaseRtpPacketCollection.h" />
+    <ClInclude Include="InterleavedDataPacket.h" />
+    <ClInclude Include="MPUrlSourceSplitter_Protocol_Rtsp.h" />
+    <ClInclude Include="MPUrlSourceSplitter_Protocol_Rtsp_Parameters.h" />
+    <ClInclude Include="RtpInfoTrack.h" />
+    <ClInclude Include="RtpInfoTrackCollection.h" />
+    <ClInclude Include="RtspAcceptApplicationSdpRequestHeader.h" />
+    <ClInclude Include="RtspAcceptRequestHeader.h" />
+    <ClInclude Include="RtspAllowResponseHeader.h" />
+    <ClInclude Include="RtspContentBaseResponseHeader.h" />
+    <ClInclude Include="RtspContentLengthResponseHeader.h" />
+    <ClInclude Include="RtspContentLocationResponseHeader.h" />
+    <ClInclude Include="RtspContentTypeResponseHeader.h" />
+    <ClInclude Include="RtspCurlInstance.h" />
+    <ClInclude Include="RtspDescribeRequest.h" />
+    <ClInclude Include="RtspDownloadRequest.h" />
+    <ClInclude Include="RtspDownloadResponse.h" />
+    <ClInclude Include="RtspDumpBox.h" />
+    <ClInclude Include="RtspGetParameterRequest.h" />
+    <ClInclude Include="RtspLocationResponseHeader.h" />
+    <ClInclude Include="RtspMainBox.h" />
+    <ClInclude Include="RtspNormalPlayTimeRangeRequestHeader.h" />
+    <ClInclude Include="RtspOptionsRequest.h" />
+    <ClInclude Include="RtspPayloadType.h" />
+    <ClInclude Include="RtspPlayRequest.h" />
+    <ClInclude Include="RtspPublicResponseHeader.h" />
+    <ClInclude Include="RtspRangeRequestHeader.h" />
+    <ClInclude Include="RtspRefererRequestHeader.h" />
+    <ClInclude Include="RtspRequest.h" />
+    <ClInclude Include="RtspRequestHeader.h" />
+    <ClInclude Include="RtspRequestHeaderCollection.h" />
+    <ClInclude Include="RtspResponse.h" />
+    <ClInclude Include="RtspResponseHeader.h" />
+    <ClInclude Include="RtspResponseHeaderCollection.h" />
+    <ClInclude Include="RtspResponseHeaderFactory.h" />
+    <ClInclude Include="RtspRtpInfoResponseHeader.h" />
+    <ClInclude Include="RtspSequenceRequestHeader.h" />
+    <ClInclude Include="RtspSequenceResponseHeader.h" />
+    <ClInclude Include="RtspServerResponseHeader.h" />
+    <ClInclude Include="RtspSessionRequestHeader.h" />
+    <ClInclude Include="RtspSessionResponseHeader.h" />
+    <ClInclude Include="RtspSetupRequest.h" />
+    <ClInclude Include="RtspStreamFragment.h" />
+    <ClInclude Include="RtspStreamFragmentCollection.h" />
+    <ClInclude Include="RtspStreamTrack.h" />
+    <ClInclude Include="RtspStreamTrackCollection.h" />
+    <ClInclude Include="RtspSupportedPayloadTypeCollection.h" />
+    <ClInclude Include="RtspTeardownRequest.h" />
+    <ClInclude Include="RtspTrack.h" />
+    <ClInclude Include="RtspTrackBox.h" />
+    <ClInclude Include="RtspTrackCollection.h" />
+    <ClInclude Include="RtspTrackStatistics.h" />
+    <ClInclude Include="RtspTransportRequestHeader.h" />
+    <ClInclude Include="RtspTransportResponseHeader.h" />
+    <ClInclude Include="RtspUserAgentRequestHeader.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BaseRtpPacketCollection.cpp" />
+    <ClCompile Include="dllmain.cpp">
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</CompileAsManaged>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="InterleavedDataPacket.cpp" />
+    <ClCompile Include="MPUrlSourceSplitter_Protocol_Rtsp.cpp" />
+    <ClCompile Include="RtpInfoTrack.cpp" />
+    <ClCompile Include="RtpInfoTrackCollection.cpp" />
+    <ClCompile Include="RtspAcceptApplicationSdpRequestHeader.cpp" />
+    <ClCompile Include="RtspAcceptRequestHeader.cpp" />
+    <ClCompile Include="RtspAllowResponseHeader.cpp" />
+    <ClCompile Include="RtspContentBaseResponseHeader.cpp" />
+    <ClCompile Include="RtspContentLengthResponseHeader.cpp" />
+    <ClCompile Include="RtspContentLocationResponseHeader.cpp" />
+    <ClCompile Include="RtspContentTypeResponseHeader.cpp" />
+    <ClCompile Include="RtspCurlInstance.cpp" />
+    <ClCompile Include="RtspDescribeRequest.cpp" />
+    <ClCompile Include="RtspDownloadRequest.cpp" />
+    <ClCompile Include="RtspDownloadResponse.cpp" />
+    <ClCompile Include="RtspDumpBox.cpp" />
+    <ClCompile Include="RtspGetParameterRequest.cpp" />
+    <ClCompile Include="RtspLocationResponseHeader.cpp" />
+    <ClCompile Include="RtspMainBox.cpp" />
+    <ClCompile Include="RtspNormalPlayTimeRangeRequestHeader.cpp" />
+    <ClCompile Include="RtspOptionsRequest.cpp" />
+    <ClCompile Include="RtspPayloadType.cpp" />
+    <ClCompile Include="RtspPlayRequest.cpp" />
+    <ClCompile Include="RtspPublicResponseHeader.cpp" />
+    <ClCompile Include="RtspRangeRequestHeader.cpp" />
+    <ClCompile Include="RtspRefererRequestHeader.cpp" />
+    <ClCompile Include="RtspRequest.cpp" />
+    <ClCompile Include="RtspRequestHeader.cpp" />
+    <ClCompile Include="RtspRequestHeaderCollection.cpp" />
+    <ClCompile Include="RtspResponse.cpp" />
+    <ClCompile Include="RtspResponseHeader.cpp" />
+    <ClCompile Include="RtspResponseHeaderCollection.cpp" />
+    <ClCompile Include="RtspResponseHeaderFactory.cpp" />
+    <ClCompile Include="RtspRtpInfoResponseHeader.cpp" />
+    <ClCompile Include="RtspSequenceRequestHeader.cpp" />
+    <ClCompile Include="RtspSequenceResponseHeader.cpp" />
+    <ClCompile Include="RtspServerResponseHeader.cpp" />
+    <ClCompile Include="RtspSessionRequestHeader.cpp" />
+    <ClCompile Include="RtspSessionResponseHeader.cpp" />
+    <ClCompile Include="RtspSetupRequest.cpp" />
+    <ClCompile Include="RtspStreamFragment.cpp" />
+    <ClCompile Include="RtspStreamFragmentCollection.cpp" />
+    <ClCompile Include="RtspStreamTrack.cpp" />
+    <ClCompile Include="RtspStreamTrackCollection.cpp" />
+    <ClCompile Include="RtspSupportedPayloadTypeCollection.cpp" />
+    <ClCompile Include="RtspTeardownRequest.cpp" />
+    <ClCompile Include="RtspTrack.cpp" />
+    <ClCompile Include="RtspTrackBox.cpp" />
+    <ClCompile Include="RtspTrackCollection.cpp" />
+    <ClCompile Include="RtspTrackStatistics.cpp" />
+    <ClCompile Include="RtspTransportRequestHeader.cpp" />
+    <ClCompile Include="RtspTransportResponseHeader.cpp" />
+    <ClCompile Include="RtspUserAgentRequestHeader.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="mpurlsourcesplitter_protocol_Rtsp.def" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

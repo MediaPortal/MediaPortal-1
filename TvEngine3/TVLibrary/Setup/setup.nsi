@@ -499,6 +499,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   SetOutPath "$INSTDIR\Plugins"
   File "${git_TVServer}\Plugins\ComSkipLauncher\bin\${BUILD_TYPE}\ComSkipLauncher.dll"
   File "${git_TVServer}\Plugins\ConflictsManager\bin\${BUILD_TYPE}\ConflictsManager.dll"
+  File "${git_TVServer}\Plugins\MediaPortalIptvFilterAndUrlSourceSplitter\bin\${BUILD_TYPE}\MediaPortalIptvFilterAndUrlSourceSplitter.dll"
   File "${git_TVServer}\Plugins\PowerScheduler\bin\${BUILD_TYPE}\PowerScheduler.dll"
   File "${git_TVServer}\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\ServerBlaster.dll"
   File "${git_TVServer}\Plugins\TvMovie\bin\${BUILD_TYPE}\TvMovie.dll"
@@ -567,6 +568,20 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_RTSP.dll"
   File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_UDP.dll"
 
+  ; protocol implementations for MPUrlSourceSplitter.ax
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Parser_Default*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol_Http*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol_Rtsp*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol_Udp*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_libcurl*"
+  File "${git_DirectShowFilters}\bin_Win32\avcodec-mpurlsourcesplitter-54.dll"
+  File "${git_DirectShowFilters}\bin_Win32\avformat-mpurlsourcesplitter-54.dll"
+  File "${git_DirectShowFilters}\bin_Win32\avutil-mpurlsourcesplitter-51.dll"
+  File "${git_DirectShowFilters}\bin_Win32\crashrpt.dll"
+  File "${git_DirectShowFilters}\bin_Win32\dbghelp.dll"
+  File "${git_DirectShowFilters}\bin_Win32\sendrpt.exe"
+
   File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
   
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\dxerr9.dll"
@@ -596,7 +611,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPWriter\bin\${BUILD_TYPE}\mpFileWriter.ax" "$INSTDIR\mpFileWriter.ax" "$INSTDIR"
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\PDMpgMux.ax" "$INSTDIR\PDMpgMux.ax" "$INSTDIR"
   ; filter for IPTV support
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTVSource.ax" "$INSTDIR\MPIPTVSource.ax" "$INSTDIR"
+  ;!insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTVSource.ax" "$INSTDIR\MPIPTVSource.ax" "$INSTDIR"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter.ax" "$INSTDIR\MPUrlSourceSplitter.ax" "$INSTDIR"
 
   #---------------------------------------------------------------------------
   # SERVICE INSTALLATION
@@ -674,7 +690,8 @@ ${MementoSectionEnd}
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\mpFileWriter.ax"
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\PDMpgMux.ax"
   ; filter for IPTV support
-  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\MPIPTVSource.ax"
+  ;!insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\MPIPTVSource.ax"
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\\MPUrlSourceSplitter.ax"
 
   ${LOG_TEXT} "INFO" "remove files..."
   ; Remove TuningParameters
@@ -690,6 +707,7 @@ ${MementoSectionEnd}
   ; Remove Plugins
   Delete "$INSTDIR\Plugins\ComSkipLauncher.dll"
   Delete "$INSTDIR\Plugins\ConflictsManager.dll"
+  Delete "$INSTDIR\Plugins\MediaPortalIptvFilterAndUrlSourceSplitter.dll"
   Delete "$INSTDIR\Plugins\PowerScheduler.dll"
   Delete "$INSTDIR\Plugins\ServerBlaster.dll"
   Delete "$INSTDIR\Plugins\TvMovie.dll"
@@ -755,6 +773,20 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\MPIPTV_RTP.dll"
   Delete "$INSTDIR\MPIPTV_RTSP.dll"
   Delete "$INSTDIR\MPIPTV_UDP.dll"  
+
+  ; protocol implementations for MPUrlSourceSplitter.ax
+  Delete "$INSTDIR\MPUrlSourceSplitter_Parser_Default*"
+  Delete "$INSTDIR\MPUrlSourceSplitter_Protocol_Http*"
+  Delete "$INSTDIR\MPUrlSourceSplitter_Protocol_Rtsp*"
+  Delete "$INSTDIR\MPUrlSourceSplitter_Protocol_Udp*"
+  Delete "$INSTDIR\MPUrlSourceSplitter_libcurl*"
+  Delete "$INSTDIR\MPUrlSourceSplitter*"
+  Delete "$INSTDIR\avcodec-mpurlsourcesplitter-54.dll"
+  Delete "$INSTDIR\avformat-mpurlsourcesplitter-54.dll"
+  Delete "$INSTDIR\avutil-mpurlsourcesplitter-51.dll"
+  Delete "$INSTDIR\crashrpt.dll"
+  Delete "$INSTDIR\dbghelp.dll"
+  Delete "$INSTDIR\sendrpt.exe"
 
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"

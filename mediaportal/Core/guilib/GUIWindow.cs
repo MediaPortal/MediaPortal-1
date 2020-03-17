@@ -575,6 +575,11 @@ namespace MediaPortal.GUI.Library
       {
         // Load the XML file
         XmlDocument doc = new XmlDocument();
+        if (!File.Exists(_windowXmlFileName)) 
+        {
+          isSkinXMLLoading = false;
+          return false;
+        }
         doc.Load(_windowXmlFileName);
         if (doc.DocumentElement == null)
         {

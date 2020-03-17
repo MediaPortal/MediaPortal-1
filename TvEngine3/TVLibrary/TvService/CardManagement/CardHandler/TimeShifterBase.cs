@@ -17,11 +17,14 @@ namespace TvService
     protected ITvCardHandler _cardHandler;
     protected bool _timeshiftingEpgGrabberEnabled;
     private readonly int _waitForTimeshifting = 15;
-    protected readonly ManualResetEvent _eventAudio = new ManualResetEvent(false); // gets signaled when audio PID is seen
-    protected readonly ManualResetEvent _eventVideo = new ManualResetEvent(false); // gets signaled when video PID is seen
-    protected bool _cancelled;
-    protected readonly ManualResetEvent _eventTimeshift = new ManualResetEvent(true);
-    protected ITvSubChannel _subchannel; // the active sub channel to record        
+    internal readonly ManualResetEvent _eventAudio = new ManualResetEvent(false); // gets signaled when audio PID is seen
+    internal readonly ManualResetEvent _eventVideo = new ManualResetEvent(false); // gets signaled when video PID is seen
+    internal readonly ManualResetEvent _eventCancelled = new ManualResetEvent(false); // gets signaled when video PID is seen
+    internal bool _cancelled;
+    internal bool _timeshiftCancelled;
+    internal readonly ManualResetEvent _eventTimeshift = new ManualResetEvent(true);
+    protected ITvSubChannel _subchannel; // the active sub channel to record
+    internal object _asyncLock = new Object();
 
     protected TimeShifterBase(ITvCardHandler cardHandler)
     {
@@ -59,7 +62,7 @@ namespace TvService
         ITvSubChannel subchannel = GetSubChannel(subchannelId);
         if (subchannel is BaseSubChannel)
         {
-          Log.Write("card {2}: Cancel Timeshifting sub:{1}", subchannel, _cardHandler.Card.Name);
+          Log.Write("card {0}: Cancel Timeshifting sub:{1}", _cardHandler.Card.Name, subchannel);
           ((BaseSubChannel)subchannel).AudioVideoEvent -= AudioVideoEventHandler;
           _eventAudio.Set();
           _eventVideo.Set();
@@ -122,9 +125,10 @@ namespace TvService
     /// <param name="user">User</param>
     /// <param name="scrambled">Indicates if the channel is scambled</param>
     /// <returns>true when timeshift files is at least of 300kb, else timeshift file is less then 300kb</returns>
-    protected bool WaitForFile(ref IUser user, out bool scrambled)
+    protected bool WaitForFile(ref IUser user, out bool scrambled, out bool isAsyncTuning)
     {
       scrambled = false;
+      isAsyncTuning = false;
 
       if (_cardHandler.DataBaseCard.Enabled == false)
       {
@@ -137,7 +141,7 @@ namespace TvService
         return false;
       }
 
-      int waitForEvent = _waitForTimeshifting * 1000; // in ms           
+      int waitForEvent = _waitForTimeshifting * 1000; // in ms
 
       DateTime timeStart = DateTime.Now;
 
@@ -151,7 +155,7 @@ namespace TvService
       {
         Log.Write("card: WaitForFile - waiting _eventAudio");
         // wait for audio PID to be seen
-        if (_eventAudio.WaitOne(waitForEvent, true))
+        if (_eventAudio.WaitOne(waitForEvent, true) && !_timeshiftCancelled)
         {
           if (IsTuneCancelled())
           {
@@ -165,6 +169,15 @@ namespace TvService
         }
         else
         {
+          if (_timeshiftCancelled)
+          {
+            _eventCancelled.WaitOne();
+            isAsyncTuning = true;
+            return true;
+          }
+          // Remove User from other cards (needed for async tuning)
+          // RemoteControl.Instance.RemoveUserFromOtherCards(_cardHandler.DataBaseCard.IdCard, user);
+
           TimeSpan ts = DateTime.Now - timeStart;
           Log.Write("card: WaitForRecordingFile - no audio was found after {0} seconds", ts.TotalSeconds);
           if (_cardHandler.IsScrambled(ref user))
@@ -178,13 +191,13 @@ namespace TvService
       {
         Log.Write("card: WaitForFile - waiting _eventAudio & _eventVideo");
         // block until video & audio PIDs are seen or the timeout is reached
-        if (_eventAudio.WaitOne(waitForEvent, true))
+        if (_eventAudio.WaitOne(waitForEvent, true) && !_timeshiftCancelled)
         {
           if (IsTuneCancelled())
           {
             return false;
           }
-          if (_eventVideo.WaitOne(waitForEvent, true))
+          if (_eventVideo.WaitOne(waitForEvent, true) && !_timeshiftCancelled)
           {
             if (IsTuneCancelled())
             {
@@ -208,8 +221,17 @@ namespace TvService
             }
           }
         }
+        else if (_timeshiftCancelled)
+        {
+          _eventCancelled.WaitOne();
+          isAsyncTuning = true;
+          return true;
+        }
         else
         {
+          // Remove User from other cards (needed for async tuning)
+          // RemoteControl.Instance.RemoveUserFromOtherCards(_cardHandler.DataBaseCard.IdCard, user);
+
           TimeSpan ts = DateTime.Now - timeStart;
           Log.Write("card: WaitForFile - no audio was found after {0} seconds", ts.TotalSeconds);
           if (_cardHandler.IsScrambled(ref user))
@@ -232,14 +254,29 @@ namespace TvService
       if (_timeshiftingEpgGrabberEnabled)
       {
         Channel channel = Channel.Retrieve(user.IdChannel);
-        if (channel.GrabEpg)
+        Card card = Card.Retrieve(user.CardId);
+        if (card.GrabEPG || channel.GrabEpg)
         {
           _cardHandler.Card.GrabEpg();
         }
         else
         {
-          Log.Info("TimeshiftingEPG: channel {0} is not configured for grabbing epg",
-                   channel.DisplayName);
+          Log.Info("TimeshiftingEPG: card [{0}] for channel [{1}] is not configured for grabbing epg",
+            card.Name, channel.DisplayName);
+        }
+      }
+    }
+
+    protected void StopTimeShiftingEPGgrabber(IUser user)
+    {
+      if (_timeshiftingEpgGrabberEnabled)
+      {
+        Channel channel = Channel.Retrieve(user.IdChannel);
+        Card card = Card.Retrieve(user.CardId);
+        if (card.GrabEPG || channel.GrabEpg)
+        {
+          _cardHandler.Card.AbortGrabbing(true);
+          Log.Info("TimeshiftingEPG: stop timeshift EPG elapted timer for card [{0}] and channel [{1}]");
         }
       }
     }

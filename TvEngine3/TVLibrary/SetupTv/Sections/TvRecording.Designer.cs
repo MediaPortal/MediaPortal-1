@@ -411,9 +411,8 @@ namespace SetupTv.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
       this.groupBox2.AutoSize = true;
       this.groupBox2.Controls.Add(this.labelCustomFormat);
       this.groupBox2.Controls.Add(this.textBoxCustomFormat);
@@ -856,8 +855,6 @@ namespace SetupTv.Sections
       // 
       // groupBox4
       // 
-      this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox4.AutoSize = true;
       this.groupBox4.Controls.Add(this.mpLabel5);
       this.groupBox4.Controls.Add(this.enableDiskQuota);
@@ -869,7 +866,7 @@ namespace SetupTv.Sections
       this.groupBox4.Controls.Add(this.labelTotalDiskSpace);
       this.groupBox4.Controls.Add(this.label10);
       this.groupBox4.Controls.Add(this.label11);
-      this.groupBox4.Location = new System.Drawing.Point(6, 215);
+      this.groupBox4.Location = new System.Drawing.Point(6, 216);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(445, 175);
       this.groupBox4.TabIndex = 27;
@@ -974,9 +971,6 @@ namespace SetupTv.Sections
       // 
       // groupBoxRecordSettings
       // 
-      this.groupBoxRecordSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxRecordSettings.AutoSize = true;
       this.groupBoxRecordSettings.Controls.Add(this.buttonSameRecFolder);
       this.groupBoxRecordSettings.Controls.Add(this.textBoxRecordingFormat);

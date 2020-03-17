@@ -109,7 +109,7 @@ namespace MediaPortal.MusicShareWatcher
     #region Private Methods
 
     //called when windows wakes up again
-    private static object syncResume = new object();
+    private static readonly object syncResume = new object();
 
     private void OnResume()
     {

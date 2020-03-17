@@ -2030,6 +2030,7 @@ namespace MediaPortal.GUI.Video
       bool BDInternalMenu = false;
       bool NoBDResume = false;
       _BDDetect = false;
+      bool _NoBDMenu = false;
       g_Player.ForcePlay = false;
       g_Player.SetResumeBDTitleState = g_Player.BdDefaultTitle;
       string filename;
@@ -2074,6 +2075,11 @@ namespace MediaPortal.GUI.Video
       if (filename.EndsWith(@"\BDMV\index.bdmv"))
       {
         _BDDetect = true;
+      }
+
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
+      {
+        _NoBDMenu = xmlreader.GetValueAsBool("bdplayer", "DisableSelectMenuBDPlayer", true);
       }
 
       using (Profile.Settings xmlreader = new MPSettings())
@@ -2149,9 +2155,64 @@ namespace MediaPortal.GUI.Video
 
                 if (result == GUIResumeDialog.Result.PlayFromBeginning)
                   timeMovieStopped = 0;
+
+                if (result == GUIResumeDialog.Result.PlayFromLastStopTime)
+                {
+                  GUIGraphicsContext.BlurayMenu = true;
+                }
               }
             }
           }
+        }
+      }
+
+      if (_BDDetect && !_NoBDMenu && !GUIGraphicsContext.BlurayMenu)
+      {
+        // Set MP to have already done this dialog
+        GUIGraphicsContext.BlurayMenu = true;
+
+        IDialogbox dialog = (IDialogbox)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        while (true)
+        {
+          // todo: translation for all string
+          dialog.Reset();
+          dialog.SetHeading("Select blu-ray player mode");
+
+          // Add play with internal BDReader menu
+          //dialog.AddLocalizedString(222);
+          GUIListItem itemBlurayMenu = new GUIListItem("Play blu-ray with menu");
+          dialog.Add(itemBlurayMenu);
+
+          // Add play with normal MP player (LAV)
+          //dialog.AddLocalizedString(222);
+          GUIListItem itemLav = new GUIListItem("Play blu-ray without menu");
+          dialog.Add(itemLav);
+
+          dialog.DoModal(GUIWindowManager.ActiveWindow);
+
+          if (dialog.SelectedId == itemBlurayMenu.ItemId)
+          {
+            _BDInternalMenu = true;
+          }
+          if (dialog.SelectedId == itemLav.ItemId)
+          {
+            _BDInternalMenu = false;
+          }
+
+          // Write the new detected settings
+          using (Settings xmlwriter = new MPSettings())
+          {
+            xmlwriter.SetValueAsBool("bdplayer", "useInternalBDPlayer", _BDInternalMenu);
+          }
+
+          if (dialog.SelectedId < 1)
+          {
+            // user cancelled so we return
+            return;
+          }
+
+          // end dialog
+          break;
         }
       }
 
@@ -3636,10 +3697,12 @@ namespace MediaPortal.GUI.Video
 
         // The last _getMediaInfoThread is closed we can start a new one
         _getMediaInfoThreadNumber++;
-        _getMediaInfoThread = new Thread(GetMediaInfoThread);
-        _getMediaInfoThread.Priority = ThreadPriority.Lowest;
-        _getMediaInfoThread.IsBackground = true;
-        _getMediaInfoThread.Name = "GetMediaInfoThread " + _getMediaInfoThreadNumber;
+        _getMediaInfoThread = new Thread(GetMediaInfoThread)
+        {
+          Priority = ThreadPriority.Lowest,
+          IsBackground = true,
+          Name = "GetMediaInfoThread " + _getMediaInfoThreadNumber
+        };
         _getMediaInfoThread.Start(itemlist2);
       }
 
@@ -3847,6 +3910,11 @@ namespace MediaPortal.GUI.Video
         if (_getMediaInfoThreadAbort)
         {
           Log.Debug("GetMediaInfoThread: finished with _getMediaInfoThreadAbort signal.");
+          return;
+        }
+        if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
+        {
+          Log.Debug("GetMediaInfoThread: abort ISO scan.");
           return;
         }
         try

@@ -1068,10 +1068,10 @@ namespace MediaPortal.Player
           {
             DirectShowUtil.ReleaseComObject(_basicVideo);
           }
-          if (_interfaceTSReader != null)
-          {
-            DirectShowUtil.ReleaseComObject(_interfaceTSReader);
-          }
+          //if (_interfaceTSReader != null)
+          //{
+          //  DirectShowUtil.ReleaseComObject(_interfaceTSReader);
+          //}
           _mediaCtrl = null;
           _mediaSeeking = null;
           _videoWin = null;

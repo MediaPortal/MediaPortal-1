@@ -49,6 +49,7 @@ enum PES_STREAM_TYPE {
     SYNCHRONIZED_DOWNLOAD               = 0x19, // Metadata carried in ISO/IEC 13818-6 Synchronized Download Protocol
     IPMP                                = 0x1A, // IPMP stream (defined in ISO/IEC 13818-11, MPEG-2 IPMP)
     VIDEO_STREAM_H264                   = 0x1B, // AVC video stream conforming to one or more profiles defined in Annex A of ITU-T Rec. H.264
+    VIDEO_STREAM_HEVC                   = 0x24, // HEVC video stream conforming to one or more profiles defined in Annex A of ITU-T Rec. H.265
     PES_1C                              = 0x1C, // ISO/IEC 14496-3 Audio, without using any additional transport syntax, such as DST, ALS and SLS
     TEXT                                = 0x1D, // ISO/IEC 14496-17 Text
     AUXILIARY_VIDEO_STREAM              = 0x1E, // Auxiliary video stream as defined in ISO/IEC 23002-3

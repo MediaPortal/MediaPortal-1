@@ -20,9 +20,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using TvLibrary.Interfaces;
 using TvLibrary.Epg;
 using TvLibrary.Streaming;
+using TvDatabase;
 
 namespace TvControl
 {
@@ -583,7 +585,6 @@ namespace TvControl
     /// <returns>true when card is timeshifting otherwise false</returns>
     bool IsTimeShifting(ref IUser user);
 
-
     /// <summary>
     /// This function checks whether something should be recorded at the given time.
     /// </summary>
@@ -710,9 +711,6 @@ namespace TvControl
     /// </returns>
     DateTime RecordingStarted(IUser user);
 
-    void CopyTimeShiftFile(Int64 position1, string bufferFile1, Int64 position2, string bufferFile2,
-                           string recordingFile);
-
     #region audio stream selection
 
     /// <summary>
@@ -825,6 +823,14 @@ namespace TvControl
     bool StopTimeShifting(ref IUser user, TvStoppedReason reason);
 
     /// <summary>
+    /// Stops the time shifting.
+    /// </summary>
+    /// <param name="user">user credentials.</param>
+    /// <param name="reason">reason why timeshifting is stopped.</param>
+    /// <returns>true if success otherwise false</returns>
+    bool CancelTimeShifting(ref IUser user, int idChannel);
+
+    /// <summary>
     /// Gets the reason why timeshifting stopped.
     /// </summary>
     /// <param name="user">The user.</param>
@@ -909,6 +915,30 @@ namespace TvControl
     /// <param name="cardId">The card id.</param>
     /// <returns></returns>
     IUser GetUserForCard(int cardId);
+
+    /// <summary>
+    /// GetTimeshiftPosition for placeshift
+    /// </summary>
+    /// <param name="cardId"></param>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    double GetTimeshiftPosition(int cardId, IUser user);
+
+    /// <summary>
+    /// SetTimeshiftPosition for placeshift
+    /// </summary>
+    /// <param name="cardId"></param>
+    /// <param name="user"></param>
+    /// <param name="TimeshiftPosition"></param>
+    void SetTimeshiftPosition(int cardId, IUser user, double TimeshiftPosition);
+
+    /// <summary>
+    /// Replace Timeshift User for placeshift
+    /// </summary>
+    /// <param name="cardId"></param>
+    /// <param name="newuser"></param>
+    /// <param name="HostName"></param>
+    void ReplaceTimeshiftUser(int cardId, IUser newuser, string HostName);
 
     /// <summary>
     /// Gets the users for card.

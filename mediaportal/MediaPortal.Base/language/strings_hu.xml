@@ -1098,6 +1098,9 @@
     <String id="1977">Fájlrendszer</String>
     <String id="1978">Virtuális memória</String>
     <String id="1984">Előnézeti kép újragenerálása</String>
+    <String id="1986">Átváltás másik kliensre</String>
+    <String id="1987">Kapcsolódás élő adáshoz</String>
+    <String id="1988">Hozzá akarsz kapcsoldóni az adatfolyamhoz?</String>    
     <String id="1989">Van csak olvashatónak megjelölt fájl a könyvtárban!</String>
     <String id="1990">Szerver felébresztés</String>
     <String id="1991">Várj, ameddig a szerver elindul!</String>

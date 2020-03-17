@@ -1,0 +1,5 @@
+LIBRARY     mpurlsourcesplitter_protocol_m3u8_decryption_aes128.dll
+
+EXPORTS
+			CreatePlugin				PRIVATE
+			DestroyPlugin				PRIVATE

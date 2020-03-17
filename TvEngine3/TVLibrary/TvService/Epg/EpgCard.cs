@@ -146,7 +146,7 @@ namespace TvService
 
     /// <summary>
     /// Callback fired by the tvcontroller when EPG data has been received
-    /// The method checks if epg grabbing was in progress and ifso creates a new workerthread
+    /// The method checks if epg grabbing was in progress and if so creates a new workerthread
     /// to update the database with the new epg data
     /// </summary>
     public override int OnEpgReceived()
@@ -174,9 +174,11 @@ namespace TvService
         if (IsCardIdle(_user) == false)
         {
           Log.Epg("Epg: card:{0} OnEpgReceived but card is not idle", _user.CardId);
-          Thread stopThread = new Thread(Stop);
-          stopThread.IsBackground = true;
-          stopThread.Name = "EPG grabber stop thread";
+          Thread stopThread = new Thread(Stop)
+          {
+            IsBackground = true,
+            Name = "EPG grabber stop thread"
+          };
           stopThread.Start();
           return 0;
         }
@@ -188,9 +190,11 @@ namespace TvService
           //no epg found for this transponder
           Log.Epg("Epg: card:{0} no epg found", _user.CardId);
           _currentTransponder.OnTimeOut();
-          Thread stopThread = new Thread(Stop);
-          stopThread.IsBackground = true;
-          stopThread.Name = "EPG grabber stop thread";
+          Thread stopThread = new Thread(Stop)
+          {
+            IsBackground = true,
+            Name = "EPG grabber stop thread"
+          };
           stopThread.Start();
           return 0;
         }
@@ -199,9 +203,11 @@ namespace TvService
         Log.Epg("Epg: card:{0} received epg for {1} channels", _user.CardId, epg.Count);
         _state = EpgState.Updating;
         _epg = epg;
-        Thread workerThread = new Thread(UpdateDatabaseThread);
-        workerThread.IsBackground = true;
-        workerThread.Name = "EPG Update thread";
+        Thread workerThread = new Thread(UpdateDatabaseThread)
+        {
+          IsBackground = true,
+          Name = "EPG Update thread"
+        };
         workerThread.Start();
       }
       catch (Exception ex)
@@ -386,9 +392,15 @@ namespace TvService
         return false;
       }
       //remove following check to enable multi-card epg grabbing (still beta)
-      if (_tvController.AllCardsIdle == false)
+      TvBusinessLayer layer = new TvBusinessLayer();
+      if (_tvController.AllCardsIdle == false && layer.GetSetting("idleEPGGrabberEnabledOnAllTuners", "no").Value != "yes")
       {
         Log.Epg("Epg: card:{0} cards are not idle", Card.IdCard);
+        return false;
+      }
+      if (!_card.GrabEPG)
+      {
+        Log.Epg("Epg: card:{0} not enable for grabbing", Card.IdCard);
         return false;
       }
 
@@ -438,7 +450,7 @@ namespace TvService
             Log.Epg("Epg: card:{0} dvbs card is not idle", Card.IdCard);
             return false; //card is busy
           }
-          return TuneEPGgrabber(channel, tuning, card, result);   
+          return TuneEPGgrabber(channel, tuning, card, result);
         }
         Log.Epg("Epg: card:{0} could not tune to dvbs channel:{1}", Card.IdCard, tuning.ToString());
         return false;
@@ -456,7 +468,7 @@ namespace TvService
             return false; //card is busy
           }
 
-          return TuneEPGgrabber(channel, tuning, card, result);          
+          return TuneEPGgrabber(channel, tuning, card, result);
         }
         Log.Epg("Epg: card:{0} could not tune to dvbt channel:{1}", Card.IdCard, tuning.ToString());
         return false;
@@ -525,15 +537,14 @@ namespace TvService
             CardReservationHelper.CancelCardReservation(cardHandler, ticket);
             throw;
           }
-                       
-        }            
+        }
         _user.CardId = -1;
         Log.Epg("EpgCard:TuneEPGgrabber: card:{0} could not tune to channel:{1}", Card.IdCard, result.ToString());
         return false;
       }
       catch (Exception ex)
       {
-        Log.Write(ex);        
+        Log.Write(ex);
         throw;
       }
     }
@@ -552,7 +563,7 @@ namespace TvService
       _dbUpdater.ReloadConfig();
       try
       {
-        foreach (EpgChannel epgChannel in _epg)
+        foreach (var epgChannel in _epg)
         {
           _dbUpdater.UpdateEpgForChannel(epgChannel);
           if (_state != EpgState.Updating)

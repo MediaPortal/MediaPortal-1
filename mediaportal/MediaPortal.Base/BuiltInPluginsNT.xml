@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<whitelist>
+  <plugin>OnlineVideos.MediaPortal1.dll</plugin>
+  <plugin>IMDb+.dll</plugin>
+</whitelist>

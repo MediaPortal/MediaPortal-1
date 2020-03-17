@@ -41,6 +41,8 @@ namespace TvPlugin
     private static bool _notifiesListChanged;
     private static bool _enableRecNotification;
     private static bool _busy;
+    private static bool _alreadyStarted;
+    private static bool _alreadyStopped;
     private int _preNotifyConfig;
 
     //list of all notifies (alert me n minutes before program starts)
@@ -68,26 +70,36 @@ namespace TvPlugin
       _dummyuser.Name = "Free channel checker";
       _timer.Interval = 15000;
       _timer.Enabled = true;
-      // Execute TvNotifyManager in a separate thread, so that it doesn't block the Main UI Render thread when Tvservice connection died
+      //// Execute TvNotifyManager in a separate thread, so that it doesn't block the Main UI Render thread when Tvservice connection died
       new Thread(() =>
                    {
                      _timer.Tick += new EventHandler(_timer_Tick);
 
                    }
-        ) {Name = "TvNotifyManager"}.Start();
+        ) { Name = "TvNotifyManager" }.Start();
       _notifiedRecordings = new ArrayList();
     }
 
     public void Start()
     {
-      Log.Info("TvNotify: start");
-      _timer.Start();
+      _alreadyStopped = false;
+      if (!_alreadyStarted)
+      {
+        Log.Info("TvNotify: start");
+        _timer.Start();
+        _alreadyStarted = true;
+      }
     }
 
     public void Stop()
     {
-      Log.Info("TvNotify: stop");
-      _timer.Stop();
+      _alreadyStarted = false;
+      if (!_alreadyStopped)
+      {
+        Log.Info("TvNotify: stop");
+        _timer.Stop();
+        _alreadyStopped = true;
+      }
     }
 
     public static bool RecordingNotificationEnabled
@@ -97,6 +109,10 @@ namespace TvPlugin
 
     public static void ForceUpdate()
     {
+      if (!TVHome.Connected)
+      {
+        return;
+      }
       if (!_enableRecNotification)
       {
         return;
@@ -253,6 +269,10 @@ namespace TvPlugin
 
     private void ProcessRecordings(DateTime preNotifySecs)
     {
+      if (!TVHome.Connected)
+      {
+        return;
+      }
       //Log.Debug("TVPlugIn: Notifier checking for recording to start at {0}", preNotifySecs);
       //if (g_Player.IsTV && TVHome.Card.IsTimeShifting && g_Player.Playing)
       IList<Schedule> schedulesList = null;

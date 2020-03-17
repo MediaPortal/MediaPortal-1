@@ -1123,7 +1123,7 @@ bool CDeMultiplexer::Start(DWORD timeout)
     if (m_hadPESfail > 64)
     {
       //Probably initial decryption problems so allow more time....
-      timeout = 60000;
+      timeout = 5000;
     }
 	  
     if (GetAudioStreamCount()>0) //Wait for first PAT to be found

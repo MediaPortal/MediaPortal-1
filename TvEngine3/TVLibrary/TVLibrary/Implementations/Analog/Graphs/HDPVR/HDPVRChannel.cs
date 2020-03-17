@@ -54,6 +54,7 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public HDPVRChannel(TvCardHDPVR card, String deviceType, Int32 subchannelId, IBaseFilter filterTsWriter, IFilterGraph2 graphBuilder)
     {
+      _eventPMTCancelled = new ManualResetEvent(false);
       _eventPMT = new ManualResetEvent(false);
       _graphState = GraphState.Created;
       _graphBuilder = graphBuilder;

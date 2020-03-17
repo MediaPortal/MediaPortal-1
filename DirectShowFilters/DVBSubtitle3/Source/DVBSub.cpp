@@ -49,8 +49,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_startTimestamp( -1 ),
   m_CurrentSeekPosition( 0 ),
   m_prevSubtitleTimestamp( 0 ),
-  m_bBasePcrSet( false ),
-  m_bHDMV( false )
+  m_bBasePcrSet( false )
 {
   TCHAR filename[1024];
   GetLogFile(filename);

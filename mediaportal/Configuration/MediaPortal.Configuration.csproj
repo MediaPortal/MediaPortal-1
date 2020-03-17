@@ -1018,7 +1018,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Configuration.exe.manifest" />
+    <None Include="Configuration.exe.manifest">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Resources\splashscreen_configuration.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

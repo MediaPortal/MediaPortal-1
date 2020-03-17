@@ -98,6 +98,7 @@ namespace TvLibrary.Implementations.DVB
     /// MD Plugs
     /// </summary>
     protected MDPlugs _mdplugs;
+    //protected MDPlugs _mdplugsBackup;
 
     /// set to true to enable PAT lookup of PMT
     private bool alwaysUsePATLookup = DebugSettings.UsePATLookup;
@@ -141,6 +142,7 @@ namespace TvLibrary.Implementations.DVB
     {
       _cancelled = false;
       _listenCA = false;
+      _eventPMTCancelled = new ManualResetEvent(false);
       _eventPMT = new ManualResetEvent(false);
       _eventCA = new ManualResetEvent(false);
       _graphState = GraphState.Created;
@@ -167,16 +169,25 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="subChannelId">The subchannel id</param>
     /// <param name="channel">The corresponding channel</param>
     public TvDvbChannel(IFilterGraph2 graphBuilder, ConditionalAccess ca, MDPlugs mdplugs, IBaseFilter tif,
-                        IBaseFilter tsWriter, int subChannelId, IChannel channel)
+                        IBaseFilter tsWriter, int subChannelId, IChannel channel, string userName)
     {
       _cancelled = false;
       _listenCA = false;
+      _eventPMTCancelled = new ManualResetEvent(false);
       _eventPMT = new ManualResetEvent(false);
       _eventCA = new ManualResetEvent(false);
       _graphState = GraphState.Created;
       _graphBuilder = graphBuilder;
       _conditionalAccess = ca;
-      _mdplugs = mdplugs;
+      //_mdplugsBackup = mdplugs;
+      if (userName == "epg")
+      {
+        _mdplugs = null;
+      }
+      else
+      {
+        _mdplugs = mdplugs;
+      }
       _filterTIF = tif;
       _teletextDecoder = new DVBTeletext();
       _packetHeader = new TSHelperTools.TSHeader();
@@ -290,7 +301,7 @@ namespace TvLibrary.Implementations.DVB
           lookForPid = channel.PmtPid;
         }
         // allow retry to look for PMT in PAT if original one times out
-        while (++retryCount <= 2)
+        while (++retryCount <= 2 && lookForPid != -1)
         {
           try
           {
@@ -306,6 +317,12 @@ namespace TvLibrary.Implementations.DVB
               else
               {
                 Log.Log.Debug("WaitForPMT: Waiting for PMT {0:X}", _pmtPid);
+              }
+
+              DVBIPChannel dvbipChannel = _currentChannel as DVBIPChannel;
+              if (dvbipChannel != null)
+              {
+                timeoutPMT = 3000;
               }
 
               if (_eventPMT.WaitOne(timeoutPMT, true))
@@ -377,6 +394,15 @@ namespace TvLibrary.Implementations.DVB
               }
               else
               {
+                // Set CancelPMT to avoid stop timeshift if a new channel is timeshifting.
+                if (_cancelPMT)
+                {
+                  // Wait that Cancel Timeshift is finishing
+                  EventPMTCancelled.WaitOne();
+                  foundPMT = true;
+                  break;
+                }
+
                 // Timeout waiting for PMT
                 TimeSpan ts = DateTime.Now - dtNow;
                 Log.Log.Debug("WaitForPMT: Timed out waiting for PMT after {0} seconds. Increase the PMT timeout value?",
@@ -450,10 +476,14 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("subch:{0} Graph already running - WaitForPMT", _subChannelId);
 
-        bool foundPMT = WaitForPMT();
-        if (!foundPMT)
+        DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
+        if (channel.PmtPid != -1)
         {
-          throw new TvExceptionNoPMT("TVDvbChannel.OnGraphStart: no PMT found");
+          bool foundPMT = WaitForPMT();
+          if (!foundPMT)
+          {
+            throw new TvExceptionNoPMT("TVDvbChannel.OnGraphStart: no PMT found");
+          }
         }
       }
       else
@@ -485,10 +515,14 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
-        bool foundPMT = WaitForPMT();
-        if (!foundPMT)
+        DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
+        if (channel.PmtPid != -1)
         {
-          throw new TvExceptionNoPMT("TVDvbChannel.OnGraphStarted: no PMT found");
+          bool foundPMT = WaitForPMT();
+          if (!foundPMT)
+          {
+            throw new TvExceptionNoPMT("TVDvbChannel.OnGraphStarted: no PMT found");
+          }
         }
       }
     }
@@ -1152,6 +1186,7 @@ namespace TvLibrary.Implementations.DVB
       lock (this)
       {
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
+        DVBIPChannel dvbipChannel = channel as DVBIPChannel;
         updatePids = false;
         waitInterval = 100;
         bool foundCA = false;
@@ -1160,7 +1195,7 @@ namespace TvLibrary.Implementations.DVB
           if (channel != null)
           {
             //HACK: Currently Premiere Direkt Feeds (nid=133) have the free_ca flag in SDT set to true (means not scrambled), so we have to override this
-            if ((!channel.FreeToAir) || (channel.NetworkId == 133 && !channel.Provider.Equals("BetaDigital")))
+            if (((!channel.FreeToAir) || (channel.NetworkId == 133 && !channel.Provider.Equals("BetaDigital"))) && dvbipChannel == null)
             {
               DateTime dtNow = DateTime.Now;
               foundCA = false;
@@ -1200,6 +1235,12 @@ namespace TvLibrary.Implementations.DVB
             int pmtProgramNumber = (_pmtData[3] << 8) + _pmtData[4];
             Log.Log.Info("subch:{0} SendPmt:{1:X} {2:X} {3:X} {4:X}", _subChannelId, pmtProgramNumber, channel.ServiceId,
                          _pmtVersion, version);
+            if (pmtProgramNumber != channel.ServiceId) // && dvbipChannel != null) // it can happen also on DVBs Channem
+            {
+              Log.Log.Info("Service ID mismatch {0} != {1} try with detected Service ID", channel.ServiceId,
+                pmtProgramNumber);
+              channel.ServiceId = pmtProgramNumber;
+            }
             if (pmtProgramNumber == channel.ServiceId)
             {
               if (_pmtVersion == version) //already received this pmt
@@ -1217,7 +1258,7 @@ namespace TvLibrary.Implementations.DVB
               {
                 channel.FreeToAir = !_channelInfo.scrambled;
                 Log.Log.Info("subch:{0} SendPMT: Channel FTA information changed to {1} according to CAIDs in PMT.",
-                             _subChannelId, channel.FreeToAir);
+                  _subChannelId, channel.FreeToAir);
               }
               if ((_mdplugs != null) && (foundCA))
               {
@@ -1250,7 +1291,7 @@ namespace TvLibrary.Implementations.DVB
                 return true;
               }
               Log.Log.WriteFile("subch:{0} SendPMT version:{1} len:{2} {3}", _subChannelId, version, _pmtLength,
-                                _channelInfo.caPMT.ProgramNumber);
+                _channelInfo.caPMT.ProgramNumber);
 
               int audioPid = -1;
               if (_currentAudioStream != null)
@@ -1267,7 +1308,7 @@ namespace TvLibrary.Implementations.DVB
               {
                 //cam is not ready yet
                 Log.Log.WriteFile("subch:{0} SendPmt failed cam flags:{1}", _subChannelId,
-                                  _conditionalAccess.IsCamReady());
+                  _conditionalAccess.IsCamReady());
                 _pmtVersion = -1;
                 waitInterval = 3000;
                 return false;

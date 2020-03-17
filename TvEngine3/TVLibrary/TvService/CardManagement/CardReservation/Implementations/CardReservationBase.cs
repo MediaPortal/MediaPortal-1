@@ -41,7 +41,8 @@ namespace TvService
     Tuning,
     Tuned,
     TuneCancelled,
-    TuneFailed    
+    TuneFailed,
+    TuneAsync
   }
 
   public enum CardStopState
@@ -190,6 +191,7 @@ namespace TvService
 
     public ICardTuneReservationTicket RequestCardTuneReservation(ITvCardHandler tvcard, IChannel tuningDetail, IUser user, int idChannel)
     {
+      Log.Debug("RequestCardTuneReservation1");
       ICardTuneReservationTicket cardTuneReservationTicket = null;
       var layer = new TvBusinessLayer();
 
@@ -210,14 +212,17 @@ namespace TvService
             {
               tvcard.Tuner.CardTuneState = CardTuneState.TuneCancelled;
             }
-          }          
+          }
         }
       }
+      Log.Debug("RequestCardTuneReservation2");
       if (!isCardAvail)
       {
+        Log.Debug("RequestCardTuneReservation3");
         if (hasUserHigherPriorityThanBlockingUser)
         {
-          tvcard.Tuner.CancelTune(tvcard.Tuner.ActiveCardTuneReservationTicket.PendingSubchannel);          
+          Log.Debug("RequestCardTuneReservation4");
+          tvcard.Tuner.CancelTune(tvcard.Tuner.ActiveCardTuneReservationTicket.PendingSubchannel);
           lock (tvcard.Tuner.CardReservationsLock)
           {
             isCardAvail = IsCardAvail(tvcard);
@@ -228,8 +233,8 @@ namespace TvService
       lock (tvcard.Tuner.CardReservationsLock)
       {
         if (isCardAvail)
-        {          
-          tvcard.Tuner.CardTuneState = CardTuneState.TunePending;            
+        {
+          tvcard.Tuner.CardTuneState = CardTuneState.TunePending;
           bool isTunedToTransponder = IsTunedToTransponder(tvcard, tuningDetail);
 
           int ownerSubchannel = -1;
@@ -256,7 +261,7 @@ namespace TvService
             context.GetUser(ref user);
             hasUserHighestPriority = context.HasUserHighestPriority(user);
             hasUserEqualOrHigherPriority = context.HasUserEqualOrHigherPriority(user);
-          }          
+          }
 
           int currentChannelId = tvcard.CurrentDbChannel(ref user);
 
@@ -291,7 +296,7 @@ namespace TvService
                 inactiveUsers.Add(actualUser);
               }
               else
-              {                
+              {
                 if (userDVBchannel != null)
                 {
                   actualUser.IdChannel = layer.GetTuningDetail(userDVBchannel).IdChannel;
@@ -317,8 +322,8 @@ namespace TvService
                       {
                         ownerSubchannel = actualUser.SubChannel;
                       }
-                    }                    
-                  }                  
+                    }
+                  }
                 }
               }
             }
@@ -361,14 +366,14 @@ namespace TvService
               hasUserHighestPriority,
               hasUserEqualOrHigherPriority);
           tvcard.Tuner.ActiveCardTuneReservationTicket = cardTuneReservationTicket;
-          tvcard.Tuner.ReservationsForTune.Add(cardTuneReservationTicket);          
+          tvcard.Tuner.ReservationsForTune.Add(cardTuneReservationTicket);
         }
 
-        cardTuneState = tvcard.Tuner.CardTuneState;        
+        cardTuneState = tvcard.Tuner.CardTuneState;
         if (tvcard.Tuner.ActiveCardTuneReservationTicket != null)
         {
-          ticketId = tvcard.Tuner.ActiveCardTuneReservationTicket.Id;  
-        }        
+          ticketId = tvcard.Tuner.ActiveCardTuneReservationTicket.Id;
+        }
       }
 
 
@@ -386,7 +391,7 @@ namespace TvService
         {
           Log.Debug("RequestCardTuneReservation: failed reservation tuningdetails={0}, res id blocking={1}, state={2}", tuningDetail, "n/a", cardTuneState);          
         }
-      }              
+      }
       return cardTuneReservationTicket;
     }    
 
@@ -397,8 +402,10 @@ namespace TvService
 
       bool isCardTuneStateIdle = (tvcard.Tuner.CardTuneState == CardTuneState.Idle);
       bool isCardTuneStateTuned = (tvcard.Tuner.CardTuneState == CardTuneState.Tuned);
+      bool isCardAsynctune = (tvcard.Tuner.CardTuneState == CardTuneState.TuneAsync);
+      bool isCardTuning = (tvcard.Tuner.CardTuneState == CardTuneState.Tuning);
 
-      bool isCardAvail = (isCardStopStateIdle || isCardStopStateStopped) && (isCardTuneStateIdle || isCardTuneStateTuned);
+      bool isCardAvail = (isCardStopStateIdle || isCardStopStateStopped) && (isCardTuneStateIdle || isCardTuneStateTuned || isCardAsynctune || isCardTuning);
       return isCardAvail;
     }
 
@@ -418,7 +425,7 @@ namespace TvService
             
       if (blockingUser != null)
       {
-        hasUserHigherPriority = (user.Priority > blockingUser.Priority);
+        hasUserHigherPriority = (user.Priority > blockingUser.Priority || user.Name.Equals(blockingUser.Name));
         Log.Debug("CardReservationBase.HasUserHigherPriorityThanBlockingUser: {0} - user '{1}' with prio={2} vs blocking user '{3}' with prio={4}", hasUserHigherPriority, 
           user.Name, user.Priority, blockingUser.Name, blockingUser.Priority);
       }

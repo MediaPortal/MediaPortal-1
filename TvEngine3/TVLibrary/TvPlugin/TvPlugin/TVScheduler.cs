@@ -188,8 +188,6 @@ namespace TvPlugin
         return;
       }
 
-      TVHome.WaitForGentleConnection();
-
       if (TVHome.Navigator == null)
       {
         TVHome.OnLoaded();
@@ -245,6 +243,13 @@ namespace TvPlugin
 
               TVHome.Card.StopTimeShifting();
             }
+          }
+          // needs for PIN protection function avoid to start tvhome with a protected group
+          if (TVHome.m_navigator != null && (TVHome.m_navigator.CheckIfProtectedGroup() || TVHome._allowProtectedItem || TVHome._showAllRecording))
+          {
+            TVHome._allowProtectedItem = false;
+            TVHome._showAllRecording = false;
+            TVHome.LoadSettings(true);
           }
         }
       }
@@ -596,6 +601,7 @@ namespace TvPlugin
 
     private void LoadDirectory()
     {
+      List<int> disallowedChannels = TVHome.ListDisallowedChannelsById();
       IList<Conflict> conflictsList = Conflict.ListAll();
       btnConflicts.Visible = conflictsList.Count > 0;
       GUIControl.ClearControl(GetID, listSchedules.GetID);
@@ -616,6 +622,10 @@ namespace TvPlugin
 
         foreach (Schedule schedule in seriesList)
         {
+          if (disallowedChannels.Contains(schedule.IdChannel))
+          {
+            continue;
+          }
           if (DateTime.Now > schedule.EndTime)
           {
             continue;
@@ -635,6 +645,11 @@ namespace TvPlugin
       {
         foreach (Schedule rec in schedulesList)
         {
+          if (disallowedChannels.Contains(rec.IdChannel))
+          {
+            continue;
+          }
+
           GUIListItem item = new GUIListItem();
           if (rec.ScheduleType != (int)ScheduleRecordingType.Once)
           {

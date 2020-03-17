@@ -591,6 +591,16 @@ namespace TvPlugin
         case Action.ActionType.ACTION_TVGUIDE_PREV_GROUP:
           OnChangeChannelGroup(-1);
           break;
+
+        case Action.ActionType.ACTION_SWITCH_HOME:
+          // needs for PIN protection function avoid to start tvhome with a protected group
+          if (TVHome.m_navigator != null && (TVHome.m_navigator.CheckIfProtectedGroup() || TVHome._allowProtectedItem || TVHome._showAllRecording))
+          {
+            TVHome._allowProtectedItem = false;
+            TVHome._showAllRecording = false;
+            TVHome.LoadSettings(true);
+          }
+          return;
       }
       base.OnAction(action);
     }
@@ -755,15 +765,12 @@ namespace TvPlugin
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
             {
-
               if (!TVHome.Connected)
               {
                 RemoteControl.Clear();
                 GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
                 return false;
               }
-
-              TVHome.WaitForGentleConnection();
 
               if (TVHome.Navigator == null)
               {
@@ -779,6 +786,7 @@ namespace TvPlugin
               if (TVHome.m_navigator == null)
               {
                 TVHome.m_navigator = new ChannelNavigator();
+                TVHome.LoadSettings(true);
               }
 
               GUIPropertyManager.SetProperty("#itemcount", string.Empty);
@@ -847,7 +855,7 @@ namespace TvPlugin
                 _showChannelLogos = false;
                 if (TVHome.Card.IsTimeShifting)
                 {
-                  _currentChannel = TVHome.Navigator.Channel;
+                  if (TVHome.Navigator != null) _currentChannel = TVHome.Navigator.Channel;
                   PositionGuideCursorToCurrentChannel();
                 }
               }
@@ -983,8 +991,10 @@ namespace TvPlugin
       if (TVHome.Navigator.Groups.Count > 1 && !_singleChannelView)
       {
         int prevGroup = TVHome.Navigator.CurrentGroup.IdGroup;
-
-        TVHome.OnSelectGroup();
+        if (!TVHome.OnUnlockChannelGroup())
+        {
+          TVHome.OnSelectGroup();
+        }
 
         if (prevGroup != TVHome.Navigator.CurrentGroup.IdGroup)
         {
@@ -3106,16 +3116,19 @@ namespace TvPlugin
         btnTvGroup.Visible = GroupButtonAvail;
 
       // set min index for focus handling
-      if (GroupButtonAvail)
+      if (TVHome.Navigator != null && TVHome.Navigator.CurrentGroup.GroupName != null)
       {
-        MinYIndex = -1; // allow focus of button
-        GroupButtonText = String.Format("{0}: {1}", GUILocalizeStrings.Get(971), TVHome.Navigator.CurrentGroup.GroupName);
-        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
-      }
-      else
-      {
-        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
-        MinYIndex = 0;
+        if (GroupButtonAvail)
+        {
+          MinYIndex = -1; // allow focus of button
+          GroupButtonText = String.Format("{0}: {1}", GUILocalizeStrings.Get(971), TVHome.Navigator.CurrentGroup.GroupName);
+          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
+          MinYIndex = 0;
+        }
       }
 
       // Set proper text for group change button; Empty string to hide text if only 1 group

@@ -52,20 +52,21 @@ namespace SetupTv.Sections
       this.mpButtonRec = new MediaPortal.UserInterface.Controls.MPButton();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
-      this.User = new System.Windows.Forms.ColumnHeader();
-      this.cardName = new System.Windows.Forms.ColumnHeader();
-      this.subchannels = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.User = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.cardName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.subchannels = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.buttonRestart = new System.Windows.Forms.Button();
       this.mpButtonReGrabEpg = new MediaPortal.UserInterface.Controls.MPButton();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpComboBoxChannels = new SetupControls.ComboBoxEx();
       this.comboBoxGroups = new SetupControls.ComboBoxEx();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.chkASynch = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -139,8 +140,8 @@ namespace SetupTv.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.label3);
       this.mpGroupBox1.Controls.Add(this.txtDisc);
       this.mpGroupBox1.Controls.Add(this.txtBytes);
@@ -251,6 +252,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonTimeShift
       // 
+      this.mpButtonTimeShift.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonTimeShift.Location = new System.Drawing.Point(221, 218);
       this.mpButtonTimeShift.Name = "mpButtonTimeShift";
       this.mpButtonTimeShift.Size = new System.Drawing.Size(115, 23);
@@ -261,6 +263,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonRec
       // 
+      this.mpButtonRec.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonRec.Enabled = false;
       this.mpButtonRec.Location = new System.Drawing.Point(343, 218);
       this.mpButtonRec.Name = "mpButtonRec";
@@ -279,9 +282,9 @@ namespace SetupTv.Sections
       // 
       this.mpListView1.AllowDrop = true;
       this.mpListView1.AllowRowReorder = true;
-      this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
@@ -342,7 +345,7 @@ namespace SetupTv.Sections
       // 
       // buttonRestart
       // 
-      this.buttonRestart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonRestart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonRestart.Location = new System.Drawing.Point(241, 392);
       this.buttonRestart.Name = "buttonRestart";
       this.buttonRestart.Size = new System.Drawing.Size(95, 23);
@@ -375,10 +378,12 @@ namespace SetupTv.Sections
       // 
       // mpComboBoxChannels
       // 
+      this.mpComboBoxChannels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpComboBoxChannels.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this.mpComboBoxChannels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxChannels.FormattingEnabled = true;
-      this.mpComboBoxChannels.ImageList = null;
+      this.mpComboBoxChannels.ImageList = this.imageList1;
       this.mpComboBoxChannels.Location = new System.Drawing.Point(64, 220);
       this.mpComboBoxChannels.Name = "mpComboBoxChannels";
       this.mpComboBoxChannels.Size = new System.Drawing.Size(151, 21);
@@ -386,6 +391,8 @@ namespace SetupTv.Sections
       // 
       // comboBoxGroups
       // 
+      this.comboBoxGroups.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxGroups.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this.comboBoxGroups.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxGroups.FormattingEnabled = true;
@@ -405,10 +412,25 @@ namespace SetupTv.Sections
       this.mpLabel2.TabIndex = 62;
       this.mpLabel2.Text = "Group:";
       // 
+      // chkASynch
+      // 
+      this.chkASynch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.chkASynch.AutoSize = true;
+      this.chkASynch.Checked = true;
+      this.chkASynch.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.chkASynch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chkASynch.Location = new System.Drawing.Point(377, 195);
+      this.chkASynch.Name = "chkASynch";
+      this.chkASynch.Size = new System.Drawing.Size(81, 17);
+      this.chkASynch.TabIndex = 75;
+      this.chkASynch.Text = "Tune Async";
+      this.chkASynch.UseVisualStyleBackColor = true;
+      // 
       // TestService
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.chkASynch);
       this.Controls.Add(this.mpLabel2);
       this.Controls.Add(this.comboBoxGroups);
       this.Controls.Add(this.mpButtonReGrabEpg);
@@ -425,6 +447,7 @@ namespace SetupTv.Sections
       this.mpGroupBox1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
+
     }
 
     #endregion
@@ -465,5 +488,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPNumericTextBox txtBytes;
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.ColumnHeader subchannels;
+    private MediaPortal.UserInterface.Controls.MPCheckBox chkASynch;
   }
 }

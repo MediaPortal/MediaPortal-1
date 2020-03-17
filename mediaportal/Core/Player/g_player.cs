@@ -2973,7 +2973,7 @@ namespace MediaPortal.Player
           (GUIGraphicsContext.Vmr9Active || GUIGraphicsContext.ForceMadVRFirstStart))
       {
         // Enable a new VideoWindow update
-        lock (GUIGraphicsContext.RenderLock)
+        //lock (GUIGraphicsContext.RenderLock) // Commented out to trying to avoid deadlock
         {
           GUIGraphicsContext.UpdateVideoWindow = true;
           VMR9Util.g_vmr9?._scene.RenderGuiRefresh(25, 25, 25, 25, true);

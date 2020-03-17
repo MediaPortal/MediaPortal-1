@@ -20,6 +20,7 @@
 
 using System.Collections;
 using System.Diagnostics;
+using MediaPortal.GUI.Library;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 
@@ -189,12 +190,14 @@ namespace MediaPortal
     /// </summary>
     public void Enumerate()
     {
+      Manager.Adapters.Reset();
       foreach (AdapterInformation ai in Manager.Adapters)
       {
         ArrayList adapterFormatList = new ArrayList();
         GraphicsAdapterInfo adapterInfo = new GraphicsAdapterInfo();
         adapterInfo.AdapterOrdinal = ai.Adapter;
         adapterInfo.AdapterDetails = ai.Information;
+        Log.Debug("D3DEnumeration ai.Information : {0}", ai.Information.Description);
 
         // Get list of all display modes on this adapter.  
         // Also build a temporary list of all display adapter formats.

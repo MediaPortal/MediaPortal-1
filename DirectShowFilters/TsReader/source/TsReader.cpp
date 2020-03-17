@@ -840,6 +840,20 @@ void CTsReaderFilter::OnBitRateChanged(int bitrate)
     m_pCallback->OnBitRateChanged(bitrate);
 }
 
+void CTsReaderFilter::OnVideoReceived()
+{
+  if (m_pCallback)
+    m_pCallback->OnVideoReceived();
+  LogDebug("OnVideoReceived()");
+}
+
+void CTsReaderFilter::OnRenderBlack()
+{
+  if (m_pCallback)
+    m_pCallback->OnRenderBlack();
+  LogDebug("OnRenderBlack()");
+}
+
 STDMETHODIMP CTsReaderFilter::SetGraphCallback(ITSReaderCallback* pCallback)
 {
   LogDebug("CALLBACK SET");
@@ -926,6 +940,10 @@ void STDMETHODCALLTYPE CTsReaderFilter::OnZapping(int info)
   // Theoretically a new PAT ( equal to PAT+1 modulo 16 ) will be issued by TsWriter.
   if (info == 0x80)
   {
+    // Send callback event
+    OnRenderBlack();
+    LogDebug("OnZapping() - OnRenderBlack()");
+
     m_bOnZap = true ;
     m_bZapinProgress = true;
     m_demultiplexer.RequestNewPat();
@@ -1053,6 +1071,9 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
   m_ShowBufferAudio = INIT_SHOWBUFFERAUDIO;
   
   LogDebug("CTsReaderFilter::Run(%05.2f) state %d -->done",msec,m_State);
+
+  // Send callback event
+  OnVideoReceived();
   return hr;
 }
 

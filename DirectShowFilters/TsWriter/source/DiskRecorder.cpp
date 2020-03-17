@@ -720,9 +720,9 @@ void CDiskRecorder::AddStream(PidInfo2 pidInfo)
   //ITV HD workaround, this enables TSWriter to timeshift / record & avoids no audio/video found.
   if (pidInfo.streamType==SERVICE_TYPE_DVB_SUBTITLES2 && pidInfo.logicalStreamType==0xffffffff && pidInfo.elementaryPid==0xd49)
   {
-    pidInfo.streamType=SERVICE_TYPE_VIDEO_H264;
-    pidInfo.logicalStreamType=SERVICE_TYPE_VIDEO_H264;
-    LogDebug("AddStream: set ITV HD video stream to H.264");
+    pidInfo.streamType=SERVICE_TYPE_VIDEO_HEVC;
+    pidInfo.logicalStreamType=SERVICE_TYPE_VIDEO_HEVC;
+    LogDebug("AddStream: set ITV HD video stream to HEVC");
   }
   //end of workaround
 	if (IsStreamWanted(pidInfo.logicalStreamType))

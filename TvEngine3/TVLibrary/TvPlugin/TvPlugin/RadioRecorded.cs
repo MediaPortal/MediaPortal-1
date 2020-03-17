@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -207,8 +208,6 @@ namespace TvPlugin
         return;
       }
 
-      TVHome.WaitForGentleConnection();
-
       if (TVHome.Navigator == null)
       {
         TVHome.OnLoaded();
@@ -231,15 +230,47 @@ namespace TvPlugin
 
       base.OnPageLoad();
       InitViewSelections();
-      DeleteInvalidRecordings();
+      // launch DeleteInvalidRecordings async for instant start of GUI screen - refresh GUI later, if recordings have been deleted
+      bool recordingsDeleted = false;
+      Object loadFacadeLock = new Object();
 
-      if (btnCompress != null)
+      new Thread(delegate()
       {
-        btnCompress.Visible = false;
-      }
+        {
+          try
+          {
+            recordingsDeleted = DeleteInvalidRecordings();
+          }
+          catch (Exception ex)
+          {
+            Log.Debug("RadioRecorded: DeleteInvalidRecordings - error: " + ex.Message);
+          }
+        }
+        GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) =>
+        {
+          {
+            if (recordingsDeleted)
+            {
+              Log.Debug("RadioRecorded: recordings were deleted -> now update GUI");
+              lock (loadFacadeLock)
+              {
+                UpdateGUI();
+              }
+            }
+            else
+            {
+              Log.Debug("RadioRecorded: no recordings were deleted -> skip GUI update");
+            }
+          }
+          return 0;
+        }, 0, 0, null);
+      }) { Name = "RadioRecorded: DeleteInvalidRecordings", IsBackground = true, Priority = ThreadPriority.BelowNormal }.Start();
 
       LoadSettings();
-      LoadDirectory();
+      lock (loadFacadeLock)
+      {
+        LoadDirectory();
+      }
 
       while (_iSelectedItem >= GetItemCount() && _iSelectedItem > 0)
       {
@@ -1401,19 +1432,13 @@ namespace TvPlugin
       RemoteControl.Instance.DeleteWatchedRecordings(currentTitle);
     }
 
-    private void DeleteInvalidRecordings()
+    private bool DeleteInvalidRecordings()
     {
-      if (RemoteControl.Instance.DeleteInvalidRecordings())
-      {
-        CacheManager.Clear();
-        LoadDirectory();
-        while (_iSelectedItem >= GetItemCount() && _iSelectedItem > 0)
-        {
-          _iSelectedItem--;
-        }
-
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
-      }
+      Stopwatch watch = new Stopwatch(); watch.Reset(); watch.Start();
+      bool deletedrecordings = RemoteControl.Instance.DeleteInvalidRecordings();
+      watch.Stop();
+      Log.Debug("DeleteInvalidRecordings() - finished after '" + watch.ElapsedMilliseconds + "' ms., deletedrecordings = '" + deletedrecordings + "'");
+      return deletedrecordings;
     }
 
     private void UpdateProperties()

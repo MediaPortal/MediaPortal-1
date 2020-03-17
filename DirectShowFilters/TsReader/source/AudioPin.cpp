@@ -511,7 +511,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           
           //Calculate a mean 'fTime' value using 'raw' fTime data
           CalcAverageFtime(fTime);
-          if (timeNow < (m_pTsReaderFilter->m_lastPauseRun + (30*1000)))
+          //if (timeNow < (m_pTsReaderFilter->m_lastPauseRun + (30*1000)))
+          if (clock < 30.0) //only do this at start of play
           {
             //do this for 30s after start of play, a flush or pause
             m_fAFTMeanRef = m_fAFTMean;

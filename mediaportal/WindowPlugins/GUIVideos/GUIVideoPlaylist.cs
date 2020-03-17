@@ -193,6 +193,7 @@ namespace MediaPortal.GUI.Video
       {
         btnRepeatPlaylist.Selected = playlistPlayer.RepeatPlaylist;
       }
+
     }
 
     protected override void OnPageDestroy(int newWindowId)

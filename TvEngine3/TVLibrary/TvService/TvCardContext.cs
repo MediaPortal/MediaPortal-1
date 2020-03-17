@@ -138,19 +138,73 @@ namespace TvService
     /// <param name = "user">The user.</param>
     public void Add(IUser user)
     {
-      Log.Info("user:{0} add", user.Name);
-      if (_owner == null)
+      if (user != null)
       {
-        _owner = user;
+        Log.Info("user:{0} add", user.Name);
+        if (_owner == null)
+        {
+          _owner = user;
+        }
+        int i = _users.FindIndex(t => t.Name == user.Name);
+        if (i > -1)
+        {
+          _users[i] = (User) user.Clone();
+        }
+        else
+        {
+          _users.Add(user);
+        }
       }
-      int i = _users.FindIndex(t => t.Name == user.Name);
-      if (i > -1)
+    }
+
+    /// <summary>
+    /// GetTimeshiftPosition for placeshift
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    public double GetTimeshiftPosition(IUser user)
+    {
+      for (int i = 0; i < _users.Count; i++)
       {
-        _users[i] = (User)user.Clone();
+        if (_users[i].Name == user.Name)
+        {
+          return _users[i].TimeshiftPosition;
+        }
       }
-      else
+      return 0;
+    }
+
+    /// <summary>
+    /// SetTimeshiftPosition for placeshift
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="TimeshiftPosition"></param>
+    public void SetTimeshiftPosition(IUser user, double TimeshiftPosition)
+    {
+      for (int i = 0; i < _users.Count; i++)
       {
-        _users.Add(user);
+        if (_users[i].Name == user.Name)
+        {
+          _users[i].TimeshiftPosition = TimeshiftPosition;
+          break;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Replace user name
+    /// </summary>
+    /// <param name="olduser"></param>
+    /// <param name="newuser"></param>
+    public void Replace(string olduser, IUser newuser)
+    {
+      for (int i = 0; i < _users.Count; i++)
+      {
+        if (_users[i].Name == olduser)
+        {
+          _users[i].Name = newuser.Name;
+          break;
+        }
       }
     }
 

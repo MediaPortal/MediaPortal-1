@@ -119,7 +119,10 @@ namespace TvPlugin
     {
       if (control == btnTvGroup)
       {
-        TVHome.OnSelectGroup();
+        if (TVHome.OnUnlockChannelGroup())
+        {
+          TVHome.OnSelectGroup();
+        }
         UpdateList();
       }
       base.OnClicked(controlId, control, actionType);
@@ -205,7 +208,10 @@ namespace TvPlugin
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
-        TVHome.OnSelectGroup();
+        if (TVHome.OnUnlockChannelGroup())
+        {
+          TVHome.OnSelectGroup();
+        }
         UpdateList();
       }
     }

@@ -20,4 +20,5 @@
   <plugin>GUIWikipedia.dll</plugin>
   <plugin>Dialogs.dll</plugin>
   <plugin>TvPlugin.dll</plugin>
+  <plugin>GUIVolume.dll</plugin>
 </whitelist>

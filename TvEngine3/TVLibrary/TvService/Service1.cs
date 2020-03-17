@@ -111,7 +111,7 @@ namespace TvService
     /// <param name="e">The <see cref="System.UnhandledExceptionEventArgs"/> instance containing the event data.</param>
     private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
-      Log.WriteFile("Tvservice stopped due to an unhandled app domain exception {0}", e.ExceptionObject);
+      Log.Error("Tvservice stopped due to an unhandled app domain exception {0}", e.ExceptionObject);
       _unhandledExceptionInThread = Thread.CurrentThread;
       ExitCode = -1; //tell windows that the service failed.      
       OnStop(); //cleanup
@@ -214,13 +214,12 @@ namespace TvService
       {
         if (!(args != null && args.Length > 0 && args[0] == "/DEBUG"))
         {
-          RequestAdditionalTime(60000); // starting database can be slow so increase default timeout        
+          RequestAdditionalTime(60000); // starting database can be slow so increase default timeout
         }
         TvServiceThread tvServiceThread = new TvServiceThread();
         ThreadStart tvServiceThreadStart = new ThreadStart(tvServiceThread.OnStart);
-        _tvServiceThread = new Thread(tvServiceThreadStart);
+        _tvServiceThread = new Thread(tvServiceThreadStart) {IsBackground = false};
 
-        _tvServiceThread.IsBackground = false;
 
         // apply process priority on initial service start.
         if (!_priorityApplied)
@@ -549,20 +548,47 @@ namespace TvService
             OnPowerEvent(PowerEventType.StandBy);
             break;
           case PBT_APMRESUMECRITICAL:
+            IsDatabaseBackendReady();
             OnPowerEvent(PowerEventType.ResumeCritical);
             break;
           case PBT_APMRESUMESUSPEND:
+            IsDatabaseBackendReady();
             OnPowerEvent(PowerEventType.ResumeSuspend);
             break;
           case PBT_APMRESUMESTANDBY:
+            IsDatabaseBackendReady();
             OnPowerEvent(PowerEventType.ResumeStandBy);
             break;
           case PBT_APMRESUMEAUTOMATIC:
+            IsDatabaseBackendReady();
             OnPowerEvent(PowerEventType.ResumeAutomatic);
             break;
         }
       }
       return DefWindowProc(hWnd, msg, wParam, lParam);
+    }
+
+    private bool IsDatabaseBackendReady()
+    {
+      int timeout = 0;
+      while (timeout < 30)
+      {
+        try
+        {
+          TvBusinessLayer layer = new TvBusinessLayer();
+          int temp = Int32.Parse(layer.GetSetting("timeshiftMaxFreeCardsToTry", "0").Value); // just for check if the database is ready
+          Log.Debug("IsDatabaseBackendReady: true");
+          return true;
+        }
+        catch
+        {
+          Log.Error("IsDatabaseBackendReady: false {0}", timeout);
+        }
+
+        Thread.Sleep(1000);
+        timeout++;
+      }
+      return false;
     }
 
     private void PowerEventThread()

@@ -82,6 +82,13 @@ namespace SetupTv.Sections
         foreach (RadioGroupMap map in maps)
         {
           Channel channel = map.ReferencedChannel();
+          if (channel == null)
+          {
+            map.Delete();
+            map.IsChanged = true;
+            map.Persist();
+            continue;
+          }
           if (!channel.IsRadio)
           {
             continue;

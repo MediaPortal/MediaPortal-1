@@ -544,6 +544,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             // This should only happen when the stream enters into paused state
             LogDebug("vid: FillBuffer - DeliverEndOfStream");
             DeliverEndOfStream();
+            // TODO madVR hack to fix rendering start
+            m_pFilter->IssueCommand(FAKESEEK, m_rtStreamOffset);
             m_bClipEndingNotified = true;
           }
           else

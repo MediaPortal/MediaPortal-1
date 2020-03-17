@@ -99,7 +99,8 @@ enum DS_CMD_ID
   REBUILD,
   SEEK,
   PAUSE,
-  RESUME
+  RESUME,
+  FAKESEEK
 };
 
 class CBDReaderFilter : public CSource, 
@@ -128,6 +129,7 @@ public:
   STDMETHODIMP Run(REFERENCE_TIME tStart);
   STDMETHODIMP Pause();
   STDMETHODIMP Stop();
+  void FakeSeek(REFERENCE_TIME tStart);
 
 private:
   // IAMFilterMiscFlags

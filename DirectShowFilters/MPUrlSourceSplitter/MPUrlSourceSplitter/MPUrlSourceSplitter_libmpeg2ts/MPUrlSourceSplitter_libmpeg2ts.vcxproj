@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{245D2C86-1D26-44D3-981F-F0136CB11CCD}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>MPUrlSourceSplitter_libmpeg2ts</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)bin_$(PlatformName)d\lib\</OutDir>
+    <IntDir>$(SolutionDir)bin_$(PlatformName)d\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)bin_$(PlatformName)\lib\</OutDir>
+    <IntDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_Interfaces;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_Interfaces;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="ConditionalAccessDescriptor.h" />
+    <ClInclude Include="ConditionalAccessParser.h" />
+    <ClInclude Include="ConditionalAccessSection.h" />
+    <ClInclude Include="Crc32.h" />
+    <ClInclude Include="Descriptor.h" />
+    <ClInclude Include="DescriptorCollection.h" />
+    <ClInclude Include="DescriptorFactory.h" />
+    <ClInclude Include="DiscontinuityParser.h" />
+    <ClInclude Include="PacketParser.h" />
+    <ClInclude Include="Parser.h" />
+    <ClInclude Include="PidCounter.h" />
+    <ClInclude Include="PidCounterCollection.h" />
+    <ClInclude Include="ProgramAssociationParser.h" />
+    <ClInclude Include="ProgramAssociationSection.h" />
+    <ClInclude Include="ProgramAssociationSectionProgram.h" />
+    <ClInclude Include="ProgramAssociationSectionProgramCollection.h" />
+    <ClInclude Include="ProgramDefinition.h" />
+    <ClInclude Include="ProgramDefinitionCollection.h" />
+    <ClInclude Include="ProgramSpecificInformationPacket.h" />
+    <ClInclude Include="Section.h" />
+    <ClInclude Include="SectionCollection.h" />
+    <ClInclude Include="SectionPayload.h" />
+    <ClInclude Include="SectionPayloadCollection.h" />
+    <ClInclude Include="SectionPayloadParser.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="TransportStreamProgramMapParser.h" />
+    <ClInclude Include="TransportStreamProgramMapSection.h" />
+    <ClInclude Include="TsPacket.h" />
+    <ClInclude Include="TsPacketCollection.h" />
+    <ClInclude Include="TsPacketConstants.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ConditionalAccessDescriptor.cpp" />
+    <ClCompile Include="ConditionalAccessParser.cpp" />
+    <ClCompile Include="ConditionalAccessSection.cpp" />
+    <ClCompile Include="Crc32.cpp" />
+    <ClCompile Include="Descriptor.cpp" />
+    <ClCompile Include="DescriptorCollection.cpp" />
+    <ClCompile Include="DescriptorFactory.cpp" />
+    <ClCompile Include="DiscontinuityParser.cpp" />
+    <ClCompile Include="PacketParser.cpp" />
+    <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="PidCounter.cpp" />
+    <ClCompile Include="PidCounterCollection.cpp" />
+    <ClCompile Include="ProgramAssociationParser.cpp" />
+    <ClCompile Include="ProgramAssociationSection.cpp" />
+    <ClCompile Include="ProgramAssociationSectionProgram.cpp" />
+    <ClCompile Include="ProgramAssociationSectionProgramCollection.cpp" />
+    <ClCompile Include="ProgramDefinition.cpp" />
+    <ClCompile Include="ProgramDefinitionCollection.cpp" />
+    <ClCompile Include="ProgramSpecificInformationPacket.cpp" />
+    <ClCompile Include="Section.cpp" />
+    <ClCompile Include="SectionCollection.cpp" />
+    <ClCompile Include="SectionPayload.cpp" />
+    <ClCompile Include="SectionPayloadCollection.cpp" />
+    <ClCompile Include="SectionPayloadParser.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="TransportStreamProgramMapParser.cpp" />
+    <ClCompile Include="TransportStreamProgramMapSection.cpp" />
+    <ClCompile Include="TsPacket.cpp" />
+    <ClCompile Include="TsPacketCollection.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

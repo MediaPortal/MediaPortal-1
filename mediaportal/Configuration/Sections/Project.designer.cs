@@ -58,8 +58,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxInfo
       // 
-      this.groupBoxInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxInfo.Controls.Add(this.labelInfo2);
       this.groupBoxInfo.Controls.Add(this.labelInfo1);
       this.groupBoxInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -71,30 +71,30 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelInfo2
       // 
-      this.labelInfo2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelInfo2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.labelInfo2.Location = new System.Drawing.Point(16, 56);
       this.labelInfo2.Name = "labelInfo2";
       this.labelInfo2.Size = new System.Drawing.Size(440, 30);
       this.labelInfo2.TabIndex = 1;
       this.labelInfo2.Text = "It allows you to listen to your favorite music and radio, watch your videos and D" +
-          "VDs, view, schedule and record live TV and much more!";
+    "VDs, view, schedule and record live TV and much more!";
       // 
       // labelInfo1
       // 
-      this.labelInfo1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelInfo1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.labelInfo1.Location = new System.Drawing.Point(16, 24);
       this.labelInfo1.Name = "labelInfo1";
       this.labelInfo1.Size = new System.Drawing.Size(440, 32);
       this.labelInfo1.TabIndex = 0;
       this.labelInfo1.Text = "MediaPortal is an open source project, hosted at SourceForge, that will turn your" +
-          " home computer into a fully fledged multi media center (HTPC).";
+    " home computer into a fully fledged multi media center (HTPC).";
       // 
       // groupBoxContact
       // 
-      this.groupBoxContact.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxContact.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxContact.Controls.Add(this.linkLabelSourceforge);
       this.groupBoxContact.Controls.Add(this.labelSourceForge);
       this.groupBoxContact.Controls.Add(this.linkLabelOnlineDocumentation);
@@ -221,8 +221,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBoxAbout
       // 
-      this.mpGroupBoxAbout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBoxAbout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBoxAbout.Controls.Add(this.labelVersion3);
       this.mpGroupBoxAbout.Controls.Add(this.labelVersion2);
       this.mpGroupBoxAbout.Controls.Add(this.labelVersion1);
@@ -238,25 +238,25 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.labelVersion3.AutoSize = true;
       this.labelVersion3.ForeColor = System.Drawing.Color.Red;
-      this.labelVersion3.Location = new System.Drawing.Point(122, 20);
+      this.labelVersion3.Location = new System.Drawing.Point(15, 34);
       this.labelVersion3.Name = "labelVersion3";
-      this.labelVersion3.Size = new System.Drawing.Size(125, 13);
+      this.labelVersion3.Size = new System.Drawing.Size(174, 13);
       this.labelVersion3.TabIndex = 2;
       this.labelVersion3.Text = "(Snapshot-Build is for testing only!!!)";
       // 
       // labelVersion2
       // 
       this.labelVersion2.AutoSize = true;
-      this.labelVersion2.Location = new System.Drawing.Point(59, 20);
+      this.labelVersion2.Location = new System.Drawing.Point(59, 18);
       this.labelVersion2.Name = "labelVersion2";
-      this.labelVersion2.Size = new System.Drawing.Size(64, 13);
+      this.labelVersion2.Size = new System.Drawing.Size(80, 13);
       this.labelVersion2.TabIndex = 1;
-      this.labelVersion2.Text = "1.0.3.23400";
+      this.labelVersion2.Text = "1.10.100.XXXX";
       // 
       // labelVersion1
       // 
       this.labelVersion1.AutoSize = true;
-      this.labelVersion1.Location = new System.Drawing.Point(15, 20);
+      this.labelVersion1.Location = new System.Drawing.Point(15, 18);
       this.labelVersion1.Name = "labelVersion1";
       this.labelVersion1.Size = new System.Drawing.Size(45, 13);
       this.labelVersion1.TabIndex = 0;

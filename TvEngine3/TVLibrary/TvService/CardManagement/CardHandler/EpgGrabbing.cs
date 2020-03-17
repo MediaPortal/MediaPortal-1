@@ -121,7 +121,7 @@ namespace TvService
           //RemoteControl.Instance.GrabEpg();
           return;
         }
-        _cardHandler.Card.AbortGrabbing();
+        _cardHandler.Card.AbortGrabbing(false);
         return;
       }
       catch (Exception ex)

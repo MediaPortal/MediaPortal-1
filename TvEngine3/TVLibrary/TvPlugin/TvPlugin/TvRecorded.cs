@@ -33,6 +33,7 @@ using MediaPortal.Profile;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
+using TvLibrary.Interfaces;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
@@ -85,7 +86,8 @@ namespace TvPlugin
     protected GUIButtonControl btnCleanup = null;
     [SkinControl(7)]
     protected GUIButtonControl btnCompress = null;
-    
+    [SkinControl(8)]
+    protected GUIButtonControl btnRecordedDisAllowed = null;
 
     #endregion
 
@@ -269,6 +271,18 @@ namespace TvPlugin
       g_Player.PlayBackStarted -= new g_Player.StartedHandler(OnPlayRecordingBackStarted);
       g_Player.PlayBackChanged -= new g_Player.ChangedHandler(OnPlayRecordingBackChanged);*/
 
+      // Reset disallowed recorded items only when we didn't start or stop the video.
+      // if we're switching to another plugin
+      if (!GUIGraphicsContext.IsTvWindow(newWindowId) && newWindowId != (int)Window.WINDOW_FULLSCREEN_VIDEO)
+      {
+        if (TVHome.m_navigator != null && (TVHome.m_navigator.CheckIfProtectedGroup() || TVHome._allowProtectedItem || TVHome._showAllRecording))
+        {
+          TVHome._showAllRecording = false;
+          TVHome._allowProtectedItem = false;
+          TVHome.LoadSettings(true);
+        }
+      }
+
       _iSelectedItem = GetSelectedItemNo();
       SaveSettings();
       base.OnPageDestroy(newWindowId);
@@ -282,8 +296,6 @@ namespace TvPlugin
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
         return;
       }
-
-      TVHome.WaitForGentleConnection();
 
       if (TVHome.Navigator == null)
       {
@@ -304,15 +316,47 @@ namespace TvPlugin
       base.OnPageLoad();
       InitViewSelections();
 
-      //DeleteInvalidRecordings();
+      // launch DeleteInvalidRecordings async for instant start of GUI screen - refresh GUI later, if recordings have been deleted
+      bool recordingsDeleted = false;
+      Object loadFacadeLock = new Object();
 
-      if (btnCompress != null)
+      new Thread(delegate()
       {
-        btnCompress.Visible = false;
-      }
+        {
+          try
+          {
+            recordingsDeleted = DeleteInvalidRecordings();
+          }
+          catch (Exception ex)
+          {
+            Log.Debug("TvRecorded: DeleteInvalidRecordings - error: " + ex.Message);
+          }
+        }
+        GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) =>
+        {
+          {
+            if (recordingsDeleted)
+            {
+              Log.Debug("TvRecorded: recordings were deleted -> now update GUI");
+              lock (loadFacadeLock)
+              {
+                UpdateGUI();
+              }
+            }
+            else
+            {
+              Log.Debug("TvRecorded: no recordings were deleted -> skip GUI update");
+            }
+          }
+          return 0;
+        }, 0, 0, null);
+      }) { Name = "TvRecorded: DeleteInvalidRecordings", IsBackground = true, Priority = ThreadPriority.BelowNormal }.Start();
 
       LoadSettings();
-      LoadDirectory();
+      lock (loadFacadeLock)
+      {
+        LoadDirectory();
+      }
 
       while (_iSelectedItem >= GetItemCount() && _iSelectedItem > 0)
       {
@@ -344,6 +388,11 @@ namespace TvPlugin
       if (control == btnCleanup)
       {
         OnCleanup();
+      }
+
+      if (control == btnRecordedDisAllowed)
+      {
+        OnRecordedDisAllowed();
       }
     }
 
@@ -738,6 +787,8 @@ namespace TvPlugin
       {
         GUIControl.ClearControl(GetID, facadeLayout.GetID);
 
+        List<int> disallowedChannels = TVHome.ListDisallowedChannelsById();
+
         SwitchLayout();
 
         // lookup radio channel ID in radio group map (smallest table that could identify a radio channel) to remove radiochannels from recording list
@@ -745,8 +796,11 @@ namespace TvPlugin
         Log.Debug("LoadDirectory() - finished loading '" + radiogroupIDs.Count() + "' radiogroupIDs after '{0}' ms.", watch.ElapsedMilliseconds);
 
         //List<Recording> recordings = (from r in Recording.ListAll()where !(from rad in radiogroups select rad.IdChannel).Contains(r.IdChannel)select r).ToList();
-        List<Recording> recordings = Recording.ListAll().Where(rec => radiogroupIDs.All(id => rec.IdChannel != id)).ToList();
-        Log.Debug("LoadDirectory() - finished loading '" + recordings.Count + "' recordings after '{0}' ms.", watch.ElapsedMilliseconds);
+        var allRecordings = Recording.ListAll().Where(rec => radiogroupIDs.All(id => rec.IdChannel != id)).ToList();
+        Log.Debug("LoadDirectory() - finished loading '" + allRecordings.Count + "' recordings after '{0}' ms.", watch.ElapsedMilliseconds);
+
+        // skip recording if it was recorded from a disallowed (PIN protected) channel
+        var recordings = !TVHome._showAllRecording ? allRecordings.Where(rec => !disallowedChannels.Contains(rec.IdChannel)).ToList() : allRecordings;
 
         // load the active channels only once to save multiple requests later when retrieving related channel
         List<Channel> channels = Channel.ListAll().ToList();
@@ -1289,7 +1343,7 @@ namespace TvPlugin
           if (g_Player.Playing)
           {
             FileInfo fInfo = new FileInfo(g_Player.currentFileName);
-            if (rec.FileName.IndexOf(fInfo.Name) > -1)
+            if (rec.FileName.IndexOf(fInfo.Name, StringComparison.Ordinal) > -1)
             {
               g_Player.Stop();
             }
@@ -1323,7 +1377,7 @@ namespace TvPlugin
         if (g_Player.currentFileName.Length > 0 && (g_Player.IsTVRecording || g_Player.Playing))
         {
           FileInfo fInfo = new FileInfo(g_Player.currentFileName);
-          isRecPlaying = (rec.FileName.IndexOf(fInfo.Name) > -1);
+          isRecPlaying = (rec.FileName.IndexOf(fInfo.Name, StringComparison.Ordinal) > -1);
         }
 
         dlgYesNo.SetDefaultToYes(false);
@@ -1497,6 +1551,68 @@ namespace TvPlugin
       }
 
       GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
+    }
+
+    private void OnRecordedDisAllowed()
+    {
+      // Disallowed recording are present, ask user if we need to show them
+      var disallowedChannels = TVHome.ListDisallowedChannelsById();
+
+      // lookup radio channel ID in radio group map (smallest table that could identify a radio channel) to remove radiochannels from recording list
+      IEnumerable<int> radiogroupIDs = RadioGroupMap.ListAll().Select(radiogroup => radiogroup.IdChannel).ToList();
+
+      var allRecordings = Recording.ListAll().Where(rec => radiogroupIDs.All(id => rec.IdChannel != id)).ToList();
+      var recordingsDisallowed = allRecordings.Where(rec => disallowedChannels.Contains(rec.IdChannel)).ToList();
+      if (recordingsDisallowed.Count > 0)
+      {
+        bool hideItems = false;
+        var dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+        if (null == dlgYesNo)
+        {
+          return;
+        }
+        dlgYesNo.SetHeading(1657); // Unhide/hide protected recording
+        if (TVHome._allowProtectedItem)
+        {
+          dlgYesNo.SetLine(1, 1659); // Do you want to hide them?
+          hideItems = true;
+        }
+        else
+        {
+          dlgYesNo.SetLine(1, 1658); // Do you want to show them?
+        }
+        dlgYesNo.DoModal(GetID);
+
+        if (dlgYesNo.IsConfirmed)
+        {
+          if (!hideItems)
+          {
+            string userCode = string.Empty;
+            string fileMenuPinCode;
+            using (Settings xmlreader = new MPSettings())
+            {
+              fileMenuPinCode = Utils.DecryptPassword(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+            }
+
+            if (!string.IsNullOrEmpty(fileMenuPinCode))
+            {
+              GetUserPasswordString(ref userCode);
+              if (userCode != fileMenuPinCode)
+              {
+                return;
+              }
+              TVHome._showAllRecording = true;
+              TVHome._allowProtectedItem = true;
+            }
+          }
+          else
+          {
+            TVHome._showAllRecording = false;
+            TVHome._allowProtectedItem = false;
+          }
+        }
+        LoadDirectory();
+      }
     }
 
     private void DeleteWatchedRecordings(string currentTitle)

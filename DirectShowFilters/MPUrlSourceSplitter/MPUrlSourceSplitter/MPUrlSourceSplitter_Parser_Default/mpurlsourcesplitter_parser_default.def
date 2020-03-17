@@ -1,0 +1,5 @@
+LIBRARY     mpurlsourcesplitter_parser_default.dll
+
+EXPORTS
+			CreatePlugin				PRIVATE
+			DestroyPlugin				PRIVATE

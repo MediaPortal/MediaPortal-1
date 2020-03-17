@@ -35,34 +35,34 @@ namespace TvLibrary.Streaming
   {
     #region imports
 
-    [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
+    [DllImport("StreamingServer.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Ansi)]
     private static extern void StreamSetup(string ipAdress);
 
-    [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
+    [DllImport("StreamingServer.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Ansi)]
     private static extern int StreamSetupEx(string ipAdress, int port);
 
-    [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
+    [DllImport("StreamingServer.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Ansi)]
     private static extern void StreamRun();
 
-    [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
+    [DllImport("StreamingServer.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Ansi)]
     private static extern void StreamAddTimeShiftFile(string streamName, 
                                                       [In, MarshalAs(UnmanagedType.LPWStr)] string fileName, 
                                                       bool isProgramStream,
                                                       int channelType);
 
-    [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
+    [DllImport("StreamingServer.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Ansi)]
     private static extern void StreamAddMpegFile(string streamName,
                                                  [In, MarshalAs(UnmanagedType.LPWStr)] string fileName, 
                                                  int channelType);
 
-    [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
+    [DllImport("StreamingServer.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Ansi)]
     private static extern void StreamRemove(string streamName);
 
 
-    [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
+    [DllImport("StreamingServer.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Ansi)]
     private static extern void StreamGetClientCount(ref short clients);
 
-    [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
+    [DllImport("StreamingServer.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Ansi)]
     private static extern void StreamGetClientDetail(short clientNr, out IntPtr ipAdres, out IntPtr streamName,
                                                      ref short isActive, out long ticks);
 

@@ -174,7 +174,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="subChannelId">The sub channel id.</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
-    public override ITvSubChannel Scan(int subChannelId, IChannel channel)
+    public override ITvSubChannel Scan(int subChannelId, string userName, IChannel channel)
     {
       Log.Log.WriteFile("atsc:Tune:{0} ", channel);
       try
@@ -183,7 +183,7 @@ namespace TvLibrary.Implementations.DVB
         {
           return null;
         }
-        ITvSubChannel ch = base.Scan(subChannelId, channel);
+        ITvSubChannel ch = base.Scan(subChannelId, userName, channel);
         return ch;
       }
       catch (TvExceptionNoSignal)
@@ -211,7 +211,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="subChannelId">The sub channel id.</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
-    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
+    public override ITvSubChannel Tune(int subChannelId, string userName, IChannel channel)
     {
       Log.Log.WriteFile("atsc:Tune:{0} ", channel);
       try
@@ -220,7 +220,7 @@ namespace TvLibrary.Implementations.DVB
         {
           return null;
         }
-        ITvSubChannel ch = base.Tune(subChannelId, channel);
+        ITvSubChannel ch = base.Tune(subChannelId, userName, channel);
         return ch;
       }
       catch (TvExceptionTuneCancelled)

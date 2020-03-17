@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{28B92E60-DE13-4E0B-B6D6-4D353531DE3D}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>MPUrlSourceSplitter_librtp</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)bin_$(PlatformName)d\lib\</OutDir>
+    <IntDir>$(SolutionDir)bin_$(PlatformName)d\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)bin_$(PlatformName)\lib\</OutDir>
+    <IntDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="ApplicationRtcpPacket.h" />
+    <ClInclude Include="BaseRtpPacket.h" />
+    <ClInclude Include="BaseRtpPacketFactory.h" />
+    <ClInclude Include="CanonicalEndPointSourceDescriptionItem.h" />
+    <ClInclude Include="ContributeSourceIdentifier.h" />
+    <ClInclude Include="ContributeSourceIdentifierCollection.h" />
+    <ClInclude Include="EmailSourceDescriptionItem.h" />
+    <ClInclude Include="GeographicUserLocationSourceDescriptionItem.h" />
+    <ClInclude Include="GoodbyeRtcpPacket.h" />
+    <ClInclude Include="Identifier.h" />
+    <ClInclude Include="IdentifierCollection.h" />
+    <ClInclude Include="Mpeg1OrMpeg2VideoRtpPacket.h" />
+    <ClInclude Include="Mpeg2TransportStreamRtpPacket.h" />
+    <ClInclude Include="MpegAudioRtpPacket.h" />
+    <ClInclude Include="NoteSourceDescriptionItem.h" />
+    <ClInclude Include="NullSourceDescriptionItem.h" />
+    <ClInclude Include="PhoneNumberSourceDescriptionItem.h" />
+    <ClInclude Include="PrivateSourceDescriptionItem.h" />
+    <ClInclude Include="ReceiverReportRtcpPacket.h" />
+    <ClInclude Include="ReportBlock.h" />
+    <ClInclude Include="ReportBlockCollection.h" />
+    <ClInclude Include="RtcpPacket.h" />
+    <ClInclude Include="RtpPacket.h" />
+    <ClInclude Include="RtpPacketCollection.h" />
+    <ClInclude Include="SenderReportRtcpPacket.h" />
+    <ClInclude Include="SourceDescriptionChunk.h" />
+    <ClInclude Include="SourceDescriptionChunkCollection.h" />
+    <ClInclude Include="SourceDescriptionItem.h" />
+    <ClInclude Include="SourceDescriptionItemCollection.h" />
+    <ClInclude Include="SourceDescriptionItemFactory.h" />
+    <ClInclude Include="SourceDescriptionRtcpPacket.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="ToolSourceDescriptionItem.h" />
+    <ClInclude Include="UserNameSourceDescriptionItem.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ApplicationRtcpPacket.cpp" />
+    <ClCompile Include="BaseRtpPacket.cpp" />
+    <ClCompile Include="BaseRtpPacketFactory.cpp" />
+    <ClCompile Include="CanonicalEndPointSourceDescriptionItem.cpp" />
+    <ClCompile Include="ContributeSourceIdentifier.cpp" />
+    <ClCompile Include="ContributeSourceIdentifierCollection.cpp" />
+    <ClCompile Include="EmailSourceDescriptionItem.cpp" />
+    <ClCompile Include="GeographicUserLocationSourceDescriptionItem.cpp" />
+    <ClCompile Include="GoodbyeRtcpPacket.cpp" />
+    <ClCompile Include="Identifier.cpp" />
+    <ClCompile Include="IdentifierCollection.cpp" />
+    <ClCompile Include="Mpeg1OrMpeg2VideoRtpPacket.cpp" />
+    <ClCompile Include="Mpeg2TransportStreamRtpPacket.cpp" />
+    <ClCompile Include="MpegAudioRtpPacket.cpp" />
+    <ClCompile Include="NoteSourceDescriptionItem.cpp" />
+    <ClCompile Include="NullSourceDescriptionItem.cpp" />
+    <ClCompile Include="PhoneNumberSourceDescriptionItem.cpp" />
+    <ClCompile Include="PrivateSourceDescriptionItem.cpp" />
+    <ClCompile Include="ReceiverReportRtcpPacket.cpp" />
+    <ClCompile Include="ReportBlock.cpp" />
+    <ClCompile Include="ReportBlockCollection.cpp" />
+    <ClCompile Include="RtcpPacket.cpp" />
+    <ClCompile Include="RtpPacket.cpp" />
+    <ClCompile Include="RtpPacketCollection.cpp" />
+    <ClCompile Include="SenderReportRtcpPacket.cpp" />
+    <ClCompile Include="SourceDescriptionChunk.cpp" />
+    <ClCompile Include="SourceDescriptionChunkCollection.cpp" />
+    <ClCompile Include="SourceDescriptionItem.cpp" />
+    <ClCompile Include="SourceDescriptionItemCollection.cpp" />
+    <ClCompile Include="SourceDescriptionItemFactory.cpp" />
+    <ClCompile Include="SourceDescriptionRtcpPacket.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ToolSourceDescriptionItem.cpp" />
+    <ClCompile Include="UserNameSourceDescriptionItem.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Teletext;
@@ -142,6 +143,16 @@ namespace TvLibrary.Implementations
     protected int _subChannelId;
 
     /// <summary>
+    /// Indicates, if we need to bypass PMT for async tuning
+    /// </summary>
+    protected bool _cancelPMT;
+
+    /// <summary>
+    /// Wait, Cancel timeshift method is finished for async tuning
+    /// </summary>
+    protected ManualResetEvent _eventPMTCancelled;
+
+    /// <summary>
     /// Current state of the graph
     /// </summary>
     protected GraphState _graphState;
@@ -191,6 +202,26 @@ namespace TvLibrary.Implementations
     public int SubChannelId
     {
       get { return _subChannelId; }
+    }
+
+    /// <summary>
+    /// Gets the CancelPMT.
+    /// </summary>
+    /// <value>The CancelPMT.</value>
+    public bool CancelPMT
+    {
+      get { return _cancelPMT; }
+      set { _cancelPMT = value; }
+    }
+
+    /// <summary>
+    /// Gets the EventPMTCancelled.
+    /// </summary>
+    /// <value>The EventPMTCancelled.</value>
+    public ManualResetEvent EventPMTCancelled
+    {
+      get { return _eventPMTCancelled; }
+      set { _eventPMTCancelled = value; }
     }
 
     /// <summary>

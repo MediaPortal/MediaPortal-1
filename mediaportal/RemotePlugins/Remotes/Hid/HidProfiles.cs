@@ -76,35 +76,49 @@ namespace MediaPortal.InputDevices
     /// Get file names of all profiles including built-in and user ones.
     /// </summary>
     /// <returns>Array of profiles file names</returns>
-    static public string[] GetExistingProfilesFileNames()
+    public static string[] GetExistingProfilesFileNames()
     {
       string legacyProfile = Path.Combine(InputHandler.CustomizedMappingsDirectory, "Generic-HID.xml");
       bool hasLegacyProfile = File.Exists(legacyProfile);
-      string[] builtInProfiles = Directory.GetFiles(InputHandler.DefaultsDirectory, "hid.*.xml");
-      string[] userProfiles = new string[0];
-      //Catch errors in case that directory does not exist, that's the case when no custom mapping was ever created
-      try { userProfiles = Directory.GetFiles(InputHandler.CustomizedMappingsDirectory, "hid.*.xml"); }
-      catch { /*ignore*/ }
-      //Workout how many profiles we have
-      int profileCount = 0;
-      if (hasLegacyProfile)
+      if (Directory.Exists(InputHandler.DefaultsDirectory))
       {
-        profileCount++;
-      }
-      profileCount += builtInProfiles.Length + userProfiles.Length;
+        string[] builtInProfiles = Directory.GetFiles(InputHandler.DefaultsDirectory, "hid.*.xml");
+        string[] userProfiles = new string[0];
+        //Catch errors in case that directory does not exist, that's the case when no custom mapping was ever created
+        try
+        {
+          userProfiles = Directory.GetFiles(InputHandler.CustomizedMappingsDirectory, "hid.*.xml");
+        }
+        catch
+        {
+          /*ignore*/
+        }
 
-      //Allocate our profile array
-      string[] profiles = new string[profileCount];
+        //Workout how many profiles we have
+        int profileCount = 0;
+        if (hasLegacyProfile)
+        {
+          profileCount++;
+        }
+        profileCount += builtInProfiles.Length + userProfiles.Length;
 
-      //Copy built-in and user profiles
-      builtInProfiles.CopyTo(profiles, 0);
-      userProfiles.CopyTo(profiles, builtInProfiles.Length);
-      //Don't forget our legacy profile
-      if (hasLegacyProfile)
-      {
-        profiles[profiles.Length - 1] = legacyProfile;
+
+        //Allocate our profile array
+        string[] profiles = new string[profileCount];
+
+
+        //Copy built-in and user profiles
+        builtInProfiles.CopyTo(profiles, 0);
+        userProfiles.CopyTo(profiles, builtInProfiles.Length);
+        //Don't forget our legacy profile
+        if (hasLegacyProfile)
+        {
+          profiles[profiles.Length - 1] = legacyProfile;
+        }
+
+        return profiles;
       }
-      return profiles;
+      return new string[] {};
     }
 
     /// <summary>

@@ -260,7 +260,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       get { return (isVideo && stream_type == 0x1b); }
     }
 
-    /// <summary>
+     /// <summary>
     /// Determins if the pid is HEVC video
     /// </summary>
     public bool IsHEVCVideo
@@ -296,6 +296,8 @@ namespace TvLibrary.Implementations.DVB.Structures
         return String.Format("pid:{0:X} video type:HEVC", pid);
       if (IsH264Video)
         return String.Format("pid:{0:X} video type:H.264", pid);
+      if (IsHEVCVideo)
+        return String.Format("pid:{0:X} video type:HEVC", pid);
       if (IsMpeg4Video)
         return String.Format("pid:{0:X} video type:MPEG-4", pid);
       if (IsMpeg2Video)

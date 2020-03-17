@@ -286,9 +286,8 @@ namespace TvService
                                  IController tvController)
     {
       if (channels == null)
-      {
         return;
-      }
+
       // find all users      
       ICollection<IUser> allUsers = GetActiveUsers(cards);
 

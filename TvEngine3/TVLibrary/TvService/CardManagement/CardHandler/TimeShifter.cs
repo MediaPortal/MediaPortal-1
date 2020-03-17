@@ -48,8 +48,6 @@ namespace TvService
     /// <param name="cardHandler">The card handler.</param>
     public TimeShifter(ITvCardHandler cardHandler) : base(cardHandler)
     {
-      
-
       _cardHandler = cardHandler;
       var layer = new TvBusinessLayer();
       _linkageScannerEnabled = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
@@ -276,7 +274,7 @@ namespace TvService
         }
 #endif
         if (IsTuneCancelled())
-        {          
+        {
           result = TvResult.TuneCancelled;
           return result;
         }
@@ -285,8 +283,8 @@ namespace TvService
         {
           // Let's verify if hard disk drive has enough free space before we start time shifting. The function automatically handles both local and UNC paths
           if (!IsTimeShifting(ref user) && !HasFreeDiskSpace(fileName))
-          {            
-            result = TvResult.NoFreeDiskSpace;            
+          {
+            result = TvResult.NoFreeDiskSpace;
           }
           else
           {
@@ -305,7 +303,7 @@ namespace TvService
                 AttachAudioVideoEventHandler(subchannel);
                 if (subchannel.IsTimeShifting)
                 {
-                  result = GetTvResultFromTimeshiftingSubchannel(ref user, context);                    
+                  result = GetTvResultFromTimeshiftingSubchannel(ref user, context);
                 }
                 else
                 {
@@ -317,7 +315,7 @@ namespace TvService
                   }
                   else
                   {
-                    result = TvResult.UnableToStartGraph; 
+                    result = TvResult.UnableToStartGraph;
                   }
                 }
               }
@@ -338,7 +336,7 @@ namespace TvService
       {
         _eventTimeshift.Set();
         _cancelled = false;
-        if (result != TvResult.Succeeded)
+        if (result != TvResult.Succeeded && result != TvResult.TuneAsync)
         {
           Stop(ref user);
         }
@@ -350,12 +348,16 @@ namespace TvService
     {
       TvResult result;
       bool isScrambled;
-      if (WaitForFile(ref user, out isScrambled))
+      bool isAsyncTuning;
+      if (WaitForFile(ref user, out isScrambled, out isAsyncTuning))
       {
-        context.OnZap(user);
-        StartLinkageScanner();
-        StartTimeShiftingEPGgrabber(user);
-        result = TvResult.Succeeded;
+        result = isAsyncTuning ? TvResult.TuneAsync : TvResult.Succeeded;
+        if (result != TvResult.TuneAsync)
+        {
+          context.OnZap(user);
+          StartLinkageScanner();
+          StartTimeShiftingEPGgrabber(user);
+        }
       }
       else
       {
@@ -387,7 +389,7 @@ namespace TvService
     /// <summary>
     /// Stops the time shifting.
     /// </summary>
-    /// <returns></returns>    
+    /// <returns></returns>
     public bool Stop(ref IUser user)
     {
       bool stop = false;
@@ -414,9 +416,11 @@ namespace TvService
               _cardHandler.Users.RemoveUser(user);
             }
             context.Remove(user);
-            stop = true;        
-          }                      
-        }                  
+            stop = true;
+            // Stop refresh EPG Timer
+            StopTimeShiftingEPGgrabber(user);
+          }
+        }
       }
       catch (Exception ex)
       {
@@ -464,8 +468,16 @@ namespace TvService
     {
       Log.Debug("TimeShifter.OnBeforeTune: resetting audio/video events");
       _tuneInProgress = true;
-      _eventAudio.Reset();
-      _eventVideo.Reset();
+
+      if (IsTuneCancelled())
+      {
+        Log.Write("card: WaitForFile - Tune Cancelled");
+      }
+      else
+      {
+        _eventAudio.Reset();
+        _eventVideo.Reset(); 
+      }
     }
 
     public void OnAfterTune()
@@ -475,6 +487,12 @@ namespace TvService
       _timeVideoEvent = DateTime.MinValue;
 
       _tuneInProgress = false;
-    }      
+    }
+
+    public void CancelTimeshift()
+    {
+      _eventAudio.Set();
+      _eventVideo.Set();
+    }
   }
 }

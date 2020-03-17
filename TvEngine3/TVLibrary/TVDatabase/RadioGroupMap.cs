@@ -76,6 +76,7 @@ namespace TvDatabase
     public bool IsChanged
     {
       get { return isChanged; }
+      set { isChanged = value; }
     }
 
     /// <summary>
@@ -178,6 +179,20 @@ namespace TvDatabase
         }
         isChanged = false;
       }
+    }
+
+    public void Delete()
+    {
+      Broker.Execute("delete from History WHERE idChannel=" + idChannel);
+      Broker.Execute("delete from Conflict WHERE idChannel=" + idChannel);
+      Broker.Execute("delete from Program WHERE idChannel=" + idChannel);
+      Broker.Execute("delete from Schedule WHERE idChannel=" + idChannel);
+      // recordings should be stay in the DB
+      //Gentle.Framework.Broker.Execute("delete from Recording WHERE idChannel=" + idChannel.ToString());
+      Broker.Execute("delete from ChannelMap WHERE idChannel=" + idChannel);
+      Broker.Execute("delete from TuningDetail WHERE idChannel=" + idChannel);
+
+      Broker.Execute("delete from RadioGroupMap WHERE idChannel=" + idChannel);
     }
 
     #endregion

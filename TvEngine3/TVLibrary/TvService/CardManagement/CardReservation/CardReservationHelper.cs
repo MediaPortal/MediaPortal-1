@@ -79,6 +79,14 @@ namespace TvService
       }
     }
 
+    private static void SetAsyncTuneCardState(ITvCardHandler tvcard)
+    {
+      lock (tvcard.Tuner.CardReservationsLock)
+      {
+        tvcard.Tuner.CardTuneState = CardTuneState.TuneAsync;
+      }
+    }
+
     private static void SetCurrentCardState(ITvCardHandler tvcard)
     {
       lock (tvcard.Tuner.CardReservationsLock)
@@ -105,6 +113,10 @@ namespace TvService
       if (tvResult == TvResult.Succeeded)
       {
         SetTunedCardState(tvcard);
+      }
+      if (tvResult == TvResult.TuneAsync)
+      {
+        SetAsyncTuneCardState(tvcard);
       }
       else if (tvResult == TvResult.NoVideoAudioDetected ||
                tvResult == TvResult.NoPmtFound ||
@@ -158,7 +170,7 @@ namespace TvService
         {
           Log.Debug("CardReservation.RemoveTuneTicket: removed reservation with id={0}, tuningdetails={1}", ticket.Id, ticket.TuningDetail);
           tvcard.Tuner.ReservationsForTune.Remove(ticket);
-          ResetCardTuneStateToIdle(tvcard);          
+          ResetCardTuneStateToIdle(tvcard);
         }
       }
     }
@@ -532,7 +544,7 @@ namespace TvService
               ResetCardTuneStateToIdle(tvcard);
             }
             else
-            {              
+            {
               if (tvcard.Tuner.ReservationsForStop.Count > 1)
               {
                 tvcard.Tuner.CardStopState = CardStopState.StopPending;

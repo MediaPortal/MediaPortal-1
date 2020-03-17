@@ -179,8 +179,6 @@ namespace TvPlugin
         return;
       }
 
-      TVHome.WaitForGentleConnection();
-
       if (TVHome.Navigator == null)
       {
         TVHome.OnLoaded();

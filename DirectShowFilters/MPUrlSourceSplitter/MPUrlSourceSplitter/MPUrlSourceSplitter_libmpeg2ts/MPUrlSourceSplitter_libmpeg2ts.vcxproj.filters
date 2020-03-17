@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Packets">
+      <UniqueIdentifier>{4dc5a4d7-e03c-4d35-bf32-3ff8fde3b621}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Packets\Header Files">
+      <UniqueIdentifier>{58361bd6-efac-4413-aaa9-b0a33d3e5b09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Packets\Source Files">
+      <UniqueIdentifier>{cee9a1c8-e0c6-49fe-b6d4-dc27755aa7ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parsers">
+      <UniqueIdentifier>{acd134b2-b248-43c2-816a-b041da5d314e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parsers\Header Files">
+      <UniqueIdentifier>{163ce141-8572-4241-8faa-66611fc04972}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parsers\Source Files">
+      <UniqueIdentifier>{35d13a3d-dd4c-4644-a641-3105c7c23540}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sections">
+      <UniqueIdentifier>{1a59db25-b45b-4d38-8860-178b1f811198}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sections\Header Files">
+      <UniqueIdentifier>{6b4b4987-9403-4b98-8c9c-12301037ac3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sections\Source Files">
+      <UniqueIdentifier>{c360a762-551c-4216-97ce-131828e80aa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Descriptors">
+      <UniqueIdentifier>{16a51f9b-a58e-4ae8-9931-8ba4fcabbc50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Descriptors\Header Files">
+      <UniqueIdentifier>{2dec64b4-6e4b-467d-a84f-48bc311a5dcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Descriptors\Source Files">
+      <UniqueIdentifier>{052f38ba-503d-4da8-94d9-ef82c6251647}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DiscontinuityParser.h">
+      <Filter>Parsers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser.h">
+      <Filter>Parsers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TsPacket.h">
+      <Filter>Packets\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PidCounter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PidCounterCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TsPacketConstants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Crc32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SectionPayload.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SectionPayloadCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramSpecificInformationPacket.h">
+      <Filter>Packets\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Section.h">
+      <Filter>Sections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramAssociationSection.h">
+      <Filter>Sections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramAssociationSectionProgram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramAssociationSectionProgramCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransportStreamProgramMapSection.h">
+      <Filter>Sections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramDefinition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramDefinitionCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramAssociationParser.h">
+      <Filter>Parsers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TsPacketCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransportStreamProgramMapParser.h">
+      <Filter>Parsers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Descriptor.h">
+      <Filter>Descriptors\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConditionalAccessDescriptor.h">
+      <Filter>Descriptors\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DescriptorFactory.h">
+      <Filter>Descriptors\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DescriptorCollection.h">
+      <Filter>Descriptors\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConditionalAccessParser.h">
+      <Filter>Parsers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConditionalAccessSection.h">
+      <Filter>Sections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketParser.h">
+      <Filter>Parsers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SectionPayloadParser.h">
+      <Filter>Parsers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SectionCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DiscontinuityParser.cpp">
+      <Filter>Parsers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Parser.cpp">
+      <Filter>Parsers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TsPacket.cpp">
+      <Filter>Packets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PidCounter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PidCounterCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Crc32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SectionPayload.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SectionPayloadCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramSpecificInformationPacket.cpp">
+      <Filter>Packets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Section.cpp">
+      <Filter>Sections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramAssociationSection.cpp">
+      <Filter>Sections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramAssociationSectionProgram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramAssociationSectionProgramCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TransportStreamProgramMapSection.cpp">
+      <Filter>Sections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramDefinition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramDefinitionCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgramAssociationParser.cpp">
+      <Filter>Parsers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TsPacketCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TransportStreamProgramMapParser.cpp">
+      <Filter>Parsers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Descriptor.cpp">
+      <Filter>Descriptors\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConditionalAccessDescriptor.cpp">
+      <Filter>Descriptors\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DescriptorFactory.cpp">
+      <Filter>Descriptors\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DescriptorCollection.cpp">
+      <Filter>Descriptors\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConditionalAccessSection.cpp">
+      <Filter>Sections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConditionalAccessParser.cpp">
+      <Filter>Parsers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketParser.cpp">
+      <Filter>Parsers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SectionPayloadParser.cpp">
+      <Filter>Parsers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SectionCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

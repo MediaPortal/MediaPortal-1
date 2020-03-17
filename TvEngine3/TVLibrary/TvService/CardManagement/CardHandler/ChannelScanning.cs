@@ -86,7 +86,7 @@ namespace TvService
     /// <param name="channel">IChannel containing the transponder tuning details.</param>
     /// <param name="settings">Scan settings</param>
     /// <returns>list of channels found</returns>
-    public IChannel[] Scan(IChannel channel, ScanParameters settings)
+    public IChannel[] Scan(IChannel channel, string userName, ScanParameters settings)
     {
       try
       {
@@ -113,7 +113,7 @@ namespace TvService
         if (scanner == null)
           return null;
         scanner.Reset();
-        List<IChannel> channelsFound = scanner.Scan(channel, settings);
+        List<IChannel> channelsFound = scanner.Scan(channel, userName, settings);
         if (channelsFound == null)
           return null;
         return channelsFound.ToArray();

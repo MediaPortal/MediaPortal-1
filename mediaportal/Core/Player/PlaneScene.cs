@@ -655,7 +655,7 @@ namespace MediaPortal.Player
 
     public int PresentImage(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pTexture, uint pSurface)
     {
-      lock (GUIGraphicsContext.RenderLock)
+      //lock (GUIGraphicsContext.RenderLock)
       {
         try
         {

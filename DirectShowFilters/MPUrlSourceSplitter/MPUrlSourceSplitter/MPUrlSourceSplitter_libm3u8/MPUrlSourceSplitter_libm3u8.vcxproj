@@ -1,0 +1,366 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{69789CEA-823C-47DA-8564-B00FC383777B}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>MPUrlSourceSplitter_libm3u8</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)bin_$(PlatformName)d\lib\</OutDir>
+    <IntDir>$(SolutionDir)bin_$(PlatformName)d\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)bin_$(PlatformName)\lib\</OutDir>
+    <IntDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_Interfaces;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_Interfaces;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="AllowCacheTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="AssociatedLanguageAttribute.h" />
+    <ClInclude Include="Attribute.h" />
+    <ClInclude Include="AttributeCollection.h" />
+    <ClInclude Include="AttributeFactory.h" />
+    <ClInclude Include="AudioAttribute.h" />
+    <ClInclude Include="AutoselectAttribute.h" />
+    <ClInclude Include="AverageBandwidthAttribute.h" />
+    <ClInclude Include="ByteRangeAttribute.h" />
+    <ClInclude Include="ByteRangeTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="CharacteristicsAttribute.h" />
+    <ClInclude Include="ClosedCaptionsAttribute.h" />
+    <ClInclude Include="CodecsAttribute.h" />
+    <ClInclude Include="CommentTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="DataIdAttribute.h" />
+    <ClInclude Include="DefaultAttribute.h" />
+    <ClInclude Include="DiscontinuitySequenceTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="DiscontinuityTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="DurationTitleTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="DurationTitleFloatingTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="EndListTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="ForcedAttribute.h" />
+    <ClInclude Include="GeneralTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="GeneralTagFactory.h" />
+    <ClInclude Include="GroupIdAttribute.h" />
+    <ClInclude Include="HeaderTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="IndependedSegmentsTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="InitializationVectorAttribute.h" />
+    <ClInclude Include="InstreamIdAttribute.h" />
+    <ClInclude Include="IntraFrameOnlyTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="IntraFrameStreamVariantTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="ItemCollection.h" />
+    <ClInclude Include="ItemFactory.h" />
+    <ClInclude Include="KeyFormatAttribute.h" />
+    <ClInclude Include="KeyFormatVersionsAttribute.h" />
+    <ClInclude Include="KeyTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="LanguageAttribute.h" />
+    <ClInclude Include="M3u8FragmentCollection.h" />
+    <ClInclude Include="M3u8FragmentEncryption.h" />
+    <ClInclude Include="MapTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="MasterPlaylist.h" />
+    <ClInclude Include="MasterPlaylistFactory.h" />
+    <ClInclude Include="MasterPlaylistV01.h" />
+    <ClInclude Include="MediaPlaylist.h" />
+    <ClInclude Include="MediaPlaylistFactory.h" />
+    <ClInclude Include="M3u8Fragment.h" />
+    <ClInclude Include="MediaPlaylistV01.h" />
+    <ClInclude Include="MediaPlaylistV02.h" />
+    <ClInclude Include="MediaPlaylistV03.h" />
+    <ClInclude Include="MediaPlaylistV04.h" />
+    <ClInclude Include="MediaPlaylistV05.h" />
+    <ClInclude Include="MediaPlaylistV06.h" />
+    <ClInclude Include="MediaPlaylistV07.h" />
+    <ClInclude Include="MediaSequenceTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="MediaTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="MethodAttribute.h" />
+    <ClInclude Include="NameAttribute.h" />
+    <ClInclude Include="Playlist.h" />
+    <ClInclude Include="PlaylistItem.h" />
+    <ClInclude Include="PlaylistItemCollection.h" />
+    <ClInclude Include="PlaylistTypeTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="PlaylistVersion.h" />
+    <ClInclude Include="PreciseAttribute.h" />
+    <ClInclude Include="ProgramDateTimeTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="ProgramIdAttribute.h" />
+    <ClInclude Include="ResolutionAttribute.h" />
+    <ClInclude Include="SessionDataTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="StartTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="BandwidthAttribute.h" />
+    <ClInclude Include="StreamVariantTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="SubtitlesAttribute.h" />
+    <ClInclude Include="Tag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="TagCollection.h" />
+    <ClInclude Include="TagFactory.h" />
+    <ClInclude Include="TargetDurationTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="TimeOffsetAttribute.h" />
+    <ClInclude Include="TypeAttribute.h" />
+    <ClInclude Include="UriAttribute.h" />
+    <ClInclude Include="ValueAttribute.h" />
+    <ClInclude Include="VersionTag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="VideoAttribute.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AllowCacheTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="AssociatedLanguageAttribute.cpp" />
+    <ClCompile Include="Attribute.cpp" />
+    <ClCompile Include="AttributeCollection.cpp" />
+    <ClCompile Include="AttributeFactory.cpp" />
+    <ClCompile Include="AudioAttribute.cpp" />
+    <ClCompile Include="AutoselectAttribute.cpp" />
+    <ClCompile Include="AverageBandwidthAttribute.cpp" />
+    <ClCompile Include="ByteRangeAttribute.cpp" />
+    <ClCompile Include="ByteRangeTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="CharacteristicsAttribute.cpp" />
+    <ClCompile Include="ClosedCaptionsAttribute.cpp" />
+    <ClCompile Include="CodecsAttribute.cpp" />
+    <ClCompile Include="CommentTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="DataIdAttribute.cpp" />
+    <ClCompile Include="DefaultAttribute.cpp" />
+    <ClCompile Include="DiscontinuitySequenceTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="DiscontinuityTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="DurationTitleTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="DurationTitleFloatingTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="EndListTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ForcedAttribute.cpp" />
+    <ClCompile Include="GeneralTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneralTagFactory.cpp" />
+    <ClCompile Include="GroupIdAttribute.cpp" />
+    <ClCompile Include="HeaderTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IndependedSegmentsTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="InitializationVectorAttribute.cpp" />
+    <ClCompile Include="InstreamIdAttribute.cpp" />
+    <ClCompile Include="IntraFrameOnlyTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="IntraFrameStreamVariantTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="ItemCollection.cpp" />
+    <ClCompile Include="ItemFactory.cpp" />
+    <ClCompile Include="KeyFormatAttribute.cpp" />
+    <ClCompile Include="KeyFormatVersionsAttribute.cpp" />
+    <ClCompile Include="KeyTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="LanguageAttribute.cpp" />
+    <ClCompile Include="M3u8FragmentCollection.cpp" />
+    <ClCompile Include="M3u8FragmentEncryption.cpp" />
+    <ClCompile Include="MapTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="MasterPlaylist.cpp" />
+    <ClCompile Include="MasterPlaylistFactory.cpp" />
+    <ClCompile Include="MasterPlaylistV01.cpp" />
+    <ClCompile Include="MediaPlaylist.cpp" />
+    <ClCompile Include="MediaPlaylistFactory.cpp" />
+    <ClCompile Include="M3u8Fragment.cpp" />
+    <ClCompile Include="MediaPlaylistV01.cpp" />
+    <ClCompile Include="MediaPlaylistV02.cpp" />
+    <ClCompile Include="MediaPlaylistV03.cpp" />
+    <ClCompile Include="MediaPlaylistV04.cpp" />
+    <ClCompile Include="MediaPlaylistV05.cpp" />
+    <ClCompile Include="MediaPlaylistV06.cpp" />
+    <ClCompile Include="MediaPlaylistV07.cpp" />
+    <ClCompile Include="MediaSequenceTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="MediaTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="MethodAttribute.cpp" />
+    <ClCompile Include="NameAttribute.cpp" />
+    <ClCompile Include="Playlist.cpp" />
+    <ClCompile Include="PlaylistItem.cpp" />
+    <ClCompile Include="PlaylistItemCollection.cpp" />
+    <ClCompile Include="PlaylistTypeTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="PreciseAttribute.cpp" />
+    <ClCompile Include="ProgramDateTimeTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ProgramIdAttribute.cpp" />
+    <ClCompile Include="ResolutionAttribute.cpp" />
+    <ClCompile Include="SessionDataTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="StartTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="StreamVariantTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BandwidthAttribute.cpp" />
+    <ClCompile Include="SubtitlesAttribute.cpp" />
+    <ClCompile Include="Tag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="TagCollection.cpp" />
+    <ClCompile Include="TagFactory.cpp" />
+    <ClCompile Include="TargetDurationTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="TimeOffsetAttribute.cpp" />
+    <ClCompile Include="TypeAttribute.cpp" />
+    <ClCompile Include="UriAttribute.cpp" />
+    <ClCompile Include="ValueAttribute.cpp" />
+    <ClCompile Include="VersionTag.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="VideoAttribute.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="m3u8_v1_draft-pantos-http-live-streaming-02.txt" />
+    <None Include="m3u8_v2_draft-pantos-http-live-streaming-04.txt" />
+    <None Include="m3u8_v3_draft-pantos-http-live-streaming-06.txt" />
+    <None Include="m3u8_v4_draft-pantos-http-live-streaming-08.txt" />
+    <None Include="m3u8_v5_draft-pantos-http-live-streaming-11.txt" />
+    <None Include="m3u8_v6_draft-pantos-http-live-streaming-13.txt" />
+    <None Include="m3u8_v7_draft-pantos-http-live-streaming-14.txt" />
+    <None Include="readme.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

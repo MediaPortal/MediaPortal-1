@@ -420,6 +420,62 @@ namespace TvService
       return user;
     }
 
+    public double GetTimeshiftPosition(int cardId, IUser user)
+    {
+      if (ValidateTvControllerParams(cardId))
+        return 0;
+
+      ITvCardHandler tvcard = _cards[cardId];
+      if (tvcard.DataBaseCard.Enabled == false)
+        return 0;
+
+      Log.Write("GetTimeshiftPosition: cardId: {0}, user.Name: {1}, user.CardId: {2}, TimeshiftPosition: {3}",
+        cardId, user.Name, user.CardId, tvcard.Users.GetTimeshiftPosition(user));
+
+      return tvcard.Users.GetTimeshiftPosition(user);
+
+    }
+
+    public void SetTimeshiftPosition(int cardId, IUser user, double TimeshiftPosition)
+    {
+      if (ValidateTvControllerParams(cardId))
+        return;
+
+      ITvCardHandler tvcard = _cards[cardId];
+      if (tvcard.DataBaseCard.Enabled == false)
+        return;
+
+      Log.Write("SetTimeshiftPosition: cardId: {0}, user.Name: {1}, user.CardId: {2}, TimeshiftPosition: {3}",
+        cardId, user.Name, user.CardId, TimeshiftPosition);
+
+      tvcard.Users.SetTimeshiftPosition(user, TimeshiftPosition);
+
+      return;
+    }
+
+    /// <summary>
+    /// Replace Timeshift User
+    /// </summary>
+    /// <param name="cardId"></param>
+    /// <param name="newuser"></param>
+    /// <param name="HostName"></param>
+    public void ReplaceTimeshiftUser(int cardId, IUser newuser, string HostName)
+    {
+        if (ValidateTvControllerParams(cardId))
+          return;
+
+        ITvCardHandler tvcard = _cards[cardId];
+        if (tvcard.DataBaseCard.Enabled == false)
+          return;
+
+        Log.Write("ReplaceTimeshiftUser: cardId: {0}, newuser.Name: {1}, user.CardId: {2}",                  
+          cardId, newuser.Name, newuser.CardId);
+
+        tvcard.Users.ReplaceTimeshiftUser(newuser, HostName);
+      
+      return;
+    }
+
     /// <summary>
     /// Locks the card for the specified user
     /// </summary>
@@ -1346,22 +1402,6 @@ namespace TvService
     }
 
     /// <summary>
-    /// Copies the time shift buffer files to the currently started recording 
-    /// </summary>
-    /// <param name="position1">start offset in first ts buffer file </param>
-    /// <param name="bufferFile1">ts buffer file to start with</param>
-    /// <param name="position2">end offset in last ts buffer file</param>
-    /// <param name="bufferFile2">ts buffer file to stop at</param>
-    /// <param name="recordingFile">filename of the recording</param>
-    public void CopyTimeShiftFile(Int64 position1, string bufferFile1, Int64 position2, string bufferFile2,
-                                  string recordingFile)
-    {
-      TsCopier copier = new TsCopier(position1, bufferFile1, position2, bufferFile2, recordingFile);
-      Thread worker = new Thread(new ThreadStart(copier.DoCopy));
-      worker.Start();
-    }
-
-    /// <summary>
     /// Returns whether the channel to which the card is tuned is
     /// scrambled or not.
     /// </summary>
@@ -1665,6 +1705,13 @@ namespace TvService
         Fire(this, new TvServerEventArgs(TvServerEventType.StartTimeShifting, GetVirtualCard(user), (User)user));
         StopEPGgrabber(1);        
 
+        // Multi-EPG Grabbing
+        Card card = Card.Retrieve(user.CardId);
+        if (card != null && card.GrabEPG)
+        {
+          StopEPGgrabber(1);
+        }
+
         bool isTimeShifting;
         try
         {
@@ -1676,28 +1723,36 @@ namespace TvService
           Log.Error("Exception in checking  " + ex.Message);
         }
         TvResult result = _cards[cardId].TimeShifter.Start(ref user, ref fileName);
-        if (result == TvResult.Succeeded)
+        if (result == TvResult.Succeeded || result == TvResult.TuneAsync)
         {
           if (!isTimeShifting)
           {
             Log.Info("user:{0} card:{1} sub:{2} add stream:{3}", user.Name, user.CardId, user.SubChannel, fileName);
             if (File.Exists(fileName))
             {
-              _streamer.Start();
+              if (_streamer != null)
+              {
+                _streamer.Start();
 
-              //  Default to tv
-              bool isTv = true;
+                //  Default to tv
+                bool isTv = true;
 
-              ITvSubChannel subChannel = _cards[cardId].Card.GetSubChannel(user.SubChannel);
+                ITvSubChannel subChannel = _cards[cardId].Card.GetSubChannel(user.SubChannel);
 
-              if (subChannel != null && subChannel.CurrentChannel != null)
-                isTv = subChannel.CurrentChannel.IsTv;
+                if (subChannel != null && subChannel.CurrentChannel != null)
+                  isTv = subChannel.CurrentChannel.IsTv;
+                else
+                  Log.Error("SubChannel or CurrentChannel is null when starting streaming");
+
+                RtspStream stream = new RtspStream(String.Format("stream{0}.{1}", cardId, user.SubChannel), fileName,
+                  _cards[cardId].Card, isTv);
+                _streamer.AddStream(stream);
+              }
               else
-                Log.Error("SubChannel or CurrentChannel is null when starting streaming");
-
-              RtspStream stream = new RtspStream(String.Format("stream{0}.{1}", cardId, user.SubChannel), fileName,
-                                                 _cards[cardId].Card, isTv);
-              _streamer.AddStream(stream);
+              {
+                Log.Error("streamer is null when starting streaming");
+                return TvResult.UnknownError;
+              }
             }
             else
             {
@@ -1776,7 +1831,7 @@ namespace TvService
         int cardId = user.CardId;
         ITvCardHandler tvcard = _cards[cardId];
         if (tvcard.DataBaseCard.Enabled == false)
-          return true;        
+          return true;
 
         if (false == tvcard.IsLocal)
         {
@@ -1808,21 +1863,201 @@ namespace TvService
         }
         
         if (false == tvcard.TimeShifter.IsTimeShifting(ref user))
-          return true;
+        {
+          return true; // TODO
+        }
         Fire(this, new TvServerEventArgs(TvServerEventType.EndTimeShifting, GetVirtualCard(user), (User)user));
 
         if (tvcard.Recorder.IsRecording(ref user))
           return true;
 
-        Log.Write("Controller: StopTimeShifting {0}", cardId);       
-        return DoStopTimeShifting(ref user, cardId);                
+        Log.Write("Controller: StopTimeShifting {0}", cardId);
+        return DoStopTimeShifting(ref user, cardId);
       }
       catch (Exception ex)
       {
         Log.Write(ex);
       }
-                  
+
       return false;
+    }
+
+    /// <summary>
+    /// Stops the time shifting.
+    /// </summary>
+    /// <param name="userName"> </param>
+    /// <param name="user">User</param>
+    /// <param name="channelId"> </param>
+    /// <returns></returns>
+    public bool CancelTimeShifting(ref IUser user, int idChannel)
+    {
+      bool timeshiftingStopped = false;
+      try
+      {
+        Channel channel = Channel.Retrieve(idChannel);
+        if (user == null)
+        {
+          foreach (ITvCardHandler cardHandler in _cards.Values)
+          {
+            ITvSubChannel[] subChannel = _cards[cardHandler.DataBaseCard.IdCard].Card.SubChannels;
+            for (int i = 0; i < subChannel.Length; ++i)
+            {
+              if (subChannel[i] != null)
+              {
+                if (subChannel[i].CurrentChannel.Name == channel.DisplayName)
+                {
+                  Log.Write("Controller: CancelTimeShifting remove ticket when user is null on card:{0} for channel {1}", cardHandler.DataBaseCard.IdCard, channel.DisplayName);
+                  subChannel[i].EventPMTCancelled.Reset();
+                  subChannel[i].CancelPMT = true;
+                  timeshiftingStopped = true;
+                  {
+                    //first, lets figure out if we are trying to stop a pending tune session
+                    bool userToRemove = false;
+                    bool currentCardTicket = false;
+
+                    // Create a fake user to do proper  Cancel Timeshifting
+                    IUser usercopy = UserFactory.CreateSchedulerUser();
+                    usercopy.SubChannel = subChannel[i].SubChannelId;
+                    usercopy.CardId = cardHandler.DataBaseCard.IdCard;
+                    usercopy.IdChannel = idChannel;
+
+                    lock (cardHandler.Tuner.CardReservationsLock)
+                    {
+                      cardHandler.TimeShifter._eventCancelled.Reset();
+                      cardHandler.TimeShifter._timeshiftCancelled = true;
+                      while (cardHandler.Tuner.ReservationsForTune.Count > 0 && usercopy != null && usercopy.SubChannel != -1)
+                      {
+                        foreach (ICardTuneReservationTicket cardTuneReservationTicket in cardHandler.Tuner.ReservationsForTune)
+                        {
+                          if (cardTuneReservationTicket != null)
+                          {
+                            IUser userwWithPendingTicket = cardTuneReservationTicket.User;
+                            usercopy.Name = userwWithPendingTicket.Name;
+                            ITvCardContext context = cardHandler.Card.Context as ITvCardContext;
+                            context.Add(usercopy);
+
+                            if (usercopy != null && userwWithPendingTicket.Name.Equals(usercopy.Name))
+                            {
+                              if (context != null)
+                              {
+                                if (usercopy.SubChannel > -1)
+                                {
+                                  if (!currentCardTicket)
+                                  {
+                                    cardHandler.TimeShifter.CancelTimeshift();
+                                    CardReservationHelper.CancelCardReservation(cardHandler, cardTuneReservationTicket);
+                                    CardReservationHelper.RemoveTuneTicket(cardHandler, cardTuneReservationTicket, true);
+                                    cardHandler.TimeShifter._eventTimeshift.Set();
+                                    cardHandler.TimeShifter.Stop(ref usercopy);
+                                    RemoteControl.Instance.RemoveUserFromOtherCards(cardHandler.DataBaseCard.IdCard, usercopy);
+                                    userToRemove = true;
+                                    currentCardTicket = true;
+                                  }
+                                  else
+                                  {
+                                    CardReservationHelper.CancelCardReservation(cardHandler, cardTuneReservationTicket);
+                                    CardReservationHelper.RemoveTuneTicket(cardHandler, cardTuneReservationTicket, true);
+                                    userToRemove = false;
+                                  }
+                                }
+                              }
+                            }
+                            break;
+                          }
+                        }
+                      }
+
+                      if (userToRemove)
+                      {
+                        cardHandler.TimeShifter._eventCancelled.Set();
+                        Log.Write("Controller: CancelTimeShifting reset  EventPMTCancelled on card:{0} for channel {1}", cardHandler.DataBaseCard.IdCard, channel.DisplayName);
+                        subChannel[i].EventPMTCancelled.Set();
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        else
+        {
+          //first, lets figure out if we are trying to stop a pending tune session
+          bool userToRemove = false;
+          bool currentCardTicket = false;
+
+          foreach (ITvCardHandler cardHandler in _cards.Values)
+          {
+            lock (cardHandler.Tuner.CardReservationsLock)
+            {
+              cardHandler.TimeShifter._eventCancelled.Reset();
+              cardHandler.TimeShifter._timeshiftCancelled = true;
+              while (cardHandler.Tuner.ReservationsForTune.Count > 0 && user != null && user.SubChannel != -1)
+              {
+                foreach (ICardTuneReservationTicket cardTuneReservationTicket in cardHandler.Tuner.ReservationsForTune)
+                {
+                  if (cardTuneReservationTicket != null)
+                  {
+                    IUser userwWithPendingTicket = cardTuneReservationTicket.User;
+
+                    if (user != null && userwWithPendingTicket.Name.Equals(user.Name))
+                    {
+                      ITvCardContext context = cardHandler.Card.Context as ITvCardContext;
+                      if (context != null)
+                      {
+                        if (user.SubChannel > -1)
+                        {
+                          if (!currentCardTicket)
+                          {
+                            Log.Write("Controller: CancelTimeShifting remove ticket with defined user {0} on card:{1} for channel {2}", user.Name, cardHandler.DataBaseCard.IdCard, channel.DisplayName);
+                            cardHandler.TimeShifter.CancelTimeshift();
+                            CardReservationHelper.CancelCardReservation(cardHandler, cardTuneReservationTicket);
+                            CardReservationHelper.RemoveTuneTicket(cardHandler, cardTuneReservationTicket, true);
+                            cardHandler.TimeShifter._eventTimeshift.Set();
+                            cardHandler.TimeShifter.Stop(ref user);
+                            //StopTimeShifting(ref user);
+                            //cardHandler.Users.RemoveUser(user);
+                            RemoteControl.Instance.RemoveUserFromOtherCards(cardHandler.DataBaseCard.IdCard, user);
+                            userToRemove = true;
+                            currentCardTicket = true;
+                          }
+                          else
+                          {
+                            CardReservationHelper.CancelCardReservation(cardHandler, cardTuneReservationTicket);
+                            CardReservationHelper.RemoveTuneTicket(cardHandler, cardTuneReservationTicket, true);
+                            userToRemove = false;
+                          }
+                          timeshiftingStopped = true;
+                        }
+                      }
+                    }
+                    break;
+                  }
+                }
+              }
+
+              if (userToRemove)
+              {
+                cardHandler.TimeShifter._eventCancelled.Set();
+              }
+            }
+          }
+        }
+
+        //if no pending tune session was found, then just stop the channel the old fashioned way.
+        if (!timeshiftingStopped)
+        {
+          if (user != null)
+          {
+            timeshiftingStopped = StopTimeShifting(ref user);
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        Log.Write(e);
+      }
+      return timeshiftingStopped;
     }
 
     private bool DoStopTimeShifting(ref IUser user, int cardId)
@@ -1832,7 +2067,7 @@ namespace TvService
         StopEPGgrabber(3);        
         // we need this, otherwise tvservice will hang in the event stoptimeshifting is called by heartbeat timeout function
       }
-      ITvCardHandler tvcard = _cards[cardId];      
+      ITvCardHandler tvcard = _cards[cardId];
       ICardStopReservationTicket ticket = CardReservationHelper.RequestAndWaitForCardStopReservation(tvcard, user);
       bool stopped = false;
       if (ticket != null)
@@ -1846,7 +2081,10 @@ namespace TvService
           {
             Log.Write("Controller:Timeshifting stopped on card:{0}", cardId);
             int subChannel = user.SubChannel;
-            _streamer.Remove(String.Format("stream{0}.{1}", cardId, subChannel));
+            if (_streamer != null)
+            {
+              _streamer.Remove(String.Format("stream{0}.{1}", cardId, subChannel));
+            }
           }
           StartEPGgrabber(3);
           UpdateChannelStatesForUsers();
@@ -1923,7 +2161,7 @@ namespace TvService
       settings.TimeOutPMT = Int32.Parse(layer.GetSetting("timeoutPMT", "10").Value);
       settings.TimeOutSDT = Int32.Parse(layer.GetSetting("timeoutSDT", "20").Value);
       settings.TimeOutAnalog = Int32.Parse(layer.GetSetting("timeoutAnalog", "20").Value);
-      return _cards[cardId].Scanner.Scan(channel, settings);
+      return _cards[cardId].Scanner.Scan(channel, "", settings);
     }
 
     public IChannel[] ScanNIT(int cardId, IChannel channel)
@@ -2052,7 +2290,28 @@ namespace TvService
           }
           return true;
         }
-        return (File.Exists(rec.FileName));
+        // Let time to network device to be started 60 seconds when checking if file exist or not
+        TimeSpan maxDuration = TimeSpan.FromSeconds(60);
+        Stopwatch sw = Stopwatch.StartNew();
+        bool doneWithWork = false;
+
+        while (sw.Elapsed < maxDuration && !doneWithWork)
+        {
+          try
+          {
+            DirectoryInfo dirInfo = Directory.GetParent(rec.FileName);
+            if (Directory.Exists(dirInfo.ToString()) || File.Exists(rec.FileName))
+            {
+              // if all the work is completed, set DoneWithWork to true
+              doneWithWork = true;
+            }
+          }
+          catch (Exception)
+          {
+            Log.Error("Controller: unable to detect if directory exist for file: {0}", rec.FileName);
+          }
+        }
+        return File.Exists(rec.FileName);
       }
       catch (Exception)
       {
@@ -2444,6 +2703,9 @@ namespace TvService
         Log.Write("Controller: StartTimeShifting {0} {1}", channel.DisplayName, channel.IdChannel);
         StopEPGgrabber(5);
 
+        // Multi-EPG Grabbing
+        //StopEPGgrabber();
+
         IDictionary<CardDetail, ICardTuneReservationTicket> tickets = null;
         try
         {
@@ -2472,7 +2734,7 @@ namespace TvService
         finally
         {
           CardReservationHelper.CancelAllCardReservations(tickets, CardCollection);
-          if (!HasTvSucceeded(result))
+          if (!HasTvSucceeded(result) || _layer.GetSetting("idleEPGGrabberEnabledOnAllTuners", "no").Value == "yes")
           {
             StartEPGgrabber(5);
           }
@@ -2615,7 +2877,7 @@ namespace TvService
             }
           }
 
-          //tune to the new channel                  
+          //tune to the new channel
           IChannel tuneChannel = cardInfo.TuningDetail;
           result = CardTune(ref userCopy, tuneChannel, channel, ticket, cardResImpl);
           if (!HasTvSucceeded(result))
@@ -2701,7 +2963,7 @@ namespace TvService
 
     private static bool HasTvSucceeded(TvResult result)
     {
-      return result == TvResult.Succeeded;
+      return (result == TvResult.Succeeded || result == TvResult.TuneAsync);
     }
 
     private static TvResult AllCardsBusy(TvResult result)
@@ -2919,7 +3181,8 @@ namespace TvService
 
     private void StartEPGgrabber(int caller)
     {
-      if (_epgGrabber != null && AllCardsIdle)
+      // Multi-EPG Grabbing
+      if (_epgGrabber != null && (AllCardsIdle || _layer.GetSetting("idleEPGGrabberEnabledOnAllTuners", "no").Value == "yes"))
       {
         Log.Write("Controller: epg start, caller {0}", caller);
         _epgGrabber.Start();
@@ -3157,7 +3420,7 @@ namespace TvService
             if (_epgGrabber != null)
             {
               if (_layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes")
-              {                
+              {
                 StartEPGgrabber(6);
               }
             }
@@ -3886,10 +4149,13 @@ namespace TvService
 
               foreach (Channel ch in tvChannelList)
               {
-                bool exists = _tvChannelListGroups.Exists(delegate(Channel c) { return c.IdChannel == ch.IdChannel; });
-                if (!exists)
+                if (_tvChannelListGroups != null && ch != null)
                 {
-                  _tvChannelListGroups.Add(ch);
+                  bool exists = _tvChannelListGroups.Exists(delegate(Channel c) { return c.IdChannel == ch.IdChannel; });
+                  if (!exists)
+                  {
+                    _tvChannelListGroups.Add(ch);
+                  }
                 }
               }
             }
@@ -3902,8 +4168,11 @@ namespace TvService
 
     private void HeartBeatMonitor()
     {
-      Log.Info("Controller: Heartbeat Monitor initiated, max timeout allowed is {0} sec.",
-               HEARTBEAT_MAX_SECS_EXCEED_ALLOWED);
+      int VirtualUserIdleTime = Convert.ToInt32(_layer.GetSetting("VirtualUserIdleTime", "5").Value);
+
+      Log.Info("Controller: Heartbeat Monitor initiated, max timeout allowed for normal user is {0} sec, for Virtual user is {1} mins.",
+                HEARTBEAT_MAX_SECS_EXCEED_ALLOWED, VirtualUserIdleTime);
+
       while (true)
       {
         Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
@@ -3925,8 +4194,17 @@ namespace TvService
                 DateTime now = DateTime.Now;
                 TimeSpan ts = tmpUser.HeartBeat - now;
 
+                if (tmpUser.Name.Contains("Placeshift Virtual User") || tmpUser.Name == "aMPdroid")
+                {
+
+                  if (ts.TotalSeconds < (-1 * VirtualUserIdleTime * 60))
+                  {
+                    Log.Write("Controller: Heartbeat Monitor - kicking the {0}", tmpUser.Name);
+                    StopTimeShifting(ref tmpUser, TvStoppedReason.HeartBeatTimeOut);
+                  }
+                }
                 // more than 30 seconds have elapsed since last heartbeat was received. lets kick the client
-                if (ts.TotalSeconds < (-1 * HEARTBEAT_MAX_SECS_EXCEED_ALLOWED))
+                else if (ts.TotalSeconds < (-1 * HEARTBEAT_MAX_SECS_EXCEED_ALLOWED))
                 {
                   Log.Write("Controller: Heartbeat Monitor - kicking idle user {0}", tmpUser.Name);
                   StopTimeShifting(ref tmpUser, TvStoppedReason.HeartBeatTimeOut);
@@ -4077,6 +4355,7 @@ namespace TvService
 
     private void Tuner_OnBeforeTuneEvent(ITvCardHandler cardHandler)
     {
+      cardHandler.TimeShifter._timeshiftCancelled = false;
       cardHandler.TimeShifter.OnBeforeTune();
     }
 

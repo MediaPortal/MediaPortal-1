@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Windows.Forms;
 using Gentle.Framework;
 using SetupTv.Dialogs;
@@ -82,6 +83,13 @@ namespace SetupTv.Sections
         foreach (GroupMap map in maps)
         {
           Channel channel = map.ReferencedChannel();
+          if (channel == null)
+          {
+            map.Delete();
+            map.IsChanged = true;
+            map.Persist();
+            continue;
+          }
           if (!channel.IsTv)
           {
             continue;
@@ -91,6 +99,14 @@ namespace SetupTv.Sections
         bool isAllChannelsGroup = (_channelGroup.GroupName == TvConstants.TvGroupNames.AllChannels);
         removeChannelFromGroup.Enabled = !isAllChannelsGroup;
         mpButtonDel.Enabled = !isAllChannelsGroup;
+
+        if (_channelGroup.GroupName != TvConstants.TvGroupNames.AllChannels)
+        {
+          labelPinCode.Visible = true;
+          textBoxPinCode.Visible = true;
+          textBoxPinCode.Text = _channelGroup.PinCode;
+        }
+
       }
       catch (Exception exp)
       {
@@ -106,6 +122,7 @@ namespace SetupTv.Sections
     {
       bool hasFta = false;
       bool hasScrambled = false;
+      float frequency = 0;
       IList<TuningDetail> tuningDetails = channel.ReferringTuningDetail();
       foreach (TuningDetail detail in tuningDetails)
       {
@@ -117,6 +134,8 @@ namespace SetupTv.Sections
         {
           hasScrambled = true;
         }
+        frequency = detail.Frequency;
+        frequency /= 1000.0f;
       }
 
       int imageIndex;
@@ -138,6 +157,7 @@ namespace SetupTv.Sections
       item.Checked = channel.VisibleInGuide;
       item.Tag = map;
       item.SubItems.Add(channel.ChannelNumber.ToString());
+      item.SubItems.Add(frequency.ToString("f2"));
       return item;
     }
 
@@ -537,6 +557,25 @@ namespace SetupTv.Sections
     private void mpButtonOrderByNumber_Click(object sender, EventArgs e)
     {
       this.listView1_ColumnClick(null, new ColumnClickEventArgs(1));
+    }
+
+    private void label1_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void textBoxPinCode_TextChanged(object sender, EventArgs e)
+    {
+      _channelGroup.PinCode = textBoxPinCode.Text;
+      _channelGroup.Persist();
+    }
+
+    private void textBoxPinCode_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      if (!Char.IsDigit(e.KeyChar) && !(e.KeyChar == 8))
+      {
+        e.Handled = true;
+      }
     }
   }
 }

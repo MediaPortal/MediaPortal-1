@@ -507,14 +507,17 @@ Section "MediaPortal core files (required)" SecCore
   ; MediaPortal.exe
   File "${git_MP}\MediaPortal.Application\bin\${BUILD_TYPE}\MediaPortal.exe"
   File "${git_MP}\MediaPortal.Application\bin\${BUILD_TYPE}\MediaPortal.exe.config"
+  File "${git_MP}\MediaPortal.Application\bin\${BUILD_TYPE}\MediaPortal.pdb"
   ; Configuration
   File "${git_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe"
   File "${git_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe.config"
   File "${git_MP}\Configuration\bin\${BUILD_TYPE}\WinCustomControls.dll"  ; Core
   File "${git_MP}\core\bin\${BUILD_TYPE}\Core.dll"
+  File "${git_MP}\core\bin\${BUILD_TYPE}\Core.pdb"
   File "${git_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
   File "${git_DirectShowFilters}\fontEngine\bin\${BUILD_TYPE}\fontengine.dll"
   File "${git_DirectShowFilters}\DirectShowHelper\bin\${BUILD_TYPE}\dshowhelper.dll"
+  File "${git_DirectShowFilters}\DirectShowHelper\bin\${BUILD_TYPE}\dshowhelper.pdb"
   File "${git_DirectShowFilters}\Win7RefreshRateHelper\bin\${BUILD_TYPE}\Win7RefreshRateHelper.dll"
   File "${git_DirectShowFilters}\DxUtil\bin\${BUILD_TYPE}\dxutil.dll"
   File "${git_DirectShowFilters}\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
@@ -527,12 +530,14 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll"
   ; Utils
   File "${git_MP}\Utils\bin\${BUILD_TYPE}\Utils.dll"
+  File "${git_MP}\Utils\bin\${BUILD_TYPE}\Utils.pdb"
   ; Common Utils
   File "${git_Common_MP_TVE3}\Common.Utils\bin\${BUILD_TYPE}\Common.Utils.dll"
   ; Support
   File "${git_MP}\MediaPortal.Support\bin\${BUILD_TYPE}\MediaPortal.Support.dll"
   ; Databases
   File "${git_MP}\databases\bin\${BUILD_TYPE}\Databases.dll"
+  File "${git_MP}\databases\bin\${BUILD_TYPE}\Databases.pdb"
   File "${git_MP}\databases\bin\${BUILD_TYPE}\HtmlAgilityPack.dll"
   ; MusicShareWatcher
   File "${git_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\${BUILD_TYPE}\MusicShareWatcher.exe"
@@ -558,11 +563,13 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\SubtitlePlugins\bin\${BUILD_TYPE}\SubtitlePlugins.dll"
   SetOutPath "$MPdir.Plugins\Windows"
   File "${git_MP}\Dialogs\bin\${BUILD_TYPE}\Dialogs.dll"
+  File "${git_MP}\Dialogs\bin\${BUILD_TYPE}\Dialogs.pdb"
   ; Window Plugins
   File "${git_MP}\WindowPlugins\GUIDisc\bin\${BUILD_TYPE}\GUIDisc.dll"
   File "${git_MP}\WindowPlugins\GUIDVD\bin\${BUILD_TYPE}\GUIDVD.dll"
   File "${git_MP}\WindowPlugins\GUIHome\bin\${BUILD_TYPE}\GUIHome.dll"
   File "${git_MP}\WindowPlugins\GUIMusic\bin\${BUILD_TYPE}\GUIMusic.dll"
+  File "${git_MP}\WindowPlugins\GUIMusic\bin\${BUILD_TYPE}\GUIMusic.pdb"
   File "${git_MP}\WindowPlugins\GUISudoku\bin\${BUILD_TYPE}\GUISudoku.dll"
   File "${git_MP}\WindowPlugins\GUIPictures\bin\${BUILD_TYPE}\GUIPictures.dll"
   File "${git_MP}\WindowPlugins\GUIRSSFeed\bin\${BUILD_TYPE}\GUIRSSFeed.dll"
@@ -570,9 +577,11 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\WindowPlugins\GUITetris\bin\${BUILD_TYPE}\GUITetris.dll"
   File "${git_MP}\WindowPlugins\GUITopbar\bin\${BUILD_TYPE}\GUITopbar.dll"
   File "${git_MP}\WindowPlugins\GUIVideos\bin\${BUILD_TYPE}\GUIVideos.dll"
+  File "${git_MP}\WindowPlugins\GUIVideos\bin\${BUILD_TYPE}\GUIVideos.pdb"
   File "${git_MP}\WindowPlugins\GUIWikipedia\bin\${BUILD_TYPE}\GUIWikipedia.dll"
   ; Common Plugins
   File "${git_MP}\WindowPlugins\Common.GUIPlugins\bin\${BUILD_TYPE}\Common.GUIPlugins.dll"
+  File "${git_MP}\WindowPlugins\Common.GUIPlugins\bin\${BUILD_TYPE}\Common.GUIPlugins.pdb"
   ; ffmpeg
   SetOutPath "$MPdir.Base\MovieThumbnailer"
   File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
@@ -665,6 +674,18 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
   ; MediaPortal.exe
   
+  ; protocol implementations for MPUrlSourceSplitter.ax
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Parser*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol*"
+  File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_libcurl*"
+  File "${git_DirectShowFilters}\bin_Win32\avcodec-mpurlsourcesplitter-54.dll"
+  File "${git_DirectShowFilters}\bin_Win32\avformat-mpurlsourcesplitter-54.dll"
+  File "${git_DirectShowFilters}\bin_Win32\avutil-mpurlsourcesplitter-51.dll" 
+  File "${git_DirectShowFilters}\bin_Win32\crashrpt.dll"
+  File "${git_DirectShowFilters}\bin_Win32\dbghelp.dll"
+  File "${git_DirectShowFilters}\bin_Win32\sendrpt.exe"
+  
   ; libbluray
   ;SetOutPath "$MPdir.Base\lib"
   ;File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\lib\*"
@@ -690,6 +711,9 @@ Section "MediaPortal core files (required)" SecCore
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\BDReader\bin\${BUILD_TYPE}\BDReader.ax"                "$MPdir.Base\BDReader.ax"         "$MPdir.Base"
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\DVBSubtitle3\bin\${BUILD_TYPE}\DVBSub3.ax"             "$MPdir.Base\DVBSub3.ax"          "$MPdir.Base"
   
+  ; filter for IPTV support
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter.ax" "$INSTDIR\MPUrlSourceSplitter.ax" "$INSTDIR"
+
   ; used for Mediaportal Audio Renderer
   ${If} ${SSE2Supported} 
   ${AndIf} ${AtLeastWinVista}
@@ -762,6 +786,8 @@ SectionEnd
 		Delete  "$MPdir.Base\mpaudiorenderer.ax"
 	${EndIf}
   ${EndIf}
+  ; filter for URL/IPTV support
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\\MPUrlSourceSplitter.ax"
   ; Delete filter to be able to be registered with an updated version
   Delete  "$MPdir.Base\TsReader.ax"
   Delete  "$MPdir.Base\cccp.ax"
@@ -792,6 +818,19 @@ SectionEnd
   Delete "$MPdir.Config\scripts\VDBParserStrings.xml"
   RMDir "$MPdir.Config\scripts"
 
+  ; protocol implementations for MPUrlSourceSplitter.ax
+  Delete "$MPdir.Base\MPUrlSourceSplitter_Parser_Default*"
+  Delete "$MPdir.Base\MPUrlSourceSplitter_Protocol_Http*"
+  Delete "$MPdir.Base\MPUrlSourceSplitter_Protocol_Rtsp*"
+  Delete "$MPdir.Base\MPUrlSourceSplitter_Protocol_Udp*"
+  Delete "$MPdir.Base\MPUrlSourceSplitter_libcurl*"
+  Delete "$MPdir.Base\MPUrlSourceSplitter*"
+  Delete "$MPdir.Base\avcodec-mpurlsourcesplitter-54.dll"
+  Delete "$MPdir.Base\avformat-mpurlsourcesplitter-54.dll"
+  Delete "$MPdir.Base\avutil-mpurlsourcesplitter-51.dll" 
+  Delete "$MPdir.Base\crashrpt.dll"
+  Delete "$MPdir.Base\dbghelp.dll"
+  Delete "$MPdir.Base\sendrpt.exe"
 
   ; MediaPortal.exe
   Delete "$MPdir.Base\MediaPortal.exe"

@@ -259,6 +259,13 @@ namespace TvPlugin
       {
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
+            if (!TVHome.Connected)
+            {
+              RemoteControl.Clear();
+              GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+              PageDestroy();
+            }
+
             if (message.SenderControlId == 35 || message.SenderControlId == 37) // listbox
             {
               if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
@@ -297,8 +304,11 @@ namespace TvPlugin
             }
             else if (message.SenderControlId == 36) // spincontrol
             {
-              // switch group              
-              OnGroupChanged();
+              // switch group
+              if (!TVHome.OnUnlockChannelGroup())
+              {
+                OnGroupChanged();
+              }
             }
             else if (message.SenderControlId == 34) // exit button
             {
@@ -318,6 +328,7 @@ namespace TvPlugin
     /// <param name="action"></param>
     public override void OnAction(Action action)
     {
+      TVHome _tvHome = new TVHome();
       switch (action.wID)
       {
         case Action.ActionType.ACTION_CONTEXT_MENU:
@@ -332,12 +343,26 @@ namespace TvPlugin
         case Action.ActionType.ACTION_MOVE_LEFT:
         case Action.ActionType.ACTION_TVGUIDE_PREV_GROUP:
           // switch group
-          spinGroup.MoveUp();
+          if (TVHome.OnUnlockChannelGroup())
+          {
+            _tvHome.OnSelectChannel();
+          }
+          else
+          {
+            spinGroup.MoveUp();
+          }
           return;
         case Action.ActionType.ACTION_MOVE_RIGHT:
         case Action.ActionType.ACTION_TVGUIDE_NEXT_GROUP:
           // switch group
-          spinGroup.MoveDown();
+          if (TVHome.OnUnlockChannelGroup())
+          {
+            _tvHome.OnSelectChannel();
+          }
+          else
+          {
+            spinGroup.MoveDown();
+          }
           return;
       }
       base.OnAction(action);
@@ -359,6 +384,12 @@ namespace TvPlugin
     /// </summary>
     protected override void OnPageLoad()
     {
+      if (!TVHome.Connected)
+      {
+        RemoteControl.Clear();
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+        return;
+      }
       //Stopwatch bClock = Stopwatch.StartNew();
 
       //Log.Debug("TvMiniGuide: onpageload");
@@ -436,6 +467,7 @@ namespace TvPlugin
         // set selected
         if (current.GroupName.CompareTo(TVHome.Navigator.CurrentGroup.GroupName) == 0)
         {
+          Log.Debug("TvMiniGuide: the current group is {0}", current.GroupName);
           spinGroup.Value = i;
         }
       }
@@ -457,30 +489,33 @@ namespace TvPlugin
 
     private List<Channel> GetChannelListByGroup()
     {
-      int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
-
-      if (_tvGroupChannelListCache == null || _forceResetTvGroupChannelListCache)
+      if (TVHome.Navigator != null)
       {
-        _tvGroupChannelListCache = new Dictionary<int, List<Channel>>();
-        _forceResetTvGroupChannelListCache = false;
-      }
+        int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
 
-      List<Channel> channels = null;
-      if (_tvGroupChannelListCache.TryGetValue(idGroup, out channels))  //already in cache ? then return it.      
-      {
-        Log.Debug("TvMiniGuide: GetChannelListByGroup returning cached version of channels.");
-        return channels;
-      }
-      else //not in cache, fetch it and update cache, then return.
-      {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        List<Channel> tvChannelList = layer.GetTVGuideChannelsForGroup(idGroup);
-
-        if (tvChannelList != null)
+        if (_tvGroupChannelListCache == null  || _forceResetTvGroupChannelListCache)
         {
-          Log.Debug("TvMiniGuide: GetChannelListByGroup caching channels from DB.");
-          _tvGroupChannelListCache.Add(idGroup, tvChannelList);
-          return tvChannelList;
+          _tvGroupChannelListCache = new Dictionary<int, List<Channel>>();
+          _forceResetTvGroupChannelListCache = false;
+        }
+
+        List<Channel> channels = null;
+        if (_tvGroupChannelListCache.TryGetValue(idGroup, out channels))  //already in cache ? then return it.      
+        {
+          Log.Debug("TvMiniGuide: GetChannelListByGroup returning cached version of channels.");
+          return channels;
+        }
+        else //not in cache, fetch it and update cache, then return.
+        {
+          TvBusinessLayer layer = new TvBusinessLayer();
+          List<Channel> tvChannelList = layer.GetTVGuideChannelsForGroup(idGroup);
+
+          if (tvChannelList != null)
+          {
+            Log.Debug("TvMiniGuide: GetChannelListByGroup caching channels from DB.");
+            _tvGroupChannelListCache.Add(idGroup, tvChannelList);
+            return tvChannelList;
+          }
         }
       }
       return new List<Channel>();

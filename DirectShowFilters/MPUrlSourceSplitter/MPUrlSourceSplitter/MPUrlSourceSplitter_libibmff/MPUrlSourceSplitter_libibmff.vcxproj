@@ -1,0 +1,221 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0FA17EC5-0542-4BAD-9956-F31C0DFE491D}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>MPUrlSourceSplitter_libibmff</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)bin_$(PlatformName)\lib\</OutDir>
+    <IntDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IntDir>$(SolutionDir)bin_$(PlatformName)d\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)bin_$(PlatformName)d\lib\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_liblogger;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="AudioSampleEntryBox.h" />
+    <ClInclude Include="BitRateBox.h" />
+    <ClInclude Include="Box.h" />
+    <ClInclude Include="BoxCollection.h" />
+    <ClInclude Include="BoxConstants.h" />
+    <ClInclude Include="BoxFactory.h" />
+    <ClInclude Include="Brand.h" />
+    <ClInclude Include="BrandCollection.h" />
+    <ClInclude Include="ChunkLargeOffsetBox.h" />
+    <ClInclude Include="ChunkOffset.h" />
+    <ClInclude Include="ChunkOffsetBox.h" />
+    <ClInclude Include="ChunkOffsetCollection.h" />
+    <ClInclude Include="CleanApertureBox.h" />
+    <ClInclude Include="DataEntryBox.h" />
+    <ClInclude Include="DataEntryBoxCollection.h" />
+    <ClInclude Include="DataEntryUrlBox.h" />
+    <ClInclude Include="DataEntryUrnBox.h" />
+    <ClInclude Include="DataInformationBox.h" />
+    <ClInclude Include="DataReferenceBox.h" />
+    <ClInclude Include="FileTypeBox.h" />
+    <ClInclude Include="FixedPointNumber.h" />
+    <ClInclude Include="FullBox.h" />
+    <ClInclude Include="HandlerBox.h" />
+    <ClInclude Include="HintMediaHeaderBox.h" />
+    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="MediaBox.h" />
+    <ClInclude Include="MediaDataBox.h" />
+    <ClInclude Include="MediaHeaderBox.h" />
+    <ClInclude Include="MediaInformationBox.h" />
+    <ClInclude Include="MediaInformationBoxFactory.h" />
+    <ClInclude Include="MetaBox.h" />
+    <ClInclude Include="MovieBox.h" />
+    <ClInclude Include="MovieExtendsBox.h" />
+    <ClInclude Include="MovieExtendsHeaderBox.h" />
+    <ClInclude Include="MovieFragmentBox.h" />
+    <ClInclude Include="MovieFragmentHeaderBox.h" />
+    <ClInclude Include="MovieHeaderBox.h" />
+    <ClInclude Include="NullMediaHeaderBox.h" />
+    <ClInclude Include="PayloadBox.h" />
+    <ClInclude Include="PixelAspectRatioBox.h" />
+    <ClInclude Include="SampleCollection.h" />
+    <ClInclude Include="SampleDescriptionBox.h" />
+    <ClInclude Include="SampleEntryBox.h" />
+    <ClInclude Include="SampleEntryBoxCollection.h" />
+    <ClInclude Include="SampleEntryBoxFactory.h" />
+    <ClInclude Include="Sample.h" />
+    <ClInclude Include="SampleTableBox.h" />
+    <ClInclude Include="SampleToChunk.h" />
+    <ClInclude Include="SampleToChunkBox.h" />
+    <ClInclude Include="SampleToChunkCollection.h" />
+    <ClInclude Include="SoundMediaHeaderBox.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="TimeToSample.h" />
+    <ClInclude Include="TimeToSampleBox.h" />
+    <ClInclude Include="TimeToSampleCollection.h" />
+    <ClInclude Include="TrackBox.h" />
+    <ClInclude Include="TrackExtendsBox.h" />
+    <ClInclude Include="TrackFragmentBox.h" />
+    <ClInclude Include="TrackFragmentHeaderBox.h" />
+    <ClInclude Include="TrackHeaderBox.h" />
+    <ClInclude Include="TrackRunBox.h" />
+    <ClInclude Include="UserDataBox.h" />
+    <ClInclude Include="UuidBox.h" />
+    <ClInclude Include="VideoMediaHeaderBox.h" />
+    <ClInclude Include="VisualSampleEntryBox.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AudioSampleEntryBox.cpp" />
+    <ClCompile Include="BitRateBox.cpp" />
+    <ClCompile Include="Box.cpp" />
+    <ClCompile Include="BoxCollection.cpp" />
+    <ClCompile Include="BoxFactory.cpp" />
+    <ClCompile Include="Brand.cpp" />
+    <ClCompile Include="BrandCollection.cpp" />
+    <ClCompile Include="ChunkLargeOffsetBox.cpp" />
+    <ClCompile Include="ChunkOffset.cpp" />
+    <ClCompile Include="ChunkOffsetBox.cpp" />
+    <ClCompile Include="ChunkOffsetCollection.cpp" />
+    <ClCompile Include="CleanApertureBox.cpp" />
+    <ClCompile Include="DataEntryBox.cpp" />
+    <ClCompile Include="DataEntryBoxCollection.cpp" />
+    <ClCompile Include="DataEntryUrlBox.cpp" />
+    <ClCompile Include="DataEntryUrnBox.cpp" />
+    <ClCompile Include="DataInformationBox.cpp" />
+    <ClCompile Include="DataReferenceBox.cpp" />
+    <ClCompile Include="FileTypeBox.cpp" />
+    <ClCompile Include="FixedPointNumber.cpp" />
+    <ClCompile Include="FullBox.cpp" />
+    <ClCompile Include="HandlerBox.cpp" />
+    <ClCompile Include="HintMediaHeaderBox.cpp" />
+    <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="MediaBox.cpp" />
+    <ClCompile Include="MediaDataBox.cpp" />
+    <ClCompile Include="MediaHeaderBox.cpp" />
+    <ClCompile Include="MediaInformationBox.cpp" />
+    <ClCompile Include="MediaInformationBoxFactory.cpp" />
+    <ClCompile Include="MetaBox.cpp" />
+    <ClCompile Include="MovieBox.cpp" />
+    <ClCompile Include="MovieExtendsBox.cpp" />
+    <ClCompile Include="MovieExtendsHeaderBox.cpp" />
+    <ClCompile Include="MovieFragmentBox.cpp" />
+    <ClCompile Include="MovieFragmentHeaderBox.cpp" />
+    <ClCompile Include="MovieHeaderBox.cpp" />
+    <ClCompile Include="NullMediaHeaderBox.cpp" />
+    <ClCompile Include="PayloadBox.cpp" />
+    <ClCompile Include="PixelAspectRatioBox.cpp" />
+    <ClCompile Include="SampleCollection.cpp" />
+    <ClCompile Include="SampleDescriptionBox.cpp" />
+    <ClCompile Include="SampleEntryBox.cpp" />
+    <ClCompile Include="SampleEntryBoxCollection.cpp" />
+    <ClCompile Include="SampleEntryBoxFactory.cpp" />
+    <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="SampleTableBox.cpp" />
+    <ClCompile Include="SampleToChunk.cpp" />
+    <ClCompile Include="SampleToChunkBox.cpp" />
+    <ClCompile Include="SampleToChunkCollection.cpp" />
+    <ClCompile Include="SoundMediaHeaderBox.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="TimeToSample.cpp" />
+    <ClCompile Include="TimeToSampleBox.cpp" />
+    <ClCompile Include="TimeToSampleCollection.cpp" />
+    <ClCompile Include="TrackBox.cpp" />
+    <ClCompile Include="TrackExtendsBox.cpp" />
+    <ClCompile Include="TrackFragmentBox.cpp" />
+    <ClCompile Include="TrackFragmentHeaderBox.cpp" />
+    <ClCompile Include="TrackHeaderBox.cpp" />
+    <ClCompile Include="TrackRunBox.cpp" />
+    <ClCompile Include="UserDataBox.cpp" />
+    <ClCompile Include="UuidBox.cpp" />
+    <ClCompile Include="VideoMediaHeaderBox.cpp" />
+    <ClCompile Include="VisualSampleEntryBox.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
