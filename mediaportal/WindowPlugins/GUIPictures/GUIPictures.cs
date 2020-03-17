@@ -2600,6 +2600,7 @@ namespace MediaPortal.GUI.Pictures
         GUIPropertyManager.SetProperty("#pictures.filename", Path.GetFileName(item.Path));
         GUIPropertyManager.SetProperty("#pictures.path", Path.GetDirectoryName(item.Path));
       }
+      // GUIPropertyManager.SetProperty("#pictures.folder", Path.GetFileName(currentFolder));
 
       int iDisp = 100002;
       if (disp == Display.Date)
@@ -2667,6 +2668,7 @@ namespace MediaPortal.GUI.Pictures
 
       GUIPropertyManager.SetProperty("#pictures.filename", string.Empty);
       GUIPropertyManager.SetProperty("#pictures.path", string.Empty);
+      GUIPropertyManager.SetProperty("#pictures.folder", string.Empty);
       GUIPropertyManager.SetProperty("#pictures.IsHDR", string.Empty);
       GUIPropertyManager.SetProperty("#pictures.IsVideo", string.Empty);
 
@@ -3782,8 +3784,8 @@ namespace MediaPortal.GUI.Pictures
       }
 
       currentFolder = strNewDirectory;
-
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
+      GUIPropertyManager.SetProperty("#pictures.folder", Path.GetFileName(currentFolder));
 
       Thread worker = new Thread(() =>
       {
