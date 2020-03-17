@@ -5697,7 +5697,7 @@ public class MediaPortalApp : D3D, IRender
               Log.Warn("Main: Exception on arrival Audio Renderer {0} exception: {1} ", message.Label,
                 exception.Message);
             }
-            Log.Error("Main: AUDIODEVICEARRIVAL play sound workaround");
+            Log.Debug("Main: AUDIODEVICEARRIVAL play sound workaround");
             try
             {
               var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) {SoundFileName = "silent.wav" };
