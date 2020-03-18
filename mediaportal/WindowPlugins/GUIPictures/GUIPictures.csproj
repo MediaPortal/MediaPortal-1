@@ -181,8 +181,8 @@
       <Project>{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}</Project>
       <Name>Common.GUIPlugins</Name>
     </ProjectReference>
-    <Reference Include="MediaInfo.Wrapper, Version=19.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Packages\MediaInfo.Wrapper.19.4.1\lib\net40\MediaInfo.Wrapper.dll</HintPath>
+    <Reference Include="MediaInfo.Wrapper, Version=19.9.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Packages\MediaInfo.Wrapper.19.9.2\lib\net40\MediaInfo.Wrapper.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>False</SpecificVersion>
@@ -262,11 +262,11 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\..\..\Packages\MediaInfo.Native.19.4.0\build\MediaInfo.Native.targets" Condition="Exists('..\..\..\Packages\MediaInfo.Native.19.4.0\build\MediaInfo.Native.targets')" />
+  <Import Project="..\..\..\Packages\MediaInfo.Native.19.9.0\build\MediaInfo.Native.targets" Condition="Exists('..\..\..\Packages\MediaInfo.Native.19.9.0\build\MediaInfo.Native.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\..\Packages\MediaInfo.Native.19.4.0\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\Packages\MediaInfo.Native.19.4.0\build\MediaInfo.Native.targets'))" />
+    <Error Condition="!Exists('..\..\..\Packages\MediaInfo.Native.19.9.0\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\Packages\MediaInfo.Native.19.9.0\build\MediaInfo.Native.targets'))" />
   </Target>
 </Project>
