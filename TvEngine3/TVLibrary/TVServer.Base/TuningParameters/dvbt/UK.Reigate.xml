@@ -36,7 +36,7 @@
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- LOC1 --><!-- [post-700 23/10/2019] -->
+  <!-- LOC1 -->
   <DVBTTuning>
     <Frequency>586000</Frequency><!-- C35 -->
     <BandWidth>8</BandWidth>

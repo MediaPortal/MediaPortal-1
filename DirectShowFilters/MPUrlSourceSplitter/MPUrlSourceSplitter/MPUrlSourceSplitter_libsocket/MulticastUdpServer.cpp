@@ -68,12 +68,13 @@ HRESULT CMulticastUdpServer::Initialize(int family, const wchar_t *multicastAddr
 HRESULT CMulticastUdpServer::Initialize(int family, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterfaceCollection *networkInterfaces)
 {
   HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, this->servers);
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->sockets);
+  CHECK_POINTER_DEFAULT_HRESULT(result, multicastAddress);
   CHECK_POINTER_DEFAULT_HRESULT(result, networkInterfaces);
 
   if (SUCCEEDED(result))
   {
-    this->servers->Clear();
+    this->sockets->Clear();
 
     for (unsigned int i = 0; (SUCCEEDED(result) && (i < networkInterfaces->Count())); i++)
     {
@@ -87,7 +88,7 @@ HRESULT CMulticastUdpServer::Initialize(int family, CIpAddress *multicastAddress
           for (unsigned int j = 0; (SUCCEEDED(result) && (j < nic->GetUnicastAddresses()->Count())); j++)
           {
             CIpAddress *ipAddr = nic->GetUnicastAddresses()->GetItem(j)->Clone();
-            CHECK_POINTER_HRESULT(result, nic, result, E_OUTOFMEMORY);
+            CHECK_POINTER_HRESULT(result, ipAddr, result, E_OUTOFMEMORY);
 
             CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = ipAddr->SetPort(multicastAddress->GetPort()) ? result : E_INVALIDARG);
 
@@ -96,14 +97,14 @@ HRESULT CMulticastUdpServer::Initialize(int family, CIpAddress *multicastAddress
               ipAddr->SetSockType(SOCK_DGRAM);
               ipAddr->SetProtocol(IPPROTO_UDP);
 
-              CMulticastUdpSocketContext *server = new CMulticastUdpSocketContext(&result, multicastAddress, sourceAddress, nic);
-              CHECK_POINTER_HRESULT(result, server, result, E_OUTOFMEMORY);
+              CMulticastUdpSocketContext *socket = new CMulticastUdpSocketContext(&result, multicastAddress, sourceAddress, nic);
+              CHECK_POINTER_HRESULT(result, socket, result, E_OUTOFMEMORY);
 
-              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->SetIpAddress(ipAddr), result);
+              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->SetIpAddress(ipAddr), result);
 
-              CHECK_CONDITION_HRESULT(result, this->servers->Add(server), result, E_OUTOFMEMORY);
+              CHECK_CONDITION_HRESULT(result, this->sockets->Add(socket), result, E_OUTOFMEMORY);
 
-              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(server));
+              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(socket));
             }
 
             FREE_MEM_CLASS(ipAddr);
@@ -120,26 +121,26 @@ HRESULT CMulticastUdpServer::StartListening(void)
 {
   // we ignore base StartListening, we do whole procedure by its own
   HRESULT result = S_OK;
-  CHECK_POINTER_HRESULT(result, this->servers, result, E_POINTER);
+  CHECK_POINTER_HRESULT(result, this->sockets, result, E_POINTER);
 
-  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->servers->Count())); i++)
+  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->sockets->Count())); i++)
   {
-    CMulticastUdpSocketContext *server = dynamic_cast<CMulticastUdpSocketContext *>(this->servers->GetItem(i));
+    CMulticastUdpSocketContext *socket = dynamic_cast<CMulticastUdpSocketContext *>(this->sockets->GetItem(i));
 
     // create server socket
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->CreateSocket(), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->CreateSocket(), result);
 
     // set non-blocking mode
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->SetBlockingMode(false), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->SetBlockingMode(false), result);
 
     // set reuse address
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->SetReuseAddress(true), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->SetReuseAddress(true), result);
 
     // bind socket to local address and port
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->Bind(), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->Bind(), result);
 
     // subscribe to multicast group
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->SubscribeToMulticastGroup(), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->SubscribeToMulticastGroup(), result);
   }
 
   return result;

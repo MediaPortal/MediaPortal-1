@@ -64,12 +64,12 @@ HRESULT CTcpServer::Initialize(int family, WORD port, int connections)
 HRESULT CTcpServer::Initialize(int family, WORD port, int connections, CNetworkInterfaceCollection *networkInterfaces)
 {
   HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, this->servers);
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->sockets);
   CHECK_POINTER_DEFAULT_HRESULT(result, networkInterfaces);
 
   if (SUCCEEDED(result))
   {
-    this->servers->Clear();
+    this->sockets->Clear();
 
     for (unsigned int i = 0; (SUCCEEDED(result) && (i < networkInterfaces->Count())); i++)
     {
@@ -83,7 +83,7 @@ HRESULT CTcpServer::Initialize(int family, WORD port, int connections, CNetworkI
           for (unsigned int j = 0; (SUCCEEDED(result) && (j < nic->GetUnicastAddresses()->Count())); j++)
           {
             CIpAddress *ipAddr = nic->GetUnicastAddresses()->GetItem(j)->Clone();
-            CHECK_POINTER_HRESULT(result, nic, result, E_OUTOFMEMORY);
+            CHECK_POINTER_HRESULT(result, ipAddr, result, E_OUTOFMEMORY);
 
             CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = ipAddr->SetPort(port) ? result : E_INVALIDARG);
 
@@ -92,15 +92,15 @@ HRESULT CTcpServer::Initialize(int family, WORD port, int connections, CNetworkI
               ipAddr->SetSockType(SOCK_STREAM);
               ipAddr->SetProtocol(IPPROTO_TCP);
 
-              CTcpSocketContext *server = new CTcpSocketContext(&result);
-              CHECK_POINTER_HRESULT(result, server, result, E_OUTOFMEMORY);
+              CTcpSocketContext *socket = new CTcpSocketContext(&result);
+              CHECK_POINTER_HRESULT(result, socket, result, E_OUTOFMEMORY);
 
-              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->SetIpAddress(ipAddr), result);
-              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->Initialize(connections), result);
+              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->SetIpAddress(ipAddr), result);
+              CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->Initialize(connections), result);
 
-              CHECK_CONDITION_HRESULT(result, this->servers->Add(server), result, E_OUTOFMEMORY);
+              CHECK_CONDITION_HRESULT(result, this->sockets->Add(socket), result, E_OUTOFMEMORY);
 
-              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(server));
+              CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(socket));
             }
 
             FREE_MEM_CLASS(ipAddr);
@@ -116,23 +116,23 @@ HRESULT CTcpServer::Initialize(int family, WORD port, int connections, CNetworkI
 HRESULT CTcpServer::StartListening(void)
 {
   HRESULT result = __super::StartListening();
-  CHECK_POINTER_HRESULT(result, this->servers, result, E_POINTER);
+  CHECK_POINTER_HRESULT(result, this->sockets, result, E_POINTER);
 
-  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->servers->Count())); i++)
+  for (unsigned int i = 0; (SUCCEEDED(result) && (i < this->sockets->Count())); i++)
   {
-    CTcpSocketContext *server = dynamic_cast<CTcpSocketContext *>(this->servers->GetItem(i));
+    CTcpSocketContext *socket = dynamic_cast<CTcpSocketContext *>(this->sockets->GetItem(i));
 
     // create server socket
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->CreateSocket(), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->CreateSocket(), result);
 
     // set non-blocking mode
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->SetBlockingMode(false), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->SetBlockingMode(false), result);
 
     // bind socket to local address and port
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->Bind(), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->Bind(), result);
 
     // listen on socket
-    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->Listen(), result);
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), socket->Listen(), result);
   }
 
   return result;

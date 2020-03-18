@@ -22,11 +22,14 @@
 
 #include "HttpDownloadResponse.h"
 
+#include "CurlInstance.h"
+
 CHttpDownloadResponse::CHttpDownloadResponse(HRESULT *result)
   : CDownloadResponse(result)
 {
   this->headers = NULL;
   this->responseCode = 0;
+  this->lastUsedUrl = NULL;
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
@@ -38,6 +41,7 @@ CHttpDownloadResponse::CHttpDownloadResponse(HRESULT *result)
 CHttpDownloadResponse::~CHttpDownloadResponse(void)
 {
   FREE_MEM_CLASS(this->headers);
+  FREE_MEM(this->lastUsedUrl);
 }
 
 /* get methods */
@@ -57,6 +61,24 @@ long CHttpDownloadResponse::GetResponseCode(void)
   return this->responseCode;
 }
 
+const wchar_t *CHttpDownloadResponse::GetLastUsedUrl(void)
+{
+  return this->lastUsedUrl;
+}
+
+HRESULT CHttpDownloadResponse::GetResultError(void)
+{
+  // result error is sometimes set to S_OK, even if HTTP error occured
+
+  // check result error and set if necessary
+  if ((__super::GetResultError() == S_OK) && IS_RESPONSE_CODE_ERROR(this->GetResponseCode()))
+  {
+    this->SetResultError(HRESULT_FROM_CURL_CODE(CURLE_HTTP_RETURNED_ERROR));
+  }
+
+  return __super::GetResultError();
+}
+
 /* set methods */
 
 void CHttpDownloadResponse::SetRangesSupported(bool rangesSupported)
@@ -68,6 +90,11 @@ void CHttpDownloadResponse::SetRangesSupported(bool rangesSupported)
 void CHttpDownloadResponse::SetResponseCode(long responseCode)
 {
   this->responseCode = responseCode;
+}
+
+bool CHttpDownloadResponse::SetLastUsedUrl(const wchar_t *lastUsedUrl)
+{
+  SET_STRING_RETURN_WITH_NULL(this->lastUsedUrl, lastUsedUrl);
 }
 
 /* other methods */

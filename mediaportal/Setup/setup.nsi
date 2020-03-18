@@ -675,6 +675,10 @@ Section "MediaPortal core files (required)" SecCore
   ; MediaPortal.exe
   
   ; protocol implementations for MPUrlSourceSplitter.ax
+  ;SetOutPath "$MPdir.Base\lib"
+  ;File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\lib\*"
+
+  ; protocol implementations for MPUrlSourceSplitter.ax
   File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter*"
   File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Parser*"
   File "${git_DirectShowFilters}\bin_Win32\MPUrlSourceSplitter_Protocol*"

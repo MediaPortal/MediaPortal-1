@@ -21,15 +21,19 @@
 #include "StdAfx.h"
 
 #include "UdpDownloadRequest.h"
+#include "MPUrlSourceSplitter_Protocol_Udp_Parameters.h"
 
 CUdpDownloadRequest::CUdpDownloadRequest(HRESULT *result)
   : CDownloadRequest(result)
 {
   this->checkInterval = 0;
+  this->ipv4Header = NULL;
+  this->igmpInterval = UINT_MAX;
 }
 
 CUdpDownloadRequest::~CUdpDownloadRequest(void)
 {
+  FREE_MEM_CLASS(this->ipv4Header);
 }
 
 /* get methods */
@@ -39,6 +43,16 @@ unsigned int CUdpDownloadRequest::GetCheckInterval(void)
   return this->checkInterval;
 }
 
+CIpv4Header *CUdpDownloadRequest::GetIpv4Header(void)
+{
+  return this->ipv4Header;
+}
+
+unsigned int CUdpDownloadRequest::GetIgmpInterval(void)
+{
+  return this->igmpInterval;
+}
+
 /* set methods */
 
 void CUdpDownloadRequest::SetCheckInterval(unsigned int checkInterval)
@@ -46,7 +60,31 @@ void CUdpDownloadRequest::SetCheckInterval(unsigned int checkInterval)
   this->checkInterval = checkInterval;
 }
 
+HRESULT CUdpDownloadRequest::SetIpv4Header(CIpv4Header *header) 
+{
+  HRESULT result = S_OK;
+  FREE_MEM_CLASS(this->ipv4Header);
+
+  if (header != NULL)
+  {
+    this->ipv4Header = header->Clone();
+    CHECK_POINTER_HRESULT(result, this->ipv4Header, result, E_OUTOFMEMORY);
+  }
+
+  return result;
+}
+
+void CUdpDownloadRequest::SetIgmpInterval(unsigned int igmpInterval)
+{
+  this->igmpInterval = igmpInterval;
+}
+
 /* other methods */
+
+bool CUdpDownloadRequest::IsRawSocket(void)
+{
+  return (this->ipv4Header != NULL);
+}
 
 /* protected methods */
 
@@ -72,6 +110,13 @@ bool CUdpDownloadRequest::CloneInternal(CDownloadRequest *clone)
     if (result)
     {
       request->checkInterval = this->checkInterval;
+      request->igmpInterval = this->igmpInterval;
+
+      if (this->ipv4Header != NULL)
+      {
+        request->ipv4Header = this->ipv4Header->Clone();
+        result &= (request->ipv4Header != NULL);
+      }
     }
   }
 

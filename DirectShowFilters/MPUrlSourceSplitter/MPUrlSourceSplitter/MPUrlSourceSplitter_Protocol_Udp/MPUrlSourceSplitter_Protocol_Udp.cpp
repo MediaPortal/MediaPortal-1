@@ -35,6 +35,7 @@
 #include "ErrorCodes.h"
 #include "StreamPackageDataRequest.h"
 #include "StreamPackageDataResponse.h"
+#include "conversions.h"
 
 #include <Shlwapi.h>
 
@@ -337,6 +338,41 @@ HRESULT CMPUrlSourceSplitter_Protocol_Udp::ReceiveData(CStreamPackage *streamPac
           request->SetReceivedDataTimeout(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_OPEN_CONNECTION_TIMEOUT, true, this->IsIptv() ? UDP_OPEN_CONNECTION_TIMEOUT_DEFAULT_IPTV : UDP_OPEN_CONNECTION_TIMEOUT_DEFAULT_SPLITTER));
           request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
           request->SetCheckInterval(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_RECEIVE_DATA_CHECK_INTERVAL, true, this->IsIptv() ? UDP_RECEIVE_DATA_CHECK_INTERVAL_DEFAULT_IPTV : UDP_RECEIVE_DATA_CHECK_INTERVAL_DEFAULT_SPLITTER));
+
+          if (this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_DSCP, true) ||
+            this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_ECN, true) ||
+            this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_DONT_FRAGMENT, true) ||
+            this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_MORE_FRAGMNETS, true) ||
+            this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_IDENTIFICATION, true) ||
+            this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_TTL, true) ||
+            this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_OPTIONS, true))
+          {
+            CIpv4Header *header = new CIpv4Header(&result);
+            CHECK_POINTER_DEFAULT_HRESULT(result, header);
+
+            if (SUCCEEDED(result))
+            {
+              header->SetDscp((uint8_t)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_IPV4_DSCP, true, UDP_IPV4_DSCP_DEFAULT));
+              header->SetEcn((uint8_t)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_IPV4_ECN, true, UDP_IPV4_ECN_DEFAULT));
+              header->SetDontFragment(this->configuration->GetValueBool(PARAMETER_NAME_UDP_IPV4_DONT_FRAGMENT, true, false));
+              header->SetMoreFragments(this->configuration->GetValueBool(PARAMETER_NAME_UDP_IPV4_MORE_FRAGMNETS, true, false));
+              header->SetTtl((uint8_t)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_IPV4_TTL, true, UDP_IPV4_TTL_DEFAULT));
+              header->SetIdentification((uint16_t)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_IPV4_IDENTIFICATION, true, GetTickCount()));
+
+              if (this->configuration->Contains(PARAMETER_NAME_UDP_IPV4_OPTIONS, true))
+              {
+                uint8_t *options = HexToDec(this->configuration->GetValue(PARAMETER_NAME_UDP_IPV4_OPTIONS, true, NULL));
+                size_t optionsLength = wcslen(this->configuration->GetValue(PARAMETER_NAME_UDP_IPV4_OPTIONS, true, NULL));
+
+                CHECK_CONDITION_HRESULT(result, header->SetOptions(options, (uint8_t)(optionsLength / 2)), result, E_OUTOFMEMORY);
+              }
+            }
+
+            CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), request->SetIpv4Header(header), result);
+            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), request->SetIgmpInterval(this->configuration->GetValueUnsignedInt(PARAMETER_NAME_UDP_IGMP_INTERVAL, true, UDP_IGMP_INTERVAL_DEFAULT)));
+
+            FREE_MEM_CLASS(header);
+          }
 
           if (SUCCEEDED(this->mainCurlInstance->Initialize(request)))
           {

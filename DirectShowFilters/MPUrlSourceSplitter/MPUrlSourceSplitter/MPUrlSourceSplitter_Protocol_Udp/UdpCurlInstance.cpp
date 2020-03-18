@@ -24,6 +24,7 @@
 #include "UdpServer.h"
 #include "UdpSocketContext.h"
 #include "MulticastUdpServer.h"
+#include "MulticastUdpRawServer.h"
 #include "LockMutex.h"
 #include "conversions.h"
 #include "Dns.h"
@@ -182,7 +183,7 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
     {
       CIpAddress *localIpAddress = localIpAddresses->GetItem(0);
 
-      server = localIpAddress->IsMulticast() ? new CMulticastUdpServer(&result) : new CUdpServer(&result);
+      server = localIpAddress->IsMulticast() ? (this->udpDownloadRequest->IsRawSocket() ? new CMulticastUdpRawServer(&result) : new CMulticastUdpServer(&result)) : new CUdpServer(&result);
       CHECK_POINTER_HRESULT(result, server, result, E_OUTOFMEMORY);
 
       CNetworkInterfaceCollection *interfaces = new CNetworkInterfaceCollection(&result);
@@ -214,9 +215,18 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
 
       if (SUCCEEDED(result) && (localIpAddress->IsMulticast()))
       {
-        CMulticastUdpServer *multicastServer = dynamic_cast<CMulticastUdpServer *>(server);
+        if (this->udpDownloadRequest->IsRawSocket())
+        {
+          CMulticastUdpRawServer *multicastServer = dynamic_cast<CMulticastUdpRawServer *>(server);
 
-        result = multicastServer->Initialize(AF_UNSPEC, localIpAddress, (this->sourceAddress != NULL) ? sourceIpAddresses->GetItem(0) : NULL, interfaces);
+          result = multicastServer->Initialize(AF_UNSPEC, localIpAddress, (this->sourceAddress != NULL) ? sourceIpAddresses->GetItem(0) : NULL, interfaces, this->udpDownloadRequest->GetIpv4Header(), this->udpDownloadRequest->GetIgmpInterval());
+        }
+        else
+        {
+          CMulticastUdpServer *multicastServer = dynamic_cast<CMulticastUdpServer *>(server);
+
+          result = multicastServer->Initialize(AF_UNSPEC, localIpAddress, (this->sourceAddress != NULL) ? sourceIpAddresses->GetItem(0) : NULL, interfaces);
+        }
       }
       else if (SUCCEEDED(result) && (!localIpAddress->IsMulticast()))
       {
@@ -288,9 +298,12 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
           // only one thread can work with UDP data in one time
           LOCK_MUTEX(this->mutex, INFINITE)
 
-          for (unsigned int i = 0; (SUCCEEDED(result) && (i < server->GetServers()->Count())); i++)
+          // maintain connections (if needed)
+          server->MaintainConnections();
+
+          for (unsigned int i = 0; (SUCCEEDED(result) && (i < server->GetSockets()->Count())); i++)
           {
-            CUdpSocketContext *udpContext = (CUdpSocketContext *)(server->GetServers()->GetItem(i));
+            CUdpSocketContext *udpContext = (CUdpSocketContext *)(server->GetSockets()->GetItem(i));
 
             unsigned int pendingIncomingDataLength = 0;
             HRESULT res = S_OK;
@@ -426,9 +439,9 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
   {
     LOCK_MUTEX(this->mutex, INFINITE)
 
-    for (unsigned int i = 0; ((server != NULL) && (i < server->GetServers()->Count())); i++)
+    for (unsigned int i = 0; ((server != NULL) && (i < server->GetSockets()->Count())); i++)
     {
-      CSocketContext *context = server->GetServers()->GetItem(i);
+      CSocketContext *context = server->GetSockets()->GetItem(i);
 
       this->logger->Log(LOGGER_VERBOSE, L"%s: %s: address: %s, received bytes: %lld, sent bytes: %lld", this->protocolName, METHOD_CURL_WORKER_NAME, (context->GetIpAddress()->GetAddressString() == NULL) ? L"unknown" : context->GetIpAddress()->GetAddressString(), context->GetReceivedDataLength(), context->GetSentDataLength());
     }

@@ -39,9 +39,9 @@ public:
 
   /* get methods */
 
-  // gets all servers
-  // @return : all servers
-  virtual CSocketContextCollection *GetServers(void);
+  // gets all sockets
+  // @return : all sockets
+  virtual CSocketContextCollection *GetSockets(void);
 
   /* set methods */
 
@@ -68,9 +68,13 @@ public:
   // @return : S_OK if successful, error code otherwise (can be system or WSA)
   virtual HRESULT StopListening(void);
 
+  // maintains connections
+  // @return : S_OK if successful, error code otherwise (can be system or WSA)
+  virtual HRESULT MaintainConnections(void);
+
 protected:
   // holds socket contexts
-  CSocketContextCollection *servers;
+  CSocketContextCollection *sockets;
 
   /* methods */
 };

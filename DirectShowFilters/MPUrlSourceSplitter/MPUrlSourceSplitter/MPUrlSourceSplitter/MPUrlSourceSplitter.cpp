@@ -228,11 +228,6 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
     CHECK_POINTER_HRESULT(*phr, this->logger, *phr, E_OUTOFMEMORY);
   }
 
-#pragma warning(push)
-  // disable warning: 'ApplicationInfo': was declared deprecated
-  // disable warning: 'HandlerSettings': was declared deprecated
-#pragma warning(disable:4996)
-
   if (crashReport == NULL)
   {
     crashReport = new CCrashReport(phr);
@@ -241,8 +236,6 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
     CHECK_CONDITION_EXECUTE(FAILED(*phr), FREE_MEM_CLASS(crashReport));
   }
 
-#pragma warning(pop)
-  
   if (SUCCEEDED(*phr))
   {
     this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, this);
@@ -616,6 +609,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         // set them as configuration parameters
         this->configuration->Clear();
         this->configuration->Append(suppliedParameters);
+
         if (!this->configuration->Contains(PARAMETER_NAME_URL, true))
         {
           result = this->configuration->Add(PARAMETER_NAME_URL, url) ? result : E_OUTOFMEMORY;

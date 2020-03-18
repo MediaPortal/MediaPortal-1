@@ -26,13 +26,8 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 #include "Flags.h"
 #include "Version.h"
 #include "ParameterCollection.h"
-#include "CrashRpt.h"
 
 #define HUNDRED_NANOSECONDS_IN_DAY                                    (SECONDS_IN_DAY * 10000000ULL)
-
-#define CRASHRPT_FILE_NAME                                            L"crashrpt.dll"
-#define DBGHELP_FILE_NAME                                             L"dbghelp.dll"
-#define SENDRPT_FILE_NAME                                             L"sendrpt.exe"
 
 #define CRASH_REPORT_FLAG_NONE                                        FLAGS_NONE
 
@@ -40,11 +35,6 @@ along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 #define CRASH_REPORT_FLAG_SEND_CRASH_ENABLED                          (1 << (FLAGS_LAST + 1))
 
 #define CRASH_REPORT_FLAG_LAST                                        (FLAGS_LAST + 2)
-
-#pragma warning(push)
-// disable warning: 'ApplicationInfo': was declared deprecated
-// disable warning: 'HandlerSettings': was declared deprecated
-#pragma warning(disable:4996)
 
 struct FileNameAndCreationDateTime
 {
@@ -84,17 +74,6 @@ public:
 
 protected:
 
-  // holds crash reporting instance
-  crash_rpt::CrashRpt *crashReporting;
-
-  // holds filter path, dbghelp path and sendrpt path for crash reporting service
-  wchar_t *filterPath;
-  wchar_t *dbgHelpPath;
-  wchar_t *sendrptPath;
-
-  ApplicationInfo *applicationInfo;
-  HandlerSettings *handlerSettings;
-
   unsigned int crashReportMode;
   unsigned int maximumDumpFiles;
   unsigned int maximumRetainDays;
@@ -102,10 +81,6 @@ protected:
  
   /* methods */
 
-  // exception handler for crash reporting
-  static crash_rpt::CrashProcessingCallbackResult CALLBACK HandleException(crash_rpt::CrashProcessingCallbackStage stage, crash_rpt::ExceptionInfo* exceptionInfo, LPVOID userData);
 };
-
-#pragma warning(pop)
 
 #endif

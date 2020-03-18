@@ -35,7 +35,6 @@ class CTcpSocketContext : public CSocketContext
 {
 public:
   CTcpSocketContext(HRESULT *result);
-  CTcpSocketContext(HRESULT *result, SOCKET socket);
   virtual ~CTcpSocketContext(void);
 
   /* get methods */

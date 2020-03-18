@@ -31,11 +31,11 @@ CMulticastUdpSocketContext::CMulticastUdpSocketContext(HRESULT *result, CIpAddre
 
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
-    if (multicastAddress != NULL)
-    {
-      this->multicastAddress = multicastAddress->Clone();
-      CHECK_POINTER_HRESULT(*result, this->multicastAddress, *result, E_OUTOFMEMORY);
-    }
+    CHECK_POINTER_DEFAULT_HRESULT(*result, multicastAddress);
+    CHECK_POINTER_DEFAULT_HRESULT(*result, networkInterface);
+
+    this->multicastAddress = multicastAddress->Clone();
+    CHECK_POINTER_HRESULT(*result, this->multicastAddress, *result, E_OUTOFMEMORY);
 
     if (sourceAddress != NULL)
     {
@@ -43,43 +43,10 @@ CMulticastUdpSocketContext::CMulticastUdpSocketContext(HRESULT *result, CIpAddre
       CHECK_POINTER_HRESULT(*result, this->sourceAddress, *result, E_OUTOFMEMORY);
     }
 
-    if (networkInterface != NULL)
-    {
-      this->networkInterface = networkInterface->Clone();
-      CHECK_POINTER_HRESULT(*result, this->networkInterface, *result, E_OUTOFMEMORY);
-    }
+    this->networkInterface = networkInterface->Clone();
+    CHECK_POINTER_HRESULT(*result, this->networkInterface, *result, E_OUTOFMEMORY);
   }
 }
-
-CMulticastUdpSocketContext::CMulticastUdpSocketContext(HRESULT *result, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface, SOCKET socket)
-  : CUdpSocketContext(result, socket)
-{
-  this->multicastAddress = NULL;
-  this->sourceAddress = NULL;
-  this->networkInterface = NULL;
-
-  if ((result != NULL) && (SUCCEEDED(*result)))
-  {
-    if (multicastAddress != NULL)
-    {
-      this->multicastAddress = multicastAddress->Clone();
-      CHECK_POINTER_HRESULT(*result, this->multicastAddress, *result, E_OUTOFMEMORY);
-    }
-
-    if (sourceAddress != NULL)
-    {
-      this->sourceAddress = sourceAddress->Clone();
-      CHECK_POINTER_HRESULT(*result, this->sourceAddress, *result, E_OUTOFMEMORY);
-    }
-
-    if (networkInterface != NULL)
-    {
-      this->networkInterface = networkInterface->Clone();
-      CHECK_POINTER_HRESULT(*result, this->networkInterface, *result, E_OUTOFMEMORY);
-    }
-  }
-}
-
 
 CMulticastUdpSocketContext::~CMulticastUdpSocketContext(void)
 {
@@ -94,6 +61,21 @@ CMulticastUdpSocketContext::~CMulticastUdpSocketContext(void)
 }
 
 /* get methods */
+
+CIpAddress *CMulticastUdpSocketContext::GetMulticastAddress(void)
+{
+  return this->multicastAddress;
+}
+
+CIpAddress *CMulticastUdpSocketContext::GetSourceAddress(void)
+{
+  return this->sourceAddress;
+}
+
+CNetworkInterface *CMulticastUdpSocketContext::GetNetworkInterface(void)
+{
+  return this->networkInterface;
+}
 
 /* set methods */
 

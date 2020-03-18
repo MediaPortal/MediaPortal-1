@@ -42,6 +42,12 @@
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- LOC2 -->
+  <DVBTTuning>
+    <Frequency>538000</Frequency><!-- C29 -->
+    <BandWidth>8</BandWidth>
+    <Offset>167</Offset>
+  </DVBTTuning>
   <!-- PSB1 Scotland -->
   <DVBTTuning>
     <Frequency>522000</Frequency><!-- C27 -->

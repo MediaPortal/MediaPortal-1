@@ -235,15 +235,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
       curl_global_cleanup();
       FREE_MEM_CLASS(ffmpegLogger);
       FREE_MEM_CLASS(staticLogger);
-
-#pragma warning(push)
-      // disable warning: 'ApplicationInfo': was declared deprecated
-      // disable warning: 'HandlerSettings': was declared deprecated
-#pragma warning(disable:4996)
-
       FREE_MEM_CLASS(crashReport);
-
-#pragma warning(pop)
 
 #ifndef _DEBUG
       if (exceptionHandler != NULL)

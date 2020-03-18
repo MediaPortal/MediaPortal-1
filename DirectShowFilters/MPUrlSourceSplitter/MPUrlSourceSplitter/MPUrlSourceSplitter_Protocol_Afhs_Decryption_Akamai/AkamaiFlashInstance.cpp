@@ -113,9 +113,9 @@ CDecryptedDataCollection *CAkamaiFlashInstance::GetDecryptedData(const uint8_t *
   CSocketContext *acceptedConnection = NULL;
 
   // there must be at least one accepted and not closed client connection
-  for (unsigned int i = 0; (i < this->server->GetServers()->Count()); i++)
+  for (unsigned int i = 0; (i < this->server->GetSockets()->Count()); i++)
   {
-    CTcpSocketContext *tcpSocketContext = dynamic_cast<CTcpSocketContext *>(this->server->GetServers()->GetItem(i));
+    CTcpSocketContext *tcpSocketContext = dynamic_cast<CTcpSocketContext *>(this->server->GetSockets()->GetItem(i));
 
     // there must be at least one accepted and not closed client connection
     if (tcpSocketContext->GetAcceptedConnections()->Count() != 0)
@@ -146,7 +146,7 @@ CDecryptedDataCollection *CAkamaiFlashInstance::GetDecryptedData(const uint8_t *
         {
           // set communication port to flash instance
           // all TCP servers are listening on same port, just choose one (first) server
-          result = this->SetTcpCommunicationPort(this->server->GetServers()->GetItem(0)->GetIpAddress()->GetPort());
+          result = this->SetTcpCommunicationPort(this->server->GetSockets()->GetItem(0)->GetIpAddress()->GetPort());
           CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot set communication port with Flash instance, result: 0x%08X", this->instanceName, METHOD_GET_DECRYPTED_DATA_NAME, result));
         }
 
@@ -161,9 +161,9 @@ CDecryptedDataCollection *CAkamaiFlashInstance::GetDecryptedData(const uint8_t *
 
   while (SUCCEEDED(result) && (acceptedConnection == NULL) && (!incomingPendingConnection) && ((GetTickCount() - currentTime) <= COMMUNICATION_MAX_WAIT_TIME))
   {
-    for (unsigned int i = 0; (SUCCEEDED(result) && (!incomingPendingConnection) && (i < this->server->GetServers()->Count())); i++)
+    for (unsigned int i = 0; (SUCCEEDED(result) && (!incomingPendingConnection) && (i < this->server->GetSockets()->Count())); i++)
     {
-      CTcpSocketContext *tcpSocketContext = dynamic_cast<CTcpSocketContext *>(this->server->GetServers()->GetItem(i));
+      CTcpSocketContext *tcpSocketContext = dynamic_cast<CTcpSocketContext *>(this->server->GetSockets()->GetItem(i));
 
       result = tcpSocketContext->IsPendingIncomingConnection();
       incomingPendingConnection = (result == S_FALSE);
@@ -541,13 +541,13 @@ HRESULT CAkamaiFlashInstance::Initialize(void)
   {
     result = this->InitializeTcpServer(COMMUNICATION_START_PORT, COMMUNICATION_STOP_PORT, COMMUNICATION_CLIENT_QUEUE);
 
-    CHECK_CONDITION_HRESULT(result, this->server->GetServers()->Count() > 0, result, E_OUTOFMEMORY);
+    CHECK_CONDITION_HRESULT(result, this->server->GetSockets()->Count() > 0, result, E_OUTOFMEMORY);
   }
 
   if (SUCCEEDED(result))
   {
     // all TCP servers are listening on same port, just choose one (first) server
-    result = this->SetTcpCommunicationPort(this->server->GetServers()->GetItem(0)->GetIpAddress()->GetPort());
+    result = this->SetTcpCommunicationPort(this->server->GetSockets()->GetItem(0)->GetIpAddress()->GetPort());
   }
 
   return result;

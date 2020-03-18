@@ -35,19 +35,6 @@ CTcpSocketContext::CTcpSocketContext(HRESULT *result)
   }
 }
 
-CTcpSocketContext::CTcpSocketContext(HRESULT *result, SOCKET socket)
-  : CSocketContext(result, socket)
-{
-  this->connections = 0;
-  this->acceptedConnections = NULL;
-
-  if ((result != NULL) && (SUCCEEDED(*result)))
-  {
-    this->acceptedConnections = new CSocketContextCollection(result);
-    CHECK_POINTER_HRESULT(*result, this->acceptedConnections, *result, E_OUTOFMEMORY);
-  }
-}
-
 CTcpSocketContext::~CTcpSocketContext(void)
 {
   FREE_MEM_CLASS(this->acceptedConnections);

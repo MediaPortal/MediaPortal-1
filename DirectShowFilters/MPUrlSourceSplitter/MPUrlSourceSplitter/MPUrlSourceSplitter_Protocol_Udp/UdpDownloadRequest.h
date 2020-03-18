@@ -24,11 +24,11 @@
 #define __UDP_DOWNLOAD_REQUEST_DEFINED
 
 #include "DownloadRequest.h"
+#include "Ipv4Header.h"
 
 #define UDP_DOWNLOAD_REQUEST_FLAG_NONE                                DOWNLOAD_REQUEST_FLAG_NONE
 
 #define UDP_DOWNLOAD_REQUEST_FLAG_LAST                                (DOWNLOAD_REQUEST_FLAG_LAST + 0)
-
 
 class CUdpDownloadRequest : public CDownloadRequest
 {
@@ -42,18 +42,45 @@ public:
   // @return : check interval for incoming data (in ms)
   virtual unsigned int GetCheckInterval(void);
 
+  // gets IPV4 header
+  // @return : IPV4 header or NULL if not specified
+  virtual CIpv4Header *GetIpv4Header(void);
+
+  // gets IGMP packet interval (in ms)
+  // @return : IGMP packet interval (in ms)
+  virtual unsigned int GetIgmpInterval(void);
+
   /* set methods */
 
   // sets receive data check interval (in ms)
   // @param checkInterval : the check interval for received data (in ms)
   virtual void SetCheckInterval(unsigned int checkInterval);
 
+  // sets IPV4 header
+  // @param header : the IPV4 header
+  // @result : S_OK if successful, error code otherwise
+  virtual HRESULT SetIpv4Header(CIpv4Header *header);
+
+  // sets IGMP packet interval (in ms)
+  // @param checkInterval : the IGMP packet interval (in ms)
+  virtual void SetIgmpInterval(unsigned int igmpInterval);
+
   /* other methods */
+
+  // tests if UDP request have to use raw socket
+  // @return : true if raw socket have to be used, false otherwise
+  virtual bool IsRawSocket(void);
 
 protected:
 
   // holds check interval for incoming data
   unsigned int checkInterval;
+
+  // specific IPV4 fields
+  CIpv4Header *ipv4Header;
+
+  // holds IGMP interval
+  unsigned int igmpInterval;
 
   /* methods */
 
