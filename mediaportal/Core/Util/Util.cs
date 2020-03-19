@@ -997,7 +997,7 @@ namespace MediaPortal.Util
             string shareDir = xmlreader.GetValueAsString("movies", sharePath, "");
             // Get item dir
             string itemDir = string.Empty;
-            if (!item.IsRemote)
+            if (!item.IsRemote && item.Path != null && !item.Path.Contains(@"://"))
             {
               itemDir = (GetParentDirectory(item.Path));
             }

@@ -565,7 +565,7 @@ namespace MediaPortal.Picture.Database
         try
         {
           result = m_db.Execute(strSQL);
-          if (result != null)
+          if (result != null && result.Rows.Count > 0)
           {
             Count = DatabaseUtility.GetAsInt(result, 0, 0);
           }
