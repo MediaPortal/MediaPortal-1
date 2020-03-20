@@ -466,108 +466,122 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
           request->SetNetworkInterfaceName(this->configuration->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
           CM3u8StreamFragment *fragment = this->streamFragments->GetItem(this->streamFragmentToDownload);
-          // clear fragment buffer
-          fragment->GetBuffer()->ClearBuffer();
-
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: starting receiving data for fragment: %u, timestamp: %lld, original timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, fragment->GetFragment(), fragment->GetFragmentTimestamp() - this->streamFragmentZeroTimestamp, fragment->GetFragmentTimestamp());
-
-          CHECK_CONDITION_HRESULT(result, request->SetUrl(fragment->GetUri()), result, E_OUTOFMEMORY);
-          CHECK_CONDITION_HRESULT(result, request->SetCookie(this->configuration->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL)), result, E_OUTOFMEMORY);
-          request->SetHttpVersion(this->configuration->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
-          request->SetIgnoreContentLength((this->configuration->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-          CHECK_CONDITION_HRESULT(result, request->SetReferer(this->configuration->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL)), result, E_OUTOFMEMORY);
-          CHECK_CONDITION_HRESULT(result, request->SetUserAgent(this->configuration->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL)), result, E_OUTOFMEMORY);
-
-          if (this->configuration->GetValueBool(PARAMETER_NAME_HTTP_SERVER_AUTHENTICATE, true, HTTP_SERVER_AUTHENTICATE_DEFAULT))
+          if (fragment == NULL)
           {
-            const wchar_t *serverUserName = this->configuration->GetValue(PARAMETER_NAME_HTTP_SERVER_USER_NAME, true, NULL);
-            const wchar_t *serverPassword = this->configuration->GetValue(PARAMETER_NAME_HTTP_SERVER_PASSWORD, true, NULL);
-
-            CHECK_POINTER_HRESULT(result, serverUserName, result, E_AUTH_NO_SERVER_USER_NAME);
-            CHECK_POINTER_HRESULT(result, serverUserName, result, E_AUTH_NO_SERVER_PASSWORD);
-
-            CHECK_CONDITION_HRESULT(result, request->SetAuthentication(true, serverUserName, serverPassword), result, E_OUTOFMEMORY);
+            result = E_M3U8_NOT_VALID_ITEM_FOUND;
           }
-
-          if (this->configuration->GetValueBool(PARAMETER_NAME_HTTP_PROXY_SERVER_AUTHENTICATE, true, HTTP_PROXY_SERVER_AUTHENTICATE_DEFAULT))
+          else
           {
-            const wchar_t *proxyServer = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER, true, NULL);
-            const wchar_t *proxyServerUserName = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER_USER_NAME, true, NULL);
-            const wchar_t *proxyServerPassword = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER_PASSWORD, true, NULL);
-            unsigned short proxyServerPort = (unsigned short)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_PROXY_SERVER_PORT, true, HTTP_PROXY_SERVER_PORT_DEFAULT);
-            unsigned int proxyServerType = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_PROXY_SERVER_TYPE, true, HTTP_PROXY_SERVER_TYPE_DEFAULT);
+            // clear fragment buffer
+            fragment->GetBuffer()->ClearBuffer();
 
-            CHECK_POINTER_HRESULT(result, proxyServer, result, E_AUTH_NO_PROXY_SERVER);
-            CHECK_POINTER_HRESULT(result, proxyServerUserName, result, E_AUTH_NO_SERVER_USER_NAME);
-            CHECK_POINTER_HRESULT(result, proxyServerPassword, result, E_AUTH_NO_SERVER_PASSWORD);
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: starting receiving data for fragment: %u, timestamp: %lld, original timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, fragment->GetFragment(), fragment->GetFragmentTimestamp() - this->streamFragmentZeroTimestamp, fragment->GetFragmentTimestamp());
 
-            CHECK_CONDITION_HRESULT(result, request->SetProxyAuthentication(true, proxyServer, proxyServerPort, proxyServerType, proxyServerUserName, proxyServerPassword), result, E_OUTOFMEMORY);
-          }
-          
-          if ((fragment->GetByteRangeOffset() != UINT_MAX) && (fragment->GetByteRangeLength() != UINT_MAX))
-          {
-            request->SetStartPosition((uint64_t)fragment->GetByteRangeOffset());
-            request->SetEndPosition((uint64_t)(fragment->GetByteRangeOffset() + fragment->GetByteRangeLength() - 1));
-          }
+            CHECK_CONDITION_HRESULT(result, request->SetUrl(fragment->GetUri()), result, E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, request->SetCookie(this->configuration->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL)), result, E_OUTOFMEMORY);
+            request->SetHttpVersion(this->configuration->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
+            request->SetIgnoreContentLength((this->configuration->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+            CHECK_CONDITION_HRESULT(result, request->SetReferer(this->configuration->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL)), result, E_OUTOFMEMORY);
+            CHECK_CONDITION_HRESULT(result, request->SetUserAgent(this->configuration->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL)), result, E_OUTOFMEMORY);
 
-          if (SUCCEEDED(this->mainCurlInstance->LockCurlInstance(this)))
-          {
-            // apply cookies
-
-            unsigned int cookiesCount = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_COOKIES_COUNT, true, 0);
-
-            if (cookiesCount != 0)
+            if (this->configuration->GetValueBool(PARAMETER_NAME_HTTP_SERVER_AUTHENTICATE, true, HTTP_SERVER_AUTHENTICATE_DEFAULT))
             {
-              CParameterCollection *cookies = new CParameterCollection(&result);
-              CHECK_POINTER_HRESULT(result, cookies, result, E_OUTOFMEMORY);
+              const wchar_t *serverUserName = this->configuration->GetValue(PARAMETER_NAME_HTTP_SERVER_USER_NAME, true, NULL);
+              const wchar_t *serverPassword = this->configuration->GetValue(PARAMETER_NAME_HTTP_SERVER_PASSWORD, true, NULL);
 
-              for (unsigned int i = 0; (SUCCEEDED(result) && (i < cookiesCount)); i++)
-              {
-                wchar_t *httpCookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
-                CHECK_POINTER_HRESULT(result, httpCookieName, result, E_OUTOFMEMORY);
+              CHECK_POINTER_HRESULT(result, serverUserName, result, E_AUTH_NO_SERVER_USER_NAME);
+              CHECK_POINTER_HRESULT(result, serverUserName, result, E_AUTH_NO_SERVER_PASSWORD);
 
-                if (SUCCEEDED(result))
-                {
-                  const wchar_t *cookieValue = this->configuration->GetValue(httpCookieName, true, NULL);
-                  CHECK_POINTER_HRESULT(result, cookieValue, result, E_OUTOFMEMORY);
-
-                  CHECK_CONDITION_HRESULT(result, cookies->Add(L"", cookieValue), result, E_OUTOFMEMORY);
-                }
-
-                FREE_MEM(httpCookieName);
-              }
-
-              CHECK_CONDITION_HRESULT(result, this->mainCurlInstance->AddCookies(cookies), result, E_OUTOFMEMORY);
-              FREE_MEM_CLASS(cookies);
-
-              // clear set cookies to avoid adding same cookies
-              for (unsigned int i = 0; (SUCCEEDED(result) && (i < cookiesCount)); i++)
-              {
-                wchar_t *httpCookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
-                CHECK_POINTER_HRESULT(result, httpCookieName, result, E_OUTOFMEMORY);
-
-                CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->configuration->Remove(httpCookieName, true));
-                FREE_MEM(httpCookieName);
-              }
-
-              this->configuration->Remove(PARAMETER_NAME_HTTP_COOKIES_COUNT, true);
+              CHECK_CONDITION_HRESULT(result, request->SetAuthentication(true, serverUserName, serverPassword), result, E_OUTOFMEMORY);
             }
 
-            if (SUCCEEDED(this->mainCurlInstance->Initialize(request)))
+            if (this->configuration->GetValueBool(PARAMETER_NAME_HTTP_PROXY_SERVER_AUTHENTICATE, true, HTTP_PROXY_SERVER_AUTHENTICATE_DEFAULT))
             {
-              // all parameters set
-              // start receiving data
+              const wchar_t *proxyServer = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER, true, NULL);
+              const wchar_t *proxyServerUserName = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER_USER_NAME, true, NULL);
+              const wchar_t *proxyServerPassword = this->configuration->GetValue(PARAMETER_NAME_HTTP_PROXY_SERVER_PASSWORD, true, NULL);
+              unsigned short proxyServerPort = (unsigned short)this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_PROXY_SERVER_PORT, true, HTTP_PROXY_SERVER_PORT_DEFAULT);
+              unsigned int proxyServerType = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_PROXY_SERVER_TYPE, true, HTTP_PROXY_SERVER_TYPE_DEFAULT);
 
-              if (SUCCEEDED(this->mainCurlInstance->StartReceivingData()))
+              CHECK_POINTER_HRESULT(result, proxyServer, result, E_AUTH_NO_PROXY_SERVER);
+              CHECK_POINTER_HRESULT(result, proxyServerUserName, result, E_AUTH_NO_SERVER_USER_NAME);
+              CHECK_POINTER_HRESULT(result, proxyServerPassword, result, E_AUTH_NO_SERVER_PASSWORD);
+
+              CHECK_CONDITION_HRESULT(result, request->SetProxyAuthentication(true, proxyServer, proxyServerPort, proxyServerType, proxyServerUserName, proxyServerPassword), result, E_OUTOFMEMORY);
+            }
+
+            if ((fragment->GetByteRangeOffset() != UINT_MAX) && (fragment->GetByteRangeLength() != UINT_MAX))
+            {
+              request->SetStartPosition((uint64_t)fragment->GetByteRangeOffset());
+              request->SetEndPosition((uint64_t)(fragment->GetByteRangeOffset() + fragment->GetByteRangeLength() - 1));
+            }
+
+            if (SUCCEEDED(this->mainCurlInstance->LockCurlInstance(this)))
+            {
+              // apply cookies
+
+              unsigned int cookiesCount = this->configuration->GetValueUnsignedInt(PARAMETER_NAME_HTTP_COOKIES_COUNT, true, 0);
+
+              if (cookiesCount != 0)
               {
-                this->mainCurlInstance->SetConnectionState(Opening);
+                CParameterCollection *cookies = new CParameterCollection(&result);
+                CHECK_POINTER_HRESULT(result, cookies, result, E_OUTOFMEMORY);
 
-                this->streamFragmentDownloading = this->streamFragmentToDownload;
-                this->streamFragmentToDownload = UINT_MAX;
+                for (unsigned int i = 0; (SUCCEEDED(result) && (i < cookiesCount)); i++)
+                {
+                  wchar_t *httpCookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
+                  CHECK_POINTER_HRESULT(result, httpCookieName, result, E_OUTOFMEMORY);
+
+                  if (SUCCEEDED(result))
+                  {
+                    const wchar_t *cookieValue = this->configuration->GetValue(httpCookieName, true, NULL);
+                    CHECK_POINTER_HRESULT(result, cookieValue, result, E_OUTOFMEMORY);
+
+                    CHECK_CONDITION_HRESULT(result, cookies->Add(L"", cookieValue), result, E_OUTOFMEMORY);
+                  }
+
+                  FREE_MEM(httpCookieName);
+                }
+
+                CHECK_CONDITION_HRESULT(result, this->mainCurlInstance->AddCookies(cookies), result, E_OUTOFMEMORY);
+                FREE_MEM_CLASS(cookies);
+
+                // clear set cookies to avoid adding same cookies
+                for (unsigned int i = 0; (SUCCEEDED(result) && (i < cookiesCount)); i++)
+                {
+                  wchar_t *httpCookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
+                  CHECK_POINTER_HRESULT(result, httpCookieName, result, E_OUTOFMEMORY);
+
+                  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->configuration->Remove(httpCookieName, true));
+                  FREE_MEM(httpCookieName);
+                }
+
+                this->configuration->Remove(PARAMETER_NAME_HTTP_COOKIES_COUNT, true);
+              }
+
+              if (SUCCEEDED(this->mainCurlInstance->Initialize(request)))
+              {
+                // all parameters set
+                // start receiving data
+
+                if (SUCCEEDED(this->mainCurlInstance->StartReceivingData()))
+                {
+                  this->mainCurlInstance->SetConnectionState(Opening);
+
+                  this->streamFragmentDownloading = this->streamFragmentToDownload;
+                  this->streamFragmentToDownload = UINT_MAX;
+                }
+                else
+                {
+                  this->mainCurlInstance->SetConnectionState(OpeningFailed);
+
+                  // we must unlock CURL instance, because we don't use it more
+                  this->mainCurlInstance->UnlockCurlInstance(this);
+                }
               }
               else
               {
-                this->mainCurlInstance->SetConnectionState(OpeningFailed);
+                this->mainCurlInstance->SetConnectionState(InitializeFailed);
 
                 // we must unlock CURL instance, because we don't use it more
                 this->mainCurlInstance->UnlockCurlInstance(this);
@@ -576,15 +590,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
             else
             {
               this->mainCurlInstance->SetConnectionState(InitializeFailed);
-
-              // we must unlock CURL instance, because we don't use it more
-              this->mainCurlInstance->UnlockCurlInstance(this);
+              this->logger->Log(LOGGER_WARNING, L"%s: %s: cannot lock CURL instance, owner: 0x%p, lock count: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetOwner(), this->mainCurlInstance->GetOwnerLockCount());
             }
-          }
-          else
-          {
-            this->mainCurlInstance->SetConnectionState(InitializeFailed);
-            this->logger->Log(LOGGER_WARNING, L"%s: %s: cannot lock CURL instance, owner: 0x%p, lock count: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetOwner(), this->mainCurlInstance->GetOwnerLockCount());
           }
         }
 
