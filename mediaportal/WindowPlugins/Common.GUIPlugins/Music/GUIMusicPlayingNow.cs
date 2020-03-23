@@ -1200,6 +1200,18 @@ namespace MediaPortal.GUI.Music
         Log.Debug("GUIMusicPlayingNow: Calling Last.FM to get similar Tracks");
         tracks = LastFMLibrary.GetSimilarTracks(tag.Title, tag.Artist);
       }
+      catch (LastFMException ex)
+      {
+        if (ex.LastFMError == MediaPortal.LastFM.LastFMException.LastFMErrorCode.InvalidParameters && ex.Message == "Track not found")
+        {
+          Log.Debug("LastFMException {0}", ex.Message);
+        }
+        else
+        {
+          Log.Error("LastFMException {0}", ex.Message);
+        }
+        return;
+      }
       catch (Exception ex)
       {
         Log.Error("Error getting similar tracks in now playing");
