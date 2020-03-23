@@ -216,11 +216,10 @@ HRESULT CMPUrlSourceSplitter_Parser_Mshs::GetParserResult(void)
                       if (SUCCEEDED(this->parserResult))
                       {
                         // add base url parameter
-                        wchar_t *baseUrl = GetBaseUrl(this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
+                        const wchar_t *baseUrl = this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL);
                         CHECK_CONDITION_HRESULT(this->parserResult, baseUrl, this->parserResult, E_OUTOFMEMORY);
 
                         CHECK_CONDITION_HRESULT(this->parserResult, this->connectionParameters->Add(PARAMETER_NAME_MSHS_BASE_URL, baseUrl), this->parserResult, E_OUTOFMEMORY);
-                        FREE_MEM(baseUrl);
                       }
 
                       if (SUCCEEDED(this->parserResult))

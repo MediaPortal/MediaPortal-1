@@ -369,7 +369,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
 
                 if (SUCCEEDED(result))
                 {
-                  wchar_t *baseUrl = GetBaseUrl(this->configuration->GetValue(PARAMETER_NAME_M3U8_PLAYLIST_URL, true, NULL));
+                  const wchar_t *baseUrl = this->configuration->GetValue(PARAMETER_NAME_M3U8_PLAYLIST_URL, true, NULL);
 
                   CM3u8StreamFragmentCollection *parsedStreamFragments = this->GetStreamFragmentsFromMediaPlaylist(baseUrl, tempPlaylist, this->streamFragments);
                   CHECK_POINTER_HRESULT(result, parsedStreamFragments, result, E_M3U8_CANNOT_GET_STREAM_FRAGMENTS_FROM_MEDIA_PLAYLIST);
@@ -382,7 +382,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
                   this->flags|= ((fragment != NULL) && fragment->IsEndOfStream()) ? PROTOCOL_PLUGIN_FLAG_NONE : PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_DETECTED;
 
                   FREE_MEM_CLASS(parsedStreamFragments);
-                  FREE_MEM(baseUrl);
                 }
 
                 FREE_MEM_CLASS(tempPlaylist);
@@ -763,7 +762,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
 
                   if (SUCCEEDED(result))
                   {
-                    wchar_t *baseUrl = GetBaseUrl(this->configuration->GetValue(PARAMETER_NAME_M3U8_PLAYLIST_URL, true, NULL));
+                    const wchar_t *baseUrl = this->configuration->GetValue(PARAMETER_NAME_M3U8_PLAYLIST_URL, true, NULL);
 
                     CM3u8StreamFragmentCollection *parsedStreamFragments = this->GetStreamFragmentsFromMediaPlaylist(baseUrl, tempPlaylist, this->streamFragments);
                     CHECK_POINTER_HRESULT(result, parsedStreamFragments, result, E_M3U8_CANNOT_GET_STREAM_FRAGMENTS_FROM_MEDIA_PLAYLIST);
@@ -779,7 +778,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
                     }
 
                     FREE_MEM_CLASS(parsedStreamFragments);
-                    FREE_MEM(baseUrl);
                   }
 
                   FREE_MEM_CLASS(tempPlaylist);

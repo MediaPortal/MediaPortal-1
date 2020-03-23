@@ -28,58 +28,6 @@
 
 extern void ZeroURL(URL_COMPONENTS *url);
 
-// gets base URL without last '/'
-// @param url : URL to get base url
-// @return : base URL or NULL if error
-wchar_t *GetBaseUrl(const wchar_t *url)
-{
-  wchar_t *result = NULL;
-
-  ALLOC_MEM_DEFINE_SET(urlComponents, URL_COMPONENTS, 1, 0);
-  if ((urlComponents != NULL) && (url != NULL))
-  {
-    ZeroURL(urlComponents);
-    urlComponents->dwStructSize = sizeof(URL_COMPONENTS);
-
-    if (InternetCrackUrl(url, 0, 0, urlComponents))
-    {
-      // if URL path is not specified, than whole URL is base URL
-      if (urlComponents->dwUrlPathLength != 0)
-      {
-        wchar_t *temp = NULL;
-        unsigned int tempLength = wcslen(url) + 1;
-
-        if (urlComponents->dwExtraInfoLength != 0)
-        {
-          // there is some extra information, ignore it
-          tempLength -= urlComponents->dwExtraInfoLength;
-        }
-
-        temp = ALLOC_MEM_SET(temp, wchar_t, tempLength, 0);
-        if ((temp != NULL) && (tempLength != 0))
-        {
-          wmemcpy(temp, url, tempLength - 1);
-
-          // find last '/'
-          // before it is base URL
-          const wchar_t *last = wcsrchr(temp, L'/');
-          unsigned int length = (last - temp);
-
-          result = ALLOC_MEM_SET(result, wchar_t, (length + 1), 0);
-          if (result != NULL)
-          {
-            wmemcpy(result, temp, length);
-          }
-        }
-        FREE_MEM(temp);
-      }
-    }
-  }
-  FREE_MEM(urlComponents);
-
-  return result;
-}
-
 wchar_t *GetAdditionalParameters(const wchar_t *url)
 {
   wchar_t *result = NULL;
@@ -168,21 +116,6 @@ wchar_t *FormatAbsoluteUrl(const wchar_t *baseUrl, const wchar_t *relativeUrl)
       InternetCombineUrlW(baseUrl, relativeUrl, result, &len, ICU_NO_ENCODE);
     }
   }
-
-  return result;
-}
-
-// gets absolute base URL combined from base URL and relative URL
-// @param baseUrl : base URL for combining, URL have to be without last '/'
-// @param relativeUrl : relative URL for combinig, URL have to be without start '/'
-// @return : absolute base URL or NULL if error
-wchar_t *FormatAbsoluteBaseUrl(const wchar_t *baseUrl, const wchar_t *relativeUrl)
-{
-  wchar_t *result = NULL;
-  wchar_t *absoluteUrl = FormatAbsoluteUrl(baseUrl, relativeUrl);
-
-  result = GetBaseUrl(absoluteUrl);
-  FREE_MEM(absoluteUrl);
 
   return result;
 }

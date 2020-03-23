@@ -23,11 +23,6 @@
 #ifndef __URL_DEFINED
 #define __URL_DEFINED
 
-// gets base URL without last '/'
-// @param url : URL to get base url
-// @return : base URL or NULL if error
-wchar_t *GetBaseUrl(const wchar_t *url);
-
 // gets additional parameters from url
 // @param url : URL to get additional parameters
 // @return : additional parameters or NULL
@@ -49,12 +44,6 @@ bool IsAbsoluteUrl(const wchar_t *url);
 // @param relativeUrl : relative URL for combinig
 // @return : absolute URL or NULL if error
 wchar_t *FormatAbsoluteUrl(const wchar_t *baseUrl, const wchar_t *relativeUrl);
-
-// gets absolute base URL combined from base URL and relative URL
-// @param baseUrl : base URL for combining, URL have to be without last '/'
-// @param relativeUrl : relative URL for combinig, URL have to be without start '/'
-// @return : absolute base URL or NULL if error
-wchar_t *FormatAbsoluteBaseUrl(const wchar_t *baseUrl, const wchar_t *relativeUrl);
 
 // replaces schema in url with specified schema
 // @param url : the URL to replace schema

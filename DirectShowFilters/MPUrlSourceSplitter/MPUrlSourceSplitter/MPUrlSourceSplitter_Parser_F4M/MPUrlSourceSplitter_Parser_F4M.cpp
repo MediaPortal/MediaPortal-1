@@ -195,7 +195,7 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
 
                       if (SUCCEEDED(this->parserResult))
                       {
-                        wchar_t *baseUrl = GetBaseUrl(this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
+                        const wchar_t *baseUrl = this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL);
                         CHECK_POINTER_HRESULT(this->parserResult, baseUrl, this->parserResult, E_OUTOFMEMORY);
 
                         CF4MBootstrapInfoCollection *bootstrapInfoCollection = new CF4MBootstrapInfoCollection(&this->parserResult);
@@ -284,8 +284,7 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
                           {
                             if (!IsNullOrEmptyOrWhitespace(manifest->GetBaseUrl()->GetBaseUrl()))
                             {
-                              FREE_MEM(baseUrl);
-                              baseUrl = GetBaseUrl(manifest->GetBaseUrl()->GetBaseUrl());
+                              baseUrl = manifest->GetBaseUrl()->GetBaseUrl();
 
                               CHECK_CONDITION_HRESULT(this->parserResult, !IsNullOrEmpty(baseUrl), this->parserResult, E_F4M_BASE_URL_NULL_OR_EMPTY);
 
@@ -463,7 +462,6 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::GetParserResult(void)
                           }
                         }
 
-                        FREE_MEM(baseUrl);
                         FREE_MEM_CLASS(bootstrapInfoCollection);
                         FREE_MEM_CLASS(mediaCollection);
                       }
