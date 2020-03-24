@@ -1,0 +1,15 @@
+Steps to take to release a new version
+1: increase version in ..\MPUrlSourceSplitter\MPUrlSourceSplitter\Version.h
+2: do a release build of the "MP Url Source Splitter" folder in the Filters.sln
+3: Edit the MediaPortalIptvFilterAndUrlSourceSplitter.xmp2 (set version to same as in version.h, fill changelog, set releasedate to today)
+4: save and build
+5: delete MPUrlSourceSplitter.log
+6: install generated mpe1 and test
+7: open MPUrlSourceSplitter.log to get the full version number
+8: Edit the MediaPortalIptvFilterAndUrlSourceSplitter.xmp2 again, fill in full version number, save, build and generate update.xml
+9: goto https://www.team-mediaportal.com/extensions/movies-videos/mediaportal-iptv-filter-and-url-source-splitter and edit page
+10: fill in changelog
+11: upload previous version as Archived File
+12: submit and get the url of that archived file (https://www.team-mediaportal.com/index.php?option=com_mtree&task=att_download&link_id=327&cf_id=41)
+13: change OnlineLocation of previous version in update.xml to the archived file url
+14: Edit page again, now setting the version, uploading the new update.xml and the new MPE1
