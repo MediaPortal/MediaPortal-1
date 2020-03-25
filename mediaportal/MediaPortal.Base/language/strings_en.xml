@@ -1652,6 +1652,7 @@
     <String id="9038">Location</String>
     <String id="9039">Address</String>
     <String id="9040">Histogram</String>
+    <String id="9041">Metadata</String>
     <!-- Map URL -->
     <!--String id="9090">https://tms.visicom.ua/2.0.0/planet3/base/15/{1},{0}/800/800.png?en</String-->
     <!--String id="9090">https://osm-static-maps.herokuapp.com/?geojson=[{{"type":"Point","coordinates":[{1},{0}]}}]&amp;width=800&amp;height=800&amp;type=png&amp;attribution=Team Mediaportal</String-->
