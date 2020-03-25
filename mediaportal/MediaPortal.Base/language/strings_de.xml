@@ -716,7 +716,7 @@
 		<String id="783">Um 180° drehen</String>
 		<String id="784">Um 270° drehen</String>
 		<String id="789"></String>
-    <String id="790"></String>
+		<String id="790"></String>
 		<String id="791">Cover-Flow</String>
 		<String id="792">Ansichts-Menü</String>
 		<String id="798">niedrig</String>
@@ -1092,18 +1092,18 @@
 		<String id="1319">Geänderte Untertiteldatei speichern?</String>
 		<String id="1320">{0} als {1} &#10;</String>
 		<String id="1321">Automatische Auswahl des Decoders</String>
-    <String id="1322">Source-Filter erzwingen</String>
-    <String id="1323">Video-Codecs für .TS-Dateien</String>
-    <String id="1324">Audio-Auswahl überschreiben und Standard verwenden</String>
-    <String id="1325">Audio/Untertitel-Stream aus LAV-Splitter übernehmen</String>
+		<String id="1322">Source-Filter erzwingen</String>
+		<String id="1323">Video-Codecs für .TS-Dateien</String>
+		<String id="1324">Audio-Auswahl überschreiben und Standard verwenden</String>
+		<String id="1325">Audio/Untertitel-Stream aus LAV-Splitter übernehmen</String>
 		<String id="1331">Filmsammlung und Filme</String>
-    <String id="1332">Nur Filmsammlung</String>
-    <String id="1333">Diesen Film zu Filmsammlung hinzufügen</String>
-    <String id="1334">Diesen Film aus Filmsammlung löschen</String>
-    <String id="1335">Cover aktualisieren</String>
-    <String id="1337">Neue Filmsammlung anlegen</String>
-    <String id="1338">Diese Filmsammlung löschen</String>
-    <String id="1336">Bibliothek</String>
+		<String id="1332">Nur Filmsammlung</String>
+		<String id="1333">Diesen Film zu Filmsammlung hinzufügen</String>
+		<String id="1334">Diesen Film aus Filmsammlung löschen</String>
+		<String id="1335">Cover aktualisieren</String>
+		<String id="1337">Neue Filmsammlung anlegen</String>
+		<String id="1338">Diese Filmsammlung löschen</String>
+		<String id="1336">Bibliothek</String>
 		<String id="1440" prefix="Mein ">Videotext</String>
 		<String id="1441">Videotext</String>
 		<String id="1442">Textlauf horizontal</String>
@@ -1334,10 +1334,12 @@
 		<String id="2145">Aktuelle Wiedergabeliste verwenden</String>
 		<String id="2146">Nicht genug Platz auf der CD</String>
 		<String id="2147">Nicht genug Platz auf der DVD</String>
-    <String id="2162">Sender löschen</String>
-    <String id="2163">Sender zu einer Gruppe hinzufügen</String>
-    <String id="2164">Sender aus Gruppe entfernen</String>
-    <String id="2166">Alle Aufnahmen in diesem Ordner löschen?</String>
+		<String id="2162">Sender löschen</String>
+		<String id="2163">Sender zu einer Gruppe hinzufügen</String>
+		<String id="2164">Sender aus Gruppe entfernen</String>
+		<String id="2166">Alle Aufnahmen in diesem Ordner löschen?</String>
+		<String id="2167">Schlüsselwort</String>
+		<String id="2168">EXIF aktualisieren</String>
 		<String id="2200" prefix="Mein ">Explorer</String>
 		<String id="2201">Quelle wählen</String>
 		<String id="2202">Ziel wählen</String>
@@ -1579,18 +1581,61 @@
 		<String id="8031">Prüfe auf neue Mails</String>
 		<String id="8033">Fortschritt</String>
 		<String id="8034">Zeige HTML</String>
-		<String id="9000">Bildgröße: </String>
-		<String id="9001">Auflösung: </String>
-		<String id="9002">Blitz: </String>
-		<String id="9003">Fokustyp: </String>
-		<String id="9004">EV +-: </String>
-		<String id="9005">Verschluss: </String>
-		<String id="9006">Foto-Datum: </String>
-		<String id="9007">Blende: </String>
-		<String id="9008">Belichtung: </String>
-		<String id="9009">Kamera: </String>
-		<String id="9010">Hersteller: </String>
-		<String id="9011">Kommentar: </String>
+		<!-- EXIF -->
+		<String id="9000">Bildabmessungen</String>
+		<String id="9001">Auflösung</String>
+		<String id="9002">Blitz</String>
+		<String id="9003">Messmodus</String>
+		<String id="9004">Kompensation</String>
+		<String id="9005">Verschlussgeschwindigkeit</String>
+		<String id="9006">Aufnahmedatum</String>
+		<String id="9007">F-Stop</String>
+		<String id="9008">Belichtungszeit</String>
+		<String id="9009">Kameramodell</String>
+		<String id="9010">Marke Ausrüstung</String>
+		<String id="9011">Anwendungsname</String>
+		<String id="9012">Schlüsselwörter</String>
+		<String id="9013">Ländercode</String>
+		<String id="9014">Land</String>
+		<String id="9015">Provinz/Bundesland</String>
+		<String id="9016">Stadt</String>
+		<String id="9017">Unterstandort</String>
+		<String id="9018">Kommentar</String>
+		<String id="9019">Autor</String>
+		<String id="9020">Copyright</String>
+		<String id="9021">Ausrichtung</String>
+		<String id="9022">ISO</String>
+		<String id="9023">Belichtungsprogramm</String>
+		<String id="9024">Belichtungsmodus</String>
+		<String id="9025">Belichtungskompensation</String>
+		<String id="9026">Erfassungsmethode</String>
+		<String id="9027">Szenentyp</String>
+		<String id="9028">Szenenaufzeichnungstyp</String>
+		<String id="9029">Modus Weißabgleich</String>
+		<String id="9030">Objektivmodell</String>
+		<String id="9031">Fokuslänge</String>
+		<String id="9032">Fokuslänge (35mm-Film)</String>
+		<String id="9033">By-Line</String>
+		<String id="9034">Copyright-Hinweis</String>
+		<String id="9035">Breitengrad</String>
+		<String id="9036">Längengrad</String>
+		<String id="9037">Höhe</String>
+		<String id="9038">Standort</String>
+		<String id="9039">Adresse</String>
+		<String id="9040">Histogramm</String>
+		<String id="9041">Metadaten</String>
+		<!-- Map URL -->
+		<String id="9090">https://maps.wikimedia.org/img/osm-intl,19,{0},{1},800x800.png</String>
+		<String id="9091">https://nominatim.openstreetmap.org/reverse?format=json&amp;lat={0}&amp;lon={1}&amp;zoom=18&amp;addressdetails=1&amp;accept-language={2}</String>
+		<!-- Location -->
+		<String id="9093">N</String>
+		<String id="9094">S</String>
+		<String id="9095">W</String>
+		<String id="9096">O</String>
+		<String id="9097">Meereshöhe</String>
+		<String id="9098">Meereshöhe {0} Meter</String>
+		<String id="9099">Unterhalb des Meeresspiegels {0} Meter</String>
+		<!-- EXIF -->
 		<String id="9100" prefix="Mein">MiniDisplay</String>
 		<String id="9101">Das Plugin ist nicht konfiguriert.</String>
 		<String id="9102">Bitte starten sie zuerst die MediaPortal Konfiguration!</String>
@@ -1701,9 +1746,9 @@
 		<String id="14016">Downloads</String>
 		<String id="14017">Bewertung</String>
 		<String id="14018">Aktualisierung installieren</String>
-        <String id="15001">Informationen zum Künstler</String>
-        <String id="15002">Informationen zum Album</String>
-        <String id="15003">Einfacher Modus</String>
+		<String id="15001">Informationen zum Künstler</String>
+		<String id="15002">Informationen zum Album</String>
+		<String id="15003">Einfacher Modus</String>
 		<String id="16001">Partymix</String>
 		<String id="19001" prefix="Mein ">Tetris</String>
 		<String id="19002">Neues Spiel</String>

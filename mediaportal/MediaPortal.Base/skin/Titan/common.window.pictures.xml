@@ -19,9 +19,9 @@
 		<type>image</type>
 		<id>1</id>
 		<posX>10</posX>
-		<posY>72</posY>
+		<posY>102</posY>
 		<width>1903</width>
-		<height>970</height>
+		<height>940</height>
 		<texture>panel_thumbs_xl.png</texture>
 		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>

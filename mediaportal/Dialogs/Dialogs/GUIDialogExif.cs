@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,9 +19,12 @@
 #endregion
 
 using System.IO;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
 using MediaPortal.Picture.Database;
+using MediaPortal.Util;
+
 using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.Dialogs
@@ -33,19 +36,19 @@ namespace MediaPortal.Dialogs
   {
     [SkinControl(2)] protected GUILabelControl lblHeading = null;
     [SkinControl(3)] protected GUIImage imgPicture = null;
-    [SkinControl(20)] protected GUILabelControl lblImgTitle = null;
-    [SkinControl(21)] protected GUILabelControl lblImgDimensions = null;
-    [SkinControl(22)] protected GUILabelControl lblResolutions = null;
-    [SkinControl(23)] protected GUIFadeLabel lblFlash = null;
-    [SkinControl(24)] protected GUIFadeLabel lblMeteringMode = null;
-    [SkinControl(25)] protected GUIFadeLabel lblExposureCompensation = null;
-    [SkinControl(26)] protected GUIFadeLabel lblShutterSpeed = null;
-    [SkinControl(27)] protected GUILabelControl lblDateTakenLabel = null;
-    [SkinControl(28)] protected GUILabelControl lblFstop = null;
-    [SkinControl(29)] protected GUILabelControl lblExposureTime = null;
-    [SkinControl(30)] protected GUIFadeLabel lblCameraModel = null;
-    [SkinControl(31)] protected GUIFadeLabel lblEquipmentMake = null;
-    [SkinControl(32)] protected GUILabelControl lblViewComments = null;
+    [SkinControl(20)] protected GUIControl lblImgTitle = null;
+    [SkinControl(21)] protected GUIControl lblImgDimensions = null;
+    [SkinControl(22)] protected GUIControl lblResolutions = null;
+    [SkinControl(23)] protected GUIControl lblFlash = null;
+    [SkinControl(24)] protected GUIControl lblMeteringMode = null;
+    [SkinControl(25)] protected GUIControl lblExposureCompensation = null;
+    [SkinControl(26)] protected GUIControl lblShutterSpeed = null;
+    [SkinControl(27)] protected GUIControl lblDateTakenLabel = null;
+    [SkinControl(28)] protected GUIControl lblFstop = null;
+    [SkinControl(29)] protected GUIControl lblExposureTime = null;
+    [SkinControl(30)] protected GUIControl lblCameraModel = null;
+    [SkinControl(31)] protected GUIControl lblEquipmentMake = null;
+    [SkinControl(32)] protected GUIControl lblViewComments = null;
 
     private int m_iTextureWidth, m_iTextureHeight;
     private string fileName;
@@ -108,11 +111,28 @@ namespace MediaPortal.Dialogs
       }
     }
 
-
     public string FileName
     {
       get { return fileName; }
       set { fileName = value; }
+    }
+
+    private void SetLabel(GUIControl control, string value, bool translate = false)
+    {
+      if (control == null)
+      {
+        return;
+      }
+
+      if (translate && !string.IsNullOrEmpty(value))
+      {
+        value = value.ToValue() ?? value;
+      }
+
+      var cf = control as GUIFadeLabel;
+      if (cf != null) cf.Label = value;
+      var cl = control as GUILabelControl;
+      if (cl != null) cl.Label = value;
     }
 
     private void Update()
@@ -122,53 +142,55 @@ namespace MediaPortal.Dialogs
         m_pTexture.Dispose();
       }
 
-      int iRotate = PictureDatabase.GetRotation(FileName);
+      SetLabel(lblCameraModel, string.Empty);
+      SetLabel(lblDateTakenLabel, string.Empty);
+      SetLabel(lblEquipmentMake, string.Empty);
+      SetLabel(lblExposureCompensation, string.Empty);
+      SetLabel(lblExposureTime, string.Empty);
+      SetLabel(lblFlash, string.Empty);
+      SetLabel(lblFstop, string.Empty);
+      SetLabel(lblImgDimensions, string.Empty);
+      SetLabel(lblImgTitle, string.Empty);
+      SetLabel(lblMeteringMode, string.Empty);
+      SetLabel(lblResolutions, string.Empty);
+      SetLabel(lblShutterSpeed, string.Empty);
+      SetLabel(lblViewComments, string.Empty);
 
-      m_pTexture = Util.Picture.Load(FileName, iRotate, 1024, 1024, true, false, out m_iTextureWidth,
-                                     out m_iTextureHeight);
-
-      lblCameraModel.Label = string.Empty;
-      lblDateTakenLabel.Label = string.Empty;
-      lblEquipmentMake.Label = string.Empty;
-      lblExposureCompensation.Label = string.Empty;
-      lblExposureTime.Label = string.Empty;
-      lblFlash.Label = string.Empty;
-      lblFstop.Label = string.Empty;
-      lblImgDimensions.Label = string.Empty;
-      lblImgTitle.Label = string.Empty;
-      lblMeteringMode.Label = string.Empty;
-      lblResolutions.Label = string.Empty;
-      lblShutterSpeed.Label = string.Empty;
-      lblViewComments.Label = string.Empty;
-
-      using (ExifMetadata extractor = new ExifMetadata())
+      if (!File.Exists(FileName))
       {
-        ExifMetadata.Metadata metaData = extractor.GetExifMetadata(FileName);
+        GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
+        return;
+      }
 
-        lblCameraModel.Label = metaData.CameraModel.DisplayValue;
-        lblDateTakenLabel.Label = metaData.DatePictureTaken.DisplayValue;
-        lblEquipmentMake.Label = metaData.EquipmentMake.DisplayValue;
-        lblExposureCompensation.Label = metaData.ExposureCompensation.DisplayValue;
-        lblExposureTime.Label = metaData.ExposureTime.DisplayValue;
-        lblFlash.Label = metaData.Flash.DisplayValue;
-        lblFstop.Label = metaData.Fstop.DisplayValue;
-        lblImgDimensions.Label = metaData.ImageDimensions.DisplayValue;
-        lblImgTitle.Label = Path.GetFileNameWithoutExtension(FileName);
-        lblMeteringMode.Label = metaData.MeteringMode.DisplayValue;
-        lblResolutions.Label = metaData.Resolution.DisplayValue;
-        lblShutterSpeed.Label = metaData.ShutterSpeed.DisplayValue;
-        lblViewComments.Label = metaData.ViewerComments.DisplayValue;
+      int iRotate = PictureDatabase.GetRotation(FileName);
+      m_pTexture = Util.Picture.Load(FileName, iRotate, (int)Thumbs.LargeThumbSize.uhd, (int)Thumbs.LargeThumbSize.uhd, 
+                                     true, false, out m_iTextureWidth, out m_iTextureHeight);
+
+      ExifMetadata.Metadata metaData = PictureDatabase.GetExifFromDB(FileName);
+      if (metaData.IsEmpty())
+      {
+        metaData = PictureDatabase.GetExifFromFile(FileName);
+      }
+      if (!metaData.IsEmpty())
+      {
+        SetLabel(lblCameraModel, metaData.CameraModel.DisplayValue);
+        SetLabel(lblDateTakenLabel, metaData.DatePictureTaken.DisplayValue);
+        SetLabel(lblEquipmentMake, metaData.EquipmentMake.DisplayValue);
+        SetLabel(lblExposureCompensation, metaData.ExposureCompensation.DisplayValue);
+        SetLabel(lblExposureTime, metaData.ExposureTime.DisplayValue);
+        SetLabel(lblFlash, metaData.Flash.DisplayValue, true);
+        SetLabel(lblFstop, metaData.Fstop.DisplayValue);
+        SetLabel(lblImgDimensions, metaData.ImageDimensionsAsString());
+        SetLabel(lblImgTitle, Path.GetFileNameWithoutExtension(FileName));
+        SetLabel(lblMeteringMode, metaData.MeteringMode.DisplayValue, true);
+        SetLabel(lblResolutions, metaData.ResolutionAsString());
+        SetLabel(lblShutterSpeed, metaData.ShutterSpeed.DisplayValue);
+        SetLabel(lblViewComments, metaData.ViewerComments.DisplayValue);
 
         imgPicture.IsVisible = false;
       }
-      if (File.Exists(FileName))
-      {
-        GUIPropertyManager.SetProperty("#selectedthumb", FileName);
-      }
-      else
-      {
-        GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
-      }
+      metaData.SetExifProperties();
+      GUIPropertyManager.SetProperty("#selectedthumb", FileName);
     }
 
     public override void Render(float timePassed)
@@ -178,17 +200,18 @@ namespace MediaPortal.Dialogs
       {
         return;
       }
+
       float x = imgPicture.XPosition;
       float y = imgPicture.YPosition;
       int width;
       int height;
-      GUIGraphicsContext.Correct(ref x, ref y);
 
+      GUIGraphicsContext.Correct(ref x, ref y);
       GUIFontManager.Present();
-      GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight, imgPicture.Width, imgPicture.Height, out width,
-                                       out height);
-      Util.Picture.RenderImage(m_pTexture, (int)x, (int)y, width, height, m_iTextureWidth, m_iTextureHeight, 0, 0,
-                               true);
+      GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight, imgPicture.Width, imgPicture.Height, 
+                                       out width, out height);
+      Util.Picture.RenderImage(m_pTexture, (int)x, (int)y, width, height, m_iTextureWidth, m_iTextureHeight, 
+                               0, 0, true);
     }
   }
 }

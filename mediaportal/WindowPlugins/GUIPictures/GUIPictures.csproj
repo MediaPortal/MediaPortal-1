@@ -184,6 +184,7 @@
     <Reference Include="MediaInfo.Wrapper, Version=19.9.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Packages\MediaInfo.Wrapper.19.9.2\lib\net40\MediaInfo.Wrapper.dll</HintPath>
     </Reference>
+    <Reference Include="MetadataExtractor, Version=2.3.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Windows\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.Direct3D.dll</HintPath>
@@ -230,6 +231,7 @@
       <Link>SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="FolderSetting.cs" />
+    <Compile Include="GUIPictureExif.cs" />
     <Compile Include="GUIPictures.cs" />
     <Compile Include="GUISlidePicture.cs" />
     <Compile Include="GUISlideShow.cs" />

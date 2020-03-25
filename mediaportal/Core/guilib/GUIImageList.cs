@@ -90,14 +90,13 @@ namespace MediaPortal.GUI.Library
       if (_tagLine != string.Empty)
       {
         string percent = GUIPropertyManager.Parse(_tagLine);
-        try
+        Double perc;
+        if (Double.TryParse(percent, out perc))
         {
-          Percentage = (int)(Math.Round(Double.Parse(percent)) * 10d);
+          Percentage = (int)(Math.Round(perc) * 10d);
         }
-        catch (Exception ex)
-        {
-          Log.Error("GUIImageList(Render): " + ex.Message);
-        }
+        else
+          Percentage = 0;
       }
       if (_orientation == eOrientation.Horizontal)
       {

@@ -2103,11 +2103,17 @@ namespace MediaPortal
         return;
       }
 
+      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+      {
+        return;
+      }
+
       // check if we are over the client area of the form
-      bool isOverForm;
+      bool isOverForm = false;
       try
       {
-        isOverForm = ClientRectangle.Contains(PointToClient(MousePosition));
+        if (MediaPortalApp.ActiveForm != null)
+          isOverForm = ClientRectangle.Contains(PointToClient(MousePosition));
       }
       catch (Exception ex)
       {

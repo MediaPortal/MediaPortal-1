@@ -178,13 +178,11 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
-    <Reference Include="Bass.Net, Version=2.4.12.5, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\BASS.NET.2.4.12.5\lib\net40\Bass.Net.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Bass.Net, Version=2.4.14.1, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\BASS.NET.2.4.14.1\lib\net40\Bass.Net.dll</HintPath>
     </Reference>
-    <Reference Include="BassRegistration, Version=2.4.12.5, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\Packages\BassRegistration.2.4.12.5\lib\net40\BassRegistration.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="BassRegistration, Version=2.4.14.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\BassRegistration.2.4.14.1\lib\net40\BassRegistration.dll</HintPath>
     </Reference>
     <Reference Include="CSScriptLibrary, Version=1.9.0.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033">
       <HintPath>..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
@@ -195,6 +193,9 @@
     </Reference>
     <Reference Include="MediaInfo.Wrapper, Version=19.9.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Packages\MediaInfo.Wrapper.19.9.2\lib\net40\MediaInfo.Wrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="MetadataExtractor, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\MetadataExtractor.2.3.0\lib\net35\MetadataExtractor.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -214,6 +215,10 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="XmpCore, Version=6.1.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\XmpCore.6.1.10\lib\net35\XmpCore.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -269,6 +274,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Pictures\IPictureDatabase.cs" />
+    <Compile Include="Pictures\PictureData.cs" />
     <Compile Include="Pictures\SqlLite\PictureDatabaseSqlLite.cs" />
     <Compile Include="SQLiteClient.cs">
       <SubType>Code</SubType>

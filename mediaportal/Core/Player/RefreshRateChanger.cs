@@ -264,6 +264,13 @@ namespace MediaPortal.Player
               if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
                   GUIGraphicsContext.ForcedRefreshRate3D)
               {
+                // Add a delay for 3D
+                if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+                {
+                  Log.Debug("RefreshRateChanger.SetRefreshRateBasedOnFPS delayed start when using madVR for 3D");
+                  Thread.Sleep(10000);
+                }
+
                 // we are here because it's a 3D movie in SBS or TAB and needed to force a 1080p resolution when we are in 4K config
                 // Get current Value
                 if (GUIGraphicsContext.ForcedRR3DBackDefault)
@@ -483,8 +490,7 @@ namespace MediaPortal.Player
     private static double _workerFps;
     private static string _workerStrFile;
     private static MediaType _workerType;
-    private static Thread _workerThread { get; set; }
-
+    
     #endregion
 
     #region public enums
@@ -770,13 +776,13 @@ namespace MediaPortal.Player
       _workerFps = fps;
       _workerStrFile = strFile;
       _workerType = type;
-      _workerThread = new Thread(new ThreadStart(SetRefreshRateBasedOnFpsThread))
+      Thread workerThread = new Thread(new ThreadStart(SetRefreshRateBasedOnFpsThread))
       {
         IsBackground = true,
         Name = "SetRefreshRateBasedOnFPS thread",
         Priority = ThreadPriority.AboveNormal
       };
-      _workerThread.Start();
+      workerThread.Start();
     }
 
     public static void SetRefreshRateBasedOnFpsThread()
@@ -890,13 +896,6 @@ namespace MediaPortal.Player
           }
           Log.Info("RefreshRateChanger.SwitchFocus");
           Util.Utils.SwitchFocus();
-
-          // stop the workerthread
-          if (_workerThread != null && _workerThread.IsAlive)
-          {
-            _workerThread.Abort();
-            _workerThread = null;
-          }
         }
       }
       catch (Exception ex)
