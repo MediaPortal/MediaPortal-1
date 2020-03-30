@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -518,13 +518,13 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_TVGUIDE_PREV_TIMEBLOCK:
-          _viewingTime = _viewingTime.AddHours(-_timePerBlock * 4);
+          _viewingTime = _viewingTime.AddHours(- (_timePerBlock * 4) / 60);
           Update(false);
           SetFocus();
           break;
 
         case Action.ActionType.ACTION_TVGUIDE_NEXT_TIMEBLOCK:
-          _viewingTime = _viewingTime.AddHours(_timePerBlock * 4);
+          _viewingTime = _viewingTime.AddHours((_timePerBlock * 4) / 60);
           Update(false);
           SetFocus();
           break;
