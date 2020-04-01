@@ -185,6 +185,11 @@ namespace TvEngine.PowerScheduler
           CancelWaitableTimer(SafeWaitHandle);
         }
       }
+      get
+      {
+        // Return expiration time
+        return DateTime.FromFileTimeUtc(m_ExpirationTime).ToLocalTime();
+      }
     }
 
     /// <summary>
