@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -176,6 +176,7 @@ namespace TvPlugin
     protected static int _notifyTVTimeout = 15;
     protected static bool _playNotifyBeep = true;
     protected static int _preNotifyConfig = 60;
+    protected static bool _changeChannelOnNotifyTimeout = false;
 
     #endregion
 
@@ -1194,6 +1195,7 @@ namespace TvPlugin
         _notifyTVTimeout = xmlreader.GetValueAsInt("mytv", "notifyTVTimeout", 15);
         _playNotifyBeep = xmlreader.GetValueAsBool("mytv", "notifybeep", true);
         _preNotifyConfig = xmlreader.GetValueAsInt("mytv", "notifyTVBefore", 300);
+        _changeChannelOnNotifyTimeout = xmlreader.GetValueAsBool("mytv", "enableChannelChange", false);
       }
       settingsLoaded = true;
     }
@@ -1875,7 +1877,7 @@ namespace TvPlugin
             {
               MediaPortal.Util.Utils.PlaySound("notify.wav", false, true);
             }
-            tvNotifyDlg.SetDefaultToYes(false);
+            tvNotifyDlg.SetDefaultToYes(_changeChannelOnNotifyTimeout);
             tvNotifyDlg.DoModal(GUIWindowManager.ActiveWindow);
 
             if (tvNotifyDlg.IsConfirmed)
