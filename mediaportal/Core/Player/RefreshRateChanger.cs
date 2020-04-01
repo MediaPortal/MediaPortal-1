@@ -264,6 +264,13 @@ namespace MediaPortal.Player
               if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
                   GUIGraphicsContext.ForcedRefreshRate3D)
               {
+                // Add a delay for 3D
+                if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+                {
+                  Log.Debug("RefreshRateChanger.SetRefreshRateBasedOnFPS delayed start when using madVR for 3D");
+                  Thread.Sleep(10000);
+                }
+
                 // we are here because it's a 3D movie in SBS or TAB and needed to force a 1080p resolution when we are in 4K config
                 // Get current Value
                 if (GUIGraphicsContext.ForcedRR3DBackDefault)
