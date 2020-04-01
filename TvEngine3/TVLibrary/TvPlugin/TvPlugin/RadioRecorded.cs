@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1603,6 +1603,8 @@ namespace TvPlugin
         {
           return 1;
         }
+
+        /* MP1-4996: This code forces folders to the start of the list -- CyberSimian
         if (item1.IsFolder && !item2.IsFolder)
         {
           return -1;
@@ -1611,6 +1613,7 @@ namespace TvPlugin
         {
           return 1;
         }
+        */
 
         int iComp = 0;
         TimeSpan ts;
