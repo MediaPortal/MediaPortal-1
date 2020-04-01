@@ -291,7 +291,7 @@ namespace MediaPortal.Configuration.Sections
       {
         FilterDefinition def = (FilterDefinition)currentView.Filters[i];
         string limit = def.Limit.ToString();
-        if (def.Limit < 0)
+        if (def.Limit <= 0)
         {
           limit = "";
         }
@@ -363,15 +363,14 @@ namespace MediaPortal.Configuration.Sections
         }
         def.SqlOperator = row[1].ToString();
         def.Restriction = row[2].ToString();
-        try
+        int tmpLimit;
+        if (Int32.TryParse(row[3].ToString(), out tmpLimit))
         {
-          def.Limit = Int32.Parse(row[3].ToString());
+          def.Limit = tmpLimit;
         }
-        catch (Exception ex)
-        {
-          Log.Error("BaseViews:StoreGridInView: {0}", ex.Message);
+        else
           def.Limit = -1;
-        }
+        
         def.DefaultView = row[4].ToString();
         def.DefaultSort = row[5].ToString();
         def.SortAscending = (bool)row[6];

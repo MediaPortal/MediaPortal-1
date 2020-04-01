@@ -288,7 +288,7 @@ namespace MediaPortal.GUI.Music
       // Do last.fm updates
       if (g_Player.IsMusic && _lookupSimilarTracks && g_Player.CurrentPosition >= 10.0 && lstSimilarTracks.Count == 0)
       {
-        Log.Debug("GUIMusicPlayingNow: Do Last.FM lookup for similar trracks");
+        Log.Debug("GUIMusicPlayingNow: Do Last.FM lookup for similar tracks");
         UpdateSimilarTracks(CurrentTrackFileName);
       }
     }
@@ -1199,6 +1199,18 @@ namespace MediaPortal.GUI.Music
       {
         Log.Debug("GUIMusicPlayingNow: Calling Last.FM to get similar Tracks");
         tracks = LastFMLibrary.GetSimilarTracks(tag.Title, tag.Artist);
+      }
+      catch (LastFMException ex)
+      {
+        if (ex.LastFMError == MediaPortal.LastFM.LastFMException.LastFMErrorCode.InvalidParameters && ex.Message == "Track not found")
+        {
+          Log.Debug("LastFMException {0}", ex.Message);
+        }
+        else
+        {
+          Log.Error("LastFMException {0}", ex.Message);
+        }
+        return;
       }
       catch (Exception ex)
       {
