@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>5000</id>
+<defaultcontrol>3</defaultcontrol>
+<allowoverlay>no</allowoverlay>
+<define>#header.label:1</define>
+<controls>
+    <import>common.default.background.xml</import>
+
+    <control>
+      <description>Picture</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <zoom>yes</zoom>
+      <texture>#pictures.exif.picture</texture>
+      <exifrotation>true</exifrotation>
+      <animation effect="fade" time="1000" start= "100" end= "25" condition="true">conditional</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Picture</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <zoom>no</zoom>
+      <texture>#pictures.exif.picture</texture>
+      <exifrotation>true</exifrotation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <import>common.default.background.overlay.xml</import>
+
+    <control>
+      <description>background listview</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>10</posX>
+      <posY>252</posY>
+      <width>1903</width>
+      <height>790</height>
+      <texture>panel_list_music.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+      <id>0</id>
+      <type>image</type>
+      <posX>66</posX>
+      <posY>36</posY>
+      <width>60</width>
+      <height>57</height>
+      <texture>icon_pictures.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <import>common.time.xml</import>
+    
+    <control>
+      <description>Cover Art</description>
+      <type>image</type>
+      <id>2</id>
+      <posX>121</posX>
+      <posY>362</posY>
+      <width>556</width>
+      <height>556</height>
+      <texture>#pictures.exif.picture</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <align>center</align>
+      <valign>top</valign>
+      <visible>!control.hasthumb(555)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+      <description>Map Art</description>
+      <type>image</type>
+      <id>555</id>
+      <posX>121</posX>
+      <posY>362</posY>
+      <width>556</width>
+      <height>556</height>
+      <texture>#pictures.exif.additional</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <align>center</align>
+      <valign>top</valign>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>listscroller bg</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>297</posX>
+      <posY>540</posY>
+      <width>211</width>
+      <height>211</height>
+      <texture>listscroller_bg.png</texture>
+      <visible>facadeview.list+string.contains(#scrolling.up,yes)|string.contains(#scrolling.down,yes)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+      
+    <control>
+      <type>label</type>
+      <id>0</id>
+      <posX>352</posX>
+      <posY>600</posY>
+      <width>96</width>
+      <height>96</height>
+      <font>TitanLight32</font>
+      <textcolor>ff000000</textcolor>
+      <label>#selecteditem.scrolllabel</label>
+      <visible>facadeview.list+string.contains(#scrolling.up,yes)|string.contains(#scrolling.down,yes)</visible>
+      <align>center</align>
+      <valign>middle</valign>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control Style="smallTitle">
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>210</posX>
+      <posY>1015</posY>
+      <width>1500</width>
+      <label>#selecteditem</label>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!--            :: Listview Lines ::            -->
+
+    <control>
+      <description>List Lines</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>800</posX>
+      <posY>385</posY>
+      <width>1029</width>
+      <height>506</height>
+      <texture>list_lines_wide.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+      
+    <control>
+      <description>listcontrol</description>
+      <type>listcontrol</type>
+      <id>3</id>
+      <onleft>3</onleft>
+      <onright>3</onright>
+      <scrollOffset>1</scrollOffset>
+      <posX>745</posX>
+      <posY>331</posY>
+      <width>1085</width>
+      <height>700</height>
+      <textXOff>10</textXOff>
+      <itemWidth>40</itemWidth>
+      <itemHeight>40</itemHeight>
+      <IconXOff>10</IconXOff>
+      <IconYOff>7</IconYOff>
+      <dimColor>ffffffff</dimColor>
+      <textureFocus>listcontrol_item_selected_wide.png</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <spinPosX>1828</spinPosX>
+      <spinPosY>1000</spinPosY>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>EXIF Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>70</posX>
+      <posY>360</posY>
+      <width>30</width>
+      <height>560</height>
+      <align>center</align>
+      <valign>top</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <shouldCache>true</shouldCache>
+      <texture>#pictures.exif.images.vertical</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <import>common.overlay.xml</import>
+</controls>
+</window>

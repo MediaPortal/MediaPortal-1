@@ -123,14 +123,46 @@
           <onup>6</onup>
         </control>
         <control>
+          <description>Slideshow Settings</description>
+          <type>button</type>
+          <id>9</id>
+          <label>300187</label>
+          <onright>50</onright>
+          <onleft>50</onleft>
+          <onup>7</onup>
+          <ondown>8</ondown>
+          <hyperlink>12</hyperlink>
+        </control>
+        <control>
+          <description>Search</description>
+          <type>button</type>
+          <id>8</id>
+          <label>137</label>
+          <onright>50</onright>
+          <onleft>50</onleft>
+          <onup>9</onup>
+          <ondown>9876</ondown>
+        </control>
+        <control>
           <description>Picture Settings</description>
           <type>button</type>
           <id>9876</id>
           <label>5</label>
           <hyperlink>12</hyperlink>
           <onup>7</onup>
+          <ondown>10</ondown>
+          <onright>50</onright>
+        </control>
+        <control>
+          <description>MP PhotoSlideShow</description>
+          <type>button</type>
+          <id>10</id>
+          <label>MP PhotoSlideshow</label>
+          <hyperlink>58963</hyperlink>
+          <onup>9876</onup>
           <ondown>2</ondown>
           <onright>50</onright>
+          <visible>plugin.isenabled(MPPhotoSlideshow)</visible>
         </control>
       </control>
     </control>
@@ -138,26 +170,14 @@
     <control>
       <id>500</id>
       <type>image</type>
-      <posX>1485</posX>
-      <posY>270</posY>
-      <width>390</width>
-      <height>270</height>
+      <posX>1410</posX>
+      <posY>300</posY>
+      <width>450</width>
+      <height>550</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <texture mask="Picturethumbmask.png">#selectedthumb</texture>
-      <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
-    </control>
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>1485</posX>
-      <posY>270</posY>
-      <width>390</width>
-      <height>270</height>
-      <texture mask="Picturethumbmask.png">Picturethumbframe.png</texture>
-      <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <texture>#(iif(eq(#selecteditem,'..'),'','#selectedthumb'))</texture>
+      <visible>facadeview.playlist|facadeview.list+Control.HasFocus(50)</visible>
     </control>
   </controls>
 </window>

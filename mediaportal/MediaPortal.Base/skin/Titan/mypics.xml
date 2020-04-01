@@ -36,14 +36,66 @@
         <posX>121</posX>
         <posY>362</posY>
         <width>556</width>
-        <height>371</height>
+        <height>556</height>
         <texture>#selectedthumb</texture>
         <keepaspectratio>yes</keepaspectratio>
+        <align>center</align>
+        <valign>top</valign>
         <visible>facadeview.list+Control.IsVisible(50)</visible>
         <animation effect="fade" time="250">WindowOpen</animation>
         <animation effect="fade" time="250">WindowClose</animation>
     </control>
     
+    <!-- MP1-4986 -->
+
+    <!-- Video -->
+
+    <control>
+        <description>Video banner</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>625</posX>
+        <posY>362</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>isVideo.png</texture>                                                  
+        <visible>facadeview.list+Control.IsVisible(50)+string.equals(#pictures.IsVideo,true)</visible>
+    	<animation effect="fade" time="0">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+
+    <!-- HDR -->
+
+    <control>
+        <description>HDR banner</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>625</posX>
+        <posY>362</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>isHDRPicture.png</texture>
+        <visible>facadeview.list+Control.IsVisible(50)+string.equals(#pictures.IsHDR,true)</visible>
+    	<animation effect="fade" time="0">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+
+    <!-- Keywords -->
+
+    <control>
+        <description>Keywords</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>121</posX>
+        <posY>940</posY>
+        <width>556</width>
+        <height>55</height>
+        <label>#pictures.exif.keywords</label>
+        <visible>facadeview.list+Control.IsVisible(50)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
     <control>
         <id>1</id>
         <type>image</type>
@@ -69,6 +121,59 @@
     </control>
     
     <import>common.facade.pictures.xml</import>
+
+    <!-- HDR -->
+
+    <control>
+      <description>HDR banner</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>381</posX>
+      <posY>360</posY>
+      <width>122</width>
+      <height>122</height>
+      <texture>isHDR.png</texture>                                                  
+      <visible>[facadeview.list]+Control.IsVisible(50)+string.equals(#pictures.exif.ishdr,true)</visible>
+      <animation effect="fade" time="0">WindowOpen</animation>
+      <animation effect="fade" time="0">WindowClose</animation>
+    </control>
+
+    <control>
+  	  <description>EXIF Logo</description>
+      <type>image</type>
+      <id>0</id>
+   	  <posX>70</posX>
+      <posY>360</posY>
+      <width>30</width>
+      <height>560</height>
+      <align>center</align>
+      <valign>top</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <shouldCache>true</shouldCache>
+      <texture>#pictures.exif.images.vertical</texture>
+      <visible>facadeview.list+Control.IsVisible(50)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+  	  <description>EXIF Logo</description>
+      <type>image</type>
+      <id>0</id>
+   	  <posX>20</posX>
+      <posY>50</posY>
+      <width>1900</width>
+      <height>30</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <shouldCache>true</shouldCache>
+      <texture>#pictures.exif.images.horizontal</texture>
+      <visible>!facadeview.list+Control.IsVisible(50)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
     <import>mypics.hiddenmenu.xml</import>
     <import>mypics.folderchanged.xml</import>
     <import>common.overlay.xml</import>

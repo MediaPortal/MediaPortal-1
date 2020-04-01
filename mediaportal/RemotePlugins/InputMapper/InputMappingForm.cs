@@ -204,6 +204,7 @@ namespace MediaPortal.InputDevices
             case (int)GUIWindow.Window.WINDOW_VIDEO_ARTIST_INFO:
             case (int)GUIWindow.Window.WINDOW_VIDEO_INFO:
             case (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD:
+            case (int) GUIWindow.Window.WINDOW_PICTURE_EXIF:
               break;
             default:
               windowsListFiltered.Add(GetFriendlyName(wnd.ToString()));

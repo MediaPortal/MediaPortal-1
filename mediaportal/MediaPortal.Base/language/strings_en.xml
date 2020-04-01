@@ -1363,6 +1363,10 @@
     <String id="2164">Remove channel from this group</String>
     <String id="2165">Do you want to remove this channel from the TvServer?</String>
     <String id="2166">Delete all recordings in this folder?</String>
+    <String id="2167">Keyword</String>
+    <String id="2168">Update Exif</String>
+    <String id="2169">Go to folder</String>
+    <String id="2170">Metadata</String>
     <String id="2200" prefix="My ">Explorer</String>
     <String id="2201">Select source</String>
     <String id="2202">Select destination</String>
@@ -1606,18 +1610,62 @@
     <String id="8031">Getting mail number</String>
     <String id="8033">Progress</String>
     <String id="8034">Show HTML</String>
-    <String id="9000">Image dimensions:</String>
-    <String id="9001">Resolution:</String>
-    <String id="9002">Flash:</String>
-    <String id="9003">Metering Mode:</String>
-    <String id="9004">Compensation:</String>
-    <String id="9005">Shutter Speed:</String>
-    <String id="9006">Date taken:</String>
-    <String id="9007">F-stop:</String>
-    <String id="9008">Exposure time:</String>
-    <String id="9009">Camera Model:</String>
-    <String id="9010">Equipment make:</String>
-    <String id="9011">View comments:</String>
+    <!-- EXIF -->
+    <String id="9000">Image dimensions</String>
+    <String id="9001">Resolution</String>
+    <String id="9002">Flash</String>
+    <String id="9003">Metering Mode</String>
+    <String id="9004">Compensation</String>
+    <String id="9005">Shutter Speed</String>
+    <String id="9006">Date taken</String>
+    <String id="9007">F-stop</String>
+    <String id="9008">Exposure time</String>
+    <String id="9009">Camera Model</String>
+    <String id="9010">Equipment make</String>
+    <String id="9011">Application Name</String>
+    <String id="9012">Keywords</String>
+    <String id="9013">Country Code</String>
+    <String id="9014">Country</String>
+    <String id="9015">Province/State</String>
+    <String id="9016">City</String>
+    <String id="9017">Sublocation</String>
+    <String id="9018">Comment</String>
+    <String id="9019">Author</String>
+    <String id="9020">Copyright</String>
+    <String id="9021">Orientation</String>
+    <String id="9022">ISO</String>
+    <String id="9023">Exposure Program</String>
+    <String id="9024">Exposure Mode</String>
+    <String id="9025">Exposure Compensation</String>
+    <String id="9026">Sensing Method</String>
+    <String id="9027">Scene Type</String>
+    <String id="9028">Scene Capture Type</String>
+    <String id="9029">White Balance Mode</String>
+    <String id="9030">Lens Model</String>
+    <String id="9031">Focal Length</String>
+    <String id="9032">Focal Length (35mm film)</String>
+    <String id="9033">By-line</String>
+    <String id="9034">Copyright Notice</String>
+    <String id="9035">Latitude</String>
+    <String id="9036">Longitude</String>
+    <String id="9037">Altitude</String>
+    <String id="9038">Location</String>
+    <String id="9039">Address</String>
+    <String id="9040">Histogram</String>
+    <!-- Map URL -->
+    <!--String id="9090">https://tms.visicom.ua/2.0.0/planet3/base/15/{1},{0}/800/800.png?en</String-->
+    <!--String id="9090">https://osm-static-maps.herokuapp.com/?geojson=[{{"type":"Point","coordinates":[{1},{0}]}}]&amp;width=800&amp;height=800&amp;type=png&amp;attribution=Team Mediaportal</String-->
+    <String id="9090">https://maps.wikimedia.org/img/osm-intl,19,{0},{1},800x800.png</String>
+    <String id="9091">https://nominatim.openstreetmap.org/reverse?format=json&amp;lat={0}&amp;lon={1}&amp;zoom=18&amp;addressdetails=1&amp;accept-language={2}</String>
+    <!-- Location -->
+    <String id="9093">N</String>
+    <String id="9094">S</String>
+    <String id="9095">W</String>
+    <String id="9096">E</String>
+    <String id="9097">Sea level</String>
+    <String id="9098">Sea level {0} metres</String>
+    <String id="9099">Below sea level {0} metres</String>
+    <!-- EXIF -->
     <String id="9100" prefix="My ">MiniDisplay</String>
     <String id="9101">Plugin is not configured.</String>
     <String id="9102">Please run MediaPortal Configuration first!</String>
@@ -2043,6 +2091,7 @@
     <String id="103011" prefix="My ">TV/Crop settings</String>
     <String id="103012">TV tuning details</String>
     <String id="104711" prefix="My ">Wikipedia</String>
+    <String id="105000">Picture - Metadata</String>
     <String id="106666">Power Scheduler Waiting</String>
     <String id="107700" prefix="My ">TV/Teletext</String>
     <String id="107701" prefix="My ">TV/Teletext</String>
