@@ -1,4 +1,6 @@
 [B|b]in
+[x|X]86
+[x|X]64
 obj
 *.log
 *.suo
