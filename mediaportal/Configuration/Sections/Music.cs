@@ -534,6 +534,16 @@ namespace MediaPortal.Configuration.Sections
           break;
       }
 
+      if (audioPlayerComboBox.SelectedIndex == 2)
+      {
+          GaplessPlaybackChkBox.Checked = false;
+          GaplessPlaybackChkBox.Enabled = false;
+      }
+      else
+      {
+          GaplessPlaybackChkBox.Enabled = true;
+      }
+
       soundDeviceComboBox.Items.Clear();
       GetAvailableSoundDevices(audioPlayerComboBox.SelectedIndex);
 
