@@ -164,7 +164,14 @@ namespace MediaPortal.Dialogs
             }
             else
             {
-              GUIControl.FocusControl(GetID, btnNo.GetID);
+              if (_defaultControlId > 0)
+              {
+                GUIControl.FocusControl(GetID, _defaultControlId);
+              }
+              else
+              {
+                GUIControl.FocusControl(GetID, btnNo.GetID);
+              }
             }
             iYesKey = (int)btnYes.Label.ToLowerInvariant()[0];
             iNoKey = (int)btnNo.Label.ToLowerInvariant()[0];
