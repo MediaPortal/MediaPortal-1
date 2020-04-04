@@ -1164,7 +1164,12 @@ namespace MediaPortal.GUI.Library
       _markerXPositions.Clear();
       _markerYPositions.Clear();
 
-      for (int i = 0; i < MarkerStartsPercent.Count || i < MarkerEndsPercent.Count; i++)
+      if (MarkerStartsPercent.Count != MarkerEndsPercent.Count)
+      {
+        Log.Error("Number of markerstarts ({0}) not equal to number of markerends ({1})", MarkerStartsPercent.Count, MarkerEndsPercent.Count);
+      }
+
+      for (int i = 0; i < MarkerStartsPercent.Count && i < MarkerEndsPercent.Count; i++)
       {
         //set the width of the bar
         fJumpWidth = (float) MarkerEndsPercent[i] - (float) MarkerStartsPercent[i];
