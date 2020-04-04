@@ -73,7 +73,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net">
-      <HintPath>..\..\mediaportal\MediaPortal.Base\log4net.dll</HintPath>
+      <HintPath>..\..\TvEngine3\TVLibrary\TVDatabase\references\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
