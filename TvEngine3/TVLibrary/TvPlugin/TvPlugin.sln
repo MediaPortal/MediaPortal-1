@@ -195,6 +195,7 @@ Global
 		{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86
 		{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}.UseCaptureDefintionsRelease|x86.Build.0 = Release|x86
 		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.Debug|Any CPU.Build.0 = Debug|x86
 		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.Debug|x86.ActiveCfg = Debug|x86
 		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.Debug|x86.Build.0 = Debug|x86
 		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.Release (Standalone)|Any CPU.ActiveCfg = Release|x86
@@ -202,6 +203,7 @@ Global
 		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.Release (Standalone)|x86.ActiveCfg = Release|x86
 		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.Release (Standalone)|x86.Build.0 = Release|x86
 		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.Release|Any CPU.ActiveCfg = Release|x86
+		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.Release|Any CPU.Build.0 = Release|x86
 		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.Release|x86.ActiveCfg = Release|x86
 		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.Release|x86.Build.0 = Release|x86
 		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = Release|x86
