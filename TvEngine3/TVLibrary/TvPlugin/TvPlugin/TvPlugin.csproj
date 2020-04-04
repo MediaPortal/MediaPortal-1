@@ -107,10 +107,6 @@
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Utils, Version=1.0.2378.12136, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\mediaportal\Utils\bin\Release\Utils.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
@@ -191,6 +187,10 @@
     <ProjectReference Include="..\..\..\..\mediaportal\Dialogs\Dialogs.csproj">
       <Project>{396c5208-5d46-4a11-92c1-fd0f2f42d7dd}</Project>
       <Name>Dialogs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\mediaportal\Utils\Utils.csproj">
+      <Project>{6da0e4df-6230-4642-98b5-e690bb6942bb}</Project>
+      <Name>Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\mediaportal\WindowPlugins\Common.GUIPlugins\Common.GUIPlugins.csproj">
       <Project>{03fec69f-6d10-46fb-a0ca-4d266e4a21e2}</Project>
