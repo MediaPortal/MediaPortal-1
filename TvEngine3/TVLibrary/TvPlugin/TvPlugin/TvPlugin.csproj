@@ -72,21 +72,6 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Common.GUIPlugins">
-      <HintPath>..\..\..\..\mediaportal\WindowPlugins\Common.GUIPlugins\bin\Release\Common.GUIPlugins.dll</HintPath>
-    </Reference>
-    <Reference Include="Core, Version=0.2.3.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\mediaportal\Core\bin\Release\Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Databases, Version=0.2.3.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\mediaportal\Databases\bin\Release\Databases.dll</HintPath>
-    </Reference>
-    <Reference Include="Dialogs, Version=0.2.3.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\mediaportal\Dialogs\bin\Release\Dialogs.dll</HintPath>
-    </Reference>
     <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\TVDatabase\references\Gentle.Common.dll</HintPath>
@@ -102,9 +87,6 @@
     <Reference Include="Gentle.Provider.SQLServer, Version=1.2.9.1289, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\TVDatabase\references\Gentle.Provider.SQLServer.dll</HintPath>
-    </Reference>
-    <Reference Include="GUIVideos">
-      <HintPath>..\..\..\..\mediaportal\WindowPlugins\GUIVideos\bin\Release\GUIVideos.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.9.0, Culture=neutral, PublicKeyToken=b32731d11ce58905">
       <SpecificVersion>False</SpecificVersion>
@@ -195,8 +177,28 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
-      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Project>{f6eda1f3-3dcd-43f4-8a90-e32da70c8227}</Project>
       <Name>Common.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\mediaportal\Core\Core.csproj">
+      <Project>{02fffc1f-2555-4b99-8b01-3432d0673855}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\mediaportal\Databases\Databases.csproj">
+      <Project>{c1bcec3e-6074-4328-b5d9-391a457c8ffb}</Project>
+      <Name>Databases</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\mediaportal\Dialogs\Dialogs.csproj">
+      <Project>{396c5208-5d46-4a11-92c1-fd0f2f42d7dd}</Project>
+      <Name>Dialogs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\mediaportal\WindowPlugins\Common.GUIPlugins\Common.GUIPlugins.csproj">
+      <Project>{03fec69f-6d10-46fb-a0ca-4d266e4a21e2}</Project>
+      <Name>Common.GUIPlugins</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\mediaportal\WindowPlugins\GUIVideos\GUIVideos.csproj">
+      <Project>{af59c1da-b02c-4e58-b6ca-3cf0ddd75c5d}</Project>
+      <Name>GUIVideos</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\TvControl\TvControl.csproj">
       <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
