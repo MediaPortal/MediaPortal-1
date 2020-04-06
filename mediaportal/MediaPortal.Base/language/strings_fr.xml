@@ -1363,6 +1363,10 @@
     <String id="2164">Supprimer la chaîne de ce groupe</String>
     <String id="2165">Voulez-vous supprimer cette chaîne du serveur télé ?</String>
     <String id="2166">Supprimer tous les enregistrements de ce dossier ?</String>
+    <String id="2167">Mot-clé</String>
+    <String id="2168">MAJ Exif</String>
+    <String id="2169">Aller au dossier</String>
+    <String id="2170">Metadata</String>
     <String id="2200" prefix="Mon ">Explorateur</String>
     <String id="2201">Sélectionner une source</String>
     <String id="2202">Sélectionner une destination</String>
@@ -1606,6 +1610,7 @@
     <String id="8031">Récupère le nombre de messages</String>
     <String id="8033">Progression</String>
     <String id="8034">Afficher HTML</String>
+    <!-- EXIF -->
     <String id="9000">Dimensions : </String>
     <String id="9001">Résolution : </String>
     <String id="9002">Flash : </String>
@@ -1618,6 +1623,48 @@
     <String id="9009">Modèle de l'appareil : </String>
     <String id="9010">Fabriquant : </String>
     <String id="9011">Voir commentaires : </String>
+    <String id="9012">Mots clé</String>
+    <String id="9013">Code pays</String>
+    <String id="9014">Pays</String>
+    <String id="9015">Province/Etat</String>
+    <String id="9016">Ville</String>
+    <String id="9017">Sous-emplacement</String>
+    <String id="9018">Commentaire</String>
+    <String id="9019">Auteur</String>
+    <String id="9020">Copyright</String>
+    <String id="9021">Orientation</String>
+    <String id="9022">ISO</String>
+    <String id="9023">Programme d'exposition</String>
+    <String id="9024">Mode d'exposition</String>
+    <String id="9025">Compensation de l'exposition</String>
+    <String id="9026">Méthode de détection</String>
+    <String id="9027">Type de scène</String>
+    <String id="9028">Type de capture de scène</String>
+    <String id="9029">Mode balance des blancs</String>
+    <String id="9030">Modèle de lentille</String>
+    <String id="9031">ongueur de focale</String>
+    <String id="9032">Longueur de focale (35mm film)</String>
+    <String id="9033">Par ligne</String>
+    <String id="9034">Copyright Notice</String>
+    <String id="9035">Latitude</String>
+    <String id="9036">Longitude</String>
+    <String id="9037">Altitude</String>
+    <String id="9038">Emplacement</String>
+    <String id="9039">Addresse</String>
+    <String id="9040">Histogramme</String>
+    <String id="9041">Metadata</String>
+    <!-- Map URL -->
+    <String id="9090">https://maps.wikimedia.org/img/osm-intl,19,{0},{1},800x800.png</String>
+    <String id="9091">https://nominatim.openstreetmap.org/reverse?format=json&amp;lat={0}&amp;lon={1}&amp;zoom=18&amp;addressdetails=1&amp;accept-language={2}</String>
+    <!-- Location -->
+    <String id="9093">N</String>
+    <String id="9094">S</String>
+    <String id="9095">O</String>
+    <String id="9096">E</String>
+    <String id="9097">Niveau de la mer</String>
+    <String id="9098">Niveau de la mer {0} mètres</String>
+    <String id="9099">Sous le niveau de la mer {0} mètres</String>
+    <!-- EXIF -->
     <String id="9100" prefix="Mon">Mini affichage</String>
     <String id="9101">Le plugin n'est pas configuré.</String>
     <String id="9102">Veuillez lancer la configuration de MediaPortal au préalable !</String>
@@ -2043,6 +2090,7 @@
     <String id="103011" prefix="Mes ">TV/Réglages Crop</String>
     <String id="103012">Détails des réglages TV</String>
     <String id="104711" prefix="Mon ">Wikipedia</String>
+    <String id="105000">Image - Metadata</String>
     <String id="106666">Attente de mise en veille</String>
     <String id="107700" prefix="Mon ">TV/Télétexte</String>
     <String id="107701" prefix="Mon ">TV/Télétexte</String>
