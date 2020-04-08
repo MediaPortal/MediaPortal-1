@@ -1089,7 +1089,7 @@ namespace MediaPortal.Player
                     Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 SBS");
                     GUIGraphicsContext.ForcedRefreshRate3D = true;
                   }
-                  RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
+                  RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, RefreshRateChanger.MediaType.Video);
                 }
               }
               else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
@@ -1131,7 +1131,7 @@ namespace MediaPortal.Player
                     Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 TopAndBottom");
                     GUIGraphicsContext.ForcedRefreshRate3D = true;
                   }
-                  RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
+                  RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, RefreshRateChanger.MediaType.Video);
                 }
               }
             }
@@ -1170,7 +1170,7 @@ namespace MediaPortal.Player
                         Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 SBSLeft");
                         GUIGraphicsContext.ForcedRefreshRate3D = true;
                       }
-                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
+                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, RefreshRateChanger.MediaType.Video);
                     }
                   }
                   break;
@@ -1203,7 +1203,7 @@ namespace MediaPortal.Player
                         Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 SBSRight");
                         GUIGraphicsContext.ForcedRefreshRate3D = true;
                       }
-                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
+                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, RefreshRateChanger.MediaType.Video);
                     }
                   }
                   break;
@@ -1237,7 +1237,7 @@ namespace MediaPortal.Player
                         Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 TABTop");
                         GUIGraphicsContext.ForcedRefreshRate3D = true;
                       }
-                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
+                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, RefreshRateChanger.MediaType.Video);
                     }
                   }
                   break;
@@ -1270,7 +1270,7 @@ namespace MediaPortal.Player
                         Log.Debug("Planescene: 3D force refresh rate for 1920 x 1080 TABBottom");
                         GUIGraphicsContext.ForcedRefreshRate3D = true;
                       }
-                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, (RefreshRateChanger.MediaType)(int)g_Player.MediaType.Video);
+                      RefreshRateChanger.AdaptRefreshRate(g_Player.CurrentFile, RefreshRateChanger.MediaType.Video);
                     }
                   }
                   break;

@@ -157,7 +157,7 @@ namespace MediaPortal.GUI.Library
         }
         catch (Exception ex)
         {
-          Log.Info("download failed:{0}", ex.Message);
+          Log.Info("download failed:{0}, {1}", URL, ex.Message);
         }
       }
       return false;

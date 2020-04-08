@@ -191,7 +191,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Error("GUITextureManager GetFileName: " + ex.Message);
+        Log.Error("GUITextureManager GetFileName: '" + fileName+"' "+ex.Message);
         // ignored
         return string.Empty;
       }

@@ -25,7 +25,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using System.Collections.Generic;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Microsoft.DirectX.Direct3D;
@@ -495,7 +494,7 @@ namespace MediaPortal.Player
 
     #region public enums
 
-    public enum MediaType
+    public enum MediaType // copy present in g_player
     {
       Video,
       TV,
@@ -503,7 +502,7 @@ namespace MediaPortal.Player
       Music,
       Recording,
       Unknown
-    } ;
+    };
 
     #endregion
 
@@ -623,10 +622,8 @@ namespace MediaPortal.Player
           List<double> fpsList = new List<double>();
           foreach (string fpsItem in fpsArray)
           {
-            double fpsAsDouble = -1;
-            double.TryParse(fpsItem, NumberStyles.AllowDecimalPoint, provider, out fpsAsDouble);
-
-            if (fpsAsDouble > -1)
+            double fpsAsDouble;
+            if (double.TryParse(fpsItem, NumberStyles.AllowDecimalPoint, provider, out fpsAsDouble))
             {
               fpsList.Add(fpsAsDouble);
             }
@@ -645,7 +642,7 @@ namespace MediaPortal.Player
       }
     }
 
-    private static void FindExtCmdfromSettings(double fps, double currentRR, bool deviceReset, out double newRR,
+    private static void FindExtCmdfromSettings(double fps, out double newRR,
                                                out string newExtCmd, out string newRRDescription)
     {
       GetRefreshRateConfiguration();
@@ -737,7 +734,6 @@ namespace MediaPortal.Player
         Log.Info("RefreshRateChanger.RunExternalJob: running external job failed {0}", e.Message);
         return false;
       }
-      finally {}
 
       if (changeRR != null)
       {
@@ -801,9 +797,6 @@ namespace MediaPortal.Player
           }
         }
 
-        double fps = _workerFps;
-        string strFile = _workerStrFile;
-        MediaType type = _workerType;
         double currentRR = 0;
         if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.Disposed)
         {
@@ -840,7 +833,7 @@ namespace MediaPortal.Player
           double newRR;
           string newExtCmd;
           string newRRDescription;
-          FindExtCmdfromSettings(fps, currentRR, deviceReset, out newRR, out newExtCmd, out newRRDescription);
+          FindExtCmdfromSettings(_workerFps, out newRR, out newExtCmd, out newRRDescription);
 
           if (newRR > 0 && (currentRR != newRR || forceRefreshRate) ||
               (GUIGraphicsContext.ForcedRefreshRate3D && !GUIGraphicsContext.ForcedRefreshRate3DDone))
@@ -855,7 +848,7 @@ namespace MediaPortal.Player
               Thread.Sleep(10000);
             }
 
-            if (newExtCmd?.Length == 0)
+            if (String.IsNullOrEmpty(newExtCmd))
             {
               Log.Info(
                 "RefreshRateChanger.SetRefreshRateBasedOnFPS: using internal win32 method for changing refreshrate. current is {0}hz, desired is {1}",
@@ -865,7 +858,7 @@ namespace MediaPortal.Player
               Win32.CycleRefreshRate((uint) GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, newRR);
               NotifyRefreshRateChanged(newRRDescription, false);
             }
-            else if (RunExternalJob(newExtCmd, strFile, type, deviceReset) && newRR != currentRR)
+            else if (RunExternalJob(newExtCmd, _workerStrFile, _workerType, deviceReset) && newRR != currentRR)
             {
               Win32.FixDwm();
               NotifyRefreshRateChanged(newRRDescription, false);
@@ -885,7 +878,7 @@ namespace MediaPortal.Player
             {
               Log.Info(
                 "RefreshRateChanger.SetRefreshRateBasedOnFPS: could not find a matching refreshrate based on {0} fps (check config)",
-                fps);
+                _workerFps);
             }
             else
             {
@@ -919,8 +912,6 @@ namespace MediaPortal.Player
       NumberFormatInfo provider = new NumberFormatInfo();
       provider.NumberDecimalSeparator = ".";
       double defaultFPS = 0;
-      bool deviceReset = false;
-      bool force_refresh_rate = false;
       using (Settings xmlreader = new MPSettings())
       {
         enabled = xmlreader.GetValueAsBool("general", "autochangerefreshrate", false);
@@ -934,7 +925,6 @@ namespace MediaPortal.Player
           }
         }
 
-        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
         bool useDefaultHz = xmlreader.GetValueAsBool("general", "use_default_hz", false);
 
         if (!useDefaultHz)
@@ -967,8 +957,6 @@ namespace MediaPortal.Player
             }
           }
         }
-
-        deviceReset = xmlreader.GetValueAsBool("general", "devicereset", false);
       }
 
       SetRefreshRateBasedOnFPS(defaultFPS, "", MediaType.Unknown);
