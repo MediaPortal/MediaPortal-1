@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -244,7 +244,6 @@ namespace MediaPortal.GUI.Library
       _properties["#TV.Transcoding.Description"] = string.Empty;
       _properties["#TV.Transcoding.Channel"] = string.Empty;
 
-
       _properties["#Play.Current.Thumb"] = string.Empty;
       _properties["#Play.Current.File"] = string.Empty;
       _properties["#Play.Current.Title"] = string.Empty;
@@ -299,6 +298,13 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Current.SampleRate"] = string.Empty;
       _properties["#Play.Current.DateLastPlayed"] = string.Empty;
       _properties["#Play.Current.DateAdded"] = string.Empty;
+
+      _properties["#Play.Current.VideoCodec.Texture"] = string.Empty;
+      _properties["#Play.Current.VideoResolution"] = string.Empty;
+      _properties["#Play.Current.AudioCodec.Texture"] = string.Empty;
+      _properties["#Play.Current.AudioChannels"] = string.Empty;
+      _properties["#Play.Current.HasSubtitles"] = string.Empty;
+      _properties["#Play.Current.AspectRatio"] = string.Empty;
 
       _properties["#Play.AlbumInfo.Review"] = string.Empty;
       _properties["#Play.AlbumInfo.Rating"] = string.Empty;
