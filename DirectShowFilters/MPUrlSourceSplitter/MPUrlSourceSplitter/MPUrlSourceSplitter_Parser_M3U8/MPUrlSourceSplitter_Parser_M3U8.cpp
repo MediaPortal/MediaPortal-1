@@ -37,6 +37,8 @@
 #include "formatUrl.h"
 #include "MediaPlaylist.h"
 #include "MediaPlaylistFactory.h"
+#include "MasterPlaylist.h"
+#include "MasterPlaylistFactory.h"
 #include "PlaylistVersion.h"
 #include "VersionInfo.h"
 #include "ErrorCodes.h"
@@ -188,6 +190,9 @@ HRESULT CMPUrlSourceSplitter_Parser_M3U8::GetParserResult(void)
 
                       if (SUCCEEDED(this->parserResult))
                       {
+                        this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_GET_PARSER_RESULT_NAME, L"M3U8 file");
+                        this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_GET_PARSER_RESULT_NAME, tempBuffer);
+
                         CMediaPlaylist *mediaPlaylist = factory->CreateMediaPlaylist(&this->parserResult, tempBuffer, tempBufferLength);
 
                         if (this->parserResult == E_M3U8_NOT_PLAYLIST)
@@ -197,6 +202,29 @@ HRESULT CMPUrlSourceSplitter_Parser_M3U8::GetParserResult(void)
                         }
                         else if (SUCCEEDED(this->parserResult) || IS_M3U8_ERROR(this->parserResult))
                         {
+                          if ((mediaPlaylist == NULL) && this->IsIptv())
+                          {
+                            HRESULT oldResult = this->parserResult;
+                            this->parserResult = S_OK;
+                            CMasterPlaylistFactory *factory = new CMasterPlaylistFactory(&this->parserResult);
+                            CHECK_POINTER_HRESULT(this->parserResult, factory, this->parserResult, E_OUTOFMEMORY);
+
+                            if (SUCCEEDED(this->parserResult))
+                            {
+                              CMasterPlaylist *masterPlaylist = factory->CreateMasterPlaylist(&this->parserResult, tempBuffer, tempBufferLength);
+                              if (SUCCEEDED(this->parserResult) && (masterPlaylist != NULL) && (masterPlaylist->GetPlaylistItems()->Count() == 1))
+                              {
+                                if (this->connectionParameters->Update(PARAMETER_NAME_URL, true, masterPlaylist->GetPlaylistItems()->GetItem(0)->GetItemContent()))
+                                  this->parserResult = S_OK;
+                                else
+                                  this->parserResult = oldResult;
+                                FREE_MEM_CLASS(masterPlaylist);
+                              }
+                              else
+                                this->parserResult = oldResult;
+                              FREE_MEM_CLASS(factory);
+                            }
+                          }
                           if ((mediaPlaylist != NULL) && (mediaPlaylist->IsSetFlags(PLAYLIST_FLAG_DETECTED_HEADER)))
                           {
                             CHECK_CONDITION_HRESULT(this->parserResult, mediaPlaylist->GetDetectedVersion() <= PLAYLIST_LAST_KNOWN_VERSION, this->parserResult, E_M3U8_NOT_SUPPORTED_PLAYLIST_VERSION);
@@ -204,9 +232,6 @@ HRESULT CMPUrlSourceSplitter_Parser_M3U8::GetParserResult(void)
                             // check error code and if received all data (complete m3u8 playlist)
                             if (response->IsNoMoreDataAvailable())
                             {
-                              this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_GET_PARSER_RESULT_NAME, L"M3U8 file");
-                              this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_GET_PARSER_RESULT_NAME, tempBuffer);
-
                               this->parserResult = SUCCEEDED(this->parserResult) ? PARSER_RESULT_KNOWN : this->parserResult;
 
                               if (this->parserResult == PARSER_RESULT_KNOWN)
@@ -307,7 +332,8 @@ HRESULT CMPUrlSourceSplitter_Parser_M3U8::GetParserResult(void)
                           }
                           else
                           {
-                            this->parserResult = PARSER_RESULT_NOT_KNOWN;
+                            if (this->parserResult != S_OK)
+                              this->parserResult = PARSER_RESULT_NOT_KNOWN;
                           }
                         }
 
