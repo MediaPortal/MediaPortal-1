@@ -298,6 +298,8 @@ namespace MediaPortal
       }
       if (needInvalidate)
       {
+        lblVersion.Parent = pbBackground;
+        lblCVS.Parent = pbBackground;
         this.Invalidate(true);
       }
     }

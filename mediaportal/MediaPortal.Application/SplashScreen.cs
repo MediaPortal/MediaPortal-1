@@ -251,12 +251,12 @@ namespace MediaPortal
     {
       Cursor.Hide();
       _frmFull = new FullScreenSplashScreen();
-      _frmFull.RetrieveSplashScreenInfo();
       _frmFull.TopMost = _alwaysOnTop;
       _frmFull.Bounds = CurrentDisplay.Bounds;
       _frmFull.lblMain.Parent = _frmFull.pbBackground;
       _frmFull.lblVersion.Parent = _frmFull.lblMain;
       _frmFull.lblCVS.Parent = _frmFull.lblMain;
+      _frmFull.RetrieveSplashScreenInfo();
       _frmFull.SetVersion(Version);
       _frmFull.Show();
       _frmFull.Update();
