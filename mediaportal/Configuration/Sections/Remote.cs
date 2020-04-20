@@ -1996,7 +1996,7 @@ namespace MediaPortal.Configuration.Sections
       // labelIrTransStatus
       // 
       this.labelIrTransStatus.AutoSize = true;
-      this.labelIrTransStatus.Location = new System.Drawing.Point(16, 48);
+      this.labelIrTransStatus.Location = new System.Drawing.Point(16, 44);
       this.labelIrTransStatus.Name = "labelIrTransStatus";
       this.labelIrTransStatus.Size = new System.Drawing.Size(0, 13);
       this.labelIrTransStatus.TabIndex = 8;
@@ -2452,7 +2452,7 @@ namespace MediaPortal.Configuration.Sections
         byte[] sendData = BitConverter.GetBytes(clientID);
         m_Socket.Send(sendData, sendData.Length, SocketFlags.None);
         m_Socket.Close();
-        labelIrTransStatus.ForeColor = Color.Blue;
+        labelIrTransStatus.ForeColor = Color.Green;
         labelIrTransStatus.Text = "IRTrans server up and running.";
       }
       catch (SocketException)
