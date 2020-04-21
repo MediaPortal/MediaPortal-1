@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -253,11 +253,29 @@ namespace MediaPortal
       _frmFull = new FullScreenSplashScreen();
       _frmFull.TopMost = _alwaysOnTop;
       _frmFull.Bounds = CurrentDisplay.Bounds;
+
       _frmFull.lblMain.Parent = _frmFull.pbBackground;
-      _frmFull.lblVersion.Parent = _frmFull.lblMain;
-      _frmFull.lblCVS.Parent = _frmFull.lblMain;
-      _frmFull.RetrieveSplashScreenInfo();
+      _frmFull.lblVersion.Parent = _frmFull.pbBackground;
+      _frmFull.lblCVS.Parent = _frmFull.pbBackground;
+
+      _frmFull.lblMain.Bounds = CurrentDisplay.Bounds;
+      _frmFull.lblMain.Top = _frmFull.lblMain.Top + 100;
+      _frmFull.lblMain.Height = _frmFull.lblMain.Height - 200;
+
+      _frmFull.lblVersion.Left = 5;
+      _frmFull.lblVersion.Top = 5;
+      _frmFull.lblVersion.Width = (_frmFull.Width - 10) / 2;
+      _frmFull.lblVersion.Height = _frmFull.Height - 10;
+
+      _frmFull.lblCVS.Left = (_frmFull.Width - 10) / 2;
+      _frmFull.lblCVS.Top = 5;
+      _frmFull.lblCVS.Width = (_frmFull.Width - 10) / 2;
+      _frmFull.lblCVS.Height = _frmFull.Height - 10;
+
       _frmFull.SetVersion(Version);
+
+      _frmFull.RetrieveSplashScreenInfo();
+
       _frmFull.Show();
       _frmFull.Update();
       _frmFull.Opacity = 100;
@@ -321,7 +339,12 @@ namespace MediaPortal
         string[] strVersion = version.Split('-');
         _versionLabel.Text = strVersion[0];
         Log.Info("Version: Application {0}", strVersion[0]);
-        if (strVersion.Length > 1)
+        if (strVersion.Length == 2)
+        {
+          _cvsLabel.Text = strVersion[1];
+          Log.Info("Edition/Codename: {0}", _cvsLabel.Text);
+        }
+        else if (strVersion.Length == 5)
         {
           string day   = strVersion[2].Substring(0, 2);
           string month = strVersion[2].Substring(3, 2);
