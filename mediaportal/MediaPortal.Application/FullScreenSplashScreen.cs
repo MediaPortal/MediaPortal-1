@@ -453,6 +453,10 @@ namespace MediaPortal
           }
         }
       }
+      lblMain.Font = new Font(lblMain.Font.FontFamily, ScaleVertical((int)lblMain.Font.Size), lblMain.Font.Style);
+      lblVersion.Font = new Font(lblVersion.Font.FontFamily, ScaleVertical((int)lblVersion.Font.Size), lblVersion.Font.Style);
+      lblCVS.Font = new Font(lblCVS.Font.FontFamily, ScaleVertical((int)lblCVS.Font.Size), lblCVS.Font.Style);
+
       this.Invalidate(true);
     }
 
@@ -552,6 +556,5 @@ namespace MediaPortal
       }
       return y;
     }
-
   }
 }
