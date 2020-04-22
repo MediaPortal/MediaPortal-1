@@ -127,10 +127,15 @@ namespace MediaPortal
         {
           foreach (XmlNode control in controlsList)
           {
-            XmlNode selectSingleNode = control.SelectSingleNode("type/text()");
-            XmlNode singleNode = control.SelectSingleNode("id/text()");
+            XmlNode nodeType = control.SelectSingleNode("type/text()");
+            XmlNode nodeID = control.SelectSingleNode("id/text()");
+            if (nodeType == null || nodeID == null)
+            {
+              continue;
+            }
+
             // if the background image control is found
-            if (singleNode != null && (selectSingleNode != null && (selectSingleNode.Value.ToLowerInvariant() == "image" && singleNode.Value == "1"))) 
+            if (nodeType.Value.ToLowerInvariant() == "image" && nodeID.Value == "1") 
             {
               XmlNode xmlNode = control.SelectSingleNode("texture/text()");
               if (xmlNode != null)
@@ -147,10 +152,9 @@ namespace MediaPortal
               continue;
             }
 
-            XmlNode node = control.SelectSingleNode("type/text()");
-            XmlNode selectSingleNode1 = control.SelectSingleNode("id/text()");
-            // if the center label control is found
-            if (selectSingleNode1 != null && (node != null && (node.Value.ToLowerInvariant() == "label" && selectSingleNode1.Value == "2")))
+            #region Main label
+            // if the Main label control is found
+            if (nodeType.Value.ToLowerInvariant() == "label" && nodeID.Value == "2")
             {
               if (control.SelectSingleNode("textsize") != null)
               {
@@ -296,8 +300,11 @@ namespace MediaPortal
                 }
               }
             }
-            // if the version label control is found
-            if (selectSingleNode1 != null && (node != null && (node.Value.ToLowerInvariant() == "label" && selectSingleNode1.Value == "3")))
+            #endregion
+
+            #region Version label
+            // if the Version label control is found
+            if (nodeType.Value.ToLowerInvariant() == "label" && nodeID.Value == "3")
             {
               if (control.SelectSingleNode("textsize") != null)
               {
@@ -373,8 +380,11 @@ namespace MediaPortal
                 }
               }
             }
+            #endregion
+
+            #region CVS label
             // if the edition/codename/cvs label control is found
-            if (selectSingleNode1 != null && (node != null && (node.Value.ToLowerInvariant() == "label" && selectSingleNode1.Value == "4")))
+            if (nodeType.Value.ToLowerInvariant() == "label" && nodeID.Value == "4")
             {
               if (control.SelectSingleNode("textsize") != null)
               {
@@ -450,6 +460,7 @@ namespace MediaPortal
                 }
               }
             }
+            #endregion
           }
         }
       }
