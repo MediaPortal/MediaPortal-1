@@ -249,6 +249,10 @@ namespace MediaPortal
     /// </summary>
     private void ShowFullScreenSplashScreen()
     {
+      int percent1w = CurrentDisplay.Bounds.Width / 100;
+      int percent1h = CurrentDisplay.Bounds.Height / 100;
+      int percent10h = CurrentDisplay.Bounds.Height / 10;
+
       Cursor.Hide();
       _frmFull = new FullScreenSplashScreen();
       _frmFull.TopMost = _alwaysOnTop;
@@ -259,18 +263,18 @@ namespace MediaPortal
       _frmFull.lblCVS.Parent = _frmFull.pbBackground;
 
       _frmFull.lblMain.Bounds = CurrentDisplay.Bounds;
-      _frmFull.lblMain.Top = _frmFull.lblMain.Top + 100;
-      _frmFull.lblMain.Height = _frmFull.lblMain.Height - 200;
+      _frmFull.lblMain.Top = _frmFull.lblMain.Top + (percent10h / 2);
+      _frmFull.lblMain.Height = _frmFull.lblMain.Height - percent10h;
 
-      _frmFull.lblVersion.Left = 5;
-      _frmFull.lblVersion.Top = 5;
-      _frmFull.lblVersion.Width = (_frmFull.Width - 10) / 2;
-      _frmFull.lblVersion.Height = _frmFull.Height - 10;
+      _frmFull.lblVersion.Left = percent1w / 2;
+      _frmFull.lblVersion.Top = percent1h / 2;
+      _frmFull.lblVersion.Width = (_frmFull.Width - percent1w) / 2;
+      _frmFull.lblVersion.Height = _frmFull.Height - percent1h;
 
-      _frmFull.lblCVS.Left = (_frmFull.Width - 10) / 2;
-      _frmFull.lblCVS.Top = 5;
-      _frmFull.lblCVS.Width = (_frmFull.Width - 10) / 2;
-      _frmFull.lblCVS.Height = _frmFull.Height - 10;
+      _frmFull.lblCVS.Left = (_frmFull.Width - percent1w) / 2;
+      _frmFull.lblCVS.Top = percent1h / 2;
+      _frmFull.lblCVS.Width = (_frmFull.Width - percent1w) / 2;
+      _frmFull.lblCVS.Height = _frmFull.Height - percent1h;
 
       _frmFull.SetVersion(Version);
 
