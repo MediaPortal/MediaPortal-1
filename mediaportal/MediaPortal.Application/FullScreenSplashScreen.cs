@@ -328,6 +328,74 @@ namespace MediaPortal
                   Log.Debug("FullScreenSplash: Version TextColor successfully set: {0}", textColor);
                 }
               }
+              if (control.SelectSingleNode("posX") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("posX/text()");
+                if (xmlNode != null)
+                {
+                  var _value = xmlNode.Value;
+                  Log.Debug("FullScreenSplash: Version Text PosX value found: {0}", _value);
+                  int _number = 0;
+                  if (Int32.TryParse(_value, out _number))
+                  {
+                    lblVersion.Dock = System.Windows.Forms.DockStyle.None;
+                    int newNumber = ScaleHorizontal(_number);
+                    lblVersion.Left = newNumber;
+                    Log.Debug("FullScreenSplash: Version Label PosX successfully set: {0}/{1}", _number, newNumber);
+                  }
+                }
+              }
+              if (control.SelectSingleNode("posY") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("posY/text()");
+                if (xmlNode != null)
+                {
+                  var _value = xmlNode.Value;
+                  Log.Debug("FullScreenSplash: Version Text PosY value found: {0}", _value);
+                  int _number = 0;
+                  if (Int32.TryParse(_value, out _number))
+                  {
+                    lblVersion.Dock = System.Windows.Forms.DockStyle.None;
+                    int newNumber = ScaleVertical(_number);
+                    lblVersion.Top = newNumber;
+                    Log.Debug("FullScreenSplash: Version Label PosY successfully set: {0}/{1}", _number, newNumber);
+                  }
+                }
+              }
+              if (control.SelectSingleNode("width") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("width/text()");
+                if (xmlNode != null)
+                {
+                  var _value = xmlNode.Value;
+                  Log.Debug("FullScreenSplash: Version Text Width value found: {0}", _value);
+                  int _number = 0;
+                  if (Int32.TryParse(_value, out _number))
+                  {
+                    lblVersion.Dock = System.Windows.Forms.DockStyle.None;
+                    int newNumber = ScaleHorizontal(_number);
+                    lblVersion.Width = newNumber;
+                    Log.Debug("FullScreenSplash: Version Label Width successfully set: {0}/{1}", _number, newNumber);
+                  }
+                }
+              }
+              if (control.SelectSingleNode("height") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("height/text()");
+                if (xmlNode != null)
+                {
+                  var _value = xmlNode.Value;
+                  Log.Debug("FullScreenSplash: Version Text Height value found: {0}", _value);
+                  int _number = 0;
+                  if (Int32.TryParse(_value, out _number))
+                  {
+                    lblVersion.Dock = System.Windows.Forms.DockStyle.None;
+                    int newNumber = ScaleVertical(_number);
+                    lblVersion.Height = newNumber;
+                    Log.Debug("FullScreenSplash: Version Label Height successfully set: {0}/{1}", _number, newNumber);
+                  }
+                }
+              }
               if (control.SelectSingleNode("align") != null)
               {
                 XmlNode xmlNode = control.SelectSingleNode("align/text()");
@@ -406,6 +474,74 @@ namespace MediaPortal
                   Log.Debug("FullScreenSplash: Edition/Codename/CVS TextColor value found: {0}", textColor);
                   lblCVS.ForeColor = textColor;
                   Log.Debug("FullScreenSplash: Edition/Codename/CVS TextColor successfully set: {0}", textColor);
+                }
+              }
+              if (control.SelectSingleNode("posX") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("posX/text()");
+                if (xmlNode != null)
+                {
+                  var _value = xmlNode.Value;
+                  Log.Debug("FullScreenSplash: Edition/Codename/CVS Text PosX value found: {0}", _value);
+                  int _number = 0;
+                  if (Int32.TryParse(_value, out _number))
+                  {
+                    lblCVS.Dock = System.Windows.Forms.DockStyle.None;
+                    int newNumber = ScaleHorizontal(_number);
+                    lblCVS.Left = newNumber;
+                    Log.Debug("FullScreenSplash: Edition/Codename/CVS Label PosX successfully set: {0}/{1}", _number, newNumber);
+                  }
+                }
+              }
+              if (control.SelectSingleNode("posY") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("posY/text()");
+                if (xmlNode != null)
+                {
+                  var _value = xmlNode.Value;
+                  Log.Debug("FullScreenSplash: Edition/Codename/CVS Text PosY value found: {0}", _value);
+                  int _number = 0;
+                  if (Int32.TryParse(_value, out _number))
+                  {
+                    lblCVS.Dock = System.Windows.Forms.DockStyle.None;
+                    int newNumber = ScaleVertical(_number);
+                    lblCVS.Top = newNumber;
+                    Log.Debug("FullScreenSplash: Edition/Codename/CVS Label PosY successfully set: {0}/{1}", _number, newNumber);
+                  }
+                }
+              }
+              if (control.SelectSingleNode("width") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("width/text()");
+                if (xmlNode != null)
+                {
+                  var _value = xmlNode.Value;
+                  Log.Debug("FullScreenSplash: Edition/Codename/CVS Text Width value found: {0}", _value);
+                  int _number = 0;
+                  if (Int32.TryParse(_value, out _number))
+                  {
+                    lblCVS.Dock = System.Windows.Forms.DockStyle.None;
+                    int newNumber = ScaleHorizontal(_number);
+                    lblCVS.Width = newNumber;
+                    Log.Debug("FullScreenSplash: Edition/Codename/CVS Label Width successfully set: {0}/{1}", _number, newNumber);
+                  }
+                }
+              }
+              if (control.SelectSingleNode("height") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("height/text()");
+                if (xmlNode != null)
+                {
+                  var _value = xmlNode.Value;
+                  Log.Debug("FullScreenSplash: Edition/Codename/CVS Text Height value found: {0}", _value);
+                  int _number = 0;
+                  if (Int32.TryParse(_value, out _number))
+                  {
+                    lblCVS.Dock = System.Windows.Forms.DockStyle.None;
+                    int newNumber = ScaleVertical(_number);
+                    lblCVS.Height = newNumber;
+                    Log.Debug("FullScreenSplash: Edition/Codename/CVS Label Height successfully set: {0}/{1}", _number, newNumber);
+                  }
                 }
               }
               if (control.SelectSingleNode("align") != null)
