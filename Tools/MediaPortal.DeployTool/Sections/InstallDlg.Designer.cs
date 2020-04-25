@@ -29,6 +29,7 @@ namespace MediaPortal.DeployTool.Sections
     private void InitializeComponent()
     {
       this.flpApplication = new System.Windows.Forms.FlowLayoutPanel();
+      this.progressInstall = new System.Windows.Forms.ProgressBar();
       this.SuspendLayout();
       // 
       // flpApplication
@@ -38,16 +39,27 @@ namespace MediaPortal.DeployTool.Sections
       this.flpApplication.Size = new System.Drawing.Size(980, 405);
       this.flpApplication.TabIndex = 1;
       // 
+      // progressInstall
+      // 
+      this.progressInstall.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(84)))), ((int)(((byte)(140)))), ((int)(((byte)(184)))));
+      this.progressInstall.Location = new System.Drawing.Point(1, 422);
+      this.progressInstall.Name = "progressInstall";
+      this.progressInstall.Size = new System.Drawing.Size(998, 5);
+      this.progressInstall.TabIndex = 0;
+      this.progressInstall.Visible = false;
+      // 
       // InstallDlg
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
+      this.Controls.Add(this.progressInstall);
       this.Controls.Add(this.flpApplication);
       this.Name = "InstallDlg";
-      this.Size = new System.Drawing.Size(1000, 430);
+      this.Size = new System.Drawing.Size(1002, 430);
       this.ParentChanged += new System.EventHandler(this.RequirementsDlg_ParentChanged);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.flpApplication, 0);
+      this.Controls.SetChildIndex(this.progressInstall, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -55,5 +67,6 @@ namespace MediaPortal.DeployTool.Sections
 
     #endregion
     private System.Windows.Forms.FlowLayoutPanel flpApplication;
+    private System.Windows.Forms.ProgressBar progressInstall;
   }
 }

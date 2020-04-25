@@ -44,7 +44,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelHeading1.AutoSize = true;
       this.labelHeading1.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelHeading1.ForeColor = System.Drawing.Color.White;
-      this.labelHeading1.Location = new System.Drawing.Point(330, 83);
+      this.labelHeading1.Location = new System.Drawing.Point(330, 70);
       this.labelHeading1.Name = "labelHeading1";
       this.labelHeading1.Size = new System.Drawing.Size(158, 18);
       this.labelHeading1.TabIndex = 11;
@@ -55,7 +55,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelHeading2.AutoSize = true;
       this.labelHeading2.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelHeading2.ForeColor = System.Drawing.Color.White;
-      this.labelHeading2.Location = new System.Drawing.Point(330, 109);
+      this.labelHeading2.Location = new System.Drawing.Point(330, 98);
       this.labelHeading2.MaximumSize = new System.Drawing.Size(600, 0);
       this.labelHeading2.Name = "labelHeading2";
       this.labelHeading2.Size = new System.Drawing.Size(478, 18);
@@ -67,7 +67,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelHeading3.AutoSize = true;
       this.labelHeading3.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelHeading3.ForeColor = System.Drawing.Color.White;
-      this.labelHeading3.Location = new System.Drawing.Point(330, 142);
+      this.labelHeading3.Location = new System.Drawing.Point(330, 134);
       this.labelHeading3.MaximumSize = new System.Drawing.Size(600, 0);
       this.labelHeading3.Name = "labelHeading3";
       this.labelHeading3.Size = new System.Drawing.Size(599, 17);
@@ -79,11 +79,11 @@ namespace MediaPortal.DeployTool.Sections
       // 
       this.linkHomepage.AutoSize = true;
       this.linkHomepage.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.linkHomepage.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.linkHomepage.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.linkHomepage.LinkColor = System.Drawing.Color.White;
       this.linkHomepage.Location = new System.Drawing.Point(330, 239);
       this.linkHomepage.Name = "linkHomepage";
-      this.linkHomepage.Size = new System.Drawing.Size(156, 17);
+      this.linkHomepage.Size = new System.Drawing.Size(166, 17);
       this.linkHomepage.TabIndex = 14;
       this.linkHomepage.TabStop = true;
       this.linkHomepage.Text = "MediaPortal Homepage";
@@ -93,11 +93,11 @@ namespace MediaPortal.DeployTool.Sections
       // 
       this.linkForum.AutoSize = true;
       this.linkForum.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.linkForum.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.linkForum.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.linkForum.LinkColor = System.Drawing.Color.White;
       this.linkForum.Location = new System.Drawing.Point(330, 258);
       this.linkForum.Name = "linkForum";
-      this.linkForum.Size = new System.Drawing.Size(134, 17);
+      this.linkForum.Size = new System.Drawing.Size(145, 17);
       this.linkForum.TabIndex = 15;
       this.linkForum.TabStop = true;
       this.linkForum.Text = "MediaPortal Forums";
@@ -107,11 +107,11 @@ namespace MediaPortal.DeployTool.Sections
       // 
       this.linkWiki.AutoSize = true;
       this.linkWiki.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.linkWiki.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.linkWiki.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.linkWiki.LinkColor = System.Drawing.Color.White;
       this.linkWiki.Location = new System.Drawing.Point(330, 277);
       this.linkWiki.Name = "linkWiki";
-      this.linkWiki.Size = new System.Drawing.Size(113, 17);
+      this.linkWiki.Size = new System.Drawing.Size(121, 17);
       this.linkWiki.TabIndex = 16;
       this.linkWiki.TabStop = true;
       this.linkWiki.Text = "MediaPortal Wiki";
@@ -123,7 +123,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelEbay.BackColor = System.Drawing.Color.Transparent;
       this.labelEbay.Font = new System.Drawing.Font("Verdana", 8F);
       this.labelEbay.ForeColor = System.Drawing.Color.White;
-      this.labelEbay.Location = new System.Drawing.Point(330, 321);
+      this.labelEbay.Location = new System.Drawing.Point(330, 399);
       this.labelEbay.MaximumSize = new System.Drawing.Size(600, 0);
       this.labelEbay.Name = "labelEbay";
       this.labelEbay.Size = new System.Drawing.Size(456, 13);

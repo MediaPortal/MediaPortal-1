@@ -39,22 +39,22 @@ namespace MediaPortal.DeployTool
       // labelSourceURL
       // 
       this.labelSourceURL.AutoSize = true;
-      this.labelSourceURL.Font = new System.Drawing.Font("Verdana", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelSourceURL.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelSourceURL.ForeColor = System.Drawing.Color.White;
       this.labelSourceURL.Location = new System.Drawing.Point(15, 13);
       this.labelSourceURL.Name = "labelSourceURL";
-      this.labelSourceURL.Size = new System.Drawing.Size(102, 13);
+      this.labelSourceURL.Size = new System.Drawing.Size(128, 17);
       this.labelSourceURL.TabIndex = 0;
       this.labelSourceURL.Text = "Download URL:";
       // 
       // labelTargetFile
       // 
       this.labelTargetFile.AutoSize = true;
-      this.labelTargetFile.Font = new System.Drawing.Font("Verdana", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelTargetFile.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelTargetFile.ForeColor = System.Drawing.Color.White;
       this.labelTargetFile.Location = new System.Drawing.Point(15, 57);
       this.labelTargetFile.Name = "labelTargetFile";
-      this.labelTargetFile.Size = new System.Drawing.Size(54, 13);
+      this.labelTargetFile.Size = new System.Drawing.Size(65, 17);
       this.labelTargetFile.TabIndex = 1;
       this.labelTargetFile.Text = "Target:";
       // 
@@ -80,9 +80,9 @@ namespace MediaPortal.DeployTool
       // 
       // progressBar
       // 
-      this.progressBar.Location = new System.Drawing.Point(19, 110);
+      this.progressBar.Location = new System.Drawing.Point(17, 110);
       this.progressBar.Name = "progressBar";
-      this.progressBar.Size = new System.Drawing.Size(530, 23);
+      this.progressBar.Size = new System.Drawing.Size(543, 23);
       this.progressBar.TabIndex = 4;
       // 
       // buttonCancel
