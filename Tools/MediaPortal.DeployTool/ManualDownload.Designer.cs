@@ -54,11 +54,11 @@ namespace MediaPortal.DeployTool
       // labelFile
       // 
       this.labelFile.AutoSize = true;
-      this.labelFile.Font = new System.Drawing.Font("Verdana", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
+      this.labelFile.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold);
       this.labelFile.ForeColor = System.Drawing.Color.White;
-      this.labelFile.Location = new System.Drawing.Point(15, 38);
+      this.labelFile.Location = new System.Drawing.Point(15, 44);
       this.labelFile.Name = "labelFile";
-      this.labelFile.Size = new System.Drawing.Size(71, 13);
+      this.labelFile.Size = new System.Drawing.Size(82, 17);
       this.labelFile.TabIndex = 1;
       this.labelFile.Text = "Filename:";
       // 
@@ -66,7 +66,7 @@ namespace MediaPortal.DeployTool
       // 
       this.labelTargetFile.AutoSize = true;
       this.labelTargetFile.ForeColor = System.Drawing.Color.White;
-      this.labelTargetFile.Location = new System.Drawing.Point(111, 38);
+      this.labelTargetFile.Location = new System.Drawing.Point(111, 48);
       this.labelTargetFile.Name = "labelTargetFile";
       this.labelTargetFile.Size = new System.Drawing.Size(41, 13);
       this.labelTargetFile.TabIndex = 2;
@@ -76,9 +76,10 @@ namespace MediaPortal.DeployTool
       // 
       this.linkURL.AutoSize = true;
       this.linkURL.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.linkURL.Location = new System.Drawing.Point(111, 56);
+      this.linkURL.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.linkURL.Location = new System.Drawing.Point(111, 66);
       this.linkURL.Name = "linkURL";
-      this.linkURL.Size = new System.Drawing.Size(87, 13);
+      this.linkURL.Size = new System.Drawing.Size(98, 13);
       this.linkURL.TabIndex = 3;
       this.linkURL.TabStop = true;
       this.linkURL.Text = "Download link";
@@ -87,11 +88,11 @@ namespace MediaPortal.DeployTool
       // labelDir
       // 
       this.labelDir.AutoSize = true;
-      this.labelDir.Font = new System.Drawing.Font("Verdana", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
+      this.labelDir.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold);
       this.labelDir.ForeColor = System.Drawing.Color.White;
-      this.labelDir.Location = new System.Drawing.Point(15, 76);
+      this.labelDir.Location = new System.Drawing.Point(15, 82);
       this.labelDir.Name = "labelDir";
-      this.labelDir.Size = new System.Drawing.Size(76, 13);
+      this.labelDir.Size = new System.Drawing.Size(91, 17);
       this.labelDir.TabIndex = 4;
       this.labelDir.Text = "Target dir:";
       // 
@@ -99,7 +100,7 @@ namespace MediaPortal.DeployTool
       // 
       this.labelTargetDir.AutoSize = true;
       this.labelTargetDir.ForeColor = System.Drawing.Color.White;
-      this.labelTargetDir.Location = new System.Drawing.Point(111, 76);
+      this.labelTargetDir.Location = new System.Drawing.Point(111, 86);
       this.labelTargetDir.Name = "labelTargetDir";
       this.labelTargetDir.Size = new System.Drawing.Size(41, 13);
       this.labelTargetDir.TabIndex = 5;
@@ -109,9 +110,10 @@ namespace MediaPortal.DeployTool
       // 
       this.linkDir.AutoSize = true;
       this.linkDir.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.linkDir.Location = new System.Drawing.Point(111, 95);
+      this.linkDir.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.linkDir.Location = new System.Drawing.Point(111, 105);
       this.linkDir.Name = "linkDir";
-      this.linkDir.Size = new System.Drawing.Size(92, 13);
+      this.linkDir.Size = new System.Drawing.Size(104, 13);
       this.linkDir.TabIndex = 6;
       this.linkDir.TabStop = true;
       this.linkDir.Text = "Open directory";

@@ -82,6 +82,7 @@ namespace MediaPortal.DeployTool
       this.MaximizeBox = false;
       this.MinimizeBox = false;
       this.Name = "ManualDownloadFileMissing";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "Manual download";
       this.ResumeLayout(false);
       this.PerformLayout();

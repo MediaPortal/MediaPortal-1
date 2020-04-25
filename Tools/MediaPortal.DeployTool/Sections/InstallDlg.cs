@@ -55,8 +55,16 @@ namespace MediaPortal.DeployTool.Sections
 
     public override DeployDialog GetNextDialog()
     {
+      progressInstall.Minimum = 0;
+      progressInstall.Maximum = flpApplication.Controls.Count;
+      progressInstall.Value = 0;
+      progressInstall.Visible = true;
+
       foreach (Control item in flpApplication.Controls)
       {
+        progressInstall.Value++;
+        progressInstall.Update();
+
         IInstallationPackage package = (IInstallationPackage)((ApplicationCtrl)item).Tag;
         int action = PerformPackageAction(package, (ApplicationCtrl)item);
         ((ApplicationCtrl)item).InAction = false;
@@ -73,8 +81,10 @@ namespace MediaPortal.DeployTool.Sections
           ((ApplicationCtrl)item).StatusName = CheckState.COMPLETE.ToString();
         }
         item.Update();
+        progressInstall.Update();
       }
       // PopulateListView();
+      progressInstall.Visible = false;
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Finished);
     }
 
