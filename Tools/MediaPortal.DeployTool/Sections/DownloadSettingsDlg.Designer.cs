@@ -42,7 +42,6 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // labelSectionHeader
       // 
-      this.labelSectionHeader.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelSectionHeader.Location = new System.Drawing.Point(330, 31);
       this.labelSectionHeader.MaximumSize = new System.Drawing.Size(400, 0);
       this.labelSectionHeader.MinimumSize = new System.Drawing.Size(400, 0);
@@ -77,7 +76,7 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // listViewLang
       // 
-      this.listViewLang.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(155)))), ((int)(((byte)(201)))));
+      this.listViewLang.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(62)))), ((int)(((byte)(111)))), ((int)(((byte)(152)))));
       this.listViewLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnCountry,
             this.columnID,
@@ -158,7 +157,6 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.Add(this.rb64bit);
       this.Controls.Add(this.rb32bit);
       this.Name = "DownloadSettingsDlg";
-      this.Size = new System.Drawing.Size(1000, 430);
       this.Controls.SetChildIndex(this.rb32bit, 0);
       this.Controls.SetChildIndex(this.rb64bit, 0);
       this.Controls.SetChildIndex(this.listViewLang, 0);

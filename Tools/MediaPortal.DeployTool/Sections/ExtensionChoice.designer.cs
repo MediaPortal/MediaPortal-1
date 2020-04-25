@@ -130,7 +130,6 @@
       this.Controls.Add(this.linkExtensions);
       this.Controls.Add(this.grpLAV);
       this.Name = "ExtensionChoice";
-      this.Size = new System.Drawing.Size(1000, 430);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.grpLAV, 0);
       this.Controls.SetChildIndex(this.linkExtensions, 0);
