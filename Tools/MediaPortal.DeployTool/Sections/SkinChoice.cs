@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ namespace MediaPortal.DeployTool.Sections
         btnExisting.Visible = true;
         lblExisting.Visible = true;
         btnExisting.Image = Images.Choose_button_on;
-        pbSkin.Image = null;
+        pbSkin.Image = Images.preview_existing;
         InstallationProperties.Instance.Set("ChosenSkin", "[Existing]");
       }
       else
@@ -112,7 +112,7 @@ namespace MediaPortal.DeployTool.Sections
       btnExisting.Image = Images.Choose_button_on;
       btnTitan.Image = Images.Choose_button_off;
       btnDefaultWide.Image = Images.Choose_button_off;
-      pbSkin.Image = null;
+      pbSkin.Image = Images.preview_existing;
       InstallationProperties.Instance.Set("ChosenSkin", "[Existing]");
     }
 
