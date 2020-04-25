@@ -28,7 +28,6 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManualDownload));
       this.labelHeading = new System.Windows.Forms.Label();
       this.labelFile = new System.Windows.Forms.Label();
       this.labelTargetFile = new System.Windows.Forms.Label();
@@ -44,10 +43,11 @@ namespace MediaPortal.DeployTool
       // labelHeading
       // 
       this.labelHeading.AutoSize = true;
-      this.labelHeading.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold);
+      this.labelHeading.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold);
+      this.labelHeading.ForeColor = System.Drawing.Color.White;
       this.labelHeading.Location = new System.Drawing.Point(15, 13);
       this.labelHeading.Name = "labelHeading";
-      this.labelHeading.Size = new System.Drawing.Size(331, 13);
+      this.labelHeading.Size = new System.Drawing.Size(398, 17);
       this.labelHeading.TabIndex = 0;
       this.labelHeading.Text = "You have to manually download the following file:";
       // 
@@ -55,6 +55,7 @@ namespace MediaPortal.DeployTool
       // 
       this.labelFile.AutoSize = true;
       this.labelFile.Font = new System.Drawing.Font("Verdana", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
+      this.labelFile.ForeColor = System.Drawing.Color.White;
       this.labelFile.Location = new System.Drawing.Point(15, 38);
       this.labelFile.Name = "labelFile";
       this.labelFile.Size = new System.Drawing.Size(71, 13);
@@ -64,6 +65,7 @@ namespace MediaPortal.DeployTool
       // labelTargetFile
       // 
       this.labelTargetFile.AutoSize = true;
+      this.labelTargetFile.ForeColor = System.Drawing.Color.White;
       this.labelTargetFile.Location = new System.Drawing.Point(111, 38);
       this.labelTargetFile.Name = "labelTargetFile";
       this.labelTargetFile.Size = new System.Drawing.Size(41, 13);
@@ -86,6 +88,7 @@ namespace MediaPortal.DeployTool
       // 
       this.labelDir.AutoSize = true;
       this.labelDir.Font = new System.Drawing.Font("Verdana", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
+      this.labelDir.ForeColor = System.Drawing.Color.White;
       this.labelDir.Location = new System.Drawing.Point(15, 76);
       this.labelDir.Name = "labelDir";
       this.labelDir.Size = new System.Drawing.Size(76, 13);
@@ -95,6 +98,7 @@ namespace MediaPortal.DeployTool
       // labelTargetDir
       // 
       this.labelTargetDir.AutoSize = true;
+      this.labelTargetDir.ForeColor = System.Drawing.Color.White;
       this.labelTargetDir.Location = new System.Drawing.Point(111, 76);
       this.labelTargetDir.Name = "labelTargetDir";
       this.labelTargetDir.Size = new System.Drawing.Size(41, 13);
@@ -117,30 +121,33 @@ namespace MediaPortal.DeployTool
       // 
       this.labelDesc.AutoSize = true;
       this.labelDesc.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelDesc.ForeColor = System.Drawing.Color.White;
       this.labelDesc.Location = new System.Drawing.Point(15, 131);
       this.labelDesc.Name = "labelDesc";
-      this.labelDesc.Size = new System.Drawing.Size(410, 13);
+      this.labelDesc.Size = new System.Drawing.Size(413, 13);
       this.labelDesc.TabIndex = 7;
-      this.labelDesc.Text = "Hit \"continue\", when you have finished downloading the requested file.";
+      this.labelDesc.Text = "Hit \"Continue\", when you have finished downloading the requested file.";
       // 
       // buttonContinue
       // 
       this.buttonContinue.Cursor = System.Windows.Forms.Cursors.Hand;
       this.buttonContinue.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.buttonContinue.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.buttonContinue.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.buttonContinue.Location = new System.Drawing.Point(265, 162);
+      this.buttonContinue.ForeColor = System.Drawing.Color.White;
+      this.buttonContinue.Location = new System.Drawing.Point(279, 162);
       this.buttonContinue.Name = "buttonContinue";
-      this.buttonContinue.Size = new System.Drawing.Size(119, 23);
+      this.buttonContinue.Size = new System.Drawing.Size(115, 30);
       this.buttonContinue.TabIndex = 8;
-      this.buttonContinue.Text = "continue";
+      this.buttonContinue.Text = "Continue";
       this.buttonContinue.UseVisualStyleBackColor = true;
       this.buttonContinue.Click += new System.EventHandler(this.buttonContinue_Click);
       // 
       // ManualDownload
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.AutoSize = true;
+      this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(62)))), ((int)(((byte)(111)))), ((int)(((byte)(152)))));
       this.ClientSize = new System.Drawing.Size(672, 200);
       this.Controls.Add(this.buttonContinue);
       this.Controls.Add(this.labelDesc);

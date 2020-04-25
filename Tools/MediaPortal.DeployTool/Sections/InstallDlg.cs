@@ -57,9 +57,8 @@ namespace MediaPortal.DeployTool.Sections
     {
       foreach (Control item in flpApplication.Controls)
       {
-        IInstallationPackage package = (IInstallationPackage)item.Tag;
+        IInstallationPackage package = (IInstallationPackage)((ApplicationCtrl)item).Tag;
         int action = PerformPackageAction(package, (ApplicationCtrl)item);
-        // item.UseItemStyleForSubItems = false;
         ((ApplicationCtrl)item).InAction = false;
         item.Update();
         if (action == 2)
@@ -73,8 +72,9 @@ namespace MediaPortal.DeployTool.Sections
           ((ApplicationCtrl)item).Action = Localizer.GetBestTranslation("Install_actionNothing");
           ((ApplicationCtrl)item).StatusName = CheckState.COMPLETE.ToString();
         }
+        item.Update();
       }
-      PopulateListView();
+      // PopulateListView();
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Finished);
     }
 
@@ -93,7 +93,6 @@ namespace MediaPortal.DeployTool.Sections
 
     private void AddPackageToListView(IInstallationPackage package)
     {
-      // listView.SmallImageList = iconsList;
       ApplicationCtrl item = new ApplicationCtrl();
       item.Name = package.GetDisplayName();
       item.IconName = package.GetIconName();
@@ -178,9 +177,13 @@ namespace MediaPortal.DeployTool.Sections
         case "singleseat":
           AddPackageToListView(new MediaPortalChecker());
           if (InstallationProperties.Instance["DBMSType"] == "msSQL2005")
+          {
             AddPackageToListView(new MSSQLExpressChecker());
+          }
           if (InstallationProperties.Instance["DBMSType"] == "mysql")
+          {
             AddPackageToListView(new MySQLChecker());
+          }
           AddPackageToListView(new TvServerChecker());
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
@@ -188,9 +191,13 @@ namespace MediaPortal.DeployTool.Sections
 
         case "tvserver_master":
           if (InstallationProperties.Instance["DBMSType"] == "msSQL2005")
+          {
             AddPackageToListView(new MSSQLExpressChecker());
+          }
           if (InstallationProperties.Instance["DBMSType"] == "mysql")
+          {
             AddPackageToListView(new MySQLChecker());
+          }
           AddPackageToListView(new TvServerChecker());
           break;
 
@@ -216,15 +223,18 @@ namespace MediaPortal.DeployTool.Sections
       }
       if ((InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1" ||
            InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1") &&
-          InstallationProperties.Instance["InstallType"] != "download_only")
+           InstallationProperties.Instance["InstallType"] != "download_only")
+      {
         AddPackageToListView(new WindowsFirewallChecker());
-      // listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+      }
     }
 
     private void RequirementsDlg_ParentChanged(object sender, EventArgs e)
     {
       if (Parent != null)
+      {
         PopulateListView();
+      }
     }
 
     private int PerformPackageAction(IInstallationPackage package, ApplicationCtrl item)
