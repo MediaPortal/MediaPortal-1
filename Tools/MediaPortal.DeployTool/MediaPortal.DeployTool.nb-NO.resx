@@ -252,7 +252,7 @@ PC-en vil da fungere som en TV-Server og gi andre PC-er på ditt nettverk tilgan
     <value>Installer</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;ingen endring&gt;</value>
+    <value>Ingen endring</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Avinstaller tidligere -&gt; last ned -&gt; installer</value>

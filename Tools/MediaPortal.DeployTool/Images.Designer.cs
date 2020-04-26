@@ -513,6 +513,16 @@ namespace MediaPortal.DeployTool {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap WinFirewall {
+            get {
+                object obj = ResourceManager.GetObject("WinFirewall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap WMP11 {
             get {
                 object obj = ResourceManager.GetObject("WMP11", resourceCulture);

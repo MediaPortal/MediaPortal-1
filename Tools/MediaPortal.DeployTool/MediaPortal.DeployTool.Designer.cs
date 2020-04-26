@@ -639,7 +639,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;no action&gt;.
+        ///   Looks up a localized string similar to No action
         /// </summary>
         internal static string Install_actionNothing {
             get {

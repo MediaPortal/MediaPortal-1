@@ -252,7 +252,7 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
     <value>Installeren</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;geen actie&gt;</value>
+    <value>Geen actie</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Deïnstalleren vorige-&gt;download-&gt;installeren</value>

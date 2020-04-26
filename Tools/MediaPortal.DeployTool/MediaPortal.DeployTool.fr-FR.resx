@@ -251,7 +251,7 @@ Ce PC sera utilisé comme TV-Server dédié et distribuera la TV aux autres PC d
     <value>Installer</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;pas d'action&gt;</value>
+    <value>Pas d'action</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Désinstaller précédent-&gt;Télécharger-&gt;Installer</value>

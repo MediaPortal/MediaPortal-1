@@ -253,7 +253,7 @@ O PC será utilizado como um servidor de TV dedicado e fornece outros PC's na su
     <value>Instalar</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;sem acção&gt;</value>
+    <value>Sem acção</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Desinstalar anterior-&gt;tranferir-&gt;instalar</value>

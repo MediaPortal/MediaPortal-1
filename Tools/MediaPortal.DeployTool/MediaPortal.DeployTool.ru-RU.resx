@@ -251,7 +251,7 @@
     <value>Установка</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;бездействие&gt;</value>
+    <value>Бездействие</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Удаление-&gt;загрузка-&gt;установка</value>

@@ -732,6 +732,7 @@
     <None Include="Resources\Mediaportal Internet Connection.png" />
     <None Include="Resources\Mediaportal Install.png" />
     <None Include="Resources\Mediaportal TV.png" />
+    <None Include="Resources\Application\Firewall.png" />
     <Content Include="Resources\MePo_download.png" />
   </ItemGroup>
   <ItemGroup>
