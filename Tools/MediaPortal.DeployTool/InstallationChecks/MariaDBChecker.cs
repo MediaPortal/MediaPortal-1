@@ -34,10 +34,12 @@ namespace MediaPortal.DeployTool.InstallationChecks
     private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
 
     private static readonly string _arch = Utils.Check64bit() ? "64" : "32";
-    private static readonly string prg = "MariaDB102_" + _arch;
+    private static readonly string prg = "MariaDB_10.2.31" + _arch;
     private static readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
 
-    private readonly string _dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\MariaDB 10.2";
+    // private readonly string _dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\MariaDB 10.2";
+    private readonly string _dataDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\MariaDB 10.2\\data";
+
 
     private static bool MySQL51 = false;
     private static string strMySQ = "";
