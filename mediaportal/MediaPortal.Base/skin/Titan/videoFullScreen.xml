@@ -274,7 +274,7 @@
 	    	<align>center</align>
 	    	<font>fontB14</font>
 	    	<wrapString> | </wrapString>
-			<visible>!string.equals(#mvCentral.isPlaying,true)+control.isVisible(111)+![control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
+            <visible>!string.equals(#mvCentral.isPlaying,true)+control.isVisible(111)+!control.isVisible(10)+!control.isVisible(11)+!control.isVisible(12)+!Player.Forwarding+!Player.Rewinding</visible>
 		</control>
 
 		<control>
