@@ -206,6 +206,9 @@ De PC is daarmee een dedicated TV-server en verzorgt het TV-signaal voor andere 
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>
   </data>
+  <data name="DBMSType_rbMariaDB" xml:space="preserve">
+    <value>MariaDB 10</value>
+  </data>
   <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
     <value>SQL-Server is reeds geïnstalleerd en zal gebruikt worden door TV-Server</value>
   </data>

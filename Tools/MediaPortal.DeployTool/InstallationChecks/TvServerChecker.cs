@@ -73,7 +73,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
 
       //NSIS installer doesn't want " in parameters (chefkoch)
-      //Remember that /D must be the last one         (chefkoch)
+      //Remember that /D must be the last one       (chefkoch)
       Process setup = Process.Start(_fileName,
                                     String.Format("/S /noClient /DeployMode --DeployMode {0} {1} {2} /D={3}", sqlparam, pwdparam,
                                                   UpdateMode, targetDir));

@@ -325,6 +325,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MariaDB 10.
+        /// </summary>
+        internal static string DBMSType_rbMariaDB {
+            get {
+                return ResourceManager.GetString("DBMSType_rbMariaDB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to delete deploy.xml\nDo you want to continue?\nSettings may not be upgraded correctly.
         /// </summary>
         internal static string DeployXmlDelete_Failed {

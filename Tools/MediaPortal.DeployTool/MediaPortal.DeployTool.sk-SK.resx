@@ -207,6 +207,9 @@ Počítač potom bude slúžiť ako vyhradený TV server a bude poskytovať tele
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>
   </data>
+  <data name="DBMSType_rbMariaDB" xml:space="preserve">
+    <value>MariaDB 10</value>
+  </data>
   <data name="DiskSpace_Error" xml:space="preserve">
     <value>Na zvolenej jednotke nieje dostatok voľného miesta! Na inštaláciu MediaPortalu potrebujete najmenej {0} MB voľného miesta.</value>
   </data>

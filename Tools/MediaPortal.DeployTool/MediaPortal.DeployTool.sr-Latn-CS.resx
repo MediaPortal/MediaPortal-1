@@ -205,6 +205,9 @@ Računar će raditi kao lokalni TV-server i omogućiće drugim računarima na va
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>
   </data>
+  <data name="DBMSType_rbMariaDB" xml:space="preserve">
+    <value>MariaDB 10</value>
+  </data>
   <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
     <value>SQL-server već postoji i biće korišćen za TV-server</value>
   </data>

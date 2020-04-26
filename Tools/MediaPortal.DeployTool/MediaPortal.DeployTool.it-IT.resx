@@ -205,6 +205,9 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>
   </data>
+  <data name="DBMSType_rbMariaDB" xml:space="preserve">
+    <value>MariaDB 10</value>
+  </data>
   <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
     <value>SQL server è già presente e verrà usato per il TV-Server</value>
   </data>

@@ -146,7 +146,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         }
         else
         {
-          //MySQL TCP Port
+          //MySQL/MariaDB TCP Port
           port = 3306;
           GloballyOpenPort("MySQL", port, NET_FW_SCOPE_.NET_FW_SCOPE_ALL, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP,
                            NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);

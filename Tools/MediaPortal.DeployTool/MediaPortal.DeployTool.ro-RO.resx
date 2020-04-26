@@ -205,6 +205,9 @@ In acest caz PC-ul se va comporta ca un TV-Server si va transimte semnalul TV ce
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>
   </data>
+  <data name="DBMSType_rbMariaDB" xml:space="preserve">
+    <value>MariaDB 10</value>
+  </data>
   <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
     <value>Server-ul SQL este deja instalat și va fi utilizat pentru TV-Server</value>
   </data>

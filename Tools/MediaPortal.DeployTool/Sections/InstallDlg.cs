@@ -194,6 +194,10 @@ namespace MediaPortal.DeployTool.Sections
           {
             AddPackageToListView(new MySQLChecker());
           }
+          if (InstallationProperties.Instance["DBMSType"] == "mariadb")
+          {
+            AddPackageToListView(new MariaDBChecker());
+          }
           AddPackageToListView(new TvServerChecker());
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
@@ -207,6 +211,10 @@ namespace MediaPortal.DeployTool.Sections
           if (InstallationProperties.Instance["DBMSType"] == "mysql")
           {
             AddPackageToListView(new MySQLChecker());
+          }
+          if (InstallationProperties.Instance["DBMSType"] == "mariadb")
+          {
+            AddPackageToListView(new MariaDBChecker());
           }
           AddPackageToListView(new TvServerChecker());
           break;
@@ -226,6 +234,7 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new MediaPortalChecker());
           AddPackageToListView(new MSSQLExpressChecker());
           AddPackageToListView(new MySQLChecker());
+          AddPackageToListView(new MariaDBChecker());
           AddPackageToListView(new TvServerChecker());
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
