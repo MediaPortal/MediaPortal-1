@@ -39,7 +39,6 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // labelSectionHeader
       // 
-      this.labelSectionHeader.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelSectionHeader.Location = new System.Drawing.Point(330, 92);
       this.labelSectionHeader.MaximumSize = new System.Drawing.Size(600, 0);
       this.labelSectionHeader.Size = new System.Drawing.Size(599, 85);
@@ -103,10 +102,10 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // pictureBox1
       // 
-      this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.Mediaportal_Internet_Connection;
-      this.pictureBox1.Location = new System.Drawing.Point(50, 120);
+      this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.Mediaportal_Box_White;
+      this.pictureBox1.Location = new System.Drawing.Point(-50, 50);
       this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(176, 265);
+      this.pictureBox1.Size = new System.Drawing.Size(374, 357);
       this.pictureBox1.TabIndex = 21;
       this.pictureBox1.TabStop = false;
       // 
@@ -120,7 +119,6 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.Add(this.rbDownloadOnly);
       this.Controls.Add(this.rbInstallNow);
       this.Name = "DownloadOnlyDlg";
-      this.Size = new System.Drawing.Size(1000, 430);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.rbInstallNow, 0);
       this.Controls.SetChildIndex(this.rbDownloadOnly, 0);

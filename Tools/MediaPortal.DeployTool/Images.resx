@@ -238,15 +238,6 @@
   <data name="Mediaportal_Box" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Mediaportal Box.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Mediaportal_Install" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Mediaportal Install.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Mediaportal_Internet_Connection" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Mediaportal Internet Connection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Mediaportal_One_Click" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Mediaportal One Click.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Mediaportal_TV" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Mediaportal TV.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -258,5 +249,8 @@
   </data>
   <data name="WinFirewall" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Application\Firewall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mediaportal_Box_White" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Mediaportal Box White.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

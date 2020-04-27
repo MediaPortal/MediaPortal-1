@@ -273,29 +273,9 @@ namespace MediaPortal.DeployTool {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Mediaportal_Install {
+        internal static System.Drawing.Bitmap Mediaportal_Box_White {
             get {
-                object obj = ResourceManager.GetObject("Mediaportal_Install", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Mediaportal_Internet_Connection {
-            get {
-                object obj = ResourceManager.GetObject("Mediaportal_Internet_Connection", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Mediaportal_One_Click {
-            get {
-                object obj = ResourceManager.GetObject("Mediaportal_One_Click", resourceCulture);
+                object obj = ResourceManager.GetObject("Mediaportal_Box_White", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

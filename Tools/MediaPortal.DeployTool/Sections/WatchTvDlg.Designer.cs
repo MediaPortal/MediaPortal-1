@@ -38,7 +38,7 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // labelSectionHeader
       // 
-      this.labelSectionHeader.Location = new System.Drawing.Point(330, 107);
+      this.labelSectionHeader.Location = new System.Drawing.Point(434, 107);
       this.labelSectionHeader.MaximumSize = new System.Drawing.Size(405, 0);
       this.labelSectionHeader.Size = new System.Drawing.Size(355, 17);
       this.labelSectionHeader.Text = "Do you want to watch TV with MediaPortal ?";
@@ -49,7 +49,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbYesWatchTv.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbYesWatchTv.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rbYesWatchTv.ForeColor = System.Drawing.Color.White;
-      this.rbYesWatchTv.Location = new System.Drawing.Point(393, 172);
+      this.rbYesWatchTv.Location = new System.Drawing.Point(497, 172);
       this.rbYesWatchTv.MaximumSize = new System.Drawing.Size(257, 0);
       this.rbYesWatchTv.Name = "rbYesWatchTv";
       this.rbYesWatchTv.Size = new System.Drawing.Size(228, 13);
@@ -63,7 +63,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbNoWatchTv.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbNoWatchTv.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rbNoWatchTv.ForeColor = System.Drawing.Color.White;
-      this.rbNoWatchTv.Location = new System.Drawing.Point(393, 225);
+      this.rbNoWatchTv.Location = new System.Drawing.Point(497, 225);
       this.rbNoWatchTv.MaximumSize = new System.Drawing.Size(257, 0);
       this.rbNoWatchTv.Name = "rbNoWatchTv";
       this.rbNoWatchTv.Size = new System.Drawing.Size(236, 13);
@@ -79,7 +79,7 @@ namespace MediaPortal.DeployTool.Sections
       this.bYes.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.bYes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.bYes.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.bYes.Location = new System.Drawing.Point(338, 167);
+      this.bYes.Location = new System.Drawing.Point(442, 167);
       this.bYes.Name = "bYes";
       this.bYes.Size = new System.Drawing.Size(32, 23);
       this.bYes.TabIndex = 20;
@@ -94,7 +94,7 @@ namespace MediaPortal.DeployTool.Sections
       this.bNo.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.bNo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.bNo.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.bNo.Location = new System.Drawing.Point(338, 220);
+      this.bNo.Location = new System.Drawing.Point(442, 220);
       this.bNo.Name = "bNo";
       this.bNo.Size = new System.Drawing.Size(32, 23);
       this.bNo.TabIndex = 21;
@@ -104,9 +104,10 @@ namespace MediaPortal.DeployTool.Sections
       // pictureBox1
       // 
       this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.Mediaportal_TV;
-      this.pictureBox1.Location = new System.Drawing.Point(50, 120);
+      this.pictureBox1.Location = new System.Drawing.Point(3, 54);
       this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(176, 265);
+      this.pictureBox1.Size = new System.Drawing.Size(425, 324);
+      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pictureBox1.TabIndex = 22;
       this.pictureBox1.TabStop = false;
       // 

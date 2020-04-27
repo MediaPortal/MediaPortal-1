@@ -41,7 +41,6 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // labelSectionHeader
       // 
-      this.labelSectionHeader.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelSectionHeader.Location = new System.Drawing.Point(332, 106);
       this.labelSectionHeader.MaximumSize = new System.Drawing.Size(405, 0);
       this.labelSectionHeader.Size = new System.Drawing.Size(340, 17);
@@ -147,10 +146,10 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // pictureBox1
       // 
-      this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.Mediaportal_Install;
-      this.pictureBox1.Location = new System.Drawing.Point(50, 120);
+      this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.Mediaportal_Box_White;
+      this.pictureBox1.Location = new System.Drawing.Point(-50, 50);
       this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(176, 265);
+      this.pictureBox1.Size = new System.Drawing.Size(374, 357);
       this.pictureBox1.TabIndex = 24;
       this.pictureBox1.TabStop = false;
       // 
@@ -167,7 +166,6 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.Add(this.rbFresh);
       this.Controls.Add(this.rbUpdate);
       this.Name = "UpgradeDlg";
-      this.Size = new System.Drawing.Size(1000, 430);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.rbUpdate, 0);
       this.Controls.SetChildIndex(this.rbFresh, 0);
