@@ -38,7 +38,6 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // labelSectionHeader
       // 
-      this.labelSectionHeader.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelSectionHeader.Location = new System.Drawing.Point(330, 107);
       this.labelSectionHeader.MaximumSize = new System.Drawing.Size(405, 0);
       this.labelSectionHeader.Size = new System.Drawing.Size(355, 17);
@@ -48,11 +47,12 @@ namespace MediaPortal.DeployTool.Sections
       // 
       this.rbYesWatchTv.AutoSize = true;
       this.rbYesWatchTv.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.rbYesWatchTv.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rbYesWatchTv.ForeColor = System.Drawing.Color.White;
-      this.rbYesWatchTv.Location = new System.Drawing.Point(399, 172);
+      this.rbYesWatchTv.Location = new System.Drawing.Point(393, 172);
       this.rbYesWatchTv.MaximumSize = new System.Drawing.Size(257, 0);
       this.rbYesWatchTv.Name = "rbYesWatchTv";
-      this.rbYesWatchTv.Size = new System.Drawing.Size(194, 13);
+      this.rbYesWatchTv.Size = new System.Drawing.Size(228, 13);
       this.rbYesWatchTv.TabIndex = 17;
       this.rbYesWatchTv.Text = "Yes, I will use MediaPortal to watch TV.";
       this.rbYesWatchTv.Click += new System.EventHandler(this.bYes_Click);
@@ -61,11 +61,12 @@ namespace MediaPortal.DeployTool.Sections
       // 
       this.rbNoWatchTv.AutoSize = true;
       this.rbNoWatchTv.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.rbNoWatchTv.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rbNoWatchTv.ForeColor = System.Drawing.Color.White;
-      this.rbNoWatchTv.Location = new System.Drawing.Point(399, 225);
+      this.rbNoWatchTv.Location = new System.Drawing.Point(393, 225);
       this.rbNoWatchTv.MaximumSize = new System.Drawing.Size(257, 0);
       this.rbNoWatchTv.Name = "rbNoWatchTv";
-      this.rbNoWatchTv.Size = new System.Drawing.Size(201, 13);
+      this.rbNoWatchTv.Size = new System.Drawing.Size(236, 13);
       this.rbNoWatchTv.TabIndex = 19;
       this.rbNoWatchTv.Text = "No, I won\'t use MediaPortal to watch TV.";
       this.rbNoWatchTv.Click += new System.EventHandler(this.bNo_Click);
@@ -119,7 +120,6 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.Add(this.rbNoWatchTv);
       this.Controls.Add(this.rbYesWatchTv);
       this.Name = "WatchTVDlg";
-      this.Size = new System.Drawing.Size(1000, 430);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.rbYesWatchTv, 0);
       this.Controls.SetChildIndex(this.rbNoWatchTv, 0);

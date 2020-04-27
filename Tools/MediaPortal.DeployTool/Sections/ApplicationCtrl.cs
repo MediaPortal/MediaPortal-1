@@ -83,6 +83,7 @@ namespace MediaPortal.DeployTool.Sections
       {
         _state = value;
         lbState.Text = value;
+        toolTip1.SetToolTip(lbState, Localizer.GetBestTranslation("Install_colState") + ": " + value);
       }
     }
 
@@ -96,6 +97,7 @@ namespace MediaPortal.DeployTool.Sections
       {
         _action = value;
         lbAction.Text = value;
+        toolTip1.SetToolTip(lbAction, Localizer.GetBestTranslation("Install_colAction") + ": " + value);
       }
     }
 
@@ -109,6 +111,7 @@ namespace MediaPortal.DeployTool.Sections
       {
         _name = value;
         lbApplication.Text = value;
+        toolTip1.SetToolTip(lbApplication, Localizer.GetBestTranslation("Install_colApplication") + ": " + value);
       }
     }
 

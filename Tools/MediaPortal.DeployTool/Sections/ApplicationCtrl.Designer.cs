@@ -28,11 +28,13 @@
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       this.pbImage = new System.Windows.Forms.PictureBox();
       this.pbStatusIcon = new System.Windows.Forms.PictureBox();
       this.lbState = new System.Windows.Forms.Label();
       this.lbAction = new System.Windows.Forms.Label();
       this.lbApplication = new System.Windows.Forms.Label();
+      this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       ((System.ComponentModel.ISupportInitialize)(this.pbImage)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pbStatusIcon)).BeginInit();
       this.SuspendLayout();
@@ -121,5 +123,6 @@
     private System.Windows.Forms.Label lbState;
     private System.Windows.Forms.Label lbAction;
     private System.Windows.Forms.Label lbApplication;
+    private System.Windows.Forms.ToolTip toolTip1;
   }
 }
