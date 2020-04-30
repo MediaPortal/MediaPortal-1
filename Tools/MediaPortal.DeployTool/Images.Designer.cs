@@ -173,6 +173,16 @@ namespace MediaPortal.DeployTool {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Database {
+            get {
+                object obj = ResourceManager.GetObject("Database", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap DirectX9C {
             get {
                 object obj = ResourceManager.GetObject("DirectX9C", resourceCulture);
@@ -226,6 +236,16 @@ namespace MediaPortal.DeployTool {
         internal static System.Drawing.Bitmap INSTALLED {
             get {
                 object obj = ResourceManager.GetObject("INSTALLED", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Internet_connection {
+            get {
+                object obj = ResourceManager.GetObject("Internet_connection", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

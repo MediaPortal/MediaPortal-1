@@ -139,11 +139,12 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // pictureBox1
       // 
-      this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.Mediaportal_Box_White;
-      this.pictureBox1.Location = new System.Drawing.Point(-50, 50);
+      this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.Internet_connection;
+      this.pictureBox1.Location = new System.Drawing.Point(3, 62);
       this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(374, 357);
-      this.pictureBox1.TabIndex = 18;
+      this.pictureBox1.Size = new System.Drawing.Size(324, 309);
+      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+      this.pictureBox1.TabIndex = 22;
       this.pictureBox1.TabStop = false;
       // 
       // DownloadSettingsDlg

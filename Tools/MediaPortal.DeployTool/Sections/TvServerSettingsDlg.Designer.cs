@@ -115,7 +115,6 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.Add(this.labelInstDir);
       this.Controls.Add(this.labelHeading);
       this.Name = "TvServerSettingsDlg";
-      this.Size = new System.Drawing.Size(1000, 430);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.labelHeading, 0);
       this.Controls.SetChildIndex(this.labelInstDir, 0);

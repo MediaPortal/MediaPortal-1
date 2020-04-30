@@ -103,7 +103,6 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.Add(this.labelHeading2);
       this.Controls.Add(this.labelHeading1);
       this.Name = "WelcomeDlg";
-      this.Size = new System.Drawing.Size(1000, 430);
       this.Controls.SetChildIndex(this.labelHeading1, 0);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.labelHeading2, 0);

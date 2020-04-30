@@ -126,10 +126,10 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // pictureBox1
       // 
-      this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.MSSQL;
-      this.pictureBox1.Location = new System.Drawing.Point(70, 100);
+      this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.Database;
+      this.pictureBox1.Location = new System.Drawing.Point(28, 61);
       this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(190, 190);
+      this.pictureBox1.Size = new System.Drawing.Size(286, 274);
       this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
       this.pictureBox1.TabIndex = 12;
       this.pictureBox1.TabStop = false;
@@ -147,7 +147,6 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.Add(this.textBoxDir);
       this.Controls.Add(this.labelInstDir);
       this.Name = "DBMSSettingsDlg";
-      this.Size = new System.Drawing.Size(1000, 430);
       this.Controls.SetChildIndex(this.labelInstDir, 0);
       this.Controls.SetChildIndex(this.textBoxDir, 0);
       this.Controls.SetChildIndex(this.buttonBrowse, 0);

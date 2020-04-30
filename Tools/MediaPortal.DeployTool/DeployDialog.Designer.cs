@@ -34,11 +34,11 @@ namespace MediaPortal.DeployTool
       // labelSectionHeader
       // 
       this.labelSectionHeader.AutoSize = true;
-      this.labelSectionHeader.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelSectionHeader.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelSectionHeader.ForeColor = System.Drawing.Color.White;
-      this.labelSectionHeader.Location = new System.Drawing.Point(8, 4);
+      this.labelSectionHeader.Location = new System.Drawing.Point(330, 4);
       this.labelSectionHeader.Name = "labelSectionHeader";
-      this.labelSectionHeader.Size = new System.Drawing.Size(194, 17);
+      this.labelSectionHeader.Size = new System.Drawing.Size(216, 18);
       this.labelSectionHeader.TabIndex = 0;
       this.labelSectionHeader.Text = "Choose installation type";
       // 

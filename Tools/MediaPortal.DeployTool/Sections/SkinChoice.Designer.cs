@@ -41,6 +41,10 @@
       ((System.ComponentModel.ISupportInitialize)(this.pbSkin)).BeginInit();
       this.SuspendLayout();
       // 
+      // labelSectionHeader
+      // 
+      this.labelSectionHeader.Location = new System.Drawing.Point(550, 4);
+      // 
       // lblChooseSkin
       // 
       this.lblChooseSkin.AutoSize = true;
