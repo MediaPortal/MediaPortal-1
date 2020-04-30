@@ -44,7 +44,8 @@
       // lbl_version
       // 
       this.lbl_version.Dock = System.Windows.Forms.DockStyle.Right;
-      this.lbl_version.ForeColor = System.Drawing.Color.Black;
+      this.lbl_version.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.lbl_version.ForeColor = System.Drawing.SystemColors.ControlText;
       this.lbl_version.Location = new System.Drawing.Point(50, 0);
       this.lbl_version.MaximumSize = new System.Drawing.Size(100, 0);
       this.lbl_version.MinimumSize = new System.Drawing.Size(100, 0);

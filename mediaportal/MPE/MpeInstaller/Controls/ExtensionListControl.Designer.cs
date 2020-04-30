@@ -88,6 +88,7 @@
       // label2
       // 
       this.label2.AutoSize = true;
+      this.label2.BackColor = System.Drawing.SystemColors.Control;
       this.label2.Location = new System.Drawing.Point(3, 8);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(31, 13);
@@ -106,10 +107,6 @@
       this.panelTop.Name = "panelTop";
       this.panelTop.Size = new System.Drawing.Size(577, 29);
       this.panelTop.TabIndex = 5;
-      // 
-      // toolTip1
-      // 
-      this.toolTip1.IsBalloon = true;
       // 
       // ExtensionListControl
       // 

@@ -188,6 +188,11 @@ namespace MpeInstaller.Controls
           testToolStripMenuItem.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold,
                                                 GraphicsUnit.Point, ((byte)(0)));
         }
+        else
+        {
+          testToolStripMenuItem.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular,
+                                      GraphicsUnit.Point, ((byte)(0)));
+        }
         if (!item.CheckDependency(true))
           testToolStripMenuItem.ForeColor = Color.Red;
         if (item.GeneralInfo.VersionDescription != null)

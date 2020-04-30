@@ -709,6 +709,5 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
         ApplicationSettings.Instance.UpdateDays = (int)dlg.numeric_Days.Value;
       }
     }
-
   }
 }

@@ -71,7 +71,7 @@
       this.lbl_name.AutoEllipsis = true;
       this.lbl_name.AutoSize = true;
       this.lbl_name.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.lbl_name.ForeColor = System.Drawing.Color.Blue;
+      this.lbl_name.ForeColor = System.Drawing.Color.White;
       this.lbl_name.Location = new System.Drawing.Point(0, 2);
       this.lbl_name.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
       this.lbl_name.Name = "lbl_name";
@@ -83,22 +83,21 @@
       // 
       // btn_uninstall
       // 
-      this.btn_uninstall.BackColor = System.Drawing.SystemColors.ButtonFace;
-      this.btn_uninstall.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btn_uninstall.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.btn_uninstall.Location = new System.Drawing.Point(84, 3);
+      this.btn_uninstall.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.btn_uninstall.ForeColor = System.Drawing.Color.White;
+      this.btn_uninstall.Location = new System.Drawing.Point(89, 3);
       this.btn_uninstall.Name = "btn_uninstall";
       this.btn_uninstall.Size = new System.Drawing.Size(75, 23);
       this.btn_uninstall.TabIndex = 1;
       this.btn_uninstall.Text = "Uninstall";
-      this.btn_uninstall.UseVisualStyleBackColor = false;
+      this.btn_uninstall.UseVisualStyleBackColor = true;
       this.btn_uninstall.Click += new System.EventHandler(this.btn_uninstall_Click);
       // 
       // lbl_description
       // 
       this.lbl_description.AutoEllipsis = true;
       this.lbl_description.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.lbl_description.ForeColor = System.Drawing.Color.Blue;
+      this.lbl_description.ForeColor = System.Drawing.Color.White;
       this.lbl_description.Location = new System.Drawing.Point(110, 0);
       this.lbl_description.Name = "lbl_description";
       this.lbl_description.Padding = new System.Windows.Forms.Padding(1);
@@ -109,7 +108,8 @@
       // lbl_version
       // 
       this.lbl_version.Dock = System.Windows.Forms.DockStyle.Right;
-      this.lbl_version.ForeColor = System.Drawing.Color.Black;
+      this.lbl_version.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.lbl_version.ForeColor = System.Drawing.Color.White;
       this.lbl_version.Location = new System.Drawing.Point(448, 0);
       this.lbl_version.MaximumSize = new System.Drawing.Size(100, 0);
       this.lbl_version.MinimumSize = new System.Drawing.Size(100, 0);
@@ -164,21 +164,21 @@
       // 
       // btn_update
       // 
-      this.btn_update.BackColor = System.Drawing.SystemColors.ButtonFace;
-      this.btn_update.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btn_update.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.btn_update.Location = new System.Drawing.Point(165, 3);
+      this.btn_update.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.btn_update.ForeColor = System.Drawing.Color.White;
+      this.btn_update.Location = new System.Drawing.Point(170, 3);
       this.btn_update.Name = "btn_update";
       this.btn_update.Size = new System.Drawing.Size(75, 23);
       this.btn_update.TabIndex = 6;
       this.btn_update.Text = "Update";
-      this.btn_update.UseVisualStyleBackColor = false;
+      this.btn_update.UseVisualStyleBackColor = true;
       this.btn_update.Click += new System.EventHandler(this.btn_update_Click);
       // 
       // btn_conf
       // 
-      this.btn_conf.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btn_conf.Location = new System.Drawing.Point(246, 3);
+      this.btn_conf.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.btn_conf.ForeColor = System.Drawing.Color.White;
+      this.btn_conf.Location = new System.Drawing.Point(251, 3);
       this.btn_conf.Name = "btn_conf";
       this.btn_conf.Size = new System.Drawing.Size(75, 23);
       this.btn_conf.TabIndex = 9;
@@ -192,11 +192,12 @@
       this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
       this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btn_install});
+      this.toolStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
       this.toolStrip1.Location = new System.Drawing.Point(4, 2);
       this.toolStrip1.Name = "toolStrip1";
       this.toolStrip1.Padding = new System.Windows.Forms.Padding(1);
-      this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-      this.toolStrip1.Size = new System.Drawing.Size(79, 25);
+      this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+      this.toolStrip1.Size = new System.Drawing.Size(82, 25);
       this.toolStrip1.TabIndex = 10;
       this.toolStrip1.Text = "toolStrip1";
       this.toolStrip1.Visible = false;
@@ -204,13 +205,14 @@
       // btn_install
       // 
       this.btn_install.DropDownButtonWidth = 16;
+      this.btn_install.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
       this.btn_install.ForeColor = System.Drawing.SystemColors.ControlText;
       this.btn_install.Image = global::MpeInstaller.Properties.Resources.system_software_update;
       this.btn_install.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.btn_install.Margin = new System.Windows.Forms.Padding(0);
       this.btn_install.Name = "btn_install";
       this.btn_install.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-      this.btn_install.Size = new System.Drawing.Size(75, 25);
+      this.btn_install.Size = new System.Drawing.Size(78, 23);
       this.btn_install.Text = "Install";
       this.btn_install.ButtonClick += new System.EventHandler(this.btn_install_ButtonClick);
       // 
@@ -226,8 +228,9 @@
       // 
       // btn_screenshot
       // 
-      this.btn_screenshot.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btn_screenshot.Location = new System.Drawing.Point(3, 3);
+      this.btn_screenshot.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.btn_screenshot.ForeColor = System.Drawing.Color.White;
+      this.btn_screenshot.Location = new System.Drawing.Point(8, 3);
       this.btn_screenshot.Name = "btn_screenshot";
       this.btn_screenshot.Size = new System.Drawing.Size(75, 23);
       this.btn_screenshot.TabIndex = 13;
@@ -240,7 +243,7 @@
       this.chk_ignore.AutoSize = true;
       this.chk_ignore.Dock = System.Windows.Forms.DockStyle.Right;
       this.chk_ignore.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-      this.chk_ignore.ForeColor = System.Drawing.SystemColors.ControlText;
+      this.chk_ignore.ForeColor = System.Drawing.Color.White;
       this.chk_ignore.Location = new System.Drawing.Point(454, 0);
       this.chk_ignore.Name = "chk_ignore";
       this.chk_ignore.Size = new System.Drawing.Size(94, 30);
@@ -258,7 +261,8 @@
       this.flowLayoutPanel1.Controls.Add(this.btn_conf);
       this.flowLayoutPanel1.Location = new System.Drawing.Point(81, 0);
       this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-      this.flowLayoutPanel1.Size = new System.Drawing.Size(328, 30);
+      this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
+      this.flowLayoutPanel1.Size = new System.Drawing.Size(329, 30);
       this.flowLayoutPanel1.TabIndex = 36;
       // 
       // panelTop
@@ -287,8 +291,8 @@
       // 
       this.lblAuthors.AutoEllipsis = true;
       this.lblAuthors.AutoSize = true;
-      this.lblAuthors.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.lblAuthors.ForeColor = System.Drawing.Color.RoyalBlue;
+      this.lblAuthors.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+      this.lblAuthors.ForeColor = System.Drawing.Color.White;
       this.lblAuthors.Location = new System.Drawing.Point(99, 2);
       this.lblAuthors.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
       this.lblAuthors.Name = "lblAuthors";
@@ -296,7 +300,7 @@
       this.lblAuthors.Size = new System.Drawing.Size(42, 16);
       this.lblAuthors.TabIndex = 45;
       this.lblAuthors.Text = "authors";
-      this.lblAuthors.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+      this.lblAuthors.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // panelBottom
       // 
@@ -347,11 +351,11 @@
       this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.AutoSize = true;
-      this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+      this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(62)))), ((int)(((byte)(111)))), ((int)(((byte)(152)))));
       this.Controls.Add(this.panelMiddle);
       this.Controls.Add(this.panelBottom);
       this.Controls.Add(this.panelTop);
-      this.ForeColor = System.Drawing.SystemColors.ButtonFace;
+      this.ForeColor = System.Drawing.Color.Transparent;
       this.MinimumSize = new System.Drawing.Size(0, 125);
       this.Name = "ExtensionControlExpanded";
       this.Padding = new System.Windows.Forms.Padding(1);
