@@ -709,5 +709,10 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
         ApplicationSettings.Instance.UpdateDays = (int)dlg.numeric_Days.Value;
       }
     }
+
+    private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      Application.Exit();
+    }
   }
 }

@@ -146,6 +146,7 @@
       this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.AutoSize = true;
+      this.BackColor = System.Drawing.SystemColors.Window;
       this.Controls.Add(this.flowLayoutPanel1);
       this.Controls.Add(this.panel1);
       this.MinimumSize = new System.Drawing.Size(0, 22);

@@ -44,6 +44,8 @@
       this.refreshUpdateInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.updateAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.cleanCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+      this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.onlyStableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.onlyCompatibleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -174,7 +176,9 @@
             this.openToolStripMenuItem,
             this.refreshUpdateInfoToolStripMenuItem,
             this.updateAllToolStripMenuItem,
-            this.cleanCacheToolStripMenuItem});
+            this.cleanCacheToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.exitToolStripMenuItem});
       this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
       this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
       this.fileToolStripMenuItem.Text = "File";
@@ -183,7 +187,8 @@
       // 
       this.openToolStripMenuItem.Image = global::MpeInstaller.Properties.Resources.open;
       this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-      this.openToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+      this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+      this.openToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
       this.openToolStripMenuItem.Text = "Open";
       this.openToolStripMenuItem.Click += new System.EventHandler(this.FileOpen_Click);
       // 
@@ -191,7 +196,8 @@
       // 
       this.refreshUpdateInfoToolStripMenuItem.Image = global::MpeInstaller.Properties.Resources.refresh;
       this.refreshUpdateInfoToolStripMenuItem.Name = "refreshUpdateInfoToolStripMenuItem";
-      this.refreshUpdateInfoToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+      this.refreshUpdateInfoToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+      this.refreshUpdateInfoToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
       this.refreshUpdateInfoToolStripMenuItem.Text = "Refresh Update Info";
       this.refreshUpdateInfoToolStripMenuItem.Click += new System.EventHandler(this.RefreshUpdateInfo_Click);
       // 
@@ -199,7 +205,8 @@
       // 
       this.updateAllToolStripMenuItem.Image = global::MpeInstaller.Properties.Resources.system_software_update;
       this.updateAllToolStripMenuItem.Name = "updateAllToolStripMenuItem";
-      this.updateAllToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+      this.updateAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F5)));
+      this.updateAllToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
       this.updateAllToolStripMenuItem.Text = "Update All Installed";
       this.updateAllToolStripMenuItem.Click += new System.EventHandler(this.UpdateAll_Click);
       // 
@@ -207,9 +214,24 @@
       // 
       this.cleanCacheToolStripMenuItem.Image = global::MpeInstaller.Properties.Resources.recycle_bin;
       this.cleanCacheToolStripMenuItem.Name = "cleanCacheToolStripMenuItem";
-      this.cleanCacheToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+      this.cleanCacheToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F8;
+      this.cleanCacheToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
       this.cleanCacheToolStripMenuItem.Text = "Clean Cache";
       this.cleanCacheToolStripMenuItem.Click += new System.EventHandler(this.CleanCache_Click);
+      // 
+      // toolStripSeparator1
+      // 
+      this.toolStripSeparator1.Name = "toolStripSeparator1";
+      this.toolStripSeparator1.Size = new System.Drawing.Size(219, 6);
+      // 
+      // exitToolStripMenuItem
+      // 
+      this.exitToolStripMenuItem.Image = global::MpeInstaller.Properties.Resources.Exit;
+      this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+      this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
+      this.exitToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+      this.exitToolStripMenuItem.Text = "Exit";
+      this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
       // 
       // viewToolStripMenuItem
       // 
@@ -224,7 +246,7 @@
       // 
       this.onlyStableToolStripMenuItem.CheckOnClick = true;
       this.onlyStableToolStripMenuItem.Name = "onlyStableToolStripMenuItem";
-      this.onlyStableToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+      this.onlyStableToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
       this.onlyStableToolStripMenuItem.Text = "only stable";
       this.onlyStableToolStripMenuItem.CheckedChanged += new System.EventHandler(this.chk_stable_CheckedChanged);
       // 
@@ -232,7 +254,7 @@
       // 
       this.onlyCompatibleToolStripMenuItem.CheckOnClick = true;
       this.onlyCompatibleToolStripMenuItem.Name = "onlyCompatibleToolStripMenuItem";
-      this.onlyCompatibleToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+      this.onlyCompatibleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
       this.onlyCompatibleToolStripMenuItem.Text = "only compatible";
       this.onlyCompatibleToolStripMenuItem.CheckedChanged += new System.EventHandler(this.chk_dependency_CheckedChanged);
       // 
@@ -248,7 +270,7 @@
       // 
       this.settingsToolStripMenuItem1.Image = global::MpeInstaller.Properties.Resources.settings;
       this.settingsToolStripMenuItem1.Name = "settingsToolStripMenuItem1";
-      this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(116, 22);
+      this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
       this.settingsToolStripMenuItem1.Text = "Settings";
       this.settingsToolStripMenuItem1.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
       // 
@@ -264,7 +286,8 @@
       // 
       this.wikiToolStripMenuItem.Image = global::MpeInstaller.Properties.Resources.help;
       this.wikiToolStripMenuItem.Name = "wikiToolStripMenuItem";
-      this.wikiToolStripMenuItem.Size = new System.Drawing.Size(97, 22);
+      this.wikiToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
+      this.wikiToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
       this.wikiToolStripMenuItem.Text = "Wiki";
       this.wikiToolStripMenuItem.Click += new System.EventHandler(this.wikiToolStripMenuItem_Click);
       // 
@@ -325,6 +348,8 @@
         private System.Windows.Forms.ToolStripMenuItem refreshUpdateInfoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem1;
-    }
+    private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+    private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+  }
 }
 

@@ -42,7 +42,7 @@
       // flowLayoutPanel1
       // 
       this.flowLayoutPanel1.AutoScroll = true;
-      this.flowLayoutPanel1.BackColor = System.Drawing.Color.White;
+      this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.Window;
       this.flowLayoutPanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
       this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
@@ -88,7 +88,6 @@
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.BackColor = System.Drawing.SystemColors.Control;
       this.label2.Location = new System.Drawing.Point(3, 8);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(31, 13);
