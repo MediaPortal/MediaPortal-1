@@ -43,7 +43,6 @@
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(459, 47);
       this.label1.TabIndex = 27;
-      this.label1.Text = "label1";
       // 
       // pictureBox3
       // 
@@ -61,10 +60,10 @@
       this.radioButton2.AutoSize = true;
       this.radioButton2.Location = new System.Drawing.Point(259, 130);
       this.radioButton2.Name = "radioButton2";
-      this.radioButton2.Size = new System.Drawing.Size(85, 17);
+      this.radioButton2.Size = new System.Drawing.Size(60, 17);
       this.radioButton2.TabIndex = 25;
       this.radioButton2.TabStop = true;
-      this.radioButton2.Text = "radioButton2";
+      this.radioButton2.Text = "Image2";
       this.radioButton2.UseVisualStyleBackColor = true;
       this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
       // 
@@ -73,10 +72,10 @@
       this.radioButton1.AutoSize = true;
       this.radioButton1.Location = new System.Drawing.Point(13, 130);
       this.radioButton1.Name = "radioButton1";
-      this.radioButton1.Size = new System.Drawing.Size(85, 17);
+      this.radioButton1.Size = new System.Drawing.Size(60, 17);
       this.radioButton1.TabIndex = 24;
       this.radioButton1.TabStop = true;
-      this.radioButton1.Text = "radioButton1";
+      this.radioButton1.Text = "Image1";
       this.radioButton1.UseVisualStyleBackColor = true;
       this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
       // 

@@ -47,6 +47,15 @@ namespace MpeCore.Classes.SectionPanel
                                   "Description of section, shown in under section title"));
       Params.Add(new SectionParam(Const_IMAGE, "", ValueTypeEnum.File,
                                   "Image in upper right part"));
+
+      button_back.FlatAppearance.MouseOverBackColor = button_back.BackColor;
+      button_back.BackColorChanged += (s, e) => { button_back.FlatAppearance.MouseOverBackColor = button_back.BackColor; };
+
+      button_next.FlatAppearance.MouseOverBackColor = button_next.BackColor;
+      button_next.BackColorChanged += (s, e) => { button_next.FlatAppearance.MouseOverBackColor = button_next.BackColor; };
+
+      button_cancel.FlatAppearance.MouseOverBackColor = button_cancel.BackColor;
+      button_cancel.BackColorChanged += (s, e) => { button_cancel.FlatAppearance.MouseOverBackColor = button_cancel.BackColor; };
     }
 
     private void button_back_Click(object sender, EventArgs e)
