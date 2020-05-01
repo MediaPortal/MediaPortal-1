@@ -35,7 +35,7 @@
       // extensionControlCollapsed
       // 
       this.extensionControlCollapsed.AutoSize = true;
-      this.extensionControlCollapsed.BackColor = System.Drawing.SystemColors.Window;
+      this.extensionControlCollapsed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(84)))), ((int)(((byte)(140)))), ((int)(((byte)(184)))));
       this.extensionControlCollapsed.Dock = System.Windows.Forms.DockStyle.Fill;
       this.extensionControlCollapsed.Location = new System.Drawing.Point(0, 0);
       this.extensionControlCollapsed.Margin = new System.Windows.Forms.Padding(1);
@@ -64,7 +64,7 @@
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-      this.BackColor = System.Drawing.SystemColors.Window;
+      this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(84)))), ((int)(((byte)(140)))), ((int)(((byte)(184)))));
       this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.Controls.Add(this.extensionControlCollapsed);
       this.Controls.Add(this.extensionControlExpanded);

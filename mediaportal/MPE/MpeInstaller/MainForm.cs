@@ -144,6 +144,17 @@ namespace MpeInstaller
       collection.Save();
     }
 
+    private string UppercaseFirst(string s)
+    {
+      if (string.IsNullOrEmpty(s))
+      {
+        return string.Empty;
+      }
+      char[] a = s.ToCharArray();
+      a[0] = char.ToUpper(a[0]);
+      return new string(a);
+    }
+
     private void SetFilterForKnownExtensionsList()
     {
       MpeCore.MpeInstaller.KnownExtensions.Hide(ApplicationSettings.Instance.ShowOnlyStable, ApplicationSettings.Instance.ShowOnlyCompatible);
@@ -154,7 +165,7 @@ namespace MpeInstaller
         if (ApplicationSettings.Instance.ShowOnlyStable) infoText += "unstable ";
         if (ApplicationSettings.Instance.ShowOnlyCompatible) infoText += (ApplicationSettings.Instance.ShowOnlyStable ? "and " : "") + "incompatible ";
         infoText += "extensions are hidden";
-        toolStripLabelWarn.Text = infoText;
+        toolStripLabelWarn.Text = UppercaseFirst(infoText);
       }
       else
         toolStripLabelWarn.Visible = false;

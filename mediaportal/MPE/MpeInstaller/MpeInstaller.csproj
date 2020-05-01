@@ -224,6 +224,7 @@
     <None Include="MpeInstaller.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Background.png" />
     <None Include="Properties\Background.png" />
     <None Include="Icons\settings.png" />
     <None Include="Icons\refresh.png" />

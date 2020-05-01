@@ -66,7 +66,7 @@
       divider.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.None;
       divider.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       divider.Name = "divider";
-      divider.Size = new System.Drawing.Size(344, 17);
+      divider.Size = new System.Drawing.Size(486, 17);
       divider.Spring = true;
       // 
       // tabControl1
@@ -78,19 +78,19 @@
       this.tabControl1.Location = new System.Drawing.Point(0, 24);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(592, 434);
+      this.tabControl1.Size = new System.Drawing.Size(734, 455);
       this.tabControl1.TabIndex = 0;
       // 
       // tab_extensions
       // 
+      this.tab_extensions.BackColor = System.Drawing.Color.Transparent;
       this.tab_extensions.Controls.Add(this.extensionListControlInstalled);
       this.tab_extensions.Location = new System.Drawing.Point(4, 22);
       this.tab_extensions.Name = "tab_extensions";
       this.tab_extensions.Padding = new System.Windows.Forms.Padding(3);
-      this.tab_extensions.Size = new System.Drawing.Size(584, 408);
+      this.tab_extensions.Size = new System.Drawing.Size(726, 429);
       this.tab_extensions.TabIndex = 0;
       this.tab_extensions.Text = "Installed extensions";
-      this.tab_extensions.UseVisualStyleBackColor = true;
       // 
       // extensionListControlInstalled
       // 
@@ -100,7 +100,7 @@
       this.extensionListControlInstalled.Location = new System.Drawing.Point(3, 3);
       this.extensionListControlInstalled.Name = "extensionListControlInstalled";
       this.extensionListControlInstalled.SelectedItem = null;
-      this.extensionListControlInstalled.Size = new System.Drawing.Size(578, 402);
+      this.extensionListControlInstalled.Size = new System.Drawing.Size(720, 423);
       this.extensionListControlInstalled.TabIndex = 0;
       this.extensionListControlInstalled.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
       this.extensionListControlInstalled.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
@@ -136,9 +136,9 @@
             this.toolStripLabelWarn,
             divider,
             this.toolStripLastUpdate});
-      this.statusStrip1.Location = new System.Drawing.Point(0, 458);
+      this.statusStrip1.Location = new System.Drawing.Point(0, 479);
       this.statusStrip1.Name = "statusStrip1";
-      this.statusStrip1.Size = new System.Drawing.Size(592, 22);
+      this.statusStrip1.Size = new System.Drawing.Size(734, 22);
       this.statusStrip1.TabIndex = 6;
       this.statusStrip1.Text = "statusStrip1";
       // 
@@ -166,7 +166,7 @@
             this.helpToolStripMenuItem});
       this.menuStrip1.Location = new System.Drawing.Point(0, 0);
       this.menuStrip1.Name = "menuStrip1";
-      this.menuStrip1.Size = new System.Drawing.Size(592, 24);
+      this.menuStrip1.Size = new System.Drawing.Size(734, 24);
       this.menuStrip1.TabIndex = 7;
       this.menuStrip1.Text = "menuStrip1";
       // 
@@ -246,7 +246,7 @@
       // 
       this.onlyStableToolStripMenuItem.CheckOnClick = true;
       this.onlyStableToolStripMenuItem.Name = "onlyStableToolStripMenuItem";
-      this.onlyStableToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.onlyStableToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
       this.onlyStableToolStripMenuItem.Text = "only stable";
       this.onlyStableToolStripMenuItem.CheckedChanged += new System.EventHandler(this.chk_stable_CheckedChanged);
       // 
@@ -254,7 +254,7 @@
       // 
       this.onlyCompatibleToolStripMenuItem.CheckOnClick = true;
       this.onlyCompatibleToolStripMenuItem.Name = "onlyCompatibleToolStripMenuItem";
-      this.onlyCompatibleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.onlyCompatibleToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
       this.onlyCompatibleToolStripMenuItem.Text = "only compatible";
       this.onlyCompatibleToolStripMenuItem.CheckedChanged += new System.EventHandler(this.chk_dependency_CheckedChanged);
       // 
@@ -270,7 +270,7 @@
       // 
       this.settingsToolStripMenuItem1.Image = global::MpeInstaller.Properties.Resources.settings;
       this.settingsToolStripMenuItem1.Name = "settingsToolStripMenuItem1";
-      this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+      this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(116, 22);
       this.settingsToolStripMenuItem1.Text = "Settings";
       this.settingsToolStripMenuItem1.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
       // 
@@ -287,7 +287,7 @@
       this.wikiToolStripMenuItem.Image = global::MpeInstaller.Properties.Resources.help;
       this.wikiToolStripMenuItem.Name = "wikiToolStripMenuItem";
       this.wikiToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-      this.wikiToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.wikiToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
       this.wikiToolStripMenuItem.Text = "Wiki";
       this.wikiToolStripMenuItem.Click += new System.EventHandler(this.wikiToolStripMenuItem_Click);
       // 
@@ -296,15 +296,16 @@
       this.AllowDrop = true;
       this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-      this.ClientSize = new System.Drawing.Size(592, 480);
+      this.BackColor = System.Drawing.SystemColors.Control;
+      this.ClientSize = new System.Drawing.Size(734, 501);
       this.Controls.Add(this.tabControl1);
       this.Controls.Add(this.statusStrip1);
       this.Controls.Add(this.menuStrip1);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MainMenuStrip = this.menuStrip1;
       this.MinimumSize = new System.Drawing.Size(600, 400);
       this.Name = "MainForm";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "MediaPortal Extensions Manager";
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
       this.Load += new System.EventHandler(this.MainForm_Load);
