@@ -111,7 +111,7 @@
       this.tab_known.Location = new System.Drawing.Point(4, 22);
       this.tab_known.Name = "tab_known";
       this.tab_known.Padding = new System.Windows.Forms.Padding(3);
-      this.tab_known.Size = new System.Drawing.Size(584, 408);
+      this.tab_known.Size = new System.Drawing.Size(726, 429);
       this.tab_known.TabIndex = 2;
       this.tab_known.Text = "Known extensions";
       this.tab_known.UseVisualStyleBackColor = true;
@@ -124,7 +124,7 @@
       this.extensionListControlKnown.Location = new System.Drawing.Point(3, 3);
       this.extensionListControlKnown.Name = "extensionListControlKnown";
       this.extensionListControlKnown.SelectedItem = null;
-      this.extensionListControlKnown.Size = new System.Drawing.Size(578, 402);
+      this.extensionListControlKnown.Size = new System.Drawing.Size(720, 423);
       this.extensionListControlKnown.TabIndex = 0;
       this.extensionListControlKnown.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
       this.extensionListControlKnown.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
@@ -303,7 +303,7 @@
       this.Controls.Add(this.menuStrip1);
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MainMenuStrip = this.menuStrip1;
-      this.MinimumSize = new System.Drawing.Size(600, 400);
+      this.MinimumSize = new System.Drawing.Size(605, 540);
       this.Name = "MainForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "MediaPortal Extensions Manager";

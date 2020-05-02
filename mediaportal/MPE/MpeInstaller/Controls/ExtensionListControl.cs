@@ -72,7 +72,10 @@ namespace MpeInstaller.Controls
         comboBox1.Items.Add("All");
         TagList.Clear();
         toolTip1.RemoveAll(); // removes all created user-objects for the tooltip - reuse this tooltip instance, otherwise memory leak!
-        foreach (Control c in flowLayoutPanel1.Controls) c.Dispose();
+        foreach (Control c in flowLayoutPanel1.Controls)
+        {
+          c.Dispose();
+        }
         flowLayoutPanel1.Controls.Clear();
         foreach (PackageClass item in collection.Items)
         {
@@ -86,7 +89,9 @@ namespace MpeInstaller.Controls
         foreach (KeyValuePair<string, int> tagList in TagList)
         {
           if (tagList.Value > 1)
+          {
             comboBox1.Items.Add(tagList.Key);
+          }
         }
         flowLayoutPanel1.ResumeLayout();
         flowLayoutPanel1_SizeChanged(this, EventArgs.Empty);
@@ -171,7 +176,10 @@ namespace MpeInstaller.Controls
       {
         foreach (Control control in flowLayoutPanel1.Controls)
         {
-          control.Width = flowLayoutPanel1.ClientSize.Width - 4;
+          if (!ApplicationSettings.Instance.ExpandTile || ApplicationSettings.Instance.ExpandTile && ApplicationSettings.Instance.ExpandTileFullWidth)
+          {
+            control.Width = flowLayoutPanel1.ClientSize.Width - 4;
+          }
         }
       }
       

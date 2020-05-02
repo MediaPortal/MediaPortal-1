@@ -48,7 +48,7 @@
       this.flowLayoutPanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
       this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-      this.flowLayoutPanel1.ForeColor = System.Drawing.SystemColors.ButtonFace;
+      this.flowLayoutPanel1.ForeColor = System.Drawing.Color.Transparent;
       this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 29);
       this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
       this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -130,13 +130,12 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel panelTop;
         public System.Windows.Forms.ToolTip toolTip1;
-    }
+    public System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+  }
 }
