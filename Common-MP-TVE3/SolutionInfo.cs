@@ -37,7 +37,7 @@ using System.Reflection;
 
 [assembly: AssemblyCompany("Team MediaPortal")]
 [assembly: AssemblyProduct("MediaPortal")]
-[assembly: AssemblyCopyright("Copyright © 2005-2019 Team MediaPortal")]
+[assembly: AssemblyCopyright("Copyright © 2005-2020 Team MediaPortal")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,8 +51,8 @@ using System.Reflection;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("1.24.100.0")]
-[assembly: AssemblyFileVersion("1.24.100.0")]
+[assembly: AssemblyVersion("1.25.000.0")]
+[assembly: AssemblyFileVersion("1.25.000.0")]
 
 //[assembly: AssemblyInformationalVersion("")]
 //[assembly: CompatibleVersion("1.1.8.*", "1.1.8.*")]
