@@ -368,7 +368,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Error("GUITextureManager Load2: " + ex.Message);
+        Log.Error("GUITextureManager Load2: {0} for {1}", ex.Message, fileName);
         return 0;
       }
       return 0;
