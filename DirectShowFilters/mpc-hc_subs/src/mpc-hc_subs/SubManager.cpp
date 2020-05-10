@@ -247,7 +247,7 @@ int CSubManager::GetExtCount()
 
 int CSubManager::GetCount() 
 {
-	return GetExtCount() + m_intSubs.GetCount();
+	return GetExtCount() + (int)m_intSubs.GetCount();
 }
 
 BSTR CSubManager::GetLanguageHelper(int i, bool useTrackName)
@@ -644,7 +644,7 @@ void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB, bool onlyShowForcedS
 						memset(&trackElement, 0, sizeof(trackElement));
 						pTrackInfo->GetTrackInfo(index, &trackElement);
 						if (trackElement.FlagForced) {
-							m_forcedSubIndex = m_pSubStreams.GetCount() - 1;
+							m_forcedSubIndex = (int)m_pSubStreams.GetCount() - 1;
 							ATLTRACE("subtitle track %d is forced", index);
 						}
 					}
@@ -715,11 +715,11 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF, LCID lcidci)
 							langForced = pszName;
 							if (m_forcedSubIndex <= -1 && langForced.Find(L"Forced Subtitles (auto)") >= 0)
 							{
-								m_forcedSubIndex = m_intSubs.GetCount() - 1;
+								m_forcedSubIndex = (int)m_intSubs.GetCount() - 1;
 							}
 							else if (((lcid == lcidci) || (lcid == lcidciTrad)) && langForced.Find(L"Forced Subtitles (auto)") <= 0)
 							{
-								m_forcedSubIndex = m_intSubs.GetCount() - 1;
+								m_forcedSubIndex = (int)m_intSubs.GetCount() - 1;
 								ATLTRACE("subtitle track %d is forced", i);
 							}
 						}

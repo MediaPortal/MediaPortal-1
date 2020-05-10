@@ -132,7 +132,7 @@ void VDInvertMemory(void *p, unsigned bytes) {
 	if (!bytes)
 		return;
 
-	while((int)dst & 3) {
+	while((size_t)dst & size_t(3)) {
 		*dst = ~*dst;
 		++dst;
 

@@ -44,7 +44,7 @@ void CSubresync::SetSubtitle(ISubStream* pSubStream, double fps)
 		ASSERT(pVSF->m_iLang >= 0);
 		CAtlArray<CVobSubFile::SubPos>& sp = pVSF->m_langs[pVSF->m_iLang].subpos;
 
-		for(int i = 0, j = sp.GetCount(); i < j; i++)
+		for(int i = 0, j = (int)sp.GetCount(); i < j; i++)
 		{
 			CString str;
 			str.Format(_T("%d,%d,%d,%d"), sp[i].vobid, sp[i].cellid, sp[i].fForced, i);
@@ -80,7 +80,7 @@ int CSubresync::FindNearestSub(__int64 rtPos)
 		return 0;
 	}
 
-	for(int i = 1, j = m_sts.GetCount(); i < j; i++)
+	for(int i = 1, j = (int)m_sts.GetCount(); i < j; i++)
 	{
 		if ((lCurTime >= m_sts[i-1].start) && (lCurTime < m_sts[i].start))
 		{
@@ -88,7 +88,7 @@ int CSubresync::FindNearestSub(__int64 rtPos)
 		}
 	}
 
-	return m_sts.GetCount() - 1;
+	return (int)m_sts.GetCount() - 1;
 }
 
 
