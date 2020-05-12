@@ -287,12 +287,12 @@ namespace MediaPortal.Configuration.Sections
       // columnHeader3
       // 
       this.columnHeader3.Text = "Pin";
-      this.columnHeader3.Width = 57;
+      this.columnHeader3.Width = 30;
       // 
       // columnHeader2
       // 
       this.columnHeader2.Text = "Folder";
-      this.columnHeader2.Width = 210;
+      this.columnHeader2.Width = 160;
       // 
       // columnHeader4
       // 
@@ -306,6 +306,7 @@ namespace MediaPortal.Configuration.Sections
       // columnHeader6
       // 
       this.columnHeader6.Text = "WOL";
+      this.columnHeader6.Width = 40;
       // 
       // BaseShares
       // 

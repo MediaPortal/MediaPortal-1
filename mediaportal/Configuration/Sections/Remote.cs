@@ -2515,13 +2515,13 @@ namespace MediaPortal.Configuration.Sections
 
     private void linkLabelDocumentation_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      ProcessStartInfo sInfo = new ProcessStartInfo("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/141_Configuration/MediaPortal_Configuration/8_Remote/HID");
+      ProcessStartInfo sInfo = new ProcessStartInfo("https://www.team-mediaportal.com/wiki/display/MediaPortal1/HID");
       Process.Start(sInfo);
     }
 
     private void linkLabelMediaDocumentation_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      ProcessStartInfo sInfo = new ProcessStartInfo("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/141_Configuration/MediaPortal_Configuration/8_Remote/Media");
+      ProcessStartInfo sInfo = new ProcessStartInfo("https://www.team-mediaportal.com/wiki/display/MediaPortal1/Media");
       Process.Start(sInfo);
     }
 
