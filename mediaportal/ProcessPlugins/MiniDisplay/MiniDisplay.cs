@@ -146,7 +146,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             MiniDisplayHelper._PropertyBrowserAvailable = true;
           }
         }
-        this.DoStart();
+        this.DoStart(false);
         Log.Info("MiniDisplay.Start(): completed");
       }
     }
@@ -177,14 +177,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     #region Thread handling
 
-    private void DoStart()
+    private void DoStart(bool delayStart)
     {
-        DoStartRenderThread();
+        DoStartRenderThread(delayStart);
         DoStartStatusThread();
         Log.Info("MiniDisplay.DoStart(): Completed");
     }
 
-    private void DoStartRenderThread()
+    private void DoStartRenderThread(bool delayStart)
     {
         if ((this.renderThread == null) || !this.renderThread.IsAlive)
         {
@@ -198,16 +198,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                 }
                 Log.Info("MiniDisplay.DoStart(): Starting background thread");
                 this.stopRequested = false;
-                this.renderThread = new Thread(new ThreadStart(this.Run));
+                this.renderThread = new Thread(new ParameterizedThreadStart(this.Run));
                 this.renderThread.Priority = ThreadPriority.Lowest;
                 this.renderThread.Name = "MiniDisplayRender";
                 this.renderThread.TrySetApartmentState(ApartmentState.MTA);
-                this.renderThread.Start();
+                this.renderThread.Start(delayStart);
                 GUIWindowManager.OnNewAction += new OnActionHandler(this.GUIWindowManager_OnNewAction);
                 Thread.Sleep(100);
                 if (!this.renderThread.IsAlive)
                 {
-                    Log.Info("MiniDisplay.DoStart(): ERROR - backgrund thread NOT STARTED");
+                    Log.Info("MiniDisplay.DoStart(): ERROR - background thread NOT STARTED");
                 }
             }
             catch (Exception exception)
@@ -532,13 +532,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     }
 
     //Render thread entry point
-    public void Run()
+    public void Run(object delayStart)
     {
       SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(this.SystemEvents_PowerModeChanged);
       bool flag2 = false;
       Settings.Instance.LogInfo("MiniDisplay.Run(): Entering MiniDisplay run loop.");
       try
       {
+        if ((delayStart is bool) && (bool)delayStart)
+          Thread.Sleep(15 * 1000);
         Settings.Instance.LogInfo("MiniDisplay.Run(): Creating MiniDisplay displayhandler.");
         this.handler = new DisplayHandler(this.display);
         Settings.Instance.LogInfo("MiniDisplay.Run(): Starting MiniDisplay displayhandler.");
@@ -1047,7 +1049,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         case PowerModes.Resume:
           Log.Info("MiniDisplay: Resume from Suspend or Hibernation detected, starting plugin");
           SystemEvents.PowerModeChanged -= new PowerModeChangedEventHandler(this.SystemEvents_PowerModeChanged);
-          this.DoStart();
+          this.DoStart(true);
           break;
 
         case PowerModes.StatusChange:

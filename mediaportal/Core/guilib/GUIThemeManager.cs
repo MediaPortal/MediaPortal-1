@@ -31,12 +31,22 @@ namespace MediaPortal.GUI.Library
   public class GUIThemeManager
   {
     public const string THEME_SKIN_DEFAULT = "Skin default";
-    private static Thread ActivateThemeThread;
-    private static string _themeName = "";
-    private static int _focusControlId = 0;
 
-    private static void ThreadActivateTheme()
+    private class ThreadParams
     {
+      public string _themeName = "";
+      public int _focusControlId = 0;
+    }
+
+    private static void ThreadActivateTheme(object param)
+    {
+      if (!(param is ThreadParams))
+      {
+        Log.Error("param at ThreadActivateTheme has wrong type");
+        return;
+      }
+      ThreadParams threadParams = (ThreadParams)param;
+
       GUIWaitCursor.Show();
 
       // Need to initialize fonts and references if they change based on the theme.
@@ -45,7 +55,7 @@ namespace MediaPortal.GUI.Library
       bool initReferences = (GUIGraphicsContext.HasThemeSpecificSkinFile(@"\references.xml"));
 
       // Change the theme and save this new setting.
-      SetTheme(_themeName);
+      SetTheme(threadParams._themeName);
       SkinSettings.Save();
 
       // Check new theme.
@@ -73,7 +83,11 @@ namespace MediaPortal.GUI.Library
       // Reactivate the current window and refocus on the control used to change the theme.
       // This applies the new theme to the current window immediately.
       GUIWindowManager.ResetAllControls();
-      GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow, true, true, _focusControlId);
+      GUIWindowManager.SendThreadCallbackAndWait((p1, p2, p3) =>
+      {
+        GUIWindowManager.ActivateWindow(p1, true, true, (int)p3);
+        return 0;
+      }, GUIWindowManager.ActiveWindow, 0, threadParams._focusControlId);
 
       GUIWaitCursor.Hide();
     }
@@ -81,14 +95,13 @@ namespace MediaPortal.GUI.Library
     public static string ActivateThemeByName(string themeName, int focusControlId)
     {
       // Change themes in a background thread so that the wait cursor gets presented during the theme change.
-      _themeName = themeName;
-      _focusControlId = focusControlId;
+      ThreadParams threadParams = new ThreadParams() { _themeName = themeName, _focusControlId = focusControlId };
 
-      ActivateThemeThread = new Thread(new ThreadStart(ThreadActivateTheme));
+      Thread ActivateThemeThread = new Thread(new ParameterizedThreadStart(ThreadActivateTheme));
       ActivateThemeThread.Name = "Activate theme for skin";
       ActivateThemeThread.IsBackground = true;
       ActivateThemeThread.Priority = ThreadPriority.Normal;
-      ActivateThemeThread.Start();
+      ActivateThemeThread.Start(threadParams);
       return themeName;
     }
 
