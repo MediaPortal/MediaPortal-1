@@ -112,23 +112,14 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Background_middle_with_MP_Box" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Background middle with MP Box.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Background_middle_empty" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Background middle empty.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Background_middle_TV_install" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Background middle TV install.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Background_middle_one_click_install_choose" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Background middle one click install choose.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Background_top" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Background top.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -142,19 +133,13 @@
   <data name="helpIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\helpIcon.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Background_middle_TV__yes_no" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Background middle TV  yes no.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Background_middle_internet_connection" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Background middle internet connection.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Background exit button" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Background_Exit_button" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Background exit button.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Choose_button_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Choose button on.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Background help button" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Background_Help_button" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Background help button.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="exitIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -168,5 +153,110 @@
   </data>
   <data name="preview_ares" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\preview_ares.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="preview_existing" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\preview_existing.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CONFIGURED" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Status\CONFIGURED.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DirectX9C" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Application\DirectX9C.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DOWNLOADED" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Status\DOWNLOADED.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="INSTALLED" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Status\INSTALLED.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LAVFilters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Application\LAVFilters.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MediaPortal" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Application\MediaPortal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MSSQL" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Application\MSSQL.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MySQL" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Application\MySQL.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OldMediaportal" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Application\OldMediaPortal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="VC2008SP1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Application\VC2008SP1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="VC2010" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Application\VC2010.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="VC2015" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Application\VC2015.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WMP11" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Application\WMP11.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NOT_CONFIGURED" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Status\NOT_CONFIGURED.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NOT_DOWNLOADED" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Status\NOT_DOWNLOADED.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NOT_INSTALLED" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Status\NOT_INSTALLED.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NOT_REMOVED" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Status\NOT_REMOVED.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PROGRESS" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Status\PROGRESS.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="REMOVED" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Status\REMOVED.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SKIPPED" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Status\SKIPPED.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="VERSION_MISMATCH" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Status\VERSION_MISMATCH.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Checkbox_Checked" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Checkbox Checked.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Checkbox_UnChecked" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Checkbox UnChecked.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="COMPLETE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Status\COMPLETE.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FAILED" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Status\FAILED.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MariaDB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Application\MariaDB.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mediaportal_Box" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Mediaportal Box.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mediaportal_TV" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Mediaportal TV.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TVPlugin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Application\TVPlugin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TVServer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Application\TVServer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WinFirewall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Application\Firewall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mediaportal_Box_White" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Mediaportal Box White.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Database" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Database.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Internet_connection" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Internet connection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

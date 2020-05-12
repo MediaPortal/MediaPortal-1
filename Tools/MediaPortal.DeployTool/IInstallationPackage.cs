@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -32,7 +32,10 @@ namespace MediaPortal.DeployTool
     NOT_DOWNLOADED,
     VERSION_MISMATCH,
     VERSION_LOOKUP_FAILED,
-    SKIPPED
+    SKIPPED,
+    PROGRESS,
+    COMPLETE,
+    FAILED
   }
 
   public struct CheckResult
@@ -44,6 +47,7 @@ namespace MediaPortal.DeployTool
   internal interface IInstallationPackage
   {
     string GetDisplayName();
+    string GetIconName();
 
     bool Download();
     bool Install();

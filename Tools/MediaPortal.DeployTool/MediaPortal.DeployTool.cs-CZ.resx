@@ -251,7 +251,7 @@ Počítač pak bude sloužit jako vyhrazený TV server a bude poskytovat televiz
     <value>Nainstalovat</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;žádná akce&gt;</value>
+    <value>Žádná akce</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Odinstalovat předchozí -&gt; Stáhnout -&gt; Nainstalovat</value>

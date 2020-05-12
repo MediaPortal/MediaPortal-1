@@ -251,7 +251,7 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
     <value>Installazione</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;nessuna azione&gt;</value>
+    <value>Nessuna azione</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Rimozione precedente-&gt;Scarico-&gt;Installazione</value>

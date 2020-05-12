@@ -251,7 +251,7 @@
     <value>安装</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;没有活动&gt;</value>
+    <value>没有活动</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>卸载以前版本-&gt;下载-&gt;安装</value>

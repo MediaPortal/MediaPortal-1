@@ -252,7 +252,7 @@ El PC actuará como servidor dedicado de TV-Server y proveerá de TV otros PC 's
     <value>Instalar</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;sin acción&gt;</value>
+    <value>Sin acción</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Desinstalar previo-&gt;Descargar-&gt;Instalar</value>

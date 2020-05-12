@@ -251,7 +251,7 @@ The PC will then act as a dedicated TV-Server and provide other PC's in your LAN
     <value>Install</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;no action&gt;</value>
+    <value>No action</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Uninstall previous-&gt;Download-&gt;Install</value>
