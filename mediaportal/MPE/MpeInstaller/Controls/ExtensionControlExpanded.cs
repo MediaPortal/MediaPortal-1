@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -187,6 +187,11 @@ namespace MpeInstaller.Controls
         {
           testToolStripMenuItem.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold,
                                                 GraphicsUnit.Point, ((byte)(0)));
+        }
+        else
+        {
+          testToolStripMenuItem.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular,
+                                      GraphicsUnit.Point, ((byte)(0)));
         }
         if (!item.CheckDependency(true))
           testToolStripMenuItem.ForeColor = Color.Red;

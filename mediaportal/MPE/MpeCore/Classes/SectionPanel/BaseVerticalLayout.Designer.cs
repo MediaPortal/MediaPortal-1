@@ -32,10 +32,12 @@
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.panel1 = new System.Windows.Forms.Panel();
-      this.etchedLine1 = new MpeCore.Classes.SectionPanel.EtchedLine();
       this.panel3 = new System.Windows.Forms.Panel();
       this.panel5 = new System.Windows.Forms.Panel();
       this.panel4 = new System.Windows.Forms.Panel();
+      this.button_cancel = new System.Windows.Forms.Button();
+      this.button_back = new System.Windows.Forms.Button();
+      this.button_next = new System.Windows.Forms.Button();
       this.panel2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.panel1.SuspendLayout();
@@ -77,22 +79,16 @@
       // 
       // panel1
       // 
-      this.panel1.BackColor = System.Drawing.SystemColors.Control;
-      this.panel1.Controls.Add(this.etchedLine1);
+      this.panel1.BackColor = System.Drawing.Color.Transparent;
+      this.panel1.BackgroundImage = global::MpeCore.Properties.Resources.Bottom;
+      this.panel1.Controls.Add(this.button_cancel);
+      this.panel1.Controls.Add(this.button_back);
+      this.panel1.Controls.Add(this.button_next);
       this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
       this.panel1.Location = new System.Drawing.Point(0, 306);
       this.panel1.Name = "panel1";
       this.panel1.Size = new System.Drawing.Size(494, 44);
       this.panel1.TabIndex = 8;
-      // 
-      // etchedLine1
-      // 
-      this.etchedLine1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.etchedLine1.Edge = MpeCore.Classes.SectionPanel.EtchEdge.Top;
-      this.etchedLine1.Location = new System.Drawing.Point(0, 0);
-      this.etchedLine1.Name = "etchedLine1";
-      this.etchedLine1.Size = new System.Drawing.Size(494, 44);
-      this.etchedLine1.TabIndex = 0;
       // 
       // panel3
       // 
@@ -115,11 +111,51 @@
       // 
       // panel4
       // 
+      this.panel4.BackColor = System.Drawing.SystemColors.Window;
       this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
       this.panel4.Location = new System.Drawing.Point(168, 0);
       this.panel4.Name = "panel4";
       this.panel4.Size = new System.Drawing.Size(326, 306);
       this.panel4.TabIndex = 7;
+      // 
+      // button_cancel
+      // 
+      this.button_cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.button_cancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.button_cancel.ForeColor = System.Drawing.Color.White;
+      this.button_cancel.Location = new System.Drawing.Point(332, 11);
+      this.button_cancel.Name = "button_cancel";
+      this.button_cancel.Size = new System.Drawing.Size(72, 23);
+      this.button_cancel.TabIndex = 24;
+      this.button_cancel.Text = "Cancel";
+      this.button_cancel.UseVisualStyleBackColor = true;
+      this.button_cancel.Visible = false;
+      // 
+      // button_back
+      // 
+      this.button_back.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.button_back.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.button_back.ForeColor = System.Drawing.Color.White;
+      this.button_back.Location = new System.Drawing.Point(12, 11);
+      this.button_back.Name = "button_back";
+      this.button_back.Size = new System.Drawing.Size(72, 23);
+      this.button_back.TabIndex = 22;
+      this.button_back.Text = "< Back";
+      this.button_back.UseVisualStyleBackColor = true;
+      this.button_back.Visible = false;
+      // 
+      // button_next
+      // 
+      this.button_next.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.button_next.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.button_next.ForeColor = System.Drawing.Color.White;
+      this.button_next.Location = new System.Drawing.Point(410, 11);
+      this.button_next.Name = "button_next";
+      this.button_next.Size = new System.Drawing.Size(72, 23);
+      this.button_next.TabIndex = 23;
+      this.button_next.Text = "Next >";
+      this.button_next.UseVisualStyleBackColor = true;
+      this.button_next.Visible = false;
       // 
       // BaseVerticalLayout
       // 
@@ -149,6 +185,8 @@
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.Panel panel5;
-        private EtchedLine etchedLine1;
-    }
+    public System.Windows.Forms.Button button_cancel;
+    public System.Windows.Forms.Button button_back;
+    public System.Windows.Forms.Button button_next;
+  }
 }

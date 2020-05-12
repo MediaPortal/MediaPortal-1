@@ -28,12 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BaseHorizontalLayout));
+      this.panel3 = new System.Windows.Forms.Panel();
       this.panel1 = new System.Windows.Forms.Panel();
       this.button_cancel = new System.Windows.Forms.Button();
       this.button_back = new System.Windows.Forms.Button();
       this.button_next = new System.Windows.Forms.Button();
-      this.panel3 = new System.Windows.Forms.Panel();
       this.panel2 = new System.Windows.Forms.Panel();
       this.lbl_small = new System.Windows.Forms.Label();
       this.lbl_large = new System.Windows.Forms.Label();
@@ -43,63 +42,72 @@
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
+      // panel3
+      // 
+      this.panel3.BackColor = System.Drawing.SystemColors.Window;
+      this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.panel3.Location = new System.Drawing.Point(0, 65);
+      this.panel3.Name = "panel3";
+      this.panel3.Size = new System.Drawing.Size(494, 247);
+      this.panel3.TabIndex = 23;
+      // 
       // panel1
       // 
-      this.panel1.BackColor = System.Drawing.SystemColors.Control;
+      this.panel1.BackColor = System.Drawing.Color.Transparent;
+      this.panel1.BackgroundImage = global::MpeCore.Properties.Resources.Bottom;
       this.panel1.Controls.Add(this.button_cancel);
       this.panel1.Controls.Add(this.button_back);
       this.panel1.Controls.Add(this.button_next);
       this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this.panel1.Location = new System.Drawing.Point(0, 306);
+      this.panel1.Location = new System.Drawing.Point(0, 312);
       this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(494, 44);
+      this.panel1.Size = new System.Drawing.Size(494, 38);
       this.panel1.TabIndex = 22;
       // 
       // button_cancel
       // 
       this.button_cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.button_cancel.Location = new System.Drawing.Point(412, 13);
+      this.button_cancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.button_cancel.ForeColor = System.Drawing.Color.White;
+      this.button_cancel.Location = new System.Drawing.Point(332, 7);
       this.button_cancel.Name = "button_cancel";
       this.button_cancel.Size = new System.Drawing.Size(72, 23);
       this.button_cancel.TabIndex = 21;
       this.button_cancel.Text = "Cancel";
-      this.button_cancel.UseVisualStyleBackColor = true;
+      this.button_cancel.UseVisualStyleBackColor = false;
       this.button_cancel.Click += new System.EventHandler(this.button_cancel_Click);
       // 
       // button_back
       // 
       this.button_back.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.button_back.Location = new System.Drawing.Point(236, 13);
+      this.button_back.BackColor = System.Drawing.Color.Transparent;
+      this.button_back.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.button_back.ForeColor = System.Drawing.Color.White;
+      this.button_back.Location = new System.Drawing.Point(12, 7);
       this.button_back.Name = "button_back";
       this.button_back.Size = new System.Drawing.Size(72, 23);
       this.button_back.TabIndex = 19;
       this.button_back.Text = "< Back";
-      this.button_back.UseVisualStyleBackColor = true;
+      this.button_back.UseVisualStyleBackColor = false;
       this.button_back.Click += new System.EventHandler(this.button_back_Click);
       // 
       // button_next
       // 
       this.button_next.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.button_next.Location = new System.Drawing.Point(317, 13);
+      this.button_next.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.button_next.ForeColor = System.Drawing.Color.White;
+      this.button_next.Location = new System.Drawing.Point(410, 7);
       this.button_next.Name = "button_next";
       this.button_next.Size = new System.Drawing.Size(72, 23);
       this.button_next.TabIndex = 20;
       this.button_next.Text = "Next >";
-      this.button_next.UseVisualStyleBackColor = true;
+      this.button_next.UseVisualStyleBackColor = false;
       this.button_next.Click += new System.EventHandler(this.button_next_Click);
-      // 
-      // panel3
-      // 
-      this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.panel3.Location = new System.Drawing.Point(0, 65);
-      this.panel3.Name = "panel3";
-      this.panel3.Size = new System.Drawing.Size(494, 241);
-      this.panel3.TabIndex = 23;
       // 
       // panel2
       // 
       this.panel2.BackColor = System.Drawing.Color.White;
-      this.panel2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel2.BackgroundImage")));
+      this.panel2.BackgroundImage = global::MpeCore.Properties.Resources.TopFadeOut;
       this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
       this.panel2.Controls.Add(this.lbl_small);
       this.panel2.Controls.Add(this.lbl_large);
@@ -112,9 +120,10 @@
       // 
       // lbl_small
       // 
+      this.lbl_small.AutoEllipsis = true;
       this.lbl_small.BackColor = System.Drawing.Color.Transparent;
       this.lbl_small.ForeColor = System.Drawing.Color.Azure;
-      this.lbl_small.Location = new System.Drawing.Point(194, 32);
+      this.lbl_small.Location = new System.Drawing.Point(194, 9);
       this.lbl_small.Name = "lbl_small";
       this.lbl_small.Size = new System.Drawing.Size(232, 31);
       this.lbl_small.TabIndex = 2;
@@ -123,12 +132,13 @@
       // 
       // lbl_large
       // 
+      this.lbl_large.AutoEllipsis = true;
       this.lbl_large.BackColor = System.Drawing.Color.Transparent;
       this.lbl_large.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.lbl_large.ForeColor = System.Drawing.Color.Azure;
-      this.lbl_large.Location = new System.Drawing.Point(84, 8);
+      this.lbl_large.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(134)))), ((int)(((byte)(208)))), ((int)(((byte)(255)))));
+      this.lbl_large.Location = new System.Drawing.Point(85, 44);
       this.lbl_large.Name = "lbl_large";
-      this.lbl_large.Size = new System.Drawing.Size(342, 22);
+      this.lbl_large.Size = new System.Drawing.Size(341, 20);
       this.lbl_large.TabIndex = 1;
       this.lbl_large.Text = "Please wait while installing this Extension for MediaPortal";
       // 

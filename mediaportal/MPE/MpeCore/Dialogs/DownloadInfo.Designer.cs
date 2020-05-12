@@ -39,7 +39,8 @@
       // 
       this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnCancel.Location = new System.Drawing.Point(200, 31);
+      this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.btnCancel.Location = new System.Drawing.Point(185, 31);
       this.btnCancel.Name = "btnCancel";
       this.btnCancel.Size = new System.Drawing.Size(75, 23);
       this.btnCancel.TabIndex = 1;

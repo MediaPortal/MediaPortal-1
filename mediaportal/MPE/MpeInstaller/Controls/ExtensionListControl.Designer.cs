@@ -42,11 +42,13 @@
       // flowLayoutPanel1
       // 
       this.flowLayoutPanel1.AutoScroll = true;
-      this.flowLayoutPanel1.BackColor = System.Drawing.Color.White;
+      this.flowLayoutPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(84)))), ((int)(((byte)(140)))), ((int)(((byte)(184)))));
+      this.flowLayoutPanel1.BackgroundImage = global::MpeInstaller.Properties.Resources.Background;
+      this.flowLayoutPanel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
       this.flowLayoutPanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
       this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-      this.flowLayoutPanel1.ForeColor = System.Drawing.SystemColors.ButtonFace;
+      this.flowLayoutPanel1.ForeColor = System.Drawing.Color.Transparent;
       this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 29);
       this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
       this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -69,17 +71,19 @@
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(299, 8);
+      this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.label1.ForeColor = System.Drawing.Color.White;
+      this.label1.Location = new System.Drawing.Point(297, 8);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(29, 13);
+      this.label1.Size = new System.Drawing.Size(39, 13);
       this.label1.TabIndex = 2;
-      this.label1.Text = "Filter";
+      this.label1.Text = "Filter:";
       // 
       // comboBox1
       // 
       this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBox1.FormattingEnabled = true;
-      this.comboBox1.Location = new System.Drawing.Point(38, 4);
+      this.comboBox1.Location = new System.Drawing.Point(42, 4);
       this.comboBox1.Name = "comboBox1";
       this.comboBox1.Size = new System.Drawing.Size(242, 21);
       this.comboBox1.TabIndex = 3;
@@ -88,14 +92,17 @@
       // label2
       // 
       this.label2.AutoSize = true;
+      this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.label2.ForeColor = System.Drawing.Color.White;
       this.label2.Location = new System.Drawing.Point(3, 8);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(31, 13);
+      this.label2.Size = new System.Drawing.Size(39, 13);
       this.label2.TabIndex = 4;
-      this.label2.Text = "Tags";
+      this.label2.Text = "Tags:";
       // 
       // panelTop
       // 
+      this.panelTop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(84)))), ((int)(((byte)(140)))), ((int)(((byte)(184)))));
       this.panelTop.Controls.Add(this.comboBox1);
       this.panelTop.Controls.Add(this.label2);
       this.panelTop.Controls.Add(this.textBox1);
@@ -106,10 +113,6 @@
       this.panelTop.Name = "panelTop";
       this.panelTop.Size = new System.Drawing.Size(577, 29);
       this.panelTop.TabIndex = 5;
-      // 
-      // toolTip1
-      // 
-      this.toolTip1.IsBalloon = true;
       // 
       // ExtensionListControl
       // 
@@ -127,13 +130,12 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel panelTop;
         public System.Windows.Forms.ToolTip toolTip1;
-    }
+    public System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+  }
 }
