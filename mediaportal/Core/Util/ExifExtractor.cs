@@ -567,7 +567,7 @@ namespace MediaPortal.GUI.Pictures
       {
         // [Panasonic Makernote - 0x009e] HDR = On
         ushort value;
-        if (panasonicDirectory.TryGetUInt16(PanasonicMakernoteDirectory.TagHDR, out value))
+        if (panasonicDirectory.TryGetUInt16(PanasonicMakernoteDirectory.TagHdr, out value))
         {
           item.HDR = value != 0;
         }
