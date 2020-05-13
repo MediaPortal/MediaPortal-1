@@ -187,7 +187,10 @@ namespace MediaPortal.Dialogs
         SetLabel(lblShutterSpeed, metaData.ShutterSpeed.DisplayValue);
         SetLabel(lblViewComments, metaData.ViewerComments.DisplayValue);
 
-        imgPicture.IsVisible = false;
+        if (imgPicture != null)
+        {
+          imgPicture.IsVisible = false;
+        }
       }
       metaData.SetExifProperties();
       GUIPropertyManager.SetProperty("#selectedthumb", FileName);
@@ -197,6 +200,10 @@ namespace MediaPortal.Dialogs
     {
       base.Render(timePassed);
       if (null == m_pTexture)
+      {
+        return;
+      }
+      if (null == imgPicture)
       {
         return;
       }
