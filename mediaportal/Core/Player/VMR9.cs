@@ -1809,7 +1809,7 @@ namespace MediaPortal.Player
               if (!NoAudioResetCheckBox)
               {
                 int mAudioDelay = AudioPostEngine.GetInstance().AudioDelay;
-                if (mAudioDelay == 0)
+                if (mAudioDelay != 0)
                 {
                   ILAVAudioSettings asett = baseFilterLavAudio as ILAVAudioSettings;
                   asett?.SetAudioDelay(true, 0);
