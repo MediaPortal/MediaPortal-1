@@ -1786,7 +1786,7 @@ namespace MediaPortal.Player
             Log.Debug("VMR9: StartMediaCtrl start put_WindowStyle");
           }
         }
-        else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        else // GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR
         {
           if (!(g_Player.Player is DVDPlayer9) && !(g_Player.Player is DVDPlayer))
           {
@@ -1800,9 +1800,9 @@ namespace MediaPortal.Player
         // Resetting audio delay on start when using LAV Engine
         try
         {
-          IBaseFilter baseFilterLavAudio = null;
           if (_graphBuilder != null)
           {
+            IBaseFilter baseFilterLavAudio = null;
             DirectShowUtil.FindFilterByClassID(_graphBuilder, ClassId.LAVAudio, out baseFilterLavAudio);
             if (baseFilterLavAudio != null)
             {
