@@ -52,5 +52,20 @@
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 
+    <!-- Keywords -->
+
+    <control>
+        <description>Keywords</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>100</posX>
+        <posY>105</posY>
+        <width>1400</width>
+        <label>#pictures.exif.keywords</label>
+		<align>left</align>
+		<font>fontB12</font>
+		<textcolor>FFFFFFFF</textcolor>
+    </control>
+
 </controls>
 </window>

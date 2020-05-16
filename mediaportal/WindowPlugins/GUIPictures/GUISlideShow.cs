@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -27,13 +27,17 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
+using MediaPortal.Util;
+
 using Microsoft.DirectX.Direct3D;
+
 using Action = MediaPortal.GUI.Library.Action;
 
 #endregion
@@ -1212,6 +1216,20 @@ namespace MediaPortal.GUI.Pictures
       _zoomTypeBackground = _currentZoomType;
       _currentSlide = null;
       _slideTime = (int)(DateTime.Now.Ticks / 10000);
+
+      ExifMetadata.Metadata _metada = new ExifMetadata.Metadata();
+      if (null == _backgroundSlide || string.IsNullOrEmpty(_backgroundSlide.FilePath) || !File.Exists(_backgroundSlide.FilePath))
+      {
+        _metada.SetExifProperties();
+        return;
+      }
+
+      _metada = Picture.Database.PictureDatabase.GetExifFromDB(_backgroundSlide.FilePath);
+      if (_metada.IsEmpty())
+      {
+        _metada = Picture.Database.PictureDatabase.GetExifFromFile(_backgroundSlide.FilePath);
+      }
+      _metada.SetExifProperties();
     }
 
     #endregion
