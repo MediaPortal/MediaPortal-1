@@ -333,6 +333,7 @@ namespace MediaPortal.GUI.Pictures
     private const int LABEL_ROW1 = 10;
     private const int LABEL_ROW2 = 11;
     private const int LABEL_ROW2_EXTRA = 12;
+    private const int CONTROL_PAUSE = 15;
 
     private const float KENBURNS_ZOOM_FACTOR = 1.30f; // Zoom factor for pictures that have a black border on the sides
     private const float KENBURNS_ZOOM_FACTOR_FS = 1.20f; // Zoom factor for pictures that are filling the whole screen
@@ -443,6 +444,8 @@ namespace MediaPortal.GUI.Pictures
     private bool _autoShuffleMusic = false;
     public bool _showRecursive = false;
     public bool _enableResumeMusic = true;
+
+    private GUIControl _pause = null;
 
     protected delegate void PlaybackChangedDelegate(g_Player.MediaType type, string filename);
 
@@ -1132,7 +1135,7 @@ namespace MediaPortal.GUI.Pictures
 
       if (_isSlideShow)
       {
-        if (RenderPause())
+        if (RenderPause(timePassed))
         {
           return;
         }
@@ -2523,8 +2526,10 @@ namespace MediaPortal.GUI.Pictures
     }
 
 
-    private bool RenderPause()
+    private bool RenderPause(float timePassed)
     {
+      _pause = GUIWindowManager.GetWindow(GetID).GetControl(CONTROL_PAUSE);
+
       _counter++;
       if (_counter > 25)
       {
@@ -2532,22 +2537,36 @@ namespace MediaPortal.GUI.Pictures
       }
       if ((!_isPaused && !_infoVisible && !_zoomInfoVisible && !_isPictureZoomed) || _zoomInfoVisible || _infoVisible)
       {
+        if (_pause != null)
+        {
+          _pause.Visible = false;
+        }
         return false;
+      }
+
+      if (_pause != null)
+      {
+        _pause.Visible = true;
+        _pause.Render(timePassed);
       }
 
       if (_counter < 13)
       {
         return false;
       }
-      GUIFont pFont = GUIFontManager.GetFont("font13");
-      if (pFont != null)
+
+      if (_pause == null)
       {
-        float fw = 0f;
-        float fh = 0f;
-        string szText = GUILocalizeStrings.Get(112);
-        pFont.GetTextExtent(szText, ref fw, ref fh);
-        pFont.DrawShadowText(500.0f, 60.0f, 0xffffffff, szText, GUIControl.Alignment.ALIGN_LEFT, (int)fw, 2, 2,
-                             0xff000000);
+        GUIFont pFont = GUIFontManager.GetFont("font13");
+        if (pFont != null)
+        {
+          float fw = 0f;
+          float fh = 0f;
+          string szText = GUILocalizeStrings.Get(112);
+          pFont.GetTextExtent(szText, ref fw, ref fh);
+          pFont.DrawShadowText(500.0f, 60.0f, 0xffffffff, szText, GUIControl.Alignment.ALIGN_LEFT, (int)fw, 2, 2,
+                               0xff000000);
+        }
       }
       return true;
     }

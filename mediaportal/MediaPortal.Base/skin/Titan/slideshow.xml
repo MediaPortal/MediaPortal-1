@@ -67,5 +67,18 @@
 		<textcolor>FFFFFFFF</textcolor>
     </control>
 
+    <!-- Pause -->
+
+    <control>
+    	<description>Pause image</description>
+    	<type>image</type>
+    	<id>15</id>
+    	<posX>100</posX>
+    	<posY>100</posY>
+    	<width>50</width>
+    	<height>50</height>
+    	<texture>osd_pause.png</texture>
+    </control>
+
 </controls>
 </window>
