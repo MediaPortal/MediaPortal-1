@@ -52,6 +52,7 @@
 !define git_DirectShowFilters "${git_ROOT}\DirectShowFilters"
 !define git_Libbluray "${git_ROOT}\libbluray"
 !define LibblurayJAR "${git_ROOT}\libbluray\src\libbluray\bdj"
+!define git_NugetPackages "${git_ROOT}\Packages"
 
 !define git_TvEngine2 "${git_ROOT}\TvEngine2"
 

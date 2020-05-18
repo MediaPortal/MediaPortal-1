@@ -70,6 +70,12 @@
 !define BUILD_DeployTool
 !define BUILD_Installer
 
+; comment one of the following lines to disable the preBuild and use Nuget instead (if version match)
+!define BUILD_Libbluray_DLL
+
+; uncomment one of the following lines to force build otherwise use Nuget package (if available). 
+;!define FORCE_BUILD_Libbluray_JAR
+
 !include "include-MP-PreBuild.nsh"
 
 

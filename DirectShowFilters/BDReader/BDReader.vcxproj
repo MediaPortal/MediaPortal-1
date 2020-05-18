@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\Packages\MediaPortal.libbluray.1.1.2\build\MediaPortal.libbluray.props" Condition="Exists('..\..\Packages\MediaPortal.libbluray.1.1.2\build\MediaPortal.libbluray.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -237,4 +238,14 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\..\Packages\MediaPortal.libbluray.1.1.2\build\MediaPortal.libbluray.targets" Condition="Exists('..\..\Packages\MediaPortal.libbluray.1.1.2\build\MediaPortal.libbluray.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\Packages\MediaPortal.libbluray.1.1.2\build\MediaPortal.libbluray.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\MediaPortal.libbluray.1.1.2\build\MediaPortal.libbluray.props'))" />
+    <Error Condition="!Exists('..\..\Packages\MediaPortal.libbluray.1.1.2\build\MediaPortal.libbluray.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\MediaPortal.libbluray.1.1.2\build\MediaPortal.libbluray.targets'))" />
+  </Target>
 </Project>
