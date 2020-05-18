@@ -1980,6 +1980,11 @@ namespace MediaPortal.GUI.Library
       int cuLeft = 0, cvLeft = 0, cumaxLeft = 0, cvmaxLeft = 0; // Left corner texture coordinates
       int cuRight = 0, cvRight = 0, cumaxRight = 0, cvmaxRight = 0; // Right corner texture coordinates
 
+      GUIGraphicsContext.ScaleHorizontal(ref bl);
+      GUIGraphicsContext.ScaleHorizontal(ref br);
+      GUIGraphicsContext.ScaleVertical(ref bt);
+      GUIGraphicsContext.ScaleVertical(ref bb);
+
       TextureFrame texture = null;
       TextureFrame cornerTexture = null;
       uint mergedBorderColorKey = GUIGraphicsContext.MergeAlpha((uint)_borderColorKey);
