@@ -5,15 +5,17 @@
 <allowoverlay>no</allowoverlay>
 <controls>
 
+    <!-- Bar Image -->
+
 	<control>
 		<description>bar image</description>
 		<type>image</type>
 		<id>0</id>
 		<posX>0</posX>
-		<posY>0</posY>
+		<posY>980</posY>
 		<width>1920</width>
-		<height>200</height>
-		<texture>basichome_exit_menu_bg.png</texture>
+		<height>100</height>
+        <texture>top_overlay.png</texture>
 	</control>
 
 	<control>
@@ -21,7 +23,7 @@
 		<type>label</type>
 		<id>10</id>
 		<posX>100</posX>
-		<posY>65</posY>
+		<posY>990</posY>
 		<label>-</label>
 		<align>left</align>
 		<font>fontB12</font>
@@ -33,7 +35,7 @@
 		<type>label</type>
 		<id>11</id>
 		<posX>1820</posX>
-		<posY>65</posY>
+		<posY>990</posY>
 		<label>-</label>
 		<align>right</align>
 		<font>fontB12</font>
@@ -45,7 +47,7 @@
 		<type>label</type>
 		<id>12</id>
 		<posX>1820</posX>
-		<posY>105</posY>
+		<posY>1030</posY>
 		<label>-</label>
 		<align>right</align>
 		<font>fontB12</font>
@@ -59,12 +61,12 @@
         <type>fadelabel</type>
         <id>0</id>
         <posX>100</posX>
-        <posY>105</posY>
+        <posY>1030</posY>
         <width>1400</width>
         <label>#pictures.exif.datepicturetaken #pictures.exif.keywords</label>
-		<align>left</align>
-		<font>fontB12</font>
-		<textcolor>FFFFFFFF</textcolor>
+        <align>left</align>
+        <font>fontB12</font>
+        <textcolor>FFFFFFFF</textcolor>
     </control>
 
     <!-- Pause -->
@@ -78,6 +80,7 @@
     	<width>50</width>
     	<height>50</height>
     	<texture>osd_pause.png</texture>
+        <visible>!Control.IsVisible(10)</visible>
     </control>
 
 </controls>
