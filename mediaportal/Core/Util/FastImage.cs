@@ -171,6 +171,7 @@ namespace MediaPortal.Util
 
       if (!File.Exists(filename))
       {
+        Log.Warn("FastImage FromFile: {0} does not exist", filename);
         return null;
       }
 
