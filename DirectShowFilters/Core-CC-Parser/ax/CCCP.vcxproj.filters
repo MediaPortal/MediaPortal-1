@@ -70,6 +70,7 @@
     <None Include="CCCP.def">
       <Filter>Auxiliary Files</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CCParser.rc">
