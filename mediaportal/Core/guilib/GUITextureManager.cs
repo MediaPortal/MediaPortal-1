@@ -362,7 +362,6 @@ namespace MediaPortal.GUI.Library
             }
 
             _cacheTextures[cacheKey] = newCache;
-            dxtexture.Dispose();
             return 1;
           }
         }
