@@ -65,6 +65,10 @@
 #---------------------------------------------------------------------------
 !include "${git_MP}\Setup\setup-preBuild.nsh"
 
+!ifndef GIT_LIBBLURAY_VERSION
+!include "${git_InstallScripts}\include\MediaPortalLibbluray.nsh"
+!echo "BUILD MESSAGE : LIBBLURAY VERSION ${GIT_LIBBLURAY_VERSION} "
+!endif
 
 #---------------------------------------------------------------------------
 # DEFINES
@@ -635,23 +639,48 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\Docs\MediaPortal License.rtf"
   ; libbluray
   SetOutPath "$MPdir.Base"
-  !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-    File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32d\libbluray.dll"
+  !ifndef Libbluray_use_Nuget_DLL
+     !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+       File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32d\libbluray.dll"
+     !else
+       File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
+     !endif
   !else
-    File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
+       !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+       File /oname=bluray.dll "${Libbluray_nuget_path}\references\runtimes\Release\libbluray.dll"
+     !else
+       File /oname=bluray.dll "${Libbluray_nuget_path}\references\runtimes\Debug\libbluray.dll"
+	 !endif
   !endif
-  File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
-  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-1.1.2.jar"
+  !ifndef Libbluray_use_Nuget_JAR
+       File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
+  !else
+	   File /oname=libbluray.jar "${Libbluray_nuget_path}\references\runtimes\libbluray-.jar"
+  !endif
+  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-${GIT_LIBBLURAY_VERSION}.jar"
     ; libbluray - Awt file
    SetOutPath "$MPdir.Base\awt"
-    File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-awt-.jar"
+   !ifndef Libbluray_use_Nuget_JAR
+       File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-awt-.jar"
+   !else 
+	   File /oname=libbluray.jar "${Libbluray_nuget_path}\references\runtimes\libbluray-awt-.jar"
+   !endif
     SetOutPath "$MPdir.Base"
   ; libbluray - submodul freetype library
-  !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-    File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Debug\freetype.dll"
+   !ifndef Libbluray_use_Nuget_DLL
+     !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+     File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Debug\freetype.dll"
+     !else
+     File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Release\freetype.dll"
+     !endif
   !else
-    File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Release\freetype.dll"
+    !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+    File /oname=freetype.dll "${Libbluray_nuget_path}\references\runtimes\Release\freetype.dll"
+    !else
+    File /oname=freetype.dll "${Libbluray_nuget_path}\references\runtimes\Debug\freetype.dll"
+	!endif
   !endif
+  
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
