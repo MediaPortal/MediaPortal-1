@@ -157,9 +157,9 @@ namespace MediaPortal.DeployTool
       this.labelHeading.BackColor = System.Drawing.Color.Transparent;
       this.labelHeading.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold);
       this.labelHeading.ForeColor = System.Drawing.Color.White;
-      this.labelHeading.Location = new System.Drawing.Point(243, 7);
+      this.labelHeading.Location = new System.Drawing.Point(111, 7);
       this.labelHeading.Name = "labelHeading";
-      this.labelHeading.Size = new System.Drawing.Size(646, 23);
+      this.labelHeading.Size = new System.Drawing.Size(778, 23);
       this.labelHeading.TabIndex = 3;
       this.labelHeading.Text = "Press the \"Install\" button to perform all necessary actions to install your setup" +
     "";
