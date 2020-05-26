@@ -20,5 +20,34 @@
       <textcolor>#00bfff</textcolor>
       <align>TopCenter</align>
     </control>
+    
+    <control>
+      <description>splashscreen version text</description>
+      <type>label</type>
+      <id>3</id>
+      <posX>750</posX>
+      <posY>600</posY>
+      <width>70</width>
+      <height>40</height>
+      <textsize>20</textsize>
+      <textcolor>#5e91e0</textcolor>
+      <align>TopLeft</align>
+    </control>
+    <control>
+      <description>splashscreen edition text</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>830</posX>
+      <posY>600</posY>
+      <width>820</width>
+      <height>40</height>
+      <textsize>20</textsize>
+      <textcolor>#5e91e0</textcolor>
+      <align>TopLeft</align>
+    </control>
+    
+    
+    
+    
   </controls>
 </window>
