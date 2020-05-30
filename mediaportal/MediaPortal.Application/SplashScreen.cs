@@ -262,9 +262,6 @@ namespace MediaPortal
       _frmFull.lblVersion.Parent = _frmFull.pbBackground;
       _frmFull.lblCVS.Parent = _frmFull.pbBackground;
 
-      // _frmFull.lblMain.Bounds = CurrentDisplay.Bounds;
-      // _frmFull.lblMain.Top = _frmFull.lblMain.Top + (percent10h / 2);
-      // _frmFull.lblMain.Height = _frmFull.lblMain.Height - percent10h;
       _frmFull.lblMain.Left = 0;
       _frmFull.lblMain.Top = (percent10h / 2);
       _frmFull.lblMain.Height = _frmFull.Height - percent10h;
