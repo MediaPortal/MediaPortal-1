@@ -603,9 +603,9 @@ namespace MediaPortal
 
       #region Font scale
 
-      lblMain.Font = new Font(lblMain.Font.FontFamily, ScaleFontSize(lblMain.Font), lblMain.Font.Style, GraphicsUnit.Pixel);
-      lblVersion.Font = new Font(lblVersion.Font.FontFamily, ScaleFontSize(lblVersion.Font), lblVersion.Font.Style, GraphicsUnit.Pixel);
-      lblCVS.Font = new Font(lblCVS.Font.FontFamily, ScaleFontSize(lblCVS.Font), lblCVS.Font.Style, GraphicsUnit.Pixel);
+      lblMain.Font = ScaleFontSize(lblMain.Font);
+      lblVersion.Font = ScaleFontSize(lblVersion.Font);
+      lblCVS.Font = ScaleFontSize(lblCVS.Font);
 
       #endregion
 
@@ -713,9 +713,9 @@ namespace MediaPortal
     /// Scale Font size for current resolution
     /// </summary>
     /// <param name="font">Font to scale.</param>
-    private int ScaleFontSize(Font font)
+    private Font ScaleFontSize(Font font)
     {
-      return ScaleVertical(font.Height);
+      return new Font(font.FontFamily, ScaleVertical(font.Height), font.Style, GraphicsUnit.Pixel);
     }
   }
 }
