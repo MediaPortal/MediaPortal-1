@@ -600,6 +600,9 @@ namespace SetupTv.Sections
         case 4:
           Thumbs.Quality = Thumbs.ThumbQuality.highest;
           break;
+        case 5:
+          Thumbs.Quality = Thumbs.ThumbQuality.uhd;
+          break;
       }
       setThumbQualityLabels();
       _needRestart = true;
@@ -643,6 +646,13 @@ namespace SetupTv.Sections
           // labelCurrentInterpolation.Text = "High Quality Bicubic";
           // labelCurrentSmoothing.Text = "High Quality";
           labelRecommendedCurrent.Text = "Very large LCDs, Projectors";
+          break;
+        case 5:
+          labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbLargeResolution);
+          // labelCurrentCompositing.Text = "High Quality";
+          // labelCurrentInterpolation.Text = "High Quality Bicubic";
+          // labelCurrentSmoothing.Text = "High Quality";
+          labelRecommendedCurrent.Text = "UHD TVs, Projectors";
           break;
       }
     }
