@@ -600,9 +600,14 @@ namespace MediaPortal
           }
         }
       }
-      lblMain.Font = new Font(lblMain.Font.FontFamily, ScaleVertical((int)lblMain.Font.Size), lblMain.Font.Style);
-      lblVersion.Font = new Font(lblVersion.Font.FontFamily, ScaleVertical((int)lblVersion.Font.Size), lblVersion.Font.Style);
-      lblCVS.Font = new Font(lblCVS.Font.FontFamily, ScaleVertical((int)lblCVS.Font.Size), lblCVS.Font.Style);
+
+      #region Font scale
+
+      lblMain.Font = new Font(lblMain.Font.FontFamily, ScaleFontSize(lblMain.Font), lblMain.Font.Style, GraphicsUnit.Pixel);
+      lblVersion.Font = new Font(lblVersion.Font.FontFamily, ScaleFontSize(lblVersion.Font), lblVersion.Font.Style, GraphicsUnit.Pixel);
+      lblCVS.Font = new Font(lblCVS.Font.FontFamily, ScaleFontSize(lblCVS.Font), lblCVS.Font.Style, GraphicsUnit.Pixel);
+
+      #endregion
 
       this.Invalidate(true);
     }
@@ -702,6 +707,33 @@ namespace MediaPortal
         y = (int)Math.Round((float)y * percentY);
       }
       return y;
+    }
+
+    /// <summary>
+    /// Scale Font size for current resolution
+    /// </summary>
+    /// <param name="font">Font to scale.</param>
+    private int ScaleFontSize(Font font)
+    {
+      /* I
+      int ascent = font.FontFamily.GetCellAscent(font.Style);
+      int descent = font.FontFamily.GetCellDescent(font.Style);
+      int emheight = font.FontFamily.GetEmHeight(font.Style);
+      int sizeInPixel = (int)Math.Round(font.Size * (descent + ascent) / (float)emheight);
+
+      return ScaleVertical(sizeInPixel);
+      */
+      return ScaleVertical(font.Height);
+      /* III
+      Graphics formGraphics = this.CreateGraphics();
+      float sizeInPixel =  font.SizeInPoints / 72 * formGraphics.DpiY;
+      return ScaleVertical((int)Math.Round(sizeInPixel));
+      */
+      /* IV
+      Graphics formGraphics = this.CreateGraphics();
+      float sizeInPixel = font.SizeInPoints / 72 * formGraphics.DpiX;
+      return ScaleVertical((int)Math.Round(sizeInPixel));
+      */
     }
   }
 }
