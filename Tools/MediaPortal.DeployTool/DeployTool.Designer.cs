@@ -123,6 +123,7 @@ namespace MediaPortal.DeployTool
       this.pictureBox1.Size = new System.Drawing.Size(1000, 70);
       this.pictureBox1.TabIndex = 20;
       this.pictureBox1.TabStop = false;
+      this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DeployTool_MouseDown);
       // 
       // splitContainer2
       // 
@@ -178,7 +179,7 @@ namespace MediaPortal.DeployTool
       this.nextButton.ForeColor = System.Drawing.Color.White;
       this.nextButton.Location = new System.Drawing.Point(895, 3);
       this.nextButton.Name = "nextButton";
-      this.nextButton.Size = new System.Drawing.Size(93, 33);
+      this.nextButton.Size = new System.Drawing.Size(93, 34);
       this.nextButton.TabIndex = 2;
       this.nextButton.Text = "next";
       this.nextButton.UseVisualStyleBackColor = false;
@@ -196,7 +197,7 @@ namespace MediaPortal.DeployTool
       this.backButton.ForeColor = System.Drawing.Color.White;
       this.backButton.Location = new System.Drawing.Point(12, 3);
       this.backButton.Name = "backButton";
-      this.backButton.Size = new System.Drawing.Size(93, 33);
+      this.backButton.Size = new System.Drawing.Size(99, 34);
       this.backButton.TabIndex = 1;
       this.backButton.Text = "previous";
       this.backButton.UseVisualStyleBackColor = false;
@@ -213,6 +214,7 @@ namespace MediaPortal.DeployTool
       this.Name = "DeployTool";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "MediaPortal Deploy Tool";
+      this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DeployTool_MouseDown);
       this.splitContainer1.Panel1.ResumeLayout(false);
       this.splitContainer1.Panel2.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
