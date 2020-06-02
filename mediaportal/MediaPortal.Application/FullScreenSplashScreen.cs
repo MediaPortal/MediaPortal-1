@@ -715,7 +715,12 @@ namespace MediaPortal
     /// <param name="font">Font to scale.</param>
     private Font ScaleFontSize(Font font)
     {
-      return new Font(font.FontFamily, ScaleVertical(font.Height), font.Style, GraphicsUnit.Pixel);
+      int ascent = font.FontFamily.GetCellAscent(font.Style);
+      int descent = font.FontFamily.GetCellDescent(font.Style);
+      int emHeight = font.FontFamily.GetEmHeight(font.Style);
+      int sizeInPixel = (int)Math.Ceiling(font.Size * (float)(descent + ascent) / (float)emHeight);
+
+      return new Font(font.FontFamily, ScaleVertical(sizeInPixel), font.Style, GraphicsUnit.Pixel);
     }
   }
 }
