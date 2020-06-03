@@ -167,6 +167,17 @@ namespace MediaPortal
                   Log.Debug("FullScreenSplash: Main label Textsize successfully set: {0}", textSize);
                 }
               }
+              if (control.SelectSingleNode("fontname") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("fontname/text()");
+                if (xmlNode != null)
+                {
+                  string fontName = xmlNode.Value;
+                  Log.Debug("FullScreenSplash: Main label Fontname value found: {0}", fontName);
+                  lblMain.Font = new Font(fontName, lblMain.Font.Size, lblMain.Font.Style);
+                  Log.Debug("FullScreenSplash: Main label Fontname successfully set: {0}", fontName);
+                }
+              }
               if (control.SelectSingleNode("textcolor") != null)
               {
                 XmlNode xmlNode = control.SelectSingleNode("textcolor/text()");
@@ -317,6 +328,17 @@ namespace MediaPortal
                   Log.Debug("FullScreenSplash: Version Textsize successfully set: {0}", textSize);
                 }
               }
+              if (control.SelectSingleNode("fontname") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("fontname/text()");
+                if (xmlNode != null)
+                {
+                  string fontName = xmlNode.Value;
+                  Log.Debug("FullScreenSplash: Version label Fontname value found: {0}", fontName);
+                  lblVersion.Font = new Font(fontName, lblVersion.Font.Size, lblVersion.Font.Style);
+                  Log.Debug("FullScreenSplash: Version label Fontname successfully set: {0}", fontName);
+                }
+              }
               if (control.SelectSingleNode("textcolor") != null)
               {
                 XmlNode xmlNode = control.SelectSingleNode("textcolor/text()");
@@ -463,6 +485,17 @@ namespace MediaPortal
                   Log.Debug("FullScreenSplash: Edition/Codename/CVS Textsize value found: {0}", textSize);
                   lblCVS.Font = new Font(lblCVS.Font.FontFamily, textSize, lblCVS.Font.Style);
                   Log.Debug("FullScreenSplash: Edition/Codename/CVS Textsize successfully set: {0}", textSize);
+                }
+              }
+              if (control.SelectSingleNode("fontname") != null)
+              {
+                XmlNode xmlNode = control.SelectSingleNode("fontname/text()");
+                if (xmlNode != null)
+                {
+                  string fontName = xmlNode.Value;
+                  Log.Debug("FullScreenSplash: Edition/Codename/CVS label Fontname value found: {0}", fontName);
+                  lblCVS.Font = new Font(fontName, lblCVS.Font.Size, lblCVS.Font.Style);
+                  Log.Debug("FullScreenSplash: Edition/Codename/CVS label Fontname successfully set: {0}", fontName);
                 }
               }
               if (control.SelectSingleNode("textcolor") != null)
