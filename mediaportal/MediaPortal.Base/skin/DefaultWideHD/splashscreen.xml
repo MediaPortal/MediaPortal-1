@@ -15,12 +15,13 @@
       <posX>784</posX>
       <posY>500</posY>
       <width>1000</width>
-      <height>40</height>
+      <height>50</height>
+      <fontname>Noto Sans</fontname>
+      <fontstyle>Regular</fontstyle>
       <textsize>24</textsize>
       <textcolor>#00bfff</textcolor>
       <align>Topleft</align>
     </control>
-    
     <control>
       <description>splashscreen version text</description>
       <type>label</type>
@@ -29,6 +30,8 @@
       <posY>920</posY>
       <width>1920</width>
       <height>50</height>
+      <fontname>Noto Sans</fontname>
+      <fontstyle>Regular</fontstyle>
       <textsize>20</textsize>
       <textcolor>#00bfff</textcolor>
       <align>BottomCenter</align>
@@ -41,13 +44,11 @@
       <posY>970</posY>
       <width>1920</width>
       <height>50</height>
+      <fontname>Noto Sans</fontname>
+      <fontstyle>Regular</fontstyle>
       <textsize>20</textsize>
       <textcolor>#00bfff</textcolor>
       <align>BottomCenter</align>
     </control>
-    
-    
-    
-    
   </controls>
 </window>
