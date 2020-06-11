@@ -65,10 +65,6 @@
 #---------------------------------------------------------------------------
 !include "${git_MP}\Setup\setup-preBuild.nsh"
 
-!ifndef GIT_LIBBLURAY_VERSION
-!include "${git_InstallScripts}\include\MediaPortalLibbluray.nsh"
-!echo "BUILD MESSAGE : LIBBLURAY VERSION ${GIT_LIBBLURAY_VERSION} "
-!endif
 
 #---------------------------------------------------------------------------
 # DEFINES
@@ -88,6 +84,9 @@
 
 SetCompressor /SOLID lzma
 
+# Libbluray Defines
+!include "${git_InstallScripts}\include\MediaPortalLibbluray.nsh"
+!echo "BUILD MESSAGE : LIBBLURAY VERSION ${GIT_LIBBLURAY_VERSION} "
 
 #---------------------------------------------------------------------------
 # VARIABLES
@@ -639,46 +638,46 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\Docs\MediaPortal License.rtf"
   ; libbluray
   SetOutPath "$MPdir.Base"
-  !ifndef Libbluray_use_Nuget_DLL
+  !ifdef Libbluray_use_Nuget_DLL
+         !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+       File /oname=bluray.dll "${Libbluray_nuget_path}\references\runtimes\Debug\libbluray.dll"
+     !else
+       File /oname=bluray.dll "${Libbluray_nuget_path}\references\runtimes\Release\libbluray.dll"
+	 !endif
+  !else
      !if ${BUILD_TYPE} == "Debug"       # it's an debug build
        File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32d\libbluray.dll"
      !else
        File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
      !endif
-  !else
-       !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-       File /oname=bluray.dll "${Libbluray_nuget_path}\references\runtimes\Release\libbluray.dll"
-     !else
-       File /oname=bluray.dll "${Libbluray_nuget_path}\references\runtimes\Debug\libbluray.dll"
-	 !endif
   !endif
-  !ifndef Libbluray_use_Nuget_JAR
-       File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
+  !ifdef Libbluray_use_Nuget_JAR
+       File /oname=libbluray.jar "${Libbluray_nuget_path}\references\runtimes\libbluray-.jar"
   !else
-	   File /oname=libbluray.jar "${Libbluray_nuget_path}\references\runtimes\libbluray-.jar"
+	   File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
   !endif
   CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-${GIT_LIBBLURAY_VERSION}.jar"
     ; libbluray - Awt file
    SetOutPath "$MPdir.Base\awt"
-   !ifndef Libbluray_use_Nuget_JAR
-       File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-awt-.jar"
+   !ifdef Libbluray_use_Nuget_JAR
+   	   File /oname=libbluray.jar "${Libbluray_nuget_path}\references\runtimes\libbluray-awt-.jar"
    !else 
-	   File /oname=libbluray.jar "${Libbluray_nuget_path}\references\runtimes\libbluray-awt-.jar"
+       File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-awt-.jar"
    !endif
     SetOutPath "$MPdir.Base"
   ; libbluray - submodul freetype library
-   !ifndef Libbluray_use_Nuget_DLL
+   !ifdef Libbluray_use_Nuget_DLL
+    !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+    File /oname=freetype.dll "${Libbluray_nuget_path}\references\runtimes\Debug\freetype.dll"
+    !else
+    File /oname=freetype.dll "${Libbluray_nuget_path}\references\runtimes\Release\freetype.dll"
+	!endif
+  !else
      !if ${BUILD_TYPE} == "Debug"       # it's an debug build
      File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Debug\freetype.dll"
      !else
      File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Release\freetype.dll"
      !endif
-  !else
-    !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-    File /oname=freetype.dll "${Libbluray_nuget_path}\references\runtimes\Release\freetype.dll"
-    !else
-    File /oname=freetype.dll "${Libbluray_nuget_path}\references\runtimes\Debug\freetype.dll"
-	!endif
   !endif
   
   ; TvLibrary for Genre
@@ -1018,6 +1017,7 @@ Section -Post
   Delete "$MPdir.Base\libbluray-j2se-1.0.1.jar"
   Delete "$MPdir.Base\libbluray-j2se-1.0.2.jar"
   Delete "$MPdir.Base\libbluray-j2se-1.1.1.jar"
+  Delete "$MPdir.Base\libbluray-*.jar"
 
   ; MP1-4315 Blow windowplugins dll to separate plugin dlls
   ${LOG_TEXT} "INFO" "Removing obsolete WindowPlugins.dll"
