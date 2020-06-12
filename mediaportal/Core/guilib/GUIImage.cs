@@ -394,6 +394,16 @@ namespace MediaPortal.GUI.Library
         _posYpropertyValue = -1;
       }
 
+      // Set texture address mode to WRAP.
+      // This is mandatory for tiled textures, and has no effect on textures
+      // which are stretched or shrunk to fit in the target area.
+      DXNative.FontEngineSetSamplerState(0,
+        (int)D3DSAMPLERSTATETYPE.D3DSAMP_ADDRESSU,
+        (int)D3DTEXTUREADDRESS.D3DTADDRESS_WRAP);
+      DXNative.FontEngineSetSamplerState(0,
+        (int)D3DSAMPLERSTATETYPE.D3DSAMP_ADDRESSV,
+        (int)D3DTEXTUREADDRESS.D3DTADDRESS_WRAP);
+
       FinalizeBorder();
     }
 
