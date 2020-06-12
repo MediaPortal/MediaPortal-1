@@ -449,7 +449,10 @@ namespace MediaPortal.GUI.Library
 
         return values;
       }
-      catch { }
+      catch (Exception e)
+      {
+        Log.Error("GUIImage:ParseParameters error while parsing {0}: {1}", valueText, e.Message);
+      }
 
       return new int[0];
     }
