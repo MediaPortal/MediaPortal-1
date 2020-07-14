@@ -511,6 +511,7 @@ namespace MediaPortal.GUI.Pictures
     {
       string lensModel = string.Empty;
 
+      // Nikon Makernote
       var nikonDirectory = directory.OfType<NikonType2MakernoteDirectory>().FirstOrDefault();
       if (nikonDirectory != null)
       {
@@ -538,6 +539,7 @@ namespace MediaPortal.GUI.Pictures
         }
       }
 
+      // Canon Makernote
       var canonDirectory = directory.OfType<CanonMakernoteDirectory>().FirstOrDefault();
       if (canonDirectory != null)
       {
@@ -562,12 +564,13 @@ namespace MediaPortal.GUI.Pictures
         }
       }
 
+      // Panasonic Makernote
       var panasonicDirectory = directory.OfType<PanasonicMakernoteDirectory>().FirstOrDefault();
       if (panasonicDirectory != null)
       {
         // [Panasonic Makernote - 0x009e] HDR = On
         ushort value;
-        if (panasonicDirectory.TryGetUInt16(PanasonicMakernoteDirectory.TagHDR, out value))
+        if (panasonicDirectory.TryGetUInt16(PanasonicMakernoteDirectory.TagHdr, out value))
         {
           item.HDR = value != 0;
         }
@@ -586,6 +589,7 @@ namespace MediaPortal.GUI.Pictures
         }
       }
 
+      // Olympus Makernote
       var olympusSettingsDirectory = directory.OfType<OlympusCameraSettingsMakernoteDirectory>().FirstOrDefault();
       if (olympusSettingsDirectory != null)
       {
@@ -621,6 +625,7 @@ namespace MediaPortal.GUI.Pictures
         }
       }
 
+      // Sony Makernote
       var sonyDirectory = directory.OfType<SonyType1MakernoteDirectory>().FirstOrDefault();
       if (sonyDirectory != null)
       {
@@ -632,6 +637,7 @@ namespace MediaPortal.GUI.Pictures
         }
       }
 
+      // Apple Makernote
       var appleDirectory = directory.OfType<AppleMakernoteDirectory>().FirstOrDefault();
       if (appleDirectory != null)
       {
@@ -643,11 +649,25 @@ namespace MediaPortal.GUI.Pictures
         }
       }
 
+      // Samsung Makernote
+      var samsungDirectory = directory.OfType<SamsungType2MakernoteDirectory>().FirstOrDefault();
+      if (samsungDirectory != null)
+      {
+        // [Samsung Makernote - 0xa003] Lens Type: Samsung NX 18-200mm F3.5-6.3 ED OIS
+        lensModel = samsungDirectory.GetDescription(SamsungType2MakernoteDirectory.TagLensType);
+        if (!string.IsNullOrEmpty(lensModel))
+        {
+          item.Lens.DisplayValue = lensModel;
+          return;
+        }
+      }
+
       if (!item.Lens.IsEmpty())
       {
         return;
       }
 
+      // XMPMeta 
       var xmpDirectory = directory.OfType<XmpDirectory>().FirstOrDefault();
       if (xmpDirectory != null)
       {
