@@ -165,7 +165,7 @@ xcopy %1\..\Packages\MediaInfo.Wrapper.19.9.2\lib\net40\MediaInfo.Wrapper.dll . 
 xcopy %1\..\Packages\Sqlite.3.21.0\sqlite.dll . /Y /D
 
 REM Exif
-xcopy %1\..\Packages\MetadataExtractor.2.4.2\lib\net35\MetadataExtractor.dll . /Y /D
+xcopy %1\..\Packages\MetadataExtractor.2.4.3\lib\net35\MetadataExtractor.dll . /Y /D
 xcopy %1\..\Packages\XmpCore.6.1.10\lib\net35\XmpCore.dll . /Y /D
 
 REM ffmpeg 
