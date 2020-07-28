@@ -22,6 +22,7 @@ using System;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace MediaPortal.DeployTool
 {
@@ -62,6 +63,14 @@ namespace MediaPortal.DeployTool
     }
 
     #endregion
+
+    public const int WM_NCLBUTTONDOWN = 0xA1;
+    public const int HT_CAPTION = 0x2;
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    public static extern bool ReleaseCapture();
 
     public DeployTool()
     {
@@ -265,6 +274,15 @@ namespace MediaPortal.DeployTool
       {
         MessageBox.Show(String.Format("Unable to open the help page with your default browser - {0}", ex.Message),
                         "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
+    }
+
+    private void DeployTool_MouseDown(object sender, MouseEventArgs e)
+    {
+      if (e.Button == MouseButtons.Left)
+      {
+        ReleaseCapture();
+        SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
       }
     }
   }
