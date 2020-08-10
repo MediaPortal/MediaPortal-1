@@ -265,11 +265,16 @@ namespace MediaPortal.Dialogs
   {
     public StandardKeyboard() : base()
     {
+      GetID = (int)Window.WINDOW_VIRTUAL_KEYBOARD;
+    }
+
+    public override bool Init()
+    {
       if (Load(GUIGraphicsContext.GetThemedSkinFile(@"\stdKeyboard.xml")))
       {
-        GetID = (int)Window.WINDOW_VIRTUAL_KEYBOARD;
         _keyboard.InitializeInstance();
       }
+      return base.Init();
     }
   }
 }
