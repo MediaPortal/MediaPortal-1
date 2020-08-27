@@ -197,10 +197,12 @@ REM taglib-sharp
 xcopy %1\..\Packages\MediaPortal.TagLib.2.1.0.2\lib\net40\taglib-sharp.dll ./Y /D
 
 REM SharpLibHid
-xcopy %1\..\Packages\SharpLibHid.1.4.2\lib\net40\SharpLibHid.dll . /Y /D
+REM Provided with Nuget to bin folder during build
+REM xcopy %1\..\Packages\SharpLibHid.1.4.4\lib\net40\SharpLibHid.dll . /Y /D
 
-REM SharpLibWin32
-xcopy %1\..\Packages\SharpLibWin32.0.0.9\lib\net20\SharpLibWin32.dll . /Y /D
+REM REM SharpLibWin32
+REM Provided with Nuget to bin folder during build
+REM xcopy %1\..\Packages\SharpLibWin32.0.2.1\lib\net20\SharpLibWin32.dll . /Y /D
 
 REM System.Management.Automation
 xcopy %1\..\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll . /Y /D
