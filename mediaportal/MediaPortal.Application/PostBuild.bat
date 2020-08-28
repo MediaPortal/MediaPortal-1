@@ -209,7 +209,7 @@ REM SharpLibDisplay
 xcopy %1\..\Packages\SharpLibDisplay.0.3.4\lib\net40\SharpLibDisplay.dll . /Y /D
 
 REM Naudio
-xcopy %1\..\Packages\NAudio.1.8.3\lib\net35\NAudio.dll . /Y /D
+xcopy %1\..\Packages\NAudio.1.10.0\lib\net35\NAudio.dll . /Y /D
 
 REM CSCore
 xcopy %1\..\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll . /Y /D
