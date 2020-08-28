@@ -578,7 +578,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\WindowPlugins\Common.GUIPlugins\bin\${BUILD_TYPE}\Common.GUIPlugins.dll"
   ; ffmpeg
   SetOutPath "$MPdir.Base\MovieThumbnailer"
-  File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
+  File "${git_ROOT}\Packages\FFmpeg.Win32.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
   ; NuGet binaries MediaInfo
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\MediaInfo.Native.19.9.0\build\native\x86\MediaInfo.dll"

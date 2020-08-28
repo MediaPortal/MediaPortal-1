@@ -556,7 +556,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_ROOT}\Packages\MediaInfo.Wrapper.19.4.1\lib\net40\MediaInfo.Wrapper.dll"
 
   ; thumbnail software
-  File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
+  File "${git_ROOT}\Packages\FFmpeg.Win32.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
   File "${git_TVServer}\TvThumbnails\bin\x86\${BUILD_TYPE}\TvThumbnails.dll"
   
 
