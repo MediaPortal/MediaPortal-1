@@ -114,7 +114,10 @@ namespace MediaPortal.Util
           // request.Proxy = WebProxy.GetDefaultProxy();
           request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception ex)
+        {
+          Log.Error("VideoDatabaseParserStrings:DownloadFile: {0}", ex.Message);
+        }
         
         using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
         {

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -27,13 +27,17 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
+using MediaPortal.Util;
+
 using Microsoft.DirectX.Direct3D;
+
 using Action = MediaPortal.GUI.Library.Action;
 
 #endregion
@@ -102,9 +106,9 @@ namespace MediaPortal.GUI.Pictures
               return _currentSlide;
             }
           }
-          catch (Exception)
+          catch (Exception ex)
           {
-            Log.Debug("GUISlideShow: catch exception when LoadSlide on stop");
+            Log.Debug("GUISlideShow: catch exception when LoadSlide on stop {0}", ex.Message);
             return _currentSlide;
           }
 
@@ -329,6 +333,7 @@ namespace MediaPortal.GUI.Pictures
     private const int LABEL_ROW1 = 10;
     private const int LABEL_ROW2 = 11;
     private const int LABEL_ROW2_EXTRA = 12;
+    private const int CONTROL_PAUSE = 15;
 
     private const float KENBURNS_ZOOM_FACTOR = 1.30f; // Zoom factor for pictures that have a black border on the sides
     private const float KENBURNS_ZOOM_FACTOR_FS = 1.20f; // Zoom factor for pictures that are filling the whole screen
@@ -439,6 +444,8 @@ namespace MediaPortal.GUI.Pictures
     private bool _autoShuffleMusic = false;
     public bool _showRecursive = false;
     public bool _enableResumeMusic = true;
+
+    private GUIControl _pause = null;
 
     protected delegate void PlaybackChangedDelegate(g_Player.MediaType type, string filename);
 
@@ -1128,7 +1135,7 @@ namespace MediaPortal.GUI.Pictures
 
       if (_isSlideShow)
       {
-        if (RenderPause())
+        if (RenderPause(timePassed))
         {
           return;
         }
@@ -1212,6 +1219,20 @@ namespace MediaPortal.GUI.Pictures
       _zoomTypeBackground = _currentZoomType;
       _currentSlide = null;
       _slideTime = (int)(DateTime.Now.Ticks / 10000);
+
+      ExifMetadata.Metadata _metada = new ExifMetadata.Metadata();
+      if (null == _backgroundSlide || string.IsNullOrEmpty(_backgroundSlide.FilePath) || !File.Exists(_backgroundSlide.FilePath))
+      {
+        _metada.SetExifProperties();
+        return;
+      }
+
+      _metada = Picture.Database.PictureDatabase.GetExifFromDB(_backgroundSlide.FilePath);
+      if (_metada.IsEmpty())
+      {
+        _metada = Picture.Database.PictureDatabase.GetExifFromFile(_backgroundSlide.FilePath);
+      }
+      _metada.SetExifProperties();
     }
 
     #endregion
@@ -2505,8 +2526,10 @@ namespace MediaPortal.GUI.Pictures
     }
 
 
-    private bool RenderPause()
+    private bool RenderPause(float timePassed)
     {
+      _pause = GUIWindowManager.GetWindow(GetID).GetControl(CONTROL_PAUSE);
+
       _counter++;
       if (_counter > 25)
       {
@@ -2514,22 +2537,36 @@ namespace MediaPortal.GUI.Pictures
       }
       if ((!_isPaused && !_infoVisible && !_zoomInfoVisible && !_isPictureZoomed) || _zoomInfoVisible || _infoVisible)
       {
+        if (_pause != null)
+        {
+          _pause.Visible = false;
+        }
         return false;
+      }
+
+      if (_pause != null)
+      {
+        _pause.Visible = true;
+        _pause.Render(timePassed);
       }
 
       if (_counter < 13)
       {
         return false;
       }
-      GUIFont pFont = GUIFontManager.GetFont("font13");
-      if (pFont != null)
+
+      if (_pause == null)
       {
-        float fw = 0f;
-        float fh = 0f;
-        string szText = GUILocalizeStrings.Get(112);
-        pFont.GetTextExtent(szText, ref fw, ref fh);
-        pFont.DrawShadowText(500.0f, 60.0f, 0xffffffff, szText, GUIControl.Alignment.ALIGN_LEFT, (int)fw, 2, 2,
-                             0xff000000);
+        GUIFont pFont = GUIFontManager.GetFont("font13");
+        if (pFont != null)
+        {
+          float fw = 0f;
+          float fh = 0f;
+          string szText = GUILocalizeStrings.Get(112);
+          pFont.GetTextExtent(szText, ref fw, ref fh);
+          pFont.DrawShadowText(500.0f, 60.0f, 0xffffffff, szText, GUIControl.Alignment.ALIGN_LEFT, (int)fw, 2, 2,
+                               0xff000000);
+        }
       }
       return true;
     }
@@ -2995,8 +3032,9 @@ namespace MediaPortal.GUI.Pictures
                     currentSong = (MusicTag) plI.MusicTag;
                   }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                  Log.Error("GUISlideShow: ShowSong {0}", ex.Message);
                   // Catch the COM execption but continue code with Music Database instead.
                 }
               }

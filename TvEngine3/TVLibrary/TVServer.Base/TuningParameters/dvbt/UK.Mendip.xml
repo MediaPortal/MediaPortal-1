@@ -2,91 +2,55 @@
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <!-- PSB1 -->
   <DVBTTuning>
-    <Frequency>562000</Frequency>
+    <Frequency>562000</Frequency><!-- C32 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- PSB2 [pre-700 05/06/2019] -->
+  <!-- PSB2 -->
   <DVBTTuning>
-    <Frequency>738000</Frequency>
+    <Frequency>578000</Frequency><!-- C34 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- PSB2 [post-700 05/06/2019] -->
+  <!-- PSB3 -->
   <DVBTTuning>
-    <Frequency>578000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- PSB3 [pre-700 05/06/2019] -->
-  <DVBTTuning>
-    <Frequency>770000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- PSB3 [post-700 05/06/2019] -->
-  <DVBTTuning>
-    <Frequency>586000</Frequency>
+    <Frequency>586000</Frequency><!-- C35 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <!-- COM4 -->
   <DVBTTuning>
-    <Frequency>690000</Frequency>
+    <Frequency>690000</Frequency><!-- C48 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <!-- COM5 -->
   <DVBTTuning>
-    <Frequency>570000</Frequency>
+    <Frequency>570000</Frequency><!-- C33 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- COM6 [pre-700 19/06/2019] -->
+  <!-- COM6 -->
   <DVBTTuning>
-    <Frequency>722000</Frequency>
+    <Frequency>594000</Frequency><!-- C36 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- COM6 [post-700 19/06/2019] -->
+  <!-- COM7 -->
   <DVBTTuning>
-    <Frequency>594000</Frequency>
+    <Frequency>746000</Frequency><!-- C55 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- COM7 [pre-700 19/06/2019] -->
+  <!-- COM8 -->
   <DVBTTuning>
-    <Frequency>594000</Frequency>
+    <Frequency>754000</Frequency><!-- C56 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <!-- COM7 [post-700 19/06/2019] -->
+  <!-- LOC1 -->
   <DVBTTuning>
-    <Frequency>746000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- COM8 [pre-700 05/06/2019] -->
-  <DVBTTuning>
-    <Frequency>586000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- COM8 [post-700 05/06/2019] -->
-  <DVBTTuning>
-    <Frequency>754000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- LOC1 [pre-700 19/06/2019] -->
-  <DVBTTuning>
-    <Frequency>714000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
-  <!-- LOC1 [post-700 19/06/2019] -->
-  <DVBTTuning>
-    <Frequency>546000</Frequency>
+    <Frequency>546000</Frequency><!-- C30 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>

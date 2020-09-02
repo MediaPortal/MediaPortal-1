@@ -4,13 +4,10 @@
   <defaultcontrol>3</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <control>
-      <id>0</id>
-      <type>image</type>
-      <width>1920</width>
-      <height>1080</height>
-      <texture>background.png</texture>
-    </control>
+
+    <import>common.default.background.xml</import>
+    <import>common.default.background.overlay.xml</import>
+
     <control>
       <type>label</type>
       <id>0</id>
@@ -21,6 +18,7 @@
       <textcolor>6aa5cb</textcolor>
       <font>font22</font>
     </control>
+
     <control>
       <id>0</id>
       <description>dialog line 1</description>
@@ -34,6 +32,7 @@
       <align>LEFT</align>
       <label>#(L(1911))</label>
     </control>
+
     <control>
       <id>2</id>
       <description>listcontrol</description>
@@ -51,6 +50,7 @@
 	  <textureNoFocus>settings_button_nofocus.png</textureNoFocus>
 	  <dimColor>ffffffff</dimColor>
     </control>
+
     <control>
       <id>3</id>
       <description>Continue button</description>
@@ -65,5 +65,6 @@
       <textureNoFocus>button-nofocus.png</textureNoFocus>
       <label>#(string.formatcount(iif(eq(#countdownseconds,''),0,#countdownseconds), 1912))</label>
     </control>
+
   </controls>
 </window>

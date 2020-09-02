@@ -290,13 +290,16 @@ namespace MediaPortal.GUI.Library
       if (_propertyLabel.Length > 0)
       {
         string m_strText = GUIPropertyManager.Parse(_propertyLabel);
-        if (m_strText.Length > 0)
+        if (m_strText.Length > 0 && !m_strText.Contains(@"#"))
         {
           try
           {
             Percentage1 = float.Parse(m_strText);
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("GUITVProgressControl: Render() {0}", ex.Message);
+          }
           if (Percentage1 < 0 || Percentage1 > 100)
           {
             Percentage1 = 0;
@@ -306,13 +309,17 @@ namespace MediaPortal.GUI.Library
       if (Label1.Length > 0)
       {
         string strText = GUIPropertyManager.Parse(Label1);
-        if (strText.Length > 0)
+        if (strText.Length > 0 && !strText.Contains(@"#"))
         {
           try
           {
             Percentage1 = float.Parse(strText);
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("GUITVProgressControl: Render2() {0}", ex.Message);
+          }
+
           if (Percentage1 < 0 || Percentage1 > 100)
           {
             Percentage1 = 0;
@@ -323,13 +330,16 @@ namespace MediaPortal.GUI.Library
       if (Label2.Length > 0)
       {
         string strText = GUIPropertyManager.Parse(Label2);
-        if (strText.Length > 0)
+        if (strText.Length > 0 && !strText.Contains(@"#"))
         {
           try
           {
             Percentage2 = float.Parse(strText);
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("GUITVProgressControl: Render3() {0}", ex.Message);
+          }
           if (Percentage2 < 0 || Percentage2 > 100)
           {
             Percentage2 = 0;
@@ -339,13 +349,16 @@ namespace MediaPortal.GUI.Library
       if (Label3.Length > 0)
       {
         string strText = GUIPropertyManager.Parse(Label3);
-        if (strText.Length > 0)
+        if (strText.Length > 0 && !strText.Contains(@"#"))
         {
           try
           {
             Percentage3 = float.Parse(strText);
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("GUITVProgressControl: Render4() {0}", ex.Message);
+          }
           if (Percentage3 < 0 || Percentage3 > 100)
           {
             Percentage3 = 0;
@@ -1088,8 +1101,9 @@ namespace MediaPortal.GUI.Library
             {
               MarkerStartsPercent.Add(float.Parse(strMarkerStarts[i]));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+              Log.Warn("GUITVProgressControl: parseMarkerValues {0}", ex.Message);
               break;
             }
             if (MarkerStartsPercent.Count > i)
@@ -1114,8 +1128,9 @@ namespace MediaPortal.GUI.Library
             {
               MarkerEndsPercent.Add(float.Parse(strMarkerEnds[i]));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+              Log.Warn("GUITVProgressControl: parseMarkerValues {0}", ex.Message);
               break;
             }
             if (MarkerEndsPercent.Count > i)
@@ -1149,7 +1164,12 @@ namespace MediaPortal.GUI.Library
       _markerXPositions.Clear();
       _markerYPositions.Clear();
 
-      for (int i = 0; i < MarkerStartsPercent.Count || i < MarkerEndsPercent.Count; i++)
+      if (MarkerStartsPercent.Count != MarkerEndsPercent.Count)
+      {
+        Log.Error("Number of markerstarts ({0}) not equal to number of markerends ({1})", MarkerStartsPercent.Count, MarkerEndsPercent.Count);
+      }
+
+      for (int i = 0; i < MarkerStartsPercent.Count && i < MarkerEndsPercent.Count; i++)
       {
         //set the width of the bar
         fJumpWidth = (float) MarkerEndsPercent[i] - (float) MarkerStartsPercent[i];

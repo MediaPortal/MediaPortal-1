@@ -7,16 +7,7 @@
 <define>#useSelectedFanart:Yes</define>
 <controls>
 
-	<control>
-		<description>default background</description>
-		<type>image</type>
-		<id>1</id>
-		<posX>0</posX>
-    <posY>0</posY>
-		<width>1920</width>
-		<height>1080</height>
-		<texture>background.png</texture>
-	</control>
+  <import>common.default.background.xml</import> 
 	
   <control>
     <id>0</id>
@@ -29,35 +20,9 @@
     <animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="250">WindowClose</animation>
   </control>
-	
-  <control>
-   	<id>0</id>
-    <type>label</type>
-    <posX>144</posX>
-    <posY>38</posY>
-    <width>855</width>
-    <font>TitanLight22</font>
-    <textcolor>ffffff</textcolor>
-    <label>#header.label</label>
-		<align>left</align>
-	  <animation effect="fade" time="250">WindowOpen</animation>
-	  <animation effect="fade" time="250">WindowClose</animation>
-  </control>
+
+  <import>common.time.xml</import>
       
-	<control>
-  	<id>0</id>
-    <type>label</type>
-    <posX>1848</posX>
-    <posY>36</posY>
-    <width>555</width>
-    <font>TitanLight22</font>
-    <textcolor>ffffff</textcolor>
-    <label>#time</label>
-		<align>right</align>
-	  <animation effect="fade" time="250">WindowOpen</animation>
-	  <animation effect="fade" time="250">WindowClose</animation>
-  </control>
-  	
 	<control>
 		<description>background listview</description>
 		<type>image</type>

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,7 +19,9 @@
 #endregion
 
 using System;
+
 using MediaPortal.GUI.Library;
+
 using SQLite.NET;
 
 namespace MediaPortal.Database
@@ -29,7 +31,7 @@ namespace MediaPortal.Database
   /// </summary>
   public class DatabaseUtility
   {
-    private DatabaseUtility() {}
+    private DatabaseUtility() { }
 
     public static void CompactDatabase(SQLiteClient m_db)
     {
@@ -252,6 +254,34 @@ namespace MediaPortal.Database
       return true;
     }
 
+    /// <summary>
+    /// Helper function to create a new trigger in the database
+    /// </summary>
+    /// <param name="triggerName">name of trigger</param>
+    /// <param name="strSQL">SQL command to create the new view</param>
+    /// <returns>true if view is created</returns>
+    public static void AddTrigger(SQLiteClient dbHandle, string triggerName, string strSQL)
+    {
+      SQLiteResultSet results;
+      results =
+        dbHandle.Execute("SELECT name FROM sqlite_master WHERE name='" + triggerName + "' and type='trigger' " +
+                         "UNION " +
+                         "SELECT name FROM sqlite_temp_master WHERE name ='" + triggerName + "' and type='trigger'");
+      if (results != null && results.Rows.Count == 1)
+      {
+        return;
+      }
+      try
+      {
+        dbHandle.Execute(strSQL);
+      }
+      catch (SQLiteException ex)
+      {
+        Log.Error("DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message, ex.StackTrace, strSQL);
+      }
+      return;
+    }
+
     public static int GetAsInt(SQLiteResultSet results, int iRecord, string strColum)
     {
       string result = Get(results, iRecord, strColum);
@@ -274,13 +304,14 @@ namespace MediaPortal.Database
             int slashPos = result.IndexOf(".", StringComparison.Ordinal);
             if (slashPos > 0)
             {
-              result = result.Substring(0, result.IndexOf('.', 0));
+              result = result.Substring(0, slashPos);
             }
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
           // Can't convert or remove decimal from the string
+          Log.Error("DatabaseUtility:GetAsInt: {0}", ex.Message);
         }
 
         int numValue;
@@ -290,10 +321,10 @@ namespace MediaPortal.Database
           returnValue = Int32.Parse(result);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Info("DatabaseUtility:GetAsInt() column:{0} record:{1} value:{2} is not an int",
-                 strColum, iRecord, result);
+        Log.Info("DatabaseUtility:GetAsInt() column:{0} record:{1} value:{2} is not an int {3}",
+                 strColum, iRecord, result, ex.Message);
       }
       return returnValue;
     }
@@ -307,8 +338,46 @@ namespace MediaPortal.Database
         int intValue = Int32.Parse(result);
         return intValue;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("DatabaseUtility:GetAsInt: {0}", ex.Message);
+      }
       return 0;
+    }
+
+    public static double? GetAsDouble(SQLiteResultSet results, int iRecord, string strColum)
+    {
+      string result = Get(results, iRecord, strColum);
+      if (string.IsNullOrEmpty(result))
+      {
+        return null;
+      }
+
+      // result = result.Replace(",", ".");
+      double doubleValue;
+      if (double.TryParse(result, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out doubleValue))
+      {
+        return doubleValue;
+      }
+      return null;
+    }
+
+
+    public static double? GetAsDouble(SQLiteResultSet results, int iRecord, int column)
+    {
+      string result = Get(results, iRecord, column);
+      if (string.IsNullOrEmpty(result))
+      {
+        return null;
+      }
+
+      // result = result.Replace(",", ".");
+      double doubleValue;
+      if (double.TryParse(result, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out doubleValue))
+      {
+        return doubleValue;
+      }
+      return null;
     }
 
     public static long GetAsInt64(SQLiteResultSet results, int iRecord, int column)
@@ -319,7 +388,10 @@ namespace MediaPortal.Database
         long longValue = Int64.Parse(result);
         return longValue;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("DatabaseUtility:GetAsInt64: {0}", ex.Message);
+      }
       return 0;
     }
 
@@ -339,10 +411,10 @@ namespace MediaPortal.Database
       {
         returnValue = Int64.Parse(result);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Info("DatabaseUtility:GetAsInt64() column:{0} record:{1} value:{2} is not an Int64",
-                 strColum, iRecord, result);
+        Log.Info("DatabaseUtility:GetAsInt64() column:{0} record:{1} value:{2} is not an Int64 {3}",
+                 strColum, iRecord, result, ex.Message);
       }
       return returnValue;
     }
@@ -359,17 +431,19 @@ namespace MediaPortal.Database
       try
       {
         SQLiteResultSet.Row arr = results.Rows[iRecord];
-        int iCol = 0;
-        if (results.ColumnIndices.ContainsKey(aTimestampColum))
+        int? iCol = (int?)results.ColumnIndices[aTimestampColum];
+        if (iCol.HasValue)
         {
-          iCol = (int)results.ColumnIndices[aTimestampColum];
-          if (arr.fields[iCol] != null)
+          if (arr.fields[iCol.Value] != null)
           {
-            finalResult = Convert.ToDateTime((arr.fields[iCol]));
+            finalResult = Convert.ToDateTime((arr.fields[iCol.Value]));
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("DatabaseUtility:GetAsDateTime: {0}", ex.Message);
+      }
 
       return finalResult;
     }
@@ -379,19 +453,23 @@ namespace MediaPortal.Database
     {
       if (null == results)
       {
+        Log.Error("DatabaseUtility.Get: Results=null");
         return string.Empty;
       }
       if (results.Rows.Count < iRecord)
       {
+        Log.Error("DatabaseUtility.Get: Recordnr {0} not found", iRecord);
         return string.Empty;
       }
       if (column < 0 || column >= results.ColumnNames.Count)
       {
+        Log.Error("DatabaseUtility.Get: Columnr {0} out of range", column);
         return string.Empty;
       }
       SQLiteResultSet.Row arr = results.Rows[iRecord];
       if (arr.fields[column] == null)
       {
+        Log.Error("DatabaseUtility.Get: Field {0} = null", column);
         return string.Empty;
       }
       string strLine = (arr.fields[column]).Trim();
@@ -404,43 +482,49 @@ namespace MediaPortal.Database
     {
       if (null == results)
       {
+        Log.Error("DatabaseUtility.Get: Results=null");
         return string.Empty;
       }
       if (results.Rows.Count == 0)
       {
+        Log.Error("DatabaseUtility.Get: Rowcount=0");
         return string.Empty;
       }
       if (results.Rows.Count < iRecord)
       {
+        Log.Error("DatabaseUtility.Get: Recordnr {0} not found", iRecord);
         return string.Empty;
       }
       SQLiteResultSet.Row arr = results.Rows[iRecord];
-      int iCol = 0;
-      if (results.ColumnIndices.ContainsKey(strColum))
+      int? iCol = (int?)results.ColumnIndices[strColum];
+      if (iCol.HasValue)
       {
-        iCol = (int)results.ColumnIndices[strColum];
-        if (arr.fields[iCol] == null)
+        if (arr.fields[iCol.Value] == null)
         {
+          Log.Error("DatabaseUtility.Get: Field {0} not found", strColum);
           return string.Empty;
         }
-        string strLine = (arr.fields[iCol]).Trim();
+        string strLine = (arr.fields[iCol.Value]).Trim();
         //strLine = strLine.Replace("''","'");
         return strLine;
       }
       int pos = strColum.IndexOf(".", StringComparison.Ordinal);
       if (pos < 0)
       {
+        Log.Error("DatabaseUtility.Get: Field {0} not found", strColum);
         return string.Empty;
       }
       strColum = strColum.Substring(pos + 1);
-      if (results.ColumnIndices.ContainsKey(strColum))
+      iCol = (int?)results.ColumnIndices[strColum];
+      if (iCol.HasValue)
       {
-        iCol = (int)results.ColumnIndices[strColum];
-        if (arr.fields[iCol] == null)
+        ;
+        if (arr.fields[iCol.Value] == null)
         {
+          Log.Error("DatabaseUtility.Get: Field {0} not found", strColum);
           return string.Empty;
         }
-        string strLine = (arr.fields[iCol]).Trim();
+        string strLine = (arr.fields[iCol.Value]).Trim();
         //strLine = strLine.Replace("''","'");
         return strLine;
       }
@@ -471,7 +555,7 @@ namespace MediaPortal.Database
 
     private static string FilterText(string strTxt)
     {
-      if (string.IsNullOrEmpty(strTxt))
+      if (string.IsNullOrWhiteSpace(strTxt))
       {
         return Strings.Unknown;
       }

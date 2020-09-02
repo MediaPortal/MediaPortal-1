@@ -303,9 +303,9 @@
 		<description>Tracks/Review</description>
 		<type>button</type>
 		<id>5</id>
-		<posX>437</posX>
+		<posX>281</posX>
 		<posY>653</posY>
-    <width>261</width>
+    <width>427</width>
     <height>58</height>
 		<label>182</label>
 		<onleft>5</onleft>
@@ -327,9 +327,9 @@
 		<description>Refresh</description>
 		<type>button</type>
 		<id>6</id>
-		<posX>437</posX>
+		<posX>281</posX>
 		<posY>720</posY>
-    <width>261</width>
+    <width>427</width>
     <height>58</height>
 		<label>184</label>
 		<onleft>6</onleft>

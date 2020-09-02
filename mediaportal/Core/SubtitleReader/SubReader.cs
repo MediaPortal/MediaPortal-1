@@ -62,11 +62,17 @@ namespace MediaPortal.Subtitle
                   }
                 }
               }
-              catch (NullReferenceException) {}
+              catch (NullReferenceException ex)
+              {
+                Log.Error("SubReader:InternalLearn {0}", ex.Message);
+              }
             }
           }
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("SubReader:InternalLearn {0}", ex.Message);
+        }
       }
     }
 

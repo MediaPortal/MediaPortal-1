@@ -728,9 +728,9 @@ namespace MediaPortal.Music.Database
       {
         DatabaseUtility.CompactDatabase(Instance.DbConnection);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Error("Musicdatabasereorg: vacuum failed");
+        Log.Error("Musicdatabasereorg: vacuum failed {0}", ex.Message);
         return (int)Errors.ERROR_COMPRESSING;
       }
       Log.Info("Musicdatabasereorg: Compress completed");
@@ -1046,9 +1046,9 @@ namespace MediaPortal.Music.Database
           return;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Error("Musicdatabasereorg: AddMissingFiles finished with error (exception for select)");
+        Log.Error("Musicdatabasereorg: AddMissingFiles finished with error (exception for select) {0}", ex.Message);
         return;
       }
 
@@ -1218,9 +1218,9 @@ namespace MediaPortal.Music.Database
           fileinCluded = true;
         }
       }
-      catch (UnauthorizedAccessException)
+      catch (UnauthorizedAccessException ex)
       {
-        Log.Warn("Musicdatabasereorg: Not enough permissions to include file {0}", file);
+        Log.Warn("Musicdatabasereorg: Not enough permissions to include file {0} {1}", file, ex.Message);
       }
       catch (Exception ex)
       {
@@ -1357,9 +1357,9 @@ namespace MediaPortal.Music.Database
             UpdateVariousArtist(tag);
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Error("Insert of song {0} failed", strFileName);
+          Log.Error("Insert of song {0} failed {1}", strFileName, ex.Message);
           return (int)Errors.ERROR_REORG_SONGS;
         }
         return (int)Errors.ERROR_OK;
@@ -1462,9 +1462,9 @@ namespace MediaPortal.Music.Database
               UpdateVariousArtist(tag);
             }
           }
-          catch (Exception)
+          catch (Exception ex)
           {
-            Log.Error("MusicDatabase: Update tags for {0} failed because of DB exception", strFileName);
+            Log.Error("MusicDatabase: Update tags for {0} failed because of DB exception {1}", strFileName, ex.Message);
             return false;
           }
         }
@@ -1535,8 +1535,9 @@ namespace MediaPortal.Music.Database
                   extractFile = true;
                 }
               }
-              catch (Exception)
+              catch (Exception ex)
               {
+                Log.Error("MusicDatabase.Updates:ExtractCoverArt: {0}", ex.Message);
                 extractFile = true;
               }
             }
@@ -1549,24 +1550,27 @@ namespace MediaPortal.Music.Database
 
                 if (!String.IsNullOrEmpty(mp3TagImage))
                 {
-                  Util.Picture.CreateThumbnail(mp3TagImage, smallThumbPath, (int) Thumbs.ThumbResolution,
-                                               (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+                  Util.Picture.CreateThumbnail(mp3TagImage, smallThumbPath, (int)Thumbs.ThumbResolution,
+                                               (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
 
-                  Util.Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int) Thumbs.ThumbLargeResolution,
-                                               (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+                  Util.Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int)Thumbs.ThumbLargeResolution,
+                                               (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
 
                   Util.Utils.FileDelete(mp3TagImage); // clean up the temp file directly
                 }
               }
-              catch (Exception)
+              catch (Exception ex)
               {
-                Log.Warn("MusicDatabase: Invalid cover art image found in {0}-{1}! {2}", tag.Artist, tag.Title,
-                         tag.FileName);
+                Log.Warn("MusicDatabase: Invalid cover art image found in {0}-{1}! {2} {3}", tag.Artist, tag.Title,
+                         tag.FileName, ex.Message);
               }
             }
           }
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("MusicDatabase.Updates:ExtractCoverArt: {0}", ex.Message);
+        }
       }
 
       // Scan folders only one time per song
@@ -1999,9 +2003,9 @@ namespace MediaPortal.Music.Database
         strSql = "delete from composer";
         MusicDbClient.Execute(strSql);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Error("Musicdatabasereorg: CleanupForeignKeys failed");
+        Log.Error("Musicdatabasereorg: CleanupForeignKeys failed {0}", ex.Message);
         return (int)Errors.ERROR_REORG_ARTIST;
       }
 
@@ -2188,10 +2192,10 @@ namespace MediaPortal.Music.Database
                 CommitTransaction();
                 return true;
               }
-              catch (Exception)
+              catch (Exception ex)
               {
                 RollbackTransaction();
-                Log.Warn("RenameSong: Rename for {0} failed because of DB exception", strPath);
+                Log.Warn("RenameSong: Rename for {0} failed because of DB exception {1}", strPath, ex.Message);
                 return false;
               }
             }
@@ -2227,9 +2231,9 @@ namespace MediaPortal.Music.Database
       {
         MusicDbClient.Execute(strSQL);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Error("Delete Directory for {0} failed because of DB exception", strPath);
+        Log.Error("Delete Directory for {0} failed because of DB exception {1}", strPath, ex.Message);
         return false;
       }
       return true;

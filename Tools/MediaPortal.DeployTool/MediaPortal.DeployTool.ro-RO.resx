@@ -251,7 +251,7 @@ In acest caz PC-ul se va comporta ca un TV-Server si va transimte semnalul TV ce
     <value>Instalare</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;nici o acțiune&gt;</value>
+    <value>Nici o acțiune</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Dezinstalare precedentă-&gt;descărcare-&gt;instalare</value>

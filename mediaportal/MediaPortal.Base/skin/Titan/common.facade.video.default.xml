@@ -39,17 +39,18 @@
     
     <control>
       <description>Moviecount</description>
-      <type>label</type>
-	  	<label>#currentmodule: #itemcount</label>
-    	<id>0</id>
-	  	<posX>96</posX>
+      <type>fadelabel</type>
+	  <label>#currentmodule: #itemcount</label>
+      <id>0</id>
+	  <posX>96</posX>
       <posY>998</posY>
       <align>left</align>
+      <width>500</width>
       <font>TitanLight12</font>
       <textcolor>000000</textcolor>
       <visible>[facadeview.list | facadeview.smallicons | facadeview.largeicons|facadeview.playlist] + control.isvisible(50)</visible>
-	  	<animation effect="fade" time="250">WindowOpen</animation>
-	  	<animation effect="fade" time="250">WindowClose</animation>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
     </control>
 
 	<!--            :: Listview Lines ::            -->
@@ -169,6 +170,20 @@
                         <RatingImageTextureSuffix />
                         <RatingUserImageTexturePrefix>RatingUser</RatingUserImageTexturePrefix>
                         <RatingUserImageTextureSuffix />
+		                <!-- MP1-4955 -->
+                        <show3DImage>yes</show3DImage>          
+                        <Is3DImagePosX>108</Is3DImagePosX>          
+                        <Is3DImagePosY>0</Is3DImagePosY>          
+                        <Is3DImageWidth>122</Is3DImageWidth>          
+                        <Is3DImageHeight>122</Is3DImageHeight>        
+                        <Is3DImageTexture>is3D.png</Is3DImageTexture>
+
+                        <showHDRImage>yes</showHDRImage>          
+                        <IsHDRImagePosX>108</IsHDRImagePosX>          
+                        <IsHDRImagePosY>0</IsHDRImagePosY>          
+                        <IsHDRImageWidth>122</IsHDRImageWidth>          
+                        <IsHDRImageHeight>122</IsHDRImageHeight>        
+                        <IsHDRImageTexture>isHDR.png</IsHDRImageTexture>
 					</control>
 
 					<control>
@@ -240,6 +255,21 @@
                         <RatingImageTextureSuffix />
                         <RatingUserImageTexturePrefix>RatingUser</RatingUserImageTexturePrefix>
                         <RatingUserImageTextureSuffix />
+
+		                <!-- MP1-4955 -->
+                        <show3DImage>yes</show3DImage>          
+                        <Is3DImagePosX Big="82">78</Is3DImagePosX>          
+                        <Is3DImagePosY Big="0">0</Is3DImagePosY>          
+                        <Is3DImageWidth Big="122">50</Is3DImageWidth>          
+                        <Is3DImageHeight Big="122">50</Is3DImageHeight>        
+                        <Is3DImageTexture>is3D.png</Is3DImageTexture>
+
+                        <showHDRImage>yes</showHDRImage>          
+                        <IsHDRImagePosX Big="82">78</IsHDRImagePosX>          
+                        <IsHDRImagePosY Big="0">0</IsHDRImagePosY>          
+                        <IsHDRImageWidth Big="122">50</IsHDRImageWidth>          
+                        <IsHDRImageHeight Big="122">50</IsHDRImageHeight>        
+                        <IsHDRImageTexture>isHDR.png</IsHDRImageTexture>
 					</control>
 
 					<control>
@@ -324,6 +354,132 @@
                       <RatingImageTextureSuffix />
                       <RatingUserImageTexturePrefix>RatingUser</RatingUserImageTexturePrefix>
                       <RatingUserImageTextureSuffix />
+  	                  <!-- MP1-4955 -->
+                      <show3DImage>yes</show3DImage>          
+                      <Is3DImagePosX>116</Is3DImagePosX>          
+                      <Is3DImagePosY>0</Is3DImagePosY>          
+                      <Is3DImageWidth>122</Is3DImageWidth>          
+                      <Is3DImageHeight>122</Is3DImageHeight>        
+                      <Is3DImageTexture>is3D.png</Is3DImageTexture>
+
+                      <showHDRImage>yes</showHDRImage>          
+                      <IsHDRImagePosX>116</IsHDRImagePosX>          
+                      <IsHDRImagePosY>0</IsHDRImagePosY>          
+                      <IsHDRImageWidth>122</IsHDRImageWidth>          
+                      <IsHDRImageHeight>122</IsHDRImageHeight>        
+                      <IsHDRImageTexture>isHDR.png</IsHDRImageTexture>
+
+                      <subitems>
+                        <subitem>
+                          <![CDATA[
+                            <controls>
+                              <control>
+                                <description>background</description>
+                                <type>image</type>
+                                <posX>0</posX>
+                                <posY>0</posY>
+                                <width>238</width>
+                                <height>340</height>
+                                <texture flipY="true" diffuse="Thumb_Mask_test.png" mask="filmstrip_mask.png">defaultVideoBack.png</texture>
+                              </control>
+
+                              <control>
+                                <description>year</description>
+                                <type>label</type>
+                                <posX>10</posX>
+                                <posY>10</posY>
+                                <width>218</width>
+                                <label>#year</label>
+                                <font>font1</font>
+                              </control>                  
+                              
+                              <control>
+                                <description>genre</description>
+                                <type>fadelabel</type>
+                                <posX>10</posX>
+                                <posY>40</posY>
+                                <width>218</width>
+                                <label>#genre</label>
+                                <font>font1</font>
+                              </control>                 
+                              
+                              <control>
+                                <description>runtime</description>
+                                <type>label</type>
+                                <posX>10</posX>
+                                <posY>70</posY>
+                                <width>218</width>
+                                <label>#(string.rtrim(L(299),' :')) #(iif(eq(#runtime,'0 (#(L(2998))) (0:00)'),' ','#runtime'))</label>
+                                <font>font1</font>
+                              </control>
+
+                              <control>
+                                <type>imagelist</type>
+                                <id>0</id>
+                                <posX>10</posX>
+                                <posY>110</posY>
+                                <textureWidth>24</textureWidth>
+                                <textureHeight>24</textureHeight>
+                                <subitems>
+                                    <subitem>starblue.png</subitem>
+                                    <subitem>starwhite.png</subitem>
+                                </subitems>
+                                <orientation>horizontal</orientation>
+                                <align>left</align>
+                                <imagesToDraw>5</imagesToDraw>
+                                <percentage>#rating</percentage>      
+                              </control>                  
+                              
+                              <control>
+                                <description>rating</description>
+                                <type>label</type>
+                                <posX>185</posX>
+                                <posY>110</posY>
+                                <width>100</width>
+                                <label>#(math.round(cflt(#rating),2))</label>
+                                <font>font1</font>
+                              </control>               
+
+                              <control>
+                                <description>plot</description>
+                                <type>textboxscrollup</type>
+                                <posX>20</posX>
+                                <posY>150</posY>
+                                <width>218</width>
+                                <height>170</height>
+                                <label>#plot</label>
+                                <font>font1</font>
+                                <lineSpacing>2</lineSpacing>
+                              </control>
+
+                              <control>
+                                  <description>3D banner</description>
+                                  <id>0</id>
+                                  <type>image</type>
+                                  <posX>115</posX>
+                                  <posY>0</posY>
+                                  <width>122</width>
+                                  <height>122</height>
+                                  <texture>is3D.png</texture>                                                  
+                                  <visible>string.equals(#Is3D,yes)</visible>
+                              </control>
+
+                              <control>
+                                  <description>HDR banner</description>
+                                  <id>0</id>
+                                  <type>image</type>
+                                  <posX>115</posX>
+                                  <posY>0</posY>
+                                  <width>122</width>
+                                  <height>122</height>
+                                  <texture>isHDR.png</texture>                                                  
+                                  <visible>string.equals(#IsHDR,true)</visible>
+                              </control>
+
+                            </controls>
+                          ]]>
+                        </subitem>
+                      </subitems>
 					</control>
 					
 					<control>

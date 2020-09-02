@@ -251,7 +251,7 @@
     <value>Установка</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;бездействие&gt;</value>
+    <value>Бездействие</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Удаление-&gt;загрузка-&gt;установка</value>
@@ -411,6 +411,7 @@
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
     <value>Для установки требуется подключение к интернету.
+
 Желаете ли Вы начать установку сейчас или хотите только скачать необходимые 
 компоненты чтобы произвечти установку позднее?
 (может быть на компьютере без подключения к интернету)</value>

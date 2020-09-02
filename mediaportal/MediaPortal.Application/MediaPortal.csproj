@@ -182,10 +182,6 @@
     <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WindowPlugins\GUIHome\GUIHome.csproj">
-      <Project>{B282C55B-A37B-4CEC-A4FC-00791069BF00}</Project>
-      <Name>GUIHome</Name>
-    </ProjectReference>
     <Reference Include="CSCore, Version=1.2.1.2, Culture=neutral, PublicKeyToken=5a08f2b6f4415dea, processorArchitecture=MSIL">
       <HintPath>..\..\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll</HintPath>
       <Private>True</Private>
@@ -205,35 +201,23 @@
     <Reference Include="Microsoft.DirectX.DirectInput, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
     </Reference>
-    <Reference Include="System">
-      <Name>system</Name>
-    </Reference>
+    <Reference Include="System" />
     <Reference Include="System.configuration" />
-    <Reference Include="System.Configuration.Install">
-      <Name>System.Configuration.Install</Name>
-    </Reference>
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
-    <Reference Include="System.Drawing">
-      <Name>System.Drawing</Name>
-    </Reference>
-    <Reference Include="System.Management">
-      <Name>System.Management</Name>
-    </Reference>
-    <Reference Include="System.Runtime.Serialization.Formatters.Soap">
-      <Name>System.Runtime.Serialization.Formatters.Soap</Name>
-    </Reference>
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
     <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Windows.Forms">
-      <Name>System.Windows.Forms</Name>
-    </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
+    <ProjectReference Include="..\WindowPlugins\GUIHome\GUIHome.csproj">
+      <Project>{B282C55B-A37B-4CEC-A4FC-00791069BF00}</Project>
+      <Name>GUIHome</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
       <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
       <Name>Common.Utils</Name>
@@ -256,6 +240,7 @@
       <Name>Dialogs</Name>
       <Project>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\MediaPortal.Support\MediaPortal.Support.csproj">
       <Project>{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}</Project>
@@ -329,37 +314,10 @@
     <Content Include="mp.ico" />
     <Content Include="mplogo.png" />
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>"$(ProjectDir)PostBuild.bat" "$(SolutionDir)" $(ConfigurationName) $(SolutionDir)</PostBuildEvent>
+    <PostBuildEvent>"$(ProjectDir)PostBuild.bat" "$(SolutionDir)" $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>

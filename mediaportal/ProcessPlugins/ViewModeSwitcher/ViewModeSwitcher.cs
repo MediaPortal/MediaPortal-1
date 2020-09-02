@@ -249,9 +249,9 @@ namespace ProcessPlugins.ViewModeSwitcher
         t.Name = "ViewModeSwitcher";
         t.Start();
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Error("ViewModeSwitcher: Exception in Start() !!!");
+        Log.Error("ViewModeSwitcher: Exception in Start() !!! {0}", ex.Message);
         stopWorkerThread = true;
       }
     }

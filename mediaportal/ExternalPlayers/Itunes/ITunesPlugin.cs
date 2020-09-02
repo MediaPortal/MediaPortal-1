@@ -269,8 +269,9 @@ namespace MediaPortal.ITunesPlayer
         {
           return _duration;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("ITunesPlugin:Duration: {0}", ex.Message);
           _iTunesApplication = null;
           return 0.0d;
         }
@@ -294,8 +295,9 @@ namespace MediaPortal.ITunesPlayer
           }
           return _currentPosition;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("ITunesPlugin:CurrentPosition: {0}", ex.Message);
           _iTunesApplication = null;
           return 0.0d;
         }
@@ -327,8 +329,9 @@ namespace MediaPortal.ITunesPlayer
           _iTunesApplication.Pause();
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("ITunesPlugin:Pause: {0}", ex.Message);
         _iTunesApplication = null;
         return;
       }
@@ -346,8 +349,9 @@ namespace MediaPortal.ITunesPlayer
           }
           return _playerIsPaused;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("ITunesPlugin:Paused: {0}", ex.Message);
           _iTunesApplication = null;
           return false;
         }
@@ -375,8 +379,9 @@ namespace MediaPortal.ITunesPlayer
           }
           return (_playerState != ITPlayerState.ITPlayerStateStopped);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("ITunesPlugin:Playing: {0}", ex.Message);
           _iTunesApplication = null;
           return false;
         }
@@ -404,8 +409,9 @@ namespace MediaPortal.ITunesPlayer
           }
           return (_ended);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("ITunesPlugin:Ended: {0}", ex.Message);
           _iTunesApplication = null;
           return true;
         }
@@ -435,8 +441,9 @@ namespace MediaPortal.ITunesPlayer
           }
           return (_ended);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("ITunesPlugin:Stopped: {0}", ex.Message);
           _iTunesApplication = null;
           return true;
         }
@@ -461,8 +468,9 @@ namespace MediaPortal.ITunesPlayer
         _started = false;
         _notifyPlaying = false;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("ITunesPlugin:Stop: {0}", ex.Message);
         _iTunesApplication = null;
       }
     }
@@ -479,8 +487,9 @@ namespace MediaPortal.ITunesPlayer
         {
           return _iTunesApplication.SoundVolume;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("ITunesPlugin:Volume: {0}", ex.Message);
           _iTunesApplication = null;
           return 0;
         }
@@ -492,11 +501,6 @@ namespace MediaPortal.ITunesPlayer
           return;
         }
         _iTunesApplication.SoundVolume = value;
-        try {}
-        catch (Exception)
-        {
-          _iTunesApplication = null;
-        }
       }
     }
 
@@ -531,7 +535,10 @@ namespace MediaPortal.ITunesPlayer
         {
           _iTunesApplication.PlayerPosition = (int)dTime;
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("ITunesPlugin:SeekAbsolute: {0}", ex.Message);
+        }
       }
     }
 

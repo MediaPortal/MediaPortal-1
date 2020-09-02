@@ -78,8 +78,9 @@ namespace MediaPortal.InputDevices
             m_IRdelay = 300;
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("WinLirc:Init {0}", ex.Message);
           m_IRdelay = 300;
         }
 
@@ -144,9 +145,9 @@ namespace MediaPortal.InputDevices
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Info("Unable to start WinLIRC from {0}", exeName);
+        Log.Info("Unable to start WinLIRC from {0} {1}", exeName, ex.Message);
         return false;
       }
       return true;

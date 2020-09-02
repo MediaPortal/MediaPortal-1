@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window>
+  <controls>    
+    <control>
+      <description>background NormalCondition</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>10</posX>
+      <posY>145</posY>
+      <width>1903</width>
+      <height>897</height>
+      <texture>panel_weather.png</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>background Image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>10</posX>
+      <posY>252</posY>
+      <width>1903</width>
+      <height>790</height>
+      <texture>panel_thumbs_noinfo.png</texture>
+      <visible>string.equals(#WorldWeather.View,Image)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>background View,Astronomy</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>10</posX>
+      <posY>252</posY>
+      <width>1903</width>
+      <height>790</height>
+      <texture>panel_thumbs_noinfo.png</texture>
+      <visible>string.equals(#WorldWeather.View,Astronomy)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>background View,GeoClock</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>10</posX>
+      <posY>252</posY>
+      <width>1903</width>
+      <height>790</height>
+      <texture>panel_thumbs_noinfo.png</texture>
+      <visible>string.equals(#WorldWeather.View,GeoClock)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>background View, Graph Condition</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>10</posX>
+      <posY>252</posY>
+      <width>1903</width>
+      <height>790</height>
+      <texture>panel_thumbs_noinfo.png</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour0StartDay, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>background View, historical Condition</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>10</posX>
+      <posY>252</posY>
+      <width>1903</width>
+      <height>790</height>
+      <texture>panel_thumbs_noinfo.png</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>background View, Calender</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>10</posX>
+      <posY>252</posY>
+      <width>1903</width>
+      <height>790</height>
+      <texture>panel_thumbs_noinfo.png</texture>
+      <visible>string.equals(#WorldWeather.View,Calendar)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>background View, Hourcondition</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>10</posX>
+      <posY>252</posY>
+      <width>1903</width>
+      <height>790</height>
+      <texture>panel_thumbs_noinfo.png</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Hour)+!string.equals(#WorldWeather.ForecastHour0StartDay, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+  </controls>
+</window>

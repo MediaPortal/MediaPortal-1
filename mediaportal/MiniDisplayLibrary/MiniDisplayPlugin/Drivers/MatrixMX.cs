@@ -1424,9 +1424,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this._isOpen = true;
           this._IsDisplayOff = false;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Info("MatrixMX.MODisplay.OpenDisplay(): CAUGHT EXCEPTION while opening display!");
+          Log.Info("MatrixMX.MODisplay.OpenDisplay(): CAUGHT EXCEPTION while opening display! {0}", ex.Message);
           this._isOpen = false;
         }
         return this._isOpen;

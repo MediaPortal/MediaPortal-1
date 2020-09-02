@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -73,6 +73,8 @@ namespace MediaPortal.GUI.Settings
     [SkinControl(15)] protected GUIButtonControl btnResetdatabase= null;
     [SkinControl(16)] protected GUICheckButton btnUseSortTitle = null;
     [SkinControl(18)] protected GUICheckButton btnUseNfoScraper = null;
+    // Actors
+    [SkinControl(19)] protected GUICheckButton btnFetchActors = null;
 
     private String _defaultShare;
     private bool _rememberLastFolder;
@@ -214,6 +216,13 @@ namespace MediaPortal.GUI.Settings
 
         btnUseSortTitle.Selected = xmlreader.GetValueAsBool("moviedatabase", "usesorttitle", false);
         btnUseNfoScraper.Selected = xmlreader.GetValueAsBool("moviedatabase", "useonlynfoscraper", false);
+
+        // Fetch Actors info when Movie updated
+        if (btnFetchActors != null)
+        {
+          btnFetchActors.Selected = xmlreader.GetValueAsBool("moviedatabase", "fetchactors", false);
+        }
+
       }
     }
 
@@ -242,7 +251,13 @@ namespace MediaPortal.GUI.Settings
         xmlwriter.SetValueAsBool("moviedatabase", "usesorttitle", btnUseSortTitle.Selected);
         // nfo scraper only
         xmlwriter.SetValueAsBool("moviedatabase", "useonlynfoscraper", btnUseNfoScraper.Selected);
-        
+
+        if (btnFetchActors != null)
+        {
+          // Fetch Actors info when Movie updated
+          xmlwriter.SetValueAsBool("moviedatabase", "fetchactors", btnFetchActors.Selected);
+        }
+
         SettingsSharesHelper settingsSharesHelper = new SettingsSharesHelper();
         settingsSharesHelper.ShareListControl = lcFolders.ListItems;
         
@@ -580,7 +595,10 @@ namespace MediaPortal.GUI.Settings
           // request.Proxy = WebProxy.GetDefaultProxy();
           request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception ex)
+        {
+          Log.Error("GUISettingsMyVideos: DownloadFile {0}", ex.Message);
+        }
 
         using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
         {
@@ -934,8 +952,9 @@ namespace MediaPortal.GUI.Settings
             DeleteVideoThumbs(files, configDir);
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("GUISettingsMyVideos: OnResetDatabase {0}", ex.Message);
           GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
           dlgOk.SetHeading(GUILocalizeStrings.Get(257));
           dlgOk.SetLine(1, GUILocalizeStrings.Get(300040)); // VDB can't be cleared
@@ -1012,8 +1031,9 @@ namespace MediaPortal.GUI.Settings
           File.Delete(file);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GUISettingsMyVideos: DeleteVideoThumbs {0}", ex.Message);
       }
     }
 

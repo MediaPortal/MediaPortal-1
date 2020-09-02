@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2029 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,7 +21,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -29,6 +28,7 @@ using System.Threading;
 using System.Windows.Media.Animation;
 using System.Windows.Serialization;
 using System.Xml;
+
 using MediaPortal.Player;
 using MediaPortal.ExtensionMethods;
 
@@ -187,6 +187,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_TV_TUNING_DETAILS = 3012, // gemx 
       WINDOW_PSCLIENTPLUGIN_UNATTENDED = 6666, // dero
       WINDOW_WIKIPEDIA = 4711,
+      WINDOW_PICTURE_EXIF = 5000, // ajs - Full EXIF View window
       WINDOW_TELETEXT = 7700,
       WINDOW_FULLSCREEN_TELETEXT = 7701,
       WINDOW_DIALOG_TEXT = 7900,
@@ -575,6 +576,11 @@ namespace MediaPortal.GUI.Library
       {
         // Load the XML file
         XmlDocument doc = new XmlDocument();
+        if (!File.Exists(_windowXmlFileName)) 
+        {
+          isSkinXMLLoading = false;
+          return false;
+        }
         doc.Load(_windowXmlFileName);
         if (doc.DocumentElement == null)
         {
@@ -623,18 +629,18 @@ namespace MediaPortal.GUI.Library
         {
           _windowId = Int32.Parse(nodeId.InnerText);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Error("LoadSkin: error converting nodeid <{0}> to int", nodeId.InnerText);
+          Log.Error("LoadSkin: error converting nodeid <{0}> to int {1}", nodeId.InnerText, ex.Message);
         }
         // Convert the id of the default control to an int
         try
         {
           _defaultControlId = Int32.Parse(nodeDefault.InnerText);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Error("LoadSkin: error converting nodeDefault <{0}> to int", nodeDefault.InnerText);
+          Log.Error("LoadSkin: error converting nodeDefault <{0}> to int {1}", nodeDefault.InnerText, ex.Message);
         }
 
         // find any XAML complex/compound properties
@@ -780,12 +786,12 @@ namespace MediaPortal.GUI.Library
                       bool.Parse(GUIPropertyManager.Parse(node.Attributes["condition"].Value,
                         GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
                   }
-                  catch (FormatException)
+                  catch (FormatException ex)
                   {
                     // The include will not be loaded if the expression could not be evaluated.
                     loadInclude = false;
-                    Log.Debug("LoadSkin: {0}, could not evaluate include expression '{1}' ", _windowXmlFileName,
-                      node.Attributes["condition"].Value);
+                    Log.Debug("LoadSkin: {0}, could not evaluate include expression '{1}' {2}", _windowXmlFileName,
+                      node.Attributes["condition"].Value, ex.Message);
                   }
                 }
 
@@ -963,9 +969,9 @@ namespace MediaPortal.GUI.Library
               {
                 createAsProperty = bool.Parse(node.Attributes["property"].Value);
               }
-              catch (FormatException)
+              catch (FormatException ex)
               {
-                Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'property'; {0} is not a boolean value", node.Attributes["property"].Value);
+                Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'property'; {0} is not a boolean value {1}", node.Attributes["property"].Value, ex.Message);
               }
             }
 
@@ -977,9 +983,9 @@ namespace MediaPortal.GUI.Library
               {
                 evaluateNow = bool.Parse(node.Attributes["evaluateNow"].Value);
               }
-              catch (FormatException)
+              catch (FormatException ex)
               {
-                Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'evaluateNow'; {0} is not a boolean value", node.Attributes["evaluateNow"].Value);
+                Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'evaluateNow'; {0} is not a boolean value {1}", node.Attributes["evaluateNow"].Value, ex.Message);
               }
             }
 
@@ -2057,9 +2063,9 @@ namespace MediaPortal.GUI.Library
             _previousFocusedControlId = id;
           }
         }
-        catch (ThreadAbortException)
+        catch (ThreadAbortException ex)
         {
-          Log.Debug("OnMessage.ThreadAbortException exception.");
+          Log.Debug("OnMessage.ThreadAbortException exception. {0}", ex.Message);
         }
         catch (Exception ex)
         {

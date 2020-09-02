@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <id>29055</id>
+  <defaultcontrol>213</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <!-- ***************  THIS IS THE EXPANDING OSD BACKGROUND  **************** -->
+    <control>
+      <description>Background Top</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>157</posX>
+      <posY>471</posY>
+      <height>590</height>
+      <width>1574</width>
+      <texture>OSDvideoexpanded.png</texture>
+      <visible>Control.HasFocus(1237)</visible>
+      <colordiffuse>eeffffff</colordiffuse>
+    </control>
+    <!-- ***************   HERE ARE THE DISPLAYED EXPANDING OSD DATA   *************** -->
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>323</posX>
+      <posY>555</posY>
+      <width>1026</width>
+      <height>28</height>
+      <texture>osd_progress_background.png</texture>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>TV Progress Bar</description>
+      <type>tvprogress</type>
+      <id>1</id>
+      <posX>321</posX>
+      <posY>558</posY>
+      <width>1023</width>
+      <height>23</height>
+      <toptexture>-</toptexture>
+      <TextureOffsetY>29</TextureOffsetY>
+      <bottomtexture>-</bottomtexture>
+      <texturetick>-</texturetick>
+      <lefttexture>-</lefttexture>
+      <midtexture>-</midtexture>
+      <righttexture>-</righttexture>
+      <logotexture>-</logotexture>
+      <fillbackgroundtexture>-</fillbackgroundtexture>
+      <fillbgxoff>0</fillbgxoff>
+      <fillbgyoff>0</fillbgyoff>
+      <filltexture1>osd_progress_mid.png</filltexture1>
+      <filltexture2>osd_progress_mid.png</filltexture2>
+      <filltexture3>osd_progress_mid_orange.png</filltexture3>
+      <fillheight>23</fillheight>
+      <label>#percentage</label>
+      <label1>#percentage</label1>
+      <font>font13</font>
+      <textcolor>FF000000</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Current Time Info</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>208</posX>
+      <posY>547</posY>
+      <label>#currentplaytime</label>
+      <align>left</align>
+      <font>font14</font>
+      <textcolor>ffffffff</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Current Time Info</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1489</posX>
+      <posY>547</posY>
+      <label>#currentremaining</label>
+      <align>right</align>
+      <font>font14</font>
+      <textcolor>ffffffff</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>divider</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1518</posX>
+      <posY>485</posY>
+      <height>112</height>
+      <texture>verticalbar.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Time Info</description>
+      <type>label</type>
+      <id>110</id>
+      <posX>1700</posX>
+      <posY>483</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font21</font>
+      <textcolor>ivory</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Plot</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>196</posX>
+      <posY>639</posY>
+      <width>1236</width>
+      <height>309</height>
+      <align>left</align>
+      <label>#Play.Current.Plot</label>
+      
+      <font>RSS</font>
+      <textcolor>black</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance>0</shadowDistance>
+    </control>
+    <control>
+      <description>Artist / Video Title</description>
+      <id>1</id>
+      <type>fadelabel</type>
+      <width>1293</width>
+      <height>42</height>
+      <posX>196</posX>
+      <posY>483</posY>
+      <align>left</align>
+      <label>#Play.Current.Title</label>
+      <font>font20</font>
+      <textcolor>ivory</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Artist Image</description>
+      <type>image</type>
+      <id>102</id>
+      <posX>1484</posX>
+      <posY>637</posY>
+      <texture mask="dvdcase_mask.png">#Youtube.fm.NowPlaying.Artist.Image</texture>
+      <height>340</height>
+      <width>217</width>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <id>1</id>
+      <type>image</type>
+      <posX>1484</posX>
+      <posY>637</posY>
+      <height>340</height>
+      <width>217</width>
+      <texture>DVDCase.png</texture>
+      <visible>control.hasthumb(102)+control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <id>1</id>
+      <description>Star Rating Value</description>
+      <type>imagelist</type>
+      <posX>1672</posX>
+      <posY>562</posY>
+      <width>168</width>
+      <height>49</height>
+      <textureHeight>28</textureHeight>
+      <textureWidth>28</textureWidth>
+      <percentage>#Youtube.fm.NowPlaying.Video.Rating</percentage>
+      <imagesToDraw>5</imagesToDraw>
+      <orientation>HORIZONTAL</orientation>
+      <align>right</align>
+      <subitems>
+        <subitem>starbad.png</subitem>
+        <subitem>star.png</subitem>
+      </subitems>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <!-- ***************   THIS IS THE OSD BACKGROUND   *************** -->
+    <control>
+      <description>Background Top</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>157</posX>
+      <posY>750</posY>
+      <height>309</height>
+      <width>1574</width>
+      <texture>OSDvideo.png</texture>
+      <visible>!control.hasfocus(1237)</visible>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+    <!-- ***************   HERE ARE THE DISPLAYED OSD DATA   *************** -->
+    <control>
+      <description>vertical divider</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1518</posX>
+      <posY>766</posY>
+      <height>112</height>
+      <texture>verticalbar.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Time Info</description>
+      <type>label</type>
+      <id>110</id>
+      <posX>1700</posX>
+      <posY>767</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font21</font>
+      <textcolor>ivory</textcolor>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>104</id>
+      <posX>323</posX>
+      <posY>838</posY>
+      <width>1026</width>
+      <height>28</height>
+      <texture>osd_progress_background.png</texture>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>TV Progress Bar</description>
+      <type>tvprogress</type>
+      <id>105</id>
+      <posX>321</posX>
+      <posY>840</posY>
+      <width>1020</width>
+      <height>23</height>
+      <toptexture>osd_progress_right.png</toptexture>
+      <TextureOffsetY>29</TextureOffsetY>
+      <bottomtexture>-</bottomtexture>
+      <texturetick>-</texturetick>
+      <lefttexture>-</lefttexture>
+      <midtexture>-</midtexture>
+      <righttexture>-</righttexture>
+      <logotexture>-</logotexture>
+      <fillbackgroundtexture>-</fillbackgroundtexture>
+      <fillbgxoff>0</fillbgxoff>
+      <fillbgyoff>0</fillbgyoff>
+      <filltexture1>osd_progress_mid.png</filltexture1>
+      <filltexture2>osd_progress_mid.png</filltexture2>
+      <filltexture3>osd_progress_mid.png</filltexture3>
+      <fillheight>23</fillheight>
+      <label>#percentage</label>
+      <label1>#percentage</label1>
+      <label2 />
+      <startlabel />
+      <endlabel />
+      <toplabel />
+      <font>font10</font>
+      <textcolor>FFffffff</textcolor>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>End Time Info</description>
+      <type>label</type>
+      <id>101</id>
+      <posX>1489</posX>
+      <posY>829</posY>
+      <label>#currentremaining</label>
+      <align>right</align>
+      <font>font14</font>
+      <textcolor>ffffffff</textcolor>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Start Time Info</description>
+      <type>label</type>
+      <id>101</id>
+      <posX>196</posX>
+      <posY>829</posY>
+      <label>#currentplaytime</label>
+      <align>left</align>
+      <font>font14</font>
+      <textcolor>ffffffff</textcolor>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Artist / Video Title</description>
+      <id>36</id>
+      <type>fadelabel</type>
+      <posX>196</posX>
+      <posY>767</posY>
+      <width>1293</width>
+      <height>56</height>
+      <align>left</align>
+      <textcolor>ffffffff</textcolor>
+      <font>font20</font>
+      <label>#Play.Current.Title</label>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <id>172</id>
+      <description>Playing Next Label</description>
+      <type>fadelabel</type>
+      <posX>3007</posX>
+      <posY>900</posY>
+      <width>217</width>
+      <font>font16</font>
+      <textcolor>black</textcolor>
+      <label>Playing Next:</label>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control Style="NoShadow">
+      <id>118</id>
+      <description>Next Video Title / Artist Title Value</description>
+      <type>fadelabel</type>
+      <posX>196</posX>
+      <posY>900</posY>
+      <width>941</width>
+      <font>font16</font>
+      <textcolor>black</textcolor>
+      <label>#Youtube.fm.Next.Artist.Name - #Youtube.fm.Next.Video.Title</label>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <!-- ***************   Logo / Media Info   *************** -->
+    <control>
+      <id>1</id>
+      <description>Star Rating Value</description>
+      <type>imagelist</type>
+      <posX>1672</posX>
+      <posY>843</posY>
+      <width>168</width>
+      <height>49</height>
+      <textureHeight>28</textureHeight>
+      <textureWidth>28</textureWidth>
+      <percentage>#Youtube.fm.NowPlaying.Video.Rating</percentage>
+      <imagesToDraw>5</imagesToDraw>
+      <orientation>HORIZONTAL</orientation>
+      <align>right</align>
+      <subitems>
+        <subitem>starbad.png</subitem>
+        <subitem>star.png</subitem>
+      </subitems>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>HD Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>181</posX>
+      <posY>977</posY>
+      <width>98</width>
+      <height>70</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Logos\hd.png</texture>
+      <visible>string.equals(#Youtube.fm.NowPlaying.Video.IsHD, True)</visible>
+    </control>
+    <control>
+      <description>SD Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>181</posX>
+      <posY>977</posY>
+      <width>98</width>
+      <height>70</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Logos\sd.png</texture>
+      <visible>!string.equals(#Youtube.fm.NowPlaying.Video.IsHD, True)</visible>
+    </control>
+    <control>
+      <description>IsDownloaded Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>281</posX>
+      <posY>977</posY>
+      <width>98</width>
+      <height>70</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Logos\downloaded.png</texture>
+      <visible>string.equals(#Youtube.fm.NowPlaying.Video.IsDownloaded, True)</visible>
+    </control>
+    <control>
+      <description>IsDownloaded Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>281</posX>
+      <posY>977</posY>
+      <width>98</width>
+      <height>70</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>Logos\downloaded_no.png</texture>
+      <visible>!string.equals(#Youtube.fm.NowPlaying.Video.IsDownloaded, True)</visible>
+    </control>
+    <control>
+      <description>Downloading Notification Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>400</posX>
+      <posY>977</posY>
+      <width>42</width>
+      <height>42</height>
+      <texture>Animated-Download.gif</texture>
+      <visible>string.equals(#Youtube.fm.IsDownloading, true )</visible>
+    </control>
+    <import>common.osd.buttons.xml</import>
+  </controls>
+</window>

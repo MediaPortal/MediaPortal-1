@@ -287,9 +287,9 @@ namespace WatchDog
         {
           Directory.CreateDirectory(directory);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Utils.ErrorDlg("You supplied an invalid path for the zip file.");
+          Utils.ErrorDlg("You supplied an invalid path for the zip file. " + ex.Message);
           return false;
         }
       }

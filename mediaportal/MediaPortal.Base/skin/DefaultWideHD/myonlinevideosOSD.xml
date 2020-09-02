@@ -8,46 +8,57 @@
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>90</posX>
-      <posY>647</posY>
-      <height>437</height>
-      <width>1755</width>
-      <texture>OSDBG2.png</texture>
-      <colordiffuse>ddffffff</colordiffuse>
+      <posX>-90</posX>
+      <posY>787</posY>
+      <height>268</height>
+      <width>2200</width>
+      <texture>OSDBG4.png</texture>
+      <colordiffuse>dfffffff</colordiffuse>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>background for black channelname</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>10</posX>
+      <posY>728</posY>
+      <height>60</height>
+      <width>1500</width>
+      <texture>OSDBG5.png</texture>
+      <colordiffuse>dfffffff</colordiffuse>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>Time BG</description>
       <type>image</type>
       <id>0</id>
-      <posX>1556</posX>
-      <posY>694</posY>
-      <width>237</width>
-      <height>52</height>
-      <texture>button_focus.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <posX>1706</posX>
+      <posY>728</posY>
+      <width>450</width>
+      <height>60</height>
+      <texture>OSDBG3.png</texture>
+      <colordiffuse>dfffffff</colordiffuse>
       <visible>control.isvisible(110)</visible>
-      <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>Time Info</description>
       <type>label</type>
       <id>110</id>
-      <posX>1768</posX>
-      <posY>691</posY>
+      <posX>1898</posX>
+      <posY>735</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font16</font>
-      <textcolor>ivory</textcolor>
+      <font>Label</font>
+      <textcolor>black</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>background</description>
       <type>image</type>
       <id>0</id>
-      <posX>327</posX>
-      <posY>841</posY>
-      <width>1183</width>
+      <posX>227</posX>
+      <posY>861</posY>
+      <width>1383</width>
       <height>28</height>
       <texture>osd_progress_background.png</texture>
       <visible>!control.hasfocus(1237)</visible>
@@ -56,9 +67,9 @@
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
       <id>1</id>
-      <posX>328</posX>
-      <posY>844</posY>
-      <width>1180</width>
+      <posX>228</posX>
+      <posY>864</posY>
+      <width>1380</width>
       <height>23</height>
       <toptexture>osd_progress_right.png</toptexture>
       <TextureOffsetY>24</TextureOffsetY>
@@ -88,10 +99,11 @@
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>175</posX>
-      <posY>705</posY>
+      <posX>1540</posX>
+      <posY>738</posY>
       <height>40</height>
       <keepaspectratio>yes</keepaspectratio>
+      <align>left</align>
       <texture>#OnlineVideos.HeaderImage</texture>
       <visible>!control.hasfocus(1237)</visible>
     </control>
@@ -99,25 +111,24 @@
       <description>OV Infos</description>
       <id>0</id>
       <type>fadelabel</type>
-      <posX>175</posX>
-      <posY>715</posY>
-      <width>1400</width>
+      <posX>0</posX>
+      <posY>815</posY>
+      <width>1920</width>
       <align>center</align>
-      <textcolor>ffffffff</textcolor>
+      <textcolor>ivory</textcolor>
       <font>Label</font>
       <label>#OnlineVideos.HeaderLabel</label>
-      <textcolor>dodgerblue</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>Movie Name</description>
       <id>36</id>
       <type>fadelabel</type>
-      <posX>175</posX>
-      <posY>770</posY>
-      <width>1600</width>
-      <align>center</align>
-      <textcolor>ffffffff</textcolor>
+      <posX>30</posX>
+      <posY>735</posY>
+      <width>1450</width>
+      <align>left</align>
+      <textcolor>black</textcolor>
       <font>Label</font>
       <label>#Play.Current.Title</label>
       <visible>!control.hasfocus(1237)</visible>
@@ -126,24 +137,24 @@
       <description>End Time Info</description>
       <type>label</type>
       <id>101</id>
-      <posX>1530</posX>
-      <posY>824</posY>
+      <posX>1630</posX>
+      <posY>844</posY>
       <label>#currentremaining</label>
       <align>left</align>
       <font>font16</font>
-      <textcolor>ffffffff</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>Start Time Info</description>
       <type>label</type>
       <id>101</id>
-      <posX>311</posX>
-      <posY>824</posY>
+      <posX>211</posX>
+      <posY>844</posY>
       <label>#currentplaytime</label>
       <align>right</align>
       <font>font16</font>
-      <textcolor>ffffffff</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     
@@ -154,46 +165,88 @@
       <description>background</description>
       <type>image</type>
       <id>1236</id>
-      <posX>90</posX>
-      <posY>505</posY>
-      <height>590</height>
-      <width>1745</width>
-      <texture>osdbg2.png</texture>
-      <colordiffuse>ccffffff</colordiffuse>
+      <posX>-90</posX>
+      <posY>613</posY>
+      <height>442</height>
+      <width>2200</width>
+      <texture>osdbg4.png</texture>
+      <colordiffuse>dfffffff</colordiffuse>
       <visible>control.hasfocus(1237)</visible>
-      <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
+    </control>
+    <control>
+      <description>Time BG</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1706</posX>
+      <posY>555</posY>
+      <width>450</width>
+      <height>60</height>
+      <texture>OSDBG3.png</texture>
+      <colordiffuse>dfffffff</colordiffuse>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Time Info</description>
+      <type>label</type>
+      <id>110</id>
+      <posX>1898</posX>
+      <posY>562</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>Label</font>
+      <textcolor>black</textcolor>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1236</id>
+      <posX>10</posX>
+      <posY>555</posY>
+      <height>60</height>
+      <width>1500</width>
+      <texture>osdbg5.png</texture>
+      <colordiffuse>dfffffff</colordiffuse>
+      <visible>control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>1540</posX>
+      <posY>565</posY>
+      <height>40</height>
+      <align>left</align>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#OnlineVideos.HeaderImage</texture>
+      <visible>control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>Movie Name</description>
       <id>0</id>
       <type>fadelabel</type>
-      <posX>175</posX>
-      <posY>555</posY>
+      <posX>30</posX>
+      <posY>562</posY>
       <height>57</height>
-      <width>1600</width>
-      <align>center</align>
-      <textcolor>dodgerblue</textcolor>
+      <width>1450</width>
+      <align>left</align>
+      <textcolor>black</textcolor>
       <font>Label</font>
       <label>#Play.Current.Title</label>
-      <shadowAngle>90</shadowAngle>
-      <shadowDistance>1</shadowDistance>
       <visible>control.hasfocus(1237)</visible>
-      <animation effect="fade" start="0" end="100" time="150" reversible="true">visiblechange</animation>
     </control>
     <control Style="NoShadow">
       <description>Plot</description>
       <type>textboxscrollup</type>
       <id>1</id>
-      <posX>175</posX>
-      <posY>615</posY>
+      <posX>75</posX>
+      <posY>640</posY>
       <height>230</height>
-      <width>1600</width>
+      <width>1800</width>
       <align>left</align>
-      <font>RSS</font>
+      <font>font10</font>
       <label>#Play.Current.Plot</label>
       <visible>control.hasfocus(1237)</visible>
-      <textcolor>lightskyblue</textcolor>
-      <animation effect="fade" start="0" end="100" time="150" reversible="true">visiblechange</animation>
+      <textcolor>ivory</textcolor>
     </control>
     <import>common.osd.buttons.xml</import>
     <!--import>tvOSD.mediainfo.xml</import-->
@@ -202,7 +255,7 @@
       <description>Pause image</description>
       <type>image</type>
       <id>16</id>
-      <posX>1546</posX>
+      <posX>1726</posX>
       <posY>970</posY>
       <width>168</width>
       <height>56</height>
@@ -214,7 +267,7 @@
       <description>2x image</description>
       <type>image</type>
       <id>17</id>
-      <posX>750</posX>
+      <posX>790</posX>
       <posY>428</posY>
       <visible>player.forwarding2x</visible>
       <texture>video+2x.png</texture>
@@ -223,7 +276,7 @@
       <description>4x image</description>
       <type>image</type>
       <id>18</id>
-      <posX>750</posX>
+      <posX>790</posX>
       <posY>428</posY>
       <visible>player.forwarding4x</visible>
       <texture>video+4x.png</texture>
@@ -232,7 +285,7 @@
       <description>8x image</description>
       <type>image</type>
       <id>19</id>
-      <posX>750</posX>
+      <posX>790</posX>
       <posY>428</posY>
       <visible>player.forwarding8x</visible>
       <texture>video+8x.png</texture>
@@ -241,7 +294,7 @@
       <description>16x image</description>
       <type>image</type>
       <id>20</id>
-      <posX>750</posX>
+      <posX>790</posX>
       <posY>428</posY>
       <visible>player.forwarding16x</visible>
       <texture>video+16x.png</texture>
@@ -250,7 +303,7 @@
       <description>32x image</description>
       <type>image</type>
       <id>21</id>
-      <posX>750</posX>
+      <posX>790</posX>
       <posY>428</posY>
       <visible>player.forwarding32x</visible>
       <texture>video+32x.png</texture>
@@ -259,7 +312,7 @@
       <description>- 2x image</description>
       <type>image</type>
       <id>23</id>
-      <posX>750</posX>
+      <posX>790</posX>
       <posY>428</posY>
       <visible>player.rewinding2x</visible>
       <texture>video-2x.png</texture>
@@ -268,7 +321,7 @@
       <description>- 4x image</description>
       <type>image</type>
       <id>24</id>
-      <posX>750</posX>
+      <posX>790</posX>
       <posY>428</posY>
       <visible>player.rewinding4x</visible>
       <texture>video-4x.png</texture>
@@ -277,7 +330,7 @@
       <description>- 8x image</description>
       <type>image</type>
       <id>25</id>
-      <posX>750</posX>
+      <posX>790</posX>
       <posY>428</posY>
       <visible>player.rewinding8x</visible>
       <texture>video-8x.png</texture>
@@ -286,7 +339,7 @@
       <description>- 16x image</description>
       <type>image</type>
       <id>26</id>
-      <posX>750</posX>
+      <posX>790</posX>
       <posY>428</posY>
       <visible>player.rewinding16x</visible>
       <texture>video-16x.png</texture>
@@ -295,7 +348,7 @@
       <description>- 32x image</description>
       <type>image</type>
       <id>27</id>
-      <posX>750</posX>
+      <posX>790</posX>
       <posY>428</posY>
       <visible>player.rewinding32x</visible>
       <texture>video-32x.png</texture>

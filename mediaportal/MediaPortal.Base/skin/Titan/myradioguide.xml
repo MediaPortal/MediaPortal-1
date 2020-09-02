@@ -6,6 +6,8 @@
   <define>#header.label:100762</define>
 <controls>
 
+    <import>common.default.background.xml</import> 
+
     <import tag="TVGuideChannels">myradioguide.7rows.xml</import>
 	
     <control>

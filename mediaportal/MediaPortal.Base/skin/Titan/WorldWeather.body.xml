@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+  <controls>
+    <!-- *** Provider Info *** -->
+
+    <control Style="smallTitle">
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>96</posX>
+      <posY>1015</posY>
+      <width>1725</width>
+      <label>#WorldWeather.TranslationProvider #WorldWeather.Provider (#WorldWeather.TranslationCurrentCondition) | #WorldWeather.ForecastProvider (#WorldWeather.TranslationForecastCondition)</label>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+    </control>
+    <control Style="smallTitle">
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>96</posX>
+      <posY>1015</posY>
+      <width>1725</width>
+      <label>#WorldWeather.TranslationProvider #WorldWeather.HistoryYearProvider</label>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,History)</visible>
+    </control>
+    <control Style="smallTitle">
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>96</posX>
+      <posY>1015</posY>
+      <width>1725</width>
+      <label>#WorldWeather.TranslationProvider #WorldWeather.ForecastHourProvider</label>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>string.equals(#WorldWeather.View,Condition)+[string.equals(#WorldWeather.ConditionView,Hour)|string.equals(#WorldWeather.ConditionView,Graphic)]</visible>
+    </control>
+
+  </controls>
+</window>

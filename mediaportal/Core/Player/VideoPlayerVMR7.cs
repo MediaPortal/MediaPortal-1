@@ -290,8 +290,9 @@ namespace MediaPortal.Player
         {
           streamLAVSelection = xmlreader.GetValueAsBool("movieplayer", "streamlavselection", false);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("VideoPlayerVMR7: {0}", ex.Message);
         }
       }
       _mediaType = g_Player.MediaType.Video;
@@ -374,7 +375,7 @@ namespace MediaPortal.Player
           // Show the frame on the primary surface.
           GUIGraphicsContext.DX9Device.Present();
         }
-        catch(DeviceLostException)
+        catch(DeviceLostException ex)
         {
         }*/
         DirectShowUtil.SetARMode(graphBuilder, AspectRatioMode.Stretched);
@@ -2166,7 +2167,9 @@ namespace MediaPortal.Player
                     case StreamType.Subtitle_file:
                     case StreamType.Subtitle_hidden:
                     case StreamType.Subtitle_shown:
-                      if (streamLAVSelection && FSInfos.Filter.ToLowerInvariant().Contains("LAV Splitter".ToLowerInvariant()))
+                      if (streamLAVSelection &&
+                          (FSInfos.Filter.ToLowerInvariant().Contains("LAV Splitter".ToLowerInvariant()) ||
+                           FSInfos.Filter.ToUpperInvariant().Contains(@"\BDMV\INDEX.BDMV")))
                       {
                         if (FSInfos.sFlag == AMStreamSelectInfoFlags.Enabled ||
                             FSInfos.sFlag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))

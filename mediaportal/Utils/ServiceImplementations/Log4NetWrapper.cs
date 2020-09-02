@@ -1,13 +1,26 @@
 ﻿using System;
 using MediaPortal.Services;
 using MediaPortal.Common.Utils.Logger;
+using System.Collections.Generic;
 
 namespace MediaPortal.ServiceImplementations
 {
-  public class Log4NetWrapper : MediaPortal.Services.ILog
+  public class Log4NetWrapper : MediaPortal.Services.ILog, MediaInfo.ILogger
   {
     #region Variables
+
+    private static readonly Dictionary<MediaInfo.LogLevel, CommonLogLevel> _logLevels = new Dictionary<MediaInfo.LogLevel, CommonLogLevel>
+    {
+      { MediaInfo.LogLevel.Critical, CommonLogLevel.Critical },
+      { MediaInfo.LogLevel.Error, CommonLogLevel.Error },
+      { MediaInfo.LogLevel.Warning, CommonLogLevel.Warning },
+      { MediaInfo.LogLevel.Information, CommonLogLevel.Information },
+      { MediaInfo.LogLevel.Debug, CommonLogLevel.Debug },
+      { MediaInfo.LogLevel.Verbose, CommonLogLevel.All },
+    };
+
     private bool _configuration;
+
     #endregion
 
     #region Constructors/Destructors
@@ -22,7 +35,7 @@ namespace MediaPortal.ServiceImplementations
     public void BackupLogFiles() {}
     public void BackupLogFile(LogType logType) {}
 
-    
+
     public void Info(string format, params object[] args)
     {
       Info(LogType.Log, format, args);
@@ -76,6 +89,37 @@ namespace MediaPortal.ServiceImplementations
     public void SetLogLevel(Level logLevel)
     {
       CommonLogger.Instance.LogLevel = ConvertToCommonLogLevel(logLevel);
+    }
+
+    public void Log(MediaInfo.LogLevel loglevel, string message, params object[] parameters)
+    {
+      CommonLogLevel commonLogLevel;
+      if (!_logLevels.TryGetValue(loglevel, out commonLogLevel) || CommonLogger.Instance.LogLevel < commonLogLevel)
+      {
+        return;
+      }
+
+      switch (commonLogLevel)
+      {
+        case CommonLogLevel.All:
+          CommonLogger.Instance.Debug(CommonLogType.Log, message, parameters);
+          break;
+        case CommonLogLevel.Debug:
+          CommonLogger.Instance.Debug(CommonLogType.Log, message, parameters);
+          break;
+        case CommonLogLevel.Information:
+          CommonLogger.Instance.Info(CommonLogType.Log, message, parameters);
+          break;
+        case CommonLogLevel.Warning:
+          CommonLogger.Instance.Warn(CommonLogType.Log, message, parameters);
+          break;
+        case CommonLogLevel.Error:
+          CommonLogger.Instance.Error(CommonLogType.Log, message, parameters);
+          break;
+        case CommonLogLevel.Critical:
+          CommonLogger.Instance.Critical(CommonLogType.Log, message, parameters);
+          break;
+      }
     }
 
     #endregion

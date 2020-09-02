@@ -117,7 +117,10 @@ namespace MediaPortal.Subtitle
               m_font.DrawShadowText((float)iposx, (float)iposy, m_iColor, line.Text, GUIControl.Alignment.ALIGN_LEFT,
                                     (int)fw, m_iShadow, m_iShadow, 0xff000000);
             }
-            catch (Exception) {}
+            catch (Exception ex)
+            {
+              Log.Error("Subtitles:Render {0}", ex.Message);
+            }
           }
         }
         if (line.StartTime > lTime)

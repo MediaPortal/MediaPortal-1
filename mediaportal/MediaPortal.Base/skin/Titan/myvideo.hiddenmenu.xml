@@ -188,7 +188,7 @@
 						<onright>50</onright>
 						<onleft>50</onleft>
 	          <ondown>3</ondown>
-	          <onup>66615</onup>
+	          <onup>66616</onup>
 					</control>
 					<control>
 						<description>Sort</description>
@@ -373,11 +373,29 @@
 		        <label>287</label>
 		        <hyperlink>84623</hyperlink>
 		        <onup>66614</onup>
-		        <ondown>2</ondown>
+		        <ondown>66616</ondown>
 						<onleft>50</onleft>
 		        <onright>50</onright>
 		        <visible>plugin.isenabled(SubCentral)</visible>
  					</control>
+              <control>
+                <description>MyVideoImporter</description>
+                <type>button</type>
+                <id>66616</id>
+                <width>499</width>
+                <height>64</height>
+                <textXOff>62</textXOff>
+                <textYOff>16</textYOff>
+                <textureFocus>hiddenmenu_item_selected.png</textureFocus>
+                <textureNoFocus>-</textureNoFocus>
+                <label>#importer.header</label>
+                <hyperlink>99555</hyperlink>
+                <onup>66615</onup>
+                <ondown>2</ondown>
+                <onleft>50</onleft>
+                <onright>50</onright>
+                <visible>plugin.isenabled(MyVideo Importer)</visible>
+              </control>
     		</control>
 		</control>
 </controls>

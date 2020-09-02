@@ -423,7 +423,10 @@ namespace MediaPortal.MusicPlayer.BASS
             {
               BassVst.BASS_VST_SetParam(vstHandle, paramter.Index, float.Parse(paramter.Value));
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+              Log.Error("Config: LoadDSPPlugins {0}", ex.Message);
+            }
           }
         }
         else

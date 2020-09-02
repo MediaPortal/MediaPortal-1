@@ -105,8 +105,9 @@ namespace MediaPortal.Util
             }
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("FolderThumbCreator:PerformRequest {0}", ex.Message);
           return;
         }
       }

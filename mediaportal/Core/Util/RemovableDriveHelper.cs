@@ -103,8 +103,10 @@ namespace MediaPortal.Util
           }
         }
       }
-      catch
-      { }
+      catch (Exception ex)
+      {
+        Log.Error("HandleDeviceChangedMessage: {0}", ex.Message);
+      }
 
       try
       {

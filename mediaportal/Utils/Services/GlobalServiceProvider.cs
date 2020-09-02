@@ -125,8 +125,9 @@ namespace MediaPortal.Services
       
       // Init wrapper from CommonLogger to the current ILog interface
       // -> this will ensure that all external plugins will work without recompile
-      ILog log = new Log4NetWrapper();  //LogImpl();
+      var log = new Log4NetWrapper();  //LogImpl();
       services.Add<ILog>(log);
+      services.Add<MediaInfo.ILogger>(log);
       return log;
 
     }

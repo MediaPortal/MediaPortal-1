@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>6</id>
   <defaultcontrol>2</defaultcontrol>
@@ -6,7 +6,9 @@
   <define>#header.label:3</define>
   <define>#useSelectedFanart:Yes</define>
   <controls>
+
     <!--            :: DUMMY ::            -->
+
     <control>
       <description>Selected item Label</description>
       <type>label</type>
@@ -16,38 +18,35 @@
       <label>#title</label>
       <visible>control.hastext(7773)</visible>
     </control>
-    <!--            :: DEFAULT BACKGROUND ::            -->
-    <control>
-      <description>DEFAULT BACKGROUND</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
-      <width>1920</width>
-      <height>1080</height>
-      <texture>background.png</texture>
-      <shouldCache>true</shouldCache>
-    </control>
+
+    <!--            :: BACKGROUND ::            -->
+    <import>common.default.background.xml</import>
     <import>common.fanart.selected.xml</import>
-    <!--            :: IMPORT ::            -->
+    <import>common.default.background.overlay.xml</import>
+
     <import>myvideo.background.default.xml</import>
+
     <control>
-			<id>0</id>
+		<id>0</id>
     	<type>image</type>
-      <posX>60</posX>
-      <posY>34</posY>
-      <width>68</width>
-			<height>60</height>
-       <texture>icon_movies.png</texture>
+        <posX>60</posX>
+        <posY>34</posY>
+        <width>68</width>
+		<height>60</height>
+        <texture>icon_movies.png</texture>
 	    <animation effect="fade" time="250">WindowOpen</animation>
 	    <animation effect="fade" time="250">WindowClose</animation>
     </control>
+
     <import>common.time.xml</import>
     <import>myvideo.hiddenmenu.xml</import>
     <import>myvideo.views.default.xml</import>
     <import>myvideo.watchedCount.xml</import>
     <import>common.facade.video.default.xml</import>
     <import>myvideo.mediainfo.xml</import>
+    <import>myvideo.folderchanged.xml</import>
+    <import>myvideo.lockunlock.xml</import>
+    <import>common.Scraper.xml</import>
     <import>common.overlay.xml</import>
   </controls>
 </window>

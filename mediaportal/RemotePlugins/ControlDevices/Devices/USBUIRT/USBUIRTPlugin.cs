@@ -453,7 +453,7 @@ namespace MediaPortal.ControlDevices.USBUIRT
           return USBUIRTAPI.UUIRTGetUUIRTConfig(UsbUirtHandle, ref puConfig);
         }
 
-        catch (Exception)
+        catch (Exception ex)
         {
           return false;
         }
@@ -626,7 +626,7 @@ namespace MediaPortal.ControlDevices.USBUIRT
         }
       }
 
-      catch (Exception)
+      catch (Exception ex)
       {
         return false;
       }

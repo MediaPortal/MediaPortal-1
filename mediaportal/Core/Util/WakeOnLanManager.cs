@@ -341,9 +341,9 @@ namespace MediaPortal.Util
 
         return addrn;
       }
-      catch (FormatException)
+      catch (FormatException ex)
       {
-        throw new ArgumentOutOfRangeException("address", address, "not a valid hardware ethernet addresss");
+        throw new ArgumentOutOfRangeException("address", address, "not a valid hardware ethernet addresss: " + ex.Message);
       }
     }
   }

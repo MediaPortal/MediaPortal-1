@@ -251,7 +251,7 @@ Računar će raditi kao lokalni TV-server i omogućiće drugim računarima na va
     <value>Instalacija</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;bez akcije&gt;</value>
+    <value>Bez akcije</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>De-instaliraj prethodno-&gt;Preuzimi-&gt;Instaliraj</value>

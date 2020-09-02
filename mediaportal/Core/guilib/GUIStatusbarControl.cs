@@ -153,7 +153,10 @@ namespace MediaPortal.GUI.Library
       {
         tb = Int32.Parse(GUIPropertyManager.Parse("#statusbarTB"));
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GUIStatusbarControl render: " + ex.Message);
+      }
 
       if (_containsProperty)
       {
@@ -173,7 +176,10 @@ namespace MediaPortal.GUI.Library
               Percentage = 100;
             }
           }
-          catch (Exception) {}
+          catch (Exception ex)
+          {
+            Log.Error("GUIStatusbarControl render2: " + ex.Message);
+          }
         }
       }
 
@@ -182,7 +188,10 @@ namespace MediaPortal.GUI.Library
       {
         yPosTop = Convert.ToInt16(_top);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GUIStatusbarControl render3: " + ex.Message);
+      }
 
       // Render the background
       int iBkgHeight = _height;

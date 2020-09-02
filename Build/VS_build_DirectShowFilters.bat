@@ -56,6 +56,20 @@ IF EXIST "%ProgramFiles(x86)%" (
 )
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
+REM BUILD LIBBLURAY PROJECT
+IF EXIST "..\libbluray\libbluray.vcxproj" (
+set xml=Build_Report_%BUILD_TYPE%_libbluray.xml
+set html=Build_Report_%BUILD_TYPE%_libbluray.html
+set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
+
+IF EXIST "%ProgramFiles(x86)%" (
+"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE%_libbluray "..\DirectShowFilters\Filters.sln" >> %log%
+) ELSE (
+"C:\Program Files\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE%_libbluray "..\DirectShowFilters\Filters.sln" >> %log%
+)
+BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
+)
+
 goto DONE
 
 :ERROR_IN_PARAMETERS

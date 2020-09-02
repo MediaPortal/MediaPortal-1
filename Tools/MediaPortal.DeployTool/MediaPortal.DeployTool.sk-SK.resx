@@ -300,7 +300,7 @@ Presuňte tento adresár do vašeho HTPC. Spustite inštaláciu spustením súbo
     <value>Nainštalovať</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;žiadna akcia&gt;</value>
+    <value>Žiadna akcia</value>
   </data>
   <data name="Install_actionRemove" xml:space="preserve">
     <value>Odobrať</value>

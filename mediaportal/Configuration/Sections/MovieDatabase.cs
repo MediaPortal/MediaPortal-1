@@ -3821,6 +3821,23 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+    private void chbDoNotUseDatabase_CheckedChanged(object sender, EventArgs e)
+    {
+      using (Settings xmlwriter = new MPSettings())
+      {
+        xmlwriter.SetValueAsBool("moviedatabase", "donotusedatabase", chbDoNotUseDatabase.Checked);
+      }
+    }
+
+    private void chbFetchActors_CheckedChanged(object sender, EventArgs e)
+    {
+      using (Settings xmlwriter = new MPSettings())
+      {
+        // Fetch Actors info when Movie updated
+        xmlwriter.SetValueAsBool("moviedatabase", "fetchactors", chbFetchActors.Checked);
+      }
+    }
+
     #endregion
 
     #region Actors
@@ -5683,14 +5700,7 @@ namespace MediaPortal.Configuration.Sections
 
     #endregion
 
-    private void chbDoNotUseDatabase_CheckedChanged(object sender, EventArgs e)
-    {
-      using (Settings xmlwriter = new MPSettings())
-      {
-        xmlwriter.SetValueAsBool("moviedatabase", "donotusedatabase", chbDoNotUseDatabase.Checked);
-      }
-    }
-    
     #endregion
+
   }
 }

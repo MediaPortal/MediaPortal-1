@@ -298,9 +298,9 @@ namespace MediaPortal.GUI.Video
       // Set audio / video properties
       if ((g_Player.IsVideo || g_Player.IsDVD) && !g_Player.IsTV && g_Player.MediaInfo != null)
       {
-        GUIPropertyManager.SetProperty("#Play.Current.VideoCodec.Texture", Util.Utils.MakeFileName(g_Player.MediaInfo.VideoCodec));
+        GUIPropertyManager.SetProperty("#Play.Current.VideoCodec.Texture", Util.Utils.MakeFileName(g_Player.MediaInfo.BestVideoStream?.Codec.ToCodecString() ?? string.Empty));
         GUIPropertyManager.SetProperty("#Play.Current.VideoResolution", g_Player.MediaInfo.VideoResolution);
-        GUIPropertyManager.SetProperty("#Play.Current.AudioCodec.Texture", Util.Utils.MakeFileName(g_Player.MediaInfo.AudioCodec));
+        GUIPropertyManager.SetProperty("#Play.Current.AudioCodec.Texture", Util.Utils.MakeFileName(g_Player.MediaInfo.BestAudioStream?.Codec.ToCodecString() ?? string.Empty));
         GUIPropertyManager.SetProperty("#Play.Current.AudioChannels", g_Player.MediaInfo.AudioChannelsFriendly);
         GUIPropertyManager.SetProperty("#Play.Current.HasSubtitles", g_Player.MediaInfo.HasSubtitles.ToString());
         GUIPropertyManager.SetProperty("#Play.Current.AspectRatio", g_Player.MediaInfo.AspectRatio);

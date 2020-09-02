@@ -220,10 +220,10 @@ void CLvctParser::OnNewSection(CSection& sections)
           {
             shortNameLength = strlen(name);
           }
-          for (size_t i = 0; i < extendedNames.size(); i++)
+          for (size_t n = 0; n < extendedNames.size(); n++)
           {
-            int extendedNameLength = strlen(extendedNames[i]);
-            if (extendedNameLength == shortNameLength && strcmp(name, extendedNames[0]) == 0)
+            int extendedNameLength = strlen(extendedNames[n]);
+            if (extendedNameLength == shortNameLength && strcmp(name, extendedNames[n]) == 0)
             {
               continue;
             }
@@ -237,23 +237,22 @@ void CLvctParser::OnNewSection(CSection& sections)
             if (newName == NULL)
             {
               LogDebug("LvctParser: failed to allocate %d bytes for the extended name", nameBufferSize);
+              continue;
             }
-            else
+            strcpy(newName, extendedNames[n]);
+            if (name != NULL)
             {
-              strcpy(newName, extendedNames[i]);
-              if (name != NULL)
-              {
-                strcat(newName, " (");
-                strcat(newName, name);
-                strcat(newName, ")");
-                delete[] name;
-              }
-              name = newName;
+              strcat(newName, " (");
+              strcat(newName, name);
+              strcat(newName, ")");
+              delete[] name;
             }
-            for (vector<char*>::iterator it = extendedNames.begin(); it != extendedNames.end(); it++)
-            {
-              delete[] *it;
-            }
+            name = newName;
+            break;
+          }
+          for (auto& extendedName : extendedNames)
+          {
+            delete[] extendedName;
           }
         }
         else if (tag == 0xa1) // service location descriptor
@@ -390,6 +389,9 @@ void CLvctParser::DecodeMultipleStrings(byte* b, int length, vector<char*>* stri
       pointer += 3;
       int numberSegments = b[pointer++];
       //LogDebug("LvctParser: string %d, number of segments = %d", i, numberSegments);
+
+      vector<char*> segments;
+      int segmentCharCount = 0;
       for (int j = 0; j < numberSegments && pointer + 2 < length; j++)
       {
         int compressionType = b[pointer++];
@@ -402,20 +404,47 @@ void CLvctParser::DecodeMultipleStrings(byte* b, int length, vector<char*>* stri
           return;
         }
 
-        char* string = NULL;
-        DecodeString(&b[pointer], compressionType, mode, numberBytes, &string);
-        if (string != NULL)
+        char* segment = NULL;
+        DecodeString(&b[pointer], compressionType, mode, numberBytes, &segment);
+        if (segment != NULL)
         {
-          strings->push_back(string);
+          segments.push_back(segment);
+          segmentCharCount += strlen(segment);
         }
 
         pointer += numberBytes;
       }
+
+      // combine the segments to produce the final string
+      if (segments.empty())
+      {
+        continue;
+      }
+      if (segments.size() == 1)
+      {
+        strings->push_back(segments[0]);
+        continue;
+      }
+
+      char* string = new char[segmentCharCount + 1];
+      if (string == NULL)
+      {
+        LogDebug("LvctParser: failed to allocate %d bytes in DecodeMultipleStrings()", segmentCharCount + 1);
+        continue;
+      }
+
+      string[0] = 0;  // start with an empty string
+      for (auto& segment : segments)
+      {
+        strcat(string, segment);
+        delete[] segment;
+      }
+      strings->push_back(string);
     }
   }
   catch (...)
   {
-    LogDebug("LvctParser: unhandled exception in ParseMultipleStrings()");
+    LogDebug("LvctParser: unhandled exception in DecodeMultipleStrings()");
   }
 }
 

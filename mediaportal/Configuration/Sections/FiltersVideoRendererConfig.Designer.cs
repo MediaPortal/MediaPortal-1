@@ -125,7 +125,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(428, 426);
+      this.mpGroupBox1.Size = new System.Drawing.Size(428, 429);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Video renderer - advanced settings";

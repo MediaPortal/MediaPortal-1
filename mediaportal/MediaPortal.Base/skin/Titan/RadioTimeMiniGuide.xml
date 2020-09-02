@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+	<id>25651</id>
+	<defaultcontrol>35</defaultcontrol>
+	<allowoverlay>no</allowoverlay>
+	<controls>
+
+<control>
+	<description>button group</description>
+	<type>group</type>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+        <dimColor>ffffffff</dimColor>
+
+	<control>
+		<description>background</description>
+		<type>image</type>
+		<id>0</id>
+		<texture>tv_miniguide_bg.png</texture>
+		<width>1560</width>
+		<height>504</height>
+		<posX>180</posX>
+		<posY>572</posY>
+	</control>
+
+	<control>
+		<description>Heading text label</description>
+		<type>label</type>
+		<id>4</id>
+		<posX>398</posX>
+		<posY>645</posY>
+		<width>426</width>
+		<label>10105</label>
+		<font>fontB16</font>
+		<textcolor>ffffff</textcolor>
+	</control>
+	
+	<control>
+		<description>time label</description>
+		<id>0</id>
+		<type>label</type>
+		<posX>1520</posX>
+		<posY>649</posY>
+		<align>right</align>
+		<font>fontB16</font>
+		<textcolor>ffffff</textcolor>
+		<label>#time</label>
+	</control>
+
+	<control>
+		<description>list to show channels without channel state logos</description>
+		<type>listcontrol</type>
+		<id>35</id>
+		<posX>365</posX>
+		<posY>714</posY>
+		<width>1190</width>
+		<height>320</height>
+		<textureFocus>tv_miniguide_bar.png</textureFocus>
+		<textureNoFocus>tv_miniguide_bar_nofocus.png</textureNoFocus>
+		<textYOff>41</textYOff>
+		<textXOff>-50</textXOff>
+		<textXOff2>1156</textXOff2>
+		<textYOff2>41</textYOff2>
+		<textXOff3>35</textXOff3>
+		<textYOff3>6</textYOff3>
+		<IconXOff>-90</IconXOff>
+		<IconYOff>10</IconYOff>
+		<PinIconWidth>45</PinIconWidth>
+		<PinIconHeight>46</PinIconHeight>
+		<spinPosY>980</spinPosY>
+		<spinPosX>405</spinPosX>
+		<spinColor>FFFFFFFF</spinColor>
+		<spinWidth>39</spinWidth>
+		<spinHeight>27</spinHeight>
+		<itemWidth>75</itemWidth>
+		<itemHeight>60</itemHeight>
+		<spaceBetweenItems>0</spaceBetweenItems>
+		<textureHeight>86</textureHeight>
+		<keepaspectratio>yes</keepaspectratio>
+		<font>font12</font>
+		<font2>font12</font2>
+		<font3>fontB14</font3>
+		<textcolor>FFFFFFFF</textcolor>
+		<textcolor2>FFFFFFFF</textcolor2>
+		<textcolor3>FFFFFFFF</textcolor3>
+		<remoteColor>ffa0d0ff</remoteColor><!-- used for selected channel -->
+    <playedColor>FF85cffe</playedColor>
+		<unfocusedAlpha>255</unfocusedAlpha>
+		<onleft>36</onleft>
+		<onright>34</onright>
+	</control>
+
+	<control>
+		<description>list to show channels with channel state logos</description>
+		<type>listcontrol</type>
+		<id>37</id>
+		<posX>365</posX>
+		<posY>714</posY>
+		<width>1190</width>
+		<height>320</height>
+		<textureFocus>tv_miniguide_bar.png</textureFocus>
+		<textureNoFocus>tv_miniguide_bar_nofocus.png</textureNoFocus>
+		<textYOff>41</textYOff>
+		<textXOff>-50</textXOff>
+		<textXOff2>1156</textXOff2>
+		<textYOff2>41</textYOff2>
+		<textXOff3>35</textXOff3>
+		<textYOff3>6</textYOff3>
+		<IconXOff>-90</IconXOff>
+		<IconYOff>10</IconYOff>
+		<PinIconXOff>1228</PinIconXOff>
+		<PinIconYOff>18</PinIconYOff>
+		<PinIconWidth>45</PinIconWidth>
+		<PinIconHeight>46</PinIconHeight>
+		<spinPosY>980</spinPosY>
+		<spinPosX>405</spinPosX>
+		<spinColor>FFFFFFFF</spinColor>
+		<spinWidth>39</spinWidth>
+		<spinHeight>27</spinHeight>
+		<itemWidth>75</itemWidth>
+		<itemHeight>60</itemHeight>
+		<spaceBetweenItems>0</spaceBetweenItems>
+		<textureHeight>86</textureHeight>
+		<keepaspectratio>yes</keepaspectratio>
+		<font>font11</font>
+		<font2>font11</font2>
+		<font3>fontB14</font3>
+		<textcolor>FFFFFFFF</textcolor>
+		<textcolor2>FFFFFFFF</textcolor2>
+		<textcolor3>FFFFFFFF</textcolor3>
+		<remoteColor>ffa0d0ff</remoteColor><!-- used for selected channel -->
+    <playedColor>FF85cffe</playedColor>	
+		<unfocusedAlpha>255</unfocusedAlpha>
+		<onleft>36</onleft>
+		<onright>34</onright>
+	</control>
+
+	<control>
+		<description>groups spin control</description>
+		<type>spincontrol</type>
+		<id>36</id>
+		<posX>1335</posX>
+		<posY>980</posY>
+		<showrange>no</showrange>
+		<orientation>horizontal</orientation>
+		<font>font12</font>
+		<textureUp>arrow_round_right_nofocus_tv.png</textureUp>
+		<textureDown>arrow_round_left_nofocus_tv.png</textureDown>
+		<textureUpFocus>arrow_round_right_focus_tv.png</textureUpFocus>
+		<textureDownFocus>arrow_round_left_focus_tv.png</textureDownFocus>
+		<width>37</width>
+		<height>37</height>
+		<ondown>35</ondown>
+		<onup>36</onup>
+		<onright>34</onright>
+		<onleft>36</onleft>
+		<align>center</align>
+	</control>
+	
+</control>
+
+	</controls>
+</window>

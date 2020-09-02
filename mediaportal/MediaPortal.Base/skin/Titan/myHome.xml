@@ -7,18 +7,8 @@
 <define>#header.label:Home</define>
 <controls>
 
-    <control>
-      <description>DEFAULT BACKGROUND</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
-      <width>1920</width>
-      <height>1080</height>
-      <texture>background.png</texture>
-      <shouldCache>true</shouldCache>
-    </control>	
-		
+    <import>common.default.background.xml</import>
+    <import>common.default.background.overlay.xml</import> 
     <import>common.time.xml</import>
 		
     <control>
@@ -59,20 +49,6 @@
     </control>
 		
     <control>
-      <description>DEFAULT BACKGROUND</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
-      <width>1920</width>
-      <height>1080</height>
-      <texture>fanart_overlay.png</texture>
-      <shouldCache>true</shouldCache>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-    </control>
-		
-    <control>
       <description>ICON</description>
       <type>image</type>
       <id>0</id>
@@ -109,21 +85,23 @@
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
 		
+  <!--            :: RSS ::            -->
+
     <control>
-      <description>RSS items</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>70</posX>
-      <posY>1000</posY>
-      <width>1810</width>
-      <height>30</height>
-      <font>font11</font>
-      <textcolor>000000</textcolor>
-      <label>#infoservice.feed.titles</label>
-      <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)</visible>
+      <description>RSS BACKGROUND</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>52</posX>
+      <posY>958</posY>
+      <width>1820</width>
+      <height>84</height>
+      <texture>BasicHomeSubBGFlat.png</texture>  
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
-    </control>	
+    </control>
+		
+    <include condition="#(and(plugin.isenabled('World News'),not(eq(#WorldNews.NewsTicker,''))))">MyHome.Main.RSS.WorldNews.xml</include>
+    <include condition="#(and(plugin.isenabled('InfoService'),eq(#infoservice.feed.enabled,'true')))">MyHome.Main.RSS.InfoServise.xml</include>
 		
     <import>myHome.exitmenu.xml</import> 
     <import>common.overlay.xml</import>

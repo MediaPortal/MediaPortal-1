@@ -2825,8 +2825,9 @@ namespace MediaPortal.GUI.Video
           // request.Proxy = WebProxy.GetDefaultProxy();
           request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("GUIVideoFiles: DownloadFile {0}", ex.Message);
         }
 
         using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
@@ -3626,7 +3627,10 @@ namespace MediaPortal.GUI.Video
             Log.Debug("GetMediaInfoThread: after join.");
           }
         }
-        catch (Exception) { }
+        catch (Exception ex)
+        {
+          Log.Error("GUIVideoFiles: LoadDirectory {0}", ex.Message);
+        }
 
         _getMediaInfoThreadAbort = false;
 
@@ -5498,7 +5502,10 @@ namespace MediaPortal.GUI.Video
             Util.Utils.RemoveStackEndings(ref filename);
           }
         }
-        catch (Exception){}
+        catch (Exception ex)
+        {
+          Log.Error("GUIVideoFiles: OnRequestMovieTitle {0}", ex.Message);
+        }
       }
       else
       {

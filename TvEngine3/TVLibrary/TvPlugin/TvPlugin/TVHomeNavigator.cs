@@ -80,7 +80,8 @@ namespace TvPlugin
 
     private int m_currentgroup = 0;
     private DateTime m_zaptime;
-    private long m_zapdelay;
+    private long m_zapdelay = 2000;
+    private long m_zapShortDelay = 2000;
     private Channel m_zapchannel = null;
     private int m_zapChannelNr = -1;
     private int m_zapgroup = -1;
@@ -340,20 +341,85 @@ namespace TvPlugin
         }
         return m_zapchannel;
       }
+      set
+      {
+        m_zapchannel = value;
+        if (m_zapchannel == null)
+        {
+          m_zapChannelNr = -1;
+        }
+        else
+        {
+          m_zapChannelNr = m_zapchannel.ChannelNumber;
+        }
+      }
     }
 
     /// <summary>
-    /// Gets the channel number that we will zap to. If not zapping by number or not zapping to anything, returns -1.
+    /// Gets the channel number (LCN) that we will zap to. If not zapping by number or not zapping to anything, returns -1.
     /// </summary>
     public int ZapChannelNr
     {
       get
       {
+        if (m_zapChannelNr<0)
+        {
+          return m_currentChannel.ChannelNumber;
+        }
         return m_zapChannelNr;
       }
       set
       {
         m_zapChannelNr = value;
+      }
+    }
+
+    /// <summary>
+    /// Gets the guide index number of the channel that we last zapped to.
+    /// </summary>
+    public int ZapChannelIdx
+    {
+      get
+      {
+        //Workaround to get remote/keyboard number entry display 
+        //in 'channel index' mode i.e. before zapping actually occurs. 
+        //m_zapChannelNr contains entered number in this situation.
+        if (m_zapchannel == null)
+        {
+          return m_zapChannelNr;
+        }
+        
+        IList<GroupMap> channels = CurrentGroup.ReferringGroupMap(); 
+        int channelIdx = GetChannelIndex(ZapChannel);    
+        if (channelIdx < 0 || channelIdx >= channels.Count)
+        {
+          Log.Debug("ZapChannelIdx, channelIdx out-of-range:{0}", channelIdx);
+          return -1;
+        }
+        //Check channelIdx against visible channels in guide
+        GroupMap gm;
+        Channel chan;
+        int guideIdx = 0;
+        for (int i = 0; i < channels.Count; i++)
+        {
+          gm = (GroupMap)channels[i];
+          chan = (Channel)gm.ReferencedChannel();
+          if (chan.VisibleInGuide)
+          {
+            guideIdx++;
+          }
+          if (i == channelIdx)
+          {
+            if (!chan.VisibleInGuide)
+            {
+              guideIdx = -1;
+            }
+            break;
+          }
+        }      
+        
+        // Log.Debug("ZapChannelIdx, guideIdx:{0}, channelIdx:{1}", guideIdx, channelIdx);
+        return guideIdx;
       }
     }
 
@@ -422,7 +488,7 @@ namespace TvPlugin
               {
                 GroupMap gm = (GroupMap)CurrentGroup.ReferringGroupMap()[0];
                 Channel chan = (Channel)gm.ReferencedChannel();
-                m_zapchannel = chan;
+                ZapChannel = chan;
               }
             }
             m_zapgroup = -1;
@@ -444,10 +510,9 @@ namespace TvPlugin
               {
                 Log.Info("Channel change:{0}", zappingTo.DisplayName);
               }
-              m_zapchannel = null;
               TVHome.ViewChannel(zappingTo);
             }
-            m_zapChannelNr = -1;
+            ZapChannel = null;
             reentrant = false;
 
             return true;
@@ -556,7 +621,7 @@ namespace TvPlugin
     {
       Log.Debug("ChannelNavigator.ZapToChannel {0} - zapdelay {1}", channel.DisplayName, useZapDelay);
       TVHome.UserChannelChanged = true;
-      m_zapchannel = channel;
+      ZapChannel = channel;
       m_zapchannel.CurrentGroup = null;
 
       if (useZapDelay)
@@ -580,52 +645,56 @@ namespace TvPlugin
       IList<GroupMap> channels = CurrentGroup.ReferringGroupMap();
       if (channelNr >= 0)
       {
-        Log.Debug("channels.Count {0}", channels.Count);
-
-        bool found = false;
-        int iCounter = 0;
         Channel chan;
-        while (iCounter < channels.Count && found == false)
+        for (int i = 0; i < channels.Count; i++)
         {
-          chan = ((GroupMap)channels[iCounter]).ReferencedChannel();
-
-          Log.Debug("chan {0}", chan.DisplayName);
+          chan = ((GroupMap)channels[i]).ReferencedChannel();
           if (chan.VisibleInGuide)
           {
             if (chan.ChannelNumber == channelNr)
             {
-              Log.Debug("find channel: iCounter {0}, chan.ChannelNumber {1}, chan.DisplayName {2}, channels.Count {3}",
-                        iCounter, chan.ChannelNumber, chan.DisplayName, channels.Count);
-              found = true;
-              ZapToChannel(iCounter + 1, useZapDelay);
+              Log.Debug("ZapToChannelNumber: found channel, channelNr: {0}, chan.DisplayName: {1}",
+                         channelNr, chan.DisplayName);
+              ZapToChannel(chan, useZapDelay);
+              return;
             }
           }
-          iCounter++;
         }
-        if (found)
-        {
-          m_zapChannelNr = channelNr;
-        }
-      }
+      }      
+      Log.Debug("ZapToChannelNumber: channel not found, channelNr: {0}, channels.Count: {1}", channelNr, channels.Count);
     }
 
     /// <summary>
     /// Changes the current channel after a specified delay.
     /// </summary>
-    /// <param name="channelNr">The nr of the channel to change to.</param>
+    /// <param name="channelIdx">The (1 based) index within the group of the channel to change to.</param>
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
-    public void ZapToChannel(int channelNr, bool useZapDelay)
+    public void ZapToChannelIndex(int channelIdx, bool useZapDelay)
     {
-      IList<GroupMap> channels = CurrentGroup.ReferringGroupMap();
-      m_zapChannelNr = channelNr;
-      channelNr--;
-      if (channelNr >= 0 && channelNr < channels.Count)
+      IList<GroupMap> channels = CurrentGroup.ReferringGroupMap();     
+      if (channelIdx < 1 || channelIdx > channels.Count)
       {
-        GroupMap gm = (GroupMap)channels[channelNr];
-        Channel chan = gm.ReferencedChannel();
-        TVHome.UserChannelChanged = true;
-        ZapToChannel(chan, useZapDelay);
+        Log.Debug("ZapToChannelIndex, channelIdx out-of-range:{0}", channelIdx);
+        return;
       }
+      //Check channelIdx against visible channels in guide
+      GroupMap gm;
+      Channel chan;
+      int guideIdx = 0;
+      for (int i = 0; i < channels.Count; i++)
+      {
+        gm = (GroupMap)channels[i];
+        chan = (Channel)gm.ReferencedChannel();
+        if (chan.VisibleInGuide)
+        {
+          guideIdx++;
+        }
+        if (guideIdx == channelIdx)
+        {
+          ZapToChannel(chan, useZapDelay);
+          return;
+        }
+      }      
     }
 
     /// <summary>
@@ -663,15 +732,15 @@ namespace TvPlugin
       } while (!chan.VisibleInGuide);
 
       TVHome.UserChannelChanged = true;
-      m_zapchannel = chan;
+      ZapChannel = chan;
       m_zapchannel.CurrentGroup = null;
-      m_zapChannelNr = -1;
-      Log.Info("Navigator:ZapNext {0}->{1}", currentChan.DisplayName, m_zapchannel.DisplayName);
+      Log.Info("Navigator:ZapNext {0}:{1}->{2}:{3},index:{4}",
+               currentChan.DisplayName, currentChan.ChannelNumber, m_zapchannel.DisplayName, m_zapchannel.ChannelNumber, currindex);
       if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
         if (useZapDelay)
         {
-          m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
+          m_zaptime = DateTime.Now.AddMilliseconds(m_zapShortDelay);
         }
         else
         {
@@ -728,16 +797,15 @@ namespace TvPlugin
       } while (!chan.VisibleInGuide);
 
       TVHome.UserChannelChanged = true;
-      m_zapchannel = chan;
+      ZapChannel = chan;
       m_zapchannel.CurrentGroup = null;
-      m_zapChannelNr = -1;
-      Log.Info("Navigator:ZapPrevious {0}->{1}",
-               currentChan.DisplayName, m_zapchannel.DisplayName);
+      Log.Info("Navigator:ZapPrevious {0}:{1}->{2}:{3},index:{4}",
+               currentChan.DisplayName, currentChan.ChannelNumber, m_zapchannel.DisplayName, m_zapchannel.ChannelNumber, currindex);
       if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
         if (useZapDelay)
         {
-          m_zaptime = DateTime.Now.AddMilliseconds(m_zapdelay);
+          m_zaptime = DateTime.Now.AddMilliseconds(m_zapShortDelay);
         }
         else
         {
@@ -814,14 +882,21 @@ namespace TvPlugin
     /// <summary>
     /// Zaps to the last viewed Channel (without ZapDelay).  // mPod
     /// </summary>
-    public void ZapToLastViewedChannel()
+    public void ZapToLastViewedChannel(bool useZapDelay)
     {
       if (_lastViewedChannel != null)
       {
         TVHome.UserChannelChanged = true;
-        m_zapchannel = _lastViewedChannel;
-        m_zapChannelNr = -1;
-        m_zaptime = DateTime.Now;
+        ZapChannel = _lastViewedChannel;
+        if (useZapDelay)
+        {
+          //Short delay to just display OSD
+          m_zaptime = DateTime.Now.AddMilliseconds(100);
+        }
+        else
+        {
+          m_zaptime = DateTime.Now;
+        }
         RaiseOnZapChannelEvent();
       }
     }
@@ -908,6 +983,7 @@ namespace TvPlugin
       Log.Info("ChannelNavigator::LoadSettings()");
       string currentchannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
       m_zapdelay = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2);
+      m_zapShortDelay = m_zapdelay;
       string groupname = xmlreader.GetValueAsString("mytv", "group", TvConstants.TvGroupNames.AllChannels);
       m_currentgroup = GetGroupIndex(groupname);
       if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count) // Group no longer exists?

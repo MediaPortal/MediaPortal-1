@@ -199,12 +199,12 @@ namespace MediaPortal.GUI.Music
             s = fi.OpenRead();
             s.Close();
           }
-          catch (IOException)
+          catch (IOException ex)
           {
             // File is locked (not copied yet), add it to blacklisted array
             _notReadyFiles.Add(e.FullPath);
             // The file is not closed yet. Ignore the event, it will be processed by the Change event
-            Log.Info("MusicFolderWatcher: File not ready yet: {0}", e.FullPath);
+            Log.Info("MusicFolderWatcher: File not ready yet: {0} {1}", e.FullPath, ex.Message);
             return;
           }
           _Events.Add(new FolderWatcherEvent(FolderWatcherEvent.EventType.Create, e.FullPath));
@@ -228,8 +228,9 @@ namespace MediaPortal.GUI.Music
           s = fi.OpenRead();
           s.Close();
         }
-        catch (IOException)
+        catch (IOException ex)
         {
+          Log.Debug("MusicFolderWatcherHelper:OnChanged{0}", ex.Message);
           return; // file is not ready yet
         }
 

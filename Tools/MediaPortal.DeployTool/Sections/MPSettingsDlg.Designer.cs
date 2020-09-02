@@ -33,6 +33,8 @@ namespace MediaPortal.DeployTool.Sections
       this.labelInstDir = new System.Windows.Forms.Label();
       this.labelHeading = new System.Windows.Forms.Label();
       this.checkBoxFirewall = new System.Windows.Forms.CheckBox();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
       // buttonBrowse
@@ -42,7 +44,7 @@ namespace MediaPortal.DeployTool.Sections
       this.buttonBrowse.Cursor = System.Windows.Forms.Cursors.Hand;
       this.buttonBrowse.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonBrowse.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.buttonBrowse.Location = new System.Drawing.Point(499, 114);
+      this.buttonBrowse.Location = new System.Drawing.Point(860, 137);
       this.buttonBrowse.Name = "buttonBrowse";
       this.buttonBrowse.Size = new System.Drawing.Size(70, 23);
       this.buttonBrowse.TabIndex = 14;
@@ -54,29 +56,31 @@ namespace MediaPortal.DeployTool.Sections
       // 
       this.textBoxDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxDir.Location = new System.Drawing.Point(30, 116);
+      this.textBoxDir.Location = new System.Drawing.Point(333, 140);
       this.textBoxDir.Name = "textBoxDir";
-      this.textBoxDir.Size = new System.Drawing.Size(463, 20);
+      this.textBoxDir.Size = new System.Drawing.Size(521, 20);
       this.textBoxDir.TabIndex = 13;
       this.textBoxDir.TextChanged += new System.EventHandler(this.textBoxDir_TextChanged);
       // 
       // labelInstDir
       // 
       this.labelInstDir.AutoSize = true;
+      this.labelInstDir.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.labelInstDir.ForeColor = System.Drawing.Color.White;
-      this.labelInstDir.Location = new System.Drawing.Point(27, 100);
+      this.labelInstDir.Location = new System.Drawing.Point(330, 124);
       this.labelInstDir.Name = "labelInstDir";
-      this.labelInstDir.Size = new System.Drawing.Size(109, 13);
+      this.labelInstDir.Size = new System.Drawing.Size(134, 13);
       this.labelInstDir.TabIndex = 12;
       this.labelInstDir.Text = "MediaPortal install dir:";
       // 
       // labelHeading
       // 
       this.labelHeading.AutoSize = true;
+      this.labelHeading.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.labelHeading.ForeColor = System.Drawing.Color.White;
-      this.labelHeading.Location = new System.Drawing.Point(27, 56);
+      this.labelHeading.Location = new System.Drawing.Point(330, 56);
       this.labelHeading.Name = "labelHeading";
-      this.labelHeading.Size = new System.Drawing.Size(297, 13);
+      this.labelHeading.Size = new System.Drawing.Size(459, 16);
       this.labelHeading.TabIndex = 11;
       this.labelHeading.Text = "Please set the needed options for the MediaPortal installation:";
       // 
@@ -86,31 +90,43 @@ namespace MediaPortal.DeployTool.Sections
       this.checkBoxFirewall.Checked = true;
       this.checkBoxFirewall.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxFirewall.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.checkBoxFirewall.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.checkBoxFirewall.ForeColor = System.Drawing.Color.White;
-      this.checkBoxFirewall.Location = new System.Drawing.Point(30, 166);
+      this.checkBoxFirewall.Location = new System.Drawing.Point(333, 176);
       this.checkBoxFirewall.Name = "checkBoxFirewall";
-      this.checkBoxFirewall.Size = new System.Drawing.Size(343, 17);
+      this.checkBoxFirewall.Size = new System.Drawing.Size(409, 17);
       this.checkBoxFirewall.TabIndex = 23;
       this.checkBoxFirewall.Text = "Configure Windows Firewall to allow external access to MediaPortal";
       this.checkBoxFirewall.UseVisualStyleBackColor = true;
+      // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.Mediaportal_Box_White;
+      this.pictureBox1.Location = new System.Drawing.Point(-50, 50);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(374, 357);
+      this.pictureBox1.TabIndex = 26;
+      this.pictureBox1.TabStop = false;
       // 
       // MPSettingsDlg
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
+      this.Controls.Add(this.pictureBox1);
       this.Controls.Add(this.checkBoxFirewall);
       this.Controls.Add(this.buttonBrowse);
       this.Controls.Add(this.textBoxDir);
       this.Controls.Add(this.labelInstDir);
       this.Controls.Add(this.labelHeading);
       this.Name = "MPSettingsDlg";
-      this.Size = new System.Drawing.Size(666, 250);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.labelHeading, 0);
       this.Controls.SetChildIndex(this.labelInstDir, 0);
       this.Controls.SetChildIndex(this.textBoxDir, 0);
       this.Controls.SetChildIndex(this.buttonBrowse, 0);
       this.Controls.SetChildIndex(this.checkBoxFirewall, 0);
+      this.Controls.SetChildIndex(this.pictureBox1, 0);
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -123,5 +139,6 @@ namespace MediaPortal.DeployTool.Sections
     private System.Windows.Forms.Label labelInstDir;
     private System.Windows.Forms.Label labelHeading;
     private System.Windows.Forms.CheckBox checkBoxFirewall;
+    private System.Windows.Forms.PictureBox pictureBox1;
   }
 }

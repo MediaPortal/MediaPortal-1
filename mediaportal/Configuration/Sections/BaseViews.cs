@@ -291,7 +291,7 @@ namespace MediaPortal.Configuration.Sections
       {
         FilterDefinition def = (FilterDefinition)currentView.Filters[i];
         string limit = def.Limit.ToString();
-        if (def.Limit < 0)
+        if (def.Limit <= 0)
         {
           limit = "";
         }
@@ -363,14 +363,14 @@ namespace MediaPortal.Configuration.Sections
         }
         def.SqlOperator = row[1].ToString();
         def.Restriction = row[2].ToString();
-        try
+        int tmpLimit;
+        if (Int32.TryParse(row[3].ToString(), out tmpLimit))
         {
-          def.Limit = Int32.Parse(row[3].ToString());
+          def.Limit = tmpLimit;
         }
-        catch (Exception)
-        {
+        else
           def.Limit = -1;
-        }
+        
         def.DefaultView = row[4].ToString();
         def.DefaultSort = row[5].ToString();
         def.SortAscending = (bool)row[6];
@@ -464,7 +464,10 @@ namespace MediaPortal.Configuration.Sections
             fileStream.Close();
           }
         }
-        catch (Exception) { }
+        catch (Exception ex)
+        {
+          Log.Error("BaseViews:btnSetDefaults_Click: {0}", ex.Message);
+        }
         LoadViews();
       }
     }
@@ -760,9 +763,9 @@ namespace MediaPortal.Configuration.Sections
             }
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          MediaPortal.GUI.Library.Log.Error("Views: Exception reading view {0}. Copying default views.", customViews);
+          MediaPortal.GUI.Library.Log.Error("Views: Exception reading view {0}. Copying default views. {1}", customViews, ex.Message);
           File.Copy(defaultViews, customViews, true);
         }
       }
@@ -778,7 +781,10 @@ namespace MediaPortal.Configuration.Sections
           fileStream.Close();
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("BaseViews:LoadSettings: {0}", ex.Message);
+      }
 
       SetupGrid();
       LoadViews();
@@ -818,7 +824,10 @@ namespace MediaPortal.Configuration.Sections
             fileStream.Close();
           }
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("BaseViews:SaveSettings: {0}", ex.Message);
+        }
       }
     }
     

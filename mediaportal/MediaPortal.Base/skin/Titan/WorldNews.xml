@@ -1,0 +1,452 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>7979</id>
+<defaultcontrol>50</defaultcontrol>
+<allowoverlay>yes</allowoverlay>
+<define>#header.label:9</define>
+<controls>
+<!--            :: BACKGROUNDS ::           	 -->
+<import>common.default.background.xml</import>
+<control>
+<description>BG</description>
+<type>image</type>
+<id>1</id>
+<width>1920</width>
+<height>1080</height>
+<texture>hover_Infoservice.png</texture>
+<shouldCache>true</shouldCache>
+<animation effect="zoom" start="105,105" end="110,110" time="20000" tween="cubic" easing="inout" pulse="true" reversible="false" condition="string.equals(#skin.enable.animated.background,True)">Conditional</animation>
+<animation effect="slide" start="0,0" end="-30,-30" time="10000" tween="cubic" easing="inout" pulse="true" reversible="false" condition="string.equals(#skin.enable.animated.background,True)">Conditional</animation>
+<animation effect="fade" time="250">WindowOpen</animation>
+<animation effect="fade" time="250">WindowClose</animation>
+<visible>string.equals(#skin.enable.Hovers,true)</visible>
+</control>
+<import>common.default.background.overlay.xml</import> 
+<!--include condition="#(eq(#skin.enable.background.overlay.plugins,'True'))">BasicHome.BackgroundSelected.overlay.xml</include-->
+<control>
+<description>VIEWPORT</description>
+<type>image</type>
+<id>0</id>
+<posX>10</posX>
+<posY>252</posY>
+<width>1903</width>
+<height>790</height>
+<texture>panel_video_actors.png</texture>
+<shouldCache>true</shouldCache>
+<visible>[facadeview.smallicons | facadeview.largeicons | facadeview.list]</visible>
+<animation effect="fade" time="250">WindowOpen</animation>
+<animation effect="fade" time="250">WindowClose</animation>
+</control>
+<control>
+<description>RSS Background page 2</description>
+<type>image</type>
+<id>0</id>
+<posX>52</posX>
+<posY>958</posY>
+<width>1820</width>
+<height>84</height>
+<texture>BasicHomeSubBG.png</texture>
+<shouldCache>true</shouldCache>
+<animation effect="fade" time="250">WindowOpen</animation>
+<animation effect="fade" time="250">WindowClose</animation>
+<visible>facadeview.filmstrip</visible>
+</control>
+<control>
+<id>0</id>
+<type>image</type>
+<posX>10</posX>
+<posY>332</posY>
+<width>1903</width>
+<height>383</height>
+<texture>panel_now_playing_info_small.png</texture>
+<visible>facadeview.filmstrip</visible>
+<animation effect="fade" time="250">WindowOpen</animation>
+<animation effect="fade" time="250">WindowClose</animation>
+</control>
+<control>
+<id>0</id>
+<type>image</type>
+<posX>66</posX>
+<posY>34</posY>
+<width>61</width>
+<height>60</height>
+<texture>icon_plugin.png</texture>
+<animation effect="fade" time="250">WindowOpen</animation>
+<animation effect="fade" time="250">WindowClose</animation>
+</control>
+<import>common.time.xml</import>
+<!-- *** Button *** -->
+<control>
+<type>actiongroup</type>
+<description>action menu</description>
+<defaultcontrol>3</defaultcontrol>
+<onexit>50</onexit>
+<dimColor>00ffffff</dimColor>
+<buttonX>0</buttonX>
+<buttonY>0</buttonY>
+<buttonwidth>521</buttonwidth>
+<buttonheight>1080</buttonheight>
+<control>
+<type>image</type>
+<id>0</id>
+<width>1920</width>
+<height>1080</height>
+<texture>semi_trans_back_hidden_menu.png</texture>
+<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+<animation effect="fade" time="450">visible</animation>
+<animation effect="fade" time="400">hidden</animation>
+</control>
+<control>
+<type>image</type>
+<id>0</id>
+<posY>0</posY>
+<posX>0</posX>
+<width>612</width>
+<height>1074</height>
+<texture>menu_bg.png</texture>
+<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+<animation effect="fade" time="0">WindowClose</animation>
+<animation effect="slide" start="-150,0" time="100">visible</animation>
+<animation effect="fade" time="50">visible</animation>
+<animation effect="fade" time="0">hidden</animation>
+</control>
+<control>
+<description>Menu label</description>
+<type>label</type>
+<id>1</id>
+<posX>116</posX>
+<posY>100</posY>
+<label>924</label>
+<font>fontB16</font>
+<textcolor>393939</textcolor>
+<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+<animation effect="fade" time="0">WindowClose</animation>
+<animation effect="slide" start="-150,0" time="100">visible</animation>
+<animation effect="fade" time="50">visible</animation>
+<animation effect="fade" time="0">hidden</animation>
+</control>
+<control>
+<type>group</type>
+<description>group element</description>
+<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+<animation effect="fade" time="0">WindowClose</animation>
+<animation effect="slide" start="-150,0" time="100">visible</animation>
+<animation effect="fade" time="50">visible</animation>
+<animation effect="fade" time="0">hidden</animation>
+<posX>53</posX>
+<posY>155</posY>
+<layout>StackLayout(0, Vertical, true)</layout>
+<control>
+<description>Refresh Button</description>
+<type>button</type>
+<id>2</id>
+<onleft>50</onleft>
+<onright>50</onright>
+<onup>9</onup>
+<ondown>3</ondown>
+<label>Category...</label>
+<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+<textureNoFocus>-</textureNoFocus>
+<width>499</width>
+<height>69</height>
+<textXOff>62</textXOff>
+<textYOff>16</textYOff>
+</control>
+<control>
+<description>Merge news</description>
+<type>checkbutton</type>
+<id>3</id>
+<onleft>50</onleft>
+<onright>50</onright>
+<onup>2</onup>
+<ondown>9</ondown>
+<posX>69</posX>
+<posY>285</posY>
+<width>459</width>
+<height>70</height>
+<label>Merge news</label>
+<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+<textureNoFocus>-</textureNoFocus>
+<width>499</width>
+<height>69</height>
+<textXOff>62</textXOff>
+<textYOff>16</textYOff>
+</control>
+<control>
+<description>Refresh</description>
+<type>button</type>
+<id>9</id>
+<onleft>50</onleft>
+<onright>50</onright>
+<onup>3</onup>
+<ondown>2</ondown>
+<posX>69</posX>
+<posY>355</posY>
+<label>Refresh</label>
+<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+<textureNoFocus>-</textureNoFocus>
+<width>499</width>
+<height>69</height>
+<textXOff>62</textXOff>
+<textYOff>16</textYOff>
+</control>
+</control>
+</control>
+<!--            :: Listview Lines ::            -->
+<control>
+<description>List Lines</description>
+<type>image</type>
+<id>1</id>
+<posX>1080</posX>
+<posY>385</posY>
+<width>740</width>
+<height>506</height>
+<texture>list_lines.png</texture>
+<animation effect="fade" time="250">WindowOpen</animation>
+<animation effect="fade" time="250">WindowClose</animation>
+<visible>facadeview.list</visible>
+</control>
+<!-- *** News Item List *** -->
+<control>
+<description>group element</description>
+<type>group</type>
+<animation effect="fade" time="250">WindowOpen</animation>
+<animation effect="fade" time="250">WindowClose</animation>
+<control>
+<description>News facade</description>
+<type>facadeview</type>
+<id>50</id>
+<!-- *** List *** -->
+<control>
+<description>listcontrol</description>
+<type>listcontrol</type>
+<id>50</id>
+<posX>1023</posX>
+<posY>331</posY>
+<height>700</height>
+<width>800</width>
+<onleft>2</onleft>
+<textXOff>25</textXOff>
+<textXOff2>0</textXOff2>
+<textYOff>-5</textYOff>
+<textYOff2>24</textYOff2>
+<font2>TitanLight10</font2>
+<textureHeight>54</textureHeight>
+<scrollOffset>1</scrollOffset>
+<IconXOff>5</IconXOff>
+<IconYOff>0</IconYOff>
+<itemWidth>90</itemWidth>
+<itemHeight>54</itemHeight>
+<keepaspectratio>yes</keepaspectratio>
+<spinPosX>1828</spinPosX>
+<dimColor>ffffffff</dimColor>
+<spinPosY>1000</spinPosY>
+<animation effect="fade" time="250">WindowOpen</animation>
+<animation effect="fade" time="250">WindowClose</animation>
+</control>
+<!-- *** Thumbnail *** -->
+<control>
+<description>Thumbnail Panel</description>
+<type>thumbnailpanel</type>
+<id>50</id>
+<posX>1060</posX>
+<posY>340</posY>
+<width>800</width>
+<height>700</height>
+<onleft>2</onleft>
+<onright>2</onright>
+<imageFolder>-</imageFolder>
+<imageFolderFocus>-</imageFolderFocus>
+<showFrame>true</showFrame>
+<dimColor>90ffffff</dimColor>
+<enableFocusZoom>yes</enableFocusZoom>
+<hideUnfocusTexture>no</hideUnfocusTexture>
+<renderFocusText>no</renderFocusText>
+<renderUnfocusText>no</renderUnfocusText>
+<thumbZoom>no</thumbZoom>
+<keepaspectratio>yes</keepaspectratio>
+<frameNoFocus>OnlineVideos\thumbbg3.png</frameNoFocus>
+<frameFocus>onlinevideos_thumb_focus.png</frameFocus>
+<textureMask></textureMask>
+<imageFolderFocus>OnlineVideos\thumbbg3.png</imageFolderFocus>
+<itemWidthBig>260</itemWidthBig>
+<itemHeightBig>194</itemHeightBig>
+<textureWidthBig>260</textureWidthBig>
+<textureHeightBig>194</textureHeightBig>
+<thumbWidthBig>220</thumbWidthBig>
+<thumbHeightBig>165</thumbHeightBig>
+<thumbPosXBig>20</thumbPosXBig>
+<thumbPosYBig>15</thumbPosYBig>
+<zoomXPixels>0</zoomXPixels>
+<zoomYPixels>0</zoomYPixels>
+<spinPosX>1828</spinPosX>
+<spinPosY>1000</spinPosY>
+<animation effect="fade" time="250">WindowOpen</animation>
+<animation effect="fade" time="250">WindowClose</animation>
+</control>
+<!-- *** Filmstrip *** -->
+<control>
+<description>Filmstrip view</description>
+<type>filmstrip</type>
+<dimColor>ffffffff</dimColor>
+<id>50</id>
+<scrollOffset>3</scrollOffset>
+<folderPrefix></folderPrefix>
+<folderSuffix></folderSuffix>
+<posX>130</posX>
+<posY>730</posY>
+<width>1700</width>
+<height>340</height>
+<ondown>2</ondown>
+<onup>2</onup>
+<thumbWidth>225</thumbWidth>
+<thumbHeight>225</thumbHeight>
+<thumbPosX>0</thumbPosX>
+<thumbPosY>0</thumbPosY>
+<itemWidth>240</itemWidth>
+<itemHeight>327</itemHeight>
+<textureWidth>230</textureWidth>
+<textureHeight>327</textureHeight>
+<textYOff>-2000</textYOff>
+<thumbs flipY="true" diffuse="Thumb_Mask_test.png" mask="filmstrip_mask.png"></thumbs>
+<scrollbarBackground>scrollbar_bg_hor.png</scrollbarBackground>
+<scrollbarLeft>scrollbar_left_hor.png</scrollbarLeft>
+<scrollbarRight>scrollbar_right_hor.png</scrollbarRight>
+<scrollbarWidth>717</scrollbarWidth>
+<scrollbarHeight>8</scrollbarHeight>
+<scrollbarYOff>375</scrollbarYOff>
+<keepaspectratio>no</keepaspectratio>
+<thumbAnimation effect="zoom" acceleration="-2" start="100,100" reversible="false" end="120,120" center="0,880" time="200">focus</thumbAnimation>
+<thumbAnimation effect="zoom" start="120,120" reversible="false" end="100,100" center="0,880" time="100">unfocus</thumbAnimation>
+</control>
+</control>
+</control>
+<!-- *** Feed Description *** -->
+<control>
+<description>Feed Description</description>
+<type>label</type>
+<id>0</id>
+<posX>96</posX>
+<posY>1000</posY>
+<width>700</width>
+<font>TitanLight12</font>
+<label>#WorldNews.NewsDescription</label>
+<textcolor>000000</textcolor>
+<visible>!string.equals(#WorldNews.NewsDescription,)+string.equals(#WorldNews.NewsImage,)</visible>
+<animation effect="fade" time="250">WindowOpen</animation>
+<animation effect="fade" time="250">WindowClose</animation>
+</control>
+<control>
+<description>Feed Description</description>
+<type>label</type>
+<id>0</id>
+<posX>200</posX>
+<posY>1017</posY>
+<width>1590</width>
+<align>center</align>
+<font>TitanLight12</font>
+<label>#WorldNews.NewsDescription</label>
+<textcolor>000000</textcolor>
+<visible>!string.equals(#WorldNews.NewsDescription,)+string.equals(#WorldNews.NewsCopyright,)+!string.equals(#WorldNews.NewsImage,)</visible>
+<animation effect="fade" time="250">WindowOpen</animation>
+<animation effect="fade" time="250">WindowClose</animation>
+</control>
+<control>
+<description>Feed Description</description>
+<type>label</type>
+<id>0</id>
+<posX>200</posX>
+<posY>1017</posY>
+<width>1590</width>
+<align>center</align>
+<font>TitanLight12</font>
+<label>#WorldNews.NewsDescription (#WorldNews.NewsCopyright)</label>
+<textcolor>000000</textcolor>
+<visible>!string.equals(#WorldNews.NewsDescription,)+!string.equals(#WorldNews.NewsCopyright,)+!string.equals(#WorldNews.NewsImage,)</visible>
+<animation effect="fade" time="250">WindowOpen</animation>
+<animation effect="fade" time="250">WindowClose</animation>
+</control>
+<!-- *** Item Picture *** -->
+<control>
+<description>Item Picture</description>
+<type>image</type>
+<id>0</id>
+<posX>120</posX>
+<posY>350</posY>
+<width>250</width>
+<height>250</height>
+<texture>defaultFeedItemRSSBig.png</texture>
+<animation effect="fade" time="250">WindowOpen</animation>
+<animation effect="fade" time="250">WindowClose</animation>
+<visible>[facadeview.smallicons | facadeview.largeicons | facadeview.list]</visible>
+</control>
+<control>
+<description>Site Logo</description>
+<type>image</type>
+<id>101</id>
+<posX>120</posX>
+<posY>660</posY>
+<width>250</width>
+<height>250</height>
+<texture>#WorldNews.NewsImage</texture>
+<centered>yes</centered>
+<keepaspectratio>yes</keepaspectratio>
+<animation effect="fade" time="250">WindowOpen</animation>
+<animation effect="fade" time="250">WindowClose</animation>
+<visible>[facadeview.smallicons | facadeview.largeicons | facadeview.list]</visible>
+</control>
+<!-- *** Item Text *** -->
+<control>
+<type>textboxscrollup</type>
+<description>Description (grouplist)</description>
+<id>0</id>
+<posX>420</posX>
+<posY>350</posY>
+<width>550</width>
+<height>600</height>
+<label>#WorldNews.NewsItemDate #WorldNews.NewsItemTime (#WorldNews.NewsItemAgo) - #WorldNews.NewsItemText</label>
+<lineSpacing>0.92</lineSpacing>
+<seperator>---------------------------------------------------------------------------------------------------------------------</seperator>
+<visible>[facadeview.smallicons | facadeview.largeicons | facadeview.list]</visible>
+<animation effect="fade" time="250">WindowOpen</animation>
+<animation effect="fade" time="250">WindowClose</animation>
+</control>
+<control>
+<type>textboxscrollup</type>
+<description>Description (grouplist)</description>
+<id>0</id>
+<posX>90</posX>
+<posY>400</posY>
+<width>1600</width>
+<height>400</height>
+<label>#WorldNews.NewsItemDate #WorldNews.NewsItemTime (#WorldNews.NewsItemAgo) - #WorldNews.NewsItemText</label>
+<lineSpacing>0.92</lineSpacing>
+<seperator>---------------------------------------------------------------------------------------------------------------------</seperator>
+<visible>facadeview.filmstrip</visible>
+<animation effect="fade" time="250">WindowOpen</animation>
+<animation effect="fade" time="250">WindowClose</animation>
+</control>
+<control>
+<id>1</id>
+<type>image</type>
+<posX>0</posX>
+<posY>440</posY>
+<width>64</width>
+<height>199</height>
+<texture>hiddenmenu_tab.png</texture>
+<visible>Control.HasFocus(50) + [facadeview.smallicons | facadeview.largeicons | facadeview.list]</visible>
+<animation effect="slide" start="-60,0" end="0,0" tween="quadratic" easing="in" time="250" delay="400">WindowOpen</animation>
+<animation effect="slide" start="0,0" end="-60,0" tween="quadratic" easing="in" time="250" delay="100">WindowClose</animation>
+</control>
+<control>
+<id>1</id>
+<type>image</type>
+<posX>858</posX>
+<posY>0</posY>
+<texture>hiddenmenu_tab_up.png</texture>
+<visible>Control.HasFocus(50) + facadeview.filmstrip</visible>
+<animation effect="slide" start="0,-60" end="0,0" tween="quadratic" easing="in" time="250" delay="400">WindowOpen</animation>
+<animation effect="slide" start="0,0" end="0,-60" tween="quadratic" easing="in" time="250" delay="100">WindowClose</animation>
+</control>
+</controls>
+</window>

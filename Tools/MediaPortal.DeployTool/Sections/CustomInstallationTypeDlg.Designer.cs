@@ -37,20 +37,21 @@ namespace MediaPortal.DeployTool.Sections
       this.bSingle = new System.Windows.Forms.Button();
       this.bMaster = new System.Windows.Forms.Button();
       this.bClient = new System.Windows.Forms.Button();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
       // labelSectionHeader
       // 
-      this.labelSectionHeader.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelSectionHeader.Location = new System.Drawing.Point(32, 28);
-      this.labelSectionHeader.Size = new System.Drawing.Size(315, 14);
+      this.labelSectionHeader.Location = new System.Drawing.Point(327, 84);
+      this.labelSectionHeader.Size = new System.Drawing.Size(371, 17);
       this.labelSectionHeader.Text = "Please choose which setup you want to install:";
       // 
       // labelSingleSeat
       // 
       this.labelSingleSeat.AutoSize = true;
       this.labelSingleSeat.ForeColor = System.Drawing.Color.White;
-      this.labelSingleSeat.Location = new System.Drawing.Point(73, 82);
+      this.labelSingleSeat.Location = new System.Drawing.Point(373, 139);
       this.labelSingleSeat.MaximumSize = new System.Drawing.Size(429, 0);
       this.labelSingleSeat.Name = "labelSingleSeat";
       this.labelSingleSeat.Size = new System.Drawing.Size(199, 13);
@@ -62,7 +63,7 @@ namespace MediaPortal.DeployTool.Sections
       // 
       this.labelMaster.AutoSize = true;
       this.labelMaster.ForeColor = System.Drawing.Color.White;
-      this.labelMaster.Location = new System.Drawing.Point(73, 140);
+      this.labelMaster.Location = new System.Drawing.Point(373, 220);
       this.labelMaster.MaximumSize = new System.Drawing.Size(429, 0);
       this.labelMaster.Name = "labelMaster";
       this.labelMaster.Size = new System.Drawing.Size(228, 13);
@@ -74,7 +75,7 @@ namespace MediaPortal.DeployTool.Sections
       // 
       this.labelClient.AutoSize = true;
       this.labelClient.ForeColor = System.Drawing.Color.White;
-      this.labelClient.Location = new System.Drawing.Point(73, 201);
+      this.labelClient.Location = new System.Drawing.Point(373, 307);
       this.labelClient.MaximumSize = new System.Drawing.Size(429, 0);
       this.labelClient.Name = "labelClient";
       this.labelClient.Size = new System.Drawing.Size(196, 13);
@@ -88,7 +89,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbSingleSeat.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbSingleSeat.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbSingleSeat.ForeColor = System.Drawing.Color.White;
-      this.rbSingleSeat.Location = new System.Drawing.Point(73, 69);
+      this.rbSingleSeat.Location = new System.Drawing.Point(373, 126);
       this.rbSingleSeat.Name = "rbSingleSeat";
       this.rbSingleSeat.Size = new System.Drawing.Size(325, 13);
       this.rbSingleSeat.TabIndex = 24;
@@ -101,7 +102,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbTvServerMaster.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbTvServerMaster.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbTvServerMaster.ForeColor = System.Drawing.Color.White;
-      this.rbTvServerMaster.Location = new System.Drawing.Point(73, 127);
+      this.rbTvServerMaster.Location = new System.Drawing.Point(373, 207);
       this.rbTvServerMaster.Name = "rbTvServerMaster";
       this.rbTvServerMaster.Size = new System.Drawing.Size(222, 13);
       this.rbTvServerMaster.TabIndex = 25;
@@ -114,7 +115,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbClient.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbClient.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbClient.ForeColor = System.Drawing.Color.White;
-      this.rbClient.Location = new System.Drawing.Point(73, 186);
+      this.rbClient.Location = new System.Drawing.Point(373, 292);
       this.rbClient.Name = "rbClient";
       this.rbClient.Size = new System.Drawing.Size(298, 13);
       this.rbClient.TabIndex = 27;
@@ -129,7 +130,7 @@ namespace MediaPortal.DeployTool.Sections
       this.bSingle.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.bSingle.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.bSingle.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.bSingle.Location = new System.Drawing.Point(35, 64);
+      this.bSingle.Location = new System.Drawing.Point(335, 121);
       this.bSingle.Name = "bSingle";
       this.bSingle.Size = new System.Drawing.Size(32, 23);
       this.bSingle.TabIndex = 28;
@@ -144,7 +145,7 @@ namespace MediaPortal.DeployTool.Sections
       this.bMaster.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.bMaster.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.bMaster.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.bMaster.Location = new System.Drawing.Point(35, 122);
+      this.bMaster.Location = new System.Drawing.Point(335, 202);
       this.bMaster.Name = "bMaster";
       this.bMaster.Size = new System.Drawing.Size(32, 23);
       this.bMaster.TabIndex = 29;
@@ -159,18 +160,27 @@ namespace MediaPortal.DeployTool.Sections
       this.bClient.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.bClient.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.bClient.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.bClient.Location = new System.Drawing.Point(35, 181);
+      this.bClient.Location = new System.Drawing.Point(335, 287);
       this.bClient.Name = "bClient";
       this.bClient.Size = new System.Drawing.Size(32, 23);
       this.bClient.TabIndex = 30;
       this.bClient.UseVisualStyleBackColor = true;
       this.bClient.Click += new System.EventHandler(this.bClient_Click);
       // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.Mediaportal_Box;
+      this.pictureBox1.Location = new System.Drawing.Point(40, 70);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(176, 357);
+      this.pictureBox1.TabIndex = 31;
+      this.pictureBox1.TabStop = false;
+      // 
       // CustomInstallationTypeDlg
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
+      this.Controls.Add(this.pictureBox1);
       this.Controls.Add(this.bClient);
       this.Controls.Add(this.bMaster);
       this.Controls.Add(this.bSingle);
@@ -181,7 +191,6 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.Add(this.labelMaster);
       this.Controls.Add(this.labelSingleSeat);
       this.Name = "CustomInstallationTypeDlg";
-      this.Size = new System.Drawing.Size(666, 250);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.labelSingleSeat, 0);
       this.Controls.SetChildIndex(this.labelMaster, 0);
@@ -192,6 +201,8 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.SetChildIndex(this.bSingle, 0);
       this.Controls.SetChildIndex(this.bMaster, 0);
       this.Controls.SetChildIndex(this.bClient, 0);
+      this.Controls.SetChildIndex(this.pictureBox1, 0);
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -208,5 +219,6 @@ namespace MediaPortal.DeployTool.Sections
     private System.Windows.Forms.Button bSingle;
     private System.Windows.Forms.Button bMaster;
     private System.Windows.Forms.Button bClient;
+    private System.Windows.Forms.PictureBox pictureBox1;
   }
 }

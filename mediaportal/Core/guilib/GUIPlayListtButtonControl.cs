@@ -873,15 +873,16 @@ namespace MediaPortal.GUI.Library
       {
         guiImg = LoadAnimationControl(parentId, id, xOffset, yOffset, width, height, dimmedImgFileName);
       }
-      catch (FileNotFoundException)
+      catch (FileNotFoundException ex)
       {
-        Log.Warn("!!! Skin is missing image: {0}, using original one: {1}", dimmedImgFileName, origImageFileName);
+        Log.Warn("!!! Skin is missing image: {0}, using original one: {1} {2}", dimmedImgFileName, origImageFileName, ex.Message);
         try
         {
           guiImg = LoadAnimationControl(parentId, id, xOffset, yOffset, width, height, imagePath);
         }
-        catch (FileNotFoundException)
+        catch (FileNotFoundException ex1)
         {
+          Log.Warn("GUIPlayListButtonControl: GetDisabledButtonImage {0}", ex1.Message);
           // If the original image doesn't exist bail out.
           return null;
         }

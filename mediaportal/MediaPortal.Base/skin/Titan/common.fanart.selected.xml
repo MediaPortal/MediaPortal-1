@@ -72,7 +72,7 @@
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>	
         
-	<control>
+	<!--control>
 		<description>NO FANART BACKGROUND</description>
 		<id>0</id>
 		<type>image</type>
@@ -89,6 +89,6 @@
 		<animation effect="fade" start="0" end="100" time="350" reversible="false">Visible</animation>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
-	</control>
+	</control-->
 </controls>
 </window>

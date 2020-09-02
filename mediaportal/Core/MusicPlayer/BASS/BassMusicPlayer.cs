@@ -97,8 +97,10 @@ namespace MediaPortal.Player
             {
               audioPlayer = (AudioPlayer)Enum.Parse(typeof(AudioPlayer), strAudioPlayer);
             }
-            catch (Exception) // We end up here in the conversion Phase, where we have still a string ioncluded
-            {}
+            catch (Exception ex) // We end up here in the conversion Phase, where we have still a string ioncluded
+            {
+              Log.Error("BassMusicPlayer: IsDefaultMusicPlayer {0}", ex.Message);
+            }
 
             switch (audioPlayer)
             {

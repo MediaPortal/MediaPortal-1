@@ -1759,7 +1759,10 @@ namespace DShowNET.Helper
           ienumFilt = null;
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("DirectShowUtil:GetFilterByName() - Exception " + ex.Message);
+      }
       finally
       {
         if (ienumFilt != null)
@@ -1789,9 +1792,9 @@ namespace DShowNET.Helper
           Log.Error("DirectShowUtil:RemoveFilter() - Marshal.IsComObject() invalid!!");
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Error("DirectShowUtil:RemoveFilter() - Exception!!");
+        Log.Error("DirectShowUtil:RemoveFilter() - Exception " + ex.Message);
       }
       return -2147467259; //E_FAIL - Unspecified error.
     }
@@ -1866,8 +1869,13 @@ namespace DShowNET.Helper
           }
         }
       }
-      catch (Exception)
+      catch (InvalidComObjectException)
       {
+        //can happen when _graphbuilder is already released
+      }
+      catch (Exception ex)
+      {
+        Log.Error("DirectShowUtil:RemoveFilters() - Exception " + ex.Message);
         return;
       }
       finally
@@ -1934,7 +1942,10 @@ namespace DShowNET.Helper
           ienumFilt = null;
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("DirectShowUtil:FindFilterByClassID() - Exception " + ex.Message);
+      }
       finally
       {
         if (ienumFilt != null)
@@ -1972,8 +1983,9 @@ namespace DShowNET.Helper
         }
         return ret;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("DirectShowUtil:GetFriendlyName() - Exception " + ex.Message);
         return null;
       }
       finally
@@ -2027,8 +2039,9 @@ namespace DShowNET.Helper
 
         return ret;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("DirectShowUtil:GetFilterProperty() - Exception " + ex.Message);
         return null;
       }
       finally
@@ -2352,10 +2365,10 @@ namespace DShowNET.Helper
           obj = null;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         StackTrace st = new StackTrace(true);
-        Log.Error("Exception DirectShowUtil:ReleaseComObject() while releasing COM object (NULL) - stacktrace: {0}", st);
+        Log.Error("Exception DirectShowUtil:ReleaseComObject() while releasing COM object (NULL) - {1} stacktrace: {0}", st, ex.Message);
       }
     }
 
@@ -2383,10 +2396,10 @@ namespace DShowNET.Helper
           obj = null;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         StackTrace st = new StackTrace(true);
-        Log.Error("Exception DirectShowUtil:FinalReleaseComObject() while releasing COM object (NULL) - stacktrace: {0}", st);
+        Log.Error("Exception DirectShowUtil:FinalReleaseComObject() while releasing COM object (NULL) - {1} stacktrace: {0}", st, ex);
       }
     }
 
@@ -2403,10 +2416,10 @@ namespace DShowNET.Helper
           obj = null;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         StackTrace st = new StackTrace(true);
-        Log.Error("Exception DirectShowUtil:CleanUpInterface() while releasing COM object (NULL) - stacktrace: {0}", st);
+        Log.Error("Exception DirectShowUtil:CleanUpInterface() while releasing COM object (NULL) - {1} stacktrace: {0}", st, ex.Message);
       }
     }
   }

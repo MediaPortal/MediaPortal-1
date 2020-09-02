@@ -35,7 +35,7 @@
         <textcolor>ffffff</textcolor>
         <label>#date / #WorldWeather.TodayTemperature</label>
 				<align>right</align>
-				<visible>plugin.isenabled(World Weather)</visible>
+				<visible>[plugin.isenabled(World Weather Lite)|plugin.isenabled(World Weather)]</visible>
  			</control>
       
 			<control>
@@ -48,7 +48,7 @@
         <textcolor>ffffff</textcolor>
         <label>#date</label>
 				<align>right</align>
-				<visible>!plugin.isenabled(World Weather)</visible>
+				<visible>![plugin.isenabled(World Weather Lite)|plugin.isenabled(World Weather)]</visible>
    		</control>
     </controls>
 </window>

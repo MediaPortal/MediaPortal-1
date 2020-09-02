@@ -1,0 +1,853 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window>
+  <controls>
+    <control>
+      <description>Current condition static label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>630</posX>
+      <posY>240</posY>
+      <width>519</width>
+      <align>center</align>
+      <label>#WorldWeather.TranslationCurrentCondition</label>
+      <font>font14</font>
+      <textcolor>00b7ff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+    </control>
+
+
+    <!--        ::  Current Weather Information with feed  ::       -->
+
+    <control>
+      <description>current weather icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>215</posX>
+      <posY>190</posY>
+      <width>250</width>
+      <height>250</height>
+      <texture>#WorldWeather.TodayIconImage</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+    </control>
+
+    <control>
+      <description>Current temp label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>90</posX>
+      <posY>510</posY>
+      <width>500</width>
+      <align>center</align>
+      <label>#WorldWeather.TodayTemperature</label>
+      <align>center</align>
+      <font>TitanLight32</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+    </control>
+
+    <!-- :: Warming / Cooling :: -->
+
+    <control>
+      <description>Weather Warming Icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>210</posX>
+      <posY>482</posY>
+      <width>50</width>
+      <height>50</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <zoom>true</zoom>
+      <texture>Weather\#(iif(eq(#fanarthandler.weather.season,'Winter'),'Warming-Sun','Warming')).png</texture>
+      <animation effect="fade" time="250" start="100" end="50" condition="true">conditional</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)+string.equals(True,#(lt(cint(string.trim(#WorldWeather.ForecastDay0High,string.trim(#WorldWeather.ForecastDay0High,'1234567890'))),cint(string.trim(#WorldWeather.ForecastDay1High,string.trim(#WorldWeather.ForecastDay1High,'1234567890'))))))</visible>
+    </control>
+
+    <control>
+      <description>Weather Cooling Icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>210</posX>
+      <posY>482</posY>
+      <width>50</width>
+      <height>50</height>
+      <align>center</align>
+      <valign>middle</valign>
+      <keepaspectratio>yes</keepaspectratio>
+      <zoom>true</zoom>
+      <texture>Weather\#(iif(eq(#fanarthandler.weather.season,'Winter'),'Cooling-Snow','Cooling')).png</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)+string.equals(True,#(gt(cint(string.trim(#WorldWeather.ForecastDay0High,string.trim(#WorldWeather.ForecastDay0High,'1234567890'))),cint(string.trim(#WorldWeather.ForecastDay1High,string.trim(#WorldWeather.ForecastDay1High,'1234567890'))))))</visible>
+      <animation effect="fade" time="250" start="100" end="50" condition="true">conditional</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!-- :: Current Min / Max Temp :: -->
+
+    <control>
+      <description>Current Min Max Temp</description>
+      <type>group</type>
+      <layout>StackLayout(20, Horizontal, true)</layout>
+      <posX>205</posX>
+      <posY>545</posY>
+      <dimColor>FFFFFFFF</dimColor>
+      <width>300</width>
+      <align>center</align>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <control>
+        <description>DAY 0 MAX VALUE</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.ForecastDay0High</label>
+        <font>TitanLight11</font>
+        <textcolor>ffffffff</textcolor>
+        <width>10</width>
+        <maxWidth>150</maxWidth>
+        <height>30</height>
+      </control>
+      <control>
+        <description>DAY 0 MIN VALUE</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.ForecastDay0Low</label>
+        <font>TitanLight11</font>
+        <textcolor>00b7ff</textcolor>
+        <width>10</width>
+        <maxWidth>150</maxWidth>
+        <height>30</height>
+      </control>
+    </control>
+
+    <control>
+      <description>Current Condition Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>90</posX>
+      <posY>450</posY>
+      <width>500</width>
+      <label>#WorldWeather.TodayCondition</label>
+      <align>center</align>
+      <font>font14</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+    </control>
+
+    <control>
+      <description>Satalite image 0</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>87</posX>
+      <posY>610</posY>
+      <width>500</width>
+      <height>350</height>
+      <texture>#WorldWeather.ImageWeather0</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Satalite image 1</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>640</posX>
+      <posY>610</posY>
+      <width>500</width>
+      <height>350</height>
+      <texture>#WorldWeather.ImageWeather1</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)+[string.equals(#WorldWeather.Feed0Text, )+string.equals(#WorldWeather.Feed1Text, )+string.equals(#WorldWeather.Feed2Text, )]</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Actual Weather Feed</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>640</posX>
+      <posY>608</posY>
+      <width>520</width>
+      <height>360</height>
+      <label>#(iif(eq(string.trim(#WorldWeather.Feed0Text),''),'','#WorldWeather.Feed0Description: #WorldWeather.Feed0Text'))#(iif(eq(string.trim(#WorldWeather.Feed1Text),''),'','  ***  #WorldWeather.Feed1Description: #WorldWeather.Feed1Text'))#(iif(eq(string.trim(#WorldWeather.Feed2Text),''),'','  ***  #WorldWeather.Feed2Description: #WorldWeather.Feed2Text'))</label>
+      <seperator>-----------------------------------------------------------------------</seperator>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <scrollStartDelaySec>3</scrollStartDelaySec>
+      <font>font10</font>
+      <textcolor>ivory</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(5, Vertical, true)</layout>
+      <posX>640</posX>
+      <posY>285</posY>
+      <align>Left</align>
+      <dimColor>ffffffff</dimColor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+
+      <!--        ::  Preicipitation label  ::       -->
+
+      <control>
+        <description>Current Precipitation static label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationPrecipitation:</label>
+        <font>font11</font>
+        <height>22</height>
+        <textcolor>00b7ff</textcolor>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayPrecipitation, )+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+
+      <!--        ::  Current visibility label  ::       -->
+
+      <control>
+        <description>current visibility label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationVisibility:</label>
+        <font>font11</font>
+        <height>22</height>
+        <textcolor>00b7ff</textcolor>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayVisibility, )+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+
+      <!--        ::  Current cloud coverage label  ::       -->
+
+      <control>
+        <description>current visibility label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationCloudCoverage:</label>
+        <font>font11</font>
+        <height>22</height>
+        <textcolor>00b7ff</textcolor>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayCloudCoverage, )+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+
+      <!--        ::  Current wind label  ::       -->
+
+      <control>
+        <description>current wind static label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationWind:</label>
+        <font>font11</font>
+        <height>22</height>
+        <textcolor>00b7ff</textcolor>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+
+      <!--        ::  Current humidity label  ::       -->
+
+      <control>
+        <description>current humidity static label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationHumidity:</label>
+        <font>font11</font>
+        <height>22</height>
+        <textcolor>00b7ff</textcolor>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+
+      <!--        ::  Current pressure label  ::       -->
+
+      <control>
+        <description>current humidity static label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationPressure:</label>
+        <font>font11</font>
+        <height>22</height>
+        <textcolor>00b7ff</textcolor>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayPressure, )+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+
+      <!--        ::  Dewpoint label  ::       -->
+
+      <control>
+        <description>Current Dewpoint label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationDewPoint:</label>
+        <font>font11</font>
+        <height>22</height>
+        <textcolor>00b7ff</textcolor>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayDewPoint, )+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+
+      <!--        ::  Current sunrise label  ::       -->
+
+      <control>
+        <description>current sunrise static label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationSunrise:</label>
+        <font>font11</font>
+        <height>22</height>
+        <textcolor>00b7ff</textcolor>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+
+      <!--        ::  Current sunset label  ::       -->
+
+      <control>
+        <description>current sunset static label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationSunset:</label>
+        <font>font11</font>
+        <height>22</height>
+        <textcolor>00b7ff</textcolor>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+
+      <!--        ::  Current moonphase label  ::       -->
+
+      <control>
+        <description>current moonphase static label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationMoonPhase:</label>
+        <font>font11</font>
+        <height>22</height>
+        <textcolor>00b7ff</textcolor>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+    </control>
+
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(5, Vertical, true)</layout>
+      <posX>880</posX>
+      <posY>285</posY>
+      <dimColor>ffffffff</dimColor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <control>
+        <description>Current Precipitation label</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.TodayPrecipitation</label>
+        <font>font11</font>
+        <height>22</height>
+        <align>Right</align>
+        <width>250</width>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayPrecipitation, )+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+      <control>
+        <description>current visibility label</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.TodayVisibility</label>
+        <font>font11</font>
+        <height>22</height>
+        <align>Right</align>
+        <width>250</width>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayVisibility, )+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+      <control>
+        <description>current cloud coverage label</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.TodayCloudCoverage</label>
+        <font>font11</font>
+        <height>22</height>
+        <align>Right</align>
+        <width>250</width>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayCloudCoverage, )+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+      <control>
+        <description>current wind label</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.TodayWindDirection - #WorldWeather.TodayWindSpeed</label>
+        <font>font11</font>
+        <height>22</height>
+        <align>Right</align>
+        <width>250</width>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#WorldWeather.TodayWindDirectionDegree, )+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+      <control>
+        <description>current wind label</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.TodayWindDirection (#WorldWeather.TodayWindDirectionDegree) - #WorldWeather.TodayWindSpeed</label>
+        <font>font11</font>
+        <height>22</height>
+        <align>Right</align>
+        <width>250</width>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayWindDirectionDegree, )+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+      <control>
+        <description>current humidity label</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.TodayHumidity</label>
+        <font>font11</font>
+        <height>22</height>
+        <align>Right</align>
+        <width>250</width>
+        <textcolor>FFFFFFFF</textcolor>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+      <control>
+        <description>current pressure label</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.TodayPressure #WorldWeather.TodayBarometricPressure</label>
+        <font>font11</font>
+        <height>22</height>
+        <align>Right</align>
+        <width>250</width>
+        <textcolor>FFFFFFFF</textcolor>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayPressure, )+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+      <control>
+        <description>current dewpoint label</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.TodayDewPoint</label>
+        <font>font11</font>
+        <height>22</height>
+        <align>Right</align>
+        <width>250</width>
+        <textcolor>FFFFFFFF</textcolor>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#WorldWeather.TodayDewPoint, )+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+      <control>
+        <description>Current sunrise label</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationSunriseTime</label>
+        <font>font11</font>
+        <height>22</height>
+        <align>Right</align>
+        <width>250</width>
+        <textcolor>FFFFFFFF</textcolor>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+      <control>
+        <description>Current sunset label</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationSunsetTime</label>
+        <font>font11</font>
+        <height>22</height>
+        <align>Right</align>
+        <width>250</width>
+        <textcolor>FFFFFFFF</textcolor>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+      <control>
+        <description>current moonphase label</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationMoonPhase</label>
+        <font>font11</font>
+        <height>22</height>
+        <align>Right</align>
+        <width>250</width>
+        <textcolor>FFFFFFFF</textcolor>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      </control>
+    </control>
+
+    <!--  Weather Forecast  -->
+
+    <!--  :: Day 1 Weather :: -->
+
+    <control>
+      <description>DAY 1 LABEL</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1254</posX>
+      <posY>407</posY>
+      <width>200</width>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay1Day</label>
+      <font>font14</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>DAY 1 ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1265</posX>
+      <posY>242</posY>
+      <width>250</width>
+      <height>150</height>
+      <texture>#WorldWeather.ForecastDay1IconImage</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>DAY 1 VALUE</description>
+      <type>group</type>
+      <layout>StackLayout(10, Horizontal, true)</layout>
+      <posX>1254</posX>
+      <posY>510</posY>
+      <width>310</width>
+      <dimColor>FFFFFFFF</dimColor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <control>
+        <description>DAY 1 MAX VALUE</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.ForecastDay1High</label>
+        <width>10</width>
+        <maxWidth>150</maxWidth>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <valign>bottom</valign>
+      </control>
+      <control>
+        <description>DAY 1 MIN VALUE</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.ForecastDay1Low</label>
+        <width>10</width>
+        <maxWidth>150</maxWidth>
+        <font>TitanLight16</font>
+        <textcolor>00b7ff</textcolor>
+        <valign>bottom</valign>
+      </control>
+    </control>
+    <control>
+      <description>separator</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1252</posX>
+      <posY>510</posY>
+      <width>201</width>
+      <height>2</height>
+      <texture>weather_divider.png</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>DAY 1 GENERAL WEATHER</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1254</posX>
+      <posY>518</posY>
+      <width>200</width>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay1Condition</label>
+      <font>TitanLight12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!-- :: Day 2 Weather :: -->
+
+    <control>
+      <description>DAY 2 LABEL</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1578</posX>
+      <posY>407</posY>
+      <width>200</width>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay2Day</label>
+      <font>font14</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>DAY 2 ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1589</posX>
+      <posY>242</posY>
+      <width>250</width>
+      <height>150</height>
+      <texture>#WorldWeather.ForecastDay2IconImage</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>DAY 2 VALUE</description>
+      <type>group</type>
+      <layout>StackLayout(10, Horizontal, true)</layout>
+      <posX>1578</posX>
+      <posY>510</posY>
+      <dimColor>FFFFFFFF</dimColor>
+      <width>310</width>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <control>
+        <description>DAY 2 MAX VALUE</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.ForecastDay2High</label>
+        <width>10</width>
+        <maxWidth>150</maxWidth>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <valign>bottom</valign>
+      </control>
+      <control>
+        <description>DAY 2 MIN VALUE</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.ForecastDay2Low</label>
+        <width>10</width>
+        <maxWidth>150</maxWidth>
+        <font>TitanLight16</font>
+        <textcolor>00b7ff</textcolor>
+        <valign>bottom</valign>
+      </control>
+    </control>
+    <control>
+      <description>separator</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1576</posX>
+      <posY>510</posY>
+      <width>201</width>
+      <height>2</height>
+      <texture>weather_divider.png</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>DAY 2 GENERAL WEATHER</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1578</posX>
+      <posY>518</posY>
+      <width>200</width>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay2Condition</label>
+      <font>TitanLight12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!-- :: Day 3 Weather :: -->
+
+    <control>
+      <description>DAY 3 LABEL</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1254</posX>
+      <posY>770</posY>
+      <width>200</width>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay3Day</label>
+      <font>font14</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>DAY 3 ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1265</posX>
+      <posY>605</posY>
+      <width>250</width>
+      <height>150</height>
+      <texture>#WorldWeather.ForecastDay3IconImage</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>DAY 3 VALUE</description>
+      <type>group</type>
+      <layout>StackLayout(10, Horizontal, true)</layout>
+      <posX>1254</posX>
+      <posY>873</posY>
+      <dimColor>FFFFFFFF</dimColor>
+      <width>310</width>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <control>
+        <description>DAY 3 MAX VALUE</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.ForecastDay3High</label>
+        <width>10</width>
+        <maxWidth>150</maxWidth>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <valign>bottom</valign>
+      </control>
+      <control>
+        <description>DAY 3 MIN VALUE</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.ForecastDay3Low</label>
+        <width>10</width>
+        <maxWidth>150</maxWidth>
+        <font>TitanLight16</font>
+        <textcolor>00b7ff</textcolor>
+        <valign>bottom</valign>
+      </control>
+    </control>
+    <control>
+      <description>separator</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1252</posX>
+      <posY>873</posY>
+      <width>201</width>
+      <height>2</height>
+      <texture>weather_divider.png</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>DAY 3 GENERAL WEATHER</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1254</posX>
+      <posY>881</posY>
+      <width>200</width>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay3Condition</label>
+      <font>TitanLight12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!-- :: Day 4 Weather :: -->
+
+    <control>
+      <description>DAY 4 LABEL</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1578</posX>
+      <posY>770</posY>
+      <width>200</width>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay4Day</label>
+      <font>font14</font>
+      <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>DAY 4 ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1589</posX>
+      <posY>605</posY>
+      <width>250</width>
+      <height>150</height>
+      <texture>#WorldWeather.ForecastDay4IconImage</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>DAY 4 VALUE</description>
+      <type>group</type>
+      <layout>StackLayout(10, Horizontal, true)</layout>
+      <posX>1578</posX>
+      <posY>873</posY>
+      <dimColor>FFFFFFFF</dimColor>
+      <width>310</width>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <control>
+        <description>DAY 4 MAX VALUE</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.ForecastDay4High</label>
+        <width>10</width>
+        <maxWidth>150</maxWidth>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <valign>bottom</valign>
+      </control>
+      <control>
+        <description>DAY 4 MIN VALUE</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.ForecastDay4Low</label>
+        <width>10</width>
+        <maxWidth>150</maxWidth>
+        <font>TitanLight16</font>
+        <textcolor>00b7ff</textcolor>
+        <valign>bottom</valign>
+      </control>
+    </control>
+    <control>
+      <description>separator</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1576</posX>
+      <posY>873</posY>
+      <width>201</width>
+      <height>2</height>
+      <texture>weather_divider.png</texture>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>DAY 4 GENERAL WEATHER</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1578</posX>
+      <posY>881</posY>
+      <width>200</width>
+      <align>left</align>
+      <label>#WorldWeather.ForecastDay4Condition</label>
+      <font>TitanLight12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+!string.equals(#skin.weather.lightmode,true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+  </controls>
+</window>

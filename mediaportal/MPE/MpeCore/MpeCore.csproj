@@ -117,12 +117,6 @@
     <Compile Include="Classes\Project\ProjectSettings.cs" />
     <Compile Include="Classes\QueueCommand.cs" />
     <Compile Include="Classes\QueueCommandCollection.cs" />
-    <Compile Include="Classes\SectionPanel\EtchedLine.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Classes\SectionPanel\EtchedLine.Designer.cs">
-      <DependentUpon>EtchedLine.cs</DependentUpon>
-    </Compile>
     <Compile Include="Classes\SectionPanel\GroupCheck.cs" />
     <Compile Include="Classes\SectionPanel\GroupCheckScript.cs" />
     <Compile Include="Classes\SectionPanel\BaseLayout.cs">
@@ -330,7 +324,9 @@
   <ItemGroup>
     <None Include="Resources\TopFadeOut.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\Bottom.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

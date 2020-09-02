@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+  
+    <control>
+    	<description>pause button</description>
+    	<type>image</type>
+    	<id>0</id>
+    	<posX>856</posX>
+    	<posY>295</posY>
+    	<width>209</width>
+    	<height>221</height>
+    	<texture>osd_pause.png</texture>
+        <visible>player.paused</visible>
+        <animation effect="fade" time="500">VisibleChange</animation>
+    </control>
+        
+  </controls>
+        
+</window>

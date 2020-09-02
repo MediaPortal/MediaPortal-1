@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <description>background listview</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>10</posX>
+      <posY>145</posY>
+      <width>1903</width>
+      <height>897</height>
+      <texture>panel_weather.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+  </controls>
+</window>

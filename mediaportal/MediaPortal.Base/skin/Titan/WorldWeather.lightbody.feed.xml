@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+
+    <!--            :: WEATHER FEED ::               -->
+
+    <control>
+      <description>Actual Weather Feed</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>770</posY>
+      <width>1050</width>
+      <height>100</height>
+      <label>#(iif(eq(string.trim(#WorldWeather.Feed0Text),''),'','#WorldWeather.Feed0Description: #WorldWeather.Feed0Text'))#(iif(eq(string.trim(#WorldWeather.Feed1Text),''),'','  ***  #WorldWeather.Feed1Description: #WorldWeather.Feed1Text'))#(iif(eq(string.trim(#WorldWeather.Feed2Text),''),'','  ***  #WorldWeather.Feed2Description: #WorldWeather.Feed2Text'))</label>
+      <seperator>----------------------------------------------------------------------------------------------------------------------------------------------------------------------</seperator>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+string.equals(#WorldWeather.FeedEnabled,true)+string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature#WorldWeather.HistoryDayAverageMaxTemperature#WorldWeather.HistoryDayAverageMinTemperature,)</visible>
+      <scrollStartDelaySec>10</scrollStartDelaySec>
+      <font>font1</font>
+      <textcolor>ivory</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!--            :: WEATHER FEED ::               -->
+
+    <control>
+      <description>Actual Weather Feed</description>
+      <type>fadelabel</type>
+      <id>5550555</id>
+      <posX>70</posX>
+      <posY>1000</posY>
+      <width>1800</width>
+      <height>30</height>
+      <font>font11</font>
+      <textcolor>000000</textcolor>
+      <label>#(iif(eq(string.trim(#WorldWeather.Feed0Text),''),'','#WorldWeather.Feed0Description: #WorldWeather.Feed0Text'))#(iif(eq(string.trim(#WorldWeather.Feed1Text),''),'','  ***  #WorldWeather.Feed1Description: #WorldWeather.Feed1Text'))#(iif(eq(string.trim(#WorldWeather.Feed2Text),''),'','  ***  #WorldWeather.Feed2Description: #WorldWeather.Feed2Text'))</label>
+      <visible>Control.HasFocus(5555)+string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Normal)+string.equals(#skin.weather.lightmode,true)+string.equals(#WorldWeather.FeedEnabled,true)+!string.equals(#WorldWeather.HistoryDayRecordMaxTemperature#WorldWeather.HistoryDayRecordMinTemperature#WorldWeather.HistoryDayAverageMaxTemperature#WorldWeather.HistoryDayAverageMinTemperature,)+[!string.equals(#WorldWeather.Feed0Text, )|!string.equals(#WorldWeather.Feed1Text, )|!string.equals(#WorldWeather.Feed2Text, )]</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+  </controls>
+</window>

@@ -309,9 +309,9 @@ namespace MediaPortal.Time
           _month = int.Parse(strDate.Substring(start, sepPos - start));
           _day = int.Parse(strDate.Substring(sepPos + 1, 2));
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          throw (new ArgumentException("Invalid Time Argument"));
+          throw (new ArgumentException("Invalid Time Argument " + ex.Message));
         }
       }
       else
@@ -322,9 +322,9 @@ namespace MediaPortal.Time
         {
           date = int.Parse(strDate);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          throw (new ArgumentException("Invalid Time Argument"));
+          throw (new ArgumentException("Invalid Time Argument " + ex.Message));
         }
 
         if (date > 0100 && date < 1231)

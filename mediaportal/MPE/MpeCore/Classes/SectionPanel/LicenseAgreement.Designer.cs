@@ -39,20 +39,20 @@
       this.richTextBox1.Location = new System.Drawing.Point(0, 65);
       this.richTextBox1.Name = "richTextBox1";
       this.richTextBox1.ReadOnly = true;
-      this.richTextBox1.Size = new System.Drawing.Size(494, 241);
+      this.richTextBox1.Size = new System.Drawing.Size(494, 247);
       this.richTextBox1.TabIndex = 14;
       this.richTextBox1.Text = "";
       // 
       // checkBox1
       // 
-      this.checkBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this.checkBox1.Location = new System.Drawing.Point(0, 287);
+      this.checkBox1.BackColor = System.Drawing.Color.Transparent;
+      this.checkBox1.Location = new System.Drawing.Point(5, 293);
       this.checkBox1.Name = "checkBox1";
       this.checkBox1.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
-      this.checkBox1.Size = new System.Drawing.Size(494, 19);
+      this.checkBox1.Size = new System.Drawing.Size(486, 19);
       this.checkBox1.TabIndex = 23;
       this.checkBox1.Text = "I accept the terms of the license agreement.";
-      this.checkBox1.UseVisualStyleBackColor = true;
+      this.checkBox1.UseVisualStyleBackColor = false;
       this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
       // 
       // LicenseAgreement

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>9817</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:#TVSeries.Translation.Artwork.Label: #itemcount #TVSeries.Artwork.Type</define>
+  <define>#header.hover:hover_my tv series.png</define>
+  <define>#itemcount:</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH TV.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Backdrop</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>#TVSeries.Current.Fanart</texture>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>background thumbview</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>100</posX>
+      <posY>170</posY>
+      <width>1780</width>
+      <height>840</height>
+      <texture>listbg.png</texture>
+      <colordiffuse>00000000</colordiffuse>
+      <visible>[facadeview.smallicons|facadeview.largeicons]</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>background filmstrip</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>410</posY>
+      <width>2020</width>
+      <height>300</height>
+      <texture>listbg.png</texture>
+      <colordiffuse>00000000</colordiffuse>
+      <visible>[facadeview.filmstrip|facadeview.coverflow]</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <include condition="#(or(eq(#TVSeries.Artwork.Type,'SeriesPoster'),eq(#TVSeries.Artwork.Type,'SeasonPoster')))">TVSeries.ArtworkChooser.Poster.xml</include>
+    <include condition="#(eq(#TVSeries.Artwork.Type,'SeriesFanart'))">TVSeries.ArtworkChooser.Fanart.xml</include>
+    <include condition="#(eq(#TVSeries.Artwork.Type,'SeriesBanner'))">TVSeries.ArtworkChooser.Banner.xml</include>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <dimColor>00ffffff</dimColor>
+      <buttonX>0</buttonX>
+      <buttonX>0</buttonX>
+      <buttonY>70</buttonY>
+      <buttonwidth>140</buttonwidth>
+      <buttonheight>984</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>168</width>
+      <height>798</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <id>0</id>
+        <type>image</type>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>white.png</texture>
+        <colordiffuse>50005eef</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>42</posX>
+        <posY>200</posY>
+        <width>435</width>
+        <height>170</height>
+        <texture>am-background.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>![Control.HasFocus(50)|Control.HasFocus(51)|Control.HasFocus(52)]+[Control.IsVisible(50)|Control.IsVisible(51)|Control.IsVisible(52)]</visible>
+        <animation effect="slide" time="100" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="100" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <visible>![Control.HasFocus(50)|Control.HasFocus(51)|Control.HasFocus(52)]+[Control.IsVisible(50)|Control.IsVisible(51)|Control.IsVisible(52)]</visible>
+        <animation effect="slide" time="100" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="100" end="-300,0" reversible="false">hidden</animation>
+        <posX>70</posX>
+        <posY>217</posY>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <control Style="NoShadow">
+          <description>Switch Layout</description>
+          <type>button</type>
+          <id>2</id>
+          <onleft>2</onleft>
+          <onright>50</onright>
+          <onup>127</onup>
+          <ondown>3</ondown>
+        </control>
+        <control Style="NoShadow">
+          <description>Data Source</description>
+          <type>button</type>
+          <id>3</id>
+          <onleft>3</onleft>
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>2</ondown>
+        </control>
+      </control>
+    </control>
+    <control>
+      <type>imagelist</type>
+      <id>1</id>
+      <posX>1095</posX>
+      <posY>247</posY>
+      <width>453</width>
+      <height>55</height>
+      <textureWidth>25</textureWidth>
+      <textureHeight>25</textureHeight>
+      <subitems>
+        <subitem>greystar.png</subitem>
+        <subitem>star.png</subitem>
+      </subitems>
+      <orientation>horizontal</orientation>
+      <align>left</align>
+      <percentage>#TVSeries.Artwork.Rating</percentage>
+      <imagesToDraw>10</imagesToDraw>
+    </control>
+    <control>
+      <description>number of votes fadelabel</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1380</posX>
+      <posY>241</posY>
+      <width>480</width>
+      <align>left</align>
+      <font>font11</font>
+      <label>(#TVSeries.Artwork.RatingCount #TVSeries.Translation.Votes.Label)</label>
+      <wrapString />
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+  </controls>
+</window>

@@ -207,9 +207,9 @@ namespace MediaPortal.GUI.Library
             continue;
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Debug("GUIImageAllocator: Skip. Could not load Image file... " + listOverlayImages[i].FileName);
+          Log.Debug("GUIImageAllocator: Skip. Could not load Image file... " + listOverlayImages[i].FileName + ":" + ex.Message);
           continue;
         }
 
@@ -253,9 +253,9 @@ namespace MediaPortal.GUI.Library
           _cachedAllocatorImages.Add(inMemoryFileID);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Error("GUIImageAllocator: BuildImages: Unable to add to MP's Graphics memory: " + inMemoryFileID);
+        Log.Error("GUIImageAllocator: BuildImages: Unable to add to MP's Graphics memory: " + inMemoryFileID + ":" + ex.Message);
         return string.Empty;
       }
       return inMemoryFileID;
@@ -282,9 +282,9 @@ namespace MediaPortal.GUI.Library
         {
           imageFile = ImageFast.FromFile(filename);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Debug("GUIImageAllocator: Reverting to slow ImageLoading for: " + filename);
+          Log.Debug("GUIImageAllocator: Reverting to slow ImageLoading for: " + filename + ":" + ex.Message);
           imageFile = Image.FromFile(filename);
         }
       }

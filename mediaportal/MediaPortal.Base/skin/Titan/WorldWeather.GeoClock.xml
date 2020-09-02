@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+
+    <!-- *** GeoClock *** -->
+    <control>
+      <description>Location label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1850</posX>
+      <posY>998</posY>
+      <width>350</width>
+      <label>#(L(19100))</label>
+      <font>TitanLight12</font>
+      <align>Right</align>
+      <textcolor>000000</textcolor>
+      <visible>string.equals(#WorldWeather.View,GeoClock)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>GeoClock image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>470</posX>
+      <posY>340</posY>
+      <width>1420</width>
+      <height>610</height>
+      <texture>#WorldWeather.ImageGeoClock</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>string.equals(#WorldWeather.View,GeoClock)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Info</description>
+      <type>group</type>
+      <dimColor>ffffffff</dimColor>
+      <visible>string.equals(#WorldWeather.View,GeoClock)</visible>
+      <!--visible>string.equals(#WorldWeather.View,GeoClock) + !string.equals(#WorldWeather.ImageGeoClock, )</visible-->
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+
+      <control>
+        <description>Coordinates Degree</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>80</posX>
+        <posY>315</posY>
+        <label>#WorldWeather.LocationCoordinatesDegree</label>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>Current sunrise label</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>80</posX>
+        <posY>345</posY>
+        <label>#WorldWeather.TranslationSunrise: #WorldWeather.LocationSunriseTime</label>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>Current sunset label</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>80</posX>
+        <posY>375</posY>
+        <label>#WorldWeather.TranslationSunset: #WorldWeather.LocationSunsetTime</label>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>SunCulmination</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationSunCulmination</label>
+        <posX>80</posX>
+        <posY>425</posY>
+        <font>font1</font>
+        <textcolor>CD5C5C</textcolor>
+      </control>
+
+      <control>
+        <description>SunCulmination</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationSunCulminationTime</label>
+        <posX>300</posX>
+        <posY>425</posY>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>SunAltitude label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationSunAltitude</label>
+        <posX>80</posX>
+        <posY>455</posY>
+        <font>font1</font>
+        <textcolor>CD5C5C</textcolor>
+      </control>
+
+      <control>
+        <description>SunAltitude</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationSunAltitude</label>
+        <posX>300</posX>
+        <posY>455</posY>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>SunAzimuth label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationSunAzimuth</label>
+        <posX>80</posX>
+        <posY>485</posY>
+        <font>font1</font>
+        <textcolor>CD5C5C</textcolor>
+      </control>
+
+      <control>
+        <description>SunAzimuth</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationSunAzimuth</label>
+        <posX>300</posX>
+        <posY>485</posY>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>SunDiameter</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationSunDiameter</label>
+        <posX>80</posX>
+        <posY>515</posY>
+        <font>font1</font>
+        <textcolor>CD5C5C</textcolor>
+      </control>
+
+      <control>
+        <description>SunDiameter</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationSunDiameter</label>
+        <posX>300</posX>
+        <posY>515</posY>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>SunDistance</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationSunDistance</label>
+        <posX>80</posX>
+        <posY>545</posY>
+        <font>font1</font>
+        <textcolor>CD5C5C</textcolor>
+      </control>
+
+      <control>
+        <description>SunDistance</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationSunDistance</label>
+        <posX>300</posX>
+        <posY>545</posY>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>SunshineDuration label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationSunshineDuration</label>
+        <posX>80</posX>
+        <posY>575</posY>
+        <font>font1</font>
+        <textcolor>CD5C5C</textcolor>
+      </control>
+
+      <control>
+        <description>SunshineDuration</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationSunshineDuration</label>
+        <posX>300</posX>
+        <posY>575</posY>
+        <font>font1</font>
+        <textcolor>ffffff</textcolor>
+      </control>
+
+      <control>
+        <description>MoonPhase label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationMoonPhase</label>
+        <posX>80</posX>
+        <posY>625</posY>
+        <font>font1</font>
+        <textcolor>00b7ff</textcolor>
+      </control>
+
+      <control>
+        <description>MoonPhase</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationMoonPhase</label>
+        <posX>300</posX>
+        <posY>625</posY>
+        <font>font1</font>
+        <width>170</width>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>MoonsetTime label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationMoonset</label>
+        <posX>80</posX>
+        <posY>655</posY>
+        <font>font1</font>
+        <textcolor>00b7ff</textcolor>
+      </control>
+
+      <control>
+        <description>MoonsetTime</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationMoonsetTime</label>
+        <posX>300</posX>
+        <posY>655</posY>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>MoonriseTime label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationMoonrise</label>
+        <posX>80</posX>
+        <posY>685</posY>
+        <font>font1</font>
+        <textcolor>00b7ff</textcolor>
+      </control>
+
+      <control>
+        <description>MoonriseTime</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationMoonriseTime</label>
+        <posX>300</posX>
+        <posY>685</posY>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>MoonCulminationTime label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationMoonCulmination</label>
+        <posX>80</posX>
+        <posY>715</posY>
+        <font>font1</font>
+        <textcolor>00b7ff</textcolor>
+      </control>
+
+      <control>
+        <description>MoonCulminationTime</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationMoonCulminationTime</label>
+        <posX>300</posX>
+        <posY>715</posY>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>MoonAltitude label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationMoonAltitude</label>
+        <posX>80</posX>
+        <posY>745</posY>
+        <font>font1</font>
+        <textcolor>00b7ff</textcolor>
+      </control>
+
+      <control>
+        <description>MoonAltitude</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationMoonAltitude</label>
+        <posX>300</posX>
+        <posY>745</posY>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>MoonAzimuth label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationMoonAzimuth</label>
+        <posX>80</posX>
+        <posY>775</posY>
+        <font>font1</font>
+        <textcolor>00b7ff</textcolor>
+      </control>
+
+      <control>
+        <description>MoonAzimuth</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationMoonAzimuth</label>
+        <posX>300</posX>
+        <posY>775</posY>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>MoonDiameter label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationMoonDiameter</label>
+        <posX>80</posX>
+        <posY>805</posY>
+        <font>font1</font>
+        <textcolor>00b7ff</textcolor>
+      </control>
+
+      <control>
+        <description>MoonDiameter</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationMoonDiameter</label>
+        <posX>300</posX>
+        <posY>805</posY>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>MoonDistance label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationMoonDistance</label>
+        <posX>80</posX>
+        <posY>835</posY>
+        <font>font1</font>
+        <textcolor>00b7ff</textcolor>
+      </control>
+
+      <control>
+        <description>MoonDistance</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationMoonDistance</label>
+        <posX>300</posX>
+        <posY>835</posY>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>TwilightMorningTime label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationCivilTwilightMorning</label>
+        <posX>80</posX>
+        <posY>885</posY>
+        <font>font1</font>
+        <textcolor>bbbbbb</textcolor>
+      </control>
+
+      <control>
+        <description>TwilightMorningTime</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationCivilTwilightMorningTime</label>
+        <posX>300</posX>
+        <posY>885</posY>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+
+      <control>
+        <description>CivilTwilightEveningTime label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationCivilTwilightEvening</label>
+        <posX>80</posX>
+        <posY>915</posY>
+        <font>font1</font>
+        <textcolor>bbbbbb</textcolor>
+      </control>
+
+      <control>
+        <description>CivilTwilightEveningTime</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.LocationCivilTwilightEveningTime</label>
+        <posX>300</posX>
+        <posY>915</posY>
+        <font>font1</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+    </control>
+
+    <!-- *** Timzone description *** -->
+    <control Style="smallTitle">
+      <description>timezone description label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>200</posX>
+      <posY>1015</posY>
+      <width>1520</width>
+      <label>#WorldWeather.LocationCountry - #WorldWeather.LocationTimezoneDescription</label>
+      <font>TitanLight12</font>
+      <align>center</align>
+      <textcolor>000000</textcolor>
+      <visible>string.equals(#WorldWeather.View,GeoClock)+!string.equals(#WorldWeather.ImageGeoClock, )</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+  </controls>
+</window>

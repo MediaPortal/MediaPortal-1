@@ -109,6 +109,7 @@ namespace MediaPortal.InputDevices
             case (int) GUIWindow.Window.WINDOW_VIDEO_ARTIST_INFO:
             case (int) GUIWindow.Window.WINDOW_VIDEO_INFO:
             case (int) GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD:
+            case (int) GUIWindow.Window.WINDOW_PICTURE_EXIF:
               break;
 
             default:
@@ -1728,8 +1729,9 @@ namespace MediaPortal.InputDevices
           actionName = "ACTION_" + friendlyName.Replace(' ', '_').ToUpperInvariant();
         }
       }
-      catch (ArgumentException)
+      catch (ArgumentException ex)
       {
+        Log.Debug("HIDInputMappingForm:GetActionName: {0}", ex.Message);
         try
         {
           if (Enum.Parse(typeof (Action.ActionType), friendlyName.Replace(' ', '_').ToUpperInvariant()) != null)
@@ -1737,8 +1739,9 @@ namespace MediaPortal.InputDevices
             actionName = friendlyName.Replace(' ', '_').ToUpperInvariant();
           }
         }
-        catch (ArgumentException)
+        catch (ArgumentException ex1)
         {
+          Log.Debug("HIDInputMappingForm:GetActionName: {0}", ex1.Message);
         }
       }
 

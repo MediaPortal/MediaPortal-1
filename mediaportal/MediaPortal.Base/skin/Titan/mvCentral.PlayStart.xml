@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+
+    <!--
+   **************************************************************************************
+   This file is an import to videoFullScreen.xml
+   **************************************************************************************
+   NOTE: *** DO NOT USE WindowOpen/WindowClose Animation Types in videoFullScreen.xml ***
+   **************************************************************************************
+   -->
+
+    <!-- ******** Pop next Video Box for mvCentral ********* -->
+    <control>
+      <description>Movie/File Status Icons group</description>
+      <type>group</type>
+      <dimColor>ffffffff</dimColor>
+      <visible>!window.isosdvisible+!window.ispauseosdvisible+string.equals(#mvCentral.Play.Started,true)</visible>
+      <!--animation effect="fade" time="500" delay="0">VisibleChange</animation-->
+
+      <control>
+        <description>Overlay</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>0</posX>
+        <posY>800</posY>
+        <width>1920</width>
+        <height>280</height>
+        <!--texture>tvguide_button_middle_colorize_overlay.png</texture-->
+        <texture>top_overlay.png</texture>
+        <shouldCache>true</shouldCache>
+      </control>
+    
+
+  	<!-- CDArt -->
+
+      <control>
+        <id>55055</id>
+        <description>Empty CD Image</description>
+        <type>image</type>
+        <posX>1650</posX>
+        <posY>810</posY>
+        <width>250</width>
+        <height>250</height>
+      	<texture>CD.png</texture>
+		<keepaspectratio>yes</keepaspectratio>
+		<centered>yes</centered>	
+	  	<visible>![control.hasthumb(55555)|control.hasthumb(55155)]</visible>
+        <animation effect="rotate" delay="0" end="-360" time="8000" loop="true" condition="!player.paused">Conditional</animation>
+        <animation effect="rotate" delay="0" end="-360" time="1500" loop="true" reversible="false" condition="player.forwarding">Conditional</animation>
+        <animation effect="rotate" delay="0" end="360" time="500" loop="true" reversible="false" condition="player.rewinding">Conditional</animation>
+      </control>
+
+      <control>
+        <id>0</id>
+        <description>Arm Image</description>
+        <type>image</type>
+        <posX>1835</posX>
+        <posY>950</posY>
+        <width>80</width>
+        <height>125</height>
+      	<texture>Arm.png</texture>
+		<keepaspectratio>yes</keepaspectratio>
+		<centered>yes</centered>	
+		<align>right</align>	
+		<valign>bottom</valign>	
+	  	<visible>control.isvisible(55055)</visible>
+        <animation effect="rotate" delay="0" start="-25" end="0" time="2000" loop="false" reversible="true" center="1890,1040" condition="player.playing">Conditional</animation>
+      </control>
+
+      <control>
+        <id>55155</id>
+        <description>CD Image</description>
+        <type>image</type>
+        <posX>1650</posX>
+        <posY>810</posY>
+        <width>250</width>
+        <height>250</height>
+     	<texture>#fanarthandler.music.albumcd.play</texture>
+		<keepaspectratio>yes</keepaspectratio>
+		<centered>yes</centered>	
+        <animation effect="rotate" delay="0" end="-360" time="8000" loop="true" condition="!player.paused">Conditional</animation>
+        <animation effect="rotate" delay="0" end="-360" time="1500" loop="true" reversible="false" condition="player.forwarding">Conditional</animation>
+        <animation effect="rotate" delay="0" end="360" time="500" loop="true" reversible="false" condition="player.rewinding">Conditional</animation>
+      	<visible>!control.hasthumb(55555)</visible>
+      </control>
+
+      <control>
+        <id>55555</id>
+        <description>CD Image</description>
+        <type>image</type>
+        <posX>1650</posX>
+        <posY>810</posY>
+        <width>250</width>
+        <height>250</height>
+      	<texture>..\..\..\Thumbs\CDArt\Music\#Play.Current.mvArtist - #Play.Current.mvAlbum.png</texture>
+		<keepaspectratio>yes</keepaspectratio>
+		<centered>yes</centered>	
+        <animation effect="rotate" delay="0" end="-360" time="8000" loop="true" condition="!player.paused">Conditional</animation>
+        <animation effect="rotate" delay="0" end="-360" time="1500" loop="true" reversible="false" condition="player.forwarding">Conditional</animation>
+        <animation effect="rotate" delay="0" end="360" time="500" loop="true" reversible="false" condition="player.rewinding">Conditional</animation>
+      </control>
+
+	<!--  -->
+
+    <control>
+      <type>image</type>
+      <description>Album Art image</description>
+      <id>0</id>
+      <posX>1525</posX>
+      <posY>810</posY>
+      <width>250</width>
+      <height>250</height>
+      <texture>#Play.Current.Thumb</texture>
+    </control>
+    <control>
+      <type>image</type>
+      <description>Album Art image</description>
+      <id>0</id>
+      <posX>1525</posX>
+      <posY>810</posY>
+      <width>250</width>
+      <height>250</height>
+      <texture>#fanarthandler.music.artisthumb.play</texture>
+  	  <visible>string.equals(#Play.Current.Thumb,)</visible>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>Progress background</description>
+      <type>image</type>
+      <posX>1525</posX>
+      <posY>1070</posY>
+      <width>250</width>
+      <height>1</height>
+      <texture>simple_pb_background.png</texture>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>progress bar</description>
+      <type>progress</type>
+      <posX>1504</posX>
+      <posY>1044</posY>
+      <width>292</width>
+      <height>26</height>
+      <label>#percentage</label>
+      <texturebg></texturebg>
+      <lefttexture></lefttexture>
+      <midtexture></midtexture>
+      <righttexture>simple_pb_right.png</righttexture>
+    </control>
+
+    <!-- ClearArt -->
+    <control>
+      <description>ClearArt</description>
+      <type>image</type>
+      <id>258456950</id>
+      <posX>1525</posX>
+      <posY>690</posY>
+      <width>250</width>
+      <height>100</height>           
+      <align>left</align>
+      <valign>bottom</valign>
+      <texture>#fanarthandler.music.artistclearart.play</texture>
+      <shouldCache>false</shouldCache>
+    </control>
+    <control>
+      <description>ClearArt</description>
+      <type>image</type>
+      <id>258456951</id>
+      <posX>1525</posX>
+      <posY>690</posY>
+      <width>250</width>
+      <height>100</height>           
+      <align>left</align>
+      <valign>bottom</valign>
+      <texture>..\..\..\Thumbs\ClearArt\Music\#Play.Current.mvArtist.png</texture>
+      <shouldCache>false</shouldCache>
+      <visible>!control.hasthumb(258456950)</visible>
+    </control>
+    <!-- -->
+
+      <control>
+        <type>fadelabel</type>          
+        <description>Track</description>
+        <id>0</id>
+        <!--label>#(iif(eq(#Play.Current.Track,''),'',string.format('{0:00}. ',cint(#Play.Current.Track))))#(string.toupper(#Play.Current.Title))</label-->
+        <label>#(iif(eq(#Play.Current.Track,''),'',string.format('{0:00}. ',cint(#Play.Current.Track))))#Play.Current.mvVideo</label>
+        <posX>1500</posX>
+        <posY>810</posY>
+        <width>1500</width>
+        <height>38</height>
+        <align>right</align>
+        <valign>top</valign>
+        <textcolor>FF00b7ff</textcolor>
+        <font>fontB20</font>
+      </control>
+      <control>
+        <type>fadelabel</type>          
+        <description>Title</description>
+        <id>0</id>
+        <!--label>#(string.toupper(#Play.Current.Title))</label-->
+        <label>#Play.Current.mvVideo</label>
+        <posX>1500</posX>
+        <posY>810</posY>
+        <width>1500</width>
+        <height>38</height>
+        <align>right</align>
+        <font>fontB20</font>
+      </control>
+
+      <control>
+        <id>0</id>
+        <type>imagelist</type>
+        <posX>1485</posX>
+        <posY>873</posY>
+        <width>876</width>
+        <height>15</height>
+        <textureWidth>16</textureWidth>
+        <textureHeight>14</textureHeight>
+        <percentage>#Play.Current.Rating</percentage>
+        <imagesToDraw>5</imagesToDraw>
+        <orientation>horizontal</orientation>
+        <align>right</align>
+        <subitems>
+          <subitem>starblue.png</subitem>
+          <subitem>starwhite.png</subitem>
+        </subitems>
+      </control>
+
+      <control>
+        <type>image</type>
+        <description>Video Resolution</description>
+        <id>0</id>
+        <posX>1360</posX>
+        <posY>867</posY>
+        <width>50</width>
+        <height>30</height>
+        <align>right</align>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\resolution\#Play.Current.VideoResolution.png</texture>
+      </control>
+
+      <control>
+        <type>image</type>
+        <description>Video Codec</description>
+        <id>0</id>
+        <posX>1310</posX>
+        <posY>867</posY>
+        <width>50</width>
+        <height>30</height>
+        <align>right</align>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\video\#Play.Current.VideoCodec.Texture.png</texture>
+      </control>
+
+      <control>
+        <type>image</type>
+        <description>SD/HD Fullscreen/Widescreen</description>
+        <id>0</id>
+        <posX>1260</posX>
+        <posY>867</posY>
+        <width>50</width>
+        <height>30</height>
+        <align>right</align>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\aspectratio\#Play.Current.AspectRatio.png</texture>
+      </control>
+
+      <control>
+        <type>image</type>
+        <description>Sub</description>
+        <id>0</id>
+        <posX>1210</posX>
+        <posY>867</posY>
+        <width>50</width>
+        <height>30</height>
+        <align>right</align>
+        <texture>logos\subtitles.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+        <visible>string.equals(#Play.Current.HasSubtitles, True)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <description>Sub</description>
+        <id>0</id>
+        <posX>1210</posX>
+        <posY>867</posY>
+        <width>50</width>
+        <height>30</height>
+        <align>right</align>
+        <texture>logos\nosubtitles.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+        <visible>!string.equals(#Play.Current.HasSubtitles, True)</visible>
+      </control>
+
+      <control>
+        <type>image</type>
+        <description>Audio Codecs / Channels</description>
+        <id>0</id>
+        <posX>1160</posX>
+        <posY>867</posY>
+        <width>50</width>
+        <height>30</height>
+        <align>right</align>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\Audio\#Play.Current.AudioCodec.Texture.png</texture>
+      </control>
+
+      <control>
+        <type>image</type>
+        <description>Audio Channels</description>
+        <id>0</id>
+        <posX>1110</posX>
+        <posY>867</posY>
+        <width>50</width>
+        <height>30</height>
+        <align>right</align>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Logos\audio\#Play.Current.AudioChannels.png</texture>
+      </control>
+
+      <control>
+        <type>fadelabel</type>
+        <description>Artist label</description>
+        <id>0</id>
+        <posX>1500</posX>
+        <posY>895</posY>
+        <width>1500</width>
+        <height>38</height>
+        <align>right</align>
+        <label>#Play.Current.mvArtist</label>
+        <font>TitanLight14</font>
+      </control>
+
+      <control>
+        <type>fadelabel</type>          
+        <description>Album</description>
+        <id>0</id>
+        <label>#Play.Current.mvAlbum#(iif(eq(#Play.Current.Year,''),'',string.format(' [{0}]',#Play.Current.Year)))</label>
+        <posX>1500</posX>
+        <posY>940</posY>
+        <width>1500</width>
+        <height>38</height>
+        <align>right</align>
+        <font>TitanLight12</font>
+      </control>
+      <control>
+        <type>fadelabel</type>          
+        <description>Year</description>
+        <id>0</id>
+        <label>#(iif(eq(#Play.Current.Year,''),'',string.format(' [{0}]',#Play.Current.Year)))</label>
+        <posX>1500</posX>
+        <posY>940</posY>
+        <width>1500</width>
+        <height>38</height>
+        <align>right</align>
+        <textcolor>FF00b7ff</textcolor>
+        <font>TitanLight12</font>
+      </control>
+
+      <control>
+        <type>label</type>
+        <description>Genre</description>
+        <id>0</id>
+        <posX>1500</posX>
+        <posY>985</posY>
+        <width>1500</width>
+        <height>38</height>
+        <align>right</align>
+        <label>#Play.Current.Genre</label>
+        <font>TitanLight10</font>
+      </control>
+
+      <control>
+        <type>label</type>
+        <description>Track info</description>
+        <id>0</id>
+        <posX>1500</posX>
+        <posY>1020</posY>
+        <width>1020</width>
+        <height>38</height>
+        <label>#currentplaytime / #duration</label>
+        <align>right</align>
+        <font>fontB16</font>
+      </control>
+      <control>
+        <type>label</type>
+        <description>Track info</description>
+        <id>0</id>
+        <posX>1500</posX>
+        <posY>1020</posY>
+        <width>1000</width>
+        <height>38</height>
+        <label>/ #duration</label>
+        <align>right</align>
+        <textcolor>FF00b7ff</textcolor>
+        <font>fontB16</font>
+      </control>
+      <control>
+        <type>label</type>
+        <description>Track info</description>
+        <id>0</id>
+        <posX>1500</posX>
+        <posY>1020</posY>
+        <width>1000</width>
+        <height>38</height>
+        <label>#duration</label>
+        <align>right</align>
+        <font>fontB16</font>
+      </control>
+
+    </control>
+  </controls>
+</window>

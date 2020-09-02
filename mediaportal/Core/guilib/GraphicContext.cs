@@ -653,8 +653,9 @@ namespace MediaPortal.GUI.Library
         {
           return form.PointToScreen(clientCenter);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("OutputScreenCenter: Exception" + ex.Message);
           return new Point(0, 0);
         }
 

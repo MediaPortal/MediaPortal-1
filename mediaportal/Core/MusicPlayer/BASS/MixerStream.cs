@@ -467,8 +467,10 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         return Bass.BASS_ChannelGetData(user.ToInt32(), buffer, length);
       }
-      catch (AccessViolationException)
-      { }
+      catch (AccessViolationException ex)
+      {
+        Log.Error("MixereSteam:AsioCallback: {0}", ex.Message);
+      }
       return 0;
     }
 
@@ -489,11 +491,13 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         return Bass.BASS_ChannelGetData(_mixer, buffer, length);
       }
-      catch (AccessViolationException)
+      catch (AccessViolationException ex)
       {
+        Log.Error("MixerStream: WasApiCallback {0}", ex.Message);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("MixerStream: WasApiCallback {0}", ex.Message);
       }
       return 0;
     }
@@ -875,9 +879,9 @@ namespace MediaPortal.MusicPlayer.BASS
         {
           musicstream = (MusicStream)_pinnedObjects[userData.ToInt32()].Target;
         }
-        catch (KeyNotFoundException)
+        catch (KeyNotFoundException ex)
         {
-          Log.Error("BASS: GCHandle of Musicstream not found in Dictionary {0}", userData.ToInt32());
+          Log.Error("BASS: GCHandle of Musicstream not found in Dictionary {0} {1}", userData.ToInt32(), ex.Message);
           return;
         }
 
@@ -942,9 +946,9 @@ namespace MediaPortal.MusicPlayer.BASS
           }
         }
       }
-      catch (AccessViolationException)
+      catch (AccessViolationException ex)
       {
-        Log.Error("BASS: Caught AccessViolationException in Playback End Proc");
+        Log.Error("BASS: Caught AccessViolationException in Playback End Proc {0}", ex.Message);
       }
     }
 

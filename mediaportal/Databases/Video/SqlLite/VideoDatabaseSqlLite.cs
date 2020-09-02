@@ -33,6 +33,8 @@ using MediaPortal.Player;
 using MediaPortal.Util;
 using SQLite.NET;
 using MediaPortal.Profile;
+using MediaInfo;
+using MediaPortal.Services;
 
 namespace MediaPortal.Video.Database
 {
@@ -76,13 +78,16 @@ namespace MediaPortal.Video.Database
         {
           Directory.CreateDirectory(strPath);
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("VideoDatabaseSqLite:Open: {0}", ex.Message);
+        }
         m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, @"VideoDatabaseV5.db3"));
 
         _dbHealth = DatabaseUtility.IntegrityCheck(m_db);
 
         DatabaseUtility.SetPragmas(m_db);
-        
+
         CreateTables();
         //
         // Check and upgrade database with new columns if necessary
@@ -100,8 +105,8 @@ namespace MediaPortal.Video.Database
 
       // Fill default Video fields for Video
       _defaultVideoViewFields = "idMovie, idDirector, strPlotOutline, strPlot, strTagLine, strVotes, fRating, strCast, " +
-                                "strCredits, iYear, strGenre, strPictureURL, strTitle, IMDBID, mpaa, runtime, iswatched, " + 
-                                "strUserReview, strFanartURL, strDirector, dateAdded, dateWatched, studios, country, " + 
+                                "strCredits, iYear, strGenre, strPictureURL, strTitle, IMDBID, mpaa, runtime, iswatched, " +
+                                "strUserReview, strFanartURL, strDirector, dateAdded, dateWatched, studios, country, " +
                                 "language, lastupdate, strSortTitle, TMDBNumber, LocalDBNumber, iUserRating, " +
                                 "MPAAText, Awards, " +
                                 "discid, strPath, cdlabel";
@@ -178,12 +183,12 @@ namespace MediaPortal.Video.Database
           // Add director name from actors
           strSQL = String.Format("SELECT idMovie, idDirector, actors.strActor FROM movieinfo, actors WHERE idDirector = idActor");
           SQLiteResultSet results = m_db.Execute(strSQL);
-          
+
           // Upgrade director name in movieinfo
           for (int i = 0; i < results.Rows.Count; i++)
           {
             string directorName = DatabaseUtility.Get(results, i, "actors.strActor");
-            int movieId = Convert.ToInt32(DatabaseUtility.Get(results, i, "idMovie"));
+            int movieId = DatabaseUtility.GetAsInt(results, i, "idMovie");
             strSQL = String.Format("UPDATE movieinfo SET strDirector='{0}' WHERE idMovie = {1}", directorName, movieId);
             m_db.Execute(strSQL);
           }
@@ -258,7 +263,7 @@ namespace MediaPortal.Video.Database
         #region Movie table
 
         bool watchedUpg = false;
-        
+
         if (DatabaseUtility.TableColumnExists(m_db, "movie", "watched") == false)
         {
           string strSQL = "ALTER TABLE \"main\".\"movie\" ADD COLUMN \"watched\" bool DEFAULT 0";
@@ -289,9 +294,9 @@ namespace MediaPortal.Video.Database
 
           for (int i = 0; i < results.Rows.Count; i++)
           {
-            int movieId = Int32.Parse(DatabaseUtility.Get(results, i, "idMovie"));
-            int watched = Int32.Parse(DatabaseUtility.Get(results, i, "iswatched"));
-            
+            int movieId = DatabaseUtility.GetAsInt(results, i, "idMovie");
+            int watched = DatabaseUtility.GetAsInt(results, i, "iswatched");
+
             if (watched > 0)
             {
               SetMovieWatchedStatus(movieId, true, 100);
@@ -303,7 +308,7 @@ namespace MediaPortal.Video.Database
 
           for (int i = 0; i < results.Rows.Count; i++)
           {
-            int movieId = Int32.Parse(DatabaseUtility.Get(results, i, "idMovie"));
+            int movieId = DatabaseUtility.GetAsInt(results, i, "idMovie");
             SetMovieWatchedStatus(movieId, true, 100);
             MovieWatchedCountIncrease(movieId);
           }
@@ -331,7 +336,21 @@ namespace MediaPortal.Video.Database
         if (DatabaseUtility.TableExists(m_db, "filesmediainfo") == false)
         {
           DatabaseUtility.AddTable(m_db, "filesmediainfo",
-                                   "CREATE TABLE filesmediainfo ( idFile integer primary key, videoCodec text, videoResolution text, aspectRatio text, hasSubtitles bool, audioCodec text, audioChannels text)");
+                                   "CREATE TABLE filesmediainfo ( idFile integer primary key, videoCodec text, videoResolution text, aspectRatio text, hasSubtitles bool, audioCodec text, audioChannels text, is3D bool, isHDR bool)");
+        }
+
+        // 3D flag
+        if (DatabaseUtility.TableColumnExists(m_db, "filesmediainfo", "is3D") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"filesmediainfo\" ADD COLUMN \"is3D\" bool DEFAULT 0";
+          m_db.Execute(strSQL);
+        }
+
+        // HDR flag
+        if (DatabaseUtility.TableColumnExists(m_db, "filesmediainfo", "isHDR") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"filesmediainfo\" ADD COLUMN \"isHDR\" bool DEFAULT 0";
+          m_db.Execute(strSQL);
         }
 
         #endregion
@@ -384,7 +403,7 @@ namespace MediaPortal.Video.Database
           string strSQL = "ALTER TABLE \"main\".\"usergroup\" ADD COLUMN \"strGroupDescription\" text DEFAULT ''";
           m_db.Execute(strSQL);
         }
-        
+
         #endregion
 
         #region Movie Collection table
@@ -418,9 +437,9 @@ namespace MediaPortal.Video.Database
         {
           DatabaseUtility.AddView(m_db, "movieView",
                                "CREATE VIEW movieView AS  " +
-                                      "SELECT movieinfo.*, " + 
+                                      "SELECT movieinfo.*, " +
                                              "genre.idGenre as idSingleGenre, genre.strGenre as strSingleGenre, " +
-                                             "moviecollection.*, " + 
+                                             "moviecollection.*, " +
                                              "usergroup.*, " +
                                              "movie.hasSubtitles, movie.discid, movie.watched, movie.iwatchedPercent, movie.timeswatched, movie.iduration, " +
                                              "path.idPath, path.strPath, path.cdlabel, " +
@@ -507,7 +526,7 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddTable(m_db, "VideoThumbBList",
                                "CREATE TABLE VideoThumbBList ( idVideoThumbBList integer primary key, strPath text, strExpires text, strFileDate text, strFileSize text)");
       DatabaseUtility.AddTable(m_db, "filesmediainfo",
-                               "CREATE TABLE filesmediainfo ( idFile integer primary key, videoCodec text, videoResolution text, aspectRatio text, hasSubtitles bool, audioCodec text, audioChannels text)");
+                               "CREATE TABLE filesmediainfo ( idFile integer primary key, videoCodec text, videoResolution text, aspectRatio text, hasSubtitles bool, audioCodec text, audioChannels text, is3D bool, isHDR bool)");
       #endregion
 
       #region Indexes
@@ -524,20 +543,20 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddIndex(m_db, "idxactorlinkmovie_idMovie",
                                "CREATE INDEX idxactorlinkmovie_idMovie ON actorlinkmovie(idMovie ASC)");
       // Actors
-      DatabaseUtility.AddIndex(m_db, "idxactors_strActor", 
+      DatabaseUtility.AddIndex(m_db, "idxactors_strActor",
                                "CREATE INDEX idxactors_strActor ON actors(strActor ASC)");
-      DatabaseUtility.AddIndex(m_db, "idxactors_idActor", 
+      DatabaseUtility.AddIndex(m_db, "idxactors_idActor",
                               "CREATE UNIQUE INDEX idxactors_idActor ON actors(idActor ASC)");
       DatabaseUtility.AddIndex(m_db, "idxactors_idIMDB",
                               "CREATE INDEX idxactors_idIMDB ON actors(IMDBActorID ASC)");
       DatabaseUtility.AddIndex(m_db, "idxactors_idxActor",
                               "CREATE INDEX idxactors_idxActor ON actors(UPPER(SUBSTR(strActor,1,1)) ASC)");
       // Files
-      DatabaseUtility.AddIndex(m_db, "idxfiles_idFile", 
+      DatabaseUtility.AddIndex(m_db, "idxfiles_idFile",
                                "CREATE UNIQUE INDEX idxfiles_idFile ON files(idFile ASC)");
-      DatabaseUtility.AddIndex(m_db, "idxfiles_idMovie", 
+      DatabaseUtility.AddIndex(m_db, "idxfiles_idMovie",
                                "CREATE INDEX idxfiles_idMovie ON files(idMovie ASC)");
-      DatabaseUtility.AddIndex(m_db, "idxfiles_idPath", 
+      DatabaseUtility.AddIndex(m_db, "idxfiles_idPath",
                                "CREATE INDEX idxfiles_idPath ON files(idPath ASC)");
       // Genre
       DatabaseUtility.AddIndex(m_db, "idxgenre_idGenre",
@@ -560,12 +579,12 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddIndex(m_db, "idxmoviecollectionlinkmovie_idMovie",
                                "CREATE INDEX idxmoviecollectionlinkmovie_idMovie ON moviecollectionlinkmovie(idMovie ASC)");
       // Movie
-      DatabaseUtility.AddIndex(m_db, "idxmovie_idMovie", 
+      DatabaseUtility.AddIndex(m_db, "idxmovie_idMovie",
                                "CREATE UNIQUE INDEX idxmovie_idMovie ON movie(idMovie ASC)");
-      DatabaseUtility.AddIndex(m_db, "idxmovie_idPath", 
+      DatabaseUtility.AddIndex(m_db, "idxmovie_idPath",
                                "CREATE INDEX idxmovie_idPath ON movie(idPath ASC)");
       // MovieInfo
-      DatabaseUtility.AddIndex(m_db, "idxmovieinfo_iYear", 
+      DatabaseUtility.AddIndex(m_db, "idxmovieinfo_iYear",
                                "CREATE INDEX idxmovieinfo_iYear ON movieinfo(iYear ASC)");
       DatabaseUtility.AddIndex(m_db, "idxmovieinfo_idDirector",
                                "CREATE INDEX idxmovieinfo_idDirector ON movieinfo(idDirector ASC)");
@@ -578,9 +597,9 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddIndex(m_db, "idxmovieinfo_idxTitle",
                                "CREATE INDEX idxmovieinfo_idxTitle ON movieinfo(UPPER(SUBSTR(strTitle,1,1)) ASC)");
       // Path
-      DatabaseUtility.AddIndex(m_db, "idxpath_idPath", 
+      DatabaseUtility.AddIndex(m_db, "idxpath_idPath",
                                "CREATE INDEX idxpath_idPath ON path(idPath ASC)");
-      DatabaseUtility.AddIndex(m_db, "idxpath_strPath", 
+      DatabaseUtility.AddIndex(m_db, "idxpath_strPath",
                                "CREATE INDEX idxpath_strPath ON path(strPath ASC)");
       // VideThumbList
       DatabaseUtility.AddIndex(m_db, "idxVideoThumbBList_strPath",
@@ -631,13 +650,13 @@ namespace MediaPortal.Video.Database
           int lFileId = -1;
           strFileName = strFileName.Trim();
 
-        string strSQL = String.Format("SELECT * FROM files WHERE idmovie={0} AND idpath={1} AND strFileName = '{2}'",
-                                        lMovieId, lPathId, strFileName);
+          string strSQL = String.Format("SELECT * FROM files WHERE idmovie={0} AND idpath={1} AND strFileName = '{2}'",
+                                          lMovieId, lPathId, strFileName);
           SQLiteResultSet results = m_db.Execute(strSQL);
 
           if (results != null && results.Rows.Count > 0)
           {
-            Int32.TryParse(DatabaseUtility.Get(results, 0, "idFile"), out lFileId);
+            lFileId = DatabaseUtility.GetAsInt(results, 0, "idFile");
             CheckMediaInfo(strFileName, string.Empty, lPathId, lFileId, false);
             return lFileId;
           }
@@ -658,7 +677,7 @@ namespace MediaPortal.Video.Database
         return -1;
       }
     }
-    
+
     private int MovieDuration(ArrayList files)
     {
       int totalMovieDuration = 0;
@@ -682,7 +701,10 @@ namespace MediaPortal.Video.Database
       {
         // Will be logged in thread main code
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("VideoDatabaseSqLite:MovieDuration: {0}", ex.Message);
+      }
 
       return totalMovieDuration;
     }
@@ -691,21 +713,21 @@ namespace MediaPortal.Video.Database
     {
       lPathId = -1;
       lMovieId = -1;
-      
+
       try
       {
         if (null == m_db)
         {
           return -1;
         }
-        
+
         string strPath, strFileName;
         strFilenameAndPath = strFilenameAndPath.Trim();
         DatabaseUtility.Split(strFilenameAndPath, out strPath, out strFileName);
         DatabaseUtility.RemoveInvalidChars(ref strPath);
         DatabaseUtility.RemoveInvalidChars(ref strFileName);
         lPathId = GetPath(strPath);
-        
+
         if (lPathId < 0)
         {
           return -1;
@@ -713,15 +735,14 @@ namespace MediaPortal.Video.Database
 
         string strSQL = String.Format("SELECT * FROM files WHERE idpath={0} AND strFilename = '{1}'", lPathId, strFileName);
         SQLiteResultSet results = m_db.Execute(strSQL);
-        
+
         if (results.Rows.Count > 0)
         {
-                int lFileId;
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idFile"), out lFileId);
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idMovie"), out lMovieId);
-                return lFileId;
-              }
-            }
+          int lFileId = DatabaseUtility.GetAsInt(results, 0, "idFile");
+          lMovieId = DatabaseUtility.GetAsInt(results, 0, "idMovie");
+          return lFileId;
+        }
+      }
       catch (ThreadAbortException)
       {
         // Will be logged in thread main code
@@ -742,12 +763,9 @@ namespace MediaPortal.Video.Database
       {
         string sql = String.Format("SELECT * FROM resume WHERE idFile={0}", iFileId);// bdtitle);
         SQLiteResultSet results = m_db.Execute(sql);
-        int BDTileID;
-
         if (results.Rows.Count != 0)
         {
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "bdtitle"), out BDTileID);
-          return BDTileID;
+          return DatabaseUtility.GetAsInt(results, 0, "bdtitle");
         }
       }
       catch (Exception ex)
@@ -761,35 +779,35 @@ namespace MediaPortal.Video.Database
     public int AddMovieFile(string strFile)
     {
       bool bHassubtitles = false;
-      
+
       if (strFile.ToLowerInvariant().IndexOf(".ifo") >= 0)
       {
         bHassubtitles = true;
       }
-      
+
       if (strFile.ToLowerInvariant().IndexOf(".vob") >= 0)
       {
         bHassubtitles = true;
       }
-      
+
       string strCDLabel = "";
-      
+
       if (Util.Utils.IsDVD(strFile))
       {
         strCDLabel = Util.Utils.GetDriveSerial(strFile);
       }
-      
+
       string[] sub_exts = {
                             ".utf", ".utf8", ".utf-8", ".sub", ".srt", ".smi", ".rt", ".txt", ".ssa", ".aqt", ".jss",
                             ".ass", ".idx", ".ifo"
                           };
-      
+
       // check if movie has subtitles
       for (int i = 0; i < sub_exts.Length; i++)
       {
         string strSubTitleFile = strFile;
         strSubTitleFile = Path.ChangeExtension(strFile, sub_exts[i]);
-        
+
         if (File.Exists(strSubTitleFile))
         {
           bHassubtitles = true;
@@ -814,7 +832,7 @@ namespace MediaPortal.Video.Database
         string strSQL = String.Format("SELECT * FROM path WHERE strPath like '{0}' AND cdlabel like '{1}'", strPath,
                                       cdlabel);
         SQLiteResultSet results = m_db.Execute(strSQL);
-        
+
         if (results.Rows.Count == 0)
         {
           // doesnt exists, add it
@@ -826,8 +844,7 @@ namespace MediaPortal.Video.Database
         }
         else
         {
-          int lPathId;
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idPath"), out lPathId);
+          int lPathId = DatabaseUtility.GetAsInt(results, 0, "idPath");
           strSQL = String.Format("UPDATE path SET strPath='{0}' WHERE idPath = {1}", strPath, lPathId);
           m_db.Execute(strSQL);
           return lPathId;
@@ -849,11 +866,11 @@ namespace MediaPortal.Video.Database
         {
           return -1;
         }
-        
+
         string cdlabel = string.Empty;
         string strSQL = string.Empty;
         strPath = strPath.Trim();
-        
+
         if (Util.Utils.IsDVD(strPath))
         {
           // It's a DVD! Any drive letter should be OK as long as the label and rest of the path matches
@@ -866,14 +883,12 @@ namespace MediaPortal.Video.Database
         {
           strSQL = String.Format("SELECT * FROM path WHERE strPath = '{0}'", strPath);
         }
-        
+
         SQLiteResultSet results = m_db.Execute(strSQL);
-        
+
         if (results.Rows.Count > 0)
         {
-          int lPathId;
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idPath"), out lPathId);
-          return lPathId;
+          return DatabaseUtility.GetAsInt(results, 0, "idPath");
         }
       }
       catch (ThreadAbortException)
@@ -918,7 +933,7 @@ namespace MediaPortal.Video.Database
         {
           return;
         }
-        
+
         // Delete files data from other tables
         string strSQL = string.Empty;
         ArrayList files = new ArrayList();
@@ -968,7 +983,7 @@ namespace MediaPortal.Video.Database
 
         if (results.Rows.Count > 0)
         {
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idFile"), out fileId);
+          fileId = DatabaseUtility.GetAsInt(results, 0, "idFile");
         }
       }
       catch (ThreadAbortException)
@@ -989,12 +1004,12 @@ namespace MediaPortal.Video.Database
       try
       {
         files.Clear();
-        
+
         if (null == m_db)
         {
           return;
         }
-        
+
         if (lMovieId < 0)
         {
           return;
@@ -1004,12 +1019,12 @@ namespace MediaPortal.Video.Database
           "SELECT * FROM path,files WHERE path.idPath=files.idPath AND files.idmovie={0} ORDER BY strFilename ASC",
           lMovieId);
         SQLiteResultSet results = m_db.Execute(strSQL);
-        
+
         if (results.Rows.Count == 0)
         {
           return;
         }
-        
+
         for (int i = 0; i < results.Rows.Count; ++i)
         {
           string strFile = DatabaseUtility.Get(results, i, "files.strFilename");
@@ -1047,9 +1062,13 @@ namespace MediaPortal.Video.Database
       strSQL = String.Format("SELECT * FROM path WHERE idPath={0}", pathID);
       SQLiteResultSet results = m_db.Execute(strSQL);
       // No ftp or http videos
-      string path = DatabaseUtility.Get(results, 0, "strPath");
+      string path = String.Empty;
+      if (results.Rows.Count > 0)
+      {
+        path = DatabaseUtility.Get(results, 0, "strPath");
+      }
 
-      if (path.IndexOf("remote:") >= 0 || path.IndexOf("http:") >= 0)
+      if (path.Contains("remote:")|| path.Contains("http:"))
       {
         return;
       }
@@ -1111,9 +1130,11 @@ namespace MediaPortal.Video.Database
         else
         {
           g_Player.currentMediaInfoFilePlaying = strFilenameAndPath;
-          mInfo = g_Player._mediaInfo = new MediaInfoWrapper(strFilenameAndPath);
-          mInfo.finished.WaitOne(5000);
+          var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
+          mInfo = g_Player._mediaInfo = new MediaInfoWrapper(strFilenameAndPath, logger);
         }
+
+        mInfo.WriteInfo();
 
         if (isImage && DaemonTools.IsMounted(strFilenameAndPath))
         {
@@ -1134,39 +1155,43 @@ namespace MediaPortal.Video.Database
 
         try
         {
-          if (results.Rows.Count == 0)
-          {
-            strSQL = String.Format(
-              "INSERT INTO filesmediainfo (idFile, videoCodec, videoResolution, aspectRatio, hasSubtitles, audioCodec, audioChannels) VALUES({0},'{1}','{2}','{3}',{4},'{5}','{6}')",
-              fileID,
-              Util.Utils.MakeFileName(mInfo.VideoCodec),
-              mInfo.VideoResolution,
-              mInfo.AspectRatio,
-              subtitles,
-              Util.Utils.MakeFileName(mInfo.AudioCodec),
-              mInfo.AudioChannelsFriendly);
-          }
-          else
-          {
-            strSQL = String.Format(
-              "UPDATE filesmediainfo SET videoCodec='{1}', videoResolution='{2}', aspectRatio='{3}', hasSubtitles='{4}', audioCodec='{5}', audioChannels='{6}' WHERE idFile={0}",
-              fileID,
-              Util.Utils.MakeFileName(mInfo.VideoCodec),
-              mInfo.VideoResolution,
-              mInfo.AspectRatio,
-              subtitles,
-              Util.Utils.MakeFileName(mInfo.AudioCodec),
-              mInfo.AudioChannelsFriendly);
-          }
-
           // Prevent empty record for future or unknown codecs
-          if (mInfo.VideoCodec == string.Empty)
+          if (mInfo.BestVideoStream == null || mInfo.BestVideoStream.Codec == MediaInfo.Model.VideoCodec.Undefined)
           {
             return;
           }
 
+          if (results.Rows.Count == 0)
+          {
+            strSQL = String.Format(
+              "INSERT INTO filesmediainfo (idFile, videoCodec, videoResolution, aspectRatio, hasSubtitles, audioCodec, audioChannels, is3D, isHDR) VALUES({0},'{1}','{2}','{3}',{4},'{5}','{6}','{7}','{8}')",
+              fileID,
+              Util.Utils.MakeFileName(mInfo.BestVideoStream.Codec.ToCodecString() ?? string.Empty),
+              mInfo.VideoResolution,
+              mInfo.AspectRatio,
+              subtitles,
+              Util.Utils.MakeFileName(mInfo.BestAudioStream?.Codec.ToCodecString() ?? string.Empty),
+              mInfo.AudioChannelsFriendly,
+              mInfo.Is3D ? 1 : 0,
+              mInfo.IsHdr ? 1 : 0);
+          }
+          else
+          {
+            strSQL = String.Format(
+              "UPDATE filesmediainfo SET videoCodec='{1}', videoResolution='{2}', aspectRatio='{3}', hasSubtitles='{4}', audioCodec='{5}', audioChannels='{6}', is3D='{7}', isHDR='{8}' WHERE idFile={0}",
+              fileID,
+              Util.Utils.MakeFileName(mInfo.BestVideoStream.Codec.ToCodecString() ?? string.Empty),
+              mInfo.VideoResolution,
+              mInfo.AspectRatio,
+              subtitles,
+              Util.Utils.MakeFileName(mInfo.BestAudioStream?.Codec.ToCodecString() ?? string.Empty),
+              mInfo.AudioChannelsFriendly,
+              mInfo.Is3D ? 1 : 0,
+              mInfo.IsHdr ? 1 : 0);
+          }
+
           m_db.Execute(strSQL);
-          SetVideoDuration(fileID, mInfo.VideoDuration / 1000);
+          SetVideoDuration(fileID, mInfo.Duration / 1000);
           ArrayList movieFiles = new ArrayList();
           int movieId = VideoDatabase.GetMovieId(strFilenameAndPath);
           VideoDatabase.GetFilesForMovie(movieId, ref movieFiles);
@@ -1180,7 +1205,10 @@ namespace MediaPortal.Video.Database
         {
           // Will be logged in thread main code
         }
-        catch (Exception) { }
+        catch (Exception ex)
+        {
+          Log.Error("VideoDatabaseSqLite:GetFilesForMovie: {0}", ex.Message);
+        }
       }
     }
 
@@ -1217,28 +1245,40 @@ namespace MediaPortal.Video.Database
             CheckMediaInfo(string.Empty, strFilenameAndPath, -1, fileID, refresh);
             results = m_db.Execute(strSQL);
           }
-          catch (Exception) { }
+          catch (Exception ex)
+          {
+            Log.Error("VideoDatabaseSqLite:GetVideoFilesMediaInfo: {0}", ex.Message);
+          }
         }
 
-        mediaInfo.VideoCodec = DatabaseUtility.Get(results, 0, "videoCodec");
-        mediaInfo.VideoResolution = DatabaseUtility.Get(results, 0, "videoResolution");
-        mediaInfo.AspectRatio = DatabaseUtility.Get(results, 0, "aspectRatio");
-
-        int hasSubtitles;
-        int.TryParse(DatabaseUtility.Get(results, 0, "hasSubtitles"), out hasSubtitles);
-
-        if (hasSubtitles != 0)
+        if (results.Rows.Count > 0)
         {
-          mediaInfo.HasSubtitles = true;
+          mediaInfo.VideoCodec = DatabaseUtility.Get(results, 0, "videoCodec");
+          mediaInfo.VideoResolution = DatabaseUtility.Get(results, 0, "videoResolution");
+          mediaInfo.AspectRatio = DatabaseUtility.Get(results, 0, "aspectRatio");
+          mediaInfo.HasSubtitles = DatabaseUtility.GetAsInt(results, 0, "hasSubtitles") != 0;
+
+          mediaInfo.AudioCodec = DatabaseUtility.Get(results, 0, "audioCodec");
+          mediaInfo.AudioChannels = DatabaseUtility.Get(results, 0, "audioChannels");
+          mediaInfo.Duration = GetVideoDuration(fileID);
+
+          mediaInfo.Is3D = (DatabaseUtility.GetAsInt(results, 0, "is3D") != 0);
+
+          mediaInfo.IsHDR = (DatabaseUtility.GetAsInt(results, 0, "isHDR") != 0);
+
         }
         else
         {
+          mediaInfo.VideoCodec = String.Empty;
+          mediaInfo.VideoResolution = String.Empty;
+          mediaInfo.AspectRatio = String.Empty;
           mediaInfo.HasSubtitles = false;
+          mediaInfo.AudioCodec = String.Empty;
+          mediaInfo.AudioChannels = String.Empty;
+          mediaInfo.Duration = 0;
+          mediaInfo.Is3D = false;
+          mediaInfo.IsHDR = false;
         }
-
-        mediaInfo.AudioCodec = DatabaseUtility.Get(results, 0, "audioCodec");
-        mediaInfo.AudioChannels = DatabaseUtility.Get(results, 0, "audioChannels");
-        mediaInfo.Duration = GetVideoDuration(fileID);
       }
       catch (ThreadAbortException)
       {
@@ -1251,45 +1291,43 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    private void GetVideoFilesMediaInfo(int movieId, ref VideoFilesMediaInfo mediaInfo)
+    private VideoFilesMediaInfo GetVideoFilesMediaInfo(int movieId)
     {
+      VideoFilesMediaInfo mediaInfo = new VideoFilesMediaInfo();
+
       try
       {
         if (movieId < 1)
         {
-          return;
+          return mediaInfo;
         }
 
         int fileID = GetFileId(movieId);
 
         if (fileID < 1 )
         {
-          return;
+          return mediaInfo;
         }
 
         // Get media info from database
         string strSQL = String.Format("SELECT * FROM filesmediainfo WHERE idFile={0}", fileID);
         SQLiteResultSet results = m_db.Execute(strSQL);
 
-        mediaInfo.VideoCodec = DatabaseUtility.Get(results, 0, "videoCodec");
-        mediaInfo.VideoResolution = DatabaseUtility.Get(results, 0, "videoResolution");
-        mediaInfo.AspectRatio = DatabaseUtility.Get(results, 0, "aspectRatio");
-
-        int hasSubtitles;
-        int.TryParse(DatabaseUtility.Get(results, 0, "hasSubtitles"), out hasSubtitles);
-
-        if (hasSubtitles != 0)
+        if (results.Rows.Count != 0)
         {
-          mediaInfo.HasSubtitles = true;
-        }
-        else
-        {
-          mediaInfo.HasSubtitles = false;
-        }
+          mediaInfo.VideoCodec = DatabaseUtility.Get(results, 0, "videoCodec");
+          mediaInfo.VideoResolution = DatabaseUtility.Get(results, 0, "videoResolution");
+          mediaInfo.AspectRatio = DatabaseUtility.Get(results, 0, "aspectRatio");
+          mediaInfo.HasSubtitles = DatabaseUtility.GetAsInt(results, 0, "hasSubtitles") != 0;
 
-        mediaInfo.AudioCodec = DatabaseUtility.Get(results, 0, "audioCodec");
-        mediaInfo.AudioChannels = DatabaseUtility.Get(results, 0, "audioChannels");
-        mediaInfo.Duration = GetVideoDuration(fileID);
+          mediaInfo.AudioCodec = DatabaseUtility.Get(results, 0, "audioCodec");
+          mediaInfo.AudioChannels = DatabaseUtility.Get(results, 0, "audioChannels");
+          mediaInfo.Duration = GetVideoDuration(fileID);
+
+          mediaInfo.Is3D = (DatabaseUtility.GetAsInt(results, 0, "is3D") != 0);
+
+          mediaInfo.IsHDR = (DatabaseUtility.GetAsInt(results, 0, "isHDR") != 0);
+        }
       }
       catch (ThreadAbortException)
       {
@@ -1300,6 +1338,7 @@ namespace MediaPortal.Video.Database
         Log.Error("videodatabase mediainfo exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
+      return mediaInfo;
     }
 
     public bool HasMediaInfo(string fileName)
@@ -1367,9 +1406,7 @@ namespace MediaPortal.Video.Database
         }
         else
         {
-          int lGenreId;
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idGenre"), out lGenreId);
-          return lGenreId;
+          return DatabaseUtility.GetAsInt(results, 0, "idGenre");
         }
       }
       catch (Exception ex)
@@ -1477,8 +1514,7 @@ namespace MediaPortal.Video.Database
           return;
         }
 
-        int idGenre;
-        Int32.TryParse(DatabaseUtility.Get(results, 0, "idGenre"), out idGenre);
+        int idGenre = DatabaseUtility.GetAsInt(results, 0, "idGenre");
         m_db.Execute(sql);
         m_db.Execute(String.Format("DELETE FROM genrelinkmovie WHERE idGenre={0}", idGenre));
         m_db.Execute(String.Format("DELETE FROM genre WHERE idGenre={0}", idGenre));
@@ -1593,9 +1629,7 @@ namespace MediaPortal.Video.Database
         }
         else
         {
-          int lCollectionId;
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idCollection"), out lCollectionId);
-          return lCollectionId;
+          return DatabaseUtility.GetAsInt(results, 0, "idCollection");
         }
       }
       catch (Exception ex)
@@ -1623,9 +1657,7 @@ namespace MediaPortal.Video.Database
 
         if (results.Rows.Count > 0)
         {
-          int lCollectionId;
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idCollection"), out lCollectionId);
-          return lCollectionId;
+          return DatabaseUtility.GetAsInt(results, 0, "idCollection");
         }
       }
       catch (Exception ex)
@@ -1656,8 +1688,7 @@ namespace MediaPortal.Video.Database
 
         if (results.Rows.Count > 0)
         {
-          int collectionId;
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idCollection"), out collectionId);
+          int collectionId = DatabaseUtility.GetAsInt(results, 0, "idCollection");
 
           if (!string.IsNullOrEmpty(strGroupDescription) && strGroupDescription != Strings.Unknown)
           {
@@ -1688,7 +1719,10 @@ namespace MediaPortal.Video.Database
         string sql = string.Format("SELECT strCollectionDescription FROM moviecollection WHERE idCollection = {0}", collectionId);
         SQLiteResultSet results = m_db.Execute(sql);
 
-        strCollection = DatabaseUtility.Get(results, 0, "strCollectionDescription");
+        if (results.Rows.Count > 0)
+        {
+          strCollection = DatabaseUtility.Get(results, 0, "strCollectionDescription");
+        }
 
         if (strCollection == Strings.Unknown)
         {
@@ -1804,8 +1838,7 @@ namespace MediaPortal.Video.Database
           return;
         }
 
-        int idCollection;
-        Int32.TryParse(DatabaseUtility.Get(results, 0, "idCollection"), out idCollection);
+        int idCollection = DatabaseUtility.GetAsInt(results, 0, "idCollection");
         m_db.Execute(sql);
         m_db.Execute(String.Format("DELETE FROM moviecollectionlinkmovie WHERE idCollection={0}", idCollection));
         m_db.Execute(String.Format("DELETE FROM moviecollection WHERE idCollection={0}", idCollection));
@@ -2016,9 +2049,7 @@ namespace MediaPortal.Video.Database
         }
         else
         {
-          int groupId;
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idGroup"), out groupId);
-          return groupId;
+          return DatabaseUtility.GetAsInt(results, 0, "idGroup");
         }
       }
       catch (Exception ex)
@@ -2046,9 +2077,7 @@ namespace MediaPortal.Video.Database
 
         if (results.Rows.Count > 0)
         {
-          int groupId;
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idGroup"), out groupId);
-          return groupId;
+          return DatabaseUtility.GetAsInt(results, 0, "idGroup");
         }
       }
       catch (Exception ex)
@@ -2079,8 +2108,7 @@ namespace MediaPortal.Video.Database
 
         if (results.Rows.Count > 0)
         {
-          int groupId;
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idGroup"), out groupId);
+          int groupId = DatabaseUtility.GetAsInt(results, 0, "idGroup");
 
           if (!string.IsNullOrEmpty(strGroupDescription) && strGroupDescription != Strings.Unknown)
           {
@@ -2180,8 +2208,10 @@ namespace MediaPortal.Video.Database
       {
         string sql = string.Format("SELECT strGroup FROM usergroup WHERE idGroup = {0}", groupId);
         SQLiteResultSet results = m_db.Execute(sql);
-        
-        strGroup =  DatabaseUtility.Get(results, 0, "strGroup");
+        if (results.Rows.Count > 0)
+        {
+          strGroup = DatabaseUtility.Get(results, 0, "strGroup");
+        }
       }
       catch (Exception ex)
       {
@@ -2205,7 +2235,10 @@ namespace MediaPortal.Video.Database
         string sql = string.Format("SELECT strGroupDescription FROM usergroup WHERE idGroup = {0}", groupId);
         SQLiteResultSet results = m_db.Execute(sql);
 
-        strGroup = DatabaseUtility.Get(results, 0, "strGroupDescription");
+        if (results.Rows.Count > 0)
+        {
+          strGroup = DatabaseUtility.Get(results, 0, "strGroupDescription");
+        }
 
         if (strGroup == Strings.Unknown)
         {
@@ -2257,7 +2290,7 @@ namespace MediaPortal.Video.Database
         
         for (int iRow = 0; iRow < results.Rows.Count; iRow++)
         {
-          int groupId = Convert.ToInt32(DatabaseUtility.Get(results, iRow, "idGroup"));
+          int groupId = DatabaseUtility.GetAsInt(results, iRow, "idGroup");
           strSQL = String.Format("SELECT strGroup FROM usergroup WHERE idGroup = {0}", groupId);
           SQLiteResultSet resultsGroup = m_db.Execute(strSQL);
           
@@ -2359,8 +2392,7 @@ namespace MediaPortal.Video.Database
           return;
         }
 
-        int idUserGroup;
-        Int32.TryParse(DatabaseUtility.Get(results, 0, "idGroup"), out idUserGroup);
+        int idUserGroup = DatabaseUtility.GetAsInt(results, 0, "idGroup");
         m_db.Execute(sql);
         m_db.Execute(String.Format("DELETE FROM usergrouplinkmovie WHERE idGroup={0}", idUserGroup));
         m_db.Execute(String.Format("DELETE FROM usergroup WHERE idGroup={0}", idUserGroup));
@@ -2584,9 +2616,7 @@ namespace MediaPortal.Video.Database
         }
         else
         {
-          int lActorId;
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idActor"), out lActorId);
-          return lActorId;
+          return DatabaseUtility.GetAsInt(results, 0, "idActor");
         }
       }
       catch (Exception ex)
@@ -2813,8 +2843,7 @@ namespace MediaPortal.Video.Database
           return;
         }
 
-        int idactor;
-        Int32.TryParse(DatabaseUtility.Get(results, 0, "idActor"), out idactor);
+        int idactor = DatabaseUtility.GetAsInt(results, 0, "idActor");
         m_db.Execute(sql);
         m_db.Execute(String.Format("DELETE FROM actorlinkmovie WHERE idActor={0}", idactor));
         m_db.Execute(String.Format("DELETE FROM actors WHERE idActor={0}", idactor));
@@ -3635,9 +3664,7 @@ namespace MediaPortal.Video.Database
           return 0;
         }
         
-        int stoptime;
-        Int32.TryParse(DatabaseUtility.Get(results, 0, "stoptime"), out stoptime);
-        return stoptime;
+        return DatabaseUtility.GetAsInt(results, 0, "stoptime");
       }
       catch (Exception ex)
       {
@@ -3717,12 +3744,10 @@ namespace MediaPortal.Video.Database
       {
         string sql = String.Format("SELECT * FROM resume WHERE idFile={0} AND bdtitle={1}", iFileId, bdtitle);
         SQLiteResultSet results = m_db.Execute(sql);
-        int stoptime;
-        int BDTileID;
 
         if (results.Rows.Count != 0)
         {
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "stoptime"), out stoptime);
+          int stoptime = DatabaseUtility.GetAsInt(results, 0, "stoptime");
           string resumeString = DatabaseUtility.Get(results, 0, "resumeData");
           resumeData = new byte[resumeString.Length/2];
           FromHexString(resumeString).CopyTo(resumeData, 0);
@@ -3730,8 +3755,8 @@ namespace MediaPortal.Video.Database
         }
         else
         {
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "bdtitle"), out BDTileID);
-          if (bdtitle != BDTileID)
+          //no results here (rows.count=0), so get returns empty string which results in a value of 0 for BDTileID
+          if (bdtitle != 0)
           {
             return 0;
           }
@@ -3806,10 +3831,7 @@ namespace MediaPortal.Video.Database
           return duration;
         }
 
-        if (Int32.TryParse(DatabaseUtility.Get(results, 0, "iduration"), out duration))
-        {
-          return duration;
-        }
+        return DatabaseUtility.GetAsInt(results, 0, "iduration");
       }
       catch (ThreadAbortException)
       {
@@ -3835,9 +3857,7 @@ namespace MediaPortal.Video.Database
           return 0;
         }
         
-        int duration;
-        Int32.TryParse(DatabaseUtility.Get(results, 0, "duration"), out duration);
-        return duration;
+        return DatabaseUtility.GetAsInt(results, 0, "duration");
       }
       catch (ThreadAbortException)
       {
@@ -3936,11 +3956,10 @@ namespace MediaPortal.Video.Database
       {
         string sql = String.Format("SELECT * FROM movie WHERE idMovie={0}", idMovie);
         SQLiteResultSet results = m_db.Execute(sql);
-        int watchedCount = 0;
-        Int32.TryParse(DatabaseUtility.Get(results, 0, "movie.timeswatched"), out watchedCount);
 
         if (results.Rows.Count != 0)
         {
+          int watchedCount = DatabaseUtility.GetAsInt(results, 0, "movie.timeswatched");
           watchedCount++;
           sql = String.Format("UPDATE movie SET timeswatched = {0} WHERE idMovie={1}",
                               watchedCount, idMovie);
@@ -3989,11 +4008,10 @@ namespace MediaPortal.Video.Database
         {
           return false;
         }
-        
-        int watched;
-        int.TryParse(DatabaseUtility.Get(results, 0, "watched"), out watched);
-        int.TryParse(DatabaseUtility.Get(results, 0, "iwatchedPercent"), out percent);
-        int.TryParse(DatabaseUtility.Get(results, 0, "timeswatched"), out timesWatched);
+
+        int watched = DatabaseUtility.GetAsInt(results, 0, "watched");
+        percent = DatabaseUtility.GetAsInt(results, 0, "iwatchedPercent");
+        timesWatched = DatabaseUtility.GetAsInt(results, 0, "timeswatched");
         
         if (watched != 0)
         {
@@ -4170,8 +4188,7 @@ namespace MediaPortal.Video.Database
         
         for (int i = 0; i < results.Rows.Count; ++i)
         {
-          int iFileId;
-          Int32.TryParse(DatabaseUtility.Get(results, i, "files.idFile"), out iFileId);
+          int iFileId = DatabaseUtility.GetAsInt(results, i, "files.idFile");
           DeleteFile(iFileId);
         }
         
@@ -4335,9 +4352,7 @@ namespace MediaPortal.Video.Database
         {
           return false;
         }
-        int lHasSubs;
-        Int32.TryParse(DatabaseUtility.Get(results, 0, "hasSubtitles"), out lHasSubs);
-        if (lHasSubs != 0)
+        if (DatabaseUtility.GetAsInt(results, 0, "hasSubtitles") != 0)
         {
           return true;
         }
@@ -5596,8 +5611,11 @@ namespace MediaPortal.Video.Database
       {
         string sql = String.Format("SELECT idPath FROM path WHERE cdlabel = '{0}'", movieDetails.CDLabel);
         SQLiteResultSet results = m_db.Execute(sql);
-        int idPath;
-        Int32.TryParse(DatabaseUtility.Get(results, 0, "idPath"), out idPath);
+        int idPath = 0;
+        if (results.Rows.Count > 0)
+        {
+          idPath = DatabaseUtility.GetAsInt(results, 0, "idPath");
+        }
         sql = String.Format("UPDATE path SET cdlabel = '{0}' WHERE idPath = '{1}'", CDlabel, idPath);
         results = m_db.Execute(sql);
       }
@@ -5830,7 +5848,7 @@ namespace MediaPortal.Video.Database
           actor.ThumbnailUrl = DatabaseUtility.Get(results, 0, "actorinfo.thumbURL");
           actor.LastUpdate = DatabaseUtility.Get(results, 0, "actorinfo.lastupdate");
           actor.IMDBActorID = DatabaseUtility.Get(results, 0, "actors.IMDBActorID");
-          actor.ID = Convert.ToInt32(DatabaseUtility.Get(results, 0, "actorinfo.idActor"));
+          actor.ID = DatabaseUtility.GetAsInt(results, 0, "actorinfo.idActor");
 
           strSql = String.Format("SELECT * FROM actorinfomovies WHERE idActor ={0}", idActor);
           results = m_db.Execute(strSql);
@@ -5842,21 +5860,21 @@ namespace MediaPortal.Video.Database
             SQLiteResultSet resultsImdb = m_db.Execute(strSql);
 
             IMDBActor.IMDBActorMovie movie = new IMDBActor.IMDBActorMovie();
-            movie.ActorID = Convert.ToInt32(DatabaseUtility.Get(results, i, "idActor"));
+            movie.ActorID = DatabaseUtility.GetAsInt(results, i, "idActor");
             movie.Role = DatabaseUtility.Get(results, i, "role");
             
             if (resultsImdb.Rows.Count != 0)
             {
               // Added IMDBid
               movie.MovieTitle = DatabaseUtility.Get(resultsImdb, 0, "strTitle");
-              movie.Year = Int32.Parse(DatabaseUtility.Get(resultsImdb, 0, "iYear"));
+              movie.Year = DatabaseUtility.GetAsInt(resultsImdb, 0, "iYear");
               movie.MovieImdbID = DatabaseUtility.Get(resultsImdb, 0, "idIMDB");
               movie.MoviePlot = DatabaseUtility.Get(resultsImdb, 0, "strPlot");
               movie.MovieCover = DatabaseUtility.Get(resultsImdb, 0, "strPictureURL");
               movie.MovieGenre = DatabaseUtility.Get(resultsImdb, 0, "strGenre");
               movie.MovieCast = DatabaseUtility.Get(resultsImdb, 0, "strCast");
               movie.MovieCredits = DatabaseUtility.Get(resultsImdb, 0, "strCredits");
-              movie.MovieRuntime = Int32.Parse(DatabaseUtility.Get(results, i, "runtime")); // Not used
+              movie.MovieRuntime = DatabaseUtility.GetAsInt(results, i, "runtime"); // Not used
               movie.MovieMpaaRating = DatabaseUtility.Get(resultsImdb, 0, "mpaa");
             }
             actor.Add(movie);
@@ -5989,10 +6007,9 @@ namespace MediaPortal.Video.Database
         }
         else
         {
-          int id = -1;
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idVideoThumbBList"), out id);
+          int id = DatabaseUtility.GetAsInt(results, 0, "idVideoThumbBList");
           
-          if (id != -1)
+          if (id != 0)
           {
             strSQL =
               String.Format(
@@ -6027,10 +6044,9 @@ namespace MediaPortal.Video.Database
         
         if (results.Rows.Count != 0)
         {
-          int id = -1;
-          Int32.TryParse(DatabaseUtility.Get(results, 0, "idVideoThumbBList"), out id);
+          int id = DatabaseUtility.GetAsInt(results, 0, "idVideoThumbBList");
           
-          if (id != -1)
+          if (id != 0)
           {
             strSQL = String.Format("DELETE FROM VideoThumbBList WHERE idVideoThumbBList={0}", id);
             m_db.Execute(strSQL);
@@ -7965,8 +7981,9 @@ namespace MediaPortal.Video.Database
           details.DirectorID = -1;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("VideoDatabaseSqLite:SetMovieDetails: {0}", ex.Message);
         details.DirectorID = -1;
       }
       
@@ -8017,7 +8034,14 @@ namespace MediaPortal.Video.Database
         string strSQL = String.Format(
           "SELECT path.strPath FROM movie,path WHERE path.idpath=movie.idpath AND movie.idMovie = {0}", details.ID);
         results = m_db.Execute(strSQL);
-        details.Path = DatabaseUtility.Get(results, 0, "path.strPath");
+        if (results.Rows.Count > 0)
+        {
+          details.Path = DatabaseUtility.Get(results, 0, "path.strPath");
+        }
+        else
+        {
+          details.Path = String.Empty;
+        }
       }
 
       if (details.ID > 0)
@@ -8043,9 +8067,7 @@ namespace MediaPortal.Video.Database
         details.VideoFileName = movieFilename;
         details.VideoFilePath = details.Path;
 
-        VideoFilesMediaInfo mInfo = new VideoFilesMediaInfo();
-        GetVideoFilesMediaInfo(details.ID, ref mInfo);
-        details.MediaInfo = mInfo;
+        details.MediaInfo = GetVideoFilesMediaInfo(details.ID);
 
         details.Genre = GetGenresForMovie(details.ID);
         details.MovieCollection = GetCollectionsForMovie(details.ID);

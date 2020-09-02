@@ -135,9 +135,9 @@ namespace MediaPortal.Utils.Time
         long ldatetime = Int64.Parse(longTime);
         SetFromLong(ldatetime);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        throw new ArgumentOutOfRangeException();
+        throw new ArgumentOutOfRangeException(ex.Message);
       }
 
       if (useOffset)

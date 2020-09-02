@@ -343,8 +343,9 @@ namespace WindowPlugins.GUISettings
 
         customTable = builder.ToString();
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GUISettingsGeneral: ValidateCustomTable {0}", ex.Message);
         customTable = string.Empty;
       }
     }

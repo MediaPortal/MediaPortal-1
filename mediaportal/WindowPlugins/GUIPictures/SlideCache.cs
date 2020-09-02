@@ -186,12 +186,16 @@ internal class SlideCache
         _prefetchingThread = null;
       }
     }
-    catch (ThreadAbortException)
+    catch (ThreadAbortException ex)
     {
+      Log.Debug("SlideCache: LoadNextSlideThread {0}", ex.Message);
       // abort is expected when slide changes outpace prefetch, ignore
       // Trace.WriteLine(String.Format("  ...aborted {0} slide {1}", _neededSlideRelativeIndex.ToString("G"), System.IO.Path.GetFileNameWithoutExtension(_neededSlideFilePath)));
     }
-    catch (Exception) {}
+    catch (Exception ex)
+    {
+      Log.Error("SlideCache: LoadNextSlideThread {0}", ex.Message);
+    }
   }
 
   public void InvalidateSlide(string slideFilePath)

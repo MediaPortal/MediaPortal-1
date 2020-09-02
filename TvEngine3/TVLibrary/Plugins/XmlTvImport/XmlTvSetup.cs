@@ -73,6 +73,10 @@ namespace SetupTv.Sections
       setting.Value = cbNoTextMod.Checked ? "true" : "false";
       setting.Persist();
 
+      setting = layer.GetSetting("xmlTvRenameFileInZip", "true");
+      setting.Value = cbRenameFileInZip.Checked ? "true" : "false";
+      setting.Persist();
+
       setting = layer.GetSetting("xmlTvTimeZoneHours", "0");
       setting.Value = textBoxHours.Text;
       setting.Persist();
@@ -136,6 +140,7 @@ namespace SetupTv.Sections
       cbImportLST.Checked = layer.GetSetting("xmlTvImportLST", "false").Value == "true";
       cbNoTextMod.Checked = layer.GetSetting("xmlTvNoTextMod", "false").Value == "true";
       checkBoxDeleteBeforeImport.Checked = layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true";
+      cbRenameFileInZip.Checked = layer.GetSetting("xmlTvRenameFileInZip", "false").Value == "true";
 
       textBoxHours.Text = layer.GetSetting("xmlTvTimeZoneHours", "0").Value;
       textBoxMinutes.Text = layer.GetSetting("xmlTvTimeZoneMins", "0").Value;
@@ -863,6 +868,16 @@ namespace SetupTv.Sections
     {
       radioDownloadOnSchedule.Enabled = chkScheduler.Checked;
       radioDownloadOnWakeUp.Enabled = chkScheduler.Checked;
+    }
+
+    private void cbRenameFileInZip_CheckedChanged(object sender, EventArgs e)
+    {
+      // Update setting to work on the fly on GUI
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting = layer.GetSetting("xmlTv");
+      setting = layer.GetSetting("xmlTvRenameFileInZip", "true");
+      setting.Value = cbRenameFileInZip.Checked ? "true" : "false";
+      setting.Persist();
     }
   }
 }

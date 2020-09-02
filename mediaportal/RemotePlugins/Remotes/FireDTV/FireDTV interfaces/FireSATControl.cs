@@ -153,7 +153,10 @@ namespace MediaPortal.InputDevices.FireDTV
           throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Device Close Failure");
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("FireSATControl:CloseFireDTVHandle {0}", ex.Message);
+      }
     }
 
     internal int getWDMCount()
@@ -227,7 +230,10 @@ namespace MediaPortal.InputDevices.FireDTV
           }
           NotificationsRegistered = true;
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("FireSATControl:RegisterGeneralNotifications {0}", ex.Message);
+        }
       }
     }
 

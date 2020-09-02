@@ -317,9 +317,10 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
               new Thread(() => AutoDJ(currentSong)) {Name = "AutoDJ"}.Start();
             }
           }
-          catch (Exception)
+          catch (Exception ex)
           {
             // Catch exception to avoid crash.
+            Log.Error("LastFMScrobbler:OnThreadMessage: {0}", ex.Message);
           }
           break;
       }

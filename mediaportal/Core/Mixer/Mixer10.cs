@@ -138,9 +138,10 @@ namespace MediaPortal.Mixer
         Stop();
         //DispatchingTimerStart(); // Disable because the check will be done in IsMuted code
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         // When no device available
+        Log.Error("Mixer10: CreateDevice {0}", ex.Message);
       }
     }
 
@@ -695,9 +696,10 @@ namespace MediaPortal.Mixer
             }).Start();
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
           // When no available
+          Log.Error("Mixer10: IsMuted {0}", ex.Message);
         }
 
       }

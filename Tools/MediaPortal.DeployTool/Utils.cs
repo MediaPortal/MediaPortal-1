@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -375,6 +375,36 @@ namespace MediaPortal.DeployTool
       return null;
     }
 
+    public static string CheckUninstallString(string clsid, string section)
+    {
+      RegistryKey key = null;
+      string keyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid;
+      key = Registry.LocalMachine.OpenSubKey(keyPath);
+      if (key == null)
+      {
+        try
+        {
+          key = OpenSubKey(Registry.LocalMachine, keyPath, false, eRegWow64Options.KEY_WOW64_32KEY);
+        }
+        catch
+        {
+          // Parent key not open, exception found at opening (probably related to
+          // security permissions requested)
+        }
+      }
+      if (key != null)
+      {
+        string strSection = key.GetValue(section).ToString();
+        if (!string.IsNullOrEmpty(strSection))
+        {
+          key.Close();
+          return strSection;
+        }
+        key.Close();
+      }
+      return null;
+    }
+
     public static CheckResult CheckNSISUninstallString(string RegistryPath, string MementoSection)
     {
       RegistryKey key = null;
@@ -687,7 +717,7 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 21;
+          minor = 24;
           revision = 100;
           break;
       }
@@ -708,7 +738,7 @@ namespace MediaPortal.DeployTool
     public static Version GetCurrentPackageVersion()
     {
       int major = 1;
-      int minor = 22;
+      int minor = 25;
       int revision = 0;
 
       Version ver = new Version(major, minor, revision);
@@ -782,7 +812,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.22.0";
+      return "1.25";
     }
 
     /// <summary>

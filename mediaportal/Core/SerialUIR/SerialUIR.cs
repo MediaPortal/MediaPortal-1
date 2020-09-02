@@ -174,7 +174,10 @@ namespace MediaPortal.SerialIR
           instance = new SerialUIR(remoteCommandCallback);
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("SerialUIR:Create {0}", ex.Message);
+      }
       return instance;
     }
 
@@ -264,9 +267,10 @@ namespace MediaPortal.SerialIR
         if (InternalCommandsActive)
           base.Open();
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         //most users dont have serial device on their system so will get a exception here
+        Log.Error("SerialUIR:SerialUIR {0}", ex.Message);
       }
     }
 
@@ -293,8 +297,9 @@ namespace MediaPortal.SerialIR
           reader.ReadEndElement();
           commandsLearned[remoteCode] = actionInt;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("SerialUIR:LoadValues {0}", ex.Message);
           break;
         }
         if (reader.LocalName != "entry")
@@ -323,7 +328,10 @@ namespace MediaPortal.SerialIR
         writer.WriteEndElement();
         writer.Close();
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("SerialUIR:SaveInternalValues {0}", ex.Message);
+      }
     }
 
     public string GetVersions()
@@ -390,8 +398,9 @@ namespace MediaPortal.SerialIR
         }
         return true;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("SerialUIR:InternalLearn {0}", ex.Message);
         return false;
       }
     }

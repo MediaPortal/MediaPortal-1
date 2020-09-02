@@ -74,4 +74,7 @@
       <Filter>Assembly Files %28AMD64%29</Filter>
     </YASM>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
 </Project>

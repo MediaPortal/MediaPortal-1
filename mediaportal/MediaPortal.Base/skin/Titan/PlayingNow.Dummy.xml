@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+        <type>fadelabel</type>
+        <description>best tag tracks label</description>
+        <id>28</id>
+        <posX>-2000</posX>
+        <posY>517</posY>
+        <width>497</width>
+        <label>Top tracks for tag</label>
+    </control>
+    <control>
+        <type>fadelabel</type>
+        <description>best album tracks label</description>
+        <id>29</id>
+        <posX>-2000</posX>
+        <posY>517</posY>
+        <width>497</width>
+        <label>33030</label>
+    </control>
+    <control>
+      <description>video window</description>
+      <type>videowindow</type>
+      <id>99</id>
+      <posX>1</posX>
+      <posY>1</posY>
+      <visible>no</visible>
+    </control>
+  </controls>
+</window>

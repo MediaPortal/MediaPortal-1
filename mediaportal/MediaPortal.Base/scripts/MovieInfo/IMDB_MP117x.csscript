@@ -26,9 +26,9 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
     string regexPattern = string.Empty;
 
     // If string contains tt number use it
-    if (Regex.Match(strSearch, @"tt\d{7}").Success)
+    if (Regex.Match(strSearch, @"tt\d{7,8}").Success)
     {
-      string ttNumber = Regex.Match(strSearch, @"(?<imdbID>tt\d{7})").Groups["imdbID"].Value;
+      string ttNumber = Regex.Match(strSearch, @"(?<imdbID>tt\d{7,8})").Groups["imdbID"].Value;
       string imdbUrl = string.Format("http://www.imdb.com/title/{0}", ttNumber);
       IMDB.IMDBUrl url = new IMDB.IMDBUrl(imdbUrl, ttNumber, _dbVersion);
       elements.Add(url);
@@ -251,8 +251,8 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 
       // Director
       regexBlockPattern = @"<h4[^>]*>[^D]*Director[s]?:[^<]*</h4>[^<]*(?<directors_block>.*?)</div>";
-      // regexPattern = @"href=""/name/nm\d{7}/[^>]*>(?<movieDirectors>.*?)</a>";
-      regexPattern = @"href=.\/name\/nm\d{7}(?:\/|\?)[^>]+?>(?:<span[^>]+?>)?(?<movieDirectors>.*?)(?:<\/span>)?<\/a>";
+      // regexPattern = @"href=""/name/nm\d{7,8}/[^>]*>(?<movieDirectors>.*?)</a>";
+      regexPattern = @"href=.\/name\/nm\d{7,8}(?:\/|\?)[^>]+?>(?:<span[^>]+?>)?(?<movieDirectors>.*?)(?:<\/span>)?<\/a>";
       block = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline).Groups["directors_block"].Value;
       movieDetails.Director =
         Utils.stripHTMLtags(HttpUtility.HtmlDecode(Regex.Match(block, regexPattern, RegexOptions.Singleline).Groups["movieDirectors"].Value));
@@ -267,7 +267,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
         {
           string strWriter = string.Empty;
           strWriter = HttpUtility.HtmlDecode(block);
-          strWriter = Utils.stripHTMLtags(block).Trim();
+          strWriter = Utils.stripHTMLtags(strWriter).Trim();
 
           if (strWriter.EndsWith(";"))
           {
@@ -289,8 +289,8 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 
       // Actors
       regexBlockPattern = @"<table class=.cast.>.*?<\/table>|<table class=.cast_list.>.*?<\/table>";
-      // regexPattern =  @"href=""/name/nm\d{7}/.*?alt=""(?<actor>.*?)"".*?<td.class=""character"">.*?<div>(?<role>.*?)</div>";
-      regexPattern =  @"href=.\/name\/nm\d{7}\/.*?alt=""(?<actor>.*?)"".*?<td.class=.character.>.*?<a[^>]+?>(?<role>.*?)<\/a>";
+      // regexPattern =  @"href=""/name/nm\d{7,8}/.*?alt=""(?<actor>.*?)"".*?<td.class=""character"">.*?<div>(?<role>.*?)</div>";
+      regexPattern =  @"href=.\/name\/nm\d{7,8}\/.*?alt=""(?<actor>.*?)"".*?<td.class=.character.>.*?<a[^>]+?>(?<role>.*?)<\/a>";
       Match castBlock = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline);
       string strCastBlock = HttpUtility.HtmlDecode(castBlock.Value);
 
@@ -388,7 +388,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 
       // Country
       regexBlockPattern = @"<h4\sclass=""inline"">Country:</h4>.*?<h4";
-      regexPattern = @"'url'>(?<country>.*?)</a>";
+      regexPattern = @"href=.[^>]+?country[^>]+?>(?<country>[^<]+)<\/a>";
       block = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline).Value.Replace("\n", string.Empty);
       MatchCollection mcCountry = Regex.Matches(block, regexPattern, RegexOptions.Singleline);
       string country = string.Empty;
@@ -410,9 +410,28 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       }
 
       // Language
+      /*
       regexPattern = @"<h4\sclass=""inline"">Language:</h4>.*?url'>(?<language>.*?)</a>";
       string language = Regex.Match(strBody, regexPattern, RegexOptions.Singleline).Groups["language"].Value;
       movieDetails.Language = language;
+      */
+      // Language from IMDB
+      regexBlockPattern = @"<h4\sclass=""inline"">Language:</h4>.*?</div>";
+      regexPattern = @"href=.[^>]+?language[^>]+?>(?<language>[^<]+)</a>";
+      block = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline).Value;
+      MatchCollection mcLanguages = Regex.Matches(block, regexPattern, RegexOptions.Singleline);
+      string languages = string.Empty;
+
+      foreach (Match ml in mcLanguages)
+      {
+        languages = languages + Utils.stripHTMLtags(ml.Groups["language"].Value) + ", ";
+      }
+
+      if (!string.IsNullOrEmpty(languages))
+      {
+        movieDetails.Language = HttpUtility.HtmlDecode(languages.Remove(languages.LastIndexOf(", ")));
+        MediaPortal.GUI.Library.Log.Debug("IMDB Languages: {0}", movieDetails.Language);
+      }
 
       // MPARating
       //
@@ -594,6 +613,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       {
         string absoluteUri;
         string strPlotHtml = GetPage(strPlotUrl, "utf-8", out absoluteUri);
+
         // regexBlockPattern = @">Plot\sSummary.*?<footer\sclass=";
         regexBlockPattern = @"<section id=.plot-summaries-content.>.+?<\/section";
         strPlotHtml = Regex.Match(strPlotHtml, regexBlockPattern,
@@ -630,6 +650,29 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       catch (Exception ex)
       {
         MediaPortal.GUI.Library.Log.Error("IMDB Script GetPlotDetails error: {0}", ex.Message);
+      }
+
+      if (movieDetails.RunTime == 0)
+      {
+        string strTechUrl = "http://www.imdb.com/title/" + movieDetails.IMDBNumber + "/technical";
+        try
+        {
+          string absoluteUri;
+          string strTechHtml = GetPage(strTechUrl, "utf-8", out absoluteUri);
+
+          regexPattern = @">\s*?Runtime[^>]+?>[^<]*?<td[^>]*?>[^<]*?\((?<movieRuntime>\d+)\smin";
+
+          MediaPortal.GUI.Library.Log.Debug("IMDB RunTime error: {0}", Regex.Match(strTechHtml, regexPattern).Groups["movieRuntime"].Value);
+          int runTime;
+          if (int.TryParse(Regex.Match(strTechHtml, regexPattern).Groups["movieRuntime"].Value, out runTime))
+          {
+            movieDetails.RunTime = runTime;
+          }
+        }
+        catch (Exception ex)
+        {
+          MediaPortal.GUI.Library.Log.Error("IMDB Script GetRunTime error: {0}", ex.Message);
+        }
       }
 
       // Awards MP1-4846

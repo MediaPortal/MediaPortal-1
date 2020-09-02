@@ -99,8 +99,9 @@ namespace MediaPortal.Dialogs
       {
         selected = int.Parse(keySelected) - 1;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GUIDialogMenu:selectOption {0}", ex.Message);
         selected = -1;
       }
       if (selected >= 0 && selected < listItems.Count)
@@ -185,6 +186,12 @@ namespace MediaPortal.Dialogs
             {
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID,
                                               selectedItemIndex, 0, null);
+              OnMessage(msg);
+            }
+            else if (listItems.Count > 0)
+            {
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID,
+                                              0, 0, null);
               OnMessage(msg);
             }
             selectedItemIndex = -1;

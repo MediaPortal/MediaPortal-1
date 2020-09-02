@@ -398,9 +398,9 @@ namespace MediaPortal.Util
         FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, IntPtr.Zero, number, 0, buffer, buffer.Capacity, 0);
         return buffer.ToString();
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        return "Unspecified error [" + number.ToString() + "]";
+        return "Unspecified error [" + number.ToString() + "]:" + ex.Message;
       }
     }
   }

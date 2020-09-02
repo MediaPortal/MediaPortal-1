@@ -218,7 +218,11 @@ namespace MediaPortal.GUI.Library
             File.Delete(file);
           }
         }
-        catch (Exception) {}
+        catch (Exception ex) 
+        {
+          Log.Error("TexturePacker: Cleanup {0}", ex.Message);
+        }
+
       }
     }
 
@@ -342,22 +346,51 @@ namespace MediaPortal.GUI.Library
         string[] themeFiles = Directory.GetFiles(String.Format(@"{0}\themes", skinName), "*.png", SearchOption.AllDirectories);
         files.AddRange(themeFiles);
       }
-      catch (DirectoryNotFoundException)
+      catch (DirectoryNotFoundException ex)
       {
         // The themes directory is not required to exist.
+        Log.Debug("TexurePacker:PackSkinGraphics: {0}", ex.Message);
       }
 
-      string[] tvLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), "*.png", SearchOption.AllDirectories);
-      files.AddRange(tvLogos);
+      try
+      {
+        string[] tvLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), "*.png", SearchOption.AllDirectories);
+        files.AddRange(tvLogos);
+      }
+      catch (DirectoryNotFoundException)
+      {
+        Log.Warn("TexturePacker: Folder not found: " + Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"));
+      }
 
-      string[] radioLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, "Radio"), "*.png", SearchOption.AllDirectories);
-      files.AddRange(radioLogos);
+      try
+      {
+        string[] radioLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, "Radio"), "*.png", SearchOption.AllDirectories);
+        files.AddRange(radioLogos);
+      }
+      catch (DirectoryNotFoundException)
+      {
+        Log.Warn("TexturePacker: Folder not found: " + Config.GetSubFolder(Config.Dir.Thumbs, "Radio"));
+      }
 
-      string[] weatherFiles = Directory.GetFiles(String.Format(@"{0}\media\weather", skinName), "*.png");
-      files.AddRange(weatherFiles);
+      try
+      {
+        string[] weatherFiles = Directory.GetFiles(String.Format(@"{0}\media\weather", skinName), "*.png");
+        files.AddRange(weatherFiles);
+      }
+      catch (DirectoryNotFoundException)
+      {
+        Log.Warn("TexturePacker: Folder not found: " + String.Format(@"{0}\media\weather", skinName));
+      }
 
-      string[] tetrisFiles = Directory.GetFiles(String.Format(@"{0}\media\tetris", skinName), "*.png");
-      files.AddRange(tetrisFiles);
+      try
+      {
+        string[] tetrisFiles = Directory.GetFiles(String.Format(@"{0}\media\tetris", skinName), "*.png");
+        files.AddRange(tetrisFiles);
+      }
+      catch (DirectoryNotFoundException)
+      {
+        Log.Warn("TexturePacker: Folder not found: " + String.Format(@"{0}\media\tetris", skinName));
+      }
 
       // Determine maximum texture dimensions
       try
@@ -367,8 +400,9 @@ namespace MediaPortal.GUI.Library
         _maxTextureHeight = capabilities.MaxTextureHeight;
         Log.Info("TexturePacker: D3D device does support {0}x{1} textures", _maxTextureWidth, _maxTextureHeight);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("TexturePacker: PackSkinGraphics {0}", ex.Message);
         _maxTextureWidth = MAXTEXTUREDIMENSION;
         _maxTextureHeight = MAXTEXTUREDIMENSION;
       }
@@ -522,9 +556,9 @@ namespace MediaPortal.GUI.Library
       {
         bmp = ImageFast.FromFile(file);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Warn("TexturePacker: Fast loading of texture {0} failed - trying safe fallback now", file);
+        Log.Warn("TexturePacker: Fast loading of texture {0} failed - trying safe fallback now: {1}", file, ex.Message);
         bmp = Image.FromFile(file);
       }
 
@@ -688,7 +722,10 @@ namespace MediaPortal.GUI.Library
                 bigOne.texture.Disposing -= TextureDisposing;
                 bigOne.texture.SafeDispose();
               }
-              catch (Exception) {}
+              catch (Exception ex)
+              {
+                Log.Error("TexturePacker: Dispose {0}", ex.Message);
+              }
             }
             bigOne.texture = null;
           }

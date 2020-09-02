@@ -280,8 +280,9 @@ namespace MediaPortal.InputDevices
                             }
                         }
                     }
-                    catch (ApplicationException)
+                    catch (ApplicationException ex)
                     {
+                      Log.Error("CentAreaRemote:MapWndProcMessage: {0}", ex.Message);
                       return null;
                     }
                     msg.Result = new IntPtr(1);

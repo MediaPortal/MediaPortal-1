@@ -605,7 +605,10 @@ namespace MediaPortal.GUI.RSS
           // request.Proxy = WebProxy.GetDefaultProxy();
           request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("GUIRSSFeed: DownloadMainStory {0}", ex.Message);
+        }
 
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
         try
@@ -617,8 +620,9 @@ namespace MediaPortal.GUI.RSS
             {
               enc = Encoding.GetEncoding(response.ContentEncoding);
             }
-            catch
+            catch (Exception ex)
             {
+              Log.Error("GUIRSSFeed: DownloadMainStory {0}", ex.Message);
               // Using Default Encoding
               enc = Encoding.GetEncoding(m_strSiteEncoding);
             }

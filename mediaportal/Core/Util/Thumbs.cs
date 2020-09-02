@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-20209 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -77,6 +77,7 @@ namespace MediaPortal.Util
     public static readonly string MusicAlbum = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Albums");
     public static readonly string MusicArtists = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Artists");
     public static readonly string MusicGenre = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Genre");
+    public static readonly string MusicYear = Config.GetSubFolder(Config.Dir.Thumbs, @"Music\Year");
 
     public static readonly string MovieTitle = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\Title");
     public static readonly string MovieActors = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos\Actors");
@@ -91,6 +92,7 @@ namespace MediaPortal.Util
 
     public static readonly string Radio = Config.GetSubFolder(Config.Dir.Thumbs, @"Radio");
     public static readonly string Pictures = Config.GetSubFolder(Config.Dir.Thumbs, @"Pictures");
+    public static readonly string PicturesMaps = Config.GetSubFolder(Config.Dir.Thumbs, @"Pictures\Maps");
     public static readonly string News = Config.GetSubFolder(Config.Dir.Thumbs, @"News");
     public static readonly string Trailers = Config.GetSubFolder(Config.Dir.Thumbs, @"Trailers");
     public static readonly string Videos = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos");
@@ -172,7 +174,9 @@ namespace MediaPortal.Util
         Directory.CreateDirectory(MusicAlbum);
         Directory.CreateDirectory(MusicArtists);
         Directory.CreateDirectory(MusicGenre);
+        Directory.CreateDirectory(MusicYear);
         Directory.CreateDirectory(Pictures);
+        Directory.CreateDirectory(PicturesMaps);
         Directory.CreateDirectory(Radio);
         Directory.CreateDirectory(TVChannel);
         Directory.CreateDirectory(TVShows);
@@ -186,7 +190,10 @@ namespace MediaPortal.Util
         Directory.CreateDirectory(News);
         Directory.CreateDirectory(Trailers);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("CreateFolders: {0}", ex.Message);
+      }
     }
 
     #region Public getters and setters

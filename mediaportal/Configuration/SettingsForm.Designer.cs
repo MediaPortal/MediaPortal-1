@@ -76,7 +76,7 @@
       this.sectionTree.ItemHeight = 16;
       this.sectionTree.Location = new System.Drawing.Point(16, 28);
       this.sectionTree.Name = "sectionTree";
-      this.sectionTree.Size = new System.Drawing.Size(240, 479);
+      this.sectionTree.Size = new System.Drawing.Size(240, 485);
       this.sectionTree.TabIndex = 2;
       this.sectionTree.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.sectionTree_BeforeSelect);
       this.sectionTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
@@ -130,7 +130,7 @@
       this.holderPanel.BackColor = System.Drawing.SystemColors.Control;
       this.holderPanel.Location = new System.Drawing.Point(266, 58);
       this.holderPanel.Name = "holderPanel";
-      this.holderPanel.Size = new System.Drawing.Size(502, 449);
+      this.holderPanel.Size = new System.Drawing.Size(502, 455);
       this.holderPanel.TabIndex = 4;
       // 
       // beveledLine1

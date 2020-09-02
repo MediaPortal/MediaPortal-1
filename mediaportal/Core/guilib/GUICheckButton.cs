@@ -283,9 +283,9 @@ namespace MediaPortal.GUI.Library
         {
           Selected = bool.Parse(GUIPropertyManager.Parse(_selected, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
         }
-        catch (System.Exception)
+        catch (System.Exception ex)
         {
-          Log.Debug("GUICheckButton: id={0} <selected> expression does not return a boolean value", GetID);
+          Log.Debug("GUICheckButton: id={0} <selected> expression does not return a boolean value {1}", GetID, ex.Message);
         }
       }
 

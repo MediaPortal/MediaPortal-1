@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -403,8 +403,9 @@ namespace MediaPortal.Dialogs
           {
             DirectoryInfo di = Directory.CreateDirectory(path);
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            Log.Error("GUIDialogFile:FileItemMC {0}", ex.Message);
             ShowError(514, path);
             m_bCanceled = true;
             return;
@@ -427,8 +428,9 @@ namespace MediaPortal.Dialogs
             {
               Directory.Delete(item.Path);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+              Log.Error("GUIDialogFile:FileItemMC {0}", ex.Message);
               ShowError(515, item.Path);
               m_bCanceled = true;
               return;
@@ -470,8 +472,9 @@ namespace MediaPortal.Dialogs
               {
                 File.Delete(destinationFolder + strItemFileName);
               }
-              catch (Exception)
+              catch (Exception ex)
               {
+                Log.Error("GUIDialogFile:FileItemMC {0}", ex.Message);
                 ShowError(516, destinationFolder + strItemFileName);
                 doNot = true;
               }
@@ -501,13 +504,13 @@ namespace MediaPortal.Dialogs
             }
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
           // fatal error
           ShowError(517, item.Path);
           m_bCanceled = true;
 
-          Log.Info("FileMenu Error: from {0} to {1} MC:{2}", item.Path, destinationFolder + strItemFileName, m_iFileMode);
+          Log.Info("FileMenu Error: from {0} to {1} MC:{2} {3}", item.Path, destinationFolder + strItemFileName, m_iFileMode, ex.Message);
         }
       }
     }
@@ -556,10 +559,16 @@ namespace MediaPortal.Dialogs
               }
             }
           }
-          catch (Exception) { }
+          catch (Exception ex)
+          {
+            Log.Error("GUIDialogFile:MoveMovieChildFiles {0}", ex.Message);
+          }
         }
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("GUIDialogFile:MoveMovieChildFiles {0}", ex.Message);
+      }
     }
 
     private static void CopyMovieChildFiles(string fName, string destinationFolder)
@@ -606,10 +615,16 @@ namespace MediaPortal.Dialogs
               }
             }
           }
-          catch (Exception) { }
+          catch (Exception ex)
+          {
+            Log.Error("GUIDialogFile:CopyMovieChildFiles {0}", ex.Message);
+          }
         }
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("GUIDialogFile:CopyMovieChildFiles {0}", ex.Message);
+      }
     }
 
     private void FileItemGetNrOfFiles(GUIListItem item)
@@ -715,11 +730,16 @@ namespace MediaPortal.Dialogs
         {
           readOnly = CheckDirectoryReadOnlyAttributes(item.Path);
         }
-        else
+        else if (File.Exists(item.Path))
         {
           FileAttributes attributes = File.GetAttributes(item.Path);
           readOnly = ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly);
         }
+        else
+        {
+          return;
+        }
+
         if (readOnly)
         {
           OnDeleteReadOnlyItem(item);
@@ -825,8 +845,9 @@ namespace MediaPortal.Dialogs
                   {
                     Directory.Move(sourceFolder + "\\" + strSourceName, sourceFolder + "\\" + strDestinationName);
                   }
-                  catch (Exception)
+                  catch (Exception ex)
                   {
+                    Log.Error("GUIDialogFile:ShowFileMenu {0}", ex.Message);
                     ShowErrorDialog(dlg.SelectedId, sourceFolder + "\\" + strSourceName);
                   }
                   m_bReload = true;
@@ -842,8 +863,9 @@ namespace MediaPortal.Dialogs
                   {
                     RenameRecording(item.Path, strDestinationFile);
                   }
-                  catch (Exception)
+                  catch (Exception ex)
                   {
+                    Log.Error("GUIDialogFile:ShowFileMenu {0}", ex.Message);
                     ShowErrorDialog(dlg.SelectedId, sourceFolder + "\\" + strSourceName);
                   }
                   m_bReload = true;
@@ -930,10 +952,16 @@ namespace MediaPortal.Dialogs
               }
             }
           }
-          catch (Exception) { }
+          catch (Exception ex)
+          {
+            Log.Error("GUIDialogFile:RenameRecording {0}", ex.Message);
+          }
         }
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("GUIDialogFile:RenameRecording {0}", ex.Message);
+      }
     }
 
     private void CleanDirectoryReadOnlyAttributes(string targetDirectory)
@@ -1254,8 +1282,9 @@ namespace MediaPortal.Dialogs
           DirectoryInfo di = Directory.CreateDirectory(path);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GUIDialogFile:MakeDir {0}", ex.Message);
         ShowErrorDialog(119, path);
       }
     }

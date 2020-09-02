@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1264,8 +1264,9 @@ namespace MediaPortal.GUI.Library
           {
             item_OnThumbnailRefresh(i, gotFocus);
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            Log.Warn("GUIListControl: Render {0}", ex.Message);
             continue;
           }
 
@@ -1418,6 +1419,8 @@ namespace MediaPortal.GUI.Library
       }
 
       float fHeight = 60.0f;
+      GUIGraphicsContext.ScaleVertical(ref fHeight);
+
       if (fHeight + fPosCY >= GUIGraphicsContext.Height)
       {
         fHeight = GUIGraphicsContext.Height - fPosCY - 1;
@@ -3454,7 +3457,11 @@ namespace MediaPortal.GUI.Library
         _listItems.Sort(comparer);
         _enableScrollLabel = false;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GUIListControl sort: " + ex.Message);
+      }
+
       _refresh = true;
     }
 

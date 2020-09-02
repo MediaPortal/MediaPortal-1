@@ -251,7 +251,7 @@ Ce PC sera utilisé comme TV-Server dédié et distribuera la TV aux autres PC d
     <value>Installer</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;pas d'action&gt;</value>
+    <value>Pas d'action</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Désinstaller précédent-&gt;Télécharger-&gt;Installer</value>
@@ -281,7 +281,7 @@ Ce PC sera utilisé comme TV-Server dédié et distribuera la TV aux autres PC d
     <value>Echec d'installation de l'application [{0}]</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
-    <value>Appuyez sur le bouton "Install" pour effectuer toutes les opérations nécessaires à votre installation</value>
+    <value>Cliquez pour installer MediaPortal</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
     <value>Téléchargement en cours...</value>
@@ -404,11 +404,9 @@ Ce PC sera utilisé comme TV-Server dédié et distribuera la TV aux autres PC d
     <value>Désinstaller</value>
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
-    <value>Une connection Internet est requise pour le processus d'installation.
+    <value>Un acces Internet est requis pour le processus d'installation.
 
-Voulez-vous démarrer le processus d'installation maintenant
-ou uniquement télécharger les composants pour une installation
-ultérieure ?
+Voulez-vous démarrer le processus d'installation maintenant ou uniquement télécharger les composants pour une installation ultérieure ?
 (Utile pour un PC sans connection Internet)</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">

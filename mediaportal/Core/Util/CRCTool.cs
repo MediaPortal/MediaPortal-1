@@ -183,9 +183,9 @@ namespace MediaPortal.Util
           return crctablefast(barray);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        MediaPortal.GUI.Library.Log.Error("CRCTools: excepting for string - {0}", strline);
+        MediaPortal.GUI.Library.Log.Error("CRCTools: excepting for string - {0} {1}", strline, ex);
         return 0;
       }
     }

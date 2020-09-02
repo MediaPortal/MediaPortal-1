@@ -936,6 +936,17 @@ HRESULT MPMadPresenter::Stopping()
     // Enable DisplayModeChanger is set by using DRR when player goes /leaves fullscreen (if we use profiles)
     EnableOriginalDisplayMode(true);
 
+    if (m_pMad)
+    {
+      // Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
+      if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
+      {
+        pMadVrCmd->SendCommand("restoreDisplayModeNow");
+        pMadVrCmd.Release();
+        Log("MPMadPresenter::Stopping() restoreDisplayModeNow");
+      }
+    }
+
     if (m_pORCB)
     {
       // IOsdRenderCallback

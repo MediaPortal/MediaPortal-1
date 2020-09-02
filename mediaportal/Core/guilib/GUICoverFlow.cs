@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2017 Team MediaPortal
+﻿#region Copyright (C) 2005-2019 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2019 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -147,8 +147,22 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("NewImagePosY")] protected int _newImagePosY = 0;
     [XMLSkinElement("NewImageWidth")] protected int _newImageWidth = 0;
     [XMLSkinElement("NewImageHeight")] protected int _newImageHeight = 0;
-    [XMLSkinElement("NewImageTexture")] protected string _newImageTexture = "hot.png";
-    [XMLSkinElement("NewImageHotTexture")] protected string _newImageTextureHot = "new.png";
+    [XMLSkinElement("NewImageTexture")] protected string _newImageTexture = "new.png";
+    [XMLSkinElement("NewImageHotTexture")] protected string _newImageTextureHot = "hot.png";
+
+    [XMLSkinElement("show3DImage")] protected bool _show3DImage = false;
+    [XMLSkinElement("Is3DImagePosX")] protected int _is3DImagePosX = 0;
+    [XMLSkinElement("Is3DImagePosY")] protected int _is3DImagePosY = 0;
+    [XMLSkinElement("Is3DImageWidth")] protected int _is3DImageWidth = 0;
+    [XMLSkinElement("Is3DImageHeight")] protected int _is3DImageHeight = 0;
+    [XMLSkinElement("Is3DImageTexture")] protected string _is3DImageTexture = "is3D.png";
+
+    [XMLSkinElement("showHDRImage")] protected bool _showHDRImage = false;
+    [XMLSkinElement("IsHDRImagePosX")] protected int _isHDRImagePosX = 0;
+    [XMLSkinElement("IsHDRImagePosY")] protected int _isHDRImagePosY = 0;
+    [XMLSkinElement("IsHDRImageWidth")] protected int _isHDRImageWidth = 0;
+    [XMLSkinElement("IsHDRImageHeight")] protected int _isHDRImageHeight = 0;
+    [XMLSkinElement("IsHDRImageTexture")] protected string _isHDRImageTexture = "isHDR.png";
 
     #endregion
 
@@ -445,6 +459,28 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+      // 5. 3D and HDR images for Movies
+      if ((_show3DImage || _showHDRImage) && pItem.AdditionalData != GUIListItemProperty.None)
+      {
+        if (_show3DImage && (pItem.AdditionalData & GUIListItemProperty.Is3D) == GUIListItemProperty.Is3D)
+          {
+            GUIOverlayImage _overlayImage = new GUIOverlayImage(_is3DImagePosX, _is3DImagePosY, _is3DImageWidth, _is3DImageHeight, _is3DImageTexture);
+            if (_overlayImage != null)
+            {
+              _overlayList.Add(_overlayImage);
+            }
+          }
+
+        if (_showHDRImage && (pItem.AdditionalData & GUIListItemProperty.IsHDR) == GUIListItemProperty.IsHDR)
+          {
+            GUIOverlayImage _overlayImage = new GUIOverlayImage(_isHDRImagePosX, _isHDRImagePosY, _isHDRImageWidth, _isHDRImageHeight, _isHDRImageTexture);
+            if (_overlayImage != null)
+            {
+              _overlayList.Add(_overlayImage);
+          }
+        }
+      }
+
       return _overlayList;
     }
 
@@ -577,6 +613,11 @@ namespace MediaPortal.GUI.Library
                                                      ref _ratingImageWidth,  ref _ratingImageHeight);
       GUIGraphicsContext.ScaleRectToScreenResolution(ref _newImagePosX, ref _newImagePosY,
                                                      ref _newImageWidth, ref _newImageHeight);
+
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _is3DImagePosX, ref _is3DImagePosY,
+                                                     ref _is3DImageWidth, ref _is3DImageHeight);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _isHDRImagePosX, ref _isHDRImagePosY,
+                                                     ref _isHDRImageWidth, ref _isHDRImageHeight);
 
       // Reallocate the card images using the new sizes.
       _reAllocate = true;
@@ -2732,7 +2773,10 @@ namespace MediaPortal.GUI.Library
       {
         _listItems.Sort(comparer);
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("GuiCoverFlow.sort: Exception" + ex.Message);
+      }
     }
 
     public void Add(GUIListItem item)

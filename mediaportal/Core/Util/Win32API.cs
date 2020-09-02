@@ -591,7 +591,10 @@ namespace MediaPortal.Util
           Show("Button", "Start", bVisible);
         }
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("Win32API:ShowStartBar: {0}", ex.Message);
+      }
     }
 
     public static void EnableStartBar(bool bEnable)
@@ -604,7 +607,10 @@ namespace MediaPortal.Util
           Enable("Button", "Start", bEnable);
         }
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("Win32API:EnableStartBar: {0}", ex.Message);
+      }
     }
 
 

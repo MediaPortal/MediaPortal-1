@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 /*
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -257,6 +257,13 @@
 ;======================================   3rd PARTY APPLICATION TESTs
 
 !macro _VCRedist2008IsInstalled _a _b _t _f
+  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{9BE518E6-ECC6-35A9-88E4-87755C07200F}" "DisplayName"
+  StrCmp $0 "" +2 0
+  Goto `${_t}`
+
+  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{1F1C2DFC-2D24-3E06-BCB8-725134ADF989}" "DisplayName"
+  StrCmp $0 "" +2 0
+  Goto `${_t}`
 
   IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.30729.6161_none_51cd0a7abbe4e19b.manifest" 0 +4
   IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.6161_none_50934f2ebcb7eb57.manifest" 0 +3

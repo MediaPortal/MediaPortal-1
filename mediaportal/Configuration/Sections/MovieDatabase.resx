@@ -141,4 +141,7 @@ Movie refresh or actor fetch will not work in GUI.
 Also, do not use configuration database importer/editor for those 
 video files beacuse database entries will override this behaviour in GUI.</value>
   </data>
+  <data name="chbFetchActors.ToolTip" xml:space="preserve">
+    <value>Use this option if you want to fetch Actors data when Movie info updated.</value>
+  </data>
 </root>

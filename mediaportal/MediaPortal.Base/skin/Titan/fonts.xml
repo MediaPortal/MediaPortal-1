@@ -1,4 +1,12 @@
 <fonts>
+<font>
+	<name>font1</name>
+	<filename>TitanSmall</filename>
+	<height>8</height>
+	<start>0</start>
+	<end>1536</end>
+	<bold>no</bold>
+</font>
 
 <font>
 	<name>font2</name>
@@ -29,6 +37,14 @@
 	<name>font12</name>
 	<filename>Titan</filename>
 	<height>12</height>
+	<start>0</start>
+	<end>1536</end>
+</font>
+
+<font>
+	<name>font13</name>
+	<filename>Titan</filename>
+	<height>14</height>
 	<start>0</start>
 	<end>1536</end>
 </font>

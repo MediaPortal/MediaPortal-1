@@ -441,8 +441,9 @@ namespace MediaPortal.GUI.Library
           _itemsPerPage = 1;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GUITextScrollupControl PreAllocResources: " + ex.Message);
         _itemHeight = 1;
         _itemsPerPage = 1;
       }
@@ -467,8 +468,9 @@ namespace MediaPortal.GUI.Library
           _itemsPerPage = 1;
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GUITextScrollupControl AllocResources: " + ex.Message);
         _itemsPerPage = 1;
       }
     }

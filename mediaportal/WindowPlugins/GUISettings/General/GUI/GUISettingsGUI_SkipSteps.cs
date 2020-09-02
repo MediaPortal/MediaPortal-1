@@ -232,9 +232,9 @@ namespace WindowPlugins.GUISettings
               break; // Do nothing
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-          Log.Error("Invalid skip step configuration in MediaPortal.xml");
+          Log.Error("Invalid skip step configuration in MediaPortal.xml {0}", ex.Message);
         }
       }
       checkMarkButtonStep1.Selected = check1;
@@ -310,9 +310,10 @@ namespace WindowPlugins.GUISettings
           {
             RemoveStep(Convert.ToInt16(dlgSel.SelectedLabelText));
           }
-          catch (Exception)
+          catch (Exception ex)
           {
             // Should never happen
+            Log.Error("should never happen {0}", ex.Message);
           }
         }
       }
@@ -514,8 +515,9 @@ namespace WindowPlugins.GUISettings
       {
         step = Convert.ToInt16(newStep);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("VerifySkipStep exception {0}", ex.Message);
         return "Not a valid integer";
       }
       //step *= multiplyer;
@@ -568,9 +570,10 @@ namespace WindowPlugins.GUISettings
             return true;
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
           // Should never happen
+          Log.Error("Should never happen {0}", ex.Message);
           return false;
         }
       }
@@ -662,8 +665,9 @@ namespace WindowPlugins.GUISettings
           newText += token;
           newText += ",";
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("AddStep exception {0}", ex.Message);
           return;
         }
       }
@@ -746,8 +750,9 @@ namespace WindowPlugins.GUISettings
             newText += ",";
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("RemoveStep exception {0}", ex.Message);
           return;
         }
       }
@@ -777,8 +782,9 @@ namespace WindowPlugins.GUISettings
           }
           count++;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("OldStyle exception {0}", ex.Message);
           return true;
         }
       }
@@ -857,8 +863,9 @@ namespace WindowPlugins.GUISettings
             }
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.Error("ConvertToNewStyle exception {0}", ex.Message);
           return DefaultSetting;
         }
       }

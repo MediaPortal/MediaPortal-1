@@ -155,7 +155,10 @@ namespace MediaPortal.RedEyeIR
           instance = new RedEye(remoteCommandCallback);
         }
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("RedEye Create: {0}", ex.Message);
+      }
       return instance;
     }
 
@@ -240,8 +243,9 @@ namespace MediaPortal.RedEyeIR
         if (InternalCommandsActive)
             base.Open();
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("RedEye RedEye: {0}", ex.Message);
         //most users dont have serial device on their system so will get a exception here
       }
     }

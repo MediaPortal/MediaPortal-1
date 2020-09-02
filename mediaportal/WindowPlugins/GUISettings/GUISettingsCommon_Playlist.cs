@@ -93,7 +93,10 @@ namespace MediaPortal.GUI.Settings
             {
               Directory.CreateDirectory(playListFolder);
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+              Log.Error("GUISettingsCommon: LoadSettings {0}", ex.Message);
+            }
           }
         }
         
@@ -307,9 +310,9 @@ namespace MediaPortal.GUI.Settings
           SetFolders(directories);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-
+        Log.Error("GUISettingsCommon: GetFolders {0}", ex.Message);
       }
     }
 

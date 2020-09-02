@@ -438,9 +438,9 @@ namespace MediaPortal.Player.Subtitles
             texture.UnlockRectangle(0);
             subtitle.texture = texture;
           }
-          catch (Exception)
+          catch (Exception ex)
           {
-            Log.Debug("OnSubtitle: Failed to copy bitmap data!");
+            Log.Debug("OnSubtitle: Failed to copy bitmap data! {0}", ex.Message);
             return 0;
           }
 

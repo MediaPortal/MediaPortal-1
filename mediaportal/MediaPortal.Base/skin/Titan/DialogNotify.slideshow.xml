@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+    <controls>
+        <control>
+          <description>group element</description>
+          <type>group</type>
+          <dimColor>ffffffff</dimColor>
+          <animation effect="fade" time="250">WindowOpen</animation>
+          <animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+          <animation effect="fade" time="0">WindowClose</animation>
+
+          <control>
+            <description>Overlay</description>
+            <type>image</type>
+            <id>0</id>
+            <posX>0</posX>
+            <posY>800</posY>
+            <width>1920</width>
+            <height>280</height>
+            <texture>top_overlay.png</texture>
+            <shouldCache>true</shouldCache>
+          </control>
+    
+          <control>
+            <id>3</id>
+            <description>Heading text label</description>
+            <type>label</type>          
+            <label>181</label>
+            <posX>1500</posX>
+            <posY>810</posY>
+            <width>1500</width>
+            <height>38</height>
+            <align>right</align>
+            <font>fontB20</font>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+            <animation effect="fade" time="0">WindowClose</animation>
+          </control>
+
+          <control>
+            <id>4</id>
+            <description>OK button</description>
+            <type>button</type>
+            <onleft>4</onleft>
+            <onright>4</onright>
+            <onup>4</onup>
+            <ondown>4</ondown>
+            <posX>100</posX>
+            <textureFocus>-</textureFocus>
+            <textureNoFocus>-</textureNoFocus>
+          </control>
+          
+          <control>
+            <type>image</type>
+            <description>logo</description>
+            <id>5</id>
+            <posX>1525</posX>
+            <posY>810</posY>
+            <width>250</width>
+            <height>250</height>
+            <align>center</align>
+            <texture>#thumb</texture>
+            <keepaspectratio>yes</keepaspectratio>
+          </control>
+                
+          <control>
+            <description>textarea</description>
+            <type>textbox</type>
+            <id>6</id>
+            <posX>0</posX>
+            <posY>867</posY>
+            <width>1500</width>
+            <height>210</height>
+            <textalign>right</textalign>
+            <font>TitanLight10</font>
+            <onleft>4</onleft>
+            <onright>4</onright>
+            <onup>4</onup>
+            <ondown>4</ondown>
+            <spinPosX>1031</spinPosX>
+            <spinPosY>-2000</spinPosY>
+            <label>-</label>
+          </control>
+
+        </control>
+    </controls>
+</window>

@@ -30,7 +30,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using MediaPortal.Configuration;
-
+using MediaPortal.Util;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
@@ -274,11 +274,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             byte newAudioCodecs = 0;
             if (g_Player.Player != null && g_Player.Player.Playing)
             {
-                if (g_Player.MediaInfo != null && g_Player.IsVideo)
+                if (g_Player.MediaInfo != null && !g_Player.MediaInfo.MediaInfoNotloaded && g_Player.IsVideo && g_Player.MediaInfo.BestVideoStream != null)
                 {
                     // video playback
-                    _videoMediaInfo.Format = g_Player.MediaInfo.VideoCodec;
-                    _audioMediaInfo.Format = g_Player.MediaInfo.AudioCodec;
+                    _videoMediaInfo.Format = g_Player.MediaInfo.BestVideoStream.Codec.ToCodecString();
+                    _audioMediaInfo.Format = g_Player.MediaInfo.BestAudioStream?.Codec.ToCodecString() ?? string.Empty;
 
                     // video stream
                     if (_videoMediaInfo.IsMpg)

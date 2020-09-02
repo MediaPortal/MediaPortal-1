@@ -70,7 +70,10 @@ namespace MediaPortal.Util
           // wr.Proxy = WebProxy.GetDefaultProxy();
           req.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("GoogleImageSearch:Search {0}", ex.Message);
+        }
         WebResponse result = req.GetResponse();
         using (Stream ReceiveStream = result.GetResponseStream())
         {
