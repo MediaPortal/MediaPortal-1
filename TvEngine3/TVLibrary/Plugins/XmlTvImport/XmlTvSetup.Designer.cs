@@ -687,7 +687,7 @@ namespace SetupTv.Sections
       this.panel3.Size = new System.Drawing.Size(469, 418);
       this.panel3.TabIndex = 23;
       // 
-      // groupBox4
+      // cbRenameFileInZip
       // 
       this.cbRenameFileInZip.AutoSize = true;
       this.cbRenameFileInZip.Location = new System.Drawing.Point(18, 117);
@@ -939,16 +939,6 @@ namespace SetupTv.Sections
       // 
       this.saveFileExport.Title = "Export the mapped guidechannels";
       this.saveFileExport.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileExport_FileOk);
-      // 
-      // cbNoTextMod
-      // 
-      this.cbNoTextMod.AutoSize = true;
-      this.cbNoTextMod.Location = new System.Drawing.Point(195, 121);
-      this.cbNoTextMod.Name = "cbNoTextMod";
-      this.cbNoTextMod.Size = new System.Drawing.Size(124, 17);
-      this.cbNoTextMod.TabIndex = 31;
-      this.cbNoTextMod.Text = "No text modifications";
-      this.cbNoTextMod.UseVisualStyleBackColor = true;
       // 
       // XmlTvSetup
       // 
