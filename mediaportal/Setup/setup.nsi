@@ -626,7 +626,7 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\SharpLibDisplay.0.3.4\lib\net40\SharpLibDisplay.dll"
   ; Naudio
-  File "${git_ROOT}\Packages\NAudio.1.8.3\lib\net35\NAudio.dll" 
+  File "${git_ROOT}\Packages\NAudio.1.10.0\lib\net35\NAudio.dll" 
   ; CSCore
   File "${git_ROOT}\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll"
   ; Intel Audio Workaround
