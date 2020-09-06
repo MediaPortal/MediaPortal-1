@@ -230,8 +230,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\Interop.WMPLib.dll</HintPath>
     </Reference>
-    <Reference Include="MediaInfo.Wrapper, Version=19.9.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\MediaInfo.Wrapper.19.9.2\lib\net40\MediaInfo.Wrapper.dll</HintPath>
+    <Reference Include="MediaInfo.Wrapper, Version=20.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\MediaInfo.Wrapper.20.8.0\lib\net40\MediaInfo.Wrapper.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="MetadataExtractor, Version=2.4.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Packages\MetadataExtractor.2.4.3\lib\net35\MetadataExtractor.dll</HintPath>
@@ -1695,9 +1696,9 @@ xcopy "$(TargetDir)core.*" "$(SolutionDir)MediaPortal.Application\bin\$(Configur
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\Packages\MediaInfo.Native.19.9.0\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\MediaInfo.Native.19.9.0\build\MediaInfo.Native.targets'))" />
     <Error Condition="!Exists('..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\MediaInfo.Native.20.8.1\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\MediaInfo.Native.20.8.1\build\MediaInfo.Native.targets'))" />
   </Target>
-  <Import Project="..\..\Packages\MediaInfo.Native.19.9.0\build\MediaInfo.Native.targets" Condition="Exists('..\..\Packages\MediaInfo.Native.19.9.0\build\MediaInfo.Native.targets')" />
   <Import Project="..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets" Condition="Exists('..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets')" />
+  <Import Project="..\..\Packages\MediaInfo.Native.20.8.1\build\MediaInfo.Native.targets" Condition="Exists('..\..\Packages\MediaInfo.Native.20.8.1\build\MediaInfo.Native.targets')" />
 </Project>
