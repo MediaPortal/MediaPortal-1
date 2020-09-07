@@ -1702,7 +1702,9 @@ xcopy "$(TargetDir)core.*" "$(SolutionDir)MediaPortal.Application\bin\$(Configur
     </PropertyGroup>
     <Error Condition="!Exists('..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets'))" />
     <Error Condition="!Exists('..\..\Packages\MediaInfo.Native.20.8.1\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\MediaInfo.Native.20.8.1\build\MediaInfo.Native.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets'))" />
   </Target>
   <Import Project="..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets" Condition="Exists('..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets')" />
   <Import Project="..\..\Packages\MediaInfo.Native.20.8.1\build\MediaInfo.Native.targets" Condition="Exists('..\..\Packages\MediaInfo.Native.20.8.1\build\MediaInfo.Native.targets')" />
+  <Import Project="..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets" Condition="Exists('..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets')" />
 </Project>
