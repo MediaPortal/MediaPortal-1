@@ -588,7 +588,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\MediaInfo.Wrapper.20.8.0\lib\net40\MediaInfo.Wrapper.dll"
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\Sqlite.3.21.0\Sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.33.0\sqlite.dll"
   ; NuGet binaries EXIF
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\MetadataExtractor.2.4.3\lib\net35\MetadataExtractor.dll"
