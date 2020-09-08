@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DvbCoreUtils", "DvbCoreUtils\DvbCoreUtils.vcxproj", "{4B134B4C-4EF6-4647-9CEA-A59FF0013357}"
 EndProject
@@ -378,6 +378,9 @@ Global
 		{CEE9D3EA-D6F9-49F1-9D36-0C3C0789AE97} = {06578191-1626-4FAB-96B0-8F1DE32F74A3}
 		{C2082189-3ECB-4079-91FA-89D3C8A305C0} = {06578191-1626-4FAB-96B0-8F1DE32F74A3}
 		{DA8461C4-7683-4360-9372-2A9E0F1795C2} = {06578191-1626-4FAB-96B0-8F1DE32F74A3}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CB1A8AEA-4844-4FEC-B77E-1A13F21E2144}
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
