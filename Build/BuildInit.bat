@@ -1,4 +1,3 @@
-
 REM detect if BUILD_TYPE should be release or debug
 if not %1!==Debug! goto RELEASE
 :DEBUG
@@ -50,5 +49,9 @@ echo. >> %log%
 REM copy BuildReport resources
 xcopy /I /Y .\BuildReport\_BuildReport_Files .\_BuildReport_Files
 
+REM Define MSbuild path
+set MSBUILD_PATH=%progpath%\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe
+echo -= using %MSBUILD_PATH% =-
+
 REM Download NuGet packages
-@"%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" RestorePackages.targets
+@"%MSBUILD_PATH%" RestorePackages.targets
