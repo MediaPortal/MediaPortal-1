@@ -15,7 +15,9 @@ if not "%ProgramFiles(x86)%".=="". set progpath=%ProgramFiles(x86)%
 
 REM Define MSbuild path
 if not defined MSBUILD_PATH set MSBUILD_PATH=%progpath%\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe
-REM if not exist "%MSBUILD_PATH%" set MSBUILD_PATH=%progpath%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBUILD.exe
+if not exist "%MSBUILD_PATH%" set MSBUILD_PATH=%progpath%\Microsoft Visual Studio\2019\Professional\MSBuild\Current\Bin\MSBuild.exe
+if not exist "%MSBUILD_PATH%" set MSBUILD_PATH=%progpath%\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\bin\MSBuild.exe
+if not exist "%MSBUILD_PATH%" set MSBUILD_PATH=%progpath%\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\bin\MSBuild.exe
 
 REM set other MP related paths
 set GIT_ROOT=..

@@ -31,8 +31,17 @@
 !define Prog_Path '$%ProgramFiles%'
 !endif
 
+!include ${git_InstallScripts}\include\CompileTimeIfFileExist.nsh
+
 !define ALToolPath "${Prog_Path}\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools"
+
+!insertmacro CompileTimeIfFileExist "${Prog_Path}\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" VS2019Community
+# !insertmacro CompileTimeIfFileExist "${Prog_Path}\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe" VS2019Buildtools
+!ifdef VS2019Community
 !define MSBuild_Path "${Prog_Path}\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
+!else
+!define MSBuild_Path "${Prog_Path}\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe"
+!endif
 
 # The following commands needs to be defined by the parent script (the one, which includes this file).
 ;!define BUILD_MediaPortal
