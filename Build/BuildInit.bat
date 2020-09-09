@@ -13,7 +13,9 @@ REM Select program path based on current machine environment
 set progpath=%ProgramFiles%
 if not "%ProgramFiles(x86)%".=="". set progpath=%ProgramFiles(x86)%
 
-REM Select Visual Studio version
+REM Define MSbuild path
+if not defined MSBUILD_PATH set MSBUILD_PATH=%progpath%\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe
+REM if not exist "%MSBUILD_PATH%" set MSBUILD_PATH=%progpath%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBUILD.exe
 
 REM set other MP related paths
 set GIT_ROOT=..
@@ -26,14 +28,14 @@ set TVLibrary="%GIT_ROOT%\TvEngine3\TVLibrary"
 set LibblurayJAR="%GIT_ROOT%\libbluray\src\libbluray\bdj\build.xml"
 set NugetPackages=%GIT_ROOT%\Packages
 
-
 REM set log file
 set log=%project%_%BUILD_TYPE%.log
-
 
 REM init log file, write dev env...
 echo.
 echo. > %log%
+echo -= MSBUILD PATH =- >> %log%
+echo -= %MSBUILD_PATH% =- >> %log%
 echo -= %project% =-
 echo -= %project% =- >> %log%
 echo -= build mode: %BUILD_TYPE% =-
@@ -48,10 +50,6 @@ echo. >> %log%
 
 REM copy BuildReport resources
 xcopy /I /Y .\BuildReport\_BuildReport_Files .\_BuildReport_Files
-
-REM Define MSbuild path
-set MSBUILD_PATH=%progpath%\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe
-echo -= using %MSBUILD_PATH% =-
 
 REM Download NuGet packages
 @"%MSBUILD_PATH%" RestorePackages.targets
