@@ -79,7 +79,7 @@
 !include "${git_InstallScripts}\include\MediaPortalLibbluray.nsh"
 !ifdef libbluray_vcxproj_is_present && Libbluray_use_Build
 !insertmacro PrepareBuildReport libbluray
-!system '"${MSBuild_Path}" ${logger} /target:rebuild /property:Configuration=Release_libbluray "${git_DirectShowFilters}\Filters.sln"' = 0
+!system '"${MSBuild_Path}"  /p:PlatformToolset=v142 ${logger} /target:rebuild /property:Configuration=Release_libbluray "${git_DirectShowFilters}\Filters.sln"' = 0
 !insertmacro FinalizeBuildReport
 !endif
 !insertmacro PrepareBuildReport DirectShowFilters
@@ -107,7 +107,8 @@
 
 !ifdef BUILD_DeployTool
 !insertmacro PrepareBuildReport DeployTool
-!system '"${MSBuild_Path}" ${logger} /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+;!system '"${MSBuild_Path}" ${logger} /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
 !insertmacro FinalizeBuildReport
 !endif
 
