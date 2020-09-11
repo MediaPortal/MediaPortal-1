@@ -93,7 +93,7 @@
       <AdditionalDependencies>strmbase.lib;livemedia555.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>bin\Release/TsMuxer.ax</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release; $(DXSDK_DIR)lib\$(PlatformTarget);$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\source\TsMuxer.def</ModuleDefinitionFile>
@@ -142,7 +142,7 @@
       <AdditionalDependencies>strmbasd.lib;livemedia555D.lib;winmm.lib;WS2_32.Lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>bin\Debug/TsMuxer.ax</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\debug; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\debug; $(DXSDK_DIR)lib\$(PlatformTarget);$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\source\TsMuxer.def</ModuleDefinitionFile>

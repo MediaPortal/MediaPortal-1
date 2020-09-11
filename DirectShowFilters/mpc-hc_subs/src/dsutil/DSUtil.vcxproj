@@ -75,11 +75,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(IncludePath);$(DXSDK_DIR)Include</IncludePath>
-    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)Lib\x86</LibraryPath>
+    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(IncludePath);$(DXSDK_DIR)Include</IncludePath>
-    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)Lib\x86</LibraryPath>
+    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

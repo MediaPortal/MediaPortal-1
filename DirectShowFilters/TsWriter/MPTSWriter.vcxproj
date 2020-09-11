@@ -101,7 +101,7 @@
       <ShowProgress>NotSet</ShowProgress>
       <OutputFile>bin\Release/TsWriter.ax</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release;$(DXSDK_DIR)lib\$(PlatformTarget);$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\source\TsWriter.def</ModuleDefinitionFile>
@@ -152,7 +152,7 @@
       <AdditionalDependencies>dvbcoreutilsD.lib;strmbasd.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>bin\Debug/TsWriter.ax</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\debug;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;../shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\debug;$(DXSDK_DIR)lib\$(PlatformTarget);$(WINDOWS_SDK)\lib;../shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libcmtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\source\TsWriter.def</ModuleDefinitionFile>

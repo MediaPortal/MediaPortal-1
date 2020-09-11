@@ -60,11 +60,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(IncludePath);$(DXSDK_DIR)Include</IncludePath>
-    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)Lib\x86</LibraryPath>
+    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(IncludePath);$(DXSDK_DIR)Include</IncludePath>
-    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)Lib\x86</LibraryPath>
+    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -88,7 +88,7 @@
     <Link>
       <AdditionalDependencies>winmm.lib;comsupp.lib;dxguid.lib;d3d9.lib;d3dx9.lib;mfuuid.lib;dxva2.lib;evr.lib;mf.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>bin\Debug/Win7RefreshRateHelper.dll</OutputFile>
-      <AdditionalLibraryDirectories>(SolutionDir)baseclasses\debug; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>(SolutionDir)baseclasses\debug; $(DXSDK_DIR)lib\$(PlatformTarget);$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>./source/Win7RefreshRateHelper.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -122,7 +122,7 @@
     <Link>
       <AdditionalDependencies>winmm.lib;comsupp.lib;dxguid.lib;d3d9.lib;d3dx9.lib;mfuuid.lib;dxva2.lib;evr.lib;mf.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>bin\Release/Win7RefreshRateHelper.dll</OutputFile>
-      <AdditionalLibraryDirectories>(SolutionDir)baseclasses\release; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>(SolutionDir)baseclasses\release; $(DXSDK_DIR)lib\$(PlatformTarget);$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>./source/Win7RefreshRateHelper.def</ModuleDefinitionFile>

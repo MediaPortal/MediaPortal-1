@@ -64,11 +64,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(IncludePath);$(DXSDK_DIR)Include</IncludePath>
-    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)Lib\x86</LibraryPath>
+    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(IncludePath);$(DXSDK_DIR)Include</IncludePath>
-    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)Lib\x86</LibraryPath>
+    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
@@ -116,7 +116,7 @@
       <ShowProgress>NotSet</ShowProgress>
       <OutputFile>bin\Release/BDReader.ax</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release; $(DXSDK_DIR)lib\$(PlatformTarget);$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\source\BDReader.def</ModuleDefinitionFile>
@@ -169,7 +169,7 @@
       <AdditionalDependencies>D3dx9.lib;DvbCoreUtilsD.lib;strmbasd.lib;quartz.lib;winmm.lib;msvcrtd.lib;ws2_32.lib;mfuuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>bin\Debug/BDReader.ax</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\debug; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\debug; $(DXSDK_DIR)lib\$(PlatformTarget);$(WINDOWS_SDK)\lib;..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libcmtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\source\BDReader.def</ModuleDefinitionFile>

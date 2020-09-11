@@ -57,13 +57,13 @@
     <TargetExt>.ax</TargetExt>
     <TargetName>MPAudioRenderer</TargetName>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DXSDK_DIR)Include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(DXSDK_DIR)lib\x86</LibraryPath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(DXSDK_DIR)lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetExt>.ax</TargetExt>
     <TargetName>MPAudioRenderer</TargetName>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DXSDK_DIR)Include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(DXSDK_DIR)lib\x86</LibraryPath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(DXSDK_DIR)lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -83,7 +83,7 @@
       <AdditionalDependencies>strmbasd.lib;Winmm.lib;dsound.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>LinkVerboseLib</ShowProgress>
       <OutputFile>bin\Debug/mpaudiorenderer.ax</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\debug;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\debug;$(DXSDK_DIR)lib\$(PlatformTarget);$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libcmtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\source\MpAudioRenderer.def</ModuleDefinitionFile>
@@ -121,7 +121,7 @@
       <AdditionalDependencies>strmbase.lib;Winmm.lib;dsound.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>LinkVerboseLib</ShowProgress>
       <OutputFile>bin\Release/mpaudiorenderer.ax</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release;$(DXSDK_DIR)lib\$(PlatformTarget);$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\source\MpAudioRenderer.def</ModuleDefinitionFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>

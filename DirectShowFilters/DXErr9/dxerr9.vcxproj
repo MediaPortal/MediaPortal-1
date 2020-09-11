@@ -68,7 +68,7 @@
     <Link>
       <AdditionalDependencies>dxerr.lib;comsuppwd.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>bin\Debug/dxerr9.dll</OutputFile>
-      <AdditionalLibraryDirectories>(SolutionDir)baseclasses\debug_MBCS;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>(SolutionDir)baseclasses\debug_MBCS;$(DXSDK_DIR)lib\$(PlatformTarget);$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>bin\Debug/dxerr9.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -98,7 +98,7 @@
     <Link>
       <AdditionalDependencies>dxerr.lib;comsuppw.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>bin\Release/dxerr9.dll</OutputFile>
-      <AdditionalLibraryDirectories>(SolutionDir)baseclasses\release_MBCS;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>(SolutionDir)baseclasses\release_MBCS;$(DXSDK_DIR)lib\$(PlatformTarget);$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <ProgramDatabaseFile>bin\Release/dxerr9.pcb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>

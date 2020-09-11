@@ -87,7 +87,7 @@
       <RegisterOutput>false</RegisterOutput>
       <AdditionalDependencies>strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>.\bin\Debug\$(ProjectName).dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\debug;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\debug;$(DXSDK_DIR)lib\$(PlatformTarget);$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>mfcs42d.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\source\dvblib.def</ModuleDefinitionFile>
       <AddModuleNamesToAssembly>%(AddModuleNamesToAssembly)</AddModuleNamesToAssembly>
@@ -129,7 +129,7 @@
     <Link>
       <AdditionalDependencies>strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>.\bin\Release\$(ProjectName).dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release;$(DXSDK_DIR)lib\$(PlatformTarget);$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\source\dvblib.def</ModuleDefinitionFile>
