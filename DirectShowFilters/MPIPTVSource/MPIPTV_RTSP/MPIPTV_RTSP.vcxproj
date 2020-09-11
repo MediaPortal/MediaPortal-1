@@ -96,7 +96,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>mpiptv_rtsp.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>mpiptvsource.lib;mpiptv_udp.lib;LiveMedia555D.lib;wininet.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>mpiptvsource.lib;mpiptv_udp.lib;LiveMedia555.lib;wininet.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>IF NOT EXIST "$(SolutionDir)\MPIPTVSource\bin\Debug" mkdir "$(SolutionDir)\MPIPTVSource\bin\Debug"
