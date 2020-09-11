@@ -156,149 +156,8 @@ namespace MediaPortal
             // if the Main label control is found
             if (nodeType.Value.ToLowerInvariant() == "label" && nodeID.Value == "2")
             {
-              if (control.SelectSingleNode("textsize") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("textsize/text()");
-                if (xmlNode != null)
-                {
-                  float textSize = float.Parse(xmlNode.Value);
-                  Log.Debug("FullScreenSplash: Main label Textsize value found: {0}", textSize);
-                  lblMain.Font = new Font(lblMain.Font.FontFamily, textSize, lblMain.Font.Style);
-                  Log.Debug("FullScreenSplash: Main label Textsize successfully set: {0}", textSize);
-                }
-              }
-              if (control.SelectSingleNode("textcolor") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("textcolor/text()");
-                if (xmlNode != null)
-                {
-                  Color textColor = ColorTranslator.FromHtml(xmlNode.Value);
-                  Log.Debug("FullScreenSplash: Main label TextColor value found: {0}", textColor);
-                  lblMain.ForeColor = textColor;
-                  lblVersion.ForeColor = textColor;
-                  lblCVS.ForeColor = textColor;
-                  Log.Debug("FullScreenSplash: Main label TextColor successfully set: {0}", textColor);
-                }
-              }
-              if (control.SelectSingleNode("posX") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("posX/text()");
-                if (xmlNode != null)
-                {
-                  var _value = xmlNode.Value;
-                  Log.Debug("FullScreenSplash: Text PosX value found: {0}", _value);
-                  int _number = 0;
-                  if (Int32.TryParse(_value, out _number))
-                  {
-                    lblMain.Dock = System.Windows.Forms.DockStyle.None;
-                    int newNumber = ScaleHorizontal(_number);
-                    lblMain.Left = newNumber;
-                    Log.Debug("FullScreenSplash: Main Label PosX successfully set: {0}/{1}", _number, newNumber);
-                  }
-                }
-              }
-              if (control.SelectSingleNode("posY") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("posY/text()");
-                if (xmlNode != null)
-                {
-                  var _value = xmlNode.Value;
-                  Log.Debug("FullScreenSplash: Text PosY value found: {0}", _value);
-                  int _number = 0;
-                  if (Int32.TryParse(_value, out _number))
-                  {
-                    lblMain.Dock = System.Windows.Forms.DockStyle.None;
-                    int newNumber = ScaleVertical(_number);
-                    lblMain.Top = newNumber;
-                    Log.Debug("FullScreenSplash: Main Label PosY successfully set: {0}/{1}", _number, newNumber);
-                  }
-                }
-              }
-              if (control.SelectSingleNode("width") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("width/text()");
-                if (xmlNode != null)
-                {
-                  var _value = xmlNode.Value;
-                  Log.Debug("FullScreenSplash: Text Width value found: {0}", _value);
-                  int _number = 0;
-                  if (Int32.TryParse(_value, out _number))
-                  {
-                    lblMain.Dock = System.Windows.Forms.DockStyle.None;
-                    int newNumber = ScaleHorizontal(_number);
-                    lblMain.Width = newNumber;
-                    Log.Debug("FullScreenSplash: Main Label Width successfully set: {0}/{1}", _number, newNumber);
-                  }
-                }
-              }
-              if (control.SelectSingleNode("height") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("height/text()");
-                if (xmlNode != null)
-                {
-                  var _value = xmlNode.Value;
-                  Log.Debug("FullScreenSplash: Text Height value found: {0}", _value);
-                  int _number = 0;
-                  if (Int32.TryParse(_value, out _number))
-                  {
-                    lblMain.Dock = System.Windows.Forms.DockStyle.None;
-                    int newNumber = ScaleVertical(_number);
-                    lblMain.Height = newNumber;
-                    Log.Debug("FullScreenSplash: Main Label Height successfully set: {0}/{1}", _number, newNumber);
-                  }
-                }
-              }
-              if (control.SelectSingleNode("align") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("align/text()");
-                if (xmlNode != null)
-                {
-                  var _value = xmlNode.Value;
-                  if (!string.IsNullOrEmpty(_value))
-                  {
-                    Log.Debug("FullScreenSplash: Text Align value found: {0}", _value);
-                    _value = _value.Trim().ToLower();
-
-                    if (_value == "bottomcenter")
-                    {
-                      lblMain.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-                    }
-                    if (_value == "bottomleft")
-                    {
-                      lblMain.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-                    }
-                    if (_value == "bottomright")
-                    {
-                      lblMain.TextAlign = System.Drawing.ContentAlignment.BottomRight;
-                    }
-                    if (_value == "middlecenter")
-                    {
-                      lblMain.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-                    }
-                    if (_value == "middleleft")
-                    {
-                      lblMain.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-                    }
-                    if (_value == "middleright")
-                    {
-                      lblMain.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-                    }
-                    if (_value == "topcenter")
-                    {
-                      lblMain.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-                    }
-                    if (_value == "topleft")
-                    {
-                      lblMain.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-                    }
-                    if (_value == "topright")
-                    {
-                      lblMain.TextAlign = System.Drawing.ContentAlignment.TopRight;
-                    }
-                    Log.Debug("FullScreenSplash: Main Label Alignment successfully set: {0}", _value);
-                  }
-                }
-              }
+              ReadLabelProperties(lblMain, control, "Main"); 
+              continue;
             }
             #endregion
 
@@ -306,147 +165,8 @@ namespace MediaPortal
             // if the Version label control is found
             if (nodeType.Value.ToLowerInvariant() == "label" && nodeID.Value == "3")
             {
-              if (control.SelectSingleNode("textsize") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("textsize/text()");
-                if (xmlNode != null)
-                {
-                  float textSize = float.Parse(xmlNode.Value);
-                  Log.Debug("FullScreenSplash: Version Textsize value found: {0}", textSize);
-                  lblVersion.Font = new Font(lblVersion.Font.FontFamily, textSize, lblVersion.Font.Style);
-                  Log.Debug("FullScreenSplash: Version Textsize successfully set: {0}", textSize);
-                }
-              }
-              if (control.SelectSingleNode("textcolor") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("textcolor/text()");
-                if (xmlNode != null)
-                {
-                  Color textColor = ColorTranslator.FromHtml(xmlNode.Value);
-                  Log.Debug("FullScreenSplash: Version TextColor value found: {0}", textColor);
-                  lblVersion.ForeColor = textColor;
-                  Log.Debug("FullScreenSplash: Version TextColor successfully set: {0}", textColor);
-                }
-              }
-              if (control.SelectSingleNode("posX") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("posX/text()");
-                if (xmlNode != null)
-                {
-                  var _value = xmlNode.Value;
-                  Log.Debug("FullScreenSplash: Version Text PosX value found: {0}", _value);
-                  int _number = 0;
-                  if (Int32.TryParse(_value, out _number))
-                  {
-                    lblVersion.Dock = System.Windows.Forms.DockStyle.None;
-                    int newNumber = ScaleHorizontal(_number);
-                    lblVersion.Left = newNumber;
-                    Log.Debug("FullScreenSplash: Version Label PosX successfully set: {0}/{1}", _number, newNumber);
-                  }
-                }
-              }
-              if (control.SelectSingleNode("posY") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("posY/text()");
-                if (xmlNode != null)
-                {
-                  var _value = xmlNode.Value;
-                  Log.Debug("FullScreenSplash: Version Text PosY value found: {0}", _value);
-                  int _number = 0;
-                  if (Int32.TryParse(_value, out _number))
-                  {
-                    lblVersion.Dock = System.Windows.Forms.DockStyle.None;
-                    int newNumber = ScaleVertical(_number);
-                    lblVersion.Top = newNumber;
-                    Log.Debug("FullScreenSplash: Version Label PosY successfully set: {0}/{1}", _number, newNumber);
-                  }
-                }
-              }
-              if (control.SelectSingleNode("width") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("width/text()");
-                if (xmlNode != null)
-                {
-                  var _value = xmlNode.Value;
-                  Log.Debug("FullScreenSplash: Version Text Width value found: {0}", _value);
-                  int _number = 0;
-                  if (Int32.TryParse(_value, out _number))
-                  {
-                    lblVersion.Dock = System.Windows.Forms.DockStyle.None;
-                    int newNumber = ScaleHorizontal(_number);
-                    lblVersion.Width = newNumber;
-                    Log.Debug("FullScreenSplash: Version Label Width successfully set: {0}/{1}", _number, newNumber);
-                  }
-                }
-              }
-              if (control.SelectSingleNode("height") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("height/text()");
-                if (xmlNode != null)
-                {
-                  var _value = xmlNode.Value;
-                  Log.Debug("FullScreenSplash: Version Text Height value found: {0}", _value);
-                  int _number = 0;
-                  if (Int32.TryParse(_value, out _number))
-                  {
-                    lblVersion.Dock = System.Windows.Forms.DockStyle.None;
-                    int newNumber = ScaleVertical(_number);
-                    lblVersion.Height = newNumber;
-                    Log.Debug("FullScreenSplash: Version Label Height successfully set: {0}/{1}", _number, newNumber);
-                  }
-                }
-              }
-              if (control.SelectSingleNode("align") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("align/text()");
-                if (xmlNode != null)
-                {
-                  var _value = xmlNode.Value;
-                  if (!string.IsNullOrEmpty(_value))
-                  {
-                    Log.Debug("FullScreenSplash: Version Text Align value found: {0}", _value);
-                    _value = _value.Trim().ToLower();
-
-                    if (_value == "bottomcenter")
-                    {
-                      lblVersion.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-                    }
-                    if (_value == "bottomleft")
-                    {
-                      lblVersion.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-                    }
-                    if (_value == "bottomright")
-                    {
-                      lblVersion.TextAlign = System.Drawing.ContentAlignment.BottomRight;
-                    }
-                    if (_value == "middlecenter")
-                    {
-                      lblVersion.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-                    }
-                    if (_value == "middleleft")
-                    {
-                      lblVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-                    }
-                    if (_value == "middleright")
-                    {
-                      lblVersion.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-                    }
-                    if (_value == "topcenter")
-                    {
-                      lblVersion.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-                    }
-                    if (_value == "topleft")
-                    {
-                      lblVersion.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-                    }
-                    if (_value == "topright")
-                    {
-                      lblVersion.TextAlign = System.Drawing.ContentAlignment.TopRight;
-                    }
-                    Log.Debug("FullScreenSplash: Version Alignment successfully set: {0}", _value);
-                  }
-                }
-              }
+              ReadLabelProperties(lblVersion, control, "Version"); 
+              continue;
             }
             #endregion
 
@@ -454,155 +174,21 @@ namespace MediaPortal
             // if the edition/codename/cvs label control is found
             if (nodeType.Value.ToLowerInvariant() == "label" && nodeID.Value == "4")
             {
-              if (control.SelectSingleNode("textsize") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("textsize/text()");
-                if (xmlNode != null)
-                {
-                  float textSize = float.Parse(xmlNode.Value);
-                  Log.Debug("FullScreenSplash: Edition/Codename/CVS Textsize value found: {0}", textSize);
-                  lblCVS.Font = new Font(lblCVS.Font.FontFamily, textSize, lblCVS.Font.Style);
-                  Log.Debug("FullScreenSplash: Edition/Codename/CVS Textsize successfully set: {0}", textSize);
-                }
-              }
-              if (control.SelectSingleNode("textcolor") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("textcolor/text()");
-                if (xmlNode != null)
-                {
-                  Color textColor = ColorTranslator.FromHtml(xmlNode.Value);
-                  Log.Debug("FullScreenSplash: Edition/Codename/CVS TextColor value found: {0}", textColor);
-                  lblCVS.ForeColor = textColor;
-                  Log.Debug("FullScreenSplash: Edition/Codename/CVS TextColor successfully set: {0}", textColor);
-                }
-              }
-              if (control.SelectSingleNode("posX") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("posX/text()");
-                if (xmlNode != null)
-                {
-                  var _value = xmlNode.Value;
-                  Log.Debug("FullScreenSplash: Edition/Codename/CVS Text PosX value found: {0}", _value);
-                  int _number = 0;
-                  if (Int32.TryParse(_value, out _number))
-                  {
-                    lblCVS.Dock = System.Windows.Forms.DockStyle.None;
-                    int newNumber = ScaleHorizontal(_number);
-                    lblCVS.Left = newNumber;
-                    Log.Debug("FullScreenSplash: Edition/Codename/CVS Label PosX successfully set: {0}/{1}", _number, newNumber);
-                  }
-                }
-              }
-              if (control.SelectSingleNode("posY") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("posY/text()");
-                if (xmlNode != null)
-                {
-                  var _value = xmlNode.Value;
-                  Log.Debug("FullScreenSplash: Edition/Codename/CVS Text PosY value found: {0}", _value);
-                  int _number = 0;
-                  if (Int32.TryParse(_value, out _number))
-                  {
-                    lblCVS.Dock = System.Windows.Forms.DockStyle.None;
-                    int newNumber = ScaleVertical(_number);
-                    lblCVS.Top = newNumber;
-                    Log.Debug("FullScreenSplash: Edition/Codename/CVS Label PosY successfully set: {0}/{1}", _number, newNumber);
-                  }
-                }
-              }
-              if (control.SelectSingleNode("width") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("width/text()");
-                if (xmlNode != null)
-                {
-                  var _value = xmlNode.Value;
-                  Log.Debug("FullScreenSplash: Edition/Codename/CVS Text Width value found: {0}", _value);
-                  int _number = 0;
-                  if (Int32.TryParse(_value, out _number))
-                  {
-                    lblCVS.Dock = System.Windows.Forms.DockStyle.None;
-                    int newNumber = ScaleHorizontal(_number);
-                    lblCVS.Width = newNumber;
-                    Log.Debug("FullScreenSplash: Edition/Codename/CVS Label Width successfully set: {0}/{1}", _number, newNumber);
-                  }
-                }
-              }
-              if (control.SelectSingleNode("height") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("height/text()");
-                if (xmlNode != null)
-                {
-                  var _value = xmlNode.Value;
-                  Log.Debug("FullScreenSplash: Edition/Codename/CVS Text Height value found: {0}", _value);
-                  int _number = 0;
-                  if (Int32.TryParse(_value, out _number))
-                  {
-                    lblCVS.Dock = System.Windows.Forms.DockStyle.None;
-                    int newNumber = ScaleVertical(_number);
-                    lblCVS.Height = newNumber;
-                    Log.Debug("FullScreenSplash: Edition/Codename/CVS Label Height successfully set: {0}/{1}", _number, newNumber);
-                  }
-                }
-              }
-              if (control.SelectSingleNode("align") != null)
-              {
-                XmlNode xmlNode = control.SelectSingleNode("align/text()");
-                if (xmlNode != null)
-                {
-                  var _value = xmlNode.Value;
-                  if (!string.IsNullOrEmpty(_value))
-                  {
-                    Log.Debug("FullScreenSplash: Edition/Codename/CVS Text Align value found: {0}", _value);
-                    _value = _value.Trim().ToLower();
-
-                    if (_value == "bottomcenter")
-                    {
-                      lblCVS.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-                    }
-                    if (_value == "bottomleft")
-                    {
-                      lblCVS.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-                    }
-                    if (_value == "bottomright")
-                    {
-                      lblCVS.TextAlign = System.Drawing.ContentAlignment.BottomRight;
-                    }
-                    if (_value == "middlecenter")
-                    {
-                      lblCVS.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-                    }
-                    if (_value == "middleleft")
-                    {
-                      lblCVS.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-                    }
-                    if (_value == "middleright")
-                    {
-                      lblCVS.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-                    }
-                    if (_value == "topcenter")
-                    {
-                      lblCVS.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-                    }
-                    if (_value == "topleft")
-                    {
-                      lblCVS.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-                    }
-                    if (_value == "topright")
-                    {
-                      lblCVS.TextAlign = System.Drawing.ContentAlignment.TopRight;
-                    }
-                    Log.Debug("FullScreenSplash: Edition/Codename/CVS Alignment successfully set: {0}", _value);
-                  }
-                }
-              }
+              ReadLabelProperties(lblCVS, control, "Edition/Codename/CVS"); 
+              continue;
             }
             #endregion
           }
         }
       }
-      lblMain.Font = new Font(lblMain.Font.FontFamily, ScaleVertical((int)lblMain.Font.Size), lblMain.Font.Style);
-      lblVersion.Font = new Font(lblVersion.Font.FontFamily, ScaleVertical((int)lblVersion.Font.Size), lblVersion.Font.Style);
-      lblCVS.Font = new Font(lblCVS.Font.FontFamily, ScaleVertical((int)lblCVS.Font.Size), lblCVS.Font.Style);
+
+      #region Font scale
+
+      lblMain.Font = ScaleFontSize(lblMain.Font);
+      lblVersion.Font = ScaleFontSize(lblVersion.Font);
+      lblCVS.Font = ScaleFontSize(lblCVS.Font);
+
+      #endregion
 
       this.Invalidate(true);
     }
@@ -631,7 +217,7 @@ namespace MediaPortal
           }
           catch (FormatException ex) // Size values were invalid.
           {
-            Log.Debug("FullScreenSplash:InitSkinSizeFromReferenceXML: {0}", ex.Message);
+            Log.Debug("FullScreenSplash: InitSkinSizeFromReferenceXML: {0}", ex.Message);
           }
         }
       }
@@ -677,6 +263,209 @@ namespace MediaPortal
     }
 
     /// <summary>
+    /// Read Label properties from Skin splashscreen.xml file
+    /// </summary>
+    private void ReadLabelProperties(System.Windows.Forms.Label label, XmlNode control, string text)
+    {
+      if (label == null || control == null)
+      {
+        return;
+      }
+
+      if (control.SelectSingleNode("textsize") != null)
+      {
+        XmlNode xmlNode = control.SelectSingleNode("textsize/text()");
+        if (xmlNode != null)
+        {
+          float textSize = float.Parse(xmlNode.Value);
+          Log.Debug("FullScreenSplash: {0} label Textsize value found: {1}", text, textSize);
+          label.Font = new Font(label.Font.FontFamily, textSize, label.Font.Style);
+          Log.Debug("FullScreenSplash: {0} label Textsize successfully set: {1}", text, textSize);
+        }
+      }
+      if (control.SelectSingleNode("fontname") != null)
+      {
+        XmlNode xmlNode = control.SelectSingleNode("fontname/text()");
+        if (xmlNode != null)
+        {
+          string fontName = xmlNode.Value;
+          Font testFont = new Font(fontName, label.Font.Size, label.Font.Style);
+          Log.Debug("FullScreenSplash: {0} label Fontname value found: {1}", text, fontName);
+          if (testFont.Name == fontName)
+          {
+            label.Font = testFont;
+            Log.Debug("FullScreenSplash: {0} label Fontname successfully set: {1}", text, fontName);
+          }
+          else
+          {
+            Log.Debug("FullScreenSplash: {0} label Fontname {1} not found.", text, fontName);
+          }
+        }
+      }
+      if (control.SelectSingleNode("fontstyle") != null)
+      {
+        XmlNode xmlNode = control.SelectSingleNode("fontstyle/text()");
+        if (xmlNode != null)
+        {
+          var _value = xmlNode.Value;
+          if (!string.IsNullOrEmpty(_value))
+          {
+            Log.Debug("FullScreenSplash: {0} label Font style value found: {1}", text, _value);
+            _value = _value.Trim().ToLower();
+
+            if (_value == "regular")
+            { 
+              label.Font = new Font(label.Font.FontFamily, label.Font.Size, FontStyle.Regular);
+            }
+            if (_value == "bold")
+            {
+              label.Font = new Font(label.Font.FontFamily, label.Font.Size, FontStyle.Bold);
+            }
+            if (_value == "italic")
+            {
+              label.Font = new Font(label.Font.FontFamily, label.Font.Size, FontStyle.Italic);
+            }
+            if (_value == "underline")
+            {
+              label.Font = new Font(label.Font.FontFamily, label.Font.Size, FontStyle.Underline);
+            }
+            Log.Debug("FullScreenSplash: {0} label Font style successfully set: {1}", text, _value);
+          }
+        }
+      }
+      if (control.SelectSingleNode("textcolor") != null)
+      {
+        XmlNode xmlNode = control.SelectSingleNode("textcolor/text()");
+        if (xmlNode != null)
+        {
+          Color textColor = ColorTranslator.FromHtml(xmlNode.Value);
+          Log.Debug("FullScreenSplash: {0} label TextColor value found: {1}", text, textColor);
+          label.ForeColor = textColor;
+          Log.Debug("FullScreenSplash: {0} label TextColor successfully set: {1}", text, textColor);
+        }
+      }
+      if (control.SelectSingleNode("posX") != null)
+      {
+        XmlNode xmlNode = control.SelectSingleNode("posX/text()");
+        if (xmlNode != null)
+        {
+          var _value = xmlNode.Value;
+          Log.Debug("FullScreenSplash: {0} label PosX value found: {1}", text, _value);
+          int _number = 0;
+          if (Int32.TryParse(_value, out _number))
+          {
+            label.Dock = System.Windows.Forms.DockStyle.None;
+            int newNumber = ScaleHorizontal(_number);
+            label.Left = newNumber;
+            Log.Debug("FullScreenSplash: {0} label PosX successfully set: {1}/{2}", text, _number, newNumber);
+          }
+        }
+      }
+      if (control.SelectSingleNode("posY") != null)
+      {
+        XmlNode xmlNode = control.SelectSingleNode("posY/text()");
+        if (xmlNode != null)
+        {
+          var _value = xmlNode.Value;
+          Log.Debug("FullScreenSplash: {0} label PosY value found: {1}", text, _value);
+          int _number = 0;
+          if (Int32.TryParse(_value, out _number))
+          {
+            label.Dock = System.Windows.Forms.DockStyle.None;
+            int newNumber = ScaleVertical(_number);
+            label.Top = newNumber;
+            Log.Debug("FullScreenSplash: {0} label PosY successfully set: {1}/{2}", text, _number, newNumber);
+          }
+        }
+      }
+      if (control.SelectSingleNode("width") != null)
+      {
+        XmlNode xmlNode = control.SelectSingleNode("width/text()");
+        if (xmlNode != null)
+        {
+          var _value = xmlNode.Value;
+          Log.Debug("FullScreenSplash: {0} label Width value found: {1}", text, _value);
+          int _number = 0;
+          if (Int32.TryParse(_value, out _number))
+          {
+            label.Dock = System.Windows.Forms.DockStyle.None;
+            int newNumber = ScaleHorizontal(_number);
+            label.Width = newNumber;
+            Log.Debug("FullScreenSplash: {0} label Width successfully set: {1}/{2}", text, _number, newNumber);
+          }
+        }
+      }
+      if (control.SelectSingleNode("height") != null)
+      {
+        XmlNode xmlNode = control.SelectSingleNode("height/text()");
+        if (xmlNode != null)
+        {
+          var _value = xmlNode.Value;
+          Log.Debug("FullScreenSplash: {0} label Height value found: {1}", text, _value);
+          int _number = 0;
+          if (Int32.TryParse(_value, out _number))
+          {
+            label.Dock = System.Windows.Forms.DockStyle.None;
+            int newNumber = ScaleVertical(_number);
+            label.Height = newNumber;
+            Log.Debug("FullScreenSplash: {0} label Height successfully set: {1}/{2}", text, _number, newNumber);
+          }
+        }
+      }
+      if (control.SelectSingleNode("align") != null)
+      {
+        XmlNode xmlNode = control.SelectSingleNode("align/text()");
+        if (xmlNode != null)
+        {
+          var _value = xmlNode.Value;
+          if (!string.IsNullOrEmpty(_value))
+          {
+            Log.Debug("FullScreenSplash: {0} label Align value found: {1}", text, _value);
+            _value = _value.Trim().ToLower();
+
+            if (_value == "bottomcenter")
+            {
+              label.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            }
+            if (_value == "bottomleft")
+            {
+              label.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            }
+            if (_value == "bottomright")
+            {
+              label.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+            }
+            if (_value == "middlecenter")
+            {
+              label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            }
+            if (_value == "middleleft")
+            {
+              label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            }
+            if (_value == "middleright")
+            {
+              label.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            }
+            if (_value == "topcenter")
+            {
+              label.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            }
+            if (_value == "topleft")
+            {
+              label.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            }
+            if (_value == "topright")
+            {
+              label.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            }
+            Log.Debug("FullScreenSplash: {0} label Alignment successfully set: {1}", text, _value);
+          }
+        }
+      }
+    }
+
+    /// <summary>
     /// Scale x position for current resolution
     /// </summary>
     /// <param name="x">X coordinate to scale.</param>
@@ -702,6 +491,20 @@ namespace MediaPortal
         y = (int)Math.Round((float)y * percentY);
       }
       return y;
+    }
+
+    /// <summary>
+    /// Scale Font size for current resolution
+    /// </summary>
+    /// <param name="font">Font to scale.</param>
+    private Font ScaleFontSize(Font font)
+    {
+      int ascent = font.FontFamily.GetCellAscent(font.Style);
+      int descent = font.FontFamily.GetCellDescent(font.Style);
+      int emHeight = font.FontFamily.GetEmHeight(font.Style);
+      int sizeInPixel = (int)Math.Ceiling(font.Size * (float)(descent + ascent) / (float)emHeight);
+
+      return new Font(font.FontFamily, ScaleVertical(sizeInPixel), font.Style, GraphicsUnit.Pixel);
     }
   }
 }

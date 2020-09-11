@@ -137,10 +137,10 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(TargetDir)fontengine.dll $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y /T
-xcopy $(TargetDir)fontengine.pdb $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y /T
-xcopy $(TargetDir)fontengine.dll $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y
-xcopy $(TargetDir)fontengine.pdb $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y</Command>
+      <Command>xcopy "$(TargetDir)fontengine.dll" "$(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\" /Y /T
+xcopy "$(TargetDir)fontengine.pdb" "$(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\" /Y /T
+xcopy "$(TargetDir)fontengine.dll" "$(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\" /Y
+xcopy "$(TargetDir)fontengine.pdb" "$(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -219,10 +219,10 @@ xcopy $(TargetDir)fontengine.pdb $(SolutionDir)..\mediaportal\MediaPortal.Applic
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(TargetDir)fontengine.dll $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y /T
-xcopy $(TargetDir)fontengine.pdb $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y /T
-xcopy $(TargetDir)fontengine.dll $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y
-xcopy $(TargetDir)fontengine.pdb $(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\ /Y</Command>
+      <Command>xcopy "$(TargetDir)fontengine.dll" "$(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\" /Y /T
+xcopy "$(TargetDir)fontengine.pdb" "$(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\" /Y /T
+xcopy "$(TargetDir)fontengine.dll" "$(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\" /Y
+xcopy "$(TargetDir)fontengine.pdb" "$(SolutionDir)..\mediaportal\MediaPortal.Application\bin\$(ConfigurationName)\" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

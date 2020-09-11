@@ -33,7 +33,9 @@
 # Correspond to nuget Package
 
 #**********************************************************************************************************#
+!ifndef CompileTimeIfFileExist_loaded 
 !include ${git_InstallScripts}\include\CompileTimeIfFileExist.nsh
+!endif 
 
 #---------------------------------------------------------------------------
 # BUILD sources

@@ -33,12 +33,7 @@ set xml=Build_Report_%BUILD_TYPE%_Filters_%PRJ%.xml
 set html=Build_Report_%BUILD_TYPE%_Filters_%PRJ%.html
 set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
 
-REM "%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" %logger% /p:PlatformToolset=Windows7.1SDK /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" %PRJ% >> %log%
-IF EXIST "%ProgramFiles(x86)%" (
-"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" %PRJ% >> %log%
-) ELSE (
-"C:\Program Files\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" %PRJ% >> %log%
-)
+"%MSBUILD_PATH%" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" %PRJ% >> %log%
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
 goto DONE
@@ -48,12 +43,7 @@ set xml=Build_Report_%BUILD_TYPE%_Filters.xml
 set html=Build_Report_%BUILD_TYPE%_Filters.html
 set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
 
-REM "%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" %logger% /p:PlatformToolset=Windows7.1SDK /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" >> %log%
-IF EXIST "%ProgramFiles(x86)%" (
-"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" >> %log%
-) ELSE (
-"C:\Program Files\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" >> %log%
-)
+"%MSBUILD_PATH%" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE% "..\DirectShowFilters\Filters.sln" >> %log%
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
 REM BUILD LIBBLURAY PROJECT
@@ -62,11 +52,7 @@ set xml=Build_Report_%BUILD_TYPE%_libbluray.xml
 set html=Build_Report_%BUILD_TYPE%_libbluray.html
 set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
 
-IF EXIST "%ProgramFiles(x86)%" (
-"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE%_libbluray "..\DirectShowFilters\Filters.sln" >> %log%
-) ELSE (
-"C:\Program Files\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE%_libbluray "..\DirectShowFilters\Filters.sln" >> %log%
-)
+"%MSBUILD_PATH%" %logger% /m /target:%BUILD_MODE% /property:Configuration=%BUILD_TYPE%_libbluray "..\DirectShowFilters\Filters.sln" >> %log%
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 )
 
