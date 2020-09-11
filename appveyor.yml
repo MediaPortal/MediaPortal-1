@@ -1,0 +1,23 @@
+version: 1.25.100.{build}
+image: Visual Studio 2019
+clone_folder: c:\project\mediaportal
+environment:
+  JAVA_HOME: C:\Program Files (x86)\Java\jdk1.8.0
+install:
+- cmd: >-
+    git submodule update --init --recursive
+
+    choco install nsis --version=2.46.0.20150406
+
+    java -version
+build_script:
+- cmd: >-
+    cd c:\project\mediaportal\build\
+
+    VS_build_DirectShowFilters_PLATFORM.bat release rebuild x64
+test: off
+artifacts:
+- path: Release\MediaPortalSetup_*.exe
+  name: Mediaportal Installer
+- path: Build\BuildFullInstaller.log
+  name: Build log
