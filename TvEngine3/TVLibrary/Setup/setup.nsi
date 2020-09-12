@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 /*
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -224,7 +224,7 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright ï¿½ 2005-2011 ${PRODUCT_PUBLISHER}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2020 ${PRODUCT_PUBLISHER}"
 ShowUninstDetails show
 
 
