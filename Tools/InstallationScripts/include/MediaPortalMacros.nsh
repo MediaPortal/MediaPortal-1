@@ -19,7 +19,7 @@
 #endregion
 
 !if "${NSIS_VERSION}" != "v3.06"
-  !error "$\r$\n$\r$\nPlease install NSIS v3.06. http://nsis.sourceforge.net$\r$\n$\r$\n"
+  !error "$\r$\n$\r$\nUnsupported NSIS version: ${NSIS_VERSION}. Please use NSIS v3.06, http://nsis.sourceforge.net$\r$\n$\r$\n"
 !endif
 
 !ifndef ___COMMON_MP_MACROS__NSH___
