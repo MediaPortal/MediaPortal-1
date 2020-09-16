@@ -97,6 +97,7 @@
   ${EndIf}
 !macroend
 
+!macroundef RemoveSection
 !macro RemoveSection SecName
   ;This macro is used to call section's Remove_... macro
   ;from the uninstaller.
