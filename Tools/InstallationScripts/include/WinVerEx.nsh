@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 /*
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -33,21 +33,21 @@
 
 !include WinVer.nsh
 
-!define WINVER_8_NT      0x86020000 ;6.02.9200
-!define WINVER_8         0x06020000 ;6.02.9200
-!define WINVER_81        0x06030000 ;6.03.9600
-!define WINVER_2012_NT   0x86020001 ;6.02.9200
-!define WINVER_2012      0x06020001 ;6.02.9200
+#!define WINVER_8_NT      0x86020000 ;6.02.9200
+#!define WINVER_8         0x06020000 ;6.02.9200
+#!define WINVER_81        0x06030000 ;6.03.9600
+#!define WINVER_2012_NT   0x86020001 ;6.02.9200
+#!define WINVER_2012      0x06020001 ;6.02.9200
  
-!macro __WinVer_DefineOSTestsEx Test Suffix
-!insertmacro __WinVer_DefineOSTest ${Test} 8      '${Suffix}'
-!insertmacro __WinVer_DefineOSTest ${Test} 81     '${Suffix}'
-!insertmacro __WinVer_DefineOSTest ${Test} 2012   '${Suffix}'
-!macroend
+#!macro __WinVer_DefineOSTestsEx Test Suffix
+#!insertmacro __WinVer_DefineOSTest ${Test} 8      '${Suffix}'
+#!insertmacro __WinVer_DefineOSTest ${Test} 81     '${Suffix}'
+#!insertmacro __WinVer_DefineOSTest ${Test} 2012   '${Suffix}'
+#!macroend
  
-!insertmacro __WinVer_DefineOSTestsEx AtLeast ""
-!insertmacro __WinVer_DefineOSTestsEx Is _NT
-!insertmacro __WinVer_DefineOSTestsEx AtMost ""
+#!insertmacro __WinVer_DefineOSTestsEx AtLeast ""
+#!insertmacro __WinVer_DefineOSTestsEx Is _NT
+#!insertmacro __WinVer_DefineOSTestsEx AtMost ""
 
 !macro GetServicePack _major _minor
 
