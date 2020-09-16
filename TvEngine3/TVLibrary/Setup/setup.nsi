@@ -200,7 +200,7 @@ UninstPage custom un.UninstallModePage un.UninstallModePageLeave
 # INSTALLER LANGUAGES
 #---------------------------------------------------------------------------
 !insertmacro LANG_LOAD "English"
-
+!insertmacro MUI_LANGUAGE "English"
 
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
