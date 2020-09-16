@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 /*
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1144,7 +1144,7 @@ Function PageDirectoryPre
   ${EndIf}
 
   ; It checks, if the Server has been selected and only displays the Directory page in this case
-  ${IfNot} ${SectionIsSelected} SecServer
+  ${IfNot} ${SectionIsSelected} ${SecServer}
     Abort
   ${EndIf}
 FunctionEnd
