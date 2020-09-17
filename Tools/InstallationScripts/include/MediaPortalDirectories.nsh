@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 /*
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -42,6 +42,7 @@
 
 !endif
 
+!define _MediaPortalDirectories_VERBOSE 2
 
 !AddPluginDir "${git_InstallScripts}\XML-plugin\Plugin"
 !include "${git_InstallScripts}\XML-plugin\Include\XML.nsh"
