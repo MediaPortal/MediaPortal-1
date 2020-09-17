@@ -25,6 +25,8 @@
 #
 #**********************************************************************************************************#
 
+Unicode True
+
 #---------------------------------------------------------------------------
 # DEVELOPMENT ENVIRONMENT
 #---------------------------------------------------------------------------
@@ -98,7 +100,6 @@ InstallDir "$TEMP\MediaPortal Installation"
 
 CRCCheck on
 XPStyle on
-Unicode True
 RequestExecutionLevel admin
 ShowInstDetails show
 AutoCloseWindow true
