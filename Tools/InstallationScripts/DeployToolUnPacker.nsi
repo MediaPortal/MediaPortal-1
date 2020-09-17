@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 /*
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -98,6 +98,7 @@ InstallDir "$TEMP\MediaPortal Installation"
 
 CRCCheck on
 XPStyle on
+Unicode True
 RequestExecutionLevel admin
 ShowInstDetails show
 AutoCloseWindow true
