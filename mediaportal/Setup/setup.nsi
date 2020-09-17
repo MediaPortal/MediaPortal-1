@@ -227,7 +227,6 @@ BrandingText  "${PRODUCT_NAME} ${VERSION_DISP} by ${PRODUCT_PUBLISHER}"
   OutFile "${git_OUT}\Setup-MediaPortal-git-${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.exe"
 !endif
 InstallDir ""
-Unicode True
 CRCCheck on
 XPStyle on
 RequestExecutionLevel admin
