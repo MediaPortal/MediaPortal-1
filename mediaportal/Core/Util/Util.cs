@@ -4791,7 +4791,7 @@ namespace MediaPortal.Util
           
           if (!File.Exists(defaultBackground))
           {
-            Log.Warn("Utils: Your skin does not supply previewbackground.png to create folder preview thumbs!");
+            Log.Warn("Utils: Your skin does not supply previewbackground.png to create tile preview thumbs!");
             return result;
           }
 
