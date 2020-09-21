@@ -135,6 +135,8 @@ Var PREVIOUS_KEYMAPSETTINGS
 !include "${git_InstallScripts}\include\FontReg.nsh"
 !include "${git_InstallScripts}\include\FontName.nsh"
 
+!include "${git_InstallScripts}\include\x64.nsh"
+
 !ifndef GIT_BUILD
 !include "${git_InstallScripts}\pages\AddRemovePage.nsh"
 !endif
@@ -578,7 +580,11 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\WindowPlugins\Common.GUIPlugins\bin\${BUILD_TYPE}\Common.GUIPlugins.dll"
   ; ffmpeg
   SetOutPath "$MPdir.Base\MovieThumbnailer"
-  File "${git_ROOT}\Packages\FFmpeg.Win32.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
+  ${If} ${RunningX64}
+    File "${git_ROOT}\Packages\FFmpeg.Win64.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
+  ${Else}
+    File "${git_ROOT}\Packages\FFmpeg.Win32.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
+  ${EndIf}
   ; NuGet binaries MediaInfo
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\MediaInfo.Native.20.8.1\build\native\x86\MediaInfo.dll"

@@ -126,6 +126,7 @@ Var frominstall
 !include "${git_InstallScripts}\pages\AddRemovePage.nsh"
 !include "${git_InstallScripts}\pages\UninstallModePage.nsh"
 
+!include "${git_InstallScripts}\include\x64.nsh"
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
@@ -555,7 +556,11 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_ROOT}\Packages\MediaInfo.Wrapper.20.8.0\lib\net40\MediaInfo.Wrapper.dll"
 
   ; thumbnail software
-  File "${git_ROOT}\Packages\FFmpeg.Win32.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
+  ${If} ${RunningX64}
+    File "${git_ROOT}\Packages\FFmpeg.Win64.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
+  ${Else}
+    File "${git_ROOT}\Packages\FFmpeg.Win32.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
+  ${EndIf}
   File "${git_TVServer}\TvThumbnails\bin\x86\${BUILD_TYPE}\TvThumbnails.dll"
   
 
