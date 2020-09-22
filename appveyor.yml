@@ -15,11 +15,7 @@ build_script:
 - cmd: >-
     cd c:\project\mediaportal\build\
 
-    REM "%ProgramFiles(x86)%\NSIS\makensis.exe" "..\Tools\InstallationScripts\DeployToolUnPacker-x64.nsi" >> BuildFullInstaller.log && type BuildFullInstaller.log
-
-    "%ProgramFiles(x86)%\NSIS\makensis.exe" "..\Tools\InstallationScripts\DeployToolUnPacker-x64.nsi" >> BuildFullInstaller.log
-
-    IF %ERRORLEVEL% NEQ 0 TYPE BuildFullInstaller.log
+    "%ProgramFiles(x86)%\NSIS\makensis.exe" "..\Tools\InstallationScripts\DeployToolUnPacker-x64.nsi" > BuildFullInstaller.log
 
     7z a ..\Release\MediaPortalSetup_%APPVEYOR_BUILD_VERSION%.%APPVEYOR_REPO_COMMIT%.zip ..\Release\MediaPortalSetup_*.exe
 
@@ -32,3 +28,5 @@ artifacts:
   name: Mediaportal Installer (Zip)
 - path: Build\BuildFullInstaller.zip
   name: Mediaportal Build Log
+on_failure:
+- ps: Push-AppveyorArtifact BuildFullInstaller.log -FileName BuildError.log
