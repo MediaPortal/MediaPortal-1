@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -148,10 +148,10 @@ namespace MediaPortal.TagReader
         musictag.Channels = tag.Properties.AudioChannels;
         musictag.SampleRate = tag.Properties.AudioSampleRate;
         musictag.Year = (int)tag.Tag.Year;
-        musictag.ReplayGainTrack = tag.Tag.ReplayGainTrack ?? "";
-        musictag.ReplayGainTrackPeak = tag.Tag.ReplayGainTrackPeak ?? "";
-        musictag.ReplayGainAlbum = tag.Tag.ReplayGainAlbum ?? "";
-        musictag.ReplayGainAlbumPeak = tag.Tag.ReplayGainAlbumPeak ?? "";
+        musictag.ReplayGainTrack = tag.Tag.ReplayGainTrackGain.ToString() ?? "";
+        musictag.ReplayGainTrackPeak = tag.Tag.ReplayGainTrackPeak.ToString() ?? "";
+        musictag.ReplayGainAlbum = tag.Tag.ReplayGainAlbumGain.ToString() ?? "";
+        musictag.ReplayGainAlbumPeak = tag.Tag.ReplayGainAlbumPeak.ToString() ?? "";
 
         if (tag.MimeType == "taglib/mp3")
         {
