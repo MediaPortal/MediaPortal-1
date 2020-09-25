@@ -299,7 +299,7 @@
       <Name>System.XML</Name>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TagLib, Version=2.2.0.2, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=x86">
+    <Reference Include="TagLibSharp, Version=2.2.0.2, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=x86">
       <HintPath>..\..\Packages\MediaPortal.TagLib.2.2.0.2\lib\net40\TagLibSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
