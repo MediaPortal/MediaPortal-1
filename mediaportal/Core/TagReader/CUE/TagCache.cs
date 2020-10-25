@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2016 Team MediaPortal
+﻿#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2016 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,10 +22,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using MediaInfo;
 using MediaPortal.Player;
 using MediaPortal.Services;
 using MediaPortal.Util;
+
+using TagLib;
 
 namespace MediaPortal.TagReader
 {
