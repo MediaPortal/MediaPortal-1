@@ -65,6 +65,15 @@ namespace MediaPortal.TagReader
     internal string m_ReplayGainAlbum = "";
     internal string m_ReplayGainAlbumPeak = "";
     internal string m_imageURL = string.Empty;
+    internal string m_mbArtistId;
+    internal string m_mbDiscId;
+    internal string m_mbReleaseArtistId;
+    internal string m_mbReleaseCountry;
+    internal string m_mbReleaseGroupId;
+    internal string m_mbReleaseId;
+    internal string m_mbReleaseStatus;
+    internal string m_mbReleaseType;
+    internal string m_mbTrackId;
 
     #endregion
 
@@ -73,7 +82,7 @@ namespace MediaPortal.TagReader
     /// <summary>
     /// empty constructor
     /// </summary>
-    public MusicTag() {}
+    public MusicTag() { }
 
     /// <summary>
     /// copy constructor
@@ -102,7 +111,16 @@ namespace MediaPortal.TagReader
       ReplayGainTrackPeak = tag.ReplayGainTrackPeak;
       ReplayGainAlbum = tag.ReplayGainAlbum;
       ReplayGainAlbumPeak = tag.ReplayGainAlbumPeak;
-      
+      MusicBrainzArtistId = tag.MusicBrainzArtistId;
+      MusicBrainzDiscId = tag.MusicBrainzDiscId;
+      MusicBrainzReleaseArtistId = tag.MusicBrainzReleaseArtistId;
+      MusicBrainzReleaseCountry = tag. MusicBrainzReleaseCountry;
+      MusicBrainzReleaseGroupId = tag.MusicBrainzReleaseGroupId;
+      MusicBrainzReleaseId = tag.MusicBrainzReleaseId;
+      MusicBrainzReleaseStatus = tag.MusicBrainzReleaseStatus;
+      MusicBrainzReleaseType = tag.MusicBrainzReleaseType;
+      MusicBrainzTrackId = tag.MusicBrainzTrackId;
+
       DateTimePlayed = tag.DateTimePlayed;
       DateTimeModified = tag.DateTimeModified;
     }
@@ -148,6 +166,15 @@ namespace MediaPortal.TagReader
       m_ReplayGainAlbum = "";
       m_ReplayGainAlbumPeak = "";
       m_imageURL = "";
+      m_mbArtistId = "";
+      m_mbDiscId = "";
+      m_mbReleaseArtistId = "";
+      m_mbReleaseCountry = "";
+      m_mbReleaseGroupId = "";
+      m_mbReleaseId = "";
+      m_mbReleaseStatus = "";
+      m_mbReleaseType = "";
+      m_mbTrackId = "";
     }
 
     public bool IsMissingData
@@ -437,6 +464,96 @@ namespace MediaPortal.TagReader
     {
       get { return m_imageURL; }
       set { m_imageURL = value; }
+    }
+
+    /// <summary>
+    /// MusicBrainzArtistId
+    /// ID3: TXXX
+    /// </summary>
+    public string MusicBrainzArtistId
+    {
+      get { return m_mbArtistId; }
+      set { m_mbArtistId = value ?? ""; }
+    }
+
+    /// <summary>
+    /// MusicBrainzDiscId
+    /// ID3: TXXX
+    /// </summary>
+    public string MusicBrainzDiscId
+    {
+      get { return m_mbDiscId; }
+      set { m_mbDiscId = value ?? ""; }
+  }
+
+    /// <summary>
+    /// MusicBrainzReleaseArtistId
+    /// ID3: TXXX
+    /// </summary>
+    public string MusicBrainzReleaseArtistId
+    {
+      get { return m_mbReleaseArtistId; }
+      set { m_mbReleaseArtistId = value ?? ""; }
+    }
+
+    /// <summary>
+    /// MusicBrainzReleaseCountry
+    /// ID3: TXXX
+    /// </summary>
+    public string MusicBrainzReleaseCountry
+    {
+      get { return m_mbReleaseCountry; }
+      set { m_mbReleaseCountry = value ?? ""; }
+    }
+
+    /// <summary>
+    /// MusicBrainzReleaseGroupId
+    /// ID3: TXXX
+    /// </summary>
+    public string MusicBrainzReleaseGroupId
+    {
+      get { return m_mbReleaseGroupId; }
+      set { m_mbReleaseGroupId = value ?? ""; }
+    }
+
+    /// <summary>
+    /// MusicBrainzReleaseId
+    /// ID3: TXXX
+    /// </summary>
+    public string MusicBrainzReleaseId
+    {
+      get { return m_mbReleaseId; }
+      set { m_mbReleaseId = value ?? ""; }
+    }
+
+    /// <summary>
+    /// MusicBrainzReleaseStatus
+    /// ID3: TXXX
+    /// </summary>
+    public string MusicBrainzReleaseStatus
+    {
+      get { return m_mbReleaseStatus; }
+      set { m_mbReleaseStatus = value ?? ""; }
+    }
+
+    /// <summary>
+    /// MusicBrainzReleaseType
+    /// ID3: TXXX
+    /// </summary>
+    public string MusicBrainzReleaseType
+    {
+      get { return m_mbReleaseType; }
+      set { m_mbReleaseType = value ?? ""; }
+    }
+
+    /// <summary>
+    /// MusicBrainzTrackId
+    /// ID3: TXXX
+    /// </summary>
+    public string MusicBrainzTrackId
+    {
+      get { return m_mbTrackId; }
+      set { m_mbTrackId = value ?? ""; }
     }
 
     #endregion

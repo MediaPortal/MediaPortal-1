@@ -153,6 +153,16 @@ namespace MediaPortal.TagReader
         musictag.ReplayGainAlbum = tag.Tag.ReplayGainAlbumGain.ToString() ?? "";
         musictag.ReplayGainAlbumPeak = tag.Tag.ReplayGainAlbumPeak.ToString() ?? "";
 
+        musictag.MusicBrainzArtistId = tag.Tag.MusicBrainzArtistId;
+        musictag.MusicBrainzDiscId = tag.Tag.MusicBrainzDiscId;
+        musictag.MusicBrainzReleaseArtistId = tag.Tag.MusicBrainzReleaseArtistId;
+        musictag.MusicBrainzReleaseCountry = tag.Tag.MusicBrainzReleaseCountry;
+        musictag.MusicBrainzReleaseGroupId = tag.Tag.MusicBrainzReleaseGroupId;
+        musictag.MusicBrainzReleaseId = tag.Tag.MusicBrainzReleaseId;
+        musictag.MusicBrainzReleaseStatus = tag.Tag.MusicBrainzReleaseStatus;
+        musictag.MusicBrainzReleaseType = tag.Tag.MusicBrainzReleaseType;
+        musictag.MusicBrainzTrackId = tag.Tag.MusicBrainzTrackId;
+
         if (tag.MimeType == "taglib/mp3")
         {
           bool foundPopm = false;
