@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using MediaPortal.GUI.Library;
 using TagLib;
 using TagLib.Ogg;
@@ -148,10 +149,10 @@ namespace MediaPortal.TagReader
         musictag.Channels = tag.Properties.AudioChannels;
         musictag.SampleRate = tag.Properties.AudioSampleRate;
         musictag.Year = (int)tag.Tag.Year;
-        musictag.ReplayGainTrack = tag.Tag.ReplayGainTrackGain.ToString() ?? "";
-        musictag.ReplayGainTrackPeak = tag.Tag.ReplayGainTrackPeak.ToString() ?? "";
-        musictag.ReplayGainAlbum = tag.Tag.ReplayGainAlbumGain.ToString() ?? "";
-        musictag.ReplayGainAlbumPeak = tag.Tag.ReplayGainAlbumPeak.ToString() ?? "";
+        musictag.ReplayGainTrack = double.IsNaN(tag.Tag.ReplayGainTrackGain) ? "" : tag.Tag.ReplayGainTrackGain.ToString(CultureInfo.InvariantCulture);
+        musictag.ReplayGainTrackPeak = double.IsNaN(tag.Tag.ReplayGainTrackPeak) ? "" : tag.Tag.ReplayGainTrackPeak.ToString(CultureInfo.InvariantCulture);
+        musictag.ReplayGainAlbum = double.IsNaN(tag.Tag.ReplayGainAlbumGain) ? "" : tag.Tag.ReplayGainAlbumGain.ToString(CultureInfo.InvariantCulture);
+        musictag.ReplayGainAlbumPeak = double.IsNaN(tag.Tag.ReplayGainAlbumPeak) ? "" : tag.Tag.ReplayGainAlbumPeak.ToString(CultureInfo.InvariantCulture);
 
         musictag.MusicBrainzArtistId = tag.Tag.MusicBrainzArtistId;
         musictag.MusicBrainzDiscId = tag.Tag.MusicBrainzDiscId;
