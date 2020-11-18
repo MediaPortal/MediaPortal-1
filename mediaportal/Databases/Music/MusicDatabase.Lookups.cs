@@ -63,6 +63,15 @@ namespace MediaPortal.Music.Database
       aSong.Composer = DatabaseUtility.Get(aResult, aRow, "tracks.strComposer").Trim(trimChars);
       aSong.Conductor = DatabaseUtility.Get(aResult, aRow, "tracks.strConductor").Trim(trimChars);
       aSong.Comment = DatabaseUtility.Get(aResult, aRow, "tracks.strComment").Trim(trimChars);
+      aSong.MusicBrainzArtistId = DatabaseUtility.Get(aResult, aRow, "strMBArtistId").Trim(trimChars);
+      aSong.MusicBrainzDiscId = DatabaseUtility.Get(aResult, aRow, "strMBDiscId").Trim(trimChars);
+      aSong.MusicBrainzReleaseArtistId = DatabaseUtility.Get(aResult, aRow, "strMBReleaseArtistId").Trim(trimChars);
+      aSong.MusicBrainzReleaseCountry = DatabaseUtility.Get(aResult, aRow, "strMBReleaseCountry").Trim(trimChars);
+      aSong.MusicBrainzReleaseGroupId = DatabaseUtility.Get(aResult, aRow, "strMBReleaseGroupId").Trim(trimChars);
+      aSong.MusicBrainzReleaseId = DatabaseUtility.Get(aResult, aRow, "strMBReleaseId").Trim(trimChars);
+      aSong.MusicBrainzReleaseStatus = DatabaseUtility.Get(aResult, aRow, "strMBReleaseStatus").Trim(trimChars);
+      aSong.MusicBrainzReleaseType = DatabaseUtility.Get(aResult, aRow, "strMBReleaseType").Trim(trimChars);
+      aSong.MusicBrainzTrackId = DatabaseUtility.Get(aResult, aRow, "strMBTrackId").Trim(trimChars);
       aSong.FileType = DatabaseUtility.Get(aResult, aRow, "tracks.strFileType").Trim(trimChars);
       aSong.Codec = DatabaseUtility.Get(aResult, aRow, "tracks.strFullCodec").Trim(trimChars);
       aSong.BitRateMode = DatabaseUtility.Get(aResult, aRow, "tracks.strBitRateMode").Trim(trimChars);
