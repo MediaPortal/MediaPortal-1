@@ -202,7 +202,6 @@ UninstPage custom un.UninstallModePage un.UninstallModePageLeave
 #---------------------------------------------------------------------------
 !insertmacro LANG_LOAD "English"
 
-
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
@@ -1149,7 +1148,7 @@ Function PageDirectoryPre
   ${EndIf}
 
   ; It checks, if the Server has been selected and only displays the Directory page in this case
-  ${IfNot} ${SectionIsSelected} SecServer
+  ${IfNot} ${SectionIsSelected} ${SecServer}
     Abort
   ${EndIf}
 FunctionEnd
