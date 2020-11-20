@@ -1,6 +1,6 @@
 version: 1.27.Pre.Release.{build}
-image: Visual Studio 2017
-#image: Visual Studio 2019
+#image: Visual Studio 2017
+image: Visual Studio 2019
 clone_folder: c:\project\mediaportal
 environment:
   JAVA_HOME: C:\Program Files (x86)\Java\jdk1.8.0
