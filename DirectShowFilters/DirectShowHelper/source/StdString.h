@@ -803,6 +803,10 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
   #include <varargs.h>
 #endif
 
+  // Visual Studio 2019 support
+#ifndef _USE
+  #define SS_USE_FACET(loc, fac) std::use_facet<fac >(loc)
+#endif
 
 #ifdef SS_NO_LOCALE
 

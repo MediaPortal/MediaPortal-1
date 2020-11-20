@@ -50,6 +50,7 @@
 #include <dvdmedia.h>
 #include <shlobj.h>
 #include <queue>
+#include <string>
 
 // uncomment the //LogDebug to enable extra logging
 #define LOG_DETAIL //LogDebug

@@ -42,6 +42,8 @@
 #include "..\..\shared\DebugSettings.h"
 #include <cassert>
 #include <queue>
+#include <string>
+#include <xstring>
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
