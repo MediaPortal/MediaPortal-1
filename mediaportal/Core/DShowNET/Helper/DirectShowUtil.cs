@@ -28,6 +28,7 @@ using System.Threading;
 using DirectShowLib;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Profile;
 using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
@@ -1005,6 +1006,32 @@ namespace DShowNET.Helper
               }
               if (hr != 0)
               {
+                // try a manual connect
+                if (pinName == "Video")
+                {
+                  using (Settings xmlreader = new MPSettings())
+                  {
+                    string VideoH264 = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
+
+                    IBaseFilter VideoCodec = null;
+                    hr = graphBuilder.FindFilterByName(VideoH264, out VideoCodec);
+                    if (VideoCodec != null)
+                    {
+                      if (TryConnect(graphBuilder, i.achName, pins[0], VideoCodec))
+                      {
+                        Log.Debug("DirectShowUtil: manual video pin connecting done");
+                      }
+
+                      Log.Debug("TSReaderPlayer: UpdateFilters video pin reconnected to video renderer");
+                      DirectShowUtil.ReleaseComObject(VideoCodec);
+                      VideoCodec = null;
+                    }
+                    else
+                    {
+                      Log.Debug("DirectShowUtil: RenderUnconnectedOutputPins Pin {0} - failed", pinName);
+                    }
+                  }
+                }
                 Log.Debug("DirectShowUtil: RenderUnconnectedOutputPins Pin {0} - failed", pinName);
               }
             }
