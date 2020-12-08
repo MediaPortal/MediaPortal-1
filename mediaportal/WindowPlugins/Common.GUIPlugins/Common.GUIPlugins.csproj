@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\..\Packages\DirectX_9_SDK.10.6.0\build\DirectX_9_SDK.props" Condition="Exists('..\..\..\Packages\DirectX_9_SDK.10.6.0\build\DirectX_9_SDK.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -49,6 +50,9 @@
     <Reference Include="MediaInfo.Wrapper, Version=20.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Packages\MediaInfo.Wrapper.20.8.0\lib\net40\MediaInfo.Wrapper.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <HintPath>..\..\..\Packages\DirectX_9_SDK.10.6.0\lib\Microsoft.DirectX.Direct3D.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -93,9 +97,6 @@
       <Project>{f6eda1f3-3dcd-43f4-8a90-e32da70c8227}</Project>
       <Name>Common.Utils</Name>
     </ProjectReference>
-    <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <SpecificVersion>True</SpecificVersion>
-    </Reference>
     <ProjectReference Include="..\..\Core\Core.csproj">
       <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
       <Name>Core</Name>
@@ -127,6 +128,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\..\..\Packages\MediaInfo.Native.20.8.1\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\Packages\MediaInfo.Native.20.8.1\build\MediaInfo.Native.targets'))" />
+    <Error Condition="!Exists('..\..\..\Packages\DirectX_9_SDK.10.6.0\build\DirectX_9_SDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\Packages\DirectX_9_SDK.10.6.0\build\DirectX_9_SDK.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
