@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <!-- Vysílací Síť 21 -->
-  <DVBTTuning>
-    <Frequency>514000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>125</Offset>
-  </DVBTTuning>
   <!-- Vysílací Síť 22 -->
   <DVBTTuning>
     <Frequency>530000</Frequency>
@@ -18,9 +12,9 @@
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
-  <!-- Vysílací Síť 24 -->
+  <!-- Vysílací Síť 21 -->
   <DVBTTuning>
-    <Frequency>650000</Frequency>
+    <Frequency>570000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>

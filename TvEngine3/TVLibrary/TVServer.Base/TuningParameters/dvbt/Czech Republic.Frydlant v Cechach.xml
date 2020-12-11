@@ -18,10 +18,4 @@
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
-  <!-- Vysílací Síť 24 -->
-  <DVBTTuning>
-    <Frequency>650000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>125</Offset>
-  </DVBTTuning>
 </ArrayOfDVBTTuning>
