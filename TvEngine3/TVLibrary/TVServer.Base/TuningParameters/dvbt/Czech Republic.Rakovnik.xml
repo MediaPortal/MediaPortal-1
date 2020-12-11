@@ -8,13 +8,19 @@
   </DVBTTuning>
   <!-- Vysílací Síť 23 -->
   <DVBTTuning>
-    <Frequency>570000</Frequency>
+    <Frequency>554000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
   <!-- Vysílací Síť 22 -->
   <DVBTTuning>
-    <Frequency>626000</Frequency>
+    <Frequency>578000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>125</Offset>
+  </DVBTTuning>
+  <!-- Vysílací Síť 24 -->
+  <DVBTTuning>
+    <Frequency>658000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
