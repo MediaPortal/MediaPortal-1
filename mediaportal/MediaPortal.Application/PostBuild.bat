@@ -164,7 +164,7 @@ xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
 xcopy %1\..\Packages\Sqlite.3.33.0\sqlite.dll . /Y /D
 
 REM MediaInfo - 
-xcopy %1\..\Packages\MediaInfo.Wrapper.20.8.0\lib\net40\MediaInfo.Wrapper.dll . /Y /D
+xcopy %1\..\Packages\MediaInfo.Wrapper.20.9.2\lib\net40\MediaInfo.Wrapper.dll . /Y /D
 REM - commented because provided on bin folder by nuget target setting during building. 
 REM xcopy %1\..\Packages\MediaInfo.Native.20.8.1\build\native\x86\MediaInfo.dll . /Y /D
 REM xcopy %1\..\Packages\MediaInfo.Native.20.8.1\build\native\x86\lib*.dll . /Y /D
