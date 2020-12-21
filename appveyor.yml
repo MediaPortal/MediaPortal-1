@@ -1,5 +1,4 @@
-version: 1.27.Pre.Release.{build}
-#image: Visual Studio 2017
+version: 1.27.Final.{build}
 image: Visual Studio 2019
 clone_folder: c:\project\mediaportal
 environment:
