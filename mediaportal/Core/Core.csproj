@@ -299,9 +299,8 @@
       <Name>System.XML</Name>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TagLibSharp, Version=2.2.0.2, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=x86">
-      <HintPath>..\..\Packages\MediaPortal.TagLib.2.2.0.2\lib\net40\TagLibSharp.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="TagLibSharp, Version=2.3.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\MediaPortal.TagLib.2.3.0\lib\net40\TagLibSharp.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="XmpCore, Version=6.1.10.0, Culture=neutral, processorArchitecture=MSIL">

@@ -199,7 +199,7 @@ xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll . /Y /D
 xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll . /Y /D
 
 REM taglib-sharp
-xcopy %1\..\Packages\MediaPortal.TagLib.2.2.0.2\lib\net40\TagLibSharp.dll ./Y /D
+xcopy %1\..\Packages\MediaPortal.TagLib.2.3.0\lib\net40\TagLibSharp.dll ./Y /D
 
 REM SharpLibHid
 REM Provided with Nuget to bin folder during build
