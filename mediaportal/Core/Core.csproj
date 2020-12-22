@@ -304,6 +304,9 @@
       <HintPath>..\..\Packages\MediaPortal.TagLib.2.2.0.2\lib\net40\TagLibSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="UnidecodeSharpFork, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\UnidecodeSharpFork.1.0.1\lib\UnidecodeSharpFork.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="XmpCore, Version=6.1.10.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Packages\XmpCore.6.1.10\lib\net35\XmpCore.dll</HintPath>

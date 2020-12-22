@@ -28,8 +28,11 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Media.Animation;
+
 using MediaPortal.ExtensionMethods;
 using MediaPortal.Profile;
+
+using UnidecodeSharpFork;
 
 // used for Keys definition
 // used for loopDelay
@@ -2083,7 +2086,7 @@ namespace MediaPortal.GUI.Library
         }
 
         GUIListItem pItem = _listItems[iItem];
-        if (pItem.Label.ToUpperInvariant().StartsWith(searchKey.ToUpperInvariant()))
+        if (pItem.Label.ToUpperInvariant().Unidecode().StartsWith(searchKey.ToUpperInvariant()))
         {
           bItemFound = true;
           break;
