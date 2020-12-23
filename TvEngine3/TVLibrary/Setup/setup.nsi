@@ -554,6 +554,10 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_ROOT}\Packages\MediaInfo.Native.20.9.1\build\native\x86\libssl-1_1.dll"
   File "${git_ROOT}\Packages\MediaInfo.Wrapper.20.9.2\lib\net40\MediaInfo.Wrapper.dll"
 
+  ; NuGet binaries UnidecodeSharp
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\UnidecodeSharpFork.1.0.1\lib\UnidecodeSharpFork.dll"
+
   ; thumbnail software
   ${If} ${RunningX64}
     File "${git_ROOT}\Packages\FFmpeg.Win64.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
@@ -561,7 +565,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     File "${git_ROOT}\Packages\FFmpeg.Win32.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
   ${EndIf}
   File "${git_TVServer}\TvThumbnails\bin\x86\${BUILD_TYPE}\TvThumbnails.dll"
-  
 
   ; protocol implementations for MPIPTVSource.ax
   File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_FILE.dll"
@@ -751,6 +754,7 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\libcurl.dll"
   Delete "$INSTDIR\libssl-1_1.dll"
   Delete "$INSTDIR\MediaInfo.Wrapper.dll"
+  Delete "$INSTDIR\UnidecodeSharpFork.dll"
 
   ; protocol implementations for MPIPTVSource.ax
   Delete "$INSTDIR\MPIPTV_FILE.dll"

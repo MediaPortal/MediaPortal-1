@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2019 Team MediaPortal
+﻿#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,19 +19,16 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Timers;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
+
 using MediaPortal.ExtensionMethods;
-using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
+
+using UnidecodeSharpFork;
 
 namespace MediaPortal.GUI.Library
 {
@@ -957,7 +954,7 @@ namespace MediaPortal.GUI.Library
 
         GUIListItem pItem = _listItems[iItem];
 
-        if (pItem.Label.ToUpperInvariant().StartsWith(SearchKey.ToUpperInvariant()) == true)
+        if (pItem.Label.ToUpperInvariant().Unidecode().StartsWith(SearchKey.ToUpperInvariant()) == true)
         {
           bItemFound = true;
           break;

@@ -598,6 +598,9 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\MetadataExtractor.2.4.3\lib\net35\MetadataExtractor.dll"
   File "${git_ROOT}\Packages\XmpCore.6.1.10\lib\net35\XmpCore.dll"
+  ; NuGet binaries UnidecodeSharp
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\UnidecodeSharpFork.1.0.1\lib\UnidecodeSharpFork.dll"
   ; Bass Core
   SetOutPath "$MPdir.Base\"
   File "${git_MP}\core\bin\${BUILD_TYPE}\Bass.Net.dll"

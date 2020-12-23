@@ -24,9 +24,11 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Media.Animation;
-using Microsoft.DirectX.Direct3D;
+
 using MediaPortal.ExtensionMethods;
 using MediaPortal.Profile;
+
+using UnidecodeSharpFork;
 
 namespace MediaPortal.GUI.Library
 {
@@ -1914,7 +1916,7 @@ namespace MediaPortal.GUI.Library
         }
 
         GUIListItem pItem = _listItems[iItem];
-        if (pItem.Label.ToUpperInvariant().StartsWith(SearchKey.ToUpperInvariant()) == true)
+        if (pItem.Label.ToUpperInvariant().Unidecode().StartsWith(SearchKey.ToUpperInvariant()) == true)
         {
           bItemFound = true;
           break;
