@@ -1547,6 +1547,15 @@ namespace MediaPortal.Player
           {
             var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
             _mediaInfo = new MediaInfoWrapper(strFile, logger);
+            int nattempts = 0;
+            while (_mediaInfo.Framerate == 0 && nattempts<5)
+            {
+              nattempts++;
+              Log.Info("Mediainfo is empty for {0}, trying again for the {1} time", strFile,nattempts);
+              Thread.Sleep(500);
+              _mediaInfo = new MediaInfoWrapper(strFile, logger);
+            }
+
             _mediaInfo.WriteInfo();
             currentMediaInfoFilePlaying = strFile;
           }
