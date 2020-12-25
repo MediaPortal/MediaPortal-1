@@ -21,8 +21,6 @@ build_script:
     7z a BuildFullInstaller.zip BuildFullInstaller.log
 test: off
 artifacts:
-- path: Release\MediaPortalSetup_*.exe
-  name: Mediaportal Installer
 - path: Release\MediaPortalSetup_*.zip
   name: Mediaportal Installer (Zip)
 - path: Build\BuildFullInstaller.zip
