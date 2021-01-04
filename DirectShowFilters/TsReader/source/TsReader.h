@@ -20,6 +20,7 @@
  *
  */
 #pragma once
+#include <string>
 #include "multifilereader.h"
 #include "pcrdecoder.h"
 #include "demultiplexer.h"
