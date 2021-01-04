@@ -21,6 +21,8 @@
 #pragma once
 
 // structure used to communicate subtitles to MediaPortal's managed code
+// pragma required for x64 mode to match c# side
+#pragma pack(1)
 struct SUBTITLE
 {
   // Subtitle bitmap
