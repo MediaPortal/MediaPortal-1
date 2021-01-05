@@ -1,4 +1,4 @@
-version: 1.25.100.{build}
+version: 1.27.Final.{build}
 image: Visual Studio 2019
 clone_folder: c:\project\mediaportal
 environment:
@@ -7,7 +7,7 @@ install:
 - cmd: >-
     git submodule update --init --recursive
 
-    choco install nsis --version=2.46.0.20150406
+    choco install nsis --version=3.06.1
 
     java -version
 build_script:

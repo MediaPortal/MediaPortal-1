@@ -123,7 +123,7 @@ namespace MediaPortal.Picture.Database
             }
             catch (Exception ex)
             {
-              Log.Error("MediaPortal.Picture.Database: {0}", ex.Message);
+              Log.Error("MediaPortal.Picture.ADO: {0}", ex.Message);
             }
             // Smirnoff: Query the orientation information
             //						if(iRotation == -1)
@@ -135,7 +135,7 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception ex)
         {
-          Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Error("MediaPortal.Picture.ADO exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         }
         return -1;
       }
@@ -163,7 +163,7 @@ namespace MediaPortal.Picture.Database
       }
       catch (Exception ex)
       {
-        Log.Error("MediaPortal.Picture.Database exception deleting picture err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("MediaPortal.Picture.ADO exception deleting picture err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -216,7 +216,7 @@ namespace MediaPortal.Picture.Database
       }
       catch (Exception ex)
       {
-        Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("MediaPortal.Picture.ADO exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
       return 0;
     }
@@ -242,7 +242,7 @@ namespace MediaPortal.Picture.Database
       }
       catch (Exception ex)
       {
-        Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("MediaPortal.Picture.ADO exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -294,7 +294,7 @@ namespace MediaPortal.Picture.Database
       }
       catch (Exception ex)
       {
-        Log.Error("MediaPortal.Picture.Database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("MediaPortal.Picture.ADO exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
       return DateTime.MinValue;
     }

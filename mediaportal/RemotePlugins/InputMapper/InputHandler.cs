@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -47,6 +47,7 @@ namespace MediaPortal.InputDevices
     private int _currentLayer = 1;
     private bool _isLoaded = false;
     private bool _basicHome = false;
+    private bool _useOnlyOneHome = false;
 
     #endregion
 
@@ -208,6 +209,7 @@ namespace MediaPortal.InputDevices
       using (Settings xmlreader = new MPSettings())
       {
         _basicHome = xmlreader.GetValueAsBool("gui", "startbasichome", true);
+        _useOnlyOneHome = xmlreader.GetValueAsBool("gui", "useonlyonehome", false);
       }
       string xmlPath = GetXmlPath(deviceXmlName);
       LoadMapping(xmlPath);
@@ -423,16 +425,32 @@ namespace MediaPortal.InputDevices
           if ((Convert.ToInt32(map.CmdProperty) == (int)GUIWindow.Window.WINDOW_HOME) ||
               (Convert.ToInt32(map.CmdProperty) == (int)GUIWindow.Window.WINDOW_SECOND_HOME))
           {
-            if (_basicHome)
+            GUIWindow.Window newHome = _basicHome ? GUIWindow.Window.WINDOW_SECOND_HOME : GUIWindow.Window.WINDOW_HOME;
+            // do we prefer to use only one home screen?
+            if (_useOnlyOneHome)
             {
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
-                                   (int)GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
+              // skip if we are already in there
+              if (GUIWindowManager.ActiveWindow == (int)newHome)
+              {
+                break;
+              }
             }
+            // we like both
             else
             {
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
-                                   (int)GUIWindow.Window.WINDOW_HOME, 0, null);
+              // if already in one home switch to the other
+              switch (GUIWindowManager.ActiveWindow)
+              {
+                case (int)GUIWindow.Window.WINDOW_HOME:
+                  newHome = GUIWindow.Window.WINDOW_SECOND_HOME;
+                  break;
+
+                case (int)GUIWindow.Window.WINDOW_SECOND_HOME:
+                  newHome = GUIWindow.Window.WINDOW_HOME;
+                  break;
+              }
             }
+            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)newHome, 0, null);
           }
           else
           {

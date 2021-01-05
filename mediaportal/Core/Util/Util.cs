@@ -4614,6 +4614,12 @@ namespace MediaPortal.Util
             defaultBackground = GUIGraphicsContext.GetThemedSkinFile(@"\media\previewbackground.png");
           }
 
+          if (!File.Exists(defaultBackground))
+          {
+            Log.Warn("Utils: Your skin does not supply previewbackground.png to create folder preview thumbs!");
+            return result;
+          }
+          
           using (FileStream fs = new FileStream(defaultBackground, FileMode.Open, FileAccess.Read))
           {
             using (Image imgFolder = Image.FromStream(fs, true, false))
@@ -4781,6 +4787,12 @@ namespace MediaPortal.Util
           else
           {
             defaultBackground = GUIGraphicsContext.GetThemedSkinFile(@"\media\previewbackground.png");
+          }
+          
+          if (!File.Exists(defaultBackground))
+          {
+            Log.Warn("Utils: Your skin does not supply previewbackground.png to create tile preview thumbs!");
+            return result;
           }
 
           // Resize defaultBackground to keep ratio based on aPictureList ratio

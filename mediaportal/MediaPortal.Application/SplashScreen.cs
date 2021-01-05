@@ -438,15 +438,15 @@ namespace MediaPortal
            (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
              | System.Windows.Forms.AnchorStyles.Right)));
         this._informationLabel.BackColor = System.Drawing.Color.Transparent;
-        this._informationLabel.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold,
+        this._informationLabel.Font = new System.Drawing.Font("Arial", 13.25F, System.Drawing.FontStyle.Bold,
                                                              System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
         this._informationLabel.ForeColor = System.Drawing.Color.White;
-        this._informationLabel.Location = new System.Drawing.Point(11, 138);
+        this._informationLabel.Location = new System.Drawing.Point(200, 138);
         this._informationLabel.Name = "_informationLabel";
         this._informationLabel.Size = new System.Drawing.Size(377, 16);
         this._informationLabel.TabIndex = 4;
         this._informationLabel.Text = "Information";
-        this._informationLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+        this._informationLabel.TextAlign = System.Drawing.ContentAlignment.TopLeft;
         // 
         // versionLabel
         // 
@@ -455,12 +455,12 @@ namespace MediaPortal
            (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
              | System.Windows.Forms.AnchorStyles.Right)));
         this._versionLabel.BackColor = System.Drawing.Color.Transparent;
-        this._versionLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular,
+        this._versionLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold,
                                                          System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this._versionLabel.ForeColor = System.Drawing.Color.White;
-        this._versionLabel.Location = new System.Drawing.Point(277, 113);
+        this._versionLabel.Location = new System.Drawing.Point(277, 230);
         this._versionLabel.Name = "_versionLabel";
-        this._versionLabel.Size = new System.Drawing.Size(111, 16);
+        this._versionLabel.Size = new System.Drawing.Size(100, 16);
         this._versionLabel.TabIndex = 5;
         this._versionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
         // 
@@ -471,9 +471,10 @@ namespace MediaPortal
            (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
              | System.Windows.Forms.AnchorStyles.Right)));
         this._cvsLabel.BackColor = System.Drawing.Color.Transparent;
-        this._cvsLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular,
+        this._cvsLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold,
                                                      System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this._cvsLabel.Location = new System.Drawing.Point(24, 113);
+        this._cvsLabel.ForeColor = System.Drawing.Color.White;
+        this._cvsLabel.Location = new System.Drawing.Point(24, 230);
         this._cvsLabel.Name = "_cvsLabel";
         this._cvsLabel.Size = new System.Drawing.Size(211, 16);
         this._cvsLabel.TabIndex = 5;
@@ -484,7 +485,7 @@ namespace MediaPortal
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
         this.BackgroundImage = global::MediaPortal.Properties.Resources.mplogo;
         this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-        this.ClientSize = new System.Drawing.Size(400, 172);
+        this.ClientSize = new System.Drawing.Size(590, 254);
         this.Controls.Add(this._panel1);
         this.DoubleBuffered = true;
         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-  <!--  Pog: onX [Online Xtra]   onX menu insert for DialogMenu.xml    -->
+  <!--  Pog and catavolt: onX [Online Xtra]   onX menu insert for DialogMenu.xml    -->
   <!-- user defined positions/sizes -->
   <define property="true" evaluateNow="true">#onx.menu.posx:653</define>
   <define property="true" evaluateNow="true">#onx.menu.posy:240</define>

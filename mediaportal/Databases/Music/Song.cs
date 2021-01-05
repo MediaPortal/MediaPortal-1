@@ -28,7 +28,7 @@ namespace MediaPortal.Music.Database
   [Serializable()]
   public class Song
   {
-    private string _strArtist = String.Empty;
+    private string _strArtist = string.Empty;
     private int _iTrack = 0;
     private int _iNumTracks = 0;
     private int _iDuration = 0;
@@ -39,25 +39,34 @@ namespace MediaPortal.Music.Database
 
     public Song()
     {
-      AuthToken = String.Empty;
-      Lyrics = String.Empty;
-      URL = String.Empty;
+      AuthToken = string.Empty;
+      Lyrics = string.Empty;
+      URL = string.Empty;
       DateTimeModified = DateTime.MinValue;
       Favorite = false;
       Rating = 0;
       TimesPlayed = 0;
-      Title = String.Empty;
-      Conductor = String.Empty;
-      Genre = String.Empty;
-      Album = String.Empty;
-      AlbumArtist = String.Empty;
-      FileName = String.Empty;
+      Title = string.Empty;
+      Conductor = string.Empty;
+      Genre = string.Empty;
+      Album = string.Empty;
+      AlbumArtist = string.Empty;
+      FileName = string.Empty;
       Id = -1;
-      Composer = String.Empty;
-      Comment = String.Empty;
-      FileType = String.Empty;
-      Codec = String.Empty;
-      BitRateMode = String.Empty;
+      Composer = string.Empty;
+      Comment = string.Empty;
+      MusicBrainzArtistId = string.Empty;
+      MusicBrainzDiscId = string.Empty;
+      MusicBrainzReleaseArtistId = string.Empty;
+      MusicBrainzReleaseCountry = string.Empty;
+      MusicBrainzReleaseGroupId = string.Empty;
+      MusicBrainzReleaseId = string.Empty;
+      MusicBrainzReleaseStatus = string.Empty;
+      MusicBrainzReleaseType = string.Empty;
+      MusicBrainzTrackId = string.Empty;
+      FileType = string.Empty;
+      Codec = string.Empty;
+      BitRateMode = string.Empty;
       BPM = 0;
       BitRate = 0;
       Channels = 0;
@@ -94,6 +103,15 @@ namespace MediaPortal.Music.Database
                         Lyrics = Lyrics,
                         AuthToken = AuthToken,
                         Comment = Comment,
+                        MusicBrainzArtistId = MusicBrainzArtistId,
+                        MusicBrainzDiscId = MusicBrainzDiscId,
+                        MusicBrainzReleaseArtistId = MusicBrainzReleaseArtistId,
+                        MusicBrainzReleaseCountry = MusicBrainzReleaseCountry,
+                        MusicBrainzReleaseGroupId = MusicBrainzReleaseGroupId,
+                        MusicBrainzReleaseId = MusicBrainzReleaseId,
+                        MusicBrainzReleaseStatus = MusicBrainzReleaseStatus,
+                        MusicBrainzReleaseType = MusicBrainzReleaseType,
+                        MusicBrainzTrackId = MusicBrainzTrackId,
                         FileType = FileType,
                         Codec = Codec,
                         BitRateMode = BitRateMode,
@@ -109,14 +127,14 @@ namespace MediaPortal.Music.Database
     {
       Id = -1;
       Favorite = false;
-      FileName = String.Empty;
-      Title = String.Empty;
-      _strArtist = String.Empty;
-      Album = String.Empty;
-      AlbumArtist = String.Empty;
-      Genre = String.Empty;
-      Composer = String.Empty;
-      Conductor = String.Empty;
+      FileName = string.Empty;
+      Title = string.Empty;
+      _strArtist = string.Empty;
+      Album = string.Empty;
+      AlbumArtist = string.Empty;
+      Genre = string.Empty;
+      Composer = string.Empty;
+      Conductor = string.Empty;
       _iTrack = 0;
       _iNumTracks = 0;
       _iDuration = 0;
@@ -125,16 +143,25 @@ namespace MediaPortal.Music.Database
       Rating = 0;
       DateTimeModified = DateTime.MinValue;
       DateTimePlayed = DateTime.MinValue;
-      URL = String.Empty;
+      URL = string.Empty;
       _iResumeAt = 0;
       _iDisc = 0;
       _iNumDisc = 0;
-      Lyrics = String.Empty;
-      AuthToken = String.Empty;
-      Comment = String.Empty;
-      FileType = String.Empty;
-      Codec = String.Empty;
-      BitRateMode = String.Empty;
+      Lyrics = string.Empty;
+      AuthToken = string.Empty;
+      Comment = string.Empty;
+      MusicBrainzArtistId = string.Empty;
+      MusicBrainzDiscId = string.Empty;
+      MusicBrainzReleaseArtistId = string.Empty;
+      MusicBrainzReleaseCountry = string.Empty;
+      MusicBrainzReleaseGroupId = string.Empty;
+      MusicBrainzReleaseId = string.Empty;
+      MusicBrainzReleaseStatus = string.Empty;
+      MusicBrainzReleaseType = string.Empty;
+      MusicBrainzTrackId = string.Empty;
+      FileType = string.Empty;
+      Codec = string.Empty;
+      BitRateMode = string.Empty;
       BPM = 0;
       BitRate = 0;
       Channels = 0;
@@ -309,6 +336,24 @@ namespace MediaPortal.Music.Database
 
     public string Comment { get; set; }
 
+    public string MusicBrainzArtistId { get; set; }
+	
+    public string MusicBrainzDiscId { get; set; }
+	
+    public string MusicBrainzReleaseArtistId { get; set; }
+	
+    public string MusicBrainzReleaseCountry { get; set; }
+	
+    public string MusicBrainzReleaseGroupId { get; set; }
+	
+    public string MusicBrainzReleaseId { get; set; }
+	
+    public string MusicBrainzReleaseStatus { get; set; }
+	
+    public string MusicBrainzReleaseType { get; set; }
+	
+    public string MusicBrainzTrackId { get; set; }
+
     public string FileType { get; set; }
 
     public string Codec { get; set; }
@@ -333,32 +378,40 @@ namespace MediaPortal.Music.Database
     {
       var tmpTag = new MusicTag
                      {
-                       Title = this.Title,
-                       Album = this.Album,
-                       DiscID = this.DiscId,
-                       DiscTotal = this.DiscTotal,
-                       AlbumArtist = this.AlbumArtist,
-                       Artist = this.Artist,
-                       Duration = this.Duration,
-                       Genre = this.Genre,
-                       Composer = this.Composer,
-                       Conductor = this.Conductor,
-                       Track = this.Track,
-                       TrackTotal = this.TrackTotal,
-                       Year = this.Year,
-                       Rating = this.Rating,
-                       TimesPlayed = this.TimesPlayed,
-                       Lyrics = this.Lyrics,
-                       DateTimeModified = this.DateTimeModified,
-                       DateTimePlayed = this.DateTimePlayed,
-                       Comment = this.Comment,
-                       FileType = this.FileType,
-                       Codec = this.Codec,
-                       BitRateMode = this.BitRateMode,
-                       BPM = this.BPM,
-                       BitRate = this.BitRate,
-                       Channels = this.Channels,
-                       SampleRate = this.SampleRate,
+                        Album = Album,
+                        Artist = Artist,
+                        AlbumArtist = AlbumArtist,
+                        Duration = Duration,
+                        FileName = FileName,
+                        Genre = Genre,
+                        Composer = Composer,
+                        Conductor = Conductor,
+                        TimesPlayed = TimesPlayed,
+                        Title = Title,
+                        Track = Track,
+                        TrackTotal = TrackTotal,
+                        Year = Year,
+                        Rating = Rating,
+                        DateTimeModified = DateTimeModified,
+                        DateTimePlayed = DateTimePlayed,
+                        DiscTotal = DiscTotal,
+                        Lyrics = Lyrics,
+                        Comment = Comment,
+                        MusicBrainzArtistId = MusicBrainzArtistId,
+                        MusicBrainzDiscId = MusicBrainzDiscId,
+                        MusicBrainzReleaseArtistId = MusicBrainzReleaseArtistId,
+                        MusicBrainzReleaseCountry = MusicBrainzReleaseCountry,
+                        MusicBrainzReleaseGroupId = MusicBrainzReleaseGroupId,
+                        MusicBrainzReleaseId = MusicBrainzReleaseId,
+                        MusicBrainzReleaseStatus = MusicBrainzReleaseStatus,
+                        MusicBrainzReleaseType = MusicBrainzReleaseType,
+                        MusicBrainzTrackId = MusicBrainzTrackId,
+                        FileType = FileType,
+                        Codec = Codec,
+                        BitRateMode = BitRateMode,
+                        BPM = BPM,
+                        Channels = Channels,
+                        SampleRate = SampleRate,
                        HasAlbumArtist = string.IsNullOrEmpty(this.AlbumArtist)
                      };
 

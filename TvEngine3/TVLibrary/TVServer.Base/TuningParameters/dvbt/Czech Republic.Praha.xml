@@ -1,48 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <!-- Multiplex 1 -->
+  <!-- Regionální Síť 6 -->
   <DVBTTuning>
-    <Frequency>730000</Frequency>
+    <Frequency>474000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
-  <!-- Multiplex 2 -->
+  <!-- Vysílací Síť 23 -->
   <DVBTTuning>
-    <Frequency>634000</Frequency>
+    <Frequency>490000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
-  <!-- Multiplex 3 -->
+  <!-- Vysílací Síť 21 -->
   <DVBTTuning>
-    <Frequency>778000</Frequency>
+    <Frequency>514000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
-  <!-- Multiplex 4 -->
+  <!-- Vysílací Síť 22 -->
+  <DVBTTuning>
+    <Frequency>626000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>125</Offset>
+  </DVBTTuning>
+  <!-- Vysílací Síť 24 -->
   <DVBTTuning>
     <Frequency>642000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
-  <!-- Regional multiplex 4 -->
+  <!-- Regionální Síť 4 -->
   <DVBTTuning>
     <Frequency>674000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
-  <!-- Regional multiplex 7 -->
-  <DVBTTuning>
-    <Frequency>602000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>125</Offset>
-  </DVBTTuning>
-  <!-- Regional multiplex 8 -->
-  <DVBTTuning>
-    <Frequency>714000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>125</Offset>
-  </DVBTTuning>
-  <!-- Regional multiplex 12 -->
+  <!-- Regionální Síť 12 -->
   <DVBTTuning>
     <Frequency>682000</Frequency>
     <BandWidth>8</BandWidth>
