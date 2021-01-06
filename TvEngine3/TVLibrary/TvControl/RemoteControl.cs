@@ -269,6 +269,7 @@ namespace TvControl
           IDictionary channelProperties = new Hashtable();
           // Creating the IDictionary to set the port on the channel instance.
           channelProperties.Add("port", 0); // "0" chooses one available port
+          channelProperties.Add("timeout", 5000); // An integer that specifies the number of milliseconds to wait before a request times out. 0 or -1 indicates an infinite timeout period.
 
           // Pass the properties for the port setting and the server provider in the server chain argument. (Client remains null here.)
           _callbackChannel = new TcpChannel(channelProperties, null, provider);
