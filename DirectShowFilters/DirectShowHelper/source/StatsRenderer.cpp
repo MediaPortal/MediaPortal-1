@@ -18,6 +18,7 @@
 
 #include <streams.h>
 #include <d3dx9.h>
+#include <cmath>
 
 #include "statsrenderer.h"
 #include "evrcustompresenter.h"
@@ -183,8 +184,8 @@ void StatsRenderer::DrawStats()
     double Scale = double(CurrentSize) / double(minSize);
     m_TextScale = Scale;
     m_pD3DXCreateFont( m_pD3DDev,
-                      UINT(-24.0*Scale),       // Height
-                      UINT(-11.0*Scale),       // Width
+                      std::lround(-24.0*Scale),       // Height
+                      std::lround(-11.0*Scale),       // Width
                       CurrentSize < 800 ? FW_NORMAL : FW_BOLD,
                       0,                      // MipLevels, 0 = autogen mipmaps
                       FALSE,                  // Italic
