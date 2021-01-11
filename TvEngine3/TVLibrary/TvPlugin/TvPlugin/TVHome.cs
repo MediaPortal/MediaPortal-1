@@ -1951,8 +1951,7 @@ namespace TvPlugin
       }
 
       //gemx: fix for 0001181: Videoplayback does not work if tvservice.exe is not running
-      bool isTS = (Card != null && Card.IsTimeShifting);
-      if (Connected && isTS)
+      if (Connected && Card != null && Card.IsTimeShifting)
       {
         Card.StopTimeShifting();
       }
