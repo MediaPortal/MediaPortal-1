@@ -82,17 +82,17 @@ namespace MediaPortal.DeployTool.Sections
 
     private void linkHomepage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("http://www.team-mediaportal.com");
+      OpenURL("https://www.team-mediaportal.com");
     }
 
     private void linkForum_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("http://forum.team-mediaportal.com");
+      OpenURL("https://forum.team-mediaportal.com");
     }
 
     private void linkWiki_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("http://wiki.team-mediaportal.com/TeamMediaPortal/MP1QuickSetupGuide/");
+      OpenURL("https://www.team-mediaportal.com/wiki/display/MediaPortal1/Quick+Setup");
     }
 
     #endregion
