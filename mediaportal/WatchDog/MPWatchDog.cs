@@ -55,7 +55,7 @@ namespace WatchDog
     #region Variables
 
     private readonly string _tempDir = "";
-    public static string zipFile = "";
+    public static string _zipFile = "";
     private string _tempConfig;
     private bool _autoMode;
     private bool _watchdog;
@@ -69,7 +69,8 @@ namespace WatchDog
     private string _currentpath = Directory.GetCurrentDirectory();
     private string _watchdogtargetDir = "";
     private string _watchdogAppDir = "";
-    private string _zipFile;
+    private string _zipPath;
+    private bool _TVEonly;
 
     #endregion
 
@@ -174,8 +175,8 @@ namespace WatchDog
 
     private string GetZipFilename()
     {
-      zipFile = tbZipFile.Text;
-      return zipFile
+      _zipFile = tbZipFile.Text;
+      return _zipFile
         .Replace("[date]", DateTime.Now.ToString("yy_MM_dd"))
         .Replace("[time]", DateTime.Now.ToString("HH_mm"));
     }
@@ -201,10 +202,22 @@ namespace WatchDog
         _tempDir += "\\";
       }
       _tempDir += "MPTemp";
-      // Check If Watchdog is installed on TV Server folder for disabled 1st & 2nd choice & rename Zip file
-      if (File.Exists(Path.Combine(_currentpath, "WatchDog.exe")) & File.Exists(Path.Combine(_currentpath, "SetupTV.exe")))
+
+      // Read Custom path for zip or apply default value
+      if (_watchdogtargetDir == string.Empty)
       {
-        _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortal-Logs\\MP_TVELogs_[date]__[time].zip";
+        _zipPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortal-Logs\\";
+      }
+      else
+      {
+        _zipPath = string.Format(_watchdogtargetDir);
+      }
+
+      // Check If Watchdog is installed on TV Server folder for disabled 1st & 2nd choice & rename Zip file
+        if (File.Exists(Path.Combine(_currentpath, "WatchDog.exe")) & File.Exists(Path.Combine(_currentpath, "SetupTV.exe")))
+         {
+         _TVEonly = true;
+          _zipFile = string.Format("{0}\\MP_TVELogs_[date]_[time].zip",_zipPath);
         if (!ParseCommandLine())
         {
           Application.Exit();
@@ -218,7 +231,7 @@ namespace WatchDog
       }
       else
       {
-        _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortal-Logs\\MediaPortalLogs_[date]__[time].zip";
+        _zipFile = string.Format("{0}\\MP_Logs_{1}_[date]_[time].zip",_zipPath,Environment.MachineName);
       }
 
       string tvPlugin = Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll";
@@ -231,7 +244,7 @@ namespace WatchDog
       {
         Application.Exit();
       }
-      tbZipFile.Text = zipFile;
+      tbZipFile.Text = _zipFile;
       if (_autoMode)
       {
         if (!CheckRequirements())
@@ -281,7 +294,7 @@ namespace WatchDog
         switch (args[i].ToLowerInvariant())
         {
           case "-zipfile":
-            zipFile = args[++i];
+            _zipFile = args[++i];
             break;
           case "-safe":
             _safeMode = true;
@@ -349,7 +362,7 @@ namespace WatchDog
       if (dr == DialogResult.OK)
       {
         tbZipFile.Text = saveDialog.FileName;
-        zipFile = tbZipFile.Text;
+        _zipFile = tbZipFile.Text;
       }
     }
 
@@ -677,9 +690,17 @@ namespace WatchDog
 
     private void btnZipFileReset_Click(object sender, EventArgs e)
     {
-      zipFile = string.Format("{0}\\MediaPortal-Logs\\MP_logs__{1}__[date]__[time].zip",
-        Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), Environment.MachineName);
-      tbZipFile.Text = zipFile;
+      if (_TVEonly == true)
+      {
+        _zipFile = string.Format("{0}\\MediaPortal - Logs\\MP_TVELogs_[date]_[time].zip", Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
+        tbZipFile.Text = _zipFile;
+      }
+      else
+      {
+        _zipFile = string.Format("{0}\\MediaPortal - Logs\\MP_Logs_{1}_[date]_[time].zip", Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), Environment.MachineName);
+        tbZipFile.Text = _zipFile;
+      }
+
     }
 
     private void menuItemClearEventLogs_Click(object sender, EventArgs e)
