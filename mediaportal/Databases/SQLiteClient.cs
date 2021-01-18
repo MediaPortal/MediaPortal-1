@@ -449,7 +449,7 @@ namespace SQLite.NET
 
       DateTime now = DateTime.Now;
       TimeSpan ts = now - DateTime.Now;
-      int timeout = -15;
+      int timeout = -60; // MP1-5061: Increase to -60 Was: -15
       while (true && ts.TotalSeconds > timeout)
       {
         for (int i = 0; i <= busyRetries; i++)
