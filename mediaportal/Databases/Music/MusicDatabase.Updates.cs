@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using MediaPortal.Database;
 using MediaPortal.Profile;
@@ -1290,6 +1291,10 @@ namespace MediaPortal.Music.Database
         tag.Genre = Util.Utils.FormatMultiItemMusicString(tag.Genre, false);
         tag.Composer = Util.Utils.FormatMultiItemMusicString(tag.Composer, _stripArtistPrefixes);
 
+        // For MusicBrainzArtist information we see different dividers like "/", "\\", ";", etc.
+        // change them to have a "|", which is the separator used inside the MP database
+        tag.MusicBrainzArtistId = Regex.Replace(tag.MusicBrainzArtistId, @"[;/\\\\]", "|");
+        
         return tag;
       }
       return null;
