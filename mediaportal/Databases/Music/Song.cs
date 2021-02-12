@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -114,6 +114,7 @@ namespace MediaPortal.Music.Database
                         MusicBrainzTrackId = MusicBrainzTrackId,
                         FileType = FileType,
                         Codec = Codec,
+                        BitRate = BitRate,
                         BitRateMode = BitRateMode,
                         BPM = BPM,
                         Channels = Channels,
@@ -408,6 +409,7 @@ namespace MediaPortal.Music.Database
                         MusicBrainzTrackId = MusicBrainzTrackId,
                         FileType = FileType,
                         Codec = Codec,
+                        BitRate = BitRate,
                         BitRateMode = BitRateMode,
                         BPM = BPM,
                         Channels = Channels,
