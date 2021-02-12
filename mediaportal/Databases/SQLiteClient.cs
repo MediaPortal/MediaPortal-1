@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ namespace SQLite.NET
     internal static extern int sqlite3_last_insert_rowid(IntPtr sqlite_handle);
 
     [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
-    internal static extern SqliteError sqlite3_prepare16(IntPtr sqlite_handle,
+    internal static extern SqliteError sqlite3_prepare16_v2(IntPtr sqlite_handle,
                                                          [MarshalAs(UnmanagedType.LPWStr)] string zSql, int zSqllen,
                                                          out IntPtr pVm, out IntPtr pzTail);
 
@@ -400,14 +400,9 @@ namespace SQLite.NET
       //lock (typeof (SQLiteClient)) // Trigger slow entering plugin (i.e myvideos in title mode)
       {
         //Log.Info("dbs:{0} sql:{1}", databaseName,query);
-        if (query == null)
+        if (string.IsNullOrEmpty(query))
         {
-          Log.Error("SQLiteClient: query==null");
-          return set1;
-        }
-        if (query.Length == 0)
-        {
-          Log.Error("SQLiteClient: query==''");
+          Log.Error("SQLiteClient: query == null or empty");
           return set1;
         }
         IntPtr errMsg;
@@ -420,7 +415,7 @@ namespace SQLite.NET
         {
           IntPtr pVm;
           IntPtr pzTail;
-          err = sqlite3_prepare16(dbHandle, query, query.Length * 2, out pVm, out pzTail);
+          err = sqlite3_prepare16_v2(dbHandle, query, query.Length * 2, out pVm, out pzTail);
           if (err == SqliteError.OK)
           {
             ReadpVm(query, set1, ref pVm);
@@ -444,16 +439,18 @@ namespace SQLite.NET
 
     internal void ReadpVm(string query, SQLiteResultSet set1, ref IntPtr pVm)
     {
-      int pN;
+      int pN = 0;
       SqliteError res = SqliteError.ERROR;
 
       if (pVm == IntPtr.Zero)
       {
         ThrowError("SQLiteClient: pvm=null", query, res);
       }
+
       DateTime now = DateTime.Now;
       TimeSpan ts = now - DateTime.Now;
-      while (true && ts.TotalSeconds > -15)
+      int timeout = -60; // MP1-5061: Increase to -60 Was: -15
+      while (true && ts.TotalSeconds > timeout)
       {
         for (int i = 0; i <= busyRetries; i++)
         {
@@ -472,7 +469,7 @@ namespace SQLite.NET
           }
         }
 
-        pN = sqlite3_column_count(pVm);
+        // pN = sqlite3_column_count(pVm);
         /*
         if (res == SqliteError.ERROR)
         {
@@ -506,10 +503,10 @@ namespace SQLite.NET
           else
           {
             IntPtr pzTail;
-            err = sqlite3_prepare16(dbHandle, query, query.Length * 2, out pVm, out pzTail);
+            err = sqlite3_prepare16_v2(dbHandle, query, query.Length * 2, out pVm, out pzTail);
 
             res = sqlite3_step(pVm);
-            pN = sqlite3_column_count(pVm);
+            // pN = sqlite3_column_count(pVm);
 
             if (pVm == IntPtr.Zero)
             {
@@ -521,6 +518,12 @@ namespace SQLite.NET
         // We have some data; lets read it
         if (set1.ColumnNames.Count == 0)
         {
+          pN = sqlite3_column_count(pVm);
+          if (pVm == IntPtr.Zero)
+          {
+            ThrowError("sqlite3_column_count:pvm=null", query, res);
+          }
+
           for (int i = 0; i < pN; i++)
           {
             string colName;
@@ -549,6 +552,11 @@ namespace SQLite.NET
         set1.Rows.Add(row);
 
         ts = now - DateTime.Now;
+      }
+
+      if (ts.TotalSeconds <= timeout)
+      {
+        Log.Warn("SQLiteClient: ReadpVm ({0} <= {1}) Exceeded sampling time, may not have received all the data.", ts.TotalSeconds, timeout);
       }
 
       if (res == SqliteError.BUSY || res == SqliteError.ERROR)
