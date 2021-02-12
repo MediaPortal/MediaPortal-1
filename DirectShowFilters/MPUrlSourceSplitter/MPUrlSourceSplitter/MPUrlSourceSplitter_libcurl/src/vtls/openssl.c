@@ -1379,6 +1379,9 @@ static void ssl_tls_trace(int direction, int ssl_ver, int content_type,
     tls_rt_name = "";
 
   msg_type = *(char*)buf;
+  if (msg_type == 23 && ssl_ver == SSL2_VERSION_MAJOR) //get rid of those SSLv2, Unknown (23):messages
+    return;
+
   msg_name = ssl_msg_type(ssl_ver, msg_type);
 
   txt_len = snprintf(ssl_buf, sizeof(ssl_buf), "SSLv%c, %s%s (%d):\n",
