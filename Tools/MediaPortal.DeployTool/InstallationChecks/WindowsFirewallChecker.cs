@@ -121,12 +121,20 @@ namespace MediaPortal.DeployTool.InstallationChecks
         app = InstallationProperties.Instance["TVServerDir"] + "\\SetupTv.exe";
         AuthorizeApplication("MediaPortal TV Setup", app, NET_FW_SCOPE_.NET_FW_SCOPE_ALL,
                              NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+        //WatchDogService
+        app = InstallationProperties.Instance["TVServerDir"] + "\\WatchDogService.exe";
+        AuthorizeApplication("MediaPortal WatchDogService", app, NET_FW_SCOPE_.NET_FW_SCOPE_ALL,
+                             NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
       }
       if (InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1")
       {
         //MediaPortal
         app = InstallationProperties.Instance["MPDir"] + "\\MediaPortal.exe";
         AuthorizeApplication("MediaPortal", app, NET_FW_SCOPE_.NET_FW_SCOPE_ALL,
+                             NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+        //Watchdog
+        app = InstallationProperties.Instance["MPDir"] + "\\WatchDog.exe";
+        AuthorizeApplication("WatchDog", app, NET_FW_SCOPE_.NET_FW_SCOPE_ALL,
                              NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
       }
       if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
@@ -246,10 +254,18 @@ namespace MediaPortal.DeployTool.InstallationChecks
       bool chktv = false;
       if (InstallationProperties.Instance["ConfigureTVServerFirewall"] != "1") chktv = true;
 
+      //WatchDogService
+      string appwds = InstallationProperties.Instance["TVServerDir"] + "\\WatchDogService.exe";
+      bool chkwds = false;
+
       //MediaPortal
       string appmp = InstallationProperties.Instance["MPdir"] + "\\MediaPortal.exe";
       bool chkmp = false;
       if (InstallationProperties.Instance["ConfigureMediaPortalFirewall"] != "1") chkmp = true;
+
+      //WatchDog
+      string appwd = InstallationProperties.Instance["MPdir"] + "\\WatchDog.exe";
+      bool chkwd = false;
 
       while (e1.MoveNext())
       {
@@ -260,10 +276,14 @@ namespace MediaPortal.DeployTool.InstallationChecks
             chktv = true;
           if (app.ProcessImageFileName.ToLower() == appmp.ToLower())
             chkmp = true;
+          if (app.ProcessImageFileName.ToLower() == appwd.ToLower())
+            chkwd = true;
+          if (app.ProcessImageFileName.ToLower() == appwds.ToLower())
+            chkwds = true;
         }
       }
 
-      if (chktv && chkmp)
+      if (chktv && chkmp && chkwd && chkwds)
         result.state = CheckState.CONFIGURED;
       else
         result.state = CheckState.NOT_CONFIGURED;

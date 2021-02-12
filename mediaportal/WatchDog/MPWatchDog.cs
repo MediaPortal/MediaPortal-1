@@ -21,9 +21,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Net;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -31,8 +33,13 @@ using DaggerLib.DSGraphEdit;
 using DaggerLib.UI;
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
+using MediaPortal.Util;
+using MediaPortal.GUI.Library;
 using WatchDog.Properties;
 using Settings = MediaPortal.Profile.Settings;
+using System.ServiceProcess;
+using System.Security.Principal;
+
 
 namespace WatchDog
 {
@@ -48,7 +55,7 @@ namespace WatchDog
     #region Variables
 
     private readonly string _tempDir = "";
-    private string _zipFile = "";
+    public static string _zipFile = "";
     private string _tempConfig;
     private bool _autoMode;
     private bool _watchdog;
@@ -60,6 +67,10 @@ namespace WatchDog
     private bool _safeMode;
     private int GraphsCreated { get; set; }
     private string _currentpath = Directory.GetCurrentDirectory();
+    private string _watchdogtargetDir = "";
+    private string _watchdogAppDir = "";
+    private string _zipPath;
+    private bool _TVEonly;
 
     #endregion
 
@@ -127,7 +138,7 @@ namespace WatchDog
           process.WaitForExit();
         }
         // ReSharper disable EmptyGeneralCatchClause
-        catch {}
+        catch { }
         // ReSharper restore EmptyGeneralCatchClause
       }
 
@@ -166,7 +177,7 @@ namespace WatchDog
     {
       _zipFile = tbZipFile.Text;
       return _zipFile
-        .Replace("[date]", DateTime.Now.ToString("dd_MM_yy"))
+        .Replace("[date]", DateTime.Now.ToString("yy_MM_dd"))
         .Replace("[time]", DateTime.Now.ToString("HH_mm"));
     }
 
@@ -174,6 +185,14 @@ namespace WatchDog
 
     public MPWatchDog()
     {
+      // Read Watchdog setting from XML files
+      _watchdogAppDir = Config.GetFile(Config.Dir.Config, "watchdog.xml");
+
+      using (Settings xmlreader = new Settings(_watchdogAppDir, false))
+      {
+        _watchdogtargetDir = xmlreader.GetValueAsString("general", "watchdogTargetDir", "");
+      }
+
       GraphsCreated = 0;
       Thread.CurrentThread.Name = "MPWatchDog";
       InitializeComponent();
@@ -183,10 +202,22 @@ namespace WatchDog
         _tempDir += "\\";
       }
       _tempDir += "MPTemp";
-      // Check If Watchdog is installed on TV Server folder for disabled 1st & 2nd choice & rename Zip file
-      if (File.Exists(Path.Combine(_currentpath, "WatchDog.exe")) & File.Exists(Path.Combine(_currentpath, "SetupTV.exe")))
+
+      // Read Custom path for zip or apply default value
+      if (_watchdogtargetDir == string.Empty)
       {
-        _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortal-Logs\\MP_TVELogs_[date]__[time].zip";
+        _zipPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortal-Logs\\";
+      }
+      else
+      {
+        _zipPath = string.Format(_watchdogtargetDir);
+      }
+
+      // Check If Watchdog is installed on TV Server folder for disabled 1st & 2nd choice & rename Zip file
+        if (File.Exists(Path.Combine(_currentpath, "WatchDog.exe")) & File.Exists(Path.Combine(_currentpath, "SetupTV.exe")))
+         {
+         _TVEonly = true;
+          _zipFile = string.Format("{0}\\MP_TVELogs_[date]_[time].zip",_zipPath);
         if (!ParseCommandLine())
         {
           Application.Exit();
@@ -200,8 +231,23 @@ namespace WatchDog
       }
       else
       {
-        _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortal-Logs\\MediaPortalLogs_[date]__[time].zip";
-        if (!ParseCommandLine())
+        _zipFile = string.Format("{0}\\MP_Logs_{1}_[date]_[time].zip",_zipPath,Environment.MachineName);
+      }
+
+      string tvPlugin = Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll";
+      if (!File.Exists(tvPlugin))
+      {
+        menuItem14.Enabled = false;
+      }
+
+      if (!ParseCommandLine())
+      {
+        Application.Exit();
+      }
+      tbZipFile.Text = _zipFile;
+      if (_autoMode)
+      {
+        if (!CheckRequirements())
         {
           Application.Exit();
         }
@@ -243,7 +289,7 @@ namespace WatchDog
     private bool ParseCommandLine()
     {
       string[] args = Environment.GetCommandLineArgs();
-      for (int i = 1; i < args.Length;)
+      for (int i = 1; i < args.Length; )
       {
         switch (args[i].ToLowerInvariant())
         {
@@ -539,12 +585,259 @@ namespace WatchDog
           {
             PerformPostTestActions();
             string mpExe = Config.GetFolder(Config.Dir.Base) + "\\MediaPortal.exe";
-            var mp = new Process {StartInfo = {FileName = mpExe}};
+            var mp = new Process { StartInfo = { FileName = mpExe } };
             mp.Start();
             Close();
           }
         }
       }
+    }
+
+    private void menuItemStartTVserver_Click(object sender, EventArgs e)
+    {
+      SetStatus("Busy...");
+      EnableChoice(false);
+      ProceedButton.Enabled = false;
+
+      TVServerManager mngr = new TVServerManager();
+      mngr.TvServerRemoteStart();
+
+      SetStatus("idle");
+      EnableChoice(true);
+      ProceedButton.Enabled = true;
+    }
+
+    private void menuItemStopTVserver_Click(object sender, EventArgs e)
+    {
+      SetStatus("Busy...");
+      EnableChoice(false);
+      ProceedButton.Enabled = false;
+
+      TVServerManager mngr = new TVServerManager();
+      mngr.TvServerRemoteStop();
+
+      SetStatus("idle");
+      EnableChoice(true);
+      ProceedButton.Enabled = true;
+    }
+
+    private string GetDirectoryName(string f)
+    {
+      try
+      {
+        int posOfDirSep = f.LastIndexOf("\\");
+        if (posOfDirSep >= 0)
+          return f.Substring(0, posOfDirSep);
+        else return string.Empty;
+      }
+      catch (Exception)
+      {
+        return string.Empty;
+      }
+    }
+
+    private void ClearEventLog()
+    {
+      string[] logNames = { "Application", "System" };
+      foreach (string strLogName in logNames)
+      {
+        EventLog e = new EventLog(strLogName);
+        try
+        {
+          e.Clear();
+        }
+        catch (Exception) { }
+      }
+    }
+
+    private void ClearDir(string strDir)
+    {
+      string[] files = Directory.GetFiles(strDir);
+      string[] dirs = Directory.GetDirectories(strDir);
+
+      foreach (string file in files)
+      {
+        if (File.Exists(file))
+        {
+          try
+          {
+            File.Delete(file);
+          }
+          catch (Exception) { }
+        }
+      }
+
+      foreach (string dir in dirs)
+      {
+        if (Directory.Exists(dir))
+        {
+          try
+          {
+            Directory.Delete(dir, true);
+          }
+          catch (Exception) { }
+        }
+      }
+    }
+
+    private void tbZipFile_TextChanged(object sender, EventArgs e)
+    {
+      using (var xmlwriter = new Settings(_watchdogAppDir, false))
+      {
+        xmlwriter.SetValue("general", "watchdogTargetDir", GetDirectoryName(tbZipFile.Text));
+      }
+    }
+
+    private void btnZipFileReset_Click(object sender, EventArgs e)
+    {
+      if (_TVEonly == true)
+      {
+        _zipFile = string.Format("{0}\\MediaPortal - Logs\\MP_TVELogs_[date]_[time].zip", Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
+        tbZipFile.Text = _zipFile;
+      }
+      else
+      {
+        _zipFile = string.Format("{0}\\MediaPortal - Logs\\MP_Logs_{1}_[date]_[time].zip", Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), Environment.MachineName);
+        tbZipFile.Text = _zipFile;
+      }
+
+    }
+
+    private void menuItemClearEventLogs_Click(object sender, EventArgs e)
+    {
+      ClearEventLog();
+    }
+
+    private void menuItemClearMPlogs_Click(object sender, EventArgs e)
+    {
+      ClearDir(Config.GetFolder(Config.Dir.Log));
+    }
+
+    private void menuItemClearWEventLogOnTVserver_Click(object sender, EventArgs e)
+    {
+      TVServerManager mngr = new TVServerManager();
+      mngr.ClearWindowsEventLogs();
+    }
+
+    private void menuItemClearTVserverLogs_Click(object sender, EventArgs e)
+    {
+      TVServerManager mngr = new TVServerManager();
+      mngr.ClearTVserverLogs();
+    }
+
+    private void menuRebootTvServer_Click(object sender, EventArgs e)
+    {
+      string hostName;
+      using (Settings xmlreader = new MPSettings())
+      {
+        hostName = xmlreader.GetValueAsString("tvservice", "hostname", string.Empty);
+      }
+
+      if (hostName == string.Empty)
+      {
+        return;
+      }
+
+      string msg = string.Format("Do you want to restart {0}?", hostName);
+
+      var result = MessageBox.Show(msg, "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+      if (result == DialogResult.Yes)
+      {
+        TVServerManager mngr = new TVServerManager();
+        mngr.RebootTvServer();
+      }
+    }
+
+    private void menuShutdownTvServer_Click(object sender, EventArgs e)
+    {
+      string hostName;
+      using (Settings xmlreader = new MPSettings())
+      {
+        hostName = xmlreader.GetValueAsString("tvservice", "hostname", string.Empty);
+      }
+
+      if (hostName == string.Empty)
+      {
+        return;
+      }
+
+      string msg = string.Format("Do you want to Shutdown {0}?", hostName);
+
+      var result = MessageBox.Show(msg, "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+      if (result == DialogResult.Yes)
+      {
+        TVServerManager mngr = new TVServerManager();
+        mngr.ShutdownTvServer();
+      }
+    }
+
+    private void menuPowerOffTvServer_Click(object sender, EventArgs e)
+    {
+      string hostName;
+      using (Settings xmlreader = new MPSettings())
+      {
+        hostName = xmlreader.GetValueAsString("tvservice", "hostname", string.Empty);
+      }
+
+      if (hostName == string.Empty)
+      {
+        return;
+      }
+
+      string msg = string.Format("Do you want to Power Off {0}?", hostName);
+
+      var result = MessageBox.Show(msg, "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+      if (result == DialogResult.Yes)
+      {
+        TVServerManager mngr = new TVServerManager();
+        mngr.PowerOffTvServer();
+      }
+    }
+
+    private void menuItemWOLTvServer_Click(object sender, EventArgs e)
+    {
+      String macAddress, hostname;
+      byte[] hwAddress;
+      
+      using (Settings xmlreader = new MPSettings())
+      {
+        macAddress = xmlreader.GetValueAsString("tvservice", "macAddress", null);
+        hostname = xmlreader.GetValueAsString("tvservice", "hostname", null);
+
+        if (!string.IsNullOrEmpty(macAddress))
+        {
+          try
+          {
+            WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
+
+            Log.Debug("WOLMgr: Ping {0}", hostname);
+            if (wakeOnLanManager.Ping(hostname, 200))
+            {
+              Log.Debug("WOLMgr: {0} already started", hostname);
+              return;
+            }
+
+            hwAddress = wakeOnLanManager.GetHwAddrBytes(macAddress);
+
+            if (!wakeOnLanManager.SendWakeOnLanPacket(hwAddress, IPAddress.Broadcast))
+            {
+              Log.Debug("WOLMgr: FAILED to send the first wake-on-lan packet!");
+            }
+
+
+          }
+          catch (Exception ex)
+          {
+            Log.Error("WOL - Failed to start the TV server - {0}", ex.Message);
+          }
+            
+          MessageBox.Show("Done", "Status", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+      }
+
     }
   }
 }

@@ -140,6 +140,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\.editorconfig = ..\.editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatchDogService.Interface", "..\Common-MP-TVE3\WatchDogService.Interface\WatchDogService.Interface.csproj", "{837CE7EA-60D4-4217-8D38-A8B5E6E1DB22}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -490,6 +492,14 @@ Global
 		{C430B2F0-CD3A-4BD5-B6C2-1DE2BDC68C86}.Release|x86.Build.0 = Release|x86
 		{C430B2F0-CD3A-4BD5-B6C2-1DE2BDC68C86}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|Any CPU
 		{C430B2F0-CD3A-4BD5-B6C2-1DE2BDC68C86}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|Any CPU
+		{837CE7EA-60D4-4217-8D38-A8B5E6E1DB22}.Debug|x86.ActiveCfg = Debug|x86
+		{837CE7EA-60D4-4217-8D38-A8B5E6E1DB22}.Debug|x86.Build.0 = Debug|x86
+		{837CE7EA-60D4-4217-8D38-A8B5E6E1DB22}.Release|x86.ActiveCfg = Release|x86
+		{837CE7EA-60D4-4217-8D38-A8B5E6E1DB22}.Release|x86.Build.0 = Release|x86
+		{837CE7EA-60D4-4217-8D38-A8B5E6E1DB22}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|x86
+		{837CE7EA-60D4-4217-8D38-A8B5E6E1DB22}.UseCaptureCardDefinitions|x86.Build.0 = Release|x86
+		{837CE7EA-60D4-4217-8D38-A8B5E6E1DB22}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86
+		{837CE7EA-60D4-4217-8D38-A8B5E6E1DB22}.UseCaptureDefintionsRelease|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
