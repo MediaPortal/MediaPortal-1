@@ -783,7 +783,7 @@ namespace SetupTv.Sections
       this.trackBarQuality.BackColor = System.Drawing.SystemColors.Window;
       this.trackBarQuality.LargeChange = 2;
       this.trackBarQuality.Location = new System.Drawing.Point(191, 38);
-      this.trackBarQuality.Maximum = 4;
+      this.trackBarQuality.Maximum = 5;
       this.trackBarQuality.Name = "trackBarQuality";
       this.trackBarQuality.Orientation = System.Windows.Forms.Orientation.Vertical;
       this.trackBarQuality.Size = new System.Drawing.Size(45, 114);

@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Import Project="..\..\Packages\DirectX_9_SDK.10.6.0\build\DirectX_9_SDK.props" Condition="Exists('..\..\Packages\DirectX_9_SDK.10.6.0\build\DirectX_9_SDK.props')" />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -76,6 +77,8 @@
     <ApplicationManifest>MediaPortal.exe.manifest</ApplicationManifest>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -187,19 +190,19 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <SpecificVersion>True</SpecificVersion>
+      <HintPath>..\..\Packages\DirectX_9_SDK.10.6.0\lib\Microsoft.DirectX.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <SpecificVersion>True</SpecificVersion>
+      <HintPath>..\..\Packages\DirectX_9_SDK.10.6.0\lib\Microsoft.DirectX.Direct3D.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.DirectX.Direct3DX, Version=1.0.2911.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <SpecificVersion>True</SpecificVersion>
+      <HintPath>..\..\Packages\DirectX_9_SDK.10.6.0\lib\Microsoft.DirectX.Direct3DX.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.DirectX.DirectDraw, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <SpecificVersion>True</SpecificVersion>
+      <HintPath>..\..\Packages\DirectX_9_SDK.10.6.0\lib\Microsoft.DirectX.DirectDraw.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.DirectX.DirectInput, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <SpecificVersion>True</SpecificVersion>
+      <HintPath>..\..\Packages\DirectX_9_SDK.10.6.0\lib\Microsoft.DirectX.DirectInput.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -217,6 +220,7 @@
     <ProjectReference Include="..\WindowPlugins\GUIHome\GUIHome.csproj">
       <Project>{B282C55B-A37B-4CEC-A4FC-00791069BF00}</Project>
       <Name>GUIHome</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
       <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
@@ -320,4 +324,10 @@
     </PreBuildEvent>
     <PostBuildEvent>"$(ProjectDir)PostBuild.bat" "$(SolutionDir)" $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Ce projet fait référence à des packages NuGet qui sont manquants sur cet ordinateur. Utilisez l'option de restauration des packages NuGet pour les télécharger. Pour plus d'informations, consultez http://go.microsoft.com/fwlink/?LinkID=322105. Le fichier manquant est : {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\Packages\DirectX_9_SDK.10.6.0\build\DirectX_9_SDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\DirectX_9_SDK.10.6.0\build\DirectX_9_SDK.props'))" />
+  </Target>
 </Project>

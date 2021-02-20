@@ -432,7 +432,7 @@ namespace MediaPortal.InputDevices
         else if (aHidEvent.IsKeyboard && aHidEvent.IsButtonDown && !GUIWindowManager.NeedsTextInput)
         {
           //Keyboard handling
-          ushort virtualKey = aHidEvent.RawInput.keyboard.VKey;
+          ushort virtualKey = aHidEvent.RawInput.data.keyboard.VKey;
           HidListener.LogInfo("HID: try mapping virtual code 0x{0}", virtualKey.ToString("X4"));
           HidUsageAction.ConditionalAction action = usageAction.GetAction(virtualKey.ToString(), aHidEvent.IsBackground, aHidEvent.IsRepeat, aHidEvent.HasModifierShift, aHidEvent.HasModifierControl, aHidEvent.HasModifierAlt, aHidEvent.HasModifierWindows);
           _actions.Add(action);

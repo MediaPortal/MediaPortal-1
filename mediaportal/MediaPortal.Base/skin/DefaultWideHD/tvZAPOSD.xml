@@ -161,7 +161,7 @@
       <height>56</height>
       <texture>tv_is_recording.png</texture>
     </control>
-    <control>
+    <!--control>
       <description>background</description>
       <type>image</type>
       <id>1</id>
@@ -171,14 +171,14 @@
       <width>670</width>
       <texture>OSDBG3.png</texture>
       <colordiffuse>bb000000</colordiffuse>
-      <!--visible>yes</visible-->
-  </control>
+      
+  </control-->
   <control>
     <description>Zap to channel no</description>
     <type>label</type>
     <id>38</id>
-    <posX>23</posX>
-    <posY>1</posY>
+    <posX>30</posX>
+    <posY>10</posY>
     <label>-</label>
     <font>font36</font>
     <textcolor>lightskyblue</textcolor>

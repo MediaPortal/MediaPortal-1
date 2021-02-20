@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -262,15 +262,15 @@ namespace MediaPortal.Configuration
            (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
              | System.Windows.Forms.AnchorStyles.Right)));
         this.informationLabel.BackColor = System.Drawing.Color.Transparent;
-        this.informationLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold,
+        this.informationLabel.Font = new System.Drawing.Font("Arial", 9.25F, System.Drawing.FontStyle.Bold,
                                                              System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.informationLabel.ForeColor = System.Drawing.Color.White;
-        this.informationLabel.Location = new System.Drawing.Point(11, 138);
+        this.informationLabel.Location = new System.Drawing.Point(200, 138);
         this.informationLabel.Name = "informationLabel";
         this.informationLabel.Size = new System.Drawing.Size(377, 16);
         this.informationLabel.TabIndex = 4;
         this.informationLabel.Text = "Loading Configuration module";
-        this.informationLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+        this.informationLabel.TextAlign = System.Drawing.ContentAlignment.TopLeft;
         // 
         // versionLabel
         // 
@@ -279,9 +279,9 @@ namespace MediaPortal.Configuration
            (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
              | System.Windows.Forms.AnchorStyles.Right)));
         this.versionLabel.BackColor = System.Drawing.Color.Transparent;
-        this.versionLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular,
+        this.versionLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold,
                                                          System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.versionLabel.Location = new System.Drawing.Point(277, 113);
+        this.versionLabel.Location = new System.Drawing.Point(277, 230);
         this.versionLabel.Name = "versionLabel";
         this.versionLabel.Size = new System.Drawing.Size(100, 16);
         this.versionLabel.TabIndex = 5;
@@ -293,7 +293,7 @@ namespace MediaPortal.Configuration
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
         this.BackgroundImage = global::MediaPortal.Configuration.Properties.Resources.mplogo;
         this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-        this.ClientSize = new System.Drawing.Size(400, 172);
+        this.ClientSize = new System.Drawing.Size(590, 254);
         this.Controls.Add(this.panel1);
         this.DoubleBuffered = true;
         this.ForeColor = System.Drawing.Color.White;

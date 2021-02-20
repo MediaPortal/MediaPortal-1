@@ -12,7 +12,7 @@ rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%MediaPortal%" >> %log%
 
 echo.
 echo Building Libbluray Java...
-call %ant_home%\bin\ant -f %LibblurayJAR% -Dsrc_awt=:java-j2se
+call .\Build_BD_Java.bat
 
 echo.
 echo Building native components...
@@ -29,7 +29,7 @@ set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logf
 
 call "MSBUILD_Rebuild_Release_MediaPortal.bat" Release
 
-"%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%MediaPortal%\MediaPortal.sln" >> %log%
+"%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%MediaPortal%\MediaPortal.sln" >> %log%
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
 echo.

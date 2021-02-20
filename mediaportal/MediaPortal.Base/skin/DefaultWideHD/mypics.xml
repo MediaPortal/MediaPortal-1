@@ -119,7 +119,7 @@
           <id>7</id>
           <label>361</label>
           <onright>50</onright>
-          <ondown>9876</ondown>
+          <ondown>9</ondown>
           <onup>6</onup>
         </control>
         <control>
@@ -149,7 +149,7 @@
           <id>9876</id>
           <label>5</label>
           <hyperlink>12</hyperlink>
-          <onup>7</onup>
+          <onup>8</onup>
           <ondown>10</ondown>
           <onright>50</onright>
         </control>

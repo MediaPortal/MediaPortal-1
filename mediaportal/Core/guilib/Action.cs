@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -173,6 +173,7 @@ namespace MediaPortal.GUI.Library
       // jumps a few seconds forward during playback of movie. Can be used in VideoFullScreen.xml window id=2005
       ACTION_JUMP_MUSIC_NOW_PLAYING = 125, // jump directly to now playing screen
       ACTION_ADD_TO_PLAYLIST = 126, // add item to playlist (rather than ACTION_QUEUE_ITEM which will queue item regardless of whether a playlist is being used)
+      ACTION_PLAY_AGAIN = 127, // play again current track MP1-5012
       ACTION_POWER_OFF = 991, // direct action rather than through ACTION_SHUTDOWN dialog menu
       ACTION_SUSPEND = 992, // direct action rather than through ACTION_SHUTDOWN dialog menu
       ACTION_HIBERNATE = 993, // direct action rather than through ACTION_SHUTDOWN dialog menu

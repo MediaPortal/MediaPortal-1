@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 /*
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,6 +24,8 @@
 #       1. Latest NSIS version from http://nsis.sourceforge.net/Download
 #
 #**********************************************************************************************************#
+
+Unicode True
 
 #---------------------------------------------------------------------------
 # DEVELOPMENT ENVIRONMENT
@@ -70,12 +72,6 @@
 !define BUILD_DeployTool
 !define BUILD_Installer
 
-; comment one of the following lines to disable the preBuild and use Nuget instead (if version match)
-!define BUILD_Libbluray_DLL
-
-; uncomment one of the following lines to force build otherwise use Nuget package (if available). 
-;!define FORCE_BUILD_Libbluray_JAR
-
 !include "include-MP-PreBuild.nsh"
 
 
@@ -114,7 +110,7 @@ VIAddVersionKey CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey FileVersion       "${VERSION}"
 VIAddVersionKey FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
-VIAddVersionKey LegalCopyright    "Copyright © 2005-2013 ${PRODUCT_PUBLISHER}"
+VIAddVersionKey LegalCopyright    "Copyright © 2005-2020 ${PRODUCT_PUBLISHER}"
 
 ;if we want to make it fully silent we can uncomment this
 ;SilentInstall silent

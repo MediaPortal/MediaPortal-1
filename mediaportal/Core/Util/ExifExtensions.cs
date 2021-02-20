@@ -278,6 +278,8 @@ namespace MediaPortal.Util
             value = metadata.ResolutionAsString(); 
             break;
           case nameof(ExifMetadata.Metadata.Location):
+            GUIPropertyManager.SetProperty("#pictures.exif.location.latitude", string.Empty);
+            GUIPropertyManager.SetProperty("#pictures.exif.location.longitude", string.Empty);
             if (metadata.Location != null)
             {
               string latitude = metadata.Location.Latitude.ToLatitudeString() ?? string.Empty;
@@ -285,6 +287,8 @@ namespace MediaPortal.Util
               if (!string.IsNullOrEmpty(latitude) && !string.IsNullOrEmpty(longitude))
               {
                 value = latitude + " / " + longitude;
+                GUIPropertyManager.SetProperty("#pictures.exif.location.latitude", metadata.Location.Latitude.ToMapString());
+                GUIPropertyManager.SetProperty("#pictures.exif.location.longitude", metadata.Location.Longitude.ToMapString());
               }
             }
             break;

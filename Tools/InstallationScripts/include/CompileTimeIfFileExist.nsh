@@ -78,3 +78,5 @@
 	!undef _TEMPFILE
 !macroend
 !define !defineifexist "!insertmacro !defineifexist"
+
+!define CompileTimeIfFileExist_loaded

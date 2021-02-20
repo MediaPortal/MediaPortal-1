@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 /*
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -126,6 +126,7 @@ Var frominstall
 !include "${git_InstallScripts}\pages\AddRemovePage.nsh"
 !include "${git_InstallScripts}\pages\UninstallModePage.nsh"
 
+!include "${git_InstallScripts}\include\x64.nsh"
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
@@ -201,7 +202,6 @@ UninstPage custom un.UninstallModePage un.UninstallModePageLeave
 #---------------------------------------------------------------------------
 !insertmacro LANG_LOAD "English"
 
-
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
@@ -224,7 +224,7 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright ï¿½ 2005-2011 ${PRODUCT_PUBLISHER}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2020 ${PRODUCT_PUBLISHER}"
 ShowUninstDetails show
 
 
@@ -547,18 +547,20 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
 
   ; MediaInfo
-  ;File "${git_ROOT}\Packages\MediaInfo.0.7.95\MediaInfo.dll"
   SetOutPath "$INSTDIR"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.4.0\build\native\x86\MediaInfo.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.4.0\build\native\x86\libcrypto-1_1.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.4.0\build\native\x86\libcurl.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.4.0\build\native\x86\libssl-1_1.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Wrapper.19.4.1\lib\net40\MediaInfo.Wrapper.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.20.9.1\build\native\x86\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.20.9.1\build\native\x86\libcrypto-1_1.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.20.9.1\build\native\x86\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.20.9.1\build\native\x86\libssl-1_1.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Wrapper.20.9.2\lib\net40\MediaInfo.Wrapper.dll"
 
   ; thumbnail software
-  File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
+  ${If} ${RunningX64}
+    File "${git_ROOT}\Packages\FFmpeg.Win64.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
+  ${Else}
+    File "${git_ROOT}\Packages\FFmpeg.Win32.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
+  ${EndIf}
   File "${git_TVServer}\TvThumbnails\bin\x86\${BUILD_TYPE}\TvThumbnails.dll"
-  
 
   ; protocol implementations for MPIPTVSource.ax
   File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_FILE.dll"
@@ -1145,7 +1147,7 @@ Function PageDirectoryPre
   ${EndIf}
 
   ; It checks, if the Server has been selected and only displays the Directory page in this case
-  ${IfNot} ${SectionIsSelected} SecServer
+  ${IfNot} ${SectionIsSelected} ${SecServer}
     Abort
   ${EndIf}
 FunctionEnd

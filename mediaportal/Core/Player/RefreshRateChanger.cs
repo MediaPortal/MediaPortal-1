@@ -1013,11 +1013,15 @@ namespace MediaPortal.Player
       List<double> tvFPS = setting.Fps;
       double fps = -1;
 
-      if ((isVideo || isDVD) && (!isRTSP && !isTV))
+      if ((isVideo || isDVD || isTV) && !isRTSP)
       {
         if (g_Player.MediaInfo != null)
         {
           fps = g_Player.MediaInfo.Framerate;
+          if (fps == 0.0 && isTV && tvFPS.Count > 0) //fallback for mediainfo.wrapper<=20.09
+          {
+            fps = tvFPS[0];
+          }
         }
         else
         {
@@ -1029,7 +1033,7 @@ namespace MediaPortal.Player
           return;
         }
       }
-      else if (isTV || isRTSP)
+      else if (isRTSP)
       {
         if (tvFPS.Count > 0)
         {
