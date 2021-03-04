@@ -38,6 +38,8 @@
 #!define WINVER_81        0x06030000 ;6.03.9600
 #!define WINVER_2012_NT   0x86020001 ;6.02.9200
 #!define WINVER_2012      0x06020001 ;6.02.9200
+#!define WINVER_2016_NT   0x8A000001 ;10.0.14393
+#!define WINVER_2016      0x0A000001 ;10.0.14393
  
 #!macro __WinVer_DefineOSTestsEx Test Suffix
 #!insertmacro __WinVer_DefineOSTest ${Test} 8      '${Suffix}'
