@@ -768,7 +768,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (BadImageFormatException ex)
       {
-        Log.Error("PluginManager:LoadWindowPlugin: {0}", ex.Message);
+        Log.Warn("PluginManager:LoadWindowPlugin: {0}", ex.Message);
       }
       catch (Exception ex)
       {

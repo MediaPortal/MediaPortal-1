@@ -2110,6 +2110,11 @@ namespace MediaPortal
     /// </summary>
     private void UpdateMouseCursor()
     {
+      if (IsDisposed)
+      {
+        return;
+      }
+
       if (!AutoHideMouse)
       {
         return;
