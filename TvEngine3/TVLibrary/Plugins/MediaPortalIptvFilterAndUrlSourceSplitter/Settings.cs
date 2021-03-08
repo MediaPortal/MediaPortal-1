@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml.Serialization;
 using System.IO;
 using System.Collections;
+using TvLibrary.Log;
 
 namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
 {
@@ -116,6 +117,11 @@ namespace TvEngine.MediaPortalIptvFilterAndUrlSourceSplitter
         public static Settings Load()
         {
             String configFilePath = Path.Combine(TvLibrary.Interfaces.PathManager.GetDataPath, Settings.ConfigurationFileName);
+            if (!File.Exists(configFilePath))
+            {
+                Log.Info("File {0} not found, settings set to default", configFilePath);
+                return new Settings();
+            }
 
             XmlSerializer serializer = new XmlSerializer(typeof(Settings));
             using (FileStream stream = new FileStream(configFilePath, FileMode.Open, FileAccess.Read))
