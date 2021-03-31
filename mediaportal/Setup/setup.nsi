@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 /*
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -586,11 +586,11 @@ Section "MediaPortal core files (required)" SecCore
   ${EndIf}
   ; NuGet binaries MediaInfo
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MediaInfo.Native.20.9.1\build\native\x86\MediaInfo.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.20.9.1\build\native\x86\libcrypto-1_1.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.20.9.1\build\native\x86\libcurl.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.20.9.1\build\native\x86\libssl-1_1.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Wrapper.20.9.2\lib\net40\MediaInfo.Wrapper.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\libcrypto-1_1.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\libssl-1_1.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Wrapper.21.3.0\lib\net40\MediaInfo.Wrapper.dll"
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\Sqlite.3.33.0\sqlite.dll"
