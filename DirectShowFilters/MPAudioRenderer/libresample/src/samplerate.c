@@ -32,7 +32,7 @@ src_new (int converter_type, int channels, int *error)
 		return NULL ;
 		} ;
 
-	if ((psrc = calloc (1, sizeof (*psrc))) == NULL)
+	if ((psrc = (SRC_PRIVATE *) calloc (1, sizeof (*psrc))) == NULL)
 	{	if (error)
 			*error = SRC_ERR_MALLOC_FAILED ;
 		return NULL ;

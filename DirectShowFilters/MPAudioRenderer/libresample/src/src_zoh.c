@@ -161,7 +161,7 @@ zoh_set_converter (SRC_PRIVATE *psrc, int src_enum)
 		} ;
 
 	if (psrc->private_data == NULL)
-	{	priv = calloc (1, sizeof (*priv) + psrc->channels * sizeof (float)) ;
+	{	priv = (ZOH_DATA*) calloc (1, sizeof (*priv) + psrc->channels * sizeof (float)) ;
 		psrc->private_data = priv ;
 		} ;
 

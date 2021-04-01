@@ -144,9 +144,12 @@
 
 	#include	<math.h>
 
+  #if (_MSC_FULL_VER <= 192829334)
+
 	/*
 	**	Win32 doesn't seem to have these functions.
 	**	Therefore implement inline versions of these functions here.
+	**  PS: Visual Studio 2019 version 16.9 - have these functions.
 	*/
 
 	__inline long int
@@ -172,6 +175,8 @@
 
 		return intgr ;
 	}
+
+  #endif
 
 #elif (defined (__MWERKS__) && defined (macintosh))
 

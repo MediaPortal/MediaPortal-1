@@ -214,7 +214,7 @@ sinc_set_converter (SRC_PRIVATE *psrc, int src_enum)
 	temp_filter.b_len = MAX (temp_filter.b_len, 4096) ;
 	temp_filter.b_len *= temp_filter.channels ;
 
-	if ((filter = calloc (1, sizeof (SINC_FILTER) + sizeof (filter->buffer [0]) * (temp_filter.b_len + temp_filter.channels))) == NULL)
+	if ((filter = (SINC_FILTER*) calloc (1, sizeof (SINC_FILTER) + sizeof (filter->buffer [0]) * (temp_filter.b_len + temp_filter.channels))) == NULL)
 		return SRC_ERR_MALLOC_FAILED ;
 
 	*filter = temp_filter ;
