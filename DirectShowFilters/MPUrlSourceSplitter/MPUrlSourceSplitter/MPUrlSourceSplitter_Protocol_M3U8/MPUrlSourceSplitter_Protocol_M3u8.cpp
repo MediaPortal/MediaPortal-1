@@ -88,7 +88,7 @@ CMPUrlSourceSplitter_Protocol_M3u8::CMPUrlSourceSplitter_Protocol_M3u8(HRESULT *
   this->lastProcessedSize = 0;
   this->currentProcessedSize = 0;
   this->decryptionHoster = NULL;
-  
+
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, this);
@@ -214,7 +214,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ParseUrl(const CParameterCollection 
     {
       int length = urlComponents->dwSchemeLength + 1;
       ALLOC_MEM_DEFINE_SET(protocol, wchar_t, length, 0);
-      if (protocol == NULL) 
+      if (protocol == NULL)
       {
         this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, L"cannot allocate memory for 'protocol'");
         result = E_OUTOFMEMORY;
@@ -318,17 +318,17 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
         // we can process stream fragment
         // after processing we mark fragment as downloaded = it is ready for filter
 
-          if (SUCCEEDED(result))
-          {
-            currentDecryptingFragment->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
-            currentDecryptingFragment->SetDecrypted(false, UINT_MAX);
-            currentDecryptingFragment->SetProcessed(true, UINT_MAX);
+        if (SUCCEEDED(result))
+        {
+          currentDecryptingFragment->SetLoadedToMemoryTime(GetTickCount(), UINT_MAX);
+          currentDecryptingFragment->SetDecrypted(false, UINT_MAX);
+          currentDecryptingFragment->SetProcessed(true, UINT_MAX);
 
-            this->streamFragments->UpdateIndexes(indexedDecryptedStreamFragment->GetItemIndex(), 1);
+          this->streamFragments->UpdateIndexes(indexedDecryptedStreamFragment->GetItemIndex(), 1);
 
-            // recalculate start position of all processed stream fragments until first not processed stream fragment
-            this->streamFragments->RecalculateProcessedStreamFragmentStartPosition(indexedDecryptedStreamFragment->GetItemIndex());
-          }
+          // recalculate start position of all processed stream fragments until first not processed stream fragment
+          this->streamFragments->RecalculateProcessedStreamFragmentStartPosition(indexedDecryptedStreamFragment->GetItemIndex());
+        }
       }
 
       FREE_MEM_CLASS(indexedDecryptedStreamFragments);
@@ -379,7 +379,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
                   // check last stream fragment for end of stream flag
                   CM3u8StreamFragment *fragment = this->streamFragments->GetItem(this->streamFragments->Count() - 1);
 
-                  this->flags|= ((fragment != NULL) && fragment->IsEndOfStream()) ? PROTOCOL_PLUGIN_FLAG_NONE : PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_DETECTED;
+                  this->flags |= ((fragment != NULL) && fragment->IsEndOfStream()) ? PROTOCOL_PLUGIN_FLAG_NONE : PROTOCOL_PLUGIN_FLAG_LIVE_STREAM_DETECTED;
 
                   FREE_MEM_CLASS(parsedStreamFragments);
                 }
@@ -731,12 +731,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
       {
         // media playlist received, check for error
         this->lastMediaPlaylistUpdateTime = GetTickCount();
-        
+
         if (SUCCEEDED(this->mainCurlInstance->GetM3u8DownloadResponse()->GetResultError()))
         {
           // successfully downloaded media playlist
           unsigned int mediaPlaylistSize = this->mainCurlInstance->GetM3u8DownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
-          
+
           if (this->mainCurlInstance->GetConnectionState() == Opening)
           {
             if (mediaPlaylistSize > 0)
@@ -1306,7 +1306,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_M3u8::ReceiveData(CStreamPackage *streamPa
           {
             CM3u8StreamFragment *fragment = this->streamFragments->GetItem(fragmentRemoveStart + fragmentRemoveCount);
 
-            if (((fragmentRemoveStart + fragmentRemoveCount) != this->streamFragments->GetStartSearchingIndex()) && fragment->IsProcessed() && ((fragment->GetFragmentTimestamp() - this->streamFragmentZeroTimestamp)  < (int64_t)this->reportedStreamTime))
+            if (((fragmentRemoveStart + fragmentRemoveCount) != this->streamFragments->GetStartSearchingIndex()) && fragment->IsProcessed() && ((fragment->GetFragmentTimestamp() - this->streamFragmentZeroTimestamp) < (int64_t)this->reportedStreamTime))
             {
               // fragment will be removed
               fragmentRemoveCount++;
@@ -1463,7 +1463,7 @@ void CMPUrlSourceSplitter_Protocol_M3u8::ClearSession(void)
   this->StopReceivingData();
 
   __super::ClearSession();
- 
+
   this->decryptionHoster->ClearSession();
   this->streamLength = 0;
   this->mainCurlInstance->ClearSession();
