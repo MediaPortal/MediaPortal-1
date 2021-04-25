@@ -31,7 +31,7 @@ CM3u8Fragment::CM3u8Fragment(HRESULT *result)
   this->offset = OFFSET_NOT_SPECIFED;
   this->length = LENGTH_NOT_SPECIFIED;
   this->encryption = NULL;
-
+  this->timeValid = false;
   if ((result != NULL) && (SUCCEEDED(*result)))
   {
     this->encryption = new CM3u8FragmentEncryption(result);
@@ -72,6 +72,18 @@ unsigned int CM3u8Fragment::GetLength(void)
   return this->length;
 }
 
+bool CM3u8Fragment::GetIsTimeValid(void)
+{
+  return this->timeValid;
+}
+
+time_t CM3u8Fragment::GetTimeInUTC(void)
+{
+  tm tmp = time;
+  time_t t = mktime(&tmp);
+  return t;
+}
+
 CM3u8FragmentEncryption *CM3u8Fragment::GetFragmentEncryption(void)
 {
   return this->encryption;
@@ -108,6 +120,12 @@ void CM3u8Fragment::SetDiscontinuity(bool discontinuity)
 {
   this->flags &= ~M3U8_FRAGMENT_FLAG_DISCONTINUITY;
   this->flags |= discontinuity ? M3U8_FRAGMENT_FLAG_DISCONTINUITY : M3U8_FRAGMENT_FLAG_NONE;
+}
+
+void CM3u8Fragment::SetTime(tm time)
+{
+  this->time = time;
+  this->timeValid = true;
 }
 
 void CM3u8Fragment::SetEndOfStream(bool endOfStream)

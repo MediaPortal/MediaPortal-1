@@ -1723,6 +1723,48 @@ CM3u8StreamFragmentCollection *CMPUrlSourceSplitter_Protocol_M3u8::GetStreamFrag
         sequenceNumber = firstFragment->GetSequenceNumber();
       }
 
+      if (lastStreamFragment == NULL)
+      {
+        time_t nowt = std::time(0);
+        tm* now = gmtime(&nowt);
+        time_t nowinutc = mktime(now);
+
+        unsigned int lastValidDateEarlierThanNowIndexPlus1 = 0;
+        CM3u8FragmentCollection* fragments = playlist->GetFragments();
+        for (unsigned int i = fragments->Count() - 3; i > 0; i--)
+        {
+          if (fragments->GetItem(i - 1)->GetIsTimeValid())
+          {
+            time_t t_frag = fragments->GetItem(i - 1)->GetTimeInUTC();
+            if (t_frag <= nowinutc)
+            {
+              lastValidDateEarlierThanNowIndexPlus1 = i;
+              break;
+            }
+          }
+        }
+
+        if (lastValidDateEarlierThanNowIndexPlus1 > 0)
+        {
+          CM3u8Fragment* fragment = fragments->GetItem(lastValidDateEarlierThanNowIndexPlus1 - 1);
+          double nextstarttime = fragment->GetTimeInUTC() + (double)fragment->GetDuration() / 1000;
+
+          while (nextstarttime < nowinutc && lastValidDateEarlierThanNowIndexPlus1 < fragments->Count() - 3)
+          {
+            lastValidDateEarlierThanNowIndexPlus1++;
+            fragment = fragments->GetItem(lastValidDateEarlierThanNowIndexPlus1 - 1);
+            nextstarttime += (double)fragment->GetDuration() / 1000;
+          };
+
+          if (lastValidDateEarlierThanNowIndexPlus1 <= fragments->Count() - 3)
+          {
+            sequenceNumber = fragments->GetItem(lastValidDateEarlierThanNowIndexPlus1 - 1)->GetSequenceNumber();
+          }
+
+        }
+      }
+
+
       int64_t timestamp = (lastStreamFragment != NULL) ? (lastStreamFragment->GetFragmentTimestamp() + lastStreamFragment->GetDuration()) : 0;
 
       for (unsigned int i = 0; (SUCCEEDED(result) && (i < playlist->GetFragments()->Count())); i++)

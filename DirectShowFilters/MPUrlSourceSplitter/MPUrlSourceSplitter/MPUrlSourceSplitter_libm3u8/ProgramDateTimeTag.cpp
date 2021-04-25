@@ -25,6 +25,7 @@
 #include "PlaylistItemCollection.h"
 #include "PlaylistItem.h"
 #include "ErrorCodes.h"
+#include <stdio.h>
 
 CProgramDateTimeTag::CProgramDateTimeTag(HRESULT *result)
   : CTag(result)
@@ -36,6 +37,11 @@ CProgramDateTimeTag::~CProgramDateTimeTag(void)
 }
 
 /* get methods */
+
+tm CProgramDateTimeTag::GetTime(void)
+{
+  return time;
+}
 
 /* set methods */
 
@@ -99,8 +105,20 @@ HRESULT CProgramDateTimeTag::ParseTag(unsigned int version)
     // successful parsing of tag
     // compare it to our tag
     CHECK_CONDITION_HRESULT(result, wcscmp(this->tag, TAG_PROGRAM_DATE_TIME) == 0, result, E_M3U8_TAG_IS_NOT_OF_SPECIFIED_TYPE);
-
-    // we do not interpret date and time
+    //this->tagContent holds the datetime
+    int y, M, d, h, m;
+    float s;
+    time = { 0 };
+    int res = swscanf(this->tagContent, L"%d-%d-%dT%d:%d:%fZ", &y, &M, &d, &h, &m, &s);
+    if (res == 6)
+    {
+      time.tm_year = y - 1900; // Year since 1900
+      time.tm_mon = M - 1;     // 0-11
+      time.tm_mday = d;        // 1-31
+      time.tm_hour = h;        // 0-23
+      time.tm_min = m;         // 0-59
+      time.tm_sec = (int)s;    // 0-61 (0-60 in C++11)
+    }
   }
 
   return result;
@@ -123,6 +141,11 @@ bool CProgramDateTimeTag::CloneInternal(CItem *item)
   bool result = __super::CloneInternal(item);
   CProgramDateTimeTag *tag = dynamic_cast<CProgramDateTimeTag *>(item);
   result &= (tag != NULL);
+
+  if (result)
+  {
+    tag->time = this->time;
+  }
 
   return result;
 }

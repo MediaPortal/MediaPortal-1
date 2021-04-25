@@ -24,6 +24,7 @@
 #define __PROGRAM_DATE_TIME_TAG_DEFINED
 
 #include "Tag.h"
+#include <ctime>
 
 #define PROGRAM_DATE_TIME_TAG_FLAG_NONE                               TAG_FLAG_NONE
 
@@ -38,6 +39,10 @@ public:
   virtual ~CProgramDateTimeTag(void);
 
   /* get methods */
+
+  // gets assosiated time
+  // @return : associated time
+  tm GetTime(void);
 
   /* set methods */
 
@@ -65,6 +70,9 @@ public:
   virtual bool ApplyTagToPlaylistItems(unsigned int version, CItemCollection *notProcessedItems, CPlaylistItemCollection *processedPlaylistItems);
 
 protected:
+
+  // holds the timestamp (in UTC)
+  tm time;
 
   /* methods */
 

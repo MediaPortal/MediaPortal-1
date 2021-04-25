@@ -25,6 +25,7 @@
 
 #include "Flags.h"
 #include "M3u8FragmentEncryption.h"
+#include <ctime>
 
 #define M3U8_FRAGMENT_FLAG_NONE                                       FLAGS_NONE
 
@@ -66,6 +67,14 @@ public:
   // @return : length or LENGTH_NOT_SPECIFIED if not specified
   unsigned int GetLength(void);
 
+  // gets IsTimeValid
+  // @return : true if time is valid
+  bool GetIsTimeValid(void);
+
+  // gets the associated time in UTC (only allowed if IsTimeValid
+  // @return : the time in UTC
+  time_t GetTimeInUTC(void);
+
   // gets fragment encryption
   // @return : fragment encryption
   CM3u8FragmentEncryption *GetFragmentEncryption(void);
@@ -96,6 +105,10 @@ public:
   // sets if after fragment is discontinuity
   // @param discontinuity : true if after fragment is discontinuity, false otherwise
   void SetDiscontinuity(bool discontinuity);
+
+  // sets assosiated datetime
+  // @param time : the time to set
+  void SetTime(tm time);
 
   // sets if fragment is end of stream
   // @param endOfStream : true if after fragment is end of stream, false otherwise
@@ -130,6 +143,9 @@ protected:
 
   // holds fragment encryption
   CM3u8FragmentEncryption *encryption;
+
+  tm time;
+  bool timeValid;
 
   /* methods */
 };

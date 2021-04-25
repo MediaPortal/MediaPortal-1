@@ -24,6 +24,7 @@
 #include "ErrorCodes.h"
 #include "DurationTitleFloatingTag.h"
 #include "DiscontinuityTag.h"
+#include "ProgramDateTimeTag.h"
 #include "KeyTag.h"
 #include "UriAttribute.h"
 #include "MethodAttribute.h"
@@ -84,6 +85,7 @@ HRESULT CMediaPlaylistV03::ParseTagsAndPlaylistItemsInternal(void)
 
           CDurationTitleFloatingTag *durationTitle = dynamic_cast<CDurationTitleFloatingTag *>(tag);
           CDiscontinuityTag *discontinuity = dynamic_cast<CDiscontinuityTag *>(tag);
+          CProgramDateTimeTag * programDate = dynamic_cast<CProgramDateTimeTag *>(tag);
           CKeyTag *key = dynamic_cast<CKeyTag *>(tag);
 
           if (durationTitle != NULL)
@@ -94,6 +96,11 @@ HRESULT CMediaPlaylistV03::ParseTagsAndPlaylistItemsInternal(void)
           if (discontinuity != NULL)
           {
             fragment->SetDiscontinuity(true);
+          }
+
+          if (programDate != NULL)
+          {
+            fragment->SetTime(programDate->GetTime());
           }
 
           if (key != NULL)
