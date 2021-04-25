@@ -1287,8 +1287,8 @@ void STDMETHODCALLTYPE CMPUrlSourceSplitter::OnDownloadCallback(HRESULT download
   if ((this->asyncDownloadCallback != NULL) && (!this->IsSetFlags(MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOAD_CALLBACK_CALLED)))
   {
     // if download callback is set and it is not current instance (avoid recursion)
-    this->asyncDownloadCallback->OnDownloadCallback(downloadResult);
     this->flags |= MP_URL_SOURCE_SPLITTER_FLAG_DOWNLOAD_CALLBACK_CALLED;
+    this->asyncDownloadCallback->OnDownloadCallback(downloadResult);
   }
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_CALLBACK_NAME);
