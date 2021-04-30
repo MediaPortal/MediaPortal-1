@@ -5,6 +5,7 @@
 ** This code is released under 2-clause BSD license. Please see the
 ** file at : https://github.com/erikd/libsamplerate/blob/master/COPYING
 */
+#include "..\..\source\stdafx.h"
 
 #include	<stdio.h>
 #include	<stdlib.h>
