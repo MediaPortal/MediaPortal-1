@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using System.Text.RegularExpressions;
 using System.Xml;
 using TvDatabase;
 using TvLibrary.Log;
@@ -610,11 +611,24 @@ namespace TvEngine
                           }
                           else if (nodeEpisodeNumSystem == "onscreen")
                           {
-                            // example: 'Episode #FFEE' 
-                            string serEpNum = ConvertHTMLToAnsi(nodeEpisodeNum);
-                            int num1 = serEpNum.IndexOf("#", 0);
-                            if (num1 < 0) num1 = 0;
-                            episodeNum = CorrectEpisodeNum(serEpNum.Substring(num1, serEpNum.Length - num1), 0);
+                            // example: 'S1 E10', 'E10'
+                            Match m = Regex.Match(nodeEpisodeNum, @"(?:S(?<season>\d+))?\s*E(?<episode>\d+)");
+                            if (m.Success)
+                            {
+                              if (m.Groups["season"].Success)
+                              {
+                                seriesNum = m.Groups["season"].Value;
+                              }
+                              episodeNum = m.Groups["episode"].Value;
+                            }
+                            else
+                            {
+                              // example: 'Episode #FFEE' 
+                              string serEpNum = ConvertHTMLToAnsi(nodeEpisodeNum);
+                              int num1 = serEpNum.IndexOf("#", 0);
+                              if (num1 < 0) num1 = 0;
+                              episodeNum = CorrectEpisodeNum(serEpNum.Substring(num1, serEpNum.Length - num1), 0);
+                            }
                           }
                         }
                         else
