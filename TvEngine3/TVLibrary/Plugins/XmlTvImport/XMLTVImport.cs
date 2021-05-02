@@ -213,8 +213,6 @@ namespace TvEngine
           _status.EndTime = new DateTime(1971, 11, 6);
           if (showProgress && ShowProgress != null) ShowProgress(_status);
 
-          Dictionary<int, Channel> guideChannels = new Dictionary<int, Channel>();
-
           IList<Channel> allChannels = Channel.ListAll();
 
           int iChannel = 0;
@@ -272,34 +270,24 @@ namespace TvEngine
                     }
                     else
                     {
-                      Channel chan = null;
-
+                      Dictionary<int, Channel> guideChannels = new Dictionary<int, Channel>();
                       // a guide channel can be mapped to multiple tvchannels
-                      foreach (Channel ch in allChannels)
+                      foreach (Channel chan in allChannels)
                       {
-                        if (ch.ExternalId == id)
+                        if (chan.ExternalId == id)
                         {
-                          chan = ch;
-                          chan.ExternalId = id;
-                        }
+                          ChannelPrograms newProgChan = new ChannelPrograms();
+                          newProgChan.Name = chan.DisplayName;
+                          newProgChan.ExternalId = chan.ExternalId;
+                          Programs.Add(newProgChan);
 
-                        if (chan == null)
-                        {
-                          // no mapping found, ignore channel
-                          continue;
-                        }
-
-                        ChannelPrograms newProgChan = new ChannelPrograms();
-                        newProgChan.Name = chan.DisplayName;
-                        newProgChan.ExternalId = chan.ExternalId;
-                        Programs.Add(newProgChan);
-
-                        Log.WriteFile("  channel#{0} xmlid:{1} name:{2} dbsid:{3}", iChannel, chan.ExternalId,
-                                      chan.DisplayName, chan.IdChannel);
-                        if (!guideChannels.ContainsKey(chan.IdChannel))
-                        {
-                          guideChannels.Add(chan.IdChannel, chan);
-                          dChannelPrograms.Add(chan.IdChannel, newProgChan);
+                          Log.WriteFile("  channel#{0} xmlid:{1} name:{2} dbsid:{3}", iChannel, chan.ExternalId,
+                                        chan.DisplayName, chan.IdChannel);
+                          if (!guideChannels.ContainsKey(chan.IdChannel))
+                          {
+                            guideChannels.Add(chan.IdChannel, chan);
+                            dChannelPrograms.Add(chan.IdChannel, newProgChan);
+                          }
                         }
                       }
 
