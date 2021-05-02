@@ -626,8 +626,7 @@ namespace TvEngine
                               // example: 'Episode #FFEE' 
                               string serEpNum = ConvertHTMLToAnsi(nodeEpisodeNum);
                               int num1 = serEpNum.IndexOf("#", 0);
-                              if (num1 < 0) num1 = 0;
-                              episodeNum = CorrectEpisodeNum(serEpNum.Substring(num1, serEpNum.Length - num1), 0);
+                              episodeNum = CorrectEpisodeNum(serEpNum.Substring(num1 + 1), 0);
                             }
                           }
                         }
