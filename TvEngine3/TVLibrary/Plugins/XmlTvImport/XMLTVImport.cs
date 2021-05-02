@@ -43,7 +43,7 @@ namespace TvEngine
       public string ExternalId;
       //public ArrayList programs = new ArrayList();
       public ProgramList programs = new ProgramList();
-    } ;
+    };
 
     public class Stats
     {
@@ -82,7 +82,7 @@ namespace TvEngine
         get { return _endTime; }
         set { _endTime = value; }
       }
-    } ;
+    };
 
     private string _errorMessage = "";
     private Stats _status = new Stats();
@@ -93,7 +93,7 @@ namespace TvEngine
     private bool _skipTextProcessing;
 
     public XMLTVImport()
-      : this(0) {}
+      : this(0) { }
 
     public XMLTVImport(int backgroundDelay)
     {
@@ -261,7 +261,7 @@ namespace TvEngine
                           if (displayName == null) displayName = xmlChannel.ReadString();
                           else xmlChannel.Skip();
                           break;
-                          // could read more stuff here, like icon...
+                        // could read more stuff here, like icon...
                         default:
                           // unknown, skip entire node
                           xmlChannel.Skip();
@@ -328,7 +328,7 @@ namespace TvEngine
 
           #endregion
 
-          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
+          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
           sb.AddOrderByField(true, "externalId");
           sb.AddConstraint("visibleInGuide = 1");
           sb.AddConstraint("externalId IS NOT null");
@@ -649,7 +649,7 @@ namespace TvEngine
                       }
                     }
                     else
-                      // fixing mantis bug 1486: XMLTV import doesn't take episode number from TVGuide.xml made by WebEPG 
+                    // fixing mantis bug 1486: XMLTV import doesn't take episode number from TVGuide.xml made by WebEPG 
                     {
                       // example: '5' like WebEPG is creating
                       serEpNum = ConvertHTMLToAnsi(nodeEpisodeNum.Replace(" ", ""));
@@ -757,7 +757,7 @@ namespace TvEngine
                 if (!deleteBeforeImport)
                 {
                   // retrieve all programs for this channel
-                  SqlBuilder sb2 = new SqlBuilder(StatementType.Select, typeof (Program));
+                  SqlBuilder sb2 = new SqlBuilder(StatementType.Select, typeof(Program));
                   sb2.AddConstraint(Operator.Equals, "idChannel", idChannel);
                   sb2.AddOrderByField(false, "starttime");
                   SqlStatement stmt2 = sb2.GetStatement(true);
@@ -937,7 +937,7 @@ namespace TvEngine
           if (timeZone[0] == '-') return -iOff;
           else return iOff;
         }
-        catch (Exception) {}
+        catch (Exception) { }
       }
       return 0;
     }
@@ -1099,7 +1099,7 @@ namespace TvEngine
         lRet = lRet * 100L + iSec;
         return lRet;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return 0;
     }
 
@@ -1123,7 +1123,7 @@ namespace TvEngine
         DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
         return dt;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return DateTime.Now;
     }
 

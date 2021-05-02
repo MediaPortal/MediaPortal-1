@@ -61,7 +61,7 @@ namespace TvEngine
     /// <summary>
     /// Create a new instance of a generic standby handler
     /// </summary>
-    public XmlTvImporter() {}
+    public XmlTvImporter() { }
 
     #endregion
 
@@ -345,11 +345,11 @@ namespace TvEngine
                   Log.Info("extracting zip file {0} to location {1}", path, newLoc);
                   ZipFile zip = new ZipFile(path);
                   zip.ExtractAll(newLoc, true);
-                  if(RenameFileInZIp == true)
-                   {
-                      sourceFileName = newLoc + (zip.EntryFileNames[0]);
-                      destinationFileName = newLoc + "tvguide.xml";
-                   }
+                  if (RenameFileInZIp == true)
+                  {
+                    sourceFileName = newLoc + (zip.EntryFileNames[0]);
+                    destinationFileName = newLoc + "tvguide.xml";
+                  }
                 }
                 catch (Exception ex2)
                 {
@@ -380,7 +380,7 @@ namespace TvEngine
 
         Log.Info(info);
       }
-      catch (Exception) {}
+      catch (Exception) { }
       finally
       {
         if (sourceFileName != "" && !sourceFileName.EndsWith("tvguide.xml"))
@@ -574,7 +574,7 @@ namespace TvEngine
       DateTime now = DateTime.Now;
 
       if (_remoteFileDownloadInProgress)
-        // we are downloading a remote tvguide.xml, wait for it to complete, before trying to read it (avoiding file locks)
+      // we are downloading a remote tvguide.xml, wait for it to complete, before trying to read it (avoiding file locks)
       {
         // check if the download has been going on for too long, then flag it as failed.
         TimeSpan ts = now - _remoteFileDonwloadInProgressAt;
@@ -698,7 +698,7 @@ namespace TvEngine
       fileName = folder + @"\tvguide.lst";
 
       if (importLST && System.IO.File.Exists(fileName))
-        // check if any files contained in tvguide.lst are newer than time of last import
+      // check if any files contained in tvguide.lst are newer than time of last import
       {
         try
         {
@@ -748,7 +748,7 @@ namespace TvEngine
         }
       }
       if ((importXML || importLST) && (DateTime.Parse(importDate.ToString()) > lastTime))
-        // To string and back to avoid rounding errors leading to continous reimports!!!
+      // To string and back to avoid rounding errors leading to continous reimports!!!
       {
         StartImport(importXML, importLST, importDate);
       }
@@ -856,7 +856,7 @@ namespace TvEngine
       public bool _importXML;
       public bool _importLST;
       public DateTime _importDate;
-    } ;
+    };
 
     private void ThreadFunctionImportTVGuide(object aparam)
     {
