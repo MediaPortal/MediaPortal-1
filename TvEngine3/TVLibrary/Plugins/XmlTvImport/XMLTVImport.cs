@@ -408,8 +408,6 @@ namespace TvEngine
             // get the first programme
             if (xmlReader.ReadToDescendant("programme"))
             {
-              #region read programme node
-
               do
               {
                 ChannelPrograms channelPrograms = new ChannelPrograms();
@@ -429,6 +427,7 @@ namespace TvEngine
                 String nodeStarRating = null;
                 String nodeClassification = null;
 
+                #region read programme node
                 XmlReader xmlProg = xmlReader.ReadSubtree();
                 xmlProg.ReadStartElement(); // read programme
                 // now, xmlProg is positioned on the first sub-element of <programme>
@@ -495,11 +494,10 @@ namespace TvEngine
 
                 #endregion
 
-                #region verify/convert values (programme)
-
                 if (nodeStart != null && nodeChannel != null && nodeTitle != null &&
                     nodeStart.Length > 0 && nodeChannel.Length > 0 && nodeTitle.Length > 0)
                 {
+                  #region verify/convert values (programme)
                   string description = "";
                   string category = "-";
                   string serEpNum = "";
@@ -724,12 +722,12 @@ namespace TvEngine
                       }
                     }
                   }
+                  #endregion
                 }
                 // get the next programme
               } while (xmlReader.ReadToNextSibling("programme"));
               //if (xmlReader != null) xmlReader.Close();
 
-              #endregion
 
               #region sort & remove invalid programs. Save all valid programs
 
