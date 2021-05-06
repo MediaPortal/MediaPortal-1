@@ -2237,9 +2237,9 @@
 		<String id="300070">Wiedergabe-Bildschirm zeigt aktuelle Wiedergabeliste</String>
 		<String id="300071">Ordner</String>
 		<String id="300072">Ordner-Info</String>
-		<String id="300073">Pfad:</String>
-		<String id="300074">Ansicht:</String>
-		<String id="300075">PIN:</String>
+		<String id="300073">Pfad: </String>
+		<String id="300074">Ansicht: </String>
+		<String id="300075">PIN: </String>
 		<String id="300076">Letzten Ordner merken</String>
 		<String id="300077">Optische Laufwerke berücksichtigen</String>
 		<String id="300078">Zu Wechselmedien wechseln</String>
@@ -2286,7 +2286,7 @@
 		<String id="300125">Datei-Existenz-Cache aktivieren</String>
 		<String id="300126">Sound-Effekte des Skins aktivieren</String>
 		<String id="300127">Spezielle Maus-Kontrollen anzeigen</String>
-		<String id="300128">Home-Anzeige:</String>
+		<String id="300128">Home-Anzeige: </String>
 		<String id="300129">Anzeige-Timeout</String>
 		<String id="300130">Zap-On-Screen-Display</String>
 		<String id="300131">Zap-Verzögerung</String>
@@ -2304,10 +2304,10 @@
 		<String id="300143">Konstant (Sek.)</String>
 		<String id="300144">Sprungwert</String>
 		<String id="300145">Vorschau-Qualität</String>
-		<String id="300146">Compositing:</String>
-		<String id="300147">Interpolation:</String>
-		<String id="300148">Glättung:</String>
-		<String id="300149">Bildschirmtyp:</String>
+		<String id="300146">Compositing: </String>
+		<String id="300147">Interpolation: </String>
+		<String id="300148">Glättung: </String>
+		<String id="300149">Bildschirmtyp: </String>
 		<String id="300150">Ordner-Cache auf Nachfrage anlegen</String>
 		<String id="300151">Musik-Vorschaubilder löschen</String>
 		<String id="300152">Bilder</String>
@@ -2326,7 +2326,7 @@
 		<String id="300165">Datenbank bei Änderungen automatisch aktualisieren</String>
 		<String id="300166">Präfix umstellen (The Who -&gt; Who, The)</String>
 		<String id="300167">Titel in einem Ordner als Album behandeln</String>
-		<String id="300168">Vorschaubildern erstellen aus:</String>
+		<String id="300168">Vorschaubildern erstellen aus: </String>
 		<String id="300169">folder.jpg (empfohlen)</String>
 		<String id="300170">*.png, *jpg (Front-Cover bevorzugt)</String>
 		<String id="300171">Cover in ID3-Tags</String>
@@ -2380,8 +2380,8 @@
 		<String id="300219">Audio-Typ</String>
 		<String id="300220">Altersgrenze</String>
 		<String id="300221">Jeder Ordner ist ein Film</String>
-		<String id="300222">Vorschaubilder:</String>
-		<String id="300223">Ordner sind Filme:</String>
+		<String id="300222">Vorschaubilder: </String>
+		<String id="300223">Ordner sind Filme: </String>
 		<String id="300224">Video-Vorschaubilder global deaktivieren</String>
 		<String id="300225">"Sortier-Titel" verwenden</String>
 		<String id="300226">Nur internen nfo-Scraper verwenden</String>
