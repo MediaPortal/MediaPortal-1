@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 /*
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -596,7 +596,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\Sqlite.3.33.0\sqlite.dll"
   ; NuGet binaries EXIF
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MetadataExtractor.2.4.3\lib\net35\MetadataExtractor.dll"
+  File "${git_ROOT}\Packages\MetadataExtractor.2.5.0\lib\net35\MetadataExtractor.dll"
   File "${git_ROOT}\Packages\XmpCore.6.1.10\lib\net35\XmpCore.dll"
   ; NuGet binaries UnidecodeSharp
   SetOutPath "$MPdir.Base\"
