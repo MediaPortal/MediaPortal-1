@@ -194,8 +194,8 @@
     <Reference Include="MediaInfo.Wrapper, Version=21.3.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Packages\MediaInfo.Wrapper.21.3.1\lib\net40\MediaInfo.Wrapper.dll</HintPath>
     </Reference>
-    <Reference Include="MetadataExtractor, Version=2.4.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\MetadataExtractor.2.4.3\lib\net35\MetadataExtractor.dll</HintPath>
+    <Reference Include="MetadataExtractor, Version=2.5.0.0, Culture=neutral, PublicKeyToken=b66b5ccaf776c301, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\MetadataExtractor.2.5.0\lib\net35\MetadataExtractor.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -217,8 +217,8 @@
       <Name>System.XML</Name>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="XmpCore, Version=6.1.10.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\XmpCore.6.1.10\lib\net35\XmpCore.dll</HintPath>
+    <Reference Include="XmpCore, Version=6.1.10.1, Culture=neutral, PublicKeyToken=961f4f366277b80e, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\XmpCore.6.1.10.1\lib\net35\XmpCore.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
