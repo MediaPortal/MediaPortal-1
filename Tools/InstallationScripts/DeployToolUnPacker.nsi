@@ -78,7 +78,7 @@ Unicode True
 #---------------------------------------------------------------------------
 # INCLUDE FILES
 #---------------------------------------------------------------------------
-!define NO_INSTALL_LOG
+#!define NO_INSTALL_LOG
 !include "${git_InstallScripts}\include\LanguageMacros.nsh"
 !include "${git_InstallScripts}\include\MediaPortalMacros.nsh"
 !include "${git_InstallScripts}\include\DotNetSearch.nsh"
