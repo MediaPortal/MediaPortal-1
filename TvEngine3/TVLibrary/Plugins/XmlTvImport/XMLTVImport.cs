@@ -216,8 +216,7 @@ namespace TvEngine
           IList<Channel> allChannels = Channel.ListAll();
 
           int iChannel = 0;
-
-          using (XmlReader xmlReader = XmlReader.Create(fileName))
+          using (XmlReader xmlReader = XmlReader.Create(fileName, new XmlReaderSettings() { DtdProcessing = DtdProcessing.Parse }))
           {
             #region import non-mapped channels by their display-name
 
@@ -367,7 +366,7 @@ namespace TvEngine
           if (showProgress && ShowProgress != null) ShowProgress(_status);
 
           Log.Debug("xmltvimport: Reading TV programs");
-          using (XmlReader xmlReader = XmlReader.Create(fileName))
+          using (XmlReader xmlReader = XmlReader.Create(fileName, new XmlReaderSettings() { DtdProcessing = DtdProcessing.Parse }))
           {
             if (xmlReader.ReadToDescendant("tv"))
             {
