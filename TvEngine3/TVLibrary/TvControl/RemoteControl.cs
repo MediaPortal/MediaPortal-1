@@ -48,6 +48,7 @@ namespace TvControl
 
     private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION = 3000; //msecs
     private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_INITIAL = 20000; //msecs
+    private const int MAX_WAIT_FOR_CHANNEL_REGISTRATION = 300000; //msecs
     private const int MAX_TCP_TIMEOUT = 1000; //msecs
     private const int REMOTING_PORT = 31456;
 
@@ -72,6 +73,7 @@ namespace TvControl
     private static string _hostName = System.Net.Dns.GetHostName();
     private static TcpChannel _callbackChannel = null; // callback channel
     private static bool _useIncreasedTimeoutForInitialConnection = true;
+    private static int _timeout = 0;
 
     #endregion
 
@@ -248,6 +250,26 @@ namespace TvControl
     }
 
     /// <summary>
+    /// Gets or sets the Timeout for the channel registration.
+    /// </summary>
+    /// <value>Timeout in ms.</value>
+    public static int TimeOut
+    {
+      get
+      {
+        if (_timeout == 0)
+        {
+          return MAX_WAIT_FOR_CHANNEL_REGISTRATION;
+        }
+        return _timeout;
+      }
+      set
+      {
+        _timeout = value;
+      }
+    }
+
+    /// <summary>
     /// Registers a remoting channel for allowing callback from server to client
     /// </summary>    
     private static void RegisterChannel()
@@ -269,7 +291,7 @@ namespace TvControl
           IDictionary channelProperties = new Hashtable();
           // Creating the IDictionary to set the port on the channel instance.
           channelProperties.Add("port", 0); // "0" chooses one available port
-          channelProperties.Add("timeout", 5000); // An integer that specifies the number of milliseconds to wait before a request times out. 0 or -1 indicates an infinite timeout period.
+          channelProperties.Add("timeout", TimeOut); // An integer that specifies the number of milliseconds to wait before a request times out. 0 or -1 indicates an infinite timeout period.
 
           // Pass the properties for the port setting and the server provider in the server chain argument. (Client remains null here.)
           _callbackChannel = new TcpChannel(channelProperties, null, provider);
