@@ -115,6 +115,8 @@ namespace MediaPortal.GUI.Music
     protected bool _addAllOnSelect;
     protected bool _playlistIsCurrent;
 
+    protected int _maxNumberOfSongsToLoad;
+
     protected bool _resumeEnabled = false;
     protected int _resumeAfter = 0;
     protected string _resumeSelect = "";
@@ -225,6 +227,7 @@ namespace MediaPortal.GUI.Music
         _selectOption = xmlreader.GetValueAsString("musicfiles", "selectOption", "play");
         _addAllOnSelect = xmlreader.GetValueAsBool("musicfiles", "addall", true);
         _playlistIsCurrent = xmlreader.GetValueAsBool("musicfiles", "playlistIsCurrent", true);
+        _maxNumberOfSongsToLoad = xmlreader.GetValueAsInt("musicfiles", "numberOfSongsToLoad", 1000);
 
         _strippedPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
 
@@ -349,6 +352,20 @@ namespace MediaPortal.GUI.Music
       if (type != g_Player.MediaType.Music)
       {
         return;
+      }
+
+      // Do we need to add additional songs because of deferred Playlist Loading?
+      PlayList plTemp = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP);
+      PlayList pl = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+
+      if (plTemp.Count > pl.Count)
+      {
+        PlayListItem playListItem = plTemp[pl.Count];
+        MusicTag tag = new MusicTag();
+        tag = TagReader.TagReader.ReadTag(playListItem.FileName);
+        playListItem.MusicTag = tag;
+
+        pl.Add(playListItem, false);
       }
 
       if (_resumeEnabled)
@@ -846,6 +863,12 @@ namespace MediaPortal.GUI.Music
         if (null != bw && isAsynch && bw.CancellationPending)
           return;
 
+        if (i > _maxNumberOfSongsToLoad)
+        {
+          Log.Info("Playlist: Selected Playlist contains more than {0} entries. Defer Loading the rest of the songs.", _maxNumberOfSongsToLoad);
+          break;
+        }
+        
         PlayListItem playListItem = playlist[i];
         if (m_database.GetSongByFileName(playListItem.FileName, ref song))
         {
@@ -872,6 +895,12 @@ namespace MediaPortal.GUI.Music
 
       if (null != bw && isAsynch && bw.CancellationPending)
         return;
+
+      // Save the PlayList in Temp Playlist, so that we can later re-use it on a song change
+      if (playlist.Count > _maxNumberOfSongsToLoad)
+      {
+        playlistPlayer.ReplacePlaylist(PlayListType.PLAYLIST_MUSIC_TEMP, playlist);
+      }
 
       PlayList pl = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
 
