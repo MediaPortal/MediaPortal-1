@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -48,7 +48,8 @@ namespace TvControl
 
     private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION = 3000; //msecs
     private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_INITIAL = 20000; //msecs
-    private const int MAX_WAIT_FOR_CHANNEL_REGISTRATION = 300000; //msecs
+    private const int MAX_WAIT_FOR_CHANNEL_REGISTRATION = 600000; //msecs
+    private const int MAX_WAIT_FOR_CHANNEL_REGISTRATION_MEDIAPORTAL = 10000; //msecs
     private const int MAX_TCP_TIMEOUT = 1000; //msecs
     private const int REMOTING_PORT = 31456;
 
@@ -259,6 +260,10 @@ namespace TvControl
       {
         if (_timeout == 0)
         {
+          if (AppDomain.CurrentDomain.FriendlyName.ToLowerInvariant() == "mediaportal.exe")
+          {
+            return MAX_WAIT_FOR_CHANNEL_REGISTRATION_MEDIAPORTAL;
+          }
           return MAX_WAIT_FOR_CHANNEL_REGISTRATION;
         }
         return _timeout;
