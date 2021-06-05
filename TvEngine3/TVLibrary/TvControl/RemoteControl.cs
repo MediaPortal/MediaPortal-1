@@ -48,7 +48,7 @@ namespace TvControl
 
     private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION = 3000; //msecs
     private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_INITIAL = 20000; //msecs
-    private const int MAX_WAIT_FOR_CHANNEL_REGISTRATION = 600000; //msecs
+    private const int MAX_WAIT_FOR_CHANNEL_REGISTRATION = 3600000; //msecs - 1 hour - Almost infinity, but will keep the server from freezing up.
     private const int MAX_WAIT_FOR_CHANNEL_REGISTRATION_MEDIAPORTAL = 10000; //msecs
     private const int MAX_TCP_TIMEOUT = 1000; //msecs
     private const int REMOTING_PORT = 31456;
