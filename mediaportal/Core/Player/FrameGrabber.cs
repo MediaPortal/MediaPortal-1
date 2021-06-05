@@ -39,7 +39,7 @@ namespace MediaPortal
   public class FrameGrabber
   {
     [DllImport("DXUtil.dll", PreserveSig = false, CharSet = CharSet.Auto)]
-    private static extern void VideoSurfaceToRGBSurface(IntPtr src, IntPtr dst);
+    private static extern void VideoSurfaceToRGBSurface(UIntPtr src, IntPtr dst);
 
     private Surface rgbSurface = null; // surface used to hold frame grabs
     private bool grabSucceeded = false; // indicates success/failure of framegrabs
@@ -470,7 +470,7 @@ namespace MediaPortal
           // Log.Debug("Calling VideoSurfaceToRGBSurface");
           if (rgbSurface != null)
           {
-            VideoSurfaceToRGBSurface(new IntPtr(pSurface), (IntPtr) rgbSurface.UnmanagedComPointer);
+            VideoSurfaceToRGBSurface(new UIntPtr(pSurface), (IntPtr) rgbSurface.UnmanagedComPointer);
           }
           lock (grabNotifier)
           {
