@@ -22,18 +22,16 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
-using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization.Formatters;
 using System.Threading;
+
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
-using ThreadState = System.Threading.ThreadState;
 
 namespace TvControl
 {
