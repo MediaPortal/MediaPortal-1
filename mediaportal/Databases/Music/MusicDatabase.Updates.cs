@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1293,7 +1293,7 @@ namespace MediaPortal.Music.Database
 
         // For MusicBrainzArtist information we see different dividers like "/", "\\", ";", etc.
         // change them to have a "|", which is the separator used inside the MP database
-        tag.MusicBrainzArtistId = Regex.Replace(tag.MusicBrainzArtistId, @"[;/\\\\]", "|");
+        tag.MusicBrainzArtistId = Regex.Replace(tag.MusicBrainzArtistId ?? string.Empty, @"[;/\\\\]", "|");
         
         return tag;
       }
