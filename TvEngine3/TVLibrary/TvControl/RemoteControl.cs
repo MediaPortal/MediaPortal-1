@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,18 +22,16 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
-using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization.Formatters;
 using System.Threading;
+
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
-using ThreadState = System.Threading.ThreadState;
 
 namespace TvControl
 {
@@ -48,6 +46,8 @@ namespace TvControl
 
     private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION = 3000; //msecs
     private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_INITIAL = 20000; //msecs
+    private const int MAX_WAIT_FOR_CHANNEL_REGISTRATION = 3600000; //msecs - 1 hour - Almost infinity, but will keep the server from freezing up.
+    private const int MAX_WAIT_FOR_CHANNEL_REGISTRATION_MEDIAPORTAL = 10000; //msecs
     private const int MAX_TCP_TIMEOUT = 1000; //msecs
     private const int REMOTING_PORT = 31456;
 
@@ -72,6 +72,7 @@ namespace TvControl
     private static string _hostName = System.Net.Dns.GetHostName();
     private static TcpChannel _callbackChannel = null; // callback channel
     private static bool _useIncreasedTimeoutForInitialConnection = true;
+    private static int _timeout = 0;
 
     #endregion
 
@@ -248,6 +249,30 @@ namespace TvControl
     }
 
     /// <summary>
+    /// Gets or sets the Timeout for the channel registration.
+    /// </summary>
+    /// <value>Timeout in ms.</value>
+    public static int TimeOut
+    {
+      get
+      {
+        if (_timeout == 0)
+        {
+          if (AppDomain.CurrentDomain.FriendlyName.ToLowerInvariant() == "mediaportal.exe")
+          {
+            return MAX_WAIT_FOR_CHANNEL_REGISTRATION_MEDIAPORTAL;
+          }
+          return MAX_WAIT_FOR_CHANNEL_REGISTRATION;
+        }
+        return _timeout;
+      }
+      set
+      {
+        _timeout = value;
+      }
+    }
+
+    /// <summary>
     /// Registers a remoting channel for allowing callback from server to client
     /// </summary>    
     private static void RegisterChannel()
@@ -269,7 +294,7 @@ namespace TvControl
           IDictionary channelProperties = new Hashtable();
           // Creating the IDictionary to set the port on the channel instance.
           channelProperties.Add("port", 0); // "0" chooses one available port
-          channelProperties.Add("timeout", 5000); // An integer that specifies the number of milliseconds to wait before a request times out. 0 or -1 indicates an infinite timeout period.
+          channelProperties.Add("timeout", TimeOut); // An integer that specifies the number of milliseconds to wait before a request times out. 0 or -1 indicates an infinite timeout period.
 
           // Pass the properties for the port setting and the server provider in the server chain argument. (Client remains null here.)
           _callbackChannel = new TcpChannel(channelProperties, null, provider);
