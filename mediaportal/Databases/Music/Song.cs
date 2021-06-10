@@ -395,6 +395,7 @@ namespace MediaPortal.Music.Database
                         Rating = Rating,
                         DateTimeModified = DateTimeModified,
                         DateTimePlayed = DateTimePlayed,
+                        DiscID = this.DiscId,
                         DiscTotal = DiscTotal,
                         Lyrics = Lyrics,
                         Comment = Comment,
@@ -414,7 +415,7 @@ namespace MediaPortal.Music.Database
                         BPM = BPM,
                         Channels = Channels,
                         SampleRate = SampleRate,
-                       HasAlbumArtist = string.IsNullOrEmpty(this.AlbumArtist)
+                        HasAlbumArtist = string.IsNullOrEmpty(this.AlbumArtist)
                      };
 
       return tmpTag;
