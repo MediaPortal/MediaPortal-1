@@ -190,8 +190,18 @@ namespace TvEngine
 
       //TVDatabase.SupressEvents = true;
       bool useTimeZone = layer.GetSetting("xmlTvUseTimeZone", "false").Value == "true";
-      int hours = Int32.Parse(layer.GetSetting("xmlTvTimeZoneHours", "0").Value);
-      int mins = Int32.Parse(layer.GetSetting("xmlTvTimeZoneMins", "0").Value);
+      int hours;
+      if (!Int32.TryParse(layer.GetSetting("xmlTvTimeZoneHours", "0").Value, out hours))
+      {
+        Log.Error("xmltv: xmlTvTimeZoneHours not a valid integer: {0}", layer.GetSetting("xmlTvTimeZoneHours", "0").Value);
+        hours = 0;
+      };
+      int mins;
+      if (!Int32.TryParse(layer.GetSetting("xmlTvTimeZoneMins", "0").Value, out mins))
+      {
+        Log.Error("xmltv: xmlTvTimeZoneMins not a valid integer: {0}", layer.GetSetting("xmlTvTimeZoneMins", "0").Value);
+        mins = 0;
+      }
       int timeZoneCorrection = hours * 60 + mins;
       _skipTextProcessing = layer.GetSetting("xmlTvNoTextMod", "false").Value == "true";
 
