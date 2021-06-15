@@ -619,7 +619,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ${LOG_TEXT} "INFO" "Installing WatchDogService"
   ExecWait '"$INSTDIR\WatchDogService.exe" /install'
-  ExecWait 'net start WatchDogService'
+  nsExec::Exec 'net start WatchDogService'
   ${LOG_TEXT} "INFO" "Finished Installing WatchDogService"
 
   SetOutPath $INSTDIR
