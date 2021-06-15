@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -29,16 +29,18 @@ using System.Net;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+
 using DaggerLib.DSGraphEdit;
 using DaggerLib.UI;
+
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
+
 using WatchDog.Properties;
+
 using Settings = MediaPortal.Profile.Settings;
-using System.ServiceProcess;
-using System.Security.Principal;
 
 
 namespace WatchDog
@@ -57,6 +59,7 @@ namespace WatchDog
     private readonly string _tempDir = "";
     public static string _zipFile = "";
     private string _tempConfig;
+    private bool _engage;
     private bool _autoMode;
     private bool _watchdog;
     private bool _restartMP;
@@ -214,10 +217,10 @@ namespace WatchDog
       }
 
       // Check If Watchdog is installed on TV Server folder for disabled 1st & 2nd choice & rename Zip file
-        if (File.Exists(Path.Combine(_currentpath, "WatchDog.exe")) & File.Exists(Path.Combine(_currentpath, "SetupTV.exe")))
-         {
-         _TVEonly = true;
-          _zipFile = string.Format("{0}\\MP_TVELogs_[date]_[time].zip",_zipPath);
+      if (File.Exists(Path.Combine(_currentpath, "WatchDog.exe")) & File.Exists(Path.Combine(_currentpath, "SetupTV.exe")))
+      {
+        _TVEonly = true;
+        _zipFile = string.Format("{0}\\MP_TVELogs_[date]_[time].zip",_zipPath);
         if (!ParseCommandLine())
         {
           Application.Exit();
@@ -244,6 +247,7 @@ namespace WatchDog
       {
         Application.Exit();
       }
+
       tbZipFile.Text = _zipFile;
       if (_autoMode)
       {
@@ -271,16 +275,44 @@ namespace WatchDog
           SetStatus("Running in auto/debug mode...");
           tmrUnAttended.Enabled = true;
         }
-        if (_watchdog)
+      }
+
+      if (_watchdog)
+      {
+        WindowState = FormWindowState.Minimized;
+        ShowInTaskbar = false;
+        tmrWatchdog.Enabled = true;
+        SetStatus("Running in WatchDog mode...");
+        using (var xmlreader = new MPSettings())
         {
-          WindowState = FormWindowState.Minimized;
-          ShowInTaskbar = false;
-          tmrWatchdog.Enabled = true;
-          using (var xmlreader = new MPSettings())
-          {
-            _restoreTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
-          }
+          _restoreTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
         }
+      }
+
+      if (!_watchdog && !_engage)
+      {
+        string[] args = Environment.GetCommandLineArgs();
+        var info = new ProcessStartInfo(Assembly.GetEntryAssembly().Location, String.Join(" ", Enumerable.Concat(args.Skip(1), new[] { "-engage" })))
+        {
+          UseShellExecute = true,
+          Verb = "runas", // indicates to eleavate privileges
+        };
+
+        var process = new Process
+        {
+          EnableRaisingEvents = true,
+          StartInfo = info
+        };
+        try
+        {
+          process.Start();
+        }
+        catch
+        {
+          // This will be thrown if the user cancels the prompt
+        }
+        // process.WaitForExit(); // sleep calling process thread until evoked process exit
+        System.Environment.Exit(0);
       }
     }
 
@@ -312,6 +344,9 @@ namespace WatchDog
               ShowUsage();
               return false;
             }
+            break;
+          case "-engage":
+            _engage = true;
             break;
           default:
             ShowUsage();
