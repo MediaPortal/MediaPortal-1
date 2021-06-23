@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,10 +21,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
+
 using MediaPortal.Configuration;
 using MediaPortal.Support;
-using MediaPortal.Core;
 using MediaPortal.Profile;
 
 namespace WatchDog
@@ -44,6 +43,7 @@ namespace WatchDog
     {
       _tmpDir = tmpDir;
       _zipFile = zipFile;
+      targetFolder = Path.GetDirectoryName(zipFile);
     }
 
     private void updateProgress(int subActions)
@@ -183,6 +183,7 @@ namespace WatchDog
       catch (Exception)
       {
       }
+
       if (isSingleSeat)
       {
         logs.Add(new TvServerLogger());
@@ -203,6 +204,7 @@ namespace WatchDog
         TVServerManager mngr = new TVServerManager();
         mngr.TvServerRemoteLogRead(zipFile);
       }
+
       logs.Add(new DxDiagLog(new ProcessRunner()));
       logs.Add(new HotFixInformationLogger());
       logs.Add(new EventLogCsvLogger("Application"));

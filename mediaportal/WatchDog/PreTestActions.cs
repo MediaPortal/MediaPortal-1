@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+
 using MediaPortal.Configuration;
 
 namespace WatchDog
@@ -36,6 +37,11 @@ namespace WatchDog
     private static string[] logNames = {"Application", "System"};
 
     public PreTestActions() {}
+
+    public PreTestActions(string zipFile)
+    {
+      targetFolder = Path.GetDirectoryName(zipFile);
+    }
 
     private void updateProgress(int subActions)
     {

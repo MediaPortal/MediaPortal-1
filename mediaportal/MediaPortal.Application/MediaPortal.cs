@@ -599,6 +599,11 @@ public class MediaPortalApp : D3D, IRender
           _skinOverrideNoTheme = true;
         }
 
+        if (arg == "/Debug")
+        {
+          Log.SetLogLevel(Level.Debug);
+        }
+
         #if !DEBUG
         _avoidVersionChecking = arg.ToLowerInvariant() == "/avoidversioncheck";
         #endif

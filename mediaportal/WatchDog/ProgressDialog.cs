@@ -59,6 +59,8 @@ namespace WatchDog
     private ProgressBar progressBar;
     private Label descLabel;
 
+    public string targetFolder;
+
     public ProgressDialog()
     {
       //
@@ -190,7 +192,7 @@ namespace WatchDog
 
     private void OkButtonClick(object sender, EventArgs e)
     {
-      Process.Start(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortal-Logs");
+      Process.Start(targetFolder);
       this.Close();
     }
   }
