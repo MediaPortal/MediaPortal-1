@@ -29,6 +29,7 @@ namespace WatchDog
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MPWatchDog));
       this.settingsGroup = new System.Windows.Forms.GroupBox();
       this.btnZipFileReset = new System.Windows.Forms.Button();
       this.btnZipFile = new System.Windows.Forms.Button();
@@ -145,7 +146,7 @@ namespace WatchDog
       this.label1.Location = new System.Drawing.Point(12, 124);
       this.label1.Name = "label1";
       this.label1.Padding = new System.Windows.Forms.Padding(18, 0, 0, 0);
-      this.label1.Size = new System.Drawing.Size(486, 110);
+      this.label1.Size = new System.Drawing.Size(486, 59);
       this.label1.TabIndex = 1;
       this.label1.Text = "This will start MediaPortal using the default skin, and only plugins which were p" +
     "art of the release version you installed. No extensions will be loaded.";
@@ -374,10 +375,9 @@ namespace WatchDog
       this.label2.Location = new System.Drawing.Point(12, 206);
       this.label2.Name = "label2";
       this.label2.Padding = new System.Windows.Forms.Padding(18, 0, 0, 0);
-      this.label2.Size = new System.Drawing.Size(474, 98);
+      this.label2.Size = new System.Drawing.Size(474, 59);
       this.label2.TabIndex = 2;
-      this.label2.Text = "Besides setting the log level to \"debug\", this option will start MediaPortal as c" +
-    "onfigured, using all extensions you have installed.";
+      this.label2.Text = resources.GetString("label2.Text");
       // 
       // label3
       // 

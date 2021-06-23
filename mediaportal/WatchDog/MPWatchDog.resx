@@ -129,4 +129,8 @@
   <metadata name="tmrWatchdog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>372, 17</value>
   </metadata>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Besides setting the log level to "debug", this option will start MediaPortal as configured, using all extensions you have installed.
+!!! Before running, it is better to set the log file level to Debug, not all plugins support forced switching of the log file level.</value>
+  </data>
 </root>
