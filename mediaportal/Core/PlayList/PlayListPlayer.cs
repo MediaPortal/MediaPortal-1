@@ -20,6 +20,7 @@
 
 using System;
 using MediaPortal.GUI.Library;
+using MediaPortal.TagReader;
 
 namespace MediaPortal.Playlists
 {
