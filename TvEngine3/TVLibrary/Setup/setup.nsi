@@ -562,7 +562,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\libcrypto-3.dll"
   File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\libcurl.dll"
   File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\libssl-3.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Wrapper.21.3.1\lib\net40\MediaInfo.Wrapper.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Wrapper.21.3.4\lib\net40\MediaInfo.Wrapper.dll"
 
   ; thumbnail software
   ${If} ${RunningX64}
