@@ -5,6 +5,7 @@
   <allowoverlay>no</allowoverlay>
   <define>#header.label:</define>
   <define>#usePlayFanart:Yes</define>
+  <define property="true" evaluateNow="true">#scroll.wrap: · </define>
   <!--rememberLastFocusedControl>yes</rememberLastFocusedControl-->
 <controls>
    <control>

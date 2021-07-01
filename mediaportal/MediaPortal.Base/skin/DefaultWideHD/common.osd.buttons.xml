@@ -618,7 +618,7 @@
       <type>label</type>
       <id>1</id>
       <posX>238</posX>
-      <posY>878</posY>
+      <posY>880</posY>
       <label>287</label>
       <font>font11</font>
       <align>left</align>
@@ -630,7 +630,7 @@
       <type>label</type>
       <id>1</id>
       <posX>238</posX>
-      <posY>878</posY>
+      <posY>880</posY>
       <label>Video</label>
       <font>font11</font>
       <align>left</align>
@@ -642,7 +642,7 @@
       <type>label</type>
       <id>1</id>
       <posX>238</posX>
-      <posY>878</posY>
+      <posY>880</posY>
       <label>Audio</label>
       <font>font11</font>
       <align>left</align>

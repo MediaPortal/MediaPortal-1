@@ -17,7 +17,7 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
   <define>#label.font:font10</define>
 
   <define property="true" evaluateNow="true">#scroll.delay:3</define>
-  <define property="true" evaluateNow="true">#scroll.wrap:·</define>
+  <define property="true" evaluateNow="true">#scroll.wrap: · </define>
 
   <define property="true" evaluateNow="true">#hedit.main.return.backward:810211</define>
   <define property="true" evaluateNow="true">#hedit.main.return.forward:810212</define>
