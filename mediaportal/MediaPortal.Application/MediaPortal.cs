@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -599,6 +599,11 @@ public class MediaPortalApp : D3D, IRender
           _skinOverrideNoTheme = true;
         }
 
+        if (arg == "/Debug")
+        {
+          Log.SetLogLevel(Level.Debug);
+        }
+
         #if !DEBUG
         _avoidVersionChecking = arg.ToLowerInvariant() == "/avoidversioncheck";
         #endif
@@ -642,6 +647,21 @@ public class MediaPortalApp : D3D, IRender
           MPSettings.AlternateConfig = true;
           MPSettings.ConfigPathName = _alternateConfig;
           MPSettings.AlternateConfig = false;
+
+          try
+          {
+            using (Settings xmlreader = new MPSettings())
+            {
+              var logLevel = (Level)xmlreader.GetValueAsInt("general", "loglevel", 3);
+              Log.SetLogLevel(logLevel);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("Failed to change Log level from alternate configuration file.");
+            Log.Error(ex);
+          }
+
           Log.BackupLogFiles();
           Log.Info("Using alternate configuration file: {0}", MPSettings.ConfigPathName);
         }

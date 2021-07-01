@@ -29,6 +29,7 @@ namespace WatchDog
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MPWatchDog));
       this.settingsGroup = new System.Windows.Forms.GroupBox();
       this.btnZipFileReset = new System.Windows.Forms.Button();
       this.btnZipFile = new System.Windows.Forms.Button();
@@ -51,10 +52,10 @@ namespace WatchDog
       this.menuItemClearWEventLogOnTVserver = new System.Windows.Forms.MenuItem();
       this.menuItemClearTVserverLogs = new System.Windows.Forms.MenuItem();
       this.menuItem10 = new System.Windows.Forms.MenuItem();
-      this.menuItemWOLTvServer = new System.Windows.Forms.MenuItem();
       this.menuRebootTvServer = new System.Windows.Forms.MenuItem();
       this.menuShutdownTvServer = new System.Windows.Forms.MenuItem();
       this.menuPowerOffTvServer = new System.Windows.Forms.MenuItem();
+      this.menuItemWOLTvServer = new System.Windows.Forms.MenuItem();
       this.menuItem9 = new System.Windows.Forms.MenuItem();
       this.menuItemClearEventLogs = new System.Windows.Forms.MenuItem();
       this.menuItemClearMPlogs = new System.Windows.Forms.MenuItem();
@@ -131,7 +132,7 @@ namespace WatchDog
       this.ExportLogsRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
       this.ExportLogsRadioButton.Location = new System.Drawing.Point(12, 268);
       this.ExportLogsRadioButton.Name = "ExportLogsRadioButton";
-      this.ExportLogsRadioButton.Size = new System.Drawing.Size(499, 21);
+      this.ExportLogsRadioButton.Size = new System.Drawing.Size(389, 17);
       this.ExportLogsRadioButton.TabIndex = 8;
       this.ExportLogsRadioButton.TabStop = true;
       this.ExportLogsRadioButton.Text = "Export all currently present logs from MediaPortal and TV Server";
@@ -145,7 +146,7 @@ namespace WatchDog
       this.label1.Location = new System.Drawing.Point(12, 124);
       this.label1.Name = "label1";
       this.label1.Padding = new System.Windows.Forms.Padding(18, 0, 0, 0);
-      this.label1.Size = new System.Drawing.Size(486, 110);
+      this.label1.Size = new System.Drawing.Size(486, 59);
       this.label1.TabIndex = 1;
       this.label1.Text = "This will start MediaPortal using the default skin, and only plugins which were p" +
     "art of the release version you installed. No extensions will be loaded.";
@@ -157,7 +158,7 @@ namespace WatchDog
       this.SafeModeRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
       this.SafeModeRadioButton.Location = new System.Drawing.Point(12, 104);
       this.SafeModeRadioButton.Name = "SafeModeRadioButton";
-      this.SafeModeRadioButton.Size = new System.Drawing.Size(280, 21);
+      this.SafeModeRadioButton.Size = new System.Drawing.Size(221, 17);
       this.SafeModeRadioButton.TabIndex = 0;
       this.SafeModeRadioButton.TabStop = true;
       this.SafeModeRadioButton.Text = "Report a Bug to Team MediaPortal";
@@ -349,7 +350,7 @@ namespace WatchDog
       this.NormalModeRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
       this.NormalModeRadioButton.Location = new System.Drawing.Point(12, 186);
       this.NormalModeRadioButton.Name = "NormalModeRadioButton";
-      this.NormalModeRadioButton.Size = new System.Drawing.Size(413, 21);
+      this.NormalModeRadioButton.Size = new System.Drawing.Size(325, 17);
       this.NormalModeRadioButton.TabIndex = 1;
       this.NormalModeRadioButton.TabStop = true;
       this.NormalModeRadioButton.Text = "Report a Bug to a Plugin Developer or Skin Designer";
@@ -374,10 +375,9 @@ namespace WatchDog
       this.label2.Location = new System.Drawing.Point(12, 206);
       this.label2.Name = "label2";
       this.label2.Padding = new System.Windows.Forms.Padding(18, 0, 0, 0);
-      this.label2.Size = new System.Drawing.Size(474, 98);
+      this.label2.Size = new System.Drawing.Size(474, 59);
       this.label2.TabIndex = 2;
-      this.label2.Text = "Besides setting the log level to \"debug\", this option will start MediaPortal as c" +
-    "onfigured, using all extensions you have installed.";
+      this.label2.Text = resources.GetString("label2.Text");
       // 
       // label3
       // 
@@ -410,7 +410,7 @@ namespace WatchDog
       this.cbTVServer_logs.CheckState = System.Windows.Forms.CheckState.Checked;
       this.cbTVServer_logs.Location = new System.Drawing.Point(8, 41);
       this.cbTVServer_logs.Name = "cbTVServer_logs";
-      this.cbTVServer_logs.Size = new System.Drawing.Size(194, 19);
+      this.cbTVServer_logs.Size = new System.Drawing.Size(170, 17);
       this.cbTVServer_logs.TabIndex = 1;
       this.cbTVServer_logs.Text = "TVE Server (Only for multiseat)";
       this.cbTVServer_logs.UseVisualStyleBackColor = true;
@@ -422,7 +422,7 @@ namespace WatchDog
       this.cbMediaPortalClient_logs.CheckState = System.Windows.Forms.CheckState.Checked;
       this.cbMediaPortalClient_logs.Location = new System.Drawing.Point(8, 20);
       this.cbMediaPortalClient_logs.Name = "cbMediaPortalClient_logs";
-      this.cbMediaPortalClient_logs.Size = new System.Drawing.Size(252, 19);
+      this.cbMediaPortalClient_logs.Size = new System.Drawing.Size(218, 17);
       this.cbMediaPortalClient_logs.TabIndex = 0;
       this.cbMediaPortalClient_logs.Text = "MediaPortal Client (+ TVE for singleseat )";
       this.cbMediaPortalClient_logs.UseVisualStyleBackColor = true;
