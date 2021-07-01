@@ -118,6 +118,14 @@
   <end>1536</end>
 </font>
 <font>
+  <name>LabelBold</name>
+  <filename>Noto Sans</filename>
+  <height>13</height>
+  <bold>no</bold>
+  <start>0</start>
+  <end>2281</end>
+</font>
+<font>
   <name>font36</name>
   <filename>Noto Sans</filename>
   <height>24</height>
