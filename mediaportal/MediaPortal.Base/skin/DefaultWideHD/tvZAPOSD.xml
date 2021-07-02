@@ -208,7 +208,7 @@
         <posX>233</posX>
         <posY>891</posY>
         <label>#TV.View.start</label>
-        <width>100</width>
+        <width>110</width>
         <maxWidth>260</maxWidth>
         <align>left</align>
         <font>LabelBold</font>
@@ -243,7 +243,7 @@
         <id>102</id>
         <posX>227</posX>
         <posY>968</posY>
-        <width>100</width>
+        <width>110</width>
         <maxWidth>260</maxWidth>
         <label>#TV.View.Stop</label>
         <align>left</align>
