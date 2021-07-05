@@ -87,7 +87,7 @@
       <type>label</type>
       <id>110</id>
       <posX>1898</posX>
-      <posY>818</posY>
+      <posY>815</posY>
       <label>#time</label>
       <align>right</align>
       <font>LabelBold</font>
@@ -122,7 +122,7 @@
       <type>label</type>
       <id>35</id>
       <posX>227</posX>
-      <posY>818</posY>
+      <posY>815</posY>
       <width>440</width>
       <label>-</label>
       <align>left</align>
@@ -321,7 +321,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>225</posX>
-      <posY>1020</posY>
+      <posY>1040</posY>
       <width>50</width>
       <label>#latestMediaHandler.tvrecordings.active.count</label>
       <align>center</align>

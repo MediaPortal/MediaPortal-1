@@ -8,6 +8,7 @@
   <define>#selectedindex:</define>
   <define>#indexcount:</define>
   <controls>
+  <include>BasicHomeHelper.xml</include>
     <control>
       <description>background image</description>
       <type>image</type>
