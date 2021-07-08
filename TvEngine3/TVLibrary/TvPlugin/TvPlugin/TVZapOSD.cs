@@ -322,7 +322,7 @@ namespace TvPlugin
   
         if (string.IsNullOrEmpty(strLogo))
         {
-          imgTvChannelLogo.SetFileName(String.Empty);
+          imgTvChannelLogo.SetFileName(string.Empty);
           imgTvChannelLogo.IsVisible = false;
         }
         else
@@ -376,8 +376,8 @@ namespace TvPlugin
 
     private void ShowPrograms()
     {
-      SetLabel(lblOnTvNow, string.Emtpy);
-      SetLabel(lblOnTvNext, string.Emty);
+      SetLabel(lblOnTvNow, string.Empty);
+      SetLabel(lblOnTvNext, string.Empty);
 
       // Set recorder status
       if (imgRecIcon != null)
@@ -500,17 +500,17 @@ namespace TvPlugin
       if (cf != null) cf.Label = value;
       var cl = control as GUILabelControl;
       if (cl != null) cl.Label = value;
-      var cl = control as GUITextControl;
-      if (cl != null)
+      var ct = control as GUITextControl;
+      if (ct != null)
       { 
-        cl.EnableUpDown = false;
+        ct.EnableUpDown = false;
         if (string.IsNullOrEmpty(value))
         {
-          cl.Clear;
+          ct.Clear;
         }
         else
         {
-          cl.Label = value;
+          ct.Label = value;
         }
       }
     }
