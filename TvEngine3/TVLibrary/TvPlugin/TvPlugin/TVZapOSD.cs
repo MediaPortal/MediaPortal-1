@@ -504,14 +504,7 @@ namespace TvPlugin
       if (ct != null)
       { 
         ct.EnableUpDown = false;
-        if (string.IsNullOrEmpty(value))
-        {
-          ct.Clear;
-        }
-        else
-        {
-          ct.Label = value;
-        }
+        ct.Label = value;
       }
     }
   }
