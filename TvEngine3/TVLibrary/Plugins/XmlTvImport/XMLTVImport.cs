@@ -365,7 +365,7 @@ namespace TvEngine
             else
             {
               // got all channels for this externalId. Add the mappings
-              if (!allChannelMappingsByExternalId.ContainsKey(chan.IdChannel))
+              if (!allChannelMappingsByExternalId.ContainsKey(previousExternalId))
               {
                 allChannelMappingsByExternalId.Add(previousExternalId, eidMappedChannels);
               }
@@ -381,7 +381,7 @@ namespace TvEngine
 
             if (i == allChannels.Count - 1)
             {
-              if (!allChannelMappingsByExternalId.ContainsKey(chan.IdChannel))
+              if (!allChannelMappingsByExternalId.ContainsKey(previousExternalId))
               {
                 allChannelMappingsByExternalId.Add(previousExternalId, eidMappedChannels);
               }
