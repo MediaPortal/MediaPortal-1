@@ -5,12 +5,12 @@
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <!--control>
+    <control>
       <description>rec logo</description>
       <type>image</type>
       <id>4</id>
       <posX>930</posX>
-      <posY>15</posY>
+      <posY>5</posY>
       <width>60</width>
       <height>60</height>
       <texture>rec.png</texture>
@@ -22,13 +22,13 @@
       <type>image</type>
       <id>0</id>
       <posX>930</posX>
-      <posY>15</posY>
+      <posY>5</posY>
       <width>60</width>
       <height>60</height>
       <texture>rec.png</texture>
       <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
       <visible>!plugin.isenabled(Latest Media Handler)+window.isvisible(0)|window.isvisible(34)+!window.isvisible(2007)</visible>
-    </control-->
+    </control>
     <control>
       <description>Current recording count</description>
       <type>fadelabel</type>
@@ -41,7 +41,7 @@
       <font>font10</font>
       <textcolor>ivory</textcolor>
       <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-      <visible>!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
     <control>
       <description>rec logo</description>
@@ -53,7 +53,7 @@
       <height>60</height>
       <texture>tb_recordNF_red.png</texture>
       <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-      <visible>!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
     <!--control>
       <description>Current channel</description>

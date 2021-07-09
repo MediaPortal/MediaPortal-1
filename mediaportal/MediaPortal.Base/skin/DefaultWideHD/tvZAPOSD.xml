@@ -205,9 +205,7 @@
         <description>Start Time Info</description>
         <type>label</type>
         <id>101</id>
-        <posX>233</posX>
-        <posY>891</posY>
-        <label>#TV.View.start</label>
+        <label></label>
         <width>110</width>
         <maxWidth>260</maxWidth>
         <align>left</align>
@@ -218,12 +216,10 @@
         <description>On tv NOW</description>
         <id>36</id>
         <type>label</type>
-        <posX>393</posX>
-        <posY>891</posY>
         <width>1000</width>
         <maxWidth>1350</maxWidth>
         <height>42</height>
-        <label>#TV.View.title</label>
+        <label></label>
         <font>LabelBold</font>
         <textcolor>lightskyblue</textcolor>
       </control>
@@ -241,11 +237,9 @@
         <description>End Time Info</description>
         <type>label</type>
         <id>102</id>
-        <posX>227</posX>
-        <posY>968</posY>
         <width>110</width>
         <maxWidth>260</maxWidth>
-        <label>#TV.View.Stop</label>
+        <label></label>
         <align>left</align>
         <textcolor>lightgray</textcolor>
         <font>Label</font>
@@ -254,12 +248,10 @@
         <description>On tv NEXT</description>
         <id>37</id>
         <type>label</type>
-        <posX>393</posX>
-        <posY>966</posY>
         <height>42</height>
         <width>1000</width>
         <maxWidth>1350</maxWidth>
-        <label>#TV.Next.title</label>
+        <label></label>
         <align>left</align>
         <font>Label</font>
         <textcolor>lightgray</textcolor>
