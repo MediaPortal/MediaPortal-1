@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -290,12 +290,19 @@ namespace TvEngine
                           newProgChan.ExternalId = chan.ExternalId;
                           Programs.Add(newProgChan);
 
-                          Log.WriteFile("  channel#{0} xmlid:{1} name:{2} dbsid:{3}", iChannel, chan.ExternalId,
-                                        chan.DisplayName, chan.IdChannel);
+                          Log.WriteFile("  channel#{0} xmlid:{1} name:{2} dbsid:{3}", 
+                                        iChannel, chan.ExternalId, chan.DisplayName, chan.IdChannel);
                           if (!guideChannels.ContainsKey(chan.IdChannel))
                           {
                             guideChannels.Add(chan.IdChannel, chan);
-                            dChannelPrograms.Add(chan.IdChannel, newProgChan);
+                            if (!dChannelPrograms.ContainsKey(chan.IdChannel))
+                            {
+                              dChannelPrograms.Add(chan.IdChannel, newProgChan);
+                            }
+                            else
+                            {
+                              Log.Error("  channel#{0} xmlid:{1} already exists in ChannelPrograms", chan.IdChannel, chan.ExternalId);
+                            }
                           }
                         }
                       }
@@ -358,7 +365,14 @@ namespace TvEngine
             else
             {
               // got all channels for this externalId. Add the mappings
-              allChannelMappingsByExternalId.Add(previousExternalId, eidMappedChannels);
+              if (!allChannelMappingsByExternalId.ContainsKey(chan.IdChannel))
+              {
+                allChannelMappingsByExternalId.Add(previousExternalId, eidMappedChannels);
+              }
+              else
+              {
+                Log.Error("  i#{0} channel#{1} xmlid:{2} already exists in allChannelMappingsByExternalId", i, previousExternalId, ch.ExternalId);
+              }
               // new externalid, create a new List & add the channel to the new List
               eidMappedChannels = new List<Channel>();
               eidMappedChannels.Add(ch);
@@ -367,7 +381,14 @@ namespace TvEngine
 
             if (i == allChannels.Count - 1)
             {
-              allChannelMappingsByExternalId.Add(previousExternalId, eidMappedChannels);
+              if (!allChannelMappingsByExternalId.ContainsKey(chan.IdChannel))
+              {
+                allChannelMappingsByExternalId.Add(previousExternalId, eidMappedChannels);
+              }
+              else
+              {
+                Log.Error("  channel#{0} xmlid:{1} already exists in allChannelMappingsByExternalId", previousExternalId, ch.ExternalId);
+              }
             }
           }
 
