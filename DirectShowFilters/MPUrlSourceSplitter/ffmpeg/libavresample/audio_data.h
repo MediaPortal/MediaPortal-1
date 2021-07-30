@@ -1,20 +1,20 @@
 /*
  * Copyright (c) 2012 Justin Ruggles <justin.ruggles@gmail.com>
  *
- * This file is part of Libav.
+ * This file is part of FFmpeg.
  *
- * Libav is free software; you can redistribute it and/or
+ * FFmpeg is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * Libav is distributed in the hope that it will be useful,
+ * FFmpeg is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with Libav; if not, write to the Free Software
+ * License along with FFmpeg; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
@@ -27,11 +27,14 @@
 #include "libavutil/log.h"
 #include "libavutil/samplefmt.h"
 #include "avresample.h"
+#include "internal.h"
+
+int ff_sample_fmt_is_planar(enum AVSampleFormat sample_fmt, int channels);
 
 /**
  * Audio buffer used for intermediate storage between conversion phases.
  */
-typedef struct AudioData {
+struct AudioData {
     const AVClass *class;               /**< AVClass for logging            */
     uint8_t *data[AVRESAMPLE_MAX_CHANNELS]; /**< data plane pointers        */
     uint8_t *buffer;                    /**< data buffer                    */
@@ -50,7 +53,7 @@ typedef struct AudioData {
     int ptr_align;                      /**< minimum data pointer alignment */
     int samples_align;                  /**< allocated samples alignment    */
     const char *name;                   /**< name for debug logging         */
-} AudioData;
+};
 
 int ff_audio_data_set_channels(AudioData *a, int channels);
 
@@ -73,9 +76,10 @@ int ff_audio_data_set_channels(AudioData *a, int channels);
  * @param name            name for debug logging (can be NULL)
  * @return                0 on success, negative AVERROR value on error
  */
-int ff_audio_data_init(AudioData *a, void **src, int plane_size, int channels,
-                       int nb_samples, enum AVSampleFormat sample_fmt,
-                       int read_only, const char *name);
+int ff_audio_data_init(AudioData *a, uint8_t * const *src, int plane_size,
+                       int channels, int nb_samples,
+                       enum AVSampleFormat sample_fmt, int read_only,
+                       const char *name);
 
 /**
  * Allocate AudioData.
@@ -117,9 +121,10 @@ void ff_audio_data_free(AudioData **a);
  *
  * @param out  output AudioData
  * @param in   input AudioData
+ * @param map  channel map, NULL if not remapping
  * @return     0 on success, negative AVERROR value on error
  */
-int ff_audio_data_copy(AudioData *out, AudioData *in);
+int ff_audio_data_copy(AudioData *out, AudioData *in, ChannelMapInfo *map);
 
 /**
  * Append data from one AudioData to the end of another.

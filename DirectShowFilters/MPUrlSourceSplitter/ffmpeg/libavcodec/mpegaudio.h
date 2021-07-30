@@ -26,11 +26,12 @@
 #ifndef AVCODEC_MPEGAUDIO_H
 #define AVCODEC_MPEGAUDIO_H
 
-#ifndef CONFIG_FLOAT
-#   define CONFIG_FLOAT 0
+#ifndef USE_FLOATS
+#   define USE_FLOATS 0
 #endif
 
 #include <stdint.h>
+#include "libavutil/internal.h"
 
 /* max frame size, in samples */
 #define MPA_FRAME_SIZE 1152
@@ -52,20 +53,25 @@
 #define WFRAC_BITS  16   /* fractional bits for window */
 #endif
 
+#define IMDCT_SCALAR 1.759
+
 #define FRAC_ONE    (1 << FRAC_BITS)
 
 #define FIX(a)   ((int)((a) * FRAC_ONE))
 
-#if CONFIG_FLOAT
+#if USE_FLOATS
 #   define INTFLOAT float
+#   define SUINTFLOAT float
 typedef float MPA_INT;
 typedef float OUT_INT;
 #elif FRAC_BITS <= 15
 #   define INTFLOAT int
+#   define SUINTFLOAT SUINT
 typedef int16_t MPA_INT;
 typedef int16_t OUT_INT;
 #else
 #   define INTFLOAT int
+#   define SUINTFLOAT SUINT
 typedef int32_t MPA_INT;
 typedef int16_t OUT_INT;
 #endif

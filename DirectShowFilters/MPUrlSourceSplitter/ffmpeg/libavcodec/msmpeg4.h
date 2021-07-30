@@ -26,7 +26,6 @@
 
 #include "config.h"
 #include "avcodec.h"
-#include "dsputil.h"
 #include "mpegvideo.h"
 #include "msmpeg4data.h"
 #include "put_bits.h"
@@ -45,25 +44,37 @@ extern VLC ff_inter_intra_vlc;
 
 void ff_msmpeg4_code012(PutBitContext *pb, int n);
 void ff_msmpeg4_common_init(MpegEncContext *s);
-void ff_msmpeg4_encode_block(MpegEncContext * s, DCTELEM * block, int n);
+void ff_msmpeg4_encode_block(MpegEncContext * s, int16_t * block, int n);
 void ff_msmpeg4_handle_slices(MpegEncContext *s);
 void ff_msmpeg4_encode_motion(MpegEncContext * s, int mx, int my);
 int ff_msmpeg4_coded_block_pred(MpegEncContext * s, int n,
                                 uint8_t **coded_block_ptr);
-int ff_msmpeg4_decode_motion(MpegEncContext * s, int *mx_ptr, int *my_ptr);
-int ff_msmpeg4_decode_block(MpegEncContext * s, DCTELEM * block,
+
+void ff_msmpeg4_encode_init(MpegEncContext *s);
+void ff_msmpeg4_encode_picture_header(MpegEncContext *s, int picture_number);
+void ff_msmpeg4_encode_ext_header(MpegEncContext *s);
+void ff_msmpeg4_encode_mb(MpegEncContext *s, int16_t block[6][64],
+                          int motion_x, int motion_y);
+
+int ff_msmpeg4_decode_init(AVCodecContext *avctx);
+int ff_msmpeg4_decode_picture_header(MpegEncContext *s);
+int ff_msmpeg4_decode_ext_header(MpegEncContext *s, int buf_size);
+void ff_msmpeg4_decode_motion(MpegEncContext * s, int *mx_ptr, int *my_ptr);
+int ff_msmpeg4_decode_block(MpegEncContext * s, int16_t * block,
                             int n, int coded, const uint8_t *scan_table);
 int ff_msmpeg4_pred_dc(MpegEncContext *s, int n,
                        int16_t **dc_val_ptr, int *dir_ptr);
-int ff_wmv2_decode_mb(MpegEncContext *s, DCTELEM block[6][64]);
+
 
 #define CONFIG_MSMPEG4_DECODER (CONFIG_MSMPEG4V1_DECODER || \
                                 CONFIG_MSMPEG4V2_DECODER || \
                                 CONFIG_MSMPEG4V3_DECODER || \
+                                CONFIG_WMV1_DECODER      || \
                                 CONFIG_WMV2_DECODER      || \
                                 CONFIG_VC1_DECODER)
 #define CONFIG_MSMPEG4_ENCODER (CONFIG_MSMPEG4V2_ENCODER || \
                                 CONFIG_MSMPEG4V3_ENCODER || \
+                                CONFIG_WMV1_ENCODER      || \
                                 CONFIG_WMV2_ENCODER)
 
 #endif /* AVCODEC_MSMPEG4_H */

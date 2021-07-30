@@ -204,37 +204,37 @@ static int GetAudioCodecPriority(AVCodecContext *codec)
 
   switch(codec->codec_id)
   {
-  case CODEC_ID_FLAC:
-  case CODEC_ID_TRUEHD:
-  case CODEC_ID_MLP:
-  case CODEC_ID_TTA:
-  case CODEC_ID_MP4ALS:
+  case AV_CODEC_ID_FLAC:
+  case AV_CODEC_ID_TRUEHD:
+  case AV_CODEC_ID_MLP:
+  case AV_CODEC_ID_TTA:
+  case AV_CODEC_ID_MP4ALS:
   // all the PCM codecs
-  case CODEC_ID_PCM_S16LE:
-  case CODEC_ID_PCM_S16BE:
-  case CODEC_ID_PCM_U16LE:
-  case CODEC_ID_PCM_U16BE:
-  case CODEC_ID_PCM_S32LE:
-  case CODEC_ID_PCM_S32BE:
-  case CODEC_ID_PCM_U32LE:
-  case CODEC_ID_PCM_U32BE:
-  case CODEC_ID_PCM_S24LE:
-  case CODEC_ID_PCM_S24BE:
-  case CODEC_ID_PCM_U24LE:
-  case CODEC_ID_PCM_U24BE:
-  case CODEC_ID_PCM_F32BE:
-  case CODEC_ID_PCM_F32LE:
-  case CODEC_ID_PCM_F64BE:
-  case CODEC_ID_PCM_F64LE:
-  case CODEC_ID_PCM_DVD:
-  case CODEC_ID_PCM_BLURAY:
+  case AV_CODEC_ID_PCM_S16LE:
+  case AV_CODEC_ID_PCM_S16BE:
+  case AV_CODEC_ID_PCM_U16LE:
+  case AV_CODEC_ID_PCM_U16BE:
+  case AV_CODEC_ID_PCM_S32LE:
+  case AV_CODEC_ID_PCM_S32BE:
+  case AV_CODEC_ID_PCM_U32LE:
+  case AV_CODEC_ID_PCM_U32BE:
+  case AV_CODEC_ID_PCM_S24LE:
+  case AV_CODEC_ID_PCM_S24BE:
+  case AV_CODEC_ID_PCM_U24LE:
+  case AV_CODEC_ID_PCM_U24BE:
+  case AV_CODEC_ID_PCM_F32BE:
+  case AV_CODEC_ID_PCM_F32LE:
+  case AV_CODEC_ID_PCM_F64BE:
+  case AV_CODEC_ID_PCM_F64LE:
+  case AV_CODEC_ID_PCM_DVD:
+  case AV_CODEC_ID_PCM_BLURAY:
     priority = 10;
     break;
-  case CODEC_ID_WAVPACK:
-  case CODEC_ID_EAC3:
+  case AV_CODEC_ID_WAVPACK:
+  case AV_CODEC_ID_EAC3:
     priority = 8;
     break;
-  case CODEC_ID_DTS:
+  case AV_CODEC_ID_DTS:
     priority = 7;
     if (codec->profile >= FF_PROFILE_DTS_HD_HRA)
     {
@@ -245,9 +245,9 @@ static int GetAudioCodecPriority(AVCodecContext *codec)
       priority += 1;
     }
     break;
-  case CODEC_ID_AC3:
-  case CODEC_ID_AAC:
-  case CODEC_ID_AAC_LATM:
+  case AV_CODEC_ID_AC3:
+  case AV_CODEC_ID_AAC:
+  case AV_CODEC_ID_AAC_LATM:
     priority = 5;
     break;
   }
@@ -723,7 +723,7 @@ CStream *CDemuxer::SelectVideoStream(void)
     uint64_t bestPixels = this->formatContext->streams[result->GetPid()]->codec->width * this->formatContext->streams[result->GetPid()]->codec->height;
     uint64_t checkPixels = this->formatContext->streams[stream->GetPid()]->codec->width * this->formatContext->streams[stream->GetPid()]->codec->height;
 
-    if ((this->formatContext->streams[result->GetPid()]->codec->codec_id == CODEC_ID_NONE) && (this->formatContext->streams[stream->GetPid()]->codec->codec_id != CODEC_ID_NONE))
+    if ((this->formatContext->streams[result->GetPid()]->codec->codec_id == AV_CODEC_ID_NONE) && (this->formatContext->streams[stream->GetPid()]->codec->codec_id != AV_CODEC_ID_NONE))
     {
       result = stream;
       continue;
@@ -967,14 +967,14 @@ uint64_t CDemuxer::GetPositionForStreamTime(uint64_t streamTime)
 
       AVStream *st = this->formatContext->streams[streamId];
 
-      if (st->nb_index_entries != 0)
+      if (st->internal->nb_index_entries != 0)
       {
         // check FFmpeg seek index entries
         int index = av_index_search_timestamp(st, streamTimestamp, AVSEEK_FLAG_BACKWARD);
 
         if (index != (-1))
         {
-          AVIndexEntry *ie = &st->index_entries[index];
+          AVIndexEntry *ie = &st->internal->index_entries[index];
 
           result = (ie->pos > 0) ? (uint64_t)ie->pos : 0;
         }
@@ -1043,12 +1043,12 @@ void CDemuxer::UpdateParserFlags(AVStream *stream)
 {
   if (stream->parser != NULL)
   {
-    if (((stream->codec->codec_id == CODEC_ID_MPEG2VIDEO) || (stream->codec->codec_id == CODEC_ID_MPEG1VIDEO)) &&
+    if (((stream->codec->codec_id == AV_CODEC_ID_MPEG2VIDEO) || (stream->codec->codec_id == AV_CODEC_ID_MPEG1VIDEO)) &&
         (_wcsicmp(this->containerFormat, L"mpegvideo") != 0))
     {
       stream->parser->flags |= PARSER_FLAG_NO_TIMESTAMP_MANGLING;
     }
-    else if (stream->codec->codec_id == CODEC_ID_VC1)
+    else if (stream->codec->codec_id == AV_CODEC_ID_VC1)
     {
       if (this->IsVc1Correction())
       {
@@ -1166,7 +1166,7 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
     bool found = false;
     ff_read_frame_flush(this->formatContext);
 
-    st->nb_index_entries = 0;
+    st->internal->nb_index_entries = 0;
     st->nb_frames = 0;
 
     // seek to time
@@ -1237,15 +1237,15 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
 
       this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, index: %d", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->demuxerId, index);
 
-      if ((index < 0) && (st->nb_index_entries > 0) && (seek_pts < st->index_entries[0].timestamp))
+      if ((index < 0) && (st->internal->nb_index_entries > 0) && (seek_pts < st->internal->index_entries[0].timestamp))
       {
         this->logger->Log(LOGGER_ERROR, METHOD_DEMUXER_MESSAGE_FORMAT, MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->demuxerId, L"failing");
         result = E_NOT_FOUND_SEEK_INDEX_ENTRY;
       }
 
-      if (SUCCEEDED(result) && (index >= 0) && (st->nb_index_entries > 0))
+      if (SUCCEEDED(result) && (index >= 0) && (st->internal->nb_index_entries > 0))
       {
-        ie = &st->index_entries[index];
+        ie = &st->internal->index_entries[index];
         this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, timestamp: %lld, seek_pts: %lld", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->demuxerId, ie->timestamp, seek_pts);
         if (ie->timestamp >= seek_pts)
         {
@@ -1261,14 +1261,14 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
         // if index is on the end of index entries than probably we have to seek to unbuffered part
         // (and we don't know right position)
         // in another case we seek in bufferred part or at least we have right position where to seek
-        if ((index < 0) || (index == (st->nb_index_entries - 1)))
+        if ((index < 0) || (index == (st->internal->nb_index_entries - 1)))
         {
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, index entries: %d", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->demuxerId, st->nb_index_entries);
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, index entries: %d", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->demuxerId, st->internal->nb_index_entries);
           AVPacket avPacket;
 
-          if ((st->nb_index_entries) && (index >= 0))
+          if ((st->internal->nb_index_entries) && (index >= 0))
           {
-            ie = &st->index_entries[index];
+            ie = &st->internal->index_entries[index];
 
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, seeking to position: %lld", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->demuxerId, ie->pos);
             int64_t res = avio_seek(this->formatContext->pb, ie->pos, SEEK_SET);
@@ -1356,7 +1356,7 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
       }
     }
 
-    if (SUCCEEDED(result) && found && (st->nb_index_entries))
+    if (SUCCEEDED(result) && found && (st->internal->nb_index_entries))
     {
       ff_read_frame_flush(this->formatContext);
       this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, searching keyframe with timestamp: %lld, stream index: %d", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->demuxerId, seek_pts, streamId);
@@ -1370,7 +1370,7 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
 
       if (SUCCEEDED(result))
       {
-        ie = &st->index_entries[index];
+        ie = &st->internal->index_entries[index];
 
         this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, seek to position: %lld, time: %lld", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, this->demuxerId, ie->pos, ie->timestamp);
 
@@ -1398,7 +1398,7 @@ int64_t BinaryTimestampSearch(AVFormatContext *formatContext, int streamIndex, i
 {
   int64_t wrap = formatContext->streams[streamIndex]->pts_wrap_bits > 0 && formatContext->streams[streamIndex]->pts_wrap_bits < 63 ? 1LL << formatContext->streams[streamIndex]->pts_wrap_bits : 0;
 
-  int64_t minPosition = formatContext->data_offset;
+  int64_t minPosition = formatContext->internal->data_offset;
   int64_t minTimestamp = formatContext->iformat->read_timestamp(formatContext, streamIndex, &minPosition, INT64_MAX);
 
   if (minTimestamp == AV_NOPTS_VALUE)
@@ -1625,7 +1625,7 @@ HRESULT CDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
 
     this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, index: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, index);
 
-    if ((index < 0) && (st->nb_index_entries) && (seek_pts < st->index_entries[0].timestamp))
+    if ((index < 0) && (st->internal->nb_index_entries) && (seek_pts < st->internal->index_entries[0].timestamp))
     {
       this->logger->Log(LOGGER_ERROR, METHOD_DEMUXER_MESSAGE_FORMAT, MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, L"failing");
       result = E_NOT_FOUND_SEEK_INDEX_ENTRY;
@@ -1633,7 +1633,7 @@ HRESULT CDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
 
     if (SUCCEEDED(result) && (index >= 0))
     {
-      AVIndexEntry *ie = &st->index_entries[index];
+      AVIndexEntry *ie = &st->internal->index_entries[index];
       this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, timestamp: %lld, seek_pts: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, ie->timestamp, seek_pts);
       if (ie->timestamp >= seek_pts)
       {
@@ -1655,13 +1655,13 @@ HRESULT CDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
       {
         // FLV container format
 
-        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, index entries: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, st->nb_index_entries);
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, index entries: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, st->internal->nb_index_entries);
         AVPacket avPacket;
         AVIndexEntry *ie = NULL;
 
-        if ((st->nb_index_entries) && (index >= 0))
+        if ((st->internal->nb_index_entries) && (index >= 0))
         {
-          ie = &st->index_entries[index];
+          ie = &st->internal->index_entries[index];
 
           this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, seeking to position: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, ie->pos);
           int64_t res = avio_seek(this->formatContext->pb, ie->pos, SEEK_SET);
@@ -1678,8 +1678,8 @@ HRESULT CDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
         }
         else
         {
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, seeking to position: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, this->formatContext->data_offset);
-          int64_t res = avio_seek(this->formatContext->pb, this->formatContext->data_offset, SEEK_SET);
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, seeking to position: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, this->formatContext->internal->data_offset);
+          int64_t res = avio_seek(this->formatContext->pb, this->formatContext->internal->data_offset, SEEK_SET);
           if (res < 0)
           {
             result = (HRESULT)res;
@@ -1933,14 +1933,14 @@ HRESULT CDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
         // not specified container format
         // use generic seeking method
 
-        if ((index < 0) || (index == (st->nb_index_entries - 1)))
+        if ((index < 0) || (index == (st->internal->nb_index_entries - 1)))
         {
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, index entries: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, st->nb_index_entries);
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, index entries: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, st->internal->nb_index_entries);
           AVIndexEntry *ie = NULL;
 
-          if ((st->nb_index_entries) && (index >= 0))
+          if ((st->internal->nb_index_entries) && (index >= 0))
           {
-            ie = &st->index_entries[index];
+            ie = &st->internal->index_entries[index];
 
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, seeking to position: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, ie->pos);
             int64_t res = avio_seek(this->formatContext->pb, ie->pos, SEEK_SET);
@@ -1957,8 +1957,8 @@ HRESULT CDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
           }
           else
           {
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, seeking to position: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, this->formatContext->data_offset);
-            int64_t res = avio_seek(this->formatContext->pb, this->formatContext->data_offset, SEEK_SET);
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: stream %u, seeking to position: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->demuxerId, this->formatContext->internal->data_offset);
+            int64_t res = avio_seek(this->formatContext->pb, this->formatContext->internal->data_offset, SEEK_SET);
             if (res < 0)
             {
               result = (HRESULT)res;
@@ -2103,16 +2103,16 @@ HRESULT CDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
 
       AVStream *st = this->formatContext->streams[streamId];
       int64_t seekTimestamp = st->first_dts;
-      int64_t seekPosition = this->formatContext->data_offset;
+      int64_t seekPosition = this->formatContext->internal->data_offset;
 
-      if (st->nb_index_entries != 0)
+      if (st->internal->nb_index_entries != 0)
       {
         // check FFmpeg seek index entries
         int index = av_index_search_timestamp(st, seek_pts, flags);
 
         if (index != (-1))
         {
-          AVIndexEntry *ie = &st->index_entries[index];
+          AVIndexEntry *ie = &st->internal->index_entries[index];
 
           seekPosition = ie->pos;
           seekTimestamp = ie->timestamp;
@@ -2231,7 +2231,7 @@ unsigned int WINAPI CDemuxer::CreateDemuxerWorker(LPVOID lpParam)
       {
         if (caller->demuxerContext == NULL)
         {
-          uint8_t *buffer = (uint8_t *)av_mallocz(DEMUXER_READ_BUFFER_SIZE + FF_INPUT_BUFFER_PADDING_SIZE);
+          uint8_t *buffer = (uint8_t *)av_mallocz(DEMUXER_READ_BUFFER_SIZE + AV_INPUT_BUFFER_PADDING_SIZE);
           caller->demuxerContext = avio_alloc_context(buffer, DEMUXER_READ_BUFFER_SIZE, 0, caller, DemuxerRead, NULL, DemuxerSeek);
         }
 
@@ -2772,7 +2772,7 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
 
       AVStream *stream = this->formatContext->streams[ffmpegPacket.stream_index];
 
-      if ((this->IsMatroska() || this->IsOgg()) && (stream->codec->codec_id == CODEC_ID_H264))
+      if ((this->IsMatroska() || this->IsOgg()) && (stream->codec->codec_id == AV_CODEC_ID_H264))
       {
         if ((stream->codec->extradata_size == 0) || (stream->codec->extradata[0] != 1) || (AV_RB32(ffmpegPacket.data) == 0x00000001))
         {
@@ -2792,13 +2792,13 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
         ffmpegPacket.pts = AV_NOPTS_VALUE;
       }
 
-      if ((stream->codec->codec_id == CODEC_ID_RV10) || (stream->codec->codec_id == CODEC_ID_RV20) || (stream->codec->codec_id == CODEC_ID_RV30) || (stream->codec->codec_id == CODEC_ID_RV40))
+      if ((stream->codec->codec_id == AV_CODEC_ID_RV10) || (stream->codec->codec_id == AV_CODEC_ID_RV20) || (stream->codec->codec_id == AV_CODEC_ID_RV30) || (stream->codec->codec_id == AV_CODEC_ID_RV40))
       {
         ffmpegPacket.pts = AV_NOPTS_VALUE;
       }
 
       // never use DTS for these formats
-      if (!this->IsAvi() && ((stream->codec->codec_id == CODEC_ID_MPEG2VIDEO) || (stream->codec->codec_id == CODEC_ID_MPEG1VIDEO) || ((stream->codec->codec_id == CODEC_ID_H264) && !this->IsMatroska())))
+      if (!this->IsAvi() && ((stream->codec->codec_id == AV_CODEC_ID_MPEG2VIDEO) || (stream->codec->codec_id == AV_CODEC_ID_MPEG1VIDEO) || ((stream->codec->codec_id == AV_CODEC_ID_H264) && !this->IsMatroska())))
       {
         ffmpegPacket.dts = AV_NOPTS_VALUE;
       }
@@ -2851,7 +2851,7 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
           rt = dts;
         }
 
-        if (stream->codec->codec_id == CODEC_ID_VC1)
+        if (stream->codec->codec_id == AV_CODEC_ID_VC1)
         {
           if (this->IsMatroska() && this->IsVc1Correction())
           {
@@ -2874,13 +2874,13 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
             packet->SetFlags(packet->GetFlags() | OUTPUT_PIN_PACKET_FLAG_PACKET_PARSED);
           }
         }
-        else if (stream->codec->codec_id == CODEC_ID_MOV_TEXT)
+        else if (stream->codec->codec_id == AV_CODEC_ID_MOV_TEXT)
         {
           packet->SetFlags(packet->GetFlags() | OUTPUT_PIN_PACKET_FLAG_PACKET_MOV_TEXT);
         }
 
         // mark the packet as parsed, so the forced subtitle parser doesn't hit it
-        if (stream->codec->codec_id == CODEC_ID_HDMV_PGS_SUBTITLE)
+        if (stream->codec->codec_id == AV_CODEC_ID_HDMV_PGS_SUBTITLE)
         {
           packet->SetFlags(packet->GetFlags() | OUTPUT_PIN_PACKET_FLAG_PACKET_PARSED);
         }
@@ -2890,7 +2890,7 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
 
         if (rt != COutputPinPacket::INVALID_TIME)
         {
-          REFERENCE_TIME newEndTime = packet->GetEndTime() + (((duration > 0) || (stream->codec->codec_id == CODEC_ID_TRUEHD)) ? duration : 1);
+          REFERENCE_TIME newEndTime = packet->GetEndTime() + (((duration > 0) || (stream->codec->codec_id == AV_CODEC_ID_TRUEHD)) ? duration : 1);
           packet->SetEndTime(newEndTime);
         }
 
@@ -2940,7 +2940,7 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
       }
 
       // check if stream is building seeking index
-      if (SUCCEEDED(result) && (activeStream != NULL) && (ffmpegPacket.pts != AV_NOPTS_VALUE) && (ffmpegPacket.pos >= 0) && (stream->nb_index_entries == 0))
+      if (SUCCEEDED(result) && (activeStream != NULL) && (ffmpegPacket.pts != AV_NOPTS_VALUE) && (ffmpegPacket.pos >= 0) && (stream->internal->nb_index_entries == 0))
       {
         // stream doesn't create seek index
         // create our own seek index
@@ -3183,8 +3183,6 @@ HRESULT CDemuxer::InitFormatContext(void)
         this->formatContext->flags |= AVFMT_FLAG_GENPTS;
       }
 
-      this->formatContext->flags |= AVFMT_FLAG_IGNPARSERSYNC;
-
       // set minimum time for stream analysis in FFmpeg (5000 ms)
       this->formatContext->max_analyze_duration = 5000000;
 
@@ -3203,13 +3201,13 @@ HRESULT CDemuxer::InitFormatContext(void)
           // disable full stream parsing for these formats
           if (st->need_parsing == AVSTREAM_PARSE_FULL)
           {
-            if (st->codec->codec_id == CODEC_ID_DVB_SUBTITLE)
+            if (st->codec->codec_id == AV_CODEC_ID_DVB_SUBTITLE)
             {
               st->need_parsing = AVSTREAM_PARSE_NONE;
             }
           }
 
-          if (this->IsOgg() && (st->codec->codec_id == CODEC_ID_H264))
+          if (this->IsOgg() && (st->codec->codec_id == AV_CODEC_ID_H264))
           {
             st->need_parsing = AVSTREAM_PARSE_FULL;
           }
@@ -3218,8 +3216,8 @@ HRESULT CDemuxer::InitFormatContext(void)
           CDemuxer::InitParser(this->formatContext, st);
           this->UpdateParserFlags(st);
 
-          if (((st->codec->codec_id == CODEC_ID_DTS) && (st->codec->codec_tag == 0xA2)) ||
-              ((st->codec->codec_id == CODEC_ID_EAC3) && (st->codec->codec_tag == 0xA1)))
+          if (((st->codec->codec_id == AV_CODEC_ID_DTS) && (st->codec->codec_tag == 0xA2)) ||
+              ((st->codec->codec_id == AV_CODEC_ID_EAC3) && (st->codec->codec_tag == 0xA1)))
           {
             st->disposition |= AV_DISPOSITION_SECONDARY_AUDIO;
           }
@@ -3230,7 +3228,7 @@ HRESULT CDemuxer::InitFormatContext(void)
             AVStream *tempStream = this->formatContext->streams[j];
 
             // find and flag the AC-3 substream
-            if (this->IsMpegTs() && (tempStream->codec->codec_id == CODEC_ID_TRUEHD))
+            if (this->IsMpegTs() && (tempStream->codec->codec_id == AV_CODEC_ID_TRUEHD))
             {
               int id = tempStream->id;
               AVStream *subStream = NULL;
@@ -3369,7 +3367,7 @@ HRESULT CDemuxer::InitFormatContext(void)
           {
             if ((stream->codec->codec_type == AVMEDIA_TYPE_UNKNOWN) ||
               (stream->discard == AVDISCARD_ALL) ||
-              ((stream->codec->codec_id == CODEC_ID_NONE) && (stream->codec->codec_tag == 0)) ||
+              ((stream->codec->codec_id == AV_CODEC_ID_NONE) && (stream->codec->codec_tag == 0)) ||
               (stream->disposition & AV_DISPOSITION_ATTACHED_PIC))
             {
               stream->discard = AVDISCARD_ALL;

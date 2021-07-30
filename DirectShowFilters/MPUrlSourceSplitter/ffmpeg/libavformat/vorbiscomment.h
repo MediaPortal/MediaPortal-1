@@ -32,25 +32,25 @@
  * @param m The metadata structure to be parsed. For no metadata, set to NULL.
  * @param vendor_string The vendor string to be added into the VorbisComment.
  * For no string, set to an empty string.
- * @param count Pointer to store the number of tags in m because m->count is "not allowed"
  * @return The length in bytes.
  */
-int ff_vorbiscomment_length(AVDictionary *m, const char *vendor_string,
-                            unsigned *count);
+int64_t ff_vorbiscomment_length(const AVDictionary *m, const char *vendor_string,
+                                AVChapter **chapters, unsigned int nb_chapters);
 
 /**
- * Write a VorbisComment into a buffer. The buffer, p, must have enough
- * data to hold the whole VorbisComment. The minimum size required can be
- * obtained by passing the same AVDictionary and vendor_string to
+ * Write a VorbisComment into an AVIOContext. The output size can be obtained
+ * in advance by passing the same chapters, AVDictionary and vendor_string to
  * ff_vorbiscomment_length()
  *
- * @param p The buffer in which to write.
+ * @param pb The AVIOContext to write the output.
  * @param m The metadata struct to write.
  * @param vendor_string The vendor string to write.
- * @param count The number of tags in m because m->count is "not allowed"
+ * @param chapters The chapters to write.
+ * @param nb_chapters The number of chapters to write.
  */
-int ff_vorbiscomment_write(uint8_t **p, AVDictionary **m,
-                           const char *vendor_string, const unsigned count);
+int ff_vorbiscomment_write(AVIOContext *pb, const AVDictionary *m,
+                           const char *vendor_string,
+                           AVChapter **chapters, unsigned int nb_chapters);
 
 extern const AVMetadataConv ff_vorbiscomment_metadata_conv[];
 

@@ -24,7 +24,8 @@
 #ifndef AVFILTER_LAVFUTILS_H
 #define AVFILTER_LAVFUTILS_H
 
-#include "libavformat/avformat.h"
+#include <stdint.h>
+#include "libavutil/pixfmt.h"
 
 /**
  * Load image from filename and put the resulting image in data.
@@ -34,10 +35,10 @@
  * @param pix_fmt pointer to the pixel format of the loaded image
  * @param filename the name of the image file to load
  * @param log_ctx log context
- * @return 0 in case of success, a negative error code otherwise.
+ * @return >= 0 in case of success, a negative error code otherwise.
  */
 int ff_load_image(uint8_t *data[4], int linesize[4],
-                  int *w, int *h, enum PixelFormat *pix_fmt,
+                  int *w, int *h, enum AVPixelFormat *pix_fmt,
                   const char *filename, void *log_ctx);
 
 #endif  /* AVFILTER_LAVFUTILS_H */

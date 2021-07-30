@@ -99,7 +99,7 @@ int CPacketInputFormat::ReadHeader(AVFormatContext *formatContext)
 
   if (ret >= 0)
   {
-    uint8_t *buffer = (uint8_t *)av_mallocz(STREAM_READ_BUFFER_SIZE + FF_INPUT_BUFFER_PADDING_SIZE);
+    uint8_t *buffer = (uint8_t *)av_mallocz(STREAM_READ_BUFFER_SIZE + AV_INPUT_BUFFER_PADDING_SIZE);
     caller->streamIoContext = avio_alloc_context(buffer, STREAM_READ_BUFFER_SIZE, 0, caller, CPacketInputFormat::StreamRead, NULL, CPacketInputFormat::StreamSeek);
     ret = ((caller->streamIoContext != NULL) && (buffer != NULL)) ? ret : (-1);
 

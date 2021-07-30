@@ -28,8 +28,8 @@
 
 #include <inttypes.h>
 
-#include "libswscale/swscale.h"
 #include "libavutil/avutil.h"
+#include "swscale.h"
 
 /* A full collection of RGB to RGB(BGR) converters */
 extern void (*rgb24tobgr32)(const uint8_t *src, uint8_t *dst, int src_size);
@@ -50,8 +50,22 @@ extern void    (*rgb24to15)(const uint8_t *src, uint8_t *dst, int src_size);
 extern void (*rgb32tobgr16)(const uint8_t *src, uint8_t *dst, int src_size);
 extern void (*rgb32tobgr15)(const uint8_t *src, uint8_t *dst, int src_size);
 
+extern void (*shuffle_bytes_0321)(const uint8_t *src, uint8_t *dst, int src_size);
 extern void (*shuffle_bytes_2103)(const uint8_t *src, uint8_t *dst, int src_size);
+extern void (*shuffle_bytes_1230)(const uint8_t *src, uint8_t *dst, int src_size);
+extern void (*shuffle_bytes_3012)(const uint8_t *src, uint8_t *dst, int src_size);
+extern void (*shuffle_bytes_3210)(const uint8_t *src, uint8_t *dst, int src_size);
 
+void rgb64tobgr48_nobswap(const uint8_t *src, uint8_t *dst, int src_size);
+void   rgb64tobgr48_bswap(const uint8_t *src, uint8_t *dst, int src_size);
+void rgb48tobgr48_nobswap(const uint8_t *src, uint8_t *dst, int src_size);
+void   rgb48tobgr48_bswap(const uint8_t *src, uint8_t *dst, int src_size);
+void    rgb64to48_nobswap(const uint8_t *src, uint8_t *dst, int src_size);
+void      rgb64to48_bswap(const uint8_t *src, uint8_t *dst, int src_size);
+void rgb48tobgr64_nobswap(const uint8_t *src, uint8_t *dst, int src_size);
+void   rgb48tobgr64_bswap(const uint8_t *src, uint8_t *dst, int src_size);
+void    rgb48to64_nobswap(const uint8_t *src, uint8_t *dst, int src_size);
+void      rgb48to64_bswap(const uint8_t *src, uint8_t *dst, int src_size);
 void    rgb24to32(const uint8_t *src, uint8_t *dst, int src_size);
 void    rgb32to24(const uint8_t *src, uint8_t *dst, int src_size);
 void rgb16tobgr32(const uint8_t *src, uint8_t *dst, int src_size);
@@ -65,14 +79,9 @@ void rgb15tobgr15(const uint8_t *src, uint8_t *dst, int src_size);
 void rgb12tobgr12(const uint8_t *src, uint8_t *dst, int src_size);
 void    rgb12to15(const uint8_t *src, uint8_t *dst, int src_size);
 
-void shuffle_bytes_0321(const uint8_t *src, uint8_t *dst, int src_size);
-void shuffle_bytes_1230(const uint8_t *src, uint8_t *dst, int src_size);
-void shuffle_bytes_3012(const uint8_t *src, uint8_t *dst, int src_size);
-void shuffle_bytes_3210(const uint8_t *src, uint8_t *dst, int src_size);
-
-void rgb24toyv12_c(const uint8_t *src, uint8_t *ydst, uint8_t *udst,
-                   uint8_t *vdst, int width, int height, int lumStride,
-                   int chromStride, int srcStride);
+void ff_rgb24toyv12_c(const uint8_t *src, uint8_t *ydst, uint8_t *udst,
+                      uint8_t *vdst, int width, int height, int lumStride,
+                      int chromStride, int srcStride, int32_t *rgb2yuv);
 
 /**
  * Height should be a multiple of 2 and width should be a multiple of 16.
@@ -118,15 +127,20 @@ extern void (*yuv422ptouyvy)(const uint8_t *ysrc, const uint8_t *usrc, const uin
  * Chrominance data is only taken from every second line, others are ignored.
  * FIXME: Write high quality version.
  */
-extern void (*rgb24toyv12)(const uint8_t *src, uint8_t *ydst, uint8_t *udst, uint8_t *vdst,
-                           int width, int height,
-                           int lumStride, int chromStride, int srcStride);
+extern void (*ff_rgb24toyv12)(const uint8_t *src, uint8_t *ydst, uint8_t *udst, uint8_t *vdst,
+                              int width, int height,
+                              int lumStride, int chromStride, int srcStride,
+                              int32_t *rgb2yuv);
 extern void (*planar2x)(const uint8_t *src, uint8_t *dst, int width, int height,
                         int srcStride, int dstStride);
 
 extern void (*interleaveBytes)(const uint8_t *src1, const uint8_t *src2, uint8_t *dst,
                                int width, int height, int src1Stride,
                                int src2Stride, int dstStride);
+
+extern void (*deinterleaveBytes)(const uint8_t *src, uint8_t *dst1, uint8_t *dst2,
+                                 int width, int height, int srcStride,
+                                 int dst1Stride, int dst2Stride);
 
 extern void (*vu9_to_vu12)(const uint8_t *src1, const uint8_t *src2,
                            uint8_t *dst1, uint8_t *dst2,
@@ -153,8 +167,9 @@ extern void (*yuyvtoyuv422)(uint8_t *ydst, uint8_t *udst, uint8_t *vdst, const u
                             int width, int height,
                             int lumStride, int chromStride, int srcStride);
 
-void sws_rgb2rgb_init(void);
+void ff_sws_rgb2rgb_init(void);
 
+void rgb2rgb_init_aarch64(void);
 void rgb2rgb_init_x86(void);
 
 #endif /* SWSCALE_RGB2RGB_H */

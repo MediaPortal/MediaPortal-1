@@ -24,7 +24,8 @@
 #define AVCODEC_ACELP_PITCH_DELAY_H
 
 #include <stdint.h>
-#include "dsputil.h"
+
+#include "audiodsp.h"
 
 #define PITCH_DELAY_MIN             20
 #define PITCH_DELAY_MAX             143
@@ -40,7 +41,13 @@
  *    with 1/3 resolution, 19  < pitch_delay <  85
  *    integers only,       85 <= pitch_delay <= 143
  */
-int ff_acelp_decode_8bit_to_1st_delay3(int ac_index);
+static inline int ff_acelp_decode_8bit_to_1st_delay3(int ac_index)
+{
+    ac_index += 58;
+    if (ac_index > 254)
+        ac_index = 3 * ac_index - 510;
+    return ac_index;
+}
 
 /**
  * @brief Decode pitch delay of the second subframe encoded by 5 or 6 bits
@@ -57,9 +64,11 @@ int ff_acelp_decode_8bit_to_1st_delay3(int ac_index);
  * @remark The routine is used in G.729 @@8k, AMR @@10.2k, AMR @@7.95k,
  *         AMR @@7.4k for the second subframe.
  */
-int ff_acelp_decode_5_6_bit_to_2nd_delay3(
-        int ac_index,
-        int pitch_delay_min);
+static inline int ff_acelp_decode_5_6_bit_to_2nd_delay3(int ac_index,
+                                                        int pitch_delay_min)
+{
+        return 3 * pitch_delay_min + ac_index - 2;
+}
 
 /**
  * @brief Decode pitch delay with 1/3 precision.
@@ -77,9 +86,16 @@ int ff_acelp_decode_5_6_bit_to_2nd_delay3(
  * @remark The routine is used in G.729 @@6.4k, AMR @@6.7k, AMR @@5.9k,
  *         AMR @@5.15k, AMR @@4.75k for the second subframe.
  */
-int ff_acelp_decode_4bit_to_2nd_delay3(
-        int ac_index,
-        int pitch_delay_min);
+static inline int ff_acelp_decode_4bit_to_2nd_delay3(int ac_index,
+                                                     int pitch_delay_min)
+{
+    if (ac_index < 4)
+        return 3 * (ac_index + pitch_delay_min);
+    else if (ac_index < 12)
+        return 3 * pitch_delay_min + ac_index + 6;
+    else
+        return 3 * (ac_index + pitch_delay_min) - 18;
+}
 
 /**
  * @brief Decode pitch delay of the first subframe encoded by 9 bits
@@ -94,7 +110,13 @@ int ff_acelp_decode_4bit_to_2nd_delay3(
  *
  * @remark The routine is used in AMR @@12.2k for the first and third subframes.
  */
-int ff_acelp_decode_9bit_to_1st_delay6(int ac_index);
+static inline int ff_acelp_decode_9bit_to_1st_delay6(int ac_index)
+{
+    if (ac_index < 463)
+        return ac_index + 105;
+    else
+        return 6 * (ac_index - 368);
+}
 
 /**
  * @brief Decode pitch delay of the second subframe encoded by 6 bits
@@ -110,9 +132,11 @@ int ff_acelp_decode_9bit_to_1st_delay6(int ac_index);
  *
  * @remark The routine is used in AMR @@12.2k for the second and fourth subframes.
  */
-int ff_acelp_decode_6bit_to_2nd_delay6(
-        int ac_index,
-        int pitch_delay_min);
+static inline int ff_acelp_decode_6bit_to_2nd_delay6(int ac_index,
+                                                     int pitch_delay_min)
+{
+    return 6 * pitch_delay_min + ac_index - 3;
+}
 
 /**
  * @brief Update past quantized energies
@@ -139,7 +163,7 @@ void ff_acelp_update_past_gain(
 /**
  * @brief Decode the adaptive codebook gain and add
  *        correction (4.1.5 and 3.9.1 of G.729).
- * @param dsp initialized dsputil context
+ * @param adsp initialized audio DSP context
  * @param gain_corr_factor gain correction factor (2.13)
  * @param fc_v fixed-codebook vector (2.13)
  * @param mr_energy mean innovation energy and fixed-point correction (7.13)
@@ -208,7 +232,7 @@ void ff_acelp_update_past_gain(
  * @remark The routine is used in G.729 and AMR (all modes).
  */
 int16_t ff_acelp_decode_gain_code(
-    DSPContext *dsp,
+    AudioDSPContext *adsp,
     int gain_corr_factor,
     const int16_t* fc_v,
     int mr_energy,

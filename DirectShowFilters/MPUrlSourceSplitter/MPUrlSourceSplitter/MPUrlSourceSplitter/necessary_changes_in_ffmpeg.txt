@@ -2,9 +2,9 @@
 The purpose of this document is to remark all changes made in ffmpeg by any developer. These same changes
 (or at least their meaning) must be made in next releases of ffmpeg.
 
-Changes in ffmpeg (ffmpeg from lavfilters HEAD 89e359e74bf32b558d03a78d4f644c3f349a7a19):
+Changes in ffmpeg (ffmpeg from lavfilters https://git.1f0.de/gitweb/?p=ffmpeg.git;a=tree;js=1 0cb0257ee66b0427a21b55cf8c41a5b9405e0240):
 
-File: build_ff_win32.sh
+File: build_ffmpeg.sh
 Comment: replace OPTIONS
 Code: 
 
@@ -14,13 +14,12 @@ OPTIONS="
 --disable-ffmpeg \
 --disable-ffplay \
 --disable-ffprobe \
---disable-ffserver \
 --disable-avdevice \
 --disable-swresample \
 --disable-swscale \
 --disable-postproc \
 --disable-avfilter \
---disable-avresample \
+--enable-avresample \
 --disable-static \
 --disable-debug \
 --disable-encoders \
@@ -55,6 +54,9 @@ cp lib*/*.lib ../bin_Win32/lib &&
 cp lib*/*-mpurlsourcesplitter-*.dll ../bin_Win32d &&
 cp lib*/*.lib ../bin_Win32d/lib &&
 
+add -static to EXTRA_LDFLAGS
+replace -lav- with -mpurlsourcesplitter-
+
 --------------------------------------------
 File: \libavformat\libavformat.v
 Comment: add export of needed functions, in global: add
@@ -73,7 +75,7 @@ whole condition starting with: if(s->pb->seekable && (!s->duration || s->duratio
 must be disabled (comment it)
 
 --------------------------------------------
-File: \libavformat\asfdec.c
+File: \libavformat\asfdec_f.c
 Comment: after including section add
 Code:
 
@@ -175,7 +177,7 @@ static int mov_read_ftix(MOVContext *c, AVIOContext *pb, MOVAtom atom)
         return AVERROR_INVALIDDATA;
     }
 
-    st->nb_index_entries = 0;
+    st->internal->nb_index_entries = 0;
 
     for (i = 0; i < entries; i++)
     {
@@ -202,10 +204,10 @@ Code:
 MOVAtom a = { .type = 0 };
 
 --------------------------------------------
-Comment: in mov_read_default() method replace 'while (total_size + 8 <= atom.size && !url_feof(pb)) {'
+Comment: in mov_read_default() method replace 'while (total_size <= atom.size -8 && !url_feof(pb)) {'
 Code:
 
-while (total_size + 8 <= atom.size && !url_feof(pb) && !(c->found_moov && c->found_mdat && c->fragmented) && !(c->fragmented && c->stop_parsing_at_fragmented_index && a.type == MKTAG('f','m','i','x'))) {
+while (total_size + 8 <= atom.size && !avio_feof(pb) && !(c->found_moov && c->found_mdat && c->fragmented) && !(c->fragmented && c->stop_parsing_at_fragmented_index && a.type == MKTAG('f','m','i','x'))) {
 
 --------------------------------------------
 Comment: in mov_read_default() method add after cycle 'for (i = 0; mov_default_parse_table[i].type; i++)'
@@ -231,7 +233,7 @@ Code:
  MOVStreamContext *sc;
 
 --------------------------------------------
-Comment: in mov_read_seek() method add after 'if (sample_time < 0) sample_time = 0;'
+Comment: in mov_read_seek() method add before 'st = s->streams[stream_index];'
 Code:
 
 if (mov->fragmented)
@@ -261,6 +263,7 @@ if (mov->fragmented)
 
     for (i = 0; i < s->nb_streams; i++)
     {
+        int64_t seek_timestamp, timestamp;
         st = s->streams[i];
         sample = mov_seek_stream(s, st, sample_time, flags);
 
@@ -270,7 +273,7 @@ if (mov->fragmented)
             return sample;
         }
 
-        seek_timestamp = st->index_entries[sample].timestamp;
+        seek_timestamp = st->internal->index_entries[sample].timestamp;
         sc = s->streams[i]->priv_data;
 
         timestamp = av_rescale_q(seek_timestamp, s->streams[stream_index]->time_base, st->time_base);
@@ -285,7 +288,7 @@ if (mov->fragmented)
     for (i = 0; i < s->nb_streams; i++)
     {
         st = s->streams[i];
-        st->nb_index_entries = 0;
+        st->internal->nb_index_entries = 0;
     }
 
     /* read all root atoms */

@@ -547,24 +547,24 @@ static struct
 } niceCodecNames [] =	
 {
   // Video
-  { CODEC_ID_H264, L"h264" }, // XXX: Do not remove, required for custom profile/level formatting
-  { CODEC_ID_VC1, L"vc-1" },  // XXX: Do not remove, required for custom profile/level formatting
-  { CODEC_ID_MPEG2VIDEO, L"mpeg2" },
+  { AV_CODEC_ID_H264, L"h264" }, // XXX: Do not remove, required for custom profile/level formatting
+  { AV_CODEC_ID_VC1, L"vc-1" },  // XXX: Do not remove, required for custom profile/level formatting
+  { AV_CODEC_ID_MPEG2VIDEO, L"mpeg2" },
   // Audio
-  { CODEC_ID_DTS, L"dts" },
-  { CODEC_ID_AAC_LATM, L"aac (latm)" },
+  { AV_CODEC_ID_DTS, L"dts" },
+  { AV_CODEC_ID_AAC_LATM, L"aac (latm)" },
   // Subs
-  { CODEC_ID_TEXT, L"txt" },
-  { CODEC_ID_MOV_TEXT, L"tx3g" },
-  { CODEC_ID_SRT, L"srt" },
-  { CODEC_ID_HDMV_PGS_SUBTITLE, L"pgs" },
-  { CODEC_ID_DVD_SUBTITLE, L"vobsub" },
-  { CODEC_ID_DVB_SUBTITLE, L"dvbsub" },
-  { CODEC_ID_SSA, L"ssa/ass" },
-  { CODEC_ID_XSUB, L"xsub" }
+  { AV_CODEC_ID_TEXT, L"txt" },
+  { AV_CODEC_ID_MOV_TEXT, L"tx3g" },
+  { AV_CODEC_ID_SRT, L"srt" },
+  { AV_CODEC_ID_HDMV_PGS_SUBTITLE, L"pgs" },
+  { AV_CODEC_ID_DVD_SUBTITLE, L"vobsub" },
+  { AV_CODEC_ID_DVB_SUBTITLE, L"dvbsub" },
+  { AV_CODEC_ID_SSA, L"ssa/ass" },
+  { AV_CODEC_ID_XSUB, L"xsub" }
 };
 
-static bool ShowSampleFmt(CodecID codecId)
+static bool ShowSampleFmt(AVCodecID codecId)
 {
   // PCM Codecs
   if ((codecId >= 0x10000) && (codecId < 0x12000))
@@ -573,13 +573,13 @@ static bool ShowSampleFmt(CodecID codecId)
   }
 
   // Lossless Codecs
-  if ((codecId == CODEC_ID_MLP) ||
-      (codecId == CODEC_ID_TRUEHD) ||
-      (codecId == CODEC_ID_FLAC) ||
-      (codecId == CODEC_ID_WMALOSSLESS) ||
-      (codecId == CODEC_ID_WAVPACK) ||
-      (codecId == CODEC_ID_MP4ALS) ||
-      (codecId == CODEC_ID_ALAC))
+  if ((codecId == AV_CODEC_ID_MLP) ||
+      (codecId == AV_CODEC_ID_TRUEHD) ||
+      (codecId == AV_CODEC_ID_FLAC) ||
+      (codecId == AV_CODEC_ID_WMALOSSLESS) ||
+      (codecId == AV_CODEC_ID_WAVPACK) ||
+      (codecId == AV_CODEC_ID_MP4ALS) ||
+      (codecId == AV_CODEC_ID_ALAC))
   {
      return true;
   }
@@ -627,7 +627,7 @@ int CDemuxerUtils::GetBitsPerSample(AVCodecContext *codecContext, bool raw)
       }
       else
       {
-        bits = av_get_bits_per_sample_fmt(codecContext->sample_fmt);
+        bits = av_get_bytes_per_sample(codecContext->sample_fmt) * 8;
       }
     }
   }
@@ -657,7 +657,7 @@ wchar_t *CDemuxerUtils::GetStreamLanguage(const AVStream *stream)
 wchar_t *CDemuxerUtils::GetCodecName(AVCodecContext *codecContext)
 {
   wchar_t *result = NULL;
-  CodecID codecId = codecContext->codec_id;
+  AVCodecID codecId = codecContext->codec_id;
 
   // grab the codec
   AVCodec *codec = avcodec_find_decoder(codecId);
@@ -674,7 +674,7 @@ wchar_t *CDemuxerUtils::GetCodecName(AVCodecContext *codecContext)
     }
   }
 
-  if ((codecId == CODEC_ID_DTS) && (codecContext->codec_tag == 0xA2))
+  if ((codecId == AV_CODEC_ID_DTS) && (codecContext->codec_tag == 0xA2))
   {
     profile = "DTS Express";
   }
@@ -682,7 +682,7 @@ wchar_t *CDemuxerUtils::GetCodecName(AVCodecContext *codecContext)
   wchar_t *profileW = ConvertToUnicodeA(profile);
   wchar_t *lowerProfile = ToLowerW(profileW);
 
-  if (codecId == CODEC_ID_H264)
+  if (codecId == AV_CODEC_ID_H264)
   {
     result = FormatString(
       ((codecContext->level != 0) && (codecContext->level != FF_LEVEL_UNKNOWN) && (codecContext->level < 1000)) ?
@@ -692,7 +692,7 @@ wchar_t *CDemuxerUtils::GetCodecName(AVCodecContext *codecContext)
       (lowerProfile == NULL) ? L"NULL" : lowerProfile,
       codecContext->level / 10.0);
   }
-  else if (codecId == CODEC_ID_VC1)
+  else if (codecId == AV_CODEC_ID_VC1)
   {
     result = FormatString(
       (codecContext->level != FF_LEVEL_UNKNOWN) ?
@@ -702,7 +702,7 @@ wchar_t *CDemuxerUtils::GetCodecName(AVCodecContext *codecContext)
       (lowerProfile == NULL) ? L"NULL" : lowerProfile,
       codecContext->level);
   }
-  else if (codecId == CODEC_ID_DTS)
+  else if (codecId == AV_CODEC_ID_DTS)
   {
     result = Duplicate(lowerProfile);
   }
@@ -730,19 +730,6 @@ wchar_t *CDemuxerUtils::GetCodecName(AVCodecContext *codecContext)
     }
 
     FREE_MEM(nameW);
-  }
-  else if (codecContext->codec_name[0] != '\0')
-  {
-    unsigned int length = sizeof(codecContext->codec_name) + 1;
-    ALLOC_MEM_DEFINE_SET(buffer, char, length, 0);
-
-    if (buffer != NULL)
-    {
-      memcpy(buffer, codecContext->codec_name, length - 1);
-      result = ConvertToUnicodeA(buffer);
-    }
-
-    FREE_MEM(buffer);
   }
   else
   {
@@ -839,7 +826,7 @@ wchar_t *CDemuxerUtils::GetStreamDescription(AVStream *stream)
 
       result = AppendString(result, (codecName == NULL) ? L"unknown codec" : codecName);
 
-      if (codecContext->pix_fmt != PIX_FMT_NONE)
+      if (codecContext->pix_fmt != AV_PIX_FMT_NONE)
       {
         wchar_t *pixelFormatW = ConvertToUnicodeA(av_get_pix_fmt_name(codecContext->pix_fmt));
         if (pixelFormatW != NULL)

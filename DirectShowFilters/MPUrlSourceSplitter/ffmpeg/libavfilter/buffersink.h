@@ -21,42 +21,65 @@
 
 /**
  * @file
+ * @ingroup lavfi_buffersink
  * memory buffer sink API for audio and video
  */
 
 #include "avfilter.h"
 
 /**
- * Struct to use for initializing a buffersink context.
- */
-typedef struct {
-    const enum PixelFormat *pixel_fmts; ///< list of allowed pixel formats, terminated by PIX_FMT_NONE
-} AVBufferSinkParams;
-
-/**
- * Create an AVBufferSinkParams structure.
+ * @defgroup lavfi_buffersink Buffer sink API
+ * @ingroup lavfi
+ * @{
  *
- * Must be freed with av_free().
- */
-AVBufferSinkParams *av_buffersink_params_alloc(void);
-
-/**
- * Struct to use for initializing an abuffersink context.
- */
-typedef struct {
-    const enum AVSampleFormat *sample_fmts; ///< list of allowed sample formats, terminated by AV_SAMPLE_FMT_NONE
-    const int64_t *channel_layouts;         ///< list of allowed channel layouts, terminated by -1
-#if FF_API_PACKING
-    const int *packing_fmts;                ///< list of allowed packing formats
-#endif
-} AVABufferSinkParams;
-
-/**
- * Create an AVABufferSinkParams structure.
+ * The buffersink and abuffersink filters are there to connect filter graphs
+ * to applications. They have a single input, connected to the graph, and no
+ * output. Frames must be extracted using av_buffersink_get_frame() or
+ * av_buffersink_get_samples().
  *
- * Must be freed with av_free().
+ * The format negotiated by the graph during configuration can be obtained
+ * using the accessor functions:
+ * - av_buffersink_get_time_base(),
+ * - av_buffersink_get_format(),
+ * - av_buffersink_get_frame_rate(),
+ * - av_buffersink_get_w(),
+ * - av_buffersink_get_h(),
+ * - av_buffersink_get_sample_aspect_ratio(),
+ * - av_buffersink_get_channels(),
+ * - av_buffersink_get_channel_layout(),
+ * - av_buffersink_get_sample_rate().
+ *
+ * The format can be constrained by setting options, using av_opt_set() and
+ * related functions with the AV_OPT_SEARCH_CHILDREN flag.
+ *  - pix_fmts (int list),
+ *  - sample_fmts (int list),
+ *  - sample_rates (int list),
+ *  - channel_layouts (int64_t),
+ *  - channel_counts (int list),
+ *  - all_channel_counts (bool).
+ * Most of these options are of type binary, and should be set using
+ * av_opt_set_int_list() or av_opt_set_bin(). If they are not set, all
+ * corresponding formats are accepted.
+ *
+ * As a special case, if neither channel_layouts nor channel_counts is set,
+ * all valid channel layouts are accepted, but channel counts without a
+ * layout are not, unless all_channel_counts is set.
+ * Also, channel_layouts must not contain a channel layout already accepted
+ * by a value in channel_counts; for example, if channel_counts contains 2,
+ * then channel_layouts must not contain stereo.
  */
-AVABufferSinkParams *av_abuffersink_params_alloc(void);
+
+/**
+ * Get a frame with filtered data from sink and put it in frame.
+ *
+ * @param ctx    pointer to a buffersink or abuffersink filter context.
+ * @param frame  pointer to an allocated frame that will be filled with data.
+ *               The data must be freed using av_frame_unref() / av_frame_free()
+ * @param flags  a combination of AV_BUFFERSINK_FLAG_* flags
+ *
+ * @return  >= 0 in for success, a negative AVERROR code for failure.
+ */
+int av_buffersink_get_frame_flags(AVFilterContext *ctx, AVFrame *frame, int flags);
 
 /**
  * Tell av_buffersink_get_buffer_ref() to read video/samples buffer
@@ -72,65 +95,111 @@ AVABufferSinkParams *av_abuffersink_params_alloc(void);
  */
 #define AV_BUFFERSINK_FLAG_NO_REQUEST 2
 
+#if FF_API_BUFFERSINK_ALLOC
 /**
- * Get an audio/video buffer data from buffer_sink and put it in bufref.
- *
- * This function works with both audio and video buffer sinks.
- *
- * @param buffer_sink pointer to a buffersink or abuffersink context
- * @param flags a combination of AV_BUFFERSINK_FLAG_* flags
- * @return >= 0 in case of success, a negative AVERROR code in case of
- * failure
+ * Deprecated and unused struct to use for initializing a buffersink context.
  */
-int av_buffersink_get_buffer_ref(AVFilterContext *buffer_sink,
-                                 AVFilterBufferRef **bufref, int flags);
-
+typedef struct AVBufferSinkParams {
+    const enum AVPixelFormat *pixel_fmts; ///< list of allowed pixel formats, terminated by AV_PIX_FMT_NONE
+} AVBufferSinkParams;
 
 /**
- * Get the number of immediately available frames.
- */
-int av_buffersink_poll_frame(AVFilterContext *ctx);
-
-#if FF_API_OLD_VSINK_API
-/**
- * @deprecated Use av_buffersink_get_buffer_ref() instead.
+ * Create an AVBufferSinkParams structure.
+ *
+ * Must be freed with av_free().
  */
 attribute_deprecated
-int av_vsink_buffer_get_video_buffer_ref(AVFilterContext *buffer_sink,
-                                         AVFilterBufferRef **picref, int flags);
+AVBufferSinkParams *av_buffersink_params_alloc(void);
+
+/**
+ * Deprecated and unused struct to use for initializing an abuffersink context.
+ */
+typedef struct AVABufferSinkParams {
+    const enum AVSampleFormat *sample_fmts; ///< list of allowed sample formats, terminated by AV_SAMPLE_FMT_NONE
+    const int64_t *channel_layouts;         ///< list of allowed channel layouts, terminated by -1
+    const int *channel_counts;              ///< list of allowed channel counts, terminated by -1
+    int all_channel_counts;                 ///< if not 0, accept any channel count or layout
+    int *sample_rates;                      ///< list of allowed sample rates, terminated by -1
+} AVABufferSinkParams;
+
+/**
+ * Create an AVABufferSinkParams structure.
+ *
+ * Must be freed with av_free().
+ */
+attribute_deprecated
+AVABufferSinkParams *av_abuffersink_params_alloc(void);
 #endif
 
 /**
- * Get a buffer with filtered data from sink and put it in buf.
+ * Set the frame size for an audio buffer sink.
  *
- * @param sink pointer to a context of a buffersink or abuffersink AVFilter.
- * @param buf pointer to the buffer will be written here if buf is non-NULL. buf
- *            must be freed by the caller using avfilter_unref_buffer().
- *            Buf may also be NULL to query whether a buffer is ready to be
- *            output.
- *
- * @return >= 0 in case of success, a negative AVERROR code in case of
- *         failure.
+ * All calls to av_buffersink_get_buffer_ref will return a buffer with
+ * exactly the specified number of samples, or AVERROR(EAGAIN) if there is
+ * not enough. The last buffer at EOF will be padded with 0.
  */
-int av_buffersink_read(AVFilterContext *sink, AVFilterBufferRef **buf);
+void av_buffersink_set_frame_size(AVFilterContext *ctx, unsigned frame_size);
 
 /**
- * Same as av_buffersink_read, but with the ability to specify the number of
- * samples read. This function is less efficient than av_buffersink_read(),
- * because it copies the data around.
+ * @defgroup lavfi_buffersink_accessors Buffer sink accessors
+ * Get the properties of the stream
+ * @{
+ */
+
+enum AVMediaType av_buffersink_get_type                (const AVFilterContext *ctx);
+AVRational       av_buffersink_get_time_base           (const AVFilterContext *ctx);
+int              av_buffersink_get_format              (const AVFilterContext *ctx);
+
+AVRational       av_buffersink_get_frame_rate          (const AVFilterContext *ctx);
+int              av_buffersink_get_w                   (const AVFilterContext *ctx);
+int              av_buffersink_get_h                   (const AVFilterContext *ctx);
+AVRational       av_buffersink_get_sample_aspect_ratio (const AVFilterContext *ctx);
+
+int              av_buffersink_get_channels            (const AVFilterContext *ctx);
+uint64_t         av_buffersink_get_channel_layout      (const AVFilterContext *ctx);
+int              av_buffersink_get_sample_rate         (const AVFilterContext *ctx);
+
+AVBufferRef *    av_buffersink_get_hw_frames_ctx       (const AVFilterContext *ctx);
+
+/** @} */
+
+/**
+ * Get a frame with filtered data from sink and put it in frame.
  *
- * @param sink pointer to a context of the abuffersink AVFilter.
- * @param buf pointer to the buffer will be written here if buf is non-NULL. buf
- *            must be freed by the caller using avfilter_unref_buffer(). buf
- *            will contain exactly nb_samples audio samples, except at the end
- *            of stream, when it can contain less than nb_samples.
- *            Buf may also be NULL to query whether a buffer is ready to be
- *            output.
+ * @param ctx pointer to a context of a buffersink or abuffersink AVFilter.
+ * @param frame pointer to an allocated frame that will be filled with data.
+ *              The data must be freed using av_frame_unref() / av_frame_free()
  *
- * @warning do not mix this function with av_buffersink_read(). Use only one or
+ * @return
+ *         - >= 0 if a frame was successfully returned.
+ *         - AVERROR(EAGAIN) if no frames are available at this point; more
+ *           input frames must be added to the filtergraph to get more output.
+ *         - AVERROR_EOF if there will be no more output frames on this sink.
+ *         - A different negative AVERROR code in other failure cases.
+ */
+int av_buffersink_get_frame(AVFilterContext *ctx, AVFrame *frame);
+
+/**
+ * Same as av_buffersink_get_frame(), but with the ability to specify the number
+ * of samples read. This function is less efficient than
+ * av_buffersink_get_frame(), because it copies the data around.
+ *
+ * @param ctx pointer to a context of the abuffersink AVFilter.
+ * @param frame pointer to an allocated frame that will be filled with data.
+ *              The data must be freed using av_frame_unref() / av_frame_free()
+ *              frame will contain exactly nb_samples audio samples, except at
+ *              the end of stream, when it can contain less than nb_samples.
+ *
+ * @return The return codes have the same meaning as for
+ *         av_buffersink_get_frame().
+ *
+ * @warning do not mix this function with av_buffersink_get_frame(). Use only one or
  * the other with a single sink, not both.
  */
-int av_buffersink_read_samples(AVFilterContext *ctx, AVFilterBufferRef **buf,
-                               int nb_samples);
+int av_buffersink_get_samples(AVFilterContext *ctx, AVFrame *frame, int nb_samples);
+
+/**
+ * @}
+ */
 
 #endif /* AVFILTER_BUFFERSINK_H */

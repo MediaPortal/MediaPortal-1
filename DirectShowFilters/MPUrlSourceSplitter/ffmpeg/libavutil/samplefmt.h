@@ -19,29 +19,41 @@
 #ifndef AVUTIL_SAMPLEFMT_H
 #define AVUTIL_SAMPLEFMT_H
 
+#include <stdint.h>
+
 #include "avutil.h"
+#include "attributes.h"
 
 /**
- * Audio Sample Formats
+ * @addtogroup lavu_audio
+ * @{
+ *
+ * @defgroup lavu_sampfmts Audio sample formats
+ *
+ * Audio sample format enumeration and related convenience functions.
+ * @{
+ */
+
+/**
+ * Audio sample formats
+ *
+ * - The data described by the sample format is always in native-endian order.
+ *   Sample values can be expressed by native C types, hence the lack of a signed
+ *   24-bit sample format even though it is a common raw audio data format.
+ *
+ * - The floating-point formats are based on full volume being in the range
+ *   [-1.0, 1.0]. Any values outside this range are beyond full volume level.
+ *
+ * - The data layout as used in av_samples_fill_arrays() and elsewhere in FFmpeg
+ *   (such as AVFrame in libavcodec) is as follows:
  *
  * @par
- * The data described by the sample format is always in native-endian order.
- * Sample values can be expressed by native C types, hence the lack of a signed
- * 24-bit sample format even though it is a common raw audio data format.
- *
- * @par
- * The floating-point formats are based on full volume being in the range
- * [-1.0, 1.0]. Any values outside this range are beyond full volume level.
- *
- * @par
- * The data layout as used in av_samples_fill_arrays() and elsewhere in Libav
- * (such as AVFrame in libavcodec) is as follows:
- *
  * For planar sample formats, each audio channel is in a separate data plane,
  * and linesize is the buffer size, in bytes, for a single plane. All data
  * planes must be the same size. For packed sample formats, only the first data
  * plane is used, and samples for each channel are interleaved. In this case,
  * linesize is the buffer size, in bytes, for the 1 plane.
+ *
  */
 enum AVSampleFormat {
     AV_SAMPLE_FMT_NONE = -1,
@@ -56,6 +68,8 @@ enum AVSampleFormat {
     AV_SAMPLE_FMT_S32P,        ///< signed 32 bits, planar
     AV_SAMPLE_FMT_FLTP,        ///< float, planar
     AV_SAMPLE_FMT_DBLP,        ///< double, planar
+    AV_SAMPLE_FMT_S64,         ///< signed 64 bits
+    AV_SAMPLE_FMT_S64P,        ///< signed 64 bits, planar
 
     AV_SAMPLE_FMT_NB           ///< Number of sample formats. DO NOT USE if linking dynamically
 };
@@ -116,14 +130,6 @@ enum AVSampleFormat av_get_planar_sample_fmt(enum AVSampleFormat sample_fmt);
  */
 char *av_get_sample_fmt_string(char *buf, int buf_size, enum AVSampleFormat sample_fmt);
 
-#if FF_API_GET_BITS_PER_SAMPLE_FMT
-/**
- * @deprecated Use av_get_bytes_per_sample() instead.
- */
-attribute_deprecated
-int av_get_bits_per_sample_fmt(enum AVSampleFormat sample_fmt);
-#endif
-
 /**
  * Return number of bytes per sample.
  *
@@ -155,16 +161,29 @@ int av_samples_get_buffer_size(int *linesize, int nb_channels, int nb_samples,
                                enum AVSampleFormat sample_fmt, int align);
 
 /**
- * Fill channel data pointers and linesize for samples with sample
+ * @}
+ *
+ * @defgroup lavu_sampmanip Samples manipulation
+ *
+ * Functions that manipulate audio samples
+ * @{
+ */
+
+/**
+ * Fill plane data pointers and linesize for samples with sample
  * format sample_fmt.
  *
- * The pointers array is filled with the pointers to the samples data:
+ * The audio_data array is filled with the pointers to the samples data planes:
  * for planar, set the start point of each channel's data within the buffer,
  * for packed, set the start point of the entire buffer only.
  *
- * The linesize array is filled with the aligned size of each channel's data
- * buffer for planar layout, or the aligned size of the buffer for all channels
- * for packed layout.
+ * The value pointed to by linesize is set to the aligned size of each
+ * channel's data buffer for planar layout, or to the aligned size of the
+ * buffer for all channels for packed layout.
+ *
+ * The buffer in buf must be big enough to contain all the samples
+ * (use av_samples_get_buffer_size() to compute its minimum size),
+ * otherwise the audio_data pointers will point to invalid data.
  *
  * @see enum AVSampleFormat
  * The documentation for AVSampleFormat describes the data layout.
@@ -176,7 +195,9 @@ int av_samples_get_buffer_size(int *linesize, int nb_channels, int nb_samples,
  * @param nb_samples       the number of samples in a single channel
  * @param sample_fmt       the sample format
  * @param align            buffer size alignment (0 = default, 1 = no alignment)
- * @return                 0 on success or a negative error code on failure
+ * @return                 >=0 on success or a negative error code on failure
+ * @todo return minimum size in bytes required for the buffer in case
+ * of success at the next bump
  */
 int av_samples_fill_arrays(uint8_t **audio_data, int *linesize,
                            const uint8_t *buf,
@@ -187,6 +208,7 @@ int av_samples_fill_arrays(uint8_t **audio_data, int *linesize,
  * Allocate a samples buffer for nb_samples samples, and fill data pointers and
  * linesize accordingly.
  * The allocated samples buffer can be freed by using av_freep(&audio_data[0])
+ * Allocated data will be initialized to silence.
  *
  * @see enum AVSampleFormat
  * The documentation for AVSampleFormat describes the data layout.
@@ -196,11 +218,25 @@ int av_samples_fill_arrays(uint8_t **audio_data, int *linesize,
  * @param nb_channels      number of audio channels
  * @param nb_samples       number of samples per channel
  * @param align            buffer size alignment (0 = default, 1 = no alignment)
- * @return                 0 on success or a negative error code on failure
+ * @return                 >=0 on success or a negative error code on failure
+ * @todo return the size of the allocated buffer in case of success at the next bump
  * @see av_samples_fill_arrays()
+ * @see av_samples_alloc_array_and_samples()
  */
 int av_samples_alloc(uint8_t **audio_data, int *linesize, int nb_channels,
                      int nb_samples, enum AVSampleFormat sample_fmt, int align);
+
+/**
+ * Allocate a data pointers array, samples buffer for nb_samples
+ * samples, and fill data pointers and linesize accordingly.
+ *
+ * This is the same as av_samples_alloc(), but also allocates the data
+ * pointers array.
+ *
+ * @see av_samples_alloc()
+ */
+int av_samples_alloc_array_and_samples(uint8_t ***audio_data, int *linesize, int nb_channels,
+                                       int nb_samples, enum AVSampleFormat sample_fmt, int align);
 
 /**
  * Copy samples from src to dst.
@@ -229,4 +265,8 @@ int av_samples_copy(uint8_t **dst, uint8_t * const *src, int dst_offset,
 int av_samples_set_silence(uint8_t **audio_data, int offset, int nb_samples,
                            int nb_channels, enum AVSampleFormat sample_fmt);
 
+/**
+ * @}
+ * @}
+ */
 #endif /* AVUTIL_SAMPLEFMT_H */

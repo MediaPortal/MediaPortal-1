@@ -26,54 +26,89 @@
 #ifndef AVCODEC_VP56_H
 #define AVCODEC_VP56_H
 
-#include "vp56data.h"
-#include "dsputil.h"
+#include "libavutil/mem_internal.h"
+
+#include "avcodec.h"
 #include "get_bits.h"
+#include "hpeldsp.h"
 #include "bytestream.h"
+#include "h264chroma.h"
+#include "videodsp.h"
+#include "vp3dsp.h"
 #include "vp56dsp.h"
 
 typedef struct vp56_context VP56Context;
 
-typedef struct {
-    int16_t x;
+typedef enum {
+    VP56_FRAME_NONE     =-1,
+    VP56_FRAME_CURRENT  = 0,
+    VP56_FRAME_PREVIOUS = 1,
+    VP56_FRAME_GOLDEN   = 2,
+    VP56_FRAME_GOLDEN2  = 3,
+} VP56Frame;
+
+typedef enum {
+    VP56_MB_INTER_NOVEC_PF = 0,  /**< Inter MB, no vector, from previous frame */
+    VP56_MB_INTRA          = 1,  /**< Intra MB */
+    VP56_MB_INTER_DELTA_PF = 2,  /**< Inter MB, above/left vector + delta, from previous frame */
+    VP56_MB_INTER_V1_PF    = 3,  /**< Inter MB, first vector, from previous frame */
+    VP56_MB_INTER_V2_PF    = 4,  /**< Inter MB, second vector, from previous frame */
+    VP56_MB_INTER_NOVEC_GF = 5,  /**< Inter MB, no vector, from golden frame */
+    VP56_MB_INTER_DELTA_GF = 6,  /**< Inter MB, above/left vector + delta, from golden frame */
+    VP56_MB_INTER_4V       = 7,  /**< Inter MB, 4 vectors, from previous frame */
+    VP56_MB_INTER_V1_GF    = 8,  /**< Inter MB, first vector, from golden frame */
+    VP56_MB_INTER_V2_GF    = 9,  /**< Inter MB, second vector, from golden frame */
+} VP56mb;
+
+typedef struct VP56Tree {
+  int8_t val;
+  int8_t prob_idx;
+} VP56Tree;
+
+typedef struct VP56mv {
+    DECLARE_ALIGNED(4, int16_t, x);
     int16_t y;
-} DECLARE_ALIGNED(4, , VP56mv);
+} VP56mv;
+
+#define VP56_SIZE_CHANGE 1
 
 typedef void (*VP56ParseVectorAdjustment)(VP56Context *s,
                                           VP56mv *vect);
 typedef void (*VP56Filter)(VP56Context *s, uint8_t *dst, uint8_t *src,
-                           int offset1, int offset2, int stride,
+                           int offset1, int offset2, ptrdiff_t stride,
                            VP56mv mv, int mask, int select, int luma);
-typedef void (*VP56ParseCoeff)(VP56Context *s);
+typedef int  (*VP56ParseCoeff)(VP56Context *s);
 typedef void (*VP56DefaultModelsInit)(VP56Context *s);
 typedef void (*VP56ParseVectorModels)(VP56Context *s);
 typedef int  (*VP56ParseCoeffModels)(VP56Context *s);
 typedef int  (*VP56ParseHeader)(VP56Context *s, const uint8_t *buf,
-                                int buf_size, int *golden_frame);
+                                int buf_size);
 
-typedef struct {
+typedef struct VP56RangeCoder {
     int high;
     int bits; /* stored negated (i.e. negative "bits" is a positive number of
                  bits left) in order to eliminate a negate in cache refilling */
     const uint8_t *buffer;
     const uint8_t *end;
     unsigned int code_word;
+    int end_reached;
 } VP56RangeCoder;
 
-typedef struct {
+typedef struct VP56RefDc {
     uint8_t not_null_dc;
     VP56Frame ref_frame;
-    DCTELEM dc_coeff;
+    int16_t dc_coeff;
 } VP56RefDc;
 
-typedef struct {
+typedef struct VP56Macroblock {
     uint8_t type;
     VP56mv mv;
 } VP56Macroblock;
 
-typedef struct {
+typedef struct VP56Model {
     uint8_t coeff_reorder[64];       /* used in vp6 only */
     uint8_t coeff_index_to_pos[64];  /* used in vp6 only */
+    uint8_t coeff_index_to_idct_selector[64]; /* used in vp6 only */
     uint8_t vector_sig[2];           /* delta sign */
     uint8_t vector_dct[2];           /* delta coding types */
     uint8_t vector_pdi[2][2];        /* predefined delta init */
@@ -90,11 +125,13 @@ typedef struct {
 
 struct vp56_context {
     AVCodecContext *avctx;
-    DSPContext dsp;
+    H264ChromaContext h264chroma;
+    HpelDSPContext hdsp;
+    VideoDSPContext vdsp;
+    VP3DSPContext vp3dsp;
     VP56DSPContext vp56dsp;
-    ScanTable scantable;
-    AVFrame frames[4];
-    AVFrame *framep[6];
+    uint8_t idct_scantable[64];
+    AVFrame *frames[4];
     uint8_t *edge_emu_buffer_alloc;
     uint8_t *edge_emu_buffer;
     VP56RangeCoder c;
@@ -103,6 +140,7 @@ struct vp56_context {
     int sub_version;
 
     /* frame info */
+    int golden_frame;
     int plane_width[4];
     int plane_height[4];
     int mb_width;   /* number of horizontal MB */
@@ -112,18 +150,18 @@ struct vp56_context {
     int quantizer;
     uint16_t dequant_dc;
     uint16_t dequant_ac;
-    int8_t *qscale_table;
 
     /* DC predictors management */
     VP56RefDc *above_blocks;
     VP56RefDc left_block[4];
     int above_block_idx[6];
-    DCTELEM prev_dc[3][3];    /* [plan][ref_frame] */
+    int16_t prev_dc[3][3];    /* [plan][ref_frame] */
 
     /* blocks / macroblock */
     VP56mb mb_type;
     VP56Macroblock *macroblocks;
-    DECLARE_ALIGNED(16, DCTELEM, block_coeff)[6][64];
+    DECLARE_ALIGNED(16, int16_t, block_coeff)[6][64];
+    int idct_selector[6];
 
     /* motion vectors */
     VP56mv mv[6];  /* vectors for each block in MB */
@@ -137,6 +175,7 @@ struct vp56_context {
     int filter_mode;
     int max_vector_length;
     int sample_variance_threshold;
+    DECLARE_ALIGNED(8, int, bounding_values_array)[256];
 
     uint8_t coeff_ctx[4][64];              /* used in vp5 only */
     uint8_t coeff_ctx_last[4];             /* used in vp5 only */
@@ -147,7 +186,7 @@ struct vp56_context {
     int flip;  /* are we flipping ? */
     int frbi;  /* first row block index in MB */
     int srbi;  /* second row block index in MB */
-    int stride[4];  /* stride for each plan */
+    ptrdiff_t stride[4];  /* stride for each plan */
 
     const uint8_t *vp56_coord_div;
     VP56ParseVectorAdjustment parse_vector_adjustment;
@@ -158,8 +197,11 @@ struct vp56_context {
     VP56ParseCoeffModels parse_coeff_models;
     VP56ParseHeader parse_header;
 
+    /* for "slice" parallelism between YUV and A */
+    VP56Context *alpha_context;
+
     VP56Model *modelp;
-    VP56Model models[2];
+    VP56Model model;
 
     /* huffman decoding */
     int use_huffman;
@@ -168,13 +210,19 @@ struct vp56_context {
     VLC runv_vlc[2];
     VLC ract_vlc[2][3][6];
     unsigned int nb_null[2][2];       /* number of consecutive NULL DC/AC */
+
+    int have_undamaged_frame;
+    int discard_frame;
 };
 
 
-void ff_vp56_init(AVCodecContext *avctx, int flip, int has_alpha);
+int ff_vp56_init(AVCodecContext *avctx, int flip, int has_alpha);
+int ff_vp56_init_context(AVCodecContext *avctx, VP56Context *s,
+                          int flip, int has_alpha);
 int ff_vp56_free(AVCodecContext *avctx);
+int ff_vp56_free_context(VP56Context *s);
 void ff_vp56_init_dequant(VP56Context *s, int quantizer);
-int ff_vp56_decode_frame(AVCodecContext *avctx, void *data, int *data_size,
+int ff_vp56_decode_frame(AVCodecContext *avctx, void *data, int *got_frame,
                          AVPacket *avpkt);
 
 
@@ -183,7 +231,17 @@ int ff_vp56_decode_frame(AVCodecContext *avctx, void *data, int *data_size,
  */
 
 extern const uint8_t ff_vp56_norm_shift[256];
-void ff_vp56_init_range_decoder(VP56RangeCoder *c, const uint8_t *buf, int buf_size);
+int ff_vp56_init_range_decoder(VP56RangeCoder *c, const uint8_t *buf, int buf_size);
+
+/**
+ * vp5689 returns 1 if the end of the stream has been reached, 0 otherwise.
+ */
+static av_always_inline int vpX_rac_is_end(VP56RangeCoder *c)
+{
+    if (c->end <= c->buffer && c->bits >= 0)
+        c->end_reached ++;
+    return c->end_reached > 10;
+}
 
 static av_always_inline unsigned int vp56_rac_renorm(VP56RangeCoder *c)
 {
@@ -268,7 +326,7 @@ static av_always_inline int vp8_rac_get(VP56RangeCoder *c)
     return vp56_rac_get_prob(c, 128);
 }
 
-static av_unused int vp56_rac_gets(VP56RangeCoder *c, int bits)
+static int vp56_rac_gets(VP56RangeCoder *c, int bits)
 {
     int value = 0;
 
@@ -279,7 +337,7 @@ static av_unused int vp56_rac_gets(VP56RangeCoder *c, int bits)
     return value;
 }
 
-static av_unused int vp8_rac_get_uint(VP56RangeCoder *c, int bits)
+static int vp8_rac_get_uint(VP56RangeCoder *c, int bits)
 {
     int value = 0;
 
@@ -325,7 +383,7 @@ int vp56_rac_get_tree(VP56RangeCoder *c,
                       const uint8_t *probs)
 {
     while (tree->val > 0) {
-        if (vp56_rac_get_prob(c, probs[tree->prob_idx]))
+        if (vp56_rac_get_prob_branchy(c, probs[tree->prob_idx]))
             tree += tree->val;
         else
             tree++;

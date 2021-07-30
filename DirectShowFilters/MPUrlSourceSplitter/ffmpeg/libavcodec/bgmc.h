@@ -1,6 +1,6 @@
 /*
  * Block Gilbert-Moore decoder
- * Copyright (c) 2010 Thilo Borgmann <thilo.borgmann _at_ googlemail.com>
+ * Copyright (c) 2010 Thilo Borgmann <thilo.borgmann _at_ mail.de>
  *
  * This file is part of FFmpeg.
  *
@@ -22,7 +22,7 @@
 /**
  * @file
  * Block Gilbert-Moore decoder header
- * @author Thilo Borgmann <thilo.borgmann _at_ googlemail.com>
+ * @author Thilo Borgmann <thilo.borgmann _at_ mail.de>
  */
 
 
@@ -40,7 +40,7 @@ int ff_bgmc_init(AVCodecContext *avctx, uint8_t **cf_lut, int **cf_lut_status);
 void ff_bgmc_end(uint8_t **cf_lut, int **cf_lut_status);
 
 
-void ff_bgmc_decode_init(GetBitContext *gb,
+int ff_bgmc_decode_init(GetBitContext *gb,
                       unsigned int *h, unsigned int *l, unsigned int *v);
 
 

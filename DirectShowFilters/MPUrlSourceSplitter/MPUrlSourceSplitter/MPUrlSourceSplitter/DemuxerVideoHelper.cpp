@@ -42,25 +42,25 @@ extern "C" {
 // map codec ids to media subtypes
 static struct
 {
-  CodecID codec;
+  AVCodecID codec;
   const GUID *subtype;
   unsigned codecTag;
   const GUID *format;
 } video_map[] =
 {
-  { CODEC_ID_H263,       &MEDIASUBTYPE_H263,         NULL,                   NULL },
-  { CODEC_ID_H263I,      &MEDIASUBTYPE_H263,         NULL,                   NULL },
-  { CODEC_ID_H264,       &MEDIASUBTYPE_AVC1,         MKTAG('A','V','C','1'), &FORMAT_MPEG2Video },
-  { CODEC_ID_MPEG1VIDEO, &MEDIASUBTYPE_MPEG1Payload, NULL,                   &FORMAT_MPEGVideo  },
-  { CODEC_ID_MPEG2VIDEO, &MEDIASUBTYPE_MPEG2_VIDEO,  NULL,                   &FORMAT_MPEG2Video },
-  { CODEC_ID_RV10,       &MEDIASUBTYPE_RV10,         MKTAG('R','V','1','0'), &FORMAT_VideoInfo2 },
-  { CODEC_ID_RV20,       &MEDIASUBTYPE_RV20,         MKTAG('R','V','2','0'), &FORMAT_VideoInfo2 },
-  { CODEC_ID_RV30,       &MEDIASUBTYPE_RV30,         MKTAG('R','V','3','0'), &FORMAT_VideoInfo2 },
-  { CODEC_ID_RV40,       &MEDIASUBTYPE_RV40,         MKTAG('R','V','4','0'), &FORMAT_VideoInfo2 },
-  { CODEC_ID_AMV,        &MEDIASUBTYPE_AMVV,         MKTAG('A','M','V','V'), NULL },
+  { AV_CODEC_ID_H263,       &MEDIASUBTYPE_H263,         NULL,                   NULL },
+  { AV_CODEC_ID_H263I,      &MEDIASUBTYPE_H263,         NULL,                   NULL },
+  { AV_CODEC_ID_H264,       &MEDIASUBTYPE_AVC1,         MKTAG('A','V','C','1'), &FORMAT_MPEG2Video },
+  { AV_CODEC_ID_MPEG1VIDEO, &MEDIASUBTYPE_MPEG1Payload, NULL,                   &FORMAT_MPEGVideo  },
+  { AV_CODEC_ID_MPEG2VIDEO, &MEDIASUBTYPE_MPEG2_VIDEO,  NULL,                   &FORMAT_MPEG2Video },
+  { AV_CODEC_ID_RV10,       &MEDIASUBTYPE_RV10,         MKTAG('R','V','1','0'), &FORMAT_VideoInfo2 },
+  { AV_CODEC_ID_RV20,       &MEDIASUBTYPE_RV20,         MKTAG('R','V','2','0'), &FORMAT_VideoInfo2 },
+  { AV_CODEC_ID_RV30,       &MEDIASUBTYPE_RV30,         MKTAG('R','V','3','0'), &FORMAT_VideoInfo2 },
+  { AV_CODEC_ID_RV40,       &MEDIASUBTYPE_RV40,         MKTAG('R','V','4','0'), &FORMAT_VideoInfo2 },
+  { AV_CODEC_ID_AMV,        &MEDIASUBTYPE_AMVV,         MKTAG('A','M','V','V'), NULL },
 };
 
-CMediaType CDemuxerVideoHelper::InitVideoType(CodecID codecId, unsigned int &codecTag, const wchar_t *container)
+CMediaType CDemuxerVideoHelper::InitVideoType(AVCodecID codecId, unsigned int &codecTag, const wchar_t *container)
 {
   CMediaType mediaType;
   mediaType.InitMediaType();
@@ -94,22 +94,22 @@ CMediaType CDemuxerVideoHelper::InitVideoType(CodecID codecId, unsigned int &cod
   switch(codecId)
   {
   // all these codecs should use VideoInfo2
-  case CODEC_ID_ASV1:
-  case CODEC_ID_ASV2:
-  case CODEC_ID_FLV1:
-  case CODEC_ID_HUFFYUV:
-  case CODEC_ID_WMV3:
+  case AV_CODEC_ID_ASV1:
+  case AV_CODEC_ID_ASV2:
+  case AV_CODEC_ID_FLV1:
+  case AV_CODEC_ID_HUFFYUV:
+  case AV_CODEC_ID_WMV3:
     mediaType.formattype = FORMAT_VideoInfo2;
     break;
-  case CODEC_ID_MPEG4:
+  case AV_CODEC_ID_MPEG4:
     mediaType.formattype = (wcscmp(container, L"mp4") == 0) ? FORMAT_MPEG2Video : FORMAT_VideoInfo2;
     break;
-  case CODEC_ID_VC1:
+  case AV_CODEC_ID_VC1:
     CHECK_CONDITION_EXECUTE(codecTag != MKTAG('W','M','V','A'), codecTag = MKTAG('W','V','C','1'));
     mediaType.formattype = FORMAT_VideoInfo2;
     mediaType.subtype = FOURCCMap(codecTag);
     break;
-  case CODEC_ID_DVVIDEO:
+  case AV_CODEC_ID_DVVIDEO:
     CHECK_CONDITION_EXECUTE(codecTag == 0, mediaType.subtype = MEDIASUBTYPE_DVCP);
     break;
   }
@@ -165,9 +165,10 @@ VIDEOINFOHEADER *CDemuxerVideoHelper::CreateVIH(const AVStream *stream, ULONG *s
     pvi->bmiHeader.biBitCount = stream->codec->bits_per_coded_sample;
 
     // validate biBitCount is set to something useful
-    if ((pvi->bmiHeader.biBitCount == 0) || (stream->codec->codec_id == CODEC_ID_RAWVIDEO))
+    if ((pvi->bmiHeader.biBitCount == 0) || (stream->codec->codec_id == AV_CODEC_ID_RAWVIDEO))
     {
-      pvi->bmiHeader.biBitCount = av_get_bits_per_pixel2(stream->codec->pix_fmt);
+      const AVPixFmtDescriptor *desc = av_pix_fmt_desc_get(stream->codec->pix_fmt);
+      pvi->bmiHeader.biBitCount = av_get_bits_per_pixel(desc);
     }
     pvi->bmiHeader.biSizeImage = DIBSIZE(pvi->bmiHeader);   // calculating this value doesn't really make a lot of sense, but apparently some decoders freak out if its 0
 
@@ -208,7 +209,7 @@ VIDEOINFOHEADER2 *CDemuxerVideoHelper::CreateVIH2(const AVStream *stream, ULONG 
     BYTE *extraData = NULL;
     BOOL zeroPad = FALSE;
 
-    if ((stream->codec->codec_id == CODEC_ID_VC1) && (stream->codec->extradata_size))
+    if ((stream->codec->codec_id == AV_CODEC_ID_VC1) && (stream->codec->extradata_size))
     {
       int i = 0;
       for (i = 0; i < (stream->codec->extradata_size - 4); i++)
@@ -278,7 +279,7 @@ VIDEOINFOHEADER2 *CDemuxerVideoHelper::CreateVIH2(const AVStream *stream, ULONG 
         }
         else
         {
-          if (stream->codec->codec_id == CODEC_ID_RV40)
+          if (stream->codec->codec_id == AV_CODEC_ID_RV40)
           {
             AVDictionaryEntry *w = av_dict_get(stream->metadata, "rm_width", NULL, 0);
             AVDictionaryEntry *h = av_dict_get(stream->metadata, "rm_height", NULL, 0);
@@ -491,7 +492,7 @@ MPEG2VIDEOINFO *CDemuxerVideoHelper::CreateMPEG2VI(const AVStream *stream, ULONG
           bool copyUntouched = false;
           
           // don't even go there for mpeg-ts for now, we supply annex-b
-          if ((stream->codec->codec_id == CODEC_ID_H264) && (!annexB))
+          if ((stream->codec->codec_id == AV_CODEC_ID_H264) && (!annexB))
           {
             if (*(char *)extraData == 1)
             {
@@ -515,7 +516,7 @@ MPEG2VIDEOINFO *CDemuxerVideoHelper::CreateMPEG2VI(const AVStream *stream, ULONG
               mp2vi->cbSequenceHeader = (DWORD)avc_parse_annexb(extraData, extra, (BYTE *)(&mp2vi->dwSequenceHeader[0]));
             }
           }
-          else if (stream->codec->codec_id == CODEC_ID_MPEG2VIDEO)
+          else if (stream->codec->codec_id == AV_CODEC_ID_MPEG2VIDEO)
           {
             CExtraDataParser parser = CExtraDataParser(extraData, extra);
             mp2vi->cbSequenceHeader = (DWORD)parser.ParseMPEGSequenceHeader((BYTE *)&mp2vi->dwSequenceHeader[0]);

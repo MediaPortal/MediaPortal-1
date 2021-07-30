@@ -38,7 +38,7 @@
 
 #define MIN_ISF_SPACING     (128.0 / 32768.0) ///< minimum isf gap
 #define PRED_FACTOR         (1.0 / 3.0)
-#define MIN_ENERGY         -14.0              ///< initial innnovation energy (dB)
+#define MIN_ENERGY         -14.0              ///< initial innovation energy (dB)
 #define ENERGY_MEAN         30.0              ///< mean innovation energy (dB) in all modes
 #define PREEMPH_FAC         0.68              ///< factor used to de-emphasize synthesis
 
@@ -66,7 +66,7 @@ enum Mode {
 
 /* All decoded parameters in these structs must be 2 bytes long
  * because of the direct indexing at the frame parsing */
-typedef struct {
+typedef struct AMRWBSubFrame {
     uint16_t adap;                         ///< adaptive codebook index
     uint16_t ltp;                          ///< ltp-filtering flag
     uint16_t vq_gain;                      ///< VQ adaptive and innovative gains
@@ -75,14 +75,14 @@ typedef struct {
     uint16_t pul_il[4];                    ///< LSBs part of codebook index
 } AMRWBSubFrame;
 
-typedef struct {
+typedef struct AMRWBFrame {
     uint16_t vad;                          ///< voice activity detection flag
     uint16_t isp_id[7];                    ///< index of ISP subvectors
     AMRWBSubFrame subframe[4];             ///< data for subframes
 } AMRWBFrame;
 
 /** The index of a frame parameter */
-#define AMR_BIT(field)                  (offsetof(AMRWBFrame, field) >> 1)
+#define AMR_BIT(field)                  (offsetof(AMRWBFrame, field))
 /** The index of a subframe-specific parameter */
 #define AMR_OF(frame_num, variable)     AMR_BIT(subframe[frame_num].variable)
 
@@ -673,7 +673,7 @@ static const uint16_t order_MODE_23k85[] = {
 };
 
 /** Reordering array addresses for each mode */
-static const uint16_t* amr_bit_orderings_by_mode[] = {
+static const uint16_t * const amr_bit_orderings_by_mode[] = {
     order_MODE_6k60,
     order_MODE_8k85,
     order_MODE_12k65,
@@ -1884,7 +1884,7 @@ static const float lpf_7_coef[31] = { // low pass, 7kHz cutoff
 /** Core frame sizes in each mode */
 static const uint16_t cf_sizes_wb[] = {
     132, 177, 253, 285, 317, 365, 397, 461, 477,
-    40 /// SID/comfort noise frame
+    40, 0, 0, 0, 0, 0, 0
 };
 
 #endif /* AVCODEC_AMRWBDATA_H */

@@ -3,8 +3,8 @@
  * ported to MPlayer by Arpi <arpi@thot.banki.hu>
  * ported to libavcodec by Nick Kurshev <nickols_k@mail.ru>
  *
- * Copyright (C) 2002 the xine project
- * Copyright (C) 2002 the ffmpeg project
+ * Copyright (c) 2002 The Xine project
+ * Copyright (c) 2002 The FFmpeg project
  *
  * This file is part of FFmpeg.
  *
@@ -34,7 +34,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "libavutil/mem.h"
+#include "libavutil/mem_internal.h"
 
 /* 6x16-entry codebook for inter-coded 4x2 vectors */
 DECLARE_ALIGNED(4, static const int8_t, svq1_inter_codebook_4x2)[768] = {

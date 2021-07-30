@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <math.h>
 #include "libavutil/attributes.h"
+#include "qdm2data.h"
 
 #define SOFTCLIP_THRESHOLD 27600
 #define HARDCLIP_THRESHOLD 35716
@@ -34,10 +35,11 @@
 #define softclip_table_init()
 #define rnd_table_init()
 #define init_noise_samples()
+#define qdm2_init_vlc()
 #include "libavcodec/qdm2_tables.h"
 #else
 static uint16_t softclip_table[HARDCLIP_THRESHOLD - SOFTCLIP_THRESHOLD + 1];
-static float noise_table[4096];
+static float noise_table[4096 + 20];
 static uint8_t random_dequant_index[256][5];
 static uint8_t random_dequant_type24[128][3];
 static float noise_samples[128];
@@ -54,8 +56,7 @@ static av_cold void softclip_table_init(void) {
 // random generated table
 static av_cold void rnd_table_init(void) {
     int i,j;
-    uint32_t ldw,hdw;
-    uint64_t tmp64_1;
+    uint32_t ldw;
     uint64_t random_seed = 0;
     float delta = 1.0 / 16384.0;
     for(i = 0; i < 4096 ;i++) {
@@ -67,22 +68,18 @@ static av_cold void rnd_table_init(void) {
         random_seed = 81;
         ldw = i;
         for (j = 0; j < 5 ;j++) {
-            random_dequant_index[i][j] = (uint8_t)((ldw / random_seed) & 0xFF);
-            ldw = (uint32_t)ldw % (uint32_t)random_seed;
-            tmp64_1 = (random_seed * 0x55555556);
-            hdw = (uint32_t)(tmp64_1 >> 32);
-            random_seed = (uint64_t)(hdw + (ldw >> 31));
+            random_dequant_index[i][j] = ldw / random_seed;
+            ldw %= random_seed;
+            random_seed /= 3;
         }
     }
     for (i = 0; i < 128 ;i++) {
         random_seed = 25;
         ldw = i;
         for (j = 0; j < 3 ;j++) {
-            random_dequant_type24[i][j] = (uint8_t)((ldw / random_seed) & 0xFF);
-            ldw = (uint32_t)ldw % (uint32_t)random_seed;
-            tmp64_1 = (random_seed * 0x66666667);
-            hdw = (uint32_t)(tmp64_1 >> 33);
-            random_seed = hdw + (ldw >> 31);
+            random_dequant_type24[i][j] = ldw / random_seed;
+            ldw %= random_seed;
+            random_seed /= 5;
         }
     }
 }
@@ -97,6 +94,63 @@ static av_cold void init_noise_samples(void) {
         noise_samples[i] = (delta * (float)((random_seed >> 16) & 0x00007fff) - 1.0);
     }
 }
+
+static VLC vlc_tab_level;
+static VLC vlc_tab_diff;
+static VLC vlc_tab_run;
+static VLC fft_level_exp_alt_vlc;
+static VLC fft_level_exp_vlc;
+static VLC fft_stereo_exp_vlc;
+static VLC fft_stereo_phase_vlc;
+static VLC vlc_tab_tone_level_idx_hi1;
+static VLC vlc_tab_tone_level_idx_mid;
+static VLC vlc_tab_tone_level_idx_hi2;
+static VLC vlc_tab_type30;
+static VLC vlc_tab_type34;
+static VLC vlc_tab_fft_tone_offset[5];
+
+static VLC_TYPE qdm2_table[3838][2];
+
+static av_cold void build_vlc(VLC *vlc, int nb_bits, int nb_codes,
+                              unsigned *offset, const uint8_t tab[][2])
+{
+    vlc->table           = &qdm2_table[*offset];
+    vlc->table_allocated = FF_ARRAY_ELEMS(qdm2_table) - *offset;
+    ff_init_vlc_from_lengths(vlc, nb_bits, nb_codes,
+                             &tab[0][1], 2, &tab[0][0], 2, 1,
+                             -1, INIT_VLC_STATIC_OVERLONG | INIT_VLC_LE, NULL);
+    *offset += vlc->table_size;
+}
+
+static av_cold void qdm2_init_vlc(void)
+{
+    const uint8_t (*tab)[2] = tab_fft_tone_offset;
+    unsigned offset = 0;
+
+    build_vlc(&vlc_tab_level, 8, 24, &offset, tab_level);
+    build_vlc(&vlc_tab_diff,  8, 33, &offset, tab_diff);
+    build_vlc(&vlc_tab_run,   5,  6, &offset, tab_run);
+
+    build_vlc(&fft_level_exp_alt_vlc, 8, 28, &offset, fft_level_exp_alt);
+    build_vlc(&fft_level_exp_vlc,     8, 20, &offset, fft_level_exp);
+
+    build_vlc(&fft_stereo_exp_vlc,   6, 7, &offset, fft_stereo_exp);
+    build_vlc(&fft_stereo_phase_vlc, 6, 9, &offset, fft_stereo_phase);
+
+    build_vlc(&vlc_tab_tone_level_idx_hi1, 8, 20, &offset, tab_tone_level_idx_hi1);
+    build_vlc(&vlc_tab_tone_level_idx_mid, 8, 13, &offset, tab_tone_level_idx_mid);
+    build_vlc(&vlc_tab_tone_level_idx_hi2, 8, 18, &offset, tab_tone_level_idx_hi2);
+
+    build_vlc(&vlc_tab_type30, 6,  9, &offset, tab_type30);
+    build_vlc(&vlc_tab_type34, 5, 10, &offset, tab_type34);
+
+    for (int i = 0; i < 5; i++) {
+        build_vlc(&vlc_tab_fft_tone_offset[i], 8, tab_fft_tone_offset_sizes[i],
+                  &offset, tab);
+        tab += tab_fft_tone_offset_sizes[i];
+    }
+}
+
 #endif /* CONFIG_HARDCODED_TABLES */
 
 #endif /* AVCODEC_QDM2_TABLEGEN_H */

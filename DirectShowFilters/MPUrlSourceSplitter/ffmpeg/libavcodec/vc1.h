@@ -24,36 +24,13 @@
 #define AVCODEC_VC1_H
 
 #include "avcodec.h"
+#include "h264chroma.h"
 #include "mpegvideo.h"
 #include "intrax8.h"
+#include "vc1_common.h"
 #include "vc1dsp.h"
 
 #define AC_VLC_BITS 9
-
-/** Markers used in VC-1 AP frame data */
-//@{
-enum VC1Code {
-    VC1_CODE_RES0       = 0x00000100,
-    VC1_CODE_ENDOFSEQ   = 0x0000010A,
-    VC1_CODE_SLICE,
-    VC1_CODE_FIELD,
-    VC1_CODE_FRAME,
-    VC1_CODE_ENTRYPOINT,
-    VC1_CODE_SEQHDR,
-};
-//@}
-
-#define IS_MARKER(x) (((x) & ~0xFF) == VC1_CODE_RES0)
-
-/** Available Profiles */
-//@{
-enum Profile {
-    PROFILE_SIMPLE,
-    PROFILE_MAIN,
-    PROFILE_COMPLEX, ///< TODO: WMV9 specific
-    PROFILE_ADVANCED
-};
-//@}
 
 /** Sequence quantizer mode */
 //@{
@@ -96,7 +73,7 @@ enum DQDoubleEdge {
 };
 //@}
 
-/** MV modes for P frames */
+/** MV modes for P-frames */
 //@{
 enum MVModes {
     MV_PMODE_1MV_HPEL_BILIN,
@@ -119,7 +96,7 @@ enum MBModesIntfr {
 };
 //@}
 
-/** @name MV types for B frames */
+/** @name MV types for B-frames */
 //@{
 enum BMVTypes {
     BMV_TYPE_BACKWARD,
@@ -129,7 +106,7 @@ enum BMVTypes {
 };
 //@}
 
-/** @name Block types for P/B frames */
+/** @name Block types for P/B-frames */
 //@{
 enum TransformTypes {
     TT_8X8,
@@ -174,6 +151,21 @@ enum FrameCodingMode {
     ILACE_FIELD         ///<  in the bitstream is reported as 11b
 };
 
+/**
+ * Imode types
+ * @{
+ */
+enum Imode {
+    IMODE_RAW,
+    IMODE_NORM2,
+    IMODE_DIFF2,
+    IMODE_NORM6,
+    IMODE_DIFF6,
+    IMODE_ROWSKIP,
+    IMODE_COLSKIP
+};
+/** @} */ //imode defines
+
 /** The VC1 Context
  * @todo Change size wherever another size is more efficient
  * Many members are only used for Advanced Profile
@@ -181,9 +173,8 @@ enum FrameCodingMode {
 typedef struct VC1Context{
     MpegEncContext s;
     IntraX8Context x8;
+    H264ChromaContext h264chroma;
     VC1DSPContext vc1dsp;
-
-    int bits;
 
     /** Simple/Main Profile sequence header */
     //@{
@@ -201,18 +192,18 @@ typedef struct VC1Context{
 
     /** Advanced Profile */
     //@{
-    int level;            ///< 3bits, for Advanced/Simple Profile, provided by TS layer
-    int chromaformat;     ///< 2bits, 2=4:2:0, only defined
+    int level;            ///< 3 bits, for Advanced/Simple Profile, provided by TS layer
+    int chromaformat;     ///< 2 bits, 2=4:2:0, only defined
     int postprocflag;     ///< Per-frame processing suggestion flag present
     int broadcast;        ///< TFF/RFF present
     int interlace;        ///< Progressive/interlaced (RPTFTM syntax element)
     int tfcntrflag;       ///< TFCNTR present
     int panscanflag;      ///< NUMPANSCANWIN, TOPLEFT{X,Y}, BOTRIGHT{X,Y} present
     int refdist_flag;     ///< REFDIST syntax element present in II, IP, PI or PP field picture headers
-    int extended_dmv;     ///< Additional extended dmv range at P/B frame-level
-    int color_prim;       ///< 8bits, chroma coordinates of the color primaries
-    int transfer_char;    ///< 8bits, Opto-electronic transfer characteristics
-    int matrix_coef;      ///< 8bits, Color primaries->YCbCr transform matrix
+    int extended_dmv;     ///< Additional extended dmv range at P/B-frame-level
+    int color_prim;       ///< 8 bits, chroma coordinates of the color primaries
+    int transfer_char;    ///< 8 bits, Opto-electronic transfer characteristics
+    int matrix_coef;      ///< 8 bits, Color primaries->YCbCr transform matrix
     int hrd_param_flag;   ///< Presence of Hypothetical Reference
                           ///< Decoder parameters
     int psf;              ///< Progressive Segmented Frame
@@ -222,22 +213,23 @@ typedef struct VC1Context{
      * TODO: choose between ints, uint8_ts and monobit flags
      */
     //@{
-    int profile;          ///< 2bits, Profile
-    int frmrtq_postproc;  ///< 3bits,
-    int bitrtq_postproc;  ///< 5bits, quantized framerate-based postprocessing strength
+    int profile;          ///< 2 bits, Profile
+    int frmrtq_postproc;  ///< 3 bits,
+    int bitrtq_postproc;  ///< 5 bits, quantized framerate-based postprocessing strength
+    int max_coded_width, max_coded_height;
     int fastuvmc;         ///< Rounding of qpel vector to hpel ? (not in Simple)
     int extended_mv;      ///< Ext MV in P/B (not in Simple)
-    int dquant;           ///< How qscale varies with MBs, 2bits (not in Simple)
+    int dquant;           ///< How qscale varies with MBs, 2 bits (not in Simple)
     int vstransform;      ///< variable-size [48]x[48] transform type + info
     int overlap;          ///< overlapped transforms in use
-    int quantizer_mode;   ///< 2bits, quantizer mode used for sequence, see QUANT_*
+    int quantizer_mode;   ///< 2 bits, quantizer mode used for sequence, see QUANT_*
     int finterpflag;      ///< INTERPFRM present
     //@}
 
     /** Frame decoding info for all profiles */
     //@{
-    uint8_t mv_mode;             ///< MV coding monde
-    uint8_t mv_mode2;            ///< Secondary MV coding mode (B frames)
+    uint8_t mv_mode;             ///< MV coding mode
+    uint8_t mv_mode2;            ///< Secondary MV coding mode (B-frames)
     int k_x;                     ///< Number of bits for MVs (depends on MV range)
     int k_y;                     ///< Number of bits for MVs (depends on MV range)
     int range_x, range_y;        ///< MV range
@@ -296,9 +288,13 @@ typedef struct VC1Context{
     int dmb_is_raw;                 ///< direct mb plane is raw
     int fmb_is_raw;                 ///< forward mb plane is raw
     int skip_is_raw;                ///< skip mb plane is not coded
-    uint8_t luty[256], lutuv[256];  ///< lookup tables used for intensity compensation
-    int use_ic;                     ///< use intensity compensation in B-frames
+    uint8_t last_luty[2][256], last_lutuv[2][256];  ///< lookup tables used for intensity compensation
+    uint8_t  aux_luty[2][256],  aux_lutuv[2][256];  ///< lookup tables used for intensity compensation
+    uint8_t next_luty[2][256], next_lutuv[2][256];  ///< lookup tables used for intensity compensation
+    uint8_t (*curr_luty)[256]  ,(*curr_lutuv)[256];
+    int last_use_ic, *curr_use_ic, next_use_ic, aux_use_ic;
     int rnd;                        ///< rounding control
+    int cbptab;
 
     /** Frame decoding info for S/M profiles only */
     //@{
@@ -340,7 +336,6 @@ typedef struct VC1Context{
     int intcomp;
     uint8_t lumscale2;  ///< for interlaced field P picture
     uint8_t lumshift2;
-    uint8_t luty2[256], lutuv2[256]; // lookup tables used for intensity compensation
     VLC* mbmode_vlc;
     VLC* imv_vlc;
     VLC* twomvbp_vlc;
@@ -352,7 +347,6 @@ typedef struct VC1Context{
     uint8_t zzi_8x8[64];
     uint8_t *blk_mv_type_base, *blk_mv_type;    ///< 0: frame MV, 1: field MV (interlaced frame)
     uint8_t *mv_f_base, *mv_f[2];               ///< 0: MV obtained from same field, 1: opposite field
-    uint8_t *mv_f_last_base, *mv_f_last[2];
     uint8_t *mv_f_next_base, *mv_f_next[2];
     int field_mode;         ///< 1 for interlaced field pictures
     int fptype;
@@ -370,13 +364,19 @@ typedef struct VC1Context{
     int qs_last;            ///< if qpel has been used in the previous (tr.) picture
     int bmvtype;
     int frfd, brfd;         ///< reference frame distance (forward or backward)
+    int first_pic_header_flag;
     int pic_header_flag;
+    int mbmodetab;
+    int icbptab;
+    int imvtab;
+    int twomvbptab;
+    int fourmvbptab;
 
     /** Frame decoding info for sprite modes */
     //@{
     int new_sprite;
     int two_sprites;
-    AVFrame sprite_output_frame;
+    AVFrame *sprite_output_frame;
     int output_width, output_height, sprite_width, sprite_height;
     uint8_t* sr_rows[2][2];      ///< Sprite resizer line cache
     //@}
@@ -385,7 +385,7 @@ typedef struct VC1Context{
     int bi_type;
     int x8_type;
 
-    DCTELEM (*block)[6][64];
+    int16_t (*block)[6][64];
     int n_allocated_blks, cur_blk_idx, left_blk_idx, topleft_blk_idx, top_blk_idx;
     uint32_t *cbp_base, *cbp;
     uint8_t *is_intra_base, *is_intra;
@@ -394,47 +394,13 @@ typedef struct VC1Context{
     uint8_t broken_link;         ///< Broken link flag (BROKEN_LINK syntax element)
     uint8_t closed_entry;        ///< Closed entry point flag (CLOSED_ENTRY syntax element)
 
+    int end_mb_x;                ///< Horizontal macroblock limit (used only by mss2)
+
     int parse_only;              ///< Context is used within parser
+    int resync_marker;           ///< could this stream contain resync markers
 
-    int warn_interlaced;
+    int recovered;
 } VC1Context;
-
-/** Find VC-1 marker in buffer
- * @return position where next marker starts or end of buffer if no marker found
- */
-static av_always_inline const uint8_t* find_next_marker(const uint8_t *src, const uint8_t *end)
-{
-    uint32_t mrk = 0xFFFFFFFF;
-
-    if (end-src < 4)
-        return end;
-    while (src < end) {
-        mrk = (mrk << 8) | *src++;
-        if (IS_MARKER(mrk))
-            return src - 4;
-    }
-    return end;
-}
-
-static av_always_inline int vc1_unescape_buffer(const uint8_t *src, int size, uint8_t *dst)
-{
-    int dsize = 0, i;
-
-    if (size < 4) {
-        for (dsize = 0; dsize < size; dsize++)
-            *dst++ = *src++;
-        return size;
-    }
-    for (i = 0; i < size; i++, src++) {
-        if (src[0] == 3 && i >= 2 && !src[-1] && !src[-2] && i < size-1 && src[1] < 4) {
-            dst[dsize++] = src[1];
-            src++;
-            i++;
-        } else
-            dst[dsize++] = *src;
-    }
-    return dsize;
-}
 
 /**
  * Decode Simple/Main Profiles sequence header
@@ -450,5 +416,24 @@ int ff_vc1_decode_entry_point(AVCodecContext *avctx, VC1Context *v, GetBitContex
 int ff_vc1_parse_frame_header    (VC1Context *v, GetBitContext *gb);
 int ff_vc1_parse_frame_header_adv(VC1Context *v, GetBitContext *gb);
 int ff_vc1_init_common(VC1Context *v);
+
+int  ff_vc1_decode_init_alloc_tables(VC1Context *v);
+void ff_vc1_init_transposed_scantables(VC1Context *v);
+int  ff_vc1_decode_end(AVCodecContext *avctx);
+void ff_vc1_decode_blocks(VC1Context *v);
+
+void ff_vc1_i_overlap_filter(VC1Context *v);
+void ff_vc1_p_overlap_filter(VC1Context *v);
+void ff_vc1_i_loop_filter(VC1Context *v);
+void ff_vc1_p_loop_filter(VC1Context *v);
+void ff_vc1_p_intfr_loop_filter(VC1Context *v);
+void ff_vc1_b_intfi_loop_filter(VC1Context *v);
+
+void ff_vc1_mc_1mv(VC1Context *v, int dir);
+void ff_vc1_mc_4mv_luma(VC1Context *v, int n, int dir, int avg);
+void ff_vc1_mc_4mv_chroma(VC1Context *v, int dir);
+void ff_vc1_mc_4mv_chroma4(VC1Context *v, int dir, int dir2, int avg);
+
+void ff_vc1_interp_mc(VC1Context *v);
 
 #endif /* AVCODEC_VC1_H */

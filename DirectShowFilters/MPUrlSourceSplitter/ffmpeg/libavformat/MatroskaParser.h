@@ -121,6 +121,8 @@ struct TrackInfo {
   ulonglong	  MinCache;
   ulonglong	  MaxCache;
   ulonglong	  DefaultDuration;
+  ulonglong	  CodecDelay;
+  ulonglong	  SeekPreRoll;
   MKFLOAT	  TimecodeScale;
   void		  *CodecPrivate;
   unsigned	  CodecPrivateSize;
@@ -148,6 +150,42 @@ struct TrackInfo {
       unsigned int    CropL, CropT, CropR, CropB;
       unsigned int    ColourSpace;
       MKFLOAT	      GammaValue;
+      struct {
+          unsigned int MatrixCoefficients;
+          unsigned int BitsPerChannel;
+          unsigned int ChromaSubsamplingHorz;
+          unsigned int ChromaSubsamplingVert;
+          unsigned int CbSubsamplingHorz;
+          unsigned int CbSubsamplingVert;
+          unsigned int ChromaSitingHorz;
+          unsigned int ChromaSitingVert;
+          unsigned int Range;
+          unsigned int TransferCharacteristics;
+          unsigned int Primaries;
+          unsigned int MaxCLL;
+          unsigned int MaxFALL;
+          struct {
+              float PrimaryRChromaticityX;
+              float PrimaryRChromaticityY;
+              float PrimaryGChromaticityX;
+              float PrimaryGChromaticityY;
+              float PrimaryBChromaticityX;
+              float PrimaryBChromaticityY;
+              float WhitePointChromaticityX;
+              float WhitePointChromaticityY;
+              float LuminanceMax;
+              float LuminanceMin;
+          } MasteringMetadata;
+      } Colour;
+
+      struct {
+        unsigned int ProjectionType;
+        char ProjectionPrivate[20];
+        unsigned ProjectionPrivateSize;
+        MKFLOAT ProjectionPoseYaw;
+        MKFLOAT ProjectionPosePitch;
+        MKFLOAT ProjectionPoseRoll;
+      } Projection;
 
       unsigned int  Interlaced:1;
     } Video;
@@ -163,6 +201,8 @@ struct TrackInfo {
   char			*Name;
   char			Language[4];
   char			*CodecID;
+
+  unsigned int NeedKeyframes;
 };
 
 typedef struct TrackInfo  TrackInfo;
@@ -244,7 +284,9 @@ typedef struct Chapter	Chapter;
 
 struct Cue {
   ulonglong        Time;
+  ulonglong        Duration;
   ulonglong        Position;
+  ulonglong        RelativePosition;
   ulonglong        Block;
   unsigned char        Track;
 };
@@ -292,6 +334,11 @@ X MatroskaFile  *mkv_OpenEx(/* in */  InputStream *io,
 			  /* out */ char *err_msg,
 			  /* in */  unsigned msgsize);
 
+/* Open the file and only parse enough information to find the segment uid */
+X MatroskaFile  *mkv_OpenSparse(/* in */ InputStream *io,
+        /* out */ char *err_msg,
+        /* in */  unsigned msgsize);
+
 /* Close and deallocate mf
  * NULL pointer is ok and is simply ignored
  */
@@ -334,6 +381,8 @@ X void	      mkv_Seek(/* in */ MatroskaFile *mf,
 		       /* in */	ulonglong timecode /* in ns */,
 		       /* in */ unsigned flags);
 
+X void mkv_Seek_CueAware(MatroskaFile *mf, ulonglong timecode, unsigned flags, unsigned fuzzy);
+
 X void	      mkv_SkipToKeyframe(MatroskaFile *mf);
 
 X ulonglong   mkv_GetLowestQTimecode(MatroskaFile *mf);
@@ -372,7 +421,11 @@ X int	      mkv_ReadFrame(/* in */  MatroskaFile *mf,
 			    /* out */ ulonglong *FilePos /* in bytes from start of file */,
 			    /* out */ unsigned int *FrameSize /* in bytes */,
 			    /* out */ char **FrameData,
-			    /* out */ unsigned int *FrameFlags);
+			    /* out */ unsigned int *FrameFlags,
+			    /* out */ longlong *FrameDiscard,
+			    /* out */ unsigned int *FrameAdditionalSize, /* in bytes */
+			    /* out */ char **FrameAdditionalData,
+			    /* out */ unsigned int *FrameAdditionalID);
 
 #ifdef MATROSKA_COMPRESSION_SUPPORT
 /* Compressed streams support */

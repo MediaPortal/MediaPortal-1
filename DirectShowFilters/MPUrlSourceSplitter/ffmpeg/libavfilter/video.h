@@ -18,19 +18,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
 #ifndef AVFILTER_VIDEO_H
 #define AVFILTER_VIDEO_H
 
 #include "avfilter.h"
 
-AVFilterBufferRef *ff_default_get_video_buffer(AVFilterLink *link,
-                                               int perms, int w, int h);
-AVFilterBufferRef *ff_null_get_video_buffer(AVFilterLink *link, int perms, int w, int h);
+AVFrame *ff_default_get_video_buffer(AVFilterLink *link, int w, int h);
+AVFrame *ff_null_get_video_buffer(AVFilterLink *link, int w, int h);
 
-
-void ff_null_start_frame(AVFilterLink *link, AVFilterBufferRef *picref);
-void ff_null_draw_slice(AVFilterLink *link, int y, int h, int slice_dir);
-void ff_null_end_frame(AVFilterLink *link);
+/**
+ * Request a picture buffer with a specific set of permissions.
+ *
+ * @param link  the output link to the filter from which the buffer will
+ *              be requested
+ * @param w     the minimum width of the buffer to allocate
+ * @param h     the minimum height of the buffer to allocate
+ * @return      A reference to the buffer. This must be unreferenced with
+ *              avfilter_unref_buffer when you are finished with it.
+ */
+AVFrame *ff_get_video_buffer(AVFilterLink *link, int w, int h);
 
 #endif /* AVFILTER_VIDEO_H */
