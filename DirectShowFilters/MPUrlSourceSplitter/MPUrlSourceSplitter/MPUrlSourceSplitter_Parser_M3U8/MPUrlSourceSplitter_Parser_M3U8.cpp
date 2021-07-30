@@ -190,10 +190,12 @@ HRESULT CMPUrlSourceSplitter_Parser_M3U8::GetParserResult(void)
 
                       if (SUCCEEDED(this->parserResult))
                       {
-                        this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_GET_PARSER_RESULT_NAME, L"M3U8 file");
-                        this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_GET_PARSER_RESULT_NAME, tempBuffer);
-
                         CMediaPlaylist *mediaPlaylist = factory->CreateMediaPlaylist(&this->parserResult, tempBuffer, tempBufferLength);
+                        if (mediaPlaylist != NULL)
+                        {
+                          this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_GET_PARSER_RESULT_NAME, L"M3U8 file");
+                          this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_GET_PARSER_RESULT_NAME, tempBuffer);
+                        }
 
                         if (this->parserResult == E_M3U8_NOT_PLAYLIST)
                         {
