@@ -10,6 +10,7 @@ extern "C++" CStaticLogger *staticLogger;
 int main(int argc, const char * argv[])
 {
   remove("C:\\ProgramData\\Team MediaPortal\\MediaPortal\\log\\MPUrlSourceSplitter.log");
+  remove("D:\\res.mp4");
   LPUNKNOWN lpunk = NULL;
   HRESULT phr = S_OK;
   staticLogger = new CStaticLogger(&phr);
