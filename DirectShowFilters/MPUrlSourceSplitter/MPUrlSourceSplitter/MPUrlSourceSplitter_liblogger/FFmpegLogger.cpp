@@ -246,6 +246,9 @@ void CFFmpegLogger::Log(unsigned int logLevel, const wchar_t *format, va_list vl
 
 void CFFmpegLogger::LogCallback(void *ptr, int log_level, const char *format, va_list vl)
 {
+  if (log_level > AV_LOG_VERBOSE)
+    return;
+
   LOCK_MUTEX(ffmpegLogger->mutex, INFINITE)
 
   bool logged = false;
