@@ -1723,14 +1723,14 @@ CM3u8StreamFragmentCollection *CMPUrlSourceSplitter_Protocol_M3u8::GetStreamFrag
         sequenceNumber = firstFragment->GetSequenceNumber();
       }
 
-      if (lastStreamFragment == NULL)
+      CM3u8FragmentCollection* fragments = playlist->GetFragments();
+      if (lastStreamFragment == NULL && fragments->Count() > 3)
       {
         time_t nowt = std::time(0);
         tm* now = gmtime(&nowt);
         time_t nowinutc = mktime(now);
 
         unsigned int lastValidDateEarlierThanNowIndexPlus1 = 0;
-        CM3u8FragmentCollection* fragments = playlist->GetFragments();
         for (unsigned int i = fragments->Count() - 3; i > 0; i--)
         {
           if (fragments->GetItem(i - 1)->GetIsTimeValid())
