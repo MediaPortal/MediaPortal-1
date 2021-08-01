@@ -39,25 +39,25 @@
       <description>Date Time</description>
       <type>label</type>
       <id>0</id>
-      <posX>1866</posX>
+      <posX>45</posX>
       <posY>15</posY>
       <label>#date | #time</label>
-      <align>right</align>
+      <align>left</align>
       <font>Label</font>
       <textcolor>ff6FAFE1</textcolor>
-      <visible>!skin.hastheme(Xmas)+!player.hasaudio+!player.hasvideo</visible>
+      <visible>!skin.hastheme(Xmas)</visible>
     </control>
   <control>
       <description>Date Time</description>
       <type>label</type>
       <id>0</id>
-      <posX>1866</posX>
+      <posX>45</posX>
       <posY>15</posY>
       <label>#date | #time</label>
-      <align>right</align>
+      <align>left</align>
       <font>Label</font>
       <textcolor>gold</textcolor>
-      <visible>skin.hastheme(Xmas)+!player.hasaudio+!player.hasvideo</visible>
+      <visible>skin.hastheme(Xmas)</visible>
     </control>
     <!-- ******************************************************************************************* -->
     <!-- *************************** INFOS ON BASIC HOME (NOW PLAYING AUDIO) *********************** -->

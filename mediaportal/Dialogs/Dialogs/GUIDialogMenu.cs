@@ -188,6 +188,12 @@ namespace MediaPortal.Dialogs
                                               selectedItemIndex, 0, null);
               OnMessage(msg);
             }
+            else if (listItems.Count > 0)
+            {
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID,
+                                              0, 0, null);
+              OnMessage(msg);
+            }
             selectedItemIndex = -1;
             selectedId = -1;
             string wszText = String.Format("{0} {1}", listItems.Count, GUILocalizeStrings.Get(127));

@@ -1914,6 +1914,18 @@ namespace MediaPortal
       {
         GUIGraphicsContext.DX9Device = new Device(dev);
         GUIGraphicsContext.DX9Device.Reset(_presentParams);
+        try
+        {
+          if (AdapterInfo.AdapterOrdinal > -1 && Manager.Adapters.Count > AdapterInfo.AdapterOrdinal)
+          {
+              double refreshRate = Manager.Adapters[AdapterInfo.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
+              Log.Info("D3D: Current refreshrate = {0}Hz ", refreshRate);
+          }
+        }
+        catch (Exception e)
+        {
+          Log.Error("Error determining refreshrate: {0}", e.Message);
+        }
       }
       else
       {
@@ -2098,16 +2110,27 @@ namespace MediaPortal
     /// </summary>
     private void UpdateMouseCursor()
     {
+      if (IsDisposed)
+      {
+        return;
+      }
+
       if (!AutoHideMouse)
       {
         return;
       }
 
+      if (Thread.CurrentThread.Name != "MPMain" && Thread.CurrentThread.Name != "Config Main")
+      {
+        return;
+      }
+
       // check if we are over the client area of the form
-      bool isOverForm;
+      bool isOverForm = false;
       try
       {
-        isOverForm = ClientRectangle.Contains(PointToClient(MousePosition));
+        if (MediaPortalApp.ActiveForm != null)
+          isOverForm = ClientRectangle.Contains(PointToClient(MousePosition));
       }
       catch (Exception ex)
       {

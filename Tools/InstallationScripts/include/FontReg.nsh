@@ -83,7 +83,8 @@ ${Index}:
   !insertmacro FontName "$FONT_DIR\${FontFileName}"
   pop $R2
   IfErrors 0 "${Index}-Add"
-    MessageBox MB_OK "$R2"
+;    MessageBox MB_OK "$R2"
+    ${LOG_TEXT} "ERROR" "Install font: $R2 - ${FontFileName}"
     goto "${Index}-End"
     
 "${Index}-Add:"
@@ -186,7 +187,8 @@ ${Index}:
   !insertmacro FontName "$FONT_DIR\${FontFileName}"
   pop $R2
   IfErrors 0 "${Index}-Remove"
-    MessageBox MB_OK "$R2"
+;    MessageBox MB_OK "$R2"
+    ${LOG_TEXT} "ERROR" "Remove font: $R2 - ${FontFileName}"
     goto "${Index}-End"
     
 "${Index}-Remove:"

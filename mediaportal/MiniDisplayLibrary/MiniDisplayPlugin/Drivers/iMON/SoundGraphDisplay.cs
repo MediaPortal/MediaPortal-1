@@ -240,7 +240,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
             CheckDisplay();
             //Pass on that call to our actual display
-            iDisplay.SetLine(line,message);
+            if (iDisplay != null) iDisplay.SetLine(line,message);
         }
 
         //From IDisplay

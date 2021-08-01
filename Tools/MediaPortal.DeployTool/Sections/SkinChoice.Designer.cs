@@ -41,12 +41,16 @@
       ((System.ComponentModel.ISupportInitialize)(this.pbSkin)).BeginInit();
       this.SuspendLayout();
       // 
+      // labelSectionHeader
+      // 
+      this.labelSectionHeader.Location = new System.Drawing.Point(550, 4);
+      // 
       // lblChooseSkin
       // 
       this.lblChooseSkin.AutoSize = true;
       this.lblChooseSkin.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold);
       this.lblChooseSkin.ForeColor = System.Drawing.Color.White;
-      this.lblChooseSkin.Location = new System.Drawing.Point(291, 43);
+      this.lblChooseSkin.Location = new System.Drawing.Point(545, 98);
       this.lblChooseSkin.Name = "lblChooseSkin";
       this.lblChooseSkin.Size = new System.Drawing.Size(108, 16);
       this.lblChooseSkin.TabIndex = 1;
@@ -60,7 +64,7 @@
       this.btnTitan.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.btnTitan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.btnTitan.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.btnTitan.Location = new System.Drawing.Point(290, 116);
+      this.btnTitan.Location = new System.Drawing.Point(554, 170);
       this.btnTitan.Name = "btnTitan";
       this.btnTitan.Size = new System.Drawing.Size(33, 23);
       this.btnTitan.TabIndex = 2;
@@ -75,7 +79,7 @@
       this.btnDefaultWide.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.btnDefaultWide.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.btnDefaultWide.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.btnDefaultWide.Location = new System.Drawing.Point(290, 149);
+      this.btnDefaultWide.Location = new System.Drawing.Point(554, 203);
       this.btnDefaultWide.Name = "btnDefaultWide";
       this.btnDefaultWide.Size = new System.Drawing.Size(33, 23);
       this.btnDefaultWide.TabIndex = 3;
@@ -86,7 +90,7 @@
       // 
       this.lblTitan.AutoSize = true;
       this.lblTitan.ForeColor = System.Drawing.Color.White;
-      this.lblTitan.Location = new System.Drawing.Point(329, 121);
+      this.lblTitan.Location = new System.Drawing.Point(593, 175);
       this.lblTitan.Name = "lblTitan";
       this.lblTitan.Size = new System.Drawing.Size(137, 13);
       this.lblTitan.TabIndex = 5;
@@ -96,7 +100,7 @@
       // 
       this.lblDefaultWide.AutoSize = true;
       this.lblDefaultWide.ForeColor = System.Drawing.Color.White;
-      this.lblDefaultWide.Location = new System.Drawing.Point(329, 154);
+      this.lblDefaultWide.Location = new System.Drawing.Point(593, 208);
       this.lblDefaultWide.Name = "lblDefaultWide";
       this.lblDefaultWide.Size = new System.Drawing.Size(147, 13);
       this.lblDefaultWide.TabIndex = 6;
@@ -105,9 +109,9 @@
       // pbSkin
       // 
       this.pbSkin.Image = global::MediaPortal.DeployTool.Images.preview_titan;
-      this.pbSkin.Location = new System.Drawing.Point(30, 75);
+      this.pbSkin.Location = new System.Drawing.Point(45, 59);
       this.pbSkin.Name = "pbSkin";
-      this.pbSkin.Size = new System.Drawing.Size(255, 144);
+      this.pbSkin.Size = new System.Drawing.Size(438, 313);
       this.pbSkin.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pbSkin.TabIndex = 8;
       this.pbSkin.TabStop = false;
@@ -116,7 +120,7 @@
       // 
       this.lblExisting.AutoSize = true;
       this.lblExisting.ForeColor = System.Drawing.Color.White;
-      this.lblExisting.Location = new System.Drawing.Point(329, 88);
+      this.lblExisting.Location = new System.Drawing.Point(593, 142);
       this.lblExisting.Name = "lblExisting";
       this.lblExisting.Size = new System.Drawing.Size(270, 13);
       this.lblExisting.TabIndex = 11;
@@ -131,7 +135,7 @@
       this.btnExisting.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.btnExisting.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.btnExisting.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.btnExisting.Location = new System.Drawing.Point(290, 83);
+      this.btnExisting.Location = new System.Drawing.Point(554, 137);
       this.btnExisting.Name = "btnExisting";
       this.btnExisting.Size = new System.Drawing.Size(33, 23);
       this.btnExisting.TabIndex = 10;
@@ -147,7 +151,7 @@
       this.btnAres.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.btnAres.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.btnAres.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.btnAres.Location = new System.Drawing.Point(290, 182);
+      this.btnAres.Location = new System.Drawing.Point(554, 236);
       this.btnAres.Name = "btnAres";
       this.btnAres.Size = new System.Drawing.Size(33, 23);
       this.btnAres.TabIndex = 4;
@@ -158,7 +162,7 @@
       // 
       this.lblAres.AutoSize = true;
       this.lblAres.ForeColor = System.Drawing.Color.White;
-      this.lblAres.Location = new System.Drawing.Point(329, 187);
+      this.lblAres.Location = new System.Drawing.Point(593, 241);
       this.lblAres.Name = "lblAres";
       this.lblAres.Size = new System.Drawing.Size(90, 13);
       this.lblAres.TabIndex = 12;

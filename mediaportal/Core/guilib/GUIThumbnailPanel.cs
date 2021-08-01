@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,9 +24,11 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Media.Animation;
-using Microsoft.DirectX.Direct3D;
+
 using MediaPortal.ExtensionMethods;
 using MediaPortal.Profile;
+
+using UnidecodeSharpFork;
 
 namespace MediaPortal.GUI.Library
 {
@@ -459,6 +461,7 @@ namespace MediaPortal.GUI.Library
                                                      ref _heightThumbBig);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _bigItemWidth, ref _bigItemHeight);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _itemWidth, ref _itemHeight);
+      GUIGraphicsContext.ScalePosToScreenResolution(ref _zoomXPixels, ref _zoomYPixels);
 
       GUIGraphicsContext.ScaleRectToScreenResolution(ref _watchedImagePosXLow, ref _watchedImagePosYLow,
                                                      ref _watchedImageWidthLow,  ref _watchedImageHeightLow);
@@ -1913,7 +1916,7 @@ namespace MediaPortal.GUI.Library
         }
 
         GUIListItem pItem = _listItems[iItem];
-        if (pItem.Label.ToUpperInvariant().StartsWith(SearchKey.ToUpperInvariant()) == true)
+        if (pItem.Label.ToUpperInvariant().Unidecode().StartsWith(SearchKey.ToUpperInvariant()) == true)
         {
           bItemFound = true;
           break;

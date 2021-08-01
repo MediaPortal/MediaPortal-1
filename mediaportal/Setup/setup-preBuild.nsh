@@ -33,6 +33,7 @@
 ;!define BUILD_TVServer
 ;!define BUILD_DeployTool
 ;!define BUILD_Installer
+;!define FORCE_BUILD_Libbluray_jar
 
 !define git_UninstallFilelist "${git_ROOT}\Tools\Script & Batch tools\UninstallFilelist"
 

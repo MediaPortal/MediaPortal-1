@@ -28,7 +28,6 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using DShowNET.Helper;
-using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.MusicPlayer.BASS;
@@ -48,7 +47,7 @@ namespace MediaPortal.Player
   {
     #region enums
 
-    public enum MediaType
+    public enum MediaType //copy present in RefreshRateChanger
     {
       Video,
       TV,
@@ -57,7 +56,7 @@ namespace MediaPortal.Player
       Music,
       Recording,
       Unknown
-    } ;
+    };
 
     public enum DriveType
     {
@@ -1548,6 +1547,15 @@ namespace MediaPortal.Player
           {
             var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
             _mediaInfo = new MediaInfoWrapper(strFile, logger);
+            int nattempts = 0;
+            while (_mediaInfo.HasVideo && _mediaInfo.Framerate == 0 && nattempts<5)
+            {
+              nattempts++;
+              Log.Info("Mediainfo is empty for {0}, trying again for the {1} time", strFile,nattempts);
+              Thread.Sleep(500);
+              _mediaInfo = new MediaInfoWrapper(strFile, logger);
+            }
+
             _mediaInfo.WriteInfo();
             currentMediaInfoFilePlaying = strFile;
           }
@@ -1699,12 +1707,12 @@ namespace MediaPortal.Player
                 {
                   if (MediaInfo != null && MediaInfo.HasVideo)
                   {
-                    RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                    RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)type);
                   }
                 }
                 else
                 {
-                  RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                  RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)type);
                 }
               }
             }
@@ -1789,7 +1797,7 @@ namespace MediaPortal.Player
                   }
                 }
                 // Do refresh rate
-                RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)type);
 
                 if (RefreshRateChangePending())
                 {
@@ -1866,12 +1874,12 @@ namespace MediaPortal.Player
               {
                 if (MediaInfo != null && MediaInfo.HasVideo)
                 {
-                  RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                  RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)type);
                 }
               }
               else
               {
-                RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)type);
               }
             }
           }
@@ -2973,7 +2981,7 @@ namespace MediaPortal.Player
           (GUIGraphicsContext.Vmr9Active || GUIGraphicsContext.ForceMadVRFirstStart))
       {
         // Enable a new VideoWindow update
-        lock (GUIGraphicsContext.RenderLock)
+        //lock (GUIGraphicsContext.RenderLock) // Commented out to trying to avoid deadlock
         {
           GUIGraphicsContext.UpdateVideoWindow = true;
           VMR9Util.g_vmr9?._scene.RenderGuiRefresh(25, 25, 25, 25, true);

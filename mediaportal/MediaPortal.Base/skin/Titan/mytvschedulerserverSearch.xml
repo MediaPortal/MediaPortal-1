@@ -94,7 +94,7 @@
 		<posX>-2000</posX>
 		<posY>87</posY>
 		<label>6035</label>
-		<font>font16</font>
+		<font>fontB16</font>
 		<align>right</align>
 		<textcolor>ffffffff</textcolor>
 	</control>

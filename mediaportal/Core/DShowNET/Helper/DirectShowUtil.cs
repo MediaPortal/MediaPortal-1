@@ -1869,6 +1869,10 @@ namespace DShowNET.Helper
           }
         }
       }
+      catch (InvalidComObjectException)
+      {
+        //can happen when _graphbuilder is already released
+      }
       catch (Exception ex)
       {
         Log.Error("DirectShowUtil:RemoveFilters() - Exception " + ex.Message);

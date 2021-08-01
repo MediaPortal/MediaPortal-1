@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ using System;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace MediaPortal.DeployTool
 {
@@ -35,6 +36,7 @@ namespace MediaPortal.DeployTool
 
     public void UpdateUI()
     {
+      labelHeading.Text = "";
       Text = Localizer.GetBestTranslation("MainWindow_AppName");
       backButton.Text = Localizer.GetBestTranslation("MainWindow_backButton");
       nextButton.Text = Localizer.GetBestTranslation("MainWindow_nextButton");
@@ -62,11 +64,21 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
+    public const int WM_NCLBUTTONDOWN = 0xA1;
+    public const int HT_CAPTION = 0x2;
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    public static extern bool ReleaseCapture();
+
     public DeployTool()
     {
       //Create necessary directory tree
       if (!Directory.Exists(Application.StartupPath + "\\deploy"))
+      {
         Directory.CreateDirectory(Application.StartupPath + "\\deploy");
+      }
 
       //Set default folders
       InstallationProperties.Instance.Set("MPDir",
@@ -129,11 +141,11 @@ namespace MediaPortal.DeployTool
 
     private void nextButton_Click(object sender, EventArgs e)
     {
+      labelHeading.Text = "";
       //
       // check Internet connection unless files have already been downloaded
       //
-      if (_currentDialog.type == DialogType.DownloadOnly &&
-          Directory.GetFiles(Application.StartupPath + "\\deploy").Length < 3)
+      if (_currentDialog.type == DialogType.DownloadOnly && Directory.GetFiles(Application.StartupPath + "\\deploy").Length < 3)
       {
         if (!InstallationChecks.InternetChecker.CheckConnection())
         {
@@ -150,8 +162,7 @@ namespace MediaPortal.DeployTool
       {
         // at least 0.5 GB free disk space are required for installation
         const double requiredDiskSpace = 0.5;
-        double actualDiskSpace =
-          InstallationChecks.DiskSpaceChecker.GetRemainingHardDiskCapacity(_currentDialog.installationPath);
+        double actualDiskSpace = InstallationChecks.DiskSpaceChecker.GetRemainingHardDiskCapacity(_currentDialog.installationPath);
 
         if (actualDiskSpace < requiredDiskSpace)
         {
@@ -190,7 +201,9 @@ namespace MediaPortal.DeployTool
         nextButton.Enabled = false;
       }
       if (!_currentDialog.SettingsValid())
+      {
         return;
+      }
       _currentDialog.SetProperties();
       if (InstallationProperties.Instance["language"] != _currentCulture)
       {
@@ -201,7 +214,9 @@ namespace MediaPortal.DeployTool
       _currentDialog = _currentDialog.GetNextDialog();
       SwitchDialog(_currentDialog);
       if (!backButton.Visible)
+      {
         backButton.Visible = true;
+      }
       if (InstallationProperties.Instance["finished"] == "yes")
       {
         backButton.Visible = false;
@@ -210,6 +225,10 @@ namespace MediaPortal.DeployTool
       }
       if (!_restart && InstallationProperties.Instance["Install_Dialog"] == "yes")
       {
+        labelHeading.Text = InstallationProperties.Instance["InstallType"] == "download_only"
+                              ? Localizer.GetBestTranslation("Install_labelHeadingDownload")
+                              : Localizer.GetBestTranslation("Install_labelHeadingInstall");
+
         nextButton.Text = InstallationProperties.Instance["InstallType"] == "download_only"
                             ? Localizer.GetBestTranslation("Install_buttonDownload")
                             : Localizer.GetBestTranslation("Install_buttonInstall");
@@ -219,10 +238,13 @@ namespace MediaPortal.DeployTool
 
     private void backButton_Click(object sender, EventArgs e)
     {
+      labelHeading.Text = "";
       bool isFirstDlg = false;
       _currentDialog = DialogFlowHandler.Instance.GetPreviousDlg(ref isFirstDlg);
       if (isFirstDlg)
+      {
         backButton.Visible = false;
+      }
       nextButton.Text = Localizer.GetBestTranslation("MainWindow_nextButton");
       SwitchDialog(_currentDialog);
     }
@@ -252,6 +274,15 @@ namespace MediaPortal.DeployTool
       {
         MessageBox.Show(String.Format("Unable to open the help page with your default browser - {0}", ex.Message),
                         "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
+    }
+
+    private void DeployTool_MouseDown(object sender, MouseEventArgs e)
+    {
+      if (e.Button == MouseButtons.Left)
+      {
+        ReleaseCapture();
+        SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
       }
     }
   }

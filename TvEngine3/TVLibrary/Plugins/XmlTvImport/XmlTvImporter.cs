@@ -20,11 +20,9 @@
 
 using System;
 using System.Net;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.IO;
-using SetupTv;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Log;
@@ -32,8 +30,6 @@ using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
 using TvEngine.Interfaces;
 using System.Runtime.CompilerServices;
-using Gentle.Common;
-using Gentle.Framework;
 using Ionic.Zip;
 
 namespace TvEngine
@@ -61,7 +57,7 @@ namespace TvEngine
     /// <summary>
     /// Create a new instance of a generic standby handler
     /// </summary>
-    public XmlTvImporter() {}
+    public XmlTvImporter() { }
 
     #endregion
 
@@ -116,7 +112,6 @@ namespace TvEngine
     {
       Log.WriteFile("plugin: xmltv started");
 
-      //System.Diagnostics.Debugger.Launch();      
       RegisterPowerEventHandler();
       RetrieveRemoteTvGuideOnStartUp();
       CheckNewTVGuide();
@@ -248,7 +243,8 @@ namespace TvEngine
 
     private void DownloadFileCallback(object sender, DownloadDataCompletedEventArgs e)
     {
-      //System.Diagnostics.Debugger.Launch();
+      string sourceFileName = "";
+      string destinationFileName = "";
       try
       {
         TvBusinessLayer layer = new TvBusinessLayer();
@@ -336,12 +332,18 @@ namespace TvEngine
 
               if (isZip)
               {
+                bool RenameFileInZIp = (layer.GetSetting("xmlTvRenameFileInZip", "false").Value == "true");
                 try
                 {
                   string newLoc = layer.GetSetting("xmlTv", "").Value + @"\";
                   Log.Info("extracting zip file {0} to location {1}", path, newLoc);
                   ZipFile zip = new ZipFile(path);
                   zip.ExtractAll(newLoc, true);
+                  if (RenameFileInZIp == true)
+                  {
+                    sourceFileName = newLoc + (zip.EntryFileNames[0]);
+                    destinationFileName = newLoc + "tvguide.xml";
+                  }
                 }
                 catch (Exception ex2)
                 {
@@ -372,9 +374,28 @@ namespace TvEngine
 
         Log.Info(info);
       }
-      catch (Exception) {}
+      catch (Exception) { }
       finally
       {
+        if (sourceFileName != "" && !sourceFileName.EndsWith("tvguide.xml"))
+        {
+          if (destinationFileName != "")
+          {
+            try
+            {
+              Log.Debug("renaming file: {0} with new filename: {1}", sourceFileName, destinationFileName);
+              if (File.Exists(destinationFileName))
+              {
+                File.Delete(destinationFileName);
+              }
+              File.Move(sourceFileName, destinationFileName);
+            }
+            catch (Exception ex)
+            {
+              Log.Error("Error renaming file: " + ex.Message);
+            }
+          }
+        }
         _remoteFileDownloadInProgress = false; //signal that we are done downloading.
         SetStandbyAllowed(true);
       }
@@ -382,7 +403,6 @@ namespace TvEngine
 
     public void RetrieveRemoteFile(String folder, string URL)
     {
-      //System.Diagnostics.Debugger.Launch();			
       if (_remoteFileDownloadInProgress)
       {
         return;
@@ -547,7 +567,7 @@ namespace TvEngine
       DateTime now = DateTime.Now;
 
       if (_remoteFileDownloadInProgress)
-        // we are downloading a remote tvguide.xml, wait for it to complete, before trying to read it (avoiding file locks)
+      // we are downloading a remote tvguide.xml, wait for it to complete, before trying to read it (avoiding file locks)
       {
         // check if the download has been going on for too long, then flag it as failed.
         TimeSpan ts = now - _remoteFileDonwloadInProgressAt;
@@ -582,7 +602,6 @@ namespace TvEngine
     [MethodImpl(MethodImplOptions.Synchronized)]
     protected void RetrieveRemoteTvGuide()
     {
-      //System.Diagnostics.Debugger.Launch();      
       if (_remoteFileDownloadInProgress)
       {
         return;
@@ -636,8 +655,6 @@ namespace TvEngine
     [MethodImpl(MethodImplOptions.Synchronized)]
     protected void CheckNewTVGuide()
     {
-      FileStream streamIn = null;
-      StreamReader fileIn = null;
       TvBusinessLayer layer = new TvBusinessLayer();
       string folder = layer.GetSetting("xmlTv", DefaultOutputFolder).Value;
       DateTime lastTime;
@@ -671,18 +688,17 @@ namespace TvEngine
       fileName = folder + @"\tvguide.lst";
 
       if (importLST && System.IO.File.Exists(fileName))
-        // check if any files contained in tvguide.lst are newer than time of last import
+      // check if any files contained in tvguide.lst are newer than time of last import
       {
-        try
+        DateTime fileTime = System.IO.File.GetLastWriteTime(fileName);
+        if (importDate < fileTime)
         {
-          DateTime fileTime = System.IO.File.GetLastWriteTime(fileName);
-          if (importDate < fileTime)
-          {
-            importDate = fileTime;
-          } // A new tvguide.lst should give an import, to retain compatibility with previous version
-          Encoding fileEncoding = Encoding.Default;
-          streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-          fileIn = new StreamReader(streamIn, fileEncoding, true);
+          importDate = fileTime;
+        } // A new tvguide.lst should give an import, to retain compatibility with previous version
+        Encoding fileEncoding = Encoding.Default;
+        using (FileStream streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+        using (StreamReader fileIn = new StreamReader(streamIn, fileEncoding, true))
+        {
           while (!fileIn.EndOfStream)
           {
             string tvguideFileName = fileIn.ReadLine();
@@ -706,22 +722,9 @@ namespace TvEngine
             }
           }
         }
-        finally
-        {
-          if (streamIn != null)
-          {
-            streamIn.Close();
-            streamIn.Dispose();
-          }
-          if (fileIn != null)
-          {
-            fileIn.Close();
-            fileIn.Dispose();
-          }
-        }
       }
       if ((importXML || importLST) && (DateTime.Parse(importDate.ToString()) > lastTime))
-        // To string and back to avoid rounding errors leading to continous reimports!!!
+      // To string and back to avoid rounding errors leading to continous reimports!!!
       {
         StartImport(importXML, importLST, importDate);
       }
@@ -730,8 +733,6 @@ namespace TvEngine
     [MethodImpl(MethodImplOptions.Synchronized)]
     protected void StartImport(bool importXML, bool importLST, DateTime importDate)
     {
-      FileStream streamIn = null;
-      StreamReader fileIn = null;
       if (_workerThreadRunning)
         return;
 
@@ -769,11 +770,11 @@ namespace TvEngine
           Log.Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access : " + e.Message);
           return;
         }
-        try //Check that all listed files can be read before starting import (and deleting programs list)
+        //Check that all listed files can be read before starting import (and deleting programs list)
+        Encoding fileEncoding = Encoding.Default;
+        using (FileStream streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+        using (StreamReader fileIn = new StreamReader(streamIn, fileEncoding, true))
         {
-          Encoding fileEncoding = Encoding.Default;
-          streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-          fileIn = new StreamReader(streamIn, fileEncoding, true);
           while (!fileIn.EndOfStream)
           {
             string tvguideFileName = fileIn.ReadLine();
@@ -796,19 +797,6 @@ namespace TvEngine
             }
           }
         }
-        finally
-        {
-          if (streamIn != null)
-          {
-            streamIn.Close();
-            streamIn.Dispose();
-          }
-          if (fileIn != null)
-          {
-            fileIn.Close();
-            fileIn.Dispose();
-          }
-        }
       }
 
       _workerThreadRunning = true;
@@ -829,14 +817,11 @@ namespace TvEngine
       public bool _importXML;
       public bool _importLST;
       public DateTime _importDate;
-    } ;
+    };
 
     private void ThreadFunctionImportTVGuide(object aparam)
     {
       SetStandbyAllowed(false);
-      //System.Diagnostics.Debugger.Launch();      
-      FileStream streamIn = null;
-      StreamReader fileIn = null;
 
       try
       {
@@ -872,7 +857,7 @@ namespace TvEngine
             string fileName = folder + @"\tvguide.xml";
             Log.Write("plugin:xmltv importing " + fileName);
 
-            XMLTVImport import = new XMLTVImport(10); // add 10 msec dely to the background thread
+            XMLTVImport import = new XMLTVImport();
             import.Import(fileName, deleteBeforeImport, false);
 
             numChannels += import.ImportStats.Channels;
@@ -888,31 +873,32 @@ namespace TvEngine
             Log.Write("plugin:xmltv importing files in " + fileName);
 
             Encoding fileEncoding = Encoding.Default;
-            streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-            fileIn = new StreamReader(streamIn, fileEncoding, true);
-
-            while (!fileIn.EndOfStream)
+            using (FileStream streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (StreamReader fileIn = new StreamReader(streamIn, fileEncoding, true))
             {
-              string tvguideFileName = fileIn.ReadLine();
-              if (tvguideFileName.Length == 0) continue;
-
-              if (!System.IO.Path.IsPathRooted(tvguideFileName))
+              while (!fileIn.EndOfStream)
               {
-                // extend by directory
-                tvguideFileName = System.IO.Path.Combine(folder, tvguideFileName);
+                string tvguideFileName = fileIn.ReadLine();
+                if (tvguideFileName.Length == 0) continue;
+
+                if (!System.IO.Path.IsPathRooted(tvguideFileName))
+                {
+                  // extend by directory
+                  tvguideFileName = System.IO.Path.Combine(folder, tvguideFileName);
+                }
+
+                Log.WriteFile(@"plugin:xmltv importing " + tvguideFileName);
+
+                XMLTVImport import = new XMLTVImport();
+
+                import.Import(tvguideFileName, deleteBeforeImport, false);
+
+                numChannels += import.ImportStats.Channels;
+                numPrograms += import.ImportStats.Programs;
+
+                if (import.ErrorMessage.Length != 0)
+                  errors += tvguideFileName + ": " + import.ErrorMessage + "; ";
               }
-
-              Log.WriteFile(@"plugin:xmltv importing " + tvguideFileName);
-
-              XMLTVImport import = new XMLTVImport(10); // add 10 msec dely to the background thread
-
-              import.Import(tvguideFileName, deleteBeforeImport, false);
-
-              numChannels += import.ImportStats.Channels;
-              numPrograms += import.ImportStats.Programs;
-
-              if (import.ErrorMessage.Length != 0)
-                errors += tvguideFileName + ": " + import.ErrorMessage + "; ";
             }
           }
 
@@ -945,16 +931,6 @@ namespace TvEngine
       finally
       {
         Log.WriteFile(@"plugin:xmltv import done");
-        if (streamIn != null)
-        {
-          streamIn.Close();
-          streamIn.Dispose();
-        }
-        if (fileIn != null)
-        {
-          fileIn.Close();
-          fileIn.Dispose();
-        }
         _workerThreadRunning = false;
         SetStandbyAllowed(true);
       }

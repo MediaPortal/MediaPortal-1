@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -77,6 +77,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public string GetDisplayName()
     {
       return "MySQL 5.6";
+    }
+
+    public string GetIconName()
+    {
+      return "MySQL";
     }
 
     public bool Download()

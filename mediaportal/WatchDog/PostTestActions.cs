@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,8 +21,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+
 using MediaPortal.Configuration;
 using MediaPortal.Support;
+using MediaPortal.Profile;
 
 namespace WatchDog
 {
@@ -41,6 +43,7 @@ namespace WatchDog
     {
       _tmpDir = tmpDir;
       _zipFile = zipFile;
+      targetFolder = Path.GetDirectoryName(zipFile);
     }
 
     private void updateProgress(int subActions)
@@ -171,7 +174,37 @@ namespace WatchDog
     {
       List<ILogCreator> logs = new List<ILogCreator>();
       logs.Add(new MediaPortalLogs(Config.GetFolder(Config.Dir.Log)));
-      logs.Add(new TvServerLogger());
+      
+      bool isSingleSeat = true;
+      try
+      {
+        isSingleSeat = MediaPortal.Util.Network.IsSingleSeat();
+      }
+      catch (Exception)
+      {
+      }
+
+      if (isSingleSeat)
+      {
+        logs.Add(new TvServerLogger());
+      }
+      else
+      {
+        setAction("Collecting the logs from remote server...");
+        Update();
+
+        string hostName;
+        using (Settings xmlreader = new MPSettings())
+        {
+          hostName = xmlreader.GetValueAsString("tvservice", "hostname", string.Empty);
+        }
+
+        string zipFile = _zipFile.Replace("MP_logs__", "TVE_logs__");
+        zipFile = zipFile.Replace(Environment.MachineName, hostName);
+        TVServerManager mngr = new TVServerManager();
+        mngr.TvServerRemoteLogRead(zipFile);
+      }
+
       logs.Add(new DxDiagLog(new ProcessRunner()));
       logs.Add(new HotFixInformationLogger());
       logs.Add(new EventLogCsvLogger("Application"));

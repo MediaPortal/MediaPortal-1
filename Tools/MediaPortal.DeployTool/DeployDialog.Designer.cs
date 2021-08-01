@@ -34,17 +34,16 @@ namespace MediaPortal.DeployTool
       // labelSectionHeader
       // 
       this.labelSectionHeader.AutoSize = true;
-      this.labelSectionHeader.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelSectionHeader.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelSectionHeader.ForeColor = System.Drawing.Color.White;
-      this.labelSectionHeader.Location = new System.Drawing.Point(8, 4);
+      this.labelSectionHeader.Location = new System.Drawing.Point(330, 4);
       this.labelSectionHeader.Name = "labelSectionHeader";
-      this.labelSectionHeader.Size = new System.Drawing.Size(164, 13);
+      this.labelSectionHeader.Size = new System.Drawing.Size(216, 18);
       this.labelSectionHeader.TabIndex = 0;
       this.labelSectionHeader.Text = "Choose installation type";
       // 
       // DeployDialog
       // 
-	  this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.AutoSize = true;
       this.BackColor = System.Drawing.Color.Transparent;
@@ -53,7 +52,7 @@ namespace MediaPortal.DeployTool
       this.Controls.Add(this.labelSectionHeader);
       this.DoubleBuffered = true;
       this.Name = "DeployDialog";
-      this.Size = new System.Drawing.Size(664, 254);
+      this.Size = new System.Drawing.Size(1000, 430);
       this.ResumeLayout(false);
       this.PerformLayout();
 

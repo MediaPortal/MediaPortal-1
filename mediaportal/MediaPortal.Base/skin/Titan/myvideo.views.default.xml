@@ -17,6 +17,7 @@
 	</control>
 	
 	<!-- ClearArt -->
+
    	<control>
    		<description>ClearArt</description>
    		<type>image</type>
@@ -114,6 +115,7 @@
    	</control>  
 
 	<!-- ClearLogo -->
+
    	<control>
    		<description>ClearLogo</description>
    		<type>image</type>
@@ -156,6 +158,7 @@
    	</control>  
 
 	<!-- CDArt -->
+
    	<control>
    		<description>CDArt</description>
    		<type>image</type>
@@ -314,6 +317,21 @@
 		<height>15</height>
 		<texture>icon_animated.png</texture>
 		<visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)+!control.IsVisible(609)+!string.equals(#fanarthandler.movie.animated.selected.thumb,)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description>Cover Art Collection Animated</description>
+		<type>image</type>
+		<id>610</id>
+		<posX>123</posX>
+		<posY>360</posY>
+		<width>379</width>
+		<height>563</height>
+		<texture>#fanarthandler.movie.animated.selected.thumb</texture>
+		<texture>..\..\..\Thumbs\Skin FanArt\Animated\Collections\Poster\#(string.trim(string.getfilename(#selecteditem))).gif</texture>
+		<visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)+string.equals(#iscollection,yes)+system.idletime(3)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>

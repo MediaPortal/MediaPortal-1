@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1788,11 +1788,11 @@ namespace TvPlugin
               }
             case SortMethod.Duration:
               {
-                TimeSpan duration1 = (rec1.EndTime - rec1.StartTime);
+                TimeSpan duration1 = rec1.EndTime - rec1.StartTime;
                 TimeSpan duration2 = rec2.EndTime - rec2.StartTime;
                 if (duration1 != duration2)
                 {
-                  return duration1 > duration2 ? 1 : -1;
+                  return m_bSortAscending ? (duration1 > duration2 ? 1 : -1) : (duration1 < duration2 ? 1 : -1);
                 }
 
                 cSortMethod = SortMethod.Date;

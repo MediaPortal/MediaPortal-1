@@ -49,12 +49,15 @@
       // button1
       // 
       this.button1.AutoSize = true;
-      this.button1.Location = new System.Drawing.Point(219, 6);
+      this.button1.BackColor = System.Drawing.Color.Transparent;
+      this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.button1.ForeColor = System.Drawing.SystemColors.ControlText;
+      this.button1.Location = new System.Drawing.Point(223, 5);
       this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(75, 23);
+      this.button1.Size = new System.Drawing.Size(75, 25);
       this.button1.TabIndex = 1;
       this.button1.Text = "Cancel";
-      this.button1.UseVisualStyleBackColor = true;
+      this.button1.UseVisualStyleBackColor = false;
       this.button1.Click += new System.EventHandler(this.button1_Click);
       // 
       // label1
@@ -72,6 +75,7 @@
       // panelBottom
       // 
       this.panelBottom.AutoSize = true;
+      this.panelBottom.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
       this.panelBottom.Controls.Add(this.button1);
       this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
       this.panelBottom.Location = new System.Drawing.Point(0, 53);

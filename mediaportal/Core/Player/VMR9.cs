@@ -546,6 +546,18 @@ namespace MediaPortal.Player
       Log.Debug("VMR9: Delayed OSD Callback");
       RegisterOsd();
       if (VMR9Util.g_vmr9 != null) VMR9Util.g_vmr9.SetMpFullscreenWindow();
+      if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.InVmr9Render)
+      {
+        // Reset 3D needed when changing resolution
+        GUIGraphicsContext.NoneDone = false;
+        GUIGraphicsContext.TopAndBottomDone = false;
+        GUIGraphicsContext.SideBySideDone = false;
+        GUIGraphicsContext.SBSLeftDone = false;
+        GUIGraphicsContext.SBSRightDone = false;
+        GUIGraphicsContext.TABTopDone = false;
+        GUIGraphicsContext.TABBottomDone = false;
+        Log.Debug("VMR9: Delayed OSD Callback init OSD position when using 3D");
+      }
     }
 
     /// <summary>
@@ -1774,7 +1786,7 @@ namespace MediaPortal.Player
             Log.Debug("VMR9: StartMediaCtrl start put_WindowStyle");
           }
         }
-        else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+        else // GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR
         {
           if (!(g_Player.Player is DVDPlayer9) && !(g_Player.Player is DVDPlayer))
           {
@@ -1788,16 +1800,16 @@ namespace MediaPortal.Player
         // Resetting audio delay on start when using LAV Engine
         try
         {
-          IBaseFilter baseFilterLavAudio = null;
           if (_graphBuilder != null)
           {
+            IBaseFilter baseFilterLavAudio = null;
             DirectShowUtil.FindFilterByClassID(_graphBuilder, ClassId.LAVAudio, out baseFilterLavAudio);
             if (baseFilterLavAudio != null)
             {
               if (!NoAudioResetCheckBox)
               {
                 int mAudioDelay = AudioPostEngine.GetInstance().AudioDelay;
-                if (mAudioDelay == 0)
+                if (mAudioDelay != 0)
                 {
                   ILAVAudioSettings asett = baseFilterLavAudio as ILAVAudioSettings;
                   asett?.SetAudioDelay(true, 0);
@@ -1934,9 +1946,12 @@ namespace MediaPortal.Player
 
     public void RestoreGuiForMadVr()
     {
+      // Stop rendering GUI on stop to avoid blankscreen when window is displayed on stop
       if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
       //if (GUIGraphicsContext.MadVrRenderTargetVMR9 != null && !GUIGraphicsContext.MadVrRenderTargetVMR9.Disposed)
       {
+        Log.Debug("g_Player: RestoreGuiForMadVr() GUIGraphicsContext.State.SUSPENDING");
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
         // We are stopping here (need to alert to avoid block in loop)
         GUIWindow._loadSkinDone = true;
 
@@ -2259,7 +2274,7 @@ namespace MediaPortal.Player
           catch (Exception ex)
           {
             // filter already released
-            Log.Error("VMR9 Dispose: {0}", ex.Message);
+            Log.Debug("VMR9: Dispose: madVR filter already released");
             releasedFilter = true;
             _vmr9Filter = null;
           }

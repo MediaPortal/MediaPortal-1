@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 /*
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -35,15 +35,18 @@ _____________________________________________________________________________
 
 
 !macro LANG_LOAD LANGLOAD
-!ifdef MUI_INCLUDED
-  !insertmacro MUI_LANGUAGE "${LANGLOAD}"
-!endif
+  !ifdef MUI_INCLUDED
+    !insertmacro MUI_LANGUAGE "${LANGLOAD}"
+  !endif
   !include "${git_InstallScripts}\languages\${LANGLOAD}.nsh"
   !undef LANG
 !macroend
  
 !macro LANG_STRING NAME VALUE
+  !pragma warning push
+  !pragma warning disable 7025
   LangString "${NAME}" "${LANG_${LANG}}" "${VALUE}"
+  !pragma warning pop
 !macroend
 
 !endif # !___LanguageMacros__NSH___

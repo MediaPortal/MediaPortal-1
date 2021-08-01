@@ -1,28 +1,10 @@
 /*
-** Copyright (C) 2002-2011 Erik de Castro Lopo <erikd@mega-nerd.com>
+** Copyright (c) 2002-2016, Erik de Castro Lopo <erikd@mega-nerd.com>
+** All rights reserved.
 **
-** This program is free software; you can redistribute it and/or modify
-** it under the terms of the GNU General Public License as published by
-** the Free Software Foundation; either version 2 of the License, or
-** (at your option) any later version.
-**
-** This program is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-** GNU General Public License for more details.
-**
-** You should have received a copy of the GNU General Public License
-** along with this program; if not, write to the Free Software
-** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+** This code is released under 2-clause BSD license. Please see the
+** file at : https://github.com/erikd/libsamplerate/blob/master/COPYING
 */
-
-/*
-** This code is part of Secret Rabbit Code aka libsamplerate. A commercial
-** use license for this code is available, please see:
-**		http://www.mega-nerd.com/SRC/procedure.html
-*/
-
-#include "..\..\source\stdafx.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -80,6 +62,10 @@ linear_vari_process (SRC_PRIVATE *psrc, SRC_DATA *data)
 	priv->in_used = priv->out_gen = 0 ;
 
 	src_ratio = psrc->last_ratio ;
+
+	if (is_bad_src_ratio (src_ratio))
+		return SRC_ERR_BAD_INTERNAL_STATE ;
+
 	input_index = psrc->last_position ;
 
 	/* Calculate samples before first sample in input array. */
@@ -184,11 +170,12 @@ linear_set_converter (SRC_PRIVATE *psrc, int src_enum)
 		} ;
 
 	if (psrc->private_data == NULL)
-	{	priv = (LINEAR_DATA*)calloc (1, sizeof (*priv) + psrc->channels * sizeof (float)) ;
-		if (priv == NULL)
-			return SRC_ERR_MALLOC_FAILED ;
+	{	priv = (LINEAR_DATA*) calloc (1, sizeof (*priv) + psrc->channels * sizeof (float)) ;
 		psrc->private_data = priv ;
 		} ;
+
+	if (priv == NULL)
+		return SRC_ERR_MALLOC_FAILED ;
 
 	priv->linear_magic_marker = LINEAR_MAGIC_MARKER ;
 	priv->channels = psrc->channels ;

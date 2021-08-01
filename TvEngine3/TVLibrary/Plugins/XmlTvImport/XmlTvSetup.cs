@@ -73,6 +73,10 @@ namespace SetupTv.Sections
       setting.Value = cbNoTextMod.Checked ? "true" : "false";
       setting.Persist();
 
+      setting = layer.GetSetting("xmlTvRenameFileInZip", "true");
+      setting.Value = cbRenameFileInZip.Checked ? "true" : "false";
+      setting.Persist();
+
       setting = layer.GetSetting("xmlTvTimeZoneHours", "0");
       setting.Value = textBoxHours.Text;
       setting.Persist();
@@ -136,6 +140,7 @@ namespace SetupTv.Sections
       cbImportLST.Checked = layer.GetSetting("xmlTvImportLST", "false").Value == "true";
       cbNoTextMod.Checked = layer.GetSetting("xmlTvNoTextMod", "false").Value == "true";
       checkBoxDeleteBeforeImport.Checked = layer.GetSetting("xmlTvDeleteBeforeImport", "true").Value == "true";
+      cbRenameFileInZip.Checked = layer.GetSetting("xmlTvRenameFileInZip", "false").Value == "true";
 
       textBoxHours.Text = layer.GetSetting("xmlTvTimeZoneHours", "0").Value;
       textBoxMinutes.Text = layer.GetSetting("xmlTvTimeZoneMins", "0").Value;
@@ -552,52 +557,37 @@ namespace SetupTv.Sections
         {
           fileName = folder + @"\tvguide.lst";
 
-          FileStream streamIn = null;
-          StreamReader fileIn = null;
 
           try
           {
             // open file
             Encoding fileEncoding = Encoding.Default;
-            streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-            fileIn = new StreamReader(streamIn, fileEncoding, true);
-
-            // ok, start reading
-            while (!fileIn.EndOfStream)
+            using (FileStream streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (StreamReader fileIn = new StreamReader(streamIn, fileEncoding, true))
             {
-              string tvguideFileName = fileIn.ReadLine();
-              if (tvguideFileName.Length == 0) continue;
-
-              if (!System.IO.Path.IsPathRooted(tvguideFileName))
+              // ok, start reading
+              while (!fileIn.EndOfStream)
               {
-                // extend by directory
-                tvguideFileName = System.IO.Path.Combine(folder, tvguideFileName);
+                string tvguideFileName = fileIn.ReadLine();
+                if (tvguideFileName.Length == 0) continue;
+
+                if (!System.IO.Path.IsPathRooted(tvguideFileName))
+                {
+                  // extend by directory
+                  tvguideFileName = System.IO.Path.Combine(folder, tvguideFileName);
+                }
+
+                Log.WriteFile(@"plugin:xmltv loading " + tvguideFileName);
+
+                // get channels
+                listChannels.AddRange(readTVGuideChannelsFromFile(tvguideFileName));
               }
-
-              Log.WriteFile(@"plugin:xmltv loading " + tvguideFileName);
-
-              // get channels
-              listChannels.AddRange(readTVGuideChannelsFromFile(tvguideFileName));
             }
-            fileIn.Close();
-            streamIn.Close();
           }
           catch (Exception e)
           {
             MessageBox.Show("Can't read file(s) from the tvguide.lst");
             Log.Error(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "] : " + e.Message);
-          }
-          finally
-          {
-            try
-            {
-              if (fileIn != null)
-                fileIn.Close();
-
-              if (streamIn != null)
-                streamIn.Close();
-            }
-            catch (Exception) {}
           }
         }
       }
@@ -635,31 +625,33 @@ namespace SetupTv.Sections
               {
                 // String displayName = null;
 
-                XmlReader xmlChannel = xmlReader.ReadSubtree();
-                xmlChannel.ReadStartElement(); // read channel
-                // now, xmlChannel is positioned on the first sub-element of <channel>
                 List<string> displayNames = new List<string>();
-
-                while (!xmlChannel.EOF)
+                using (XmlReader xmlChannel = xmlReader.ReadSubtree())
                 {
-                  if (xmlChannel.NodeType == XmlNodeType.Element)
+                  xmlChannel.ReadStartElement(); // read channel
+                                                 // now, xmlChannel is positioned on the first sub-element of <channel>
+
+                  while (!xmlChannel.EOF)
                   {
-                    switch (xmlChannel.Name)
+                    if (xmlChannel.NodeType == XmlNodeType.Element)
                     {
-                      case "display-name":
-                      case "Display-Name":
-                        displayNames.Add(xmlChannel.ReadString());
-                        //else xmlChannel.Skip();
-                        break;
+                      switch (xmlChannel.Name)
+                      {
+                        case "display-name":
+                        case "Display-Name":
+                          displayNames.Add(xmlChannel.ReadString());
+                          //else xmlChannel.Skip();
+                          break;
                         // could read more stuff here, like icon...
-                      default:
-                        // unknown, skip entire node
-                        xmlChannel.Skip();
-                        break;
+                        default:
+                          // unknown, skip entire node
+                          xmlChannel.Skip();
+                          break;
+                      }
                     }
+                    else
+                      xmlChannel.Read();
                   }
-                  else
-                    xmlChannel.Read();
                 }
                 foreach (string displayName in displayNames)
                 {
@@ -863,6 +855,16 @@ namespace SetupTv.Sections
     {
       radioDownloadOnSchedule.Enabled = chkScheduler.Checked;
       radioDownloadOnWakeUp.Enabled = chkScheduler.Checked;
+    }
+
+    private void cbRenameFileInZip_CheckedChanged(object sender, EventArgs e)
+    {
+      // Update setting to work on the fly on GUI
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting = layer.GetSetting("xmlTv");
+      setting = layer.GetSetting("xmlTvRenameFileInZip", "true");
+      setting.Value = cbRenameFileInZip.Checked ? "true" : "false";
+      setting.Persist();
     }
   }
 }

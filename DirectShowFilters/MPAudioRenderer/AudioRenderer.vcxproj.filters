@@ -260,6 +260,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="source\MpAudioRenderer.def" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="libsamplerate">

@@ -251,7 +251,7 @@ Denna dator kommer att fungera som en dedikerad TV-Server och leverera TV till a
     <value>Installera</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;ingen åtgärd&gt;</value>
+    <value>Ingen åtgärd</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Avinstallera föregående-&gt;Ladda ner-&gt;Installera</value>

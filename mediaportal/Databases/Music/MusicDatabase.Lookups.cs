@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -63,6 +63,15 @@ namespace MediaPortal.Music.Database
       aSong.Composer = DatabaseUtility.Get(aResult, aRow, "tracks.strComposer").Trim(trimChars);
       aSong.Conductor = DatabaseUtility.Get(aResult, aRow, "tracks.strConductor").Trim(trimChars);
       aSong.Comment = DatabaseUtility.Get(aResult, aRow, "tracks.strComment").Trim(trimChars);
+      aSong.MusicBrainzArtistId = DatabaseUtility.Get(aResult, aRow, "tracks.strMBArtistId").Trim(trimChars);
+      aSong.MusicBrainzDiscId = DatabaseUtility.Get(aResult, aRow, "tracks.strMBDiscId").Trim(trimChars);
+      aSong.MusicBrainzReleaseArtistId = DatabaseUtility.Get(aResult, aRow, "tracks.strMBReleaseArtistId").Trim(trimChars);
+      aSong.MusicBrainzReleaseCountry = DatabaseUtility.Get(aResult, aRow, "tracks.strMBReleaseCountry").Trim(trimChars);
+      aSong.MusicBrainzReleaseGroupId = DatabaseUtility.Get(aResult, aRow, "tracks.strMBReleaseGroupId").Trim(trimChars);
+      aSong.MusicBrainzReleaseId = DatabaseUtility.Get(aResult, aRow, "tracks.strMBReleaseId").Trim(trimChars);
+      aSong.MusicBrainzReleaseStatus = DatabaseUtility.Get(aResult, aRow, "tracks.strMBReleaseStatus").Trim(trimChars);
+      aSong.MusicBrainzReleaseType = DatabaseUtility.Get(aResult, aRow, "tracks.strMBReleaseType").Trim(trimChars);
+      aSong.MusicBrainzTrackId = DatabaseUtility.Get(aResult, aRow, "tracks.strMBTrackId").Trim(trimChars);
       aSong.FileType = DatabaseUtility.Get(aResult, aRow, "tracks.strFileType").Trim(trimChars);
       aSong.Codec = DatabaseUtility.Get(aResult, aRow, "tracks.strFullCodec").Trim(trimChars);
       aSong.BitRateMode = DatabaseUtility.Get(aResult, aRow, "tracks.strBitRateMode").Trim(trimChars);
@@ -70,15 +79,9 @@ namespace MediaPortal.Music.Database
       aSong.BitRate = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iBitRate");
       aSong.Channels = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iChannels");
       aSong.SampleRate = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iSampleRate");
-      try
-      {
-        aSong.DateTimePlayed = DatabaseUtility.GetAsDateTime(aResult, aRow, "dateLastPlayed");
-        aSong.DateTimeModified = DatabaseUtility.GetAsDateTime(aResult, aRow, "dateAdded");
-      }
-      catch (Exception ex)
-      {
-        Log.Warn("MusicDatabase Lookup: Exception parsing date fields: {0} stack: {1}", ex.Message, ex.StackTrace);
-      }
+
+      aSong.DateTimePlayed = DatabaseUtility.GetAsDateTime(aResult, aRow, "dateLastPlayed");
+      aSong.DateTimeModified = DatabaseUtility.GetAsDateTime(aResult, aRow, "dateAdded");
       return true;
     }
 
@@ -177,13 +180,16 @@ namespace MediaPortal.Music.Database
 
         PseudoRandomNumberGenerator rand = new PseudoRandomNumberGenerator();
 
-        int maxIDSong, rndIDSong;
         string strSQL = String.Format("SELECT max(idTrack) FROM tracks");
 
         SQLiteResultSet results = DirectExecute(strSQL);
 
-        maxIDSong = DatabaseUtility.GetAsInt(results, 0, 0);
-        rndIDSong = rand.Next(0, maxIDSong);
+        int maxIDSong = 0;
+        if (results.Rows.Count > 0)
+        {
+          maxIDSong = DatabaseUtility.GetAsInt(results, 0, 0);
+        }
+        int rndIDSong = rand.Next(0, maxIDSong);
 
         strSQL = String.Format("SELECT * FROM tracks WHERE idTrack={0}", rndIDSong);
 

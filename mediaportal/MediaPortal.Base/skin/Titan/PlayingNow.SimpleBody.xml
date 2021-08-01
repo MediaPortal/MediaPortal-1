@@ -431,7 +431,7 @@
         <type>fadelabel</type>
         <description>Album</description>
         <id>0</id>
-        <label>#Play.Current.Album#</label>
+        <label>#Play.Current.Album</label>
         <width>10</width>
         <maxWidth>1250</maxWidth>
         <align>right</align>

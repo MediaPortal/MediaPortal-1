@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -599,6 +599,11 @@ public class MediaPortalApp : D3D, IRender
           _skinOverrideNoTheme = true;
         }
 
+        if (arg == "/Debug")
+        {
+          Log.SetLogLevel(Level.Debug);
+        }
+
         #if !DEBUG
         _avoidVersionChecking = arg.ToLowerInvariant() == "/avoidversioncheck";
         #endif
@@ -642,6 +647,21 @@ public class MediaPortalApp : D3D, IRender
           MPSettings.AlternateConfig = true;
           MPSettings.ConfigPathName = _alternateConfig;
           MPSettings.AlternateConfig = false;
+
+          try
+          {
+            using (Settings xmlreader = new MPSettings())
+            {
+              var logLevel = (Level)xmlreader.GetValueAsInt("general", "loglevel", 3);
+              Log.SetLogLevel(logLevel);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("Failed to change Log level from alternate configuration file.");
+            Log.Error(ex);
+          }
+
           Log.BackupLogFiles();
           Log.Info("Using alternate configuration file: {0}", MPSettings.ConfigPathName);
         }
@@ -5529,6 +5549,13 @@ public class MediaPortalApp : D3D, IRender
           break;
 
         case GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH:
+          // We need to restore GUI after madVR restore (need this bug fix when a window is present on stop)
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+          {
+            Log.Debug("Main: GUIMessage.MessageType.GUI_MSG_MADVR_SCREEN_REFRESH - GUIGraphicsContext.State.RUNNING");
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+          }
+
           // We need to do a refresh of screen when using madVR only if resolution screen has change during playback
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.NeedRecreateSwapChain ||
               message.Param1 == 1 || message.Param1 == 2)
@@ -5690,7 +5717,7 @@ public class MediaPortalApp : D3D, IRender
               Log.Warn("Main: Exception on arrival Audio Renderer {0} exception: {1} ", message.Label,
                 exception.Message);
             }
-            Log.Error("Main: AUDIODEVICEARRIVAL play sound workaround");
+            Log.Debug("Main: AUDIODEVICEARRIVAL play sound workaround");
             try
             {
               var action = new Action(Action.ActionType.ACTION_PLAY_INTEL_AUDIO_SOUND, 0f, 0f) {SoundFileName = "silent.wav" };

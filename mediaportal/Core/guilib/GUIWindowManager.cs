@@ -878,7 +878,6 @@ namespace MediaPortal.GUI.Library
           _routedWindow = null;
         }
 
-        GUIMessage msg;
         GUIWindow previousWindow = null;
         GUIWindow newWindow = null;
         int previousWindowID = _activeWindowId;
@@ -902,7 +901,7 @@ namespace MediaPortal.GUI.Library
         {
           if ((newWindowId != previousWindow.GetID) || GUIWindow.WasWinTVplugin())
           {
-            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, previousWindow.GetID, 0, 0, newWindowId,
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, previousWindow.GetID, 0, 0, newWindowId,
               (skipAnimation ? 1 : 0),
               null);
             previousWindow.OnMessage(msg);
@@ -974,7 +973,7 @@ namespace MediaPortal.GUI.Library
             OnActivateWindow(_activeWindowId);
           }
 
-            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _activeWindowId, 0, 0, _previousActiveWindowId,
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _activeWindowId, 0, 0, _previousActiveWindowId,
                                  (skipAnimation ? 1 : 0), loadParameter);
             msg.Param3 = focusControlId;
             newWindow.OnMessage(msg);

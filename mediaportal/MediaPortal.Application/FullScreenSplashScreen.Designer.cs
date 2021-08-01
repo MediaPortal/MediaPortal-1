@@ -41,7 +41,6 @@ namespace MediaPortal
       // 
       this.lblMain.AutoEllipsis = true;
       this.lblMain.BackColor = System.Drawing.Color.Transparent;
-      this.lblMain.Dock = System.Windows.Forms.DockStyle.Fill;
       this.lblMain.Font = new System.Drawing.Font("Arial", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.lblMain.ForeColor = System.Drawing.Color.White;
       this.lblMain.Location = new System.Drawing.Point(0, 0);
@@ -53,8 +52,6 @@ namespace MediaPortal
       // 
       // lblVersion
       // 
-      this.lblVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
       this.lblVersion.BackColor = System.Drawing.Color.Transparent;
       this.lblVersion.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.lblVersion.ForeColor = System.Drawing.Color.White;
@@ -67,12 +64,11 @@ namespace MediaPortal
       // 
       // lblCVS
       // 
-      this.lblCVS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblCVS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.lblCVS.BackColor = System.Drawing.Color.Transparent;
       this.lblCVS.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.lblCVS.ForeColor = System.Drawing.Color.White;
-      this.lblCVS.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
       this.lblCVS.Location = new System.Drawing.Point(141, 234);
       this.lblCVS.Name = "lblCVS";
       this.lblCVS.Size = new System.Drawing.Size(131, 21);
@@ -94,7 +90,7 @@ namespace MediaPortal
       // 
       // FullScreenSplashScreen
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.ClientSize = new System.Drawing.Size(284, 264);
       this.ControlBox = false;
@@ -106,11 +102,11 @@ namespace MediaPortal
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
       this.MaximizeBox = false;
       this.Name = "FullScreenSplashScreen";
-      this.Opacity = 0;
+      this.Opacity = 0D;
       this.ShowInTaskbar = false;
       this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-      this.Text = "FullScreenSplashScreen";
       this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+      this.Text = "FullScreenSplashScreen";
       ((System.ComponentModel.ISupportInitialize)(this.pbBackground)).EndInit();
       this.ResumeLayout(false);
 

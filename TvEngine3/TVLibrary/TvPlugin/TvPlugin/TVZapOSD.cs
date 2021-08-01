@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 //
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -39,21 +39,20 @@ namespace TvPlugin
   ///
   public class TvZapOsd : GUIInternalWindow
   {
-    [SkinControl(35)] protected GUILabelControl lblCurrentChannel = null;
-    [SkinControl(36)] protected GUITextControl lblOnTvNow = null;
-    [SkinControl(37)] protected GUITextControl lblOnTvNext = null;
-    [SkinControl(100)] protected GUILabelControl lblCurrentTime = null;
-    [SkinControl(101)] protected GUILabelControl lblStartTime = null;
-    [SkinControl(102)] protected GUILabelControl lblEndTime = null;
+    [SkinControl(35)] protected GUIControl lblCurrentChannel = null;
+    [SkinControl(36)] protected GUIControl lblOnTvNow = null;
+    [SkinControl(37)] protected GUIControl lblOnTvNext = null;
+    [SkinControl(100)] protected GUIControl lblCurrentTime = null;
+    [SkinControl(101)] protected GUIControl lblStartTime = null;
+    [SkinControl(102)] protected GUIControl lblEndTime = null;
     [SkinControl(39)] protected GUIImage imgRecIcon = null;
     [SkinControl(10)] protected GUIImage imgTvChannelLogo = null;
-    [SkinControl(38)] protected GUILabelControl lblZapToChannelNo = null;
-
+    [SkinControl(38)] protected GUIControl lblZapToChannelNo = null;
 
     private bool m_bNeedRefresh = false;
     private DateTime m_dateTime = DateTime.Now;
-    private string channelName = "";
-    private string channelNr = "";
+    private string channelName = string.Empty;
+    private string channelNr = string.Empty;
     private int idChannel;
     private bool _byIndex = false;
 
@@ -204,10 +203,7 @@ namespace TvPlugin
                                 prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                 prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
       }
-      if (lblCurrentTime != null)
-      {
-        lblCurrentTime.Label = strTime;
-      }
+      SetLabel(lblCurrentTime, strTime);
     }
 
     public override void ResetAllControls()
@@ -326,7 +322,7 @@ namespace TvPlugin
   
         if (string.IsNullOrEmpty(strLogo))
         {
-          imgTvChannelLogo.SetFileName(String.Empty);
+          imgTvChannelLogo.SetFileName(string.Empty);
           imgTvChannelLogo.IsVisible = false;
         }
         else
@@ -364,7 +360,7 @@ namespace TvPlugin
       
       if (zapChannelNr<0)
       {
-        return "";
+        return string.Empty;
       }
       return zapChannelNr.ToString();
     }
@@ -380,16 +376,8 @@ namespace TvPlugin
 
     private void ShowPrograms()
     {
-      if (lblOnTvNow != null)
-      {
-        lblOnTvNow.EnableUpDown = false;
-        lblOnTvNow.Clear();
-      }
-      if (lblOnTvNext != null)
-      {
-        lblOnTvNext.EnableUpDown = false;
-        lblOnTvNext.Clear();
-      }
+      SetLabel(lblOnTvNow, string.Empty);
+      SetLabel(lblOnTvNext, string.Empty);
 
       // Set recorder status
       if (imgRecIcon != null)
@@ -403,12 +391,12 @@ namespace TvPlugin
       {
         if (string.IsNullOrEmpty(channelNr))
         {
-          lblZapToChannelNo.Label = String.Empty;
+          SetLabel(lblZapToChannelNo, string.Empty);
           lblZapToChannelNo.Visible = false;
         }
         else
         {
-          lblZapToChannelNo.Label = channelNr;
+          SetLabel(lblZapToChannelNo, channelNr);
           lblZapToChannelNo.Visible = true;
         }
       }
@@ -418,18 +406,18 @@ namespace TvPlugin
         var prog = chan.GetProgramAt(m_dateTime);
         if (LastError != null)
         {
-          if (lblStartTime != null) lblStartTime.Label = "";
-          if (lblEndTime != null) lblEndTime.Label = "";
+          SetLabel(lblStartTime, string.Empty);
+          SetLabel(lblEndTime, string.Empty);
           if (LastError.FailingChannel != null)
           {
-            if (lblCurrentChannel != null) lblCurrentChannel.Label = LastError.FailingChannel.DisplayName;
+            SetLabel(lblCurrentChannel, LastError.FailingChannel.DisplayName);
           }
           if (LastError.Messages.Count > 0)
           {
-            lblOnTvNow.Label = LastError.Messages[0]; // first line in "NOW"
+            SetLabel(lblOnTvNow, LastError.Messages[0]); // first line in "NOW"
             if (LastError.Messages.Count > 1)
             {
-              lblOnTvNext.Label = String.Join(", ", LastError.Messages.ToArray(), 1, LastError.Messages.Count - 1);
+              SetLabel(lblOnTvNext, String.Join(", ", LastError.Messages.ToArray(), 1, LastError.Messages.Count - 1));
               // 2nd and later in "NEXT"
             }
           }
@@ -437,64 +425,34 @@ namespace TvPlugin
         }
         else
         {
-          if (lblCurrentChannel != null)
-          {
-            lblCurrentChannel.Label = channelName;
-          }
+          SetLabel(lblCurrentChannel, channelName);
           if (prog != null)
           {
             string strTime = String.Format("{0}-{1}",
               prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
               prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-            if (lblCurrentTime != null)
-            {
-              lblCurrentTime.Label = strTime;
-            }
-
-            if (lblOnTvNow != null)
-            {
-              lblOnTvNow.Label = prog.Title;
-            }
-            if (lblStartTime != null)
-            {
-              strTime = String.Format("{0}", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-              lblStartTime.Label = strTime;
-            }
-            if (lblEndTime != null)
-            {
-              strTime = String.Format("{0} ", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-              lblEndTime.Label = strTime;
-            }
+            SetLabel(lblCurrentTime, strTime);
+            SetLabel(lblOnTvNow, prog.Title);
+            strTime = String.Format("{0}", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            SetLabel(lblStartTime, strTime);
+            strTime = String.Format("{0} ", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            SetLabel(lblEndTime, strTime);
 
             // next program
             prog = chan.GetProgramAt(prog.EndTime.AddMinutes(1));
             //prog = TVHome.Navigator.GetChannel(channelName).GetProgramAt(prog.EndTime.AddMinutes(1));
             if (prog != null)
             {
-              if (lblOnTvNext != null)
-              {
-                lblOnTvNext.Label = prog.Title;
-              }
+              SetLabel(lblOnTvNext, prog.Title);
             }
           }
-
           else
           {
-            lblOnTvNow.Label = GUILocalizeStrings.Get(736); // no epg for this channel
-
-            if (lblStartTime != null)
-            {
-              lblStartTime.Label = String.Empty;
-            }
-            if (lblEndTime != null)
-            {
-              lblEndTime.Label = String.Empty;
-            }
-            if (lblCurrentTime != null)
-            {
-              lblCurrentTime.Label = String.Empty;
-            }
+            SetLabel(lblOnTvNow, GUILocalizeStrings.Get(736)); // no epg for this channel
+            SetLabel(lblStartTime, string.Empty);
+            SetLabel(lblEndTime, string.Empty);
+            SetLabel(lblCurrentTime, string.Empty);
           }
         }
       }
@@ -524,6 +482,30 @@ namespace TvPlugin
       }
       fPercent *= 100.0d;
       GUIPropertyManager.SetProperty("#TV.View.Percentage", fPercent.ToString());
+    }
+
+    private void SetLabel(GUIControl control, string value, bool translate = false)
+    {
+      if (control == null)
+      {
+        return;
+      }
+
+      if (translate && !string.IsNullOrEmpty(value))
+      {
+        value = value.ToValue() ?? value;
+      }
+
+      var cf = control as GUIFadeLabel;
+      if (cf != null) cf.Label = value;
+      var cl = control as GUILabelControl;
+      if (cl != null) cl.Label = value;
+      var ct = control as GUITextControl;
+      if (ct != null)
+      { 
+        ct.EnableUpDown = false;
+        ct.Label = value;
+      }
     }
   }
 }

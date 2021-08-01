@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -23,19 +23,19 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+
 using MediaPortal.ExtensionMethods;
+using MediaPortal.GUI.Library;
+
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.WindowsAPICodePack.Shell;
+
 using Direct3D = Microsoft.DirectX.Direct3D;
-using MediaPortal.GUI.Library;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 using ScaleTransform = System.Windows.Media.ScaleTransform;
-
 
 namespace MediaPortal.Util
 {
@@ -44,7 +44,6 @@ namespace MediaPortal.Util
   /// </summary>
   public class Picture
   {
-    private static ExifOrientations orientation = ExifOrientations.Normal;
     public enum ExifOrientations
     {
         None = 0,
@@ -81,7 +80,7 @@ namespace MediaPortal.Util
     /// <param name="iWidth">width of the returned texture</param>
     /// <param name="iHeight">height of the returned texture</param>
     /// <returns>Texture with image or null if image could not be loaded</returns>
-    /// 
+    ///
     public static Texture Load(string strPic, int iRotate, int iMaxWidth, int iMaxHeight, bool bRGB, bool bZoom,
                                out int iWidth, out int iHeight)
     {
@@ -99,20 +98,23 @@ namespace MediaPortal.Util
         return null;
 
       Direct3D.Texture texture = null;
-      Image theImage = null;
       try
       {
         try
         {
           using (FileStream fs = new FileStream(strPic, FileMode.Open, FileAccess.Read))
           {
-            using (theImage = Image.FromStream(fs, true, false))
+            using (Image theImage = Image.FromStream(fs, true, false))
             {
-              Log.Debug("Picture: Fast loaded texture {0}", strPic);
               if (theImage == null)
+              {
                 return null;
+              }
+              Log.Debug("Picture: Fast loaded texture {0}", strPic);
               if (iRotate > 0)
               {
+                RotateImage(theImage);
+                /*
                 RotateFlipType fliptype;
                 switch (iRotate)
                 {
@@ -132,6 +134,7 @@ namespace MediaPortal.Util
                     fliptype = RotateFlipType.RotateNoneFlipNone;
                     break;
                 }
+                */
               }
               iWidth = theImage.Size.Width;
               iHeight = theImage.Size.Height;
@@ -236,13 +239,6 @@ namespace MediaPortal.Util
       {
         Log.Warn("Picture: exception loading {0} err:{1}", strPic, ex.Message);
       }
-      finally
-      {
-        if (theImage != null)
-        {
-          theImage.SafeDispose();
-        }
-      }
       return texture;
     }
 
@@ -255,11 +251,27 @@ namespace MediaPortal.Util
     /// <returns>Texture with image or null if image could not be loaded</returns>
     public static Texture ConvertImageToTexture(Bitmap theImage, out int iWidth, out int iHeight)
     {
+      return ConvertImageToTexture(theImage, 0, Format.X8R8G8B8, out iWidth, out iHeight);
+    }
+
+    /// <summary>
+    /// This method converts a GDI image to a DirectX Textures
+    /// </summary>
+    /// <param name="theImage">GDI Image</param>
+    /// <param name="lColorKey">A 32-bit ARGB color to replace with transparent black, or 0 to disable the color key</param>
+    /// <param name="fmt">Member of the Format enumerated type that describes the requested pixel format for the cube texture</param>
+    /// <param name="iWidth">width of returned texture</param>
+    /// <param name="iHeight">height of returned texture</param>
+    /// <returns>Texture with image or null if image could not be loaded</returns>
+    public static Texture ConvertImageToTexture(Bitmap theImage, long lColorKey, Format fmt, out int iWidth, out int iHeight)
+    {
       iWidth = 0;
       iHeight = 0;
       if (theImage == null)
+      {
         return null;
-      // Texture texture=null;
+      }
+
       try
       {
         Texture texture = null;
@@ -272,14 +284,14 @@ namespace MediaPortal.Util
           texture = TextureLoader.FromStream(
             GUIGraphicsContext.DX9Device,
             stream,
-            0, 0, //width/height
-            1, //mipslevels
-            0, //Usage.Dynamic,
-            Format.X8R8G8B8,
+            0, 0, // width/height
+            1,    // mipslevels
+            0,    // Usage.Dynamic,
+            fmt,
             GUIGraphicsContext.GetTexturePoolType(),
             Filter.None,
             Filter.None,
-            (int)0,
+            (int)lColorKey,
             ref info2);
           stream.Close();
           iWidth = info2.Width;
@@ -296,7 +308,6 @@ namespace MediaPortal.Util
       return null;
     }
 
-
     /// <summary>
     /// render the image contained in texture onscreen
     /// </summary>
@@ -309,7 +320,7 @@ namespace MediaPortal.Util
     /// <param name="iTextureHeight">height in texture</param>
     /// <param name="iTextureLeft">x (left) offset in texture</param>
     /// <param name="iTextureTop">y (top) offset in texture</param>
-    /// <param name="bHiQuality">true :render in hi quality but slow, 
+    /// <param name="bHiQuality">true :render in hi quality but slow,
     ///                          false:render in lo quality but fast,  </param>
     //public static void RenderImage(ref Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, bool bHiQuality)
     public static void RenderImage(Texture texture, float x, float y, float nw, float nh, float iTextureWidth,
@@ -464,7 +475,7 @@ namespace MediaPortal.Util
     /// <param name="iTextureHeight">height in texture</param>
     /// <param name="iTextureLeft">x (left) offset in texture</param>
     /// <param name="iTextureTop">y (top) offset in texture</param>
-    /// <param name="bHiQuality">true :render in hi quality but slow, 
+    /// <param name="bHiQuality">true :render in hi quality but slow,
     ///                          false:render in lo quality but fast,  </param>
     //public static void RenderImage(ref Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, bool bHiQuality)
     public static void RenderImage(Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight,
@@ -753,7 +764,7 @@ namespace MediaPortal.Util
 
         int g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
         float g_fMipMapLodBias = 0.0f;
-        
+
         DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
         DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
         DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
@@ -975,7 +986,8 @@ namespace MediaPortal.Util
     /// /// <param name="needOverride">Override if the file is exist</param>
     /// <returns>Whether the thumb has been successfully created</returns>
     public static bool ReCreateThumbnail(string thumbnailImageSource, string thumbnailImageDest, int aThumbWidth,
-                                       int aThumbHeight, int iRotate, bool aFastMode, bool autocreateLargeThumbs, bool fallBack, bool needOverride)
+                                         int aThumbHeight, int iRotate, bool aFastMode, bool autocreateLargeThumbs,
+                                         bool fallBack, bool needOverride)
     {
       if (!needOverride && File.Exists(thumbnailImageDest))
       {
@@ -1013,8 +1025,7 @@ namespace MediaPortal.Util
         else
         {
           //Try generate Bitmap frame : speedy and low memory !
-          frame = BitmapFrame.Create(new Uri(MediaUrl), BitmapCreateOptions.DelayCreation,
-                                     BitmapCacheOption.None);
+          frame = BitmapFrame.Create(new Uri(MediaUrl), BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
         }
 
         if (frame.Thumbnail == null) //If it failed try second method (slower and use more memory)
@@ -1276,6 +1287,8 @@ namespace MediaPortal.Util
 
       try
       {
+        RotateImage(aDrawingImage, aRotation);
+        /*
         switch (aRotation)
         {
           case 1:
@@ -1290,7 +1303,7 @@ namespace MediaPortal.Util
           default:
             break;
         }
-
+        */
         int iWidth = aThumbWidth;
         int iHeight = aThumbHeight;
         float fAR = (aDrawingImage.Width) / ((float)aDrawingImage.Height);
@@ -1341,9 +1354,7 @@ namespace MediaPortal.Util
           }
         }
 
-        if (MediaPortal.Player.g_Player.Playing)
-          Thread.Sleep(30);
-
+        Utils.ThreadSleep(30);
         result = SaveThumbnail(aThumbTargetPath, myTargetThumb);
       }
       catch (Exception ex)
@@ -1372,6 +1383,7 @@ namespace MediaPortal.Util
       double angle = 0;
       if ((meta != null) && (ret != null)) //si on a des meta, tentative de récupération de l'orientation
       {
+        ExifOrientations orientation = ExifOrientations.Normal;
         if (meta.GetQuery("/app1/ifd/{ushort=274}") != null)
         {
           orientation =
@@ -1416,10 +1428,7 @@ namespace MediaPortal.Util
 
         File.SetAttributes(aThumbTargetPath, File.GetAttributes(aThumbTargetPath) | FileAttributes.Hidden);
         // even if run in background thread wait a little so the main process does not starve on IO
-        if (MediaPortal.Player.g_Player.Playing)
-          Thread.Sleep(100);
-        else
-          Thread.Sleep(1);
+        Utils.ThreadSleep(100);
         return true;
       }
       catch (Exception ex)
@@ -1514,21 +1523,204 @@ namespace MediaPortal.Util
         if (propItem.Id == 0x112)
         {
           int iType = Convert.ToInt16(propItem.Value[0]);
-          switch (iType)
-          {
-            case 06:
-              return 1; // 90 degree:  112/03/06 00
-            case 03:
-              return 2; // 180 degree: 112/03/03 00
-            case 08:
-              return 3; // 270 degree: 112/03/08 00
-          }
-          break;
+          return iType.ToRotation();
         }
       }
       return 0; // not rotated
     }
-  }
 
-//public class Picture
+    public static void GetImageSizes(string strFile, out Size resolution, out Size dimensions)
+    {
+      resolution = Size.Empty;
+      dimensions = Size.Empty;
+
+      if (!File.Exists(strFile))
+      {
+        return;
+      }
+
+      using (Image MyImage = Image.FromFile(strFile))
+      {
+        resolution.Width = Convert.ToInt32(MyImage.HorizontalResolution);
+        resolution.Height = Convert.ToInt32(MyImage.VerticalResolution);
+        dimensions = MyImage.Size;
+      }
+    }
+
+    public static void RotateImage(Image img)
+    {
+      if (img == null)
+      {
+        return;
+      }
+
+      try
+      {
+        int iRotation = GetRotateByExif(img);
+        RotateImage(img, iRotation);
+      }
+      catch (Exception ex)
+      {
+        Log.Warn("Picture: RotateImage: {0}", ex.Message);
+      }
+    }
+
+    public static void RotateImage(Image img, int iRotation)
+    {
+      if (img == null)
+      {
+        return;
+      }
+
+      try
+      {
+        switch (iRotation)
+        {
+          case 1:
+            img.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            break;
+          case 2:
+            img.RotateFlip(RotateFlipType.Rotate180FlipNone);
+            break;
+          case 3:
+            img.RotateFlip(RotateFlipType.Rotate270FlipNone);
+            break;
+          default:
+            break;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Warn("Picture: RotateImage: {0}", ex.Message);
+      }
+    }
+
+    public static bool GetHistogramImage(string strFile, string strTarget)
+    {
+      Image image = CalculateHistogram(strFile);
+      if (image == null)
+      {
+        return false;
+      }
+      try
+      {
+        image.Save(strTarget, ImageFormat.Png);
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture: Error saving Histogram Image {0} - {1}", strTarget, ex.Message);
+      }
+      return false;
+    }
+
+    public static Image CalculateHistogram(string strFile)
+    {
+      if (!File.Exists(strFile))
+      {
+        return null;
+      }
+
+      try
+      {
+        using (Image MyImage = ImageFast.FromFile(strFile))
+        {
+          return CalculateHistogram(MyImage);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture: Calculate Histogram error {0} - {1}", strFile, ex.Message);
+      }
+      return null;
+    }
+
+    public static Image CalculateHistogram(Image image)
+    {
+      Bitmap histogram = null;
+      if (image != null)
+      {
+        int width = 768; // 1024
+        int height = 600;
+        histogram = new Bitmap(width, height);
+        using (Graphics g = Graphics.FromImage(histogram))
+        {
+          Rectangle imageSize = new Rectangle(0, 0, width, height);
+          g.FillRectangle(System.Drawing.Brushes.WhiteSmoke, imageSize);
+        }
+        int[] R = new int[256];
+        int[] G = new int[256];
+        int[] B = new int[256];
+        // int[] L = new int[256];
+
+        Bitmap bmp = new Bitmap(image);
+        int i, j;
+        System.Drawing.Color color;
+        for (i = 0; i < bmp.Width; ++i)
+        {
+          for (j = 0; j < bmp.Height; ++j)
+          {
+            color = bmp.GetPixel(i, j);
+            ++R[color.R];
+            ++G[color.G];
+            ++B[color.B];
+          }
+        }
+
+        int max = 0;
+        for (i = 0; i < 256; ++i)
+        {
+          /*
+          L[i] = Convert.ToInt32(0.3 * R[i] + 0.59 * G[i] + 0.11 * B[i]); // NTSC RGB
+          L[i] = Convert.ToInt32(0.21 * R[i] + 0.72 * G[i] + 0.7 * B[i]); // sRGB
+
+          if (L[i] > max)
+          {
+            max = L[i];
+          }
+          */
+          if (R[i] > max)
+          {
+            max = R[i];
+          }
+          if (G[i] > max)
+          {
+            max = G[i];
+          }
+          if (B[i] > max)
+          {
+            max = B[i];
+          }
+        }
+
+        double point = (double) max / height;
+        for (i = 0; i < width - 3; ++i) // 4
+        {
+          for (j = height - 1; j > height - R[i / 3] / point; --j) // 4
+          {
+            histogram.SetPixel(i, j, System.Drawing.Color.Red);
+          }
+          ++i;
+          for (j = height - 1; j > height - G[i / 3] / point; --j) // 4
+          {
+            histogram.SetPixel(i, j, System.Drawing.Color.Green);
+          }
+          ++i;
+          for (j = height - 1; j > height - B[i / 3] / point; --j) // 4
+          {
+            histogram.SetPixel(i, j, System.Drawing.Color.Blue);
+          }
+          /*
+          ++i;
+          for (j = height - 1; j > height - L[i / 4] / point; --j)
+          {
+            histogram.SetPixel(i, j, System.Drawing.Color.Black);
+          }
+          */
+        }
+      }
+      return histogram;
+    }
+  }
+  // public class Picture
 }

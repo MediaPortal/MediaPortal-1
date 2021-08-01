@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,15 +18,10 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
+
 using MpeCore;
+using MpeCore.Classes;
 
 namespace MpeInstaller.Controls
 {
@@ -46,10 +41,15 @@ namespace MpeInstaller.Controls
     private void CollapsedItemClicked(ExtensionControlCollapsed sender)
     {
       var listCtrl = Parent.Parent as ExtensionListControl;
-      if (listCtrl.SelectedItem != null) listCtrl.SelectedItem.Collapse();
+      if (listCtrl.SelectedItem != null)
+      {
+        listCtrl.SelectedItem.Collapse();
+      }
       extensionControlCollapsed.Visible = false;
       if (!extensionControlExpanded.IsInitialized)
+      {
         extensionControlExpanded.Initialize(isInstalled, meetsAllDependencies, Package, UpdatePackage);
+      }
       extensionControlExpanded.Visible = true;
       Height = extensionControlExpanded.PreferredSize.Height + Margin.Top + Margin.Bottom;
 
@@ -61,6 +61,17 @@ namespace MpeInstaller.Controls
       extensionControlExpanded.Visible = false;
       extensionControlCollapsed.Visible = true;
       Height = extensionControlCollapsed.PreferredSize.Height + Margin.Top + Margin.Bottom;
+    }
+
+    void Expand()
+    {
+      extensionControlCollapsed.Visible = false;
+      if (!extensionControlExpanded.IsInitialized)
+      {
+        extensionControlExpanded.Initialize(isInstalled, meetsAllDependencies, Package, UpdatePackage);
+      }
+      extensionControlExpanded.Visible = true;
+      Height = extensionControlExpanded.PreferredSize.Height + Margin.Top + Margin.Bottom;
     }
 
     public void Initialize(PackageClass package, bool isInstalled)
@@ -78,8 +89,12 @@ namespace MpeInstaller.Controls
         meetsAllDependencies, 
         UpdatePackage != null ? UpdatePackage.GeneralInfo.Version.ToString() : null, 
         CollapsedItemClicked);
-
       Height = extensionControlCollapsed.PreferredSize.Height + Margin.Top + Margin.Bottom;
+
+      if (ApplicationSettings.Instance.ExpandTile)
+      {
+        Expand();
+      }
     }
 
     public bool Filter(string str, string tag)

@@ -251,7 +251,7 @@
     <value>Εγκατάσταση</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;καμία επιλογή&gt;</value>
+    <value>Καμία επιλογή</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Απεγκατάσταση προηγούμενου-&gt;Μεταφόρτωση-&gt;Εγκατάσταση</value>

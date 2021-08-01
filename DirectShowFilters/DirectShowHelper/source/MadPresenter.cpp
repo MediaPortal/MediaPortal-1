@@ -793,7 +793,7 @@ void MPMadPresenter::DeInitMadvrWindow()
   if (m_hWnd)
   {
     // remove ourself as user data to ensure we're not called anymore
-    SetWindowLongPtr(m_hWnd, GWL_USERDATA, 0);
+    SetWindowLongPtr(m_hWnd, GWLP_USERDATA, 0);
 
     // destroy the hidden window
     DestroyWindow(m_hWnd);
@@ -852,7 +852,7 @@ bool MPMadPresenter::InitMadvrWindow(HWND &hWnd)
   }
 
   if (hWnd)
-    SetWindowLongPtr(hWnd, GWL_USERDATA, NPT_POINTER_TO_LONG(this));
+    SetWindowLongPtr(hWnd, GWLP_USERDATA, NPT_POINTER_TO_LONG(this));
 
   return true;
 }
@@ -935,6 +935,17 @@ HRESULT MPMadPresenter::Stopping()
 
     // Enable DisplayModeChanger is set by using DRR when player goes /leaves fullscreen (if we use profiles)
     EnableOriginalDisplayMode(true);
+
+    if (m_pMad)
+    {
+      // Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
+      if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
+      {
+        pMadVrCmd->SendCommand("restoreDisplayModeNow");
+        pMadVrCmd.Release();
+        Log("MPMadPresenter::Stopping() restoreDisplayModeNow");
+      }
+    }
 
     if (m_pORCB)
     {

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -176,6 +176,7 @@ namespace TvPlugin
     protected static int _notifyTVTimeout = 15;
     protected static bool _playNotifyBeep = true;
     protected static int _preNotifyConfig = 60;
+    protected static bool _changeChannelOnNotifyTimeout = false;
 
     #endregion
 
@@ -1194,6 +1195,7 @@ namespace TvPlugin
         _notifyTVTimeout = xmlreader.GetValueAsInt("mytv", "notifyTVTimeout", 15);
         _playNotifyBeep = xmlreader.GetValueAsBool("mytv", "notifybeep", true);
         _preNotifyConfig = xmlreader.GetValueAsInt("mytv", "notifyTVBefore", 300);
+        _changeChannelOnNotifyTimeout = xmlreader.GetValueAsBool("mytv", "enableChannelChange", false);
       }
       settingsLoaded = true;
     }
@@ -1875,7 +1877,7 @@ namespace TvPlugin
             {
               MediaPortal.Util.Utils.PlaySound("notify.wav", false, true);
             }
-            tvNotifyDlg.SetDefaultToYes(false);
+            tvNotifyDlg.SetDefaultToYes(_changeChannelOnNotifyTimeout);
             tvNotifyDlg.DoModal(GUIWindowManager.ActiveWindow);
 
             if (tvNotifyDlg.IsConfirmed)
@@ -1949,8 +1951,7 @@ namespace TvPlugin
       }
 
       //gemx: fix for 0001181: Videoplayback does not work if tvservice.exe is not running
-      bool isTS = (Card != null && Card.IsTimeShifting);
-      if (Connected && isTS)
+      if (Connected && Card != null && Card.IsTimeShifting)
       {
         Card.StopTimeShifting();
       }
@@ -2627,6 +2628,11 @@ namespace TvPlugin
           percentLivePoint *= 100.0d;
           GUIPropertyManager.SetProperty("#TV.View.Percentage", percentLivePoint.ToString());
           GUIPropertyManager.SetProperty("#TV.Record.percent3", percentLivePoint.ToString());
+          string unwatchedTitle = GUILocalizeStrings.Get(698); // TS Buffer available
+          GUIPropertyManager.SetProperty("#TV.View.unwatchedTitle", unwatchedTitle);
+          double unwatchednum = livePoint - playingPoint;
+          string unwatched = Utils.SecondsToHMSString((int)unwatchednum);
+          GUIPropertyManager.SetProperty("#TV.View.unwatched", unwatched);
         }
       }
 
@@ -2660,6 +2666,8 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
       GUIPropertyManager.SetProperty("#TV.View.remainingSeconds", string.Empty);
       GUIPropertyManager.SetProperty("#TV.View.remainingMinutes", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.unwatchedTitle", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.unwatched", String.Empty);
     }
 
     private static void UpdateNextEpgProperties(Channel ch)

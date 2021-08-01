@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using MediaPortal.Database;
 using MediaPortal.Profile;
@@ -1290,6 +1291,10 @@ namespace MediaPortal.Music.Database
         tag.Genre = Util.Utils.FormatMultiItemMusicString(tag.Genre, false);
         tag.Composer = Util.Utils.FormatMultiItemMusicString(tag.Composer, _stripArtistPrefixes);
 
+        // For MusicBrainzArtist information we see different dividers like "/", "\\", ";", etc.
+        // change them to have a "|", which is the separator used inside the MP database
+        tag.MusicBrainzArtistId = Regex.Replace(tag.MusicBrainzArtistId ?? string.Empty, @"[;/\\\\]", "|");
+        
         return tag;
       }
       return null;
@@ -1329,15 +1334,24 @@ namespace MediaPortal.Music.Database
             @"insert into tracks (
                                strPath, strArtist, strAlbumArtist, strAlbum, strGenre, strComposer, strConductor, strTitle, 
                                iTrack, iNumTracks, iDuration, iYear, iTimesPlayed, iRating, iFavorite, 
-                               iResumeAt, iDisc, iNumDisc, strLyrics, strComment, strFileType, strFullCodec, strBitRateMode, 
+                               iResumeAt, iDisc, iNumDisc, strLyrics, strComment,
+                               strMBArtistId, strMBDiscId, strMBReleaseArtistId, strMBReleaseCountry, strMBReleaseGroupId,
+                               strMBReleaseId, strMBReleaseStatus, strMBReleaseType, strMBTrackId,
+                               strFileType, strFullCodec, strBitRateMode, 
                                iBPM, iBitRate, iChannels, iSampleRate, dateLastPlayed, dateAdded) 
                                values ( 
                                '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}',
                                {8}, {9}, {10}, {11}, {12}, {13}, {14}, 
-                               {15}, {16}, {17}, '{18}', '{19}',  '{20}', '{21}',  '{22}',  {23}, {24}, {25}, {26}, '{27}', '{28}' )",
+                               {15}, {16}, {17}, '{18}', '{19}',
+                               '{20}', '{21}', '{22}', '{23}', '{24}',
+                               '{25}', '{26}', '{27}', '{28}',
+                               '{29}',  '{30}',  '{31}', {32}, {33}, {34}, {35}, '{36}', '{37}' )",
             strFileName, tag.Artist, tag.AlbumArtist, tag.Album, tag.Genre, tag.Composer, tag.Conductor, tag.Title,
             tag.Track, tag.TrackTotal, tag.Duration, tag.Year, 0, tag.Rating, 0,
-            0, tag.DiscID, tag.DiscTotal, tag.Lyrics, tag.Comment, tag.FileType, tag.Codec, tag.BitRateMode,
+            0, tag.DiscID, tag.DiscTotal, tag.Lyrics, tag.Comment,
+            tag.MusicBrainzArtistId, tag.MusicBrainzDiscId, tag.MusicBrainzReleaseArtistId, tag.MusicBrainzReleaseCountry, tag.MusicBrainzReleaseGroupId,
+            tag.MusicBrainzReleaseId, tag.MusicBrainzReleaseStatus, tag.MusicBrainzReleaseType, tag.MusicBrainzTrackId,
+            tag.FileType, tag.Codec, tag.BitRateMode,
             tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, DateTime.MinValue.ToString("yyyy-MM-dd HH:mm:ss"), dateadded.ToString("yyyy-MM-dd HH:mm:ss")
             );
         try
@@ -1438,15 +1452,20 @@ namespace MediaPortal.Music.Database
                                  set strArtist = '{0}', strAlbumArtist = '{1}', strAlbum = '{2}', 
                                  strGenre = '{3}', strTitle = '{4}', iTrack = {5}, iNumTracks = {6}, 
                                  iDuration = {7}, iYear = {8}, iRating = {9}, iDisc = {10}, iNumDisc = {11}, 
-                                 strLyrics = '{12}', strComposer = '{13}', strConductor = '{14}',
-                                 strComment = '{15}', strFileType = '{16}', strFullCodec = '{17}',
-                                 strBitRateMode = '{18}', iBPM = {19}, iBitRate = {20}, iChannels = {21},
-                                 iSampleRate = {22}, dateAdded = '{23}' 
-                                 where strPath = '{24}'",
+                                 strLyrics = '{12}', strComposer = '{13}', strConductor = '{14}', strComment = '{15}',
+                                 strMBArtistId = '{16}', strMBDiscId = '{17}', strMBReleaseArtistId = '{18}', strMBReleaseCountry = '{19}', strMBReleaseGroupId = '{20}',
+                                 strMBReleaseId = '{21}', strMBReleaseStatus = '{22}', strMBReleaseType = '{23}', strMBTrackId = '{24}',
+                                 strFileType = '{25}', strFullCodec = '{26}',
+                                 strBitRateMode = '{27}', iBPM = {28}, iBitRate = {29}, iChannels = {30},
+                                 iSampleRate = {31}, dateAdded = '{32}' 
+                                 where strPath = '{33}'",
               tag.Artist, tag.AlbumArtist, tag.Album,
               tag.Genre, tag.Title, tag.Track, tag.TrackTotal,
               tag.Duration, tag.Year, tag.Rating, tag.DiscID, tag.DiscTotal,
-              tag.Lyrics, tag.Composer, tag.Conductor, tag.Comment, tag.FileType, tag.Codec,
+              tag.Lyrics, tag.Composer, tag.Conductor, tag.Comment,
+              tag.MusicBrainzArtistId, tag.MusicBrainzDiscId, tag.MusicBrainzReleaseArtistId, tag.MusicBrainzReleaseCountry, tag.MusicBrainzReleaseGroupId,
+              tag.MusicBrainzReleaseId, tag.MusicBrainzReleaseStatus, tag.MusicBrainzReleaseType, tag.MusicBrainzTrackId,
+              tag.FileType, tag.Codec,
               tag.BitRateMode, tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, dateadded.ToString("yyyy-MM-dd HH:mm:ss"),
               strFileName
               );

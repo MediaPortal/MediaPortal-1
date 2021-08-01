@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -28,8 +28,11 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Media.Animation;
+
 using MediaPortal.ExtensionMethods;
 using MediaPortal.Profile;
+
+using UnidecodeSharpFork;
 
 // used for Keys definition
 // used for loopDelay
@@ -1419,6 +1422,8 @@ namespace MediaPortal.GUI.Library
       }
 
       float fHeight = 60.0f;
+      GUIGraphicsContext.ScaleVertical(ref fHeight);
+
       if (fHeight + fPosCY >= GUIGraphicsContext.Height)
       {
         fHeight = GUIGraphicsContext.Height - fPosCY - 1;
@@ -2081,7 +2086,7 @@ namespace MediaPortal.GUI.Library
         }
 
         GUIListItem pItem = _listItems[iItem];
-        if (pItem.Label.ToUpperInvariant().StartsWith(searchKey.ToUpperInvariant()))
+        if (pItem.Label.ToUpperInvariant().Unidecode().StartsWith(searchKey.ToUpperInvariant()))
         {
           bItemFound = true;
           break;

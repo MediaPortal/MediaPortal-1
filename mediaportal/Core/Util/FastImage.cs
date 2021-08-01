@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -168,6 +168,12 @@ namespace MediaPortal.Util
     {
       filename = Path.GetFullPath(filename);
       IntPtr loadingImage = IntPtr.Zero;
+
+      if (!File.Exists(filename))
+      {
+        Log.Warn("FastImage FromFile: {0} does not exist", filename);
+        return null;
+      }
 
       // We are not using ICM at all, fudge that, this should be FAAAAAST!
       int ret = GdipLoadImageFromFile(filename, out loadingImage);

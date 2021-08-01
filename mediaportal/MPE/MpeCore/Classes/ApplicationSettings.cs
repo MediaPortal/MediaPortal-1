@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Xml.Serialization;
 
@@ -50,6 +51,8 @@ namespace MpeCore.Classes
       ShowOnlyStable = true;
       ShowOnlyCompatible = true;
       IgnoredUpdates = new List<string>();
+      ExpandTile = false;
+      ExpandTileFullWidth = false;
     }
 
     public DateTime LastUpdate { get; set; }
@@ -59,11 +62,16 @@ namespace MpeCore.Classes
     public bool ShowOnlyStable { get; set; }
     public bool ShowOnlyCompatible { get; set; }
     public List<string> IgnoredUpdates { get; set; }
+    public bool ExpandTile { get; set; }
+    public bool ExpandTileFullWidth { get; set; }
+    public Size FormSize { get; set; }
 
     public void Save()
     {
       if (!Directory.Exists(MpeInstaller.BaseFolder))
+      {
         Directory.CreateDirectory(MpeInstaller.BaseFolder);
+      }
       string filename = string.Format("{0}\\InstallerSettings.xml", MpeInstaller.BaseFolder);
       var serializer = new XmlSerializer(typeof (ApplicationSettings));
       using (TextWriter writer = new StreamWriter(filename))
