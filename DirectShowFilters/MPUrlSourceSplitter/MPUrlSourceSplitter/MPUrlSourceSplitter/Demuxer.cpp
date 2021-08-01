@@ -1339,7 +1339,7 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
                 break;
               }
 
-              av_free_packet(&avPacket);
+              av_packet_unref(&avPacket);
 
               if (streamId == avPacket.stream_index)
               {
@@ -1820,7 +1820,7 @@ HRESULT CDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
                   } while ((avResult == AVERROR(EAGAIN)) || (avResult == E_CONNECTION_LOST_TRYING_REOPEN));
 
                   CHECK_CONDITION_EXECUTE(avResult < 0, result = (HRESULT)avResult);
-                  av_free_packet(&avPacket);
+                  av_packet_unref(&avPacket);
 
                   if ((streamId != avPacket.stream_index) || (avPacket.dts < 0))
                   {
@@ -2082,7 +2082,7 @@ HRESULT CDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
       } while ((avResult == AVERROR(EAGAIN)) || (avResult == E_CONNECTION_LOST_TRYING_REOPEN));
 
       CHECK_CONDITION_EXECUTE(avResult < 0, result = (HRESULT)avResult);
-      av_free_packet(&avPacket);
+      av_packet_unref(&avPacket);
 
       if ((streamId != avPacket.stream_index) || (avPacket.dts < 0))
       {
@@ -2179,7 +2179,7 @@ HRESULT CDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
       } while ((avResult == AVERROR(EAGAIN)) || (avResult == E_CONNECTION_LOST_TRYING_REOPEN));
 
       CHECK_CONDITION_EXECUTE(avResult < 0, result = (HRESULT)avResult);
-      av_free_packet(&avPacket);
+      av_packet_unref(&avPacket);
 
       if ((streamId != avPacket.stream_index) || (avPacket.pts < 0))
       {
@@ -2745,7 +2745,7 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
     else if ((ffmpegPacket.size <= 0) || (ffmpegPacket.stream_index < 0) || ((unsigned)ffmpegPacket.stream_index >= this->formatContext->nb_streams))
     {
       // in some cases ffmpeg returns a zero or negative packet size
-      av_free_packet(&ffmpegPacket);
+      av_packet_unref(&ffmpegPacket);
     }
     else
     {
@@ -2961,7 +2961,7 @@ HRESULT CDemuxer::GetNextPacketInternal(COutputPinPacket *packet)
         }
       }
 
-      av_free_packet(&ffmpegPacket);
+      av_packet_unref(&ffmpegPacket);
 
       //if ((this->m_bFlv) && (this->flvTimestamps != NULL) && (pPacket->StreamId < FLV_TIMESTAMP_MAX))
       //{
