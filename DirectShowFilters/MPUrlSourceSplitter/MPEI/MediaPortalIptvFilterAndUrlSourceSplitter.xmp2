@@ -1851,8 +1851,8 @@ public class Script
     <Version>
       <Major>2</Major>
       <Minor>2</Minor>
-      <Build>23</Build>
-      <Revision>7785</Revision>
+      <Build>24</Build>
+      <Revision>7882</Revision>
     </Version>
     <ExtensionDescription>The MediaPortal IPTV filter and url source splitter is a directshow source filter that enables direct playback for many protocols and filetypes used in online video sources in the internet.
 
@@ -1864,14 +1864,12 @@ Supported protocols:
 - Adobe HTTP Dynamic Streaming (HDS, F4M manifest)
 - Microsoft Smooth Streaming
 - Apple HTTP live streaming (M3U8 playlists)</ExtensionDescription>
-    <VersionDescription>- Fixed live streams starting not on current live-point
-
-- Fixed "Error occurred while loading settings." MediaPortalIptvFilterAndUrlSourceSplitter.xml not found
-
-- Reduce unneeded logging</VersionDescription>
+    <VersionDescription>- Fixed compatibility witn Windows Vista
+- Updated ffmpeg
+- Fixed crash at short m3u8 files</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=327&amp;cf_id=24</OnlineLocation>
-    <ReleaseDate>2021-04-25T20:21:47</ReleaseDate>
+    <ReleaseDate>2021-07-31T20:21:47</ReleaseDate>
     <Tags>codec</Tags>
     <Location>.\MediaPortalUrlSourceSplitter[Version].mpe1</Location>
     <Params>
@@ -1920,7 +1918,7 @@ Supported protocols:
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\avformat-mpurlsourcesplitter-58.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{7f4575db-93f0-4c8d-8ba1-889567b3fc3f}-avformat-mpurlsourcesplitter-58.dll</ZipFileName>
-        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-58.dll</DestinationFilename>
+        <DestinationFilename>%TvServerBase%\\MPUrlSourceSplitteravformat-mpurlsourcesplitter-58.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
@@ -1934,7 +1932,7 @@ Supported protocols:
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\avutil-mpurlsourcesplitter-56.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{58add760-64a5-4a1e-afee-346097e6a2da}-avutil-mpurlsourcesplitter-56.dll</ZipFileName>
-        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avutil-mpurlsourcesplitter-56.dll</DestinationFilename>
+        <DestinationFilename>%TvServerBase%MPUrlSourceSplitter\avutil-mpurlsourcesplitter-56.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
@@ -2073,7 +2071,7 @@ Supported protocols:
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>MPUrlSourceSplitter.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{3f025af0-6ad5-4d8f-a571-b6c86ed8f431}-MPUrlSourceSplitter.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{c84417fd-ebbc-4af9-863e-15275ef9fcf4}-MPUrlSourceSplitter.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
