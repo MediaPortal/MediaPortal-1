@@ -154,8 +154,8 @@ Function CheckAndDownloadDotNet35
 
 # Set up our Variables
 Var /GLOBAL dotNET35IsThere
-Var /GLOBAL dotNET_CMD_LINE
-Var /GLOBAL EXIT_CODE
+Var /GLOBAL dotNET35_CMD_LINE
+Var /GLOBAL EXIT_CODE_35
 
 ; check if .Net Framework 3.5 is installed
 ReadRegDWORD $0 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5" "Install"
@@ -170,7 +170,7 @@ ${EndIf}
 is_equal:
     Goto done_compare_not_needed
 is_greater:
-    # Useful if, for example, Microsoft releases .NET 4.5 SP1
+    # Useful if, for example, Microsoft releases .NET 3.5 SP1
     # We want to be able to simply skip install since it's not
     # needed on this system
     Goto done_compare_not_needed
@@ -182,11 +182,11 @@ done_compare_needed:
 
     # Microsoft Download Center EXE:
     # Web Bootstrapper: ---
-    # Full Download: ---
+    # Full Download: https://download.microsoft.com/download/0/6/1/061F001C-8752-4600-A198-53214C69B51F/dotnetfx35setup.exe
 
     # Setup looks for components\dotNET35Full.exe relative to the install EXE location
     # This allows the installer to be placed on a USB stick (for computers without internet connections)
-    # If the .NET Framework 4.5 installer is *NOT* found, Setup will connect to Microsoft's website
+    # If the .NET Framework 3.5 installer is *NOT* found, Setup will connect to Microsoft's website
     # and download it for you
 
     # Reboot Required with these Exit Codes:
@@ -203,10 +203,10 @@ done_compare_needed:
     IfSilent is_quiet is_not_quiet
 
     is_quiet:
-        StrCpy $dotNET_CMD_LINE "/q /norestart"
+        StrCpy $dotNET35_CMD_LINE "/q /norestart"
         Goto LookForLocalFile
     is_not_quiet:
-        StrCpy $dotNET_CMD_LINE "/showrmui /passive /norestart"
+        StrCpy $dotNET35_CMD_LINE "/showrmui /passive /norestart"
         Goto LookForLocalFile
 
     LookForLocalFile:
@@ -216,18 +216,19 @@ done_compare_needed:
         do_local_install:
             # .NET Framework found on the local disk.  Use this copy
 
-            ExecWait '"$EXEPATH\components\dotNET35Full.exe" $dotNET_CMD_LINE' $EXIT_CODE
+            ExecWait '"$EXEPATH\components\dotNET35Full.exe" $dotNET35_CMD_LINE' $EXIT_CODE_35|
             Goto is_reboot_requested
 
         # Now, let's Download the .NET
         do_network_install:
 
             Var /GLOBAL dotNetDidDownload
-            NSISdl::download "http://go.microsoft.com/fwlink/?LinkId=!!!!!!!" "$TEMP\dotNET35Web.exe" $dotNetDidDownload
+            # NSISdl::download "http://go.microsoft.com/fwlink/?LinkId=!!!!!!!" "$TEMP\dotNET35Web.exe" $dotNetDidDownload
+            NSISdl::download "https://download.microsoft.com/download/0/6/1/061F001C-8752-4600-A198-53214C69B51F/dotnetfx35setup.exe" "$TEMP\dotNET35Web.exe" $dotNetDidDownload
 
             StrCmp $dotNetDidDownload success fail
             success:
-                ExecWait '"$TEMP\dotNET35Web.exe" $dotNET_CMD_LINE' $EXIT_CODE
+                ExecWait '"$TEMP\dotNET35Web.exe" $dotNET35_CMD_LINE' $EXIT_CODE_35
                 Goto is_reboot_requested
 
             fail:
@@ -236,8 +237,8 @@ done_compare_needed:
 
             # $EXIT_CODE contains the return codes.  1641 and 3010 means a Reboot has been requested
             is_reboot_requested:
-                ${If} $EXIT_CODE = 1641
-                ${OrIf} $EXIT_CODE = 3010
+                ${If} $EXIT_CODE_35 = 1641
+                ${OrIf} $EXIT_CODE_35 = 3010
                     SetRebootFlag true
                 ${EndIf}
 
@@ -258,8 +259,8 @@ Function CheckAndDownloadDotNet45
 
 # Set up our Variables
 Var /GLOBAL dotNET45IsThere
-Var /GLOBAL dotNET_CMD_LINE
-Var /GLOBAL EXIT_CODE
+Var /GLOBAL dotNET45_CMD_LINE
+Var /GLOBAL EXIT_CODE_45
 
 ReadRegDWORD $dotNET45IsThere HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" "Release"
 IntCmp $dotNET45IsThere 378389 is_equal is_less is_greater
@@ -300,10 +301,10 @@ done_compare_needed:
     IfSilent is_quiet is_not_quiet
 
     is_quiet:
-        StrCpy $dotNET_CMD_LINE "/q /norestart"
+        StrCpy $dotNET45_CMD_LINE "/q /norestart"
         Goto LookForLocalFile
     is_not_quiet:
-        StrCpy $dotNET_CMD_LINE "/showrmui /passive /norestart"
+        StrCpy $dotNET45_CMD_LINE "/showrmui /passive /norestart"
         Goto LookForLocalFile
 
     LookForLocalFile:
@@ -313,7 +314,7 @@ done_compare_needed:
         do_local_install:
             # .NET Framework found on the local disk.  Use this copy
 
-            ExecWait '"$EXEPATH\components\dotNET45Full.exe" $dotNET_CMD_LINE' $EXIT_CODE
+            ExecWait '"$EXEPATH\components\dotNET45Full.exe" $dotNET45_CMD_LINE' $EXIT_CODE_45
             Goto is_reboot_requested
 
         # Now, let's Download the .NET
@@ -324,7 +325,7 @@ done_compare_needed:
 
             StrCmp $dotNetDidDownload success fail
             success:
-                ExecWait '"$TEMP\dotNET45Web.exe" $dotNET_CMD_LINE' $EXIT_CODE
+                ExecWait '"$TEMP\dotNET45Web.exe" $dotNET45_CMD_LINE' $EXIT_CODE_45
                 Goto is_reboot_requested
 
             fail:
@@ -333,8 +334,8 @@ done_compare_needed:
 
             # $EXIT_CODE contains the return codes.  1641 and 3010 means a Reboot has been requested
             is_reboot_requested:
-                ${If} $EXIT_CODE = 1641
-                ${OrIf} $EXIT_CODE = 3010
+                ${If} $EXIT_CODE_45 = 1641
+                ${OrIf} $EXIT_CODE_45 = 3010
                     SetRebootFlag true
                 ${EndIf}
 
