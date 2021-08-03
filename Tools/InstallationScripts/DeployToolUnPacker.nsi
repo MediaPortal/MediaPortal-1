@@ -215,8 +215,7 @@ done_compare_needed:
 
         do_local_install:
             # .NET Framework found on the local disk.  Use this copy
-
-            ExecWait '"$EXEPATH\components\dotNET35Full.exe" $dotNET35_CMD_LINE' $EXIT_CODE_35|
+            ExecWait '"$EXEPATH\components\dotNET35Full.exe" $dotNET35_CMD_LINE' $EXIT_CODE_35
             Goto is_reboot_requested
 
         # Now, let's Download the .NET
@@ -313,7 +312,6 @@ done_compare_needed:
 
         do_local_install:
             # .NET Framework found on the local disk.  Use this copy
-
             ExecWait '"$EXEPATH\components\dotNET45Full.exe" $dotNET45_CMD_LINE' $EXIT_CODE_45
             Goto is_reboot_requested
 
