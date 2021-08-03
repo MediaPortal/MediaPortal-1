@@ -221,11 +221,11 @@ done_compare_needed:
         # Now, let's Download the .NET
         do_network_install:
 
-            Var /GLOBAL dotNetDidDownload
-            # NSISdl::download "http://go.microsoft.com/fwlink/?LinkId=!!!!!!!" "$TEMP\dotNET35Web.exe" $dotNetDidDownload
-            NSISdl::download "https://download.microsoft.com/download/0/6/1/061F001C-8752-4600-A198-53214C69B51F/dotnetfx35setup.exe" "$TEMP\dotNET35Web.exe" $dotNetDidDownload
+            Var /GLOBAL dotNet35DidDownload
+            # NSISdl::download "http://go.microsoft.com/fwlink/?LinkId=!!!!!!!" "$TEMP\dotNET35Web.exe" $dotNet35DidDownload
+            NSISdl::download "https://download.microsoft.com/download/0/6/1/061F001C-8752-4600-A198-53214C69B51F/dotnetfx35setup.exe" "$TEMP\dotNET35Web.exe" $dotNet35DidDownload
 
-            StrCmp $dotNetDidDownload success fail
+            StrCmp $dotNet35DidDownload success fail
             success:
                 ExecWait '"$TEMP\dotNET35Web.exe" $dotNET35_CMD_LINE' $EXIT_CODE_35
                 Goto is_reboot_requested
@@ -318,10 +318,10 @@ done_compare_needed:
         # Now, let's Download the .NET
         do_network_install:
 
-            Var /GLOBAL dotNetDidDownload
-            NSISdl::download "http://go.microsoft.com/fwlink/?LinkId=225704" "$TEMP\dotNET45Web.exe" $dotNetDidDownload
+            Var /GLOBAL dotNet45DidDownload
+            NSISdl::download "http://go.microsoft.com/fwlink/?LinkId=225704" "$TEMP\dotNET45Web.exe" $dotNet45DidDownload
 
-            StrCmp $dotNetDidDownload success fail
+            StrCmp $dotNet45DidDownload success fail
             success:
                 ExecWait '"$TEMP\dotNET45Web.exe" $dotNET45_CMD_LINE' $EXIT_CODE_45
                 Goto is_reboot_requested
