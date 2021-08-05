@@ -182,7 +182,7 @@ done_compare_needed:
 
     # Microsoft Download Center EXE:
     # Web Bootstrapper: ---
-    # Full Download: https://download.microsoft.com/download/0/6/1/061F001C-8752-4600-A198-53214C69B51F/dotnetfx35setup.exe
+    # Full Download: https://install.team-mediaportal.com/MP1/dotnetfx35setup.exe
 
     # Setup looks for components\dotNET35Full.exe relative to the install EXE location
     # This allows the installer to be placed on a USB stick (for computers without internet connections)
@@ -222,8 +222,7 @@ done_compare_needed:
         do_network_install:
 
             Var /GLOBAL dotNet35DidDownload
-            # NSISdl::download "http://go.microsoft.com/fwlink/?LinkId=!!!!!!!" "$TEMP\dotNET35Web.exe" $dotNet35DidDownload
-            NSISdl::download "https://download.microsoft.com/download/0/6/1/061F001C-8752-4600-A198-53214C69B51F/dotnetfx35setup.exe" "$TEMP\dotNET35Web.exe" $dotNet35DidDownload
+            NSISdl::download "https://install.team-mediaportal.com/MP1/dotnetfx35setup.exe" "$TEMP\dotNET35Web.exe" $dotNet35DidDownload
 
             StrCmp $dotNet35DidDownload success fail
             success:
