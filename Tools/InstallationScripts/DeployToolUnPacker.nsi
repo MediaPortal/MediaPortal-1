@@ -318,7 +318,7 @@ done_compare_needed:
         do_network_install:
 
             Var /GLOBAL dotNet45DidDownload
-            NSISdl::download "http://go.microsoft.com/fwlink/?LinkId=225704" "$TEMP\dotNET45Web.exe" $dotNet45DidDownload
+            NSISdl::download "https://install.team-mediaportal.com/MP1/dotnetfx45_full_x86_x64.exe" "$TEMP\dotNET45Web.exe" $dotNet45DidDownload
 
             StrCmp $dotNet45DidDownload success fail
             success:
