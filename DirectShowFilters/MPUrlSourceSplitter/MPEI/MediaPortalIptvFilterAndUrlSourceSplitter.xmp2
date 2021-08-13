@@ -22,7 +22,7 @@
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\avformat-mpurlsourcesplitter-58.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{7f4575db-93f0-4c8d-8ba1-889567b3fc3f}-avformat-mpurlsourcesplitter-58.dll</ZipFileName>
-              <DestinationFilename>%TvServerBase%\\MPUrlSourceSplitteravformat-mpurlsourcesplitter-58.dll</DestinationFilename>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-58.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
@@ -36,7 +36,7 @@
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_Win32\avutil-mpurlsourcesplitter-56.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{58add760-64a5-4a1e-afee-346097e6a2da}-avutil-mpurlsourcesplitter-56.dll</ZipFileName>
-              <DestinationFilename>%TvServerBase%MPUrlSourceSplitter\avutil-mpurlsourcesplitter-56.dll</DestinationFilename>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avutil-mpurlsourcesplitter-56.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
@@ -1918,7 +1918,7 @@ Supported protocols:
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_Win32\avformat-mpurlsourcesplitter-58.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{7f4575db-93f0-4c8d-8ba1-889567b3fc3f}-avformat-mpurlsourcesplitter-58.dll</ZipFileName>
-        <DestinationFilename>%TvServerBase%\\MPUrlSourceSplitteravformat-mpurlsourcesplitter-58.dll</DestinationFilename>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-58.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
