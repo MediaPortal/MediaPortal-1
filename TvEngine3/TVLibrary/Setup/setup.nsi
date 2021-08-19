@@ -607,8 +607,13 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; filters for analog tv
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPWriter\bin\${BUILD_TYPE}\mpFileWriter.ax" "$INSTDIR\mpFileWriter.ax" "$INSTDIR"
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\PDMpgMux.ax" "$INSTDIR\PDMpgMux.ax" "$INSTDIR"
-  ; filter for IPTV support
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTVSource.ax" "$INSTDIR\MPIPTVSource.ax" "$INSTDIR"
+
+  ${If} ${FileExists} "${TVSERVER.BASE}\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"
+    ${LOG_TEXT} "INFO" "MPUrlSourceSplitter detected, skipping registration of MPIPTVSource.ax"
+  ${Else}
+    ; filter for IPTV support
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTVSource.ax" "$INSTDIR\MPIPTVSource.ax" "$INSTDIR"
+  ${EndIf}
 
   #---------------------------------------------------------------------------
   # SERVICE INSTALLATION
@@ -694,8 +699,13 @@ ${MementoSectionEnd}
   ; filters for analog tv
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\mpFileWriter.ax"
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\PDMpgMux.ax"
-  ; filter for IPTV support
-  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\MPIPTVSource.ax"
+
+  ${If} ${FileExists} "${TVSERVER.BASE}\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"
+    ${LOG_TEXT} "INFO" "MPUrlSourceSplitter detected, skipping unregistration of MPIPTVSource.ax"
+  ${Else}
+    ; filter for IPTV support
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\MPIPTVSource.ax"
+  ${EndIf}
 
   ${LOG_TEXT} "INFO" "remove files..."
   ; Remove TuningParameters
