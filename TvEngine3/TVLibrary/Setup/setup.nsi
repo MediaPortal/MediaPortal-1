@@ -610,6 +610,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ${If} ${FileExists} "$INSTDIR\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"
     ${LOG_TEXT} "INFO" "MPUrlSourceSplitter detected, skipping registration of MPIPTVSource.ax"
+    ; reregister because previous uninstall probably unregisterd the MPIPTVSource.ax
+    REGDLL "$INSTDIR\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"
   ${Else}
     ; filter for IPTV support
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTVSource.ax" "$INSTDIR\MPIPTVSource.ax" "$INSTDIR"
