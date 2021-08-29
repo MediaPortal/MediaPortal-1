@@ -215,6 +215,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MPUrlSourceSplitter\MPUrlSourceSplitter.vcxproj">
+      <Project>{cd13dbc5-3694-4591-84cf-5fcc2705dad8}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\MPUrlSourceSplitter_libcurl\MPUrlSourceSplitter_libcurl.vcxproj">
       <Project>{53e65326-8163-403d-82d1-2566d448fdb9}</Project>
     </ProjectReference>

@@ -910,8 +910,8 @@ Global
 		{CD13DBC5-3694-4591-84CF-5FCC2705DAD8}.Release_libbluray|Win32.ActiveCfg = Release|Win32
 		{CD13DBC5-3694-4591-84CF-5FCC2705DAD8}.Release|Win32.ActiveCfg = Release|Win32
 		{CD13DBC5-3694-4591-84CF-5FCC2705DAD8}.Release|Win32.Build.0 = Release|Win32
-		{CD13DBC5-3694-4591-84CF-5FCC2705DAD8}.Test|Win32.ActiveCfg = Debug|Win32
-		{CD13DBC5-3694-4591-84CF-5FCC2705DAD8}.Test|Win32.Build.0 = Debug|Win32
+		{CD13DBC5-3694-4591-84CF-5FCC2705DAD8}.Test|Win32.ActiveCfg = Test|Win32
+		{CD13DBC5-3694-4591-84CF-5FCC2705DAD8}.Test|Win32.Build.0 = Test|Win32
 		{A19A049B-2859-4D4E-AAF0-2F957C92D7FC}.Debug_libbluray|Win32.ActiveCfg = Debug|Win32
 		{A19A049B-2859-4D4E-AAF0-2F957C92D7FC}.Debug|Win32.ActiveCfg = Debug|Win32
 		{A19A049B-2859-4D4E-AAF0-2F957C92D7FC}.Debug|Win32.Build.0 = Debug|Win32
@@ -1197,8 +1197,8 @@ Global
 		{0B3664C8-5A71-41E3-975A-4D65CA7609B2}.Release_libbluray|Win32.ActiveCfg = Release|Win32
 		{0B3664C8-5A71-41E3-975A-4D65CA7609B2}.Release|Win32.ActiveCfg = Release|Win32
 		{0B3664C8-5A71-41E3-975A-4D65CA7609B2}.Release|Win32.Build.0 = Release|Win32
-		{0B3664C8-5A71-41E3-975A-4D65CA7609B2}.Test|Win32.ActiveCfg = Debug|Win32
-		{0B3664C8-5A71-41E3-975A-4D65CA7609B2}.Test|Win32.Build.0 = Debug|Win32
+		{0B3664C8-5A71-41E3-975A-4D65CA7609B2}.Test|Win32.ActiveCfg = Test|Win32
+		{0B3664C8-5A71-41E3-975A-4D65CA7609B2}.Test|Win32.Build.0 = Test|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
