@@ -608,7 +608,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPWriter\bin\${BUILD_TYPE}\mpFileWriter.ax" "$INSTDIR\mpFileWriter.ax" "$INSTDIR"
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\PDMpgMux.ax" "$INSTDIR\PDMpgMux.ax" "$INSTDIR"
 
-  ${If} ${FileExists} "${TVSERVER.BASE}\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"
+  ${If} ${FileExists} "$INSTDIR\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"
     ${LOG_TEXT} "INFO" "MPUrlSourceSplitter detected, skipping registration of MPIPTVSource.ax"
   ${Else}
     ; filter for IPTV support
@@ -700,7 +700,7 @@ ${MementoSectionEnd}
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\mpFileWriter.ax"
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\PDMpgMux.ax"
 
-  ${If} ${FileExists} "${TVSERVER.BASE}\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"
+  ${If} ${FileExists} "$INSTDIR\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"
     ${LOG_TEXT} "INFO" "MPUrlSourceSplitter detected, skipping unregistration of MPIPTVSource.ax"
   ${Else}
     ; filter for IPTV support
