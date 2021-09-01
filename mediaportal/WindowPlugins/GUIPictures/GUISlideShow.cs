@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -115,13 +115,11 @@ namespace MediaPortal.GUI.Pictures
         }
 
         GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(GUIPictures.fileNameCheck));
-
         ResetCurrentZoom(_currentSlide);
-
         PrefetchNextSlide();
-
-        Log.Debug("GUISlideShow: LoadSlide - currentSlideIndex {0}", _currentSlideIndex);
         GUIpictures.SetSelectedItemIndex(_currentSlideIndex);
+        Log.Debug("GUISlideShow: LoadSlide - currentSlideIndex {0}", _currentSlideIndex);
+        showOSD();
 
         #region Video in slideshow
 
@@ -208,6 +206,21 @@ namespace MediaPortal.GUI.Pictures
         }
       }
       return _currentSlide;
+    }
+
+    private void showOSD()
+    {
+      if (!_showOSD)
+      {
+        return;
+      }
+
+      GUIControl.SetControlLabel(GetID, LABEL_ROW1, "");
+      GUIControl.SetControlLabel(GetID, LABEL_ROW2, "");
+
+      _infoVisible = true;
+      _autoHideOsd = _autoHideOSD;
+      _slideTime = (int)(DateTime.Now.Ticks / 10000);
     }
 
     private void pauseMusic()
@@ -444,6 +457,9 @@ namespace MediaPortal.GUI.Pictures
     private bool _autoShuffleMusic = false;
     public bool _showRecursive = false;
     public bool _enableResumeMusic = true;
+
+    private bool _showOSD = false;
+    private bool _autoHideOSD = true;
 
     private GUIControl _pause = null;
 
@@ -742,7 +758,7 @@ namespace MediaPortal.GUI.Pictures
               _zoomInfoVisible = true;
             }
             _infoVisible = true;
-            _autoHideOsd = true;
+            _autoHideOsd = _autoHideOSD;
             _slideTime = (int)(DateTime.Now.Ticks / 10000);
           }
           break;
@@ -1143,7 +1159,7 @@ namespace MediaPortal.GUI.Pictures
 
       if (!_infoVisible && !_zoomInfoVisible && !_isLoadingRawPicture)
       {
-        _autoHideOsd = true;
+        _autoHideOsd = _autoHideOSD;
         return;
       }
 
@@ -2885,6 +2901,8 @@ namespace MediaPortal.GUI.Pictures
         _useRandomTransitions = xmlreader.GetValueAsBool("pictures", "random", true);
         _autoShuffle = xmlreader.GetValueAsBool("pictures", "autoShuffle", false);
         _autoRepeat = xmlreader.GetValueAsBool("pictures", "autoRepeat", false);
+        _showOSD = xmlreader.GetValueAsBool("pictures", "showOSD", false);
+        _autoHideOSD = xmlreader.GetValueAsBool("pictures", "autoHideOSD", true);
       }
     }
 

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -49,6 +49,8 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox checkBoxGroupDays;
     private MPCheckBox checkBoxEnableVideo;
     private MPCheckBox checkBoxPlayVideosInSlideshow;
+    private MPCheckBox showOSDCheckBox;
+    private MPCheckBox autoHideOSDCheckBox;
     private IContainer components = null;
 
     public Pictures()
@@ -74,6 +76,9 @@ namespace MediaPortal.Configuration.Sections
 
         autoShuffleCheckBox.Checked = xmlreader.GetValueAsBool("pictures", "autoShuffle", false);
         repeatSlideshowCheckBox.Checked = xmlreader.GetValueAsBool("pictures", "autoRepeat", true);
+
+        showOSDCheckBox.Checked = xmlreader.GetValueAsBool("pictures", "showOSD", false);
+        autoHideOSDCheckBox.Checked = xmlreader.GetValueAsBool("pictures", "autoHideOSD", true);
 
         checkBoxUseExif.Checked = xmlreader.GetValueAsBool("pictures", "useExif", true);
         checkBoxUsePicasa.Checked = xmlreader.GetValueAsBool("pictures", "usePicasa", false);
@@ -101,6 +106,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("pictures", "useDayGrouping", checkBoxGroupDays.Checked);
         xmlwriter.SetValueAsBool("pictures", "enableVideoPlayback", checkBoxEnableVideo.Checked);
         xmlwriter.SetValueAsBool("pictures", "playVideosInSlideshows", checkBoxPlayVideosInSlideshow.Checked);
+        xmlwriter.SetValueAsBool("pictures", "showOSD", showOSDCheckBox.Checked);
+        xmlwriter.SetValueAsBool("pictures", "autoHideOSD", autoHideOSDCheckBox.Checked);
       }
     }
 
@@ -144,9 +151,11 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxUsePicasa = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxUseExif = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxViewSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxPlayVideosInSlideshow = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxEnableVideo = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxGroupDays = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxPlayVideosInSlideshow = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.showOSDCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.autoHideOSDCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBoxRotation.SuspendLayout();
@@ -155,10 +164,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.showOSDCheckBox);
+      this.groupBox1.Controls.Add(this.autoHideOSDCheckBox);
       this.groupBox1.Controls.Add(this.kenburnsTextBox);
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.transitionTextBox);
@@ -177,10 +186,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // kenburnsTextBox
       // 
-      this.kenburnsTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.kenburnsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.kenburnsTextBox.BorderColor = System.Drawing.Color.Empty;
       this.kenburnsTextBox.Location = new System.Drawing.Point(168, 68);
       this.kenburnsTextBox.Name = "kenburnsTextBox";
@@ -198,10 +205,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // transitionTextBox
       // 
-      this.transitionTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.transitionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.transitionTextBox.BorderColor = System.Drawing.Color.Empty;
       this.transitionTextBox.Location = new System.Drawing.Point(168, 44);
       this.transitionTextBox.Name = "transitionTextBox";
@@ -210,10 +215,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // durationTextBox
       // 
-      this.durationTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.durationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.durationTextBox.BorderColor = System.Drawing.Color.Empty;
       this.durationTextBox.Location = new System.Drawing.Point(168, 20);
       this.durationTextBox.Name = "durationTextBox";
@@ -262,10 +265,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.radioButtonKenBurns);
       this.groupBox2.Controls.Add(this.radioButtonRandom);
       this.groupBox2.Controls.Add(this.radioButtonXFade);
@@ -359,6 +360,17 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxViewSettings.TabStop = false;
       this.groupBoxViewSettings.Text = "View Settings";
       // 
+      // checkBoxPlayVideosInSlideshow
+      // 
+      this.checkBoxPlayVideosInSlideshow.AutoSize = true;
+      this.checkBoxPlayVideosInSlideshow.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxPlayVideosInSlideshow.Location = new System.Drawing.Point(19, 70);
+      this.checkBoxPlayVideosInSlideshow.Name = "checkBoxPlayVideosInSlideshow";
+      this.checkBoxPlayVideosInSlideshow.Size = new System.Drawing.Size(143, 17);
+      this.checkBoxPlayVideosInSlideshow.TabIndex = 9;
+      this.checkBoxPlayVideosInSlideshow.Text = "Play videos in slideshows";
+      this.checkBoxPlayVideosInSlideshow.UseVisualStyleBackColor = true;
+      // 
       // checkBoxEnableVideo
       // 
       this.checkBoxEnableVideo.AutoSize = true;
@@ -382,16 +394,27 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxGroupDays.Text = "Create a group for each day in date view (instead of showing the full month)";
       this.checkBoxGroupDays.UseVisualStyleBackColor = true;
       // 
-      // checkBoxPlayVideosInSlideshow
+      // showOSDCheckBox
       // 
-      this.checkBoxPlayVideosInSlideshow.AutoSize = true;
-      this.checkBoxPlayVideosInSlideshow.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxPlayVideosInSlideshow.Location = new System.Drawing.Point(19, 70);
-      this.checkBoxPlayVideosInSlideshow.Name = "checkBoxPlayVideosInSlideshow";
-      this.checkBoxPlayVideosInSlideshow.Size = new System.Drawing.Size(143, 17);
-      this.checkBoxPlayVideosInSlideshow.TabIndex = 9;
-      this.checkBoxPlayVideosInSlideshow.Text = "Play videos in slideshows";
-      this.checkBoxPlayVideosInSlideshow.UseVisualStyleBackColor = true;
+      this.showOSDCheckBox.AutoSize = true;
+      this.showOSDCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.showOSDCheckBox.Location = new System.Drawing.Point(323, 104);
+      this.showOSDCheckBox.Name = "showOSDCheckBox";
+      this.showOSDCheckBox.Size = new System.Drawing.Size(77, 17);
+      this.showOSDCheckBox.TabIndex = 8;
+      this.showOSDCheckBox.Text = "Show OSD";
+      this.showOSDCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // autoHideOSDCheckBox
+      // 
+      this.autoHideOSDCheckBox.AutoSize = true;
+      this.autoHideOSDCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.autoHideOSDCheckBox.Location = new System.Drawing.Point(323, 128);
+      this.autoHideOSDCheckBox.Name = "autoHideOSDCheckBox";
+      this.autoHideOSDCheckBox.Size = new System.Drawing.Size(97, 17);
+      this.autoHideOSDCheckBox.TabIndex = 9;
+      this.autoHideOSDCheckBox.Text = "Auto Hide OSD";
+      this.autoHideOSDCheckBox.UseVisualStyleBackColor = true;
       // 
       // Pictures
       // 
@@ -410,6 +433,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxViewSettings.ResumeLayout(false);
       this.groupBoxViewSettings.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion
