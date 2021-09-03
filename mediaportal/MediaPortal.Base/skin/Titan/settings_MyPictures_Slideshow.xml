@@ -81,7 +81,7 @@
     <type>label</type>
     <id>1</id>
 	  <posX>685</posX>
-	  <posY>646</posY>
+	  <posY>606</posY>
     <label>300184</label>
 		<font>fontB14</font>
     <textcolor>ff00b7ff</textcolor>
@@ -93,7 +93,7 @@
 		<description>buttons</description>
 		<type>group</type>
 		<posX>655</posX>
-		<posY>711</posY>
+		<posY>661</posY>
 		<dimColor>ffffffff</dimColor>
     <layout>StackLayout(7, Vertical, true)</layout>
 	  <animation effect="fade" time="150">WindowOpen</animation>
@@ -114,9 +114,54 @@
       <label>300186</label>
       <onleft>9995</onleft>
       <onright>44</onright>
+      <ondown>50</ondown>
+    </control>
+  </control>
+
+    <!-- OSD Settings group -->
+
+  <control>
+    <description>OSD settings</description>
+    <type>label</type>
+    <id>1</id>
+	  <posX>685</posX>
+	  <posY>826</posY>
+    <label>300233</label>
+		<font>fontB14</font>
+    <textcolor>ff00b7ff</textcolor>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+  </control>
+
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>655</posX>
+		<posY>880</posY>
+		<dimColor>ffffffff</dimColor>
+    <layout>StackLayout(7, Vertical, true)</layout>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+    
+		<control Style="SettingsCheckButtonMedium">
+      <description>Show OSD</description>
+      <type>checkbutton</type>
+      <id>50</id>
+      <label>300234</label>
+      <onleft>9995</onleft>
+      <onright>43</onright>
+    </control>
+		<control Style="SettingsCheckButtonMedium">
+      <description>Auto Hide OSD</description>
+      <type>checkbutton</type>
+      <id>51</id>
+      <label>300235</label>
+      <onleft>9995</onleft>
+      <onright>44</onright>
       <ondown>2</ondown>
     </control>
   </control>
+
     <!--Slideshow Settings group-->
 
     <control>
@@ -152,7 +197,7 @@
       <onleft>6</onleft>
       <onright>6</onright>
       <ondown>3</ondown>
-      <onup>42</onup>
+      <onup>51</onup>
       <buddycontrolid>100</buddycontrolid>
   		<animation effect="fade" time="150">WindowOpen</animation>
   		<animation effect="fade" time="150">WindowClose</animation>

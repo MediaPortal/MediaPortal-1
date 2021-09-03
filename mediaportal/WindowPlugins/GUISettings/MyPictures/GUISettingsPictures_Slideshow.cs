@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,9 +19,7 @@
 #endregion
 
 using System;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using WindowPlugins.GUISettings;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Settings
@@ -42,7 +40,10 @@ namespace MediaPortal.GUI.Settings
     [SkinControl(43)] protected GUICheckButton cmGroupByDaySlideShows = null;
     [SkinControl(44)] protected GUICheckButton cmEnablePlaySlideShows = null;
     [SkinControl(45)] protected GUICheckButton cmPlayInSlideShows = null;
-    
+
+    [SkinControl(50)] protected GUICheckButton cmShowOSD = null;
+    [SkinControl(51)] protected GUICheckButton cmAutoHideOSD = null;
+
     private enum Controls
     {
       CONTROL_SPEED = 2,
@@ -88,6 +89,15 @@ namespace MediaPortal.GUI.Settings
         cmGroupByDaySlideShows.Selected = xmlreader.GetValueAsBool("pictures", "useDayGrouping", false);
         cmEnablePlaySlideShows.Selected = xmlreader.GetValueAsBool("pictures", "enableVideoPlayback", false);
         cmPlayInSlideShows.Selected = xmlreader.GetValueAsBool("pictures", "playVideosInSlideshows", false);
+
+        if (cmShowOSD != null)
+        {
+          cmShowOSD.Selected = xmlreader.GetValueAsBool("pictures", "showOSD", false);
+        }
+        if (cmAutoHideOSD != null)
+        {
+          cmAutoHideOSD.Selected = xmlreader.GetValueAsBool("pictures", "autoHideOSD", true);
+        }
       }
     }
 
@@ -108,6 +118,15 @@ namespace MediaPortal.GUI.Settings
         xmlwriter.SetValueAsBool("pictures", "useDayGrouping", cmGroupByDaySlideShows.Selected);
         xmlwriter.SetValueAsBool("pictures", "enableVideoPlayback", cmEnablePlaySlideShows.Selected);
         xmlwriter.SetValueAsBool("pictures", "playVideosInSlideshows", cmPlayInSlideShows.Selected);
+
+        if (cmShowOSD != null)
+        {
+          xmlwriter.SetValueAsBool("pictures", "showOSD", cmShowOSD.Selected);
+        }
+        if (cmAutoHideOSD != null)
+        {
+          xmlwriter.SetValueAsBool("pictures", "autoHideOSD", cmAutoHideOSD.Selected);
+        }
       }
     }
 
@@ -270,7 +289,9 @@ namespace MediaPortal.GUI.Settings
           control == cmPlayInSlideShows || 
           control == cmXfade || 
           control == cmKenburns || 
-          control == cmRandom)
+          control == cmRandom ||
+          control == cmShowOSD ||
+          control == cmAutoHideOSD)
       {
         SettingsChanged(true);
       }
