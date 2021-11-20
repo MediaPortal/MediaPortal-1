@@ -19,14 +19,14 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Windows.Controls;
 
 namespace MediaPortal.GUI.Library
 {
+  using KeyRow = List<GUIKeyboard.Key>;
+  using Keyboard = System.Collections.Generic.List<List<GUIKeyboard.Key>>;
+
   /// <summary>
   /// The class implementing a GUIKeyboard.
   /// </summary>
@@ -511,7 +511,7 @@ namespace MediaPortal.GUI.Library
     public int _searchKind; // 0=Starts with, 1=Contains, 2=Ends with
     //
 
-    public ArrayList _keyboardList = new ArrayList(); // list of rows = keyboard
+    public Dictionary<KeyboardTypes, Keyboard> _keyboardList = new Dictionary<KeyboardTypes, Keyboard>();
 
     #endregion
 
@@ -716,15 +716,13 @@ namespace MediaPortal.GUI.Library
         inputText.Dispose();
         inputTextCaret.Dispose();
 
-        for (int kb = 0; kb < _keyboardList.Count; kb++)
+        foreach (var kv in _keyboardList)
         {
-          ArrayList keyBoard = (ArrayList)_keyboardList[kb];
-          for (int row = 0; row < _maxRows; ++row)
+          Keyboard keyBoard = kv.Value;
+          foreach (var keyRow in keyBoard)
           {
-            ArrayList keyRow = (ArrayList)keyBoard[row];
-            for (int i = 0; i < keyRow.Count; i++)
+            foreach (var key in keyRow)
             {
-              Key key = (Key)keyRow[i];
               key.button.Dispose();
             }
           }
@@ -782,16 +780,16 @@ namespace MediaPortal.GUI.Library
       int y1 = keyboardY;
       int x1 = keyboardX;
       float fY = y1;
-      ArrayList keyBoard = (ArrayList)_keyboardList[(int)_currentKeyboard];
+      Keyboard keyBoard = _keyboardList[_currentKeyboard];
       for (int row = 0; row < _maxRows; ++row, fY += _keyHeightScaled)
       {
         float fX = x1;
         float fWidthSum = 0.0f;
-        ArrayList keyRow = (ArrayList)keyBoard[row];
+        KeyRow keyRow = keyBoard[row];
         int dwIndex = 0;
         for (int i = 0; i < keyRow.Count; i++)
         {
-          Key key = (Key)keyRow[i];
+          Key key = keyRow[i];
           int width = key.dwWidth;
           GUIGraphicsContext.ScaleHorizontal(ref width);
           if (x >= fX + fWidthSum && x <= fX + fWidthSum + width)
@@ -1068,10 +1066,10 @@ namespace MediaPortal.GUI.Library
       // Alpha keyboard
       //-------------------------------------------------------------------------
 
-      ArrayList keyBoard = new ArrayList();
+      Keyboard keyBoard = new Keyboard();
 
       // First row is Done, 1-0
-      ArrayList keyRow = new ArrayList();
+      KeyRow keyRow = new KeyRow();
       if (_useSearchLayout)
       {
         keyRow.Add(new Key(Xkey.XK_OK, _searchModeKeyWidth, this));
@@ -1103,7 +1101,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Second row is Shift, A-J
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1136,7 +1134,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Third row is Caps Lock, K-T
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1169,7 +1167,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Fourth row is Accents, U-Z, Backspace
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1199,7 +1197,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Fifth row is SMS, Space, Left, Right
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1217,16 +1215,16 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Add the alpha keyboard to the list
-      _keyboardList.Add(keyBoard);
+      _keyboardList.Add(KeyboardTypes.TYPE_ALPHABET, keyBoard);
 
       //-------------------------------------------------------------------------
       // Symbol keyboard
       //-------------------------------------------------------------------------
 
-      keyBoard = new ArrayList();
+      keyBoard = new Keyboard();
 
       // First row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
       if (_useSearchLayout)
       {
         keyRow.Add(new Key(Xkey.XK_OK, _searchModeKeyWidth, this));
@@ -1249,7 +1247,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Second row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1273,7 +1271,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Third row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1297,7 +1295,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Fourth row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1318,7 +1316,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Fifth row is Accents, Space, Left, Right
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1336,16 +1334,16 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Add the symbol keyboard to the list
-      _keyboardList.Add(keyBoard);
+      _keyboardList.Add(KeyboardTypes.TYPE_SYMBOLS, keyBoard);
 
       //-------------------------------------------------------------------------
       // Accents keyboard
       //-------------------------------------------------------------------------
 
-      keyBoard = new ArrayList();
+      keyBoard = new Keyboard();
 
       // First row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
       // Swedish - Finnish
       if (_useSearchLayout)
       {
@@ -1368,7 +1366,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Second row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1392,7 +1390,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Third row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1416,7 +1414,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Fourth row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1438,7 +1436,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Fifth row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1456,7 +1454,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Add the accents keyboard to the list
-      _keyboardList.Add(keyBoard);
+      _keyboardList.Add(KeyboardTypes.TYPE_ACCENTS, keyBoard);
     }
 
     protected void UpdateState(Event ev)
@@ -1514,10 +1512,10 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    protected void ChangeKey(int iBoard, int iRow, int iKey, Key newkey)
+    protected void ChangeKey(KeyboardTypes iBoard, int iRow, int iKey, Key newkey)
     {
-      ArrayList board = (ArrayList)_keyboardList[iBoard];
-      ArrayList row = (ArrayList)board[iRow];
+      Keyboard board = _keyboardList[iBoard];
+      KeyRow row = board[iRow];
       row[iKey] = newkey;
     }
 
@@ -1528,9 +1526,9 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
-      ArrayList row = (ArrayList)board[_currentRow];
-      Key key = (Key)row[_currentKey];
+      Keyboard board = _keyboardList[_currentKeyboard];
+      KeyRow row = board[_currentRow];
+      Key key = row[_currentKey];
 
       // Press it
       Press(key.xKey);
@@ -1707,19 +1705,19 @@ namespace MediaPortal.GUI.Library
       switch (_searchKind)
       {
         case (int)SearchKinds.SEARCH_STARTS_WITH:
-          ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_START_WITH, _searchModeKeyWidth, this));
+          ChangeKey(_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_START_WITH, _searchModeKeyWidth, this));
           break;
 
         case (int)SearchKinds.SEARCH_ENDS_WITH:
-          ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_ENDS_WITH, _searchModeKeyWidth, this));
+          ChangeKey(_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_ENDS_WITH, _searchModeKeyWidth, this));
           break;
 
         case (int)SearchKinds.SEARCH_IS:
-          ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_IS, _searchModeKeyWidth, this));
+          ChangeKey(_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_IS, _searchModeKeyWidth, this));
           break;
 
         case (int)SearchKinds.SEARCH_CONTAINS:
-          ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_CONTAINS, _searchModeKeyWidth, this));
+          ChangeKey(_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_CONTAINS, _searchModeKeyWidth, this));
           break;
       }
       if (TextChanged != null)
@@ -1906,9 +1904,9 @@ namespace MediaPortal.GUI.Library
       }
 
       // If the new key is a single character, remember it for later
-      ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
-      ArrayList row = (ArrayList)board[_currentRow];
-      Key key = (Key)row[_currentKey];
+      Keyboard board = _keyboardList[_currentKeyboard];
+      KeyRow row = board[_currentRow];
+      Key key = row[_currentKey];
       if (key.name == "" || _lastColumn == 0)
       {
         switch (key.xKey)
@@ -1943,9 +1941,9 @@ namespace MediaPortal.GUI.Library
         return true;
       }
 
-      ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
-      ArrayList row = (ArrayList)board[_currentRow];
-      Key key = (Key)row[_currentKey];
+      Keyboard board = _keyboardList[_currentKeyboard];
+      KeyRow row = board[_currentRow];
+      Key key = row[_currentKey];
 
       // On the symbols keyboard, Shift and Caps Lock are disabled
       if (_currentKeyboard == KeyboardTypes.TYPE_SYMBOLS)

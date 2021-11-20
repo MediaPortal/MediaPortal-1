@@ -18,13 +18,13 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MediaPortal.GUI.Library
 {
+  using KeyRow = List<GUIKeyboard.Key>;
+  using Keyboard = System.Collections.Generic.List<List<GUIKeyboard.Key>>;
+
   public class GUIStandardKeyboard : GUIKeyboard
   {
     public GUIStandardKeyboard(int dwParentID)
@@ -43,8 +43,8 @@ namespace MediaPortal.GUI.Library
       {
         if (_currentKey <= 0)
         {
-          ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
-          ArrayList row = (ArrayList)board[_currentRow];
+          Keyboard board = _keyboardList[_currentKeyboard];
+          KeyRow row = board[_currentRow];
           _currentKey = row.Count - 1;
         }
         else
@@ -65,8 +65,8 @@ namespace MediaPortal.GUI.Library
 
       do
       {
-        ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
-        ArrayList row = (ArrayList)board[_currentRow];
+        Keyboard board = _keyboardList[_currentKeyboard];
+        KeyRow row = board[_currentRow];
 
         if (_currentKey == row.Count - 1)
         {
@@ -221,17 +221,17 @@ namespace MediaPortal.GUI.Library
 
       // Draw each row
       float fY = y1;
-      ArrayList keyBoard = (ArrayList)_keyboardList[(int)_currentKeyboard];
+      Keyboard keyBoard = _keyboardList[_currentKeyboard];
       for (int row = 0; row < _maxRows; ++row, fY += (_keyHeightScaled + _keyVerticalSpacing))
       {
         float fX = x1;
         float fWidthSum = 0.0f;
-        ArrayList keyRow = (ArrayList)keyBoard[row];
+        KeyRow keyRow = keyBoard[row];
         int dwIndex = 0;
         for (int i = 0; i < keyRow.Count; i++)
         {
           // Determine key name
-          Key key = (Key)keyRow[i];
+          Key key = keyRow[i];
           long selKeyColor = 0xffffffff;
           long selTextColor = _keyFontColor;
 

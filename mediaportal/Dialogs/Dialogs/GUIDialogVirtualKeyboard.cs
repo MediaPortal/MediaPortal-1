@@ -18,8 +18,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using MediaPortal.GUI.Library;
 using Action = MediaPortal.GUI.Library.Action;
 
@@ -155,7 +153,7 @@ namespace MediaPortal.Dialogs
       InitializeBackground();
       _keyboard.ResetLabelAsInitialText();
 
-      if (!_keyboard._useSearchLayout && !_keyboard._password)
+      if (!_keyboard.IsSearchKeyboard && !_keyboard.Password)
       {
         using (MediaPortal.Profile.MPSettings xmlreader = new MediaPortal.Profile.MPSettings())
         {
@@ -172,7 +170,7 @@ namespace MediaPortal.Dialogs
 
     public void PageDestroy()
     {
-      if (!_keyboard._useSearchLayout && !_keyboard._password)
+      if (!_keyboard.IsSearchKeyboard && !_keyboard.Password)
       {
         using (MediaPortal.Profile.MPSettings xmlwriter = new Profile.MPSettings())
         {
