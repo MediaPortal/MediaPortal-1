@@ -224,14 +224,14 @@ namespace MediaPortal.GUI.Library
       TYPE_ANS,
 
       TYPE_MAX
-    } ;
+    };
 
     public enum State
     {
       STATE_BACK, // Main menu
       STATE_KEYBOARD, // Keyboard display
       STATE_MAX
-    } ;
+    };
 
     public enum Event
     {
@@ -252,7 +252,7 @@ namespace MediaPortal.GUI.Library
       EV_RIGHT, // Right Dpad or left joy
 
       EVENT_MAX
-    } ;
+    };
 
     public enum Xkey
     {
@@ -448,7 +448,7 @@ namespace MediaPortal.GUI.Library
       XK_SMS7,
       XK_SMS8,
       XK_SMS9
-    } ;
+    };
 
     public enum StringID
     {
@@ -475,7 +475,7 @@ namespace MediaPortal.GUI.Library
       STR_HELP_TRIGGER,
 
       STR_MAX,
-    } ;
+    };
 
     #endregion
 
@@ -1581,7 +1581,7 @@ namespace MediaPortal.GUI.Library
         _shiftTurnedOn = false;
       }
 
-        // Special cases
+      // Special cases
       else
       {
         switch (xk)

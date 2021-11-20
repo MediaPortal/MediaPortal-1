@@ -28,9 +28,9 @@ namespace MediaPortal.GUI.Library
   public class GUIStandardKeyboard : GUIKeyboard
   {
     public GUIStandardKeyboard(int dwParentID)
-      : base(dwParentID) {}
+      : base(dwParentID) { }
 
-    public override void InitializeInstance() {}
+    public override void InitializeInstance() { }
 
     protected override void MoveLeft()
     {

@@ -230,20 +230,20 @@ namespace MediaPortal.Dialogs
 
     public static bool GetKeyboard(ref string strLine, int windowId)
     {
-        VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
-        if (null == keyboard)
-        {
-          return false;
-        }
-        keyboard.Reset();
-        keyboard.Text = strLine;
-        keyboard.DoModal(windowId);
-        if (keyboard.IsConfirmed)
-        {
-          strLine = keyboard.Text;
-          return true;
-        }
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard)
+      {
         return false;
+      }
+      keyboard.Reset();
+      keyboard.Text = strLine;
+      keyboard.DoModal(windowId);
+      if (keyboard.IsConfirmed)
+      {
+        strLine = keyboard.Text;
+        return true;
+      }
+      return false;
     }
 
     #region IRenderLayer
