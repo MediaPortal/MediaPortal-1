@@ -406,10 +406,11 @@ namespace MediaPortal.GUI.Settings
         return;
       }
       keyboard.Reset();
+      keyboard.IsNumeric = true;
       keyboard.Text = strLine;
 
       keyboard.DoModal(GUIWindowManager.ActiveWindow);
-      
+
       if (keyboard.IsConfirmed)
       {
         int number;
