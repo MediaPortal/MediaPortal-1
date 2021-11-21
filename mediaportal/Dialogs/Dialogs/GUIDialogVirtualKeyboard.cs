@@ -119,6 +119,11 @@ namespace MediaPortal.Dialogs
       set { _keyboard.IsSearchKeyboard = value; }
     }
 
+    public bool IsNumeric
+    {
+      set { _keyboard.IsNumeric = value; }
+    }
+
     public bool ShiftTurnedOn
     {
       get { return _keyboard._shiftTurnedOn; }
@@ -153,7 +158,7 @@ namespace MediaPortal.Dialogs
       InitializeBackground();
       _keyboard.ResetLabelAsInitialText();
 
-      if (!_keyboard.IsSearchKeyboard && !_keyboard.Password)
+      if (!_keyboard.IsSearchKeyboard && !_keyboard.Password && !_keyboard.IsNumeric)
       {
         using (MediaPortal.Profile.MPSettings xmlreader = new MediaPortal.Profile.MPSettings())
         {
@@ -170,7 +175,7 @@ namespace MediaPortal.Dialogs
 
     public void PageDestroy()
     {
-      if (!_keyboard.IsSearchKeyboard && !_keyboard.Password)
+      if (!_keyboard.IsSearchKeyboard && !_keyboard.Password && !_keyboard.IsNumeric)
       {
         using (MediaPortal.Profile.MPSettings xmlwriter = new Profile.MPSettings())
         {
