@@ -162,7 +162,7 @@ xcopy %1\MPE\MpeMaker\bin\%2\MpeMaker.* . /Y /D
 
 REM Nuget 
 xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
-xcopy %1\..\Packages\Sqlite.3.33.0\sqlite.dll . /Y /D
+xcopy %1\..\Packages\Sqlite.3.36.0\sqlite.dll . /Y /D
 
 REM MediaInfo - 
 xcopy %1\..\Packages\MediaInfo.Wrapper.20.9.2\lib\net40\MediaInfo.Wrapper.dll . /Y /D
