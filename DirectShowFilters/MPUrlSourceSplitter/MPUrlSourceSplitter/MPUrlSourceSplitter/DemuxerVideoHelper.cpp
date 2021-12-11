@@ -58,6 +58,7 @@ static struct
   { AV_CODEC_ID_RV30,       &MEDIASUBTYPE_RV30,         MKTAG('R','V','3','0'), &FORMAT_VideoInfo2 },
   { AV_CODEC_ID_RV40,       &MEDIASUBTYPE_RV40,         MKTAG('R','V','4','0'), &FORMAT_VideoInfo2 },
   { AV_CODEC_ID_AMV,        &MEDIASUBTYPE_AMVV,         MKTAG('A','M','V','V'), NULL },
+  { AV_CODEC_ID_HEVC,       &MEDIASUBTYPE_HEVC,         NULL,                   &FORMAT_MPEG2Video },
 };
 
 CMediaType CDemuxerVideoHelper::InitVideoType(AVCodecID codecId, unsigned int &codecTag, const wchar_t *container)
