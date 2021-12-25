@@ -1707,11 +1707,11 @@ xcopy "$(TargetDir)core.*" "$(SolutionDir)MediaPortal.Application\bin\$(Configur
     <Error Condition="!Exists('..\..\Packages\Sqlite.3.36.0\build\sqlite.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\Sqlite.3.36.0\build\sqlite.targets'))" />
     <Error Condition="!Exists('..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets'))" />
     <Error Condition="!Exists('..\..\Packages\DirectX_9_SDK.10.6.0\build\DirectX_9_SDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\DirectX_9_SDK.10.6.0\build\DirectX_9_SDK.props'))" />
-    <Error Condition="!Exists('..\..\Packages\MediaInfo.Native.21.3.0\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets'))" />
   </Target>
   <Import Project="..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets" Condition="Exists('..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets')" />
   <Import Project="..\..\Packages\Sqlite.3.36.0\build\sqlite.targets" Condition="Exists('..\..\Packages\Sqlite.3.36.0\build\sqlite.targets')" />
   <Import Project="..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets" Condition="Exists('..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets')" />
   <Import Project="..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets" Condition="Exists('..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets')" />
-  <Import Project="..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets" Condition="Exists('..\..\Packages\MediaInfo.Native.21.3.0\build\MediaInfo.Native.targets')" />
+  <Import Project="..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets" Condition="Exists('..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets')" />
 </Project>

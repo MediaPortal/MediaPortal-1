@@ -261,10 +261,6 @@ namespace MediaPortal.WebEPG
 
         _channelPrograms.RemoveOverlappingPrograms(dbPrograms);
       }
-      foreach (Channel chan in _currentChannels)
-      {
-        layer.RemoveOldPrograms(chan.IdChannel);
-      }
 
       DeleteBeforeImportOption programsToDelete = _deleteExisting
                                                     ? DeleteBeforeImportOption.OverlappingPrograms
