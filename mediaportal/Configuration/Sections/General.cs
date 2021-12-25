@@ -42,7 +42,7 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
     }
 
-    private string loglevel = "2"; // 1= error, 2 = info, 3 = debug
+    private string loglevel = "3"; // 1= error, 2 = info, 3 = debug
 
     /// <summary> 
     /// Erforderliche Designervariable.
