@@ -597,7 +597,7 @@ File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDog
   File "${git_ROOT}\Packages\Sqlite.3.33.0\sqlite.dll"
   ; NuGet binaries EXIF
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MetadataExtractor.2.7.0\lib\net35\MetadataExtractor.dll"
+  File "${git_ROOT}\Packages\MetadataExtractor.2.7.1\lib\net35\MetadataExtractor.dll"
   File "${git_ROOT}\Packages\XmpCore.6.1.10.1\lib\net35\XmpCore.dll"
   ; NuGet binaries UnidecodeSharp
   SetOutPath "$MPdir.Base\"
