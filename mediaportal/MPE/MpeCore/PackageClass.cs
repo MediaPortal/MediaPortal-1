@@ -883,6 +883,11 @@ namespace MpeCore
       return pak1.GeneralInfo.Name.ToUpperInvariant().CompareTo(pak2.GeneralInfo.Name.ToUpperInvariant());
     }
 
+    public override string ToString()
+    {
+      return (GeneralInfo == null) ? base.ToString() : GeneralInfo.Name + " " + GeneralInfo.Version;
+    }
+
     public PackageClass Clone()
     {
       var serializer = new XmlSerializer(typeof(PackageClass));
