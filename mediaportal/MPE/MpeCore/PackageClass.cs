@@ -424,7 +424,7 @@ namespace MpeCore
     /// <summary>
     /// Gets the installable file count, based on group settings
     /// </summary>
-    /// <returns>Number of files to be copyed</returns>
+    /// <returns>Number of files to be copied</returns>
     public int GetInstallableFileCount()
     {
       int i = 0;
@@ -637,7 +637,7 @@ namespace MpeCore
 
     /// <summary>
     /// Gets the system file paths frome extracted unique file list.
-    /// This should caled only if the package is loaded from a zip file
+    /// This should be called only if the package is loaded from a zip file
     /// </summary>
     public void GetFilePaths()
     {
