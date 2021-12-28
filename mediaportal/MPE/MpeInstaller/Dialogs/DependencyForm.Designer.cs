@@ -200,6 +200,7 @@ namespace MpeInstaller.Dialogs
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(584, 312);
       this.Controls.Add(this.panel1);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
       this.MinimumSize = new System.Drawing.Size(455, 263);
       this.Name = "DependencyForm";
       this.ShowIcon = false;

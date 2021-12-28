@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 /*
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -84,6 +84,9 @@
 
 SetCompressor /SOLID lzma
 
+# Libbluray Defines
+!include "${git_InstallScripts}\include\MediaPortalLibbluray.nsh"
+!echo "BUILD MESSAGE : LIBBLURAY VERSION ${GIT_LIBBLURAY_VERSION} "
 
 #---------------------------------------------------------------------------
 # VARIABLES
@@ -131,6 +134,8 @@ Var PREVIOUS_KEYMAPSETTINGS
 !include "${git_InstallScripts}\include\CPUDesc.nsh"
 !include "${git_InstallScripts}\include\FontReg.nsh"
 !include "${git_InstallScripts}\include\FontName.nsh"
+
+!include "${git_InstallScripts}\include\x64.nsh"
 
 !ifndef GIT_BUILD
 !include "${git_InstallScripts}\pages\AddRemovePage.nsh"
@@ -213,7 +218,6 @@ UninstPage custom un.UninstallModePage un.UninstallModePageLeave
 #---------------------------------------------------------------------------
 !insertmacro LANG_LOAD "English"
 
-
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
@@ -236,7 +240,7 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2011 ${PRODUCT_PUBLISHER}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2020 ${PRODUCT_PUBLISHER}"
 ShowUninstDetails show
 
 
@@ -539,6 +543,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.dll"
   ; WatchDog
   File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\WatchDog.exe"
+File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDogService.Interface.dll"
   File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\DaggerLib.dll"
   File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\DaggerLib.DSGraphEdit.dll"
   File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\DirectShowLib-2005.dll"
@@ -575,21 +580,28 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\WindowPlugins\Common.GUIPlugins\bin\${BUILD_TYPE}\Common.GUIPlugins.dll"
   ; ffmpeg
   SetOutPath "$MPdir.Base\MovieThumbnailer"
-  File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
+  ${If} ${RunningX64}
+    File "${git_ROOT}\Packages\FFmpeg.Win64.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
+  ${Else}
+    File "${git_ROOT}\Packages\FFmpeg.Win32.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
+  ${EndIf}
   ; NuGet binaries MediaInfo
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.9.0\build\native\x86\MediaInfo.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.9.0\build\native\x86\libcrypto-1_1.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.9.0\build\native\x86\libcurl.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.9.0\build\native\x86\libssl-1_1.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Wrapper.19.9.2\lib\net40\MediaInfo.Wrapper.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\libcrypto-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\libssl-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Wrapper.21.3.4\lib\net40\MediaInfo.Wrapper.dll"
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\Sqlite.3.21.0\Sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.33.0\sqlite.dll"
   ; NuGet binaries EXIF
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MetadataExtractor.2.3.0\lib\net35\MetadataExtractor.dll"
-  File "${git_ROOT}\Packages\XmpCore.6.1.10\lib\net35\XmpCore.dll"
+  File "${git_ROOT}\Packages\MetadataExtractor.2.7.0\lib\net35\MetadataExtractor.dll"
+  File "${git_ROOT}\Packages\XmpCore.6.1.10.1\lib\net35\XmpCore.dll"
+  ; NuGet binaries UnidecodeSharp
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\UnidecodeSharpFork.1.0.1\lib\UnidecodeSharpFork.dll"
   ; Bass Core
   SetOutPath "$MPdir.Base\"
   File "${git_MP}\core\bin\${BUILD_TYPE}\Bass.Net.dll"
@@ -612,18 +624,18 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\plugins\bass*.dll"
   ; taglib-sharp
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.1.0.2\lib\net40\taglib-sharp.dll"
+  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.3.1\lib\net40\TagLibSharp.dll"
   ; SharpLibHid
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibHid.1.4.2\lib\net40\SharpLibHid.dll"
+  File "${git_ROOT}\Packages\SharpLibHid.1.4.4\lib\net40\SharpLibHid.dll"
   ; SharpLibWin32
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibWin32.0.0.9\lib\net20\SharpLibWin32.dll"
+  File "${git_ROOT}\Packages\SharpLibWin32.0.2.1\lib\net20\SharpLibWin32.dll"
   ; SharpLibDisplay
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\SharpLibDisplay.0.3.4\lib\net40\SharpLibDisplay.dll"
   ; Naudio
-  File "${git_ROOT}\Packages\NAudio.1.8.3\lib\net35\NAudio.dll" 
+  File "${git_ROOT}\Packages\NAudio.1.10.0\lib\net35\NAudio.dll" 
   ; CSCore
   File "${git_ROOT}\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll"
   ; Intel Audio Workaround
@@ -635,23 +647,48 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\Docs\MediaPortal License.rtf"
   ; libbluray
   SetOutPath "$MPdir.Base"
-  !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-    File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32d\libbluray.dll"
+  !ifdef Libbluray_use_Nuget_DLL
+         !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+       File /oname=bluray.dll "${Libbluray_nuget_path}\references\runtimes\Debug\libbluray.dll"
+     !else
+       File /oname=bluray.dll "${Libbluray_nuget_path}\references\runtimes\Release\libbluray.dll"
+	 !endif
   !else
-    File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
+     !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+       File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32d\libbluray.dll"
+     !else
+       File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
+     !endif
   !endif
-  File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
-  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-1.1.2.jar"
+  !ifdef Libbluray_use_Nuget_JAR
+       File /oname=libbluray.jar "${Libbluray_nuget_path}\references\runtimes\libbluray-.jar"
+  !else
+	   File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
+  !endif
+  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-${GIT_LIBBLURAY_VERSION}.jar"
     ; libbluray - Awt file
    SetOutPath "$MPdir.Base\awt"
-    File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-awt-.jar"
+   !ifdef Libbluray_use_Nuget_JAR
+   	   File /oname=libbluray.jar "${Libbluray_nuget_path}\references\runtimes\libbluray-awt-.jar"
+   !else 
+       File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-awt-.jar"
+   !endif
     SetOutPath "$MPdir.Base"
   ; libbluray - submodul freetype library
-  !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-    File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Debug\freetype.dll"
+   !ifdef Libbluray_use_Nuget_DLL
+    !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+    File /oname=freetype.dll "${Libbluray_nuget_path}\references\runtimes\Debug\freetype.dll"
+    !else
+    File /oname=freetype.dll "${Libbluray_nuget_path}\references\runtimes\Release\freetype.dll"
+	!endif
   !else
-    File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Release\freetype.dll"
+     !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+     File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Debug\freetype.dll"
+     !else
+     File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Release\freetype.dll"
+     !endif
   !endif
+  
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
@@ -822,6 +859,7 @@ SectionEnd
   Delete "$MPdir.Base\MusicShareWatcherHelper.dll"
   ; WatchDog
   Delete "$MPdir.Base\WatchDog.exe"
+  Delete "$MPdir.Base\WatchDogService.Interface.dll"
   Delete "$MPdir.Base\DaggerLib.dll"
   Delete "$MPdir.Base\DaggerLib.DSGraphEdit.dll"
   Delete "$MPdir.Base\DirectShowLib-2005.dll"
@@ -989,6 +1027,7 @@ Section -Post
   Delete "$MPdir.Base\libbluray-j2se-1.0.1.jar"
   Delete "$MPdir.Base\libbluray-j2se-1.0.2.jar"
   Delete "$MPdir.Base\libbluray-j2se-1.1.1.jar"
+  Delete "$MPdir.Base\libbluray-*.jar"
 
   ; MP1-4315 Blow windowplugins dll to separate plugin dlls
   ${LOG_TEXT} "INFO" "Removing obsolete WindowPlugins.dll"

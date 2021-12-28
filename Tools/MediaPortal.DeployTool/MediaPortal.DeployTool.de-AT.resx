@@ -251,7 +251,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Installieren</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;Keine Aktion&gt;</value>
+    <value>Keine Aktion</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Vorherige Version deinstallieren-&gt;Herunterladen-&gt;Installieren</value>

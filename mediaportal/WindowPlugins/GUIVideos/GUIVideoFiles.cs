@@ -3618,7 +3618,7 @@ namespace MediaPortal.GUI.Video
       {
         try
         {
-          if (_getMediaInfoThread.IsAlive)
+          if (_getMediaInfoThread != null &&_getMediaInfoThread.IsAlive)
           {
             // dont want to abort, rather send a signal and wait to finish, it is a clean exit
             Log.Debug("GetMediaInfoThread: send an exit signal to the last thread and waiting for exit.");

@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="source\dshowhelper.def" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="helpers">

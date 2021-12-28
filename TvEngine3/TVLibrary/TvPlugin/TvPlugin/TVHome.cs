@@ -1951,8 +1951,7 @@ namespace TvPlugin
       }
 
       //gemx: fix for 0001181: Videoplayback does not work if tvservice.exe is not running
-      bool isTS = (Card != null && Card.IsTimeShifting);
-      if (Connected && isTS)
+      if (Connected && Card != null && Card.IsTimeShifting)
       {
         Card.StopTimeShifting();
       }
@@ -2629,6 +2628,11 @@ namespace TvPlugin
           percentLivePoint *= 100.0d;
           GUIPropertyManager.SetProperty("#TV.View.Percentage", percentLivePoint.ToString());
           GUIPropertyManager.SetProperty("#TV.Record.percent3", percentLivePoint.ToString());
+          string unwatchedTitle = GUILocalizeStrings.Get(698); // TS Buffer available
+          GUIPropertyManager.SetProperty("#TV.View.unwatchedTitle", unwatchedTitle);
+          double unwatchednum = livePoint - playingPoint;
+          string unwatched = Utils.SecondsToHMSString((int)unwatchednum);
+          GUIPropertyManager.SetProperty("#TV.View.unwatched", unwatched);
         }
       }
 
@@ -2662,6 +2666,8 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
       GUIPropertyManager.SetProperty("#TV.View.remainingSeconds", string.Empty);
       GUIPropertyManager.SetProperty("#TV.View.remainingMinutes", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.unwatchedTitle", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.unwatched", String.Empty);
     }
 
     private static void UpdateNextEpgProperties(Channel ch)

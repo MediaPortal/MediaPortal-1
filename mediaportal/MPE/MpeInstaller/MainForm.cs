@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -144,6 +144,17 @@ namespace MpeInstaller
       collection.Save();
     }
 
+    private string UppercaseFirst(string s)
+    {
+      if (string.IsNullOrEmpty(s))
+      {
+        return string.Empty;
+      }
+      char[] a = s.ToCharArray();
+      a[0] = char.ToUpper(a[0]);
+      return new string(a);
+    }
+
     private void SetFilterForKnownExtensionsList()
     {
       MpeCore.MpeInstaller.KnownExtensions.Hide(ApplicationSettings.Instance.ShowOnlyStable, ApplicationSettings.Instance.ShowOnlyCompatible);
@@ -154,7 +165,7 @@ namespace MpeInstaller
         if (ApplicationSettings.Instance.ShowOnlyStable) infoText += "unstable ";
         if (ApplicationSettings.Instance.ShowOnlyCompatible) infoText += (ApplicationSettings.Instance.ShowOnlyStable ? "and " : "") + "incompatible ";
         infoText += "extensions are hidden";
-        toolStripLabelWarn.Text = infoText;
+        toolStripLabelWarn.Text = UppercaseFirst(infoText);
       }
       else
         toolStripLabelWarn.Visible = false;
@@ -180,6 +191,7 @@ namespace MpeInstaller
       extensionListControlKnown.ConfigureExtension += extensionListControl_ConfigureExtension;
       extensionListControlKnown.InstallExtension += extensionListControl_InstallExtension;
       extensionListControlKnown.ShowScreenShot += extensionListControl_ShowScreenShot;
+      this.Size = ApplicationSettings.Instance.FormSize;
     }
 
     private void extensionListControl_ShowScreenShot(object sender, PackageClass packageClass)
@@ -442,6 +454,20 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
 
     private void RefreshListControls()
     {
+      if (ApplicationSettings.Instance.ExpandTile && !ApplicationSettings.Instance.ExpandTileFullWidth)
+      {
+        extensionListControlInstalled.flowLayoutPanel1.WrapContents = true;
+        extensionListControlInstalled.flowLayoutPanel1.FlowDirection = FlowDirection.LeftToRight;
+        extensionListControlKnown.flowLayoutPanel1.WrapContents = true;
+        extensionListControlKnown.flowLayoutPanel1.FlowDirection = FlowDirection.LeftToRight;
+      }
+      else
+      {
+        extensionListControlInstalled.flowLayoutPanel1.WrapContents = false;
+        extensionListControlInstalled.flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
+        extensionListControlKnown.flowLayoutPanel1.WrapContents = false;
+        extensionListControlKnown.flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
+      }
       toolStripLastUpdate.Text = "Last update: " + (ApplicationSettings.Instance.LastUpdate == DateTime.MinValue ? "Never" : ApplicationSettings.Instance.LastUpdate.ToString("g"));
       extensionListControlInstalled.Set(MpeCore.MpeInstaller.InstalledExtensions, true);
       extensionListControlKnown.Set(MpeCore.MpeInstaller.KnownExtensions.GetUniqueList(MpeCore.MpeInstaller.InstalledExtensions), false);
@@ -620,6 +646,7 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
 
     private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
     {
+      ApplicationSettings.Instance.FormSize = this.Size;
       ApplicationSettings.Instance.Save();
     }
 
@@ -698,17 +725,34 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
 
     private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      bool expandTitle = ApplicationSettings.Instance.ExpandTile;
+      bool expandTitleFullWidth = ApplicationSettings.Instance.ExpandTileFullWidth;
+
       SettingsForm dlg = new SettingsForm();
       dlg.chk_update.Checked = ApplicationSettings.Instance.DoUpdateInStartUp;
       dlg.chk_updateExtension.Checked = ApplicationSettings.Instance.UpdateAll;
       dlg.numeric_Days.Value = ApplicationSettings.Instance.UpdateDays;
+      dlg.chk_ExpandTile.Checked = ApplicationSettings.Instance.ExpandTile;
+      dlg.chk_ExpandTileFullWidth.Checked = ApplicationSettings.Instance.ExpandTileFullWidth;
+
       if (dlg.ShowDialog() == DialogResult.OK)
       {
         ApplicationSettings.Instance.DoUpdateInStartUp = dlg.chk_update.Checked;
         ApplicationSettings.Instance.UpdateAll = dlg.chk_updateExtension.Checked;
         ApplicationSettings.Instance.UpdateDays = (int)dlg.numeric_Days.Value;
+        ApplicationSettings.Instance.ExpandTile = dlg.chk_ExpandTile.Checked;
+        ApplicationSettings.Instance.ExpandTileFullWidth = dlg.chk_ExpandTileFullWidth.Checked;
+
+        if (expandTitle != ApplicationSettings.Instance.ExpandTile || expandTitleFullWidth != ApplicationSettings.Instance.ExpandTileFullWidth)
+        {
+          RefreshListControls();
+        }
       }
     }
 
+    private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      this.Close();
+    }
   }
 }

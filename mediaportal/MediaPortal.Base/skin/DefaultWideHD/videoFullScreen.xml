@@ -5,18 +5,6 @@
   <allowoverlay>no</allowoverlay>
   <disabletopbar>false</disabletopbar>
   <controls>
-    <!--control>
-      <description>background image</description>
-      <type>image</type>
-      <id>105</id>
-      <posX>3062</posX>
-      <posY>924</posY>
-      <width>1404</width>
-      <height>125</height>
-      <texture mask="OSDBG2.png">black.png</texture>
-      <colordiffuse>White</colordiffuse>
-      <visible>window.ispauseosdvisible|player.rewinding|player.forwarding</visible>
-    </control-->
     <control>
       <description>background image</description>
       <type>image</type>
@@ -25,8 +13,44 @@
       <posY>937</posY>
       <height>128</height>
       <width>2200</width>
-      <texture>OSDBG4.png</texture>
-      <colordiffuse>dfffffff</colordiffuse>
+      <texture>white.png</texture>
+      <colordiffuse>f200061c</colordiffuse>
+      <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-90</posX>
+      <posY>937</posY>
+      <height>3</height>
+      <width>2200</width>
+      <texture>white.png</texture>
+      <colordiffuse>ff09173c</colordiffuse>
+      <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-90</posX>
+      <posY>1063</posY>
+      <height>3</height>
+      <width>2200</width>
+      <texture>white.png</texture>
+      <colordiffuse>ff09173c</colordiffuse>
+      <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
+    </control>
+    <control>
+      <description>background for black channelname</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>8</posX>
+      <posY>876</posY>
+      <height>64</height>
+      <width>1504</width>
+      <texture>OSDBG7.png</texture>
+      <colordiffuse>f700061c</colordiffuse>
       <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
     </control>
     <control>
@@ -36,9 +60,21 @@
       <posX>10</posX>
       <posY>878</posY>
       <height>60</height>
-      <width>1600</width>
-      <texture>OSDBG5.png</texture>
-      <colordiffuse>dfffffff</colordiffuse>
+      <width>1500</width>
+      <texture>OSDBG7.png</texture>
+      <colordiffuse>ff09173c</colordiffuse>
+      <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
+    </control>
+    <control>
+      <description>Time BG</description>
+      <type>image</type>
+      <id>105</id>
+      <posX>1704</posX>
+      <posY>876</posY>
+      <width>454</width>
+      <height>64</height>
+      <texture>OSDBG3.png</texture>
+      <colordiffuse>f700051c</colordiffuse>
       <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
     </control>
     <control>
@@ -50,7 +86,7 @@
       <width>450</width>
       <height>60</height>
       <texture>OSDBG3.png</texture>
-      <colordiffuse>dfffffff</colordiffuse>
+      <colordiffuse>ff09173c</colordiffuse>
       <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
     </control>
     <control>
@@ -58,26 +94,26 @@
       <type>label</type>
       <id>2</id>
       <posX>1898</posX>
-      <posY>885</posY>
+      <posY>886</posY>
       <label>#time</label>
       <align>right</align>
-      <font>Label</font>
-      <textcolor>black</textcolor>
+      <font>LabelBold</font>
+      <textcolor>white</textcolor>
       <visible>control.isVisible(111)</visible>
     </control>
     <control>
       <description>Movie Name</description>
       <id>3</id>
       <type>fadelabel</type>
-      <posX>30</posX>
-      <posY>885</posY>
-      <width>1920</width>
+      <posX>50</posX>
+      <posY>881</posY>
+      <width>1430</width>
       <height>54</height>
       <label>-</label>
-      <align>left</align>
-      <textcolor>black</textcolor>
-      <font>Label</font>
-      <label>#Play.Current.Title</label>
+      <align>center</align>
+      <textcolor>white</textcolor>
+      <font>LabelBold</font>
+      <label>#Play.Current.Title (#duration)</label>
       <visible>control.isVisible(111)</visible>
     </control>
     <control>
@@ -85,7 +121,7 @@
       <type>label</type>
       <id>101</id>
       <posX>140</posX>
-      <posY>964</posY>
+      <posY>967</posY>
       <label>#currentplaytime</label>
       <align>right</align>
       <font>Label</font>
@@ -97,7 +133,7 @@
       <type>label</type>
       <id>102</id>
       <posX>1530</posX>
-      <posY>964</posY>
+      <posY>967</posY>
       <label>#currentremaining</label>
       <align>left</align>
       <font>Label</font>
@@ -132,7 +168,7 @@
       <filltexture1>osd_progress_mid_tv.png</filltexture1>
       <filltexture2>osd_progress_mid_tv.png</filltexture2>
       <filltexture3>osd_progress_mid_orange_tv.png</filltexture3>
-      <markertexture>osd_progress_mid_orange_tv.png</markertexture>
+      <markertexture>chaptermarker.png</markertexture>
       <fillheight>24</fillheight>
       <label>#percentage</label>
       <labelmarkerstarts>#jumppoints</labelmarkerstarts>
@@ -143,11 +179,12 @@
     <control>
       <description>Series ClearArt</description>
       <type>image</type>
-      <id>0</id>
+      <id>1</id>
       <posX>1522</posX>
-      <posY>690</posY>
-      <width>372</width>
+      <posY>840</posY>
+      <width>172</width>
       <height>187</height>
+      <keepaspectratio>yes</keepaspectratio>
       <texture>#TVSeries.Play.ClearArt</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -160,11 +197,12 @@
     <control>
       <description>Movie ClearArt</description>
       <type>image</type>
-      <id>0</id>
+      <id>1</id>
       <posX>1522</posX>
-      <posY>690</posY>
-      <width>372</width>
+      <posY>840</posY>
+      <width>172</width>
       <height>187</height>
+      <keepaspectratio>yes</keepaspectratio>
       <texture>..\..\..\Thumbs\ClearArt\Movies\#Play.Current.IMDBNumber.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -177,11 +215,12 @@
     <control>
       <description>mvCentral ClearArt</description>
       <type>image</type>
-      <id>0</id>
+      <id>1</id>
       <posX>1522</posX>
-      <posY>690</posY>
-      <width>372</width>
+      <posY>840</posY>
+      <width>172</width>
       <height>187</height>
+      <keepaspectratio>yes</keepaspectratio>
       <texture>..\..\..\Thumbs\ClearArt\Music\#Play.Current.mvArtist.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -195,43 +234,65 @@
     <!-- *****************************         RECORDING INFO LATESTMEDIA       ****************************** -->
     <!-- ***************************************************************************************************** -->
     <control>
-      <description>rec logo</description>
+      <description>background for recording info</description>
       <type>image</type>
-      <id>40</id>
-      <posX>210</posX>
-      <posY>1005</posY>
-      <width>59</width>
-      <height>60</height>
-      <texture>tb_recordNF_red.png</texture>
-      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-      <visible>plugin.isenabled(Latest Media Handler)+control.isVisible(111)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+      <id>1</id>
+      <posX>53</posX>
+      <posY>1007</posY>
+      <width>604</width>
+      <height>41</height>
+      <texture>osdbg6.png</texture>
+      <colordiffuse>f700061c</colordiffuse>
+      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+player.paused+control.isVisible(111)</visible>
+    </control>
+    <control>
+      <description>background for recording info</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>55</posX>
+      <posY>1009</posY>
+      <width>600</width>
+      <height>37</height>
+      <texture>osdbg6.png</texture>
+      <colordiffuse>ff09173c</colordiffuse>
+      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+player.paused+control.isVisible(111)</visible>
     </control>
     <control>
       <description>Current recording count</description>
       <type>fadelabel</type>
-      <id>0</id>
-      <posX>215</posX>
-      <posY>1035</posY>
+      <id>1</id>
+      <posX>1093</posX>
+      <posY>965</posY>
       <width>50</width>
       <label>#latestMediaHandler.tvrecordings.active.count</label>
       <align>center</align>
       <font>font10</font>
       <textcolor>ivory</textcolor>
-      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+control.isVisible(111)</visible>
+      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+player.paused+control.isVisible(111)</visible>
+    </control>
+    <control>
+      <description>rec logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>1010</posY>
+      <width>35</width>
+      <height>35</height>
+      <texture>tv_is_recording.png</texture>
+      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+player.paused+control.isVisible(111)</visible>
     </control>
     <control>
       <description>Current channel</description>
       <type>fadelabel</type>
-      <id>0</id>
-      <posX>270</posX>
-      <posY>1020</posY>
-      <width>600</width>
+      <id>1</id>
+      <posX>110</posX>
+      <posY>1015</posY>
+      <width>540</width>
       <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
       <align>left</align>
       <font>font9</font>
       <textcolor>ivory</textcolor>
-      <visible>plugin.isenabled(Latest Media Handler)+control.isVisible(111)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+player.paused+control.isVisible(111)</visible>
     </control>
   </controls>
 </window>

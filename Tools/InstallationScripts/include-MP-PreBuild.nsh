@@ -26,9 +26,21 @@
 #**********************************************************************************************************#
 
 !ifdef x64Environment
-!define ALToolPath "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools"
+!define Prog_Path '$%ProgramFiles(x86)%'
 !else
-!define ALToolPath "C:\Program Files\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools"
+!define Prog_Path '$%ProgramFiles%'
+!endif
+
+!include ${git_InstallScripts}\include\CompileTimeIfFileExist.nsh
+
+!define ALToolPath "${Prog_Path}\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools"
+
+!insertmacro CompileTimeIfFileExist "${Prog_Path}\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" VS2019Community
+# !insertmacro CompileTimeIfFileExist "${Prog_Path}\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe" VS2019Buildtools
+!ifdef VS2019Community
+!define MSBuild_Path "${Prog_Path}\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
+!else
+!define MSBuild_Path "${Prog_Path}\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe"
 !endif
 
 # The following commands needs to be defined by the parent script (the one, which includes this file).
@@ -61,28 +73,29 @@
 !system '"${git_DeployVersionGIT}\DeployVersionGIT\bin\Release\DeployVersionGIT.exe" /git="${git_ROOT}" /path="${git_ROOT}\Common-MP-TVE3"' = 0
 !endif
 
-!system '"$%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" "${git_ROOT}\Build\RestorePackages.targets"' = 0
+!system '"${MSBuild_Path}" "${git_ROOT}\Build\RestorePackages.targets"' = 0
 
 !ifdef BUILD_MediaPortal
-!system 'ant -f ${LibblurayJAR} -Dsrc_awt=:java-j2se' = 0
-!insertmacro PrepareBuildReport DirectShowFilters
-!ifdef x64Environment
-!system '"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
-!else
-!system '"C:\Program Files\MSBuild\14.0\Bin\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
+!include "${git_InstallScripts}\include\MediaPortalLibbluray.nsh"
+!ifdef libbluray_vcxproj_is_present && Libbluray_use_Build
+!insertmacro PrepareBuildReport libbluray
+!system '"${MSBuild_Path}"  /p:PlatformToolset=v142 ${logger} /target:rebuild /property:Configuration=Release_libbluray "${git_DirectShowFilters}\Filters.sln"' = 0
+!insertmacro FinalizeBuildReport
 !endif
+!insertmacro PrepareBuildReport DirectShowFilters
+!system '"${MSBuild_Path}" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
 !insertmacro FinalizeBuildReport
 !insertmacro PrepareBuildReport MediaPortal
-!system '"$%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_MP}\MediaPortal.sln"' = 0
+!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_MP}\MediaPortal.sln"' = 0
 !insertmacro FinalizeBuildReport
 !endif
 
 !ifdef BUILD_TVServer
 !insertmacro PrepareBuildReport TvLibrary
-!system '"$%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvLibrary.sln"' = 0
+!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvLibrary.sln"' = 0
 !insertmacro FinalizeBuildReport
 !insertmacro PrepareBuildReport TvPlugin
-!system '"$%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvPlugin\TvPlugin.sln"' = 0
+!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvPlugin\TvPlugin.sln"' = 0
 !insertmacro FinalizeBuildReport
 !endif
 
@@ -94,7 +107,8 @@
 
 !ifdef BUILD_DeployTool
 !insertmacro PrepareBuildReport DeployTool
-!system '"$%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" ${logger} /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+;!system '"${MSBuild_Path}" ${logger} /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
 !insertmacro FinalizeBuildReport
 !endif
 

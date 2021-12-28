@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,18 +21,27 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Net;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+
 using DaggerLib.DSGraphEdit;
 using DaggerLib.UI;
+
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
+using MediaPortal.Util;
+using MediaPortal.GUI.Library;
+
 using WatchDog.Properties;
+
 using Settings = MediaPortal.Profile.Settings;
+using System.Runtime.InteropServices;
 
 namespace WatchDog
 {
@@ -48,8 +57,9 @@ namespace WatchDog
     #region Variables
 
     private readonly string _tempDir = "";
-    private string _zipFile = "";
+    public static string _zipFile = "";
     private string _tempConfig;
+    private bool _engage;
     private bool _autoMode;
     private bool _watchdog;
     private bool _restartMP;
@@ -60,6 +70,10 @@ namespace WatchDog
     private bool _safeMode;
     private int GraphsCreated { get; set; }
     private string _currentpath = Directory.GetCurrentDirectory();
+    private string _watchdogtargetDir = "";
+    private string _watchdogAppDir = "";
+    private string _zipPath;
+    private bool _TVEonly;
 
     #endregion
 
@@ -97,11 +111,11 @@ namespace WatchDog
       _tempConfig = CreateTemporaryConfiguration();
       if (_safeMode)
       {
-        return String.Format("/skin={0} /safelist=\"{1}\\BuiltInPlugins.xml\" /config=\"{2}\" /NoTheme",
+        return String.Format("/skin={0} /safelist=\"{1}\\BuiltInPlugins.xml\" /config=\"{2}\" /Debug /NoTheme",
                              GetScreenAspect() <= 1.5 ? Default4To3Skin : Default16To9Skin,
                              Application.StartupPath, _tempConfig);
       }
-      return String.Format("/config=\"{0}\" /NoTheme", _tempConfig);
+      return String.Format("/config=\"{0}\" /Debug /NoTheme", _tempConfig);
     }
 
     private string CreateTemporaryConfiguration()
@@ -127,7 +141,7 @@ namespace WatchDog
           process.WaitForExit();
         }
         // ReSharper disable EmptyGeneralCatchClause
-        catch {}
+        catch { }
         // ReSharper restore EmptyGeneralCatchClause
       }
 
@@ -166,7 +180,7 @@ namespace WatchDog
     {
       _zipFile = tbZipFile.Text;
       return _zipFile
-        .Replace("[date]", DateTime.Now.ToString("dd_MM_yy"))
+        .Replace("[date]", DateTime.Now.ToString("yy_MM_dd"))
         .Replace("[time]", DateTime.Now.ToString("HH_mm"));
     }
 
@@ -174,6 +188,14 @@ namespace WatchDog
 
     public MPWatchDog()
     {
+      // Read Watchdog setting from XML files
+      _watchdogAppDir = Config.GetFile(Config.Dir.Config, "watchdog.xml");
+
+      using (Settings xmlreader = new Settings(_watchdogAppDir, false))
+      {
+        _watchdogtargetDir = xmlreader.GetValueAsString("general", "watchdogTargetDir", "");
+      }
+
       GraphsCreated = 0;
       Thread.CurrentThread.Name = "MPWatchDog";
       InitializeComponent();
@@ -183,10 +205,22 @@ namespace WatchDog
         _tempDir += "\\";
       }
       _tempDir += "MPTemp";
+
+      // Read Custom path for zip or apply default value
+      if (_watchdogtargetDir == string.Empty)
+      {
+        _zipPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortal-Logs\\";
+      }
+      else
+      {
+        _zipPath = string.Format(_watchdogtargetDir);
+      }
+
       // Check If Watchdog is installed on TV Server folder for disabled 1st & 2nd choice & rename Zip file
       if (File.Exists(Path.Combine(_currentpath, "WatchDog.exe")) & File.Exists(Path.Combine(_currentpath, "SetupTV.exe")))
       {
-        _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortal-Logs\\MP_TVELogs_[date]__[time].zip";
+        _TVEonly = true;
+        _zipFile = string.Format("{0}\\MP_TVELogs_[date]_[time].zip",_zipPath);
         if (!ParseCommandLine())
         {
           Application.Exit();
@@ -200,8 +234,24 @@ namespace WatchDog
       }
       else
       {
-        _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortal-Logs\\MediaPortalLogs_[date]__[time].zip";
-        if (!ParseCommandLine())
+        _zipFile = string.Format("{0}\\MP_Logs_{1}_[date]_[time].zip",_zipPath,Environment.MachineName);
+      }
+
+      string tvPlugin = Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll";
+      if (!File.Exists(tvPlugin))
+      {
+        menuItem14.Enabled = false;
+      }
+
+      if (!ParseCommandLine())
+      {
+        Application.Exit();
+      }
+
+      tbZipFile.Text = _zipFile;
+      if (_autoMode)
+      {
+        if (!CheckRequirements())
         {
           Application.Exit();
         }
@@ -225,16 +275,44 @@ namespace WatchDog
           SetStatus("Running in auto/debug mode...");
           tmrUnAttended.Enabled = true;
         }
-        if (_watchdog)
+      }
+
+      if (_watchdog)
+      {
+        WindowState = FormWindowState.Minimized;
+        ShowInTaskbar = false;
+        tmrWatchdog.Enabled = true;
+        SetStatus("Running in WatchDog mode...");
+        using (var xmlreader = new MPSettings())
         {
-          WindowState = FormWindowState.Minimized;
-          ShowInTaskbar = false;
-          tmrWatchdog.Enabled = true;
-          using (var xmlreader = new MPSettings())
-          {
-            _restoreTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
-          }
+          _restoreTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
         }
+      }
+
+      if (!_watchdog && !_engage)
+      {
+        string[] args = Environment.GetCommandLineArgs();
+        var info = new ProcessStartInfo(Assembly.GetEntryAssembly().Location, String.Join(" ", Enumerable.Concat(args.Skip(1), new[] { "-engage" })))
+        {
+          UseShellExecute = true,
+          Verb = "runas", // indicates to eleavate privileges
+        };
+
+        var process = new Process
+        {
+          EnableRaisingEvents = true,
+          StartInfo = info
+        };
+        try
+        {
+          process.Start();
+        }
+        catch
+        {
+          // This will be thrown if the user cancels the prompt
+        }
+        // process.WaitForExit(); // sleep calling process thread until evoked process exit
+        System.Environment.Exit(0);
       }
     }
 
@@ -243,7 +321,7 @@ namespace WatchDog
     private bool ParseCommandLine()
     {
       string[] args = Environment.GetCommandLineArgs();
-      for (int i = 1; i < args.Length;)
+      for (int i = 1; i < args.Length; )
       {
         switch (args[i].ToLowerInvariant())
         {
@@ -266,6 +344,9 @@ namespace WatchDog
               ShowUsage();
               return false;
             }
+            break;
+          case "-engage":
+            _engage = true;
             break;
           default:
             ShowUsage();
@@ -366,7 +447,7 @@ namespace WatchDog
     private void PerformPreTestActions(bool autoClose)
     {
       SetStatus("Busy performing pre-test actions...");
-      var pta = new PreTestActions();
+      var pta = new PreTestActions(GetZipFilename());
       pta.Show();
 
       // give windows 1 sec to render the form
@@ -388,6 +469,7 @@ namespace WatchDog
       }
       CreateTemporaryConfiguration();
       SetStatus("Launching MediaPortal...");
+      /*
       _processMP = new Process
       {
         StartInfo =
@@ -398,6 +480,8 @@ namespace WatchDog
         }
       };
       _processMP.Start();
+      */
+      RunAsDesktopUser(Application.StartupPath + @"\Mediaportal.exe", GetMPArguments());
       SetStatus("MediaPortal started. Waiting for exit...");
       Update();
       tmrMPWatcher.Enabled = true;
@@ -438,7 +522,7 @@ namespace WatchDog
     private void tmrMPWatcher_Tick(object sender, EventArgs e)
     {
       tmrMPWatcher.Enabled = false;
-      if (_processMP.HasExited)
+      if (_processMP != null && _processMP.HasExited)
       {
         if (!string.IsNullOrEmpty(_tempConfig))
         {
@@ -451,6 +535,7 @@ namespace WatchDog
         ProceedButton.Enabled = true;
         return;
       }
+
       List<DSGrapheditROTEntry> rotEntries = DaggerDSUtils.GetFilterGraphsFromROT();
       foreach (DSGrapheditROTEntry rot in rotEntries)
       {
@@ -539,12 +624,472 @@ namespace WatchDog
           {
             PerformPostTestActions();
             string mpExe = Config.GetFolder(Config.Dir.Base) + "\\MediaPortal.exe";
-            var mp = new Process {StartInfo = {FileName = mpExe}};
+            var mp = new Process { StartInfo = { FileName = mpExe } };
             mp.Start();
             Close();
           }
         }
       }
     }
+
+    private void menuItemStartTVserver_Click(object sender, EventArgs e)
+    {
+      SetStatus("Busy...");
+      EnableChoice(false);
+      ProceedButton.Enabled = false;
+
+      TVServerManager mngr = new TVServerManager();
+      mngr.TvServerRemoteStart();
+
+      SetStatus("idle");
+      EnableChoice(true);
+      ProceedButton.Enabled = true;
+    }
+
+    private void menuItemStopTVserver_Click(object sender, EventArgs e)
+    {
+      SetStatus("Busy...");
+      EnableChoice(false);
+      ProceedButton.Enabled = false;
+
+      TVServerManager mngr = new TVServerManager();
+      mngr.TvServerRemoteStop();
+
+      SetStatus("idle");
+      EnableChoice(true);
+      ProceedButton.Enabled = true;
+    }
+
+    private string GetDirectoryName(string f)
+    {
+      try
+      {
+        int posOfDirSep = f.LastIndexOf("\\");
+        if (posOfDirSep >= 0)
+          return f.Substring(0, posOfDirSep);
+        else return string.Empty;
+      }
+      catch (Exception)
+      {
+        return string.Empty;
+      }
+    }
+
+    private void ClearEventLog()
+    {
+      string[] logNames = { "Application", "System" };
+      foreach (string strLogName in logNames)
+      {
+        EventLog e = new EventLog(strLogName);
+        try
+        {
+          e.Clear();
+        }
+        catch (Exception) { }
+      }
+    }
+
+    private void ClearDir(string strDir)
+    {
+      string[] files = Directory.GetFiles(strDir);
+      string[] dirs = Directory.GetDirectories(strDir);
+
+      foreach (string file in files)
+      {
+        if (File.Exists(file))
+        {
+          try
+          {
+            File.Delete(file);
+          }
+          catch (Exception) { }
+        }
+      }
+
+      foreach (string dir in dirs)
+      {
+        if (Directory.Exists(dir))
+        {
+          try
+          {
+            Directory.Delete(dir, true);
+          }
+          catch (Exception) { }
+        }
+      }
+    }
+
+    private void tbZipFile_TextChanged(object sender, EventArgs e)
+    {
+      using (var xmlwriter = new Settings(_watchdogAppDir, false))
+      {
+        xmlwriter.SetValue("general", "watchdogTargetDir", GetDirectoryName(tbZipFile.Text));
+      }
+    }
+
+    private void btnZipFileReset_Click(object sender, EventArgs e)
+    {
+      if (_TVEonly == true)
+      {
+        _zipFile = string.Format("{0}\\MediaPortal - Logs\\MP_TVELogs_[date]_[time].zip", Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
+        tbZipFile.Text = _zipFile;
+      }
+      else
+      {
+        _zipFile = string.Format("{0}\\MediaPortal - Logs\\MP_Logs_{1}_[date]_[time].zip", Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), Environment.MachineName);
+        tbZipFile.Text = _zipFile;
+      }
+
+    }
+
+    private void menuItemClearEventLogs_Click(object sender, EventArgs e)
+    {
+      ClearEventLog();
+    }
+
+    private void menuItemClearMPlogs_Click(object sender, EventArgs e)
+    {
+      ClearDir(Config.GetFolder(Config.Dir.Log));
+    }
+
+    private void menuItemClearWEventLogOnTVserver_Click(object sender, EventArgs e)
+    {
+      TVServerManager mngr = new TVServerManager();
+      mngr.ClearWindowsEventLogs();
+    }
+
+    private void menuItemClearTVserverLogs_Click(object sender, EventArgs e)
+    {
+      TVServerManager mngr = new TVServerManager();
+      mngr.ClearTVserverLogs();
+    }
+
+    private void menuRebootTvServer_Click(object sender, EventArgs e)
+    {
+      string hostName;
+      using (Settings xmlreader = new MPSettings())
+      {
+        hostName = xmlreader.GetValueAsString("tvservice", "hostname", string.Empty);
+      }
+
+      if (hostName == string.Empty)
+      {
+        return;
+      }
+
+      string msg = string.Format("Do you want to restart {0}?", hostName);
+
+      var result = MessageBox.Show(msg, "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+      if (result == DialogResult.Yes)
+      {
+        TVServerManager mngr = new TVServerManager();
+        mngr.RebootTvServer();
+      }
+    }
+
+    private void menuShutdownTvServer_Click(object sender, EventArgs e)
+    {
+      string hostName;
+      using (Settings xmlreader = new MPSettings())
+      {
+        hostName = xmlreader.GetValueAsString("tvservice", "hostname", string.Empty);
+      }
+
+      if (hostName == string.Empty)
+      {
+        return;
+      }
+
+      string msg = string.Format("Do you want to Shutdown {0}?", hostName);
+
+      var result = MessageBox.Show(msg, "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+      if (result == DialogResult.Yes)
+      {
+        TVServerManager mngr = new TVServerManager();
+        mngr.ShutdownTvServer();
+      }
+    }
+
+    private void menuPowerOffTvServer_Click(object sender, EventArgs e)
+    {
+      string hostName;
+      using (Settings xmlreader = new MPSettings())
+      {
+        hostName = xmlreader.GetValueAsString("tvservice", "hostname", string.Empty);
+      }
+
+      if (hostName == string.Empty)
+      {
+        return;
+      }
+
+      string msg = string.Format("Do you want to Power Off {0}?", hostName);
+
+      var result = MessageBox.Show(msg, "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+      if (result == DialogResult.Yes)
+      {
+        TVServerManager mngr = new TVServerManager();
+        mngr.PowerOffTvServer();
+      }
+    }
+
+    private void menuItemWOLTvServer_Click(object sender, EventArgs e)
+    {
+      String macAddress, hostname;
+      byte[] hwAddress;
+      
+      using (Settings xmlreader = new MPSettings())
+      {
+        macAddress = xmlreader.GetValueAsString("tvservice", "macAddress", null);
+        hostname = xmlreader.GetValueAsString("tvservice", "hostname", null);
+
+        if (!string.IsNullOrEmpty(macAddress))
+        {
+          try
+          {
+            WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
+
+            Log.Debug("WOLMgr: Ping {0}", hostname);
+            if (wakeOnLanManager.Ping(hostname, 200))
+            {
+              Log.Debug("WOLMgr: {0} already started", hostname);
+              return;
+            }
+
+            hwAddress = wakeOnLanManager.GetHwAddrBytes(macAddress);
+
+            if (!wakeOnLanManager.SendWakeOnLanPacket(hwAddress, IPAddress.Broadcast))
+            {
+              Log.Debug("WOLMgr: FAILED to send the first wake-on-lan packet!");
+            }
+
+
+          }
+          catch (Exception ex)
+          {
+            Log.Error("WOL - Failed to start the TV server - {0}", ex.Message);
+          }
+            
+          MessageBox.Show("Done", "Status", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+      }
+
+    }
+
+    private void RunAsDesktopUser(string fileName, string arguments)
+    {
+      if (string.IsNullOrWhiteSpace(fileName))
+      {
+        throw new ArgumentException("Value cannot be null or whitespace.", nameof(fileName));
+      }
+
+      // To start process as shell user you will need to carry out these steps:
+      // 1. Enable the SeIncreaseQuotaPrivilege in your current token
+      // 2. Get an HWND representing the desktop shell (GetShellWindow)
+      // 3. Get the Process ID(PID) of the process associated with that window(GetWindowThreadProcessId)
+      // 4. Open that process(OpenProcess)
+      // 5. Get the access token from that process (OpenProcessToken)
+      // 6. Make a primary token with that token(DuplicateTokenEx)
+      // 7. Start the new process with that primary token(CreateProcessWithTokenW)
+
+      var hProcessToken = IntPtr.Zero;
+      // Enable SeIncreaseQuotaPrivilege in this process.  (This won't work if current process is not elevated.)
+      try
+      {
+        var process = GetCurrentProcess();
+        if (!OpenProcessToken(process, 0x0020, ref hProcessToken))
+          return;
+
+        var tkp = new TOKEN_PRIVILEGES
+        {
+          PrivilegeCount = 1,
+          Privileges = new LUID_AND_ATTRIBUTES[1]
+        };
+
+        if (!LookupPrivilegeValue(null, "SeIncreaseQuotaPrivilege", ref tkp.Privileges[0].Luid))
+          return;
+
+        tkp.Privileges[0].Attributes = 0x00000002;
+
+        if (!AdjustTokenPrivileges(hProcessToken, false, ref tkp, 0, IntPtr.Zero, IntPtr.Zero))
+          return;
+      }
+      finally
+      {
+        CloseHandle(hProcessToken);
+      }
+
+      // Get an HWND representing the desktop shell.
+      // CAVEATS:  This will fail if the shell is not running (crashed or terminated), or the default shell has been
+      // replaced with a custom shell.  This also won't return what you probably want if Explorer has been terminated and
+      // restarted elevated.
+      var hwnd = GetShellWindow();
+      if (hwnd == IntPtr.Zero)
+        return;
+
+      var hShellProcess = IntPtr.Zero;
+      var hShellProcessToken = IntPtr.Zero;
+      var hPrimaryToken = IntPtr.Zero;
+      try
+      {
+        // Get the PID of the desktop shell process.
+        uint dwPID;
+        if (GetWindowThreadProcessId(hwnd, out dwPID) == 0)
+          return;
+
+        // Open the desktop shell process in order to query it (get the token)
+        hShellProcess = OpenProcess(ProcessAccessFlags.QueryInformation, false, dwPID);
+        if (hShellProcess == IntPtr.Zero)
+          return;
+
+        // Get the process token of the desktop shell.
+        if (!OpenProcessToken(hShellProcess, 0x0002, ref hShellProcessToken))
+          return;
+
+        var dwTokenRights = 395U;
+
+        // Duplicate the shell's process token to get a primary token.
+        // Based on experimentation, this is the minimal set of rights required for CreateProcessWithTokenW (contrary to current documentation).
+        if (!DuplicateTokenEx(hShellProcessToken, dwTokenRights, IntPtr.Zero, SECURITY_IMPERSONATION_LEVEL.SecurityImpersonation, TOKEN_TYPE.TokenPrimary, out hPrimaryToken))
+          return;
+
+        // Start the target process with the new token.
+        var si = new STARTUPINFO();
+        var pi = new PROCESS_INFORMATION();
+        if (!CreateProcessWithTokenW(hPrimaryToken, 0, null, $"\"{fileName}\" {arguments}", 0, IntPtr.Zero, Path.GetDirectoryName(fileName), ref si, out pi))
+          return;
+        _processMP = Process.GetProcessById(pi.dwProcessId);
+      }
+      finally
+      {
+        CloseHandle(hShellProcessToken);
+        CloseHandle(hPrimaryToken);
+        CloseHandle(hShellProcess);
+      }
+
+    }
+
+    #region Interop
+
+    private struct TOKEN_PRIVILEGES
+    {
+      public UInt32 PrivilegeCount;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
+      public LUID_AND_ATTRIBUTES[] Privileges;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 4)]
+    private struct LUID_AND_ATTRIBUTES
+    {
+      public LUID Luid;
+      public UInt32 Attributes;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct LUID
+    {
+      public uint LowPart;
+      public int HighPart;
+    }
+
+    [Flags]
+    private enum ProcessAccessFlags : uint
+    {
+      All = 0x001F0FFF,
+      Terminate = 0x00000001,
+      CreateThread = 0x00000002,
+      VirtualMemoryOperation = 0x00000008,
+      VirtualMemoryRead = 0x00000010,
+      VirtualMemoryWrite = 0x00000020,
+      DuplicateHandle = 0x00000040,
+      CreateProcess = 0x000000080,
+      SetQuota = 0x00000100,
+      SetInformation = 0x00000200,
+      QueryInformation = 0x00000400,
+      QueryLimitedInformation = 0x00001000,
+      Synchronize = 0x00100000
+    }
+
+    private enum SECURITY_IMPERSONATION_LEVEL
+    {
+      SecurityAnonymous,
+      SecurityIdentification,
+      SecurityImpersonation,
+      SecurityDelegation
+    }
+
+    private enum TOKEN_TYPE
+    {
+      TokenPrimary = 1,
+      TokenImpersonation
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct PROCESS_INFORMATION
+    {
+      public IntPtr hProcess;
+      public IntPtr hThread;
+      public int dwProcessId;
+      public int dwThreadId;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    private struct STARTUPINFO
+    {
+      public Int32 cb;
+      public string lpReserved;
+      public string lpDesktop;
+      public string lpTitle;
+      public Int32 dwX;
+      public Int32 dwY;
+      public Int32 dwXSize;
+      public Int32 dwYSize;
+      public Int32 dwXCountChars;
+      public Int32 dwYCountChars;
+      public Int32 dwFillAttribute;
+      public Int32 dwFlags;
+      public Int16 wShowWindow;
+      public Int16 cbReserved2;
+      public IntPtr lpReserved2;
+      public IntPtr hStdInput;
+      public IntPtr hStdOutput;
+      public IntPtr hStdError;
+    }
+
+    [DllImport("kernel32.dll", ExactSpelling = true)]
+    private static extern IntPtr GetCurrentProcess();
+
+    [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
+    private static extern bool OpenProcessToken(IntPtr h, int acc, ref IntPtr phtok);
+
+    [DllImport("advapi32.dll", SetLastError = true)]
+    private static extern bool LookupPrivilegeValue(string host, string name, ref LUID pluid);
+
+    [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
+    private static extern bool AdjustTokenPrivileges(IntPtr htok, bool disall, ref TOKEN_PRIVILEGES newst, int len, IntPtr prev, IntPtr relen);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool CloseHandle(IntPtr hObject);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetShellWindow();
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern IntPtr OpenProcess(ProcessAccessFlags processAccess, bool bInheritHandle, uint processId);
+
+    [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern bool DuplicateTokenEx(IntPtr hExistingToken, uint dwDesiredAccess, IntPtr lpTokenAttributes, SECURITY_IMPERSONATION_LEVEL impersonationLevel, TOKEN_TYPE tokenType, out IntPtr phNewToken);
+
+    [DllImport("advapi32", SetLastError = true, CharSet = CharSet.Unicode)]
+    private static extern bool CreateProcessWithTokenW(IntPtr hToken, int dwLogonFlags, string lpApplicationName, string lpCommandLine, int dwCreationFlags, IntPtr lpEnvironment, string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, out PROCESS_INFORMATION lpProcessInformation);
+
+    #endregion
   }
 }

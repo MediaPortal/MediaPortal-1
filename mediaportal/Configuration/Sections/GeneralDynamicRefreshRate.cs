@@ -749,7 +749,7 @@ namespace MediaPortal.Configuration.Sections
     {
       try
       {
-        Process.Start("http://wiki.team-mediaportal.com/MediaPortal/Configuration/General/RefreshRate");
+        Process.Start("https://www.team-mediaportal.com/wiki/display/MediaPortal1/Dynamic%20Refresh%20Rate");
       }
       catch (Exception) {}
     }

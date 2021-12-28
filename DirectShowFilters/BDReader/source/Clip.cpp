@@ -24,6 +24,7 @@
 #include "Clip.h"
 #include <streams.h>
 #include "mediaformats.h"
+#include <string>
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"

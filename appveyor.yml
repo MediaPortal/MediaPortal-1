@@ -1,0 +1,29 @@
+version: 1.29.Final.{build}
+image: Visual Studio 2019
+clone_folder: c:\project\mediaportal
+environment:
+  JAVA_HOME: C:\Program Files (x86)\Java\jdk1.8.0
+install:
+- cmd: >-
+    git submodule update --init --recursive
+
+    choco install nsis --version=3.06.1
+
+    java -version
+build_script:
+- cmd: >-
+    cd c:\project\mediaportal\build\
+
+    "%ProgramFiles(x86)%\NSIS\makensis.exe" "..\Tools\InstallationScripts\DeployToolUnPacker-x64.nsi" > BuildFullInstaller.log
+
+    7z a ..\Release\MediaPortalSetup_%APPVEYOR_BUILD_VERSION%.%APPVEYOR_REPO_COMMIT%.zip ..\Release\MediaPortalSetup_*.exe
+
+    7z a BuildFullInstaller.zip BuildFullInstaller.log
+test: off
+artifacts:
+- path: Release\MediaPortalSetup_*.zip
+  name: Mediaportal Installer (Zip)
+- path: Build\BuildFullInstaller.zip
+  name: Mediaportal Build Log
+on_failure:
+- ps: Push-AppveyorArtifact BuildFullInstaller.log -FileName BuildError.log

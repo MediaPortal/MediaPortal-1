@@ -251,7 +251,7 @@ Računalnik bo potem deloval kot namenski TV strežnik in bo posredoval TV signa
     <value>Namestitev</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;brez postopka&gt;</value>
+    <value>Brez postopka</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Odstranitev prejšnjega-&gt;Nalaganje-&gt;Namestitev</value>

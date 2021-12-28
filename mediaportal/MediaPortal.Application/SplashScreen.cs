@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -249,15 +249,38 @@ namespace MediaPortal
     /// </summary>
     private void ShowFullScreenSplashScreen()
     {
+      int percent1w = CurrentDisplay.Bounds.Width / 100;
+      int percent1h = CurrentDisplay.Bounds.Height / 100;
+      int percent10h = CurrentDisplay.Bounds.Height / 10;
+
       Cursor.Hide();
       _frmFull = new FullScreenSplashScreen();
       _frmFull.TopMost = _alwaysOnTop;
       _frmFull.Bounds = CurrentDisplay.Bounds;
+
       _frmFull.lblMain.Parent = _frmFull.pbBackground;
-      _frmFull.lblVersion.Parent = _frmFull.lblMain;
-      _frmFull.lblCVS.Parent = _frmFull.lblMain;
-      _frmFull.RetrieveSplashScreenInfo();
+      _frmFull.lblVersion.Parent = _frmFull.pbBackground;
+      _frmFull.lblCVS.Parent = _frmFull.pbBackground;
+
+      _frmFull.lblMain.Left = 0;
+      _frmFull.lblMain.Top = (percent10h / 2);
+      _frmFull.lblMain.Height = _frmFull.Height - percent10h;
+      _frmFull.lblMain.Width = _frmFull.Width;
+
+      _frmFull.lblVersion.Left = percent1w / 2;
+      _frmFull.lblVersion.Top = percent1h / 2;
+      _frmFull.lblVersion.Width = (_frmFull.Width - percent1w) / 2;
+      _frmFull.lblVersion.Height = _frmFull.Height - percent1h;
+
+      _frmFull.lblCVS.Left = (_frmFull.Width - percent1w) / 2;
+      _frmFull.lblCVS.Top = percent1h / 2;
+      _frmFull.lblCVS.Width = (_frmFull.Width - percent1w) / 2;
+      _frmFull.lblCVS.Height = _frmFull.Height - percent1h;
+
       _frmFull.SetVersion(Version);
+
+      _frmFull.RetrieveSplashScreenInfo();
+
       _frmFull.Show();
       _frmFull.Update();
       _frmFull.Opacity = 100;
@@ -321,7 +344,12 @@ namespace MediaPortal
         string[] strVersion = version.Split('-');
         _versionLabel.Text = strVersion[0];
         Log.Info("Version: Application {0}", strVersion[0]);
-        if (strVersion.Length > 1)
+        if (strVersion.Length == 2)
+        {
+          _cvsLabel.Text = strVersion[1];
+          Log.Info("Edition/Codename: {0}", _cvsLabel.Text);
+        }
+        else if (strVersion.Length == 5)
         {
           string day   = strVersion[2].Substring(0, 2);
           string month = strVersion[2].Substring(3, 2);
@@ -410,15 +438,15 @@ namespace MediaPortal
            (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
              | System.Windows.Forms.AnchorStyles.Right)));
         this._informationLabel.BackColor = System.Drawing.Color.Transparent;
-        this._informationLabel.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold,
+        this._informationLabel.Font = new System.Drawing.Font("Arial", 13.25F, System.Drawing.FontStyle.Bold,
                                                              System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
         this._informationLabel.ForeColor = System.Drawing.Color.White;
-        this._informationLabel.Location = new System.Drawing.Point(11, 138);
+        this._informationLabel.Location = new System.Drawing.Point(200, 138);
         this._informationLabel.Name = "_informationLabel";
         this._informationLabel.Size = new System.Drawing.Size(377, 16);
         this._informationLabel.TabIndex = 4;
         this._informationLabel.Text = "Information";
-        this._informationLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+        this._informationLabel.TextAlign = System.Drawing.ContentAlignment.TopLeft;
         // 
         // versionLabel
         // 
@@ -427,12 +455,12 @@ namespace MediaPortal
            (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
              | System.Windows.Forms.AnchorStyles.Right)));
         this._versionLabel.BackColor = System.Drawing.Color.Transparent;
-        this._versionLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular,
+        this._versionLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold,
                                                          System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this._versionLabel.ForeColor = System.Drawing.Color.White;
-        this._versionLabel.Location = new System.Drawing.Point(277, 113);
+        this._versionLabel.Location = new System.Drawing.Point(277, 230);
         this._versionLabel.Name = "_versionLabel";
-        this._versionLabel.Size = new System.Drawing.Size(111, 16);
+        this._versionLabel.Size = new System.Drawing.Size(100, 16);
         this._versionLabel.TabIndex = 5;
         this._versionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
         // 
@@ -443,9 +471,10 @@ namespace MediaPortal
            (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
              | System.Windows.Forms.AnchorStyles.Right)));
         this._cvsLabel.BackColor = System.Drawing.Color.Transparent;
-        this._cvsLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular,
+        this._cvsLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold,
                                                      System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this._cvsLabel.Location = new System.Drawing.Point(24, 113);
+        this._cvsLabel.ForeColor = System.Drawing.Color.White;
+        this._cvsLabel.Location = new System.Drawing.Point(24, 230);
         this._cvsLabel.Name = "_cvsLabel";
         this._cvsLabel.Size = new System.Drawing.Size(211, 16);
         this._cvsLabel.TabIndex = 5;
@@ -456,7 +485,7 @@ namespace MediaPortal
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
         this.BackgroundImage = global::MediaPortal.Properties.Resources.mplogo;
         this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-        this.ClientSize = new System.Drawing.Size(400, 172);
+        this.ClientSize = new System.Drawing.Size(590, 254);
         this.Controls.Add(this._panel1);
         this.DoubleBuffered = true;
         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;

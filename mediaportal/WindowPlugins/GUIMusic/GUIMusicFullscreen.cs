@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -162,6 +162,13 @@ namespace MediaPortal.GUI.Video
             {
               g_Player.Pause();
             }
+          }
+          break;
+
+        case Action.ActionType.ACTION_PLAY_AGAIN:
+          {
+            g_Player.SeekAsolutePercentage(0);
+            return;
           }
           break;
       }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 /*
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -126,6 +126,7 @@ Var frominstall
 !include "${git_InstallScripts}\pages\AddRemovePage.nsh"
 !include "${git_InstallScripts}\pages\UninstallModePage.nsh"
 
+!include "${git_InstallScripts}\include\x64.nsh"
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
@@ -201,7 +202,6 @@ UninstPage custom un.UninstallModePage un.UninstallModePageLeave
 #---------------------------------------------------------------------------
 !insertmacro LANG_LOAD "English"
 
-
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
@@ -224,7 +224,7 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright ï¿½ 2005-2011 ${PRODUCT_PUBLISHER}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2020 ${PRODUCT_PUBLISHER}"
 ShowUninstDetails show
 
 
@@ -460,6 +460,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ${LOG_TEXT} "INFO" "Terminating processes ..."
   ${StopService} "TVservice"
   ${KillProcess} "SetupTv.exe"
+  ${KillProcess} "WatchDogService.exe"
   ; ffmpeg
   ${KillProcess} "ffmpeg.exe"
   ; MPEI installer / MPEI maker
@@ -480,6 +481,10 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     ${LOG_TEXT} "INFO" "Uninstalling TVService"
     ExecWait '"$InstallPath\TVService.exe" /uninstall'
     ${LOG_TEXT} "INFO" "Finished uninstalling TVService"
+    ${LOG_TEXT} "INFO" "Uninstalling WatchDogService"
+    ExecWait '"$InstallPath\WatchDogService.exe" /uninstall'
+    ${LOG_TEXT} "INFO" "Finished uninstalling WatchDogService"
+
   ${EndIf}
 
   Pop $0
@@ -530,7 +535,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\TvService\bin\${BUILD_TYPE}\TvService.exe.config"
   File "${git_TVServer}\SetupControls\bin\${BUILD_TYPE}\SetupControls.dll"
   File "${git_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\TVLibrary.Utils.dll"
-  ;File "${git_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
+ ;File "${git_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
 
   ; MP2 assemblies
   File "${TVSERVER.BASE}\HttpServer.dll"
@@ -546,19 +551,26 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
 
+  ; WatchDogService
+  File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDogService.Interface.dll"
+  File "${git_TVServer}\WatchDogService\bin\${BUILD_TYPE}\WatchDogService.exe"
+
+
   ; MediaInfo
-  ;File "${git_ROOT}\Packages\MediaInfo.0.7.95\MediaInfo.dll"
   SetOutPath "$INSTDIR"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.4.0\build\native\x86\MediaInfo.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.4.0\build\native\x86\libcrypto-1_1.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.4.0\build\native\x86\libcurl.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.4.0\build\native\x86\libssl-1_1.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Wrapper.19.4.1\lib\net40\MediaInfo.Wrapper.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\libcrypto-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\libssl-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Wrapper.21.3.4\lib\net40\MediaInfo.Wrapper.dll"
 
   ; thumbnail software
-  File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
+  ${If} ${RunningX64}
+    File "${git_ROOT}\Packages\FFmpeg.Win64.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
+  ${Else}
+    File "${git_ROOT}\Packages\FFmpeg.Win32.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
+  ${EndIf}
   File "${git_TVServer}\TvThumbnails\bin\x86\${BUILD_TYPE}\TvThumbnails.dll"
-  
 
   ; protocol implementations for MPIPTVSource.ax
   File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_FILE.dll"
@@ -595,8 +607,15 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; filters for analog tv
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPWriter\bin\${BUILD_TYPE}\mpFileWriter.ax" "$INSTDIR\mpFileWriter.ax" "$INSTDIR"
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\PDMpgMux.ax" "$INSTDIR\PDMpgMux.ax" "$INSTDIR"
-  ; filter for IPTV support
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTVSource.ax" "$INSTDIR\MPIPTVSource.ax" "$INSTDIR"
+
+  ${If} ${FileExists} "$INSTDIR\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"
+    ${LOG_TEXT} "INFO" "MPUrlSourceSplitter detected, skipping registration of MPIPTVSource.ax"
+    ; reregister because previous uninstall probably unregisterd the MPIPTVSource.ax
+    REGDLL "$INSTDIR\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"
+  ${Else}
+    ; filter for IPTV support
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTVSource.ax" "$INSTDIR\MPIPTVSource.ax" "$INSTDIR"
+  ${EndIf}
 
   #---------------------------------------------------------------------------
   # SERVICE INSTALLATION
@@ -604,6 +623,11 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ${LOG_TEXT} "INFO" "Installing TVService"
   ExecWait '"$INSTDIR\TVService.exe" /install'
   ${LOG_TEXT} "INFO" "Finished Installing TVService"
+
+  ${LOG_TEXT} "INFO" "Installing WatchDogService"
+  ExecWait '"$INSTDIR\WatchDogService.exe" /install'
+  nsExec::Exec 'net start WatchDogService'
+  ${LOG_TEXT} "INFO" "Finished Installing WatchDogService"
 
   SetOutPath $INSTDIR
   ${If} $noDesktopSC != 1
@@ -631,6 +655,7 @@ ${MementoSectionEnd}
   ; Kill running Programs
   ${LOG_TEXT} "INFO" "Terminating processes ..."
   ${StopService} "TVservice"
+  ${StopService} "WatchDogService"
   ${KillProcess} "SetupTv.exe"
   ; ffmpeg
   ${KillProcess} "ffmpeg.exe"
@@ -649,6 +674,9 @@ ${MementoSectionEnd}
   ${LOG_TEXT} "INFO" "DeInstalling TVService"
   ExecWait '"$INSTDIR\TVService.exe" /uninstall'
   ${LOG_TEXT} "INFO" "Finished DeInstalling TVService"
+  ${LOG_TEXT} "INFO" "DeInstalling WatchDogService"
+  ExecWait '"$INSTDIR\WatchDogService.exe" /uninstall'
+  ${LOG_TEXT} "INFO" "Finished DeInstalling WatchDogService"
 
   #---------------------------------------------------------------------------
   # FILTER UNREGISTRATION     for TVServer
@@ -673,8 +701,13 @@ ${MementoSectionEnd}
   ; filters for analog tv
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\mpFileWriter.ax"
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\PDMpgMux.ax"
-  ; filter for IPTV support
-  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\MPIPTVSource.ax"
+
+  ${If} ${FileExists} "$INSTDIR\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"
+    ${LOG_TEXT} "INFO" "MPUrlSourceSplitter detected, skipping unregistration of MPIPTVSource.ax"
+  ${Else}
+    ; filter for IPTV support
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\MPIPTVSource.ax"
+  ${EndIf}
 
   ${LOG_TEXT} "INFO" "remove files..."
   ; Remove TuningParameters
@@ -724,6 +757,8 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\TvService.exe"
   Delete "$INSTDIR\TvService.exe.config"
   Delete "$INSTDIR\SetupControls.dll"
+  Delete "$INSTDIR\WatchDogService.exe"
+  Delete "$INSTDIR\WatchDogService.Interface.dll"
 
   ; MP2 assemblies
   Delete "$INSTDIR\HttpServer.dll"
@@ -1145,7 +1180,7 @@ Function PageDirectoryPre
   ${EndIf}
 
   ; It checks, if the Server has been selected and only displays the Directory page in this case
-  ${IfNot} ${SectionIsSelected} SecServer
+  ${IfNot} ${SectionIsSelected} ${SecServer}
     Abort
   ${EndIf}
 FunctionEnd

@@ -239,12 +239,12 @@ namespace MediaPortal.GUI.Library
           }
           catch (FileNotFoundException ex)
           {
-            Log.Warn("TextureManager: texture: {0} does not exist {1}", fileName, ex.Message);
+            Log.Warn("TextureManager: Gif texture: {0} does not exist {1}", fileName, ex.Message);
             return 0;
           }
           catch (Exception ex)
           {
-            Log.Warn("TextureManager: Fast loading texture {0} failed using safer fallback {1}", fileName, ex.Message);
+            Log.Warn("TextureManager: Gif Fast loading texture {0} failed using safer fallback {1}", fileName, ex.Message);
             theImage = Image.FromFile(fileName);
           }
           if (theImage != null)
@@ -277,7 +277,7 @@ namespace MediaPortal.GUI.Library
             }
             catch (Exception ex)
             {
-              Log.Error("GUITextureManager Load: " + ex.Message);
+              Log.Error("GUITextureManager Gif Load: " + ex.Message);
             }
 
             for (int i = 0; i < newCache.Frames; ++i)
@@ -325,7 +325,7 @@ namespace MediaPortal.GUI.Library
         }
         catch (Exception ex)
         {
-          Log.Error("TextureManager: exception loading texture {0}", fileName);
+          Log.Error("TextureManager: Gif exception loading texture {0}", fileName);
           Log.Error(ex);
         }
         return 0;

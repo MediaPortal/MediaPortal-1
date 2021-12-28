@@ -370,7 +370,12 @@ namespace OSInfo
       ///<summary>
       /// Windows 2016 Server
       ///</summary>
-      Windows2016
+      Windows2016,
+
+      ///<summary>
+      /// Windows 2019 Server
+      ///</summary>
+      Windows2019
     }
 
     /// <summary>

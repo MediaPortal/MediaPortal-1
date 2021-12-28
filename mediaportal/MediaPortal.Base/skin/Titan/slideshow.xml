@@ -5,26 +5,28 @@
 <allowoverlay>no</allowoverlay>
 <controls>
 
+    <!-- Bar Image -->
+
 	<control>
 		<description>bar image</description>
 		<type>image</type>
 		<id>0</id>
-		<posX>32</posX>
-		<posY>41</posY>
-		<width>1216</width>
-		<height>92</height>
-		<texture>calibration_bar.png</texture>
+		<posX>0</posX>
+		<posY>980</posY>
+		<width>1920</width>
+		<height>100</height>
+        <texture>top_overlay.png</texture>
 	</control>
 
 	<control>
 		<description>row 1 label</description>
 		<type>label</type>
 		<id>10</id>
-		<posX>124</posX>
-		<posY>68</posY>
+		<posX>100</posX>
+		<posY>990</posY>
 		<label>-</label>
 		<align>left</align>
-		<font>fontB16</font>
+		<font>fontB12</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 
@@ -32,11 +34,11 @@
 		<description>row 2 label</description>
 		<type>label</type>
 		<id>11</id>
-		<posX>1066</posX>
-		<posY>68</posY>
+		<posX>1820</posX>
+		<posY>990</posY>
 		<label>-</label>
-		<align>left</align>
-		<font>fontB16</font>
+		<align>right</align>
+		<font>fontB12</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 
@@ -44,13 +46,42 @@
 		<description>row 2 extra label</description>
 		<type>label</type>
 		<id>12</id>
-		<posX>800</posX>
-		<posY>68</posY>
+		<posX>1820</posX>
+		<posY>1030</posY>
 		<label>-</label>
-		<align>left</align>
-		<font>fontB16</font>
+		<align>right</align>
+		<font>fontB12</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
+
+    <!-- DatePictureTaken / Keywords -->
+
+    <control>
+        <description>DatePictureTaken / Keywords</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>100</posX>
+        <posY>1030</posY>
+        <width>1400</width>
+        <label>#pictures.exif.datepicturetaken #pictures.exif.keywords</label>
+        <align>left</align>
+        <font>fontB12</font>
+        <textcolor>FFFFFFFF</textcolor>
+    </control>
+
+    <!-- Pause -->
+
+    <control>
+    	<description>Pause image</description>
+    	<type>image</type>
+    	<id>15</id>
+    	<posX>100</posX>
+    	<posY>100</posY>
+    	<width>50</width>
+    	<height>50</height>
+    	<texture>osd_pause.png</texture>
+        <visible>!Control.IsVisible(10)</visible>
+    </control>
 
 </controls>
 </window>

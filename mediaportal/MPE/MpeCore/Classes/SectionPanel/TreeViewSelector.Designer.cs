@@ -35,10 +35,6 @@
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
-      // button_next
-      // 
-      this.button_next.Text = "Next >";
-      // 
       // lbl_description
       // 
       this.lbl_description.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -75,7 +71,6 @@
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(476, 30);
       this.label1.TabIndex = 23;
-      this.label1.Text = "label1";
       // 
       // TreeViewSelector
       // 

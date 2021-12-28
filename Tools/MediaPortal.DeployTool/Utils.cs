@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -706,7 +706,7 @@ namespace MediaPortal.DeployTool
     {
       int major = 0;
       int minor = 0;
-      int revision = 0;
+      int revision = 100;
 
       switch (type)
       {
@@ -717,8 +717,8 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 24;
-          revision = 0;
+          minor = 28;
+          revision = 100;
           break;
       }
       Version ver = new Version(major, minor, revision);
@@ -738,8 +738,8 @@ namespace MediaPortal.DeployTool
     public static Version GetCurrentPackageVersion()
     {
       int major = 1;
-      int minor = 24;
-      int revision = 0;
+      int minor = 29;
+      int revision = 000;
 
       Version ver = new Version(major, minor, revision);
       return ver;
@@ -812,7 +812,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.25.0 Pre Release";
+      return "1.29 The Phantom Menace";
     }
 
     /// <summary>

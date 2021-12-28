@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using MediaPortal.GUI.Library;
 using TagLib;
 using TagLib.Ogg;
@@ -148,10 +149,20 @@ namespace MediaPortal.TagReader
         musictag.Channels = tag.Properties.AudioChannels;
         musictag.SampleRate = tag.Properties.AudioSampleRate;
         musictag.Year = (int)tag.Tag.Year;
-        musictag.ReplayGainTrack = tag.Tag.ReplayGainTrack ?? "";
-        musictag.ReplayGainTrackPeak = tag.Tag.ReplayGainTrackPeak ?? "";
-        musictag.ReplayGainAlbum = tag.Tag.ReplayGainAlbum ?? "";
-        musictag.ReplayGainAlbumPeak = tag.Tag.ReplayGainAlbumPeak ?? "";
+        musictag.ReplayGainTrack = double.IsNaN(tag.Tag.ReplayGainTrackGain) ? "" : tag.Tag.ReplayGainTrackGain.ToString(CultureInfo.InvariantCulture);
+        musictag.ReplayGainTrackPeak = double.IsNaN(tag.Tag.ReplayGainTrackPeak) ? "" : tag.Tag.ReplayGainTrackPeak.ToString(CultureInfo.InvariantCulture);
+        musictag.ReplayGainAlbum = double.IsNaN(tag.Tag.ReplayGainAlbumGain) ? "" : tag.Tag.ReplayGainAlbumGain.ToString(CultureInfo.InvariantCulture);
+        musictag.ReplayGainAlbumPeak = double.IsNaN(tag.Tag.ReplayGainAlbumPeak) ? "" : tag.Tag.ReplayGainAlbumPeak.ToString(CultureInfo.InvariantCulture);
+
+        musictag.MusicBrainzArtistId = tag.Tag.MusicBrainzArtistId;
+        musictag.MusicBrainzDiscId = tag.Tag.MusicBrainzDiscId;
+        musictag.MusicBrainzReleaseArtistId = tag.Tag.MusicBrainzReleaseArtistId;
+        musictag.MusicBrainzReleaseCountry = tag.Tag.MusicBrainzReleaseCountry;
+        musictag.MusicBrainzReleaseGroupId = tag.Tag.MusicBrainzReleaseGroupId;
+        musictag.MusicBrainzReleaseId = tag.Tag.MusicBrainzReleaseId;
+        musictag.MusicBrainzReleaseStatus = tag.Tag.MusicBrainzReleaseStatus;
+        musictag.MusicBrainzReleaseType = tag.Tag.MusicBrainzReleaseType;
+        musictag.MusicBrainzTrackId = tag.Tag.MusicBrainzTrackId;
 
         if (tag.MimeType == "taglib/mp3")
         {

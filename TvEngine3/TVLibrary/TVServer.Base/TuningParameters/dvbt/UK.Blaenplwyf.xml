@@ -30,6 +30,7 @@
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
+  <!-- COM6 -->
   <DVBTTuning>
     <Frequency>530000</Frequency><!-- C28 -->
     <BandWidth>8</BandWidth>

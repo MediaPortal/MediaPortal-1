@@ -33,7 +33,12 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public string GetDisplayName()
     {
-      return "MS Visual C++ 2008 SP1 (ATL | MFC Security) Update";
+      return "MS Visual C++ 2008 SP1\r\n(ATL | MFC Security) Update";
+    }
+
+    public string GetIconName()
+    {
+      return "VC2008SP1";
     }
 
     public bool Download()

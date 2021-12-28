@@ -630,6 +630,7 @@
     <String id="690">Discographie (Albums)</String>
     <String id="691">Discographie (compilations, coffrets)</String>
     <String id="692">Flux TV</String>
+    <String id="698">Buffer TS disponible :</String>
     <String id="699">TV principal</String>
     <String id="700">Discographie (eps, singles)</String>
     <String id="701">Discographie (bootlegs, vidéos, interviews)</String>
@@ -1070,7 +1071,7 @@
     <String id="1297">Actualiser les infos de l'acteur sélectionné</String>
     <String id="1298">Actualiser les Fanart</String>
     <String id="1299">Actualiser le dossier courant</String>
-    <String id="1300" prefix="Mes ">fichiers TV</String>
+    <String id="1300" prefix="Mes ">Séries TV</String>
     <String id="1301">Télécharger des infos acteurs</String>
     <String id="1302">Téléchargement acteurs de cinéma et des rôles</String>
     <String id="1303">Sélectionnez un artiste</String>

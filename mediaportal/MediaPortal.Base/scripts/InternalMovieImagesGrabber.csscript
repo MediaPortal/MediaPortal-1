@@ -8,6 +8,7 @@ using System.IO;
 using System.Net;
 using System.Web;
 using System.Text.RegularExpressions;
+using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using System.Collections;
@@ -342,19 +343,36 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
     string strBodyTmdb = string.Empty;
     string uri = string.Empty;
 
+    string language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLowerInvariant();
+   
     if (!string.IsNullOrEmpty(imdbMovieID) && imdbMovieID.StartsWith("tt"))
     {
+      if (language != "en")
+      {
+        string localPosterPageLinkUrl = string.Format("http://api.themoviedb.org/3/movie/{0}/images?api_key=2ed40b5d82aa804a2b1fcedb5ca8d97a&language={1}", imdbMovieID, language);
+        GetTmdbPage(localPosterPageLinkUrl, "utf-8", out uri, ref strBodyTmdb);
+        string localPosterBlock = Regex.Match(strBodyTmdb, @"""posters"":\[.*?\]", RegexOptions.IgnoreCase | RegexOptions.Singleline).Value;
+        // Get all cover links and put it in the "cover" group
+        MatchCollection localCovers = Regex.Matches(localPosterBlock, @"""file_path"":""/(?<cover>.*?jpg)""");
+
+        foreach (Match cover in localCovers)
+        {
+          string coverUrl = string.Empty;
+          coverUrl = string.Format("http://image.tmdb.org/t/p/w500/{0}", cover.Groups["cover"].Value);
+          imageList.Add(coverUrl);
+        }
+      }
+
       string defaultPosterPageLinkUrl = string.Format("http://api.themoviedb.org/3/movie/{0}/images?api_key=2ed40b5d82aa804a2b1fcedb5ca8d97a&language=en", imdbMovieID);
       GetTmdbPage(defaultPosterPageLinkUrl, "utf-8", out uri, ref strBodyTmdb);
-      string posterBlock =
-        Regex.Match(strBodyTmdb, @"""posters"":\[.*?\]", RegexOptions.IgnoreCase | RegexOptions.Singleline).Value;
+      string posterBlock = Regex.Match(strBodyTmdb, @"""posters"":\[.*?\]", RegexOptions.IgnoreCase | RegexOptions.Singleline).Value;
       // Get all cover links and put it in the "cover" group
       MatchCollection covers = Regex.Matches(posterBlock, @"""file_path"":""/(?<cover>.*?jpg)""");
 
       foreach (Match cover in covers)
       {
         string coverUrl = string.Empty;
-        coverUrl = string.Format("http://image.tmdb.org/t/p/w500/{0}",cover.Groups["cover"].Value);
+        coverUrl = string.Format("http://image.tmdb.org/t/p/w500/{0}", cover.Groups["cover"].Value);
         imageList.Add(coverUrl);
       }
 
@@ -363,6 +381,22 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
 
     if (!string.IsNullOrEmpty(movieTitle))
     {
+      if (language != "en")
+      {
+        string localPosterPageLinkUrl = string.Format("http://api.themoviedb.org/3/search/movie?api_key=2ed40b5d82aa804a2b1fcedb5ca8d97a&query={0}&language={1}", movieTitle, language);
+        GetTmdbPage(localPosterPageLinkUrl, "utf-8", out uri, ref strBodyTmdb);
+
+        // Get all cover links and put it in the "cover" group
+        MatchCollection localCovers = Regex.Matches(strBodyTmdb, @"""poster_path"":""/(?<cover>.*?jpg)""");
+
+        foreach (Match cover in localCovers)
+        {
+          string coverUrl = string.Empty;
+          coverUrl = string.Format("http://image.tmdb.org/t/p/w500/{0}", cover.Groups["cover"].Value);
+          imageList.Add(coverUrl);
+        }
+      }
+
       string defaultPosterPageLinkUrl = string.Format("http://api.themoviedb.org/3/search/movie?api_key=2ed40b5d82aa804a2b1fcedb5ca8d97a&query={0}&language=en", movieTitle);
       GetTmdbPage(defaultPosterPageLinkUrl, "utf-8", out uri, ref strBodyTmdb);
 

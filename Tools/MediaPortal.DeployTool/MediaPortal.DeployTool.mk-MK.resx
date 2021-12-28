@@ -252,7 +252,7 @@ PC-то ќе се однесува како специјализиран TV-Serv
     <value>Инсталирај</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;без акција&gt;</value>
+    <value>Без акција</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Деинсталирај претходно-&gt;симни-&gt;инсталирај</value>

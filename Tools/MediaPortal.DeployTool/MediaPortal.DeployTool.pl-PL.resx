@@ -254,7 +254,7 @@ Ten komputerem będzie pełnił tylko rolę serwera oraz będzie dostarczał pro
     <value>Instalacja</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;bez akcji&gt;</value>
+    <value>Bez akcji</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Najpierw deinstalacja -&gt;ściąganie-&gt;instalacja</value>

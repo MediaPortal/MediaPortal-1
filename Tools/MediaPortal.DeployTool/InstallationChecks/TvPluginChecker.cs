@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -33,7 +33,12 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public string GetDisplayName()
     {
-      return "MediaPortal TV-Plugin " + Utils.GetDisplayVersion();
+      return "MediaPortal TV-Plugin\r\n" + Utils.GetDisplayVersion();
+    }
+
+    public string GetIconName()
+    {
+      return "TVPlugin";
     }
 
     public bool Download()

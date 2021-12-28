@@ -9,19 +9,35 @@
         <description>background image</description>
         <type>image</type>
         <id>1</id>
-        <posX>105</posX>
-      <posY>212</posY>
-      <width>1320</width>
-      <height>745</height>
+        <posX>330</posX>
+      <posY>500</posY>
+      <width>1280</width>
+      <height>550</height>
         <texture>context_background.png</texture>
+        <colordiffuse>99ffffff</colordiffuse>
       </control>
-      
+      <control>
+      <id>3</id>
+      <description>Dummy Image for showing old exif info when picture in full screen</description>
+      <type>image</type>
+      <colordiffuse>ffffffff</colordiffuse>
+      <posX>2283</posX>
+      <posY>204</posY>
+      <width>574</width>
+      <height>574</height>
+      <texture>-</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <align>center</align>
+      <valign>top</valign>
+      <animation effect="Fade" time="150">WindowOpen</animation>
+      <animation effect="Fade" time="150">WindowClose</animation>
+    </control>
       <control>
         <type>group</type>
         <description>group element</description>
         <layout>StackLayout(41, Vertical, true)</layout>
-        <posX>200</posX>
-        <posY>280</posY>
+        <posX>380</posX>
+      <posY>530</posY>
         <control>
           <description>Dimensions txt</description>
           <type>label</type>
@@ -123,8 +139,8 @@
         <type>group</type>
         <description>group element</description>
         <layout>StackLayout(0, Vertical, true)</layout>
-        <posX>730</posX>
-        <posY>280</posY>
+        <posX>910</posX>
+      <posY>530</posY>
         <control>
           <description>Image Dimensions value</description>
           <type>label</type>
@@ -251,8 +267,8 @@
         <type>group</type>
         <description>group element</description>
         <layout>StackLayout(40, Vertical, true)</layout>
-        <posX>140</posX>
-        <posY>323</posY>
+        <posX>330</posX>
+      <posY>572</posY>
         <control>
           <description>divider horizontal</description>
           <type>image</type>

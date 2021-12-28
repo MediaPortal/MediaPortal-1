@@ -175,16 +175,16 @@
         </control>
       </control>
     </control>
-    <import>common.facade.video.title.xml</import>
+    <import>common.facade.video.shares.xml</import>
     <!--import>myvideo.common.mediainfo.xml</import-->
     <!-- info visible when in list view for titles -->
     <control>
       <description>Selected item Label</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>0</posX>
+      <posX>30</posX>
       <posY>142</posY>
-      <width>1920</width>
+      <width>1860</width>
       <label>#selecteditem</label>
       <font>Menutitle</font>
       <align>center</align>

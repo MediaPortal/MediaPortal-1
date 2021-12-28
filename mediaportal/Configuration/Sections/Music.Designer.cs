@@ -104,6 +104,8 @@ namespace MediaPortal.Configuration.Sections
       this.chkDisableSimilarTrackLookups = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.PlaylistTabPg = new System.Windows.Forms.TabPage();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel16 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.playlistNumberOfSongsTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.PlayListUTF8CheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.PlaylistCurrentCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.autoShuffleCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -903,6 +905,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.mpLabel16);
+      this.groupBox1.Controls.Add(this.playlistNumberOfSongsTextBox);
       this.groupBox1.Controls.Add(this.PlayListUTF8CheckBox);
       this.groupBox1.Controls.Add(this.PlaylistCurrentCheckBox);
       this.groupBox1.Controls.Add(this.autoShuffleCheckBox);
@@ -915,10 +919,30 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(16, 16);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(432, 222);
+      this.groupBox1.Size = new System.Drawing.Size(432, 255);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Playlist settings";
+      // 
+      // mpLabel16
+      // 
+      this.mpLabel16.AutoSize = true;
+      this.mpLabel16.Location = new System.Drawing.Point(88, 202);
+      this.mpLabel16.Name = "mpLabel16";
+      this.mpLabel16.Size = new System.Drawing.Size(206, 13);
+      this.mpLabel16.TabIndex = 10;
+      this.mpLabel16.Text = "Maximum number of songs initially loaded: ";
+      // 
+      // playlistNumberOfSongsTextBox
+      // 
+      this.playlistNumberOfSongsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.playlistNumberOfSongsTextBox.BorderColor = System.Drawing.Color.Empty;
+      this.playlistNumberOfSongsTextBox.Location = new System.Drawing.Point(338, 199);
+      this.playlistNumberOfSongsTextBox.Name = "playlistNumberOfSongsTextBox";
+      this.playlistNumberOfSongsTextBox.Size = new System.Drawing.Size(46, 20);
+      this.playlistNumberOfSongsTextBox.TabIndex = 9;
+      this.playlistNumberOfSongsTextBox.Text = "1000";
       // 
       // PlayListUTF8CheckBox
       // 
@@ -1157,5 +1181,7 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel mpLabel14;
     private MPLabel mpLabel15;
     private MPCheckBox PlayListUTF8CheckBox;
+    private MPLabel mpLabel16;
+    private MPTextBox playlistNumberOfSongsTextBox;
   }
 }

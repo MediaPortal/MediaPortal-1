@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
@@ -386,7 +387,7 @@ namespace MediaPortal.GUI.Music
         InitViewSelections();
       }
 
-      LoadDirectory("db_view");
+      LoadDirectory("db_view", true);
 
       if (facadeLayout.Count <= 0)
       {
@@ -803,6 +804,11 @@ namespace MediaPortal.GUI.Music
     /// <param name="strNotUsed">Used to implement method in base class but not used</param>
     protected override void LoadDirectory(string strNotUsed)
     {
+      LoadDirectory(strNotUsed, false);
+    }
+
+    protected void LoadDirectory(string strNotUsed, bool waitUntilFinished)
+    {
       GUIWaitCursor.Show();
       GUIListItem SelectedItem = facadeLayout.SelectedListItem;
 
@@ -826,195 +832,207 @@ namespace MediaPortal.GUI.Music
         }
       }
 
-      List<Song> songs;
-      if (!((MusicViewHandler)handler).Execute(out songs))
+      Thread worker = new Thread(() =>
       {
-        GUIWaitCursor.Hide();
-        Action action = new Action();
-        action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
-        GUIGraphicsContext.OnAction(action);
-        return;
-      }
-
-      GUIControl.ClearControl(GetID, facadeLayout.GetID);
-      SwitchLayout();
-
-      List<GUIListItem> itemsToAdd = new List<GUIListItem>();
-
-      TimeSpan totalPlayingTime = new TimeSpan();
-
-      if (previousLevel > handler.CurrentLevel)
-      {
-        // only need to lookup values when navigating back up through the view
-        strSelectedItem = m_history.Get(handler.LocalizedCurrentView + "." + handler.CurrentLevel.ToString());
-      }
-
-      #region handle pin protected share
-
-      if (songs.Count > 0) // some songs in there?
-      {
-        Song song = songs[0];
-        if (song.FileName.Length > 0) // does a filename exits
+        try
         {
-          foreach (Share share in _shareList)
+          List<Song> songs;
+          if (!((MusicViewHandler)handler).Execute(out songs))
           {
-            if (song.FileName.Contains(share.Path)) // compare it with shares
-            {
-              if (share.Pincode != string.Empty) // does it have a pincode?
-              {
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
-                GUIWindowManager.SendMessage(msg); // ask for the userinput
+            GUIWaitCursor.Hide();
+            Action action = new Action();
+            action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
+            GUIGraphicsContext.OnAction(action);
+            return;
+          }
 
-                if (msg.Label != share.Pincode)
+          GUIControl.ClearControl(GetID, facadeLayout.GetID);
+          SwitchLayout();
+
+          List<GUIListItem> itemsToAdd = new List<GUIListItem>();
+
+          TimeSpan totalPlayingTime = new TimeSpan();
+
+          if (previousLevel > handler.CurrentLevel)
+          {
+            // only need to lookup values when navigating back up through the view
+            strSelectedItem = m_history.Get(handler.LocalizedCurrentView + "." + handler.CurrentLevel.ToString());
+          }
+
+          #region handle pin protected share
+
+          if (songs.Count > 0) // some songs in there?
+          {
+            Song song = songs[0];
+            if (song.FileName.Length > 0) // does a filename exits
+            {
+              foreach (Share share in _shareList)
+              {
+                if (song.FileName.Contains(share.Path)) // compare it with shares
                 {
-                  songs.Clear();
+                  if (share.Pincode != string.Empty) // does it have a pincode?
+                  {
+                    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+                    GUIWindowManager.SendMessage(msg); // ask for the userinput
+
+                    if (msg.Label != share.Pincode)
+                    {
+                      songs.Clear();
+                    }
+                    break;
+                  }
                 }
-                break;
               }
             }
           }
-        }
-      }
 
-      #endregion
+          #endregion
 
-      if (handler.CurrentLevel > 0)
-      {
-        // add ".." folder item if not at bottom level of view
-        GUIListItem pItem = new GUIListItem("..");
-        pItem.Path = string.Empty;
-        pItem.IsFolder = true;
-        Util.Utils.SetDefaultIcons(pItem);
-        itemsToAdd.Add(pItem);
-      }
-
-      // Get current Filter used
-      var currentFilter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
-
-      for (int i = 0; i < songs.Count; ++i)
-      {
-        Song song = songs[i];
-        GUIListItem item = new GUIListItem();
-
-        MusicTag tag = new MusicTag();
-        tag = song.ToMusicTag();
-        item.AlbumInfoTag = song;
-        item.MusicTag = tag;
-
-        if (handler.CurrentLevel + 1 < handler.MaxLevels)
-        {
-          item.IsFolder = true;
-          item.Label = MusicViewHandler.GetFieldValue(song, handler.CurrentLevelWhere);
-
-          if (handler.CurrentLevelWhere == "filetype")
+          if (handler.CurrentLevel > 0)
           {
-            if (!string.IsNullOrEmpty(song.Codec))
+            // add ".." folder item if not at bottom level of view
+            GUIListItem pItem = new GUIListItem("..");
+            pItem.Path = string.Empty;
+            pItem.IsFolder = true;
+            Util.Utils.SetDefaultIcons(pItem);
+            itemsToAdd.Add(pItem);
+          }
+
+          // Get current Filter used
+          var currentFilter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
+
+          for (int i = 0; i < songs.Count; ++i)
+          {
+            Song song = songs[i];
+            GUIListItem item = new GUIListItem();
+
+            MusicTag tag = new MusicTag();
+            tag = song.ToMusicTag();
+            item.AlbumInfoTag = song;
+            item.MusicTag = tag;
+
+            if (handler.CurrentLevel + 1 < handler.MaxLevels)
             {
-              item.Label = song.Codec;
+              item.IsFolder = true;
+              item.Label = MusicViewHandler.GetFieldValue(song, handler.CurrentLevelWhere);
+
+              if (handler.CurrentLevelWhere == "filetype")
+              {
+                if (!string.IsNullOrEmpty(song.Codec))
+                {
+                  item.Label = song.Codec;
+                }
+                else
+                {
+                  item.Label = item.Label.ToUpper();
+                }
+              }
+
+              // If we are grouping on a specific value, we have in the Duration field the number of items
+              // Use this in the sort field
+              if (currentFilter.SqlOperator == "group")
+              {
+                item.Label2 = tag.Duration.ToString();
+              }
+              else
+              {
+                SetSortLabel(ref item, CurrentSortMethod, handler.CurrentLevelWhere);
+              }
             }
             else
             {
-              item.Label = item.Label.ToUpper();
+              item.IsFolder = false;
+              if (!GUIMusicBaseWindow.SetTrackLabels(ref item, CurrentSortMethod))
+              {
+                item.Label = song.Title;
+              }
+            }
+
+            if (tag != null)
+            {
+              if (tag.Duration > 0)
+              {
+                totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
+              }
+            }
+
+            item.Path = song.FileName;
+
+            if (!string.IsNullOrEmpty(_currentPlaying) &&
+                item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
+            {
+              item.Selected = true;
+            }
+
+            item.Duration = song.Duration;
+            tag.TimesPlayed = song.TimesPlayed;
+            item.Rating = song.Rating;
+            item.Year = song.Year;
+            item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+            item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+            itemsToAdd.Add(item);
+          }
+
+          itemsToAdd.Sort(new MusicSort(CurrentSortMethod, CurrentSortAsc));
+
+          int iItem = 0; // used to hold index of item to select			
+          bool itemSelected = false;
+          for (int i = 0; i < itemsToAdd.Count; ++i)
+          {
+            if (!itemSelected && itemsToAdd[i].Label == strSelectedItem)
+            {
+              iItem = i;
+              itemSelected = true;
+            }
+            facadeLayout.Add(itemsToAdd[i]);
+          }
+
+          int iTotalItems = facadeLayout.Count;
+          if (iTotalItems > 0)
+          {
+            GUIListItem rootItem = facadeLayout[0];
+            if (rootItem.Label == "..")
+            {
+              iTotalItems--;
             }
           }
 
-          // If we are grouping on a specific value, we have in the Duration field the number of items
-          // Use this in the sort field
-          if (currentFilter.SqlOperator == "group")
+          //set object count label, total duration
+          GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
+
+          if (totalPlayingTime.TotalSeconds > 0)
           {
-            item.Label2 = tag.Duration.ToString();
+            GUIPropertyManager.SetProperty("#totalduration",
+                                           Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));
           }
           else
           {
-            SetSortLabel(ref item, CurrentSortMethod, handler.CurrentLevelWhere);  
+            GUIPropertyManager.SetProperty("#totalduration", string.Empty);
           }
-        }
-        else
-        {
-          item.IsFolder = false;
-          if (!GUIMusicBaseWindow.SetTrackLabels(ref item, CurrentSortMethod))
+
+          if (itemSelected)
           {
-            item.Label = song.Title;
+            GUIControl.SelectItemControl(GetID, facadeLayout.GetID, iItem);
           }
-        }
-
-        if (tag != null)
-        {
-          if (tag.Duration > 0)
+          else if (m_iItemSelected >= 0)
           {
-            totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
+            GUIControl.SelectItemControl(GetID, facadeLayout.GetID, m_iItemSelected);
           }
+          else
+          {
+            SelectCurrentItem();
+          }
+
+          UpdateButtonStates();
         }
-
-        item.Path = song.FileName;
-
-        if (!string.IsNullOrEmpty(_currentPlaying) &&
-            item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
+        finally
         {
-          item.Selected = true;
+          GUIWaitCursor.Hide();
         }
-
-        item.Duration = song.Duration;
-        tag.TimesPlayed = song.TimesPlayed;
-        item.Rating = song.Rating;
-        item.Year = song.Year;
-        item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-        item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-        itemsToAdd.Add(item);
-      }
-
-      itemsToAdd.Sort(new MusicSort(CurrentSortMethod, CurrentSortAsc));
-
-      int iItem = 0; // used to hold index of item to select			
-      bool itemSelected = false;
-      for (int i = 0; i < itemsToAdd.Count; ++i)
-      {
-        if (!itemSelected && itemsToAdd[i].Label == strSelectedItem)
-        {
-          iItem = i;
-          itemSelected = true;
-        }
-        facadeLayout.Add(itemsToAdd[i]);
-      }
-
-      int iTotalItems = facadeLayout.Count;
-      if (iTotalItems > 0)
-      {
-        GUIListItem rootItem = facadeLayout[0];
-        if (rootItem.Label == "..")
-        {
-          iTotalItems--;
-        }
-      }
-
-      //set object count label, total duration
-      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
-
-      if (totalPlayingTime.TotalSeconds > 0)
-      {
-        GUIPropertyManager.SetProperty("#totalduration",
-                                       Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));
-      }
-      else
-      {
-        GUIPropertyManager.SetProperty("#totalduration", string.Empty);
-      }
-
-      if (itemSelected)
-      {
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, iItem);
-      }
-      else if (m_iItemSelected >= 0)
-      {
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, m_iItemSelected);
-      }
-      else
-      {
-        SelectCurrentItem();
-      }
-
-      UpdateButtonStates();
-      GUIWaitCursor.Hide();
+      });
+      worker.Start();
+      if (waitUntilFinished)
+        worker.Join();
     }
 
     private void OnThreadMessage(GUIMessage message)
