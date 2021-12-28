@@ -689,7 +689,7 @@ namespace MpeCore
     /// Loads the specified file name.
     /// </summary>
     /// <param name="fileName">Name of the file.</param>
-    /// <returns>True if loding was successful else False  </returns>
+    /// <returns>True if loading was successful else False  </returns>
     public bool Load(string fileName)
     {
       if (File.Exists(fileName))
