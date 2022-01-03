@@ -125,7 +125,7 @@
     <Channel id="ziggosportvoetbal" siteId="ziggosportvoetbal" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://dionysus:12345/https/www.tvgids.nl/gids/[DAY_NAME]/[ID]" post="" external="false" encoding="UTF-8" />
+    <Site url="https://www.tvgids.nl/gids/[DAY_NAME]/[ID]" post="" external="false" encoding="UTF-8" />
     <Search startOffset="0" maxlistings="0" startPage="0">
       <DayNames>
         <Day>vandaag</Day>
