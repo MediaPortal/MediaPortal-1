@@ -424,7 +424,7 @@ namespace MpeCore
     /// <summary>
     /// Gets the installable file count, based on group settings
     /// </summary>
-    /// <returns>Number of files to be copyed</returns>
+    /// <returns>Number of files to be copied</returns>
     public int GetInstallableFileCount()
     {
       int i = 0;
@@ -637,7 +637,7 @@ namespace MpeCore
 
     /// <summary>
     /// Gets the system file paths frome extracted unique file list.
-    /// This should caled only if the package is loaded from a zip file
+    /// This should be called only if the package is loaded from a zip file
     /// </summary>
     public void GetFilePaths()
     {
@@ -689,7 +689,7 @@ namespace MpeCore
     /// Loads the specified file name.
     /// </summary>
     /// <param name="fileName">Name of the file.</param>
-    /// <returns>True if loding was successful else False  </returns>
+    /// <returns>True if loading was successful else False  </returns>
     public bool Load(string fileName)
     {
       if (File.Exists(fileName))
@@ -881,6 +881,11 @@ namespace MpeCore
         return pak1.GeneralInfo.Version.CompareTo(pak2.GeneralInfo.Version);
       }
       return pak1.GeneralInfo.Name.ToUpperInvariant().CompareTo(pak2.GeneralInfo.Name.ToUpperInvariant());
+    }
+
+    public override string ToString()
+    {
+      return (GeneralInfo == null) ? base.ToString() : GeneralInfo.Name + " " + GeneralInfo.Version;
     }
 
     public PackageClass Clone()
