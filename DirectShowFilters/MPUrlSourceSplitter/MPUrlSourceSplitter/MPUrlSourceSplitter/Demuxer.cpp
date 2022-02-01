@@ -1339,11 +1339,13 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
                 break;
               }
 
-              av_packet_unref(&avPacket);
-
               if (streamId == avPacket.stream_index)
               {
                 found = true;
+              }
+              av_packet_unref(&avPacket);
+              if (found)
+              {
                 break;
               }
             }
@@ -1820,9 +1822,11 @@ HRESULT CDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
                   } while ((avResult == AVERROR(EAGAIN)) || (avResult == E_CONNECTION_LOST_TRYING_REOPEN));
 
                   CHECK_CONDITION_EXECUTE(avResult < 0, result = (HRESULT)avResult);
+
+                  bool wrongPacket = (streamId != avPacket.stream_index) || (avPacket.dts < 0);
                   av_packet_unref(&avPacket);
 
-                  if ((streamId != avPacket.stream_index) || (avPacket.dts < 0))
+                  if (wrongPacket)
                   {
                     // continue reading next avPacket, because we don't have avPacket with right stream index or avPacket doesn't have dts
                     continue;
@@ -2082,9 +2086,11 @@ HRESULT CDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
       } while ((avResult == AVERROR(EAGAIN)) || (avResult == E_CONNECTION_LOST_TRYING_REOPEN));
 
       CHECK_CONDITION_EXECUTE(avResult < 0, result = (HRESULT)avResult);
+
+      bool wrongPacket = (streamId != avPacket.stream_index) || (avPacket.dts < 0);
       av_packet_unref(&avPacket);
 
-      if ((streamId != avPacket.stream_index) || (avPacket.dts < 0))
+      if (wrongPacket)
       {
         // continue reading next avPacket, because we don't have avPacket with right stream index or avPacket doesn't have dts
         continue;
@@ -2179,9 +2185,11 @@ HRESULT CDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
       } while ((avResult == AVERROR(EAGAIN)) || (avResult == E_CONNECTION_LOST_TRYING_REOPEN));
 
       CHECK_CONDITION_EXECUTE(avResult < 0, result = (HRESULT)avResult);
+
+      bool wrongPacket = (streamId != avPacket.stream_index) || (avPacket.pts < 0);
       av_packet_unref(&avPacket);
 
-      if ((streamId != avPacket.stream_index) || (avPacket.pts < 0))
+      if (wrongPacket)
       {
         // continue reading next avPacket, because we don't have avPacket with right stream index or avPacket doesn't have dts
         continue;
