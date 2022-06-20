@@ -13,7 +13,7 @@
       <height>268</height>
       <width>2200</width>
       <texture>white.png</texture>
-      <colordiffuse>f200061c</colordiffuse>
+      <colordiffuse>ff00061c</colordiffuse>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
@@ -49,7 +49,7 @@
       <height>64</height>
       <width>1284</width>
       <texture>OSDBG7.png</texture>
-      <colordiffuse>f700061c</colordiffuse>
+      <colordiffuse>ff00061c</colordiffuse>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
@@ -121,7 +121,7 @@
       <width>454</width>
       <height>64</height>
       <texture>OSDBG3.png</texture>
-      <colordiffuse>f700061c</colordiffuse>
+      <colordiffuse>ff00061c</colordiffuse>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
@@ -141,7 +141,7 @@
       <type>label</type>
       <id>110</id>
       <posX>1898</posX>
-      <posY>736</posY>
+      <posY>738</posY>
       <label>#time</label>
       <align>right</align>
       <font>LabelBold</font>
@@ -158,7 +158,7 @@
       <height>243</height>
       <texture mask="dvdcase_mask.png">#Play.Current.Thumb</texture>
       <keepaspectratio>yes</keepaspectratio>
-      <colordiffuse>f700061c</colordiffuse>
+      <colordiffuse>ff00061c</colordiffuse>
       <animation effect="fade" time="100" reversible="true">visible</animation>
       <visible>!control.hasfocus(1237)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
     </control>
@@ -192,7 +192,7 @@
       <type>label</type>
       <id>0</id>
       <posX>387</posX>
-      <posY>814</posY>
+      <posY>813</posY>
       <label>#currentplaytime</label>
       <align>right</align>
       <font>Menutitle</font>
@@ -204,7 +204,7 @@
       <id>36</id>
       <type>fadelabel</type>
       <posX>258</posX>
-      <posY>734</posY>
+      <posY>735</posY>
       <width>1230</width>
       <align>left</align>
       <textcolor>ivory</textcolor>
@@ -224,7 +224,7 @@
       <height>442</height>
       <width>2200</width>
       <texture>white.png</texture>
-      <colordiffuse>f200061c</colordiffuse>
+      <colordiffuse>ff00061c</colordiffuse>
       <visible>control.hasfocus(1237)</visible>
     </control>
     <control>
@@ -260,7 +260,7 @@
       <width>454</width>
       <height>64</height>
       <texture>OSDBG3.png</texture>
-      <colordiffuse>f700061c</colordiffuse>
+      <colordiffuse>ff00061c</colordiffuse>
       <visible>control.hasfocus(1237)</visible>
     </control>
     <control>
@@ -280,7 +280,7 @@
       <type>label</type>
       <id>110</id>
       <posX>1898</posX>
-      <posY>563</posY>
+      <posY>565</posY>
       <label>#time</label>
       <align>right</align>
       <font>LabelBold</font>
@@ -342,7 +342,7 @@
       <id>36</id>
       <type>fadelabel</type>
       <posX>258</posX>
-      <posY>561</posY>
+      <posY>563</posY>
       <height>57</height>
       <width>1230</width>
       <align>left</align>
@@ -363,6 +363,7 @@
       <label>#Play.Current.Plot</label>
       <font>font10</font>
       <textcolor>lightgray</textcolor>
+      <scrollStartDelaySec>6</scrollStartDelaySec>
       <visible>control.hasfocus(1237)</visible>
     </control>
     <control>
@@ -375,7 +376,7 @@
       <height>243</height>
       <texture mask="dvdcase_mask.png">#Play.Current.Thumb</texture>
       <keepaspectratio>yes</keepaspectratio>
-      <colordiffuse>f700061c</colordiffuse>
+      <colordiffuse>ff00061c</colordiffuse>
       <animation effect="fade" time="100" reversible="true">visible</animation>
       <visible>control.hasfocus(1237)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
     </control>
@@ -434,6 +435,18 @@
       <labelmarkerends>#chapters</labelmarkerends>
       <visible>!control.hasfocus(1237)</visible>
     </control>
+    <control>
+      <description>End of progressbar</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1653</posX>
+      <posY>821</posY>
+      <label>|</label>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>lightskyblue</textcolor>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
     <!-- ***************************************************************************************************** -->
     <!-- *****************************         RECORDING INFO LATESTMEDIA       ****************************** -->
     <!-- ***************************************************************************************************** -->
@@ -446,7 +459,7 @@
       <width>604</width>
       <height>41</height>
       <texture>osdbg6.png</texture>
-      <colordiffuse>f700061c</colordiffuse>
+      <colordiffuse>ff00061c</colordiffuse>
       <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
     <control>
@@ -466,7 +479,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>1093</posX>
-      <posY>985</posY>
+      <posY>965</posY>
       <width>50</width>
       <label>#latestMediaHandler.tvrecordings.active.count</label>
       <align>center</align>
