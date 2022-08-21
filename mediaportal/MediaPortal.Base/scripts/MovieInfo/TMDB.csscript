@@ -43,6 +43,11 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
            aUrl.title,
            "TMDB");
         elements.Add(url);
+
+        if (elements.Count >= iLimit)
+        {
+          break;
+        }
         System.Threading.Thread.Sleep(1000);
       }
     }
