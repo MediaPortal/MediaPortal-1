@@ -42,6 +42,8 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
         MediaPortal.Video.Database.IMDB.IMDBUrl url = new MediaPortal.Video.Database.IMDB.IMDBUrl(aUrl.url, aUrl.title, strGrabber);
         elements.Add(url);
 
+        System.Threading.Thread.Sleep(1000);
+
         if (elements.Count >= iLimit)
         {
           break;
