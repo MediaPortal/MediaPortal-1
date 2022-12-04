@@ -121,6 +121,20 @@
       <font>Menutitle</font>
       <align>center</align>
       <textcolor>ff6FAFE1</textcolor>
+      <visible>!Control.IsVisible(1239)+facadeview.list</visible>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>142</posY>
+      <width>1920</width>
+      <label>#TVSeries.Series.Pretty_Name | #TVSeries.Title</label>
+      <font>Menutitle</font>
+      <align>center</align>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>Control.IsVisible(1239)+facadeview.list</visible>
     </control>
     <control>
       <description>Overlay text right</description>
