@@ -208,7 +208,7 @@
 		<Channel siteId="zeeone,ZEE-1" id="Zee.One"/>
 	</Channels>
 	<Listing type="Html">
-		<Site url="http://m.tvspielfilm.de/tv-programm/sendungen/[ID].html?date=[YYYY]-[MM]-[DD]" external="false" encoding="utf-8"/>
+		<Site url="https://m.tvspielfilm.de/tv-programm/sendungen/[ID].html?date=[YYYY]-[MM]-[DD]" external="false" encoding="utf-8"/>
 		<Html>
 			<Template name="default" start="">
 				<SectionTemplate tags="LS">
@@ -217,13 +217,12 @@
 						<li>
 						<source>
 						<source>
-						<span class="d">.</span>
-						<span class="t"><#START> - <#END></span>
+						<span class="t"><#START> - <#END> | </span>
 						<span class="c">DAS ERSTE</span>
 						<strong class="tv-tip-heading"><#TITLE></strong>
-						<span class="genre"><#GENRE></span>
-						<span class="listing-icon rating-3"></span>
-						<span class="listing-icon to-hide images"></span>
+						<span class="genre"><#GENRE><span class="listing-icon rating-0"></span></span>
+						<span class="listing-icon rating-0"></span>
+						<span class="listing-icon to-hide more"></span>
 						<span class="progress-bar"></span>
 						</li>
 					]]>
@@ -241,7 +240,7 @@
 			</Template>
 			<Sublinks>
 				<Sublink search="/tv-programm/sendung/" template="Details">
-					<Link url="http://m.tvspielfilm.de/[1]" external="false" encoding="utf-8"/>
+					<Link url="https://m.tvspielfilm.de/[1]" external="false" encoding="utf-8"/>
 				</Sublink>
 			</Sublinks>
 		</Html>
