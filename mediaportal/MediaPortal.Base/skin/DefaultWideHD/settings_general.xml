@@ -168,6 +168,7 @@
           <label>300080</label>
           <width>550</width>
           <onup>21</onup>
+          <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
         </control>
         <control>
           <description>Startup settings</description>
@@ -175,6 +176,7 @@
           <id>3</id>
           <label>300081</label>
           <width>550</width>
+          <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
         </control>
         <control>
           <description>Resume settings</description>
@@ -182,6 +184,7 @@
           <id>4</id>
           <label>300082</label>
           <width>550</width>
+          <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
         </control>
         <control>
           <description>Volume settings</description>
@@ -189,6 +192,7 @@
           <id>5</id>
           <label>101007</label>
           <width>550</width>
+          <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
         </control>
         <control>
           <description>RefreshRate settings</description>
@@ -196,16 +200,211 @@
           <id>6</id>
           <label>300083</label>
           <width>550</width>
+          <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
         </control>
         <control>
           <description>AUtoplay</description>
           <type>button</type>
           <id>7</id>
           <label>713</label>
+          <ondown>8</ondown>
+          <width>550</width>
+          <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
+        </control>
+        <control>
+          <description>Keyboard Shortcuts</description>
+          <id>8</id>
+          <type>checkbutton</type>
+          <label>Keyboard Shortcuts (General)</label>
+          <selected>#(skin.hassetting('#skin.keyboard.shortcuts'))</selected>
+          <onclick>#(skin.togglesetting('#skin.keyboard.shortcuts')) </onclick>            
+          <onright>8</onright>
+          <onleft>8</onleft>
           <ondown>2</ondown>
           <width>550</width>
         </control>
       </control>
+    </control>
+    <control>
+    <description>Keyboard Shortcuts left</description>
+    <type>textboxscrollup</type>
+    <id>1</id>
+    <posX>705</posX>
+    <posY>375</posY>
+    <width>1120</width>
+    <height>700</height>
+    <label>
+    Cursor Keys  &#x2192;  Select item
+    Home  &#x2192;  Select first item
+    End  &#x2192;  Select last item
+    PageUp  &#x2192;  Previous item page
+    PageDown  &#x2192;  Next item page
+    Enter  &#x2192;  Perform action
+    Escape  &#x2192;  Previous window
+    U  &#x2192;  Parent folder
+    H  &#x2192;  Switch Classic/Basic Home
+    Space  &#x2192;  Pause/Resume
+    X  &#x2192;  Switch GUI/Fullscreen TV/Video
+    R  &#x2192;  Record current TV
+    P  &#x2192;  Start playing
+    </label>
+    <textcolor>lightskyblue</textcolor>
+    <font>font11</font>
+    <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
+  </control>
+  <control>
+    <description>Keyboard Shortcuts right</description>
+    <type>textboxscrollup</type>
+    <id>1</id>
+    <posX>1305</posX>
+    <posY>335</posY>
+    <width>1120</width>
+    <height>700</height>
+    <label>   
+    B  &#x2192;  Stop playing
+    Y  &#x2192;  Show OSD
+    F3  &#x2192;  Show info of selected item
+    F5  &#x2192;  Rewind
+    F6  &#x2192;  FastForward
+    F7  &#x2192;  Play previous
+    F8  &#x2192;  PlayNext
+    F9  &#x2192;  Show context menu
+    -  &#x2192;  Volume -
+    +  &#x2192;  Volume +
+    M  &#x2192;  Mute
+    F11  &#x2192;  Screenshot of current screen
+    </label>
+    <textcolor>lightskyblue</textcolor>
+    <font>font11</font>
+    <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
+  </control>
+  <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(39, Vertical, true)</layout>
+      <posX>658</posX>
+      <posY>411</posY>
+      <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1227</width>
+        <height>1</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>70ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1227</width>
+        <height>1</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>70ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1227</width>
+        <height>1</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>70ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1227</width>
+        <height>1</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>70ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1227</width>
+        <height>1</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>70ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1227</width>
+        <height>1</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>70ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1227</width>
+        <height>1</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>70ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1227</width>
+        <height>1</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>70ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1227</width>
+        <height>1</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>70ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1227</width>
+        <height>1</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>70ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1227</width>
+        <height>1</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>70ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <width>1227</width>
+        <height>1</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>70ffffff</colordiffuse>
+      </control>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1280</posX>
+      <posY>355</posY>
+      <height>590</height>
+      <width>1</width>
+      <texture>verticalbar.png</texture>
+      <colordiffuse>aaffffff</colordiffuse>
+      <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
   </controls>
 </window>
