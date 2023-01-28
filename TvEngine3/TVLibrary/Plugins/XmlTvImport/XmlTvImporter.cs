@@ -671,7 +671,7 @@ namespace TvEngine
 
 
       bool importXML = layer.GetSetting("xmlTvImportXML", "true").Value == "true";
-      bool importLST = layer.GetSetting("xmlTvImportLST", "true").Value == "true";
+      bool importLST = layer.GetSetting("xmlTvImportLST", "false").Value == "true";
       DateTime importDate = DateTime.MinValue; // gets the date of the newest file
 
       string fileName = folder + @"\tvguide.xml";
