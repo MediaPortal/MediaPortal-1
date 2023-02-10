@@ -1191,7 +1191,7 @@ public class MediaPortalApp : D3D, IRender
       _idlePluginWindowId         = xmlreader.GetValueAsInt("general", "IdlePluginWindow", 0);
       _showLastActiveModule       = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
       screenNumber                = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
-      _stopOnLostAudioRenderer    = xmlreader.GetValueAsBool("general", "stoponaudioremoval", true);
+      _stopOnLostAudioRenderer    = xmlreader.GetValueAsBool("general", "stoponaudioremoval", false);
       _delayOnResume              = xmlreader.GetValueAsBool("general", "delay resume", false) ? xmlreader.GetValueAsInt("general", "delay", 0) : 0;
       screenDeviceId              = xmlreader.GetValueAsString("screenselector", "screendeviceid", "");
       _usePrimaryScreen           = xmlreader.GetValueAsBool("general", "useprimaryscreen", false);
