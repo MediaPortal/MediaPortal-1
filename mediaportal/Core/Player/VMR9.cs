@@ -1839,7 +1839,7 @@ namespace MediaPortal.Player
             hr = mediaCtrl.GetState(10, out filterState);
             hr = mediaCtrl.Run();
             // check with timeout max. 10 times a second if the state changed
-          } while ((hr != 0) && ((DateTime.Now - startTime).TotalSeconds <= 5));
+          } while ((hr < 0) && ((DateTime.Now - startTime).TotalSeconds <= 5));
           if (hr != 0) // S_OK
           {
             DsError.ThrowExceptionForHR(hr);
