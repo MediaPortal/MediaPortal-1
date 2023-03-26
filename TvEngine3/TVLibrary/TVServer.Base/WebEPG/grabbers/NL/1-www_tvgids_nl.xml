@@ -103,7 +103,6 @@
     <Channel id="sbs6" siteId="sbs6" />
     <Channel id="sbs9" siteId="sbs9" />
     <Channel id="shortstv" siteId="shortstv" />
-    <Channel id="spike" siteId="spike" />
     <Channel id="stingrayclassica" siteId="stingrayclassica" />
     <Channel id="tlc" siteId="tlc" />
     <Channel id="trt" siteId="trt" />
@@ -139,9 +138,10 @@
     </Search>
     <Html>
       <Template name="default" start="">
-        <SectionTemplate tags="DP">
+        <SectionTemplate tags="DPH">
           <TemplateText>
-&lt;div class="program__info"&gt;&lt;div&gt;&lt;div class="program__starttime"&gt;&lt;#START&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;h3 class="program__title"&gt;&lt;#TITLE&gt;&lt;/h3&gt;&lt;p class="program__text"&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;          </TemplateText>
+&lt;div class="program__info"&gt;&lt;div&gt;&lt;div class="program__starttime"&gt;&lt;#START&gt;&lt;h3 class="program__title"&gt;&lt;#TITLE&gt;&lt;/h3&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;p&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;         </TemplateText>
         </SectionTemplate>
       </Template>
     </Html>
