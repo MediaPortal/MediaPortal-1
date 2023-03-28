@@ -138,10 +138,10 @@
     </Search>
     <Html>
       <Template name="default" start="">
-        <SectionTemplate tags="DPH">
+        <SectionTemplate tags="DH">
           <TemplateText>
 &lt;div class="program__info"&gt;&lt;div&gt;&lt;div class="program__starttime"&gt;&lt;#START&gt;&lt;h3 class="program__title"&gt;&lt;#TITLE&gt;&lt;/h3&gt;
-&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;p&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;         </TemplateText>
+&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;</TemplateText>
         </SectionTemplate>
       </Template>
     </Html>
