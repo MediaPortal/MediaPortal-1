@@ -31,9 +31,9 @@ using DShowNET.Helper;
 using DirectShowLib;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
+//using Microsoft.DirectX;
+//using Microsoft.DirectX.Direct3D;
+//using Direct3D = Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.Util
 {

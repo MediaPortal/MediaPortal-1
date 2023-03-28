@@ -18,7 +18,7 @@
 
 #endregion
 
-using Microsoft.DirectX.Direct3D;
+using SharpDX.Direct3D9;
 
 namespace MediaPortal
 {
@@ -109,21 +109,21 @@ namespace MediaPortal
     /// <summary>
     /// Gets the number of depth bits
     /// </summary>
-    public static int GetDepthBits(DepthFormat format)
+    public static int GetDepthBits(Format format)
     {
       switch (format)
       {
-        case DepthFormat.D16:
+        case Format.D16:
           return 16;
-        case DepthFormat.D15S1:
+        case Format.D15S1:
           return 15;
-        case DepthFormat.D24X8:
+        case Format.D24X8:
           return 24;
-        case DepthFormat.D24S8:
+        case Format.D24S8:
           return 24;
-        case DepthFormat.D24X4S4:
+        case Format.D24X4S4:
           return 24;
-        case DepthFormat.D32:
+        case Format.D32:
           return 32;
         default:
           return 0;
@@ -134,21 +134,21 @@ namespace MediaPortal
     /// <summary>
     /// Gets the number of stencil bits
     /// </summary>
-    public static int GetStencilBits(DepthFormat format)
+    public static int GetStencilBits(Format format)
     {
       switch (format)
       {
-        case DepthFormat.D16:
+        case Format.D16:
           return 0;
-        case DepthFormat.D15S1:
+        case Format.D15S1:
           return 1;
-        case DepthFormat.D24X8:
+        case Format.D24X8:
           return 0;
-        case DepthFormat.D24S8:
+        case Format.D24S8:
           return 8;
-        case DepthFormat.D24X4S4:
+        case Format.D24X4S4:
           return 4;
-        case DepthFormat.D32:
+        case Format.D32:
           return 0;
         default:
           return 0;

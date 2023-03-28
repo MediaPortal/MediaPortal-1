@@ -2,7 +2,7 @@
 using DShowNET.Helper;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
-using Microsoft.DirectX.Direct3D;
+using SharpDX.Direct3D9;
 
 namespace MediaPortal.guilib
 {
@@ -28,8 +28,8 @@ namespace MediaPortal.guilib
       {
         unsafe
         {
-          _image.Disposing -= new EventHandler(D3DTexture_Disposing);
-          _image.Disposing += new EventHandler(D3DTexture_Disposing);
+          _image.Disposing -= new EventHandler<EventArgs>(D3DTexture_Disposing);
+          _image.Disposing += new EventHandler<EventArgs>(D3DTexture_Disposing);
 
           IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(_image);
           _textureNumber = DXNative.FontEngineAddTextureSync(ptr.ToInt32(), true, (void*)ptr.ToPointer());
@@ -114,9 +114,9 @@ namespace MediaPortal.guilib
         _textureNumber = -1;
       }
 
-      if (_image != null && !_image.Disposed)
+      if (_image != null && !_image.IsDisposed)
       {
-        _image.Disposing -= new EventHandler(D3DTexture_Disposing);
+        _image.Disposing -= new EventHandler<EventArgs>(D3DTexture_Disposing);
         _image.SafeDispose();
       }
 

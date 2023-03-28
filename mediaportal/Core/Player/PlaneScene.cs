@@ -29,8 +29,8 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
+//using SharpDX;
+using SharpDX.Direct3D9;
 using Geometry = MediaPortal.GUI.Library.Geometry;
 
 namespace MediaPortal.Player
@@ -73,7 +73,7 @@ namespace MediaPortal.Player
     private Geometry _geometry = new Geometry();
     private VMR9Util _vmr9Util = null;
     private VertexBuffer[] _vertexBuffers;
-    private uint _textureAddress;
+    private IntPtr _textureAddress;
 
     private CropSettings _cropSettings;
     private bool updateCrop = false; // indicates that _cropSettings has been updated
@@ -132,19 +132,25 @@ namespace MediaPortal.Player
     {
       //	Log.Info("PlaneScene: ctor()");
 
-      _textureAddress = 0;
+      _textureAddress = IntPtr.Zero;
       _vmr9Util = util;
 
       // Number of vertex buffers must be same as numer of segments in non-linear stretch
       _vertexBuffers = new VertexBuffer[nlsSourcePartitioning.Length];
       for (int i = 0; i < _vertexBuffers.Length; i++)
       {
-        _vertexBuffers[i] = new VertexBuffer(typeof (CustomVertex.TransformedColoredTextured),
-                                             4,
-                                             GUIGraphicsContext.DX9Device,
-                                             0,
-                                             CustomVertex.TransformedColoredTextured.Format,
-                                             GUIGraphicsContext.GetTexturePoolType());
+        //_vertexBuffers[i] = new VertexBuffer(typeof (CustomVertex.TransformedColoredTextured),
+        //                                     4,
+        //                                     GUIGraphicsContext.DX9Device,
+        //                                     0,
+        //                                     CustomVertex.TransformedColoredTextured.Format,
+        //                                     GUIGraphicsContext.GetTexturePoolType());
+
+        _vertexBuffers[i] = new VertexBuffer(GUIGraphicsContext.DX9Device,
+                      CustomVertex.TransformedColoredTextured.StrideSize * 4,
+                      Usage.None,
+                      CustomVertex.TransformedColoredTextured.Format,
+                      GUIGraphicsContext.GetTexturePoolType());
       }
 
       _blackImage = new GUIImage(0);
@@ -162,7 +168,7 @@ namespace MediaPortal.Player
     /// Returns a rectangle specifying the part of the video texture which is 
     /// shown
     /// </summary>
-    public static Rectangle SourceRect
+    public static System.Drawing.Rectangle SourceRect
     {
       get { return _sourceRect; }
     }
@@ -170,7 +176,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// Returns a rectangle specifying the video window onscreen
     /// </summary>
-    public static Rectangle DestRect
+    public static System.Drawing.Rectangle DestRect
     {
       get { return _destinationRect; }
     }
@@ -232,7 +238,7 @@ namespace MediaPortal.Player
     /// <param name="fV">(0-1) Specifies the height to used of the video texture</param>
     public void SetSrcRect(float fU, float fV)
     {
-      _rectPrevious = new Rectangle(0, 0, 0, 0);
+      _rectPrevious = new System.Drawing.Rectangle(0, 0, 0, 0);
       _uValue = fU;
       _vValue = fV;
     }
@@ -261,7 +267,7 @@ namespace MediaPortal.Player
       else if (_renderTarget != null)
       {
         //VMR9 changes the directx 9 render target. Thats why we set it back to what it was
-        if (!_renderTarget.Disposed)
+        if (!_renderTarget.IsDisposed)
         {
           GUIGraphicsContext.DX9Device.SetRenderTarget(0, _renderTarget);
         }
@@ -513,7 +519,7 @@ namespace MediaPortal.Player
 
           //settings (position,size,aspect ratio) changed.
           //Store these settings and start calucating the new video window
-          _rectPrevious = new Rectangle((int) x, (int) y, (int) nw, (int) nh);
+          _rectPrevious = new System.Drawing.Rectangle((int) x, (int) y, (int) nw, (int) nh);
           _subsRect = _rectPrevious;
           _aspectRatioType = GUIGraphicsContext.ARType;
           _lastOverlayVisible = GUIGraphicsContext.Overlay;
@@ -653,7 +659,7 @@ namespace MediaPortal.Player
 
     #region IVMR9Callback Members
 
-    public int PresentImage(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pTexture, uint pSurface)
+    public int PresentImage(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, IntPtr pTexture, IntPtr pSurface)
     {
       lock (GUIGraphicsContext.RenderLock)
       {
@@ -666,7 +672,7 @@ namespace MediaPortal.Player
 
           _textureAddress = pTexture;
 
-          if (pTexture == 0)
+          if (pTexture == IntPtr.Zero)
           {
             Log.Debug("PlaneScene: PresentImage() dispose surfaces");
             _vmr9Util.VideoWidth = 0;
@@ -717,16 +723,16 @@ namespace MediaPortal.Player
           lock (GUIGraphicsContext.RenderModeSwitch)
           {
             if (grabber != null)
-              grabber.OnFrame((short)client.Width, (short)client.Height, (short)client.Width, (short)client.Height, (uint)surfaceMadVr.UnmanagedComPointer,
+              grabber.OnFrame((short)client.Width, (short)client.Height, (short)client.Width, (short)client.Height, (IntPtr)surfaceMadVr,
                 FrameGrabber.FrameSource.Video);
           }
         }
-        surfaceMadVr.ReleaseGraphics();
+        //surfaceMadVr.ReleaseGraphics();
         surfaceMadVr.Dispose();
       }
       catch (Exception ex)
       {
-        surfaceMadVr.ReleaseGraphics();
+        //surfaceMadVr.ReleaseGraphics();
         surfaceMadVr.Dispose();
       }
     }
@@ -1295,7 +1301,7 @@ namespace MediaPortal.Player
 
           Device device = GUIGraphicsContext.DX9Device;
 
-          device.Clear(ClearFlags.Target, Color.FromArgb(0, 0, 0, 0), 1.0f, 0);
+          device.Clear(ClearFlags.Target, RawColorsBGRA.Zero, 1.0f, 0);
           device.BeginScene();
 
           if (layers == GUILayers.over)
@@ -1408,7 +1414,7 @@ namespace MediaPortal.Player
       }
     }
 
-    public void RenderSubtitleEx(long frameStart, Rectangle viewportRect, Rectangle croppedVideoRect, int xOffsetInPixels)
+    public void RenderSubtitleEx(long frameStart, System.Drawing.Rectangle viewportRect, System.Drawing.Rectangle croppedVideoRect, int xOffsetInPixels)
     {
       //// We are rendering from madVR // Debugging purpose if OSD disable on C++
       //if (GUIGraphicsContext.InitMadVRWindowPosition)
@@ -1537,17 +1543,17 @@ namespace MediaPortal.Player
     }
 
     public static void RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf renderModeHalf, float timePassed,
-      Surface backbuffer, Surface surface, Rectangle targetRect)
+      Surface backbuffer, Surface surface, System.Drawing.Rectangle targetRect)
     {
       if (GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.SideBySideFrom2D ||
           GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D &&
           renderModeHalf == GUIGraphicsContext.eRender3DModeHalf.SBSLeft)
       {
-        if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.Disposed)
+        if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.IsDisposed)
         {
           GUIGraphicsContext.DX9Device.SetRenderTarget(0, surface);
 
-          GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+          GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, RawColorsBGRA.Black, 1.0f, 0);
 
           GUIGraphicsContext.DX9Device.BeginScene();
           GUIGraphicsContext.SetScalingResolution(0, 0, false);
@@ -1578,13 +1584,14 @@ namespace MediaPortal.Player
 
         if (renderModeHalf == GUIGraphicsContext.eRender3DModeHalf.SBSLeft)
         {
-          if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.Disposed)
+          if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.IsDisposed)
           {
             GUIGraphicsContext.DX9Device.StretchRectangle(surface,
-              new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
+              new SharpDX.Mathematics.Interop.RawRectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
               backbuffer,
-              targetRect,
+              new SharpDX.Mathematics.Interop.RawRectangle(targetRect.Left, targetRect.Y, targetRect.Right, targetRect.Bottom),
               TextureFilter.Point);
+            
 
             // if texture for last frame does not exist, then create it
 
@@ -1606,9 +1613,9 @@ namespace MediaPortal.Player
             Surface surfaceLastFrame = GUIGraphicsContext.LastFrames[GUIGraphicsContext.LastFramesIndex].GetSurfaceLevel(0);
 
             GUIGraphicsContext.DX9Device.StretchRectangle(surface,
-              new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
+              new SharpDX.Mathematics.Interop.RawRectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
               surfaceLastFrame,
-              new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
+              new SharpDX.Mathematics.Interop.RawRectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
               TextureFilter.Point);
             surfaceLastFrame.Dispose();
           }
@@ -1647,9 +1654,9 @@ namespace MediaPortal.Player
                 int horzDelta = (int) (xSkewPerLine*y);
 
                 GUIGraphicsContext.DX9Device?.StretchRectangle(surfaceLastFrame,
-                  new Rectangle(horzDelta, y, backbuffer.Description.Width - horzOffset*2 + horzDelta, 1),
+                  new SharpDX.Mathematics.Interop.RawRectangle(horzDelta, y, backbuffer.Description.Width - horzOffset * 2 + horzDelta + horzDelta, y + 1),
                   backbuffer,
-                  new Rectangle(targetRect.X, y, targetRect.Width, 1),
+                  new SharpDX.Mathematics.Interop.RawRectangle(targetRect.X, y, targetRect.Right, y + 1),
                   TextureFilter.Point);
               }
 
@@ -1661,9 +1668,9 @@ namespace MediaPortal.Player
       else // render normal 3D movie
       {
         GUIGraphicsContext.DX9Device?.StretchRectangle(surface,
-          new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
+          new SharpDX.Mathematics.Interop.RawRectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height),
           backbuffer,
-          targetRect,
+          new SharpDX.Mathematics.Interop.RawRectangle(targetRect.Left, targetRect.Y, targetRect.Right, targetRect.Bottom),
           TextureFilter.Point);
       }
     }
@@ -1707,7 +1714,7 @@ namespace MediaPortal.Player
         {
           return;
         }
-        if (GUIGraphicsContext.DX9Device.Disposed)
+        if (GUIGraphicsContext.DX9Device.IsDisposed)
         {
           return;
         }
@@ -1719,7 +1726,7 @@ namespace MediaPortal.Player
         _debugStep = 1;
         if (_renderTarget != null)
         {
-          if (!_renderTarget.Disposed)
+          if (!_renderTarget.IsDisposed)
           {
             GUIGraphicsContext.DX9Device.SetRenderTarget(0, _renderTarget);
           }
@@ -1762,7 +1769,7 @@ namespace MediaPortal.Player
 
         _debugStep = 3;
         //get desired video window
-        if (width > 0 && height > 0 && _textureAddress != 0)
+        if (width > 0 && height > 0 && _textureAddress !=  IntPtr.Zero)
         {
           Size nativeSize = new Size(width, height);
           _shouldRenderTexture = SetVideoWindow(nativeSize);
@@ -1790,7 +1797,7 @@ namespace MediaPortal.Player
             if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D)
               // convert 2D to 3D
             {
-              Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+              Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0); //, BackBufferType.Mono);
 
               // create texture/surface for preparation for 3D output 
 
@@ -1847,7 +1854,7 @@ namespace MediaPortal.Player
               if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
                 GUIGraphicsContext.Render3DModeHalf = GUIGraphicsContext.eRender3DModeHalf.TABTop;
 
-              GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+              GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, RawColorsBGRA.Black, 1.0f, 0);
               GUIGraphicsContext.DX9Device.BeginScene();
 
               try
@@ -1873,7 +1880,7 @@ namespace MediaPortal.Player
 
             // 3D output either SBS or TAB
 
-            Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+            Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0); //, BackBufferType.Mono);
 
             // create texture/surface for preparation for 3D output
  
@@ -1949,21 +1956,21 @@ namespace MediaPortal.Player
 
         _debugStep = 20;
       }
-      catch (DeviceLostException ex)
+      catch (SharpDX.SharpDXException ex)
       {
-        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
-        Log.Warn("Planescene caught DeviceLostException in InternalPresentImage {0}", ex.Message);
-      }
-      catch (DirectXException dex)
-      {
-        if (dex.ErrorCode == -2005530508 || // GPU_HUNG
-            dex.ErrorCode == -2005530512) // GPU_REMOVED
+        if (ex.ResultCode == 0x88760868) //D3DERR_DEVICELOST: 0x88760868
+        {
+          GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+          Log.Warn("Planescene caught DeviceLostException in InternalPresentImage {0}", ex.Message);
+        }
+        if (ex.ResultCode == -2005530508 || // GPU_HUNG
+            ex.ResultCode == -2005530512) // GPU_REMOVED
         {
           Log.Info("Planescene caught GPU_HUNG in InternalPresentImage");
           GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
         }
         else
-          Log.Debug("Planescene: {0}", dex.Message);
+          Log.Debug("Planescene: {0}", ex.Message);
       }
       catch (Exception ex)
       {
@@ -1982,81 +1989,91 @@ namespace MediaPortal.Player
     private void DrawTextureSegment(VertexBuffer vertexBuffer, float srcX, float srcY, float srcWidth, float srcHeight,
                                     float dstX, float dstY, float dstWidth, float dstHeight, long lColorDiffuse)
     {
-      CustomVertex.TransformedColoredTextured[] verts =
-        (CustomVertex.TransformedColoredTextured[])vertexBuffer.Lock(0, 0);
+      //CustomVertex.TransformedColoredTextured[] verts =
+      //  (CustomVertex.TransformedColoredTextured[])vertexBuffer.Lock(0, 0);
 
-      float fVideoWidth = (float)GUIGraphicsContext.VideoSize.Width;
-      float fVideoHeight = (float)GUIGraphicsContext.VideoSize.Height;
-      float uoff = srcX / fVideoWidth;
-      float voff = srcY / fVideoHeight;
-      float umax = srcWidth / fVideoWidth;
-      float vmax = srcHeight / fVideoHeight;
-
-
-      // Lock the buffer (which will return our structs)
-      // Top right
-      verts[0].X = dstX;// - 0.5f;
-      verts[0].Y = dstY + dstHeight;// - 0.5f;
-      verts[0].Z = 0.0f;
-      verts[0].Rhw = 1.0f;
-      verts[0].Color = (int)lColorDiffuse;
-      verts[0].Tu = uoff;
-      verts[0].Tv = voff + vmax;
-
-      // Top Left
-      verts[1].X = dstX;// - 0.5f;
-      verts[1].Y = dstY;// - 0.5f;
-      verts[1].Z = 0.0f;
-      verts[1].Rhw = 1.0f;
-      verts[1].Color = (int)lColorDiffuse;
-      verts[1].Tu = uoff;
-      verts[1].Tv = voff;
-
-      // Bottom right
-      verts[2].X = dstX + dstWidth;// - 0.5f;
-      verts[2].Y = dstY + dstHeight;// - 0.5f;
-      verts[2].Z = 0.0f;
-      verts[2].Rhw = 1.0f;
-      verts[2].Color = (int)lColorDiffuse;
-      verts[2].Tu = uoff + umax;
-      verts[2].Tv = voff + vmax;
-
-      // Bottom left
-      verts[3].X = dstX + dstWidth;// - 0.5f;
-      verts[3].Y = dstY;// - 0.5f;
-      verts[3].Z = 0.0f;
-      verts[3].Rhw = 1.0f;
-      verts[3].Color = (int)lColorDiffuse;
-      verts[3].Tu = uoff + umax;
-      verts[3].Tv = voff;
-
-      // Update vertices to compensate texel/pixel coordinate origins (top left of pixel vs. center of texel)
-      // See https://msdn.microsoft.com/en-us/library/bb219690(VS.85).aspx
-      for (int i = 0; i < verts.Length; i++)
+      unsafe
       {
-        verts[i].X -= 0.5f;
-        verts[i].Y -= 0.5f;
+        using (SharpDX.DataStream ds = vertexBuffer.Lock(0, 0, LockFlags.None))
+        {
+          CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)ds.DataPointer;
+
+          float fVideoWidth = (float)GUIGraphicsContext.VideoSize.Width;
+          float fVideoHeight = (float)GUIGraphicsContext.VideoSize.Height;
+          float uoff = srcX / fVideoWidth;
+          float voff = srcY / fVideoHeight;
+          float umax = srcWidth / fVideoWidth;
+          float vmax = srcHeight / fVideoHeight;
+
+
+          // Lock the buffer (which will return our structs)
+          // Top right
+          verts[0].X = dstX;// - 0.5f;
+          verts[0].Y = dstY + dstHeight;// - 0.5f;
+          verts[0].Z = 0.0f;
+          verts[0].Rhw = 1.0f;
+          verts[0].Color = (int)lColorDiffuse;
+          verts[0].Tu = uoff;
+          verts[0].Tv = voff + vmax;
+
+          // Top Left
+          verts[1].X = dstX;// - 0.5f;
+          verts[1].Y = dstY;// - 0.5f;
+          verts[1].Z = 0.0f;
+          verts[1].Rhw = 1.0f;
+          verts[1].Color = (int)lColorDiffuse;
+          verts[1].Tu = uoff;
+          verts[1].Tv = voff;
+
+          // Bottom right
+          verts[2].X = dstX + dstWidth;// - 0.5f;
+          verts[2].Y = dstY + dstHeight;// - 0.5f;
+          verts[2].Z = 0.0f;
+          verts[2].Rhw = 1.0f;
+          verts[2].Color = (int)lColorDiffuse;
+          verts[2].Tu = uoff + umax;
+          verts[2].Tv = voff + vmax;
+
+          // Bottom left
+          verts[3].X = dstX + dstWidth;// - 0.5f;
+          verts[3].Y = dstY;// - 0.5f;
+          verts[3].Z = 0.0f;
+          verts[3].Rhw = 1.0f;
+          verts[3].Color = (int)lColorDiffuse;
+          verts[3].Tu = uoff + umax;
+          verts[3].Tv = voff;
+
+          // Update vertices to compensate texel/pixel coordinate origins (top left of pixel vs. center of texel)
+          // See https://msdn.microsoft.com/en-us/library/bb219690(VS.85).aspx
+          for (int i = 0; i < 4; i++)
+          {
+            verts[i].X -= 0.5f;
+            verts[i].Y -= 0.5f;
+          }
+        }
       }
 
       vertexBuffer.Unlock();
       unsafe
       {
-        GUIGraphicsContext.DX9Device.SetStreamSource(0, vertexBuffer, 0);
+        GUIGraphicsContext.DX9Device.SetStreamSource(0, vertexBuffer, 0, CustomVertex.TransformedColoredTextured.StrideSize);
         GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
       }
     }
 
 
-    private void DrawTexture(uint texAddr, long lColorDiffuse)
+    private void DrawTexture(IntPtr texAddr, long lColorDiffuse)
     {
-      if (texAddr == 0)
+      if (texAddr == IntPtr.Zero)
       {
         return;
       }
       unsafe
       {
-        UIntPtr ptr = new UIntPtr(texAddr);
-        DXNative.FontEngineSetTexture(ptr.ToPointer());
+        //UIntPtr ptr = new UIntPtr(texAddr);
+        //DXNative.FontEngineSetTexture(ptr.ToPointer());
+        DXNative.FontEngineSetTexture(texAddr.ToPointer());
+      
 
         DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
         DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
@@ -2195,7 +2212,7 @@ namespace MediaPortal.Player
           return;
         }
 
-        if (_textureAddress != 0)
+        if (_textureAddress != IntPtr.Zero)
         {
           Rectangle originalDestination = _destinationRect;
           Rectangle originalSource = _sourceRect;

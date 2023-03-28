@@ -20,7 +20,7 @@
 
 using System;
 using System.Threading;
-using Microsoft.DirectX.DirectInput;
+using SharpDX.DirectInput;
 
 namespace MediaPortal
 {
@@ -30,7 +30,7 @@ namespace MediaPortal
   /// 
   public class DirectInputListener
   {
-    private Device device = null;
+    private Joystick device = null;
     private Thread inputListener = null;
     private bool isRunning = false;
     private int delay = 150; // sleep time in milliseconds
@@ -71,22 +71,24 @@ namespace MediaPortal
       set { delay = value; }
     }
 
-    public bool InitDevice(Guid guid)
+    public bool InitDevice(DirectInput di, Guid guid)
     {
-      device = new Device(guid);
-      device.SetCooperativeLevel(null, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
-      device.Properties.AxisModeAbsolute = true;
+      device = new Joystick(di, guid);
+      device.SetCooperativeLevel(IntPtr.Zero, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
+      device.Properties.AxisMode = DeviceAxisMode.Absolute;
 
       // Enumerate axes
-      foreach (DeviceObjectInstance doi in device.Objects)
-      {
-        if ((doi.ObjectId & (int)DeviceObjectTypeFlags.Axis) != 0)
-        {
-          // We found an axis, set the range to a max of 10,000
-          device.Properties.SetRange(ParameterHow.ById,
-                                     doi.ObjectId, new InputRange(-5000, 5000));
-        }
-      }
+      //foreach (DeviceObjectInstance doi in device.Objects)
+      //{
+      //  if ((doi.ObjectId & (int)DeviceObjectTypeFlags.Axis) != 0)
+      //  {
+      //    // We found an axis, set the range to a max of 10,000
+      //    device.Properties.SetRange(ParameterHow.ById,
+      //                               doi.ObjectId, new InputRange(-5000, 5000));
+      //  }
+      //}
+      device.Properties.Range = new InputRange(-5000, 5000);
+
       StopListener();
       StartListener();
       device.Acquire();
@@ -101,7 +103,7 @@ namespace MediaPortal
         {
           device.Unacquire();
         }
-        catch (NullReferenceException) {}
+        catch (NullReferenceException) { }
         device.Dispose();
         device = null;
       }
@@ -117,12 +119,13 @@ namespace MediaPortal
         // Get the state of the device.
         try
         {
-          state = device.CurrentJoystickState;
+          state = device.GetCurrentState();
           return ButtonComboAsString(state);
         }
-          // Catch any exceptions. None will be handled here, 
-          // any device re-aquisition will be handled above.  
-        catch (InputException)
+        // Catch any exceptions. None will be handled here, 
+        // any device re-aquisition will be handled above.  
+        //catch (InputException)
+        catch
         {
           return res;
         }
@@ -132,15 +135,15 @@ namespace MediaPortal
 
     private string ButtonComboAsString(JoystickState state)
     {
-      byte[] buttons = state.GetButtons();
+      bool[] buttons = state.Buttons;
       int button = 0;
       string res = "";
 
       // button combos
       string sep = "";
-      foreach (byte b in buttons)
+      foreach (bool b in buttons)
       {
-        if (0 != (b & 0x80))
+        if (b)
         {
           res += sep + button.ToString("00");
           sep = ",";
@@ -171,9 +174,10 @@ namespace MediaPortal
         // Poll the device for info.
         device.Poll();
       }
-      catch (InputException inputex)
+      //catch (InputException inputex)
+      catch
       {
-        if ((inputex is NotAcquiredException) || (inputex is InputLostException))
+        //if ((inputex is NotAcquiredException) || (inputex is InputLostException))
         {
           // Check to see if either the app
           // needs to acquire the device, or
@@ -184,7 +188,8 @@ namespace MediaPortal
             // Acquire the device.
             device.Acquire();
           }
-          catch (InputException)
+          //catch (InputException)
+          catch
           {
             // Failed to acquire the device.
             // This could be because the app
@@ -205,11 +210,12 @@ namespace MediaPortal
         // Get the state of the device.
         try
         {
-          state = device.CurrentJoystickState;
+          state = device.GetCurrentState();
         }
-          // Catch any exceptions. None will be handled here, 
-          // any device re-aquisition will be handled above.  
-        catch (InputException)
+        // Catch any exceptions. None will be handled here, 
+        // any device re-aquisition will be handled above.  
+        //catch (InputException)
+        catch
         {
           return;
         }

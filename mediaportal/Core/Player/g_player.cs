@@ -4216,11 +4216,11 @@ namespace MediaPortal.Player
                 Log.Debug("g_player VideoWindowChanged() ForceMadVRFirstStart madVR");
               }
 
-              if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth != client.Width ||
-                  GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight != client.Height)
+              if (GUIGraphicsContext.PresentationParameters.BackBufferWidth != client.Width ||
+                  GUIGraphicsContext.PresentationParameters.BackBufferHeight != client.Height)
               {
-                GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
-                GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
+                GUIGraphicsContext.PresentationParameters.BackBufferWidth = client.Width;
+                GUIGraphicsContext.PresentationParameters.BackBufferHeight = client.Height;
 
                 int activeWin = GUIWindowManager.ActiveWindow;
 
@@ -4279,14 +4279,14 @@ namespace MediaPortal.Player
               RefreshMadVrVideo();
             }
 
-            if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth == 0)
+            if (GUIGraphicsContext.PresentationParameters.BackBufferWidth == 0)
             {
-              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
+              //GUIGraphicsContext.PresentationParameters.BackBufferWidth = client.Width;
               Log.Debug("g_player VideoWindowChanged() BackBufferWidth == 0 for madVR");
             }
-            if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight == 0)
+            if (GUIGraphicsContext.PresentationParameters.BackBufferHeight == 0)
             {
-              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
+              //GUIGraphicsContext.PresentationParameters.BackBufferHeight = client.Height;
               Log.Debug("g_player VideoWindowChanged() BackBufferHeight == 0 for madVR");
             }
 

@@ -32,10 +32,10 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using DShowNET.Helper;
 using MediaPortal.ExtensionMethods;
-using Microsoft.DirectX.Direct3D;
-using Filter = Microsoft.DirectX.Direct3D.Filter;
+using SharpDX.Direct3D9;
+using Filter = SharpDX.Direct3D9.Filter;
 using Font = System.Drawing.Font;
-using InvalidDataException = Microsoft.DirectX.Direct3D.InvalidDataException;
+//using InvalidDataException = SharpDX.Direct3D9.InvalidDataException;
 
 namespace MediaPortal.GUI.Library
 {
@@ -106,7 +106,7 @@ namespace MediaPortal.GUI.Library
     public const int MaxNumfontVertices = 100 * 6;
     private int _StartCharacter = 32;
     private int _EndCharacter = 255;
-    private Microsoft.DirectX.Direct3D.Font _d3dxFont;
+    private SharpDX.Direct3D9.Font _d3dxFont;
     private static ArrayList _outOfBoundsChar = new ArrayList {
                                          (char) 8211, // 0x2013 // –
                                          (char) 8212, // 0x2014 // —
@@ -1047,7 +1047,7 @@ namespace MediaPortal.GUI.Library
 
         if (_textureFont != null)
         {
-          _textureFont.Disposing -= new EventHandler(_textureFont_Disposing);
+          _textureFont.Disposing -= new EventHandler<EventArgs>(_textureFont_Disposing);
           _textureFont.SafeDispose();
         }
         _textureFont = null;
@@ -1121,7 +1121,7 @@ namespace MediaPortal.GUI.Library
 
         // If requested texture is too big, use a smaller texture and smaller font,
         // and scale up when rendering.
-        Caps d3dCaps = GUIGraphicsContext.DX9Device.DeviceCaps;
+        Capabilities d3dCaps = GUIGraphicsContext.DX9Device.Capabilities;
 
         // If the needed texture is too large for the video card...
         if (_textureWidth > d3dCaps.MaxTextureWidth)
@@ -1195,8 +1195,8 @@ namespace MediaPortal.GUI.Library
         {
           try
           {
-            ImageInformation info = new ImageInformation();
-            _textureFont = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
+            ImageInformation info;
+            _textureFont = Texture.FromFile(GUIGraphicsContext.DX9Device,
                                                   strCache,
                                                   0, 0, //width/height
                                                   1, //miplevels
@@ -1206,7 +1206,7 @@ namespace MediaPortal.GUI.Library
                                                   Filter.None,
                                                   Filter.None,
                                                   0,
-                                                  ref info);
+                                                  out info);
 
             s = File.Open(strCache + ".bxml", FileMode.Open, FileAccess.Read);
             _textureCoords = (float[,])b.Deserialize(s);
@@ -1258,8 +1258,8 @@ namespace MediaPortal.GUI.Library
                 {
                   format = Format.Unknown;
                 }
-                ImageInformation info = new ImageInformation();
-                _textureFont = TextureLoader.FromStream(GUIGraphicsContext.DX9Device,
+                ImageInformation info;
+                _textureFont = Texture.FromStream(GUIGraphicsContext.DX9Device,
                                                         imageStream, (int)imageStream.Length,
                                                         0, 0, //width/height
                                                         1, //miplevels
@@ -1269,10 +1269,10 @@ namespace MediaPortal.GUI.Library
                                                         Filter.None,
                                                         Filter.None,
                                                         0,
-                                                        ref info);
+                                                        out info);
 
                 // Finally save texture and texture coords to disk
-                TextureLoader.Save(strCache, ImageFileFormat.Dds, _textureFont);
+                BaseTexture.ToFile(_textureFont, strCache, ImageFileFormat.Dds);
                 s = File.Open(strCache + ".bxml", FileMode.CreateNew, FileAccess.ReadWrite);
                 b.Serialize(s, (object)_textureCoords);
                 s.Close();
@@ -1290,10 +1290,25 @@ namespace MediaPortal.GUI.Library
 
         try
         {
-          _textureFont.Disposing -= new EventHandler(_textureFont_Disposing);
-          _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
+          _textureFont.Disposing -= new EventHandler<EventArgs>(_textureFont_Disposing);
+          _textureFont.Disposing += new EventHandler<EventArgs>(_textureFont_Disposing);
           SetFontEgine();
-          _d3dxFont = new Microsoft.DirectX.Direct3D.Font(GUIGraphicsContext.DX9Device, _systemFont);
+          //_d3dxFont = new SharpDX.Direct3D9.Font(GUIGraphicsContext.DX9Device, _systemFont);
+          FontDescription fd = new FontDescription()
+          {
+            Height = (int)_systemFont.GetHeight(),
+            Italic = _systemFont.Italic,
+            CharacterSet = FontCharacterSet.Ansi,
+            FaceName = _systemFont.Name,
+            MipLevels = 0,
+            OutputPrecision = FontPrecision.String,
+            PitchAndFamily = FontPitchAndFamily.Default,
+            Quality = FontQuality.Default,
+            Weight = _systemFont.Bold ? FontWeight.Bold : FontWeight.Regular
+          };
+
+          _d3dxFont = new SharpDX.Direct3D9.Font(GUIGraphicsContext.DX9Device, fd);
+
         }
         catch (Exception ex)
         {

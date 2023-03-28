@@ -252,10 +252,14 @@ namespace MediaPortal.Configuration
             break;
         }
 
+
+
         if (applicationForm != null)
         {
+          MediaPortal.GUI.Library.GUIGraphicsContext.Direct3DLoad();
           Log.Info("start application");
           Application.Run(applicationForm);
+          MediaPortal.GUI.Library.GUIGraphicsContext.Direct3DUnload();
         }
       }
     }

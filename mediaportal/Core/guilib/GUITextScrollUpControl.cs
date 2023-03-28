@@ -22,7 +22,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Drawing;
-using Microsoft.DirectX.Direct3D;
+//using Microsoft.DirectX.Direct3D;
 using System.Collections.Generic;
 using MediaPortal.ExtensionMethods;
 

@@ -22,7 +22,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
-using Microsoft.DirectX.Direct3D;
+using SharpDX.Direct3D9;
 
 namespace MediaPortal.Player
 {
@@ -141,12 +141,12 @@ namespace MediaPortal.Player
         }
 
         // Store current settings so they can be restored when we are done
-        VertexFormats vertexFormat = GUIGraphicsContext.DX9Device.VertexFormat;
+        VertexFormat vertexFormat = GUIGraphicsContext.DX9Device.VertexFormat;
         
         try
         {
-          if ((_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_PG] == null || _planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_PG].Disposed) &&
-              (_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_IG] == null || _planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_IG].Disposed))
+          if ((_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_PG] == null || _planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_PG].IsDisposed) &&
+              (_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_IG] == null || _planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_IG].IsDisposed))
           {
             return;
           }
@@ -181,19 +181,19 @@ namespace MediaPortal.Player
           // Make sure D3D objects haven't been disposed for some reason. This would cause
           // an access violation on native side, causing Skin Engine to halt rendering
           
-          if (_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_PG] != null && !_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_PG].Disposed && !_vertexBuffer.Disposed)
+          if (_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_PG] != null && !_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_PG].IsDisposed && !_vertexBuffer.IsDisposed)
           {
-            GUIGraphicsContext.DX9Device.SetStreamSource(0, _vertexBuffer, 0);
+            GUIGraphicsContext.DX9Device.SetStreamSource(0, _vertexBuffer, 0, Util.CustomVertex.TransformedTextured.StrideSize);
             GUIGraphicsContext.DX9Device.SetTexture(0, _planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_PG]);
-            GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedTextured.Format;
+            GUIGraphicsContext.DX9Device.VertexFormat = Util.CustomVertex.TransformedTextured.Format;
             GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
           }
 
-          if (_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_IG] != null && !_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_IG].Disposed && !_vertexBuffer.Disposed)
+          if (_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_IG] != null && !_planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_IG].IsDisposed && !_vertexBuffer.IsDisposed)
           {
-            GUIGraphicsContext.DX9Device.SetStreamSource(0, _vertexBuffer, 0);
+            GUIGraphicsContext.DX9Device.SetStreamSource(0, _vertexBuffer, 0, Util.CustomVertex.TransformedTextured.StrideSize);
             GUIGraphicsContext.DX9Device.SetTexture(0, _planes[(int)BD_OVERLAY_PLANE.BD_OVERLAY_IG]);
-            GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedTextured.Format;
+            GUIGraphicsContext.DX9Device.VertexFormat = Util.CustomVertex.TransformedTextured.Format;
             GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
           }
         }
@@ -224,31 +224,46 @@ namespace MediaPortal.Player
         {
           usage = Usage.Dynamic | Usage.WriteOnly;
         }
-        _vertexBuffer = new VertexBuffer(typeof(CustomVertex.TransformedTextured),
-                                        4, GUIGraphicsContext.DX9Device,
-                                        usage, 
-                                        CustomVertex.TransformedTextured.Format,
-                                        GUIGraphicsContext.GetTexturePoolType());
+        //_vertexBuffer = new VertexBuffer(typeof(CustomVertex.TransformedTextured),
+        //                                4, GUIGraphicsContext.DX9Device,
+        //                                usage, 
+        //                                CustomVertex.TransformedTextured.Format,
+        //                                GUIGraphicsContext.GetTexturePoolType());
+
+        _vertexBuffer = new VertexBuffer(GUIGraphicsContext.DX9Device,
+                      Util.CustomVertex.TransformedTextured.StrideSize * 4,
+                      usage,
+                      Util.CustomVertex.TransformedTextured.Format,
+                      GUIGraphicsContext.GetTexturePoolType());
+
         _wx = _wy = _wwidth = _wheight = 0;
       }
 
       if (_wx != wx || _wy != wy || _wwidth != wwidth || _wheight != wheight)
       {
-        CustomVertex.TransformedTextured[] verts = (CustomVertex.TransformedTextured[])_vertexBuffer.Lock(0, 0);
+        //CustomVertex.TransformedTextured[] verts = (CustomVertex.TransformedTextured[])_vertexBuffer.Lock(0, 0);
 
-        // upper left
-        verts[0] = new CustomVertex.TransformedTextured(wx, wy, 0, 1, 0, 0);
+        unsafe
+        {
+          using (SharpDX.DataStream ds = _vertexBuffer.Lock(0, 0, LockFlags.None))
+          {
+            Util.CustomVertex.TransformedTextured* verts = (Util.CustomVertex.TransformedTextured*)ds.DataPointer;
 
-        // upper right
-        verts[1] = new CustomVertex.TransformedTextured(wx + wwidth, wy, 0, 1, 1, 0);
+            // upper left
+            verts[0] = new Util.CustomVertex.TransformedTextured(wx, wy, 0, 1, 0, 0);
 
-        // lower left
-        verts[2] = new CustomVertex.TransformedTextured(wx, wy + wheight, 0, 1, 0, 1);
+            // upper right
+            verts[1] = new Util.CustomVertex.TransformedTextured(wx + wwidth, wy, 0, 1, 1, 0);
 
-        // lower right
-        verts[3] = new CustomVertex.TransformedTextured(wx + wwidth, wy + wheight, 0, 1, 1, 1);
+            // lower left
+            verts[2] = new Util.CustomVertex.TransformedTextured(wx, wy + wheight, 0, 1, 0, 1);
 
-        _vertexBuffer.SetData(verts, 0, LockFlags.None);
+            // lower right
+            verts[3] = new Util.CustomVertex.TransformedTextured(wx + wwidth, wy + wheight, 0, 1, 1, 1);
+
+            //_vertexBuffer.SetData(verts, 0, LockFlags.None);
+          }
+        }
         _vertexBuffer.Unlock();
         
         // remember what the vertexBuffer is set to

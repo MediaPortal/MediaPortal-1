@@ -33,9 +33,9 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player.LAV;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using Microsoft.DirectX.Direct3D;
+using SharpDX.Direct3D9;
 using Action = MediaPortal.GUI.Library.Action;
-using Filter = Microsoft.DirectX.Direct3D.Filter;
+using Filter = SharpDX.Direct3D9.Filter;
 using Geometry = MediaPortal.GUI.Library.Geometry;
 
 namespace MediaPortal.Player
@@ -61,7 +61,7 @@ namespace MediaPortal.Player
   public interface IVMR9PresentCallback
   {
     [PreserveSig]
-    int PresentImage(Int16 cx, Int16 cy, Int16 arx, Int16 ary, uint pImage, uint pTexture);
+    int PresentImage(Int16 cx, Int16 cy, Int16 arx, Int16 ary, IntPtr pImage, IntPtr pTexture);
 
     //called by EVR presenter, before sample is rendered
     //used to synchronize subtitle's clock
@@ -926,7 +926,7 @@ namespace MediaPortal.Player
         }
 
         HResult hr;
-        IntPtr hMonitor = Manager.GetAdapterMonitor(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
+        IntPtr hMonitor = GUIGraphicsContext.DX9Device.Direct3D.GetAdapterMonitor(GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal);
         IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
         _scene = new PlaneScene(this);
@@ -938,7 +938,7 @@ namespace MediaPortal.Player
           {
             GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.EVR;
             // Keep current RenderTarget to trying to restore D3D GUI from madVR but release it if already init previously
-            if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null && !GUIGraphicsContext.MadVrRenderTargetVmr9.Disposed)
+            if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null && !GUIGraphicsContext.MadVrRenderTargetVmr9.IsDisposed)
             {
               GUIGraphicsContext.DX9Device?.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVmr9);
               GUIGraphicsContext.MadVrRenderTargetVmr9.Dispose();
@@ -963,7 +963,7 @@ namespace MediaPortal.Player
           }
 
           // Keep current RenderTarget to trying to restore D3D GUI from madVR but release it if already init previously
-          if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null && !GUIGraphicsContext.MadVrRenderTargetVmr9.Disposed)
+          if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null && !GUIGraphicsContext.MadVrRenderTargetVmr9.IsDisposed)
           {
             GUIGraphicsContext.DX9Device?.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVmr9);
             GUIGraphicsContext.MadVrRenderTargetVmr9.Dispose();
@@ -983,7 +983,7 @@ namespace MediaPortal.Player
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
         {
           // Fix RDP Screen out of bound (force to use AdapterOrdinal to 0 if adapter number are out of bounds)
-          int adapterOrdinal = GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal;
+          int adapterOrdinal = GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal;
           if (adapterOrdinal >= Screen.AllScreens.Length)
           {
             adapterOrdinal = Screen.AllScreens.Length - 1;
@@ -1047,16 +1047,16 @@ namespace MediaPortal.Player
           var yposition = GUIGraphicsContext.form.Location.Y;
           //Backup current refresh rate value
           Win32.FindMonitorIndexForScreen();
-          if ((GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal == -1) ||
-              (Manager.Adapters.Count <= GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal) ||
-              (Manager.Adapters.Count > Screen.AllScreens.Length))
+          if ((GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal == -1) ||
+              (GUIGraphicsContext.DX9Device.Direct3D.Adapters.Count <= GUIGraphicsContext.DX9DeviceMadVr.Capabilities.AdapterOrdinal) ||
+              (GUIGraphicsContext.DX9Device.Direct3D.Adapters.Count > Screen.AllScreens.Length))
           {
             Log.Info("VMR9: adapter number out of bounds");
           }
           else
           {
             GUIGraphicsContext.ForcedRR3DRate =
-              Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
+              GUIGraphicsContext.DX9Device.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
             Log.Info("VMR9: backup current refresh rate value {0}Hz", GUIGraphicsContext.ForcedRR3DRate);
           }
           // Get Client size
@@ -1811,6 +1811,7 @@ namespace MediaPortal.Player
                 int mAudioDelay = AudioPostEngine.GetInstance().AudioDelay;
                 if (mAudioDelay != 0)
                 {
+
                   ILAVAudioSettings asett = baseFilterLavAudio as ILAVAudioSettings;
                   asett?.SetAudioDelay(true, 0);
                   DirectShowUtil.ReleaseComObject(baseFilterLavAudio);
@@ -2035,17 +2036,18 @@ namespace MediaPortal.Player
           //
 
           using (
-            Surface surface = GUIGraphicsContext.DX9Device.CreateOffscreenPlainSurface(GUIGraphicsContext.Width,
+            Surface surface = Surface.CreateOffscreenPlain(GUIGraphicsContext.DX9Device, GUIGraphicsContext.Width,
                                                                                        GUIGraphicsContext.Height,
                                                                                        Format.X8R8G8B8,
                                                                                        Pool.SystemMemory))
           {
-            SurfaceLoader.FromStream(surface, mStr, Filter.None, 0);
+            Surface.FromFileInStream(surface, mStr, Filter.None, 0);
+
             bmp.dwFlags = (VMR9AlphaBitmapFlags)(4 | 8);
             bmp.clrSrcKey = 0;
             unsafe
             {
-              bmp.pDDS = (IntPtr)surface.UnmanagedComPointer;
+              bmp.pDDS = (IntPtr)surface;
             }
             bmp.rDest = new NormalizedRect();
             bmp.rDest.top = yy;

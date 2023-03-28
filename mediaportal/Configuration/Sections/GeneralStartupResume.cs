@@ -30,7 +30,7 @@ using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using Microsoft.DirectX.Direct3D;
+using SharpDX.Direct3D9;
 using Microsoft.Win32;
 
 #pragma warning disable 108
@@ -297,10 +297,10 @@ namespace MediaPortal.Configuration.Sections
           deviceId = "";
         }
 
-        foreach (AdapterInformation adapter in Manager.Adapters)
+        foreach (AdapterInformation adapter in GUIGraphicsContext.Direct3D.Adapters)
         {
           bool detectedId = false;
-          if (screen.DeviceName.Equals(adapter.Information.DeviceName.Trim()))
+          if (screen.DeviceName.Equals(adapter.Details.DeviceName.Trim()))
           {
             foreach (var display in DisplayDetails.GetMonitorDetails())
             {
@@ -310,15 +310,15 @@ namespace MediaPortal.Configuration.Sections
                 if (!string.IsNullOrEmpty(display.Model))
                 {
                   dtblDataSource.Rows.Add(string.Format("{0} ({1}x{2}) on {3} - Screen Primary : {4}", display.Model,
-                    adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description, screen.Primary ? "Yes" : "No"),
-                    indexAdapter, info.DeviceID, adapter.Information.DeviceName.Trim());
+                    adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Details.Description, screen.Primary ? "Yes" : "No"),
+                    indexAdapter, info.DeviceID, adapter.Details.DeviceName.Trim());
                   indexAdapter++;
                   detectedId = true;
                   break;
                 }
                 dtblDataSource.Rows.Add(string.Format("{0} ({1}x{2}) on {3} - Screen Primary : {4}", monitorname,
-                  adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description, screen.Primary ? "Yes" : "No"),
-                  indexAdapter, info.DeviceID, adapter.Information.DeviceName.Trim());
+                  adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Details, screen.Primary ? "Yes" : "No"),
+                  indexAdapter, info.DeviceID, adapter.Details.DeviceName.Trim());
                 indexAdapter++;
                 detectedId = true;
                 break;
@@ -327,8 +327,8 @@ namespace MediaPortal.Configuration.Sections
             if (!detectedId)
             {
               dtblDataSource.Rows.Add(string.Format("{0} ({1}x{2}) on {3} - Screen Primary : {4}", monitorname,
-                adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description, screen.Primary ? "Yes" : "No"),
-                indexAdapter, deviceId, adapter.Information.DeviceName.Trim());
+                adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Details.Description, screen.Primary ? "Yes" : "No"),
+                indexAdapter, deviceId, adapter.Details.DeviceName.Trim());;
               indexAdapter++;
               break;
             }

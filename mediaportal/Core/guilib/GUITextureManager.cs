@@ -31,8 +31,8 @@ using MediaPortal.ExtensionMethods;
 using MediaPortal.guilib;
 using MediaPortal.Util;
 
-using Microsoft.DirectX.Direct3D;
-using InvalidDataException = Microsoft.DirectX.Direct3D.InvalidDataException;
+using SharpDX.Direct3D9;
+//using InvalidDataException = SharpDX.Direct3D.InvalidDataException;
 
 namespace MediaPortal.GUI.Library
 {
@@ -288,21 +288,22 @@ namespace MediaPortal.GUI.Library
               using (MemoryStream stream = new MemoryStream())
               {
                 theImage.Save(stream, ImageFormat.Png);
-                ImageInformation info2 = new ImageInformation();
+                ImageInformation info2;
                 stream.Flush();
                 stream.Seek(0, SeekOrigin.Begin);
-                Texture texture = TextureLoader.FromStream(
+                Texture texture = Texture.FromStream(
                   GUIGraphicsContext.DX9Device,
                   stream,
+                  0, // size
                   0, 0, // width/height
                   1,    // mipslevels
-                  0,    // Usage.Dynamic,
+                  Usage.None, //0   // Usage.Dynamic,
                   Format.A8R8G8B8,
                   GUIGraphicsContext.GetTexturePoolType(),
                   Filter.None,
                   Filter.None,
                   (int)lColorKey,
-                  ref info2);
+                  out info2);
                 newCache.Width = info2.Width;
                 newCache.Height = info2.Height;
                 newCache[i] = new TextureFrame(fileName, texture, (frameDelay[i] / 5) * 50);
@@ -418,21 +419,22 @@ namespace MediaPortal.GUI.Library
         using (MemoryStream stream = new MemoryStream())
         {
           memoryImage.Save(stream, ImageFormat.Png);
-          ImageInformation info2 = new ImageInformation();
+          ImageInformation info2;
           stream.Flush();
           stream.Seek(0, SeekOrigin.Begin);
-          Texture texture = TextureLoader.FromStream(
+          Texture texture = Texture.FromStream(
             GUIGraphicsContext.DX9Device,
             stream,
+            0, // size
             0, 0, //width/height
             1, //mipslevels
-            0, //Usage.Dynamic,
+            Usage.None, //Usage.Dynamic,
             Format.A8R8G8B8,
             GUIGraphicsContext.GetTexturePoolType(),
             Filter.None,
             Filter.None,
             (int)lColorKey,
-            ref info2);
+            out info2);
           newCache.Width = info2.Width;
           newCache.Height = info2.Height;
           newCache.Texture = new TextureFrame(cacheName, texture, 0);
@@ -490,12 +492,13 @@ namespace MediaPortal.GUI.Library
         using (MemoryStream stream = new MemoryStream())
         {
           memoryImage.Save(stream, ImageFormat.Png);
-          ImageInformation info2 = new ImageInformation();
+          ImageInformation info2;
           stream.Flush();
           stream.Seek(0, SeekOrigin.Begin);
-          texture = TextureLoader.FromStream(
+          texture = Texture.FromStream(
             GUIGraphicsContext.DX9Device,
             stream,
+            0, //size
             0, 0, //width/height
             1, //mipslevels
             Usage.Dynamic, //Usage.Dynamic,
@@ -504,7 +507,7 @@ namespace MediaPortal.GUI.Library
             Filter.None,
             Filter.None,
             (int)lColorKey,
-            ref info2);
+            out info2);
           newCache.Width = info2.Width;
           newCache.Height = info2.Height;
           newCache.Texture = new TextureFrame(cacheName, texture, 0);
@@ -603,9 +606,9 @@ namespace MediaPortal.GUI.Library
 
         Format fmt = Format.A8R8G8B8;
 
-        ImageInformation info2 = new ImageInformation();
+        ImageInformation info2;
 
-        texture = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
+        texture = Texture.FromFile(GUIGraphicsContext.DX9Device,
                                          fileName,
                                          0, 0, //width/height
                                          1, //mipslevels
@@ -615,7 +618,7 @@ namespace MediaPortal.GUI.Library
                                          Filter.None,
                                          Filter.None,
                                          (int)lColorKey,
-                                         ref info2);
+                                         out info2);
         width = info2.Width;
         height = info2.Height;
       }
@@ -634,18 +637,19 @@ namespace MediaPortal.GUI.Library
           str.Position = 0;
           try
           {
-            ImageInformation info2 = new ImageInformation();
-            texture = TextureLoader.FromStream(GUIGraphicsContext.DX9Device,
+            ImageInformation info2;
+            texture = Texture.FromStream(GUIGraphicsContext.DX9Device,
                                      str,
+                                     0, //size
                                      0, 0, //width/height
                                      1, //mipslevels
-                                     0, //Usage.Dynamic,
+                                     Usage.None, //Usage.Dynamic,
                                      Format.A8R8G8B8,
                                      GUIGraphicsContext.GetTexturePoolType(),
                                      Filter.None,
                                      Filter.None,
                                      (int)lColorKey,
-                                     ref info2);
+                                     out info2);
             width = info2.Width;
             height = info2.Height;
           }
@@ -662,8 +666,8 @@ namespace MediaPortal.GUI.Library
         Format fmt = Format.A8R8G8B8;
         string fallback = GUIGraphicsContext.GetThemedSkinFile(@"\media\" + "black.png");
 
-        ImageInformation info2 = new ImageInformation();
-        texture = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
+        ImageInformation info2;
+        texture = Texture.FromFile(GUIGraphicsContext.DX9Device,
                                          fallback,
                                          0, 0, //width/height
                                          1, //mipslevels
@@ -673,7 +677,7 @@ namespace MediaPortal.GUI.Library
                                          Filter.None,
                                          Filter.None,
                                          (int)lColorKey,
-                                         ref info2);
+                                         out info2);
         width = info2.Width;
         height = info2.Height;
       }
@@ -737,7 +741,7 @@ namespace MediaPortal.GUI.Library
             width = theImage.Size.Width;
             height = theImage.Size.Height;
 
-            texture = Picture.ConvertImageToTexture((Bitmap) theImage, lColorKey, Format.A8R8G8B8, out width, out height);
+            texture = Picture.ConvertImageToTexture((Bitmap)theImage, lColorKey, Format.A8R8G8B8, out width, out height);
           }
         }
       }

@@ -33,8 +33,9 @@ using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using MediaPortal;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
+using SharpDX;
+using SharpDX.Direct3D9;
+using SharpDX.Mathematics.Interop;
 
 // ReSharper disable CheckNamespace
 namespace MediaPortal.GUI.Library
@@ -68,7 +69,7 @@ namespace MediaPortal.GUI.Library
 
     private static readonly object RenderLoopLock = new object();  // Rendering loop lock - use this when removing any D3D resources
     private static readonly object RenderLoopMadVrLock = new object();  // Rendering loop madVR lock - use this when calling video window changed
-    private static readonly List<Point> Cameras = new List<Point>();
+    private static readonly List<System.Drawing.Point> Cameras = new List<System.Drawing.Point>();
     private static readonly List<TransformMatrix> GroupTransforms = new List<TransformMatrix>();
     private static TransformMatrix _guiTransform = new TransformMatrix();
     private static TransformMatrix _finalTransform = new TransformMatrix();
@@ -94,11 +95,13 @@ namespace MediaPortal.GUI.Library
       EVR = 1,
       madVR = 2
     }
-    
+
     public static event SendMessageHandler Receivers; // triggered when a message has arrived
     public static event OnActionHandler OnNewAction; // triggered when a action has arrived
     public static event VideoWindowChangedHandler OnVideoWindowChanged; // triggered when the video window location/size or AR have been changed
     public static event VideoGammaContrastBrightnessHandler OnGammaContrastBrightnessChanged; // triggered when contrast, brightness, gamma settings have been changed
+
+    public static PresentParameters PresentationParameters;
 
     public static Device DX9Device = null; // pointer to current DX9 device
 
@@ -129,7 +132,7 @@ namespace MediaPortal.GUI.Library
     private static string _skin = "";
     private static string _theme = "";
     private static bool _isFullScreenVideo; // are we in GUI or fullscreen video/tv mode
-    private static Rectangle _rectVideo; // video preview window
+    private static System.Drawing.Rectangle _rectVideo; // video preview window
     private static Geometry.Type _geometryType = Geometry.Type.Normal; // video transformation type (see geometry.cs)
     private static bool _overlay = true; // indicating if the overlay window is allowed to be shown
     private static float _zoomHorizontal = 1.0f; // x zoom of GUI calibration
@@ -173,6 +176,11 @@ namespace MediaPortal.GUI.Library
     private static bool _allowRememberLastFocusedItem = true;
     private static bool _fullHD3DFormat = false;
     private static bool _tabWithBlackBars = false;
+    
+    /// <summary>
+    /// Device lost event
+    /// </summary>
+    public static event EventHandler DeviceLost;
 
     // For madVR
     public static Surface MadVrRenderTargetVmr9 = null;
@@ -187,7 +195,7 @@ namespace MediaPortal.GUI.Library
     private static readonly Stack<FinalTransformBucket> FinalTransformStack = new Stack<FinalTransformBucket>();
 
     // Stack for managing clip rectangles.
-    private static readonly Stack<Rectangle> ClipRectangleStack = new Stack<Rectangle>();
+    private static readonly Stack<RawRectangle> ClipRectangleStack = new Stack<RawRectangle>();
 
     /// <summary>
     /// This internal class contains the information needed to place the final transform on a stack.
@@ -223,7 +231,7 @@ namespace MediaPortal.GUI.Library
     }
 
     // singleton. Don't allow any instance of this class
-    private GUIGraphicsContext() {}
+    private GUIGraphicsContext() { }
 
     static GUIGraphicsContext()
     {
@@ -236,6 +244,12 @@ namespace MediaPortal.GUI.Library
       Convert2Dto3DSkewFactor = 0;
       LastFrames = new List<Texture>();
       LastFramesIndex = 0;
+    }
+
+    public static void Create(Device device, PresentParameters prms)
+    {
+      DX9Device = device;
+      PresentationParameters = prms;
     }
 
     /// <summary>
@@ -626,7 +640,7 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        return DX9Device != null ? DX9Device.PresentationParameters.BackBufferHeight : form.ClientSize.Height;
+        return DX9Device != null ? PresentationParameters.BackBufferHeight : form.ClientSize.Height;
       }
     }
 
@@ -637,18 +651,18 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        return DX9Device != null ? DX9Device.PresentationParameters.BackBufferWidth : form.ClientSize.Width;
+        return DX9Device != null ? PresentationParameters.BackBufferWidth : form.ClientSize.Width;
       }
     }
 
     /// <summary>
     /// Gets the center of MP's current Window Area
     /// </summary>
-    public static Point OutputScreenCenter
+    public static System.Drawing.Point OutputScreenCenter
     {
       get
       {
-        var clientCenter = new Point(form.ClientSize.Width / 2, form.ClientSize.Height / 2);
+        var clientCenter = new System.Drawing.Point(form.ClientSize.Width / 2, form.ClientSize.Height / 2);
         try
         {
           return form.PointToScreen(clientCenter);
@@ -656,7 +670,7 @@ namespace MediaPortal.GUI.Library
         catch (Exception ex)
         {
           Log.Error("OutputScreenCenter: Exception" + ex.Message);
-          return new Point(0, 0);
+          return new System.Drawing.Point(0, 0);
         }
 
       }
@@ -671,7 +685,7 @@ namespace MediaPortal.GUI.Library
       int newX, newY;
       if (interpolate)
       {
-        Point oldPos = Cursor.Position;
+        System.Drawing.Point oldPos = Cursor.Position;
         if (form.ClientRectangle.Width - oldPos.X < OutputScreenCenter.X)
         {
           newX = OutputScreenCenter.X + (oldPos.X - OutputScreenCenter.X) / 2;
@@ -695,7 +709,7 @@ namespace MediaPortal.GUI.Library
         newX = OutputScreenCenter.X;
         newY = OutputScreenCenter.Y;
       }
-      Cursor.Position = new Point(newX, newY);
+      Cursor.Position = new System.Drawing.Point(newX, newY);
       Cursor.Hide();
     }
 
@@ -899,7 +913,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static string Skin
     {
-      set { 
+      set
+      {
         _skin = Config.GetSubFolder(Config.Dir.Skin, value);
         _theme = _skin; // The default theme is the skin itself.
       }
@@ -1012,7 +1027,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get/Set current pixel Ratio
     /// </summary>
-    public static float PixelRatio  { get; set; }
+    public static float PixelRatio { get; set; }
 
     /// <summary>
     /// get /set whether we're playing a movie , visz or TV in
@@ -1047,7 +1062,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get/Set video window rectangle
     /// </summary>
-    public static Rectangle VideoWindow
+    public static System.Drawing.Rectangle VideoWindow
     {
       get { return _rectVideo; }
       set
@@ -1093,7 +1108,7 @@ namespace MediaPortal.GUI.Library
           if (GUIGraphicsContext.Vmr9Active && !GUIGraphicsContext.VideoWindowFullscreen)
           {
             GUIGraphicsContext.VideoWindowFullscreen = true;
-            GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 5, 5);
+            GUIGraphicsContext.VideoWindow = new System.Drawing.Rectangle(0, 0, 5, 5);
             VMR9Util.g_vmr9?.SceneMadVr();
           }
 
@@ -1115,7 +1130,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public static Rectangle rDest { get; set; }
+    public static System.Drawing.Rectangle rDest { get; set; }
 
     /// <summary>
     /// Get/Set application state (starting,running,stopping)
@@ -1160,7 +1175,7 @@ namespace MediaPortal.GUI.Library
           {
             lock (RenderMadVrLock)
             {
-              VideoWindow = new Rectangle(0, 0, 1, 1);
+              VideoWindow = new System.Drawing.Rectangle(0, 0, 1, 1);
             }
           }
 
@@ -1181,7 +1196,7 @@ namespace MediaPortal.GUI.Library
     /// Get/Set left screen calibration
     /// </summary>
     public static int OffsetX { get; set; }
- 
+
     /// <summary>
     /// Get/Set upper screen calibration
     /// </summary>
@@ -1259,7 +1274,7 @@ namespace MediaPortal.GUI.Library
 
       width = maxWidth;
       height = (int)(width / outputFrameAR);
-      
+
       if (height > maxHeight)
       {
         height = maxHeight;
@@ -1588,9 +1603,9 @@ namespace MediaPortal.GUI.Library
       {
         Size client = GUIGraphicsContext.form.ClientSize;
         float ration = 1.0f;
-        
-        if (DX9Device != null && DX9Device.PresentationParameters != null)
-          ration = (float)client.Width / (float)DX9Device.PresentationParameters.BackBufferWidth;
+
+        if (DX9Device != null)
+          ration = (float)client.Width / (float)PresentationParameters.BackBufferWidth;
 
         width = (int)((float)width * (float)ration);
         height = (int)((float)height * (float)ration);
@@ -1616,7 +1631,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// 
     /// </summary>
-    public static bool InVmr9Render  { get; set; }
+    public static bool InVmr9Render { get; set; }
 
     /// <summary>
     /// 
@@ -1954,8 +1969,8 @@ namespace MediaPortal.GUI.Library
       }
 
       Cameras.Clear();
-      Cameras.Add(new Point(Width / 2, Height / 2));
-      UpdateCameraPosition(Cameras[Cameras.Count-1]);
+      Cameras.Add(new System.Drawing.Point(Width / 2, Height / 2));
+      UpdateCameraPosition(Cameras[Cameras.Count - 1]);
 
       // reset the final transform and window transforms
       UpdateFinalTransform(_guiTransform);
@@ -2087,13 +2102,13 @@ namespace MediaPortal.GUI.Library
     /// 
     /// </summary>
     /// <param name="camera"></param>
-    public static void SetCameraPosition(Point camera)
+    public static void SetCameraPosition(System.Drawing.Point camera)
     {
       // Position the camera relative to the default camera location (the geometric center of the screen).
       // The default camera is always camera [0].
-      var cam = new Point(Cameras[0].X + camera.X, Cameras[0].Y + camera.Y);
+      var cam = new System.Drawing.Point(Cameras[0].X + camera.X, Cameras[0].Y + camera.Y);
       Cameras.Add(cam);
-      UpdateCameraPosition(Cameras[Cameras.Count-1]);
+      UpdateCameraPosition(Cameras[Cameras.Count - 1]);
     }
 
     /// <summary>
@@ -2110,14 +2125,14 @@ namespace MediaPortal.GUI.Library
       {
         Log.Error("GUIGraphicsContext: RestoreCameraPosition() - attempt to remove the default camera; calls to set a camera position should not be made from Render().");
       }
-      UpdateCameraPosition(Cameras[Cameras.Count-1]);
+      UpdateCameraPosition(Cameras[Cameras.Count - 1]);
     }
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="camera"></param>
-    public static void UpdateCameraPosition(Point camera)
+    public static void UpdateCameraPosition(System.Drawing.Point camera)
     {
       // NOTE: This routine is currently called (twice) every time there is a <camera>
       //       tag in the skin.  It actually only has to be called before we render
@@ -2128,7 +2143,7 @@ namespace MediaPortal.GUI.Library
       //       to cut down on one setting)
 
       // and calculate the offset from the screen center
-      var offset = new Point(camera.X - (Width / 2), camera.Y - (Height / 2));
+      var offset = new System.Drawing.Point(camera.X - (Width / 2), camera.Y - (Height / 2));
 
       // grab the viewport dimensions and location
       Viewport viewport = DX9Device.Viewport;
@@ -2138,13 +2153,15 @@ namespace MediaPortal.GUI.Library
       // world view.  Until this is moved onto the GPU (via a vertex shader for instance), we set it to the identity
       // here.
       Matrix mtxWorld = Matrix.Identity;
-      DX9Device.Transform.World = mtxWorld;
+      //DX9Device.Transform.World = mtxWorld;
+      DX9Device.SetTransform(TransformState.World, mtxWorld);
       // camera view.  Multiply the Y coord by -1 then translate so that everything is relative to the camera
       // position.
       Matrix flipY = Matrix.Scaling(1.0f, -1.0f, 1.0f);
       Matrix translate = Matrix.Translation(-(viewport.X + w + offset.X), -(viewport.Y + h + offset.Y), 2 * h);
       Matrix mtxView = Matrix.Multiply(translate, flipY);
-      DX9Device.Transform.View = mtxView;
+      //DX9Device.Transform.View = mtxView;
+      DX9Device.SetTransform(TransformState.View, mtxView);
 
       // projection onto screen space
       Matrix mtxProjection = Matrix.PerspectiveOffCenterLH((-w - offset.X) * 0.5f, //Minimum x-value of the view volume.
@@ -2153,7 +2170,8 @@ namespace MediaPortal.GUI.Library
                                                            (h + offset.Y) * 0.5f, //Maximum y-value of the view volume.
                                                            h, //Minimum z-value of the view volume.
                                                            100 * h); //Maximum z-value of the view volume.
-      DX9Device.Transform.Projection = mtxProjection;
+      //DX9Device.Transform.Projection = mtxProjection;
+      DX9Device.SetTransform(TransformState.Projection, mtxProjection);
     }
 
     #region Matrix Management and Transformations
@@ -2194,7 +2212,9 @@ namespace MediaPortal.GUI.Library
     public static void PushProjectionMatrix()
     {
       // Push the current direct3d projection matrix onto the stack.
-      ProjectionMatrixStack.Push(DX9Device.Transform.Projection);
+      //ProjectionMatrixStack.Push(DX9Device.Transform.Projection);
+      ProjectionMatrixStack.Push(DX9Device.GetTransform(TransformState.Projection));
+
     }
 
     /// <summary>
@@ -2206,7 +2226,8 @@ namespace MediaPortal.GUI.Library
       // Pop the direct3d projection matrix off of the stack.
       if (ProjectionMatrixStack.Count > 0)
       {
-        DX9Device.Transform.Projection = ProjectionMatrixStack.Pop();
+        //DX9Device.Transform.Projection = ProjectionMatrixStack.Pop();
+        DX9Device.SetTransform(TransformState.Projection, ProjectionMatrixStack.Pop());
       }
       else
       {
@@ -2219,7 +2240,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void SetPerspectiveProjectionMatrix(float fovy, float aspectratio, float nearPlane, float farPlane)
     {
-      DX9Device.Transform.Projection = Matrix.PerspectiveFovLH(fovy, aspectratio, nearPlane, farPlane);
+      //DX9Device.Transform.Projection = Matrix.PerspectiveFovLH(fovy, aspectratio, nearPlane, farPlane);
+      DX9Device.SetTransform(TransformState.Projection, Matrix.PerspectiveFovLH(fovy, aspectratio, nearPlane, farPlane));
     }
 
     /// <summary>
@@ -2286,16 +2308,16 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Returns the current clip rectangle.
     /// </summary>
-    public static Rectangle GetClipRect()
+    public static RawRectangle GetClipRect()
     {
-      return DX9Device.ScissorRectangle;
+      return DX9Device.ScissorRect;
     }
 
     /// <summary>
     /// Sets a clip region. Set the clip rectangle as specified and enables the FontEngine to use clipping.
     /// </summary>
     /// <param name="rect"></param>
-    public static void BeginClip(Rectangle rect)
+    public static void BeginClip(System.Drawing.Rectangle rect)
     {
       BeginClip(rect, true);
     }
@@ -2306,16 +2328,16 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     /// <param name="rect"></param>
     /// <param name="constrain"></param>
-    public static void BeginClip(Rectangle rect, bool constrain)
+    public static void BeginClip(System.Drawing.Rectangle rect, bool constrain)
     {
-      Rectangle r3 = rect;
+      RawRectangle r3 = new RawRectangle(rect.Left, rect.Top, rect.Right, rect.Bottom);
 
       if (constrain && ClipRectangleStack.Count > 0)
       {
         // Default behavior for nested clipping is handled by not disturbing the outer clip rectangle.
         // Nested clip rectangles are themselves clipped at the boundary of the outer clip rectangle.
-        Rectangle r1 = ClipRectangleStack.Peek();
-        Rectangle r2 = rect;
+        RawRectangle r1 = ClipRectangleStack.Peek();
+        RawRectangle r2 = new RawRectangle(rect.Left, rect.Top, rect.Right, rect.Bottom);
         r3 = r1; // Default result is the clip rectangle on the top of the stack.
 
         bool intersect = !(r2.Left > r1.Right || r2.Right < r1.Left || r2.Top > r1.Bottom || r2.Bottom < r1.Top);
@@ -2324,15 +2346,15 @@ namespace MediaPortal.GUI.Library
         {
           int x = Math.Max(r1.Left, r2.Left);
           int y = Math.Max(r1.Top, r2.Top);
-          int width = Math.Min(r1.Right, r2.Right) - x;
-          int height = Math.Min(r1.Bottom, r2.Bottom) - y;
-          r3 = new Rectangle(x, y, width, height);
+          int r = Math.Min(r1.Right, r2.Right);
+          int b = Math.Min(r1.Bottom, r2.Bottom);
+          r3 = new RawRectangle(x, y, r, b);
         }
       }
 
       // Place the clip rectangle on the top of the stack and set it as the current clip rectangle.
       ClipRectangleStack.Push(r3);
-      DX9Device.ScissorRectangle = ClipRectangleStack.Peek();
+      DX9Device.ScissorRect = ClipRectangleStack.Peek();
       DXNative.FontEngineSetClipEnable();
     }
 
@@ -2353,9 +2375,50 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          DX9Device.ScissorRectangle = ClipRectangleStack.Peek();
+          DX9Device.ScissorRect = ClipRectangleStack.Peek();
         }
       }
     }
+
+    /// <summary>
+    /// Raise device lost event
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    public static void OnDeviceLost(object sender, EventArgs e)
+    {
+        if (DeviceLost != null)
+          DeviceLost(sender, e);
+    }
+
+    public static Direct3D Direct3D
+    {
+      get { return _d3d; }
+    } private static Direct3D _d3d;
+
+    public static void Direct3DLoad()
+    {
+      if (_d3d == null)
+      {
+        if (IsDX9EXused)
+          _d3d = new Direct3DEx();
+        else
+          _d3d = new Direct3D();
+      }
+    }
+
+    public static void Direct3DUnload()
+    {
+      if (DX9Device != null)
+      {
+        DX9Device.Dispose();
+        DX9Device = null;
+      }
+
+      if (_d3d != null)
+        _d3d.Dispose();
+      _d3d = null;
+    }
+
   }
 }

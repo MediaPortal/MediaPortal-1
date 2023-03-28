@@ -20,7 +20,7 @@
 
 using System.Collections.Generic;
 using System.Drawing;
-using Microsoft.DirectX.Direct3D;
+//using Microsoft.DirectX.Direct3D;
 using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library

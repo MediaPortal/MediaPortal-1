@@ -32,8 +32,8 @@ using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using Microsoft.DirectX.Direct3D;
-using Filter = Microsoft.DirectX.Direct3D.Filter;
+using SharpDX.Direct3D9;
+using Filter = SharpDX.Direct3D9.Filter;
 
 // ReSharper disable CheckNamespace
 namespace MediaPortal.GUI.Library
@@ -395,7 +395,7 @@ namespace MediaPortal.GUI.Library
       // Determine maximum texture dimensions
       try
       {
-        Caps capabilities = GUIGraphicsContext.DX9Device.DeviceCaps;
+        Capabilities capabilities = GUIGraphicsContext.DX9Device.Capabilities;
         _maxTextureWidth = capabilities.MaxTextureWidth;
         _maxTextureHeight = capabilities.MaxTextureHeight;
         Log.Info("TexturePacker: D3D device does support {0}x{1} textures", _maxTextureWidth, _maxTextureHeight);
@@ -500,8 +500,8 @@ namespace MediaPortal.GUI.Library
 
         string fileName = String.Format(@"{0}\packedgfx2{1}.png", GUIGraphicsContext.SkinCacheFolder, index);
 
-        var info2 = new ImageInformation();
-        Texture tex = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
+        ImageInformation info2;
+        Texture tex = Texture.FromFile(GUIGraphicsContext.DX9Device,
                                              fileName,
                                              0, 0, //width/height
                                              1, //mipslevels
@@ -511,7 +511,7 @@ namespace MediaPortal.GUI.Library
                                              Filter.None,
                                              Filter.None,
                                              0,
-                                             ref info2);
+                                             out info2);
         bigOne.texture = tex;
         bigOne.texture.Disposing -= TextureDisposing;
         bigOne.texture.Disposing += TextureDisposing;
@@ -715,7 +715,7 @@ namespace MediaPortal.GUI.Library
           }
           if (bigOne.texture != null)
           {
-            if (!bigOne.texture.Disposed)
+            if (!bigOne.texture.IsDisposed)
             {
               try
               {

@@ -25,7 +25,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Music.Amazon;
 using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
-using Microsoft.DirectX.Direct3D;
+using SharpDX.Direct3D9;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Music
