@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2022 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2022 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -83,6 +83,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("itemHeight")] protected int _imageHeight = 16;
 
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("textalign2")] protected Alignment _text2Alignment = Alignment.ALIGN_RIGHT;
     [XMLSkinElement("textalign3")] protected Alignment _text3Alignment = Alignment.ALIGN_LEFT;
 
     [XMLSkinElement("textcontent3")] protected string _text3Content = string.Empty;
@@ -821,7 +822,7 @@ namespace MediaPortal.GUI.Library
 
               // set text, alignment and font for rendering
               label2.Label = item.Label2;
-              label2.TextAlignment = Alignment.ALIGN_RIGHT;
+              label2.TextAlignment = _text2Alignment;
               label2.FontName = _fontName2Name;
 
               // recalculate label width
@@ -974,7 +975,7 @@ namespace MediaPortal.GUI.Library
 
               // set text, alignment and font for rendering
               label2.Label = item.Label2;
-              label2.TextAlignment = Alignment.ALIGN_RIGHT;
+              label2.TextAlignment = _text2Alignment;
               label2.FontName = _fontName2Name;
 
               // apply padding to label width
@@ -3948,6 +3949,12 @@ namespace MediaPortal.GUI.Library
     {
       get { return _textAlignment; }
       set { _textAlignment = value; }
+    }
+
+    public Alignment Text2Alignment
+    {
+      get { return _text2Alignment; }
+      set { _text2Alignment = value; }
     }
 
     public Alignment Text3Alignment
