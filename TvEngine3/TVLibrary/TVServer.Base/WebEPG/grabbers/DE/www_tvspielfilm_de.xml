@@ -214,22 +214,26 @@
 				<SectionTemplate tags="LS">
 					<TemplateText>
 					<![CDATA[
-						<li>
-						<source>
-						<source>
-						<span class="t"><#START> - <#END> | </span>
-						<span class="c">DAS ERSTE</span>
-						<strong class="tv-tip-heading"><#TITLE></strong>
-						<span class="genre"><#GENRE><span class="listing-icon rating-0"></span></span>
-						<span class="listing-icon rating-0"></span>
-						<span class="listing-icon to-hide more"></span>
-						<span class="progress-bar"></span>
-						</li>
+							<li>
+							<span class="t"><#START> - <#END> | </span>
+							<span class="c"></span></div>
+							<div class="">
+							<strong class="tv-tip-heading"><#TITLE></strong>
+							</div>
+							<div class="genre">
+							<span class="genre-time">| <#GENRE></span>
+							<span class="listing-icon rating-0"></span>
+							</div>
+							</div>
+							</a>
+							</div>
+							<span class="progress-bar"></span>
+							</li>
 					]]>
 					</TemplateText>
 				</SectionTemplate>
 			</Template>
-			<Template name="Details" start="&lt;div class=&quot;article-text&quot;&gt;" end="&lt;/div&gt;">
+			<Template name="Details" start="&lt;section class=&quot;broadcast-detail__description&quot;&gt;" end="&lt;/section&gt;">
 				<SectionTemplate tags="P">
 					<TemplateText>
 					<![CDATA[
