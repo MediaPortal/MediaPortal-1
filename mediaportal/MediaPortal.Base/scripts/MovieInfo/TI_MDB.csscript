@@ -21,7 +21,7 @@ using System.Web;
 internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabber
 {
   const string strGrabber = "TI_MDB";
-  const string strGrabberVersion = "20191230.I";
+  const string strGrabberVersion = "20230328.I";
 
   public Grabber()
   {
@@ -1692,7 +1692,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     public bool adult { get; set; }
     public string backdrop_path { get; set; }
     public Collection belongs_to_collection { get; set; }
-    public int budget { get; set; }
+    public string budget { get; set; }
     public List<Genre> genres { get; set; }
     public string homepage { get; set; }
     public int id { get; set; }
@@ -1705,7 +1705,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     public List<ProductionCompany> production_companies { get; set; }
     public List<ProductionCountry> production_countries { get; set; }
     public string release_date { get; set; }
-    public int revenue { get; set; }
+    public string revenue { get; set; }
     public int runtime { get; set; }
     public List<SpokenLanguage> spoken_languages { get; set; }
     public string status { get; set; }

@@ -44,8 +44,6 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
            "TMDB");
         elements.Add(url);
 
-        System.Threading.Thread.Sleep(1000);
-
         if (elements.Count >= iLimit)
         {
           break;
