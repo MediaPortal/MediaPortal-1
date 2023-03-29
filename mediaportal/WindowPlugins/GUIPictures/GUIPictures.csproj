@@ -185,8 +185,8 @@
     <Reference Include="MediaInfo.Wrapper, Version=21.9.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Packages\MediaInfo.Wrapper.21.9.2\lib\net40\MediaInfo.Wrapper.dll</HintPath>
     </Reference>
-    <Reference Include="MetadataExtractor, Version=2.7.1.0, Culture=neutral, PublicKeyToken=b66b5ccaf776c301, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Packages\MetadataExtractor.2.7.1\lib\net35\MetadataExtractor.dll</HintPath>
+    <Reference Include="MetadataExtractor, Version=2.7.2.0, Culture=neutral, PublicKeyToken=b66b5ccaf776c301, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Packages\MetadataExtractor.2.7.2\lib\net35\MetadataExtractor.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <HintPath>..\..\..\Packages\DirectX_9_SDK.10.6.0\lib\Microsoft.DirectX.Direct3D.dll</HintPath>
