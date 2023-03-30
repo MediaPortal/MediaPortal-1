@@ -1,6 +1,6 @@
-#region Copyright (C) 2014 Team MediaPortal
+#region Copyright (C) 2014-2023 Team MediaPortal
 
-// Copyright (C) 2014 Team MediaPortal
+// Copyright (C) 2014-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -274,7 +274,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             byte newAudioCodecs = 0;
             if (g_Player.Player != null && g_Player.Player.Playing)
             {
-                if (g_Player.MediaInfo != null && !g_Player.MediaInfo.MediaInfoNotloaded && g_Player.IsVideo && g_Player.MediaInfo.BestVideoStream != null)
+                if (g_Player.MediaInfo != null && g_Player.MediaInfo.Success && g_Player.IsVideo && g_Player.MediaInfo.BestVideoStream != null)
                 {
                     // video playback
                     _videoMediaInfo.Format = g_Player.MediaInfo.BestVideoStream.Codec.ToCodecString();
