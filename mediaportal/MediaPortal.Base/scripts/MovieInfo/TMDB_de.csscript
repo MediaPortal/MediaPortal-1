@@ -53,9 +53,9 @@ public class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 	// get the list on find films specified by the title
     public void FindFilm(string strSearch, int iLimit, ArrayList elements)
     {
-        if (Regex.Match(strSearch, @"tt\d{7}").Success)
+        if (Regex.Match(strSearch, @"tt\d{7,8}").Success)
         {
-            string ttNumber = Regex.Match(strSearch, @"(?<imdbID>tt\d{7})").Groups["imdbID"].Value;
+            string ttNumber = Regex.Match(strSearch, @"(?<imdbID>tt\d{7,8})").Groups["imdbID"].Value;
             string imdbUrl = string.Format("http://www.imdb.com/title/{0}", ttNumber);
             string imdbPage = GetHtmlPage(imdbUrl);
             strSearch = GetTitleIMDB(imdbPage);
