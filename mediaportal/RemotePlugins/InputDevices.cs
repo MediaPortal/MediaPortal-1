@@ -90,7 +90,8 @@ namespace MediaPortal.InputDevices
         catch (Exception ex)
         {
           //Keep on propagating that message even if one of our input device crapped out.
-          Log.Error("InputDevices - WndProc - exception caught from InputDevice: {0} {1}", device.ToString(), ex);
+          Log.Error("InputDevices - WndProc - exception caught from InputDevice: {0} MSG:{1} W:{2} L:{3} Ex:{4}",
+            device.ToString(), msg.Msg, msg.WParam, msg.LParam, ex);
         }
       }
 
