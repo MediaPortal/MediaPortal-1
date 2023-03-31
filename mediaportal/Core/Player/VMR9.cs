@@ -114,7 +114,7 @@ namespace MediaPortal.Player
     int ReduceMadvrFrame();
 
     [PreserveSig]
-    void DestroyHWnd(uint phWnd);
+    void DestroyHWnd(IntPtr phWnd);
   }
 
   #endregion
@@ -124,8 +124,8 @@ namespace MediaPortal.Player
     #region imports
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe bool Vmr9Init(IVMR9PresentCallback callback, uint dwD3DDevice, IBaseFilter vmr9Filter,
-                                               uint monitor);
+    private static extern unsafe bool Vmr9Init(IVMR9PresentCallback callback, IntPtr dwD3DDevice, IBaseFilter vmr9Filter,
+                                               IntPtr monitor);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void Vmr9Deinit();
@@ -137,8 +137,8 @@ namespace MediaPortal.Player
     private static extern unsafe void Vmr9SetDeinterlacePrefs(uint dwMethod);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe bool EvrInit(IVMR9PresentCallback callback, uint dwD3DDevice, 
-                                              ref IBaseFilter vmr9Filter, uint monitor, int monitorIdx,
+    private static extern unsafe bool EvrInit(IVMR9PresentCallback callback, IntPtr dwD3DDevice, 
+                                              ref IBaseFilter vmr9Filter, IntPtr monitor, int monitorIdx,
                                               bool disVsyncCorr, bool disMparCorr);
 
     //, uint dwWindow);
@@ -165,7 +165,7 @@ namespace MediaPortal.Player
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe int MadInit(IVMR9PresentCallback callback, int xposition, int yposition,
-                                              int width, int height, uint dwD3DDevice, uint parent,
+                                              int width, int height, IntPtr dwD3DDevice, IntPtr parent,
                                               ref IBaseFilter madFilter, IGraphBuilder mPGraphbuilder);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -994,12 +994,12 @@ namespace MediaPortal.Player
             if ((OSInfo.OSInfo.Win7OrLater() &&
                  Screen.AllScreens[adapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
             {
-              EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
+              EvrInit(_scene, upDevice, ref _vmr9Filter, hMonitor,
                 GUIGraphicsContext.currentMonitorIdx, false, false);
             }
             else
             {
-              EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
+              EvrInit(_scene, upDevice, ref _vmr9Filter, hMonitor,
                 GUIGraphicsContext.currentMonitorIdx, true, true);
               Log.Debug("VMR9: force disable vsync and bias correction for Win7 or lower - current primary is : {0}",
                 Screen.AllScreens[adapterOrdinal].Primary);
@@ -1010,12 +1010,12 @@ namespace MediaPortal.Player
             if ((OSInfo.OSInfo.Win7OrLater() &&
                  Screen.AllScreens[adapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
             {
-              EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
+              EvrInit(_scene, upDevice, ref _vmr9Filter, hMonitor,
                 adapterOrdinal, false, false);
             }
             else
             {
-              EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
+              EvrInit(_scene, upDevice, ref _vmr9Filter, hMonitor,
                 adapterOrdinal, true, true);
               Log.Debug("VMR9: force disable vsync and bias correction for Win7 or lower - current primary is : {0}",
                 Screen.AllScreens[adapterOrdinal].Primary);
@@ -1048,15 +1048,15 @@ namespace MediaPortal.Player
           //Backup current refresh rate value
           Win32.FindMonitorIndexForScreen();
           if ((GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal == -1) ||
-              (GUIGraphicsContext.DX9Device.Direct3D.Adapters.Count <= GUIGraphicsContext.DX9DeviceMadVr.Capabilities.AdapterOrdinal) ||
-              (GUIGraphicsContext.DX9Device.Direct3D.Adapters.Count > Screen.AllScreens.Length))
+              (GUIGraphicsContext.Direct3D.Adapters.Count <= GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal) ||
+              (GUIGraphicsContext.Direct3D.Adapters.Count > Screen.AllScreens.Length))
           {
             Log.Info("VMR9: adapter number out of bounds");
           }
           else
           {
             GUIGraphicsContext.ForcedRR3DRate =
-              GUIGraphicsContext.DX9Device.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
+              GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
             Log.Info("VMR9: backup current refresh rate value {0}Hz", GUIGraphicsContext.ForcedRR3DRate);
           }
           // Get Client size
@@ -1065,8 +1065,8 @@ namespace MediaPortal.Player
           GUIGraphicsContext._backupCurrentScreenSizeHeight = client.Height;
           //GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
           //GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
-          hr = new HResult(MadInit(_scene, xposition, yposition, client.Width, client.Height, (uint) upDevice.ToInt32(),
-            (uint) GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, graphBuilder));
+          hr = new HResult(MadInit(_scene, xposition, yposition, client.Width, client.Height, upDevice,
+            GUIGraphicsContext.ActiveForm, ref _vmr9Filter, graphBuilder));
           //hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
           if (!UseMadVideoRenderer3D) // TODO
           {
@@ -1100,7 +1100,7 @@ namespace MediaPortal.Player
           _vmr9Filter = (IBaseFilter) new VideoMixingRenderer9();
           Log.Info("VMR9: added Video Mixing Renderer 9 to graph");
 
-          Vmr9Init(_scene, (uint) upDevice.ToInt32(), _vmr9Filter, (uint) hMonitor.ToInt32());
+          Vmr9Init(_scene, upDevice, _vmr9Filter, hMonitor);
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Video Mixing Renderer 9"));
         }
 
@@ -1811,7 +1811,6 @@ namespace MediaPortal.Player
                 int mAudioDelay = AudioPostEngine.GetInstance().AudioDelay;
                 if (mAudioDelay != 0)
                 {
-
                   ILAVAudioSettings asett = baseFilterLavAudio as ILAVAudioSettings;
                   asett?.SetAudioDelay(true, 0);
                   DirectShowUtil.ReleaseComObject(baseFilterLavAudio);

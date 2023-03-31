@@ -668,7 +668,7 @@ namespace MediaPortal.Player
           // Alert the frame grabber that it has a chance to grab a video frame
           // if it likes (method returns immediately otherwise
           if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
-            grabber.OnFrame(width, height, arWidth, arHeight, pSurface, FrameGrabber.FrameSource.Video);
+            grabber.OnFrame(width, height, arWidth, arHeight, (Surface)pSurface, FrameGrabber.FrameSource.Video);
 
           _textureAddress = pTexture;
 
@@ -723,7 +723,7 @@ namespace MediaPortal.Player
           lock (GUIGraphicsContext.RenderModeSwitch)
           {
             if (grabber != null)
-              grabber.OnFrame((short)client.Width, (short)client.Height, (short)client.Width, (short)client.Height, (IntPtr)surfaceMadVr,
+              grabber.OnFrame((short)client.Width, (short)client.Height, (short)client.Width, (short)client.Height, surfaceMadVr,
                 FrameGrabber.FrameSource.Video);
           }
         }
@@ -1359,11 +1359,11 @@ namespace MediaPortal.Player
       //}
     }
 
-    public void DestroyHWnd(uint phWnd)
+    public void DestroyHWnd(IntPtr phWnd)
     {
       if (GUIGraphicsContext.DX9Device != null)
       {
-        GUIGraphicsContext.MadVrHWnd = (IntPtr) phWnd;
+        GUIGraphicsContext.MadVrHWnd = phWnd;
         Log.Debug("Received madVR phWnd : {0} from C++ side", phWnd);
       }
     }

@@ -32,7 +32,7 @@ namespace MediaPortal.guilib
           _image.Disposing += new EventHandler<EventArgs>(D3DTexture_Disposing);
 
           IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(_image);
-          _textureNumber = DXNative.FontEngineAddTextureSync(ptr.ToInt32(), true, (void*)ptr.ToPointer());
+          _textureNumber = DXNative.FontEngineAddTextureSync(ptr.ToInt64(), true, (void*)ptr.ToPointer());
         }
       }
     }

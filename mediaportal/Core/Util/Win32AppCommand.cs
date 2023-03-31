@@ -11,7 +11,10 @@ namespace Win32
   {
     public static int GET_APPCOMMAND_LPARAM(IntPtr lParam)
     {
-      return ((short) HIWORD(lParam.ToInt32()) & ~Const.FAPPCOMMAND_MASK);
+      if (IntPtr.Size == 8)
+        return ((short)HIWORD(lParam.ToInt64()) & ~Const.FAPPCOMMAND_MASK);
+      else
+        return ((short)HIWORD(lParam.ToInt32()) & ~Const.FAPPCOMMAND_MASK);
     }
   }
 }
