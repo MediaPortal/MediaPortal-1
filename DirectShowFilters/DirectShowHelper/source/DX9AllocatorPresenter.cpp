@@ -309,7 +309,7 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface, SIZE szAspectRa
 
     CComPtr<IDirect3DTexture9> pTexture = NULL;
     pSurface->GetContainer(IID_IDirect3DTexture9, (void**)&pTexture);
-    m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)pTexture, (DWORD)(IDirect3DSurface9*)pSurface);
+    m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (IDirect3DTexture9*)pTexture, (IDirect3DSurface9*)pSurface);
   }
   catch(...)
   {

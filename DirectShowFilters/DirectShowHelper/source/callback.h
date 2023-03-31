@@ -18,15 +18,15 @@
 
 DECLARE_INTERFACE_(IVMR9Callback, IUnknown)
 {
-  STDMETHOD(PresentImage)  (THIS_ DWORD cx, DWORD cy, DWORD arx, DWORD ary, DWORD pTexture, DWORD pSurface)PURE;
+  STDMETHOD(PresentImage)  (THIS_ DWORD cx, DWORD cy, DWORD arx, DWORD ary, LPVOID pTexture, LPVOID pSurface)PURE;
   STDMETHOD(SetSampleTime)(REFERENCE_TIME nsSampleTime)PURE;
   STDMETHOD(RenderGui)(DWORD cx, DWORD cy, DWORD arx, DWORD ary)PURE;
   STDMETHOD(RenderOverlay)(DWORD cx, DWORD cy, DWORD arx, DWORD ary)PURE;
-  STDMETHOD(SetRenderTarget)(LONG pTarget)PURE;
-  STDMETHOD(SetSubtitleDevice)(LONG pDevice)PURE;
+  STDMETHOD(SetRenderTarget)(LPVOID pTarget)PURE;
+  STDMETHOD(SetSubtitleDevice)(LPVOID pDevice)PURE;
   STDMETHOD(RenderSubtitle)(REFERENCE_TIME frameStart, int left, int top, int right, int bottom, int width, int height, int xOffsetInPixels)PURE;
   STDMETHOD(RenderSubtitleEx)(REFERENCE_TIME frameStart, RECT viewportRect, RECT croppedVideoRect, int xOffsetInPixels)PURE;
-  STDMETHOD(RenderFrame)(int cx, int cy, int arx, int ary, LONG pTargetmadVr)PURE;
+  STDMETHOD(RenderFrame)(int cx, int cy, int arx, int ary, LPVOID pTargetmadVr)PURE;
   STDMETHOD(GrabMadVrScreenshot)(LPVOID pTargetmadVrDib)PURE;
   STDMETHOD(GrabMadVrFrame)(LPVOID pTargetmadVrDib)PURE;
   STDMETHOD(GrabMadVrCurrentFrame)(LPVOID pTargetmadVrDib)PURE;

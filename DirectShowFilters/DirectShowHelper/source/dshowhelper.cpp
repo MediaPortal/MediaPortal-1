@@ -437,7 +437,7 @@ VMR9_SampleFormat ConvertInterlaceFlags(DWORD dwInterlaceFlags)
 }
 
 
-BOOL Vmr9Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter,DWORD monitor)
+BOOL Vmr9Init(IVMR9Callback* callback, LPVOID* dwD3DDevice, IBaseFilter* vmr9Filter, LPVOID* monitor)
 {
   HRESULT hr;
   m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
@@ -779,7 +779,7 @@ HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService, REFIID riid, LPV
 }
 
 
-BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter** evrFilter, DWORD monitor, int monitorIdx, bool disVsyncCorr, bool disMparCorr)
+BOOL EvrInit(IVMR9Callback* callback, LPVOID* dwD3DDevice, IBaseFilter** evrFilter, LPVOID* monitor, int monitorIdx, bool disVsyncCorr, bool disMparCorr)
 {
   HRESULT hr;
   m_RenderPrefix = _T("evr");
@@ -972,7 +972,7 @@ void CloseFrameGrabbing()
 }
 // madVR frame grabber thread end
 
-int MadInit(IVMR9Callback* callback, int xposition, int yposition, int width, int height, DWORD dwD3DDevice, OAHWND parent, IBaseFilter** madFilter, IGraphBuilder* pMediaControl)
+int MadInit(IVMR9Callback* callback, int xposition, int yposition, int width, int height, LPVOID* dwD3DDevice, OAHWND parent, IBaseFilter** madFilter, IGraphBuilder* pMediaControl)
 {
   m_RenderPrefix = _T("mad");
 
