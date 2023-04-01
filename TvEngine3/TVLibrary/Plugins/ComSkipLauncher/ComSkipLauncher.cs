@@ -34,7 +34,7 @@ namespace TvEngine
   {
     #region Constants
 
-    private const bool DefaultRunAtStrart = true;
+    private const bool DefaultRunAtStrart = false;
     private const string DefaultProgram = "ComSkip.exe";
     private const string DefaultParameters = "\"{0}\"";
 
