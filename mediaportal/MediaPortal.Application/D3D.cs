@@ -1553,7 +1553,6 @@ namespace MediaPortal
       ResumeLayout(false);
     }
 
-
     /// <summary>
     /// 
     /// </summary>
@@ -1567,254 +1566,73 @@ namespace MediaPortal
       return true;
     }
 
-
     /// <summary>
     /// Finds the adapter that has the specified screen on its primary monitor
     /// </summary>
     /// <returns>The adapter that has the specified screen on its primary monitor</returns>
-    private GraphicsAdapterInfo FindAdapterForScreen(Screen screen)
+    public GraphicsAdapterInfo FindAdapterForScreen(Screen screen)
     {
-      // For fullscreen, default to first HAL DeviceCombo that supports the current desktop 
-      // display mode, or any display mode if HAL is not compatible with the desktop mode, or 
-      // non-HAL if no HAL is available
-      DisplayMode bestAdapterDesktopDisplayMode = new DisplayMode();
-
+      // Get display mode of primary adapter (which is assumed to be where the window will appear)
+      DisplayMode primaryDesktopDisplayMode = GUIGraphicsContext.Direct3D.Adapters[0].CurrentDisplayMode;
       GraphicsAdapterInfo bestAdapterInfo = null;
       GraphicsDeviceInfo bestDeviceInfo = null;
       DeviceCombo bestDeviceCombo = null;
 
+      Log.Debug("[FindAdapterForScreen] PrimaryDesktopDisplayMode: Format:{0}", primaryDesktopDisplayMode.Format);
+
       foreach (GraphicsAdapterInfo adapterInfo in _enumerationSettings.AdapterInfoList)
       {
-        DisplayMode adapterDesktopDisplayMode = GUIGraphicsContext.Direct3D.Adapters[adapterInfo.AdapterOrdinal].CurrentDisplayMode;
+        Log.Debug("[FindAdapterForScreen] AdapterInfo: {0} - {1}", adapterInfo.AdapterDetails.Description, adapterInfo.AdapterDetails.DeviceName);
+
         foreach (GraphicsDeviceInfo deviceInfo in adapterInfo.DeviceInfos)
         {
-          //if (doesRequireHardware && deviceInfo.DevType != DeviceType.Hardware)
-          //  continue;
-          //if (doesRequireReference && deviceInfo.DevType != DeviceType.Reference)
-          //  continue;
+          Log.Debug("[FindAdapterForScreen] DeviceInfo: {0}", deviceInfo.DevType);
 
           foreach (DeviceCombo deviceCombo in deviceInfo.DeviceCombos)
           {
-            if (deviceCombo.IsWindowed)
+            Log.Debug("[FindAdapterForScreen] DeviceCombo: BackBufferFormat:{0} AdapterFormat:{1} Windowed:{2}",
+              deviceCombo.BackBufferFormat, deviceCombo.AdapterFormat, deviceCombo.IsWindowed);
+
+            if (!deviceCombo.IsWindowed)
+              continue;
+
+            if (deviceCombo.AdapterFormat != primaryDesktopDisplayMode.Format)
               continue;
 
             bool adapterMatchesBackBuffer = (deviceCombo.BackBufferFormat == deviceCombo.AdapterFormat);
-            bool adapterMatchesDesktop = (deviceCombo.AdapterFormat == adapterDesktopDisplayMode.Format);
 
-            // If we haven't found a compatible set yet, or if this set
+            // If we haven't found a compatible DeviceCombo yet, or if this set
             // is better (because it's a HAL, and/or because formats match better),
             // save it
             if (bestDeviceCombo == null ||
                 bestDeviceCombo.DevType != DeviceType.Hardware && deviceInfo.DevType == DeviceType.Hardware ||
-                bestDeviceCombo.DevType == DeviceType.Hardware &&
-                bestDeviceCombo.AdapterFormat != adapterDesktopDisplayMode.Format && adapterMatchesDesktop ||
-                bestDeviceCombo.DevType == DeviceType.Hardware && adapterMatchesDesktop && adapterMatchesBackBuffer)
+                deviceCombo.DevType == DeviceType.Hardware && adapterMatchesBackBuffer)
             {
-              bestAdapterDesktopDisplayMode = adapterDesktopDisplayMode;
               bestAdapterInfo = adapterInfo;
               bestDeviceInfo = deviceInfo;
               bestDeviceCombo = deviceCombo;
-              if (deviceInfo.DevType == DeviceType.Hardware && adapterMatchesDesktop && adapterMatchesBackBuffer)
-                // This fullscreen device combo looks great -- take it
-                goto EndFullscreenDeviceComboSearch;
-              // Otherwise keep looking for a better fullscreen device combo
+              if (deviceInfo.DevType == DeviceType.Hardware && adapterMatchesBackBuffer)
+              {
+                Log.Debug("[FindAdapterForScreen] DeviceCombo: Selected");
+                // This windowed device combo looks great -- take it
+                goto EndWindowedDeviceComboSearch;
+              }
+              // Otherwise keep looking for a better windowed device combo
+              Log.Debug("[FindAdapterForScreen] DeviceCombo: Accepted");
             }
           }
         }
-        //if (GUIGraphicsContext._useScreenSelector)
-        //  break;// no need to loop again.. result would be the same
-
       }
 
-
-    EndFullscreenDeviceComboSearch:
+    EndWindowedDeviceComboSearch:
       if (bestDeviceCombo == null)
-        return null;
-
-      // Need to find a display mode on the best adapter that uses pBestDeviceCombo->AdapterFormat
-      // and is as close to bestAdapterDesktopDisplayMode's res as possible
-      foreach (DisplayMode displayMode in bestAdapterInfo.DisplayModes)
       {
-        if (displayMode.Format != bestDeviceCombo.AdapterFormat)
-          continue;
-        if (displayMode.Width == bestAdapterDesktopDisplayMode.Width &&
-            displayMode.Height == bestAdapterDesktopDisplayMode.Height &&
-            displayMode.RefreshRate == bestAdapterDesktopDisplayMode.RefreshRate)
-          return bestAdapterInfo; // _desktopDisplayMode = displayMode;
+        Log.Debug("[FindAdapterForScreen] NotFound");
+        return null;
       }
 
-      return null;
-
+      return bestAdapterInfo;
     }
-
-
-    /// <summary>
-    /// Build D3D presentation parameters
-    /// </summary>
-    /// <param name="windowed">true for window, false for fullscreen</param>
-    //protected PresentParameters BuildPresentParams(bool windowed)
-    //{
-    //  // disable event handlers
-    //  if (GUIGraphicsContext.DX9Device != null)
-    //  {
-    //    GUIGraphicsContext.DeviceLost -= OnDeviceLost;
-    //  }
-
-    //  Log.Debug("D3D: BuildPresentParams()");
-
-    //  Screen screen = Screen.FromControl(this);
-    //  var size = new Size(screen.Bounds.Width, screen.Bounds.Height);
-    //  var sizeMaxClient = CalcMaxClientArea();
-    //  Log.Info("D3D: BuildPresentParams CalcMaxClientArea from: {0}x{1}", sizeMaxClient.Width, sizeMaxClient.Height);
-    //  Log.Info("D3D: BuildPresentParams screen WorkingArea from: {0}x{1}", screen.WorkingArea.Width, screen.WorkingArea.Height);
-
-    //  if (windowed)
-    //  {
-    //    size = GUIGraphicsContext.form.ClientSize;
-    //    int backupSizeWidth = 0;
-    //    int backupSizeHeight = 0;
-
-    //    using (Settings xmlreader = new MPSettings())
-    //    {
-    //      backupSizeWidth = xmlreader.GetValueAsInt("gui", "backupsizewidth", 0);
-    //      backupSizeHeight = xmlreader.GetValueAsInt("gui", "backupsizeheight", 0);
-    //    }
-
-    //    // TODO this part need to be checked because it break at runtime when BuildPresentParams is rebuilded
-    //    if ((backupSizeWidth != 0 && backupSizeHeight != 0) && _firstTimeLoadingParams)
-    //    {
-    //      size.Width = backupSizeWidth;
-    //      size.Height = backupSizeHeight;
-    //    }
-
-    //    // Sanity check and replace with sensible size values if necessary
-    //    if (size.Width < 256 || size.Height < 256 || size.Width > sizeMaxClient.Width || size.Height > sizeMaxClient.Height)
-    //    {
-    //      Log.Debug("D3D: BuildPresentParams(), invalid size {0} x {1} changed to {2} x {3}", size.Width, size.Height, sizeMaxClient.Width, sizeMaxClient.Height);
-    //      size.Width = sizeMaxClient.Width;
-    //      size.Height = sizeMaxClient.Height;
-    //    }
-    //  }
-    //  else if (g_Player.Playing && GUIGraphicsContext.InVmr9Render || GUIGraphicsContext.ForceMadVRFirstStart)
-    //  {
-    //    // Needed this to avoid D3D issue for example on AMD user and only while playing a video
-    //    size.Width = screen.WorkingArea.Width;
-    //    size.Height = screen.WorkingArea.Height;
-    //  }
-
-
-    //  PresentParameters result = new PresentParameters(size.Width, size.Height);
-
-
-    //  Log.Info("D3D: BuildPresentParams ClientSize from: {0}x{1}", GUIGraphicsContext.form.ClientSize.Width, GUIGraphicsContext.form.ClientSize.Height);
-    //  Log.Info("D3D: BuildPresentParams screen from: {0}x{1}", screen.Bounds.Width, screen.Bounds.Height);
-    //  Log.Info("D3D: BuildPresentParams size from: {0}x{1}", size.Width, size.Height);
-
-    //  if (OSInfo.OSInfo.Win7OrLater())
-    //  {
-    //    if (!_doNotWaitForVSync)
-    //    {
-    //      // FLIPEX will benefit from more back buffers
-    //      result.BackBufferCount = 4;
-    //    }
-    //    else
-    //    {
-    //      // Allow performance measurements when DWM is not blocking Present()
-    //      result.BackBufferCount = 20;
-    //      int hr = DXNative.FontEngineSetMaximumFrameLatency(20);
-    //      if (hr != 0)
-    //      {
-    //        Log.Info("D3D: BuildPresentParams() failed to set maximum frame latency - error: {0}", hr);
-    //      }
-    //    }
-    //  }
-    //  else
-    //  {
-    //    result.BackBufferCount = 2;
-    //  }
-
-    //  DisplayMode mode = GUIGraphicsContext.Direct3D.Adapters[AdapterInfo.AdapterOrdinal].CurrentDisplayMode;
-
-    //  result.MultiSampleType = MultisampleType.None;
-    //  result.MultiSampleQuality = 0;
-
-    //  // From http://msdn.microsoft.com/en-us/library/windows/desktop/bb173422%28v=vs.85%29.aspx :
-    //  // To use multisampling, the SwapEffect member of D3DPRESENT_PARAMETER must be set to D3DSWAPEFFECT_DISCARD.
-    //  // SwapEffect must be set to SwapEffect.FlipEx to support the Present property to be Present.ForceImmediate
-    //  // (see http://msdn.microsoft.com/en-us/library/windows/desktop/bb174343%28v=vs.85%29.aspx )
-    //  //result.SwapEffect = mst == MultisampleType.None ? SwapEffect.FlipEx : SwapEffect.Discard;
-    //  result.SwapEffect = SwapEffect.FlipEx;
-
-    //  // Attention: assigning the Form's handle to DeviceWindowHandle resets its Location!
-    //  System.Drawing.Point location = _renderTarget.Location;
-    //  result.DeviceWindowHandle = _renderTarget.Handle;
-    //  _renderTarget.Location = location;
-
-    //  //result.Windowed = windowed;
-    //  result.EnableAutoDepthStencil = false;
-
-
-
-    //  //Format[] depthStencilFormatArray =
-    //  //  {
-    //  //    Format.D16,
-    //  //    Format.D15S1,
-    //  //    Format.D24X8,
-    //  //    Format.D24S8,
-    //  //    Format.D24X4S4,
-    //  //    Format.D32,
-    //  //  };
-
-    //  //List<Format> formats = new List<Format>();
-
-    //  //const int AppMinDepthBits = 15;
-    //  //const int AppMinStencilBits = 0;
-
-    //  //foreach (Format depthStencilFmt in depthStencilFormatArray)
-    //  //{
-    //  //  if (D3DUtil.GetDepthBits(depthStencilFmt) < AppMinDepthBits)
-    //  //    continue;
-    //  //  if (D3DUtil.GetStencilBits(depthStencilFmt) < AppMinStencilBits)
-    //  //    continue;
-    //  //  if (GUIGraphicsContext.Direct3D.CheckDeviceFormat(AdapterInfo.AdapterOrdinal, _deviceType, mode.Format,
-    //  //      Usage.DepthStencil, ResourceType.Surface, depthStencilFmt))
-    //  //    if (GUIGraphicsContext.Direct3D.CheckDepthStencilMatch(AdapterInfo.AdapterOrdinal, _deviceType,
-    //  //        mode.Format, mode.Format, depthStencilFmt))
-    //  //      formats.Add(depthStencilFmt);
-    //  //}
-
-    //  //result.AutoDepthStencilFormat = Format.Unknown;
-    //  ////result.AutoDepthStencilFormat = formats.FirstOrDefault(dsf =>
-    //  ////    !dc.DepthStencilMultiSampleConflicts.Contains(new DepthStencilMultiSampleConflict { DepthStencilFormat = dsf, MultisampleType = mst }));
-
-
-    //  // Note that PresentFlags.Video makes NVidia graphics drivers switch off multisampling antialiasing
-    //  result.PresentFlags = PresentFlags.None;
-    //  result.FullScreenRefreshRateInHz = result.Windowed ? 0 : mode.RefreshRate;
-    //  result.PresentationInterval = _doNotWaitForVSync ? PresentInterval.Immediate : PresentInterval.One;
-    //  //result.ForceNoMultiThreadedFlag  = false;
-
-    //  result.BackBufferWidth = size.Width;
-    //  result.BackBufferHeight = size.Height;
-    //  result.BackBufferFormat = mode.Format;
-
-
-
-    //  Log.Info("D3D: Back Buffer, size: {0}x{1}, windowed:{2}, count:{3}", _presentParams.BackBufferWidth, _presentParams.BackBufferHeight, windowed, _presentParams.BackBufferCount);
-    //  Log.Debug("D3D: BuildPresentParams(), windowed:{0}, BW:{1}, BH:{2}, SW:{3}, SH:{4}, BBC:{5}",
-    //            windowed,
-    //            GUIGraphicsContext.currentScreen.Bounds.Width,
-    //            GUIGraphicsContext.currentScreen.Bounds.Height,
-    //            size.Width,
-    //            size.Height,
-    //            _presentParams.BackBufferCount
-    //            );
-    //  Windowed = windowed;
-
-    //  _presentParams = result;
-    //  GUIGraphicsContext.DirectXPresentParameters = _presentParams;
-    //  return result;
-    //}
 
     /// <summary>
     /// Initialization of the D3D Device
@@ -1932,6 +1750,7 @@ namespace MediaPortal
 
       return null;
     }
+
 
     public Device CreateDevice(D3DConfiguration configuration)
     {
@@ -3266,8 +3085,6 @@ namespace MediaPortal
     #endregion
 
 
-
-
     /// <summary>
     /// Build presentation parameters from the current settings.
     /// </summary>
@@ -3284,10 +3101,38 @@ namespace MediaPortal
     {
       int backBufferWidth;
       int backBufferHeight;
-      if (configuration.DeviceCombo.IsWindowed)
+      if (Windowed)
       {
         backBufferWidth = _renderTarget.ClientRectangle.Width;
         backBufferHeight = _renderTarget.ClientRectangle.Height;
+
+        Size sizeMaxClient = CalcMaxClientArea();
+        Log.Info("D3D: BuildPresentParams CalcMaxClientArea from: {0}x{1}", sizeMaxClient.Width, sizeMaxClient.Height);
+        Log.Info("D3D: BuildPresentParams screen WorkingArea from: {0}x{1}", backBufferWidth, backBufferHeight);
+
+        int backupSizeWidth = 0;
+        int backupSizeHeight = 0;
+
+        using (Settings xmlreader = new MPSettings())
+        {
+          backupSizeWidth = xmlreader.GetValueAsInt("gui", "backupsizewidth", 0);
+          backupSizeHeight = xmlreader.GetValueAsInt("gui", "backupsizeheight", 0);
+        }
+
+        // TODO this part need to be checked because it break at runtime when BuildPresentParams is rebuilded
+        if ((backupSizeWidth != 0 && backupSizeHeight != 0) && _firstTimeLoadingParams)
+        {
+          backBufferWidth = backupSizeWidth;
+          backBufferHeight = backupSizeHeight;
+        }
+
+        // Sanity check and replace with sensible size values if necessary
+        if (backBufferWidth < 256 || backBufferHeight < 256 || backBufferWidth > sizeMaxClient.Width || backBufferHeight > sizeMaxClient.Height)
+        {
+          Log.Debug("D3D: BuildPresentParams(), invalid size {0} x {1} changed to {2} x {3}", backBufferWidth, backBufferHeight, sizeMaxClient.Width, sizeMaxClient.Height);
+          backBufferWidth = sizeMaxClient.Width;
+          backBufferHeight = sizeMaxClient.Height;
+        }
       }
       else
       {
@@ -3339,6 +3184,7 @@ namespace MediaPortal
 
       return result;
     }
+
 
     /// <summary>
     /// Returns a settings object with best available windowed mode, according to 
