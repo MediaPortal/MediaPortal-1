@@ -412,6 +412,7 @@ namespace MediaPortal.GUI.Library
         //keep commonly used textures at the top of the pile
         ListFontTextures.RemoveAt(cacheSlot);
         ListFontTextures.Add(drawingTexture);
+        size = drawingTexture.sizeDest;
       }
       else // texture needs to be cached
       {
@@ -482,7 +483,7 @@ namespace MediaPortal.GUI.Library
         size.Width = (int)textwidth;
         size.Height = (int)textheight;
 
-        var newTexture = new FontTexture {text = draw.Text, texture = texture, size = fontSize};
+        var newTexture = new FontTexture {text = draw.Text, texture = texture, size = fontSize, sizeDest = size};
 
         if (ListFontTextures.Count >= MaxCachedTextures)
         {

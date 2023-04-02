@@ -38,6 +38,7 @@ namespace MediaPortal.GUI.Library
     public int size { get; set; }
     public string text { get; set; }
     public Texture texture { get; set; }
+    public System.Drawing.Size sizeDest { get; set; }
 
     #endregion //properties
 
