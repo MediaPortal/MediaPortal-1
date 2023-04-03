@@ -21,7 +21,7 @@ using System.Web;
 internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScriptGrabber
 {
   const string strGrabber = "TI_MDB";
-  const string strGrabberVersion = "20230328.I";
+  const string strGrabberVersion = "20230403.I";
 
   public Grabber()
   {
@@ -210,7 +210,8 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
 
   #region TMDB Title
 
-  public const string TITLE_MASK = "{0}{1}{2}";                    // {0} - Title {1} - Separator {2} - Original Title {3} - Year
+  public const string TITLE_MASK = "{0}{1}{2}";                 // {0} - Title {1} - Separator {2} - Original Title {3} - Year
+  public const string TITLE_MASK_SEARCH = "{0}{1}{2} ({3})";    // {0} - Title {1} - Separator {2} - Original Title {3} - Year
   public const string TITLE_SEPARATOR = " / ";
 
   #endregion TMDB Title
@@ -315,7 +316,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       try
       {
         string urlID = !string.IsNullOrWhiteSpace(tmdbMovieID) ? tmdbMovieID : imdbMovieID;
-        TMDBMovie aMovie = GetTMDBDetails(urlID);
+        TMDBMovie aMovie = GetTMDBDetails(urlID, true);
         if (aMovie.ID > 0)
         {
           TMDBUrl aUrl = new TMDBUrl(urlID, aMovie.Title, strGrabber + "_" + API_LANG);
@@ -360,8 +361,8 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
             // Year
             string sYear = !string.IsNullOrWhiteSpace(tmdbMovie.release_date) && tmdbMovie.release_date.Length >= 4 ? tmdbMovie.release_date.Substring(0, 4) : string.Empty;
 
-            // Title - TITLE_MASK {0} - Title {1} - Separator {2} - Original Title {3} - Year
-            string sTitle = TITLE_MASK;
+            // Title - TITLE_MASK_SEARCH {0} - Title {1} - Separator {2} - Original Title {3} - Year
+            string sTitle = TITLE_MASK_SEARCH;
             if (!string.IsNullOrEmpty(sTitle))
             {
               if (tmdbMovie.title.Equals(tmdbMovie.original_title, StringComparison.CurrentCultureIgnoreCase))
@@ -372,15 +373,11 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
               {
                 sTitle = sTitle.Replace("{1}", string.Empty).Trim();
               }
-              sTitle = string.Format(sTitle, tmdbMovie.title, TITLE_SEPARATOR, tmdbMovie.original_title, sYear);
-              if (!string.IsNullOrEmpty(sTitle))
+              if (string.IsNullOrEmpty(sYear))
               {
-                sTitle = sTitle.Trim();
-                if (!string.IsNullOrEmpty(sYear))
-                {
-                  sTitle = sTitle + " (" + sYear + ")";
-                }
+                sTitle = sTitle.Replace("({3})", string.Empty).Replace("[{3])", string.Empty).Replace("{3}", string.Empty).Trim();
               }
+              sTitle = string.Format(sTitle, tmdbMovie.title, TITLE_SEPARATOR, tmdbMovie.original_title, sYear);
             }
 
             // Check for Year
@@ -409,7 +406,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
 
             // Add to Result list
             Log.Info("{0} Found {1} - [{2}] {3}", strGrabber, title, tmdbMovie.id, sTitle);
-            TMDBUrl aUrl = new TMDBUrl(tmdbMovie.id.ToString(), sTitle, "TMDB_" + API_LANG);
+            TMDBUrl aUrl = new TMDBUrl(tmdbMovie.id.ToString(), sTitle, strGrabber + "_" + API_LANG);
             tReturn.Add(aUrl);
           }
         }
@@ -419,7 +416,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
     return tReturn.ToArray();
   }
 
-  public static TMDBMovie GetTMDBDetails(string url)
+  public static TMDBMovie GetTMDBDetails(string url, bool search = false)
   {
     TMDBMovie oReturn = new TMDBMovie();
     string json = string.Empty;
@@ -581,7 +578,7 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
       }
 
       // Make Title by TITLE_MASK {0} - Title {1} - Separator {2} - Original Title {3} - Year
-      string ResultTitleMask = TITLE_MASK;
+      string ResultTitleMask = search ? TITLE_MASK_SEARCH : TITLE_MASK;
       if (!string.IsNullOrEmpty(ResultTitleMask))
       {
         if (oReturn.Title.Equals(oReturn.OriginalTitle, StringComparison.CurrentCultureIgnoreCase))
@@ -592,8 +589,12 @@ internal class Grabber : MarshalByRefObject, MediaPortal.Video.Database.IIMDBScr
         {
           ResultTitleMask = ResultTitleMask.Replace("{1}", string.Empty).Trim();
         }
+        if (string.IsNullOrEmpty(sYear))
+        {
+          ResultTitleMask = ResultTitleMask.Replace("({3})", string.Empty).Replace("[{3])", string.Empty).Replace("{3}", string.Empty).Trim();
+        }
 
-        oReturn.Title = string.Format(ResultTitleMask, oReturn.Title, TITLE_SEPARATOR, oReturn.OriginalTitle);
+        oReturn.Title = string.Format(ResultTitleMask, oReturn.Title, TITLE_SEPARATOR, oReturn.OriginalTitle, sYear);
         if (!string.IsNullOrEmpty(oReturn.Title))
         {
           oReturn.Title = oReturn.Title.Trim();
