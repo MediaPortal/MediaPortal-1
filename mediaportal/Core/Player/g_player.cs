@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2018 Team MediaPortal
+    #region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -1524,6 +1524,7 @@ namespace MediaPortal.Player
         bool UseEVRMadVRForTV = false;
         bool _NoBDMenu = false;
 
+        GUIGraphicsContext.Is3D = false;
         IsPicture = false;
         IsExtTS = false;
         bool AskForRefresh = true;
@@ -1558,6 +1559,7 @@ namespace MediaPortal.Player
 
             _mediaInfo.WriteInfo();
             currentMediaInfoFilePlaying = strFile;
+            GUIGraphicsContext.Is3D = _mediaInfo.Is3D;
           }
         }
 

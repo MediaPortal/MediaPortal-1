@@ -882,6 +882,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public static bool Is3D { get; set; }
     public static bool IsFullHD3DFormat
     {
       get { return _fullHD3DFormat; }
