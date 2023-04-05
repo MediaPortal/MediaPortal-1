@@ -4281,12 +4281,12 @@ namespace MediaPortal.Player
 
             if (GUIGraphicsContext.PresentationParameters.BackBufferWidth == 0)
             {
-              //GUIGraphicsContext.PresentationParameters.BackBufferWidth = client.Width;
+              GUIGraphicsContext.PresentationParameters.BackBufferWidth = client.Width;
               Log.Debug("g_player VideoWindowChanged() BackBufferWidth == 0 for madVR");
             }
             if (GUIGraphicsContext.PresentationParameters.BackBufferHeight == 0)
             {
-              //GUIGraphicsContext.PresentationParameters.BackBufferHeight = client.Height;
+              GUIGraphicsContext.PresentationParameters.BackBufferHeight = client.Height;
               Log.Debug("g_player VideoWindowChanged() BackBufferHeight == 0 for madVR");
             }
 
