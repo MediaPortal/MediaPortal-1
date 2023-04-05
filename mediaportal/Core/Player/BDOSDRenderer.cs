@@ -245,26 +245,23 @@ namespace MediaPortal.Player
 
         unsafe
         {
-          using (SharpDX.DataStream ds = _vertexBuffer.Lock(0, 0, LockFlags.None))
-          {
-            Util.CustomVertex.TransformedTextured* verts = (Util.CustomVertex.TransformedTextured*)ds.DataPointer;
+          Util.CustomVertex.TransformedTextured* verts = (Util.CustomVertex.TransformedTextured*)_vertexBuffer.LockToPointer(0, 0, LockFlags.None);
+          // upper left
+          verts[0] = new Util.CustomVertex.TransformedTextured(wx, wy, 0, 1, 0, 0);
 
-            // upper left
-            verts[0] = new Util.CustomVertex.TransformedTextured(wx, wy, 0, 1, 0, 0);
+          // upper right
+          verts[1] = new Util.CustomVertex.TransformedTextured(wx + wwidth, wy, 0, 1, 1, 0);
 
-            // upper right
-            verts[1] = new Util.CustomVertex.TransformedTextured(wx + wwidth, wy, 0, 1, 1, 0);
+          // lower left
+          verts[2] = new Util.CustomVertex.TransformedTextured(wx, wy + wheight, 0, 1, 0, 1);
 
-            // lower left
-            verts[2] = new Util.CustomVertex.TransformedTextured(wx, wy + wheight, 0, 1, 0, 1);
+          // lower right
+          verts[3] = new Util.CustomVertex.TransformedTextured(wx + wwidth, wy + wheight, 0, 1, 1, 1);
 
-            // lower right
-            verts[3] = new Util.CustomVertex.TransformedTextured(wx + wwidth, wy + wheight, 0, 1, 1, 1);
+          //_vertexBuffer.SetData(verts, 0, LockFlags.None);
+          _vertexBuffer.Unlock();
 
-            //_vertexBuffer.SetData(verts, 0, LockFlags.None);
-          }
         }
-        _vertexBuffer.Unlock();
         
         // remember what the vertexBuffer is set to
         _wy = wy;

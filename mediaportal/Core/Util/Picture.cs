@@ -403,45 +403,42 @@ namespace MediaPortal.Util
 
         unsafe
         {
-          using (DataStream s = m_vbBuffer.Lock(0, 0, LockFlags.None))
-          {
-            CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)s.DataPointer;
-            // Lock the buffer (which will return our structs)
-            verts[0].X = x - 0.5f;
-            verts[0].Y = y + nh - 0.5f;
-            verts[0].Z = 0.0f;
-            verts[0].Rhw = 1.0f;
-            verts[0].Color = (int)_diffuseColor;
-            verts[0].Tu = uoffs;
-            verts[0].Tv = voffs + vmax;
+          CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)m_vbBuffer.LockToPointer(0, 0, LockFlags.None);
+          // Lock the buffer (which will return our structs)
+          verts[0].X = x - 0.5f;
+          verts[0].Y = y + nh - 0.5f;
+          verts[0].Z = 0.0f;
+          verts[0].Rhw = 1.0f;
+          verts[0].Color = (int)_diffuseColor;
+          verts[0].Tu = uoffs;
+          verts[0].Tv = voffs + vmax;
 
-            verts[1].X = x - 0.5f;
-            verts[1].Y = y - 0.5f;
-            verts[1].Z = 0.0f;
-            verts[1].Rhw = 1.0f;
-            verts[1].Color = (int)_diffuseColor;
-            verts[1].Tu = uoffs;
-            verts[1].Tv = voffs;
+          verts[1].X = x - 0.5f;
+          verts[1].Y = y - 0.5f;
+          verts[1].Z = 0.0f;
+          verts[1].Rhw = 1.0f;
+          verts[1].Color = (int)_diffuseColor;
+          verts[1].Tu = uoffs;
+          verts[1].Tv = voffs;
 
-            verts[2].X = x + nw - 0.5f;
-            verts[2].Y = y + nh - 0.5f;
-            verts[2].Z = 0.0f;
-            verts[2].Rhw = 1.0f;
-            verts[2].Color = (int)_diffuseColor;
-            verts[2].Tu = uoffs + umax;
-            verts[2].Tv = voffs + vmax;
+          verts[2].X = x + nw - 0.5f;
+          verts[2].Y = y + nh - 0.5f;
+          verts[2].Z = 0.0f;
+          verts[2].Rhw = 1.0f;
+          verts[2].Color = (int)_diffuseColor;
+          verts[2].Tu = uoffs + umax;
+          verts[2].Tv = voffs + vmax;
 
-            verts[3].X = x + nw - 0.5f;
-            verts[3].Y = y - 0.5f;
-            verts[3].Z = 0.0f;
-            verts[3].Rhw = 1.0f;
-            verts[3].Color = (int)_diffuseColor;
-            verts[3].Tu = uoffs + umax;
-            verts[3].Tv = voffs;
-          }
+          verts[3].X = x + nw - 0.5f;
+          verts[3].Y = y - 0.5f;
+          verts[3].Z = 0.0f;
+          verts[3].Rhw = 1.0f;
+          verts[3].Color = (int)_diffuseColor;
+          verts[3].Tu = uoffs + umax;
+          verts[3].Tv = voffs;
+
+          m_vbBuffer.Unlock();
         }
-
-        m_vbBuffer.Unlock();
 
         GUIGraphicsContext.DX9Device.SetTexture(0, texture);
         int g_nAnisotropy = GUIGraphicsContext.DX9Device.Capabilities.MaxAnisotropy;
@@ -568,45 +565,43 @@ namespace MediaPortal.Util
 
         unsafe
         {
-          using (DataStream s = m_vbBuffer.Lock(0, 0, LockFlags.None))
-          {
-            CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)s.DataPointer;
+          CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)m_vbBuffer.LockToPointer(0, 0, LockFlags.None);
 
-            // Lock the buffer (which will return our structs)
-            verts[0].X = x - 0.5f;
-            verts[0].Y = y + nh - 0.5f;
-            verts[0].Z = 0.0f;
-            verts[0].Rhw = 1.0f;
-            verts[0].Color = (int)_diffuseColor;
-            verts[0].Tu = uoffs;
-            verts[0].Tv = voffs + vmax;
+          // Lock the buffer (which will return our structs)
+          verts[0].X = x - 0.5f;
+          verts[0].Y = y + nh - 0.5f;
+          verts[0].Z = 0.0f;
+          verts[0].Rhw = 1.0f;
+          verts[0].Color = (int)_diffuseColor;
+          verts[0].Tu = uoffs;
+          verts[0].Tv = voffs + vmax;
 
-            verts[1].X = x - 0.5f;
-            verts[1].Y = y - 0.5f;
-            verts[1].Z = 0.0f;
-            verts[1].Rhw = 1.0f;
-            verts[1].Color = (int)_diffuseColor;
-            verts[1].Tu = uoffs;
-            verts[1].Tv = voffs;
+          verts[1].X = x - 0.5f;
+          verts[1].Y = y - 0.5f;
+          verts[1].Z = 0.0f;
+          verts[1].Rhw = 1.0f;
+          verts[1].Color = (int)_diffuseColor;
+          verts[1].Tu = uoffs;
+          verts[1].Tv = voffs;
 
-            verts[2].X = x + nw - 0.5f;
-            verts[2].Y = y + nh - 0.5f;
-            verts[2].Z = 0.0f;
-            verts[2].Rhw = 1.0f;
-            verts[2].Color = (int)_diffuseColor;
-            verts[2].Tu = uoffs + umax;
-            verts[2].Tv = voffs + vmax;
+          verts[2].X = x + nw - 0.5f;
+          verts[2].Y = y + nh - 0.5f;
+          verts[2].Z = 0.0f;
+          verts[2].Rhw = 1.0f;
+          verts[2].Color = (int)_diffuseColor;
+          verts[2].Tu = uoffs + umax;
+          verts[2].Tv = voffs + vmax;
 
-            verts[3].X = x + nw - 0.5f;
-            verts[3].Y = y - 0.5f;
-            verts[3].Z = 0.0f;
-            verts[3].Rhw = 1.0f;
-            verts[3].Color = (int)_diffuseColor;
-            verts[3].Tu = uoffs + umax;
-            verts[3].Tv = voffs;
-          }
+          verts[3].X = x + nw - 0.5f;
+          verts[3].Y = y - 0.5f;
+          verts[3].Z = 0.0f;
+          verts[3].Rhw = 1.0f;
+          verts[3].Color = (int)_diffuseColor;
+          verts[3].Tu = uoffs + umax;
+          verts[3].Tv = voffs;
+
+          m_vbBuffer.Unlock();
         }
-        m_vbBuffer.Unlock();
 
         GUIGraphicsContext.DX9Device.SetTexture(0, texture);
         int g_nAnisotropy = GUIGraphicsContext.DX9Device.Capabilities.MaxAnisotropy;
@@ -731,44 +726,43 @@ namespace MediaPortal.Util
 
         unsafe
         {
-          using (DataStream s = m_vbBuffer.Lock(0, 0, LockFlags.None))
-          {
-            CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)s.DataPointer;
-            // Lock the buffer (which will return our structs)
-            verts[0].X = x - 0.5f;
-            verts[0].Y = y + nh - 0.5f;
-            verts[0].Z = 0.0f;
-            verts[0].Rhw = 1.0f;
-            verts[0].Color = (int)lColorDiffuse;
-            verts[0].Tu = uoffs;
-            verts[0].Tv = voffs + vmax;
+          CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)m_vbBuffer.LockToPointer(0, 0, LockFlags.None);
 
-            verts[1].X = x - 0.5f;
-            verts[1].Y = y - 0.5f;
-            verts[1].Z = 0.0f;
-            verts[1].Rhw = 1.0f;
-            verts[1].Color = (int)lColorDiffuse;
-            verts[1].Tu = uoffs;
-            verts[1].Tv = voffs;
+          // Lock the buffer (which will return our structs)
+          verts[0].X = x - 0.5f;
+          verts[0].Y = y + nh - 0.5f;
+          verts[0].Z = 0.0f;
+          verts[0].Rhw = 1.0f;
+          verts[0].Color = (int)lColorDiffuse;
+          verts[0].Tu = uoffs;
+          verts[0].Tv = voffs + vmax;
 
-            verts[2].X = x + nw - 0.5f;
-            verts[2].Y = y + nh - 0.5f;
-            verts[2].Z = 0.0f;
-            verts[2].Rhw = 1.0f;
-            verts[2].Color = (int)lColorDiffuse;
-            verts[2].Tu = uoffs + umax;
-            verts[2].Tv = voffs + vmax;
+          verts[1].X = x - 0.5f;
+          verts[1].Y = y - 0.5f;
+          verts[1].Z = 0.0f;
+          verts[1].Rhw = 1.0f;
+          verts[1].Color = (int)lColorDiffuse;
+          verts[1].Tu = uoffs;
+          verts[1].Tv = voffs;
 
-            verts[3].X = x + nw - 0.5f;
-            verts[3].Y = y - 0.5f;
-            verts[3].Z = 0.0f;
-            verts[3].Rhw = 1.0f;
-            verts[3].Color = (int)lColorDiffuse;
-            verts[3].Tu = uoffs + umax;
-            verts[3].Tv = voffs;
-          }
+          verts[2].X = x + nw - 0.5f;
+          verts[2].Y = y + nh - 0.5f;
+          verts[2].Z = 0.0f;
+          verts[2].Rhw = 1.0f;
+          verts[2].Color = (int)lColorDiffuse;
+          verts[2].Tu = uoffs + umax;
+          verts[2].Tv = voffs + vmax;
+
+          verts[3].X = x + nw - 0.5f;
+          verts[3].Y = y - 0.5f;
+          verts[3].Z = 0.0f;
+          verts[3].Rhw = 1.0f;
+          verts[3].Color = (int)lColorDiffuse;
+          verts[3].Tu = uoffs + umax;
+          verts[3].Tv = voffs;
+
+          m_vbBuffer.Unlock();
         }
-        m_vbBuffer.Unlock();
 
         GUIGraphicsContext.DX9Device.SetTexture(0, texture);
 

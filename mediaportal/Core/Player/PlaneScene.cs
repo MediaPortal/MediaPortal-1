@@ -1989,73 +1989,64 @@ namespace MediaPortal.Player
     private void DrawTextureSegment(VertexBuffer vertexBuffer, float srcX, float srcY, float srcWidth, float srcHeight,
                                     float dstX, float dstY, float dstWidth, float dstHeight, long lColorDiffuse)
     {
-      //CustomVertex.TransformedColoredTextured[] verts =
-      //  (CustomVertex.TransformedColoredTextured[])vertexBuffer.Lock(0, 0);
-
       unsafe
       {
-        using (SharpDX.DataStream ds = vertexBuffer.Lock(0, 0, LockFlags.None))
+        CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)vertexBuffer.LockToPointer(0, 0, LockFlags.None);
+
+        float fVideoWidth = (float)GUIGraphicsContext.VideoSize.Width;
+        float fVideoHeight = (float)GUIGraphicsContext.VideoSize.Height;
+        float uoff = srcX / fVideoWidth;
+        float voff = srcY / fVideoHeight;
+        float umax = srcWidth / fVideoWidth;
+        float vmax = srcHeight / fVideoHeight;
+
+        // Lock the buffer (which will return our structs)
+        // Top right
+        verts[0].X = dstX;// - 0.5f;
+        verts[0].Y = dstY + dstHeight;// - 0.5f;
+        verts[0].Z = 0.0f;
+        verts[0].Rhw = 1.0f;
+        verts[0].Color = (int)lColorDiffuse;
+        verts[0].Tu = uoff;
+        verts[0].Tv = voff + vmax;
+
+        // Top Left
+        verts[1].X = dstX;// - 0.5f;
+        verts[1].Y = dstY;// - 0.5f;
+        verts[1].Z = 0.0f;
+        verts[1].Rhw = 1.0f;
+        verts[1].Color = (int)lColorDiffuse;
+        verts[1].Tu = uoff;
+        verts[1].Tv = voff;
+
+        // Bottom right
+        verts[2].X = dstX + dstWidth;// - 0.5f;
+        verts[2].Y = dstY + dstHeight;// - 0.5f;
+        verts[2].Z = 0.0f;
+        verts[2].Rhw = 1.0f;
+        verts[2].Color = (int)lColorDiffuse;
+        verts[2].Tu = uoff + umax;
+        verts[2].Tv = voff + vmax;
+
+        // Bottom left
+        verts[3].X = dstX + dstWidth;// - 0.5f;
+        verts[3].Y = dstY;// - 0.5f;
+        verts[3].Z = 0.0f;
+        verts[3].Rhw = 1.0f;
+        verts[3].Color = (int)lColorDiffuse;
+        verts[3].Tu = uoff + umax;
+        verts[3].Tv = voff;
+
+        // Update vertices to compensate texel/pixel coordinate origins (top left of pixel vs. center of texel)
+        // See https://msdn.microsoft.com/en-us/library/bb219690(VS.85).aspx
+        for (int i = 0; i < 4; i++)
         {
-          CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)ds.DataPointer;
-
-          float fVideoWidth = (float)GUIGraphicsContext.VideoSize.Width;
-          float fVideoHeight = (float)GUIGraphicsContext.VideoSize.Height;
-          float uoff = srcX / fVideoWidth;
-          float voff = srcY / fVideoHeight;
-          float umax = srcWidth / fVideoWidth;
-          float vmax = srcHeight / fVideoHeight;
-
-
-          // Lock the buffer (which will return our structs)
-          // Top right
-          verts[0].X = dstX;// - 0.5f;
-          verts[0].Y = dstY + dstHeight;// - 0.5f;
-          verts[0].Z = 0.0f;
-          verts[0].Rhw = 1.0f;
-          verts[0].Color = (int)lColorDiffuse;
-          verts[0].Tu = uoff;
-          verts[0].Tv = voff + vmax;
-
-          // Top Left
-          verts[1].X = dstX;// - 0.5f;
-          verts[1].Y = dstY;// - 0.5f;
-          verts[1].Z = 0.0f;
-          verts[1].Rhw = 1.0f;
-          verts[1].Color = (int)lColorDiffuse;
-          verts[1].Tu = uoff;
-          verts[1].Tv = voff;
-
-          // Bottom right
-          verts[2].X = dstX + dstWidth;// - 0.5f;
-          verts[2].Y = dstY + dstHeight;// - 0.5f;
-          verts[2].Z = 0.0f;
-          verts[2].Rhw = 1.0f;
-          verts[2].Color = (int)lColorDiffuse;
-          verts[2].Tu = uoff + umax;
-          verts[2].Tv = voff + vmax;
-
-          // Bottom left
-          verts[3].X = dstX + dstWidth;// - 0.5f;
-          verts[3].Y = dstY;// - 0.5f;
-          verts[3].Z = 0.0f;
-          verts[3].Rhw = 1.0f;
-          verts[3].Color = (int)lColorDiffuse;
-          verts[3].Tu = uoff + umax;
-          verts[3].Tv = voff;
-
-          // Update vertices to compensate texel/pixel coordinate origins (top left of pixel vs. center of texel)
-          // See https://msdn.microsoft.com/en-us/library/bb219690(VS.85).aspx
-          for (int i = 0; i < 4; i++)
-          {
-            verts[i].X -= 0.5f;
-            verts[i].Y -= 0.5f;
-          }
+          verts[i].X -= 0.5f;
+          verts[i].Y -= 0.5f;
         }
-      }
 
-      vertexBuffer.Unlock();
-      unsafe
-      {
+        vertexBuffer.Unlock();
+
         GUIGraphicsContext.DX9Device.SetStreamSource(0, vertexBuffer, 0, CustomVertex.TransformedColoredTextured.StrideSize);
         GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
       }
