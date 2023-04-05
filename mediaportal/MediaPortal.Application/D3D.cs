@@ -732,9 +732,9 @@ namespace MediaPortal
                 catch (SharpDXException ex)
                 {
                   if (ex.ResultCode == 0x88760868) //D3DERR_DEVICELOST: 0x88760868
-                    Log.Debug("Main: D3DERR_DEVICELOST - device is lost but cannot be reset at this time {0}", ex.Message);
+                    Log.Error("Main: D3DERR_DEVICELOST - device is lost but cannot be reset at this time {0}", ex.Message);
                   else
-                    Log.Debug("Main: SharpDXException: {0}", ex.Message);
+                    Log.Error("Main: SharpDXException: {0}", ex.Message);
                 }
                 //catch (InvalidCallException ex)
                 //{
