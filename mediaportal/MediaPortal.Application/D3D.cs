@@ -811,6 +811,15 @@ namespace MediaPortal
                   Log.Error("D3D: RecreateSwapChain exception : {0}", ex);
                 }
               }
+
+              //SharpDX doesn't dispose the previous surface(Microsoft does)
+              //We need to change the target now otherwise PlaneScene will keep rendering to old surface
+              Surface srf = GUIGraphicsContext.RenderTarget;
+              if (srf != null)
+                srf.Dispose();
+
+              //Set the new Surface
+              GUIGraphicsContext.RenderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
             }
           }
 

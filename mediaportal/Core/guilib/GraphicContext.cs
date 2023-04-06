@@ -102,6 +102,7 @@ namespace MediaPortal.GUI.Library
     public static event VideoGammaContrastBrightnessHandler OnGammaContrastBrightnessChanged; // triggered when contrast, brightness, gamma settings have been changed
 
     public static PresentParameters PresentationParameters;
+    public static Surface RenderTarget = null;
 
     public static Device DX9Device = null; // pointer to current DX9 device
 
@@ -250,6 +251,7 @@ namespace MediaPortal.GUI.Library
     {
       DX9Device = device;
       PresentationParameters = prms;
+      RenderTarget = device.GetRenderTarget(0);
     }
 
     /// <summary>

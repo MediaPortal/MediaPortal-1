@@ -1726,6 +1726,10 @@ namespace MediaPortal.Player
         _debugStep = 1;
         if (_renderTarget != null)
         {
+          //Render target changed while playing (RecreateSwapChain)
+          if (GUIGraphicsContext.RenderTarget != null && _renderTarget != GUIGraphicsContext.RenderTarget)
+            _renderTarget = GUIGraphicsContext.RenderTarget;
+
           if (!_renderTarget.IsDisposed)
           {
             GUIGraphicsContext.DX9Device.SetRenderTarget(0, _renderTarget);
