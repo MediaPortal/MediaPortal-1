@@ -174,7 +174,7 @@ template <class TItem> bool CCollection<TItem>::Insert(unsigned int position, TI
     if (result)
     {
       // move everything after insert position
-      unsigned int size = (this->itemCount - position) * sizeof(unsigned int);
+      size_t size = sizeof(size_t) * (size_t)(this->itemCount - position);
       if (size > 0)
       {
         void *source = (void *)(this->items + position);
@@ -246,7 +246,7 @@ template <class TItem> bool CCollection<TItem>::Remove(unsigned int index, unsig
     }
 
     // move rest of items
-    unsigned int size = (this->itemCount - index - count) * sizeof(unsigned int);
+    size_t size = sizeof(size_t) * (size_t)(this->itemCount - index - count);
     if (size > 0)
     {
       void *source = (void *)(this->items + index + count);
@@ -295,7 +295,7 @@ template <class TItem> bool CCollection<TItem>::RemoveWithoutDestroyInstance(uns
   if ((count > 0) && ((index + count) <= this->itemCount))
   {
     // move rest of items
-    unsigned int size = (this->itemCount - index - count) * sizeof(unsigned int);
+    size_t size = sizeof(size_t) * (size_t)(this->itemCount - index - count);
     if (size > 0)
     {
       void *source = (void *)(this->items + index + count);
