@@ -25,7 +25,7 @@ set xml=Build_Report_%BUILD_TYPE%_TvPlugin.xml
 set html=Build_Report_%BUILD_TYPE%_TvPlugin.html
 set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
 
-"%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%TVLibrary%\TvPlugin\TvPlugin.sln" >> %log%
+"%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE% "%TVLibrary%\TvPlugin\TvPlugin.sln" >> %log%
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
 echo.

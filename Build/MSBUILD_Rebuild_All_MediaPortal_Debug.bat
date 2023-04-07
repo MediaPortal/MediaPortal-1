@@ -29,7 +29,7 @@ set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logf
 
 call "MSBUILD_Rebuild_Release_MediaPortal.bat" Release
 
-"%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%MediaPortal%\MediaPortal.sln" >> %log%
+"%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x64 "%MediaPortal%\MediaPortal.sln" >> %log%
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
 echo.
