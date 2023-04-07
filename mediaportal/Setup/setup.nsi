@@ -594,7 +594,7 @@ File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDog
   File "${git_ROOT}\Packages\MediaInfo.Wrapper.21.9.2\lib\net40\MediaInfo.Wrapper.dll"
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\Sqlite.3.36.0\sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.x64.3.41.2\sqlite.dll"
   ; NuGet binaries EXIF
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\MetadataExtractor.2.7.1\lib\net35\MetadataExtractor.dll"
