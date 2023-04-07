@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2021 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 /*
-// Copyright (C) 2005-2021 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -110,7 +110,7 @@ VIAddVersionKey CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey FileVersion       "${VERSION}"
 VIAddVersionKey FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
-VIAddVersionKey LegalCopyright    "Copyright © 2005-2020 ${PRODUCT_PUBLISHER}"
+VIAddVersionKey LegalCopyright    "Copyright © 2005-2023 ${PRODUCT_PUBLISHER}"
 
 ;if we want to make it fully silent we can uncomment this
 ;SilentInstall silent
