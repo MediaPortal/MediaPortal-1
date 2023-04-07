@@ -1,0 +1,70 @@
+name: Mediaportal
+
+on:
+  push:
+    # On Push to Master branch
+    branches: 
+      - master
+    # Ignore all Tags / Release
+    tags-ignore:
+      - '**'   
+  workflow_call:
+
+jobs:
+  build:
+    name: Build Mediaportal
+
+    runs-on: windows-2019
+    
+    steps:
+    - name: Setup Visual Studio 2019
+      uses: microsoft/setup-msbuild@v1.1
+      with:
+        vs-version: 16.11
+
+    - name: Link to Visual Studio 2019 Community
+      run: |
+        mklink /J "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community" "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise"
+      shell: cmd
+
+    - name: Setup Java JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: 8
+        architecture: x86
+        distribution: temurin
+
+    - name: Setup NSIS
+      run: |
+        choco install --yes nsis --version=3.06.1
+
+    - name: Git Checkout
+      uses: actions/checkout@v3
+
+    - name: Git Sumbodule Update
+      run: |
+        git submodule update --init --recursive
+
+    - name: Build
+      run: |
+        BuildFullinstaller.cmd
+      working-directory: ${{ github.workspace }}\Build
+      shell: cmd
+
+    - name: Upload Artifact / Build result
+      uses: actions/upload-artifact@v3
+      if: ${{ always() }}
+      with:
+        name: Build result file
+        path: |
+          ${{ github.workspace }}\Build\BuildFullInstaller.log
+        retention-days: 3
+
+    - name: Upload Artifact / Mediaportal setup
+      uses: actions/upload-artifact@v3
+      if: ${{ success() }}
+      with:
+        name: Mediaportal setup file
+        path: |
+          ${{ github.workspace }}\Release\MediaPortalSetup_*.exe
+        if-no-files-found: error
