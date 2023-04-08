@@ -587,10 +587,10 @@ File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDog
   ${EndIf}
   ; NuGet binaries MediaInfo
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\MediaInfo.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcrypto-3.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcurl.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libssl-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libcrypto-3-x64.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libssl-3-x64.dll"
   File "${git_ROOT}\Packages\MediaInfo.Wrapper.21.9.2\lib\net40\MediaInfo.Wrapper.dll"
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
@@ -606,22 +606,22 @@ File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDog
   SetOutPath "$MPdir.Base\"
   File "${git_MP}\core\bin\${BUILD_TYPE}\Bass.Net.dll"
   File "${git_MP}\core\bin\${BUILD_TYPE}\\BassRegistration.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bass.dll"
   File "${git_ROOT}\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll"
   ; Bass Addons
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bassasio.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_fx.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bassmix.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_vst.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_wadsp.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\basswasapi.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bassenc.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\basscd.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\Plugins\OptimFROG.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bassasio.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bass_fx.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bassmix.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bass_vst.dll"
+  ; File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_wadsp.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\basswasapi.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bassenc.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\basscd.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\Plugins\OptimFROG.dll"
   ; Bass AudioDecoders
   SetOutPath "$MPdir.Base\MusicPlayer\plugins\audio decoders"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\plugins\bass*.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\plugins\bass*.dll"
   ; taglib-sharp
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\MediaPortal.TagLib.2.3.1\lib\net40\TagLibSharp.dll"
@@ -638,7 +638,12 @@ File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDog
   File "${git_ROOT}\Packages\NAudio.1.10.0\lib\net35\NAudio.dll" 
   ; CSCore
   File "${git_ROOT}\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll"
-  ; Intel Audio Workaround
+  ; SharpDX
+  File "${git_ROOT}\Packages\SharpDX.4.2.0\lib\net40\SharpDX.dll"
+  File "${git_ROOT}\Packages\SharpDX.Direct3D9.4.2.0\lib\net40\SharpDX.Direct3D9.dll"
+  File "${git_ROOT}\Packages\SharpDX.DirectInput.4.2.0\lib\net40\SharpDX.DirectInput.dll"
+  File "${git_ROOT}\Packages\SharpDX.Mathematics.4.2.0\lib\net40\SharpDX.Mathematics.dll"
+    ; Intel Audio Workaround
   SetOutPath "$MPdir.Config\Sounds"
   File /nonfatal "${MEDIAPORTAL.BASE}\Sounds\silent.wav"
   ; Doc
@@ -655,9 +660,9 @@ File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDog
 	 !endif
   !else
      !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-       File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32d\libbluray.dll"
+       File /oname=bluray.dll "${git_DirectShowFilters}\bin_x64d\libbluray.dll"
      !else
-       File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
+       File /oname=bluray.dll "${git_DirectShowFilters}\bin_x64\libbluray\libbluray.dll"
      !endif
   !endif
   !ifdef Libbluray_use_Nuget_JAR
@@ -683,9 +688,9 @@ File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDog
 	!endif
   !else
      !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-     File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Debug\freetype.dll"
+     File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\x64\Debug\freetype.dll"
      !else
-     File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Release\freetype.dll"
+     File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\x64\Release\freetype.dll"
      !endif
   !endif
   
