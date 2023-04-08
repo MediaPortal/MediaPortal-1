@@ -125,17 +125,17 @@
 	#include    <emmintrin.h>
 	#include    <mmintrin.h>
 
-	__inline long int
-	lrint(double flt)
-	{
-		return _mm_cvtsd_si32(_mm_load_sd(&flt));
-	}
+	//__inline long int
+	//lrint(double flt)
+	//{
+	//	return _mm_cvtsd_si32(_mm_load_sd(&flt));
+	//}
 
-	__inline long int
-	lrintf(float flt)
-	{
-		return _mm_cvtss_si32(_mm_load_ss(&flt));
-	}
+	//__inline long int
+	//lrintf(float flt)
+	//{
+	//	return _mm_cvtss_si32(_mm_load_ss(&flt));
+	//}
 
 #elif (defined (WIN32) || defined (_WIN32))
 
