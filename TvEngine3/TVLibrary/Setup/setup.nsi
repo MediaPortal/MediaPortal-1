@@ -68,7 +68,7 @@
 !define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
 
 !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
-!define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+!define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal TV Server"
@@ -940,7 +940,7 @@ Section -Post
 
   ; if TVplugin is enabled, save MP installation path to uninstall it even if mp is already uninstalled
   ${If} ${TVClientIsInstalled}
-    WriteRegDWORD HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir" "$MPdir.Base"
+    WriteRegDWORD HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir64" "$MPdir.Base"
   ${EndIf}
 
   ;${If} $noStartMenuSC != 1
@@ -1227,7 +1227,7 @@ Function un.onInit
   ${AndIfNot} ${MPIsInstalled}
     Sleep 1
   ${else}
-    ReadRegStr $MPdir.Base HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir"
+    ReadRegStr $MPdir.Base HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir64"
 
     ${If} $MPdir.Base = ""
       !insertmacro MP_GET_INSTALL_DIR $MPdir.Base

@@ -69,15 +69,15 @@
 #---------------------------------------------------------------------------
 # DEFINES
 #---------------------------------------------------------------------------
-!define PRODUCT_NAME          "MediaPortal"
+!define PRODUCT_NAME          "MediaPortal (x64)"
 !define PRODUCT_PUBLISHER     "Team MediaPortal"
 !define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
 
-!define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+!define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal"
-!define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal"
+!define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal (x64)"
 
 ; import version from shared file
 !include "${git_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
@@ -1132,7 +1132,7 @@ Section Uninstall
   Delete "${STARTMENU_GROUP}\Help.url"
   Delete "${STARTMENU_GROUP}\web site.url"
   RMDir "${STARTMENU_GROUP}"
-  RMDir "$SMPROGRAMS\Team MediaPortal"
+  RMDir "$SMPROGRAMS\Team MediaPortal\MediaPortal (x64)"
 
   ; remove Desktop shortcuts
   Delete "$DESKTOP\MediaPortal.lnk"

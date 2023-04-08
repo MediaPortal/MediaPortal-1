@@ -292,7 +292,7 @@
   ;${LOG_TEXT} "DEBUG" "MACRO:MP_GET_INSTALL_DIR"
 
   ${If} ${MP023IsInstalled}
-    ReadRegStr ${_var} HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
+    ReadRegStr ${_var} HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir64"
     ${LOG_TEXT} "INFO" "MediaPortal v0.2.3 installation dir found: ${_var}"
   ${ElseIf} ${MPIsInstalled}
     ReadRegStr ${_var} HKLM "${MP_REG_UNINSTALL}" "InstallPath"
@@ -887,7 +887,7 @@ ${EndIf}
 !endif
 
 
-!if "${PRODUCT_NAME}" == "MediaPortal"
+!if "${PRODUCT_NAME}" == "MediaPortal (x64)"
 
 !macro DoPreInstallChecks
 
