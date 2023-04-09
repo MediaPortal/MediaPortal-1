@@ -40,11 +40,7 @@ namespace MediaPortal.Player.Subtitles
   /// Structure used in communication with subtitle filter
   /// </summary>
   ///
-#if WIN64
   [StructLayout(LayoutKind.Sequential)]
-#else
-  [StructLayout(LayoutKind.Sequential, Pack = 1)]
-#endif
   public struct NATIVE_SUBTITLE
   {
     // start of bitmap fields
@@ -101,11 +97,8 @@ namespace MediaPortal.Player.Subtitles
 
   */
 
-#if WIN64
+
   [StructLayout(LayoutKind.Sequential)]
-#else
-  [StructLayout(LayoutKind.Sequential, Pack = 1)]
-#endif
   public struct TEXT_SUBTITLE
   {
     public int encoding;
