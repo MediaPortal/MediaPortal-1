@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 /*
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -292,7 +292,11 @@
   ;${LOG_TEXT} "DEBUG" "MACRO:MP_GET_INSTALL_DIR"
 
   ${If} ${MP023IsInstalled}
-    ReadRegStr ${_var} HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir64"
+    !if "${Architecture}" == "x64"
+      ReadRegStr ${_var} HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir64"
+    !else
+      ReadRegStr ${_var} HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
+    !endif
     ${LOG_TEXT} "INFO" "MediaPortal v0.2.3 installation dir found: ${_var}"
   ${ElseIf} ${MPIsInstalled}
     ReadRegStr ${_var} HKLM "${MP_REG_UNINSTALL}" "InstallPath"
@@ -500,7 +504,7 @@
 !macro CompleteMediaPortalCleanup
 
 # make and uninstallation of the other app, which may be still installed
-!if "${PRODUCT_NAME}" == "MediaPortal"
+!if "${PRODUCT_NAME}" == "MediaPortal" || "${PRODUCT_NAME}" == "MediaPortal (x64)"
   !insertmacro NSISuninstall "${TV3_REG_UNINSTALL}"
 !endif
 !if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client"
@@ -845,7 +849,7 @@ ${EndIf}
 !macro MinimumVersionForGITCheck
   ${LOG_TEXT} "INFO" ".: MinimumVersionForGITCheck: Compare installed and minimum version for this GIT snapshot :."
 
-!if "${PRODUCT_NAME}" == "MediaPortal"
+!if "${PRODUCT_NAME}" == "MediaPortal" || "${PRODUCT_NAME}" == "MediaPortal (x64)"
   ${IfNot} ${MPIsInstalled}
     MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_GIT_NOMP)" IDNO +2
     ExecShell open "${WEB_DOWNLOAD_MIN_MP_VERSION}"
@@ -887,7 +891,7 @@ ${EndIf}
 !endif
 
 
-!if "${PRODUCT_NAME}" == "MediaPortal (x64)"
+!if "${PRODUCT_NAME}" == "MediaPortal" || "${PRODUCT_NAME}" == "MediaPortal (x64)"
 
 !macro DoPreInstallChecks
 

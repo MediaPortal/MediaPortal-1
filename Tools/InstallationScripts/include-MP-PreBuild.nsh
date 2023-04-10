@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 /*
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -26,9 +26,9 @@
 #**********************************************************************************************************#
 
 !ifdef x64Environment
-!define Prog_Path '$%ProgramFiles(x86)%'
+  !define Prog_Path '$%ProgramFiles(x86)%'
 !else
-!define Prog_Path '$%ProgramFiles%'
+  !define Prog_Path '$%ProgramFiles%'
 !endif
 
 !include ${git_InstallScripts}\include\CompileTimeIfFileExist.nsh
@@ -38,9 +38,9 @@
 !insertmacro CompileTimeIfFileExist "${Prog_Path}\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" VS2019Community
 # !insertmacro CompileTimeIfFileExist "${Prog_Path}\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe" VS2019Buildtools
 !ifdef VS2019Community
-!define MSBuild_Path "${Prog_Path}\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
+  !define MSBuild_Path "${Prog_Path}\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
 !else
-!define MSBuild_Path "${Prog_Path}\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe"
+  !define MSBuild_Path "${Prog_Path}\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe"
 !endif
 
 # The following commands needs to be defined by the parent script (the one, which includes this file).
@@ -57,8 +57,8 @@
 
   !system 'xcopy /I /Y "${BuildReport}\_BuildReport_Files" "${git_OUT}\_BuildReport_Files"'
 !macroend
-!macro FinalizeBuildReport
 
+!macro FinalizeBuildReport
   !system '"${BuildReport}\msxsl.exe" "${xml}" "${BuildReport}\_BuildReport_Files\BuildReport.xslt" -o "${html}"' = 0
   !undef BuildReport
   !undef xml
@@ -79,14 +79,14 @@
 !include "${git_InstallScripts}\include\MediaPortalLibbluray.nsh"
 !ifdef libbluray_vcxproj_is_present && Libbluray_use_Build
 !insertmacro PrepareBuildReport libbluray
-!system '"${MSBuild_Path}"  /p:PlatformToolset=v142 ${logger} /target:rebuild /property:Configuration=Release_libbluray "${git_DirectShowFilters}\Filters.sln"' = 0
+!system '"${MSBuild_Path}"  /p:PlatformToolset=v142 ${logger} /target:rebuild /property:Configuration=Release_libbluray;Platform=${Architecture} "${git_DirectShowFilters}\Filters.sln"' = 0
 !insertmacro FinalizeBuildReport
 !endif
 !insertmacro PrepareBuildReport DirectShowFilters
-!system '"${MSBuild_Path}" ${logger} /target:rebuild /property:Configuration=Release "${git_DirectShowFilters}\Filters.sln"' = 0
+!system '"${MSBuild_Path}" ${logger} /target:rebuild /property:Configuration=Release;Platform=${Architecture} "${git_DirectShowFilters}\Filters.sln"' = 0
 !insertmacro FinalizeBuildReport
 !insertmacro PrepareBuildReport MediaPortal
-!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_MP}\MediaPortal.sln"' = 0
+!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=${Architecture} "${git_MP}\MediaPortal.sln"' = 0
 !insertmacro FinalizeBuildReport
 !endif
 
@@ -95,7 +95,7 @@
 !system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvLibrary.sln"' = 0
 !insertmacro FinalizeBuildReport
 !insertmacro PrepareBuildReport TvPlugin
-!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvPlugin\TvPlugin.sln"' = 0
+!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform="Any CPU" "${git_TVServer}\TvPlugin\TvPlugin.sln"' = 0
 !insertmacro FinalizeBuildReport
 !endif
 
@@ -114,6 +114,6 @@
 
 !ifdef BUILD_Installer
 !system '${git_ROOT}\Build\MSBUILD_MP_LargeAddressAware.bat Release' = 0
-!system '"${NSISDIR}\makensis.exe" "${git_MP}\Setup\setup.nsi"' = 0
-!system '"${NSISDIR}\makensis.exe" "${git_TVServer}\Setup\setup.nsi"' = 0
+!system '"${NSISDIR}\makensis.exe" /DArchitecture=${Architecture} "${git_MP}\Setup\setup.nsi"' = 0
+!system '"${NSISDIR}\makensis.exe" /DArchitecture=${Architecture} "${git_TVServer}\Setup\setup.nsi"' = 0
 !endif
