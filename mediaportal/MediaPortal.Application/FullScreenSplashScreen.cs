@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -43,6 +43,10 @@ namespace MediaPortal
     public void SetVersion(string version)
     {
       string[] strVersion = version.Split('-');
+      if (IntPtr.Size == 8)
+      {
+        strVersion[0] += " x64";
+      }
       lblVersion.Text = strVersion[0];
       Log.Info("Version: Application {0}", strVersion[0]);
       if (strVersion.Length == 2)
