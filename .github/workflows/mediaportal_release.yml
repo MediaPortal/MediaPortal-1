@@ -1,0 +1,44 @@
+name: Mediaportal / Release
+
+on:
+  push:
+    # On Tag / Release by Mask
+    tags:
+      - "Release_*"
+
+jobs:
+  build:
+    uses: ./.github/workflows/mediaportal.yml
+  
+  release:
+    name: Release Mediaportal
+    needs: build
+    permissions:
+      contents: write
+    
+    runs-on: windows-2019
+    
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: Mediaportal setup file
+          path: release-files
+
+      - name: 7z Artifacts
+        run: |
+          FOR %%I IN (*.exe) DO 7z.exe a -tZip "%%~nI.zip" "%%~I"
+        shell: cmd
+        working-directory: release-files
+
+      - name: Check artifacts
+        run: |
+          dir /S
+        shell: cmd
+        working-directory: release-files
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            release-files/MediaPortalSetup_*

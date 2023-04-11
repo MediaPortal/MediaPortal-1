@@ -100,7 +100,7 @@ namespace MediaPortal.TagReader
       {
         var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
         var mi = new MediaInfoWrapper(fname, logger);
-        if (!mi.MediaInfoNotloaded)
+        if (mi.Success)
         {
           mi.WriteInfo();
           var audioStream = mi.BestAudioStream;

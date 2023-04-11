@@ -4038,7 +4038,7 @@ double MPEVRCustomPresenter::GetVideoFramePeriod(FPS_SOURCE_METHOD fpsSource)
       }
     break;
     
-    case 2:
+    case FPS_SOURCE_SAMPLE_DURATION:
       // Returns 0.0 for the first 4 frames, then from sample duration
       if ((m_DetectedFrameTimePos >= 4) && (m_DetSampleAve > DFT_THRESH))
       {

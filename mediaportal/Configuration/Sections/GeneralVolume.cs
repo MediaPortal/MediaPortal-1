@@ -101,7 +101,7 @@ namespace MediaPortal.Configuration.Sections
         {
           volumewarnlb.Visible = true;
           if (string.IsNullOrEmpty(isSettingExist))
-          _useVistaHandler.Checked = true;
+            _useVistaHandler.Checked = true;
         }
 
         _customText = reader.GetValueAsString("volume", "table",
@@ -236,7 +236,7 @@ namespace MediaPortal.Configuration.Sections
         StringBuilder builder = new StringBuilder();
         ArrayList valueArray = new ArrayList();
 
-        foreach (string token in ((TextBox)sender).Text.Split(new char[] {',', ';', ' '}))
+        foreach (string token in ((TextBox)sender).Text.Split(new char[] { ',', ';', ' ' }))
         {
           if (token == string.Empty)
           {
@@ -509,7 +509,7 @@ namespace MediaPortal.Configuration.Sections
       this._customTextbox.Location = new System.Drawing.Point(168, 137);
       this._customTextbox.Name = "_customTextbox";
       this._customTextbox.Size = new System.Drawing.Size(288, 20);
-      this._customTextbox.TabIndex = 5;
+      this._customTextbox.TabIndex = 6;
       this._customTextbox.Validating += new System.ComponentModel.CancelEventHandler(this.OnValidateCustomTable);
       // 
       // _useCustomHandler
@@ -519,7 +519,7 @@ namespace MediaPortal.Configuration.Sections
       this._useCustomHandler.Location = new System.Drawing.Point(16, 138);
       this._useCustomHandler.Name = "_useCustomHandler";
       this._useCustomHandler.Size = new System.Drawing.Size(62, 17);
-      this._useCustomHandler.TabIndex = 4;
+      this._useCustomHandler.TabIndex = 5;
       this._useCustomHandler.Text = "C&ustom:";
       this._useCustomHandler.UseVisualStyleBackColor = true;
       this._useCustomHandler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
@@ -578,9 +578,10 @@ namespace MediaPortal.Configuration.Sections
       this._useWin10Handler.Location = new System.Drawing.Point(16, 116);
       this._useWin10Handler.Name = "_useWin10Handler";
       this._useWin10Handler.Size = new System.Drawing.Size(83, 17);
-      this._useWin10Handler.TabIndex = 6;
+      this._useWin10Handler.TabIndex = 4;
       this._useWin10Handler.Text = "Windows 10";
       this._useWin10Handler.UseVisualStyleBackColor = true;
+      this._useWin10Handler.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
       // 
       // GeneralVolume
       // 
