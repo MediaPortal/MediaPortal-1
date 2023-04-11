@@ -97,10 +97,18 @@ Name          "${SKRIPT_NAME}"
 BrandingText  "${PRODUCT_NAME} ${VERSION_DISP} by ${PRODUCT_PUBLISHER}"
 Icon "${git_DeployTool}\Install.ico"
 !define /date buildTIMESTAMP "%Y-%m-%d-%H-%M"
-!if ${VER_BUILD} == 0
-  OutFile "${git_OUT}\MediaPortalSetup_${VERSION}_${buildTIMESTAMP}.exe"
+!if "${Architecture}" == "x64"
+  !if ${VER_BUILD} == 0
+    OutFile "${git_OUT}\MediaPortalSetup_x64_${VERSION}_${buildTIMESTAMP}.exe"
+  !else
+    OutFile "${git_OUT}\MediaPortalSetup_x64_${VERSION}_${buildTIMESTAMP}.exe"
+  !endif
 !else
-  OutFile "${git_OUT}\MediaPortalSetup_${VERSION}_${buildTIMESTAMP}.exe"
+  !if ${VER_BUILD} == 0
+    OutFile "${git_OUT}\MediaPortalSetup_${VERSION}_${buildTIMESTAMP}.exe"
+  !else
+    OutFile "${git_OUT}\MediaPortalSetup_${VERSION}_${buildTIMESTAMP}.exe"
+  !endif
 !endif
 InstallDir "$TEMP\MediaPortal Installation"
 
@@ -116,7 +124,7 @@ VIAddVersionKey CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey FileVersion       "${VERSION}"
 VIAddVersionKey FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
-VIAddVersionKey LegalCopyright    "Copyright © 2005-2020 ${PRODUCT_PUBLISHER}"
+VIAddVersionKey LegalCopyright    "Copyright © 2005-2023 ${PRODUCT_PUBLISHER}"
 
 ;if we want to make it fully silent we can uncomment this
 ;SilentInstall silent
