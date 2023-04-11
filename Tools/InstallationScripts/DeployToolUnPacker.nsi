@@ -105,9 +105,9 @@ Icon "${git_DeployTool}\Install.ico"
   !endif
 !else
   !if ${VER_BUILD} == 0
-    OutFile "${git_OUT}\MediaPortalSetup_${VERSION}_${buildTIMESTAMP}.exe"
+    OutFile "${git_OUT}\MediaPortalSetup_x86_${VERSION}_${buildTIMESTAMP}.exe"
   !else
-    OutFile "${git_OUT}\MediaPortalSetup_${VERSION}_${buildTIMESTAMP}.exe"
+    OutFile "${git_OUT}\MediaPortalSetup_x86_${VERSION}_${buildTIMESTAMP}.exe"
   !endif
 !endif
 InstallDir "$TEMP\MediaPortal Installation"
