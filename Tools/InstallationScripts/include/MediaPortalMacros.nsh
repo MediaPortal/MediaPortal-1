@@ -504,7 +504,10 @@
 !macro CompleteMediaPortalCleanup
 
 # make and uninstallation of the other app, which may be still installed
-!if "${PRODUCT_NAME}" == "MediaPortal" || "${PRODUCT_NAME}" == "MediaPortal (x64)"
+!if "${PRODUCT_NAME}" == "MediaPortal"
+  !insertmacro NSISuninstall "${TV3_REG_UNINSTALL}"
+!endif
+!if "${PRODUCT_NAME}" == "MediaPortal (x64)"
   !insertmacro NSISuninstall "${TV3_REG_UNINSTALL}"
 !endif
 !if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client"
@@ -849,7 +852,17 @@ ${EndIf}
 !macro MinimumVersionForGITCheck
   ${LOG_TEXT} "INFO" ".: MinimumVersionForGITCheck: Compare installed and minimum version for this GIT snapshot :."
 
-!if "${PRODUCT_NAME}" == "MediaPortal" || "${PRODUCT_NAME}" == "MediaPortal (x64)"
+!if "${PRODUCT_NAME} == MediaPortal"
+  ${IfNot} ${MPIsInstalled}
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_GIT_NOMP)" IDNO +2
+    ExecShell open "${WEB_DOWNLOAD_MIN_MP_VERSION}"
+    Abort
+  ${Else}
+
+    !insertmacro MP_GET_VERSION $R0
+!endif
+
+!if "${PRODUCT_NAME} == MediaPortal (x64)"
   ${IfNot} ${MPIsInstalled}
     MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_GIT_NOMP)" IDNO +2
     ExecShell open "${WEB_DOWNLOAD_MIN_MP_VERSION}"
@@ -891,7 +904,50 @@ ${EndIf}
 !endif
 
 
-!if "${PRODUCT_NAME}" == "MediaPortal" || "${PRODUCT_NAME}" == "MediaPortal (x64)"
+!if "${PRODUCT_NAME}" == "MediaPortal"
+
+!macro DoPreInstallChecks
+
+!ifdef GIT_BUILD
+  ; check if correct MP version ist installed, which is required for this git snapshot
+  !insertmacro MinimumVersionForGITCheck
+!endif
+
+  ; OS and other common initialization checks are done in the following NSIS header file
+  !insertmacro MediaPortalOperatingSystemCheck
+  !insertmacro MediaPortalAdminCheck
+  !insertmacro MediaPortalVCRedistCheck
+  !insertmacro MediaPortalNetFrameworkCheck
+
+  ; check if old mp 0.2.2 is installed
+  ${If} ${MP022IsInstalled}
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP022)"
+    Abort
+  ${EndIf}
+
+  ; check if old mp 0.2.3 RC3 is installed
+  ${If} ${MP023RC3IsInstalled}
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP023RC3)"
+    Abort
+  ${EndIf}
+
+  ; check if old mp 0.2.3 is installed.
+  ${If} ${MP023IsInstalled}
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP023)"
+    Abort
+  ${EndIf}
+
+  ; check if reboot is required
+  ${If} ${FileExists} "$MPdir.Base\rebootflag"
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
+    Abort
+  ${EndIf}
+
+!macroend
+
+!endif
+
+!if "${PRODUCT_NAME}" == "MediaPortal (x64)"
 
 !macro DoPreInstallChecks
 
