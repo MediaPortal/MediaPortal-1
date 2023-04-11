@@ -8,8 +8,7 @@ updates:
       day: monday
       time: "12:00"
     labels:
-      - github:actions
-      - type:dependencies
+      - dependencies
     commit-message:
       prefix: "MP1"
     open-pull-requests-limit: 10
