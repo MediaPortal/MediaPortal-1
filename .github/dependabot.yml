@@ -12,5 +12,4 @@ updates:
       - type:dependencies
     commit-message:
       prefix: "MP1"
-      include: "scope"
     open-pull-requests-limit: 10
