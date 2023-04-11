@@ -1,13 +1,27 @@
-echo.
-echo Building Installer...
-set progpath=%ProgramFiles%
-if not "%ProgramFiles(x86)%".=="". set progpath=%ProgramFiles(x86)%
-set GIT_ROOT=..
+@ECHO OFF
 
-if "%1"=="" (
-set "OUTF=>> BuildFullInstaller.log"
-) else ( 
-set "OUTF="
+ECHO.
+ECHO Building Installer...
+
+SET progpath=%ProgramFiles%
+IF NOT "%ProgramFiles(x86)%".=="". SET progpath=%ProgramFiles(x86)%
+
+SET GIT_ROOT=..
+
+IF "%1"=="" (
+  SET "OUTF=>> BuildFullInstaller.log"
+) ELSE ( 
+  IF "%1"=="LOG" ( 
+    SET "OUTF=>> BuildFullInstaller.log"
+  ) ELSE (
+    SET "OUTF="
+  )
 )
 
-"%progpath%\NSIS\makensis.exe" "%GIT_ROOT%\Tools\InstallationScripts\DeployToolUnPacker-x64.nsi" %OUTF%
+IF NOT "%2"=="" (
+  SET ARCH=/DArchitecture=%2
+) ELSE (
+  SET ARCH=
+)
+
+"%progpath%\NSIS\makensis.exe" %ARCH% "%GIT_ROOT%\Tools\InstallationScripts\DeployToolUnPacker-x64.nsi" %OUTF%

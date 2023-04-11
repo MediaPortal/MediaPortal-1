@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2021 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 /*
-// Copyright (C) 2005-2021 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -28,6 +28,13 @@
 Unicode True
 
 #---------------------------------------------------------------------------
+# ARCHITECTURE
+#---------------------------------------------------------------------------
+!ifndef Architecture
+  !define Architecture x86
+!endif
+
+#---------------------------------------------------------------------------
 # DEVELOPMENT ENVIRONMENT
 #---------------------------------------------------------------------------
 # SKRIPT_NAME is needed to diff between the install scripts in imported headers
@@ -37,7 +44,6 @@ Unicode True
 !define git_InstallScripts "${git_ROOT}\Tools\InstallationScripts"
 # common script init
 !include "${git_InstallScripts}\include\MediaPortalScriptInit.nsh"
-
 
 #---------------------------------------------------------------------------
 # UNPACKER script
@@ -91,10 +97,18 @@ Name          "${SKRIPT_NAME}"
 BrandingText  "${PRODUCT_NAME} ${VERSION_DISP} by ${PRODUCT_PUBLISHER}"
 Icon "${git_DeployTool}\Install.ico"
 !define /date buildTIMESTAMP "%Y-%m-%d-%H-%M"
-!if ${VER_BUILD} == 0
-  OutFile "${git_OUT}\MediaPortalSetup_${VERSION}_${buildTIMESTAMP}.exe"
+!if "${Architecture}" == "x64"
+  !if ${VER_BUILD} == 0
+    OutFile "${git_OUT}\MediaPortalSetup_x64_${VERSION}_${buildTIMESTAMP}.exe"
+  !else
+    OutFile "${git_OUT}\MediaPortalSetup_x64_${VERSION}_${buildTIMESTAMP}.exe"
+  !endif
 !else
-  OutFile "${git_OUT}\MediaPortalSetup_${VERSION}_${buildTIMESTAMP}.exe"
+  !if ${VER_BUILD} == 0
+    OutFile "${git_OUT}\MediaPortalSetup_x86_${VERSION}_${buildTIMESTAMP}.exe"
+  !else
+    OutFile "${git_OUT}\MediaPortalSetup_x86_${VERSION}_${buildTIMESTAMP}.exe"
+  !endif
 !endif
 InstallDir "$TEMP\MediaPortal Installation"
 
@@ -110,7 +124,7 @@ VIAddVersionKey CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey FileVersion       "${VERSION}"
 VIAddVersionKey FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
-VIAddVersionKey LegalCopyright    "Copyright © 2005-2020 ${PRODUCT_PUBLISHER}"
+VIAddVersionKey LegalCopyright    "Copyright © 2005-2023 ${PRODUCT_PUBLISHER}"
 
 ;if we want to make it fully silent we can uncomment this
 ;SilentInstall silent

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2021 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 /*
-// Copyright (C) 2005-2021 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -37,6 +37,12 @@
 #!define HEISE_BUILD
 # parameter for command line execution: /DHEISE_BUILD
 
+#---------------------------------------------------------------------------
+# ARCHITECTURE
+#---------------------------------------------------------------------------
+!ifndef Architecture
+  !define Architecture x86
+!endif
 
 #---------------------------------------------------------------------------
 # DEVELOPMENT ENVIRONMENT
@@ -69,15 +75,27 @@
 #---------------------------------------------------------------------------
 # DEFINES
 #---------------------------------------------------------------------------
-!define PRODUCT_NAME          "MediaPortal (x64)"
+!if "${Architecture}" == "x64"
+  !define PRODUCT_NAME          "MediaPortal (x64)"
+!else
+  !define PRODUCT_NAME          "MediaPortal"
+!endif
 !define PRODUCT_PUBLISHER     "Team MediaPortal"
 !define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
 
-!define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
+!if "${Architecture}" == "x64"
+  !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
+!else
+  !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+!endif
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal"
-!define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal (x64)"
+!if "${Architecture}" == "x64"
+  !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal (x64)"
+!else
+  !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal"
+!endif
 
 ; import version from shared file
 !include "${git_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
@@ -587,14 +605,25 @@ File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDog
   ${EndIf}
   ; NuGet binaries MediaInfo
   SetOutPath "$MPdir.Base\"
+  !if "${Architecture}" == "x64"
   File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\MediaInfo.dll"
   File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libcrypto-3-x64.dll"
   File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libcurl.dll"
   File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libssl-3-x64.dll"
+  !else
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcrypto-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libssl-3.dll"
+  !endif
   File "${git_ROOT}\Packages\MediaInfo.Wrapper.21.9.2\lib\net40\MediaInfo.Wrapper.dll"
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
+  !if "${Architecture}" == "x64"
   File "${git_ROOT}\Packages\Sqlite.x64.3.41.2\sqlite.dll"
+  !else
+  File "${git_ROOT}\Packages\Sqlite.3.41.2\sqlite.dll"
+  !endif
   ; NuGet binaries EXIF
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\MetadataExtractor.2.7.1\lib\net35\MetadataExtractor.dll"
@@ -606,10 +635,15 @@ File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDog
   SetOutPath "$MPdir.Base\"
   File "${git_MP}\core\bin\${BUILD_TYPE}\Bass.Net.dll"
   File "${git_MP}\core\bin\${BUILD_TYPE}\\BassRegistration.dll"
+  !if "${Architecture}" == "x64"
   File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bass.dll"
+  !else
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass.dll"
+  !endif
   File "${git_ROOT}\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll"
   ; Bass Addons
   SetOutPath "$MPdir.Base\"
+  !if "${Architecture}" == "x64"
   File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bassasio.dll"
   File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bass_fx.dll"
   File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bassmix.dll"
@@ -619,9 +653,24 @@ File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDog
   File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bassenc.dll"
   File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\basscd.dll"
   File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\Plugins\OptimFROG.dll"
+  !else
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bassasio.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_fx.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bassmix.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_vst.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_wadsp.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\basswasapi.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bassenc.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\basscd.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\Plugins\OptimFROG.dll"
+  !endif
   ; Bass AudioDecoders
   SetOutPath "$MPdir.Base\MusicPlayer\plugins\audio decoders"
+  !if "${Architecture}" == "x64"
   File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\plugins\bass*.dll"
+  !else
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\plugins\bass*.dll"
+  !endif
   ; taglib-sharp
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\MediaPortal.TagLib.2.3.1\lib\net40\TagLibSharp.dll"
@@ -643,7 +692,7 @@ File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDog
   File "${git_ROOT}\Packages\SharpDX.Direct3D9.4.2.0\lib\net40\SharpDX.Direct3D9.dll"
   File "${git_ROOT}\Packages\SharpDX.DirectInput.4.2.0\lib\net40\SharpDX.DirectInput.dll"
   File "${git_ROOT}\Packages\SharpDX.Mathematics.4.2.0\lib\net40\SharpDX.Mathematics.dll"
-    ; Intel Audio Workaround
+  ; Intel Audio Workaround
   SetOutPath "$MPdir.Config\Sounds"
   File /nonfatal "${MEDIAPORTAL.BASE}\Sounds\silent.wav"
   ; Doc
@@ -659,11 +708,19 @@ File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDog
        File /oname=bluray.dll "${Libbluray_nuget_path}\references\runtimes\Release\libbluray.dll"
 	 !endif
   !else
-     !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-       File /oname=bluray.dll "${git_DirectShowFilters}\bin_x64d\libbluray.dll"
-     !else
-       File /oname=bluray.dll "${git_DirectShowFilters}\bin_x64\libbluray\libbluray.dll"
-     !endif
+    !if "${Architecture}" == "x64"
+      !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+        File /oname=bluray.dll "${git_DirectShowFilters}\bin_x64d\libbluray.dll"
+      !else
+        File /oname=bluray.dll "${git_DirectShowFilters}\bin_x64\libbluray\libbluray.dll"
+      !endif
+    !else
+      !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+        File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32d\libbluray.dll"
+      !else
+        File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
+      !endif
+    !endif
   !endif
   !ifdef Libbluray_use_Nuget_JAR
        File /oname=libbluray.jar "${Libbluray_nuget_path}\references\runtimes\libbluray-.jar"
@@ -687,10 +744,18 @@ File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDog
     File /oname=freetype.dll "${Libbluray_nuget_path}\references\runtimes\Release\freetype.dll"
 	!endif
   !else
-     !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-     File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\x64\Debug\freetype.dll"
+     !if "${Architecture}" == "x64"
+       !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+         File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\x64\Debug\freetype.dll"
+       !else
+         File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\x64\Release\freetype.dll"
+       !endif
      !else
-     File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\x64\Release\freetype.dll"
+       !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+         File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Debug\freetype.dll"
+       !else
+         File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Release\freetype.dll"
+       !endif
      !endif
   !endif
   
@@ -1048,19 +1113,32 @@ Section -Post
   
   ; create desktop shortcuts
   ${If} $noDesktopSC != 1
+    !if "${Architecture}" == "x64"
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal (x64)"
     CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration (x64)"
     CreateShortCut "$DESKTOP\MediaPortal WatchDog.lnk"      "$MPdir.Base\WatchDog.exe"         "" "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog (x64)"
+    !else
+    CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
+    CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
+    CreateShortCut "$DESKTOP\MediaPortal WatchDog.lnk"      "$MPdir.Base\WatchDog.exe"         "" "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
+    !endif
   ${EndIf}
 
   ; create startmenu shortcuts
   ;${If} $noStartMenuSC != 1
       ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
       CreateDirectory "${STARTMENU_GROUP}"
+      !if "${Architecture}" == "x64"
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal (x64)"
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration (x64)"
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"                   "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog (x64)"
       CreateShortCut "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
+      !else
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"                   "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
+      CreateShortCut "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
+      !endif
       CreateShortCut "${STARTMENU_GROUP}\User Files.lnk"                             "$MPdir.Config"                 ""      "$MPdir.Config"                 0 "" "" "Browse you config files, databases, thumbs, logs, ..."
 
       WriteINIStr "${STARTMENU_GROUP}\Quick Setup Guide.url"  "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/TeamMediaPortal/MP1QuickSetupGuide"
@@ -1132,7 +1210,11 @@ Section Uninstall
   Delete "${STARTMENU_GROUP}\Help.url"
   Delete "${STARTMENU_GROUP}\web site.url"
   RMDir "${STARTMENU_GROUP}"
+  !if "${Architecture}" == "x64"
   RMDir "$SMPROGRAMS\Team MediaPortal\MediaPortal (x64)"
+  !else
+  RMDir "$SMPROGRAMS\Team MediaPortal\MediaPortal"
+  !endif
 
   ; remove Desktop shortcuts
   Delete "$DESKTOP\MediaPortal.lnk"
@@ -1189,7 +1271,11 @@ Function LoadPreviousSettings
   ${If} "$PREVIOUS_INSTALLDIR" != ""
     StrCpy $INSTDIR "$PREVIOUS_INSTALLDIR"
   ${ElseIf} "$INSTDIR" == ""
+    !if "${Architecture}" == "x64"
     StrCpy $INSTDIR "$PROGRAMFILES\Team MediaPortal\MediaPortal (x64)"
+    !else
+    StrCpy $INSTDIR "$PROGRAMFILES\Team MediaPortal\MediaPortal"
+    !endif
   ${EndIf}
 
   ; reset previous component selection from registry

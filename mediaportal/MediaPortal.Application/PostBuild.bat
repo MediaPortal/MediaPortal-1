@@ -1,5 +1,6 @@
 REM %1 = Solution Directory
 REM %2 = $(ConfigurationName) Debug/Release
+REM %3 = $(PlatformShortName) x86/x64
 
 set GIT_ROOT=%~dp0..\..\
 set Build="%GIT_ROOT%\Build"
@@ -111,13 +112,24 @@ xcopy %1\..\DirectShowFilters\mpc-hc_subs\bin\%2\mpcSubs.pdb . /Y /D
 )
 
 REM bluray.dll - odd source folder is 
-if /I "%2" EQU "RELEASE" (
-xcopy %1\..\DirectShowFilters\bin_x64\libbluray.dll . /Y /D
+if /I "%3" EQU "x64" (
+  if /I "%2" EQU "RELEASE" (
+    xcopy %1\..\DirectShowFilters\bin_x64\libbluray.dll . /Y /D
+  )
+
+  if /I "%2" EQU "DEBUG" (
+    xcopy %1\..\DirectShowFilters\bin_x64d\libbluray.dll . /Y /D
+  )
+) ELSE (
+  if /I "%2" EQU "RELEASE" (
+    xcopy %1\..\DirectShowFilters\bin_Win32\libbluray.dll . /Y /D
+  )
+
+  if /I "%2" EQU "DEBUG" (
+    xcopy %1\..\DirectShowFilters\bin_Win32d\libbluray.dll . /Y /D
+  )
 )
 
-if /I "%2" EQU "DEBUG" (
-xcopy %1\..\DirectShowFilters\bin_x64d\libbluray.dll . /Y /D
-)
 
 ren libbluray.dll bluray.dll
 
@@ -136,12 +148,22 @@ xcopy %1\..\libbluray\src\.libs\libbluray-awt-.jar .\awt\ /Y /D
 ren .\awt\libbluray-awt-.jar libbluray.jar
 
 REM freetype.dll - odd source folder is 
-if /I "%2" EQU "RELEASE" (
-xcopy %1\..\libbluray\3rd_party\freetype2\objs\Win64\Release\freetype.dll . /Y /D
-)
+if /I "%3" EQU "x64" (
+  if /I "%2" EQU "RELEASE" (
+    xcopy %1\..\libbluray\3rd_party\freetype2\objs\Win64\Release\freetype.dll . /Y /D
+  )
 
-if /I "%2" EQU "DEBUG" (
-xcopy %1\..\libbluray\3rd_party\freetype2\objs\Win64\Debug\freetype.dll . /Y /D
+  if /I "%2" EQU "DEBUG" (
+    xcopy %1\..\libbluray\3rd_party\freetype2\objs\Win64\Debug\freetype.dll . /Y /D
+  )
+) ELSE (
+  if /I "%2" EQU "RELEASE" (
+    xcopy %1\..\libbluray\3rd_party\freetype2\objs\Win32\Release\freetype.dll . /Y /D
+  )
+
+  if /I "%2" EQU "DEBUG" (
+    xcopy %1\..\libbluray\3rd_party\freetype2\objs\Win32\Debug\freetype.dll . /Y /D
+  )
 )
 
 REM mpWatchDog
@@ -162,13 +184,22 @@ xcopy %1\MPE\MpeMaker\bin\%2\MpeMaker.* . /Y /D
 
 REM Nuget 
 xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
-xcopy %1\..\Packages\Sqlite.x64.3.41.2\sqlite.dll . /Y /D
+if /I "%3" EQU "x64" (
+  xcopy %1\..\Packages\Sqlite.x64.3.41.2\sqlite.dll . /Y /D
+) ELSE (
+  xcopy %1\..\Packages\Sqlite.3.41.2\sqlite.dll . /Y /D
+)
 
 REM MediaInfo - 
 xcopy %1\..\Packages\MediaInfo.Wrapper.20.9.2\lib\net40\MediaInfo.Wrapper.dll . /Y /D
 REM - commented because provided on bin folder by nuget target setting during building. 
-REM xcopy %1\..\Packages\MediaInfo.Native.20.8.1\build\native\x64\MediaInfo.dll . /Y /D
-REM xcopy %1\..\Packages\MediaInfo.Native.20.8.1\build\native\x64\lib*.dll . /Y /D
+if /I "%3" EQU "x64" (
+  REM xcopy %1\..\Packages\MediaInfo.Native.20.8.1\build\native\x64\MediaInfo.dll . /Y /D
+  REM xcopy %1\..\Packages\MediaInfo.Native.20.8.1\build\native\x64\lib*.dll . /Y /D
+) ELSE (
+  REM xcopy %1\..\Packages\MediaInfo.Native.20.8.1\build\native\x86\MediaInfo.dll . /Y /D
+  REM xcopy %1\..\Packages\MediaInfo.Native.20.8.1\build\native\x86\lib*.dll . /Y /D
+)
 
 REM Exif
 xcopy %1\..\Packages\MetadataExtractor.2.7.1\lib\net35\MetadataExtractor.dll . /Y /D
@@ -180,20 +211,39 @@ xcopy %1\..\Packages\FFmpeg.Win32.Static.4.1.1.1\ffmpeg\ffmpeg.exe MovieThumbnai
 REM Bass Core
 xcopy %1\core\bin\%2\Bass.Net.dll . /Y /D
 xcopy %1\core\bin\%2\BassRegistration.dll . /Y /D
-xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\bass.dll . /Y /D
+if /I "%3" EQU "x64" (
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\bass.dll . /Y /D
+) ELSE (
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\bass.dll . /Y /D
+)
 
 REM Bass AddOns
-xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\bass_fx.dll . /Y /D
-xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\bass_vst.dll . /Y /D
-REM xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\bass_wadsp.dll . /Y /D
-xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\bassasio.dll . /Y /D
-xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\basscd.dll . /Y /D
-xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\bassmix.dll . /Y /D
-xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\basswasapi.dll . /Y /D
-xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\plugins\OptimFROG.dll . /Y /D
+if /I "%3" EQU "x64" (
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\bass_fx.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\bass_vst.dll . /Y /D
+  REM xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\bass_wadsp.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\bassasio.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\basscd.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\bassmix.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\basswasapi.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\plugins\OptimFROG.dll . /Y /D
+) ELSE (
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\bass_fx.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\bass_vst.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\bass_wadsp.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\bassasio.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\basscd.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\bassmix.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\basswasapi.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\plugins\OptimFROG.dll . /Y /D
+)
 
 REM Bass AudioDecoders
+if /I "%3" EQU "x64" (
 xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\plugins\bass*.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+) ELSE (
+xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\plugins\bass*.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+)
 
 REM iMON Display 
 xcopy %1\..\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll . /Y /D

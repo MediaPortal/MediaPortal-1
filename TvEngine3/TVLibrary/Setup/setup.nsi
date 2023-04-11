@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2021 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 /*
-// Copyright (C) 2005-2021 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -39,6 +39,13 @@
 
 
 #---------------------------------------------------------------------------
+# ARCHITECTURE
+#---------------------------------------------------------------------------
+!ifndef Architecture
+  !define Architecture x86
+!endif
+
+#---------------------------------------------------------------------------
 # DEVELOPMENT ENVIRONMENT
 #---------------------------------------------------------------------------
 # SKRIPT_NAME is needed to diff between the install scripts in imported headers
@@ -68,7 +75,11 @@
 !define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
 
 !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
-!define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
+!if "${Architecture}" == "x64"
+  !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
+!else
+  !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+!endif
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal TV Server"
@@ -940,7 +951,11 @@ Section -Post
 
   ; if TVplugin is enabled, save MP installation path to uninstall it even if mp is already uninstalled
   ${If} ${TVClientIsInstalled}
+    !if "${Architecture}" == "x64"
     WriteRegDWORD HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir64" "$MPdir.Base"
+    !else
+    WriteRegDWORD HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir" "$MPdir.Base"
+    !endif
   ${EndIf}
 
   ;${If} $noStartMenuSC != 1
@@ -1227,7 +1242,11 @@ Function un.onInit
   ${AndIfNot} ${MPIsInstalled}
     Sleep 1
   ${else}
+    !if "${Architecture}" == "x64"
     ReadRegStr $MPdir.Base HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir64"
+    !else
+    ReadRegStr $MPdir.Base HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir"
+    !endif
 
     ${If} $MPdir.Base = ""
       !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
