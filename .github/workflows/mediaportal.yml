@@ -12,6 +12,10 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        architecture: [x86, x64]  
+
     name: Build Mediaportal
 
     runs-on: windows-2019
@@ -47,24 +51,24 @@ jobs:
 
     - name: Build
       run: |
-        BuildFullinstaller.cmd
+        BuildFullinstaller.cmd LOG ${{ matrix.architecture }}
       working-directory: ${{ github.workspace }}\Build
       shell: cmd
 
-    - name: Upload Artifact / Build result
+    - name: Upload Artifact / Build result file
       uses: actions/upload-artifact@v3
       if: ${{ always() }}
       with:
-        name: Build result file
+        name: Build result file ${{ matrix.architecture }}
         path: |
           ${{ github.workspace }}\Build\BuildFullInstaller.log
         retention-days: 3
 
-    - name: Upload Artifact / Mediaportal setup
+    - name: Upload Artifact / Mediaportal setup file
       uses: actions/upload-artifact@v3
       if: ${{ success() }}
       with:
-        name: Mediaportal setup file
+        name: Mediaportal setup file ${{ matrix.architecture }}
         path: |
           ${{ github.workspace }}\Release\MediaPortalSetup_*.exe
         if-no-files-found: error

@@ -1,9 +1,9 @@
 name: Mediaportal / Release
 
 on:
+  # On Push Release Tag
   push:
-    # On Tag / Release by Mask
-    tags:
+   tags:
       - "Release_*"
 
 jobs:
@@ -19,10 +19,16 @@ jobs:
     runs-on: windows-2019
     
     steps:
-      - name: Download Artifacts
+      - name: Download х86 Artifacts 
         uses: actions/download-artifact@v3
         with:
-          name: Mediaportal setup file
+          name: Mediaportal setup file x86
+          path: release-files
+
+      - name: Download х64 Artifacts 
+        uses: actions/download-artifact@v3
+        with:
+          name: Mediaportal setup file x64
           path: release-files
 
       - name: 7z Artifacts
@@ -41,4 +47,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            release-files/MediaPortalSetup_*
+            release-files/MediaPortalSetup_*.zip
