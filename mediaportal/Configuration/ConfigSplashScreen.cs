@@ -182,13 +182,13 @@ namespace MediaPortal.Configuration
         string[] strVersion = version.Split('-');
         if (System.IntPtr.Size == 8)
         {
-          strVersion[0] += " x64";
+          strVersion[0] += " | x64";
         }
         versionLabel.Text = strVersion[0];
         Log.Info("Version: Application {0}", strVersion[0]);
         if (strVersion.Length == 2)
         {
-          versionLabel.Text = versionLabel.Text + " " + strVersion[1];
+          versionLabel.Text = versionLabel.Text + " | " + strVersion[1];
           Log.Info("Edition/Codename: {0}", strVersion[1]);
         }
         else if (strVersion.Length > 2)

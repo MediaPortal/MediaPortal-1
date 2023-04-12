@@ -45,7 +45,7 @@ namespace MediaPortal
       string[] strVersion = version.Split('-');
       if (IntPtr.Size == 8)
       {
-        strVersion[0] += " x64";
+        strVersion[0] += " | x64";
       }
       lblVersion.Text = strVersion[0];
       Log.Info("Version: Application {0}", strVersion[0]);
