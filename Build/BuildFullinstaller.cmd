@@ -1,7 +1,7 @@
 @ECHO OFF
 
 ECHO.
-ECHO Building Installer...
+ECHO Building Installer... %2
 
 SET progpath=%ProgramFiles%
 IF NOT "%ProgramFiles(x86)%".=="". SET progpath=%ProgramFiles(x86)%
