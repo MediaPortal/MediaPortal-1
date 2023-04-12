@@ -2,6 +2,7 @@
 using MediaPortal.Services;
 using MediaPortal.Common.Utils.Logger;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace MediaPortal.ServiceImplementations
 {
@@ -18,6 +19,8 @@ namespace MediaPortal.ServiceImplementations
       { MediaInfo.LogLevel.Debug, CommonLogLevel.Debug },
       { MediaInfo.LogLevel.Verbose, CommonLogLevel.All },
     };
+
+    private readonly Regex _RegexMediaInfo = new Regex(@"\{(?<logValue>[^\}]+)\}", RegexOptions.Singleline | RegexOptions.Compiled);
 
     private bool _configuration;
 
@@ -99,25 +102,41 @@ namespace MediaPortal.ServiceImplementations
         return;
       }
 
+      //MediaInfo.Wrapper v21.9.3 formating fix
+      string strMessageNew = message;
+      int iPos = 0;
+      int iIdx = 0;
+      foreach (var parameter in parameters)
+      {
+        Match match = _RegexMediaInfo.Match(strMessageNew, iPos);
+        if (match.Success)
+        {
+          strMessageNew = strMessageNew.Replace(match.Value, $"{{{iIdx}}}");
+          iPos = match.Index + 1;
+        }
+
+        iIdx++;
+      }
+
       switch (commonLogLevel)
       {
         case CommonLogLevel.All:
-          CommonLogger.Instance.Debug(CommonLogType.Log, message, parameters);
+          CommonLogger.Instance.Debug(CommonLogType.Log, strMessageNew, parameters);
           break;
         case CommonLogLevel.Debug:
-          CommonLogger.Instance.Debug(CommonLogType.Log, message, parameters);
+          CommonLogger.Instance.Debug(CommonLogType.Log, strMessageNew, parameters);
           break;
         case CommonLogLevel.Information:
-          CommonLogger.Instance.Info(CommonLogType.Log, message, parameters);
+          CommonLogger.Instance.Info(CommonLogType.Log, strMessageNew, parameters);
           break;
         case CommonLogLevel.Warning:
-          CommonLogger.Instance.Warn(CommonLogType.Log, message, parameters);
+          CommonLogger.Instance.Warn(CommonLogType.Log, strMessageNew, parameters);
           break;
         case CommonLogLevel.Error:
-          CommonLogger.Instance.Error(CommonLogType.Log, message, parameters);
+          CommonLogger.Instance.Error(CommonLogType.Log, strMessageNew, parameters);
           break;
         case CommonLogLevel.Critical:
-          CommonLogger.Instance.Critical(CommonLogType.Log, message, parameters);
+          CommonLogger.Instance.Critical(CommonLogType.Log, strMessageNew, parameters);
           break;
       }
     }
