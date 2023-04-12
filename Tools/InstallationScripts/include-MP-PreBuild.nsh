@@ -25,6 +25,10 @@
 #
 #**********************************************************************************************************#
 
+!ifndef Architecture
+  !define Architecture x86
+!endif
+
 !ifdef x64Environment
   !define Prog_Path '$%ProgramFiles(x86)%'
 !else
@@ -66,7 +70,6 @@
   !undef logger
 !macroend
 
-
 !if ${VER_BUILD} != 0
 !system '"${git_DeployVersionGIT}\DeployVersionGIT\bin\Release\DeployVersionGIT.exe" /git="${git_ROOT}" /path="${git_MP}"' = 0
 !system '"${git_DeployVersionGIT}\DeployVersionGIT\bin\Release\DeployVersionGIT.exe" /git="${git_ROOT}" /path="${git_TVServer}"' = 0
@@ -96,8 +99,13 @@
 !endif
 
 !ifdef BUILD_TVServer
+!if "${Architecture}" == "x64"
+  !define TVServerArchitecture x86
+!else
+  !define TVServerArchitecture x86
+!endif
 !insertmacro PrepareBuildReport TvLibrary
-!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvLibrary.sln"' = 0
+!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=${TVServerArchitecture} "${git_TVServer}\TvLibrary.sln"' = 0
 !insertmacro FinalizeBuildReport
 !insertmacro PrepareBuildReport TvPlugin
 !system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform="Any CPU" "${git_TVServer}\TvPlugin\TvPlugin.sln"' = 0
@@ -111,9 +119,14 @@
 !endif
 
 !ifdef BUILD_DeployTool
+!if "${Architecture}" == "x64"
+  !define DeployArchitecture x86
+!else
+  !define DeployArchitecture x86
+!endif
 !insertmacro PrepareBuildReport DeployTool
-;!system '"${MSBuild_Path}" ${logger} /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
-!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+;!system '"${MSBuild_Path}" ${logger} /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=${Architecture} "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=${DeployArchitecture} "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
 !insertmacro FinalizeBuildReport
 !endif
 
