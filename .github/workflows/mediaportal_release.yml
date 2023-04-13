@@ -16,7 +16,7 @@ jobs:
     permissions:
       contents: write
     
-    runs-on: windows-2019
+    runs-on: ubuntu-latest
     
     steps:
       - name: Download Artifacts
@@ -27,18 +27,16 @@ jobs:
 
       - name: 7z Artifacts
         run: |
-          FOR %%I IN (*.exe) DO 7z.exe a -tZip "%%~nI.zip" "%%~I"
-        shell: cmd
+          for i in *.exe;do 7z a -tZip ${i%.exe}.zip $i;done
         working-directory: release-files
 
       - name: Check artifacts
         run: |
-          dir /S
-        shell: cmd
+          ls -l
         working-directory: release-files
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            release-files/MediaPortalSetup_*
+            release-files/MediaPortalSetup_*.zip
