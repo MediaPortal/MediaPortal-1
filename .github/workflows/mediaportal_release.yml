@@ -1,9 +1,9 @@
 name: Mediaportal / Release
 
 on:
-  # On Push Release Tag
   push:
-   tags:
+    # On Tag / Release by Mask
+    tags:
       - "Release_*"
 
 jobs:
@@ -16,16 +16,16 @@ jobs:
     permissions:
       contents: write
     
-    runs-on: windows-2019
+    runs-on: ubuntu-latest
     
     steps:
-      - name: Download х86 Artifacts 
+      - name: Download x86 Artifacts
         uses: actions/download-artifact@v3
         with:
           name: Mediaportal setup file x86
           path: release-files
 
-      - name: Download х64 Artifacts 
+      - name: Download x64 Artifacts
         uses: actions/download-artifact@v3
         with:
           name: Mediaportal setup file x64
@@ -33,14 +33,12 @@ jobs:
 
       - name: 7z Artifacts
         run: |
-          FOR %%I IN (*.exe) DO 7z.exe a -tZip "%%~nI.zip" "%%~I"
-        shell: cmd
+          for i in *.exe;do 7z a -tZip ${i%.exe}.zip $i;done
         working-directory: release-files
 
       - name: Check artifacts
         run: |
-          dir /S
-        shell: cmd
+          ls -l
         working-directory: release-files
 
       - name: Release
