@@ -1938,11 +1938,11 @@ namespace FFDShow
     {
       if (ffrwNoOSD)
         SendMessage(FFD_WPRM.SET_FFRW_NO_OSD, 1);
-      int res = 0;
+
       if (seconds >= 0)
-        res = SendMessage(FFD_WPRM.FASTFORWARD, seconds);
+        SendMessage(FFD_WPRM.FASTFORWARD, seconds);
       else
-        res = SendMessage(FFD_WPRM.FASTREWIND, -seconds);
+        SendMessage(FFD_WPRM.FASTREWIND, -seconds);
     }
 
     /// <summary>
@@ -1970,7 +1970,7 @@ namespace FFDShow
     /// <returns>Step in seconds</returns>
     public int getFastForwardSpeed()
     {
-      return SendMessage(FFD_WPRM.GETFASTFORWARDSPEED, 0);
+      return SendMessage(FFD_WPRM.GETFASTFORWARDSPEED, 0).ToInt32();
     }
 
 
@@ -1982,7 +1982,7 @@ namespace FFDShow
     /// <returns>1 if successfull</returns>
     public int captureImage()
     {
-      return SendMessage(FFD_WPRM.CAPTUREIMAGE, 0);
+      return SendMessage(FFD_WPRM.CAPTUREIMAGE, 0).ToInt32();
     }
 
     /// <summary>
@@ -1991,7 +1991,7 @@ namespace FFDShow
     /// <param name="time">Time to set in seconds</param>
     public void setCurrentTime(int time)
     {
-      int result = SendMessage(FFD_WPRM.SET_CURTIME, time);
+        SendMessage(FFD_WPRM.SET_CURTIME, time);
     }
 
     /// <summary>
@@ -1999,13 +1999,9 @@ namespace FFDShow
     /// </summary>
     public void toggleOSD()
     {
-      int value = SendMessage(FFD_WPRM.GET_PARAM_VALUE_INT, (int)FFDShowConstants.FFDShowDataId.IDFF_isOSD);
-      if (value == 0)
-        value = 1;
-      else
-        value = 0;
-      int result = SendMessage(FFD_WPRM.SET_PARAM_NAME, (int)FFDShowConstants.FFDShowDataId.IDFF_isOSD);
-      result = PostMessage(FFD_WPRM.SET_PARAM_VALUE_INT, value);
+      IntPtr result = SendMessage(FFD_WPRM.GET_PARAM_VALUE_INT, (int)FFDShowConstants.FFDShowDataId.IDFF_isOSD);
+      SendMessage(FFD_WPRM.SET_PARAM_NAME, (int)FFDShowConstants.FFDShowDataId.IDFF_isOSD);
+      PostMessage(FFD_WPRM.SET_PARAM_VALUE_INT, result == IntPtr.Zero ? 1 : 0);
     }
 
 
@@ -2024,7 +2020,7 @@ namespace FFDShow
     /// <returns>Duration in seconds</returns>
     public int getDuration()
     {
-      return SendMessage(FFD_WPRM.GET_DURATION, 0);
+      return SendMessage(FFD_WPRM.GET_DURATION, 0).ToInt32();
     }
 
     /// <summary>
@@ -2033,7 +2029,7 @@ namespace FFDShow
     /// <returns>Current position in seconds</returns>
     public int getCurrentTime()
     {
-      return SendMessage(FFD_WPRM.GET_CUR_TIME, 0);
+      return SendMessage(FFD_WPRM.GET_CUR_TIME, 0).ToInt32();
     }
 
     /// <summary>
@@ -2042,7 +2038,7 @@ namespace FFDShow
     /// <returns>Retrieve the frame rate (float with decimals eventually)</returns>
     public float getFrameRate()
     {
-      int fps1000 = SendMessage(FFD_WPRM.GET_FRAMERATE, 0);
+      int fps1000 = SendMessage(FFD_WPRM.GET_FRAMERATE, 0).ToInt32();
       return (float)fps1000 / 1000;
     }
 
@@ -2078,7 +2074,7 @@ namespace FFDShow
     /// <returns>Result of the registration</returns>
     public int setROTRegistration(ROTRegistration registration)
     {
-      return SendMessage(FFD_WPRM.SET_ADDTOROT, (int)registration);
+      return SendMessage(FFD_WPRM.SET_ADDTOROT, (int)registration).ToInt32();
     }
 
     /// <summary>
@@ -2286,7 +2282,7 @@ namespace FFDShow
     public int getIntParam(FFDShowConstants.FFDShowDataId param)
     {
       if (ffdshowAPIMode == FFDShowAPIMode.InterProcessMode)
-        return SendMessage(FFD_WPRM.GET_PARAM_VALUE_INT, (int)param);
+        return SendMessage(FFD_WPRM.GET_PARAM_VALUE_INT, (int)param).ToInt32();
       else if (ffdshowBase != null)
       {
         int val = 0;
@@ -2328,7 +2324,7 @@ namespace FFDShow
       Win32.SendMessageTimeout(new IntPtr(ffDShowInstanceHandle), (int)type, receiver.Handle, new IntPtr((int)param),
                                Win32.SendMessageTimeoutFlags.SMTO_ABORTIFHUNG, requestTimeout, out ret);
 
-      if (ret.ToInt32() != TRUE)
+      if (ret.ToInt64() != TRUE)
         return null;
 
       /*Debug.WriteLine("Sleep " + param + "/" + type);
@@ -2383,13 +2379,13 @@ namespace FFDShow
     /// <param name="param">Identifier of the parameter</param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public int setStringParam(FFDShowConstants.FFDShowDataId param, string value)
+    public Int64 setStringParam(FFDShowConstants.FFDShowDataId param, string value)
     {
       if (ffdshowAPIMode == FFDShowAPIMode.DirectShowMode && ffdshowBase != null)
       {
         return ffdshowBase.putParamStr((uint)param, value);
       }
-      int result = SendMessage(FFD_WPRM.SET_PARAM_NAME, (int)param);
+      SendMessage(FFD_WPRM.SET_PARAM_NAME, (int)param);
       //IntPtr WindowHandle = new IntPtr(this.FFDShowAPIRemote);
 
       Win32.COPYDATASTRUCT cd = new Win32.COPYDATASTRUCT();
@@ -2408,17 +2404,17 @@ namespace FFDShow
                                Win32.SendMessageTimeoutFlags.SMTO_ABORTIFHUNG, (int)requestTimeout, out returnedValue);
 #endif
       Marshal.FreeHGlobal(cd.lpData);
-      return returnedValue.ToInt32();
+      return returnedValue.ToInt64();
     }
 
-    private int SendMessage(FFD_WPRM wParam, int lParam)
+    private IntPtr SendMessage(FFD_WPRM wParam, int lParam)
     {
-      return Win32.SendMessage(ffDShowInstanceHandle, FFDShowAPIRemote, (int)wParam, lParam).ToInt32();
+      return Win32.SendMessage(ffDShowInstanceHandle, FFDShowAPIRemote, (int)wParam, lParam);
     }
 
-    private int PostMessage(FFD_WPRM wParam, int lParam)
+    private IntPtr PostMessage(FFD_WPRM wParam, int lParam)
     {
-      return Win32.PostMessage(ffDShowInstanceHandle, FFDShowAPIRemote, (int)wParam, lParam).ToInt32();
+      return Win32.PostMessage(ffDShowInstanceHandle, FFDShowAPIRemote, (int)wParam, lParam);
     }
 
     #endregion Base commands
