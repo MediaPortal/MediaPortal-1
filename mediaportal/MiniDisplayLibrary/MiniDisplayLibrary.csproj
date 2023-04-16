@@ -164,6 +164,7 @@
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonSettingsForm.designer.cs">
       <DependentUpon>SoundGraphImonSettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\MPx86ProxyHandler.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\SharpLibDisplay\SharpLibDisplay.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\SharpLibDisplay\SharpLibDisplaySettings.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\SharpLibDisplay\SharpLibDisplaySettingsForm.cs">

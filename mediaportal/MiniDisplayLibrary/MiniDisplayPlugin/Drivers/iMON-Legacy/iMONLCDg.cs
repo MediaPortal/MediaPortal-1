@@ -37,6 +37,7 @@ using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
+using MediaPortal.Player;
 using Microsoft.Win32;
 using Win32.Utils.Cd;
 using Action = MediaPortal.GUI.Library.Action;
@@ -263,10 +264,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                                                         }
                                                            };
 
-    private static readonly object DWriteMutex = new object();
-    private static readonly int[] Inserted_Media = new int[0x1b];
+    private static readonly object _DWriteMutex = new object();
+    private static readonly int[] _Inserted_Media = new int[0x1b];
 
-    private static readonly object ThreadMutex = new object();
+    private static readonly object _ThreadMutex = new object();
     private static int _DisplayType = -1;
     private static bool _stopUpdateIconThread;
     private static bool _VFD_UseV3DLL;
@@ -313,16 +314,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private bool _UsingAntecManager;
     private bool _UsingSoundgraphManager;
-    private AdvancedSettings AdvSettings = AdvancedSettings.Load();
-    private byte[] bitmapData;
-    private CustomFont CFont;
-    private LargeIcon CustomLargeIcon;
-    private DisplayOptions DisplayOptions;
-    private DisplayControl DisplaySettings;
-    public static bool DoDebug;
-    private bool DVMactive;
-    private EQControl EQSettings;
-    private string IdleMessage = string.Empty;
+    private AdvancedSettings _AdvSettings = AdvancedSettings.Load();
+    private byte[] _bitmapData;
+    private CustomFont _CFont;
+    private LargeIcon _CustomLargeIcon;
+    private DisplayOptions _DisplayOptions;
+    private DisplayControl _DisplaySettings;
+    public static bool _DoDebug;
+    private bool _DVMactive;
+    private EQControl _EQSettings;
+    private string _IdleMessage = string.Empty;
     //private const char IMON_CHAR_1_BAR;
     //private const char IMON_CHAR_2_BARS = '\x0001';
     //private const char IMON_CHAR_3_BARS = '\x0002';
@@ -348,18 +349,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     //private const char IMON_VFD_CHAR_RPLAY = '\x0011';
     //private const char IMON_VFD_CHAR_TRI_DOWN = '\x001f';
     //private const char IMON_VFD_CHAR_TRI_UP = '\x001e';
-    private string imonVFD_DLLFile;
-    private int LastProgLevel;
-    private DateTime LastSettingsCheck = DateTime.Now;
-    private int LastVolLevel;
+    private string _imonVFD_DLLFile;
+    private int _LastProgLevel;
+    private DateTime _LastSettingsCheck = DateTime.Now;
+    private int _LastVolLevel;
 
-    private SystemStatus MPStatus;
-    private int progLevel;
-    private int SendData_Error_Count;
-    private DateTime SettingsLastModTime;
-    private int volLevel;
+    private SystemStatus _MPStatus;
+    private int _progLevel;
+    private int _SendData_Error_Count;
+    private DateTime _SettingsLastModTime;
+    private int _volLevel;
 
-    #region IDisplay Members
+    private ulong[] _DeviceGraphCommandBuffer = new ulong[28];
+    private ulong[] _DeviceLineCommandBuffer = new ulong[3];
+    private ulong[] _DeviceEqCommandBuffer = new ulong[3];
+
+#region IDisplay Members
 
     public override void CleanUp()
     {
@@ -465,13 +470,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           try
           {
             Process proc2 = new Process
-                              {
-                                StartInfo =
+            {
+              StartInfo =
                                   {
                                     FileName = workdir + "\\" + irss_app + ".exe",
                                     WorkingDirectory = workdir
                                   }
-                              };
+            };
             proc2.Start();
           }
           catch (Exception ex)
@@ -489,16 +494,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (!_isDisabled)
       {
-        if (EQSettings._EqDataAvailable || _IsDisplayOff)
+        if (_EQSettings._EqDataAvailable || _IsDisplayOff)
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.DrawImage(): Suppressing display update!");
           }
         }
         else
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("(IDisplay) iMONLCDg.DrawImage(): called");
           }
@@ -512,20 +517,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                     bitmap.PixelFormat);
             try
             {
-              if (bitmapData == null)
+              if (_bitmapData == null)
               {
-                bitmapData = new byte[bitmapdata.Stride * _grows];
+                _bitmapData = new byte[bitmapdata.Stride * _grows];
               }
-              Marshal.Copy(bitmapdata.Scan0, bitmapData, 0, bitmapData.Length);
+              Marshal.Copy(bitmapdata.Scan0, _bitmapData, 0, _bitmapData.Length);
             }
             finally
             {
               bitmap.UnlockBits(bitmapdata);
             }
-            byte[] buffer = _sha256.ComputeHash(bitmapData);
+            byte[] buffer = _sha256.ComputeHash(_bitmapData);
             if (ByteArray.AreEqual(buffer, _lastHash))
             {
-              if (DoDebug)
+              if (_DoDebug)
               {
                 Log.Info("(IDisplay) iMONLCDg.DrawImage():  bitmap not changed");
               }
@@ -542,7 +547,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 {
                   int index = (j * bitmapdata.Stride) + (i * 4);
                   if (
-                    Color.FromArgb(bitmapData[index + 2], bitmapData[index + 1], bitmapData[index]).
+                    Color.FromArgb(_bitmapData[index + 2], _bitmapData[index + 1], _bitmapData[index]).
                       GetBrightness() < 0.5f)
                   {
                     pixelArray[i] = (byte)(pixelArray[i] | ((byte)((1) << (7 - j))));
@@ -552,7 +557,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 {
                   int num5 = (k * bitmapdata.Stride) + (i * 4);
                   if (
-                    Color.FromArgb(bitmapData[num5 + 2], bitmapData[num5 + 1], bitmapData[num5]).
+                    Color.FromArgb(_bitmapData[num5 + 2], _bitmapData[num5 + 1], _bitmapData[num5]).
                       GetBrightness() < 0.5f)
                   {
                     pixelArray[i + 0x60] = (byte)(pixelArray[i + 0x60] | ((byte)((1) << (15 - k))));
@@ -560,7 +565,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 }
               }
               SendPixelArray(pixelArray);
-              if (DoDebug)
+              if (_DoDebug)
               {
                 Log.Info("(IDisplay) iMONLCDg.DrawImage(): Sending pixel array to iMON Handler");
               }
@@ -598,7 +603,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         try
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("(IDisplay) iMONLCDg.SetLine(): called for Line {0} msg: '{1}'",
                      line.ToString(), message);
@@ -608,7 +613,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             DisplayLines();
           }
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("(IDisplay) iMONLCDg.SetLine(): completed");
           }
@@ -624,9 +629,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                       int backlightLevel, bool contrast, int contrastLevel, bool blankOnExit)
     {
       Log.Info("(IDisplay) iMONLCDg.Setup(): called");
-      MiniDisplayHelper.InitEQ(ref EQSettings);
-      MiniDisplayHelper.InitDisplayControl(ref DisplaySettings);
-      MiniDisplayHelper.InitDisplayOptions(ref DisplayOptions);
+      MiniDisplayHelper.InitEQ(ref _EQSettings);
+      MiniDisplayHelper.InitDisplayControl(ref _DisplaySettings);
+      MiniDisplayHelper.InitDisplayOptions(ref _DisplayOptions);
       _BlankDisplayOnExit = blankOnExit;
       _Backlight = false;
       _BacklightLevel = (ulong)backlightLevel;
@@ -830,7 +835,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           _isDisabled = true;
           _errorMessage = exception3.Message;
-          Log.Info("(IDisplay) iMONLCDg.Setup(): caught an exception.");
+          Log.Info("(IDisplay) iMONLCDg.Setup(): caught an exception: " + _errorMessage);
         }
       }
       string property = GUIPropertyManager.GetProperty("#currentmodule");
@@ -866,13 +871,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("(IDisplay) iMONLCDg.Setup(): _trows (Text Mode Rows) set to {0}", _trows);
         }
         Log.Info("(IDisplay) iMONLCDg.Setup(): _tcols (Text Mode Columns) set to {0}", _tcols);
-        DisplayOptions.DiskMediaStatus = false;
-        DisplayOptions.VolumeDisplay = false;
-        DisplayOptions.ProgressDisplay = false;
-        DisplayOptions.UseCustomFont = false;
-        DisplayOptions.UseLargeIcons = false;
-        DisplayOptions.UseCustomIcons = false;
-        DisplayOptions.UseInvertedIcons = false;
+        _DisplayOptions.DiskMediaStatus = false;
+        _DisplayOptions.VolumeDisplay = false;
+        _DisplayOptions.ProgressDisplay = false;
+        _DisplayOptions.UseCustomFont = false;
+        _DisplayOptions.UseLargeIcons = false;
+        _DisplayOptions.UseCustomIcons = false;
+        _DisplayOptions.UseInvertedIcons = false;
       }
       else if (_DisplayType == DisplayType.ThreeRsystems)
       {
@@ -886,13 +891,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Log.Info(
           "(IDisplay) iMONLCDg.Setup(): DISPLAY CONFIGURATION (3Rsystems MODE) ERROR - Columns must be less then or equal to 12");
 
-        DisplayOptions.DiskMediaStatus = false;
-        DisplayOptions.VolumeDisplay = false;
-        DisplayOptions.ProgressDisplay = false;
-        DisplayOptions.UseCustomFont = false;
-        DisplayOptions.UseLargeIcons = false;
-        DisplayOptions.UseCustomIcons = false;
-        DisplayOptions.UseInvertedIcons = false;
+        _DisplayOptions.DiskMediaStatus = false;
+        _DisplayOptions.VolumeDisplay = false;
+        _DisplayOptions.ProgressDisplay = false;
+        _DisplayOptions.UseCustomFont = false;
+        _DisplayOptions.UseLargeIcons = false;
+        _DisplayOptions.UseCustomIcons = false;
+        _DisplayOptions.UseInvertedIcons = false;
       }
       _delay = delay;
       _delayG = timeG;
@@ -906,7 +911,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public override string Description
     {
-      get { return "SoundGraph iMON USB VFD/LCD Plugin v29_11_2009"; }
+      get { return "SoundGraph iMON USB VFD/LCD Plugin >= 8.12.1202"; }
     }
 
     public override string ErrorMessage
@@ -940,13 +945,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           return true;
         }
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("(IDisplay) iMONLCDg.SupportsGraphics(): _displayType = {0}", DisplayType.TypeName(_DisplayType));
         }
         if (!_IMON.iMONVFD_IsInited())
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("(IDisplay) iMONLCDg.SupportsGraphics(): forcing true for configuration");
           }
@@ -954,13 +959,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("(IDisplay) iMONLCDg.SupportsGraphics(): returned true");
           }
           return true;
         }
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("(IDisplay) iMONLCDg.SupportsGraphics(): returned false");
         }
@@ -973,13 +978,129 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       get { return true; }
     }
 
-    #endregion
+    public int TextOffset
+    {
+      get
+      {
+        return this._DisplayOptions.UseLargeIcons ? 16 / (this._gcols / _tcols) : 0;
+      }
+    }
+
+    private class ImonMediaInfo
+    {
+      const string _mpgCodec = "MPEG VIDEO";
+      readonly string[] _divxCodecs = { "DX50", "DIVX", "DIV3", "3IV" };
+      const string _xvidCodec = "XVID";
+      const string _wmvCodec = "VC-1";
+      const string _mpg2Codec = "AVC";
+      const string _dtsCodec = "DTS";
+      const string _wmaCodec = "WMA";
+      const string _ac3Codec = "AC-3";
+      const string _mp3Codec = "LAYER 3";
+      const string _oggCodec = "VORBIS";
+      private string _format;
+
+      public string Format
+      {
+        get { return _format; }
+        set
+        {
+          _format = value;
+          if (_format != null && _format.Length > 0)
+          {
+            _format = _format.ToUpper();
+          }
+        }
+      }
+
+      public bool IsMpg
+      {
+        get { return IsCodec(_mpgCodec); }
+      }
+
+      public bool IsDivx
+      {
+        get
+        {
+          if (Format != null && Format.Length > 0)
+          {
+            foreach (string codec in _divxCodecs)
+            {
+              if (Format.IndexOf(codec) >= 0)
+              {
+                return true;
+              }
+            }
+            return false;
+          }
+          return false;
+        }
+      }
+
+      public bool IsXvid
+      {
+        get { return IsCodec(_xvidCodec); }
+      }
+
+      public bool IsWmv
+      {
+        get { return IsCodec(_wmvCodec); }
+      }
+
+      public bool IsMpg2
+      {
+        get { return IsCodec(_mpg2Codec); }
+      }
+
+      public bool IsWma
+      {
+        get { return IsCodec(_wmaCodec); }
+      }
+
+      public bool IsDts
+      {
+        get { return IsCodec(_dtsCodec); }
+      }
+
+      public bool IsAc3
+      {
+        get { return IsCodec(_ac3Codec); }
+      }
+
+      public bool IsMp3
+      {
+        get { return IsCodec(_mp3Codec); }
+      }
+
+      public bool IsOgg
+      {
+        get { return IsCodec(_oggCodec); }
+      }
+
+      private bool IsCodec(string codec)
+      {
+        if (Format != null && Format.Length > 0)
+        {
+          if (Format.IndexOf(codec) >= 0)
+          {
+            return true;
+          }
+          return false;
+        }
+        return false;
+      }
+    }
+
+    ImonMediaInfo _videoMediaInfo = new ImonMediaInfo();
+    ImonMediaInfo _audioMediaInfo = new ImonMediaInfo();
+
+#endregion
 
     private void ActivateDVM()
     {
       try
       {
-        if (!DVMactive)
+        if (!_DVMactive)
         {
           DVM = new DeviceVolumeMonitor(GUIGraphicsContext.form.Handle);
           if (DVM != null)
@@ -989,13 +1110,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             DVM.AsynchronousEvents = true;
             DVM.Enabled = true;
             Log.Debug("iMONLCDg.ActivateDVM(): DVM Activated");
-            DVMactive = true;
+            _DVMactive = true;
           }
         }
       }
       catch (Exception exception)
       {
-        DVMactive = true;
+        _DVMactive = true;
         Log.Debug("iMONLCDg.ActivateDVM(): caught exception: {0}", exception);
       }
     }
@@ -1003,7 +1124,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private void AdvancedSettings_OnSettingsChanged()
     {
       Log.Info("iMONLCDg.AdvancedSettings_OnSettingsChanged(): RELOADING SETTINGS");
-      AdvancedSettings advSettings = AdvSettings;
+      AdvancedSettings advSettings = _AdvSettings;
       AdvancedSettings settings2 = AdvancedSettings.Load();
       bool flag = false;
       if (!advSettings.Equals(settings2))
@@ -1041,27 +1162,27 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void Check_Idle_State()
     {
-      if (MPStatus.MP_Is_Idle)
+      if (_MPStatus.MP_Is_Idle)
       {
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.DisplayLines(): _BlankDisplayWhenIdle = {0}, _BlankIdleTimeout = {1}",
-                   DisplaySettings.BlankDisplayWhenIdle, DisplaySettings._BlankIdleTimeout);
+                   _DisplaySettings.BlankDisplayWhenIdle, _DisplaySettings._BlankIdleTimeout);
         }
-        if (DisplaySettings.BlankDisplayWhenIdle)
+        if (_DisplaySettings.BlankDisplayWhenIdle)
         {
           if (!_mpIsIdle)
           {
-            if (DoDebug)
+            if (_DoDebug)
             {
               Log.Info("iMONLCDg.DisplayLines(): MP going IDLE");
             }
-            DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
+            _DisplaySettings._BlankIdleTime = DateTime.Now.Ticks;
           }
           if (!_IsDisplayOff &&
-              ((DateTime.Now.Ticks - DisplaySettings._BlankIdleTime) > DisplaySettings._BlankIdleTimeout))
+              ((DateTime.Now.Ticks - _DisplaySettings._BlankIdleTime) > _DisplaySettings._BlankIdleTimeout))
           {
-            if (DoDebug)
+            if (_DoDebug)
             {
               Log.Info("iMONLCDg.DisplayLines(): Blanking display due to IDLE state");
             }
@@ -1072,9 +1193,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       else
       {
-        if (DisplaySettings.BlankDisplayWhenIdle & _mpIsIdle)
+        if (_DisplaySettings.BlankDisplayWhenIdle & _mpIsIdle)
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.DisplayLines(): MP no longer IDLE - restoring display");
           }
@@ -1164,13 +1285,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): " + curBrand + " " + curApp + " Manager Stopped");
               Win32Functions.RedrawNotificationArea();
               process = new Process
-                          {
-                            StartInfo =
+              {
+                StartInfo =
                               {
                                 WorkingDirectory = FindManagerPath(curBrand, curApp),
                                 FileName = curApp + ".exe"
                               }
-                          };
+              };
               Log.Debug("iMONLCDg.Check_iMON_Manager_Status(): ReStarting " + curBrand + " " + curApp + " Manager");
               Process.Start(process.StartInfo);
             }
@@ -1336,12 +1457,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
         {
-          if (!_displayTest)
+          if (!_displayTest && _iconThread != null)
           {
             while (_iconThread.IsAlive)
             {
               Log.Info("iMONLCDg.CloseLcd(): Stopping iMONLCDg.UpdateIcons() Thread");
-              lock (ThreadMutex)
+              lock (_ThreadMutex)
               {
                 _stopUpdateIconThread = true;
               }
@@ -1389,24 +1510,29 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             num |= (ulong)((now.Year & 0x0FL) << 0x08);
             SendData(num);
           }
-          SendData(iMonCommand.General.KeypadLightOff);
-          if (DisplayOptions.UseCustomFont)
+
+          if (_DisplayType == DisplayType.LCD2)
+            SendData(iMonCommand.LCD2.KeypadLightOff);
+          else
+            SendData(iMonCommand.LCD.KeypadLightOff);
+
+          if (_DisplayOptions.UseCustomFont)
           {
-            CFont.CloseFont();
+            _CFont.CloseFont();
           }
-          if (DisplayOptions.UseLargeIcons & DisplayOptions.UseCustomIcons)
+          if (_DisplayOptions.UseLargeIcons & _DisplayOptions.UseCustomIcons)
           {
-            CustomLargeIcon.CloseIcons();
+            _CustomLargeIcon.CloseIcons();
           }
         }
         else if (_DisplayType == DisplayType.VFD)
         {
-          if (EQSettings.UseEqDisplay || DisplaySettings.BlankDisplayWithVideo)
+          if (_EQSettings.UseEqDisplay || _DisplaySettings.BlankDisplayWithVideo)
           {
             while (_iconThread.IsAlive)
             {
               Log.Info("iMONLCDg.CloseLcd(): Stoping iMONLCDg.VFD_EQ_Update() Thread");
-              lock (ThreadMutex)
+              lock (_ThreadMutex)
               {
                 _stopUpdateIconThread = true;
               }
@@ -1422,9 +1548,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           else
           {
             Log.Info("iMONLCDg.CloseLcd(): Sending Shutdown message to VFD display!!");
-            if ((DisplaySettings._Shutdown1 != string.Empty) || (DisplaySettings._Shutdown2 != string.Empty))
+            if ((_DisplaySettings._Shutdown1 != string.Empty) || (_DisplaySettings._Shutdown2 != string.Empty))
             {
-              SetText(DisplaySettings._Shutdown1, DisplaySettings._Shutdown2);
+              SetText(_DisplaySettings._Shutdown1, _DisplaySettings._Shutdown2);
             }
             else
             {
@@ -1435,12 +1561,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else if (_DisplayType == DisplayType.ThreeRsystems)
         {
-          if (EQSettings.UseEqDisplay || DisplaySettings.BlankDisplayWithVideo)
+          if (_EQSettings.UseEqDisplay || _DisplaySettings.BlankDisplayWithVideo)
           {
             while (_iconThread.IsAlive)
             {
               Log.Info("iMONLCDg.CloseLcd(): Stoping iMONLCDg.VFD_EQ_Update() Thread");
-              lock (ThreadMutex)
+              lock (_ThreadMutex)
               {
                 _stopUpdateIconThread = true;
               }
@@ -1451,9 +1577,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           if (_BlankDisplayOnExit)
           {
             Log.Info("iMONLCDg.CloseLcd(): Sending Shutdown message to LCD3R display!!");
-            if (DisplaySettings._Shutdown1 != string.Empty)
+            if (_DisplaySettings._Shutdown1 != string.Empty)
             {
-              SendText3R(DisplaySettings._Shutdown1);
+              SendText3R(_DisplaySettings._Shutdown1);
             }
             else
             {
@@ -1492,101 +1618,101 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void DisplayEQ()
     {
-      if (!(EQSettings.UseEqDisplay & EQSettings._EqDataAvailable))
+      if (!(_EQSettings.UseEqDisplay & _EQSettings._EqDataAvailable))
       {
         return;
       }
-      if (EQSettings.RestrictEQ &
-          ((DateTime.Now.Ticks - EQSettings._LastEQupdate.Ticks) < EQSettings._EqUpdateDelay))
+      if (_EQSettings.RestrictEQ &
+          ((DateTime.Now.Ticks - _EQSettings._LastEQupdate.Ticks) < _EQSettings._EqUpdateDelay))
       {
         return;
       }
-      if (DoDebug)
+      if (_DoDebug)
       {
-        Log.Info("\niMONLCDg.DisplayEQ(): Retrieved {0} samples of Equalizer data.", EQSettings.EqFftData.Length / 2);
+        Log.Info("\niMONLCDg.DisplayEQ(): Retrieved {0} samples of Equalizer data.", _EQSettings.EqFftData.Length / 2);
       }
-      if ((EQSettings.UseStereoEq || EQSettings.UseVUmeter) || EQSettings.UseVUmeter2)
+      if ((_EQSettings.UseStereoEq || _EQSettings.UseVUmeter) || _EQSettings.UseVUmeter2)
       {
-        if (EQSettings.UseStereoEq)
+        if (_EQSettings.UseStereoEq)
         {
-          EQSettings.Render_MaxValue = 100;
-          EQSettings.Render_BANDS = 8;
-          EQSettings.EqArray[0] = 0x63;
+          _EQSettings.Render_MaxValue = 100;
+          _EQSettings.Render_BANDS = 8;
+          _EQSettings.EqArray[0] = 0x63;
           if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
           {
-            EQSettings.Render_MaxValue = (EQSettings._useEqMode == 2) ? 8 : 0x10;
-            EQSettings.EqArray[0] = (byte)EQSettings._useEqMode;
+            _EQSettings.Render_MaxValue = (_EQSettings._useEqMode == 2) ? 8 : 0x10;
+            _EQSettings.EqArray[0] = (byte)_EQSettings._useEqMode;
           }
           else if (_DisplayType == DisplayType.ThreeRsystems)
           {
-            EQSettings.Render_MaxValue = 6;
-            EQSettings.EqArray[0] = 0;
+            _EQSettings.Render_MaxValue = 6;
+            _EQSettings.EqArray[0] = 0;
           }
-          MiniDisplayHelper.ProcessEqData(ref EQSettings);
-          for (int i = 0; i < EQSettings.Render_BANDS; i++)
+          MiniDisplayHelper.ProcessEqData(ref _EQSettings);
+          for (int i = 0; i < _EQSettings.Render_BANDS; i++)
           {
-            switch (EQSettings.EqArray[0])
+            switch (_EQSettings.EqArray[0])
             {
               case 2:
                 {
-                  var num2 = (byte)(EQSettings.EqArray[1 + i] & 15);
-                  EQSettings.EqArray[1 + i] = (byte)((num2 << 4) | num2);
-                  var num3 = (byte)(EQSettings.EqArray[9 + i] & 15);
-                  EQSettings.EqArray[9 + i] = (byte)((num3 << 4) | num3);
+                  var num2 = (byte)(_EQSettings.EqArray[1 + i] & 15);
+                  _EQSettings.EqArray[1 + i] = (byte)((num2 << 4) | num2);
+                  var num3 = (byte)(_EQSettings.EqArray[9 + i] & 15);
+                  _EQSettings.EqArray[9 + i] = (byte)((num3 << 4) | num3);
                   break;
                 }
             }
           }
           for (int j = 15; j > 7; j--)
           {
-            EQSettings.EqArray[j + 1] = EQSettings.EqArray[j];
+            _EQSettings.EqArray[j + 1] = _EQSettings.EqArray[j];
           }
-          EQSettings.EqArray[8] = 0;
-          EQSettings.EqArray[9] = 0;
+          _EQSettings.EqArray[8] = 0;
+          _EQSettings.EqArray[9] = 0;
         }
         else
         {
-          EQSettings.Render_MaxValue = 80;
-          EQSettings.Render_BANDS = 1;
+          _EQSettings.Render_MaxValue = 80;
+          _EQSettings.Render_BANDS = 1;
           if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
           {
-            EQSettings.Render_MaxValue = 0x60;
-            if (EQSettings._useVUindicators)
+            _EQSettings.Render_MaxValue = 0x60;
+            if (_EQSettings._useVUindicators)
             {
-              EQSettings.Render_MaxValue = 0x60;
+              _EQSettings.Render_MaxValue = 0x60;
             }
           }
-          else if (EQSettings._useVUindicators)
+          else if (_EQSettings._useVUindicators)
           {
-            EQSettings.Render_MaxValue = 0x4b;
+            _EQSettings.Render_MaxValue = 0x4b;
           }
-          MiniDisplayHelper.ProcessEqData(ref EQSettings);
+          MiniDisplayHelper.ProcessEqData(ref _EQSettings);
         }
       }
       else
       {
-        EQSettings.Render_MaxValue = 100;
-        EQSettings.Render_BANDS = 0x10;
-        EQSettings.EqArray[0] = 0x63;
+        _EQSettings.Render_MaxValue = 100;
+        _EQSettings.Render_BANDS = 0x10;
+        _EQSettings.EqArray[0] = 0x63;
         if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
         {
-          EQSettings.Render_MaxValue = (EQSettings._useEqMode == 2) ? 8 : 0x10;
-          EQSettings.EqArray[0] = (byte)EQSettings._useEqMode;
+          _EQSettings.Render_MaxValue = (_EQSettings._useEqMode == 2) ? 8 : 0x10;
+          _EQSettings.EqArray[0] = (byte)_EQSettings._useEqMode;
         }
         else if (_DisplayType == DisplayType.ThreeRsystems)
         {
-          EQSettings.Render_MaxValue = 6;
-          EQSettings.EqArray[0] = 0;
+          _EQSettings.Render_MaxValue = 6;
+          _EQSettings.EqArray[0] = 0;
         }
-        MiniDisplayHelper.ProcessEqData(ref EQSettings);
-        for (int k = 0; k < EQSettings.Render_BANDS; k++)
+        MiniDisplayHelper.ProcessEqData(ref _EQSettings);
+        for (int k = 0; k < _EQSettings.Render_BANDS; k++)
         {
-          switch (EQSettings.EqArray[0])
+          switch (_EQSettings.EqArray[0])
           {
             case 2:
               {
-                var num6 = (byte)(EQSettings.EqArray[1 + k] & 15);
-                EQSettings.EqArray[1 + k] = (byte)((num6 << 4) | num6);
+                var num6 = (byte)(_EQSettings.EqArray[1 + k] & 15);
+                _EQSettings.EqArray[1 + k] = (byte)((num6 << 4) | num6);
                 break;
               }
           }
@@ -1594,32 +1720,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
       {
-        if (!EQSettings.UseVUmeter && !EQSettings.UseVUmeter2)
+        if (!_EQSettings.UseVUmeter && !_EQSettings.UseVUmeter2)
         {
-          SetEQ(EQSettings.EqArray);
+          SetEQ(_EQSettings.EqArray);
         }
         else
         {
-          DrawVU(EQSettings.EqArray);
+          DrawVU(_EQSettings.EqArray);
         }
       }
       else if (_DisplayType == DisplayType.ThreeRsystems)
       {
         for (int m = 0; m < 8; m++)
         {
-          EQSettings.EqArray[1 + m] =
-            (byte)((EQSettings.EqArray[1 + m] << 4) + EQSettings.EqArray[9 + m]);
+          _EQSettings.EqArray[1 + m] =
+            (byte)((_EQSettings.EqArray[1 + m] << 4) + _EQSettings.EqArray[9 + m]);
         }
         ulong data = 0x0901000000000000L;
         ulong num9 = 0x0000000000000002L;
-        data = data + EQSettings.EqArray[1] << 40;
-        data = data + EQSettings.EqArray[2] << 0x20;
-        data = data + EQSettings.EqArray[3] << 0x18;
-        data = data + EQSettings.EqArray[4] << 0x10;
-        data = data + EQSettings.EqArray[5] << 8;
-        num9 = num9 + EQSettings.EqArray[6] << 40;
-        num9 = num9 + EQSettings.EqArray[7] << 0x20;
-        num9 = num9 + EQSettings.EqArray[8] << 0x18;
+        data = data + _EQSettings.EqArray[1] << 40;
+        data = data + _EQSettings.EqArray[2] << 0x20;
+        data = data + _EQSettings.EqArray[3] << 0x18;
+        data = data + _EQSettings.EqArray[4] << 0x10;
+        data = data + _EQSettings.EqArray[5] << 8;
+        num9 = num9 + _EQSettings.EqArray[6] << 40;
+        num9 = num9 + _EQSettings.EqArray[7] << 0x20;
+        num9 = num9 + _EQSettings.EqArray[8] << 0x18;
         SendData(0x0200020000000000L);
         SendData(0x0000000000000002L);
         SendData(0x0d0f202020202000L);
@@ -1629,53 +1755,53 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       else
       {
-        if (!EQSettings.UseVUmeter && !EQSettings.UseVUmeter2)
+        if (!_EQSettings.UseVUmeter && !_EQSettings.UseVUmeter2)
         {
           var destinationArray = new int[0x10];
-          Array.Copy(EQSettings.EqArray, 1, destinationArray, 0, 0x10);
-          lock (DWriteMutex)
+          Array.Copy(_EQSettings.EqArray, 1, destinationArray, 0, 0x10);
+          lock (_DWriteMutex)
           {
             _IMON.iMONVFD_SetEQ(destinationArray);
             goto Label_0613;
           }
         }
-        DrawVU(EQSettings.EqArray);
+        DrawVU(_EQSettings.EqArray);
       }
-      Label_0613:
-      EQSettings._LastEQupdate = DateTime.Now;
-      if ((DateTime.Now.Ticks - EQSettings._EQ_FPS_time.Ticks) < 0x989680L)
+    Label_0613:
+      _EQSettings._LastEQupdate = DateTime.Now;
+      if ((DateTime.Now.Ticks - _EQSettings._EQ_FPS_time.Ticks) < 0x989680L)
       {
-        EQSettings._EQ_Framecount++;
+        _EQSettings._EQ_Framecount++;
       }
       else
       {
-        EQSettings._Max_EQ_FPS = Math.Max(EQSettings._Max_EQ_FPS, EQSettings._EQ_Framecount);
-        EQSettings._EQ_Framecount = 0;
-        EQSettings._EQ_FPS_time = DateTime.Now;
+        _EQSettings._Max_EQ_FPS = Math.Max(_EQSettings._Max_EQ_FPS, _EQSettings._EQ_Framecount);
+        _EQSettings._EQ_Framecount = 0;
+        _EQSettings._EQ_FPS_time = DateTime.Now;
       }
     }
 
     private void DisplayLines()
     {
       UpdateAdvancedSettings();
-      if (DoDebug)
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.DisplayLines(): Sending text to display type {0}", DisplayType.TypeName(_DisplayType));
       }
       try
       {
-        MiniDisplayHelper.GetSystemStatus(ref MPStatus);
+        MiniDisplayHelper.GetSystemStatus(ref _MPStatus);
         Check_Idle_State();
-        if (EQSettings._EqDataAvailable || _IsDisplayOff)
+        if (_EQSettings._EqDataAvailable || _IsDisplayOff)
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.DisplayLines(): Suppressing display update!");
           }
         }
         else if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.DisplayLines(): Calling SendText() to emulate VFD for {0}",
                      DisplayType.TypeName(_DisplayType));
@@ -1684,7 +1810,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else if (_DisplayType == DisplayType.VFD)
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.DisplayLines(): Calling SetText()");
           }
@@ -1705,52 +1831,55 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (!_IsDisplayOff)
       {
-        if (DisplaySettings.EnableDisplayAction & DisplaySettings._DisplayControlAction)
+        if (_DisplaySettings.EnableDisplayAction & _DisplaySettings._DisplayControlAction)
         {
-          if ((DateTime.Now.Ticks - DisplaySettings._DisplayControlLastAction) <
-              DisplaySettings._DisplayControlTimeout)
+          if ((DateTime.Now.Ticks - _DisplaySettings._DisplayControlLastAction) <
+              _DisplaySettings._DisplayControlTimeout)
           {
-            if (DoDebug)
+            if (_DoDebug)
             {
               Log.Info("iMONLCDg.DisplayOff(): DisplayControlAction Timer = {0}.",
-                       DateTime.Now.Ticks - DisplaySettings._DisplayControlLastAction);
+                       DateTime.Now.Ticks - _DisplaySettings._DisplayControlLastAction);
             }
             return;
           }
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.DisplayOff(): DisplayControlAction Timeout expired.");
           }
-          DisplaySettings._DisplayControlAction = false;
-          DisplaySettings._DisplayControlLastAction = 0L;
+          _DisplaySettings._DisplayControlAction = false;
+          _DisplaySettings._DisplayControlLastAction = 0L;
         }
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.DisplayOff(): called");
         }
-        lock (DWriteMutex)
+        lock (_DWriteMutex)
         {
           switch (_DisplayType)
           {
             case DisplayType.LCD2:
-              if (DoDebug)
+              if (_DoDebug)
                 Log.Info("iMONLCDg.DisplayOff(): Sending Shutdown command to LCD2");
               SendData(iMonCommand.LCD2.BacklightOff | iMonCommand.LCD2.ClearDisplay);
+              SendData(iMonCommand.LCD2.KeypadLightOff);
               break;
             case DisplayType.LCD:
-              if (DoDebug)
+              if (_DoDebug)
                 Log.Info("iMONLCDg.DisplayOff(): Sending Shutdown command to LCD");
               SendData(iMonCommand.LCD.BacklightOff | iMonCommand.LCD.ClearDisplay);
+              SendData(iMonCommand.LCD.KeypadLightOff);
               break;
             case DisplayType.VFD:
-              if (DoDebug)
+              if (_DoDebug)
                 Log.Info("iMONLCDg.DisplayOff(): Sending blank display to VFD");
               _IMON.iMONVFD_SetText(new string(' ', 0x10), new string(' ', 0x10));
+              SendData(iMonCommand.LCD.KeypadLightOff);
               break;
           }
           _IsDisplayOff = true;
         }
-        if (DoDebug)
+        if (_DoDebug)
           Log.Info("iMONLCDg.DisplayOff(): completed");
       }
     }
@@ -1761,15 +1890,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         return;
       }
-      if (DoDebug)
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.DisplayOn(): called");
       }
       if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
       {
-        lock (DWriteMutex)
+        lock (_DWriteMutex)
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.DisplayOn(): Sending Display ON command to LCD");
           }
@@ -1791,12 +1920,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           goto Label_0150;
         }
       }
-      lock (DWriteMutex)
+      lock (_DWriteMutex)
       {
         _IsDisplayOff = false;
       }
-      Label_0150:
-      if (DoDebug)
+    Label_0150:
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.DisplayOn(): called");
       }
@@ -1860,13 +1989,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void DrawVU(byte[] EqDataArray)
     {
-      if (DoDebug)
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.DrawVU(): Called");
       }
       if ((_DisplayType != DisplayType.LCD) && (_DisplayType != DisplayType.LCD2))
       {
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.DrawVU(): Drawing VU meter for VFD display");
         }
@@ -1874,9 +2003,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         string secondLine = "";
         const char ch = IMON_CHAR_6_BARS;
         int num7 = 0x10;
-        if (EQSettings._useVUindicators)
+        if (_EQSettings._useVUindicators)
         {
-          if (EQSettings.UseVUmeter)
+          if (_EQSettings.UseVUmeter)
           {
             firstLine = "L";
             secondLine = "R";
@@ -1901,7 +2030,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             secondLine = secondLine + ' ';
           }
-          else if (EQSettings.UseVUmeter)
+          else if (_EQSettings.UseVUmeter)
           {
             if (((i + 1) * 5) < EqDataArray[2])
             {
@@ -1917,11 +2046,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             secondLine = secondLine + ' ';
           }
         }
-        if (EQSettings.UseVUmeter2 && EQSettings._useVUindicators)
+        if (_EQSettings.UseVUmeter2 && _EQSettings._useVUindicators)
         {
           secondLine = secondLine + "R";
         }
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.DrawVU(): Sending VU meter data to display: L = \"{0}\" - R = \"{1}\"", firstLine,
                    secondLine);
@@ -1930,21 +2059,21 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       else
       {
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.DrawVU(): Drawing Graphical VU meter for LCD display");
         }
         int num = 0x60;
         int num2 = 0;
         var pixelArray = new byte[0xc0];
-        if (EQSettings._useVUindicators)
+        if (_EQSettings._useVUindicators)
         {
           num = 0x58;
           for (int m = 5; m >= 0; m--)
           {
             if ((m + num2) < 0x60)
             {
-              pixelArray[num2 + m] = DisplayOptions.UseCustomFont
+              pixelArray[num2 + m] = _DisplayOptions.UseCustomFont
                                        ? BitReverse(CustomFont.PixelData(0x4c, m))
                                        : BitReverse(_Font8x5[0x4c, m]);
             }
@@ -1960,13 +2089,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           pixelArray[num2 + j] = 0x7e;
         }
         num2 = 0x60;
-        if (EQSettings._useVUindicators)
+        if (_EQSettings._useVUindicators)
         {
           for (int n = 5; n >= 0; n--)
           {
-            if (DisplayOptions.UseCustomFont)
+            if (_DisplayOptions.UseCustomFont)
             {
-              if (EQSettings.UseVUmeter)
+              if (_EQSettings.UseVUmeter)
               {
                 pixelArray[num2 + n] = BitReverse(CustomFont.PixelData(0x52, n));
               }
@@ -1975,7 +2104,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 pixelArray[(num2 + 90) + n] = BitReverse(CustomFont.PixelData(0x52, n));
               }
             }
-            else if (EQSettings.UseVUmeter)
+            else if (_EQSettings.UseVUmeter)
             {
               pixelArray[num2 + n] = BitReverse(_Font8x5[0x52, n]);
             }
@@ -1984,7 +2113,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               pixelArray[(num2 + 90) + n] = BitReverse(_Font8x5[0x52, n]);
             }
           }
-          if (EQSettings.UseVUmeter)
+          if (_EQSettings.UseVUmeter)
           {
             num2 += 8;
           }
@@ -1995,7 +2124,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             break;
           }
-          if (EQSettings.UseVUmeter)
+          if (_EQSettings.UseVUmeter)
           {
             pixelArray[num2 + k] = 0x7e;
           }
@@ -2006,7 +2135,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         SendPixelArrayRaw(pixelArray);
       }
-      if (DoDebug)
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.DrawVU(): completed");
       }
@@ -2015,49 +2144,49 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     public string FindImonVFDdll()
     {
       RegistryKey key;
-      string str;
-      if (DoDebug)
+      string strPathDll;
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.FindImonVFDdll(): called.");
       }
-      bool flag = false;
-      bool flag2 = false;
-      string str2 = string.Empty;
-      string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-      string str4 = string.Empty;
-      string str5 = string.Empty;
+      bool bAntec = false;
+      bool bSoundGraph = false;
+      string strResult = string.Empty;
+      string strFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+      string strPathAntec = string.Empty;
+      string strPathSoundgraph = string.Empty;
       if (Registry.CurrentUser.OpenSubKey(@"Software\Antec\VFD", false) != null)
       {
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.FindImonVFDdll(): found Antec registry keys.");
         }
-        flag = true;
+        bAntec = true;
         Registry.CurrentUser.Close();
         key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\VFD.exe", false);
         if (key != null)
         {
-          str4 = (string)key.GetValue("Path", string.Empty);
-          if (str4 == string.Empty)
+          strPathAntec = (string)key.GetValue("Path", string.Empty);
+          if (strPathAntec == string.Empty)
           {
-            if (DoDebug)
+            if (_DoDebug)
             {
               Log.Info("iMONLCDg.FindImonVFDdll(): Antec file Path registry key not found. trying default path");
             }
-            str4 = folderPath + @"\Antec\VFD";
+            strPathAntec = strFolderPath + @"\Antec\VFD";
           }
-          else if (DoDebug)
+          else if (_DoDebug)
           {
             Log.Info("iMONLCDg.FindImonVFDdll(): found Antec file Path registry key.");
           }
         }
         else
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.FindImonVFDdll(): Antec file Path registry key not found. trying default path");
           }
-          str4 = folderPath + @"\Antec\VFD";
+          strPathAntec = strFolderPath + @"\Antec\VFD";
         }
         Registry.LocalMachine.Close();
       }
@@ -2067,36 +2196,38 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       if (Registry.CurrentUser.OpenSubKey(@"Software\SOUNDGRAPH\iMON", false) != null)
       {
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.FindImonVFDdll(): found SoundGraph registry keys.");
         }
-        flag2 = true;
+        bSoundGraph = true;
         Registry.CurrentUser.Close();
         key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\iMON.exe", false);
         if (key != null)
         {
-          str5 = (string)key.GetValue("Path", string.Empty);
-          if (str5 == string.Empty)
+          strPathSoundgraph = (string)key.GetValue("Path", string.Empty);
+          if (strPathSoundgraph == string.Empty)
           {
-            if (DoDebug)
+            if (_DoDebug)
             {
               Log.Info("iMONLCDg.FindImonVFDdll(): SoundGraph file Path registry key not found. trying default path");
             }
-            str5 = folderPath + @"\SoundGraph\iMON";
+            strPathSoundgraph = strFolderPath + @"\SoundGraph\iMON";
           }
-          else if (DoDebug)
+          else
           {
-            Log.Info("iMONLCDg.FindImonVFDdll(): found SoundGraph file Path registry key.");
+            bAntec = false;
+            if (_DoDebug)
+              Log.Info("iMONLCDg.FindImonVFDdll(): found SoundGraph file Path registry key.");
           }
         }
         else
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.FindImonVFDdll(): SoundGraph file Path registry key not found. trying default path");
           }
-          str5 = folderPath + @"\Antec\VFD";
+          strPathSoundgraph = strFolderPath + @"\Antec\VFD";
         }
         Registry.LocalMachine.Close();
       }
@@ -2104,64 +2235,64 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         Registry.CurrentUser.Close();
       }
-      if (flag & !flag2)
+      if (bAntec & !bSoundGraph)
       {
-        str = str4 + @"\sg_vfd.dll";
-        if (File.Exists(str))
+        strPathDll = strPathAntec + @"\sg_vfd.dll";
+        if (File.Exists(strPathDll))
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.FindImonVFDdll(): Selected Antec DLL.");
           }
-          str2 = str;
+          strResult = strPathDll;
         }
       }
-      else if (!flag & flag2)
+      else if (!bAntec & bSoundGraph)
       {
-        str = str5 + @"\sg_vfd.dll";
-        if (File.Exists(str))
+        strPathDll = strPathSoundgraph + @"\sg_vfdu.dll";
+        if (File.Exists(strPathDll))
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.FindImonVFDdll(): Selected SoundGraph DLL.");
           }
-          str2 = str;
+          strResult = strPathDll;
         }
       }
       else
       {
-        str = str4 + @"\sg_vfd.dll";
-        if (File.Exists(str))
+        strPathDll = strPathAntec + @"\sg_vfd.dll";
+        if (File.Exists(strPathDll))
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.FindImonVFDdll(): Picked Antec DLL.");
           }
-          str2 = str;
+          strResult = strPathDll;
         }
         else
         {
-          str = str5 + @"\sg_vfd.dll";
-          if (File.Exists(str))
+          strPathDll = strPathSoundgraph + @"\sg_vfd.dll";
+          if (File.Exists(strPathDll))
           {
-            if (DoDebug)
+            if (_DoDebug)
             {
               Log.Info("iMONLCDg.FindImonVFDdll(): Picked Soundgraph DLL.");
             }
-            str2 = str;
+            strResult = strPathDll;
           }
         }
       }
-      if (DoDebug)
+      if (_DoDebug)
       {
-        Log.Info("iMONLCDg.FindImonVFDdll(): completed - selected file \"{0}\".", str2);
+        Log.Info("iMONLCDg.FindImonVFDdll(): completed - selected file \"{0}\".", strResult);
       }
-      return str2;
+      return strResult;
     }
 
     public string FindManagerPath(string curBrand, string curApp)
     {
-      if (DoDebug)
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.FindManagerPath(): called.");
       }
@@ -2182,7 +2313,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         Registry.CurrentUser.Close();
       }
-      if (DoDebug)
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.FindManagerPath(): selected path = \"{0}\".", str);
       }
@@ -2193,7 +2324,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (!_ForceManagerRestart)
       {
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.ForceManagerRestart(): Option not selected... restart not required.");
         }
@@ -2207,7 +2338,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           string str = FindManagerPath(curBrand, curApp);
           if (String.IsNullOrEmpty(str))
           {
-            if (DoDebug)
+            if (_DoDebug)
             {
               Log.Info("iMONLCDg.ForceManagerRestart(): Manager installation not found... restart not possible.");
             }
@@ -2226,7 +2357,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 _UsingAntecManager = true;
               }
-              if (DoDebug)
+              if (_DoDebug)
               {
                 Log.Info("iMONLCDg.ForceManagerRestart(): Found " + curBrand + " " + curApp + " Manager process.");
               }
@@ -2237,13 +2368,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Win32Functions.RedrawNotificationArea();
 
               process = new Process
-                          {
-                            StartInfo =
+              {
+                StartInfo =
                               {
                                 WorkingDirectory = str,
                                 FileName = curApp + ".exe"
                               }
-                          };
+              };
               Log.Debug("iMONLCDg.ForceManagerRestart(): ReStarting " + curBrand + " " + curApp + " Manager");
               Process.Start(process.StartInfo);
               GUIGraphicsContext.form.Activate();
@@ -2334,10 +2465,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void GetEQ()
     {
-      lock (DWriteMutex)
+      lock (_DWriteMutex)
       {
-        EQSettings._EqDataAvailable = MiniDisplayHelper.GetEQ(ref EQSettings);
-        _iconThread.Priority = EQSettings._EqDataAvailable ? ThreadPriority.AboveNormal : ThreadPriority.BelowNormal;
+        _EQSettings._EqDataAvailable = MiniDisplayHelper.GetEQ(ref _EQSettings);
+        _iconThread.Priority = _EQSettings._EqDataAvailable ? ThreadPriority.AboveNormal : ThreadPriority.BelowNormal;
       }
     }
 
@@ -2384,13 +2515,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void InitializeDriver()
     {
-      DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
+      _DoDebug = Assembly.GetEntryAssembly().FullName.Contains("Configuration") | Settings.Instance.ExtensiveLogging;
       _IsConfiguring = Assembly.GetEntryAssembly().FullName.Contains("Configuration");
       Log.Info("iMONLCDg.InitializeDriver(): started.");
       Log.Info("iMONLCDg.InitializeDriver(): iMONLCDg Driver - {0}", Description);
       Log.Info("iMONLCDg.InitializeDriver(): Called by \"{0}\".", Assembly.GetEntryAssembly().FullName);
       var info = new FileInfo(Assembly.GetExecutingAssembly().Location);
-      if (DoDebug)
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.InitializeDriver(): Assembly creation time: {0} ( {1} UTC )", info.LastWriteTime,
                  info.LastWriteTimeUtc.ToUniversalTime());
@@ -2420,62 +2551,63 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Control Contrast: {0}", _Contrast);
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Force Graphic Text: {0}",
                Settings.Instance.ForceGraphicText);
-      Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Use Disk Icon: {0}", DisplayOptions.DiskIcon.ToString());
+      Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Use Disk Icon: {0}", _DisplayOptions.DiskIcon.ToString());
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Volume Bar: {10",
-               DisplayOptions.VolumeDisplay.ToString());
+               _DisplayOptions.VolumeDisplay.ToString());
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Progress Bar: {0}",
-               DisplayOptions.ProgressDisplay.ToString());
+               _DisplayOptions.ProgressDisplay.ToString());
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Use Disk Icon For Media Status: {0}",
-               DisplayOptions.DiskMediaStatus.ToString());
+               _DisplayOptions.DiskMediaStatus.ToString());
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Use Disk Icon For CD/DVD device status: {0}",
-               DisplayOptions.DiskMonitor.ToString());
+               _DisplayOptions.DiskMonitor.ToString());
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Custom Font: {0}",
-               DisplayOptions.UseCustomFont.ToString());
+               _DisplayOptions.UseCustomFont.ToString());
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Large Icons: {0}",
-               DisplayOptions.UseLargeIcons.ToString());
+               _DisplayOptions.UseLargeIcons.ToString());
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Custom Large Icons: {0}",
-               DisplayOptions.UseCustomIcons.ToString());
-      Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Equalizer Display: {0}", EQSettings.UseEqDisplay);
-      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   EQMode: {0}", EQSettings._useEqMode);
-      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Normal Equalizer Display: {0}", EQSettings.UseNormalEq);
-      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Stereo Equalizer Display: {0}", EQSettings.UseStereoEq);
-      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   VU Meter Display: {0}", EQSettings.UseVUmeter);
-      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   VU Meter Style 2 Display: {0}", EQSettings.UseVUmeter2);
+               _DisplayOptions.UseCustomIcons.ToString());
+      Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Equalizer Display: {0}", _EQSettings.UseEqDisplay);
+      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   EQMode: {0}", _EQSettings._useEqMode);
+      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Normal Equalizer Display: {0}", _EQSettings.UseNormalEq);
+      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Stereo Equalizer Display: {0}", _EQSettings.UseStereoEq);
+      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   VU Meter Display: {0}", _EQSettings.UseVUmeter);
+      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   VU Meter Style 2 Display: {0}", _EQSettings.UseVUmeter2);
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -     Use VU Channel indicators: {0}",
-               EQSettings._useVUindicators);
-      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Restrict EQ Update Rate: {0}", EQSettings.RestrictEQ);
+               _EQSettings._useVUindicators);
+      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Restrict EQ Update Rate: {0}", _EQSettings.RestrictEQ);
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -     Restricted EQ Update Rate: {0} updates per second",
-               EQSettings._EQ_Restrict_FPS);
-      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Delay EQ Startup: {0}", EQSettings.DelayEQ);
+               _EQSettings._EQ_Restrict_FPS);
+      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Delay EQ Startup: {0}", _EQSettings.DelayEQ);
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -     Delay EQ Startup Time: {0} seconds",
-               EQSettings._DelayEQTime);
-      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Smooth EQ Amplitude Decay: {0}", EQSettings.SmoothEQ);
+               _EQSettings._DelayEQTime);
+      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Smooth EQ Amplitude Decay: {0}", _EQSettings.SmoothEQ);
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Show Track Info with EQ display: {0}",
-               EQSettings.EQTitleDisplay);
+               _EQSettings.EQTitleDisplay);
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -     Show Track Info Interval: {0} seconds",
-               EQSettings._EQTitleDisplayTime);
+               _EQSettings._EQTitleDisplayTime);
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -     Show Track Info duration: {0} seconds",
-               EQSettings._EQTitleShowTime);
+               _EQSettings._EQTitleShowTime);
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Blank display with video: {0}",
-               DisplaySettings.BlankDisplayWithVideo);
+               _DisplaySettings.BlankDisplayWithVideo);
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   Enable Display on Action: {0}",
-               DisplaySettings.EnableDisplayAction);
+               _DisplaySettings.EnableDisplayAction);
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -     Enable display for: {0} seconds",
-               DisplaySettings.DisplayActionTime);
+               _DisplaySettings.DisplayActionTime);
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Monitor PowerState Events: {0}", _MonitorPower);
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Blank display when idle: {0}",
-               DisplaySettings.BlankDisplayWhenIdle);
+               _DisplaySettings.BlankDisplayWhenIdle);
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options -     blank display after: {0} seconds",
-               DisplaySettings._BlankIdleTimeout / 0xf4240L);
+               _DisplaySettings._BlankIdleTimeout / 0xf4240L);
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Shutdown Message - Line 1: {0}",
-               DisplaySettings._Shutdown1);
+               _DisplaySettings._Shutdown1);
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Shutdown Message - Line 2: {0}",
-               DisplaySettings._Shutdown2);
-      Log.Info("iMONLCDg.InitializeDriver(): Setting - Audio using ASIO: {0}", EQSettings._AudioUseASIO);
-      Log.Info("iMONLCDg.InitializeDriver(): Setting - Audio using Mixer: {0}", EQSettings._AudioIsMixing);
-      if (!DisplayOptions.DiskMonitor & !DisplayOptions.DiskMediaStatus)
+               _DisplaySettings._Shutdown2);
+      Log.Info("iMONLCDg.InitializeDriver(): Advanced options -   KeyPad Light: {0}", _AdvSettings.KeyPadLight);
+      Log.Info("iMONLCDg.InitializeDriver(): Setting - Audio using ASIO: {0}", _EQSettings._AudioUseASIO);
+      Log.Info("iMONLCDg.InitializeDriver(): Setting - Audio using Mixer: {0}", _EQSettings._AudioIsMixing);
+      if (!_DisplayOptions.DiskMonitor & !_DisplayOptions.DiskMediaStatus)
       {
-        DisplayOptions.DiskIcon = false;
+        _DisplayOptions.DiskIcon = false;
       }
       if (_ForceDisplay == "LCD")
       {
@@ -2497,10 +2629,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         _DisplayType = DisplayType.VFD;
         Log.Info("iMONLCDg.InitializeDriver(): Advanced options forces display type to LCD3R");
       }
-      Log.Info("iMONLCDg.InitializeDriver(): Extensive logging: {0}", DoDebug);
+      Log.Info("iMONLCDg.InitializeDriver(): Extensive logging: {0}", _DoDebug);
       Log.Info("iMONLCDg.InitializeDriver(): Use V3 DLL for VFD: {0}", _VFD_UseV3DLL);
       Log.Info("iMONLCDg.InitializeDriver(): Display Type: {0}", DisplayType.TypeName(_DisplayType));
-      if (((imonVFD_DLLFile = FindImonVFDdll()) == string.Empty) & !_VFD_UseV3DLL)
+      if (((_imonVFD_DLLFile = FindImonVFDdll()) == string.Empty) & !_VFD_UseV3DLL)
       {
         Log.Info("iMONLCDg.InitializeDriver(): Failed - installed sg_vfd.dll not found - driver disabled");
         _isDisabled = true;
@@ -2508,7 +2640,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       else
       {
         _IMON = new iMONDisplay();
-        if (!_IMON.Initialize(imonVFD_DLLFile))
+        if (!_IMON.Initialize(_imonVFD_DLLFile))
         {
           Log.Info("iMONLCDg.InitializeDriver(): DLL linking Failed - driver disabled");
           _isDisabled = true;
@@ -2544,69 +2676,69 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void LoadAdvancedSettings()
     {
-      AdvSettings = AdvancedSettings.Load();
-      IdleMessage = (Settings.Instance.IdleMessage != string.Empty) ? Settings.Instance.IdleMessage : "MediaPortal";
-      _DelayStartup = AdvSettings.DelayStartup;
-      _EnsureManagerStartup = AdvSettings.EnsureManagerStartup;
-      _ForceManagerRestart = AdvSettings.ForceManagerRestart;
-      _ForceManagerReload = AdvSettings.ForceManagerReload;
-      _RestartFrontviewOnExit = AdvSettings.RestartFrontviewOnExit;
-      _LeaveFrontviewActive = AdvSettings.LeaveFrontviewActive;
-      _ForceKeyBoardMode = AdvSettings.ForceKeyBoardMode;
-      _ForceDisplay = AdvSettings.DisplayType;
+      _AdvSettings = AdvancedSettings.Load();
+      _IdleMessage = (Settings.Instance.IdleMessage != string.Empty) ? Settings.Instance.IdleMessage : "MediaPortal";
+      _DelayStartup = _AdvSettings.DelayStartup;
+      _EnsureManagerStartup = _AdvSettings.EnsureManagerStartup;
+      _ForceManagerRestart = _AdvSettings.ForceManagerRestart;
+      _ForceManagerReload = _AdvSettings.ForceManagerReload;
+      _RestartFrontviewOnExit = _AdvSettings.RestartFrontviewOnExit;
+      _LeaveFrontviewActive = _AdvSettings.LeaveFrontviewActive;
+      _ForceKeyBoardMode = _AdvSettings.ForceKeyBoardMode;
+      _ForceDisplay = _AdvSettings.DisplayType;
       if (String.IsNullOrEmpty(_ForceDisplay))
       {
         _ForceDisplay = "AutoDetect";
       }
-      DisplayOptions.VolumeDisplay = AdvSettings.VolumeDisplay;
-      DisplayOptions.ProgressDisplay = AdvSettings.ProgressDisplay;
-      DisplayOptions.DiskIcon = AdvSettings.DiskIcon;
-      DisplayOptions.DiskMediaStatus = AdvSettings.DiskMediaStatus;
-      DisplayOptions.DiskMonitor = AdvSettings.DeviceMonitor;
-      DisplayOptions.UseCustomFont = AdvSettings.UseCustomFont;
-      DisplayOptions.UseLargeIcons = AdvSettings.UseLargeIcons;
-      DisplayOptions.UseCustomIcons = AdvSettings.UseCustomIcons;
-      DisplayOptions.UseInvertedIcons = AdvSettings.UseInvertedIcons;
-      EQSettings.UseEqDisplay = AdvSettings.EqDisplay;
-      EQSettings.UseNormalEq = AdvSettings.NormalEQ;
-      EQSettings.UseStereoEq = AdvSettings.StereoEQ;
-      EQSettings.UseVUmeter = AdvSettings.VUmeter;
-      EQSettings.UseVUmeter2 = AdvSettings.VUmeter2;
-      EQSettings._useVUindicators = AdvSettings.VUindicators;
-      EQSettings._useEqMode = AdvSettings.EqMode;
-      EQSettings.RestrictEQ = AdvSettings.RestrictEQ;
-      EQSettings._EQ_Restrict_FPS = AdvSettings.EqRate;
-      EQSettings.DelayEQ = AdvSettings.DelayEQ;
-      EQSettings._DelayEQTime = AdvSettings.DelayEqTime;
-      EQSettings.SmoothEQ = AdvSettings.SmoothEQ;
-      EQSettings.EQTitleDisplay = AdvSettings.EQTitleDisplay;
-      EQSettings._EQTitleShowTime = AdvSettings.EQTitleShowTime;
-      EQSettings._EQTitleDisplayTime = AdvSettings.EQTitleDisplayTime;
-      EQSettings._EqUpdateDelay = (EQSettings._EQ_Restrict_FPS == 0)
+      _DisplayOptions.VolumeDisplay = _AdvSettings.VolumeDisplay;
+      _DisplayOptions.ProgressDisplay = _AdvSettings.ProgressDisplay;
+      _DisplayOptions.DiskIcon = _AdvSettings.DiskIcon;
+      _DisplayOptions.DiskMediaStatus = _AdvSettings.DiskMediaStatus;
+      _DisplayOptions.DiskMonitor = _AdvSettings.DeviceMonitor;
+      _DisplayOptions.UseCustomFont = _AdvSettings.UseCustomFont;
+      _DisplayOptions.UseLargeIcons = _AdvSettings.UseLargeIcons;
+      _DisplayOptions.UseCustomIcons = _AdvSettings.UseCustomIcons;
+      _DisplayOptions.UseInvertedIcons = _AdvSettings.UseInvertedIcons;
+      _EQSettings.UseEqDisplay = _AdvSettings.EqDisplay;
+      _EQSettings.UseNormalEq = _AdvSettings.NormalEQ;
+      _EQSettings.UseStereoEq = _AdvSettings.StereoEQ;
+      _EQSettings.UseVUmeter = _AdvSettings.VUmeter;
+      _EQSettings.UseVUmeter2 = _AdvSettings.VUmeter2;
+      _EQSettings._useVUindicators = _AdvSettings.VUindicators;
+      _EQSettings._useEqMode = _AdvSettings.EqMode;
+      _EQSettings.RestrictEQ = _AdvSettings.RestrictEQ;
+      _EQSettings._EQ_Restrict_FPS = _AdvSettings.EqRate;
+      _EQSettings.DelayEQ = _AdvSettings.DelayEQ;
+      _EQSettings._DelayEQTime = _AdvSettings.DelayEqTime;
+      _EQSettings.SmoothEQ = _AdvSettings.SmoothEQ;
+      _EQSettings.EQTitleDisplay = _AdvSettings.EQTitleDisplay;
+      _EQSettings._EQTitleShowTime = _AdvSettings.EQTitleShowTime;
+      _EQSettings._EQTitleDisplayTime = _AdvSettings.EQTitleDisplayTime;
+      _EQSettings._EqUpdateDelay = (_EQSettings._EQ_Restrict_FPS == 0)
                                     ? 0
-                                    : ((0x989680 / EQSettings._EQ_Restrict_FPS) -
-                                       (0xf4240 / EQSettings._EQ_Restrict_FPS));
-      _VFD_UseV3DLL = AdvSettings.VFD_UseV3DLL;
-      _MonitorPower = AdvSettings.MonitorPowerState;
-      DisplaySettings.BlankDisplayWithVideo = AdvSettings.BlankDisplayWithVideo;
-      DisplaySettings.EnableDisplayAction = AdvSettings.EnableDisplayAction;
-      DisplaySettings.DisplayActionTime = AdvSettings.EnableDisplayActionTime;
-      DisplaySettings.BlankDisplayWhenIdle = AdvSettings.BlankDisplayWhenIdle;
-      DisplaySettings.BlankIdleDelay = AdvSettings.BlankIdleTime;
-      DisplaySettings._BlankIdleTimeout = DisplaySettings.BlankIdleDelay * 0x989680;
-      DisplaySettings._Shutdown1 = Settings.Instance.Shutdown1;
-      DisplaySettings._Shutdown2 = Settings.Instance.Shutdown2;
-      DisplaySettings._DisplayControlTimeout = DisplaySettings.DisplayActionTime * 0x989680;
+                                    : ((10000000 / _EQSettings._EQ_Restrict_FPS) -
+                                       (1000000 / _EQSettings._EQ_Restrict_FPS));
+      _VFD_UseV3DLL = _AdvSettings.VFD_UseV3DLL;
+      _MonitorPower = _AdvSettings.MonitorPowerState;
+      _DisplaySettings.BlankDisplayWithVideo = _AdvSettings.BlankDisplayWithVideo;
+      _DisplaySettings.EnableDisplayAction = _AdvSettings.EnableDisplayAction;
+      _DisplaySettings.DisplayActionTime = _AdvSettings.EnableDisplayActionTime;
+      _DisplaySettings.BlankDisplayWhenIdle = _AdvSettings.BlankDisplayWhenIdle;
+      _DisplaySettings.BlankIdleDelay = _AdvSettings.BlankIdleTime;
+      _DisplaySettings._BlankIdleTimeout = _DisplaySettings.BlankIdleDelay * 0x989680;
+      _DisplaySettings._Shutdown1 = Settings.Instance.Shutdown1;
+      _DisplaySettings._Shutdown2 = Settings.Instance.Shutdown2;
+      _DisplaySettings._DisplayControlTimeout = _DisplaySettings.DisplayActionTime * 0x989680;
       var info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"));
-      SettingsLastModTime = info.LastWriteTime;
-      LastSettingsCheck = DateTime.Now;
+      _SettingsLastModTime = info.LastWriteTime;
+      _LastSettingsCheck = DateTime.Now;
     }
 
     private void OnExternalAction(Action action)
     {
-      if (DisplaySettings.EnableDisplayAction)
+      if (_DisplaySettings.EnableDisplayAction)
       {
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.OnExternalAction(): received action {0}", action.wID);
         }
@@ -2623,9 +2755,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           return;
         }
-        DisplaySettings._DisplayControlAction = true;
-        DisplaySettings._DisplayControlLastAction = DateTime.Now.Ticks;
-        if (DoDebug)
+        _DisplaySettings._DisplayControlAction = true;
+        _DisplaySettings._DisplayControlLastAction = DateTime.Now.Ticks;
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.OnExternalAction(): received DisplayControlAction");
         }
@@ -2655,22 +2787,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             Log.Info("iMONLCDg.OpenLcd(): display opened");
             if (!_displayTest & ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2)))
             {
-              if (DisplayOptions.UseCustomFont)
+              if (_DisplayOptions.UseCustomFont)
               {
-                CFont = new CustomFont();
-                CFont.InitializeCustomFont();
+                _CFont = new CustomFont();
+                _CFont.InitializeCustomFont();
               }
-              if (DisplayOptions.UseLargeIcons)
+              if (_DisplayOptions.UseLargeIcons)
               {
-                CustomLargeIcon = new LargeIcon();
-                CustomLargeIcon.InitializeLargeIcons();
+                _CustomLargeIcon = new LargeIcon();
+                _CustomLargeIcon.InitializeLargeIcons();
               }
               _iconThread = new Thread(UpdateIcons)
-                              {
-                                IsBackground = true,
-                                Priority = ThreadPriority.BelowNormal,
-                                Name = "UpdateIconThread"
-                              };
+              {
+                IsBackground = true,
+                Priority = ThreadPriority.BelowNormal,
+                Name = "UpdateIconThread"
+              };
               _iconThread.Start();
               if (_iconThread.IsAlive)
               {
@@ -2683,14 +2815,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             else if (!_displayTest & (_DisplayType == DisplayType.VFD))
             {
-              if (EQSettings.UseEqDisplay || DisplaySettings.BlankDisplayWithVideo)
+              if (_EQSettings.UseEqDisplay || _DisplaySettings.BlankDisplayWithVideo)
               {
                 _iconThread = new Thread(VFD_EQ_Update)
-                                {
-                                  IsBackground = true,
-                                  Priority = ThreadPriority.BelowNormal,
-                                  Name = "VFD_EQ_Update"
-                                };
+                {
+                  IsBackground = true,
+                  Priority = ThreadPriority.BelowNormal,
+                  Name = "VFD_EQ_Update"
+                };
                 _iconThread.Start();
                 if (_iconThread.IsAlive)
                 {
@@ -2703,14 +2835,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               }
             }
             else if ((!_displayTest & (_DisplayType == DisplayType.ThreeRsystems)) &&
-                     (EQSettings.UseEqDisplay || DisplaySettings.BlankDisplayWithVideo))
+                     (_EQSettings.UseEqDisplay || _DisplaySettings.BlankDisplayWithVideo))
             {
               _iconThread = new Thread(VFD_EQ_Update)
-                              {
-                                IsBackground = true,
-                                Priority = ThreadPriority.BelowNormal,
-                                Name = "VFD_EQ_Update"
-                              };
+              {
+                IsBackground = true,
+                Priority = ThreadPriority.BelowNormal,
+                Name = "VFD_EQ_Update"
+              };
               _iconThread.TrySetApartmentState(ApartmentState.MTA);
               _iconThread.Start();
               if (_iconThread.IsAlive)
@@ -2733,7 +2865,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("iMONLCDg.OpenLcd(): Adding Power State Monitor callback to system event thread");
           SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
         }
-        lock (DWriteMutex)
+        lock (_DWriteMutex)
         {
           if ((_DisplayType == DisplayType.LCD) || (_DisplayType == DisplayType.LCD2))
           {
@@ -2750,6 +2882,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               SendData(iMonCommand.General.SetLines1);
               SendData(iMonCommand.General.SetLines2);
               ClearDisplay();
+
+              if (_AdvSettings.KeyPadLight)
+                SendData(iMonCommand.LCD2.KeypadLightOn);
             }
             else
             {
@@ -2760,7 +2895,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 Log.Info("iMONLCDg.OpenLcd(): Setting LCD contrast level to {0}", _ContrastLevel);
                 SendData(iMonCommand.General.SetContrast, _ContrastLevel);
               }
-              SendData(iMonCommand.General.KeypadLightOn);
+
+              if (_AdvSettings.KeyPadLight)
+                SendData(iMonCommand.LCD.KeypadLightOn);
             }
           }
           else if (_DisplayType == DisplayType.ThreeRsystems)
@@ -2831,13 +2968,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Log.Info("iMONLCDg.RestartFrontview(): " + curBrand + " " + curApp + " Manager Stopped");
               Win32Functions.RedrawNotificationArea();
               process = new Process
-                          {
-                            StartInfo =
+              {
+                StartInfo =
                               {
                                 WorkingDirectory = FindManagerPath(curBrand, curApp),
                                 FileName = curApp + ".exe"
                               }
-                          };
+              };
               Log.Info("iMONLCDg.RestartFrontview(): ReStarting " + curBrand + " " + curApp + " Manager");
               Process.Start(process.StartInfo);
             }
@@ -2859,11 +2996,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void RestoreDisplayFromVideoOrIdle()
     {
-      if (DisplaySettings.BlankDisplayWithVideo)
+      if (_DisplaySettings.BlankDisplayWithVideo)
       {
-        if (DisplaySettings.BlankDisplayWhenIdle)
+        if (_DisplaySettings.BlankDisplayWhenIdle)
         {
-          if (!MPStatus.MP_Is_Idle)
+          if (!_MPStatus.MP_Is_Idle)
           {
             DisplayOn();
           }
@@ -2890,34 +3027,73 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       SendData((ulong)command);
     }
 
+    private void SendData(ulong[] data)
+    {
+      try
+      {
+        if (_DoDebug)
+        {
+          Log.Info("iMONLCDg.SendData(): Sending buffer to display");
+        }
+        if (!_IMON.iMONLCD_SendData(data))
+        {
+          _SendData_Error_Count++;
+          if (_SendData_Error_Count > 20)
+          {
+            _isDisabled = true;
+            if (_DoDebug)
+            {
+              Log.Info("iMONLCDg.SendData(): ERROR Sending buffer to display");
+              Log.Info("iMONLCDg.SendData(): ERROR LIMIT EXCEEDED - DISPLAY DISABLED");
+            }
+          }
+          if (_DoDebug)
+          {
+            Log.Info("iMONLCDg.SendData(): ERROR Sending buffer to display");
+          }
+        }
+        else
+        {
+          _SendData_Error_Count = 0;
+          Thread.Sleep(_delay);
+        }
+      }
+      catch (Exception exception)
+      {
+        _isDisabled = true;
+        _errorMessage = exception.Message;
+        Log.Info("iMONLCDg.SendData(): caught exception '{0}'\nIs your SG_VFD.dll version 5.1 or higher??");
+      }
+    }
+
     private void SendData(ulong data)
     {
       try
       {
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.SendData(): Sending {0} to display", data.ToString("x0000000000000000"));
         }
         if (!_IMON.iMONLCD_SendData(ref data))
         {
-          SendData_Error_Count++;
-          if (SendData_Error_Count > 20)
+          _SendData_Error_Count++;
+          if (_SendData_Error_Count > 20)
           {
             _isDisabled = true;
-            if (DoDebug)
+            if (_DoDebug)
             {
               Log.Info("iMONLCDg.SendData(): ERROR Sending {0} to display", data.ToString("x0000000000000000"));
               Log.Info("iMONLCDg.SendData(): ERROR LIMIT EXCEEDED - DISPLAY DISABLED");
             }
           }
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.SendData(): ERROR Sending {0} to display", data.ToString("x0000000000000000"));
           }
         }
         else
         {
-          SendData_Error_Count = 0;
+          _SendData_Error_Count = 0;
           Thread.Sleep(_delay);
         }
       }
@@ -2942,8 +3118,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           Log.Error("ERROR in iMONLCDg SendPixelArray");
         }
-        if (DisplayOptions.UseLargeIcons ||
-            (DisplayOptions.UseLargeIcons & DisplayOptions.UseCustomIcons))
+        if (_DisplayOptions.UseLargeIcons ||
+            (_DisplayOptions.UseLargeIcons & _DisplayOptions.UseCustomIcons))
         {
           for (int i = 0x5f; i > 0x11; i--)
           {
@@ -2955,21 +3131,21 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             PixelArray[j] = 0;
             PixelArray[j + 0x60] = 0;
           }
-          if ((DisplayOptions.UseLargeIcons & !DisplayOptions.UseCustomIcons) & DoDebug)
+          if ((_DisplayOptions.UseLargeIcons & !_DisplayOptions.UseCustomIcons) & _DoDebug)
           {
             Log.Debug("iMONLCDg.SendText(): Inserting Large Icons");
           }
-          if (DisplayOptions.UseCustomIcons & DoDebug)
+          if (_DisplayOptions.UseCustomIcons & _DoDebug)
           {
             Log.Debug("iMONLCDg.SendText(): Inserting Custom Large Icons");
           }
-          if (DisplayOptions.UseInvertedIcons & DoDebug)
+          if (_DisplayOptions.UseInvertedIcons & _DoDebug)
           {
             Log.Debug("iMONLCDg.SendText(): Using inverted Large Icon data");
           }
           for (int k = 0; k < 0x10; k++)
           {
-            if (DisplayOptions.UseCustomIcons)
+            if (_DisplayOptions.UseCustomIcons)
             {
               PixelArray[k] = LargeIcon.PixelData(_CurrentLargeIcon, k);
               PixelArray[k + 0x60] = LargeIcon.PixelData(_CurrentLargeIcon, k + 0x10);
@@ -2979,7 +3155,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               PixelArray[k] = _InternalLargeIcons[_CurrentLargeIcon, k];
               PixelArray[k + 0x60] = _InternalLargeIcons[_CurrentLargeIcon, k + 0x10];
             }
-            if (DisplayOptions.UseInvertedIcons)
+            if (_DisplayOptions.UseInvertedIcons)
             {
               PixelArray[k] = (byte)(PixelArray[k] ^ 0xff);
               PixelArray[k + 0x60] = (byte)(PixelArray[k + 0x60] ^ 0xff);
@@ -2987,7 +3163,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
         }
         byte num4 = 0x20;
-        lock (DWriteMutex)
+        lock (_DWriteMutex)
         {
           for (int m = 0; m <= 0xbd; m += 7)
           {
@@ -3002,10 +3178,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (num4 <= 0x3b)
             {
-              SendData(data);
+              if (IntPtr.Size == 8)
+                this._DeviceGraphCommandBuffer[num4 - 0x20] = data;
+              else
+                SendData(data);
+
             }
             num4++;
           }
+          if (IntPtr.Size == 8)
+            SendData(this._DeviceGraphCommandBuffer);
         }
       }
     }
@@ -3019,7 +3201,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Error("ERROR in iMONLCDg SendPixelArrayRaw");
         }
         byte num = 0x20;
-        lock (DWriteMutex)
+        lock (_DWriteMutex)
         {
           for (int i = 0; i <= 0xbd; i += 7)
           {
@@ -3034,65 +3216,75 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (num <= 0x3b)
             {
-              SendData(data);
+              if (IntPtr.Size == 8)
+                this._DeviceGraphCommandBuffer[num - 0x20] = data;
+              else
+                SendData(data);
             }
             num++;
           }
+          if (IntPtr.Size == 8)
+            SendData(this._DeviceGraphCommandBuffer);
         }
       }
     }
 
-    private void SendText(string Line1, string Line2)
+    private void SendText(string strLine1, string strLine2)
     {
-      if (DoDebug)
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.SendText(): Called");
       }
-      if (DisplayOptions.UseCustomFont & DoDebug)
+      if (_DisplayOptions.UseCustomFont & _DoDebug)
       {
         Log.Debug("iMONLCDg.SendText(): Using CustomFont");
       }
-      int num = 0;
-      var pixelArray = new byte[0xc0];
-      for (int i = 0; i < Math.Min(0x10, Line1.Length); i++)
+
+      byte[] pixelArray = new byte[192];
+
+      //First line
+      int iX = 0;
+      for (int iCharIdx = 0; iCharIdx < Math.Min(16, strLine1.Length); iCharIdx++)
       {
-        byte charID = Encoding.Default.GetBytes(Line1)[i];
-        for (int k = 5; k >= 0; k--)
+        byte bChar = Encoding.Default.GetBytes(strLine1)[iCharIdx];
+        for (int i = 5; i >= 0; i--)
         {
-          if ((k + num) < 0x60)
+          if ((iX + i) < 96)
           {
-            pixelArray[num + k] = DisplayOptions.UseCustomFont
-                                    ? BitReverse(CustomFont.PixelData(charID, k))
-                                    : BitReverse(_Font8x5[charID, k]);
+            pixelArray[iX + i] = _DisplayOptions.UseCustomFont
+                                    ? BitReverse(CustomFont.PixelData(bChar, i))
+                                    : BitReverse(_Font8x5[bChar, i]);
           }
         }
-        num += 6;
+        iX += 6;
       }
-      num = 0x60;
-      for (int j = 0; j < Math.Min(0x10, Line2.Length); j++)
+
+      //Second line
+      iX = 96;
+      for (int iCharIdx = 0; iCharIdx < Math.Min(16, strLine2.Length); iCharIdx++)
       {
-        byte ch2 = Encoding.Default.GetBytes(Line2)[j];
-        for (int m = 5; m >= 0; m--)
+        byte bChar = Encoding.Default.GetBytes(strLine2)[iCharIdx];
+        for (int i = 5; i >= 0; i--)
         {
-          if ((m + num) < 0xc0)
+          if ((iX + i) < 192)
           {
-            pixelArray[num + m] = DisplayOptions.UseCustomFont
-                                    ? BitReverse(CustomFont.PixelData(ch2, m))
-                                    : BitReverse(_Font8x5[ch2, m]);
+            pixelArray[iX + i] = _DisplayOptions.UseCustomFont
+                                    ? BitReverse(CustomFont.PixelData(bChar, i))
+                                    : BitReverse(_Font8x5[bChar, i]);
           }
         }
-        num += 6;
+        iX += 6;
       }
       SendPixelArray(pixelArray);
     }
 
     private void SendText3R(string Line1)
     {
-      if (DoDebug)
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.SendText3R(): Called");
       }
-      var buffer = new byte[] {13, 15, 0x20, 0x20, 0x20, 0x20, 0x20, 0, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 2};
+      var buffer = new byte[] { 13, 15, 0x20, 0x20, 0x20, 0x20, 0x20, 0, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 2 };
       Line1 = Line1 + "            ";
       Line1 = Line1.Substring(0, 12);
       for (int i = 0; i < 5; i++)
@@ -3115,7 +3307,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       SendData(0x0000000000000002L);
       SendData(data);
       SendData(num4);
-      if (DoDebug)
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.SendText3R(): Completed");
       }
@@ -3126,7 +3318,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void SetEQ(byte[] EqDataArray)
     {
-      lock (DWriteMutex)
+      lock (_DWriteMutex)
       {
         byte num = 0x40;
         for (int i = 0; i <= 0x15; i += 7)
@@ -3142,12 +3334,167 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           if (num <= 0x42)
           {
-            SendData(data);
+            if (IntPtr.Size == 8)
+              this._DeviceEqCommandBuffer[num - 0x40] = data;
+            else
+              SendData(data);
           }
           num++;
         }
+        if (IntPtr.Size == 8)
+          SendData(this._DeviceEqCommandBuffer);
       }
     }
+
+    private void SetIconsAspectRatio(BuiltinIconMask mask, ref ulong optionBitmask)
+    {
+      if (g_Player.MediaInfo != null && g_Player.IsVideo)
+      {
+        int videoHeight = g_Player.MediaInfo.Height;
+
+        if (videoHeight > 576) optionBitmask |= mask.ICON_HDTV;
+        else if (videoHeight > 0) optionBitmask |= mask.ICON_TV_2;
+
+        if (g_Player.ARType == Geometry.Type.Original) optionBitmask |= mask.ICON_SRC;
+        else optionBitmask |= mask.ICON_FIT;
+      }
+      else
+      {
+        VideoStreamFormat vsf = g_Player.GetVideoFormat();
+        if (vsf != null && vsf.IsValid)
+        {
+          if (vsf.height > 576) optionBitmask |= mask.ICON_HDTV;
+          else if (vsf.height > 0) optionBitmask |= mask.ICON_TV_2;
+
+          if (g_Player.ARType == Geometry.Type.Original) optionBitmask |= mask.ICON_SRC;
+          else optionBitmask |= mask.ICON_FIT;
+        }
+      }
+    }
+
+    private void SetIconsSpeakerConfig(BuiltinIconMask mask, ref ulong optionBitmask)
+    {
+      if (g_Player.MediaInfo != null)
+      {
+        switch (g_Player.MediaInfo.AudioChannels)
+        {
+          case 1: // mono
+          case 2: // stereo
+            optionBitmask |= mask.SPKR_FL;
+            optionBitmask |= mask.SPKR_FR;
+            break;
+          case 3: // 2.1
+            optionBitmask |= mask.SPKR_FL;
+            optionBitmask |= mask.SPKR_FR;
+            optionBitmask |= mask.SPKR_LFE;
+            break;
+          case 4: // quad
+            optionBitmask |= mask.SPKR_FL;
+            optionBitmask |= mask.SPKR_FR;
+            optionBitmask |= mask.SPKR_SL;
+            optionBitmask |= mask.SPKR_SR;
+            break;
+          case 5: // surround
+            optionBitmask |= mask.SPKR_FL;
+            optionBitmask |= mask.SPKR_FR;
+            optionBitmask |= mask.SPKR_SL;
+            optionBitmask |= mask.SPKR_SR;
+            optionBitmask |= mask.SPKR_FC;
+            break;
+          case 6: // 5.1
+            optionBitmask |= mask.SPKR_FL;
+            optionBitmask |= mask.SPKR_FR;
+            optionBitmask |= mask.SPKR_RL;
+            optionBitmask |= mask.SPKR_FC;
+            optionBitmask |= mask.SPKR_LFE;
+            optionBitmask |= mask.SPKR_RR;
+            break;
+          case 7: // 6.1
+            optionBitmask |= mask.SPKR_FL;
+            optionBitmask |= mask.SPKR_FR;
+            optionBitmask |= mask.SPKR_SL;
+            optionBitmask |= mask.SPKR_SR;
+            optionBitmask |= mask.SPKR_FC;
+            optionBitmask |= mask.SPKR_LFE;
+            optionBitmask |= mask.SPKR_RL;
+            break;
+          case 8: // 7.1
+            optionBitmask |= mask.SPKR_FL;
+            optionBitmask |= mask.SPKR_FR;
+            optionBitmask |= mask.SPKR_SL;
+            optionBitmask |= mask.SPKR_SR;
+            optionBitmask |= mask.SPKR_FC;
+            optionBitmask |= mask.SPKR_LFE;
+            optionBitmask |= mask.SPKR_RL;
+            optionBitmask |= mask.SPKR_RR;
+            break;
+          default: // no audio/unknown
+            break;
+        }
+
+      }
+    }
+
+    private void SetIconsCodecs(BuiltinIconMask mask, ref ulong optionBitmask)
+    {
+      //Log.Debug("SetIconsCodecs()");
+      if (g_Player.MediaInfo != null)
+      {
+        if (g_Player.IsVideo)
+        {
+          // video playback
+          _videoMediaInfo.Format = g_Player.MediaInfo.VideoCodec;
+          _audioMediaInfo.Format = g_Player.MediaInfo.AudioCodec;
+
+          //Log.Debug("SetIconsCodecs(): VideoCodec='{0}'", g_Player.MediaInfo.VideoCodec);
+          //Log.Debug("SetIconsCodecs(): AudioCodec='{0}'", g_Player.MediaInfo.AudioCodec);
+
+          // video stream
+          if (_videoMediaInfo.IsMpg) optionBitmask |= mask.ICON_MPG; //"MPEG VIDEO" 
+          else if (_videoMediaInfo.IsMpg2) optionBitmask |= mask.ICON_MPG; //"AVC"
+          else if (_videoMediaInfo.IsDivx) optionBitmask |= mask.ICON_DivX;
+          else if (_videoMediaInfo.IsXvid) optionBitmask |= mask.ICON_xVid;
+          else if (_videoMediaInfo.IsWmv) optionBitmask |= mask.ICON_WMV;
+
+          // audio stream
+          if (_audioMediaInfo.IsMp3) optionBitmask |= mask.ICON_MP3;
+          else if (_audioMediaInfo.IsWma) optionBitmask |= mask.ICON_WMA;
+          else if (_audioMediaInfo.IsDts) optionBitmask |= mask.ICON_DTS;
+          else if (_audioMediaInfo.IsAc3) optionBitmask |= mask.ICON_AC3;
+          else if (_audioMediaInfo.IsOgg) optionBitmask |= mask.ICON_OGG;
+        }
+        else if (g_Player.IsMusic)
+        {
+          // music playback
+          string currentFile = GUIPropertyManager.GetProperty("#Play.Current.File");
+          if (currentFile != null && currentFile.Length > 0)
+          {
+            string extension = System.IO.Path.GetExtension(currentFile).ToUpper();
+
+            switch (extension)
+            {
+              case ".MP3":
+                optionBitmask |= mask.ICON_MP3;
+                break;
+              case ".OGG":
+                optionBitmask |= mask.ICON_OGG;
+                break;
+              case ".WMA":
+                optionBitmask |= mask.ICON_WMA;
+                break;
+              case ".WAV":
+                optionBitmask |= mask.ICON_WAV;
+                break;
+              default:
+                break;
+            }
+
+          }
+        }
+      }
+
+    }
+
 
     private void SetLineLength(int TopLine, int BotLine, int TopProgress, int BotProgress)
     {
@@ -3157,28 +3504,46 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void SetLinePixels(ulong TopLine, ulong BotLine, ulong TopProgress, ulong BotProgress)
     {
-      lock (DWriteMutex)
+      lock (_DWriteMutex)
       {
         var mask = new BuiltinIconMask();
         ulong optionBitmask = TopProgress << 0x20;
         optionBitmask += TopLine;
         optionBitmask &= mask.ICON_ALL;
-        SendData(iMonCommand.General.SetLines0, optionBitmask);
+
+        if (IntPtr.Size == 8)
+          this._DeviceLineCommandBuffer[0] = (ulong)iMonCommand.General.SetLines0 | optionBitmask;
+        else
+          SendData(iMonCommand.General.SetLines0, optionBitmask);
+
         optionBitmask = TopProgress >> 0x18;
         optionBitmask += BotProgress << 8;
         optionBitmask += BotLine << 40;
         optionBitmask &= mask.ICON_ALL;
-        SendData(iMonCommand.General.SetLines1, optionBitmask);
+
+        if (IntPtr.Size == 8)
+          this._DeviceLineCommandBuffer[1] = (ulong)iMonCommand.General.SetLines1 | optionBitmask;
+        else
+          SendData(iMonCommand.General.SetLines1, optionBitmask);
+
         optionBitmask = BotLine >> 0x10;
-        SendData(iMonCommand.General.SetLines2, optionBitmask);
+
+        if (IntPtr.Size == 8)
+        {
+          this._DeviceLineCommandBuffer[2] = (ulong)iMonCommand.General.SetLines2 | optionBitmask;
+          SendData(this._DeviceLineCommandBuffer);
+        }
+        else
+          SendData(iMonCommand.General.SetLines2, optionBitmask);
+
       }
     }
 
     private void SetText(string Line1, string Line2)
     {
-      lock (DWriteMutex)
+      lock (_DWriteMutex)
       {
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.SetText(): Sending text to display");
         }
@@ -3194,7 +3559,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         Log.Info("iMONLCDg.SetVFDClock(): Options specify diplay blank on exit - clock not set");
       }
-      else if ((DisplaySettings._Shutdown1 != string.Empty) || (DisplaySettings._Shutdown2 != string.Empty))
+      else if ((_DisplaySettings._Shutdown1 != string.Empty) || (_DisplaySettings._Shutdown2 != string.Empty))
       {
         Log.Info("iMONLCDg.SetVFDClock(): Custom Shutdown message defined - clock not set");
       }
@@ -3233,44 +3598,44 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void ShowProgressBars()
     {
-      progLevel = 0;
-      volLevel = 0;
-      if ((MPStatus.MediaPlayer_Playing || MiniDisplayHelper.MPStatus.Media_IsTV) &
-          DisplayOptions.VolumeDisplay)
+      _progLevel = 0;
+      _volLevel = 0;
+      if ((_MPStatus.MediaPlayer_Playing || MiniDisplayHelper.MPStatus.Media_IsTV) &
+          _DisplayOptions.VolumeDisplay)
       {
         try
         {
-          if (!MPStatus.IsMuted)
+          if (!_MPStatus.IsMuted)
           {
-            volLevel = MPStatus.SystemVolumeLevel / 2048;
+            _volLevel = _MPStatus.SystemVolumeLevel / 2048;
           }
         }
         catch (Exception exception)
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.ShowProgressBars(): Audio Mixer NOT available! exception: {0}", exception);
           }
         }
       }
-      if (MPStatus.MediaPlayer_Playing & DisplayOptions.ProgressDisplay)
+      if (_MPStatus.MediaPlayer_Playing & _DisplayOptions.ProgressDisplay)
       {
-        progLevel =
-          ((int)(((((float)MPStatus.Media_CurrentPosition) / ((float)MPStatus.Media_Duration)) - 0.01) * 32.0)) +
+        _progLevel =
+          ((int)(((((float)_MPStatus.Media_CurrentPosition) / ((float)_MPStatus.Media_Duration)) - 0.01) * 32.0)) +
           1;
       }
-      if ((LastVolLevel != volLevel) || (LastProgLevel != progLevel))
+      if ((_LastVolLevel != _volLevel) || (_LastProgLevel != _progLevel))
       {
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.ShowProgressBars(): Sending vol: {0} prog: {1} cur: {2} dur: {3} to LCD.",
-                   volLevel.ToString(), progLevel.ToString(), MPStatus.Media_CurrentPosition.ToString(),
-                   MPStatus.Media_Duration.ToString());
+                   _volLevel.ToString(), _progLevel.ToString(), _MPStatus.Media_CurrentPosition.ToString(),
+                   _MPStatus.Media_Duration.ToString());
         }
-        SetLineLength(volLevel, progLevel, volLevel, progLevel);
+        SetLineLength(_volLevel, _progLevel, _volLevel, _progLevel);
       }
-      LastVolLevel = volLevel;
-      LastProgLevel = progLevel;
+      _LastVolLevel = _volLevel;
+      _LastProgLevel = _progLevel;
     }
 
     private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
@@ -3318,25 +3683,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void UpdateAdvancedSettings()
     {
-      if (DateTime.Now.Ticks >= LastSettingsCheck.AddMinutes(1.0).Ticks)
+      if (DateTime.Now.Ticks >= _LastSettingsCheck.AddMinutes(1.0).Ticks)
       {
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.UpdateAdvancedSettings(): called");
         }
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml")))
         {
           var info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"));
-          if (info.LastWriteTime.Ticks > SettingsLastModTime.Ticks)
+          if (info.LastWriteTime.Ticks > _SettingsLastModTime.Ticks)
           {
-            if (DoDebug)
+            if (_DoDebug)
             {
               Log.Info("iMONLCDg.UpdateAdvancedSettings(): updating advanced settings");
             }
             LoadAdvancedSettings();
           }
         }
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.UpdateAdvancedSettings(): completed");
         }
@@ -3345,22 +3710,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void UpdateIcons()
     {
-      ulong optionBitmask = 0L;
-      ulong num2;
-      bool flag = false;
-      var icon = new DiskIcon();
+      ulong lOptionBitmask = 0L;
+      ulong lOptionBitmaskLast;
+      bool bFlag = false;
+      DiskIcon icon = new DiskIcon();
       Log.Debug("iMONLCDg.UpdateIcons(): Starting Icon Update Thread");
-      var mask = new BuiltinIconMask();
-      var drive = new CDDrive();
-      if (DisplaySettings.BlankDisplayWithVideo & DisplaySettings.EnableDisplayAction)
+      BuiltinIconMask mask = new BuiltinIconMask();
+      CDDrive drive = new CDDrive();
+      if (_DisplaySettings.BlankDisplayWithVideo & _DisplaySettings.EnableDisplayAction)
       {
         GUIWindowManager.OnNewAction += OnExternalAction;
       }
       for (int i = 0; i < 0x1b; i++)
       {
-        Inserted_Media[i] = 0;
+        _Inserted_Media[i] = 0;
       }
-      if (DisplayOptions.DiskIcon & DisplayOptions.DiskMonitor)
+      if (_DisplayOptions.DiskIcon & _DisplayOptions.DiskMonitor)
       {
         char[] cDDriveLetters = CDDrive.GetCDDriveLetters();
         var arg = cDDriveLetters.Length;
@@ -3388,41 +3753,49 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               drive.Refresh();
               if (drive.GetNumAudioTracks() > 0)
               {
-                Inserted_Media[cDDriveLetters[j] - 'A'] = 1;
+                _Inserted_Media[cDDriveLetters[j] - 'A'] = 1;
                 Log.Debug("iMONLCDg.UpdateIcons(): Found Audio CD in Drive {0}.", cDDriveLetters[j]);
               }
               else if (File.Exists(cDDriveLetters[j] + @"\VIDEO_TS"))
               {
-                Inserted_Media[cDDriveLetters[j] - 'A'] = 2;
+                _Inserted_Media[cDDriveLetters[j] - 'A'] = 2;
                 Log.Debug("iMONLCDg.UpdateIcons(): Found DVD in Drive {0}.", cDDriveLetters[j]);
               }
               else
               {
-                Inserted_Media[cDDriveLetters[j] - 'A'] = 4;
+                _Inserted_Media[cDDriveLetters[j] - 'A'] = 4;
                 Log.Debug("iMONLCDg.UpdateIcons(): Unknown media found in Drive {0}.", cDDriveLetters[j]);
               }
             }
             else
             {
-              Inserted_Media[cDDriveLetters[j] - 'A'] = 0;
+              _Inserted_Media[cDDriveLetters[j] - 'A'] = 0;
               Log.Debug("iMONLCDg.UpdateIcons(): No media found in Drive {0}.", cDDriveLetters[j]);
             }
           }
           drive.Close();
         }
       }
-      if (DisplayOptions.DiskIcon & DisplayOptions.DiskMonitor)
+      if (_DisplayOptions.DiskIcon & _DisplayOptions.DiskMonitor)
       {
         ActivateDVM();
       }
       icon.Reset();
+
+      long lTsEq = 0;
+      long lTsDisc = 0;
+      long lDur, lTs;
+      int iSleep;
+      const int REFRESH_RATE_ICONS = 400;
+      int iRefreshrateEq = _EQSettings.UseVUmeter || _EQSettings.UseVUmeter2 ? 200 : 40;
+
       while (true)
       {
         do
         {
-          lock (ThreadMutex)
+          lock (_ThreadMutex)
           {
-            if (DoDebug)
+            if (_DoDebug)
             {
               Log.Info("iMONLCDg.UpdateIcons(): Checking for Thread termination request");
             }
@@ -3430,7 +3803,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               Log.Info("iMONLCDg.UpdateIcons(): Icon Update Thread terminating");
               _stopUpdateIconThread = false;
-              if (DisplaySettings.BlankDisplayWithVideo & DisplaySettings.EnableDisplayAction)
+              if (_DisplaySettings.BlankDisplayWithVideo & _DisplaySettings.EnableDisplayAction)
               {
                 GUIWindowManager.OnNewAction -= OnExternalAction;
               }
@@ -3441,200 +3814,244 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               }
               return;
             }
-            if ((!DVMactive & DisplayOptions.DiskIcon) & DisplayOptions.DiskMonitor)
+            if ((!_DVMactive & _DisplayOptions.DiskIcon) & _DisplayOptions.DiskMonitor)
             {
               ActivateDVM();
             }
-            num2 = optionBitmask;
-            flag = !flag;
-            int num7 = _CurrentLargeIcon;
-            LastVolLevel = volLevel;
-            LastProgLevel = progLevel;
-            int num8 = 0;
-            icon.Off();
-            icon.Animate();
-            if (DoDebug)
+
+#region IconRefresh
+            lTs = DateTime.Now.Ticks;
+            lDur = (lTs - lTsDisc) / 10000; //in ms
+            if (lDur >= REFRESH_RATE_ICONS)
             {
-              Log.Info("iMONLCDg.UpdateIcons(): Checking TV Card status: IsAnyCardRecording = {0}, IsViewing = {1}",
-                       MiniDisplayHelper.MPStatus.Media_IsRecording.ToString(),
-                       MiniDisplayHelper.MPStatus.Media_IsTV.ToString());
-            }
-            MiniDisplayHelper.GetSystemStatus(ref MPStatus);
-            Check_Idle_State();
-            if (DoDebug)
-            {
-              Log.Info("iMONLCDg.UpdateIcons(): System Status: Plugin Status = {0}, IsIdle = {1}",
-                       MPStatus.CurrentPluginStatus.ToString(), MPStatus.MP_Is_Idle);
-            }
-            optionBitmask = ConvertPluginIconsToDriverIcons(MPStatus.CurrentIconMask);
-            if ((optionBitmask & (0x400000000L)) > 0L)
-            {
-              num8 = 5;
-            }
-            else if ((optionBitmask & (8L)) > 0L)
-            {
-              num8 = 1;
-            }
-            if (MiniDisplayHelper.MPStatus.Media_IsTV && !MPStatus.Media_IsTimeshifting)
-            {
-              icon.On();
-              icon.InvertOn();
-              icon.RotateCW();
-            }
-            if (_mpIsIdle)
-            {
-              num8 = 0;
-            }
-            if (MPStatus.MediaPlayer_Playing)
-            {
-              icon.On();
-              if ((MPStatus.CurrentIconMask & (0x10L)) > 0L)
+              lTsDisc = lTs;
+
+              lOptionBitmaskLast = lOptionBitmask;
+              bFlag = !bFlag;
+              int iLargeIconLast = _CurrentLargeIcon;
+              _LastVolLevel = _volLevel;
+              _LastProgLevel = _progLevel;
+              int iLargeIconNew = 0;
+              icon.Off();
+              icon.Animate(0);
+              if (_DoDebug)
               {
-                icon.InvertOff();
+                Log.Info("iMONLCDg.UpdateIcons(): Checking TV Card status: IsAnyCardRecording = {0}, IsViewing = {1}",
+                         MiniDisplayHelper.MPStatus.Media_IsRecording.ToString(),
+                         MiniDisplayHelper.MPStatus.Media_IsTV.ToString());
               }
-              else
+              MiniDisplayHelper.GetSystemStatus(ref _MPStatus);
+              Check_Idle_State();
+              if (_DoDebug)
               {
+                Log.Info("iMONLCDg.UpdateIcons(): System Status: Plugin Status = {0}, IsIdle = {1}",
+                         _MPStatus.CurrentPluginStatus.ToString(), _MPStatus.MP_Is_Idle);
+              }
+              lOptionBitmask = ConvertPluginIconsToDriverIcons(_MPStatus.CurrentIconMask);
+              if ((lOptionBitmask & (0x400000000L)) > 0L)
+              {
+                iLargeIconNew = 5;
+              }
+              else if ((lOptionBitmask & (8L)) > 0L)
+              {
+                iLargeIconNew = 1;
+              }
+              if (MiniDisplayHelper.MPStatus.Media_IsTV && !_MPStatus.Media_IsTimeshifting)
+              {
+                icon.On();
                 icon.InvertOn();
-              }
-              if ((MPStatus.CurrentIconMask & (0x10000000000L)) > 0L)
-              {
-                icon.RotateCCW();
-              }
-              else
-              {
                 icon.RotateCW();
               }
-              icon.FlashOff();
-              if (((((((MPStatus.CurrentIconMask & (0x40L)) > 0L) |
-                      ((MPStatus.CurrentIconMask & (8L)) > 0L)) |
-                     (MPStatus.CurrentPluginStatus == Status.PlayingDVD)) |
-                    (MPStatus.CurrentPluginStatus == Status.PlayingTV)) |
-                   (MPStatus.CurrentPluginStatus == Status.PlayingVideo)) |
-                  (MPStatus.CurrentPluginStatus == Status.Timeshifting))
+              if (_mpIsIdle)
               {
-                if ((MPStatus.CurrentPluginStatus == Status.PlayingTV) |
-                    ((MPStatus.CurrentIconMask & (8L)) > 0L))
+                iLargeIconNew = 0;
+              }
+              if (_MPStatus.MediaPlayer_Playing && !_MPStatus.MediaPlayer_Paused)
+              {
+                icon.On();
+                if ((_MPStatus.CurrentIconMask & (0x10L)) > 0L)
                 {
-                  num8 = 1;
+                  icon.InvertOff();
                 }
                 else
                 {
-                  num8 = 2;
+                  icon.InvertOn();
                 }
-                if (DisplaySettings.BlankDisplayWithVideo)
+                if ((_MPStatus.CurrentIconMask & (0x10000000000L)) > 0L)
                 {
-                  DisplayOff();
+                  icon.RotateCCW();
                 }
+                else
+                {
+                  icon.RotateCW();
+                }
+                icon.FlashOff();
+                if (((((((_MPStatus.CurrentIconMask & (0x40L)) > 0L) |
+                        ((_MPStatus.CurrentIconMask & (8L)) > 0L)) |
+                       (_MPStatus.CurrentPluginStatus == Status.PlayingDVD)) |
+                      (_MPStatus.CurrentPluginStatus == Status.PlayingTV)) |
+                     (_MPStatus.CurrentPluginStatus == Status.PlayingVideo)) |
+                    (_MPStatus.CurrentPluginStatus == Status.Timeshifting))
+                {
+                  if ((_MPStatus.CurrentPluginStatus == Status.PlayingTV) |
+                      ((_MPStatus.CurrentIconMask & (8L)) > 0L))
+                  {
+                    iLargeIconNew = 1;
+                  }
+                  else
+                  {
+                    iLargeIconNew = 2;
+                  }
+                  if (_DisplaySettings.BlankDisplayWithVideo)
+                  {
+                    DisplayOff();
+                  }
+                }
+                else
+                {
+                  iLargeIconNew = 3;
+                }
+              }
+              else if (_MPStatus.MediaPlayer_Paused)
+              {
+                icon.On();
+                lock (_DWriteMutex)
+                {
+                  _EQSettings._EqDataAvailable = false;
+                  _iconThread.Priority = ThreadPriority.BelowNormal;
+                }
+                RestoreDisplayFromVideoOrIdle();
+                icon.FlashOn();
+                iLargeIconNew = 6;
               }
               else
               {
-                num8 = 3;
+                icon.Off();
+                RestoreDisplayFromVideoOrIdle();
+                lock (_DWriteMutex)
+                {
+                  _EQSettings._EqDataAvailable = false;
+                  _iconThread.Priority = ThreadPriority.BelowNormal;
+                }
               }
-              GetEQ();
-            }
-            else if (MPStatus.MediaPlayer_Paused)
-            {
-              icon.On();
-              lock (DWriteMutex)
+
+              if ((!MiniDisplayHelper.Player_Playing() & !MiniDisplayHelper.MPStatus.Media_IsTV) ||
+                (_DisplayOptions.DiskIcon & !_DisplayOptions.DiskMediaStatus))
               {
-                EQSettings._EqDataAvailable = false;
-                _iconThread.Priority = ThreadPriority.BelowNormal;
+                int num9 = 0;
+                if (_DisplayOptions.DiskIcon)
+                {
+                  for (int m = 0; m < 0x1b; m++)
+                  {
+                    num9 |= _Inserted_Media[m];
+                  }
+                  switch (num9)
+                  {
+                    case 1:
+                      lOptionBitmask |= mask.ICON_CDIn;
+                      goto Label_06B0;
+
+                    case 2:
+                      lOptionBitmask |= mask.ICON_DVDIn;
+                      goto Label_06B0;
+                  }
+                  if (num9 > 0)
+                  {
+                    lOptionBitmask |= mask.ICON_DiskOn;
+                  }
+                }
               }
-              RestoreDisplayFromVideoOrIdle();
-              icon.FlashOn();
-              num8 = 6;
+            Label_06B0:
+              if (_DisplayOptions.DiskIcon & _DisplayOptions.DiskMediaStatus)
+              {
+                lOptionBitmask |= icon.Mask;
+              }
+              if (_DoDebug)
+              {
+                Log.Info("iMONLCDg.UpdateIcons(): last = {0}, new = {1}, disk mask = {2}",
+                         lOptionBitmaskLast.ToString("X0000000000000000"), lOptionBitmask.ToString("X0000000000000000"),
+                         icon.Mask.ToString("X0000000000000000"));
+              }
+
+              if (g_Player.Player != null && (g_Player.Player.Playing || g_Player.Player.Paused))
+              {
+                //optionBitmask &= 0x00ffff3f000000ffL; //clear all required bits
+                SetIconsAspectRatio(mask, ref lOptionBitmask);
+                SetIconsCodecs(mask, ref lOptionBitmask);
+                SetIconsSpeakerConfig(mask, ref lOptionBitmask);
+                //bMmIconSet = true;
+              }
+
+              if (lOptionBitmask != lOptionBitmaskLast)
+              {
+                lock (_DWriteMutex)
+                {
+                  SendData(iMonCommand.General.SetIcons, lOptionBitmask);
+                }
+              }
+
+              if (iLargeIconNew != iLargeIconLast)
+              {
+                _CurrentLargeIcon = iLargeIconNew;
+              }
+            }
+#endregion
+
+#region EQ Display Refresh
+            lDur = (lTs - lTsEq) / (Stopwatch.Frequency / 1000);
+            if (lDur >= iRefreshrateEq)
+            {
+              lTsEq = lTs;
+
+              if (_MPStatus.MediaPlayer_Playing && !_MPStatus.MediaPlayer_Paused)
+              {
+                GetEQ();
+                DisplayEQ();
+              }
+
+              if (_DisplayOptions.VolumeDisplay || _DisplayOptions.ProgressDisplay)
+              {
+                lock (_DWriteMutex)
+                {
+                  ShowProgressBars();
+                  //Log.Info("iMONLCDg.UpdateIcons(): ProgressBar:{0}/{1}", MPStatus.Media_CurrentPosition, g_Player.CurrentPosition);
+                }
+              }
+
+              iSleep = iRefreshrateEq;
             }
             else
-            {
-              icon.Off();
-              RestoreDisplayFromVideoOrIdle();
-              lock (DWriteMutex)
-              {
-                EQSettings._EqDataAvailable = false;
-                _iconThread.Priority = ThreadPriority.BelowNormal;
-              }
-            }
-            if ((!MiniDisplayHelper.Player_Playing() & !MiniDisplayHelper.MPStatus.Media_IsTV) ||
-                (DisplayOptions.DiskIcon & !DisplayOptions.DiskMediaStatus))
-            {
-              int num9 = 0;
-              if (DisplayOptions.DiskIcon)
-              {
-                for (int m = 0; m < 0x1b; m++)
-                {
-                  num9 |= Inserted_Media[m];
-                }
-                switch (num9)
-                {
-                  case 1:
-                    optionBitmask |= mask.ICON_CDIn;
-                    goto Label_06B0;
-
-                  case 2:
-                    optionBitmask |= mask.ICON_DVDIn;
-                    goto Label_06B0;
-                }
-                if (num9 > 0)
-                {
-                  optionBitmask |= mask.ICON_DiskOn;
-                }
-              }
-            }
-            Label_06B0:
-            if (DisplayOptions.DiskIcon & DisplayOptions.DiskMediaStatus)
-            {
-              optionBitmask |= icon.Mask;
-            }
-            if (DoDebug)
-            {
-              Log.Info("iMONLCDg.UpdateIcons(): last = {0}, new = {1}, disk mask = {2}",
-                       num2.ToString("X0000000000000000"), optionBitmask.ToString("X0000000000000000"),
-                       icon.Mask.ToString("X0000000000000000"));
-            }
-            if (optionBitmask != num2)
-            {
-              lock (DWriteMutex)
-              {
-                SendData(iMonCommand.General.SetIcons, optionBitmask);
-              }
-            }
-            DisplayEQ();
-            if (DisplayOptions.VolumeDisplay || DisplayOptions.ProgressDisplay)
-            {
-              lock (DWriteMutex)
-              {
-                ShowProgressBars();
-              }
-            }
-            if (num8 != num7)
-            {
-              _CurrentLargeIcon = num8;
-            }
+              iSleep = Math.Max(5, iRefreshrateEq - (int)lDur);
+#endregion
           }
-        } while (EQSettings._EqDataAvailable && !MPStatus.MediaPlayer_Paused);
+
+          if (iSleep > 0)
+            Thread.Sleep(iSleep);
+
+        } while (_EQSettings._EqDataAvailable && !_MPStatus.MediaPlayer_Paused);
         Thread.Sleep(200);
       }
     }
 
     private void VFD_EQ_Update()
     {
-      if (DisplaySettings.BlankDisplayWithVideo & DisplaySettings.EnableDisplayAction)
+      if (_DisplaySettings.BlankDisplayWithVideo & _DisplaySettings.EnableDisplayAction)
       {
         GUIWindowManager.OnNewAction += OnExternalAction;
       }
       while (true)
       {
         object obj2;
-        Monitor.Enter(obj2 = ThreadMutex);
+        Monitor.Enter(obj2 = _ThreadMutex);
         try
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.VFD_EQ_Update(): Checking for Thread termination request");
           }
           if (_stopUpdateIconThread)
           {
-            if (DisplaySettings.BlankDisplayWithVideo & DisplaySettings.EnableDisplayAction)
+            if (_DisplaySettings.BlankDisplayWithVideo & _DisplaySettings.EnableDisplayAction)
             {
               GUIWindowManager.OnNewAction -= OnExternalAction;
             }
@@ -3642,25 +4059,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             _stopUpdateIconThread = false;
             break;
           }
-          MiniDisplayHelper.GetSystemStatus(ref MPStatus);
-          if (((!MPStatus.MediaPlayer_Active | !MPStatus.MediaPlayer_Playing) &
-               DisplaySettings.BlankDisplayWithVideo) &
-              (DisplaySettings.BlankDisplayWhenIdle & !_mpIsIdle))
+          MiniDisplayHelper.GetSystemStatus(ref _MPStatus);
+          if (((!_MPStatus.MediaPlayer_Active | !_MPStatus.MediaPlayer_Playing) &
+               _DisplaySettings.BlankDisplayWithVideo) &
+              (_DisplaySettings.BlankDisplayWhenIdle & !_mpIsIdle))
           {
             DisplayOn();
           }
-          if (MPStatus.MediaPlayer_Playing)
+          if (_MPStatus.MediaPlayer_Playing)
           {
-            if (EQSettings.UseEqDisplay && (MPStatus.Media_IsCD || MPStatus.Media_IsMusic || MPStatus.Media_IsRadio))
+            if (_EQSettings.UseEqDisplay && (_MPStatus.Media_IsCD || _MPStatus.Media_IsMusic || _MPStatus.Media_IsRadio))
             {
               GetEQ();
               DisplayEQ();
             }
-            if (DisplaySettings.BlankDisplayWithVideo &
-                (((MPStatus.Media_IsDVD || MPStatus.Media_IsVideo) || MPStatus.Media_IsTV) ||
-                 MPStatus.Media_IsTVRecording))
+            if (_DisplaySettings.BlankDisplayWithVideo &
+                (((_MPStatus.Media_IsDVD || _MPStatus.Media_IsVideo) || _MPStatus.Media_IsTV) ||
+                 _MPStatus.Media_IsTVRecording))
             {
-              if (DoDebug)
+              if (_DoDebug)
               {
                 Log.Info("iMONLCDg.VFD_EQ_Update(): Turning off display while playing video");
               }
@@ -3670,9 +4087,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           else
           {
             RestoreDisplayFromVideoOrIdle();
-            lock (DWriteMutex)
+            lock (_DWriteMutex)
             {
-              EQSettings._EqDataAvailable = false;
+              _EQSettings._EqDataAvailable = false;
               _iconThread.Priority = ThreadPriority.BelowNormal;
             }
           }
@@ -3686,7 +4103,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           Monitor.Exit(obj2);
         }
-        if (!EQSettings._EqDataAvailable || MPStatus.MediaPlayer_Paused)
+        if (!_EQSettings._EqDataAvailable || _MPStatus.MediaPlayer_Paused)
         {
           Thread.Sleep(250);
         }
@@ -3713,7 +4130,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       drive.Refresh();
       if (drive.GetNumAudioTracks() > 0)
       {
-        Inserted_Media[str[0] - 'A'] = 1;
+        _Inserted_Media[str[0] - 'A'] = 1;
         if (Settings.Instance.ExtensiveLogging)
         {
           Log.Info("iMONLCDg.UpdateDisplay.VolumeInserted(): Audio CD inserted in drive {0}", str);
@@ -3725,7 +4142,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         drive.Close();
         if (Directory.Exists(str + @"\VIDEO_TS"))
         {
-          Inserted_Media[str[0] - 'A'] = 2;
+          _Inserted_Media[str[0] - 'A'] = 2;
           if (Settings.Instance.ExtensiveLogging)
           {
             Log.Info("iMONLCDg.UpdateDisplay.VolumeInserted(): DVD inserted in drive {0}", str);
@@ -3733,7 +4150,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          Inserted_Media[str[0] - 'A'] = 4;
+          _Inserted_Media[str[0] - 'A'] = 4;
           if (Settings.Instance.ExtensiveLogging)
           {
             Log.Info("iMONLCDg.UpdateDisplay.VolumeInserted(): Unknown Media inserted in drive {0}", str);
@@ -3749,19 +4166,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         Log.Info("iMONLCDg.UpdateDisplay.VolumeRemoved(): volume removed from drive {0}", str);
       }
-      Inserted_Media[str[0] - 'A'] = 0;
+      _Inserted_Media[str[0] - 'A'] = 0;
     }
 
-    #region Nested type: AdvancedSettings
+#region Nested type: AdvancedSettings
 
     [Serializable]
     public class AdvancedSettings
     {
-      #region Delegates
+#region Delegates
 
       public delegate void OnSettingsChangedHandler();
 
-      #endregion
+#endregion
 
       private static readonly bool DoDebug = Settings.Instance.ExtensiveLogging;
       private static AdvancedSettings m_Instance;
@@ -3772,6 +4189,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       private int m_EQTitleDisplayTime = 10;
       private int m_EQTitleShowTime = 2;
       private bool m_NormalEQ = true;
+      private bool m_KeyPadLight;
 
       [XmlAttribute]
       public bool BlankDisplayWhenIdle { get; set; }
@@ -3934,6 +4352,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       [XmlAttribute]
       public bool VUmeter2 { get; set; }
 
+      [XmlAttribute]
+      public bool KeyPadLight
+      {
+        get { return this.m_KeyPadLight; }
+        set { this.m_KeyPadLight = value; }
+      }
+
       public static event OnSettingsChangedHandler OnSettingsChanged;
 
       private static void Default(AdvancedSettings _settings)
@@ -3986,7 +4411,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml")))
         {
           Log.Info("iMONLCDg.AdvancedSettings.Load(): Loading settings from XML file");
-          var serializer = new XmlSerializer(typeof (AdvancedSettings));
+          var serializer = new XmlSerializer(typeof(AdvancedSettings));
           var xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"));
           settings = (AdvancedSettings)serializer.Deserialize(xmlReader);
           xmlReader.Close();
@@ -4021,9 +4446,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           Log.Info("iMONLCDg.AdvancedSettings.Save(): Saving settings to XML file");
         }
-        var serializer = new XmlSerializer(typeof (AdvancedSettings));
+        var serializer = new XmlSerializer(typeof(AdvancedSettings));
         var writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"),
-                                       Encoding.UTF8) {Formatting = Formatting.Indented, Indentation = 2};
+                                       Encoding.UTF8)
+        { Formatting = Formatting.Indented, Indentation = 2 };
         serializer.Serialize(writer, ToSave);
         writer.Close();
         if (DoDebug)
@@ -4038,9 +4464,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    #endregion
+#endregion
 
-    #region Nested type: BuiltinIconMask
+#region Nested type: BuiltinIconMask
 
     public class BuiltinIconMask
     {
@@ -4091,9 +4517,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       public readonly ulong SPKR_SR = 0x800L;
     }
 
-    #endregion
+#endregion
 
-    #region Nested type: iMonCommand
+#region Nested type: iMonCommand
 
     private class iMonCommand
     {
@@ -4116,6 +4542,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         ClearDisplay = 0x5000000000000040L,
         SetClock = 0x5000000000000080L,
         ClearAlarm = 0x5100000000000000L,
+        KeypadLightOff = 0x0400000000000000L,
+        KeypadLightOn = 0x0400000000000004L
       }
 
       [Flags]
@@ -4125,19 +4553,23 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         BacklightOff = 0x8800000000000008L,
         ClearDisplay = 0x8800000000000040L,
         SetClock = 0x8800000000000080L,
-        ClearAlarm = 0x8900000000000000L
+        ClearAlarm = 0x8900000000000000L,
+        KeypadLightOff = 0x8e00000000000000L,
+        KeypadLightOn = 0x8e00000000000004L
       }
 
       public enum VFD2 : ulong
       {
-        VFD2_DisplayOff = 9944230551722393856L,
-        VFD2_ShowClock = 9943949076745683200L
+        VFD2_DisplayOff = 0x8A01010000000100L,
+        VFD2_ShowClock = 0x8A00010000000100L,
+        KeypadLightOff = 0x0400000000000000L,
+        KeypadLightOn = 0x0400000000000004L
       }
     }
 
-    #endregion
+#endregion
 
-    #region Nested type: CustomFont
+#region Nested type: CustomFont
 
     private class CustomFont
     {
@@ -4168,20 +4600,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             FontData.Rows.Clear();
             FontData.Columns.Clear();
-            CstmFont = new byte[0x100,6];
-            CID.DataType = typeof (byte);
+            CstmFont = new byte[0x100, 6];
+            CID.DataType = typeof(byte);
             FontData.Columns.Add(CID);
-            CData0.DataType = typeof (byte);
+            CData0.DataType = typeof(byte);
             FontData.Columns.Add(CData0);
-            CData1.DataType = typeof (byte);
+            CData1.DataType = typeof(byte);
             FontData.Columns.Add(CData1);
-            CData2.DataType = typeof (byte);
+            CData2.DataType = typeof(byte);
             FontData.Columns.Add(CData2);
-            CData3.DataType = typeof (byte);
+            CData3.DataType = typeof(byte);
             FontData.Columns.Add(CData3);
-            CData4.DataType = typeof (byte);
+            CData4.DataType = typeof(byte);
             FontData.Columns.Add(CData4);
-            CData5.DataType = typeof (byte);
+            CData5.DataType = typeof(byte);
             FontData.Columns.Add(CData5);
             FontData.Clear();
           }
@@ -4204,7 +4636,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml")))
         {
           FontData.Rows.Clear();
-          var serializer = new XmlSerializer(typeof (DataTable));
+          var serializer = new XmlSerializer(typeof(DataTable));
           var xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml"));
           Log.Debug("LoadCustomFontData(): DeSerializing data");
           FontData = (DataTable)serializer.Deserialize(xmlReader);
@@ -4258,7 +4690,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           row[6] = _Font8x5[i, 5];
           FontData.Rows.Add(row);
         }
-        var serializer = new XmlSerializer(typeof (DataTable));
+        var serializer = new XmlSerializer(typeof(DataTable));
         using (
           TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml")))
         {
@@ -4271,25 +4703,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    #endregion
+#endregion
 
-    #region Nested type: DiskIcon
+#region Nested type: DiskIcon
 
     public class DiskIcon
     {
       private readonly ulong[] _DiskMask = new ulong[]
                                              {
-                                               0x80fe0000000000L, 0x80fd0000000000L, 0x80fb0000000000L,
-                                               0x80f70000000000L
-                                               , 0x80ef0000000000L, 0x80df0000000000L, 0x80bf0000000000L,
-                                               0x807f0000000000L
+                                              0x80fe0000000000L, 0x80fd0000000000L, 0x80fb0000000000L, 0x80f70000000000L,
+                                               0x80ef0000000000L, 0x80df0000000000L, 0x80bf0000000000L, 0x807f0000000000L
                                              };
 
       private readonly ulong[] _DiskMaskInv = new ulong[]
                                                 {
-                                                  0x80010000000000L, 0x80020000000000L, 0x80040000000000L,
-                                                  0x80080000000000L, 0x80100000000000L, 0x80200000000000L,
-                                                  0x80400000000000L, 0x80800000000000L
+                                                  0x80010000000000L, 0x80020000000000L, 0x80040000000000L, 0x80080000000000L,
+                                                  0x80100000000000L, 0x80200000000000L, 0x80400000000000L, 0x80800000000000L
                                                 };
 
       private const ulong _diskSolidOffMask = 0L;
@@ -4329,7 +4758,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         get
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("ON: {0}, flashing: {1}, FLASHSTATE : {2}, Rotate: {3}, Invert: {4}",
                      _diskOn, _diskFlash, _flashState.ToString(), _diskRotate, _diskInverted);
@@ -4370,9 +4799,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
       }
 
-      public void Animate()
+      public void Animate(long lRate = 500000L)
       {
-        if ((DateTime.Now.Ticks - _LastAnimate.Ticks) >= 0x7a120L)
+        if ((DateTime.Now.Ticks - _LastAnimate.Ticks) >= lRate)
         {
           if ((_diskRotate & !_diskFlash) || (_diskRotate & (_diskFlash & !_diskSRWFlash)))
           {
@@ -4477,9 +4906,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    #endregion
+#endregion
 
-    #region Nested type: DisplayType
+#region Nested type: DisplayType
 
     private class DisplayType
     {
@@ -4512,9 +4941,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    #endregion
+#endregion
 
-    #region Nested type: LargeIcon
+#region Nested type: LargeIcon
 
     private class LargeIcon
     {
@@ -4579,72 +5008,72 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               LIconData.Rows.Clear();
               LIconData.Columns.Clear();
-              CustomIcons = new byte[10,0x20];
-              LIID.DataType = typeof (byte);
+              CustomIcons = new byte[10, 0x20];
+              LIID.DataType = typeof(byte);
               LIconData.Columns.Add(LIID);
-              IData0.DataType = typeof (byte);
+              IData0.DataType = typeof(byte);
               LIconData.Columns.Add(IData0);
-              IData1.DataType = typeof (byte);
+              IData1.DataType = typeof(byte);
               LIconData.Columns.Add(IData1);
-              IData2.DataType = typeof (byte);
+              IData2.DataType = typeof(byte);
               LIconData.Columns.Add(IData2);
-              IData3.DataType = typeof (byte);
+              IData3.DataType = typeof(byte);
               LIconData.Columns.Add(IData3);
-              IData4.DataType = typeof (byte);
+              IData4.DataType = typeof(byte);
               LIconData.Columns.Add(IData4);
-              IData5.DataType = typeof (byte);
+              IData5.DataType = typeof(byte);
               LIconData.Columns.Add(IData5);
-              IData6.DataType = typeof (byte);
+              IData6.DataType = typeof(byte);
               LIconData.Columns.Add(IData6);
-              IData7.DataType = typeof (byte);
+              IData7.DataType = typeof(byte);
               LIconData.Columns.Add(IData7);
-              IData8.DataType = typeof (byte);
+              IData8.DataType = typeof(byte);
               LIconData.Columns.Add(IData8);
-              IData9.DataType = typeof (byte);
+              IData9.DataType = typeof(byte);
               LIconData.Columns.Add(IData9);
-              IData10.DataType = typeof (byte);
+              IData10.DataType = typeof(byte);
               LIconData.Columns.Add(IData10);
-              IData11.DataType = typeof (byte);
+              IData11.DataType = typeof(byte);
               LIconData.Columns.Add(IData11);
-              IData12.DataType = typeof (byte);
+              IData12.DataType = typeof(byte);
               LIconData.Columns.Add(IData12);
-              IData13.DataType = typeof (byte);
+              IData13.DataType = typeof(byte);
               LIconData.Columns.Add(IData13);
-              IData14.DataType = typeof (byte);
+              IData14.DataType = typeof(byte);
               LIconData.Columns.Add(IData14);
-              IData15.DataType = typeof (byte);
+              IData15.DataType = typeof(byte);
               LIconData.Columns.Add(IData15);
-              IData16.DataType = typeof (byte);
+              IData16.DataType = typeof(byte);
               LIconData.Columns.Add(IData16);
-              IData17.DataType = typeof (byte);
+              IData17.DataType = typeof(byte);
               LIconData.Columns.Add(IData17);
-              IData18.DataType = typeof (byte);
+              IData18.DataType = typeof(byte);
               LIconData.Columns.Add(IData18);
-              IData19.DataType = typeof (byte);
+              IData19.DataType = typeof(byte);
               LIconData.Columns.Add(IData19);
-              IData20.DataType = typeof (byte);
+              IData20.DataType = typeof(byte);
               LIconData.Columns.Add(IData20);
-              IData21.DataType = typeof (byte);
+              IData21.DataType = typeof(byte);
               LIconData.Columns.Add(IData21);
-              IData22.DataType = typeof (byte);
+              IData22.DataType = typeof(byte);
               LIconData.Columns.Add(IData22);
-              IData23.DataType = typeof (byte);
+              IData23.DataType = typeof(byte);
               LIconData.Columns.Add(IData23);
-              IData24.DataType = typeof (byte);
+              IData24.DataType = typeof(byte);
               LIconData.Columns.Add(IData24);
-              IData25.DataType = typeof (byte);
+              IData25.DataType = typeof(byte);
               LIconData.Columns.Add(IData25);
-              IData26.DataType = typeof (byte);
+              IData26.DataType = typeof(byte);
               LIconData.Columns.Add(IData26);
-              IData27.DataType = typeof (byte);
+              IData27.DataType = typeof(byte);
               LIconData.Columns.Add(IData27);
-              IData28.DataType = typeof (byte);
+              IData28.DataType = typeof(byte);
               LIconData.Columns.Add(IData28);
-              IData29.DataType = typeof (byte);
+              IData29.DataType = typeof(byte);
               LIconData.Columns.Add(IData29);
-              IData30.DataType = typeof (byte);
+              IData30.DataType = typeof(byte);
               LIconData.Columns.Add(IData30);
-              IData31.DataType = typeof (byte);
+              IData31.DataType = typeof(byte);
               LIconData.Columns.Add(IData31);
               LIconData.Clear();
             }
@@ -4668,7 +5097,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml")))
         {
           LIconData.Rows.Clear();
-          var serializer = new XmlSerializer(typeof (DataTable));
+          var serializer = new XmlSerializer(typeof(DataTable));
           var xmlReader =
             new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml"));
           Log.Debug("LoadLargeIconData(): DeSerializing data");
@@ -4719,7 +5148,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           LIconData.Rows.Add(row);
         }
-        var serializer = new XmlSerializer(typeof (DataTable));
+        var serializer = new XmlSerializer(typeof(DataTable));
         using (
           TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml")))
         {
@@ -4732,6 +5161,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    #endregion
+#endregion
   }
 }
