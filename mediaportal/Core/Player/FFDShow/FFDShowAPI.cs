@@ -296,10 +296,10 @@ namespace FFDShow
 
       // Import the SendMessage function for use with COPYDATASTRUCT
       [DllImport("User32.Dll")]
-      public static extern IntPtr SendMessage(IntPtr hwnd, Int32 msg, Int32 hwndFrom, ref COPYDATASTRUCT cds);
+      public static extern IntPtr SendMessage(IntPtr hwnd, Int32 msg, IntPtr hwndFrom, ref COPYDATASTRUCT cds);
 
       [DllImport("User32.Dll")]
-      public static extern IntPtr SendMessage(IntPtr hwnd, Int32 msg, Int32 hwndFrom, IntPtr cds);
+      public static extern IntPtr SendMessage(IntPtr hwnd, Int32 msg, IntPtr hwndFrom, IntPtr cds);
 
       [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
       public static extern IntPtr SendMessageTimeout(
@@ -575,7 +575,7 @@ namespace FFDShow
           receiver.ReceivedString = null;
           receiver.ReceivedType = 0;
           //receiver.ParentThread = Thread.CurrentThread;
-          Win32.SendMessage(new IntPtr(ffDShowInstanceHandle), Win32.WM_COPYDATA, receiver.Handle.ToInt32(), ref cd);
+          Win32.SendMessage(new IntPtr(ffDShowInstanceHandle), Win32.WM_COPYDATA, receiver.Handle, ref cd);
           if (playState == PlayState.PlayState || playState == PlayState.FastForwardRewind)
             startVideo();
         }
@@ -2101,7 +2101,7 @@ namespace FFDShow
       cd.lpData = Marshal.StringToHGlobalAnsi(message);
 #endif
       cd.cbData = (uint)Win32.GlobalSize(cd.lpData);
-      Win32.SendMessage(new IntPtr(ffDShowInstanceHandle), Win32.WM_COPYDATA, 0, ref cd);
+      Win32.SendMessage(new IntPtr(ffDShowInstanceHandle), Win32.WM_COPYDATA, IntPtr.Zero, ref cd);
     }
 
     /// <summary>
@@ -2125,7 +2125,7 @@ namespace FFDShow
       cd.lpData = Marshal.StringToHGlobalAnsi(message);
 #endif
       cd.cbData = (uint)Win32.GlobalSize(cd.lpData);
-      Win32.SendMessage(new IntPtr(ffDShowInstanceHandle), Win32.WM_COPYDATA, 0, ref cd);
+      Win32.SendMessage(new IntPtr(ffDShowInstanceHandle), Win32.WM_COPYDATA, IntPtr.Zero, ref cd);
     }
 
     /// <summary>
