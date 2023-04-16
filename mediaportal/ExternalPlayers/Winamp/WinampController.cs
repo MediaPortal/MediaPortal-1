@@ -99,13 +99,13 @@ namespace MediaPortal.WinampPlayer
     {
       m_windowName = "Winamp v1.x";
       m_hwnd = Win32API.FindWindow(m_windowName, null);
-      if (m_hwnd.ToInt32() <= 0) // try to find it and start it since it's not found
+      if (m_hwnd.ToInt64() <= 0) // try to find it and start it since it's not found
       {
         IntPtr mpHwnd = Win32API.GetActiveWindow();
         if (StartWinamp())
         {
           m_hwnd = Win32API.FindWindow(m_windowName, null);
-          if (m_hwnd.ToInt32() > 0)
+          if (m_hwnd.ToInt64() > 0)
           {
             m_winampCreatedHere = true;
           }
@@ -160,7 +160,7 @@ namespace MediaPortal.WinampPlayer
         {
           Thread.Sleep(200);
           pluginWindow = Win32API.FindWindow(m_windowName, null);
-          if (pluginWindow.ToInt32() > 0) // window handle was found
+          if (pluginWindow.ToInt64() > 0) // window handle was found
           {
             break;
           }
