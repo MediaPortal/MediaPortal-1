@@ -252,7 +252,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
             Debug.WriteLine("  MyDeviceInterfaceDetailData.cbSize: " + MyDeviceInterfaceDetailData.cbSize);
 
             // Skip over cbsize (4 bytes) to get the address of the devicePathName.
-            IntPtr pdevicePathName = new IntPtr(DetailDataBuffer.ToInt32() + 4);
+            IntPtr pdevicePathName = IntPtr.Add(DetailDataBuffer, 4);
 
             // Get the String containing the devicePathName.
             string SingledevicePathName = Marshal.PtrToStringAuto(pdevicePathName);
@@ -363,7 +363,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
         Marshal.FreeHGlobal(DevBroadcastDeviceInterfaceBuffer);
 
         // Find out if RegisterDeviceNotification was successful.
-        if (deviceNotificationHandle.ToInt32() == IntPtr.Zero.ToInt32())
+        if (deviceNotificationHandle == IntPtr.Zero)
         {
           Debug.WriteLine("RegisterDeviceNotification error");
           return false;

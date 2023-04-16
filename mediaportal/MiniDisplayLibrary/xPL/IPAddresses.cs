@@ -47,7 +47,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         {
           _MIB_IPADDRROW _mib_ipaddrrow =
             (_MIB_IPADDRROW)
-            Marshal.PtrToStructure((IntPtr)((zero.ToInt32() + 4) + (i * Marshal.SizeOf(typeof (_MIB_IPADDRROW)))),
+            Marshal.PtrToStructure(IntPtr.Add(zero, 4 + (i * Marshal.SizeOf(typeof (_MIB_IPADDRROW)))),
                                    typeof (_MIB_IPADDRROW));
           newAddress = long.Parse(_mib_ipaddrrow.dwAddr.ToString());
           list.Add(new IPAddress(newAddress).ToString());
