@@ -424,9 +424,9 @@ namespace MediaPortal.Util
           Type t = (2 == level) ? typeof(SHARE_INFO_2) : typeof(SHARE_INFO_1);
           int offset = Marshal.SizeOf(t);
 
-          for (int i = 0, lpItem = pBuffer.ToInt32(); i < entriesRead; i++, lpItem += offset)
+          for (int i = 0; i < entriesRead; i++)
           {
-            IntPtr pItem = new IntPtr(lpItem);
+            IntPtr pItem = IntPtr.Add(pBuffer, i * offset);
             if (1 == level)
             {
               SHARE_INFO_1 si = (SHARE_INFO_1)Marshal.PtrToStructure(pItem, t);
@@ -483,9 +483,9 @@ namespace MediaPortal.Util
 
         if (NO_ERROR == nRet || ERROR_MORE_DATA == nRet)
         {
-          for (int i = 0, lpItem = pBuffer.ToInt32(); i < entriesRead; i++, lpItem += size)
+          for (int i = 0; i < entriesRead; i++)
           {
-            IntPtr pItem = new IntPtr(lpItem);
+            IntPtr pItem = IntPtr.Add(pBuffer, i * size);
 
             if (1 == level)
             {
