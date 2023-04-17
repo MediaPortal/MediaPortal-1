@@ -852,14 +852,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       if (g_Player.Player == null)
       {
-#if CUSTOM_BUILD
         if (MPStatus.MediaPlayer_Playing)
         {
             //Update our playing state and mark the time
             MPStatus.MediaPlayer_Playing = false;
             MPStatus.TimePlayingStateChanged = DateTime.Now;
         }
-#endif
         return (num | ((ulong)0x40000000000L));
       }
       MPStatus.MediaPlayer_Active = true;
@@ -902,7 +900,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         MPStatus.MediaPlayer_Paused = true;
         num |= (ulong)0x80000000000L;
       }
-#if CUSTOM_BUILD
       if (g_Player.IsMusic && !g_Player.IsVideo)
       {
           if (g_Player.CurrentFile.StartsWith("http", StringComparison.CurrentCultureIgnoreCase)
@@ -913,12 +910,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
           else
             MPStatus.Media_IsMusic = true;
-#else
 
-      if (g_Player.IsMusic)
-      {
-        MPStatus.Media_IsMusic = true;
-#endif
         num |= (ulong)0x80L;
         property = g_Player.currentFileName;
         if (property.Length > 0)
@@ -988,11 +980,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         return num;
       }
-#if CUSTOM_BUILD
+
       //num |= (ulong)0x80L; //sets music icon ?? why ?
-#else
-      num |= (ulong)0x80L;
-#endif
+
       strArray = property.Split(new char[] {'.'});
       if ((strArray.Length <= 1) || ((str3 = strArray[1].ToLowerInvariant()) == null))
       {
