@@ -40,3 +40,9 @@ jobs:
         with:
           files: |
             release-files/MediaPortalSetup_*.zip
+
+  codeql:
+    uses: ./.github/workflows/workflow_codeql.yml
+    needs: [build, release]
+    permissions:
+      security-events: write
