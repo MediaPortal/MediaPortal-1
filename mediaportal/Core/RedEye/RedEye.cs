@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -364,13 +364,13 @@ namespace MediaPortal.RedEyeIR
             }
             else
             {
-              Log.Info("Redeye Failed to Send channel change : " + channel);
+              Log.Info("Redeye Failed to Send channel change : {0}", channel);
               throw new Exception("Redeye Failed to Send channel change : " + channel);
             }
             Sleep(CommandDelay);
           }
         }
-        Log.Info("RedEye Transmitted Channel : " + channel);
+        Log.Info("RedEye Transmitted Channel : {0}", channel);
       }
     }
   }
