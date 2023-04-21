@@ -41,7 +41,7 @@ jobs:
     - name: Git Checkout
       uses: actions/checkout@v3
 
-    - name: Git Sumbodule Update
+    - name: Git Submodule Update
       run: |
         git submodule update --init --recursive
 
