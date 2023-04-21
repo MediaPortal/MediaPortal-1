@@ -1,4 +1,4 @@
-name: Stale
+name: "Workflow / Stale"
 
 on:
   schedule:
