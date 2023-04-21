@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -110,7 +110,7 @@ namespace TvEngine
     /// </summary>
     public void Start(IController controller)
     {
-      Log.WriteFile("plugin: xmltv started");
+      Log.WriteFile("xmltv: Plugin started");
 
       RegisterPowerEventHandler();
       RetrieveRemoteTvGuideOnStartUp();
@@ -127,7 +127,7 @@ namespace TvEngine
     /// </summary>
     public void Stop()
     {
-      Log.WriteFile("plugin: xmltv stopped");
+      Log.WriteFile("xmltv: Plugin stopped");
 
       UnRegisterPowerEventHandler();
 
@@ -214,7 +214,7 @@ namespace TvEngine
         {
           string folder = layer.GetSetting("xmlTv", DefaultOutputFolder).Value;
           string URL = layer.GetSetting("xmlTvRemoteURL", "").Value;
-          Log.Debug("downloadGuideOnWakeUp");
+          Log.Debug("xmltv: downloadGuideOnWakeUp");
           RetrieveRemoteFile(folder, URL);
         }
       }
@@ -224,12 +224,12 @@ namespace TvEngine
     {
       try
       {
-        Log.Info("xmlTV plugin resumed");
+        Log.Info("xmltv: Plugin resumed");
         RetrieveRemoteTvGuideOnStartUp();
       }
       catch (Exception e)
       {
-        Log.Info("xmlTV plugin resume exception [" + e.Message + "]");
+        Log.Info("xmltv: Plugin resume exception [{0}]", e.Message);
       }
     }
 
@@ -325,7 +325,7 @@ namespace TvEngine
               }
               catch (Exception ex)
               {
-                Log.Info("file is locked, retrying in 30secs. [" + ex.Message + "]");
+                Log.Info("xmltv: file is locked, retrying in 30secs. [{0}]", ex.Message);
                 retries++;
                 Thread.Sleep(30000); //wait 30 sec. before retrying.
               }
@@ -336,7 +336,7 @@ namespace TvEngine
                 try
                 {
                   string newLoc = layer.GetSetting("xmlTv", "").Value + @"\";
-                  Log.Info("extracting zip file {0} to location {1}", path, newLoc);
+                  Log.Info("xmltv: extracting zip file {0} to location {1}", path, newLoc);
                   ZipFile zip = new ZipFile(path);
                   zip.ExtractAll(newLoc, true);
                   if (RenameFileInZIp == true)
@@ -347,7 +347,7 @@ namespace TvEngine
                 }
                 catch (Exception ex2)
                 {
-                  Log.Info("file is locked, retrying in 30secs. [" + ex2.Message + "]");
+                  Log.Info("xmltv: file is locked, retrying in 30secs. [{0}]", ex2.Message);
                   retries++;
                   Thread.Sleep(30000); //wait 30 sec. before retrying.
                 }
@@ -372,7 +372,7 @@ namespace TvEngine
         setting.Value = DateTime.Now.ToString();
         setting.Persist();
 
-        Log.Info(info);
+        Log.Info("xmltv: {0}", info);
       }
       catch (Exception) { }
       finally
@@ -383,7 +383,7 @@ namespace TvEngine
           {
             try
             {
-              Log.Debug("renaming file: {0} with new filename: {1}", sourceFileName, destinationFileName);
+              Log.Debug("xmltv: renaming file: {0} with new filename: {1}", sourceFileName, destinationFileName);
               if (File.Exists(destinationFileName))
               {
                 File.Delete(destinationFileName);
@@ -392,7 +392,7 @@ namespace TvEngine
             }
             catch (Exception ex)
             {
-              Log.Error("Error renaming file: " + ex.Message);
+              Log.Error("xmltv: Error renaming file: {0}", ex.Message);
             }
           }
         }
@@ -419,7 +419,7 @@ namespace TvEngine
       if (URL.Length == 0)
       {
         errMsg = "No URL defined.";
-        Log.Error(errMsg);
+        Log.Error("xmltv: {0}", errMsg);
         setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");
         setting.Value = errMsg;
         setting.Persist();
@@ -431,7 +431,7 @@ namespace TvEngine
       if (folder.Length == 0)
       {
         errMsg = "No tvguide.xml path defined.";
-        Log.Error(errMsg);
+        Log.Error("xmltv: {0}", errMsg);
         setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");
         setting.Value = errMsg;
         setting.Persist();
@@ -454,13 +454,13 @@ namespace TvEngine
         // grab username, password and server from the URL
         // ftp://user:pass@www.somesite.com/TVguide.xml
 
-        Log.Info("FTP URL detected.");
+        Log.Info("xmltv: FTP URL detected.");
 
         int passwordEndIdx = URL.IndexOf("@");
 
         if (passwordEndIdx > -1)
         {
-          Log.Info("FTP username/password detected.");
+          Log.Info("xmltv: FTP username/password detected.");
 
           int userStartIdx = 6; //6 is the length of chars in  --> "ftp://"
           int userEndIdx = URL.IndexOf(":", userStartIdx);
@@ -474,15 +474,15 @@ namespace TvEngine
         }
         else
         {
-          Log.Info("no FTP username/password detected. Using anonymous access.");
+          Log.Info("xmltv: no FTP username/password detected. Using anonymous access.");
         }
       }
       else
       {
-        Log.Info("HTTP URL detected.");
+        Log.Info("xmltv: HTTP URL detected.");
       }
 
-      Log.Info("initiating download of remote file from " + URL);
+      Log.Info("xmltv: Initiating download of remote file from {0}", URL);
       Uri uri = new Uri(URL);
       Client.DownloadDataCompleted += new DownloadDataCompletedEventHandler(DownloadFileCallback);
 
@@ -495,20 +495,20 @@ namespace TvEngine
       }
       catch (WebException ex)
       {
-        errMsg = "An error occurred while downloading the file: " + URL + " (" + ex.Message + ").";
-        Log.Error(errMsg);
+        errMsg = string.Format("An error occurred while downloading the file: {0} ({1}).", URL, ex.Message);
+        Log.Error("xmltv: {0}", errMsg);
         lastTransferAt = errMsg;
       }
       catch (InvalidOperationException ex)
       {
-        errMsg = "The " + folder + @"\tvguide.xml file is in use by another thread (" + ex.Message + ").";
-        Log.Error(errMsg);
+        errMsg = string.Format(@"The {0}\tvguide.xml file is in use by another thread ({1}).", folder, ex.Message);
+        Log.Error("xmltv: {0}", errMsg);
         lastTransferAt = errMsg;
       }
       catch (Exception ex)
       {
-        errMsg = "Unknown error @ " + URL + "(" + ex.Message + ").";
-        Log.Error(errMsg);
+        errMsg = string.Format("Unknown error @ {0} ({1}).", URL, ex.Message);
+        Log.Error("xmltv: {0}", errMsg);
         lastTransferAt = errMsg;
       }
 
@@ -585,11 +585,11 @@ namespace TvEngine
           setting.Value = now.ToString();
           setting.Persist();
 
-          Log.Info("File transfer timed out.");
+          Log.Info("xmltv: File transfer timed out.");
         }
         else
         {
-          Log.Info("File transfer is in progress. Waiting...");
+          Log.Info("xmltv: File transfer is in progress. Waiting...");
           return;
         }
       }
@@ -648,7 +648,7 @@ namespace TvEngine
       }
       else
       {
-        Log.Info("Not the time to fetch remote file yet");
+        Log.Info("xmltv: Not the time to fetch remote file yet");
       }
     }
 
@@ -665,7 +665,7 @@ namespace TvEngine
       }
       catch (Exception e)
       {
-        Log.Info("xmlTvLastUpdate not found, forcing import {0}", e.Message);
+        Log.Info("xmltv: xmlTvLastUpdate not found, forcing import {0}", e.Message);
         lastTime = DateTime.MinValue;
       }
 
@@ -752,7 +752,7 @@ namespace TvEngine
         }
         catch (Exception e)
         {
-          Log.Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access : " + e.Message);
+          Log.Error("xmltv: StartImport - File [{0}] doesn't have read access : {1}", fileName, e.Message);
           return;
         }
       }
@@ -767,7 +767,7 @@ namespace TvEngine
         }
         catch (Exception e)
         {
-          Log.Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access : " + e.Message);
+          Log.Error("xmltv: StartImport - File [{0}] doesn't have read access : {1}", fileName, e.Message);
           return;
         }
         //Check that all listed files can be read before starting import (and deleting programs list)
@@ -791,8 +791,7 @@ namespace TvEngine
             }
             catch (Exception e)
             {
-              Log.Error(@"plugin:xmltv StartImport - File [" + tvguideFileName + "] doesn't have read access : " +
-                        e.Message);
+              Log.Error("xmltv: StartImport - File [{0}] doesn't have read access : {1}", tvguideFileName, e.Message);
               return;
             }
           }
@@ -855,7 +854,7 @@ namespace TvEngine
           if (param._importXML)
           {
             string fileName = folder + @"\tvguide.xml";
-            Log.Write("plugin:xmltv importing " + fileName);
+            Log.Write("xmltv: Importing " + fileName);
 
             XMLTVImport import = new XMLTVImport();
             import.Import(fileName, deleteBeforeImport, false);
@@ -870,7 +869,7 @@ namespace TvEngine
           if (param._importLST)
           {
             string fileName = folder + @"\tvguide.lst";
-            Log.Write("plugin:xmltv importing files in " + fileName);
+            Log.Write("xmltv: Importing files in " + fileName);
 
             Encoding fileEncoding = Encoding.Default;
             using (FileStream streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -887,7 +886,7 @@ namespace TvEngine
                   tvguideFileName = System.IO.Path.Combine(folder, tvguideFileName);
                 }
 
-                Log.WriteFile(@"plugin:xmltv importing " + tvguideFileName);
+                Log.WriteFile("xmltv: Importing {0}", tvguideFileName);
 
                 XMLTVImport import = new XMLTVImport();
 
@@ -914,23 +913,23 @@ namespace TvEngine
           setting = layer.GetSetting("xmlTvResultStatus", "");
           setting.Value = errors;
           setting.Persist();
-          Log.Write("Xmltv: imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
+          Log.Write("xmltv: Imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
         }
         catch (Exception ex)
         {
-          Log.Error(@"plugin:xmltv import failed");
+          Log.Error("xmltv: Import failed");
           Log.Write(ex);
         }
 
         setting = layer.GetSetting("xmlTvLastUpdate", "");
         setting.Value = param._importDate.ToString();
         setting.Persist();
-        Log.Info("Xmltv: waiting for database to finish inserting imported programs.");
+        Log.Info("xmltv: Waiting for database to finish inserting imported programs.");
         layer.WaitForInsertPrograms();
       }
       finally
       {
-        Log.WriteFile(@"plugin:xmltv import done");
+        Log.WriteFile("xmltv: Import done");
         _workerThreadRunning = false;
         SetStandbyAllowed(true);
       }
@@ -951,11 +950,11 @@ namespace TvEngine
         if (handler != null)
         {
           handler.EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
-          Log.Debug("XmlTvImporter: registered with PowerScheduler EPG handler");
+          Log.Debug("xmltv: Registered with PowerScheduler EPG handler");
           return;
         }
       }
-      Log.Debug("XmlTvImporter: NOT registered with PowerScheduler EPG handler");
+      Log.Debug("xmltv: NOT registered with PowerScheduler EPG handler");
     }
 
 
@@ -963,7 +962,7 @@ namespace TvEngine
     {
       if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
       {
-        Log.Debug("plugin:xmltv: Telling PowerScheduler standby is allowed: {0}, timeout is one hour", allowed);
+        Log.Debug("xmltv: Telling PowerScheduler standby is allowed: {0}, timeout is one hour", allowed);
         GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed, 3600);
       }
     }
