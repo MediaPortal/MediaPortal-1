@@ -1,3 +1,23 @@
+#region Copyright (C) 2005-2023 Team MediaPortal
+
+// Copyright (C) 2005-2023 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 using System;
 using System.IO;
 using System.Management;
@@ -68,15 +88,12 @@ namespace MediaPortal.Util
         {
             if (String.IsNullOrWhiteSpace(path))
             {
-                Log.Debug("UNCTools: ResolveToUNC: The path argument '" + path + "' was null or whitespace.");
+                Log.Debug("UNCTools: ResolveToUNC: The path argument '{0}' was null or whitespace.", path);
             }
 
             if (!Path.IsPathRooted(path))
             {
-                Log.Debug(
-                    string.Format("UNCTools: ResolveToUNC: The path '{0}' was not a rooted path and ResolveToUNC does not support relative paths.",
-                        path)
-                );
+                Log.Debug("UNCTools: ResolveToUNC: The path '{0}' was not a rooted path and ResolveToUNC does not support relative paths.", path);
             }
 
             // Is the path already in the UNC format?
@@ -112,10 +129,7 @@ namespace MediaPortal.Util
 
             if (!Path.IsPathRooted(path))
             {
-                Log.Debug(
-                    string.Format("UNCTools: ResolveToRootUNC: The path '{0}' was not a rooted path and ResolveToRootUNC does not support relative paths.",
-                    path)
-                );
+                Log.Debug("UNCTools: ResolveToRootUNC: The path '{0}' was not a rooted path and ResolveToRootUNC does not support relative paths.", path);
             }
 
             if (path.StartsWith(@"\\"))
@@ -156,10 +170,7 @@ namespace MediaPortal.Util
 
             if (!Path.IsPathRooted(path))
             {
-                Log.Debug(
-                    string.Format("UNCTools: isNetworkDrive: The path '{0}' was not a rooted path and ResolveToRootUNC does not support relative paths.",
-                    path)
-                );
+                Log.Debug("UNCTools: isNetworkDrive: The path '{0}' was not a rooted path and ResolveToRootUNC does not support relative paths.", path);
             }
 
             if (path.StartsWith(@"\\"))
@@ -193,15 +204,12 @@ namespace MediaPortal.Util
 
             if (!Path.IsPathRooted(path))
             {
-                Log.Debug(
-                    string.Format("UNCTools: GetDriveLetter: The path '{0}' was not a rooted path and GetDriveLetter does not support relative paths.",
-                    path)
-                );
+                Log.Debug("UNCTools: GetDriveLetter: The path '{0}' was not a rooted path and GetDriveLetter does not support relative paths.", path);
             }
 
             if (path.StartsWith(@"\\"))
             {
-                Log.Debug("UNCTools: A UNC path was passed to GetDriveLetter, path '" + path + "'");
+                Log.Debug("UNCTools: A UNC path was passed to GetDriveLetter, path '{0}'", path);
             }
 
             return Directory.GetDirectoryRoot(path).Replace(Path.DirectorySeparatorChar.ToString(), "");
@@ -256,18 +264,18 @@ namespace MediaPortal.Util
           if (bolExist)
           {
             //File/Folder exists
-            Log.Debug("UNCFileFolderExists: " + strType + "'" + strFile + "' exists!");
+            Log.Debug("UNCTools: UNCFileFolderExists: {0} '{1}' exists!", strType, strFile);
           }
           else
           {
             //File/Folder doesnt exist
-            Log.Info("UNCTools: UNCFileFolderExists: " + strType + "'" + strFile + "' doesn't exists or isnt online!");
+            Log.Info("UNCTools: UNCFileFolderExists: {0} '{1}' doesn't exists or isnt online!", strType, strFile);
           }
 
         }
         catch (Exception ex)
         {
-          Log.Error("UNCFileFolderExists: {0} for {1}", ex.Message, strFile);
+          Log.Error("UNCTools: UNCFileFolderExists: {0} for {1}", ex.Message, strFile);
         }
 
         if (!VirtualDirectory.detectedItemsPath.Contains(strFile))
@@ -315,7 +323,7 @@ namespace MediaPortal.Util
         }
 
         //We DONT have received an answer
-        Log.Debug("UNCTools: UNCFileFolderOnline: host '" + uri.Host + "' is not reachable!! , File/Folder '" + strFile + "'");
+        Log.Debug("UNCTools: UNCFileFolderOnline: host '{0}' is not reachable!! , File/Folder '{1}'", uri.Host, strFile);
         return string.Empty;
 
         //UNC device is online or local file/folder
@@ -430,7 +438,7 @@ namespace MediaPortal.Util
             //check if we have an ipaddress
             if((strHost_or_IP == "") || (address == null))
             {
-                Log.Debug("UNCTools: PingHost: Could not resolve/convert " + strHost_or_IP + " to an IPAddress object!");
+                Log.Debug("UNCTools: PingHost: Could not resolve/convert {0} to an IPAddress object!", strHost_or_IP);
                 return 0;
             }
 
@@ -465,14 +473,14 @@ namespace MediaPortal.Util
                             switch (pingReply.Status)
                             {
                                 case IPStatus.Success:
-                                    //Log.Debug(string.Format("UNCTools: PingHost: Reply from {0}: bytes={1} time={2}ms TTL={3}", pingReply.Address, pingReply.Buffer.Length, pingReply.RoundtripTime, pingReply.Options.Ttl));
+                                    //Log.Debug("UNCTools: PingHost: Reply from {0}: bytes={1} time={2}ms TTL={3}", pingReply.Address, pingReply.Buffer.Length, pingReply.RoundtripTime, pingReply.Options.Ttl);
                                     iAnswers++;
                                     break;
                                 case IPStatus.TimedOut:
                                     Log.Debug("UNCTools: PingHost: Connection has timed out...");
                                     break;
                                 default:
-                                    Log.Debug(string.Format("PingHost: Ping failed: {0}", pingReply.Status.ToString()));
+                                    Log.Debug("UNCTools: PingHost: Ping failed: {0}", pingReply.Status.ToString());
                                     break;
                             }
                         }
@@ -481,11 +489,11 @@ namespace MediaPortal.Util
                     }
                     catch (PingException ex)
                     {
-                        Log.Debug(string.Format("UNCTools: PingHost: Connection Error: {0}", ex.Message));
+                        Log.Debug("UNCTools: PingHost: Connection Error: {0}", ex.Message);
                     }
                     catch (SocketException ex)
                     {
-                        Log.Debug(string.Format("UNCTools: PingHost: Connection Error: {0}", ex.Message));
+                        Log.Debug("UNCTools: PingHost: Connection Error: {0}", ex.Message);
                     }
                 }
             }
@@ -538,7 +546,7 @@ namespace MediaPortal.Util
                 }
                 catch (Exception ex)
                 {
-                    Log.Debug("UNCTools: AsyncDNSReverseLookup: exception: " + ex.InnerException.Message);
+                    Log.Debug("UNCTools: AsyncDNSReverseLookup: exception: {0}", ex.InnerException.Message);
                 }
             }
 
@@ -546,11 +554,11 @@ namespace MediaPortal.Util
             //is the result ok?
             if (address == null)
             {
-                Log.Debug(string.Format("UNCTools: AsyncDNSReverseLookup: dns reverse lookup timeout (" + iTimeDiff.ToString() + " ms)!"));
+                Log.Debug("UNCTools: AsyncDNSReverseLookup: dns reverse lookup timeout ({0} ms)!", iTimeDiff.ToString());
             }
             else
             {
-                Log.Debug(string.Format("UNCTools: AsyncDNSReverseLookup: ip '" + address.ToString() + "' resolved for host '" + strHost_or_IP + "' in " + iTimeDiff.ToString() + " ms"));
+                Log.Debug("UNCTools: AsyncDNSReverseLookup: ip '{0}' resolved for host '{1}' in {2} ms", address.ToString(), strHost_or_IP, iTimeDiff.ToString());
             }
             return address;
         }
