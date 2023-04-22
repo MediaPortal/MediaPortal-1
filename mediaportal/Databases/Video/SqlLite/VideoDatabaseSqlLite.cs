@@ -6173,7 +6173,7 @@ namespace MediaPortal.Video.Database
       }
       
       // Final IMDBtt check
-      Match ttNo = Regex.Match(id, @"tt[\d]{7}?", RegexOptions.IgnoreCase);
+      Match ttNo = Regex.Match(id, @"tt[\d]{7,8}?", RegexOptions.IgnoreCase);
       
       if (!ttNo.Success)
       {
@@ -6192,7 +6192,7 @@ namespace MediaPortal.Video.Database
       }
       
       // Final IMDBtt check
-      Match ttNo = Regex.Match(id, @"nm[\d]{7}?", RegexOptions.IgnoreCase);
+      Match ttNo = Regex.Match(id, @"nm[\d]{7,8}?", RegexOptions.IgnoreCase);
       
       if (!ttNo.Success)
       {

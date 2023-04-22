@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -2002,7 +2002,7 @@ namespace MediaPortal.Video.Database
 
     private static bool MatchImdb(ref string strToMatch)
     {
-      Match match = Regex.Match(strToMatch, @"tt[\d]{7}?", RegexOptions.IgnoreCase);
+      Match match = Regex.Match(strToMatch, @"tt[\d]{7,8}?", RegexOptions.IgnoreCase);
       
       if (match.Success)
       {
