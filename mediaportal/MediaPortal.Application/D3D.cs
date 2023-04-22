@@ -586,7 +586,17 @@ namespace MediaPortal
         if (_oldClientRectangle.IsEmpty)
         {
           Location = new System.Drawing.Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
-          ClientSize = CalcMaxClientArea();
+
+          using (Settings xmlreader = new MPSettings())
+          {
+            int iW = xmlreader.GetValueAsInt("gui", "backupsizewidth", 0);
+            int iH = xmlreader.GetValueAsInt("gui", "backupsizeheight", 0);
+            if (iW > 0 && iH > 0)
+              this.Size = new Size(iW, iH);
+            else
+              this.Size = this.CalcMaxClientArea();
+          }
+
         }
         else
         {
