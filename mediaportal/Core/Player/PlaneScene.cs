@@ -89,7 +89,7 @@ namespace MediaPortal.Player
     private GUIImage _blackImage;
 
     private const int _full3DTABMinHeight = 720 * 2;
-    private const int _full3DSBSMinWidth  = 1280 * 2;
+    private const int _full3DSBSMinWidth = 1280 * 2;
 
     private FrameGrabber grabber = FrameGrabber.GetInstance();
 
@@ -139,7 +139,7 @@ namespace MediaPortal.Player
       _vertexBuffers = new VertexBuffer[nlsSourcePartitioning.Length];
       for (int i = 0; i < _vertexBuffers.Length; i++)
       {
-        _vertexBuffers[i] = new VertexBuffer(typeof (CustomVertex.TransformedColoredTextured),
+        _vertexBuffers[i] = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
                                              4,
                                              GUIGraphicsContext.DX9Device,
                                              0,
@@ -282,7 +282,7 @@ namespace MediaPortal.Player
         _blackImage = null;
       }
 
-      if (grabber != null) 
+      if (grabber != null)
       {
         lock (GUIGraphicsContext.RenderModeSwitch)
         {
@@ -430,13 +430,13 @@ namespace MediaPortal.Player
 
           GUIGraphicsContext.IsFullHD3DFormat = false;
 
-          if (((double) videoSize.Width/videoSize.Height >= 2.5) && (videoSize.Width >= _full3DSBSMinWidth))
-            // we have Full HD SBS 
+          if (((double)videoSize.Width / videoSize.Height >= 2.5) && (videoSize.Width >= _full3DSBSMinWidth))
+          // we have Full HD SBS 
           {
             GUIGraphicsContext.IsFullHD3DFormat = true;
           }
-          else if (((double) videoSize.Width/videoSize.Height <= 1.5) && (videoSize.Height >= _full3DTABMinHeight))
-            // we have Full HD TAB
+          else if (((double)videoSize.Width / videoSize.Height <= 1.5) && (videoSize.Height >= _full3DTABMinHeight))
+          // we have Full HD TAB
           {
             GUIGraphicsContext.IsFullHD3DFormat = true;
           }
@@ -513,7 +513,7 @@ namespace MediaPortal.Player
 
           //settings (position,size,aspect ratio) changed.
           //Store these settings and start calucating the new video window
-          _rectPrevious = new Rectangle((int) x, (int) y, (int) nw, (int) nh);
+          _rectPrevious = new Rectangle((int)x, (int)y, (int)nw, (int)nh);
           _subsRect = _rectPrevious;
           _aspectRatioType = GUIGraphicsContext.ARType;
           _lastOverlayVisible = GUIGraphicsContext.Overlay;
@@ -523,28 +523,28 @@ namespace MediaPortal.Player
           _prevArVideoHeight = _arVideoHeight;
 
           //calculate the video window according to the current aspect ratio settings
-          float fVideoWidth = (float) videoSize.Width;
-          float fVideoHeight = (float) videoSize.Height;
+          float fVideoWidth = (float)videoSize.Width;
+          float fVideoHeight = (float)videoSize.Height;
 
           // if we have a Full-HD 3D video we half the width or height in order
           // to provide only the size of one half to the GetWindow call of the
           // Geometry class
 
-          if (((double) videoSize.Width/videoSize.Height >= 2.5) && (videoSize.Width >= _full3DSBSMinWidth))
-            // we have Full HD SBS 
+          if (((double)videoSize.Width / videoSize.Height >= 2.5) && (videoSize.Width >= _full3DSBSMinWidth))
+          // we have Full HD SBS 
           {
             fVideoWidth /= 2;
           }
-          else if (((double) videoSize.Width/videoSize.Height <= 1.5) && (videoSize.Height >= _full3DTABMinHeight))
-            // we have Full HD TAB
+          else if (((double)videoSize.Width / videoSize.Height <= 1.5) && (videoSize.Height >= _full3DTABMinHeight))
+          // we have Full HD TAB
           {
             fVideoHeight /= 2;
           }
 
-          _geometry.ImageWidth = (int) fVideoWidth;
-          _geometry.ImageHeight = (int) fVideoHeight;
-          _geometry.ScreenWidth = (int) nw;
-          _geometry.ScreenHeight = (int) nh;
+          _geometry.ImageWidth = (int)fVideoWidth;
+          _geometry.ImageHeight = (int)fVideoHeight;
+          _geometry.ScreenWidth = (int)nw;
+          _geometry.ScreenHeight = (int)nh;
           _geometry.ARType = GUIGraphicsContext.ARType;
           _geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
 
@@ -553,15 +553,15 @@ namespace MediaPortal.Player
 
           if (GUIGraphicsContext.IsFullHD3DFormat)
           {
-            _arVideoWidth = (int) ((float) _geometry.ImageWidth/_geometry.ImageHeight*_arVideoHeight);
+            _arVideoWidth = (int)((float)_geometry.ImageWidth / _geometry.ImageHeight * _arVideoHeight);
           }
 
           _geometry.GetWindow(_arVideoWidth, _arVideoHeight, out _sourceRect, out _destinationRect,
             out _useNonLinearStretch, _cropSettings);
 
           updateCrop = false;
-          _destinationRect.X += (int) x;
-          _destinationRect.Y += (int) y;
+          _destinationRect.X += (int)x;
+          _destinationRect.Y += (int)y;
 
           if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
           {
@@ -776,9 +776,9 @@ namespace MediaPortal.Player
             DateTime.Now.Minute, DateTime.Now.Second);
 
           // Save screenshot from DIB
-          Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER) Marshal.PtrToStructure(pdib, typeof (Win32API.BITMAPINFOHEADER));
+          Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER)Marshal.PtrToStructure(pdib, typeof(Win32API.BITMAPINFOHEADER));
           IntPtr pixels = IntPtr.Add(pdib, bmih.biSize);
-          Bitmap result = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth*4, PixelFormat.Format32bppRgb, pixels);
+          Bitmap result = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth * 4, PixelFormat.Format32bppRgb, pixels);
           result.RotateFlip(RotateFlipType.RotateNoneFlipY);
           result.Save(fileName + ".jpg", ImageFormat.Jpeg);
           result.SafeDispose();
@@ -829,10 +829,10 @@ namespace MediaPortal.Player
           // pTargetmadVrDib is a DIB
           if (pTargetmadVrDib != IntPtr.Zero)
           {
-            Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER) Marshal.PtrToStructure(pTargetmadVrDib, typeof (Win32API.BITMAPINFOHEADER));
+            Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER)Marshal.PtrToStructure(pTargetmadVrDib, typeof(Win32API.BITMAPINFOHEADER));
             IntPtr pixels = IntPtr.Add(pTargetmadVrDib, bmih.biSize);
 
-            using (Bitmap b = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth*4, PixelFormat.Format32bppRgb, pixels))
+            using (Bitmap b = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth * 4, PixelFormat.Format32bppRgb, pixels))
             {
               GUIGraphicsContext.madVRCurrentFrameBitmap = new Bitmap(b);
               GUIGraphicsContext.madVRCurrentFrameBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
@@ -977,7 +977,7 @@ namespace MediaPortal.Player
                 GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D)
             {
               if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D)
-                // convert 2D to 3D
+              // convert 2D to 3D
               {
                 // left half
                 // right half
@@ -1062,10 +1062,10 @@ namespace MediaPortal.Player
                   Size client = GUIGraphicsContext.form.ClientSize;
 
                   // left half (or right if switched)
-                  VMR9Util.g_vmr9?.MadVr3DSizeLeft(0, 0, client.Width/2, client.Height);
+                  VMR9Util.g_vmr9?.MadVr3DSizeLeft(0, 0, client.Width / 2, client.Height);
 
                   // right half (or left if switched)
-                  VMR9Util.g_vmr9?.MadVr3DSizeRight(client.Width/2, 0, client.Width, client.Height);
+                  VMR9Util.g_vmr9?.MadVr3DSizeRight(client.Width / 2, 0, client.Width, client.Height);
 
                   GUIGraphicsContext.NoneDone = false;
                   GUIGraphicsContext.TopAndBottomDone = false;
@@ -1105,10 +1105,10 @@ namespace MediaPortal.Player
                   Size client = GUIGraphicsContext.form.ClientSize;
 
                   // upper half (or lower if switched)
-                  VMR9Util.g_vmr9?.MadVr3DSizeLeft(0, 0, client.Width, client.Height/2);
+                  VMR9Util.g_vmr9?.MadVr3DSizeLeft(0, 0, client.Width, client.Height / 2);
 
                   // lower half (or upper if switched)
-                  VMR9Util.g_vmr9?.MadVr3DSizeRight(0, client.Height/2, client.Width, client.Height);
+                  VMR9Util.g_vmr9?.MadVr3DSizeRight(0, client.Height / 2, client.Width, client.Height);
 
                   GUIGraphicsContext.NoneDone = false;
                   GUIGraphicsContext.TopAndBottomDone = true;
@@ -1357,7 +1357,7 @@ namespace MediaPortal.Player
     {
       if (GUIGraphicsContext.DX9Device != null)
       {
-        GUIGraphicsContext.MadVrHWnd = (IntPtr) phWnd;
+        GUIGraphicsContext.MadVrHWnd = (IntPtr)phWnd;
         Log.Debug("Received madVR phWnd : {0} from C++ side", phWnd);
       }
     }
@@ -1614,7 +1614,7 @@ namespace MediaPortal.Player
           }
         }
         else
-          // render right image of the last frame for 2D to 3D conversion, the difference between 2 frames generates a 3D effect only for moving objects...
+        // render right image of the last frame for 2D to 3D conversion, the difference between 2 frames generates a 3D effect only for moving objects...
         {
           int lastIndex = GUIGraphicsContext.LastFramesIndex - 1;
 
@@ -1630,9 +1630,9 @@ namespace MediaPortal.Player
               // generate additional 3D effect for not moving objects by stretching the right image...
 
               double xSkewPerLine =
-                (double) (GUIGraphicsContext.Convert2Dto3DSkewFactor/1000f*backbuffer.Description.Width)/
+                (double)(GUIGraphicsContext.Convert2Dto3DSkewFactor / 1000f * backbuffer.Description.Width) /
                 (backbuffer.Description.Height - 1);
-              int horzOffset = (int) (xSkewPerLine*backbuffer.Description.Height);
+              int horzOffset = (int)(xSkewPerLine * backbuffer.Description.Height);
 
               for (int y = 0; y < backbuffer.Description.Height; y++)
               {
@@ -1644,10 +1644,10 @@ namespace MediaPortal.Player
                               new Rectangle(targetRect.X, y, targetRect.Width, 1),
                               TextureFilter.Point);*/
 
-                int horzDelta = (int) (xSkewPerLine*y);
+                int horzDelta = (int)(xSkewPerLine * y);
 
                 GUIGraphicsContext.DX9Device?.StretchRectangle(surfaceLastFrame,
-                  new Rectangle(horzDelta, y, backbuffer.Description.Width - horzOffset*2 + horzDelta, 1),
+                  new Rectangle(horzDelta, y, backbuffer.Description.Width - horzOffset * 2 + horzDelta, 1),
                   backbuffer,
                   new Rectangle(targetRect.X, y, targetRect.Width, 1),
                   TextureFilter.Point);
@@ -1738,16 +1738,16 @@ namespace MediaPortal.Player
           else
           {
             // fade in
-            int iStep = 0xff/iMaxSteps;
+            int iStep = 0xff / iMaxSteps;
             if (_fadingIn)
             {
-              _diffuseColor = iStep*_fadeFrameCounter;
+              _diffuseColor = iStep * _fadeFrameCounter;
               _diffuseColor <<= 24;
               _diffuseColor |= 0xffffff;
             }
             else
             {
-              _diffuseColor = (iMaxSteps - iStep)*_fadeFrameCounter;
+              _diffuseColor = (iMaxSteps - iStep) * _fadeFrameCounter;
               _diffuseColor <<= 24;
               _diffuseColor |= 0xffffff;
             }
@@ -1788,7 +1788,7 @@ namespace MediaPortal.Player
               GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D)
           {
             if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideFrom2D)
-              // convert 2D to 3D
+            // convert 2D to 3D
             {
               Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
 
@@ -1805,13 +1805,13 @@ namespace MediaPortal.Player
 
               RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.SBSLeft,
                 timePassed, backbuffer, auto3DSurface,
-                new Rectangle(0, 0, backbuffer.Description.Width/2, backbuffer.Description.Height));
+                new Rectangle(0, 0, backbuffer.Description.Width / 2, backbuffer.Description.Height));
 
               // right half
 
               RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.SBSRight,
                 timePassed, backbuffer, auto3DSurface,
-                new Rectangle(backbuffer.Description.Width/2, 0, backbuffer.Description.Width/2,
+                new Rectangle(backbuffer.Description.Width / 2, 0, backbuffer.Description.Width / 2,
                   backbuffer.Description.Height));
 
               if (!GUIGraphicsContext.Render3DSubtitle)
@@ -1876,7 +1876,7 @@ namespace MediaPortal.Player
             Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
 
             // create texture/surface for preparation for 3D output
- 
+
             // Alert the frame grabber that it has a chance to grab a GUI frame
             // if it likes (method returns immediately otherwise
             grabber.OnFrameGUI(backbuffer);
@@ -1899,7 +1899,7 @@ namespace MediaPortal.Player
                   ? GUIGraphicsContext.eRender3DModeHalf.SBSRight
                   : GUIGraphicsContext.eRender3DModeHalf.SBSLeft,
                 timePassed, backbuffer, auto3DSurface,
-                new Rectangle(0, 0, backbuffer.Description.Width/2, backbuffer.Description.Height));
+                new Rectangle(0, 0, backbuffer.Description.Width / 2, backbuffer.Description.Height));
 
               // right half (or left if switched)
 
@@ -1908,7 +1908,7 @@ namespace MediaPortal.Player
                   ? GUIGraphicsContext.eRender3DModeHalf.SBSLeft
                   : GUIGraphicsContext.eRender3DModeHalf.SBSRight,
                 timePassed, backbuffer, auto3DSurface,
-                new Rectangle(backbuffer.Description.Width/2, 0, backbuffer.Description.Width/2,
+                new Rectangle(backbuffer.Description.Width / 2, 0, backbuffer.Description.Width / 2,
                   backbuffer.Description.Height));
             }
             else
@@ -1919,7 +1919,7 @@ namespace MediaPortal.Player
                   ? GUIGraphicsContext.eRender3DModeHalf.TABBottom
                   : GUIGraphicsContext.eRender3DModeHalf.TABTop,
                 timePassed, backbuffer, auto3DSurface,
-                new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height/2));
+                new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height / 2));
 
               // lower half (or upper if switched)
               RenderFor3DMode(
@@ -1927,8 +1927,8 @@ namespace MediaPortal.Player
                   ? GUIGraphicsContext.eRender3DModeHalf.TABTop
                   : GUIGraphicsContext.eRender3DModeHalf.TABBottom,
                 timePassed, backbuffer, auto3DSurface,
-                new Rectangle(0, backbuffer.Description.Height/2, backbuffer.Description.Width,
-                  backbuffer.Description.Height/2));
+                new Rectangle(0, backbuffer.Description.Height / 2, backbuffer.Description.Width,
+                  backbuffer.Description.Height / 2));
             }
 
             // for a 3D movie with subtitles generated by a 3D subtitle tool, we render the subtitle here instead of in RenderLayer()
@@ -2208,7 +2208,7 @@ namespace MediaPortal.Player
               {
                 case GUIGraphicsContext.eRender3DModeHalf.SBSLeft:
 
-                  if (!GUIGraphicsContext.IsFullHD3DFormat && 
+                  if (!GUIGraphicsContext.IsFullHD3DFormat &&
                       GUIGraphicsContext.Render3DMode != GUIGraphicsContext.eRender3DMode.SideBySideFrom2D)
                   {
                     _sourceRect.X = originalSource.X / 2;
@@ -2278,7 +2278,7 @@ namespace MediaPortal.Player
                 case GUIGraphicsContext.eRender3DModeHalf.SBSLeft:
 
                   if (!GUIGraphicsContext.IsFullHD3DFormat)
-                    _sourceRect.Width = originalSource.Width/2;
+                    _sourceRect.Width = originalSource.Width / 2;
                   break;
 
                 case GUIGraphicsContext.eRender3DModeHalf.SBSRight:
@@ -2297,7 +2297,7 @@ namespace MediaPortal.Player
                 case GUIGraphicsContext.eRender3DModeHalf.TABTop:
 
                   if (!GUIGraphicsContext.IsFullHD3DFormat)
-                    _sourceRect.Height = originalSource.Height/2;
+                    _sourceRect.Height = originalSource.Height / 2;
                   break;
 
                 case GUIGraphicsContext.eRender3DModeHalf.TABBottom:
@@ -2319,11 +2319,11 @@ namespace MediaPortal.Player
           {
             if (GUIGraphicsContext.IsFullHD3DFormat)
             {
-              if ((double) _prevVideoWidth/_prevVideoHeight >= 2.5) // we have Full HD SBS 
+              if ((double)_prevVideoWidth / _prevVideoHeight >= 2.5) // we have Full HD SBS 
               {
                 _sourceRect.Width *= 2;
               }
-              else if ((double) _prevVideoWidth/_prevVideoHeight <= 1.5) // we have Full HD TAB
+              else if ((double)_prevVideoWidth / _prevVideoHeight <= 1.5) // we have Full HD TAB
               {
                 _sourceRect.Height *= 2;
               }
@@ -2362,19 +2362,19 @@ namespace MediaPortal.Player
 
         if (GUIGraphicsContext.Render3DSubtitle)
         {
-            if (!GUIGraphicsContext.StretchSubtitles)
-                SubEngine.GetInstance().Render(_subsRect, _destinationRect, 0);
-            else
-            {
-                Rectangle dstRect = _destinationRect;
+          if (!GUIGraphicsContext.StretchSubtitles)
+            SubEngine.GetInstance().Render(_subsRect, _destinationRect, 0);
+          else
+          {
+            Rectangle dstRect = _destinationRect;
 
-                if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide || GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
-                    dstRect.Width *= 2;
-                else
-                    dstRect.Height *= 2;
-                
-                SubEngine.GetInstance().Render(_subsRect, dstRect, 0);
-            }
+            if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide || GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
+              dstRect.Width *= 2;
+            else
+              dstRect.Height *= 2;
+
+            SubEngine.GetInstance().Render(_subsRect, dstRect, 0);
+          }
         }
       }
       else if (((GUIGraphicsContext.Render3DModeHalf == GUIGraphicsContext.eRender3DModeHalf.SBSRight ||
@@ -2393,10 +2393,10 @@ namespace MediaPortal.Player
 
           if (GUIGraphicsContext.StretchSubtitles)
           {
-              if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide || GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
-                dstRect.Width *= 2;
-              else
-                dstRect.Height *= 2;
+            if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide || GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D)
+              dstRect.Width *= 2;
+            else
+              dstRect.Height *= 2;
           }
 
           subRect.X += GUIGraphicsContext.Render3DSubtitleDistance;
