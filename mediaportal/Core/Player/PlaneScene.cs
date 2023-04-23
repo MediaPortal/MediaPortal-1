@@ -655,6 +655,20 @@ namespace MediaPortal.Player
 
     public int PresentImage(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pTexture, uint pSurface)
     {
+      _textureAddress = pTexture;
+
+      if (pTexture == 0)
+      {
+        Log.Debug("PlaneScene: PresentImage() dispose surfaces");
+        _vmr9Util.VideoWidth = 0;
+        _vmr9Util.VideoHeight = 0;
+        _vmr9Util.VideoAspectRatioX = 0;
+        _vmr9Util.VideoAspectRatioY = 0;
+        _arVideoWidth = 0;
+        _arVideoHeight = 0;
+        return 0;
+      }
+
       lock (GUIGraphicsContext.RenderLock)
       {
         try
@@ -664,19 +678,6 @@ namespace MediaPortal.Player
           if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
             grabber.OnFrame(width, height, arWidth, arHeight, pSurface, FrameGrabber.FrameSource.Video);
 
-          _textureAddress = pTexture;
-
-          if (pTexture == 0)
-          {
-            Log.Debug("PlaneScene: PresentImage() dispose surfaces");
-            _vmr9Util.VideoWidth = 0;
-            _vmr9Util.VideoHeight = 0;
-            _vmr9Util.VideoAspectRatioX = 0;
-            _vmr9Util.VideoAspectRatioY = 0;
-            _arVideoWidth = 0;
-            _arVideoHeight = 0;
-            return 0;
-          }
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
           {
             return 0;
