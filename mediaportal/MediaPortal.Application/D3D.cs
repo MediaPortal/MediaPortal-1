@@ -1725,7 +1725,6 @@ namespace MediaPortal
 
         try
         {
-          //D3DConfiguration configuration = Windowed ? FindBestWindowedMode(false, false) : FindBestFullscreenMode(false, false);
           D3DConfiguration configuration = FindBestWindowedMode(false, false);
           if (configuration == null)
           {
@@ -1740,13 +1739,9 @@ namespace MediaPortal
           }
           catch (Exception e)
           {
-            Log.Error("D3DSetup: Failed to initialize device. Falling back to reference rasterizer.", e);
+            Log.Error("D3DSetup: Failed to initialize device. Falling back to reference rasterizer. Exception: " + e.Message);
             if (configuration.DeviceInfo.DevType == DeviceType.Hardware)
             {
-              // Let the user know we are switching from HAL to the reference rasterizer
-              //HandleException(e, ApplicationMessage.WarnSwitchToRef);
-
-              //configuration = Windowed ? FindBestWindowedMode(false, true) : FindBestFullscreenMode(false, true);
               configuration = FindBestWindowedMode(false, true);
 
               if (configuration == null)
@@ -1761,8 +1756,7 @@ namespace MediaPortal
         }
         catch (Exception ex)
         {
-          //HandleException(ex, ApplicationMessage.ApplicationMustExit);
-          Log.Error("D3DSetup: Failed to initialize device. Falling back to reference rasterizer.", ex);
+          Log.Error("D3DSetup: Failed to initialize device. Falling back to reference rasterizer. Exception: " + ex.Message);
         }
         Environment.Exit(0);
       }
