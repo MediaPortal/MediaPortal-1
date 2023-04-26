@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1925,7 +1925,7 @@ namespace MediaPortal.GUI.Video
       try
       {
         string uri;
-        string movieUrl = "http://www.imdb.com/title/" + _currentMovie.IMDBNumber;
+        string movieUrl = string.Format("https://www.imdb.com/title/{0}/", _currentMovie.IMDBNumber);
         string strBody = GetPage(movieUrl, "utf-8", out uri);
         string regexPattern = string.Empty;
         string[] vdbParserStr = VdbParserStringVideoInfo();
