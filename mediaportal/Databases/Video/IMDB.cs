@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ namespace MediaPortal.Video.Database
   {
     public static string ScriptDirectory = Config.GetSubFolder(Config.Dir.Config, "scripts\\MovieInfo");
     public static string InternalScriptDirectory = Config.GetSubFolder(Config.Dir.Config, "scripts");
-    public const string DEFAULT_DATABASE = "IMDB_MP13x";
+    public const string DEFAULT_DATABASE = "TI_IMDB";
     public const int DEFAULT_SEARCH_LIMIT = 25;
 
     #region interfaces and classes
@@ -557,7 +557,7 @@ namespace MediaPortal.Video.Database
       // getting searchstring
       string strSearch = HttpUtility.UrlEncode(GetSearchString(strActor));
       _elements.Clear();
-      string strURL = String.Format("http://www.imdb.com/find?s=nm&q=" + strSearch, strSearch);
+      string strURL = string.Format("https://www.imdb.com/find/?s=nm&q={0}", strSearch);
       FindIMDBActor(strURL);
     }
 

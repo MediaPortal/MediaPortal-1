@@ -698,7 +698,7 @@ namespace MediaPortal.Video.Database
           if (_fetchActors && !string.IsNullOrEmpty(actorImdbId))
           {
             _imdb = new IMDB();
-            _imdb.SetIMDBActor("http://www.imdb.com/name/" + actorImdbId, actorImdbId);
+            _imdb.SetIMDBActor(string.Format("https://www.imdb.com/name/{0}/", actorImdbId), actorImdbId);
             _actor = actorName + (string.IsNullOrEmpty(role) ? "" : " as " + role);
             _actorId = actorId;
             _actorIndex = 0;
@@ -754,7 +754,7 @@ namespace MediaPortal.Video.Database
       }
       else // Direct get actor details (by actorImdbId) as name
       {
-        fetcher._imdb.SetIMDBActor("http://www.imdb.com/name/" + actor, actor);
+        fetcher._imdb.SetIMDBActor(string.Format("https://www.imdb.com/name/{0}/", actor), actor);
         return fetcher.FetchActorDetails(actor, actorId, 0);
       }
       return null;
