@@ -27,15 +27,17 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
+
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Util;
-using SQLite.NET;
 using MediaPortal.Profile;
-using MediaInfo;
 using MediaPortal.Services;
+using MediaPortal.Util;
+
+using MediaInfo;
+using SQLite.NET;
 
 namespace MediaPortal.Video.Database
 {
@@ -6189,8 +6191,8 @@ namespace MediaPortal.Video.Database
 
     public bool CheckMovieImdbId(string id)
     {
-      // IMDBtt search check tt number, must be exactly 9 chars with leading zeros if needed
-      if (id == null || id.Length != 9)
+      // IMDBtt search check tt number, must be exactly 9-10 chars with leading zeros if needed
+      if (string.IsNullOrEmpty(id) || !(9 <= id.Length && id.Length <= 10))
       {
         return false;
       }
@@ -6208,8 +6210,8 @@ namespace MediaPortal.Video.Database
 
     public bool CheckActorImdbId(string id)
     {
-      // IMDBnm search check nm number, must be exactly 9 chars with leading zeros if needed
-      if (id == null || id.Length != 9)
+      // IMDBnm search check nm number, must be exactly 9-10 chars with leading zeros if needed
+      if (string.IsNullOrEmpty(id) || !(9 <= id.Length && id.Length <= 10))
       {
         return false;
       }
