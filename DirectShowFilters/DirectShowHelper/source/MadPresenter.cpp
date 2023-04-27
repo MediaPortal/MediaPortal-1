@@ -735,7 +735,7 @@ HRESULT MPMadPresenter::Shutdown()
 
       if (m_pCallback)
       {
-        m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(nullptr));
+        m_pCallback->SetSubtitleDevice(nullptr);
         Log("MPMadPresenter::Shutdown() reset subtitle device");
         m_pCallback->RestoreDeviceSurface(m_pSurfaceDevice);
         Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
@@ -1130,7 +1130,7 @@ HRESULT MPMadPresenter::Stopping()
 
     if (m_pCallback)
     {
-      m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(nullptr));
+      m_pCallback->SetSubtitleDevice(nullptr);
       Log("MPMadPresenter::SetDeviceOsd() reset C# subtitle device");
     }
 
