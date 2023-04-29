@@ -2358,6 +2358,8 @@ namespace MediaPortal.GUI.Library
       //Make sure the rectangle location is not less then zero(it leeds to Direct3D error)
       r3.Left = Math.Max(0, r3.Left);
       r3.Top = Math.Max(0, r3.Top);
+      r3.Right = Math.Max(r3.Left, r3.Right);
+      r3.Bottom = Math.Max(r3.Top, r3.Bottom);
 
       // Place the clip rectangle on the top of the stack and set it as the current clip rectangle.
       ClipRectangleStack.Push(r3);
