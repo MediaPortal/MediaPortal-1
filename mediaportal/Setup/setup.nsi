@@ -132,8 +132,7 @@ Var PREVIOUS_KEYMAPSETTINGS
 !include "${git_InstallScripts}\include\ProcessMacros.nsh"
 !include "${git_InstallScripts}\include\WinVerEx.nsh"
 !include "${git_InstallScripts}\include\CPUDesc.nsh"
-!include "${git_InstallScripts}\include\FontReg.nsh"
-!include "${git_InstallScripts}\include\FontName.nsh"
+!include "${git_InstallScripts}\include\FontInstall.nsh"
 
 !include "${git_InstallScripts}\include\x64.nsh"
 
@@ -141,7 +140,6 @@ Var PREVIOUS_KEYMAPSETTINGS
 !include "${git_InstallScripts}\pages\AddRemovePage.nsh"
 !endif
 !include "${git_InstallScripts}\pages\UninstallModePage.nsh"
-
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
@@ -240,9 +238,8 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2020 ${PRODUCT_PUBLISHER}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright Â© 2005-2023 ${PRODUCT_PUBLISHER}"
 ShowUninstDetails show
-
 
 #---------------------------------------------------------------------------
 # USEFUL MACROS
@@ -290,19 +287,6 @@ ShowUninstDetails show
     ${LOG_TEXT} "INFO" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml already exists. It will be renamed."
     Rename "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml" "$DOCUMENTS\Team MediaPortal\MediaPortalDirs.xml_$R0"
   ${EndIf}
-!macroend
-
-!macro un.Fonts
-  ; used for Default and Titan Skin Font
-  StrCpy $FONT_DIR $FONTS
-  !insertmacro RemoveTTFFont "Lato-Medium.ttf"
-  !insertmacro RemoveTTFFont "Lato-Light.ttf"
-  !insertmacro RemoveTTFFont "TitanSmall.ttf"
-  !insertmacro RemoveTTFFont "Titan.ttf"
-  !insertmacro RemoveTTFFont "TitanLight.ttf"
-  !insertmacro RemoveTTFFont "TitanMedium.ttf"
-  !insertmacro RemoveTTFFont "NotoSans-Regular.ttf"
-  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
 !macroend
 
 !macro BackupSkinSettings
@@ -355,6 +339,51 @@ ShowUninstDetails show
     ${LOG_TEXT} "INFO" "Restore keymap.xml (${COMMON_APPDATA}\keymap.xml)"
     CopyFiles /SILENT /FILESONLY "$PREVIOUS_KEYMAPSETTINGS" "${COMMON_APPDATA}\keymap.xml" 
   ${EndIf}
+!macroend
+
+!macro InstallTTFFont FontFile
+  ${GetFileName} "${FontFile}" $R0
+
+  InitPluginsDir
+  File "/oname=$PluginsDir\$R0" "${FontFile}"
+  FontInfo::GetFontName "$PluginsDir\$R0"
+  ${If} $0 != ""
+    !insertmacro FontInstallTTF "${FontFile}" "$R0" $0
+    ${IfNotThen} ${Errors} ${|} IntOp $1 $1 + 1 ${|}
+  ${EndIf}
+   
+  ${If} $1 <> 0
+    DetailPrint "Successfully installed $1 font(s)..."
+    SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000
+  ${EndIf}
+!macroend
+
+!macro RemoveTTFFont FontFile
+
+  FontInfo::GetFontName "$Fonts\${FontFile}"
+  ${If} $0 != ""
+    !insertmacro FontUninstallTTF "${FontFile}" $0
+    ${IfNotThen} ${Errors} ${|} IntOp $1 $1 + 1 ${|}
+  ${EndIf}
+   
+  ${If} $1 <> 0
+    DetailPrint "Successfully uninstalled $1 font(s)..."
+    SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000
+  ${EndIf}
+!macroend
+
+!macro un.Fonts
+  ; used for Default and Titan Skin Font
+
+  !insertmacro RemoveTTFFont "Lato-Medium.ttf"
+  !insertmacro RemoveTTFFont "Lato-Light.ttf"
+  !insertmacro RemoveTTFFont "TitanSmall.ttf"
+  !insertmacro RemoveTTFFont "Titan.ttf"
+  !insertmacro RemoveTTFFont "TitanLight.ttf"
+  !insertmacro RemoveTTFFont "TitanMedium.ttf"
+  !insertmacro RemoveTTFFont "NotoSans-Regular.ttf"
+
+  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
 !macroend
 
 Function RunUninstaller
@@ -742,8 +771,6 @@ Section "MediaPortal core files (required)" SecCore
   Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\MediaPortalDefault.ttf"
 
   ; used for Default and Titan Skin Font
-  StrCpy $FONT_DIR $FONTS
-
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
