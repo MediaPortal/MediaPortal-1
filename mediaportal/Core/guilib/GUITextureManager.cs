@@ -106,6 +106,21 @@ namespace MediaPortal.GUI.Library
       return null;
     }
 
+    public static Texture GetTexture(string strName, int iFrameNr, out int iDuration)
+    {
+      string strCacheKey = strName.ToLowerInvariant();
+      iDuration = -1;
+      CachedTexture texture;
+      if (_cacheTextures.TryGetValue(strCacheKey, out texture) && iFrameNr >= 0 && iFrameNr < texture.Frames)
+      {
+        TextureFrame frame = texture[iFrameNr];
+        iDuration = frame.Duration;
+        return frame.Image;
+      }
+
+      return null;
+    }
+
     public static void StartPreLoad()
     {
       //TODO
@@ -529,6 +544,80 @@ namespace MediaPortal.GUI.Library
         Log.Error("TextureManager: exception loading texture memoryImage");
         Log.Error(ex);
       }
+      return 0;
+    }
+
+    public static int LoadFromMemoryEx(Image[] memoryImages, int[] durations, string strName, long lColorKey)
+    {
+      bool bDebugLog = !strName.StartsWith("[NoLog:");
+      if (bDebugLog)
+      {
+        Log.Debug("TextureManagerEx: load from memory: {0}", strName);
+      }
+      string strCacheName = strName;
+      string strCacheKey = strCacheName.ToLowerInvariant();
+
+      CachedTexture cached;
+      if (_cacheTextures.TryGetValue(strCacheKey, out cached))
+        return cached.Frames;
+
+      if (memoryImages == null || durations == null || memoryImages.Length = 0 || durations.Length != memoryImages.Length)
+        return 0;
+
+      try
+      {
+        Texture texture;
+        CachedTexture newCache = new CachedTexture();
+
+        newCache.Name = strName;
+        newCache.Frames = memoryImages.Length;
+
+        for (int iIdx = 0; iIdx < memoryImages.Length; iIdx++)
+        {
+          using (MemoryStream stream = new MemoryStream())
+          {
+            memoryImages[iIdx].Save(stream, ImageFormat.Png);
+            ImageInformation info2;
+            stream.Flush();
+            stream.Seek(0, SeekOrigin.Begin);
+            texture = Texture.FromStream(
+              GUIGraphicsContext.DX9Device,
+              stream,
+              0, //size
+              0, 0, //width/height
+              1, //mipslevels
+              Usage.Dynamic,
+              Format.A8R8G8B8,
+              Pool.Default,
+              Filter.None,
+              Filter.None,
+              (int)lColorKey,
+              out info2);
+
+            newCache.Width = info2.Width;
+            newCache.Height = info2.Height;
+            newCache[iIdx] = new TextureFrame(strCacheName, texture, Math.Max(10, durations[iIdx]));
+          }
+        }
+
+        newCache.Disposed += new EventHandler(cachedTexture_Disposed);
+
+        _cacheTextures[strCacheKey] = newCache;
+
+        if (bDebugLog)
+        {
+          Log.Debug("TextureManager: added: memoryImage  " + " total count: " + _cacheTextures.Count + ", mem left (MB): " +
+                    ((uint)GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576));
+        }
+
+        return newCache.Frames;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TextureManager: exception loading texture memoryImage");
+        Log.Error(ex);
+      }
+
       return 0;
     }
 
