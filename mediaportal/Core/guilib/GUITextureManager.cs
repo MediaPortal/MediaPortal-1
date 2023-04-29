@@ -561,7 +561,7 @@ namespace MediaPortal.GUI.Library
       if (_cacheTextures.TryGetValue(strCacheKey, out cached))
         return cached.Frames;
 
-      if (memoryImages == null || durations == null || memoryImages.Length = 0 || durations.Length != memoryImages.Length)
+      if (memoryImages == null || durations == null || memoryImages.Length == 0 || durations.Length != memoryImages.Length)
         return 0;
 
       try
