@@ -1603,6 +1603,12 @@ namespace MediaPortal
       {
         Log.Debug("[FindAdapterForScreen] AdapterInfo: {0} - {1}", adapterInfo.AdapterDetails.Description, adapterInfo.AdapterDetails.DeviceName);
 
+        IntPtr pMon = GUIGraphicsContext.Direct3D.Adapters[adapterInfo.AdapterOrdinal].Monitor;
+        MonitorInformation monInfo = new MonitorInformation();
+        monInfo.Size = (uint)Marshal.SizeOf(monInfo);
+        GetMonitorInfo(pMon, ref monInfo);
+        System.Drawing.Rectangle rect = Screen.FromRectangle(monInfo.MonitorRectangle).Bounds;
+
         foreach (GraphicsDeviceInfo deviceInfo in adapterInfo.DeviceInfos)
         {
           Log.Debug("[FindAdapterForScreen] DeviceInfo: {0}", deviceInfo.DevType);
@@ -1630,7 +1636,7 @@ namespace MediaPortal
               bestAdapterInfo = adapterInfo;
               bestDeviceInfo = deviceInfo;
               bestDeviceCombo = deviceCombo;
-              if (deviceInfo.DevType == DeviceType.Hardware && adapterMatchesBackBuffer)
+              if (deviceInfo.DevType == DeviceType.Hardware && adapterMatchesBackBuffer && rect.Equals(screen.Bounds))
               {
                 Log.Debug("[FindAdapterForScreen] DeviceCombo: Selected");
                 // This windowed device combo looks great -- take it
@@ -1671,6 +1677,7 @@ namespace MediaPortal
         }
         Log.Info("D3D: Vertex shader version: {0}", capabilities.VertexShaderVersion);
         Log.Info("D3D: Pixel shader version: {0}", capabilities.PixelShaderVersion);
+        Log.Info("D3D: Device Caps: {0}", capabilities.DeviceCaps);
 
         // default to reference rasterizer and software vertex processing for initialization purposes
         _deviceType = DeviceType.Reference;
@@ -1725,7 +1732,7 @@ namespace MediaPortal
 
         try
         {
-          D3DConfiguration configuration = FindBestWindowedMode(false, false);
+          D3DConfiguration configuration = FindBestWindowedMode(GUIGraphicsContext.currentScreen, false, false);
           if (configuration == null)
           {
             Log.Error("D3DSetup: Failed to find best windowed display mode.");
@@ -1742,7 +1749,7 @@ namespace MediaPortal
             Log.Error("D3DSetup: Failed to initialize device. Falling back to reference rasterizer. Exception: " + e.Message);
             if (configuration.DeviceInfo.DevType == DeviceType.Hardware)
             {
-              configuration = FindBestWindowedMode(false, true);
+              configuration = FindBestWindowedMode(GUIGraphicsContext.currentScreen, false, true);
 
               if (configuration == null)
               {
@@ -3206,8 +3213,10 @@ namespace MediaPortal
     /// <param name="doesRequireHardware">The device requires hardware support.</param>
     /// <param name="doesRequireReference">The device requires the ref device.</param>
     /// <returns><c>true</c> if a mode is found, <c>false</c> otherwise.</returns>
-    public D3DConfiguration FindBestWindowedMode(bool doesRequireHardware, bool doesRequireReference)
+    public D3DConfiguration FindBestWindowedMode(Screen screen, bool doesRequireHardware, bool doesRequireReference)
     {
+      Log.Info("D3D: FindBestWindowedMode: {0}x{1}", screen.Bounds.Width, screen.Bounds.Height);
+
       D3DConfiguration result = new D3DConfiguration();
 
       // Get display mode of primary adapter (which is assumed to be where the window will appear)
@@ -3223,6 +3232,13 @@ namespace MediaPortal
           adapterInfo = FindAdapterForScreen(GUI.Library.GUIGraphicsContext.currentScreen);
           primaryDesktopDisplayMode = Direct3D.Adapters[adapterInfo.AdapterOrdinal].CurrentDisplayMode;
         }*/
+
+        IntPtr pMon = GUIGraphicsContext.Direct3D.Adapters[adapterInfo.AdapterOrdinal].Monitor;
+        MonitorInformation monInfo = new MonitorInformation();
+        monInfo.Size = (uint)Marshal.SizeOf(monInfo);
+        GetMonitorInfo(pMon, ref monInfo);
+        System.Drawing.Rectangle rect = Screen.FromRectangle(monInfo.MonitorRectangle).Bounds;
+
         foreach (GraphicsDeviceInfo deviceInfo in adapterInfo.DeviceInfos)
         {
           if (doesRequireHardware && deviceInfo.DevType != DeviceType.Hardware)
@@ -3249,7 +3265,7 @@ namespace MediaPortal
               bestAdapterInfo = adapterInfo;
               bestDeviceInfo = deviceInfo;
               bestDeviceCombo = deviceCombo;
-              if (deviceInfo.DevType == DeviceType.Hardware && adapterMatchesBackBuffer)
+              if (deviceInfo.DevType == DeviceType.Hardware && adapterMatchesBackBuffer && rect.Equals(screen.Bounds))
                 // This windowed device combo looks great -- take it
                 goto EndWindowedDeviceComboSearch;
               // Otherwise keep looking for a better windowed device combo
@@ -3267,7 +3283,12 @@ namespace MediaPortal
       result.AdapterInfo = bestAdapterInfo;
       result.DeviceInfo = bestDeviceInfo;
       result.DeviceCombo = bestDeviceCombo;
-      result.DisplayMode = primaryDesktopDisplayMode;
+      result.DisplayMode = GUIGraphicsContext.Direct3D.Adapters[bestAdapterInfo.AdapterOrdinal].CurrentDisplayMode;
+
+      Log.Debug("D3D: FindBestWindowedMode: AdapterInfo: {0} - {1} : {2}x{3}",
+        bestAdapterInfo.AdapterDetails.Description, bestAdapterInfo.AdapterDetails.DeviceName,
+        result.DisplayMode.Width, result.DisplayMode.Height
+        );
 
       return result;
     }
