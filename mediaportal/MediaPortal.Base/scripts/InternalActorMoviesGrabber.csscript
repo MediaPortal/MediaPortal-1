@@ -25,7 +25,7 @@ using Newtonsoft.Json;
 
 internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 {
-  const string strGrabberVersion = "20230425.I";
+  const string strGrabberVersion = "20230430.I";
 
   private string _strBody = string.Empty;
   private TMDBMovie tmdbMovie;
@@ -1244,6 +1244,49 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     public string type { get; set; }
   }
 
+  public class JsonIMDBText
+  {
+    public string text { get; set; }
+  }
+
+  public class JsonIMDBPlainText
+  {
+    public string plainText { get; set; }
+  }
+
+  public class JsonIMDBReleaseYear
+  {
+    public int year { get; set; }
+  }
+
+  public class JsonIMDBPlot
+  {
+    public JsonIMDBPlainText plotText { get; set; }
+  }
+
+  public class JsonIMDBPrimaryImage
+  {
+    public string url { get; set; }
+    public int height { get; set; }
+    public int width { get; set; }
+    public JsonIMDBPlainText caption { get; set; }
+  }
+  public class JsonIMDBPosterData
+  {
+    public string constId { get; set; }
+    public JsonIMDBPosterImage image { get; set; }
+    public string type { get; set; }
+  }
+
+  public class JsonIMDBPosterImage
+  {
+    public string url { get; set; }
+    public int maxHeight { get; set; }
+    public int maxWidth { get; set; }
+    public string caption { get; set; }
+  }
+
+  // Movie
   public class JsonIMDBPerson : JsonIMDBBase
   {
     public string url { get; set; }
@@ -1285,6 +1328,81 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     public List<JsonIMDBPerson> director { get; set; }
     public List<JsonIMDBPerson> creator { get; set; }
     public string duration { get; set; }
+  }
+
+  // IMDB Awards
+  public class JsonIMDBAwards
+  {
+    public JsonIMDBAwardsProps props { get; set; }
+    public string page { get; set; }
+  }
+
+  public class JsonIMDBAwardsProps
+  {
+    public JsonIMDBAwardsPageProps pageProps { get; set; }
+  }
+
+  public class JsonIMDBAwardsPageProps
+  {
+    public JsonIMDBAwardsContentData contentData { get; set; }
+  }
+
+  public class JsonIMDBAwardsContentData
+  {
+    public string parentDisplayText { get; set; }
+    public JsonIMDBEntityMetadata entityMetadata { get; set; }
+    public JsonIMDBPosterData posterData { get; set; }
+    public List<JsonIMDBAwardsCategory> categories { get; set; }
+    public int nominationsCount { get; set; }
+    public int winsCount { get; set; }
+  }
+
+  public class JsonIMDBEntityMetadata
+  {
+    public string id { get; set; }
+    public JsonIMDBText titleText { get; set; }
+    public JsonIMDBText originalTitleText { get; set; }
+    public JsonIMDBReleaseYear releaseYear { get; set; }
+    public JsonIMDBPlot plot { get; set; }
+    public JsonIMDBPrimaryImage primaryImage { get; set; }
+  }
+
+  public class JsonIMDBAwardsCategory
+  {
+    public string id { get; set; }
+    public string name { get; set; }
+    public JsonIMDBAwardsSection section { get; set; }
+  }
+
+  public class JsonIMDBAwardsSection
+  {
+    public int listItemType { get; set; }
+    public List<JsonIMDBAwardsSectionItem> items { get; set; }
+    public int total { get; set; }
+    public string endCursor { get; set; }
+  }
+
+  public class JsonIMDBAwardsSectionItem
+  {
+    public string id { get; set; }
+    public List<JsonIMDBAwardsListContent> listContent { get; set; }
+    public string rowTitle { get; set; }
+    public string rowSubTitle { get; set; }
+    public string rowLink { get; set; }
+    public List<JsonIMDBAwardsSubListContent> subListContent { get; set; }
+  }
+
+  public class JsonIMDBAwardsListContent
+  {
+    public string className { get; set; }
+    public string text { get; set; }
+  }
+
+  public class JsonIMDBAwardsSubListContent
+  {
+    public string text { get; set; }
+    public string subText { get; set; }
+    public string href { get; set; }
   }
 
   public IMDBActor GetIMDBActorDetails(string imdbID, string page)
@@ -1472,194 +1590,121 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
     try
     {
-      string uri = string.Empty;
+      string absoluteUri;
       string _awardsURL = string.Format("https://www.imdb.com/name/{0}/awards/", IMDBID);
-      string _awardsPage = GetPage(_awardsURL, "utf-8", out uri);
+      string _awardsPage = GetPage(_awardsURL, "utf-8", out absoluteUri);
       if (string.IsNullOrEmpty(_awardsPage))
       {
         return string.Empty;
       }
 
-      string _awardsList = string.Empty;
-
-      string rx_awards_mainblock = @"<h3>(?<award>[^<]+?)<\/h3>[^<]*?<table[^>]+?>(?<block>[\s\S]+?)<\/table>";
-      string rx_awards_listWblock = @">(?<awardyear>[^<]+?)<\/a>[^>]+?>[^<]+?<td[^>]+?>[^<]+?<b>(?!Nomin(?:ated|ee))(W(?:on|inner))<\/b(?<block>[\s\S]+?)<\/tr";
-      string rx_awards_listNblock = @">(?<awardyear>[^<]+?)<\/a>[^>]+?>[^<]+?<td[^>]+?>[^<]+?<b>(?!W(?:on|inner))(Nomin(?:ated|ee))<\/b(?<block>[\s\S]+?)<\/tr";
-      string rx_awards_line = @"award_category.>(?<award>[^<]+?)<[\s\S]+?award_description.>(?<what>[^<]+?)(?:<br.?\/>)?(?<who><[\s\S]+?)<\/td>";
-      _awardsPage = HttpUtility.HtmlDecode(_awardsPage);
-
-      ArrayList awardsList = Parse(_awardsPage, rx_awards_mainblock);
-      if (awardsList != null && awardsList.Count > 0)
+      string regex = @"type=.application\/json.>(?<json>{.+?})<";
+      string json = Regex.Match(_awardsPage, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["json"].Value;
+      if (string.IsNullOrEmpty(json))
       {
-        for (int i = 0; i < awardsList.Count; i++)
-        {
-          Hashtable awardMain = (Hashtable)awardsList[i];
-          string awardMainName = (string)awardMain["award"];
-          string awardMainBlock = (string)awardMain["block"];
-          awardMainName = awardMainName.Trim().Replace("\n", string.Empty);
-          awardMainName = Utils.stripHTMLtags(awardMainName);
+        Log.Debug("{0} GetIMDBAwards IMDB = {1}, JSON not found.", "GetActorDetails", IMDBID);
+      }
 
-          if (!string.IsNullOrEmpty(awardMainBlock))
+      try
+      {
+        JsonIMDBAwards Awards = JsonConvert.DeserializeObject<JsonIMDBAwards>(json);
+        if (Awards == null)
+        {
+          Log.Debug("{0} GetIMDBAwards IMDB = {1}, JSON changed!?.", "GetActorDetails", IMDBID);
+        }
+
+        if (Awards.props != null && Awards.props.pageProps != null &&
+          (Awards.props.pageProps.contentData == null || Awards.props.pageProps.contentData.nominationsCount == 0))
+        {
+          Log.Debug("{0} GetIMDBAwards No Awards for IMDB = {1}", "GetActorDetails", IMDBID);
+        }
+
+        string _awardsList = string.Empty;
+        if (!string.IsNullOrEmpty(Awards.props.pageProps.contentData.entityMetadata.id))
+        {
+          string AwardsMASK = string.Empty;
+          if (Awards.props.pageProps.contentData.winsCount > 0 && Awards.props.pageProps.contentData.nominationsCount > 0)
           {
-            _awardsList = _awardsList + "* " + awardMainName + "\n";
-            // Winner
-            ArrayList awardsWList = Parse(awardMainBlock, rx_awards_listWblock);
-            if (awardsWList != null && awardsWList.Count > 0)
+            AwardsMASK = "{0} WINS & {1} NOMINATIONS";
+          }
+          else if (Awards.props.pageProps.contentData.winsCount > 0)
+          {
+            AwardsMASK = "{0} WINS";
+          }
+          else if (Awards.props.pageProps.contentData.nominationsCount > 0)
+          {
+            AwardsMASK = "{1} NOMINATIONS";
+          }
+          string awardMainTitle = string.Format(AwardsMASK, Awards.props.pageProps.contentData.winsCount,
+                                                            Awards.props.pageProps.contentData.nominationsCount);
+          if (!string.IsNullOrEmpty(awardMainTitle))
+          {
+            _awardsList = "::: " + awardMainTitle + " :::\n\n";
+          }
+
+          foreach (var category in Awards.props.pageProps.contentData.categories)
+          {
+            var awards = category.section.items.Where(x => x.rowTitle.Contains("Winner"));
+            string awardMainName = string.Empty;
+            if (awards.Count() > 0)
             {
-              for (int k = 0; k < awardsWList.Count; k++)
+              awardMainName = category.name;
+
+              _awardsList += "* " + awardMainName + "\n";
+              _awardsList += "Won:\n";
+
+              foreach (var award in awards)
               {
-                Hashtable awardWMain = (Hashtable)awardsWList[k];
-                string awardWMainYear = (string)awardWMain["awardyear"];
-                string awardWMainBlock = (string)awardWMain["block"];
-                if (!string.IsNullOrEmpty(awardWMainBlock))
-                {
-                  _awardsList = _awardsList + "Won:\n";
-                  ArrayList awardsWListLines = Parse(awardWMainBlock, rx_awards_line);
-                  if (awardsWListLines != null && awardsWListLines.Count > 0)
-                  {
-                    if (!string.IsNullOrEmpty(awardWMainYear))
-                    {
-                      awardWMainYear = awardWMainYear.Trim().Replace("\n", string.Empty);
-                      awardWMainYear = Utils.stripHTMLtags(awardWMainYear);
-                      awardWMainYear = Regex.Replace(awardWMainYear, @"[ ]{2,}", " ").Trim();
-                      awardWMainYear = " (" + awardWMainYear + ")"; 
-                    }
-                    else
-                    {
-                      awardWMainYear = string.Empty;
-                    }
-                    for (int j = 0; j < awardsWListLines.Count; j++)
-                    {
-                      Hashtable awardLine = (Hashtable)awardsWListLines[j];
-                      string awardLineName = (string)awardLine["award"];
-                      string awardLineWho = (string)awardLine["who"];
-                      string awardLineWhat = (string)awardLine["what"];
-                      if (!string.IsNullOrEmpty(awardLineName))
-                      {
-                        awardLineName = awardLineName.Trim().Replace("\n", string.Empty);
-                        awardLineName = Utils.stripHTMLtags(awardLineName);
-                        awardLineName = Regex.Replace(awardLineName, @"[ ]{2,}", " ").Trim() + awardWMainYear;
-                      }
-                      else
-                      {
-                        awardLineName = string.Empty;
-                      }
-                      if (!string.IsNullOrEmpty(awardLineWho))
-                      {
-                        awardLineWho = Regex.Replace(awardLineWho, @"<\/a>[^<]+?<span[^>]+?>\s*\(\d{4}\)\s*<\/span>", " ");
-                        awardLineWho = awardLineWho.Trim().Replace("\n", string.Empty).Replace("</a>", ", ");
-                        awardLineWho = Utils.stripHTMLtags(awardLineWho);
-                        awardLineWho = Regex.Replace(awardLineWho, @"[ ]{2,}", " ").Trim();
-                      }
-                      else
-                      {
-                        awardLineWho = string.Empty;
-                      }
-                      if (!string.IsNullOrEmpty(awardLineWhat))
-                      {
-                        awardLineWhat = awardLineWhat.Trim().Replace("\n", string.Empty);
-                        awardLineWhat = Utils.stripHTMLtags(awardLineWhat);
-                        awardLineWhat = Regex.Replace(awardLineWhat, @"[ ]{2,}", " ").Trim();
-                      }
-                      else
-                      {
-                        awardLineWhat = string.Empty;
-                      }
-                      if (!string.IsNullOrEmpty(awardLineName))
-                      {
-                        _awardsList = _awardsList + "- " + awardLineName + (string.IsNullOrEmpty(awardLineWho) ? string.Empty : " - " + awardLineWho) + (string.IsNullOrEmpty(awardLineWhat) ? string.Empty : " - " + awardLineWhat) + "\n";
-                        Log.Debug("IMDB Award (W): {0} - {1} {2} {3}", awardMainName, awardLineName, awardLineWho, awardLineWhat);
-                      }
-                    }
-                  }
-                }
+                string awardLineName = Regex.Match(award.rowTitle, @"(?<year>\d{4})").Groups["year"].Value + " " + award.rowSubTitle;
+                string awardLineWho = string.Join(", ", award.subListContent.Select(x => x.text).ToList());
+                string awardLineWhat = string.Join(", ", award.listContent.Select(x => x.text).ToList());
+
+                _awardsList += "- " + awardLineName + (string.IsNullOrEmpty(awardLineWho) ? string.Empty : " - " + awardLineWho) + (string.IsNullOrEmpty(awardLineWhat) ? string.Empty : " - " + awardLineWhat) + "\n";
+                Log.Debug("{4} Award (W): {0} - {1} {2} {3}", awardMainName, awardLineName, awardLineWho, awardLineWhat, "GetActorDetails");
               }
             }
-            // Nominate
-            ArrayList awardsNList = Parse(awardMainBlock, rx_awards_listNblock);
-            if (awardsNList != null && awardsNList.Count > 0)
+
+            awards = category.section.items.Where(x => x.rowTitle.Contains("Nominee"));
+            if (awards.Count() > 0)
             {
-              for (int k = 0; k < awardsNList.Count; k++)
+              if (string.IsNullOrEmpty(awardMainName))
               {
-                Hashtable awardNMain = (Hashtable)awardsNList[k];
-                string awardNMainYear = (string)awardNMain["awardyear"];
-                string awardNMainBlock = (string)awardNMain["block"];
-                if (!string.IsNullOrEmpty(awardNMainBlock))
-                {
-                  _awardsList = _awardsList + "Nominated:\n";
-                  ArrayList awardsNListLines = Parse(awardNMainBlock, rx_awards_line);
-                  if (awardsNListLines != null && awardsNListLines.Count > 0)
-                  {
-                    if (!string.IsNullOrEmpty(awardNMainYear))
-                    {
-                      awardNMainYear = awardNMainYear.Trim().Replace("\n", string.Empty);
-                      awardNMainYear = Utils.stripHTMLtags(awardNMainYear);
-                      awardNMainYear = Regex.Replace(awardNMainYear, @"[ ]{2,}", " ").Trim();
-                      awardNMainYear = " (" + awardNMainYear + ")"; 
-                    }
-                    else
-                    {
-                      awardNMainYear = string.Empty;
-                    }
-                    for (int j = 0; j < awardsNListLines.Count; j++)
-                    {
-                      Hashtable awardLine = (Hashtable)awardsNListLines[j];
-                      string awardLineName = (string)awardLine["award"];
-                      string awardLineWho = (string)awardLine["who"];
-                      string awardLineWhat = (string)awardLine["what"];
-                      if (!string.IsNullOrEmpty(awardLineName))
-                      {
-                        awardLineName = awardLineName.Trim().Replace("\n", string.Empty);
-                        awardLineName = Utils.stripHTMLtags(awardLineName);
-                        awardLineName = Regex.Replace(awardLineName, @"[ ]{2,}", " ").Trim() + awardNMainYear;
-                      }
-                      else
-                      {
-                        awardLineName = string.Empty;
-                      }
-                      if (!string.IsNullOrEmpty(awardLineWho))
-                      {
-                        awardLineWho = Regex.Replace(awardLineWho, @"<\/a>[^<]+?<span[^>]+?>\s*\(\d{4}\)\s*<\/span>", " ");
-                        awardLineWho = awardLineWho.Trim().Replace("\n", string.Empty).Replace("</a>", ", ");
-                        awardLineWho = Utils.stripHTMLtags(awardLineWho);
-                        awardLineWho = Regex.Replace(awardLineWho, @"[ ]{2,}", " ").Trim();
-                      }
-                      else
-                      {
-                        awardLineWho = string.Empty;
-                      }
-                      if (!string.IsNullOrEmpty(awardLineWhat))
-                      {
-                        awardLineWhat = awardLineWhat.Trim().Replace("\n", string.Empty);
-                        awardLineWhat = Utils.stripHTMLtags(awardLineWhat);
-                        awardLineWhat = Regex.Replace(awardLineWhat, @"[ ]{2,}", " ").Trim();
-                      }
-                      else
-                      {
-                        awardLineWhat = string.Empty;
-                      }
-                      if (!string.IsNullOrEmpty(awardLineName))
-                      {
-                        _awardsList = _awardsList + "- " + awardLineName + (string.IsNullOrEmpty(awardLineWho) ? string.Empty : " - " + awardLineWho) + (string.IsNullOrEmpty(awardLineWhat) ? string.Empty : " - " + awardLineWhat) + "\n";
-                        Log.Debug("IMDB Award (N): {0} - {1} {2} {3}", awardMainName, awardLineName, awardLineWho, awardLineWhat);
-                      }
-                    }
-                  }
-                }
+                awardMainName = category.name;
+                _awardsList += "* " + awardMainName + "\n";
               }
+              _awardsList += "Nominated:\n";
+
+              foreach (var award in awards)
+              {
+                string awardLineName = Regex.Match(award.rowTitle, @"(?<year>\d{4})").Groups["year"].Value + " " + award.rowSubTitle;
+                string awardLineWho = string.Join(", ", award.subListContent.Select(x => x.text).ToList());
+                string awardLineWhat = string.Join(", ", award.listContent.Select(x => x.text).ToList());
+
+                _awardsList += "- " + awardLineName + (string.IsNullOrEmpty(awardLineWho) ? string.Empty : " - " + awardLineWho) + (string.IsNullOrEmpty(awardLineWhat) ? string.Empty : " - " + awardLineWhat) + "\n";
+                Log.Debug("{4} Award (N): {0} - {1} {2} {3}", awardMainName, awardLineName, awardLineWho, awardLineWhat, "GetActorDetails");
+              }
+            }
+            if (!string.IsNullOrEmpty(awardMainName))
+            {
+              _awardsList += "\n";
             }
           }
         }
+
+        if (!string.IsNullOrEmpty(_awardsList))
+        {
+          return "Awards:\n" + _awardsList; // MP1-4846
+        }
       }
-      
-      if (!string.IsNullOrEmpty(_awardsList))
+      catch (Exception ex)
       {
-        return "Awards:\n" + _awardsList;
+        Log.Debug("{0} GetIMDBAwards IMDB = {1}, Exception {2}, JSON changed!?.", "GetActorDetails", IMDBID, ex.Message);
       }
+
     }
     catch (Exception ex)
     {
-      Log.Debug("IMDB Script GetAwards error: {0}", ex.Message);
+      Log.Error("{0} GetIMDBAwards error: {1}", "GetActorDetails", ex.Message);
     }
     return string.Empty;
   }
