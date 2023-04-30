@@ -44,8 +44,7 @@
 
 !define _MediaPortalDirectories_VERBOSE 2
 
-!AddPluginDir "${git_InstallScripts}\XML-plugin\Plugin"
-!include "${git_InstallScripts}\XML-plugin\Include\XML.nsh"
+!AddPluginDir "${git_InstallScripts}\nsisXML-plugin\Plugins\x86-unicode"
 
 #---------------------------------------------------------------------------
 #   Read      Special MediaPortal directories from  xml
@@ -74,33 +73,30 @@ Var MPdir.Cache
 !define ReadMPdir `!insertmacro ReadMPdir`
 !macro ReadMPdir DIR
 
-  ${xml::RootElement} $0 $1
-  IntCmp $1 -1 ${DIR}_fail
-  ${xml::XPathNode} "//Config/Dir[@id='${DIR}']/Path" $1
-  IntCmp $1 -1 ${DIR}_fail
-  ${xml::GetText} $0 $1
-  IntCmp $1 -1 ${DIR}_fail
+  nsisXML::select "//Config/Dir[@id='${DIR}']/Path"
+  IntCmp $2 0 ${DIR}_fail
+  nsisXML::getText
 
-  ${WordReplace} "$0" "%APPDATA%" "$AppDataUser" "+" $0
-  ${WordReplace} "$0" "%PROGRAMDATA%" "$AppDataCommon" "+" $0
+  ${WordReplace} "$3" "%APPDATA%" "$AppDataUser" "+" $3
+  ${WordReplace} "$3" "%PROGRAMDATA%" "$AppDataCommon" "+" $3
 
   ; if there is no root, it is relative to MediaPortal's base dir
-  ${GetRoot} "$0" $1
+  ${GetRoot} "$3" $1
   ${If} $1 == ""
-    StrCpy $0 "$MPdir.Base\$0"
+    StrCpy $3 "$MPdir.Base\$3"
   ${EndIf}
 
   # trim   \   at the end of the path
   ; path length
-  StrLen $1 "$0"
+  StrLen $1 "$3"
   IntOp $2 $1 - 1
   ; get last char from path
-  StrCpy $3 $0 1 $2
+  StrCpy $0 $3 1 $2
 
-  ${If} $3 == "\"
-    StrCpy $MPdir.${DIR} $0 $2
+  ${If} $0 == "\"
+    StrCpy $MPdir.${DIR} $3 $2
   ${Else}
-    StrCpy $MPdir.${DIR} $0
+    StrCpy $MPdir.${DIR} $3
   ${EndIf}
 
   Goto ${DIR}_done
@@ -155,8 +151,8 @@ Var MPdir.Cache
 
   IfFileExists "$0\MediaPortalDirs.xml" 0 ReadConfig_fail
 
-  ${xml::LoadFile} "$0\MediaPortalDirs.xml" $1
-  IntCmp $1 -1 ReadConfig_fail
+  nsisXML::create
+  nsisXML::load "$0\MediaPortalDirs.xml"
 
   ${LoadDefaultDirs}
   ${ReadMPdir} Config
