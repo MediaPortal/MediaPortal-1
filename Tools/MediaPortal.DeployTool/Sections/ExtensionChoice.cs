@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2020 Team MediaPortal
+﻿#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -87,17 +87,17 @@ namespace MediaPortal.DeployTool.Sections
 
     private void linkExtensions_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("http://www.team-mediaportal.com/extensions");
+      OpenURL("https://www.team-mediaportal.com/extensions");
     }
 
     private void linkLAV_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/17_Extensions/3_Plugins/LAV_Filters");
+      OpenURL("https://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/17_Extensions/3_Plugins/LAV_Filters");
     }
 
     private void linkTitan_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/17_Extensions/4_Skins/Titan_Extended");
+      OpenURL("https://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/17_Extensions/4_Skins/Titan_Extended");
     }
 
     #endregion
