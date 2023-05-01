@@ -3,7 +3,7 @@ Microsoft Developer Studio Workspace File, Format Version 6.00
 
 ###############################################################################
 
-Project: "KillProcDLL"=.\KillProcDLL.dsp - Package Owner=<4>
+Project: "nsisXML"=.\nsisXML.dsp - Package Owner=<4>
 
 Package=<5>
 {{{

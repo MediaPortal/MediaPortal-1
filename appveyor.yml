@@ -7,14 +7,14 @@ install:
 - cmd: >-
     git submodule update --init --recursive
 
-    choco install nsis --version=3.06.1
+    choco install nsis --version=3.08
 
     java -version
 build_script:
 - cmd: >-
     cd c:\project\mediaportal\build\
 
-    "%ProgramFiles(x86)%\NSIS\makensis.exe" "..\Tools\InstallationScripts\DeployToolUnPacker-x64.nsi" > BuildFullInstaller.log
+    BuildFullinstaller.cmd
 
     7z a ..\Release\MediaPortalSetup_%APPVEYOR_BUILD_VERSION%.%APPVEYOR_REPO_COMMIT%.zip ..\Release\MediaPortalSetup_*.exe
 
