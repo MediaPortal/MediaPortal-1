@@ -628,7 +628,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\Sqlite.3.41.2\sqlite.dll"
   ; NuGet binaries EXIF
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MetadataExtractor.2.7.2\lib\net35\MetadataExtractor.dll"
+  File "${git_ROOT}\Packages\MetadataExtractor.2.7.3\lib\net35\MetadataExtractor.dll"
   File "${git_ROOT}\Packages\XmpCore.6.1.10.1\lib\net35\XmpCore.dll"
   ; NuGet binaries UnidecodeSharp
   SetOutPath "$MPdir.Base\"
