@@ -135,6 +135,8 @@ namespace MPx86Proxy.Drivers
 
         public static bool iMONDisplay_Init(int vfdType, int resevered)
         {
+            Logging.Log.Debug("[iMONDisplay_Init]");
+
             switch (_Mode)
             {
                 case ModeEnum.Default:
@@ -207,6 +209,8 @@ namespace MPx86Proxy.Drivers
 
         public static void iMONDisplay_Uninit()
         {
+            Logging.Log.Debug("[iMONDisplay_Uninit]");
+
             switch (_Mode)
             {
                 case ModeEnum.Default:
