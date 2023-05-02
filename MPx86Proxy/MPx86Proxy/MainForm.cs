@@ -263,7 +263,7 @@ namespace MPx86Proxy
       this.Close();
     }
 
-    private void exitToolStripMenuItem1_Click(object sender, EventArgs e)
+    private void exitToolStripIconMenuItem_Click(object sender, EventArgs e)
     {
       this._AppClose = true;
       this.Close();
