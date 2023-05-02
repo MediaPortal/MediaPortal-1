@@ -44,6 +44,8 @@ namespace MPx86Proxy
 
     private uint _WM_RC_PluginNotify;
 
+    private int _RcInitAttempts = 0;
+
     private ConnectionHandler _ConnectionHandler = new ConnectionHandler();
 
     private bool _Hide = false;
@@ -90,10 +92,23 @@ namespace MPx86Proxy
       this._WM_RC_PluginNotify = (uint)RegisterWindowMessage("WM_RC_PLUGIN_NOTIFY");
 
       //Init iMON RC API
-      Drivers.iMONApi.RcResult result = Drivers.iMONApi.IMON_RcApi_Init(this.Handle, this._WM_RC_PluginNotify);
-      this.logWindow("iMON API RC INIT: " + result.ToString());
-      //result = Drivers.iMONApi.IMON_RcApi_IsInited();
-      //result = Drivers.iMONApi.IMON_RcApi_IsPluginModeEnabled();
+      if (MPx86Proxy.Properties.Settings.Default.RC_Enabled)
+      {
+        Logging.Log.Debug("IMON RC API: enabled");
+
+        this.remoteControlAPIEnabledToolStripMenuItem.Checked = true;
+
+        Drivers.iMONApi.RcResult result = Drivers.iMONApi.IMON_RcApi_Init(this.Handle, this._WM_RC_PluginNotify);
+        Logging.Log.Debug("IMON_RcApi_Init: " + result.ToString());
+        //this.logWindow("iMON API RC INIT: " + result.ToString());
+        //result = Drivers.iMONApi.IMON_RcApi_IsInited();
+        //result = Drivers.iMONApi.IMON_RcApi_IsPluginModeEnabled();
+      }
+      else
+      {
+        Logging.Log.Debug("IMON RC API: disabled");
+        this.remoteControlAPIEnabledToolStripMenuItem.Checked = false;
+      }
 
       this.logWindow("Ready.");
     }
@@ -123,17 +138,33 @@ namespace MPx86Proxy
           case Drivers.iMONApi.RCNotifyCode.RCNM_PLUGIN_FAILED:
             Drivers.iMONApi.RCNInitResult errCode = (Drivers.iMONApi.RCNInitResult)m.LParam;
             Logging.Log.Error("[iMONReceiver][WndProc][RCNM_PLUGIN_FAILED] " + errCode);
+            this.logWindow("[MESSAGE][RCNM_PLUGIN_FAILED] " + errCode, MPx86Proxy.Controls.EventTableMessageTypeEnum.Error);
 
             //Try again if no reply
             if (errCode == Drivers.iMONApi.RCNInitResult.RCN_ERR_IMON_NO_REPLY)
             {
               Drivers.iMONApi.IMON_RcApi_Uninit();
-              System.Threading.Thread.Sleep(200);
-              Drivers.iMONApi.IMON_RcApi_Init(this.Handle, this._WM_RC_PluginNotify);
+
+              if (++this._RcInitAttempts < 5)
+              {
+                System.Threading.Thread.Sleep(200);
+                Drivers.iMONApi.IMON_RcApi_Init(this.Handle, this._WM_RC_PluginNotify);
+              }
+              else
+              {
+                this.remoteControlAPIEnabledToolStripMenuItem.Checked = false;
+                //MPx86Proxy.Properties.Settings.Default.RC_Enabled = false;
+                //MPx86Proxy.Properties.Settings.Default.Save();
+                this.logWindow("RC API Disabled.", MPx86Proxy.Controls.EventTableMessageTypeEnum.Warning);
+                Logging.Log.Warning("[iMONReceiver][WndProc] RC API Disabled.");
+              }
             }
             break;
 
           case Drivers.iMONApi.RCNotifyCode.RCNM_PLUGIN_SUCCEED:
+            this.logWindow("[MESSAGE][RCNM_PLUGIN_SUCCEED]");
+            Logging.Log.Debug("[iMONReceiver][WndProc][RCNM_PLUGIN_SUCCEED]");
+            this._RcInitAttempts = 0;
             break;
 
           case Drivers.iMONApi.RCNotifyCode.RCNM_KNOB_ACTION:
@@ -267,6 +298,25 @@ namespace MPx86Proxy
     {
       this._AppClose = true;
       this.Close();
+    }
+
+    private void remoteControlAPIEnabledToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      if (this.remoteControlAPIEnabledToolStripMenuItem.Checked)
+      {
+        Drivers.iMONApi.IMON_RcApi_Uninit();
+        MPx86Proxy.Properties.Settings.Default.RC_Enabled = false;
+        this.remoteControlAPIEnabledToolStripMenuItem.Checked = false;
+      }
+      else
+      {
+        MPx86Proxy.Properties.Settings.Default.RC_Enabled = true;
+        this.remoteControlAPIEnabledToolStripMenuItem.Checked = true;
+        Drivers.iMONApi.RcResult result = Drivers.iMONApi.IMON_RcApi_Init(this.Handle, this._WM_RC_PluginNotify);
+        Logging.Log.Debug("IMON_RcApi_Init: " + result.ToString());
+      }
+
+      MPx86Proxy.Properties.Settings.Default.Save();
     }
 
     private void logToolStripMenuItem_Click(object sender, EventArgs e)

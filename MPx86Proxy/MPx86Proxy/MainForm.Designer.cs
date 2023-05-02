@@ -42,6 +42,8 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.eventTableControl = new MPx86Proxy.Controls.EventTableControl();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.remoteControlAPIEnabledToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuIcon.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -59,12 +61,12 @@
             this.contextMenuIcon.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exitToolStripIconMenuItem});
             this.contextMenuIcon.Name = "contextMenuIcon";
-            this.contextMenuIcon.Size = new System.Drawing.Size(181, 50);
+            this.contextMenuIcon.Size = new System.Drawing.Size(105, 28);
             // 
             // exitToolStripIconMenuItem
             // 
             this.exitToolStripIconMenuItem.Name = "exitToolStripIconMenuItem";
-            this.exitToolStripIconMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.exitToolStripIconMenuItem.Size = new System.Drawing.Size(104, 24);
             this.exitToolStripIconMenuItem.Text = "Exit";
             this.exitToolStripIconMenuItem.Click += new System.EventHandler(this.exitToolStripIconMenuItem_Click);
             // 
@@ -73,7 +75,8 @@
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.viewToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.helpToolStripMenuItem,
+            this.optionsToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(686, 27);
@@ -151,6 +154,21 @@
             this.eventTableControl.TabIndex = 3;
             this.eventTableControl.TableRowsLimit = 50;
             // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.remoteControlAPIEnabledToolStripMenuItem});
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(76, 23);
+            this.optionsToolStripMenuItem.Text = "Options";
+            // 
+            // remoteControlAPIEnabledToolStripMenuItem
+            // 
+            this.remoteControlAPIEnabledToolStripMenuItem.Name = "remoteControlAPIEnabledToolStripMenuItem";
+            this.remoteControlAPIEnabledToolStripMenuItem.Size = new System.Drawing.Size(281, 24);
+            this.remoteControlAPIEnabledToolStripMenuItem.Text = "Remote Control API Enabled";
+            this.remoteControlAPIEnabledToolStripMenuItem.Click += new System.EventHandler(this.remoteControlAPIEnabledToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -188,6 +206,8 @@
     private System.Windows.Forms.ToolStripMenuItem logToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem remoteControlAPIEnabledToolStripMenuItem;
   }
 }
 
