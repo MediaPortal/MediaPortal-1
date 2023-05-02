@@ -16,11 +16,14 @@ namespace MPx86Proxy.Logging
         public static LogLevelEnum LogLevel
         { get; private set; }
 
+        public static string LogFile
+        { get; private set; }
+
         static Log()
         {
             LogLevel = LogLevelEnum.Debug;
-            string strPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\MPx86Proxy.log";
-            _Fs = new FileStream(strPath, FileMode.Create, FileAccess.Write);
+            LogFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\MPx86Proxy.log";
+            _Fs = new FileStream(LogFile, FileMode.Create, FileAccess.Write);
             _Wr = new StreamWriter(_Fs);
         }
 
