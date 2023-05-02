@@ -40,10 +40,10 @@
             this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.eventTableControl = new MPx86Proxy.Controls.EventTableControl();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.remoteControlAPIEnabledToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.eventTableControl = new MPx86Proxy.Controls.EventTableControl();
             this.contextMenuIcon.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -74,9 +74,9 @@
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.optionsToolStripMenuItem,
             this.viewToolStripMenuItem,
-            this.helpToolStripMenuItem,
-            this.optionsToolStripMenuItem});
+            this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(686, 27);
@@ -128,6 +128,21 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.remoteControlAPIEnabledToolStripMenuItem});
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(76, 23);
+            this.optionsToolStripMenuItem.Text = "Options";
+            // 
+            // remoteControlAPIEnabledToolStripMenuItem
+            // 
+            this.remoteControlAPIEnabledToolStripMenuItem.Name = "remoteControlAPIEnabledToolStripMenuItem";
+            this.remoteControlAPIEnabledToolStripMenuItem.Size = new System.Drawing.Size(281, 24);
+            this.remoteControlAPIEnabledToolStripMenuItem.Text = "Remote Control API Enabled";
+            this.remoteControlAPIEnabledToolStripMenuItem.Click += new System.EventHandler(this.remoteControlAPIEnabledToolStripMenuItem_Click);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Location = new System.Drawing.Point(0, 367);
@@ -153,21 +168,6 @@
             this.eventTableControl.Size = new System.Drawing.Size(686, 340);
             this.eventTableControl.TabIndex = 3;
             this.eventTableControl.TableRowsLimit = 50;
-            // 
-            // optionsToolStripMenuItem
-            // 
-            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.remoteControlAPIEnabledToolStripMenuItem});
-            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(76, 23);
-            this.optionsToolStripMenuItem.Text = "Options";
-            // 
-            // remoteControlAPIEnabledToolStripMenuItem
-            // 
-            this.remoteControlAPIEnabledToolStripMenuItem.Name = "remoteControlAPIEnabledToolStripMenuItem";
-            this.remoteControlAPIEnabledToolStripMenuItem.Size = new System.Drawing.Size(281, 24);
-            this.remoteControlAPIEnabledToolStripMenuItem.Text = "Remote Control API Enabled";
-            this.remoteControlAPIEnabledToolStripMenuItem.Click += new System.EventHandler(this.remoteControlAPIEnabledToolStripMenuItem_Click);
             // 
             // MainForm
             // 
