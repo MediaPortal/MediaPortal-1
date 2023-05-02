@@ -94,8 +94,8 @@
     </Compile>
     <Compile Include="Drivers\iMONApi.cs" />
     <Compile Include="Drivers\iMONDisplay.cs" />
-    <Compile Include="Log\Log.cs" />
-    <Compile Include="Log\LogLevelEnum.cs" />
+    <Compile Include="Logging\Log.cs" />
+    <Compile Include="Logging\LogLevelEnum.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

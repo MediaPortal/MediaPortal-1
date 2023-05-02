@@ -113,14 +113,14 @@ namespace MPx86Proxy
                 ac.Dispose();
                 ac = null;
 
-                Log.Log.Debug("[Run] Server started on port: {0}", this.Port);
+                Logging.Log.Debug("[Run] Server started on port: {0}", this.Port);
 
                 MainForm.Instance.logWindow("Server started on port: " + this.Port);
 
             }
             catch (Exception ex)
             {
-                Log.Log.Error("[Run] Error: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+                Logging.Log.Error("[Run] Error: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
             }
         }
 
@@ -156,13 +156,13 @@ namespace MPx86Proxy
                 this._GlobalFile.Dispose();
                 this._GlobalFile = null;
 
-                Log.Log.Debug("[Stop] Server stopped.");
+                Logging.Log.Debug("[Stop] Server stopped.");
                 MainForm.Instance.logWindow("Server stopped.");
 
             }
             catch (Exception ex)
             {
-                Log.Log.Error("[Stop] Error: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+                Logging.Log.Error("[Stop] Error: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
             }
         }
 
@@ -253,7 +253,7 @@ namespace MPx86Proxy
 
             //Connection closed
             string strClient = client.Socket.RemoteEndPoint.ToString();
-            Log.Log.Debug("[Receive] Remote client termination: '{0}'", strClient);
+            Logging.Log.Debug("[Receive] Remote client termination: '{0}'", strClient);
             MainForm.Instance.logWindow("Remote client termination: " + strClient);
 
             lock (this._ClientList)
@@ -289,7 +289,7 @@ namespace MPx86Proxy
 
                         string strClient = socket.RemoteEndPoint.ToString();
 
-                        Log.Log.Debug("[AcceptSocket] New socket connection accepted: '{0}'", strClient);
+                        Logging.Log.Debug("[AcceptSocket] New socket connection accepted: '{0}'", strClient);
 
                         MainForm.Instance.logWindow("New socket connection accepted: " + strClient);
                     }
@@ -297,7 +297,7 @@ namespace MPx86Proxy
             }
             catch (Exception ex)
             {
-                Log.Log.Error("[AcceptSocket] Error: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+                Logging.Log.Error("[AcceptSocket] Error: {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
             }
 
             if (this._Server != null)

@@ -293,7 +293,7 @@ namespace MPx86Proxy.Drivers
 
         public static void Detect()
         {
-            Log.Log.Debug("[iMONDisplay][Detect] called.");
+            Logging.Log.Debug("[iMONDisplay][Detect] called.");
 
             RegistryKey key;
             string strPathDll;
@@ -303,7 +303,7 @@ namespace MPx86Proxy.Drivers
             string strPathSoundgraph = string.Empty;
             if (Registry.CurrentUser.OpenSubKey(@"Software\Antec\VFD", false) != null)
             {
-                Log.Log.Debug("[iMONDisplay][Detect] found Antec registry keys.");
+                Logging.Log.Debug("[iMONDisplay][Detect] found Antec registry keys.");
                 mode = ModeEnum.Antec;
                 Registry.CurrentUser.Close();
                 key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\VFD.exe", false);
@@ -312,15 +312,15 @@ namespace MPx86Proxy.Drivers
                     strPathAntec = (string)key.GetValue("Path", string.Empty);
                     if (strPathAntec == string.Empty)
                     {
-                        Log.Log.Debug("[iMONDisplay][Detect] Antec file Path registry key not found. trying default path");
+                        Logging.Log.Debug("[iMONDisplay][Detect] Antec file Path registry key not found. trying default path");
                         strPathAntec = strFolderPath + @"\Antec\VFD";
                     }
                     else
-                        Log.Log.Debug("[iMONDisplay][Detect] found Antec file Path registry key.");
+                        Logging.Log.Debug("[iMONDisplay][Detect] found Antec file Path registry key.");
                 }
                 else
                 {
-                    Log.Log.Debug("[iMONDisplay][Detect] Antec file Path registry key not found. trying default path");
+                    Logging.Log.Debug("[iMONDisplay][Detect] Antec file Path registry key not found. trying default path");
                     strPathAntec = strFolderPath + @"\Antec\VFD";
                 }
 
@@ -331,7 +331,7 @@ namespace MPx86Proxy.Drivers
 
             if (Registry.CurrentUser.OpenSubKey(@"Software\SOUNDGRAPH\iMON", false) != null)
             {
-                Log.Log.Debug("[iMONDisplay][Detect] found SoundGraph registry keys.");
+                Logging.Log.Debug("[iMONDisplay][Detect] found SoundGraph registry keys.");
 
                 mode = ModeEnum.SoundGraph;
                 Registry.CurrentUser.Close();
@@ -341,16 +341,16 @@ namespace MPx86Proxy.Drivers
                     strPathSoundgraph = (string)key.GetValue("Path", string.Empty);
                     if (strPathSoundgraph == string.Empty)
                     {
-                        Log.Log.Debug("[iMONDisplay][Detect] SoundGraph file Path registry key not found. trying default path");
+                        Logging.Log.Debug("[iMONDisplay][Detect] SoundGraph file Path registry key not found. trying default path");
                         strPathSoundgraph = strFolderPath + @"\SoundGraph\iMON";
                     }
                     else
-                        Log.Log.Debug("[iMONDisplay][Detect] found SoundGraph file Path registry key.");
+                        Logging.Log.Debug("[iMONDisplay][Detect] found SoundGraph file Path registry key.");
 
                 }
                 else
                 {
-                    Log.Log.Debug("[iMONDisplay][Detect] SoundGraph file Path registry key not found. trying default path");
+                    Logging.Log.Debug("[iMONDisplay][Detect] SoundGraph file Path registry key not found. trying default path");
                     strPathSoundgraph = strFolderPath + @"\Antec\VFD";
                 }
                 Registry.LocalMachine.Close();
@@ -363,7 +363,7 @@ namespace MPx86Proxy.Drivers
                 strPathDll = strPathAntec + @"\sg_vfd.dll";
                 if (File.Exists(strPathDll))
                 {
-                    Log.Log.Debug("[iMONDisplay][Detect] Selected Antec DLL.");
+                    Logging.Log.Debug("[iMONDisplay][Detect] Selected Antec DLL.");
                     _Mode = mode;
                 }
             }
@@ -372,7 +372,7 @@ namespace MPx86Proxy.Drivers
                 strPathDll = strPathSoundgraph + @"\sg_vfdu.dll";
                 if (File.Exists(strPathDll))
                 {
-                    Log.Log.Debug("[iMONDisplay][Detect] Selected SoundGraph DLL.");
+                    Logging.Log.Debug("[iMONDisplay][Detect] Selected SoundGraph DLL.");
                     _Mode = mode;
                 }
             }
@@ -381,7 +381,7 @@ namespace MPx86Proxy.Drivers
                 strPathDll = strPathAntec + @"\sg_vfd.dll";
                 if (File.Exists(strPathDll))
                 {
-                    Log.Log.Debug("[iMONDisplay][Detect] Picked Antec DLL.");
+                    Logging.Log.Debug("[iMONDisplay][Detect] Picked Antec DLL.");
                     _Mode = mode;
                 }
                 else
@@ -389,13 +389,13 @@ namespace MPx86Proxy.Drivers
                     strPathDll = strPathSoundgraph + @"\sg_vfd.dll";
                     if (File.Exists(strPathDll))
                     {
-                        Log.Log.Debug("[iMONDisplay][Detect] Picked Soundgraph DLL.");
+                        Logging.Log.Debug("[iMONDisplay][Detect] Picked Soundgraph DLL.");
                         _Mode = ModeEnum.Unknown;
                     }
                 }
             }
 
-            Log.Log.Debug("[iMONDisplay][Detect] completed - selected mode: {0}", _Mode);
+            Logging.Log.Debug("[iMONDisplay][Detect] completed - selected mode: {0}", _Mode);
         }
     }
 }

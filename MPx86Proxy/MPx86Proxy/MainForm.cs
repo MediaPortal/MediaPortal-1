@@ -122,7 +122,7 @@ namespace MPx86Proxy
 
                     case Drivers.iMONApi.RCNotifyCode.RCNM_PLUGIN_FAILED:
                         Drivers.iMONApi.RCNInitResult errCode = (Drivers.iMONApi.RCNInitResult)m.LParam;
-                        Log.Log.Error("[iMONReceiver][WndProc][RCNM_PLUGIN_FAILED] " + errCode);
+                        Logging.Log.Error("[iMONReceiver][WndProc][RCNM_PLUGIN_FAILED] " + errCode);
 
                         //Try again if no reply
                         if (errCode == Drivers.iMONApi.RCNInitResult.RCN_ERR_IMON_NO_REPLY)

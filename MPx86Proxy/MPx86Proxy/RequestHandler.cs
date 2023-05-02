@@ -58,7 +58,7 @@ namespace MPx86Proxy
                     }
                     catch (Exception ex)
                     {
-                        Log.Log.Error("[HandleRequest] Error: " + ex.Message);
+                        Logging.Log.Error("[HandleRequest] Error: " + ex.Message);
                         return -1;
                     }
                 }
@@ -262,7 +262,7 @@ namespace MPx86Proxy
                         }
                         catch (Exception ex)
                         {
-                            Log.Log.Error("[HandleRequest] Error: " + ex.Message);
+                            Logging.Log.Error("[HandleRequest] Error: " + ex.Message);
                             iResut = -1;
                         }
                     }

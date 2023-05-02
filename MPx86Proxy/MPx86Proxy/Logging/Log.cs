@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace MPx86Proxy.Log
+namespace MPx86Proxy.Logging
 {
     internal static class Log
     {

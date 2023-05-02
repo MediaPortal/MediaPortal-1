@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MPx86Proxy.Log
+namespace MPx86Proxy.Logging
 {
     public enum LogLevelEnum
     {
