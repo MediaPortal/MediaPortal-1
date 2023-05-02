@@ -274,5 +274,11 @@ namespace MPx86Proxy
       Logging.LogViewForm form = new Logging.LogViewForm(Logging.Log.LogFile);
       form.Show();
     }
+
+    private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      Forms.AboutBox form = new Forms.AboutBox();
+      form.ShowDialog();
+    }
   }
 }
