@@ -76,6 +76,7 @@ Var MPdir.Cache
   nsisXML::select "//Config/Dir[@id='${DIR}']/Path"
   IntCmp $2 0 ${DIR}_fail
   nsisXML::getText
+  IntCmp $3 0 ${DIR}_fail
 
   ${WordReplace} "$3" "%APPDATA%" "$AppDataUser" "+" $3
   ${WordReplace} "$3" "%PROGRAMDATA%" "$AppDataCommon" "+" $3
@@ -148,11 +149,11 @@ Var MPdir.Cache
   Push $3
   Push $4
 
-
   IfFileExists "$0\MediaPortalDirs.xml" 0 ReadConfig_fail
 
   nsisXML::create
   nsisXML::load "$0\MediaPortalDirs.xml"
+  IntCmp $0 0 ReadConfig_fail
 
   ${LoadDefaultDirs}
   ${ReadMPdir} Config
@@ -164,12 +165,12 @@ Var MPdir.Cache
   ${ReadMPdir} Thumbs
   ${ReadMPdir} Cache
 
-
   StrCpy $0 "0"
   Goto ReadConfig_done
 
   ReadConfig_fail:
   StrCpy $0 "-1"
+
   ReadConfig_done:
 
   Pop $4
