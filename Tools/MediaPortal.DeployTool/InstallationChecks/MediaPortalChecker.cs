@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         {
           File.Delete(deployXml);
         }
-        catch (Exception ex)
+        catch
         {
           var result = MessageBox.Show(Localizer.GetBestTranslation("MainWindow_AppName"),
                                        Localizer.GetBestTranslation("DeployXmlDelete_Failed"),
@@ -132,8 +132,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       //NSIS installer need to know if it's a fresh install or an update (chefkoch)
       string updateMode = InstallationProperties.Instance["UpdateMode"] == "yes" ? "/UpdateMode" : string.Empty;
 
-      Process setup = null;
-
+      Process setup;
       if (UpgradeDlg.reInstallForce)
       {
         setup = Process.Start(_fileName, String.Format("/S"));
@@ -148,6 +147,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       {
         setup = Process.Start(_fileName, String.Format("/S"));
       }
+
       if (setup != null)
       {
         setup.WaitForExit();

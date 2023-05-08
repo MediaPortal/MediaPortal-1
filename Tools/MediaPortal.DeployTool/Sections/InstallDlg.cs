@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 
 using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.DeployTool.InstallationChecks;
 
@@ -64,11 +65,14 @@ namespace MediaPortal.DeployTool.Sections
       {
         progressInstall.Value++;
         progressInstall.Update();
+        Thread.Sleep(1);
 
         IInstallationPackage package = (IInstallationPackage)((ApplicationCtrl)item).Tag;
         int action = PerformPackageAction(package, (ApplicationCtrl)item);
         ((ApplicationCtrl)item).InAction = false;
         item.Update();
+        Thread.Sleep(1);
+
         if (action == 2)
         {
           ((ApplicationCtrl)item).StatusName = CheckState.FAILED.ToString();
@@ -80,8 +84,10 @@ namespace MediaPortal.DeployTool.Sections
           ((ApplicationCtrl)item).Action = Localizer.GetBestTranslation("Install_actionNothing");
           ((ApplicationCtrl)item).StatusName = CheckState.COMPLETE.ToString();
         }
+
         item.Update();
         progressInstall.Update();
+        Thread.Sleep(1);
       }
       // PopulateListView();
       progressInstall.Visible = false;
@@ -103,10 +109,12 @@ namespace MediaPortal.DeployTool.Sections
 
     private void AddPackageToListView(IInstallationPackage package)
     {
-      ApplicationCtrl item = new ApplicationCtrl();
-      item.Name = package.GetDisplayName();
-      item.IconName = package.GetIconName();
-      item.Tag = package;
+      ApplicationCtrl item = new ApplicationCtrl
+      {
+        Name = package.GetDisplayName(),
+        IconName = package.GetIconName(),
+        Tag = package
+      };
       CheckResult result = package.CheckStatus();
       item.StatusName = result.state.ToString();
       switch (result.state)
