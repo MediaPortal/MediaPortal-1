@@ -204,7 +204,7 @@ xcopy %1\..\Packages\MediaPortal.TagLib.2.3.1\lib\net40\TagLibSharp.dll ./Y /D
 
 REM SharpLibHid
 REM Provided with Nuget to bin folder during build
-REM xcopy %1\..\Packages\SharpLibHid.1.4.4\lib\net40\SharpLibHid.dll . /Y /D
+REM xcopy %1\..\Packages\SharpLibHid.1.5.1\lib\net40\SharpLibHid.dll . /Y /D
 
 REM REM SharpLibWin32
 REM Provided with Nuget to bin folder during build

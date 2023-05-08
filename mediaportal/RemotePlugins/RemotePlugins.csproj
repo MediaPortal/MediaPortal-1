@@ -111,7 +111,7 @@
       <HintPath>..\..\Packages\DirectX_9_SDK.10.6.0\lib\Microsoft.DirectX.DirectInput.dll</HintPath>
     </Reference>
     <Reference Include="SharpLibHid, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\SharpLibHid.1.4.4\lib\net40\SharpLibHid.dll</HintPath>
+      <HintPath>..\..\Packages\SharpLibHid.1.5.1\lib\net40\SharpLibHid.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SharpLibWin32, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
