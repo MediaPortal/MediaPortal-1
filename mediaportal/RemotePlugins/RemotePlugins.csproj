@@ -110,8 +110,8 @@
     <Reference Include="Microsoft.DirectX.DirectInput, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <HintPath>..\..\Packages\DirectX_9_SDK.10.6.0\lib\Microsoft.DirectX.DirectInput.dll</HintPath>
     </Reference>
-    <Reference Include="SharpLibHid, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\SharpLibHid.1.5.1\lib\net40\SharpLibHid.dll</HintPath>
+    <Reference Include="SharpLibHid, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\SharpLibHid.1.5.1\lib\net40\SharpLib.Hid.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SharpLibWin32, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
