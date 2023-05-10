@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls> 
+
+   	<control Style="HomeButtonPicture">
+		<description>BasicHome World Weather Lite No Focus</description>
+ 	    <type>image</type>
+ 	    <id>0</id>
+  		<posX>#L21left</posX>
+       	<posY>#L21top</posY>
+ 	    <texture>basichome_button_worldweatherlite.png</texture>
+       	<animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(400)">conditional</animation>
+ 		<visible>control.IsVisible(10201)+!control.hasthumb(400999)</visible>  
+ 	</control>
+
+   	<control Style="HomeButtonPicture">
+		<description>BasicHome World Weather Lite No Focus</description>
+ 	    <type>image</type>
+ 	    <id>400999</id>
+  		<posX>#L21left</posX>
+       	<posY>#L21top</posY>
+        <texture>weather\buttons\#WorldWeather.TodayIconNumber.png</texture>
+       	<animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(400)">conditional</animation>
+ 		<visible>control.IsVisible(10201)</visible>  
+ 	</control>
+
+  	<control Style="HomeButtonMenu">
+    	<description>BasicHome World Weather Lite</description>
+      	<type>button</type>
+      	<id>3</id>
+		<posX>#L21lefttext</posX>
+	    <posY>#L21toptext</posY>
+        <textYOff>#textYoff</textYOff>
+    	<hyperlink>79770</hyperlink>
+    	<label>400</label>
+        <onright>5</onright>
+        <onleft>#P1L21ToLeft</onleft>
+        <onup>2</onup>
+        <ondown>12</ondown>
+  	    <visible allowhiddenfocus="true">![Control.IsVisible(70081)|Control.IsVisible(70091)|control.isvisible(90109)|control.hasfocus(99999)]+[Control.IsVisible(1009)|Control.IsVisible(1109)|Control.IsVisible(10101)]</visible>
+	</control>
+</controls>
+</window>

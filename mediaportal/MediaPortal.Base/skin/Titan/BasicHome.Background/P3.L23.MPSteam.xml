@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+        
+     <!--            :: MPSteam ::            -->
+        
+    <control Style="HomeBasicFanart">
+        <description>MPSteam Selected Fanart</description>
+        <type>image</type>
+        <id>0</id>
+        <texture>hover_MPsteam.png</texture>
+        <visible>control.hasfocus(750)</visible>
+    </control> 
+
+</controls>
+</window>

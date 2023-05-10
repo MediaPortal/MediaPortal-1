@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+        
+     <!--            :: Weather ::            -->
+        
+    <control Style="HomeBasicFanart">
+      <description>Wheather Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <texture>weather\bg\#WorldWeather.TodayIconNumber.jpg</texture>
+      <visible>control.hasfocus(3)+!control.isvisible(91919283)</visible>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+      <description>Weather Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(3)+control.isvisible(91919281)+control.isvisible(91919283)</visible>
+      <texture>#fanarthandler.weather.backdrop1</texture>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+      <description>Weather Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(3)+control.isvisible(91919282)+control.isvisible(91919283)</visible>
+      <texture>#fanarthandler.weather.backdrop2</texture>
+    </control> 
+
+</controls>
+</window>

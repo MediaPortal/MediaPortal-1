@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls> 
+
+   	<control Style="HomeButtonPicture">
+	    <description>BasicHome Trakt NoFocus</description>
+ 	    <type>image</type>
+ 	    <id>0</id>
+  		<posX>#L22left</posX>
+       	<posY>#L22top</posY>
+ 	    <texture>basichome_button_trakt.png</texture>
+       	<animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(500)">conditional</animation>
+ 		<visible>control.IsVisible(10201)</visible>  
+ 	</control>
+
+  	<control Style="HomeButtonMenu">
+    	<description>BasicHome Trakt</description>
+      	<type>button</type>
+      	<id>500</id>
+		<posX>#L22lefttext</posX>
+	    <posY>#L22toptext</posY>
+        <textYOff>#textYoff</textYOff>
+        <hyperlink>87258</hyperlink>
+        <label>Trakt</label>
+		<onright>700</onright>
+		<onleft>300</onleft>
+      	<onup>400</onup>
+		<ondown>212</ondown>  
+        <oninfo>#(skin.setfocus(35,98302))</oninfo>
+  	    <visible allowhiddenfocus="true">![control.isvisible(90209)|control.hasfocus(99999)]+Control.IsVisible(10201)</visible>
+	</control>
+</controls>
+</window>

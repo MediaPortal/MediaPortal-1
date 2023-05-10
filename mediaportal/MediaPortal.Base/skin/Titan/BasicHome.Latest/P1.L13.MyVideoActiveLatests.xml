@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+    <control>
+      <description>DUMMY Visible</description>
+      <type>label</type>
+      <id>60091</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>[control.hasfocus(6)|control.hasfocus(91915991)|control.hasfocus(91915992)|control.hasfocus(91915993)]+string.equals(#latestMediaHandler.myvideo.latest.enabled,true)</visible>
+    </control>
+
+    <control>
+      <description>Background</description>
+      <type>image</type>
+      <id>60001</id>
+      <posX>8</posX>
+      <posY>409</posY>
+      <width>1859</width>
+      <height>329</height>
+      <texture>basichome_latestmedia_bg.png</texture>
+      <animation effect="fade" time="350" delay="500" reversible="false">visible</animation>
+      <animation effect="slide" start="600" end="0" time="500" delay="500" reversible="false">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>control.IsVisible(60091)</visible>              
+    </control>
+
+    <control>
+      <description>latestMedia Movie Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>485</posY>
+      <width>585</width>
+      <font>TitanLight20</font>
+      <textcolor>ffffffff</textcolor>
+      <!--label>#(L(4558))</label-->
+      <label>#latestMediaHandler.myvideo.label</label>
+      <visible>control.IsVisible(60091)+!control.HasFocus(91915991)+!control.HasFocus(91915992)+!control.HasFocus(91915993)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+   
+    <control>
+      <description>Poster 1</description>
+      <type>button</type>
+      <id>91915991</id>
+      <posX>81</posX>
+      <posY>481</posY>
+      <width>134</width>
+      <height>191</height>
+      <onup>91915991</onup>
+      <ondown>7</ondown>
+      <onright>91915992</onright>
+      <onleft>4</onleft>
+      <onESC>#(skin.setfocus(35,6))</onESC>
+      <textureFocus>#latestMediaHandler.myvideo.latest1.thumb</textureFocus>
+      <textureNoFocus>#latestMediaHandler.myvideo.latest1.thumb</textureNoFocus>
+      <visible allowhiddenfocus="true">control.IsVisible(60091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="zoom" start="100,100" end="110,110" time="200" condition="control.hasfocus(91915991)">conditional</animation>
+    </control>
+    
+    <control>
+        <description>Play Button</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>81</posX>
+        <posY>627</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>play_btn_white.png</texture>
+        <visible>control.isvisible(60091)+control.HasFocus(91915991)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="fade" time="1000" start= "100" end= "50" reversible="false">Visible</animation>
+    </control>  
+
+    <control>
+        <description>New Indicator 1</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>81</posX>
+        <posY>481</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(60091)+string.equals(#latestMediaHandler.myvideo.latest1.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="slide" start="0,0" end="-10,-10" time="200" condition="control.hasfocus(91915991)">conditional</animation>
+    </control>  
+
+    <control>
+      <description>Movie 1</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>554</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.myvideo.latest1.title</label>
+      <visible>control.IsVisible(60091)+!control.HasFocus(91915991)+!control.HasFocus(91915992)+!control.HasFocus(91915993)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+      <description>Movie 1 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>554</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>#latestMediaHandler.myvideo.latest1.year</label>
+      <visible>control.IsVisible(60091)+!control.HasFocus(91915991)+!control.HasFocus(91915992)+!control.HasFocus(91915993)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+      <description>Poster 2</description>
+      <type>button</type>
+      <id>91915992</id>
+      <posX>226</posX>
+      <posY>481</posY>
+      <width>134</width>
+      <height>191</height>
+      <onup>91915992</onup>
+      <ondown>7</ondown>
+      <onright>91915993</onright>
+      <onleft>91915991</onleft>
+      <onESC>#(skin.setfocus(35,6))</onESC>
+      <textureFocus>#latestMediaHandler.myvideo.latest2.thumb</textureFocus>
+      <textureNoFocus>#latestMediaHandler.myvideo.latest2.thumb</textureNoFocus>
+      <visible>control.IsVisible(60091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="zoom" start="100,100" end="110,110" time="200" condition="control.hasfocus(91915992)">conditional</animation>
+    </control>
+   
+    <control>
+        <description>Play Button</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>226</posX>
+        <posY>627</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>play_btn_white.png</texture>
+        <visible>control.isvisible(60091)+control.HasFocus(91915992)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="fade" time="1000" start= "100" end= "50" reversible="false">Visible</animation>
+    </control>  
+
+    <control>
+        <description>New Indicator 2</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>226</posX>
+        <posY>481</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(60091)+string.equals(#latestMediaHandler.myvideo.latest2.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="slide" start="0,0" end="-10,-10" time="200" condition="control.hasfocus(91915992)">conditional</animation>
+    </control>  
+
+    <control>
+      <description>Movie 2</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>590</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.myvideo.latest2.title</label>
+      <visible>control.IsVisible(60091)+!control.HasFocus(91915991)+!control.HasFocus(91915992)+!control.HasFocus(91915993)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+      <description>Movie 2 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>590</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>#latestMediaHandler.myvideo.latest2.year</label>
+      <visible>control.IsVisible(60091)+!control.HasFocus(91915991)+!control.HasFocus(91915992)+!control.HasFocus(91915993)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+      <description>Poster 3</description>
+      <type>button</type>
+      <id>91915993</id>
+      <posX>370</posX>
+      <posY>481</posY>
+      <width>134</width>
+      <height>191</height>
+      <onup>91915993</onup>
+      <ondown>7</ondown>
+      <onright>6</onright>
+      <onleft>91915992</onleft>
+      <onESC>#(skin.setfocus(35,6))</onESC>
+      <textureFocus>#latestMediaHandler.myvideo.latest3.thumb</textureFocus>
+      <textureNoFocus>#latestMediaHandler.myvideo.latest3.thumb</textureNoFocus>
+      <visible>control.IsVisible(60091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="zoom" start="100,100" end="110,110" time="200" condition="control.hasfocus(91915993)">conditional</animation>
+    </control>
+       
+    <control>
+        <description>Play Button</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>370</posX>
+        <posY>627</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>play_btn_white.png</texture>
+        <visible>control.isvisible(60091)+control.HasFocus(91915993)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="fade" time="1000" start= "100" end= "50" reversible="false">Visible</animation>
+    </control>  
+
+    <control>
+        <description>New Indicator 3</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>370</posX>
+        <posY>481</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(60091)+string.equals(#latestMediaHandler.myvideo.latest3.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="slide" start="0,0" end="-10,-10" time="200" condition="control.hasfocus(91915993)">conditional</animation>
+    </control>  
+
+    <control>
+      <description>Movie 3</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>628</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.myvideo.latest3.title</label>
+      <visible>control.IsVisible(60091)+!control.HasFocus(91915991)+!control.HasFocus(91915992)+!control.HasFocus(91915993)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+    <control>
+      <description>Movie 3 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>628</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>#latestMediaHandler.myvideo.latest3.year</label>
+      <visible>control.IsVisible(60091)+!control.HasFocus(91915991)+!control.HasFocus(91915992)+!control.HasFocus(91915993)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+    <!-- Description 1 -->
+    <control>
+        <description>latestMedia Artist</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>544</posX>
+        <posY>485</posY>
+        <width>585</width>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <label>#latestMediaHandler.myvideo.latest1.title</label>
+        <visible>control.isvisible(60091)+control.HasFocus(91915991)</visible>
+        <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+        <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>Summary</description>
+      <type>textboxscrollup</type>
+      <posX>1280</posX>
+      <posX>544</posX>
+      <posY>554</posY>
+      <height>111</height>
+      <label>#latestMediaHandler.myvideo.latest1.plotoutline</label>
+      <scrollStartDelaySec>5</scrollStartDelaySec>
+      <lineSpacing>0.95</lineSpacing>
+      <seperator>---------------------------------------------------------------------------------------------------------</seperator>
+      <visible>control.isvisible(60091)+control.HasFocus(91915991)</visible>
+      <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+      <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!-- Description 2 -->
+    <control>
+        <description>latestMedia Artist</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>544</posX>
+        <posY>485</posY>
+        <width>585</width>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <label>#latestMediaHandler.myvideo.latest2.title</label>
+        <visible>control.isvisible(60091)+control.HasFocus(91915992)</visible>
+        <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+        <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>Summary</description>
+      <type>textboxscrollup</type>
+      <posX>1280</posX>
+      <posX>544</posX>
+      <posY>554</posY>
+      <height>111</height>
+      <label>#latestMediaHandler.myvideo.latest2.plotoutline</label>
+      <scrollStartDelaySec>5</scrollStartDelaySec>
+      <lineSpacing>0.95</lineSpacing>
+      <seperator>---------------------------------------------------------------------------------------------------------</seperator>
+      <visible>control.isvisible(60091)+control.HasFocus(91915992)</visible>
+      <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+      <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!-- Description 3 -->
+    <control>
+        <description>latestMedia Artist</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>544</posX>
+        <posY>485</posY>
+        <width>585</width>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <label>#latestMediaHandler.myvideo.latest3.title</label>
+        <visible>control.isvisible(60091)+control.HasFocus(91915993)</visible>
+        <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+        <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>Summary</description>
+      <type>textboxscrollup</type>
+      <posX>1280</posX>
+      <posX>544</posX>
+      <posY>554</posY>
+      <height>111</height>
+      <label>#latestMediaHandler.myvideo.latest3.plotoutline</label>
+      <scrollStartDelaySec>5</scrollStartDelaySec>
+      <lineSpacing>0.95</lineSpacing>
+      <seperator>---------------------------------------------------------------------------------------------------------</seperator>
+      <visible>control.isvisible(60091)+control.HasFocus(91915993)</visible>
+      <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+      <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+</controls>
+</window>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>      
+
+   	<control Style="HomeButtonPicture">
+      <description>BasicHome TVSeries NoFocus</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>#L23left</posX>
+      <posY>#L23top</posY>
+	  <texture>basichome_button_series.png</texture>
+      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(7)">conditional</animation>
+      <visible>![Control.IsVisible(30081)|Control.IsVisible(30091)]+[Control.IsVisible(1009)|Control.IsVisible(1109)|Control.IsVisible(10101)]</visible>           
+    </control>        
+
+  	<control Style="HomeButtonMenu">
+      <description>BasicHome TVSeries</description>
+      <type>button</type>
+      <id>7</id>
+	  <posX>#L23lefttext</posX>
+	  <posY>#L23toptext</posY>
+      <textYOff>#textYoff</textYOff>
+      <hyperlink>9811</hyperlink>        
+      <label>1300</label>
+      <onright>300</onright>
+      <onleft>5</onleft>  
+      <ondown>12</ondown>
+      <onup>6</onup>
+      <oninfo>#(skin.setfocus(35,17001))</oninfo>
+	  <visible allowhiddenfocus="true">![control.IsVisible(70081)|Control.IsVisible(30081)|Control.IsVisible(30091)|control.isvisible(90109)|control.hasfocus(99999)]+[Control.IsVisible(1009)|Control.IsVisible(1109)|Control.IsVisible(10101)]</visible>
+    </control>
+
+    <!--            :: NEW ::            -->
+
+    <control Style="HomePictureMenuNew">
+        <description>New indicator</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>#L23lefttext</posX>
+        <posY>#L23toptext</posY>
+        <visible>control.isvisible(7)+string.equals(#latestMediaHandler.tvseries.hasnew,true)</visible>
+       <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(7)">conditional</animation>
+    </control>
+
+    <!-- 		::TV-Series::              -->
+
+    <control>
+      <description>Background</description>
+      <id>70081</id>
+      <type>image</type>
+      <posX>#L23lefttext</posX>
+      <posY>#L23toptext</posY>
+      <width>593</width>
+      <height>241</height>
+      <texture>submenu_bg.png</texture>
+      <shouldCache>true</shouldCache>
+      <visible allowhiddenfocus="true">control.HasFocus(17001) | control.HasFocus(17002) | control.HasFocus(17003) | control.HasFocus(17004) | control.HasFocus(17005) | control.HasFocus(17006)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="350" delay="0">visible</animation>
+      <animation effect="fade" time="0">hidden</animation>
+    </control>
+
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <layout>StackLayout(0, Vertical,true)</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="350" delay="0">visible</animation>
+      <animation effect="fade" time="0">hidden</animation>
+      <dimColor>0xffffffff</dimColor>
+      <posX>#L23leftcontext</posX>
+      <posY>#L23topcontext</posY>
+      <control>
+        <description>TV-Series</description>
+        <type>button</type>
+        <id>17001</id>
+        <width>500</width>
+        <height>40</height>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <hyperlink>9811</hyperlink>
+        <hyperlinkParameter>All</hyperlinkParameter>
+        <textalign>center</textalign>
+        <label>889</label>
+        <font>font12</font>
+        <textcolor>FFFFFFFF</textcolor>
+        <textcolorNoFocus>FF000000</textcolorNoFocus>
+        <textYOff>0</textYOff>
+        <onright>7</onright>
+        <onleft>91919994</onleft>
+        <ondown>17002</ondown>
+        <onup>17004</onup>
+        <onESC>#(skin.setfocus(35,7))</onESC>
+        <visible allowhiddenfocus="true">Control.IsVisible(70081)</visible>
+      </control>
+      <control>
+        <description>Genres</description>
+        <type>button</type>
+        <id>17002</id>
+        <width>500</width>
+        <height>40</height>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <hyperlink>9811</hyperlink>
+        <hyperlinkParameter>Genres</hyperlinkParameter>
+        <textalign>center</textalign>
+        <label>135</label>
+        <font>font12</font>
+        <textcolor>FFFFFFFF</textcolor>
+        <textcolorNoFocus>FF000000</textcolorNoFocus>
+        <textYOff>0</textYOff>
+        <onright>7</onright>
+        <onleft>91919994</onleft>
+        <ondown>17003</ondown>
+        <onup>17001</onup>
+        <onESC>#(skin.setfocus(35,7))</onESC>
+        <visible allowhiddenfocus="true">Control.IsVisible(70081)</visible>
+      </control>
+      <control>
+        <description>Unwatched</description>
+        <type>button</type>
+        <id>17003</id>
+        <width>500</width>
+        <height>40</height>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <hyperlink>9811</hyperlink>
+        <hyperlinkParameter>Unwatched</hyperlinkParameter>
+        <textalign>center</textalign>
+        <label>1267</label>
+        <font>font12</font>
+        <textcolor>FFFFFFFF</textcolor>
+        <textcolorNoFocus>FF000000</textcolorNoFocus>
+        <textYOff>0</textYOff>
+        <onright>7</onright>
+        <onleft>91919994</onleft>
+        <onup>17002</onup>
+        <ondown>17004</ondown>
+        <onESC>#(skin.setfocus(35,7))</onESC>
+        <visible allowhiddenfocus="true">Control.IsVisible(70081)</visible>
+      </control>
+      <control>
+        <description>Recently Added</description>
+        <type>button</type>
+        <id>17004</id>
+        <width>500</width>
+        <height>40</height>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <hyperlink>9811</hyperlink>
+        <hyperlinkParameter>RecentlyAdded</hyperlinkParameter>
+        <textalign>center</textalign>
+        <label>4558</label>
+        <font>font12</font>
+        <textcolor>FFFFFFFF</textcolor>
+        <textcolorNoFocus>FF000000</textcolorNoFocus>
+        <textYOff>0</textYOff>
+        <onright>7</onright>
+        <onleft>91919994</onleft>
+        <onup>17003</onup>
+        <ondown>17001</ondown>
+        <onESC>#(skin.setfocus(35,7))</onESC>
+        <visible allowhiddenfocus="true">Control.IsVisible(70081)</visible>
+      </control>
+    </control>
+
+</controls>
+</window>

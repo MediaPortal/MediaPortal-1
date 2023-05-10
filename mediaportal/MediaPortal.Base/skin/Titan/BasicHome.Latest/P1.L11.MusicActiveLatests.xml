@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+    <control>
+      <description>DUMMY Visible</description>
+      <type>label</type>
+      <id>20091</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>[control.hasfocus(2)|control.hasfocus(91919997)|control.hasfocus(91919998)|control.hasfocus(91919999)]+string.equals(#latestMediaHandler.music.latest.enabled,true)</visible>
+    </control>
+
+    <control>
+        <description>Background</description>
+        <type>image</type>
+        <id>20001</id>
+        <posX>50</posX>
+        <posY>409</posY>
+        <width>1859</width>
+        <height>329</height>
+        <texture>basichome_latestmedia_bgl.png</texture>
+        <animation effect="fade" time="350" delay="50" reversible="false">visible</animation>
+        <animation effect="slide" start="-600" end="0" time="500" delay="500" reversible="false">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <visible>control.isvisible(20091)</visible>              
+    </control>
+
+    <control>
+        <description>latestMedia Music Label</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>485</posY>
+        <width>585</width>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <!--label>#(L(4558))</label-->
+        <label>#latestMediaHandler.music.label</label>
+        <visible>control.isvisible(20091)+!control.HasFocus(91919997)+!control.HasFocus(91919998)+!control.HasFocus(91919999)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+        <description>Album thumb/fanart 1</description>
+        <type>button</type>
+        <id>91919997</id>
+        <posX>670</posX>
+        <posY>480</posY>
+        <width>190</width>
+        <height>190</height>
+        <textureFocus>#latestMediaHandler.music.latest1.thumb</textureFocus>
+        <textureNoFocus>#latestMediaHandler.music.latest1.thumb</textureNoFocus>
+        <visible allowhiddenfocus="true">control.isvisible(20091)</visible>
+        <onup>91919997</onup>
+        <ondown>3</ondown>
+        <onright>91919998</onright>
+        <onleft>2</onleft>
+        <onESC>#(skin.setfocus(35,2))</onESC>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="zoom" start="100,100" end="110,110" time="200" condition="control.hasfocus(91919997)">conditional</animation>
+    </control>
+    
+    <control>
+        <description>Play Button</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>670</posX>
+        <posY>620</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>play_btn_white.png</texture>
+        <visible>control.isvisible(20091)+control.HasFocus(91919997)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="fade" time="1000" start= "100" end= "50" reversible="false">Visible</animation>
+    </control>  
+
+    <control>
+        <description>New Indicator 1</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>670</posX>
+        <posY>480</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(20091)+string.equals(#latestMediaHandler.music.latest1.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="slide" start="0,0" end="-10,-10" time="200" condition="control.hasfocus(91919997)">conditional</animation>
+    </control>  
+
+    <control>
+        <description>Music 1</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>554</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.music.latest1.artist#(iif(eq(#latestMediaHandler.music.latest1.album,''),'',string.format(' - {0}',#latestMediaHandler.music.latest1.album)))#(iif(eq(#latestMediaHandler.music.latest1.year,''),'',string.format(' ({0})',#latestMediaHandler.music.latest1.year)))</label>
+        <visible>control.isvisible(20091)+!control.HasFocus(91919997)+!control.HasFocus(91919998)+!control.HasFocus(91919999)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+    
+    <control>
+        <description>Album thumb/fanart 2</description>
+        <type>button</type>
+        <id>91919998</id>
+        <posX>870</posX>
+        <posY>480</posY>
+        <width>190</width>
+        <height>190</height>
+        <textureFocus>#latestMediaHandler.music.latest2.thumb</textureFocus>
+        <textureNoFocus>#latestMediaHandler.music.latest2.thumb</textureNoFocus>
+        <visible>control.isvisible(20091)</visible>
+        <onup>91919998</onup>
+        <ondown>3</ondown>
+        <onright>91919999</onright>
+        <onleft>91919997</onleft>
+        <onESC>#(skin.setfocus(35,2))</onESC>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="zoom" start="100,100" end="110,110" time="200" condition="control.hasfocus(91919998)">conditional</animation>
+    </control>
+   
+    <control>
+        <description>Play Button</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>870</posX>
+        <posY>620</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>play_btn_white.png</texture>
+        <visible>control.isvisible(20091)+control.HasFocus(91919998)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="fade" time="1000" start= "100" end= "50" reversible="false">Visible</animation>
+    </control>  
+
+    <control>
+        <description>New Indicator 2</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>870</posX>
+        <posY>480</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(20091)+string.equals(#latestMediaHandler.music.latest2.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="slide" start="0,0" end="-10,-10" time="200" condition="control.hasfocus(91919998)">conditional</animation>
+    </control>  
+
+    <control>
+        <description>Music 2</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>590</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.music.latest2.artist#(iif(eq(#latestMediaHandler.music.latest2.album,''),'',string.format(' - {0}',#latestMediaHandler.music.latest2.album)))#(iif(eq(#latestMediaHandler.music.latest2.year,''),'',string.format(' ({0})',#latestMediaHandler.music.latest2.year)))</label>
+        <visible>control.isvisible(20091)+!control.HasFocus(91919997)+!control.HasFocus(91919998)+!control.HasFocus(91919999)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+   
+    <control>
+        <description>Album thumb/fanart 3</description>
+        <type>button</type>
+        <id>91919999</id>
+        <posX>1070</posX>
+        <posY>480</posY>
+        <width>190</width>
+        <height>190</height>
+        <textureFocus>#latestMediaHandler.music.latest3.thumb</textureFocus>
+        <textureNoFocus>#latestMediaHandler.music.latest3.thumb</textureNoFocus>
+        <visible>control.isvisible(20091)</visible>
+        <onup>91919999</onup>
+        <ondown>3</ondown>
+        <onright>4</onright>
+        <onleft>91919998</onleft>
+        <onESC>#(skin.setfocus(35,2))</onESC>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="zoom" start="100,100" end="110,110" time="200" condition="control.hasfocus(91919999)">conditional</animation>
+    </control>
+       
+    <control>
+        <description>Play Button</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>1070</posX>
+        <posY>620</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>play_btn_white.png</texture>
+        <visible>control.isvisible(20091)+control.HasFocus(91919999)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="fade" time="1000" start= "100" end= "50" reversible="false">Visible</animation>
+    </control>  
+
+    <control>
+        <description>New Indicator 3</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>1070</posX>
+        <posY>480</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(20091)+string.equals(#latestMediaHandler.music.latest3.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="slide" start="0,0" end="-10,-10" time="200" condition="control.hasfocus(91919999)">conditional</animation>
+    </control>  
+
+    <control>
+        <description>Music 3</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>628</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.music.latest3.artist#(iif(eq(#latestMediaHandler.music.latest3.album,''),'',string.format(' - {0}',#latestMediaHandler.music.latest3.album)))#(iif(eq(#latestMediaHandler.music.latest3.year,''),'',string.format(' ({0})',#latestMediaHandler.music.latest3.year)))</label>
+        <visible>control.isvisible(20091)+!control.HasFocus(91919997)+!control.HasFocus(91919998)+!control.HasFocus(91919999)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+
+    <!-- Description 1 -->
+    <control>
+        <description>latestMedia Artist</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>485</posY>
+        <width>585</width>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <label>#latestMediaHandler.music.latest1.artist</label>
+        <visible>control.isvisible(20091)+control.HasFocus(91919997)</visible>
+        <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+        <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>Summary</description>
+      <type>textboxscrollup</type>
+      <posX>1280</posX>
+      <posY>554</posY>
+      <width>570</width>
+      <height>111</height>
+      <label>#latestMediaHandler.music.latest1.artistbiooutline</label>
+      <scrollStartDelaySec>5</scrollStartDelaySec>
+      <lineSpacing>0.95</lineSpacing>
+      <seperator>---------------------------------------------------------------------------------------------------------</seperator>
+      <visible>control.isvisible(20091)+control.HasFocus(91919997)</visible>
+      <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+      <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!-- Description 2 -->
+    <control>
+        <description>latestMedia Artist</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>485</posY>
+        <width>585</width>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <label>#latestMediaHandler.music.latest2.artist</label>
+        <visible>control.isvisible(20091)+control.HasFocus(91919998)</visible>
+        <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+        <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>Summary</description>
+      <type>textboxscrollup</type>
+      <posX>1280</posX>
+      <posY>554</posY>
+      <width>570</width>
+      <height>111</height>
+      <label>#latestMediaHandler.music.latest2.artistbiooutline</label>
+      <scrollStartDelaySec>5</scrollStartDelaySec>
+      <lineSpacing>0.95</lineSpacing>
+      <seperator>---------------------------------------------------------------------------------------------------------</seperator>
+      <visible>control.isvisible(20091)+control.HasFocus(91919998)</visible>
+      <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+      <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!-- Description 3 -->
+    <control>
+        <description>latestMedia Artist</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>485</posY>
+        <width>585</width>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <label>#latestMediaHandler.music.latest3.artist</label>
+        <visible>control.isvisible(20091)+control.HasFocus(91919999)</visible>
+        <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+        <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>Summary</description>
+      <type>textboxscrollup</type>
+      <posX>1280</posX>
+      <posY>554</posY>
+      <width>570</width>
+      <height>111</height>
+      <label>#latestMediaHandler.music.latest3.artistbiooutline</label>
+      <scrollStartDelaySec>5</scrollStartDelaySec>
+      <lineSpacing>0.95</lineSpacing>
+      <seperator>---------------------------------------------------------------------------------------------------------</seperator>
+      <visible>control.isvisible(20091)+control.HasFocus(91919999)</visible>
+      <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+      <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+</controls>
+</window>

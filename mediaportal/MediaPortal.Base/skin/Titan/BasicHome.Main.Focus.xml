@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>  
+        
+  <!--            :: FOCUS FRAMES ::            -->
+    
+  <control>
+    <description>group element</description>
+    <type>group</type>
+    <dimColor>0xffffffff</dimColor>
+    
+    <control Style="HomeButtonMenuFocus">
+      <description>BasicHome DUMMY L1-1 Focus</description>
+      <type>image</type>
+      <id>209</id>
+      <posX>#L11leftfocus</posX>
+      <posY>#L11topfocus</posY>
+      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(201)">conditional</animation>
+      <animation effect="fade" time="250" condition="control.hasfocus(201)">conditional</animation>
+      <visible>control.isvisible(210)+control.isvisible(10001)</visible>                
+    </control>
+        
+    <control Style="HomeButtonMenuFocus">
+      <description>BasicHome DUMMY L2-1 Focus</description>
+      <type>image</type>
+      <id>309</id>
+      <posX>#L21leftfocus</posX>
+      <posY>#L21topfocus</posY>
+      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(301)">conditional</animation>
+      <animation effect="fade" time="250" condition="control.hasfocus(301)">conditional</animation>
+      <visible>control.isvisible(310)+control.isvisible(10001)</visible>                
+    </control>
+    
+    <control Style="HomeButtonMenuFocus">
+      <description>BasicHome DUMMY L1-2 Focus</description>
+      <type>image</type>
+      <id>409</id>
+      <posX>#L12leftfocus</posX>
+      <posY>#L12topfocus</posY>
+      <texture>basichome_button_focus.png</texture>
+      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(401)">conditional</animation>
+      <animation effect="fade" time="250" condition="control.hasfocus(401)">conditional</animation>
+      <visible>control.isvisible(410)+control.isvisible(10001)</visible>                
+    </control>
+            
+    <control Style="HomeButtonMenuFocus">
+      <description>BasicHome DUMMY L2-2 Focus</description>
+      <type>image</type>
+      <id>509</id>
+      <posX>#L22leftfocus</posX>
+      <posY>#L22topfocus</posY>
+      <texture>basichome_button_focus.png</texture>
+      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(501)">conditional</animation>
+      <animation effect="fade" time="250" condition="control.hasfocus(501)">conditional</animation>
+      <visible>control.isvisible(510)+control.isvisible(10001)</visible>                
+    </control>
+      
+    <control Style="HomeButtonMenuFocus">
+      <description>BasicHome DUMMY L1-3 Focus</description>
+      <type>image</type>
+      <id>609</id>
+      <posX>#L13leftfocus</posX>
+      <posY>#L13topfocus</posY>
+      <texture>basichome_button_focus.png</texture>
+      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(601)">conditional</animation>
+      <animation effect="fade" time="250" condition="control.hasfocus(601)">conditional</animation>
+      <visible>control.isvisible(610)+control.isvisible(10001)</visible>                
+    </control>
+      
+    <control Style="HomeButtonMenuFocus">
+      <description>BasicHome DUMMY L2-3 Focus</description>
+      <type>image</type>
+      <id>709</id>
+      <posX>#L23leftfocus</posX>
+      <posY>#L23topfocus</posY>
+      <texture>basichome_button_focus.png</texture>
+      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(701)">conditional</animation>
+      <animation effect="fade" time="250" condition="control.hasfocus(701)">conditional</animation>
+      <visible>control.isvisible(710)+control.isvisible(10001)</visible>                
+    </control>
+      
+   </control>
+
+   <!--            :: MENU INDICATOR ::            -->
+
+   <control>
+       <description>right menu indicator</description>
+       <id>0</id>
+       <type>image</type>
+       <posX>1890</posX>
+       <posY>629</posY>
+       <width>30</width>
+       <height>149</height>
+       <texture>basichome_nextpage_right.png</texture>
+       <visible>Control.IsVisible(10902)</visible>
+       <animation effect="slide" start="60,0" end="0,0" tween="quadratic" easing="in" time="250" delay="0">visible</animation>
+       <animation effect="slide" start="0,0" end="60,0" tween="quadratic" easing="in" time="250" delay="0">hidden</animation>
+       <animation effect="fade" time="250">WindowOpen</animation>
+       <animation effect="fade" time="250">WindowClose</animation>
+   </control>
+ 
+   <control>
+       <description>left menu indicator</description>
+       <id>0</id>
+       <type>image</type>
+       <posX>0</posX>
+       <posY>629</posY>
+       <width>30</width>
+       <height>149</height>
+       <texture>basichome_nextpage_left.png</texture>
+       <visible>Control.IsVisible(20901)</visible>
+       <animation effect="slide" start="-60,0" end="0,0" tween="quadratic" easing="in" time="250" delay="0">visible</animation>
+       <animation effect="slide" start="0,0" end="-60,0" tween="quadratic" easing="in" time="250" delay="0">hidden</animation>
+       <animation effect="fade" time="250">WindowOpen</animation>
+       <animation effect="fade" time="250">WindowClose</animation>
+   </control>
+
+   <control>
+       <description>down menu indicator</description>
+       <id>0</id>
+       <type>image</type>
+       <posX>885</posX>
+       <posY>1050</posY>
+       <width>149</width>
+       <height>30</height>
+       <texture>basichome_nextpage_down.png</texture>
+       <visible>Control.IsVisible(10901)</visible>
+       <animation effect="slide" start="0,60" end="0,0" tween="quadratic" easing="in" time="250" delay="0">visible</animation>
+       <animation effect="slide" start="0,0" end="0,60" tween="quadratic" easing="in" time="250" delay="0">hidden</animation>
+       <animation effect="fade" time="250">WindowOpen</animation>
+       <animation effect="fade" time="250">WindowClose</animation>
+   </control>
+
+</controls>
+</window>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+	 <!--            :: VIDEO/MOVIES ::            -->
+    
+    <control Style="HomeBasicFanart">
+	  <description>Video Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>[control.hasfocus(6) | control.IsVisible(60001)] + control.isvisible(91919297)</visible>
+      <texture>#fanarthandler.movie.scraper.backdrop1.any</texture>
+    </control>
+        
+    <control Style="HomeBasicFanart">
+ 	  <description>Video Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>[control.hasfocus(6) | control.IsVisible(60001)] + control.isvisible(91919298)</visible>
+      <texture>#fanarthandler.movie.scraper.backdrop2.any</texture>
+    </control>
+
+    <control Style="HomeBasicFanart">
+      <description>Films Latests Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(91919988)</visible>
+      <texture>#latestMediaHandler.myfilms.latest1.fanart</texture>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+      <description>Films Latests Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(91919989)</visible>
+      <texture>#latestMediaHandler.myfilms.latest2.fanart</texture>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+      <description>Films Latests Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(91919990)</visible>
+      <texture>#latestMediaHandler.myfilms.latest3.fanart</texture>
+    </control> 
+
+</controls>
+</window>

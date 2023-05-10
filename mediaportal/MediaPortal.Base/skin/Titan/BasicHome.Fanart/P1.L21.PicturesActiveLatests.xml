@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+	 <!--            :: PICTURES ::            -->
+		
+    <control Style="HomeBasicFanart">
+	  <description>Pictures Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>[control.hasfocus(3) | control.IsVisible(30001)] + control.isvisible(91919297)</visible>
+      <texture>#(switch(
+                   eq(#fanarthandler.spotlight.random.available,'true'),#fanarthandler.spotlight.backdrop1.any,
+                   eq(1,1),#fanarthandler.picture.userdef.backdrop1.any)
+                 )</texture>
+    </control> 
+		
+    <control Style="HomeBasicFanart">
+	  <description>Pictures Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>[control.hasfocus(3) | control.IsVisible(30001)] + control.isvisible(91919298)</visible>
+      <texture>#(switch(
+                   eq(#fanarthandler.spotlight.random.available,'true'),#fanarthandler.spotlight.backdrop2.any,
+                   eq(1,1),#fanarthandler.picture.userdef.backdrop2.any)
+                 )</texture>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+      <description>Pictures Latests Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(91919971)</visible>
+      <texture>#latestMediaHandler.picture.latest1.fanart</texture>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+      <description>Pictures Latests Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(91919972)</visible>
+      <texture>#latestMediaHandler.picture.latest2.fanart</texture>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+      <description>Pictures Latests Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(91919973)</visible>
+      <texture>#latestMediaHandler.picture.latest3.fanart</texture>
+    </control> 
+
+</controls>
+</window>

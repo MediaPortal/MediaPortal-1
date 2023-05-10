@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls> 
+
+   	<control Style="HomeButtonPictureDummy">
+ 	    <description>BasicHome DUMMY NoFocus</description>
+ 	    <type>image</type>
+ 	    <id>0</id>
+  		<posX>#L12left</posX>
+       	<posY>#L12top</posY>
+       	<animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(4)">conditional</animation>
+        <visible>![control.IsVisible(20081)|Control.IsVisible(20091)|Control.IsVisible(60091)|Control.IsVisible(600081)]+[Control.IsVisible(40091)|Control.IsVisible(10101)]</visible>
+ 	</control>
+
+  	<control Style="HomeButtonMenuDummy">
+    	<description>BasicHome DUMMY</description>
+      	<type>button</type>
+      	<id>4</id>
+        <textYOff>#textYoff</textYOff>
+		<posX>#L12lefttext</posX>
+	    <posY>#L12toptext</posY>
+		<onright>6</onright>
+		<onleft>2</onleft>
+      	<onup>4</onup>
+		<ondown>5</ondown>  
+        <visible allowhiddenfocus="true">![control.IsVisible(20081)|control.IsVisible(20091)|control.IsVisible(60091)|Control.IsVisible(600081)|control.IsVisible(90109)|control.hasfocus(99999)]+[Control.IsVisible(40091)|Control.IsVisible(10101)]</visible>  
+	</control>
+</controls>
+</window>

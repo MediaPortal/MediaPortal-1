@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls> 
+
+   	<control Style="HomeButtonPicture">
+        <description>BasicHome Picture NoFocus</description>
+        <type>image</type>
+        <id>0</id>
+  		<posX>#L21left</posX>
+       	<posY>#L21top</posY>
+ 	    <texture>basichome_button_radio.png</texture>
+        <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(3)">conditional</animation>
+        <visible>![Control.IsVisible(70081)|Control.IsVisible(70091)]+[Control.IsVisible(1009)|Control.IsVisible(1109)|Control.IsVisible(10101)]</visible>      
+	</control>
+
+  	<control Style="HomeButtonMenu">
+        <description>BasicHome Pictures</description>
+        <type>button</type>
+        <id>3</id>
+		<posX>#L21lefttext</posX>
+	    <posY>#L21toptext</posY>
+        <textYOff>#textYoff</textYOff>
+      	<hyperlink>30</hyperlink>
+      	<label>665</label>
+        <onright>5</onright>
+        <onleft>#P1L21ToLeft</onleft>
+        <onup>2</onup>
+        <ondown>12</ondown>
+  	    <visible allowhiddenfocus="true">![Control.IsVisible(70081)|Control.IsVisible(70091)|control.isvisible(90109)|control.hasfocus(99999)]+[Control.IsVisible(1009)|Control.IsVisible(1109)|Control.IsVisible(10101)]</visible>
+	</control>
+
+</controls>
+</window>
