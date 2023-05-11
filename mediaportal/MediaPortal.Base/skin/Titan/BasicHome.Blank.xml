@@ -6,17 +6,41 @@
   <disabletopbar>no</disabletopbar>
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
 
-  <!--[P3D]define>#P1L11ToLeft:600</define[P3D]-->
-  <!--[P3D]define>#P1L21ToLeft:700</define[P3D]-->
+  <!--[P2D|P3D]define>#P1L11ToLeft:6</define[P2D|P3D]-->
+  <!--[P2D|P3D]define>#P1L21ToLeft:7</define[P2D|P3D]-->
+  <!--[P2D|P3D]define>#P1L13ToRight:2</define[P2D|P3D]-->
+  <!--[P2D|P3D]define>#P1L23ToRight:3</define[P2D|P3D]-->
 
-  <!--[P3D]define>#P2L13ToRight:2</define[P3D]-->
-  <!--[P3D]define>#P2L23ToRight:3</define[P3D]-->
+  <!--[P2E|P3D]define>#P1L11ToLeft:600</define[P2E|P3D]-->
+  <!--[P2E|P3D]define>#P1L21ToLeft:700</define[P2E|P3D]-->
+  <!--[P2E|P3D]define>#P1L13ToRight:200</define[P2E|P3D]-->
+  <!--[P2E|P3D]define>#P1L23ToRight:300</define[P2E|P3D]-->
+  <!--[P2E|P3D]define>#P2L11ToLeft:6</define[P2E|P3D]-->
+  <!--[P2E|P3D]define>#P2L21ToLeft:7</define[P2E|P3D]-->
+  <!--[P2E|P3D]define>#P2L13ToRight:2</define[P2E|P3D]-->
+  <!--[P2E|P3D]define>#P2L23ToRight:3</define[P2E|P3D]-->
 
-  <!--[P3E]define>#P1L11ToLeft:650</define[P3E]-->
-  <!--[P3E]define>#P1L21ToLeft:750</define[P3E]-->
+  <!--[P2D|P3E]define>#P1L11ToLeft:650</define[P2D|P3E]-->
+  <!--[P2D|P3E]define>#P1L21ToLeft:750</define[P2D|P3E]-->
+  <!--[P2D|P3E]define>#P1L13ToRight:250</define[P2D|P3E]-->
+  <!--[P2D|P3E]define>#P1L23ToRight:350</define[P2D|P3E]-->
+  <!--[P2D|P3E]define>#P3L11ToLeft:6</define[P2D|P3E]-->
+  <!--[P2D|P3E]define>#P3L21ToLeft:7</define[P2D|P3E]-->
+  <!--[P2D|P3E]define>#P3L13ToRight:2</define[P2D|P3E]-->
+  <!--[P2D|P3E]define>#P3L23ToRight:3</define[P2D|P3E]-->
 
-  <!--[P3E]define>#P2L13ToRight:250</define[P3E]-->
-  <!--[P3E]define>#P2L23ToRight:350</define[P3E]-->
+  <!--[P2E|P3E]define>#P1L11ToLeft:650</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P1L21ToLeft:750</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P1L13ToRight:200</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P1L23ToRight:300</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P2L11ToLeft:6</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P2L21ToLeft:7</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P2L13ToRight:250</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P2L23ToRight:350</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P3L11ToLeft:600</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P3L21ToLeft:700</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P3L13ToRight:2</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P3L23ToRight:3</define[P2E|P3E]-->
 
 <controls>  
 
