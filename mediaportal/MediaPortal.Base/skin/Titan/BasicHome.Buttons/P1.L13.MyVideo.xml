@@ -22,7 +22,7 @@
       <textYOff>#textYoff</textYOff>
       <hyperlink>6</hyperlink>        
       <label>3</label>
-	  <onright>200</onright>
+	  <onright>#P1L13ToRight</onright>
 	  <onleft>4</onleft>
 	  <onup>6</onup>
 	  <ondown>7</ondown>

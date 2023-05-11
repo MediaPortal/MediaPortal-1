@@ -22,7 +22,7 @@
         <textYOff>#textYoff</textYOff>
         <hyperlink>8465</hyperlink>
         <label>Steam Box</label>
-		<onright>3</onright>
+		<onright>#P3L23ToRight</onright>
 		<onleft>550</onleft>
       	<onup>650</onup>
 		<ondown>312</ondown>  

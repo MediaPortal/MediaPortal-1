@@ -24,7 +24,7 @@
         <label>897</label>
   	    <onright>400</onright>
   	    <onup>200</onup>
-  	    <onleft>6</onleft>
+  	    <onleft>#P2L11ToLeft</onleft>
   	    <ondown>300</ondown>
   	    <visible allowhiddenfocus="true">![control.isvisible(90209)|control.hasfocus(99999)]+Control.IsVisible(10201)</visible>
 	</control>

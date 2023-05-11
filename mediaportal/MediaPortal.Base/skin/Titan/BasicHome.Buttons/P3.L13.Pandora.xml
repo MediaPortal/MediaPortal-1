@@ -21,7 +21,7 @@
         <textYOff>#textYoff</textYOff>
         <hyperlink>82341</hyperlink>
         <label>Pandora</label>
-		<onright>2</onright>
+		<onright>#P3L13ToRight</onright>
 		<onleft>450</onleft>
       	<onup>650</onup>
 		<ondown>750</ondown>  

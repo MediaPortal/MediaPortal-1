@@ -23,7 +23,7 @@
         <hyperlink>112011</hyperlink>
         <label>#mvCentral.Settings.HomeScreenName</label>
         <onright>550</onright>
-        <onleft>700</onleft>
+        <onleft>#P3L21ToLeft</onleft>
       	<onup>250</onup>
 		<ondown>312</ondown>  
         <visible allowhiddenfocus="true">![Control.IsVisible(60093)|control.isvisible(90309)|control.hasfocus(99999)]+Control.IsVisible(10301)</visible>

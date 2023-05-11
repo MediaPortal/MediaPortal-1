@@ -19,7 +19,7 @@
 		<posX>#L13lefttext</posX>
 	    <posY>#L13toptext</posY>
         <textYOff>#textYoff</textYOff>
-		<onright>2</onright>
+		<onright>#P3L13ToRight</onright>
 		<onleft>450</onleft>
       	<onup>650</onup>
 		<ondown>750</ondown>  

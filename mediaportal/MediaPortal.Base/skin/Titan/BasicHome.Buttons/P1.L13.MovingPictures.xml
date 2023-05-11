@@ -21,7 +21,7 @@
 	  <posY>#L13toptext</posY>
       <textYOff>#textYoff</textYOff>
       <label>#MovingPictures.Settings.HomeScreenName</label>
-	  <onright>200</onright>
+	  <onright>#P1L13ToRight</onright>
 	  <onleft>4</onleft>
 	  <onup>6</onup>
 	  <ondown>7</ondown>

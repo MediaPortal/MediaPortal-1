@@ -19,7 +19,7 @@
 		<posX>#L23lefttext</posX>
 	    <posY>#L23toptext</posY>
         <textYOff>#textYoff</textYOff>
-		<onright>300</onright>
+		<onright>#P1L23ToRight</onright>
 		<onleft>5</onleft>
       	<onup>6</onup>
 		<ondown>12</ondown>  

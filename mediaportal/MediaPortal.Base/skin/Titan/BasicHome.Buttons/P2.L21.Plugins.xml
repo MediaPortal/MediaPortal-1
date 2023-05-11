@@ -23,7 +23,7 @@
       <hyperlink>34</hyperlink>        
       <label>100034</label>
       <onright>500</onright>
-      <onleft>7</onleft>  
+      <onleft>#P2L21ToLeft</onleft>  
       <ondown>212</ondown>
       <onup>200</onup>
 	  <visible allowhiddenfocus="true">![control.isvisible(90209)|control.hasfocus(99999)]+Control.IsVisible(10201)</visible>

@@ -20,7 +20,7 @@
         <posY>#L11toptext</posY>
         <textYOff>#textYoff</textYOff>
         <onright>450</onright>
-        <onleft>600</onleft>
+        <onleft>#P3L11ToLeft</onleft>
         <onup>250</onup>
         <ondown>350</ondown>  
         <visible allowhiddenfocus="true">![Control.IsVisible(60093)|control.isvisible(90309)|control.hasfocus(99999)]+Control.IsVisible(10301)</visible>

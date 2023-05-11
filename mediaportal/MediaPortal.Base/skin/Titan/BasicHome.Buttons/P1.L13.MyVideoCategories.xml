@@ -23,7 +23,7 @@
       <!--hyperlink>6</hyperlink-->
       <onclick>#(skin.setfocus(35,600001))</onclick>
       <label>3</label>
-	  <onright>200</onright>
+	  <onright>#P1L13ToRight</onright>
 	  <onleft>4</onleft>
 	  <onup>6</onup>
 	  <ondown>7</ondown>
