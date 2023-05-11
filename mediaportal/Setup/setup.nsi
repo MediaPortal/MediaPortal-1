@@ -1077,6 +1077,15 @@ Section -Post
     CreateShortCut "$DESKTOP\MediaPortal WatchDog.lnk"      "$MPdir.Base\WatchDog.exe"         "" "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
   ${EndIf}
 
+  ; Titan Editor
+
+  ; remove Titan Editor shortcut
+  Delete "$DESKTOP\TitanEditor.lnk"
+  ${If} $noDesktopSC != 1
+    ; create Titan Editor shortcuts
+    CreateShortCut "$DESKTOP\TitanEditor.lnk" "$MPdir.Skin\Titan\BasicHome.Editor\TitanEditor.exe" "" "$MPdir.Skin\Titan\BasicHome.Editor\TitanEditor.exe" 0 "" "" "TitanEditor"
+  ${EndIf}
+
   ; create startmenu shortcuts
   ;${If} $noStartMenuSC != 1
       ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
@@ -1162,6 +1171,9 @@ Section Uninstall
   Delete "$DESKTOP\MediaPortal.lnk"
   Delete "$DESKTOP\MediaPortal Configuration.lnk"
   Delete "$DESKTOP\MediaPortal WatchDog.lnk"
+
+  ; remove Titan Editor shortcut
+  Delete "$DESKTOP\TitanEditor.lnk"
 
   ; remove last files and instdir
   Delete "$MPdir.Base\uninstall-mp.exe"
