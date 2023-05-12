@@ -18,8 +18,8 @@
 
 #endregion
 
-using System;
 using System.Windows.Forms;
+
 using MediaPortal.DeployTool.InstallationChecks;
 
 namespace MediaPortal.DeployTool.Sections

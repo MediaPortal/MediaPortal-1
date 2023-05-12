@@ -50,24 +50,21 @@ namespace MediaPortal.DeployTool.Sections
     {
       this.linkExtensions = new System.Windows.Forms.LinkLabel();
       this.lblRecommended = new System.Windows.Forms.Label();
-
       this.grpLAV = new System.Windows.Forms.GroupBox();
       this.linkLAV = new System.Windows.Forms.LinkLabel();
       this.lblLAV = new System.Windows.Forms.Label();
       this.chkLAV = new System.Windows.Forms.CheckBox();
       this.pbLavFilters = new System.Windows.Forms.PictureBox();
-
       this.grpTitan = new System.Windows.Forms.GroupBox();
       this.linkTitan = new System.Windows.Forms.LinkLabel();
       this.lblTitan = new System.Windows.Forms.Label();
       this.chkTitan = new System.Windows.Forms.CheckBox();
-
+      this.pbTitanExtended = new System.Windows.Forms.PictureBox();
       this.grpLAV.SuspendLayout();
-      this.grpTitan.SuspendLayout();
-
       ((System.ComponentModel.ISupportInitialize)(this.pbLavFilters)).BeginInit();
+      this.grpTitan.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pbTitanExtended)).BeginInit();
       this.SuspendLayout();
-
       // 
       // linkExtensions
       // 
@@ -98,7 +95,7 @@ namespace MediaPortal.DeployTool.Sections
       this.grpLAV.Controls.Add(this.linkLAV);
       this.grpLAV.Controls.Add(this.lblLAV);
       this.grpLAV.Controls.Add(this.chkLAV);
-      this.grpLAV.Location = new System.Drawing.Point(333, 65);
+      this.grpLAV.Location = new System.Drawing.Point(333, 66);
       this.grpLAV.Name = "grpLAV";
       this.grpLAV.Size = new System.Drawing.Size(513, 84);
       this.grpLAV.TabIndex = 12;
@@ -133,11 +130,11 @@ namespace MediaPortal.DeployTool.Sections
       this.chkLAV.AutoSize = true;
       this.chkLAV.Checked = true;
       this.chkLAV.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkLAV.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.chkLAV.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.chkLAV.ForeColor = System.Drawing.Color.White;
       this.chkLAV.Location = new System.Drawing.Point(15, 19);
       this.chkLAV.Name = "chkLAV";
-      this.chkLAV.Size = new System.Drawing.Size(86, 17);
+      this.chkLAV.Size = new System.Drawing.Size(96, 17);
       this.chkLAV.TabIndex = 9;
       this.chkLAV.Text = "LAV Filters";
       this.chkLAV.UseVisualStyleBackColor = true;
@@ -157,23 +154,20 @@ namespace MediaPortal.DeployTool.Sections
       this.grpTitan.Controls.Add(this.linkTitan);
       this.grpTitan.Controls.Add(this.lblTitan);
       this.grpTitan.Controls.Add(this.chkTitan);
-      this.grpTitan.Location = new System.Drawing.Point(53, 149);
+      this.grpTitan.Location = new System.Drawing.Point(333, 156);
       this.grpTitan.Name = "grpTitan";
-      this.grpTitan.Size = new System.Drawing.Size(513, 70);
+      this.grpTitan.Size = new System.Drawing.Size(513, 84);
       this.grpTitan.TabIndex = 11;
       this.grpTitan.TabStop = false;
-      // Enable or Disable Titan Extended related by displaying or not the groupbox.
-      this.grpTitan.Visible = true;
-      this.chkTitan.Checked = this.grpTitan.Visible;
       // 
       // linkTitan
       // 
       this.linkTitan.AutoSize = true;
       this.linkTitan.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.linkTitan.LinkColor = System.Drawing.Color.White;
-      this.linkTitan.Location = new System.Drawing.Point(437, 50);
+      this.linkTitan.Location = new System.Drawing.Point(434, 59);
       this.linkTitan.Name = "linkTitan";
-      this.linkTitan.Size = new System.Drawing.Size(52, 13);
+      this.linkTitan.Size = new System.Drawing.Size(62, 13);
       this.linkTitan.TabIndex = 11;
       this.linkTitan.TabStop = true;
       this.linkTitan.Text = "More Info";
@@ -186,31 +180,44 @@ namespace MediaPortal.DeployTool.Sections
       this.lblTitan.ForeColor = System.Drawing.Color.White;
       this.lblTitan.Location = new System.Drawing.Point(36, 39);
       this.lblTitan.Name = "lblTitan";
-      this.lblTitan.Size = new System.Drawing.Size(305, 13);
+      this.lblTitan.Size = new System.Drawing.Size(453, 13);
       this.lblTitan.TabIndex = 10;
-      this.lblTitan.Text = "Install extension that adds support for popular third party plugins";
+      this.lblTitan.Text = "Install extension that adds support for popular third party plugins in Titan skin" +
+    "";
       // 
       // chkTitan
       // 
       this.chkTitan.AutoSize = true;
-      this.chkTitan.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.chkTitan.Checked = this.grpTitan.Visible;
       this.chkTitan.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.chkTitan.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.chkTitan.ForeColor = System.Drawing.Color.White;
       this.chkTitan.Location = new System.Drawing.Point(15, 19);
       this.chkTitan.Name = "chkTitan";
-      this.chkTitan.Size = new System.Drawing.Size(98, 17);
+      this.chkTitan.Size = new System.Drawing.Size(124, 17);
       this.chkTitan.TabIndex = 9;
       this.chkTitan.Text = "Titan Extended";
       this.chkTitan.UseVisualStyleBackColor = true;
       // 
+      // pbTitanExtended
+      // 
+      this.pbTitanExtended.Image = global::MediaPortal.DeployTool.Images.Titan;
+      this.pbTitanExtended.Location = new System.Drawing.Point(247, 160);
+      this.pbTitanExtended.Name = "pbTitanExtended";
+      this.pbTitanExtended.Size = new System.Drawing.Size(80, 80);
+      this.pbTitanExtended.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+      this.pbTitanExtended.TabIndex = 16;
+      this.pbTitanExtended.TabStop = false;
+      // 
       // ExtensionChoice
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-      this.Controls.Add(this.lblRecommended);
-      this.Controls.Add(this.linkExtensions);
-      this.Controls.Add(this.grpLAV);
+      this.Controls.Add(this.pbTitanExtended);
       this.Controls.Add(this.grpTitan);
       this.Controls.Add(this.pbLavFilters);
+      this.Controls.Add(this.grpLAV);
+      this.Controls.Add(this.lblRecommended);
+      this.Controls.Add(this.linkExtensions);
       this.Name = "ExtensionChoice";
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.linkExtensions, 0);
@@ -218,13 +225,16 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.SetChildIndex(this.grpLAV, 0);
       this.Controls.SetChildIndex(this.pbLavFilters, 0);
       this.Controls.SetChildIndex(this.grpTitan, 0);
+      this.Controls.SetChildIndex(this.pbTitanExtended, 0);
       this.grpLAV.ResumeLayout(false);
       this.grpLAV.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pbLavFilters)).EndInit();
       this.grpTitan.ResumeLayout(false);
       this.grpTitan.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pbLavFilters)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pbTitanExtended)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
+
     }
 
     #endregion
@@ -240,5 +250,6 @@ namespace MediaPortal.DeployTool.Sections
     private System.Windows.Forms.CheckBox chkTitan;
     private System.Windows.Forms.Label lblTitan;
     private System.Windows.Forms.LinkLabel linkTitan;
+    private System.Windows.Forms.PictureBox pbTitanExtended;
   }
 }
