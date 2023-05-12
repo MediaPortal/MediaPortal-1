@@ -19,12 +19,12 @@
 #endregion
 
 using System;
-using MediaPortal.DeployTool.Sections;
 using System.Xml;
-using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
+
+using MediaPortal.DeployTool.Sections;
 
 namespace MediaPortal.DeployTool.InstallationChecks
 {

@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.DeployTool.InstallationChecks;
