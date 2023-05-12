@@ -107,6 +107,7 @@
     <Compile Include="InstallationChecks\DiskSpaceChecker.cs" />
     <Compile Include="InstallationChecks\InternetChecker.cs" />
     <Compile Include="InstallationChecks\VCRedistChecker_2015.cs" />
+    <Compile Include="InstallationChecks\TitanExtensionInstall.cs" />
     <Compile Include="ManualDownloadFileMissing.cs">
       <SubType>Form</SubType>
     </Compile>

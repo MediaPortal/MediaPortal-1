@@ -32,7 +32,7 @@ namespace MediaPortal.DeployTool.Sections
       InitializeComponent();
       ExtensionInstalledCheck();
       type = DialogType.ExtensionChoice;
-      labelSectionHeader.Text = "";
+      labelSectionHeader.Text = string.Empty;
 
       UpdateUI();
     }
@@ -41,10 +41,14 @@ namespace MediaPortal.DeployTool.Sections
 
     public override void UpdateUI()
     {
-      lblLAV.Text = Localizer.GetBestTranslation("ExtensionChoice_LAV");
       linkExtensions.Text = Localizer.GetBestTranslation("ExtensionChoice_OtherExtensions");
-      linkLAV.Text = Localizer.GetBestTranslation("ExtensionChoice_MoreInfo");
       lblRecommended.Text = Localizer.GetBestTranslation("ExtensionChoice_Title");
+
+      lblLAV.Text = Localizer.GetBestTranslation("ExtensionChoice_LAV");
+      linkLAV.Text = Localizer.GetBestTranslation("ExtensionChoice_MoreInfo");
+
+      lblTitan.Text = Localizer.GetBestTranslation("ExtensionChoice_Titan");
+      linkTitan.Text = Localizer.GetBestTranslation("ExtensionChoice_MoreInfo");
     }
 
     public void ExtensionInstalledCheck()
@@ -54,6 +58,13 @@ namespace MediaPortal.DeployTool.Sections
       if (result.state == CheckState.INSTALLED)
       {
         this.chkLAV.Checked = false;
+      }
+
+      package = new TitanExtensionInstall();
+      result = package.CheckStatus();
+      if (result.state == CheckState.INSTALLED)
+      {
+        this.chkTitan.Checked = false;
       }
     }
 
@@ -70,6 +81,7 @@ namespace MediaPortal.DeployTool.Sections
     public override void SetProperties()
     {
       InstallationProperties.Instance.Set("ConfigureMediaPortalLAV", chkLAV.Checked ? "1" : "0");
+      InstallationProperties.Instance.Set("ConfigureMediaPortalTitanExtended", chkTitan.Checked ? "1" : "0");
     }
 
     #endregion
@@ -92,12 +104,12 @@ namespace MediaPortal.DeployTool.Sections
 
     private void linkLAV_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("https://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/17_Extensions/3_Plugins/LAV_Filters");
+      OpenURL("https://www.team-mediaportal.com/wiki/display/MediaPortal1/LAV-Filters");
     }
 
     private void linkTitan_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("https://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/17_Extensions/4_Skins/Titan_Extended");
+      OpenURL("https://www.team-mediaportal.com/wiki/display/MediaPortal1/Titan+Extended");
     }
 
     #endregion
