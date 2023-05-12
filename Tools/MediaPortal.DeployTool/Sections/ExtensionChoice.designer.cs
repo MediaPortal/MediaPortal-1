@@ -119,7 +119,7 @@ namespace MediaPortal.DeployTool.Sections
       this.lblLAV.AutoSize = true;
       this.lblLAV.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.lblLAV.ForeColor = System.Drawing.Color.White;
-      this.lblLAV.Location = new System.Drawing.Point(31, 39);
+      this.lblLAV.Location = new System.Drawing.Point(30, 39);
       this.lblLAV.Name = "lblLAV";
       this.lblLAV.Size = new System.Drawing.Size(465, 13);
       this.lblLAV.TabIndex = 10;
@@ -178,12 +178,11 @@ namespace MediaPortal.DeployTool.Sections
       this.lblTitan.AutoSize = true;
       this.lblTitan.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.lblTitan.ForeColor = System.Drawing.Color.White;
-      this.lblTitan.Location = new System.Drawing.Point(36, 39);
+      this.lblTitan.Location = new System.Drawing.Point(30, 39);
       this.lblTitan.Name = "lblTitan";
-      this.lblTitan.Size = new System.Drawing.Size(453, 13);
+      this.lblTitan.Size = new System.Drawing.Size(465, 13);
       this.lblTitan.TabIndex = 10;
-      this.lblTitan.Text = "Install extension that adds support for popular third party plugins in Titan skin" +
-    "";
+      this.lblTitan.Text = "Install extension that adds support for popular third party plugins in Titan skin";
       // 
       // chkTitan
       // 
