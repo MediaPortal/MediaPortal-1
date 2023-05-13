@@ -74,6 +74,8 @@ namespace MediaPortal.DeployTool.Sections
     public override void UpdateUI()
     {
       lblChooseSkin.Text = Localizer.GetBestTranslation("SkinChoice_labelSectionHeader");
+      lblExtendedDescription.Text = Localizer.GetBestTranslation("SkinChoice_ExtendedDescription");
+      linkSkins.Text = Localizer.GetBestTranslation("SkinChoice_OtherSkins");
     }
 
     public override DeployDialog GetNextDialog()
