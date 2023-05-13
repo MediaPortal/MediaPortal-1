@@ -205,6 +205,10 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
           AddPackageToListView(new TitanExtensionInstall());
+          if (InstallationProperties.Instance["ConfigureMediaPortalAresSkin"] == "0")
+          {
+            AddPackageToListView(new AresSkinExtensionInstall());
+          }
           break;
 
         case "tvserver_master":
@@ -224,12 +228,20 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
           AddPackageToListView(new TitanExtensionInstall());
+          if (InstallationProperties.Instance["ConfigureMediaPortalAresSkin"] == "0")
+          {
+            AddPackageToListView(new AresSkinExtensionInstall());
+          }
           break;
 
         case "mp_only":
           AddPackageToListView(new MediaPortalChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
           AddPackageToListView(new TitanExtensionInstall());
+          if (InstallationProperties.Instance["ConfigureMediaPortalAresSkin"] == "0")
+          {
+            AddPackageToListView(new AresSkinExtensionInstall());
+          }
           break;
 
         case "download_only":
@@ -240,6 +252,10 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
           AddPackageToListView(new TitanExtensionInstall());
+          if (InstallationProperties.Instance["ConfigureMediaPortalAresSkin"] == "0")
+          {
+            AddPackageToListView(new AresSkinExtensionInstall());
+          }
           break;
       }
       if ((InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1" ||

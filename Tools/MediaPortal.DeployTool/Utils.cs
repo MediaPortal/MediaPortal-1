@@ -119,7 +119,7 @@ namespace MediaPortal.DeployTool
       XmlDocument doc = new XmlDocument();
       HTTPDownload dlg = new HTTPDownload();
       string XmlFile = Application.StartupPath + "\\ApplicationLocations.xml";
-      const string XmlUrl = "http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml";
+      const string XmlUrl = "https://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml";
 
       //HTTP update of the xml file with the application download URLs
       if (!File.Exists(XmlFile))
@@ -219,6 +219,19 @@ namespace MediaPortal.DeployTool
     internal static string GetUserAgentOsString()
     {
       return "Windows NT " + OSInfo.OSInfo.OSMajorVersion + "." + OSInfo.OSInfo.OSMinorVersion;
+    }
+
+    #endregion
+
+    #region Hyperlink Helper
+
+    internal static void OpenURL(string url)
+    {
+      try
+      {
+        System.Diagnostics.Process.Start(url);
+      }
+      catch (System.Exception) { }
     }
 
     #endregion

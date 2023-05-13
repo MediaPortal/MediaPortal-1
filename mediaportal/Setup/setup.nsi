@@ -110,6 +110,7 @@ Var frominstall
 Var MPTray_Running
 
 Var PREVIOUS_SKINSETTINGS_TITAN_CONFIG
+Var PREVIOUS_SKINSETTINGS_TITAN_BASICHOME
 Var PREVIOUS_SKINSETTINGS_ARES_CONFIG
 Var PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG
 Var PREVIOUS_KEYMAPSETTINGS
@@ -302,6 +303,12 @@ ShowUninstDetails show
     CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml" "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG"
   ${EndIf}
 
+  ${If} ${FileExists} "${COMMON_APPDATA}\skin\Titan\BasicHome.Blank.xml"
+    GetTempFileName $PREVIOUS_SKINSETTINGS_TITAN_BASICHOME
+    ${LOG_TEXT} "INFO" "Backup BasicHome.xml for Titan (${COMMON_APPDATA}\skin\Titan\BasicHome.xml)"
+    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\skin\Titan\BasicHome.xml" "$PREVIOUS_SKINSETTINGS_TITAN_BASICHOME"
+  ${EndIf}
+
   ${If} ${FileExists} "${COMMON_APPDATA}\skin\Ares\SkinSettings.xml"
     GetTempFileName $PREVIOUS_SKINSETTINGS_ARES_CONFIG
     ${LOG_TEXT} "INFO" "Backup SkinSettings.xml for Ares (${COMMON_APPDATA}\skin\Ares\SkinSettings.xml)"
@@ -318,6 +325,11 @@ ShowUninstDetails show
   ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG"
     ${LOG_TEXT} "INFO" "Restore SkinSettings.xml for Titan (${COMMON_APPDATA}\skin\Titan\SkinSettings.xml)"
     CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG" "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml" 
+  ${EndIf}  
+
+  ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_TITAN_BASICHOME"
+    ${LOG_TEXT} "INFO" "Restore BasicHome.xml for Titan (${COMMON_APPDATA}\skin\Titan\BasicHome.xml)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_TITAN_BASICHOME" "${COMMON_APPDATA}\skin\Titan\BasicHome.xml" 
   ${EndIf}  
 
   ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_ARES_CONFIG"
@@ -765,10 +777,6 @@ Section "MediaPortal core files (required)" SecCore
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeLight.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HELN.TTF"
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HindVadodara-SemiBold.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\MediaPortalDefault.ttf"
 
   ; used for Default and Titan Skin Font
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
@@ -776,10 +784,6 @@ Section "MediaPortal core files (required)" SecCore
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeLight.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HELN.TTF"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HindVadodara-SemiBold.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\MediaPortalDefault.ttf"
 
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
   
@@ -1133,8 +1137,6 @@ Section -Post
     Exec '"$MPdir.Base\MPTray.exe"'
   ${EndIf}
 
-  ; run AresBackupRestore.exe
-  Exec '"$MPdir.Base\AresBackupRestore.exe"'
 SectionEnd
 
 #---------------------------------------------------------------------------

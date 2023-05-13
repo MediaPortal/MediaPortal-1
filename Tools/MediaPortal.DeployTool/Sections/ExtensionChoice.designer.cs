@@ -95,9 +95,9 @@ namespace MediaPortal.DeployTool.Sections
       this.grpLAV.Controls.Add(this.linkLAV);
       this.grpLAV.Controls.Add(this.lblLAV);
       this.grpLAV.Controls.Add(this.chkLAV);
-      this.grpLAV.Location = new System.Drawing.Point(333, 66);
+      this.grpLAV.Location = new System.Drawing.Point(335, 66);
       this.grpLAV.Name = "grpLAV";
-      this.grpLAV.Size = new System.Drawing.Size(513, 84);
+      this.grpLAV.Size = new System.Drawing.Size(526, 84);
       this.grpLAV.TabIndex = 12;
       this.grpLAV.TabStop = false;
       // 
@@ -106,7 +106,7 @@ namespace MediaPortal.DeployTool.Sections
       this.linkLAV.AutoSize = true;
       this.linkLAV.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.linkLAV.LinkColor = System.Drawing.Color.White;
-      this.linkLAV.Location = new System.Drawing.Point(434, 59);
+      this.linkLAV.Location = new System.Drawing.Point(454, 59);
       this.linkLAV.Name = "linkLAV";
       this.linkLAV.Size = new System.Drawing.Size(62, 13);
       this.linkLAV.TabIndex = 11;
@@ -154,9 +154,9 @@ namespace MediaPortal.DeployTool.Sections
       this.grpTitan.Controls.Add(this.linkTitan);
       this.grpTitan.Controls.Add(this.lblTitan);
       this.grpTitan.Controls.Add(this.chkTitan);
-      this.grpTitan.Location = new System.Drawing.Point(333, 156);
+      this.grpTitan.Location = new System.Drawing.Point(335, 156);
       this.grpTitan.Name = "grpTitan";
-      this.grpTitan.Size = new System.Drawing.Size(513, 84);
+      this.grpTitan.Size = new System.Drawing.Size(526, 84);
       this.grpTitan.TabIndex = 11;
       this.grpTitan.TabStop = false;
       // 
@@ -165,7 +165,7 @@ namespace MediaPortal.DeployTool.Sections
       this.linkTitan.AutoSize = true;
       this.linkTitan.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.linkTitan.LinkColor = System.Drawing.Color.White;
-      this.linkTitan.Location = new System.Drawing.Point(434, 59);
+      this.linkTitan.Location = new System.Drawing.Point(454, 61);
       this.linkTitan.Name = "linkTitan";
       this.linkTitan.Size = new System.Drawing.Size(62, 13);
       this.linkTitan.TabIndex = 11;
@@ -180,9 +180,10 @@ namespace MediaPortal.DeployTool.Sections
       this.lblTitan.ForeColor = System.Drawing.Color.White;
       this.lblTitan.Location = new System.Drawing.Point(30, 39);
       this.lblTitan.Name = "lblTitan";
-      this.lblTitan.Size = new System.Drawing.Size(465, 13);
+      this.lblTitan.Size = new System.Drawing.Size(453, 13);
       this.lblTitan.TabIndex = 10;
-      this.lblTitan.Text = "Install extension that adds support for popular third party plugins in Titan skin";
+      this.lblTitan.Text = "Install extension that adds support for popular third party plugins in Titan skin" +
+    "";
       // 
       // chkTitan
       // 

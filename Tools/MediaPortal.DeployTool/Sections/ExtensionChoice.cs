@@ -88,28 +88,19 @@ namespace MediaPortal.DeployTool.Sections
 
     #region Hyperlink handler
 
-    private static void OpenURL(string url)
-    {
-      try
-      {
-        System.Diagnostics.Process.Start(url);
-      }
-      catch (System.Exception) { }
-    }
-
     private void linkExtensions_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("https://www.team-mediaportal.com/extensions");
+      Utils.OpenURL("https://www.team-mediaportal.com/extensions");
     }
 
     private void linkLAV_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("https://www.team-mediaportal.com/wiki/display/MediaPortal1/LAV-Filters");
+      Utils.OpenURL("https://www.team-mediaportal.com/wiki/display/MediaPortal1/LAV-Filters");
     }
 
     private void linkTitan_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("https://www.team-mediaportal.com/wiki/display/MediaPortal1/Titan+Extended");
+      Utils.OpenURL("https://www.team-mediaportal.com/wiki/display/MediaPortal1/Titan+Extended");
     }
 
     #endregion

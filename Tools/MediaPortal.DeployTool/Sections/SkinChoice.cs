@@ -30,7 +30,9 @@ namespace MediaPortal.DeployTool.Sections
     {
       InitializeComponent();
       type = DialogType.SkinChoice;
-      labelSectionHeader.Text = "";
+      labelSectionHeader.Text = string.Empty;
+
+      InstallationProperties.Instance.Set("ConfigureMediaPortalAresSkin", "0");
 
       if (InstallationProperties.Instance.Get("UpdateMode") == "yes")
       {
@@ -57,6 +59,15 @@ namespace MediaPortal.DeployTool.Sections
 
       UpdateUI();
     }
+
+    #region Hyperlink handler
+
+    private void linkSkins_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      Utils.OpenURL("https://www.team-mediaportal.com/extensions/widescreen");
+    }
+
+    #endregion
 
     #region IDeployDialog interface
 
@@ -85,6 +96,7 @@ namespace MediaPortal.DeployTool.Sections
       btnAres.Image = Images.Choose_button_off;
       pbSkin.Image = Images.preview_titan;
       InstallationProperties.Instance.Set("ChosenSkin", "Titan");
+      InstallationProperties.Instance.Set("ConfigureMediaPortalAresSkin", "0");
     }
 
     private void btnSkin2_Click(object sender, EventArgs e)
@@ -95,6 +107,7 @@ namespace MediaPortal.DeployTool.Sections
       btnAres.Image = Images.Choose_button_off;
       pbSkin.Image = Images.preview_DefaultWide_HD;
       InstallationProperties.Instance.Set("ChosenSkin", "DefaultWideHD");
+      InstallationProperties.Instance.Set("ConfigureMediaPortalAresSkin", "0");
     }
 
     private void btnSkin3_Click(object sender, EventArgs e)
@@ -105,6 +118,7 @@ namespace MediaPortal.DeployTool.Sections
       btnAres.Image = Images.Choose_button_on;
       pbSkin.Image = Images.preview_ares;
       InstallationProperties.Instance.Set("ChosenSkin", "Ares");
+      InstallationProperties.Instance.Set("ConfigureMediaPortalAresSkin", "1");
     }
 
     private void btnExisting_Click(object sender, EventArgs e)
@@ -114,6 +128,7 @@ namespace MediaPortal.DeployTool.Sections
       btnDefaultWide.Image = Images.Choose_button_off;
       pbSkin.Image = Images.preview_existing;
       InstallationProperties.Instance.Set("ChosenSkin", "[Existing]");
+      InstallationProperties.Instance.Set("ConfigureMediaPortalAresSkin", "0");
     }
 
   }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       try
       {
-        Uri Url = new Uri("http://install.team-mediaportal.com/");
+        Uri Url = new Uri("https://install.team-mediaportal.com/");
         WebRequest WebReq = WebRequest.Create(Url);
         WebReq.Proxy.Credentials = CredentialCache.DefaultCredentials;
         WebResponse Resp;

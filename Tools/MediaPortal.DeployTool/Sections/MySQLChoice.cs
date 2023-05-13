@@ -93,18 +93,9 @@ namespace MediaPortal.DeployTool.Sections
 
     #region Hyperlink handler
 
-    private static void OpenURL(string url)
-    {
-      try
-      {
-        System.Diagnostics.Process.Start(url);
-      }
-      catch (System.Exception) { }
-    }
-
     private void linkMySQL_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/0_What's_New/1.7.x/MySQL_Upgrade_choice");
+      Utils.OpenURL("https://www.team-mediaportal.com/wiki/display/MediaPortal1/1.8.x%20-%20MySQL%20Upgrade%20choice");
     }
 
     #endregion

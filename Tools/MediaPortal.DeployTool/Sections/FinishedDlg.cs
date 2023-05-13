@@ -71,28 +71,19 @@ namespace MediaPortal.DeployTool.Sections
 
     #region Hyperlink handler
 
-    private static void OpenURL(string url)
-    {
-      try
-      {
-        System.Diagnostics.Process.Start(url);
-      }
-      catch (System.Exception) {}
-    }
-
     private void linkHomepage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("https://www.team-mediaportal.com");
+      Utils.OpenURL("https://www.team-mediaportal.com");
     }
 
     private void linkForum_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("https://forum.team-mediaportal.com");
+      Utils.OpenURL("https://forum.team-mediaportal.com");
     }
 
     private void linkWiki_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("https://www.team-mediaportal.com/wiki/display/MediaPortal1/Quick+Setup");
+      Utils.OpenURL("https://www.team-mediaportal.com/wiki/display/MediaPortal1/Quick+Setup");
     }
 
     #endregion

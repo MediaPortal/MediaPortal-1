@@ -58,6 +58,7 @@ namespace MediaPortal.DeployTool.Sections
       this.btnExisting = new System.Windows.Forms.Button();
       this.btnAres = new System.Windows.Forms.Button();
       this.lblAres = new System.Windows.Forms.Label();
+      this.linkSkins = new System.Windows.Forms.LinkLabel();
       ((System.ComponentModel.ISupportInitialize)(this.pbSkin)).BeginInit();
       this.SuspendLayout();
       // 
@@ -184,13 +185,27 @@ namespace MediaPortal.DeployTool.Sections
       this.lblAres.ForeColor = System.Drawing.Color.White;
       this.lblAres.Location = new System.Drawing.Point(593, 241);
       this.lblAres.Name = "lblAres";
-      this.lblAres.Size = new System.Drawing.Size(90, 13);
+      this.lblAres.Size = new System.Drawing.Size(153, 13);
       this.lblAres.TabIndex = 12;
-      this.lblAres.Text = "Ares (1920x1080)";
+      this.lblAres.Text = "Ares (1920x1080) External skin";
+      // 
+      // linkSkins
+      // 
+      this.linkSkins.AutoSize = true;
+      this.linkSkins.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.linkSkins.LinkColor = System.Drawing.Color.White;
+      this.linkSkins.Location = new System.Drawing.Point(545, 355);
+      this.linkSkins.Name = "linkSkins";
+      this.linkSkins.Size = new System.Drawing.Size(145, 17);
+      this.linkSkins.TabIndex = 14;
+      this.linkSkins.TabStop = true;
+      this.linkSkins.Text = "Browse other skins";
+      this.linkSkins.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkSkins_LinkClicked);
       // 
       // SkinChoice
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.Controls.Add(this.linkSkins);
       this.Controls.Add(this.lblAres);
       this.Controls.Add(this.btnAres);
       this.Controls.Add(this.lblExisting);
@@ -213,6 +228,7 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.SetChildIndex(this.lblExisting, 0);
       this.Controls.SetChildIndex(this.btnAres, 0);
       this.Controls.SetChildIndex(this.lblAres, 0);
+      this.Controls.SetChildIndex(this.linkSkins, 0);
       ((System.ComponentModel.ISupportInitialize)(this.pbSkin)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -231,5 +247,6 @@ namespace MediaPortal.DeployTool.Sections
     private System.Windows.Forms.Button btnExisting;
     private System.Windows.Forms.Button btnAres;
     private System.Windows.Forms.Label lblAres;
+    private System.Windows.Forms.LinkLabel linkSkins;
   }
 }
