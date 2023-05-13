@@ -88,7 +88,7 @@ namespace MediaPortal.DeployTool.Sections
 
     #region Hyperlink handler
 
-    private void linkExtensions_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
+    private void linkExtensions_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       Utils.OpenURL("https://www.team-mediaportal.com/extensions");
     }

@@ -77,7 +77,7 @@ namespace MediaPortal.DeployTool.Sections
       this.linkExtensions.TabIndex = 13;
       this.linkExtensions.TabStop = true;
       this.linkExtensions.Text = "Browse other extensions";
-      this.linkExtensions.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkExtensions_LinkClicked_1);
+      this.linkExtensions.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkExtensions_LinkClicked);
       // 
       // lblRecommended
       // 
@@ -201,7 +201,7 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // pbTitanExtended
       // 
-      this.pbTitanExtended.Image = global::MediaPortal.DeployTool.Images.Titan;
+      this.pbTitanExtended.Image = global::MediaPortal.DeployTool.Images.TitanExtended;
       this.pbTitanExtended.Location = new System.Drawing.Point(247, 160);
       this.pbTitanExtended.Name = "pbTitanExtended";
       this.pbTitanExtended.Size = new System.Drawing.Size(80, 80);

@@ -453,13 +453,23 @@ namespace MediaPortal.DeployTool {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Titan {
+        internal static System.Drawing.Bitmap TitanExtended {
             get {
-                object obj = ResourceManager.GetObject("Titan", resourceCulture);
+                object obj = ResourceManager.GetObject("TitanExtended", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AresSkin {
+            get {
+                object obj = ResourceManager.GetObject("AresSkin", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>

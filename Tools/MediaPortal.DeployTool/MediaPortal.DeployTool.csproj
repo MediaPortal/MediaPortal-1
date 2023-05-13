@@ -679,7 +679,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Install.ico" />
-    <None Include="Resources\Application\Titan.png" />
+    <None Include="Resources\Application\TitanExtended.png" />
+    <None Include="Resources\Application\AresSkin.png" />
     <None Include="Resources\Status\FAILED.png" />
     <None Include="Resources\Status\COMPLETE.png" />
     <None Include="Resources\Status\PROGRESS.png" />
