@@ -205,7 +205,7 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
           AddPackageToListView(new TitanExtensionInstall());
-          if (InstallationProperties.Instance["ConfigureMediaPortalAresSkin"] == "0")
+          if (InstallationProperties.Instance["ConfigureMediaPortalAresSkin"] == "1")
           {
             AddPackageToListView(new AresSkinExtensionInstall());
           }
@@ -228,7 +228,7 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
           AddPackageToListView(new TitanExtensionInstall());
-          if (InstallationProperties.Instance["ConfigureMediaPortalAresSkin"] == "0")
+          if (InstallationProperties.Instance["ConfigureMediaPortalAresSkin"] == "1")
           {
             AddPackageToListView(new AresSkinExtensionInstall());
           }
@@ -238,7 +238,7 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new MediaPortalChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
           AddPackageToListView(new TitanExtensionInstall());
-          if (InstallationProperties.Instance["ConfigureMediaPortalAresSkin"] == "0")
+          if (InstallationProperties.Instance["ConfigureMediaPortalAresSkin"] == "1")
           {
             AddPackageToListView(new AresSkinExtensionInstall());
           }
@@ -252,7 +252,7 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new TvPluginChecker());
           AddPackageToListView(new LAVFilterMPEInstall());
           AddPackageToListView(new TitanExtensionInstall());
-          if (InstallationProperties.Instance["ConfigureMediaPortalAresSkin"] == "0")
+          if (InstallationProperties.Instance["ConfigureMediaPortalAresSkin"] == "1")
           {
             AddPackageToListView(new AresSkinExtensionInstall());
           }

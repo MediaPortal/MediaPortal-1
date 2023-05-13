@@ -59,6 +59,7 @@ namespace MediaPortal.DeployTool.Sections
       this.btnAres = new System.Windows.Forms.Button();
       this.lblAres = new System.Windows.Forms.Label();
       this.linkSkins = new System.Windows.Forms.LinkLabel();
+      this.label1 = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.pbSkin)).BeginInit();
       this.SuspendLayout();
       // 
@@ -185,9 +186,9 @@ namespace MediaPortal.DeployTool.Sections
       this.lblAres.ForeColor = System.Drawing.Color.White;
       this.lblAres.Location = new System.Drawing.Point(593, 241);
       this.lblAres.Name = "lblAres";
-      this.lblAres.Size = new System.Drawing.Size(153, 13);
+      this.lblAres.Size = new System.Drawing.Size(141, 13);
       this.lblAres.TabIndex = 12;
-      this.lblAres.Text = "Ares (1920x1080) External skin";
+      this.lblAres.Text = "Ares (1920x1080) - External*";
       // 
       // linkSkins
       // 
@@ -202,9 +203,21 @@ namespace MediaPortal.DeployTool.Sections
       this.linkSkins.Text = "Browse other skins";
       this.linkSkins.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkSkins_LinkClicked);
       // 
+      // label1
+      // 
+      this.label1.ForeColor = System.Drawing.Color.White;
+      this.label1.Location = new System.Drawing.Point(545, 320);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(397, 35);
+      this.label1.TabIndex = 15;
+      this.label1.Text = "* External - The external skins are only installed when you choose them, but you " +
+    "can always install them yourself.";
+      this.label1.Visible = false;
+      // 
       // SkinChoice
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.Controls.Add(this.label1);
       this.Controls.Add(this.linkSkins);
       this.Controls.Add(this.lblAres);
       this.Controls.Add(this.btnAres);
@@ -223,12 +236,13 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.SetChildIndex(this.lblTitan, 0);
       this.Controls.SetChildIndex(this.lblChooseSkin, 0);
       this.Controls.SetChildIndex(this.pbSkin, 0);
-      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.btnExisting, 0);
       this.Controls.SetChildIndex(this.lblExisting, 0);
       this.Controls.SetChildIndex(this.btnAres, 0);
       this.Controls.SetChildIndex(this.lblAres, 0);
       this.Controls.SetChildIndex(this.linkSkins, 0);
+      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
+      this.Controls.SetChildIndex(this.label1, 0);
       ((System.ComponentModel.ISupportInitialize)(this.pbSkin)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -248,5 +262,6 @@ namespace MediaPortal.DeployTool.Sections
     private System.Windows.Forms.Button btnAres;
     private System.Windows.Forms.Label lblAres;
     private System.Windows.Forms.LinkLabel linkSkins;
+    private System.Windows.Forms.Label label1;
   }
 }

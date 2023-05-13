@@ -126,6 +126,7 @@ namespace MediaPortal.DeployTool.Sections
       btnExisting.Image = Images.Choose_button_on;
       btnTitan.Image = Images.Choose_button_off;
       btnDefaultWide.Image = Images.Choose_button_off;
+      btnAres.Image = Images.Choose_button_off;
       pbSkin.Image = Images.preview_existing;
       InstallationProperties.Instance.Set("ChosenSkin", "[Existing]");
       InstallationProperties.Instance.Set("ConfigureMediaPortalAresSkin", "0");
