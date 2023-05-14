@@ -60,6 +60,7 @@ namespace MediaPortal.DeployTool.Sections
         this.chkLAV.Checked = false;
       }
 
+      this.chkTitan.Checked = InstallationProperties.Instance["ChosenSkin"] == "Titan";
       package = new TitanExtensionInstall();
       result = package.CheckStatus();
       if (result.state == CheckState.INSTALLED)

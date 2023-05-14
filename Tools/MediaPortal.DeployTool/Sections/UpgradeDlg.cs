@@ -66,8 +66,8 @@ namespace MediaPortal.DeployTool.Sections
       int major = 0;
       int minor = 0;
       int revision = 0;
-      RegistryKey key =
-        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
+
       string MpBuild = "0";
       string MpDisplayVer = string.Empty;
       if (key != null)
@@ -77,7 +77,13 @@ namespace MediaPortal.DeployTool.Sections
         minor = (int)key.GetValue("VersionMinor", 0);
         revision = (int)key.GetValue("VersionRevision", 0);
         MpDisplayVer = key.GetValue("DisplayVersion").ToString().Replace(" for TESTING ONLY", string.Empty);
+        string InstallPath = key.GetValue("InstallPath").ToString();
         key.Close();
+
+        if (!string.IsNullOrEmpty(InstallPath))
+        {
+          InstallationProperties.Instance.Set("MPDir", InstallPath);
+        }
       }
       Version MpVer = new Version(major, minor, revision);
 
@@ -85,8 +91,7 @@ namespace MediaPortal.DeployTool.Sections
       major = 0;
       minor = 0;
       revision = 0;
-      key =
-        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
+      key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
       string Tv3Build = "0";
       string Tv3DisplayVer = string.Empty;
       if (key != null)
@@ -96,7 +101,12 @@ namespace MediaPortal.DeployTool.Sections
         minor = (int)key.GetValue("VersionMinor", 0);
         revision = (int)key.GetValue("VersionRevision", 0);
         Tv3DisplayVer = key.GetValue("DisplayVersion").ToString().Replace(" for TESTING ONLY", string.Empty);
+        string InstallPath = key.GetValue("InstallPath").ToString();
         key.Close();
+        if (!string.IsNullOrEmpty(InstallPath))
+        {
+          InstallationProperties.Instance.Set("TVServerDir", InstallPath);
+        }
       }
       Version Tv3Ver = new Version(major, minor, revision);
 

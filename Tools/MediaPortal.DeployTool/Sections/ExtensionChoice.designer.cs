@@ -189,7 +189,6 @@ namespace MediaPortal.DeployTool.Sections
       // 
       this.chkTitan.AutoSize = true;
       this.chkTitan.Checked = this.grpTitan.Visible;
-      this.chkTitan.CheckState = System.Windows.Forms.CheckState.Checked;
       this.chkTitan.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.chkTitan.ForeColor = System.Drawing.Color.White;
       this.chkTitan.Location = new System.Drawing.Point(15, 19);

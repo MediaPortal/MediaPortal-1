@@ -123,13 +123,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
           }
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) { }
 
       string targetDir = InstallationProperties.Instance["MPDir"];
 
-      //NSIS installer need to know if it's a fresh install or an update (chefkoch)
+      // NSIS installer need to know if it's a fresh install or an update (chefkoch)
       string updateMode = InstallationProperties.Instance["UpdateMode"] == "yes" ? "/UpdateMode" : string.Empty;
 
       Process setup;
@@ -139,8 +137,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
       else if (UpgradeDlg.freshForce)
       {
-      //NSIS installer doesn't want " in parameters (chefkoch)
-      //Remember that /D must be the last one         (chefkoch)
+        // NSIS installer doesn't want " in parameters (chefkoch)
+        // Remember that /D must be the last one         (chefkoch)
         setup = Process.Start(_fileName, String.Format("/S /DeployMode --DeployMode {0} /D={1}", updateMode, targetDir));
       }
       else
@@ -158,7 +156,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
             Utils.NotifyReboot(GetDisplayName());
           }
 
-          // installer backups existing folder so need to write deploy.xml after installation 
+          // Installer backups existing folder so need to write deploy.xml after installation 
           // else it will get backed up
           if (InstallationProperties.Instance["UpdateMode"] != "yes")
           {
