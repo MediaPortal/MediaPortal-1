@@ -18,8 +18,7 @@ call .\Build_BD_Java.bat
 
 echo.
 echo Building native components...
-call VS_Rebuild_Release_DirectShowFilters.bat
-call VS_Rebuild_Debug_DirectShowFilters.bat
+call VS_Rebuild_Debug_DirectShowFilters.bat %ARCH%
 
 echo.
 echo Building MediaPortal...
@@ -32,6 +31,7 @@ set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logf
 call "MSBUILD_Rebuild_Release_MediaPortal.bat" Release
 
 "%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=%ARCH% "%MediaPortal%\MediaPortal.sln" >> %log%
+"%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%GIT_ROOT%\MPx86Proxy\MPx86Proxy.sln" >> %log%
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
 echo.

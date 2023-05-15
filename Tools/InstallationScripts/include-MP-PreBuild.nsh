@@ -96,6 +96,9 @@
 !insertmacro PrepareBuildReport MediaPortal
 !system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=${Architecture} "${git_MP}\MediaPortal.sln"' = 0
 !insertmacro FinalizeBuildReport
+!insertmacro PrepareBuildReport MPx86Proxy
+!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_ROOT}\MPx86Proxy\MPx86Proxy.sln"' = 0
+!insertmacro FinalizeBuildReport
 !endif
 
 !ifdef BUILD_TVServer

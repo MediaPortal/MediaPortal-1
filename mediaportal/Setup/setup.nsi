@@ -571,6 +571,13 @@ Section "MediaPortal core files (required)" SecCore
   ; MediaPortal.exe
   File "${git_MP}\MediaPortal.Application\bin\${BUILD_TYPE}\MediaPortal.exe"
   File "${git_MP}\MediaPortal.Application\bin\${BUILD_TYPE}\MediaPortal.exe.config"
+  ; MPx86Proxy
+  !if "${Architecture}" == "x64"
+  File "${git_ROOT}\MPx86Proxy\MPx86Proxy\bin\${BUILD_TYPE}\MPx86Proxy.exe"
+  File "${git_ROOT}\MPx86Proxy\MPx86Proxy\iMONAPI\iMONDisplay.dll"
+  File "${git_ROOT}\MPx86Proxy\MPx86Proxy\iMONAPI\iMONRemoteControl.dll"
+  !else
+  !endif
   ; Configuration
   File "${git_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe"
   File "${git_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe.config"
@@ -928,6 +935,10 @@ SectionEnd
   ; MediaPortal.exe
   Delete "$MPdir.Base\MediaPortal.exe"
   Delete "$MPdir.Base\MediaPortal.exe.config"
+  ; MPx86Proxy
+  Delete "$MPdir.Base\MPx86Proxy.exe"
+  Delete "$MPdir.Base\iMONDisplay.dll"
+  Delete "$MPdir.Base\iMONRemoteControl.dll"
   ; Configuration
   Delete "$MPdir.Base\Configuration.exe"
   Delete "$MPdir.Base\Configuration.exe.config"
