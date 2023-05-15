@@ -18,7 +18,7 @@ call .\Build_BD_Java.bat
 
 echo.
 echo Building native components...
-call VS_Rebuild_Release_DirectShowFilters.bat
+call VS_Rebuild_Release_DirectShowFilters.bat %ARCH%
 
 echo.
 echo Building MediaPortal...
