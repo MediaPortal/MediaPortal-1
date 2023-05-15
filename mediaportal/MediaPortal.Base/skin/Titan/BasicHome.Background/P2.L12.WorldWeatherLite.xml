@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+        
+     <!--            :: Weather ::            -->
+        
+    <control Style="HomeBasicFanart">
+        <description>Wheather Selected Fanart</description>
+        <type>image</type>
+        <id>0</id>
+        <texture>weather\bg\#WorldWeather.TodayIconNumber.jpg</texture>
+        <visible>control.hasfocus(400)</visible>
+    </control> 
+
+</controls>
+</window>

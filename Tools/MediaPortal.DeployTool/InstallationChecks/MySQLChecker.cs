@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -416,7 +416,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       CheckResult result = default(CheckResult);
 
-      // check if the user does not want LAV installed
+      // check if the user does not want MySQL installed
       if (InstallationProperties.Instance["ConfigureMediaPortalMySQL"] == "No")
       {
         result.state = CheckState.SKIPPED;

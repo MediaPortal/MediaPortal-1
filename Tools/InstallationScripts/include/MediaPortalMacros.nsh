@@ -18,8 +18,8 @@
 */
 #endregion
 
-!if "${NSIS_VERSION}" != "v3.06.1"
-  !error "$\r$\n$\r$\nUnsupported NSIS version: ${NSIS_VERSION}. Please use NSIS v3.06.1, http://nsis.sourceforge.net$\r$\n$\r$\n"
+!if "${NSIS_VERSION}" != "v3.08"
+  !error "$\r$\n$\r$\nUnsupported NSIS version: ${NSIS_VERSION}. Please use NSIS v3.08, http://nsis.sourceforge.net$\r$\n$\r$\n"
 !endif
 
 !ifndef ___COMMON_MP_MACROS__NSH___

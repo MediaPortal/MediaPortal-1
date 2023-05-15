@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>  
+
+  <!--            :: RSS ::            -->
+
+  <control>
+    <description>RSS items</description>
+    <type>fadelabel</type>
+    <id>0</id>
+    <posX>70</posX>
+    <posY>1000</posY>
+    <width>1810</width>
+    <height>30</height>
+    <font>font11</font>
+    <textcolor>000000</textcolor>
+    <label>#infoservice.feed.titles</label>
+    <visible>![control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14)]+!Control.IsVisible(40904)</visible>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+    
+</controls>
+</window>

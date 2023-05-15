@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+    <control Style="HomeBasicFanart">
+	  <description>Music Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>[control.hasfocus(2) | Control.IsVisible(20001) | Control.IsVisible(20081)]</visible>
+      <texture>hover_my music.png</texture>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+	  <description>Radio Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(12002)</visible>
+      <texture>hover_my radio.png</texture>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+	  <description>Radio Time Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(12003)</visible>
+      <texture>hover_radiotime.png</texture>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+	  <description>Rockstar Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(12004)</visible>
+      <texture>hover_rockstar.png</texture>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+	  <description>mvCentral Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(12005)</visible>
+      <texture>hover_mvCentral.png</texture>
+    </control> 
+
+</controls>
+</window>

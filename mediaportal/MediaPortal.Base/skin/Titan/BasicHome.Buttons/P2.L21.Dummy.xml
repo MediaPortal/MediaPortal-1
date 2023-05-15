@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls> 
+
+   	<control Style="HomeButtonPictureDummy">
+ 	    <description>BasicHome DUMMY NoFocus</description>
+ 	    <type>image</type>
+ 	    <id>0</id>
+  		<posX>#L21left</posX>
+       	<posY>#L21top</posY>
+       	<animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(300)">conditional</animation>
+ 		<visible>control.IsVisible(10201)</visible>  
+ 	</control>
+
+  	<control Style="HomeButtonMenuDummy">
+    	<description>BasicHome DUMMY</description>
+      	<type>button</type>
+      	<id>300</id>
+		<posX>#L21lefttext</posX>
+	    <posY>#L21toptext</posY>
+        <textYOff>#textYoff</textYOff>
+		<onright>500</onright>
+		<onleft>#P2L21ToLeft</onleft>
+      	<onup>200</onup>
+		<ondown>212</ondown>  
+  	    <visible allowhiddenfocus="true">![control.isvisible(90209)|control.hasfocus(99999)]+Control.IsVisible(10201)</visible>
+	</control>
+</controls>
+</window>

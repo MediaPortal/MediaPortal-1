@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>  
+        
+  <!--            :: DUMMY ::            -->
+
+  <control>
+    <description>DUMMY Visible Focus Global</description>
+    <type>label</type>
+    <id>10001</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>control.isvisible(210) | control.isvisible(310) | control.isvisible(410) | control.isvisible(510) | control.isvisible(610) | control.isvisible(710)</visible>
+  </control>
+        
+  <control>
+    <description>DUMMY Visible Focus L1-1</description>
+    <type>label</type>
+    <id>210</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>control.HasFocus(2) | control.HasFocus(200) | control.HasFocus(250)</visible>
+  </control>
+        
+  <control>
+    <description>DUMMY Visible Focus L2-1</description>
+    <type>label</type>
+    <id>310</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>control.HasFocus(3) | control.HasFocus(300) | control.HasFocus(350)</visible>
+  </control>
+        
+  <control>
+    <description>DUMMY Visible Focus L1-2</description>
+    <type>label</type>
+    <id>410</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>control.HasFocus(4) | control.HasFocus(400) | control.HasFocus(450)</visible>
+  </control>
+        
+  <control>
+    <description>DUMMY Visible Focus L2-2</description>
+    <type>label</type>
+    <id>510</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>control.HasFocus(5) | control.HasFocus(500) | control.HasFocus(550)</visible>
+  </control>
+        
+  <control>
+    <description>DUMMY Visible Focus L1-3</description>
+    <type>label</type>
+    <id>610</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>control.HasFocus(6) | control.HasFocus(600) | control.HasFocus(650)</visible>
+  </control>
+        
+  <control>
+    <description>DUMMY Visible Focus L2-3</description>
+    <type>label</type>
+    <id>710</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>control.HasFocus(7) | control.HasFocus(700) | control.HasFocus(750)</visible>
+  </control>
+        
+  <control>
+    <description>DUMMY Visible Left Indicator</description>
+    <type>label</type>
+    <id>20901</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>control.isvisible(209) | control.isvisible(309)</visible>
+  </control>
+        
+  <control>
+    <description>DUMMY Visible Right Indicator</description>
+    <type>label</type>
+    <id>10902</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>control.isvisible(609) | control.isvisible(709)</visible>
+  </control>
+
+  <control>
+    <description>DUMMY Visible Titan Update</description>
+    <type>label</type>
+    <id>90909</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>string.equals(#Titan.ShowUpdateInd,true)</visible>
+  </control>
+
+  <control>
+    <description>DUMMY Visible WorldNews RSS Line</description>
+    <type>label</type>
+    <id>40904</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>plugin.isenabled(World News)+!string.equals(#WorldNews.NewsTicker,'')+!control.IsVisble(90909)</visible>
+  </control>
+
+  <control>
+    <description>DUMMY Visible InfoService RSS Line</description>
+    <type>label</type>
+    <id>30903</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled,true)+!control.IsVisble(90909)+!Control.IsVisible(40904)</visible>
+  </control>
+
+  <control>
+    <description>DUMMY Visible Exit Indicator</description>
+    <type>label</type>
+    <id>20902</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>!Control.IsVisible(30903)+!Control.IsVisible(40904)+!Control.IsVisble(90909)</visible>
+  </control>
+
+  <control>
+    <description>DUMMY Visible Down Indicator</description>
+    <type>label</type>
+    <id>10901</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>!Control.IsVisible(20902)+[control.isvisible(309) | control.isvisible(509) | control.isvisible(709)]</visible>
+  </control>
+
+  <control>
+    <description>DUMMY Basic Home Visible 1</description>
+    <type>label</type>
+    <id>10101</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <!--visible>control.HasFocus(2) | control.HasFocus(3) | control.HasFocus(4) | control.HasFocus(5) | control.HasFocus(6) | control.HasFocus(7) | control.isvisible(90109) | control.isvisible(19091) | control.HasFocus(99999)</visible-->
+    <visible>![control.isvisible(10201) | control.isvisible(10301)] | control.isvisible(19091)</visible>
+  </control>
+
+  <control>
+    <description>DUMMY Basic Home Visible 2</description>
+    <type>label</type>
+    <id>10201</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <!--visible>control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700) | control.isvisible(90209) | control.isvisible(19091) | control.isvisible(50092)</visible-->
+    <visible>control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700) | control.isvisible(90209) | control.isvisible(50092)</visible>
+  </control>
+
+  <control>
+    <description>DUMMY Basic Home Visible 3</description>
+    <type>label</type>
+    <id>10301</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <!--visible>control.HasFocus(250) | control.HasFocus(350) | control.HasFocus(450) | control.HasFocus(550) | control.HasFocus(650) | control.HasFocus(750) | control.isvisible(90309) | control.isvisible(19091)</visible-->
+    <visible>control.HasFocus(250) | control.HasFocus(350) | control.HasFocus(450) | control.HasFocus(550) | control.HasFocus(650) | control.HasFocus(750) | control.isvisible(90309)</visible>
+  </control>
+
+  <control>
+    <description>DUMMY Basic Home Visible TopBar</description>
+    <type>label</type>
+    <id>19091</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <!--visible>window.isactive(3004) | window.isactive(3005) | window.isvisible(3004) | window.isvisible(3005) | window.istopmost(3004) | window.istopmost(3005) | topbar.focused | topbar.visible</visible-->
+    <visible>plugin.isenabled(Topbar) + [window.isactive(3004) | window.isactive(3005) | window.isvisible(3004) | window.isvisible(3005) | window.istopmost(3004) | window.istopmost(3005) | topbar.focused | topbar.visible</visible>
+  </control>
+
+  <control>
+    <description>DUMMY Basic Home Exit Menu Visible</description>
+    <type>label</type>
+    <id>90009</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>control.isvisible(90109) | control.isvisible(90209) | control.isvisible(90309)</visible>         
+  </control>
+
+  <control>
+    <description>DUMMY Basic Home Exit Menu Visible Page 1</description>
+    <type>label</type>
+    <id>90109</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>control.hasfocus(12) | control.hasfocus(13) | control.hasfocus(14)</visible>         
+  </control>
+
+  <control>
+    <description>DUMMY Basic Home Exit Menu Visible Page 2</description>
+    <type>label</type>
+    <id>90209</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>control.hasfocus(212) | control.hasfocus(213) | control.hasfocus(214)</visible>         
+  </control>
+
+  <control>
+    <description>DUMMY Basic Home Exit Menu Visible Page 3</description>
+    <type>label</type>
+    <id>90309</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+    <visible>control.hasfocus(312) | control.hasfocus(313) | control.hasfocus(314)</visible>         
+  </control>
+
+</controls>
+</window>

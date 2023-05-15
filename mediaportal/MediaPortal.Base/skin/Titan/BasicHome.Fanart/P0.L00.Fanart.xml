@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+  <control>
+    <description>DUMMY CONTROLL FOR RANDOM FANART AVAILABILITY CONDITION</description>
+    <type>label</type>
+    <id>91919299</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+  </control>
+
+  <control>
+    <description>DUMMY CONTROL FOR RANDOM FANART 1 VISIBILITY CONDITION</description>
+    <type>label</type>
+    <id>91919297</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+  </control>
+
+  <control>
+    <description>DUMMY CONTROL FOR RANDOM FANART 2 VISIBILITY CONDITION</description>
+    <type>label</type>
+    <id>91919298</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+  </control>
+
+  <control>
+    <description>DUMMY CONTROL FOR WEATHER FANART VISIBILITY CONDITION</description>
+    <type>label</type>
+    <id>91919283</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+  </control>
+
+  <control>
+    <description>DUMMY CONTROL FOR WEATHER FANART 1 VISIBILITY CONDITION</description>
+    <type>label</type>
+    <id>91919281</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+  </control>
+
+  <control>
+    <description>DUMMY CONTROL FOR WEATHER FANART 2 VISIBILITY CONDITION</description>
+    <type>label</type>
+    <id>91919282</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1</width>
+  </control>
+
+</controls>
+</window>

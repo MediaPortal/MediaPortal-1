@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+	 <!--            :: TVSERIES ::            -->
+		
+    <control Style="HomeBasicFanart">
+	  <description>TVSeries Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>[control.hasfocus(7) | control.IsVisible(70001) | Control.IsVisible(70081)] + control.isvisible(91919297)</visible>
+      <texture>#fanarthandler.tvseries.backdrop1.any</texture>
+    </control> 
+		
+    <control Style="HomeBasicFanart">
+	  <description>TVSeries Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>[control.hasfocus(7) | control.IsVisible(70001) | Control.IsVisible(70081)] + control.isvisible(91919298)</visible>
+      <texture>#fanarthandler.tvseries.backdrop2.any</texture>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+      <description>TVSeries Latests Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(91919994)</visible>
+      <texture>#latestMediaHandler.tvseries.latest1.fanart</texture>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+      <description>TVSeries Latests Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(91919995)</visible>
+      <texture>#latestMediaHandler.tvseries.latest2.fanart</texture>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+      <description>TVSeries Latests Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(91919996)</visible>
+      <texture>#latestMediaHandler.tvseries.latest3.fanart</texture>
+    </control> 
+
+</controls>
+</window>

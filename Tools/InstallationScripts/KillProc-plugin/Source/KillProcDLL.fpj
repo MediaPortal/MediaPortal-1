@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+	<Files>
+		<File Name="KillProcDLL.c"/>
+		<File Name="exdll.h"/>
+		<File Name="pluginapi.c"/>
+		<File Name="pluginapi.h"/>
+		<File Name="nsis_tchar.h"/>
+		<File Name="api.h"/>
+	</Files>
+	<ConfigurationIndex Value="0"/>
+	<ConfigurationName Value="Win32 - Unicode"/>
+	<Libs Value="-shared -Wl,--kill-at -m32"/>
+	<Flags Value="-DUNICODE -D_UNICODE -m32"/>
+	<Target Value="../bin/x86-unicode/KillProcDLL.dll"/>
+	<CommandLine Value=""/>
+	<CompilerOptions Value="-Wall -s -O2"/>
+	<DeleteObjectsBefore Value="Yes"/>
+	<DeleteObjectsAfter Value="Yes"/>
+	<DeleteMakefileAfter Value="No"/>
+	<DeleteResourcesAfter Value="Yes"/>
+	<EnableTheme Value="No"/>
+	<RequiresAdmin Value="No"/>
+	<CompilerType Value="C"/>
+	<AppType Value="DLL"/>
+	<Configurations>
+		<Configuration>
+			<ConfigurationName Value="Win64 - Unicode"/>
+			<Libs Value="-shared -Wl,--kill-at -m64"/>
+			<Flags Value="-DUNICODE -D_UNICODE -m64"/>
+			<Target Value="../bin/x64-unicode/KillProcDLL.dll"/>
+			<CommandLine Value=""/>
+			<CompilerOptions Value="-Wall -s -O2"/>
+			<DeleteObjectsBefore Value="Yes"/>
+			<DeleteObjectsAfter Value="Yes"/>
+			<DeleteMakefileAfter Value="No"/>
+			<DeleteResourcesAfter Value="Yes"/>
+			<EnableTheme Value="No"/>
+			<RequiresAdmin Value="No"/>
+			<CompilerType Value="C"/>
+			<AppType Value="DLL"/>
+		</Configuration>
+		<Configuration>
+			<ConfigurationName Value="Win32 - ANSI"/>
+			<Libs Value="-shared -Wl,--kill-at -m32"/>
+			<Flags Value="-m32"/>
+			<Target Value="../bin/x86-ansi/KillProcDLL.dll"/>
+			<CommandLine Value=""/>
+			<CompilerOptions Value="-Wall -s -O2"/>
+			<DeleteObjectsBefore Value="Yes"/>
+			<DeleteObjectsAfter Value="Yes"/>
+			<DeleteMakefileAfter Value="No"/>
+			<DeleteResourcesAfter Value="Yes"/>
+			<EnableTheme Value="No"/>
+			<RequiresAdmin Value="No"/>
+			<CompilerType Value="C"/>
+			<AppType Value="DLL"/>
+		</Configuration>
+		<Configuration>
+			<ConfigurationName Value="Win64 - ANSI"/>
+			<Libs Value="-shared -Wl,--kill-at -m64"/>
+			<Flags Value="-m64"/>
+			<Target Value="../bin/x64-ansi/KillProcDLL.dll"/>
+			<CommandLine Value=""/>
+			<CompilerOptions Value="-Wall -s -O2"/>
+			<DeleteObjectsBefore Value="Yes"/>
+			<DeleteObjectsAfter Value="Yes"/>
+			<DeleteMakefileAfter Value="No"/>
+			<DeleteResourcesAfter Value="Yes"/>
+			<EnableTheme Value="No"/>
+			<RequiresAdmin Value="No"/>
+			<CompilerType Value="C"/>
+			<AppType Value="DLL"/>
+		</Configuration>
+	</Configurations>
+</Project>

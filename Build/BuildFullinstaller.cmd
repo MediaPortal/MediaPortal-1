@@ -1,7 +1,7 @@
 @ECHO OFF
 
 ECHO.
-ECHO Building Installer... %2
+ECHO Prepare Environment... %2
 
 SET progpath=%ProgramFiles%
 IF NOT "%ProgramFiles(x86)%".=="". SET progpath=%ProgramFiles(x86)%
@@ -23,5 +23,8 @@ IF NOT "%2"=="" (
 ) ELSE (
   SET ARCH=
 )
+
+ECHO.
+ECHO Building Installer...
 
 "%progpath%\NSIS\makensis.exe" %ARCH% "%GIT_ROOT%\Tools\InstallationScripts\DeployToolUnPacker-x64.nsi" %OUTF%

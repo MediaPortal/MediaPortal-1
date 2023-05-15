@@ -119,7 +119,7 @@ namespace MediaPortal.DeployTool
       XmlDocument doc = new XmlDocument();
       HTTPDownload dlg = new HTTPDownload();
       string XmlFile = Application.StartupPath + "\\ApplicationLocations.xml";
-      const string XmlUrl = "http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml";
+      const string XmlUrl = "https://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml";
 
       //HTTP update of the xml file with the application download URLs
       if (!File.Exists(XmlFile))
@@ -223,6 +223,19 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
+    #region Hyperlink Helper
+
+    internal static void OpenURL(string url)
+    {
+      try
+      {
+        System.Diagnostics.Process.Start(url);
+      }
+      catch (System.Exception) { }
+    }
+
+    #endregion
+
     #region RegistryHelper
 
     [DllImport("advapi32.dll", CharSet = CharSet.Unicode, EntryPoint = "RegOpenKeyEx")]
@@ -254,15 +267,15 @@ namespace MediaPortal.DeployTool
 
       eRegistryRights Rights = eRegistryRights.ReadKey;
       if (pWriteable)
+      {
         Rights = eRegistryRights.WriteKey;
+      }
 
-      System.IntPtr SubKeyHandle;
-      System.Int32 Result = RegOpenKeyEx(GetRegistryKeyHandle(pParentKey), pSubKeyName, 0,
-                                        (int)Rights | (int)pOptions, out SubKeyHandle);
+      int Result = RegOpenKeyEx(GetRegistryKeyHandle(pParentKey), pSubKeyName, 0,
+                                (int)Rights | (int)pOptions, out IntPtr SubKeyHandle);
       if (Result != 0)
       {
-        System.ComponentModel.Win32Exception W32ex =
-            new System.ComponentModel.Win32Exception();
+        System.ComponentModel.Win32Exception W32ex = new System.ComponentModel.Win32Exception();
         throw new System.Exception("OpenSubKey: Exception encountered opening key",
             W32ex);
       }
@@ -342,9 +355,8 @@ namespace MediaPortal.DeployTool
 
     public static string CheckUninstallString(string clsid, bool delete)
     {
-      RegistryKey key = null;
       string keyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid;
-      key = Registry.LocalMachine.OpenSubKey(keyPath);
+      RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath);
       if (key == null)
       {
         try
@@ -377,9 +389,8 @@ namespace MediaPortal.DeployTool
 
     public static string CheckUninstallString(string clsid, string section)
     {
-      RegistryKey key = null;
       string keyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid;
-      key = Registry.LocalMachine.OpenSubKey(keyPath);
+      RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath);
       if (key == null)
       {
         try
@@ -408,13 +419,15 @@ namespace MediaPortal.DeployTool
     public static CheckResult CheckNSISUninstallString(string RegistryPath, string MementoSection)
     {
       RegistryKey key = null;
-      CheckResult result = new CheckResult();
-      result.state = CheckState.NOT_INSTALLED;
+      CheckResult result = new CheckResult
+      {
+        state = CheckState.NOT_INSTALLED
+      };
 
       try
       {
-        key = OpenSubKey(Registry.LocalMachine, ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath), false,
-            eRegWow64Options.KEY_WOW64_32KEY);
+        key = OpenSubKey(Registry.LocalMachine, ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath),
+                         false, eRegWow64Options.KEY_WOW64_32KEY);
       }
       catch
       {
@@ -423,8 +436,7 @@ namespace MediaPortal.DeployTool
       }
       if (key == null)
       {
-        key =
-          Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath);
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath);
       }
       if (key != null)
       {
@@ -437,8 +449,8 @@ namespace MediaPortal.DeployTool
         Version ver = new Version(major, minor, revision);
 
 #if DEBUG
-        MessageBox.Show("Registry version = <" + ver + ">, IsUpdatable= " + IsPackageUpdatabled(ver) + ", IsInstalled=" + _IsInstalled,
-          "Debug information: " +  MementoSection, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        MessageBox.Show("Registry version = <" + ver + ">, IsUpdatable= " + IsPackageUpdatabled(ver) + ", IsInstalled=" + _IsInstalled + " [" + RegistryPath + "]",
+                        "Debug information: " +  MementoSection, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 #endif
 
         if (_IsInstalled == 1)
@@ -631,8 +643,7 @@ namespace MediaPortal.DeployTool
 
       Process p = Process.GetCurrentProcess();
       IntPtr handle = p.Handle;
-      bool isWow64;
-      bool success = IsWow64Process(handle, out isWow64);
+      bool success = IsWow64Process(handle, out bool isWow64);
       if (!success)
       {
         throw new System.ComponentModel.Win32Exception();
@@ -718,7 +729,7 @@ namespace MediaPortal.DeployTool
         case "max":
           major = 1;
           minor = 30;
-          revision = 000;
+          revision = 100;
           break;
       }
       Version ver = new Version(major, minor, revision);
@@ -738,8 +749,8 @@ namespace MediaPortal.DeployTool
     public static Version GetCurrentPackageVersion()
     {
       int major = 1;
-      int minor = 30;
-      int revision = 100;
+      int minor = 31;
+      int revision = 000;
 
       Version ver = new Version(major, minor, revision);
       return ver;
@@ -812,7 +823,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.31 Pre Release";
+      return "1.31 Phoenix";
     }
 
     /// <summary>

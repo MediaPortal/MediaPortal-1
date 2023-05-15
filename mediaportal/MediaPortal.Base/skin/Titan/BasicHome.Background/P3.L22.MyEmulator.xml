@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+        
+     <!--            :: MyEmulator ::            -->
+        
+    <control Style="HomeBasicFanart">
+        <description>MyEmulator Selected Fanart</description>
+        <type>image</type>
+        <id>0</id>
+        <texture>hover_MyEmulator.png</texture>
+        <visible>control.hasfocus(550)</visible>
+    </control> 
+
+</controls>
+</window>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+  <!--            :: MUSIC ::            -->
+		
+  <control Style="HomeBasicFanart">
+    <description>Music Selected Fanart</description>
+    <type>image</type>
+    <id>0</id>
+    <visible>[control.hasfocus(2) | Control.IsVisible(20001) | Control.IsVisible(20081)] + control.isvisible(91919297)</visible>
+    <texture>#fanarthandler.music.scraper.backdrop1.any</texture>
+  </control> 
+
+  <control Style="HomeBasicFanart">
+    <description>Music Selected Fanart</description>
+    <type>image</type>
+    <id>0</id>
+    <visible>[control.hasfocus(2) | Control.IsVisible(20001) | Control.IsVisible(20081)] + control.isvisible(91919298)</visible>
+    <texture>#fanarthandler.music.scraper.backdrop2.any</texture>
+  </control> 
+
+  <control Style="HomeBasicFanart">
+    <description>Music Latests Fanart</description>
+    <type>image</type>
+    <id>0</id>
+    <visible>control.hasfocus(91919997)</visible>
+    <texture>#latestMediaHandler.music.latest1.fanart</texture>
+  </control> 
+
+  <control Style="HomeBasicFanart">
+    <description>Music Latests Fanart</description>
+    <type>image</type>
+    <id>0</id>
+    <visible>control.hasfocus(91919998)</visible>
+    <texture>#latestMediaHandler.music.latest2.fanart</texture>
+  </control> 
+
+  <control Style="HomeBasicFanart">
+    <description>Music Latests Fanart</description>
+    <type>image</type>
+    <id>0</id>
+    <visible>control.hasfocus(91919999)</visible>
+    <texture>#latestMediaHandler.music.latest3.fanart</texture>
+  </control> 
+
+  <control Style="HomeBasicFanart">
+    <description>Radio Selected Fanart</description>
+    <type>image</type>
+    <id>0</id>
+    <visible>control.hasfocus(12002)</visible>
+    <texture>hover_my radio.png</texture>
+  </control> 
+
+  <control Style="HomeBasicFanart">
+    <description>Radio Time Selected Fanart</description>
+    <type>image</type>
+    <id>0</id>
+    <visible>control.hasfocus(12003)</visible>
+    <texture>hover_radiotime.png</texture>
+  </control> 
+
+  <control Style="HomeBasicFanart">
+    <description>Rockstar Selected Fanart</description>
+    <type>image</type>
+    <id>0</id>
+    <visible>control.hasfocus(12004)</visible>
+    <texture>hover_rockstar.png</texture>
+  </control> 
+
+  <control Style="HomeBasicFanart">
+    <description>mvCentral Selected Fanart</description>
+    <type>image</type>
+    <id>0</id>
+    <visible>control.hasfocus(12005)</visible>
+    <texture>hover_mvCentral.png</texture>
+  </control> 
+
+</controls>
+</window>

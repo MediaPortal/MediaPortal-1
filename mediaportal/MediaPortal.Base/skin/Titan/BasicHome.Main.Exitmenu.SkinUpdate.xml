@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+
+    <control>
+      <description>DEFAULT BACKGROUND DIMMED</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>background_dimmed.png</texture>
+      <animation effect="fade" time="400" delay="250">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+	  <visible>control.isvisible(90009)|control.hasfocus(99999)</visible>
+    </control>
+	
+    <control>
+      <type>group</type>
+      <description>Exit menu Home 1</description>
+      <dimColor>0xffffffff</dimColor>
+      <visible>control.isvisible(90109)</visible>		
+      <animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="300" delay="250">Visible</animation>
+      <animation effect="fade" time="450" delay="250">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation> 	
+
+      <control>
+        <description>BACKGROUND</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>0</posX>
+        <posY>486</posY>
+        <width>1920</width>
+        <height>233</height>
+        <texture>basichome_exit_menu_bg.png</texture>
+      </control>                          
+
+      <control>
+		<description>Shutdown Button</description>
+		<type>button</type>
+		<id>13</id>
+		<posX>937</posX>
+		<posY>577</posY>
+		<width>46</width>
+		<height>50</height>
+		<textureNoFocus>shutdown_button_nofocus.png</textureNoFocus>
+		<textureFocus>shutdown_button_focus.png</textureFocus>
+		<action>99</action>
+		<onright>12</onright>
+		<onleft>14</onleft>
+		<onup>4</onup>
+		<ondown>99999</ondown>
+		<label>1030</label>
+		<textXOff>-2000</textXOff>
+      	<animation effect="zoom"  start="100,100" end="110,110" time="200">focus</animation>
+      	<animation effect="zoom" start="110,110" end="100,100" time="150">unfocus</animation>  
+      </control>
+
+      <control>
+		<description>Restart Button</description>
+   		<type>button</type>
+   		<id>14</id>
+   		<posX>780</posX>
+   		<posY>577</posY>
+   		<width>46</width>
+   		<height>50</height>
+   		<textureNoFocus>restart_button_nofocus.png</textureNoFocus>
+   		<textureFocus>restart_button_focus.png</textureFocus>
+   		<action>98</action>
+   		<onright>13</onright>
+   		<onleft>12</onleft>
+   		<onup>2</onup>
+   		<ondown>99999</ondown>
+   		<label>1031</label>
+   		<textXOff>-2000</textXOff>
+      	<animation effect="zoom"  start="100,100" end="110,110" time="200">focus</animation>
+      	<animation effect="zoom" start="110,110" end="100,100" time="150">unfocus</animation>  
+      </control>      			
+
+      <control>
+    	<description>Exit Button</description>
+    	<type>button</type>
+    	<id>12</id>
+    	<posX>1090</posX>
+    	<posY>578</posY>
+    	<width>46</width>
+    	<height>50</height>
+    	<textureNoFocus>exit_button_nofocus.png</textureNoFocus>
+    	<textureFocus>exit_button_focus.png</textureFocus>
+    	<action>97</action>
+    	<onright>14</onright>
+    	<onleft>13</onleft>
+    	<onup>6</onup>
+    	<ondown>99999</ondown>
+    	<label>Exit</label>
+      	<animation effect="zoom"  start="100,100" end="110,110" time="200">focus</animation>
+      	<animation effect="zoom" start="110,110" end="100,100" time="150">unfocus</animation>
+      </control>
+
+    </control>
+  
+    <control>
+      <type>group</type>
+      <description>Exit menu Home 2</description>
+      <dimColor>0xffffffff</dimColor>
+      <visible>control.isvisible(90209)</visible>		
+      <animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="300" delay="250">Visible</animation>
+      <animation effect="fade" time="450" delay="250">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation> 	
+
+      <control>
+        <description>BACKGROUND</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>0</posX>
+        <posY>486</posY>
+        <width>1920</width>
+        <height>233</height>
+        <texture>basichome_exit_menu_bg.png</texture>
+      </control>                          
+
+      <control>
+		<description>Shutdown Button</description>
+		<type>button</type>
+		<id>213</id>
+		<posX>937</posX>
+		<posY>577</posY>
+		<width>46</width>
+		<height>50</height>
+		<textureNoFocus>shutdown_button_nofocus.png</textureNoFocus>
+		<textureFocus>shutdown_button_focus.png</textureFocus>
+		<action>99</action>
+		<onright>212</onright>
+		<onleft>214</onleft>
+		<onup>400</onup>
+		<ondown>99999</ondown>
+		<label>1030</label>
+		<textXOff>-2000</textXOff>
+      	<animation effect="zoom"  start="100,100" end="110,110" time="200">focus</animation>
+      	<animation effect="zoom" start="110,110" end="100,100" time="150">unfocus</animation>  
+      </control>
+
+      <control>
+		<description>Restart Button</description>
+   		<type>button</type>
+   		<id>214</id>
+   		<posX>780</posX>
+   		<posY>577</posY>
+   		<width>46</width>
+   		<height>50</height>
+   		<textureNoFocus>restart_button_nofocus.png</textureNoFocus>
+   		<textureFocus>restart_button_focus.png</textureFocus>
+   		<action>98</action>
+   		<onright>213</onright>
+   		<onleft>212</onleft>
+   		<onup>200</onup>
+   		<ondown>99999</ondown>
+   		<label>1031</label>
+   		<textXOff>-2000</textXOff>
+      	<animation effect="zoom"  start="100,100" end="110,110" time="200">focus</animation>
+      	<animation effect="zoom" start="110,110" end="100,100" time="150">unfocus</animation>  
+      </control>      			
+
+      <control>
+    	<description>Exit Button</description>
+    	<type>button</type>
+    	<id>212</id>
+    	<posX>1090</posX>
+    	<posY>578</posY>
+    	<width>46</width>
+    	<height>50</height>
+    	<textureNoFocus>exit_button_nofocus.png</textureNoFocus>
+    	<textureFocus>exit_button_focus.png</textureFocus>
+    	<action>97</action>
+    	<onright>214</onright>
+    	<onleft>213</onleft>
+    	<onup>600</onup>
+    	<ondown>99999</ondown>
+    	<label>Exit</label>
+      	<animation effect="zoom"  start="100,100" end="110,110" time="200">focus</animation>
+      	<animation effect="zoom" start="110,110" end="100,100" time="150">unfocus</animation>
+      </control>
+
+    </control>
+
+    <control>
+      <type>group</type>
+      <description>Exit menu Home 3</description>
+      <dimColor>0xffffffff</dimColor>
+      <visible>control.isvisible(90309)</visible>		
+      <animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="300" delay="250">Visible</animation>
+      <animation effect="fade" time="450" delay="250">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation> 	
+
+      <control>
+        <description>BACKGROUND</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>0</posX>
+        <posY>486</posY>
+        <width>1920</width>
+        <height>233</height>
+        <texture>basichome_exit_menu_bg.png</texture>
+      </control>                          
+
+      <control>
+		<description>Shutdown Button</description>
+		<type>button</type>
+		<id>313</id>
+		<posX>937</posX>
+		<posY>577</posY>
+		<width>46</width>
+		<height>50</height>
+		<textureNoFocus>shutdown_button_nofocus.png</textureNoFocus>
+		<textureFocus>shutdown_button_focus.png</textureFocus>
+		<action>99</action>
+		<onright>312</onright>
+		<onleft>314</onleft>
+		<onup>450</onup>
+		<ondown>99999</ondown>
+		<label>1030</label>
+		<textXOff>-2000</textXOff>
+      	<animation effect="zoom"  start="100,100" end="110,110" time="200">focus</animation>
+      	<animation effect="zoom" start="110,110" end="100,100" time="150">unfocus</animation>  
+      </control>
+
+      <control>
+		<description>Restart Button</description>
+   		<type>button</type>
+   		<id>314</id>
+   		<posX>780</posX>
+   		<posY>577</posY>
+   		<width>46</width>
+   		<height>50</height>
+   		<textureNoFocus>restart_button_nofocus.png</textureNoFocus>
+   		<textureFocus>restart_button_focus.png</textureFocus>
+   		<action>98</action>
+   		<onright>313</onright>
+   		<onleft>312</onleft>
+   		<onup>250</onup>
+   		<ondown>99999</ondown>
+   		<label>1031</label>
+   		<textXOff>-2000</textXOff>
+      	<animation effect="zoom"  start="100,100" end="110,110" time="200">focus</animation>
+      	<animation effect="zoom" start="110,110" end="100,100" time="150">unfocus</animation>  
+      </control>      			
+
+      <control>
+    	<description>Exit Button</description>
+    	<type>button</type>
+    	<id>312</id>
+    	<posX>1090</posX>
+    	<posY>578</posY>
+    	<width>46</width>
+    	<height>50</height>
+    	<textureNoFocus>exit_button_nofocus.png</textureNoFocus>
+    	<textureFocus>exit_button_focus.png</textureFocus>
+    	<action>97</action>
+    	<onright>314</onright>
+    	<onleft>313</onleft>
+    	<onup>650</onup>
+    	<ondown>99999</ondown>
+    	<label>Exit</label>
+      	<animation effect="zoom"  start="100,100" end="110,110" time="200">focus</animation>
+      	<animation effect="zoom" start="110,110" end="100,100" time="150">unfocus</animation>
+      </control>
+
+    </control>
+
+    <control>
+      <description>Shutdown label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>132</posX>
+      <posY>575</posY>
+      <width>620</width>
+      <font>TitanLight20</font>
+      <label>1030</label>
+      <visible>[Control.HasFocus(13) + Control.IsVisible(13)] | [Control.HasFocus(213) + Control.IsVisible(213)] | [Control.HasFocus(313) + Control.IsVisible(313)]</visible>
+      <animation effect="fade" time="450" delay="250">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation> 
+    </control>
+    
+    <control>
+      <description>Restart label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>132</posX>
+      <posY>575</posY>
+      <width>620</width>
+      <font>TitanLight20</font>
+      <label>1031</label>
+      <visible>[Control.HasFocus(14) + Control.IsVisible(14)] | [Control.HasFocus(214) + Control.IsVisible(214)] | [Control.HasFocus(314) + Control.IsVisible(314)]</visible>
+      <animation effect="fade" time="450" delay="250">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation> 
+    </control>
+    
+    <control>
+      <description>Exit label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>132</posX>
+      <posY>575</posY>
+      <width>620</width>
+      <font>TitanLight20</font>
+      <label>4517</label>
+      <visible>[Control.HasFocus(12) + Control.IsVisible(12)] | [Control.HasFocus(212) + Control.IsVisible(212)] | [Control.HasFocus(312) + Control.IsVisible(312)]</visible>
+      <animation effect="fade" time="450" delay="250">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation> 
+    </control>
+
+    <!-- Skin Update -->
+
+    <control>
+      <description>Update Indicator</description>
+      <type>button</type>
+      <id>99999</id>
+      <label>-</label>
+      <textureFocus>update_notification_focus.png</textureFocus>
+      <textureNoFocus>update_notification_nofocus.png</textureNoFocus>
+      <posX>944</posX>
+      <posY>998</posY>
+      <width>34</width>
+      <height>34</height>
+      <hyperlink>165104</hyperlink>
+      <onright>99999</onright>
+      <onleft>99999</onleft>
+      <onup>4</onup>
+      <ondown>5</ondown>
+      <visible>control.IsVisible(90909)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+	
+	<control>
+      <type>label</type>
+      <id>4201</id>
+      <posX>920</posX>
+      <posY>998</posY>
+      <width>500</width>
+      <label>#Titan.SkinUpdateNF</label>
+      <textcolor>ff000000</textcolor>
+      <font>TitanLight12</font>
+      <align>right</align>
+      <visible>control.IsVisible(90909)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+   </control>
+
+</controls>
+</window>

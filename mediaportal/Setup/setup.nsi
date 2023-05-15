@@ -128,6 +128,7 @@ Var frominstall
 Var MPTray_Running
 
 Var PREVIOUS_SKINSETTINGS_TITAN_CONFIG
+Var PREVIOUS_SKINSETTINGS_TITAN_BASICHOME
 Var PREVIOUS_SKINSETTINGS_ARES_CONFIG
 Var PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG
 Var PREVIOUS_KEYMAPSETTINGS
@@ -150,8 +151,7 @@ Var PREVIOUS_KEYMAPSETTINGS
 !include "${git_InstallScripts}\include\ProcessMacros.nsh"
 !include "${git_InstallScripts}\include\WinVerEx.nsh"
 !include "${git_InstallScripts}\include\CPUDesc.nsh"
-!include "${git_InstallScripts}\include\FontReg.nsh"
-!include "${git_InstallScripts}\include\FontName.nsh"
+!include "${git_InstallScripts}\include\FontInstall.nsh"
 
 !include "${git_InstallScripts}\include\x64.nsh"
 
@@ -159,7 +159,6 @@ Var PREVIOUS_KEYMAPSETTINGS
 !include "${git_InstallScripts}\pages\AddRemovePage.nsh"
 !endif
 !include "${git_InstallScripts}\pages\UninstallModePage.nsh"
-
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
@@ -258,9 +257,8 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2020 ${PRODUCT_PUBLISHER}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright Â© 2005-2023 ${PRODUCT_PUBLISHER}"
 ShowUninstDetails show
-
 
 #---------------------------------------------------------------------------
 # USEFUL MACROS
@@ -310,19 +308,6 @@ ShowUninstDetails show
   ${EndIf}
 !macroend
 
-!macro un.Fonts
-  ; used for Default and Titan Skin Font
-  StrCpy $FONT_DIR $FONTS
-  !insertmacro RemoveTTFFont "Lato-Medium.ttf"
-  !insertmacro RemoveTTFFont "Lato-Light.ttf"
-  !insertmacro RemoveTTFFont "TitanSmall.ttf"
-  !insertmacro RemoveTTFFont "Titan.ttf"
-  !insertmacro RemoveTTFFont "TitanLight.ttf"
-  !insertmacro RemoveTTFFont "TitanMedium.ttf"
-  !insertmacro RemoveTTFFont "NotoSans-Regular.ttf"
-  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
-!macroend
-
 !macro BackupSkinSettings
   ${If} ${FileExists} "${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml"
     GetTempFileName $PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG
@@ -334,6 +319,12 @@ ShowUninstDetails show
     GetTempFileName $PREVIOUS_SKINSETTINGS_TITAN_CONFIG
     ${LOG_TEXT} "INFO" "Backup SkinSettings.xml for Titan (${COMMON_APPDATA}\skin\Titan\SkinSettings.xml)"
     CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml" "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG"
+  ${EndIf}
+
+  ${If} ${FileExists} "${COMMON_APPDATA}\skin\Titan\BasicHome.Blank.xml"
+    GetTempFileName $PREVIOUS_SKINSETTINGS_TITAN_BASICHOME
+    ${LOG_TEXT} "INFO" "Backup BasicHome.xml for Titan (${COMMON_APPDATA}\skin\Titan\BasicHome.xml)"
+    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\skin\Titan\BasicHome.xml" "$PREVIOUS_SKINSETTINGS_TITAN_BASICHOME"
   ${EndIf}
 
   ${If} ${FileExists} "${COMMON_APPDATA}\skin\Ares\SkinSettings.xml"
@@ -352,6 +343,11 @@ ShowUninstDetails show
   ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG"
     ${LOG_TEXT} "INFO" "Restore SkinSettings.xml for Titan (${COMMON_APPDATA}\skin\Titan\SkinSettings.xml)"
     CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG" "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml" 
+  ${EndIf}  
+
+  ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_TITAN_BASICHOME"
+    ${LOG_TEXT} "INFO" "Restore BasicHome.xml for Titan (${COMMON_APPDATA}\skin\Titan\BasicHome.xml)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_TITAN_BASICHOME" "${COMMON_APPDATA}\skin\Titan\BasicHome.xml" 
   ${EndIf}  
 
   ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_ARES_CONFIG"
@@ -373,6 +369,51 @@ ShowUninstDetails show
     ${LOG_TEXT} "INFO" "Restore keymap.xml (${COMMON_APPDATA}\keymap.xml)"
     CopyFiles /SILENT /FILESONLY "$PREVIOUS_KEYMAPSETTINGS" "${COMMON_APPDATA}\keymap.xml" 
   ${EndIf}
+!macroend
+
+!macro InstallTTFFont FontFile
+  ${GetFileName} "${FontFile}" $R0
+
+  InitPluginsDir
+  File "/oname=$PluginsDir\$R0" "${FontFile}"
+  FontInfo::GetFontName "$PluginsDir\$R0"
+  ${If} $0 != ""
+    !insertmacro FontInstallTTF "${FontFile}" "$R0" $0
+    ${IfNotThen} ${Errors} ${|} IntOp $1 $1 + 1 ${|}
+  ${EndIf}
+   
+  ${If} $1 <> 0
+    DetailPrint "Successfully installed $1 font(s)..."
+    SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000
+  ${EndIf}
+!macroend
+
+!macro RemoveTTFFont FontFile
+
+  FontInfo::GetFontName "$Fonts\${FontFile}"
+  ${If} $0 != ""
+    !insertmacro FontUninstallTTF "${FontFile}" $0
+    ${IfNotThen} ${Errors} ${|} IntOp $1 $1 + 1 ${|}
+  ${EndIf}
+   
+  ${If} $1 <> 0
+    DetailPrint "Successfully uninstalled $1 font(s)..."
+    SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000
+  ${EndIf}
+!macroend
+
+!macro un.Fonts
+  ; used for Default and Titan Skin Font
+
+  !insertmacro RemoveTTFFont "Lato-Medium.ttf"
+  !insertmacro RemoveTTFFont "Lato-Light.ttf"
+  !insertmacro RemoveTTFFont "TitanSmall.ttf"
+  !insertmacro RemoveTTFFont "Titan.ttf"
+  !insertmacro RemoveTTFFont "TitanLight.ttf"
+  !insertmacro RemoveTTFFont "TitanMedium.ttf"
+  !insertmacro RemoveTTFFont "NotoSans-Regular.ttf"
+
+  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
 !macroend
 
 Function RunUninstaller
@@ -628,7 +669,7 @@ Section "MediaPortal core files (required)" SecCore
   !endif
   ; NuGet binaries EXIF
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MetadataExtractor.2.7.2\lib\net35\MetadataExtractor.dll"
+  File "${git_ROOT}\Packages\MetadataExtractor.2.8.0\lib\net35\MetadataExtractor.dll"
   File "${git_ROOT}\Packages\XmpCore.6.1.10.1\lib\net35\XmpCore.dll"
   ; NuGet binaries UnidecodeSharp
   SetOutPath "$MPdir.Base\"
@@ -678,7 +719,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\MediaPortal.TagLib.2.3.1\lib\net40\TagLibSharp.dll"
   ; SharpLibHid
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibHid.1.4.4\lib\net40\SharpLibHid.dll"
+  File "${git_ROOT}\Packages\SharpLibHid.1.5.1\lib\net40\SharpLib.Hid.dll"
   ; SharpLibWin32
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\SharpLibWin32.0.2.1\lib\net20\SharpLibWin32.dll"
@@ -806,23 +847,13 @@ Section "MediaPortal core files (required)" SecCore
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeLight.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HELN.TTF"
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HindVadodara-SemiBold.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\MediaPortalDefault.ttf"
 
   ; used for Default and Titan Skin Font
-  StrCpy $FONT_DIR $FONTS
-
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeLight.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HELN.TTF"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HindVadodara-SemiBold.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\MediaPortalDefault.ttf"
 
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
   
@@ -925,7 +956,7 @@ SectionEnd
   Delete "$MPdir.Base\MediaPortal.Support.dll"
   ; Databases
   Delete "$MPdir.Base\Databases.dll"
-  Delete "$MPdir.Base\\HtmlAgilityPack.dll"
+  Delete "$MPdir.Base\HtmlAgilityPack.dll"
   ; MusicShareWatcher
   Delete "$MPdir.Base\MusicShareWatcher.exe"
   Delete "$MPdir.Base\MusicShareWatcherHelper.dll"
@@ -1126,6 +1157,15 @@ Section -Post
     !endif
   ${EndIf}
 
+  ; Titan Editor
+
+  ; remove Titan Editor shortcut
+  Delete "$DESKTOP\TitanEditor.lnk"
+  ${If} $noDesktopSC != 1
+    ; create Titan Editor shortcuts
+    CreateShortCut "$DESKTOP\TitanEditor.lnk" "$MPdir.Skin\Titan\BasicHome.Editor\TitanEditor.exe" "" "$MPdir.Skin\Titan\BasicHome.Editor\TitanEditor.exe" 0 "" "" "TitanEditor"
+  ${EndIf}
+
   ; create startmenu shortcuts
   ;${If} $noStartMenuSC != 1
       ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
@@ -1180,8 +1220,6 @@ Section -Post
     Exec '"$MPdir.Base\MPTray.exe"'
   ${EndIf}
 
-  ; run AresBackupRestore.exe
-  Exec '"$MPdir.Base\AresBackupRestore.exe"'
 SectionEnd
 
 #---------------------------------------------------------------------------
@@ -1222,6 +1260,9 @@ Section Uninstall
   Delete "$DESKTOP\MediaPortal.lnk"
   Delete "$DESKTOP\MediaPortal Configuration.lnk"
   Delete "$DESKTOP\MediaPortal WatchDog.lnk"
+
+  ; remove Titan Editor shortcut
+  Delete "$DESKTOP\TitanEditor.lnk"
 
   ; remove last files and instdir
   Delete "$MPdir.Base\uninstall-mp.exe"

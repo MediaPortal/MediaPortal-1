@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+        
+     <!--            :: Onlinevideos ::            -->
+        
+    <control Style="HomeBasicFanart">
+        <description>Onlinevideos Selected Fanart</description>
+        <type>image</type>
+        <id>0</id>
+        <texture>hover_OnlineVideos.png</texture>
+        <visible>control.hasfocus(5)</visible>
+    </control> 
+
+</controls>
+</window>

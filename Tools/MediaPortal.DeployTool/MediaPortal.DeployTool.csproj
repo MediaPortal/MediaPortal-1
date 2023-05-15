@@ -100,6 +100,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Images.resx</DependentUpon>
     </Compile>
+    <Compile Include="InstallationChecks\AresSkinExtensionInstall.cs" />
     <Compile Include="InstallationChecks\LAVFilterMPEInstall.cs" />
     <Compile Include="InstallationChecks\MPEInstall.cs" />
     <Compile Include="InstallationChecks\OldVCRedistChecker.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="InstallationChecks\DiskSpaceChecker.cs" />
     <Compile Include="InstallationChecks\InternetChecker.cs" />
     <Compile Include="InstallationChecks\VCRedistChecker_2015.cs" />
+    <Compile Include="InstallationChecks\TitanExtensionInstall.cs" />
     <Compile Include="ManualDownloadFileMissing.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -677,6 +679,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Install.ico" />
+    <None Include="Resources\Application\TitanExtended.png" />
+    <None Include="Resources\Application\AresSkin.png" />
     <None Include="Resources\Status\FAILED.png" />
     <None Include="Resources\Status\COMPLETE.png" />
     <None Include="Resources\Status\PROGRESS.png" />
@@ -697,15 +701,8 @@
     <None Include="Resources\preview_ares.png" />
     <None Include="Resources\preview_titan.png" />
     <None Include="MediaPortal.DeployTool.exe.manifest" />
-    <None Include="Resources\MePo_average.png" />
-    <None Include="Resources\MePo_smart.png" />
-    <None Include="Resources\MePo_tv.png" />
     <None Include="Resources\Background top.png" />
     <None Include="Resources\Background bottom.png" />
-    <None Include="Resources\Background middle internet connection.png" />
-    <None Include="Resources\Background middle one click install choose.png" />
-    <None Include="Resources\Background middle TV  yes no.png" />
-    <None Include="Resources\Background middle with MP Box.png" />
     <None Include="Resources\Background middle empty.png" />
     <None Include="Resources\Choose button on.png" />
     <None Include="Resources\Choose button off.png" />
@@ -726,17 +723,12 @@
     <None Include="Resources\Application\TVPlugin.png" />
     <None Include="Resources\Application\TVServer.png" />
     <None Include="Resources\Mediaportal Box.png" />
-    <None Include="Resources\Mediaportal One Click.png" />
     <None Include="Resources\Application\MariaDB.png" />
-    <None Include="Resources\Mediaporta Internet Connection.png" />
-    <None Include="Resources\Mediaportal Internet Connection.png" />
-    <None Include="Resources\Mediaportal Install.png" />
     <None Include="Resources\Mediaportal TV.png" />
     <None Include="Resources\Application\Firewall.png" />
     <None Include="Resources\Mediaportal Box White.png" />
     <None Include="Resources\Internet connection.png" />
     <None Include="Resources\Database.png" />
-    <Content Include="Resources\MePo_download.png" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="NetFwTypeLib">

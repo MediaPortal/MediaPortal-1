@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+    <control Style="HomeBasicFanart">
+	  <description>Music Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(2)</visible>
+      <texture>hover_my music.png</texture>
+    </control> 
+
+</controls>
+</window>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls> 
+
+   	<control Style="HomeButtonPicture">
+        <description>BasicHome Picture NoFocus</description>
+        <type>image</type>
+        <id>0</id>
+  		<posX>#L12left</posX>
+       	<posY>#L12top</posY>
+        <texture>basichome_button_pictures.png</texture>
+        <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(4)">conditional</animation>
+        <visible>![control.IsVisible(20081)|Control.IsVisible(20091)|Control.IsVisible(60091)|Control.IsVisible(600081)]+[Control.IsVisible(40091)|Control.IsVisible(10101)]</visible>
+	</control>
+
+  	<control Style="HomeButtonMenu">
+        <description>BasicHome Pictures</description>
+        <type>button</type>
+        <id>4</id>
+		<posX>#L12lefttext</posX>
+	    <posY>#L12toptext</posY>
+        <textYOff>#textYoff</textYOff>
+        <hyperlink>2</hyperlink>
+        <label>1</label>
+        <onup>4</onup>
+        <ondown>5</ondown>
+        <onright>6</onright>
+        <onleft>2</onleft>
+        <visible allowhiddenfocus="true">![control.IsVisible(20081)|control.IsVisible(20091)|control.IsVisible(60091)|Control.IsVisible(600081)|control.IsVisible(90109)|control.hasfocus(99999)]+[Control.IsVisible(40091)|Control.IsVisible(10101)]</visible>  
+	</control>
+
+    <!--            :: NEW ::            -->
+
+    <control Style="HomePictureMenuNew">
+        <description>New indicator</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>#L12lefttext</posX>
+        <posY>#L12toptext</posY>
+        <visible>control.isvisible(3)+string.equals(#latestMediaHandler.picture.hasnew,true)</visible>
+        <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(3)">conditional</animation>
+    </control>
+
+</controls>
+</window>

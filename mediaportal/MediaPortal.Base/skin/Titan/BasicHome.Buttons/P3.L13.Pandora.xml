@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls> 
+   	<control Style="HomeButtonPicture">
+  	    <description>BasicHome Pandora Focus</description>
+ 	    <type>image</type>
+ 	    <id>0</id>
+  		<posX>#L13left</posX>
+       	<posY>#L13top</posY>
+	    <texture>basichome_button_pandora.png</texture>
+       	<animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(650)">conditional</animation>
+ 		<visible>control.IsVisible(10301)</visible>  
+ 	</control>
+
+  	<control Style="HomeButtonMenu">
+        <description>BasicHome Pandora</description>
+      	<type>button</type>
+      	<id>650</id>
+		<posX>#L13lefttext</posX>
+	    <posY>#L13toptext</posY>
+        <textYOff>#textYoff</textYOff>
+        <hyperlink>82341</hyperlink>
+        <label>Pandora</label>
+		<onright>#P3L13ToRight</onright>
+		<onleft>450</onleft>
+      	<onup>650</onup>
+		<ondown>750</ondown>  
+  	    <visible allowhiddenfocus="true">![control.isvisible(90309)|control.hasfocus(99999)]+Control.IsVisible(10301)</visible>
+	</control>
+
+</controls>
+</window>

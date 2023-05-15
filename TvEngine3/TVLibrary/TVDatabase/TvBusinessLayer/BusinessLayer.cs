@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2022 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2022 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -3393,7 +3393,7 @@ namespace TvDatabase
     /// </summary>
     public void SetLogLevel()
     {
-      var logLevel = (LogLevel)int.Parse(GetSetting("loglevel", "5").Value); // debug is "5", info is "4"
+      var logLevel = (LogLevel)int.Parse(GetSetting("loglevel", "4").Value); // debug is "5", info is "4"
       Log.SetLogLevel(logLevel);
     }
   }

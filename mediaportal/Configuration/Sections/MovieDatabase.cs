@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -4067,7 +4067,7 @@ namespace MediaPortal.Configuration.Sections
         string value = cbActor.SelectedValue.ToString();
         IMDBActor actdetail = new IMDBActor();
         actdetail = VideoDatabase.GetActorInfo(int.Parse(value));
-        string url = "http://www.imdb.com/name/" + actdetail.IMDBActorID;
+        string url = string.Format("https://www.imdb.com/name/{0}/", actdetail.IMDBActorID);
 
         Process.Start(url);
       }
@@ -4096,7 +4096,7 @@ namespace MediaPortal.Configuration.Sections
           dgActorMovies.Rows.Add();
           dgActorMovies.Rows[i].Cells[0].Value = actdetail[i].Year.ToString();
           dgActorMovies.Rows[i].Cells[1].Value = actdetail[i].MovieTitle;
-          dgActorMovies.Rows[i].Cells[1].ToolTipText = "http://www.imdb.com/title/" + actdetail[i].MovieImdbID;
+          dgActorMovies.Rows[i].Cells[1].ToolTipText = string.Format("https://www.imdb.com/title/{0}/", actdetail[i].MovieImdbID);
           dgActorMovies.Rows[i].Cells[2].Value = actdetail[i].Role;
           dgActorMovies.Rows[i].Cells[3].Value = actdetail[i].MovieImdbID;
 
@@ -4139,7 +4139,7 @@ namespace MediaPortal.Configuration.Sections
         string value = cbActorMovies.SelectedValue.ToString();
         IMDBActor actdetail = new IMDBActor();
         actdetail = VideoDatabase.GetActorInfo(int.Parse(value));
-        string url = "http://www.imdb.com/name/" + actdetail.IMDBActorID;
+        string url = string.Format("https://www.imdb.com/name/{0}/", actdetail.IMDBActorID);
 
         Process.Start(url);
       }
@@ -5362,7 +5362,7 @@ namespace MediaPortal.Configuration.Sections
     {
       if (tbIMDBNr.Text != string.Empty)
       {
-        string url = "http://www.imdb.com/title/" + tbIMDBNr.Text;
+        string url = string.Format("https://www.imdb.com/title/{0}/", tbIMDBNr.Text);
         Process.Start(url);
       }
     }
