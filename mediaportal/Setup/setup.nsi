@@ -823,6 +823,12 @@ Section "MediaPortal core files (required)" SecCore
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
   #---------------------------------------------------------------------------
   SetOutPath "$MPdir.Base"
+  
+  !if "${Architecture}" == "x64"
+    !define LIBRARY_X64
+  !else
+  !endif
+  
   ;filter used for SVCD and VCD playback
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\cdxareader.ax"                             "$MPdir.Base\cdxareader.ax"       "$MPdir.Base"
   ; used for channels with two mono languages in one stereo streams
