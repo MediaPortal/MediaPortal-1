@@ -65,7 +65,11 @@
 !endif
 
 !ifndef MP_REG_UNINSTALL
-  !define MP_REG_UNINSTALL  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+    !if "${Architecture}" == "x64"
+        !define MP_REG_UNINSTALL  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
+    !else
+        !define MP_REG_UNINSTALL  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+    !endif
 !endif
 !ifndef TV3_REG_UNINSTALL
   !define TV3_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
