@@ -1161,6 +1161,7 @@ Section -Post
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal (x64)"
     CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration (x64)"
     CreateShortCut "$DESKTOP\MediaPortal WatchDog.lnk"      "$MPdir.Base\WatchDog.exe"         "" "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog (x64)"
+    CreateShortCut "$DESKTOP\MediaPortal x86Proxy.lnk"      "$MPdir.Base\MPx86Proxy.exe"       "-h" "$MPdir.Base\MPx86Proxy.exe"  0 "" "" "MediaPortal x86 Proxy"
     !else
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
     CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
@@ -1185,6 +1186,7 @@ Section -Post
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal (x64)"
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration (x64)"
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"                   "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog (x64)"
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal x86Proxy.lnk"                   "$MPdir.Base\MPx86Proxy.exe"    "-h"    "$MPdir.Base\MPx86Proxy.exe"    0 "" "" "MediaPortal x86 Proxy"
       CreateShortCut "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
       !else
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
@@ -1251,6 +1253,10 @@ Section Uninstall
   Delete "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"
+  !if "${Architecture}" == "x64"
+    Delete "${STARTMENU_GROUP}\MediaPortal x86Proxy.lnk"
+  !else
+  !endif
   Delete "${STARTMENU_GROUP}\MediaPortal Log-Files.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal TestTool.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"
@@ -1262,15 +1268,19 @@ Section Uninstall
   Delete "${STARTMENU_GROUP}\web site.url"
   RMDir "${STARTMENU_GROUP}"
   !if "${Architecture}" == "x64"
-  RMDir "$SMPROGRAMS\Team MediaPortal\MediaPortal (x64)"
+    RMDir "$SMPROGRAMS\Team MediaPortal\MediaPortal (x64)"
   !else
-  RMDir "$SMPROGRAMS\Team MediaPortal\MediaPortal"
+    RMDir "$SMPROGRAMS\Team MediaPortal\MediaPortal"
   !endif
 
   ; remove Desktop shortcuts
   Delete "$DESKTOP\MediaPortal.lnk"
   Delete "$DESKTOP\MediaPortal Configuration.lnk"
   Delete "$DESKTOP\MediaPortal WatchDog.lnk"
+  !if "${Architecture}" == "x64"
+    Delete "$DESKTOP\MediaPortal x86Proxy.lnk"
+  !else
+  !endif
 
   ; remove Titan Editor shortcut
   Delete "$DESKTOP\TitanEditor.lnk"
