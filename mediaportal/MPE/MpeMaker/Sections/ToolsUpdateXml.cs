@@ -179,7 +179,7 @@ namespace MpeMaker.Sections
       }
 
       string url =
-        string.Format("http://install.team-mediaportal.com/MPEI/submit.php?url={0}&name={1}&version={2}&id={3}",
+        string.Format("https://install.team-mediaportal.com/MPEI/submit.php?url={0}&name={1}&version={2}&id={3}",
                       HttpUtility.UrlEncode(Package.GeneralInfo.UpdateUrl), 
                       Package.GeneralInfo.Name,
                       Package.GeneralInfo.Version,
