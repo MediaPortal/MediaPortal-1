@@ -8,7 +8,7 @@
       <id>0</id>
       <posX>#L13left</posX>
       <posY>#L13top</posY>
-      <texture>basichome_button_movies.png</texture>
+      <texture>basichome_button_moving pictures.png</texture>
       <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(6)">conditional</animation>
       <visible>![control.IsVisible(20081)|Control.IsVisible(20091)|Control.IsVisible(400081)]+Control.IsVisible(10101)</visible>           
     </control>        
@@ -21,11 +21,11 @@
 	  <posY>#L13toptext</posY>
       <textYOff>#textYoff</textYOff>
       <label>#MovingPictures.Settings.HomeScreenName</label>
+      <hyperlink>96742</hyperlink> 
 	  <onright>#P1L13ToRight</onright>
 	  <onleft>4</onleft>
 	  <onup>6</onup>
 	  <ondown>7</ondown>
-	  <onclick>#(skin.setfocus(35,600001))</onclick>
 	  <visible allowhiddenfocus="true">![control.IsVisible(20081)|Control.IsVisible(20091)|Control.IsVisible(400081)|control.isvisible(90109)|control.hasfocus(99999)]+Control.IsVisible(10101)</visible>
     </control>
     
@@ -39,175 +39,6 @@
         <posY>#L13toptext</posY>
         <visible>control.isvisible(6)+string.equals(#latestMediaHandler.movingpicture.hasnew,true)</visible>
         <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(2)">conditional</animation>
-    </control>
-
-   <!--            :: SUB MENUS ::            -->
-
-    <control>
-      <description>submenu indicator</description>
-      <id>0</id>
-      <type>image</type>
-      <posX>#L13leftsub</posX>
-      <posY>#L13topsub</posY>
-      <width>22</width>
-      <height>20</height>
-      <texture>basichome_submenu_indicator.png</texture>
-      <visible>control.IsVisible(6)</visible>  
-      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(6)">conditional</animation>
-	  <animation effect="fade" time="250">WindowOpen</animation>
-	  <animation effect="fade" time="150">WindowClose</animation>
-    </control>
-
- 	<!--            :: Moving Pictures ::            -->
- 	
-	<control>
-      <description>Background</description>
-      <id>600081</id>
-      <type>image</type>
-      <posX>619</posX>
-      <posY>409</posY>
-      <width>709</width>
-      <height>329</height>
-      <texture>basichome_submenu_bg.png</texture>
-      <visible>[control.HasFocus(600001) | control.HasFocus(600011) | control.HasFocus(600021) | control.HasFocus(600031) | control.HasFocus(600041)]</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
-      <animation effect="fade" time="350" delay="0">visible</animation>
-      <animation effect="slide" start="300" end="0" time="350">visible</animation>
-      <animation effect="fade" time="0">hidden</animation>		
-	</control>
- 	
-    <control>
-      <description>group element</description>
-      <type>group</type>
-      <layout>StackLayout(Vertical,true)</layout>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
-      <animation effect="fade" time="350" delay="0">visible</animation>
-      <animation effect="slide" start="250" end="0" time="350">visible</animation>
-      <animation effect="fade" time="0">hidden</animation>		
-      <dimColor>0xffffffff</dimColor>
-      <posX>728</posX>
-      <posY>478</posY>
-  				
-    	<control>
-          <description>Categories</description>
-          <type>button</type>
-          <id>600001</id>
-          <width>500</width>
-          <height>40</height>
-          <textureFocus>-</textureFocus>
-          <textureNoFocus>-</textureNoFocus>
-          <hyperlink>96742</hyperlink> 
-          <label>#(L(2053)) #(L(101))</label>
-          <font>font12</font>
-          <textcolor>FFFFFFFF</textcolor>
-          <textalign>left</textalign>   
-          <textcolorNoFocus>FF000000</textcolorNoFocus>
-          <textYOff>0</textYOff>
-          <textXOff>0</textXOff>
-          <onright>6</onright>
-          <onleft>4</onleft>
-          <ondown>600011</ondown>
-          <onup>600041</onup>
-          <visible allowhiddenfocus="true">control.isVisible(600081)</visible>
-        </control>
-    		
-        <control>
-          <description>All Movies</description>
-          <type>button</type>
-          <id>600011</id>
-          <width>500</width>
-          <height>40</height>
-          <textureFocus>-</textureFocus>
-          <textureNoFocus>-</textureNoFocus>
-          <hyperlink>96742</hyperlink>
-          <hyperlinkParameter>categoryname:${AllMovies}</hyperlinkParameter>
-          <label>All Movies</label>
-          <font>font12</font>
-          <textcolor>FFFFFFFF</textcolor>
-          <textalign>left</textalign>   
-          <textcolorNoFocus>FF000000</textcolorNoFocus>
-          <textYOff>0</textYOff>
-          <textXOff>0</textXOff>
-          <onright>6</onright>
-          <onleft>4</onleft>
-          <ondown>600021</ondown>
-          <onup>600001</onup>
-          <visible allowhiddenfocus="true">control.isVisible(600081)</visible>
-        </control>
-        
-        <control>
-          <description>Recently Added</description>
-          <type>button</type>
-          <id>600021</id>
-          <width>500</width>
-          <height>40</height>
-          <textureFocus>-</textureFocus>
-          <textureNoFocus>-</textureNoFocus>
-          <hyperlink>96742</hyperlink>
-          <hyperlinkParameter>categoryname:${RecentlyAddedMovies}</hyperlinkParameter>
-          <label>4558</label>
-          <font>font12</font>
-          <textcolor>FFFFFFFF</textcolor>
-          <textalign>left</textalign>   
-          <textcolorNoFocus>FF000000</textcolorNoFocus>
-          <textYOff>0</textYOff>
-          <textXOff>0</textXOff>
-          <onright>6</onright>
-          <onleft>4</onleft>
-          <onup>600011</onup>
-          <ondown>600031</ondown>
-          <visible allowhiddenfocus="true">control.isVisible(600081)</visible>
-        </control>
-        
-        <control>
-          <description>Unwatched</description>
-          <type>button</type>
-          <id>600031</id>
-          <width>500</width>
-          <height>40</height>
-          <textureFocus>-</textureFocus>
-          <textureNoFocus>-</textureNoFocus>
-          <hyperlink>96742</hyperlink>
-          <hyperlinkParameter>categoryname:${UnwatchedMovies}</hyperlinkParameter>
-          <label>1267</label>
-          <font>font12</font>
-          <textcolor>FFFFFFFF</textcolor>
-          <textalign>left</textalign>   
-          <textcolorNoFocus>FF000000</textcolorNoFocus>
-          <textYOff>0</textYOff>
-          <textXOff>0</textXOff>
-          <onright>6</onright>
-          <onleft>4</onleft>
-          <onup>600021</onup>
-          <ondown>600041</ondown>
-          <visible allowhiddenfocus="true">control.isVisible(600081)</visible>
-        </control>
-          
-        <control>
-          <description>Videos</description>
-          <type>button</type>
-          <id>600041</id>
-          <width>500</width>
-          <height>40</height>
-          <textureFocus>-</textureFocus>
-          <textureNoFocus>-</textureNoFocus>
-          <hyperlink>6</hyperlink>
-          <label>3</label>
-          <font>font12</font>
-          <textcolor>FFFFFFFF</textcolor>
-          <textalign>left</textalign>   
-          <textcolorNoFocus>FF000000</textcolorNoFocus>
-          <textYOff>0</textYOff>
-          <textXOff>0</textXOff>
-          <onright>6</onright>
-          <onleft>4</onleft>
-          <onup>600031</onup>
-          <ondown>600001</ondown>
-          <visible allowhiddenfocus="true">control.isVisible(600081)</visible>
-        </control>
-        
     </control>
 
 </controls>

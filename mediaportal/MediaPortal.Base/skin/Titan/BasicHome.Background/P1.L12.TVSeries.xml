@@ -3,11 +3,11 @@
 <controls>
 
     <control Style="HomeBasicFanart">
-	  <description>TV Selected Fanart</description>
+	  <description>TVSeries Selected Fanart</description>
       <type>image</type>
       <id>0</id>
-      <visible>[control.hasfocus(4)]</visible>
-      <texture>hover_my tv.png</texture>
+      <visible>control.hasfocus(4)</visible>
+      <texture>hover_tv series.png</texture>
     </control> 
 
 </controls>
