@@ -38,7 +38,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       InitializeComponent();
       type = DialogType.Upgrade;
-      labelSectionHeader.Text = "";
+      labelSectionHeader.Text = string.Empty;
       bFresh.Image = Images.Choose_button_on;
       rbFreshChecked = true;
       rbReinstallChecked = false;
@@ -66,7 +66,8 @@ namespace MediaPortal.DeployTool.Sections
       int major = 0;
       int minor = 0;
       int revision = 0;
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
+      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal" +
+                                                         (Utils.Is64bit() ? " (x64)" : string.Empty));
 
       string MpBuild = "0";
       string MpDisplayVer = string.Empty;

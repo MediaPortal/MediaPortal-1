@@ -102,7 +102,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
 
       // Remove PowerScheduler++ information from installed extensions
-      string InstalledMpesPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Team MediaPortal\MediaPortal\Installer\V2\InstalledExtensions.xml";
+      string InstalledMpesPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
+                                                           @"\Team MediaPortal\MediaPortal\Installer\V2\InstalledExtensions.xml";
       XmlDocument doc = new XmlDocument();
       try
       {
@@ -180,9 +181,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
 
       string[] UninstKeys = {
-                              "MediaPortal", // 1.x
-                              "MediaPortal 0.2.3.0"
-                            }; // 0.2.3.0
+                              "MediaPortal" + (Utils.Is64bit() ? " (x64)" : string.Empty), // 1.x - x86/x64
+                              "MediaPortal 0.2.3.0"                                        // 0.2.3.0
+                            };
 
       foreach (string UnistKey in UninstKeys)
       {
@@ -213,8 +214,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
       result.state = CheckState.NOT_INSTALLED;
 
       string[] UninstKeys = {
-                              "MediaPortal",        // 1.x
-                              "MediaPortal 0.2.3.0" // 0.2.3.0
+                              "MediaPortal" + (Utils.Is64bit() ? " (x64)" : string.Empty), // 1.x - x86/x64
+                              "MediaPortal 0.2.3.0"                                        // 0.2.3.0
                             };
 
       foreach (string UnistKey in UninstKeys)

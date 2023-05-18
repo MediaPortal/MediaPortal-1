@@ -123,7 +123,7 @@
 
 !ifdef BUILD_DeployTool
 !if "${Architecture}" == "x64"
-  !define DeployArchitecture x86
+  !define DeployArchitecture x64
 !else
   !define DeployArchitecture x86
 !endif

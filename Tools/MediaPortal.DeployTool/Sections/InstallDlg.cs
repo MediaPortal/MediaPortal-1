@@ -188,7 +188,7 @@ namespace MediaPortal.DeployTool.Sections
     private void PopulateListView()
     {
       flpApplication.Controls.Clear();
-      if (InstallationProperties.Instance["InstallType"] != "download_only")
+      if (!Utils.Is64bit() && InstallationProperties.Instance["InstallType"] != "download_only")
       {
         AddPackageToListView(new OldPackageChecker());
       }

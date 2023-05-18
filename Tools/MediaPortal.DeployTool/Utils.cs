@@ -651,6 +651,11 @@ namespace MediaPortal.DeployTool
       return isWow64;
     }
 
+    public static bool Is64bit()
+    {
+      return (IntPtr.Size == 8);
+    }
+
     #endregion
 
     #region Aero check
