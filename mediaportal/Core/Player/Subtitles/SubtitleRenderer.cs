@@ -139,6 +139,9 @@ namespace MediaPortal.Player.Subtitles
 
   public class Subtitle : IDisposable
   {
+    [DllImport("msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
+    private static extern IntPtr memcpy(IntPtr dest, IntPtr src, UIntPtr count);
+
     public static int idCount = 0;
 
     public Subtitle()
@@ -197,20 +200,10 @@ namespace MediaPortal.Player.Subtitles
           DataRectangle dr = texture.LockRectangle(0, LockFlags.Discard);
           BitmapData bmData = subBitmap.LockBits(new System.Drawing.Rectangle(0, 0, (int)this.width, (int)this.height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
           int size = bmData.Stride * bmData.Height;
-          SubtitleRenderer.memcpy(dr.DataPointer, bmData.Scan0, new UIntPtr((uint)size));
+          memcpy(dr.DataPointer, bmData.Scan0, new UIntPtr((uint)size));
           texture.UnlockRectangle(0);
           subBitmap.UnlockBits(bmData);
 
-          //using (MemoryStream stream = new MemoryStream())
-          //{
-          //  ImageInformation imageInformation;
-          //  subBitmap.Save(stream, ImageFormat.Bmp);
-          //  stream.Position = 0;
-          //  texture = Texture.FromStream(GUIGraphicsContext.DX9Device, stream, (int)stream.Length, (int)width,
-          //    (int)height, 1,
-          //    Usage.Dynamic, Format.A8R8G8B8, Pool.Default, SharpDX.Direct3D9.Filter.None, SharpDX.Direct3D9.Filter.None, 0,
-          //    out imageInformation);
-          //}
           // Free bitmap
           subBitmap.SafeDispose();
           subBitmap = null;
@@ -245,7 +238,7 @@ namespace MediaPortal.Player.Subtitles
       }
 
       // Copy to new bitmap
-      SubtitleRenderer.memcpy(bmData.Scan0, subtitle.bmBits, new UIntPtr((uint)size));
+      memcpy(bmData.Scan0, subtitle.bmBits, new UIntPtr((uint)size));
       
       bitmap.UnlockBits(bmData);
     }
@@ -485,7 +478,6 @@ namespace MediaPortal.Player.Subtitles
             " h pos=" + sub.horizontalPosition + " (startPos = " + _startPos + ")");
 
           Subtitle subtitle = new Subtitle();
-          //subtitle.subBitmap = new Bitmap(sub.bmWidth, sub.bmHeight, PixelFormat.Format32bppArgb);
           subtitle.timeOut = sub.timeOut;
           subtitle.presentTime = ((double)sub.timeStamp / 1000.0f) + _startPos; // compute present time in SECONDS
           subtitle.height = (uint)sub.bmHeight;
@@ -495,57 +487,7 @@ namespace MediaPortal.Player.Subtitles
           subtitle.firstScanLine = sub.firstScanLine;
           subtitle.horizontalPosition = sub.horizontalPosition;
           subtitle.id = _subCounter++;
-          //Log.Debug("Received Subtitle : " + subtitle.ToString());
-
           subtitle.CopyBits(sub);
-          AddSubtitle(subtitle);
-          Log.Debug("OnSubtitle: End");
-          return 0;
-
-          Texture texture = null;
-          try
-          {
-            // allocate new texture
-            texture = new Texture(GUIGraphicsContext.DX9Device, (int)subtitle.width, (int)subtitle.height, 1,
-                                  Usage.Dynamic,
-                                  Format.A8R8G8B8, GUIGraphicsContext.GetTexturePoolType());
-
-            //texture = Texture.FromMemory(GUIGraphicsContext.DX9Device, createBmpImage(sub));
-
-            if (texture == null)
-            {
-              Log.Debug("OnSubtitle: Failed to create new texture!");
-              return 0;
-            }
-
-            DataRectangle dr = texture.LockRectangle(0, LockFlags.Discard); //cca 10÷15 ms
-            //unsafe
-            //{
-            //  //cca 5÷6 ms
-            //  byte* to = (byte*)dr.DataPointer;
-            //  byte* from = (byte*)sub.bmBits;
-            //  for (int y = 0; y < sub.bmHeight; ++y)
-            //  {
-            //    for (int x = 0; x < sub.bmWidth * 4; ++x)
-            //    {
-            //      to[dr.Pitch * y + x] = from[y * sub.bmWidthBytes + x];
-            //    }
-            //  }
-            //}
-            memcpy(dr.DataPointer, sub.bmBits, new UIntPtr((uint)(sub.bmWidthBytes * sub.bmHeight)));
-
-
-
-
-            texture.UnlockRectangle(0);
-            subtitle.texture = texture;
-          }
-          catch (Exception ex)
-          {
-            Log.Debug("OnSubtitle: Failed to copy bitmap data! {0}", ex.Message);
-            return 0;
-          }
-
           AddSubtitle(subtitle);
         }
         catch (Exception e)
@@ -824,8 +766,6 @@ namespace MediaPortal.Player.Subtitles
           return;
         }
 
-        //Log.Debug("SubtitleRenderer:Render() Time-Enter: " + System.Diagnostics.Stopwatch.GetTimestamp());
-
         // ugly temp!
         bool timeForNext = false;
         if (_subtitles.Count > 0)
@@ -962,8 +902,6 @@ namespace MediaPortal.Player.Subtitles
           Log.Error(e);
         }
       } // end of lock (subtitle)
-
-      //Log.Debug("SubtitleRenderer:Render() Time-Leave: " + System.Diagnostics.Stopwatch.GetTimestamp());
     }
 
     /// <summary>
@@ -980,11 +918,6 @@ namespace MediaPortal.Player.Subtitles
       {
         Log.Debug("Subtitle: Creating vertex buffer");
         Usage usage = OSInfo.OSInfo.VistaOrLater() ? Usage.Dynamic | Usage.WriteOnly : 0;
-        //_vertexBuffer = new VertexBuffer(typeof (CustomVertex.TransformedTextured),
-        //                                 4, GUIGraphicsContext.DX9Device,
-        //                                 usage,
-        //                                 CustomVertex.TransformedTextured.Format,
-        //                                 GUIGraphicsContext.GetTexturePoolType());
 
         _vertexBuffer = new VertexBuffer(GUIGraphicsContext.DX9Device,
                               Util.CustomVertex.TransformedTextured.StrideSize * 4,
@@ -1014,7 +947,6 @@ namespace MediaPortal.Player.Subtitles
           // lower right
           verts[3] = new Util.CustomVertex.TransformedTextured(wx + wwidth, wy + wheight, 0, 1, 1, 1);
 
-          //_vertexBuffer.SetData(verts, 0, LockFlags.None);
           _vertexBuffer.Unlock();
         }
 
@@ -1070,120 +1002,5 @@ namespace MediaPortal.Player.Subtitles
       Log.Debug("SubtitleRenderer: cleanup done");
     }
 
-
-    [DllImport("msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
-    public static extern IntPtr memcpy(IntPtr dest, IntPtr src, UIntPtr count);
-
-    private static unsafe byte[] createBmpImage(NATIVE_SUBTITLE sub)
-    {
-      #region Bitmap Making...
-
-      int iDataSize = sub.bmWidthBytes * sub.bmHeight;
-      int iBmpSize = iDataSize + 54;
- 
-      // BmpBufferSize : a pure length of raw bitmap data without the header.
-      // the 54 value here is the length of bitmap header.
-      byte[] bmp = new byte[iBmpSize];
-
-      fixed (byte* pBmp = bmp)
-      {
-        byte* p = pBmp;
-
-        #region Bitmap Header
-        // 0~2 "BM"
-        *(p++) = 0x42;
-        *(p++) = 0x4d;
-
-        // 2~6 Size of the BMP file - Bit cound + Header 54
-        *(p++) = (byte)iBmpSize;
-        *(p++) = (byte)(iBmpSize >> 8);
-        *(p++) = (byte)(iBmpSize >> 16);
-        *(p++) = (byte)(iBmpSize >> 24);
-
-        // 6~8 Application Specific : normally, set zero
-        *(p++) = 0;
-        *(p++) = 0;
-
-        // 8~10 Application Specific : normally, set zero
-        *(p++) = 0;
-        *(p++) = 0;
-
-        // 10~14 Offset where the pixel array can be found - 24bit bitmap data always starts at 54 offset.
-        *(p++) = 54;
-        *(p++) = 0;
-        *(p++) = 0;
-        *(p++) = 0;
-        #endregion
-
-        #region DIB Header
-        // 14~18 Number of bytes in the DIB header. 40 bytes constant.
-        *(p++) = 40;
-        *(p++) = 0;
-        *(p++) = 0;
-        *(p++) = 0;
-
-        // 18~22 Width of the bitmap.
-        *(p++) = (byte)sub.bmWidth;
-        *(p++) = (byte)(sub.bmWidth >> 8);
-        *(p++) = (byte)(sub.bmWidth >> 16);
-        *(p++) = (byte)(sub.bmWidth >> 24);
-
-        // 22~26 Height of the bitmap.
-        *(p++) = (byte)sub.bmHeight;
-        *(p++) = (byte)(sub.bmHeight >> 8);
-        *(p++) = (byte)(sub.bmHeight >> 16);
-        *(p++) = (byte)(sub.bmHeight >> 24);
-
-        // 26~28 Number of color planes being used
-        *(p++) = 1;
-        *(p++) = 0;
-
-        // 28~30 Number of bits. If you don't know the pixel format, trying to calculate it with the quality of the video/image source.
-        *(p++) = (byte)sub.bmBitsPixel;
-        *(p++) = (byte)(sub.bmBitsPixel >> 8);
-
-        // 30~34 BI_RGB no pixel array compression used : most of the time, just set zero if it is raw data.
-        *(p++) = 0;
-        *(p++) = 0;
-        *(p++) = 0;
-        *(p++) = 0;
-
-        // 34~38 Size of the raw bitmap data ( including padding )
-        *(p++) = (byte)iDataSize;
-        *(p++) = (byte)(iDataSize >> 8);
-        *(p++) = (byte)(iDataSize >> 16);
-        *(p++) = (byte)(iDataSize >> 24);
-
-        // 38~46 Print resolution of the image, 72 DPI x 39.3701 inches per meter yields
-        *(p++) = 0x12;
-        *(p++) = 0x0b;
-        *(p++) = 0;
-        *(p++) = 0;
-        *(p++) = 0x12;
-        *(p++) = 0x0b;
-        *(p++) = 0;
-        *(p++) = 0;
-
-        // 46~50 Number of colors in the palette
-        *(p++) = 0;
-        *(p++) = 0;
-        *(p++) = 0;
-        *(p++) = 0;
-
-        // 50~54 means all colors are important
-        *(p++) = 0;
-        *(p++) = 0;
-        *(p++) = 0;
-        *(p++) = 0;
-
-        // 54~end : Pixel Data : Finally, time to combine your raw data, BmpBuffer in this code, with a bitmap header you've just created.
-        memcpy((IntPtr)p, sub.bmBits, new UIntPtr((uint)iDataSize));
-
-        #endregion - bitmap header process
-        #endregion - bitmap making process
-      }
-
-      return bmp;
-    }
   }
 }
