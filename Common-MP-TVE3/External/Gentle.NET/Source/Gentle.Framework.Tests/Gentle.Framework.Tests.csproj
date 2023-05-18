@@ -28,7 +28,8 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\Output\Debug\</OutputPath>
@@ -141,11 +142,6 @@
     <ProjectReference Include="..\Gentle.Provider.SQLite\Gentle.Provider.SQLite.csproj">
       <Name>Gentle.Provider.SQLite</Name>
       <Project>{B5F29BFF-488D-4E4B-88B9-3D97AA3A8008}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
-    <ProjectReference Include="..\Gentle.Provider.SQLServerCE\Gentle.Provider.SQLServerCE.csproj">
-      <Name>Gentle.Provider.SQLServerCE</Name>
-      <Project>{E3149E66-2BF2-4441-8A72-CDEFDE97C4D1}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
     <ProjectReference Include="..\Gentle.Provider.SQLServer\Gentle.Provider.SQLServer.csproj">
