@@ -23,7 +23,13 @@ set html=Build_Report_%BUILD_TYPE%_MediaPortal.html
 set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
 
 "%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=%ARCH% "%MediaPortal%\MediaPortal.sln" >> %log%
-"%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%GIT_ROOT%\MPx86Proxy\MPx86Proxy.sln" >> %log%
+BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
+
+set xml=Build_Report_%BUILD_TYPE%_MPx86Proxy.xml
+set html=Build_Report_%BUILD_TYPE%_MPx86Proxy.html
+set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
+
+"%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%GIT_ROOT%\Tools\MPx86Proxy\MPx86Proxy.sln" >> %log%
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
 echo.
