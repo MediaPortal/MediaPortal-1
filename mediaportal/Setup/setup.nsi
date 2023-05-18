@@ -573,9 +573,9 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\MediaPortal.Application\bin\${BUILD_TYPE}\MediaPortal.exe.config"
   ; MPx86Proxy
   !if "${Architecture}" == "x64"
-  File "${git_ROOT}\MPx86Proxy\MPx86Proxy\bin\${BUILD_TYPE}\MPx86Proxy.exe"
-  File "${git_ROOT}\MPx86Proxy\MPx86Proxy\iMONAPI\iMONDisplay.dll"
-  File "${git_ROOT}\MPx86Proxy\MPx86Proxy\iMONAPI\iMONRemoteControl.dll"
+  File "${git_ROOT}\Tools\MPx86Proxy\MPx86Proxy\bin\${BUILD_TYPE}\MPx86Proxy.exe"
+  File "${git_ROOT}\Tools\MPx86Proxy\MPx86Proxy\iMONAPI\iMONDisplay.dll"
+  File "${git_ROOT}\Tools\MPx86Proxy\MPx86Proxy\iMONAPI\iMONRemoteControl.dll"
   !else
   !endif
   ; Configuration
