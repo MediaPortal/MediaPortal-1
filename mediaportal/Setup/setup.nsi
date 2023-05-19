@@ -132,7 +132,7 @@ Var PREVIOUS_KEYMAPSETTINGS
 !include "${git_InstallScripts}\include\MediaPortalMacros.nsh"
 !include "${git_InstallScripts}\include\ProcessMacros.nsh"
 !include "${git_InstallScripts}\include\WinVerEx.nsh"
-!include "${git_InstallScripts}\include\CPUDesc.nsh"
+!include "${git_InstallScripts}\include\CPUFeatures.nsh"
 !include "${git_InstallScripts}\include\FontInstall.nsh"
 
 !include "${git_InstallScripts}\include\x64.nsh"
@@ -763,7 +763,7 @@ Section "MediaPortal core files (required)" SecCore
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\DVBSubtitle3\bin\${BUILD_TYPE}\DVBSub3.ax"             "$MPdir.Base\DVBSub3.ax"          "$MPdir.Base"
   
   ; used for Mediaportal Audio Renderer
-  ${If} ${SSE2Supported} 
+  ${If} ${CPUSupports} "SSE2"
   ${AndIf} ${AtLeastWinVista}
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPAudioRenderer\bin\${BUILD_TYPE}\mpaudiorenderer.ax"                "$MPdir.Base\mpaudiorenderer.ax"         "$MPdir.Base"
   ${EndIf}
@@ -818,7 +818,7 @@ SectionEnd
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\DVBSub3.ax"
   ; used for Mediaportal Audio Renderer
   ${If} ${FileExists} "$MPdir.Base\mpaudiorenderer.ax"
-	${If} ${SSE2Supported} 
+    ${If} ${CPUSupports} "SSE2"
 		!insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\mpaudiorenderer.ax"
 	${Else}
 		Delete  "$MPdir.Base\mpaudiorenderer.ax"
