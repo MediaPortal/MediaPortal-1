@@ -4,8 +4,6 @@
 [![GitHub](https://img.shields.io/github/license/Mediaportal/Mediaportal-1?color=blue)](https://github.com/MediaPortal/MediaPortal-1/blob/master/LICENSE)
 [![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/MediaPortal/MediaPortal-1?include_prereleases)](https://github.com/MediaPortal/MediaPortal-1/releases)
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/downloads-pre/Mediaportal/Mediaportal-1/latest/total?label=release@downloads)](https://github.com/MediaPortal/MediaPortal-1/releases)
-[![GitHub Repo stars](https://img.shields.io/github/stars/Mediaportal/Mediaportal-1)](https://github.com/MediaPortal/MediaPortal-1)
-[![GitHub forks](https://img.shields.io/github/forks/Mediaportal/Mediaportal-1)](https://github.com/MediaPortal/MediaPortal-1)
 
 __MediaPortal__ transforms your PC into a complete media solution.
 It runs on basic hardware, connects directly to your TV and displays your TV Series, Movies, Photos and Music in a much more dynamic way. All in the comfort of your living room, on your big screen LCD or Plasma TV or projector!
