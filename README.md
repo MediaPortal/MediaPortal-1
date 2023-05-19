@@ -1,6 +1,7 @@
 ## Welcome to the best media experience with MediaPortal!
 [![Build status](https://ci.appveyor.com/api/projects/status/mqvm5gyxdxqnyy5f?svg=true)](https://ci.appveyor.com/project/MediaPortal/mediaportal-1)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/MediaPortal/MediaPortal-1/mediaportal.yml?logo=github)](https://github.com/MediaPortal/MediaPortal-1/actions)
+[![GitHub](https://img.shields.io/github/license/Mediaportal/Mediaportal-1?color=blue)](https://github.com/MediaPortal/MediaPortal-1/blob/master/LICENSE)
 [![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/MediaPortal/MediaPortal-1?include_prereleases)](https://github.com/MediaPortal/MediaPortal-1/releases)
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/downloads-pre/Mediaportal/Mediaportal-1/latest/total?label=release@downloads)](https://github.com/MediaPortal/MediaPortal-1/releases)
 [![GitHub Repo stars](https://img.shields.io/github/stars/Mediaportal/Mediaportal-1)](https://github.com/MediaPortal/MediaPortal-1)
