@@ -22,7 +22,6 @@ using System;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace MediaPortal.DeployTool
 {
@@ -36,10 +35,11 @@ namespace MediaPortal.DeployTool
 
     public void UpdateUI()
     {
-      labelHeading.Text = "";
+      labelHeading.Text = string.Empty;
       Text = Localizer.GetBestTranslation("MainWindow_AppName");
       backButton.Text = Localizer.GetBestTranslation("MainWindow_backButton");
       nextButton.Text = Localizer.GetBestTranslation("MainWindow_nextButton");
+      lbBadge.Visible = Utils.Is64bit();
     }
 
     public DeployDialog GetNextDialog()
@@ -147,7 +147,8 @@ namespace MediaPortal.DeployTool
 
     private void nextButton_Click(object sender, EventArgs e)
     {
-      labelHeading.Text = "";
+      labelHeading.Text = string.Empty;
+
       //
       // check Internet connection unless files have already been downloaded
       //
@@ -244,7 +245,7 @@ namespace MediaPortal.DeployTool
 
     private void backButton_Click(object sender, EventArgs e)
     {
-      labelHeading.Text = "";
+      labelHeading.Text = string.Empty;
       bool isFirstDlg = false;
       _currentDialog = DialogFlowHandler.Instance.GetPreviousDlg(ref isFirstDlg);
       if (isFirstDlg)
