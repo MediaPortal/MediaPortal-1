@@ -55,7 +55,7 @@ namespace MediaPortal.DeployTool.Sections
       CheckResult resultTvServer = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
       CheckResult resultTvClient = Utils.CheckNSISUninstallString("Mediaportal Tv Server", "MementoSection_SecClient");
       // "NoRepair" key is not the best choice but we need a key returing 1 as value ;)
-      CheckResult resultMp = Utils.CheckNSISUninstallString("MediaPortal", "NoRepair");
+      CheckResult resultMp = Utils.CheckNSISUninstallString("MediaPortal" + (Utils.Is64bit() ? " (x64)" : string.Empty), "NoRepair");
 
       bool TvServer = resultTvServer.state != CheckState.NOT_INSTALLED;
       bool TvClient = resultTvClient.state != CheckState.NOT_INSTALLED;

@@ -164,7 +164,8 @@ namespace MediaPortal.DeployTool
       // 
       // check if there's is sufficient hard disk space for installation
       // 
-      if (_currentDialog.type == DialogType.DBMSSettings || _currentDialog.type == DialogType.TvServerSettings ||
+      if (_currentDialog.type == DialogType.DBMSSettings ||
+          _currentDialog.type == DialogType.TvServerSettings ||
           _currentDialog.type == DialogType.MPSettings)
       {
         // at least 0.5 GB free disk space are required for installation

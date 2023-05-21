@@ -438,6 +438,11 @@ namespace MediaPortal.DeployTool
       {
         key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath);
       }
+      if (key == null && Utils.Is64bit())
+      {
+        RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+        key = localKey.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath);
+      }
       if (key != null)
       {
         int _IsInstalled = (int)key.GetValue(MementoSection, 0);
