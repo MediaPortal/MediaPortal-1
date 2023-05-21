@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2021 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2021 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,12 +18,6 @@
 
 #endregion
 
-using System.Linq;
-using CSCore.CoreAudioAPI;
-using DirectShowLib;
-using DShowNET.Helper;
-using FilterCategory = DirectShowLib.FilterCategory;
-
 #region usings
 
 using System;
@@ -32,16 +26,21 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
-
 using System.ServiceProcess;
-using System.Text;
 using System.Threading;
-using System.Timers;
 using System.Windows.Forms;
 using System.Xml;
+
+using CSCore.CoreAudioAPI;
+
+using DirectShowLib;
+using DShowNET.Helper;
+
 using MediaPortal;
 using MediaPortal.Common.Utils;
 using MediaPortal.Configuration;
@@ -56,20 +55,21 @@ using MediaPortal.Properties;
 using MediaPortal.RedEyeIR;
 using MediaPortal.Ripper;
 using MediaPortal.SerialIR;
-using MediaPortal.Util;
 using MediaPortal.Services;
+using MediaPortal.Util;
+
+using Microsoft.Win32;
+
 using SharpDX;
 using SharpDX.Direct3D9;
-using Microsoft.Win32;
+
 using Action = MediaPortal.GUI.Library.Action;
-using Timer = System.Timers.Timer;
-using System.Collections.Generic;
-using System.Net;
+using FilterCategory = DirectShowLib.FilterCategory;
 
 #endregion
 
 // ReSharper disable EmptyNamespace
-namespace MediaPortal {}
+namespace MediaPortal { }
 // ReSharper restore EmptyNamespace
 
 /// <summary>
@@ -769,13 +769,15 @@ public class MediaPortalApp : D3D, IRender
 
       // Log MediaPortal version build and operating system level
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
+      string architecture = (IntPtr.Size == 8) ? "x64" : "x86";
       try
       {
-        Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
+        Log.Info("Main: MediaPortal " + architecture + " v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
       }
       catch {
-        Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
+        Log.Info("Main: MediaPortal " + architecture + " v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
       }
+
       //Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
       Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
 
