@@ -68,6 +68,12 @@ namespace MediaPortal.DeployTool.Sections
       int revision = 0;
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal" +
                                                          (Utils.Is64bit() ? " (x64)" : string.Empty));
+      if (key == null && Utils.Is64bit())
+      {
+        RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+        key = localKey.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal" +
+                                  (Utils.Is64bit() ? " (x64)" : string.Empty));
+      }
 
       string MpBuild = "0";
       string MpDisplayVer = string.Empty;
@@ -93,6 +99,12 @@ namespace MediaPortal.DeployTool.Sections
       minor = 0;
       revision = 0;
       key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
+      if (key == null && Utils.Is64bit())
+      {
+        RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+        key = localKey.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
+      }
+
       string Tv3Build = "0";
       string Tv3DisplayVer = string.Empty;
       if (key != null)

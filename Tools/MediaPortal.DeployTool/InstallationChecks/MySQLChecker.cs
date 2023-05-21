@@ -107,6 +107,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
       {
         key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
       }
+      if (key == null && Utils.Is64bit())
+      {
+        RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+        key = localKey.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
+      }
       if (key != null)
       {
         strMySQL = key.GetValue("Location").ToString();
@@ -438,7 +443,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       try
       {
         key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\MySQL AB\\MySQL Server 5.6", false,
-            Utils.eRegWow64Options.KEY_WOW64_32KEY);
+                               Utils.eRegWow64Options.KEY_WOW64_32KEY);
       }
       catch
       {
@@ -448,6 +453,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
       if (key == null)
       {
         key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.6");
+      }
+      if (key == null && Utils.Is64bit())
+      {
+        RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+        key = localKey.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.6");
       }
       if (key == null)
       {
@@ -479,7 +489,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       try
       {
         key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\MySQL AB\\MySQL Server 5.1", false,
-            Utils.eRegWow64Options.KEY_WOW64_32KEY);
+                               Utils.eRegWow64Options.KEY_WOW64_32KEY);
       }
       catch
       {
@@ -489,6 +499,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
       if (key == null)
       {
         key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
+      }
+      if (key == null && Utils.Is64bit())
+      {
+        RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+        key = localKey.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
       }
       if (key == null)
       {

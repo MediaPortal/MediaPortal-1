@@ -362,13 +362,18 @@ namespace MediaPortal.DeployTool
         try
         {
           key = OpenSubKey(Registry.LocalMachine, keyPath, false,
-              eRegWow64Options.KEY_WOW64_32KEY);
+                           eRegWow64Options.KEY_WOW64_32KEY);
         }
         catch
         {
           // Parent key not open, exception found at opening (probably related to
           // security permissions requested)
         }
+      }
+      if (key == null && Utils.Is64bit())
+      {
+        RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+        key = localKey.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid);
       }
       if (key != null)
       {
@@ -402,6 +407,11 @@ namespace MediaPortal.DeployTool
           // Parent key not open, exception found at opening (probably related to
           // security permissions requested)
         }
+      }
+      if (key == null && Utils.Is64bit())
+      {
+        RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+        key = localKey.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid);
       }
       if (key != null)
       {
@@ -781,7 +791,7 @@ namespace MediaPortal.DeployTool
       try
       {
         key = OpenSubKey(Registry.LocalMachine, (regkey), false,
-            eRegWow64Options.KEY_WOW64_32KEY);
+                         eRegWow64Options.KEY_WOW64_32KEY);
       }
       catch
       {
@@ -789,9 +799,16 @@ namespace MediaPortal.DeployTool
         // security permissions requested)
       }
       if (key == null)
+      {
         key = Registry.LocalMachine.OpenSubKey(regkey);
-      string Tv3Path = null;
+      }
+      if (key == null && Utils.Is64bit())
+      {
+        RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+        key = localKey.OpenSubKey(regkey);
+      }
 
+      string Tv3Path = null;
       if (key != null)
       {
         Tv3Path = (string)key.GetValue("UninstallString");
@@ -807,16 +824,23 @@ namespace MediaPortal.DeployTool
       try
       {
         key = OpenSubKey(Registry.LocalMachine, (regkey), false,
-            eRegWow64Options.KEY_WOW64_32KEY);
+                         eRegWow64Options.KEY_WOW64_32KEY);
       }
       catch
       {
         // Parent key not open, exception found at opening (probably related to
         // security permissions requested)
       }
-
       if (key == null)
+      {
         key = Registry.LocalMachine.OpenSubKey(regkey);
+      }
+      if (key == null && Utils.Is64bit())
+      {
+        RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+        key = localKey.OpenSubKey(regkey);
+      }
+
       int major = 0;
       int minor = 0;
       int revision = 0;

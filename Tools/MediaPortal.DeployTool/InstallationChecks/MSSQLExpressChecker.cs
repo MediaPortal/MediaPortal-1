@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -64,12 +64,17 @@ namespace MediaPortal.DeployTool.InstallationChecks
         try
         {
           keySql = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL", false,
-              Utils.eRegWow64Options.KEY_WOW64_32KEY);
+                                    Utils.eRegWow64Options.KEY_WOW64_32KEY);
         }
         catch
         {
           // Parent key not open, exception found at opening (probably related to
           // security permissions requested)
+        }
+        if (keySql == null && Utils.Is64bit())
+        {
+          RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+          keySql = localKey.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
         }
       }
       if (keySql == null)
@@ -79,21 +84,23 @@ namespace MediaPortal.DeployTool.InstallationChecks
       string instanceSQL = (string)keySql.GetValue(GetIstanceName());
       keySql.Close();
 
-      keySql =
-        Registry.LocalMachine.OpenSubKey(
-          "SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll",
-          true);
+      keySql = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll", true);
       if (keySql == null)
       {
         try
         {
           keySql = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll", true,
-              Utils.eRegWow64Options.KEY_WOW64_32KEY);
+                                    Utils.eRegWow64Options.KEY_WOW64_32KEY);
         }
         catch
         {
           // Parent key not open, exception found at opening (probably related to
           // security permissions requested)
+        }
+        if (keySql == null && Utils.Is64bit())
+        {
+          RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+          keySql = localKey.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll", true);
         }
       }
       if (keySql == null)
@@ -218,20 +225,23 @@ namespace MediaPortal.DeployTool.InstallationChecks
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      key =
-        Registry.LocalMachine.OpenSubKey(
-          "SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
+      key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
       if (key == null)
       {
         try
         {
           key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion", false,
-              Utils.eRegWow64Options.KEY_WOW64_32KEY);
+                                 Utils.eRegWow64Options.KEY_WOW64_32KEY);
         }
         catch
         {
           // Parent key not open, exception found at opening (probably related to
           // security permissions requested)
+        }
+        if (key == null && Utils.Is64bit())
+        {
+          RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+          key = localKey.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
         }
       }
 

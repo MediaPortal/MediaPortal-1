@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -115,12 +115,17 @@ namespace MediaPortal.DeployTool.InstallationChecks
           try
           {
             key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\DirectX", false,
-                Utils.eRegWow64Options.KEY_WOW64_32KEY);
+                                   Utils.eRegWow64Options.KEY_WOW64_32KEY);
           }
           catch
           {
             // Parent key not open, exception found at opening (probably related to
             // security permissions requested)
+          }
+          if (key == null && Utils.Is64bit())
+          {
+            RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+            key = localKey.OpenSubKey("SOFTWARE\\Microsoft\\DirectX");
           }
         }
         using (key)
