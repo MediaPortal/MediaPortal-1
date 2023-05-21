@@ -1342,7 +1342,7 @@ Function LoadPreviousSettings
     StrCpy $INSTDIR "$PREVIOUS_INSTALLDIR"
   ${ElseIf} "$INSTDIR" == ""
     !if "${Architecture}" == "x64"
-    StrCpy $INSTDIR "$PROGRAMFILES\Team MediaPortal\MediaPortal (x64)"
+    StrCpy $INSTDIR "$PROGRAMFILES64\Team MediaPortal\MediaPortal"
     !else
     StrCpy $INSTDIR "$PROGRAMFILES\Team MediaPortal\MediaPortal"
     !endif
