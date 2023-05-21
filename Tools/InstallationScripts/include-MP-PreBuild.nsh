@@ -93,6 +93,7 @@
 !insertmacro PrepareBuildReport DirectShowFilters
 !system '"${MSBuild_Path}" ${logger} /target:rebuild /property:Configuration=Release;Platform=${FilterArchitecture} "${git_DirectShowFilters}\Filters.sln"' = 0
 !insertmacro FinalizeBuildReport
+
 !insertmacro PrepareBuildReport MediaPortal
 !system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=${Architecture} "${git_MP}\MediaPortal.sln"' = 0
 !insertmacro FinalizeBuildReport

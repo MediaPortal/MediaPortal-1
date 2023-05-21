@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 /*
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ Var TempInstallLog
   FileOpen $LogFile "$TempInstallLog" w
 
   ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
-  ${LOG_TEXT} "INFO" "${PRODUCT_NAME} ${UNINSTALL_PREFIX}installation"
+  ${LOG_TEXT} "INFO" "${PRODUCT_NAME} ${Architecture} ${UNINSTALL_PREFIX}installation"
   ${LOG_TEXT} "INFO" "Logging started: $0.$1.$2 $4:$5:$6"
   ${LOG_TEXT} "INFO" "${UNINSTALL_PREFIX}installer version: ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
   ${LOG_TEXT} "INFO" "============================================================================================"
@@ -96,7 +96,7 @@ Var TempInstallLog
   ${LOG_TEXT} "INFO" "============================================================================================"
   ${LOG_TEXT} "INFO" "Logging stopped: $0.$1.$2 $4:$5:$6"
   ${LOG_TEXT} "INFO" "${UNINSTALL_PREFIX}installer version: ${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
-  ${LOG_TEXT} "INFO" "${PRODUCT_NAME} ${UNINSTALL_PREFIX}installation"
+  ${LOG_TEXT} "INFO" "${PRODUCT_NAME} ${Architecture} ${UNINSTALL_PREFIX}installation"
 
   FileClose $LogFile
 
@@ -107,7 +107,7 @@ Var TempInstallLog
   !ifdef INSTALL_LOG_DIR
 
     ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
-    CopyFiles "$TempInstallLog" "${INSTALL_LOG_DIR}\${UNINSTALL_PREFIX}install_${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}_$2-$1-$0_$4-$5-$6.log"
+    CopyFiles "$TempInstallLog" "${INSTALL_LOG_DIR}\${UNINSTALL_PREFIX}install_${Architecture}.${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}_$2-$1-$0_$4-$5-$6.log"
 
   !else
 
@@ -116,7 +116,7 @@ Var TempInstallLog
     !endif
 
     ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
-    CopyFiles "$TempInstallLog" "${COMMON_APPDATA}\log\${UNINSTALL_PREFIX}install_${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}_$2-$1-$0_$4-$5-$6.log"
+    CopyFiles "$TempInstallLog" "${COMMON_APPDATA}\log\${UNINSTALL_PREFIX}install_${Architecture}.${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}_$2-$1-$0_$4-$5-$6.log"
 
   !endif
 
