@@ -96,7 +96,7 @@ namespace MediaPortal.DeployTool.Sections
       string Tv3Build = "0";
       string Tv3DisplayVer = string.Empty;
 
-      RegistryKey key = Utils.GetUninstallKey("MediaPortal TV Server");
+      key = Utils.GetUninstallKey("MediaPortal TV Server");
       if (key != null)
       {
         Tv3Build = key.GetValue("VersionBuild").ToString();
@@ -106,6 +106,7 @@ namespace MediaPortal.DeployTool.Sections
         Tv3DisplayVer = key.GetValue("DisplayVersion").ToString().Replace(" for TESTING ONLY", string.Empty);
         string InstallPath = key.GetValue("InstallPath").ToString();
         key.Close();
+
         if (!string.IsNullOrEmpty(InstallPath))
         {
           InstallationProperties.Instance.Set("TVServerDir", InstallPath);
