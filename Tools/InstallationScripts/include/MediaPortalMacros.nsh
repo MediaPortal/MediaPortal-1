@@ -64,15 +64,25 @@
   !define WEB_REQUIREMENTS "http://wiki.team-mediaportal.com/GeneralRequirements"
 !endif
 
+!ifndef MP_REG_UNINSTALL_X86
+    !define MP_REG_UNINSTALL_X86  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+!endif
+!ifndef MP_REG_UNINSTALL_X64
+    !define MP_REG_UNINSTALL_X64  "SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
+!endif
 !ifndef MP_REG_UNINSTALL
     !if "${Architecture}" == "x64"
-        !define MP_REG_UNINSTALL  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
+        !define MP_REG_UNINSTALL  $MP_REG_UNINSTALL_X64
     !else
-        !define MP_REG_UNINSTALL  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+        !define MP_REG_UNINSTALL  $MP_REG_UNINSTALL_X86
     !endif
 !endif
 !ifndef TV3_REG_UNINSTALL
-  !define TV3_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
+    !if "${Architecture}" == "x64"
+        !define TV3_REG_UNINSTALL "SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
+    !else
+        !define TV3_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
+    !endif
 !endif
 
 ; modify your registry and uncomment the following line to test if the git version check is working
@@ -225,6 +235,24 @@
 !define MSI_TVClientIsInstalled `"" MSI_TVClientIsInstalled ""`
 
 ;======================================
+
+!macro _MPIsInstalledx86 _a _b _t _f
+  SetRegView 32
+  !insertmacro _LOGICLIB_TEMP
+
+  ReadRegStr $_LOGICLIB_TEMP HKLM "${MP_REG_UNINSTALL_X86}" "UninstallString"
+  IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
+!macroend
+!define MPIsInstalledx86 `"" MPIsInstalledx86 ""`
+
+!macro _MPIsInstalledx64 _a _b _t _f
+  SetRegView 32
+  !insertmacro _LOGICLIB_TEMP
+
+  ReadRegStr $_LOGICLIB_TEMP HKLM "${MP_REG_UNINSTALL_X64}" "UninstallString"
+  IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
+!macroend
+!define MPIsInstalledx64 `"" MPIsInstalledx64 ""`
 
 !macro _MPIsInstalled _a _b _t _f
   SetRegView 32

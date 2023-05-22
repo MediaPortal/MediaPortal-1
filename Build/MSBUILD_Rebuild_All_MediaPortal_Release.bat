@@ -71,21 +71,28 @@ rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%TVLibrary%" >> %log%
 %DeployVersionGIT% /git="%GIT_ROOT%" /path="%CommonMPTV%" >> %log%
 
 echo.
-echo Building TV Server...
-set xml=Build_Report_%BUILD_TYPE%_TvLibrary.xml
-set html=Build_Report_%BUILD_TYPE%_TvLibrary.html
-set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
-
-"%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%TVLibrary%\TvLibrary.sln" >> %log%
-BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
-
-echo.
 echo Building TV Client plugin...
 set xml=Build_Report_%BUILD_TYPE%_TvPlugin.xml
 set html=Build_Report_%BUILD_TYPE%_TvPlugin.html
 set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
 
 "%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE% "%TVLibrary%\TvPlugin\TvPlugin.sln" >> %log%
+BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
+
+
+if %ARCH%==x64 (
+    echo.
+    echo Building native components x86 for TV Server...
+    call VS_Rebuild_Release_DirectShowFilters.bat x86
+) 
+
+echo.
+echo Building TV Server...
+set xml=Build_Report_%BUILD_TYPE%_TvLibrary.xml
+set html=Build_Report_%BUILD_TYPE%_TvLibrary.html
+set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
+
+"%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%TVLibrary%\TvLibrary.sln" >> %log%
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
 echo.

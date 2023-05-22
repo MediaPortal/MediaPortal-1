@@ -78,6 +78,7 @@
 
 !system '"${MSBuild_Path}" "${git_ROOT}\Build\RestorePackages.targets"' = 0
 
+; Build MP
 !ifdef BUILD_MediaPortal
 !if "${Architecture}" == "x64"
   !define FilterArchitecture x64
@@ -102,22 +103,37 @@
 !insertmacro FinalizeBuildReport
 !endif
 
+!if ${VER_BUILD} != 0
+!system '"${git_DeployVersionGIT}\DeployVersionGIT\bin\Release\DeployVersionGIT.exe" /git="${git_ROOT}" /path="${git_MP}"  /revert' = 0
+!endif
+
+; Build MP installer
+!ifdef BUILD_Installer
+;!system '${git_ROOT}\Build\MSBUILD_MP_LargeAddressAware.bat Release' = 0
+!system '"${NSISDIR}\makensis.exe" /DBUILD_TYPE=Release /DArchitecture=${Architecture} "${git_MP}\Setup\setup.nsi"' = 0
+!endif
+
+; Build TV server
 !ifdef BUILD_TVServer
 !if "${Architecture}" == "x64"
   !define TVServerArchitecture x86
+  
+  ; Build DirectShow filters as x86 for TV server
+  !insertmacro PrepareBuildReport DirectShowFilters
+  !system '"${MSBuild_Path}" ${logger} /target:rebuild /property:Configuration=Release;Platform=Win32 "${git_DirectShowFilters}\Filters.sln"' = 0
+  !insertmacro FinalizeBuildReport
 !else
   !define TVServerArchitecture x86
 !endif
-!insertmacro PrepareBuildReport TvLibrary
-!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=${TVServerArchitecture} "${git_TVServer}\TvLibrary.sln"' = 0
-!insertmacro FinalizeBuildReport
 !insertmacro PrepareBuildReport TvPlugin
 !system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform="Any CPU" "${git_TVServer}\TvPlugin\TvPlugin.sln"' = 0
+!insertmacro FinalizeBuildReport
+!insertmacro PrepareBuildReport TvLibrary
+!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=${TVServerArchitecture} "${git_TVServer}\TvLibrary.sln"' = 0
 !insertmacro FinalizeBuildReport
 !endif
 
 !if ${VER_BUILD} != 0
-!system '"${git_DeployVersionGIT}\DeployVersionGIT\bin\Release\DeployVersionGIT.exe" /git="${git_ROOT}" /path="${git_MP}"  /revert' = 0
 !system '"${git_DeployVersionGIT}\DeployVersionGIT\bin\Release\DeployVersionGIT.exe" /git="${git_ROOT}" /path="${git_TVServer}"  /revert' = 0
 !system '"${git_DeployVersionGIT}\DeployVersionGIT\bin\Release\DeployVersionGIT.exe" /git="${git_ROOT}" /path="${git_ROOT}\Common-MP-TVE3"  /revert' = 0
 !endif
@@ -134,8 +150,7 @@
 !insertmacro FinalizeBuildReport
 !endif
 
+; Build TV installer
 !ifdef BUILD_Installer
-!system '${git_ROOT}\Build\MSBUILD_MP_LargeAddressAware.bat Release' = 0
-!system '"${NSISDIR}\makensis.exe" /DArchitecture=${Architecture} "${git_MP}\Setup\setup.nsi"' = 0
-!system '"${NSISDIR}\makensis.exe" /DArchitecture=${Architecture} "${git_TVServer}\Setup\setup.nsi"' = 0
+!system '"${NSISDIR}\makensis.exe" /DBUILD_TYPE=Release /DArchitecture=${TVServerArchitecture} "${git_TVServer}\Setup\setup.nsi"' = 0
 !endif
