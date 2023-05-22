@@ -108,26 +108,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
       try
       {
-        RegistryKey key = null;
-        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\DirectX");
-        if (key == null)
-        {
-          try
-          {
-            key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\DirectX", false,
-                                   Utils.eRegWow64Options.KEY_WOW64_32KEY);
-          }
-          catch
-          {
-            // Parent key not open, exception found at opening (probably related to
-            // security permissions requested)
-          }
-          if (key == null && Utils.Is64bit())
-          {
-            RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
-            key = localKey.OpenSubKey("SOFTWARE\\Microsoft\\DirectX");
-          }
-        }
+        RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\Microsoft\\DirectX");
         using (key)
         {
           if (key == null)
@@ -156,7 +137,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
       catch (Exception)
       {
-        MessageBox.Show("Failed to check the DirectX installation status", "Error", MessageBoxButtons.OK,
+        MessageBox.Show("Failed to check the DirectX installation status", "Error", 
+                        MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
       }
       return result;

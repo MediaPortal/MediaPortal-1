@@ -57,26 +57,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     private static void FixTcpPort()
     {
-      RegistryKey keySql = null;
-      keySql = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
-      if (keySql == null)
-      {
-        try
-        {
-          keySql = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL", false,
-                                    Utils.eRegWow64Options.KEY_WOW64_32KEY);
-        }
-        catch
-        {
-          // Parent key not open, exception found at opening (probably related to
-          // security permissions requested)
-        }
-        if (keySql == null && Utils.Is64bit())
-        {
-          RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
-          keySql = localKey.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
-        }
-      }
+      RegistryKey keySql = Utils.LMOpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
       if (keySql == null)
       {
         return;
@@ -84,29 +65,12 @@ namespace MediaPortal.DeployTool.InstallationChecks
       string instanceSQL = (string)keySql.GetValue(GetIstanceName());
       keySql.Close();
 
-      keySql = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll", true);
-      if (keySql == null)
-      {
-        try
-        {
-          keySql = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll", true,
-                                    Utils.eRegWow64Options.KEY_WOW64_32KEY);
-        }
-        catch
-        {
-          // Parent key not open, exception found at opening (probably related to
-          // security permissions requested)
-        }
-        if (keySql == null && Utils.Is64bit())
-        {
-          RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
-          keySql = localKey.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll", true);
-        }
-      }
+      keySql = Utils.LMOpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll", true);
       if (keySql == null)
       {
         return;
       }
+
       keySql.SetValue("TcpPort", "1433");
       keySql.SetValue("TcpDynamicPorts", string.Empty);
       keySql.Close();
@@ -212,43 +176,28 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public CheckResult CheckStatus()
     {
-      RegistryKey key = null;
       CheckResult result;
       result.needsDownload = true;
-      FileInfo msSqlFile = new FileInfo(_fileName);
 
+      FileInfo msSqlFile = new FileInfo(_fileName);
       if (msSqlFile.Exists && msSqlFile.Length != 0)
+      {
         result.needsDownload = false;
+      }
 
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
-      if (key == null)
-      {
-        try
-        {
-          key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion", false,
-                                 Utils.eRegWow64Options.KEY_WOW64_32KEY);
-        }
-        catch
-        {
-          // Parent key not open, exception found at opening (probably related to
-          // security permissions requested)
-        }
-        if (key == null && Utils.Is64bit())
-        {
-          RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
-          key = localKey.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
-        }
-      }
 
+      RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
       using (key)
       {
         if (key == null)
+        {
           result.state = CheckState.NOT_INSTALLED;
+        }
         else
         {
           string version = (string)key.GetValue("CurrentVersion");

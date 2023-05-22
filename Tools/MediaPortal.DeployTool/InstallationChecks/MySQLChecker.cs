@@ -92,26 +92,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     private bool IsMySQL51Installed()
     {
-      RegistryKey key = null;
-      try
-      {
-        key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\MySQL AB\\MySQL Server 5.1", false,
-                               Utils.eRegWow64Options.KEY_WOW64_32KEY);
-      }
-      catch
-      {
-        // Parent key not open, exception found at opening (probably related to
-        // security permissions requested)
-      }
-      if (key == null)
-      {
-        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
-      }
-      if (key == null && Utils.Is64bit())
-      {
-        RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
-        key = localKey.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
-      }
+      RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
       if (key != null)
       {
         strMySQL = key.GetValue("Location").ToString();
@@ -320,10 +301,12 @@ namespace MediaPortal.DeployTool.InstallationChecks
 #else
       Process svcInstaller = Process.Start(cmdExe, cmdParam);
 #endif
+
       if (svcInstaller != null)
       {
         svcInstaller.WaitForExit();
       }
+
       ServiceController ctrl = new ServiceController(ServiceName);
       try
       {
@@ -402,6 +385,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         MessageBox.Show("MySQL - set privileges exception");
         return false;
       }
+
       if (MySQL51)
       {
         RestoreDB();
@@ -418,7 +402,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public CheckResult CheckStatus()
     {
-
       CheckResult result = default(CheckResult);
 
       // check if the user does not want MySQL installed
@@ -428,37 +411,21 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return result;
       }
 
-      RegistryKey key = null;
       result.needsDownload = true;
       FileInfo mySqlFile = new FileInfo(_fileName);
 
       if (mySqlFile.Exists && mySqlFile.Length != 0)
+      {
         result.needsDownload = false;
+      }
 
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      try
-      {
-        key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\MySQL AB\\MySQL Server 5.6", false,
-                               Utils.eRegWow64Options.KEY_WOW64_32KEY);
-      }
-      catch
-      {
-        // Parent key not open, exception found at opening (probably related to
-        // security permissions requested)
-      }
-      if (key == null)
-      {
-        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.6");
-      }
-      if (key == null && Utils.Is64bit())
-      {
-        RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
-        key = localKey.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.6");
-      }
+
+      RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.6");
       if (key == null)
       {
         result.state = CheckState.NOT_INSTALLED;
@@ -473,7 +440,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public static CheckResult CheckStatusMySQL51()
     {
-      RegistryKey key = null;
       CheckResult result;
       result.needsDownload = true;
       FileInfo mySqlFile = new FileInfo(_fileName);
@@ -486,25 +452,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      try
-      {
-        key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\MySQL AB\\MySQL Server 5.1", false,
-                               Utils.eRegWow64Options.KEY_WOW64_32KEY);
-      }
-      catch
-      {
-        // Parent key not open, exception found at opening (probably related to
-        // security permissions requested)
-      }
-      if (key == null)
-      {
-        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
-      }
-      if (key == null && Utils.Is64bit())
-      {
-        RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
-        key = localKey.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
-      }
+
+      RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
       if (key == null)
       {
         result.state = CheckState.NOT_INSTALLED;
