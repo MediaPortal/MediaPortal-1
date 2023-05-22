@@ -369,7 +369,7 @@ namespace MediaPortal.DeployTool
       CheckUninstallString(clsid, true);
     }
 
-    public static string GetUninstallKey(string clsid)
+    public static RegistryKey GetUninstallKey(string clsid)
     {
       return LMOpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid);
     }
