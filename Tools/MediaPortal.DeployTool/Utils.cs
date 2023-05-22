@@ -415,7 +415,6 @@ namespace MediaPortal.DeployTool
 
     public static CheckResult CheckNSISUninstallString(string RegistryPath, string MementoSection)
     {
-      RegistryKey key = null;
       CheckResult result = new CheckResult
       {
         state = CheckState.NOT_INSTALLED
