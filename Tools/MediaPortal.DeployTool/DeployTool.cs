@@ -74,19 +74,29 @@ namespace MediaPortal.DeployTool
 
     public DeployTool()
     {
-      //Create necessary directory tree
+      // Create necessary directory tree
       if (!Directory.Exists(Application.StartupPath + "\\deploy"))
       {
         Directory.CreateDirectory(Application.StartupPath + "\\deploy");
       }
 
-      //Set default folders
+      // Set default folders
       InstallationProperties.Instance.Set("MPDir",
                                           Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) +
                                           "\\Team MediaPortal\\MediaPortal");
-      InstallationProperties.Instance.Set("TVServerDir",
-                                          Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) +
-                                          "\\Team MediaPortal\\MediaPortal TV Server");
+      if (Utils.Is64bit())
+      {
+        InstallationProperties.Instance.Set("TVServerDir",
+                                            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) +
+                                            "\\Team MediaPortal\\MediaPortal TV Server (x64)");
+      }
+      else
+      {
+        InstallationProperties.Instance.Set("TVServerDir",
+                                            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) +
+                                            "\\Team MediaPortal\\MediaPortal TV Server");
+      }
+
       if (Utils.Is64bit())
       {
         InstallationProperties.Instance.Set("ProgramFiles", Environment.GetEnvironmentVariable("ProgramFiles"));

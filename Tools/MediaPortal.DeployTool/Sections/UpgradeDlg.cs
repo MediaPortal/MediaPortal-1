@@ -96,7 +96,7 @@ namespace MediaPortal.DeployTool.Sections
       string Tv3Build = "0";
       string Tv3DisplayVer = string.Empty;
 
-      key = Utils.GetUninstallKey("MediaPortal TV Server");
+      key = Utils.GetUninstallKey("MediaPortal TV Server" + (Utils.Is64bit() ? " (x64)" : string.Empty));
       if (key != null)
       {
         Tv3Build = key.GetValue("VersionBuild").ToString();
@@ -248,8 +248,8 @@ namespace MediaPortal.DeployTool.Sections
       freshForce = false;
       InstallationProperties.Instance.Set("UpdateMode", "yes");
 
-      CheckResult resultTvServer = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
-      CheckResult resultTvClient = Utils.CheckNSISUninstallString("Mediaportal Tv Server", "MementoSection_SecClient");
+      CheckResult resultTvServer = Utils.CheckNSISUninstallString("MediaPortal TV Server" + (Utils.Is64bit() ? " (x64)" : string.Empty), "MementoSection_SecServer");
+      CheckResult resultTvClient = Utils.CheckNSISUninstallString("Mediaportal TV Server" + (Utils.Is64bit() ? " (x64)" : string.Empty), "MementoSection_SecClient");
 
       bool TvServer = resultTvServer.state != CheckState.NOT_INSTALLED;
       bool TvClient = resultTvClient.state != CheckState.NOT_INSTALLED;
@@ -272,8 +272,8 @@ namespace MediaPortal.DeployTool.Sections
       freshForce = false;
       InstallationProperties.Instance.Set("UpdateMode", "yes");
 
-      CheckResult resultTvServer = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
-      CheckResult resultTvClient = Utils.CheckNSISUninstallString("Mediaportal Tv Server", "MementoSection_SecClient");
+      CheckResult resultTvServer = Utils.CheckNSISUninstallString("MediaPortal TV Server" + (Utils.Is64bit() ? " (x64)" : string.Empty), "MementoSection_SecServer");
+      CheckResult resultTvClient = Utils.CheckNSISUninstallString("Mediaportal TV Server" + (Utils.Is64bit() ? " (x64)" : string.Empty), "MementoSection_SecClient");
 
       bool TvServer = resultTvServer.state != CheckState.NOT_INSTALLED;
       bool TvClient = resultTvClient.state != CheckState.NOT_INSTALLED;
