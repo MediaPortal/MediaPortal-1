@@ -1131,14 +1131,7 @@ Function .onInit
 
   ${InitCommandlineParameter}
   ${ReadCommandlineParameter} "noClient"
-
-  ; For x64 force to not select TV Server  
-  ${If} "${Architecture}" == "x64"
-    StrCpy $noServer 1
-  ${else}
-    ${ReadCommandlineParameter} "noServer"
-  ${EndIf}
-  
+  ${ReadCommandlineParameter} "noServer"
   ${ReadCommandlineParameter} "noDesktopSC"
   ;${ReadCommandlineParameter} "noStartMenuSC"
   ${ReadCommandlineParameter} "DeployMode"
