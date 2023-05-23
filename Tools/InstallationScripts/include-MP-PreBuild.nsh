@@ -117,11 +117,6 @@
 !ifdef BUILD_TVServer
 !if "${Architecture}" == "x64"
   !define TVServerArchitecture x86
-  
-  ; Build DirectShow filters as x86 for TV server
-  !insertmacro PrepareBuildReport DirectShowFilters
-  !system '"${MSBuild_Path}" ${logger} /target:rebuild /property:Configuration=Release;Platform=Win32 "${git_DirectShowFilters}\Filters.sln"' = 0
-  !insertmacro FinalizeBuildReport
 !else
   !define TVServerArchitecture x86
 !endif
@@ -152,5 +147,5 @@
 
 ; Build TV installer
 !ifdef BUILD_Installer
-!system '"${NSISDIR}\makensis.exe" /DBUILD_TYPE=Release /DArchitecture=${TVServerArchitecture} "${git_TVServer}\Setup\setup.nsi"' = 0
+!system '"${NSISDIR}\makensis.exe" /DBUILD_TYPE=Release /DArchitecture=${Architecture} "${git_TVServer}\Setup\setup.nsi"' = 0
 !endif

@@ -76,17 +76,21 @@
 
 
 !if "${Architecture}" == "x64"
-  !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
-  ;!define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
+  !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
+  !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server (x64)"
 !else
+  !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
   !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
-  ;!define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
 !endif
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal TV Server"
 !define MP_COMMON_APPDATA     "$APPDATA\Team MediaPortal\MediaPortal"
-!define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
+!if "${Architecture}" == "x64"
+    !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server (x64)"
+!else
+    !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
+!endif
 
 ; import version from shared file
 !include "${git_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
@@ -118,7 +122,6 @@ Var PREVIOUS_GENTLE_CONFIG_PLUGIN
 
 Var frominstall
 
-Var path
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
@@ -483,8 +486,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; MediaPortal Watchdog
   ${KillProcess} "WatchDog.exe"
 
-  ${IfNot} ${MPIsInstalledx86}
-  ${AndIfNot} ${MPIsInstalledx64} 
+  ${IfNot} ${MPIsInstalled}
     !insertmacro SecMpeInstaller
     !insertmacro SecWatchdog
   ${EndIf}
@@ -615,7 +617,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ${LOG_TEXT} "INFO" "filter registration..."
   ; filters for digital tv
   ${IfNot} ${MP023IsInstalled}
-  ${AndIfNot} ${MPIsInstalledx86}
+  ${AndIfNot} ${MPIsInstalled}
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax" "$INSTDIR\TsReader.ax" "$INSTDIR"
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\Core-CC-Parser\CCCP\${BUILD_TYPE}\cccp.ax" "$INSTDIR\cccp.ax" "$INSTDIR"
   ${EndIf}
@@ -666,6 +668,11 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ;${EndIf}
 ${MementoSectionEnd}
 !macro Remove_${SecServer}
+
+  ; Currently the x86 version only is suppoertd
+  ${If} "${Architecture}" == "x86"
+
+
   ${LOG_TEXT} "INFO" "Uninstalling MediaPortal TV Server..."
 
   ; Kill running Programs
@@ -701,7 +708,7 @@ ${MementoSectionEnd}
   ${LOG_TEXT} "INFO" "Unreg and remove filters..."
   ; filters for digital tv
   ${IfNot} ${MP023IsInstalled}
-  ${AndIfNot} ${MPIsInstalledx86}
+  ${AndIfNot} ${MPIsInstalled}
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\TsReader.ax"
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\cccp.ax"
     ; Delete TV filter to be able to be registered with an updated version
@@ -817,10 +824,11 @@ ${MementoSectionEnd}
   ; remove Desktop shortcuts
   Delete "$DESKTOP\TV-Server Configuration.lnk"
   
-  ${IfNot} ${MPIsInstalledx86}
-  ${AndIfNot} ${MPIsInstalledx64}
+  ${IfNot} ${MPIsInstalled}
     !insertmacro Remove_SecMpeInstaller
     !insertmacro Remove_SecWatchdog
+  ${EndIf}
+  
   ${EndIf}
   
 !macroend
@@ -839,60 +847,33 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   ${LOG_TEXT} "INFO" "MediaPortalPlugins are at: $MPdir.Plugins"
   
   #---------------------------- File Copy ----------------------
+  ; Common Files
+  SetOutPath "$MPdir.Base"
+  File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvControl.dll"
+  File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
+  File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TVDatabase.dll"
+  File "${git_TVServer}\TVDatabase\references\Gentle.Common.DLL"
+  File "${git_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
+  File "${git_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.dll"
+  File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
+  File "${git_TVServer}\TVDatabase\references\log4net.dll"
+  File "${git_TVServer}\TVDatabase\references\MySql.Data.dll"
+  File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
 
   ;Gentle.Config
   SetOutPath "$MPdir.Config"
   File "${git_Common_MP_TVE3}\Gentle.config"
 
-  
-  ${If} ${MPIsInstalledx86}
-      ; Common Files
-      ReadRegStr $path HKLM "${MP_REG_UNINSTALL_X86}" "InstallPath"
-      ${LOG_TEXT} "INFO" "Installing TvPlugin x86: $path"           
-      SetOutPath "$path"
-      File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvControl.dll"
-      File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
-      File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TVDatabase.dll"
-      File "${git_TVServer}\TVDatabase\references\Gentle.Common.DLL"
-      File "${git_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
-      File "${git_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.dll"
-      File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
-      File "${git_TVServer}\TVDatabase\references\log4net.dll"
-      File "${git_TVServer}\TVDatabase\references\MySql.Data.dll"
-      File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
-
-      ; The Plugins
-      SetOutPath "$path\Plugins\Windows"
-      File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvPlugin.dll"
-  ${EndIf}
-  
-  ${If} ${MPIsInstalledx64}
-      ; Common Files
-      ReadRegStr $path HKLM "${MP_REG_UNINSTALL_X64}" "InstallPath"
-      ${LOG_TEXT} "INFO" "Installing TvPlugin x64: $path"           
-      SetOutPath "$path"
-      File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvControl.dll"
-      File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
-      File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TVDatabase.dll"
-      File "${git_TVServer}\TVDatabase\references\Gentle.Common.DLL"
-      File "${git_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
-      File "${git_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.dll"
-      File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
-      File "${git_TVServer}\TVDatabase\references\log4net.dll"
-      File "${git_TVServer}\TVDatabase\references\MySql.Data.dll"
-      File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
-
-      ; The Plugins
-      SetOutPath "$path\Plugins\Windows"
-      File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvPlugin.dll"
-  ${EndIf}
+  ; The Plugins
+  SetOutPath "$MPdir.Plugins\Windows"
+  File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvPlugin.dll"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION       for TVClient
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
   #---------------------------------------------------------------------------
-  ; !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\DVBSubtitle3\bin\${BUILD_TYPE}\DVBSub3.ax" "$MPdir.Base\DVBSub3.ax"  "$MPdir.Base"
-  ; !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\mmaacd.ax"                     "$MPdir.Base\mmaacd.ax"   "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\DVBSubtitle3\bin\${BUILD_TYPE}\DVBSub3.ax" "$MPdir.Base\DVBSub3.ax"  "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\mmaacd.ax"                     "$MPdir.Base\mmaacd.ax"   "$MPdir.Base"
 ${MementoSectionEnd}
 !macro Remove_${SecClient}
   ${LOG_TEXT} "INFO" "Uninstalling MediaPortal TV Client plugin..."
@@ -919,49 +900,23 @@ ${MementoSectionEnd}
   # FILTER UNREGISTRATION     for TVClient
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
   #---------------------------------------------------------------------------
-  ; !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\DVBSub3.ax"
-  ; !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\mmaacd.ax"
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\DVBSub3.ax"
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\mmaacd.ax"
 
-  ${If} ${MPIsInstalledx86}
-    ReadRegStr $path HKLM "${MP_REG_UNINSTALL_X86}" "InstallPath"
-    ${LOG_TEXT} "INFO" "Removing TvPlugin x86: $path"
-    
-    ; The Plugins
-    Delete "$path\Plugins\Windows\TvPlugin.dll"
+  ; The Plugins
+  Delete "$MPdir.Plugins\Windows\TvPlugin.dll"
 
-    ; Common Files
-    Delete "$path\TVDatabase.dll"
-    Delete "$path\Gentle.Common.DLL"
-    Delete "$path\Gentle.Framework.DLL"
-    Delete "$path\Gentle.Provider.MySQL.dll"
-    Delete "$path\Gentle.Provider.SQLServer.dll"
-    ;Delete "$path\log4net.dll"
-    Delete "$path\MySql.Data.dll"
-    Delete "$path\TvBusinessLayer.dll"
-    Delete "$path\TvControl.dll"
-    Delete "$pathe\TvLibrary.Interfaces.dll"
-  ${EndIf}
-  
-  ${If} ${MPIsInstalledx64}
-    ReadRegStr $path HKLM "${MP_REG_UNINSTALL_X64}" "InstallPath"
-    ${LOG_TEXT} "INFO" "Removing TvPlugin x64: $path"
-    
-    ; The Plugins
-    Delete "$path\Plugins\Windows\TvPlugin.dll"
-
-    ; Common Files
-    Delete "$path\TVDatabase.dll"
-    Delete "$path\Gentle.Common.DLL"
-    Delete "$path\Gentle.Framework.DLL"
-    Delete "$path\Gentle.Provider.MySQL.dll"
-    Delete "$path\Gentle.Provider.SQLServer.dll"
-    ;Delete "$path\log4net.dll"
-    Delete "$path\MySql.Data.dll"
-    Delete "$path\TvBusinessLayer.dll"
-    Delete "$path\TvControl.dll"
-    Delete "$pathe\TvLibrary.Interfaces.dll"
-  ${EndIf}
-  
+  ; Common Files
+  Delete "$MPdir.Base\TVDatabase.dll"
+  Delete "$MPdir.Base\Gentle.Common.DLL"
+  Delete "$MPdir.Base\Gentle.Framework.DLL"
+  Delete "$MPdir.Base\Gentle.Provider.MySQL.dll"
+  Delete "$MPdir.Base\Gentle.Provider.SQLServer.dll"
+  ;Delete "$MPdir.Base\log4net.dll"
+  Delete "$MPdir.Base\MySql.Data.dll"
+  Delete "$MPdir.Base\TvBusinessLayer.dll"
+  Delete "$MPdir.Base\TvControl.dll"
+  Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
 !macroend
 
 ${MementoSectionDone}
@@ -1010,11 +965,7 @@ Section -Post
 
   ; if TVplugin is enabled, save MP installation path to uninstall it even if mp is already uninstalled
   ${If} ${TVClientIsInstalled}
-    !if "${Architecture}" == "x64"
-    WriteRegDWORD HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir64" "$MPdir.Base"
-    !else
     WriteRegDWORD HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir" "$MPdir.Base"
-    !endif
   ${EndIf}
 
   ;${If} $noStartMenuSC != 1
@@ -1042,7 +993,7 @@ Section -Post
   WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString    "$INSTDIR\uninstall-tve3.exe"
   WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 1
   WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 1
-  
+
   WriteUninstaller "$INSTDIR\uninstall-tve3.exe"
 
   ; set rights to programmdata directory and reg keys
@@ -1130,7 +1081,12 @@ Function LoadPreviousSettings
   ${If} "$PREVIOUS_INSTALLDIR" != ""
     StrCpy $INSTDIR "$PREVIOUS_INSTALLDIR"
   ${ElseIf} "$INSTDIR" == ""
-    StrCpy $INSTDIR "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server"
+  
+      ${If} "${Architecture}" == "x64"
+        StrCpy $INSTDIR "$PROGRAMFILES64\Team MediaPortal\MediaPortal TV Server"
+      ${else}
+        StrCpy $INSTDIR "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server"
+      ${EndIf}
   ${EndIf}
 
 
@@ -1138,8 +1094,7 @@ Function LoadPreviousSettings
   ${MementoSectionRestore}
 
   ; set sections, according to possible selections
-  ${IfNot} ${MPIsInstalledx86}
-  ${AndIfNot} ${MPIsInstalledx64}
+  ${IfNot} ${MPIsInstalled}
     !insertmacro DisableSection "${SecClient}" "MediaPortal TV Client plugin" " ($(TEXT_MP_NOT_INSTALLED))"
   ${else}
     !insertmacro EnableSection "${SecClient}" "MediaPortal TV Client plugin"
@@ -1176,7 +1131,14 @@ Function .onInit
 
   ${InitCommandlineParameter}
   ${ReadCommandlineParameter} "noClient"
-  ${ReadCommandlineParameter} "noServer"
+
+  ; For x64 force to not select TV Server  
+  ${If} "${Architecture}" == "x64"
+    StrCpy $noServer 1
+  ${else}
+    ${ReadCommandlineParameter} "noServer"
+  ${EndIf}
+  
   ${ReadCommandlineParameter} "noDesktopSC"
   ;${ReadCommandlineParameter} "noStartMenuSC"
   ${ReadCommandlineParameter} "DeployMode"
@@ -1299,17 +1261,10 @@ Function un.onInit
 
 
   ${IfNot} ${MP023IsInstalled}
-  ${AndIfNot} ${MPIsInstalledx86}
-  ${AndIfNot} ${MPIsInstalledx64}
+  ${AndIfNot} ${MPIsInstalled}
     Sleep 1
   ${else}
-    ${LOG_TEXT} "DEBUG" "FUNCTION un.onInit: ${REG_UNINSTALL}"
-  
-    !if "${Architecture}" == "x64"
-    ReadRegStr $MPdir.Base HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir64"
-    !else
     ReadRegStr $MPdir.Base HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir"
-    !endif
 
     ${If} $MPdir.Base = ""
       !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
