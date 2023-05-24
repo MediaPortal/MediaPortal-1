@@ -10,6 +10,7 @@ using System.IO.MemoryMappedFiles;
 using MediaPortal.GUI.Library;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using MediaPortal.Configuration;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
 {
@@ -93,7 +94,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
         return _Instance;
       }
 
-    }private static MPx86ProxyHandler _Instance = null;
+    }
+    private static MPx86ProxyHandler _Instance = null;
 
 
     public int Execute(string strDriver, string strMethod, params object[] args)
@@ -432,7 +434,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
         Log.Error("[MPx86ProxyHandler][Execute] Command:{0} Error: {1}", cmd, ex.Message);
         return -1;
       }
-  }
+    }
 
     public int Execute(CommandEnum cmd, ref byte[] data, int iLength)
     {
@@ -467,7 +469,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
 
           //Send
           iResult = this.send(iSize, iLength, data);
-          
+
 
           //Log.Debug("[MPx86ProxyHandler][Execute] Command:{0} Result:{1} Duration:{2}",
           //  cmd,
@@ -515,8 +517,58 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
 
       if (this._FileAccessor == null && this._Connection == null)
       {
+        //Try to open memory file
+        MemoryMappedFile f;
+
+        int iAttempts = 2;
+        while (true)
+        {
+          try
+          {
+            f = MemoryMappedFile.OpenExisting("MPx86ProxyDescription");
+          }
+          catch { f = null; }
+
+          if (f != null)
+            break; //OK
+
+          if (iAttempts-- > 0)
+          {
+            //Check if proxy is running
+            if (Process.GetProcessesByName("MPx86Proxy").Length == 0)
+            {
+              string strProxyPath = Config.GetFile(Config.Dir.Base, "MPx86Proxy.exe");
+              if (File.Exists(strProxyPath))
+              {
+                Log.Debug("[MPx86ProxyHandler][connect] Running-up MPx86Proxy.exe...");
+
+                //Start MPx86Proxy.exe
+                ProcessStartInfo psi = new ProcessStartInfo(strProxyPath);
+                psi.WindowStyle = ProcessWindowStyle.Hidden;
+                psi.Arguments = " -h";
+                psi.CreateNoWindow = true;
+                psi.UseShellExecute = false;
+                psi.ErrorDialog = false;
+                Process proc = new Process();
+                proc.StartInfo = psi;
+                proc.Start();
+              }
+              else
+              {
+                Log.Error("[MPx86ProxyHandler][connect] MPx86Proxy.exe not found.");
+                return -1;
+              }
+            }
+
+            System.Threading.Thread.Sleep(500);
+            continue; //try to get the file again
+          }
+
+          Log.Error("[MPx86ProxyHandler][connect] Unknown connection to the proxy.");
+          return -1;
+        }
+
         //Read port from memory file
-        MemoryMappedFile f = MemoryMappedFile.OpenExisting("MPx86ProxyDescription");
         byte[] data = new byte[512];
         MemoryMappedViewAccessor ac = f.CreateViewAccessor();
         ac.ReadArray<byte>(0, data, 0, data.Length);
@@ -582,7 +634,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
 
         //Get response
         int iRec = this._Connection.Client.Receive(this._Response);
-        if (iRec !=  4 + iDataLength)
+        if (iRec != 4 + iDataLength)
           return -1;
 
         if (iDataLength > 0)
@@ -699,7 +751,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
           }
         }
         else
-          throw new Exception("Unknown argument type: " +  o.GetType().ToString());
+          throw new Exception("Unknown argument type: " + o.GetType().ToString());
       }
 
       //Size at position 0
