@@ -37,7 +37,7 @@ namespace MpeCore.Classes
   {
     public static string InstallerConfigDir
     {
-      get { return Config.GetSubFolder(Config.Dir.Config, "Installer" + (IntPtr.Size == 8 ? " (x64)" : string.Empty); }
+      get { return Config.GetSubFolder(Config.Dir.Config, "Installer" + (IntPtr.Size == 8 ? " (x64)" : string.Empty)); }
     }
 
     public static void LoadPlugins(string pluginFile)
