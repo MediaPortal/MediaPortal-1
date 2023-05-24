@@ -144,6 +144,7 @@ Var PREVIOUS_KEYMAPSETTINGS
 !include WinMessages.nsh
 
 !include "${git_InstallScripts}\include\FileAssociation.nsh"
+!include "${git_InstallScripts}\include\FileAssociationEx.nsh"
 !include "${git_InstallScripts}\include\LanguageMacros.nsh"
 !include "${git_InstallScripts}\include\LoggingMacros.nsh"
 !include "${git_InstallScripts}\include\MediaPortalDirectories.nsh"
@@ -1073,8 +1074,20 @@ Section "-MediaPortal Extension Manager" SecMpeInstaller
   CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"     "$MPdir.Base\MpeMaker.exe"      ""  "$MPdir.Base\MpeMaker.exe"      0 "" "" "MediaPortal Extension Maker"
 
   ; associate file extensions
-  ${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpe1" "MediaPortal extension"
-  ${RegisterExtension} "$MPdir.Base\MpeMaker.exe"     ".xmp2" "MediaPortal extension project"
+  ${If} ${AtLeastWinVista}
+    !if "${Architecture}" == "x64"
+      !insertmacro APP_ASSOCIATE "mpe1" "MPE.Installer.x64" "MediaPortal extension" "$MPdir.Base\MpeInstaller.exe,0" "Open with MPE Installer (x64)" "$MPdir.Base\MpeInstaller.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE "xmp2" "MPE.Maker.x64" "MediaPortal extension project" "$MPdir.Base\MpeMaker.exe,0" "Open with MPE Maker (x64)" "$MPdir.Base\MpeMaker.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDVERB "MPE.Maker.x64" "edit" "Edit with MPE Maker (x64)" "$MPdir.Base\MpeMaker.exe $\"%1$\""
+    !else
+      !insertmacro APP_ASSOCIATE "mpe1" "MPE.Installer" "MediaPortal extension" "$MPdir.Base\MpeInstaller.exe,0" "Open with MPE Installer" "$MPdir.Base\MpeInstaller.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE "xmp2" "MPE.Maker" "MediaPortal extension project" "$MPdir.Base\MpeMaker.exe,0" "Open with MPE Maker" "$MPdir.Base\MpeMaker.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDVERB "MPE.Maker" "edit" "Edit with MPE Maker" "$MPdir.Base\MpeMaker.exe $\"%1$\""
+    !endif
+  ${Else}
+    ${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpe1" "MediaPortal extension"
+    ${RegisterExtension} "$MPdir.Base\MpeMaker.exe"     ".xmp2" "MediaPortal extension project"
+  ${EndIf}
 
   ${RefreshShellIcons}
 SectionEnd
@@ -1094,8 +1107,18 @@ SectionEnd
   Delete "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"
 
   ; unassociate file extensions
-  ${UnRegisterExtension} ".mpe1" "MediaPortal extension"
-  ${UnRegisterExtension} ".xmp2"  "MediaPortal extension project"
+  ${If} ${AtLeastWinVista}
+    !if "${Architecture}" == "x64"
+      !insertmacro APP_ASSOCIATE_REMOVE "mpe1" "MPE.Installer.x64"
+      !insertmacro APP_ASSOCIATE_REMOVE "xmp2" "MPE.Maker.x64"
+    !else
+      !insertmacro APP_ASSOCIATE_REMOVE "mpe1" "MPE.Installer"
+      !insertmacro APP_ASSOCIATE_REMOVE "xmp2" "MPE.Maker"
+    !endif
+  ${Else}
+    ${UnRegisterExtension} ".mpe1" "MediaPortal extension"
+    ${UnRegisterExtension} ".xmp2"  "MediaPortal extension project"
+  ${EndIf}
 
   ${RefreshShellIcons}
 !macroend
