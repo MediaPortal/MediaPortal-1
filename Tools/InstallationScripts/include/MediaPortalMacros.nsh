@@ -228,7 +228,27 @@
 !macroend
 !define MSI_TVClientIsInstalled `"" MSI_TVClientIsInstalled ""`
 
-;======================================
+;======================================   Mediaportal by Architecture
+
+!macro _MPIsInstalledx86 _a _b _t _f
+  SetRegView 32
+  !insertmacro _LOGICLIB_TEMP
+
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal" "UninstallString"
+  IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
+!macroend
+!define MPIsInstalledx86 `"" MPIsInstalledx86 ""`
+
+!macro _MPIsInstalledx64 _a _b _t _f
+  SetRegView 32
+  !insertmacro _LOGICLIB_TEMP
+
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)" "UninstallString"
+  IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
+!macroend
+!define MPIsInstalledx64 `"" MPIsInstalledx64 ""`
+
+;======================================   Mediaportal / TV Server / TV Client
 
 !macro _MPIsInstalled _a _b _t _f
   SetRegView 32
