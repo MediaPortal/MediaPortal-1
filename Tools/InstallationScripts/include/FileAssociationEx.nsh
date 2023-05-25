@@ -123,6 +123,11 @@
   WriteRegStr SHELL_CONTEXT "Software\Classes\${FILECLASS}\shell\${VERB}\command" "" `${COMMAND}`
 !macroend
 
+!macro APP_ASSOCIATE_ADDNAME FILECLASS FRIENDLYNAME COMPANY
+  WriteRegStr SHELL_CONTEXT "Software\Classes\${FILECLASS}" "FriendlyAppName" `${FRIENDLYNAME}`
+  WriteRegStr SHELL_CONTEXT "Software\Classes\${FILECLASS}" "ApplicationCompany" `${COMPANY}`
+!macroend
+
 !macro APP_ASSOCIATE_REMOVEVERB FILECLASS VERB
   DeleteRegKey SHELL_CONTEXT "Software\Classes\${FILECLASS}\shell\${VERB}"
 !macroend

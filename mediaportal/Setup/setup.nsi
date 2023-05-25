@@ -1067,22 +1067,28 @@ Section "-MediaPortal Extension Manager" SecMpeInstaller
   
   ; create startmenu shortcuts
   ${If} $noDesktopSC != 1
-    CreateShortCut "$DESKTOP\MediaPortal Extension Manager.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
+    CreateShortCut "$DESKTOP\MediaPortal Extension Manager.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0  ""  ""  "MediaPortal Extension Manager"
   ${EndIf}
   CreateDirectory "${STARTMENU_GROUP}"
   CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
-  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"     "$MPdir.Base\MpeMaker.exe"      ""  "$MPdir.Base\MpeMaker.exe"      0 "" "" "MediaPortal Extension Maker"
+  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"   "$MPdir.Base\MpeMaker.exe"      ""  "$MPdir.Base\MpeMaker.exe"      0 "" "" "MediaPortal Extension Maker"
 
   ; associate file extensions
   ${If} ${AtLeastWinVista}
     !if "${Architecture}" == "x64"
-      !insertmacro APP_ASSOCIATE "mpe1" "MPE.Installer.x64" "MediaPortal extension" "$MPdir.Base\MpeInstaller.exe,0" "Open with MPE Installer (x64)" "$MPdir.Base\MpeInstaller.exe $\"%1$\""
-      !insertmacro APP_ASSOCIATE "xmp2" "MPE.Maker.x64" "MediaPortal extension project" "$MPdir.Base\MpeMaker.exe,0" "Open with MPE Maker (x64)" "$MPdir.Base\MpeMaker.exe $\"%1$\""
-      !insertmacro APP_ASSOCIATE_ADDVERB "MPE.Maker.x64" "edit" "Edit with MPE Maker (x64)" "$MPdir.Base\MpeMaker.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE "mpe1"  "MPE.Installer.x64" "MediaPortal extension" "$MPdir.Base\MpeInstaller.exe,0" "Open with MPE Installer (x64)" "$MPdir.Base\MpeInstaller.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDNAME "MPE.Installer.x64" "MPE Installer (x64)"   "Team MediaPortal"
+
+      !insertmacro APP_ASSOCIATE "xmp2"  "MPE.Maker.x64" "MediaPortal extension project" "$MPdir.Base\MpeMaker.exe,0" "Open with MPE Maker (x64)"         "$MPdir.Base\MpeMaker.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDVERB "MPE.Maker.x64" "edit"                          "Edit with MPE Maker (x64)"  "$MPdir.Base\MpeMaker.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDNAME "MPE.Maker.x64" "MPE Maker (x64)"               "Team MediaPortal"
     !else
-      !insertmacro APP_ASSOCIATE "mpe1" "MPE.Installer" "MediaPortal extension" "$MPdir.Base\MpeInstaller.exe,0" "Open with MPE Installer" "$MPdir.Base\MpeInstaller.exe $\"%1$\""
-      !insertmacro APP_ASSOCIATE "xmp2" "MPE.Maker" "MediaPortal extension project" "$MPdir.Base\MpeMaker.exe,0" "Open with MPE Maker" "$MPdir.Base\MpeMaker.exe $\"%1$\""
-      !insertmacro APP_ASSOCIATE_ADDVERB "MPE.Maker" "edit" "Edit with MPE Maker" "$MPdir.Base\MpeMaker.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE "mpe1" "MPE.Installer"  "MediaPortal extension" "$MPdir.Base\MpeInstaller.exe,0" "Open with MPE Installer" "$MPdir.Base\MpeInstaller.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDNAME "MPE.Installer" "MPE Installer"         "Team MediaPortal"
+
+      !insertmacro APP_ASSOCIATE "xmp2"  "MPE.Maker" "MediaPortal extension project" "$MPdir.Base\MpeMaker.exe,0" "Open with MPE Maker"                "$MPdir.Base\MpeMaker.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDVERB "MPE.Maker" "edit"                          "Edit with MPE Maker"        "$MPdir.Base\MpeMaker.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDNAME "MPE.Maker" "MPE Maker"                     "Team MediaPortal"
     !endif
   ${Else}
     ${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpe1" "MediaPortal extension"
