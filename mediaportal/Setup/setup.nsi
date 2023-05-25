@@ -890,11 +890,6 @@ SectionEnd
   # FILTER UNREGISTRATION     for TVClient
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
   #---------------------------------------------------------------------------
-  !if "${Architecture}" == "x64"
-    !define LIBRARY_X64
-  !else
-  !endif
-
   ;filter used for SVCD and VCD playback
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\cdxareader.ax"
   ##### MAYBE used by VideoEditor
