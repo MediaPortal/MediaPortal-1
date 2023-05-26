@@ -131,15 +131,23 @@ namespace MediaPortal.DeployTool
       try
       {
         doc.Load(XmlFile);
-        if (Is64bit() && node_id == "FILE")
+        
+        bool need64 = false;
+        if (Is64bit())
         {
-          XmlNode node64 = doc.SelectSingleNode("/Applications/" + session_id + "/" + node_id + "x64");
-          if (node64 != null)
-          {
-            return node64.InnerText;
-          }
+          XmlNode node64 = doc.SelectSingleNode("/Applications/" + session_id + "/X64");
+          need64 = (node64 != null)
         }
+
         XmlNode node = doc.SelectSingleNode("/Applications/" + session_id + "/" + node_id);
+        if (need64 && node_id == "URL")
+        {
+          return node.InnerText + "x64";
+        }
+        if (need64 && node_id == "FILE")
+        {
+          return node.InnerText.Replace("x86", "x64");
+        }
         return node.InnerText;
       }
       catch
