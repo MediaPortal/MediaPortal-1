@@ -136,7 +136,7 @@ namespace MediaPortal.DeployTool
         if (Is64bit())
         {
           XmlNode node64 = doc.SelectSingleNode("/Applications/" + session_id + "/X64");
-          need64 = (node64 != null)
+          need64 = (node64 != null);
         }
 
         XmlNode node = doc.SelectSingleNode("/Applications/" + session_id + "/" + node_id);
