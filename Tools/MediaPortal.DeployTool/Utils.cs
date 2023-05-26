@@ -131,6 +131,14 @@ namespace MediaPortal.DeployTool
       try
       {
         doc.Load(XmlFile);
+        if (Is64bit() && node_id == "FILE")
+        {
+          XmlNode node64 = doc.SelectSingleNode("/Applications/" + session_id + "/" + node_id + "x64");
+          if (node64 != null)
+          {
+            return node64.InnerText;
+          }
+        }
         XmlNode node = doc.SelectSingleNode("/Applications/" + session_id + "/" + node_id);
         return node.InnerText;
       }
@@ -334,7 +342,7 @@ namespace MediaPortal.DeployTool
         }
       }
 
-      if (key == null && Utils.Is64bit())
+      if (key == null && Is64bit())
       {
         RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
         key = localKey.OpenSubKey(keyPath, writable);
