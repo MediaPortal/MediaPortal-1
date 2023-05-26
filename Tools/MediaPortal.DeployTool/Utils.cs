@@ -147,16 +147,17 @@ namespace MediaPortal.DeployTool
     public static DialogResult DownloadFile(string FileName, string prg)
     {
       DialogResult result;
-      ManualDownload dlg = new ManualDownload();
 
-      if (GetDownloadString(prg, "TYPE") == "Manual")
+      if (GetDownloadString(prg, "TYPE") == "Automatic")
       {
-        result = dlg.ShowDialog(GetDownloadString(prg, "URL"), Path.GetFileName(FileName),
-                                Application.StartupPath + "\\deploy");
+        HTTPDownload dlg = new HTTPDownload();
+        result = dlg.ShowDialog(GetDownloadString(prg, "URL"), FileName, GetUserAgentOsString());
       }
       else
       {
-        result = dlg.ShowDialog(GetDownloadString(prg, "URL"), FileName, GetUserAgentOsString());
+        ManualDownload dlg = new ManualDownload();
+        result = dlg.ShowDialog(GetDownloadString(prg, "URL"), Path.GetFileName(FileName),
+                                Application.StartupPath + "\\deploy");
       }
       return result;
     }
