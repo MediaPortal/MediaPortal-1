@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -73,17 +73,31 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool UnInstall()
     {
-      // MS Visual C++ 2008 SP1 + MFC Security Update (9.0.30729.6161)
-      string keySection = Utils.CheckUninstallString("{9BE518E6-ECC6-35A9-88E4-87755C07200F}", "DisplayName");
-      if (!string.IsNullOrEmpty(keySection))
+      return true;
+
+      if (Utils.Is64bit())
       {
-        Utils.UninstallMSI("{9BE518E6-ECC6-35A9-88E4-87755C07200F}");
+        // MS Visual C++ 2008 SP1 + MFC Security Update (9.0.30729.6161) x64
+        string keySection = Utils.CheckUninstallString("{5FCE6D76-F5DC-37AB-B2B8-22AB8CEDB1D4}", "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          Utils.UninstallMSI("{5FCE6D76-F5DC-37AB-B2B8-22AB8CEDB1D4}");
+        }
       }
-      // MS Visual C++ 2008 SP1 + ATL Update (9.0.30729.4148)
-      keySection = Utils.CheckUninstallString("{1F1C2DFC-2D24-3E06-BCB8-725134ADF989}", "DisplayName");
-      if (!string.IsNullOrEmpty(keySection))
+      else
       {
-        Utils.UninstallMSI("{1F1C2DFC-2D24-3E06-BCB8-725134ADF989}");
+        // MS Visual C++ 2008 SP1 + MFC Security Update (9.0.30729.6161) x86
+        string keySection = Utils.CheckUninstallString("{9BE518E6-ECC6-35A9-88E4-87755C07200F}", "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          Utils.UninstallMSI("{9BE518E6-ECC6-35A9-88E4-87755C07200F}");
+        }
+        // MS Visual C++ 2008 SP1 + ATL Update (9.0.30729.4148) x86
+        keySection = Utils.CheckUninstallString("{1F1C2DFC-2D24-3E06-BCB8-725134ADF989}", "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          Utils.UninstallMSI("{1F1C2DFC-2D24-3E06-BCB8-725134ADF989}");
+        }
       }
       return true;
     }
@@ -109,49 +123,81 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return result;
       }
 
-      // MS Visual C++ 2008 SP1 + MFC Security Update (9.0.30729.6161)
-      string keySection = Utils.CheckUninstallString("{9BE518E6-ECC6-35A9-88E4-87755C07200F}", "DisplayName");
-      if (!string.IsNullOrEmpty(keySection))
+      if (Utils.Is64bit())
       {
-        result.state = CheckState.INSTALLED;
-        return result;
+        // MS Visual C++ 2008 SP1 + MFC Security Update (9.0.30729.6161) x64
+        string keySection = Utils.CheckUninstallString("{5FCE6D76-F5DC-37AB-B2B8-22AB8CEDB1D4}", "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
       }
-      // MS Visual C++ 2008 SP1 + ATL Update (9.0.30729.4148)
-      keySection = Utils.CheckUninstallString("{1F1C2DFC-2D24-3E06-BCB8-725134ADF989}", "DisplayName");
-      if (!string.IsNullOrEmpty(keySection))
+      else
       {
-        result.state = CheckState.INSTALLED;
-        return result;
+        // MS Visual C++ 2008 SP1 + MFC Security Update (9.0.30729.6161) x86
+        string keySection = Utils.CheckUninstallString("{9BE518E6-ECC6-35A9-88E4-87755C07200F}", "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
+        // MS Visual C++ 2008 SP1 + ATL Update (9.0.30729.4148)
+        keySection = Utils.CheckUninstallString("{1F1C2DFC-2D24-3E06-BCB8-725134ADF989}", "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
       }
 
       string ManifestDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\winsxs\\Manifests\\";
-      // Manifests for Windows7/Windows10
-      // MS Visual C++ 2008 SP1 + MFC Security Update (9.0.30729.6161)
-      const string ManifestCRT_Win7 = "x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.6161_none_50934f2ebcb7eb57.manifest";
-      const string ManifestMFC_Win7 = "x86_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.6161_none_4bf7e3e2bf9ada4c.manifest";
-      const string ManifestATL_Win7 = "x86_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.30729.6161_none_51cd0a7abbe4e19b.manifest";
-      // Manifests for Vista/2008
-      // MS Visual C++ 2008 SP1 + ATL Update (9.0.30729.4148)
-      const string ManifestCRT_Vista = "x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.4148_none_5090ab56bcba71c2.manifest";
-      const string ManifestMFC_Vista = "x86_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.4148_none_4bf5400abf9d60b7.manifest";
-      const string ManifestATL_Vista = "x86_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.30729.4148_none_51ca66a2bbe76806.manifest";
-      // Manifests for XP/2003
-      // MS Visual C++ 2008 SP1 + ATL Update (9.0.30729.4148)
-      const string ManifestCRT_XP = "x86_Microsoft.VC90.CRT_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_d495ac4e.manifest";
-      const string ManifestMFC_XP = "x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53.manifest";
-      const string ManifestATL_XP = "x86_Microsoft.VC90.ATL_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_353599c2.manifest";
-
-      if (File.Exists(ManifestDir + ManifestCRT_Win7) && File.Exists(ManifestDir + ManifestMFC_Win7) &&
-          File.Exists(ManifestDir + ManifestATL_Win7))
-        result.state = CheckState.INSTALLED;
-      else if (File.Exists(ManifestDir + ManifestCRT_Vista) && File.Exists(ManifestDir + ManifestMFC_Vista) &&
-          File.Exists(ManifestDir + ManifestATL_Vista))
-        result.state = CheckState.INSTALLED;
-      else if (File.Exists(ManifestDir + ManifestCRT_XP) && File.Exists(ManifestDir + ManifestMFC_XP) &&
-               File.Exists(ManifestDir + ManifestATL_XP))
-        result.state = CheckState.INSTALLED;
+      if (Utils.Is64bit())
+      {
+        // Manifests for Windows10/Windows11
+        // MS Visual C++ 2008 SP1 + MFC Security Update (9.0.30729.6161)
+        const string ManifestCRT_Win10 = "amd64_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.9635_none_08e2c157a83ed5da.manifest";
+        if (File.Exists(ManifestDir + ManifestCRT_Win10))
+          result.state = CheckState.INSTALLED;
+        else
+          result.state = CheckState.NOT_INSTALLED;
+      }
       else
-        result.state = CheckState.NOT_INSTALLED;
+      {
+        // Manifests for Windows10/Windows11
+        // MS Visual C++ 2008 SP1 + MFC Security Update (9.0.30729.6161)
+        const string ManifestCRT_Win10 = "x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.9635_none_508ff82ebcbafee0.manifest";
+        // Manifests for Windows7/Windows10
+        // MS Visual C++ 2008 SP1 + MFC Security Update (9.0.30729.6161)
+        const string ManifestCRT_Win7 = "x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.6161_none_50934f2ebcb7eb57.manifest";
+        const string ManifestMFC_Win7 = "x86_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.6161_none_4bf7e3e2bf9ada4c.manifest";
+        const string ManifestATL_Win7 = "x86_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.30729.6161_none_51cd0a7abbe4e19b.manifest";
+        // Manifests for Vista/2008
+        // MS Visual C++ 2008 SP1 + ATL Update (9.0.30729.4148)
+        const string ManifestCRT_Vista = "x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.4148_none_5090ab56bcba71c2.manifest";
+        const string ManifestMFC_Vista = "x86_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.4148_none_4bf5400abf9d60b7.manifest";
+        const string ManifestATL_Vista = "x86_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.30729.4148_none_51ca66a2bbe76806.manifest";
+        // Manifests for XP/2003
+        // MS Visual C++ 2008 SP1 + ATL Update (9.0.30729.4148)
+        const string ManifestCRT_XP = "x86_Microsoft.VC90.CRT_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_d495ac4e.manifest";
+        const string ManifestMFC_XP = "x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53.manifest";
+        const string ManifestATL_XP = "x86_Microsoft.VC90.ATL_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_353599c2.manifest";
+
+        if (File.Exists(ManifestDir + ManifestCRT_Win7) &&
+            File.Exists(ManifestDir + ManifestMFC_Win7) &&
+            File.Exists(ManifestDir + ManifestATL_Win7))
+          result.state = CheckState.INSTALLED;
+        else if (File.Exists(ManifestDir + ManifestCRT_Vista) &&
+                 File.Exists(ManifestDir + ManifestMFC_Vista) &&
+                 File.Exists(ManifestDir + ManifestATL_Vista))
+          result.state = CheckState.INSTALLED;
+        else if (File.Exists(ManifestDir + ManifestCRT_XP) &&
+                 File.Exists(ManifestDir + ManifestMFC_XP) &&
+                 File.Exists(ManifestDir + ManifestATL_XP))
+          result.state = CheckState.INSTALLED;
+        else
+          result.state = CheckState.NOT_INSTALLED;
+      }
 
       return result;
     }

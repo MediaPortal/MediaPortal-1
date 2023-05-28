@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -73,7 +73,18 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool UnInstall()
     {
-      Utils.UninstallMSI("{FF66E9F6-83E7-3A3E-AF14-8DE9A809A6A4}");
+      if (Utils.Is64bit())
+      {
+        // Microsoft Visual C++ 2010 Redistributable - x64 10.0.40219
+        Utils.UninstallMSI("{1D8E6291-B0D5-35EC-8441-6616F567A0F7}");
+      }
+      else
+      {
+        // Microsoft Visual C++ 2010 Redistributable - x86 10.0.40219
+        Utils.UninstallMSI("{F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}");
+        // Microsoft Visual C++ 2008 Redistributable - x86 9.0.21022
+        Utils.UninstallMSI("{FF66E9F6-83E7-3A3E-AF14-8DE9A809A6A4}");
+      }
       return true;
     }
 
