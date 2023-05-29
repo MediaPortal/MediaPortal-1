@@ -31,6 +31,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
 
+    // Microsoft Visual C++ 2015 Redistributable - x86 14.0.24215.1
+    private readonly string x86GUID = "{e2803110-78b3-4664-a479-3611a381656a}";
+    // Microsoft Visual C++ 2015 Redistributable - x64 14.0.24215.1
+    private readonly string x64GUID = "{d992c12e-cab2-426f-bde3-fb8c53950b0d}";
+
     public string GetDisplayName()
     {
       return "MS Visual C++ 2015";
@@ -75,12 +80,19 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       if (Utils.Is64bit())
       {
-
+        string keySection = Utils.CheckUninstallString(x64GUID, "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          Utils.UninstallMSI(x64GUID);
+        }
       }
       else
       {
-        // Microsoft Visual C++ 2015 Redistributable - x86
-        Utils.UninstallMSI("{2e085fd2-a3e4-4b39-8e10-6b8d35f55244}");
+        string keySection = Utils.CheckUninstallString(x86GUID, "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          Utils.UninstallMSI(x86GUID);
+        }
       }
       return true;
     }
@@ -104,6 +116,55 @@ namespace MediaPortal.DeployTool.InstallationChecks
       {
         result.state = CheckState.NOT_INSTALLED;
         return result;
+      }
+
+      if (Utils.Is64bit())
+      {
+        string keySection = Utils.CheckUninstallString(x64GUID, "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
+
+        // Visual C++ 2015-2019 Redistributable x64 (14.24.28127.4)
+        keySection = Utils.CheckUninstallString("{282975d8-55fe-4991-bbbb-06a72581ce58}", "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
+        // Visual C++ 2015-2022 Redistributable x64 (14.30.30704.0)
+        keySection = Utils.CheckUninstallString("{57a73df6-4ba9-4c1d-bbbb-517289ff6c13}", "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
+      }
+      else
+      {
+        string keySection = Utils.CheckUninstallString(x86GUID, "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
+
+        // Visual C++ 2015-2019 Redistributable x86 (14.24.28127.4)
+        keySection = Utils.CheckUninstallString("{e31cb1a4-76b5-46a5-a084-3fa419e82201}", "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
+        // Visual C++ 2015-2022 Redistributable x86 (14.30.30704.0)
+        keySection = Utils.CheckUninstallString("{4d8dcf8c-a72a-43e1-9833-c12724db736e}", "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
       }
 
       string InstallDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\system32\\";

@@ -30,6 +30,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public static string prg = "VCRedist2010";
 
     private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
+    
+    // Microsoft Visual C++ 2010 Redistributable - x86 10.0.40219
+    private readonly string x86GUID = "{F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}";
+    // Microsoft Visual C++ 2010 Redistributable - x64 10.0.40219
+    private readonly string x64GUID = "{1D8E6291-B0D5-35EC-8441-6616F567A0F7}";
 
     public string GetDisplayName()
     {
@@ -75,15 +80,19 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       if (Utils.Is64bit())
       {
-        // Microsoft Visual C++ 2010 Redistributable - x64 10.0.40219
-        Utils.UninstallMSI("{1D8E6291-B0D5-35EC-8441-6616F567A0F7}");
+        string keySection = Utils.CheckUninstallString(x64GUID, "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          Utils.UninstallMSI(x64GUID);
+        }
       }
       else
       {
-        // Microsoft Visual C++ 2010 Redistributable - x86 10.0.40219
-        Utils.UninstallMSI("{F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}");
-        // Microsoft Visual C++ 2008 Redistributable - x86 9.0.21022
-        Utils.UninstallMSI("{FF66E9F6-83E7-3A3E-AF14-8DE9A809A6A4}");
+        string keySection = Utils.CheckUninstallString(x86GUID, "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          Utils.UninstallMSI(x86GUID);
+        }
       }
       return true;
     }
@@ -107,6 +116,25 @@ namespace MediaPortal.DeployTool.InstallationChecks
       {
         result.state = CheckState.NOT_INSTALLED;
         return result;
+      }
+
+      if (Utils.Is64bit())
+      {
+        string keySection = Utils.CheckUninstallString(x64GUID, "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
+      }
+      else
+      {
+        string keySection = Utils.CheckUninstallString(x86GUID, "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
       }
 
       string InstallDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\system32\\";
