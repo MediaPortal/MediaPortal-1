@@ -25,7 +25,7 @@ using MediaPortal.GUI.Pictures;
 using MediaPortal.Picture.Database;
 using MediaPortal.Util;
 
-using Microsoft.DirectX.Direct3D;
+using SharpDX.Direct3D9;
 
 namespace MediaPortal.Dialogs
 {

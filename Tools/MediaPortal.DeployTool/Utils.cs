@@ -29,7 +29,9 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+
 using MediaPortal.DeployTool.Sections;
+
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 
@@ -129,7 +131,23 @@ namespace MediaPortal.DeployTool
       try
       {
         doc.Load(XmlFile);
+        
+        bool need64 = false;
+        if (Is64bit())
+        {
+          XmlNode node64 = doc.SelectSingleNode("/Applications/" + session_id + "/X64");
+          need64 = (node64 != null);
+        }
+
         XmlNode node = doc.SelectSingleNode("/Applications/" + session_id + "/" + node_id);
+        if (need64 && node_id == "URL")
+        {
+          return node.InnerText + "x64";
+        }
+        if (need64 && node_id == "FILE")
+        {
+          return node.InnerText.Replace("x86", "x64");
+        }
         return node.InnerText;
       }
       catch
@@ -139,23 +157,23 @@ namespace MediaPortal.DeployTool
         File.Delete(XmlFile);
         Environment.Exit(-2);
       }
-      return String.Empty;
+      return string.Empty;
     }
 
     public static DialogResult DownloadFile(string FileName, string prg)
     {
       DialogResult result;
 
-      if (GetDownloadString(prg, "TYPE") == "Manual")
+      if (GetDownloadString(prg, "TYPE") == "Automatic")
+      {
+        HTTPDownload dlg = new HTTPDownload();
+        result = dlg.ShowDialog(GetDownloadString(prg, "URL"), FileName, GetUserAgentOsString());
+      }
+      else
       {
         ManualDownload dlg = new ManualDownload();
         result = dlg.ShowDialog(GetDownloadString(prg, "URL"), Path.GetFileName(FileName),
                                 Application.StartupPath + "\\deploy");
-      }
-      else
-      {
-        HTTPDownload dlg = new HTTPDownload();
-        result = dlg.ShowDialog(GetDownloadString(prg, "URL"), FileName, GetUserAgentOsString());
       }
       return result;
     }
@@ -239,8 +257,7 @@ namespace MediaPortal.DeployTool
     #region RegistryHelper
 
     [DllImport("advapi32.dll", CharSet = CharSet.Unicode, EntryPoint = "RegOpenKeyEx")]
-    static extern int RegOpenKeyEx(IntPtr hKey, string subKey, uint options, int sam,
-        out IntPtr phkResult);
+    static extern int RegOpenKeyEx(IntPtr hKey, string subKey, uint options, int sam, out IntPtr phkResult);
 
     [Flags]
     public enum eRegWow64Options : int
@@ -259,11 +276,12 @@ namespace MediaPortal.DeployTool
     }
 
     public static RegistryKey OpenSubKey(RegistryKey pParentKey, string pSubKeyName,
-                                         bool pWriteable,
-                                         eRegWow64Options pOptions)
+                                         bool pWriteable, eRegWow64Options pOptions)
     {
       if (pParentKey == null || GetRegistryKeyHandle(pParentKey).Equals(System.IntPtr.Zero))
+      {
         throw new System.Exception("OpenSubKey: Parent key is not open");
+      }
 
       eRegistryRights Rights = eRegistryRights.ReadKey;
       if (pWriteable)
@@ -276,8 +294,7 @@ namespace MediaPortal.DeployTool
       if (Result != 0)
       {
         System.ComponentModel.Win32Exception W32ex = new System.ComponentModel.Win32Exception();
-        throw new System.Exception("OpenSubKey: Exception encountered opening key",
-            W32ex);
+        throw new System.Exception("OpenSubKey: Exception encountered opening key", W32ex);
       }
 
       return PointerToRegistryKey(SubKeyHandle, pWriteable, false);
@@ -294,35 +311,51 @@ namespace MediaPortal.DeployTool
       return Handle.DangerousGetHandle();
     }
 
-    private static RegistryKey PointerToRegistryKey(IntPtr hKey, bool pWritable,
-        bool pOwnsHandle)
+    private static RegistryKey PointerToRegistryKey(IntPtr hKey, bool pWritable, bool pOwnsHandle)
     {
       // Create a SafeHandles.SafeRegistryHandle from this pointer - this is a private class
       BindingFlags privateConstructors = BindingFlags.Instance | BindingFlags.NonPublic;
-      Type safeRegistryHandleType = typeof(
-          SafeHandleZeroOrMinusOneIsInvalid).Assembly.GetType(
-          "Microsoft.Win32.SafeHandles.SafeRegistryHandle");
+      Type safeRegistryHandleType = typeof(SafeHandleZeroOrMinusOneIsInvalid).Assembly.GetType("Microsoft.Win32.SafeHandles.SafeRegistryHandle");
 
-      Type[] safeRegistryHandleConstructorTypes = new Type[] { typeof(System.IntPtr),
-        typeof(System.Boolean) };
-      ConstructorInfo safeRegistryHandleConstructor =
-          safeRegistryHandleType.GetConstructor(privateConstructors,
-          null, safeRegistryHandleConstructorTypes, null);
-      Object safeHandle = safeRegistryHandleConstructor.Invoke(new Object[] { hKey,
-        pOwnsHandle });
+      Type[] safeRegistryHandleConstructorTypes = new Type[] { typeof(System.IntPtr), typeof(System.Boolean) };
+      ConstructorInfo safeRegistryHandleConstructor = safeRegistryHandleType.GetConstructor(privateConstructors, null, 
+                                                                                            safeRegistryHandleConstructorTypes, null);
+      Object safeHandle = safeRegistryHandleConstructor.Invoke(new Object[] { hKey, pOwnsHandle });
 
       // Create a new Registry key using the private constructor using the
       // safeHandle - this should then behave like 
       // a .NET natively opened handle and disposed of correctly
       Type registryKeyType = typeof(Microsoft.Win32.RegistryKey);
-      Type[] registryKeyConstructorTypes = new Type[] { safeRegistryHandleType,
-        typeof(Boolean) };
-      ConstructorInfo registryKeyConstructor =
-          registryKeyType.GetConstructor(privateConstructors, null,
-          registryKeyConstructorTypes, null);
-      RegistryKey result = (RegistryKey)registryKeyConstructor.Invoke(new Object[] {
-        safeHandle, pWritable });
+      Type[] registryKeyConstructorTypes = new Type[] { safeRegistryHandleType, typeof(Boolean) };
+      ConstructorInfo registryKeyConstructor = registryKeyType.GetConstructor(privateConstructors, null, 
+                                                                              registryKeyConstructorTypes, null);
+      RegistryKey result = (RegistryKey)registryKeyConstructor.Invoke(new Object[] { safeHandle, pWritable });
       return result;
+    }
+
+    public static RegistryKey LMOpenSubKey(string keyPath, bool writable = false)
+    {
+      RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath, writable);
+
+      if (key == null)
+      {
+        try
+        {
+          key = OpenSubKey(Registry.LocalMachine, keyPath, writable, eRegWow64Options.KEY_WOW64_32KEY);
+        }
+        catch
+        {
+          // Parent key not open, exception found at opening (probably related to
+          // security permissions requested)
+        }
+      }
+
+      if (key == null && Is64bit())
+      {
+        RegistryKey localKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+        key = localKey.OpenSubKey(keyPath, writable);
+      }
+      return key;
     }
 
     #endregion
@@ -353,56 +386,14 @@ namespace MediaPortal.DeployTool
       CheckUninstallString(clsid, true);
     }
 
-    public static string CheckUninstallString(string clsid, bool delete)
+    public static RegistryKey GetUninstallKey(string clsid)
     {
-      string keyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid;
-      RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath);
-      if (key == null)
-      {
-        try
-        {
-          key = OpenSubKey(Registry.LocalMachine, keyPath, false,
-              eRegWow64Options.KEY_WOW64_32KEY);
-        }
-        catch
-        {
-          // Parent key not open, exception found at opening (probably related to
-          // security permissions requested)
-        }
-      }
-      if (key != null)
-      {
-        string strUninstall = key.GetValue("UninstallString").ToString();
-        if (File.Exists(strUninstall))
-        {
-          key.Close();
-          return strUninstall;
-        }
-        if (delete)
-        {
-          key.DeleteSubKeyTree(keyPath);
-        }
-        key.Close();
-      }
-      return null;
+      return LMOpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid);
     }
 
     public static string CheckUninstallString(string clsid, string section)
     {
-      string keyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid;
-      RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath);
-      if (key == null)
-      {
-        try
-        {
-          key = OpenSubKey(Registry.LocalMachine, keyPath, false, eRegWow64Options.KEY_WOW64_32KEY);
-        }
-        catch
-        {
-          // Parent key not open, exception found at opening (probably related to
-          // security permissions requested)
-        }
-      }
+      RegistryKey key = GetUninstallKey(clsid);
       if (key != null)
       {
         string strSection = key.GetValue(section).ToString();
@@ -416,28 +407,37 @@ namespace MediaPortal.DeployTool
       return null;
     }
 
+    public static string CheckUninstallString(string clsid, bool delete)
+    {
+      string strUninstall = CheckUninstallString(clsid, "UninstallString");
+      if (!string.IsNullOrEmpty(strUninstall))
+      {
+        if (File.Exists(strUninstall))
+        {
+          return strUninstall;
+        }
+      }
+
+      if (delete)
+      {
+        RegistryKey key = GetUninstallKey(clsid);
+        if (key != null)
+        {
+          key.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid);
+          key.Close();
+        }
+      }
+      return null;
+    }
+
     public static CheckResult CheckNSISUninstallString(string RegistryPath, string MementoSection)
     {
-      RegistryKey key = null;
       CheckResult result = new CheckResult
       {
         state = CheckState.NOT_INSTALLED
       };
 
-      try
-      {
-        key = OpenSubKey(Registry.LocalMachine, ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath),
-                         false, eRegWow64Options.KEY_WOW64_32KEY);
-      }
-      catch
-      {
-        // Parent key not open, exception found at opening (probably related to
-        // security permissions requested)
-      }
-      if (key == null)
-      {
-        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath);
-      }
+      RegistryKey key = GetUninstallKey(RegistryPath);
       if (key != null)
       {
         int _IsInstalled = (int)key.GetValue(MementoSection, 0);
@@ -482,10 +482,16 @@ namespace MediaPortal.DeployTool
 
     public static bool CheckTargetDir(string dir)
     {
-      if (dir == "")
+      if (string.IsNullOrEmpty(dir))
+      {
         return false;
+      }
+
       if (Directory.Exists(dir))
+      {
         return true;
+      }
+
       try
       {
         Directory.CreateDirectory(dir);
@@ -524,7 +530,9 @@ namespace MediaPortal.DeployTool
       {
         if (Directory.GetCurrentDirectory().StartsWith("\\"))
         {
-          MessageBox.Show("Please start installation from a local drive.", Application.StartupPath, MessageBoxButtons.OK,
+          MessageBox.Show("Please start installation from a local drive.", 
+                          Application.StartupPath, 
+                          MessageBoxButtons.OK,
                           MessageBoxIcon.Stop);
           return false;
         }
@@ -534,7 +542,9 @@ namespace MediaPortal.DeployTool
         {
           if ((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
           {
-            MessageBox.Show("Need write access to startup directory.", Application.StartupPath, MessageBoxButtons.OK,
+            MessageBox.Show("Need write access to startup directory.", 
+                            Application.StartupPath, 
+                            MessageBoxButtons.OK,
                             MessageBoxIcon.Stop);
             return false;
           }
@@ -544,7 +554,9 @@ namespace MediaPortal.DeployTool
       catch
       {
         MessageBox.Show("Unable to determine startup path. Please try running from a local drive with write access.",
-                        Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                        Application.StartupPath, 
+                        MessageBoxButtons.OK, 
+                        MessageBoxIcon.Stop);
         return false;
       }
     }
@@ -585,12 +597,13 @@ namespace MediaPortal.DeployTool
       Utils.AutoRunApplication("set");
 
       // Notify about the needed reboot
-      MessageBox.Show(Localizer.GetBestTranslation("Reboot_Required"), DisplayName, MessageBoxButtons.OK,
+      MessageBox.Show(Localizer.GetBestTranslation("Reboot_Required"), 
+                      DisplayName, 
+                      MessageBoxButtons.OK,
                       MessageBoxIcon.Exclamation);
 
       //Close DeployTool
       Environment.Exit(-3);
-
     }
 
     #endregion
@@ -604,21 +617,34 @@ namespace MediaPortal.DeployTool
       switch (OSInfo.OSInfo.GetOSSupported())
       {
         case OSInfo.OSInfo.OsSupport.Blocked:
-          MessageBox.Show(Localizer.GetBestTranslation("OS_Support"), OSInfo.OSInfo.GetOSDisplayVersion(),
-                          MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show(Localizer.GetBestTranslation("OS_Support"), 
+                          OSInfo.OSInfo.GetOSDisplayVersion(),
+                          MessageBoxButtons.OK, 
+                          MessageBoxIcon.Error);
           Application.Exit();
           break;
         case OSInfo.OSInfo.OsSupport.NotSupported:
-          res = MessageBox.Show(Localizer.GetBestTranslation("OS_Warning"), OSInfo.OSInfo.GetOSDisplayVersion(),
-                                MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-          if (res == DialogResult.Cancel) Application.Exit();
+          res = MessageBox.Show(Localizer.GetBestTranslation("OS_Warning"), 
+                                OSInfo.OSInfo.GetOSDisplayVersion(),
+                                MessageBoxButtons.OKCancel, 
+                                MessageBoxIcon.Warning);
+          if (res == DialogResult.Cancel) 
+          {
+            Application.Exit();
+          }
           break;
       }
+
       if (OSInfo.OSInfo.OSServicePackMinor != 0)
       {
-        res = MessageBox.Show(Localizer.GetBestTranslation("OS_Beta"), OSInfo.OSInfo.GetOSDisplayVersion(),
-                              MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-        if (res == DialogResult.Cancel) Application.Exit();
+        res = MessageBox.Show(Localizer.GetBestTranslation("OS_Beta"), 
+                              OSInfo.OSInfo.GetOSDisplayVersion(),
+                              MessageBoxButtons.OKCancel, 
+                              MessageBoxIcon.Warning);
+        if (res == DialogResult.Cancel)
+        {
+          Application.Exit();
+        }
       }
     }
 
@@ -649,6 +675,11 @@ namespace MediaPortal.DeployTool
         throw new System.ComponentModel.Win32Exception();
       }
       return isWow64;
+    }
+
+    public static bool Is64bit()
+    {
+      return (IntPtr.Size == 8);
     }
 
     #endregion
@@ -767,46 +798,22 @@ namespace MediaPortal.DeployTool
 
     public static string PathFromRegistry(string regkey)
     {
-      RegistryKey key = null;
-      try
-      {
-        key = OpenSubKey(Registry.LocalMachine, (regkey), false,
-            eRegWow64Options.KEY_WOW64_32KEY);
-      }
-      catch
-      {
-        // Parent key not open, exception found at opening (probably related to
-        // security permissions requested)
-      }
-      if (key == null)
-        key = Registry.LocalMachine.OpenSubKey(regkey);
-      string Tv3Path = null;
+      RegistryKey key = LMOpenSubKey(regkey);
 
+      string Tv3Path = null;
       if (key != null)
       {
         Tv3Path = (string)key.GetValue("UninstallString");
         key.Close();
-
       }
+
       return Tv3Path;
     }
 
     public static Version VersionFromRegistry(string regkey)
     {
-      RegistryKey key = null;
-      try
-      {
-        key = OpenSubKey(Registry.LocalMachine, (regkey), false,
-            eRegWow64Options.KEY_WOW64_32KEY);
-      }
-      catch
-      {
-        // Parent key not open, exception found at opening (probably related to
-        // security permissions requested)
-      }
+      RegistryKey key = LMOpenSubKey(regkey);
 
-      if (key == null)
-        key = Registry.LocalMachine.OpenSubKey(regkey);
       int major = 0;
       int minor = 0;
       int revision = 0;
@@ -818,6 +825,7 @@ namespace MediaPortal.DeployTool
         revision = (int)key.GetValue("VersionRevision", 0);
         key.Close();
       }
+
       return new Version(major, minor, revision);
     }
 
@@ -836,15 +844,16 @@ namespace MediaPortal.DeployTool
     public static void SetDeployXml(string section, string entry, string value)
     {
       var commonAppsDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
-                          @"\Team MediaPortal\MediaPortal\";
+                                                    @"\Team MediaPortal\MediaPortal\";
       if (!Directory.Exists(commonAppsDir))
       {
         Directory.CreateDirectory(commonAppsDir);
       }
 
       var deployXmlLocation = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
-                              @"\Team MediaPortal\MediaPortal\deploy.xml";
+                                                        @"\Team MediaPortal\MediaPortal\deploy.xml";
       var deployXml = File.Exists(deployXmlLocation) ? XDocument.Load(deployXmlLocation) : new XDocument();
+
       var root = deployXml.Elements("deploySettings").FirstOrDefault();
       if (root == null)
       {
@@ -860,8 +869,7 @@ namespace MediaPortal.DeployTool
 
       if (existingNode == null)
       {
-        root.Add(new XElement("deploySetting", new XAttribute("section", section), new XAttribute("entry", entry),
-                              value));
+        root.Add(new XElement("deploySetting", new XAttribute("section", section), new XAttribute("entry", entry), value));
       }
       else
       {

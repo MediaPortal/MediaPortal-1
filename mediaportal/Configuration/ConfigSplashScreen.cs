@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -180,9 +180,18 @@ namespace MediaPortal.Configuration
       public void SetVersion(string version)
       {
         string[] strVersion = version.Split('-');
+        if (System.IntPtr.Size == 8)
+        {
+          strVersion[0] += " | x64";
+        }
         versionLabel.Text = strVersion[0];
         Log.Info("Version: Application {0}", strVersion[0]);
-        if (strVersion.Length > 1)
+        if (strVersion.Length == 2)
+        {
+          versionLabel.Text = versionLabel.Text + " | " + strVersion[1];
+          Log.Info("Edition/Codename: {0}", strVersion[1]);
+        }
+        else if (strVersion.Length > 2)
         {
           string day = strVersion[2].Substring(0, 2);
           string month = strVersion[2].Substring(3, 2);

@@ -162,7 +162,7 @@ namespace MediaPortal.Ripper
           try
           {
             IntPtr buffer = handle.AddrOfPinnedObject();
-            buffer = (IntPtr)(buffer.ToInt32() + (Index * Marshal.SizeOf(typeof (TRACK_DATA))));
+            buffer = IntPtr.Add(buffer, Index * Marshal.SizeOf(typeof (TRACK_DATA)));
             res = (TRACK_DATA)Marshal.PtrToStructure(buffer, typeof (TRACK_DATA));
           }
           finally

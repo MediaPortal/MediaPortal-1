@@ -402,7 +402,7 @@ namespace Yeti.Lame
       GCHandle handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
       try
       {
-        IntPtr ptr = (IntPtr)(handle.AddrOfPinnedObject().ToInt32() + index);
+        IntPtr ptr = IntPtr.Add(handle.AddrOfPinnedObject(), index);
         res = beEncodeChunk(hbeStream, nBytes / 2 /*Samples*/, ptr, pOutput, ref pdwOutput);
       }
       finally

@@ -31,8 +31,8 @@ using MediaPortal.ExtensionMethods;
 using MediaPortal.guilib;
 using MediaPortal.Util;
 
-using Microsoft.DirectX.Direct3D;
-using InvalidDataException = Microsoft.DirectX.Direct3D.InvalidDataException;
+using SharpDX.Direct3D9;
+//using InvalidDataException = SharpDX.Direct3D.InvalidDataException;
 
 namespace MediaPortal.GUI.Library
 {
@@ -103,6 +103,21 @@ namespace MediaPortal.GUI.Library
       {
         return texture;
       }
+      return null;
+    }
+
+    public static Texture GetTexture(string strName, int iFrameNr, out int iDuration)
+    {
+      string strCacheKey = strName.ToLowerInvariant();
+      iDuration = -1;
+      CachedTexture texture;
+      if (_cacheTextures.TryGetValue(strCacheKey, out texture) && iFrameNr >= 0 && iFrameNr < texture.Frames)
+      {
+        TextureFrame frame = texture[iFrameNr];
+        iDuration = frame.Duration;
+        return frame.Image;
+      }
+
       return null;
     }
 
@@ -288,21 +303,22 @@ namespace MediaPortal.GUI.Library
               using (MemoryStream stream = new MemoryStream())
               {
                 theImage.Save(stream, ImageFormat.Png);
-                ImageInformation info2 = new ImageInformation();
+                ImageInformation info2;
                 stream.Flush();
                 stream.Seek(0, SeekOrigin.Begin);
-                Texture texture = TextureLoader.FromStream(
+                Texture texture = Texture.FromStream(
                   GUIGraphicsContext.DX9Device,
                   stream,
+                  0, // size
                   0, 0, // width/height
                   1,    // mipslevels
-                  0,    // Usage.Dynamic,
+                  Usage.None, //0   // Usage.Dynamic,
                   Format.A8R8G8B8,
                   GUIGraphicsContext.GetTexturePoolType(),
                   Filter.None,
                   Filter.None,
                   (int)lColorKey,
-                  ref info2);
+                  out info2);
                 newCache.Width = info2.Width;
                 newCache.Height = info2.Height;
                 newCache[i] = new TextureFrame(fileName, texture, (frameDelay[i] / 5) * 50);
@@ -418,21 +434,22 @@ namespace MediaPortal.GUI.Library
         using (MemoryStream stream = new MemoryStream())
         {
           memoryImage.Save(stream, ImageFormat.Png);
-          ImageInformation info2 = new ImageInformation();
+          ImageInformation info2;
           stream.Flush();
           stream.Seek(0, SeekOrigin.Begin);
-          Texture texture = TextureLoader.FromStream(
+          Texture texture = Texture.FromStream(
             GUIGraphicsContext.DX9Device,
             stream,
+            0, // size
             0, 0, //width/height
             1, //mipslevels
-            0, //Usage.Dynamic,
+            Usage.None, //Usage.Dynamic,
             Format.A8R8G8B8,
             GUIGraphicsContext.GetTexturePoolType(),
             Filter.None,
             Filter.None,
             (int)lColorKey,
-            ref info2);
+            out info2);
           newCache.Width = info2.Width;
           newCache.Height = info2.Height;
           newCache.Texture = new TextureFrame(cacheName, texture, 0);
@@ -490,12 +507,13 @@ namespace MediaPortal.GUI.Library
         using (MemoryStream stream = new MemoryStream())
         {
           memoryImage.Save(stream, ImageFormat.Png);
-          ImageInformation info2 = new ImageInformation();
+          ImageInformation info2;
           stream.Flush();
           stream.Seek(0, SeekOrigin.Begin);
-          texture = TextureLoader.FromStream(
+          texture = Texture.FromStream(
             GUIGraphicsContext.DX9Device,
             stream,
+            0, //size
             0, 0, //width/height
             1, //mipslevels
             Usage.Dynamic, //Usage.Dynamic,
@@ -504,7 +522,7 @@ namespace MediaPortal.GUI.Library
             Filter.None,
             Filter.None,
             (int)lColorKey,
-            ref info2);
+            out info2);
           newCache.Width = info2.Width;
           newCache.Height = info2.Height;
           newCache.Texture = new TextureFrame(cacheName, texture, 0);
@@ -526,6 +544,80 @@ namespace MediaPortal.GUI.Library
         Log.Error("TextureManager: exception loading texture memoryImage");
         Log.Error(ex);
       }
+      return 0;
+    }
+
+    public static int LoadFromMemoryEx(Image[] memoryImages, int[] durations, string strName, long lColorKey)
+    {
+      bool bDebugLog = !strName.StartsWith("[NoLog:");
+      if (bDebugLog)
+      {
+        Log.Debug("TextureManagerEx: load from memory: {0}", strName);
+      }
+      string strCacheName = strName;
+      string strCacheKey = strCacheName.ToLowerInvariant();
+
+      CachedTexture cached;
+      if (_cacheTextures.TryGetValue(strCacheKey, out cached))
+        return cached.Frames;
+
+      if (memoryImages == null || durations == null || memoryImages.Length == 0 || durations.Length != memoryImages.Length)
+        return 0;
+
+      try
+      {
+        Texture texture;
+        CachedTexture newCache = new CachedTexture();
+
+        newCache.Name = strName;
+        newCache.Frames = memoryImages.Length;
+
+        for (int iIdx = 0; iIdx < memoryImages.Length; iIdx++)
+        {
+          using (MemoryStream stream = new MemoryStream())
+          {
+            memoryImages[iIdx].Save(stream, ImageFormat.Png);
+            ImageInformation info2;
+            stream.Flush();
+            stream.Seek(0, SeekOrigin.Begin);
+            texture = Texture.FromStream(
+              GUIGraphicsContext.DX9Device,
+              stream,
+              0, //size
+              0, 0, //width/height
+              1, //mipslevels
+              Usage.Dynamic,
+              Format.A8R8G8B8,
+              Pool.Default,
+              Filter.None,
+              Filter.None,
+              (int)lColorKey,
+              out info2);
+
+            newCache.Width = info2.Width;
+            newCache.Height = info2.Height;
+            newCache[iIdx] = new TextureFrame(strCacheName, texture, Math.Max(10, durations[iIdx]));
+          }
+        }
+
+        newCache.Disposed += new EventHandler(cachedTexture_Disposed);
+
+        _cacheTextures[strCacheKey] = newCache;
+
+        if (bDebugLog)
+        {
+          Log.Debug("TextureManager: added: memoryImage  " + " total count: " + _cacheTextures.Count + ", mem left (MB): " +
+                    ((uint)GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576));
+        }
+
+        return newCache.Frames;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TextureManager: exception loading texture memoryImage");
+        Log.Error(ex);
+      }
+
       return 0;
     }
 
@@ -603,9 +695,9 @@ namespace MediaPortal.GUI.Library
 
         Format fmt = Format.A8R8G8B8;
 
-        ImageInformation info2 = new ImageInformation();
+        ImageInformation info2;
 
-        texture = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
+        texture = Texture.FromFile(GUIGraphicsContext.DX9Device,
                                          fileName,
                                          0, 0, //width/height
                                          1, //mipslevels
@@ -615,7 +707,7 @@ namespace MediaPortal.GUI.Library
                                          Filter.None,
                                          Filter.None,
                                          (int)lColorKey,
-                                         ref info2);
+                                         out info2);
         width = info2.Width;
         height = info2.Height;
       }
@@ -634,18 +726,19 @@ namespace MediaPortal.GUI.Library
           str.Position = 0;
           try
           {
-            ImageInformation info2 = new ImageInformation();
-            texture = TextureLoader.FromStream(GUIGraphicsContext.DX9Device,
+            ImageInformation info2;
+            texture = Texture.FromStream(GUIGraphicsContext.DX9Device,
                                      str,
+                                     0, //size
                                      0, 0, //width/height
                                      1, //mipslevels
-                                     0, //Usage.Dynamic,
+                                     Usage.None, //Usage.Dynamic,
                                      Format.A8R8G8B8,
                                      GUIGraphicsContext.GetTexturePoolType(),
                                      Filter.None,
                                      Filter.None,
                                      (int)lColorKey,
-                                     ref info2);
+                                     out info2);
             width = info2.Width;
             height = info2.Height;
           }
@@ -662,8 +755,8 @@ namespace MediaPortal.GUI.Library
         Format fmt = Format.A8R8G8B8;
         string fallback = GUIGraphicsContext.GetThemedSkinFile(@"\media\" + "black.png");
 
-        ImageInformation info2 = new ImageInformation();
-        texture = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
+        ImageInformation info2;
+        texture = Texture.FromFile(GUIGraphicsContext.DX9Device,
                                          fallback,
                                          0, 0, //width/height
                                          1, //mipslevels
@@ -673,7 +766,7 @@ namespace MediaPortal.GUI.Library
                                          Filter.None,
                                          Filter.None,
                                          (int)lColorKey,
-                                         ref info2);
+                                         out info2);
         width = info2.Width;
         height = info2.Height;
       }
@@ -737,7 +830,7 @@ namespace MediaPortal.GUI.Library
             width = theImage.Size.Width;
             height = theImage.Size.Height;
 
-            texture = Picture.ConvertImageToTexture((Bitmap) theImage, lColorKey, Format.A8R8G8B8, out width, out height);
+            texture = Picture.ConvertImageToTexture((Bitmap)theImage, lColorKey, Format.A8R8G8B8, out width, out height);
           }
         }
       }

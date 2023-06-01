@@ -27,7 +27,7 @@ using System.Threading;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
-using Microsoft.DirectX.Direct3D;
+using SharpDX.Direct3D9;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -194,7 +194,7 @@ namespace MediaPortal.Player
     /// <returns>The monitorIndex that has the specified screen on its primary monitor</returns>
     internal static int FindMonitorIndexForScreen()
     {
-      if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.Disposed)
+      if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.IsDisposed)
       {
         uint deviceNum = 0;
         DISPLAY_DEVICE displayDevice = new DISPLAY_DEVICE();
@@ -202,7 +202,7 @@ namespace MediaPortal.Player
         while (EnumDisplayDevices(null, deviceNum, displayDevice, 0) != 0)
         {
           if (displayDevice.DeviceName ==
-              Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName)
+              GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].Details.DeviceName)
           {
             // Set new monitorIndex
             GUIGraphicsContext.currentMonitorIdx = (int) deviceNum;
@@ -212,8 +212,8 @@ namespace MediaPortal.Player
           ++deviceNum;
         }
         Log.Debug("CycleRefreshRate: return current default MonitorIndex, detection failed to find the new one : {0}",
-          GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
-        return GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal;
+          GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal);
+        return GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal;
       }
       return -1;
     }
@@ -230,12 +230,12 @@ namespace MediaPortal.Player
       int result = EnumDisplayDevices(null, monitorIndex, displayDevice, 0);
       if (result != 0)
       {
-        if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.Disposed)
+        if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.IsDisposed)
         {
           Log.Debug("CycleRefreshRate: Current MonitorIndex : {0} and current deviceName : {1}", (int) monitorIndex,
-            Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName);
+            GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].Details.DeviceName);
           if (displayDevice.DeviceName !=
-              Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName)
+              GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].Details.DeviceName)
           {
             // Analyse monitorIndex to be sure to get on the good one (some multiscreen setup can failed otherwise)
             monitorIndex = (uint) FindMonitorIndexForScreen();
@@ -243,7 +243,7 @@ namespace MediaPortal.Player
             // Try to get new displayDevice based on newest detected monitorIndex
             result = EnumDisplayDevices(null, monitorIndex, displayDevice, 0);
             Log.Debug("CycleRefreshRate: New MonitorIndex : {0} based on current deviceName : {1}", (int) monitorIndex,
-              Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName);
+              GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].Details.DeviceName);
           }
         }
 
@@ -798,18 +798,18 @@ namespace MediaPortal.Player
         }
 
         double currentRR = 0;
-        if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.Disposed)
+        if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.IsDisposed)
         {
-          if ((GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal == -1) ||
-              (Manager.Adapters.Count <= GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal) ||
-              (Manager.Adapters.Count > Screen.AllScreens.Length))
+          if ((GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal == -1) ||
+              (GUIGraphicsContext.Direct3D.Adapters.Count <= GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal) ||
+              (GUIGraphicsContext.Direct3D.Adapters.Count > Screen.AllScreens.Length))
           {
             Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: adapter number out of bounds");
           }
           else
           {
             currentRR =
-              Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
+              GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
           }
           _refreshrateChangeCurrentRR = currentRR;
 
@@ -854,8 +854,8 @@ namespace MediaPortal.Player
                 "RefreshRateChanger.SetRefreshRateBasedOnFPS: using internal win32 method for changing refreshrate. current is {0}hz, desired is {1}",
                 currentRR, newRR);
               Log.Info("RefreshRateChanger AdapterOrdinal value is {0}",
-                (uint) GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
-              Win32.CycleRefreshRate((uint) GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, newRR);
+                (uint) GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal);
+              Win32.CycleRefreshRate((uint) GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal, newRR);
               NotifyRefreshRateChanged(newRRDescription, false);
             }
             else if (RunExternalJob(newExtCmd, _workerStrFile, _workerType, deviceReset) && newRR != currentRR)

@@ -95,7 +95,7 @@ namespace MediaPortal.InputDevices
       m_hwnd = Win32API.FindWindow(null, m_windowName);
 
       //check we found it - if not, start it!
-      if (m_hwnd.ToInt32() <= 0) // try to find it and start it since it's not found
+      if (m_hwnd.ToInt64() <= 0) // try to find it and start it since it's not found
       {
         Log.Info("WinLirc window not found, starting WinLirc");
         IntPtr mpHwnd = Win32API.GetActiveWindow(); //Get MP
@@ -103,7 +103,7 @@ namespace MediaPortal.InputDevices
         Win32API.ShowWindow(mpHwnd, Win32API.ShowWindowFlags.Restore); //restore MP		
         Win32API.SetForegroundWindow(mpHwnd); //restore MP
       }
-      if (m_hwnd.ToInt32() > 0)
+      if (m_hwnd.ToInt64() > 0)
       {
         Log.Info("Winlirc OK");
         return true;
@@ -139,7 +139,7 @@ namespace MediaPortal.InputDevices
         {
           Thread.Sleep(200);
           m_hwnd = Win32API.FindWindow(null, m_windowName);
-          if (m_hwnd.ToInt32() > 0) // window handle was found
+          if (m_hwnd.ToInt64() > 0) // window handle was found
           {
             break;
           }
@@ -171,7 +171,7 @@ namespace MediaPortal.InputDevices
         {
           return;
         }
-        if (m_hwnd.ToInt32() == 0)
+        if (m_hwnd == IntPtr.Zero)
         {
           Log.Info("WinLirc HWND is invalid. Check WinLirc is running");
           return;

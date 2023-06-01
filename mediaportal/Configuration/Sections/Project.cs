@@ -41,6 +41,16 @@ namespace MediaPortal.Configuration.Sections
     {
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
       string version = ConfigurationManager.AppSettings["version"];
+      string[] strVersion = version.Split('-');
+      version = strVersion[0];
+      if (System.IntPtr.Size == 8)
+      {
+        version = version + " | x64";
+      }
+      if (strVersion.Length == 2)
+      {
+        version = version + " | " + strVersion[1];
+      }
       labelVersion2.Text = string.Format("{0} ({1})", version, versionInfo.FileVersion);
     }
 

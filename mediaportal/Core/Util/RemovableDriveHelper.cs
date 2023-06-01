@@ -211,7 +211,7 @@ namespace MediaPortal.Util
       IntPtr handle = CreateFile(sPhysicalDrive, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
         IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
 
-      if (handle.ToInt32() == INVALID_HANDLE_VALUE)
+      if (handle.ToInt64() == INVALID_HANDLE_VALUE)
       {
         message = "Media eject failed. Drive not ready or in use!";
         return false;
@@ -401,7 +401,7 @@ namespace MediaPortal.Util
     {
       int ans = -1;
       IntPtr h = CreateFile(devicePath, 0, 0, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
-      if (h.ToInt32() != INVALID_HANDLE_VALUE)
+      if (h.ToInt64() != INVALID_HANDLE_VALUE)
       {
         int requiredSize;
         var Sdn = new STORAGE_DEVICE_NUMBER();
@@ -434,7 +434,7 @@ namespace MediaPortal.Util
 
       IntPtr _deviceInfoSet = SetupDiGetClassDevs(ref guid, 0, IntPtr.Zero, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
 
-      if (_deviceInfoSet.ToInt32() == INVALID_HANDLE_VALUE)
+      if (_deviceInfoSet.ToInt64() == INVALID_HANDLE_VALUE)
       {
         return null;
       }

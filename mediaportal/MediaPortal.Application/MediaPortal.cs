@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2021 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2021 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,12 +18,6 @@
 
 #endregion
 
-using System.Linq;
-using CSCore.CoreAudioAPI;
-using DirectShowLib;
-using DShowNET.Helper;
-using FilterCategory = DirectShowLib.FilterCategory;
-
 #region usings
 
 using System;
@@ -32,15 +26,21 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.ServiceProcess;
-using System.Text;
 using System.Threading;
-using System.Timers;
 using System.Windows.Forms;
 using System.Xml;
+
+using CSCore.CoreAudioAPI;
+
+using DirectShowLib;
+using DShowNET.Helper;
+
 using MediaPortal;
 using MediaPortal.Common.Utils;
 using MediaPortal.Configuration;
@@ -55,20 +55,21 @@ using MediaPortal.Properties;
 using MediaPortal.RedEyeIR;
 using MediaPortal.Ripper;
 using MediaPortal.SerialIR;
-using MediaPortal.Util;
 using MediaPortal.Services;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
+using MediaPortal.Util;
+
 using Microsoft.Win32;
+
+using SharpDX;
+using SharpDX.Direct3D9;
+
 using Action = MediaPortal.GUI.Library.Action;
-using Timer = System.Timers.Timer;
-using System.Collections.Generic;
-using System.Net;
+using FilterCategory = DirectShowLib.FilterCategory;
 
 #endregion
 
 // ReSharper disable EmptyNamespace
-namespace MediaPortal {}
+namespace MediaPortal { }
 // ReSharper restore EmptyNamespace
 
 /// <summary>
@@ -123,13 +124,13 @@ public class MediaPortalApp : D3D, IRender
   private static DateTime       _lastOnresume;
   private DateTime              _updateTimer;
   private DateTime              _lastContextMenuAction;
-  private Point                 _lastCursorPosition;
+  private System.Drawing.Point  _lastCursorPosition;
   private SerialUIR             _serialuirdevice;
   private USBUIRT               _usbuirtdevice;
   private WinLirc               _winlircdevice;
   private RedEye                _redeyedevice;
   private MouseEventArgs        _lastMouseClickEvent;
-  private readonly Rectangle[]  _region;
+  private readonly SharpDX.Mathematics.Interop.RawRectangle[]  _region;
   private static RestartOptions _restartOptions;
   private IntPtr                _deviceNotificationHandle;
   private IntPtr                _displayStatusHandle;
@@ -152,6 +153,7 @@ public class MediaPortalApp : D3D, IRender
   /// Whether HID keyboard handler should be used instead of legacy keyboard handler.
   /// </summary>
   private bool                  _hidKeyboard = false;
+
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
@@ -198,6 +200,7 @@ public class MediaPortalApp : D3D, IRender
   private const int D3DERR_INVALIDCALL       = -2005530516; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
   private const int D3DERR_NOTAVAILABLE      = -2005530518; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
   private const int E_FAIL                   = -2147467259; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
+  private const int D3DERR_DEVICELOST        = -2005530520;
 
   private const int DEVICE_NOTIFY_WINDOW_HANDLE         = 0;
   private const int DEVICE_NOTIFY_ALL_INTERFACE_CLASSES = 4;
@@ -493,6 +496,7 @@ public class MediaPortalApp : D3D, IRender
   [DllImport("user32.dll", SetLastError = true)]
   static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
+
   #endregion
 
   #region main()
@@ -765,13 +769,15 @@ public class MediaPortalApp : D3D, IRender
 
       // Log MediaPortal version build and operating system level
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
+      string architecture = (IntPtr.Size == 8) ? "x64" : "x86";
       try
       {
-        Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
+        Log.Info("Main: MediaPortal " + architecture + " v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
       }
       catch {
-        Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
+        Log.Info("Main: MediaPortal " + architecture + " v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
       }
+
       //Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
       Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
 
@@ -985,7 +991,7 @@ public class MediaPortalApp : D3D, IRender
           if (File.Exists(tvPlugin) && !_avoidVersionChecking)
           {
             string tvPluginVersion = FileVersionInfo.GetVersionInfo(tvPlugin).ProductVersion;
-            string mpVersion       = FileVersionInfo.GetVersionInfo(mpExe).ProductVersion;
+            string mpVersion = FileVersionInfo.GetVersionInfo(mpExe).ProductVersion;
 
             if (mpVersion != tvPluginVersion)
             {
@@ -1107,6 +1113,9 @@ public class MediaPortalApp : D3D, IRender
         // ReSharper restore LocalizableElement
       }
     }
+
+    GUIGraphicsContext.Direct3DUnload();
+
     Environment.Exit(0);
   }
 
@@ -1176,7 +1185,7 @@ public class MediaPortalApp : D3D, IRender
     _lastOnresume          = DateTime.Now;
     _updateTimer           = DateTime.MinValue;
     _lastContextMenuAction = DateTime.MaxValue;
-    _region                = new Rectangle[1];
+    _region                = new SharpDX.Mathematics.Interop.RawRectangle[1];
     _restartOptions        = RestartOptions.Reboot;
 
     int screenNumber;
@@ -1275,7 +1284,7 @@ public class MediaPortalApp : D3D, IRender
              GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
 
     // move form to selected screen
-    Location = new Point(Location.X + GUIGraphicsContext.currentScreen.Bounds.X, Location.Y + GUIGraphicsContext.currentScreen.Bounds.Y);
+    Location = new System.Drawing.Point(Location.X + GUIGraphicsContext.currentScreen.Bounds.X, Location.Y + GUIGraphicsContext.currentScreen.Bounds.Y);
 
     // temporarily set new client size for initialization purposes
     ClientSize = new Size(0, 0);
@@ -1507,14 +1516,14 @@ public class MediaPortalApp : D3D, IRender
           font.DrawText(80, 40, 0xffffffff, FrameStatsLine1, GUIControl.Alignment.ALIGN_LEFT, -1);
           font.DrawText(80, 55, 0xffffffff, FrameStatsLine2, GUIControl.Alignment.ALIGN_LEFT, -1);
 
-          _region[0].X = _xpos;
-          _region[0].Y = 0;
-          _region[0].Width = 4;
-          _region[0].Height = GUIGraphicsContext.Height;
+          _region[0].Left = _xpos;
+          _region[0].Top = 0;
+          _region[0].Right = _xpos + 4;
+          _region[0].Bottom = GUIGraphicsContext.Height;
 
           if (GUIGraphicsContext.DX9Device != null)
           {
-            GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.FromArgb(255, 255, 255, 255), 1.0f, 0, _region);
+            GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, RawColorsBGRA.White, 1.0f, 0, _region);
           }
 
           float fStep = (GUIGraphicsContext.Width - 100);
@@ -1691,7 +1700,7 @@ public class MediaPortalApp : D3D, IRender
           // disable event handlers
           if (GUIGraphicsContext.DX9Device != null)
           {
-            GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+            GUIGraphicsContext.DeviceLost -= OnDeviceLost;
           }
 
           // Suspending GUIGraphicsContext.State
@@ -1756,7 +1765,7 @@ public class MediaPortalApp : D3D, IRender
           // enable event handlers
           if (GUIGraphicsContext.DX9Device != null)
           {
-            GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+            GUIGraphicsContext.DeviceLost += OnDeviceLost;
           }
 
           // FCU Workaround
@@ -1949,7 +1958,7 @@ public class MediaPortalApp : D3D, IRender
           // disable event handlers
           if (GUIGraphicsContext.DX9Device != null)
           {
-            GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+            GUIGraphicsContext.DeviceLost -= OnDeviceLost;
           }
 
           // Workaround HDMI hot-plug problems by forcing the form size to match the actual screen size.
@@ -1964,7 +1973,8 @@ public class MediaPortalApp : D3D, IRender
               SetBounds(_backupBounds.X, _backupBounds.Y, _backupBounds.Width, _backupBounds.Height);
             }
             GUIGraphicsContext.currentScreen = _backupscreen;
-            BuildPresentParams(Windowed);
+            //BuildPresentParams(Windowed);
+            BuildPresentParamsFromSettings();
 
             if (_presentParamsBackup.BackBufferWidth == WINDOWS_NATIVE_RESOLUTION.Width && _presentParamsBackup.BackBufferHeight == WINDOWS_NATIVE_RESOLUTION.Height)
             {
@@ -1984,7 +1994,7 @@ public class MediaPortalApp : D3D, IRender
           // enable event handlers
           if (GUIGraphicsContext.DX9Device != null)
           {
-            GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+            GUIGraphicsContext.DeviceLost += OnDeviceLost;
           }
           break;
 
@@ -1992,7 +2002,7 @@ public class MediaPortalApp : D3D, IRender
           // disable event handlers
           if (GUIGraphicsContext.DX9Device != null)
           {
-            GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+            GUIGraphicsContext.DeviceLost -= OnDeviceLost;
           }
 
           // Check Delayed Resume
@@ -2015,7 +2025,7 @@ public class MediaPortalApp : D3D, IRender
           // enable event handlers
           if (GUIGraphicsContext.DX9Device != null)
           {
-            GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+            GUIGraphicsContext.DeviceLost += OnDeviceLost;
           }
           break;
 
@@ -2037,7 +2047,7 @@ public class MediaPortalApp : D3D, IRender
           // disable event handlers
           if (GUIGraphicsContext.DX9Device != null)
           {
-            GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+            GUIGraphicsContext.DeviceLost -= OnDeviceLost;
           }
 
           // Check Delayed Resume
@@ -2070,7 +2080,7 @@ public class MediaPortalApp : D3D, IRender
           // enable event handlers
           if (GUIGraphicsContext.DX9Device != null)
           {
-            GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+            GUIGraphicsContext.DeviceLost += OnDeviceLost;
           }
 
           // Workaround HDMI hot-plug problems by forcing the form size to match the actual screen size.
@@ -2317,15 +2327,15 @@ public class MediaPortalApp : D3D, IRender
                   {
                     foreach (GraphicsAdapterInfo adapterInfo in _enumerationSettings.AdapterInfoList)
                     {
-                      var hMon = Manager.GetAdapterMonitor(adapterInfo.AdapterOrdinal);
+                      var hMon = GUIGraphicsContext.Direct3D.GetAdapterMonitor(adapterInfo.AdapterOrdinal);
                       var info = new MonitorInformation();
                       info.Size = (uint) Marshal.SizeOf(info);
                       GetMonitorInfo(hMon, ref info);
                       var rect = Screen.FromRectangle(info.MonitorRectangle).Bounds;
                       if (
                         GUIGraphicsContext.DX9Device != null && (Equals(
-                          Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information
-                            .DeviceName,
+                          GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].Details.DeviceName,
+
                           GetCleanDisplayName(GUIGraphicsContext.currentStartScreen)) && rect.Equals(screen.Bounds)))
                       {
                         GUIGraphicsContext.currentScreen = GUIGraphicsContext.currentStartScreen;
@@ -2465,7 +2475,7 @@ public class MediaPortalApp : D3D, IRender
     // disable event handlers
     if (GUIGraphicsContext.DX9Device != null)
     {
-      GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+      GUIGraphicsContext.DeviceLost -= OnDeviceLost;
     }
 
     if (VMR9Util.g_vmr9 != null && GUIGraphicsContext.Vmr9Active &&
@@ -2473,8 +2483,8 @@ public class MediaPortalApp : D3D, IRender
     {
       VMR9Util.g_vmr9.UpdateEVRDisplayFPS(); // Update FPS
     }
-    Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
-    Rectangle newBounds = screen.Bounds;
+    System.Drawing.Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
+    System.Drawing.Rectangle newBounds = screen.Bounds;
     if (Created && !Equals(screen, GUIGraphicsContext.currentScreen) || !Equals(currentBounds.Size, newBounds.Size) || !Equals(screen, GUIGraphicsContext.currentStartScreen))
     {
       Log.Info("Main: Screen MP OnDisplayChange is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
@@ -2502,12 +2512,12 @@ public class MediaPortalApp : D3D, IRender
       {
         foreach (GraphicsAdapterInfo adapterInfo in _enumerationSettings.AdapterInfoList)
         {
-          var hMon = Manager.GetAdapterMonitor(adapterInfo.AdapterOrdinal);
+          var hMon = GUIGraphicsContext.Direct3D.GetAdapterMonitor(adapterInfo.AdapterOrdinal);
           var info = new MonitorInformation();
           info.Size = (uint)Marshal.SizeOf(info);
           GetMonitorInfo(hMon, ref info);
           var rect = Screen.FromRectangle(info.MonitorRectangle).Bounds;
-          if (GUIGraphicsContext.DX9Device != null && (Equals(Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName, GetCleanDisplayName(GUIGraphicsContext.currentStartScreen)) && rect.Equals(screen.Bounds)))
+          if (GUIGraphicsContext.DX9Device != null && (Equals(GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].Details.DeviceName, GetCleanDisplayName(GUIGraphicsContext.currentStartScreen)) && rect.Equals(screen.Bounds)))
           {
             GUIGraphicsContext.currentScreen = GUIGraphicsContext.currentStartScreen;
             break;
@@ -2531,7 +2541,7 @@ public class MediaPortalApp : D3D, IRender
     // enable event handlers
     if (GUIGraphicsContext.DX9Device != null)
     {
-      GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+      GUIGraphicsContext.DeviceLost += OnDeviceLost;
     }
   }
 
@@ -2558,7 +2568,7 @@ public class MediaPortalApp : D3D, IRender
     // disable event handlers
     if (GUIGraphicsContext.DX9Device != null)
     {
-      GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+      GUIGraphicsContext.DeviceLost -= OnDeviceLost;
     }
 
     var mmi = (MINMAXINFO)Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
@@ -2579,11 +2589,11 @@ public class MediaPortalApp : D3D, IRender
     }
 
     // check if display changes in case no DISPLAYCHANGE message is send by Windows
-    Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
-    Rectangle newBounds = screen.Bounds;
+    System.Drawing.Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
+    System.Drawing.Rectangle newBounds = screen.Bounds;
     if (GUIGraphicsContext.DX9Device != null)
     {
-      string adapterOrdinalScreenName = Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName;
+      string adapterOrdinalScreenName = GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].Details.DeviceName;
 
       if ((!Equals(screen, GUIGraphicsContext.currentScreen) || (!Equals(GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen)))) && !_firstLoadedScreen && !_restoreLoadedScreen)
       {
@@ -2678,7 +2688,7 @@ public class MediaPortalApp : D3D, IRender
     // enable event handlers
     if (GUIGraphicsContext.DX9Device != null)
     {
-      GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+      GUIGraphicsContext.DeviceLost += OnDeviceLost;
     }
   }
 
@@ -2740,7 +2750,7 @@ public class MediaPortalApp : D3D, IRender
     }
 
     // snapback cursor to window border if needed
-    Point pos = Cursor.Position;
+    System.Drawing.Point pos = Cursor.Position;
     if (pos.X > rc.right)
     {
       pos.X = rc.right;
@@ -2817,8 +2827,8 @@ public class MediaPortalApp : D3D, IRender
             _firstRestoreScreen = false;
             if ((_backupSizeWidth != 0) && (_backupSizeHeight != 0))
             {
-              Location = new Point(_locationX, _locationY);
-              ClientSize = new Size(_backupSizeWidth, _backupSizeHeight);
+              Location = new System.Drawing.Point(_locationX, _locationY);
+              ClientSize = new System.Drawing.Size(_backupSizeWidth, _backupSizeHeight);
               Log.Debug("Main: Restore MP location {0}x{1} and previous client size of {2}x{3}", _locationX, _locationY,
                 _backupSizeWidth, _backupSizeHeight);
             }
@@ -3041,6 +3051,8 @@ public class MediaPortalApp : D3D, IRender
   /// </summary>
   private void OnResumeAutomatic()
   {
+
+
     Log.Debug("Main: OnResumeAutomatic - reopen Database");
     ReOpenDBs();
 
@@ -3296,7 +3308,7 @@ public class MediaPortalApp : D3D, IRender
         if (_mMdeviceEnumerator == null)
           _mMdeviceEnumerator = new MMDeviceEnumerator();
         GUIGraphicsContext.DeviceAudioConnected =
-          _mMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active).Count();
+          _mMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, CSCore.CoreAudioAPI.DeviceState.Active).Count();
       }
       catch (Exception ex)
       {
@@ -3607,6 +3619,8 @@ public class MediaPortalApp : D3D, IRender
 
     GUIFontManager.SetDeviceNull();
 
+
+
     if (_isWinScreenSaverInUse)
     {
       SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 1, 0, SPIF_SENDCHANGE);
@@ -3700,7 +3714,7 @@ public class MediaPortalApp : D3D, IRender
       LastRect.left   = Location.X;
       LastRect.bottom = Size.Height;
       LastRect.right  = Size.Width;
-      Location = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
+      Location = new System.Drawing.Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
     }
     else
     {
@@ -3713,6 +3727,8 @@ public class MediaPortalApp : D3D, IRender
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(68));
     GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
     GUIFontManager.InitializeDeviceObjects();
+
+
 
     // Loading window plugins
     Log.Info("Startup: Loading and Starting Window Plugins");
@@ -3757,15 +3773,17 @@ public class MediaPortalApp : D3D, IRender
     // setting D3D9 helper variables
     if (GUIGraphicsContext.DX9Device != null)
     {
-      _anisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
-      _supportsFiltering = Manager.CheckDeviceFormat(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal,
-                                                     GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType,
-                                                     GUIGraphicsContext.DX9Device.DisplayMode.Format,
-                                                     Usage.RenderTarget | Usage.QueryFilter, ResourceType.Textures,
+      DisplayMode mode = GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].CurrentDisplayMode;
+
+      _anisotropy = GUIGraphicsContext.DX9Device.Capabilities.MaxAnisotropy;
+      _supportsFiltering = GUIGraphicsContext.Direct3D.CheckDeviceFormat(GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal,
+                                                     GUIGraphicsContext.DX9Device.Capabilities.DeviceType,
+                                                     mode.Format,
+                                                     Usage.RenderTarget | Usage.QueryFilter, ResourceType.Texture,
                                                      Format.A8R8G8B8);
-      _supportsAlphaBlend = Manager.CheckDeviceFormat(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal,
-                                                      GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType,
-                                                      GUIGraphicsContext.DX9Device.DisplayMode.Format,
+      _supportsAlphaBlend = GUIGraphicsContext.Direct3D.CheckDeviceFormat(GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal,
+                                                      GUIGraphicsContext.DX9Device.Capabilities.DeviceType,
+                                                      mode.Format,
                                                       Usage.RenderTarget | Usage.QueryPostPixelShaderBlending,
                                                       ResourceType.Surface,
                                                       Format.A8R8G8B8);
@@ -3834,7 +3852,7 @@ public class MediaPortalApp : D3D, IRender
   protected override void Render(float timePassed)
   {
     if (!_suspended && AppActive && !_isRendering && GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.LOST &&
-        GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.Disposed)
+        GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.IsDisposed)
     {
       if (GUIGraphicsContext.InVmr9Render)
       {
@@ -3855,18 +3873,27 @@ public class MediaPortalApp : D3D, IRender
 
       try
       {
-        if (GUIGraphicsContext.DX9Device != null) GUIGraphicsContext.DX9Device.TestCooperativeLevel();
+        if (GUIGraphicsContext.DX9Device != null)
+          GUIGraphicsContext.DX9Device.TestCooperativeLevel();
       }
-      catch (DeviceLostException ex)
+      catch (SharpDXException ex)
       {
-        Log.Debug("Main: D3DERR_DEVICELOST - device is lost but cannot be reset at this time {0}", ex.Message);
-        return;
+        if (ex.ResultCode == 0x88760868) //D3DERR_DEVICELOST: 0x88760868
+        {
+          Log.Debug("Main: D3DERR_DEVICELOST - device is lost but cannot be reset at this time {0}", ex.Message);
+          return;
+        }
       }
-      catch (DeviceNotResetException ex)
-      {
-        Log.Debug("Main: D3DERR_DEVICENOTRESET - device is lost but can be reset at this time {0}", ex.Message);
-        return;
-      }
+      //catch (DeviceLostException ex)
+      //{
+      //  Log.Debug("Main: D3DERR_DEVICELOST - device is lost but cannot be reset at this time {0}", ex.Message);
+      //  return;
+      //}
+      //catch (DeviceNotResetException ex)
+      //{
+      //  Log.Debug("Main: D3DERR_DEVICENOTRESET - device is lost but can be reset at this time {0}", ex.Message);
+      //  return;
+      //}
       catch
       {
         Log.Debug("Main: render not ready at this time");
@@ -3890,8 +3917,9 @@ public class MediaPortalApp : D3D, IRender
             grabber.OnFrameGUI();
             try
             {
+              _lasttime = Stopwatch.GetTimestamp();
               // clear the surface
-              GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+              GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, RawColorsBGRA.Black, 1.0f, 0);
               GUIGraphicsContext.DX9Device.BeginScene();
               CreateStateBlock();
               GUIGraphicsContext.SetScalingResolution(0, 0, false);
@@ -3904,14 +3932,18 @@ public class MediaPortalApp : D3D, IRender
               // Show the frame on the primary surface.
               GUIGraphicsContext.DX9Device.Present(); //SLOW
             }
-            catch (DeviceLostException ex)
+            //catch (DeviceLostException ex)
+            catch (SharpDXException ex)
             {
-              Log.Error("Main: Device lost - {0}", ex.ToString());
-              if (!RefreshRateChanger.RefreshRateChangePending)
+              if (ex.ResultCode == 0x88760868) //D3DERR_DEVICELOST: 0x88760868
               {
-                g_Player.Stop();
+                Log.Error("Main: Device lost - {0}", ex.ToString());
+                if (!RefreshRateChanger.RefreshRateChangePending)
+                {
+                  g_Player.Stop();
+                }
+                GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
               }
-              GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
             }
           }
           else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide ||
@@ -3919,7 +3951,7 @@ public class MediaPortalApp : D3D, IRender
           {
             // 3D output either SBS or TAB
 
-            Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+            Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0);
 
             // Alert the frame grabber that it has a chance to grab a GUI frame
             // if it likes (method returns immediately otherwise
@@ -3940,25 +3972,25 @@ public class MediaPortalApp : D3D, IRender
 
               PlaneScene.RenderFor3DMode(GUIGraphicsContext.Switch3DSides ? GUIGraphicsContext.eRender3DModeHalf.SBSRight : GUIGraphicsContext.eRender3DModeHalf.SBSLeft,
                               timePassed, backbuffer, auto3DSurface,
-                              new Rectangle(0, 0, backbuffer.Description.Width / 2, backbuffer.Description.Height));
+                              new System.Drawing.Rectangle(0, 0, backbuffer.Description.Width / 2, backbuffer.Description.Height));
 
               // right half (or right if switched)
 
               PlaneScene.RenderFor3DMode(GUIGraphicsContext.Switch3DSides ? GUIGraphicsContext.eRender3DModeHalf.SBSLeft : GUIGraphicsContext.eRender3DModeHalf.SBSRight,
                               timePassed, backbuffer, auto3DSurface,
-                              new Rectangle(backbuffer.Description.Width / 2, 0, backbuffer.Description.Width / 2, backbuffer.Description.Height));
+                              new System.Drawing.Rectangle(backbuffer.Description.Width / 2, 0, backbuffer.Description.Width / 2, backbuffer.Description.Height));
             }
             else
             {
               // upper half (or lower if switched)
               PlaneScene.RenderFor3DMode(GUIGraphicsContext.Switch3DSides ? GUIGraphicsContext.eRender3DModeHalf.TABBottom : GUIGraphicsContext.eRender3DModeHalf.TABTop, 
                               timePassed, backbuffer, auto3DSurface,
-                              new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height/2));
+                              new System.Drawing.Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height/2));
 
               // lower half (or upper if switched)
               PlaneScene.RenderFor3DMode(GUIGraphicsContext.Switch3DSides ? GUIGraphicsContext.eRender3DModeHalf.TABTop : GUIGraphicsContext.eRender3DModeHalf.TABBottom, 
                               timePassed, backbuffer, auto3DSurface,
-                              new Rectangle(0, backbuffer.Description.Height/2, backbuffer.Description.Width, backbuffer.Description.Height/2));
+                              new System.Drawing.Rectangle(0, backbuffer.Description.Height/2, backbuffer.Description.Width, backbuffer.Description.Height/2));
             }
 
             GUIGraphicsContext.DX9Device.Present();
@@ -3969,15 +4001,16 @@ public class MediaPortalApp : D3D, IRender
           }
         }
       }
-      catch (DirectXException dex)
+      //catch (DirectXException dex)
+      catch (SharpDXException dex)
       {
-        switch (dex.ErrorCode)
+        switch (dex.ResultCode.Code)
         {
           case D3DERR_INVALIDCALL:
             _errorCounter++;
-            if (AdapterInfo.AdapterOrdinal > -1 && Manager.Adapters.Count > AdapterInfo.AdapterOrdinal)
+            if (AdapterInfo.AdapterOrdinal > -1 && GUIGraphicsContext.Direct3D.Adapters.Count > AdapterInfo.AdapterOrdinal)
             {
-              double refreshRate = Manager.Adapters[AdapterInfo.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
+              double refreshRate = GUIGraphicsContext.Direct3D.Adapters[AdapterInfo.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
               if (refreshRate > 0 && _errorCounter > 5*refreshRate) // why 5 * refreshRate???
               {
                 _errorCounter = 0; //reset counter
@@ -4636,8 +4669,8 @@ public class MediaPortalApp : D3D, IRender
             {
               if (GUIGraphicsContext.DX9Device != null)
               {
-                Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
-                SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
+                Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0);
+                Surface.ToFile(backbuffer, fileName + ".png", ImageFileFormat.Png);
                 backbuffer.Dispose();
               }
             }
@@ -4660,8 +4693,8 @@ public class MediaPortalApp : D3D, IRender
             {
               if (GUIGraphicsContext.DX9Device != null)
               {
-                Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
-                SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
+                Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0);
+                Surface.ToFile(backbuffer, fileName + ".png", ImageFileFormat.Png);
                 backbuffer.Dispose();
               }
             }
@@ -5090,9 +5123,9 @@ public class MediaPortalApp : D3D, IRender
   /// </summary>
   /// <param name="location"></param>
   /// <returns></returns>
-  private Point ScaleCursorPosition(Point location)
+  private System.Drawing.Point ScaleCursorPosition(System.Drawing.Point location)
   {
-    var point = new Point
+    var point = new System.Drawing.Point
     {
       X = (int)Math.Round(location.X * (float)GUIGraphicsContext.Width / ClientSize.Width),
       Y = (int)Math.Round(location.Y * (float)GUIGraphicsContext.Height / ClientSize.Height)
@@ -5112,7 +5145,7 @@ public class MediaPortalApp : D3D, IRender
     if (e.Delta > 0)
     {
       base.MouseMoveEvent(e);
-      Point p = ScaleCursorPosition(e.Location);
+      System.Drawing.Point p = ScaleCursorPosition(e.Location);
       var action = new Action(Action.ActionType.ACTION_MOVE_UP, p.X, p.Y) {MouseButton = e.Button};
       GUIGraphicsContext.ResetLastActivity(); 
       GUIGraphicsContext.OnAction(action);
@@ -5121,7 +5154,7 @@ public class MediaPortalApp : D3D, IRender
     else if (e.Delta < 0)
     {
       base.MouseMoveEvent(e);
-      Point p = ScaleCursorPosition(e.Location);
+      System.Drawing.Point p = ScaleCursorPosition(e.Location);
       var action = new Action(Action.ActionType.ACTION_MOVE_DOWN, p.X, p.Y) {MouseButton = e.Button};
       GUIGraphicsContext.ResetLastActivity();
       GUIGraphicsContext.OnAction(action);
@@ -5160,7 +5193,7 @@ public class MediaPortalApp : D3D, IRender
         _lastCursorPosition = Cursor.Position;
         if (GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow) != null)
         {
-          Point p = ScaleCursorPosition(e.Location);
+          System.Drawing.Point p = ScaleCursorPosition(e.Location);
           var action = new Action(Action.ActionType.ACTION_MOUSE_MOVE, p.X, p.Y) {MouseButton = e.Button};
           GUIGraphicsContext.OnAction(action);
           if (MouseCursor && current != null)
@@ -5195,7 +5228,7 @@ public class MediaPortalApp : D3D, IRender
     else
     {
       _lastCursorPosition = Cursor.Position;
-      Point p = ScaleCursorPosition(e.Location);
+      System.Drawing.Point p = ScaleCursorPosition(e.Location);
 
       var actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, p.X, p.Y);
       GUIGraphicsContext.OnAction(actionMove);
@@ -5232,7 +5265,7 @@ public class MediaPortalApp : D3D, IRender
       Action action;
       bool mouseButtonRightClick = false;
       _lastCursorPosition = Cursor.Position;
-      Point p = ScaleCursorPosition(e.Location);
+      System.Drawing.Point p = ScaleCursorPosition(e.Location);
 
       var actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, p.X, p.Y);
       GUIGraphicsContext.OnAction(actionMove);
@@ -5340,7 +5373,7 @@ public class MediaPortalApp : D3D, IRender
     if (_mouseClickFired)
     {
       _mouseClickFired = false;
-      Point p = ScaleCursorPosition(e.Location);
+      System.Drawing.Point p = ScaleCursorPosition(e.Location);
       var action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, p.X, p.Y) {MouseButton = _lastMouseClickEvent.Button, SoundFileName = "click.wav"};
       if (action.SoundFileName.Length > 0 && !g_Player.Playing)
       {
@@ -5563,14 +5596,14 @@ public class MediaPortalApp : D3D, IRender
             // disable event handlers
             if (GUIGraphicsContext.DX9Device != null)
             {
-              GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+              GUIGraphicsContext.DeviceLost -= OnDeviceLost;
             }
 
             try
             {
               // "message.Param1 == 2" is when stopping playback
               if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null &&
-                  !GUIGraphicsContext.MadVrRenderTargetVmr9.Disposed && message.Param1 == 2)
+                  !GUIGraphicsContext.MadVrRenderTargetVmr9.IsDisposed && message.Param1 == 2)
               {
                 GUIGraphicsContext.DX9Device?.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVmr9);
                 GUIGraphicsContext.MadVrRenderTargetVmr9.Dispose();
@@ -5582,7 +5615,7 @@ public class MediaPortalApp : D3D, IRender
               {
                 var surface = (Surface) message.Object;
                 if (surface != null &&
-                    !surface.Disposed)
+                    !surface.IsDisposed)
                 {
                   GUIGraphicsContext.MadVrRenderTargetVmr9 = surface;
                 }
@@ -5624,7 +5657,7 @@ public class MediaPortalApp : D3D, IRender
             // enable event handlers
             if (GUIGraphicsContext.DX9Device != null)
             {
-              GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+              GUIGraphicsContext.DeviceLost += OnDeviceLost;
             }
           }
           break;

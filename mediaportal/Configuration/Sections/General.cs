@@ -24,8 +24,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
-using Microsoft.DirectX.Direct3D;
-using Microsoft.Win32;
+//using Microsoft.DirectX.Direct3D;
+//using Microsoft.Win32;
 
 #pragma warning disable 108
 

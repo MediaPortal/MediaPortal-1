@@ -19,10 +19,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Download Artifacts
+      - name: Download x86 Artifacts
         uses: actions/download-artifact@v3
         with:
-          name: Mediaportal setup file
+          name: Mediaportal setup file x86
+          path: release-files
+
+      - name: Download x64 Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: Mediaportal setup file x64
           path: release-files
 
       - name: 7z Artifacts

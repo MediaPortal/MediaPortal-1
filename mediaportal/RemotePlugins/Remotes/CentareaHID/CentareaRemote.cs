@@ -127,7 +127,9 @@ namespace MediaPortal.InputDevices
     /// <returns>Command handled</returns>
     public bool WndProc(ref Message msg)
     {
-      if (_remoteActive)
+      if (_remoteActive &&
+        (msg.Msg == WM_KEYDOWN || msg.Msg == WM_SYSKEYDOWN || msg.Msg == Win32.Const.WM_APPCOMMAND || msg.Msg == WM_LBUTTONDOWN ||
+                  msg.Msg == WM_RBUTTONDOWN || msg.Msg == WM_MOUSEMOVE))
       {
         AppCommands appCommand = (AppCommands) Win32.Macro.GET_APPCOMMAND_LPARAM(msg.LParam);
         // find out which request the MCE remote handled last

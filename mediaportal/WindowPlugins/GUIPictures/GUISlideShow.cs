@@ -36,7 +36,7 @@ using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
 
-using Microsoft.DirectX.Direct3D;
+using SharpDX.Direct3D9;
 
 using Action = MediaPortal.GUI.Library.Action;
 
@@ -1062,7 +1062,7 @@ namespace MediaPortal.GUI.Pictures
       float x, y, width, height;
 
       // x-fade
-      GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+      GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, RawColorsBGRA.Black, 1.0f, 0);
       if (_transitionMethod != 9 || _currentSlide == null)
       {
         GetOutputRect(_backgroundSlide.Width, _backgroundSlide.Height, _zoomFactorBackground, out x, out y, out width,

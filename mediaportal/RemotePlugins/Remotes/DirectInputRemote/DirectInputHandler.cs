@@ -20,12 +20,14 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
-using Microsoft.DirectX.DirectInput;
+using SharpDX.RawInput;
+using SharpDX.DirectInput;
 
 namespace MediaPortal.InputDevices
 {
@@ -37,8 +39,10 @@ namespace MediaPortal.InputDevices
     [DllImport("winmm.dll")]
     public static extern int timeGetTime();
 
+    private static DirectInput _DirectInput = new DirectInput();
+
     private DirectInputListener _diListener = null;
-    private DeviceList _deviceList = null;
+    private IList<DeviceInstance> _deviceList = null;
     private string _selectedDeviceGUID = string.Empty;
     private InputHandler _inputHandler = null;
 
@@ -113,7 +117,7 @@ namespace MediaPortal.InputDevices
     public event diStateChangeText OnStateChangeText = null;
 
 
-    public DirectInputHandler() {}
+    public DirectInputHandler() { }
 
     ~DirectInputHandler()
     {
@@ -161,17 +165,18 @@ namespace MediaPortal.InputDevices
     {
       try
       {
-        _deviceList = Manager.GetDevices(DeviceClass.GameControl, EnumDevicesFlags.AttachedOnly);
+        _deviceList = new List<DeviceInstance>();
+        _deviceList = _DirectInput.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly);
         _deviceNames.Clear();
         _deviceGUIDs.Clear();
         if (null == _deviceList)
         {
           return;
         }
-        _deviceList.Reset();
+        //_deviceList.Reset();
         foreach (DeviceInstance di in _deviceList)
         {
-          if (Manager.GetDeviceAttached(di.InstanceGuid))
+          if (_DirectInput.IsDeviceAttached(di.InstanceGuid))
           {
             _deviceNames.Add(di.InstanceName);
             _deviceGUIDs.Add(di.InstanceGuid);
@@ -248,7 +253,7 @@ namespace MediaPortal.InputDevices
       int i = 0;
       if ((null != _diListener.SelectedDevice) && (_selectedDeviceGUID != string.Empty))
       {
-        _deviceList.Reset();
+        //_deviceList.Reset();
         foreach (DeviceInstance di in _deviceList)
         {
           if (di.InstanceGuid.ToString() == _selectedDeviceGUID)
@@ -324,14 +329,14 @@ namespace MediaPortal.InputDevices
       {
         return false;
       }
-      _deviceList.Reset();
+      //_deviceList.Reset();
       foreach (DeviceInstance di in _deviceList)
       {
         if (di.InstanceGuid.ToString() == devGUID)
         {
           _selectedDeviceGUID = devGUID;
           // create and init device
-          res = _diListener.InitDevice(di.InstanceGuid);
+          res = _diListener.InitDevice(_DirectInput, di.InstanceGuid);
         }
       }
       return res;
@@ -354,15 +359,15 @@ namespace MediaPortal.InputDevices
       // todo: timer stuff!!
 
       // buttons first!
-      byte[] buttons = state.GetButtons();
+      bool[] buttons = state.Buttons;
       int button = 0;
       string pressedButtons = "";
 
       // button combos
       string sep = "";
-      foreach (byte b in buttons)
+      foreach (bool b in buttons)
       {
-        if (0 != (b & 0x80))
+        if (b)
         {
           pressedButtons += sep + button.ToString("00");
           sep = ",";
@@ -392,9 +397,9 @@ namespace MediaPortal.InputDevices
       {
         button = 0;
         bool foundButton = false;
-        foreach (byte b in buttons)
+        foreach (bool b in buttons)
         {
-          if (0 != (b & 0x80))
+          if (b)
           {
             foundButton = true;
             break;
@@ -414,7 +419,7 @@ namespace MediaPortal.InputDevices
       // pov next
       if (actionCode == -1)
       {
-        int[] pov = state.GetPointOfView();
+        int[] pov = state.PointOfViewControllers;
         switch (pov[0])
         {
           case 0:
@@ -486,10 +491,10 @@ namespace MediaPortal.InputDevices
       if (actionCode == -1)
       {
         // rotation
-        if (Math.Abs(state.Rx) > _axisLimit)
+        if (Math.Abs(state.RotationX) > _axisLimit)
         {
-          curAxisValue = state.Rx;
-          if (state.Rx > 0)
+          curAxisValue = state.RotationX;
+          if (state.RotationX > 0)
           {
             actionCode = (int)joyButton.rotationXUp;
           }
@@ -498,10 +503,10 @@ namespace MediaPortal.InputDevices
             actionCode = (int)joyButton.rotationXDown;
           }
         }
-        else if (Math.Abs(state.Ry) > _axisLimit)
+        else if (Math.Abs(state.RotationY) > _axisLimit)
         {
-          curAxisValue = state.Ry;
-          if (state.Ry > 0)
+          curAxisValue = state.RotationY;
+          if (state.RotationY > 0)
           {
             actionCode = (int)joyButton.rotationYUp;
           }
@@ -510,10 +515,10 @@ namespace MediaPortal.InputDevices
             actionCode = (int)joyButton.rotationYDown;
           }
         }
-        else if (Math.Abs(state.Rz) > _axisLimit)
+        else if (Math.Abs(state.RotationZ) > _axisLimit)
         {
-          curAxisValue = state.Rz;
-          if (state.Rz > 0)
+          curAxisValue = state.RotationZ;
+          if (state.RotationZ > 0)
           {
             actionCode = (int)joyButton.rotationZUp;
           }
@@ -551,13 +556,13 @@ namespace MediaPortal.InputDevices
 
       string joyState = string.Format("Axis    : {0:+0000;-0000} / {1:+0000;-0000} / {2:+0000;-0000}\n", state.X,
                                       state.Y, state.Z);
-      joyState += string.Format("Rotation: {0:+0000;-0000} / {1:+0000;-0000} / {2:+0000;-0000}\n\n", state.Rx, state.Ry,
-                                state.Rz);
+      joyState += string.Format("Rotation: {0:+0000;-0000} / {1:+0000;-0000} / {2:+0000;-0000}\n\n", state.RotationX, state.RotationY,
+                                state.RotationZ);
 
-      int[] slider = state.GetSlider();
+      int[] slider = state.Sliders;
       joyState += string.Format("Slider  : 0: {0:+0000;-0000} 1: {1:+0000;-0000}\n\n", slider[0], slider[1]);
 
-      int[] pov = state.GetPointOfView();
+      int[] pov = state.PointOfViewControllers;
       switch (pov[0])
       {
         case 0:
@@ -607,12 +612,12 @@ namespace MediaPortal.InputDevices
       }
 
       // Fill up text with which buttons are pressed
-      byte[] buttons = state.GetButtons();
+      bool[] buttons = state.Buttons;
 
       int button = 0;
-      foreach (byte b in buttons)
+      foreach (bool b in buttons)
       {
-        if (0 != (b & 0x80))
+        if (b)
         {
           strText += button.ToString("00 ");
         }
@@ -700,15 +705,15 @@ namespace MediaPortal.InputDevices
       // 2) the time elapsed when sending the same code is smaller than the delay threshold
       if (actionCode == _lastCodeSent)
       {
-/*
-        int timeNow = timeGetTime();
-        int timeElapsed = timeNow - timeLastSend;
-        if (timeElapsed < delay)
-        {
-          res = true;
-        }
-        else 
-*/
+        /*
+                int timeNow = timeGetTime();
+                int timeElapsed = timeNow - timeLastSend;
+                if (timeElapsed < delay)
+                {
+                  res = true;
+                }
+                else 
+        */
         if (Math.Abs(axisValue) < Math.Abs(_lastAxisValue))
         {
           // axis is being released => don't send action!

@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2020 Team MediaPortal
+﻿#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Team MediaPortal")]
 [assembly: AssemblyProduct("MediaPortal")]
-[assembly: AssemblyCopyright("Copyright © 2005-2020 Team MediaPortal")]
+[assembly: AssemblyCopyright("Copyright © 2005-2023 Team MediaPortal")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -53,5 +53,5 @@ using System.Runtime.InteropServices;
 //      Revision
 //
 
-[assembly: AssemblyVersion("1.2.0.*")]
-[assembly: AssemblyFileVersion("1.2.0.0")]
+[assembly: AssemblyVersion("1.5.0.*")]
+[assembly: AssemblyFileVersion("1.5.0.0")]

@@ -39,6 +39,13 @@
 
 
 #---------------------------------------------------------------------------
+# ARCHITECTURE
+#---------------------------------------------------------------------------
+!ifndef Architecture
+  !define Architecture x86
+!endif
+
+#---------------------------------------------------------------------------
 # DEVELOPMENT ENVIRONMENT
 #---------------------------------------------------------------------------
 # SKRIPT_NAME is needed to diff between the install scripts in imported headers
@@ -67,13 +74,23 @@
 !define PRODUCT_PUBLISHER     "Team MediaPortal"
 !define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
 
-!define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
-!define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+
+!if "${Architecture}" == "x64"
+  !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
+  !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server (x64)"
+!else
+  !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+  !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
+!endif
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal TV Server"
 !define MP_COMMON_APPDATA     "$APPDATA\Team MediaPortal\MediaPortal"
-!define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
+!if "${Architecture}" == "x64"
+    !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server (x64)"
+!else
+    !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
+!endif
 
 ; import version from shared file
 !include "${git_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
@@ -600,7 +617,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ${LOG_TEXT} "INFO" "filter registration..."
   ; filters for digital tv
   ${IfNot} ${MP023IsInstalled}
-  ${AndIfNot} ${MPIsInstalled}
+  ${AndIfNot} ${MPIsInstalledx86}
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax" "$INSTDIR\TsReader.ax" "$INSTDIR"
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\Core-CC-Parser\CCCP\${BUILD_TYPE}\cccp.ax" "$INSTDIR\cccp.ax" "$INSTDIR"
   ${EndIf}
@@ -651,6 +668,11 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ;${EndIf}
 ${MementoSectionEnd}
 !macro Remove_${SecServer}
+
+  ; Currently the x86 version only is suppoertd
+  ${If} "${Architecture}" == "x86"
+
+
   ${LOG_TEXT} "INFO" "Uninstalling MediaPortal TV Server..."
 
   ; Kill running Programs
@@ -686,7 +708,7 @@ ${MementoSectionEnd}
   ${LOG_TEXT} "INFO" "Unreg and remove filters..."
   ; filters for digital tv
   ${IfNot} ${MP023IsInstalled}
-  ${AndIfNot} ${MPIsInstalled}
+  ${AndIfNot} ${MPIsInstalledx86}
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\TsReader.ax"
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\cccp.ax"
     ; Delete TV filter to be able to be registered with an updated version
@@ -807,6 +829,8 @@ ${MementoSectionEnd}
     !insertmacro Remove_SecWatchdog
   ${EndIf}
   
+  ${EndIf}
+  
 !macroend
 
 ${MementoSection} "MediaPortal TV Client plugin" SecClient
@@ -825,16 +849,16 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   #---------------------------- File Copy ----------------------
   ; Common Files
   SetOutPath "$MPdir.Base"
-  File "${git_TVServer}\TvControl\bin\${BUILD_TYPE}\TvControl.dll"
-  File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
-  File "${git_TVServer}\TVDatabase\bin\${BUILD_TYPE}\TVDatabase.dll"
+  File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvControl.dll"
+  File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
+  File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TVDatabase.dll"
   File "${git_TVServer}\TVDatabase\references\Gentle.Common.DLL"
   File "${git_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.dll"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
   File "${git_TVServer}\TVDatabase\references\log4net.dll"
   File "${git_TVServer}\TVDatabase\references\MySql.Data.dll"
-  File "${git_TVServer}\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
+  File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
 
   ;Gentle.Config
   SetOutPath "$MPdir.Config"
@@ -888,7 +912,7 @@ ${MementoSectionEnd}
   Delete "$MPdir.Base\Gentle.Framework.DLL"
   Delete "$MPdir.Base\Gentle.Provider.MySQL.dll"
   Delete "$MPdir.Base\Gentle.Provider.SQLServer.dll"
-  Delete "$MPdir.Base\log4net.dll"
+  ;Delete "$MPdir.Base\log4net.dll"
   Delete "$MPdir.Base\MySql.Data.dll"
   Delete "$MPdir.Base\TvBusinessLayer.dll"
   Delete "$MPdir.Base\TvControl.dll"
@@ -1057,7 +1081,12 @@ Function LoadPreviousSettings
   ${If} "$PREVIOUS_INSTALLDIR" != ""
     StrCpy $INSTDIR "$PREVIOUS_INSTALLDIR"
   ${ElseIf} "$INSTDIR" == ""
-    StrCpy $INSTDIR "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server"
+  
+      ${If} "${Architecture}" == "x64"
+        StrCpy $INSTDIR "$PROGRAMFILES64\Team MediaPortal\MediaPortal TV Server"
+      ${else}
+        StrCpy $INSTDIR "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server"
+      ${EndIf}
   ${EndIf}
 
 

@@ -66,6 +66,26 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType />
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Bass.Net, Version=2.4.14.1, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
       <HintPath>..\..\Packages\BASS.NET.2.4.14.1\lib\net40\Bass.Net.dll</HintPath>
@@ -144,6 +164,7 @@
     <Compile Include="MiniDisplayPlugin\Drivers\iMON\SoundGraphImonSettingsForm.designer.cs">
       <DependentUpon>SoundGraphImonSettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MiniDisplayPlugin\Drivers\MPx86ProxyHandler.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\SharpLibDisplay\SharpLibDisplay.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\SharpLibDisplay\SharpLibDisplaySettings.cs" />
     <Compile Include="MiniDisplayPlugin\Drivers\SharpLibDisplay\SharpLibDisplaySettingsForm.cs">

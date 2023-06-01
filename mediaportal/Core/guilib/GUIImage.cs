@@ -29,8 +29,8 @@ using MediaPortal.ExtensionMethods;
 using MediaPortal.guilib;
 using MediaPortal.Util;
 
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
+using SharpDX;
+using SharpDX.Direct3D9;
 
 namespace MediaPortal.GUI.Library
 {
@@ -144,7 +144,7 @@ namespace MediaPortal.GUI.Library
     private int m_iRenderHeight = 0;
 
     //private System.Drawing.Image m_image = null;
-    private Rectangle m_destRect;
+    private System.Drawing.Rectangle m_destRect;
     private string _cachedTextureFileName = string.Empty;
 
     //using for debugging leaks;
@@ -159,8 +159,8 @@ namespace MediaPortal.GUI.Library
     private bool _propertyChanged = false;
     private bool _refresh = false;
     //    StateBlock                      savedStateBlock;
-    private Rectangle sourceRect;
-    private Rectangle destinationRect;
+    private System.Drawing.Rectangle sourceRect;
+    private System.Drawing.Rectangle destinationRect;
     private Vector3 pntPosition;
     private float scaleX = 1;
     private float scaleY = 1;
@@ -196,12 +196,12 @@ namespace MediaPortal.GUI.Library
       : base(dwParentID) { }
 
     public GUIImage(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
-                    string strTexture, Color color)
+                    string strTexture, System.Drawing.Color color)
       : this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTexture, color.ToArgb()) { }
 
     public GUIImage(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
-                    string strTexture, Color color, int[] border, int strBorderPosition, bool borderTextureRotate,
-                    bool borderTextureRepeat, Color borderColor)
+                    string strTexture, System.Drawing.Color color, int[] border, int strBorderPosition, bool borderTextureRotate,
+                    bool borderTextureRepeat, System.Drawing.Color borderColor)
       : this(
         dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTexture, color.ToArgb(), border,
         strBorderPosition, borderTextureRepeat, borderTextureRotate, borderColor.ToArgb())
@@ -714,7 +714,7 @@ namespace MediaPortal.GUI.Library
           return;
         }
 
-        if (GUIGraphicsContext.DX9Device.Disposed)
+        if (GUIGraphicsContext.DX9Device.IsDisposed)
         {
           return;
         }
@@ -856,7 +856,7 @@ namespace MediaPortal.GUI.Library
     {
       if (_packedTexture == (Texture)sender)
       {
-        _packedTexture.Disposing -= new EventHandler(OnPackedTexturesDisposedEvent);
+        _packedTexture.Disposing -= new EventHandler<EventArgs>(OnPackedTexturesDisposedEvent);
         _packedTexture.Dispose();
         _packedTexture = null;
       }
@@ -1015,7 +1015,7 @@ namespace MediaPortal.GUI.Library
 
       if (_packedTexture != null)
       {
-        _packedTexture.Disposing -= new EventHandler(OnPackedTexturesDisposedEvent);
+        _packedTexture.Disposing -= new EventHandler<EventArgs>(OnPackedTexturesDisposedEvent);
       }
 
       _currentFrameNumber = 0;
@@ -1137,7 +1137,7 @@ namespace MediaPortal.GUI.Library
         }
 
         // if texture is disposed then free its resources and return
-        if (texture.Disposed)
+        if (texture.IsDisposed)
         {
           texture = null;
           FreeResourcesAndRegEvent();
@@ -1395,9 +1395,9 @@ namespace MediaPortal.GUI.Library
       }
 
       pntPosition = new Vector3(x, y, 0);
-      sourceRect = new Rectangle(_selectedFrameNumber * _width + iSourceX, iSourceY, iSourceWidth, iSourceHeight);
-      destinationRect = new Rectangle(0, 0, (int)nw, (int)nh);
-      m_destRect = new Rectangle((int)x, (int)y, (int)nw, (int)nh);
+      sourceRect = new System.Drawing.Rectangle(_selectedFrameNumber * _width + iSourceX, iSourceY, iSourceWidth, iSourceHeight);
+      destinationRect = new System.Drawing.Rectangle(0, 0, (int)nw, (int)nh);
+      m_destRect = new System.Drawing.Rectangle((int)x, (int)y, (int)nw, (int)nh);
 
       scaleX = (float)destinationRect.Width / (float)iSourceWidth;
       scaleY = (float)destinationRect.Height / (float)iSourceHeight;
@@ -1412,7 +1412,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public void RenderRect(float timePassed, Rectangle rectSrc, Rectangle rectDst)
+    public void RenderRect(float timePassed, System.Drawing.Rectangle rectSrc, System.Drawing.Rectangle rectDst)
     {
       _fx = rectDst.Left;
       _fy = rectDst.Top;
@@ -2588,7 +2588,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Gets the rectangle in which this GUIImage is rendered.
     /// </summary>
-    public Rectangle rect
+    public System.Drawing.Rectangle rect
     {
       get { return m_destRect; }
     }
@@ -2898,16 +2898,14 @@ namespace MediaPortal.GUI.Library
 
     public bool LockMemoryImageTexture(out Bitmap bitmap)
     {
-      int pitch;
       if (_memoryImageTexture == null)
       {
         bitmap = null;
         return false;
       }
-      using (GraphicsStream gs = _memoryImageTexture.LockRectangle(0, LockFlags.Discard, out pitch))
-      {
-        bitmap = new Bitmap(_memoryImageWidth, _memoryImageHeight, pitch, PixelFormat.Format32bppArgb, gs.InternalData);
-      }
+
+      DataRectangle r = _memoryImageTexture.LockRectangle(0, LockFlags.Discard);
+      bitmap = new Bitmap(_memoryImageWidth, _memoryImageHeight, r.Pitch, PixelFormat.Format32bppArgb, r.DataPointer);
       return true;
     }
 

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -108,21 +108,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
       try
       {
-        RegistryKey key = null;
-        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\DirectX");
-        if (key == null)
-        {
-          try
-          {
-            key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\DirectX", false,
-                Utils.eRegWow64Options.KEY_WOW64_32KEY);
-          }
-          catch
-          {
-            // Parent key not open, exception found at opening (probably related to
-            // security permissions requested)
-          }
-        }
+        RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\Microsoft\\DirectX");
         using (key)
         {
           if (key == null)
@@ -134,12 +120,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
             key.Close();
             string[] DllList = {
                                  @"\System32\D3DX9_43.dll",
-                                 @"\microsoft.net\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.Direct3D.dll",
-                                 @"\microsoft.net\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.DirectDraw.dll",
-                                 @"\microsoft.net\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.DirectInput.dll"
-                                 ,
-                                 @"\microsoft.net\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.dll",
-                                 @"\microsoft.net\DirectX for Managed Code\1.0.2911.0\Microsoft.DirectX.Direct3DX.dll"
                                };
             string WinDir = Environment.GetEnvironmentVariable("WINDIR");
             foreach (string DllFile in DllList)
@@ -157,7 +137,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
       catch (Exception)
       {
-        MessageBox.Show("Failed to check the DirectX installation status", "Error", MessageBoxButtons.OK,
+        MessageBox.Show("Failed to check the DirectX installation status", "Error", 
+                        MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
       }
       return result;

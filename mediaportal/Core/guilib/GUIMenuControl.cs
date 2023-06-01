@@ -26,7 +26,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Media.Animation;
 using MediaPortal.Profile;
-using Microsoft.DirectX.Direct3D;
+//using Microsoft.DirectX.Direct3D;
 using MediaPortal.ExtensionMethods;
 
 // used for Keys definition

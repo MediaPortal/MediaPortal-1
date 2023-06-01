@@ -60,8 +60,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
     [DllImport("hid.dll", SetLastError = true)]
     public static extern bool HidD_GetInputReport(int HidDeviceObject, ref byte lpReportBuffer, int ReportBufferLength);
 
-    [DllImport("hid.dll", PreserveSig = false)]
-    public static extern void HidD_GetHidGuid(ref Guid HidGuid);
+    [DllImport("hid.dll", SetLastError = true)]
+    public static extern void HidD_GetHidGuid(out Guid HidGuid);
 
     [DllImport("hid.dll", SetLastError = true)]
     public static extern bool HidD_GetNumInputBuffers(int HidDeviceObject, ref int NumberBuffers);

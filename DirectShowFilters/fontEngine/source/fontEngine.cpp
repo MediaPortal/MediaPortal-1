@@ -103,7 +103,7 @@ struct FONT_DATA_T
 
 struct TEXTURE_DATA_T
 {
-  int                     hashCode;
+  INT64                   hashCode;
   LPDIRECT3DTEXTURE9      pTexture;
   LPDIRECT3DINDEXBUFFER9  pIndexBuffer;
   CUSTOMVERTEX*           vertices;
@@ -345,7 +345,7 @@ void FontEngineRemoveTexture(int textureNo)
 }
 
 //*******************************************************************************************************************
-int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
+int FontEngineAddTexture(INT64 hashCode, bool useAlphaBlend, void* texture)
 {
   try
   {
@@ -417,7 +417,7 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
 }
 
 //*******************************************************************************************************************
-int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
+int FontEngineAddSurface(INT64 hashCode, bool useAlphaBlend,void* surface)
 {
   int selected=-1;
 
