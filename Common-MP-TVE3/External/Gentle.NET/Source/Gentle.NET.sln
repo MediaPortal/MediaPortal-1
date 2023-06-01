@@ -1,5 +1,7 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AC1325E5-634F-4AC7-915E-8045D75D864B}"
 	ProjectSection(SolutionItems) = preProject
 		Gentle.snk = Gentle.snk
@@ -68,13 +70,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gentle.Provider.SybaseASA",
 		{AF3B526D-DBD9-42C4-B8AB-CFE03178AE50} = {AF3B526D-DBD9-42C4-B8AB-CFE03178AE50}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gentle.Provider.SQLServerCE", "Gentle.Provider.SQLServerCE\Gentle.Provider.SQLServerCE.csproj", "{E3149E66-2BF2-4441-8A72-CDEFDE97C4D1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gentle.Provider.DB2", "Gentle.Provider.DB2\Gentle.Provider.DB2.csproj", "{E5128903-A06C-4682-A81E-F889AAB03181}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gentle.Provider.Firebird", "Gentle.Provider.Firebird\Gentle.Provider.Firebird.csproj", "{0EDBF925-B8F4-469F-AFD6-812F36A7D051}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gentle.Provider.MySQL", "Gentle.Provider.MySQL\Gentle.Provider.MySQL.csproj", "{07F6A0D3-4B72-4EE8-8E4C-12653BEA87AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gentle.Provider.SQLServerCE", "Gentle.Provider.SQLServerCE\Gentle.Provider.SQLServerCE.csproj", "{E3149E66-2BF2-4441-8A72-CDEFDE97C4D1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -126,10 +128,6 @@ Global
 		{392C0AD0-07EC-44DE-BA47-75422F750D4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{392C0AD0-07EC-44DE-BA47-75422F750D4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{392C0AD0-07EC-44DE-BA47-75422F750D4C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E3149E66-2BF2-4441-8A72-CDEFDE97C4D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E3149E66-2BF2-4441-8A72-CDEFDE97C4D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E3149E66-2BF2-4441-8A72-CDEFDE97C4D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E3149E66-2BF2-4441-8A72-CDEFDE97C4D1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E5128903-A06C-4682-A81E-F889AAB03181}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E5128903-A06C-4682-A81E-F889AAB03181}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5128903-A06C-4682-A81E-F889AAB03181}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -142,8 +140,15 @@ Global
 		{07F6A0D3-4B72-4EE8-8E4C-12653BEA87AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07F6A0D3-4B72-4EE8-8E4C-12653BEA87AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07F6A0D3-4B72-4EE8-8E4C-12653BEA87AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3149E66-2BF2-4441-8A72-CDEFDE97C4D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3149E66-2BF2-4441-8A72-CDEFDE97C4D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3149E66-2BF2-4441-8A72-CDEFDE97C4D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3149E66-2BF2-4441-8A72-CDEFDE97C4D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {873DB40A-F68B-4BE0-9D21-A3935026C9C9}
 	EndGlobalSection
 EndGlobal
