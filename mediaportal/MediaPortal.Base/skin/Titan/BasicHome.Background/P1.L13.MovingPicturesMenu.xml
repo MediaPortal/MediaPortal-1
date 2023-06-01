@@ -8,7 +8,7 @@
 	  <description>Video/Movies Selected Fanart</description>
       <type>image</type>
       <id>0</id>
-      <visible>control.hasfocus(6)</visible>
+      <visible>[control.hasfocus(6) | control.HasFocus(1100) | control.HasFocus(1101) | control.HasFocus(1102) | control.HasFocus(1103) | control.HasFocus(1104)]</visible>
       <texture>hover_my videos.png</texture>
     </control>
 

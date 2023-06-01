@@ -8,7 +8,7 @@
     <description>TV Selected Fanart</description>
     <type>image</type>
     <id>0</id>
-    <visible>control.hasfocus(4) + control.isvisible(91919297)</visible>
+    <visible>[control.hasfocus(4) | control.hasfocus(400001) | control.hasfocus(400011) | control.hasfocus(400021) | control.hasfocus(400031) | control.hasfocus(400041)] + control.isvisible(91919297)</visible>
     <texture>#fanarthandler.tv.userdef.backdrop1.any</texture>
   </control> 
 
@@ -16,7 +16,7 @@
     <description>TV Selected Fanart</description>
     <type>image</type>
     <id>0</id>
-    <visible>control.hasfocus(4) + control.isvisible(91919298)</visible>
+    <visible>[control.hasfocus(4) | control.hasfocus(400001) | control.hasfocus(400011) | control.hasfocus(400021) | control.hasfocus(400031) | control.hasfocus(400041)] + control.isvisible(91919298)</visible>
     <texture>#fanarthandler.tv.userdef.backdrop2.any</texture>
   </control> 
 

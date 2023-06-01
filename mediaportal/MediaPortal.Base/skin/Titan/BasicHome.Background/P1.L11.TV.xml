@@ -6,7 +6,7 @@
 	  <description>TV Selected Fanart</description>
       <type>image</type>
       <id>0</id>
-      <visible>[control.hasfocus(4)]</visible>
+      <visible>control.hasfocus(2)</visible>
       <texture>hover_my tv.png</texture>
     </control> 
 
