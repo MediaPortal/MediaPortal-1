@@ -137,8 +137,8 @@ namespace SetupTv
       // 
       // gbServerLocation
       // 
-      this.gbServerLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.gbServerLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.gbServerLocation.Controls.Add(this.tbDatabaseName);
       this.gbServerLocation.Controls.Add(this.lblDbName);
       this.gbServerLocation.Controls.Add(this.tbServiceDependency);
@@ -155,8 +155,8 @@ namespace SetupTv
       // 
       // tbDatabaseName
       // 
-      this.tbDatabaseName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbDatabaseName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tbDatabaseName.Location = new System.Drawing.Point(99, 74);
       this.tbDatabaseName.Name = "tbDatabaseName";
       this.tbDatabaseName.Size = new System.Drawing.Size(220, 20);
@@ -174,8 +174,8 @@ namespace SetupTv
       // 
       // tbServiceDependency
       // 
-      this.tbServiceDependency.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbServiceDependency.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tbServiceDependency.Location = new System.Drawing.Point(99, 48);
       this.tbServiceDependency.Name = "tbServiceDependency";
       this.tbServiceDependency.Size = new System.Drawing.Size(220, 20);
@@ -202,8 +202,8 @@ namespace SetupTv
       // 
       // tbServerHostName
       // 
-      this.tbServerHostName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbServerHostName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tbServerHostName.Location = new System.Drawing.Point(99, 22);
       this.tbServerHostName.Name = "tbServerHostName";
       this.tbServerHostName.Size = new System.Drawing.Size(220, 20);
@@ -252,10 +252,10 @@ namespace SetupTv
       this.rbMySQL.AutoSize = true;
       this.rbMySQL.Location = new System.Drawing.Point(204, 122);
       this.rbMySQL.Name = "rbMySQL";
-      this.rbMySQL.Size = new System.Drawing.Size(72, 17);
+      this.rbMySQL.Size = new System.Drawing.Size(152, 17);
       this.rbMySQL.TabIndex = 0;
       this.rbMySQL.TabStop = true;
-      this.rbMySQL.Text = "My SQL 5";
+      this.rbMySQL.Text = "My SQL / Maria DB Server";
       this.rbMySQL.UseVisualStyleBackColor = true;
       this.rbMySQL.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
       // 
@@ -264,10 +264,10 @@ namespace SetupTv
       this.rbSQLServer.AutoSize = true;
       this.rbSQLServer.Location = new System.Drawing.Point(19, 122);
       this.rbSQLServer.Name = "rbSQLServer";
-      this.rbSQLServer.Size = new System.Drawing.Size(153, 17);
+      this.rbSQLServer.Size = new System.Drawing.Size(126, 17);
       this.rbSQLServer.TabIndex = 0;
       this.rbSQLServer.TabStop = true;
-      this.rbSQLServer.Text = "Microsoft SQL Server 2005";
+      this.rbSQLServer.Text = "Microsoft SQL Server";
       this.rbSQLServer.UseVisualStyleBackColor = true;
       this.rbSQLServer.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
       // 
