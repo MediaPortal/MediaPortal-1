@@ -430,15 +430,18 @@ namespace MediaPortal.Player
 
           GUIGraphicsContext.IsFullHD3DFormat = false;
 
-          if (((double)videoSize.Width / videoSize.Height >= 2.5) && (videoSize.Width >= _full3DSBSMinWidth))
-          // we have Full HD SBS 
+          if (GUIGraphicsContext.Is3D)
           {
-            GUIGraphicsContext.IsFullHD3DFormat = true;
-          }
-          else if (((double)videoSize.Width / videoSize.Height <= 1.5) && (videoSize.Height >= _full3DTABMinHeight))
-          // we have Full HD TAB
-          {
-            GUIGraphicsContext.IsFullHD3DFormat = true;
+            if (((double)videoSize.Width / videoSize.Height >= 2.5) && (videoSize.Width >= _full3DSBSMinWidth))
+            // we have Full HD SBS 
+            {
+              GUIGraphicsContext.IsFullHD3DFormat = true;
+            }
+            else if (((double)videoSize.Width / videoSize.Height <= 1.5) && (videoSize.Height >= _full3DTABMinHeight))
+            // we have Full HD TAB
+            {
+              GUIGraphicsContext.IsFullHD3DFormat = true;
+            }
           }
 
           GUIGraphicsContext.VideoSize = videoSize;
@@ -530,15 +533,18 @@ namespace MediaPortal.Player
           // to provide only the size of one half to the GetWindow call of the
           // Geometry class
 
-          if (((double)videoSize.Width / videoSize.Height >= 2.5) && (videoSize.Width >= _full3DSBSMinWidth))
-          // we have Full HD SBS 
+          if (GUIGraphicsContext.IsFullHD3DFormat)
           {
-            fVideoWidth /= 2;
-          }
-          else if (((double)videoSize.Width / videoSize.Height <= 1.5) && (videoSize.Height >= _full3DTABMinHeight))
-          // we have Full HD TAB
-          {
-            fVideoHeight /= 2;
+            if (((double)videoSize.Width / videoSize.Height >= 2.5) && (videoSize.Width >= _full3DSBSMinWidth))
+            // we have Full HD SBS 
+            {
+              fVideoWidth /= 2;
+            }
+            else if (((double)videoSize.Width / videoSize.Height <= 1.5) && (videoSize.Height >= _full3DTABMinHeight))
+            // we have Full HD TAB
+            {
+              fVideoHeight /= 2;
+            }
           }
 
           _geometry.ImageWidth = (int)fVideoWidth;
