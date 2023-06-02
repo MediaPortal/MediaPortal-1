@@ -193,8 +193,12 @@ namespace MediaPortal.DeployTool.Sections
         AddPackageToListView(new OldPackageChecker());
       }
       AddPackageToListView(new DirectX9Checker());
-      AddPackageToListView(new VCRedistCheckerOld());
-      AddPackageToListView(new VCRedistChecker());
+      AddPackageToListView(new VCRedistChecker2008());
+      AddPackageToListView(new VCRedistChecker2010());
+      if (Utils.Is64bit())
+      {
+        AddPackageToListView(new VcRedistChecker2013());
+      }
       AddPackageToListView(new VcRedistChecker2015());
       AddPackageToListView(new WindowsMediaPlayerChecker());
       switch (InstallationProperties.Instance["InstallType"])
