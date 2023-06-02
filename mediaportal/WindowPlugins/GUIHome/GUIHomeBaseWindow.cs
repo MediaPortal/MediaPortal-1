@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ namespace MediaPortal.GUI.Home
 
     [SkinControl(200)] protected GUILabelControl lblDate = null;
     [SkinControl(201)] protected GUILabelControl lblTime = null;
-    [SkinControl(50)] protected GUIMenuControl menuMain = null;
+    [SkinControl(50)] protected GUIControl menuMain = null;
     [SkinControl(99)] protected GUIVideoControl videoWindow = null;
 
     #endregion
@@ -98,11 +98,22 @@ namespace MediaPortal.GUI.Home
       base.OnWindowLoaded();
       if (menuMain != null)
       {
-        menuMain.FixedScroll = _fixedScroll;
-        menuMain.EnableAnimation = _enableAnimation;
+        if (menuMain is GUIMenuControl)
+        {
+          (menuMain as GUIMenuControl).FixedScroll = _fixedScroll;
+          (menuMain as GUIMenuControl).EnableAnimation = _enableAnimation;
+        }
       }
+
       LoadButtonNames();
-      menuMain.ButtonInfos.Sort(menuMain.Compare);
+
+      if (menuMain != null)
+      {
+        if (menuMain is GUIMenuControl)
+        {
+          (menuMain as GUIMenuControl).ButtonInfos.Sort((menuMain as GUIMenuControl).Compare);
+        }
+      }
     }
 
     protected override void OnPageLoad()

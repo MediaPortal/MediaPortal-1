@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -56,7 +56,17 @@ namespace MediaPortal.GUI.Home
       {
         return;
       }
-      menuMain.ButtonInfos.Clear();
+
+      if (menuMain is GUIMenuControl)
+      {
+        (menuMain as GUIMenuControl).ButtonInfos.Clear();
+      }
+
+      if (menuMain is GUIFacadeControl)
+      {
+        GUIControl.ClearControl(GetID, menuMain.GetID);
+      }
+
       ArrayList plugins = PluginManager.SetupForms;
       int myPluginsCount = 0;
       using (Profile.Settings xmlreader = new Profile.MPSettings())
@@ -74,6 +84,7 @@ namespace MediaPortal.GUI.Home
             {
               continue;
             }
+
             IShowPlugin showPlugin = setup as IShowPlugin;
             if (_useMyPlugins)
             {
@@ -99,6 +110,7 @@ namespace MediaPortal.GUI.Home
                 }
               }
             }
+
             int index = xmlreader.GetValueAsInt("pluginSorting", setup.PluginName(), Int32.MaxValue);
             if ((focusTexture == null) || (focusTexture.Length < 1))
             {
@@ -116,8 +128,22 @@ namespace MediaPortal.GUI.Home
             nonFocusTexture = GetNonFocusTextureFileName(nonFocusTexture);
             nonFocusHover = GetNonFocusHoverFileName(hover);
             hover = GetHoverFileName(hover);
-            menuMain.ButtonInfos.Add(new MenuButtonInfo(plugInText, setup.GetWindowId(), focusTexture, nonFocusTexture,
-                                                        hover, nonFocusHover, index));
+
+            if (menuMain is GUIMenuControl)
+            {
+              (menuMain as GUIMenuControl).ButtonInfos.Add(new MenuButtonInfo(plugInText, setup.GetWindowId(), 
+                                                                              focusTexture, nonFocusTexture,
+                                                                              hover, nonFocusHover, index));
+            }
+
+            if (menuMain is GUIFacadeControl)
+            {
+              GUIListItem listItem = new GUIListItem(plugInText);
+              listItem.Path = setup.GetWindowId().ToString();
+              listItem.IsFolder = false;
+              // listItem.OnItemSelected += OnItemSelected;
+              (menuMain as GUIFacadeControl).Add(listItem);
+            }
           }
         }
 
@@ -128,8 +154,22 @@ namespace MediaPortal.GUI.Home
           string hover = GetHoverFileName("my plugins");
           string nonFocusHover = GetNonFocusHoverFileName("my plugins");
           int index = xmlreader.GetValueAsInt("pluginSorting", "my Plugins", Int32.MaxValue);
-          menuMain.ButtonInfos.Add(new MenuButtonInfo(GUILocalizeStrings.Get(913), (int)Window.WINDOW_MYPLUGINS,
-                                                      focusTexture, nonFocusTexture, hover, nonFocusHover, index));
+
+          if (menuMain is GUIMenuControl)
+          {
+            (menuMain as GUIMenuControl).ButtonInfos.Add(new MenuButtonInfo(GUILocalizeStrings.Get(913), (int)Window.WINDOW_MYPLUGINS,
+                                                                            focusTexture, nonFocusTexture, 
+                                                                            hover, nonFocusHover, index));
+          }
+
+          if (menuMain is GUIFacadeControl)
+          {
+            GUIListItem listItem = new GUIListItem(GUILocalizeStrings.Get(913));
+            listItem.Path = ((int)Window.WINDOW_MYPLUGINS).ToString();
+            listItem.IsFolder = false;
+            // listItem.OnItemSelected += OnItemSelected;
+            (menuMain as GUIFacadeControl).Add(listItem);
+          }
         }
       }
     }

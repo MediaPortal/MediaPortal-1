@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -57,9 +57,18 @@ namespace MediaPortal.GUI.Home
       {
         return;
       }
-      menuMain.ButtonInfos.Clear();
-      ArrayList plugins = PluginManager.SetupForms;
 
+      if (menuMain is GUIMenuControl)
+      {
+        (menuMain as GUIMenuControl).ButtonInfos.Clear();
+      }
+
+      if (menuMain is GUIFacadeControl)
+      {
+        GUIControl.ClearControl(GetID, menuMain.GetID);
+      }
+
+      ArrayList plugins = PluginManager.SetupForms;
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         foreach (ISetupForm setup in plugins)
@@ -110,8 +119,22 @@ namespace MediaPortal.GUI.Home
             nonFocusHover = GetNonFocusHoverFileName(hover);
             hover = GetHoverFileName(hover);
             int index = xmlreader.GetValueAsInt("pluginSorting", "my Plugins", Int32.MaxValue);
-            menuMain.ButtonInfos.Add(new MenuButtonInfo(plugInText, setup.GetWindowId(), focusTexture, nonFocusTexture,
-                                                        hover, nonFocusHover, index));
+
+            if (menuMain is GUIMenuControl)
+            {
+              (menuMain as GUIMenuControl).ButtonInfos.Add(new MenuButtonInfo(plugInText, setup.GetWindowId(), 
+                                                          focusTexture, nonFocusTexture,
+                                                          hover, nonFocusHover, index));
+            }
+
+            if (menuMain is GUIFacadeControl)
+            {
+              GUIListItem listItem = new GUIListItem(plugInText);
+              listItem.Path = setup.GetWindowId().ToString();
+              listItem.IsFolder = false;
+              // listItem.OnItemSelected += OnItemSelected;
+              (menuMain as GUIFacadeControl).Add(listItem);
+            }
           }
         }
       }
