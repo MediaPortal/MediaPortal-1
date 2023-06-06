@@ -314,7 +314,7 @@ namespace MediaPortal.Util
           if (iPingAnswers != 0) 
             return strUNCPath;
         }
-        if (HostDetectMethod == "Samba")
+        else if (HostDetectMethod == "Samba")
         {
           if (CheckNetworkHost(strFile, 139))
           {
