@@ -36,6 +36,13 @@
 
   <!-- Section used by 1.31.100+ installer -->
 
+  <VCRedist2013>
+    <URL>https://install.team-mediaportal.com/VcRedist2013</URL>
+    <FILE>vcredist2013_x86.exe</FILE>
+    <TYPE>Automatic</TYPE>
+    <X64 />
+  </VCRedist2013>
+
   <VCRedist2015>
     <URL>https://install.team-mediaportal.com/VcRedist2015</URL>
     <FILE>vcredist2015_x86.exe</FILE>

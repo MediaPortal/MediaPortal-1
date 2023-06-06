@@ -25,25 +25,25 @@ using System.Windows.Forms;
 
 namespace MediaPortal.DeployTool.InstallationChecks
 {
-  internal class VCRedistChecker : IInstallationPackage
+  internal class VcRedistChecker2013 : IInstallationPackage
   {
-    public static string prg = "VCRedist2010";
+    public static string prg = "VCRedist2013";
 
     private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
-    
-    // Microsoft Visual C++ 2010 Redistributable - x86 10.0.40219
-    private readonly string x86GUID = "{F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}";
-    // Microsoft Visual C++ 2010 Redistributable - x64 10.0.40219
-    private readonly string x64GUID = "{1D8E6291-B0D5-35EC-8441-6616F567A0F7}";
+
+    // Microsoft Visual C++ 2013 Redistributable - x86 12.0.40649.5
+    private readonly string x86GUID = "{35b83883-40fa-423c-ae73-2aff7e1ea820}";
+    // Microsoft Visual C++ 2013 Redistributable - x64 12.0.40649.5
+    private readonly string x64GUID = "{5d0723d3-cff7-4e07-8d0b-ada737deb5e6}";
 
     public string GetDisplayName()
     {
-      return "MS Visual C++ 2010";
+      return "MS Visual C++ 2013";
     }
 
     public string GetIconName()
     {
-      return "VC2010";
+      return "VC2013";
     }
 
     public bool Download()
@@ -138,17 +138,12 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
 
       string InstallDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\system32\\";
-      string[] dll = new string[7];
+      string[] dll = new string[3];
       //CRT
-      dll[0] = "msvcp100.dll";
-      dll[1] = "msvcr100.dll";
+      dll[0] = "msvcp120.dll";
       //MFC
-      dll[2] = "mfc100.dll";
-      dll[3] = "mfc100u.dll";
-      dll[4] = "mfcm100.dll";
-      dll[5] = "mfcm100u.dll";
-      //ATL
-      dll[6] = "atl100.dll";
+      dll[1] = "mfc120.dll";
+      dll[2] = "mfc120u.dll";
 
       for (int i = 0; i < dll.Length; i++)
       {

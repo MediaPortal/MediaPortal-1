@@ -513,6 +513,16 @@ namespace MediaPortal.DeployTool {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap VC2013 {
+            get {
+                object obj = ResourceManager.GetObject("VC2013", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap VC2015 {
             get {
                 object obj = ResourceManager.GetObject("VC2015", resourceCulture);

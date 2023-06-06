@@ -122,10 +122,11 @@
     <Compile Include="InstallationChecks\AresSkinExtensionInstall.cs" />
     <Compile Include="InstallationChecks\LAVFilterMPEInstall.cs" />
     <Compile Include="InstallationChecks\MPEInstall.cs" />
-    <Compile Include="InstallationChecks\OldVCRedistChecker.cs" />
-    <Compile Include="InstallationChecks\VCRedistChecker.cs" />
     <Compile Include="InstallationChecks\DiskSpaceChecker.cs" />
     <Compile Include="InstallationChecks\InternetChecker.cs" />
+    <Compile Include="InstallationChecks\VCRedistChecker_2008.cs" />
+    <Compile Include="InstallationChecks\VCRedistChecker_2010.cs" />
+    <Compile Include="InstallationChecks\VCRedistChecker_2013.cs" />
     <Compile Include="InstallationChecks\VCRedistChecker_2015.cs" />
     <Compile Include="InstallationChecks\TitanExtensionInstall.cs" />
     <Compile Include="ManualDownloadFileMissing.cs">
@@ -714,6 +715,7 @@
     <None Include="Resources\Status\INSTALLED.png" />
     <None Include="Resources\Status\DOWNLOADED.png" />
     <None Include="Resources\Status\CONFIGURED.png" />
+    <None Include="Resources\Application\VC2013.png" />
     <None Include="Resources\Application\VC2015.png" />
     <None Include="Resources\Application\VC2010.png" />
     <None Include="Resources\Application\VC2008SP1.png" />

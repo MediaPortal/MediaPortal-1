@@ -168,6 +168,12 @@ namespace MediaPortal.DeployTool
       {
         HTTPDownload dlg = new HTTPDownload();
         result = dlg.ShowDialog(GetDownloadString(prg, "URL"), FileName, GetUserAgentOsString());
+        if (result == DialogResult.Abort)
+        {
+          ManualDownload mdlg = new ManualDownload();
+          result = mdlg.ShowDialog(GetDownloadString(prg, "URL"), Path.GetFileName(FileName),
+                                   Application.StartupPath + "\\deploy");
+        }
       }
       else
       {
