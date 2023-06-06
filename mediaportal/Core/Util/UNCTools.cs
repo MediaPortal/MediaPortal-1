@@ -308,11 +308,18 @@ namespace MediaPortal.Util
         {
           //ping the Host
           if (uri.Host == "") return strUNCPath;
-          //We have an host -> try to ping it
 
+          //We have an host -> try to ping it
           var iPingAnswers = PingHost(uri.Host, 200, 2);
           if (iPingAnswers != 0) 
             return strUNCPath;
+        }
+        if (HostDetectMethod == "Samba")
+        {
+          if (CheckNetworkHost(strFile, 139))
+          {
+            return strUNCPath;
+          }
         }
         else
         {
@@ -600,6 +607,76 @@ namespace MediaPortal.Util
             return true;
         }
 
+        private class IsPortOpen
+        {
+          public TcpClient Client { get; set; }
+          public bool Open { get; set; }
+        }
+
+        private static void AsyncCallback(IAsyncResult asyncResult)
+        {
+          var state = (IsPortOpen)asyncResult.AsyncState;
+          TcpClient client = state.Client;
+
+          try
+          {
+            client.EndConnect(asyncResult);
+          }
+          catch
+          {
+            return;
+          }
+
+          if (client.Connected && state.Open)
+          {
+            return;
+          }
+
+          client.Close();
+        }
+
+        public static bool CheckNetworkHost(string hostname, int port, int timeout = 5000)
+        {
+          if (string.IsNullOrEmpty(hostname))
+          {
+            return false;
+          }
+
+          if (port == 0)
+          {
+            return false;
+          }
+
+          try
+          {
+            Uri uri = new Uri(hostname);
+            IPHostEntry host = Dns.GetHostEntry(uri.Host);
+            IPAddress address = host.AddressList[0];
+
+            var state = new IsPortOpen
+            {
+              Client = new TcpClient(),
+              Open = true
+            };
+
+            IAsyncResult ar = state.Client.BeginConnect(address, port, AsyncCallback, state);
+            state.Open = ar.AsyncWaitHandle.WaitOne(timeout, false);
+
+            if (state.Open == false || state.Client.Connected == false)
+            {
+              Log.Debug("UNCTools: CheckNetworkHost: Connection {0}:{1} Error", hostname, port);
+              return false;
+            }
+            return true;
+          }
+          catch (Exception ex)
+          {
+            Log.Debug("UNCTools: CheckNetworkHost: Connection {0}:{1} Error: {2}", hostname, port, ex.Message);
+          }
+          return false;
+        }
+
         #endregion
+
     }
 }

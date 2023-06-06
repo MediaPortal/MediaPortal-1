@@ -63,6 +63,11 @@ namespace MediaPortal.Configuration.Sections
         checkBoxEnableWatchdog.Checked = xmlreader.GetValueAsBool("general", "watchdogEnabled", false);
         checkBoxAutoRestart.Checked = xmlreader.GetValueAsBool("general", "restartOnError", true);
         numericUpDownDelay.Value = xmlreader.GetValueAsInt("general", "restart delay", 10);
+
+        string HostDetectMethod = xmlreader.GetValueAsString("general", "HostDetectMethod", "Ping");
+        rbHDMPing.Checked = (HostDetectMethod == "Ping");
+        rbHDMSamba.Checked = (HostDetectMethod == "Samba");
+        rbHDMNetUse.Checked = (HostDetectMethod == "NetUse");
       }
     }
 
@@ -76,6 +81,21 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("general", "watchdogEnabled", checkBoxEnableWatchdog.Checked);
         xmlwriter.SetValueAsBool("general", "restartOnError", checkBoxAutoRestart.Checked);
         xmlwriter.SetValue("general", "restart delay", numericUpDownDelay.Value);
+
+        string HostDetectMethod = "Ping";
+        if (rbHDMPing.Checked)
+        {
+          HostDetectMethod = "Ping";
+        }
+        if (rbHDMSamba.Checked)
+        {
+          HostDetectMethod = "Samba";
+        }
+        if (rbHDMNetUse.Checked)
+        {
+          HostDetectMethod = "NetUse";
+        }
+        xmlwriter.SetValue("general", "HostDetectMethod", HostDetectMethod);
       }
     }
 
