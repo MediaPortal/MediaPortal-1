@@ -21,12 +21,10 @@
 #region Usings
 
 using System;
-using System.Drawing;
 using System.IO;
-using MediaPortal.Configuration;
+
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.ExtensionMethods;
 
 #endregion
@@ -55,6 +53,7 @@ namespace MediaPortal.GUI.Home
     protected DateTime _updateTimer = DateTime.MinValue;
     protected GUIOverlayWindow _overlayWin = null;
     private static bool _addedGlobalMessageHandler = false;
+    protected GUIFacadeControl.Layout _layout = GUIFacadeControl.Layout.List;
 
     #endregion
 
@@ -113,6 +112,12 @@ namespace MediaPortal.GUI.Home
         {
           (menuMain as GUIMenuControl).ButtonInfos.Sort((menuMain as GUIMenuControl).Compare);
         }
+
+        if (menuMain is GUIFacadeControl)
+        {
+          (menuMain as GUIFacadeControl).Sort(new PluginSort(true));
+          (menuMain as GUIFacadeControl).CurrentLayout = _layout;
+        }
       }
     }
 
@@ -144,7 +149,12 @@ namespace MediaPortal.GUI.Home
           break;
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, message.Param1, 0, null);
+          int windowID = message.Param1;
+          if (menuMain is GUIFacadeControl)
+          {
+            windowID = (menuMain as GUIFacadeControl).SelectedListItem.ItemId;
+          }
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, windowID, 0, null);
           GUIWindowManager.SendThreadMessage(msg);
           break;
       }

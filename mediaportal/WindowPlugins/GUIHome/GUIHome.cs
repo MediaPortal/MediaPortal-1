@@ -22,7 +22,7 @@
 
 using System;
 using System.Collections;
-using MediaPortal.Configuration;
+
 using MediaPortal.GUI.Library;
 
 #endregion
@@ -47,6 +47,16 @@ namespace MediaPortal.GUI.Home
 
     public override bool Init()
     {
+      string layout = GUIPropertyManager.GetProperty("#home.myhome.layout");
+      try
+      {
+        _layout = (GUIFacadeControl.Layout)Enum.Parse(typeof(GUIFacadeControl.Layout), layout);
+      }
+      catch
+      {
+        _layout = GUIFacadeControl.Layout.List;
+      }
+
       return (Load(GUIGraphicsContext.GetThemedSkinFile(@"\myHome.xml")));
     }
 
@@ -138,10 +148,16 @@ namespace MediaPortal.GUI.Home
 
             if (menuMain is GUIFacadeControl)
             {
-              GUIListItem listItem = new GUIListItem(plugInText);
-              listItem.Path = setup.GetWindowId().ToString();
-              listItem.IsFolder = false;
-              // listItem.OnItemSelected += OnItemSelected;
+              GUIListItem listItem = new GUIListItem(plugInText)
+              {
+                Path = index.ToString(),
+                ItemId = setup.GetWindowId(),
+                IsFolder = false,
+                IconImage = focusTexture,
+                ThumbnailImage = hover,
+                AlbumInfoTag = setup
+              };
+              listItem.OnItemSelected += OnItemSelected;
               (menuMain as GUIFacadeControl).Add(listItem);
             }
           }
@@ -164,10 +180,17 @@ namespace MediaPortal.GUI.Home
 
           if (menuMain is GUIFacadeControl)
           {
-            GUIListItem listItem = new GUIListItem(GUILocalizeStrings.Get(913));
-            listItem.Path = ((int)Window.WINDOW_MYPLUGINS).ToString();
-            listItem.IsFolder = false;
-            // listItem.OnItemSelected += OnItemSelected;
+            GUIListItem listItem = new GUIListItem(GUILocalizeStrings.Get(913))
+            {
+              Path = index.ToString(),
+              ItemId = (int)Window.WINDOW_MYPLUGINS,
+              IsFolder = false,
+              IconImage = focusTexture,
+              ThumbnailImage = hover,
+              AlbumInfoTag = null
+            };
+            listItem.OnItemSelected += OnItemSelected;
+
             (menuMain as GUIFacadeControl).Add(listItem);
           }
         }
@@ -175,5 +198,27 @@ namespace MediaPortal.GUI.Home
     }
 
     #endregion
+
+    private void OnItemSelected(GUIListItem item, GUIControl parent)
+    {
+      GUIPropertyManager.SetProperty("#pluginname", item.Label);
+      GUIPropertyManager.SetProperty("#pluginauthor", string.Empty);
+      GUIPropertyManager.SetProperty("#plugindescription", string.Empty);
+
+      if (item.AlbumInfoTag == null)
+      {
+        return;
+      }
+
+      GUIPropertyManager.SetProperty("#pluginauthor", (item.AlbumInfoTag as ISetupForm).Author());
+      GUIPropertyManager.SetProperty("#plugindescription", (item.AlbumInfoTag as ISetupForm).Description());
+
+      GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
+      if (filmstrip != null)
+      {
+        filmstrip.InfoImageFileName = item.ThumbnailImage;
+      }
+    }
+
   }
 }
