@@ -366,7 +366,9 @@ namespace MediaPortal.Util
         }
 
         //We DONT have received an answer
-        Log.Debug("UNCTools: UNCFileFolderOnline: host '{0}' is not reachable!! , File/Folder '{1}'", uri.Host, strFile);
+        Log.Debug("UNCTools: UNCFileFolderOnline: Host:       '{0}' is not reachable!", uri.Host);
+        Log.Debug("                             : Method:      {0}/{1}", HostDetectMethod, hostdetectmethod);
+        Log.Debug("                             : File/Folder: {0}", strFile);
         return string.Empty;
 
         //UNC device is online or local file/folder
