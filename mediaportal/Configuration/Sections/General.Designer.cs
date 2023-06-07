@@ -25,10 +25,10 @@
     {
       this.components = new System.ComponentModel.Container();
       this.globalToolTip = new System.Windows.Forms.ToolTip(this.components);
-      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.rbHDMNetUse = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.rbHDMSamba = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.rbHDMPing = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label4 = new System.Windows.Forms.Label();
       this.watchdogGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label1 = new System.Windows.Forms.Label();
@@ -48,27 +48,11 @@
       this.groupBoxGeneralSettings.SuspendLayout();
       this.SuspendLayout();
       // 
-      // mpGroupBox1
-      // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox1.Controls.Add(this.rbHDMNetUse);
-      this.mpGroupBox1.Controls.Add(this.rbHDMSamba);
-      this.mpGroupBox1.Controls.Add(this.rbHDMPing);
-      this.mpGroupBox1.Controls.Add(this.label4);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(3, 208);
-      this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(466, 75);
-      this.mpGroupBox1.TabIndex = 3;
-      this.mpGroupBox1.TabStop = false;
-      this.mpGroupBox1.Text = "Host Detect Method";
-      // 
       // rbHDMNetUse
       // 
       this.rbHDMNetUse.AutoSize = true;
       this.rbHDMNetUse.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.rbHDMNetUse.Location = new System.Drawing.Point(328, 44);
+      this.rbHDMNetUse.Location = new System.Drawing.Point(198, 44);
       this.rbHDMNetUse.Name = "rbHDMNetUse";
       this.rbHDMNetUse.Size = new System.Drawing.Size(63, 17);
       this.rbHDMNetUse.TabIndex = 16;
@@ -80,7 +64,7 @@
       // 
       this.rbHDMSamba.AutoSize = true;
       this.rbHDMSamba.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.rbHDMSamba.Location = new System.Drawing.Point(170, 44);
+      this.rbHDMSamba.Location = new System.Drawing.Point(85, 44);
       this.rbHDMSamba.Name = "rbHDMSamba";
       this.rbHDMSamba.Size = new System.Drawing.Size(90, 17);
       this.rbHDMSamba.TabIndex = 15;
@@ -102,6 +86,22 @@
       this.globalToolTip.SetToolTip(this.rbHDMPing, "Not all network resources will respond to Ping, if it does not work, choose anoth" +
         "er method.");
       this.rbHDMPing.UseVisualStyleBackColor = true;
+      // 
+      // mpGroupBox1
+      // 
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.rbHDMNetUse);
+      this.mpGroupBox1.Controls.Add(this.rbHDMSamba);
+      this.mpGroupBox1.Controls.Add(this.rbHDMPing);
+      this.mpGroupBox1.Controls.Add(this.label4);
+      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox1.Location = new System.Drawing.Point(3, 208);
+      this.mpGroupBox1.Name = "mpGroupBox1";
+      this.mpGroupBox1.Size = new System.Drawing.Size(466, 75);
+      this.mpGroupBox1.TabIndex = 3;
+      this.mpGroupBox1.TabStop = false;
+      this.mpGroupBox1.Text = "Host Detect Method";
       // 
       // label4
       // 

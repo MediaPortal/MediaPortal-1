@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
 namespace MediaPortal.Util
@@ -57,6 +58,7 @@ namespace MediaPortal.Util
     private bool runtimeAdded;
     public Layout DefaultLayout = Layout.List;
     private bool shareWakeOnLan = false;
+    private string hostDetectMethod = "Default";
     private bool donotFolderJpgIfPin = true;
     private bool shareOffline = false;
 
@@ -154,7 +156,16 @@ namespace MediaPortal.Util
       set { shareWakeOnLan = value; }
     }
 
-        /// <summary>
+    /// <summary>
+    /// Property to get/set HostDetectMethod for server
+    /// </summary>
+    public string HostDetectMethod
+    {
+      get { return hostDetectMethod; }
+      set { hostDetectMethod = value; }
+    }
+
+    /// <summary>
     /// Property to get/set ShareOffline for server
     /// </summary>
     public bool ShareOffline

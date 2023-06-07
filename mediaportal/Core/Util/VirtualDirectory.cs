@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -23,12 +23,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Threading;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using MediaPortal.Configuration;
 using MediaPortal.TagReader;
+
 using EnterpriseDT.Net.Ftp;
-using System.Threading;
+
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
 namespace MediaPortal.Util
@@ -64,24 +67,27 @@ namespace MediaPortal.Util
     public void LoadSettings(string section)
     {
       Clear();
+
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         string strDefault = xmlreader.GetValueAsString(section, "default", string.Empty);
         for (int i = 0; i < MaximumShares; i++)
         {
-          string strShareName = String.Format("sharename{0}", i);
-          string strSharePath = String.Format("sharepath{0}", i);
-          string strPincode = String.Format("pincode{0}", i);
+          string strShareName = string.Format("sharename{0}", i);
+          string strSharePath = string.Format("sharepath{0}", i);
+          string strPincode = string.Format("pincode{0}", i);
 
-          string shareType = String.Format("sharetype{0}", i);
-          string shareServer = String.Format("shareserver{0}", i);
-          string shareLogin = String.Format("sharelogin{0}", i);
-          string sharePwd = String.Format("sharepassword{0}", i);
-          string sharePort = String.Format("shareport{0}", i);
-          string remoteFolder = String.Format("shareremotepath{0}", i);
-          string shareViewPath = String.Format("shareview{0}", i);
-          string sharewakeonlan = String.Format("sharewakeonlan{0}", i);
-          string sharedonotfolderjpgifpin = String.Format("sharedonotfolderjpgifpin{0}", i);
+          string shareType = string.Format("sharetype{0}", i);
+          string shareServer = string.Format("shareserver{0}", i);
+          string shareLogin = string.Format("sharelogin{0}", i);
+          string sharePwd = string.Format("sharepassword{0}", i);
+          string sharePort = string.Format("shareport{0}", i);
+          string remoteFolder = string.Format("shareremotepath{0}", i);
+          string shareViewPath = string.Format("shareview{0}", i);
+          string sharewakeonlan = string.Format("sharewakeonlan{0}", i);
+          string hostdetectmethod = string.Format("hostdetectmethod{0}", i);
+          string sharedonotfolderjpgifpin = string.Format("sharedonotfolderjpgifpin{0}", i);
+
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString(section, strShareName, string.Empty);
           share.Path = xmlreader.GetValueAsString(section, strSharePath, string.Empty);
@@ -94,6 +100,7 @@ namespace MediaPortal.Util
           share.FtpFolder = xmlreader.GetValueAsString(section, remoteFolder, "/");
           share.DefaultLayout = (Layout)xmlreader.GetValueAsInt(section, shareViewPath, (int)Layout.List);
           share.ShareWakeOnLan = xmlreader.GetValueAsBool(section, sharewakeonlan, false);
+          share.HostDetectMethod = xmlreader.GetValueAsString(section, hostdetectmethod, "Default");
           share.DonotFolderJpgIfPin = xmlreader.GetValueAsBool(section, sharedonotfolderjpgifpin, true);
 
           if (share.Name.Length > 0)
@@ -120,13 +127,13 @@ namespace MediaPortal.Util
             bool driveFound = false;
             string driveName = Utils.GetDriveName(drive);
 
-            if (driveName.Length == 0)
+            if (string.IsNullOrEmpty(driveName))
             {
-              driveName = String.Format("({0}:) Removable", drive.Substring(0, 1).ToUpper());
+              driveName = string.Format("({0}:) Removable", drive.Substring(0, 1).ToUpper());
             }
             else
             {
-              driveName = String.Format("({0}:) {1}", drive.Substring(0, 1).ToUpper(), driveName);
+              driveName = string.Format("({0}:) {1}", drive.Substring(0, 1).ToUpper(), driveName);
             }
 
             foreach (var share in m_shares)
@@ -333,7 +340,7 @@ namespace MediaPortal.Util
     //    {
     //      string driveName = Utils.GetDriveName(item.Path);
     //      if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
-    //      item.Label = String.Format("({0}) {1}", item.Path, driveName);
+    //      item.Label = string.Format("({0}) {1}", item.Path, driveName);
     //    }
     //    if (Utils.IsDVD(item.Path))
     //    {
@@ -342,14 +349,14 @@ namespace MediaPortal.Util
     //    }
     //    if (item.DVDLabel != "")
     //    {
-    //      item.Label = String.Format("({0}) {1}", item.Path, item.DVDLabel);
+    //      item.Label = string.Format("({0}) {1}", item.Path, item.DVDLabel);
     //    }
     //    else
     //      item.Label = share.Name;
     //    item.IsFolder = true;
     //    if (share.IsFtpShare)
     //    {
-    //      //item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+    //      //item.Path = string.Format("remote:{0}?{1}?{2}?{3}?{4}",
     //      //    share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
     //      item.Path = GetShareRemoteURL(share);
     //      item.IsRemote = true;
@@ -405,7 +412,7 @@ namespace MediaPortal.Util
     //      {
     //        GUIListItem item = new GUIListItem();
     //        item.Path = driveLetter;
-    //        item.Label = String.Format("({0}) {1}", item.Path, driveName);
+    //        item.Label = string.Format("({0}) {1}", item.Path, driveName);
     //        item.IsFolder = true;
     //        Utils.SetDefaultIcons(item);
     //        // dont add removable shares without media
@@ -432,7 +439,7 @@ namespace MediaPortal.Util
       if (share == null) return false;
       if (share.IsFtpShare)
       {
-        //string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+        //string remoteFolder = string.Format("remote:{0}?{1}?{2}?{3}?{4}",
         //  share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
         string remoteFolder = GetShareRemoteURL(share);
         if (strDir == remoteFolder)
@@ -473,7 +480,7 @@ namespace MediaPortal.Util
       {
         if (share.IsFtpShare)
         {
-          //string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+          //string remoteFolder = string.Format("remote:{0}?{1}?{2}?{3}?{4}",
           //  share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
           string remoteFolder = GetShareRemoteURL(share);
           if (CurrentShare == remoteFolder)
@@ -493,7 +500,7 @@ namespace MediaPortal.Util
       return false;
     }
 
-        /// <summary>
+    /// <summary>
     /// This method checks if the specified at least one share is offline
     /// </summary>
     /// <returns>
@@ -518,11 +525,11 @@ namespace MediaPortal.Util
       Share share = GetShare(strDir);
       if (share == null)
       {
-        CurrentShare = "";
+        CurrentShare = string.Empty;
       }
       else if (share.IsFtpShare)
       {
-        //string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+        //string remoteFolder = string.Format("remote:{0}?{1}?{2}?{3}?{4}",
         //  share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
         string remoteFolder = GetShareRemoteURL(share);
         CurrentShare = remoteFolder;
@@ -535,8 +542,11 @@ namespace MediaPortal.Util
 
     public Share GetShare(string strDir)
     {
-      if (strDir == null) return null;
-      if (strDir.Length <= 0) return null;
+      if (string.IsNullOrEmpty(strDir))
+      {
+        return null;
+      }
+
       string strRoot = strDir;
       bool isRemote = IsRemote(strDir);
       if (!isRemote)
@@ -551,6 +561,7 @@ namespace MediaPortal.Util
             Log.Error("VirtualDirectory:GetShare: {0}", ex.Message);
           }
       }
+
       Share foundShare = null;
       string foundFullPath = string.Empty;
       foreach (Share share in m_shares)
@@ -561,7 +572,7 @@ namespace MediaPortal.Util
           {
             if (share.IsFtpShare)
             {
-              //string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+              //string remoteFolder = string.Format("remote:{0}?{1}?{2}?{3}?{4}",
               //  share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
               string remoteFolder = GetShareRemoteURL(share);
               if (strDir.ToLowerInvariant() == remoteFolder.ToLowerInvariant())
@@ -577,7 +588,7 @@ namespace MediaPortal.Util
                 }
                 else
                 {
-                  //string foundRemoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+                  //string foundRemoteFolder = string.Format("remote:{0}?{1}?{2}?{3}?{4}",
                   //  foundShare.FtpServer, foundShare.FtpPort, foundShare.FtpLoginName, foundShare.FtpPassword, Utils.RemoveTrailingSlash(foundShare.FtpFolder));
                   string foundRemoteFolder = GetShareRemoteURL(foundShare);
                   if (foundRemoteFolder.Length < remoteFolder.Length)
@@ -637,7 +648,10 @@ namespace MediaPortal.Util
 
     public bool IsRemote(string folder)
     {
-      if (folder == null) return false;
+      if (string.IsNullOrEmpty(folder))
+      {
+        return false;
+      }
       if (folder.IndexOf("remote:") == 0) return true;
       return false;
     }
@@ -650,6 +664,14 @@ namespace MediaPortal.Util
       return shareName.ShareWakeOnLan;
     }
 
+    public string HostDetectMethod(Share shareName)
+    {
+      if (shareName == null) 
+        return string.Empty;
+      
+      return shareName.HostDetectMethod;
+    }
+
     public bool IsShareOffline(Share shareName)
     {
       if (shareName == null)
@@ -660,7 +682,7 @@ namespace MediaPortal.Util
 
     public string GetShareRemoteURL(Share shareName)
     {
-      return String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+      return string.Format("remote:{0}?{1}?{2}?{3}?{4}",
                            shareName.FtpServer,
                            shareName.FtpPort,
                            shareName.FtpLoginName,
@@ -885,7 +907,7 @@ namespace MediaPortal.Util
     //          item.IsFolder = true;
     //          item.Label = file.Name;
     //          item.Label2 = "";
-    //          item.Path = String.Format("{0}/{1}", strDir, file.Name);
+    //          item.Path = string.Format("{0}/{1}", strDir, file.Name);
     //          item.IsRemote = true;
     //          item.FileInfo = null;
     //          Utils.SetDefaultIcons(item);
@@ -905,7 +927,7 @@ namespace MediaPortal.Util
     //          item.IsFolder = false;
     //          item.Label = Utils.GetFilename(file.Name);
     //          item.Label2 = "";
-    //          item.Path = String.Format("{0}/{1}", strDir, file.Name);
+    //          item.Path = string.Format("{0}/{1}", strDir, file.Name);
     //          item.IsRemote = true;
     //          if (IsRemoteFileDownloaded(item.Path, file.Size))
     //          {
@@ -958,10 +980,10 @@ namespace MediaPortal.Util
     /// <returns>A list of GUIListItems for the specified folder</returns>
     public List<GUIListItem> GetDirectoryExt(string strDir, bool loadHidden)
     {
-      if (String.IsNullOrEmpty(strDir))
+      if (string.IsNullOrEmpty(strDir))
       {
-        m_strPreviousDir = "";
-        CurrentShare = "";
+        m_strPreviousDir = string.Empty;
+        CurrentShare = string.Empty;
         return GetRootExt();
       }
 
@@ -980,7 +1002,7 @@ namespace MediaPortal.Util
       }
 
       //get the parent folder
-      string strParent = "";
+      string strParent = string.Empty;
       if (IsRemote(strDir))
       {
         int ipos = strDir.LastIndexOf(@"/");
@@ -1023,7 +1045,7 @@ namespace MediaPortal.Util
                 GUIListItem itemTmp = new GUIListItem();
                 itemTmp.IsFolder = true;
                 itemTmp.Label = "..";
-                itemTmp.Label2 = "";
+                itemTmp.Label2 = string.Empty;
                 itemTmp.Path = m_strPreviousDir;
                 Utils.SetDefaultIcons(itemTmp);
                 items.Add(itemTmp);
@@ -1079,10 +1101,10 @@ namespace MediaPortal.Util
         item = new GUIListItem();
         item.IsFolder = true;
         item.Label = "..";
-        item.Label2 = "";
+        item.Label2 = string.Empty;
         Utils.SetDefaultIcons(item);
 
-        item.Path = strParent == strDir ? "" : strParent;
+        item.Path = strParent == strDir ? string.Empty : strParent;
         items.Add(item);
       }
       else
@@ -1090,8 +1112,8 @@ namespace MediaPortal.Util
         item = new GUIListItem();
         item.IsFolder = true;
         item.Label = "..";
-        item.Label2 = "";
-        item.Path = "";
+        item.Label2 = string.Empty;
+        item.Path = string.Empty;
         Utils.SetDefaultIcons(item);
         items.Add(item);
       }
@@ -1105,7 +1127,10 @@ namespace MediaPortal.Util
 
         string folder = strDir.Substring("remote:".Length);
         string[] subitems = folder.Split(new char[] {'?'});
-        if (subitems[4] == string.Empty) subitems[4] = "/";
+        if (string.IsNullOrEmpty(subitems[4]))
+        {
+          subitems[4] = "/";
+        }
 
         FTPFile[] files;
         try
@@ -1152,8 +1177,8 @@ namespace MediaPortal.Util
               item = new GUIListItem();
               item.IsFolder = true;
               item.Label = file.Name;
-              item.Label2 = "";
-              item.Path = String.Format("{0}/{1}", strDir, file.Name);
+              item.Label2 = string.Empty;
+              item.Path = string.Format("{0}/{1}", strDir, file.Name);
               item.IsRemote = true;
               item.FileInfo = null;
               Utils.SetDefaultIcons(item);
@@ -1172,8 +1197,8 @@ namespace MediaPortal.Util
               item = new GUIListItem();
               item.IsFolder = false;
               item.Label = Utils.GetFilename(file.Name);
-              item.Label2 = "";
-              item.Path = String.Format("{0}/{1}", strDir, file.Name);
+              item.Label2 = string.Empty;
+              item.Path = string.Format("{0}/{1}", strDir, file.Name);
               item.IsRemote = true;
               if (IsRemoteFileDownloaded(item.Path, file.Size))
               {
@@ -1304,7 +1329,7 @@ namespace MediaPortal.Util
         return items;
       }
 
-      string strParent = "";
+      string strParent = string.Empty;
       int ipos = strDir.LastIndexOf(@"\");
       if (ipos > 0)
       {
@@ -1321,7 +1346,10 @@ namespace MediaPortal.Util
 
         string folder = strDir.Substring("remote:".Length);
         string[] subitems = folder.Split(new char[] {'?'});
-        if (subitems[4] == string.Empty) subitems[4] = "/";
+        if (string.IsNullOrEmpty(subitems[4]))
+        {
+          subitems[4] = "/";
+        }
 
         FTPFile[] files;
         try
@@ -1369,8 +1397,8 @@ namespace MediaPortal.Util
               item = new GUIListItem();
               item.IsFolder = true;
               item.Label = file.Name;
-              item.Label2 = "";
-              item.Path = String.Format("{0}/{1}", strDir, file.Name);
+              item.Label2 = string.Empty;
+              item.Path = string.Format("{0}/{1}", strDir, file.Name);
               item.IsRemote = true;
               item.FileInfo = null;
               Utils.SetDefaultIcons(item);
@@ -1389,8 +1417,8 @@ namespace MediaPortal.Util
               item = new GUIListItem();
               item.IsFolder = false;
               item.Label = Utils.GetFilename(file.Name);
-              item.Label2 = "";
-              item.Path = String.Format("{0}/{1}", strDir, file.Name);
+              item.Label2 = string.Empty;
+              item.Path = string.Format("{0}/{1}", strDir, file.Name);
               item.IsRemote = true;
               if (IsRemoteFileDownloaded(item.Path, file.Size))
               {
@@ -1447,12 +1475,12 @@ namespace MediaPortal.Util
         item = new GUIListItem();
         item.IsFolder = true;
         item.Label = "..";
-        item.Label2 = "";
+        item.Label2 = string.Empty;
         Utils.SetDefaultIcons(item);
 
         if (strParent == strDir)
         {
-          item.Path = "";
+          item.Path = string.Empty;
         }
         else
           item.Path = strParent;
@@ -1463,8 +1491,8 @@ namespace MediaPortal.Util
         item = new GUIListItem();
         item.IsFolder = true;
         item.Label = "..";
-        item.Label2 = "";
-        item.Path = "";
+        item.Label2 = string.Empty;
+        item.Path = string.Empty;
         Utils.SetDefaultIcons(item);
         items.Add(item);
       }
@@ -1499,8 +1527,11 @@ namespace MediaPortal.Util
           if (Utils.IsRemovable(item.Path) && Directory.Exists(item.Path))
           {
             string driveName = Utils.GetDriveName(item.Path);
-            if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
-            item.Label = String.Format("({0}) {1}", item.Path, driveName);
+            if (string.IsNullOrEmpty(driveName))
+            {
+              driveName = GUILocalizeStrings.Get(1061);
+            }
+            item.Label = string.Format("({0}) {1}", item.Path, driveName);
           }
           if (Utils.IsDVD(item.Path))
           {
@@ -1508,17 +1539,19 @@ namespace MediaPortal.Util
             item.DVDLabel = item.DVDLabel.Replace('_', ' ');
           }
 
-          if (item.DVDLabel != "")
+          if (!string.IsNullOrEmpty(item.DVDLabel))
           {
-            item.Label = String.Format("({0}) {1}", item.Path, item.DVDLabel);
+            item.Label = string.Format("({0}) {1}", item.Path, item.DVDLabel);
           }
           else
+          {
             item.Label = share.Name;
+          }
           item.IsFolder = true;
 
           if (share.IsFtpShare)
           {
-            //item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+            //item.Path = string.Format("remote:{0}?{1}?{2}?{3}?{4}",
             //      share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
             item.Path = GetShareRemoteURL(share);
             item.IsRemote = true;
@@ -1539,7 +1572,7 @@ namespace MediaPortal.Util
 
             if (!detectedItems.Contains(serverName))
             {
-              pathOnline = !isUNCNetwork || UNCTools.IsUNCFileFolderOnline(item.Path);
+              pathOnline = !isUNCNetwork || UNCTools.IsUNCFileFolderOnline(item.Path, share.HostDetectMethod);
             }
             else
             {
@@ -1560,7 +1593,7 @@ namespace MediaPortal.Util
             }
           }
 
-          if ((share.Pincode == string.Empty || !share.DonotFolderJpgIfPin) && pathOnline)
+          if ((string.IsNullOrEmpty(share.Pincode) || !share.DonotFolderJpgIfPin) && pathOnline)
           {
             string coverArt = Utils.GetCoverArtName(item.Path, "folder");
             string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
@@ -1575,7 +1608,7 @@ namespace MediaPortal.Util
               item.IconImageBig = largeCoverArt;
             }
 
-              // Fix for Mantis issue 0001465: folder.jpg in main shares view only displayed when list view is used
+            // Fix for Mantis issue 0001465: folder.jpg in main shares view only displayed when list view is used
             else if (coverArtExists)
             {
               item.IconImageBig = coverArt;
@@ -1616,7 +1649,10 @@ namespace MediaPortal.Util
           bool driveFound = false;
           string driveName = Utils.GetDriveName(drive);
           string driveLetter = drive.Substring(0, 1).ToUpperInvariant() + ":";
-          if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
+          if (string.IsNullOrEmpty(driveName))
+          {
+            driveName = GUILocalizeStrings.Get(1061);
+          }
           //
           // Check if the share already exists
           //
@@ -1633,7 +1669,7 @@ namespace MediaPortal.Util
           {
             GUIListItem item = new GUIListItem();
             item.Path = driveLetter;
-            item.Label = String.Format("({0}) {1}", item.Path, driveName);
+            item.Label = string.Format("({0}) {1}", item.Path, driveName);
             item.IsFolder = true;
 
             Utils.SetDefaultIcons(item);
@@ -1684,7 +1720,7 @@ namespace MediaPortal.Util
         fd.cFileName = new String(' ', 256);
         fd.cAlternate = new String(' ', 14);
         // http://msdn.microsoft.com/en-us/library/aa364418%28VS.85%29.aspx
-        bool available = UNCTools.UNCFileFolderExists(aDirectory);
+        bool available = UNCTools.UNCFileFolderExists(aDirectory, GetShareHostDetectMethod(aDirectory));
         if (available)
         {
           handle = Win32API.FindFirstFile(aDirectory + @"\*.*", out fd);
@@ -1725,7 +1761,7 @@ namespace MediaPortal.Util
 
               string strPath = FileName.Substring(aDirectory.Length + 1);
               fi.Name = fd.cFileName;
-              item = new GUIListItem(strPath, "", FileName, true, fi);
+              item = new GUIListItem(strPath, string.Empty, FileName, true, fi);
 
               Utils.SetDefaultIcons(item);
 
@@ -1751,7 +1787,7 @@ namespace MediaPortal.Util
               {
                 if (DaemonTools.IsEnabled && !IsValidExtension(FileName))
                 {
-                  item = new GUIListItem(Path.GetFileName(FileName), "", FileName, true, null);
+                  item = new GUIListItem(Path.GetFileName(FileName), string.Empty, FileName, true, null);
 
                   Utils.SetDefaultIcons(item);
                   Utils.SetThumbnails(ref item);
@@ -1785,7 +1821,7 @@ namespace MediaPortal.Util
                   fi.Length = 0;
                 }
 
-                item = new GUIListItem(Utils.GetFilename(FileName), "", FileName, false, fi);
+                item = new GUIListItem(Utils.GetFilename(FileName), string.Empty, FileName, false, fi);
 
                 Utils.SetDefaultIcons(item);
                 Utils.SetThumbnails(ref item);
@@ -1916,8 +1952,11 @@ namespace MediaPortal.Util
     /// </returns>
     public bool IsValidExtension(string strPath)
     {
-      if (strPath == null) return false;
-      if (strPath == string.Empty) return false;
+      if (string.IsNullOrEmpty(strPath))
+      {
+        return false;
+      }
+
       try
       {
         //				if (!Path.HasExtension(strPath)) return false;
@@ -1946,8 +1985,11 @@ namespace MediaPortal.Util
     /// </returns>
     public static bool IsValidExtension(string strPath, ArrayList extensions, bool filesWithoutExtension)
     {
-      if (strPath == null) return false;
-      if (strPath == string.Empty) return false;
+      if (string.IsNullOrEmpty(strPath))
+      {
+        return false;
+      }
+
       try
       {
         //				if (!Path.HasExtension(strPath)) return false;
@@ -2011,6 +2053,22 @@ namespace MediaPortal.Util
     }
 
     /// <summary>
+    /// Return HostDetectMethod for Share
+    /// </summary>
+    /// <param name="strDir">Share Dir</param>
+    /// <returns>HostDetectMethod</returns>
+    public string GetShareHostDetectMethod(string strDir)
+    {
+      Share share = GetShare(strDir);
+
+      if (share == null) 
+      {
+        return string.Empty;
+      }
+      return share.HostDetectMethod;
+    }
+
+    /// <summary>
     /// Returns the local filename for a downloaded file
     /// remote file is in format remote:hostname?port?login?password?folder
     /// </summary>
@@ -2028,7 +2086,7 @@ namespace MediaPortal.Util
           string filename, path;
           GetRemoteFileNameAndPath(remotefile, out filename, out path);
 
-          //string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+          //string remoteFolder = string.Format("remote:{0}?{1}?{2}?{3}?{4}",
           //  share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
           string remoteFolder = GetShareRemoteURL(share);
 
@@ -2071,7 +2129,10 @@ namespace MediaPortal.Util
 
       //nop then check if local file exists
       string localFile = GetLocalFilename(file);
-      if (localFile == string.Empty) return false;
+      if (string.IsNullOrEmpty(localFile))
+      {
+        return false;
+      }
       if (Util.Utils.FileExistsInCache(localFile))
       {
         FileInfo info = new FileInfo(localFile);
@@ -2187,7 +2248,10 @@ namespace MediaPortal.Util
       bool ActiveConnection = true;
       string folder = file.Substring("remote:".Length);
       string[] subitems = folder.Split(new char[] {'?'});
-      if (subitems[4] == string.Empty) subitems[4] = "/";
+      if (string.IsNullOrEmpty(subitems[4]))
+      {
+        subitems[4] = "/";
+      }
       //if (subitems[5] == null) 
       ActiveConnection = true;
       //else
@@ -2224,7 +2288,7 @@ namespace MediaPortal.Util
           int driveType = Utils.getDriveType(drive);
           if (driveType == (int)DriveType.CDRom)
           {
-            string driveName = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpperInvariant());
+            string driveName = string.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpperInvariant());
             Share share = new Share(driveName, drive, string.Empty);
             sharesMusic.Add(share);
             sharesPhotos.Add(share);
@@ -2292,16 +2356,16 @@ namespace MediaPortal.Util
       {
         for (int index = 0; index < MaximumShares; index++)
         {
-          string shareName = String.Format("sharename{0}", index);
-          string sharePath = String.Format("sharepath{0}", index);
-          string sharePin = String.Format("pincode{0}", index);
+          string shareName = string.Format("sharename{0}", index);
+          string sharePath = string.Format("sharepath{0}", index);
+          string sharePin = string.Format("pincode{0}", index);
 
-          string shareType = String.Format("sharetype{0}", index);
-          string shareServer = String.Format("shareserver{0}", index);
-          string shareLogin = String.Format("sharelogin{0}", index);
-          string sharePwd = String.Format("sharepassword{0}", index);
-          string sharePort = String.Format("shareport{0}", index);
-          string shareRemotePath = String.Format("shareremotepath{0}", index);
+          string shareType = string.Format("sharetype{0}", index);
+          string shareServer = string.Format("shareserver{0}", index);
+          string shareLogin = string.Format("sharelogin{0}", index);
+          string sharePwd = string.Format("sharepassword{0}", index);
+          string sharePort = string.Format("shareport{0}", index);
+          string shareRemotePath = string.Format("shareremotepath{0}", index);
 
           string shareNameData = string.Empty;
           string sharePathData = string.Empty;
