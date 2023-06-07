@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Net;
+
 using MediaPortal.Util;
 using MediaPortal.Profile;
 using MediaPortal.GUI.Library;
@@ -58,6 +59,7 @@ namespace MediaPortal.Configuration
     private MPLabel label3;
     private MPLabel label9;
     private MPComboBox comboBox1;
+    private MPComboBox cboxHostDetectMethod;
     private MPCheckBox checkBoxPASV;
     public MPCheckBox cbCreateThumbs;
     public MPLabel labelCreateThumbs;
@@ -66,6 +68,7 @@ namespace MediaPortal.Configuration
     private MPCheckBox cbEnableWakeOnLan;
     private MPButton mpButtonLearnMacNow;
     private MPCheckBox mpCBdonotFolderJpgIfPin;
+    private MPLabel mpLabel1;
     private IContainer components;
 
     public EditShareForm()
@@ -107,6 +110,7 @@ namespace MediaPortal.Configuration
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditShareForm));
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpCBdonotFolderJpgIfPin = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpButtonLearnMacNow = new MediaPortal.UserInterface.Controls.MPButton();
       this.cbEnableWakeOnLan = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -115,6 +119,7 @@ namespace MediaPortal.Configuration
       this.labelCreateThumbs = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxPASV = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.comboBox1 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.cboxHostDetectMethod = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label9 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxRemoteFolder = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -146,6 +151,7 @@ namespace MediaPortal.Configuration
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.mpLabel1);
       this.groupBox1.Controls.Add(this.mpCBdonotFolderJpgIfPin);
       this.groupBox1.Controls.Add(this.mpButtonLearnMacNow);
       this.groupBox1.Controls.Add(this.cbEnableWakeOnLan);
@@ -154,6 +160,7 @@ namespace MediaPortal.Configuration
       this.groupBox1.Controls.Add(this.labelCreateThumbs);
       this.groupBox1.Controls.Add(this.checkBoxPASV);
       this.groupBox1.Controls.Add(this.comboBox1);
+      this.groupBox1.Controls.Add(this.cboxHostDetectMethod);
       this.groupBox1.Controls.Add(this.label9);
       this.groupBox1.Controls.Add(this.textBoxRemoteFolder);
       this.groupBox1.Controls.Add(this.label3);
@@ -176,11 +183,19 @@ namespace MediaPortal.Configuration
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(408, 354);
+      this.groupBox1.Size = new System.Drawing.Size(406, 396);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Folder settings";
       this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Location = new System.Drawing.Point(16, 204);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(229, 13);
+      this.mpLabel1.TabIndex = 36;
+      this.mpLabel1.Text = "Host Detect Method:";
       // 
       // mpCBdonotFolderJpgIfPin
       // 
@@ -253,7 +268,7 @@ namespace MediaPortal.Configuration
       // 
       this.checkBoxPASV.AutoSize = true;
       this.checkBoxPASV.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxPASV.Location = new System.Drawing.Point(343, 244);
+      this.checkBoxPASV.Location = new System.Drawing.Point(343, 287);
       this.checkBoxPASV.Name = "checkBoxPASV";
       this.checkBoxPASV.Size = new System.Drawing.Size(52, 17);
       this.checkBoxPASV.TabIndex = 26;
@@ -277,6 +292,20 @@ namespace MediaPortal.Configuration
       this.comboBox1.Size = new System.Drawing.Size(184, 21);
       this.comboBox1.TabIndex = 25;
       // 
+      // cboxHostDetectMethod
+      // 
+      this.cboxHostDetectMethod.BorderColor = System.Drawing.Color.Empty;
+      this.cboxHostDetectMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cboxHostDetectMethod.Items.AddRange(new object[] {
+            "Default",
+            "Ping",
+            "Samba",
+            "NetUse"});
+      this.cboxHostDetectMethod.Location = new System.Drawing.Point(16, 220);
+      this.cboxHostDetectMethod.Name = "cboxHostDetectMethod";
+      this.cboxHostDetectMethod.Size = new System.Drawing.Size(184, 21);
+      this.cboxHostDetectMethod.TabIndex = 35;
+      // 
       // label9
       // 
       this.label9.AutoSize = true;
@@ -291,15 +320,15 @@ namespace MediaPortal.Configuration
       this.textBoxRemoteFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxRemoteFolder.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxRemoteFolder.Location = new System.Drawing.Point(16, 323);
+      this.textBoxRemoteFolder.Location = new System.Drawing.Point(16, 366);
       this.textBoxRemoteFolder.Name = "textBoxRemoteFolder";
-      this.textBoxRemoteFolder.Size = new System.Drawing.Size(381, 20);
+      this.textBoxRemoteFolder.Size = new System.Drawing.Size(379, 20);
       this.textBoxRemoteFolder.TabIndex = 8;
       this.textBoxRemoteFolder.Text = "/";
       // 
       // label3
       // 
-      this.label3.Location = new System.Drawing.Point(16, 307);
+      this.label3.Location = new System.Drawing.Point(16, 350);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(168, 23);
       this.label3.TabIndex = 23;
@@ -308,7 +337,7 @@ namespace MediaPortal.Configuration
       // label8
       // 
       this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(288, 225);
+      this.label8.Location = new System.Drawing.Point(288, 268);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(68, 13);
       this.label8.TabIndex = 22;
@@ -317,7 +346,7 @@ namespace MediaPortal.Configuration
       // textBoxPort
       // 
       this.textBoxPort.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxPort.Location = new System.Drawing.Point(291, 243);
+      this.textBoxPort.Location = new System.Drawing.Point(291, 286);
       this.textBoxPort.Name = "textBoxPort";
       this.textBoxPort.Size = new System.Drawing.Size(38, 20);
       this.textBoxPort.TabIndex = 7;
@@ -327,7 +356,7 @@ namespace MediaPortal.Configuration
       // textBoxPassword
       // 
       this.textBoxPassword.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxPassword.Location = new System.Drawing.Point(213, 283);
+      this.textBoxPassword.Location = new System.Drawing.Point(213, 326);
       this.textBoxPassword.Name = "textBoxPassword";
       this.textBoxPassword.PasswordChar = '*';
       this.textBoxPassword.Size = new System.Drawing.Size(184, 20);
@@ -335,7 +364,7 @@ namespace MediaPortal.Configuration
       // 
       // label7
       // 
-      this.label7.Location = new System.Drawing.Point(213, 267);
+      this.label7.Location = new System.Drawing.Point(213, 310);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(100, 16);
       this.label7.TabIndex = 19;
@@ -344,14 +373,14 @@ namespace MediaPortal.Configuration
       // textBoxLogin
       // 
       this.textBoxLogin.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxLogin.Location = new System.Drawing.Point(16, 283);
+      this.textBoxLogin.Location = new System.Drawing.Point(16, 326);
       this.textBoxLogin.Name = "textBoxLogin";
       this.textBoxLogin.Size = new System.Drawing.Size(184, 20);
       this.textBoxLogin.TabIndex = 5;
       // 
       // label6
       // 
-      this.label6.Location = new System.Drawing.Point(16, 267);
+      this.label6.Location = new System.Drawing.Point(16, 310);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(100, 16);
       this.label6.TabIndex = 17;
@@ -360,7 +389,7 @@ namespace MediaPortal.Configuration
       // textBoxServer
       // 
       this.textBoxServer.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxServer.Location = new System.Drawing.Point(16, 243);
+      this.textBoxServer.Location = new System.Drawing.Point(16, 286);
       this.textBoxServer.Name = "textBoxServer";
       this.textBoxServer.Size = new System.Drawing.Size(263, 20);
       this.textBoxServer.TabIndex = 4;
@@ -369,7 +398,7 @@ namespace MediaPortal.Configuration
       // label5
       // 
       this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(16, 225);
+      this.label5.Location = new System.Drawing.Point(16, 268);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(135, 13);
       this.label5.TabIndex = 15;
@@ -379,7 +408,7 @@ namespace MediaPortal.Configuration
       // 
       this.checkBoxRemote.AutoSize = true;
       this.checkBoxRemote.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxRemote.Location = new System.Drawing.Point(16, 203);
+      this.checkBoxRemote.Location = new System.Drawing.Point(16, 246);
       this.checkBoxRemote.Name = "checkBoxRemote";
       this.checkBoxRemote.Size = new System.Drawing.Size(153, 17);
       this.checkBoxRemote.TabIndex = 3;
@@ -394,7 +423,7 @@ namespace MediaPortal.Configuration
       this.pinCodeTextBox.BorderColor = System.Drawing.Color.Empty;
       this.pinCodeTextBox.Location = new System.Drawing.Point(216, 39);
       this.pinCodeTextBox.Name = "pinCodeTextBox";
-      this.pinCodeTextBox.Size = new System.Drawing.Size(71, 20);
+      this.pinCodeTextBox.Size = new System.Drawing.Size(69, 20);
       this.pinCodeTextBox.TabIndex = 1;
       // 
       // label4
@@ -408,7 +437,7 @@ namespace MediaPortal.Configuration
       // folderButton
       // 
       this.folderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.folderButton.Location = new System.Drawing.Point(368, 103);
+      this.folderButton.Location = new System.Drawing.Point(366, 103);
       this.folderButton.Name = "folderButton";
       this.folderButton.Size = new System.Drawing.Size(24, 20);
       this.folderButton.TabIndex = 3;
@@ -423,7 +452,7 @@ namespace MediaPortal.Configuration
       this.folderTextBox.BorderColor = System.Drawing.Color.Empty;
       this.folderTextBox.Location = new System.Drawing.Point(16, 103);
       this.folderTextBox.Name = "folderTextBox";
-      this.folderTextBox.Size = new System.Drawing.Size(344, 20);
+      this.folderTextBox.Size = new System.Drawing.Size(342, 20);
       this.folderTextBox.TabIndex = 2;
       this.folderTextBox.TextChanged += new System.EventHandler(this.folderTextBox_TextChanged);
       // 
@@ -443,7 +472,7 @@ namespace MediaPortal.Configuration
       this.nameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.nameTextBox.Location = new System.Drawing.Point(16, 39);
       this.nameTextBox.Name = "nameTextBox";
-      this.nameTextBox.Size = new System.Drawing.Size(184, 20);
+      this.nameTextBox.Size = new System.Drawing.Size(182, 20);
       this.nameTextBox.TabIndex = 0;
       // 
       // label1
@@ -459,7 +488,7 @@ namespace MediaPortal.Configuration
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.Location = new System.Drawing.Point(342, 369);
+      this.cancelButton.Location = new System.Drawing.Point(339, 411);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
       this.cancelButton.TabIndex = 1;
@@ -470,7 +499,7 @@ namespace MediaPortal.Configuration
       // okButton
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.Location = new System.Drawing.Point(262, 369);
+      this.okButton.Location = new System.Drawing.Point(260, 411);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
       this.okButton.TabIndex = 0;
@@ -483,7 +512,7 @@ namespace MediaPortal.Configuration
       this.AcceptButton = this.okButton;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.CancelButton = this.cancelButton;
-      this.ClientSize = new System.Drawing.Size(426, 402);
+      this.ClientSize = new System.Drawing.Size(424, 441);
       this.Controls.Add(this.okButton);
       this.Controls.Add(this.cancelButton);
       this.Controls.Add(this.groupBox1);
@@ -609,6 +638,10 @@ namespace MediaPortal.Configuration
       {
         comboBox1.SelectedIndex = 0;
       }
+      if (cboxHostDetectMethod.SelectedIndex < 0)
+      {
+        cboxHostDetectMethod.SelectedIndex = 0;
+      }
     }
 
     public string Folder
@@ -710,16 +743,22 @@ namespace MediaPortal.Configuration
       set { cbEnableWakeOnLan.Checked = value; }
     }
 
+    public string HostDetectMethod
+    {
+      get { return cboxHostDetectMethod.SelectedItem.ToString(); }
+      set { cboxHostDetectMethod.SelectedIndex = cboxHostDetectMethod.FindStringExact(string.IsNullOrEmpty(value) ? "Default" : value); }
+    }
+
     private void mpButton1_Click(object sender, EventArgs e)
     {
       String macAddress;
       byte[] hwAddress;
-      string hostName = "";
+      string hostName = string.Empty;
 
       WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
 
       IPAddress ipAddress = null;
-      string detectedFolderName = "";
+      string detectedFolderName = string.Empty;
       if (!Util.Utils.IsUNCNetwork(folderTextBox.Text))
       {
         // Check if letter drive is a network drive
@@ -806,7 +845,7 @@ namespace MediaPortal.Configuration
 
     private void folderTextBox_TextChanged(object sender, EventArgs e)
     {
-      string detectedFolderName = "";
+      string detectedFolderName = string.Empty;
       if (!Util.Utils.IsUNCNetwork(folderTextBox.Text))
       {
         // Check if letter drive is a network drive
@@ -815,11 +854,13 @@ namespace MediaPortal.Configuration
       if (Util.Utils.IsUNCNetwork(detectedFolderName) || Util.Utils.IsUNCNetwork(folderTextBox.Text))
       {
         cbEnableWakeOnLan.Enabled = true;
+        cboxHostDetectMethod.Enabled = true;
       }
       else
       {
         cbEnableWakeOnLan.Checked = false;
         cbEnableWakeOnLan.Enabled = false;
+        cboxHostDetectMethod.Enabled = false;
       }
     }
   }

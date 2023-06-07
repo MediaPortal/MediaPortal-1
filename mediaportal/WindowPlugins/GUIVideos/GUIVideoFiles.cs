@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2018 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2018 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -3372,7 +3372,7 @@ namespace MediaPortal.GUI.Video
               GUIListItem item = innerList[i];
               bool isMovieFolder = false;
 
-              if (!string.IsNullOrEmpty(newFolderName) || UNCTools.UNCFileFolderExists(item.Path))
+              if (!string.IsNullOrEmpty(newFolderName) || UNCTools.UNCFileFolderExists(item.Path, _virtualDirectory.GetShareHostDetectMethod(item.Path)))
               {
                 if (item.IsFolder)
                 {

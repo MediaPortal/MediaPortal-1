@@ -24,13 +24,14 @@ using System.Management;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using MediaPortal.GUI.Library;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Threading;
+
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Util
 {
@@ -71,7 +72,7 @@ namespace MediaPortal.Util
         {
           using (Profile.Settings xmlreader = new Profile.MPSettings())
           {
-            HostDetectMethod = xmlreader.GetValueAsString("general", "HostDetectMethod", "Ping");
+            HostDetectMethod = xmlreader.GetValueAsString("general", "HostDetectMethod", HostDetectMethod);
           }
         }
 
@@ -212,7 +213,7 @@ namespace MediaPortal.Util
                 Log.Debug("UNCTools: A UNC path was passed to GetDriveLetter, path '{0}'", path);
             }
 
-            return Directory.GetDirectoryRoot(path).Replace(Path.DirectorySeparatorChar.ToString(), "");
+            return Directory.GetDirectoryRoot(path).Replace(Path.DirectorySeparatorChar.ToString(), string.Empty);
         }
 
       /// <summary>
@@ -225,6 +226,20 @@ namespace MediaPortal.Util
       /// <returns>BOOL</returns>
       public static bool UNCFileFolderExists(string strFile)
       {
+        return UNCFileFolderExists(strFile, "Default");
+      }
+
+      /// <summary>
+      /// Check if the host of an UNC file/folder is online and the given filesystem object exists (with user defined ping timeout)
+      /// On local files/folders (ex.: c:\temp\1.txt) will be returned true/// 
+      /// ex.: bolRes = UNCFileFolderExists("\\MYSERVER\VIDEOS\1.MKV");
+      /// ex.: bolRes = UNCFileFolderExists("\\MYSERVER\VIDEOS\");/// 
+      /// </summary>
+      /// <param name="strFile"></param>
+      /// <param name="hostDetectMethod"></param>
+      /// <returns>BOOL</returns>
+      public static bool UNCFileFolderExists(string strFile, string hostDetectMethod)
+      {
         // Check if UNC strFile was already tested avoid another check
         if (VirtualDirectory.detectedItemsPath.Contains(strFile))
         {
@@ -233,12 +248,13 @@ namespace MediaPortal.Util
 
         string strUNCPath;
         bool bolExist = false;
-        string strType = "";
+        string strType = string.Empty;
+
         try
         {
           //Check if the host of the file/folder is online
-          strUNCPath = UNCFileFolderOnline(strFile);
-          if (strUNCPath == "")
+          strUNCPath = UNCFileFolderOnline(strFile, hostDetectMethod);
+          if (string.IsNullOrEmpty(strUNCPath))
           {
             return false;
           }
@@ -285,7 +301,6 @@ namespace MediaPortal.Util
 
         //Return the flag
         return bolExist;
-
       }
 
       /// <summary>
@@ -299,22 +314,43 @@ namespace MediaPortal.Util
       /// <returns>empty string when the file/folder is offline</returns>
       public static string UNCFileFolderOnline(string strFile)
       {
-        //Resolve given path to UNC
-        var strUNCPath = ResolveToUNC(strFile);
-        //Get Host name
-        var uri = new Uri(strUNCPath);
-          
-        if (HostDetectMethod == "Ping")
-        {
-          //ping the Host
-          if (uri.Host == "") return strUNCPath;
+        return UNCFileFolderOnline(strFile, "Default");
+      }
 
-          //We have an host -> try to ping it
-          var iPingAnswers = PingHost(uri.Host, 200, 2);
-          if (iPingAnswers != 0) 
+      /// <summary>
+      /// Check if the host of an UNC file/folder is online, (with user defined ping timeout)
+      /// On local files/folders (ex.: c:\temp\1.txt) will be returned true
+      /// ex.: strUNCPath = UNCFileFolderOnline("C:\mydir\myfile.ext");
+      /// ex.: strUNCPath = UNCFileFolderOnline("C:\mydir\");/// 
+      /// </summary>
+      /// <param name="strFile"></param>
+      /// <param name="hostDetectMethod"></param>
+      /// <returns>the converted UNC Path as string when the file/folder is online</returns>
+      /// <returns>empty string when the file/folder is offline</returns>
+      public static string UNCFileFolderOnline(string strFile, string hostDetectMethod)
+      {
+        string hostdetectmethod = (string.IsNullOrEmpty(hostDetectMethod) || hostDetectMethod == "Default") ? HostDetectMethod : hostDetectMethod;
+
+        // Resolve given path to UNC
+        var strUNCPath = ResolveToUNC(strFile);
+        // Get Host name
+        var uri = new Uri(strUNCPath);
+
+        if (hostdetectmethod == "Ping")
+        {
+          // Ping the Host
+          if (string.IsNullOrEmpty(uri.Host)) 
+          {
             return strUNCPath;
+          }
+          // We have an host -> try to ping it
+          var iPingAnswers = PingHost(uri.Host, 200, 2);
+          if (iPingAnswers != 0)
+          {
+            return strUNCPath;
+          }
         }
-        else if (HostDetectMethod == "Samba")
+        else if (hostdetectmethod == "Samba")
         {
           if (CheckNetworkHost(strFile, 139))
           {
@@ -330,7 +366,9 @@ namespace MediaPortal.Util
         }
 
         //We DONT have received an answer
-        Log.Debug("UNCTools: UNCFileFolderOnline: host '{0}' is not reachable!! , File/Folder '{1}'", uri.Host, strFile);
+        Log.Debug("UNCTools: UNCFileFolderOnline: Host:       '{0}' is not reachable!", uri.Host);
+        Log.Debug("                             : Method:      {0}/{1}", HostDetectMethod, hostdetectmethod);
+        Log.Debug("                             : File/Folder: {0}", strFile);
         return string.Empty;
 
         //UNC device is online or local file/folder
@@ -338,7 +376,12 @@ namespace MediaPortal.Util
 
       public static bool IsUNCFileFolderOnline(string strFile)
       {
-        return UNCFileFolderOnline(strFile) != string.Empty;
+        return IsUNCFileFolderOnline(strFile, "Default");
+      }
+
+      public static bool IsUNCFileFolderOnline(string strFile, string hostDetectMethod)
+      {
+        return !string.IsNullOrEmpty(UNCFileFolderOnline(strFile, hostDetectMethod));
       }
 
       [MethodImpl(MethodImplOptions.Synchronized)]
@@ -402,10 +445,15 @@ namespace MediaPortal.Util
       //Method UNCCopyFile copies a remote file (strSourceFile) to the given strDestFile
       public static void UNCCopyFile(string strSourceFile, string strDestFile)
       {
-        //CopyDB
+        UNCCopyFile(strSourceFile, strDestFile, "Default");
+      }
+
+      public static void UNCCopyFile(string strSourceFile, string strDestFile, string hostDetectMethod)
+      {
+        // CopyDB
         try
         {
-          if (UNCTools.UNCFileFolderExists(strSourceFile))
+          if (UNCFileFolderExists(strSourceFile, hostDetectMethod))
           {
             //UNC host is online and file exists
             File.Copy(strSourceFile, strDestFile, true);
@@ -443,7 +491,7 @@ namespace MediaPortal.Util
             IPAddress address = AsyncDNSReverseLookup(strHost_or_IP);
 
             //check if we have an ipaddress
-            if((strHost_or_IP == "") || (address == null))
+            if(string.IsNullOrEmpty(strHost_or_IP) || (address == null))
             {
                 Log.Debug("UNCTools: PingHost: Could not resolve/convert {0} to an IPAddress object!", strHost_or_IP);
                 return 0;
