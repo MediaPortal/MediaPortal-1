@@ -270,6 +270,7 @@
       <DependentUpon>GUIHomeSetupForm.cs</DependentUpon>
     </Compile>
     <Compile Include="GUIPlugIns.cs" />
+    <Compile Include="PluginSort.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

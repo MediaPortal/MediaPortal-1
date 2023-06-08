@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 
 using System;
 using System.Collections;
-using MediaPortal.Configuration;
+
 using MediaPortal.GUI.Library;
 
 #endregion
@@ -47,6 +47,16 @@ namespace MediaPortal.GUI.Home
 
     public override bool Init()
     {
+      string layout = GUIPropertyManager.GetProperty("#home.myhomeplugins.layout");
+      try
+      {
+        _layout = (GUIFacadeControl.Layout)Enum.Parse(typeof(GUIFacadeControl.Layout), layout);
+      }
+      catch
+      {
+        _layout = GUIFacadeControl.Layout.List;
+      }
+
       //GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
       return (Load(GUIGraphicsContext.GetThemedSkinFile(@"\myHomePlugIns.xml")));
     }
@@ -57,9 +67,18 @@ namespace MediaPortal.GUI.Home
       {
         return;
       }
-      menuMain.ButtonInfos.Clear();
-      ArrayList plugins = PluginManager.SetupForms;
 
+      if (menuMain is GUIMenuControl)
+      {
+        (menuMain as GUIMenuControl).ButtonInfos.Clear();
+      }
+
+      if (menuMain is GUIFacadeControl)
+      {
+        GUIControl.ClearControl(GetID, menuMain.GetID);
+      }
+
+      ArrayList plugins = PluginManager.SetupForms;
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         foreach (ISetupForm setup in plugins)
@@ -110,13 +129,55 @@ namespace MediaPortal.GUI.Home
             nonFocusHover = GetNonFocusHoverFileName(hover);
             hover = GetHoverFileName(hover);
             int index = xmlreader.GetValueAsInt("pluginSorting", "my Plugins", Int32.MaxValue);
-            menuMain.ButtonInfos.Add(new MenuButtonInfo(plugInText, setup.GetWindowId(), focusTexture, nonFocusTexture,
-                                                        hover, nonFocusHover, index));
+
+            if (menuMain is GUIMenuControl)
+            {
+              (menuMain as GUIMenuControl).ButtonInfos.Add(new MenuButtonInfo(plugInText, setup.GetWindowId(), 
+                                                          focusTexture, nonFocusTexture,
+                                                          hover, nonFocusHover, index));
+            }
+
+            if (menuMain is GUIFacadeControl)
+            {
+              GUIListItem listItem = new GUIListItem(plugInText)
+              {
+                Path = index.ToString(),
+                ItemId = setup.GetWindowId(),
+                IsFolder = false,
+                IconImage = focusTexture,
+                ThumbnailImage = hover,
+                AlbumInfoTag = setup
+              };
+              listItem.OnItemSelected += OnItemSelected;
+              (menuMain as GUIFacadeControl).Add(listItem);
+            }
           }
         }
       }
     }
 
     #endregion
+
+    private void OnItemSelected(GUIListItem item, GUIControl parent)
+    {
+      GUIPropertyManager.SetProperty("#pluginname", item.Label);
+      GUIPropertyManager.SetProperty("#pluginauthor", string.Empty);
+      GUIPropertyManager.SetProperty("#plugindescription", string.Empty);
+
+      if (item.AlbumInfoTag == null)
+      {
+        return;
+      }
+
+      GUIPropertyManager.SetProperty("#pluginauthor", (item.AlbumInfoTag as ISetupForm).Author());
+      GUIPropertyManager.SetProperty("#plugindescription", (item.AlbumInfoTag as ISetupForm).Description());
+
+      GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
+      if (filmstrip != null)
+      {
+        filmstrip.InfoImageFileName = item.ThumbnailImage;
+      }
+    }
+
   }
 }
