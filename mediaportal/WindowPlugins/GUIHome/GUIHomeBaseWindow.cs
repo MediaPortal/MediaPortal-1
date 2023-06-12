@@ -95,6 +95,7 @@ namespace MediaPortal.GUI.Home
     protected override void OnWindowLoaded()
     {
       base.OnWindowLoaded();
+
       if (menuMain != null)
       {
         if (menuMain is GUIMenuControl)
@@ -124,6 +125,7 @@ namespace MediaPortal.GUI.Home
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+
       //set video window position
       if (videoWindow != null)
       {

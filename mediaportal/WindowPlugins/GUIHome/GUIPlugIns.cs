@@ -47,6 +47,12 @@ namespace MediaPortal.GUI.Home
 
     public override bool Init()
     {
+      //GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
+      return (Load(GUIGraphicsContext.GetThemedSkinFile(@"\myHomePlugIns.xml")));
+    }
+
+    protected override void OnWindowLoaded()
+    {
       string layout = GUIPropertyManager.GetProperty("#home.myhomeplugins.layout");
       try
       {
@@ -57,8 +63,7 @@ namespace MediaPortal.GUI.Home
         _layout = GUIFacadeControl.Layout.List;
       }
 
-      //GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
-      return (Load(GUIGraphicsContext.GetThemedSkinFile(@"\myHomePlugIns.xml")));
+      base.OnWindowLoaded();
     }
 
     protected override void LoadButtonNames()
@@ -143,6 +148,7 @@ namespace MediaPortal.GUI.Home
               {
                 Path = index.ToString(),
                 ItemId = setup.GetWindowId(),
+                Label2 = setup.Author(),
                 IsFolder = false,
                 IconImage = focusTexture,
                 ThumbnailImage = hover,
