@@ -43,6 +43,8 @@
     <X64 />
   </VCRedist2013>
 
+  <!-- VCRedistr 2015-2022 -->
+
   <VCRedist2015>
     <URL>https://install.team-mediaportal.com/VcRedist2015</URL>
     <FILE>vcredist2015_x86.exe</FILE>
