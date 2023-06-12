@@ -134,8 +134,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
           result.state = CheckState.INSTALLED;
           return result;
         }
-        // Visual C++ 2015-2022 Redistributable x64 (14.30.30704.0)
-        keySection = Utils.CheckUninstallString("{57a73df6-4ba9-4c1d-bbbb-517289ff6c13}", "DisplayName");
+        // Visual C++ 2015-2022 Redistributable x64 (14.36.32532.0)
+        keySection = Utils.CheckUninstallString("{8bdfe669-9705-4184-9368-db9ce581e0e7}", "DisplayName");
         if (!string.IsNullOrEmpty(keySection))
         {
           result.state = CheckState.INSTALLED;
@@ -158,8 +158,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
           result.state = CheckState.INSTALLED;
           return result;
         }
-        // Visual C++ 2015-2022 Redistributable x86 (14.30.30704.0)
-        keySection = Utils.CheckUninstallString("{4d8dcf8c-a72a-43e1-9833-c12724db736e}", "DisplayName");
+        // Visual C++ 2015-2022 Redistributable x86 (14.36.32532.0)
+        keySection = Utils.CheckUninstallString("{410c0ee1-00bb-41b6-9772-e12c2828b02f}", "DisplayName");
         if (!string.IsNullOrEmpty(keySection))
         {
           result.state = CheckState.INSTALLED;
