@@ -2420,7 +2420,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void AllocResources()
     {
-      // Dispose(); // MP1-5167 - Remove Dispose due ListItems cleared
+      SafeDispose();
 
       base.AllocResources();
       _upDownControl.AllocResources();
@@ -2496,12 +2496,10 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// Frees the control its DirectX resources.
+    /// Safe (without clear ListItems) Frees the control its DirectX resources.
     /// </summary>
-    public override void Dispose()
+    public void SafeDispose()
     {
-      base.Dispose();
-
       _font = null;
       _font2 = null;
       _font3 = null;
@@ -2510,11 +2508,22 @@ namespace MediaPortal.GUI.Library
       _listButtons.DisposeAndClear();
       _verticalScrollbar.SafeDispose();
 
-      _listItems.DisposeAndClear();
       _listProgresses.DisposeAndClear();
       _labelControls1.DisposeAndClear();
       _labelControls2.DisposeAndClear();
       _labelControls3.DisposeAndClear();
+    }
+
+    /// <summary>
+    /// Frees the control its DirectX resources.
+    /// </summary>
+    public override void Dispose()
+    {
+      base.Dispose();
+
+      _listItems.DisposeAndClear();
+
+      SafeDispose();
     }
 
     /// <summary>
