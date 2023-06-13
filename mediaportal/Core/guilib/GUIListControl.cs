@@ -2420,13 +2420,14 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void AllocResources()
     {
-      Dispose();
+      // Dispose(); // MP1-5167 - Remove Dispose due ListItems cleared
+
       base.AllocResources();
       _upDownControl.AllocResources();
       _verticalScrollbar.AllocResources();
+
       _font = GUIFontManager.GetFont(_fontName);
       _font2 = GUIFontManager.GetFont(_fontName2Name);
-
 
       float fHeight = (float)_itemHeight + _spaceBetweenItems;
       float fTotalHeight = _height - _upDownControl.Height - 5;
