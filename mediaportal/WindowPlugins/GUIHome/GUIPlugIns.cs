@@ -80,7 +80,7 @@ namespace MediaPortal.GUI.Home
 
       if (menuMain is GUIFacadeControl)
       {
-        GUIControl.ClearControl(GetID, menuMain.GetID);
+        (menuMain as GUIFacadeControl).Clear();
       }
 
       ArrayList plugins = PluginManager.SetupForms;
