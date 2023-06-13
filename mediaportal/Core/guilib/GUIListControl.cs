@@ -2420,7 +2420,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void AllocResources()
     {
-      SafeDispose();
+      SafelyDispose();
 
       base.AllocResources();
       _upDownControl.AllocResources();
@@ -2496,9 +2496,9 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// Safe (without clear ListItems) Frees the control its DirectX resources.
+    /// Safely (without clear ListItems) Frees the control its DirectX resources.
     /// </summary>
-    public void SafeDispose()
+    private void SafelyDispose()
     {
       _font = null;
       _font2 = null;
@@ -2523,7 +2523,7 @@ namespace MediaPortal.GUI.Library
 
       _listItems.DisposeAndClear();
 
-      SafeDispose();
+      SafelyDispose();
     }
 
     /// <summary>
