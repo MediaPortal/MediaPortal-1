@@ -5761,7 +5761,7 @@ namespace MediaPortal.GUI.Video
 
     public string Author()
     {
-      return "Frodo";
+      return "Frodo, ajs";
     }
 
     public string Description()
