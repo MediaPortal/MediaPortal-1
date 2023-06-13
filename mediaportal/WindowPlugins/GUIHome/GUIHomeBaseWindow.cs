@@ -208,7 +208,7 @@ namespace MediaPortal.GUI.Home
       string dir = Path.GetDirectoryName(FileName);
       if (dir.Length > 0)
       {
-        dir = dir + "\\";
+        dir += "\\";
       }
       if (!name.ToLowerInvariant().Contains("hover_"))
       {
@@ -223,7 +223,7 @@ namespace MediaPortal.GUI.Home
       string dir = Path.GetDirectoryName(FileName);
       if (dir.Length > 0)
       {
-        dir = dir + "\\";
+        dir += "\\";
       }
       if (!name.ToLowerInvariant().Contains("nonfocushover_"))
       {
@@ -234,7 +234,7 @@ namespace MediaPortal.GUI.Home
 
     protected string GetMediaFileName(string name)
     {
-      if (Path.GetPathRoot(name) == "")
+      if (string.IsNullOrEmpty(Path.GetPathRoot(name)))
       {
         name = GUIGraphicsContext.GetThemedSkinFile(@"\media\" + name);
       }
@@ -283,13 +283,13 @@ namespace MediaPortal.GUI.Home
           break;
 
         case GUIMessage.MessageType.GUI_MSG_ASKYESNO:
-          string Head = "", Line1 = "", Line2 = "", Line3 = "", Line4 = "";
+          string Head = string.Empty, Line1 = string.Empty, Line2 = string.Empty, Line3 = string.Empty, Line4 = string.Empty;
           bool DefaultYes = false;
           if (message.Param1 != 0)
           {
             Head = GUILocalizeStrings.Get(message.Param1);
           }
-          else if (message.Label != string.Empty)
+          else if (!string.IsNullOrEmpty(message.Label))
           {
             Head = message.Label;
           }
@@ -297,7 +297,7 @@ namespace MediaPortal.GUI.Home
           {
             Line1 = GUILocalizeStrings.Get(message.Param2);
           }
-          else if (message.Label2 != string.Empty)
+          else if (!string.IsNullOrEmpty(message.Label2))
           {
             Line1 = message.Label2;
           }
@@ -305,7 +305,7 @@ namespace MediaPortal.GUI.Home
           {
             Line2 = GUILocalizeStrings.Get(message.Param3);
           }
-          else if (message.Label3 != string.Empty)
+          else if (!string.IsNullOrEmpty(message.Label3))
           {
             Line2 = message.Label3;
           }
@@ -341,12 +341,12 @@ namespace MediaPortal.GUI.Home
 
         case GUIMessage.MessageType.GUI_MSG_SHOW_WARNING:
           {
-            string strHead = "", strLine1 = "", strLine2 = "";
+            string strHead = string.Empty, strLine1 = string.Empty, strLine2 = string.Empty;
             if (message.Param1 != 0)
             {
               strHead = GUILocalizeStrings.Get(message.Param1);
             }
-            else if (message.Label != string.Empty)
+            else if (!string.IsNullOrEmpty(message.Label))
             {
               strHead = message.Label;
             }
@@ -354,7 +354,7 @@ namespace MediaPortal.GUI.Home
             {
               strLine1 = GUILocalizeStrings.Get(message.Param2);
             }
-            else if (message.Label2 != string.Empty)
+            else if (!string.IsNullOrEmpty(message.Label2))
             {
               strLine2 = message.Label2;
             }
@@ -362,7 +362,7 @@ namespace MediaPortal.GUI.Home
             {
               strLine2 = GUILocalizeStrings.Get(message.Param3);
             }
-            else if (message.Label3 != string.Empty)
+            else if (!string.IsNullOrEmpty(message.Label3))
             {
               strLine2 = message.Label3;
             }
@@ -385,7 +385,7 @@ namespace MediaPortal.GUI.Home
           }
           else
           {
-            message.Label = "";
+            message.Label = string.Empty;
           }
           break;
 
@@ -405,7 +405,7 @@ namespace MediaPortal.GUI.Home
           }
           else
           {
-            message.Label = "";
+            message.Label = string.Empty;
           }
           break;
 
@@ -441,7 +441,7 @@ namespace MediaPortal.GUI.Home
       pDlgOK.SetHeading(strHeading);
       pDlgOK.SetLine(1, strLine1);
       pDlgOK.SetLine(2, strLine2);
-      pDlgOK.SetLine(3, "");
+      pDlgOK.SetLine(3, string.Empty);
       pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
     }
 
