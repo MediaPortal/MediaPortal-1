@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2022 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2022 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -78,6 +78,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textpadding")] protected int _textPadding = 0;
     [XMLSkinElement("textpadding2")] protected int _textPadding2 = 0;
     [XMLSkinElement("textpadding3")] protected int _textPadding3 = 0;
+
+    [XMLSkinElement("textwidth2")] protected int _textWidth2 = 0;
 
     [XMLSkinElement("itemWidth")] protected int _imageWidth = 16;
     [XMLSkinElement("itemHeight")] protected int _imageHeight = 16;
@@ -378,6 +380,7 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleVertical(ref _yOffsetPinIcon);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _widthPinIcon, ref _heightPinIcon);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _imageWidth, ref _imageHeight);
+      GUIGraphicsContext.ScaleHorizontal(ref _textWidth2);
     }
 
     private void item_OnThumbnailRefresh(int buttonNr, bool gotFocus)
@@ -826,7 +829,20 @@ namespace MediaPortal.GUI.Library
               label2.FontName = _fontName2Name;
 
               // recalculate label width
-              labelWidth = label2._positionX - positionX - label2.TextWidth - GUIGraphicsContext.ScaleHorizontal(20);
+              int label2width = label2.TextWidth;
+              if (_textWidth2 > 0)
+              {
+                label2width = _textWidth2;
+              }
+              else
+              {
+                int label2maxwidth = _width / 3 * 2; // MP1-5167: The Default maximum width of Label 2 is 2/3 of the control's width.
+                if (label2width > label2maxwidth)
+                {
+                  label2width = label2maxwidth;
+                }
+              }
+              labelWidth = label2._positionX - positionX - label2width - GUIGraphicsContext.ScaleHorizontal(20);
             }
           }
         }
@@ -979,11 +995,25 @@ namespace MediaPortal.GUI.Library
               label2.FontName = _fontName2Name;
 
               // apply padding to label width
+              int label2width = _width - labelWidth;
+              if (_textWidth2 > 0)
+              {
+                label2width = _textWidth2;
+              }
+              else
+              {
+                int label2maxwidth = _width / 3 * 2; // MP1-5167: The Default maximum width of Label 2 is 2/3 of the control's width.
+                if (label2width > label2maxwidth)
+                {
+                  label2width = label2maxwidth;
+                }
+              }
+
               if (_textPadding2 > 0)
               {
-                _width -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
+                label2width -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
               }
-              label2.Width = _width;
+              label2.Width = label2width;
 
               // render label if it still has a visible length
               if (label2.Width > 0)
