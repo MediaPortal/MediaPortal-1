@@ -18,7 +18,9 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.Home
@@ -52,22 +54,22 @@ namespace MediaPortal.GUI.Home
 
       if (SortAscending)
       {
-        if (item1.ItemId > item2.ItemId)
+        if (Convert.ToInt32(item1.Path) > Convert.ToInt32(item2.Path))
         {
           return 1;
         }
-        if (item1.ItemId < item2.ItemId)
+        if (Convert.ToInt32(item1.Path) < Convert.ToInt32(item2.Path))
         {
           return -1;
         }
       }
       else
       {
-        if (item1.ItemId > item2.ItemId)
+        if (Convert.ToInt32(item1.Path) > Convert.ToInt32(item2.Path))
         {
           return -1;
         }
-        if (item1.ItemId < item2.ItemId)
+        if (Convert.ToInt32(item1.Path) < Convert.ToInt32(item2.Path))
         {
           return 1;
         }

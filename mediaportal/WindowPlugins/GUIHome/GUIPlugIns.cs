@@ -93,6 +93,7 @@ namespace MediaPortal.GUI.Home
           string nonFocusTexture;
           string hover;
           string nonFocusHover;
+
           if (setup.GetHome(out plugInText, out focusTexture, out nonFocusTexture, out hover))
           {
             if (setup.PluginName().Equals("Home"))
@@ -102,7 +103,7 @@ namespace MediaPortal.GUI.Home
             IShowPlugin showPlugin = setup as IShowPlugin;
 
             string showInPlugIns = xmlreader.GetValue("myplugins", setup.PluginName());
-            if ((showInPlugIns == null) || (showInPlugIns.Length < 1))
+            if (string.IsNullOrEmpty(showInPlugIns))
             {
               if ((showPlugin != null) && (showPlugin.ShowDefaultHome() == true))
               {
@@ -117,15 +118,15 @@ namespace MediaPortal.GUI.Home
               }
             }
 
-            if ((focusTexture == null) || (focusTexture.Length < 1))
+            if (string.IsNullOrEmpty(focusTexture))
             {
               focusTexture = setup.PluginName();
             }
-            if ((nonFocusTexture == null) || (nonFocusTexture.Length < 1))
+            if (string.IsNullOrEmpty(nonFocusTexture))
             {
               nonFocusTexture = setup.PluginName();
             }
-            if ((hover == null) || (hover.Length < 1))
+            if (string.IsNullOrEmpty(hover))
             {
               hover = setup.PluginName();
             }
@@ -133,7 +134,7 @@ namespace MediaPortal.GUI.Home
             nonFocusTexture = GetNonFocusTextureFileName(nonFocusTexture);
             nonFocusHover = GetNonFocusHoverFileName(hover);
             hover = GetHoverFileName(hover);
-            int index = xmlreader.GetValueAsInt("pluginSorting", "my Plugins", Int32.MaxValue);
+            int index = xmlreader.GetValueAsInt("pluginSorting", setup.PluginName(), Int32.MaxValue);
 
             if (menuMain is GUIMenuControl)
             {
@@ -144,14 +145,19 @@ namespace MediaPortal.GUI.Home
 
             if (menuMain is GUIFacadeControl)
             {
+              string icon = GetIconTextureFileName(setup.PluginName());
+              string iconBig = GetIconBigTextureFileName(setup.PluginName());
+              string thumb = GetThumbTextureFileName(setup.PluginName());
+
               GUIListItem listItem = new GUIListItem(plugInText)
               {
                 Path = index.ToString(),
                 ItemId = setup.GetWindowId(),
                 Label2 = setup.Author(),
                 IsFolder = false,
-                IconImage = focusTexture,
-                ThumbnailImage = hover,
+                IconImage = string.IsNullOrEmpty(icon) ? focusTexture : icon,
+                IconImageBig = string.IsNullOrEmpty(iconBig) ? hover : iconBig,
+                ThumbnailImage = string.IsNullOrEmpty(thumb) ? hover : thumb,
                 AlbumInfoTag = setup
               };
               listItem.OnItemSelected += OnItemSelected;
@@ -166,17 +172,16 @@ namespace MediaPortal.GUI.Home
 
     private void OnItemSelected(GUIListItem item, GUIControl parent)
     {
-      GUIPropertyManager.SetProperty("#pluginname", item.Label);
+      GUIPropertyManager.SetProperty("#pluginname", string.Empty);
       GUIPropertyManager.SetProperty("#pluginauthor", string.Empty);
       GUIPropertyManager.SetProperty("#plugindescription", string.Empty);
 
-      if (item.AlbumInfoTag == null)
+      if (item.AlbumInfoTag != null)
       {
-        return;
+        GUIPropertyManager.SetProperty("#pluginname", (item.AlbumInfoTag as ISetupForm).PluginName());
+        GUIPropertyManager.SetProperty("#pluginauthor", (item.AlbumInfoTag as ISetupForm).Author());
+        GUIPropertyManager.SetProperty("#plugindescription", (item.AlbumInfoTag as ISetupForm).Description());
       }
-
-      GUIPropertyManager.SetProperty("#pluginauthor", (item.AlbumInfoTag as ISetupForm).Author());
-      GUIPropertyManager.SetProperty("#plugindescription", (item.AlbumInfoTag as ISetupForm).Description());
 
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
       if (filmstrip != null)
