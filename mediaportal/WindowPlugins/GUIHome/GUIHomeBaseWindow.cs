@@ -232,6 +232,33 @@ namespace MediaPortal.GUI.Home
       return GetMediaFileName(FileName);
     }
 
+    public string GetIconTextureFileName(string FileName)
+    {
+      if (!FileName.ToLowerInvariant().Contains("home_button_icon_"))
+      {
+        FileName = "home_button_icon_" + FileName;
+      }
+      return GetMediaFileName(FileName);
+    }
+
+    public string GetIconBigTextureFileName(string FileName)
+    {
+      if (!FileName.ToLowerInvariant().Contains("home_button_iconbig_"))
+      {
+        FileName = "home_button_iconbig_" + FileName;
+      }
+      return GetMediaFileName(FileName);
+    }
+
+    public string GetThumbTextureFileName(string FileName)
+    {
+      if (!FileName.ToLowerInvariant().Contains("home_button_thumb_"))
+      {
+        FileName = "home_button_thumb_" + FileName;
+      }
+      return GetMediaFileName(FileName);
+    }
+
     protected string GetMediaFileName(string name)
     {
       if (string.IsNullOrEmpty(Path.GetPathRoot(name)))

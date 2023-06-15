@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2022 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2022 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -79,6 +79,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textpadding2")] protected int _textPadding2 = 0;
     [XMLSkinElement("textpadding3")] protected int _textPadding3 = 0;
 
+    [XMLSkinElement("columnwidth")] protected int _columnWidth1 = 0;
+    [XMLSkinElement("columnwidth2")] protected int _columnWidth2 = 0;
+    [XMLSkinElement("columnwidth3")] protected int _columnWidth3 = 0;
+
     [XMLSkinElement("itemWidth")] protected int _imageWidth = 16;
     [XMLSkinElement("itemHeight")] protected int _imageHeight = 16;
 
@@ -103,10 +107,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("IconXOff")] protected int _iconOffsetX = 8;
     [XMLSkinElement("IconYOff")] protected int _iconOffsetY = 5;
 
-    [XMLSkinElement("texturebg")] private string _backgroundTextureName = "";
-    [XMLSkinElement("lefttexture")] private string _leftTextureName = "";
-    [XMLSkinElement("midtexture")] private string _midTextureName = "";
-    [XMLSkinElement("righttexture")] private string _rightTextureName = "";
+    [XMLSkinElement("texturebg")] private string _backgroundTextureName = string.Empty;
+    [XMLSkinElement("lefttexture")] private string _leftTextureName = string.Empty;
+    [XMLSkinElement("midtexture")] private string _midTextureName = string.Empty;
+    [XMLSkinElement("righttexture")] private string _rightTextureName = string.Empty;
     [XMLSkinElement("ProgressBarWidth")] protected int _widthProgressBar = 0;
     [XMLSkinElement("ProgressBarHeight")] protected int _heightProgressBar = 0;
     [XMLSkinElement("ProgressBarXOffset")] protected int _xOffsetProgressBar = 0;
@@ -121,9 +125,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("keepaspectratio")] protected bool _keepAspectRatio = false;
 
     [XMLSkinElement("suffix")] protected string _suffix = "|";
-    [XMLSkinElement("font")] protected string _fontName = "";
-    [XMLSkinElement("font2")] protected string _fontName2Name = "";
-    [XMLSkinElement("font3")] protected string _fontName3Name = "";
+    [XMLSkinElement("font")] protected string _fontName = string.Empty;
+    [XMLSkinElement("font2")] protected string _fontName2Name = string.Empty;
+    [XMLSkinElement("font3")] protected string _fontName3Name = string.Empty;
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
     [XMLSkinElement("textcolor2")] protected long _textColor2 = 0xFFFFFFFF;
     [XMLSkinElement("textcolor3")] protected long _textColor3 = 0xFFFFFFFF;
@@ -141,19 +145,19 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("folderPrefix")] protected string _folderPrefix = "[";
     [XMLSkinElement("folderSuffix")] protected string _folderSuffix = "]";
 
-    [XMLSkinElement("textureUp")] protected string _upTextureName = "";
-    [XMLSkinElement("textureDown")] protected string _downTextureName = "";
-    [XMLSkinElement("textureUpFocus")] protected string _upTextureNameFocus = "";
-    [XMLSkinElement("textureDownFocus")] protected string _downTextureNameFocus = "";
-    [XMLSkinElement("textureNoFocus")] protected string _buttonNonFocusName = "";
-    [XMLSkinElement("textureFocus")] protected string _buttonFocusName = "";
+    [XMLSkinElement("textureUp")] protected string _upTextureName = string.Empty;
+    [XMLSkinElement("textureDown")] protected string _downTextureName = string.Empty;
+    [XMLSkinElement("textureUpFocus")] protected string _upTextureNameFocus = string.Empty;
+    [XMLSkinElement("textureDownFocus")] protected string _downTextureNameFocus = string.Empty;
+    [XMLSkinElement("textureNoFocus")] protected string _buttonNonFocusName = string.Empty;
+    [XMLSkinElement("textureFocus")] protected string _buttonFocusName = string.Empty;
     [XMLSkinElement("scrollbarwidth")] protected int _scrollbarWidth = 15;
     [XMLSkinElement("scrollbarXOff")] protected int _scrollbarXOff = 0;
 
-    [XMLSkin("textureNoFocus", "border")] protected string _strBorderBNF = "";
+    [XMLSkin("textureNoFocus", "border")] protected string _strBorderBNF = string.Empty;
 
     [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionBNF =
-      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+                                                      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
 
     [XMLSkin("textureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatBNF = false;
     [XMLSkin("textureNoFocus", "textureRotate")] protected bool _borderTextureRotateBNF = false;
@@ -162,10 +166,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("textureNoFocus", "corners")] protected bool _borderHasCornersBNF = false;
     [XMLSkin("textureNoFocus", "cornerRotate")] protected bool _borderCornerTextureRotateBNF = true;
 
-    [XMLSkin("textureFocus", "border")] protected string _strBorderBF = "";
+    [XMLSkin("textureFocus", "border")] protected string _strBorderBF = string.Empty;
 
     [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionBF =
-      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+                                                    GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
 
     [XMLSkin("textureFocus", "textureRepeat")] protected bool _borderTextureRepeatBF = false;
     [XMLSkin("textureFocus", "textureRotate")] protected bool _borderTextureRotateBF = false;
@@ -174,9 +178,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("textureFocus", "corners")] protected bool _borderHasCornersBF = false;
     [XMLSkin("textureFocus", "cornerRotate")] protected bool _borderCornerTextureRotateBF = true;
 
-    [XMLSkinElement("scrollbarbg")] protected string _scrollbarBackgroundName = "";
-    [XMLSkinElement("scrollbartop")] protected string _scrollbarTopName = "";
-    [XMLSkinElement("scrollbarbottom")] protected string _scrollbarBottomName = "";
+    [XMLSkinElement("scrollbarbg")] protected string _scrollbarBackgroundName = string.Empty;
+    [XMLSkinElement("scrollbartop")] protected string _scrollbarTopName = string.Empty;
+    [XMLSkinElement("scrollbarbottom")] protected string _scrollbarBottomName = string.Empty;
 
     [XMLSkinElement("spinColor")] protected long _spinControlColor;
     [XMLSkinElement("spinAlign")] protected Alignment _spinControlAlignment = Alignment.ALIGN_LEFT;
@@ -197,6 +201,7 @@ namespace MediaPortal.GUI.Library
     protected GUIFont _font = null;
     protected GUIFont _font2 = null;
     protected GUIFont _font3 = null;
+
     protected GUISpinControl _upDownControl = null;
     protected List<GUIControl> _listButtons = null;
     protected GUIVerticalScrollbar _verticalScrollbar = null;
@@ -237,7 +242,7 @@ namespace MediaPortal.GUI.Library
     private DateTime _timerKey = DateTime.Now;
     private char _currentKey = (char)0;
     private char _previousKey = (char)0;
-    protected string _searchString = "";
+    protected string _searchString = string.Empty;
     protected int _lastSearchItem = 0;
     protected bool _enableSMSsearch = true;
     protected bool _enableScrollLabel = false;
@@ -245,7 +250,7 @@ namespace MediaPortal.GUI.Library
     private DateTime _scrollTimer = DateTime.Now;
     private int _scrollCounter;
     private const int _scrollCounterLimit = 3;
-    protected string _scrollDirection = "";
+    protected string _scrollDirection = string.Empty;
 
     public GUIListControl(int dwParentID) : base(dwParentID)
     {
@@ -326,15 +331,16 @@ namespace MediaPortal.GUI.Library
       base.FinalizeConstruction();
 
       _font = GUIFontManager.GetFont(_fontName);
-      if (_fontName2Name == string.Empty)
+      if (string.IsNullOrEmpty(_fontName2Name))
       {
         _fontName2Name = _fontName;
       }
-      if (_fontName3Name == string.Empty)
+      Font2 = _fontName2Name;
+
+      if (string.IsNullOrEmpty(_fontName3Name))
       {
         _fontName3Name = _fontName2Name;
       }
-      Font2 = _fontName2Name;
       Font3 = _fontName3Name;
 
       _upDownControl = new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth,
@@ -378,6 +384,9 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleVertical(ref _yOffsetPinIcon);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _widthPinIcon, ref _heightPinIcon);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _imageWidth, ref _imageHeight);
+      GUIGraphicsContext.ScaleHorizontal(ref _columnWidth1);
+      GUIGraphicsContext.ScaleHorizontal(ref _columnWidth2);
+      GUIGraphicsContext.ScaleHorizontal(ref _columnWidth3);
     }
 
     private void item_OnThumbnailRefresh(int buttonNr, bool gotFocus)
@@ -423,18 +432,21 @@ namespace MediaPortal.GUI.Library
       _lastItem = -1;
       _scrollOffsetX = 0.0f;
       _timeElapsed = 0.0f;
+
       // Reset searchstring
       if (_lastSearchItem != (_cursorX + _offset))
       {
         _previousKey = (char)0;
         _currentKey = (char)0;
-        _searchString = "";
+        _searchString = string.Empty;
       }
 
-      string strSelected = "";
-      string strSelected2 = "";
-      string strThumb = "";
-      string strIndex = "";
+      string strSelected = string.Empty;
+      string strSelected2 = string.Empty;
+
+      string strThumb = string.Empty;
+      string strIndex = string.Empty;
+
       int item = GetSelectedItem(ref strSelected, ref strSelected2, ref strThumb, ref strIndex);
       if (!GUIWindowManager.IsRouted)
       {
@@ -494,8 +506,8 @@ namespace MediaPortal.GUI.Library
             {
               GUIListItem pItem2 = _listItems[x];
               //pItem2.RetrieveArt = false;
-              if ((pItem.IconImage != "" && pItem.IconImage == pItem2.IconImage) ||
-                  (pItem.IconImageBig != "" && pItem.IconImageBig == pItem2.IconImageBig))
+              if ((!string.IsNullOrEmpty(pItem.IconImage) && pItem.IconImage == pItem2.IconImage) ||
+                  (!string.IsNullOrEmpty(pItem.IconImageBig) && pItem.IconImageBig == pItem2.IconImageBig))
               {
                 dispose = false;
                 break;
@@ -520,8 +532,8 @@ namespace MediaPortal.GUI.Library
             {
               GUIListItem pItem2 = _listItems[x];
               //pItem2.RetrieveArt = false;
-              if ((pItem.IconImageBig != "" && pItem.IconImage == pItem2.IconImageBig) ||
-                  (pItem.IconImageBig != "" && pItem.IconImageBig == pItem2.IconImageBig))
+              if ((!string.IsNullOrEmpty(pItem.IconImageBig) && pItem.IconImage == pItem2.IconImageBig) ||
+                  (!string.IsNullOrEmpty(pItem.IconImageBig) && pItem.IconImageBig == pItem2.IconImageBig))
               {
                 dispose = false;
                 break;
@@ -715,6 +727,73 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="textColor"></param>
+    /// <param name="textColorNoFocus"></param>
+    /// <param name="selectedColor"></param>
+    /// <param name="selected"></param>
+    /// <param name="played"></param>
+    /// <param name="remote"></param>
+    /// <param name="dvd"></param>
+    /// <param name="focus"></param>
+    /// <param name="addAlpha"></param>
+    protected long GetColor(long textColor, string textColorNoFocus, long selectedColor, 
+                            bool selected, bool played, bool remote, bool downloading, bool dvd, 
+                            bool gotfocus, bool focus)
+    {
+      // set initial text color
+      long color = textColor;
+
+      // override text color if label is not selected
+      if (!gotfocus)
+      {
+        if (long.TryParse(textColorNoFocus, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out long value))
+        {
+          color = value;
+        }
+      }
+
+      // override text color if skin sets it as selected
+      if (selected)
+      {
+        color = selectedColor;
+      }
+
+      // override text color if item is currently played
+      if (played)
+      {
+        color = _playedColor;
+      }
+
+      // override text color if item is on a remote folder
+      if (remote)
+      {
+        color = downloading ? _downloadColor : _remoteColor;
+      }
+
+      // override text color if item is a BD or DVD folder
+      if (dvd)
+      {
+        color = _bdDvdDirectoryColor;
+      }
+
+      // apply unfocusedAlpha to color if item is not selected and plugin didn't set it as selected
+      if (!gotfocus && !selected)
+      {
+        color = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb();
+      }
+
+      // if control is not in focus apply color dimming
+      if (!focus)
+      {
+        color &= DimColor;
+      }
+
+      return color;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     /// <param name="timePassed"></param>
     /// <param name="buttonNumber"></param>
     /// <param name="positionX"></param>
@@ -747,152 +826,64 @@ namespace MediaPortal.GUI.Library
         GUIPropertyManager.SetProperty("#selecteditem.scrolllabel", " ");
       }
 
+      // Render Labels
       if (_listItems.Count > buttonNumber + _offset)
       {
+        // Get Item for rendering
         GUIListItem item = _listItems[buttonNumber + _offset];
-        bool selected = buttonNumber == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST;
-        long color;
 
-        // apply horizontal text offset to position and calculate width
+        // Selected 
+        bool selected = buttonNumber == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST;
+
+        // Apply horizontal text offset to position
         positionX += _textOffsetX;
+
+        // Calculate Label width
         int labelWidth = _width - _textOffsetX - _imageWidth - GUIGraphicsContext.ScaleHorizontal(20);
 
-        if (_text2Visible && item.Label2.Length > 0 && _textOffsetY == _textOffsetY2)
+        if (_text2Visible && !string.IsNullOrEmpty(item.Label2) && _textOffsetY == _textOffsetY2)
         {
-          // set initial text color
-          color = _textColor2;
-
-          // override text color if label is not selected
-          if (!gotFocus)
-          {
-            long value;
-            if (long.TryParse(_textColorNoFocus2, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out value))
-            {
-              color = value;
-            }
-          }
-
-          // override text color if skin sets it as selected
-          if (item.Selected)
-          {
-            color = _selectedColor2;
-          }
-
-          // override text color if item is currently played
-          if (item.IsPlayed)
-          {
-            color = _playedColor;
-          }
-
-          // override text color if item is on a remote folder
-          if (item.IsRemote)
-          {
-            color = item.IsDownloading ? _downloadColor : _remoteColor;
-          }
-
-          // override text color if item is a BD or DVD folder
-          if (item.IsBdDvdFolder)
-          {
-            color = _bdDvdDirectoryColor;
-          }
-
-          // if control is not in focus apply color dimming
-          if (!Focus)
-          {
-            color &= DimColor;
-          }
-
-          // apply horizontal text offset to position
-          int x = _textOffsetX2 == 0 
-            ? _positionX + _width - GUIGraphicsContext.ScaleHorizontal(16) 
-            : _positionX + _textOffsetX2;
-
           if (_labelControls2 != null && buttonNumber >= 0 && buttonNumber < _labelControls2.Count)
           {
             GUILabelControl label2 = _labelControls2[buttonNumber];
             if (label2 != null)
             {
-              // set position for rendering
+              // Apply horizontal text offset to position
+              int x = _textOffsetX2 == 0 
+                ? _positionX + _width - GUIGraphicsContext.ScaleHorizontal(16) 
+                : _positionX + _textOffsetX2;
+
+              // Set position for rendering
               label2.SetPosition(x, positionY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
 
-              // apply unfocusedAlpha if item is not selected and control is in focus, else use color in its current state for rendering
-              label2.TextColor = !gotFocus && Focus
-                ? Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int) color)).ToArgb()
-                : color;
-
-              // set text, alignment and font for rendering
+              // Set text, alignment and font for rendering
               label2.Label = item.Label2;
-              label2.TextAlignment = _text2Alignment;
               label2.FontName = _fontName2Name;
 
-              // recalculate label width
+              // Recalculate label width
               labelWidth = label2._positionX - positionX - label2.TextWidth - GUIGraphicsContext.ScaleHorizontal(20);
             }
           }
         }
 
-        if (_text1Visible)
+        // If there is a first label present process it
+        if (_text1Visible && !string.IsNullOrEmpty(item.Label))
         {
-          // set initial text color
-          color = _textColor;
+          // Set text color
+          long color = GetColor(_textColor, _textColorNoFocus, _selectedColor, 
+                                item.Selected, item.IsPlayed, item.IsRemote, item.IsDownloading, item.IsBdDvdFolder, 
+                                gotFocus, Focus);
 
-          // override text color if label is not selected
-          if (!gotFocus)
-          {
-            long value;
-            if (long.TryParse(_textColorNoFocus, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out value))
-            {
-              color = value;
-            }
-          }
-
-          // override text color if skin sets it as selected
-          if (item.Selected)
-          {
-            color = _selectedColor;
-          }
-
-          // override text color if item is currently played
-          if (item.IsPlayed)
-          {
-            color = _playedColor;
-          }
-
-          // override text color if item is on a remote folder
-          if (item.IsRemote)
-          {
-            color = item.IsDownloading ? _downloadColor : _remoteColor;
-          }
-
-          // override text color if item is a BD or DVD folder
-          if (item.IsBdDvdFolder)
-          {
-            color = _bdDvdDirectoryColor;
-          }
-
-          // apply unfocusedAlpha to color if item is not selected and plugin didn't set it as selected
-          if (!gotFocus && !item.Selected)
-          {
-            color = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb();
-          }
-
-          // if control is not in focus apply color dimming
-          if (!Focus)
-          {
-            color &= DimColor;
-          }
-
-          // apply padding to label width 
-          int maxWidth = labelWidth;
+          // Apply padding to label width 
           if (_textPadding > 0)
           {
-            maxWidth -= GUIGraphicsContext.ScaleHorizontal(_textPadding);
+            labelWidth -= GUIGraphicsContext.ScaleHorizontal(_textPadding);
           }
 
-          // render label if it still has a visible length
-          if (maxWidth > 0)
+          // Render label if it still has a visible length
+          if (labelWidth > 0)
           {
-            RenderText(timePassed, buttonNumber, positionX, (float) positionY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, maxWidth, color, item.Label, selected);
+            RenderText(timePassed, buttonNumber, positionX, (float) positionY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, labelWidth, color, item.Label, selected);
           }
           else
           {
@@ -900,92 +891,53 @@ namespace MediaPortal.GUI.Library
           }
         }
 
-        // if there is a second label present process it
-        if (item.Label2.Length > 0)
+        // If there is a second label present process it
+        if (_text2Visible && !string.IsNullOrEmpty(item.Label2))
         {
-          // set initial text color
-          color = _textColor2;
-
-          // override text color if label is not selected
-          if (!gotFocus)
-          {
-            long value;
-            if (long.TryParse(_textColorNoFocus2, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out value))
-            {
-              color = value;
-            }
-          }
-
-          // override text color if skin sets it as selected
-          if (item.Selected)
-          {
-            color = _selectedColor2;
-          }
-
-          // override text color if item is currently played
-          if (item.IsPlayed)
-          {
-            color = _playedColor;
-          }
-
-          // override text color if item is on a remote folder
-          if (item.IsRemote)
-          {
-            color = item.IsDownloading ? _downloadColor : _remoteColor; 
-          }
-
-          // override text color if item is a BD or DVD folder
-          if (item.IsBdDvdFolder)
-          {
-            color = _bdDvdDirectoryColor;
-          }
-
-          // apply unfocusedAlpha to color if item is not selected and plugin didn't set it as selected
-          if (!gotFocus && !item.Selected)
-          {
-            color = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb();
-          }
-
-          // if control is not in focus apply color dimming
-          if (!Focus)
-          {
-            color &= DimColor;
-          }
-
-          // apply horizontal text offset to position
-          if (_textOffsetX2 == 0)
-          {
-            positionX = _positionX + _width - GUIGraphicsContext.ScaleHorizontal(16);
-          }
-          else
-          {
-            positionX = _positionX + _textOffsetX2;
-          }
-
-          if (_text2Visible && (_labelControls2 != null) && (buttonNumber >= 0) && (buttonNumber < _labelControls2.Count))
+          if (_labelControls2 != null && buttonNumber >= 0 && buttonNumber < _labelControls2.Count)
           {
             GUILabelControl label2 = _labelControls2[buttonNumber];
             if (label2 != null)
             {
-              // set position for rendering
+              // Get text color
+              long color = GetColor(_textColor2, _textColorNoFocus2, _selectedColor2,
+                                    item.Selected, item.IsPlayed, item.IsRemote, item.IsDownloading, item.IsBdDvdFolder,
+                                    gotFocus, Focus);
+
+              // Apply horizontal text offset to position
+              if (_textOffsetX2 == 0)
+              {
+                positionX = _positionX + _width - GUIGraphicsContext.ScaleHorizontal(16);
+              }
+              else
+              {
+                positionX = _positionX + _textOffsetX2;
+              }
+
+              // Set position for rendering
               label2.SetPosition(positionX - GUIGraphicsContext.ScaleHorizontal(6), positionY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
 
               // set label text color
               label2.TextColor = color;
 
-              // set text, alignment and font for rendering
+              // Set label text for rendering
               label2.Label = item.Label2;
+
+              // Set alignment, font for rendering
               label2.TextAlignment = _text2Alignment;
               label2.FontName = _fontName2Name;
 
-              // apply padding to label width
+              // Set width for rendering
+              int label2Width = _width;
+
+              // Apply padding to label width
               if (_textPadding2 > 0)
               {
-                _width -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
+                label2Width -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
               }
-              label2.Width = _width;
+              label2.Width = label2Width;
 
-              // render label if it still has a visible length
+              // Render label if it still has a visible length
               if (label2.Width > 0)
               {
                 label2.Render(timePassed);
@@ -999,98 +951,57 @@ namespace MediaPortal.GUI.Library
         }
 
         // if there is a third label present process it
-        if (item.Label3.Length > 0 || !string.IsNullOrEmpty(_text3Content))
+        if (_text3Visible && (!string.IsNullOrEmpty(item.Label3) || !string.IsNullOrEmpty(_text3Content)))
         {
-          // set initial text color
-          color = _textColor3;
-
-          // override text color if label is not selected
-          if (!gotFocus)
-          {
-            long value;
-            if (long.TryParse(_textColorNoFocus3, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out value))
-            {
-              color = value;
-            }
-          }
-
-          // override text color if skin sets it as selected
-          if (item.Selected)
-          {
-            color = _selectedColor3;
-          }
-
-          // override text color if item is currently played
-          if (item.IsPlayed)
-          {
-            color = _playedColor;
-          }
-
-          // override text color if item is on a remote folder
-          if (item.IsRemote)
-          {
-            color = item.IsDownloading ? _downloadColor : _remoteColor;
-          }
-
-          // override text color if item is a BD or DVD folder
-          if (item.IsBdDvdFolder)
-          {
-            color = _bdDvdDirectoryColor;
-          }
-
-          // apply unfocusedAlpha to color if item is not selected and plugin didn't set it as selected
-          if (!gotFocus && !item.Selected)
-          {
-            color = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb();
-          }
-
-          // if control is not in focus apply color dimming
-          if (!Focus)
-          {
-            color &= DimColor;
-          }
-
-          // apply horizontal text offset to position
-          positionX = _textOffsetX3 == 0 ? _positionX + _textOffsetX : _positionX + _textOffsetX3;
-
-          // apply vertical text offset to position
-          int ypos = positionY;
-          ypos += _textOffsetY3 == 0 ? _textOffsetY2 : _textOffsetY3;
-
-          if (_text3Visible && _labelControls3 != null && buttonNumber >= 0 && buttonNumber < _labelControls3.Count)
+          if (_labelControls3 != null && buttonNumber >= 0 && buttonNumber < _labelControls3.Count)
           {
             GUILabelControl label3 = _labelControls3[buttonNumber];
-
             if (label3 != null)
             {
-              // set position for rendering
+              // Get text color
+              long color = GetColor(_textColor3, _textColorNoFocus3, _selectedColor3,
+                                    item.Selected, item.IsPlayed, item.IsRemote, item.IsDownloading, item.IsBdDvdFolder,
+                                    gotFocus, Focus);
+
+              // Apply horizontal text offset to position
+              positionX = _textOffsetX3 == 0 ? _positionX + _textOffsetX : _positionX + _textOffsetX3;
+
+              // Apply vertical text offset to position
+              int ypos = positionY;
+              ypos += _textOffsetY3 == 0 ? _textOffsetY2 : _textOffsetY3;
+
+              // Set position for rendering
               label3.SetPosition(positionX, ypos);
 
-              // set label text color
+              // Set label text color
               label3.TextColor = color;
 
-              // set label text for rendering
+              // Set label text for rendering
               label3.Label = item.Label3;
               if (!string.IsNullOrEmpty(_text3Content))
               {
                 label3.Label = SetLabel(_text3Content, item);
               }
 
-              // set alignment, font and width for rendering
+              // Set alignment, font and width for rendering
+              // Set alignment, font for rendering
               label3.TextAlignment = _text3Alignment;
               label3.FontName = _fontName3Name;
-              label3.Width = _width - _textOffsetX - _imageWidth - GUIGraphicsContext.ScaleHorizontal(34);
             
-              // adjust label width with padding
+              // Set width for rendering
+              int label3Width = _width - _textOffsetX - _imageWidth - GUIGraphicsContext.ScaleHorizontal(34);
+
+              // Adjust label width with padding
               if (_textPadding3 > 0)
               {
-                label3.Width -= GUIGraphicsContext.ScaleHorizontal(_textPadding3);
+                label3Width -= GUIGraphicsContext.ScaleHorizontal(_textPadding3);
               }
+              label3.Width = label3Width;
 
-              // render label if it still has a visible length
+              // Render label if it still has a visible length
               if (label3.Width > 0)
               {
-                RenderText(timePassed, buttonNumber, label3, selected);
+                label3.Render(timePassed);
               }
               else
               {
@@ -1105,6 +1016,7 @@ namespace MediaPortal.GUI.Library
     private string SetLabel(string textContent, GUIListItem item)
     {
       string label = string.Empty;
+
       switch (textContent.ToLowerInvariant())
       {
         case "#selectedindex":
@@ -1131,13 +1043,15 @@ namespace MediaPortal.GUI.Library
           label = item.Label2;
           break;
 
-          /*case "#itemcount":
+        /*
+        case "#itemcount":
           label = GUIPropertyManager.GetProperty("#itemcount");
           break;
 
         case "#selectedthumb":
           label = item.ThumbnailImage;
-          break;*/
+          break;
+        */
 
         case "#rating":
           label = item.Rating.ToString(CultureInfo.InvariantCulture);
@@ -1345,6 +1259,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
+
       if (item < 0 || item >= _labelControls1.Count)
       {
         return;
@@ -1356,6 +1271,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
+
       float textWidth = 0;
       float textHeight = 0;
       if (_font != null) _font.GetTextExtent(label.Label, ref textWidth, ref textHeight);
@@ -1374,6 +1290,7 @@ namespace MediaPortal.GUI.Library
       label.Width = (int)fMaxWidth;
       label.TextAlignment = textWidth < fMaxWidth ? _textAlignment : Alignment.ALIGN_LEFT;
       label.FontName = _fontName;
+
       RenderText(timePassed, item, label, bScroll);
     }
 
@@ -1474,7 +1391,7 @@ namespace MediaPortal.GUI.Library
       {
         // scrolling necessary
         fMaxWidth += 50.0f;
-        _textLine2 = "";
+        _textLine2 = string.Empty;
         if (_lastItem != iItem)
         {
           _scrollPosition = 0;
@@ -1498,7 +1415,7 @@ namespace MediaPortal.GUI.Library
           else
           {
             // advance 1 - 3 pixels every frame
-            _scrollPosititionX = _scrollPosititionX + (GUIGraphicsContext.ScrollSpeedHorizontal - 2);
+            _scrollPosititionX += (GUIGraphicsContext.ScrollSpeedHorizontal - 2);
           }
 
           char wTmp = _scrollPosition >= _brackedText.Length ? ' ' : _brackedText[_scrollPosition];
@@ -1588,7 +1505,7 @@ namespace MediaPortal.GUI.Library
       switch (action.wID)
       {
         case Action.ActionType.ACTION_PAGE_UP:
-          _searchString = "";
+          _searchString = string.Empty;
           OnPageUp();
           _refresh = true;
           break;
@@ -1599,7 +1516,7 @@ namespace MediaPortal.GUI.Library
           break;
 
         case Action.ActionType.ACTION_HOME:
-          _searchString = "";
+          _searchString = string.Empty;
           _offset = 0;
           _cursorX = 0;
           _upDownControl.Value = 1;
@@ -1608,7 +1525,7 @@ namespace MediaPortal.GUI.Library
           break;
 
         case Action.ActionType.ACTION_END:
-          _searchString = "";
+          _searchString = string.Empty;
           int iItem = _listItems.Count - 1;
           if (iItem >= 0)
           {
@@ -1644,25 +1561,25 @@ namespace MediaPortal.GUI.Library
           break;
 
         case Action.ActionType.ACTION_MOVE_DOWN:
-          _searchString = "";
+          _searchString = string.Empty;
           OnDown();
           _refresh = true;
           break;
 
         case Action.ActionType.ACTION_MOVE_UP:
-          _searchString = "";
+          _searchString = string.Empty;
           OnUp();
           _refresh = true;
           break;
 
         case Action.ActionType.ACTION_MOVE_LEFT:
-          _searchString = "";
+          _searchString = string.Empty;
           OnLeft();
           _refresh = true;
           break;
 
         case Action.ActionType.ACTION_MOVE_RIGHT:
-          _searchString = "";
+          _searchString = string.Empty;
           OnRight();
           _refresh = true;
           break;
@@ -1791,7 +1708,7 @@ namespace MediaPortal.GUI.Library
         _drawFocus = true;
         if (!bUpDown && _listType == ListType.CONTROL_LIST)
         {
-          _searchString = "";
+          _searchString = string.Empty;
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID,
                                           (int)Action.ActionType.ACTION_SELECT_ITEM, 0, null);
           GUIGraphicsContext.SendMessage(msg);
@@ -2377,6 +2294,7 @@ namespace MediaPortal.GUI.Library
     public override void PreAllocResources()
     {
       base.PreAllocResources();
+
       _upDownControl.PreAllocResources();
       _verticalScrollbar.PreAllocResources();
     }
@@ -2406,6 +2324,7 @@ namespace MediaPortal.GUI.Library
                           _borderCornerTextureRotateBNF);
         cntl.AllocResources();
         cntl.DimColor = DimColor;
+
         _listButtons.Add(cntl);
       }
     }
@@ -2423,11 +2342,13 @@ namespace MediaPortal.GUI.Library
       SafelyDispose();
 
       base.AllocResources();
+
       _upDownControl.AllocResources();
       _verticalScrollbar.AllocResources();
 
       _font = GUIFontManager.GetFont(_fontName);
       _font2 = GUIFontManager.GetFont(_fontName2Name);
+      _font3 = GUIFontManager.GetFont(_fontName3Name);
 
       float fHeight = (float)_itemHeight + _spaceBetweenItems;
       float fTotalHeight = _height - _upDownControl.Height - 5;
@@ -2437,28 +2358,32 @@ namespace MediaPortal.GUI.Library
       _labelControls1 = new List<GUILabelControl>();
       _labelControls2 = new List<GUILabelControl>();
       _labelControls3 = new List<GUILabelControl>();
+
       AllocButtons();
+
       for (int i = 0; i < _itemsPerPage; ++i)
       {
-        GUILabelControl cntl1 = new GUILabelControl(_controlId, 0, 0, 0, 0, 0, _fontName, "", _textColor,
+        GUILabelControl cntl1 = new GUILabelControl(_controlId, 0, 0, 0, 0, 0, _fontName, string.Empty, _textColor,
                                                     Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false,
                                                     _shadowAngle, _shadowDistance, _shadowColor);
-        GUILabelControl cntl2 = new GUILabelControl(_controlId, 0, 0, 0, 0, 0, _fontName2Name, "", _textColor2,
+        GUILabelControl cntl2 = new GUILabelControl(_controlId, 0, 0, 0, 0, 0, _fontName2Name, string.Empty, _textColor2,
                                                     Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false,
                                                     _shadowAngle, _shadowDistance, _shadowColor);
-        GUILabelControl cntl3 = new GUILabelControl(_controlId, 0, 0, 0, 0, 0, _fontName2Name, "", _textColor3,
+        GUILabelControl cntl3 = new GUILabelControl(_controlId, 0, 0, 0, 0, 0, _fontName2Name, string.Empty, _textColor3,
                                                     Alignment.ALIGN_RIGHT, VAlignment.ALIGN_TOP, false,
                                                     _shadowAngle, _shadowDistance, _shadowColor);
         if (_backgroundTextureName != string.Empty && _leftTextureName != string.Empty &&
           _midTextureName != string.Empty && _rightTextureName != string.Empty)
         {
-          GUIProgressControl progressCtl = new GUIProgressControl(_controlId, 0, 0, 0, GUIGraphicsContext.ScaleHorizontal(_widthProgressBar),
+          GUIProgressControl progressCtl = new GUIProgressControl(_controlId, 0, 0, 0, 
+                                                                  GUIGraphicsContext.ScaleHorizontal(_widthProgressBar),
                                                                   GUIGraphicsContext.ScaleVertical(_heightProgressBar),
-                                                                  _backgroundTextureName, _leftTextureName, _midTextureName, _rightTextureName);
-        progressCtl.ParentControl = this;
-        progressCtl.AllocResources();
-        progressCtl.Visible = false;
-        _listProgresses.Add(progressCtl);
+                                                                  _backgroundTextureName, _leftTextureName, 
+                                                                  _midTextureName, _rightTextureName);
+          progressCtl.ParentControl = this;
+          progressCtl.AllocResources();
+          progressCtl.Visible = false;
+          _listProgresses.Add(progressCtl);
         }
 
         cntl1.ParentControl = this;
@@ -2472,6 +2397,7 @@ namespace MediaPortal.GUI.Library
         cntl1.DimColor = DimColor;
         cntl2.DimColor = DimColor;
         cntl3.DimColor = DimColor;
+
         _labelControls1.Add(cntl1);
         _labelControls2.Add(cntl2);
         _labelControls3.Add(cntl3);
@@ -2894,8 +2820,10 @@ namespace MediaPortal.GUI.Library
 
       _textOffsetX = iXoffset;
       _textOffsetY = iYOffset;
+
       _textOffsetX2 = iXoffset2;
       _textOffsetY2 = iYOffset2;
+
       _textOffsetX3 = iXoffset3;
       _textOffsetY3 = iYOffset3;
     }
@@ -2960,7 +2888,8 @@ namespace MediaPortal.GUI.Library
         {
           return;
         }
-        if (value != "")
+
+        if (!string.IsNullOrEmpty(value))
         {
           _fontName2Name = value;
           _font2 = GUIFontManager.GetFont(value);
@@ -2990,7 +2919,7 @@ namespace MediaPortal.GUI.Library
         {
           return;
         }
-        if (value != "")
+        if (!string.IsNullOrEmpty(value))
         {
           _fontName3Name = value;
           _font3 = GUIFontManager.GetFont(value);
@@ -2998,12 +2927,22 @@ namespace MediaPortal.GUI.Library
           {
             _fontName3Name = _fontName2Name;
             _font3 = GUIFontManager.GetFont(_fontName2Name);
+            if (null == _font3)
+            {
+              _fontName3Name = _fontName;
+              _font3 = GUIFontManager.GetFont(_fontName);
+            }
           }
         }
         else
         {
           _fontName3Name = _fontName2Name;
           _font3 = GUIFontManager.GetFont(_fontName2Name);
+          if (null == _font3)
+          {
+            _fontName3Name = _fontName;
+            _font3 = GUIFontManager.GetFont(_fontName);
+          }
         }
       }
     }
@@ -3032,10 +2971,11 @@ namespace MediaPortal.GUI.Library
 
     public int GetSelectedItem(ref string strLabel, ref string strLabel2, ref string strThumb, ref string strIndex)
     {
-      strLabel = "";
-      strLabel2 = "";
-      strThumb = "";
-      strIndex = "";
+      strLabel = string.Empty;
+      strLabel2 = string.Empty;
+      strThumb = string.Empty;
+      strIndex = string.Empty;
+
       int iItem = _cursorX + _offset;
       if (iItem >= 0 && iItem < _listItems.Count)
       {
@@ -3057,7 +2997,7 @@ namespace MediaPortal.GUI.Library
         {
           index++;
         }
-        strIndex = pItem.Label == ".." ? "" : index.ToString(CultureInfo.InvariantCulture);
+        strIndex = pItem.Label == ".." ? string.Empty : index.ToString(CultureInfo.InvariantCulture);
 
         if (pItem.IsFolder)
         {
@@ -3683,7 +3623,7 @@ namespace MediaPortal.GUI.Library
     {
       wrappedLines = new ArrayList();
       GUILabelControl cntl1 = new GUILabelControl(_controlId, 0, 0, 0, GUIGraphicsContext.Width,
-                                                  GUIGraphicsContext.Height, _fontName, "", _textColor,
+                                                  GUIGraphicsContext.Height, _fontName, string.Empty, _textColor,
                                                   Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false,
                                                   _shadowAngle, _shadowDistance, _shadowColor) {ParentControl = this};
       cntl1.AllocResources();
@@ -3696,7 +3636,7 @@ namespace MediaPortal.GUI.Library
       int lpos = 0;
       int iLastSpace = -1;
       int iLastSpaceInLine = -1;
-      string szLine = "";
+      string szLine = string.Empty;
       strText = strText.Replace("\r", " ");
       strText.Trim();
       while (pos < strText.Length)
@@ -3714,7 +3654,7 @@ namespace MediaPortal.GUI.Library
           iLastSpace = -1;
           iLastSpaceInLine = -1;
           lpos = 0;
-          szLine = "";
+          szLine = string.Empty;
         }
         else
         {
@@ -3746,7 +3686,7 @@ namespace MediaPortal.GUI.Library
             iLastSpaceInLine = -1;
             iLastSpace = -1;
             lpos = 0;
-            szLine = "";
+            szLine = string.Empty;
           }
           else
           {
