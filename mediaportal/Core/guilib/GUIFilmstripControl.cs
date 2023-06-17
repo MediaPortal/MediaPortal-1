@@ -1466,7 +1466,9 @@ namespace MediaPortal.GUI.Library
             {
               // Check key
               if (((action.m_key.KeyChar >= '0') && (action.m_key.KeyChar <= '9')) ||
-                  action.m_key.KeyChar == '*' || action.m_key.KeyChar == '(' || action.m_key.KeyChar == '#' ||
+                  action.m_key.KeyChar == '*' ||
+                  action.m_key.KeyChar == '(' ||
+                  action.m_key.KeyChar == '#' ||
                   action.m_key.KeyChar == '§')
               {
                 Press((char)action.m_key.KeyChar);

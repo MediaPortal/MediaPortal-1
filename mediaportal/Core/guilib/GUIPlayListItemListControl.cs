@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -553,8 +553,6 @@ namespace MediaPortal.GUI.Library
 
     public override void Render(float timePassed)
     {
-      _timeElapsed += timePassed;
-
       // If there is no font do not render.
       if (null == _font)
       {
@@ -604,6 +602,8 @@ namespace MediaPortal.GUI.Library
 
           // render the text
           RenderLabel(timePassed, i, dwPosX, dwPosY, gotFocus);
+
+          // render pin icon
           RenderPinIcon(timePassed, i, _positionX, dwPosY, gotFocus);
 
           dwPosY += _itemHeight + _spaceBetweenItems;
