@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2020 Team MediaPortal
+﻿#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -730,7 +730,9 @@ namespace MediaPortal.GUI.Library
             {
               // Check key
               if (((action.m_key.KeyChar >= '0') && (action.m_key.KeyChar <= '9')) ||
-                  action.m_key.KeyChar == '*' || action.m_key.KeyChar == '(' || action.m_key.KeyChar == '#' ||
+                  action.m_key.KeyChar == '*' ||
+                  action.m_key.KeyChar == '(' ||
+                  action.m_key.KeyChar == '#' ||
                   action.m_key.KeyChar == '§')
               {
                 Press((char)action.m_key.KeyChar);

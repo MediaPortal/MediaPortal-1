@@ -75,6 +75,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textYOff2")] protected int _textOffsetY2;
     [XMLSkinElement("textXOff3")] protected int _textOffsetX3;
     [XMLSkinElement("textYOff3")] protected int _textOffsetY3;
+
     [XMLSkinElement("textpadding")] protected int _textPadding = 0;
     [XMLSkinElement("textpadding2")] protected int _textPadding2 = 0;
     [XMLSkinElement("textpadding3")] protected int _textPadding3 = 0;
@@ -222,16 +223,9 @@ namespace MediaPortal.GUI.Library
     protected bool _upDownControlVisible = true;
 
     protected bool _refresh = false;
-    protected string _textLine2;
-    protected string _brackedText;
 
-    protected int _scrollPosition = 0;
-    protected int _scrollPosititionX = 0;
+    protected RenderScrollCache ScrollCache = new RenderScrollCache();
     protected int _lastItem = -1;
-
-    protected double _scrollOffsetX = 0.0f;
-    protected double _timeElapsed = 0.0f;
-    protected bool _scrollContinuously = false;
 
     protected bool _drawFocus = true;
     protected double _lastCommandTime = 0;
@@ -427,11 +421,8 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      _scrollPosition = 0;
-      _scrollPosititionX = 0;
       _lastItem = -1;
-      _scrollOffsetX = 0.0f;
-      _timeElapsed = 0.0f;
+      ScrollCache.Clear();
 
       // Reset searchstring
       if (_lastSearchItem != (_cursorX + _offset))
@@ -883,7 +874,9 @@ namespace MediaPortal.GUI.Library
           // Render label if it still has a visible length
           if (labelWidth > 0)
           {
-            RenderText(timePassed, buttonNumber, positionX, (float) positionY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, labelWidth, color, item.Label, selected);
+            RenderText(timePassed, buttonNumber, 
+                       positionX, positionY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, 
+                       labelWidth, color, item.Label, selected);
           }
           else
           {
@@ -903,19 +896,6 @@ namespace MediaPortal.GUI.Library
               long color = GetColor(_textColor2, _textColorNoFocus2, _selectedColor2,
                                     item.Selected, item.IsPlayed, item.IsRemote, item.IsDownloading, item.IsBdDvdFolder,
                                     gotFocus, Focus);
-
-              // Apply horizontal text offset to position
-              if (_textOffsetX2 == 0)
-              {
-                positionX = _positionX + _width - GUIGraphicsContext.ScaleHorizontal(16);
-              }
-              else
-              {
-                positionX = _positionX + _textOffsetX2;
-              }
-
-              // Set position for rendering
-              label2.SetPosition(positionX - GUIGraphicsContext.ScaleHorizontal(6), positionY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
 
               // set label text color
               label2.TextColor = color;
@@ -937,10 +917,28 @@ namespace MediaPortal.GUI.Library
               }
               label2.Width = label2Width;
 
+              // Apply horizontal text offset to position
+              if (_textOffsetX2 == 0)
+              {
+                positionX = _positionX + _width - GUIGraphicsContext.ScaleHorizontal(16);
+              }
+              else
+              {
+                positionX = _positionX + _textOffsetX2;
+              }
+
+              // Set position for rendering
+              // label2.SetPosition(positionX - GUIGraphicsContext.ScaleHorizontal(6), positionY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
+
               // Render label if it still has a visible length
               if (label2.Width > 0)
               {
-                label2.Render(timePassed);
+                // label2.Render(timePassed);
+                RenderText(timePassed, label2, 
+                           positionX - GUIGraphicsContext.ScaleHorizontal(6), 
+                           positionY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2, 
+                           label2Width,
+                           selected, false);
               }
               else
               {
@@ -963,16 +961,6 @@ namespace MediaPortal.GUI.Library
                                     item.Selected, item.IsPlayed, item.IsRemote, item.IsDownloading, item.IsBdDvdFolder,
                                     gotFocus, Focus);
 
-              // Apply horizontal text offset to position
-              positionX = _textOffsetX3 == 0 ? _positionX + _textOffsetX : _positionX + _textOffsetX3;
-
-              // Apply vertical text offset to position
-              int ypos = positionY;
-              ypos += _textOffsetY3 == 0 ? _textOffsetY2 : _textOffsetY3;
-
-              // Set position for rendering
-              label3.SetPosition(positionX, ypos);
-
               // Set label text color
               label3.TextColor = color;
 
@@ -983,7 +971,6 @@ namespace MediaPortal.GUI.Library
                 label3.Label = SetLabel(_text3Content, item);
               }
 
-              // Set alignment, font and width for rendering
               // Set alignment, font for rendering
               label3.TextAlignment = _text3Alignment;
               label3.FontName = _fontName3Name;
@@ -998,10 +985,23 @@ namespace MediaPortal.GUI.Library
               }
               label3.Width = label3Width;
 
+              // Apply horizontal text offset to position
+              positionX = _textOffsetX3 == 0 ? _positionX + _textOffsetX : _positionX + _textOffsetX3;
+
+              // Apply vertical text offset to position
+              int ypos = positionY;
+              ypos += _textOffsetY3 == 0 ? _textOffsetY2 : _textOffsetY3;
+
+              // Set position for rendering
+              // label3.SetPosition(positionX, ypos);
+
               // Render label if it still has a visible length
               if (label3.Width > 0)
               {
-                label3.Render(timePassed);
+                // label3.Render(timePassed);
+                RenderText(timePassed, label3, 
+                           positionX, ypos, 
+                           label3Width, selected, false);
               }
               else
               {
@@ -1092,7 +1092,6 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void Render(float timePassed)
     {
-      _timeElapsed += timePassed;
       // If there is no font do not render.
       if (null == _font)
       {
@@ -1149,9 +1148,6 @@ namespace MediaPortal.GUI.Library
           int labelX;
           int pinX;
 
-          int ten = 10;
-          GUIGraphicsContext.ScaleHorizontal(ref ten);
-
           switch (_textAlignment)
           {
             case Alignment.ALIGN_RIGHT:
@@ -1161,7 +1157,7 @@ namespace MediaPortal.GUI.Library
               break;
             default:
               iconX = dwPosX + _iconOffsetX;
-              labelX = dwPosX + _imageWidth + ten;
+              labelX = dwPosX + _imageWidth + GUIGraphicsContext.ScaleHorizontal(10);
               pinX = dwPosX;
               break;
           }
@@ -1173,9 +1169,12 @@ namespace MediaPortal.GUI.Library
           RenderLabel(timePassed, i, labelX, dwPosY, gotFocus);
 
           // render progressbar
-          RenderProgressBar(timePassed, i, dwPosX + GUIGraphicsContext.ScaleHorizontal(_xOffsetProgressBar),
-                            dwPosY + GUIGraphicsContext.ScaleVertical(_yOffsetProgressBar), gotFocus);
+          RenderProgressBar(timePassed, i,
+                            dwPosX + GUIGraphicsContext.ScaleHorizontal(_xOffsetProgressBar),
+                            dwPosY + GUIGraphicsContext.ScaleVertical(_yOffsetProgressBar),
+                            gotFocus);
 
+          // render pin icon
           RenderPinIcon(timePassed, i, pinX, dwPosY, gotFocus);
 
           try
@@ -1251,7 +1250,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="strTextToRender">The actual text.</param>
     /// <param name="bScroll">A bool indication if there is scrolling or not.</param>
     /// <param name="timePassed"></param>
-    protected void RenderText(float timePassed, int item, float fPosX, float fPosY, float fMaxWidth, long dwTextColor,
+    protected void RenderText(float timePassed, int item, float fPosX, float fPosY, 
+                              float fMaxWidth, long dwTextColor,
                               string strTextToRender, bool bScroll)
     {
       // TODO Unify render text methods into one general rendertext method.
@@ -1266,32 +1266,57 @@ namespace MediaPortal.GUI.Library
       }
 
       GUILabelControl label = _labelControls1[item];
-
       if (label == null)
       {
         return;
       }
 
-      float textWidth = 0;
-      float textHeight = 0;
-      if (_font != null) _font.GetTextExtent(label.Label, ref textWidth, ref textHeight);
+      label.TextColor = dwTextColor;
+      label.Label = strTextToRender;
+      label.TextAlignment = _textAlignment;
+      label.FontName = _fontName;
 
-      if (_textAlignment == Alignment.ALIGN_RIGHT && textWidth < fMaxWidth)
+      RenderText(timePassed, label, fPosX, fPosY, fMaxWidth, bScroll);
+    }
+
+    /// <summary>
+    /// Renders the Label text.
+    /// </summary>
+    /// <param name="label"></param>
+    /// <param name="fPosX">The X position of the text.</param>
+    /// <param name="fPosY">The Y position of the text.</param>
+    /// <param name="fMaxWidth">The maximum render width.</param>
+    /// <param name="dwTextColor">The color of the text.</param>
+    /// <param name="bScroll">A bool indication if there is scrolling or not.</param>
+    /// <param name="move">A bool indication if need move position X for Right Align or not.</param>
+    /// <param name="timePassed"></param>
+    protected void RenderText(float timePassed, GUILabelControl label,
+                              float fPosX, float fPosY, 
+                              float fMaxWidth, 
+                              bool bScroll, bool move = true)
+    {
+      if (label == null)
       {
-        label.SetPosition((int)(fPosX + fMaxWidth), (int)fPosY);
+        return;
+      }
+
+      label.Width = (int)fMaxWidth;
+
+      if (move && label.TextAlignment == Alignment.ALIGN_RIGHT && label.TextWidth < label.Width)
+      {
+        label.SetPosition((int)(fPosX + label.Width), (int)fPosY);
       }
       else
       {
         label.SetPosition((int)fPosX, (int)fPosY);
       }
 
-      label.TextColor = dwTextColor;
-      label.Label = strTextToRender;
-      label.Width = (int)fMaxWidth;
-      label.TextAlignment = textWidth < fMaxWidth ? _textAlignment : Alignment.ALIGN_LEFT;
-      label.FontName = _fontName;
+      if (label.TextWidth >= label.Width)
+      {
+        label.TextAlignment = Alignment.ALIGN_LEFT;
+      }
 
-      RenderText(timePassed, item, label, bScroll);
+      RenderText(timePassed, 0, label, bScroll);
     }
 
     /// <summary>
@@ -1305,35 +1330,21 @@ namespace MediaPortal.GUI.Library
     {
       float fPosX = label._positionX;
       float fPosY = label._positionY;
-      float fMaxWidth = label.Width;
-      long dwTextColor = label.TextColor;
-      string strTextToRender = label.Label;
-      GUIFont font = GUIFontManager.GetFont(label.FontName);
 
-      if (!bScroll || label.TextWidth <= fMaxWidth)
+      if (!bScroll || label.TextWidth <= label.Width)
       {
         // don't scroll here => x-position is constant
         label.Render(timePassed);
         return;
       }
 
-      float fTextHeight = 0;
-      float fTextWidth = 0;
-      font.GetTextExtent(strTextToRender, ref fTextWidth, ref fTextHeight);
-      float fWidth = 0;
-
-      float fPosCX = fPosX;
-      float fPosCY = fPosY;
-
-      if (fPosCX < 0)
+      float fPosCX = fPosX < 0 ? 0.0f : fPosX;
+      if (fPosCX > GUIGraphicsContext.Width)
       {
-        fPosCX = 0.0f;
-      }
-      if (fPosCY < 0)
-      {
-        fPosCY = 0.0f;
+        fPosCX = GUIGraphicsContext.Width;
       }
 
+      float fPosCY = fPosY < 0 ? 0.0f : fPosY;
       if (fPosCY > GUIGraphicsContext.Height)
       {
         fPosCY = GUIGraphicsContext.Height;
@@ -1341,67 +1352,58 @@ namespace MediaPortal.GUI.Library
 
       float fHeight = 60.0f;
       GUIGraphicsContext.ScaleVertical(ref fHeight);
-
       if (fHeight + fPosCY >= GUIGraphicsContext.Height)
       {
         fHeight = GUIGraphicsContext.Height - fPosCY - 1;
-      }
-      if (fHeight <= 0)
-      {
-        return;
-      }
-
-      //float fwidth = fMaxWidth - 5.0f;
-      float fwidth = fMaxWidth + 6f;
-
-      if (fwidth < 1)
-      {
-        return;
       }
       if (fHeight < 1)
       {
         return;
       }
 
-      if (fPosCX <= 0)
+      //float fWidth = label.Width - 5.0f;
+      float fWidth = label.Width + 6f;
+      if (fWidth < 1)
       {
-        fPosCX = 0;
-      }
-      if (fPosCY <= 0)
-      {
-        fPosCY = 0;
+        return;
       }
 
       Rectangle clipRect = new Rectangle
                              {
                                X = (int) fPosCX,
                                Y = (int) fPosCY,
-                               Width = (int) (fwidth),
+                               Width = (int) (fWidth),
                                Height = (int) (fHeight)
                              };
       GUIGraphicsContext.BeginClip(clipRect);
 
-      // scroll
+      // Check current item
       int iItem = _cursorX + _offset;
-      _brackedText = strTextToRender;
-      _brackedText += ("  " + _suffix + " ");
-      font.GetTextExtent(_brackedText, ref fTextWidth, ref fTextHeight);
+      if (_lastItem != iItem)
+      {
+        _lastItem = iItem;
+        ScrollCache.Clear();
+      }
 
-      if (fTextWidth > fMaxWidth)
+      // Add suffix to Text
+      string brackedText = label.Label + "  " + _suffix + " ";
+
+      // Get text Height and Width
+      float fTextHeight = 0;
+      float fTextWidth = 0;
+      GUIFont font = GUIFontManager.GetFont(label.FontName);
+      font.GetTextExtent(brackedText, ref fTextWidth, ref fTextHeight);
+
+      // Scroll
+      if (fTextWidth > label.Width)
       {
         // scrolling necessary
-        fMaxWidth += 50.0f;
-        _textLine2 = string.Empty;
-        if (_lastItem != iItem)
-        {
-          _scrollPosition = 0;
-          _lastItem = iItem;
-          _scrollPosititionX = 0;
-          _scrollOffsetX = 0.0f;
-          _timeElapsed = 0.0f;
-          _scrollContinuously = false;
-        }
-        if ((int)_timeElapsed > _scrollStartDelay || _scrollContinuously)
+        RenderScroll scroll = ScrollCache.Get(label.Label);
+        scroll.TimeElapsed += timePassed;
+
+        string textLine = string.Empty;
+
+        if ((int)scroll.TimeElapsed > _scrollStartDelay || scroll.ScrollContinuously)
         {
           // Add an especially slow setting for far distance + small display + bad eyes + foreign language combination
           if (GUIGraphicsContext.ScrollSpeedHorizontal < 3)
@@ -1409,50 +1411,47 @@ namespace MediaPortal.GUI.Library
             // Advance one pixel every 3 or 2 frames
             if (_frameLimiter % (4 - GUIGraphicsContext.ScrollSpeedHorizontal) == 0)
             {
-              _scrollPosititionX++;
+              scroll.ScrollPositionX++;
             }
           }
           else
           {
             // advance 1 - 3 pixels every frame
-            _scrollPosititionX += (GUIGraphicsContext.ScrollSpeedHorizontal - 2);
+            scroll.ScrollPositionX += (GUIGraphicsContext.ScrollSpeedHorizontal - 2);
           }
 
-          char wTmp = _scrollPosition >= _brackedText.Length ? ' ' : _brackedText[_scrollPosition];
+          char wTmp = scroll.ScrollPosition >= brackedText.Length ? ' ' : brackedText[scroll.ScrollPosition];
+          font.GetTextExtent(wTmp.ToString(), ref fWidth, ref fHeight);
 
-          font.GetTextExtent(wTmp.ToString(CultureInfo.InvariantCulture), ref fWidth, ref fHeight);
-          if (_scrollPosititionX - _scrollOffsetX >= fWidth)
+          if (scroll.ScrollPositionX - scroll.ScrollOffsetX >= fWidth)
           {
-            _scrollPosition++;
-            if (_scrollPosition > _brackedText.Length)
+            scroll.ScrollPosition++;
+            if (scroll.ScrollPosition > brackedText.Length)
             {
-              _scrollPosition = 0;
-              _scrollPosititionX = 0;
-              _scrollOffsetX = 0.0f;
-              _timeElapsed = 0.0f;
-              _scrollContinuously = true;
+              scroll.Reset();
             }
             else
             {
-              _scrollOffsetX += fWidth;
+              scroll.ScrollOffsetX += fWidth;
             }
           }
+
           int ipos = 0;
-          for (int i = 0; i < _brackedText.Length; i++)
+          for (int i = 0; i < brackedText.Length; i++)
           {
-            if (i + _scrollPosition < _brackedText.Length)
+            if (i + scroll.ScrollPosition < brackedText.Length)
             {
-              _textLine2 += _brackedText[i + _scrollPosition];
+              textLine += brackedText[i + scroll.ScrollPosition];
             }
             else
             {
               if (ipos == 0)
               {
-                _textLine2 += ' ';
+                textLine += ' ';
               }
               else
               {
-                _textLine2 += _brackedText[ipos - 1];
+                textLine += brackedText[ipos - 1];
               }
               ipos++;
             }
@@ -1460,37 +1459,40 @@ namespace MediaPortal.GUI.Library
 
           if (fPosY >= 0.0)
           {
-            long tc = GUIGraphicsContext.MergeAlpha((uint)dwTextColor);
+            long tc = GUIGraphicsContext.MergeAlpha((uint)label.TextColor);
             long sc = GUIGraphicsContext.MergeAlpha((uint)_shadowColor);
+
             if ((_shadowDistance > 0) && ((_shadowColor >> 24) > 0))
             {
-              font.DrawShadowTextWidth((int)(fPosX - _scrollPosititionX + _scrollOffsetX),
-                            fPosY, tc, _textLine2, Alignment.ALIGN_LEFT,
-                            _shadowAngle, _shadowDistance, sc,
-                            (int)(fMaxWidth - 50f + _scrollPosititionX - _scrollOffsetX));
+              font.DrawShadowTextWidth(fPosX - scroll.ScrollPositionX + (int)scroll.ScrollOffsetX,
+                                       fPosY, tc, textLine, Alignment.ALIGN_LEFT,
+                                       _shadowAngle, _shadowDistance, sc,
+                                       label.Width + scroll.ScrollPositionX - (int)scroll.ScrollOffsetX);
             }
             else
             {
-              font.DrawText((int)(fPosX - _scrollPosititionX + _scrollOffsetX),
-                            fPosY, tc, _textLine2, Alignment.ALIGN_LEFT,
-                            (int)(fMaxWidth - 50f + _scrollPosititionX - _scrollOffsetX));
+              font.DrawText(fPosX - scroll.ScrollPositionX + (int)scroll.ScrollOffsetX,
+                            fPosY, tc, textLine, Alignment.ALIGN_LEFT,
+                            label.Width + scroll.ScrollPositionX - (int)scroll.ScrollOffsetX);
             }
           }
         }
         else if (fPosY >= 0.0)
         {
-          long tc = GUIGraphicsContext.MergeAlpha((uint)dwTextColor);
+          long tc = GUIGraphicsContext.MergeAlpha((uint)label.TextColor);
           long sc = GUIGraphicsContext.MergeAlpha((uint)_shadowColor);
+
           if ((_shadowDistance > 0) && ((_shadowColor >> 24) > 0))
           {
-            font.DrawShadowTextWidth(fPosX, fPosY, tc, strTextToRender, Alignment.ALIGN_LEFT, _shadowAngle, _shadowDistance, sc, (int)(fMaxWidth - 50f));
+            font.DrawShadowTextWidth(fPosX, fPosY, tc, label.Label, Alignment.ALIGN_LEFT, _shadowAngle, _shadowDistance, sc, label.Width);
           }
           else
           {
-            font.DrawText(fPosX, fPosY, tc, strTextToRender, Alignment.ALIGN_LEFT, (int)(fMaxWidth - 50f));
+            font.DrawText(fPosX, fPosY, tc, label.Label, Alignment.ALIGN_LEFT, label.Width);
           }
         }
       }
+
       GUIGraphicsContext.EndClip();
     }
 
@@ -1589,7 +1591,9 @@ namespace MediaPortal.GUI.Library
           {
             // Check key
             if (((action.m_key.KeyChar >= '0') && (action.m_key.KeyChar <= '9')) ||
-                action.m_key.KeyChar == '*' || action.m_key.KeyChar == '(' || action.m_key.KeyChar == '#' ||
+                action.m_key.KeyChar == '*' ||
+                action.m_key.KeyChar == '(' ||
+                action.m_key.KeyChar == '#' ||
                 action.m_key.KeyChar == '§')
             {
               Press((char) action.m_key.KeyChar);
@@ -4010,4 +4014,64 @@ namespace MediaPortal.GUI.Library
       _refresh = true;
     }
   }
+
+  public class RenderScroll
+  {
+    public int ScrollPosition;
+    public int ScrollPositionX;
+
+    public double ScrollOffsetX;
+    public double TimeElapsed;
+
+    public bool ScrollContinuously;
+    
+    public RenderScroll()
+    {
+      Clear();
+    }
+    
+    public void Clear()
+    {
+      ScrollPosition = 0;
+      ScrollPositionX = 0;
+      ScrollOffsetX = 0.0f;
+      TimeElapsed = 0.0f;
+      ScrollContinuously = false;
+    }
+    
+    public void Reset()
+    {
+      Clear();
+      ScrollContinuously = true;
+    }
+  }
+
+  public class RenderScrollCache
+  {
+    private Dictionary<string, RenderScroll> Cache;
+    
+    public RenderScrollCache()
+    {
+      Cache = new Dictionary<string, RenderScroll>();
+    }
+    
+    public RenderScroll Get(string key)
+    {
+      if (string.IsNullOrEmpty(key))
+      {
+        return new RenderScroll();
+      }
+      if (!Cache.ContainsKey(key))
+      {
+        Cache.Add(key, new RenderScroll());
+      }
+      return Cache[key];
+    }
+    
+    public void Clear()
+    {
+      Cache.Clear();
+    }
+  }
+
 }
