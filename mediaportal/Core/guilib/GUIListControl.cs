@@ -897,7 +897,7 @@ namespace MediaPortal.GUI.Library
                                     item.Selected, item.IsPlayed, item.IsRemote, item.IsDownloading, item.IsBdDvdFolder,
                                     gotFocus, Focus);
 
-              // set label text color
+              // Set label text color
               label2.TextColor = color;
 
               // Set label text for rendering
@@ -1013,7 +1013,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    private string SetLabel(string textContent, GUIListItem item)
+    protected string SetLabel(string textContent, GUIListItem item)
     {
       string label = string.Empty;
 
