@@ -724,7 +724,9 @@ namespace MediaPortal.GUI.Library
         // Render label if it still has a visible length
         if (maxWidth > 0)
         {
-          RenderText(timePassed, buttonNr, dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, maxWidth, dwColor, pItem.Label, bSelected);
+          RenderText(timePassed, buttonNr, 
+                     dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, 
+                     maxWidth, dwColor, pItem.Label, bSelected);
         }
         else
         {
@@ -786,7 +788,8 @@ namespace MediaPortal.GUI.Library
                          dwPosX, 
                          dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2, 
                          label2.Width,
-                         selected, false);            }
+                         bSelected, false);            
+            }
             else
             {
               base.Render(timePassed);
@@ -836,7 +839,7 @@ namespace MediaPortal.GUI.Library
             label3.Label = pItem.Label3;
             if (!string.IsNullOrEmpty(_text3Content))
             {
-              label3.Label = SetLabel(_text3Content, item);
+              label3.Label = SetLabel(_text3Content, pItem);
             }
 
             // Set alignment, font for rendering
@@ -862,7 +865,7 @@ namespace MediaPortal.GUI.Library
               // label3.Render(timePassed);
               RenderText(timePassed, label3, 
                          dwPosX, ypos, 
-                         label3.Width, selected, false);
+                         label3.Width, bSelected, false);
             }
             else
             {

@@ -1013,7 +1013,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    private string SetLabel(string textContent, GUIListItem item)
+    protected string SetLabel(string textContent, GUIListItem item)
     {
       string label = string.Empty;
 
