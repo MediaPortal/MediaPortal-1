@@ -131,6 +131,11 @@ namespace MediaPortal.GUI.Home
       {
         videoWindow.OnInit();
       }
+
+      if (menuMain is GUIFacadeControl)
+      {
+        GUIControl.SelectItemControl(GetID, (menuMain as GUIFacadeControl).GetID, (menuMain as GUIFacadeControl).SelectedListItemIndex);
+      }
     }
 
     protected virtual void LoadButtonNames() {}
