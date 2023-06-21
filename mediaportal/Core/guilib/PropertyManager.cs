@@ -387,6 +387,7 @@ namespace MediaPortal.GUI.Library
       _properties["#VUMeterL"] = string.Empty; // The name of the VUMeterfile Left
       _properties["#VUMeterR"] = string.Empty; // The name of the VUMeterfile Right
 
+      _properties["#pluginid"] = string.Empty;
       _properties["#pluginname"] = string.Empty;
       _properties["#pluginauthor"] = string.Empty;
       _properties["#plugindescription"] = string.Empty;
