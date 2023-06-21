@@ -172,12 +172,14 @@ namespace MediaPortal.GUI.Home
 
     private void OnItemSelected(GUIListItem item, GUIControl parent)
     {
+      GUIPropertyManager.SetProperty("#pluginid", string.Empty);
       GUIPropertyManager.SetProperty("#pluginname", string.Empty);
       GUIPropertyManager.SetProperty("#pluginauthor", string.Empty);
       GUIPropertyManager.SetProperty("#plugindescription", string.Empty);
 
       if (item.AlbumInfoTag != null)
       {
+        GUIPropertyManager.SetProperty("#pluginid", item.ItemId.ToString());
         GUIPropertyManager.SetProperty("#pluginname", (item.AlbumInfoTag as ISetupForm).PluginName());
         GUIPropertyManager.SetProperty("#pluginauthor", (item.AlbumInfoTag as ISetupForm).Author());
         GUIPropertyManager.SetProperty("#plugindescription", (item.AlbumInfoTag as ISetupForm).Description());
