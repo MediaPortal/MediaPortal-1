@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+	<control>
+		<description>background listview</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>10</posX>
+		<posY>252</posY>
+		<width>1903</width>
+		<height>790</height>
+		<texture>panel_list.png</texture>
+		<visible>[facadeview.list|facadeview.playlist] + Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	<control>
+		<description>viewport thumbs</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>10</posX>
+		<posY>102</posY>
+		<width>1903</width>
+		<height>940</height>
+		<texture>panel_thumbs_xl.png</texture>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>	
+	<control>
+		<description>filmstrip overlay</description>
+		<type>image</type>
+		<id>0</id>
+    <posX>0</posX>
+    <posY>405</posY>
+    <width>1920</width>
+    <height>675</height>
+    <texture>filmstrip_overlay_recordings.png</texture>
+		<visible>[facadeview.filmstrip | facadeview.coverflow] + Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	<control>
+		<description>filmstrip overlay</description>
+		<type>image</type>
+		<id>0</id>
+    <posX>52</posX>
+    <posY>958</posY>
+    <width>1820</width>
+    <height>84</height>
+    <texture>BasicHomeSubBG.png</texture>
+		<visible>[facadeview.filmstrip | facadeview.coverflow] + Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+  <control>
+     <description>right menu indicator</description>
+     <id>0</id>
+     <type>image</type>
+     <posX>1890</posX>
+     <posY>529</posY>
+     <width>30</width>
+     <height>149</height>
+     <texture>basichome_nextpage_right.png</texture>
+ 		 <visible>[facadeview.list|facadeview.playlist] + Control.HasFocus(50)</visible>
+     <animation effect="slide" start="60,0" end="0,0" tween="quadratic" easing="in" time="250" delay="0">visible</animation>
+     <animation effect="slide" start="0,0" end="60,0" tween="quadratic" easing="in" time="250" delay="0">hidden</animation>
+     <animation effect="fade" time="250">WindowOpen</animation>
+     <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+  <control>
+    <description>left menu indicator</description>
+    <id>0</id>
+    <type>image</type>
+    <posX>0</posX>
+    <posY>529</posY>
+    <width>30</width>
+    <height>149</height>
+    <texture>basichome_nextpage_left.png</texture>
+ 		 <visible>[facadeview.list|facadeview.playlist] + Control.HasFocus(50)</visible>
+    <animation effect="slide" start="-60,0" end="0,0" tween="quadratic" easing="in" time="250" delay="0">visible</animation>
+    <animation effect="slide" start="0,0" end="-60,0" tween="quadratic" easing="in" time="250" delay="0">hidden</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+  <control>
+    <id>1</id>
+    <type>image</type>
+    <posX>858</posX>
+    <posY>0</posY>
+    <texture>hiddenmenu_tab_up.png</texture>
+		<visible>[facadeview.filmstrip | facadeview.coverflow] + Control.HasFocus(50)</visible>
+    <animation effect="slide" start="0,-60" end="0,0" tween="quadratic" easing="in" time="250" delay="400">WindowOpen</animation>
+    <animation effect="slide" start="0,0" end="0,-60" tween="quadratic" easing="in" time="250" delay="100">WindowClose</animation>
+  </control>
+</controls>
+</window>

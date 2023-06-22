@@ -157,6 +157,8 @@
   <!-- [fanart]include condition="#(eq(#usePlayFanart,'Yes'))">common.music.play.fanart.xml</include[fanart] -->
   <!--[fanart]include>common.music.play.fanart.xml</include[fanart]-->
 
+  <!--[fanart]include>BasicHome.Fanart\P0.L00.Holiday.xml</include[fanart]-->
+
   <import>common.default.background.overlay.xml</import> 
 
   <control>
@@ -307,6 +309,20 @@
     <width>62</width>
     <height>55</height>
     <texture>icon_home.png</texture>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+    <visible>!control.hasthumb(9870789)</visible>
+  </control>
+
+  <control>
+    <description>Home Holiday ICON</description>
+    <type>image</type>
+    <id>9870789</id>
+    <posX>66</posX>
+    <posY>38</posY>
+    <width>60</width>
+    <height>60</height>
+    <texture>#fanarthandler.holiday.icon</texture>
     <animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="250">WindowClose</animation>
   </control>
