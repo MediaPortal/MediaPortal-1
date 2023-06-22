@@ -167,6 +167,7 @@ namespace MediaPortal.GUI.Home
                 IconImage = string.IsNullOrEmpty(icon) ? focusTexture : icon,
                 IconImageBig = string.IsNullOrEmpty(iconBig) ? hover : iconBig,
                 ThumbnailImage = string.IsNullOrEmpty(thumb) ? hover : thumb,
+                DVDLabel = hover,
                 AlbumInfoTag = setup
               };
               listItem.OnItemSelected += OnItemSelected;
@@ -205,6 +206,7 @@ namespace MediaPortal.GUI.Home
               IconImage = string.IsNullOrEmpty(icon) ? focusTexture : icon,
               IconImageBig = string.IsNullOrEmpty(iconBig) ? hover : iconBig,
               ThumbnailImage = string.IsNullOrEmpty(thumb) ? hover : thumb,
+              DVDLabel = hover,
               AlbumInfoTag = null
             };
             listItem.OnItemSelected += OnItemSelected;
@@ -223,10 +225,13 @@ namespace MediaPortal.GUI.Home
       GUIPropertyManager.SetProperty("#pluginname", string.Empty);
       GUIPropertyManager.SetProperty("#pluginauthor", string.Empty);
       GUIPropertyManager.SetProperty("#plugindescription", string.Empty);
+      GUIPropertyManager.SetProperty("#pluginhover", string.Empty);
+
+      GUIPropertyManager.SetProperty("#pluginid", item.ItemId.ToString());
+      GUIPropertyManager.SetProperty("#pluginhover", item.DVDLabel);
 
       if (item.ItemId == (int)Window.WINDOW_MYPLUGINS)
       {
-        GUIPropertyManager.SetProperty("#pluginid", item.ItemId.ToString());
         GUIPropertyManager.SetProperty("#pluginname", "my plugins");
         GUIPropertyManager.SetProperty("#pluginauthor", "Team Mediaportal");
         GUIPropertyManager.SetProperty("#plugindescription", "Browse plugins that are not included in Home page.");
@@ -234,7 +239,6 @@ namespace MediaPortal.GUI.Home
 
       if (item.AlbumInfoTag != null)
       {
-        GUIPropertyManager.SetProperty("#pluginid", item.ItemId.ToString());
         GUIPropertyManager.SetProperty("#pluginname", (item.AlbumInfoTag as ISetupForm).PluginName());
         GUIPropertyManager.SetProperty("#pluginauthor", (item.AlbumInfoTag as ISetupForm).Author());
         GUIPropertyManager.SetProperty("#plugindescription", (item.AlbumInfoTag as ISetupForm).Description());

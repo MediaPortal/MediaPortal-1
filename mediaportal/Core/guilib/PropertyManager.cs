@@ -391,6 +391,7 @@ namespace MediaPortal.GUI.Library
       _properties["#pluginname"] = string.Empty;
       _properties["#pluginauthor"] = string.Empty;
       _properties["#plugindescription"] = string.Empty;
+      _properties["#pluginhover"] = string.Empty;
     }
 
     /// <summary>
