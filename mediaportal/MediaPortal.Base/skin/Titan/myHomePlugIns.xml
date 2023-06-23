@@ -7,17 +7,22 @@
 	<define>#header.label:Home Plugins</define>		
 <controls>	
 
-    <import>common.default.background.xml</import>
-    <include condition="#(neq(#home.myhome.layout,'Legacy'))">myHome.hover.xml</include>
     <include condition="#(eq(#skin.basichome.background,'FanartHandler'))">myHome.fanart.define.xml</include> 
     <include condition="#(eq(#skin.basichome.background,'FanartHandler'))">myHome.fanart.dummy.xml</include> 
+
+    <import>common.default.background.xml</import>
+
+    <include condition="#(neq(#home.myhome.layout,'Legacy'))">myHome.hover.xml</include>
     <include condition="#(eq(#skin.basichome.background,'FanartHandler'))">myHome.fanart.xml</include>
     <include condition="#(eq(#skin.basichome.background,'FanartHandler'))">myHome.fanart.holiday.xml</include>
+
     <import>common.default.background.overlay.xml</import> 
 		
     <include condition="#(neq(#home.myhomeplugins.layout,'Legacy'))">common.window.home.xml</include>
     <include condition="#(neq(#home.myhomeplugins.layout,'Legacy'))">common.facade.home.xml</include>
     <include condition="#(eq(#home.myhomeplugins.layout,'Legacy'))">myHomePlugIns.menu.xml</include>
+
+    <include condition="#(neq(#home.myhome.layout,'Legacy'))">myHome.latests.xml</include>
 
     <control>
       <description>Home ICON</description>

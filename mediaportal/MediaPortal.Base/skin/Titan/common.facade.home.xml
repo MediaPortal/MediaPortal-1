@@ -297,20 +297,6 @@
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
 
-	<control Style="InfoLabel">
-    <description>Plugin Author</description>
-    <type>fadelabel</type>
-    <id>1</id>
-    <posX>150</posX>
-    <posY>750</posY>
-    <width>920</width>
-    <height>170</height>
-    <label>#pluginid #pluginname #pluginhover</label>
-    <visible>facadeview.list</visible>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
-  </control>
-
   <control>
     <description>Author - Name</description>
     <type>group</type>

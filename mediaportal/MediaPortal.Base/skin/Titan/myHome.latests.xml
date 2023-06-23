@@ -1,0 +1,2838 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+
+   <!--            :: MUSIC ::            -->
+  
+    <control>
+      <description>DUMMY Visible</description>
+      <type>label</type>
+      <id>10091</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>!facadeview.list+string.equals(#pluginid,2)+string.equals(#latestMediaHandler.music.latest.enabled,true)</visible>
+    </control>
+
+    <control>
+        <description>Background</description>
+        <type>image</type>
+        <id>10001</id>
+        <posX>50</posX>
+        <posY>409</posY>
+        <width>1859</width>
+        <height>329</height>
+        <texture>basichome_latestmedia_bgl.png</texture>
+        <animation effect="fade" time="350" delay="50" reversible="false">visible</animation>
+        <animation effect="slide" start="-600" end="0" time="500" delay="500" reversible="false">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <visible>control.isvisible(10091)</visible>              
+    </control>
+
+    <control>
+        <description>latestMedia Music Label</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>485</posY>
+        <width>585</width>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <!--label>#(L(4558))</label-->
+        <label>#latestMediaHandler.music.label</label>
+        <visible>control.isvisible(10091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+        <description>Album thumb/fanart 1</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>670</posX>
+        <posY>480</posY>
+        <width>190</width>
+        <height>190</height>
+        <texture>#latestMediaHandler.music.latest1.thumb</texture>
+        <visible>control.isvisible(10091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+        <description>New Indicator 1</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>670</posX>
+        <posY>480</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(10091)+string.equals(#latestMediaHandler.music.latest1.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+        <description>Music 1</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>554</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.music.latest1.artist - #latestMediaHandler.music.latest1.album</label>
+        <visible>control.isvisible(10091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+    
+    <control>
+        <description>Album thumb/fanart 2</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>870</posX>
+        <posY>480</posY>
+        <width>190</width>
+        <height>190</height>
+        <texture>#latestMediaHandler.music.latest2.thumb</texture>
+        <visible>control.isvisible(10091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+        <description>New Indicator 2</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>870</posX>
+        <posY>480</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(10091)+string.equals(#latestMediaHandler.music.latest2.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+        <description>Music 2</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>590</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.music.latest2.artist - #latestMediaHandler.music.latest2.album</label>
+        <visible>control.isvisible(10091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+   
+    <control>
+        <description>Album thumb/fanart 3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1070</posX>
+        <posY>480</posY>
+        <width>190</width>
+        <height>190</height>
+        <texture>#latestMediaHandler.music.latest3.thumb</texture>
+        <visible>control.isvisible(10091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+    <control>
+        <description>New Indicator 3</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>1070</posX>
+        <posY>480</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(10091)+string.equals(#latestMediaHandler.music.latest3.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+        <description>Music 3</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>628</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.music.latest3.artist - #latestMediaHandler.music.latest3.album</label>
+        <visible>control.isvisible(10091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+      
+   <!--            :: MUSIC / MVCENTRAL ::            -->
+
+    <control>
+      <description>DUMMY Visible</description>
+      <type>label</type>
+      <id>20091</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>!facadeview.list+string.equals(#pluginid,112011)+string.equals(#latestMediaHandler.mvcentral.latest.enabled,true)</visible>
+    </control>
+
+    <control>
+        <description>Background</description>
+        <type>image</type>
+        <id>20001</id>
+        <posX>50</posX>
+        <posY>409</posY>
+        <width>1859</width>
+        <height>329</height>
+        <texture>basichome_latestmedia_bgl.png</texture>
+        <animation effect="fade" time="350" delay="50" reversible="false">visible</animation>
+        <animation effect="slide" start="-600" end="0" time="500" delay="500" reversible="false">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <visible>control.isvisible(20091)</visible>              
+    </control>
+
+    <control>
+        <description>latestMedia Music Label</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>485</posY>
+        <width>585</width>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <!--label>#(L(4558))</label-->
+        <label>#latestMediaHandler.mvcentral.label</label>
+        <visible>control.isvisible(20091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+        <description>Album thumb/fanart 1</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>670</posX>
+        <posY>480</posY>
+        <width>190</width>
+        <height>190</height>
+        <texture>#latestMediaHandler.mvcentral.latest1.thumb</texture>
+        <visible>control.isvisible(20091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+        <description>New Indicator 1</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>670</posX>
+        <posY>480</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(20091)+string.equals(#latestMediaHandler.mvcentral.latest1.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+        <description>Music 1</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>554</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.mvcentral.latest1.artist - #latestMediaHandler.mvcentral.latest1.album</label>
+        <visible>control.isvisible(20091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+    
+    <control>
+        <description>Album thumb/fanart 2</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>870</posX>
+        <posY>480</posY>
+        <width>190</width>
+        <height>190</height>
+        <texture>#latestMediaHandler.mvcentral.latest2.thumb</texture>
+        <visible>control.isvisible(20091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+        <description>New Indicator 2</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>870</posX>
+        <posY>480</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(20091)+string.equals(#latestMediaHandler.mvcentral.latest2.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+        <description>Music 2</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>590</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.mvcentral.latest2.artist - #latestMediaHandler.mvcentral.latest2.album</label>
+        <visible>control.isvisible(20091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+   
+    <control>
+        <description>Album thumb/fanart 3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1070</posX>
+        <posY>480</posY>
+        <width>190</width>
+        <height>190</height>
+        <texture>#latestMediaHandler.mvcentral.latest3.thumb</texture>
+        <visible>control.isvisible(20091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+    <control>
+        <description>New Indicator 3</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>1070</posX>
+        <posY>480</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(20091)+string.equals(#latestMediaHandler.mvcentral.latest3.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+        <description>Music 3</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>628</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.mvcentral.latest3.artist - #latestMediaHandler.mvcentral.latest3.album</label>
+        <visible>control.isvisible(20091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+      
+   <!--            :: VIDEO/MOVIES ::            -->
+
+    <control>
+      <description>DUMMY Visible</description>
+      <type>label</type>
+      <id>30091</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>!facadeview.list+string.equals(#pluginid,6)+string.equals(#latestMediaHandler.myvideo.latest.enabled,true)</visible>
+    </control>
+
+    <control>
+      <description>Background</description>
+      <type>image</type>
+      <id>30001</id>
+      <posX>8</posX>
+      <posY>409</posY>
+      <width>1859</width>
+      <height>329</height>
+      <texture>basichome_latestmedia_bg.png</texture>
+      <animation effect="fade" time="350" delay="500" reversible="false">visible</animation>
+      <animation effect="slide" start="600" end="0" time="500" delay="500" reversible="false">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>control.IsVisible(30091)</visible>              
+    </control>
+
+    <control>
+      <description>latestMedia Movie Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>485</posY>
+      <width>585</width>
+      <font>TitanLight20</font>
+      <textcolor>ffffffff</textcolor>
+      <!--label>#(L(4558))</label-->
+      <label>#latestMediaHandler.myvideo.label</label>
+      <visible>control.IsVisible(30091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Poster 1</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>81</posX>
+      <posY>481</posY>
+      <width>134</width>
+      <height>191</height>
+      <texture>#latestMediaHandler.myvideo.latest1.thumb</texture>
+      <visible>control.IsVisible(30091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+        <description>New Indicator 1</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>81</posX>
+        <posY>481</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(30091)+string.equals(#latestMediaHandler.myvideo.latest1.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+      <description>Movie 1</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>554</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.myvideo.latest1.title</label>
+      <visible>control.IsVisible(30091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+      <description>Movie 1 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>554</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>#latestMediaHandler.myvideo.latest1.year</label>
+      <visible>control.IsVisible(30091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+      <description>Poster 2</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>226</posX>
+      <posY>481</posY>
+      <width>134</width>
+      <height>191</height>
+      <texture>#latestMediaHandler.myvideo.latest2.thumb</texture>
+      <visible>control.IsVisible(30091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+        <description>New Indicator 2</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>226</posX>
+        <posY>481</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(30091)+string.equals(#latestMediaHandler.myvideo.latest2.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+      <description>Movie 2</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>590</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.myvideo.latest2.title</label>
+      <visible>control.IsVisible(30091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+      <description>Movie 2 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>590</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>#latestMediaHandler.myvideo.latest2.year</label>
+      <visible>control.IsVisible(30091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+      <description>Poster 3</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>370</posX>
+      <posY>481</posY>
+      <width>134</width>
+      <height>191</height>
+      <texture>#latestMediaHandler.myvideo.latest3.thumb</texture>
+      <visible>control.IsVisible(30091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+    <control>
+        <description>New Indicator 3</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>370</posX>
+        <posY>481</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(30091)+string.equals(#latestMediaHandler.myvideo.latest3.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+      <description>Movie 3</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>628</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.myvideo.latest3.title</label>
+      <visible>control.IsVisible(30091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+    <control>
+      <description>Movie 3 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>628</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>#latestMediaHandler.myvideo.latest3.year</label>
+      <visible>control.IsVisible(30091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+   <!--            :: TVSERIES ::            -->
+
+    <control>
+      <description>DUMMY Visible</description>
+      <type>label</type>
+      <id>40091</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>!facadeview.list+string.equals(#pluginid,9811)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true)</visible>
+    </control>
+
+    <control>
+      <description>Background</description>
+      <type>image</type>
+      <id>40001</id>
+      <posX>8</posX>
+      <posY>669</posY>
+      <width>1859</width>
+      <height>329</height>
+      <texture>basichome_latestmedia_bg.png</texture>
+      <animation effect="fade" time="350" delay="500" reversible="false">visible</animation>
+      <animation effect="slide" start="600" end="0" time="500" delay="500" reversible="false">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>control.isvisible(40091)</visible>              
+    </control>
+
+    <control>
+      <description>latestMedia Movie Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>745</posY>
+      <width>585</width>
+      <font>TitanLight20</font>
+      <textcolor>ffffffff</textcolor>
+      <!--label>#(L(4558))</label-->
+      <label>#latestMediaHandler.tvseries.label</label>
+      <visible>control.isvisible(40091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+   
+    <control>
+      <description>Poster 1</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>81</posX>
+      <posY>741</posY>
+      <width>134</width>
+      <height>191</height>
+      <texture>#(iif(eq(#latestMediaHandler.tvseries.latest.mode,'seasons'),#latestMediaHandler.tvseries.latest1.thumb,#latestMediaHandler.tvseries.latest1.serieThumb))</texture>
+      <visible>control.isvisible(40091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+        <description>New Indicator 1</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>81</posX>
+        <posY>741</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(40091)+string.equals(#latestMediaHandler.tvseries.latest1.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+      <description>Episode 1</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>814</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.tvseries.latest1.serieName</label>
+      <visible>control.isvisible(40091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Episode 1 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>814</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>S#latestMediaHandler.tvseries.latest1.seasonIndexE#latestMediaHandler.tvseries.latest1.episodeIndex</label>
+      <visible>control.isvisible(40091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Poster 2</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>226</posX>
+      <posY>741</posY>
+      <width>134</width>
+      <height>191</height>
+      <texture>#(iif(eq(#latestMediaHandler.tvseries.latest.mode,'seasons'),#latestMediaHandler.tvseries.latest2.thumb,#latestMediaHandler.tvseries.latest2.serieThumb))</texture>
+      <visible>control.isvisible(40091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+        <description>New Indicator 2</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>226</posX>
+        <posY>741</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(40091)+string.equals(#latestMediaHandler.tvseries.latest2.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+      <description>Episode 2</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>850</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.tvseries.latest2.serieName</label>
+      <visible>control.isvisible(40091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Episode 2 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>850</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>S#latestMediaHandler.tvseries.latest2.seasonIndexE#latestMediaHandler.tvseries.latest2.episodeIndex</label>
+      <visible>control.isvisible(40091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Poster 3</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>370</posX>
+      <posY>741</posY>
+      <width>134</width>
+      <height>191</height>
+      <texture>#(iif(eq(#latestMediaHandler.tvseries.latest.mode,'seasons'),#latestMediaHandler.tvseries.latest3.thumb,#latestMediaHandler.tvseries.latest3.serieThumb))</texture>
+      <visible>control.isvisible(40091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+        <description>New Indicator 3</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>370</posX>
+        <posY>741</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(40091)+string.equals(#latestMediaHandler.tvseries.latest3.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+      <description>Episode 3</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>888</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.tvseries.latest3.serieName</label>
+      <visible>control.isvisible(40091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Episode 3 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>888</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>S#latestMediaHandler.tvseries.latest3.seasonIndexE#latestMediaHandler.tvseries.latest3.episodeIndex</label>
+      <visible>control.isvisible(40091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+   <!--            :: VIDEO/MOVING PICTURES ::            -->
+
+    <control>
+      <description>DUMMY Visible</description>
+      <type>label</type>
+      <id>50091</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>!facadeview.list+string.equals(#pluginid,96742)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true)</visible>
+    </control>
+
+    <control>
+      <description>Background</description>
+      <type>image</type>
+      <id>50001</id>
+      <posX>8</posX>
+      <posY>409</posY>
+      <width>1859</width>
+      <height>329</height>
+      <texture>basichome_latestmedia_bg.png</texture>
+      <animation effect="fade" time="350" delay="500" reversible="false">visible</animation>
+      <animation effect="slide" start="600" end="0" time="500" delay="500" reversible="false">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>control.isvisible(50091)</visible>              
+    </control>
+
+    <control>
+      <description>latestMedia Movie Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>544</posX>
+      <posY>485</posY>
+      <width>585</width>
+      <font>TitanLight20</font>
+      <textcolor>ffffffff</textcolor>
+      <!--label>#(L(4558))</label-->
+      <label>#latestMediaHandler.movingpicture.label</label>
+      <visible>control.isvisible(50091)</visible>  
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+   
+    <control>
+      <description>Poster 1</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>81</posX>
+      <posY>481</posY>
+      <width>134</width>
+      <height>191</height>
+      <texture>#latestMediaHandler.movingpicture.latest1.thumb</texture>
+      <visible>control.isvisible(50091)</visible>
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+        <description>New Indicator 1</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>81</posX>
+        <posY>481</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(50091)+string.equals(#latestMediaHandler.movingpicture.latest1.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+      <description>Movie 1</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>554</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.movingpicture.latest1.title</label>
+      <visible>control.isvisible(50091)</visible>
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+      <description>Movie 1 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>554</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>#latestMediaHandler.movingpicture.latest1.year</label>
+      <visible>control.isvisible(50091)</visible>
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+      <description>Poster 2</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>226</posX>
+      <posY>481</posY>
+      <width>134</width>
+      <height>191</height>
+      <texture>#latestMediaHandler.movingpicture.latest2.thumb</texture>
+      <visible>control.isvisible(50091)</visible>
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+        <description>New Indicator 2</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>226</posX>
+        <posY>481</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(50091)+string.equals(#latestMediaHandler.movingpicture.latest2.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+      <description>Movie 2</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>590</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.movingpicture.latest2.title</label>
+      <visible>control.isvisible(50091)</visible>
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+      <description>Movie 2 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>590</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>#latestMediaHandler.movingpicture.latest2.year</label>
+      <visible>control.isvisible(50091)</visible>
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+      <description>Poster 3</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>370</posX>
+      <posY>481</posY>
+      <width>134</width>
+      <height>191</height>
+      <texture>#latestMediaHandler.movingpicture.latest3.thumb</texture>
+      <visible>control.isvisible(50091)</visible>
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+    <control>
+        <description>New Indicator 3</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>370</posX>
+        <posY>481</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(50091)+string.equals(#latestMediaHandler.movingpicture.latest3.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+      <description>Movie 3</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>628</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.movingpicture.latest3.title</label>
+      <visible>control.isvisible(50091)</visible>
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+    <control>
+      <description>Movie 3 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>628</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>#latestMediaHandler.movingpicture.latest3.year</label>
+      <visible>control.isvisible(50091)</visible>
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+   <!--            :: VIDEO/MY FILMS ::            -->
+
+    <control>
+      <description>DUMMY Visible</description>
+      <type>label</type>
+      <id>60091</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>!facadeview.list+string.equals(#pluginid,7986)+string.equals(#latestMediaHandler.myfilms.latest.enabled,true)</visible>
+    </control>
+
+    <control>
+      <description>Background</description>
+      <type>image</type>
+      <id>60001</id>
+      <posX>8</posX>
+      <posY>409</posY>
+      <width>1859</width>
+      <height>329</height>
+      <texture>basichome_latestmedia_bg.png</texture>
+      <animation effect="fade" time="350" delay="500" reversible="false">visible</animation>
+      <animation effect="slide" start="600" end="0" time="500" delay="500" reversible="false">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>control.IsVisible(60091)</visible>              
+    </control>
+
+    <control>
+      <description>latestMedia Movie Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>485</posY>
+      <width>585</width>
+      <font>TitanLight20</font>
+      <textcolor>ffffffff</textcolor>
+      <!--label>#(L(4558))</label-->
+      <label>#latestMediaHandler.myfilms.label</label>
+      <visible>control.IsVisible(60091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+   
+    <control>
+      <description>Poster 1</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>81</posX>
+      <posY>481</posY>
+      <width>134</width>
+      <height>191</height>
+      <texture>#latestMediaHandler.myfilms.latest1.thumb</texture>
+      <visible>control.IsVisible(60091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+        <description>New Indicator 1</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>81</posX>
+        <posY>481</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(60091)+string.equals(#latestMediaHandler.myfilms.latest1.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+      <description>Movie 1</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>554</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.myfilms.latest1.title</label>
+      <visible>control.IsVisible(60091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+      <description>Movie 1 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>554</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>#latestMediaHandler.myfilms.latest1.year</label>
+      <visible>control.IsVisible(60091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+      <description>Poster 2</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>226</posX>
+      <posY>481</posY>
+      <width>134</width>
+      <height>191</height>
+      <texture>#latestMediaHandler.myfilms.latest2.thumb</texture>
+      <visible>control.IsVisible(60091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+        <description>New Indicator 2</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>226</posX>
+        <posY>481</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(60091)+string.equals(#latestMediaHandler.myfilms.latest2.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+      <description>Movie 2</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>590</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.myfilms.latest2.title</label>
+      <visible>control.IsVisible(60091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+      <description>Movie 2 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>590</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>#latestMediaHandler.myfilms.latest2.year</label>
+      <visible>control.IsVisible(60091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+      <description>Poster 3</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>370</posX>
+      <posY>481</posY>
+      <width>134</width>
+      <height>191</height>
+      <texture>#latestMediaHandler.myfilms.latest3.thumb</texture>
+      <visible>control.IsVisible(60091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+    <control>
+        <description>New Indicator 3</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>370</posX>
+        <posY>481</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(60091)+string.equals(#latestMediaHandler.myfilms.latest3.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+      <description>Movie 3</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>628</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.myfilms.latest3.title</label>
+      <visible>control.IsVisible(60091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+    <control>
+      <description>Movie 3 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>628</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>#latestMediaHandler.myfilms.latest3.year</label>
+      <visible>control.IsVisible(60091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+   <!--            :: PICTURES ::            -->
+
+    <control>
+      <description>DUMMY Visible</description>
+      <type>label</type>
+      <id>70091</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>!facadeview.list+string.equals(#pluginid,2)+string.equals(#latestMediaHandler.picture.latest.enabled,true)</visible>
+    </control>
+
+    <control>
+        <description>Background</description>
+        <type>image</type>
+        <id>70001</id>
+        <posX>50</posX>
+        <posY>669</posY>
+        <width>1859</width>
+        <height>329</height>
+        <texture>basichome_latestmedia_bgl.png</texture>
+        <animation effect="fade" time="350" delay="500" reversible="false">visible</animation>
+        <animation effect="slide" start="-600" end="0" time="500" delay="500" reversible="false">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <visible>control.isvisible(70091)</visible>              
+    </control>
+
+    <control>
+        <description>latestMedia Pictures Label</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>740</posY>
+        <width>585</width>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <!--label>#(L(4558))</label-->
+        <label>#latestMediaHandler.picture.label</label>
+        <visible>control.isvisible(70091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+        <description>Pictures thumb 1</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>670</posX>
+        <posY>740</posY>
+        <width>190</width>
+        <height>190</height>
+        <texture>#latestMediaHandler.picture.latest1.thumb</texture>
+        <visible>control.isvisible(70091)</visible>
+   		<!--keepaspectratio>yes</keepaspectratio>
+   		<centered>yes</centered-->	
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+        <description>New Indicator 1</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>670</posX>
+        <posY>740</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(70091)+string.equals(#latestMediaHandler.picture.latest1.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+        <description>Pictures 1</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>800</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.picture.latest1.title</label>
+        <visible>control.isvisible(70091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+    
+    <control>
+        <description>Pictures thumb 2</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>870</posX>
+        <posY>740</posY>
+        <width>190</width>
+        <height>190</height>
+        <texture>#latestMediaHandler.picture.latest2.thumb</texture>
+   		<!--keepaspectratio>yes</keepaspectratio>
+   		<centered>yes</centered-->	
+        <visible>control.isvisible(70091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+        <description>New Indicator 2</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>870</posX>
+        <posY>740</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(70091)+string.equals(#latestMediaHandler.picture.latest2.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+        <description>Pictures 2</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>840</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.picture.latest2.title</label>
+        <visible>control.isvisible(70091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+  
+    <control>
+        <description>Pictures thumb 3</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1070</posX>
+        <posY>740</posY>
+        <width>190</width>
+        <height>190</height>
+        <texture>#latestMediaHandler.picture.latest3.thumb</texture>
+   		<!--keepaspectratio>yes</keepaspectratio>
+   		<centered>yes</centered-->	
+        <visible>control.isvisible(70091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+    <control>
+        <description>New Indicator 3</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>1070</posX>
+        <posY>740</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(70091)+string.equals(#latestMediaHandler.picture.latest3.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+        <description>Pictures 3</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>880</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.picture.latest3.title</label>
+        <visible>control.isvisible(70091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+      
+   <!--            :: TRAKT ::            -->
+
+    <control>
+      <description>DUMMY Visible</description>
+      <type>label</type>
+      <id>80091</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>!facadeview.list+string.equals(#pluginid,87258)+!string.equals(#Trakt.Movie.0.Title,)</visible>
+    </control> 
+
+    <control>
+      <description>GROUP: Trakt</description>
+      <type>group</type>
+      <dimColor>0xffffffff</dimColor>
+      <visible>control.isvisible(80091)</visible>
+      <animation effect="slide" start="100" end="0" time="350" delay="500" reversible="false">Visible</animation>
+      <animation effect="slide" start="-100" end="0" time="500" delay="500" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="550">visible</animation>
+      <animation effect="fade" start="100" end="0" time="0">hidden</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <control>
+        <description>LATEST MEDIA BACKGROUND</description>
+        <type>image</type>
+        <id>80001</id>
+        <posX>8</posX>
+        <posY>150</posY>
+        <width>1907</width>
+        <height>329</height>
+        <texture>BasicHomeLatestBG.png</texture>
+      </control>
+      <control>
+        <description>Trending Movies label</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>87</posX>
+        <posY>230</posY>
+        <width>490</width>
+        <label>#Trakt.Translation.TrendingMovies.Label</label>
+        <font>TitanLight20</font>
+        <textcolor>FFFFFFFF</textcolor>
+      </control>
+      <control>
+        <description>Trending Series label</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1474</posX>
+        <posY>230</posY>
+        <width>490</width>
+        <label>#Trakt.Translation.TrendingShows.Label</label>
+        <font>TitanLight20</font>
+        <textcolor>FFFFFFFF</textcolor>
+      </control>
+      <control>
+        <description>Trending Movies</description>
+        <type>facadeview</type>
+        <id>98302</id>
+        <visible>control.isvisible(80091)</visible>
+        <control>
+          <type>filmstrip</type>
+          <dimColor>ffffffff</dimColor>
+          <id>98302</id>
+          <onup>400</onup>
+          <onleft>98302</onleft>
+          <ondown>500</ondown>
+          <onright>98301</onright>
+          <posX>500</posX>
+          <posY>196</posY>
+          <width>500</width>
+          <height>220</height>
+          <thumbWidth>135</thumbWidth>
+          <thumbHeight>192</thumbHeight>
+          <thumbPosX>25</thumbPosX>
+          <thumbPosY>25</thumbPosY>
+          <itemWidth>146</itemWidth>
+          <itemHeight>192</itemHeight>
+          <textureWidth>184</textureWidth>
+          <textureHeight>242</textureHeight>
+          <textYOff>-2000</textYOff>
+          <imageFolderFocus>-</imageFolderFocus>
+          <frame>-</frame>
+          <frameFocus>thumb_focus.png</frameFocus>
+          <background>-</background>
+          <thumbs></thumbs>
+          <showFrame>yes</showFrame>
+          <showFolder>no</showFolder>
+          <showBackGround>no</showBackGround>
+          <showInfoImage>no</showInfoImage>
+          <scrollbarBackground>-</scrollbarBackground>
+          <scrollbarLeft>-</scrollbarLeft>
+          <scrollbarRight>-</scrollbarRight>
+          <scrollbarWidth>717</scrollbarWidth>
+          <scrollbarHeight>8</scrollbarHeight>
+          <scrollbarYOff>375</scrollbarYOff>
+          <keepaspectratio>no</keepaspectratio>
+          <visible>control.isvisible(80091)</visible>
+        </control>
+      </control>
+      <control>
+        <description>Trending Shows</description>
+        <type>facadeview</type>
+        <id>98301</id>
+        <visible>control.isvisible(80091)</visible>
+        <control>
+          <type>filmstrip</type>
+          <dimColor>ffffffff</dimColor>
+          <id>98301</id>
+          <onup>400</onup>
+          <onleft>98302</onleft>
+          <onright>98301</onright>
+          <ondown>500</ondown>
+          <posX>983</posX>
+          <posY>196</posY>
+          <width>500</width>
+          <height>220</height>
+          <thumbWidth>135</thumbWidth>
+          <thumbHeight>192</thumbHeight>
+          <thumbPosX>25</thumbPosX>
+          <thumbPosY>25</thumbPosY>
+          <itemWidth>146</itemWidth>
+          <itemHeight>192</itemHeight>
+          <textureWidth>184</textureWidth>
+          <textureHeight>242</textureHeight>
+          <textYOff>-2000</textYOff>
+          <imageFolderFocus>-</imageFolderFocus>
+          <frame>-</frame>
+          <frameFocus>thumb_focus.png</frameFocus>
+          <background>-</background>
+          <thumbs></thumbs>
+          <showFrame>yes</showFrame>
+          <showFolder>no</showFolder>
+          <showBackGround>no</showBackGround>
+          <showInfoImage>no</showInfoImage>
+          <scrollbarBackground>-</scrollbarBackground>
+          <scrollbarLeft>-</scrollbarLeft>
+          <scrollbarRight>-</scrollbarRight>
+          <scrollbarWidth>717</scrollbarWidth>
+          <scrollbarHeight>8</scrollbarHeight>
+          <scrollbarYOff>375</scrollbarYOff>
+          <keepaspectratio>no</keepaspectratio>
+          <visible>control.isvisible(80091)</visible>
+        </control>
+      </control>
+      <!--            :: Movie Titles ::            -->
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>87</posX>
+        <posY>296</posY>
+        <width>380</width>
+        <label>#Trakt.Movie.0.Title</label>
+        <textcolor>000000</textcolor>
+        <font>font12</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>87</posX>
+        <posY>334</posY>
+        <width>380</width>
+        <label>#Trakt.Movie.1.Title</label>
+        <textcolor>000000</textcolor>
+        <font>font12</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>87</posX>
+        <posY>372</posY>
+        <width>380</width>
+        <label>#Trakt.Movie.2.Title</label>
+        <textcolor>000000</textcolor>
+        <font>font12</font>
+      </control>
+      <!--            :: Series Titles ::            -->
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>1474</posX>
+        <posY>296</posY>
+        <width>380</width>
+        <label>#Trakt.Show.0.Title</label>
+        <textcolor>000000</textcolor>
+        <font>font12</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>1474</posX>
+        <posY>334</posY>
+        <width>380</width>
+        <label>#Trakt.Show.1.Title</label>
+        <textcolor>000000</textcolor>
+        <font>font12</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>1474</posX>
+        <posY>372</posY>
+        <width>380</width>
+        <label>#Trakt.Show.2.Title</label>
+        <textcolor>000000</textcolor>
+        <font>font12</font>
+      </control>
+    </control>
+
+   <!--            :: ONLINE VIDEOS ::            -->
+
+    <control>
+      <description>GROUP: RecentlyAdded OnlineVideos</description>
+      <type>group</type>
+      <dimColor>0xffffffff</dimColor>
+      <visible>!facadeview.list+string.equals(#pluginid,4755)</visible>
+      <animation effect="slide" start="100" end="0" time="350" delay="500" reversible="false">Visible</animation>
+      <animation effect="slide" start="-100" end="0" time="500" delay="500" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="550">visible</animation>
+      <animation effect="fade" start="100" end="0" time="0">hidden</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <control>
+        <description>LATEST MEDIA BACKGROUND</description>
+        <type>image</type>
+        <id>90001</id>
+        <posX>8</posX>
+        <posY>150</posY>
+        <width>1907</width>
+        <height>329</height>
+        <texture>BasicHomeLatestBG.png</texture>
+      </control>
+
+      <!-- COVER -->
+      <control>
+        <description>Header label (cover)</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>602</posX>
+        <posY>227</posY>
+        <width>590</width>
+        <label>#(L(4558))</label>
+        <font>TitanLight20</font>
+        <textcolor>000000</textcolor>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,cover)</visible>
+      </control>
+      <control>
+        <description>Thumb 1 (cover)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>135</posX>
+        <posY>221</posY>
+        <width>135</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo1.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,cover)</visible>
+      </control>
+      <control>
+        <description>Video 1 title (cover)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>604</posX>
+        <posY>291</posY>
+        <width>931</width>
+        <label>#OnlineVideos.LatestVideo1.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,cover)</visible>
+      </control>
+      <control>
+        <description>Thumb 2 (cover)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>285</posX>
+        <posY>221</posY>
+        <width>135</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo2.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,cover)</visible>
+      </control>
+      <control>
+        <description>Video 2 title (cover)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>604</posX>
+        <posY>332</posY>
+        <width>931</width>
+        <label>#OnlineVideos.LatestVideo2.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,cover)</visible>
+      </control>
+      <control>
+        <description>Thumb 3 (cover)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>435</posX>
+        <posY>221</posY>
+        <width>135</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo3.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,cover)</visible>
+      </control>
+      <control>
+        <description>Video 3 Title (cover)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>604</posX>
+        <posY>373</posY>
+        <width>931</width>
+        <label>#OnlineVideos.LatestVideo3.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,cover)</visible>
+      </control>
+
+      <!-- THUMB -->
+      <control>
+        <description>Header label (thumb)</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>674</posX>
+        <posY>226</posY>
+        <width>590</width>
+        <label>#(L(4558))</label>
+        <font>TitanLight20</font>
+        <textcolor>000000</textcolor>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,thumb)</visible>
+      </control>
+      <control>
+        <description>Thumb 1 (thumb)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>135</posX>
+        <posY>291</posY>
+        <width>159</width>
+        <height>118</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo1.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,thumb)</visible>
+      </control>
+      <control>
+        <description>Video 1 title (thumb)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>676</posX>
+        <posY>291</posY>
+        <width>859</width>
+        <label>#OnlineVideos.LatestVideo1.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,thumb)</visible>
+      </control>
+      <control>
+        <description>Thumb 2 (thumb)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>309</posX>
+        <posY>291</posY>
+        <width>159</width>
+        <height>118</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo2.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,thumb)</visible>
+      </control>
+      <control>
+        <description>Video 2 title (thumb)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>676</posX>
+        <posY>332</posY>
+        <width>859</width>
+        <label>#OnlineVideos.LatestVideo2.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,thumb)</visible>
+      </control>
+      <control>
+        <description>Thumb 3 (thumb)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>483</posX>
+        <posY>291</posY>
+        <width>159</width>
+        <height>118</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo3.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,thumb)</visible>
+      </control>
+      <control>
+        <description>Video 3 Title (thumb)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>676</posX>
+        <posY>373</posY>
+        <width>859</width>
+        <label>#OnlineVideos.LatestVideo3.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,thumb)</visible>
+      </control>
+
+      <!-- SQUARE -->
+      <control>
+        <description>Header label (square)</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>767</posX>
+        <posY>226</posY>
+        <width>590</width>
+        <label>#(L(4558))</label>
+        <font>TitanLight20</font>
+        <textcolor>000000</textcolor>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,square)</visible>
+      </control>
+      <control>
+        <description>Thumb 1 (square)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>135</posX>
+        <posY>221</posY>
+        <width>191</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo1.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,square)</visible>
+      </control>
+      <control>
+        <description>Video 1 title (square)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>769</posX>
+        <posY>291</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo1.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,square)</visible>
+      </control>
+      <control>
+        <description>Thumb 2 (square)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>341</posX>
+        <posY>221</posY>
+        <width>191</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo2.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,square)</visible>
+      </control>
+      <control>
+        <description>Video 2 title (square)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>769</posX>
+        <posY>332</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo2.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,square)</visible>
+      </control>
+      <control>
+        <description>Thumb 3 (square)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>547</posX>
+        <posY>221</posY>
+        <width>191</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo3.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,square)</visible>
+      </control>
+      <control>
+        <description>Video 3 Title (square)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>769</posX>
+        <posY>373</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo3.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,square)</visible>
+      </control>
+
+      <!-- ICON -->
+      <control>
+        <description>Header label (icon)</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>767</posX>
+        <posY>226</posY>
+        <width>590</width>
+        <label>#(L(4558))</label>
+        <font>TitanLight20</font>
+        <textcolor>000000</textcolor>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,icon)</visible>
+      </control>
+      <control>
+        <description>Thumb 1 (icon)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>135</posX>
+        <posY>221</posY>
+        <width>191</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo1.SiteIcon</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,icon)</visible>
+      </control>
+      <control>
+        <description>Video 1 title (icon)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>769</posX>
+        <posY>291</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo1.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,icon)</visible>
+      </control>
+      <control>
+        <description>Thumb 2 (icon)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>341</posX>
+        <posY>221</posY>
+        <width>191</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo2.SiteIcon</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,icon)</visible>
+      </control>
+      <control>
+        <description>Video 2 title (icon)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>769</posX>
+        <posY>332</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo2.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,icon)</visible>
+      </control>
+      <control>
+        <description>Thumb 3 (icon)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>547</posX>
+        <posY>221</posY>
+        <width>191</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo3.SiteIcon</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,icon)</visible>
+      </control>
+      <control>
+        <description>Video 3 Title (icon)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>769</posX>
+        <posY>373</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo3.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,icon)</visible>
+      </control>
+
+      <control>
+        <description>Site 1</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1580</posX>
+        <posY>291</posY>
+        <width>280</width>
+        <label>#OnlineVideos.LatestVideo1.Site</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+      </control>
+      <control>
+        <description>Site 2</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1580</posX>
+        <posY>332</posY>
+        <width>280</width>
+        <label>#OnlineVideos.LatestVideo2.Site</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+      </control>
+      <control>
+        <description>Site 3</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1580</posX>
+        <posY>373</posY>
+        <width>280</width>
+        <label>#OnlineVideos.LatestVideo3.Site</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+      </control>
+    </control>
+
+   <!--            :: TV ::            -->
+
+    <control>
+      <description>DUMMY Visible</description>
+      <type>label</type>
+      <id>11091</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>!facadeview.list+string.equals(#pluginid,1)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
+    </control>
+
+    <control>
+        <description>Background</description>
+        <type>image</type>
+        <id>11001</id>
+        <posX>50</posX>
+        <posY>409</posY>
+        <width>1859</width>
+        <height>329</height>
+        <texture>basichome_latestmedia_bgl.png</texture>
+        <animation effect="fade" time="350" delay="50" reversible="false">visible</animation>
+        <animation effect="slide" start="-600" end="0" time="500" delay="500" reversible="false">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <visible>control.isvisible(11091)</visible>              
+    </control>
+
+    <control>
+        <description>latestMedia TV Label</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>485</posY>
+        <width>585</width>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <!--label>#(L(4558))</label-->
+        <label>#latestMediaHandler.tvrecordings.label</label>
+        <visible>control.isvisible(11091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+        <description>Album thumb/fanart 1</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>670</posX>
+        <posY>480</posY>
+        <width>190</width>
+        <height>190</height>
+        <texture>#latestMediaHandler.tvrecordings.latest1.thumb</texture>
+        <visible>control.isvisible(11091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+        <description>New Indicator 1</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>670</posX>
+        <posY>480</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(11091)+string.equals(#latestMediaHandler.tvrecordings.latest1.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+        <description>TV 1</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>554</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.tvrecordings.latest1.title - #latestMediaHandler.tvrecordings.latest1.dateAdded</label>
+        <visible>control.isvisible(11091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+    
+    <control>
+        <description>Album thumb/fanart 2</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>870</posX>
+        <posY>480</posY>
+        <width>190</width>
+        <height>190</height>
+        <texture>#latestMediaHandler.tvrecordings.latest2.thumb</texture>
+        <visible>control.isvisible(11091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+        <description>New Indicator 2</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>870</posX>
+        <posY>480</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(11091)+string.equals(#latestMediaHandler.tvrecordings.latest2.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+        <description>TV 2</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>590</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.tvrecordings.latest2.title - #latestMediaHandler.tvrecordings.latest2.dateAdded</label>
+        <visible>control.isvisible(11091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+   
+    <control>
+        <description>Album thumb/fanart 3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1070</posX>
+        <posY>480</posY>
+        <width>190</width>
+        <height>190</height>
+        <texture>#latestMediaHandler.tvrecordings.latest3.thumb</texture>
+        <visible>control.isvisible(11091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+    <control>
+        <description>New Indicator 3</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>1070</posX>
+        <posY>480</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(11091)+string.equals(#latestMediaHandler.tvrecordings.latest3.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+        <description>TV 3</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>628</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.tvrecordings.latest3.title - #latestMediaHandler.tvrecordings.latest3.dateAdded</label>
+        <visible>control.isvisible(11091)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+
+   <!--            :: WEATHER ::            -->
+
+    <control>
+      <description>GROUP: BasicHome 5 Day Weather Forecast</description>
+      <type>group</type>
+      <dimColor>0xffffffff</dimColor>
+      	<visible>!facadeview.list+[string.equals(#pluginid,7977)|string.equals(#pluginid,79770)]</visible>
+            <animation effect="slide" start="100" end="0" time="350" delay="500" reversible="false">Visible</animation>
+            <animation effect="slide" start="-100" end="0" time="500" delay="500" reversible="false">Visible</animation>
+			<animation effect="fade" start="0" end="100" time="250" delay="550">visible</animation>
+			<animation effect="fade" start="100" end="0" time="0">hidden</animation>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+        <control>
+          <description>LATEST MEDIA BACKGROUND</description>
+          <type>image</type>
+          <id>120001</id>
+          <posX>8</posX>
+          <posY>150</posY>
+          <width>1907</width>
+          <height>329</height>
+          <texture>BasicHomeLatestBG.png</texture>
+        </control>
+
+      <control>
+        <description>Weather 6th name</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1570</posX>
+        <posY>320</posY>
+        <font>TitanLight12</font>
+        <textcolor>ffffff</textcolor>
+        <label>#WorldWeather.ForecastDay4Day</label>
+      </control>
+	  
+      <control>
+        <description>Weather 6th value</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1570</posX>
+        <posY>350</posY>
+		<align>left</align>
+        <label>#WorldWeather.ForecastDay4High/#WorldWeather.ForecastDay4Low</label>
+        <font>fontB14</font>
+        <textcolor>FFffffff</textcolor>
+      </control>
+	  
+      <control>
+        <description>Weather 6th Condition</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1570</posX>
+        <posY>380</posY>
+		<align>left</align>
+        <label>#WorldWeather.ForecastDay4Condition</label>
+        <font>fontB14</font>
+        <width>190</width>
+        <textcolor>FFffffff</textcolor>
+      </control>
+
+	<control>
+		<description>Weather 6th image</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1560</posX>
+		<posY>210</posY>
+		<height>120</height>
+		<width>120</width>
+		<texture>#WorldWeather.ForecastDay4IconImage</texture>
+       	<valign>top</valign>
+      </control>
+
+      <control>
+        <description>Weather 5th name</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1370</posX>
+        <posY>320</posY>
+        <font>TitanLight12</font>
+        <textcolor>ffffff</textcolor>
+        <label>#WorldWeather.ForecastDay3Day</label>
+      </control>
+	  
+      <control>
+        <description>Weather 5th value</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1370</posX>
+        <posY>350</posY>
+		<align>left</align>
+        <label>#WorldWeather.ForecastDay3High/#WorldWeather.ForecastDay3Low</label>
+        <font>fontB14</font>
+        <textcolor>FFffffff</textcolor>
+      </control>
+	  
+      <control>
+        <description>Weather 5th Condition</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1370</posX>
+        <posY>380</posY>
+		<align>left</align>
+        <label>#WorldWeather.ForecastDay3Condition</label>
+        <font>fontB14</font>
+        <width>190</width>
+        <textcolor>FFffffff</textcolor>
+      </control>
+	  
+	  <control>
+		<description>Weather 5th image</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1360</posX>
+		<posY>210</posY>
+		<height>120</height>
+		<width>120</width>
+		<texture>#WorldWeather.ForecastDay3IconImage</texture>
+       	<valign>top</valign>
+	</control>
+      
+     <control>
+        <description>Weather 4th name</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1170</posX>
+        <posY>320</posY>
+        <font>TitanLight12</font>
+        <textcolor>ffffff</textcolor>
+        <label>#WorldWeather.ForecastDay2Day</label>
+      </control>
+	  
+      <control>
+        <description>Weather 4th value</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1170</posX>
+        <posY>350</posY>
+		<align>left</align>
+        <label>#WorldWeather.ForecastDay2High/#WorldWeather.ForecastDay2Low</label>
+        <font>fontB14</font>
+        <textcolor>FFffffff</textcolor>
+      </control>
+	  
+      <control>
+        <description>Weather 4th Condition</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1170</posX>
+        <posY>380</posY>
+		<align>left</align>
+        <label>#WorldWeather.ForecastDay2Condition</label>
+        <font>fontB14</font>
+        <width>190</width>
+        <textcolor>FFffffff</textcolor>
+      </control>
+	  
+	<control>
+		<description>Weather 4th image</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1160</posX>
+		<posY>210</posY>
+		<height>120</height>
+		<width>120</width>
+		<texture>#WorldWeather.ForecastDay2IconImage</texture>
+       	<valign>top</valign>
+	</control>
+      
+     <control>
+        <description>Weather 3th name</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>970</posX>
+        <posY>320</posY>
+        <font>TitanLight12</font>
+        <textcolor>ffffff</textcolor>
+        <label>#WorldWeather.ForecastDay1Day</label>
+      </control>
+	  
+      <control>
+        <description>Weather 3th value</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>970</posX>
+        <posY>350</posY>
+		<align>left</align>
+        <label>#WorldWeather.ForecastDay1High/#WorldWeather.ForecastDay1Low</label>
+        <font>fontB14</font>
+        <textcolor>FFffffff</textcolor>
+      </control>
+	  
+      <control>
+        <description>Weather 3th Condition</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>970</posX>
+        <posY>380</posY>
+		<align>left</align>
+        <label>#WorldWeather.ForecastDay1Condition</label>
+        <font>fontB14</font>
+        <width>190</width>
+        <textcolor>FFffffff</textcolor>
+      </control>
+	  
+	<control>
+		<description>Weather 3th image</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>960</posX>
+		<posY>210</posY>
+		<height>120</height>
+		<width>120</width>
+		<texture>#WorldWeather.ForecastDay1IconImage</texture>
+       	<valign>top</valign>
+	</control>
+      
+     <control>
+        <description>Weather 2th name</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>770</posX>
+        <posY>320</posY>
+        <font>TitanLight12</font>
+        <textcolor>ffffff</textcolor>
+        <label>#WorldWeather.ForecastDay0Day</label>
+      </control>
+	  
+      <control>
+        <description>Weather 2th value</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>770</posX>
+        <posY>350</posY>
+		<align>left</align>
+        <label>#WorldWeather.ForecastDay0High/#WorldWeather.ForecastDay0Low</label>
+        <font>fontB14</font>
+        <textcolor>FFffffff</textcolor>
+      </control>
+	  
+      <control>
+        <description>Weather 2th Condition</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>770</posX>
+        <posY>380</posY>
+		<align>left</align>
+        <label>#WorldWeather.ForecastDay0Condition</label>
+        <font>fontB14</font>
+        <width>190</width>
+        <textcolor>FFffffff</textcolor>
+      </control>
+	  
+	<control>
+		<description>Weather 2th image</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>760</posX>
+		<posY>210</posY>
+		<height>120</height>
+		<width>120</width>
+		<texture>#WorldWeather.ForecastDay0IconImage</texture>
+       	<valign>top</valign>
+	</control>
+      
+      <control>
+        <description>Weather today name</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>350</posX>
+        <posY>220</posY>
+        <label>#(string.rtrim(L(143),':'))</label>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+	  
+      <control>
+        <description>Weather today condition</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>355</posX>
+        <posY>295</posY>
+		<width>320</width>
+        <label>#WorldWeather.TodayCondition</label>
+        <font>fontB12</font>
+        <textcolor>ffffff</textcolor>
+      </control>
+	  	  
+     <control>
+        <description>Weather today min value</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>355</posX>
+        <posY>330</posY>
+        <label>#WorldWeather.TodayTemperature / #WorldWeather.ForecastDay0Low</label>
+        <font>fontB20</font>
+        <textcolor>FFffffff</textcolor>
+      </control>
+	  
+	<control>
+		<description>Weather image</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>100</posX>
+		<posY>185</posY>
+		<height>236</height>
+		<width>236</width>
+		<texture>#WorldWeather.TodayIconImage</texture>
+       	<valign>top</valign>
+	</control>
+  </control>
+
+  </controls>
+</window>
