@@ -35,7 +35,6 @@
       <textureBackground>-</textureBackground>
       <onup>12</onup>
       <ondown>12</ondown>
-      <visible allowhiddenfocus="true">!control.hasfocus(12)+!control.hasfocus(13)+!control.hasfocus(14)</visible>		
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>       
       <animation effect="fade" time="500" start="0" end="100" reversable="true" delay="0">VisibleChange</animation>

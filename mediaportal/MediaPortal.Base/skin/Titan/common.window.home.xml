@@ -31,19 +31,6 @@
 		<description>filmstrip overlay</description>
 		<type>image</type>
 		<id>0</id>
-    <posX>0</posX>
-    <posY>405</posY>
-    <width>1920</width>
-    <height>675</height>
-    <texture>filmstrip_overlay_recordings.png</texture>
-		<visible>[facadeview.filmstrip | facadeview.coverflow] + Control.IsVisible(50)</visible>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
-	</control>
-	<control>
-		<description>filmstrip overlay</description>
-		<type>image</type>
-		<id>0</id>
     <posX>52</posX>
     <posY>958</posY>
     <width>1820</width>

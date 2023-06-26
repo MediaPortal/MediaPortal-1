@@ -3,11 +3,11 @@
 
   <define>#LatestMediaHandler:Yes</define>
 
-  <define property="true" evaluateNow="true">#skin.home.button.type:'middle'</define>
+  <define property="true" evaluateNow="true">#skin.home.button.type:'small'</define>
   <define property="true" evaluateNow="true">#skin.currentTile:50</define>
 
   <!--     *****************                        Latests                      ********************  -->
-  <define property="true" evaluateNow="true">#home.latest.posy:#(switch( eq(#skin.home.button.type,'small'),491, eq(#skin.home.button.type,'middle'),390, eq(1,1),191))</define>
+  <define property="true" evaluateNow="true">#home.latest.posy:#(switch( eq(#skin.home.button.type,'small'),451, eq(#skin.home.button.type,'middle'),340, eq(1,1),141))</define>
   <define property="true" evaluateNow="true">#home.latest.shadow.posy:#(switch( eq(#skin.home.button.type,'small'),498, eq(#skin.home.button.type,'middle'),397, eq(1,1),198))</define>
   <define property="true" evaluateNow="true">#home.latest.label.posy:#(switch( eq(#skin.home.button.type,'small'),500, eq(#skin.home.button.type,'middle'),399, eq(1,1),200))</define>
   <define property="true" evaluateNow="true">#home.latest.line1.posy:#(switch( eq(#skin.home.button.type,'small'),545, eq(#skin.home.button.type,'middle'),444, eq(1,1),245))</define>
@@ -59,13 +59,13 @@
         <description>MovingPictures Background</description>
         <type>image</type>
         <id>010004</id>
-        <posX>40</posX>
+        <posX>0</posX>
         <posY>#home.latest.posy</posY>
-        <width>1845</width>
-        <height>209</height>
-        <texture>Inf_gfx.png</texture>
+        <width>1920</width>
+        <height>309</height>
+        <texture>BasicHomeLatestBG.png</texture>
         <animation effect="fade" time="350" delay="2000" reversible="false" condition="control.isvisible(010004)">conditional</animation>
-        <visible>!facadeview.list+string.equals(#pluginid,96742)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true)</visible>
+        <visible>!facadeview.list+!control.isvisible(9875789)+string.equals(#pluginid,96742)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true)</visible>
       </control>
 
       <!-- Overview -->
@@ -374,13 +374,13 @@
         <description>TVSeries Background</description>
         <type>image</type>
         <id>010008</id>
-        <posX>40</posX>
+        <posX>0</posX>
         <posY>#home.latest.posy</posY>
-        <width>1845</width>
-        <height>209</height>
-        <texture>Inf_gfx.png</texture>
+        <width>1920</width>
+        <height>309</height>
+        <texture>BasicHomeLatestBG.png</texture>
         <animation effect="fade" time="350" delay="2000" reversible="false" condition="control.isvisible(010008)">conditional</animation>
-        <visible>!facadeview.list+string.equals(#pluginid,9811)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true)</visible>
+        <visible>!facadeview.list+!control.isvisible(9875789)+string.equals(#pluginid,9811)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true)</visible>
       </control>
 
       <!-- Overview -->
@@ -690,13 +690,13 @@
         <description>TV Background</description>
         <type>image</type>
         <id>010012</id>
-        <posX>40</posX>
+        <posX>0</posX>
         <posY>#home.latest.posy</posY>
-        <width>1845</width>
-        <height>209</height>
-        <texture>Inf_gfx.png</texture>
+        <width>1920</width>
+        <height>309</height>
+        <texture>BasicHomeLatestBG.png</texture>
         <animation effect="fade" time="350" delay="2000" reversible="false" condition="control.isvisible(010012)">conditional</animation>
-        <visible>!facadeview.list+string.equals(#pluginid,1)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>!facadeview.list+!control.isvisible(9875789)+string.equals(#pluginid,1)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
       </control>
 
       <!-- Overview -->
@@ -891,13 +891,13 @@
         <description>Music Background</description>
         <type>image</type>
         <id>010016</id>
-        <posX>40</posX>
+        <posX>0</posX>
         <posY>#home.latest.posy</posY>
-        <width>1845</width>
-        <height>209</height>
-        <texture>Inf_gfx.png</texture>
+        <width>1920</width>
+        <height>309</height>
+        <texture>BasicHomeLatestBG.png</texture>
         <animation effect="fade" time="350" delay="2000" reversible="false" condition="control.isvisible(010016)">conditional</animation>
-        <visible>!facadeview.list+string.equals(#pluginid,2)+string.equals(#latestMediaHandler.music.latest.enabled,true)</visible>
+        <visible>!facadeview.list+!control.isvisible(9875789)+string.equals(#pluginid,2)+string.equals(#latestMediaHandler.music.latest.enabled,true)</visible>
       </control>
 
       <!-- Overview -->
@@ -1205,13 +1205,13 @@
         <description>Video Background</description>
         <type>image</type>
         <id>010020</id>
-        <posX>40</posX>
+        <posX>0</posX>
         <posY>#home.latest.posy</posY>
-        <width>1845</width>
-        <height>209</height>
-        <texture>Inf_gfx.png</texture>
+        <width>1920</width>
+        <height>309</height>
+        <texture>BasicHomeLatestBG.png</texture>
         <animation effect="fade" time="350" delay="2000" reversible="false" condition="control.isvisible(010020)">conditional</animation>
-        <visible>!facadeview.list+string.equals(#pluginid,6)+string.equals(#latestMediaHandler.myvideo.latest.enabled,true)</visible>
+        <visible>!facadeview.list+!control.isvisible(9875789)+string.equals(#pluginid,6)+string.equals(#latestMediaHandler.myvideo.latest.enabled,true)</visible>
       </control>
 
       <!-- Overview -->
@@ -1520,13 +1520,13 @@
         <description>Pictures Background</description>
         <type>image</type>
         <id>013016</id>
-        <posX>40</posX>
+        <posX>0</posX>
         <posY>#home.latest.posy</posY>
-        <width>1845</width>
-        <height>209</height>
-        <texture>Inf_gfx.png</texture>
+        <width>1920</width>
+        <height>309</height>
+        <texture>BasicHomeLatestBG.png</texture>
         <animation effect="fade" time="350" delay="2000" reversible="false" condition="control.isvisible(013016)">conditional</animation>
-        <visible>!facadeview.list+string.equals(#pluginid,2)+string.equals(#latestMediaHandler.picture.latest.enabled,true)</visible>
+        <visible>!facadeview.list+!control.isvisible(9875789)+string.equals(#pluginid,2)+string.equals(#latestMediaHandler.picture.latest.enabled,true)</visible>
       </control>
 
       <control>
@@ -1866,18 +1866,18 @@
         <description>GROUP: Trakt</description>
         <type>group</type>
         <dimColor>ffffffff</dimColor>
-        <visible>!facadeview.list+string.equals(#pluginid,87258)+!string.equals(#Trakt.Movie.0.Title,)</visible>
+        <visible>!facadeview.list+!control.isvisible(9875789)+string.equals(#pluginid,87258)+!string.equals(#Trakt.Movie.0.Title,)</visible>
         <animation effect="fade" time="350" delay="2000" reversible="false" condition="control.isvisible(012016)">conditional</animation>
 
         <control>
           <description>Trakt Background</description>
           <type>image</type>
           <id>012016</id>
-          <posX>40</posX>
+          <posX>0</posX>
           <posY>#home.latest.posy</posY>
-          <width>1845</width>
-          <height>209</height>
-          <texture>Inf_gfx.png</texture>
+          <width>1920</width>
+          <height>309</height>
+          <texture>BasicHomeLatestBG.png</texture>
           <!--animation effect="fade" time="350" delay="2000" reversible="false" condition="control.isvisible(012016)">conditional</animation>
           <visible>control.isvisible(012016)</visible-->
         </control>
@@ -2073,13 +2073,13 @@
         <description>OnlineVideo Background</description>
         <type>image</type>
         <id>5521125</id>
-        <posX>40</posX>
+        <posX>0</posX>
         <posY>#home.latest.posy</posY>
-        <width>1845</width>
-        <height>209</height>
-        <texture>Inf_gfx.png</texture>
+        <width>1920</width>
+        <height>309</height>
+        <texture>BasicHomeLatestBG.png</texture>
         <animation effect="fade" time="350" delay="2000" reversible="false" condition="control.isvisible(5521125)">conditional</animation>
-        <visible>!facadeview.list+string.equals(#pluginid,4755)</visible>
+        <visible>!facadeview.list+!control.isvisible(9875789)+string.equals(#pluginid,4755)</visible>
       </control>
 
       <control>
@@ -2561,18 +2561,18 @@
       <description>GROUP: BasicHome 5 Day Weather Forecast</description>
       <type>group</type>
       <dimColor>0xffffffff</dimColor>
-      <visible>!facadeview.list+[string.equals(#pluginid,7977)|string.equals(#pluginid,79770)]</visible>
+      <visible>!facadeview.list+!control.isvisible(9875789)+[string.equals(#pluginid,7977)|string.equals(#pluginid,79770)]</visible>
       <animation effect="fade" time="350" delay="2000" reversible="false" condition="control.isVisible(5100000)]">conditional</animation>
 
       <control>
         <description>Weather Background</description>
         <type>image</type>
         <id>5100000</id>
-        <posX>40</posX>
+        <posX>0</posX>
         <posY>#home.latest.posy</posY>
-        <width>1845</width>
-        <height>209</height>
-        <texture>Inf_gfx.png</texture>
+        <width>1920</width>
+        <height>309</height>
+        <texture>BasicHomeLatestBG.png</texture>
       </control>	
 
       <control>
@@ -2974,13 +2974,13 @@
         <description>MvCentral Background</description>
         <type>image</type>
         <id>010033</id>
-        <posX>40</posX>
+        <posX>0</posX>
         <posY>#home.latest.posy</posY>
-        <width>1845</width>
-        <height>209</height>
-        <texture>Inf_gfx.png</texture>
+        <width>1920</width>
+        <height>309</height>
+        <texture>BasicHomeLatestBG.png</texture>
         <animation effect="fade" time="350" delay="2000" reversible="false" condition="control.isvisible(010033)">conditional</animation>
-        <visible>!facadeview.list+string.equals(#pluginid,112011)+string.equals(#latestMediaHandler.mvcentral.latest.enabled,true)</visible>
+        <visible>!facadeview.list+!control.isvisible(9875789)+string.equals(#pluginid,112011)+string.equals(#latestMediaHandler.mvcentral.latest.enabled,true)</visible>
       </control>
 
       <!-- Overview -->
@@ -3286,18 +3286,18 @@
       <description>GROUP: BasicHome Extensions Updates</description>
       <type>group</type>
       <dimColor>0xffffffff</dimColor>
-      <visible>!facadeview.list+string.equals(#pluginid,801)+!string.equals(#mpei.updates,'')</visible>
+      <visible>!facadeview.list+!control.isvisible(9875789)+string.equals(#pluginid,801)+!string.equals(#mpei.updates,'')</visible>
       <animation effect="fade" time="350" delay="2000" reversible="false" condition="control.isVisible(5100005)">conditional</animation>
 
       <control>
         <description>Extensions Background</description>
         <type>image</type>
         <id>5100005</id>
-        <posX>40</posX>
+        <posX>0</posX>
         <posY>#home.latest.posy</posY>
-        <width>1845</width>
-        <height>209</height>
-        <texture>Inf_gfx.png</texture>
+        <width>1920</width>
+        <height>309</height>
+        <texture>BasicHomeLatestBG.png</texture>
       </control>	
 
       <control>

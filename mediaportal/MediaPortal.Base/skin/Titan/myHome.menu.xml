@@ -32,10 +32,11 @@
       <mouseScrollTime>900</mouseScrollTime>
       <mouseScrollTimeMin>450</mouseScrollTimeMin>
       <textureBackground>-</textureBackground>
-      <onup>12</onup>
-      <ondown>12</ondown>
+      <onup>13</onup>
+      <ondown>13</ondown>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>       
+      <visible allowhiddenfocus="true">Control.HasFocus(50)</visible>
     </control>
 
     <control>

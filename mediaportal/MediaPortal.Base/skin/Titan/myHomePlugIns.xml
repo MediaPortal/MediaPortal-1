@@ -24,6 +24,28 @@
 
     <include condition="#(neq(#home.myhome.layout,'Legacy'))">myHome.latests.xml</include>
 
+	
+    <!--            :: RSS ::            -->
+
+    <control>
+      <description>RSS BACKGROUND</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>52</posX>
+      <posY>958</posY>
+      <width>1820</width>
+      <height>84</height>
+      <texture>BasicHomeSubBGFlat.png</texture>  
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>string.equals(#home.myhomeplugins.layout,Legacy)</visible>
+    </control>
+		
+    <include condition="#(and(plugin.isenabled('World News'),not(eq(#WorldNews.NewsTicker,''))))">MyHome.Main.RSS.WorldNews.xml</include>
+    <include condition="#(and(plugin.isenabled('InfoService'),eq(#infoservice.feed.enabled,'true')))">MyHome.Main.RSS.InfoServise.xml</include>
+
+    <import>myHome.exitmenu.xml</import> 
+
     <control>
       <description>Home ICON</description>
       <type>image</type>
@@ -50,27 +72,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
-		
-  <!--            :: RSS ::            -->
 
-    <control>
-      <description>RSS BACKGROUND</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>52</posX>
-      <posY>958</posY>
-      <width>1820</width>
-      <height>84</height>
-      <texture>BasicHomeSubBGFlat.png</texture>  
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-      <visible>string.equals(#home.myhomeplugins.layout,Legacy)</visible>
-    </control>
-		
-    <include condition="#(and(plugin.isenabled('World News'),not(eq(#WorldNews.NewsTicker,''))))">MyHome.Main.RSS.WorldNews.xml</include>
-    <include condition="#(and(plugin.isenabled('InfoService'),eq(#infoservice.feed.enabled,'true')))">MyHome.Main.RSS.InfoServise.xml</include>
-
-    <import>myHome.exitmenu.xml</import> 
     <import>common.time.xml</import>
     <import>common.Scraper.xml</import>
     <import>common.Latests.xml</import>

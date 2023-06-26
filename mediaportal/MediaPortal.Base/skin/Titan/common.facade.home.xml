@@ -80,6 +80,7 @@
         <dimColor>ffffffff</dimColor>
         <spinPosX>10000</spinPosX>
         <spinPosY>10000</spinPosY>
+        <visible allowhiddenfocus="true">!control.isvisible(9875789)</visible>
       </control>
 
       <control>
@@ -124,6 +125,7 @@
         <spinPosX>10000</spinPosX>
         <spinPosY>10000</spinPosY>
         <unfocusedAlpha>170</unfocusedAlpha>
+        <visible allowhiddenfocus="true">!control.isvisible(9875789)</visible>
       </control>
                   
       <control>
@@ -174,6 +176,7 @@
         <spinPosY>10000</spinPosY>
         <thumbAnimation effect="zoom" acceleration="-2" start="100,100" reversible="false" end="135,135" center="0,800" time="200">focus</thumbAnimation>
         <thumbAnimation effect="zoom" start="135,135" reversible="false" end="100,100" center="0,800" time="100">unfocus</thumbAnimation>
+        <visible allowhiddenfocus="true">!control.isvisible(9875789)</visible>
       </control>
       
       <control>
@@ -232,6 +235,7 @@
         <scrollbarHeight>8</scrollbarHeight>
         <scrollbarYOff>293</scrollbarYOff>
         <cards flipY="true" diffuse="Thumb_Mask.png" mask="pictures_filmstrip_mask.png"></cards>
+        <visible allowhiddenfocus="true">!control.isvisible(9875789)</visible>
         <subitems>
           <subitem>
             <![CDATA[
@@ -292,7 +296,7 @@
 		<texture>#selectedthumb</texture>
 		<keepaspectratio>yes</keepaspectratio>
 		<centered>yes</centered>	
-		<visible>facadeview.list</visible>
+		<visible>facadeview.list+control.hasfocus(50)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
@@ -307,7 +311,7 @@
     <width>1000</width>
     <height>100</height>
     <dimColor>FFFFFFFF</dimColor>
-    <visible>facadeview.list</visible>
+    <visible>facadeview.list+control.hasfocus(50)</visible>
     <animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="250">WindowClose</animation>
     <control Style="InfoLabel">
@@ -341,7 +345,7 @@
     <height>130</height>
     <label>#plugindescription</label>
     <scrollStartDelaySec>10</scrollStartDelaySec>
-    <visible>facadeview.list</visible>
+    <visible>facadeview.list+control.hasfocus(50)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
   </control>
