@@ -73,6 +73,7 @@
     <import>myHome.exitmenu.xml</import> 
     <import>common.time.xml</import>
     <import>common.Scraper.xml</import>
+    <import>common.Latests.xml</import>
     <import>common.overlay.xml</import>
 		
 </controls>
