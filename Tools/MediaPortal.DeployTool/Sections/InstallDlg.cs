@@ -193,7 +193,10 @@ namespace MediaPortal.DeployTool.Sections
         AddPackageToListView(new OldPackageChecker());
       }
       AddPackageToListView(new DirectX9Checker());
-      AddPackageToListView(new VCRedistChecker2008());
+      if (!Utils.Is64bit())
+      {
+        AddPackageToListView(new VCRedistChecker2008());
+      }
       AddPackageToListView(new VCRedistChecker2010());
       if (Utils.Is64bit())
       {
