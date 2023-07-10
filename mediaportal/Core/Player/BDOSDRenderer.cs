@@ -48,6 +48,8 @@ namespace MediaPortal.Player
     /// </summary>
     private VertexBuffer _vertexBuffer;
 
+    private LockFlags _vertexBufferLock;
+
     /// <summary>
     /// Array containing interactive and presentation graphics overlay textures
     /// </summary>
@@ -219,16 +221,17 @@ namespace MediaPortal.Player
     {
       if (_vertexBuffer == null)
       {
-        Usage usage = Usage.None;
+        Usage usage;
         if (OSInfo.OSInfo.VistaOrLater())
         {
+          this._vertexBufferLock = LockFlags.Discard;
           usage = Usage.Dynamic | Usage.WriteOnly;
         }
-        //_vertexBuffer = new VertexBuffer(typeof(CustomVertex.TransformedTextured),
-        //                                4, GUIGraphicsContext.DX9Device,
-        //                                usage, 
-        //                                CustomVertex.TransformedTextured.Format,
-        //                                GUIGraphicsContext.GetTexturePoolType());
+        else
+        {
+          this._vertexBufferLock = LockFlags.None;
+          usage = Usage.None;
+        }
 
         _vertexBuffer = new VertexBuffer(GUIGraphicsContext.DX9Device,
                       Util.CustomVertex.TransformedTextured.StrideSize * 4,
@@ -241,11 +244,9 @@ namespace MediaPortal.Player
 
       if (_wx != wx || _wy != wy || _wwidth != wwidth || _wheight != wheight)
       {
-        //CustomVertex.TransformedTextured[] verts = (CustomVertex.TransformedTextured[])_vertexBuffer.Lock(0, 0);
-
         unsafe
         {
-          Util.CustomVertex.TransformedTextured* verts = (Util.CustomVertex.TransformedTextured*)_vertexBuffer.LockToPointer(0, 0, LockFlags.None);
+          Util.CustomVertex.TransformedTextured* verts = (Util.CustomVertex.TransformedTextured*)_vertexBuffer.LockToPointer(0, 0, this._vertexBufferLock);
           // upper left
           verts[0] = new Util.CustomVertex.TransformedTextured(wx, wy, 0, 1, 0, 0);
 
@@ -258,7 +259,6 @@ namespace MediaPortal.Player
           // lower right
           verts[3] = new Util.CustomVertex.TransformedTextured(wx + wwidth, wy + wheight, 0, 1, 1, 1);
 
-          //_vertexBuffer.SetData(verts, 0, LockFlags.None);
           _vertexBuffer.Unlock();
 
         }
