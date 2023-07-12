@@ -199,20 +199,8 @@ namespace MediaPortal.Player.Subtitles
         {
           DataRectangle dr = texture.LockRectangle(0, LockFlags.Discard);
           BitmapData bmData = subBitmap.LockBits(new System.Drawing.Rectangle(0, 0, this.width, this.height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-          int size = bmData.Stride * bmData.Height;
 
-          unsafe
-          {
-            byte* pTo = (byte*)dr.DataPointer;
-            byte* pFrom = (byte*)bmData.Scan0;
-            for (int iY = 0; iY < this.height; iY++)
-            {
-              for (int iX = 0; iX < this.width * 4; iX++)
-              {
-                pTo[dr.Pitch * iY + iX] = pFrom[bmData.Stride * iY + iX];
-              }
-            }
-          }
+          CopyBitmap(dr, bmData); //Fast copy
 
           texture.UnlockRectangle(0);
           subBitmap.UnlockBits(bmData);
@@ -259,6 +247,17 @@ namespace MediaPortal.Player.Subtitles
     public override string ToString()
     {
       return "Subtitle " + id + " meta data: Timeout=" + timeOut + " timestamp=" + presentTime;
+    }
+
+    public static void CopyBitmap(DataRectangle destination, BitmapData source)
+    {
+      //Fast copy
+      //The pitch of locked rectangle can be larger then bitmap stride; we need to copy the bitmap data line by line
+      UIntPtr pSize = new UIntPtr((uint)source.Width * 4);
+      for (int iY = 0; iY < source.Height; iY++)
+      {
+        memcpy(destination.DataPointer + (destination.Pitch * iY), source.Scan0 + (source.Stride * iY), pSize);
+      }
     }
   }
 
@@ -597,28 +596,14 @@ namespace MediaPortal.Player.Subtitles
           BitmapData bd = subtitle.subBitmap.LockBits(new System.Drawing.Rectangle(0, 0, subtitle.subBitmap.Width,
                                                                       subtitle.subBitmap.Height), ImageLockMode.ReadOnly,
                                                         PixelFormat.Format32bppArgb);
+          
+          Subtitle.CopyBitmap(dr, bd); //Fast copy
 
-          // Quick copy of content
-          unsafe
-          {
-            byte* to = (byte*)dr.DataPointer;
-            byte* from = (byte*)bd.Scan0.ToPointer();
-            for (int y = 0; y < bd.Height; ++y)
-            {
-              for (int x = 0; x < bd.Width * 4; ++x)
-              {
-                to[dr.Pitch * y + x] = from[y * bd.Stride + x];
-
-              }
-            }
-
-            texture.UnlockRectangle(0);
-            subtitle.subBitmap.UnlockBits(bd);
-            subtitle.subBitmap.SafeDispose();
-            subtitle.subBitmap = null;
-            subtitle.texture = texture;
-
-          }
+          texture.UnlockRectangle(0);
+          subtitle.subBitmap.UnlockBits(bd);
+          subtitle.subBitmap.SafeDispose();
+          subtitle.subBitmap = null;
+          subtitle.texture = texture;
         }
         catch (Exception e)
         {
