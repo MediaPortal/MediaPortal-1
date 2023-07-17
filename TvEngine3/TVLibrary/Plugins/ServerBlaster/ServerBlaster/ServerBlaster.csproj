@@ -119,7 +119,7 @@
       <HintPath>..\..\..\TVDatabase\references\Gentle.Provider.SQLServer.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="MySql.Data, Version=1.0.7.30072, Culture=neutral, PublicKeyToken=c5687fc88969c44d">
+    <Reference Include="MySql.Data, Version=6.6.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\TVDatabase\references\MySql.Data.dll</HintPath>
       <Private>False</Private>
