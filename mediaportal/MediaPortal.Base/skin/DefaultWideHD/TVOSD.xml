@@ -51,7 +51,7 @@
       <height>64</height>
       <width>454</width>
       <texture>OSDBG3.png</texture>
-      <colordiffuse>f700061c</colordiffuse>
+      <colordiffuse>ff00061c</colordiffuse>
       <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
     </control>
     <control>
@@ -75,7 +75,7 @@
       <width>454</width>
       <height>64</height>
       <texture>OSDBG3.png</texture>
-      <colordiffuse>f700061c</colordiffuse>
+      <colordiffuse>ff00061c</colordiffuse>
       <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
     </control>
     <control>
@@ -95,7 +95,7 @@
       <type>label</type>
       <id>110</id>
       <posX>1898</posX>
-      <posY>737</posY>
+      <posY>738</posY>
       <label>#time</label>
       <align>right</align>
       <font>LabelBold</font>
@@ -110,8 +110,8 @@
       <posY>723</posY>
       <width>141</width>
       <height>141</height>
-      <texture>#TV.View.thumb</texture>
-      <colordiffuse>f700061c</colordiffuse>
+      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'defaultlogo.png','#TV.View.thumb'))</texture>
+      <colordiffuse>ff00061c</colordiffuse>
       <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
     </control>
     <control>
@@ -122,7 +122,7 @@
       <posY>725</posY>
       <width>137</width>
       <height>137</height>
-      <texture>#TV.View.thumb</texture>
+      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'defaultlogo.png','#TV.View.thumb'))</texture>
       <centered>yes</centered>
       <keepaspectratio>yes</keepaspectratio>
       <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
@@ -132,7 +132,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>227</posX>
-      <posY>735</posY>
+      <posY>738</posY>
       <width>400</width>
       <label>#TV.View.channel</label>
       <align>left</align>
@@ -160,7 +160,7 @@
       <posX>227</posX>
       <posY>803</posY>
       <width>1180</width>
-      <label>#TV.View.start - #TV.Next.start #scroll.wrap #TV.View.title</label>
+      <label>#(iif(eq(#TV.View.start,''),'#TV.View.title','#TV.View.start - #TV.Next.start #scroll.wrap #TV.View.title'))</label>
       <align>left</align>
       <font>LabelBold</font>
       <textcolor>lightskyblue</textcolor>
@@ -172,7 +172,7 @@
       <id>1</id>
       <posX>1425</posX>
       <posY>843</posY>
-      <width>1107</width>
+      <width>1180</width>
       <label>#TV.View.remaining</label>
       <align>left</align>
       <font>font10</font>
@@ -255,25 +255,12 @@
       <posY>878</posY>
       <height>42</height>
       <width>1180</width>
-      <label>#TV.Next.start - #TV.Next.stop #scroll.wrap #TV.Next.title</label>
+      <label>#(iif(eq(#TV.Next.start,''),'#TV.Next.title','#TV.Next.start - #TV.Next.stop #scroll.wrap #TV.Next.title'))</label>
       <align>left</align>
       <font>Label</font>
       <textcolor>lightgray</textcolor>
       <visible>!control.hasfocus(1237)+!control.hasfocus(1238)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
     </control>
-    <!--control>
-      <description>On TV Next End Time</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>1456</posX>
-      <posY>880</posY>
-      <width>1200</width>
-      <label>#TV.Next.stop</label>
-      <align>right</align>
-      <font>Label</font>
-      <textcolor>lightgray</textcolor>
-      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
-    </control-->
     <control>
       <description>EXPERIMENTAL Pause time</description>
       <type>label</type>
@@ -334,8 +321,8 @@
       <posY>550</posY>
       <width>141</width>
       <height>141</height>
-      <texture>#TV.View.thumb</texture>
-      <colordiffuse>f700061c</colordiffuse>
+      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'defaultlogo.png','#TV.View.thumb'))</texture>
+      <colordiffuse>ff00061c</colordiffuse>
       <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
     </control>
     <control>
@@ -346,7 +333,7 @@
       <posY>552</posY>
       <width>137</width>
       <height>137</height>
-      <texture>#TV.View.thumb</texture>
+      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'defaultlogo.png','#TV.View.thumb'))</texture>
       <centered>yes</centered>
       <keepaspectratio>yes</keepaspectratio>
       <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
@@ -360,7 +347,7 @@
       <height>64</height>
       <width>454</width>
       <texture>osdbg3.png</texture>
-      <colordiffuse>f700061c</colordiffuse>
+      <colordiffuse>ff00061c</colordiffuse>
       <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
     </control>
     <control>
@@ -380,7 +367,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>227</posX>
-      <posY>561</posY>
+      <posY>563</posY>
       <width>400</width>
       <label>#TV.View.channel</label>
       <align>left</align>
@@ -393,7 +380,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>265</posX>
-      <posY>561</posY>
+      <posY>563</posY>
       <width>360</width>
       <label>#TV.View.channel</label>
       <align>left</align>
@@ -421,7 +408,7 @@
       <width>454</width>
       <height>64</height>
       <texture>OSDBG3.png</texture>
-      <colordiffuse>f700061c</colordiffuse>
+      <colordiffuse>ff00061c</colordiffuse>
       <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
     </control>
     <control>
@@ -441,7 +428,7 @@
       <type>label</type>
       <id>110</id>
       <posX>1898</posX>
-      <posY>562</posY>
+      <posY>563</posY>
       <label>#time</label>
       <align>right</align>
       <font>LabelBold</font>
@@ -489,27 +476,28 @@
       <id>0</id>
       <type>fadelabel</type>
       <posX>225</posX>
-      <posY>621</posY>
+      <posY>628</posY>
       <height>57</height>
       <width>1600</width>
-      <align>center</align>
+      <align>left</align>
       <textcolor>lightskyblue</textcolor>
       <font>LabelBold</font>
-      <label>#TV.View.title  (#TV.View.start - #TV.View.stop)</label>
+      <label>#(iif(eq(#TV.View.start,''),'#TV.View.title','#TV.View.start - #TV.Next.start #scroll.wrap #TV.View.title'))</label>
       <visible>control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>Plot</description>
       <type>textboxscrollup</type>
       <id>1</id>
-      <posX>75</posX>
+      <posX>225</posX>
       <posY>700</posY>
-      <height>145</height>
-      <width>1800</width>
+      <height>140</height>
+      <width>1640</width>
       <align>left</align>
       <label>#TV.View.description</label>
       <font>font10</font>
       <textcolor>lightgray</textcolor>
+      <scrollStartDelaySec>6</scrollStartDelaySec>
       <visible>control.hasfocus(1237)</visible>
     </control>
     <!-- Here are the infos for the next program -->
@@ -548,28 +536,29 @@
       <description>Next Program Info</description>
       <id>0</id>
       <type>fadelabel</type>
-      <posX>175</posX>
-      <posY>623</posY>
+      <posX>225</posX>
+      <posY>628</posY>
       <height>57</height>
       <width>1600</width>
-      <align>center</align>
+      <align>left</align>
       <textcolor>ivory</textcolor>
       <font>LabelBold</font>
-      <label>#TV.Next.title  (#TV.Next.start - #TV.Next.stop)</label>
+      <label>#(iif(eq(#TV.Next.start,''),'#TV.Next.title','#TV.Next.start - #TV.Next.stop #scroll.wrap #TV.Next.title'))</label>
       <visible>control.hasfocus(1238)</visible>
     </control>
     <control>
       <description>Next Plot</description>
       <type>textboxscrollup</type>
       <id>1</id>
-      <posX>75</posX>
+      <posX>225</posX>
       <posY>700</posY>
-      <height>145</height>
-      <width>1800</width>
+      <height>140</height>
+      <width>1640</width>
       <align>left</align>
       <label>#TV.Next.description</label>
       <font>font10</font>
       <textcolor>ivory</textcolor>
+      <scrollStartDelaySec>6</scrollStartDelaySec>
       <visible>control.hasfocus(1238)</visible>
     </control>
     <import>common.osd.buttons.xml</import>
@@ -627,7 +616,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>1093</posX>
-      <posY>985</posY>
+      <posY>965</posY>
       <width>50</width>
       <label>#latestMediaHandler.tvrecordings.active.count</label>
       <align>center</align>
@@ -644,7 +633,7 @@
       <width>604</width>
       <height>41</height>
       <texture>osdbg6.png</texture>
-      <colordiffuse>f700061c</colordiffuse>
+      <colordiffuse>ff00061c</colordiffuse>
       <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+!control.isvisible(39)|[!string.equals(#latestMediaHandler.tvrecordings.active2.title,)]</visible>
     </control>
     <control>

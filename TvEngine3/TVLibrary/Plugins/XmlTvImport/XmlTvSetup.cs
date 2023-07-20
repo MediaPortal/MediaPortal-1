@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -198,7 +198,7 @@ namespace SetupTv.Sections
       }
       catch (Exception e)
       {
-        Log.Error("Failed to load groups {0}", e.Message);
+        Log.Error("xmltv: Failed to load groups {0}", e.Message);
       }
     }
 
@@ -226,7 +226,7 @@ namespace SetupTv.Sections
         textBoxAction.Text = "Loading";
         this.Refresh();
 
-        Log.Debug("Loading all channels from the tvguide[s]");
+        Log.Debug("xmltv: Loading all channels from the tvguide[s]");
         // used for partial matches
         TstDictionary guideChannels = new TstDictionary();
 
@@ -255,7 +255,7 @@ namespace SetupTv.Sections
           }
         }
 
-        Log.Debug("Loading all channels from the database");
+        Log.Debug("xmltv: Loading all channels from the database");
 
         CBChannelGroup chGroup = (CBChannelGroup)comboBoxGroup.SelectedItem;
 
@@ -390,7 +390,7 @@ namespace SetupTv.Sections
                 }
                 catch (Exception ex)
                 {
-                  Log.Error("Error while searching for matching guide channel :" + ex.Message);
+                  Log.Error("xmltv: Error while searching for matching guide channel : {0}", ex.Message);
                 }
               }
             }
@@ -459,7 +459,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        Log.Error("Failed loading channels/mappings : channel {0} erro {1} ", name, ex.Message);
+        Log.Error("xmltv: Failed loading channels/mappings : channel {0} error {1}", name, ex.Message);
         Log.Error(ex.StackTrace);
         textBoxAction.Text = "Error";
       }
@@ -527,13 +527,13 @@ namespace SetupTv.Sections
           if (canRead)
           {
               // all ok, get channels
-              Log.WriteFile(@"plugin:xmltv loading " + fileName);
+              Log.WriteFile(@"plugin:xmltv loading {0}", fileName);
               listChannels.AddRange(readTVGuideChannelsFromFile(fileName));
           }
           else
           {
               MessageBox.Show("Can't open tvguide.xml for reading");
-              Log.Error(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "].");
+              Log.Error(@"plugin:xmltv StartImport - Exception when reading [{0}].", fileName);
           }*/
 
           try
@@ -542,14 +542,14 @@ namespace SetupTv.Sections
             IOUtil.CheckFileAccessRights(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
 
             // all ok, get channels
-            Log.WriteFile(@"plugin:xmltv loading " + fileName);
+            Log.WriteFile("xmltv: Loading {0}", fileName);
 
             listChannels.AddRange(readTVGuideChannelsFromFile(fileName));
           }
           catch (Exception e)
           {
             MessageBox.Show("Can't open tvguide.xml for reading");
-            Log.Error(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "] : " + e.Message);
+            Log.Error("xmltv: StartImport - Exception when reading [{0}] : {1}", fileName, e.Message);
           }
         }
 
@@ -577,7 +577,7 @@ namespace SetupTv.Sections
                   tvguideFileName = System.IO.Path.Combine(folder, tvguideFileName);
                 }
 
-                Log.WriteFile(@"plugin:xmltv loading " + tvguideFileName);
+                Log.WriteFile("xmltv: Loading {0}", tvguideFileName);
 
                 // get channels
                 listChannels.AddRange(readTVGuideChannelsFromFile(tvguideFileName));
@@ -587,7 +587,7 @@ namespace SetupTv.Sections
           catch (Exception e)
           {
             MessageBox.Show("Can't read file(s) from the tvguide.lst");
-            Log.Error(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "] : " + e.Message);
+            Log.Error("xmltv: StartImport - Exception when reading [{0}] : {1}", fileName, e.Message);
           }
         }
       }
@@ -619,7 +619,7 @@ namespace SetupTv.Sections
               String id = xmlReader.GetAttribute("id");
               if (id == null || id.Length == 0)
               {
-                Log.Error("  channel#{0} doesnt contain an id", iChannel);
+                Log.Error("xmltv: - channel#{0} doesnt contain an id", iChannel);
               }
               else
               {
@@ -727,7 +727,7 @@ namespace SetupTv.Sections
       catch (Exception ex)
       {
         textBoxAction.Text = "Save failed";
-        Log.Error("Error while saving channelmappings : {0}", ex.Message);
+        Log.Error("xmltv: Error while saving channelmappings : {0}", ex.Message);
         Log.Error(ex.StackTrace);
       }
     }
@@ -806,11 +806,11 @@ namespace SetupTv.Sections
       catch (UnauthorizedAccessException ex)
       {
         MessageBox.Show("Can't open the file for writing");
-        Log.Error("Failed to export guidechannels {0}", ex.Message);
+        Log.Error("xmltv: Failed to export guidechannels {0}", ex.Message);
       }
       catch (Exception ex)
       {
-        Log.Error("Failed to export guidechannels {0}", ex.Message);
+        Log.Error("xmltv: Failed to export guidechannels {0}", ex.Message);
       }
     }
 

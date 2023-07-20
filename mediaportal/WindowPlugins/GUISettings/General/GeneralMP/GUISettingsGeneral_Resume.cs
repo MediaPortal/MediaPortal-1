@@ -28,7 +28,7 @@ using System.Text;
 using System.Windows.Forms;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using Microsoft.DirectX.Direct3D;
+using SharpDX.Direct3D9;
 using Microsoft.Win32;
 using Action = MediaPortal.GUI.Library.Action;
 
@@ -406,10 +406,11 @@ namespace MediaPortal.GUI.Settings
         return;
       }
       keyboard.Reset();
+      keyboard.IsNumeric = true;
       keyboard.Text = strLine;
 
       keyboard.DoModal(GUIWindowManager.ActiveWindow);
-      
+
       if (keyboard.IsConfirmed)
       {
         int number;
@@ -445,10 +446,10 @@ namespace MediaPortal.GUI.Settings
           deviceId = "";
         }
 
-        foreach (AdapterInformation adapter in Manager.Adapters)
+        foreach (AdapterInformation adapter in GUIGraphicsContext.Direct3D.Adapters)
         {
           bool detectedId = false;
-          if (screen.DeviceName.Equals(adapter.Information.DeviceName.Trim()))
+          if (screen.DeviceName.Equals(adapter.Details.DeviceName.Trim()))
           {
             foreach (var display in DisplayDetails.GetMonitorDetails())
             {
@@ -458,7 +459,7 @@ namespace MediaPortal.GUI.Settings
                 _screenCollection.Add(
                   new Tuple<string, string, string>((
                     string.Format("{0} ({1}x{2}) on {3}", display.Model, adapter.CurrentDisplayMode.Width,
-                      adapter.CurrentDisplayMode.Height, adapter.Information.Description)), deviceId, adapter.Information.DeviceName.Trim()));
+                      adapter.CurrentDisplayMode.Height, adapter.Details.Description)), deviceId, adapter.Details.DeviceName.Trim()));
                 detectedId = true;
                 break;
               }
@@ -468,7 +469,7 @@ namespace MediaPortal.GUI.Settings
               _screenCollection.Add(
                 new Tuple<string, string, string>((
                   string.Format("{0} ({1}x{2}) on {3}", monitorname, adapter.CurrentDisplayMode.Width,
-                    adapter.CurrentDisplayMode.Height, adapter.Information.Description)), deviceId, adapter.Information.DeviceName.Trim()));
+                    adapter.CurrentDisplayMode.Height, adapter.Details.Description)), deviceId, adapter.Details.DeviceName.Trim()));
               break;
             }
           }

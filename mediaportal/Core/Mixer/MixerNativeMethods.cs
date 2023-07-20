@@ -75,6 +75,7 @@ namespace MediaPortal.Mixer
 
     #region Structures
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 4)]
     public struct MixerControl
     {
       #region Fields
@@ -85,30 +86,58 @@ namespace MediaPortal.Mixer
       public int fdwControl;
       public int MultipleItems;
 
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)] public string ShortName;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
+      public string ShortName;
 
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)] public string Name;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+      public string Name;
 
+      //  union {
+      //  struct {
+      //    LONG lMinimum;
+      //    LONG lMaximum;
+      //  } DUMMYSTRUCTNAME;
+      //  struct {
+      //    DWORD dwMinimum;
+      //    DWORD dwMaximum;
+      //  } DUMMYSTRUCTNAME2;
+      //  DWORD dwReserved[6];
+      //} Bounds;
       public int Minimum;
       public int Maximum;
+      public int BoundsReserved2;
+      public int BoundsReserved3;
+      public int BoundsReserved4;
+      public int BoundsReserved5;
 
-      [MarshalAs(UnmanagedType.U4, SizeConst = 10)] public int Reserved;
+
+      //  union {
+      //    DWORD cSteps;
+      //    DWORD cbCustomData;
+      //    DWORD dwReserved[6];
+      //} Metrics;
+      public int MetricsReserved0;
+      public int MetricsReserved1;
+      public int MetricsReserved2;
+      public int MetricsReserved3;
+      public int MetricsReserved4;
+      public int MetricsReserved5;
 
       #endregion Fields
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 4)]
     public class MixerControlDetails : IDisposable
     {
       #region Constructors
 
       public MixerControlDetails(int controlId)
       {
-        this.Size = Marshal.SizeOf(typeof (MixerControlDetails));
+        this.Size = Marshal.SizeOf(typeof(MixerControlDetails));
         this.ControlId = controlId;
         this.Data = Marshal.AllocCoTaskMem(4);
         this.Channels = 1;
-        this.Item = 0;
+        this.Item = IntPtr.Zero;
         this.DataSize = Marshal.SizeOf(4);
       }
 
@@ -118,10 +147,8 @@ namespace MediaPortal.Mixer
 
       public void Dispose()
       {
-        if (Data != IntPtr.Zero)
-        {
-          Marshal.FreeCoTaskMem(Data);
-        }
+        if (this.Data != IntPtr.Zero)
+          Marshal.FreeCoTaskMem(this.Data);
       }
 
       #endregion Methods
@@ -131,25 +158,32 @@ namespace MediaPortal.Mixer
       public int Size;
       public int ControlId;
       public int Channels;
-      public int Item;
+
+      //union {
+      //    HWND  hwndOwner;
+      //    DWORD cMultipleItems;
+      //  } DUMMYUNIONNAME;
+      public IntPtr Item;
+
       public int DataSize;
       public IntPtr Data;
 
       #endregion Fields
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 4)]
     public struct MixerLine
     {
       #region Constructors
 
       public MixerLine(MixerComponentType componentType)
       {
-        this.Size = Marshal.SizeOf(typeof (MixerLine));
+        this.Size = Marshal.SizeOf(typeof(MixerLine));
         this.Destination = 0;
         this.Source = 0;
         this.LineId = 0;
         this.Status = MixerLineStatusFlags.Disconnected;
-        this.dwUser = 0;
+        this.dwUser = IntPtr.Zero;
         this.ComponentType = componentType;
         this.Channels = 0;
         this.Connections = 0;
@@ -173,15 +207,17 @@ namespace MediaPortal.Mixer
       public int Source;
       public int LineId;
       public MixerLineStatusFlags Status;
-      public int dwUser;
+      public IntPtr dwUser;
       public MixerComponentType ComponentType;
       public int Channels;
       public int Connections;
       public int Controls;
 
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)] public string ShortName;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
+      public string ShortName;
 
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)] public string Name;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+      public string Name;
 
       public MixerLineTargetType Type;
       public int DeviceId;
@@ -189,24 +225,25 @@ namespace MediaPortal.Mixer
       public short ProductId;
       public int DriverVersion;
 
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)] public string ProductName;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+      public string ProductName;
 
       #endregion Fields
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 4)]
     public class MixerLineControls : IDisposable
     {
       #region Constructors
 
       public MixerLineControls(int lineId, MixerControlType controlType)
       {
-        this.Size = Marshal.SizeOf(typeof (MixerControlDetails));
+        this.Size = Marshal.SizeOf(typeof(MixerLineControls));
         this.LineId = lineId;
         this.ControlType = Convert.ToUInt32(controlType);
         this.Controls = 1;
-        this.Data = Marshal.AllocCoTaskMem(152);
-        this.DataSize = 152;
+        this.DataSize = Marshal.SizeOf(typeof(MixerControl));
+        this.Data = Marshal.AllocCoTaskMem(this.DataSize);
       }
 
       #endregion Constructors
@@ -215,10 +252,8 @@ namespace MediaPortal.Mixer
 
       public void Dispose()
       {
-        if (Data != IntPtr.Zero)
-        {
-          Marshal.FreeCoTaskMem(Data);
-        }
+        if (this.Data != IntPtr.Zero)
+          Marshal.FreeCoTaskMem(this.Data);
       }
 
       #endregion Methods

@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2020 Team MediaPortal
+﻿#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -32,8 +32,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public LAVFilterMPEInstall()
     {
       MpeId = "b7738156-b6ec-4f0f-b1a8-b5010349d8b1";
-      MpeURL ="http://www.team-mediaportal.com/index.php?option=com_mtree&task=att_download&link_id=162&cf_id=24";
-      MpeUpdateURL= "http://www.team-mediaportal.com/index.php?option=com_mtree&task=att_download&link_id=162&cf_id=52";
+      MpeURL ="https://www.team-mediaportal.com/index.php?option=com_mtree&task=att_download&link_id=162&cf_id=24";
+      MpeUpdateURL= "https://www.team-mediaportal.com/index.php?option=com_mtree&task=att_download&link_id=162&cf_id=52";
       MpeUpdateFile = Application.StartupPath + "\\deploy\\" + "LAVFilters.xml";
       FileName = Application.StartupPath + "\\deploy\\" + "LAVFilters.mpe1";
     }

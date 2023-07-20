@@ -29,11 +29,11 @@ using System.Windows.Media.Imaging;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
+using SharpDX;
+using SharpDX.Direct3D9;
 using Microsoft.WindowsAPICodePack.Shell;
 
-using Direct3D = Microsoft.DirectX.Direct3D;
+using Direct3D = SharpDX.Direct3D9;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 using ScaleTransform = System.Windows.Media.ScaleTransform;
 
@@ -209,11 +209,11 @@ namespace MediaPortal.Util
                       // Set picture at center position
                       int xpos = 1; // (iMaxWidth-iWidth)/2;
                       int ypos = 1; // (iMaxHeight-iHeight)/2;
-                      g.DrawImage(theImage, new Rectangle(xpos, ypos, iWidth, iHeight));
+                      g.DrawImage(theImage, new System.Drawing.Rectangle(xpos, ypos, iWidth, iHeight));
                     }
                     else
                     {
-                      g.DrawImage(theImage, new Rectangle(0, 0, iWidth, iHeight));
+                      g.DrawImage(theImage, new System.Drawing.Rectangle(0, 0, iWidth, iHeight));
                     }
                   }
                   texture = Picture.ConvertImageToTexture(result, out iWidth, out iHeight);
@@ -277,13 +277,14 @@ namespace MediaPortal.Util
         Texture texture = null;
         using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
         {
-          ImageInformation info2 = new ImageInformation();
+          ImageInformation info2;
           theImage.Save(stream, System.Drawing.Imaging.ImageFormat.Bmp);
           stream.Flush();
           stream.Seek(0, System.IO.SeekOrigin.Begin);
-          texture = TextureLoader.FromStream(
+          texture = Texture.FromStream(
             GUIGraphicsContext.DX9Device,
             stream,
+            0, //size
             0, 0, // width/height
             1,    // mipslevels
             0,    // Usage.Dynamic,
@@ -292,7 +293,7 @@ namespace MediaPortal.Util
             Filter.None,
             Filter.None,
             (int)lColorKey,
-            ref info2);
+            out info2);
           stream.Close();
           iWidth = info2.Width;
           iHeight = info2.Height;
@@ -328,11 +329,11 @@ namespace MediaPortal.Util
     {
       if (texture == null)
         return;
-      if (texture.Disposed)
+      if (texture.IsDisposed)
         return;
       if (GUIGraphicsContext.DX9Device == null)
         return;
-      if (GUIGraphicsContext.DX9Device.Disposed)
+      if (GUIGraphicsContext.DX9Device.IsDisposed)
         return;
 
       if (x < 0 || y < 0)
@@ -347,9 +348,15 @@ namespace MediaPortal.Util
       VertexBuffer m_vbBuffer = null;
       try
       {
-        m_vbBuffer = new VertexBuffer(typeof (CustomVertex.TransformedColoredTextured),
-                                      4, GUIGraphicsContext.DX9Device,
-                                      0, CustomVertex.TransformedColoredTextured.Format,
+        //m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
+        //                              4, GUIGraphicsContext.DX9Device,
+        //                              0, CustomVertex.TransformedColoredTextured.Format,
+        //                              GUIGraphicsContext.GetTexturePoolType());
+
+        m_vbBuffer = new VertexBuffer(GUIGraphicsContext.DX9Device,
+                                      CustomVertex.TransformedColoredTextured.StrideSize * 4,
+                                      Usage.None,
+                                      CustomVertex.TransformedColoredTextured.Format,
                                       GUIGraphicsContext.GetTexturePoolType());
 
         Direct3D.SurfaceDescription desc;
@@ -394,46 +401,47 @@ namespace MediaPortal.Util
           nh = GUIGraphicsContext.Height - y;
         }
 
-        CustomVertex.TransformedColoredTextured[] verts =
-          (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0, 0);
-        // Lock the buffer (which will return our structs)
-        verts[0].X = x - 0.5f;
-        verts[0].Y = y + nh - 0.5f;
-        verts[0].Z = 0.0f;
-        verts[0].Rhw = 1.0f;
-        verts[0].Color = (int)_diffuseColor;
-        verts[0].Tu = uoffs;
-        verts[0].Tv = voffs + vmax;
+        unsafe
+        {
+          CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)m_vbBuffer.LockToPointer(0, 0, LockFlags.None);
+          // Lock the buffer (which will return our structs)
+          verts[0].X = x - 0.5f;
+          verts[0].Y = y + nh - 0.5f;
+          verts[0].Z = 0.0f;
+          verts[0].Rhw = 1.0f;
+          verts[0].Color = (int)_diffuseColor;
+          verts[0].Tu = uoffs;
+          verts[0].Tv = voffs + vmax;
 
-        verts[1].X = x - 0.5f;
-        verts[1].Y = y - 0.5f;
-        verts[1].Z = 0.0f;
-        verts[1].Rhw = 1.0f;
-        verts[1].Color = (int)_diffuseColor;
-        verts[1].Tu = uoffs;
-        verts[1].Tv = voffs;
+          verts[1].X = x - 0.5f;
+          verts[1].Y = y - 0.5f;
+          verts[1].Z = 0.0f;
+          verts[1].Rhw = 1.0f;
+          verts[1].Color = (int)_diffuseColor;
+          verts[1].Tu = uoffs;
+          verts[1].Tv = voffs;
 
-        verts[2].X = x + nw - 0.5f;
-        verts[2].Y = y + nh - 0.5f;
-        verts[2].Z = 0.0f;
-        verts[2].Rhw = 1.0f;
-        verts[2].Color = (int)_diffuseColor;
-        verts[2].Tu = uoffs + umax;
-        verts[2].Tv = voffs + vmax;
+          verts[2].X = x + nw - 0.5f;
+          verts[2].Y = y + nh - 0.5f;
+          verts[2].Z = 0.0f;
+          verts[2].Rhw = 1.0f;
+          verts[2].Color = (int)_diffuseColor;
+          verts[2].Tu = uoffs + umax;
+          verts[2].Tv = voffs + vmax;
 
-        verts[3].X = x + nw - 0.5f;
-        verts[3].Y = y - 0.5f;
-        verts[3].Z = 0.0f;
-        verts[3].Rhw = 1.0f;
-        verts[3].Color = (int)_diffuseColor;
-        verts[3].Tu = uoffs + umax;
-        verts[3].Tv = voffs;
+          verts[3].X = x + nw - 0.5f;
+          verts[3].Y = y - 0.5f;
+          verts[3].Z = 0.0f;
+          verts[3].Rhw = 1.0f;
+          verts[3].Color = (int)_diffuseColor;
+          verts[3].Tu = uoffs + umax;
+          verts[3].Tv = voffs;
 
-
-        m_vbBuffer.Unlock();
+          m_vbBuffer.Unlock();
+        }
 
         GUIGraphicsContext.DX9Device.SetTexture(0, texture);
-        int g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
+        int g_nAnisotropy = GUIGraphicsContext.DX9Device.Capabilities.MaxAnisotropy;
         float g_fMipMapLodBias = 0.0f;
 
         DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
@@ -449,7 +457,7 @@ namespace MediaPortal.Util
         DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPMAPLODBIAS, (uint)g_fMipMapLodBias);
 
         // Render the image
-        GUIGraphicsContext.DX9Device.SetStreamSource(0, m_vbBuffer, 0);
+        GUIGraphicsContext.DX9Device.SetStreamSource(0, m_vbBuffer, 0, CustomVertex.TransformedColoredTextured.StrideSize);
         GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
         GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
 
@@ -483,11 +491,11 @@ namespace MediaPortal.Util
     {
       if (texture == null)
         return;
-      if (texture.Disposed)
+      if (texture.IsDisposed)
         return;
       if (GUIGraphicsContext.DX9Device == null)
         return;
-      if (GUIGraphicsContext.DX9Device.Disposed)
+      if (GUIGraphicsContext.DX9Device.IsDisposed)
         return;
 
       if (x < 0 || y < 0)
@@ -502,10 +510,16 @@ namespace MediaPortal.Util
       VertexBuffer m_vbBuffer = null;
       try
       {
-        m_vbBuffer = new VertexBuffer(typeof (CustomVertex.TransformedColoredTextured),
-                                      4, GUIGraphicsContext.DX9Device,
-                                      0, CustomVertex.TransformedColoredTextured.Format,
-                                      GUIGraphicsContext.GetTexturePoolType());
+        //m_vbBuffer = new VertexBuffer(typeof (CustomVertex.TransformedColoredTextured),
+        //                              4, GUIGraphicsContext.DX9Device,
+        //                              0, CustomVertex.TransformedColoredTextured.Format,
+        //                              GUIGraphicsContext.GetTexturePoolType());
+
+        m_vbBuffer = new VertexBuffer(GUIGraphicsContext.DX9Device,
+                              CustomVertex.TransformedColoredTextured.StrideSize * 4,
+                              Usage.None,
+                              CustomVertex.TransformedColoredTextured.Format,
+                              GUIGraphicsContext.GetTexturePoolType());
 
         Direct3D.SurfaceDescription desc;
         desc = texture.GetLevelDescription(0);
@@ -549,46 +563,48 @@ namespace MediaPortal.Util
           nh = GUIGraphicsContext.Height - y;
         }
 
-        CustomVertex.TransformedColoredTextured[] verts =
-          (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0, 0);
-        // Lock the buffer (which will return our structs)
-        verts[0].X = x - 0.5f;
-        verts[0].Y = y + nh - 0.5f;
-        verts[0].Z = 0.0f;
-        verts[0].Rhw = 1.0f;
-        verts[0].Color = (int)_diffuseColor;
-        verts[0].Tu = uoffs;
-        verts[0].Tv = voffs + vmax;
+        unsafe
+        {
+          CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)m_vbBuffer.LockToPointer(0, 0, LockFlags.None);
 
-        verts[1].X = x - 0.5f;
-        verts[1].Y = y - 0.5f;
-        verts[1].Z = 0.0f;
-        verts[1].Rhw = 1.0f;
-        verts[1].Color = (int)_diffuseColor;
-        verts[1].Tu = uoffs;
-        verts[1].Tv = voffs;
+          // Lock the buffer (which will return our structs)
+          verts[0].X = x - 0.5f;
+          verts[0].Y = y + nh - 0.5f;
+          verts[0].Z = 0.0f;
+          verts[0].Rhw = 1.0f;
+          verts[0].Color = (int)_diffuseColor;
+          verts[0].Tu = uoffs;
+          verts[0].Tv = voffs + vmax;
 
-        verts[2].X = x + nw - 0.5f;
-        verts[2].Y = y + nh - 0.5f;
-        verts[2].Z = 0.0f;
-        verts[2].Rhw = 1.0f;
-        verts[2].Color = (int)_diffuseColor;
-        verts[2].Tu = uoffs + umax;
-        verts[2].Tv = voffs + vmax;
+          verts[1].X = x - 0.5f;
+          verts[1].Y = y - 0.5f;
+          verts[1].Z = 0.0f;
+          verts[1].Rhw = 1.0f;
+          verts[1].Color = (int)_diffuseColor;
+          verts[1].Tu = uoffs;
+          verts[1].Tv = voffs;
 
-        verts[3].X = x + nw - 0.5f;
-        verts[3].Y = y - 0.5f;
-        verts[3].Z = 0.0f;
-        verts[3].Rhw = 1.0f;
-        verts[3].Color = (int)_diffuseColor;
-        verts[3].Tu = uoffs + umax;
-        verts[3].Tv = voffs;
+          verts[2].X = x + nw - 0.5f;
+          verts[2].Y = y + nh - 0.5f;
+          verts[2].Z = 0.0f;
+          verts[2].Rhw = 1.0f;
+          verts[2].Color = (int)_diffuseColor;
+          verts[2].Tu = uoffs + umax;
+          verts[2].Tv = voffs + vmax;
 
+          verts[3].X = x + nw - 0.5f;
+          verts[3].Y = y - 0.5f;
+          verts[3].Z = 0.0f;
+          verts[3].Rhw = 1.0f;
+          verts[3].Color = (int)_diffuseColor;
+          verts[3].Tu = uoffs + umax;
+          verts[3].Tv = voffs;
 
-        m_vbBuffer.Unlock();
+          m_vbBuffer.Unlock();
+        }
 
         GUIGraphicsContext.DX9Device.SetTexture(0, texture);
-        int g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
+        int g_nAnisotropy = GUIGraphicsContext.DX9Device.Capabilities.MaxAnisotropy;
         float g_fMipMapLodBias = 0.0f;
         DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
         DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
@@ -603,7 +619,7 @@ namespace MediaPortal.Util
         DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPMAPLODBIAS, (uint)g_fMipMapLodBias);
 
         // Render the image
-        GUIGraphicsContext.DX9Device.SetStreamSource(0, m_vbBuffer, 0);
+        GUIGraphicsContext.DX9Device.SetStreamSource(0, m_vbBuffer, 0, CustomVertex.TransformedColoredTextured.StrideSize);
         GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
         GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
 
@@ -637,11 +653,11 @@ namespace MediaPortal.Util
     {
       if (texture == null)
         return;
-      if (texture.Disposed)
+      if (texture.IsDisposed)
         return;
       if (GUIGraphicsContext.DX9Device == null)
         return;
-      if (GUIGraphicsContext.DX9Device.Disposed)
+      if (GUIGraphicsContext.DX9Device.IsDisposed)
         return;
 
       if (x < 0 || y < 0)
@@ -656,10 +672,16 @@ namespace MediaPortal.Util
       VertexBuffer m_vbBuffer = null;
       try
       {
-        m_vbBuffer = new VertexBuffer(typeof (CustomVertex.TransformedColoredTextured),
-                                      4, GUIGraphicsContext.DX9Device,
-                                      0, CustomVertex.TransformedColoredTextured.Format,
-                                      GUIGraphicsContext.GetTexturePoolType());
+        //m_vbBuffer = new VertexBuffer(typeof (CustomVertex.TransformedColoredTextured),
+        //                              4, GUIGraphicsContext.DX9Device,
+        //                              0, CustomVertex.TransformedColoredTextured.Format,
+        //                              GUIGraphicsContext.GetTexturePoolType());
+
+        m_vbBuffer = new VertexBuffer(GUIGraphicsContext.DX9Device,
+                              CustomVertex.TransformedColoredTextured.StrideSize * 4,
+                              Usage.None,
+                              CustomVertex.TransformedColoredTextured.Format,
+                              GUIGraphicsContext.GetTexturePoolType());
 
         Direct3D.SurfaceDescription desc;
         desc = texture.GetLevelDescription(0);
@@ -702,43 +724,45 @@ namespace MediaPortal.Util
           nh = GUIGraphicsContext.Height - y;
         }
 
-        CustomVertex.TransformedColoredTextured[] verts =
-          (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0, 0);
-        // Lock the buffer (which will return our structs)
-        verts[0].X = x - 0.5f;
-        verts[0].Y = y + nh - 0.5f;
-        verts[0].Z = 0.0f;
-        verts[0].Rhw = 1.0f;
-        verts[0].Color = (int)lColorDiffuse;
-        verts[0].Tu = uoffs;
-        verts[0].Tv = voffs + vmax;
+        unsafe
+        {
+          CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)m_vbBuffer.LockToPointer(0, 0, LockFlags.None);
 
-        verts[1].X = x - 0.5f;
-        verts[1].Y = y - 0.5f;
-        verts[1].Z = 0.0f;
-        verts[1].Rhw = 1.0f;
-        verts[1].Color = (int)lColorDiffuse;
-        verts[1].Tu = uoffs;
-        verts[1].Tv = voffs;
+          // Lock the buffer (which will return our structs)
+          verts[0].X = x - 0.5f;
+          verts[0].Y = y + nh - 0.5f;
+          verts[0].Z = 0.0f;
+          verts[0].Rhw = 1.0f;
+          verts[0].Color = (int)lColorDiffuse;
+          verts[0].Tu = uoffs;
+          verts[0].Tv = voffs + vmax;
 
-        verts[2].X = x + nw - 0.5f;
-        verts[2].Y = y + nh - 0.5f;
-        verts[2].Z = 0.0f;
-        verts[2].Rhw = 1.0f;
-        verts[2].Color = (int)lColorDiffuse;
-        verts[2].Tu = uoffs + umax;
-        verts[2].Tv = voffs + vmax;
+          verts[1].X = x - 0.5f;
+          verts[1].Y = y - 0.5f;
+          verts[1].Z = 0.0f;
+          verts[1].Rhw = 1.0f;
+          verts[1].Color = (int)lColorDiffuse;
+          verts[1].Tu = uoffs;
+          verts[1].Tv = voffs;
 
-        verts[3].X = x + nw - 0.5f;
-        verts[3].Y = y - 0.5f;
-        verts[3].Z = 0.0f;
-        verts[3].Rhw = 1.0f;
-        verts[3].Color = (int)lColorDiffuse;
-        verts[3].Tu = uoffs + umax;
-        verts[3].Tv = voffs;
+          verts[2].X = x + nw - 0.5f;
+          verts[2].Y = y + nh - 0.5f;
+          verts[2].Z = 0.0f;
+          verts[2].Rhw = 1.0f;
+          verts[2].Color = (int)lColorDiffuse;
+          verts[2].Tu = uoffs + umax;
+          verts[2].Tv = voffs + vmax;
 
+          verts[3].X = x + nw - 0.5f;
+          verts[3].Y = y - 0.5f;
+          verts[3].Z = 0.0f;
+          verts[3].Rhw = 1.0f;
+          verts[3].Color = (int)lColorDiffuse;
+          verts[3].Tu = uoffs + umax;
+          verts[3].Tv = voffs;
 
-        m_vbBuffer.Unlock();
+          m_vbBuffer.Unlock();
+        }
 
         GUIGraphicsContext.DX9Device.SetTexture(0, texture);
 
@@ -762,7 +786,7 @@ namespace MediaPortal.Util
         DXNative.FontEngineSetTextureStageState(1, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLOROP, (int)D3DTEXTUREOP.D3DTOP_DISABLE);
         DXNative.FontEngineSetTextureStageState(1, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAOP, (int)D3DTEXTUREOP.D3DTOP_DISABLE);
 
-        int g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
+        int g_nAnisotropy = GUIGraphicsContext.DX9Device.Capabilities.MaxAnisotropy;
         float g_fMipMapLodBias = 0.0f;
 
         DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
@@ -778,7 +802,7 @@ namespace MediaPortal.Util
         DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPMAPLODBIAS, (uint)g_fMipMapLodBias);
 
         // Render the image
-        GUIGraphicsContext.DX9Device.SetStreamSource(0, m_vbBuffer, 0);
+        GUIGraphicsContext.DX9Device.SetStreamSource(0, m_vbBuffer, 0, CustomVertex.TransformedColoredTextured.StrideSize);
         GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
         GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
 
@@ -1349,7 +1373,7 @@ namespace MediaPortal.Util
             g.CompositingQuality = Thumbs.Compositing;
             g.InterpolationMode = Thumbs.Interpolation;
             g.SmoothingMode = Thumbs.Smoothing;
-            g.DrawImage(aDrawingImage, new Rectangle(0, 0, iWidth, iHeight));
+            g.DrawImage(aDrawingImage, new System.Drawing.Rectangle(0, 0, iWidth, iHeight));
             myTargetThumb = myBitmap;
           }
         }
@@ -1440,7 +1464,7 @@ namespace MediaPortal.Util
 
     public static void DrawLine(int x1, int y1, int x2, int y2, long color)
     {
-      Vector2[] vec = new Vector2[2];
+      SharpDX.Mathematics.Interop.RawVector2[] vec = new SharpDX.Mathematics.Interop.RawVector2[2];
       vec[0].X = x1;
       vec[0].Y = y1;
       vec[1].X = x2;
@@ -1448,22 +1472,27 @@ namespace MediaPortal.Util
       using (Line line = new Line(GUIGraphicsContext.DX9Device))
       {
         line.Begin();
-        line.Draw(vec, (int)color);
+        line.Draw(vec, RawColorsBGRA.FromARGB(color));
         line.End();
       }
     }
 
-    public static void DrawRectangle(Rectangle rect, long color, bool fill)
+    public static void DrawRectangle(System.Drawing.Rectangle rect, long color, bool fill)
     {
+      SharpDX.Mathematics.Interop.RawColorBGRA col = RawColorsBGRA.FromARGB(color);
+
       if (fill)
       {
-        Rectangle[] rects = new Rectangle[1];
-        rects[0] = rect;
-        GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, (int)color, 1.0f, 0, rects);
+        SharpDX.Mathematics.Interop.RawRectangle[] rects = new SharpDX.Mathematics.Interop.RawRectangle[1];
+        rects[0].Left = rect.Left;
+        rects[0].Top = rect.Top;
+        rects[0].Right = rect.Right;
+        rects[0].Bottom = rect.Bottom;
+        GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, col, 1.0f, 0, rects);
       }
       else
       {
-        Vector2[] vec = new Vector2[2];
+        SharpDX.Mathematics.Interop.RawVector2[] vec = new SharpDX.Mathematics.Interop.RawVector2[2];
         vec[0].X = rect.Left;
         vec[0].Y = rect.Top;
         vec[1].X = rect.Left + rect.Width;
@@ -1471,26 +1500,25 @@ namespace MediaPortal.Util
         using (Line line = new Line(GUIGraphicsContext.DX9Device))
         {
           line.Begin();
-          line.Draw(vec, (int)color);
+          line.Draw(vec, col);
 
           vec[0].X = rect.Left + rect.Width;
           vec[0].Y = rect.Top;
           vec[1].X = rect.Left + rect.Width;
           vec[1].Y = rect.Top + rect.Height;
-          line.Draw(vec, (int)color);
+          line.Draw(vec, col);
 
           vec[0].X = rect.Left + rect.Width;
           vec[0].Y = rect.Top + rect.Width;
           vec[1].X = rect.Left;
           vec[1].Y = rect.Top + rect.Height;
-          line.Draw(vec, (int)color);
-
+          line.Draw(vec, col);
 
           vec[0].X = rect.Left;
           vec[0].Y = rect.Top + rect.Height;
           vec[1].X = rect.Left;
           vec[1].Y = rect.Top;
-          line.Draw(vec, (int)color);
+          line.Draw(vec, col);
           line.End();
         }
       }
@@ -1645,7 +1673,7 @@ namespace MediaPortal.Util
         histogram = new Bitmap(width, height);
         using (Graphics g = Graphics.FromImage(histogram))
         {
-          Rectangle imageSize = new Rectangle(0, 0, width, height);
+          System.Drawing.Rectangle imageSize = new System.Drawing.Rectangle(0, 0, width, height);
           g.FillRectangle(System.Drawing.Brushes.WhiteSmoke, imageSize);
         }
         int[] R = new int[256];

@@ -19,7 +19,7 @@ namespace MediaPortal.DeployTool {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class MediaPortal_DeployTool {
@@ -449,7 +449,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Install extension that adds support for popular third party plugins.
+        ///   Looks up a localized string similar to Install extension that adds support for popular third party plugins in Titan skin.
         /// </summary>
         internal static string ExtensionChoice_Titan {
             get {
@@ -639,7 +639,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No action
+        ///   Looks up a localized string similar to No action.
         /// </summary>
         internal static string Install_actionNothing {
             get {
@@ -1156,6 +1156,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to * External - The external skins are only installed when you choose them, but you can always install them yourself..
+        /// </summary>
+        internal static string SkinChoice_ExtendedDescription {
+            get {
+                return ResourceManager.GetString("SkinChoice_ExtendedDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use Existing Skin (This will be checked for compatibility).
         /// </summary>
         internal static string SkinChoice_labelExistingSkin {
@@ -1170,6 +1179,15 @@ namespace MediaPortal.DeployTool {
         internal static string SkinChoice_labelSectionHeader {
             get {
                 return ResourceManager.GetString("SkinChoice_labelSectionHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Browse other skins.
+        /// </summary>
+        internal static string SkinChoice_OtherSkins {
+            get {
+                return ResourceManager.GetString("SkinChoice_OtherSkins", resourceCulture);
             }
         }
         

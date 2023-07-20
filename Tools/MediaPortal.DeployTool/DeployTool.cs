@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,7 +22,6 @@ using System;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace MediaPortal.DeployTool
 {
@@ -36,10 +35,11 @@ namespace MediaPortal.DeployTool
 
     public void UpdateUI()
     {
-      labelHeading.Text = "";
+      labelHeading.Text = string.Empty;
       Text = Localizer.GetBestTranslation("MainWindow_AppName");
       backButton.Text = Localizer.GetBestTranslation("MainWindow_backButton");
       nextButton.Text = Localizer.GetBestTranslation("MainWindow_nextButton");
+      lbBadge.Visible = Utils.Is64bit();
     }
 
     public DeployDialog GetNextDialog()
@@ -74,28 +74,44 @@ namespace MediaPortal.DeployTool
 
     public DeployTool()
     {
-      //Create necessary directory tree
+      // Create necessary directory tree
       if (!Directory.Exists(Application.StartupPath + "\\deploy"))
       {
         Directory.CreateDirectory(Application.StartupPath + "\\deploy");
       }
 
-      //Set default folders
+      // Set default folders
       InstallationProperties.Instance.Set("MPDir",
                                           Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) +
                                           "\\Team MediaPortal\\MediaPortal");
-      InstallationProperties.Instance.Set("TVServerDir",
-                                          Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) +
-                                          "\\Team MediaPortal\\MediaPortal TV Server");
-
-      string tmpPrg = Environment.GetEnvironmentVariable("ProgramW6432");
-      if (!string.IsNullOrEmpty(tmpPrg))
+      if (Utils.Is64bit())
       {
-        InstallationProperties.Instance.Set("ProgramFiles", tmpPrg);
+        InstallationProperties.Instance.Set("TVServerDir",
+                                            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) +
+                                            "\\Team MediaPortal\\MediaPortal TV Server (x64)");
       }
       else
       {
+        InstallationProperties.Instance.Set("TVServerDir",
+                                            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) +
+                                            "\\Team MediaPortal\\MediaPortal TV Server");
+      }
+
+      if (Utils.Is64bit())
+      {
         InstallationProperties.Instance.Set("ProgramFiles", Environment.GetEnvironmentVariable("ProgramFiles"));
+      }
+      else
+      {
+        string tmpPrg = Environment.GetEnvironmentVariable("ProgramW6432");
+        if (!string.IsNullOrEmpty(tmpPrg))
+        {
+          InstallationProperties.Instance.Set("ProgramFiles", tmpPrg);
+        }
+        else
+        {
+          InstallationProperties.Instance.Set("ProgramFiles", Environment.GetEnvironmentVariable("ProgramFiles"));
+        }
       }
 
       // Paint first screen
@@ -141,7 +157,8 @@ namespace MediaPortal.DeployTool
 
     private void nextButton_Click(object sender, EventArgs e)
     {
-      labelHeading.Text = "";
+      labelHeading.Text = string.Empty;
+
       //
       // check Internet connection unless files have already been downloaded
       //
@@ -157,7 +174,8 @@ namespace MediaPortal.DeployTool
       // 
       // check if there's is sufficient hard disk space for installation
       // 
-      if (_currentDialog.type == DialogType.DBMSSettings || _currentDialog.type == DialogType.TvServerSettings ||
+      if (_currentDialog.type == DialogType.DBMSSettings ||
+          _currentDialog.type == DialogType.TvServerSettings ||
           _currentDialog.type == DialogType.MPSettings)
       {
         // at least 0.5 GB free disk space are required for installation
@@ -238,7 +256,7 @@ namespace MediaPortal.DeployTool
 
     private void backButton_Click(object sender, EventArgs e)
     {
-      labelHeading.Text = "";
+      labelHeading.Text = string.Empty;
       bool isFirstDlg = false;
       _currentDialog = DialogFlowHandler.Instance.GetPreviousDlg(ref isFirstDlg);
       if (isFirstDlg)

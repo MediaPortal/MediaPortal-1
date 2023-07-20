@@ -59,7 +59,7 @@
       this.label1.Location = new System.Drawing.Point(12, 8);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(36, 13);
-      this.label1.TabIndex = 1;
+      this.label1.TabIndex = 10;
       this.label1.Text = "Folder";
       // 
       // label2
@@ -68,7 +68,7 @@
       this.label2.Location = new System.Drawing.Point(9, 47);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(51, 13);
-      this.label2.TabIndex = 3;
+      this.label2.TabIndex = 11;
       this.label2.Text = "Template";
       // 
       // chk_recurs
@@ -88,7 +88,7 @@
       this.add_folder.Location = new System.Drawing.Point(379, 24);
       this.add_folder.Name = "add_folder";
       this.add_folder.Size = new System.Drawing.Size(32, 20);
-      this.add_folder.TabIndex = 5;
+      this.add_folder.TabIndex = 1;
       this.add_folder.Text = "...";
       this.add_folder.UseVisualStyleBackColor = true;
       this.add_folder.Click += new System.EventHandler(this.add_folder_Click);
@@ -98,7 +98,7 @@
       this.btn_add_template.Location = new System.Drawing.Point(379, 63);
       this.btn_add_template.Name = "btn_add_template";
       this.btn_add_template.Size = new System.Drawing.Size(32, 20);
-      this.btn_add_template.TabIndex = 6;
+      this.btn_add_template.TabIndex = 3;
       this.btn_add_template.Text = "...";
       this.btn_add_template.UseVisualStyleBackColor = true;
       this.btn_add_template.Click += new System.EventHandler(this.btn_add_template_Click);
@@ -108,7 +108,7 @@
       this.addButton.Location = new System.Drawing.Point(130, 213);
       this.addButton.Name = "addButton";
       this.addButton.Size = new System.Drawing.Size(75, 23);
-      this.addButton.TabIndex = 7;
+      this.addButton.TabIndex = 8;
       this.addButton.Text = "Add";
       this.addButton.UseVisualStyleBackColor = true;
       this.addButton.Click += new System.EventHandler(this.button1_Click);
@@ -119,7 +119,7 @@
       this.cancelButton.Location = new System.Drawing.Point(211, 213);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
-      this.cancelButton.TabIndex = 8;
+      this.cancelButton.TabIndex = 9;
       this.cancelButton.Text = "Cancel";
       this.cancelButton.UseVisualStyleBackColor = true;
       this.cancelButton.Click += new System.EventHandler(this.button2_Click);
@@ -132,7 +132,7 @@
       this.txt_template.Location = new System.Drawing.Point(12, 62);
       this.txt_template.Name = "txt_template";
       this.txt_template.Size = new System.Drawing.Size(361, 21);
-      this.txt_template.TabIndex = 9;
+      this.txt_template.TabIndex = 2;
       // 
       // label7
       // 
@@ -140,7 +140,7 @@
       this.label7.Location = new System.Drawing.Point(12, 173);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(46, 13);
-      this.label7.TabIndex = 19;
+      this.label7.TabIndex = 14;
       this.label7.Text = "Param 1";
       // 
       // txt_param1
@@ -150,7 +150,7 @@
       this.txt_param1.Location = new System.Drawing.Point(104, 170);
       this.txt_param1.Name = "txt_param1";
       this.txt_param1.Size = new System.Drawing.Size(269, 20);
-      this.txt_param1.TabIndex = 18;
+      this.txt_param1.TabIndex = 7;
       // 
       // label6
       // 
@@ -158,7 +158,7 @@
       this.label6.Location = new System.Drawing.Point(12, 146);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(52, 13);
-      this.label6.TabIndex = 17;
+      this.label6.TabIndex = 13;
       this.label6.Text = "Overwrite";
       // 
       // cmb_overwrite
@@ -174,7 +174,7 @@
       this.cmb_overwrite.Location = new System.Drawing.Point(104, 143);
       this.cmb_overwrite.Name = "cmb_overwrite";
       this.cmb_overwrite.Size = new System.Drawing.Size(269, 21);
-      this.cmb_overwrite.TabIndex = 16;
+      this.cmb_overwrite.TabIndex = 6;
       // 
       // label4
       // 
@@ -194,7 +194,7 @@
       this.cmb_installtype.Location = new System.Drawing.Point(104, 116);
       this.cmb_installtype.Name = "cmb_installtype";
       this.cmb_installtype.Size = new System.Drawing.Size(269, 21);
-      this.cmb_installtype.TabIndex = 11;
+      this.cmb_installtype.TabIndex = 5;
       // 
       // AddFolder2Group
       // 

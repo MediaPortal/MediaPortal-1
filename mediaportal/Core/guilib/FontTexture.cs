@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.DirectX.Direct3D;
+using SharpDX.Direct3D9;
 
 namespace MediaPortal.GUI.Library
 {
@@ -38,6 +38,7 @@ namespace MediaPortal.GUI.Library
     public int size { get; set; }
     public string text { get; set; }
     public Texture texture { get; set; }
+    public System.Drawing.Size sizeDest { get; set; }
 
     #endregion //properties
 

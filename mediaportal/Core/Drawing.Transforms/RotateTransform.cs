@@ -45,7 +45,7 @@ namespace MediaPortal.Drawing.Transforms
     {
       Matrix matrix = Matrix.Translation((float)-_center.X, (float)-_center.Y, 0);
 
-      matrix *= Matrix.RotationZ(Microsoft.DirectX.Direct3D.Geometry.DegreeToRadian((float)_angle));
+      matrix *= Matrix.RotationZ((float)_angle * ((float)System.Math.PI / 180f));
       matrix *= Matrix.Translation((float)_center.X, (float)_center.Y, 0);
 
       return matrix;

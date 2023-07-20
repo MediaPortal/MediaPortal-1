@@ -1,3 +1,23 @@
+#region Copyright (C) 2005-2023 Team MediaPortal
+
+// Copyright (C) 2005-2023 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 namespace MediaPortal.DeployTool.Sections
 {
   partial class DBMSTypeDlg
@@ -35,13 +55,13 @@ namespace MediaPortal.DeployTool.Sections
       this.bMS = new System.Windows.Forms.Button();
       this.bMySQL = new System.Windows.Forms.Button();
       this.bExists = new System.Windows.Forms.Button();
-      this.lbMSSQL = new System.Windows.Forms.LinkLabel();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.pictureBox2 = new System.Windows.Forms.PictureBox();
       this.label1 = new System.Windows.Forms.Label();
       this.pictureBox3 = new System.Windows.Forms.PictureBox();
       this.pictureBox4 = new System.Windows.Forms.PictureBox();
       this.pictureBox5 = new System.Windows.Forms.PictureBox();
+      this.lbMSSQL = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -144,22 +164,6 @@ namespace MediaPortal.DeployTool.Sections
       this.bExists.UseVisualStyleBackColor = true;
       this.bExists.Click += new System.EventHandler(this.bExists_Click);
       // 
-      // lbMSSQL
-      // 
-      this.lbMSSQL.AutoSize = true;
-      this.lbMSSQL.Enabled = false;
-      this.lbMSSQL.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.25F);
-      this.lbMSSQL.ForeColor = System.Drawing.Color.White;
-      this.lbMSSQL.LinkColor = System.Drawing.Color.White;
-      this.lbMSSQL.Location = new System.Drawing.Point(383, 169);
-      this.lbMSSQL.Name = "lbMSSQL";
-      this.lbMSSQL.Size = new System.Drawing.Size(88, 13);
-      this.lbMSSQL.TabIndex = 29;
-      this.lbMSSQL.TabStop = true;
-      this.lbMSSQL.Text = "( learn why here )";
-      this.lbMSSQL.Visible = false;
-      this.lbMSSQL.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbMSSQL_LinkClicked);
-      // 
       // pictureBox1
       // 
       this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.MSSQL;
@@ -185,7 +189,7 @@ namespace MediaPortal.DeployTool.Sections
       this.label1.AutoSize = true;
       this.label1.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.label1.ForeColor = System.Drawing.Color.White;
-      this.label1.Location = new System.Drawing.Point(388, 280);
+      this.label1.Location = new System.Drawing.Point(382, 279);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(244, 13);
       this.label1.TabIndex = 32;
@@ -221,17 +225,30 @@ namespace MediaPortal.DeployTool.Sections
       this.pictureBox5.TabIndex = 35;
       this.pictureBox5.TabStop = false;
       // 
+      // lbMSSQL
+      // 
+      this.lbMSSQL.AutoSize = true;
+      this.lbMSSQL.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.lbMSSQL.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.lbMSSQL.ForeColor = System.Drawing.Color.White;
+      this.lbMSSQL.Location = new System.Drawing.Point(383, 169);
+      this.lbMSSQL.Name = "lbMSSQL";
+      this.lbMSSQL.Size = new System.Drawing.Size(108, 13);
+      this.lbMSSQL.TabIndex = 36;
+      this.lbMSSQL.Text = "Learn why here...";
+      this.lbMSSQL.Click += new System.EventHandler(this.lbMSSQL_Click);
+      // 
       // DBMSTypeDlg
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
+      this.Controls.Add(this.lbMSSQL);
       this.Controls.Add(this.pictureBox5);
       this.Controls.Add(this.pictureBox4);
       this.Controls.Add(this.pictureBox3);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.pictureBox2);
       this.Controls.Add(this.pictureBox1);
-      this.Controls.Add(this.lbMSSQL);
       this.Controls.Add(this.bExists);
       this.Controls.Add(this.bMySQL);
       this.Controls.Add(this.bMS);
@@ -248,13 +265,13 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.SetChildIndex(this.bMS, 0);
       this.Controls.SetChildIndex(this.bMySQL, 0);
       this.Controls.SetChildIndex(this.bExists, 0);
-      this.Controls.SetChildIndex(this.lbMSSQL, 0);
       this.Controls.SetChildIndex(this.pictureBox1, 0);
       this.Controls.SetChildIndex(this.pictureBox2, 0);
       this.Controls.SetChildIndex(this.label1, 0);
       this.Controls.SetChildIndex(this.pictureBox3, 0);
       this.Controls.SetChildIndex(this.pictureBox4, 0);
       this.Controls.SetChildIndex(this.pictureBox5, 0);
+      this.Controls.SetChildIndex(this.lbMSSQL, 0);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
@@ -274,12 +291,12 @@ namespace MediaPortal.DeployTool.Sections
     private System.Windows.Forms.Button bMS;
     private System.Windows.Forms.Button bMySQL;
     private System.Windows.Forms.Button bExists;
-    private System.Windows.Forms.LinkLabel lbMSSQL;
     private System.Windows.Forms.PictureBox pictureBox1;
     private System.Windows.Forms.PictureBox pictureBox2;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.PictureBox pictureBox3;
     private System.Windows.Forms.PictureBox pictureBox4;
     private System.Windows.Forms.PictureBox pictureBox5;
+    private System.Windows.Forms.Label lbMSSQL;
   }
 }

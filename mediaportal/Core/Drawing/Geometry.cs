@@ -20,7 +20,7 @@
 
 using System;
 using System.ComponentModel;
-using Microsoft.DirectX.Direct3D;
+using SharpDX.Direct3D9;
 
 namespace MediaPortal.Drawing
 {
@@ -71,7 +71,7 @@ namespace MediaPortal.Drawing
       get { return _vertexArray == null ? 0 : _vertexArray.Length; }
     }
 
-    public VertexFormats VertexFormat
+    public VertexFormat VertexFormat
     {
       get { return _vertexFormat; }
       set { _vertexFormat = value; }
@@ -102,7 +102,7 @@ namespace MediaPortal.Drawing
     private PrimitiveType _primitiveType;
     private Array _vertexArray;
     private VertexBuffer _vertexBuffer = null;
-    private VertexFormats _vertexFormat;
+    private VertexFormat _vertexFormat;
     private Type _vertexType;
 
     #endregion Fields

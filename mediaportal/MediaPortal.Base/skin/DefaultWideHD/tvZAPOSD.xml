@@ -87,7 +87,7 @@
       <type>label</type>
       <id>110</id>
       <posX>1898</posX>
-      <posY>815</posY>
+      <posY>818</posY>
       <label>#time</label>
       <align>right</align>
       <font>LabelBold</font>
@@ -96,14 +96,25 @@
     <control>
       <description>TV Logo Background</description>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <posX>52</posX>
       <posY>803</posY>
       <width>141</width>
       <height>141</height>
-      <texture>#TV.View.thumb</texture>
-      <colordiffuse>f700061c</colordiffuse>
-      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>defaultlogo.png</texture>
+      <colordiffuse>ff00061c</colordiffuse>
+    </control>
+    <control>
+      <description>TV Logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>54</posX>
+      <posY>805</posY>
+      <width>137</width>
+      <height>137</height>
+      <texture>defaultlogo.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
     </control>
     <control>
       <description>TV Logo</description>
@@ -114,7 +125,6 @@
       <width>137</width>
       <height>137</height>
       <texture>#TV.View.thumb</texture>
-      <centered>yes</centered>
       <keepaspectratio>yes</keepaspectratio>
     </control>
     <control>
@@ -122,7 +132,7 @@
       <type>label</type>
       <id>35</id>
       <posX>227</posX>
-      <posY>815</posY>
+      <posY>818</posY>
       <width>440</width>
       <label>-</label>
       <align>left</align>
@@ -206,7 +216,7 @@
         <type>label</type>
         <id>101</id>
         <label></label>
-        <width>110</width>
+        <width>100</width>
         <maxWidth>260</maxWidth>
         <align>left</align>
         <font>LabelBold</font>
@@ -218,7 +228,6 @@
         <type>label</type>
         <width>1000</width>
         <maxWidth>1350</maxWidth>
-        <height>42</height>
         <label></label>
         <font>LabelBold</font>
         <textcolor>lightskyblue</textcolor>
@@ -237,9 +246,9 @@
         <description>End Time Info</description>
         <type>label</type>
         <id>102</id>
-        <width>110</width>
+        <width>100</width>
         <maxWidth>260</maxWidth>
-        <label></label>
+        <label> #scroll.wrap </label>
         <align>left</align>
         <textcolor>lightgray</textcolor>
         <font>Label</font>
@@ -248,7 +257,6 @@
         <description>On tv NEXT</description>
         <id>37</id>
         <type>label</type>
-        <height>42</height>
         <width>1000</width>
         <maxWidth>1350</maxWidth>
         <label></label>
@@ -313,7 +321,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>225</posX>
-      <posY>1040</posY>
+      <posY>1020</posY>
       <width>50</width>
       <label>#latestMediaHandler.tvrecordings.active.count</label>
       <align>center</align>

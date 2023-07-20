@@ -510,8 +510,8 @@
   <define property="true" evaluateNow="true">#AUDIO5.active:#(iif(or(eq(#AUDIO5.plugin,''),plugin.isenabled(#AUDIO5.plugin)),' ',''))</define>
   <define property="true" evaluateNow="true">#AUDIO5:#(string.format('{0}{1}',#AUDIO5.name,iif(eq(#AUDIO5.active,' '),'',#PLUGERROR)))</define>
 
-  <define property="true" evaluateNow="true">#AUDIO6.name:mvCentral</define>
-  <define property="true" evaluateNow="true">#AUDIO6.plugin:mvCentral</define>
+  <define property="true" evaluateNow="true">#AUDIO6.name:#(string.format('{0}',#mvCentral.Settings.HomeScreenName))</define>
+  <define property="true" evaluateNow="true">#AUDIO6.plugin:#(string.format('{0}',#mvCentral.Settings.HomeScreenName))</define>
   <define property="true" evaluateNow="true">#AUDIO6.hyperlink:112011</define>
   <define property="true" evaluateNow="true">#AUDIO6.parameter:</define>
   <define property="true" evaluateNow="true">#AUDIO6.latestmedia:919299280</define>
@@ -1525,7 +1525,7 @@
   <!--     *******************************************************************************************  -->
 
   <!-- Moving Pictures -->
-  <define property="true" evaluateNow="true">#.MOVPIC.name:Moving Pictures</define>
+  <define property="true" evaluateNow="true">#.MOVPIC.name:#(string.format('{0}',#MovingPictures.Settings.HomeScreenName))</define>
   <define property="true" evaluateNow="true">#.MOVPIC.plugin:Moving Pictures</define>
   <define property="true" evaluateNow="true">#.MOVPIC.hyperlink:96742</define>
   <define property="true" evaluateNow="true">#.MOVPIC.parameter:</define>
@@ -1922,7 +1922,7 @@
   <!--     *******************************************************************************************  -->
 
   <!-- TV Series -->
-  <define property="true" evaluateNow="true">#.TVSERIES.name:#(L(1300))</define>
+  <define property="true" evaluateNow="true">#.TVSERIES.name:#(string.format('{0}',#TVSeries.PluginName))</define>
   <define property="true" evaluateNow="true">#.TVSERIES.plugin:MP-TV Series</define>
   <define property="true" evaluateNow="true">#.TVSERIES.hyperlink:9811</define>
   <define property="true" evaluateNow="true">#.TVSERIES.parameter:</define>

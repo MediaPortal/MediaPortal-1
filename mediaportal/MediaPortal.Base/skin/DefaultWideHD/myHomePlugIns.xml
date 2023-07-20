@@ -3,7 +3,7 @@
   <id>34</id>
   <defaultcontrol>50</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <disabletopbar>yes</disabletopbar>
+  <disabletopbar>no</disabletopbar>
   <define>#selecteditem:</define>
   <define>#selectedindex:</define>
   <define>#indexcount:</define>
@@ -15,18 +15,18 @@
       <id>1</id>
       <width>1920</width>
       <height>1080</height>
-      <texture>BH Home2.jpg</texture>
+      <texture>plugins3.jpg</texture>
     </control>
-    <import>common.window.xml</import>
     <control>
-      <description>General Overlay</description>
-      <id>0</id>
+      <description>background top overlay</description>
       <type>image</type>
+      <id>1</id>
       <posX>0</posX>
-      <posY>45</posY>
+      <posY>0</posY>
       <width>1920</width>
-      <height>1080</height>
-      <texture>general_overlay.png</texture>
+      <height>140</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>99ffffff</colordiffuse>
     </control>
     <control>
       <description>background selecteditem</description>
@@ -37,84 +37,35 @@
       <width>2025</width>
       <height>90</height>
       <texture>general_overlay_selecteditem.png</texture>
-      <colordiffuse>bbffffff</colordiffuse>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>Player.HasAudio|Player.HasVideo</visible>
     </control>
-    <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>800</posX>
-      <posY>260</posY>
-      <width>944</width>
-      <height>648</height>
-      <texture>MPLogo.png</texture>
-    </control>
-    <control>
-      <description>Menu</description>
-      <type>menu</type>
-      <animation effect="fade" time="300">WindowOpen</animation>
-      <animation effect="fade" time="300">WindowClose</animation>
-      <id>50</id>
-      <posX>180</posX>
-      <posY>260</posY>
-      <width>450</width>
-      <height>500</height>
-      <textAlign>center</textAlign>
-      <textcolor>ffffffff</textcolor>
-      <textColorNoFocus>aaffffff</textColorNoFocus>
-      <dimColor>ffffffff</dimColor>
-      <buttonTextXOff>0</buttonTextXOff>
-      <buttonTextYOff>0</buttonTextYOff>
-      <buttonOffset>0</buttonOffset>
-      <buttonFont>Menutitle</buttonFont>
-      <buttonHeight>65</buttonHeight>
-      <buttonWidth>375</buttonWidth>
-      <spaceBetweenButtons>0</spaceBetweenButtons>
-      <numberOfButtons>10</numberOfButtons>
-      <textureButtonFocus>button_focus.png</textureButtonFocus>
-      <textureButtonNoFocus />
-      <hoverX>800</hoverX>
-      <hoverY>260</hoverY>
-      <hoverWidth>944</hoverWidth>
-      <hoverHeight>648</hoverHeight>
-      <hoverKeepAspectratio>yes</hoverKeepAspectratio>
-      <scrollTime>150</scrollTime>
-      <scrollTimeMin>150</scrollTimeMin>
-      <mouseScrollTime>900</mouseScrollTime>
-      <mouseScrollTimeMin>450</mouseScrollTimeMin>
-      <textureBackground>-</textureBackground>
-      <onright>50</onright>
-      <onleft>9997</onleft>
-      <onup>50</onup>
-      <ondown>50</ondown>
-      <horizontal>no</horizontal>
-      <animation effect="fade" time="150" delay="100">windowopen</animation>
-      <animation effect="fade" time="150" delay="100">windowclose</animation>
-    </control>
+    <include>common.facade.home.xml</include>
     
-    <control>
-      <description>EXIT</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>15</posX>
-      <posY>425</posY>
-      <height>50</height>
-      <width>50</width>
-      <texture>exit2.png</texture>
-      <colordiffuse>90ffffff</colordiffuse>
-      <visible>!control.isvisible(9997)+!control.isvisible(9998)+!control.isvisible(9999)</visible>
-      <animation effect="fade" time="150" delay="100">windowopen</animation>
-      <animation effect="fade" time="150" delay="100">windowclose</animation>
-    </control>
     <!-- ******************************************************************************************* -->
     <!-- ************************************** EXIT BUTTONS *************************************** -->
     <!-- ******************************************************************************************* -->
     <control>
+      <description>EXIT</description>
+      <type>button</type>
+      <id>9996</id>
+      <posX>15</posX>
+      <posY>425</posY>
+      <height>50</height>
+      <width>50</width>
+      <textureNoFocus>exit2.png</textureNoFocus>
+      <textureFocus>exit2.png</textureFocus>
+      <colordiffuse>90ffffff</colordiffuse>
+      <visible>!control.isvisible(9997)+!control.isvisible(9998)+!control.isvisible(9999)</visible>
+      <animation effect="fade" time="150">windowopen</animation>
+      <animation effect="fade" time="50">windowclose</animation>
+    </control>
+    <control>
       <type>group</type>
       <description>group element</description>
       <layout>StackLayout(2, Vertical, true)</layout>
-      <animation effect="fade" time="150" delay="100">windowopen</animation>
-      <animation effect="fade" time="150" delay="100">windowclose</animation>
+      <animation effect="fade" time="150">windowopen</animation>
+      <animation effect="fade" time="50">windowclose</animation>
       <posX>14</posX>
       <posY>400</posY>
       <visible>!control.hasfocus(50)+!control.hasfocus(1111)</visible>
@@ -132,8 +83,8 @@
         <onleft>9997</onleft>
         <onup>9998</onup>
         <ondown>9999</ondown>
-        <animation effect="fade" time="150" delay="100">windowopen</animation>
-        <animation effect="fade" time="150" delay="100">windowclose</animation>
+        <animation effect="fade" time="150">windowopen</animation>
+        <animation effect="fade" time="50">windowclose</animation>
         <animation effect="zoom" time="50" start="100,100" end="130,120">focus</animation>
       </control>
       <control>
@@ -150,8 +101,8 @@
         <onleft>9999</onleft>
         <onup>9997</onup>
         <ondown>9998</ondown>
-        <animation effect="fade" time="150" delay="100">windowopen</animation>
-        <animation effect="fade" time="150" delay="100">windowclose</animation>
+        <animation effect="fade" time="150">windowopen</animation>
+        <animation effect="fade" time="50">windowclose</animation>
         <animation effect="zoom" time="50" start="100,100" end="130,120">focus</animation>
       </control>
       <control>
@@ -168,8 +119,8 @@
         <onleft>9998</onleft>
         <onup>9999</onup>
         <ondown>9997</ondown>
-        <animation effect="fade" time="150" delay="100">windowopen</animation>
-        <animation effect="fade" time="150" delay="100">windowclose</animation>
+        <animation effect="fade" time="150">windowopen</animation>
+        <animation effect="fade" time="50">windowclose</animation>
         <animation effect="zoom" time="50" start="100,100" end="130,120">focus</animation>
       </control>
     </control>
@@ -187,18 +138,8 @@
       <textcolor>ff6FAFE1</textcolor>
       <visible>!player.hasaudio+!player.hasvideo</visible>
     </control>
-    <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>800</posX>
-      <posY>260</posY>
-      <width>944</width>
-      <height>648</height>
-      <texture>hover_overlay.png</texture>
-    </control>
-  
-  <!--     *******************************************************************************************  -->
+   
+    <!--     *******************************************************************************************  -->
     <!--     *******************************    NOW PLAYING AUDIO   ************************************  -->
     <!--     *******************************************************************************************  -->
     <control>

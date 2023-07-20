@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2021 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 /*
-// Copyright (C) 2005-2021 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -39,6 +39,13 @@
 
 
 #---------------------------------------------------------------------------
+# ARCHITECTURE
+#---------------------------------------------------------------------------
+!ifndef Architecture
+  !define Architecture x86
+!endif
+
+#---------------------------------------------------------------------------
 # DEVELOPMENT ENVIRONMENT
 #---------------------------------------------------------------------------
 # SKRIPT_NAME is needed to diff between the install scripts in imported headers
@@ -67,13 +74,23 @@
 !define PRODUCT_PUBLISHER     "Team MediaPortal"
 !define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
 
-!define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
-!define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+
+!if "${Architecture}" == "x64"
+  !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
+  !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server (x64)"
+!else
+  !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+  !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
+!endif
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal TV Server"
 !define MP_COMMON_APPDATA     "$APPDATA\Team MediaPortal\MediaPortal"
-!define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
+!if "${Architecture}" == "x64"
+    !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server (x64)"
+!else
+    !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
+!endif
 
 ; import version from shared file
 !include "${git_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
@@ -224,7 +241,7 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2020 ${PRODUCT_PUBLISHER}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright Â© 2005-2023 ${PRODUCT_PUBLISHER}"
 ShowUninstDetails show
 
 
@@ -525,9 +542,11 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\TVDatabase\references\Gentle.Common.DLL"
   File "${git_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.dll"
-  File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
-  File "${git_TVServer}\TVDatabase\references\log4net.dll"
   File "${git_TVServer}\TVDatabase\references\MySql.Data.dll"
+  File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
+  File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLite.dll"
+  File "${git_TVServer}\TVDatabase\references\System.Data.SQLite.DLL"
+  File "${git_TVServer}\TVDatabase\references\log4net.dll"
   File "${git_TVServer}\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_TVServer}\TVLibrary\bin\${BUILD_TYPE}\TVLibrary.dll"
@@ -558,11 +577,12 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; MediaInfo
   SetOutPath "$INSTDIR"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\MediaInfo.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\libcrypto-3.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\libcurl.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.3.0\build\native\x86\libssl-3.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Wrapper.21.3.4\lib\net40\MediaInfo.Wrapper.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcrypto-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libssl-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Wrapper.21.9.3\lib\net40\MediaInfo.Wrapper.dll"
+  File "${git_ROOT}\Packages\System.ValueTuple.4.5.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll"
 
   ; thumbnail software
   ${If} ${RunningX64}
@@ -599,7 +619,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ${LOG_TEXT} "INFO" "filter registration..."
   ; filters for digital tv
   ${IfNot} ${MP023IsInstalled}
-  ${AndIfNot} ${MPIsInstalled}
+  ${AndIfNot} ${MPIsInstalledx86}
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax" "$INSTDIR\TsReader.ax" "$INSTDIR"
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\Core-CC-Parser\CCCP\${BUILD_TYPE}\cccp.ax" "$INSTDIR\cccp.ax" "$INSTDIR"
   ${EndIf}
@@ -607,8 +627,15 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; filters for analog tv
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPWriter\bin\${BUILD_TYPE}\mpFileWriter.ax" "$INSTDIR\mpFileWriter.ax" "$INSTDIR"
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\PDMpgMux.ax" "$INSTDIR\PDMpgMux.ax" "$INSTDIR"
-  ; filter for IPTV support
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTVSource.ax" "$INSTDIR\MPIPTVSource.ax" "$INSTDIR"
+
+  ${If} ${FileExists} "$INSTDIR\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"
+    ${LOG_TEXT} "INFO" "MPUrlSourceSplitter detected, skipping registration of MPIPTVSource.ax"
+    ; reregister because previous uninstall probably unregisterd the MPIPTVSource.ax
+    REGDLL "$INSTDIR\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"
+  ${Else}
+    ; filter for IPTV support
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTVSource.ax" "$INSTDIR\MPIPTVSource.ax" "$INSTDIR"
+  ${EndIf}
 
   #---------------------------------------------------------------------------
   # SERVICE INSTALLATION
@@ -643,6 +670,11 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ;${EndIf}
 ${MementoSectionEnd}
 !macro Remove_${SecServer}
+
+  ; Currently the x86 version only is suppoertd
+  ${If} "${Architecture}" == "x86"
+
+
   ${LOG_TEXT} "INFO" "Uninstalling MediaPortal TV Server..."
 
   ; Kill running Programs
@@ -678,7 +710,7 @@ ${MementoSectionEnd}
   ${LOG_TEXT} "INFO" "Unreg and remove filters..."
   ; filters for digital tv
   ${IfNot} ${MP023IsInstalled}
-  ${AndIfNot} ${MPIsInstalled}
+  ${AndIfNot} ${MPIsInstalledx86}
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\TsReader.ax"
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\cccp.ax"
     ; Delete TV filter to be able to be registered with an updated version
@@ -694,8 +726,13 @@ ${MementoSectionEnd}
   ; filters for analog tv
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\mpFileWriter.ax"
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\PDMpgMux.ax"
-  ; filter for IPTV support
-  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\MPIPTVSource.ax"
+
+  ${If} ${FileExists} "$INSTDIR\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"
+    ${LOG_TEXT} "INFO" "MPUrlSourceSplitter detected, skipping unregistration of MPIPTVSource.ax"
+  ${Else}
+    ; filter for IPTV support
+    !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\MPIPTVSource.ax"
+  ${EndIf}
 
   ${LOG_TEXT} "INFO" "remove files..."
   ; Remove TuningParameters
@@ -735,9 +772,11 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\Gentle.Common.DLL"
   Delete "$INSTDIR\Gentle.Framework.DLL"
   Delete "$INSTDIR\Gentle.Provider.MySQL.dll"
-  Delete "$INSTDIR\Gentle.Provider.SQLServer.dll"
-  Delete "$INSTDIR\log4net.dll"
   Delete "$INSTDIR\MySql.Data.dll"
+  Delete "$INSTDIR\Gentle.Provider.SQLServer.dll"
+  Delete "$INSTDIR\Gentle.Provider.SQLite.dll"
+  Delete "$INSTDIR\System.Data.SQLite.DLL"
+  Delete "$INSTDIR\log4net.dll"
   Delete "$INSTDIR\TvBusinessLayer.dll"
   Delete "$INSTDIR\TvLibrary.Interfaces.dll"
   Delete "$INSTDIR\TVLibrary.dll"
@@ -794,6 +833,8 @@ ${MementoSectionEnd}
     !insertmacro Remove_SecWatchdog
   ${EndIf}
   
+  ${EndIf}
+  
 !macroend
 
 ${MementoSection} "MediaPortal TV Client plugin" SecClient
@@ -812,16 +853,18 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   #---------------------------- File Copy ----------------------
   ; Common Files
   SetOutPath "$MPdir.Base"
-  File "${git_TVServer}\TvControl\bin\${BUILD_TYPE}\TvControl.dll"
-  File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
-  File "${git_TVServer}\TVDatabase\bin\${BUILD_TYPE}\TVDatabase.dll"
+  File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvControl.dll"
+  File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
+  File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TVDatabase.dll"
   File "${git_TVServer}\TVDatabase\references\Gentle.Common.DLL"
   File "${git_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.dll"
-  File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
-  File "${git_TVServer}\TVDatabase\references\log4net.dll"
   File "${git_TVServer}\TVDatabase\references\MySql.Data.dll"
-  File "${git_TVServer}\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
+  File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
+  File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLite.dll"
+  File "${git_TVServer}\TVDatabase\references\System.Data.SQLite.DLL"
+  File "${git_TVServer}\TVDatabase\references\log4net.dll"
+  File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
 
   ;Gentle.Config
   SetOutPath "$MPdir.Config"
@@ -874,9 +917,11 @@ ${MementoSectionEnd}
   Delete "$MPdir.Base\Gentle.Common.DLL"
   Delete "$MPdir.Base\Gentle.Framework.DLL"
   Delete "$MPdir.Base\Gentle.Provider.MySQL.dll"
-  Delete "$MPdir.Base\Gentle.Provider.SQLServer.dll"
-  Delete "$MPdir.Base\log4net.dll"
   Delete "$MPdir.Base\MySql.Data.dll"
+  Delete "$MPdir.Base\Gentle.Provider.SQLServer.dll"
+  Delete "$MPdir.Base\Gentle.Provider.SQLite.dll"
+  Delete "$MPdir.Base\System.Data.SQLite.DLL"
+  ;Delete "$MPdir.Base\log4net.dll"
   Delete "$MPdir.Base\TvBusinessLayer.dll"
   Delete "$MPdir.Base\TvControl.dll"
   Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
@@ -1044,7 +1089,12 @@ Function LoadPreviousSettings
   ${If} "$PREVIOUS_INSTALLDIR" != ""
     StrCpy $INSTDIR "$PREVIOUS_INSTALLDIR"
   ${ElseIf} "$INSTDIR" == ""
-    StrCpy $INSTDIR "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server"
+  
+      ${If} "${Architecture}" == "x64"
+        StrCpy $INSTDIR "$PROGRAMFILES64\Team MediaPortal\MediaPortal TV Server"
+      ${else}
+        StrCpy $INSTDIR "$PROGRAMFILES\Team MediaPortal\MediaPortal TV Server"
+      ${EndIf}
   ${EndIf}
 
 

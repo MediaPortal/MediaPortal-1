@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 /*
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,8 +18,8 @@
 */
 #endregion
 
-!if "${NSIS_VERSION}" != "v3.06.1"
-  !error "$\r$\n$\r$\nUnsupported NSIS version: ${NSIS_VERSION}. Please use NSIS v3.06.1, http://nsis.sourceforge.net$\r$\n$\r$\n"
+!if "${NSIS_VERSION}" != "v3.08"
+  !error "$\r$\n$\r$\nUnsupported NSIS version: ${NSIS_VERSION}. Please use NSIS v3.08, http://nsis.sourceforge.net$\r$\n$\r$\n"
 !endif
 
 !ifndef ___COMMON_MP_MACROS__NSH___
@@ -65,10 +65,18 @@
 !endif
 
 !ifndef MP_REG_UNINSTALL
-  !define MP_REG_UNINSTALL  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+    !if "${Architecture}" == "x64"
+        !define MP_REG_UNINSTALL  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
+    !else
+        !define MP_REG_UNINSTALL  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+    !endif
 !endif
 !ifndef TV3_REG_UNINSTALL
-  !define TV3_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
+    !if "${Architecture}" == "x64"
+        !define TV3_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server (x64)"
+    !else
+        !define TV3_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
+    !endif
 !endif
 
 ; modify your registry and uncomment the following line to test if the git version check is working
@@ -220,7 +228,27 @@
 !macroend
 !define MSI_TVClientIsInstalled `"" MSI_TVClientIsInstalled ""`
 
-;======================================
+;======================================   Mediaportal by Architecture
+
+!macro _MPIsInstalledx86 _a _b _t _f
+  SetRegView 32
+  !insertmacro _LOGICLIB_TEMP
+
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal" "UninstallString"
+  IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
+!macroend
+!define MPIsInstalledx86 `"" MPIsInstalledx86 ""`
+
+!macro _MPIsInstalledx64 _a _b _t _f
+  SetRegView 32
+  !insertmacro _LOGICLIB_TEMP
+
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)" "UninstallString"
+  IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
+!macroend
+!define MPIsInstalledx64 `"" MPIsInstalledx64 ""`
+
+;======================================   Mediaportal / TV Server / TV Client
 
 !macro _MPIsInstalled _a _b _t _f
   SetRegView 32
@@ -292,7 +320,11 @@
   ;${LOG_TEXT} "DEBUG" "MACRO:MP_GET_INSTALL_DIR"
 
   ${If} ${MP023IsInstalled}
-    ReadRegStr ${_var} HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
+    !if "${Architecture}" == "x64"
+      ReadRegStr ${_var} HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir64"
+    !else
+      ReadRegStr ${_var} HKLM "SOFTWARE\Team MediaPortal\MediaPortal" "ApplicationDir"
+    !endif
     ${LOG_TEXT} "INFO" "MediaPortal v0.2.3 installation dir found: ${_var}"
   ${ElseIf} ${MPIsInstalled}
     ReadRegStr ${_var} HKLM "${MP_REG_UNINSTALL}" "InstallPath"
@@ -501,6 +533,9 @@
 
 # make and uninstallation of the other app, which may be still installed
 !if "${PRODUCT_NAME}" == "MediaPortal"
+  !insertmacro NSISuninstall "${TV3_REG_UNINSTALL}"
+!endif
+!if "${PRODUCT_NAME}" == "MediaPortal (x64)"
   !insertmacro NSISuninstall "${TV3_REG_UNINSTALL}"
 !endif
 !if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client"
@@ -845,7 +880,17 @@ ${EndIf}
 !macro MinimumVersionForGITCheck
   ${LOG_TEXT} "INFO" ".: MinimumVersionForGITCheck: Compare installed and minimum version for this GIT snapshot :."
 
-!if "${PRODUCT_NAME}" == "MediaPortal"
+!if "${PRODUCT_NAME} == MediaPortal"
+  ${IfNot} ${MPIsInstalled}
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_GIT_NOMP)" IDNO +2
+    ExecShell open "${WEB_DOWNLOAD_MIN_MP_VERSION}"
+    Abort
+  ${Else}
+
+    !insertmacro MP_GET_VERSION $R0
+!endif
+
+!if "${PRODUCT_NAME} == MediaPortal (x64)"
   ${IfNot} ${MPIsInstalled}
     MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_GIT_NOMP)" IDNO +2
     ExecShell open "${WEB_DOWNLOAD_MIN_MP_VERSION}"
@@ -888,6 +933,49 @@ ${EndIf}
 
 
 !if "${PRODUCT_NAME}" == "MediaPortal"
+
+!macro DoPreInstallChecks
+
+!ifdef GIT_BUILD
+  ; check if correct MP version ist installed, which is required for this git snapshot
+  !insertmacro MinimumVersionForGITCheck
+!endif
+
+  ; OS and other common initialization checks are done in the following NSIS header file
+  !insertmacro MediaPortalOperatingSystemCheck
+  !insertmacro MediaPortalAdminCheck
+  !insertmacro MediaPortalVCRedistCheck
+  !insertmacro MediaPortalNetFrameworkCheck
+
+  ; check if old mp 0.2.2 is installed
+  ${If} ${MP022IsInstalled}
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP022)"
+    Abort
+  ${EndIf}
+
+  ; check if old mp 0.2.3 RC3 is installed
+  ${If} ${MP023RC3IsInstalled}
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP023RC3)"
+    Abort
+  ${EndIf}
+
+  ; check if old mp 0.2.3 is installed.
+  ${If} ${MP023IsInstalled}
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP023)"
+    Abort
+  ${EndIf}
+
+  ; check if reboot is required
+  ${If} ${FileExists} "$MPdir.Base\rebootflag"
+    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
+    Abort
+  ${EndIf}
+
+!macroend
+
+!endif
+
+!if "${PRODUCT_NAME}" == "MediaPortal (x64)"
 
 !macro DoPreInstallChecks
 

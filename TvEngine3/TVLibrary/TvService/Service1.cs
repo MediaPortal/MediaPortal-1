@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,31 +19,33 @@
 #endregion
 
 using System;
-using System.Net;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Configuration.Install;
 using System.Diagnostics;
-using System.Reflection;
 using System.IO;
+using System.Net;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Runtime.Remoting;
+using System.Security.AccessControl;
 using System.Security.Principal;
 using System.ServiceProcess;
 using System.Threading;
 using System.Windows.Forms;
-using System.Runtime.CompilerServices;
-using System.Runtime.Remoting;
 using System.Xml;
+
 using MediaPortal.Common.Utils.Logger;
-using TvDatabase;
-using TvLibrary.Log;
+
 using TvControl;
+using TvDatabase;
 using TvEngine;
 using TvEngine.Interfaces;
 using TvLibrary.Interfaces;
-using System.Runtime.InteropServices;
-using System.Security.AccessControl;
+using TvLibrary.Log;
 
 namespace TvService
 {
@@ -916,29 +918,24 @@ namespace TvService
 
           // Log TvService start and versions
           FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-
+          string architecture = (IntPtr.Size == 8) ? "x64" : "x86";
           try
           {
-            Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " +
-            OSInfo.OSInfo.GetOSDisplayVersion());
+            Log.WriteFile("TVService " + architecture + " v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
           }
           catch (Exception)
           {
-            Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
+            Log.WriteFile("TVService " + architecture + " v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
           }
 
           //Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
           Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
 
           // Warn about unsupported operating systems
-
           try
           {
             OSPrerequisites.OSPrerequisites.OsCheck(false);
-          } catch (Exception)
-          {
-
-          }
+          } catch (Exception) { }
 
           // Start the power event thread
           _powerEventThread = new Thread(PowerEventThread);

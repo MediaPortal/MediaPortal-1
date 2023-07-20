@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -33,9 +33,9 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player.LAV;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using Microsoft.DirectX.Direct3D;
+using SharpDX.Direct3D9;
 using Action = MediaPortal.GUI.Library.Action;
-using Filter = Microsoft.DirectX.Direct3D.Filter;
+using Filter = SharpDX.Direct3D9.Filter;
 using Geometry = MediaPortal.GUI.Library.Geometry;
 
 namespace MediaPortal.Player
@@ -61,7 +61,7 @@ namespace MediaPortal.Player
   public interface IVMR9PresentCallback
   {
     [PreserveSig]
-    int PresentImage(Int16 cx, Int16 cy, Int16 arx, Int16 ary, uint pImage, uint pTexture);
+    int PresentImage(Int16 cx, Int16 cy, Int16 arx, Int16 ary, IntPtr pImage, IntPtr pTexture);
 
     //called by EVR presenter, before sample is rendered
     //used to synchronize subtitle's clock
@@ -114,7 +114,7 @@ namespace MediaPortal.Player
     int ReduceMadvrFrame();
 
     [PreserveSig]
-    void DestroyHWnd(uint phWnd);
+    void DestroyHWnd(IntPtr phWnd);
   }
 
   #endregion
@@ -124,8 +124,8 @@ namespace MediaPortal.Player
     #region imports
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe bool Vmr9Init(IVMR9PresentCallback callback, uint dwD3DDevice, IBaseFilter vmr9Filter,
-                                               uint monitor);
+    private static extern unsafe bool Vmr9Init(IVMR9PresentCallback callback, IntPtr dwD3DDevice, IBaseFilter vmr9Filter,
+                                               IntPtr monitor);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void Vmr9Deinit();
@@ -137,8 +137,8 @@ namespace MediaPortal.Player
     private static extern unsafe void Vmr9SetDeinterlacePrefs(uint dwMethod);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe bool EvrInit(IVMR9PresentCallback callback, uint dwD3DDevice, 
-                                              ref IBaseFilter vmr9Filter, uint monitor, int monitorIdx,
+    private static extern unsafe bool EvrInit(IVMR9PresentCallback callback, IntPtr dwD3DDevice, 
+                                              ref IBaseFilter vmr9Filter, IntPtr monitor, int monitorIdx,
                                               bool disVsyncCorr, bool disMparCorr);
 
     //, uint dwWindow);
@@ -165,7 +165,7 @@ namespace MediaPortal.Player
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern unsafe int MadInit(IVMR9PresentCallback callback, int xposition, int yposition,
-                                              int width, int height, uint dwD3DDevice, uint parent,
+                                              int width, int height, IntPtr dwD3DDevice, IntPtr parent,
                                               ref IBaseFilter madFilter, IGraphBuilder mPGraphbuilder);
 
     [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -678,9 +678,9 @@ namespace MediaPortal.Player
             // Save screenshot from DIB
             IntPtr pdib = pTargetmadVrDib;
             Win32API.BITMAPINFOHEADER bmih =
-              (Win32API.BITMAPINFOHEADER) Marshal.PtrToStructure(pdib, typeof (Win32API.BITMAPINFOHEADER));
+              (Win32API.BITMAPINFOHEADER)Marshal.PtrToStructure(pdib, typeof(Win32API.BITMAPINFOHEADER));
             IntPtr pixels = IntPtr.Add(pdib, bmih.biSize);
-            Bitmap tmpBmp = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth*4, PixelFormat.Format32bppRgb, pixels);
+            Bitmap tmpBmp = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth * 4, PixelFormat.Format32bppRgb, pixels);
             Bitmap result = new Bitmap(tmpBmp);
             result.RotateFlip(RotateFlipType.RotateNoneFlipY);
             result.Save(fileName + ".jpg", ImageFormat.Jpeg);
@@ -741,11 +741,11 @@ namespace MediaPortal.Player
             if (pTargetmadVrDib != IntPtr.Zero)
             {
               Win32API.BITMAPINFOHEADER bmih =
-                (Win32API.BITMAPINFOHEADER) Marshal.PtrToStructure(pTargetmadVrDib, typeof (Win32API.BITMAPINFOHEADER));
+                (Win32API.BITMAPINFOHEADER)Marshal.PtrToStructure(pTargetmadVrDib, typeof(Win32API.BITMAPINFOHEADER));
               IntPtr pixels = IntPtr.Add(pTargetmadVrDib, bmih.biSize);
 
               using (
-                Bitmap b = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth*4, PixelFormat.Format32bppRgb, pixels))
+                Bitmap b = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth * 4, PixelFormat.Format32bppRgb, pixels))
               {
                 GUIGraphicsContext.madVRCurrentFrameBitmap = new Bitmap(b);
                 GUIGraphicsContext.madVRCurrentFrameBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
@@ -844,7 +844,7 @@ namespace MediaPortal.Player
               videoWin.put_Owner(GUIGraphicsContext.MadVrHWnd != IntPtr.Zero // TODO
                 ? GUIGraphicsContext.MadVrHWnd
                 : GUIGraphicsContext.form.Handle);
-              videoWin.put_WindowStyle((WindowStyle) ((int) WindowStyle.Child + (int) WindowStyle.ClipChildren + (int) WindowStyle.ClipSiblings));
+              videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
               videoWin.put_MessageDrain(GUIGraphicsContext.MadVrHWnd != IntPtr.Zero
                 ? GUIGraphicsContext.MadVrHWnd
                 : GUIGraphicsContext.form.Handle);
@@ -926,7 +926,7 @@ namespace MediaPortal.Player
         }
 
         HResult hr;
-        IntPtr hMonitor = Manager.GetAdapterMonitor(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
+        IntPtr hMonitor = GUIGraphicsContext.DX9Device.Direct3D.GetAdapterMonitor(GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal);
         IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
         _scene = new PlaneScene(this);
@@ -938,7 +938,7 @@ namespace MediaPortal.Player
           {
             GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.EVR;
             // Keep current RenderTarget to trying to restore D3D GUI from madVR but release it if already init previously
-            if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null && !GUIGraphicsContext.MadVrRenderTargetVmr9.Disposed)
+            if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null && !GUIGraphicsContext.MadVrRenderTargetVmr9.IsDisposed)
             {
               GUIGraphicsContext.DX9Device?.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVmr9);
               GUIGraphicsContext.MadVrRenderTargetVmr9.Dispose();
@@ -963,7 +963,7 @@ namespace MediaPortal.Player
           }
 
           // Keep current RenderTarget to trying to restore D3D GUI from madVR but release it if already init previously
-          if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null && !GUIGraphicsContext.MadVrRenderTargetVmr9.Disposed)
+          if (GUIGraphicsContext.MadVrRenderTargetVmr9 != null && !GUIGraphicsContext.MadVrRenderTargetVmr9.IsDisposed)
           {
             GUIGraphicsContext.DX9Device?.SetRenderTarget(0, GUIGraphicsContext.MadVrRenderTargetVmr9);
             GUIGraphicsContext.MadVrRenderTargetVmr9.Dispose();
@@ -983,7 +983,7 @@ namespace MediaPortal.Player
         if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
         {
           // Fix RDP Screen out of bound (force to use AdapterOrdinal to 0 if adapter number are out of bounds)
-          int adapterOrdinal = GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal;
+          int adapterOrdinal = GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal;
           if (adapterOrdinal >= Screen.AllScreens.Length)
           {
             adapterOrdinal = Screen.AllScreens.Length - 1;
@@ -994,12 +994,12 @@ namespace MediaPortal.Player
             if ((OSInfo.OSInfo.Win7OrLater() &&
                  Screen.AllScreens[adapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
             {
-              EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
+              EvrInit(_scene, upDevice, ref _vmr9Filter, hMonitor,
                 GUIGraphicsContext.currentMonitorIdx, false, false);
             }
             else
             {
-              EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
+              EvrInit(_scene, upDevice, ref _vmr9Filter, hMonitor,
                 GUIGraphicsContext.currentMonitorIdx, true, true);
               Log.Debug("VMR9: force disable vsync and bias correction for Win7 or lower - current primary is : {0}",
                 Screen.AllScreens[adapterOrdinal].Primary);
@@ -1010,12 +1010,12 @@ namespace MediaPortal.Player
             if ((OSInfo.OSInfo.Win7OrLater() &&
                  Screen.AllScreens[adapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
             {
-              EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
+              EvrInit(_scene, upDevice, ref _vmr9Filter, hMonitor,
                 adapterOrdinal, false, false);
             }
             else
             {
-              EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
+              EvrInit(_scene, upDevice, ref _vmr9Filter, hMonitor,
                 adapterOrdinal, true, true);
               Log.Debug("VMR9: force disable vsync and bias correction for Win7 or lower - current primary is : {0}",
                 Screen.AllScreens[adapterOrdinal].Primary);
@@ -1042,21 +1042,21 @@ namespace MediaPortal.Player
           GUIGraphicsContext.ForcedRefreshRate3DDone = false;
           GUIGraphicsContext.RenderMadVr3Dchanged = false;
           GUIGraphicsContext.ProcessMadVrOsdDisplay = false;
-          IMediaControl mPMediaControl = (IMediaControl) graphBuilder;
+          IMediaControl mPMediaControl = (IMediaControl)graphBuilder;
           var xposition = GUIGraphicsContext.form.Location.X;
           var yposition = GUIGraphicsContext.form.Location.Y;
           //Backup current refresh rate value
           Win32.FindMonitorIndexForScreen();
-          if ((GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal == -1) ||
-              (Manager.Adapters.Count <= GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal) ||
-              (Manager.Adapters.Count > Screen.AllScreens.Length))
+          if ((GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal == -1) ||
+              (GUIGraphicsContext.Direct3D.Adapters.Count <= GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal) ||
+              (GUIGraphicsContext.Direct3D.Adapters.Count > Screen.AllScreens.Length))
           {
             Log.Info("VMR9: adapter number out of bounds");
           }
           else
           {
             GUIGraphicsContext.ForcedRR3DRate =
-              Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
+              GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
             Log.Info("VMR9: backup current refresh rate value {0}Hz", GUIGraphicsContext.ForcedRR3DRate);
           }
           // Get Client size
@@ -1065,8 +1065,8 @@ namespace MediaPortal.Player
           GUIGraphicsContext._backupCurrentScreenSizeHeight = client.Height;
           //GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
           //GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
-          hr = new HResult(MadInit(_scene, xposition, yposition, client.Width, client.Height, (uint) upDevice.ToInt32(),
-            (uint) GUIGraphicsContext.ActiveForm.ToInt32(), ref _vmr9Filter, graphBuilder));
+          hr = new HResult(MadInit(_scene, xposition, yposition, client.Width, client.Height, upDevice,
+            GUIGraphicsContext.ActiveForm, ref _vmr9Filter, graphBuilder));
           //hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "madVR"));
           if (!UseMadVideoRenderer3D) // TODO
           {
@@ -1097,10 +1097,10 @@ namespace MediaPortal.Player
         }
         else
         {
-          _vmr9Filter = (IBaseFilter) new VideoMixingRenderer9();
+          _vmr9Filter = (IBaseFilter)new VideoMixingRenderer9();
           Log.Info("VMR9: added Video Mixing Renderer 9 to graph");
 
-          Vmr9Init(_scene, (uint) upDevice.ToInt32(), _vmr9Filter, (uint) hMonitor.ToInt32());
+          Vmr9Init(_scene, upDevice, _vmr9Filter, hMonitor);
           hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Video Mixing Renderer 9"));
         }
 
@@ -1601,65 +1601,65 @@ namespace MediaPortal.Player
                   //Pass in the same VMR9VideoDesc structure, along with one of the GUIDs from the array.
                   //The method fills a VMR9DeinterlaceCaps structure with the mode capabilities. 
                   VMR9DeinterlaceCaps caps = new VMR9DeinterlaceCaps();
-                  caps.dwSize = Marshal.SizeOf(typeof (VMR9DeinterlaceCaps));
+                  caps.dwSize = Marshal.SizeOf(typeof(VMR9DeinterlaceCaps));
                   hr = deinterlace.GetDeinterlaceModeCaps(modes[i], ref VideoDesc, ref caps);
                   if (hr == 0)
                   {
                     Log.Debug("VMR9: AvailableDeinterlaceMode - {0}: {1}", i, modes[i]);
                     switch (caps.DeinterlaceTechnology)
                     {
-                        //The algorithm is unknown or proprietary
+                      //The algorithm is unknown or proprietary
                       case VMR9DeinterlaceTech.Unknown:
                         {
                           Log.Info("VMR9: Unknown H/W de-interlace mode");
                           break;
                         }
-                        //The algorithm creates each missing line by repeating the line above it or below it.
-                        //This method creates jagged artifacts and is not recommended.
+                      //The algorithm creates each missing line by repeating the line above it or below it.
+                      //This method creates jagged artifacts and is not recommended.
                       case VMR9DeinterlaceTech.BOBLineReplicate:
                         {
                           Log.Info("VMR9: BOB Line Replicate capable");
                           break;
                         }
-                        //The algorithm creates the missing lines by vertically stretching each video field by a factor of two.
-                        //For example, it might average two lines or use a (-1, 9, 9, -1)/16 filter across four lines.
-                        //Slight vertical adjustments are made to ensure that the resulting image does not "bob" up and down
+                      //The algorithm creates the missing lines by vertically stretching each video field by a factor of two.
+                      //For example, it might average two lines or use a (-1, 9, 9, -1)/16 filter across four lines.
+                      //Slight vertical adjustments are made to ensure that the resulting image does not "bob" up and down
                       case VMR9DeinterlaceTech.BOBVerticalStretch:
                         {
                           Log.Info("VMR9: BOB Vertical Stretch capable");
                           verticalStretch = modes[i].ToString();
                           break;
                         }
-                        //The algorithm uses median filtering to recreate the pixels in the missing lines.
+                      //The algorithm uses median filtering to recreate the pixels in the missing lines.
                       case VMR9DeinterlaceTech.MedianFiltering:
                         {
                           Log.Info("VMR9: Median Filtering capable");
                           medianFiltering = modes[i].ToString();
                           break;
                         }
-                        //The algorithm uses an edge filter to create the missing lines.
-                        //In this process, spatial directional filters are applied to determine the orientation of edges in the picture content.
-                        //Missing pixels are created by filtering along (rather than across) the detected edges.
+                      //The algorithm uses an edge filter to create the missing lines.
+                      //In this process, spatial directional filters are applied to determine the orientation of edges in the picture content.
+                      //Missing pixels are created by filtering along (rather than across) the detected edges.
                       case VMR9DeinterlaceTech.EdgeFiltering:
                         {
                           Log.Info("VMR9: Edge Filtering capable");
                           break;
                         }
-                        //The algorithm uses spatial or temporal interpolation, switching between the two on a field-by-field basis, depending on the amount of motion.
+                      //The algorithm uses spatial or temporal interpolation, switching between the two on a field-by-field basis, depending on the amount of motion.
                       case VMR9DeinterlaceTech.FieldAdaptive:
                         {
                           Log.Info("VMR9: Field Adaptive capable");
                           break;
                         }
-                        //The algorithm uses spatial or temporal interpolation, switching between the two on a pixel-by-pixel basis, depending on the amount of motion.
+                      //The algorithm uses spatial or temporal interpolation, switching between the two on a pixel-by-pixel basis, depending on the amount of motion.
                       case VMR9DeinterlaceTech.PixelAdaptive:
                         {
                           Log.Info("VMR9: Pixel Adaptive capable");
                           pixelAdaptive = modes[i].ToString();
                           break;
                         }
-                        //The algorithm identifies objects within a sequence of video fields.
-                        //Before it recreates the missing pixels, it aligns the movement axes of the individual objects in the scene to make them parallel with the time axis.
+                      //The algorithm identifies objects within a sequence of video fields.
+                      //Before it recreates the missing pixels, it aligns the movement axes of the individual objects in the scene to make them parallel with the time axis.
                       case VMR9DeinterlaceTech.MotionVectorSteered:
                         {
                           Log.Info("VMR9: Motion Vector Steered capable");
@@ -1724,7 +1724,7 @@ namespace MediaPortal.Player
             Log.Info("VMR9: progressive mode detected - no need to de-interlace");
           }
         }
-          //If the format type is VideoInfo, it must be a progressive frame.
+        //If the format type is VideoInfo, it must be a progressive frame.
         else
         {
           Log.Info("VMR9: no need to de-interlace this video source");
@@ -2035,17 +2035,18 @@ namespace MediaPortal.Player
           //
 
           using (
-            Surface surface = GUIGraphicsContext.DX9Device.CreateOffscreenPlainSurface(GUIGraphicsContext.Width,
+            Surface surface = Surface.CreateOffscreenPlain(GUIGraphicsContext.DX9Device, GUIGraphicsContext.Width,
                                                                                        GUIGraphicsContext.Height,
                                                                                        Format.X8R8G8B8,
                                                                                        Pool.SystemMemory))
           {
-            SurfaceLoader.FromStream(surface, mStr, Filter.None, 0);
+            Surface.FromFileInStream(surface, mStr, Filter.None, 0);
+
             bmp.dwFlags = (VMR9AlphaBitmapFlags)(4 | 8);
             bmp.clrSrcKey = 0;
             unsafe
             {
-              bmp.pDDS = (IntPtr)surface.UnmanagedComPointer;
+              bmp.pDDS = (IntPtr)surface;
             }
             bmp.rDest = new NormalizedRect();
             bmp.rDest.top = yy;
@@ -2141,7 +2142,7 @@ namespace MediaPortal.Player
     private void CreateCommandThread()
     {
       ThreadStart ts = new ThreadStart(CommandThread);
-      _commandThread = new Thread(ts) {Name = "VMR9 madVR Stop thread"};
+      _commandThread = new Thread(ts) { Name = "VMR9 madVR Stop thread" };
       _commandNotify = new ManualResetEventSlim();
       _commandThread.Start();
     }

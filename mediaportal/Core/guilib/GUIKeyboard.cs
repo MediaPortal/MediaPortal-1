@@ -19,14 +19,14 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Windows.Controls;
 
 namespace MediaPortal.GUI.Library
 {
+  using KeyRow = List<GUIKeyboard.Key>;
+  using Keyboard = System.Collections.Generic.List<List<GUIKeyboard.Key>>;
+
   /// <summary>
   /// The class implementing a GUIKeyboard.
   /// </summary>
@@ -218,20 +218,21 @@ namespace MediaPortal.GUI.Library
       TYPE_ALPHABET = 0,
       TYPE_SYMBOLS,
       TYPE_ACCENTS,
+      TYPE_NUMERIC,
 
       TYPE_HIRAGANA,
       TYPE_KATAKANA,
       TYPE_ANS,
 
       TYPE_MAX
-    } ;
+    };
 
     public enum State
     {
       STATE_BACK, // Main menu
       STATE_KEYBOARD, // Keyboard display
       STATE_MAX
-    } ;
+    };
 
     public enum Event
     {
@@ -252,7 +253,7 @@ namespace MediaPortal.GUI.Library
       EV_RIGHT, // Right Dpad or left joy
 
       EVENT_MAX
-    } ;
+    };
 
     public enum Xkey
     {
@@ -426,6 +427,8 @@ namespace MediaPortal.GUI.Library
       XK_KATAKANA, // Katakana
       XK_ANS, // Alphabet/numeral/symbol
       XK_SMS, //SMS Toggle
+      XK_INC, //Increase value (for numeric keyboard only)
+      XK_DEC, //Decrease value (for numeric keyboard only)
 
       // Special Search-Keys
       XK_SEARCH_START_WITH = 0x11000, // to search music that starts with string
@@ -448,7 +451,7 @@ namespace MediaPortal.GUI.Library
       XK_SMS7,
       XK_SMS8,
       XK_SMS9
-    } ;
+    };
 
     public enum StringID
     {
@@ -475,7 +478,7 @@ namespace MediaPortal.GUI.Library
       STR_HELP_TRIGGER,
 
       STR_MAX,
-    } ;
+    };
 
     #endregion
 
@@ -511,7 +514,7 @@ namespace MediaPortal.GUI.Library
     public int _searchKind; // 0=Starts with, 1=Contains, 2=Ends with
     //
 
-    public ArrayList _keyboardList = new ArrayList(); // list of rows = keyboard
+    public Dictionary<KeyboardTypes, Keyboard> _keyboardList = new Dictionary<KeyboardTypes, Keyboard>();
 
     #endregion
 
@@ -716,15 +719,13 @@ namespace MediaPortal.GUI.Library
         inputText.Dispose();
         inputTextCaret.Dispose();
 
-        for (int kb = 0; kb < _keyboardList.Count; kb++)
+        foreach (var kv in _keyboardList)
         {
-          ArrayList keyBoard = (ArrayList)_keyboardList[kb];
-          for (int row = 0; row < _maxRows; ++row)
+          Keyboard keyBoard = kv.Value;
+          foreach (var keyRow in keyBoard)
           {
-            ArrayList keyRow = (ArrayList)keyBoard[row];
-            for (int i = 0; i < keyRow.Count; i++)
+            foreach (var key in keyRow)
             {
-              Key key = (Key)keyRow[i];
               key.button.Dispose();
             }
           }
@@ -782,16 +783,16 @@ namespace MediaPortal.GUI.Library
       int y1 = keyboardY;
       int x1 = keyboardX;
       float fY = y1;
-      ArrayList keyBoard = (ArrayList)_keyboardList[(int)_currentKeyboard];
+      Keyboard keyBoard = _keyboardList[_currentKeyboard];
       for (int row = 0; row < _maxRows; ++row, fY += _keyHeightScaled)
       {
         float fX = x1;
         float fWidthSum = 0.0f;
-        ArrayList keyRow = (ArrayList)keyBoard[row];
+        KeyRow keyRow = keyBoard[row];
         int dwIndex = 0;
         for (int i = 0; i < keyRow.Count; i++)
         {
-          Key key = (Key)keyRow[i];
+          Key key = keyRow[i];
           int width = key.dwWidth;
           GUIGraphicsContext.ScaleHorizontal(ref width);
           if (x >= fX + fWidthSum && x <= fX + fWidthSum + width)
@@ -956,7 +957,10 @@ namespace MediaPortal.GUI.Library
               }
               else
               {
-                Press(chKey);
+                if (_currentKeyboard != KeyboardTypes.TYPE_NUMERIC) //for numeric keyboard only 0..9 are allowed
+                {
+                  Press(chKey);
+                }
               }
             }
             if (action.m_key.KeyChar == 8)
@@ -1068,10 +1072,10 @@ namespace MediaPortal.GUI.Library
       // Alpha keyboard
       //-------------------------------------------------------------------------
 
-      ArrayList keyBoard = new ArrayList();
+      Keyboard keyBoard = new Keyboard();
 
       // First row is Done, 1-0
-      ArrayList keyRow = new ArrayList();
+      KeyRow keyRow = new KeyRow();
       if (_useSearchLayout)
       {
         keyRow.Add(new Key(Xkey.XK_OK, _searchModeKeyWidth, this));
@@ -1103,7 +1107,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Second row is Shift, A-J
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1136,7 +1140,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Third row is Caps Lock, K-T
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1169,7 +1173,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Fourth row is Accents, U-Z, Backspace
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1199,7 +1203,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Fifth row is SMS, Space, Left, Right
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1217,16 +1221,16 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Add the alpha keyboard to the list
-      _keyboardList.Add(keyBoard);
+      _keyboardList.Add(KeyboardTypes.TYPE_ALPHABET, keyBoard);
 
       //-------------------------------------------------------------------------
       // Symbol keyboard
       //-------------------------------------------------------------------------
 
-      keyBoard = new ArrayList();
+      keyBoard = new Keyboard();
 
       // First row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
       if (_useSearchLayout)
       {
         keyRow.Add(new Key(Xkey.XK_OK, _searchModeKeyWidth, this));
@@ -1249,7 +1253,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Second row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1273,7 +1277,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Third row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1297,7 +1301,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Fourth row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1318,7 +1322,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Fifth row is Accents, Space, Left, Right
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1336,16 +1340,16 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Add the symbol keyboard to the list
-      _keyboardList.Add(keyBoard);
+      _keyboardList.Add(KeyboardTypes.TYPE_SYMBOLS, keyBoard);
 
       //-------------------------------------------------------------------------
       // Accents keyboard
       //-------------------------------------------------------------------------
 
-      keyBoard = new ArrayList();
+      keyBoard = new Keyboard();
 
       // First row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
       // Swedish - Finnish
       if (_useSearchLayout)
       {
@@ -1368,7 +1372,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Second row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1392,7 +1396,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Third row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1416,7 +1420,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Fourth row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1438,7 +1442,7 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Fifth row
-      keyRow = new ArrayList();
+      keyRow = new KeyRow();
 
       if (_useSearchLayout)
       {
@@ -1456,7 +1460,70 @@ namespace MediaPortal.GUI.Library
       keyBoard.Add(keyRow);
 
       // Add the accents keyboard to the list
-      _keyboardList.Add(keyBoard);
+      _keyboardList.Add(KeyboardTypes.TYPE_ACCENTS, keyBoard);
+
+      //-------------------------------------------------------------------------
+      // Numeric keyboard
+      //-------------------------------------------------------------------------
+
+      keyBoard = new Keyboard();
+
+      // First row is Done, 1-3
+      keyRow = new KeyRow();
+      if (_useSearchLayout)
+      {
+        keyRow.Add(new Key(Xkey.XK_OK, _searchModeKeyWidth, this));
+      }
+      else
+      {
+        keyRow.Add(new Key(Xkey.XK_OK, _modeKeyWidth, this));
+      }
+
+      keyRow.Add(new Key(Xkey.XK_1, _keyWidth * 2, this));
+      keyRow.Add(new Key(Xkey.XK_2, _keyWidth * 2, this));
+      keyRow.Add(new Key(Xkey.XK_3, _keyWidth * 2, this));
+      keyBoard.Add(keyRow);
+
+      // Second row is INC, 4-6
+      keyRow = new KeyRow();
+
+      keyRow.Add(new Key(Xkey.XK_INC, _modeKeyWidth, this));
+      keyRow.Add(new Key(Xkey.XK_4, _keyWidth * 2, this));
+      keyRow.Add(new Key(Xkey.XK_5, _keyWidth * 2, this));
+      keyRow.Add(new Key(Xkey.XK_6, _keyWidth * 2, this));
+
+      keyBoard.Add(keyRow);
+
+      // Third row is DEC, 7-9
+      keyRow = new KeyRow();
+
+      keyRow.Add(new Key(Xkey.XK_DEC, _modeKeyWidth, this));
+      keyRow.Add(new Key(Xkey.XK_7, _keyWidth * 2, this));
+      keyRow.Add(new Key(Xkey.XK_8, _keyWidth * 2, this));
+      keyRow.Add(new Key(Xkey.XK_9, _keyWidth * 2, this));
+
+      keyBoard.Add(keyRow);
+
+      // Fourth row is Accents (will be disabled), 0, Backspace
+      keyRow = new KeyRow();
+
+      keyRow.Add(new Key(Xkey.XK_ACCENTS, _modeKeyWidth, this));
+      keyRow.Add(new Key(Xkey.XK_0, _keyWidth * 6, this));
+      keyRow.Add(new Key(Xkey.XK_BACKSPACE, (_keyWidth * 4) + (_keyHorizontalSpacing * 3), this));
+
+      keyBoard.Add(keyRow);
+
+      // Fifth row is SMS (will be disabled), Space (will be disabled), Left, Right
+      keyRow = new KeyRow();
+
+      keyRow.Add(new Key(Xkey.XK_SMS, _modeKeyWidth, this));
+      keyRow.Add(new Key(Xkey.XK_SPACE, (_keyWidth * 6) + (_keyHorizontalSpacing * 5), this));
+      keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+      keyRow.Add(new Key(Xkey.XK_ARROWRIGHT, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+      keyBoard.Add(keyRow);
+
+      // Add the nmueric keyboard to the list
+      _keyboardList.Add(KeyboardTypes.TYPE_NUMERIC, keyBoard);
     }
 
     protected void UpdateState(Event ev)
@@ -1514,10 +1581,10 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    protected void ChangeKey(int iBoard, int iRow, int iKey, Key newkey)
+    protected void ChangeKey(KeyboardTypes iBoard, int iRow, int iKey, Key newkey)
     {
-      ArrayList board = (ArrayList)_keyboardList[iBoard];
-      ArrayList row = (ArrayList)board[iRow];
+      Keyboard board = _keyboardList[iBoard];
+      KeyRow row = board[iRow];
       row[iKey] = newkey;
     }
 
@@ -1528,9 +1595,9 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
-      ArrayList row = (ArrayList)board[_currentRow];
-      Key key = (Key)row[_currentKey];
+      Keyboard board = _keyboardList[_currentKeyboard];
+      KeyRow row = board[_currentRow];
+      Key key = row[_currentKey];
 
       // Press it
       Press(key.xKey);
@@ -1581,7 +1648,7 @@ namespace MediaPortal.GUI.Library
         _shiftTurnedOn = false;
       }
 
-        // Special cases
+      // Special cases
       else
       {
         switch (xk)
@@ -1698,6 +1765,22 @@ namespace MediaPortal.GUI.Library
           case Xkey.XK_SMS9:
             ProcessSmsInsertion(9);
             break;
+
+          case Xkey.XK_INC:
+          case Xkey.XK_DEC:
+            {
+              int res;
+              if (Int32.TryParse(_textEntered, out res))
+              {
+                if (xk == Xkey.XK_INC)
+                  res++;
+                else
+                  res--;
+                _textEntered = res.ToString();
+                _position = _textEntered.Length;
+              }
+              break;
+            }
         }
       }
     }
@@ -1707,19 +1790,19 @@ namespace MediaPortal.GUI.Library
       switch (_searchKind)
       {
         case (int)SearchKinds.SEARCH_STARTS_WITH:
-          ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_START_WITH, _searchModeKeyWidth, this));
+          ChangeKey(_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_START_WITH, _searchModeKeyWidth, this));
           break;
 
         case (int)SearchKinds.SEARCH_ENDS_WITH:
-          ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_ENDS_WITH, _searchModeKeyWidth, this));
+          ChangeKey(_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_ENDS_WITH, _searchModeKeyWidth, this));
           break;
 
         case (int)SearchKinds.SEARCH_IS:
-          ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_IS, _searchModeKeyWidth, this));
+          ChangeKey(_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_IS, _searchModeKeyWidth, this));
           break;
 
         case (int)SearchKinds.SEARCH_CONTAINS:
-          ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_CONTAINS, _searchModeKeyWidth, this));
+          ChangeKey(_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_CONTAINS, _searchModeKeyWidth, this));
           break;
       }
       if (TextChanged != null)
@@ -1758,7 +1841,7 @@ namespace MediaPortal.GUI.Library
             }
             break;
           case 3:
-            if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
+            if (_currentKeyboard != KeyboardTypes.TYPE_NUMERIC && (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET))
             {
               if (_currentKey == 7) // backspace
               {
@@ -1785,7 +1868,7 @@ namespace MediaPortal.GUI.Library
           case 4:
             if (_currentKey == 1) // spacebar
             {
-              if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
+              if (_currentKeyboard != KeyboardTypes.TYPE_NUMERIC && (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET))
               {
                 _currentKey = Math.Min(6, _lastColumn); // restore column
               }
@@ -1796,7 +1879,7 @@ namespace MediaPortal.GUI.Library
             }
             else if (_currentKey > 1) // left and right
             {
-              if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
+              if (_currentKeyboard != KeyboardTypes.TYPE_NUMERIC && (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET))
               {
                 _currentKey = 7; // backspace
               }
@@ -1832,7 +1915,7 @@ namespace MediaPortal.GUI.Library
             }
             break;
           case 2:
-            if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
+            if (_currentKeyboard != KeyboardTypes.TYPE_NUMERIC && (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET))
             {
               if (_currentKey > 7) // q - t
               {
@@ -1850,7 +1933,7 @@ namespace MediaPortal.GUI.Library
             }
             break;
           case 3:
-            if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
+            if (_currentKeyboard != KeyboardTypes.TYPE_NUMERIC && (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET))
             {
               if (0 < _currentKey && _currentKey < 7) // u - z
               {
@@ -1870,7 +1953,7 @@ namespace MediaPortal.GUI.Library
                 _currentKey = Math.Min(6, _lastColumn);
                 break;
               case 2: // left arrow
-                if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
+                if (_currentKeyboard != KeyboardTypes.TYPE_NUMERIC && (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET))
                 {
                   _currentKey = Math.Max(Math.Min(8, _lastColumn), 7);
                 }
@@ -1880,7 +1963,7 @@ namespace MediaPortal.GUI.Library
                 }
                 break;
               case 3: // right arrow
-                if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
+                if (_currentKeyboard != KeyboardTypes.TYPE_NUMERIC && (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET))
                 {
                   _currentKey = Math.Max(9, _lastColumn);
                 }
@@ -1906,9 +1989,9 @@ namespace MediaPortal.GUI.Library
       }
 
       // If the new key is a single character, remember it for later
-      ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
-      ArrayList row = (ArrayList)board[_currentRow];
-      Key key = (Key)row[_currentKey];
+      Keyboard board = _keyboardList[_currentKeyboard];
+      KeyRow row = board[_currentRow];
+      Key key = row[_currentKey];
       if (key.name == "" || _lastColumn == 0)
       {
         switch (key.xKey)
@@ -1916,13 +1999,13 @@ namespace MediaPortal.GUI.Library
           // Adjust the last column for the arrow keys to confine it
           // within the range of the key width
           case Xkey.XK_ARROWLEFT:
-            if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
+            if (_currentKeyboard != KeyboardTypes.TYPE_NUMERIC && (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET))
             {
               _lastColumn = (_lastColumn <= 7) ? 7 : 8;
             }
             break;
           case Xkey.XK_ARROWRIGHT:
-            if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
+            if (_currentKeyboard != KeyboardTypes.TYPE_NUMERIC && (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET))
             {
               _lastColumn = (_lastColumn <= 9) ? 9 : 10;
             }
@@ -1943,17 +2026,29 @@ namespace MediaPortal.GUI.Library
         return true;
       }
 
-      ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
-      ArrayList row = (ArrayList)board[_currentRow];
-      Key key = (Key)row[_currentKey];
+      Keyboard board = _keyboardList[_currentKeyboard];
+      KeyRow row = board[_currentRow];
+      Key key = row[_currentKey];
 
       // On the symbols keyboard, Shift and Caps Lock are disabled
-      if (_currentKeyboard == KeyboardTypes.TYPE_SYMBOLS)
+      switch (_currentKeyboard)
       {
-        if (key.xKey == Xkey.XK_SHIFT || key.xKey == Xkey.XK_CAPSLOCK)
-        {
-          return true;
-        }
+        case KeyboardTypes.TYPE_SYMBOLS:
+          {
+            if (key.xKey == Xkey.XK_SHIFT || key.xKey == Xkey.XK_CAPSLOCK)
+            {
+              return true;
+            }
+            break;
+          }
+        case KeyboardTypes.TYPE_NUMERIC:
+          {
+            if (key.xKey == Xkey.XK_ACCENTS || key.xKey == Xkey.XK_SMS)
+            {
+              return true;
+            }
+            break;
+          }
       }
 
       return false;
@@ -1990,6 +2085,12 @@ namespace MediaPortal.GUI.Library
           break;
         case Xkey.XK_SMS9:
           smsResult = "9 (wxyz)";
+          break;
+        case Xkey.XK_INC:
+          smsResult = "+";
+          break;
+        case Xkey.XK_DEC:
+          smsResult = "-";
           break;
       }
 
@@ -2308,6 +2409,19 @@ namespace MediaPortal.GUI.Library
           }
           _useSearchLayout = value;
           InitBoard();
+        }
+      }
+    }
+
+    public bool IsNumeric
+    {
+      get { return _currentKeyboard == KeyboardTypes.TYPE_NUMERIC; }
+      set
+      {
+        if (value)
+        {
+          SmsStyleText = !value;
+          _currentKeyboard = KeyboardTypes.TYPE_NUMERIC;
         }
       }
     }

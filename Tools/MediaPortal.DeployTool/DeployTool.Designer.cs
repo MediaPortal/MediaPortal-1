@@ -36,6 +36,7 @@ namespace MediaPortal.DeployTool
       this.labelHeading = new System.Windows.Forms.Label();
       this.nextButton = new System.Windows.Forms.Button();
       this.backButton = new System.Windows.Forms.Button();
+      this.lbBadge = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
       this.splitContainer1.Panel1.SuspendLayout();
       this.splitContainer1.Panel2.SuspendLayout();
@@ -62,6 +63,7 @@ namespace MediaPortal.DeployTool
       this.splitContainer1.Panel1.BackColor = System.Drawing.Color.Transparent;
       this.splitContainer1.Panel1.Controls.Add(this.bHelp);
       this.splitContainer1.Panel1.Controls.Add(this.bExit);
+      this.splitContainer1.Panel1.Controls.Add(this.lbBadge);
       this.splitContainer1.Panel1.Controls.Add(this.pictureBox1);
       this.splitContainer1.Panel1.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       // 
@@ -72,7 +74,6 @@ namespace MediaPortal.DeployTool
       this.splitContainer1.Size = new System.Drawing.Size(1000, 550);
       this.splitContainer1.SplitterDistance = 70;
       this.splitContainer1.SplitterWidth = 1;
-      this.splitContainer1.TabIndex = 0;
       // 
       // bHelp
       // 
@@ -89,7 +90,7 @@ namespace MediaPortal.DeployTool
       this.bHelp.Location = new System.Drawing.Point(945, 12);
       this.bHelp.Name = "bHelp";
       this.bHelp.Size = new System.Drawing.Size(23, 24);
-      this.bHelp.TabIndex = 21;
+      this.bHelp.TabIndex = 2;
       this.bHelp.UseVisualStyleBackColor = false;
       this.bHelp.Click += new System.EventHandler(this.bHelp_Click);
       // 
@@ -109,7 +110,7 @@ namespace MediaPortal.DeployTool
       this.bExit.Margin = new System.Windows.Forms.Padding(0);
       this.bExit.Name = "bExit";
       this.bExit.Size = new System.Drawing.Size(23, 24);
-      this.bExit.TabIndex = 0;
+      this.bExit.TabIndex = 3;
       this.bExit.UseVisualStyleBackColor = false;
       this.bExit.Click += new System.EventHandler(this.bExit_Click);
       // 
@@ -121,7 +122,6 @@ namespace MediaPortal.DeployTool
       this.pictureBox1.Location = new System.Drawing.Point(0, 0);
       this.pictureBox1.Name = "pictureBox1";
       this.pictureBox1.Size = new System.Drawing.Size(1000, 70);
-      this.pictureBox1.TabIndex = 20;
       this.pictureBox1.TabStop = false;
       this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DeployTool_MouseDown);
       // 
@@ -151,7 +151,6 @@ namespace MediaPortal.DeployTool
       this.splitContainer2.Size = new System.Drawing.Size(1000, 479);
       this.splitContainer2.SplitterDistance = 439;
       this.splitContainer2.SplitterWidth = 1;
-      this.splitContainer2.TabIndex = 0;
       // 
       // labelHeading
       // 
@@ -161,7 +160,6 @@ namespace MediaPortal.DeployTool
       this.labelHeading.Location = new System.Drawing.Point(111, 7);
       this.labelHeading.Name = "labelHeading";
       this.labelHeading.Size = new System.Drawing.Size(778, 23);
-      this.labelHeading.TabIndex = 3;
       this.labelHeading.Text = "Press the \"Install\" button to perform all necessary actions to install your setup" +
     "";
       this.labelHeading.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -180,7 +178,7 @@ namespace MediaPortal.DeployTool
       this.nextButton.Location = new System.Drawing.Point(895, 3);
       this.nextButton.Name = "nextButton";
       this.nextButton.Size = new System.Drawing.Size(93, 34);
-      this.nextButton.TabIndex = 2;
+      this.nextButton.TabIndex = 0;
       this.nextButton.Text = "next";
       this.nextButton.UseVisualStyleBackColor = false;
       this.nextButton.Click += new System.EventHandler(this.nextButton_Click);
@@ -203,6 +201,16 @@ namespace MediaPortal.DeployTool
       this.backButton.UseVisualStyleBackColor = false;
       this.backButton.Click += new System.EventHandler(this.backButton_Click);
       // 
+      // lbBadge
+      // 
+      this.lbBadge.AutoSize = true;
+      this.lbBadge.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold);
+      this.lbBadge.ForeColor = System.Drawing.Color.White;
+      this.lbBadge.Location = new System.Drawing.Point(73, 47);
+      this.lbBadge.Name = "lbBadge";
+      this.lbBadge.Size = new System.Drawing.Size(31, 13);
+      this.lbBadge.Text = "x64";
+      // 
       // DeployTool
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -216,6 +224,7 @@ namespace MediaPortal.DeployTool
       this.Text = "MediaPortal Deploy Tool";
       this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DeployTool_MouseDown);
       this.splitContainer1.Panel1.ResumeLayout(false);
+      this.splitContainer1.Panel1.PerformLayout();
       this.splitContainer1.Panel2.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
       this.splitContainer1.ResumeLayout(false);
@@ -238,6 +247,7 @@ namespace MediaPortal.DeployTool
     private System.Windows.Forms.Button bExit;
     private System.Windows.Forms.Button bHelp;
     private System.Windows.Forms.Label labelHeading;
+    private System.Windows.Forms.Label lbBadge;
   }
 }
 

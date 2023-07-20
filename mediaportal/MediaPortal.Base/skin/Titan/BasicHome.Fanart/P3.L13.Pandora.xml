@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+  <!--            :: MUSIC ::            -->
+		
+  <control Style="HomeBasicFanart">
+    <description>Music Selected Fanart</description>
+    <type>image</type>
+    <id>0</id>
+    <visible>control.hasfocus(650) + control.isvisible(91919297)</visible>
+    <texture>#fanarthandler.music.scraper.backdrop1.any</texture>
+  </control> 
+
+  <control Style="HomeBasicFanart">
+    <description>Music Selected Fanart</description>
+    <type>image</type>
+    <id>0</id>
+    <visible>control.hasfocus(650) + control.isvisible(91919298)</visible>
+    <texture>#fanarthandler.music.scraper.backdrop2.any</texture>
+  </control> 
+
+</controls>
+</window>

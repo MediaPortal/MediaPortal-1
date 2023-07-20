@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,12 +21,10 @@
 #region Usings
 
 using System;
-using System.Drawing;
 using System.IO;
-using MediaPortal.Configuration;
+
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.ExtensionMethods;
 
 #endregion
@@ -42,7 +40,7 @@ namespace MediaPortal.GUI.Home
 
     [SkinControl(200)] protected GUILabelControl lblDate = null;
     [SkinControl(201)] protected GUILabelControl lblTime = null;
-    [SkinControl(50)] protected GUIMenuControl menuMain = null;
+    [SkinControl(50)] protected GUIControl menuMain = null;
     [SkinControl(99)] protected GUIVideoControl videoWindow = null;
 
     #endregion
@@ -55,6 +53,7 @@ namespace MediaPortal.GUI.Home
     protected DateTime _updateTimer = DateTime.MinValue;
     protected GUIOverlayWindow _overlayWin = null;
     private static bool _addedGlobalMessageHandler = false;
+    protected GUIFacadeControl.Layout _layout = GUIFacadeControl.Layout.List;
 
     #endregion
 
@@ -96,22 +95,46 @@ namespace MediaPortal.GUI.Home
     protected override void OnWindowLoaded()
     {
       base.OnWindowLoaded();
+
       if (menuMain != null)
       {
-        menuMain.FixedScroll = _fixedScroll;
-        menuMain.EnableAnimation = _enableAnimation;
+        if (menuMain is GUIMenuControl)
+        {
+          (menuMain as GUIMenuControl).FixedScroll = _fixedScroll;
+          (menuMain as GUIMenuControl).EnableAnimation = _enableAnimation;
+        }
       }
+
       LoadButtonNames();
-      menuMain.ButtonInfos.Sort(menuMain.Compare);
+
+      if (menuMain != null)
+      {
+        if (menuMain is GUIMenuControl)
+        {
+          (menuMain as GUIMenuControl).ButtonInfos.Sort((menuMain as GUIMenuControl).Compare);
+        }
+
+        if (menuMain is GUIFacadeControl)
+        {
+          (menuMain as GUIFacadeControl).Sort(new PluginSort(true));
+          (menuMain as GUIFacadeControl).CurrentLayout = _layout;
+        }
+      }
     }
 
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+
       //set video window position
       if (videoWindow != null)
       {
         videoWindow.OnInit();
+      }
+
+      if (menuMain is GUIFacadeControl)
+      {
+        GUIControl.SelectItemControl(GetID, (menuMain as GUIFacadeControl).GetID, (menuMain as GUIFacadeControl).SelectedListItemIndex);
       }
     }
 
@@ -133,7 +156,12 @@ namespace MediaPortal.GUI.Home
           break;
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, message.Param1, 0, null);
+          int windowID = message.Param1;
+          if (menuMain is GUIFacadeControl)
+          {
+            windowID = (menuMain as GUIFacadeControl).SelectedListItem.ItemId;
+          }
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, windowID, 0, null);
           GUIWindowManager.SendThreadMessage(msg);
           break;
       }
@@ -185,7 +213,7 @@ namespace MediaPortal.GUI.Home
       string dir = Path.GetDirectoryName(FileName);
       if (dir.Length > 0)
       {
-        dir = dir + "\\";
+        dir += "\\";
       }
       if (!name.ToLowerInvariant().Contains("hover_"))
       {
@@ -200,7 +228,7 @@ namespace MediaPortal.GUI.Home
       string dir = Path.GetDirectoryName(FileName);
       if (dir.Length > 0)
       {
-        dir = dir + "\\";
+        dir += "\\";
       }
       if (!name.ToLowerInvariant().Contains("nonfocushover_"))
       {
@@ -209,9 +237,36 @@ namespace MediaPortal.GUI.Home
       return GetMediaFileName(FileName);
     }
 
+    public string GetIconTextureFileName(string FileName)
+    {
+      if (!FileName.ToLowerInvariant().Contains("home_button_icon_"))
+      {
+        FileName = "home_button_icon_" + FileName;
+      }
+      return GetMediaFileName(FileName);
+    }
+
+    public string GetIconBigTextureFileName(string FileName)
+    {
+      if (!FileName.ToLowerInvariant().Contains("home_button_iconbig_"))
+      {
+        FileName = "home_button_iconbig_" + FileName;
+      }
+      return GetMediaFileName(FileName);
+    }
+
+    public string GetThumbTextureFileName(string FileName)
+    {
+      if (!FileName.ToLowerInvariant().Contains("home_button_thumb_"))
+      {
+        FileName = "home_button_thumb_" + FileName;
+      }
+      return GetMediaFileName(FileName);
+    }
+
     protected string GetMediaFileName(string name)
     {
-      if (Path.GetPathRoot(name) == "")
+      if (string.IsNullOrEmpty(Path.GetPathRoot(name)))
       {
         name = GUIGraphicsContext.GetThemedSkinFile(@"\media\" + name);
       }
@@ -260,13 +315,13 @@ namespace MediaPortal.GUI.Home
           break;
 
         case GUIMessage.MessageType.GUI_MSG_ASKYESNO:
-          string Head = "", Line1 = "", Line2 = "", Line3 = "", Line4 = "";
+          string Head = string.Empty, Line1 = string.Empty, Line2 = string.Empty, Line3 = string.Empty, Line4 = string.Empty;
           bool DefaultYes = false;
           if (message.Param1 != 0)
           {
             Head = GUILocalizeStrings.Get(message.Param1);
           }
-          else if (message.Label != string.Empty)
+          else if (!string.IsNullOrEmpty(message.Label))
           {
             Head = message.Label;
           }
@@ -274,7 +329,7 @@ namespace MediaPortal.GUI.Home
           {
             Line1 = GUILocalizeStrings.Get(message.Param2);
           }
-          else if (message.Label2 != string.Empty)
+          else if (!string.IsNullOrEmpty(message.Label2))
           {
             Line1 = message.Label2;
           }
@@ -282,7 +337,7 @@ namespace MediaPortal.GUI.Home
           {
             Line2 = GUILocalizeStrings.Get(message.Param3);
           }
-          else if (message.Label3 != string.Empty)
+          else if (!string.IsNullOrEmpty(message.Label3))
           {
             Line2 = message.Label3;
           }
@@ -318,12 +373,12 @@ namespace MediaPortal.GUI.Home
 
         case GUIMessage.MessageType.GUI_MSG_SHOW_WARNING:
           {
-            string strHead = "", strLine1 = "", strLine2 = "";
+            string strHead = string.Empty, strLine1 = string.Empty, strLine2 = string.Empty;
             if (message.Param1 != 0)
             {
               strHead = GUILocalizeStrings.Get(message.Param1);
             }
-            else if (message.Label != string.Empty)
+            else if (!string.IsNullOrEmpty(message.Label))
             {
               strHead = message.Label;
             }
@@ -331,7 +386,7 @@ namespace MediaPortal.GUI.Home
             {
               strLine1 = GUILocalizeStrings.Get(message.Param2);
             }
-            else if (message.Label2 != string.Empty)
+            else if (!string.IsNullOrEmpty(message.Label2))
             {
               strLine2 = message.Label2;
             }
@@ -339,7 +394,7 @@ namespace MediaPortal.GUI.Home
             {
               strLine2 = GUILocalizeStrings.Get(message.Param3);
             }
-            else if (message.Label3 != string.Empty)
+            else if (!string.IsNullOrEmpty(message.Label3))
             {
               strLine2 = message.Label3;
             }
@@ -362,7 +417,7 @@ namespace MediaPortal.GUI.Home
           }
           else
           {
-            message.Label = "";
+            message.Label = string.Empty;
           }
           break;
 
@@ -382,7 +437,7 @@ namespace MediaPortal.GUI.Home
           }
           else
           {
-            message.Label = "";
+            message.Label = string.Empty;
           }
           break;
 
@@ -418,7 +473,7 @@ namespace MediaPortal.GUI.Home
       pDlgOK.SetHeading(strHeading);
       pDlgOK.SetLine(1, strLine1);
       pDlgOK.SetLine(2, strLine2);
-      pDlgOK.SetLine(3, "");
+      pDlgOK.SetLine(3, string.Empty);
       pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
     }
 

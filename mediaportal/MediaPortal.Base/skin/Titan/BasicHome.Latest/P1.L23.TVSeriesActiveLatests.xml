@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+    <control>
+      <description>DUMMY Visible</description>
+      <type>label</type>
+      <id>70091</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>[control.hasfocus(7)|control.hasfocus(91919994)|control.hasfocus(91919995)|control.hasfocus(91919996)]+plugin.isenabled(MP-TV Series)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true)</visible>
+    </control>
+
+    <control>
+      <description>Background</description>
+      <type>image</type>
+      <id>70001</id>
+      <posX>8</posX>
+      <posY>669</posY>
+      <width>1859</width>
+      <height>329</height>
+      <texture>basichome_latestmedia_bg.png</texture>
+      <animation effect="fade" time="350" delay="500" reversible="false">visible</animation>
+      <animation effect="slide" start="600" end="0" time="500" delay="500" reversible="false">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>control.isvisible(70091)</visible>              
+    </control>
+
+    <control>
+      <description>latestMedia Movie Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>745</posY>
+      <width>585</width>
+      <font>TitanLight20</font>
+      <textcolor>ffffffff</textcolor>
+      <!--label>#(L(4558))</label-->
+      <label>#latestMediaHandler.tvseries.label</label>
+      <visible>control.isvisible(70091)+!control.HasFocus(91919994)+!control.HasFocus(91919995)+!control.HasFocus(91919996)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+   
+    <control>
+      <description>Poster 1</description>
+      <type>button</type>
+      <id>91919994</id>
+      <posX>81</posX>
+      <posY>741</posY>
+      <width>134</width>
+      <height>191</height>
+      <onup>6</onup>
+      <ondown>12</ondown>
+      <onright>91919995</onright>
+      <onleft>5</onleft>
+      <onESC>#(skin.setfocus(35,7))</onESC>
+      <textureFocus>#(iif(eq(#latestMediaHandler.tvseries.latest.mode,'seasons'),#latestMediaHandler.tvseries.latest1.thumb,#latestMediaHandler.tvseries.latest1.serieThumb))</textureFocus>
+      <textureNoFocus>#(iif(eq(#latestMediaHandler.tvseries.latest.mode,'seasons'),#latestMediaHandler.tvseries.latest1.thumb,#latestMediaHandler.tvseries.latest1.serieThumb))</textureNoFocus>
+      <visible allowhiddenfocus="true">control.isvisible(70091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="zoom" start="100,100" end="110,110" time="200" condition="control.hasfocus(91919994)">conditional</animation>
+    </control>
+    
+    <control>
+        <description>Play Button</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>81</posX>
+        <posY>882</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>play_btn_white.png</texture>
+        <visible>control.isvisible(70091)+control.HasFocus(91919994)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="fade" time="1000" start= "100" end= "50" reversible="false">Visible</animation>
+    </control>  
+
+    <control>
+        <description>New Indicator 1</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>81</posX>
+        <posY>741</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(70091)+string.equals(#latestMediaHandler.tvseries.latest1.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="slide" start="0,0" end="-10,-10" time="200" condition="control.hasfocus(91919994)">conditional</animation>
+    </control>  
+
+    <control>
+      <description>Episode 1</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>814</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.tvseries.latest1.serieName</label>
+      <visible>control.isvisible(70091)+!control.HasFocus(91919994)+!control.HasFocus(91919995)+!control.HasFocus(91919996)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Episode 1 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>814</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>S#latestMediaHandler.tvseries.latest1.seasonIndexE#latestMediaHandler.tvseries.latest1.episodeIndex</label>
+      <visible>control.isvisible(70091)+!control.HasFocus(91919994)+!control.HasFocus(91919995)+!control.HasFocus(91919996)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Poster 2</description>
+      <type>button</type>
+      <id>91919995</id>
+      <posX>226</posX>
+      <posY>741</posY>
+      <width>134</width>
+      <height>191</height>
+      <onup>6</onup>
+      <ondown>12</ondown>
+      <onright>91919996</onright>
+      <onleft>91919994</onleft>
+      <onESC>#(skin.setfocus(35,7))</onESC>
+      <textureFocus>#(iif(eq(#latestMediaHandler.tvseries.latest.mode,'seasons'),#latestMediaHandler.tvseries.latest2.thumb,#latestMediaHandler.tvseries.latest2.serieThumb))</textureFocus>
+      <textureNoFocus>#(iif(eq(#latestMediaHandler.tvseries.latest.mode,'seasons'),#latestMediaHandler.tvseries.latest2.thumb,#latestMediaHandler.tvseries.latest2.serieThumb))</textureNoFocus>
+      <visible>control.isvisible(70091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="zoom" start="100,100" end="110,110" time="200" condition="control.hasfocus(91919995)">conditional</animation>
+    </control>
+
+    <control>
+        <description>Play Button</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>226</posX>
+        <posY>882</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>play_btn_white.png</texture>
+        <visible>control.isvisible(70091)+control.HasFocus(91919995)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="fade" time="1000" start= "100" end= "50" reversible="false">Visible</animation>
+    </control>  
+
+    <control>
+        <description>New Indicator 2</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>226</posX>
+        <posY>741</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(70091)+string.equals(#latestMediaHandler.tvseries.latest2.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="slide" start="0,0" end="-10,-10" time="200" condition="control.hasfocus(91919995)">conditional</animation>
+    </control>  
+
+    <control>
+      <description>Episode 2</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>850</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.tvseries.latest2.serieName</label>
+      <visible>control.isvisible(70091)+!control.HasFocus(91919994)+!control.HasFocus(91919995)+!control.HasFocus(91919996)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Episode 2 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>850</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>S#latestMediaHandler.tvseries.latest2.seasonIndexE#latestMediaHandler.tvseries.latest2.episodeIndex</label>
+      <visible>control.isvisible(70091)+!control.HasFocus(91919994)+!control.HasFocus(91919995)+!control.HasFocus(91919996)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Poster 3</description>
+      <type>button</type>
+      <id>91919996</id>
+      <posX>370</posX>
+      <posY>741</posY>
+      <width>134</width>
+      <height>191</height>
+      <onup>6</onup>
+      <ondown>12</ondown>
+      <onright>7</onright>
+      <onleft>91919995</onleft>
+      <onESC>#(skin.setfocus(35,7))</onESC>
+      <textureFocus>#(iif(eq(#latestMediaHandler.tvseries.latest.mode,'seasons'),#latestMediaHandler.tvseries.latest3.thumb,#latestMediaHandler.tvseries.latest3.serieThumb))</textureFocus>
+      <textureNoFocus>#(iif(eq(#latestMediaHandler.tvseries.latest.mode,'seasons'),#latestMediaHandler.tvseries.latest3.thumb,#latestMediaHandler.tvseries.latest3.serieThumb))</textureNoFocus>
+      <visible>control.isvisible(70091)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="zoom" start="100,100" end="110,110" time="200" condition="control.hasfocus(91919996)">conditional</animation>
+    </control>
+
+    <control>
+        <description>Play Button</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>370</posX>
+        <posY>882</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>play_btn_white.png</texture>
+        <visible>control.isvisible(70091)+control.HasFocus(91919996)</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="fade" time="1000" start= "100" end= "50" reversible="false">Visible</animation>
+    </control>  
+
+    <control>
+        <description>New Indicator 3</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>370</posX>
+        <posY>741</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(70091)+string.equals(#latestMediaHandler.tvseries.latest3.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="slide" start="0,0" end="-10,-10" time="200" condition="control.hasfocus(91919996)">conditional</animation>
+    </control>  
+
+    <control>
+      <description>Episode 3</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+      <posY>888</posY>
+      <width>600</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <label>#latestMediaHandler.tvseries.latest3.serieName</label>
+      <visible>control.isvisible(70091)+!control.HasFocus(91919994)+!control.HasFocus(91919995)+!control.HasFocus(91919996)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>Episode 3 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+      <posY>888</posY>
+      <width>200</width>
+      <textcolor>ffffffff</textcolor>
+      <font>font12</font>
+      <align>right</align>
+      <label>S#latestMediaHandler.tvseries.latest3.seasonIndexE#latestMediaHandler.tvseries.latest3.episodeIndex</label>
+      <visible>control.isvisible(70091)+!control.HasFocus(91919994)+!control.HasFocus(91919995)+!control.HasFocus(91919996)</visible>              
+      <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+    <!-- Description 1 -->
+    <control>
+        <description>latestMedia Artist</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>544</posX>
+        <posY>745</posY>
+        <width>585</width>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <label>#latestMediaHandler.tvseries.latest1.serieName</label>
+        <visible>control.isvisible(70091)+control.HasFocus(91919994)</visible>
+        <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+        <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>Summary</description>
+      <type>textboxscrollup</type>
+      <posX>544</posX>
+      <posY>814</posY>
+      <width>570</width>
+      <height>111</height>
+      <label>#latestMediaHandler.tvseries.latest1.plotoutline</label>
+      <scrollStartDelaySec>5</scrollStartDelaySec>
+      <lineSpacing>0.95</lineSpacing>
+      <seperator>---------------------------------------------------------------------------------------------------------</seperator>
+      <visible>control.isvisible(70091)+control.HasFocus(91919994)</visible>
+      <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+      <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!-- Description 2 -->
+    <control>
+        <description>latestMedia Artist</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>544</posX>
+        <posY>745</posY>
+        <width>585</width>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <label>#latestMediaHandler.tvseries.latest2.serieName</label>
+        <visible>control.isvisible(70091)+control.HasFocus(91919995)</visible>
+        <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+        <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>Summary</description>
+      <type>textboxscrollup</type>
+      <posX>544</posX>
+      <posY>814</posY>
+      <width>570</width>
+      <height>111</height>
+      <label>#latestMediaHandler.tvseries.latest2.plotoutline</label>
+      <scrollStartDelaySec>5</scrollStartDelaySec>
+      <lineSpacing>0.95</lineSpacing>
+      <seperator>---------------------------------------------------------------------------------------------------------</seperator>
+      <visible>control.isvisible(70091)+control.HasFocus(91919995)</visible>
+      <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+      <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!-- Description 3 -->
+    <control>
+        <description>latestMedia Artist</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>544</posX>
+        <posY>745</posY>
+        <width>585</width>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <label>#latestMediaHandler.tvseries.latest3.serieName</label>
+        <visible>control.isvisible(70091)+control.HasFocus(91919996)</visible>
+        <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+        <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <id>0</id>
+      <description>Summary</description>
+      <type>textboxscrollup</type>
+      <posX>544</posX>
+      <posY>814</posY>
+      <width>570</width>
+      <height>111</height>
+      <label>#latestMediaHandler.tvseries.latest3.plotoutline</label>
+      <scrollStartDelaySec>5</scrollStartDelaySec>
+      <lineSpacing>0.95</lineSpacing>
+      <seperator>---------------------------------------------------------------------------------------------------------</seperator>
+      <visible>control.isvisible(70091)+control.HasFocus(91919996)</visible>
+      <animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+      <animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+</controls>
+</window>

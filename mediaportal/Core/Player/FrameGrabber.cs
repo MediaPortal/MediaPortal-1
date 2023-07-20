@@ -28,8 +28,8 @@ using DirectShowLib;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
+using SharpDX;
+using SharpDX.Direct3D9;
 
 namespace MediaPortal
 {
@@ -39,7 +39,7 @@ namespace MediaPortal
   public class FrameGrabber
   {
     [DllImport("DXUtil.dll", PreserveSig = false, CharSet = CharSet.Auto)]
-    private static extern void VideoSurfaceToRGBSurface(UIntPtr src, IntPtr dst);
+    private static extern void VideoSurfaceToRGBSurface(IntPtr src, IntPtr dst);
 
     private Surface rgbSurface = null; // surface used to hold frame grabs
     private bool grabSucceeded = false; // indicates success/failure of framegrabs
@@ -62,7 +62,7 @@ namespace MediaPortal
     }
 
     // MP1-4248 :  Start* Line Code for Ambilight System Capture (Atmolight)
-    public delegate void NewFrameHandler(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pSurface, FrameSource FrameSource);
+    public delegate void NewFrameHandler(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, Surface pSurface, FrameSource FrameSource);
 
     public event NewFrameHandler OnNewFrame;
     // MP1-4248 : End* Ambilight Capture
@@ -235,7 +235,7 @@ namespace MediaPortal
 
               if (grabSucceeded)
               {
-                using (GraphicsStream stream = SurfaceLoader.SaveToStream(ImageFileFormat.Bmp, rgbSurface))
+                using (DataStream stream = Surface.ToStream(rgbSurface, ImageFileFormat.Bmp))
                 {
                   Bitmap b = new Bitmap(Image.FromStream(stream));
 
@@ -261,7 +261,7 @@ namespace MediaPortal
           return null;
         }
         // Not image grabbed
-        return null;
+        //return null;
       }
     }
 
@@ -298,7 +298,7 @@ namespace MediaPortal
     {
       if ((OnNewFrame != null) && (!GUIGraphicsContext.IsFullScreenVideo))
       {
-        using (Surface surface = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono))
+        using (Surface surface = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0))
         {
           OnFrameGUI(surface);
         }
@@ -315,7 +315,7 @@ namespace MediaPortal
       {
         unsafe
         {
-          OnFrame((Int16)surface.Description.Width, (Int16)surface.Description.Height, 0, 0, (uint)surface.UnmanagedComPointer, FrameSource.GUI);
+          OnFrame((Int16)surface.Description.Width, (Int16)surface.Description.Height, 0, 0, surface, FrameSource.GUI);
         }
       }
     }
@@ -408,7 +408,7 @@ namespace MediaPortal
     /// <param name="arWidth"></param>
     /// <param name="arHeight"></param>
     /// <param name="pSurface"></param>
-    public void OnFrame(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pSurface, FrameSource FrameSource)
+    public void OnFrame(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, Surface pSurface, FrameSource FrameSource)
     {
       FrameGrabberD3D9Enable = true;
       // MP1-4248 :Start* Line Code for Ambilight System Capture (Atmolight)
@@ -427,7 +427,8 @@ namespace MediaPortal
       // MP1-4248 :End* Ambilight Capture code
 
       //Dont pass GUI frames to GetCurrentImage() -> VideoModeSwitcher is using it
-      if (FrameSource == FrameGrabber.FrameSource.GUI) return;
+      if (FrameSource == FrameGrabber.FrameSource.GUI)
+        return;
 
       //Log.Debug("PlaneScene: grabSample is true");
       try
@@ -440,28 +441,28 @@ namespace MediaPortal
 
         // if we havent already allocated a surface or the surface dimensions dont match
         // allocate a new surface to store the grabbed frame in
-        if (rgbSurface == null || rgbSurface.Disposed || rgbSurface.Description.Height != height ||
+        if (rgbSurface == null || rgbSurface.IsDisposed || rgbSurface.Description.Height != height ||
             rgbSurface.Description.Width != width)
         {
           Log.Debug("FrameGrabber: Creating new frame grabbing surface");
 
           if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
           {
-            rgbSurface = GUIGraphicsContext.DX9Device.CreateRenderTarget(width, height, Format.A8R8G8B8,
-                                                             MultiSampleType.None, 0, true);
+            rgbSurface = Surface.CreateRenderTarget(GUIGraphicsContext.DX9Device, width, height, Format.A8R8G8B8,
+                                                             MultisampleType.None, 0, true);
           }
           else if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR && GUIGraphicsContext.Vmr9Active)
           {
             if (GUIGraphicsContext.DX9DeviceMadVr != null)
             {
-              rgbSurface = GUIGraphicsContext.DX9DeviceMadVr.CreateRenderTarget(width, height, Format.A8R8G8B8,
-                                                                 MultiSampleType.None, 0, true);
+              rgbSurface = Surface.CreateRenderTarget(GUIGraphicsContext.DX9DeviceMadVr, width, height, Format.A8R8G8B8,
+                                                                 MultisampleType.None, 0, true);
             }
           }
           else
           {
-            rgbSurface = GUIGraphicsContext.DX9Device.CreateRenderTarget(width, height, Format.A8R8G8B8,
-                                                                         MultiSampleType.None, 0, true);
+            rgbSurface = Surface.CreateRenderTarget(GUIGraphicsContext.DX9Device, width, height, Format.A8R8G8B8,
+                                                                         MultisampleType.None, 0, true);
           }
         }
         unsafe
@@ -470,7 +471,7 @@ namespace MediaPortal
           // Log.Debug("Calling VideoSurfaceToRGBSurface");
           if (rgbSurface != null)
           {
-            VideoSurfaceToRGBSurface(new UIntPtr(pSurface), (IntPtr) rgbSurface.UnmanagedComPointer);
+            VideoSurfaceToRGBSurface((IntPtr)pSurface, (IntPtr)rgbSurface);
           }
           lock (grabNotifier)
           {

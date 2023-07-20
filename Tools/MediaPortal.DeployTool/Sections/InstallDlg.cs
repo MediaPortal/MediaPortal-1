@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 #endregion
 
 using System;
-using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.DeployTool.InstallationChecks;
 
@@ -59,29 +59,42 @@ namespace MediaPortal.DeployTool.Sections
       progressInstall.Maximum = flpApplication.Controls.Count;
       progressInstall.Value = 0;
       progressInstall.Visible = true;
+      progressInstall.Update();
+
+      Application.DoEvents();
+      Thread.Sleep(1);
 
       foreach (Control item in flpApplication.Controls)
       {
-        progressInstall.Value++;
-        progressInstall.Update();
-
         IInstallationPackage package = (IInstallationPackage)((ApplicationCtrl)item).Tag;
         int action = PerformPackageAction(package, (ApplicationCtrl)item);
         ((ApplicationCtrl)item).InAction = false;
+
         item.Update();
+
+        Application.DoEvents();
+        Thread.Sleep(1);
+
         if (action == 2)
         {
           ((ApplicationCtrl)item).StatusName = CheckState.FAILED.ToString();
           break;
         }
+
         if (action == 1)
         {
           ((ApplicationCtrl)item).State = Localizer.GetBestTranslation("Install_stateInstalled");
           ((ApplicationCtrl)item).Action = Localizer.GetBestTranslation("Install_actionNothing");
           ((ApplicationCtrl)item).StatusName = CheckState.COMPLETE.ToString();
         }
+
         item.Update();
+
+        progressInstall.Value++;
         progressInstall.Update();
+
+        Application.DoEvents();
+        Thread.Sleep(1);
       }
       // PopulateListView();
       progressInstall.Visible = false;
@@ -103,10 +116,12 @@ namespace MediaPortal.DeployTool.Sections
 
     private void AddPackageToListView(IInstallationPackage package)
     {
-      ApplicationCtrl item = new ApplicationCtrl();
-      item.Name = package.GetDisplayName();
-      item.IconName = package.GetIconName();
-      item.Tag = package;
+      ApplicationCtrl item = new ApplicationCtrl
+      {
+        Name = package.GetDisplayName(),
+        IconName = package.GetIconName(),
+        Tag = package
+      };
       CheckResult result = package.CheckStatus();
       item.StatusName = result.state.ToString();
       switch (result.state)
@@ -173,13 +188,20 @@ namespace MediaPortal.DeployTool.Sections
     private void PopulateListView()
     {
       flpApplication.Controls.Clear();
-      if (InstallationProperties.Instance["InstallType"] != "download_only")
+      if (!Utils.Is64bit() && InstallationProperties.Instance["InstallType"] != "download_only")
       {
         AddPackageToListView(new OldPackageChecker());
       }
       AddPackageToListView(new DirectX9Checker());
-      AddPackageToListView(new VCRedistCheckerOld());
-      AddPackageToListView(new VCRedistChecker());
+      if (!Utils.Is64bit())
+      {
+        AddPackageToListView(new VCRedistChecker2008());
+      }
+      AddPackageToListView(new VCRedistChecker2010());
+      if (Utils.Is64bit())
+      {
+        AddPackageToListView(new VcRedistChecker2013());
+      }
       AddPackageToListView(new VcRedistChecker2015());
       AddPackageToListView(new WindowsMediaPlayerChecker());
       switch (InstallationProperties.Instance["InstallType"])
@@ -196,7 +218,6 @@ namespace MediaPortal.DeployTool.Sections
           }
           AddPackageToListView(new TvServerChecker());
           AddPackageToListView(new TvPluginChecker());
-          AddPackageToListView(new LAVFilterMPEInstall());
           break;
 
         case "tvserver_master":
@@ -214,12 +235,10 @@ namespace MediaPortal.DeployTool.Sections
         case "client":
           AddPackageToListView(new MediaPortalChecker());
           AddPackageToListView(new TvPluginChecker());
-          AddPackageToListView(new LAVFilterMPEInstall());
           break;
 
         case "mp_only":
           AddPackageToListView(new MediaPortalChecker());
-          AddPackageToListView(new LAVFilterMPEInstall());
           break;
 
         case "download_only":
@@ -228,12 +247,31 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new MySQLChecker());
           AddPackageToListView(new TvServerChecker());
           AddPackageToListView(new TvPluginChecker());
-          AddPackageToListView(new LAVFilterMPEInstall());
           break;
       }
-      if ((InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1" ||
-           InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1") &&
-           InstallationProperties.Instance["InstallType"] != "download_only")
+
+      if (InstallationProperties.Instance["InstallType"] != "tvserver_master")
+      {
+        // Extension
+        if (InstallationProperties.Instance["ConfigureMediaPortalLAV"] == "1")
+        {
+          AddPackageToListView(new LAVFilterMPEInstall());
+        }
+        if (InstallationProperties.Instance["ConfigureMediaPortalTitanExtended"] == "1")
+        {
+          AddPackageToListView(new TitanExtensionInstall());
+        }
+
+        // Skin
+        if (InstallationProperties.Instance["ConfigureMediaPortalAresSkin"] == "1")
+        {
+          AddPackageToListView(new AresSkinExtensionInstall());
+        }
+      }
+
+      if (InstallationProperties.Instance["InstallType"] != "download_only" &&
+          (InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1" ||
+           InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1"))
       {
         AddPackageToListView(new WindowsFirewallChecker());
       }

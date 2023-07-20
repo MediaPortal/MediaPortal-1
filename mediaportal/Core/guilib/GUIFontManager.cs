@@ -29,11 +29,13 @@ using System.Linq;
 using System.Xml;
 using DShowNET.Helper;
 using MediaPortal.Util;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Filter = Microsoft.DirectX.Direct3D.Filter;
-using Font = Microsoft.DirectX.Direct3D.Font;
-using Matrix = Microsoft.DirectX.Matrix;
+using SharpDX;
+using SharpDX.Direct3D9;
+using SharpDX.Mathematics;
+using SharpDX.Mathematics.Interop;
+using Filter = SharpDX.Direct3D9.Filter;
+using Font = SharpDX.Direct3D9.Font;
+using Matrix = SharpDX.Matrix;
 using MediaPortal.ExtensionMethods;
 
 // ReSharper disable CheckNamespace
@@ -61,7 +63,7 @@ namespace MediaPortal.GUI.Library
       public Font Fnt;
       public float Xpos;
       public float Ypos;
-      public int Color;
+      public RawColorBGRA Color;
       public string Text;
       public float[,] Matrix;
       public Viewport Viewport;
@@ -307,9 +309,9 @@ namespace MediaPortal.GUI.Library
         {
           _sprite = new Sprite(GUIGraphicsContext.DX9Device);
         }
-        Rectangle rect = fnt.MeasureString(_sprite, text, DrawTextFormat.NoClip, Color.Black);
-        textwidth = rect.Width;
-        textheight = rect.Height;
+        RawRectangle rect = fnt.MeasureText(_sprite, text, FontDrawFlags.NoClip);
+        textwidth = rect.Right - rect.Left;
+        textheight = rect.Bottom - rect.Top;
       }
     }
 
@@ -368,14 +370,14 @@ namespace MediaPortal.GUI.Library
       return ListFontObjects[cacheSlot].font;
     }
 
-    public static void DrawText(Font fnt, float xpos, float ypos, Color color, string text, int maxWidth, int fontHeight)
+    public static void DrawText(Font fnt, float xpos, float ypos, System.Drawing.Color color, string text, int maxWidth, int fontHeight)
     {
       FontManagerDrawText draw;
       draw.FontHeight = fontHeight;
       draw.Fnt = fnt;
       draw.Xpos = xpos;
       draw.Ypos = ypos;
-      draw.Color = color.ToArgb();
+      draw.Color = new RawColorBGRA(color.B, color.G, color.R, color.A);
       draw.Text = text;
       draw.Matrix = (float[,])GUIGraphicsContext.GetFinalMatrix().Clone();
       draw.Viewport = GUIGraphicsContext.DX9Device.Viewport;
@@ -410,6 +412,7 @@ namespace MediaPortal.GUI.Library
         //keep commonly used textures at the top of the pile
         ListFontTextures.RemoveAt(cacheSlot);
         ListFontTextures.Add(drawingTexture);
+        size = drawingTexture.sizeDest;
       }
       else // texture needs to be cached
       {
@@ -432,7 +435,7 @@ namespace MediaPortal.GUI.Library
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
                 g.TextContrast = 0;
-                g.DrawString(draw.Text, CachedSystemFont(fontSize), Brushes.White, new Point(0, 0),
+                g.DrawString(draw.Text, CachedSystemFont(fontSize), Brushes.White, new System.Drawing.Point(0, 0),
                              StringFormat.GenericTypographic);
 
                 bitmap.Save(imageStream, ImageFormat.Bmp);
@@ -447,7 +450,7 @@ namespace MediaPortal.GUI.Library
                 var info = new ImageInformation();
                 try
                 {
-                  texture = TextureLoader.FromStream(GUIGraphicsContext.DX9Device,
+                  texture = Texture.FromStream(GUIGraphicsContext.DX9Device,
                                                      imageStream, (int)imageStream.Length,
                                                      0, 0,
                                                      1,
@@ -457,12 +460,12 @@ namespace MediaPortal.GUI.Library
                                                      Filter.None,
                                                      Filter.None,
                                                      0,
-                                                     ref info);
+                                                     out info);
                 }
-                catch (OutOfVideoMemoryException oovme)
-                {
-                  Log.Error("GUIFontManager: OutOfVideoMemory in DrawTextUsingTexture - {0}", oovme.Message);
-                }
+                //catch (OutOfVideoMemoryException oovme)
+                //{
+                //  Log.Error("GUIFontManager: OutOfVideoMemory in DrawTextUsingTexture - {0}", oovme.Message);
+                //}
                 catch (OutOfMemoryException oome)
                 {
                   Log.Error("GUIFontManager: OutOfMemory in DrawTextUsingTexture - {0}", oome.Message);
@@ -480,7 +483,7 @@ namespace MediaPortal.GUI.Library
         size.Width = (int)textwidth;
         size.Height = (int)textheight;
 
-        var newTexture = new FontTexture {text = draw.Text, texture = texture, size = fontSize};
+        var newTexture = new FontTexture {text = draw.Text, texture = texture, size = fontSize, sizeDest = size};
 
         if (ListFontTextures.Count >= MaxCachedTextures)
         {
@@ -493,9 +496,9 @@ namespace MediaPortal.GUI.Library
         drawingTexture = newTexture;
       }
 
-      _sprite.Draw(drawingTexture.texture, new Rectangle(0, 0, size.Width, size.Height),
-                       Vector3.Empty,
-                       new Vector3((int)draw.Xpos, (int)draw.Ypos, 0), draw.Color);
+      _sprite.Draw(drawingTexture.texture, draw.Color, new RawRectangle(0, 0, size.Width, size.Height),
+                       Vector3.Zero,
+                       new Vector3((int)draw.Xpos, (int)draw.Ypos, 0));
     }
 
     public static void Present()
@@ -516,7 +519,7 @@ namespace MediaPortal.GUI.Library
           }
           _sprite.Begin(SpriteFlags.AlphaBlend | SpriteFlags.SortTexture);
           Viewport orgView = GUIGraphicsContext.DX9Device.Viewport;
-          Matrix orgProj = GUIGraphicsContext.DX9Device.Transform.View;
+          Matrix orgProj = GUIGraphicsContext.DX9Device.GetTransform(TransformState.View);
           Matrix projm = orgProj;
 
           foreach (FontManagerDrawText draw in _listDrawText)
@@ -552,15 +555,15 @@ namespace MediaPortal.GUI.Library
             projm.M22 = (orgProj.M22 + orgProj.M24 * yoffset) * hfactor;
             projm.M32 = (orgProj.M32 + orgProj.M34 * yoffset) * hfactor;
             projm.M42 = (orgProj.M42 + orgProj.M44 * yoffset) * hfactor;
-            GUIGraphicsContext.DX9Device.Transform.View = projm;
+            GUIGraphicsContext.DX9Device.SetTransform(TransformState.View, projm);
             if (GUIGraphicsContext.IsDirectX9ExUsed())
             {
               DrawTextUsingTexture(draw, draw.FontHeight);
             }
             else
             {
-              draw.Fnt.DrawText(_sprite, draw.Text, new Rectangle((int)draw.Xpos,
-                                                                      (int)draw.Ypos, 0, 0), DrawTextFormat.NoClip,
+              draw.Fnt.DrawText(_sprite, draw.Text, new RawRectangle((int)draw.Xpos,
+                                                                      (int)draw.Ypos, 0, 0), FontDrawFlags.NoClip,
                                 draw.Color);
             }
 
@@ -568,7 +571,7 @@ namespace MediaPortal.GUI.Library
           }
 
           GUIGraphicsContext.DX9Device.Viewport = orgView;
-          GUIGraphicsContext.DX9Device.Transform.View = orgProj;
+          GUIGraphicsContext.DX9Device.SetTransform(TransformState.View, orgProj);
           _sprite.End();
           _listDrawText = new List<FontManagerDrawText>();
           _spriteUsed = false;

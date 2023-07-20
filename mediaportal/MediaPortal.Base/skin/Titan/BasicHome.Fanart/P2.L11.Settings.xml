@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+    <!--            :: Settings ::            -->
+        
+    <control Style="HomeBasicFanart">
+        <description>Settings Selected Fanart</description>
+        <type>image</type>
+        <id>0</id>
+        <texture>hover_settings.png</texture>
+        <visible>control.hasfocus(200)</visible>
+    </control> 
+
+</controls>
+</window>

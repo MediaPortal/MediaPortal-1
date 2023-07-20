@@ -67,6 +67,8 @@
       this.cmb_installtype = new System.Windows.Forms.ComboBox();
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
       this.treeView1 = new CodersLab.Windows.Controls.TreeView();
+      this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+      this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
       this.toolStrip.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage_group.SuspendLayout();
@@ -88,7 +90,9 @@
             this.toolStripButton3,
             this.mnu_add_files,
             this.mnu_add_folder,
-            this.mnu_remove_files});
+            this.mnu_remove_files,
+            this.toolStripSeparator1,
+            this.toolStripButton1});
       this.toolStrip.Location = new System.Drawing.Point(0, 0);
       this.toolStrip.Name = "toolStrip";
       this.toolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -485,6 +489,21 @@
       this.treeView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
       this.treeView1.Leave += new System.EventHandler(this.treeView1_Leave);
       // 
+      // toolStripSeparator1
+      // 
+      this.toolStripSeparator1.Name = "toolStripSeparator1";
+      this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+      // 
+      // toolStripButton1
+      // 
+      this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.toolStripButton1.Image = global::MpeMaker.Properties.Resources.arrow_down;
+      this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.toolStripButton1.Name = "toolStripButton1";
+      this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+      this.toolStripButton1.Text = "Sort";
+      this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+      // 
       // FilesGroupsSection
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -548,6 +567,7 @@
         private System.Windows.Forms.TextBox txt_source;
         private System.Windows.Forms.Button btnSelectSourceFile;
         private System.Windows.Forms.Panel panel1;
-
-    }
+    private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+    private System.Windows.Forms.ToolStripButton toolStripButton1;
+  }
 }

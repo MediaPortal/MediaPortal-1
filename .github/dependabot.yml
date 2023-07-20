@@ -1,0 +1,14 @@
+version: 2
+
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "12:00"
+    labels:
+      - dependencies
+    commit-message:
+      prefix: "MP1"
+    open-pull-requests-limit: 10

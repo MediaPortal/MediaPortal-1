@@ -141,7 +141,7 @@ namespace Yeti.WMFSdk
       if (m_Position < m_Length)
 
       {
-        IntPtr src = (IntPtr)(m_BufferPtr.ToInt32() + m_Position);
+        IntPtr src = IntPtr.Add(m_BufferPtr, (int)m_Position);
 
         int ToCopy = Math.Min(count, (int)(this.Length - this.Position));
 
@@ -188,7 +188,7 @@ namespace Yeti.WMFSdk
         throw new ArgumentOutOfRangeException("count");
       }
 
-      IntPtr dest = (IntPtr)(m_BufferPtr.ToInt32() + m_Position);
+      IntPtr dest = IntPtr.Add(m_BufferPtr, (int)m_Position);
 
       Marshal.Copy(buffer, offset, dest, count);
 

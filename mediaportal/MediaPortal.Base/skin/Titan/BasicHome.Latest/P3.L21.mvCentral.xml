@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+    <control>
+      <description>DUMMY Visible</description>
+      <type>label</type>
+      <id>30093</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>control.hasfocus(350)+string.equals(#latestMediaHandler.mvcentral.latest.enabled,true)</visible>
+    </control>
+
+    <control>
+        <description>Background</description>
+        <type>image</type>
+        <id>20001</id>
+        <posX>50</posX>
+        <posY>669</posY>
+        <width>1859</width>
+        <height>329</height>
+        <texture>basichome_latestmedia_bgl.png</texture>
+        <animation effect="fade" time="350" delay="50" reversible="false">visible</animation>
+        <animation effect="slide" start="-600" end="0" time="500" delay="500" reversible="false">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <visible>control.isvisible(30093)</visible>              
+    </control>
+
+    <control>
+        <description>latestMedia Music Label</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>745</posY>
+        <width>585</width>
+        <font>TitanLight20</font>
+        <textcolor>ffffffff</textcolor>
+        <!--label>#(L(4558))</label-->
+        <label>#latestMediaHandler.mvcentral.label</label>
+        <visible>control.isvisible(30093)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+        <description>Album thumb/fanart 1</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>670</posX>
+        <posY>740</posY>
+        <width>190</width>
+        <height>190</height>
+        <texture>#latestMediaHandler.mvcentral.latest1.thumb</texture>
+        <visible>control.isvisible(30093)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+        <description>New Indicator 1</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>670</posX>
+        <posY>740</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(30093)+string.equals(#latestMediaHandler.mvcentral.latest1.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+        <description>Music 1</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>814</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.mvcentral.latest1.artist - #latestMediaHandler.mvcentral.latest1.album</label>
+        <visible>control.isvisible(30093)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+    
+    <control>
+        <description>Album thumb/fanart 2</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>870</posX>
+        <posY>740</posY>
+        <width>190</width>
+        <height>190</height>
+        <texture>#latestMediaHandler.mvcentral.latest2.thumb</texture>
+        <visible>control.isvisible(30093)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+        <description>New Indicator 2</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>870</posX>
+        <posY>740</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(30093)+string.equals(#latestMediaHandler.mvcentral.latest2.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+        <description>Music 2</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>850</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.mvcentral.latest2.artist - #latestMediaHandler.mvcentral.latest2.album</label>
+        <visible>control.isvisible(30093)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+   
+    <control>
+        <description>Album thumb/fanart 3</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1070</posX>
+        <posY>740</posY>
+        <width>190</width>
+        <height>190</height>
+        <texture>#latestMediaHandler.mvcentral.latest3.thumb</texture>
+        <visible>control.isvisible(30093)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+    <control>
+        <description>New Indicator 3</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>1070</posX>
+        <posY>740</posY>
+        <width>50</width>
+        <height>50</height>
+        <texture>basichome_new_indicator.png</texture>
+        <visible>control.isvisible(30093)+string.equals(#latestMediaHandler.mvcentral.latest3.new,true)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>  
+
+    <control>
+        <description>Music 3</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>1280</posX>
+        <posY>888</posY>
+        <width>570</width>
+        <textcolor>ffffffff</textcolor>
+        <font>font12</font>
+        <label>#latestMediaHandler.mvcentral.latest3.artist - #latestMediaHandler.mvcentral.latest3.album</label>
+        <visible>control.isvisible(30093)</visible>
+        <animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+        <animation effect="zoom" start="50,50" end="100,100" time="1500">Visible</animation>
+        <animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+    </control>
+      
+</controls>
+</window>

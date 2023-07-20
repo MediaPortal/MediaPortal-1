@@ -82,6 +82,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private RadioButton mpUseVUmeter;
     private RadioButton mpUseVUmeter2;
     private MPCheckBox mpVFD_UseV3DLL;
+    private GroupBox groupBoxKeyPad;
+    private MPCheckBox mpKeyPadLight;
     private MPCheckBox mpVolumeDisplay;
 
     public iMONLCDg_AdvancedSetupForm()
@@ -150,6 +152,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       mpRestartFrontview.DataBindings.Add("Checked", iMONLCDg.AdvancedSettings.Instance, "RestartFrontviewOnExit");
       mpLeaveFrontviewActive.DataBindings.Add("Checked", iMONLCDg.AdvancedSettings.Instance, "LeaveFrontviewActive");
       mpForceKeyBoardMode.DataBindings.Add("Checked", iMONLCDg.AdvancedSettings.Instance, "ForceKeyBoardMode");
+
+      mpKeyPadLight.DataBindings.Add("Checked", iMONLCDg.AdvancedSettings.Instance, "KeyPadLight");
+
       cmbType_Changed();
       Log.Debug("iMONLCDg.AdvancedSetupForm(): Constructor completed");
     }
@@ -241,6 +246,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         mpUseVUmeter2.Checked = true;
       }
+      mpKeyPadLight.Checked = false;
       iMONLCDg.AdvancedSettings.SetDefaults();
       cmbType_Changed();
       Refresh();
@@ -591,7 +597,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    private void InitializeComponent()
+     private void InitializeComponent()
     {
       groupBoxConfiguration = new MPGroupBox();
       groupBox1 = new GroupBox();
@@ -648,6 +654,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       mpUseInvertedIcons = new MPCheckBox();
       btnOK = new MPButton();
       btnReset = new MPButton();
+      groupBoxKeyPad = new GroupBox();
+      mpKeyPadLight = new MPCheckBox();
       groupBoxConfiguration.SuspendLayout();
       groupBox1.SuspendLayout();
       groupBoxManager.SuspendLayout();
@@ -656,6 +664,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       groupboxEqualizerOptions.SuspendLayout();
       groupEQstyle.SuspendLayout();
       groupBoxDisplayOptions.SuspendLayout();
+      groupBoxKeyPad.SuspendLayout();
       SuspendLayout();
       // 
       // groupBoxConfiguration
@@ -669,6 +678,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       groupBoxConfiguration.Controls.Add(groupBoxDisplayControl);
       groupBoxConfiguration.Controls.Add(groupboxEqualizerOptions);
       groupBoxConfiguration.Controls.Add(groupBoxDisplayOptions);
+      groupBoxConfiguration.Controls.Add(groupBoxKeyPad);
       groupBoxConfiguration.FlatStyle = FlatStyle.Popup;
       groupBoxConfiguration.Location = new Point(9, 6);
       groupBoxConfiguration.Name = "groupBoxConfiguration";
@@ -680,7 +690,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // groupBox1
       // 
       groupBox1.Controls.Add(mpMonitorPowerState);
-      groupBox1.Location = new Point(321, 373);
+      groupBox1.Location = new Point(321, 426);
       groupBox1.Name = "groupBox1";
       groupBox1.Size = new Size(301, 30);
       groupBox1.TabIndex = 134;
@@ -1540,6 +1550,27 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       btnReset.UseVisualStyleBackColor = true;
       btnReset.Click += btnReset_Click;
       // 
+      // groupBoxKeyPad
+      // 
+      this.groupBoxKeyPad.Controls.Add(this.mpKeyPadLight);
+      this.groupBoxKeyPad.Location = new System.Drawing.Point(322, 368);
+      this.groupBoxKeyPad.Name = "groupBoxKeyPad";
+      this.groupBoxKeyPad.Size = new System.Drawing.Size(300, 46);
+      this.groupBoxKeyPad.TabIndex = 135;
+      this.groupBoxKeyPad.TabStop = false;
+      this.groupBoxKeyPad.Text = "KeyPad";
+      // 
+      // mpKeyPadLight
+      // 
+      this.mpKeyPadLight.AutoSize = true;
+      this.mpKeyPadLight.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpKeyPadLight.Location = new System.Drawing.Point(16, 19);
+      this.mpKeyPadLight.Name = "mpKeyPadLight";
+      this.mpKeyPadLight.Size = new System.Drawing.Size(120, 17);
+      this.mpKeyPadLight.TabIndex = 128;
+      this.mpKeyPadLight.Text = "KeyPad Light On";
+      this.mpKeyPadLight.UseVisualStyleBackColor = true;
+      // 
       // iMONLCDg_AdvancedSetupForm
       // 
       AutoScaleDimensions = new SizeF(6F, 13F);
@@ -1565,6 +1596,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       groupEQstyle.PerformLayout();
       groupBoxDisplayOptions.ResumeLayout(false);
       groupBoxDisplayOptions.PerformLayout();
+      groupBoxKeyPad.ResumeLayout(false);
       ResumeLayout(false);
     }
 

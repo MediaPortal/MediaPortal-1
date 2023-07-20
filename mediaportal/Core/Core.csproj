@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
-  <Import Project="..\..\Packages\DirectX_9_SDK.10.6.0\build\DirectX_9_SDK.props" Condition="Exists('..\..\Packages\DirectX_9_SDK.10.6.0\build\DirectX_9_SDK.props')" />
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -203,6 +202,60 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;WIN64</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;WIN64</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType />
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UseCaptureCardDefinitions|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\UseCaptureCardDefinitions\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;WIN64</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UseCaptureDefintionsRelease|x64'">
+    <OutputPath>bin\x64\UseCaptureDefintionsRelease\</OutputPath>
+    <DefineConstants>TRACE;WIN64</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <DebugType />
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28Standalone%29|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Release %28Standalone%29\</OutputPath>
+    <DefineConstants>TRACE;WIN64</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AxInterop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -231,23 +284,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\Interop.WMPLib.dll</HintPath>
     </Reference>
-    <Reference Include="MediaInfo.Wrapper, Version=21.3.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\MediaInfo.Wrapper.21.3.4\lib\net40\MediaInfo.Wrapper.dll</HintPath>
+    <Reference Include="MediaInfo.Wrapper, Version=21.9.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\MediaInfo.Wrapper.21.9.3\lib\net40\MediaInfo.Wrapper.dll</HintPath>
     </Reference>
-    <Reference Include="MetadataExtractor, Version=2.6.0.0, Culture=neutral, PublicKeyToken=b66b5ccaf776c301, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\MetadataExtractor.2.6.0\lib\net35\MetadataExtractor.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <HintPath>..\..\Packages\DirectX_9_SDK.10.6.0\lib\Microsoft.DirectX.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <HintPath>..\..\Packages\DirectX_9_SDK.10.6.0\lib\Microsoft.DirectX.Direct3D.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.DirectX.Direct3DX, Version=1.0.2911.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <HintPath>..\..\Packages\DirectX_9_SDK.10.6.0\lib\Microsoft.DirectX.Direct3DX.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.DirectX.DirectDraw, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <HintPath>..\..\Packages\DirectX_9_SDK.10.6.0\lib\Microsoft.DirectX.DirectDraw.dll</HintPath>
+    <Reference Include="MetadataExtractor, Version=2.8.0.0, Culture=neutral, PublicKeyToken=b66b5ccaf776c301, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\MetadataExtractor.2.8.0\lib\net35\MetadataExtractor.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualC" />
     <Reference Include="Microsoft.WindowsAPICodePack.Shell">
@@ -257,8 +298,20 @@
       <HintPath>..\..\Packages\NAudio.1.10.0\lib\net35\NAudio.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\Newtonsoft.Json.13.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\SharpDX.4.2.0\lib\net40\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\SharpDX.Direct3D9.4.2.0\lib\net40\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\SharpDX.Mathematics.4.2.0\lib\net40\SharpDX.Mathematics.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -284,6 +337,9 @@
     </Reference>
     <Reference Include="System.ServiceProcess">
       <Name>System.ServiceProcess</Name>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\System.ValueTuple.4.5.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Web">
       <Name>System.Web</Name>
@@ -591,6 +647,7 @@
     </Compile>
     <Compile Include="guilib\DXEnums.cs" />
     <Compile Include="Util\CodecExtenstions.cs" />
+    <Compile Include="Util\CustomVertex.cs" />
     <Compile Include="Util\EncryptDecrypt.cs" />
     <Compile Include="Util\ExifExtensions.cs" />
     <Compile Include="Util\FanArt.cs" />
@@ -610,6 +667,7 @@
     <Compile Include="Util\PathUtility.cs" />
     <Compile Include="Util\PRNG.cs" />
     <Compile Include="Util\ProcessLock.cs" />
+    <Compile Include="Util\RawColorsBGRA.cs" />
     <Compile Include="Util\RawInput.cs" />
     <Compile Include="Util\RegistryTools.cs" />
     <Compile Include="Util\RemovableDriveHelper.cs" />
@@ -1704,14 +1762,13 @@ xcopy "$(TargetDir)core.*" "$(SolutionDir)MediaPortal.Application\bin\$(Configur
     </PropertyGroup>
     <Error Condition="!Exists('..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets'))" />
     <Error Condition="!Exists('..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets'))" />
-    <Error Condition="!Exists('..\..\Packages\Sqlite.3.33.0\build\Sqlite.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\Sqlite.3.33.0\build\Sqlite.targets'))" />
     <Error Condition="!Exists('..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets'))" />
-    <Error Condition="!Exists('..\..\Packages\DirectX_9_SDK.10.6.0\build\DirectX_9_SDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\DirectX_9_SDK.10.6.0\build\DirectX_9_SDK.props'))" />
-    <Error Condition="!Exists('..\..\Packages\MediaInfo.Native.21.3.0\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\MediaInfo.Native.21.3.0\build\MediaInfo.Native.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\Sqlite.3.41.2.5\build\sqlite.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\Sqlite.3.41.2.5\build\sqlite.targets'))" />
   </Target>
   <Import Project="..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets" Condition="Exists('..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets')" />
-  <Import Project="..\..\Packages\Sqlite.3.33.0\build\Sqlite.targets" Condition="Exists('..\..\Packages\Sqlite.3.33.0\build\Sqlite.targets')" />
   <Import Project="..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets" Condition="Exists('..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets')" />
   <Import Project="..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets" Condition="Exists('..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets')" />
-  <Import Project="..\..\Packages\MediaInfo.Native.21.3.0\build\MediaInfo.Native.targets" Condition="Exists('..\..\Packages\MediaInfo.Native.21.3.0\build\MediaInfo.Native.targets')" />
+  <Import Project="..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets" Condition="Exists('..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets')" />
+  <Import Project="..\..\Packages\Sqlite.3.41.2.5\build\sqlite.targets" Condition="Exists('..\..\Packages\Sqlite.3.41.2.5\build\sqlite.targets')" />
 </Project>

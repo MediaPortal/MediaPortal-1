@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 /*
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -54,8 +54,8 @@
 #---------------------------------------------------------------------------
 
 Var MyDocs
-Var UserAppData
-Var CommonAppData
+Var AppDataUser
+Var AppDataCommon
 
 Var MPdir.Base
 
@@ -81,8 +81,8 @@ Var MPdir.Cache
   ${xml::GetText} $0 $1
   IntCmp $1 -1 ${DIR}_fail
 
-  ${WordReplace} "$0" "%APPDATA%" "$UserAppData" "+" $0
-  ${WordReplace} "$0" "%PROGRAMDATA%" "$CommonAppData" "+" $0
+  ${WordReplace} "$0" "%APPDATA%" "$AppDataUser" "+" $0
+  ${WordReplace} "$0" "%PROGRAMDATA%" "$AppDataCommon" "+" $0
 
   ; if there is no root, it is relative to MediaPortal's base dir
   ${GetRoot} "$0" $1
@@ -104,9 +104,11 @@ Var MPdir.Cache
   ${EndIf}
 
   Goto ${DIR}_done
+
   ${DIR}_fail:
     ${LOG_TEXT} "ERROR" "Reading ${DIR}-dir from MediaPortalDirs.xml failed."
     ${LOG_TEXT} "INFO" "  Using default: $MPdir.${DIR}"
+
   ${DIR}_done:
 
 !macroend
@@ -117,7 +119,7 @@ Var MPdir.Cache
 !define LoadDefaultDirs `!insertmacro LoadDefaultDirs`
 !macro LoadDefaultDirs
 
-  StrCpy $MPdir.Config              "$CommonAppData\Team MediaPortal\MediaPortal"
+  StrCpy $MPdir.Config              "$AppDataCommon\Team MediaPortal\MediaPortal"
 
   StrCpy $MPdir.Plugins             "$MPdir.Base\plugins"
   StrCpy $MPdir.Log                 "$MPdir.Config\log"
@@ -152,7 +154,6 @@ Var MPdir.Cache
   Push $3
   Push $4
 
-
   IfFileExists "$0\MediaPortalDirs.xml" 0 ReadConfig_fail
 
   ${xml::LoadFile} "$0\MediaPortalDirs.xml" $1
@@ -168,12 +169,12 @@ Var MPdir.Cache
   ${ReadMPdir} Thumbs
   ${ReadMPdir} Cache
 
-
   StrCpy $0 "0"
   Goto ReadConfig_done
 
   ReadConfig_fail:
   StrCpy $0 "-1"
+
   ReadConfig_done:
 
   Pop $4
@@ -200,9 +201,9 @@ Var MPdir.Cache
   StrCpy $MPdir.Base "${INSTDIR}"
   SetShellVarContext current
   StrCpy $MyDocs "$DOCUMENTS"
-  StrCpy $UserAppData "$APPDATA"
+  StrCpy $AppDataUser "$APPDATA"
   SetShellVarContext all
-  StrCpy $CommonAppData "$APPDATA"
+  StrCpy $AppDataCommon "$APPDATA"
 
   ${LoadDefaultDirs}
 

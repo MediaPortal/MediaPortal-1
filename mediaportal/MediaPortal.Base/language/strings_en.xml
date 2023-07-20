@@ -2434,6 +2434,9 @@
     <String id="300230">Stop playback on removal of an audio renderer</String>
     <String id="300231">Reduce frame rate when not being in focus</String>
 	<String id="300232">Only update files after {0}</String>
+	<String id="300233">OSD Settings</String>
+	<String id="300234">Show OSD</String>
+	<String id="300235">Auto Hide OSD</String>
 	<String id="350001">Press Info/F9 for quick settings...</String>
 	<String id="350002">Movies</String>
 	<String id="350003">PlayDisc</String>

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -386,6 +386,12 @@ namespace MediaPortal.GUI.Library
 
       _properties["#VUMeterL"] = string.Empty; // The name of the VUMeterfile Left
       _properties["#VUMeterR"] = string.Empty; // The name of the VUMeterfile Right
+
+      _properties["#pluginid"] = string.Empty;
+      _properties["#pluginname"] = string.Empty;
+      _properties["#pluginauthor"] = string.Empty;
+      _properties["#plugindescription"] = string.Empty;
+      _properties["#pluginhover"] = string.Empty;
     }
 
     /// <summary>

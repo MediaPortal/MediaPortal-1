@@ -60,21 +60,21 @@ namespace MediaPortal.DeployTool
       // 
       // labelURL
       // 
-      this.labelURL.AutoSize = true;
+      this.labelURL.AutoEllipsis = true;
       this.labelURL.ForeColor = System.Drawing.Color.White;
       this.labelURL.Location = new System.Drawing.Point(15, 35);
       this.labelURL.Name = "labelURL";
-      this.labelURL.Size = new System.Drawing.Size(41, 13);
+      this.labelURL.Size = new System.Drawing.Size(545, 13);
       this.labelURL.TabIndex = 2;
       this.labelURL.Text = "label3";
       // 
       // labelTarget
       // 
-      this.labelTarget.AutoSize = true;
+      this.labelTarget.AutoEllipsis = true;
       this.labelTarget.ForeColor = System.Drawing.Color.White;
       this.labelTarget.Location = new System.Drawing.Point(15, 80);
       this.labelTarget.Name = "labelTarget";
-      this.labelTarget.Size = new System.Drawing.Size(41, 13);
+      this.labelTarget.Size = new System.Drawing.Size(545, 13);
       this.labelTarget.TabIndex = 3;
       this.labelTarget.Text = "label3";
       // 

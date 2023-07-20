@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WatchTV_labelSectionHeader" xml:space="preserve">
     <value>Do you want to watch TV with MediaPortal ?</value>
@@ -529,7 +529,7 @@ Please proceed with it before continuing with MediaPortal installation.</value>
     <value>Browse other extensions</value>
   </data>
   <data name="ExtensionChoice_Titan" xml:space="preserve">
-    <value>Install extension that adds support for popular third party plugins</value>
+    <value>Install extension that adds support for popular third party plugins in Titan skin</value>
   </data>
   <data name="ExtensionChoice_Title" xml:space="preserve">
     <value>Recommended Extensions</value>
@@ -548,5 +548,11 @@ Please proceed with it before continuing with MediaPortal installation.</value>
   </data>
   <data name="MySQLChoice_Title" xml:space="preserve">
     <value>MySQL Upgrade 5.1 to 5.6</value>
+  </data>
+  <data name="SkinChoice_ExtendedDescription" xml:space="preserve">
+    <value>* External - The external skins are only installed when you choose them, but you can always install them yourself.</value>
+  </data>
+  <data name="SkinChoice_OtherSkins" xml:space="preserve">
+    <value>Browse other skins</value>
   </data>
 </root>

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -23,23 +23,26 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
+
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Util;
-using SQLite.NET;
 using MediaPortal.Profile;
-using MediaInfo;
 using MediaPortal.Services;
+using MediaPortal.Util;
+
+using MediaInfo;
+using SQLite.NET;
 
 namespace MediaPortal.Video.Database
 {
   /// <summary>
-  /// Summary description for Class1.
+  /// VideoDatabase Class for SQLite
   /// </summary>
   public class VideoDatabaseSqlLite : IVideoDatabase, IDisposable
   {
@@ -1601,16 +1604,20 @@ namespace MediaPortal.Video.Database
 
     #region Collection
 
-    public int AddCollection(string strCollection1)
+    public int AddCollection(string strMovieCollection)
     {
       if (null == m_db)
+      {
+        return -1;
+      }
+      if (string.IsNullOrWhiteSpace(strMovieCollection))
       {
         return -1;
       }
 
       try
       {
-        string strCollection = strCollection1.Trim();
+        string strCollection = strMovieCollection.Trim();
         DatabaseUtility.RemoveInvalidChars(ref strCollection);
 
         string strSQL = "SELECT * FROM moviecollection WHERE strCollection LIKE '";
@@ -1640,16 +1647,20 @@ namespace MediaPortal.Video.Database
       return -1;
     }
 
-    public int GetCollectionId(string movieCollection)
+    public int GetCollectionId(string strMovieCollection)
     {
       if (null == m_db)
+      {
+        return -1;
+      }
+      if (string.IsNullOrWhiteSpace(strMovieCollection))
       {
         return -1;
       }
 
       try
       {
-        string strCollection = movieCollection.Trim();
+        string strCollection = strMovieCollection.Trim();
         DatabaseUtility.RemoveInvalidChars(ref strCollection);
 
         string strSQL = string.Format("SELECT idCollection FROM moviecollection WHERE strCollection like '{0}'", strCollection);
@@ -1668,16 +1679,20 @@ namespace MediaPortal.Video.Database
       return -1;
     }
 
-    public void AddCollectionDescription(string movieCollection, string description)
+    public void AddCollectionDescription(string strMovieCollection, string description)
     {
       if (null == m_db)
+      {
+        return;
+      }
+      if (string.IsNullOrWhiteSpace(strMovieCollection))
       {
         return;
       }
 
       try
       {
-        string strCollection = movieCollection.Trim();
+        string strCollection = strMovieCollection.Trim();
         DatabaseUtility.RemoveInvalidChars(ref strCollection);
 
         string strGroupDescription = description.Trim();
@@ -1883,13 +1898,13 @@ namespace MediaPortal.Video.Database
 
     public void RemoveCollectionFromMovie(int lMovieId, int lCollectionId)
     {
-      try
-      {
         if (null == m_db)
         {
           return;
         }
 
+      try
+      {
         string strSQL = String.Format("DELETE FROM moviecollectionlinkmovie WHERE idCollection={0} AND idMovie={1}", lCollectionId, lMovieId);
         m_db.Execute(strSQL);
       }
@@ -3683,7 +3698,7 @@ namespace MediaPortal.Video.Database
         
         if (results.Rows.Count == 0)
         {
-          sql = String.Format("INSERT INTO resume ( idResume,idFile,stoptime) VALUES(NULL,{0},{1})",
+          sql = String.Format("INSERT INTO resume (idResume,idFile,stoptime) VALUES(NULL,{0},{1})",
                               iFileId, stoptime);
         }
         else
@@ -4595,18 +4610,23 @@ namespace MediaPortal.Video.Database
       return titles;
     }
     
-    public void GetMoviesByCollection(string strCollection1, ref ArrayList movies)
-    {
-      try
+    public void GetMoviesByCollection(string strMovieCollection, ref ArrayList movies)
       {
-        string strCollection = strCollection1;
-        DatabaseUtility.RemoveInvalidChars(ref strCollection);
         movies.Clear();
         
         if (null == m_db)
         {
           return;
         }
+      if (string.IsNullOrWhiteSpace(strMovieCollection))
+      {
+        return;
+      }
+
+      try
+      {
+        string strCollection = strMovieCollection.Trim();
+        DatabaseUtility.RemoveInvalidChars(ref strCollection);
         
         string strSQL = String.Format(
           "SELECT * FROM moviecollectionlinkmovie,moviecollection,movie,movieinfo,path WHERE path.idpath=movie.idpath AND moviecollectionlinkmovie.idCollection=moviecollection.idCollection AND moviecollectionlinkmovie.idmovie=movie.idmovie AND movieinfo.idmovie=movie.idmovie AND moviecollection.strCollection='{0}' ORDER BY movieinfo.strTitle",
@@ -4632,23 +4652,28 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    public void GetRandomMoviesByCollection(string strCollection1, ref ArrayList movies, int limit)
+    public void GetRandomMoviesByCollection(string strMovieCollection, ref ArrayList movies, int limit)
     {
-      GetRandomMoviesByCollection(strCollection1, ref movies, limit, string.Empty);
+      GetRandomMoviesByCollection(strMovieCollection, ref movies, limit, string.Empty);
     }
 
-    public void GetRandomMoviesByCollection(string strCollection1, ref ArrayList movies, int limit, string whereClause)
-    {
-      try
+    public void GetRandomMoviesByCollection(string strMovieCollection, ref ArrayList movies, int limit, string whereClause)
       {
-        string strCollection = strCollection1;
-        DatabaseUtility.RemoveInvalidChars(ref strCollection);
         movies.Clear();
 
         if (null == m_db)
         {
           return;
         }
+      if (string.IsNullOrWhiteSpace(strMovieCollection))
+      {
+        return;
+      }
+
+      try
+      {
+        string strCollection = strMovieCollection.Trim();
+        DatabaseUtility.RemoveInvalidChars(ref strCollection);
 
         string strSQL = string.Format("SELECT DISTINCT {0} FROM movieView WHERE strCollection = '{1}' {2} ORDER BY RANDOM() LIMIT {3}",
                                        _defaultVideoViewFields, strCollection, (!string.IsNullOrEmpty(whereClause) ? "AND " + whereClause : ""), limit);
@@ -5774,7 +5799,7 @@ namespace MediaPortal.Video.Database
           {
             strSQL = String.Format("INSERT INTO IMDBMovies (  idIMDB, idTmdb, strPlot, strCast, strCredits, iYear, strGenre, strPictureURL, strTitle, mpaa) VALUES( '{0}' ,'{1}' ,'{2}' , '{3}' , '{4}' , {5} , '{6}' ,'{7}' ,'{8}' , '{9}')",
                                       movie.MovieImdbID,
-                                      "", // Not used (TMDBid)
+                                      "", // Not used (TMDBid) see IMDBActor.cs
                                       "",
                                       "",
                                       "",
@@ -6166,14 +6191,14 @@ namespace MediaPortal.Video.Database
 
     public bool CheckMovieImdbId(string id)
     {
-      // IMDBtt search check tt number, must be exactly 9 chars with leading zeros if needed
-      if (id == null || id.Length != 9)
+      // IMDBtt search check tt number, must be exactly 9-10 chars with leading zeros if needed
+      if (string.IsNullOrEmpty(id) || !(9 <= id.Length && id.Length <= 10))
       {
         return false;
       }
       
       // Final IMDBtt check
-      Match ttNo = Regex.Match(id, @"tt[\d]{7}?", RegexOptions.IgnoreCase);
+      Match ttNo = Regex.Match(id, @"tt[\d]{7,8}?", RegexOptions.IgnoreCase);
       
       if (!ttNo.Success)
       {
@@ -6185,14 +6210,14 @@ namespace MediaPortal.Video.Database
 
     public bool CheckActorImdbId(string id)
     {
-      // IMDBnm search check nm number, must be exactly 9 chars with leading zeros if needed
-      if (id == null || id.Length != 9)
+      // IMDBnm search check nm number, must be exactly 9-10 chars with leading zeros if needed
+      if (string.IsNullOrEmpty(id) || !(9 <= id.Length && id.Length <= 10))
       {
         return false;
       }
       
       // Final IMDBtt check
-      Match ttNo = Regex.Match(id, @"nm[\d]{7}?", RegexOptions.IgnoreCase);
+      Match ttNo = Regex.Match(id, @"nm[\d]{7,8}?", RegexOptions.IgnoreCase);
       
       if (!ttNo.Success)
       {
@@ -6316,6 +6341,7 @@ namespace MediaPortal.Video.Database
             XmlNode nodeTitle = nodeMovie.SelectSingleNode("title");
             XmlNode nodeSortTitle = nodeMovie.SelectSingleNode("sorttitle");
             XmlNode nodeRating = nodeMovie.SelectSingleNode("rating");
+            XmlNode nodeRatings = nodeMovie.SelectSingleNode("ratings");
             XmlNode nodeUserRating = nodeMovie.SelectSingleNode("userrating");
             XmlNode nodeYear = nodeMovie.SelectSingleNode("year");
             XmlNode nodeDuration = nodeMovie.SelectSingleNode("runtime");
@@ -6603,6 +6629,54 @@ namespace MediaPortal.Video.Database
 
             #endregion
 
+            #region TMDB Number
+
+            // TMDB Number
+            if (nodeTMDBNumber != null)
+            {
+              movie.TMDBNumber = nodeTMDBNumber.InnerText;
+            }
+
+            #endregion
+
+            #region LocalDB Number
+
+            // LocalDB Number
+            if (nodeLocalDBNumber != null)
+            {
+              movie.LocalDBNumber = nodeLocalDBNumber.InnerText;
+            }
+
+            #endregion
+
+            #region Unique ID / Kodi 19
+
+            // Unique ID IMDB
+            XmlNode nodeUniqueIMDBID = nodeMovie.Cast<XmlNode>().Where(n => n.Name == "uniqueid").FirstOrDefault(x => x.Attributes["type"].Value == "imdb");
+            if (nodeUniqueIMDBID != null && nodeUniqueIMDBID.InnerText != null)
+            {
+              if (CheckMovieImdbId(nodeUniqueIMDBID.InnerText))
+              {
+                movie.IMDBNumber = nodeUniqueIMDBID.InnerText;
+              }
+            }
+
+            // Unique ID TMDB
+            XmlNode nodeUniqueTMDBID = nodeMovie.Cast<XmlNode>().Where(n => n.Name == "uniqueid").FirstOrDefault(x => x.Attributes["type"].Value == "tmdb");
+            if (nodeUniqueTMDBID != null && nodeUniqueTMDBID.InnerText != null)
+            {
+              movie.TMDBNumber = nodeUniqueTMDBID.InnerText;
+            }
+
+            // Unique ID Local DB
+            XmlNode nodeUniqueLocalID = nodeMovie.Cast<XmlNode>().Where(n => n.Name == "uniqueid").FirstOrDefault(x => x.Attributes["type"].Value == "local");
+            if (nodeUniqueLocalID != null && nodeUniqueLocalID.InnerText != null)
+            {
+              movie.LocalDBNumber = nodeUniqueLocalID.InnerText;
+            }
+
+            #endregion
+
             #region CD/DVD labels
 
             // CD label
@@ -6706,13 +6780,83 @@ namespace MediaPortal.Video.Database
             if (nodeRating != null)
             {
               double rating = 0;
-              if (Double.TryParse(nodeRating.InnerText.Replace(".", ","), out rating))
+              if (double.TryParse(nodeRating.InnerText.Replace(",", "."), NumberStyles.Float, CultureInfo.InvariantCulture, out rating))
               {
                 movie.Rating = (float) rating;
                 
                 if (movie.Rating > 10.0f)
                 {
                   movie.Rating /= 10.0f;
+                }
+              }
+            }
+
+            #endregion
+
+            #region Votes
+
+            // Votes
+            if (nodeVotes != null && nodeVotes.InnerText != null)
+            {
+              movie.Votes = nodeVotes.InnerText;
+            }
+
+            #endregion
+
+            #region Ratings / Kodi 19
+
+            if (nodeRatings != null)
+            {
+              foreach(XmlNode singleRating in nodeRatings)
+              {
+                XmlAttribute attrName = singleRating.Attributes["name"];
+                XmlAttribute attrMax = singleRating.Attributes["max"];
+                XmlAttribute attrDefault = singleRating.Attributes["default"];
+
+                string name = string.Empty;
+                bool? def = null;
+
+                if (attrName != null && attrName.Value != null)
+                {
+                  name = attrName.Value;
+                }
+                if (attrDefault != null && attrDefault.Value != null) 
+                {
+                  def = singleRating.Attributes["default"].Value == "true";
+                }
+                if (def.HasValue && !def.Value)
+                {
+                  continue;
+                }
+
+                double rating = 0;
+                XmlNode nValue = singleRating.SelectSingleNode("value");
+                XmlNode nVotes = singleRating.SelectSingleNode("votes");
+                if (nValue == null)
+                {
+                  continue;
+                }
+
+                if (nValue != null && nValue.InnerText != null)
+                {
+                  if (double.TryParse(nValue.InnerText.Replace(",","."), NumberStyles.Float, CultureInfo.InvariantCulture, out rating))
+                  {
+                    movie.Rating = (float) rating;
+                  
+                    if (movie.Rating > 10.0f)
+                    {
+                      movie.Rating /= 10.0f;
+                    }
+                  }
+                }
+                if (nVotes != null && nVotes.InnerText != null)
+                {
+                  movie.Votes = nodeVotes.InnerText;
+                }
+
+                if (name == "imdb" || (def.HasValue && def.Value))
+                {
+                  break;
                 }
               }
             }
@@ -6790,26 +6934,6 @@ namespace MediaPortal.Video.Database
 
             #endregion
 
-            #region TMDB Number
-
-            // TMDB Number
-            if (nodeTMDBNumber != null)
-            {
-              movie.TMDBNumber = nodeTMDBNumber.InnerText;
-            }
-
-            #endregion
-
-            #region LocalDB Number
-
-            // LocalDB Number
-            if (nodeLocalDBNumber != null)
-            {
-              movie.LocalDBNumber = nodeLocalDBNumber.InnerText;
-            }
-
-            #endregion
-
             #region TOP250
 
             // Top250
@@ -6827,17 +6951,7 @@ namespace MediaPortal.Video.Database
 
             #endregion
 
-            #region votes
-
-            // Votes
-            if (nodeVotes != null)
-            {
-              movie.Votes = nodeVotes.InnerText;
-            }
-
-            #endregion
-
-            #region Watched/watched count
+            #region Watched / Watched count
 
             // Watched
             int percent = 0;
@@ -6909,6 +7023,7 @@ namespace MediaPortal.Video.Database
             }
 
             #endregion
+
             #region poster
 
             // Poster
@@ -7172,7 +7287,7 @@ namespace MediaPortal.Video.Database
 
             foreach (XmlNode fanartNode in fanartNodeList)
             {
-              if (fanartNode != null)
+              if (fanartNode != null && fanartNode.InnerText != null)
               {
                 faFile = path + @"\" + fanartNode.InnerText;
                 
@@ -7182,8 +7297,8 @@ namespace MediaPortal.Video.Database
                   movie.FanartURL = faFile;
                   faFound = true;
                 }
+                faIndex ++;
               }
-              faIndex ++;
 
               if (faIndex == 5)
               {
@@ -7327,22 +7442,68 @@ namespace MediaPortal.Video.Database
             #region UserGroups / Movie Collections / Sets
             
             movie.MovieCollection = string.Empty;
+            XmlNode movieCollection = nodeMovie.SelectSingleNode("set");
+            if (movieCollection != null)
+            {
+              if (movieCollection.InnerText == null) // Single node as <set>setname</set> -> Movie Collections
+              {
+                string name = movieCollection.InnerText;
 
-            XmlNodeList userGroups = nodeMovie.SelectNodes("set");
+                if (!string.IsNullOrEmpty(name))
+                {
+                  movie.MovieCollection += (string.IsNullOrEmpty(movie.MovieCollection) ? "" : " / ") + name;
+                }
+              }
+              else // Kodi 19 - <set> <name></name> <overview></overview> </set> -> Movie Collections
+              {
+                XmlNodeList movieCollectionList = nodeMovie.SelectNodes("set");
+                
+                foreach (XmlNode nodeCollection in movieCollectionList)
+                {
+                  string name = string.Empty;
+                  string description = string.Empty;
+
+                  XmlNode nodeCollectionName = nodeCollection.SelectSingleNode("name");
+                  XmlNode nodeCollectionOverview = nodeCollection.SelectSingleNode("overview");
+
+                  if (nodeCollectionName != null && nodeCollectionName.InnerText != null)
+                  {
+                    name = nodeCollectionName.InnerText;
+                  }
+
+                  if (nodeCollectionOverview != null && nodeCollectionOverview.InnerText != null)
+                  {
+                    description = nodeCollectionOverview.InnerText;
+                  }
+
+                  if (!string.IsNullOrEmpty(name))
+                  {
+                    movie.MovieCollection += (string.IsNullOrEmpty(movie.MovieCollection) ? "" : " / ") + name;
+
+                    AddCollection(name);
+                    if (!string.IsNullOrEmpty(description))
+                    {
+                      AddCollectionDescription(name, description);
+                    }
+                  }
+                }
+              }
+            }
             
-            // Main node as <set> ---- </set> with subnodes name, rule, image -> User Groups
+            XmlNodeList userGroups = nodeMovie.SelectNodes("usergroup");
+            if (userGroups != null)
+            {
             foreach (XmlNode nodeUserGroup in userGroups)
             {
-              if (nodeUserGroup != null)
-              {
                 string name = string.Empty;
                 string description = string.Empty;
                 string rule = string.Empty;
                 string image = string.Empty;
-                XmlNode nodeSetName = nodeUserGroup.SelectSingleNode("setname");
-                XmlNode nodeSetDescription = nodeUserGroup.SelectSingleNode("setdescription");
-                XmlNode nodeSetRule = nodeUserGroup.SelectSingleNode("setrule");
-                XmlNode nodeSetImage = nodeUserGroup.SelectSingleNode("setimage");
+
+                XmlNode nodeSetName = nodeUserGroup.SelectSingleNode("name");
+                XmlNode nodeSetDescription = nodeUserGroup.SelectSingleNode("description");
+                XmlNode nodeSetRule = nodeUserGroup.SelectSingleNode("rule");
+                XmlNode nodeSetImage = nodeUserGroup.SelectSingleNode("image");
 
                 if (nodeSetName != null && nodeSetName.InnerText != null)
                 {
@@ -7400,34 +7561,21 @@ namespace MediaPortal.Video.Database
                     Util.Utils.FileDelete(smallThumb);
                     Util.Utils.FileDelete(largeThumb);
 
-                    if (Util.Picture.CreateThumbnail(image, smallThumb, (int) Thumbs.ThumbResolution,
-                      (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                    if (Util.Picture.CreateThumbnail(image, smallThumb, (int) Thumbs.ThumbResolution, (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
                     {
-                      Util.Picture.CreateThumbnail(image, largeThumb, (int) Thumbs.ThumbLargeResolution,
-                        (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+                      Util.Picture.CreateThumbnail(image, largeThumb, (int) Thumbs.ThumbLargeResolution, (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
                     }
-                  }
-                }
-                else // Single node as <set>setname</set>  -> Movie Collections / Sets
-                {
-                  name = nodeUserGroup.InnerText;
-
-                  if (!string.IsNullOrEmpty(name))
-                  {
-                    // int iUserGroup = AddUserGroup(name);
-                    // AddUserGroupToMovie(movie.ID, iUserGroup);
-                    movie.MovieCollection += (string.IsNullOrEmpty(movie.MovieCollection) ? "" : " / ") + name;
                   }
                 }
               }
             }
 
+            #endregion
+
             VideoDatabase.SetMovieInfoById(id, ref movie, true);
 
             // Add groups with rules
             VideoDatabase.UpdateUserGroupWithRule(movie.ID, "nfo import");
-
-            #endregion
           }
         }
       }
@@ -7520,9 +7668,9 @@ namespace MediaPortal.Video.Database
             CreateXmlNode(mainNode, doc, "sorttitle", movieDetails.Title);
           }
 
-          //  movie IMDB number
-          CreateXmlNode(mainNode, doc, "imdb", movieDetails.IMDBNumber);
+          // Movie IMDB number
           CreateXmlNode(mainNode, doc, "id", movieDetails.IMDBNumber);
+          CreateXmlNode(mainNode, doc, "imdb", movieDetails.IMDBNumber);
           //  Language
           CreateXmlNode(mainNode, doc, "language", movieDetails.Language);
           //  Country
@@ -7559,11 +7707,11 @@ namespace MediaPortal.Video.Database
           CreateXmlNode(mainNode, doc, "plot", movieDetails.Plot);
           // Review
           CreateXmlNode(mainNode, doc, "review", movieDetails.UserReview);
-          //  movie TMDB number
+          // Movie TMDB number
           CreateXmlNode(mainNode, doc, "tmdb", movieDetails.TMDBNumber);
-          //  movie LocalDB number
+          // Movie LocalDB number
           CreateXmlNode(mainNode, doc, "localdb", movieDetails.LocalDBNumber);
-          //  movie Awards
+          // Movie Awards
           CreateXmlNode(mainNode, doc, "awards", movieDetails.MovieAwards);
           // Watched
           string watched = "false";
@@ -7581,6 +7729,24 @@ namespace MediaPortal.Video.Database
           GetMovieWatchedStatus(movieId, out percent, out watchedCount);
           CreateXmlNode(mainNode, doc, "playcount", watchedCount.ToString());
 
+          // Ratings / Kodi 19
+          subNode = doc.CreateElement("ratings");
+          CreateXmlNode(subNode, doc, "rating", 
+                        new Dictionary<string, string>() {{"name", "imdb"}, {"default","true"}}, 
+                        new Dictionary<string, string>() {{"value", movieDetails.Rating.ToString().Replace(",", ".")}, {"votes", movieDetails.Votes}});
+          mainNode.AppendChild(subNode);
+
+          // Unique ID / Kodi 19
+		  CreateXmlNode(mainNode, doc, "uniquid", movieDetails.IMDBNumber, new Dictionary<string, string>() {{"type", "imdb"}});
+		  if (!string.IsNullOrEmpty(movieDetails.TMDBNumber))
+		  {
+            CreateXmlNode(mainNode, doc, "uniquid", movieDetails.TMDBNumber, new Dictionary<string, string>() {{"type", "tmdb"}});
+		  }
+		  if (!string.IsNullOrEmpty(movieDetails.LocalDBNumber))
+		  {
+            CreateXmlNode(mainNode, doc, "uniquid", movieDetails.LocalDBNumber, new Dictionary<string, string>() {{"type", "local"}});
+          }
+
           // Poster
           string titleExt = movieDetails.Title + "{" + movieId + "}";
           string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
@@ -7592,7 +7758,7 @@ namespace MediaPortal.Video.Database
             {
               File.Copy(largeCoverArtImage, coverFilename, true);
               File.SetAttributes(coverFilename, FileAttributes.Normal);
-              CreateXmlNode(mainNode, doc, "thumb", movieFile + ".jpg");
+              CreateXmlNode(mainNode, doc, "thumb", movieFile + ".jpg", new Dictionary<string, string>() {{"aspect", "poster"}});
             }
             catch (Exception ex)
             {
@@ -7683,7 +7849,7 @@ namespace MediaPortal.Video.Database
             mainNode.AppendChild(subNode);
           }
 
-          //  Movie Set / Collection
+          // Movie Collections
           ArrayList movieCollections = new ArrayList();
           GetMovieCollections(movieId, movieCollections);
           
@@ -7691,7 +7857,17 @@ namespace MediaPortal.Video.Database
           {
             foreach (string movieCollection in movieCollections)
             {
-              CreateXmlNode(mainNode, doc, "set", movieCollection);
+              subNode = doc.CreateElement("set");
+              CreateXmlNode(subNode, doc, "name", movieCollection);
+
+              int idCollection = GetCollectionId(movieCollection);
+              string description = GetCollectionDescriptionById(idCollection);
+              if (!string.IsNullOrEmpty(description))
+              {
+                CreateXmlNode(subNode, doc, "overview", description);
+              }
+
+              mainNode.AppendChild(subNode);
             }
           }
 
@@ -7703,24 +7879,24 @@ namespace MediaPortal.Video.Database
           {
             foreach (string userGroup in userGroups)
             {
-              subNode = doc.CreateElement("set");
-              CreateXmlNode(subNode, doc, "setname", userGroup);
+              subNode = doc.CreateElement("usergroup");
+              CreateXmlNode(subNode, doc, "name", userGroup);
 
               string rule = GetUserGroupRule(userGroup);
               string description = GetUserGroupDescriptionById(GetUserGroupId(userGroup));
 
               if (!string.IsNullOrEmpty(rule))
               {
-                CreateXmlNode(subNode, doc, "setrule", rule);
+                CreateXmlNode(subNode, doc, "rule", rule);
               }
 
               if (!string.IsNullOrEmpty(description))
               {
-                CreateXmlNode(subNode, doc, "setdescription", description);
+                CreateXmlNode(subNode, doc, "description", description);
               }
 
               // Image is not exportable beacuse it is already resized and not in original quality
-              //CreateXmlNode(subNode, doc, "setimage", string.Empty);
+              // CreateXmlNode(subNode, doc, "image", string.Empty);
 
               mainNode.AppendChild(subNode);
             }
@@ -7752,6 +7928,35 @@ namespace MediaPortal.Video.Database
       XmlNode subNode = doc.CreateElement(element);
       subNode.InnerText = innerTxt;
       mainNode.AppendChild(subNode);
+    }
+
+	private void CreateXmlNode(XmlNode mainNode, XmlDocument doc, string element, Dictionary<string, string> attributes, Dictionary<string, string> nodes)
+    {
+      XmlNode subNode = doc.CreateElement(element);
+      foreach(var pair in attributes)
+	  {
+        XmlAttribute attr = doc.CreateAttribute(pair.Key);
+        attr.Value = pair.Value;
+        subNode.Attributes.Append(attr);
+      }
+      foreach(var pair in nodes)
+	  {
+		CreateXmlNode(subNode, doc, pair.Key, pair.Value);
+      }
+	  mainNode.AppendChild(subNode);
+    }
+
+	private void CreateXmlNode(XmlNode mainNode, XmlDocument doc, string element, string innerTxt, Dictionary<string, string> attributes)
+    {
+      XmlNode subNode = doc.CreateElement(element);
+      subNode.InnerText = innerTxt;
+      foreach(var pair in attributes)
+	  {
+        XmlAttribute attr = doc.CreateAttribute(pair.Key);
+        attr.Value = pair.Value;
+        subNode.Attributes.Append(attr);
+      }
+	  mainNode.AppendChild(subNode);
     }
 
     private void CreateCovers(string titleExt, string coverImage, IMDBMovie movie)

@@ -630,6 +630,7 @@
     <String id="690">Diskografi (skivor)</String>
     <String id="691">Diskografi (samlingar, boxar)</String>
     <String id="692">TV-Strömmar</String>
+    <String id="698">TS-buffer tillgänglig</String>
     <String id="699">TV Start</String>
     <String id="700">Diskografi (EP, singlar)</String>
     <String id="701">Diskografi (bootlegs, videor, intervjuer)</String>
@@ -1362,7 +1363,10 @@
     <String id="2164">Ta bort kanalen från denna grupp</String>
     <String id="2165">Vill du denna kanal från TV-Servern?</String>
     <String id="2166">Ta bort alla inspelningar i denna mapp?</String>
-    <String id="2200" prefix="Min">Utforskare</String>
+    <String id="2167">Nyckelord</String>
+    <String id="2168">Uppdatera Exif</String>
+    <String id="2169">Gå till mapp</String>
+    <String id="2170">Metadata</String>    <String id="2200" prefix="Min">Utforskare</String>
     <String id="2201">Välj källa</String>
     <String id="2202">Välj mål</String>
     <String id="2203">Kopiera data</String>
@@ -1617,6 +1621,43 @@
     <String id="9009">Kameramodell:</String>
     <String id="9010">Tillverkare:</String>
     <String id="9011">Visa kommentarer:</String>
+    <String id="9012">Nyckelord</String>
+    <String id="9013">Landskod</String>
+    <String id="9014">Land</String>
+    <String id="9015">Provins/Stat</String>
+    <String id="9016">Stad</String>
+    <String id="9017">Sublokation</String>
+    <String id="9018">Kommentar</String>
+    <String id="9019">Skapare</String>
+    <String id="9020">Copyright</String>
+    <String id="9021">Orientation</String>
+    <String id="9022">ISO</String>
+    <String id="9023">Exponeringsprogram</String>
+    <String id="9024">Exponeringsläge</String>
+    <String id="9025">Exponeringskompensation</String>
+    <String id="9026">Avkänningsmetod</String>
+    <String id="9027">Scentyp</String>
+    <String id="9028">Scenfångsttyp</String>
+    <String id="9029">Vitbalansläge</String>
+    <String id="9030">Linsmodell</String>
+    <String id="9031">Skärpedjup</String>
+    <String id="9032">Skärpedjup (35mm film)</String>
+    <String id="9033">Byline</String>
+    <String id="9034">Copyright-notis</String>
+    <String id="9035">Latitud</String>
+    <String id="9036">Longitud</String>
+    <String id="9037">Altitud</String>
+    <String id="9038">Lokation</String>
+    <String id="9039">Adress</String>
+    <String id="9040">Histogram</String>
+    <String id="9041">Metadata</String>
+    <String id="9093">N</String>
+    <String id="9094">S</String>
+    <String id="9095">V</String>
+    <String id="9096">Ö</String>
+    <String id="9097">Havsnivå</String>
+    <String id="9098">Havsnivå {0} meter</String>
+    <String id="9099">Under havsnivå {0} meter</String>
     <String id="9100" prefix="Min">MiniDisplay</String>
     <String id="9101">Denna plugin har inte konfigurerats.</String>
     <String id="9102">Var god kör MediaPortals konfiguration först!</String>
@@ -2042,6 +2083,7 @@
     <String id="103011" prefix="Mina ">TV/Beskärningsinställningar</String>
     <String id="103012">Information om tv-mottagning</String>
     <String id="104711" prefix="Min ">Wikipedia</String>
+    <String id="105000">Bild - Metadata</String>
     <String id="106666">Power Scheduler väntar</String>
     <String id="107700" prefix="Min">TV/Text-TV</String>
     <String id="107701" prefix="Min">TV/Text-TV</String>
@@ -2382,6 +2424,9 @@
     <String id="300230">Stoppa uppspelning när ljuduppspelaren tas bort</String>
     <String id="300231">Minska bildfrekvensen när MediaPortal inte är fokuserat</String>
     <String id="300232">Uppdatera endast filer nyare än {0}</String>
+    <String id="300233">OSD-Inställningar</String>
+    <String id="300234">Visa OSD</String>
+    <String id="300235">Göm OSD automatiskt</String>
     <String id="350001">Tryck på Info/F9 för snabbinställningar...</String>
     <String id="350002">Filmer</String>
     <String id="350003">SpelaSkiva</String>

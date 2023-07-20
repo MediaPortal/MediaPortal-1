@@ -25,7 +25,7 @@
 !include "${git_InstallScripts}\include\LoggingMacros.nsh"
 
 !AddPluginDir "${git_InstallScripts}\nsSCM-plugin\Plugin"
-!AddPluginDir "${git_InstallScripts}\KillProc-plugin\Plugin"
+!AddPluginDir "${git_InstallScripts}\KillProc-plugin\Plugins\x86-unicode"
 
 #***************************
 #***************************

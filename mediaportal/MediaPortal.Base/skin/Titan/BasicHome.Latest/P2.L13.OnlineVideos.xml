@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window>
+  <!-- set #basichome.onlinevideos.latest.mode property to cover, thumb, square or icon -->
+  <define property="true" evaluateNow="true">#basichome.onlinevideos.latest.mode:cover</define>
+  
+  <controls>
+    <control>
+      <description>GROUP: RecentlyAdded OnlineVideos</description>
+      <type>group</type>
+      <dimColor>0xffffffff</dimColor>
+      <visible>plugin.isenabled(OnlineVideos)+control.hasfocus(600)</visible>
+      <animation effect="slide" start="100" end="0" time="350" delay="500" reversible="false">Visible</animation>
+      <animation effect="slide" start="-100" end="0" time="500" delay="500" reversible="false">Visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="550">visible</animation>
+      <animation effect="fade" start="100" end="0" time="0">hidden</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <control>
+        <description>LATEST MEDIA BACKGROUND</description>
+        <type>image</type>
+        <id>60002</id>
+        <posX>8</posX>
+        <posY>150</posY>
+        <width>1907</width>
+        <height>329</height>
+        <texture>BasicHomeLatestBG.png</texture>
+      </control>
+
+      <!-- COVER -->
+      <control>
+        <description>Header label (cover)</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>602</posX>
+        <posY>227</posY>
+        <width>590</width>
+        <label>#(L(4558))</label>
+        <font>TitanLight20</font>
+        <textcolor>000000</textcolor>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,cover)</visible>
+      </control>
+      <control>
+        <description>Thumb 1 (cover)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>135</posX>
+        <posY>221</posY>
+        <width>135</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo1.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,cover)</visible>
+      </control>
+      <control>
+        <description>Video 1 title (cover)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>604</posX>
+        <posY>291</posY>
+        <width>931</width>
+        <label>#OnlineVideos.LatestVideo1.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,cover)</visible>
+      </control>
+      <control>
+        <description>Thumb 2 (cover)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>285</posX>
+        <posY>221</posY>
+        <width>135</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo2.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,cover)</visible>
+      </control>
+      <control>
+        <description>Video 2 title (cover)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>604</posX>
+        <posY>332</posY>
+        <width>931</width>
+        <label>#OnlineVideos.LatestVideo2.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,cover)</visible>
+      </control>
+      <control>
+        <description>Thumb 3 (cover)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>435</posX>
+        <posY>221</posY>
+        <width>135</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo3.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,cover)</visible>
+      </control>
+      <control>
+        <description>Video 3 Title (cover)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>604</posX>
+        <posY>373</posY>
+        <width>931</width>
+        <label>#OnlineVideos.LatestVideo3.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,cover)</visible>
+      </control>
+
+      <!-- THUMB -->
+      <control>
+        <description>Header label (thumb)</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>674</posX>
+        <posY>226</posY>
+        <width>590</width>
+        <label>#(L(4558))</label>
+        <font>TitanLight20</font>
+        <textcolor>000000</textcolor>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,thumb)</visible>
+      </control>
+      <control>
+        <description>Thumb 1 (thumb)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>135</posX>
+        <posY>291</posY>
+        <width>159</width>
+        <height>118</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo1.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,thumb)</visible>
+      </control>
+      <control>
+        <description>Video 1 title (thumb)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>676</posX>
+        <posY>291</posY>
+        <width>859</width>
+        <label>#OnlineVideos.LatestVideo1.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,thumb)</visible>
+      </control>
+      <control>
+        <description>Thumb 2 (thumb)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>309</posX>
+        <posY>291</posY>
+        <width>159</width>
+        <height>118</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo2.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,thumb)</visible>
+      </control>
+      <control>
+        <description>Video 2 title (thumb)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>676</posX>
+        <posY>332</posY>
+        <width>859</width>
+        <label>#OnlineVideos.LatestVideo2.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,thumb)</visible>
+      </control>
+      <control>
+        <description>Thumb 3 (thumb)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>483</posX>
+        <posY>291</posY>
+        <width>159</width>
+        <height>118</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo3.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,thumb)</visible>
+      </control>
+      <control>
+        <description>Video 3 Title (thumb)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>676</posX>
+        <posY>373</posY>
+        <width>859</width>
+        <label>#OnlineVideos.LatestVideo3.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,thumb)</visible>
+      </control>
+
+      <!-- SQUARE -->
+      <control>
+        <description>Header label (square)</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>767</posX>
+        <posY>226</posY>
+        <width>590</width>
+        <label>#(L(4558))</label>
+        <font>TitanLight20</font>
+        <textcolor>000000</textcolor>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,square)</visible>
+      </control>
+      <control>
+        <description>Thumb 1 (square)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>135</posX>
+        <posY>221</posY>
+        <width>191</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo1.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,square)</visible>
+      </control>
+      <control>
+        <description>Video 1 title (square)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>769</posX>
+        <posY>291</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo1.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,square)</visible>
+      </control>
+      <control>
+        <description>Thumb 2 (square)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>341</posX>
+        <posY>221</posY>
+        <width>191</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo2.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,square)</visible>
+      </control>
+      <control>
+        <description>Video 2 title (square)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>769</posX>
+        <posY>332</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo2.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,square)</visible>
+      </control>
+      <control>
+        <description>Thumb 3 (square)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>547</posX>
+        <posY>221</posY>
+        <width>191</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo3.Thumb</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,square)</visible>
+      </control>
+      <control>
+        <description>Video 3 Title (square)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>769</posX>
+        <posY>373</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo3.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,square)</visible>
+      </control>
+
+      <!-- ICON -->
+      <control>
+        <description>Header label (icon)</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>767</posX>
+        <posY>226</posY>
+        <width>590</width>
+        <label>#(L(4558))</label>
+        <font>TitanLight20</font>
+        <textcolor>000000</textcolor>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,icon)</visible>
+      </control>
+      <control>
+        <description>Thumb 1 (icon)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>135</posX>
+        <posY>221</posY>
+        <width>191</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo1.SiteIcon</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,icon)</visible>
+      </control>
+      <control>
+        <description>Video 1 title (icon)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>769</posX>
+        <posY>291</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo1.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,icon)</visible>
+      </control>
+      <control>
+        <description>Thumb 2 (icon)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>341</posX>
+        <posY>221</posY>
+        <width>191</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo2.SiteIcon</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,icon)</visible>
+      </control>
+      <control>
+        <description>Video 2 title (icon)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>769</posX>
+        <posY>332</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo2.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,icon)</visible>
+      </control>
+      <control>
+        <description>Thumb 3 (icon)</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>547</posX>
+        <posY>221</posY>
+        <width>191</width>
+        <height>191</height>
+        <zoom>true</zoom>
+        <keepaspectratio>true</keepaspectratio>
+        <texture>#OnlineVideos.LatestVideo3.SiteIcon</texture>
+        <shouldCache>true</shouldCache>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,icon)</visible>
+      </control>
+      <control>
+        <description>Video 3 Title (icon)</description>
+        <type>fadelabel</type>
+        <id>0</id>
+        <posX>769</posX>
+        <posY>373</posY>
+        <width>766</width>
+        <label>#OnlineVideos.LatestVideo3.Title</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+        <scrollStartDelaySec>10</scrollStartDelaySec>
+        <visible>string.equals(#basichome.onlinevideos.latest.mode,icon)</visible>
+      </control>
+
+      <control>
+        <description>Site 1</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1580</posX>
+        <posY>291</posY>
+        <width>280</width>
+        <label>#OnlineVideos.LatestVideo1.Site</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+      </control>
+      <control>
+        <description>Site 2</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1580</posX>
+        <posY>332</posY>
+        <width>280</width>
+        <label>#OnlineVideos.LatestVideo2.Site</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+      </control>
+      <control>
+        <description>Site 3</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1580</posX>
+        <posY>373</posY>
+        <width>280</width>
+        <label>#OnlineVideos.LatestVideo3.Site</label>
+        <font>font12</font>
+        <textcolor>000000</textcolor>
+      </control>
+    </control>
+  </controls>
+</window>

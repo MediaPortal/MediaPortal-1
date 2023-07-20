@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2018 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2018 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -347,9 +347,11 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        var clipRect = new Rectangle();
-        clipRect.X      = (int)xpos;
-        clipRect.Y      = (int)ypos;
+        var clipRect = new Rectangle
+        {
+          X = (int)xpos,
+          Y = (int)ypos
+        };
         clipRect.Width  = width > 0 ? width : GUIGraphicsContext.Width - clipRect.X;
         clipRect.Height = GUIGraphicsContext.Height - clipRect.Y;
 

@@ -43,7 +43,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -52,7 +52,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -77,6 +77,25 @@
     <StartupObject>
     </StartupObject>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <WarningLevel>1</WarningLevel>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">
       <Name>System</Name>
@@ -100,13 +119,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Images.resx</DependentUpon>
     </Compile>
+    <Compile Include="InstallationChecks\AresSkinExtensionInstall.cs" />
     <Compile Include="InstallationChecks\LAVFilterMPEInstall.cs" />
     <Compile Include="InstallationChecks\MPEInstall.cs" />
-    <Compile Include="InstallationChecks\OldVCRedistChecker.cs" />
-    <Compile Include="InstallationChecks\VCRedistChecker.cs" />
     <Compile Include="InstallationChecks\DiskSpaceChecker.cs" />
     <Compile Include="InstallationChecks\InternetChecker.cs" />
+    <Compile Include="InstallationChecks\VCRedistChecker_2008.cs" />
+    <Compile Include="InstallationChecks\VCRedistChecker_2010.cs" />
+    <Compile Include="InstallationChecks\VCRedistChecker_2013.cs" />
     <Compile Include="InstallationChecks\VCRedistChecker_2015.cs" />
+    <Compile Include="InstallationChecks\TitanExtensionInstall.cs" />
     <Compile Include="ManualDownloadFileMissing.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -677,6 +699,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Install.ico" />
+    <None Include="Resources\Application\TitanExtended.png" />
+    <None Include="Resources\Application\AresSkin.png" />
     <None Include="Resources\Status\FAILED.png" />
     <None Include="Resources\Status\COMPLETE.png" />
     <None Include="Resources\Status\PROGRESS.png" />
@@ -691,21 +715,15 @@
     <None Include="Resources\Status\INSTALLED.png" />
     <None Include="Resources\Status\DOWNLOADED.png" />
     <None Include="Resources\Status\CONFIGURED.png" />
+    <None Include="Resources\Application\VC2013.png" />
     <None Include="Resources\Application\VC2015.png" />
     <None Include="Resources\Application\VC2010.png" />
     <None Include="Resources\Application\VC2008SP1.png" />
     <None Include="Resources\preview_ares.png" />
     <None Include="Resources\preview_titan.png" />
     <None Include="MediaPortal.DeployTool.exe.manifest" />
-    <None Include="Resources\MePo_average.png" />
-    <None Include="Resources\MePo_smart.png" />
-    <None Include="Resources\MePo_tv.png" />
     <None Include="Resources\Background top.png" />
     <None Include="Resources\Background bottom.png" />
-    <None Include="Resources\Background middle internet connection.png" />
-    <None Include="Resources\Background middle one click install choose.png" />
-    <None Include="Resources\Background middle TV  yes no.png" />
-    <None Include="Resources\Background middle with MP Box.png" />
     <None Include="Resources\Background middle empty.png" />
     <None Include="Resources\Choose button on.png" />
     <None Include="Resources\Choose button off.png" />
@@ -726,17 +744,12 @@
     <None Include="Resources\Application\TVPlugin.png" />
     <None Include="Resources\Application\TVServer.png" />
     <None Include="Resources\Mediaportal Box.png" />
-    <None Include="Resources\Mediaportal One Click.png" />
     <None Include="Resources\Application\MariaDB.png" />
-    <None Include="Resources\Mediaporta Internet Connection.png" />
-    <None Include="Resources\Mediaportal Internet Connection.png" />
-    <None Include="Resources\Mediaportal Install.png" />
     <None Include="Resources\Mediaportal TV.png" />
     <None Include="Resources\Application\Firewall.png" />
     <None Include="Resources\Mediaportal Box White.png" />
     <None Include="Resources\Internet connection.png" />
     <None Include="Resources\Database.png" />
-    <Content Include="Resources\MePo_download.png" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="NetFwTypeLib">

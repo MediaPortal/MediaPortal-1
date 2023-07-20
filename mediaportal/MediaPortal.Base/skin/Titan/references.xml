@@ -79,8 +79,8 @@
     <textXOff>32</textXOff>
     <textYOff>12</textYOff>
     <font>font12</font>
-		<textcolor>FF000000</textcolor>
-		<textcolorNoFocus>ffffffff</textcolorNoFocus>
+        <textcolor>FF000000</textcolor>
+        <textcolorNoFocus>ffffffff</textcolorNoFocus>
   </style>
   <style Name="textBox">
     <width>555</width>
@@ -117,7 +117,7 @@
     <height>58</height>
     <textXOff>0</textXOff>
     <textYOff>3</textYOff>
-		<textalign>center</textalign>
+        <textalign>center</textalign>
     <textureFocus>settings_button_small_focus.png</textureFocus>
     <textureNoFocus>settings_button_small_nofocus.png</textureNoFocus>
     <scrollStartDelaySec>0</scrollStartDelaySec>
@@ -186,55 +186,70 @@
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
   </style>
-  <style Name="SettingsMenuMedium">
-    <width>552</width>
-    <height>58</height>
-    <textXOff>33</textXOff>
-    <textYOff>11</textYOff>
-    <textureFocus>settings_button_medium_focus.png</textureFocus>
-    <textureNoFocus>settings_button_medium_nofocus.png</textureNoFocus>
-    <scrollStartDelaySec>0</scrollStartDelaySec>
-    <textcolor>ff000000</textcolor>
-    <textcolorNoFocus>ffffffff</textcolorNoFocus>
-    <textureUp>page_up_nofocus.png</textureUp>
-    <textureUpFocus>page_up_focus.png</textureUpFocus>
-    <textureDown>page_down_nofocus.png</textureDown>
-    <textureDownFocus>page_down_focus.png</textureDownFocus>
-    <spinWidth>21</spinWidth>
-    <spinHeight>21</spinHeight>
-    <spinXOff>13</spinXOff>
-    <spinTextXOff>7</spinTextXOff>
-    <spinTextYOff>2</spinTextYOff>
-    <spinalign>right</spinalign>
-    <spinvalign>middle</spinvalign>
-    <spintype>text</spintype>
-    <showrange>no</showrange>
-    <reverse>no</reverse>
-    <cycleItems>yes</cycleItems>
-    <dialogTitle></dialogTitle>
-    <dialogShowNumbers>no</dialogShowNumbers>
-    <font>font12</font>
-    <colordiffuse>ffffffff</colordiffuse>
-    <disabledcolor>60ffffff</disabledcolor>
-    <!--dimColor>ffffffff</dimColor-->
+  <style Name="HomeButtonPicture">
+    <width>623</width>
+    <height>271</height>
+    <animation effect="fade" time="250">Visible</animation><!--animation effect="fade" time="500">VisibleChange</animation-->
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="100">WindowClose</animation>
+  </style>
+  <style Name="HomeButtonPictureDummy">
+    <width>623</width>
+    <height>271</height>
+    <texture>basichome_button_dummy.png</texture>
+    <animation effect="fade" time="250">Visible</animation><!--animation effect="fade" time="500">VisibleChange</animation-->
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="100">WindowClose</animation>
+  </style>
+  <style Name="HomePictureMenuNew">
+    <width>594</width>
+    <height>241</height>
+    <texture>basichome_menu_item_new_overlay.png</texture>
+    <animation effect="fade" time="250">Visible</animation><!--animation effect="fade" time="500">VisibleChange</animation-->
+    <animation effect="zoom" start="100,100" end="102,102" time="200">focus</animation>
+    <animation effect="zoom" start="102,102" end="100,100" time="150">unfocus</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="100">WindowClose</animation>
+  </style>
+  <style Name="HomeButtonMenu">
+    <width>594</width>
+    <height>241</height>
+    <textureFocus>basichome_menu_item_label_overlay.png</textureFocus>
+    <textureNoFocus>basichome_menu_item_label_overlay.png</textureNoFocus>
+    <font>TitanLight20</font>
+    <textcolor>FFFFFF</textcolor>
+    <textalign>center</textalign>          
+    <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
+    <textYOff>88</textYOff>
+    <animation effect="fade" time="250">Visible</animation><!--animation effect="fade" time="500">VisibleChange</animation-->
+    <animation effect="zoom" start="100,100" end="102,102" time="200">focus</animation>
+    <animation effect="zoom" start="102,102" end="100,100" time="150">unfocus</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="100">WindowClose</animation>
+  </style>
+  <style Name="HomeButtonMenuDummy">
+    <width>594</width>
+    <height>241</height>
+    <textureFocus>-</textureFocus>
+    <textureNoFocus>-</textureNoFocus>
+    <font>TitanLight20</font>
+    <textcolor>FFFFFF</textcolor>
+    <textalign>center</textalign>   
+    <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
+    <textYOff>88</textYOff>
+    <animation effect="fade" time="250">Visible</animation><!--animation effect="fade" time="500">VisibleChange</animation-->
+    <animation effect="zoom" start="100,100" end="102,102" time="200">focus</animation>
+    <animation effect="zoom" start="102,102" end="100,100" time="150">unfocus</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="100">WindowClose</animation>
   </style>
   <style Name="HomeButtonMenuFocus">
-    <height>#home.button.height</height>
-    <width>367</width>
-    <texture>btn\#home.button.type\basichome_button_focus.png</texture>
+    <width>663</width>
+    <height>311</height>
+    <texture>basichome_button_focus.png</texture>
     <animation effect="fade" time="100">Hidden</animation>
     <animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="100">WindowClose</animation>
-    <!--animation effect="fade" time="350" reversible="false">visible</animation-->
-  </style>
-  <style Name="HomeButtonMenuNew">
-    <height>#home.button.height</height>
-    <width>367</width>
-    <texture>btn\#home.button.type\basichome_menu_item_new_overlay.png</texture>
-    <animation effect="fade" time="100">Hidden</animation>
-    <animation effect="fade" time="250">WindowOpen</animation>
-    <animation effect="fade" time="100">WindowClose</animation>
-    <!--animation effect="fade" time="350" reversible="false">visible</animation-->
   </style>
   <style Name="HomeBasicFanart">
     <posX>0</posX>
@@ -245,33 +260,6 @@
     <animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
     <animation effect="fade" start="0" end="100" time="250" delay="350">WindowOpen</animation>
     <animation effect="fade" start="100" end="0" time="250" delay="0">WindowClose</animation>
-  </style>
-  <style Name="BasicHomeButton">
-    <font>font10</font>
-    <textalign>center</textalign>
-    <textcolor>ffffffff</textcolor>
-    <textcolorNoFocus>ff808080</textcolorNoFocus>
-    <disabledcolor>ffffffff</disabledcolor>
-    <dimColor>ffffffff</dimColor>
-    <textYOff>0</textYOff>
-    <textureFocus></textureFocus>
-    <textureNoFocus></textureNoFocus>
-  </style>
-  <style Name="BasicHomeSubmenu">
-    <font>font10</font>
-    <textalign>center</textalign>
-    <textcolor>ffffffff</textcolor>
-    <textcolorNoFocus>ff808080</textcolorNoFocus>
-    <disabledcolor>ff666666</disabledcolor>
-    <dimColor>ffffffff</dimColor>
-    <width>375</width>
-    <height>45</height>
-    <textYOff>3</textYOff>
-    <textureFocus></textureFocus>
-    <textureNoFocus></textureNoFocus>
-  </style>
-  <style Name="BasicHomeFade">
-    <animation effect="slide" start="-1500,0" end="0,0" reversible="true" time="300">visible</animation>
   </style>
   <control>
     <description>default image</description>
@@ -429,7 +417,7 @@
     <downloadColor>fffc7b19</downloadColor>
     <playedColor>FF00B7FF</playedColor>
     <spaceBetweenItems>2</spaceBetweenItems>
-		<unfocusedAlpha applyToAll="true">130</unfocusedAlpha>
+        <unfocusedAlpha applyToAll="true">130</unfocusedAlpha>
     <scrollOffset>1</scrollOffset>
     <textXOff>50</textXOff>
     <textYOff>8</textYOff>
@@ -449,15 +437,15 @@
     <spinPosY>1000</spinPosY>
     <spinAlign>right</spinAlign>
     <spinColor>FF000000</spinColor>
-	<texturebg>osd_progress_bg_list.png</texturebg>
+    <texturebg>osd_progress_bg_list.png</texturebg>
     <lefttexture>osd_progress_mid_lists_cap.png</lefttexture>
     <midtexture>osd_progress_mid_lists.png</midtexture>
     <righttexture>osd_progress_mid_lists_cap.png</righttexture>
-    <ProgressBarWidth>698</ProgressBarWidth>
+    <ProgressBarWidth>645</ProgressBarWidth>
     <ProgressBarHeight>5</ProgressBarHeight>
-    <ProgressBarXOffset>-13</ProgressBarXOffset>
+    <ProgressBarXOffset>35</ProgressBarXOffset>
     <ProgressBarYOffset>50</ProgressBarYOffset>
-    <SelectedProgressOnly>Yes</SelectedProgressOnly>	
+    <SelectedProgressOnly>Yes</SelectedProgressOnly>
     <explicitlyEnableScrollLabel>yes</explicitlyEnableScrollLabel>
   </control>
   <control>
@@ -725,7 +713,7 @@
     <font>font12</font>
     <scrollStartDelaySec>5</scrollStartDelaySec>
     <textcolor>white</textcolor>
-		<allowFadeIn>no</allowFadeIn>
+        <allowFadeIn>no</allowFadeIn>
     <wrapString> | </wrapString>
   </control>
   <control>
@@ -759,7 +747,7 @@
     <textcolor>ffFFFFFF</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
     <scrollStartDelaySec>10</scrollStartDelaySec>
-	<lineSpacing>0.98</lineSpacing>
+        <lineSpacing>0.98</lineSpacing>
   </control>
   <control>
     <description>default progress control</description>

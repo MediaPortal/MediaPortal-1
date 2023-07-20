@@ -1,0 +1,54 @@
+name: Mediaportal / Release
+
+on:
+  push:
+    # On Tag / Release by Mask
+    tags:
+      - "Release_*"
+
+jobs:
+  build:
+    uses: ./.github/workflows/mediaportal.yml
+  
+  release:
+    name: Release Mediaportal
+    needs: build
+    permissions:
+      contents: write
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Download x86 Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: Mediaportal setup file x86
+          path: release-files
+
+      - name: Download x64 Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: Mediaportal setup file x64
+          path: release-files
+
+      - name: 7z Artifacts
+        run: |
+          for i in *.exe;do 7z a -tZip ${i%.exe}.zip $i;done
+        working-directory: release-files
+
+      - name: Check artifacts
+        run: |
+          ls -l
+        working-directory: release-files
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            release-files/MediaPortalSetup_*.zip
+
+  codeql:
+    uses: ./.github/workflows/workflow_codeql.yml
+    needs: [build, release]
+    permissions:
+      security-events: write

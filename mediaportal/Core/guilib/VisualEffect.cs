@@ -764,9 +764,9 @@ namespace MediaPortal.GUI.Library
         _startX = (float)Math.Ceiling(currentTime.Minute / 60.0 * 360.0);
         _endX = _startX;
       }
-      else if (_savedHour != currentTime.Hour)
+      else if (_savedHour != currentTime.Minute) //hour hand must be rendered every minute just like minute hand
       {
-        _savedHour = currentTime.Hour;
+        _savedHour = currentTime.Minute;
         _startX = (float)Math.Ceiling((currentTime.Hour / 12.0 * 360.0) + (currentTime.Minute / 60.0 * 30.0));
         _endX = _startX;
       }

@@ -217,20 +217,7 @@ namespace MediaPortal.Mixer
               }
               _mixerEventListener.LineChanged += new MixerEventHandler(OnLineChanged);
               _mixerEventListener.ControlChanged += new MixerEventHandler(OnControlChanged);
-    
-              MixerNativeMethods.MixerControl mc = new MixerNativeMethods.MixerControl();
-    
-              mc.Size = 0;
-              mc.ControlId = 0;
-              mc.ControlType = MixerControlType.Volume;
-              mc.fdwControl = 0;
-              mc.MultipleItems = 0;
-              mc.ShortName = string.Empty;
-              mc.Name = string.Empty;
-              mc.Minimum = 0;
-              mc.Maximum = 0;
-              mc.Reserved = 0;
-    
+   
               IntPtr handle = IntPtr.Zero;
     
               if (

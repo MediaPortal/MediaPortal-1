@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,8 +24,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
-using Microsoft.DirectX.Direct3D;
-using Microsoft.Win32;
+//using Microsoft.DirectX.Direct3D;
+//using Microsoft.Win32;
 
 #pragma warning disable 108
 
@@ -53,7 +53,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        loglevel = xmlreader.GetValueAsString("general", "loglevel", "3"); // set loglevel to 2:info 3:debug
+        loglevel = xmlreader.GetValueAsString("general", "loglevel", loglevel); // set loglevel to 2:info 3:debug
         cbDebug.SelectedIndex = Convert.ToInt16(loglevel);
 
         string prio = xmlreader.GetValueAsString("general", "ThreadPriority", "Normal");
@@ -63,6 +63,11 @@ namespace MediaPortal.Configuration.Sections
         checkBoxEnableWatchdog.Checked = xmlreader.GetValueAsBool("general", "watchdogEnabled", false);
         checkBoxAutoRestart.Checked = xmlreader.GetValueAsBool("general", "restartOnError", true);
         numericUpDownDelay.Value = xmlreader.GetValueAsInt("general", "restart delay", 10);
+
+        string HostDetectMethod = xmlreader.GetValueAsString("general", "HostDetectMethod", "Ping");
+        rbHDMPing.Checked = (HostDetectMethod == "Ping");
+        rbHDMSamba.Checked = (HostDetectMethod == "Samba");
+        rbHDMNetUse.Checked = (HostDetectMethod == "NetUse");
       }
     }
 
@@ -76,6 +81,21 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("general", "watchdogEnabled", checkBoxEnableWatchdog.Checked);
         xmlwriter.SetValueAsBool("general", "restartOnError", checkBoxAutoRestart.Checked);
         xmlwriter.SetValue("general", "restart delay", numericUpDownDelay.Value);
+
+        string HostDetectMethod = "Ping";
+        if (rbHDMPing.Checked)
+        {
+          HostDetectMethod = "Ping";
+        }
+        if (rbHDMSamba.Checked)
+        {
+          HostDetectMethod = "Samba";
+        }
+        if (rbHDMNetUse.Checked)
+        {
+          HostDetectMethod = "NetUse";
+        }
+        xmlwriter.SetValue("general", "HostDetectMethod", HostDetectMethod);
       }
     }
 

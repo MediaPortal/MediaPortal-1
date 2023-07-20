@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls> 
+
+   	<control Style="HomeButtonPicture">
+        <description>BasicHome WorldNews NoFocus</description>
+ 	    <type>image</type>
+ 	    <id>0</id>
+  		<posX>#L12left</posX>
+       	<posY>#L12top</posY>
+ 	    <texture>basichome_button_WorldNews.png</texture>
+       	<animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(400)">conditional</animation>
+ 		<visible>control.IsVisible(10201)</visible>  
+ 	</control>
+
+  	<control Style="HomeButtonMenu">
+        <description>BasicHome WorldNews</description>
+      	<type>button</type>
+      	<id>400</id>
+		<posX>#L12lefttext</posX>
+	    <posY>#L12toptext</posY>
+        <textYOff>#textYoff</textYOff>
+        <hyperlink>7979</hyperlink>
+        <label>WorldNews</label>
+		<onright>600</onright>
+		<onleft>200</onleft>
+      	<onup>400</onup>
+		<ondown>500</ondown>  
+  	    <visible allowhiddenfocus="true">![control.isvisible(90209)|control.hasfocus(99999)]+Control.IsVisible(10201)</visible>
+	</control>
+</controls>
+</window>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls> 
+
+   	<control Style="HomeButtonPicture">
+ 	    <description>BasicHome Radio NoFocus</description>
+ 	    <type>image</type>
+ 	    <id>0</id>
+  		<posX>#L22left</posX>
+       	<posY>#L22top</posY>
+        <texture>basichome_button_pictures.png</texture>
+       	<animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(5)">conditional</animation>
+ 		<visible>![Control.IsVisible(30081)|Control.IsVisible(30091)|Control.IsVisible(70091)]+[Control.IsVisible(1009)|Control.IsVisible(1109)|Control.IsVisible(10101)]</visible>  
+ 	</control>
+
+  	<control Style="HomeButtonMenu">
+    	<description>BasicHome Radio</description>
+      	<type>button</type>
+      	<id>5</id>
+		<posX>#L22lefttext</posX>
+	    <posY>#L22toptext</posY>
+        <textYOff>#textYoff</textYOff>
+        <hyperlink>2</hyperlink>
+        <label>1</label>
+		<onright>7</onright>
+		<onleft>3</onleft>
+      	<onup>4</onup>
+		<ondown>12</ondown>  
+  	    <visible allowhiddenfocus="true">![Control.IsVisible(30081)|Control.IsVisible(30091)|Control.IsVisible(70091)|control.isvisible(90109)|control.hasfocus(99999)]+[Control.IsVisible(1009)|Control.IsVisible(1109)|Control.IsVisible(10101)]</visible>
+	</control>
+
+    <!--            :: NEW ::            -->
+
+    <control Style="HomePictureMenuNew">
+        <description>New indicator</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>#L21lefttext</posX>
+        <posY>#L21toptext</posY>
+        <visible>control.isvisible(5)+string.equals(#latestMediaHandler.picture.hasnew,true)</visible>
+        <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(5)">conditional</animation>
+    </control>
+
+</controls>
+</window>

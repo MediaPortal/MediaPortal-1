@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2018 Team MediaPortal
+    #region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -1524,6 +1524,7 @@ namespace MediaPortal.Player
         bool UseEVRMadVRForTV = false;
         bool _NoBDMenu = false;
 
+        GUIGraphicsContext.Is3D = false;
         IsPicture = false;
         IsExtTS = false;
         bool AskForRefresh = true;
@@ -1558,6 +1559,7 @@ namespace MediaPortal.Player
 
             _mediaInfo.WriteInfo();
             currentMediaInfoFilePlaying = strFile;
+            GUIGraphicsContext.Is3D = _mediaInfo.Is3D;
           }
         }
 
@@ -4216,11 +4218,11 @@ namespace MediaPortal.Player
                 Log.Debug("g_player VideoWindowChanged() ForceMadVRFirstStart madVR");
               }
 
-              if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth != client.Width ||
-                  GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight != client.Height)
+              if (GUIGraphicsContext.PresentationParameters.BackBufferWidth != client.Width ||
+                  GUIGraphicsContext.PresentationParameters.BackBufferHeight != client.Height)
               {
-                GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
-                GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
+                GUIGraphicsContext.PresentationParameters.BackBufferWidth = client.Width;
+                GUIGraphicsContext.PresentationParameters.BackBufferHeight = client.Height;
 
                 int activeWin = GUIWindowManager.ActiveWindow;
 
@@ -4279,14 +4281,14 @@ namespace MediaPortal.Player
               RefreshMadVrVideo();
             }
 
-            if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth == 0)
+            if (GUIGraphicsContext.PresentationParameters.BackBufferWidth == 0)
             {
-              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
+              GUIGraphicsContext.PresentationParameters.BackBufferWidth = client.Width;
               Log.Debug("g_player VideoWindowChanged() BackBufferWidth == 0 for madVR");
             }
-            if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight == 0)
+            if (GUIGraphicsContext.PresentationParameters.BackBufferHeight == 0)
             {
-              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
+              GUIGraphicsContext.PresentationParameters.BackBufferHeight = client.Height;
               Log.Debug("g_player VideoWindowChanged() BackBufferHeight == 0 for madVR");
             }
 

@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>35</id>
+  <defaultcontrol>4</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <disabletopbar>no</disabletopbar>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+
+  <!--[P2D|P3D]define>#P1L11ToLeft:6</define[P2D|P3D]-->
+  <!--[P2D|P3D]define>#P1L21ToLeft:7</define[P2D|P3D]-->
+  <!--[P2D|P3D]define>#P1L13ToRight:2</define[P2D|P3D]-->
+  <!--[P2D|P3D]define>#P1L23ToRight:3</define[P2D|P3D]-->
+
+  <!--[P2E|P3D]define>#P1L11ToLeft:600</define[P2E|P3D]-->
+  <!--[P2E|P3D]define>#P1L21ToLeft:700</define[P2E|P3D]-->
+  <!--[P2E|P3D]define>#P1L13ToRight:200</define[P2E|P3D]-->
+  <!--[P2E|P3D]define>#P1L23ToRight:300</define[P2E|P3D]-->
+  <!--[P2E|P3D]define>#P2L11ToLeft:6</define[P2E|P3D]-->
+  <!--[P2E|P3D]define>#P2L21ToLeft:7</define[P2E|P3D]-->
+  <!--[P2E|P3D]define>#P2L13ToRight:2</define[P2E|P3D]-->
+  <!--[P2E|P3D]define>#P2L23ToRight:3</define[P2E|P3D]-->
+
+  <!--[P2D|P3E]define>#P1L11ToLeft:650</define[P2D|P3E]-->
+  <!--[P2D|P3E]define>#P1L21ToLeft:750</define[P2D|P3E]-->
+  <!--[P2D|P3E]define>#P1L13ToRight:250</define[P2D|P3E]-->
+  <!--[P2D|P3E]define>#P1L23ToRight:350</define[P2D|P3E]-->
+  <!--[P2D|P3E]define>#P3L11ToLeft:6</define[P2D|P3E]-->
+  <!--[P2D|P3E]define>#P3L21ToLeft:7</define[P2D|P3E]-->
+  <!--[P2D|P3E]define>#P3L13ToRight:2</define[P2D|P3E]-->
+  <!--[P2D|P3E]define>#P3L23ToRight:3</define[P2D|P3E]-->
+
+  <!--[P2E|P3E]define>#P1L11ToLeft:650</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P1L21ToLeft:750</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P1L13ToRight:200</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P1L23ToRight:300</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P2L11ToLeft:6</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P2L21ToLeft:7</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P2L13ToRight:250</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P2L23ToRight:350</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P3L11ToLeft:600</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P3L21ToLeft:700</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P3L13ToRight:2</define[P2E|P3E]-->
+  <!--[P2E|P3E]define>#P3L23ToRight:3</define[P2E|P3E]-->
+
+<controls>  
+
+  <import>BasicHome.Main.Define.xml</import> 
+
+  <!-- :::::::::: BACKGROUND ::::::::::  -->
+
+  <import>common.default.background.xml</import>
+
+  <!-- :::::::::: DUMMY ::::::::::  -->
+
+  <!--[fanart]include>BasicHome.Fanart\P0.L00.Fanart.xml</include[fanart]-->   
+    
+  <!-- :::::::::: GROUPS ::::::::::  -->
+
+  <!-- :::::::::: GROUP 1 ::::::::::  -->
+
+  <!-- :::::::::: GROUP 1 L1-1 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P1.L11.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P1.L11.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: GROUP 1 L2-1 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P1.L21.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P1.L21.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: GROUP 1 L1-2 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P1.L12.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P1.L12.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: GROUP 1 L2-2 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P1.L22.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P1.L22.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: GROUP 1 L1-3 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P1.L13.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P1.L13.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: GROUP 1 L2-3 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P1.L23.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P1.L23.Blank].xml</include[fanart]-->
+      
+  <!-- :::::::::: GROUP 2 ::::::::::  -->
+
+  <!-- :::::::::: GROUP 2 L1-1 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P2.L11.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P2.L11.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: GROUP 2 L2-1 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P2.L21.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P2.L21.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: GROUP 2 L1-2 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P2.L12.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P2.L12.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: GROUP 2 L2-2 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P2.L22.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P2.L22.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: GROUP 2 L1-3 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P2.L13.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P2.L13.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: GROUP 2 L2-3 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P2.L23.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P2.L23.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: GROUP 3 ::::::::::  -->
+
+  <!-- :::::::::: GROUP 3 L1-1 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P3.L11.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P3.L11.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: GROUP 3 L2-1 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P3.L21.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P3.L21.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: GROUP 3 L1-2 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P3.L12.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P3.L12.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: GROUP 3 L2-2 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P3.L22.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P3.L22.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: GROUP 3 L1-3 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P3.L13.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P3.L13.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: GROUP 3 L2-3 ::::::::::  -->
+
+  <!--[background]include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.Background\[P3.L23.Blank].xml</include[background]--> 
+  <!--[fanart]include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.Fanart\[P3.L23.Blank].xml</include[fanart]-->
+
+  <!-- :::::::::: Play Fanart ::::::::::  -->
+
+  <!-- [fanart]include condition="#(eq(#usePlayFanart,'Yes'))">common.music.play.fanart.xml</include[fanart] -->
+  <!--[fanart]include>common.music.play.fanart.xml</include[fanart]-->
+
+  <!--[fanart]include>BasicHome.Fanart\P0.L00.Holiday.xml</include[fanart]-->
+
+  <import>common.default.background.overlay.xml</import> 
+
+  <control>
+    <description>Background Menu Panel</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>0</posX>
+    <posY>380</posY>
+    <width>1920</width>
+    <height>734</height>
+    <texture>panel_now_playing_info.png</texture>
+    <shouldCache>true</shouldCache>
+    <animation effect="fade" time="250" start="0" end="100">WindowOpen</animation>
+    <animation effect="fade" time="250" start="100" end="0">WindowClose</animation>
+    <animation effect="fade" time="350" start="100" end="20" condition="true">conditional</animation>
+  </control>
+    
+  <!-- :::::::::: DUMMY ::::::::::  -->
+
+  <import>BasicHome.Main.Dummy.xml</import> 
+    
+  <!-- :::::::::: TIME ::::::::::  -->
+
+  <import>common.time.xml</import> 
+
+  <!-- :::::::::: GROUPS ::::::::::  -->
+
+  <!-- :::::::::: GROUP 1 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+
+  <!-- :::::::::: GROUP 1 Latests ::::::::::  -->
+
+  <!--[latest]include>BasicHome.Latest\[P1.L11.Blank].xml</include[latest]--> 
+  <!--[latest]include>BasicHome.Latest\[P1.L21.Blank].xml</include[latest]--> 
+  <!--[latest]include>BasicHome.Latest\[P1.L12.Blank].xml</include[latest]--> 
+  <!--[latest]include>BasicHome.Latest\[P1.L22.Blank].xml</include[latest]--> 
+  <!--[latest]include>BasicHome.Latest\[P1.L13.Blank].xml</include[latest]--> 
+  <!--[latest]include>BasicHome.Latest\[P1.L23.Blank].xml</include[latest]--> 
+
+  <!-- :::::::::: GROUP 1 L1-1 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P1.L11.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 1 L2-1 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P1.L21.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 1 L1-2 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P1.L12.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 1 L2-2 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P1.L22.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 1 L1-3 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P1.L13.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 1 L2-3 ::::::::::  -->
+      
+  <!--[button]include>BasicHome.Buttons\[P1.L23.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 2 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::  -->
+
+  <!-- :::::::::: GROUP 2 Latests ::::::::::  -->
+
+  <!--[latest]include>BasicHome.Latest\[P2.L11.Blank].xml</include[latest]--> 
+  <!--[latest]include>BasicHome.Latest\[P2.L21.Blank].xml</include[latest]--> 
+  <!--[latest]include>BasicHome.Latest\[P2.L12.Blank].xml</include[latest]--> 
+  <!--[latest]include>BasicHome.Latest\[P2.L22.Blank].xml</include[latest]--> 
+  <!--[latest]include>BasicHome.Latest\[P2.L13.Blank].xml</include[latest]--> 
+  <!--[latest]include>BasicHome.Latest\[P2.L23.Blank].xml</include[latest]--> 
+
+  <!-- :::::::::: GROUP 2 L1-1 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P2.L11.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 2 L2-1 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P2.L21.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 2 L1-2 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P2.L12.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 2 L2-2 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P2.L22.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 2 L1-3 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P2.L13.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 2 L2-3 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P2.L23.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 3 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::  -->
+
+  <!-- :::::::::: GROUP 3 Latests ::::::::::  -->
+
+  <!--[latest]include>BasicHome.Latest\[P3.L11.Blank].xml</include[latest]--> 
+  <!--[latest]include>BasicHome.Latest\[P3.L21.Blank].xml</include[latest]--> 
+  <!--[latest]include>BasicHome.Latest\[P3.L12.Blank].xml</include[latest]--> 
+  <!--[latest]include>BasicHome.Latest\[P3.L22.Blank].xml</include[latest]--> 
+  <!--[latest]include>BasicHome.Latest\[P3.L13.Blank].xml</include[latest]--> 
+  <!--[latest]include>BasicHome.Latest\[P3.L23.Blank].xml</include[latest]--> 
+
+  <!-- :::::::::: GROUP 3 L1-1 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P3.L11.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 3 L2-1 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P3.L21.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 3 L1-2 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P3.L12.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 3 L2-2 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P3.L22.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 3 L1-3 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P3.L13.Blank].xml</include[button]--> 
+
+  <!-- :::::::::: GROUP 3 L2-3 ::::::::::  -->
+
+  <!--[button]include>BasicHome.Buttons\[P3.L23.Blank].xml</include[button]--> 
+
+  <!--            :: FOCUS FRAMES ::            -->
+    
+  <import>BasicHome.Main.Focus.xml</import>
+
+  <include condition="#(eq(#Titan.ShowUpdateInd,'true'))">BasicHome.Main.ExitMenu.SkinUpdate.xml</include>
+  <include condition="#(not(eq(#Titan.ShowUpdateInd,'true')))">BasicHome.Main.ExitMenu.xml</include>
+
+  <!--            :: OTHER ::            -->
+
+  <control>
+    <description>Home ICON</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>66</posX>
+    <posY>38</posY>
+    <width>62</width>
+    <height>55</height>
+    <texture>icon_home.png</texture>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+    <visible>!control.hasthumb(9870789)</visible>
+  </control>
+
+  <control>
+    <description>Home Holiday ICON</description>
+    <type>image</type>
+    <id>9870789</id>
+    <posX>66</posX>
+    <posY>38</posY>
+    <width>60</width>
+    <height>60</height>
+    <texture>#fanarthandler.holiday.icon</texture>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+
+  <control>
+    <description>Bottom Menu Background</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>52</posX>
+    <posY>958</posY>
+    <width>1820</width>
+    <height>84</height>
+    <texture>BasicHomeSubBG.png</texture>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+  </control>      
+
+  <!--            :: RSS ::            -->
+
+  <include condition="#(and(plugin.isenabled('World News'),not(eq(#WorldNews.NewsTicker,''))))">BasicHome.Main.RSS.WorldNews.xml</include>
+  <include condition="#(and(plugin.isenabled('InfoService'),eq(#infoservice.feed.enabled,'true')))">BasicHome.Main.RSS.InfoServise.xml</include>
+
+  <!--            :: EXIT BUTTON ::            -->
+
+  <control>
+    <description>exit menu button</description>
+    <id>0</id>
+    <type>image</type>
+    <posX>937</posX>
+    <posY>995</posY>
+    <width>36</width>
+    <height>40</height>
+    <texture>basichome_button_exit.png</texture>
+    <visible>Control.IsVisible(20902)</visible>
+    <animation effect="fade" time="250" start="0" end="100">WindowOpen</animation>
+    <animation effect="fade" time="250" start="100" end="0">WindowClose</animation>
+    <animation effect="fade" time="350" start="100" end="60" condition="true">conditional</animation>
+  </control>
+    
+  <!--            :: INFO ::            -->
+
+  <import>BasicHome.FHLMH.Update.xml</import>
+
+  <import>common.Scraper.xml</import>
+  <import>common.Latests.xml</import>
+  <import>common.overlay.xml</import>
+</controls>
+</window>

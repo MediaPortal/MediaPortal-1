@@ -26,7 +26,9 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+
 using Ionic.Zip;
+
 using MpeCore;
 using MpeCore.Classes;
 using MpeInstaller.Dialogs;
@@ -43,6 +45,11 @@ namespace MpeInstaller
     public MainForm()
     {
       Init();
+
+      if (IntPtr.Size == 8)
+      {
+        this.Text += " | x64";
+      }
     }
 
     public MainForm(ProgramArguments args) : this()

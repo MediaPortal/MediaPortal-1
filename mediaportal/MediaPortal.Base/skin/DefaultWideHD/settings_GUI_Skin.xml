@@ -272,6 +272,8 @@
           <onleft>9991</onleft>
         </control>
       </control>
+      
+      
       <control>
         <type>label</type>
         <id>1</id>
@@ -300,10 +302,42 @@
           <subitem> 12</subitem>
         </subitems>
         <onup>32</onup>
-        <ondown>30</ondown>
+        <ondown>50</ondown>
         <onleft>9991</onleft>
         <onright>33</onright>
       </control>
+      
+      
+      
+      <control>
+          <description>Facade Classic Home</description>
+          <type>menubutton</type>
+          <id>50</id>
+          <posX>655</posX>
+        <posY>850</posY>
+        <width>550</width>
+          <mode>dialoglist</mode>
+          <dialogTitle>Layout Classic Home</dialogTitle>
+          <valueTextInButton>yes</valueTextInButton>
+          <valuePrefixText>Layout Classic Home: </valuePrefixText>
+          <onfocus>#(skin.setstring('#skin.previewframe','No'))</onfocus>
+          <onclick>#(skin.setstring('#home.myhome.layout',#selectedlabel50))</onclick>
+          <binding>#home.myhome.layout</binding>
+          <subitems>
+            <!--subitem>Legacy</subitem-->
+            <subitem>List</subitem>
+            <subitem>LargeIcons</subitem>
+            <subitem>Filmstrip</subitem>
+            <subitem>CoverFlow</subitem>
+          </subitems>
+          <onup>33</onup>
+          <ondown>30</ondown>
+          <onright>30</onright>
+          <onleft>9991</onleft>
+        </control>
+      
+      
+      
       <control>
         <type>label</type>
         <id>1</id>

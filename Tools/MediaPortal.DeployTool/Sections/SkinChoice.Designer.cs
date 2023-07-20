@@ -1,4 +1,24 @@
-﻿namespace MediaPortal.DeployTool.Sections
+﻿#region Copyright (C) 2005-2023 Team MediaPortal
+
+// Copyright (C) 2005-2023 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
+namespace MediaPortal.DeployTool.Sections
 {
   partial class SkinChoice
   {
@@ -38,6 +58,8 @@
       this.btnExisting = new System.Windows.Forms.Button();
       this.btnAres = new System.Windows.Forms.Button();
       this.lblAres = new System.Windows.Forms.Label();
+      this.linkSkins = new System.Windows.Forms.LinkLabel();
+      this.lblExtendedDescription = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.pbSkin)).BeginInit();
       this.SuspendLayout();
       // 
@@ -164,13 +186,38 @@
       this.lblAres.ForeColor = System.Drawing.Color.White;
       this.lblAres.Location = new System.Drawing.Point(593, 241);
       this.lblAres.Name = "lblAres";
-      this.lblAres.Size = new System.Drawing.Size(90, 13);
+      this.lblAres.Size = new System.Drawing.Size(141, 13);
       this.lblAres.TabIndex = 12;
-      this.lblAres.Text = "Ares (1920x1080)";
+      this.lblAres.Text = "Ares (1920x1080) - External*";
+      // 
+      // linkSkins
+      // 
+      this.linkSkins.AutoSize = true;
+      this.linkSkins.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.linkSkins.LinkColor = System.Drawing.Color.White;
+      this.linkSkins.Location = new System.Drawing.Point(545, 355);
+      this.linkSkins.Name = "linkSkins";
+      this.linkSkins.Size = new System.Drawing.Size(145, 17);
+      this.linkSkins.TabIndex = 14;
+      this.linkSkins.TabStop = true;
+      this.linkSkins.Text = "Browse other skins";
+      this.linkSkins.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkSkins_LinkClicked);
+      // 
+      // lblExtendedDescription
+      // 
+      this.lblExtendedDescription.ForeColor = System.Drawing.Color.White;
+      this.lblExtendedDescription.Location = new System.Drawing.Point(545, 312);
+      this.lblExtendedDescription.Name = "lblExtendedDescription";
+      this.lblExtendedDescription.Size = new System.Drawing.Size(397, 43);
+      this.lblExtendedDescription.TabIndex = 15;
+      this.lblExtendedDescription.Text = "* External - The external skins are only installed when you choose them, but you " +
+    "can always install them yourself.";
       // 
       // SkinChoice
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.Controls.Add(this.lblExtendedDescription);
+      this.Controls.Add(this.linkSkins);
       this.Controls.Add(this.lblAres);
       this.Controls.Add(this.btnAres);
       this.Controls.Add(this.lblExisting);
@@ -188,11 +235,13 @@
       this.Controls.SetChildIndex(this.lblTitan, 0);
       this.Controls.SetChildIndex(this.lblChooseSkin, 0);
       this.Controls.SetChildIndex(this.pbSkin, 0);
-      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.btnExisting, 0);
       this.Controls.SetChildIndex(this.lblExisting, 0);
       this.Controls.SetChildIndex(this.btnAres, 0);
       this.Controls.SetChildIndex(this.lblAres, 0);
+      this.Controls.SetChildIndex(this.linkSkins, 0);
+      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
+      this.Controls.SetChildIndex(this.lblExtendedDescription, 0);
       ((System.ComponentModel.ISupportInitialize)(this.pbSkin)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -211,5 +260,7 @@
     private System.Windows.Forms.Button btnExisting;
     private System.Windows.Forms.Button btnAres;
     private System.Windows.Forms.Label lblAres;
+    private System.Windows.Forms.LinkLabel linkSkins;
+    private System.Windows.Forms.Label lblExtendedDescription;
   }
 }

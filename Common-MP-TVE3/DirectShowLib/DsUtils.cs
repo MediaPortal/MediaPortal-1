@@ -1137,10 +1137,9 @@ namespace DirectShowLib
 
         // Build up the object to add to the table
         int id = Process.GetCurrentProcess().Id;
-        IntPtr iuPtr = Marshal.GetIUnknownForObject(graph);
-        int iuInt = (int) iuPtr;
-        Marshal.Release(iuPtr);
-        string item = string.Format("FilterGraph {0} pid {1} - {2}", iuInt.ToString("x8"), id.ToString("x8"), "(MediaPortal)");
+        IntPtr p = Marshal.GetIUnknownForObject(graph);
+        Marshal.Release(p);
+        string item = string.Format("FilterGraph {0} pid {1} - {2}", p.ToInt64().ToString("x8"), id.ToString("x8"), "(MediaPortal)");
         hr = CreateItemMoniker("!", item, out mk);
         DsError.ThrowExceptionForHR(hr);
 

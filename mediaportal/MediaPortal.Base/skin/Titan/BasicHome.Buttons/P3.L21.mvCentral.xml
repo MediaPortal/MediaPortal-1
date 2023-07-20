@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls> 
+
+    <control Style="HomeButtonPicture">
+        <description>BasicHome mvCentral No Focus</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>#L21left</posX>
+        <posY>#L21top</posY>
+        <texture>basichome_button_mvcentral.png</texture>
+        <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(350)">conditional</animation>
+        <visible>!Control.IsVisible(60093)+control.IsVisible(10301)</visible>
+    </control>     
+
+    <control Style="HomeButtonMenu">
+        <description>BasicHome mvCentral</description>
+        <type>button</type>
+        <id>350</id>
+        <posX>#L21lefttext</posX>
+        <posY>#L21toptext</posY>
+        <textYOff>#textYoff</textYOff>
+        <hyperlink>112011</hyperlink>
+        <label>#mvCentral.Settings.HomeScreenName</label>
+        <onright>550</onright>
+        <onleft>#P3L21ToLeft</onleft>
+      	<onup>250</onup>
+		<ondown>312</ondown>  
+        <visible allowhiddenfocus="true">![Control.IsVisible(60093)|control.isvisible(90309)|control.hasfocus(99999)]+Control.IsVisible(10301)</visible>
+  </control>
+
+</controls>
+</window>

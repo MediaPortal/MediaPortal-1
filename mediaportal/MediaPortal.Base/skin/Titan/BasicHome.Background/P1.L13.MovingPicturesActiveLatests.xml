@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+	 <!--            :: VIDEO/MOVIES ::            -->
+    
+    <control Style="HomeBasicFanart">
+	  <description>Video/Movies Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>[control.hasfocus(6) | control.IsVisible(60001) | control.HasFocus(1100) | control.HasFocus(1101) | control.HasFocus(1102) | control.HasFocus(1103) | control.HasFocus(1104)]</visible>
+      <texture>hover_my videos.png</texture>
+    </control>
+
+</controls>
+</window>

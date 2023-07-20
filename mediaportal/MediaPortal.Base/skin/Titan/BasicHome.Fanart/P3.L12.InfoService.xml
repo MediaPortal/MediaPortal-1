@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+        
+    <!--            :: Info service ::            -->
+
+    <control Style="HomeBasicFanart">
+        <description>Info service Background</description>
+        <type>image</type>
+        <id>0</id>
+        <visible>control.hasfocus(450)</visible>
+        <texture>hover_infoservice.png</texture>
+    </control> 
+</controls>
+</window>
