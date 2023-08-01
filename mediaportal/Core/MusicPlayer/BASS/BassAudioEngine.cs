@@ -2425,7 +2425,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
     public int GetChannelData(int handle, float[] buffer, int lenght)
     {
-      lock (_syncRoot)
+      //this lock causes to block a gPlayer's "Stop" command after end of playlist if minidisplay renders EQ
+      //lock (_syncRoot)
       {
         // Return the GetChannelData
         return Bass.BASS_ChannelGetData(handle, buffer, lenght);
