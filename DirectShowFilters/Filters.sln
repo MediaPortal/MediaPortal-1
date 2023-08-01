@@ -780,8 +780,8 @@ Global
 		{3AA274D9-D442-4A8A-BA7F-9FACA88C4887}.Release Static|Win32.Build.0 = Release Static|Win32
 		{3AA274D9-D442-4A8A-BA7F-9FACA88C4887}.Release Static|x64.ActiveCfg = Release Static|x64
 		{3AA274D9-D442-4A8A-BA7F-9FACA88C4887}.Release Static|x64.Build.0 = Release Static|x64
-		{3AA274D9-D442-4A8A-BA7F-9FACA88C4887}.Release_libbluray|Win32.ActiveCfg = Release Static|Win32
-		{3AA274D9-D442-4A8A-BA7F-9FACA88C4887}.Release_libbluray|Win32.Build.0 = Release Static|Win32
+		{3AA274D9-D442-4A8A-BA7F-9FACA88C4887}.Release_libbluray|Win32.ActiveCfg = Release|Win32
+		{3AA274D9-D442-4A8A-BA7F-9FACA88C4887}.Release_libbluray|Win32.Build.0 = Release|Win32
 		{3AA274D9-D442-4A8A-BA7F-9FACA88C4887}.Release_libbluray|x64.ActiveCfg = Release|x64
 		{3AA274D9-D442-4A8A-BA7F-9FACA88C4887}.Release_libbluray|x64.Build.0 = Release|x64
 		{3AA274D9-D442-4A8A-BA7F-9FACA88C4887}.Release|Win32.ActiveCfg = Release|Win32
