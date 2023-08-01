@@ -20,13 +20,15 @@
 #include "DeviceState.h"
 #include "helpers/smartptr.h"
 #include <tchar.h>
-#include "../../mpc-hc_subs/src/DSUtil/DSUtil.h"
+//#include "../../DSUtil/DSUtil.h"
 #include "threads/Condition.h"
 #include "threads/CriticalSection.h"
 #include "StdString.h"
 #include "dshowhelper.h"
 
 using namespace std;
+
+#define QI(i)  (riid == __uuidof(i)) ? GetInterface((i*)this, ppv) :
 
   enum SHAREDRENDER_STATE
   {
