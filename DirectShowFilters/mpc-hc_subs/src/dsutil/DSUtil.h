@@ -1,6 +1,6 @@
 /*
  * (C) 2003-2006 Gabest
- * (C) 2006-2013 see Authors.txt
+ * (C) 2006-2017 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -21,17 +21,20 @@
 
 #pragma once
 
-#include <afxstr.h>
-#include "NullRenderers.h"
 #include "HdmvClipInfo.h"
-#include "H264Nalu.h"
 #include "MediaTypeEx.h"
-#include "vd.h"
 #include "text.h"
+#include "vd.h"
+#include "streams.h"
+#include <atlcoll.h>
+#include <atlpath.h>
+#include "MFCHelper.h"
+#include "Utils.h"
 
 #define LCID_NOSUBTITLES -1
 
-extern void DumpStreamConfig(TCHAR* fn, IAMStreamConfig* pAMVSCCap);
+#define IsWaveFormatExtensible(wfe) (wfe->wFormatTag == WAVE_FORMAT_EXTENSIBLE && wfe->cbSize == 22)
+
 extern int  CountPins(IBaseFilter* pBF, int& nIn, int& nOut, int& nInC, int& nOutC);
 extern bool IsSplitter(IBaseFilter* pBF, bool fCountConnectedOnly = false);
 extern bool IsMultiplexer(IBaseFilter* pBF, bool fCountConnectedOnly = false);
@@ -39,8 +42,8 @@ extern bool IsStreamStart(IBaseFilter* pBF);
 extern bool IsStreamEnd(IBaseFilter* pBF);
 extern bool IsVideoRenderer(IBaseFilter* pBF);
 extern bool IsAudioWaveRenderer(IBaseFilter* pBF);
-extern IBaseFilter* GetUpStreamFilter(IBaseFilter* pBF, IPin* pInputPin = NULL);
-extern IPin* GetUpStreamPin(IBaseFilter* pBF, IPin* pInputPin = NULL);
+extern IBaseFilter* GetUpStreamFilter(IBaseFilter* pBF, IPin* pInputPin = nullptr);
+extern IPin* GetUpStreamPin(IBaseFilter* pBF, IPin* pInputPin = nullptr);
 extern IPin* GetFirstPin(IBaseFilter* pBF, PIN_DIRECTION dir = PINDIR_INPUT);
 extern IPin* GetFirstDisconnectedPin(IBaseFilter* pBF, PIN_DIRECTION dir);
 extern void  NukeDownstream(IBaseFilter* pBF, IFilterGraph* pFG);
@@ -60,38 +63,49 @@ extern void  ShowPPage(CString DisplayName, HWND hParentWnd);
 extern void  ShowPPage(IUnknown* pUnknown, HWND hParentWnd);
 extern CLSID GetCLSID(IBaseFilter* pBF);
 extern CLSID GetCLSID(IPin* pPin);
+extern CString CLSIDToString(CLSID& clsid);
 extern bool  IsCLSIDRegistered(LPCTSTR clsid);
 extern bool  IsCLSIDRegistered(const CLSID& clsid);
+extern CString GetFilterPath(LPCTSTR clsid);
+extern CString GetFilterPath(const CLSID& clsid);
 extern void  CStringToBin(CString str, CAtlArray<BYTE>& data);
 extern CString BinToCString(const BYTE* ptr, size_t len);
-typedef enum {
-    CDROM_NotFound,
-    CDROM_Audio,
-    CDROM_VideoCD,
-    CDROM_DVDVideo,
-    CDROM_Unknown
-} cdrom_t;
-extern cdrom_t GetCDROMType(TCHAR drive, CAtlList<CString>& files);
+extern void FindFiles(CString fn, CAtlList<CString>& files);
+enum OpticalDiskType_t {
+    OpticalDisk_NotFound,
+    OpticalDisk_Audio,
+    OpticalDisk_VideoCD,
+    OpticalDisk_DVDVideo,
+    OpticalDisk_BD,
+    OpticalDisk_Unknown
+};
+extern OpticalDiskType_t GetOpticalDiskType(TCHAR drive, CAtlList<CString>& files);
 extern CString GetDriveLabel(TCHAR drive);
+extern CString GetDriveLabel(CPath path);
+bool IsDriveVirtual(CString drive);
 extern bool GetKeyFrames(CString fn, CUIntArray& kfs);
-extern DVD_HMSF_TIMECODE RT2HMSF(REFERENCE_TIME rt, double fps = 0); // used to remember the current position
-extern DVD_HMSF_TIMECODE RT2HMS_r(REFERENCE_TIME rt);                // used only for information (for display on the screen)
-extern REFERENCE_TIME HMSF2RT(DVD_HMSF_TIMECODE hmsf, double fps = 0);
+extern DVD_HMSF_TIMECODE RT2HMSF(REFERENCE_TIME rt, double fps = 0.0); // used to remember the current position
+extern DVD_HMSF_TIMECODE RT2HMS(REFERENCE_TIME rt);
+extern DVD_HMSF_TIMECODE RT2HMS_r(REFERENCE_TIME rt);                  // used only to display information with rounding to nearest second
+extern REFERENCE_TIME HMSF2RT(DVD_HMSF_TIMECODE hmsf, double fps = -1.0);
 extern void memsetd(void* dst, unsigned int c, size_t nbytes);
 extern void memsetw(void* dst, unsigned short c, size_t nbytes);
 extern bool ExtractBIH(const AM_MEDIA_TYPE* pmt, BITMAPINFOHEADER* bih);
 extern bool ExtractBIH(IMediaSample* pMS, BITMAPINFOHEADER* bih);
 extern bool ExtractAvgTimePerFrame(const AM_MEDIA_TYPE* pmt, REFERENCE_TIME& rtAvgTimePerFrame);
 extern bool ExtractDim(const AM_MEDIA_TYPE* pmt, int& w, int& h, int& arx, int& ary);
-extern bool MakeMPEG2MediaType(CMediaType& mt, BYTE* seqhdr, DWORD len, int w, int h);
 extern bool CreateFilter(CStringW DisplayName, IBaseFilter** ppBF, CStringW& FriendlyName);
 extern IBaseFilter* AppendFilter(IPin* pPin, IMoniker* pMoniker, IGraphBuilder* pGB);
 extern CStringW GetFriendlyName(CStringW DisplayName);
 extern HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv);
 extern HRESULT LoadExternalFilter(LPCTSTR path, REFCLSID clsid, IBaseFilter** ppBF);
 extern HRESULT LoadExternalPropertyPage(IPersist* pP, REFCLSID clsid, IPropertyPage** ppPP);
-extern void UnloadExternalObjects();
+extern bool UnloadUnusedExternalObjects();
+extern void ExtendMaxPathLengthIfNeeded(CString& path, int max_length = MAX_PATH, bool no_url = false);
+extern bool ContainsWildcard(CString& path);
+extern void ShortenLongPath(CString& path);
 extern CString MakeFullPath(LPCTSTR path);
+extern bool GetMediaTypeFourCC(const GUID& guid, CString& fourCC);
 extern CString GetMediaTypeName(const GUID& guid);
 extern GUID GUIDFromCString(CString str);
 extern HRESULT GUIDFromCString(CString str, GUID& guid);
@@ -100,55 +114,37 @@ extern CStringW UTF8To16(LPCSTR utf8);
 extern CStringA UTF16To8(LPCWSTR utf16);
 extern CStringW UTF8ToStringW(const char* S);
 extern CStringW LocalToStringW(const char* S);
-extern CString ISO6391ToLanguage(LPCSTR code);
-extern CString ISO6392ToLanguage(LPCSTR code);
-extern LCID ISO6391ToLcid(LPCSTR code);
-extern LCID ISO6392ToLcid(LPCSTR code);
-extern CString ISO6391To6392(LPCSTR code);
-extern CString ISO6392To6391(LPCSTR code);
-extern CString LanguageToISO6392(LPCTSTR lang);
-extern int  MakeAACInitData(BYTE* pData, int profile, int freq, int channels);
 extern BOOL CFileGetStatus(LPCTSTR lpszFileName, CFileStatus& status);
 extern bool DeleteRegKey(LPCTSTR pszKey, LPCTSTR pszSubkey);
 extern bool SetRegKeyValue(LPCTSTR pszKey, LPCTSTR pszSubkey, LPCTSTR pszValueName, LPCTSTR pszValue);
 extern bool SetRegKeyValue(LPCTSTR pszKey, LPCTSTR pszSubkey, LPCTSTR pszValue);
-extern void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, LPCTSTR chkbytes, LPCTSTR ext = NULL, ...);
-extern void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, const CAtlList<CString>& chkbytes, LPCTSTR ext = NULL, ...);
+extern void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, LPCTSTR chkbytes, LPCTSTR ext = nullptr, ...);
+extern void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, const CAtlList<CString>& chkbytes, LPCTSTR ext = nullptr, ...);
 extern void UnRegisterSourceFilter(const GUID& subtype);
 extern LPCTSTR GetDXVAMode(const GUID* guidDecoder);
-extern void DumpBuffer(BYTE* pBuffer, int nSize);
 extern CString ReftimeToString(const REFERENCE_TIME& rtVal);
 extern CString ReftimeToString2(const REFERENCE_TIME& rtVal);
 extern CString DVDtimeToString(const DVD_HMSF_TIMECODE& rtVal, bool bAlwaysShowHours = false);
 extern REFERENCE_TIME StringToReftime(LPCTSTR strVal);
-extern COLORREF YCrCbToRGB_Rec601(BYTE Y, BYTE Cr, BYTE Cb);
-extern COLORREF YCrCbToRGB_Rec709(BYTE Y, BYTE Cr, BYTE Cb);
-extern DWORD YCrCbToRGB_Rec601(BYTE A, BYTE Y, BYTE Cr, BYTE Cb);
-extern DWORD YCrCbToRGB_Rec709(BYTE A, BYTE Y, BYTE Cr, BYTE Cb);
-extern void TraceFilterInfo(IBaseFilter* pBF);
-extern void TracePinInfo(IPin* pPin);
 extern void SetThreadName(DWORD dwThreadID, LPCSTR szThreadName);
-extern void HexDump(CString fName, BYTE* buf, int size);
-extern void CorrectComboListWidth(CComboBox& m_pComboBox);
+extern CString FindCoverArt(const CString& path, const CString& author);
+extern CString NormalizeUnicodeStrForSearch(CString srcStr, LANGID langid);
+extern bool FindStringInList(const CAtlList<CString>& list, CString& value);
 
-extern void getExtraData(const BYTE* format, const GUID* formattype, const size_t formatlen, BYTE* extra, unsigned int* extralen);
-extern void audioFormatTypeHandler(const BYTE* format, const GUID* formattype,
-                                   DWORD* pnSamples, WORD* pnChannels,
-                                   WORD* pnBitsPerSample, WORD* pnBlockAlign,
-                                   DWORD* pnBytesPerSec);
+extern inline const LONGLONG GetPerfCounter();
 
-typedef enum {
+enum FF_FIELD_TYPE {
     PICT_NONE,
     PICT_TOP_FIELD,
     PICT_BOTTOM_FIELD,
     PICT_FRAME
-} FF_FIELD_TYPE;
+};
 
 class CPinInfo : public PIN_INFO
 {
 public:
     CPinInfo() {
-        pFilter = NULL;
+        pFilter = nullptr;
     }
     ~CPinInfo() {
         if (pFilter) {
@@ -161,7 +157,7 @@ class CFilterInfo : public FILTER_INFO
 {
 public:
     CFilterInfo() {
-        pGraph = NULL;
+        pGraph = nullptr;
     }
     ~CFilterInfo() {
         if (pGraph) {
@@ -170,84 +166,75 @@ public:
     }
 };
 
-#define BeginEnumFilters(pFilterGraph, pEnumFilters, pBaseFilter)                                                  \
-{                                                                                                                  \
-    CComPtr<IEnumFilters> pEnumFilters;                                                                            \
-    if (pFilterGraph && SUCCEEDED(pFilterGraph->EnumFilters(&pEnumFilters)))                                       \
-    {                                                                                                              \
-        for (CComPtr<IBaseFilter> pBaseFilter; S_OK == pEnumFilters->Next(1, &pBaseFilter, 0); pBaseFilter = NULL) \
-        {
+#define BeginEnumFilters(pFilterGraph, pEnumFilters, pBaseFilter)                                                      \
+{                                                                                                                      \
+    CComPtr<IEnumFilters> pEnumFilters;                                                                                \
+    if (pFilterGraph && SUCCEEDED(pFilterGraph->EnumFilters(&pEnumFilters))) {                                         \
+        for (CComPtr<IBaseFilter> pBaseFilter; S_OK == pEnumFilters->Next(1, &pBaseFilter, 0); pBaseFilter = nullptr) {
 
 #define EndEnumFilters }}}
 
-#define BeginEnumCachedFilters(pGraphConfig, pEnumFilters, pBaseFilter)                                            \
-{                                                                                                                  \
-    CComPtr<IEnumFilters> pEnumFilters;                                                                            \
-    if (pGraphConfig && SUCCEEDED(pGraphConfig->EnumCacheFilter(&pEnumFilters)))                                   \
-    {                                                                                                              \
-        for (CComPtr<IBaseFilter> pBaseFilter; S_OK == pEnumFilters->Next(1, &pBaseFilter, 0); pBaseFilter = NULL) \
-        {
+#define BeginEnumCachedFilters(pGraphConfig, pEnumFilters, pBaseFilter)                                                \
+{                                                                                                                      \
+    CComPtr<IEnumFilters> pEnumFilters;                                                                                \
+    if (pGraphConfig && SUCCEEDED(pGraphConfig->EnumCacheFilter(&pEnumFilters))) {                                     \
+        for (CComPtr<IBaseFilter> pBaseFilter; S_OK == pEnumFilters->Next(1, &pBaseFilter, 0); pBaseFilter = nullptr) {
 
 #define EndEnumCachedFilters }}}
 
-#define BeginEnumPins(pBaseFilter, pEnumPins, pPin)                                 \
-{                                                                                   \
-    CComPtr<IEnumPins> pEnumPins;                                                   \
-    if (pBaseFilter && SUCCEEDED(pBaseFilter->EnumPins(&pEnumPins)))                \
-    {                                                                               \
-        for (CComPtr<IPin> pPin; S_OK == pEnumPins->Next(1, &pPin, 0); pPin = NULL) \
-        {
+#define BeginEnumPins(pBaseFilter, pEnumPins, pPin)                                     \
+{                                                                                       \
+    CComPtr<IEnumPins> pEnumPins;                                                       \
+    if (pBaseFilter && SUCCEEDED(pBaseFilter->EnumPins(&pEnumPins))) {                  \
+        for (CComPtr<IPin> pPin; S_OK == pEnumPins->Next(1, &pPin, 0); pPin = nullptr) {
 
 #define EndEnumPins }}}
 
-#define BeginEnumMediaTypes(pPin, pEnumMediaTypes, pMediaType)                                                      \
-{                                                                                                                   \
-    CComPtr<IEnumMediaTypes> pEnumMediaTypes;                                                                       \
-    if (pPin && SUCCEEDED(pPin->EnumMediaTypes(&pEnumMediaTypes)))                                                  \
-    {                                                                                                               \
-        AM_MEDIA_TYPE* pMediaType = NULL;                                                                           \
-        for (; S_OK == pEnumMediaTypes->Next(1, &pMediaType, NULL); DeleteMediaType(pMediaType), pMediaType = NULL) \
-        {
+#define BeginEnumMediaTypes(pPin, pEnumMediaTypes, pMediaType)                                                             \
+{                                                                                                                          \
+    CComPtr<IEnumMediaTypes> pEnumMediaTypes;                                                                              \
+    if (pPin && SUCCEEDED(pPin->EnumMediaTypes(&pEnumMediaTypes))) {                                                       \
+        AM_MEDIA_TYPE* pMediaType = nullptr;                                                                               \
+        for (; S_OK == pEnumMediaTypes->Next(1, &pMediaType, nullptr); DeleteMediaType(pMediaType), pMediaType = nullptr) {
 
-#define EndEnumMediaTypes(pMediaType)                                                                         \
-        }                                                                                                     \
-    if (pMediaType)                                                                                           \
-        DeleteMediaType(pMediaType);                                                                          \
-    }                                                                                                         \
+#define EndEnumMediaTypes(pMediaType)                                                                               \
+        }                                                                                                           \
+        if (pMediaType) {                                                                                           \
+            DeleteMediaType(pMediaType);                                                                            \
+        }                                                                                                           \
+    }                                                                                                               \
 }
 
-#define BeginEnumSysDev(clsid, pMoniker)                                                                      \
-{                                                                                                             \
-    CComPtr<ICreateDevEnum> pDevEnum4$##clsid;                                                                \
-    pDevEnum4$##clsid.CoCreateInstance(CLSID_SystemDeviceEnum);                                               \
-    CComPtr<IEnumMoniker> pClassEnum4$##clsid;                                                                \
-    if (SUCCEEDED(pDevEnum4$##clsid->CreateClassEnumerator(clsid, &pClassEnum4$##clsid, 0))                   \
-        && pClassEnum4$##clsid)                                                                               \
-    {                                                                                                         \
-        for (CComPtr<IMoniker> pMoniker; pClassEnum4$##clsid->Next(1, &pMoniker, 0) == S_OK; pMoniker = NULL) \
-        {
+#define BeginEnumSysDev(clsid, pMoniker)                                                                            \
+{                                                                                                                   \
+    CComPtr<ICreateDevEnum> pDevEnum4$##clsid;                                                                      \
+    if (SUCCEEDED(pDevEnum4$##clsid.CoCreateInstance(CLSID_SystemDeviceEnum))) {                                    \
+        CComPtr<IEnumMoniker> pClassEnum4$##clsid;                                                                  \
+        if (SUCCEEDED(pDevEnum4$##clsid->CreateClassEnumerator(clsid, &pClassEnum4$##clsid, 0))                     \
+            && pClassEnum4$##clsid) {                                                                               \
+            for (CComPtr<IMoniker> pMoniker; pClassEnum4$##clsid->Next(1, &pMoniker, 0) == S_OK; pMoniker = nullptr) {
 
-#define EndEnumSysDev }}}
+#define EndEnumSysDev }}}}
 
-#define PauseGraph                                                                                         \
-    CComQIPtr<IMediaControl> _pMC(m_pGraph);                                                               \
-    OAFilterState _fs = -1;                                                                                \
-    if (_pMC)                                                                                              \
-        _pMC->GetState(1000, &_fs);                                                                        \
-    if (_fs == State_Running)                                                                              \
-        _pMC->Pause();                                                                                     \
-                                                                                                           \
-    HRESULT _hr = E_FAIL;                                                                                  \
-    CComQIPtr<IMediaSeeking> _pMS((IUnknown*)(INonDelegatingUnknown*)m_pGraph);                            \
-    REFERENCE_TIME _rtNow = 0;                                                                             \
-    if (_pMS)                                                                                              \
+#define PauseGraph                                                                                              \
+    CComQIPtr<IMediaControl> _pMC(m_pGraph);                                                                    \
+    OAFilterState _fs = -1;                                                                                     \
+    if (_pMC)                                                                                                   \
+        _pMC->GetState(1000, &_fs);                                                                             \
+    if (_fs == State_Running)                                                                                   \
+        _pMC->Pause();                                                                                          \
+                                                                                                                \
+    HRESULT _hr = E_FAIL;                                                                                       \
+    CComQIPtr<IMediaSeeking> _pMS((IUnknown*)(INonDelegatingUnknown*)m_pGraph);                                 \
+    REFERENCE_TIME _rtNow = 0;                                                                                  \
+    if (_pMS)                                                                                                   \
         _hr = _pMS->GetCurrentPosition(&_rtNow);
 
-#define ResumeGraph                                                                                        \
-    if (SUCCEEDED(_hr) && _pMS && _fs != State_Stopped)                                                    \
-        _hr = _pMS->SetPositions(&_rtNow, AM_SEEKING_AbsolutePositioning, NULL, AM_SEEKING_NoPositioning); \
-                                                                                                           \
-    if (_fs == State_Running && _pMS)                                                                      \
+#define ResumeGraph                                                                                             \
+    if (SUCCEEDED(_hr) && _pMS && _fs != State_Stopped)                                                         \
+        _hr = _pMS->SetPositions(&_rtNow, AM_SEEKING_AbsolutePositioning, nullptr, AM_SEEKING_NoPositioning);   \
+                                                                                                                \
+    if (_fs == State_Running && _pMS)                                                                           \
         _pMC->Run();
 
 #define CallQueue(call)         \
@@ -259,35 +246,38 @@ public:
 #define QI(i)  (riid == __uuidof(i)) ? GetInterface((i*)this, ppv) :
 #define QI2(i) (riid == IID_##i) ? GetInterface((i*)this, ppv) :
 
-#define SAFE_DELETE(p)       { if (p) { delete (p);     (p) = NULL; } }
-#define SAFE_DELETE_ARRAY(p) { if (p) { delete [] (p);  (p) = NULL; } }
-#define SAFE_RELEASE(p)      { if (p) { (p)->Release(); (p) = NULL; } }
+#define SAFE_DELETE(p)       { if (p) { delete (p);     (p) = nullptr; } }
+#define SAFE_DELETE_ARRAY(p) { if (p) { delete [] (p);  (p) = nullptr; } }
+#define SAFE_RELEASE(p)      { if (p) { (p)->Release(); (p) = nullptr; } }
+#define SAFE_CLOSE_HANDLE(p) { if (p) { if ((p) != INVALID_HANDLE_VALUE) VERIFY(CloseHandle(p)); (p) = nullptr; } }
+#define EXIT_ON_ERROR(hres)  { if (FAILED(hres)) return hres; }
 
-#define ResStr(id)  CString(MAKEINTRESOURCE(id))
+#define StrRes(id)  MAKEINTRESOURCE((id))
+#define ResStr(id)  CString(StrRes((id)))
 
-template <typename T> __inline void INITDDSTRUCT(T& dd)
-{
-    ZeroMemory(&dd, sizeof(dd));
-    dd.dwSize = sizeof(dd);
-}
-
-#define countof(array) (sizeof(array)/sizeof(array[0]))
+#define UNREACHABLE_CODE()  \
+    do {                    \
+        ASSERT(false);      \
+        __assume(false);    \
+    } while (false)
 
 template <class T>
 static CUnknown* WINAPI CreateInstance(LPUNKNOWN lpunk, HRESULT* phr)
 {
     *phr = S_OK;
     CUnknown* punk = DEBUG_NEW T(lpunk, phr);
-    if (punk == NULL) {
+    if (punk == nullptr) {
         *phr = E_OUTOFMEMORY;
     }
     return punk;
 }
 
-inline int GCD(int a, int b)
+template <class T>
+typename std::enable_if<std::is_unsigned<T>::value, T>::type GCD(T a, T b)
 {
+    static_assert(std::is_integral<T>::value, "GCD supports integral types only");
     if (a == 0 || b == 0) {
-        return 1;
+        return std::max(std::max(a, b), T(1));
     }
     while (a != b) {
         if (a < b) {
@@ -297,4 +287,62 @@ inline int GCD(int a, int b)
         }
     }
     return a;
+}
+
+template <class T>
+typename std::enable_if<std::is_signed<T>::value, T>::type GCD(T a, T b)
+{
+    using uT = typename std::make_unsigned<T>::type;
+
+    return T(GCD(uT(std::abs(a)), uT(std::abs(b))));
+}
+
+template<class T>
+constexpr typename std::enable_if<std::is_integral<T>::value, bool>::type IsEqual(T a, T b)
+{
+    return a == b;
+}
+
+template<class T>
+constexpr typename std::enable_if<std::is_floating_point<T>::value, bool>::type IsEqual(T a, T b)
+{
+    return std::abs(a - b) < std::numeric_limits<T>::epsilon();
+}
+
+template<class T>
+constexpr typename std::enable_if<std::is_floating_point<T>::value, bool>::type IsNearlyEqual(T a, T b, T epsilon)
+{
+    return std::abs(a - b) < epsilon;
+}
+
+template <class T>
+constexpr typename std::enable_if < std::is_integral<T>::value&& std::is_unsigned<T>::value, int >::type SGN(T n)
+{
+    return T(0) < n;
+}
+
+template <typename T>
+constexpr typename std::enable_if < std::is_integral<T>::value&& std::is_signed<T>::value, int >::type SGN(T n)
+{
+    return (T(0) < n) - (n < T(0));
+}
+
+template <typename T>
+constexpr typename std::enable_if <std::is_floating_point<T>::value, int>::type SGN(T n)
+{
+    return IsEqual(n, T(0)) ? 0 : (n > 0 ? 1 : -1);
+}
+
+namespace CStringUtils
+{
+    struct IgnoreCaseLess {
+        bool operator()(const CString& str1, const CString& str2) const {
+            return str1.CompareNoCase(str2) < 0;
+        }
+    };
+    struct LogicalLess {
+        bool operator()(const CString& str1, const CString& str2) const {
+            return StrCmpLogicalW(str1, str2) < 0;
+        }
+    };
 }

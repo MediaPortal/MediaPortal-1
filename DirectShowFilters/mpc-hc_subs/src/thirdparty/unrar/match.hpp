@@ -14,6 +14,10 @@ enum {
    MATCH_EXACT,        // Paths must match exactly.
                        // Names must match exactly.
 
+   MATCH_ALLWILD,      // Paths and names are compared using wildcards.
+                       // Unlike MATCH_SUBPATH, paths do not match subdirs
+                       // unless a wildcard tells so.
+
    MATCH_EXACTPATH,    // Paths must match exactly.
                        // Names are compared using wildcards.
 
@@ -29,7 +33,6 @@ enum {
 #define MATCH_MODEMASK           0x0000ffff
 #define MATCH_FORCECASESENSITIVE 0x80000000
 
-bool CmpName(const char *Wildcard,const char *Name,int CmpMode);
 bool CmpName(const wchar *Wildcard,const wchar *Name,int CmpMode);
 
 #endif

@@ -1,0 +1,14 @@
+prefix=F:/Projects/Repos/MediaPortal-1/DirectShowFilters/mpc-hc_subs/src/thirdparty/freetype2/freetype2/out/install/x64-Debug
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: FreeType 2
+URL: https://freetype.org
+Description: A free, high-quality, and portable font engine.
+Version: 26.0.20
+Requires:  
+Requires.private: 
+Libs: -L${libdir} -lfreetype 
+Libs.private: 
+Cflags: -I${includedir}/freetype2

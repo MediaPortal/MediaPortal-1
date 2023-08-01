@@ -1,0 +1,8 @@
+F:/Projects/Repos/MediaPortal-1/DirectShowFilters/mpc-hc_subs/src/thirdparty/freetype2/freetype2/out/build/x64-Debug/CMakeFiles/package.dir
+F:/Projects/Repos/MediaPortal-1/DirectShowFilters/mpc-hc_subs/src/thirdparty/freetype2/freetype2/out/build/x64-Debug/CMakeFiles/freetype.dir
+F:/Projects/Repos/MediaPortal-1/DirectShowFilters/mpc-hc_subs/src/thirdparty/freetype2/freetype2/out/build/x64-Debug/CMakeFiles/package_source.dir
+F:/Projects/Repos/MediaPortal-1/DirectShowFilters/mpc-hc_subs/src/thirdparty/freetype2/freetype2/out/build/x64-Debug/CMakeFiles/install/local.dir
+F:/Projects/Repos/MediaPortal-1/DirectShowFilters/mpc-hc_subs/src/thirdparty/freetype2/freetype2/out/build/x64-Debug/CMakeFiles/install.dir
+F:/Projects/Repos/MediaPortal-1/DirectShowFilters/mpc-hc_subs/src/thirdparty/freetype2/freetype2/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+F:/Projects/Repos/MediaPortal-1/DirectShowFilters/mpc-hc_subs/src/thirdparty/freetype2/freetype2/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
+F:/Projects/Repos/MediaPortal-1/DirectShowFilters/mpc-hc_subs/src/thirdparty/freetype2/freetype2/out/build/x64-Debug/CMakeFiles/list_install_components.dir

@@ -1,6 +1,6 @@
 /*
  * (C) 2003-2006 Gabest
- * (C) 2006-2012 see Authors.txt
+ * (C) 2006-2015, 2017 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -53,13 +53,13 @@ public:
     CPoint m_org;
     int m_scale_x, m_scale_y;   // % (don't set it to unsigned because as a side effect it will mess up negative coordinates in GetDestrect())
     int m_alpha;                // %
-    int m_fSmooth;              // 0: OFF, 1: ON, 2: OLD (means no filtering at all)
+    int m_iSmooth;              // 0: OFF, 1: ON, 2: OLD (means no filtering at all)
     int m_fadein, m_fadeout;    // ms
-    bool m_fAlign;
+    bool m_bAlign;
     int m_alignhor, m_alignver; // 0: left/top, 1: center, 2: right/bottom
     unsigned int m_toff;        // ms
-    bool m_fOnlyShowForcedSubs;
-    bool m_fCustomPal;
+    bool m_bOnlyShowForcedSubs;
+    bool m_bCustomPal;
     int m_tridx;
     RGBQUAD m_orgpal[16], m_cuspal[4];
 
@@ -69,19 +69,43 @@ public:
     void InitSettings();
 
     bool GetCustomPal(RGBQUAD* cuspal, int& tridx);
-    void SetCustomPal(RGBQUAD* cuspal, int tridx);
+    void SetCustomPal(const RGBQUAD* cuspal, int tridx);
 
     void GetDestrect(CRect& r); // destrect of m_img, considering the current alignment mode
     void GetDestrect(CRect& r, int w, int h); // this will scale it to the frame size of (w, h)
 
-    void SetAlignment(bool fAlign, int x, int y, int hor, int ver);
+    void SetAlignment(bool bAlign, int x, int y, int hor = 1, int ver = 1);
 };
 
 class __declspec(uuid("998D4C9A-460F-4de6-BDCD-35AB24F94ADF"))
     CVobSubFile : public CVobSubSettings, public ISubStream, public CSubPicProviderImpl
 {
+public:
+    struct SubPos {
+        __int64 filepos       = 0i64;
+        __int64 start         = 0i64;
+        __int64 stop          = 0i64;
+        bool bForced          = false;
+        bool bAnimated        = false;
+        char vobid            = 0;
+        char cellid           = 0;
+        __int64 celltimestamp = 0i64;
+        bool bValid           = false;
+
+        bool operator <(const SubPos& rhs) const {
+            return start < rhs.start;
+        }
+    };
+
+    struct SubLang {
+        WORD id = 0;
+        CString name, alt;
+        CAtlArray<SubPos> subpos;
+    };
+
 protected:
     CString m_title;
+    CString m_path;
 
     void TrimExtension(CString& fn);
     bool ReadIdx(CString fn, int& ver), ReadSub(CString fn), ReadRar(CString fn), ReadIfo(CString fn);
@@ -89,10 +113,11 @@ protected:
 
     CMemFile m_sub;
 
-    BYTE* GetPacket(int idx, int& packetsize, int& datasize, int iLang = -1);
-    bool GetFrame(int idx, int iLang = -1);
+    BYTE* GetPacket(size_t idx, size_t& packetSize, size_t& dataSize, size_t nLang = SIZE_T_ERROR);
+    const SubPos* GetFrameInfo(size_t idx, size_t nLang = SIZE_T_ERROR) const;
+    bool GetFrame(size_t idx, size_t nLang = SIZE_T_ERROR, REFERENCE_TIME rt = -1);
     bool GetFrameByTimeStamp(__int64 time);
-    int GetFrameIdxByTimeStamp(__int64 time);
+    size_t GetFrameIdxByTimeStamp(__int64 time);
 
     bool SaveVobSub(CString fn, int delay);
     bool SaveWinSubMux(CString fn, int delay);
@@ -100,37 +125,22 @@ protected:
     bool SaveMaestro(CString fn, int delay);
 
 public:
-    typedef struct {
-        __int64 filepos;
-        __int64 start, stop;
-        bool fForced;
-        char vobid, cellid;
-        __int64 celltimestamp;
-        bool fValid;
-    } SubPos;
+    size_t m_nLang;
+    std::array<SubLang, 32> m_langs;
 
-    typedef struct {
-        int id;
-        CString name, alt;
-        CAtlArray<SubPos> subpos;
-    } SubLang;
-
-    int m_iLang;
-    SubLang m_langs[32];
-
-public:
     CVobSubFile(CCritSec* pLock);
     virtual ~CVobSubFile();
 
     bool Copy(CVobSubFile& vsf);
+    CString GetPath();
 
-    typedef enum {
+    enum SubFormat {
         None,
         VobSub,
         WinSubMux,
         Scenarist,
         Maestro
-    } SubFormat;
+    };
 
     bool Open(CString fn);
     bool Save(CString fn, int delay = 0, SubFormat sf = VobSub);
@@ -148,8 +158,7 @@ public:
     STDMETHODIMP_(REFERENCE_TIME) GetStop(POSITION pos, double fps);
     STDMETHODIMP_(bool) IsAnimated(POSITION pos);
     STDMETHODIMP Render(SubPicDesc& spd, REFERENCE_TIME rt, double fps, RECT& bbox);
-
-    STDMETHODIMP_(SUBTITLE_TYPE) GetType() { return ST_VOBSUB; };
+    STDMETHODIMP GetRelativeTo(POSITION pos, RelativeTo& relativeTo);
 
     // IPersist
     STDMETHODIMP GetClassID(CLSID* pClassID);
@@ -160,6 +169,7 @@ public:
     STDMETHODIMP_(int) GetStream();
     STDMETHODIMP SetStream(int iStream);
     STDMETHODIMP Reload();
+    STDMETHODIMP SetSourceTargetInfo(CString yuvMatrix, int targetBlackLevel, int targetWhiteLevel) { return E_NOTIMPL; };
 };
 
 class __declspec(uuid("D7FBFB45-2D13-494F-9B3D-FFC9557D5C45"))
@@ -170,6 +180,7 @@ class __declspec(uuid("D7FBFB45-2D13-494F-9B3D-FFC9557D5C45"))
     CCritSec m_csSubPics;
     struct SubPic {
         REFERENCE_TIME tStart, tStop;
+        bool bAnimated;
         CAtlArray<BYTE> pData;
     };
     CAutoPtrList<SubPic> m_subpics;
@@ -193,8 +204,7 @@ public:
     STDMETHODIMP_(REFERENCE_TIME) GetStop(POSITION pos, double fps);
     STDMETHODIMP_(bool) IsAnimated(POSITION pos);
     STDMETHODIMP Render(SubPicDesc& spd, REFERENCE_TIME rt, double fps, RECT& bbox);
-
-    STDMETHODIMP_(SUBTITLE_TYPE) GetType() { return ST_VOBSUB; };
+    STDMETHODIMP GetRelativeTo(POSITION pos, RelativeTo& relativeTo);
 
     // IPersist
     STDMETHODIMP GetClassID(CLSID* pClassID);
@@ -205,4 +215,5 @@ public:
     STDMETHODIMP_(int) GetStream();
     STDMETHODIMP SetStream(int iStream);
     STDMETHODIMP Reload() { return E_NOTIMPL; }
+    STDMETHODIMP SetSourceTargetInfo(CString yuvMatrix, int targetBlackLevel, int targetWhiteLevel) { return E_NOTIMPL; }
 };

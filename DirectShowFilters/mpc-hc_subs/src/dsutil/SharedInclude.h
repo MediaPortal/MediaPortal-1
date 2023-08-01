@@ -1,5 +1,5 @@
 /*
- * (C) 2009-2012 see Authors.txt
+ * (C) 2009-2013, 2016 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -21,16 +21,21 @@
 #pragma once
 
 #pragma warning(disable:4995)
+#pragma warning(disable:5054)
+#pragma warning(disable:4467)
 
-#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
-#endif
-
-#ifndef VC_EXTRALEAN
 #define VC_EXTRALEAN        // Exclude rarely-used stuff from Windows headers
+
+#ifndef STRICT_TYPED_ITEMIDS
+#define STRICT_TYPED_ITEMIDS
 #endif
 
 #ifdef _DEBUG
+#if 1
 #define _CRTDBG_MAP_ALLOC   // include Microsoft memory leak detection procedures
 #include <crtdbg.h>
+#else
+#include "vld.h" //include visual leak detector procedures
+#endif
 #endif

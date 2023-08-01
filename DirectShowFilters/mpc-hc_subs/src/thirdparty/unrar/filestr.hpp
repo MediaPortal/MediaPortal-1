@@ -2,8 +2,7 @@
 #define _RAR_FILESTR_
 
 bool ReadTextFile(
-  const char *Name,
-  const wchar *NameW,
+  const wchar *Name,
   StringList *List,
   bool Config,
   bool AbortOnError=false,
@@ -12,5 +11,7 @@ bool ReadTextFile(
   bool SkipComments=false,
   bool ExpandEnvStr=false
 );
+
+RAR_CHARSET DetectTextEncoding(const byte *Data,size_t DataSize);
 
 #endif
