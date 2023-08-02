@@ -370,12 +370,16 @@ void CSubManager::Render(int x, int y, int width, int height, int xOffsetInPixel
 			//ATLTRACE("src: (%d,%d) - (%d,%d)", rcSource.left, rcSource.top, rcSource.right, rcSource.bottom);
 			//ATLTRACE("dst: (%d,%d) - (%d,%d)\n", rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);
 			rcDest.OffsetRect(x, y);
-			DWORD fvf, alphaTest, colorOp, samplerAddressU, samplerAddressV;
+			DWORD fvf, alphaTest, colorOp, samplerAddressU, samplerAddressV, samplerFtMag, samplerFtMin, samplerFtMip;
 			m_d3DDev->GetFVF(&fvf);
 			m_d3DDev->GetRenderState(D3DRS_ALPHATESTENABLE, &alphaTest);
 			m_d3DDev->GetTextureStageState(0, D3DTSS_COLOROP, &colorOp); //change to it causes "white" osd artifact  
 			m_d3DDev->GetSamplerState(0, D3DSAMP_ADDRESSU, &samplerAddressU);
 			m_d3DDev->GetSamplerState(0, D3DSAMP_ADDRESSV, &samplerAddressV);
+
+			m_d3DDev->GetSamplerState(0, D3DSAMP_MAGFILTER, &samplerFtMag);
+			m_d3DDev->GetSamplerState(0, D3DSAMP_MINFILTER, &samplerFtMin);
+			m_d3DDev->GetSamplerState(0, D3DSAMP_MIPFILTER, &samplerFtMip);
 
 			m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
@@ -387,6 +391,10 @@ void CSubManager::Render(int x, int y, int width, int height, int xOffsetInPixel
 
 			m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSU, samplerAddressU);
 			m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSV, samplerAddressV);
+
+			m_d3DDev->SetSamplerState(0, D3DSAMP_MAGFILTER, samplerFtMag);
+			m_d3DDev->SetSamplerState(0, D3DSAMP_MINFILTER, samplerFtMin);
+			m_d3DDev->SetSamplerState(0, D3DSAMP_MIPFILTER, samplerFtMip);
 		}
 	}
 }
