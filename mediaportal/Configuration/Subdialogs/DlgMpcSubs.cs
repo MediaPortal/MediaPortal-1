@@ -156,6 +156,7 @@ namespace MediaPortal.Configuration
       this.pow2texCheckBox.TabIndex = 14;
       this.pow2texCheckBox.Text = "Round to the power of 2";
       this.pow2texCheckBox.UseVisualStyleBackColor = true;
+      this.pow2texCheckBox.Visible = false;
       // 
       // mpLabel1
       // 
