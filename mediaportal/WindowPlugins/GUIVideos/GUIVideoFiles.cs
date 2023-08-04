@@ -5038,7 +5038,7 @@ namespace MediaPortal.GUI.Video
         List<GUIListItem> listFiles = _virtualDirectory.GetDirectoryUnProtectedExt(_currentFolder, false);
         string[] subExts = {
                               ".utf", ".utf8", ".utf-8", ".sub", ".srt", ".smi", ".rt", ".txt", ".ssa", ".aqt", ".jss",
-                              ".ass", ".idx", ".ifo"
+                              ".ass", ".idx", ".ifo", ".webvtt", ".vtt"
                             };
         if (!isDVD)
         {
