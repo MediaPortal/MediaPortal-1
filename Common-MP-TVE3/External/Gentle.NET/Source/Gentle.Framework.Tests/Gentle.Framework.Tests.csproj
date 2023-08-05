@@ -330,6 +330,6 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>$(ProjectDir)Postbuild.bat $(ConfigurationName) $(ProjectDir)$(OutDir) $(SolutionDir)..\..\..\..\TvEngine3\TVLibrary\TVDatabase\references</PostBuildEvent>
+    <PostBuildEvent>"$(ProjectDir)Postbuild.bat" $(ConfigurationName) "$(ProjectDir)$(OutDir)" "$(SolutionDir)..\..\..\..\TvEngine3\TVLibrary\TVDatabase\references"</PostBuildEvent>
   </PropertyGroup>
 </Project>
