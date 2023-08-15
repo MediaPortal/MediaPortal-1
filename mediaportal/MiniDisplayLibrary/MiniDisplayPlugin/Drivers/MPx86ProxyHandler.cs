@@ -542,16 +542,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
               {
                 Log.Debug("[MPx86ProxyHandler][connect] Running-up MPx86Proxy.exe...");
 
-                //Start MPx86Proxy.exe
-                ProcessStartInfo psi = new ProcessStartInfo(strProxyPath);
-                psi.WindowStyle = ProcessWindowStyle.Hidden;
-                psi.Arguments = " -h";
-                psi.CreateNoWindow = true;
-                psi.UseShellExecute = false;
-                psi.ErrorDialog = false;
-                Process proc = new Process();
-                proc.StartInfo = psi;
-                proc.Start();
+                try
+                {
+                  //Start MPx86Proxy.exe
+                  ProcessStartInfo psi = new ProcessStartInfo(strProxyPath);
+                  psi.WindowStyle = ProcessWindowStyle.Hidden;
+                  psi.Arguments = " -h";
+                  psi.CreateNoWindow = true;
+                  psi.UseShellExecute = false;
+                  psi.ErrorDialog = false;
+                  Process proc = new Process();
+                  proc.StartInfo = psi;
+                  proc.Start();
+                }
+                catch(Exception ex)
+                {
+                  Log.Error("[MPx86ProxyHandler][connect] Failed to start-up MPx86Proxy.exe. Error: {0}", ex.Message);
+                  return -1;
+                }
               }
               else
               {
