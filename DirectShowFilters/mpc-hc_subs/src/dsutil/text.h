@@ -1,6 +1,6 @@
 /*
  * (C) 2003-2006 Gabest
- * (C) 2006-2013 see Authors.txt
+ * (C) 2006-2017 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -22,6 +22,7 @@
 #pragma once
 
 #include <atlcoll.h>
+#include <string>
 
 template<class T, typename SEP>
 T Explode(const T& str, CAtlList<T>& sl, SEP sep, size_t limit = 0)
@@ -36,6 +37,25 @@ T Explode(const T& str, CAtlList<T>& sl, SEP sep, size_t limit = 0)
             break;
         } else {
             sl.AddTail(str.Mid(i, j - i).Trim());
+        }
+    }
+
+    return sl.GetHead();
+}
+
+template<class T, typename SEP>
+T ExplodeNoTrim(const T& str, CAtlList<T>& sl, SEP sep, size_t limit = 0)
+{
+    sl.RemoveAll();
+
+    for (int i = 0, j = 0; ; i = j + 1) {
+        j = str.Find(sep, i);
+
+        if (j < 0 || sl.GetCount() == limit - 1) {
+            sl.AddTail(str.Mid(i));
+            break;
+        } else {
+            sl.AddTail(str.Mid(i, j - i));
         }
     }
 
@@ -72,8 +92,8 @@ T ExplodeEsc(T str, CAtlList<T>& sl, SEP sep, size_t limit = 0, SEP esc = _T('\\
             break;
         }
 
-        // Skip this seperator if it is escaped
-        if (str.GetAt(j - 1) == esc) {
+        // Skip this separator if it is escaped
+        if (j > 0 && str.GetAt(j - 1) == esc) {
             // Delete the escape character
             str.Delete(j - 1);
             continue;
@@ -124,11 +144,72 @@ T ImplodeEsc(const CAtlList<T>& sl, SEP sep, SEP esc = _T('\\'))
 
 extern CString ExtractTag(CString tag, CMapStringToString& attribs, bool& fClosing);
 extern CStringA ConvertMBCS(CStringA str, DWORD SrcCharSet, DWORD DstCharSet);
-extern CStringA UrlEncode(CStringA str_in, bool fArg = false);
-extern CStringA UrlDecode(CStringA str_in);
+extern CStringA UrlEncode(const CStringA& strIn);
+/**
+ * @brief Escape the characters that JSON reserves as special.
+ * @param str The string that needs escaping.
+ * @return The input string with the special characters escaped.
+ */
+extern CStringA EscapeJSONString(const CStringA& str);
+extern CStringA UrlDecode(const CStringA& strIn);
+extern CStringW UrlDecodeWithUTF8(const CStringW in, bool keepEncodedSpecialChar = false);
+extern CStringW URLGetHostName(const CStringW in);
+extern CStringW ShortenURL(const CStringW url, int targetLength = 100, bool returnHostnameIfTooLong = false);
 extern CStringA HtmlSpecialChars(CStringA str, bool bQuotes = false);
+extern CStringA HtmlSpecialCharsDecode(CStringA str);
 extern DWORD CharSetToCodePage(DWORD dwCharSet);
 extern CAtlList<CString>& MakeLower(CAtlList<CString>& sl);
 extern CAtlList<CString>& MakeUpper(CAtlList<CString>& sl);
+extern int LastIndexOfCString(const CString& text, const CString& pattern);
+extern bool IsNameSimilar(const CString& title, const CString& fileName);
 
 CString FormatNumber(CString szNumber, bool bNoFractionalDigits = true);
+void GetLocaleString(LCID lcid, LCTYPE type, CString& output);
+
+template<class T>
+T& FastTrimRight(T& str)
+{
+    if (!str.IsEmpty()) {
+        typename T::PCXSTR szStart = str;
+        typename T::PCXSTR szEnd   = szStart + str.GetLength() - 1;
+        typename T::PCXSTR szCur   = szEnd;
+        for (; szCur >= szStart; szCur--) {
+            if (!T::StrTraits::IsSpace(*szCur) || *szCur == 133) { // allow ellipsis character
+                break;
+            }
+        }
+
+        if (szCur != szEnd) {
+            str.Truncate(int(szCur - szStart + 1));
+        }
+    }
+
+    return str;
+}
+
+template<class T>
+T& FastTrim(T& str)
+{
+    return FastTrimRight(str).TrimLeft();
+}
+
+template<class T>
+int FindOneOf(const T& str, typename T::PCXSTR pszCharSet, int iStart) throw()
+{
+    ATLASSERT(AtlIsValidString(pszCharSet));
+    ATLASSERT(iStart >= 0);
+
+    if (iStart < 0 || iStart >= str.GetLength()) {
+        return -1;
+    }
+
+    typename T::PCXSTR psz = T::StrTraits::StringScanSet(str.GetString() + iStart, pszCharSet);
+    return ((psz == NULL) ? -1 : int(psz - str.GetString()));
+}
+
+template<typename T>
+CString NumToCString(T num)
+{
+    static_assert(std::numeric_limits<T>::is_specialized, "NumToCString can be used only for numeric types.");
+    return std::to_string(num).c_str();
+}

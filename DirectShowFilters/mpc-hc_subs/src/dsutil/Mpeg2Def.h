@@ -1,5 +1,5 @@
 /*
- * (C) 2009-2012 see Authors.txt
+ * (C) 2009-2015 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -54,6 +54,12 @@ enum PES_STREAM_TYPE {
     AUXILIARY_VIDEO_STREAM              = 0x1E, // Auxiliary video stream as defined in ISO/IEC 23002-3
     SVC_H264                            = 0x1F, // SVC video sub-bitstream of an AVC video stream conforming to one or more profiles defined in Annex G of ITU-T Rec. H.264 | ISO/IEC 14496-10
     MVC_H264                            = 0x20, // MVC video sub-bitstream of an AVC video stream conforming to one or more profiles defined in Annex H of ITU-T Rec. H.264 | ISO/IEC 14496-10
+    VIDEO_STREAM_JPEG2000               = 0x21, // ITU - T Rec.T.800 | ISO / IEC 15444 - 1
+    ADDITIONAL_VIEW_MPEG2               = 0x22, // ITU - T Rec.H.262 | ISO / IEC 13818 - 2 Additional view for compatible 3D
+    ADDITIONAL_VIEW_H264                = 0x23, // ITU - T Rec.H.264 | ISO / IEC 14496 - 10 Additional view for compatible 3D
+    VIDEO_STREAM_HEVC                   = 0x24, // ITU - T Rec.H.265 | ISO / IEC 23008 - 2 video stream
+    VIDEO_SUBSET_HEVC                   = 0x25, // ITU - T Rec.H.265 | ISO / IEC 23008 - 2 Annex A temporal video subset
+    MVCD_H264                           = 0x26, // ITU - T Rec.H.264 | ISO / IEC 14496 - 10 Annex I MVCD video sub - bitstream
     AUDIO_STREAM_LPCM                   = 0x80,
     AUDIO_STREAM_AC3                    = 0x81,
     AUDIO_STREAM_DTS                    = 0x82,
@@ -74,13 +80,13 @@ enum MPEG2_PID {
     PID_CAT     = 0x001,    // Conditional Access Table
     PID_TSDT    = 0x002,    // Transport Stream Description Table
     PID_NIT     = 0x010,    // Network Identification Table
-    PID_BAT     = 0x011,    // Bouquet Association Table ou ...
-    PID_SDT     = 0x011,    // Service Description Table
+    PID_BAT     = 0x011,    // Bouquet Association Table or ...
+    PID_SDT     = 0x011,    // ... Service Description Table
     PID_EIT     = 0x012,    // Event Information Table
-    PID_RST     = 0x013,    // Running Status Tection
-    PID_TDT     = 0x014,    // Time and Date Table ou ...
-    PID_TOT     = 0x014,    // Time Offset Table
-    PID_SFN     = 0x015,    // SFN/MIP synchronisation
+    PID_RST     = 0x013,    // Running Status Table
+    PID_TDT     = 0x014,    // Time and Date Table or ...
+    PID_TOT     = 0x014,    // ... Time Offset Table
+    PID_SFN     = 0x015,    // SFN/MIP synchronization
     PID_DIT     = 0x01e,
     PID_SIT     = 0x01f,
     PID_NULL    = 0x1fff    // Null packet
@@ -141,12 +147,13 @@ enum MPEG2_DESCRIPTOR {
     DT_SUBTITLING               = 0x59,
     DT_TERRESTRIAL_DELIV_SYS    = 0x5a,
     DT_PRIVATE_DATA             = 0x5f,
-    //
+
     DT_DATA_BROADCAST_ID        = 0x66,
     DT_AC3_AUDIO                = 0x6a,     // DVB
     DT_EXTENDED_AC3_AUDIO       = 0x7a,
-    //
-    DT_AC3_AUDIO__2             = 0x81,     // DCII ou ATSC
+    DT_AAC_AUDIO                = 0x7c,
+
+    DT_AC3_AUDIO__2             = 0x81,     // DCII or ATSC
     DT_LOGICAL_CHANNEL          = 0x83,
     DT_HD_SIMCAST_LOG_CHANNEL   = 0x88
 };
@@ -157,6 +164,16 @@ enum MPEG_TYPES {
     mpeg_ts,
     mpeg_es,
     mpeg_pva
+};
+
+enum SERVICE_TYPE {
+    DIGITAL_TV          = 0x01,
+    DIGITAL_RADIO       = 0x02,
+    AVC_DIGITAL_RADIO   = 0x0A,
+    MPEG2_HD_DIGITAL_TV = 0x11,
+    AVC_SD_TV           = 0x16,
+    AVC_HD_TV           = 0x19,
+    HEVC_TV             = 0x1F
 };
 
 extern const wchar_t* StreamTypeToName(PES_STREAM_TYPE _Type);

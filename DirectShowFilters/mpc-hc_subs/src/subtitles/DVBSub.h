@@ -1,5 +1,5 @@
 /*
- * (C) 2009-2012 see Authors.txt
+ * (C) 2009-2015 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -20,29 +20,34 @@
 
 #pragma once
 
-#include "BaseSub.h"
-
-#define MAX_REGIONS     10
-#define MAX_OBJECTS     10          // Max number of objects per region
+#include "RLECodedSubtitle.h"
+#include "CompositionObject.h"
+#include <list>
+#include <memory>
 
 class CGolombBuffer;
 
-class CDVBSub : public CBaseSub
+class CDVBSub : public CRLECodedSubtitle
 {
 public:
-    CDVBSub();
+    CDVBSub(CCritSec* pLock, const CString& name, LCID lcid);
     ~CDVBSub();
 
-    virtual HRESULT        ParseSample(IMediaSample* pSample);
-    virtual void           EndOfStream();
-    virtual void           Render(SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox);
-    virtual HRESULT        GetTextureSize(POSITION pos, SIZE& MaxTextureSize, SIZE& VideoSize, POINT& VideoTopLeft);
-    virtual POSITION       GetStartPosition(REFERENCE_TIME rt, double fps);
-    virtual POSITION       GetNext(POSITION pos);
-    virtual REFERENCE_TIME GetStart(POSITION nPos);
-    virtual REFERENCE_TIME GetStop(POSITION nPos);
-    virtual void           Reset();
+    // ISubPicProvider
+    STDMETHODIMP_(POSITION)       GetStartPosition(REFERENCE_TIME rt, double fps);
+    STDMETHODIMP_(POSITION)       GetNext(POSITION pos);
+    STDMETHODIMP_(REFERENCE_TIME) GetStart(POSITION pos, double fps);
+    STDMETHODIMP_(REFERENCE_TIME) GetStop(POSITION pos, double fps);
+    STDMETHODIMP_(bool)           IsAnimated(POSITION pos);
+    STDMETHODIMP                  Render(SubPicDesc& spd, REFERENCE_TIME rt, double fps, RECT& bbox);
+    STDMETHODIMP                  GetTextureSize(POSITION pos, SIZE& MaxTextureSize, SIZE& VirtualSize, POINT& VirtualTopLeft);
+    STDMETHODIMP                  GetRelativeTo(POSITION pos, RelativeTo& relativeTo);
 
+    virtual HRESULT ParseSample(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop, BYTE* pData, size_t nLen);
+    virtual void    EndOfStream();
+    virtual void    Reset();
+
+private:
     // EN 300-743, table 2
     enum DVB_SEGMENT_TYPE {
         NO_SEGMENT     = 0xFFFF,
@@ -69,155 +74,102 @@ public:
     };
 
     struct DVB_CLUT {
-        BYTE    id;
-        BYTE    version_number;
-        BYTE    size;
+        BYTE id = 0;
+        BYTE version_number = 0;
+        WORD size = 0;
 
-        HDMV_PALETTE palette[256];
+        std::array<HDMV_PALETTE, 256> palette;
 
-        DVB_CLUT() {
-            id = 0;
-            version_number = 0;
-            size = 0;
-            memset(palette, 0, sizeof(palette));
+        DVB_CLUT()
+            : palette() {
         }
     };
 
     struct DVB_DISPLAY {
-        BYTE        version_number;
-        BYTE        display_window_flag;
-        short       width;
-        short       height;
-        short       horizontal_position_minimun;
-        short       horizontal_position_maximum;
-        short       vertical_position_minimun;
-        short       vertical_position_maximum;
-
-        DVB_DISPLAY() {
-            // Default value (§5.1.3)
-            version_number = 0;
-            width          = 720;
-            height         = 576;
-        }
+        // Default value (section 5.1.3)
+        BYTE  version_number = 0;
+        BYTE  display_window_flag = 0;
+        short width = 720;
+        short height = 576;
+        short horizontal_position_minimun = 0;
+        short horizontal_position_maximum = 0;
+        short vertical_position_minimun = 0;
+        short vertical_position_maximum = 0;
     };
 
     struct DVB_OBJECT {
-        short       object_id;
-        BYTE        object_type;
-        BYTE        object_provider_flag;
-        short       object_horizontal_position;
-        short       object_vertical_position;
-        BYTE        foreground_pixel_code;
-        BYTE        background_pixel_code;
+        short object_id = 0;
+        BYTE  object_type = 0;
+        BYTE  object_provider_flag = 0;
+        short object_horizontal_position = 0;
+        short object_vertical_position = 0;
+        BYTE  foreground_pixel_code = 0;
+        BYTE  background_pixel_code = 0;
+    };
 
-        DVB_OBJECT() {
-            object_id                  = 0xFF;
-            object_type                = 0;
-            object_provider_flag       = 0;
-            object_horizontal_position = 0;
-            object_vertical_position   = 0;
-            foreground_pixel_code      = 0;
-            background_pixel_code      = 0;
-        }
+    struct DVB_REGION_POS {
+        BYTE id = 0;
+        WORD horizAddr = 0;
+        WORD vertAddr = 0;
     };
 
     struct DVB_REGION {
-        BYTE       id;
-        WORD       horizAddr;
-        WORD       vertAddr;
-        BYTE       version_number;
-        BYTE       fill_flag;
-        WORD       width;
-        WORD       height;
-        BYTE       level_of_compatibility;
-        BYTE       depth;
-        BYTE       CLUT_id;
-        BYTE       _8_bit_pixel_code;
-        BYTE       _4_bit_pixel_code;
-        BYTE       _2_bit_pixel_code;
-        int        objectCount;
-        DVB_OBJECT objects[MAX_OBJECTS];
-
-        DVB_REGION() {
-            id                     = 0;
-            horizAddr              = 0;
-            vertAddr               = 0;
-            version_number         = 0;
-            fill_flag              = 0;
-            width                  = 0;
-            height                 = 0;
-            level_of_compatibility = 0;
-            depth                  = 0;
-            CLUT_id                = 0;
-            _8_bit_pixel_code      = 0;
-            _4_bit_pixel_code      = 0;
-            _2_bit_pixel_code      = 0;
-            objectCount            = 0;
-        }
+        BYTE id = 0;
+        BYTE version_number = 0;
+        BYTE fill_flag = 0;
+        WORD width = 0;
+        WORD height = 0;
+        BYTE level_of_compatibility = 0;
+        BYTE depth = 0;
+        BYTE CLUT_id = 0;
+        BYTE _8_bit_pixel_code = 0;
+        BYTE _4_bit_pixel_code = 0;
+        BYTE _2_bit_pixel_code = 0;
+        std::list<DVB_OBJECT> objects;
     };
+
+    using RegionList = std::list<std::unique_ptr<DVB_REGION>>;
+    using CompositionObjectList = std::list<std::unique_ptr<CompositionObject>>;
+    using ClutList = std::list<std::unique_ptr<DVB_CLUT>>;
 
     class DVB_PAGE
     {
     public:
-        REFERENCE_TIME               rtStart;
-        REFERENCE_TIME               rtStop;
-        BYTE                         pageTimeOut;
-        BYTE                         pageVersionNumber;
-        BYTE                         pageState;
-        int                          regionCount;
-        DVB_REGION                   regions[MAX_REGIONS];
-        CAtlList<CompositionObject*> objects;
-        CAtlList<DVB_CLUT*>          CLUTs;
-        bool                         rendered;
-
-        DVB_PAGE() {
-            pageTimeOut       = 0;
-            pageVersionNumber = 0;
-            pageState         = 0;
-            regionCount       = 0;
-            rendered          = false;
-        }
-
-        ~DVB_PAGE() {
-            CompositionObject* pObject;
-            while (objects.GetCount() > 0) {
-                pObject = objects.RemoveHead();
-                delete pObject;
-            }
-
-            DVB_CLUT* pCLUT;
-            while (CLUTs.GetCount() > 0) {
-                pCLUT = CLUTs.RemoveHead();
-                delete pCLUT;
-            }
-        }
+        REFERENCE_TIME rtStart = 0;
+        REFERENCE_TIME rtStop = 0;
+        BYTE           pageTimeOut = 0;
+        BYTE           pageVersionNumber = 0;
+        BYTE           pageState = 0;
+        std::list<DVB_REGION_POS> regionsPos;
+        RegionList                regions;
+        CompositionObjectList     objects;
+        ClutList                  CLUTs;
+        bool           rendered = false;
     };
 
-private:
-    static const REFERENCE_TIME INVALID_TIME = _I64_MIN;
+    size_t                 m_nBufferSize;
+    size_t                 m_nBufferReadPos;
+    size_t                 m_nBufferWritePos;
+    BYTE*                  m_pBuffer;
+    CAutoPtrList<DVB_PAGE> m_pages;
+    CAutoPtr<DVB_PAGE>     m_pCurrentPage;
+    DVB_DISPLAY            m_displayInfo;
 
-    int                 m_nBufferSize;
-    int                 m_nBufferReadPos;
-    int                 m_nBufferWritePos;
-    BYTE*               m_pBuffer;
-    CAtlList<DVB_PAGE*> m_Pages;
-    CAutoPtr<DVB_PAGE>  m_pCurrentPage;
-    DVB_DISPLAY         m_Display;
-    REFERENCE_TIME      m_rtStart;
-    REFERENCE_TIME      m_rtStop;
+    HRESULT  AddToBuffer(BYTE* pData, size_t nSize);
 
-    HRESULT             AddToBuffer(BYTE* pData, int nSize);
-    DVB_PAGE*           FindPage(REFERENCE_TIME rt);
-    DVB_REGION*         FindRegion(DVB_PAGE* pPage, BYTE bRegionId);
-    DVB_CLUT*           FindClut(DVB_PAGE* pPage, BYTE bClutId);
-    CompositionObject*  FindObject(DVB_PAGE* pPage, short sObjectId);
+    POSITION FindPage(REFERENCE_TIME rt) const;
+    RegionList::const_iterator FindRegion(const CAutoPtr<DVB_PAGE>& pPage, BYTE bRegionId) const;
+    ClutList::const_iterator   FindClut(const CAutoPtr<DVB_PAGE>& pPage, BYTE bClutId) const;
+    CompositionObjectList::const_iterator FindObject(const CAutoPtr<DVB_PAGE>& pPage, short sObjectId) const;
 
-    HRESULT             ParsePage(CGolombBuffer& gb, WORD wSegLength, CAutoPtr<DVB_PAGE>& pPage);
-    HRESULT             ParseDisplay(CGolombBuffer& gb, WORD wSegLength);
-    HRESULT             ParseRegion(CGolombBuffer& gb, WORD wSegLength);
-    HRESULT             ParseClut(CGolombBuffer& gb, WORD wSegLength);
-    HRESULT             ParseObject(CGolombBuffer& gb, WORD wSegLength);
+    HRESULT  ParsePage(CGolombBuffer& gb, WORD wSegLength, CAutoPtr<DVB_PAGE>& pPage);
+    HRESULT  ParseDisplay(CGolombBuffer& gb, WORD wSegLength);
+    HRESULT  ParseRegion(CGolombBuffer& gb, WORD wSegLength);
+    HRESULT  ParseClut(CGolombBuffer& gb, WORD wSegLength);
+    HRESULT  ParseObject(CGolombBuffer& gb, WORD wSegLength);
 
-    HRESULT             EnqueuePage(REFERENCE_TIME rtStop);
-    HRESULT             UpdateTimeStamp(REFERENCE_TIME rtStop);
+    HRESULT  EnqueuePage(REFERENCE_TIME rtStop);
+    HRESULT  UpdateTimeStamp(REFERENCE_TIME rtStop);
+
+    void     RemoveOldPages(REFERENCE_TIME rt);
 };

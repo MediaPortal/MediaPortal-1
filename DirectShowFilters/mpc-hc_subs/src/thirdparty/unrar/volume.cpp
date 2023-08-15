@@ -1,58 +1,69 @@
 #include "rar.hpp"
 
-
-
-
-#if defined(RARDLL) && defined(_MSC_VER) && !defined(_WIN_64)
-// Disable the run time stack check for unrar.dll, so we can manipulate
-// with ChangeVolProc call type below. Run time check would intercept
-// a wrong ESP before we restore it.
-#pragma runtime_checks( "s", off )
+#ifdef RARDLL
+static bool DllVolChange(RAROptions *Cmd,wchar *NextName,size_t NameSize);
+static bool DllVolNotify(RAROptions *Cmd,wchar *NextName);
 #endif
 
-bool MergeArchive(Archive &Arc,ComprDataIO *DataIO,bool ShowFileName,char Command)
+
+
+bool MergeArchive(Archive &Arc,ComprDataIO *DataIO,bool ShowFileName,wchar Command)
 {
   RAROptions *Cmd=Arc.GetRAROptions();
 
-  int HeaderType=Arc.GetHeaderType();
-  FileHeader *hd=HeaderType==NEWSUB_HEAD ? &Arc.SubHead:&Arc.NewLhd;
-  bool SplitHeader=(HeaderType==FILE_HEAD || HeaderType==NEWSUB_HEAD) &&
-                   (hd->Flags & LHD_SPLIT_AFTER)!=0;
+  HEADER_TYPE HeaderType=Arc.GetHeaderType();
+  FileHeader *hd=HeaderType==HEAD_SERVICE ? &Arc.SubHead:&Arc.FileHead;
+  bool SplitHeader=(HeaderType==HEAD_FILE || HeaderType==HEAD_SERVICE) &&
+                   hd->SplitAfter;
 
-  if (DataIO!=NULL && SplitHeader && hd->UnpVer>=20 &&
-      hd->FileCRC!=0xffffffff && DataIO->PackedCRC!=~hd->FileCRC)
+  if (DataIO!=NULL && SplitHeader)
   {
-    Log(Arc.FileName,St(MDataBadCRC),hd->FileName,Arc.FileName);
+    bool PackedHashPresent=Arc.Format==RARFMT50 || 
+         hd->UnpVer>=20 && hd->FileHash.CRC32!=0xffffffff;
+    if (PackedHashPresent && 
+        !DataIO->PackedDataHash.Cmp(&hd->FileHash,hd->UseHashKey ? hd->HashKey:NULL))
+      uiMsg(UIERROR_CHECKSUMPACKED, Arc.FileName, hd->FileName);
   }
+
+  bool PrevVolEncrypted=Arc.Encrypted;
 
   int64 PosBeforeClose=Arc.Tell();
 
   if (DataIO!=NULL)
-    DataIO->ProcessedArcSize+=Arc.FileLength();
+    DataIO->ProcessedArcSize+=DataIO->LastArcSize;
+
 
   Arc.Close();
 
-  char NextName[NM];
-  wchar NextNameW[NM];
-  strcpy(NextName,Arc.FileName);
-  wcscpy(NextNameW,Arc.FileNameW);
-  NextVolumeName(NextName,NextNameW,ASIZE(NextName),(Arc.NewMhd.Flags & MHD_NEWNUMBERING)==0 || Arc.OldFormat);
+  wchar NextName[NM];
+  wcsncpyz(NextName,Arc.FileName,ASIZE(NextName));
+  NextVolumeName(NextName,ASIZE(NextName),!Arc.NewNumbering);
 
 #if !defined(SFX_MODULE) && !defined(RARDLL)
   bool RecoveryDone=false;
 #endif
-  bool FailedOpen=false,OldSchemeTested=false;
+  bool OldSchemeTested=false;
 
-#if !defined(GUI) && !defined(SILENT)
+  bool FailedOpen=false; // No more next volume open attempts if true.
+#if !defined(SILENT)
   // In -vp mode we force the pause before next volume even if it is present
   // and even if we are on the hard disk. It is important when user does not
   // want to process partially downloaded volumes preliminary.
-  if (Cmd->VolumePause && !AskNextVol(NextName,NextNameW))
+  // 2022.01.11: In WinRAR 6.10 beta versions we tried to ignore VolumePause
+  // if we could open the next volume with FMF_OPENEXCLUSIVE. But another
+  // developer asked us to return the previous behavior and always prompt
+  // for confirmation. They want to control when unrar continues, because
+  // the next file might not be fully decoded yet. They write chunks of data
+  // and then close the file again until the next chunk comes in.
+
+  if (Cmd->VolumePause && !uiAskNextVolume(NextName,ASIZE(NextName)))
     FailedOpen=true;
 #endif
 
+  uint OpenMode = Cmd->OpenShared ? FMF_OPENSHARED : 0;
+
   if (!FailedOpen)
-    while (!Arc.Open(NextName,NextNameW,0))
+    while (!Arc.Open(NextName,OpenMode))
     {
       // We need to open a new volume which size was not calculated
       // in total size before, so we cannot calculate the total progress
@@ -65,100 +76,40 @@ bool MergeArchive(Archive &Arc,ComprDataIO *DataIO,bool ShowFileName,char Comman
       {
         // Checking for new style volumes renamed by user to old style
         // name format. Some users did it for unknown reason.
-        char AltNextName[NM];
-        wchar AltNextNameW[NM];
-        strcpy(AltNextName,Arc.FileName);
-        wcscpy(AltNextNameW,Arc.FileNameW);
-        NextVolumeName(AltNextName,AltNextNameW,ASIZE(AltNextName),true);
+        wchar AltNextName[NM];
+        wcsncpyz(AltNextName,Arc.FileName,ASIZE(AltNextName));
+        NextVolumeName(AltNextName,ASIZE(AltNextName),true);
         OldSchemeTested=true;
-        if (Arc.Open(AltNextName,AltNextNameW,0))
+        if (Arc.Open(AltNextName,OpenMode))
         {
-          strcpy(NextName,AltNextName);
-          wcscpy(NextNameW,AltNextNameW);
+          wcsncpyz(NextName,AltNextName,ASIZE(NextName));
           break;
         }
       }
 #ifdef RARDLL
-      bool DllVolChanged=false;
-
-      if (Cmd->Callback!=NULL)
+      if (!DllVolChange(Cmd,NextName,ASIZE(NextName)))
       {
-        GetWideName(NextName,NextNameW,NextNameW,ASIZE(NextNameW));
-        char CurName[ASIZE(NextName)];
-        strcpy(CurName,NextName);
-        wchar CurNameW[ASIZE(NextNameW)];
-        wcscpy(CurNameW,NextNameW);
-        if (Cmd->Callback(UCM_CHANGEVOLUMEW,Cmd->UserData,(LPARAM)NextNameW,RAR_VOL_ASK)!=-1 &&
-            wcscmp(CurNameW,NextNameW)!=0)
-        {
-          *NextName=0;
-          DllVolChanged=true;
-        }
-        else
-          if (Cmd->Callback(UCM_CHANGEVOLUME,Cmd->UserData,(LPARAM)NextName,RAR_VOL_ASK)!=-1 &&
-              strcmp(CurName,NextName)!=0)
-          {
-            *NextNameW=0;
-            DllVolChanged=true;
-          }
+        FailedOpen=true;
+        break;
       }
-      if (!DllVolChanged && Cmd->ChangeVolProc!=NULL)
-      {
-        // Here we preserve ESP value. It is necessary for those developers,
-        // who still define ChangeVolProc callback as "C" type function,
-        // even though in year 2001 we announced in unrar.dll whatsnew.txt
-        // that it will be PASCAL type (for compatibility with Visual Basic).
-#if defined(_MSC_VER)
-#ifndef _WIN_64
-        __asm mov ebx,esp
-#endif
-#elif defined(_WIN_ALL) && defined(__BORLANDC__)
-        _EBX=_ESP;
-#endif
-        int RetCode=Cmd->ChangeVolProc(NextName,RAR_VOL_ASK);
-
-        // Restore ESP after ChangeVolProc with wrongly defined calling
-        // convention broken it.
-#if defined(_MSC_VER)
-#ifndef _WIN_64
-      __asm mov esp,ebx
-#endif
-#elif defined(_WIN_ALL) && defined(__BORLANDC__)
-      _ESP=_EBX;
-#endif
-      if (RetCode!=0)
-      {
-        *NextNameW=0;
-        DllVolChanged=true;
-      }
-    }
-    if (!DllVolChanged)
-    {
-      Cmd->DllError=ERAR_EOPEN;
-      FailedOpen=true;
-      break;
-    }
 #else // !RARDLL
 
-#if !defined(SFX_MODULE) && !defined(_WIN_CE)
+#ifndef SFX_MODULE
       if (!RecoveryDone)
       {
-        RecVolumes RecVol;
-        RecVol.Restore(Cmd,Arc.FileName,Arc.FileNameW,true);
+        RecVolumesRestore(Cmd,Arc.FileName,true);
         RecoveryDone=true;
         continue;
       }
 #endif
 
-#ifndef GUI
       if (!Cmd->VolumePause && !IsRemovable(NextName))
       {
         FailedOpen=true;
         break;
       }
-#endif
 #ifndef SILENT
-      if (Cmd->AllYes || !AskNextVol(NextName,NextNameW))
+      if (Cmd->AllYes || !uiAskNextVolume(NextName,ASIZE(NextName)))
 #endif
       {
         FailedOpen=true;
@@ -170,111 +121,148 @@ bool MergeArchive(Archive &Arc,ComprDataIO *DataIO,bool ShowFileName,char Comman
   
   if (FailedOpen)
   {
-#if !defined(SILENT) && !defined(_WIN_CE)
-      Log(Arc.FileName,St(MAbsNextVol),NextName);
-#endif
-    Arc.Open(Arc.FileName,Arc.FileNameW,0);
+    uiMsg(UIERROR_MISSINGVOL,NextName);
+    Arc.Open(Arc.FileName,OpenMode);
     Arc.Seek(PosBeforeClose,SEEK_SET);
-    return(false);
+    return false;
   }
-  Arc.CheckArc(true);
-#ifdef RARDLL
-  if (Cmd->Callback!=NULL)
-  {
-    GetWideName(NextName,NextNameW,NextNameW,ASIZE(NextNameW));
-    if (Cmd->Callback(UCM_CHANGEVOLUMEW,Cmd->UserData,(LPARAM)NextNameW,RAR_VOL_NOTIFY)==-1)
-      return(false);
-    if (Cmd->Callback(UCM_CHANGEVOLUME,Cmd->UserData,(LPARAM)NextName,RAR_VOL_NOTIFY)==-1)
-      return(false);
-  }
-  if (Cmd->ChangeVolProc!=NULL)
-  {
-#if defined(_WIN_ALL) && !defined(_MSC_VER) && !defined(__MINGW32__)
-    _EBX=_ESP;
-#endif
-    int RetCode=Cmd->ChangeVolProc(NextName,RAR_VOL_NOTIFY);
-#if defined(_WIN_ALL) && !defined(_MSC_VER) && !defined(__MINGW32__)
-    _ESP=_EBX;
-#endif
-    if (RetCode==0)
-      return(false);
-  }
-#endif
 
   if (Command=='T' || Command=='X' || Command=='E')
     mprintf(St(Command=='T' ? MTestVol:MExtrVol),Arc.FileName);
 
 
+  Arc.CheckArc(true);
+#ifdef RARDLL
+  if (!DllVolNotify(Cmd,NextName))
+    return false;
+#endif
+
+  if (Arc.Encrypted!=PrevVolEncrypted)
+  {
+    // There is no legitimate reason for encrypted header state to be
+    // changed in the middle of volume sequence. So we abort here to prevent
+    // replacing an encrypted header volume to unencrypted and adding
+    // unexpected files by third party to encrypted extraction.
+    uiMsg(UIERROR_BADARCHIVE,Arc.FileName);
+    ErrHandler.Exit(RARX_FATAL);
+  }
+
   if (SplitHeader)
     Arc.SearchBlock(HeaderType);
   else
     Arc.ReadHeader();
-  if (Arc.GetHeaderType()==FILE_HEAD)
+  if (Arc.GetHeaderType()==HEAD_FILE)
   {
     Arc.ConvertAttributes();
-    Arc.Seek(Arc.NextBlockPos-Arc.NewLhd.FullPackSize,SEEK_SET);
+    Arc.Seek(Arc.NextBlockPos-Arc.FileHead.PackSize,SEEK_SET);
   }
-#ifndef GUI
-  if (ShowFileName)
+  if (ShowFileName && !Cmd->DisableNames)
   {
-    char OutName[NM];
-    IntToExt(Arc.NewLhd.FileName,OutName);
-#ifdef UNICODE_SUPPORTED
-    bool WideName=(Arc.NewLhd.Flags & LHD_UNICODE) && UnicodeEnabled();
-    if (WideName)
-    {
-      wchar NameW[NM];
-      ConvertPath(Arc.NewLhd.FileNameW,NameW);
-      char Name[NM];
-      if (WideToChar(NameW,Name) && IsNameUsable(Name))
-        strcpy(OutName,Name);
-    }
-#endif
-    mprintf(St(MExtrPoints),OutName);
+    mprintf(St(MExtrPoints),Arc.FileHead.FileName);
     if (!Cmd->DisablePercentage)
-      mprintf("     ");
+      mprintf(L"     ");
   }
-#endif
   if (DataIO!=NULL)
   {
-    if (HeaderType==ENDARC_HEAD)
+    if (HeaderType==HEAD_ENDARC)
       DataIO->UnpVolume=false;
     else
     {
-      DataIO->UnpVolume=(hd->Flags & LHD_SPLIT_AFTER)!=0;
-      DataIO->SetPackedSizeToRead(hd->FullPackSize);
+      DataIO->UnpVolume=hd->SplitAfter;
+      DataIO->SetPackedSizeToRead(hd->PackSize);
     }
-#ifdef SFX_MODULE
-    DataIO->UnpArcSize=Arc.FileLength();
-#endif
-    
+
+    DataIO->AdjustTotalArcSize(&Arc);
+      
     // Reset the size of packed data read from current volume. It is used
     // to display the total progress and preceding volumes are already
     // compensated with ProcessedArcSize, so we need to reset this variable.
     DataIO->CurUnpRead=0;
 
-    DataIO->PackedCRC=0xffffffff;
-//    DataIO->SetFiles(&Arc,NULL);
+    DataIO->PackedDataHash.Init(hd->FileHash.Type,Cmd->Threads);
   }
-  return(true);
+  return true;
 }
 
-#if defined(RARDLL) && defined(_MSC_VER) && !defined(_WIN_64)
-// Restore the run time stack check for unrar.dll.
-#pragma runtime_checks( "s", restore )
+
+
+
+
+
+#ifdef RARDLL
+bool DllVolChange(RAROptions *Cmd,wchar *NextName,size_t NameSize)
+{
+  bool DllVolChanged=false,DllVolAborted=false;
+
+  if (Cmd->Callback!=NULL)
+  {
+    wchar OrgNextName[NM];
+    wcsncpyz(OrgNextName,NextName,ASIZE(OrgNextName));
+    if (Cmd->Callback(UCM_CHANGEVOLUMEW,Cmd->UserData,(LPARAM)NextName,RAR_VOL_ASK)==-1)
+      DllVolAborted=true;
+    else
+      if (wcscmp(OrgNextName,NextName)!=0)
+        DllVolChanged=true;
+      else
+      {
+        char NextNameA[NM],OrgNextNameA[NM];
+        WideToChar(NextName,NextNameA,ASIZE(NextNameA));
+        strncpyz(OrgNextNameA,NextNameA,ASIZE(OrgNextNameA));
+        if (Cmd->Callback(UCM_CHANGEVOLUME,Cmd->UserData,(LPARAM)NextNameA,RAR_VOL_ASK)==-1)
+          DllVolAborted=true;
+        else
+          if (strcmp(OrgNextNameA,NextNameA)!=0)
+          {
+            // We can damage some Unicode characters by U->A->U conversion,
+            // so set Unicode name only if we see that ANSI name is changed.
+            CharToWide(NextNameA,NextName,NameSize);
+            DllVolChanged=true;
+          }
+      }
+  }
+  if (!DllVolChanged && Cmd->ChangeVolProc!=NULL)
+  {
+    char NextNameA[NM];
+    WideToChar(NextName,NextNameA,ASIZE(NextNameA));
+    int RetCode=Cmd->ChangeVolProc(NextNameA,RAR_VOL_ASK);
+    if (RetCode==0)
+      DllVolAborted=true;
+    else
+      CharToWide(NextNameA,NextName,NameSize);
+  }
+
+  // We quit only on 'abort' condition, but not on 'name not changed'.
+  // It is legitimate for program to return the same name when waiting
+  // for currently non-existent volume.
+  // Also we quit to prevent an infinite loop if no callback is defined.
+  if (DllVolAborted || Cmd->Callback==NULL && Cmd->ChangeVolProc==NULL)
+  {
+    Cmd->DllError=ERAR_EOPEN;
+    return false;
+  }
+  return true;
+}
 #endif
 
 
-
-
-
-
-#ifndef SILENT
-bool AskNextVol(char *ArcName,wchar *ArcNameW)
+#ifdef RARDLL
+bool DllVolNotify(RAROptions *Cmd,wchar *NextName)
 {
-  eprintf(St(MAskNextVol),ArcName);
-  if (Ask(St(MContinueQuit))==2)
-    return(false);
-  return(true);
+  char NextNameA[NM];
+  WideToChar(NextName,NextNameA,ASIZE(NextNameA));
+  if (Cmd->Callback!=NULL)
+  {
+    if (Cmd->Callback(UCM_CHANGEVOLUMEW,Cmd->UserData,(LPARAM)NextName,RAR_VOL_NOTIFY)==-1)
+      return false;
+    if (Cmd->Callback(UCM_CHANGEVOLUME,Cmd->UserData,(LPARAM)NextNameA,RAR_VOL_NOTIFY)==-1)
+      return false;
+  }
+  if (Cmd->ChangeVolProc!=NULL)
+  {
+    int RetCode=Cmd->ChangeVolProc(NextNameA,RAR_VOL_NOTIFY);
+    if (RetCode==0)
+      return false;
+  }
+  return true;
 }
 #endif

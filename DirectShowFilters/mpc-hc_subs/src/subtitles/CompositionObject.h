@@ -1,5 +1,5 @@
 /*
- * (C) 2009-2012 see Authors.txt
+ * (C) 2009-2015 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -21,6 +21,7 @@
 #pragma once
 
 #include "Rasterizer.h"
+#include "ColorConvTable.h"
 
 
 struct HDMV_PALETTE {
@@ -42,45 +43,47 @@ public:
     bool  m_forced_on_flag;
     BYTE  m_version_number;
 
-    short m_horizontal_position;
-    short m_vertical_position;
-    short m_width;
-    short m_height;
+    LONG m_horizontal_position;
+    LONG m_vertical_position;
+    LONG m_width;
+    LONG m_height;
 
-    short m_cropping_horizontal_position;
-    short m_cropping_vertical_position;
-    short m_cropping_width;
-    short m_cropping_height;
+    LONG m_cropping_horizontal_position;
+    LONG m_cropping_vertical_position;
+    LONG m_cropping_width;
+    LONG m_cropping_height;
 
     CompositionObject();
+    CompositionObject(const CompositionObject& obj);
     ~CompositionObject();
 
-    void  SetRLEData(const BYTE* pBuffer, int nSize, int nTotalSize);
-    void  AppendRLEData(const BYTE* pBuffer, int nSize);
-    const BYTE* GetRLEData() { return m_pRLEData; };
-    int   GetRLEDataSize() { return m_nRLEDataSize; };
-    bool  IsRLEComplete() { return m_nRLEPos >= m_nRLEDataSize; };
-    void  RenderHdmv(SubPicDesc& spd);
-    void  RenderDvb(SubPicDesc& spd, short nX, short nY);
-    void  WriteSeg(SubPicDesc& spd, short nX, short nY, short nCount, short nPaletteIndex);
-    void  SetPalette(int nNbEntry, HDMV_PALETTE* pPalette, bool bIsHD);
-    void  SetPalette(int nNbEntry, DWORD* dwColors);
-    bool  HavePalette() { return m_nColorNumber > 0; };
+    void  Init();
+    void  Reset();
 
-    CompositionObject* Copy() {
-        CompositionObject* pCompositionObject = DEBUG_NEW CompositionObject(*this);
-        pCompositionObject->m_pRLEData = NULL;
-        pCompositionObject->SetRLEData(m_pRLEData, m_nRLEDataSize, m_nRLEDataSize);
+    void SetRLEData(const BYTE* pBuffer, size_t nSize, size_t nTotalSize);
+    void AppendRLEData(const BYTE* pBuffer, size_t nSize);
+    const BYTE* GetRLEData() const { return m_pRLEData; };
+    size_t GetRLEDataSize() const { return m_nRLEDataSize; };
+    size_t GetRLEPos() const { return m_nRLEPos; };
+    bool IsRLEComplete() const { return m_nRLEPos >= m_nRLEDataSize; };
+    void RenderHdmv(SubPicDesc& spd);
+    void RenderDvb(SubPicDesc& spd, short nX, short nY);
+    void WriteSeg(SubPicDesc& spd, short nX, short nY, short nCount, short nPaletteIndex);
+    void SetPalette(int nNbEntry, const HDMV_PALETTE* pPalette, ColorConvTable::YuvMatrixType currentMatrix);
+    bool HavePalette() const { return m_nColorNumber > 0; };
 
-        return pCompositionObject;
-    }
+    // Forbid the use of direct affectation for now, it would be dangerous because
+    // of possible leaks and double frees. We could do a deep copy to be safe but
+    // it could possibly hurt the performance if we forgot about this and start
+    // using affectation a lot.
+    CompositionObject& operator=(const CompositionObject&) = delete;
 
 private:
     BYTE* m_pRLEData;
-    int   m_nRLEDataSize;
-    int   m_nRLEPos;
-    int   m_nColorNumber;
-    DWORD m_Colors[256];
+    size_t m_nRLEDataSize;
+    size_t m_nRLEPos;
+    int m_nColorNumber;
+    std::array<DWORD, 256> m_colors;
 
     void  DvbRenderField(SubPicDesc& spd, CGolombBuffer& gb, short nXStart, short nYStart, short nLength);
     void  Dvb2PixelsCodeString(SubPicDesc& spd, CGolombBuffer& gb, short& nX, short& nY);

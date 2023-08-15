@@ -1,5 +1,7 @@
 #pragma once
 #include "Subresync.h"
+#include "../filters/renderer/VideoRenderers/RenderersSettings.h"
+#include "..\mpc-hc\RegexUtil.h"
 
 class CRenderedTextSubtitle;
 
@@ -10,6 +12,7 @@ extern CSize g_textureSize;
 extern bool g_pow2tex;
 extern BOOL g_disableAnim;
 extern BOOL g_onlyShowForcedSubs;
+extern CRenderersSettings g_rendSet;
 
 class CSubManager
 {

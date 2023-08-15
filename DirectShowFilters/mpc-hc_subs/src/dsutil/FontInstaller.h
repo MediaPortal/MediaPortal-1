@@ -1,6 +1,6 @@
 /*
  * (C) 2003-2006 Gabest
- * (C) 2006-2012 see Authors.txt
+ * (C) 2006-2012, 2014 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -26,13 +26,14 @@
 class CFontInstaller
 {
     HANDLE(WINAPI* pAddFontMemResourceEx)(PVOID, DWORD, PVOID, DWORD*);
-    BOOL (WINAPI* pRemoveFontMemResourceEx)(HANDLE);
     int (WINAPI* pAddFontResourceEx)(LPCTSTR, DWORD, PVOID);
+    BOOL (WINAPI* pRemoveFontMemResourceEx)(HANDLE);
     BOOL (WINAPI* pRemoveFontResourceEx)(LPCTSTR, DWORD, PVOID);
     BOOL (WINAPI* pMoveFileEx)(LPCTSTR, LPCTSTR, DWORD);
 
     CAtlList<HANDLE> m_fonts;
     CAtlList<CString> m_files;
+	CAtlList<CString> m_tempfonts;
     bool InstallFontFile(const void* pData, UINT len);
 
 public:
@@ -42,5 +43,6 @@ public:
     bool InstallFont(const CAtlArray<BYTE>& data);
     bool InstallFont(const void* pData, UINT len);
     bool InstallFontMemory(const void* pData, UINT len);
+	bool InstallTempFontFile(LPCTSTR fn);
     void UninstallFonts();
 };

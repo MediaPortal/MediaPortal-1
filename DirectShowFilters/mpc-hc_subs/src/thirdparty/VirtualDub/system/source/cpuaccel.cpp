@@ -26,7 +26,7 @@
 #include "stdafx.h"
 #include <wtypes.h>
 #include <winnt.h>
-#include <intrin.h>
+#include <vd2/system/win32/intrin.h>
 #include <vd2/system/cpuaccel.h>
 
 static long g_lCPUExtensionsEnabled;
@@ -124,6 +124,9 @@ long CPUCheckForExtensions() {
 
 			if (cpuInfo[2] & 0x00080000)
 				flags |= CPUF_SUPPORTS_SSE41;
+
+			if (cpuInfo[2] & 0x00100000)
+				flags |= CPUF_SUPPORTS_SSE42;
 
 			// check OSXSAVE and AVX bits
 			if ((cpuInfo[2] & ((1 << 27) | (1 << 28))) == ((1 << 27) | (1 << 28))) {

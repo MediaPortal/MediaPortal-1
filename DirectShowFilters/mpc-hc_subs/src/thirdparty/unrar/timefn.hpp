@@ -9,7 +9,7 @@ struct RarLocalTime
   uint Hour;
   uint Minute;
   uint Second;
-  uint Reminder; // Part of time smaller than 1 second, represented in 100-nanosecond intervals.
+  uint Reminder; // Part of time smaller than 1 second, represented in 1/REMINDER_PRECISION intervals.
   uint wDay;
   uint yDay;
 };
@@ -18,37 +18,48 @@ struct RarLocalTime
 class RarTime
 {
   private:
-    RarLocalTime rlt;
+    static const uint TICKS_PER_SECOND = 1000000000; // Internal precision.
+
+    // Internal time representation in 1/TICKS_PER_SECOND since 01.01.1601.
+    // We use nanoseconds here to handle the high precision Unix time.
+    uint64 itime;
   public:
-    RarTime();
+    // RarLocalTime::Reminder precision. Must be equal to TICKS_PER_SECOND.
+    // Unlike TICKS_PER_SECOND, it is a public field.
+    static const uint REMINDER_PRECISION = TICKS_PER_SECOND;
+  public:
+    RarTime() {Reset();}
+    bool operator == (RarTime &rt) {return itime==rt.itime;}
+    bool operator != (RarTime &rt) {return itime!=rt.itime;}
+    bool operator < (RarTime &rt)  {return itime<rt.itime;}
+    bool operator <= (RarTime &rt) {return itime<rt.itime || itime==rt.itime;}
+    bool operator > (RarTime &rt)  {return itime>rt.itime;}
+    bool operator >= (RarTime &rt) {return itime>rt.itime || itime==rt.itime;}
+
+    void GetLocal(RarLocalTime *lt);
+    void SetLocal(RarLocalTime *lt);
 #ifdef _WIN_ALL
-    RarTime& operator =(FILETIME &ft);
-    void GetWin32(FILETIME *ft);
+    void GetWinFT(FILETIME *ft);
+    void SetWinFT(FILETIME *ft);
 #endif
-#if defined(_UNIX) || defined(_EMX)
-    RarTime& operator =(time_t ut);
+    uint64 GetWin();
+    void SetWin(uint64 WinTime);
     time_t GetUnix();
-#endif
-    bool operator == (RarTime &rt);
-    bool operator < (RarTime &rt);
-    bool operator <= (RarTime &rt);
-    bool operator > (RarTime &rt);
-    bool operator >= (RarTime &rt);
-    void GetLocal(RarLocalTime *lt) {*lt=rlt;}
-    void SetLocal(RarLocalTime *lt) {rlt=*lt;}
-    int64 GetRaw();
-    void SetRaw(int64 RawTime);
+    void SetUnix(time_t ut);
+    uint64 GetUnixNS();
+    void SetUnixNS(uint64 ns);
     uint GetDos();
     void SetDos(uint DosTime);
-    void GetText(char *DateStr,bool FullYear);
-    void SetIsoText(const char *TimeText);
-    void SetAgeText(const char *TimeText);
+    void GetText(wchar *DateStr,size_t MaxSize,bool FullMS);
+    void SetIsoText(const wchar *TimeText);
+    void SetAgeText(const wchar *TimeText);
     void SetCurrentTime();
-    void Reset() {rlt.Year=0;}
-    bool IsSet() {return(rlt.Year!=0);}
+    void Reset() {itime=0;}
+    bool IsSet() {return itime!=0;}
+    void Adjust(int64 ns);
 };
 
-const char *GetMonthName(int Month);
+const wchar *GetMonthName(int Month);
 bool IsLeapYear(int Year);
 
 #endif

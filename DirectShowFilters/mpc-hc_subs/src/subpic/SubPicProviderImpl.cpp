@@ -1,6 +1,6 @@
 /*
  * (C) 2003-2006 Gabest
- * (C) 2006-2012 see Authors.txt
+ * (C) 2006-2014 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -24,7 +24,7 @@
 #include "../DSUtil/DSUtil.h"
 
 CSubPicProviderImpl::CSubPicProviderImpl(CCritSec* pLock)
-    : CUnknown(NAME("CSubPicProviderImpl"), NULL)
+    : CUnknown(NAME("CSubPicProviderImpl"), nullptr)
     , m_pLock(pLock)
 {
 }
@@ -44,10 +44,22 @@ STDMETHODIMP CSubPicProviderImpl::NonDelegatingQueryInterface(REFIID riid, void*
 
 STDMETHODIMP CSubPicProviderImpl::Lock()
 {
-    return m_pLock ? m_pLock->Lock(), S_OK : E_FAIL;
+    CheckPointer(m_pLock, E_FAIL);
+#if DEBUG
+    if (m_pLock->m_currentOwner != 0 && m_pLock->m_currentOwner != GetCurrentThreadId()) {
+        TRACE(_T("CSubPicProviderImpl::Lock -> Lockcount=%d Lockowner=%d Thread=%d\n"), m_pLock->m_lockCount, m_pLock->m_currentOwner, GetCurrentThreadId());
+    };
+#endif
+    m_pLock->Lock();
+
+    return S_OK;
 }
 
 STDMETHODIMP CSubPicProviderImpl::Unlock()
 {
-    return m_pLock ? m_pLock->Unlock(), S_OK : E_FAIL;
+    CheckPointer(m_pLock, E_FAIL);
+
+    m_pLock->Unlock();
+
+    return S_OK;
 }

@@ -1,5 +1,5 @@
 /*
- * (C) 2008-2012 see Authors.txt
+ * (C) 2008-2013 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -20,8 +20,7 @@
 
 #pragma once
 
-
-typedef enum {
+enum NALU_TYPE {
     NALU_TYPE_SLICE    = 1,
     NALU_TYPE_DPA      = 2,
     NALU_TYPE_DPB      = 3,
@@ -34,7 +33,7 @@ typedef enum {
     NALU_TYPE_EOSEQ    = 10,
     NALU_TYPE_EOSTREAM = 11,
     NALU_TYPE_FILL     = 12
-} NALU_TYPE;
+};
 
 
 class CH264Nalu
@@ -61,7 +60,7 @@ public:
         forbidden_bit(0),
         nal_reference_idc(0),
         nal_unit_type() {
-        SetBuffer(NULL, 0, 0);
+        SetBuffer(nullptr, 0, 0);
     }
 
     NALU_TYPE GetType() const { return nal_unit_type; };

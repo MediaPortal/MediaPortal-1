@@ -8,25 +8,34 @@ class RawRead
     File *SrcFile;
     size_t DataSize;
     size_t ReadPos;
-#ifndef SHELL_EXT
     CryptData *Crypt;
-#endif
   public:
+    RawRead();
     RawRead(File *SrcFile);
-    void Read(size_t Size);
+    void Reset();
+    size_t Read(size_t Size);
     void Read(byte *SrcData,size_t Size);
-    void Get(byte &Field);
-    void Get(ushort &Field);
-    void Get(uint &Field);
-    void Get8(int64 &Field);
-    void Get(byte *Field,size_t Size);
-    void Get(wchar *Field,size_t Size);
-    uint GetCRC(bool ProcessedOnly);
+    byte   Get1();
+    ushort Get2();
+    uint   Get4();
+    uint64 Get8();
+    uint64 GetV();
+    uint   GetVSize(size_t Pos);
+    size_t GetB(void *Field,size_t Size);
+    void GetW(wchar *Field,size_t Size);
+    uint GetCRC15(bool ProcessedOnly);
+    uint GetCRC50();
+    byte* GetDataPtr() {return &Data[0];}
     size_t Size() {return DataSize;}
     size_t PaddedSize() {return Data.Size()-DataSize;}
-#ifndef SHELL_EXT
+    size_t DataLeft() {return DataSize-ReadPos;}
+    size_t GetPos() {return ReadPos;}
+    void SetPos(size_t Pos) {ReadPos=Pos;}
+    void Skip(size_t Size) {ReadPos+=Size;}
+    void Rewind() {SetPos(0);}
     void SetCrypt(CryptData *Crypt) {RawRead::Crypt=Crypt;}
-#endif
 };
+
+uint64 RawGetV(const byte *Data,uint &ReadPos,uint DataSize,bool &Overflow);
 
 #endif
