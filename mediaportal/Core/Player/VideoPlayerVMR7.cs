@@ -1830,7 +1830,7 @@ namespace MediaPortal.Player
 
       //MPC-HC 2.0.0
       //"[Local] 4-3 bar test.English-Forced.srt\tEnglish"
-      Regex regexMPCHC = new Regex(@"\[([^\]]+)\]\s(?<file>[^\t]+)(\t(?<lng>.+))?");
+      Regex regexMPCHC = new Regex(@"^\[([^\]]+)\]\s(?<file>[^\t]+)(\t(?<lng>.+))?");
       Match match = regexMPCHC.Match(streamName);
       if (match.Success)
       {
@@ -1936,7 +1936,7 @@ namespace MediaPortal.Player
 
       //MPC-HC 2.0.0
       //"[Local] 4-3 bar test.English-Forced.srt\tEnglish"
-      Regex regexMPCHC = new Regex(@"\[([^\]]+)\]\s(?<file>[^\t]+)(\t(?<lng>.+))?");
+      Regex regexMPCHC = new Regex(@"^\[([^\]]+)\]\s(?<file>[^\t]+)(\t(?<lng>.+))?");
       Match match = regexMPCHC.Match(streamName);
       if (match.Success)
       {
