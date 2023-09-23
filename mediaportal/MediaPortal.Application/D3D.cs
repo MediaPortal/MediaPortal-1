@@ -726,6 +726,12 @@ namespace MediaPortal
               lock (GUIGraphicsContext.RenderLock)
               {
                 GUIGraphicsContext.DX9Device.EvictManagedResources();
+
+                if (GUIGraphicsContext.SwapChain != null)
+                {
+                  GUIGraphicsContext.SwapChain.Dispose();
+                  GUIGraphicsContext.SwapChain = null;
+                }
               }
 
               if (useBackup)
@@ -737,6 +743,11 @@ namespace MediaPortal
                   lock (GUIGraphicsContext.RenderLock)
                   {
                     GUIGraphicsContext.DX9Device.Reset(_presentParamsBackup);
+
+                    if (GUIGraphicsContext.DX9Device is DeviceEx)
+                      GUIGraphicsContext.SwapChain = new SwapChain9Ex(((DeviceEx)GUIGraphicsContext.DX9Device).GetSwapChain(0).NativePointer);
+                    else
+                      GUIGraphicsContext.SwapChain = GUIGraphicsContext.DX9Device.GetSwapChain(0);
                   }
                 }
                 catch (SharpDXException ex)
@@ -785,6 +796,11 @@ namespace MediaPortal
                   lock (GUIGraphicsContext.RenderLock)
                   {
                     GUIGraphicsContext.DX9Device.Reset(_presentParams);
+
+                    if (GUIGraphicsContext.DX9Device is DeviceEx)
+                      GUIGraphicsContext.SwapChain = new SwapChain9Ex(((DeviceEx)GUIGraphicsContext.DX9Device).GetSwapChain(0).NativePointer);
+                    else
+                      GUIGraphicsContext.SwapChain = GUIGraphicsContext.DX9Device.GetSwapChain(0);
                   }
                 }
                 catch (SharpDXException ex)
@@ -1795,6 +1811,11 @@ namespace MediaPortal
       Log.Debug("D3D: Backup PresentParams with buffer size set to: {0}x{1}", _presentParamsBackup.BackBufferWidth, _presentParamsBackup.BackBufferHeight);
 
 
+      if (GUIGraphicsContext.SwapChain != null)
+      {
+        GUIGraphicsContext.SwapChain.Dispose();
+        GUIGraphicsContext.SwapChain = null;
+      }
 
       if (GUIGraphicsContext.DX9Device != null)
       {
