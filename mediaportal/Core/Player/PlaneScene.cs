@@ -125,12 +125,6 @@ namespace MediaPortal.Player
     private bool UiVisible { get; set; }
     protected internal Thread WorkerThread = null;
 
-    private PresentationStatistics _PresentationStatisticsLast;
-    private Present _PresentModeNext = Present.None;
-    private bool _PresentSceneInitComplete = false;
-    private bool _PresentSceneFrameDropCheck = false;
-    private int _PresentSceneVblankMultiplier = 1;
-
     #endregion
 
     #region ctor
@@ -379,10 +373,6 @@ namespace MediaPortal.Player
           Log.Error("PlaceScene: Init: {0}", ex.Message);
         }
       }
-
-      //Presentation init
-      this._PresentSceneInitComplete = false;
-      
     }
 
     /// <summary>
@@ -701,9 +691,6 @@ namespace MediaPortal.Player
       {
         try
         {
-          if (!this._PresentSceneInitComplete)
-            this.PresentSceneInit();
-
           // Alert the frame grabber that it has a chance to grab a video frame
           // if it likes (method returns immediately otherwise
           if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
@@ -2021,143 +2008,10 @@ namespace MediaPortal.Player
       }
     }
 
-    private void PresentSceneInit()
-    {
-      double dFpsMedia;
-      double dFpsAdapter = GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
-
-      //PresentationParameters availabale in FLIPEX mode only
-      this._PresentSceneFrameDropCheck = GUIGraphicsContext.PresentationParameters.SwapEffect == SwapEffect.FlipEx;
-
-      if (g_Player.MediaInfo == null)
-      {
-        Log.Debug("PlaneScene: PresentScene: Init: MediaInfo not available");
-
-        // FPS_SOURCE_ADAPTIVE = 0
-        // FPS_SOURCE_SAMPLE_TIMESTAMP = 1
-        // FPS_SOURCE_SAMPLE_DURATION= 2
-        // FPS_SOURCE_EVR_MIXER = 3
-        dFpsMedia = this._vmr9Util.GetEVRVideoFPS(3);
-        if (dFpsMedia > 0)
-          Log.Debug("PlaneScene: PresentScene: Init: Got media FPS from EVR: " + dFpsMedia);
-        else
-          this._PresentSceneFrameDropCheck = false;
-      }
-      else
-      {
-        dFpsMedia = g_Player.MediaInfo.Framerate;
-        if (g_Player.MediaInfo.IsInterlaced)
-          dFpsMedia *= 2;
-      }
-
-      if (dFpsAdapter == 0)
-      {
-        this._PresentSceneFrameDropCheck = false;
-        Log.Debug("PlaneScene: PresentScene: Init: AdapterRefreshRate not available");
-      }
-
-      //Check ratio between AdapterRefreshRate & media FPS
-      //To check late Present() call the MediaFPS must match AdapterRefreshRate
-      if (this._PresentSceneFrameDropCheck)
-      {
-        double dRatio = dFpsAdapter / dFpsMedia;
-        this._PresentSceneVblankMultiplier = (int)Math.Round(dRatio);
-        if (this._PresentSceneVblankMultiplier < 1 || Math.Abs(dRatio - this._PresentSceneVblankMultiplier) > 0.005)
-        {
-          this._PresentSceneFrameDropCheck = false;
-          this._PresentSceneVblankMultiplier = 1;
-          Log.Debug("PlaneScene: PresentScene: Init: AdapterRefreshRate vs. MediaFPS ratio mismatch. Adapter:{0}  Media:{1}", dFpsAdapter, dFpsMedia);
-        }
-        else
-        {
-          //OK: Init
-          Log.Debug("PlaneScene: PresentScene: Init: AdapterRefreshRate vs. MediaFPS ratio is valid. Adapter:{0}  Media:{1}", dFpsAdapter, dFpsMedia);
-
-          this._PresentationStatisticsLast = default;
-          this._PresentModeNext = Present.None;
-        }
-      }
-
-      this._PresentSceneInitComplete = true;
-
-      Log.Debug("PlaneScene: PresentScene: Init complete. FrameDropCheck:{0}  VblankMultiplier:{1}",
-        this._PresentSceneFrameDropCheck, this._PresentSceneVblankMultiplier);
-    }
-
     private void PresentScene(bool bIsRepaint)
     {
-      //Audio/video sync: we need to check if Present() call wasn't too late (after Vsync)
-      //Use this procedure only if AdapterRefreshRate matches video FPS
-      if (this._PresentSceneFrameDropCheck )
-      {
-        //Present()
-        ((DeviceEx)GUIGraphicsContext.DX9Device).PresentEx(this._PresentModeNext);
-
-        //Reset stats when repainting 
-        if (bIsRepaint)
-        {
-          this._PresentModeNext = Present.None;
-
-          //Reset stats for next check
-          this._PresentationStatisticsLast = default;
-        }
-        else
-        {
-          //Get PresentStats
-
-          //PresentCount:
-          //Running count of successful Present calls made by a display device that is currently outputting to screen.
-          //This parameter is really the Present ID of the last Present call and is not necessarily the total number of Present API calls made.
-
-          //PresentRefreshCount:
-          //The vblank count at which the last Present was displayed on screen, the vblank count increments once every vblank interval.
-
-          //Exceptions:
-          //0x88760884 = "D3DERR_PRESENT_STATISTICS_DISJOINT"; The present statistics have no orderly sequence. Direct3D 9Ex under Windows 7 only.
-
-          PresentationStatistics stats;
-          try
-          {
-            stats = ((SwapChain9Ex)GUIGraphicsContext.SwapChain).PresentStats;
-          }
-          catch (SharpDX.SharpDXException ex)
-          {
-            if (ex.ResultCode != 0x88760884) //D3DERR_PRESENT_STATISTICS_DISJOINT
-              Log.Debug("Planescene: PresentScene: {0}", ex.Message);
-
-            stats = default;
-          }
-          catch (Exception ex)
-          {
-            Log.Debug("Planescene: PresentScene: {0}", ex.Message);
-            stats = default;
-          }
-
-          //Check differences between the current stats and the last stats
-          if (this._PresentModeNext == Present.None
-            && (stats.PresentCount - this._PresentationStatisticsLast.PresentCount)
-            != ((stats.PresentRefreshCount - this._PresentationStatisticsLast.PresentRefreshCount) / this._PresentSceneVblankMultiplier))
-          {
-            //Number of Vblanks doesn't match the number of Present() calls; we are out of sync
-            //Next Present() call must skip intermediate frames.
-
-            //Set next Present() to 'ForceImmediate'
-            this._PresentModeNext = Present.ForceImmediate;
-
-            Log.Debug("PlaneScene: Late Present() detected. PresentCount:{0} PresentCountLast:{2} PresentRefreshCount:{1} PresentRefreshCountLast:{3}",
-              stats.PresentCount,
-              stats.PresentRefreshCount,
-              this._PresentationStatisticsLast.PresentCount,
-              this._PresentationStatisticsLast.PresentRefreshCount
-              );
-          }
-          else
-            this._PresentModeNext = Present.None;
-
-          //Remember stats for next check
-          this._PresentationStatisticsLast = stats;
-        }
-      }
+      if (GUIGraphicsContext.PresentationParameters.SwapEffect == SwapEffect.FlipEx)
+        ((DeviceEx)GUIGraphicsContext.DX9Device).PresentEx(Present.ForceImmediate);
       else
         GUIGraphicsContext.DX9Device.Present();
     }
