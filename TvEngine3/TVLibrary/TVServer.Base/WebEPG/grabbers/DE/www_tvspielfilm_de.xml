@@ -215,6 +215,8 @@
 					<TemplateText>
 					<![CDATA[
 							<li>
+							<source>
+							<source>
 							<span class="t"><#START> - <#END> | </span>
 							<span class="c"></span></div>
 							<div class="">
