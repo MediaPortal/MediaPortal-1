@@ -1844,7 +1844,9 @@ namespace MediaPortal.Player
                 SubEngine.GetInstance().Render(_subsRect, _destinationRect, 0);
               }
 
-              GUIGraphicsContext.DX9Device.Present();
+              //Present
+              this.PresentScene(isRepaint);
+
               backbuffer.Dispose();
 
               auto3DSurface.Dispose();
@@ -1888,7 +1890,8 @@ namespace MediaPortal.Player
                 GUIGraphicsContext.DX9Device.EndScene();
               }
 
-              GUIGraphicsContext.DX9Device.Present();
+              //Present
+              this.PresentScene(isRepaint);
             }
           }
           else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide ||
@@ -1963,7 +1966,9 @@ namespace MediaPortal.Player
               SubEngine.GetInstance().Render(_subsRect, _destinationRect, 0);
             }
 
-            GUIGraphicsContext.DX9Device.Present();
+            //Present
+            this.PresentScene(isRepaint);
+
             backbuffer.Dispose();
 
             auto3DSurface.Dispose();
@@ -2001,6 +2006,14 @@ namespace MediaPortal.Player
         _reEntrant = false;
         GUIGraphicsContext.InVmr9Render = false;
       }
+    }
+
+    private void PresentScene(bool bIsRepaint)
+    {
+      if (GUIGraphicsContext.PresentationParameters.SwapEffect == SwapEffect.FlipEx)
+        ((DeviceEx)GUIGraphicsContext.DX9Device).PresentEx(Present.ForceImmediate);
+      else
+        GUIGraphicsContext.DX9Device.Present();
     }
 
     private void DrawTextureSegment(VertexBuffer vertexBuffer, float srcX, float srcY, float srcWidth, float srcHeight,
