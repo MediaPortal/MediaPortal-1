@@ -310,7 +310,19 @@ STDMETHODIMP CMPAudioRenderer::GetState(DWORD dwMSecs, FILTER_STATE* State)
   if (m_State == State_Paused && (m_pRenderer->BufferredDataDuration() <= (m_pSettings->GetOutputBuffer() * 10000)) &&
     (GetCurrentTimestamp() - m_lastSampleArrivalTime < SAMPLE_RECEIVE_TIMEOUT)) 
   {
-    NotifyEvent(EC_STARVATION, 0, 0);
+    /*
+      EC_STARVATION
+      A filter is not receiving enough data.
+      The event is not sent to the application.
+      If the filter graph is running, the filter graph manager pauses the graph and waits for the pause to complete. Then it runs the graph again.
+      The filter sending the event should not complete its transition to paused until it has enough data to resume.
+      If the filter graph is not running, the filter graph manager ignores this event.
+    */
+
+    // We should not report this event while in paused state: it sometimes causes graph to pause/resume again right after the resume is complete,
+    // and it leads to issues in WASAPI renderer (early sample check) 
+    //NotifyEvent(EC_STARVATION, 0, 0);
+
     *State = State_Paused;
 
     return VFW_S_STATE_INTERMEDIATE;
