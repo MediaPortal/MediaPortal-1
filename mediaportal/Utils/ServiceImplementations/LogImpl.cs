@@ -63,7 +63,7 @@ namespace MediaPortal.ServiceImplementations
       //BackupLogFiles();
       using (Settings xmlreader = new MPSettings())
       {
-        _minLevel = (Level)Enum.Parse(typeof (Level), xmlreader.GetValueAsString("general", "loglevel", "3")); // set loglevel to 2:info 3:debug
+        _minLevel = (Level)Enum.Parse(typeof (Level), xmlreader.GetValueAsString("general", "loglevel", "2")); // set loglevel to 2:info 3:debug
       }
       bConfiguration = false;
     }
