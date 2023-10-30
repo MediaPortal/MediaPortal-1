@@ -283,6 +283,7 @@ CStreamSwitcherInputPin::CStreamSwitcherInputPin(CStreamSwitcherFilter* pFilter,
 	, m_bSampleSkipped(FALSE)
 	, m_bQualityChanged(FALSE)
 	, m_bUsingOwnAllocator(FALSE)
+	, m_bSampleSetMedia(FALSE)
 	, m_evBlock(TRUE)
 	, m_fCanBlock(false)
 	, m_hNotifyEvent(NULL)
@@ -760,6 +761,8 @@ STDMETHODIMP CStreamSwitcherInputPin::Receive(IMediaSample* pSample)
 		((CStreamSwitcherFilter*)m_pFilter)->OnNewOutputMediaType(m_mt, mtOut);
 		pOutSample->SetMediaType(&mtOut);
 	}
+	else if (m_bSampleSetMedia)
+		pOutSample->SetMediaType(&mtOut);
 
 	// Transform
 
@@ -770,7 +773,22 @@ STDMETHODIMP CStreamSwitcherInputPin::Receive(IMediaSample* pSample)
     if(S_OK == hr)
 	{
 		hr = pOut->Deliver(pOutSample);
-        m_bSampleSkipped = FALSE;
+		if (FAILED(hr))
+		{
+			//sample was not delivered (usually becouse of flushing)
+			if (fTypeChanged)
+			{
+				//next sample must carry the mediatype and AM_SAMPLE_TYPECHANGED flag set
+				m_bSampleSetMedia = TRUE;
+			}
+
+			m_bSampleSkipped = TRUE;
+		}
+		else
+		{
+			m_bSampleSetMedia = FALSE;
+			m_bSampleSkipped = FALSE;
+		}
 /*
 		if(FAILED(hr))
 		{

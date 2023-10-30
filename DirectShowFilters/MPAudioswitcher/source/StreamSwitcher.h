@@ -128,6 +128,7 @@ class CStreamSwitcherInputPin : public CBaseInputPin, public IPinConnection, pub
 	BOOL m_bSampleSkipped;
 	BOOL m_bQualityChanged;
 	BOOL m_bUsingOwnAllocator;
+	BOOL m_bSampleSetMedia;
 
 	CAMEvent m_evBlock;
 	bool m_fCanBlock;
