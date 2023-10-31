@@ -25,6 +25,7 @@ struct CLOCKDATA
   double driftHWvsSystem;
   double currentDrift;
   double resamplingAdjustment;
+  bool maintainSoundPitch;
 };
 
 // {91A198BA-1C78-4c31-A50F-0F5C7578F078}
@@ -35,6 +36,7 @@ MIDL_INTERFACE("91A198BA-1C78-4c31-A50F-0F5C7578F078")
 IAVSyncClock: public IUnknown
 {
 public:
+  virtual HRESULT STDMETHODCALLTYPE SetCurrentPhaseDifference(DOUBLE dDiff, DOUBLE dDiffAvg) = 0;
   virtual HRESULT STDMETHODCALLTYPE AdjustClock(DOUBLE adjustment) = 0;
   virtual HRESULT STDMETHODCALLTYPE SetBias(DOUBLE bias) = 0;
   virtual HRESULT STDMETHODCALLTYPE GetBias(DOUBLE *bias) = 0;
@@ -42,6 +44,5 @@ public:
   virtual HRESULT STDMETHODCALLTYPE GetMinBias(DOUBLE *bias) = 0;
   virtual HRESULT STDMETHODCALLTYPE GetClockData(CLOCKDATA *clockData) = 0;
   virtual HRESULT STDMETHODCALLTYPE SetEVRPresentationDelay(DOUBLE EVRDelay) = 0;
-
 };
 #endif // IAVSYNCCLOCK

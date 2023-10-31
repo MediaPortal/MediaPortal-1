@@ -793,11 +793,24 @@ HRESULT CMPAudioRenderer::EndFlush()
 
 // IAVSyncClock interface implementation
 
+HRESULT CMPAudioRenderer::SetCurrentPhaseDifference(DOUBLE dDiff, DOUBLE dDiffAvg)
+{
+    CAutoLock cs(&m_csAudioRenderer);
+
+    if (m_pSettings->GetUseTimeStretching() && m_pSettings->GetEnableSyncAdjustment() && !m_pSettings->GetMaintainSoundPitch())
+    {
+        m_pClock->SetCurrentPhaseDifference(dDiff, dDiffAvg);
+        return S_OK;
+    }
+    else
+        return S_FALSE;
+}
+
 HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
 {
   CAutoLock cs(&m_csAudioRenderer);
 
-  if (m_pSettings->GetUseTimeStretching() && m_pSettings->GetEnableSyncAdjustment())
+  if (m_pSettings->GetUseTimeStretching() && m_pSettings->GetEnableSyncAdjustment() && m_pSettings->GetMaintainSoundPitch())
   {
     m_dAdjustment = pAdjustment;
     m_pClock->SetAdjustment(m_dAdjustment);

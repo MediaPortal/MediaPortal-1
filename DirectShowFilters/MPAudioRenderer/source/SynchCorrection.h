@@ -33,92 +33,113 @@
 #define QUALITY_CORRECTION_MULTIPLIER 1.02 //correction rate
 #define QUALITY_BIAS_LIMIT 0.01 // if the bias is within this of one we use quality mode
 
-typedef struct stSampleTimeData 
+typedef struct stSampleTimeData
 {
-  INT64 rtOriginalSampleStart;
-  INT64 rtAdjustedSampleStart;
-  INT64 rtOriginalSampleEnd;
-  INT64 rtAdjustedSampleEnd;
+	INT64 rtOriginalSampleStart;
+	INT64 rtAdjustedSampleStart;
+	INT64 rtOriginalSampleEnd;
+	INT64 rtAdjustedSampleEnd;
 } SampleTimeData;
 
 class SynchCorrection
 {
 public:
-  SynchCorrection(AudioRendererSettings* pSettings, Logger* pLogger);
-  ~SynchCorrection();
+	SynchCorrection(AudioRendererSettings* pSettings, Logger* pLogger);
+	~SynchCorrection();
 
-  void Flush();
-  // Call reset when a discontinuity happens in the audio stream (drifting resets to zero etc)
-  void Reset(bool soft);
-  void Reset(double dBias);
-  void Reset(double dBias, REFERENCE_TIME tStart);
-  
-  // Suggested adjustment - this can be ignored if you want
-  double SuggestedAudioMultiplier(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime, double bias, double adjustment);
-  // estimate of the current drift
-  double GetCurrentDrift(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime);
+	void Flush();
+	// Call reset when a discontinuity happens in the audio stream (drifting resets to zero etc)
+	void Reset(bool soft);
+	void Reset(double dBias);
+	void Reset(double dBias, REFERENCE_TIME tStart);
 
-  // Used for the adjustment - it also corrects bias
-  void SetAdjustment(double adjustment);
-  double GetAdjustment();
+	// Suggested adjustment - this can be ignored if you want
+	double SuggestedAudioMultiplier(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime, double bias, double adjustment);
+	// estimate of the current drift
+	double GetCurrentDrift(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime);
 
-  void SetBias(double bias);
-  double GetBias();
+	// Used for the adjustment - it also corrects bias
+	void SetCurrentPhaseDifference(double dDiff, double dDiffAvg);
+	void SetAdjustment(double adjustment);
+	double GetAdjustment();
 
-  // gets and sets the audio delay in 10 shake units
-  void SetAudioDelay(INT64 delay);
-  INT64 GetAudioDelay();
+	void SetBias(double bias);
+	double GetBias();
 
-  // gets and sets the audio delay required by the EVR presenter in 10 shake units
-  void SetPresenterInducedAudioDelay(INT64 delay);
-  INT64 GetPresenterInducedAudioDelay();
+	// gets and sets the audio delay in 10 shake units
+	void SetAudioDelay(INT64 delay);
+	INT64 GetAudioDelay();
 
-  // Recalculation of the delta value for the reference clock
-  INT64 GetCorrectedTimeDelta(INT64 time, REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime);
+	// gets and sets the audio delay required by the EVR presenter in 10 shake units
+	void SetPresenterInducedAudioDelay(INT64 delay);
+	INT64 GetPresenterInducedAudioDelay();
 
-  UINT64 CalculateReferenceClock(UINT64 rtCurrentPlaybackTime, UINT64 rtPlaybackQpc, UINT64 rtCurrentQpc, UINT64 delta, UINT64 lastRefernceTime, UINT64 rtHwStart);
+	// Recalculation of the delta value for the reference clock
+	INT64 GetCorrectedTimeDelta(INT64 time, REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime);
 
-  void AddSample(INT64 rtOriginalStart, INT64 rtAdjustedStart, INT64 rtOriginalEnd, INT64 rtAdjustedEnd);
+	UINT64 CalculateReferenceClock(UINT64 rtCurrentPlaybackTime, UINT64 rtPlaybackQpc, UINT64 rtCurrentQpc, UINT64 delta, UINT64 lastRefernceTime, UINT64 rtHwStart);
 
-  REFERENCE_TIME GetReferenceTimeFromAudioSamples(REFERENCE_TIME rtAHwtime);
+	void AddSample(INT64 rtOriginalStart, INT64 rtAdjustedStart, INT64 rtOriginalEnd, INT64 rtAdjustedEnd);
 
-  INT64 CalculateDrift(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime);
+	REFERENCE_TIME GetReferenceTimeFromAudioSamples(REFERENCE_TIME rtAHwtime);
+
+	INT64 CalculateDrift(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime);
+
+	bool GetMaintainSoundPitch();
 
 private:
-  double GetRequiredAdjustment(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime, double bias, double adjustment);
-  double TotalAudioDrift(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime);
+	double GetRequiredAdjustment(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime, double bias, double adjustment);
+	double TotalAudioDrift(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime);
 
-  double m_dBiasCorrection;
-  double m_dlastAdjustment;
+	double m_dBiasCorrection;
+	double m_dlastAdjustment;
 
-  double m_dAudioDelay;
-  double m_dEVRAudioDelay;
+	double m_dAudioDelay;
+	double m_dEVRAudioDelay;
 
-  int m_iBiasDir;
-  double m_Bias;
-  double m_Adjustment;
-  double m_dDeltaError;
+	int m_iBiasDir;
+	double m_Bias;
+	double m_Adjustment;
+	double m_dDeltaError;
 
-  bool m_bQualityCorrectionOn;
-  int m_iQualityDir;
+	double m_dPhaseDiff;
+	double m_dPhaseDiffAvg;
+	double m_dPhaseBiasOffsetP;
+	double m_dPhaseBiasOffsetI;
 
-  std::queue<SampleTimeData*> m_qSampleTimes;
-  REFERENCE_TIME m_rtQueueDuration;
-  REFERENCE_TIME m_rtQueueAdjustedDuration;
+	bool m_bMaintainSoundPitch;
 
-  CCritSec m_csSampleQueueLock;
-  CCritSec m_csBiasLock;
-  CCritSec m_csAdjustmentLock;
-  CCritSec m_csDeltaLock;
-  
-  SampleTimeData * GetMatchingSampleForTime(REFERENCE_TIME time);
+	double m_dCurrentAdjustmentAvg;
 
-  REFERENCE_TIME m_rtStart;
-  REFERENCE_TIME m_rtAHwStart;
-  
-  bool m_rtAHwStartSet;
+	bool m_bQualityCorrectionOn;
+	int m_iQualityDir;
 
-  AudioRendererSettings* m_pSettings;
+	double m_dHwTimeLast;
+	double m_dAudioDriftOffsetI;
+	double m_dCurrentAdjustment;
 
-  Logger* m_pLogger;
+	double m_dAudioDriftAvg;
+	double m_dAudioDriftLast;
+	double m_dAudioDriftNew;
+	int m_iAudioDriftChangeCnt;
+
+	std::queue<SampleTimeData*> m_qSampleTimes;
+	REFERENCE_TIME m_rtQueueDuration;
+	REFERENCE_TIME m_rtQueueAdjustedDuration;
+
+	CCritSec m_csSampleQueueLock;
+	CCritSec m_csBiasLock;
+	CCritSec m_csAdjustmentLock;
+	CCritSec m_csDeltaLock;
+
+	SampleTimeData* GetMatchingSampleForTime(REFERENCE_TIME time);
+
+	REFERENCE_TIME m_rtStart;
+	REFERENCE_TIME m_rtAHwStart;
+
+	bool m_rtAHwStartSet;
+
+	AudioRendererSettings* m_pSettings;
+
+	Logger* m_pLogger;
 };

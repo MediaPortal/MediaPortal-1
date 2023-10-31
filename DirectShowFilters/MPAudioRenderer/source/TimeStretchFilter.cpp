@@ -33,19 +33,20 @@
   }
 
 CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings, CSyncClock* pClock, Logger* pLogger) :
-  CQueuedAudioSink(pSettings, pLogger),
-  m_Stream(NULL),
-  m_fCurrentTempo(1.0),
-  m_fNewAdjustment(1.0),
-  m_fCurrentAdjustment(1.0),
-  m_fNewTempo(1.0),
-  m_pMediaType(NULL),
-  m_rtInSampleTime(0),
-  m_rtLastOuputStart(0),
-  m_rtLastOuputEnd(-1),
-  m_rtNextIncomingSampleTime(0),
-  m_pClock(pClock),
-  m_pLogger(pLogger)
+    CQueuedAudioSink(pSettings, pLogger),
+    m_Stream(NULL),
+    m_fCurrentTempo(1.0),
+    m_fNewAdjustment(1.0),
+    m_fCurrentAdjustment(1.0),
+    m_fNewTempo(1.0),
+    m_pMediaType(NULL),
+    m_rtInSampleTime(0),
+    m_rtLastOuputStart(0),
+    m_rtLastOuputEnd(-1),
+    m_rtNextIncomingSampleTime(0),
+    m_pClock(pClock),
+    m_pLogger(pLogger),
+    m_bCurrentMaintainSoundPitch(false)
 {
 }
 
@@ -277,6 +278,7 @@ HRESULT CTimeStretchFilter::SetFormat(const WAVEFORMATEXTENSIBLE *pwfe)
     setTempoInternal(m_fNewTempo, m_fNewAdjustment);
     setSampleRate(pwfe->Format.nSamplesPerSec);
     setTempoChange(0);
+    setRateChange(0);
     setPitchSemiTones(0);
   }
 
@@ -632,15 +634,41 @@ bool CTimeStretchFilter::setTempo(float newTempo, float newAdjustment)
 
 void CTimeStretchFilter::setTempoInternal(float newTempo, float newAdjustment)
 {
+  double dRate = newTempo * newAdjustment;
+  bool bMaintainPitch;
+  bool bChange;
+
   CAutoLock streamLock(&m_csStreamLock);
   ASSERT(m_Stream || (m_bBitstreaming && !m_Stream));
 
   if (m_Stream)
-  { 
-    m_Stream->setTempo(newTempo * newAdjustment);
-    m_fCurrentTempo = newTempo;
-    m_fCurrentAdjustment = newAdjustment;
-  } 
+  {
+      bMaintainPitch = m_pClock->GetMaintainSoundPitch();
+      bChange = m_bCurrentMaintainSoundPitch != bMaintainPitch;
+
+      //if (m_pSettings->GetLogDebug())
+      //  Log("CTimeStretchFilter::setTempoInternal: rate:%10.8f", dRate);
+
+      if (bMaintainPitch)
+      {
+          if (bChange)
+              m_Stream->setRate(1.0);
+
+          m_Stream->setTempo(dRate); //tempo: pitch is maintained
+      }
+      else
+      {
+          if (bChange)
+              m_Stream->setTempo(1.0);
+
+          m_Stream->setRate(dRate); //rate: pitch is not maintained
+      }
+
+
+      m_fCurrentTempo = newTempo;
+      m_fCurrentAdjustment = newAdjustment;
+      m_bCurrentMaintainSoundPitch = bMaintainPitch;
+  }
 }
 
 BOOL CTimeStretchFilter::setSetting(int settingId, int value)
