@@ -911,7 +911,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public override string Description
     {
-      get { return "SoundGraph iMON USB VFD/LCD Plugin >= 8.12.1202"; }
+      get { return "SoundGraph iMON USB VFD/LCD Plugin >= 7.77.1022"; }
     }
 
     public override string ErrorMessage
@@ -2257,6 +2257,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             Log.Info("iMONLCDg.FindImonVFDdll(): Selected SoundGraph DLL.");
           }
           strResult = strPathDll;
+        }
+        else
+        {
+          strPathDll = strPathSoundgraph + @"\sg_vfd.dll";
+          if (File.Exists(strPathDll))
+          {
+            if (_DoDebug)
+            {
+              Log.Info("iMONLCDg.FindImonVFDdll(): Selected SoundGraph DLL.");
+            }
+            strResult = strPathDll;
+          }
         }
       }
       else

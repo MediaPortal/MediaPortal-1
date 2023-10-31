@@ -802,7 +802,7 @@ namespace MediaPortal.Video.Database
 
       string[] sub_exts = {
                             ".utf", ".utf8", ".utf-8", ".sub", ".srt", ".smi", ".rt", ".txt", ".ssa", ".aqt", ".jss",
-                            ".ass", ".idx", ".ifo"
+                            ".ass", ".idx", ".ifo", ".webvtt", ".vtt"
                           };
 
       // check if movie has subtitles

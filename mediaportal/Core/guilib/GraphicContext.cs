@@ -110,6 +110,8 @@ namespace MediaPortal.GUI.Library
 
     public static IntPtr SubDeviceMadVr = IntPtr.Zero; // pointer to current DX9 madVR device
 
+    public static SwapChain SwapChain = null; // pointer to current device swapchain
+
     // ReSharper disable InconsistentNaming
     public static Graphics graphics = null; // GDI+ Graphics object
     public static Form form = null; // Current GDI form
@@ -252,6 +254,11 @@ namespace MediaPortal.GUI.Library
       DX9Device = device;
       PresentationParameters = prms;
       RenderTarget = device.GetRenderTarget(0);
+
+      if (device is DeviceEx)
+        SwapChain = new SwapChain9Ex(((DeviceEx)device).GetSwapChain(0).NativePointer);
+      else
+        SwapChain = device.GetSwapChain(0);
     }
 
     /// <summary>

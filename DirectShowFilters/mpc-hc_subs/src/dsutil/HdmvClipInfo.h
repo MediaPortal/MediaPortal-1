@@ -1,5 +1,5 @@
 /*
- * (C) 2008-2012 see Authors.txt
+ * (C) 2008-2013, 2016 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -21,6 +21,7 @@
 #pragma once
 
 #include "Mpeg2Def.h"
+#include <atlcoll.h>
 
 enum BDVM_VideoFormat {
     BDVM_VideoFormat_Unknown = 0,
@@ -73,7 +74,7 @@ public:
 
     struct Stream {
         Stream() {
-            memset(this, 0, sizeof(*this));
+            ZeroMemory(this, sizeof(*this));
         }
         short m_PID;
         PES_STREAM_TYPE m_Type;
@@ -124,7 +125,7 @@ public:
     Stream* FindStream(short wPID);
     bool IsHdmv() const { return m_bIsHdmv; };
     size_t GetStreamNumber() { return m_Streams.GetCount(); };
-    Stream* GetStreamByIndex(size_t nIndex) { return (nIndex < m_Streams.GetCount()) ? &m_Streams[nIndex] : NULL; };
+    Stream* GetStreamByIndex(size_t nIndex) { return (nIndex < m_Streams.GetCount()) ? &m_Streams[nIndex] : nullptr; };
 
     HRESULT FindMainMovie(LPCTSTR strFolder, CString& strPlaylistFile, CAtlList<PlaylistItem>& MainPlaylist, CAtlList<PlaylistItem>& MPLSPlaylists);
     HRESULT ReadPlaylist(CString strPlaylistFile, REFERENCE_TIME& rtDuration, CAtlList<PlaylistItem>& Playlist);

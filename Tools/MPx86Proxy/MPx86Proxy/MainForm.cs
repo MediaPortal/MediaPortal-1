@@ -50,7 +50,7 @@ namespace MPx86Proxy
 
     private bool _Hide = false;
     private bool _AppClose = false;
-
+    
     internal static MainForm Instance;
 
     public MainForm(string[] args)
@@ -79,8 +79,9 @@ namespace MPx86Proxy
       this.InitializeComponent();
 
       //Version
-      string version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-      this.Text += version;
+      string strVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+      this.Text += strVersion;
+      Logging.Log.Debug("MP x86 proxy Server " + strVersion);
 
       //Detect iMON dll
       Drivers.iMONDisplay.Detect();
@@ -109,6 +110,10 @@ namespace MPx86Proxy
         Logging.Log.Debug("IMON RC API: disabled");
         this.remoteControlAPIEnabledToolStripMenuItem.Checked = false;
       }
+
+      //Extensive logging
+      //this.extensiveLoggingToolStripMenuItem.Checked = this._ConnectionHandler.ExtensiveLogging = MPx86Proxy.Properties.Settings.Default.ExtensiveLogging;
+      this.logExtensiveLogging();
 
       this.logWindow("Ready.");
     }
@@ -226,6 +231,14 @@ namespace MPx86Proxy
     }
     #endregion
 
+    private void logExtensiveLogging()
+    {
+      //Extensive logging
+      string str = "Extensive logging: " + (this._ConnectionHandler.ExtensiveLogging ? "Enabled" : "Disabled");
+      Logging.Log.Debug(str);
+      this.logWindow(str);
+    }
+
     private void cbMainFormClosing(object sender, FormClosingEventArgs e)
     {
       if (!this._AppClose && e.CloseReason == CloseReason.UserClosing)
@@ -329,6 +342,16 @@ namespace MPx86Proxy
     {
       Forms.AboutBox form = new Forms.AboutBox();
       form.ShowDialog();
+    }
+
+    private void extensiveLoggingToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      if (this.extensiveLoggingToolStripMenuItem.Checked)
+        this.extensiveLoggingToolStripMenuItem.Checked = MPx86Proxy.Properties.Settings.Default.RC_Enabled = this._ConnectionHandler.ExtensiveLogging = false;
+      else
+        this.extensiveLoggingToolStripMenuItem.Checked = MPx86Proxy.Properties.Settings.Default.RC_Enabled = this._ConnectionHandler.ExtensiveLogging = true;
+
+      this.logExtensiveLogging();
     }
   }
 }

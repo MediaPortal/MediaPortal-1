@@ -36,14 +36,15 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.remoteControlAPIEnabledToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.remoteControlAPIEnabledToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.eventTableControl = new MPx86Proxy.Controls.EventTableControl();
+            this.extensiveLoggingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuIcon.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -98,6 +99,22 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.remoteControlAPIEnabledToolStripMenuItem,
+            this.extensiveLoggingToolStripMenuItem});
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(76, 23);
+            this.optionsToolStripMenuItem.Text = "Options";
+            // 
+            // remoteControlAPIEnabledToolStripMenuItem
+            // 
+            this.remoteControlAPIEnabledToolStripMenuItem.Name = "remoteControlAPIEnabledToolStripMenuItem";
+            this.remoteControlAPIEnabledToolStripMenuItem.Size = new System.Drawing.Size(281, 24);
+            this.remoteControlAPIEnabledToolStripMenuItem.Text = "Remote Control API Enabled";
+            this.remoteControlAPIEnabledToolStripMenuItem.Click += new System.EventHandler(this.remoteControlAPIEnabledToolStripMenuItem_Click);
+            // 
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -128,21 +145,6 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // optionsToolStripMenuItem
-            // 
-            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.remoteControlAPIEnabledToolStripMenuItem});
-            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(76, 23);
-            this.optionsToolStripMenuItem.Text = "Options";
-            // 
-            // remoteControlAPIEnabledToolStripMenuItem
-            // 
-            this.remoteControlAPIEnabledToolStripMenuItem.Name = "remoteControlAPIEnabledToolStripMenuItem";
-            this.remoteControlAPIEnabledToolStripMenuItem.Size = new System.Drawing.Size(281, 24);
-            this.remoteControlAPIEnabledToolStripMenuItem.Text = "Remote Control API Enabled";
-            this.remoteControlAPIEnabledToolStripMenuItem.Click += new System.EventHandler(this.remoteControlAPIEnabledToolStripMenuItem_Click);
-            // 
             // statusStrip1
             // 
             this.statusStrip1.Location = new System.Drawing.Point(0, 367);
@@ -168,6 +170,13 @@
             this.eventTableControl.Size = new System.Drawing.Size(686, 340);
             this.eventTableControl.TabIndex = 3;
             this.eventTableControl.TableRowsLimit = 50;
+            // 
+            // extensiveLoggingToolStripMenuItem
+            // 
+            this.extensiveLoggingToolStripMenuItem.Name = "extensiveLoggingToolStripMenuItem";
+            this.extensiveLoggingToolStripMenuItem.Size = new System.Drawing.Size(281, 24);
+            this.extensiveLoggingToolStripMenuItem.Text = "Extensive logging";
+            this.extensiveLoggingToolStripMenuItem.Click += new System.EventHandler(this.extensiveLoggingToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -208,6 +217,7 @@
     private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem remoteControlAPIEnabledToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem extensiveLoggingToolStripMenuItem;
   }
 }
 

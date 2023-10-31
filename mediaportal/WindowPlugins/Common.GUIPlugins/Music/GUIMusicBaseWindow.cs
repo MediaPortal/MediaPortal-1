@@ -2385,13 +2385,24 @@ namespace MediaPortal.GUI.Music
       //then start at the end of the playlist
       int iCurrentItemCount = pl.Count;
 
-      foreach (PlayListItem pItem in pItems)
+      //if playlist file is behind the selected item then do not count $playlistcount
+      //otherwise playback will start from wrong track
+      int iIdx;
+      if (facadeLayout != null && facadeLayout.SelectedListItem != null)
+        iIdx = facadeLayout.SelectedListItemIndex - (facadeLayout.Count - pItems.Count);
+      else
+        iIdx = -1;
+
+      for (int i = 0; i < pItems.Count; i++)
       {
+        PlayListItem pItem = pItems[i];
         if (PlayListFactory.IsPlayList(pItem.FileName))
         {
           pl.Remove(pItem.FileName, false);
           playlistPresent = true;
-          playlistcount++;
+
+          if (iIdx < 0 || i < iIdx)
+            playlistcount++;
         }
         else
         {

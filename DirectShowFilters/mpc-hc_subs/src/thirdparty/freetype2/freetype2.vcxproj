@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="..\..\platform.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\common.props" />
+    <Import Project="..\..\common-3rd-party.props" />
+  </ImportGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories>freetype2\include;..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>FT_CONFIG_OPTION_SYSTEM_ZLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <DisableLanguageExtensions>true</DisableLanguageExtensions>
+      <WarningLevel>Level2</WarningLevel>
+      <DisableSpecificWarnings>4312;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>16.0.29911.84</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <PreprocessorDefinitions>NDEBUG;WIN32;_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <DebugInformationFormat />
+      <DisableSpecificWarnings>4001;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;WIN32;_LIB;_CRT_SECURE_NO_WARNINGS;FT_DEBUG_LEVEL_ERROR;FT_DEBUG_LEVEL_TRACE;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4001;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <PreprocessorDefinitions>NDEBUG;WIN32;_LIB;_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <DebugInformationFormat />
+      <DisableSpecificWarnings>4001;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;WIN32;_LIB;_CRT_SECURE_NO_WARNINGS;FT_DEBUG_LEVEL_ERROR;FT_DEBUG_LEVEL_TRACE;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4001;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="freetype2\builds\windows\ftdebug.c">
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+    </ClCompile>
+    <ClCompile Include="freetype2\src\autofit\autofit.c" />
+    <ClCompile Include="freetype2\src\base\ftbase.c" />
+    <ClCompile Include="freetype2\src\base\ftbbox.c" />
+    <ClCompile Include="freetype2\src\base\ftbdf.c" />
+    <ClCompile Include="freetype2\src\base\ftbitmap.c" />
+    <ClCompile Include="freetype2\src\base\ftcid.c" />
+    <ClCompile Include="freetype2\src\base\ftfstype.c" />
+    <ClCompile Include="freetype2\src\base\ftgasp.c" />
+    <ClCompile Include="freetype2\src\base\ftglyph.c" />
+    <ClCompile Include="freetype2\src\base\ftgxval.c" />
+    <ClCompile Include="freetype2\src\base\ftinit.c" />
+    <ClCompile Include="freetype2\src\base\ftmm.c" />
+    <ClCompile Include="freetype2\src\base\ftotval.c" />
+    <ClCompile Include="freetype2\src\base\ftpatent.c" />
+    <ClCompile Include="freetype2\src\base\ftpfr.c" />
+    <ClCompile Include="freetype2\src\base\ftstroke.c" />
+    <ClCompile Include="freetype2\src\base\ftsynth.c" />
+    <ClCompile Include="freetype2\src\base\ftsystem.c" />
+    <ClCompile Include="freetype2\src\base\fttype1.c" />
+    <ClCompile Include="freetype2\src\base\ftwinfnt.c" />
+    <ClCompile Include="freetype2\src\bdf\bdf.c" />
+    <ClCompile Include="freetype2\src\cache\ftcache.c" />
+    <ClCompile Include="freetype2\src\cff\cff.c" />
+    <ClCompile Include="freetype2\src\cid\type1cid.c" />
+    <ClCompile Include="freetype2\src\gzip\ftgzip.c" />
+    <ClCompile Include="freetype2\src\lzw\ftlzw.c" />
+    <ClCompile Include="freetype2\src\pcf\pcf.c" />
+    <ClCompile Include="freetype2\src\pfr\pfr.c" />
+    <ClCompile Include="freetype2\src\psaux\psaux.c" />
+    <ClCompile Include="freetype2\src\pshinter\pshinter.c" />
+    <ClCompile Include="freetype2\src\psnames\psmodule.c" />
+    <ClCompile Include="freetype2\src\raster\raster.c" />
+    <ClCompile Include="freetype2\src\sfnt\sfnt.c" />
+    <ClCompile Include="freetype2\src\sfnt\ttsvg.c" />
+    <ClCompile Include="freetype2\src\smooth\smooth.c" />
+    <ClCompile Include="freetype2\src\sdf\sdf.c" />
+    <ClCompile Include="freetype2\src\svg\svg.c" />
+    <ClCompile Include="freetype2\src\truetype\truetype.c" />
+    <ClCompile Include="freetype2\src\type1\type1.c" />
+    <ClCompile Include="freetype2\src\type42\type42.c" />
+    <ClCompile Include="freetype2\src\winfonts\winfnt.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="freetype2\include\freetype\config\ftconfig.h" />
+    <ClInclude Include="freetype2\include\freetype\config\ftheader.h" />
+    <ClInclude Include="freetype2\include\freetype\config\ftmodule.h" />
+    <ClInclude Include="freetype2\include\freetype\config\ftoption.h" />
+    <ClInclude Include="freetype2\include\freetype\config\ftstdlib.h" />
+    <ClInclude Include="freetype2\include\ft2build.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

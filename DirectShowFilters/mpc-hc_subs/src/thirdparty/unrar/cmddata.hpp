@@ -2,18 +2,22 @@
 #define _RAR_CMDDATA_
 
 
-#define DefaultStoreList "7z;ace;arj;bz2;cab;gz;jpeg;jpg;lha;lzh;mp3;rar;taz;tgz;z;zip"
+#define DefaultStoreList L"7z;ace;arj;bz2;cab;gz;jpeg;jpg;lha;lz;lzh;mp3;rar;taz;tgz;xz;z;zip;zipx"
 
 enum RAR_CMD_LIST_MODE {RCLM_AUTO,RCLM_REJECT_LISTS,RCLM_ACCEPT_LISTS};
+
+enum IS_PROCESS_FILE_FLAGS {IPFF_EXCLUDE_PARENT=1};
 
 class CommandData:public RAROptions
 {
   private:
-    void ProcessSwitchesString(char *Str);
-    void ProcessSwitch(const char *Switch,const wchar *SwitchW=NULL);
-    void BadSwitch(const char *Switch);
-    bool ExclCheckArgs(StringList *Args,bool Dir,char *CheckName,bool CheckFullPath,int MatchMode);
-    uint GetExclAttr(const char *Str);
+    void ProcessSwitch(const wchar *Switch);
+    void BadSwitch(const wchar *Switch);
+    uint GetExclAttr(const wchar *Str,bool &Dir);
+#if !defined(SFX_MODULE)
+    void SetTimeFilters(const wchar *Mod,bool Before,bool Age);
+    void SetStoreTimeMode(const wchar *S);
+#endif
 
     bool FileLists;
     bool NoMoreSwitches;
@@ -21,44 +25,46 @@ class CommandData:public RAROptions
     bool BareOutput;
   public:
     CommandData();
-    ~CommandData();
     void Init();
-    void Close();
 
-    void PreprocessCommandLine(int argc, char *argv[]);
-    void ParseCommandLine(int argc, char *argv[]);
-    void ParseArg(char *Arg,wchar *ArgW);
+    void ParseCommandLine(bool Preprocess,int argc, char *argv[]);
+    void ParseArg(wchar *ArgW);
     void ParseDone();
     void ParseEnvVar();
     void ReadConfig();
-    bool PreprocessSwitch(const char *Switch);
+    void PreprocessArg(const wchar *Arg);
+    void ProcessSwitchesString(const wchar *Str);
     void OutTitle();
     void OutHelp(RAR_EXIT ExitCode);
     bool IsSwitch(int Ch);
-    bool ExclCheck(char *CheckName,bool Dir,bool CheckFullPath,bool CheckInclList);
+    bool ExclCheck(const wchar *CheckName,bool Dir,bool CheckFullPath,bool CheckInclList);
+    static bool CheckArgs(StringList *Args,bool Dir,const wchar *CheckName,bool CheckFullPath,int MatchMode);
     bool ExclDirByAttr(uint FileAttr);
-    bool TimeCheck(RarTime &ft);
+    bool TimeCheck(RarTime &ftm,RarTime &ftc,RarTime &fta);
     bool SizeCheck(int64 Size);
     bool AnyFiltersActive();
-    int IsProcessFile(FileHeader &NewLhd,bool *ExactMatch=NULL,int MatchType=MATCH_WILDSUBPATH);
+    int IsProcessFile(FileHeader &FileHead,bool *ExactMatch,int MatchType,
+                      bool Flags,wchar *MatchedArg,uint MatchedArgSize);
     void ProcessCommand();
-    void AddArcName(const char *Name,const wchar *NameW);
-    bool GetArcName(char *Name,wchar *NameW,int MaxSize);
+    void AddArcName(const wchar *Name);
+    bool GetArcName(wchar *Name,int MaxSize);
     bool CheckWinSize();
 
-    int GetRecoverySize(const char *Str,int DefSize);
+    int GetRecoverySize(const wchar *CmdStr,const wchar *Value,int DefSize);
 
-    char Command[NM+16];
-    wchar CommandW[NM+16];
+#ifndef SFX_MODULE
+    void ReportWrongSwitches(RARFORMAT Format);
+#endif
 
-    char ArcName[NM];
-    wchar ArcNameW[NM];
+    wchar Command[NM+16];
 
-    StringList *FileArgs;
-    StringList *ExclArgs;
-    StringList *InclArgs;
-    StringList *ArcNames;
-    StringList *StoreArgs;
+    wchar ArcName[NM];
+
+    StringList FileArgs;
+    StringList ExclArgs;
+    StringList InclArgs;
+    StringList ArcNames;
+    StringList StoreArgs;
 };
 
 #endif
