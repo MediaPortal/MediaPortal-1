@@ -141,6 +141,18 @@ BEGIN
     CONTROL         "Log sample times",IDC_LOG_SAMPLE_TIMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,113,70,11
     LTEXT           "Output buffer (in ms):",IDC_STATIC,20,95,72,8
     EDITTEXT        IDC_OUTPUT_BUFFER,92,93,34,12,ES_AUTOHSCROLL,WS_EX_RIGHT
+    CONTROL         "Maintain Sound Pitch",IDC_MAINTAIN_PITCH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,114,182,82,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_PROPPAGE AFX_DIALOG_LAYOUT
+BEGIN
+    0
 END
 
 #endif    // English (United States) resources
