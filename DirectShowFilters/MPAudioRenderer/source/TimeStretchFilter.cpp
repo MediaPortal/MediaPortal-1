@@ -25,17 +25,16 @@
   void CTimeStretchFilter::funcname(paramtype paramname) \
   { \
     CAutoLock streamLock(&m_csStreamLock); \
-    ASSERT(m_Streams || (m_bBitstreaming && !m_Streams)); \
-    if (m_Streams) \
+    ASSERT(m_Stream || (m_bBitstreaming && !m_Stream)); \
+    if (m_Stream) \
     { \
-      for(int i=0; i<m_Streams->size(); i++) \
-        m_Streams->at(i)->funcname(paramname); \
+        m_Stream->funcname(paramname); \
     } \
   }
 
 CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings, CSyncClock* pClock, Logger* pLogger) :
   CQueuedAudioSink(pSettings, pLogger),
-  m_Streams(NULL),
+  m_Stream(NULL),
   m_fCurrentTempo(1.0),
   m_fNewAdjustment(1.0),
   m_fCurrentAdjustment(1.0),
@@ -171,7 +170,9 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
 
     SetInputFormat(pwfx);
     SetOutputFormat(pwfx);
-    SetFormat(pwfx);
+    hr = SetFormat(pwfx);
+    if (FAILED(hr))
+        return hr;
   }
   else
     LogWaveFormat(pwfx, "TS   -          ");
@@ -238,99 +239,33 @@ HRESULT CTimeStretchFilter::CheckSample(IMediaSample* pSample, REFERENCE_TIME* r
 
 HRESULT CTimeStretchFilter::SetFormat(const WAVEFORMATEXTENSIBLE *pwfe)
 {
-  std::vector<CSoundTouchEx*>* newStreams = NULL;
+  CSoundTouchEx* newStream = NULL;
 
   if (pwfe)
   {
-    // First verify format is supported
-    if (pwfe->SubFormat != KSDATAFORMAT_SUBTYPE_PCM &&
-        pwfe->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
-      return VFW_E_TYPE_NOT_ACCEPTED;
+      // First verify format is supported
+      if (pwfe->SubFormat != KSDATAFORMAT_SUBTYPE_PCM &&
+          pwfe->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
+          return VFW_E_TYPE_NOT_ACCEPTED;
 
-    DWORD dwChannelMask = pwfe->dwChannelMask;
+      if (pwfe->Format.nChannels < 1 || pwfe->Format.nChannels > SOUNDTOUCH_MAX_CHANNELS)
+          return VFW_E_TYPE_NOT_ACCEPTED;
 
-    newStreams =  new std::vector<CSoundTouchEx*>;
-    if (!newStreams)
-      return E_OUTOFMEMORY;
-
-    map<DWORD, int> inSpeakerOffset;
-    map<DWORD, int> outSpeakerOffset;
-    int currOffset = 0;
-    // Each bit position in dwChannelMask corresponds to a speaker position
-    // try every bit position from 0 to 31
-    for (DWORD dwSpeaker = 1; dwSpeaker != 0; dwSpeaker <<= 1) 
-    {
-      if (dwChannelMask & dwSpeaker)
-      {
-        inSpeakerOffset[dwSpeaker] = currOffset;
-        currOffset += pwfe->Format.wBitsPerSample / 8;
-      }
-    }
-
-    ASSERT(inSpeakerOffset.size() == pwfe->Format.nChannels);
-
-    // PCM output, 1-to-1 mapping of input to output
-    outSpeakerOffset.insert(inSpeakerOffset.begin(), inSpeakerOffset.end());
-
-    // TODO: First create the base downmixing coefficients
-    // for syncing mono channels like LFE and Center
-    
-    // Now start adding channels
-    // First try all speaker pairs
-    for (SpeakerPair *pPair = PairedSpeakers; pPair->dwLeft; pPair++)
-    {
-      if ((pPair->PairMask() & dwChannelMask) == pPair->PairMask())
-      {
-        CSoundTouchEx* pStream = new CSoundTouchEx();
-        pStream->setChannels(2);
-        pStream->SetInputChannels(inSpeakerOffset[pPair->dwLeft], inSpeakerOffset[pPair->dwRight]);
-        pStream->SetInputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8);
-        pStream->SetOutputChannels(outSpeakerOffset[pPair->dwLeft], outSpeakerOffset[pPair->dwRight]);
-        pStream->SetOutputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8);
-        pStream->SetupFormats();
-        newStreams->push_back(pStream);
-        dwChannelMask &= ~pPair->PairMask(); // mark channels as processed
-      }
-    }
-    // Then add all remaining channels as mono streams
-    // try every bit position from 0 to 31
-    for (DWORD dwSpeaker = 1; dwSpeaker != 0; dwSpeaker <<= 1) 
-    {
-      if (dwChannelMask & dwSpeaker)
-      {
-        CSoundTouchEx *pStream = new CSoundTouchEx();
-        // TODO: make this a mixing stream, so that the channel can be synchronized 
-        // to the mix of the main channels (normally Front Left/Right if available)
-        pStream->setChannels(1); 
-        pStream->SetInputChannels(inSpeakerOffset[dwSpeaker]);
-        pStream->SetInputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8);
-        pStream->SetOutputChannels(outSpeakerOffset[dwSpeaker]);
-        pStream->SetOutputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8);
-        pStream->SetupFormats();
-        newStreams->push_back(pStream);
-        // The following is only necessary if we skip some channels
-        // currently we don't
-        //dwChannelMask &= ~dwSpeaker; // mark channel as processed        
-      }
-    }
+      newStream = new CSoundTouchEx();
+      newStream->SetChannels(pwfe->Format.nChannels);
+      newStream->SetInputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8);
+      newStream->SetOutputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8);
   }
 
   CAutoLock streamLock(&m_csStreamLock);
 
-  // delete old ones
-  std::vector<CSoundTouchEx*>* oldStreams = m_Streams;
-  if (oldStreams)
-  {
-    for (int i = 0; i < oldStreams->size(); i++)
-    {
-      SAFE_DELETE(oldStreams->at(i));
-    }
-    SAFE_DELETE(oldStreams);
-  }
+  // delete old one
+  CSoundTouchEx* oldStream = m_Stream;
+  SAFE_DELETE(oldStream);
 
-  m_Streams = newStreams;
+  m_Stream = newStream;
 
-  if (newStreams && pwfe)
+  if (newStream && pwfe)
   {
     setSetting(SETTING_USE_QUICKSEEK, m_pSettings->GetQuality_USE_QUICKSEEK());
     setSetting(SETTING_USE_AA_FILTER, m_pSettings->GetQuality_USE_AA_FILTER());
@@ -656,46 +591,32 @@ DEFINE_STREAM_FUNC(setSampleRate, uint, srate)
 void CTimeStretchFilter::clear() 
 { 
   CAutoLock streamLock(&m_csStreamLock);
-  ASSERT(m_Streams || (m_bBitstreaming && !m_Streams));
+  ASSERT(m_Stream || (m_bBitstreaming && !m_Stream));
 
-  if (m_Streams)
-  { 
-    for (int i = 0; i < m_Streams->size(); i++) 
-      m_Streams->at(i)->clear(); 
-  }
+  if (m_Stream)
+      m_Stream->clear(); 
 }
 
 void CTimeStretchFilter::flush() 
 { 
   CAutoLock streamLock(&m_csStreamLock);
-  ASSERT(m_Streams || (m_bBitstreaming && !m_Streams));
+  ASSERT(m_Stream || (m_bBitstreaming && !m_Stream));
 
-  if (m_Streams)
-  { 
-    for (int i = 0; i < m_Streams->size(); i++)
-    {
-      m_Streams->at(i)->flush(); 
-    }
-  }
+  if (m_Stream)
+      m_Stream->flush(); 
+
 }
 
 uint CTimeStretchFilter::flushEx()
 { 
   CAutoLock streamLock(&m_csStreamLock);
-  ASSERT(m_Streams || (m_bBitstreaming && !m_Streams));
+  ASSERT(m_Stream || (m_bBitstreaming && !m_Stream));
 
-  uint minZeros = 0;
-  if (m_Streams) 
-  { 
-    for (int i = 0; i < m_Streams->size(); i++)
-    {
-      uint zeros = m_Streams->at(i)->flushEx();
-      if (i == 0 || minZeros > zeros)
-        minZeros = zeros;
-    }
-  }
+  
+  if (m_Stream) 
+      return m_Stream->flushEx();
 
-  return minZeros;
+  return 0;
 }
 
 bool CTimeStretchFilter::setTempo(float newTempo, float newAdjustment)
@@ -712,15 +633,11 @@ bool CTimeStretchFilter::setTempo(float newTempo, float newAdjustment)
 void CTimeStretchFilter::setTempoInternal(float newTempo, float newAdjustment)
 {
   CAutoLock streamLock(&m_csStreamLock);
-  ASSERT(m_Streams || (m_bBitstreaming && !m_Streams));
+  ASSERT(m_Stream || (m_bBitstreaming && !m_Stream));
 
-  if (m_Streams)
+  if (m_Stream)
   { 
-    for (int i = 0; i < m_Streams->size(); i++)
-    {
-      m_Streams->at(i)->setTempo(newTempo * newAdjustment);
-    }
-
+    m_Stream->setTempo(newTempo * newAdjustment);
     m_fCurrentTempo = newTempo;
     m_fCurrentAdjustment = newAdjustment;
   } 
@@ -729,17 +646,13 @@ void CTimeStretchFilter::setTempoInternal(float newTempo, float newAdjustment)
 BOOL CTimeStretchFilter::setSetting(int settingId, int value)
 {
   CAutoLock streamLock(&m_csStreamLock);
-  ASSERT(m_Streams || (m_bBitstreaming && !m_Streams));
+  ASSERT(m_Stream || (m_bBitstreaming && !m_Stream));
 
   // TODO should LFE channel have separate settings since it is by nature quite
   // different when it comes to frequency response
-  if (m_Streams)
+  if (m_Stream)
   {
-    for (int i = 0; i < m_Streams->size(); i++)
-    {
-      m_Streams->at(i)->setSetting(settingId, value);
-    }
-
+    m_Stream->setSetting(settingId, value);
     return true;
   }
 
@@ -749,53 +662,36 @@ BOOL CTimeStretchFilter::setSetting(int settingId, int value)
 uint CTimeStretchFilter::numUnprocessedSamples() const
 {
   CAutoLock streamLock(&m_csStreamLock);
-  ASSERT(m_Streams || (m_bBitstreaming && !m_Streams));
+  ASSERT(m_Stream || (m_bBitstreaming && !m_Stream));
 
-  uint maxSamples = 0;
-  if (m_Streams)
-  {
-    for (int i = 0; i < m_Streams->size(); i++)
-    {
-      uint samples = m_Streams->at(i)->numUnprocessedSamples();
-      if (maxSamples == 0 || maxSamples < samples)
-        maxSamples = samples;
-    }
-  }
-  return maxSamples;
+  if (m_Stream)
+      return m_Stream->numUnprocessedSamples();
+    
+  return 0;
 }
 
 /// Returns number of samples currently available.
 uint CTimeStretchFilter::numSamples() const
 {
   CAutoLock streamLock(&m_csStreamLock);
-  ASSERT(m_Streams || (m_bBitstreaming && !m_Streams));
+  ASSERT(m_Stream || (m_bBitstreaming && !m_Stream));
 
-  uint minSamples = 0;
-  if (m_Streams)
-  {
-    for (int i = 0; i < m_Streams->size(); i++)
-    {
-      uint samples = m_Streams->at(i)->numSamples();
-      if (i == 0 || minSamples > samples)
-        minSamples = samples;
-    }
-  }
-  return minSamples;
+  if (m_Stream)
+      return m_Stream->numSamples();
+    
+  return 0;
 }
 
 /// Returns nonzero if there aren't any samples available for outputting.
 int CTimeStretchFilter::isEmpty() const
 {
   CAutoLock streamLock(&m_csStreamLock);
-  ASSERT(m_Streams || (m_bBitstreaming && !m_Streams));
+  ASSERT(m_Stream || (m_bBitstreaming && !m_Stream));
 
-  if (m_Streams)
+  if (m_Stream)
   {
-    for (int i = 0; i < m_Streams->size(); i++)
-    {
-      if (m_Streams->at(i)->isEmpty())
+     if (m_Stream->isEmpty())
         return true;
-    }
   }
 
   return false; // TODO: not sure if this is the right thing to return if m_Streams is NULL
@@ -804,16 +700,12 @@ int CTimeStretchFilter::isEmpty() const
 bool CTimeStretchFilter::putSamplesInternal(const short *inBuffer, long inSamples)
 {
   CAutoLock streamLock(&m_csStreamLock);
-  ASSERT(m_Streams || (m_bBitstreaming && !m_Streams));
+  ASSERT(m_Stream || (m_bBitstreaming && !m_Stream));
 
-  if (!m_Streams)
+  if (!m_Stream)
     return false;
-
-  for (int i = 0; i < m_Streams->size(); i++)
-  {
-    CSoundTouchEx* stream = m_Streams->at(i);
-    stream->putBuffer((BYTE *)inBuffer, inSamples);
-  }
+  
+  m_Stream->putBuffer((BYTE *)inBuffer, inSamples);
 
   return true;
 }
@@ -821,19 +713,16 @@ bool CTimeStretchFilter::putSamplesInternal(const short *inBuffer, long inSample
 uint CTimeStretchFilter::receiveSamplesInternal(short *outBuffer, uint maxSamples)
 {
   CAutoLock streamLock(&m_csStreamLock);
-  ASSERT(m_Streams || (m_bBitstreaming && !m_Streams));
+  ASSERT(m_Stream || (m_bBitstreaming && !m_Stream));
 
-  if (!m_Streams)
+  if (!m_Stream)
     return 0;
 
   uint outSamples = numSamples();
   if (outSamples > maxSamples)
     outSamples = maxSamples;
 
-  for (int i = 0; i < m_Streams->size(); i++)
-  {
-    m_Streams->at(i)->getBuffer((BYTE *)outBuffer, outSamples);
-  }
+  m_Stream->getBuffer((BYTE *)outBuffer, outSamples);
 
   return outSamples;
 }
