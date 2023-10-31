@@ -4798,6 +4798,8 @@ void MPEVRCustomPresenter::AdjustAVSync(double currentPhaseDiff)
   
   m_avPhaseDiff = averagePhaseDifference;
 
+  m_pAVSyncClock->SetCurrentPhaseDifference(currentPhaseDiff, averagePhaseDifference);
+
   // If we are getting close to target then stop correcting.
   // Since it is a rolling average we will overshoot the target, so we plan to stop early.
   // If we are speeding up, we should stop when above the "green" limit
