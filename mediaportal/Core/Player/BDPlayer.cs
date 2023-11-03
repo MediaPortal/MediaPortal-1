@@ -244,6 +244,7 @@ namespace MediaPortal.Player
       public string VideoMPEG { get; set; }
       public string VideoH264 { get; set; }
       public string VideoVC1 { get; set; }
+      public string VideoHEVC { get; set; }
       public string Audio { get; set; }
       //public string AudioAAC { get; set; }
       //public string AudioDDPlus { get; set; }
@@ -1988,6 +1989,7 @@ namespace MediaPortal.Player
         //filterConfig.AudioDDPlus = xmlreader.GetValueAsString("bdplayer", "ddplusaudiocodec", "");
         filterConfig.VideoH264 = xmlreader.GetValueAsString("bdplayer", "h264videocodec", "");
         filterConfig.VideoVC1 = xmlreader.GetValueAsString("bdplayer", "vc1videocodec", "");
+        filterConfig.VideoHEVC = xmlreader.GetValueAsString("bdplayer", "hevcvideocodec", "");
         filterConfig.AudioRenderer = xmlreader.GetValueAsString("bdplayer", "audiorenderer", "Default DirectSound Device");
 
         // get AR setting
@@ -2714,6 +2716,10 @@ namespace MediaPortal.Player
         {
           return filterConfig.VideoVC1;
         }
+        else if (_currentVideoFormat == BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_HEVC)
+        {
+          return filterConfig.VideoHEVC;
+        }
         else
         {
           return filterConfig.VideoH264;
@@ -3234,7 +3240,16 @@ namespace MediaPortal.Player
     {
       ExportGuidFilterAndRelease(filterConfig.VideoH264, BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_H264);
 
-      if (filterConfig.VideoMPEG != filterConfig.VideoH264)
+      if (filterConfig.VideoHEVC != filterConfig.VideoH264)
+      {
+        ExportGuidFilterAndRelease(filterConfig.VideoHEVC, BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_HEVC);
+      }
+      else
+      {
+        _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_HEVC, ref GuidFilter);
+      }
+
+      if (filterConfig.VideoMPEG != filterConfig.VideoH264 || filterConfig.VideoMPEG != filterConfig.VideoHEVC)
       {
         ExportGuidFilterAndRelease(filterConfig.VideoMPEG, BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2);
       }
@@ -3243,7 +3258,7 @@ namespace MediaPortal.Player
         _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2, ref GuidFilter);
       }
 
-      if (filterConfig.VideoVC1 != filterConfig.VideoH264 || filterConfig.VideoVC1 != filterConfig.VideoMPEG)
+      if (filterConfig.VideoVC1 != filterConfig.VideoH264 || filterConfig.VideoVC1 != filterConfig.VideoHEVC || filterConfig.VideoVC1 != filterConfig.VideoMPEG)
       {
         ExportGuidFilterAndRelease(filterConfig.VideoVC1, BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1);
       }
@@ -3495,6 +3510,8 @@ namespace MediaPortal.Player
           return "1080p";
         case VideoFormat.BLURAY_VIDEO_FORMAT_576P:
           return "576p";
+        case VideoFormat.BLURAY_VIDEO_FORMAT_2160P:
+          return "2160p";
         default:
           return Strings.Unknown;
       }
@@ -3528,6 +3545,8 @@ namespace MediaPortal.Player
           return "H264";
         case BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1:
           return "VC1";
+        case BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_HEVC:
+          return "HEVC";
       }
       return Strings.Unknown;
     }
