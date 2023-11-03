@@ -43,23 +43,21 @@ CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime,
   audioPlaybackPosition = playlistFirstPacketTime;
   videoPlaybackPosition = playlistFirstPacketTime;
 
-  earliestPacketAccepted = _I64_MAX;
+  m_rtEarliestPacketAccepted = _I64_MAX;
   firstVideoPosition = _I64_MAX;
   firstAudioPosition = _I64_MAX;
 
   clipDuration = duration;
-  clipPlaylistOffset = totalStreamOffset;
+  m_rtClipPlaylistOffset = totalStreamOffset;
   m_rtStreamStartOffset = streamStartOffset;
 
   m_playlistOffset = clipOffset;
   m_rtPlayedDuration = 0;
   m_rtPrevAudioStart = 0;
-  m_rtClipVideoStartingOffset = 0LL;
-  m_rtClipAudioStartingOffset = 0LL;
-
-  m_bCalculateAudioOffset = true;
-  m_bCalculateVideoOffset = true;
-
+  m_rtClipStartingOffset = 0LL;
+  
+  m_bCalculateOffset = true;
+  
   noAudio =! audioPresent;
 
   clipInterrupted = interrupted;
@@ -70,8 +68,8 @@ CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime,
 
   firstAudio = true;
   firstVideo = true;
-  firstPacketAccepted = false;
-  firstPacketReturned = false;
+  m_bFirstPacketAccepted = false;
+  m_bFirstPacketReturned = false;
 
   clipReset = false;
   //LogDebug("CClip:: New Clip (%d,%d) stream Offset %I64d", nPlaylist, nClip, totalStreamOffset);
@@ -94,8 +92,8 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
   if (noAudio)
   {
     ret = GenerateFakeAudio(audioPlaybackPosition);
-    if (earliestPacketAccepted == INT64_MAX)
-      earliestPacketAccepted = audioPlaybackPosition;
+    if (m_rtEarliestPacketAccepted == INT64_MAX)
+      m_rtEarliestPacketAccepted = audioPlaybackPosition;
   }
   else
   {
@@ -122,20 +120,20 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
       if (clipInterrupted)
         ret->nNewSegment |= NS_INTERRUPTED;
 
-      if (m_bCalculateAudioOffset && (abs(earliestPacketAccepted - ret->rtStart) > 0))
-        m_rtClipAudioStartingOffset =  earliestPacketAccepted - ret->rtStart;
+      if (m_bCalculateOffset && (abs(m_rtEarliestPacketAccepted - ret->rtStart) > 0))
+        m_rtClipStartingOffset =  m_rtEarliestPacketAccepted - ret->rtStart;
       
-      m_bCalculateAudioOffset = false;
+      m_bCalculateOffset = false;
     }
 
-    if (!firstPacketReturned)
-      firstPacketReturned = true;
+    if (!m_bFirstPacketReturned)
+      m_bFirstPacketReturned = true;
 
     ret->rtPlaylistTime = ret->rtStart - m_playlistOffset;
 
-    ret->rtClipStartTime = ret->rtStart - earliestPacketAccepted + m_rtClipAudioStartingOffset;
-    ret->rtStart += clipPlaylistOffset - earliestPacketAccepted + m_rtClipAudioStartingOffset;
-    ret->rtStop += clipPlaylistOffset - earliestPacketAccepted + m_rtClipAudioStartingOffset;
+    ret->rtClipStartTime = ret->rtStart - m_rtEarliestPacketAccepted + m_rtClipStartingOffset;
+    ret->rtStart += m_rtClipPlaylistOffset - m_rtEarliestPacketAccepted + m_rtClipStartingOffset;
+    ret->rtStop += m_rtClipPlaylistOffset - m_rtEarliestPacketAccepted + m_rtClipStartingOffset;
 
     if (m_rtPrevAudioStart == 0)
       m_rtPrevAudioStart = ret->rtStart;
@@ -178,10 +176,10 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
         firstVideo = false;
         ret->pmt = CreateMediaType(m_videoPmt);
 
-        if (m_bCalculateVideoOffset && (abs(earliestPacketAccepted - ret->rtStart) > 0))
-          m_rtClipVideoStartingOffset = earliestPacketAccepted - ret->rtStart;
+        if (m_bCalculateOffset && (abs(m_rtEarliestPacketAccepted - ret->rtStart) > 0))
+          m_rtClipStartingOffset = m_rtEarliestPacketAccepted - ret->rtStart;
 
-        m_bCalculateVideoOffset = false;
+        m_bCalculateOffset = false;
       }
 
       if (ret->rtStart > videoPlaybackPosition) 
@@ -190,14 +188,14 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
         //LogDebug("Videoplayback position (%d,%d) %I64d", nPlaylist, nClip, videoPlaybackPosition);
       }
 
-      if (!firstPacketReturned)
-        firstPacketReturned = true;
+      if (!m_bFirstPacketReturned)
+        m_bFirstPacketReturned = true;
 
       ret->rtPlaylistTime = ret->rtStart - m_playlistOffset;
 
-      ret->rtClipStartTime = ret->rtStart - earliestPacketAccepted + m_rtClipVideoStartingOffset;
-      ret->rtStart += clipPlaylistOffset - earliestPacketAccepted + m_rtClipVideoStartingOffset;
-      ret->rtStop += clipPlaylistOffset - earliestPacketAccepted + m_rtClipVideoStartingOffset;
+      ret->rtClipStartTime = ret->rtStart - m_rtEarliestPacketAccepted + m_rtClipStartingOffset;
+      ret->rtStart += m_rtClipPlaylistOffset - m_rtEarliestPacketAccepted + m_rtClipStartingOffset;
+      ret->rtStop += m_rtClipPlaylistOffset - m_rtEarliestPacketAccepted + m_rtClipStartingOffset;
     }
   }
 //  LogDebug("Clip: vid: return Packet rtStart: %I64d offset: %I64d seekRequired %d",ret->rtStart, ret->rtOffset,ret->bSeekRequired);
@@ -245,10 +243,10 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
     packet->pmt = CreateMediaType(&pmt);
   }
   
-  if (earliestPacketAccepted == INT64_MAX)
-    earliestPacketAccepted = audioPlaybackPosition;
+  if (m_rtEarliestPacketAccepted == INT64_MAX)
+    m_rtEarliestPacketAccepted = audioPlaybackPosition;
 
-  firstPacketAccepted = true;
+  m_bFirstPacketAccepted = true;
 
   lastAudioPosition += FAKE_AUDIO_DURATION;
   audioPlaybackPosition += FAKE_AUDIO_DURATION;
@@ -274,10 +272,12 @@ bool CClip::AcceptAudioPacket(Packet* packet)
   else
   {
     //CAutoLock lock(m_sectionRead);
-    if (!firstPacketReturned)
+    if (!m_bFirstPacketReturned)
     {
-      if (earliestPacketAccepted > packet->rtStart) earliestPacketAccepted = packet->rtStart;
-        firstPacketAccepted = true;
+      if (m_rtEarliestPacketAccepted > packet->rtStart)
+          m_rtEarliestPacketAccepted = packet->rtStart;
+
+        m_bFirstPacketAccepted = true;
     }
 
     packet->nClipNumber = nClip;
@@ -304,12 +304,12 @@ bool CClip::AcceptVideoPacket(Packet*  packet)
   }
   else
   {
-    if (!firstPacketReturned && packet->rtStart != Packet::INVALID_TIME && earliestPacketAccepted > packet->rtStart)
-        earliestPacketAccepted = packet->rtStart;
+    if (!m_bFirstPacketReturned && packet->rtStart != Packet::INVALID_TIME && m_rtEarliestPacketAccepted > packet->rtStart)
+        m_rtEarliestPacketAccepted = packet->rtStart;
 
-    if (!firstPacketAccepted && packet->rtStart != Packet::INVALID_TIME)
+    if (!m_bFirstPacketAccepted && packet->rtStart != Packet::INVALID_TIME)
     {
-      firstPacketAccepted = true;
+      m_bFirstPacketAccepted = true;
       lastVideoPosition = packet->rtStart;
     }
 
@@ -392,23 +392,22 @@ void CClip::Reset(REFERENCE_TIME totalStreamOffset)
   lastVideoPosition = playlistFirstPacketTime;
   lastAudioPosition = playlistFirstPacketTime;
   
-  firstPacketAccepted ? clipReset = true : clipReset = false;
+  m_bFirstPacketAccepted ? clipReset = true : clipReset = false;
 
-  clipPlaylistOffset = totalStreamOffset;
+  m_rtClipPlaylistOffset = totalStreamOffset;
 
   audioPlaybackPosition = playlistFirstPacketTime;
   videoPlaybackPosition = playlistFirstPacketTime;
-  m_rtClipAudioStartingOffset = 0LL;
-  m_rtClipVideoStartingOffset = 0LL;
+  m_rtClipStartingOffset = 0LL;
 
-  earliestPacketAccepted = INT64_MAX;
+  m_rtEarliestPacketAccepted = INT64_MAX;
 
   superseded = NO_SUPERSEDE;
 
   firstAudio = true;
   firstVideo = true;
-  firstPacketAccepted = false;
-  firstPacketReturned = false;
+  m_bFirstPacketAccepted = false;
+  m_bFirstPacketReturned = false;
 }
 
 bool CClip::HasAudio()
