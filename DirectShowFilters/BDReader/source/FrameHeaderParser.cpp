@@ -2206,10 +2206,10 @@ bool CFrameHeaderParser::Read(bdlpcmhdr& h, int len, CMediaType* pmt)
 
   wfe.Samples.wSamplesPerBlock = 0;
   wfe.Samples.wValidBitsPerSample = bitspersample[h.bitpersample];
-  wfe.SubFormat = MEDIASUBTYPE_PCM;
+  wfe.SubFormat = MEDIASUBTYPE_BD_LPCM_AUDIO; //MEDIASUBTYPE_PCM;
 
 	pmt->majortype	= MEDIATYPE_Audio;
-	pmt->subtype	= MEDIASUBTYPE_PCM;
+	pmt->subtype	= MEDIASUBTYPE_BD_LPCM_AUDIO; //MEDIASUBTYPE_PCM;
 	pmt->formattype = FORMAT_WaveFormatEx;
 	pmt->SetFormat((BYTE*)&wfe, sizeof(wfe));
 
