@@ -68,6 +68,20 @@ bool StreamParser::Parse(byte* tsPacket, int serviceType)
 			parsed=true;
 		}
 	}
+	else if (serviceType == BLURAY_STREAM_TYPE_VIDEO_HEVC)
+	{
+		hevchdr hevc;
+		if (hdrParser.Read(hevc, framesize, &pmt))
+		{
+			basicVideoInfo.width = hevc.width;
+			basicVideoInfo.height = hevc.height;
+			basicVideoInfo.fps = 1000 / (hevc.AvgTimePerFrame / 10000);
+			basicVideoInfo.isInterlaced = 0;
+			basicVideoInfo.streamType = 4; // HEVC
+			basicVideoInfo.isValid = true;
+			parsed = true;
+		}
+	}
 	else if (serviceType == BLURAY_STREAM_TYPE_VIDEO_H264)
 	{
 		avchdr avc;

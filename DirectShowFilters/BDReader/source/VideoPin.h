@@ -96,6 +96,7 @@ protected:
   CLSID m_VC1decoder;
   CLSID m_H264decoder;
   CLSID m_MPEG2decoder;
+  CLSID m_HEVCdecoder;
   
   CLSID m_currentDecoder;
 

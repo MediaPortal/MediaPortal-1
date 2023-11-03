@@ -812,7 +812,7 @@ void CDeMultiplexer::FlushPESBuffers(bool bDiscardData, bool bSetCurrentClipFill
     if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_MPEG1 ||
         m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_MPEG2)
       FillVideoMPEG2(NULL, NULL, true);
-    else if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_H264)
+    else if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_H264 || m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_HEVC)
       FillVideoH264PESPacket(NULL, m_pBuild, true);
     else if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_VC1)
       FillVideoVC1PESPacket(NULL, m_pBuild, true);
@@ -996,10 +996,22 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> 
     if (!pData)
       continue;
 
-    if ((pData[4]&0x1f) == 0x09) 
-      m_fHasAccessUnitDelimiters = true;
+    bool bFlag = false;
+    if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_HEVC)
+    {
+        if (((pData[4] >> 1) & 0x3f) == HEVC_NAL_AUD)
+        {
+            m_fHasAccessUnitDelimiters = true;
+            bFlag = true;
+        }
+    }
+    else if ((pData[4] & 0x1f) == NALU_TYPE_AUD)
+    {
+        m_fHasAccessUnitDelimiters = true;
+        bFlag = true;
+    }
 
-    if ((pData[4]&0x1f) == 0x09 || !m_fHasAccessUnitDelimiters && pPacket->rtStart != Packet::INVALID_TIME) 
+    if (bFlag || !m_fHasAccessUnitDelimiters && pPacket->rtStart != Packet::INVALID_TIME)
     {
       p = m_pl.RemoveHead();
 
@@ -1263,8 +1275,8 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
 
   if (m_pBuild->GetCount() && m_videoServiceType != BLURAY_STREAM_TYPE_VIDEO_VC1)
   {
-    FillVideoH264PESPacket(header, m_pBuild);
-    m_pBuild.Free();
+      FillVideoH264PESPacket(header, m_pBuild);
+      m_pBuild.Free();
   }
 }
 
@@ -1716,6 +1728,8 @@ char* CDeMultiplexer::StreamFormatAsString(int pStreamType)
     return "H264";
   case BLURAY_STREAM_TYPE_VIDEO_VC1:
     return "VC1";
+  case BLURAY_STREAM_TYPE_VIDEO_HEVC:
+      return "HEVC";
   case BLURAY_STREAM_TYPE_AUDIO_LPCM:
     return "LPCM";
   case BLURAY_STREAM_TYPE_AUDIO_AC3:

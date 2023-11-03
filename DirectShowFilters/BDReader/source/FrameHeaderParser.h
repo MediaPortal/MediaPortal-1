@@ -387,6 +387,30 @@ enum mpeg_t {mpegunk, mpeg1, mpeg2};
 		}sar;		
 	};
 
+	struct hevchdr
+	{
+		BYTE profile, level;
+		unsigned int width, height;
+		bool progressive;
+		__int64 spspos, spslen;
+		__int64 ppspos, ppslen;
+		__int64 AvgTimePerFrame;
+		int arx, ary;
+		BYTE ar;
+		hevchdr()
+		{
+			progressive = true;
+			spspos = 0;
+			spslen = 0;
+			ppspos = 0;
+			ppslen = 0;
+			AvgTimePerFrame = 0;
+			ar = 0;
+			arx = 0;
+			ary = 0;
+		}
+	};
+
   struct thdhdr
   {
     int stream_type;            // 0xBB for MLP, 0xBA for TrueHD
@@ -457,6 +481,7 @@ public:
 	bool Read(trsechdr& h);
 	bool Read(pvahdr& h, bool fSync = true);
 	bool Read(avchdr& h, int len, CMediaType* pmt = NULL);
+	bool Read(hevchdr& h, int len, CMediaType* pmt);
 	bool Read(vc1hdr& h, int len, CMediaType* pmt = NULL);
     bool Read(bdlpcmhdr& h, int len, CMediaType* pmt = NULL);
     bool Read(thdhdr& h, int len, CMediaType* pmt = NULL);
@@ -465,6 +490,8 @@ public:
 
 	void DumpSequenceHeader(seqhdr h);
 	void DumpAvcHeader(avchdr h);
+
+	void profile_tier_level(bool profilePresentFlag, int maxNumSubLayersMinus1, CGolombBuffer* gb);
 
 private:
   REFERENCE_TIME m_rtPTSOffset;
