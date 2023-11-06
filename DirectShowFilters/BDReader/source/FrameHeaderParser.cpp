@@ -1686,8 +1686,6 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt)
 	h.progressive = true;
 	h.AvgTimePerFrame = 370000;  //27 Hz
 
-	BYTE* pBuff = GetBufferPos();
-
 	while (GetRemaining() > 4 && (h.spslen == 0 || h.ppslen == 0 || h.vpslen == 0))
 	{
 		const int nal_len = BitRead(32);
