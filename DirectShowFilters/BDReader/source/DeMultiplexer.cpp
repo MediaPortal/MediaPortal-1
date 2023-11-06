@@ -999,7 +999,7 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> 
     bool bFlag = false;
     if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_HEVC)
     {
-        if (((pData[4] >> 1) & 0x3f) == HEVC_NAL_AUD)
+        if (((pData[4] >> 1) & 0x3f) == HEVC::NAL_AUD)
         {
             m_fHasAccessUnitDelimiters = true;
             bFlag = true;

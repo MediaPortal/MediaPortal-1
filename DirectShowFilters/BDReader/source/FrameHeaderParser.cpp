@@ -35,12 +35,15 @@
 #include <wmcodecdsp.h>
 #include <ks.h>
 #include <ksmedia.h>
-#include "h264nalu.h"
+#include "HEVC\Hevc.h"
+#include "HEVC\HevcNalDecode.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
 extern void LogDebug(const char *fmt, ...) ;
+
+#define LOG_HEVC_FHP //LogDebug
 
 #define countof(array) (sizeof(array)/sizeof(array[0]))
 #define DNew new
@@ -48,6 +51,14 @@ extern void LogDebug(const char *fmt, ...) ;
 #define MAX_SPS 256			// Max size for a SPS packet
 
 #define TRUEHD_SYNC_WORD    0xf8726f
+
+//AVC Chroma format IDC definitions
+#define YUV400  0     
+#define YUV420  1     
+#define YUV422  2     
+#define YUV444  3  
+
+using namespace HEVC;
 
 // LR C LFE LRs LRvh LRc LRrs Cs Ts LRsd LRw Cvh LFE2
 static const UINT8 thd_chancount[13] = {2, 1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 1, 1};
@@ -1668,142 +1679,87 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 
 bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt)
 {
-	memset(&h, 0, sizeof(h));
+	if ((len <= 6) || (len > 65534)) 
+		return(false); //Sanity check
 
-	while (GetRemaining() > 4 && (h.spslen == 0 || h.ppslen == 0))
+	memset(&h, 0, sizeof(h));
+	h.progressive = true;
+	h.AvgTimePerFrame = 370000;  //27 Hz
+
+	BYTE* pBuff = GetBufferPos();
+
+	while (GetRemaining() > 4 && (h.spslen == 0 || h.ppslen == 0 || h.vpslen == 0))
 	{
 		const int nal_len = BitRead(32);
-		const INT64 next_nal = GetPos() + nal_len;
+		const INT64 nal_pos = GetPos();
+		const INT64 next_nal = nal_pos + nal_len;
 
-		//nalu header
-		const bool bForbiden = BitRead(1); //forbidden_zero_bit
-		const HEVC_NALU_TYPE nal_type = (HEVC_NALU_TYPE)BitRead(6); //nal_unit_type
-		const int idLayer = BitRead(6); //nuh_layer_id
-		const int iTempId = BitRead(3); //nuh_temporal_id_plus1
+		NALUnitType nal_type = HevcNalDecode::processNALUnit(GetBufferPos(), nal_len, h);
 
-		if (bForbiden || idLayer > 0 || (nal_type != HEVC_NAL_SPS && nal_type != HEVC_NAL_PPS && nal_type != HEVC_NAL_VPS))
+		if (nal_type == NAL_FAIL) //NAL decoding error
 		{
-			Seek(next_nal);
-			continue;
+			return(false);
 		}
-		if (nal_type == HEVC_NAL_SPS)
+		else if (nal_type == NAL_SPS)
 		{
-			h.spspos = GetPos() - 6;
-			h.spslen = next_nal - h.spspos;
-
-			BYTE			buff[MAX_SPS];
-			BYTE			buffTmp[MAX_SPS];
-			CGolombBuffer	gb(buff, MAX_SPS);
-			ByteRead((BYTE*)buffTmp, min(MAX_SPS, GetRemaining()));
-			RemoveMpegEscapeCode(buff, buffTmp, MAX_SPS);
-
-			int tmp = gb.BitRead(4); //sps_video_parameter_set_id
-			int sps_max_sub_layers_minus1 = gb.BitRead(3); //sps_max_sub_layers_minus1
-			tmp = gb.BitRead(1); //sps_temporal_id_nesting_flag
-
-			profile_tier_level(1, sps_max_sub_layers_minus1, &gb);
-
-			tmp = gb.UExpGolombRead(); //sps_seq_parameter_set_id
-			tmp = gb.UExpGolombRead(); //chroma_format_idc
-
-			if (tmp == 3)
-				gb.BitRead(1); //separate_colour_plane_flag
-
-			h.width = gb.UExpGolombRead(); //width
-			h.height = gb.UExpGolombRead(); //height
-
-			//if (gb.BitRead(1)) // pic_conformance_flag 
-			//{
-			//	tmp = gb.UExpGolombRead(); //conf_win_left_offset
-			//	tmp = gb.UExpGolombRead(); //conf_win_right_offset
-			//	tmp = gb.UExpGolombRead(); //conf_win_top_offset
-			//	tmp = gb.UExpGolombRead(); //conf_win_bottom_offset
-			//}
-
-			//tmp = gb.UExpGolombRead(); //bit_depth_luma_minus8
-			//tmp = gb.UExpGolombRead(); //bit_depth_chroma_minus8
-			//tmp = gb.UExpGolombRead(); //log2_max_pic_order_cnt_lsb_minus4
-		}
-		else if (nal_type == HEVC_NAL_PPS)
-		{
-			h.ppspos = GetPos() - 6;
-			h.ppslen = next_nal - h.ppspos;
-		}
-		else if (nal_type == HEVC_NAL_VPS)
-		{
-			BYTE			buff[MAX_SPS];
-			BYTE			buffTmp[MAX_SPS];
-			CGolombBuffer	gb(buff, MAX_SPS);
-			ByteRead((BYTE*)buffTmp, min(MAX_SPS, GetRemaining()));
-			RemoveMpegEscapeCode(buff, buffTmp, MAX_SPS);
-
-			int tmp = gb.BitRead(4); //vps_video_parameter_set_id
-			tmp = gb.BitRead(1); //vps_base_layer_internal_flag
-			tmp = gb.BitRead(1); //vps_base_layer_available_flag
-			tmp = gb.BitRead(6); //vps_max_layers_minus1
-			int iSubLayers = gb.BitRead(3); //vps_max_sub_layers_minus1
-			tmp = gb.BitRead(1); //vps_temporal_id_nesting_flag
-			tmp = gb.BitRead(16); //vps_reserved_0xffff_16bits
-
-
-			profile_tier_level(true, iSubLayers, &gb);
-
-			bool bFlag = gb.BitRead(1); //vps_sub_layer_ordering_info_present_flag
-
-			for (int i = bFlag ? 0 : iSubLayers; i <= iSubLayers; i++)
+			LOG_HEVC_FHP("SPS found");
+			//Copy SPS to buffer
+			h.sps = (BYTE*)malloc(nal_len);
+			if (h.sps == NULL) 
 			{
-				tmp = gb.UExpGolombRead(); //vps_max_dec_pic_buffering_minus1
-				tmp = gb.UExpGolombRead(); //vps_max_num_reorder_pics
-				tmp = gb.UExpGolombRead(); //vps_max_latency_increase_plus1
-			}
-
-			int iMaxLayer = gb.BitRead(6); //vps_max_layer_id
-			int iLayersSet = gb.UExpGolombRead(); //vps_num_layer_sets_minus1
-
-			for (int i = 1; i <= iLayersSet; i++)
-				for (int j = 0; j <= iMaxLayer; j++)
-					tmp = gb.BitRead(1); //layer_id_included_flag
-
-			bFlag = gb.BitRead(1); //vps_timing_info_present_flag
-			if (bFlag)
+				//malloc error...
+				h.spslen = 0; 
+				return(false); 
+			} 
+			ByteRead(h.sps, nal_len);
+			h.spslen = nal_len;
+		}
+		else if (nal_type == NAL_PPS)
+		{
+			LOG_HEVC_FHP("PPS found");
+			//Copy PPS to new buffer
+			h.pps = (BYTE*)malloc(nal_len);
+			if (h.pps == NULL) 
 			{
-				int vps_num_units_in_tick = gb.BitRead(32); //vps_num_units_in_tick
-				int vps_time_scale = gb.BitRead(32); //vps_time_scale
-
-				h.AvgTimePerFrame = (10000000I64 * vps_num_units_in_tick) / vps_time_scale;
-
-				bFlag = gb.BitRead(1); //vps_poc_proportional_to_timing_flag
-				if (bFlag)
-					tmp = gb.UExpGolombRead(); //vps_num_ticks_poc_diff_one_minus1
-
-				tmp = gb.UExpGolombRead(); //vps_num_hrd_parameters
+				//malloc error...
+				h.ppslen = 0;
+				return(false);
+			} 
+			ByteRead(h.pps, nal_len);
+			h.ppslen = nal_len;
+		}
+		else if (nal_type == NAL_VPS)
+		{
+			LOG_HEVC_FHP("VPS found");
+			//Copy VPS to new buffer
+			h.vps = (BYTE*)malloc(nal_len);
+			if (h.vps == NULL) 
+			{
+				//malloc error...
+				h.vpslen = 0; 
+				return(false); 
 			}
+			ByteRead(h.vps, nal_len);
+			h.vpslen = nal_len;
 		}
 
 		Seek(next_nal);
 	}
 
-	if (!h.spspos || !h.spslen || !h.ppspos || !h.ppslen || h.height < 300 || h.width < 300 || h.AvgTimePerFrame < 1000)
+	if (!h.spslen || !h.ppslen || !h.vpslen || h.height < 100 || h.width < 100 || h.AvgTimePerFrame < 1000)
 		return(false);
 
 	if (!pmt)
 		return(true);
 
-	h.ar = 255; //ex
-	h.arx = 1; //ex
-	h.ary = 1; //ex
-
-	//h.profile = 2; //ex
-	//h.level = 153; //ex
-
 	{
 
-		int extra = 2 + h.spslen - 4 + 2 + h.ppslen - 4;
+		int extra = h.spslen + 4 + h.ppslen + 4 + h.vpslen + 4;
 		pmt->SetType(&MEDIATYPE_Video);
 		//pmt->SetSubtype(&MEDIASUBTYPE_H264);
 		pmt->SetSubtype(&HEVC_SubType);
 		pmt->formattype = FORMAT_MPEG2_VIDEO;
-		//pmt->bTemporalCompression = true; //ex
+		pmt->bTemporalCompression = true;
 
 		int len = FIELD_OFFSET(MPEG2VIDEOINFO, dwSequenceHeader) + extra;
 		MPEG2VIDEOINFO* vi = (MPEG2VIDEOINFO*)pmt->AllocFormatBuffer(len);
@@ -1847,31 +1803,58 @@ bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt)
 		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
 		vi->hdr.bmiHeader.biWidth = h.width;
 		vi->hdr.bmiHeader.biHeight = h.height;
-		//vi->hdr.bmiHeader.biCompression = '462h';
+		vi->hdr.rcSource.right = h.width;
+		vi->hdr.rcSource.bottom = h.height;
+		vi->hdr.rcTarget.right = h.width;
+		vi->hdr.rcTarget.bottom = h.height;
 		vi->hdr.bmiHeader.biCompression = 'CVEH';
 		vi->hdr.bmiHeader.biPlanes = 1;
-		vi->hdr.bmiHeader.biBitCount = 24;
+
+
+		switch (h.chromaFormat)
+		{
+		case YUV420:
+			vi->hdr.bmiHeader.biBitCount = h.lumaDepth + (h.chromaDepth / 2);
+			break;
+		case YUV422:
+			vi->hdr.bmiHeader.biBitCount = h.lumaDepth + h.chromaDepth;
+			break;
+		case YUV444:
+			vi->hdr.bmiHeader.biBitCount = h.lumaDepth + (2 * h.chromaDepth);
+			break;
+		case YUV400: //Monochrome
+			vi->hdr.bmiHeader.biBitCount = h.lumaDepth;
+			break;
+		default:
+			vi->hdr.bmiHeader.biBitCount = h.lumaDepth + (h.chromaDepth / 2);
+		}
+
 		vi->hdr.bmiHeader.biClrUsed = 0;
+		vi->hdr.bmiHeader.biSizeImage = DIBSIZE(vi->hdr.bmiHeader);
 		vi->dwProfile = h.profile;
-		vi->dwFlags = 4; // ?
+		vi->dwFlags = 0;
 		vi->dwLevel = h.level;
 		vi->cbSequenceHeader = extra;
 		vi->dwStartTimeCode = 0;
-		//vi->hdr.rcSource.right = h.width; //ex
-		//vi->hdr.rcSource.bottom = h.height; //ex
-		//vi->hdr.rcTarget.right = h.width; //ex
-		//vi->hdr.rcTarget.bottom = h.height; //ex
 		BYTE* p = (BYTE*)&vi->dwSequenceHeader[0];
-		*p++ = (h.spslen - 4) >> 8;
-		*p++ = (h.spslen - 4) & 0xff;
-		Seek(h.spspos + 4);
-		ByteRead(p, h.spslen - 4);
-		p += h.spslen - 4;
-		*p++ = (h.ppslen - 4) >> 8;
-		*p++ = (h.ppslen - 4) & 0xff;
-		Seek(h.ppspos + 4);
-		ByteRead(p, h.ppslen - 4);
-		p += h.ppslen - 4;
+		*p++ = 0;
+		*p++ = 0;
+		*p++ = 0;
+		*p++ = 1;
+		memcpy(p, h.sps, (size_t)h.spslen);
+		p += h.spslen;
+		*p++ = 0;
+		*p++ = 0;
+		*p++ = 0;
+		*p++ = 1;
+		memcpy(p, h.pps, (size_t)h.ppslen);
+		p += h.ppslen;
+		*p++ = 0;
+		*p++ = 0;
+		*p++ = 0;
+		*p++ = 1;
+		memcpy(p, h.vps, (size_t)h.vpslen);
+
 		pmt->SetFormat((BYTE*)vi, len);
 	}
 
@@ -2253,150 +2236,4 @@ void CFrameHeaderParser::DumpAvcHeader(avchdr h)
 	LogDebug("SPS len: %i",h.spslen);
 */
 	LogDebug("=================================");
-}
-
-void CFrameHeaderParser::profile_tier_level(bool profilePresentFlag, int maxNumSubLayersMinus1, CGolombBuffer* gb)
-{
-	if (profilePresentFlag)
-	{
-		byte general_profile_compatibility_flag[32];
-
-		gb->BitRead(2); //general_profile_space	u(2)
-		gb->BitRead(1); //general_tier_flag	u(1)
-		int general_profile_idc = gb->BitRead(5); //general_profile_idc u(5)
-		for (int j = 0; j < 32; j++)
-			general_profile_compatibility_flag[j] = gb->BitRead(1);//u(1)
-
-		gb->BitRead(1); //general_progressive_source_flag u(1)
-		gb->BitRead(1); //general_interlaced_source_flag u(1)
-		gb->BitRead(1); //general_non_packed_constraint_flag u(1)
-		gb->BitRead(1); //general_frame_only_constraint_flag u(1)
-		if (general_profile_idc == 4 || general_profile_compatibility_flag[4]
-			|| general_profile_idc == 5 || general_profile_compatibility_flag[5]
-			|| general_profile_idc == 6 || general_profile_compatibility_flag[6]
-			|| general_profile_idc == 7 || general_profile_compatibility_flag[7]
-			|| general_profile_idc == 8 || general_profile_compatibility_flag[8]
-			|| general_profile_idc == 9 || general_profile_compatibility_flag[9]
-			|| general_profile_idc == 10 || general_profile_compatibility_flag[10])
-		{
-			/* The number of bits in this syntax structure is not affected by this condition */
-			gb->BitRead(1); //general_max_12bit_constraint_flag	u(1)
-			gb->BitRead(1); //general_max_10bit_constraint_flag u(1)
-			gb->BitRead(1); //general_max_8bit_constraint_flag u(1)
-			gb->BitRead(1); //general_max_422chroma_constraint_flag u(1)
-			gb->BitRead(1); //general_max_420chroma_constraint_flag u(1)
-			gb->BitRead(1); //general_max_monochrome_constraint_flag u(1)
-			gb->BitRead(1); //general_intra_constraint_flag u(1)
-			gb->BitRead(1); //general_one_picture_only_constraint_flag u(1)
-			gb->BitRead(1); //general_lower_bit_rate_constraint_flag u(1)
-			if (general_profile_idc == 5 || general_profile_compatibility_flag[5]
-				|| general_profile_idc == 9 || general_profile_compatibility_flag[9] ||
-				general_profile_idc == 10 || general_profile_compatibility_flag[10]) {
-				gb->BitRead(1); //general_max_14bit_constraint_flag	u(1)
-				gb->BitRead(33); //general_reserved_zero_33bits u(33)
-			}
-			else
-				gb->BitRead(34); //general_reserved_zero_34bits u(34)
-		}
-		else if (general_profile_idc == 2 || general_profile_compatibility_flag[2])
-		{
-			gb->BitRead(7); //general_reserved_zero_7bits u(7)
-			gb->BitRead(1); //general_one_picture_only_constraint_flag u(1)
-			gb->BitRead(35); //general_reserved_zero_35bits u(35)
-		}
-		else
-
-			gb->BitRead(43); //general_reserved_zero_43bits u(43)
-		if ((general_profile_idc >= 1 && general_profile_idc <= 5)
-			|| general_profile_idc == 9
-			|| general_profile_compatibility_flag[1] || general_profile_compatibility_flag[2]
-			|| general_profile_compatibility_flag[3] || general_profile_compatibility_flag[4]
-			|| general_profile_compatibility_flag[5] || general_profile_compatibility_flag[9])
-			/* The number of bits in this syntax structure is not affected by this condition */
-			gb->BitRead(1); //general_inbld_flag u(1)
-		else
-			gb->BitRead(1); //general_reserved_zero_bit u(1)
-	}
-	gb->BitRead(8); //general_level_idc u(8)
-
-	byte sub_layer_profile_present_flag[8];
-	byte sub_layer_profile_idc[8];
-	byte sub_layer_profile_compatibility_flag[8][32];
-	byte sub_layer_level_present_flag[8];
-
-	for (int i = 0; i < maxNumSubLayersMinus1; i++)
-	{
-		sub_layer_profile_present_flag[i] = (byte)gb->BitRead(1); //sub_layer_profile_present_flag[i]	u(1)
-		sub_layer_level_present_flag[i] = (byte)gb->BitRead(1); //sub_layer_level_present_flag[i] u(1)
-	}
-	if (maxNumSubLayersMinus1 > 0)
-		for (int i = maxNumSubLayersMinus1; i < 8; i++)
-			gb->BitRead(2); //reserved_zero_2bits[i] u(2)
-
-	for (int i = 0; i < maxNumSubLayersMinus1; i++)
-	{
-		if (sub_layer_profile_present_flag[i])
-		{
-			gb->BitRead(2); //sub_layer_profile_space[i] u(2)
-			gb->BitRead(1); //sub_layer_tier_flag[i] u(1)
-			sub_layer_profile_idc[i] = (byte)gb->BitRead(5); //sub_layer_profile_idc[i] u(5)
-
-			for (int j = 0; j < 32; j++)
-				sub_layer_profile_compatibility_flag[i][j] = (byte)gb->BitRead(1); //sub_layer_profile_compatibility_flag[i][j] u(1)
-
-			gb->BitRead(1); //sub_layer_progressive_source_flag[i] u(1)
-			gb->BitRead(1); //sub_layer_interlaced_source_flag[i] u(1)
-			gb->BitRead(1); //sub_layer_non_packed_constraint_flag[i] u(1)
-			gb->BitRead(1); //sub_layer_frame_only_constraint_flag[i] u(1)
-			if (sub_layer_profile_idc[i] == 4 || sub_layer_profile_compatibility_flag[i][4]
-				|| sub_layer_profile_idc[i] == 5 || sub_layer_profile_compatibility_flag[i][5]
-				|| sub_layer_profile_idc[i] == 6 || sub_layer_profile_compatibility_flag[i][6]
-				|| sub_layer_profile_idc[i] == 7 || sub_layer_profile_compatibility_flag[i][7]
-				|| sub_layer_profile_idc[i] == 8 || sub_layer_profile_compatibility_flag[i][8]
-				|| sub_layer_profile_idc[i] == 9 || sub_layer_profile_compatibility_flag[i][9]
-				|| sub_layer_profile_idc[i] == 10 || sub_layer_profile_compatibility_flag[i][10]
-				)
-			{
-				/* The number of bits in this syntax structure is not affected by this condition */
-				gb->BitRead(1); //sub_layer_max_12bit_constraint_flag[i] u(1)
-				gb->BitRead(1); //sub_layer_max_10bit_constraint_flag[i] u(1)
-				gb->BitRead(1); //sub_layer_max_8bit_constraint_flag[i]	u(1)
-				gb->BitRead(1); //sub_layer_max_422chroma_constraint_flag[i] u(1)
-				gb->BitRead(1); //sub_layer_max_420chroma_constraint_flag[i] u(1)
-				gb->BitRead(1); //sub_layer_max_monochrome_constraint_flag[i] u(1)
-				gb->BitRead(1); //sub_layer_intra_constraint_flag[i] u(1)
-				gb->BitRead(1); //sub_layer_one_picture_only_constraint_flag[i]	u(1)
-				gb->BitRead(1); //sub_layer_lower_bit_rate_constraint_flag[i] u(1)
-
-				if (sub_layer_profile_idc[i] == 5 || sub_layer_profile_compatibility_flag[i][5])
-				{
-					gb->BitRead(1); //sub_layer_max_14bit_constraint_flag[i] u(1)
-					gb->BitRead(33); //sub_layer_reserved_zero_33bits[i] u(33)
-				}
-				else
-					gb->BitRead(34); //sub_layer_reserved_zero_34bits[i] u(34)
-			}
-			else if (sub_layer_profile_idc[i] == 2 || sub_layer_profile_compatibility_flag[i][2])
-			{
-				gb->BitRead(7); //sub_layer_reserved_zero_7bits[i] u(7)
-				gb->BitRead(1); //sub_layer_one_picture_only_constraint_flag[i]	u(1)
-				gb->BitRead(35); //sub_layer_reserved_zero_35bits[i] u(35)
-			}
-			else
-				gb->BitRead(43); //sub_layer_reserved_zero_43bits[i] u(43)
-			if ((sub_layer_profile_idc[i] >= 1 && sub_layer_profile_idc[i] <= 5)
-				|| sub_layer_profile_idc[i] == 9 || sub_layer_profile_compatibility_flag[1]
-				|| sub_layer_profile_compatibility_flag[2] || sub_layer_profile_compatibility_flag[3]
-				|| sub_layer_profile_compatibility_flag[4] || sub_layer_profile_compatibility_flag[5]
-				|| sub_layer_profile_compatibility_flag[9]
-				)
-				/* The number of bits in this syntax structure is not affected by this condition */
-				gb->BitRead(1); //sub_layer_inbld_flag[i] u(1)
-			else
-				gb->BitRead(1); // sub_layer_reserved_zero_bit[i] u(1)
-		}
-
-		if (sub_layer_level_present_flag[i])
-			gb->BitRead(8); //sub_layer_level_idc[i] u(8)
-	}
 }

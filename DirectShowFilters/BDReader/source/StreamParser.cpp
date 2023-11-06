@@ -28,9 +28,12 @@
 #include "StreamParser.h"
 #include <initguid.h>
 #include <bluray.h>
+#include "HEVC\Hevc.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
+
+using namespace HEVC;
 
 extern void LogDebug(const char *fmt, ...) ;
 
