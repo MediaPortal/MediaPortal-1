@@ -37,6 +37,7 @@ namespace MpeMaker.Sections
     {
       InitializeComponent();
       Package = null;
+      this.cmb_platform.SelectedIndex = (int)PlatformCompatibilityEnum.AnyCPU;
     }
 
     private void GeneralSection_Load(object sender, EventArgs e) {}
@@ -62,6 +63,7 @@ namespace MpeMaker.Sections
       txt_versiondesc.Lines = pak.GeneralInfo.VersionDescription.Split('\n');
       txt_tags.Text = pak.GeneralInfo.Tags;
       date_release.Value = pak.GeneralInfo.ReleaseDate;
+      cmb_platform.SelectedIndex = (int)pak.GeneralInfo.PlatformCompatibility;
       Package = pak;
       RefreshIcon();
     }
@@ -93,6 +95,7 @@ namespace MpeMaker.Sections
         Package.GeneralInfo.OnlineLocation = txt_online.Text;
         Package.GeneralInfo.Tags = txt_tags.Text;
         Package.GeneralInfo.ReleaseDate = date_release.Value;
+        Package.GeneralInfo.PlatformCompatibility = (PlatformCompatibilityEnum)cmb_platform.SelectedIndex;
       }
     }
 

@@ -70,8 +70,8 @@ namespace MpeCore
     public FileItemCollection UniqueFileList { get; set; }
     public ProjectSettings ProjectSettings { get; set; }
     public bool IsSkin { get; set; }
-
-    [XmlIgnore]
+    
+   [XmlIgnore]
     public ExtensionCollection Parent { get; set; }
 
     [XmlIgnore]
@@ -85,6 +85,23 @@ namespace MpeCore
 
     [XmlIgnore]
     public bool IsHiden { get; set; }
+
+    [XmlIgnore]
+    public bool IsPlatformCompatible
+    {
+      get
+      {
+        if (this.GeneralInfo == null)
+          return false;
+
+        if (IntPtr.Size == 8)
+          return this.GeneralInfo.PlatformCompatibility == PlatformCompatibilityEnum.AnyCPU ||
+            this.GeneralInfo.PlatformCompatibility == PlatformCompatibilityEnum.x64;
+        else
+          return this.GeneralInfo.PlatformCompatibility == PlatformCompatibilityEnum.AnyCPU ||
+              this.GeneralInfo.PlatformCompatibility == PlatformCompatibilityEnum.x86;
+      }
+    }
 
     /// <summary>
     /// Gets the location folder were stored the backup and the uninstall informations. Ended with \

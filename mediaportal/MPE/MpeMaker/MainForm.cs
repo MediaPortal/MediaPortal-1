@@ -426,6 +426,10 @@ namespace MpeMaker
         }
       }
 
+      //Set initial platform compatibility to AnyCPU
+      if (this.Package != null)
+        this.Package.GeneralInfo.PlatformCompatibility = PlatformCompatibilityEnum.AnyCPU;
+
       Show();
       BringToFront();
     }

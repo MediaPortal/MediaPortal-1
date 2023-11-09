@@ -476,8 +476,8 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
         extensionListControlKnown.flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
       }
       toolStripLastUpdate.Text = "Last update: " + (ApplicationSettings.Instance.LastUpdate == DateTime.MinValue ? "Never" : ApplicationSettings.Instance.LastUpdate.ToString("g"));
-      extensionListControlInstalled.Set(MpeCore.MpeInstaller.InstalledExtensions, true);
-      extensionListControlKnown.Set(MpeCore.MpeInstaller.KnownExtensions.GetUniqueList(MpeCore.MpeInstaller.InstalledExtensions), false);
+      extensionListControlInstalled.Set(MpeCore.MpeInstaller.InstalledExtensions, true, false);
+      extensionListControlKnown.Set(MpeCore.MpeInstaller.KnownExtensions.GetUniqueList(MpeCore.MpeInstaller.InstalledExtensions), false, true);
     }
 
     private void extensionListControl_UnInstallExtension(object sender, PackageClass packageClass)
@@ -567,6 +567,13 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
           MessageBox.Show("Wrong file format !");
         return;
       }
+
+      if (!pak.IsPlatformCompatible)
+      {
+        MessageBox.Show("Package is not platform compatible!");
+        return;
+      }
+
       if (pak.CheckDependency(false))
       {
         PackageClass installedPak = MpeCore.MpeInstaller.InstalledExtensions.Get(pak.GeneralInfo.Id);

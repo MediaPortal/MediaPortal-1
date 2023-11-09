@@ -60,7 +60,7 @@ namespace MpeInstaller.Controls
 
     public ExtensionControlHost SelectedItem { get; set; }
 
-    public void Set(ExtensionCollection collection, bool isListOfInstalledExtensions)
+    public void Set(ExtensionCollection collection, bool isListOfInstalledExtensions, bool bPlatformCompatibleOnly)
     {
       var oldCursor = ParentForm.Cursor;
       try
@@ -79,6 +79,9 @@ namespace MpeInstaller.Controls
         flowLayoutPanel1.Controls.Clear();
         foreach (PackageClass item in collection.Items)
         {
+          if (bPlatformCompatibleOnly && !item.IsPlatformCompatible)
+              continue;
+
           var extHostCtrl = new ExtensionControlHost();
           flowLayoutPanel1.Controls.Add(extHostCtrl);
           extHostCtrl.Initialize(item, isListOfInstalledExtensions);

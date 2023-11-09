@@ -128,6 +128,7 @@
     <Compile Include="Classes\InstallerType\GenericSkinFile.cs" />
     <Compile Include="Classes\ParamNamesConst.cs" />
     <Compile Include="Classes\PathProvider\TvServerPaths.cs" />
+    <Compile Include="Classes\PlatformCompatibilityEnum.cs" />
     <Compile Include="Classes\PluginDependencyItem.cs" />
     <Compile Include="Classes\PluginDependencyItemCollection.cs" />
     <Compile Include="Classes\PluginLoader.cs" />
