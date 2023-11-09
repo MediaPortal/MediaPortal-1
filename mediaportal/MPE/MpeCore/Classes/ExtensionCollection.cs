@@ -45,15 +45,16 @@ namespace MpeCore.Classes
     /// <returns></returns>
     public ExtensionCollection GetUniqueList()
     {
-      return GetUniqueList(null);
+      return GetUniqueList(null, false);
     }
 
     /// <summary>
     /// Gets the unique list of extensions with highest version
     /// </summary>
     /// <param name="exlude">Exlude these extensions</param>
+    /// <param name="bPlatformCompatibleOnly">Check for platform compatibility</param>
     /// <returns></returns>
-    public ExtensionCollection GetUniqueList(ExtensionCollection exlude)
+    public ExtensionCollection GetUniqueList(ExtensionCollection exlude, bool bPlatformCompatibleOnly)
     {
       HashSet<string> exludedIds = new HashSet<string>();
       if (exlude != null) exlude.Items.ForEach(p => exludedIds.Add(p.GeneralInfo.Id));
@@ -61,6 +62,9 @@ namespace MpeCore.Classes
       
       foreach (PackageClass item in Items)
       {
+        if (bPlatformCompatibleOnly && !item.IsPlatformCompatible)
+          continue;
+
         if (item.IsHiden || exludedIds.Contains(item.GeneralInfo.Id))
           continue;
 
