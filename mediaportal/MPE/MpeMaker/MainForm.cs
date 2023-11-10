@@ -409,6 +409,11 @@ namespace MpeMaker
         {
           case MpeStartupResult.NewFile:
             Package = GetNewProject();
+
+            //Set initial platform compatibility to AnyCPU
+            if (this.Package != null)
+              this.Package.GeneralInfo.PlatformCompatibility = PlatformCompatibilityEnum.AnyCPU;
+
             break;
 
           case MpeStartupResult.OpenFile:
@@ -425,10 +430,6 @@ namespace MpeMaker
             break;
         }
       }
-
-      //Set initial platform compatibility to AnyCPU
-      if (this.Package != null)
-        this.Package.GeneralInfo.PlatformCompatibility = PlatformCompatibilityEnum.AnyCPU;
 
       Show();
       BringToFront();
