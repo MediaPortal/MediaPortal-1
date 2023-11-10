@@ -84,7 +84,8 @@ namespace MpeInstaller.Controls
 
       extensionControlCollapsed.Initialize(
         package.GeneralInfo.Name, 
-        package.GeneralInfo.Author, 
+        package.GeneralInfo.Author,
+        package.GeneralInfo.PlatformCompatibility.ToString(),
         package.GeneralInfo.Version.ToString(), 
         meetsAllDependencies, 
         UpdatePackage != null ? UpdatePackage.GeneralInfo.Version.ToString() : null, 
