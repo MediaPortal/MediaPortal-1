@@ -92,8 +92,8 @@ namespace MediaPortal.Configuration
       if (!DirectXCheck.IsInstalled())
       {
         string strLine = "Please install a newer DirectX 9.0c redist!\r\n";
-        strLine = strLine + "MediaPortal cannot run without DirectX 9.0c redist (August 2008)\r\n";
-        strLine = strLine + "http://install.team-mediaportal.com/DirectX";
+        strLine = strLine + "MediaPortal cannot run without DirectX 9.0c redist (June 2010)\r\n";
+        strLine = strLine + "https://install.team-mediaportal.com/DirectX";
         MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }

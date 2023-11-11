@@ -28,7 +28,7 @@ namespace MediaPortal.Configuration
     public static bool IsInstalled()
     {
       string[] DllList = {
-                           @"\System32\D3DX9_30.dll",
+                           @"\System32\D3DX9_43.dll",
                          };
       string WinDir = Environment.GetEnvironmentVariable("WINDIR");
       foreach (string DllFile in DllList)
