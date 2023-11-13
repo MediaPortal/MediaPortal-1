@@ -53,6 +53,7 @@ namespace MpeCore.Classes
       IgnoredUpdates = new List<string>();
       ExpandTile = false;
       ExpandTileFullWidth = false;
+      PlatformCompatibilityCheck = true;
     }
 
     public DateTime LastUpdate { get; set; }
@@ -65,6 +66,7 @@ namespace MpeCore.Classes
     public bool ExpandTile { get; set; }
     public bool ExpandTileFullWidth { get; set; }
     public Size FormSize { get; set; }
+    public bool PlatformCompatibilityCheck { get; set; }
 
     public void Save()
     {

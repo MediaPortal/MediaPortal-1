@@ -477,7 +477,8 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
       }
       toolStripLastUpdate.Text = "Last update: " + (ApplicationSettings.Instance.LastUpdate == DateTime.MinValue ? "Never" : ApplicationSettings.Instance.LastUpdate.ToString("g"));
       extensionListControlInstalled.Set(MpeCore.MpeInstaller.InstalledExtensions, true);
-      extensionListControlKnown.Set(MpeCore.MpeInstaller.KnownExtensions.GetUniqueList(MpeCore.MpeInstaller.InstalledExtensions), false);
+      extensionListControlKnown.Set(MpeCore.MpeInstaller.KnownExtensions.GetUniqueList(
+        MpeCore.MpeInstaller.InstalledExtensions, ApplicationSettings.Instance.PlatformCompatibilityCheck), false);
     }
 
     private void extensionListControl_UnInstallExtension(object sender, PackageClass packageClass)
@@ -567,6 +568,22 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
           MessageBox.Show("Wrong file format !");
         return;
       }
+
+      if (!pak.IsPlatformCompatible)
+      {
+        if (ApplicationSettings.Instance.PlatformCompatibilityCheck)
+        {
+          MessageBox.Show("Package is not platform compatible!");
+          return;
+        }
+        else
+        {
+          if (MessageBox.Show("Package is not platform compatible!\r\nInstall anyway?", "Warning",
+            MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
+          return;
+        }
+      }
+
       if (pak.CheckDependency(false))
       {
         PackageClass installedPak = MpeCore.MpeInstaller.InstalledExtensions.Get(pak.GeneralInfo.Id);
@@ -734,6 +751,7 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
     {
       bool expandTitle = ApplicationSettings.Instance.ExpandTile;
       bool expandTitleFullWidth = ApplicationSettings.Instance.ExpandTileFullWidth;
+      bool platformCheck = ApplicationSettings.Instance.PlatformCompatibilityCheck;
 
       SettingsForm dlg = new SettingsForm();
       dlg.chk_update.Checked = ApplicationSettings.Instance.DoUpdateInStartUp;
@@ -741,6 +759,7 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
       dlg.numeric_Days.Value = ApplicationSettings.Instance.UpdateDays;
       dlg.chk_ExpandTile.Checked = ApplicationSettings.Instance.ExpandTile;
       dlg.chk_ExpandTileFullWidth.Checked = ApplicationSettings.Instance.ExpandTileFullWidth;
+      dlg.chk_PlatformCompatibility.Checked = ApplicationSettings.Instance.PlatformCompatibilityCheck;
 
       if (dlg.ShowDialog() == DialogResult.OK)
       {
@@ -749,8 +768,10 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
         ApplicationSettings.Instance.UpdateDays = (int)dlg.numeric_Days.Value;
         ApplicationSettings.Instance.ExpandTile = dlg.chk_ExpandTile.Checked;
         ApplicationSettings.Instance.ExpandTileFullWidth = dlg.chk_ExpandTileFullWidth.Checked;
+        ApplicationSettings.Instance.PlatformCompatibilityCheck = dlg.chk_PlatformCompatibility.Checked;
 
-        if (expandTitle != ApplicationSettings.Instance.ExpandTile || expandTitleFullWidth != ApplicationSettings.Instance.ExpandTileFullWidth)
+        if (expandTitle != ApplicationSettings.Instance.ExpandTile || expandTitleFullWidth != ApplicationSettings.Instance.ExpandTileFullWidth
+          || platformCheck != ApplicationSettings.Instance.PlatformCompatibilityCheck)
         {
           RefreshListControls();
         }

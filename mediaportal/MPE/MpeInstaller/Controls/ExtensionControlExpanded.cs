@@ -58,6 +58,7 @@ namespace MpeInstaller.Controls
 
       lbl_name.Text = package.GeneralInfo.Name;
       lblAuthors.Text = string.Format("[{0}]", package.GeneralInfo.Author);
+      lbl_Platform.Text = string.Format("[{0}]", package.GeneralInfo.PlatformCompatibility.ToString());
       lbl_version.Text = package.GeneralInfo.Version.ToString();
       img_dep.Visible = meetsAllDependencies;
       if (meetsAllDependencies)

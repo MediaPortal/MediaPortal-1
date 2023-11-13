@@ -60,6 +60,11 @@ namespace MpeCore.Classes
     public string OnlineLocation { get; set; }
     public DateTime ReleaseDate { get; set; }
     public string Tags { get; set; }
+    public PlatformCompatibilityEnum PlatformCompatibility
+    {
+      get { return this._PlatformCompatibility; }
+      set { this._PlatformCompatibility = value; }
+    } private PlatformCompatibilityEnum _PlatformCompatibility = PlatformCompatibilityEnum.x86;
 
     /// <summary>
     /// Gets or sets the location of packed file.
