@@ -67,6 +67,7 @@ LPCTSTR speakerConfig = TEXT("SpeakerConfig");
 LPCTSTR forceChannelMixing = TEXT("ForceChannelMixing");
 LPCTSTR expandMonoToStereo = TEXT("ExpandMonoToStereo");
 LPCTSTR allowBitStreaming = TEXT("AllowBitStreaming");
+LPCTSTR maintainSoundPitch = TEXT("MaintainSoundPitch");
 
 // Default values for the settings in registry
 DWORD enableTimestretchingData = 1;
@@ -96,6 +97,7 @@ DWORD quality_SEQUENCE_MSData = 82;       // in ms (same as soundtouch default)
 DWORD quality_SEEKWINDOW_MSData = 28;     // in ms (same as soundtouch default)
 DWORD quality_OVERLAP_MSData = 28;        // in ms (same as soundtouch default)
 DWORD allowBitStreamingData = 1;
+DWORD maintainSoundPitchData = 1;
 
 AudioRendererSettings::AudioRendererSettings(Logger* pLogger) :
   CUnknown(_T("MPAR_Settings"), NULL),
@@ -106,6 +108,7 @@ AudioRendererSettings::AudioRendererSettings(Logger* pLogger) :
   m_bUseWASAPI(true),
   m_bWASAPIUseEventMode(true),
   m_bUseTimeStretching(false),
+  m_bMaintainSoundPitch(true),
   m_lAC3Encoding(0),
   m_bQuality_USE_QUICKSEEK(false),
   m_bQuality_USE_AA_FILTER(false),
@@ -189,6 +192,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, forceChannelMixing, forceChannelMixingData);
     ReadRegistryKeyDword(hKey, expandMonoToStereo, expandMonoToStereoData);
     ReadRegistryKeyDword(hKey, allowBitStreaming, allowBitStreamingData);
+    ReadRegistryKeyDword(hKey, maintainSoundPitch, maintainSoundPitchData);
 
     // SoundTouch quality settings
     ReadRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
@@ -201,6 +205,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
 
     Log("   EnableTimestrecthing:     %d", enableTimestretchingData);
+    Log("   MaintainSoundPitch:       %d", maintainSoundPitchData);
     Log("   WASAPIExclusive:          %d", WASAPIExclusiveData);
     Log("   WASAPIUseEventMode:       %d", WASAPIUseEventModeData);
     Log("   AC3Encoding:              %d (0 = disabled, 1 = auto, 2 = forced)", AC3EncodingData);
@@ -235,6 +240,11 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       m_bUseTimeStretching = true;
     else
       m_bUseTimeStretching = false;
+
+    if (maintainSoundPitchData > 0)
+        m_bMaintainSoundPitch = true;
+    else
+        m_bMaintainSoundPitch = false;
 
     if (WASAPIExclusiveData > 0)
       m_WASAPIShareMode = AUDCLNT_SHAREMODE_EXCLUSIVE;
@@ -440,6 +450,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, quality_SEQUENCE_MS, quality_SEQUENCE_MSData);
       WriteRegistryKeyDword(hKey, quality_SEEKWINDOW_MS, quality_SEEKWINDOW_MSData);
       WriteRegistryKeyDword(hKey, quality_OVERLAP_MS, quality_OVERLAP_MSData);
+      WriteRegistryKeyDword(hKey, maintainSoundPitch, maintainSoundPitchData);
 
       delete[] m_wWASAPIPreferredDeviceId;
       m_wWASAPIPreferredDeviceId = new WCHAR[MAX_REG_LENGTH];
@@ -466,6 +477,7 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
   }
 
   enableTimestretchingData = m_bUseTimeStretching ? 1 : 0;
+  maintainSoundPitchData = m_bMaintainSoundPitch ? 1 : 0;
   WASAPIExclusiveData = m_WASAPIShareMode == AUDCLNT_SHAREMODE_EXCLUSIVE ? 1 : 0;
   WASAPIUseEventModeData = m_bWASAPIUseEventMode ? 1 : 0;
   //devicePeriodData = m_hnsPeriod;
@@ -522,6 +534,7 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
   WriteRegistryKeyDword(hKey, quality_SEQUENCE_MS, quality_SEQUENCE_MSData);
   WriteRegistryKeyDword(hKey, quality_SEEKWINDOW_MS, quality_SEEKWINDOW_MSData);
   WriteRegistryKeyDword(hKey, quality_OVERLAP_MS, quality_OVERLAP_MSData);
+  WriteRegistryKeyDword(hKey, maintainSoundPitch, maintainSoundPitchData);
 
   WriteRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
 }
@@ -1039,6 +1052,18 @@ void AudioRendererSettings::SetUseTimeStretching(bool setting)
   m_bUseTimeStretching = setting;
 }
 
+bool AudioRendererSettings::GetMaintainSoundPitch()
+{
+    CAutoLock settingLock(&m_csSettings);
+    return m_bMaintainSoundPitch;
+}
+
+void AudioRendererSettings::SetMaintainSoundPitch(bool setting)
+{
+    CAutoLock settingLock(&m_csSettings);
+    m_bMaintainSoundPitch = setting;
+}
+
 bool AudioRendererSettings::GetExpandMonoToStereo()
 {
   CAutoLock settingLock(&m_csSettings);
@@ -1305,6 +1330,9 @@ HRESULT AudioRendererSettings::GetBool(MPARSetting setting, bool* pValue)
     case ALLOW_BITSTREAMING:
       *pValue = m_bAllowBitStreaming;
 
+    case MAINTAIN_PITCH:
+      *pValue = m_bMaintainSoundPitch;
+
     default:
       hr = E_NOTIMPL;
   }
@@ -1345,6 +1373,9 @@ HRESULT AudioRendererSettings::SetBool(MPARSetting setting, bool value)
 
     case ALLOW_BITSTREAMING:
       m_bAllowBitStreaming = value;
+
+    case MAINTAIN_PITCH:
+        m_bMaintainSoundPitch = value;
 
     default:
       hr = E_NOTIMPL;

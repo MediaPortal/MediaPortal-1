@@ -87,6 +87,9 @@ HRESULT CSettingsProp::OnActivate()
   // Use timestretching
   SendDlgItemMessage(m_Dlg, IDC_ENABLE_TIMESTRETCH, BM_SETCHECK, m_pSettings->GetUseTimeStretching() , 0);
 
+  // Use maintainpitch
+  SendDlgItemMessage(m_Dlg, IDC_MAINTAIN_PITCH, BM_SETCHECK, m_pSettings->GetMaintainSoundPitch(), 0);
+
   // Force channel mixing
   SendDlgItemMessage(m_Dlg, IDC_FORCE_MIXING, BM_SETCHECK, m_pSettings->GetForceChannelMixing() , 0);
 
@@ -242,6 +245,10 @@ HRESULT CSettingsProp::OnApplyChanges()
   bFlag = (bool)SendDlgItemMessage(m_Dlg, IDC_ENABLE_TIMESTRETCH, BM_GETCHECK, 0, 0);
   m_pSettings->SetUseTimeStretching(bFlag);
 
+  // Use maintainpitch
+  bFlag = (bool)SendDlgItemMessage(m_Dlg, IDC_MAINTAIN_PITCH, BM_GETCHECK, 0, 0);
+  m_pSettings->SetMaintainSoundPitch(bFlag);
+
   // Force channel mixing
   bFlag = (bool)SendDlgItemMessage(m_Dlg, IDC_FORCE_MIXING, BM_GETCHECK, 0, 0);
   m_pSettings->SetForceChannelMixing(bFlag);
@@ -327,6 +334,7 @@ INT_PTR CSettingsProp::OnReceiveMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
             LOWORD(wParam) == IDC_EXPAND_MONO ||
             LOWORD(wParam) == IDC_ENABLE_VSYNC ||
             LOWORD(wParam) == IDC_ENABLE_TIMESTRETCH ||
+            LOWORD(wParam) == IDC_MAINTAIN_PITCH ||
             LOWORD(wParam) == IDC_SPEAKER_SETUP ||
             LOWORD(wParam) == IDC_FORCE_MIXING ||
             LOWORD(wParam) == IDC_SAMPLERATE ||

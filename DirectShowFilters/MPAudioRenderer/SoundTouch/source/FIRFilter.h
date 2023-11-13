@@ -11,13 +11,6 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2013-06-12 18:24:44 +0300 (ke, 12 kesä 2013) $
-// File revision : $Revision: 4 $
-//
-// $Id: FIRFilter.h 171 2013-06-12 15:24:44Z oparviai $
-//
-////////////////////////////////////////////////////////////////////////////////
-//
 // License :
 //
 //  SoundTouch audio processing library
@@ -64,6 +57,7 @@ protected:
 
     // Memory for filter coefficients
     SAMPLETYPE *filterCoeffs;
+    SAMPLETYPE *filterCoeffsStereo;
 
     virtual uint evaluateFilterStereo(SAMPLETYPE *dest, 
                                       const SAMPLETYPE *src, 
@@ -71,7 +65,7 @@ protected:
     virtual uint evaluateFilterMono(SAMPLETYPE *dest, 
                                     const SAMPLETYPE *src, 
                                     uint numSamples) const;
-    virtual uint evaluateFilterMulti(SAMPLETYPE *dest, const SAMPLETYPE *src, uint numSamples, uint numChannels) const;
+    virtual uint evaluateFilterMulti(SAMPLETYPE *dest, const SAMPLETYPE *src, uint numSamples, uint numChannels);
 
 public:
     FIRFilter();
@@ -91,7 +85,7 @@ public:
     uint evaluate(SAMPLETYPE *dest, 
                   const SAMPLETYPE *src, 
                   uint numSamples, 
-                  uint numChannels) const;
+                  uint numChannels);
 
     uint getLength() const;
 
@@ -112,12 +106,12 @@ public:
         short *filterCoeffsUnalign;
         short *filterCoeffsAlign;
 
-        virtual uint evaluateFilterStereo(short *dest, const short *src, uint numSamples) const;
+        virtual uint evaluateFilterStereo(short *dest, const short *src, uint numSamples) const override;
     public:
         FIRFilterMMX();
         ~FIRFilterMMX();
 
-        virtual void setCoefficients(const short *coeffs, uint newLength, uint uResultDivFactor);
+        virtual void setCoefficients(const short *coeffs, uint newLength, uint uResultDivFactor) override;
     };
 
 #endif // SOUNDTOUCH_ALLOW_MMX
@@ -131,12 +125,12 @@ public:
         float *filterCoeffsUnalign;
         float *filterCoeffsAlign;
 
-        virtual uint evaluateFilterStereo(float *dest, const float *src, uint numSamples) const;
+        virtual uint evaluateFilterStereo(float *dest, const float *src, uint numSamples) const override;
     public:
         FIRFilterSSE();
         ~FIRFilterSSE();
 
-        virtual void setCoefficients(const float *coeffs, uint newLength, uint uResultDivFactor);
+        virtual void setCoefficients(const float *coeffs, uint newLength, uint uResultDivFactor) override;
     };
 
 #endif // SOUNDTOUCH_ALLOW_SSE
