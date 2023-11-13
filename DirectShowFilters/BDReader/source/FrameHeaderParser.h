@@ -29,6 +29,11 @@
 #include <streams.h>
 
 #include "GolombBuffer.h"
+#include "HEVC\Hevc.h"
+#include "HEVC\HevcNalDecode.h"
+
+using namespace HEVC;
+
 static const byte pixel_aspect[17][2]={
 	{0, 1},
 	{1, 1},
@@ -429,7 +434,7 @@ struct BasicVideoInfo
 	}
 };
 
-class CFrameHeaderParser:public CGolombBuffer
+class CFrameHeaderParser:public CGolombBuffer, public HEVC::HevcNalDecode
 {
 	int m_tslen; // transport stream packet length (188 or 192 bytes, auto-detected)
 
@@ -460,6 +465,7 @@ public:
 	bool Read(vc1hdr& h, int len, CMediaType* pmt = NULL);
     bool Read(bdlpcmhdr& h, int len, CMediaType* pmt = NULL);
     bool Read(thdhdr& h, int len, CMediaType* pmt = NULL);
+	bool Read(hevchdr& h, int len, CMediaType* pmt);
 
 	void RemoveMpegEscapeCode(BYTE* dst, BYTE* src, int length);
 

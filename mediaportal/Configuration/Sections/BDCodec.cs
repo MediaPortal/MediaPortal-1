@@ -62,6 +62,7 @@ namespace MediaPortal.Configuration.Sections
         ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
         ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
+        ArrayList availableHEVCVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.HEVC);
         ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.VC1);
         ArrayList availableVC1CyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.CyberlinkVC1);
         ArrayList availableFileSyncFilters = FilterHelper.GetFilters(MediaType.Stream, MediaSubType.Null);
@@ -113,6 +114,7 @@ namespace MediaPortal.Configuration.Sections
         audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
         availableFileSyncFilters.Sort();
         h264videoCodecComboBox.Items.AddRange(availableH264VideoFilters.ToArray());
+        hevcvideoCodecComboBox.Items.AddRange(availableHEVCVideoFilters.ToArray());
         vc1videoCodecComboBox.Items.AddRange(availableVC1VideoFilters.ToArray());
         vc1videoCodecComboBox.Items.AddRange(availableVC1CyberlinkVideoFilters.ToArray());
         audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
@@ -137,6 +139,7 @@ namespace MediaPortal.Configuration.Sections
         // Set codecs
         string videoCodec = xmlreader.GetValueAsString("bdplayer", "mpeg2videocodec", "");
         string h264videoCodec = xmlreader.GetValueAsString("bdplayer", "h264videocodec", "");
+        string hevcvideoCodec = xmlreader.GetValueAsString("bdplayer", "hevcvideocodec", "");
         string vc1videoCodec = xmlreader.GetValueAsString("bdplayer", "vc1videocodec", "");
         string audioCodec = xmlreader.GetValueAsString("bdplayer", "mpeg2audiocodec", "");
         //string aacaudioCodec = xmlreader.GetValueAsString("bdplayer", "aacaudiocodec", "");
@@ -150,6 +153,11 @@ namespace MediaPortal.Configuration.Sections
         {
           ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
           h264videoCodec = SetCodecBox(availableH264VideoFilters, "LAV Video Decoder", "CoreAVC Video Decoder", "");
+        }
+        if (hevcvideoCodec == string.Empty)
+        {
+          ArrayList availableHEVCVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.HEVC);
+          hevcvideoCodec = SetCodecBox(availableHEVCVideoFilters, "LAV Video Decoder", "CoreAVC Video Decoder", "");
         }
         if (vc1videoCodec == string.Empty)
         {
@@ -165,10 +173,12 @@ namespace MediaPortal.Configuration.Sections
         audioCodecComboBox.Text = audioCodec;
         videoCodecComboBox.Text = videoCodec;
         h264videoCodecComboBox.Text = h264videoCodec;
+        hevcvideoCodecComboBox.Text = hevcvideoCodec;
         vc1videoCodecComboBox.Text = vc1videoCodec;
         CheckBoxValid(audioCodecComboBox);
         CheckBoxValid(videoCodecComboBox);
         CheckBoxValid(h264videoCodecComboBox);
+        CheckBoxValid(hevcvideoCodecComboBox);
         CheckBoxValid(vc1videoCodecComboBox);
         CheckBoxValid(audioRendererComboBox);
       }
@@ -242,6 +252,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("bdplayer", "mpeg2audiocodec", audioCodecComboBox.Text);
         xmlwriter.SetValue("bdplayer", "mpeg2videocodec", videoCodecComboBox.Text);
         xmlwriter.SetValue("bdplayer", "h264videocodec", h264videoCodecComboBox.Text);
+        xmlwriter.SetValue("bdplayer", "hevcvideocodec", hevcvideoCodecComboBox.Text);
         xmlwriter.SetValue("bdplayer", "vc1videocodec", vc1videoCodecComboBox.Text);
       }
     }
@@ -294,6 +305,11 @@ namespace MediaPortal.Configuration.Sections
       }
       videoCodecComboBox.SelectedIndexChanged += videoCodecComboBox_SelectedIndexChanged;
     */
+    }
+
+    private void hevcvideoCodecComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+
     }
 
     private void RegMPtoConfig(string subkeysource)
@@ -395,6 +411,11 @@ namespace MediaPortal.Configuration.Sections
     private void configH264_Click(object sender, EventArgs e)
     {
       ConfigCodecSection(sender, e, h264videoCodecComboBox.Text);
+    }
+
+    private void configHEVC_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, hevcvideoCodecComboBox.Text);
     }
 
     private void configVC1_Click(object sender, EventArgs e)

@@ -63,7 +63,7 @@ public:
   void Supersede(int supersedeType);
   bool IsSuperseded(int supersedeType);
   REFERENCE_TIME playlistFirstPacketTime;
-  REFERENCE_TIME clipPlaylistOffset;
+  REFERENCE_TIME m_rtClipPlaylistOffset;
   void Reset(REFERENCE_TIME totalStreamOffset);
   bool HasAudio();
   bool HasVideo();
@@ -85,7 +85,7 @@ public:
   // starttime of the last video packet returned from the clip to the pin
   REFERENCE_TIME videoPlaybackPosition;
 
-  REFERENCE_TIME earliestPacketAccepted;
+  REFERENCE_TIME m_rtEarliestPacketAccepted;
 
   // Clip duration as provided by libbluray 
   REFERENCE_TIME clipDuration;
@@ -98,9 +98,8 @@ public:
 
   // Accurate clip starting time (when known).
   // Not set when selecting chapter from the menu
-  REFERENCE_TIME m_rtClipAudioStartingOffset;
-  REFERENCE_TIME m_rtClipVideoStartingOffset;
-
+  REFERENCE_TIME m_rtClipStartingOffset;
+  
   // true would indicate that this is the first audio packet
   bool firstAudio;
   // true would indicate that this is the first video packet
@@ -120,13 +119,12 @@ protected:
   CCritSec m_sectionVectorAudio;
   CCritSec m_sectionVectorVideo;
 
-  bool m_bCalculateAudioOffset;
-  bool m_bCalculateVideoOffset;
+  bool m_bCalculateOffset;
 
   // indicates if this is the first packet to be buffered in clip
-  bool firstPacketAccepted;
+  bool m_bFirstPacketAccepted;
   // indicates if this is the first packet to be returned from the clip
-  bool firstPacketReturned;
+  bool m_bFirstPacketReturned;
 
   REFERENCE_TIME m_rtPrevAudioStart;
   REFERENCE_TIME m_rtPlayedDuration; // Do not zero on reset as this should be cumulative
