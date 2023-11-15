@@ -33,7 +33,7 @@ namespace MediaPortal.DeployTool.Sections
       InitializeComponent();
       type = DialogType.DownloadSettings;
       labelSectionHeader.Text = "";
-      if (Utils.Check64bit())
+      if (Utils.Is64bit())
       {
         b64bit.Image = Images.Choose_button_on;
         arch64 = true;

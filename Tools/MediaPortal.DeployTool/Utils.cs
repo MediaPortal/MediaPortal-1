@@ -665,7 +665,7 @@ namespace MediaPortal.DeployTool
       [Out] out bool lpSystemInfo
       );
 
-    public static bool Check64bit()
+    public static bool IsWow64Process()
     {
       //IsWow64Process is not supported under Windows2000
       if (!OSInfo.OSInfo.XpOrLater())
@@ -686,6 +686,11 @@ namespace MediaPortal.DeployTool
     public static bool Is64bit()
     {
       return (IntPtr.Size == 8);
+    }
+
+    public static bool Is64bitOS
+    {
+      get { return Environment.Is64BitOperatingSystem; }
     }
 
     #endregion
