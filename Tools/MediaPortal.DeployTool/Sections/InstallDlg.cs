@@ -243,7 +243,8 @@ namespace MediaPortal.DeployTool.Sections
 
         case "download_only":
           AddPackageToListView(new MediaPortalChecker());
-          AddPackageToListView(new MSSQLExpressChecker());
+          // framug: MS SQL is no longer supported
+          // AddPackageToListView(new MSSQLExpressChecker());
           AddPackageToListView(new MySQLChecker());
           AddPackageToListView(new TvServerChecker());
           AddPackageToListView(new TvPluginChecker());
