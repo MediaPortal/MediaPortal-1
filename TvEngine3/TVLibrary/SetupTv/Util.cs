@@ -70,9 +70,10 @@ namespace SetupTv
       string filename,
       [MarshalAs(UnmanagedType.U4)] FileAccess fileaccess,
       [MarshalAs(UnmanagedType.U4)] FileShare fileshare,
-      int securityattributes,
+      IntPtr securityAttributes,
       [MarshalAs(UnmanagedType.U4)] FileMode creationdisposition,
-      int flags, IntPtr template);
+      [MarshalAs(UnmanagedType.U4)] FileAttributes flagsAndAttributes,
+      IntPtr templateFile);
 
 
     [DllImport("kernel32.dll", SetLastError = true)]
@@ -432,7 +433,7 @@ namespace SetupTv
 
       try
       {
-        IntPtr fHandle = CreateFile(strDrive, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open, 0x80, IntPtr.Zero);
+        IntPtr fHandle = CreateFile(strDrive, FileAccess.Read, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, FileAttributes.Normal, IntPtr.Zero);
         if (fHandle.ToInt64() != -1) //INVALID_HANDLE_VALUE)
         {
           uint Result;
