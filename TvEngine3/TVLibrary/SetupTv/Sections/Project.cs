@@ -39,7 +39,7 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-      labelVersion2.Text = versionInfo.FileVersion;
+      labelVersion2.Text = versionInfo.FileVersion + (System.IntPtr.Size == 8 ? " | x64 |" : " | x86 |");
       labelVersion3.Visible = versionInfo.FileVersion.Length - versionInfo.FileVersion.LastIndexOf('.') > 2;
     }
 

@@ -171,12 +171,13 @@ namespace SetupTv
 
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
+      string strArch = System.IntPtr.Size == 8 ? "x64" : "x86";
       try
       {
-        Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
+        Log.Info("---- SetupTv " + strArch + " v" + versionInfo.FileVersion  + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
       } catch (Exception)
       {
-        Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
+        Log.Info("---- SetupTv " + strArch + " v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
       }
       //Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
       Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
