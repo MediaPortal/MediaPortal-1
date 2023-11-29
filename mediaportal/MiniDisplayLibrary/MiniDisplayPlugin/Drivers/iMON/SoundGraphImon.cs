@@ -220,7 +220,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
                     //Array.Copy(iSettings.iEq.EqArray, 1, iEqDataLeft.BandData, 0, 0x10);
                     //Array.Copy(iSettings.iEq.EqArray, 1, iEqDataRight.BandData, 0, 0x10);
-                    SoundGraphDisplay.IDW_SetLcdEqData(iEqDataLeft, iEqDataRight);
+                    SoundGraphDisplay.SetLcdEqData(iEqDataLeft, iEqDataRight);
                 }
                 else
                 {
@@ -266,7 +266,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                         iEqData.BandData[i - 1] = iSettings.iEq.EqArray[i];
                     }
 
-                    SoundGraphDisplay.IDW_SetVfdEqData(iEqData);
+                    SoundGraphDisplay.SetVfdEqData(iEqData);
                     goto Label_0613;
 
                 }

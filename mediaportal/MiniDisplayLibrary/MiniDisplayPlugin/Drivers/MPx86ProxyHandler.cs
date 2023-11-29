@@ -51,6 +51,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
       Unknown = 0,
       DriverMethod,
 
+      ImonDisplayWrapper = 100,
+
       ImonInit = 120,
       ImonUninit,
       ImonIsInited,
@@ -72,8 +74,29 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
       ImonRCGetPacket
     }
 
+    public enum ImonDisplayWrapperCommandEnum
+    {
+      Init = 0,
+      UnInit,
+      IsInitialized,
+      GetStatus,
+      SetVfdText,
+      SetVfdEqData,
+      SetLcdEqData,
+      SetLcdText,
+      SetLcdAllIcons,
+      SetLcdOrangeIcon,
+      SetLcdMediaTypeIcon,
+      SetLcdSpeakerIcon,
+      SetLcdVideoCodecIcon,
+      SetLcdAudioCodecIcon,
+      SetLcdAspectRatioIcon,
+      SetLcdEtcIcon,
+      SetLcdProgress
+    }
+
     private TcpClient _Connection = null;
-    private byte[] _Response = new byte[8];
+    private byte[] _Response = new byte[1024 * 16];
 
     private object _Padlock = new object();
     private MemoryMappedFile _File = null;
@@ -436,7 +459,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
       }
     }
 
-    public int Execute(CommandEnum cmd, ref byte[] data, int iLength)
+    public int Execute(CommandEnum cmd, byte[] data, int iLength)
     {
       try
       {
@@ -463,13 +486,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
               fixed (byte* pDst = this._Data)
               {
                 memcpy((IntPtr)(pDst + 5), (IntPtr)pSrc, new UIntPtr((uint)iLength));
+
+                //Send
+                iResult = this.send(iSize, iLength, (IntPtr)pSrc);
               }
             }
           }
-
-          //Send
-          iResult = this.send(iSize, iLength, data);
-
 
           //Log.Debug("[MPx86ProxyHandler][Execute] Command:{0} Result:{1} Duration:{2}",
           //  cmd,
@@ -486,6 +508,163 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
         return -1;
       }
     }
+
+
+    public int Execute(CommandEnum cmd, byte cmdSub, IntPtr pSrc, int iLength, bool bReadBack = false)
+    {
+      try
+      {
+        lock (this._Padlock)
+        {
+          //Init
+          int iResult = this.initTransfer(cmd, cmdSub, iLength, out int iSize);
+
+          unsafe
+          {
+            if (iLength > 0)
+            {
+              fixed (byte* pDst = this._Data)
+              {
+                memcpy((IntPtr)(pDst + 6), (IntPtr)pSrc, new UIntPtr((uint)iLength));
+              }
+            }
+
+            //Send
+           return this.send(iSize, iLength, pSrc);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("[MPx86ProxyHandler][Execute] Command:{0} Error: {1}", cmd, ex.Message);
+        return -1;
+      }
+    }
+
+    public int Execute(CommandEnum cmd, byte cmdSub, byte[] data, int iLength)
+    {
+      try
+      {
+        lock (this._Padlock)
+        {
+          //Init
+          int iResult = this.initTransfer(cmd, cmdSub, iLength, out int iSize);
+
+          unsafe
+          {
+            fixed (void* pSrc = data)
+            {
+              fixed (byte* pDst = this._Data)
+              {
+                memcpy((IntPtr)(pDst + 6), (IntPtr)pSrc, new UIntPtr((uint)iLength));
+              }
+            }
+          }
+
+          //Send
+          return this.send(iSize);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("[MPx86ProxyHandler][Execute] Command:{0} Error: {1}", cmd, ex.Message);
+        return -1;
+      }
+    }
+
+    public int Execute(CommandEnum cmd, byte cmdSub, int[] data)
+    {
+      try
+      {
+        lock (this._Padlock)
+        {
+          //Init
+          int iResult = this.initTransfer(cmd, cmdSub, data.Length * 4, out int iSize);
+
+          unsafe
+          {
+            fixed (void* pSrc = data)
+            {
+              fixed (byte* pDst = this._Data)
+              {
+                memcpy((IntPtr)(pDst + 6), (IntPtr)pSrc, new UIntPtr((uint)data.Length * 4));
+              }
+            }
+          }
+
+          //Send
+          return this.send(iSize);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("[MPx86ProxyHandler][Execute] Command:{0} Error: {1}", cmd, ex.Message);
+        return -1;
+      }
+    }
+
+    public int Execute(CommandEnum cmd, byte cmdSub, int[] data1, int[] data2)
+    {
+      try
+      {
+        lock (this._Padlock)
+        {
+          //Init
+          int iResult = this.initTransfer(cmd, cmdSub, (data1.Length * 4) + (data2.Length * 4), out int iSize);
+
+          unsafe
+          {
+            fixed (void* pSrc = data1)
+            {
+              fixed (byte* pDst = this._Data)
+              {
+                memcpy((IntPtr)(pDst + 6), (IntPtr)pSrc, new UIntPtr((uint)data1.Length * 4));
+                memcpy((IntPtr)(pDst + 6 + (data1.Length * 4)), (IntPtr)pSrc, new UIntPtr((uint)data2.Length * 4));
+              }
+            }
+          }
+
+          //Send
+          return this.send(iSize);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("[MPx86ProxyHandler][Execute] Command:{0} Error: {1}", cmd, ex.Message);
+        return -1;
+      }
+    }
+
+    public int Execute(CommandEnum cmd, byte cmdSub, int iArg1, int iArg2)
+    {
+      try
+      {
+        lock (this._Padlock)
+        {
+          //Init
+          int iResult = this.initTransfer(cmd, cmdSub, 8, out int iSize);
+
+          this._Data[6] = (byte)iArg1;
+          this._Data[7] = (byte)(iArg1 >> 8);
+          this._Data[8] = (byte)(iArg1 >> 16);
+          this._Data[9] = (byte)(iArg1 >> 24);
+
+          this._Data[10] = (byte)iArg2;
+          this._Data[11] = (byte)(iArg2 >> 8);
+          this._Data[12] = (byte)(iArg2 >> 16);
+          this._Data[13] = (byte)(iArg2 >> 24);
+
+          //Send
+          return this.send(iSize);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("[MPx86ProxyHandler][Execute] Command:{0} Error: {1}", cmd, ex.Message);
+        return -1;
+      }
+    }
+
 
     public void Dispose()
     {
@@ -513,7 +692,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
     private int connect()
     {
       if (this._Data == null)
-        this._Data = new byte[256];
+        this._Data = new byte[this._Response.Length];
 
       if (this._FileAccessor == null && this._Connection == null)
       {
@@ -633,7 +812,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
       return 0;
     }
 
-    private int send(int iSize, int iDataLength = 0, byte[] data = null)
+    private int send(int iSize, int iDataLength = 0, IntPtr pData = default)
     {
       if (this._ProxyPort > 0)
       {
@@ -645,8 +824,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
         if (iRec != 4 + iDataLength)
           return -1;
 
-        if (iDataLength > 0)
-          Buffer.BlockCopy(this._Data, 4, data, 0, iDataLength);
+        if (iDataLength > 0 && pData != IntPtr.Zero)
+        {
+          unsafe
+          {
+            fixed (byte* p = this._Response)
+            {
+              memcpy(pData, (IntPtr)(p + 4), new UIntPtr((uint)iDataLength));
+            }
+          }
+        }
 
         return BitConverter.ToInt32(this._Response, 0);
       }
@@ -657,8 +844,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
         //Send request
         SendMessage((IntPtr)HWND_BROADCAST, this._MessageId, (IntPtr)this._Atom, IntPtr.Zero);
 
-        if (iDataLength > 0)
-          this._FileAccessor.ReadArray<byte>(0, data, 4, iDataLength);
+        if (iDataLength > 0 && pData != IntPtr.Zero)
+        {
+          this._FileAccessor.ReadArray<byte>(0, this._Response, 4, iDataLength);
+          unsafe
+          {
+            fixed (byte* p = this._Response)
+            {
+              memcpy(pData, (IntPtr)(p + 4), new UIntPtr((uint)iDataLength));
+            }
+          }
+        }
 
         //Get response
         return this._FileAccessor.ReadInt32(0);
@@ -772,6 +968,33 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.Drivers
       return iIdx;
     }
 
+    private int initTransfer(CommandEnum cmd, byte cmdSub, int iLength, out int iSize)
+    {
+      iSize = 0;
 
+      //Connect
+      int iResult = this.connect();
+
+      if (iResult != 0)
+        return iResult;
+
+      //Get data
+      iSize = iLength + 6;
+
+      if (iSize > this._Data.Length)
+      {
+        Log.Error("[MPx86ProxyHandler][initTransfer] Invalid data length:{1} Command:{0}", cmd, iSize);
+        return -1;
+      }
+
+      this._Data[0] = (byte)iSize;
+      this._Data[1] = (byte)(iSize >> 8);
+      this._Data[2] = (byte)(iSize >> 16);
+      this._Data[3] = (byte)(iSize >> 24);
+      this._Data[4] = (byte)cmd;
+      this._Data[5] = cmdSub;
+
+      return 0;
+    }
   }
 }
