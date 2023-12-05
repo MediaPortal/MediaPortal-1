@@ -28,11 +28,22 @@ namespace MediaPortal.DeployTool.Sections
 
     public CustomInstallationTypeDlg()
     {
-      InitializeComponent();
+      this.InitializeComponent();
       type = DialogType.CUSTOM_INSTALLATION_TYPE;
-      bSingle.Image = Images.Choose_button_on;
-      installType = 1;
-      UpdateUI();
+#if NO_TV_SERVER
+      this.bSingle.Enabled = false;
+      this.rbSingleSeat.Enabled = false;
+      this.labelSingleSeat.Enabled = false;
+      this.bMaster.Enabled = false;
+      this.rbTvServerMaster.Enabled = false;
+      this.labelMaster.Enabled = false;
+      this.bClient.Image = Images.Choose_button_on;
+      this.installType = 3;
+#else
+      this.bSingle.Image = Images.Choose_button_on;
+      this.installType = 1;
+#endif
+      this.UpdateUI();
     }
 
     #region IDeployDialog interface

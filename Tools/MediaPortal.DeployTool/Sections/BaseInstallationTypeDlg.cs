@@ -68,7 +68,11 @@ namespace MediaPortal.DeployTool.Sections
       {
         InstallationProperties.Instance.Set("InstallTypeHeader",
                                             Localizer.GetBestTranslation("BaseInstallation_rbOneClick"));
+#if NO_TV_SERVER
+        InstallationProperties.Instance.Set("InstallType", "client");
+#else
         InstallationProperties.Instance.Set("InstallType", "singleseat");
+#endif
         InstallationProperties.Instance.Set("ConfigureTVServerFirewall", "1");
         InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "1");
         InstallationProperties.Instance.Set("ConfigureDBMSFirewall", "1");
