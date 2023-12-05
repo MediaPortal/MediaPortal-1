@@ -83,19 +83,12 @@ namespace MediaPortal.DeployTool
       // Set default folders
       InstallationProperties.Instance.Set("MPDir",
                                           Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) +
-                                          "\\Team MediaPortal\\MediaPortal");
-      if (Utils.Is64bit())
-      {
-        InstallationProperties.Instance.Set("TVServerDir",
-                                            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) +
-                                            "\\Team MediaPortal\\MediaPortal TV Server (x64)");
-      }
-      else
-      {
-        InstallationProperties.Instance.Set("TVServerDir",
-                                            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) +
-                                            "\\Team MediaPortal\\MediaPortal TV Server");
-      }
+                                          @"\Team MediaPortal\MediaPortal");
+
+
+      InstallationProperties.Instance.Set("TVServerDir",
+                                          Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) +
+                                          @"\Team MediaPortal\MediaPortal TV Server");
 
       if (Utils.Is64bit())
       {

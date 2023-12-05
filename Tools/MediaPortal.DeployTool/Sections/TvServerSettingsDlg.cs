@@ -30,18 +30,11 @@ namespace MediaPortal.DeployTool.Sections
     {
       InitializeComponent();
       type = DialogType.TvServerSettings;
-      if (Utils.Is64bit())
-      {
-        textBoxDir.Text =
-          installationPath =
-          Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\Team MediaPortal\\MediaPortal TV Server (x64)";
-      }
-      else
-      {
-        textBoxDir.Text =
-          installationPath =
-          Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server";
-      }
+
+      textBoxDir.Text =
+        installationPath =
+        Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server";
+
       UpdateUI();
     }
 
