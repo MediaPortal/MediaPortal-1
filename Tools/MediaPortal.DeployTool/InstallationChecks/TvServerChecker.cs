@@ -100,7 +100,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return true;
       }
 
-      string keyUninstall = Utils.CheckUninstallString("MediaPortal TV Server" + (Utils.Is64bit() ? " (x64)" : string.Empty), true);
+      string keyUninstall = Utils.CheckUninstallString("MediaPortal TV Server", true, false);
       if (keyUninstall != null && File.Exists(keyUninstall))
       {
         Utils.UninstallNSIS(keyUninstall);
@@ -114,7 +114,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       result.needsDownload = true;
       FileInfo tvServerFile = new FileInfo(_fileName);
 
-      result = Utils.CheckNSISUninstallString("MediaPortal TV Server" + (Utils.Is64bit() ? " (x64)" : string.Empty), "MementoSection_SecServer");
+      result = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
 
       if (tvServerFile.Exists && tvServerFile.Length != 0)
       {
@@ -131,7 +131,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return result;
       }
 
-      CheckResult already = Utils.CheckNSISUninstallString("MediaPortal TV Server" + (Utils.Is64bit() ? string.Empty : " (x64)"), "MementoSection_SecServer");
+      CheckResult already = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
       if (already.state != CheckState.NOT_INSTALLED)
       {
         result.state = CheckState.INSTALLED;

@@ -90,6 +90,10 @@ namespace MediaPortal.DeployTool
                                           Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) +
                                           @"\Team MediaPortal\MediaPortal TV Server");
 
+
+      //Fix old MediaPortal x64 registry path
+      Utils.FixMediaPortal64RegistryPath();
+
       if (Utils.Is64bit())
       {
         InstallationProperties.Instance.Set("ProgramFiles", Environment.GetEnvironmentVariable("ProgramFiles"));

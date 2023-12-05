@@ -339,12 +339,15 @@ namespace MediaPortal.DeployTool
       return result;
     }
 
-    public static RegistryKey LMOpenSubKey(string keyPath, bool writable = false)
+    public static RegistryKey LMOpenSubKey(string keyPath, bool writable = false, bool bIncludeWow6432 = true)
     {
       RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath, writable);
 
       if (key == null)
       {
+        if (!bIncludeWow6432)
+          return null;
+
         try
         {
           key = OpenSubKey(Registry.LocalMachine, keyPath, writable, eRegWow64Options.KEY_WOW64_32KEY);
@@ -392,14 +395,14 @@ namespace MediaPortal.DeployTool
       CheckUninstallString(clsid, true);
     }
 
-    public static RegistryKey GetUninstallKey(string clsid)
+    public static RegistryKey GetUninstallKey(string clsid, bool bIncludeWow6432 = true)
     {
-      return LMOpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid);
+      return LMOpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid, bIncludeWow6432: bIncludeWow6432);
     }
 
-    public static string CheckUninstallString(string clsid, string section)
+    public static string CheckUninstallString(string clsid, string section, bool bIncludeWow6432 = true)
     {
-      RegistryKey key = GetUninstallKey(clsid);
+      RegistryKey key = GetUninstallKey(clsid, bIncludeWow6432);
       if (key != null)
       {
         string strSection = key.GetValue(section).ToString();
@@ -413,9 +416,9 @@ namespace MediaPortal.DeployTool
       return null;
     }
 
-    public static string CheckUninstallString(string clsid, bool delete)
+    public static string CheckUninstallString(string clsid, bool delete, bool bIncludeWow6432 = true)
     {
-      string strUninstall = CheckUninstallString(clsid, "UninstallString");
+      string strUninstall = CheckUninstallString(clsid, "UninstallString", bIncludeWow6432);
       if (!string.IsNullOrEmpty(strUninstall))
       {
         if (File.Exists(strUninstall))
@@ -426,7 +429,7 @@ namespace MediaPortal.DeployTool
 
       if (delete)
       {
-        RegistryKey key = GetUninstallKey(clsid);
+        RegistryKey key = GetUninstallKey(clsid, bIncludeWow6432);
         if (key != null)
         {
           key.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid);
@@ -443,7 +446,7 @@ namespace MediaPortal.DeployTool
         state = CheckState.NOT_INSTALLED
       };
 
-      RegistryKey key = GetUninstallKey(RegistryPath);
+      RegistryKey key = GetUninstallKey(RegistryPath, false);
       if (key != null)
       {
         int _IsInstalled = (int)key.GetValue(MementoSection, 0);
@@ -809,7 +812,7 @@ namespace MediaPortal.DeployTool
 
     public static string PathFromRegistry(string regkey)
     {
-      RegistryKey key = LMOpenSubKey(regkey);
+      RegistryKey key = LMOpenSubKey(regkey, bIncludeWow6432: false);
 
       string Tv3Path = null;
       if (key != null)
@@ -823,7 +826,7 @@ namespace MediaPortal.DeployTool
 
     public static Version VersionFromRegistry(string regkey)
     {
-      RegistryKey key = LMOpenSubKey(regkey);
+      RegistryKey key = LMOpenSubKey(regkey, bIncludeWow6432: false);
 
       int major = 0;
       int minor = 0;
@@ -888,6 +891,53 @@ namespace MediaPortal.DeployTool
       }
 
       deployXml.Save(deployXmlLocation);
+    }
+
+    /// <summary>
+    /// Fixes MediaPortal 1.32 uninstall registry path
+    /// </summary>
+    public static void FixMediaPortal64RegistryPath()
+    {
+      if (Is64bit())
+      {
+        const string NAME_OLD = "MediaPortal (x64)";
+        const string PATH_UNINSTALL = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
+        const string PATH_UNINSTALL_WOW6432 = @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall";
+        const string PATH_MP = PATH_UNINSTALL + @"\MediaPortal";
+        const string PATH_MP_OLD = PATH_UNINSTALL_WOW6432 + @"\" + NAME_OLD;
+
+        RegistryKey keyOld = Registry.LocalMachine.OpenSubKey(PATH_MP_OLD);
+        if (keyOld != null)
+        {
+          //Existing old registry path
+
+          RegistryKey key = Registry.LocalMachine.OpenSubKey(PATH_MP);
+
+          if (key == null)
+          {
+            //Create new registry path
+            using (RegistryKey localKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default))
+            {
+              key = localKey.CreateSubKey(PATH_MP);
+            }
+          }
+
+          //Copy all values from the old key to the new key
+          foreach (string strName in keyOld.GetValueNames())
+          {
+            key.SetValue(strName, keyOld.GetValue(strName), keyOld.GetValueKind(strName));
+          }
+
+          //Delete old key
+          using (RegistryKey k = Registry.LocalMachine.OpenSubKey(PATH_UNINSTALL_WOW6432, true))
+          {
+            k.DeleteSubKeyTree(NAME_OLD);
+          }
+
+          key.Dispose();
+          keyOld.Dispose();
+        }
+      }
     }
 
     #endregion
