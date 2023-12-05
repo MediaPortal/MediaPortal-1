@@ -83,11 +83,8 @@
 !define PRODUCT_PUBLISHER     "Team MediaPortal"
 !define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
 
-!if "${Architecture}" == "x64"
-  !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
-!else
-  !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
-!endif
+!define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal"
@@ -293,6 +290,9 @@ ShowUninstDetails show
   
   ; MovieThumbnailer
   ${KillProcess} "mtn.exe"
+  
+  ; MPx86Proxy
+  ${KillProcess} "MPx86Proxy.exe"
 !macroend
 
 !macro RenameInstallDirectory
@@ -1401,6 +1401,12 @@ Function .onInit
   ${LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION .onInit"
 
+  !if "${Architecture}" == "x64"
+    SetRegView 64
+  !else 
+    SetRegView 32
+  !endif
+
   !insertmacro MediaPortalNetFrameworkCheck
   !insertmacro MediaPortalNet4FrameworkCheck
 
@@ -1473,6 +1479,11 @@ Function un.onInit
   ${un.LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION un.onInit"
 
+  !if "${Architecture}" == "x64"
+    SetRegView 64
+  !else 
+    SetRegView 32
+  !endif
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........

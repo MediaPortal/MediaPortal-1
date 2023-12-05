@@ -134,14 +134,9 @@
 !endif
 
 !ifdef BUILD_DeployTool
-!if "${Architecture}" == "x64"
-  !define DeployArchitecture x64
-!else
-  !define DeployArchitecture x86
-!endif
 !insertmacro PrepareBuildReport DeployTool
 ;!system '"${MSBuild_Path}" ${logger} /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=${Architecture} "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
-!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=${DeployArchitecture} "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=${Architecture} "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
 !insertmacro FinalizeBuildReport
 !endif
 
