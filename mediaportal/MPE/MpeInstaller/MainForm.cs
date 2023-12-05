@@ -569,20 +569,9 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
         return;
       }
 
-      if (!pak.IsPlatformCompatible)
-      {
-        if (ApplicationSettings.Instance.PlatformCompatibilityCheck)
-        {
-          MessageBox.Show("Package is not platform compatible!");
-          return;
-        }
-        else
-        {
-          if (MessageBox.Show("Package is not platform compatible!\r\nInstall anyway?", "Warning",
-            MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
-          return;
-        }
-      }
+      //Check for platform compatibility
+      if (!pak.CheckPlatformCompatibility())
+        return;
 
       if (pak.CheckDependency(false))
       {

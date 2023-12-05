@@ -900,6 +900,26 @@ namespace MpeCore
       return pak1.GeneralInfo.Name.ToUpperInvariant().CompareTo(pak2.GeneralInfo.Name.ToUpperInvariant());
     }
 
+    public bool CheckPlatformCompatibility()
+    {
+      if (!this.IsPlatformCompatible)
+      {
+        if (ApplicationSettings.Instance.PlatformCompatibilityCheck)
+        {
+          MessageBox.Show("Package '" + this.GeneralInfo.Name + "' is not platform compatible!");
+          return false;
+        }
+        else
+        {
+          if (MessageBox.Show("Package '" + this.GeneralInfo.Name + "' is not platform compatible!\r\nInstall anyway?", "Warning",
+            MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
+            return false;
+        }
+      }
+
+      return true;
+    }
+
     public override string ToString()
     {
       return (GeneralInfo == null) ? base.ToString() : GeneralInfo.Name + " " + GeneralInfo.Version;
