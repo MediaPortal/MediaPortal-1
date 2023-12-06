@@ -930,6 +930,12 @@ ${EndIf}
 
 
 !if "${PRODUCT_NAME}" == "MediaPortal"
+    !define _macro_cond_MP_
+!else if "${PRODUCT_NAME}" == "MediaPortal (x64)"
+    !define _macro_cond_MP_
+!endif
+
+!ifdef _macro_cond_MP_
 
 !macro DoPreInstallChecks
 
@@ -972,50 +978,15 @@ ${EndIf}
 
 !endif
 
-!if "${PRODUCT_NAME}" == "MediaPortal (x64)"
 
-!macro DoPreInstallChecks
-
-!ifdef GIT_BUILD
-  ; check if correct MP version ist installed, which is required for this git snapshot
-  !insertmacro MinimumVersionForGITCheck
-!endif
-
-  ; OS and other common initialization checks are done in the following NSIS header file
-  !insertmacro MediaPortalOperatingSystemCheck
-  !insertmacro MediaPortalAdminCheck
-  !insertmacro MediaPortalVCRedistCheck
-  !insertmacro MediaPortalNetFrameworkCheck
-
-  ; check if old mp 0.2.2 is installed
-  ${If} ${MP022IsInstalled}
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP022)"
-    Abort
-  ${EndIf}
-
-  ; check if old mp 0.2.3 RC3 is installed
-  ${If} ${MP023RC3IsInstalled}
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP023RC3)"
-    Abort
-  ${EndIf}
-
-  ; check if old mp 0.2.3 is installed.
-  ${If} ${MP023IsInstalled}
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP023)"
-    Abort
-  ${EndIf}
-
-  ; check if reboot is required
-  ${If} ${FileExists} "$MPdir.Base\rebootflag"
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
-    Abort
-  ${EndIf}
-
-!macroend
-
-!endif
 
 !if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client"
+    !define _macro_cond_TV_
+!else if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client (x64)"
+    !define _macro_cond_TV_
+!endif    
+
+!ifdef _macro_cond_TV_
 
 !macro DoPreInstallChecks
 

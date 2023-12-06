@@ -70,7 +70,11 @@
 #---------------------------------------------------------------------------
 # DEFINES
 #---------------------------------------------------------------------------
-!define PRODUCT_NAME          "MediaPortal TV Server / Client"
+!if "${Architecture}" == "x64"
+  !define PRODUCT_NAME        "MediaPortal TV Server / Client (x64)"
+!else
+  !define PRODUCT_NAME        "MediaPortal TV Server / Client"
+!endif
 !define PRODUCT_PUBLISHER     "Team MediaPortal"
 !define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
 
@@ -230,7 +234,7 @@ XPStyle on
 RequestExecutionLevel admin
 ShowInstDetails show
 VIProductVersion "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName       "MediaPortal TV Server"
+VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName       "${PRODUCT_NAME}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductVersion    "${VERSION_DISP}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
@@ -572,10 +576,17 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; MediaInfo
   SetOutPath "$INSTDIR"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\MediaInfo.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcrypto-3.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcurl.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libssl-3.dll"
+  ${If} ${RunningX64}
+    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\MediaInfo.dll"
+    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libcrypto-3-x64.dll"
+    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libcurl.dll"
+    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libssl-3-x64.dll"
+  ${Else}
+    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\MediaInfo.dll"
+    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcrypto-3.dll"
+    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcurl.dll"
+    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libssl-3.dll"
+  ${EndIf}
   File "${git_ROOT}\Packages\MediaInfo.Wrapper.21.9.3\lib\net40\MediaInfo.Wrapper.dll"
   File "${git_ROOT}\Packages\System.ValueTuple.4.5.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll"
 
@@ -585,7 +596,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ${Else}
     File "${git_ROOT}\Packages\FFmpeg.Win32.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
   ${EndIf}
-  File "${git_TVServer}\TvThumbnails\bin\x86\${BUILD_TYPE}\TvThumbnails.dll"
+  File "${git_TVServer}\TvThumbnails\bin\${BUILD_TYPE}\TvThumbnails.dll"
 
   ; protocol implementations for MPIPTVSource.ax
   File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_FILE.dll"
@@ -665,10 +676,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ;${EndIf}
 ${MementoSectionEnd}
 !macro Remove_${SecServer}
-
-  ; Currently the x86 version only is suppoertd
-  ${If} "${Architecture}" == "x86"
-
 
   ${LOG_TEXT} "INFO" "Uninstalling MediaPortal TV Server..."
 
@@ -826,8 +833,6 @@ ${MementoSectionEnd}
   ${IfNot} ${MPIsInstalled}
     !insertmacro Remove_SecMpeInstaller
     !insertmacro Remove_SecWatchdog
-  ${EndIf}
-  
   ${EndIf}
   
 !macroend
