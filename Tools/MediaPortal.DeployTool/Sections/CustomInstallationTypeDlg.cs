@@ -64,9 +64,8 @@ namespace MediaPortal.DeployTool.Sections
       switch (installType)
       {
         case 1:
-          return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSType);
         case 2:
-          return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSType);
+          return DialogFlowHandler.Instance.GetDialogInstance(Utils.Is64bit() ? DialogType.TvServerWarning : DialogType.DBMSType);
         case 3:
           return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettings);
         default:

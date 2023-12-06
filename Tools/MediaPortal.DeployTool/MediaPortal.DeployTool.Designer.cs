@@ -1237,6 +1237,16 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to TV-Server x64 is not compatible with some TV cards.
+        ///	If you are owner one of the following devices, please install 32bit version of the TV-Server..
+        /// </summary>
+        internal static string TvServerWarning_labelHeading {
+            get {
+                return ResourceManager.GetString("TvServerWarning_labelHeading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MediaPortal {0} detected..
         /// </summary>
         internal static string Upgrade_labelSectionHeader {
