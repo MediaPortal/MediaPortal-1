@@ -900,38 +900,47 @@ namespace MediaPortal.DeployTool
     {
       if (Is64bit())
       {
-        const string NAME_OLD = "MediaPortal (x64)";
+        FixMediaPortal64RegistryPath("MediaPortal");
+        FixMediaPortal64RegistryPath("MediaPortal TV Server");
+      }
+    }
+
+    public static void FixMediaPortal64RegistryPath(string strName)
+    {
+      if (Is64bit())
+      {
+        string strNameOld = strName + " (x64)";
         const string PATH_UNINSTALL = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
         const string PATH_UNINSTALL_WOW6432 = @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall";
-        const string PATH_MP = PATH_UNINSTALL + @"\MediaPortal";
-        const string PATH_MP_OLD = PATH_UNINSTALL_WOW6432 + @"\" + NAME_OLD;
+        string strPath = PATH_UNINSTALL + @"\" + strName;
+        string strPathOld = PATH_UNINSTALL_WOW6432 + @"\" + strNameOld;
 
-        RegistryKey keyOld = Registry.LocalMachine.OpenSubKey(PATH_MP_OLD);
+        RegistryKey keyOld = Registry.LocalMachine.OpenSubKey(strPathOld);
         if (keyOld != null)
         {
           //Existing old registry path
 
-          RegistryKey key = Registry.LocalMachine.OpenSubKey(PATH_MP);
+          RegistryKey key = Registry.LocalMachine.OpenSubKey(strPath);
 
           if (key == null)
           {
             //Create new registry path
             using (RegistryKey localKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default))
             {
-              key = localKey.CreateSubKey(PATH_MP);
+              key = localKey.CreateSubKey(strPath);
             }
           }
 
           //Copy all values from the old key to the new key
-          foreach (string strName in keyOld.GetValueNames())
+          foreach (string strValueName in keyOld.GetValueNames())
           {
-            key.SetValue(strName, keyOld.GetValue(strName), keyOld.GetValueKind(strName));
+            key.SetValue(strValueName, keyOld.GetValue(strValueName), keyOld.GetValueKind(strValueName));
           }
 
           //Delete old key
           using (RegistryKey k = Registry.LocalMachine.OpenSubKey(PATH_UNINSTALL_WOW6432, true))
           {
-            k.DeleteSubKeyTree(NAME_OLD);
+            k.DeleteSubKeyTree(strNameOld);
           }
 
           key.Dispose();
