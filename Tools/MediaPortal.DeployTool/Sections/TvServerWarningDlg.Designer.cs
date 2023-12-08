@@ -57,15 +57,17 @@ namespace MediaPortal.DeployTool.Sections
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
             // 
-            // labelCards
+            // labelDevices
             // 
             this.labelDevices.AutoSize = true;
             this.labelDevices.ForeColor = System.Drawing.Color.White;
             this.labelDevices.Location = new System.Drawing.Point(330, 113);
             this.labelDevices.Name = "labelDevices";
-            this.labelDevices.Size = new System.Drawing.Size(37, 13);
+            this.labelDevices.Size = new System.Drawing.Size(267, 65);
             this.labelDevices.TabIndex = 19;
-            this.labelDevices.Text = " - Haupage WinTV_CI: hcwWinTVCI.dll, hauppauge.dll\r\n - TeVii: TeVii.dll\r\n - Technotrend: ttBdaDrvApi_Dll.dll, ttdvbacc.dll\r\n - ODSoft multimedia KNC CI: KNCBDACTRL.dll\r\n - HCWIRBlaster: hcwIRblast.dll";
+            this.labelDevices.Text = " - Haupage WinTV_CI: hcwWinTVCI.dll, hauppauge.dll\r\n - TeVii: TeVii.dll\r\n - Techn" +
+    "otrend: ttBdaDrvApi_Dll.dll, ttdvbacc.dll\r\n - ODSoft multimedia KNC CI: KNCBDACT" +
+    "RL.dll\r\n - HCWIRBlaster: hcwIRblast.dll";
             // 
             // labelHeading
             // 
@@ -90,7 +92,7 @@ namespace MediaPortal.DeployTool.Sections
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("Warning")));
+            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
             this.pictureBox2.Location = new System.Drawing.Point(243, 70);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(64, 64);
