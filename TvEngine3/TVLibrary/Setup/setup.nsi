@@ -887,7 +887,7 @@ ${MementoSectionEnd}
   ${If} ${TVClientIsInstalled}
     ${LOG_TEXT} "INFO" "TV Client plugin is installed"
 
-    ${If} $MPdir.Base = ""
+    ${If} $MPdir.Base == ""
       ${LOG_TEXT} "ERROR" "MediaPortal Directory not found, TVClient plugin uninstallation will fail!!"
     ${Else}
       ${LOG_TEXT} "INFO" "Removing TV Client plugin in: $MPdir.Base"
