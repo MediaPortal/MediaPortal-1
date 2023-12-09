@@ -21,11 +21,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 
 namespace MpeCore.Classes
 {
   public class GeneralInfoItem
   {
+    private static List<GeneralInfoItem> _ExtensionsWhiteList = null;
+
     public GeneralInfoItem()
     {
       Version = new VersionInfo();
@@ -62,7 +65,13 @@ namespace MpeCore.Classes
     public string Tags { get; set; }
     public PlatformCompatibilityEnum PlatformCompatibility
     {
-      get { return this._PlatformCompatibility; }
+      get
+      {
+        if (this.TryGetPlatformCompatibilityFromList(out PlatformCompatibilityEnum compatibility))
+          return compatibility;
+
+        return this._PlatformCompatibility;
+      }
       set { this._PlatformCompatibility = value; }
     } private PlatformCompatibilityEnum _PlatformCompatibility = PlatformCompatibilityEnum.x86;
 
@@ -77,6 +86,68 @@ namespace MpeCore.Classes
     public TagCollection TagList
     {
       get { return new TagCollection(Tags); }
+    }
+
+    private bool TryGetPlatformCompatibilityFromList(out PlatformCompatibilityEnum compatibility)
+    {
+      compatibility = PlatformCompatibilityEnum.x86;
+
+      if (_ExtensionsWhiteList == null)
+      {
+        //Build extension list from embeded resource txt file
+        try
+        {
+          using (Stream stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("MpeCore.Data.ExtensionPlatformCompatibilityList.txt"))
+          {
+            List<GeneralInfoItem> list = new List<GeneralInfoItem>();
+            StreamReader sr = new StreamReader(stream);
+            string strLine;
+            while (!sr.EndOfStream)
+            {
+              strLine = sr.ReadLine().Trim();
+              if (string.IsNullOrWhiteSpace(strLine) || strLine.StartsWith("#"))
+                continue;
+
+              //#GUID;VERSION;COMPATIBILITY;DESCRIPTION
+              string[] parts = strLine.Split(';');
+              if (parts.Length < 4)
+                continue;
+
+              VersionInfo version = new VersionInfo(new Version(parts[1]));
+
+              if (list.Exists(p => p.Id.Equals(parts[0], StringComparison.CurrentCultureIgnoreCase) && p.Version == version))
+                continue;
+
+              list.Add(new GeneralInfoItem()
+              {
+                Id = parts[0],
+                Version = version,
+                PlatformCompatibility = (PlatformCompatibilityEnum)Enum.Parse(typeof(PlatformCompatibilityEnum), parts[2]),
+                ExtensionDescription = parts[3]
+              });
+
+            }
+
+            //Set the extension list
+            _ExtensionsWhiteList = list;
+          }
+
+        }
+        catch
+        {
+          return false;
+        }
+      }
+
+      //Try find the extension in the whitelist
+      GeneralInfoItem gi = _ExtensionsWhiteList.Find(p => p.Id.Equals(this.Id, StringComparison.CurrentCultureIgnoreCase) && p.Version == this.Version);
+      if (gi != null)
+      {
+        compatibility = gi._PlatformCompatibility; //use private field to avoid recursion
+        return true;
+      }
+
+      return false;
     }
   }
 }
