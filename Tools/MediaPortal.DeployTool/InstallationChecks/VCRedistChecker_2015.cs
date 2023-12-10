@@ -167,19 +167,23 @@ namespace MediaPortal.DeployTool.InstallationChecks
         }
       }
 
-      string InstallDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\system32\\";
-      string[] dll = new string[5];
-      //CRT
-      dll[0] = "msvcp140.dll";
-      //MFC
-      dll[1] = "mfc140.dll";
-      dll[2] = "mfc140u.dll";
-      dll[3] = "mfcm140.dll";
-      dll[4] = "mfcm140u.dll";
+      string strInstallDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\system32\\";
+      string[] dll = new string[]
+        {
+          //CRT
+          "msvcp140.dll",
+          //MFC
+          "mfc140.dll", "mfc140u.dll", "mfcm140.dll", "mfcm140u.dll",
+          //API SET STUB
+          "api-ms-win-crt-convert-l1-1-0.dll", "api-ms-win-crt-environment-l1-1-0.dll", "api-ms-win-crt-filesystem-l1-1-0.dll",
+          "api-ms-win-crt-heap-l1-1-0.dll", "api-ms-win-crt-locale-l1-1-0.dll", "api-ms-win-crt-math-l1-1-0.dll",
+          "api-ms-win-crt-multibyte-l1-1-0.dll", "api-ms-win-crt-runtime-l1-1-0.dll", "api-ms-win-crt-stdio-l1-1-0.dll",
+          "api-ms-win-crt-string-l1-1-0.dll", "api-ms-win-crt-time-l1-1-0.dll", "api-ms-win-crt-utility-l1-1-0.dll"
+        };
 
       for (int i = 0; i < dll.Length; i++)
       {
-        if (!File.Exists(InstallDir + dll[i]))
+        if (!File.Exists(strInstallDir + dll[i]))
         {
           result.state = CheckState.NOT_INSTALLED;
           return result;
