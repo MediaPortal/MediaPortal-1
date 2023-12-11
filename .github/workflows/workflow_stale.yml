@@ -18,7 +18,7 @@ jobs:
       # - No PRs marked as no-stale
       # - No issues (-1)
       - name: 90 days stale PRs policy
-        uses: actions/stale@v8
+        uses: actions/stale@v9
         with:
           days-before-stale: 90
           days-before-close: 7
