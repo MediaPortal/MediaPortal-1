@@ -65,9 +65,9 @@ namespace MediaPortal.DeployTool.Sections
             this.labelDevices.Name = "labelDevices";
             this.labelDevices.Size = new System.Drawing.Size(267, 65);
             this.labelDevices.TabIndex = 19;
-            this.labelDevices.Text = " - Haupage WinTV_CI: hcwWinTVCI.dll, hauppauge.dll\r\n - TeVii: TeVii.dll\r\n - Techn" +
-    "otrend: ttBdaDrvApi_Dll.dll, ttdvbacc.dll\r\n - ODSoft multimedia KNC CI: KNCBDACT" +
-    "RL.dll\r\n - HCWIRBlaster: hcwIRblast.dll";
+            this.labelDevices.Text = " - Hauppauge WinTV CI  (uses: hcwWinTVCI.dll, hauppauge.dll)\r\n - TeVii  (uses: TeVii.dll)\r\n - Techn" +
+    "otrend  (uses: ttBdaDrvApi_Dll.dll, ttdvbacc.dll)\r\n - ODSoft multimedia KNC CI  (uses: KNCBDACT" +
+    "RL.dll)\r\n - HCWIRBlaster  (uses: hcwIRblast.dll)";
             // 
             // labelHeading
             // 
@@ -78,7 +78,7 @@ namespace MediaPortal.DeployTool.Sections
             this.labelHeading.Name = "labelHeading";
             this.labelHeading.Size = new System.Drawing.Size(604, 26);
             this.labelHeading.TabIndex = 18;
-            this.labelHeading.Text = "TV-Server x64 is not compatible with some TV cards.\r\nIf you are owner one of the " +
+            this.labelHeading.Text = "TV-Server x64 is not compatible with some TV cards.\r\nIf you are using one of the " +
     "following devices, please install 32bit version of the TV-Server.";
             // 
             // pictureBox1
