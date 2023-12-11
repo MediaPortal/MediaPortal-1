@@ -623,6 +623,12 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
   #---------------------------------------------------------------------------
   ${LOG_TEXT} "INFO" "filter registration..."
+  
+  !if "${Architecture}" == "x64"
+    !define LIBRARY_X64
+  !else
+  !endif
+  
   ; filters for digital tv
   ${IfNot} ${MP023IsInstalled}
   ${AndIfNot} ${MPIsInstalled}
