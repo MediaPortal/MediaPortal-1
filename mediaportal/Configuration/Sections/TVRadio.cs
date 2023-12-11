@@ -236,6 +236,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpTextBoxHostname.Size = new System.Drawing.Size(141, 15);
       this.mpTextBoxHostname.TabIndex = 1;
       this.mpTextBoxHostname.TextChanged += new System.EventHandler(this.mpTextBoxHostname_TextChanged);
+      this.mpTextBoxHostname.BackColorChanged += new System.EventHandler(this.mpTextBoxHostname_BackColorChanged);
       // 
       // mpButtonTestConnection
       // 
@@ -733,11 +734,14 @@ namespace MediaPortal.Configuration.Sections
       int selectedIdx = -1;
       foreach (string hostname in GetNetworkComputers())
       {
-        int idx = mpComboBoxHostname.Items.Add(hostname);
+        if (!string.IsNullOrWhiteSpace(hostname))
+        {
+          int idx = mpComboBoxHostname.Items.Add(hostname);
 
-        // Preselect verified hostname or local hostname
-        if (hostname == _verifiedHostname || (_verifiedHostname == string.Empty && hostname == Dns.GetHostName()))
-          selectedIdx = idx;
+          // Preselect verified hostname or local hostname
+          if (hostname == _verifiedHostname || (_verifiedHostname == string.Empty && hostname == Dns.GetHostName()))
+            selectedIdx = idx;
+        }
       }
       mpComboBoxHostname.SelectedIndex = selectedIdx;
 
@@ -752,8 +756,16 @@ namespace MediaPortal.Configuration.Sections
     private void mpComboBoxHostname_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
       // Take selected hostname to hostname textbox
-      mpTextBoxHostname.Text = mpComboBoxHostname.SelectedItem.ToString();
-      mpTextBoxHostname.BackColor = Color.YellowGreen;
+      if (mpComboBoxHostname.SelectedItem != null)
+      {
+        mpTextBoxHostname.Text = mpComboBoxHostname.SelectedItem.ToString();
+        mpTextBoxHostname.BackColor = Color.YellowGreen;
+      }
+      else
+      {
+        mpTextBoxHostname.Text = string.Empty;
+        mpTextBoxHostname.BackColor = Color.Red;
+      }
       _verifiedHostname = mpTextBoxHostname.Text;
 
       // Disable WOL for localhost
@@ -764,6 +776,12 @@ namespace MediaPortal.Configuration.Sections
       }
       catch { }
     }
+
+    private void mpTextBoxHostname_BackColorChanged(object sender, System.EventArgs e)
+    {
+      mpTextBoxHostname.ForeColor = mpTextBoxHostname.BackColor == Color.YellowGreen ? Color.Black : Color.WhiteSmoke;
+    }
+    
 
     #endregion
   }
