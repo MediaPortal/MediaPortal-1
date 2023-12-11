@@ -1,3 +1,22 @@
 ﻿#GUID;VERSION;COMPATIBILITY;DESCRIPTION
 b7738156-b6ec-4f0f-b1a8-b5010349d8b1;0.78.0.0;AnyCPU;LAV Filters
 e14cf436-6e19-4b40-b65f-3bbc934ae521;1.11.0.2;AnyCPU;SchedulesDirect Plugin
+814a6918-0183-4323-a3b4-c00fac11b4f6;4.0.3.339;AnyCPU;Fanart Handler
+2855d0cd-e4b6-406b-80c5-a0736ed741f2;1.0.0.85;AnyCPU;Studios for Mediaportal
+06cff56e-f5eb-4413-bd54-9471d1a2bd16;1.0.0.23;AnyCPU;Genres for Mediaportal
+bbbf4c0f-dbaa-4b45-be5a-02142b7c1c91;1.0.0.11;AnyCPU;Awards for Mediaportal
+f8f30e5e-cc8a-44a0-91a9-1175fe55732f;1.2.7.0;AnyCPU;SubCentral
+1f288e48-6f5b-481c-a1b4-605393c913db;1.0.8.432;AnyCPU;mvCentral
+805a38ec-6dd4-4b2c-9b65-55e680da24cc;1.0.11.0;AnyCPU;Ares
+d2c4076c-f3d0-4d84-9a74-83fbbd15c940;5.0.0.98;AnyCPU;Titan Extended
+50d7c352-8ae1-406d-b899-2131e03d4f1e;3.1.3.0;AnyCPU;SubtitleDownloader
+acdc23fa-19b4-4867-bf25-176e79753869;2.2.1.284;AnyCPU;MyLyrics
+fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c;2.4.0.83;AnyCPU;Latest Media Handler
+5da44c68-3359-40c6-8e9e-31fc868ec794;0.11.1.33;x64;CECRemote (x64)
+2bbbfaea-1953-4672-b5ca-804f05369472;1.0.0.7;AnyCPU;Weather for Mediaportal
+910e1703-317a-4e69-9ce9-682130eb4d4f;1.0.0.17;AnyCPU;Holidays for Mediaportal
+71cc3381-de92-482d-9556-7e86f67f8067;1.5.0.0;AnyCPU;RadioTime
+9282cfe9-d873-4c85-8415-721a9018e8f7;1.0.0.13;AnyCPU;Spectrum Analyzer
+dba14ebb-b9c8-4996-a015-073da658b94b;1.0.1.14;AnyCPU;MyVideo Importer
+fa7968ec-ca50-4410-bb4b-38f6d88f3f5e;0.0.0.2;AnyCPU;MP-Domoticz
+cb5ddc84-520e-455c-9411-093b72f0751d;1.0.0.0;AnyCPU;LatestGames
