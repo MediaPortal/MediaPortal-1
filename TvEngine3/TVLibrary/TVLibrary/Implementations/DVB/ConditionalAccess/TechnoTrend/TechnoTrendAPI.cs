@@ -748,16 +748,19 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void CloseCI()
     {
-      // if hw was opened before, close it now
-      if (m_hBdaApi.ToInt32() != -1)
+      if (m_deviceType != TTApiDeviceCat.UNKNOWN)
       {
-        if (m_ciSlotAvailable)
+        // if hw was opened before, close it now
+        if (m_hBdaApi.ToInt32() != -1)
         {
-          Log.Log.Debug("TechnoTrend: Closing CI");
-          bdaapiCloseCI(m_hBdaApi);
+          if (m_ciSlotAvailable)
+          {
+            Log.Log.Debug("TechnoTrend: Closing CI");
+            bdaapiCloseCI(m_hBdaApi);
+          }
+          Log.Log.Debug("TechnoTrend: Closing hardware");
+          bdaapiClose(m_hBdaApi);
         }
-        Log.Log.Debug("TechnoTrend: Closing hardware");
-        bdaapiClose(m_hBdaApi);
       }
     }
 
