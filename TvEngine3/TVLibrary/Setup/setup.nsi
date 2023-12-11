@@ -986,7 +986,11 @@ Section -Post
     ;!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
     CreateDirectory "${STARTMENU_GROUP}"
-    CreateShortCut "${STARTMENU_GROUP}\uninstall TV-Server.lnk" "$INSTDIR\uninstall-tve3.exe"
+    !if "${Architecture}" == "x64"
+        CreateShortCut "${STARTMENU_GROUP}\Uninstall TV-Server (x64).lnk" "$INSTDIR\uninstall-tve3.exe" "" "$INSTDIR\uninstall-tve3.exe"  0 "" "" "Uninstall TV-Server (x64)"
+    !else
+        CreateShortCut "${STARTMENU_GROUP}\Uninstall TV-Server.lnk" "$INSTDIR\uninstall-tve3.exe" "" "$INSTDIR\uninstall-tve3.exe"  0 "" "" "Uninstall TV-Server"
+    !endif
     WriteINIStr "${STARTMENU_GROUP}\Help.url"      "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/"
     WriteINIStr "${STARTMENU_GROUP}\web site.url"  "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
     ;!insertmacro MUI_STARTMENU_WRITE_END
@@ -1043,7 +1047,11 @@ Section Uninstall
 
   ; remove Start Menu shortcuts
   ; $StartMenuGroup (default): "Team MediaPortal\TV Server"
-  Delete "${STARTMENU_GROUP}\uninstall TV-Server.lnk"
+  !if "${Architecture}" == "x64"
+    Delete "${STARTMENU_GROUP}\Uninstall TV-Server (x64).lnk"
+  !else
+    Delete "${STARTMENU_GROUP}\Uninstall TV-Server.lnk"
+  !endif
   Delete "${STARTMENU_GROUP}\Help.url"
   Delete "${STARTMENU_GROUP}\web site.url"
   RMDir "${STARTMENU_GROUP}"
