@@ -20,3 +20,45 @@ fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c;2.4.0.83;AnyCPU;Latest Media Handler
 dba14ebb-b9c8-4996-a015-073da658b94b;1.0.1.14;AnyCPU;MyVideo Importer
 fa7968ec-ca50-4410-bb4b-38f6d88f3f5e;0.0.0.2;AnyCPU;MP-Domoticz
 cb5ddc84-520e-455c-9411-093b72f0751d;1.0.0.0;AnyCPU;LatestGames
+0656bca5-afe1-4da8-a616-81391d4b73ff;1.3.0.0;AnyCPU;Xtreme eXtension Pack
+28d83714-1735-4110-9725-8fb3a1e7a6a6;0.6.2.0;AnyCPU;TsBufferExtractor
+8f8cd2eb-429e-4114-9a9e-7df9eec097f7;0.3.0.0;AnyCPU;Frustration
+a5cb941e-ba8a-4d74-8dca-d1fb315ce694;0.4.1.0;AnyCPU;Connect4
+0de9bedd-11e0-454d-9939-c40c8564f56c;0.6.1.2;AnyCPU;SimonSay
+7e2b5b18-46ba-48f8-b7a3-2430405a9f86;2.4.4.0;AnyCPU;KeyboardInputPlugin
+4031e85f-490d-462a-8aff-caea33626ec1;0.3.2.0;AnyCPU;Spanish Canal+ TV Logos
+05afd608-7fb0-4738-85b3-250bb8e521a6;2.0.3.0;AnyCPU;MySleepTimer
+95732da5-2c37-42aa-b2cd-1640ec5ccd8c;2.7.5.181;AnyCPU;Hebrew Subtitle Downloader
+c0dd920e-febd-4460-aac0-749d28718e49;0.9.9.5;AnyCPU;Canadian Weather
+6054f744-7372-417d-8def-58cd3c776b65;1.0.1.1;AnyCPU;Message Plugin
+55bb986b-bd76-41c6-a9be-a1f60ca56fdd;1.3.0.0;AnyCPU;yrWeather
+dc62f0e3-1830-4202-9c75-d2e9e3fd0b1d;0.0.2.2;AnyCPU;mp-transmission
+6eef6468-7da8-49b6-8967-915fe0194b37;1.6.1.0;AnyCPU;Quebec TV logos
+0e4b1c42-6a2c-46dd-bf8c-9dac3f75b4f4;1.1.4.3;AnyCPU;French Pack
+784949ad-7eed-4541-9ec8-edc0cb6a3521;1.0.0.11;AnyCPU;Italy logos Tv and Radio
+15db8e0f-9516-43a9-bffc-80c00d8b21f0;1.5.0.0;AnyCPU;MPCoreChanger
+19421e6a-7963-4535-87c6-86496c6d1a92;1.1.0.0;AnyCPU;Athena
+a36a3aa5-7ad3-4a5f-a4ab-5fc1a7874747;0.1.0.9;AnyCPU;Türksat Logo Pack
+e41906ec-f7b0-4c03-ab05-315312b660a1;1.0.0.0;AnyCPU;MPsteam
+9091eb3e-3573-40a0-b322-c3f9a9ba3ece;1.5.5.0;AnyCPU;mpNZB
+7d9c01e5-0408-4f1b-ba3a-e8afd66c22ab;1.0.5.4;AnyCPU;APODPlugin
+f1f3054d-3183-4b08-a89a-69d13cba4ff9;1.1.4.2;AnyCPU;YAC Listener Caller-ID
+9a4f423d-db5f-452f-8f5a-7cda5eb18f28;1.2.8.0;AnyCPU;Swiss Radio + TV Logos
+a8a75d2f-f3df-4554-8df7-a8362a1d5323;0.1.1.3;AnyCPU;NetflixAlpha
+a8a75d2f-f3df-4554-8df7-a8362a1d5323;0.1.2.3;AnyCPU;NetflixAlpha
+080a5e79-c670-45e2-b278-05e742271d72;1.4.5.0;AnyCPU;Norwegian TV and Radio logos
+57c02e19-815d-4dd1-93f2-fc90d61b5eaf;1.7.0.0;AnyCPU;TITANIUS
+0ef9caed-3e62-4c2c-a1db-8b429d6bc388;1.2.1.0;AnyCPU;Israel DVB-T logos
+a49a6155-3deb-448a-b519-e701ba02b8e3;1.4.2.0;AnyCPU;Frames
+87138503-6ffd-4cfa-9d07-e9b3834cef08;1.0.10.0;AnyCPU;Danish TV & Radio logos
+02fa2bda-53fe-4920-9e5a-72719fac7eee;2.2.0.0;AnyCPU;SPressoDisplayPlugin
+ea2aee37-34d8-41d9-a006-8a47930b5f55;1.1.0.0;AnyCPU;MusicBrainzRating
+be65661e-0603-4551-99ec-b27234c08403;2.9.3.3668;AnyCPU;MyAlarm
+d29419c3-1176-48fd-bed5-599a4ec93b7b;0.2.4.0;AnyCPU;Android Remote
+f11d4e87-8755-4be4-83d6-6509d4cac244;1.0.1.0;AnyCPU;Music Rating Updater
+33cb85e4-85e3-477e-a10a-bdddf217a6ec;2.0.2.0;AnyCPU;Music Trivia
+ae8391dd-92c7-4242-a189-018d64bbe828;0.9.7.30;AnyCPU;BDHandler
+5894e835-41fc-4fbe-887e-87ac4740273b;0.3.0.0;AnyCPU;Opera Mobile Launcher
+bdfea2a7-2206-4fae-8165-02342031848c;0.2.8.0;AnyCPU;MyDailyComics
+bd702cf2-87b2-48ea-9bd6-d1ee41d255df;0.4.1.0;AnyCPU;Earth TV
+4624d03e-812a-43c4-bca3-aee1b03ab0b5;0.2.0.0;AnyCPU;Videoload (German only)
