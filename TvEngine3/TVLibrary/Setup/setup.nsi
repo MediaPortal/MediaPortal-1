@@ -670,7 +670,15 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     ;!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
     CreateDirectory "${STARTMENU_GROUP}"
-    CreateShortCut "${STARTMENU_GROUP}\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe"  "" "$INSTDIR\SetupTV.exe"  0 "" "" "TV-Server Configuration"
+    !if "${Architecture}" == "x64"
+        CreateShortCut "${STARTMENU_GROUP}\TV-Server Configuration (x64).lnk" "$INSTDIR\SetupTV.exe"  "" "$INSTDIR\SetupTV.exe"  0 "" "" "TV-Server Configuration (x64)"
+        
+        ; Delete shortcuts with old x64 naming
+        Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
+    !else
+        CreateShortCut "${STARTMENU_GROUP}\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe"  "" "$INSTDIR\SetupTV.exe"  0 "" "" "TV-Server Configuration"
+    !endif    
+        
     CreateDirectory "${COMMON_APPDATA}\log"
     CreateShortCut "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"     "${COMMON_APPDATA}\log" "" "${COMMON_APPDATA}\log" 0 "" "" "TV-Server Log-Files"
 
@@ -827,7 +835,11 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\MPIPTV_UDP.dll"  
 
   ; remove Start Menu shortcuts
-  Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
+  !if "${Architecture}" == "x64"
+    Delete "${STARTMENU_GROUP}\TV-Server Configuration (x64).lnk"
+  !else 
+    Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
+  !endif
   Delete "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"
 
   Delete "${STARTMENU_GROUP}\Quick Setup Guide.url"
@@ -988,6 +1000,9 @@ Section -Post
     CreateDirectory "${STARTMENU_GROUP}"
     !if "${Architecture}" == "x64"
         CreateShortCut "${STARTMENU_GROUP}\Uninstall TV-Server (x64).lnk" "$INSTDIR\uninstall-tve3.exe" "" "$INSTDIR\uninstall-tve3.exe"  0 "" "" "Uninstall TV-Server (x64)"
+        
+        ; Delete shortcuts with old x64 naming
+        Delete "${STARTMENU_GROUP}\Uninstall TV-Server.lnk"
     !else
         CreateShortCut "${STARTMENU_GROUP}\Uninstall TV-Server.lnk" "$INSTDIR\uninstall-tve3.exe" "" "$INSTDIR\uninstall-tve3.exe"  0 "" "" "Uninstall TV-Server"
     !endif
