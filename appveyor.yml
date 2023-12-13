@@ -12,7 +12,7 @@ install:
 - cmd: >-
     git submodule update --init --recursive
 
-    choco install nsis --version=3.08
+    choco install nsis --version=3.09
 
     java -version
 
