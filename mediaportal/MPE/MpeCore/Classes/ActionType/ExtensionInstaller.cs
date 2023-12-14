@@ -136,6 +136,10 @@ namespace MpeCore.Classes.ActionType
         }
       }
 
+      //Check for platform compatibility
+      if (!embeddedPackage.CheckPlatformCompatibility())
+        return SectionResponseEnum.Cancel;
+
       embeddedPackage.Silent = actionItem.Params[Const_Silent].GetValueAsBool();
       if (embeddedPackage.StartInstallWizard())
       {

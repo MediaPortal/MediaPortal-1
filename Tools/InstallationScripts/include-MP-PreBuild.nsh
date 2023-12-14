@@ -115,16 +115,13 @@
 
 ; Build TV server
 !ifdef BUILD_TVServer
-!if "${Architecture}" == "x64"
-  !define TVServerArchitecture x86
-!else
-  !define TVServerArchitecture x86
-!endif
 !insertmacro PrepareBuildReport TvPlugin
 !system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform="Any CPU" "${git_TVServer}\TvPlugin\TvPlugin.sln"' = 0
 !insertmacro FinalizeBuildReport
 !insertmacro PrepareBuildReport TvLibrary
-!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=${TVServerArchitecture} "${git_TVServer}\TvLibrary.sln"' = 0
+# Use x86 platform target; x64 configuration is not available for tv server yet
+!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvLibrary.sln"' = 0
+#!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=${Architecture} "${git_TVServer}\TvLibrary.sln"' = 0
 !insertmacro FinalizeBuildReport
 !endif
 
@@ -134,14 +131,9 @@
 !endif
 
 !ifdef BUILD_DeployTool
-!if "${Architecture}" == "x64"
-  !define DeployArchitecture x64
-!else
-  !define DeployArchitecture x86
-!endif
 !insertmacro PrepareBuildReport DeployTool
 ;!system '"${MSBuild_Path}" ${logger} /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=${Architecture} "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
-!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=${DeployArchitecture} "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+!system '"${MSBuild_Path}" ${logger} /target:Rebuild /property:Configuration=Release;Platform=${Architecture} "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
 !insertmacro FinalizeBuildReport
 !endif
 

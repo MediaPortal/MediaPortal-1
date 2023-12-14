@@ -19,6 +19,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.IO;
 using System.Diagnostics;
@@ -180,14 +182,15 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return true;
       }
 
-      string[] UninstKeys = {
-                              "MediaPortal" + (Utils.Is64bit() ? " (x64)" : string.Empty), // 1.x - x86/x64
-                              "MediaPortal 0.2.3.0"                                        // 0.2.3.0
-                            };
-
-      foreach (string UnistKey in UninstKeys)
+      object[][] keys =
       {
-        string keyUninstall = Utils.CheckUninstallString(UnistKey, true);
+        new object[] { "MediaPortal", false}, // 1.x - x86/x64
+        new object[] { "MediaPortal 0.2.3.0", true } // 0.2.3.0
+      };
+
+      foreach (object[] key in keys)
+      {
+        string keyUninstall = Utils.CheckUninstallString((string)key[0], true, (bool)key[1]);
         if (keyUninstall != null && File.Exists(keyUninstall))
         {
           Utils.UninstallNSIS(keyUninstall);
@@ -214,7 +217,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       result.state = CheckState.NOT_INSTALLED;
 
       string[] UninstKeys = {
-                              "MediaPortal" + (Utils.Is64bit() ? " (x64)" : string.Empty), // 1.x - x86/x64
+                              "MediaPortal", // 1.x - x86/x64
                               "MediaPortal 0.2.3.0"                                        // 0.2.3.0
                             };
 

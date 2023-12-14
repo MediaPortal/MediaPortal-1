@@ -65,18 +65,10 @@
 !endif
 
 !ifndef MP_REG_UNINSTALL
-    !if "${Architecture}" == "x64"
-        !define MP_REG_UNINSTALL  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
-    !else
-        !define MP_REG_UNINSTALL  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
-    !endif
+    !define MP_REG_UNINSTALL  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
 !endif
 !ifndef TV3_REG_UNINSTALL
-    !if "${Architecture}" == "x64"
-        !define TV3_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server (x64)"
-    !else
-        !define TV3_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
-    !endif
+    !define TV3_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
 !endif
 
 ; modify your registry and uncomment the following line to test if the git version check is working
@@ -179,7 +171,7 @@
 
 # old installations < 0.2.3.0 RC 3
 !macro _MP022IsInstalled _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{87819CFA-1786-484D-B0DE-10B5FBF2625D}" "UninstallString"
@@ -188,7 +180,7 @@
 !define MP022IsInstalled `"" MP022IsInstalled ""`
 
 !macro _MP023RC3IsInstalled _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal 0.2.3.0 RC3" "UninstallString"
@@ -197,7 +189,7 @@
 !define MP023RC3IsInstalled `"" MP023RC3IsInstalled ""`
 
 !macro _MP023IsInstalled _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal 0.2.3.0" "UninstallString"
@@ -208,7 +200,7 @@
 ;======================================   OLD TVServer/TVClient INSTALLATION TESTs
 
 !macro _MSI_TVServerIsInstalled _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4B738773-EE07-413D-AFB7-BB0AB04A5488}" "UninstallString"
@@ -217,7 +209,7 @@
 !define MSI_TVServerIsInstalled `"" MSI_TVServerIsInstalled ""`
 
 !macro _MSI_TVClientIsInstalled _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{F7444E89-5BC0-497E-9650-E50539860DE0}" "UninstallString"
@@ -235,15 +227,20 @@
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal" "UninstallString"
+  
+  !if "${Architecture}" == "x64"
+    SetRegView 64
+  !endif
+  
   IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
 !macroend
 !define MPIsInstalledx86 `"" MPIsInstalledx86 ""`
 
 !macro _MPIsInstalledx64 _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
-  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)" "UninstallString"
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal" "UninstallString"
   IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
 !macroend
 !define MPIsInstalledx64 `"" MPIsInstalledx64 ""`
@@ -251,7 +248,7 @@
 ;======================================   Mediaportal / TV Server / TV Client
 
 !macro _MPIsInstalled _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "${MP_REG_UNINSTALL}" "UninstallString"
@@ -260,7 +257,7 @@
 !define MPIsInstalled `"" MPIsInstalled ""`
 
 !macro _TVServerIsInstalled _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "${TV3_REG_UNINSTALL}" "UninstallString"
@@ -272,7 +269,7 @@
 !define TVServerIsInstalled `"" TVServerIsInstalled ""`
 
 !macro _TVClientIsInstalled _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "${TV3_REG_UNINSTALL}" "UninstallString"
@@ -316,7 +313,7 @@
 #**********************************************************************************************************#
 # Get MP infos
 !macro MP_GET_INSTALL_DIR _var
-  SetRegView 32
+  ;SetRegView 32
   ;${LOG_TEXT} "DEBUG" "MACRO:MP_GET_INSTALL_DIR"
 
   ${If} ${MP023IsInstalled}
@@ -337,7 +334,7 @@
 !macroend
 
 !macro TVSERVER_GET_INSTALL_DIR _var
-  SetRegView 32
+  ;SetRegView 32
   ;${LOG_TEXT} "DEBUG" "MACRO:TVSERVER_GET_INSTALL_DIR"
 
   ${If} ${TVServerIsInstalled}
@@ -352,7 +349,7 @@
 !macroend
 
 !macro MP_GET_VERSION _var
-  SetRegView 32
+  ;SetRegView 32
   ${LOG_TEXT} "DEBUG" "MACRO:MP_GET_VERSION"
 
   ${If} ${MPIsInstalled}
@@ -368,7 +365,7 @@
 !macroend
 
 !macro TVSERVER_GET_VERSION _var
-  SetRegView 32
+  ;SetRegView 32
   ${LOG_TEXT} "DEBUG" "MACRO:TVSERVER_GET_VERSION"
 
   ${If} ${TVServerIsInstalled}
@@ -933,6 +930,12 @@ ${EndIf}
 
 
 !if "${PRODUCT_NAME}" == "MediaPortal"
+    !define _macro_cond_MP_
+!else if "${PRODUCT_NAME}" == "MediaPortal (x64)"
+    !define _macro_cond_MP_
+!endif
+
+!ifdef _macro_cond_MP_
 
 !macro DoPreInstallChecks
 
@@ -975,50 +978,15 @@ ${EndIf}
 
 !endif
 
-!if "${PRODUCT_NAME}" == "MediaPortal (x64)"
 
-!macro DoPreInstallChecks
-
-!ifdef GIT_BUILD
-  ; check if correct MP version ist installed, which is required for this git snapshot
-  !insertmacro MinimumVersionForGITCheck
-!endif
-
-  ; OS and other common initialization checks are done in the following NSIS header file
-  !insertmacro MediaPortalOperatingSystemCheck
-  !insertmacro MediaPortalAdminCheck
-  !insertmacro MediaPortalVCRedistCheck
-  !insertmacro MediaPortalNetFrameworkCheck
-
-  ; check if old mp 0.2.2 is installed
-  ${If} ${MP022IsInstalled}
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP022)"
-    Abort
-  ${EndIf}
-
-  ; check if old mp 0.2.3 RC3 is installed
-  ${If} ${MP023RC3IsInstalled}
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP023RC3)"
-    Abort
-  ${EndIf}
-
-  ; check if old mp 0.2.3 is installed.
-  ${If} ${MP023IsInstalled}
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP023)"
-    Abort
-  ${EndIf}
-
-  ; check if reboot is required
-  ${If} ${FileExists} "$MPdir.Base\rebootflag"
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
-    Abort
-  ${EndIf}
-
-!macroend
-
-!endif
 
 !if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client"
+    !define _macro_cond_TV_
+!else if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client (x64)"
+    !define _macro_cond_TV_
+!endif    
+
+!ifdef _macro_cond_TV_
 
 !macro DoPreInstallChecks
 
