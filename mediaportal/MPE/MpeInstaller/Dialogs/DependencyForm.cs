@@ -41,7 +41,7 @@ namespace MpeInstaller.Dialogs
       package = pak;
       this.Text = pak.GeneralInfo.Name + " - Dependencies";
       versionLabel.Text = string.Format("MediaPortal {0} (API: {1})  -  Skin {2}",
-        MediaPortal.Common.Utils.CompatibilityManager.MediaPortalReleaseForApiVersion(MediaPortal.Common.Utils.CompatibilityManager.GetCurrentMaxVersion()),
+        MediaPortal.Common.Utils.CompatibilityManager.AppVersion,
         MediaPortal.Common.Utils.CompatibilityManager.GetCurrentVersion(),
         MediaPortal.Common.Utils.CompatibilityManager.SkinVersion);
       generalDepBindSource.DataSource = package.Dependencies.Items;

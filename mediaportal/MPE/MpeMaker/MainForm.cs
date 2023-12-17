@@ -364,21 +364,23 @@ namespace MpeMaker
       Package.GenerateRelativePath(Path.GetDirectoryName(filename));
       Package.GenerateUniqueFileList();
       Package.SetPluginsDependencies();
-      DependencyItem MPDep;
-      if (Package.CheckMPDependency(out MPDep))
+      if (Package.CheckMPDependency(out DependencyItem depMP))
       {
-        if (MPDep.MinVersion.CompareTo(MpeCore.Classes.VersionProvider.MediaPortalVersion.MinimumMPVersionRequired) < 0)
-        {
-          MPDep.MinVersion = MpeCore.Classes.VersionProvider.MediaPortalVersion.MinimumMPVersionRequired;
-        }
+        //Fix old MP versioning
+        Version vOld = new Version(1, 1, 6, 27644);
+
+        if (depMP.MinVersion.CompareTo(vOld) <= 0)
+          depMP.MinVersion = new VersionInfo();
+
+        if (depMP.MaxVersion.CompareTo(vOld) <= 0)
+          depMP.MaxVersion = new VersionInfo();
       }
       else
       {
         Package.CreateMPDependency();
       }
-      FileItem skinFile;
-      DependencyItem dep;
-      if (Package.ProvidesSkin(out skinFile) && !Package.CheckSkinDependency(out dep))
+
+      if (Package.ProvidesSkin(out FileItem skinFile) && !Package.CheckSkinDependency(out DependencyItem dep))
       {
         Package.CreateSkinDependency(skinFile);
       }
