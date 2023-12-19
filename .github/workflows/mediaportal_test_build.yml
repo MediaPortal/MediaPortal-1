@@ -56,7 +56,7 @@ jobs:
       shell: cmd
 
     - name: Upload Artifact / Build result file
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ always() }}
       with:
         name: Build result file ${{ matrix.architecture }}
@@ -65,7 +65,7 @@ jobs:
         retention-days: 3
 
     - name: Upload Artifact / Mediaportal setup file
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ success() }}
       with:
         name: Mediaportal setup file ${{ matrix.architecture }}
