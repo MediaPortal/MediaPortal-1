@@ -20,13 +20,13 @@ jobs:
     
     steps:
       - name: Download x86 Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Mediaportal setup file x86
           path: release-files
 
       - name: Download x64 Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Mediaportal setup file x64
           path: release-files
