@@ -57,10 +57,10 @@ namespace MpeCore.Classes
     /// </summary>
     public VersionInfo()
     {
-      Major = "0";
-      Minor = "0";
-      Build = "0";
-      Revision = "0";
+      Major = "*";
+      Minor = "*";
+      Build = "*";
+      Revision = "*";
     }
 
     public VersionInfo(Version version)
@@ -75,32 +75,41 @@ namespace MpeCore.Classes
 
     public string Major
     {
-      get { return string.IsNullOrEmpty(_major) ? "0" : _major; }
-      set { _major = value; }
+      get { return string.IsNullOrEmpty(_major) ? "*" : _major; }
+      set { _major = SanityValue(value); }
     }
 
     private string _minor;
 
     public string Minor
     {
-      get { return string.IsNullOrEmpty(_minor) ? "0" : _minor; }
-      set { _minor = value; }
+      get { return string.IsNullOrEmpty(_minor) ? "*" : _minor; }
+      set { _minor = SanityValue(value); }
     }
 
     private string _build;
 
     public string Build
     {
-      get { return string.IsNullOrEmpty(_build) ? "0" : _build; }
-      set { _build = value; }
+      get { return string.IsNullOrEmpty(_build) ? "*" : _build; }
+      set { _build = SanityValue(value); }
     }
 
     private string _revision;
 
     public string Revision
     {
-      get { return string.IsNullOrEmpty(_revision) ? "0" : _revision; }
-      set { _revision = value; }
+      get { return string.IsNullOrEmpty(_revision) ? "*" : _revision; }
+      set { _revision = SanityValue(value); }
+    }
+
+    public bool IsAnyVersion
+    {
+      get
+      {
+        return this._major == "*" && this._minor == "*"
+           && this._build == "*" && this._revision == "*";
+      }
     }
 
     public static VersionInfo Parse(string s)
@@ -206,5 +215,16 @@ namespace MpeCore.Classes
     {
       return v1.CompareTo(v2) > 0;
     }
+
+
+    private static string SanityValue(string strValue)
+    {
+      int i;
+      if (string.IsNullOrWhiteSpace(strValue) || !int.TryParse(strValue, out i))
+        return "*";
+
+      return i.ToString();
+    }
+
   }
 }

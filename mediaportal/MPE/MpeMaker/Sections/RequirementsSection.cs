@@ -59,11 +59,8 @@ namespace MpeMaker.Sections
       IVersionProvider type = menu.Tag as IVersionProvider;
       if (type != null)
       {
-        var item = new DependencyItem(type.DisplayName) { MinVersion = type.Version(null), MaxVersion = type.Version(null) };
-        if (type is MpeCore.Classes.VersionProvider.MediaPortalVersion)
-        {
-          item.Message = string.Format("This version of {0} requires MediaPortal {1} or higher!", Package.GeneralInfo.Name, MediaPortal.Common.Utils.CompatibilityManager.MediaPortalReleaseForApiVersion(new Version(item.MinVersion.ToString())));
-        }
+        DependencyItem item = new DependencyItem(type.DisplayName) { MinVersion = type.Version(null), MaxVersion = type.Version(null) };
+        item.MaxVersion = new VersionInfo(); //don't specify max version
         Package.Dependencies.Add(item);
         list_versions.Items.Add(item);
       }
@@ -78,7 +75,7 @@ namespace MpeMaker.Sections
       SelectedItem.WarnOnly = chk_warn.Checked;
       SelectedItem.Id = txt_id.Text;
       SelectedItem.Name = txt_name.Text;
-      SelectedItem.Message = txt_message.Text;
+      
       SelectedItem.MinVersion.Major = txt_version1_min.Text;
       SelectedItem.MinVersion.Minor = txt_version2_min.Text;
       SelectedItem.MinVersion.Build = txt_version3_min.Text;
@@ -88,6 +85,12 @@ namespace MpeMaker.Sections
       SelectedItem.MaxVersion.Build = txt_version3_max.Text;
       SelectedItem.MaxVersion.Revision = txt_version4_max.Text;
       list_versions.SelectedItem = SelectedItem;
+
+      //Refresh the message
+      this.SelectedItem.Message = null;
+      this.txt_message.Text = this.SelectedItem.Message; 
+
+
       if (MpeInstaller.VersionProviders.ContainsKey(cmb_type.Text))
         lbl_ver.Text = MpeInstaller.VersionProviders[cmb_type.Text].Version(txt_id.Text).ToString();
     }
@@ -95,20 +98,10 @@ namespace MpeMaker.Sections
     private void UpdateControlStates()
     {
       bool isMPDep = cmb_type.Text == MPDependency.DisplayName;
-      
-      txt_version1_min.ReadOnly = isMPDep;
-      txt_version2_min.ReadOnly = isMPDep;
-      txt_version3_min.ReadOnly = isMPDep;
-      txt_version4_min.ReadOnly = isMPDep;
-      txt_version1_max.ReadOnly = isMPDep;
-      txt_version2_max.ReadOnly = isMPDep;
-      txt_version3_max.ReadOnly = isMPDep;
-      txt_version4_max.ReadOnly = isMPDep;
-
       chk_warn.Enabled = !isMPDep;
       txt_id.Enabled = button1.Enabled = cmb_type.Text == new MpeCore.Classes.VersionProvider.ExtensionVersion().DisplayName;
 
-      if (cmb_type.Text == MPDependency.DisplayName)
+      if (isMPDep)
       {
         chk_warn.Checked = false;
       }
@@ -185,10 +178,12 @@ namespace MpeMaker.Sections
     {
       bool result = true;
 
-      bool numericKeys = (
-                           ((e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9) ||
+      bool bTextHasAsterix = ((TextBox)sender).Text.Contains("*");
+
+      bool numericKeys = (!bTextHasAsterix &&
+                           (((e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9) ||
                             (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9))
-                           && e.Modifiers != Keys.Shift);
+                           && e.Modifiers != Keys.Shift));
 
       bool ctrlA = e.KeyCode == Keys.A && e.Modifiers == Keys.Control;
 
@@ -196,7 +191,7 @@ namespace MpeMaker.Sections
                         (e.KeyCode == Keys.Z && e.Modifiers == Keys.Control) ||
                         (e.KeyCode == Keys.X && e.Modifiers == Keys.Control) ||
                         (e.KeyCode == Keys.C && e.Modifiers == Keys.Control) ||
-                        (e.KeyCode == Keys.V && e.Modifiers == Keys.Control) ||
+                        (e.KeyCode == Keys.V && e.Modifiers == Keys.Control && !bTextHasAsterix) ||
                         e.KeyCode == Keys.Delete ||
                         e.KeyCode == Keys.Back);
 
@@ -208,7 +203,9 @@ namespace MpeMaker.Sections
                               e.KeyCode == Keys.Home ||
                               e.KeyCode == Keys.End);
 
-      if (!(numericKeys || editKeys || navigationKeys))
+      bool bIsAsterix = e.KeyCode == Keys.Multiply && ((TextBox)sender).Text.Length == 0;
+
+      if (!(numericKeys || editKeys || navigationKeys || bIsAsterix))
       {
         result = false;
       }

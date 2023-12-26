@@ -29,8 +29,6 @@ namespace MpeCore.Classes.VersionProvider
 {
   public class MediaPortalVersion : VersionProvider
   {
-    public static readonly VersionInfo MinimumMPVersionRequired = new VersionInfo(MediaPortal.Common.Utils.CompatibilityManager.GetCurrentVersion());
-    
     public override string DisplayName
     {
       get { return "MediaPortal"; }
@@ -38,15 +36,25 @@ namespace MpeCore.Classes.VersionProvider
 
     public override bool Validate(DependencyItem dependency)
     {
-      if (dependency.MinVersion < MinimumMPVersionRequired)
-        return false;
-
       return base.Validate(dependency);
     }
 
     public override VersionInfo Version(string id)
     {
-      return new VersionInfo(MediaPortal.Common.Utils.CompatibilityManager.GetCurrentVersion());
+      RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal");
+      if (key != null)
+      {
+        VersionInfo version = new VersionInfo
+        {
+          Build = ((int)key.GetValue("VersionBuild", 0)).ToString(),
+          Major = ((int)key.GetValue("VersionMajor", 0)).ToString(),
+          Minor = ((int)key.GetValue("VersionMinor", 0)).ToString(),
+          Revision = ((int)key.GetValue("VersionRevision", 0)).ToString(),
+        };
+        key.Close();
+        return version;
+      }
+      return new VersionInfo(MediaPortal.Common.Utils.CompatibilityManager.AppVersion);
     }
   }
 }
