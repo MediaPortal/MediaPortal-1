@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+   <control>
+      <description>text background image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-40</posX>
+      <posY>225</posY>
+      <width>2100</width>
+      <height>795</height>
+      <texture>filmstripbg.png</texture>
+      <colordiffuse>80ffffff</colordiffuse>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>253</posY>
+      <width>1995</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>dodgerblue</colordiffuse>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>989</posY>
+      <width>1995</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>dodgerblue</colordiffuse>
+      <visible>facadeview.list</visible>
+    </control> 
+    <control>
+      <description>text background image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-40</posX>
+      <posY>225</posY>
+      <width>2100</width>
+      <height>760</height>
+      <texture>filmstripbg.png</texture>
+      <colordiffuse>80ffffff</colordiffuse>
+      <visible>facadeview.largeicons</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>253</posY>
+      <width>1995</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>dodgerblue</colordiffuse>
+      <visible>facadeview.largeicons</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>954</posY>
+      <width>1995</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>dodgerblue</colordiffuse>
+      <visible>facadeview.largeicons</visible>
+    </control>
+    <control>
+      <description>text background image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-40</posX>
+      <posY>385</posY>
+      <width>2100</width>
+      <height>560</height>
+      <texture>filmstripbg.png</texture>
+      <colordiffuse>80ffffff</colordiffuse>
+      <visible>!facadeview.largeicons+!facadeview.list</visible>
+    </control>
+    
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>406</posY>
+      <width>1995</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>dodgerblue</colordiffuse>
+      <visible>!facadeview.largeicons+!facadeview.list</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>924</posY>
+      <width>1995</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>dodgerblue</colordiffuse>
+      <visible>!facadeview.largeicons+!facadeview.list</visible>
+    </control>
+    <control>
+      <description>background image Cover View</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>640</posY>
+      <width>1920</width>
+      <height>140</height>
+      <texture>roof.png</texture>
+      <visible>!facadeview.largeicons+!facadeview.list</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>733</posX>
+      <posY>818</posY>
+      <width>460</width>
+      <height>55</height>
+      <texture>tvseries_mask.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+      <visible>facadeview.coverflow</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>733</posX>
+      <posY>818</posY>
+      <width>460</width>
+      <height>55</height>
+      <texture>tvseriescase.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>facadeview.coverflow</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>798</posX>
+      <posY>828</posY>
+      <width>460</width>
+      <height>55</height>
+      <texture>tvseries_mask.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+      <visible>facadeview.filmstrip</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>798</posX>
+      <posY>828</posY>
+      <width>460</width>
+      <height>55</height>
+      <texture>tvseriescase.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>facadeview.filmstrip</visible>
+    </control>
+    <control>
+      <description>Overlay to darken FanArt in Music</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>170</posX>
+      <posY>250</posY>
+      <width>830</width>
+      <height>747</height>
+      <texture>listbg.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>overlay image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1080</posX>
+      <posY>265</posY>
+      <width>652</width>
+      <height>448</height>
+      <texture mask="picturecase_mask.png">#selectedthumb</texture>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>overlay image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1080</posX>
+      <posY>265</posY>
+      <width>652</width>
+      <height>448</height>
+      <texture>picturecase.png</texture>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>Plugin Description Background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1080</posX>
+      <posY>750</posY>
+      <width>652</width>
+      <height>240</height>
+      <texture>latestmediabg.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>Plugin Description</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1110</posX>
+      <posY>780</posY>
+      <width>600</width>
+      <height>170</height>
+      <textcolor>lightgray</textcolor>
+      <font>font10</font>
+      <label>#(L(200))#pluginauthor</label>
+      <!--scrollStartDelaySec>10</scrollStartDelaySec-->
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>Plugin Description</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>1110</posX>
+      <posY>820</posY>
+      <width>600</width>
+      <height>130</height>
+      <textcolor>ff00bfff</textcolor>
+      <font>font10</font>
+      <label>#plugindescription</label>
+      <scrollStartDelaySec>10</scrollStartDelaySec>
+      <visible>facadeview.list</visible>
+    </control>
+    
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <control>
+        <description>composite control consisting of a list control and a thumbnail panel</description>
+        <type>facadeview</type>
+        <id>50</id>
+      <control>
+          <description>listcontrol like Legacy - author in description right</description>
+          <type>listcontrol</type>
+          <id>50</id>
+          <posX>205</posX>
+          <posY>288</posY>
+          <height>731</height>
+          <width>694</width>
+          <textureHeight>65</textureHeight>
+          <font>Menutitle</font>
+          <font2>font10</font2>
+          <textXOff>0</textXOff>
+          <textYOff>33</textYOff>
+          <textalign>center</textalign>
+          <textureFocus>button_focus.png</textureFocus>
+          <textureNoFocus></textureNoFocus>
+          <textXOff2>3000</textXOff2>
+          <textYOff2>52</textYOff2>
+          <textalign2>center</textalign2>
+          
+          <textcolor2>ff00bfff</textcolor2>
+          <itemWidth>2</itemWidth>
+          <itemHeight>2</itemHeight>
+          <IconXOff>2</IconXOff>
+          <IconYOff>2</IconYOff>
+          <folderPrefix />
+          <folderSuffix />
+          <scrollOffset>6</scrollOffset>
+          <onleft>9997</onleft>
+          <onright>50</onright>
+          <spinPosX>3626</spinPosX>
+          <spinPosY>984</spinPosY>
+          <scrollbarHeight>400</scrollbarHeight>
+          <scrollbarbg>bar_vert.png</scrollbarbg>
+          <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+          <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+          <scrollbarXOff>3015</scrollbarXOff>
+          <scrollbarYOff>0</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <scrollbarwidth>20</scrollbarwidth>
+        </control>
+        
+        
+        
+        <control>
+          <description>Thumbnail Panel</description>
+          <type>thumbnailpanel</type>
+          <id>50</id>
+          <posX>139</posX>
+          <posY>300</posY>
+          <width>1700</width>
+          <height>630</height>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <textXOff>0</textXOff>
+          <textYOff>-148</textYOff>
+          <textalign>center</textalign>>
+          <itemWidth>310</itemWidth>
+          <itemHeight>207</itemHeight>
+          <textureWidth>300</textureWidth>
+          <textureHeight>197</textureHeight>
+          <thumbWidth>300</thumbWidth>
+          <thumbHeight>197</thumbHeight>
+          <thumbPosX>0</thumbPosX>
+          <thumbPosY>0</thumbPosY>
+          <itemWidthBig>310</itemWidthBig>
+          <itemHeightBig>207</itemHeightBig>
+          <thumbWidthBig>300</thumbWidthBig>
+          <thumbHeightBig>197</thumbHeightBig>
+          <textureWidthBig>300</textureWidthBig>
+          <textureHeightBig>197</textureHeightBig>
+          <thumbPosXBig>0</thumbPosXBig>
+          <thumbPosYBig>0</thumbPosYBig>
+          <hideUnfocusTexture>no</hideUnfocusTexture>
+          <renderFocusText>yes</renderFocusText>
+          <renderUnfocusText>no</renderUnfocusText>
+          <imageFolder>-</imageFolder>
+          <imageFolderFocus>-</imageFolderFocus>
+          <showFrame>true</showFrame>
+          <showFolder>no</showFolder>
+          <frameNoFocus>Picturecase.png</frameNoFocus>
+          <frameFocus>HomecaseFocus.png</frameFocus>
+          <textureMask>picturecase_mask.png</textureMask>
+          <renderFocusText>yes</renderFocusText>
+          <spinPosX>3865</spinPosX>
+          <spinPosY>998</spinPosY>
+          <onleft>9997</onleft>
+          <onright>2</onright>
+          <folderPrefix />
+          <folderSuffix />
+          <keepaspectratio>yes</keepaspectratio>
+          <enableFocusZoom>yes</enableFocusZoom>
+          <zoomXPixels>50</zoomXPixels>
+          <zoomYPixels>50</zoomYPixels>
+          <hideUnfocusTexture>no</hideUnfocusTexture>
+          <scrollbarHeight>380</scrollbarHeight>
+          <scrollbarbg>bar_vert.png</scrollbarbg>
+          <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+          <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+          <scrollbarXOff>-80</scrollbarXOff>
+          <scrollbarYOff>0</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <scrollbarwidth>20</scrollbarwidth>
+          <dimColor>ffffffff</dimColor>
+          <keepaspectratio>no</keepaspectratio>
+        </control>
+        <control>
+          <description>Filmstrip view</description>
+          <type>filmstrip</type>
+          <id>50</id>
+          <posX>62</posX>
+          <posY>500</posY>
+          <width>1920</width>
+          <height>562</height>
+          <onleft>9997</onleft>
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>2</ondown>
+          <itemWidth>300</itemWidth>
+          <itemHeight>197</itemHeight>
+          <textureWidth>300</textureWidth>
+          <textureHeight>197</textureHeight>
+          <thumbWidth>300</thumbWidth>
+          <thumbHeight>197</thumbHeight>
+          <thumbPosX>0</thumbPosX>
+          <thumbPosY>0</thumbPosY>
+          <keepaspectratio>no</keepaspectratio>
+          <thumbs mask="picturecase_mask.png" />
+          <!--<InfoImage flipY="true" diffuse="Thumb_Mask.png"/>-->
+          <imageFolder>picturecase.png</imageFolder>
+          <imageFolderFocus>HomeCasefocus.png</imageFolderFocus>
+          <showFolder>yes</showFolder>
+          <showBackGround>no</showBackGround>
+          <showInfoImage>no</showInfoImage>
+          <enableFocusZoom>no</enableFocusZoom>
+          <scrollOffset>4</scrollOffset>
+          <font>font10</font>
+          <textcolor>ffffffff</textcolor>
+          <textalign>center</textalign>
+          <halign>center</halign>
+          <textXOff>0</textXOff>
+          <textYOff>-118</textYOff>
+          <suffix />
+          <folderPrefix />
+          <folderSuffix />
+          <scrollbarBackground>bar_hor.png</scrollbarBackground>
+          <scrollbarLeft>mouse_left_vertical.png</scrollbarLeft>
+          <scrollbarRight>mouse_right_vertical.png</scrollbarRight>
+          <scrollbarYOff>350</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <thumbAnimation effect="zoom" start="100,100" end="140,140" time="300" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="140,140" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
+          <spinPosX>3710</spinPosX>
+          <spinPosY>801</spinPosY>
+        </control>
+        <control>
+          <description>Cover Flow view</description>
+          <type>coverflow</type>
+          <dimColor>90ffffff</dimColor>
+          <id>50</id>
+          <posX>0</posX>
+          <posY>120</posY>
+          <width>1920</width>
+          <height>1080</height>
+          <onleft>9997</onleft>
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>2</ondown>
+          <selectedCard>0</selectedCard>
+          <cardWidth>450</cardWidth>
+          <cardHeight>300</cardHeight>
+          <angle>65</angle>
+          <sideShift>380</sideShift>
+          <sideGap>90</sideGap>
+          <sideDepth>550</sideDepth>
+          <offsetY>0</offsetY>
+          <selectedOffsetY>30</selectedOffsetY>
+          <speed>8</speed>
+          <backgroundColor>000000FF</backgroundColor>
+          <backgroundHeight>140</backgroundHeight>
+          <backgroundWidth>1920</backgroundWidth>
+          <backgroundX>0</backgroundX>
+          <backgroundY>620</backgroundY>
+          <backgroundDiffuse>FF000000</backgroundDiffuse>
+          <background>roof.png</background>
+          <showBackground>yes</showBackground>
+          <showFrame>yes</showFrame>
+          <frame mask="picturecase_mask.png">PictureCase.png</frame>
+          <frameFocus mask="picturecase_mask.png">HomeCasefocus.png</frameFocus>
+          <frameWidth>450</frameWidth>
+          <frameHeight>300</frameHeight>
+          <keepaspectratio>no</keepaspectratio>
+          <spinSpeed>6</spinSpeed>
+          <folderPrefix />
+          <folderSuffix />
+          <font1>Menutitle</font1>
+          <font2>font14</font2>
+          <label1>#pluginname</label1>
+          <!--label2>#pluginname</label2-->
+          <textColor>FFFFFFFF</textColor>
+          <remoteColor>FFFF0000</remoteColor>
+          <playedColor>FFA0D0FF</playedColor>
+          <downloadColor>FF00FF00</downloadColor>
+          <selectedColor>FFFFFFFF</selectedColor>
+          <shadowDistance>1</shadowDistance>
+          <label1YOff>302</label1YOff>
+          <label2YOff>390</label2YOff>
+          <pageSize>100</pageSize>
+          <scrollbarBackground>bar_hor.png</scrollbarBackground>
+          <scrollbarLeft>mouse_left_vertical.png</scrollbarLeft>
+          <scrollbarRight>mouse_right_vertical.png</scrollbarRight>
+          <scrollbarYOff>420</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <cards mask="picturecase_mask.png">-</cards>
+          <subitems>
+            <subitem>
+              <![CDATA[                                <controls>
+              <control>
+                <description>background</description>
+                <type>image</type>
+                <posX>0</posX>
+                <posY>0</posY>
+                <width>450</width>
+                <height>300</height>
+                <texture mask="picturecase_mask.png">black.png</texture>
+              </control>
+              <control>
+                <description>General Info</description>
+                <type>textbox</type>
+                <posX>25</posX>
+                <posY>10</posY>
+                <width>400</width>
+                <height>250</height>
+                <label>#plugindescription</label>
+                <font>font9</font>
+                <!--align>center</align-->
+                <textcolor>lightskyblue</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+              </control>
+              <control>
+                <description>Info Header</description>
+                <type>fadelabel</type>
+                <posX>0</posX>
+                <posY>230</posY>
+                <width>450</width>
+                <label>#(L(200))#pluginauthor</label>
+                <font>font10</font>
+                <align>center</align>
+                <textcolor>lightgray</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+              </control>
+            </controls>]]></subitem>
+        </subitems>
+      </control>
+    </control>
+  </control>
+</controls>
+</window>

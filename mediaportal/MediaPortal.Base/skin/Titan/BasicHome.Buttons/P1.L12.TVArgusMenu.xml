@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls> 
+
+	<control>
+      <description>Background</description>
+      <id>400081</id>
+      <type>image</type>
+      <posX>1203</posX>
+      <posY>409</posY>
+      <width>709</width>
+      <height>329</height>
+      <texture>basichome_submenu_bg_r.png</texture>
+      <visible>control.HasFocus(400001) | control.HasFocus(400011) | control.HasFocus(400021) | control.HasFocus(400031) | control.HasFocus(400041)  | control.HasFocus(400051)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="350" delay="0">visible</animation>
+      <animation effect="slide" start="-300" end="0" time="350">visible</animation>
+      <animation effect="fade" time="0">hidden</animation>	
+	</control>
+
+   	<control Style="HomeButtonPicture">
+        <description>BasicHome TV NoFocus</description>
+        <type>image</type>
+ 	    <id>0</id>
+  		<posX>#L12left</posX>
+       	<posY>#L12top</posY>
+        <texture>basichome_button_tv.png</texture>
+        <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(4)">conditional</animation>
+        <visible>![control.IsVisible(20081)|Control.IsVisible(20091)|Control.IsVisible(60091)|Control.IsVisible(600081)]+[Control.IsVisible(40091)|Control.IsVisible(10101)]</visible>
+ 	</control>
+
+  	<control Style="HomeButtonMenu">
+    	<description>BasicHome TV</description>
+      	<type>button</type>
+      	<id>4</id>
+		<posX>#L12lefttext</posX>
+	    <posY>#L12toptext</posY>
+        <textYOff>#textYoff</textYOff>
+        <label>605</label>
+        <onup>4</onup>
+        <ondown>5</ondown>
+        <onright>6</onright>
+        <onleft>2</onleft>
+        <onclick>#(skin.setfocus(35,400001))</onclick>                                
+        <visible allowhiddenfocus="true">![control.IsVisible(20081)|control.IsVisible(20091)|control.IsVisible(60091)|Control.IsVisible(600081)|control.IsVisible(90109)|control.hasfocus(99999)]+[Control.IsVisible(40091)|Control.IsVisible(10101)]</visible>  
+	</control>
+
+   <!--            :: SUB MENUS ::            -->
+
+   <control>
+       <description>submenu indicator</description>
+       <id>0</id>
+       <type>image</type>
+       <posX>#L12leftsub</posX>
+       <posY>#L12topsub</posY>
+       <width>22</width>
+       <height>20</height>
+       <texture>basichome_submenu_indicator.png</texture>
+       <visible>Control.IsVisible(4)</visible>
+       <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(4)">conditional</animation>
+       <animation effect="fade" time="250">WindowOpen</animation>
+       <animation effect="fade" time="150">WindowClose</animation>
+   </control>  
+
+    <!--            :: NEW ::            -->
+
+    <control Style="HomePictureMenuNew">
+        <description>New indicator</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>#L12lefttext</posX>
+        <posY>#L12toptext</posY>
+        <visible>control.isvisible(4)+string.equals(#latestMediaHandler.tvrecordings.hasnew,true)</visible>
+        <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(2)">conditional</animation>
+    </control>
+
+ 	<!--            :: TV ::            -->
+ 	
+  <control>
+    <description>group element</description>
+    <type>group</type>
+	<layout>StackLayout(1,Vertical,true)</layout>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="200">WindowClose</animation>
+	<animation effect="fade" time="350" delay="250">visible</animation>
+	<animation effect="fade" time="0">hidden</animation>	
+    <dimColor>0xffffffff</dimColor>
+    <posY>#L12topcontext</posY>
+	<posX>1296</posX>
+		
+	<control>
+  	  <description>TV Home</description>
+      <type>button</type>
+      <id>400001</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>1</hyperlink>
+      <label>100001</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+      <onright>6</onright>
+      <onleft>4</onleft>
+      <onup>400041</onup>
+      <visible allowhiddenfocus="true">control.IsVisible(400081)</visible>   
+    </control>
+		
+	<control>
+      <description>Recordings</description>
+      <type>button</type>
+      <id>400011</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>603</hyperlink>
+      <label>914</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+      <onright>6</onright>
+      <onleft>4</onleft>
+      <visible allowhiddenfocus="true">control.IsVisible(400081)</visible>
+    </control>
+    
+ 	<control>
+      <description>TVGuide</description>
+      <type>button</type>
+      <id>400021</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>600</hyperlink>
+      <label>600</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+      <onright>6</onright>
+      <onleft>4</onleft>
+      <visible allowhiddenfocus="true">control.IsVisible(400081)+!plugin.isenabled('Clickfinder ProgramGuide')</visible>
+    </control>
+    
+    <control>
+      <description>Clickfinder</description>
+      <type>button</type>
+      <id>400051</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>165654465</hyperlink>
+      <label>Clickfinder</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <textalign>left</textalign>
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+      <onright>6</onright>
+      <onleft>4</onleft>
+      <visible allowhiddenfocus="true">control.IsVisible(400081)+plugin.isenabled('Clickfinder ProgramGuide')</visible>
+    </control>
+
+	<control>
+      <description>ARGUS Upcoming TV</description>
+      <type>button</type>
+      <id>400031</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>49848</hyperlink>
+      <label>646</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+      <onright>6</onright>
+      <onleft>4</onleft>
+      <visible allowhiddenfocus="true">control.IsVisible(400081)</visible>
+    </control>
+      
+	<control>
+      <description>ARGUS TV Guide Search</description>
+      <type>button</type>
+      <id>400041</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>49850</hyperlink>
+      <label>724</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+      <onright>6</onright>
+      <onleft>4</onleft>
+      <ondown>400001</ondown>
+      <visible allowhiddenfocus="true">control.IsVisible(400081)</visible>
+    </control>
+
+  </control>
+
+</controls>
+</window>

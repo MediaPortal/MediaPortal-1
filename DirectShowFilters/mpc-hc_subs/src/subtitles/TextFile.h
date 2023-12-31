@@ -1,6 +1,6 @@
 /*
  * (C) 2003-2006 Gabest
- * (C) 2006-2012 see Authors.txt
+ * (C) 2006-2014 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -21,30 +21,37 @@
 
 #pragma once
 
-#include <afx.h>
+#include "StdioFile64.h"
 
-class CTextFile : protected CStdioFile
+class CTextFile : protected CStdioFile64
 {
 public:
-    typedef enum {
+    enum enc {
         DEFAULT_ENCODING,
         UTF8,
         LE16,
         BE16,
         ANSI
-    } enc;
+    };
 
 private:
-    enc m_encoding, m_defaultencoding;
+    enc m_encoding, m_defaultencoding, m_fallbackencoding;
     int m_offset;
+    ULONGLONG m_posInFile;
+    CAutoVectorPtr<char> m_buffer;
+    CAutoVectorPtr<WCHAR> m_wbuffer;
+    LONGLONG m_posInBuffer, m_nInBuffer;
 
 public:
+    using CFile::Flush;
+    using CFile::Close;
     CTextFile(enc e = DEFAULT_ENCODING);
 
     virtual bool Open(LPCTSTR lpszFileName);
     virtual bool Save(LPCTSTR lpszFileName, enc e /*= DEFAULT_ENCODING*/);
 
     void SetEncoding(enc e);
+    void SetFallbackEncoding(enc e);
     enc GetEncoding();
     bool IsUnicode();
 
@@ -65,6 +72,8 @@ public:
 
 protected:
     virtual bool ReopenAsText();
+    bool FillBuffer();
+    ULONGLONG GetPositionFastBuffered() const;
 };
 
 class CWebTextFile : public CTextFile
@@ -73,7 +82,7 @@ class CWebTextFile : public CTextFile
     CString m_tempfn;
 
 public:
-    CWebTextFile(CTextFile::enc e = DEFAULT_ENCODING, LONGLONG llMaxSize = 1024 * 1024);
+    CWebTextFile(CTextFile::enc e = DEFAULT_ENCODING, LONGLONG llMaxSize = 64 * 1024 * 1024);
 
     bool Open(LPCTSTR lpszFileName);
     bool Save(LPCTSTR lpszFileName, enc e /*= DEFAULT_ENCODING*/);

@@ -1,0 +1,25 @@
+name: Workflow / Size and Stability labels
+
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+#  push:
+#    branches: [master]
+
+jobs:
+  add-labels:
+    name: Add labels
+    
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Add Size and Stability labels
+        uses: victorx64/pr-label@v0
+        with:
+          # Optional pattern used to limit paths.
+          # See https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddefpathspecapathspec
+          git-pathspec: "':!Build/**' ':!**/TuningParameters/**' ':!libbluray'"

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls> 
+
+   	<control Style="HomeButtonPicture">
+ 	    <description>BasicHome Onlinevideos NoFocus</description>
+ 	    <type>image</type>
+ 	    <id>0</id>
+  		<posX>#L13left</posX>
+       	<posY>#L13top</posY>
+ 	    <texture>basichome_button_onlinevideos.png</texture>
+       	<animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(600)">conditional</animation>
+ 		<visible>control.IsVisible(10201)</visible>  
+ 	</control>
+
+  	<control Style="HomeButtonMenu">
+    	<description>BasicHome Onlinevideos</description>
+      	<type>button</type>
+      	<id>600</id>
+		<posX>#L13lefttext</posX>
+	    <posY>#L13toptext</posY>
+        <textYOff>#textYoff</textYOff>
+        <hyperlink>4755</hyperlink>
+        <label>#OnlineVideos.HomeScreenName</label>
+		<onright>#P2L13ToRight</onright>
+		<onleft>400</onleft>
+      	<onup>600</onup>
+		<ondown>700</ondown>  
+  	    <visible allowhiddenfocus="true">![control.isvisible(90209)|control.hasfocus(99999)]+Control.IsVisible(10201)</visible>
+	</control>
+</controls>
+</window>

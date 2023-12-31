@@ -1,6 +1,6 @@
-#region Copyright (C) 2014 Team MediaPortal
+#region Copyright (C) 2014-2023 Team MediaPortal
 
-// Copyright (C) 2014 Team MediaPortal
+// Copyright (C) 2014-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -45,9 +45,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             Initialized = false;
         }
 
-        public static void LogDebug(string msg) { Log.Debug(msg); }
-        public static void LogInfo(string msg) { Log.Info(msg); }
-        public static void LogError(string msg) { Log.Error(msg); }
+        public static void LogDebug(string msg) { Log.Debug("{0}", msg); }
+        public static void LogInfo(string msg) { Log.Info("{0}", msg); }
+        public static void LogError(string msg) { Log.Error("{0}", msg); }
 
         public static bool IsElapsed(DateTime aStartTime, int aDelayInSeconds)
         {
@@ -240,7 +240,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
             CheckDisplay();
             //Pass on that call to our actual display
-            iDisplay.SetLine(line,message);
+            if (iDisplay != null) iDisplay.SetLine(line,message);
         }
 
         //From IDisplay

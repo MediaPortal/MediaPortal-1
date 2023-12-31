@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+    <control Style="HomeBasicFanart">
+	  <description>Plugins Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(300)</visible>
+      <texture>hover_my plugins.png</texture>
+    </control>
+
+</controls>
+</window>

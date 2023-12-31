@@ -54,6 +54,7 @@
       this.label22 = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
       this.groupBox7 = new System.Windows.Forms.GroupBox();
+      this.checkBoxUseAllAvailableTuners = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkboxSameTransponder = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label1 = new System.Windows.Forms.Label();
       this.checkBoxEnableCRCCheck = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -74,8 +75,8 @@
       // 
       // groupBox9
       // 
-      this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox9.Controls.Add(this.label31);
       this.groupBox9.Controls.Add(this.edTitleTemplate);
       this.groupBox9.Controls.Add(this.label27);
@@ -96,19 +97,19 @@
       // 
       // label31
       // 
-      this.label31.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.label31.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.label31.Location = new System.Drawing.Point(326, 80);
       this.label31.Name = "label31";
       this.label31.Size = new System.Drawing.Size(125, 106);
       this.label31.TabIndex = 37;
       this.label31.Text = "%TITLE%\r\n%DESCRIPTION%\r\n%GENRE%\r\n%STARRATING%\r\n%STARRATING_STR%\r\n%CLASSIFICATION%" +
-          "\r\n%PARENTALRATING%\r\n%NEWLINE%";
+    "\r\n%PARENTALRATING%\r\n%NEWLINE%";
       // 
       // edTitleTemplate
       // 
-      this.edTitleTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edTitleTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.edTitleTemplate.Location = new System.Drawing.Point(75, 19);
       this.edTitleTemplate.Name = "edTitleTemplate";
       this.edTitleTemplate.Size = new System.Drawing.Size(245, 20);
@@ -144,8 +145,8 @@
       // 
       // edDescriptionTemplate
       // 
-      this.edDescriptionTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edDescriptionTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.edDescriptionTemplate.Location = new System.Drawing.Point(75, 45);
       this.edDescriptionTemplate.Name = "edDescriptionTemplate";
       this.edDescriptionTemplate.Size = new System.Drawing.Size(245, 20);
@@ -162,8 +163,8 @@
       // 
       // edTitleTest
       // 
-      this.edTitleTest.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edTitleTest.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.edTitleTest.Location = new System.Drawing.Point(75, 100);
       this.edTitleTest.Name = "edTitleTest";
       this.edTitleTest.ReadOnly = true;
@@ -181,9 +182,9 @@
       // 
       // edDescriptionTest
       // 
-      this.edDescriptionTest.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.edDescriptionTest.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.edDescriptionTest.Location = new System.Drawing.Point(75, 126);
       this.edDescriptionTest.Multiline = true;
       this.edDescriptionTest.Name = "edDescriptionTest";
@@ -204,8 +205,8 @@
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.numericUpDownEpgRefresh);
       this.groupBox2.Controls.Add(this.numericUpDownEpgTimeOut);
       this.groupBox2.Controls.Add(this.checkBoxEnableEPGWhileIdle);
@@ -318,8 +319,8 @@
       // 
       // numericUpDownTSEpgTimeout
       // 
-      this.numericUpDownTSEpgTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.numericUpDownTSEpgTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.numericUpDownTSEpgTimeout.Location = new System.Drawing.Point(70, 42);
       this.numericUpDownTSEpgTimeout.Maximum = new decimal(new int[] {
             3600,
@@ -368,8 +369,9 @@
       // 
       // groupBox7
       // 
-      this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox7.Controls.Add(this.checkBoxUseAllAvailableTuners);
       this.groupBox7.Controls.Add(this.checkboxSameTransponder);
       this.groupBox7.Controls.Add(this.label1);
       this.groupBox7.Controls.Add(this.checkBoxEnableCRCCheck);
@@ -382,17 +384,17 @@
       this.groupBox7.TabStop = false;
       this.groupBox7.Text = "General";
       // 
-      // checkBoxEnableCRCCheck
+      // checkBoxUseAllAvailableTuners
       // 
-      this.checkBoxEnableCRCCheck.AutoSize = true;
-      this.checkBoxEnableCRCCheck.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableCRCCheck.Location = new System.Drawing.Point(11, 42);
-      this.checkBoxEnableCRCCheck.Name = "checkBoxEnableCRCCheck";
-      this.checkBoxEnableCRCCheck.Size = new System.Drawing.Size(115, 17);
-      this.checkBoxEnableCRCCheck.TabIndex = 12;
-      this.checkBoxEnableCRCCheck.Text = "Enable CRC check";
-      this.checkBoxEnableCRCCheck.UseVisualStyleBackColor = true;
-      //
+      this.checkBoxUseAllAvailableTuners.AutoSize = true;
+      this.checkBoxUseAllAvailableTuners.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxUseAllAvailableTuners.Location = new System.Drawing.Point(304, 65);
+      this.checkBoxUseAllAvailableTuners.Name = "checkBoxUseAllAvailableTuners";
+      this.checkBoxUseAllAvailableTuners.Size = new System.Drawing.Size(133, 17);
+      this.checkBoxUseAllAvailableTuners.TabIndex = 14;
+      this.checkBoxUseAllAvailableTuners.Text = "Use all available tuners";
+      this.checkBoxUseAllAvailableTuners.UseVisualStyleBackColor = true;
+      // 
       // checkboxSameTransponder
       // 
       this.checkboxSameTransponder.AutoSize = true;
@@ -413,7 +415,18 @@
       this.label1.Size = new System.Drawing.Size(321, 26);
       this.label1.TabIndex = 13;
       this.label1.Text = "(This will increase stability of EPG grabbing.If your provider doesn\'t \r\nbroadcas" +
-          "t CRC checksums, you have to disable it)";
+    "t CRC checksums, you have to disable it)";
+      // 
+      // checkBoxEnableCRCCheck
+      // 
+      this.checkBoxEnableCRCCheck.AutoSize = true;
+      this.checkBoxEnableCRCCheck.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEnableCRCCheck.Location = new System.Drawing.Point(11, 42);
+      this.checkBoxEnableCRCCheck.Name = "checkBoxEnableCRCCheck";
+      this.checkBoxEnableCRCCheck.Size = new System.Drawing.Size(115, 17);
+      this.checkBoxEnableCRCCheck.TabIndex = 12;
+      this.checkBoxEnableCRCCheck.Text = "Enable CRC check";
+      this.checkBoxEnableCRCCheck.UseVisualStyleBackColor = true;
       // 
       // checkBoxAlwaysUpdate
       // 
@@ -453,9 +466,9 @@
       // 
       // tabControlEpg
       // 
-      this.tabControlEpg.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControlEpg.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlEpg.Controls.Add(this.tabPage1);
       this.tabControlEpg.Location = new System.Drawing.Point(0, 0);
       this.tabControlEpg.Name = "tabControlEpg";
@@ -522,5 +535,6 @@
     private System.Windows.Forms.Label label1;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableCRCCheck;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkboxSameTransponder;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseAllAvailableTuners;
   }
 }

@@ -9,106 +9,133 @@
       <description>background image</description>
       <type>image</type>
       <id>111</id>
-      <posX>137</posX>
-      <posY>855</posY>
-      <height>212</height>
-      <width>1634</width>
-      <texture>OSDBG2.png</texture>
-      <colordiffuse>eeffffff</colordiffuse>
+      <posX>-90</posX>
+      <posY>937</posY>
+      <height>128</height>
+      <width>2200</width>
+      <texture>white.png</texture>
+      <colordiffuse>f200061c</colordiffuse>
+      <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-90</posX>
+      <posY>937</posY>
+      <height>3</height>
+      <width>2200</width>
+      <texture>white.png</texture>
+      <colordiffuse>ff09173c</colordiffuse>
+      <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-90</posX>
+      <posY>1063</posY>
+      <height>3</height>
+      <width>2200</width>
+      <texture>white.png</texture>
+      <colordiffuse>ff09173c</colordiffuse>
+      <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
+    </control>
+    <control>
+      <description>background for black channelname</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>8</posX>
+      <posY>876</posY>
+      <height>64</height>
+      <width>1504</width>
+      <texture>OSDBG5.png</texture>
+      <colordiffuse>f700061c</colordiffuse>
+      <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
+    </control>
+    <control>
+      <description>background for black channelname</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>10</posX>
+      <posY>878</posY>
+      <height>60</height>
+      <width>1500</width>
+      <texture>OSDBG5.png</texture>
+      <colordiffuse>ff09173c</colordiffuse>
       <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
     </control>
     <control>
       <description>Time BG</description>
       <type>image</type>
-      <id>0</id>
-      <posX>1500</posX>
-      <posY>895</posY>
-      <width>216</width>
-      <height>52</height>
-      <texture>button_focus.png</texture>
-      <colordiffuse>90ffffff</colordiffuse>
-      <visible>control.isVisible(111)</visible>
+      <id>2</id>
+      <posX>1704</posX>
+      <posY>876</posY>
+      <width>454</width>
+      <height>64</height>
+      <texture>OSDBG3.png</texture>
+      <colordiffuse>f700061c</colordiffuse>
+      <visible>control.isVisible(111)+!topbar.focused</visible>
+    </control>
+    <control>
+      <description>Time BG</description>
+      <type>image</type>
+      <id>2</id>
+      <posX>1706</posX>
+      <posY>878</posY>
+      <width>450</width>
+      <height>60</height>
+      <texture>OSDBG3.png</texture>
+      <colordiffuse>ff09173c</colordiffuse>
+      <visible>control.isVisible(111)+!topbar.focused</visible>
     </control>
     <control>
       <description>Time Info</description>
       <type>label</type>
-      <id>0</id>
-      <posX>1685</posX>
-      <posY>897</posY>
+      <id>3</id>
+      <posX>1898</posX>
+      <posY>888</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font16</font>
-      <textcolor>ivory</textcolor>
+      <font>LabelBold</font>
+      <textcolor>white</textcolor>
       <visible>control.isVisible(111)</visible>
     </control>
     <control>
       <description>Movie Name</description>
-      <id>0</id>
+      <id>4</id>
       <type>fadelabel</type>
-      <posX>196</posX>
-      <posY>899</posY>
-      <width>1222</width>
-      <height>56</height>
+      <posX>50</posX>
+      <posY>884</posY>
+      <width>1430</width>
+      <height>54</height>
       <label>-</label>
-      <align>left</align>
-      <textcolor>ffffffff</textcolor>
-      <font>font14</font>
+      <align>center</align>
+      <textcolor>white</textcolor>
+      <font>LabelBold</font>
       <label>#Play.Current.Title</label>
-      <visible>control.isvisible(111)</visible>
+      <visible>control.isVisible(111)</visible>
     </control>
     <control>
-      <description>background</description>
       <type>image</type>
-      <id>104</id>
-      <posX>362</posX>
-      <posY>978</posY>
-      <width>941</width>
-      <height>28</height>
-      <texture>osd_progress_background.png</texture>
-      <visible>control.isvisible(111)</visible>
-    </control>
-    <control>
-      <description>TV Progress Bar</description>
-      <type>tvprogress</type>
-      <id>101</id>
-      <posX>363</posX>
-      <posY>980</posY>
-      <width>929</width>
-      <height>24</height>
-      <toptexture>osd_progress_indicator.png</toptexture>
-      <TextureOffsetY>25</TextureOffsetY>
-      <bottomtexture>-</bottomtexture>
-      <texturetick>-</texturetick>
-      <lefttexture>osd_progress_left.png</lefttexture>
-      <midtexture>-</midtexture>
-      <righttexture>-</righttexture>
-      <logotexture>-</logotexture>
-      <fillbackgroundtexture>-</fillbackgroundtexture>
-      <fillbgxoff>-3</fillbgxoff>
-      <fillbgyoff>0</fillbgyoff>
-      <filltexture1>osd_progress_mid.png</filltexture1>
-      <filltexture2>osd_progress_mid.png</filltexture2>
-      <filltexture3>osd_progress_mid_orange.png</filltexture3>
-      <fillheight>24</fillheight>
-      <label>#percentage</label>
-      <label1>#percentage</label1>
-      <label2>#TV.Record.percent3</label2>
-      <startlabel />
-      <endlabel />
-      <toplabel />
-      <font>font10</font>
-      <textcolor>FFffffff</textcolor>
-      <visible>control.isvisible(111)</visible>
+      <id>5</id>
+      <posX>1540</posX>
+      <posY>888</posY>
+      <height>40</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <align>left</align>
+      <texture>#OnlineVideos.HeaderImage</texture>
+      <visible>control.isVisible(111)</visible>
     </control>
     <control>
       <description>Start Time Info</description>
       <type>label</type>
       <id>101</id>
-      <posX>196</posX>
-      <posY>968</posY>
+      <posX>240</posX>
+      <posY>967</posY>
       <label>#currentplaytime</label>
-      <align>left</align>
-      <font>font16</font>
+      <align>right</align>
+      <font>Label</font>
       <textcolor>ffffffff</textcolor>
       <visible>control.isVisible(111)</visible>
     </control>
@@ -116,14 +143,106 @@
       <description>Remaining time</description>
       <type>label</type>
       <id>102</id>
-      <posX>1489</posX>
-      <posY>968</posY>
+      <posX>1530</posX>
+      <posY>967</posY>
       <label>#currentremaining</label>
-      <align>right</align>
-      <font>font16</font>
+      <align>left</align>
+      <font>Label</font>
       <textcolor>ffffffff</textcolor>
       <visible>control.isVisible(111)</visible>
     </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>104</id>
+      <posX>261</posX>
+      <posY>974</posY>
+      <width>1240</width>
+      <height>28</height>
+      <texture>osd_progress_background.png</texture>
+      <visible>control.isVisible(111)</visible>
+    </control>
+    
+    <control>
+      <description>Progress Bar</description>
+      <type>tvprogress</type>
+      <id>1</id>
+      <posX>262</posX>
+      <posY>977</posY>
+      <width>1237</width>
+      <height>23</height>
+      <toptexture>osd_progress_right.png</toptexture>
+      <TextureOffsetY>24</TextureOffsetY>
+      <lefttexture>osd_progress_left_tv.png</lefttexture>
+      <fillbgxoff>-3</fillbgxoff>
+      <fillbgyoff>0</fillbgyoff>
+      <filltexture1>osd_progress_mid_tv.png</filltexture1>
+      <filltexture2>osd_progress_mid_tv.png</filltexture2>
+      <filltexture3>osd_progress_mid_orange_tv.png</filltexture3>
+      <markertexture>chaptermarker.png</markertexture>
+      <fillheight>24</fillheight>
+      <label>#percentage</label>
+      <labelmarkerstarts>#jumppoints</labelmarkerstarts>
+      <labelmarkerends>#chapters</labelmarkerends>
+      <visible>control.isVisible(111)</visible>
+    </control>
     <import>common.play.xml</import>
+    <!-- ***************************************************************************************************** -->
+    <!-- *****************************         RECORDING INFO LATESTMEDIA       ****************************** -->
+    <!-- ***************************************************************************************************** -->
+    <control>
+      <description>rec logo</description>
+      <type>image</type>
+      <id>40</id>
+      <posX>210</posX>
+      <posY>1005</posY>
+      <width>59</width>
+      <height>60</height>
+      <texture>tb_recordNF_red.png</texture>
+      <visible>plugin.isenabled(Latest Media Handler)+[control.isVisible(111)|player.paused]+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+    </control>
+    <control>
+      <description>Current recording count</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>215</posX>
+      <posY>1015</posY>
+      <width>50</width>
+      <label>#latestMediaHandler.tvrecordings.active.count</label>
+      <align>center</align>
+      <font>font10</font>
+      <textcolor>ivory</textcolor>
+      <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
+      <visible>plugin.isenabled(Latest Media Handler)+[control.isVisible(111)|player.paused]+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+    </control>
+    <control>
+      <description>Current channel</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>270</posX>
+      <posY>1020</posY>
+      <width>600</width>
+      <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
+      <align>left</align>
+      <font>font9</font>
+      <textcolor>ivory</textcolor>
+      <visible>plugin.isenabled(Latest Media Handler)+control.isVisible(111)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+    </control>
+    <control>
+     <description>Current channel</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>270</posX>
+      <posY>1020</posY>
+      <width>600</width>
+      <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
+      <align>left</align>
+      <font>font9</font>
+      <textcolor>ivory</textcolor>
+      <shadowAngle>45</shadowAngle>
+    <shadowDistance>3</shadowDistance>
+    <shadowColor>ff000000</shadowColor>
+      <visible>plugin.isenabled(Latest Media Handler)+!control.isVisible(111)+player.paused+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+    </control>
   </controls>
 </window>

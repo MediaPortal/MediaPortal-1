@@ -140,7 +140,7 @@ namespace MediaPortal.Music.Database
       {
         if (MusicDbClient == null)
         {
-          MusicDbClient = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3"));
+          MusicDbClient = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV14.db3"));
         }
 
         return MusicDbClient;
@@ -208,34 +208,18 @@ namespace MediaPortal.Music.Database
           Log.Error("MusicDatabase:Open: {0}", ex.Message);
         }
 
-        if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3")))
+        if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV14.db3")))
         {
-          if (File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3")))
+          if (File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3")))
           {
             Log.Info("MusicDatabase: Found older version of database. Upgrade to new layout.");
-            File.Copy(Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3"),
-                      Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3"));
+            File.Copy(Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3"),
+                      Config.GetFile(Config.Dir.Database, "MusicDatabaseV14.db3"));
 
             // Get the DB handle or create it if necessary
             MusicDbClient = DbConnection;
 
-            UpgradeDBV11_V13();
-
-            return;
-          }
-          if (File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV12.db3")))
-          {
-            // upgrade DB (add last fm user table)
-            File.Copy(Config.GetFile(Config.Dir.Database, "MusicDatabaseV12.db3"),
-                      Config.GetFile(Config.Dir.Database, "MusicDatabaseV13.db3"));
-
-            // Get the DB handle or create it if necessary
-            MusicDbClient = DbConnection;
-
-            if (!CreateDatabase())
-            {
-              Log.Error("MusicDatabase: Error creating new database. aborting upgrade}");
-            }
+            UpgradeDBV13_V14();
 
             return;
           }
@@ -255,8 +239,6 @@ namespace MediaPortal.Music.Database
         // Get the DB handle or create it if necessary
         MusicDbClient = DbConnection;
 
-        UpgradeDBV13Indexes();
-
         _dbHealth = DatabaseUtility.IntegrityCheck(MusicDbClient);
       }
 
@@ -267,30 +249,31 @@ namespace MediaPortal.Music.Database
       Log.Info("MusicDatabase: Database opened");
     }
 
-    private void UpgradeDBV11_V13()
+    private void UpgradeDBV13_V14()
     {
       try
       {
         // First rename the tracks table
-        string strSQL = "alter table tracks rename to tracksV11";
+        string strSQL = "alter table tracks rename to tracksV13";
         MusicDbClient.Execute(strSQL);
 
-        // Now call the Create Datbase function to create the new table
+        // Now call the Create Database function to create the new table
         if (!CreateDatabase())
         {
           Log.Error("MusicDatabase: Error creating new database. aborting upgrade}");
           return;
         }
 
-        // Now copy the content of the old V11 tracks table to the new V12 tracks table
+        // Now copy the content of the old V13 tracks table to the new V14 tracks table
         strSQL =
           "insert into tracks select idTrack, strPath, strArtist, strAlbumArtist, strAlbum, strGenre, strComposer, strConductor, " +
           "strTitle, iTRack, iNumTracks, iDuration, iYear, iTimesPlayed, iRating, iFavorite, iResumeAt, iDisc, iNumDisc, " +
-          "strLyrics, '', '', '', '', 0, 0, 0, 0, dateLastPlayed, dateAdded from tracksV11";
+          "strLyrics, strComment, '', '', '', '', '','','','',''," +
+          "strFileType, strFullCodec, strBitRateMode, iBPM, iBitRate, iChannels, iSampleRate, dateLastPlayed, dateAdded from tracksV13";
 
         MusicDbClient.Execute(strSQL);
 
-        strSQL = "drop table tracksV11";
+        strSQL = "drop table tracksV13";
         MusicDbClient.Execute(strSQL);
 
         Log.Info("MusicDatabase: Finished upgrading database.");
@@ -298,41 +281,6 @@ namespace MediaPortal.Music.Database
       catch (Exception ex)
       {
         Log.Error("MusicDatabase: exception while renaming table:{0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-    }
-
-    private void UpgradeDBV13Indexes()
-    {
-      try
-      {
-        // Indices for Tracks table
-        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_iYear",
-                                 "CREATE INDEX idxtracks_iYear ON tracks(iYear ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_iRating",
-                                 "CREATE INDEX idxtracks_iRating ON tracks(iRating ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_iFavorite",
-                                 "CREATE INDEX idxtracks_iFavorite ON tracks(iFavorite ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_strTitle",
-                                 "CREATE INDEX idxtracks_strTitle ON tracks(strTitle ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_strAlbumstrTitle",
-                                 "CREATE INDEX idxtracks_strAlbumstrTitle ON tracks(strAlbum, strTitle)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_strArtiststrTitle",
-                                 "CREATE INDEX idxtracks_strArtiststrTitle ON tracks(strArtist, strTitle)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_strArtiststrAlbumstrTitle",
-                                 "CREATE INDEX idxtracks_strArtiststrAlbumstrTitle ON tracks(strArtist, strAlbum, strTitle)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_strAlbumArtiststrAlbum",
-                                 "CREATE INDEX idxtracks_strAlbumArtiststrAlbum ON tracks(strAlbumArtist, strAlbum)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_strAlbumArtiststrAlbumiDisc",
-                                 "CREATE INDEX idxtracks_strAlbumArtiststrAlbumiDisc ON tracks(strAlbumArtist, strAlbum, iDisc)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxtracks_strAlbumArtiststrAlbumstrFileType",
-                                 "CREATE INDEX idxtracks_strAlbumArtiststrAlbumstrFileType ON tracks(strAlbumArtist, strAlbum, strFileType)");
-        // Indices for Album and Artist Info
-        DatabaseUtility.AddIndex(MusicDbClient, "idxalbuminfo_strArtiststrAlbum",
-                                 "CREATE INDEX idxalbuminfo_strArtiststrAlbum ON albuminfo(strArtist, strAlbum)");
-      }
-      catch (Exception ex)
-      {
-        Log.Error("MusicDatabase: Upgrade indexes failed. Err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -367,6 +315,15 @@ namespace MediaPortal.Music.Database
           "iNumDisc integer, " + // Total  Number of Discs
           "strLyrics text, " + // Lyric Text
           "strComment text, " + // Comment
+          "strMBArtistId text, " + // MusicBrainz Artist Id
+          "strMBDiscId text, " + // MusicBrainz Disc Id
+          "strMBReleaseArtistId text, " + // MusicBrainz Release Artist Id
+          "strMBReleaseCountry text, " + // MusicBrainz Release Country
+          "strMBReleaseGroupId text, " + // MusicBrainz Release Group Id
+          "strMBReleaseId text, " + // MusicBrainz Release Id
+          "strMBReleaseStatus text, " + // MusicBrainz Release Status
+          "strMBReleaseType text, " + // MusicBrainz Release Type
+          "strMBTrackId text, " + // MusicBrainz Track Id
           "strFileType text, " + // File Format (mp3, flac, etc.)           
           "strFullCodec text, " + // Full Codec Description      
           "strBitRateMode text, " + // Bitrate mode (CBR / VBR)           

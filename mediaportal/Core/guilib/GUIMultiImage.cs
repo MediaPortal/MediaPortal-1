@@ -288,7 +288,7 @@ namespace MediaPortal.GUI.Library
         {
           return;
         }
-        if (GUIGraphicsContext.DX9Device.Disposed)
+        if (GUIGraphicsContext.DX9Device.IsDisposed)
         {
           return;
         }

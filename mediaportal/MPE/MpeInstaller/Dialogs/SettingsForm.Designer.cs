@@ -40,6 +40,8 @@
       this.btnOK = new System.Windows.Forms.Button();
       this.btnCancel = new System.Windows.Forms.Button();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+      this.chk_ExpandTile = new System.Windows.Forms.CheckBox();
+      this.chk_ExpandTileFullWidth = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numeric_Days)).BeginInit();
       this.panel1.SuspendLayout();
@@ -47,6 +49,8 @@
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this.chk_ExpandTileFullWidth);
+      this.groupBox1.Controls.Add(this.chk_ExpandTile);
       this.groupBox1.Controls.Add(this.chk_updateExtension);
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.label1);
@@ -55,7 +59,7 @@
       this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
       this.groupBox1.Location = new System.Drawing.Point(1, 1);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(543, 78);
+      this.groupBox1.Size = new System.Drawing.Size(543, 94);
       this.groupBox1.TabIndex = 3;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Startup";
@@ -121,7 +125,7 @@
       this.panel1.Controls.Add(this.btnOK);
       this.panel1.Controls.Add(this.btnCancel);
       this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this.panel1.Location = new System.Drawing.Point(1, 79);
+      this.panel1.Location = new System.Drawing.Point(1, 95);
       this.panel1.Name = "panel1";
       this.panel1.Size = new System.Drawing.Size(543, 32);
       this.panel1.TabIndex = 4;
@@ -150,13 +154,33 @@
       // 
       this.toolTip1.IsBalloon = true;
       // 
+      // chk_ExpandTile
+      // 
+      this.chk_ExpandTile.AutoSize = true;
+      this.chk_ExpandTile.Location = new System.Drawing.Point(6, 65);
+      this.chk_ExpandTile.Name = "chk_ExpandTile";
+      this.chk_ExpandTile.Size = new System.Drawing.Size(78, 17);
+      this.chk_ExpandTile.TabIndex = 5;
+      this.chk_ExpandTile.Text = "Expand tile";
+      this.chk_ExpandTile.UseVisualStyleBackColor = true;
+      // 
+      // chk_ExpandTileFullWidth
+      // 
+      this.chk_ExpandTileFullWidth.AutoSize = true;
+      this.chk_ExpandTileFullWidth.Location = new System.Drawing.Point(90, 65);
+      this.chk_ExpandTileFullWidth.Name = "chk_ExpandTileFullWidth";
+      this.chk_ExpandTileFullWidth.Size = new System.Drawing.Size(112, 17);
+      this.chk_ExpandTileFullWidth.TabIndex = 6;
+      this.chk_ExpandTileFullWidth.Text = "Full Window width";
+      this.chk_ExpandTileFullWidth.UseVisualStyleBackColor = true;
+      // 
       // SettingsForm
       // 
       this.AcceptButton = this.btnOK;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.btnCancel;
-      this.ClientSize = new System.Drawing.Size(545, 112);
+      this.ClientSize = new System.Drawing.Size(545, 128);
       this.ControlBox = false;
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.panel1);
@@ -186,5 +210,7 @@
     public System.Windows.Forms.NumericUpDown numeric_Days;
     public System.Windows.Forms.CheckBox chk_update;
     private System.Windows.Forms.ToolTip toolTip1;
+    public System.Windows.Forms.CheckBox chk_ExpandTile;
+    public System.Windows.Forms.CheckBox chk_ExpandTileFullWidth;
   }
 }

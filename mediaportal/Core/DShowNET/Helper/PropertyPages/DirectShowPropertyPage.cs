@@ -102,7 +102,7 @@ namespace DShowNET.Helper
                                     ref o, cauuid.cElems, cauuid.pElems, 0, 0, IntPtr.Zero);
         DsError.ThrowExceptionForHR(hr);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         MessageBox.Show("This filter has no property page!");
       }
@@ -128,7 +128,7 @@ namespace DShowNET.Helper
 
     // ---------------- DLL Imports --------------------
 
-    [DllImport("olepro32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+    [DllImport("oleaut32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
     private static extern int OleCreatePropertyFrame(
       IntPtr hwndOwner, int x, int y,
       string lpszCaption, int cObjects,

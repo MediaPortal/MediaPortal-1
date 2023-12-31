@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -22,89 +22,35 @@
     <ProjectName>unrar</ProjectName>
     <ProjectGuid>{DA8461C4-7683-4360-9372-2A9E0F1795C2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+  <Import Project="..\..\platform.props" />
+  <PropertyGroup Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
-    <UseOfMfc>false</UseOfMfc>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
-    <UseOfMfc>false</UseOfMfc>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\common.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\common.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\common.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\common.props" />
+    <Import Project="..\..\common-3rd-party.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup>
-    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-  </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeaderFile>rar.hpp</PrecompiledHeaderFile>
       <PreprocessorDefinitions>_LIB;RARDLL;SILENT;_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <EnablePREfast>false</EnablePREfast>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <PrecompiledHeaderFile>rar.hpp</PrecompiledHeaderFile>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <PreprocessorDefinitions>_LIB;RARDLL;SILENT;_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <PrecompiledHeaderFile>rar.hpp</PrecompiledHeaderFile>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <PreprocessorDefinitions>_LIB;RARDLL;SILENT;_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <EnablePREfast>false</EnablePREfast>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <PrecompiledHeaderFile>rar.hpp</PrecompiledHeaderFile>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <PreprocessorDefinitions>_LIB;RARDLL;SILENT;_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="archive.cpp" />
     <ClCompile Include="arcread.cpp" />
+    <ClCompile Include="blake2s.cpp" />
     <ClCompile Include="cmddata.cpp" />
     <ClCompile Include="consio.cpp" />
     <ClCompile Include="crc.cpp" />
@@ -123,11 +69,14 @@
     <ClCompile Include="global.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="hash.cpp" />
+    <ClCompile Include="headers.cpp" />
     <ClCompile Include="isnt.cpp" />
     <ClCompile Include="list.cpp" />
     <ClCompile Include="match.cpp" />
     <ClCompile Include="options.cpp" />
     <ClCompile Include="pathfn.cpp" />
+    <ClCompile Include="qopen.cpp" />
     <ClCompile Include="rar.cpp" />
     <ClCompile Include="rarpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -139,16 +88,18 @@
     <ClCompile Include="resource.cpp" />
     <ClCompile Include="rijndael.cpp" />
     <ClCompile Include="rs.cpp" />
-    <ClCompile Include="savepos.cpp" />
+    <ClCompile Include="rs16.cpp" />
     <ClCompile Include="scantree.cpp" />
     <ClCompile Include="secpassword.cpp" />
     <ClCompile Include="sha1.cpp" />
+    <ClCompile Include="sha256.cpp" />
     <ClCompile Include="smallfn.cpp" />
     <ClCompile Include="strfn.cpp" />
     <ClCompile Include="strlist.cpp" />
     <ClCompile Include="system.cpp" />
+    <ClCompile Include="threadpool.cpp" />
     <ClCompile Include="timefn.cpp" />
-    <ClCompile Include="ulinks.cpp" />
+    <ClCompile Include="ui.cpp" />
     <ClCompile Include="unicode.cpp" />
     <ClCompile Include="unpack.cpp" />
     <ClCompile Include="volume.cpp" />
@@ -156,6 +107,7 @@
   <ItemGroup>
     <ClInclude Include="archive.hpp" />
     <ClInclude Include="array.hpp" />
+    <ClInclude Include="blake2s.hpp" />
     <ClInclude Include="cmddata.hpp" />
     <ClInclude Include="coder.hpp" />
     <ClInclude Include="compress.hpp" />
@@ -174,7 +126,9 @@
     <ClInclude Include="find.hpp" />
     <ClInclude Include="getbits.hpp" />
     <ClInclude Include="global.hpp" />
+    <ClInclude Include="hash.hpp" />
     <ClInclude Include="headers.hpp" />
+    <ClInclude Include="headers5.hpp" />
     <ClInclude Include="isnt.hpp" />
     <ClInclude Include="list.hpp" />
     <ClInclude Include="loclang.hpp" />
@@ -184,29 +138,33 @@
     <ClInclude Include="options.hpp" />
     <ClInclude Include="os.hpp" />
     <ClInclude Include="pathfn.hpp" />
+    <ClInclude Include="qopen.hpp" />
     <ClInclude Include="rar.hpp" />
     <ClInclude Include="rardefs.hpp" />
     <ClInclude Include="rarlang.hpp" />
     <ClInclude Include="raros.hpp" />
     <ClInclude Include="rartypes.hpp" />
     <ClInclude Include="rarvm.hpp" />
+    <ClInclude Include="rawint.hpp" />
     <ClInclude Include="rawread.hpp" />
     <ClInclude Include="rdwrfn.hpp" />
     <ClInclude Include="recvol.hpp" />
     <ClInclude Include="resource.hpp" />
     <ClInclude Include="rijndael.hpp" />
     <ClInclude Include="rs.hpp" />
-    <ClInclude Include="savepos.hpp" />
+    <ClInclude Include="rs16.hpp" />
     <ClInclude Include="scantree.hpp" />
     <ClInclude Include="secpassword.hpp" />
     <ClInclude Include="sha1.hpp" />
+    <ClInclude Include="sha256.hpp" />
     <ClInclude Include="smallfn.hpp" />
     <ClInclude Include="strfn.hpp" />
     <ClInclude Include="strlist.hpp" />
     <ClInclude Include="suballoc.hpp" />
     <ClInclude Include="system.hpp" />
+    <ClInclude Include="threadpool.hpp" />
     <ClInclude Include="timefn.hpp" />
-    <ClInclude Include="ulinks.hpp" />
+    <ClInclude Include="ui.hpp" />
     <ClInclude Include="unicode.hpp" />
     <ClInclude Include="unpack.hpp" />
     <ClInclude Include="version.hpp" />

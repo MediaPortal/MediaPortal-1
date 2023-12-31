@@ -20,6 +20,10 @@ void SetDefaultStyle(const SubtitleStyle* s, BOOL overrideUserStyles)
 	g_style.outlineWidthX = g_style.outlineWidthY = s->borderWidth;
 	g_style.borderStyle = (s->isBorderOutline ? 0 : 1); // 0: outline, 1: opaque box
 	g_overrideUserStyles = overrideUserStyles;
+
+	g_rendSet.fontScaleOverride = 1.0;
+	g_rendSet.subPicVerticalShift = 0;
+	g_rendSet.m_AdvRendSets.SetDefault();
 }
 
 void SetAdvancedOptions(int subPicsBufferAhead, SIZE textureSize, BOOL pow2tex, BOOL disableAnim)

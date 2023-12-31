@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 /*
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -37,6 +37,12 @@
 #!define HEISE_BUILD
 # parameter for command line execution: /DHEISE_BUILD
 
+#---------------------------------------------------------------------------
+# ARCHITECTURE
+#---------------------------------------------------------------------------
+!ifndef Architecture
+  !define Architecture x86
+!endif
 
 #---------------------------------------------------------------------------
 # DEVELOPMENT ENVIRONMENT
@@ -69,21 +75,36 @@
 #---------------------------------------------------------------------------
 # DEFINES
 #---------------------------------------------------------------------------
-!define PRODUCT_NAME          "MediaPortal"
+!if "${Architecture}" == "x64"
+  !define PRODUCT_NAME          "MediaPortal (x64)"
+!else
+  !define PRODUCT_NAME          "MediaPortal"
+!endif
 !define PRODUCT_PUBLISHER     "Team MediaPortal"
 !define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
 
-!define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+!if "${Architecture}" == "x64"
+  !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
+!else
+  !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+!endif
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal"
-!define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal"
+!if "${Architecture}" == "x64"
+  !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal (x64)"
+!else
+  !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal"
+!endif
 
 ; import version from shared file
 !include "${git_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
 
 SetCompressor /SOLID lzma
 
+# Libbluray Defines
+!include "${git_InstallScripts}\include\MediaPortalLibbluray.nsh"
+!echo "BUILD MESSAGE : LIBBLURAY VERSION ${GIT_LIBBLURAY_VERSION} "
 
 #---------------------------------------------------------------------------
 # VARIABLES
@@ -107,6 +128,7 @@ Var frominstall
 Var MPTray_Running
 
 Var PREVIOUS_SKINSETTINGS_TITAN_CONFIG
+Var PREVIOUS_SKINSETTINGS_TITAN_BASICHOME
 Var PREVIOUS_SKINSETTINGS_ARES_CONFIG
 Var PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG
 Var PREVIOUS_KEYMAPSETTINGS
@@ -122,21 +144,22 @@ Var PREVIOUS_KEYMAPSETTINGS
 !include WinMessages.nsh
 
 !include "${git_InstallScripts}\include\FileAssociation.nsh"
+!include "${git_InstallScripts}\include\FileAssociationEx.nsh"
 !include "${git_InstallScripts}\include\LanguageMacros.nsh"
 !include "${git_InstallScripts}\include\LoggingMacros.nsh"
 !include "${git_InstallScripts}\include\MediaPortalDirectories.nsh"
 !include "${git_InstallScripts}\include\MediaPortalMacros.nsh"
 !include "${git_InstallScripts}\include\ProcessMacros.nsh"
 !include "${git_InstallScripts}\include\WinVerEx.nsh"
-!include "${git_InstallScripts}\include\CPUDesc.nsh"
-!include "${git_InstallScripts}\include\FontReg.nsh"
-!include "${git_InstallScripts}\include\FontName.nsh"
+!include "${git_InstallScripts}\include\CPUFeatures.nsh"
+!include "${git_InstallScripts}\include\FontInstall.nsh"
+
+!include "${git_InstallScripts}\include\x64.nsh"
 
 !ifndef GIT_BUILD
 !include "${git_InstallScripts}\pages\AddRemovePage.nsh"
 !endif
 !include "${git_InstallScripts}\pages\UninstallModePage.nsh"
-
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
@@ -213,7 +236,6 @@ UninstPage custom un.UninstallModePage un.UninstallModePageLeave
 #---------------------------------------------------------------------------
 !insertmacro LANG_LOAD "English"
 
-
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
@@ -236,9 +258,8 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2011 ${PRODUCT_PUBLISHER}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright Â© 2005-2023 ${PRODUCT_PUBLISHER}"
 ShowUninstDetails show
-
 
 #---------------------------------------------------------------------------
 # USEFUL MACROS
@@ -288,19 +309,6 @@ ShowUninstDetails show
   ${EndIf}
 !macroend
 
-!macro un.Fonts
-  ; used for Default and Titan Skin Font
-  StrCpy $FONT_DIR $FONTS
-  !insertmacro RemoveTTFFont "Lato-Medium.ttf"
-  !insertmacro RemoveTTFFont "Lato-Light.ttf"
-  !insertmacro RemoveTTFFont "TitanSmall.ttf"
-  !insertmacro RemoveTTFFont "Titan.ttf"
-  !insertmacro RemoveTTFFont "TitanLight.ttf"
-  !insertmacro RemoveTTFFont "TitanMedium.ttf"
-  !insertmacro RemoveTTFFont "NotoSans-Regular.ttf"
-  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
-!macroend
-
 !macro BackupSkinSettings
   ${If} ${FileExists} "${COMMON_APPDATA}\skin\DefaultWideHD\SkinSettings.xml"
     GetTempFileName $PREVIOUS_SKINSETTINGS_DEFAULTWIDEHD_CONFIG
@@ -312,6 +320,12 @@ ShowUninstDetails show
     GetTempFileName $PREVIOUS_SKINSETTINGS_TITAN_CONFIG
     ${LOG_TEXT} "INFO" "Backup SkinSettings.xml for Titan (${COMMON_APPDATA}\skin\Titan\SkinSettings.xml)"
     CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml" "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG"
+  ${EndIf}
+
+  ${If} ${FileExists} "${COMMON_APPDATA}\skin\Titan\BasicHome.Blank.xml"
+    GetTempFileName $PREVIOUS_SKINSETTINGS_TITAN_BASICHOME
+    ${LOG_TEXT} "INFO" "Backup BasicHome.xml for Titan (${COMMON_APPDATA}\skin\Titan\BasicHome.xml)"
+    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\skin\Titan\BasicHome.xml" "$PREVIOUS_SKINSETTINGS_TITAN_BASICHOME"
   ${EndIf}
 
   ${If} ${FileExists} "${COMMON_APPDATA}\skin\Ares\SkinSettings.xml"
@@ -330,6 +344,11 @@ ShowUninstDetails show
   ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG"
     ${LOG_TEXT} "INFO" "Restore SkinSettings.xml for Titan (${COMMON_APPDATA}\skin\Titan\SkinSettings.xml)"
     CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_TITAN_CONFIG" "${COMMON_APPDATA}\skin\Titan\SkinSettings.xml" 
+  ${EndIf}  
+
+  ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_TITAN_BASICHOME"
+    ${LOG_TEXT} "INFO" "Restore BasicHome.xml for Titan (${COMMON_APPDATA}\skin\Titan\BasicHome.xml)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_SKINSETTINGS_TITAN_BASICHOME" "${COMMON_APPDATA}\skin\Titan\BasicHome.xml" 
   ${EndIf}  
 
   ${If} ${FileExists} "$PREVIOUS_SKINSETTINGS_ARES_CONFIG"
@@ -351,6 +370,51 @@ ShowUninstDetails show
     ${LOG_TEXT} "INFO" "Restore keymap.xml (${COMMON_APPDATA}\keymap.xml)"
     CopyFiles /SILENT /FILESONLY "$PREVIOUS_KEYMAPSETTINGS" "${COMMON_APPDATA}\keymap.xml" 
   ${EndIf}
+!macroend
+
+!macro InstallTTFFont FontFile
+  ${GetFileName} "${FontFile}" $R0
+
+  InitPluginsDir
+  File "/oname=$PluginsDir\$R0" "${FontFile}"
+  FontInfo::GetFontName "$PluginsDir\$R0"
+  ${If} $0 != ""
+    !insertmacro FontInstallTTF "${FontFile}" "$R0" $0
+    ${IfNotThen} ${Errors} ${|} IntOp $1 $1 + 1 ${|}
+  ${EndIf}
+   
+  ${If} $1 <> 0
+    DetailPrint "Successfully installed $1 font(s)..."
+    SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000
+  ${EndIf}
+!macroend
+
+!macro RemoveTTFFont FontFile
+
+  FontInfo::GetFontName "$Fonts\${FontFile}"
+  ${If} $0 != ""
+    !insertmacro FontUninstallTTF "${FontFile}" $0
+    ${IfNotThen} ${Errors} ${|} IntOp $1 $1 + 1 ${|}
+  ${EndIf}
+   
+  ${If} $1 <> 0
+    DetailPrint "Successfully uninstalled $1 font(s)..."
+    SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=5000
+  ${EndIf}
+!macroend
+
+!macro un.Fonts
+  ; used for Default and Titan Skin Font
+
+  !insertmacro RemoveTTFFont "Lato-Medium.ttf"
+  !insertmacro RemoveTTFFont "Lato-Light.ttf"
+  !insertmacro RemoveTTFFont "TitanSmall.ttf"
+  !insertmacro RemoveTTFFont "Titan.ttf"
+  !insertmacro RemoveTTFFont "TitanLight.ttf"
+  !insertmacro RemoveTTFFont "TitanMedium.ttf"
+  !insertmacro RemoveTTFFont "NotoSans-Regular.ttf"
+
+  SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
 !macroend
 
 Function RunUninstaller
@@ -471,6 +535,7 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\skin\*"
   SetOutPath "$MPdir.Thumbs"
   File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\thumbs\*"
+
 ### AUTO-GENERATED   UNINSTALLATION CODE   END ###
 
   ; remve Default and DefautWide skins (were used before 1.13)
@@ -498,7 +563,7 @@ Section "MediaPortal core files (required)" SecCore
   
   SetOutPath "$MPdir.Config\scripts"
   File /nonfatal "${MEDIAPORTAL.BASE}\scripts\InternalActorMoviesGrabber.csscript"
-	File /nonfatal "${MEDIAPORTAL.BASE}\scripts\InternalMovieImagesGrabber.csscript"
+  File /nonfatal "${MEDIAPORTAL.BASE}\scripts\InternalMovieImagesGrabber.csscript"
   File /nonfatal "${MEDIAPORTAL.BASE}\scripts\VDBParserStrings.xml"
   
   SetOutPath "$MPdir.Base"
@@ -507,6 +572,13 @@ Section "MediaPortal core files (required)" SecCore
   ; MediaPortal.exe
   File "${git_MP}\MediaPortal.Application\bin\${BUILD_TYPE}\MediaPortal.exe"
   File "${git_MP}\MediaPortal.Application\bin\${BUILD_TYPE}\MediaPortal.exe.config"
+  ; MPx86Proxy
+  !if "${Architecture}" == "x64"
+  File "${git_ROOT}\Tools\MPx86Proxy\MPx86Proxy\bin\${BUILD_TYPE}\MPx86Proxy.exe"
+  File "${git_ROOT}\Tools\MPx86Proxy\MPx86Proxy\iMONAPI\iMONDisplay.dll"
+  File "${git_ROOT}\Tools\MPx86Proxy\MPx86Proxy\iMONAPI\iMONRemoteControl.dll"
+  !else
+  !endif
   ; Configuration
   File "${git_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe"
   File "${git_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe.config"
@@ -521,7 +593,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
   File "${git_MP}\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
   ; Json Library
-  File "${git_MP}\MediaPortal.Base\Newtonsoft.Json.dll"
+  File "${git_ROOT}\Packages\Newtonsoft.Json.13.0.3\lib\net40\Newtonsoft.Json.dll"
   ; iMON VFD/LCD
   File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplay.dll"
   File "${git_ROOT}\Packages\MediaPortal-iMON-Display.1.1.0\lib\iMONDisplayWrapper.dll"
@@ -539,6 +611,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.dll"
   ; WatchDog
   File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\WatchDog.exe"
+  File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDogService.Interface.dll"
   File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\DaggerLib.dll"
   File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\DaggerLib.DSGraphEdit.dll"
   File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\DirectShowLib-2005.dll"
@@ -575,65 +648,101 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\WindowPlugins\Common.GUIPlugins\bin\${BUILD_TYPE}\Common.GUIPlugins.dll"
   ; ffmpeg
   SetOutPath "$MPdir.Base\MovieThumbnailer"
-  File "${git_ROOT}\Packages\ffmpeg.2.7.1\ffmpeg.exe"
+  ${If} ${RunningX64}
+    File "${git_ROOT}\Packages\FFmpeg.Win64.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
+  ${Else}
+    File "${git_ROOT}\Packages\FFmpeg.Win32.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
+  ${EndIf}
   ; NuGet binaries MediaInfo
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.4.0\build\native\x86\MediaInfo.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.4.0\build\native\x86\libcrypto-1_1.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.4.0\build\native\x86\libcurl.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.19.4.0\build\native\x86\libssl-1_1.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Wrapper.19.4.1\lib\net40\MediaInfo.Wrapper.dll"
+  !if "${Architecture}" == "x64"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libcrypto-3-x64.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libssl-3-x64.dll"
+  !else
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcrypto-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libssl-3.dll"
+  !endif
+  File "${git_ROOT}\Packages\MediaInfo.Wrapper.21.9.3\lib\net40\MediaInfo.Wrapper.dll"
+  File "${git_ROOT}\Packages\System.ValueTuple.4.5.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll"
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\Sqlite.3.21.0\Sqlite.dll"
+  !if "${Architecture}" == "x64"
+  File "${git_ROOT}\Packages\Sqlite.3.41.2.5\sqlite\x64\sqlite.dll"
+  !else
+  File "${git_ROOT}\Packages\Sqlite.3.41.2.5\sqlite\x86\sqlite.dll"
+  !endif
+  ; NuGet binaries EXIF
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\MetadataExtractor.2.8.0\lib\net35\MetadataExtractor.dll"
+  File "${git_ROOT}\Packages\XmpCore.6.1.10.1\lib\net35\XmpCore.dll"
+  ; NuGet binaries UnidecodeSharp
+  SetOutPath "$MPdir.Base\"
+  File "${git_ROOT}\Packages\UnidecodeSharpFork.1.0.1\lib\UnidecodeSharpFork.dll"
   ; Bass Core
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\BASS.2.4.12.1\bass.dll"
-  File "${git_ROOT}\Packages\BASS.NET.2.4.12.5\lib\net40\Bass.Net.dll"
-  File "${git_ROOT}\Packages\BassRegistration.2.4.12.5\lib\net40\BassRegistration.dll"
+  File "${git_MP}\core\bin\${BUILD_TYPE}\Bass.Net.dll"
+  File "${git_MP}\core\bin\${BUILD_TYPE}\\BassRegistration.dll"
+  !if "${Architecture}" == "x64"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bass.dll"
+  !else
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass.dll"
+  !endif
   File "${git_ROOT}\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll"
   ; Bass Addons
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\bass.asio.1.3.1\bassasio.dll"
-  File "${git_ROOT}\Packages\bass.fx.2.4.11.1\bass_fx.dll"
-  File "${git_ROOT}\Packages\bass.mix.2.4.8.0\bassmix.dll"
-  File "${git_ROOT}\Packages\bass.vst.2.4.5\bass_vst.dll"
-  File "${git_ROOT}\Packages\bass.wadsp.2.4.1\bass_wadsp.dll"
-  File "${git_ROOT}\Packages\bass.wasapi.2.4.1.2\basswasapi.dll"
-  File "${git_ROOT}\Packages\bass.ofr.2.4.0.2\OptimFROG.dll"
+  !if "${Architecture}" == "x64"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bassasio.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bass_fx.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bassmix.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bass_vst.dll"
+  ; File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_wadsp.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\basswasapi.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bassenc.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\basscd.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\Plugins\OptimFROG.dll"
+  !else
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bassasio.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_fx.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bassmix.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_vst.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_wadsp.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\basswasapi.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bassenc.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\basscd.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\Plugins\OptimFROG.dll"
+  !endif
   ; Bass AudioDecoders
   SetOutPath "$MPdir.Base\MusicPlayer\plugins\audio decoders"
-  File "${git_ROOT}\Packages\bass.aac.2.4.5.1\bass_aac.dll"
-  File "${git_ROOT}\Packages\bass.ac3.2.4.0.5\bass_ac3.dll"
-  File "${git_ROOT}\Packages\bass.alac.2.4.3\bass_alac.dll"
-  File "${git_ROOT}\Packages\bass.ape.2.4.2.0\bass_ape.dll"
-  File "${git_ROOT}\Packages\bass.mpc.2.4.1.2\bass_mpc.dll"
-  File "${git_ROOT}\Packages\bass.ofr.2.4.0.2\bass_ofr.dll"
-  File "${git_ROOT}\Packages\bass.spx.2.4.3.2\bass_spx.dll"
-  File "${git_ROOT}\Packages\bass.tta.2.4.0.2\bass_tta.dll"
-  File "${git_ROOT}\Packages\bass.cd.2.4.6.0\basscd.dll"
-  File "${git_ROOT}\Packages\bass.flac.2.4.3.0\bassflac.dll"
-  File "${git_ROOT}\Packages\bass.midi.2.4.10.0\bassmidi.dll"
-  File "${git_ROOT}\Packages\bass.opus.2.4.1.9\bassopus.dll"
-  File "${git_ROOT}\Packages\bass.wma.2.4.5.1\basswma.dll"
-  File "${git_ROOT}\Packages\bass.wv.2.4.6.0\basswv.dll"
-  File "${git_ROOT}\Packages\bass.dsd.2.4.0.2\bassdsd.dll"
+  !if "${Architecture}" == "x64"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\plugins\bass*.dll"
+  !else
+  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\plugins\bass*.dll"
+  !endif
   ; taglib-sharp
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.1.0.2\lib\net40\taglib-sharp.dll"
+  File "${git_ROOT}\Packages\MediaPortal.TagLib.2.3.1\lib\net40\TagLibSharp.dll"
   ; SharpLibHid
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibHid.1.4.2\lib\net40\SharpLibHid.dll"
+  File "${git_ROOT}\Packages\SharpLibHid.1.5.1\lib\net40\SharpLib.Hid.dll"
   ; SharpLibWin32
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\SharpLibWin32.0.0.9\lib\net20\SharpLibWin32.dll"
+  File "${git_ROOT}\Packages\SharpLibWin32.0.2.1\lib\net20\SharpLibWin32.dll"
   ; SharpLibDisplay
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\SharpLibDisplay.0.3.4\lib\net40\SharpLibDisplay.dll"
   ; Naudio
-  File "${git_ROOT}\Packages\NAudio.1.8.3\lib\net35\NAudio.dll" 
+  File "${git_ROOT}\Packages\NAudio.1.10.0\lib\net35\NAudio.dll" 
   ; CSCore
   File "${git_ROOT}\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll"
+  ; SharpDX
+  File "${git_ROOT}\Packages\SharpDX.4.2.0\lib\net40\SharpDX.dll"
+  File "${git_ROOT}\Packages\SharpDX.Direct3D9.4.2.0\lib\net40\SharpDX.Direct3D9.dll"
+  File "${git_ROOT}\Packages\SharpDX.DirectInput.4.2.0\lib\net40\SharpDX.DirectInput.dll"
+  File "${git_ROOT}\Packages\SharpDX.Mathematics.4.2.0\lib\net40\SharpDX.Mathematics.dll"
   ; Intel Audio Workaround
   SetOutPath "$MPdir.Config\Sounds"
   File /nonfatal "${MEDIAPORTAL.BASE}\Sounds\silent.wav"
@@ -643,23 +752,64 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\Docs\MediaPortal License.rtf"
   ; libbluray
   SetOutPath "$MPdir.Base"
-  !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-    File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32d\libbluray.dll"
+  !ifdef Libbluray_use_Nuget_DLL
+         !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+       File /oname=bluray.dll "${Libbluray_nuget_path}\references\runtimes\Debug\libbluray.dll"
+     !else
+       File /oname=bluray.dll "${Libbluray_nuget_path}\references\runtimes\Release\libbluray.dll"
+	 !endif
   !else
-    File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
+    !if "${Architecture}" == "x64"
+      !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+        File /oname=bluray.dll "${git_DirectShowFilters}\bin_x64d\libbluray.dll"
+      !else
+        File /oname=bluray.dll "${git_DirectShowFilters}\bin_x64\libbluray\libbluray.dll"
+      !endif
+    !else
+      !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+        File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32d\libbluray.dll"
+      !else
+        File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
+      !endif
+    !endif
   !endif
-  File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
-  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-1.1.2.jar"
+  !ifdef Libbluray_use_Nuget_JAR
+       File /oname=libbluray.jar "${Libbluray_nuget_path}\references\runtimes\libbluray-.jar"
+  !else
+	   File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
+  !endif
+  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-${GIT_LIBBLURAY_VERSION}.jar"
     ; libbluray - Awt file
    SetOutPath "$MPdir.Base\awt"
-    File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-awt-.jar"
+   !ifdef Libbluray_use_Nuget_JAR
+   	   File /oname=libbluray.jar "${Libbluray_nuget_path}\references\runtimes\libbluray-awt-.jar"
+   !else 
+       File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-awt-.jar"
+   !endif
     SetOutPath "$MPdir.Base"
   ; libbluray - submodul freetype library
-  !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-    File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Debug\freetype.dll"
+   !ifdef Libbluray_use_Nuget_DLL
+    !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+    File /oname=freetype.dll "${Libbluray_nuget_path}\references\runtimes\Debug\freetype.dll"
+    !else
+    File /oname=freetype.dll "${Libbluray_nuget_path}\references\runtimes\Release\freetype.dll"
+	!endif
   !else
-    File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Release\freetype.dll"
+     !if "${Architecture}" == "x64"
+       !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+         File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\x64\Debug\freetype.dll"
+       !else
+         File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\x64\Release\freetype.dll"
+       !endif
+     !else
+       !if ${BUILD_TYPE} == "Debug"       # it's an debug build
+         File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Debug\freetype.dll"
+       !else
+         File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Release\freetype.dll"
+       !endif
+     !endif
   !endif
+  
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
@@ -674,26 +824,38 @@ Section "MediaPortal core files (required)" SecCore
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
   #---------------------------------------------------------------------------
   SetOutPath "$MPdir.Base"
+  
+  !if "${Architecture}" == "x64"
+    !define LIBRARY_X64
+  !else
+  !endif
+  
   ;filter used for SVCD and VCD playback
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\cdxareader.ax"                             "$MPdir.Base\cdxareader.ax"       "$MPdir.Base"
+  !if "${Architecture}" == "x64"
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\x64\cdxareader.ax"                        "$MPdir.Base\cdxareader.ax"       "$MPdir.Base"
+  !else
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\cdxareader.ax"                            "$MPdir.Base\cdxareader.ax"       "$MPdir.Base"
+  !endif
+
   ; used for channels with two mono languages in one stereo streams
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPAudioswitcher\bin\${BUILD_TYPE}\MPAudioSwitcher.ax"  "$MPdir.Base\MPAudioSwitcher.ax"  "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPAudioswitcher\bin\${BUILD_TYPE}\MPAudioSwitcher.ax"   "$MPdir.Base\MPAudioSwitcher.ax"  "$MPdir.Base"
   ; used for digital tv
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax"                "$MPdir.Base\TsReader.ax"         "$MPdir.Base"
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\Core-CC-Parser\CCCP\${BUILD_TYPE}\cccp.ax"             "$MPdir.Base\cccp.ax"             "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax"                 "$MPdir.Base\TsReader.ax"         "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\Core-CC-Parser\CCCP\${BUILD_TYPE}\cccp.ax"              "$MPdir.Base\cccp.ax"             "$MPdir.Base"
+
   WriteRegStr HKCR "Media Type\Extensions\.ts"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
   WriteRegStr HKCR "Media Type\Extensions\.tp"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
   WriteRegStr HKCR "Media Type\Extensions\.tsbuffer"  "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
   WriteRegStr HKCR "Media Type\Extensions\.rtsp"      "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
 
   ; used for Blu-ray
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\BDReader\bin\${BUILD_TYPE}\BDReader.ax"                "$MPdir.Base\BDReader.ax"         "$MPdir.Base"
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\DVBSubtitle3\bin\${BUILD_TYPE}\DVBSub3.ax"             "$MPdir.Base\DVBSub3.ax"          "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\BDReader\bin\${BUILD_TYPE}\BDReader.ax"                 "$MPdir.Base\BDReader.ax"         "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\DVBSubtitle3\bin\${BUILD_TYPE}\DVBSub3.ax"              "$MPdir.Base\DVBSub3.ax"          "$MPdir.Base"
   
   ; used for Mediaportal Audio Renderer
-  ${If} ${SSE2Supported} 
+  ${If} ${CPUSupports} "SSE2"
   ${AndIf} ${AtLeastWinVista}
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPAudioRenderer\bin\${BUILD_TYPE}\mpaudiorenderer.ax"                "$MPdir.Base\mpaudiorenderer.ax"         "$MPdir.Base"
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPAudioRenderer\bin\${BUILD_TYPE}\mpaudiorenderer.ax" "$MPdir.Base\mpaudiorenderer.ax"  "$MPdir.Base"
   ${EndIf}
 
   ; delete font for proper reinstallation for Default and Titan Skin Font
@@ -705,23 +867,13 @@ Section "MediaPortal core files (required)" SecCore
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeLight.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HELN.TTF"
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HindVadodara-SemiBold.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\MediaPortalDefault.ttf"
 
   ; used for Default and Titan Skin Font
-  StrCpy $FONT_DIR $FONTS
-
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\AvalonTypeLight.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HELN.TTF"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\HindVadodara-SemiBold.ttf"
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Ares\MPDefaultFonts\MediaPortalDefault.ttf"
 
   SendMessage ${HWND_BROADCAST} ${WM_FONTCHANGE} 0 0 /TIMEOUT=1000
   
@@ -756,7 +908,7 @@ SectionEnd
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\DVBSub3.ax"
   ; used for Mediaportal Audio Renderer
   ${If} ${FileExists} "$MPdir.Base\mpaudiorenderer.ax"
-	${If} ${SSE2Supported} 
+    ${If} ${CPUSupports} "SSE2"
 		!insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\mpaudiorenderer.ax"
 	${Else}
 		Delete  "$MPdir.Base\mpaudiorenderer.ax"
@@ -796,6 +948,10 @@ SectionEnd
   ; MediaPortal.exe
   Delete "$MPdir.Base\MediaPortal.exe"
   Delete "$MPdir.Base\MediaPortal.exe.config"
+  ; MPx86Proxy
+  Delete "$MPdir.Base\MPx86Proxy.exe"
+  Delete "$MPdir.Base\iMONDisplay.dll"
+  Delete "$MPdir.Base\iMONRemoteControl.dll"
   ; Configuration
   Delete "$MPdir.Base\Configuration.exe"
   Delete "$MPdir.Base\Configuration.exe.config"
@@ -824,12 +980,13 @@ SectionEnd
   Delete "$MPdir.Base\MediaPortal.Support.dll"
   ; Databases
   Delete "$MPdir.Base\Databases.dll"
-  Delete "$MPdir.Base\\HtmlAgilityPack.dll"
+  Delete "$MPdir.Base\HtmlAgilityPack.dll"
   ; MusicShareWatcher
   Delete "$MPdir.Base\MusicShareWatcher.exe"
   Delete "$MPdir.Base\MusicShareWatcherHelper.dll"
   ; WatchDog
   Delete "$MPdir.Base\WatchDog.exe"
+  Delete "$MPdir.Base\WatchDogService.Interface.dll"
   Delete "$MPdir.Base\DaggerLib.dll"
   Delete "$MPdir.Base\DaggerLib.DSGraphEdit.dll"
   Delete "$MPdir.Base\DirectShowLib-2005.dll"
@@ -911,15 +1068,33 @@ Section "-MediaPortal Extension Manager" SecMpeInstaller
   
   ; create startmenu shortcuts
   ${If} $noDesktopSC != 1
-    CreateShortCut "$DESKTOP\MediaPortal Extension Manager.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
+    CreateShortCut "$DESKTOP\MediaPortal Extension Manager.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0  ""  ""  "MediaPortal Extension Manager"
   ${EndIf}
   CreateDirectory "${STARTMENU_GROUP}"
   CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
-  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"     "$MPdir.Base\MpeMaker.exe"      ""  "$MPdir.Base\MpeMaker.exe"      0 "" "" "MediaPortal Extension Maker"
+  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"   "$MPdir.Base\MpeMaker.exe"      ""  "$MPdir.Base\MpeMaker.exe"      0 "" "" "MediaPortal Extension Maker"
 
   ; associate file extensions
-  ${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpe1" "MediaPortal extension"
-  ${RegisterExtension} "$MPdir.Base\MpeMaker.exe"     ".xmp2" "MediaPortal extension project"
+  ${If} ${AtLeastWinVista}
+    !if "${Architecture}" == "x64"
+      !insertmacro APP_ASSOCIATE "mpe1"  "MPE.Installer.x64" "MediaPortal extension" "$MPdir.Base\MpeInstaller.exe,0" "Open with MPE Installer (x64)" "$MPdir.Base\MpeInstaller.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDNAME "MPE.Installer.x64" "MPE Installer (x64)"   "Team MediaPortal"
+
+      !insertmacro APP_ASSOCIATE "xmp2"  "MPE.Maker.x64" "MediaPortal extension project" "$MPdir.Base\MpeMaker.exe,0" "Open with MPE Maker (x64)"         "$MPdir.Base\MpeMaker.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDVERB "MPE.Maker.x64" "edit"                          "Edit with MPE Maker (x64)"  "$MPdir.Base\MpeMaker.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDNAME "MPE.Maker.x64" "MPE Maker (x64)"               "Team MediaPortal"
+    !else
+      !insertmacro APP_ASSOCIATE "mpe1" "MPE.Installer"  "MediaPortal extension" "$MPdir.Base\MpeInstaller.exe,0" "Open with MPE Installer" "$MPdir.Base\MpeInstaller.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDNAME "MPE.Installer" "MPE Installer"         "Team MediaPortal"
+
+      !insertmacro APP_ASSOCIATE "xmp2"  "MPE.Maker" "MediaPortal extension project" "$MPdir.Base\MpeMaker.exe,0" "Open with MPE Maker"                "$MPdir.Base\MpeMaker.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDVERB "MPE.Maker" "edit"                          "Edit with MPE Maker"        "$MPdir.Base\MpeMaker.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDNAME "MPE.Maker" "MPE Maker"                     "Team MediaPortal"
+    !endif
+  ${Else}
+    ${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpe1" "MediaPortal extension"
+    ${RegisterExtension} "$MPdir.Base\MpeMaker.exe"     ".xmp2" "MediaPortal extension project"
+  ${EndIf}
 
   ${RefreshShellIcons}
 SectionEnd
@@ -939,8 +1114,18 @@ SectionEnd
   Delete "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"
 
   ; unassociate file extensions
-  ${UnRegisterExtension} ".mpe1" "MediaPortal extension"
-  ${UnRegisterExtension} ".xmp2"  "MediaPortal extension project"
+  ${If} ${AtLeastWinVista}
+    !if "${Architecture}" == "x64"
+      !insertmacro APP_ASSOCIATE_REMOVE "mpe1" "MPE.Installer.x64"
+      !insertmacro APP_ASSOCIATE_REMOVE "xmp2" "MPE.Maker.x64"
+    !else
+      !insertmacro APP_ASSOCIATE_REMOVE "mpe1" "MPE.Installer"
+      !insertmacro APP_ASSOCIATE_REMOVE "xmp2" "MPE.Maker"
+    !endif
+  ${Else}
+    ${UnRegisterExtension} ".mpe1" "MediaPortal extension"
+    ${UnRegisterExtension} ".xmp2"  "MediaPortal extension project"
+  ${EndIf}
 
   ${RefreshShellIcons}
 !macroend
@@ -985,6 +1170,11 @@ Section -Post
   ; BASS 2.3  to   2.4   Update - requested by hwahrmann (2009-01-26)
   ${LOG_TEXT} "INFO" "Removing obsolete BASS 2.3 files"
   Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_wv.dll"
+  
+  ; BASS Update - requested by hwahrmann MP1-4966 
+  ${LOG_TEXT} "INFO" "Removing obsolete various BASS files"
+  Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\basscd.dll"
+  Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_alac.dll"
 
   ; Libbluray remove previous release files
   ${LOG_TEXT} "INFO" "Removing obsolete libbluray files"
@@ -992,6 +1182,7 @@ Section -Post
   Delete "$MPdir.Base\libbluray-j2se-1.0.1.jar"
   Delete "$MPdir.Base\libbluray-j2se-1.0.2.jar"
   Delete "$MPdir.Base\libbluray-j2se-1.1.1.jar"
+  Delete "$MPdir.Base\libbluray-*.jar"
 
   ; MP1-4315 Blow windowplugins dll to separate plugin dlls
   ${LOG_TEXT} "INFO" "Removing obsolete WindowPlugins.dll"
@@ -1007,19 +1198,43 @@ Section -Post
   
   ; create desktop shortcuts
   ${If} $noDesktopSC != 1
+    !if "${Architecture}" == "x64"
+    CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal (x64)"
+    CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration (x64)"
+    CreateShortCut "$DESKTOP\MediaPortal WatchDog.lnk"      "$MPdir.Base\WatchDog.exe"         "" "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog (x64)"
+    CreateShortCut "$DESKTOP\MediaPortal x86Proxy.lnk"      "$MPdir.Base\MPx86Proxy.exe"       "-h" "$MPdir.Base\MPx86Proxy.exe"  0 "" "" "MediaPortal x86 Proxy"
+    !else
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
     CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
     CreateShortCut "$DESKTOP\MediaPortal WatchDog.lnk"      "$MPdir.Base\WatchDog.exe"         "" "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
+    !endif
+  ${EndIf}
+
+  ; Titan Editor
+
+  ; remove Titan Editor shortcut
+  Delete "$DESKTOP\TitanEditor.lnk"
+  ${If} $noDesktopSC != 1
+    ; create Titan Editor shortcuts
+    CreateShortCut "$DESKTOP\TitanEditor.lnk" "$MPdir.Skin\Titan\BasicHome.Editor\TitanEditor.exe" "" "$MPdir.Skin\Titan\BasicHome.Editor\TitanEditor.exe" 0 "" "" "TitanEditor"
   ${EndIf}
 
   ; create startmenu shortcuts
   ;${If} $noStartMenuSC != 1
       ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
       CreateDirectory "${STARTMENU_GROUP}"
+      !if "${Architecture}" == "x64"
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal (x64)"
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration (x64)"
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"                   "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog (x64)"
+      CreateShortCut "${STARTMENU_GROUP}\MediaPortal x86Proxy.lnk"                   "$MPdir.Base\MPx86Proxy.exe"    "-h"    "$MPdir.Base\MPx86Proxy.exe"    0 "" "" "MediaPortal x86 Proxy"
+      CreateShortCut "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
+      !else
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"                   "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
       CreateShortCut "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
+      !endif
       CreateShortCut "${STARTMENU_GROUP}\User Files.lnk"                             "$MPdir.Config"                 ""      "$MPdir.Config"                 0 "" "" "Browse you config files, databases, thumbs, logs, ..."
 
       WriteINIStr "${STARTMENU_GROUP}\Quick Setup Guide.url"  "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/TeamMediaPortal/MP1QuickSetupGuide"
@@ -1059,8 +1274,6 @@ Section -Post
     Exec '"$MPdir.Base\MPTray.exe"'
   ${EndIf}
 
-  ; run AresBackupRestore.exe
-  Exec '"$MPdir.Base\AresBackupRestore.exe"'
 SectionEnd
 
 #---------------------------------------------------------------------------
@@ -1081,6 +1294,10 @@ Section Uninstall
   Delete "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"
+  !if "${Architecture}" == "x64"
+    Delete "${STARTMENU_GROUP}\MediaPortal x86Proxy.lnk"
+  !else
+  !endif
   Delete "${STARTMENU_GROUP}\MediaPortal Log-Files.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal TestTool.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"
@@ -1091,12 +1308,23 @@ Section Uninstall
   Delete "${STARTMENU_GROUP}\Help.url"
   Delete "${STARTMENU_GROUP}\web site.url"
   RMDir "${STARTMENU_GROUP}"
-  RMDir "$SMPROGRAMS\Team MediaPortal"
+  !if "${Architecture}" == "x64"
+    RMDir "$SMPROGRAMS\Team MediaPortal\MediaPortal (x64)"
+  !else
+    RMDir "$SMPROGRAMS\Team MediaPortal\MediaPortal"
+  !endif
 
   ; remove Desktop shortcuts
   Delete "$DESKTOP\MediaPortal.lnk"
   Delete "$DESKTOP\MediaPortal Configuration.lnk"
   Delete "$DESKTOP\MediaPortal WatchDog.lnk"
+  !if "${Architecture}" == "x64"
+    Delete "$DESKTOP\MediaPortal x86Proxy.lnk"
+  !else
+  !endif
+
+  ; remove Titan Editor shortcut
+  Delete "$DESKTOP\TitanEditor.lnk"
 
   ; remove last files and instdir
   Delete "$MPdir.Base\uninstall-mp.exe"
@@ -1148,7 +1376,11 @@ Function LoadPreviousSettings
   ${If} "$PREVIOUS_INSTALLDIR" != ""
     StrCpy $INSTDIR "$PREVIOUS_INSTALLDIR"
   ${ElseIf} "$INSTDIR" == ""
+    !if "${Architecture}" == "x64"
+    StrCpy $INSTDIR "$PROGRAMFILES64\Team MediaPortal\MediaPortal"
+    !else
     StrCpy $INSTDIR "$PROGRAMFILES\Team MediaPortal\MediaPortal"
+    !endif
   ${EndIf}
 
   ; reset previous component selection from registry

@@ -29,7 +29,7 @@ using DirectShowLib;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
-using Microsoft.DirectX.Direct3D;
+using SharpDX.Direct3D9;
 using Microsoft.Win32;
 
 #pragma warning disable 618
@@ -1869,6 +1869,10 @@ namespace DShowNET.Helper
           }
         }
       }
+      catch (InvalidComObjectException)
+      {
+        //can happen when _graphbuilder is already released
+      }
       catch (Exception ex)
       {
         Log.Error("DirectShowUtil:RemoveFilters() - Exception " + ex.Message);
@@ -1885,17 +1889,17 @@ namespace DShowNET.Helper
 
     public static IntPtr GetUnmanagedSurface(Surface surface)
     {
-      return surface.GetObjectByValue(magicConstant);
+      return (IntPtr)surface;
     }
 
     public static IntPtr GetUnmanagedDevice(Device device)
     {
-      return device.GetObjectByValue(magicConstant);
+      return (IntPtr)device;
     }
 
     public static IntPtr GetUnmanagedTexture(Texture texture)
     {
-      return texture.GetObjectByValue(magicConstant);
+      return (IntPtr)texture;
     }
 
     public static void FindFilterByClassID(IGraphBuilder m_graphBuilder, Guid classID, out IBaseFilter filterFound)

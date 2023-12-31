@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+  <exif name="Unknown">Unbekannt</exif>
+  <exif name="Not defined">Nicht definiert</exif>
+  <!-- Exposure Program -->
+  <exif name="Manual">Manuell</exif>
+  <exif name="Manual control">Manueller Modus</exif>
+  <exif name="Normal program">Normales Programm</exif>
+  <exif name="Program normal">Normales Programm</exif>
+  <exif name="Aperture priority">Blenden-Priorität</exif>
+  <exif name="Shutter priority">Verschluss-Priorität</exif>
+  <exif name="Portrait mode">Modus Portrait</exif>
+  <exif name="Landscape mode">Modus Landschaft</exif>
+  <exif name="Program action (high-speed program)">Kreatives Programm (Hochgeschwindigkeitsverschlusszeit)</exif>
+  <exif name="Program creative (slow program)">Kreatives Programm (langsame Verschlusszeit)</exif>
+  <exif name="Creative program (biased toward depth of field)">Kreatives Programm (Vorrang für Schärfentiefe)</exif>
+  <exif name="Action program (biased toward fast shutter speed)">Kreatives Programm (Vorrang für schnelle Verschlusszeit)</exif>
+  <exif name="Portrait mode (for closeup photos with the background out of focus)">Portraitmodus (Nahaufnahmen mit unscharfem Hintergrund)</exif>
+  <exif name="Landscape mode (for landscape photos with the background in focus)">Landschaftsmodus (Landschaftsfotos mit Hintergrund im Fokus)</exif>
+  <!-- Metering Mode -->
+  <exif name="Average">Durchschnitt</exif>
+  <exif name="Center weighted average">Zentraler gewichteter Durchschnitt</exif>
+  <exif name="Spot">Spot</exif>
+  <exif name="Multi-spot">Multi-Spot</exif>
+  <exif name="Multi-segment">Multi-Segment</exif>
+  <exif name="Pattern">Muster</exif>
+  <exif name="Partial">Partiell</exif>
+  <exif name="Other">Andere</exif>
+  <!-- Sensing Method -->
+  <exif name="One-chip color area sensor">Ein-Chip-Farbflächensensor</exif>
+  <exif name="Two-chip color area sensor">Zwei-Chip-Farbflächensensor</exif>
+  <exif name="Three-chip color area sensor">Drei-Chip-Farbflächensensor</exif>
+  <exif name="Color sequential area sensor">Farb-Sequenzflächensensor</exif>
+  <exif name="Trilinear sensor">Trilinearer Sensor</exif>
+  <exif name="Color sequential linear sensor">Farbreihenfolge-Linearsensor</exif>
+  <!-- Scene Capture Type -->
+  <exif name="Standard">Standard</exif>
+  <exif name="Landscape">Landschaft</exif>
+  <exif name="Portrait">Portrait</exif>
+  <exif name="Night scene">Nachtszene</exif>
+  <!-- Exposure Mode -->
+  <exif name="Auto exposure">Automatische Belichtung</exif>
+  <exif name="Manual exposure">Manuelle Belichtung</exif>
+  <exif name="Auto bracket">Automatische Klammer</exif>
+  <!-- White Balance -->
+  <exif name="Auto white balance">Automatischer Weissabgleich</exif>
+  <exif name="Manual white balance">Manueller Weissabgleich</exif>
+  <!-- Flash -->
+  <exif name="No flash function">Keine Blitzfunktion</exif>
+  <exif name="Flash did not fire">Blitz nicht ausgelöst</exif>
+  <exif name="Flash did not fire, auto">Blitz nicht ausgelöst, Automatikbetrieb</exif>
+  <exif name="Flash did not fire, auto, red-eye reduction">Blitz nicht ausgelöst, Automatikbetrieb, Rote-Augen-Reduzierung</exif>
+  <exif name="Flash fired">Blitz ausgelöst</exif>
+  <exif name="Flash fired, auto">Blitz ausgelöst, Automatikbetrieb</exif>
+  <exif name="Flash fired, auto, red-eye reduction">Blitz ausgelöst, Automatikbetrieb, Rote-Augen-Reduzierung</exif>
+  <exif name="Flash fired, red-eye reduction">Blitz ausgelöst, Rote-Augen-Reduzierung</exif>
+  <exif name="Flash fired, return detected">Blitz ausgelöst, Rücklauf erkannt</exif>
+  <exif name="Flash fired, return detected, auto">Blitz ausgelöst, Rücklauf erkannt, Automatikbetrieb</exif>
+  <exif name="Flash fired, return detected, auto, red-eye reduction">Blitz ausgelöst, Rücklauf erkannt, Automatikbetrieb, Rote-Augen-Reduzierung</exif>
+  <exif name="Flash fired, return detected, red-eye reduction">Blitz ausgelöst, Rücklauf erkannt, Rote-Augen-Reduzierung</exif>
+  <exif name="Flash fired, return not detected">Blitz ausgelöst, Rücklauf nicht erkannt</exif>
+  <exif name="Flash fired, return not detected, auto">Blitz ausgelöst, Rücklauf nicht erkannt, Automatikbetrieb</exif>
+  <exif name="Flash fired, return not detected, auto, red-eye reduction">Blitz ausgelöst, Rücklauf nicht erkannt, Automatikbetrieb, Rote-Augen-Reduzierung</exif>
+  <exif name="Flash fired, return not detected, red-eye reduction">Blitz ausgelöst, Rücklauf nicht erkannt, Rote-Augen-Reduzierung</exif>
+  <exif name="Strobe return light not detected">Stroboskoprücklicht nicht erkannt</exif>
+  <exif name="Strobe return light detected">Stroboskoprücklicht erkannt</exif>
+  <exif name="Flash fired, compulsory flash mode, red-eye reduction mode">Blitz ausgelöst, Zwangsblitzmodus, Rote-Augen-Reduzierung</exif>
+  <exif name="Flash fired, compulsory flash mode, red-eye reduction mode, return light not detected">Blitz ausgelöst, Zwangsblitzmodus, Rote-Augen-Reduzierung, Rücklauf nicht erkannt</exif>
+  <exif name="Flash fired, compulsory flash mode, red-eye reduction mode, return light detected">Blitz ausgelöst, Zwangsblitzmodus, Rote-Augen-Reduzierung, Rücklauf erkannt</exif>
+  <!-- Light Source -->
+  <exif name="Daylight">Tageslicht</exif>
+  <exif name="Fluorescent">Leuchtstoffröhre</exif>
+  <exif name="Tungsten (incandescent light)">Wolfram (Glühlampenlicht)</exif>
+  <exif name="Flash">Blitz</exif>
+  <exif name="Fine weather">Schönes Wetter</exif>
+  <exif name="Cloudy weather">Bewölkt</exif>
+  <exif name="Shade">Schatten</exif>
+  <exif name="Daylight fluorescent (D 5700 - 7100K)">Tageslicht-Leuchtstoffröhre (D 5700 - 7100K)</exif>
+  <exif name="Day white fluorescent (N 4600 - 5400K)">Tagesweiss-Leuchtstoffröhre (N 4600 - 5400K)</exif>
+  <exif name="Cool white fluorescent (W 3900 - 4500K)">Kaltweiss-Leuchtstoffröhre (W 3900 - 4500K)</exif>
+  <exif name="White fluorescent (WW 3200 - 3700K)">Warmweiss-Leuchtstoffröhre (WW 3200 - 3700K)</exif>
+  <exif name="Standard light A">Normlicht A</exif>
+  <exif name="Standard light B">Normlicht B</exif>
+  <exif name="Standard light C">Normlicht C</exif>
+  <exif name="ISO studio tungsten">ISO-Studio-Glühlampenlicht</exif>
+  <exif name="Other light source">Anderes Licht</exif>
+  <!-- Orienatation -->
+  <exif name="Top, left side (Horizontal / normal)">Horizontal / normal</exif>
+  <exif name="Bottom, right side (Rotate 180)">Drehung 180°</exif>
+  <exif name="Right side, top (Rotate 90 CW)">Drehung 90° im Uhrzeigersinn</exif>
+  <exif name="Left side, bottom (Rotate 270 CW)">Drehung 270° im Uhrzeigersinn</exif>
+  <!-- Sscene Type -->
+  <exif name="Directly photographed image">Direkt fotografiertes Bild</exif>
+</data>

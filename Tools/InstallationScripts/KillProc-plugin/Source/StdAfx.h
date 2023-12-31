@@ -18,7 +18,7 @@
 
 //From exam28.cpp
 #include <tlhelp32.h>
-#include <iostream.h>
+#include <iostream>
 
 #ifdef BORLANDC
   #include <string.h>

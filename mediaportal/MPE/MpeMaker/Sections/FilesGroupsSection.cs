@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -577,6 +577,12 @@ namespace MpeMaker.Sections
         fileItem.DestinationFilename = destinationFilename;
         txt_installpath.Text = destinationFilename;
       }
+    }
+
+    private void toolStripButton1_Click(object sender, EventArgs e)
+    {
+      Package.Groups.Items.Sort((a, b) => (a.ParentGroup + a.Name).CompareTo(b.ParentGroup + b.Name));
+      Set(Get());
     }
   }
 }

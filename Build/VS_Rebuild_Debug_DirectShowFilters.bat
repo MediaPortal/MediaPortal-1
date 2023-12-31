@@ -1,3 +1,4 @@
 @echo off
 
-call "VS_build_DirectShowFilters.bat" debug rebuild
+if [%1]==[] (set ARCH=x86) ELSE (set ARCH=%1)
+call "VS_build_DirectShowFilters.bat" debug rebuild %ARCH%

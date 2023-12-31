@@ -33,20 +33,23 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
   public class iMONDisplay
   {
-    private static readonly bool DoDebug = (Assembly.GetEntryAssembly().FullName.Contains("Configuration") |
+    private static readonly bool _DoDebug = (Assembly.GetEntryAssembly().FullName.Contains("Configuration") |
                                             Settings.Instance.ExtensiveLogging);
 
     private static bool _A_DLL;
     private static bool _S_DLL;
+    private static bool _SU_DLL;
     private static bool _UseV3DLL;
 
-    private static ModuleBuilder s_mb;
+    private static ModuleBuilder _s_mb;
     private Type _iMONDLL;
-    private string imonRC_DLLFile;
+    private string _imonRC_DLLFile;
+
+    private static bool _Initialized = false;
 
     internal iMONDisplay()
     {
-      if (DoDebug)
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.iMONDisplay constructor: called");
       }
@@ -55,11 +58,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         CreateImonDLLWrapper();
       }
       _UseV3DLL = iMONLCDg.AdvancedSettings.Load().VFD_UseV3DLL;
-      if (DoDebug)
+      if (_DoDebug)
       {
-        Log.Info("iMONLCDg.iMONDisplay constructor: UseV3DLL option set '{0}' for display", new object[] {_UseV3DLL});
+        Log.Info("iMONLCDg.iMONDisplay constructor: UseV3DLL option set '{0}' for display", new object[] { _UseV3DLL });
       }
-      if (DoDebug)
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.iMONDisplay constructor: completed");
       }
@@ -89,6 +92,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     [DllImport(@"..\VFD\SG_VFD.dll", EntryPoint = "iMONVFD_Uninit")]
     private static extern void _A_iMONVFD_Uninit();
 
+
+
     [DllImport(@".\SG_VFD.dll", EntryPoint = "iMONLCD_SendData")]
     private static extern bool _iMONLCD_SendData(ref ulong bitMap);
 
@@ -107,130 +112,235 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     [DllImport(@".\SG_VFD.dll", EntryPoint = "iMONVFD_Uninit")]
     private static extern void _iMONVFD_Uninit();
 
-    [DllImport(@"..\iMON\SG_VFD.dll", EntryPoint = "iMONLCD_SendData")]
-    private static extern bool _S_iMONLCD_SendData(ref ulong bitMap);
 
-    [DllImport(@"..\iMON\SG_VFD.dll", EntryPoint = "iMONVFD_Init")]
-    private static extern bool _S_iMONVFD_Init(int vfdType, int resevered);
+    private static bool _S_iMONLCD_SendData(ref ulong bitMap)
+    {
+      if (IntPtr.Size == 8)
+        return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
+          MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonSendData, bitMap) == 1;
+      else if (_SU_DLL)
+        return _S_SG_VFDU_iMONLCD_SendData(ref bitMap);
+      else
+        return _S_SG_VFD_iMONLCD_SendData(ref bitMap);
+    }
 
-    [DllImport(@"..\iMON\SG_VFD.dll", EntryPoint = "iMONVFD_IsInited")]
-    private static extern bool _S_iMONVFD_IsInited();
+    private static bool _S_iMONVFD_Init(int vfdType, int resevered)
+    {
+      if (IntPtr.Size == 8)
+        return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
+          MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonInit, vfdType, resevered) == 1;
+      else if (_SU_DLL)
+        return _S_SG_VFDU_iMONVFD_Init(vfdType, resevered);
+      else
+        return _S_SG_VFD_iMONVFD_Init(vfdType, resevered);
+    }
 
-    [DllImport(@"..\iMON\SG_VFD.dll", EntryPoint = "iMONVFD_SetEQ")]
-    private static extern bool _S_iMONVFD_SetEQ(int[] arEQValue);
+    private static bool _S_iMONVFD_IsInited()
+    {
+      if (IntPtr.Size == 8)
+        return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
+          MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonIsInited) == 1;
+      else if (_SU_DLL)
+        return _S_SG_VFDU_iMONVFD_IsInited();
+      else
+        return _S_SG_VFD_iMONVFD_IsInited();
+    }
 
-    [DllImport(@"..\iMON\SG_VFD.dll", EntryPoint = "iMONVFD_SetText")]
-    private static extern bool _S_iMONVFD_SetText(string firstLine, string secondLine);
+    private static bool _S_iMONVFD_SetEQ(int[] arEQValue)
+    {
+      if (IntPtr.Size == 8)
+        return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
+          MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonSetEQ, arEQValue) == 1;
+      else if (_SU_DLL)
+        return _S_SG_VFDU_iMONVFD_SetEQ(arEQValue);
+      else
+        return _S_SG_VFD_iMONVFD_SetEQ(arEQValue);
+    }
 
-    [DllImport(@"..\iMON\SG_VFD.dll", EntryPoint = "iMONVFD_Uninit")]
-    private static extern void _S_iMONVFD_Uninit();
+    private static bool _S_iMONVFD_SetText(string firstLine, string secondLine)
+    {
+      if (IntPtr.Size == 8)
+        return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute("iMONDisplay", "_S_iMONVFD_SetText",
+          firstLine == null ? string.Empty : firstLine,
+          secondLine == null ? string.Empty : secondLine
+          ) == 1;
+      else if (_SU_DLL)
+        return _S_SG_VFDU_iMONVFD_SetText(firstLine, secondLine);
+      else
+        return _S_SG_VFD_iMONVFD_SetText(firstLine, secondLine);
+    }
 
-    [DllImport(@"..\iMON\SG_VFD.dll", EntryPoint = "LCD3R_SetLCDData2")]
-    private static extern bool _S_LCD3R_SetLCDData2(ref ulong bitMap);
+    private static void _S_iMONVFD_Uninit()
+    {
+      if (IntPtr.Size == 8)
+        MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
+          MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonUninit);
+      else if (_SU_DLL)
+        _S_SG_VFDU_iMONVFD_Uninit();
+      else
+        _S_SG_VFD_iMONVFD_Uninit();
+    }
+
+    private static bool _S_LCD3R_SetLCDData2(ref ulong bitMap)
+    {
+      if (IntPtr.Size == 8)
+        return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
+          MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonSetLCDData2, bitMap) == 1;
+      else if (_SU_DLL)
+        return _S_SG_VFDU_LCD3R_SetLCDData2(ref bitMap);
+      else
+        return _S_SG_VFD_LCD3R_SetLCDData2(ref bitMap);
+    }
+
+    [DllImport(@"..\..\SoundGraph\iMON\SG_VFDU.dll", EntryPoint = "iMONLCD_SendData", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool _S_SG_VFDU_iMONLCD_SendData(ref ulong bitMap);
+
+    [DllImport(@"..\..\SoundGraph\iMON\SG_VFDU.dll", EntryPoint = "iMONVFD_Init", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool _S_SG_VFDU_iMONVFD_Init(int vfdType, int resevered);
+
+    [DllImport(@"..\..\SoundGraph\iMON\SG_VFDU.dll", EntryPoint = "iMONVFD_IsInited", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool _S_SG_VFDU_iMONVFD_IsInited();
+
+    [DllImport(@"..\..\SoundGraph\iMON\SG_VFDU.dll", EntryPoint = "iMONVFD_SetEQ", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool _S_SG_VFDU_iMONVFD_SetEQ(int[] arEQValue);
+
+    [DllImport(@"..\..\SoundGraph\iMON\SG_VFDU.dll", EntryPoint = "iMONVFD_SetText", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool _S_SG_VFDU_iMONVFD_SetText(string firstLine, string secondLine);
+
+    [DllImport(@"..\..\SoundGraph\iMON\SG_VFDU.dll", EntryPoint = "iMONVFD_Uninit", CallingConvention = CallingConvention.Cdecl)]
+    private static extern void _S_SG_VFDU_iMONVFD_Uninit();
+
+    [DllImport(@"..\..\SoundGraph\iMON\SG_VFDU.dll", EntryPoint = "LCD3R_SetLCDData2", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool _S_SG_VFDU_LCD3R_SetLCDData2(ref ulong bitMap);
+
+    [DllImport(@"..\..\SoundGraph\iMON\SG_VFD.dll", EntryPoint = "iMONLCD_SendData", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool _S_SG_VFD_iMONLCD_SendData(ref ulong bitMap);
+
+    [DllImport(@"..\..\SoundGraph\iMON\SG_VFD.dll", EntryPoint = "iMONVFD_Init", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool _S_SG_VFD_iMONVFD_Init(int vfdType, int resevered);
+
+    [DllImport(@"..\..\SoundGraph\iMON\SG_VFD.dll", EntryPoint = "iMONVFD_IsInited", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool _S_SG_VFD_iMONVFD_IsInited();
+
+    [DllImport(@"..\..\SoundGraph\iMON\SG_VFD.dll", EntryPoint = "iMONVFD_SetEQ", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool _S_SG_VFD_iMONVFD_SetEQ(int[] arEQValue);
+
+    [DllImport(@"..\..\SoundGraph\iMON\SG_VFD.dll", EntryPoint = "iMONVFD_SetText", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool _S_SG_VFD_iMONVFD_SetText(string firstLine, string secondLine);
+
+    [DllImport(@"..\..\SoundGraph\iMON\SG_VFD.dll", EntryPoint = "iMONVFD_Uninit", CallingConvention = CallingConvention.Cdecl)]
+    private static extern void _S_SG_VFD_iMONVFD_Uninit();
+
+    [DllImport(@"..\..\SoundGraph\iMON\SG_VFD.dll", EntryPoint = "LCD3R_SetLCDData2", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool _S_SG_VFD_LCD3R_SetLCDData2(ref ulong bitMap);
 
     private void CreateImonDLLWrapper()
     {
-      if (DoDebug)
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.iMONDisplay.CreateImonDLLWrapper(): called");
       }
       new FileInfo(Assembly.GetEntryAssembly().Location);
-      imonRC_DLLFile = FindImonRCdll();
-      if (DoDebug)
+      _imonRC_DLLFile = FindImonRCdll();
+      if (_DoDebug)
       {
-        Log.Info("iMONLCDg.iMONDisplay.CreateImonDLLWrapper(): using RC DLL {1}", new object[] {imonRC_DLLFile});
+        Log.Info("iMONLCDg.iMONDisplay.CreateImonDLLWrapper(): using RC DLL {1}", new object[] { _imonRC_DLLFile });
       }
-      if (imonRC_DLLFile == string.Empty)
+      if (_imonRC_DLLFile == string.Empty)
       {
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.iMONDisplay.CreateImonDLLWrapper(): FAILED - SG_RC.dll not found");
         }
         return;
       }
+
+      if (IntPtr.Size == 8)
+        return;
+
       try
       {
-        if (s_mb == null)
+        if (_s_mb == null)
         {
-          var name = new AssemblyName
-                       {
-                         Name = ("iMONDLLWrapper" + Guid.NewGuid().ToString("N"))
-                       };
-          s_mb =
+          AssemblyName name = new AssemblyName
+          {
+            Name = ("iMONDLLWrapper" + Guid.NewGuid().ToString("N"))
+          };
+          _s_mb =
             AppDomain.CurrentDomain.DefineDynamicAssembly(name, AssemblyBuilderAccess.Run).DefineDynamicModule(
               "iMON_DLL_wrapper");
         }
-        TypeBuilder builder2 = s_mb.DefineType("iMONDLLWrapper" + Guid.NewGuid().ToString("N"));
-        MethodBuilder builder3 = builder2.DefinePInvokeMethod("iMONRC_Init", imonRC_DLLFile,
+        TypeBuilder builder2 = _s_mb.DefineType("iMONDLLWrapper" + Guid.NewGuid().ToString("N"));
+        MethodBuilder builder3 = builder2.DefinePInvokeMethod("iMONRC_Init", _imonRC_DLLFile,
                                                               MethodAttributes.PinvokeImpl | MethodAttributes.HideBySig |
                                                               MethodAttributes.Static | MethodAttributes.Public,
-                                                              CallingConventions.Standard, typeof (bool),
-                                                              new[] {typeof (int), typeof (int), typeof (int)},
+                                                              CallingConventions.Standard, typeof(bool),
+                                                              new[] { typeof(int), typeof(int), typeof(int) },
                                                               CallingConvention.StdCall, CharSet.Auto);
         builder3.SetImplementationFlags(MethodImplAttributes.PreserveSig | builder3.GetMethodImplementationFlags());
-        builder3 = builder2.DefinePInvokeMethod("iMONRC_Uninit", imonRC_DLLFile,
+        builder3 = builder2.DefinePInvokeMethod("iMONRC_Uninit", _imonRC_DLLFile,
                                                 MethodAttributes.PinvokeImpl | MethodAttributes.HideBySig |
                                                 MethodAttributes.Static | MethodAttributes.Public,
-                                                CallingConventions.Standard, typeof (void), null,
+                                                CallingConventions.Standard, typeof(void), null,
                                                 CallingConvention.StdCall, CharSet.Auto);
         builder3.SetImplementationFlags(MethodImplAttributes.PreserveSig | builder3.GetMethodImplementationFlags());
-        builder3 = builder2.DefinePInvokeMethod("iMONRC_IsInited", imonRC_DLLFile,
+        builder3 = builder2.DefinePInvokeMethod("iMONRC_IsInited", _imonRC_DLLFile,
                                                 MethodAttributes.PinvokeImpl | MethodAttributes.HideBySig |
                                                 MethodAttributes.Static | MethodAttributes.Public,
-                                                CallingConventions.Standard, typeof (bool), null,
+                                                CallingConventions.Standard, typeof(bool), null,
                                                 CallingConvention.StdCall, CharSet.Auto);
         builder3.SetImplementationFlags(MethodImplAttributes.PreserveSig | builder3.GetMethodImplementationFlags());
-        builder3 = builder2.DefinePInvokeMethod("iMONRC_GetHWType", imonRC_DLLFile,
+        builder3 = builder2.DefinePInvokeMethod("iMONRC_GetHWType", _imonRC_DLLFile,
                                                 MethodAttributes.PinvokeImpl | MethodAttributes.HideBySig |
                                                 MethodAttributes.Static | MethodAttributes.Public,
-                                                CallingConventions.Standard, typeof (int), null,
+                                                CallingConventions.Standard, typeof(int), null,
                                                 CallingConvention.StdCall, CharSet.Auto);
         builder3.SetImplementationFlags(MethodImplAttributes.PreserveSig | builder3.GetMethodImplementationFlags());
-        builder3 = builder2.DefinePInvokeMethod("iMONRC_GetFirmwareVer", imonRC_DLLFile,
+        builder3 = builder2.DefinePInvokeMethod("iMONRC_GetFirmwareVer", _imonRC_DLLFile,
                                                 MethodAttributes.PinvokeImpl | MethodAttributes.HideBySig |
                                                 MethodAttributes.Static | MethodAttributes.Public,
-                                                CallingConventions.Standard, typeof (int), null,
+                                                CallingConventions.Standard, typeof(int), null,
                                                 CallingConvention.StdCall, CharSet.Auto);
         builder3.SetImplementationFlags(MethodImplAttributes.PreserveSig | builder3.GetMethodImplementationFlags());
-        builder3 = builder2.DefinePInvokeMethod("iMONRC_CheckDriverVersion", imonRC_DLLFile,
+        builder3 = builder2.DefinePInvokeMethod("iMONRC_CheckDriverVersion", _imonRC_DLLFile,
                                                 MethodAttributes.PinvokeImpl | MethodAttributes.HideBySig |
                                                 MethodAttributes.Static | MethodAttributes.Public,
-                                                CallingConventions.Standard, typeof (int), null,
+                                                CallingConventions.Standard, typeof(int), null,
                                                 CallingConvention.StdCall, CharSet.Auto);
         builder3.SetImplementationFlags(MethodImplAttributes.PreserveSig | builder3.GetMethodImplementationFlags());
-        builder3 = builder2.DefinePInvokeMethod("iMONRC_ChangeiMONRCSet", imonRC_DLLFile,
+        builder3 = builder2.DefinePInvokeMethod("iMONRC_ChangeiMONRCSet", _imonRC_DLLFile,
                                                 MethodAttributes.PinvokeImpl | MethodAttributes.HideBySig |
                                                 MethodAttributes.Static | MethodAttributes.Public,
-                                                CallingConventions.Standard, typeof (bool), new[] {typeof (int)},
+                                                CallingConventions.Standard, typeof(bool), new[] { typeof(int) },
                                                 CallingConvention.StdCall, CharSet.Auto);
         builder3.SetImplementationFlags(MethodImplAttributes.PreserveSig | builder3.GetMethodImplementationFlags());
-        builder3 = builder2.DefinePInvokeMethod("iMONRC_ChangeRC6", imonRC_DLLFile,
+        builder3 = builder2.DefinePInvokeMethod("iMONRC_ChangeRC6", _imonRC_DLLFile,
                                                 MethodAttributes.PinvokeImpl | MethodAttributes.HideBySig |
                                                 MethodAttributes.Static | MethodAttributes.Public,
-                                                CallingConventions.Standard, typeof (bool), new[] {typeof (int)},
+                                                CallingConventions.Standard, typeof(bool), new[] { typeof(int) },
                                                 CallingConvention.StdCall, CharSet.Auto);
         builder3.SetImplementationFlags(MethodImplAttributes.PreserveSig | builder3.GetMethodImplementationFlags());
-        builder3 = builder2.DefinePInvokeMethod("iMONRC_GetLastRFMode", imonRC_DLLFile,
+        builder3 = builder2.DefinePInvokeMethod("iMONRC_GetLastRFMode", _imonRC_DLLFile,
                                                 MethodAttributes.PinvokeImpl | MethodAttributes.HideBySig |
                                                 MethodAttributes.Static | MethodAttributes.Public,
-                                                CallingConventions.Standard, typeof (int), null,
+                                                CallingConventions.Standard, typeof(int), null,
                                                 CallingConvention.StdCall, CharSet.Auto);
         builder3.SetImplementationFlags(MethodImplAttributes.PreserveSig | builder3.GetMethodImplementationFlags());
-        builder3 = builder2.DefinePInvokeMethod("iMONRC_GetPacket", imonRC_DLLFile,
+        builder3 = builder2.DefinePInvokeMethod("iMONRC_GetPacket", _imonRC_DLLFile,
                                                 MethodAttributes.PinvokeImpl | MethodAttributes.HideBySig |
                                                 MethodAttributes.Static | MethodAttributes.Public,
-                                                CallingConventions.Standard, typeof (bool),
-                                                new[] {typeof (byte[]), typeof (int)}, CallingConvention.StdCall,
+                                                CallingConventions.Standard, typeof(bool),
+                                                new[] { typeof(byte[]), typeof(int) }, CallingConvention.StdCall,
                                                 CharSet.Auto);
         builder3.SetImplementationFlags(MethodImplAttributes.PreserveSig | builder3.GetMethodImplementationFlags());
         _iMONDLL = builder2.CreateType();
       }
       catch (Exception exception)
       {
-        Log.Error("iMONLCDg.iMONDisplay.CreateImonDLLwrapper(): caught exception: {0}", new object[] {exception});
+        Log.Error("iMONLCDg.iMONDisplay.CreateImonDLLwrapper(): caught exception: {0}", new object[] { exception });
         return;
       }
-      if (DoDebug)
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.iMONDisplay.CreateImonDLLWrapper(): Completed - RC DLL wrapper created.");
       }
@@ -240,29 +350,29 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     public string FindImonRCdll()
     {
       RegistryKey key;
-      string str;
-      if (DoDebug)
+      string strPathDll;
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.iMONDisplay.FindImonRCdll(): called.");
       }
-      bool flag = false;
-      bool flag2 = false;
-      string str2 = string.Empty;
-      string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-      string str4 = string.Empty;
-      string str5 = string.Empty;
+      bool bAntec = false;
+      bool bSoundgraph = false;
+      string strResult = string.Empty;
+      string strFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+      string strPathAntec = string.Empty;
+      string strPathSoundgraph = string.Empty;
       if (Registry.CurrentUser.OpenSubKey(@"Software\Antec\VFD", false) != null)
       {
-        flag = true;
+        bAntec = true;
         Registry.CurrentUser.Close();
         key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\VFD.exe", false);
         if (key != null)
         {
-          str4 = (string)key.GetValue("Path", string.Empty);
+          strPathAntec = (string)key.GetValue("Path", string.Empty);
         }
         else
         {
-          str4 = folderPath + @"\ANTEC\VFD";
+          strPathAntec = strFolderPath + @"\ANTEC\VFD";
         }
         Registry.LocalMachine.Close();
       }
@@ -272,16 +382,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       if (Registry.CurrentUser.OpenSubKey(@"Software\SOUNDGRAPH\iMON", false) != null)
       {
-        flag2 = true;
+        bSoundgraph = true;
         Registry.CurrentUser.Close();
         key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\iMON.exe", false);
         if (key != null)
         {
-          str5 = (string)key.GetValue("Path", string.Empty);
+          strPathSoundgraph = (string)key.GetValue("Path", string.Empty);
         }
         else
         {
-          str5 = folderPath + @"\SoundGraph\iMON";
+          strPathSoundgraph = strFolderPath + @"\SoundGraph\iMON";
         }
         Registry.LocalMachine.Close();
       }
@@ -289,43 +399,51 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         Registry.CurrentUser.Close();
       }
-      if (flag & !flag2)
+      if (bAntec & !bSoundgraph)
       {
-        str = str4 + @"\sg_rc.dll";
-        if (File.Exists(str))
+        strPathDll = strPathAntec + @"\sg_rc.dll";
+        if (File.Exists(strPathDll))
         {
-          str2 = str;
+          strResult = strPathDll;
         }
       }
-      else if (!flag & flag2)
+      else if (!bAntec & bSoundgraph)
       {
-        str = str5 + @"\sg_rc.dll";
-        if (File.Exists(str))
+        strPathDll = strPathSoundgraph + @"\sg_rcu.dll";
+        if (File.Exists(strPathDll))
         {
-          str2 = str;
+          strResult = strPathDll;
+        }
+        else
+        {
+          strPathDll = strPathSoundgraph + @"\sg_rc.dll";
+          if (File.Exists(strPathDll))
+          {
+            strResult = strPathDll;
+          }
         }
       }
       else
       {
-        str = str4 + @"\sg_rc.dll";
-        if (File.Exists(str))
+        strPathDll = strPathAntec + @"\sg_rc.dll";
+        if (File.Exists(strPathDll))
         {
-          str2 = str;
+          strResult = strPathDll;
         }
         else
         {
-          str = str5 + @"\sg_rc.dll";
-          if (File.Exists(str))
+          strPathDll = strPathSoundgraph + @"\sg_rc.dll";
+          if (File.Exists(strPathDll))
           {
-            str2 = str;
+            strResult = strPathDll;
           }
         }
       }
-      if (DoDebug)
+      if (_DoDebug)
       {
-        Log.Info("iMONLCDg.iMONDisplay.FindImonRCdll(): selected file \"{0}\".", new object[] {str2});
+        Log.Info("iMONLCDg.iMONDisplay.FindImonRCdll(): selected file \"{0}\".", new object[] { strResult });
       }
-      return str2;
+      return strResult;
     }
 
     public bool iMONLCD_SendData(ref ulong bitMap)
@@ -345,7 +463,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       return _iMONLCD_SendData(ref bitMap);
     }
 
-    public bool iMONRC_ChangeRC6(int RC_MODE)
+    public bool iMONLCD_SendData(ulong[] data)
+    {
+      if (_UseV3DLL)
+      {
+        return false;
+      }
+      if (_A_DLL)
+      {
+        return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonSendDataBuffer, data) == 1;
+      }
+      if (_S_DLL)
+      {
+        return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonSendDataBuffer, data) == 1;
+      }
+      return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonSendDataBuffer, data) == 1;
+    }
+
+    public bool iMONRC_ChangeRC6(int iRcMode)
     {
       if (_iMONDLL == null)
       {
@@ -353,20 +488,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       try
       {
-        return
-          (bool)
-          _iMONDLL.InvokeMember("iMONRC_ChangeRC6",
+        if (IntPtr.Size == 8)
+          return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
+            MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonRCChangeRC6, iRcMode) == 1;
+        else
+          return (bool)_iMONDLL.InvokeMember("iMONRC_ChangeRC6",
                                 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
-                                new object[] {RC_MODE});
+                                new object[] { iRcMode });
       }
       catch (Exception exception)
       {
-        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_ChangeRC6(): Caught exception: {0}", new object[] {exception});
+        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_ChangeRC6(): Caught exception: {0}", new object[] { exception });
         return false;
       }
     }
 
-    public bool iMONRC_ChangeRCSet(int RC_SET)
+    public bool iMONRC_ChangeRCSet(int iRcSet)
     {
       if (_iMONDLL == null)
       {
@@ -374,15 +511,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       try
       {
-        return
-          (bool)
-          _iMONDLL.InvokeMember("iMONRC_ChangeiMONRCSet",
+        if (IntPtr.Size == 8)
+            return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
+            MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonRCChangeiMONRCSet, iRcSet) == 1;
+      else
+         return (bool)_iMONDLL.InvokeMember("iMONRC_ChangeiMONRCSet",
                                 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
-                                new object[] {RC_SET});
+                                new object[] { iRcSet });
       }
       catch (Exception exception)
       {
-        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_ChangeiMONRCSet(): Caught exception: {0}", new object[] {exception});
+        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_ChangeiMONRCSet(): Caught exception: {0}", new object[] { exception });
         return false;
       }
     }
@@ -395,15 +534,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       try
       {
-        return
-          (int)
-          _iMONDLL.InvokeMember("iMONRC_CheckDriverVersion",
+        if (IntPtr.Size == 8)
+          return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
+          MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonRCCheckDriverVersion);
+        else
+          return (int)_iMONDLL.InvokeMember("iMONRC_CheckDriverVersion",
                                 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
                                 null);
       }
       catch (Exception exception)
       {
-        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_CheckDriverVersion(): Caught exception: {0}", new object[] {exception});
+        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_CheckDriverVersion(): Caught exception: {0}", new object[] { exception });
         return -1;
       }
     }
@@ -416,15 +557,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       try
       {
-        return
-          (int)
-          _iMONDLL.InvokeMember("iMONRC_GetFirmwareVer",
+        if (IntPtr.Size == 8)
+            return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
+            MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonRCGetFirmwareVer);
+        else
+          return (int)_iMONDLL.InvokeMember("iMONRC_GetFirmwareVer",
                                 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
                                 null);
       }
       catch (Exception exception)
       {
-        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_GetFirmwareVer(): Caught exception: {0}", new object[] {exception});
+        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_GetFirmwareVer(): Caught exception: {0}", new object[] { exception });
         return -1;
       }
     }
@@ -437,15 +580,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       try
       {
-        return
-          (int)
-          _iMONDLL.InvokeMember("iMONRC_GetHWType",
+        if (IntPtr.Size == 8)
+          return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
+          MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonRCGetHWType);
+        else
+          return (int)_iMONDLL.InvokeMember("iMONRC_GetHWType",
                                 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
                                 null);
       }
       catch (Exception exception)
       {
-        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_GetHWType(): Caught exception: {0}", new object[] {exception});
+        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_GetHWType(): Caught exception: {0}", new object[] { exception });
         return -1;
       }
     }
@@ -458,20 +603,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       try
       {
-        return
-          (int)
-          _iMONDLL.InvokeMember("iMONRC_GetLastRFMode",
+        if (IntPtr.Size == 8)
+          return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
+          MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonRCGetLastRFMode);
+      else
+        return (int)_iMONDLL.InvokeMember("iMONRC_GetLastRFMode",
                                 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
                                 null);
       }
       catch (Exception exception)
       {
-        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_GetLastRFMode(): Caught exception: {0}", new object[] {exception});
+        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_GetLastRFMode(): Caught exception: {0}", new object[] { exception });
         return -1;
       }
     }
 
-    public bool iMONRC_GetPacket(ref byte[] Buffer, ref int BufferSize)
+    public bool iMONRC_GetPacket(ref byte[] buffer, ref int iSize)
     {
       if (_iMONDLL == null)
       {
@@ -479,25 +626,27 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       try
       {
-        var flag =
-          (bool)
-          _iMONDLL.InvokeMember("iMONRC_GetPacket",
+        if (IntPtr.Size == 8)
+          return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
+          MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonRCGetPacket, ref buffer, iSize) == 1;
+
+        var flag = (bool)_iMONDLL.InvokeMember("iMONRC_GetPacket",
                                 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
-                                new object[] {Buffer, BufferSize});
-        if (DoDebug)
+                                new object[] { buffer, iSize });
+        if (_DoDebug)
         {
-          Log.Info("iMONLCDg.iMONDisplay.iMONRC_GetPacket(): Returning: {0}", new object[] {flag});
+          Log.Info("iMONLCDg.iMONDisplay.iMONRC_GetPacket(): Returning: {0}", new object[] { flag });
         }
         return flag;
       }
       catch (Exception exception)
       {
-        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_GetPacket(): Caught exception: {0}", new object[] {exception});
+        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_GetPacket(): Caught exception: {0}", new object[] { exception });
         return false;
       }
     }
 
-    public bool iMONRC_Init(int RC_SET, int RC_TYPE, int RC_RESERVED)
+    public bool iMONRC_Init(int iRcSet, int iRcType, int iRcReserved)
     {
       if (_iMONDLL == null)
       {
@@ -505,20 +654,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       try
       {
-        var flag =
-          (bool)
-          _iMONDLL.InvokeMember("iMONRC_Init",
+        if (IntPtr.Size == 8)
+          return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
+          MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonRCInit, iRcSet, iRcType, iRcReserved) == 1;
+
+        var flag = (bool)_iMONDLL.InvokeMember("iMONRC_Init",
                                 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
-                                new object[] {RC_SET, RC_TYPE, RC_RESERVED});
-        if (DoDebug)
+                                new object[] { iRcSet, iRcType, iRcReserved });
+        if (_DoDebug)
         {
-          Log.Info("iMONLCDg.iMONDisplay.iMONRC_Init(): Returning: {0}", new object[] {flag});
+          Log.Info("iMONLCDg.iMONDisplay.iMONRC_Init(): Returning: {0}", new object[] { flag });
         }
         return flag;
       }
       catch (Exception exception)
       {
-        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_Init(): Caught exception: {0}", new object[] {exception});
+        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_Init(): Caught exception: {0}", new object[] { exception });
         return false;
       }
     }
@@ -531,15 +682,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       try
       {
-        return
-          (bool)
-          _iMONDLL.InvokeMember("iMONRC_IsInited",
+        if (IntPtr.Size == 8)
+          return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
+          MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonRCIsInited) == 1;
+        else
+          return (bool)_iMONDLL.InvokeMember("iMONRC_IsInited",
                                 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
                                 null);
       }
       catch (Exception exception)
       {
-        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_IsInited(): Caught exception: {0}", new object[] {exception});
+        Log.Debug("iMONLCDg.iMONDisplay.iMONRC_IsInited(): Caught exception: {0}", new object[] { exception });
         return false;
       }
     }
@@ -550,24 +703,28 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         try
         {
-          _iMONDLL.InvokeMember("iMONRC_Uninit",
+          if (IntPtr.Size == 8)
+            MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
+            MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonRCUninit);
+          else
+            _iMONDLL.InvokeMember("iMONRC_Uninit",
                                 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
                                 null);
         }
         catch (Exception exception)
         {
-          Log.Debug("iMONLCDg.iMONDisplay.iMONRC_Uninit(): Caught exception: {0}", new object[] {exception});
+          Log.Debug("iMONLCDg.iMONDisplay.iMONRC_Uninit(): Caught exception: {0}", new object[] { exception });
         }
       }
     }
 
-    public bool iMONVFD_Init(int VFD_Type, int VFD_Reserved)
+    public bool iMONVFD_Init(int iVfdType, int iVfdReserved)
     {
       int num = 0;
-      if (DoDebug)
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.iMONDisplay.iMONVFD_Init(): Opening Display with iMONVFD_Init({0},{1})",
-                 new object[] {VFD_Type.ToString("x00"), VFD_Reserved.ToString("x00")});
+                 new object[] { iVfdType.ToString("x00"), iVfdReserved.ToString("x00") });
       }
       bool flag = false;
       while ((num < 10) && !flag)
@@ -587,80 +744,84 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             _iMONVFD_Uninit();
           }
           Thread.Sleep(150);
-          VFD_Reserved = VFD_Reserved == 0 ? 0x8888 : 0;
-          if (DoDebug)
+          iVfdReserved = iVfdReserved == 0 ? 0x8888 : 0;
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.iMONDisplay.iMONVFD_Init(): Open failed - retrying...");
           }
         }
         if (_A_DLL)
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.iMONDisplay.iMONVFD_Init(): Opening Display with Installed Antec DLL");
           }
-          flag = _A_iMONVFD_Init(VFD_Type, VFD_Reserved);
+          flag = _Initialized = _A_iMONVFD_Init(iVfdType, iVfdReserved);
         }
         else if (_S_DLL)
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.iMONDisplay.iMONVFD_Init(): Opening Display with Installed SoundGraph DLL");
           }
-          flag = _S_iMONVFD_Init(VFD_Type, VFD_Reserved);
+          flag = _Initialized = _S_iMONVFD_Init(iVfdType, iVfdReserved);
         }
         else
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.iMONDisplay.iMONVFD_Init(): Opening Display with default DLL");
           }
-          flag = _iMONVFD_Init(VFD_Type, VFD_Reserved);
+          flag = _Initialized = _iMONVFD_Init(iVfdType, iVfdReserved);
         }
         num++;
       }
-      if (DoDebug)
+      if (_DoDebug)
       {
-        Log.Info("iMONLCDg.iMONDisplay.iMONVFD_Init(): Display Open Returned: {0}", new object[] {flag});
+        Log.Info("iMONLCDg.iMONDisplay.iMONVFD_Init(): Display Open Returned: {0}", new object[] { flag });
       }
       return flag;
     }
 
-    public bool iMONVFD_Init_OLD(int VFD_Type, int VFD_Reserved)
+    public bool iMONVFD_Init_OLD(int iVdfType, int iVfdReserved)
     {
       if (_A_DLL || _S_DLL)
       {
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Debug("iMONLCDg.iMONDisplay.iMONVFD_Init(): Opening Display with Installed DLL");
         }
       }
-      else if (DoDebug)
+      else if (_DoDebug)
       {
         Log.Debug("iMONLCDg.iMONDisplay.iMONVFD_Init(): Opening Display with default DLL");
       }
       if (_A_DLL)
       {
-        return _A_iMONVFD_Init(VFD_Type, VFD_Reserved);
+        return _A_iMONVFD_Init(iVdfType, iVfdReserved);
       }
       if (_S_DLL)
       {
-        return _S_iMONVFD_Init(VFD_Type, VFD_Reserved);
+        return _S_iMONVFD_Init(iVdfType, iVfdReserved);
       }
-      return _iMONVFD_Init(VFD_Type, VFD_Reserved);
+      return _iMONVFD_Init(iVdfType, iVfdReserved);
     }
 
     public bool iMONVFD_IsInited()
     {
+      if (!_Initialized)
+        return false;
+
       if (_A_DLL)
       {
-        return _A_iMONVFD_IsInited();
+        return _Initialized = _A_iMONVFD_IsInited();
       }
-      if (_S_DLL)
+      else if (_S_DLL)
       {
-        return _S_iMONVFD_IsInited();
+        return _Initialized = _S_iMONVFD_IsInited();
       }
-      return _iMONVFD_IsInited();
+      else
+        return _Initialized = _iMONVFD_IsInited();
     }
 
     public bool iMONVFD_SetEQ(int[] arEQValue)
@@ -680,7 +841,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       if (_A_DLL)
       {
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.iMONDisplay.iMONVFD_SetText(): Calling SetText() from Antec DLL");
         }
@@ -688,13 +849,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       if (_S_DLL)
       {
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.iMONDisplay.iMONVFD_SetText(): Calling SetText() from SoundGraph DLL");
         }
         return _S_iMONVFD_SetText(firstLine, secondLine);
       }
-      if (DoDebug)
+      if (_DoDebug)
       {
         Log.Info("iMONLCDg.iMONDisplay.iMONVFD_SetText(): Calling SetText() from Default (V3) DLL");
       }
@@ -703,117 +864,122 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public void iMONVFD_Uninit()
     {
+      _Initialized = false;
+
       if (_A_DLL)
       {
         _A_iMONVFD_Uninit();
       }
-      if (_S_DLL)
+      else if (_S_DLL)
       {
         _S_iMONVFD_Uninit();
       }
-      _iMONVFD_Uninit();
+      else
+        _iMONVFD_Uninit();
     }
 
-    public bool Initialize(string DLLFullPath)
+    public bool Initialize(string strDLLFullPath)
     {
       try
       {
-        string directoryName;
-        if (DoDebug)
+        string strDirectoryName;
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.iMONDisplay.Initialize(): called");
         }
-        bool flag;
-        if (DoDebug)
+        bool bResult;
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.iMONDisplay.Initialize(): Attempting to determine DLL source");
         }
-        if (_UseV3DLL | (DLLFullPath == string.Empty))
+        if (_UseV3DLL | (strDLLFullPath == string.Empty))
         {
           _A_DLL = false;
           _S_DLL = false;
-          if (_UseV3DLL && DoDebug)
+          if (_UseV3DLL && _DoDebug)
           {
             Log.Info("iMONLCDg.iMONDisplay.Initialize(): Advanced options forces V3 DLL");
           }
-          if ((DLLFullPath == string.Empty) && DoDebug)
+          if ((strDLLFullPath == string.Empty) && _DoDebug)
           {
             Log.Info(
               "iMONLCDg.iMONDisplay.Initialize(): Installed DLL not found - using DLL supplied with MediaPortal",
               new object[0]);
           }
         }
-        else if (DLLFullPath.ToLowerInvariant().Contains("antec"))
+        else if (strDLLFullPath.IndexOf("antec", StringComparison.CurrentCultureIgnoreCase) >= 0)
         {
           _A_DLL = true;
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.iMONDisplay.Initialize(): Found Antec installed DLL - Version {0}",
-                     new object[] {FileVersionInfo.GetVersionInfo(DLLFullPath).FileVersion});
+                     new object[] { FileVersionInfo.GetVersionInfo(strDLLFullPath).FileVersion });
           }
         }
-        else if (DLLFullPath.ToLowerInvariant().Contains("soundgraph"))
+        else if (strDLLFullPath.IndexOf("soundgraph", StringComparison.CurrentCultureIgnoreCase) >= 0)
         {
           _S_DLL = true;
-          if (DoDebug)
+          _SU_DLL = strDLLFullPath.EndsWith("sg_vfdu.dll", StringComparison.CurrentCultureIgnoreCase);
+
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.iMONDisplay.Initialize(): Found SoundGraph installed DLL - Version {0}",
-                     new object[] {FileVersionInfo.GetVersionInfo(DLLFullPath).FileVersion});
+                     new object[] { FileVersionInfo.GetVersionInfo(strDLLFullPath).FileVersion });
           }
         }
-        string currentDirectory = Environment.CurrentDirectory;
+        string strCurrentDirectory = Environment.CurrentDirectory;
         Environment.CurrentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-        string environmentVariable = Environment.GetEnvironmentVariable("Path");
-        if (_UseV3DLL | (DLLFullPath == string.Empty))
+        string strEnvironmentVariable = Environment.GetEnvironmentVariable("Path");
+        if (_UseV3DLL | (strDLLFullPath == string.Empty))
         {
-          directoryName = Config.GetFolder(Config.Dir.Base) + @"\sg_vfd.dll";
+          strDirectoryName = Config.GetFolder(Config.Dir.Base) + @"\sg_vfd.dll";
         }
         else
         {
-          directoryName = new FileInfo(DLLFullPath).DirectoryName;
+          strDirectoryName = new FileInfo(strDLLFullPath).DirectoryName;
         }
-        if (DoDebug)
+        if (_DoDebug)
         {
-          Log.Info("iMONLCDg.iMONDisplay.Initialize(): Forcing OS Search Path to: {0}", new object[] {directoryName});
+          Log.Info("iMONLCDg.iMONDisplay.Initialize(): Forcing OS Search Path to: {0}", new object[] { strDirectoryName });
         }
-        Environment.SetEnvironmentVariable("Path", directoryName);
-        if (DoDebug)
+        Environment.SetEnvironmentVariable("Path", strDirectoryName);
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.iMONDisplay.Initialize(): Attempting to link SG_VFD DLL");
         }
         try
         {
           iMONVFD_IsInited();
-          flag = true;
-          if (DoDebug)
+          bResult = true;
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.iMONDisplay.Initialize(): DLL linking completed");
           }
         }
         catch
         {
-          if (DoDebug)
+          if (_DoDebug)
           {
             Log.Info("iMONLCDg.iMONDisplay.Initialize(): DLL linking failed");
           }
-          flag = false;
+          bResult = false;
         }
-        if (DoDebug)
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.iMONDisplay.Initialize(): Restoring OS Search Path to: {0}",
-                   new object[] {environmentVariable});
+                   new object[] { strEnvironmentVariable });
         }
-        Environment.SetEnvironmentVariable("Path", environmentVariable);
-        Environment.CurrentDirectory = currentDirectory;
-        if (DoDebug)
+        Environment.SetEnvironmentVariable("Path", strEnvironmentVariable);
+        Environment.CurrentDirectory = strCurrentDirectory;
+        if (_DoDebug)
         {
           Log.Info("iMONLCDg.iMONDisplay.Initialize(): completed");
         }
-        return flag;
+        return bResult;
       }
       catch (Exception exception)
       {
-        Log.Info("iMONLCDg.iMONDisplay.Initialize(): CAUGHT EXCEPTION: {0}", new object[] {exception});
+        Log.Info("iMONLCDg.iMONDisplay.Initialize(): CAUGHT EXCEPTION: {0}", new object[] { exception });
         return false;
       }
     }

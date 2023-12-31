@@ -28,7 +28,7 @@ using System.Threading;
 
 namespace TvService
 {
-  public class EpgCardPriorityComparer : IComparer<EpgCard>
+  public class EpgCardPriorityComparerHighest : IComparer<EpgCard>
   {
     // Highest priority first
     public int Compare(EpgCard x, EpgCard y)
@@ -38,6 +38,19 @@ namespace TvService
       if (x.Card.Priority == y.Card.Priority)
         return 0;
       return -1;
+    }
+  }
+
+  public class EpgCardPriorityComparerLowest : IComparer<EpgCard>
+  {
+    // Lowest priority first
+    public int Compare(EpgCard x, EpgCard y)
+    {
+      if (x.Card.Priority < y.Card.Priority)
+        return -1;
+      if (x.Card.Priority == y.Card.Priority)
+        return 0;
+      return 1;
     }
   }
 
@@ -58,6 +71,7 @@ namespace TvService
     private bool _disposed;
     private bool _isRunning;
     private bool _reEntrant;
+    private bool _UseAllAvailableTunersForEPG;
     private readonly TVController _tvController;
     private List<EpgCard> _epgCards;
 
@@ -164,7 +178,18 @@ namespace TvService
         EpgCard epgCard = new EpgCard(_tvController, card);
         _epgCards.Add(epgCard);
       }
-      _epgCards.Sort(new EpgCardPriorityComparer());
+
+      if (layer.GetSetting("UseAllAvailableTunersForEPG", "yes").Value != "yes")
+      {
+        _epgCards.Sort(new EpgCardPriorityComparerHighest());
+        _UseAllAvailableTunersForEPG = false;
+      }
+      else
+      {
+        _epgCards.Sort(new EpgCardPriorityComparerLowest());
+        _UseAllAvailableTunersForEPG = true;
+      }
+
       _epgTimer.Interval = timerInterval;
       _epgTimer.Enabled = true;
     }
@@ -246,7 +271,8 @@ namespace TvService
         }
         catch (InvalidOperationException) {}
 
-        if (_tvController.AllCardsIdle == false)
+        // Grab when all cards idle only when grab on highest priority card
+        if (_tvController.AllCardsIdle == false && _UseAllAvailableTunersForEPG == false)
           return;
         foreach (EpgCard card in _epgCards)
         {
@@ -255,7 +281,8 @@ namespace TvService
             return;
           if (card.IsGrabbing)
             continue;
-          if (_tvController.AllCardsIdle == false)
+          // Grab when all cards idle only when grab on highest priority card
+          if (_tvController.AllCardsIdle == false && _UseAllAvailableTunersForEPG == false)
             return;
           GrabEpgOnCard(card);
         }

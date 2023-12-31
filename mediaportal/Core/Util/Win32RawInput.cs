@@ -27,17 +27,27 @@ namespace Win32
     /// <returns></returns>
     public static int GET_RAWINPUT_CODE_WPARAM(IntPtr wParam)
     {
-      return (wParam.ToInt32() & 0xff);
+      if (IntPtr.Size == 8)
+        return (int)(wParam.ToInt64() & 0xff);
+      else
+        return (wParam.ToInt32() & 0xff);
     }
 
     public static int GET_DEVICE_LPARAM(IntPtr lParam)
     {
-      return ((ushort) (HIWORD(lParam.ToInt32()) & Const.FAPPCOMMAND_MASK));
+      if (IntPtr.Size == 8)
+        return ((ushort)(HIWORD(lParam.ToInt64()) & Const.FAPPCOMMAND_MASK));
+      else
+        return ((ushort)(HIWORD(lParam.ToInt32()) & Const.FAPPCOMMAND_MASK));
     }
 
     public static int HIWORD(int val)
     {
       return ((val >> 16) & 0xffff);
+    }
+    public static int HIWORD(long val)
+    {
+      return (int)((val >> 16) & 0xffff);
     }
   }
 

@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2018 Team MediaPortal
+    #region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -28,7 +28,6 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using DShowNET.Helper;
-using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.MusicPlayer.BASS;
@@ -48,7 +47,7 @@ namespace MediaPortal.Player
   {
     #region enums
 
-    public enum MediaType
+    public enum MediaType //copy present in RefreshRateChanger
     {
       Video,
       TV,
@@ -57,7 +56,7 @@ namespace MediaPortal.Player
       Music,
       Recording,
       Unknown
-    } ;
+    };
 
     public enum DriveType
     {
@@ -1525,6 +1524,7 @@ namespace MediaPortal.Player
         bool UseEVRMadVRForTV = false;
         bool _NoBDMenu = false;
 
+        GUIGraphicsContext.Is3D = false;
         IsPicture = false;
         IsExtTS = false;
         bool AskForRefresh = true;
@@ -1548,8 +1548,18 @@ namespace MediaPortal.Player
           {
             var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
             _mediaInfo = new MediaInfoWrapper(strFile, logger);
+            int nattempts = 0;
+            while (_mediaInfo.HasVideo && _mediaInfo.Framerate == 0 && nattempts<5)
+            {
+              nattempts++;
+              Log.Info("Mediainfo is empty for {0}, trying again for the {1} time", strFile,nattempts);
+              Thread.Sleep(500);
+              _mediaInfo = new MediaInfoWrapper(strFile, logger);
+            }
+
             _mediaInfo.WriteInfo();
             currentMediaInfoFilePlaying = strFile;
+            GUIGraphicsContext.Is3D = _mediaInfo.Is3D;
           }
         }
 
@@ -1699,12 +1709,12 @@ namespace MediaPortal.Player
                 {
                   if (MediaInfo != null && MediaInfo.HasVideo)
                   {
-                    RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                    RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)type);
                   }
                 }
                 else
                 {
-                  RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                  RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)type);
                 }
               }
             }
@@ -1789,7 +1799,7 @@ namespace MediaPortal.Player
                   }
                 }
                 // Do refresh rate
-                RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)type);
 
                 if (RefreshRateChangePending())
                 {
@@ -1866,12 +1876,12 @@ namespace MediaPortal.Player
               {
                 if (MediaInfo != null && MediaInfo.HasVideo)
                 {
-                  RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                  RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)type);
                 }
               }
               else
               {
-                RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)type);
               }
             }
           }
@@ -2973,7 +2983,7 @@ namespace MediaPortal.Player
           (GUIGraphicsContext.Vmr9Active || GUIGraphicsContext.ForceMadVRFirstStart))
       {
         // Enable a new VideoWindow update
-        lock (GUIGraphicsContext.RenderLock)
+        //lock (GUIGraphicsContext.RenderLock) // Commented out to trying to avoid deadlock
         {
           GUIGraphicsContext.UpdateVideoWindow = true;
           VMR9Util.g_vmr9?._scene.RenderGuiRefresh(25, 25, 25, 25, true);
@@ -4208,11 +4218,11 @@ namespace MediaPortal.Player
                 Log.Debug("g_player VideoWindowChanged() ForceMadVRFirstStart madVR");
               }
 
-              if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth != client.Width ||
-                  GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight != client.Height)
+              if (GUIGraphicsContext.PresentationParameters.BackBufferWidth != client.Width ||
+                  GUIGraphicsContext.PresentationParameters.BackBufferHeight != client.Height)
               {
-                GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
-                GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
+                GUIGraphicsContext.PresentationParameters.BackBufferWidth = client.Width;
+                GUIGraphicsContext.PresentationParameters.BackBufferHeight = client.Height;
 
                 int activeWin = GUIWindowManager.ActiveWindow;
 
@@ -4271,14 +4281,14 @@ namespace MediaPortal.Player
               RefreshMadVrVideo();
             }
 
-            if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth == 0)
+            if (GUIGraphicsContext.PresentationParameters.BackBufferWidth == 0)
             {
-              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = client.Width;
+              GUIGraphicsContext.PresentationParameters.BackBufferWidth = client.Width;
               Log.Debug("g_player VideoWindowChanged() BackBufferWidth == 0 for madVR");
             }
-            if (GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight == 0)
+            if (GUIGraphicsContext.PresentationParameters.BackBufferHeight == 0)
             {
-              GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = client.Height;
+              GUIGraphicsContext.PresentationParameters.BackBufferHeight = client.Height;
               Log.Debug("g_player VideoWindowChanged() BackBufferHeight == 0 for madVR");
             }
 

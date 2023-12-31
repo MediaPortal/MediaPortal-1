@@ -35,8 +35,8 @@ enum BLEND_MODE
 #pragma message("use dllimport")
 #endif
 void FontEngineInitialize(int screenWidth, int screenHeight, int poolFormat);
-int  FontEngineAddTexture(int hashCode, bool useAlphaBlend,void* texture);
-int  FontEngineAddSurface(int hashCode, bool useAlphaBlend, void* surface);
+int  FontEngineAddTexture(INT64 hashCode, bool useAlphaBlend,void* texture);
+int  FontEngineAddSurface(INT64 hashCode, bool useAlphaBlend, void* surface);
 void FontEngineRemoveTexture(int textureNo);
 void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, unsigned int color);
 void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, unsigned int color, float m[3][4], int textureNo2, float uoff2, float voff2, float umax2, float vmax2);

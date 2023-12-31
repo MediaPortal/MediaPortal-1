@@ -22,6 +22,7 @@
 #include "..\..\shared\sectiondecoder.h"
 #include "..\..\shared\section.h"
 #include <vector>
+#include <string>
 using namespace std;
 
 #define PID_NIT 0x10

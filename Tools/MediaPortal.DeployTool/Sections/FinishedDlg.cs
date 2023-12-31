@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ namespace MediaPortal.DeployTool.Sections
       {
         labelHeading2.Text = Localizer.GetBestTranslation("Finished_labelHeading2_download");
         labelHeading3.Text = Localizer.GetBestTranslation("Finished_labelHeading3_download");
-        labelHeading3.Location = new Point(labelHeading3.Location.X, 79);
+        // labelHeading3.Location = new Point(labelHeading3.Location.X, 79);
       }
       else
       {
@@ -71,28 +71,19 @@ namespace MediaPortal.DeployTool.Sections
 
     #region Hyperlink handler
 
-    private static void OpenURL(string url)
-    {
-      try
-      {
-        System.Diagnostics.Process.Start(url);
-      }
-      catch (System.Exception) {}
-    }
-
     private void linkHomepage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("http://www.team-mediaportal.com");
+      Utils.OpenURL("https://www.team-mediaportal.com");
     }
 
     private void linkForum_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("http://forum.team-mediaportal.com");
+      Utils.OpenURL("https://forum.team-mediaportal.com");
     }
 
     private void linkWiki_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("http://wiki.team-mediaportal.com/TeamMediaPortal/MP1QuickSetupGuide/");
+      Utils.OpenURL("https://www.team-mediaportal.com/wiki/display/MediaPortal1/Quick+Setup");
     }
 
     #endregion

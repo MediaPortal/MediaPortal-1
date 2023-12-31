@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,15 +20,16 @@
 
 using System;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
+
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using System.Diagnostics;
-using System.Threading;
 
 namespace MpeCore.Classes
 {
@@ -36,7 +37,7 @@ namespace MpeCore.Classes
   {
     public static string InstallerConfigDir
     {
-      get { return Config.GetSubFolder(Config.Dir.Config, "Installer"); }
+      get { return Config.GetSubFolder(Config.Dir.Config, "Installer" + (IntPtr.Size == 8 ? " (x64)" : string.Empty)); }
     }
 
     public static void LoadPlugins(string pluginFile)

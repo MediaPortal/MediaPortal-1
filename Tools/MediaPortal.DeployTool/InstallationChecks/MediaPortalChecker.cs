@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,12 +19,12 @@
 #endregion
 
 using System;
-using MediaPortal.DeployTool.Sections;
 using System.Xml;
-using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
+
+using MediaPortal.DeployTool.Sections;
 
 namespace MediaPortal.DeployTool.InstallationChecks
 {
@@ -37,6 +37,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public string GetDisplayName()
     {
       return "MediaPortal " + Utils.GetDisplayVersion();
+    }
+
+    public string GetIconName()
+    {
+      return prg;
     }
 
     public bool Download()
@@ -61,7 +66,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         {
           File.Delete(deployXml);
         }
-        catch (Exception ex)
+        catch
         {
           var result = MessageBox.Show(Localizer.GetBestTranslation("MainWindow_AppName"),
                                        Localizer.GetBestTranslation("DeployXmlDelete_Failed"),
@@ -97,7 +102,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
 
       // Remove PowerScheduler++ information from installed extensions
-      string InstalledMpesPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Team MediaPortal\MediaPortal\Installer\V2\InstalledExtensions.xml";
+      string InstalledMpesPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
+                                                           @"\Team MediaPortal\MediaPortal\Installer\V2\InstalledExtensions.xml";
       XmlDocument doc = new XmlDocument();
       try
       {
@@ -118,31 +124,29 @@ namespace MediaPortal.DeployTool.InstallationChecks
           }
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) { }
 
       string targetDir = InstallationProperties.Instance["MPDir"];
 
-      //NSIS installer need to know if it's a fresh install or an update (chefkoch)
+      // NSIS installer need to know if it's a fresh install or an update (chefkoch)
       string updateMode = InstallationProperties.Instance["UpdateMode"] == "yes" ? "/UpdateMode" : string.Empty;
 
-      Process setup = null;
-
+      Process setup;
       if (UpgradeDlg.reInstallForce)
       {
         setup = Process.Start(_fileName, String.Format("/S"));
       }
       else if (UpgradeDlg.freshForce)
       {
-      //NSIS installer doesn't want " in parameters (chefkoch)
-      //Remember that /D must be the last one         (chefkoch)
+        // NSIS installer doesn't want " in parameters (chefkoch)
+        // Remember that /D must be the last one         (chefkoch)
         setup = Process.Start(_fileName, String.Format("/S /DeployMode --DeployMode {0} /D={1}", updateMode, targetDir));
       }
       else
       {
         setup = Process.Start(_fileName, String.Format("/S"));
       }
+
       if (setup != null)
       {
         setup.WaitForExit();
@@ -153,7 +157,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
             Utils.NotifyReboot(GetDisplayName());
           }
 
-          // installer backups existing folder so need to write deploy.xml after installation 
+          // Installer backups existing folder so need to write deploy.xml after installation 
           // else it will get backed up
           if (InstallationProperties.Instance["UpdateMode"] != "yes")
           {
@@ -177,9 +181,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
 
       string[] UninstKeys = {
-                              "MediaPortal", // 1.x
-                              "MediaPortal 0.2.3.0"
-                            }; // 0.2.3.0
+                              "MediaPortal" + (Utils.Is64bit() ? " (x64)" : string.Empty), // 1.x - x86/x64
+                              "MediaPortal 0.2.3.0"                                        // 0.2.3.0
+                            };
 
       foreach (string UnistKey in UninstKeys)
       {
@@ -210,8 +214,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
       result.state = CheckState.NOT_INSTALLED;
 
       string[] UninstKeys = {
-                              "MediaPortal",        // 1.x
-                              "MediaPortal 0.2.3.0" // 0.2.3.0
+                              "MediaPortal" + (Utils.Is64bit() ? " (x64)" : string.Empty), // 1.x - x86/x64
+                              "MediaPortal 0.2.3.0"                                        // 0.2.3.0
                             };
 
       foreach (string UnistKey in UninstKeys)

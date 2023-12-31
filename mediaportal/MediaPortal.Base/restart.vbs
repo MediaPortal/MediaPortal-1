@@ -16,7 +16,7 @@ Function IsProcessRunning( strProcess )
 End Function
 
 
-Dim   Shell, Shell2, objFolder, objFolderItem, logpath, logold, lognew, syspath, FileSys, LogFile, TmpFile, strEcho, prockill, result, process
+Dim   Shell, Shell2, objFolder, objFolderItem, logpath, logname, logold, lognew, syspath, FileSys, LogFile, TmpFile, strEcho, prockill, result, process
 
 ' Values taken from http://msdn.microsoft.com/en-us/library/bb774096(VS.85).aspx
 Const ssfCOMMONAPPDATA = 35
@@ -28,36 +28,42 @@ Set Shell         = CreateObject("WScript.Shell")
 Set Shell2        = CreateObject("Shell.Application")
 Set objFolder     = Shell2.Namespace(ssfCOMMONAPPDATA)
 Set objFolderItem = objFolder.Self
+Set FileSys       = CreateObject("Scripting.FileSystemObject")
 
-logpath           = objFolderItem.Path & "\Team MediaPortal\MediaPortal\log\"
-lognew            = logpath + "\" + Wscript.ScriptName + ".log"
-logold            = logpath + "\" + Wscript.ScriptName + ".bak"
+logpath           = FileSys.BuildPath(objFolderItem.Path, "Team MediaPortal\MediaPortal\log")
+logname           = FileSys.GetBaseName(Wscript.ScriptName)
+lognew            = FileSys.BuildPath(logpath, logname + ".log")
+logold            = FileSys.BuildPath(logpath, logname + ".bak")
 
 Set objFolder     = Shell2.Namespace(ssfSYSTEM)
 Set objFolderItem = objFolder.Self
 
 syspath           = objFolderItem.Path
 
-Set FileSys = CreateObject("Scripting.FileSystemObject")
 If FileSys.FileExists(lognew) Then
-	Set TmpFile = FileSys.GetFile(lognew)
+  Set TmpFile = FileSys.GetFile(lognew)
   TmpFile.Copy(logold)
 End If
 
 ' Clean up for all log files to avoid confusion
-If FileSys.FileExists(logpath + "\restart.log") Then
-	Set TmpFile = FileSys.GetFile(logpath + "\restart.log")
+If FileSys.FileExists(lognew) Then
+  Set TmpFile = FileSys.GetFile(lognew)
   TmpFile.Delete
 End If
 
-Set LogFile = FileSys.CreateTextFile(lognew,1)
+If not FileSys.FolderExists(logpath) Then
+  FileSys.CreateFolder logpath
+End If
+
+Set LogFile = FileSys.CreateTextFile(lognew, True)
 
 strEcho = Date() & "-" & Time() & ": Starting """ & Wscript.ScriptName & """ with """ & Wscript.FullName & """ (v. " & Wscript.Version & ")"
 LogFile.writeline strEcho
 
 strEcho = Date() & "-" & Time() & ": Looking for ""tskill.exe"" in """ & syspath & """"
 LogFile.writeline strEcho
-If FileSys.FileExists(syspath + "\tskill.exe") Then
+
+If FileSys.FileExists(FileSys.BuildPath(syspath, "tskill.exe")) Then
 
   strEcho = Date() & "-" & Time() & ": Kill utility will be ""tskill"""
   LogFile.writeline strEcho
@@ -82,7 +88,7 @@ LogFile.writeline strEcho
 
 ' Check for MediaPortal still running
 do
-	WScript.Sleep(100)
+  WScript.Sleep(100)
 loop while IsProcessRunning ( process & ".exe" ) 
 
 strEcho = Date() & "-" & Time() & ": Executing """ & process & """"

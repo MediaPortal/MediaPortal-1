@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,15 +21,15 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using MediaPortal.Services;
 using MediaPortal.Util;
-using MediaPortal.Profile;
-using System.Runtime.InteropServices;
-using System.Net;
 
 namespace MediaPortal.Configuration
 {
@@ -65,16 +65,18 @@ namespace MediaPortal.Configuration
       Log.SetConfigurationMode();
       Log.BackupLogFile(LogType.Config);
 
+      // Log MediaPortal Configuration version build and operating system level
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-
+      string architecture = (IntPtr.Size == 8) ? "x64" : "x86";
       try
       {
-        Log.Info("Main: Configuration v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
+        Log.Info("Main: Configuration " + architecture + " v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
       }
       catch
       {
-        Log.Info("Main: Configuration v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
+        Log.Info("Main: Configuration " + architecture + " v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
       }
+
       //Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
       Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());
 #if DEBUG
@@ -252,10 +254,14 @@ namespace MediaPortal.Configuration
             break;
         }
 
+
+
         if (applicationForm != null)
         {
+          MediaPortal.GUI.Library.GUIGraphicsContext.Direct3DLoad();
           Log.Info("start application");
           Application.Run(applicationForm);
+          MediaPortal.GUI.Library.GUIGraphicsContext.Direct3DUnload();
         }
       }
     }

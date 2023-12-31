@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -72,6 +72,11 @@ namespace MpeMaker.Dialogs
                            {Tag = MpeStartupResult.SkinWizard});
 
       listView.Items[0].Selected = true;
+
+      if (IntPtr.Size == 8)
+      {
+        this.Text += " | x64";
+      }
     }
 
     public NewFileSelector(ICollection<string> mruFiles)

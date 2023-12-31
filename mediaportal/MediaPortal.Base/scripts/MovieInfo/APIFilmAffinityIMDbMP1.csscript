@@ -237,7 +237,7 @@ internal class IMDb
     {
         Functions f = new Functions();
         int nMaxIDMDb = 8;//recupera sólo los nMaxIDMDb primeros, posteriormente distinctMatches extrae los distintos; es una forma de optimizar la búsqueda
-        var distinctMatches = f.matchAll(@"/(tt\d{7})/", html, 1, nMaxIDMDb).OfType<System.String>().Select(x => x).Distinct();//sólo busca @"/(tt\d{7})/ quito wIMDbtitle a ver que tal, por problema con Matrix reloaded
+        var distinctMatches = f.matchAll(@"/(tt\d{7,8})/", html, 1, nMaxIDMDb).OfType<System.String>().Select(x => x).Distinct();//sólo busca @"/(tt\d{7,8})/ quito wIMDbtitle a ver que tal, por problema con Matrix reloaded
         List<string> imdbUrls = new List<string>();
         foreach (string item in distinctMatches)
             imdbUrls.Add(item);
@@ -263,7 +263,7 @@ internal class IMDb
         if (!imdbUrlPage.StartsWith("file:"))
             imdbUrlPage = imdbUrlPage + "combined";
         html = f.getDataWebR(imdbUrlPage);
-        Id = f.match(@"<link rel=""canonical"" href=""" + wIMDbtitle + @"(tt\d{7})/combined"" />", html);
+        Id = f.match(@"<link rel=""canonical"" href=""" + wIMDbtitle + @"(tt\d{7,8})/combined"" />", html);
         if (!string.IsNullOrEmpty(Id))
         {
             status = true;
@@ -331,7 +331,7 @@ internal class IMDb
         ArrayList alTemp = new ArrayList();
         foreach (string rowCast in alCast)
         {
-            string sLink = f.match(@"/name/(nm\d{7})/", rowCast);
+            string sLink = f.match(@"/name/(nm\d{7,8})/", rowCast);
             string sImg = string.Empty;
             string sImgJPG = f.match(@"<img src=""(.*?)""", rowCast);
             string sName = f.match(@"<td class=""nm""><a.*?href=""/name/.*?/"".*?>(.*?)</a>", rowCast);
@@ -441,7 +441,7 @@ public class Functions
 
     public string idFromUrlIMDb(string urlIMDb)
     {
-        return match(wIMDbTitle + @"(tt\d{7})/", urlIMDb);
+        return match(wIMDbTitle + @"(tt\d{7,8})/", urlIMDb);
     }
 
 

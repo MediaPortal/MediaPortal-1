@@ -251,7 +251,7 @@
     <value>Инсталација</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;без акције&gt;</value>
+    <value>Без акције</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Де-инсталирај претходно-&gt;Преузими-&gt;Инсталирај</value>

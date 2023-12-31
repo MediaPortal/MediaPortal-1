@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+  
+    <!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::HOLIDAY BACKGROUND IMAGE:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-->	
+  
+    <control Style="HomeBasicFanart">
+      <description>FANART IMAGE 1</description>
+      <id>0</id>
+      <type>image</type>
+      <texture>#fanarthandler.holiday.backdrop1</texture>
+      <visible>control.isvisible(91919285)+control.isvisible(91919284)</visible>
+    </control>
+
+    <control Style="HomeBasicFanart">
+      <description>FANART IMAGE 2</description>
+      <id>0</id>
+      <type>image</type>
+      <texture>#fanarthandler.holiday.backdrop2</texture>
+      <visible>control.isvisible(91919286)+control.isvisible(91919284)</visible>
+    </control>
+  
+  </controls>
+</window>
+
+

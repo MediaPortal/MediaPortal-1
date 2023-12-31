@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -31,7 +31,9 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
+
 using CSScriptLibrary;
+
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
@@ -218,30 +220,32 @@ namespace MediaPortal.Configuration.Sections
         Log.Info("PictureDatabase: Beginning picture database reorganization and thumbnail generation...");
 
         // treat each picture file one by one
+        int iScanned = 0;
         foreach (string file in availableFiles)
         {
+          iScanned++; 
           Log.Info("Scanning file: {0}", file);
           // create thumb if not created and add file to db if not already there
           CreateThumbsAndAddPictureToDB(file);
+          if (iScanned % 50 == 0)
+          {
+            SetStatus(String.Format("Picture thumbnail generation and database additions, processed {0}/{1}...", iScanned, availableFiles.Count));
+          }
         }
         benchclockfile.Stop();
-        if (noLargeThumbnails)
-        {
-          Log.Debug("Pictures Configuration : Creation of selected thumb for '{0}' files, took {1} seconds",
-                    availableFiles.Count,
-                    benchclockfile.Elapsed.TotalSeconds);
-        }
-        else
-        {
-          Log.Debug("Pictures Configuration : Creation of selected thumb for '{0}' files, took {1} seconds",
-                    availableFiles.Count * 2,
-                    benchclockfile.Elapsed.TotalSeconds);
-        }
-
-        Log.Info("PictureDatabase: Database reorganization and thumbnail generation finished");
+        TimeSpan t = TimeSpan.FromSeconds(benchclockfile.Elapsed.TotalSeconds);
+        string totalTime = string.Format("{0:D2}h {1:D2}m {2:D2}s {3:D3}ms",
+                                      t.Hours,
+                                      t.Minutes,
+                                      t.Seconds,
+                                      t.Milliseconds);
+        Log.Debug("Pictures Configuration : Creation of selected thumb for {0} files, took {1}. Generated {2} thumbnails.",
+                  availableFiles.Count,
+                  totalTime,
+                  totalFiles);
+        Log.Info("PictureDatabase: Database reorganization and thumbnail generation finished.");
 
         SetStatus(String.Format("Finished. {0} files processsed", totalFiles));
-
       }
       catch (Exception)
       {
@@ -250,6 +254,11 @@ namespace MediaPortal.Configuration.Sections
 
     private void CreateThumbsAndAddPictureToDB(string file)
     {
+      if (file.ToLowerInvariant().Contains(@"folder.jpg"))
+      {
+        return;
+      }
+
       int iRotate = PictureDatabase.GetRotation(file);
       if (iRotate == -1)
       {
@@ -288,7 +297,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private bool ClearDatabase()
     {
-      string database = Config.GetFile(Config.Dir.Database, "PictureDatabase.db3");
+      string database = Config.GetFile(Config.Dir.Database, PictureDatabase.DatabaseName);
       if (File.Exists(database))
       {
         PictureDatabase.Dispose();
@@ -367,6 +376,11 @@ namespace MediaPortal.Configuration.Sections
             }
             if (!item.IsFolder)
             {
+              if (item.Path.ToLowerInvariant().Contains(@"folder.jpg"))
+              {
+                continue;
+              }
+
               int iRotate = PictureDatabase.GetRotation(item.Path);
               if (iRotate == -1)
               {

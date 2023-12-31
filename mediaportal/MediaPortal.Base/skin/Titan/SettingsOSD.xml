@@ -28,7 +28,7 @@
 		<posX>444</posX>
 		<posY>87</posY>
 		<label>5</label>
-		<font>font16</font>
+		<font>fontB16</font>
 		<align>right</align>
 		<textcolor>ffffffff</textcolor>
 	</control>

@@ -53,6 +53,8 @@
       // btn_next
       // 
       this.btn_next.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btn_next.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.btn_next.ForeColor = System.Drawing.SystemColors.Control;
       this.btn_next.Location = new System.Drawing.Point(609, 392);
       this.btn_next.Name = "btn_next";
       this.btn_next.Size = new System.Drawing.Size(75, 23);
@@ -64,6 +66,8 @@
       // btn_prev
       // 
       this.btn_prev.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.btn_prev.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.btn_prev.ForeColor = System.Drawing.SystemColors.Control;
       this.btn_prev.Location = new System.Drawing.Point(11, 392);
       this.btn_prev.Name = "btn_prev";
       this.btn_prev.Size = new System.Drawing.Size(75, 23);
@@ -103,6 +107,7 @@
       this.Controls.Add(this.btn_next);
       this.Controls.Add(this.pictureBox);
       this.Controls.Add(this.lblIndex);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
       this.MinimizeBox = false;
       this.Name = "ScreenShotNavigator";
       this.Text = "ScreenShotNavigator";

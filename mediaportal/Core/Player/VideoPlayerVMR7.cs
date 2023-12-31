@@ -1828,6 +1828,35 @@ namespace MediaPortal.Player
         return Strings.Unknown;
       }
 
+      //MPC-HC 2.0.0
+      //"[Local] 4-3 bar test.English-Forced.srt\tEnglish"
+      Regex regexMPCHC = new Regex(@"^\[([^\]]+)\]\s(?<file>[^\t]+)(\t(?<lng>.+))?");
+      Match match = regexMPCHC.Match(streamName);
+      if (match.Success)
+      {
+        //  Group grLng = match.Groups["lng"];
+        //  if (grLng.Success)
+        //    return grLng.Value;
+        //
+        //  string strVideNoExt = Path.GetFileNameWithoutExtension(this.m_strCurrentFile);
+        //  string strSubNoExt = Path.GetFileNameWithoutExtension(match.Groups["file"].Value);
+        //  if (strVideNoExt.Equals(strSubNoExt, StringComparison.CurrentCultureIgnoreCase))
+        //    return "Undetermined";
+
+        string strVideNoExt = Path.GetFileNameWithoutExtension(this.m_strCurrentFile);
+        string strSubNoExt = Path.GetFileNameWithoutExtension(match.Groups["file"].Value);
+        if (strSubNoExt.Length > strVideNoExt.Length)
+          streamName = strSubNoExt.Substring(strVideNoExt.Length + 1);
+        else
+          streamName = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(streamName))
+          streamName = strVideNoExt;
+
+        langName = streamName;
+        streamNameUND = streamName;
+      }
+
       // remove prefix, which is added by Haali Media Splitter
       streamName = Regex.Replace(streamName, @"^S: ", "");
       // Check if returned string contains both language and trackname info
@@ -1904,6 +1933,24 @@ namespace MediaPortal.Player
       {
         return Strings.Unknown;
       }
+
+      //MPC-HC 2.0.0
+      //"[Local] 4-3 bar test.English-Forced.srt\tEnglish"
+      Regex regexMPCHC = new Regex(@"^\[([^\]]+)\]\s(?<file>[^\t]+)(\t(?<lng>.+))?");
+      Match match = regexMPCHC.Match(streamName);
+      if (match.Success)
+      {
+        string strVideNoExt = Path.GetFileNameWithoutExtension(this.m_strCurrentFile);
+        string strSubNoExt = Path.GetFileNameWithoutExtension(match.Groups["file"].Value);
+        if (strSubNoExt.Length > strVideNoExt.Length)
+          streamName = strSubNoExt.Substring(strVideNoExt.Length + 1);
+        else
+          streamName = string.Empty;
+
+        streamNameFalse = streamName;
+        langName = streamName;
+      }
+
       // remove prefix, which is added by Haali Media Splitter
       streamName = Regex.Replace(streamName, @"^S: ", "");
 
@@ -2167,7 +2214,9 @@ namespace MediaPortal.Player
                     case StreamType.Subtitle_file:
                     case StreamType.Subtitle_hidden:
                     case StreamType.Subtitle_shown:
-                      if (streamLAVSelection && FSInfos.Filter.ToLowerInvariant().Contains("LAV Splitter".ToLowerInvariant()))
+                      if (streamLAVSelection &&
+                          (FSInfos.Filter.ToLowerInvariant().Contains("LAV Splitter".ToLowerInvariant()) ||
+                           FSInfos.Filter.ToUpperInvariant().Contains(@"\BDMV\INDEX.BDMV")))
                       {
                         if (FSInfos.sFlag == AMStreamSelectInfoFlags.Enabled ||
                             FSInfos.sFlag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))

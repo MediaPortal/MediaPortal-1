@@ -138,7 +138,7 @@ namespace MediaPortal.Util
       }
       finally
       {
-        if (findHandle.ToInt32() > 0) FindClose(findHandle);
+        if (findHandle.ToInt64() > 0) FindClose(findHandle);
       }
       return fi.ToArray();
     }
@@ -205,7 +205,7 @@ namespace MediaPortal.Util
       }
       finally
       {
-        if (findHandle.ToInt32() > 0) FindClose(findHandle);
+        if (findHandle.ToInt64() > 0) FindClose(findHandle);
       }
       return fi.ToArray();
     }

@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,8 +18,8 @@
 
 #endregion
 
-using System;
 using System.Windows.Forms;
+
 using MediaPortal.DeployTool.InstallationChecks;
 
 namespace MediaPortal.DeployTool.Sections
@@ -32,7 +32,7 @@ namespace MediaPortal.DeployTool.Sections
       InitializeComponent();
       ExtensionInstalledCheck();
       type = DialogType.ExtensionChoice;
-      labelSectionHeader.Text = "";
+      labelSectionHeader.Text = string.Empty;
 
       UpdateUI();
     }
@@ -41,10 +41,14 @@ namespace MediaPortal.DeployTool.Sections
 
     public override void UpdateUI()
     {
-      lblLAV.Text = Localizer.GetBestTranslation("ExtensionChoice_LAV");
       linkExtensions.Text = Localizer.GetBestTranslation("ExtensionChoice_OtherExtensions");
-      linkLAV.Text = Localizer.GetBestTranslation("ExtensionChoice_MoreInfo");
       lblRecommended.Text = Localizer.GetBestTranslation("ExtensionChoice_Title");
+
+      lblLAV.Text = Localizer.GetBestTranslation("ExtensionChoice_LAV");
+      linkLAV.Text = Localizer.GetBestTranslation("ExtensionChoice_MoreInfo");
+
+      lblTitan.Text = Localizer.GetBestTranslation("ExtensionChoice_Titan");
+      linkTitan.Text = Localizer.GetBestTranslation("ExtensionChoice_MoreInfo");
     }
 
     public void ExtensionInstalledCheck()
@@ -54,6 +58,14 @@ namespace MediaPortal.DeployTool.Sections
       if (result.state == CheckState.INSTALLED)
       {
         this.chkLAV.Checked = false;
+      }
+
+      this.chkTitan.Checked = InstallationProperties.Instance["ChosenSkin"] == "Titan";
+      package = new TitanExtensionInstall();
+      result = package.CheckStatus();
+      if (result.state == CheckState.INSTALLED)
+      {
+        this.chkTitan.Checked = false;
       }
     }
 
@@ -70,34 +82,26 @@ namespace MediaPortal.DeployTool.Sections
     public override void SetProperties()
     {
       InstallationProperties.Instance.Set("ConfigureMediaPortalLAV", chkLAV.Checked ? "1" : "0");
+      InstallationProperties.Instance.Set("ConfigureMediaPortalTitanExtended", chkTitan.Checked ? "1" : "0");
     }
 
     #endregion
 
     #region Hyperlink handler
 
-    private static void OpenURL(string url)
+    private void linkExtensions_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      try
-      {
-        System.Diagnostics.Process.Start(url);
-      }
-      catch (System.Exception) { }
-    }
-
-    private void linkExtensions_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
-    {
-      OpenURL("http://www.team-mediaportal.com/extensions");
+      Utils.OpenURL("https://www.team-mediaportal.com/extensions");
     }
 
     private void linkLAV_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/17_Extensions/3_Plugins/LAV_Filters");
+      Utils.OpenURL("https://www.team-mediaportal.com/wiki/display/MediaPortal1/LAV-Filters");
     }
 
     private void linkTitan_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      OpenURL("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/17_Extensions/4_Skins/Titan_Extended");
+      Utils.OpenURL("https://www.team-mediaportal.com/wiki/display/MediaPortal1/Titan+Extended");
     }
 
     #endregion

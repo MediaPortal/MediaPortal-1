@@ -1,3 +1,23 @@
+#region Copyright (C) 2005-2023 Team MediaPortal
+
+// Copyright (C) 2005-2023 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 namespace MediaPortal.DeployTool.Sections
 {
   partial class InstallDlg
@@ -28,88 +48,45 @@ namespace MediaPortal.DeployTool.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InstallDlg));
-      this.labelHeading = new System.Windows.Forms.Label();
-      this.listView = new System.Windows.Forms.ListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.iconsList = new System.Windows.Forms.ImageList(this.components);
+      this.flpApplication = new System.Windows.Forms.FlowLayoutPanel();
+      this.progressInstall = new System.Windows.Forms.ProgressBar();
       this.SuspendLayout();
       // 
-      // labelHeading
+      // flpApplication
       // 
-      this.labelHeading.AutoSize = true;
-      this.labelHeading.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelHeading.ForeColor = System.Drawing.Color.White;
-      this.labelHeading.Location = new System.Drawing.Point(30, 25);
-      this.labelHeading.Name = "labelHeading";
-      this.labelHeading.Size = new System.Drawing.Size(452, 13);
-      this.labelHeading.TabIndex = 11;
-      this.labelHeading.Text = "Press the \"install\" button to perform all necessary actions to install your setup" +
-          "";
+      this.flpApplication.Location = new System.Drawing.Point(10, 13);
+      this.flpApplication.Name = "flpApplication";
+      this.flpApplication.Size = new System.Drawing.Size(980, 405);
+      this.flpApplication.TabIndex = 1;
       // 
-      // listView
+      // progressInstall
       // 
-      this.listView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3});
-      this.listView.Location = new System.Drawing.Point(22, 43);
-      this.listView.Name = "listView";
-      this.listView.Size = new System.Drawing.Size(622, 193);
-      this.listView.TabIndex = 15;
-      this.listView.UseCompatibleStateImageBehavior = false;
-      this.listView.View = System.Windows.Forms.View.Details;
-      // 
-      // columnHeader1
-      // 
-      this.columnHeader1.Text = "Component";
-      // 
-      // columnHeader2
-      // 
-      this.columnHeader2.Text = "Status";
-      // 
-      // columnHeader3
-      // 
-      this.columnHeader3.Text = "Action";
-      // 
-      // iconsList
-      // 
-      this.iconsList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("iconsList.ImageStream")));
-      this.iconsList.TransparentColor = System.Drawing.Color.Transparent;
-      this.iconsList.Images.SetKeyName(0, "0_nothing_to_do.gif");
-      this.iconsList.Images.SetKeyName(1, "1_install_needed.ico");
-      this.iconsList.Images.SetKeyName(2, "2_version_mismatch.ico");
+      this.progressInstall.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(84)))), ((int)(((byte)(140)))), ((int)(((byte)(184)))));
+      this.progressInstall.Location = new System.Drawing.Point(1, 422);
+      this.progressInstall.Name = "progressInstall";
+      this.progressInstall.Size = new System.Drawing.Size(998, 5);
+      this.progressInstall.TabIndex = 0;
+      this.progressInstall.Visible = false;
       // 
       // InstallDlg
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
-      this.Controls.Add(this.listView);
-      this.Controls.Add(this.labelHeading);
+      this.Controls.Add(this.progressInstall);
+      this.Controls.Add(this.flpApplication);
       this.Name = "InstallDlg";
-      this.Size = new System.Drawing.Size(666, 250);
+      this.Size = new System.Drawing.Size(1002, 430);
       this.ParentChanged += new System.EventHandler(this.RequirementsDlg_ParentChanged);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
-      this.Controls.SetChildIndex(this.labelHeading, 0);
-      this.Controls.SetChildIndex(this.listView, 0);
+      this.Controls.SetChildIndex(this.flpApplication, 0);
+      this.Controls.SetChildIndex(this.progressInstall, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
 
     }
 
     #endregion
-
-    private System.Windows.Forms.Label labelHeading;
-    private System.Windows.Forms.ListView listView;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
-    private System.Windows.Forms.ColumnHeader columnHeader2;
-    private System.Windows.Forms.ColumnHeader columnHeader3;
-    private System.Windows.Forms.ImageList iconsList;
+    private System.Windows.Forms.FlowLayoutPanel flpApplication;
+    private System.Windows.Forms.ProgressBar progressInstall;
   }
 }

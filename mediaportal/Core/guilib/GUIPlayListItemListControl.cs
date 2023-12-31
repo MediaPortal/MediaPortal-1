@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -483,7 +483,9 @@ namespace MediaPortal.GUI.Library
               }
 
               GUIGraphicsContext.OnAction(newAction);
-              Console.WriteLine("\t**action modified:{0}", newAction.wID);
+#if DEBUG
+              Console.WriteLine("\t*** action modified:{0}", newAction.wID);
+#endif
               return;
             }
             break;
@@ -499,15 +501,19 @@ namespace MediaPortal.GUI.Library
 
       if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECT)
       {
+#if DEBUG
         if (_currentSelection == Selection.PageUpDown)
         {
-          Console.WriteLine("currentSelection == Selection.PageUpDown");
+          Console.WriteLine("\t*** currentSelection == Selection.PageUpDown");
         }
+#endif
       }
 
       if (message.Message == GUIMessage.MessageType.GUI_MSG_SETFOCUS)
       {
-        Console.WriteLine("GUI_MSG_SETFOCUS");
+#if DEBUG
+        Console.WriteLine("\t*** GUI_MSG_SETFOCUS");
+#endif
         SetItemButtonState(GUIPlayListButtonControl.ActiveButton.Main);
       }
 
@@ -553,8 +559,6 @@ namespace MediaPortal.GUI.Library
 
     public override void Render(float timePassed)
     {
-      _timeElapsed += timePassed;
-
       // If there is no font do not render.
       if (null == _font)
       {
@@ -604,6 +608,8 @@ namespace MediaPortal.GUI.Library
 
           // render the text
           RenderLabel(timePassed, i, dwPosX, dwPosY, gotFocus);
+
+          // render pin icon
           RenderPinIcon(timePassed, i, _positionX, dwPosY, gotFocus);
 
           dwPosY += _itemHeight + _spaceBetweenItems;
@@ -647,260 +653,225 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
+      // Get Item for rendering
       GUIListItem pItem = _listItems[buttonNr + _offset];
-      long dwColor;
 
-      dwPosX += _textOffsetX;
+      // Selected 
       bool bSelected = buttonNr == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST;
 
-      GUIPlayListButtonControl btn = (GUIPlayListButtonControl)_listButtons[buttonNr];
-      int dMaxWidth = (_width - _imageWidth - PinIconOffsetX - GUIGraphicsContext.ScaleHorizontal(8));
+      // Apply horizontal text offset to position
+      dwPosX += _textOffsetX;
 
+      // Calculate Label width
+      int dMaxWidth = (_width - _imageWidth - PinIconOffsetX - GUIGraphicsContext.ScaleHorizontal(8));
+      GUIPlayListButtonControl btn = (GUIPlayListButtonControl)_listButtons[buttonNr];
       if (btn != null)
       {
         dMaxWidth = (_upBtnXOffset - _imageWidth - PinIconOffsetX - GUIGraphicsContext.ScaleHorizontal(8));
       }
 
-      if (_text2Visible && pItem.Label2.Length > 0)
+      if (_text2Visible && !string.IsNullOrEmpty(pItem.Label2))
       {
         if (_textOffsetY == _textOffsetY2)
         {
-          dwColor = _textColor2;
-          if (pItem.Selected)
+          if (_labelControls2 != null && buttonNr >= 0 && buttonNr < _labelControls2.Count)
           {
-            dwColor = _selectedColor2;
-          }
-          if (pItem.IsRemote)
-          {
-            dwColor = _remoteColor;
-            if (pItem.IsDownloading)
+            GUILabelControl label2 = _labelControls2[buttonNr];
+            if (label2 != null)
             {
-              dwColor = _downloadColor;
-            }
-          }
+              int xpos;
+              int ypos = dwPosY;
 
-          if (pItem.IsBdDvdFolder)
-          {
-            dwColor = _bdDvdDirectoryColor;
-          }
-
-          int xpos;
-          int ypos = dwPosY;
-
-          if (0 == _textOffsetX2)
-          {
-            xpos = _positionX + _upBtnXOffset - GUIGraphicsContext.ScaleHorizontal(8);
-          }
-          else
-          {
-            xpos = _positionX + _textOffsetX2;
-          }
-
-          if (_labelControls2 != null)
-          {
-            if (buttonNr >= 0 && buttonNr < _labelControls2.Count)
-            {
-              GUILabelControl label2 = _labelControls2[buttonNr];
-              if (label2 != null)
+              // Apply horizontal text offset to position
+              if (0 == _textOffsetX2)
               {
-                label2.SetPosition(xpos, ypos + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
-                label2.TextColor = gotFocus ? dwColor : Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-                label2.Label = pItem.Label2;
-                label2.TextAlignment = Alignment.ALIGN_RIGHT;
-                label2.FontName = _fontName2Name;
-                dMaxWidth = label2._positionX - dwPosX - label2.TextWidth - GUIGraphicsContext.ScaleHorizontal(20);
+                xpos = _positionX + _upBtnXOffset - GUIGraphicsContext.ScaleHorizontal(8);
               }
+              else
+              {
+                xpos = _positionX + _textOffsetX2;
+              }
+
+              // Set position for rendering
+              label2.SetPosition(xpos, ypos + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
+
+              // Set text, alignment and font for rendering
+              label2.Label = pItem.Label2;
+              label2.FontName = _fontName2Name;
+
+              // Recalculate label width
+              dMaxWidth = label2._positionX - dwPosX - label2.TextWidth - GUIGraphicsContext.ScaleHorizontal(20);
             }
           }
         }
       }
 
-      if (_text1Visible)
+      // If there is a first label present process it
+      if (_text1Visible && !string.IsNullOrEmpty(pItem.Label))
       {
-        dwColor = _textColor;
-        if (pItem.Selected)
-        {
-          dwColor = _selectedColor;
-        }
+        // Set text color
+        long dwColor = GetColor(_textColor, _textColorNoFocus, _selectedColor, 
+                                pItem.Selected, pItem.IsPlayed, pItem.IsRemote, pItem.IsDownloading, pItem.IsBdDvdFolder, 
+                                gotFocus, Focus);
 
-        if (pItem.IsRemote)
-        {
-          dwColor = _remoteColor;
-          if (pItem.IsDownloading)
-          {
-            dwColor = _downloadColor;
-          }
-        }
-
-        if (pItem.IsBdDvdFolder)
-        {
-          dwColor = _bdDvdDirectoryColor;
-        }
-
-        if (!gotFocus)
-        {
-          dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-        }
-
+        // Apply padding to label width 
         int maxWidth = dMaxWidth;
         if (_textPadding > 0)
         {
           maxWidth -= GUIGraphicsContext.ScaleHorizontal(_textPadding);
         }
         
-        if (maxWidth <= 0)
+        // Render label if it still has a visible length
+        if (maxWidth > 0)
+        {
+          RenderText(timePassed, buttonNr, 
+                     dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, 
+                     maxWidth, dwColor, pItem.Label, bSelected);
+        }
+        else
         {
           base.Render(timePassed);
         }
-        else
-        {
-          RenderText(timePassed, buttonNr, dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, maxWidth, dwColor, pItem.Label, bSelected);
-        }
       }
 
-      if (pItem.Label2.Length > 0)
+      // If there is a second label present process it
+      if (_text2Visible && !string.IsNullOrEmpty(pItem.Label2))
       {
-        dwColor = _textColor2;
-        if (pItem.Selected)
+        if (_labelControls2 != null && (buttonNr >= 0 && buttonNr < _labelControls2.Count))
         {
-          dwColor = _selectedColor2;
-        }
-
-        if (pItem.IsRemote)
-        {
-          dwColor = _remoteColor;
-          if (pItem.IsDownloading)
+          GUILabelControl label2 = _labelControls2[buttonNr];
+          if (label2 != null)
           {
-            dwColor = _downloadColor;
-          }
-        }
+            // Get text color
+            long dwColor = GetColor(_textColor2, _textColorNoFocus2, _selectedColor2,
+                                    pItem.Selected, pItem.IsPlayed, pItem.IsRemote, pItem.IsDownloading, pItem.IsBdDvdFolder,
+                                    gotFocus, Focus);
 
-        if (pItem.IsBdDvdFolder)
-        {
-          dwColor = _bdDvdDirectoryColor;
-        }
-
-        if (_textOffsetX2 == 0)
-        {
-          dwPosX = _positionX + _upBtnXOffset - GUIGraphicsContext.ScaleHorizontal(8);
-        }
-        else
-        {
-          dwPosX = _positionX + _textOffsetX2;
-        }
-
-        if (_text2Visible)
-        {
-          if (_labelControls2 != null && (buttonNr >= 0 && buttonNr < _labelControls2.Count))
-          {
-            GUILabelControl label2 = _labelControls2[buttonNr];
-            if (label2 != null)
+            // Apply horizontal text offset to position
+            if (_textOffsetX2 == 0)
             {
-              label2.SetPosition(dwPosX, dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
-              label2.TextColor = gotFocus
-                                   ? dwColor
-                                   : Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int) dwColor)).ToArgb();
-              label2.Label = pItem.Label2;
-              label2.TextAlignment = Alignment.ALIGN_RIGHT;
-              label2.FontName = _fontName2Name;
+              dwPosX = _positionX + _upBtnXOffset - GUIGraphicsContext.ScaleHorizontal(8);
+            }
+            else
+            {
+              dwPosX = _positionX + _textOffsetX2;
+            }
 
-              float width = label2.Width;
-              float height = label2.Height;
-              _font.GetTextExtent(label2.Label, ref width, ref height);
-              label2.Width = (int)width + 1;
-              label2.Height = (int)height;
+            // Set label text color
+            label2.TextColor = dwColor;
 
-              if (_textPadding2 > 0)
-              {
-                label2.Width -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
-              }
+            // Set label text for rendering
+            label2.Label = pItem.Label2;
 
-              if (label2.Width > 0)
-              {
-                label2.Render(timePassed);
-              }
+            // Set alignment, font for rendering
+            label2.TextAlignment = Alignment.ALIGN_RIGHT;
+            label2.FontName = _fontName2Name;
+
+            // Set width for rendering
+            label2.Width = label2.TextWidth + 1;
+            label2.Height = label2.TextHeight;
+
+            // Apply padding to label width
+            if (_textPadding2 > 0)
+            {
+              label2.Width -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
+            }
+
+            // Set position for rendering
+            // label2.SetPosition(dwPosX, dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
+
+            // Render label if it still has a visible length
+            if (label2.Width > 0)
+            {
+              // label2.Render(timePassed);
+              RenderText(timePassed, label2, 
+                         dwPosX, 
+                         dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2, 
+                         label2.Width,
+                         bSelected, false);            
+            }
+            else
+            {
+              base.Render(timePassed);
             }
           }
         }
       }
 
-      if (pItem.Label3.Length > 0)
+      // if there is a third label present process it
+      if (_text3Visible && (!string.IsNullOrEmpty(pItem.Label3) || !string.IsNullOrEmpty(_text3Content)))
       {
-        dwColor = _textColor3;
-        if (pItem.Selected)
+        if (_labelControls3 != null && buttonNr >= 0 && buttonNr < _labelControls3.Count)
         {
-          dwColor = _selectedColor3;
-        }
-
-        if (pItem.IsRemote)
-        {
-          dwColor = _remoteColor;
-          if (pItem.IsDownloading)
+          GUILabelControl label3 = _labelControls3[buttonNr];
+          if (label3 != null)
           {
-            dwColor = _downloadColor;
-          }
-        }
+            // Get text color
+            long dwColor = GetColor(_textColor3, _textColorNoFocus3, _selectedColor3,
+                                    pItem.Selected, pItem.IsPlayed, pItem.IsRemote, pItem.IsDownloading, pItem.IsBdDvdFolder,
+                                    gotFocus, Focus);
 
-        if (pItem.IsBdDvdFolder)
-        {
-          dwColor = _bdDvdDirectoryColor;
-        }
-
-        if (0 == _textOffsetX3)
-        {
-          dwPosX = _positionX + _textOffsetX;
-        }
-        else
-        {
-          dwPosX = _positionX + _textOffsetX3;
-        }
-
-        int ypos = dwPosY;
-
-        if (0 == _textOffsetY3)
-        {
-          ypos += _textOffsetY2;
-        }
-        else
-        {
-          ypos += _textOffsetY3;
-        }
-
-        if (_text3Visible)
-        {
-          if (_labelControls3 != null)
-          {
-            if (buttonNr >= 0 && buttonNr < _labelControls3.Count)
+            // Apply horizontal text offset to position
+            if (0 == _textOffsetX3)
             {
-              GUILabelControl label3 = _labelControls3[buttonNr];
-
-              if (label3 != null)
-              {
-                label3.SetPosition(dwPosX, ypos);
-
-                label3.TextColor = gotFocus ? dwColor : Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-                label3.Label = pItem.Label3;
-                label3.TextAlignment = Alignment.ALIGN_LEFT;
-                label3.FontName = _fontName2Name;
-
-                float width = label3.Width;
-                float height = label3.Height;
-                _font.GetTextExtent(label3.Label, ref width, ref height);
-                label3.Width = (int)width + 1;
-                label3.Height = (int)height;
-
-                if (_textPadding3 > 0)
-                {
-                  label3.Width -= GUIGraphicsContext.ScaleHorizontal(_textPadding3);
-                }
-
-                if (label3.Width > 0)
-                {
-                  label3.Render(timePassed);
-                }
-              }
+              dwPosX = _positionX + _textOffsetX;
             }
-          }
+            else
+            {
+              dwPosX = _positionX + _textOffsetX3;
+            }
+
+            // Apply vertical text offset to position
+            int ypos = dwPosY;
+            if (0 == _textOffsetY3)
+            {
+              ypos += _textOffsetY2;
+            }
+            else
+            {
+              ypos += _textOffsetY3;
+            }
+
+            // Set label text color
+            label3.TextColor = dwColor;
+
+            // Set label text for rendering
+            label3.Label = pItem.Label3;
+            if (!string.IsNullOrEmpty(_text3Content))
+            {
+              label3.Label = SetLabel(_text3Content, pItem);
+            }
+
+            // Set alignment, font for rendering
+            label3.TextAlignment = Alignment.ALIGN_LEFT;
+            label3.FontName = _fontName3Name;
+
+            // Set width for rendering
+            label3.Width = label3.TextWidth + 1;
+            label3.Height = label3.TextHeight;
+
+            // Adjust label width with padding
+            if (_textPadding3 > 0)
+            {
+              label3.Width -= GUIGraphicsContext.ScaleHorizontal(_textPadding3);
+            }
+
+            // Set position for rendering
+            // label3.SetPosition(dwPosX, ypos);
+
+            // Render label if it still has a visible length
+            if (label3.Width > 0)
+            {
+              // label3.Render(timePassed);
+              RenderText(timePassed, label3, 
+                         dwPosX, ypos, 
+                         label3.Width, bSelected, false);
+            }
+            else
+            {
+              base.Render(timePassed);
+            }
+         }
         }
       }
     }

@@ -1,4 +1,24 @@
-﻿namespace MediaPortal.DeployTool.Sections
+﻿#region Copyright (C) 2005-2023 Team MediaPortal
+
+// Copyright (C) 2005-2023 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
+namespace MediaPortal.DeployTool.Sections
 {
   partial class SkinChoice
   {
@@ -38,15 +58,21 @@
       this.btnExisting = new System.Windows.Forms.Button();
       this.btnAres = new System.Windows.Forms.Button();
       this.lblAres = new System.Windows.Forms.Label();
+      this.linkSkins = new System.Windows.Forms.LinkLabel();
+      this.lblExtendedDescription = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.pbSkin)).BeginInit();
       this.SuspendLayout();
+      // 
+      // labelSectionHeader
+      // 
+      this.labelSectionHeader.Location = new System.Drawing.Point(550, 4);
       // 
       // lblChooseSkin
       // 
       this.lblChooseSkin.AutoSize = true;
       this.lblChooseSkin.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold);
       this.lblChooseSkin.ForeColor = System.Drawing.Color.White;
-      this.lblChooseSkin.Location = new System.Drawing.Point(291, 43);
+      this.lblChooseSkin.Location = new System.Drawing.Point(545, 98);
       this.lblChooseSkin.Name = "lblChooseSkin";
       this.lblChooseSkin.Size = new System.Drawing.Size(108, 16);
       this.lblChooseSkin.TabIndex = 1;
@@ -60,7 +86,7 @@
       this.btnTitan.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.btnTitan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.btnTitan.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.btnTitan.Location = new System.Drawing.Point(290, 116);
+      this.btnTitan.Location = new System.Drawing.Point(554, 170);
       this.btnTitan.Name = "btnTitan";
       this.btnTitan.Size = new System.Drawing.Size(33, 23);
       this.btnTitan.TabIndex = 2;
@@ -75,7 +101,7 @@
       this.btnDefaultWide.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.btnDefaultWide.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.btnDefaultWide.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.btnDefaultWide.Location = new System.Drawing.Point(290, 149);
+      this.btnDefaultWide.Location = new System.Drawing.Point(554, 203);
       this.btnDefaultWide.Name = "btnDefaultWide";
       this.btnDefaultWide.Size = new System.Drawing.Size(33, 23);
       this.btnDefaultWide.TabIndex = 3;
@@ -86,7 +112,7 @@
       // 
       this.lblTitan.AutoSize = true;
       this.lblTitan.ForeColor = System.Drawing.Color.White;
-      this.lblTitan.Location = new System.Drawing.Point(329, 121);
+      this.lblTitan.Location = new System.Drawing.Point(593, 175);
       this.lblTitan.Name = "lblTitan";
       this.lblTitan.Size = new System.Drawing.Size(137, 13);
       this.lblTitan.TabIndex = 5;
@@ -96,7 +122,7 @@
       // 
       this.lblDefaultWide.AutoSize = true;
       this.lblDefaultWide.ForeColor = System.Drawing.Color.White;
-      this.lblDefaultWide.Location = new System.Drawing.Point(329, 154);
+      this.lblDefaultWide.Location = new System.Drawing.Point(593, 208);
       this.lblDefaultWide.Name = "lblDefaultWide";
       this.lblDefaultWide.Size = new System.Drawing.Size(147, 13);
       this.lblDefaultWide.TabIndex = 6;
@@ -105,9 +131,9 @@
       // pbSkin
       // 
       this.pbSkin.Image = global::MediaPortal.DeployTool.Images.preview_titan;
-      this.pbSkin.Location = new System.Drawing.Point(30, 75);
+      this.pbSkin.Location = new System.Drawing.Point(45, 59);
       this.pbSkin.Name = "pbSkin";
-      this.pbSkin.Size = new System.Drawing.Size(255, 144);
+      this.pbSkin.Size = new System.Drawing.Size(438, 313);
       this.pbSkin.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pbSkin.TabIndex = 8;
       this.pbSkin.TabStop = false;
@@ -116,7 +142,7 @@
       // 
       this.lblExisting.AutoSize = true;
       this.lblExisting.ForeColor = System.Drawing.Color.White;
-      this.lblExisting.Location = new System.Drawing.Point(329, 88);
+      this.lblExisting.Location = new System.Drawing.Point(593, 142);
       this.lblExisting.Name = "lblExisting";
       this.lblExisting.Size = new System.Drawing.Size(270, 13);
       this.lblExisting.TabIndex = 11;
@@ -131,7 +157,7 @@
       this.btnExisting.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.btnExisting.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.btnExisting.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.btnExisting.Location = new System.Drawing.Point(290, 83);
+      this.btnExisting.Location = new System.Drawing.Point(554, 137);
       this.btnExisting.Name = "btnExisting";
       this.btnExisting.Size = new System.Drawing.Size(33, 23);
       this.btnExisting.TabIndex = 10;
@@ -147,7 +173,7 @@
       this.btnAres.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.btnAres.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.btnAres.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.btnAres.Location = new System.Drawing.Point(290, 182);
+      this.btnAres.Location = new System.Drawing.Point(554, 236);
       this.btnAres.Name = "btnAres";
       this.btnAres.Size = new System.Drawing.Size(33, 23);
       this.btnAres.TabIndex = 4;
@@ -158,15 +184,40 @@
       // 
       this.lblAres.AutoSize = true;
       this.lblAres.ForeColor = System.Drawing.Color.White;
-      this.lblAres.Location = new System.Drawing.Point(329, 187);
+      this.lblAres.Location = new System.Drawing.Point(593, 241);
       this.lblAres.Name = "lblAres";
-      this.lblAres.Size = new System.Drawing.Size(90, 13);
+      this.lblAres.Size = new System.Drawing.Size(141, 13);
       this.lblAres.TabIndex = 12;
-      this.lblAres.Text = "Ares (1920x1080)";
+      this.lblAres.Text = "Ares (1920x1080) - External*";
+      // 
+      // linkSkins
+      // 
+      this.linkSkins.AutoSize = true;
+      this.linkSkins.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.linkSkins.LinkColor = System.Drawing.Color.White;
+      this.linkSkins.Location = new System.Drawing.Point(545, 355);
+      this.linkSkins.Name = "linkSkins";
+      this.linkSkins.Size = new System.Drawing.Size(145, 17);
+      this.linkSkins.TabIndex = 14;
+      this.linkSkins.TabStop = true;
+      this.linkSkins.Text = "Browse other skins";
+      this.linkSkins.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkSkins_LinkClicked);
+      // 
+      // lblExtendedDescription
+      // 
+      this.lblExtendedDescription.ForeColor = System.Drawing.Color.White;
+      this.lblExtendedDescription.Location = new System.Drawing.Point(545, 312);
+      this.lblExtendedDescription.Name = "lblExtendedDescription";
+      this.lblExtendedDescription.Size = new System.Drawing.Size(397, 43);
+      this.lblExtendedDescription.TabIndex = 15;
+      this.lblExtendedDescription.Text = "* External - The external skins are only installed when you choose them, but you " +
+    "can always install them yourself.";
       // 
       // SkinChoice
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.Controls.Add(this.lblExtendedDescription);
+      this.Controls.Add(this.linkSkins);
       this.Controls.Add(this.lblAres);
       this.Controls.Add(this.btnAres);
       this.Controls.Add(this.lblExisting);
@@ -184,11 +235,13 @@
       this.Controls.SetChildIndex(this.lblTitan, 0);
       this.Controls.SetChildIndex(this.lblChooseSkin, 0);
       this.Controls.SetChildIndex(this.pbSkin, 0);
-      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.btnExisting, 0);
       this.Controls.SetChildIndex(this.lblExisting, 0);
       this.Controls.SetChildIndex(this.btnAres, 0);
       this.Controls.SetChildIndex(this.lblAres, 0);
+      this.Controls.SetChildIndex(this.linkSkins, 0);
+      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
+      this.Controls.SetChildIndex(this.lblExtendedDescription, 0);
       ((System.ComponentModel.ISupportInitialize)(this.pbSkin)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -207,5 +260,7 @@
     private System.Windows.Forms.Button btnExisting;
     private System.Windows.Forms.Button btnAres;
     private System.Windows.Forms.Label lblAres;
+    private System.Windows.Forms.LinkLabel linkSkins;
+    private System.Windows.Forms.Label lblExtendedDescription;
   }
 }

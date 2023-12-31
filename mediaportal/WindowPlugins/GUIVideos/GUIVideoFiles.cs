@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2018 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2018 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -3372,7 +3372,7 @@ namespace MediaPortal.GUI.Video
               GUIListItem item = innerList[i];
               bool isMovieFolder = false;
 
-              if (!string.IsNullOrEmpty(newFolderName) || UNCTools.UNCFileFolderExists(item.Path))
+              if (!string.IsNullOrEmpty(newFolderName) || UNCTools.UNCFileFolderExists(item.Path, _virtualDirectory.GetShareHostDetectMethod(item.Path)))
               {
                 if (item.IsFolder)
                 {
@@ -3618,7 +3618,7 @@ namespace MediaPortal.GUI.Video
       {
         try
         {
-          if (_getMediaInfoThread.IsAlive)
+          if (_getMediaInfoThread != null &&_getMediaInfoThread.IsAlive)
           {
             // dont want to abort, rather send a signal and wait to finish, it is a clean exit
             Log.Debug("GetMediaInfoThread: send an exit signal to the last thread and waiting for exit.");
@@ -5038,7 +5038,7 @@ namespace MediaPortal.GUI.Video
         List<GUIListItem> listFiles = _virtualDirectory.GetDirectoryUnProtectedExt(_currentFolder, false);
         string[] subExts = {
                               ".utf", ".utf8", ".utf-8", ".sub", ".srt", ".smi", ".rt", ".txt", ".ssa", ".aqt", ".jss",
-                              ".ass", ".idx", ".ifo"
+                              ".ass", ".idx", ".ifo", ".webvtt", ".vtt"
                             };
         if (!isDVD)
         {
@@ -5761,7 +5761,7 @@ namespace MediaPortal.GUI.Video
 
     public string Author()
     {
-      return "Frodo";
+      return "Frodo, ajs";
     }
 
     public string Description()

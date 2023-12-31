@@ -268,10 +268,10 @@ namespace SetupTv
       this.rbMySQL.AutoSize = true;
       this.rbMySQL.Location = new System.Drawing.Point(204, 122);
       this.rbMySQL.Name = "rbMySQL";
-      this.rbMySQL.Size = new System.Drawing.Size(72, 17);
+      this.rbMySQL.Size = new System.Drawing.Size(152, 17);
       this.rbMySQL.TabIndex = 0;
       this.rbMySQL.TabStop = true;
-      this.rbMySQL.Text = "My SQL 5";
+      this.rbMySQL.Text = "My SQL / Maria DB Server";
       this.rbMySQL.UseVisualStyleBackColor = true;
       this.rbMySQL.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
       // 
@@ -280,10 +280,10 @@ namespace SetupTv
       this.rbSQLServer.AutoSize = true;
       this.rbSQLServer.Location = new System.Drawing.Point(19, 122);
       this.rbSQLServer.Name = "rbSQLServer";
-      this.rbSQLServer.Size = new System.Drawing.Size(153, 17);
+      this.rbSQLServer.Size = new System.Drawing.Size(126, 17);
       this.rbSQLServer.TabIndex = 0;
       this.rbSQLServer.TabStop = true;
-      this.rbSQLServer.Text = "Microsoft SQL Server 2005";
+      this.rbSQLServer.Text = "Microsoft SQL Server";
       this.rbSQLServer.UseVisualStyleBackColor = true;
       this.rbSQLServer.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
       // 

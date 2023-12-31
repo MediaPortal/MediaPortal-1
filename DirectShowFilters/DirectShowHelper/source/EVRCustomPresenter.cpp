@@ -3178,7 +3178,7 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
     CComPtr<IDirect3DTexture9> pTexture = NULL;
     pSurface->GetContainer(IID_IDirect3DTexture9, (void**)&pTexture);
 
-    hr = m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)pTexture, (DWORD)(IDirect3DSurface9*)pSurface);
+    hr = m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (IDirect3DTexture9*)pTexture, (IDirect3DSurface9*)pSurface);
 
     m_PaintTime = GetCurrentTimestamp() - startPaint;
       
@@ -4038,7 +4038,7 @@ double MPEVRCustomPresenter::GetVideoFramePeriod(FPS_SOURCE_METHOD fpsSource)
       }
     break;
     
-    case 2:
+    case FPS_SOURCE_SAMPLE_DURATION:
       // Returns 0.0 for the first 4 frames, then from sample duration
       if ((m_DetectedFrameTimePos >= 4) && (m_DetSampleAve > DFT_THRESH))
       {

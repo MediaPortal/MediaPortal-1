@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,6 +18,7 @@
 
 #endregion
 
+using System.Configuration;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -39,8 +40,18 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-      labelVersion2.Text = versionInfo.FileVersion;
-      labelVersion3.Visible = versionInfo.FileVersion.Length - versionInfo.FileVersion.LastIndexOf('.') > 2;
+      string version = ConfigurationManager.AppSettings["version"];
+      string[] strVersion = version.Split('-');
+      version = strVersion[0];
+      if (System.IntPtr.Size == 8)
+      {
+        version = version + " | x64";
+      }
+      if (strVersion.Length == 2)
+      {
+        version = version + " | " + strVersion[1];
+      }
+      labelVersion2.Text = string.Format("{0} ({1})", version, versionInfo.FileVersion);
     }
 
     private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+
+   <!--            :: MUSIC ::            -->
+  		
+    <control Style="HomeBasicFanart">
+      <description>Music Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>[string.contains(#pluginname,Music)|string.equals(#pluginid,112011)] + control.isvisible(91919297)</visible>
+      <texture>#fanarthandler.music.scraper.backdrop1.any</texture>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+      <description>Music Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>[string.contains(#pluginname,Music)|string.equals(#pluginid,112011)] + control.isvisible(91919298)</visible>
+      <texture>#fanarthandler.music.scraper.backdrop2.any</texture>
+    </control> 
+
+  <!--            :: PICTURES ::            -->
+		
+    <control Style="HomeBasicFanart">
+	  <description>Pictures Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>string.contains(#pluginname,Pictures) + !string.contains(#pluginname,Moving) + control.isvisible(91919297)</visible>
+      <texture>#(switch(
+                   eq(#fanarthandler.spotlight.random.available,'true'),#fanarthandler.spotlight.backdrop1.any,
+                   eq(1,1),#fanarthandler.picture.userdef.backdrop1.any)
+                 )</texture>
+    </control> 
+		
+    <control Style="HomeBasicFanart">
+	  <description>Pictures Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>string.contains(#pluginname,Pictures) + !string.contains(#pluginname,Moving) + control.isvisible(91919298)</visible>
+      <texture>#(switch(
+                   eq(#fanarthandler.spotlight.random.available,'true'),#fanarthandler.spotlight.backdrop2.any,
+                   eq(1,1),#fanarthandler.picture.userdef.backdrop2.any)
+                 )</texture>
+    </control> 
+
+	 <!--            :: VIDEO/MOVIES ::            -->
+    
+    <control Style="HomeBasicFanart">
+	  <description>Video Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>string.contains(#pluginname,Video) + control.isvisible(91919297)</visible>
+      <texture>#fanarthandler.movie.scraper.backdrop1.any</texture>
+    </control>
+        
+    <control Style="HomeBasicFanart">
+ 	  <description>Video Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>string.contains(#pluginname,Video) + control.isvisible(91919298)</visible>
+      <texture>#fanarthandler.movie.scraper.backdrop2.any</texture>
+    </control>
+
+	 <!--            :: VIDEO/MOVIES ::            -->
+    
+    <control Style="HomeBasicFanart">
+  	  <description>Moving Picture Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>string.contains(#pluginname,Pictures) + string.contains(#pluginname,Moving) + control.isvisible(91919297)</visible>
+      <texture>#fanarthandler.movingpicture.backdrop1.any</texture>
+    </control>
+        
+    <control Style="HomeBasicFanart">
+  	  <description>Moving Picture Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>string.contains(#pluginname,Pictures) + string.contains(#pluginname,Moving) + control.isvisible(91919298)</visible>
+      <texture>#fanarthandler.movingpicture.backdrop2.any</texture>
+    </control>
+
+	 <!--            :: TVSERIES ::            -->
+		
+    <control Style="HomeBasicFanart">
+	  <description>TVSeries Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>string.contains(#pluginname,Series) + control.isvisible(91919297)</visible>
+      <texture>#fanarthandler.tvseries.backdrop1.any</texture>
+    </control> 
+		
+    <control Style="HomeBasicFanart">
+	  <description>TVSeries Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>string.contains(#pluginname,Series) + control.isvisible(91919298)</visible>
+      <texture>#fanarthandler.tvseries.backdrop2.any</texture>
+    </control> 
+
+   <!--            :: Weather ::            -->
+        
+    <control Style="HomeBasicFanart">
+      <description>Wheather Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <texture>weather\bg\#WorldWeather.TodayIconNumber.jpg</texture>
+      <visible>string.contains(#pluginname,Weather) + !control.isvisible(91919283)</visible>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+      <description>Weather Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>string.contains(#pluginname,Weather) + control.isvisible(91919281) + control.isvisible(91919283)</visible>
+      <texture>#fanarthandler.weather.backdrop1</texture>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+      <description>Weather Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>string.contains(#pluginname,Weather) + control.isvisible(91919282) + control.isvisible(91919283)</visible>
+      <texture>#fanarthandler.weather.backdrop2</texture>
+    </control> 
+
+   <!--            :: Plugins ::            -->
+        
+    <control Style="HomeBasicFanart">
+        <description>Plugins Selected Fanart</description>
+        <type>image</type>
+        <id>0</id>
+        <visible>string.contains(#pluginname,Plugins) + control.isvisible(91919297)</visible>
+        <texture>#fanarthandler.plugins.userdef.backdrop1.any</texture>
+    </control> 
+        
+    <control Style="HomeBasicFanart">
+        <description>Plugins Selected Fanart</description>
+        <type>image</type>
+        <id>0</id>
+        <visible>string.contains(#pluginname,Plugins) + control.isvisible(91919298)</visible>
+        <texture>#fanarthandler.plugins.userdef.backdrop2.any</texture>
+    </control> 
+
+   <!--            :: TV ::            -->
+  		
+    <control Style="HomeBasicFanart">
+      <description>TV Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>string.contains(#pluginname,TV) + !string.contains(#pluginname,Series) + control.isvisible(91919297)</visible>
+      <texture>#fanarthandler.tv.userdef.backdrop1.any</texture>
+    </control> 
+
+    <control Style="HomeBasicFanart">
+      <description>TV Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>string.contains(#pluginname,TV) + !string.contains(#pluginname,Series) + control.isvisible(91919298)</visible>
+      <texture>#fanarthandler.tv.userdef.backdrop2.any</texture>
+    </control> 
+
+  </controls>
+</window>

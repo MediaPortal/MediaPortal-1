@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -23,9 +23,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using MediaPortal.Drawing;
+
 using MediaPortal.ExtensionMethods;
-using Microsoft.DirectX.Direct3D;
+
+using UnidecodeSharpFork;
 
 // used for Keys definition
 
@@ -87,6 +88,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("thumbPosY")] protected int _thumbNailPositionY = 8;
     [XMLSkinElement("thumbWidth")] protected int _thumbNailWidth = 64;
     [XMLSkinElement("thumbHeight")] protected int _thumbNailHeight = 64;
+
     [XMLSkinElement("font")] protected string _fontName = "";
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
     [XMLSkinElement("selectedColor")] protected long _selectedColor = 0xFFFFFFFF;
@@ -225,6 +227,8 @@ namespace MediaPortal.GUI.Library
 
     [XMLSkinElement("textXOff")] protected int _textXOff = 0;
     [XMLSkinElement("textYOff")] protected int _textYOff = 0;
+    [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
+
     [XMLSkinElement("spinCanFocus")] protected bool _spinCanFocus = true;
 
     [XMLSkinElement("bdDvdDirectoryColor")] protected long _bdDvdDirectoryColor = 0xFFFFFFFF;
@@ -398,7 +402,7 @@ namespace MediaPortal.GUI.Library
 
         // for label
         GUIFadeLabel fadelabel = new GUIFadeLabel(_parentControlId, _controlId, _positionX, _positionY, _textureWidth,
-                                                  _textureHeight, _fontName, _textColor, Alignment.ALIGN_LEFT,
+                                                  _textureHeight, _fontName, _textColor, _textAlignment,
                                                   VAlignment.ALIGN_TOP, 0, 0, 0, " | ");
         fadelabel.ParentControl = this;
         fadelabel.AllowScrolling = _allowScrolling;
@@ -1032,7 +1036,14 @@ namespace MediaPortal.GUI.Library
       }
       if (pItem.Label != "..")
       {
-        _listLabels[itemNumber].XPosition = dwPosX + _textXOff;
+        if (_textAlignment == Alignment.ALIGN_RIGHT)
+        {
+          _listLabels[itemNumber].XPosition = dwPosX + _textureWidth - _textXOff;
+        }
+        else
+        {
+          _listLabels[itemNumber].XPosition = dwPosX + _textXOff;
+        }
         _listLabels[itemNumber].YPosition = (int)Math.Truncate(fTextPosY + _textYOff);
         _listLabels[itemNumber].Width = _textureWidth;
         _listLabels[itemNumber].Height = _textureHeight;
@@ -1455,7 +1466,9 @@ namespace MediaPortal.GUI.Library
             {
               // Check key
               if (((action.m_key.KeyChar >= '0') && (action.m_key.KeyChar <= '9')) ||
-                  action.m_key.KeyChar == '*' || action.m_key.KeyChar == '(' || action.m_key.KeyChar == '#' ||
+                  action.m_key.KeyChar == '*' ||
+                  action.m_key.KeyChar == '(' ||
+                  action.m_key.KeyChar == '#' ||
                   action.m_key.KeyChar == '§')
               {
                 Press((char)action.m_key.KeyChar);
@@ -1824,7 +1837,7 @@ namespace MediaPortal.GUI.Library
         }
 
         GUIListItem pItem = _listItems[iItem];
-        if (pItem.Label.ToUpperInvariant().StartsWith(SearchKey.ToUpperInvariant()) == true)
+        if (pItem.Label.ToUpperInvariant().Unidecode().StartsWith(SearchKey.ToUpperInvariant()) == true)
         {
           bItemFound = true;
           break;

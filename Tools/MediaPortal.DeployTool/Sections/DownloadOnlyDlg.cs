@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -52,10 +52,10 @@ namespace MediaPortal.DeployTool.Sections
         // Download only
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DownloadSettings);
       }
-      CheckResult resultTvServer = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
-      CheckResult resultTvClient = Utils.CheckNSISUninstallString("Mediaportal Tv Server", "MementoSection_SecClient");
+      CheckResult resultTvServer = Utils.CheckNSISUninstallString("MediaPortal TV Server" + (Utils.Is64bit() ? " (x64)" : string.Empty), "MementoSection_SecServer");
+      CheckResult resultTvClient = Utils.CheckNSISUninstallString("Mediaportal TV Server" + (Utils.Is64bit() ? " (x64)" : string.Empty), "MementoSection_SecClient");
       // "NoRepair" key is not the best choice but we need a key returing 1 as value ;)
-      CheckResult resultMp = Utils.CheckNSISUninstallString("MediaPortal", "NoRepair");
+      CheckResult resultMp = Utils.CheckNSISUninstallString("MediaPortal" + (Utils.Is64bit() ? " (x64)" : string.Empty), "NoRepair");
 
       bool TvServer = resultTvServer.state != CheckState.NOT_INSTALLED;
       bool TvClient = resultTvClient.state != CheckState.NOT_INSTALLED;

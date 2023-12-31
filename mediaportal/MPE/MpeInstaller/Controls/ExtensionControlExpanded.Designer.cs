@@ -34,15 +34,9 @@
       this.btn_uninstall = new System.Windows.Forms.Button();
       this.lbl_description = new System.Windows.Forms.Label();
       this.lbl_version = new System.Windows.Forms.Label();
-      this.img_dep = new System.Windows.Forms.PictureBox();
-      this.img_update = new System.Windows.Forms.PictureBox();
-      this.btn_home = new System.Windows.Forms.Button();
-      this.btn_forum = new System.Windows.Forms.Button();
       this.btn_update = new System.Windows.Forms.Button();
       this.btn_conf = new System.Windows.Forms.Button();
       this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-      this.btn_install = new System.Windows.Forms.ToolStripSplitButton();
-      this.img_logo = new System.Windows.Forms.PictureBox();
       this.btn_screenshot = new System.Windows.Forms.Button();
       this.chk_ignore = new System.Windows.Forms.CheckBox();
       this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
@@ -53,10 +47,13 @@
       this.panelMiddle = new System.Windows.Forms.Panel();
       this.panelMiddleLeft = new System.Windows.Forms.Panel();
       this.panelMiddleRight = new System.Windows.Forms.Panel();
-      ((System.ComponentModel.ISupportInitialize)(this.img_dep)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.img_update)).BeginInit();
+      this.img_update = new System.Windows.Forms.PictureBox();
+      this.img_dep = new System.Windows.Forms.PictureBox();
+      this.img_logo = new System.Windows.Forms.PictureBox();
+      this.btn_home = new System.Windows.Forms.Button();
+      this.btn_forum = new System.Windows.Forms.Button();
+      this.btn_install = new System.Windows.Forms.ToolStripSplitButton();
       this.toolStrip1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.img_logo)).BeginInit();
       this.flowLayoutPanel1.SuspendLayout();
       this.panelTop.SuspendLayout();
       this.flowLayoutPanel2.SuspendLayout();
@@ -64,6 +61,9 @@
       this.panelMiddle.SuspendLayout();
       this.panelMiddleLeft.SuspendLayout();
       this.panelMiddleRight.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.img_update)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.img_dep)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.img_logo)).BeginInit();
       this.SuspendLayout();
       // 
       // lbl_name
@@ -71,7 +71,7 @@
       this.lbl_name.AutoEllipsis = true;
       this.lbl_name.AutoSize = true;
       this.lbl_name.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.lbl_name.ForeColor = System.Drawing.Color.Blue;
+      this.lbl_name.ForeColor = System.Drawing.Color.White;
       this.lbl_name.Location = new System.Drawing.Point(0, 2);
       this.lbl_name.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
       this.lbl_name.Name = "lbl_name";
@@ -83,22 +83,21 @@
       // 
       // btn_uninstall
       // 
-      this.btn_uninstall.BackColor = System.Drawing.SystemColors.ButtonFace;
-      this.btn_uninstall.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btn_uninstall.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.btn_uninstall.Location = new System.Drawing.Point(84, 3);
+      this.btn_uninstall.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.btn_uninstall.ForeColor = System.Drawing.Color.White;
+      this.btn_uninstall.Location = new System.Drawing.Point(89, 3);
       this.btn_uninstall.Name = "btn_uninstall";
       this.btn_uninstall.Size = new System.Drawing.Size(75, 23);
       this.btn_uninstall.TabIndex = 1;
       this.btn_uninstall.Text = "Uninstall";
-      this.btn_uninstall.UseVisualStyleBackColor = false;
+      this.btn_uninstall.UseVisualStyleBackColor = true;
       this.btn_uninstall.Click += new System.EventHandler(this.btn_uninstall_Click);
       // 
       // lbl_description
       // 
       this.lbl_description.AutoEllipsis = true;
       this.lbl_description.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.lbl_description.ForeColor = System.Drawing.Color.Blue;
+      this.lbl_description.ForeColor = System.Drawing.Color.White;
       this.lbl_description.Location = new System.Drawing.Point(110, 0);
       this.lbl_description.Name = "lbl_description";
       this.lbl_description.Padding = new System.Windows.Forms.Padding(1);
@@ -109,76 +108,34 @@
       // lbl_version
       // 
       this.lbl_version.Dock = System.Windows.Forms.DockStyle.Right;
-      this.lbl_version.ForeColor = System.Drawing.Color.Black;
+      this.lbl_version.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.lbl_version.ForeColor = System.Drawing.Color.White;
       this.lbl_version.Location = new System.Drawing.Point(448, 0);
       this.lbl_version.MaximumSize = new System.Drawing.Size(100, 0);
       this.lbl_version.MinimumSize = new System.Drawing.Size(100, 0);
       this.lbl_version.Name = "lbl_version";
-      this.lbl_version.Size = new System.Drawing.Size(100, 20);
+      this.lbl_version.Size = new System.Drawing.Size(100, 0);
       this.lbl_version.TabIndex = 4;
       this.lbl_version.Text = "3.2.55.2365";
       this.lbl_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
-      // img_dep
-      // 
-      this.img_dep.BackColor = System.Drawing.Color.Transparent;
-      this.img_dep.Image = global::MpeInstaller.Properties.Resources.software_update_urgent;
-      this.img_dep.Location = new System.Drawing.Point(74, 4);
-      this.img_dep.Name = "img_dep";
-      this.img_dep.Size = new System.Drawing.Size(32, 32);
-      this.img_dep.TabIndex = 7;
-      this.img_dep.TabStop = false;
-      this.img_dep.Click += new System.EventHandler(this.img_dep_Click);
-      // 
-      // img_update
-      // 
-      this.img_update.BackColor = System.Drawing.Color.Transparent;
-      this.img_update.Image = global::MpeInstaller.Properties.Resources.software_update_available;
-      this.img_update.Location = new System.Drawing.Point(74, 36);
-      this.img_update.Name = "img_update";
-      this.img_update.Size = new System.Drawing.Size(32, 32);
-      this.img_update.TabIndex = 5;
-      this.img_update.TabStop = false;
-      // 
-      // btn_home
-      // 
-      this.btn_home.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-      this.btn_home.Image = global::MpeInstaller.Properties.Resources.internet_web_browser;
-      this.btn_home.Location = new System.Drawing.Point(0, 39);
-      this.btn_home.Name = "btn_home";
-      this.btn_home.Size = new System.Drawing.Size(32, 32);
-      this.btn_home.TabIndex = 12;
-      this.btn_home.UseVisualStyleBackColor = true;
-      this.btn_home.Click += new System.EventHandler(this.btn_home_Click);
-      // 
-      // btn_forum
-      // 
-      this.btn_forum.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-      this.btn_forum.Image = global::MpeInstaller.Properties.Resources.internet_group_chat;
-      this.btn_forum.Location = new System.Drawing.Point(0, 2);
-      this.btn_forum.Name = "btn_forum";
-      this.btn_forum.Size = new System.Drawing.Size(32, 32);
-      this.btn_forum.TabIndex = 32;
-      this.btn_forum.UseVisualStyleBackColor = true;
-      this.btn_forum.Click += new System.EventHandler(this.btn_forum_Click);
-      // 
       // btn_update
       // 
-      this.btn_update.BackColor = System.Drawing.SystemColors.ButtonFace;
-      this.btn_update.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btn_update.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.btn_update.Location = new System.Drawing.Point(165, 3);
+      this.btn_update.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.btn_update.ForeColor = System.Drawing.Color.White;
+      this.btn_update.Location = new System.Drawing.Point(170, 3);
       this.btn_update.Name = "btn_update";
       this.btn_update.Size = new System.Drawing.Size(75, 23);
       this.btn_update.TabIndex = 6;
       this.btn_update.Text = "Update";
-      this.btn_update.UseVisualStyleBackColor = false;
+      this.btn_update.UseVisualStyleBackColor = true;
       this.btn_update.Click += new System.EventHandler(this.btn_update_Click);
       // 
       // btn_conf
       // 
-      this.btn_conf.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btn_conf.Location = new System.Drawing.Point(246, 3);
+      this.btn_conf.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.btn_conf.ForeColor = System.Drawing.Color.White;
+      this.btn_conf.Location = new System.Drawing.Point(251, 3);
       this.btn_conf.Name = "btn_conf";
       this.btn_conf.Size = new System.Drawing.Size(75, 23);
       this.btn_conf.TabIndex = 9;
@@ -192,42 +149,21 @@
       this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
       this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btn_install});
+      this.toolStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
       this.toolStrip1.Location = new System.Drawing.Point(4, 2);
       this.toolStrip1.Name = "toolStrip1";
       this.toolStrip1.Padding = new System.Windows.Forms.Padding(1);
-      this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-      this.toolStrip1.Size = new System.Drawing.Size(79, 25);
+      this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+      this.toolStrip1.Size = new System.Drawing.Size(82, 25);
       this.toolStrip1.TabIndex = 10;
       this.toolStrip1.Text = "toolStrip1";
       this.toolStrip1.Visible = false;
       // 
-      // btn_install
-      // 
-      this.btn_install.DropDownButtonWidth = 16;
-      this.btn_install.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.btn_install.Image = global::MpeInstaller.Properties.Resources.system_software_update;
-      this.btn_install.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.btn_install.Margin = new System.Windows.Forms.Padding(0);
-      this.btn_install.Name = "btn_install";
-      this.btn_install.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-      this.btn_install.Size = new System.Drawing.Size(75, 25);
-      this.btn_install.Text = "Install";
-      this.btn_install.ButtonClick += new System.EventHandler(this.btn_install_ButtonClick);
-      // 
-      // img_logo
-      // 
-      this.img_logo.Image = global::MpeInstaller.Properties.Resources.package_x_generic;
-      this.img_logo.Location = new System.Drawing.Point(4, 4);
-      this.img_logo.Name = "img_logo";
-      this.img_logo.Size = new System.Drawing.Size(64, 64);
-      this.img_logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-      this.img_logo.TabIndex = 2;
-      this.img_logo.TabStop = false;
-      // 
       // btn_screenshot
       // 
-      this.btn_screenshot.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btn_screenshot.Location = new System.Drawing.Point(3, 3);
+      this.btn_screenshot.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.btn_screenshot.ForeColor = System.Drawing.Color.White;
+      this.btn_screenshot.Location = new System.Drawing.Point(8, 3);
       this.btn_screenshot.Name = "btn_screenshot";
       this.btn_screenshot.Size = new System.Drawing.Size(75, 23);
       this.btn_screenshot.TabIndex = 13;
@@ -240,7 +176,7 @@
       this.chk_ignore.AutoSize = true;
       this.chk_ignore.Dock = System.Windows.Forms.DockStyle.Right;
       this.chk_ignore.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-      this.chk_ignore.ForeColor = System.Drawing.SystemColors.ControlText;
+      this.chk_ignore.ForeColor = System.Drawing.Color.White;
       this.chk_ignore.Location = new System.Drawing.Point(454, 0);
       this.chk_ignore.Name = "chk_ignore";
       this.chk_ignore.Size = new System.Drawing.Size(94, 30);
@@ -258,7 +194,8 @@
       this.flowLayoutPanel1.Controls.Add(this.btn_conf);
       this.flowLayoutPanel1.Location = new System.Drawing.Point(81, 0);
       this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-      this.flowLayoutPanel1.Size = new System.Drawing.Size(328, 30);
+      this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
+      this.flowLayoutPanel1.Size = new System.Drawing.Size(329, 30);
       this.flowLayoutPanel1.TabIndex = 36;
       // 
       // panelTop
@@ -287,8 +224,8 @@
       // 
       this.lblAuthors.AutoEllipsis = true;
       this.lblAuthors.AutoSize = true;
-      this.lblAuthors.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.lblAuthors.ForeColor = System.Drawing.Color.RoyalBlue;
+      this.lblAuthors.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+      this.lblAuthors.ForeColor = System.Drawing.Color.White;
       this.lblAuthors.Location = new System.Drawing.Point(99, 2);
       this.lblAuthors.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
       this.lblAuthors.Name = "lblAuthors";
@@ -296,7 +233,7 @@
       this.lblAuthors.Size = new System.Drawing.Size(42, 16);
       this.lblAuthors.TabIndex = 45;
       this.lblAuthors.Text = "authors";
-      this.lblAuthors.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+      this.lblAuthors.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // panelBottom
       // 
@@ -342,25 +279,90 @@
       this.panelMiddleRight.Size = new System.Drawing.Size(36, 73);
       this.panelMiddleRight.TabIndex = 0;
       // 
+      // img_update
+      // 
+      this.img_update.BackColor = System.Drawing.Color.Transparent;
+      this.img_update.Image = global::MpeInstaller.Properties.Resources.software_update_available;
+      this.img_update.Location = new System.Drawing.Point(74, 36);
+      this.img_update.Name = "img_update";
+      this.img_update.Size = new System.Drawing.Size(32, 32);
+      this.img_update.TabIndex = 5;
+      this.img_update.TabStop = false;
+      // 
+      // img_dep
+      // 
+      this.img_dep.BackColor = System.Drawing.Color.Transparent;
+      this.img_dep.Image = global::MpeInstaller.Properties.Resources.software_update_urgent;
+      this.img_dep.Location = new System.Drawing.Point(74, 4);
+      this.img_dep.Name = "img_dep";
+      this.img_dep.Size = new System.Drawing.Size(32, 32);
+      this.img_dep.TabIndex = 7;
+      this.img_dep.TabStop = false;
+      this.img_dep.Click += new System.EventHandler(this.img_dep_Click);
+      // 
+      // img_logo
+      // 
+      this.img_logo.Image = global::MpeInstaller.Properties.Resources.package_x_generic;
+      this.img_logo.Location = new System.Drawing.Point(4, 4);
+      this.img_logo.Name = "img_logo";
+      this.img_logo.Size = new System.Drawing.Size(64, 64);
+      this.img_logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+      this.img_logo.TabIndex = 2;
+      this.img_logo.TabStop = false;
+      // 
+      // btn_home
+      // 
+      this.btn_home.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.btn_home.Image = global::MpeInstaller.Properties.Resources.internet_web_browser;
+      this.btn_home.Location = new System.Drawing.Point(0, 39);
+      this.btn_home.Name = "btn_home";
+      this.btn_home.Size = new System.Drawing.Size(32, 32);
+      this.btn_home.TabIndex = 12;
+      this.btn_home.UseVisualStyleBackColor = true;
+      this.btn_home.Click += new System.EventHandler(this.btn_home_Click);
+      // 
+      // btn_forum
+      // 
+      this.btn_forum.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.btn_forum.Image = global::MpeInstaller.Properties.Resources.internet_group_chat;
+      this.btn_forum.Location = new System.Drawing.Point(0, 2);
+      this.btn_forum.Name = "btn_forum";
+      this.btn_forum.Size = new System.Drawing.Size(32, 32);
+      this.btn_forum.TabIndex = 32;
+      this.btn_forum.UseVisualStyleBackColor = true;
+      this.btn_forum.Click += new System.EventHandler(this.btn_forum_Click);
+      // 
+      // btn_install
+      // 
+      this.btn_install.DropDownButtonWidth = 16;
+      this.btn_install.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+      this.btn_install.ForeColor = System.Drawing.SystemColors.ControlText;
+      this.btn_install.Image = global::MpeInstaller.Properties.Resources.system_software_update;
+      this.btn_install.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.btn_install.Margin = new System.Windows.Forms.Padding(0);
+      this.btn_install.Name = "btn_install";
+      this.btn_install.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+      this.btn_install.Size = new System.Drawing.Size(78, 23);
+      this.btn_install.Text = "Install";
+      this.btn_install.ButtonClick += new System.EventHandler(this.btn_install_ButtonClick);
+      // 
       // ExtensionControlExpanded
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.AutoSize = true;
-      this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+      this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(62)))), ((int)(((byte)(111)))), ((int)(((byte)(152)))));
       this.Controls.Add(this.panelMiddle);
       this.Controls.Add(this.panelBottom);
       this.Controls.Add(this.panelTop);
-      this.ForeColor = System.Drawing.SystemColors.ButtonFace;
+      this.DoubleBuffered = true;
+      this.ForeColor = System.Drawing.Color.Transparent;
       this.MinimumSize = new System.Drawing.Size(0, 125);
       this.Name = "ExtensionControlExpanded";
       this.Padding = new System.Windows.Forms.Padding(1);
       this.Size = new System.Drawing.Size(550, 125);
-      ((System.ComponentModel.ISupportInitialize)(this.img_dep)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.img_update)).EndInit();
       this.toolStrip1.ResumeLayout(false);
       this.toolStrip1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.img_logo)).EndInit();
       this.flowLayoutPanel1.ResumeLayout(false);
       this.panelTop.ResumeLayout(false);
       this.flowLayoutPanel2.ResumeLayout(false);
@@ -370,6 +372,9 @@
       this.panelMiddle.ResumeLayout(false);
       this.panelMiddleLeft.ResumeLayout(false);
       this.panelMiddleRight.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.img_update)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.img_dep)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.img_logo)).EndInit();
       this.ResumeLayout(false);
 
     }

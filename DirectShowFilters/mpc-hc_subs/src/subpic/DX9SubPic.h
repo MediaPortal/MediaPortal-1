@@ -1,6 +1,6 @@
 /*
  * (C) 2003-2006 Gabest
- * (C) 2006-2012 see Authors.txt
+ * (C) 2006-2014 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -27,43 +27,6 @@
 
 // CDX9SubPic
 
-class CVirtualLock
-{
-public:
-    virtual void Lock() = 0;
-    virtual void Unlock() = 0;
-};
-
-typedef void (FLock)(void* _pLock);
-
-class CScopeLock
-{
-    void* m_pLock;
-    FLock* m_pUnlockFunc;
-public:
-    CScopeLock(): m_pLock(NULL), m_pUnlockFunc(NULL) {};
-
-    template <typename t_Lock>
-    class TCLocker
-    {
-    public:
-        static void fs_Locker(void* _pLock) {
-            ((t_Lock*)_pLock)->Unlock();
-        }
-    };
-
-    template <typename t_Lock>
-    CScopeLock(t_Lock& _Lock) {
-        _Lock.Lock();
-        m_pLock = &_Lock;
-        m_pUnlockFunc = TCLocker<t_Lock>::fs_Locker;
-    }
-
-    ~CScopeLock() {
-        m_pUnlockFunc(m_pLock);
-    }
-};
-
 
 class CDX9SubPicAllocator;
 class CDX9SubPic : public CSubPicImpl
@@ -82,7 +45,7 @@ public:
     // ISubPic
     STDMETHODIMP GetDesc(SubPicDesc& spd);
     STDMETHODIMP CopyTo(ISubPic* pSubPic);
-    STDMETHODIMP ClearDirtyRect(DWORD color);
+    STDMETHODIMP ClearDirtyRect();
     STDMETHODIMP Lock(SubPicDesc& spd);
     STDMETHODIMP Unlock(RECT* pDirtyRect);
     STDMETHODIMP AlphaBlt(RECT* pSrc, RECT* pDst, SubPicDesc* pTarget);
@@ -99,17 +62,17 @@ class CDX9SubPicAllocator : public CSubPicAllocatorImpl, public CCritSec
     bool Alloc(bool fStatic, ISubPic** ppSubPic);
 
 public:
-    static CCritSec ms_SurfaceQueueLock;
-    CAtlList<CComPtr<IDirect3DSurface9> > m_FreeSurfaces;
-    CAtlList<CDX9SubPic*> m_AllocatedSurfaces;
+    static CCritSec ms_surfaceQueueLock;
+    CAtlList<CComPtr<IDirect3DSurface9>> m_freeSurfaces;
+    CAtlList<CDX9SubPic*> m_allocatedSurfaces;
 
-    void GetStats(int& _nFree, int& _nAlloc);
+    void GetStats(int& nFree, int& nAlloc) const;
 
-    CDX9SubPicAllocator(IDirect3DDevice9* pD3DDev, SIZE maxsize, bool fPow2Textures, bool bExternalRenderer);
+    CDX9SubPicAllocator(IDirect3DDevice9* pD3DDev, SIZE maxsize, bool bExternalRenderer);
     ~CDX9SubPicAllocator();
     void ClearCache();
 
     // ISubPicAllocator
     STDMETHODIMP ChangeDevice(IUnknown* pDev);
-    STDMETHODIMP SetMaxTextureSize(SIZE MaxTextureSize);
+    STDMETHODIMP SetMaxTextureSize(SIZE maxTextureSize);
 };

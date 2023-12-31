@@ -25,10 +25,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using System.Collections.Generic;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
-using Microsoft.DirectX.Direct3D;
+using SharpDX.Direct3D9;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -195,7 +194,7 @@ namespace MediaPortal.Player
     /// <returns>The monitorIndex that has the specified screen on its primary monitor</returns>
     internal static int FindMonitorIndexForScreen()
     {
-      if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.Disposed)
+      if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.IsDisposed)
       {
         uint deviceNum = 0;
         DISPLAY_DEVICE displayDevice = new DISPLAY_DEVICE();
@@ -203,7 +202,7 @@ namespace MediaPortal.Player
         while (EnumDisplayDevices(null, deviceNum, displayDevice, 0) != 0)
         {
           if (displayDevice.DeviceName ==
-              Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName)
+              GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].Details.DeviceName)
           {
             // Set new monitorIndex
             GUIGraphicsContext.currentMonitorIdx = (int) deviceNum;
@@ -213,8 +212,8 @@ namespace MediaPortal.Player
           ++deviceNum;
         }
         Log.Debug("CycleRefreshRate: return current default MonitorIndex, detection failed to find the new one : {0}",
-          GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
-        return GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal;
+          GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal);
+        return GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal;
       }
       return -1;
     }
@@ -231,12 +230,12 @@ namespace MediaPortal.Player
       int result = EnumDisplayDevices(null, monitorIndex, displayDevice, 0);
       if (result != 0)
       {
-        if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.Disposed)
+        if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.IsDisposed)
         {
           Log.Debug("CycleRefreshRate: Current MonitorIndex : {0} and current deviceName : {1}", (int) monitorIndex,
-            Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName);
+            GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].Details.DeviceName);
           if (displayDevice.DeviceName !=
-              Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName)
+              GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].Details.DeviceName)
           {
             // Analyse monitorIndex to be sure to get on the good one (some multiscreen setup can failed otherwise)
             monitorIndex = (uint) FindMonitorIndexForScreen();
@@ -244,7 +243,7 @@ namespace MediaPortal.Player
             // Try to get new displayDevice based on newest detected monitorIndex
             result = EnumDisplayDevices(null, monitorIndex, displayDevice, 0);
             Log.Debug("CycleRefreshRate: New MonitorIndex : {0} based on current deviceName : {1}", (int) monitorIndex,
-              Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName);
+              GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].Details.DeviceName);
           }
         }
 
@@ -264,6 +263,13 @@ namespace MediaPortal.Player
               if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR &&
                   GUIGraphicsContext.ForcedRefreshRate3D)
               {
+                // Add a delay for 3D
+                if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR)
+                {
+                  Log.Debug("RefreshRateChanger.SetRefreshRateBasedOnFPS delayed start when using madVR for 3D");
+                  Thread.Sleep(10000);
+                }
+
                 // we are here because it's a 3D movie in SBS or TAB and needed to force a 1080p resolution when we are in 4K config
                 // Get current Value
                 if (GUIGraphicsContext.ForcedRR3DBackDefault)
@@ -483,13 +489,12 @@ namespace MediaPortal.Player
     private static double _workerFps;
     private static string _workerStrFile;
     private static MediaType _workerType;
-    private static Thread _workerThread { get; set; }
-
+    
     #endregion
 
     #region public enums
 
-    public enum MediaType
+    public enum MediaType // copy present in g_player
     {
       Video,
       TV,
@@ -497,7 +502,7 @@ namespace MediaPortal.Player
       Music,
       Recording,
       Unknown
-    } ;
+    };
 
     #endregion
 
@@ -617,10 +622,8 @@ namespace MediaPortal.Player
           List<double> fpsList = new List<double>();
           foreach (string fpsItem in fpsArray)
           {
-            double fpsAsDouble = -1;
-            double.TryParse(fpsItem, NumberStyles.AllowDecimalPoint, provider, out fpsAsDouble);
-
-            if (fpsAsDouble > -1)
+            double fpsAsDouble;
+            if (double.TryParse(fpsItem, NumberStyles.AllowDecimalPoint, provider, out fpsAsDouble))
             {
               fpsList.Add(fpsAsDouble);
             }
@@ -639,7 +642,7 @@ namespace MediaPortal.Player
       }
     }
 
-    private static void FindExtCmdfromSettings(double fps, double currentRR, bool deviceReset, out double newRR,
+    private static void FindExtCmdfromSettings(double fps, out double newRR,
                                                out string newExtCmd, out string newRRDescription)
     {
       GetRefreshRateConfiguration();
@@ -731,7 +734,6 @@ namespace MediaPortal.Player
         Log.Info("RefreshRateChanger.RunExternalJob: running external job failed {0}", e.Message);
         return false;
       }
-      finally {}
 
       if (changeRR != null)
       {
@@ -770,13 +772,13 @@ namespace MediaPortal.Player
       _workerFps = fps;
       _workerStrFile = strFile;
       _workerType = type;
-      _workerThread = new Thread(new ThreadStart(SetRefreshRateBasedOnFpsThread))
+      Thread workerThread = new Thread(new ThreadStart(SetRefreshRateBasedOnFpsThread))
       {
         IsBackground = true,
         Name = "SetRefreshRateBasedOnFPS thread",
         Priority = ThreadPriority.AboveNormal
       };
-      _workerThread.Start();
+      workerThread.Start();
     }
 
     public static void SetRefreshRateBasedOnFpsThread()
@@ -795,22 +797,19 @@ namespace MediaPortal.Player
           }
         }
 
-        double fps = _workerFps;
-        string strFile = _workerStrFile;
-        MediaType type = _workerType;
         double currentRR = 0;
-        if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.Disposed)
+        if (GUIGraphicsContext.DX9Device != null && !GUIGraphicsContext.DX9Device.IsDisposed)
         {
-          if ((GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal == -1) ||
-              (Manager.Adapters.Count <= GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal) ||
-              (Manager.Adapters.Count > Screen.AllScreens.Length))
+          if ((GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal == -1) ||
+              (GUIGraphicsContext.Direct3D.Adapters.Count <= GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal) ||
+              (GUIGraphicsContext.Direct3D.Adapters.Count > Screen.AllScreens.Length))
           {
             Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: adapter number out of bounds");
           }
           else
           {
             currentRR =
-              Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
+              GUIGraphicsContext.Direct3D.Adapters[GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
           }
           _refreshrateChangeCurrentRR = currentRR;
 
@@ -834,7 +833,7 @@ namespace MediaPortal.Player
           double newRR;
           string newExtCmd;
           string newRRDescription;
-          FindExtCmdfromSettings(fps, currentRR, deviceReset, out newRR, out newExtCmd, out newRRDescription);
+          FindExtCmdfromSettings(_workerFps, out newRR, out newExtCmd, out newRRDescription);
 
           if (newRR > 0 && (currentRR != newRR || forceRefreshRate) ||
               (GUIGraphicsContext.ForcedRefreshRate3D && !GUIGraphicsContext.ForcedRefreshRate3DDone))
@@ -849,17 +848,17 @@ namespace MediaPortal.Player
               Thread.Sleep(10000);
             }
 
-            if (newExtCmd?.Length == 0)
+            if (String.IsNullOrEmpty(newExtCmd))
             {
               Log.Info(
                 "RefreshRateChanger.SetRefreshRateBasedOnFPS: using internal win32 method for changing refreshrate. current is {0}hz, desired is {1}",
                 currentRR, newRR);
               Log.Info("RefreshRateChanger AdapterOrdinal value is {0}",
-                (uint) GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
-              Win32.CycleRefreshRate((uint) GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, newRR);
+                (uint) GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal);
+              Win32.CycleRefreshRate((uint) GUIGraphicsContext.DX9Device.Capabilities.AdapterOrdinal, newRR);
               NotifyRefreshRateChanged(newRRDescription, false);
             }
-            else if (RunExternalJob(newExtCmd, strFile, type, deviceReset) && newRR != currentRR)
+            else if (RunExternalJob(newExtCmd, _workerStrFile, _workerType, deviceReset) && newRR != currentRR)
             {
               Win32.FixDwm();
               NotifyRefreshRateChanged(newRRDescription, false);
@@ -879,7 +878,7 @@ namespace MediaPortal.Player
             {
               Log.Info(
                 "RefreshRateChanger.SetRefreshRateBasedOnFPS: could not find a matching refreshrate based on {0} fps (check config)",
-                fps);
+                _workerFps);
             }
             else
             {
@@ -890,13 +889,6 @@ namespace MediaPortal.Player
           }
           Log.Info("RefreshRateChanger.SwitchFocus");
           Util.Utils.SwitchFocus();
-
-          // stop the workerthread
-          if (_workerThread != null && _workerThread.IsAlive)
-          {
-            _workerThread.Abort();
-            _workerThread = null;
-          }
         }
       }
       catch (Exception ex)
@@ -920,8 +912,6 @@ namespace MediaPortal.Player
       NumberFormatInfo provider = new NumberFormatInfo();
       provider.NumberDecimalSeparator = ".";
       double defaultFPS = 0;
-      bool deviceReset = false;
-      bool force_refresh_rate = false;
       using (Settings xmlreader = new MPSettings())
       {
         enabled = xmlreader.GetValueAsBool("general", "autochangerefreshrate", false);
@@ -935,7 +925,6 @@ namespace MediaPortal.Player
           }
         }
 
-        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
         bool useDefaultHz = xmlreader.GetValueAsBool("general", "use_default_hz", false);
 
         if (!useDefaultHz)
@@ -968,8 +957,6 @@ namespace MediaPortal.Player
             }
           }
         }
-
-        deviceReset = xmlreader.GetValueAsBool("general", "devicereset", false);
       }
 
       SetRefreshRateBasedOnFPS(defaultFPS, "", MediaType.Unknown);
@@ -1026,11 +1013,15 @@ namespace MediaPortal.Player
       List<double> tvFPS = setting.Fps;
       double fps = -1;
 
-      if ((isVideo || isDVD) && (!isRTSP && !isTV))
+      if ((isVideo || isDVD || isTV) && !isRTSP)
       {
         if (g_Player.MediaInfo != null)
         {
           fps = g_Player.MediaInfo.Framerate;
+          if (fps == 0.0 && isTV && tvFPS.Count > 0) //fallback for mediainfo.wrapper<=20.09
+          {
+            fps = tvFPS[0];
+          }
         }
         else
         {
@@ -1042,7 +1033,7 @@ namespace MediaPortal.Player
           return;
         }
       }
-      else if (isTV || isRTSP)
+      else if (isRTSP)
       {
         if (tvFPS.Count > 0)
         {

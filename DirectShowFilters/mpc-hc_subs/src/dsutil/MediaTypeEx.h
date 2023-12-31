@@ -1,6 +1,6 @@
 /*
  * (C) 2003-2006 Gabest
- * (C) 2006-2012 see Authors.txt
+ * (C) 2006-2013, 2016 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include <atlcoll.h>
+
 class CMediaTypeEx : public CMediaType
 {
 public:
@@ -30,7 +32,7 @@ public:
         CMediaType::operator = (mt);
     }
 
-    CString ToString(IPin* pPin = NULL);
+    CString ToString(IPin* pPin = nullptr);
 
     static CString GetVideoCodecName(const GUID& subtype, DWORD biCompression);
     static CString GetAudioCodecName(const GUID& subtype, WORD wFormatTag);

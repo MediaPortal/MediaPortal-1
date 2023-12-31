@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -30,7 +30,9 @@ namespace MediaPortal.DeployTool.Sections
     {
       InitializeComponent();
       type = DialogType.SkinChoice;
-      labelSectionHeader.Text = "";
+      labelSectionHeader.Text = string.Empty;
+
+      InstallationProperties.Instance.Set("ConfigureMediaPortalAresSkin", "0");
 
       if (InstallationProperties.Instance.Get("UpdateMode") == "yes")
       {
@@ -38,7 +40,7 @@ namespace MediaPortal.DeployTool.Sections
         btnExisting.Visible = true;
         lblExisting.Visible = true;
         btnExisting.Image = Images.Choose_button_on;
-        pbSkin.Image = null;
+        pbSkin.Image = Images.preview_existing;
         InstallationProperties.Instance.Set("ChosenSkin", "[Existing]");
       }
       else
@@ -58,11 +60,22 @@ namespace MediaPortal.DeployTool.Sections
       UpdateUI();
     }
 
+    #region Hyperlink handler
+
+    private void linkSkins_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      Utils.OpenURL("https://www.team-mediaportal.com/extensions/widescreen");
+    }
+
+    #endregion
+
     #region IDeployDialog interface
 
     public override void UpdateUI()
     {
       lblChooseSkin.Text = Localizer.GetBestTranslation("SkinChoice_labelSectionHeader");
+      lblExtendedDescription.Text = Localizer.GetBestTranslation("SkinChoice_ExtendedDescription");
+      linkSkins.Text = Localizer.GetBestTranslation("SkinChoice_OtherSkins");
     }
 
     public override DeployDialog GetNextDialog()
@@ -85,6 +98,7 @@ namespace MediaPortal.DeployTool.Sections
       btnAres.Image = Images.Choose_button_off;
       pbSkin.Image = Images.preview_titan;
       InstallationProperties.Instance.Set("ChosenSkin", "Titan");
+      InstallationProperties.Instance.Set("ConfigureMediaPortalAresSkin", "0");
     }
 
     private void btnSkin2_Click(object sender, EventArgs e)
@@ -95,6 +109,7 @@ namespace MediaPortal.DeployTool.Sections
       btnAres.Image = Images.Choose_button_off;
       pbSkin.Image = Images.preview_DefaultWide_HD;
       InstallationProperties.Instance.Set("ChosenSkin", "DefaultWideHD");
+      InstallationProperties.Instance.Set("ConfigureMediaPortalAresSkin", "0");
     }
 
     private void btnSkin3_Click(object sender, EventArgs e)
@@ -105,6 +120,7 @@ namespace MediaPortal.DeployTool.Sections
       btnAres.Image = Images.Choose_button_on;
       pbSkin.Image = Images.preview_ares;
       InstallationProperties.Instance.Set("ChosenSkin", "Ares");
+      InstallationProperties.Instance.Set("ConfigureMediaPortalAresSkin", "1");
     }
 
     private void btnExisting_Click(object sender, EventArgs e)
@@ -112,8 +128,10 @@ namespace MediaPortal.DeployTool.Sections
       btnExisting.Image = Images.Choose_button_on;
       btnTitan.Image = Images.Choose_button_off;
       btnDefaultWide.Image = Images.Choose_button_off;
-      pbSkin.Image = null;
+      btnAres.Image = Images.Choose_button_off;
+      pbSkin.Image = Images.preview_existing;
       InstallationProperties.Instance.Set("ChosenSkin", "[Existing]");
+      InstallationProperties.Instance.Set("ConfigureMediaPortalAresSkin", "0");
     }
 
   }

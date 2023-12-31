@@ -1,0 +1,57 @@
+version: 1.32.Final.{build}
+image: Visual Studio 2019
+clone_folder: c:\project\mediaportal
+environment:
+  JAVA_HOME: C:\Program Files (x86)\Java\jdk1.8.0
+  
+configuration:
+  - x86
+  - x64
+  
+install:
+- cmd: >-
+    git submodule update --init --recursive
+
+    choco install nsis --version=3.08
+
+    java -version
+
+for:
+  -
+    matrix:
+      only:
+        - configuration: x86
+    build_script:
+      - cmd: >-
+          cd c:\project\mediaportal\build\
+
+          BuildFullinstaller.cmd LOG x86
+
+          7z a ..\Release\MediaPortalSetup_x86_%APPVEYOR_BUILD_VERSION%.%APPVEYOR_REPO_COMMIT%.zip ..\Release\MediaPortalSetup_*.exe
+
+          7z a BuildFullInstaller_x86.zip BuildFullInstaller.log
+    on_failure:
+      - ps: Push-AppveyorArtifact BuildFullInstaller.log -FileName BuildError_x86.log
+
+  -
+    matrix:
+      only:
+        - configuration: x64
+    build_script:
+          cd c:\project\mediaportal\build\
+
+          BuildFullinstaller.cmd LOG x64
+
+          7z a ..\Release\MediaPortalSetup_x64_%APPVEYOR_BUILD_VERSION%.%APPVEYOR_REPO_COMMIT%.zip ..\Release\MediaPortalSetup_*.exe
+
+          7z a BuildFullInstaller_x64.zip BuildFullInstaller.log
+    on_failure:
+      - ps: Push-AppveyorArtifact BuildFullInstaller.log -FileName BuildError_x64.log
+
+artifacts:
+  - path: Release\MediaPortalSetup_*.zip
+    name: Mediaportal Installer (Zip)
+  - path: Build\BuildFullInstaller_*.zip
+    name: Mediaportal Build Log
+
+test: off

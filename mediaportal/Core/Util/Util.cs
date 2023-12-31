@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -36,18 +36,18 @@ using System.Text;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.ServiceProcess;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+
 using MediaPortal.ExtensionMethods;
-using MediaPortal.Player;
 using MediaPortal.Profile;
-using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using MediaPortal.Configuration;
 using MediaPortal.Services;
+
+using Microsoft.Win32;
 
 namespace MediaPortal.Util
 {
@@ -155,7 +155,7 @@ namespace MediaPortal.Util
 
     private static string[] _artistNamePrefixes;
     protected static string _artistPrefixes;
-    
+
     private static bool m_bHideExtensions = false;
     private static bool enableGuiSounds;
 
@@ -201,7 +201,7 @@ namespace MediaPortal.Util
         ".wma," +
         // BassWv
         ".wv";
-    
+
     public static string VideoExtensionsDefault =
       ".avi,.bdmv,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo,.flv,.m4v,.3gp,.wtv,.ogv";
 
@@ -287,7 +287,11 @@ namespace MediaPortal.Util
 
     public static string GetDriveSerial(string drive)
     {
-      if (drive == null) return string.Empty;
+      if (string.IsNullOrWhiteSpace(drive))
+      {
+        return string.Empty;
+      }
+
       //receives volume name of drive
       StringBuilder volname = new StringBuilder(256);
       //receives serial number of drive,not in case of network drive(win95/98)
@@ -304,12 +308,16 @@ namespace MediaPortal.Util
       {
         return String.Format("{0:X}", sn);
       }
-      else return "";
+      else return string.Empty;
     }
 
     public static string GetDriveName(string drive)
     {
-      if (drive == null) return string.Empty;
+      if (string.IsNullOrWhiteSpace(drive))
+      {
+        return string.Empty;
+      }
+
       //receives volume name of drive
       StringBuilder volname = new StringBuilder(256);
       //receives serial number of drive,not in case of network drive(win95/98)
@@ -325,7 +333,7 @@ namespace MediaPortal.Util
       {
         return volname.ToString();
       }
-      else return "";
+      else return string.Empty;
     }
 
     public static int getDriveType(string drive)
@@ -421,6 +429,15 @@ namespace MediaPortal.Util
       return string.Format("{0:f} {1}B", beautySize, sizes[i - 1]);
     }
 
+    public static bool IsURL(string strPath)
+    {
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
+      return (strPath.Length > 10 && (strPath.StartsWith(@"http://") || strPath.StartsWith(@"https://")));
+    }
+
     /// <summary>
     /// Returns whether a file is TV
     /// Will also return true is file is Radio as both share same format
@@ -429,7 +446,10 @@ namespace MediaPortal.Util
     /// <returns>Whether file is TV</returns>
     public static bool IsLiveTv(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
 
       Match ex = Regex.Match(strPath, @"(live\d+-\d+\.ts(\.tsbuffer(\d+\.ts)?)?)$");
       return ex.Success;
@@ -437,7 +457,10 @@ namespace MediaPortal.Util
 
     public static bool IsRTSP(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
 
       return strPath.Contains("rtsp:");
     }
@@ -450,7 +473,10 @@ namespace MediaPortal.Util
     /// <returns>Whether file is radio</returns>
     public static bool IsLiveRadio(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
       //
       // Bugged implementation: files are named "live3-0.ts.tsbuffer" as for LiveTv
       //
@@ -459,7 +485,7 @@ namespace MediaPortal.Util
 
     /// <summary>
     /// This returns whether a file is video or not
-    /// There is an issue in the logic for multi-seat radio 
+    /// There is an issue in the logic for multi-seat radio
     /// => if (strPath.ToLowerInvariant().StartsWith("rtsp:")) return true;
     /// means this will incorrectly return true for multi-seat radio
     /// </summary>
@@ -467,7 +493,10 @@ namespace MediaPortal.Util
     /// <returns>Whether file is a video file</returns>
     public static bool IsVideo(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
       if (IsLastFMStream(strPath)) return false;
       if (strPath.ToLowerInvariant().StartsWith("rtsp:")) return true;
       if (strPath.ToLowerInvariant().StartsWith("mms:")
@@ -519,7 +548,10 @@ namespace MediaPortal.Util
 
     public static bool IsAVStream(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
       if (strPath.StartsWith("http:")) return true;
       if (strPath.StartsWith("https:")) return true;
       if (strPath.StartsWith("mms:")) return true;
@@ -538,7 +570,11 @@ namespace MediaPortal.Util
 
     public static bool IsAudio(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
+
       if (IsLastFMStream(strPath)) return true;
       try
       {
@@ -556,7 +592,11 @@ namespace MediaPortal.Util
 
     public static bool IsPicture(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
+
       try
       {
         if (!Path.HasExtension(strPath)) return false;
@@ -583,7 +623,11 @@ namespace MediaPortal.Util
 
     public static bool IsPlayList(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
+
       try
       {
         if (!Path.HasExtension(strPath)) return false;
@@ -599,7 +643,11 @@ namespace MediaPortal.Util
 
     public static bool IsProgram(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
+
       try
       {
         if (!Path.HasExtension(strPath)) return false;
@@ -615,7 +663,11 @@ namespace MediaPortal.Util
 
     public static bool IsShortcut(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
+
       try
       {
         if (!Path.HasExtension(strPath)) return false;
@@ -982,7 +1034,7 @@ namespace MediaPortal.Util
         //
         bool createVideoThumbs;
         bool getItemThumb = true;
-          
+
         using (Settings xmlreader = new MPSettings())
         {
           createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "videoondemand", true);
@@ -994,10 +1046,10 @@ namespace MediaPortal.Util
           {
             // Get share dir
             string sharePath = String.Format("sharepath{0}", index);
-            string shareDir = xmlreader.GetValueAsString("movies", sharePath, "");
+            string shareDir = xmlreader.GetValueAsString("movies", sharePath, string.Empty);
             // Get item dir
             string itemDir = string.Empty;
-            if (!item.IsRemote)
+            if (!item.IsRemote && item.Path != null && !item.Path.Contains(@"://"))
             {
               itemDir = (GetParentDirectory(item.Path));
             }
@@ -1016,8 +1068,7 @@ namespace MediaPortal.Util
           if (Path.IsPathRooted(item.Path) && IsVideo(item.Path) &&
               !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLowerInvariant()))
           {
-            Log.Debug("SetThumbnails: Thumbs for video (" + GetFilename(item.Path) +
-                      ") not found. Creating a new video thumb...");
+            Log.Debug("SetThumbnails: Thumbs for video ({0}) not found. Creating a new video thumb...", GetFilename(item.Path));
             // creating and starting a thread for potentially every file in a list is very expensive, we should use the threadpool
             //Thread extractVideoThumbThread = new Thread(GetVideoThumb)
             //{
@@ -1072,7 +1123,7 @@ namespace MediaPortal.Util
     /// <summary>
     /// Function to check share path and selected item path.
     /// Item path can have deeper subdir level but must begin
-    /// with share path to return TRUE, selected item extra 
+    /// with share path to return TRUE, selected item extra
     /// subdir levels will be ignored
     /// </summary>
     /// <param name="dir1">share path</param>
@@ -1147,11 +1198,11 @@ namespace MediaPortal.Util
         {
           // Get share dir
           string sharePath = String.Format("sharepath{0}", index);
-          string shareDir = xmlreader.GetValueAsString("movies", sharePath, "");
+          string shareDir = xmlreader.GetValueAsString("movies", sharePath, string.Empty);
           // Get item dir
           string itemDir = string.Empty;
           itemDir = (GetParentDirectory(directory));
-          
+
           // Check if share dir correspond to item dir
           if (AreEqual(shareDir, itemDir))
           {
@@ -1265,7 +1316,7 @@ namespace MediaPortal.Util
           if (!xmlreader.GetValueAsBool("thumbnails", "videoondemand", true))
             return;
 
-          string lastVersion = xmlreader.GetValueAsString("thumbnails", "extractorversion", "");
+          string lastVersion = xmlreader.GetValueAsString("thumbnails", "extractorversion", string.Empty);
           string newVersion = VideoThumbCreator.GetThumbExtractorVersion();
           if (newVersion != lastVersion)
           {
@@ -1293,7 +1344,7 @@ namespace MediaPortal.Util
       int mm = lSeconds / 60;
       int ss = lSeconds % 60;
 
-      string strHMS = "";
+      string strHMS = string.Empty;
       strHMS = String.Format("{0}:{1:00}", hh, mm);
       return strHMS;
     }
@@ -1311,7 +1362,7 @@ namespace MediaPortal.Util
       int mm = lSeconds / 60;
       int ss = lSeconds % 60;
 
-      string strHMS = "";
+      string strHMS = string.Empty;
       if (hh >= 1)
         strHMS = String.Format("{0}:{1:00}:{2:00}", hh, mm, ss);
       else
@@ -1327,7 +1378,7 @@ namespace MediaPortal.Util
     public static string SecondsToHMSStringSeconds(int lSeconds)
     {
       if (lSeconds < 0) return ("0:00");
-      string strHMS = "";
+      string strHMS = string.Empty;
       strHMS = String.Format("{0}", lSeconds);
       return strHMS;
     }
@@ -1341,14 +1392,14 @@ namespace MediaPortal.Util
     {
       if (lSeconds < 0) return ("0:00");
       int mm = lSeconds / 60;
-      string strHMS = "";
+      string strHMS = string.Empty;
       strHMS = String.Format("{0}", mm);
       return strHMS;
     }
 
     public static string GetNamedMonth(string aTwoLetterMonth)
     {
-      string readableMonth = "";
+      string readableMonth = string.Empty;
       switch (aTwoLetterMonth)
       {
         case "01":
@@ -1379,7 +1430,7 @@ namespace MediaPortal.Util
           readableMonth = GUILocalizeStrings.Get(29); //September
           break;
         case "10":
-          readableMonth = GUILocalizeStrings.Get(30); //October          
+          readableMonth = GUILocalizeStrings.Get(30); //October
           break;
         case "11":
           readableMonth = GUILocalizeStrings.Get(31); //November
@@ -1468,7 +1519,7 @@ namespace MediaPortal.Util
       lSeconds = lSeconds % 3600;
       int mm = lSeconds / 60;
 
-      string strHM = "";
+      string strHM = string.Empty;
       if (hh >= 1)
         strHM = String.Format("{0:00}:{1:00}", hh, mm);
       else
@@ -1513,15 +1564,20 @@ namespace MediaPortal.Util
 
     public static string stripHTMLtags(string strHTML)
     {
-      if (strHTML == null) return string.Empty;
-      if (strHTML.Length == 0) return string.Empty;
+      if (string.IsNullOrWhiteSpace(strHTML))
+      {
+        return string.Empty;
+      }
       string stripped = Regex.Replace(strHTML, @"<(.|\n)*?>", string.Empty);
       return stripped.Trim();
     }
 
     public static bool IsNetwork(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
       if (strPath.Length < 2) return false;
       if (strPath.StartsWith(@"\\")) return true;
       string strDrive = strPath.Substring(0, 2);
@@ -1531,7 +1587,10 @@ namespace MediaPortal.Util
 
     public static bool IsUNCNetwork(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
       if (strPath.Length < 2) return false;
       if (strPath.StartsWith(@"\\")) return true;
       return false;
@@ -1559,7 +1618,10 @@ namespace MediaPortal.Util
 
     public static string FindNetworkPath(string path)
     {
-      if (string.IsNullOrEmpty(path)) return path;
+      if (string.IsNullOrWhiteSpace(path))
+      {
+        return string.Empty;
+      }
       string pathRoot = Path.GetPathRoot(path);
       if (string.IsNullOrEmpty(pathRoot)) return path;
       ProcessStartInfo pinfo = new ProcessStartInfo("net", "use");
@@ -1712,7 +1774,7 @@ namespace MediaPortal.Util
       }
       catch (DirectoryNotFoundException ex)
       {
-        Log.Debug("Util:GetFiles: {0}", ex.Message);
+        Log.Debug("Util: GetFiles: {0}", ex.Message);
         if (Utils.IsPersistentNetwork(path))
         {
           if (Utils.TryReconnectNetwork(path))
@@ -1738,7 +1800,10 @@ namespace MediaPortal.Util
 
     public static bool IsHD(string strPath)
     {
-      if (strPath == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath))
+      {
+        return false;
+      }
       if (strPath.Length < 2) return false;
       string strDrive = strPath.Substring(0, 2);
       if (getDriveType(strDrive) == 3) return true;
@@ -1747,7 +1812,10 @@ namespace MediaPortal.Util
 
     public static bool IsCDDA(string strFile)
     {
-      if (String.IsNullOrEmpty(strFile)) return false;
+      if (string.IsNullOrWhiteSpace(strFile))
+      {
+        return false;
+      }
       if (strFile.StartsWith("cdda:")) return true;
       string extension = Path.GetExtension(strFile).ToLowerInvariant();
       if (extension.Equals(".cda")) return true;
@@ -1756,7 +1824,10 @@ namespace MediaPortal.Util
 
     public static bool IsDVD(string strFile)
     {
-      if (strFile == null) return false;
+      if (string.IsNullOrWhiteSpace(strFile))
+      {
+        return false;
+      }
       if (strFile.Length < 2) return false;
       string strDrive = strFile.Substring(0, 2);
       if (getDriveType(strDrive) == 5) return true;
@@ -1765,7 +1836,10 @@ namespace MediaPortal.Util
 
     public static bool IsRemovable(string strFile)
     {
-      if (strFile == null) return false;
+      if (string.IsNullOrWhiteSpace(strFile))
+      {
+        return false;
+      }
       if (strFile.Length < 2) return false;
       string strDrive = strFile.Substring(0, 2);
       if (getDriveType(strDrive) == 2) return true;
@@ -1774,7 +1848,10 @@ namespace MediaPortal.Util
 
     public static bool IsUsbHdd(string path)
     {
-      if (path == null) return false;
+      if (string.IsNullOrWhiteSpace(path))
+      {
+        return false;
+      }
       if (path.Length < 2) return false;
       List<string> usbHdds = new List<string>();
       usbHdds = GetAvailableUsbHardDisks();
@@ -1785,7 +1862,10 @@ namespace MediaPortal.Util
 
     public static bool IsRemovableUsbDisk(string path)
     {
-      if (path == null) return false;
+      if (string.IsNullOrWhiteSpace(path))
+      {
+        return false;
+      }
       if (path.Length < 2) return false;
       List<string> usbDisks = new List<string>();
       usbDisks = GetRemovableUsbDisks();
@@ -1799,8 +1879,8 @@ namespace MediaPortal.Util
     {
       string extension = Path.GetExtension(fileName).ToLowerInvariant();
       // check for "http" and "https" to prevent exception
-      if (string.IsNullOrEmpty(fileName) || fileName.StartsWith("http://") || fileName.StartsWith("https://") || 
-          !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts")) 
+      if (string.IsNullOrEmpty(fileName) || fileName.StartsWith("http://") || fileName.StartsWith("https://") ||
+          !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts"))
         return false;
 
       string vDrive = DaemonTools.GetVirtualDrive();
@@ -1926,9 +2006,11 @@ namespace MediaPortal.Util
 
     public static bool GetDVDLabel(string strFile, out string strLabel)
     {
-      strLabel = "";
-      if (strFile == null) return false;
-      if (strFile.Length == 0) return false;
+      strLabel = string.Empty;
+      if (string.IsNullOrWhiteSpace(strFile))
+      {
+        return false;
+      }
       string strDrive = strFile.Substring(0, 2);
       strLabel = GetDriveName(strDrive);
       return true;
@@ -1936,8 +2018,14 @@ namespace MediaPortal.Util
 
     public static bool ShouldStack(string strFile1, string strFile2)
     {
-      if (strFile1 == null) return false;
-      if (strFile2 == null) return false;
+      if (string.IsNullOrWhiteSpace(strFile1))
+      {
+        return false;
+      }
+      if (string.IsNullOrWhiteSpace(strFile2))
+      {
+        return false;
+      }
       try
       {
         var stackReg = StackExpression();
@@ -1956,9 +2044,9 @@ namespace MediaPortal.Util
           {
             // Both strings had the special pattern. Now see if the filenames are the same.
             // Do this by removing the special pattern and compare the remains.
-            //if (Regex.Replace(strFileName1, pattern[i], "", RegexOptions.IgnoreCase)
-            //    == Regex.Replace(strFileName2, pattern[i], "", RegexOptions.IgnoreCase))
-            if (stackReg[i].Replace(strFileName1, "") == stackReg[i].Replace(strFileName2, ""))
+            //if (Regex.Replace(strFileName1, pattern[i], string.Empty, RegexOptions.IgnoreCase)
+            //    == Regex.Replace(strFileName2, pattern[i], string.Empty, RegexOptions.IgnoreCase))
+            if (stackReg[i].Replace(strFileName1, string.Empty) == stackReg[i].Replace(strFileName2, string.Empty))
             {
               // It was a match so stack it
               return true;
@@ -1977,8 +2065,14 @@ namespace MediaPortal.Util
 
     public static bool PathShouldStack(string strPath1, string strPath2)
     {
-      if (strPath1 == null) return false;
-      if (strPath2 == null) return false;
+      if (string.IsNullOrWhiteSpace(strPath1))
+      {
+        return false;
+      }
+      if (string.IsNullOrWhiteSpace(strPath2))
+      {
+        return false;
+      }
       try
       {
         var stackReg = StackExpression();
@@ -1991,7 +2085,7 @@ namespace MediaPortal.Util
           {
             // Both strings had the special pattern. Now see if the paths are the same.
             // Do this by removing the special pattern and compare the remains.
-            if (stackReg[i].Replace(strPath1, "") == stackReg[i].Replace(strPath2, ""))
+            if (stackReg[i].Replace(strPath1, string.Empty) == stackReg[i].Replace(strPath2, string.Empty))
             {
               // It was a match so stack it
               return true;
@@ -2010,7 +2104,10 @@ namespace MediaPortal.Util
 
     public static void RemoveStackEndings(ref string strFileName)
     {
-      if (strFileName == null) return;
+      if (string.IsNullOrWhiteSpace(strFileName))
+      {
+        return;
+      }
       var stackReg = StackExpression();
       for (int i = 0; i < stackReg.Length; i++)
       {
@@ -2018,8 +2115,8 @@ namespace MediaPortal.Util
         //if (Regex.IsMatch(strFileName, pattern[i], RegexOptions.IgnoreCase))
         if (stackReg[i].IsMatch(strFileName))
         {
-          strFileName = stackReg[i].Replace(strFileName, "");
-          //Regex.Replace(strFileName, pattern[i], "", RegexOptions.IgnoreCase);
+          strFileName = stackReg[i].Replace(strFileName, string.Empty);
+          //Regex.Replace(strFileName, pattern[i], string.Empty, RegexOptions.IgnoreCase);
         }
       }
     }
@@ -2055,7 +2152,7 @@ namespace MediaPortal.Util
         return "000";
       try
       {
-        if (String.Compare(Strings.Unknown, strLine, true) == 0) return "";
+        if (String.Compare(Strings.Unknown, strLine, true) == 0) return string.Empty;
         CRCTool crc = new CRCTool();
         crc.Init(CRCTool.CRCCode.CRC32);
         ulong dwcrc = crc.calc(strLine);
@@ -2079,10 +2176,13 @@ namespace MediaPortal.Util
 
     public static void Split(string strFileNameAndPath, out string strPath, out string strFileName)
     {
-      strFileName = "";
-      strPath = "";
-      if (strFileNameAndPath == null) return;
-      if (strFileNameAndPath.Length == 0) return;
+      strFileName = string.Empty;
+      strPath = string.Empty;
+      if (string.IsNullOrWhiteSpace(strFileNameAndPath))
+      {
+        return;
+      }
+
       try
       {
         strFileNameAndPath = strFileNameAndPath.Trim();
@@ -2101,14 +2201,14 @@ namespace MediaPortal.Util
         }
         else
         {
-          strPath = "";
+          strPath = string.Empty;
           strFileName = strFileNameAndPath;
         }
       }
       catch (Exception ex)
       {
         Log.Error("Split: {0}", ex.Message);
-        strPath = "";
+        strPath = string.Empty;
         strFileName = strFileNameAndPath;
       }
     }
@@ -2143,7 +2243,7 @@ namespace MediaPortal.Util
     {
       mciSendString("set cdaudio door open", null, 0, IntPtr.Zero);
     }
-    
+
     public static void CloseCDROM(string driveLetter)
     {
       mciSendString(string.Format("set CDAudio!{0} door closed", driveLetter), null, 127, IntPtr.Zero);
@@ -2174,24 +2274,23 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        string ErrorString =
-          String.Format(
-            "Utils: Error starting process!\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n  stack: {3} {4} {5}",
-            proc.StartInfo.FileName,
-            proc.StartInfo.Arguments,
-            proc.StartInfo.WorkingDirectory,
-            ex.Message,
-            ex.Source,
-            ex.StackTrace);
-        Log.Info(ErrorString);
+        Log.Info("Util: Error starting process!\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n  stack: {3} {4} {5}",
+                 proc.StartInfo.FileName,
+                 proc.StartInfo.Arguments,
+                 proc.StartInfo.WorkingDirectory,
+                 ex.Message,
+                 ex.Source,
+                 ex.StackTrace);
       }
       return proc;
     }
 
     public static Process StartProcess(string strProgram, string strParams, bool bWaitForExit, bool bHidden)
     {
-      if (strProgram == null) return null;
-      if (strProgram.Length == 0) return null;
+      if (string.IsNullOrWhiteSpace(strProgram))
+      {
+        return null;
+      }
 
       string strWorkingDir = Path.GetFullPath(strProgram);
       string strFileName = Path.GetFileName(strProgram);
@@ -2247,12 +2346,12 @@ namespace MediaPortal.Util
       //ProcOptions.StandardOutputEncoding = Encoding.GetEncoding("ISO-8859-1"); // the output contains "Umlaute", etc.
       //ProcOptions.StandardErrorEncoding = Encoding.GetEncoding("ISO-8859-1");
       ProcOptions.WorkingDirectory = aWorkingDir; // set the dir because the binary might depend on cygwin.dll
-      ProcOptions.CreateNoWindow = true; // Do not spawn a "Dos-Box"      
-      ProcOptions.ErrorDialog = false; // Do not open an error box on failure        
+      ProcOptions.CreateNoWindow = true; // Do not spawn a "Dos-Box"
+      ProcOptions.ErrorDialog = false; // Do not open an error box on failure
 
       ExternalProc.OutputDataReceived += new DataReceivedEventHandler(OutputDataHandler);
       ExternalProc.ErrorDataReceived += new DataReceivedEventHandler(ErrorDataHandler);
-      ExternalProc.EnableRaisingEvents = true; // We want to know when and why the process died        
+      ExternalProc.EnableRaisingEvents = true; // We want to know when and why the process died
       ExternalProc.StartInfo = ProcOptions;
       if (File.Exists(ProcOptions.FileName))
       {
@@ -2405,12 +2504,12 @@ namespace MediaPortal.Util
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
       {
-        string strPath = xmlreader.GetValueAsString("dvdplayer", "path", "");
-        string strParams = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
+        string strPath = xmlreader.GetValueAsString("dvdplayer", "path", string.Empty);
+        string strParams = xmlreader.GetValueAsString("dvdplayer", "arguments", string.Empty);
         bool bInternal = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
         if (bInternal) return false;
 
-        if (strPath != "")
+        if (!string.IsNullOrEmpty(strPath))
         {
           if (File.Exists(strPath))
           {
@@ -2472,22 +2571,22 @@ namespace MediaPortal.Util
         }
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
         {
-          //using external player checking is now g_player side 
+          //using external player checking is now g_player side
           //bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
           //if (bInternal) return false;
-          string strPath = xmlreader.GetValueAsString("movieplayer", "path", "");
-          string strParams = xmlreader.GetValueAsString("movieplayer", "arguments", "");
+          string strPath = xmlreader.GetValueAsString("movieplayer", "path", string.Empty);
+          string strParams = xmlreader.GetValueAsString("movieplayer", "arguments", string.Empty);
           if (extension.ToLowerInvariant() == ".ifo" || extension.ToLowerInvariant() == ".vob")
           {
-            strPath = xmlreader.GetValueAsString("dvdplayer", "path", "");
-            strParams = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
+            strPath = xmlreader.GetValueAsString("dvdplayer", "path", string.Empty);
+            strParams = xmlreader.GetValueAsString("dvdplayer", "arguments", string.Empty);
           }
           else if  (extension.ToLowerInvariant() == ".bdmv")
           {
-            strPath = xmlreader.GetValueAsString("bdplayer", "path", "");
-            strParams = xmlreader.GetValueAsString("bdplayer", "arguments", "");
+            strPath = xmlreader.GetValueAsString("bdplayer", "path", string.Empty);
+            strParams = xmlreader.GetValueAsString("bdplayer", "arguments", string.Empty);
           }
-          if (strPath != "")
+          if (!string.IsNullOrEmpty(strPath))
           {
             if (File.Exists(strPath))
             {
@@ -2517,7 +2616,7 @@ namespace MediaPortal.Util
               // %filename% argument handling
               else if (strParams.IndexOf("%filename%", StringComparison.Ordinal) >= 0)
                 strParams = strParams.Replace("%filename%", "\"" + strFile + "\"");
-              
+
               Process movieplayer = new Process();
               string strWorkingDir = Path.GetFullPath(strPath);
               string strFileName = Path.GetFileName(strPath);
@@ -2532,7 +2631,7 @@ namespace MediaPortal.Util
               {
                 movieplayer.StartInfo.Arguments = "\"" + strFile + "\"";
               }
-              Log.Info("start process {0} {1}", strPath, movieplayer.StartInfo.Arguments);
+              Log.Info("Util: Start process {0} {1}", strPath, movieplayer.StartInfo.Arguments);
               if (OnStartExternal != null)
               {
                 OnStartExternal(movieplayer, true); // Event: Starting external process
@@ -2591,7 +2690,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("longtodate: {0}", ex.Message);
+        Log.Error("Util: longtodate: {0}", ex.Message);
       }
       return DateTime.Now;
     }
@@ -2617,7 +2716,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("datetolong: {0}", ex.Message);
+        Log.Error("Util: datetolong: {0}", ex.Message);
       }
       return 0;
     }
@@ -2653,7 +2752,7 @@ namespace MediaPortal.Util
               if (c == i)
               {
                 unclean = true;
-                //Log.Warn("Utils: *** File name {1} still contains invalid chars - {0}", Convert.ToString(c), strFName);
+                //Log.Warn("Util: *** File name {1} still contains invalid chars - {0}", Convert.ToString(c), strFName);
                 strFName = strFName.Replace(c, '_');
                 break;
               }
@@ -2714,7 +2813,11 @@ namespace MediaPortal.Util
 
     public static bool DirectoryDelete(string aDirectory, bool aRecursive)
     {
-      if (String.IsNullOrEmpty(aDirectory)) return false;
+      if (String.IsNullOrEmpty(aDirectory))
+      {
+        return false;
+      }
+
       try
       {
         Directory.Delete(aDirectory, aRecursive);
@@ -2722,21 +2825,23 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("DirectoryDelete: {0}", ex.Message);
+        Log.Error("Util: DirectoryDelete: {0}", ex.Message);
       }
       return false;
     }
 
-    public static void DownLoadImage(string strUrl, string strFile, System.Drawing.Imaging.ImageFormat imageFormat)
+    public static void DownLoadImage(string strURL, string strFile, System.Drawing.Imaging.ImageFormat imageFormat)
     {
-      if (string.IsNullOrEmpty(strUrl) || string.IsNullOrEmpty(strFile))
+      if (string.IsNullOrEmpty(strURL) || string.IsNullOrEmpty(strFile))
+      {
         return;
+      }
 
       using (WebClient client = new WebClient())
       {
         try
         {
-          string extensionURL = Path.GetExtension(strUrl);
+          string extensionURL = Path.GetExtension(strURL);
           string extensionFile = Path.GetExtension(strFile);
           if (extensionURL.Length > 0 && extensionFile.Length > 0)
           {
@@ -2744,7 +2849,7 @@ namespace MediaPortal.Util
             extensionFile = extensionFile.ToLowerInvariant();
             string strLogo = Path.ChangeExtension(strFile, extensionURL);
             client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-            client.DownloadFile(strUrl, strLogo);
+            client.DownloadFile(strURL, strLogo);
             if (extensionURL != extensionFile)
             {
               using (Image imgSrc = Image.FromFile(strLogo))
@@ -2757,17 +2862,17 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          Log.Error("Utils: DownLoadImage {1} failed: {0}", ex.Message, strUrl);
+          Log.Error("Util: DownLoadImage {1} failed: {0}", ex.Message, strURL);
         }
       }
     }
 
     public static void DownLoadAndCacheImage(string strURL, string strFile)
     {
-      if (strURL == null) return;
-      if (strURL.Length == 0) return;
-      if (strFile == null) return;
-      if (strFile.Length == 0) return;
+      if (string.IsNullOrEmpty(strURL) || string.IsNullOrEmpty(strFile))
+      {
+        return;
+      }
       string url = String.Format("mpcache-{0}", EncryptLine(strURL));
 
       string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
@@ -2776,15 +2881,15 @@ namespace MediaPortal.Util
         try
         {
           File.Copy(file, strFile, true);
-          Log.Debug("Util DownLoadAndCacheImage: Copying previously cached image {0} to {1}", file, strFile);
+          Log.Debug("Util: DownLoadAndCacheImage: Copying previously cached image {0} to {1}", file, strFile);
         }
         catch (Exception ex)
         {
-          Log.Error("Util DownLoadAndCacheImage: error copying cached image {0} to {1} - {2}", file, strFile, ex.Message);
+          Log.Error("Util: DownLoadAndCacheImage: error copying cached image {0} to {1} - {2}", file, strFile, ex.Message);
         }
         return;
       }
-      Log.Debug("Util DownLoadImage URL : {0}, file : {1}",strURL, file);
+      Log.Debug("Util: DownLoadImage URL : {0}, file : {1}",strURL, file);
       DownLoadImage(strURL, file);
       if (File.Exists(file))
       {
@@ -2795,11 +2900,11 @@ namespace MediaPortal.Util
           //string strFileL = ConvertToLargeCoverArt(strFile);
           //Util.Picture.CreateThumbnail(file, strFileL, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
           File.Copy(file, strFile, true);
-          Log.Debug("Util DownLoadAndCacheImage: Copying downloaded image {0} to {1}", file, strFile);
+          Log.Debug("Util: DownLoadAndCacheImage: Copying downloaded image {0} to {1}", file, strFile);
         }
         catch (Exception ex)
         {
-          Log.Error("Util DownLoadAndCacheImage: error copying downloaded image {0} to {1} - {2}", file, strFile, ex.Message);
+          Log.Error("Util: DownLoadAndCacheImage: error copying downloaded image {0} to {1} - {2}", file, strFile, ex.Message);
         }
       }
     }
@@ -2812,17 +2917,17 @@ namespace MediaPortal.Util
     /// <param name="strFile"></param>
     public static void DownLoadAndOverwriteCachedImage(string strURL, string strFile)
     {
-      if (strURL == null) return;
-      if (strURL.Length == 0) return;
-      if (strFile == null) return;
-      if (strFile.Length == 0) return;
+      if (string.IsNullOrEmpty(strURL) || string.IsNullOrEmpty(strFile))
+      {
+        return;
+      }
       string url = String.Format("mpcache-{0}", EncryptLine(strURL));
 
       string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
       FileDelete(file);
-      Log.Debug("Util DownLoadImage URL : {0}, file : {1}", strURL, file);
+      Log.Debug("Util: DownLoadImage URL : {0}, file : {1}", strURL, file);
       DownLoadImage(strURL, file);
-      
+
       if (File.Exists(file))
       {
         try
@@ -2831,7 +2936,7 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          Log.Error("Util DownLoadAndOverwriteCachedImage: error copying downloaded image {0} to {1} - {2}", file, strFile, ex.Message);
+          Log.Error("Util: DownLoadAndOverwriteCachedImage: error copying downloaded image {0} to {1} - {2}", file, strFile, ex.Message);
         }
       }
     }
@@ -2839,7 +2944,9 @@ namespace MediaPortal.Util
     public static void DownLoadImage(string strUrl, string strFile)
     {
       if (string.IsNullOrEmpty(strUrl) || string.IsNullOrEmpty(strFile))
+      {
         return;
+      }
 
       try
       {
@@ -2853,8 +2960,34 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Info("Utils: DownLoadImage {1} failed:{0}", ex.Message, strUrl);
+        Log.Info("Util: DownLoadImage {1} failed:{0}", ex.Message, strUrl);
       }
+    }
+
+    public static string DownLoadString(string strUrl)
+    {
+      if (string.IsNullOrEmpty(strUrl))
+      {
+        return string.Empty;
+      }
+
+      try
+      {
+        using (WebClient client = new WebClientWithTimeouts { Timeout = TimeSpan.FromMilliseconds(20000) })
+        {
+          client.UseDefaultCredentials = true;
+          client.Encoding = Encoding.UTF8;
+          client.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)");
+          string result = client.DownloadString(strUrl);
+          client.Dispose();
+          return result;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Info("Util: DownLoadImage {1} failed:{0}", ex.Message, strUrl);
+      }
+      return string.Empty;
     }
 
     public class WebClientWithTimeouts : WebClient
@@ -2927,7 +3060,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("GetFilename: {0}", ex.Message);
+        Log.Error("Util: GetFilename: {0}", ex.Message);
       }
       return strPath;
     }
@@ -2941,7 +3074,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("GetFileNameWithExtension: {0}", ex.Message);
+        Log.Error("Util: GetFileNameWithExtension: {0}", ex.Message);
       }
       return strPath;
     }
@@ -2955,15 +3088,15 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("GetFileExtension: {0}", ex.Message);
+        Log.Error("Util: GetFileExtension: {0}", ex.Message);
       }
       return string.Empty;
     }
 
     ///<summary>
-    ///Plays a sound from a byte array. 
-    ///Note: If distortion or corruption of 
-    //     audio playback occurs, 
+    ///Plays a sound from a byte array.
+    ///Note: If distortion or corruption of
+    //     audio playback occurs,
     ///try using synchronous playback, or sa
     //     ve to a temp file and
     ///use the file-based option.
@@ -2975,9 +3108,9 @@ namespace MediaPortal.Util
     }
 
     ///<summary>
-    ///Plays a sound from a byte array. 
-    ///Note: If distortion or corruption of 
-    //     audio playback occurs, 
+    ///Plays a sound from a byte array.
+    ///Note: If distortion or corruption of
+    //     audio playback occurs,
     ///try using synchronous playback, or sa
     //     ve to a temp file and
     ///use the file-based option.
@@ -3005,7 +3138,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("PlaySound: {0}", ex.Message);
+        Log.Error("Util: PlaySound: {0}", ex.Message);
         if (!bIgnoreErrors)
         {
           throw ex;
@@ -3060,7 +3193,7 @@ namespace MediaPortal.Util
         }
         else
         {
-          Log.Info(@"Cannot find sound:{0} ", GUIGraphicsContext.GetThemedSkinFile("\\sounds\\" + sSoundFile));
+          Log.Info(@"Util: Cannot find sound:{0} ", GUIGraphicsContext.GetThemedSkinFile("\\sounds\\" + sSoundFile));
           return 0;
         }
       }
@@ -3269,7 +3402,7 @@ namespace MediaPortal.Util
             }
             catch (Exception ex)
             {
-              Log.Error("TryEverythingToGetFolderThumbByFilename: {0}", ex.Message);
+              Log.Error("Util: TryEverythingToGetFolderThumbByFilename: {0}", ex.Message);
             }
           }
           if (FileExistsInCache(strRemoteFolderThumb))
@@ -3358,7 +3491,7 @@ namespace MediaPortal.Util
       }
       catch (Exception e)
       {
-        Log.Info("Exception counting files:{0}", e);
+        Log.Info("Util: Exception counting files:{0}", e);
         // Ignore
       }
     }
@@ -3405,7 +3538,7 @@ namespace MediaPortal.Util
     {
       lock (_fileLookUpCacheLock)
       {
-        //Log.Debug("UpdateLookUpCacheItem : {0}", key);
+        //Log.Debug("Util: UpdateLookUpCacheItem : {0}", key);
         _fileLookUpCache[key] = fileLookUpItem; // we never remove anything, so this is safe
       }
     }
@@ -3431,9 +3564,9 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Warn("DirSearch: {0}", ex.Message);
+        Log.Warn("Util: DirSearch: {0}", ex.Message);
         AddFoldersLookedUp(sDir); //lets tag the invalid folder as have looked-up
-        //Log.Error("DirSearch failed in dir={0}, with err={1}", sDir, e.Message);        
+        //Log.Error("Util: DirSearch failed in dir={0}, with err={1}", sDir, e.Message);
         //ignore
       }
       return files;
@@ -3452,12 +3585,12 @@ namespace MediaPortal.Util
     {
       // eg. takes care of this sequence
       // 1:         \\thumbs\tv\recorded
-      // 2:					\\thumbs\tv         
+      // 2:         \\thumbs\tv
 
-      //or 
+      //or
       // eg. takes care of this sequence
       // 1:         \\thumbs\tv
-      // 2:         \\thumbs\tv          
+      // 2:         \\thumbs\tv
       string dirCopy = dir;
 
       HashSet<string> foldersLookedUpCopy = null;
@@ -3511,7 +3644,7 @@ namespace MediaPortal.Util
       {
         lock (_foldersLookedUpLock)
         {
-          //Log.Debug("AddFoldersLookedUp {0}", dir);
+          //Log.Debug("Util: AddFoldersLookedUp {0}", dir);
           //make sure we don't add the same one again
           if (!_foldersLookedUp.Contains(dir))
           {
@@ -3529,7 +3662,7 @@ namespace MediaPortal.Util
 
       if (watcher != null)
       {
-        Log.Debug("fileSystemWatcher_Error path {0} exception={1}", watcher.Path, watchException);
+        Log.Debug("Util: fileSystemWatcher_Error path {0} exception={1}", watcher.Path, watchException);
 
         string path = watcher.Path;
         if (watchException is InternalBufferOverflowException)
@@ -3555,7 +3688,7 @@ namespace MediaPortal.Util
       {
         if (watcher != null)
         {
-          Log.Debug("fileSystemWatcher_Created file {0}", e.FullPath);
+          Log.Debug("Util: fileSystemWatcher_Created file {0}", e.FullPath);
           DoInsertExistingFileIntoCache(e.FullPath);
         }
       }
@@ -3569,7 +3702,7 @@ namespace MediaPortal.Util
       {
         if (watcher != null)
         {
-          Log.Debug("fileSystemWatcher_Deleted file {0}", e.FullPath);
+          Log.Debug("Util: fileSystemWatcher_Deleted file {0}", e.FullPath);
           DoInsertNonExistingFileIntoCache(e.FullPath);
         }
       }
@@ -3586,7 +3719,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("GetDirectoryName: {0}", ex.Message);
+        Log.Error("Util: GetDirectoryName: {0}", ex.Message);
         return string.Empty;
       }
     }
@@ -3616,13 +3749,13 @@ namespace MediaPortal.Util
               }
               /*else
                 {
-                  Log.Debug("FileExistsInCache: already pre-scanned dir : {0} .. skipping", path);
+                  Log.Debug("Util: FileExistsInCache: already pre-scanned dir : {0} .. skipping", path);
                 }*/
             }
           }
           catch (ArgumentException ex)
           {
-            Log.Warn("FileExistsInCache: {0}", ex.Message);
+            Log.Warn("Util: FileExistsInCache: {0}", ex.Message);
             //ignore
           }
           found = DoFileExistsInCache(filename);
@@ -3634,7 +3767,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("FileExistsInCache: {0}", ex.Message);
+        Log.Error("Util: FileExistsInCache: {0}", ex.Message);
       }
       return found;
     }
@@ -3666,7 +3799,7 @@ namespace MediaPortal.Util
           int items = fileExistsCacheQueueCopy.Count;
           if (items > 0)
           {
-            Log.Debug("FileExistsCacheThread: new items found waiting for caching: {0}", items);
+            Log.Debug("Util: FileExistsCacheThread: new items found waiting for caching: {0}", items);
 
             foreach (string path in fileExistsCacheQueueCopy)
             {
@@ -3686,7 +3819,7 @@ namespace MediaPortal.Util
 
           if (isQueueEmpty)
           {
-            Log.Debug("FileExistsCacheThread: no more items to cache, suspending thread.: {0}", items);
+            Log.Debug("Util: FileExistsCacheThread: no more items to cache, suspending thread.: {0}", items);
             _fileExistsCacheThreadEvt?.Reset();
           }
 
@@ -3701,7 +3834,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("FileExistsCacheThread: {0}", ex.Message);
+        Log.Error("Util: FileExistsCacheThread: {0}", ex.Message);
       }
     }
 
@@ -3723,7 +3856,7 @@ namespace MediaPortal.Util
 
               if (ts.TotalSeconds > 5)
               {
-                Log.Debug("FileSystemWatchManagerThread : updating watchers");
+                Log.Debug("Util: FileSystemWatchManagerThread : updating watchers");
                 HashSet<string> folders = GetUniqueTopLevelFolders();
 
                 foreach (string dir in folders)
@@ -3737,7 +3870,7 @@ namespace MediaPortal.Util
                   }
                 }
                 _lastTimeFolderWasAdded = DateTime.MinValue;
-                Log.Debug("FileLookUpCacheThread items : {0}", _fileLookUpCache.Count);
+                Log.Debug("Util: FileLookUpCacheThread items : {0}", _fileLookUpCache.Count);
               }
 
 
@@ -3747,7 +3880,7 @@ namespace MediaPortal.Util
                 FileSystemWatcher fsw = null;
                 if (_watchers.TryGetValue(key, out fsw))
                 {
-                  Log.Debug("FileSystemWatcher : {0}", fsw.Path);
+                  Log.Debug("Util: FileSystemWatcher : {0}", fsw.Path);
                 }
               }*/
             }
@@ -3762,7 +3895,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("FileSystemWatchManagerThread: {0}", ex.Message);
+        Log.Error("Util: FileSystemWatchManagerThread: {0}", ex.Message);
       }
     }
 
@@ -3907,7 +4040,7 @@ namespace MediaPortal.Util
     }
 
     /// <summary>
-    /// taken from audioscrobbler plugin code to reverse where prefix has been swapped 
+    /// taken from audioscrobbler plugin code to reverse where prefix has been swapped
     /// eg. The Beatles => Beatles, The or Die Toten Hosen => Toten Hosen ,Die
     /// and will change back to the artist name
     /// </summary>
@@ -3938,7 +4071,8 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("An error occured undoing prefix strip for artist: {0} - {1}", aStrippedArtist,
+        Log.Error("Util: An error occured undoing prefix strip for artist: {0} - {1}", 
+                  aStrippedArtist,
                   ex.Message);
       }
 
@@ -3992,11 +4126,11 @@ namespace MediaPortal.Util
               _watchers.Add(dir, fsw);
             }
           }
-          Log.Debug("AddWatcher {0}", dir);
+          Log.Debug("Util: AddWatcher {0}", dir);
         }
         catch (Exception ex)
         {
-          Log.Error("AddWatcher exception on dir={0}, ex={1}", dir, ex);
+          Log.Error("Util: AddWatcher exception on dir={0}, ex={1}", dir, ex);
         }
       }
     }
@@ -4005,7 +4139,7 @@ namespace MediaPortal.Util
     {
       try
       {
-        Log.Debug("RemoveWatcher {0}", dir);
+        Log.Debug("Util: RemoveWatcher {0}", dir);
         FileSystemWatcher fsw = null;
         if (_watchers.TryGetValue(dir, out fsw))
         {
@@ -4022,7 +4156,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("RemoveWatcher exception on dir={0}, ex={1}", dir, ex);
+        Log.Error("Util: RemoveWatcher exception on dir={0}, ex={1}", dir, ex);
       }
     }
 
@@ -4047,7 +4181,7 @@ namespace MediaPortal.Util
 
       lock (_foldersLookedUpLock)
       {
-        Log.Debug("RemoveWatcher removing folders from cache={0}", dir);
+        Log.Debug("Util: RemoveWatcher removing folders from cache={0}", dir);
         _foldersLookedUp.RemoveWhere(s => s.StartsWith(dir));
       }
     }
@@ -4090,7 +4224,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("DisposeFileExistsCacheThread: {0}", ex.Message);
+        Log.Error("Util: DisposeFileExistsCacheThread: {0}", ex.Message);
       }
     }
 
@@ -4104,7 +4238,7 @@ namespace MediaPortal.Util
         {
           if (!HasFolderBeenScanned(dir2Lower))
           {
-            Log.Debug("InsertFilesIntoCacheAsynch: pre-scanning dir : {0}", path);
+            Log.Debug("Util: InsertFilesIntoCacheAsynch: pre-scanning dir : {0}", path);
             IEnumerable<string> files = DirSearch(dir2Lower);
             foreach (string file in files)
             {
@@ -4118,7 +4252,7 @@ namespace MediaPortal.Util
         }
         /*else
         {
-          Log.Debug("InsertFilesIntoCacheAsynch: dir already pre-scanned : {0}", path);      
+          Log.Debug("Util: InsertFilesIntoCacheAsynch: dir already pre-scanned : {0}", path);
         }*/
       }
     }
@@ -4270,70 +4404,171 @@ namespace MediaPortal.Util
       return Utils.GetCoverArtName(strFolder, strFileName + "L");
     }
 
-    private static void AddPicture(Graphics g, string strFileName, int x, int y, int w, int h)
+    public static void ThreadSleep(int sleep)
     {
-      Image img = null;
+      if (MediaPortal.Player.g_Player.Playing)
+      {
+        Thread.Sleep(sleep);
+      }
+      else
+      {
+        Thread.Sleep(1);
+      }
+    }
+
+    private static bool AddPicture(Graphics g, string strFileName, int x, int y, int w, int h)
+    {
+      bool result = false;
       try
       {
-        // Add a thumbnail of the specified picture file to the image referenced by g, draw it at the given location and size.
-        //try
-        //{
-        //  img = ImageFast.FromFile(strFileName);
-        //  using (FileStream fs = new FileStream(strFileName, FileMode.Open, FileAccess.ReadWrite))
-        //  {
-        //    img = Image.FromStream(fs, true, true);
-        //  }
-        //}
-        //catch (ArgumentException)
-        //{
-        try
+        using (FileStream fs = new FileStream(strFileName, FileMode.Open, FileAccess.Read))
         {
-          try
+          using (Image img = Image.FromStream(fs, true, false))
           {
-            using (FileStream fs = new FileStream(strFileName, FileMode.Open, FileAccess.Read))
+            Picture.RotateImage(img);
+            if (img != null)
             {
-              using (img = Image.FromStream(fs, true, false))
+              g.DrawImage(img, x, y, w, h);
+              result = true;
+            }
+          }
+        }
+      }
+      catch (OutOfMemoryException exm)
+      {
+        Log.Warn("Util: Damaged picture file found: {0}. Try to repair or delete this file please! {1}", strFileName, exm.Message);
+      }
+      catch (Exception ex)
+      {
+        Log.Info("Util: An exception occured adding an image to the folder preview thumb: {0}", ex.Message);
+      }
+
+      ThreadSleep(50);
+      return result;
+    }
+
+    private static bool AddTwoPicture(Graphics g, List<string> aPictureList, int border, int hW, int hH, int fW, int fH)
+    {
+      bool result = false;
+      try
+      {
+        using (FileStream fs1 = new FileStream((string)aPictureList[0], FileMode.Open, FileAccess.Read),
+                          fs2 = new FileStream((string)aPictureList[1], FileMode.Open, FileAccess.Read))
+        {
+          using (Image img1 = Image.FromStream(fs1, true, false),
+                       img2 = Image.FromStream(fs2, true, false))
+          {
+            Picture.RotateImage(img1);
+            Picture.RotateImage(img2);
+
+            if (img1 != null && img2 != null)
+            {
+              bool vertical1 = img1.Width < img1.Height;
+              bool vertical2 = img2.Width < img2.Height;
+              if (vertical1 && vertical2)
               {
-                int iRotation = Util.Picture.GetRotateByExif(img);
-                switch (iRotation)
-                {
-                  case 1:
-                    img.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                    break;
-                  case 2:
-                    img.RotateFlip(RotateFlipType.Rotate180FlipNone);
-                    break;
-                  case 3:
-                    img.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                    break;
-                  default:
-                    break;
-                }
-                if (img != null)
-                  g.DrawImage(img, x, y, w, h);
+                g.DrawImage(img1, border, border, hW, fH);
+                g.DrawImage(img2, hW + border * 2, border, hW, fH);
+              }
+              else if (!vertical1 && !vertical2)
+              {
+                g.DrawImage(img1, border, border, fW, hH);
+                g.DrawImage(img2, border, hH + border * 2, fW, hH);
+              }
+              else if (vertical1 && !vertical2)
+              {
+                g.DrawImage(img1, border, border, hW, fH);
+                g.DrawImage(img2, hW + border * 2, border + fH / 2 - hH / 2 , hW, hH);
+              }
+              else // (!vertical1 && vertical2)
+              {
+                g.DrawImage(img1, border, border, fW, hH);
+                g.DrawImage(img2, border + fW / 2 - hW / 2, hH + border * 2, hW, hH);
+              }
+              result = true;
+            }
+          }
+        }
+      }
+      catch (OutOfMemoryException exm)
+      {
+        Log.Warn("Util: Damaged picture file found: {0}/{1}. Try to repair or delete this file please! {2}", (string)aPictureList[0], (string)aPictureList[1], exm.Message);
+      }
+      catch (Exception ex)
+      {
+        Log.Info("Util: An exception occured adding an image to the folder preview thumb: {0}", ex.Message);
+      }
+
+      ThreadSleep(50);
+      return result;
+    }
+
+    private static bool AddThreePicture(Graphics g, List<string> aPictureList, int border, int hW, int hH, int fW, int fH)
+    {
+      bool result = false;
+      try
+      {
+        using (FileStream fs = new FileStream((string)aPictureList[0], FileMode.Open, FileAccess.Read))
+        {
+          using (Image img = Image.FromStream(fs, true, false))
+          {
+            Picture.RotateImage(img);
+            if (img != null)
+            {
+              bool vertical = img.Width < img.Height;
+              if (vertical)
+              {
+                g.DrawImage(img, border, border, hW, fH);
+                result = true;
+                result = result && AddPicture(g, (string)aPictureList[1], hW + border * 2, border, hW, hH);
+                result = result && AddPicture(g, (string)aPictureList[2], hW + border * 2, hH + border * 2, hW, hH);
+              }
+              else
+              {
+                g.DrawImage(img, border, border, fW, hH);
+                result = true;
+                result = result && AddPicture(g, (string)aPictureList[1], border, hH + border * 2, hW, hH);
+                result = result && AddPicture(g, (string)aPictureList[2], hW + border * 2, hH + border * 2, hW, hH);
               }
             }
           }
-          catch
-            (OutOfMemoryException ex)
-          {
-            Log.Warn("Utils: Damaged picture file found: {0}. Try to repair or delete this file please! {1}",
-                     strFileName, ex.Message);
-          }
-        }
-        catch (Exception ex)
-        {
-          Log.Info("Utils: An exception occured adding an image to the folder preview thumb: {0}", ex.Message);
         }
       }
-      finally
+      catch (OutOfMemoryException exm)
       {
-        if (img != null)
-          img.SafeDispose();
-        if (MediaPortal.Player.g_Player.Playing)
-          Thread.Sleep(50);
-        else
-          Thread.Sleep(10);
+        Log.Warn("Util: Damaged picture file found: {0}. Try to repair or delete this file please! {1}", (string)aPictureList[0], exm.Message);
+      }
+      catch (Exception ex)
+      {
+        Log.Info("Util: An exception occured adding an image to the folder preview thumb: {0}", ex.Message);
+      }
+
+      ThreadSleep(50);
+      return result;
+    }
+
+    public static void Shuffle(List<string> strList)
+    {
+      if (strList == null)
+      {
+        return;
+      }
+
+      try
+      {
+        int n = strList.Count;
+        while (n > 1)
+        {
+          n--;
+          int k = ThreadSafeRandom.ThisThreadsRandom.Next(n + 1);
+          string value = strList[k];
+          strList[k] = strList[n];
+          strList[n] = value;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Util: Shuffle: " + ex);
       }
     }
 
@@ -4345,9 +4580,10 @@ namespace MediaPortal.Util
     public static bool CreateFolderPreviewThumb(List<string> aPictureList, string aThumbPath, bool needBorder)
     {
       bool result = false;
+      int border = 0;
+
       Stopwatch benchClock = new Stopwatch();
       benchClock.Start();
-      int border = 0;
 
       if (needBorder)
       {
@@ -4361,7 +4597,7 @@ namespace MediaPortal.Util
           string defaultBackground;
           string currentSkin = GUIGraphicsContext.Skin;
 
-          // when launched by configuration exe this might be the case
+          // When launched by configuration exe this might be the case
           if (string.IsNullOrEmpty(currentSkin))
           {
             using (Profile.Settings xmlreader = new Profile.MPSettings())
@@ -4375,7 +4611,12 @@ namespace MediaPortal.Util
             defaultBackground = GUIGraphicsContext.GetThemedSkinFile(@"\media\previewbackground.png");
           }
 
-
+          if (!File.Exists(defaultBackground))
+          {
+            Log.Warn("Util: Your skin does not supply previewbackground.png to create folder preview thumbs!");
+            return result;
+          }
+          
           using (FileStream fs = new FileStream(defaultBackground, FileMode.Open, FileAccess.Read))
           {
             using (Image imgFolder = Image.FromStream(fs, true, false))
@@ -4383,19 +4624,10 @@ namespace MediaPortal.Util
               int width = imgFolder.Width;
               int height = imgFolder.Height;
 
-              int thumbnailWidth = (int)Thumbs.ThumbLargeResolution;
-              int thumbnailHeight = (int)Thumbs.ThumbLargeResolution;
-              // draw a fullsize thumb if only 1 pic is available
-              if (aPictureList.Count == 1)
-              {
-                thumbnailWidth = (width - border * 2);
-                thumbnailHeight = (height - border * 2);
-              }
-              else
-              {
-                thumbnailWidth = (width - border * 3) / 2;
-                thumbnailHeight = (height - border * 3) / 2;
-              }
+              int fullWidth = (width - border * 2);
+              int fullHeight = (height - border * 2);
+              int halfWidth = (width - border * 3) / 2;
+              int halfHeight = (height - border * 3) / 2;
 
               using (Bitmap bmp = new Bitmap(width, height))
               {
@@ -4406,94 +4638,97 @@ namespace MediaPortal.Util
                   g.SmoothingMode = Thumbs.Smoothing;
 
                   g.DrawImage(imgFolder, 0, 0, width, height);
-                  int x, y, w, h;
-                  x = 0;
-                  y = 0;
-                  w = thumbnailWidth;
-                  h = thumbnailHeight;
-                  //Load first of 4 images for the folder thumb.                  
+
+                  //Load first of 4 images for the folder thumb.
                   try
                   {
-                    AddPicture(g, (string)aPictureList[0], x + border, y + border, w, h);
-
-                    //If exists load second of 4 images for the folder thumb.
-                    if (aPictureList.Count > 1)
+                    switch (aPictureList.Count)
                     {
-                      AddPicture(g, (string)aPictureList[1], x + thumbnailWidth + border * 2, y + border, w, h);
-                    }
-
-                    //If exists load third of 4 images for the folder thumb.
-                    if (aPictureList.Count > 2)
-                    {
-                      AddPicture(g, (string)aPictureList[2], x + border, y + thumbnailHeight + border * 2, w, h);
-                    }
-
-                    //If exists load fourth of 4 images for the folder thumb.
-                    if (aPictureList.Count > 3)
-                    {
-                      AddPicture(g, (string)aPictureList[3], x + thumbnailWidth + border * 2, y + thumbnailHeight + border * 2, w, h);
+                      case 1:
+                        result = AddPicture(g, (string)aPictureList[0], border, border, fullWidth, fullHeight);
+                        break;
+                      case 2:
+                        // AddPicture(g, (string)aPictureList[0], border, border, halfWidth, halfHeight);
+                        // AddPicture(g, (string)aPictureList[1], halfWidth + border * 2, halfHeight + border * 2, halfWidth, halfHeight);
+                        result = AddTwoPicture(g, aPictureList, border, halfWidth, halfHeight, fullWidth, fullHeight);
+                        break;
+                      case 3:
+                        // AddPicture(g, (string)aPictureList[0], border, border, halfWidth, halfHeight);
+                        // AddPicture(g, (string)aPictureList[1], halfWidth + border * 2, border, halfWidth, halfHeight);
+                        // AddPicture(g, (string)aPictureList[2], width / 2 - halfWidth / 2, halfHeight + border * 2, halfWidth, halfHeight);
+                        result = AddThreePicture(g, aPictureList, border, halfWidth, halfHeight, fullWidth, fullHeight);
+                        break;
+                      default:
+                        result = AddPicture(g, (string)aPictureList[0], border, border, halfWidth, halfHeight);
+                        result = result && AddPicture(g, (string)aPictureList[1], halfWidth + border * 2, border, halfWidth, halfHeight);
+                        result = result && AddPicture(g, (string)aPictureList[2], border, halfHeight + border * 2, halfWidth, halfHeight);
+                        result = result && AddPicture(g, (string)aPictureList[3], halfWidth + border * 2, halfHeight + border * 2, halfWidth, halfHeight);
+                        break;
                     }
                   }
                   catch (Exception ex)
                   {
-                    Log.Error("Utils: An exception occured creating folder preview thumb: {0}", ex.Message);
+                    Log.Error("Util: An exception occured creating folder preview thumb: {0}", ex.Message);
+                    result = false;
                   }
-                } //using (Graphics g = Graphics.FromImage(bmp) )
+                } // using (Graphics g = Graphics.FromImage(bmp))
 
-                try
+                if (result)
                 {
-                  string tmpFile = Path.GetTempFileName();
-                  Log.Debug("Saving thumb!");
-                  bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
-
-                  // we do not want a folderL.jpg
-                  if (aThumbPath.ToLowerInvariant().Contains(@"folder.jpg"))
+                  try
                   {
-                    Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution,
-                                            (int)Thumbs.ThumbLargeResolution, 0, false);
-                    FileDelete(tmpFile);
+                    result = false;
+                    string tmpFile = Path.GetTempFileName();
+                    bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+                    Log.Debug("Util: Saving preview folder thumb {0}...", aThumbPath);
+
+                    // we do not want a folderL.jpg
+                    if (aThumbPath.ToLowerInvariant().Contains(@"folder.jpg"))
+                    {
+                      Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
+                      FileDelete(tmpFile);
+                    }
+                    else if (Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                    {
+                      aThumbPath = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
+                      Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
+                      FileDelete(tmpFile);
+                    }
+
+                    ThreadSleep(100);
+
+                    if (FileExistsInCache(aThumbPath))
+                    {
+                      result = true;
+                    }
                   }
-                  else if (Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbResolution,
-                                                   (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                  catch (Exception ex2)
                   {
-                    aThumbPath = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
-                    Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution,
-                                            (int)Thumbs.ThumbLargeResolution, 0, false);
-                    FileDelete(tmpFile);
+                    Log.Error("Util: An exception occured saving folder preview thumb: {0} - {1}", aThumbPath, ex2.Message);
                   }
-
-                  if (MediaPortal.Player.g_Player.Playing)
-                    Thread.Sleep(100);
-                  else
-                    Thread.Sleep(10);
-
-                  if (FileExistsInCache(aThumbPath))
-                    result = true;
-                }
-                catch (Exception ex2)
-                {
-                  Log.Error("Utils: An exception occured saving folder preview thumb: {0} - {1}", aThumbPath,
-                            ex2.Message);
-                }
-              } //using (Bitmap bmp = new Bitmap(210,210))
-            }
-          }
+                } // if (result)
+              } // using (Bitmap bmp = new Bitmap(width, height))
+            } // using (Image imgFolder = Image.FromStream(fs, true, false))
+          } // using (FileStream fs = new FileStream(defaultBackground, FileMode.Open, FileAccess.Read))
         }
         catch (FileNotFoundException ex)
         {
-          Log.Warn("Utils: Your skin does not supply previewbackground.png to create folder preview thumbs! {0}", ex.Message);
+          Log.Warn("Util: Your skin does not supply previewbackground.png to create folder preview thumbs! {0}", ex.Message);
         }
         catch (Exception exm)
         {
-          Log.Error("Utils: An error occured creating folder preview thumbs: {0}", exm.Message);
+          Log.Error("Util: An error occured creating folder preview thumbs: {0}", exm.Message);
         }
-
-        benchClock.Stop();
-        Log.Debug("Utils: CreateFolderPreviewThumb for {0} took {1} ms", aThumbPath, benchClock.ElapsedMilliseconds);
-      } //if (pictureList.Count>0)
+      } // if (pictureList.Count > 0)
       else
       {
         result = false;
+      }
+
+      if (result)
+      {
+        benchClock.Stop();
+        Log.Debug("Util: CreateFolderPreviewThumb for {0} took {1} ms", aThumbPath, benchClock.ElapsedMilliseconds);
       }
       return result;
     }
@@ -4550,6 +4785,12 @@ namespace MediaPortal.Util
           {
             defaultBackground = GUIGraphicsContext.GetThemedSkinFile(@"\media\previewbackground.png");
           }
+          
+          if (!File.Exists(defaultBackground))
+          {
+            Log.Warn("Util: Your skin does not supply previewbackground.png to create tile preview thumbs!");
+            return result;
+          }
 
           // Resize defaultBackground to keep ratio based on aPictureList ratio
           Image img = new Bitmap(aPictureList[0]);
@@ -4572,10 +4813,10 @@ namespace MediaPortal.Util
                 thumbnailWidth = width;
                 break;
               case 2:
-                thumbnailWidth = width/2;
+                thumbnailWidth = width / 2;
                 break;
               case 3:
-                thumbnailWidth = width/3;
+                thumbnailWidth = width / 3;
                 break;
             }
             switch (PreviewRows)
@@ -4584,10 +4825,10 @@ namespace MediaPortal.Util
                 thumbnailHeight = height;
                 break;
               case 2:
-                thumbnailHeight = height/2;
+                thumbnailHeight = height / 2;
                 break;
               case 3:
-                thumbnailHeight = height/3;
+                thumbnailHeight = height / 3;
                 break;
             }
 
@@ -4672,7 +4913,7 @@ namespace MediaPortal.Util
                 }
                 catch (Exception ex)
                 {
-                  Log.Error("Utils: An exception occured creating CreateTileThumb: {0}", ex.Message);
+                  Log.Error("Util: An exception occured creating CreateTileThumb: {0}", ex.Message);
                 }
               }
 
@@ -4680,9 +4921,10 @@ namespace MediaPortal.Util
               {
                 string tmpFile = Path.GetTempFileName();
                 bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
-                Log.Debug("CreateTileThumb: Saving thumb!");
+                Log.Debug("Util: CreateTileThumb: Saving thumb for {0}...", aThumbPath);
 
-                Picture.CreateThumbnail(tmpFile, aThumbPath, (int) Thumbs.ThumbLargeResolution,
+                Picture.CreateThumbnail(tmpFile, aThumbPath,
+                                        (int) Thumbs.ThumbLargeResolution,
                                         (int) Thumbs.ThumbLargeResolution, 0, false);
                 FileDelete(tmpFile);
 
@@ -4712,33 +4954,31 @@ namespace MediaPortal.Util
                   }
                   catch (FileNotFoundException ex)
                   {
-                    Log.Debug("CreateTileThumb: {0} file not found. {1}", pictureListName, ex.Message);
+                    Log.Debug("Util: CreateTileThumb: {0} file not found. {1}", pictureListName, ex.Message);
                   }
                 }
 
-                if (MediaPortal.Player.g_Player.Playing)
-                  Thread.Sleep(100);
-                else
-                  Thread.Sleep(10);
+                ThreadSleep(100);
 
                 if (FileExistsInCache(aThumbPath))
+                {
                   result = true;
+                }
               }
               catch (Exception ex2)
               {
-                Log.Error("Utils: An exception occured saving CreateTileThumb: {0} - {1}", aThumbPath,
-                          ex2.Message);
+                Log.Error("Util: An exception occured saving CreateTileThumb: {0} - {1}", aThumbPath, ex2.Message);
               }
             }
           }
         }
         catch (FileNotFoundException ex)
         {
-          Log.Warn("Utils: Your skin does not supply previewbackground.png to create CreateTileThumb! {0}", ex.Message);
+          Log.Warn("Util: Your skin does not supply previewbackground.png to create CreateTileThumb! {0}", ex.Message);
         }
         catch (Exception exm)
         {
-          Log.Error("Utils: An error occured creating folder CreateTileThumb: {0}", exm.Message);
+          Log.Error("Util: An error occured creating folder CreateTileThumb: {0}", exm.Message);
         }
       }
       return result;
@@ -4762,7 +5002,7 @@ namespace MediaPortal.Util
 
     /// <summary>
     /// Move the Prefix of an artist to the end of the string for better sorting
-    /// i.e. "The Rolling Stones" -> "Rolling Stones, The" 
+    /// i.e. "The Rolling Stones" -> "Rolling Stones, The"
     /// </summary>
     /// <param name="artistName"></param>
     /// <param name="appendPrefix"></param>
@@ -4774,7 +5014,9 @@ namespace MediaPortal.Util
       foreach (string s in _artistNamePrefixes)
       {
         if (s.Length == 0)
+        {
           continue;
+        }
 
         string prefix = s;
         prefix = prefix.Trim().ToLower(CultureInfo.CurrentCulture);
@@ -4784,10 +5026,13 @@ namespace MediaPortal.Util
           string tempName = artistName.Substring(prefix.Length).Trim();
 
           if (appendPrefix)
+          {
             artistName = string.Format("{0}, {1}", tempName, artistName.Substring(0, prefix.Length));
+          }
           else
+          {
             artistName = tempName;
-
+          }
           return true;
         }
       }
@@ -4837,11 +5082,8 @@ namespace MediaPortal.Util
 
     public static void DeleteFiles(string strDir, string strPattern, bool recursive)
     {
-      if (strDir == null) return;
-      if (strDir.Length == 0) return;
-
-      if (strPattern == null) return;
-      if (strPattern.Length == 0) return;
+      if (string.IsNullOrEmpty(strDir)) return;
+      if (string.IsNullOrEmpty(strPattern)) return;
 
       string[] strFiles;
       try
@@ -4857,7 +5099,7 @@ namespace MediaPortal.Util
           }
           catch (Exception ex)
           {
-            Log.Error("DeleteFiles: {0}", ex.Message);
+            Log.Error("Util: DeleteFiles: {0}", ex.Message);
           }
         }
         if (recursive)
@@ -4872,14 +5114,14 @@ namespace MediaPortal.Util
             }
             catch (Exception ex)
             {
-              Log.Error("DeleteFiles: {0}", ex.Message);
+              Log.Error("Util: DeleteFiles: {0}", ex.Message);
             }
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Error("DeleteFiles: {0}", ex.Message);
+        Log.Error("Util: DeleteFiles: {0}", ex.Message);
       }
     }
 
@@ -4893,7 +5135,7 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          Log.Error("UsingTvServer: {0}", ex.Message);
+          Log.Error("Util: UsingTvServer: {0}", ex.Message);
           return false;
         }
       }
@@ -4921,7 +5163,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("ParseDateTimeString: {0}", ex.Message);
+        Log.Error("Util: ParseDateTimeString: {0}", ex.Message);
       }
       return DateTime.Now;
     }
@@ -4948,7 +5190,7 @@ namespace MediaPortal.Util
       }
       catch (Exception e)
       {
-        Log.Info("Util.ExportEmbeddedResource: {0}", e.Message);
+        Log.Info("Util: ExportEmbeddedResource: {0}", e.Message);
       }
     }
 
@@ -5033,14 +5275,14 @@ namespace MediaPortal.Util
             }
             catch (Exception ex)
             {
-              Log.Error("DeleteOldTimeShiftFiles: {0}", ex.Message);
+              Log.Error("Util: DeleteOldTimeShiftFiles: {0}", ex.Message);
             }
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Error("DeleteOldTimeShiftFiles: {0}", ex.Message);
+        Log.Error("Util: DeleteOldTimeShiftFiles: {0}", ex.Message);
       }
 
       // clean the TempSBE\ folder
@@ -5058,14 +5300,14 @@ namespace MediaPortal.Util
             }
             catch (Exception ex)
             {
-              Log.Error("DeleteOldTimeShiftFiles: {0}", ex.Message);
+              Log.Error("Util: DeleteOldTimeShiftFiles: {0}", ex.Message);
             }
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Error("DeleteOldTimeShiftFiles: {0}", ex.Message);
+        Log.Error("Util: DeleteOldTimeShiftFiles: {0}", ex.Message);
       }
 
       // delete *.tv
@@ -5083,14 +5325,14 @@ namespace MediaPortal.Util
             }
             catch (Exception ex)
             {
-              Log.Error("DeleteOldTimeShiftFiles: {0}", ex.Message);
+              Log.Error("Util: DeleteOldTimeShiftFiles: {0}", ex.Message);
             }
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Error("DeleteOldTimeShiftFiles: {0}", ex.Message);
+        Log.Error("Util: DeleteOldTimeShiftFiles: {0}", ex.Message);
       }
     }
 
@@ -5138,13 +5380,13 @@ namespace MediaPortal.Util
           }
           catch (Exception ex)
           {
-            Log.Error("DeleteRecording: {0}", ex.Message);
+            Log.Error("Util: DeleteRecording: {0}", ex.Message);
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Error("DeleteRecording: {0}", ex.Message);
+        Log.Error("Util: DeleteRecording: {0}", ex.Message);
       }
     }
 
@@ -5155,7 +5397,7 @@ namespace MediaPortal.Util
     /// <returns></returns>
     public static void HibernateSystem(bool forceShutDown)
     {
-      Log.Info("Utils: Hibernate system");
+      Log.Info("Util: Hibernate system");
       WindowsController.ExitWindows(RestartOptions.Hibernate, forceShutDown);
     }
 
@@ -5166,20 +5408,20 @@ namespace MediaPortal.Util
     /// <returns></returns>
     public static void SuspendSystem(bool forceShutDown)
     {
-      Log.Info("Utils: Suspend system");
+      Log.Info("Util: Suspend system");
       WindowsController.ExitWindows(RestartOptions.Suspend, forceShutDown);
     }
 
     public static void RestartMePo()
     {
       File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
-      Log.Info("Restarting - saving settings...");
+      Log.Info("Util: Restarting - saving settings...");
       Settings.SaveCache();
       Process restartScript = new Process();
       restartScript.EnableRaisingEvents = false;
       restartScript.StartInfo.WorkingDirectory = Config.GetFolder(Config.Dir.Base);
       restartScript.StartInfo.FileName = Config.GetFile(Config.Dir.Base, @"restart.vbs");
-      Log.Debug("Restarting - executing script {0}", restartScript.StartInfo.FileName);
+      Log.Debug("Util: Restarting - executing script {0}", restartScript.StartInfo.FileName);
       restartScript.Start();
       try
       {
@@ -5191,7 +5433,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("Restarting - WaitForExit: {0}", ex.Message);
+        Log.Error("Util: Restarting - WaitForExit: {0}", ex.Message);
       }
     }
 
@@ -5381,7 +5623,7 @@ namespace MediaPortal.Util
 
     public static string TranslateLanguageString(string language)
     {
-      string languageTranslated = "";
+      string languageTranslated = string.Empty;
       switch (language.ToLowerInvariant())
       {
         case "undetermined":
@@ -5438,11 +5680,12 @@ namespace MediaPortal.Util
         default:
           break;
       }
-      if (languageTranslated.Equals(""))
+      if (string.IsNullOrEmpty(languageTranslated))
+      {
         languageTranslated = language;
+      }
       return languageTranslated;
     }
-
 
     public static string GetCultureRegionLanguage()
     {
@@ -5489,7 +5732,7 @@ namespace MediaPortal.Util
         string[] strFiles = System.IO.Directory.GetFiles(path, "*." + sp);
         foreach (string strFile in strFiles)
         {
-          //this check is needed because GetFiles truncates extension to 3 letters, 
+          //this check is needed because GetFiles truncates extension to 3 letters,
           //therefore "*.htm" would find both htm and html files, together with any other variant (htmshit for example)
           if (!strFile.ToLowerInvariant().EndsWith("." + sp))
           {
@@ -5527,7 +5770,7 @@ namespace MediaPortal.Util
     public static string FormatMultiItemMusicString(string tagValue, bool stripArtistPrefixes)
     {
       string[] strSplit = tagValue.Split(new char[] { ';', '|' });
-      // Can't use a simple String.Join as i need to trim all the elements 
+      // Can't use a simple String.Join as i need to trim all the elements
       string strFormattedString = "| ";
       foreach (string strTmp in strSplit)
       {
@@ -5600,7 +5843,7 @@ namespace MediaPortal.Util
     public static List<string> GetAvailableUsbHardDisks()
     {
       List<string> disks = new List<string>();
-      
+
       try
       {
         // browse all USB WMI physical disks
@@ -5630,7 +5873,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("Utils: GetUsbHardDisks Error: {0}", ex.Message);
+        Log.Error("Util: GetUsbHardDisks Error: {0}", ex.Message);
       }
 
       return disks;
@@ -5674,7 +5917,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("Utils: GetUsbHardDisks Error: {0}", ex.Message);
+        Log.Error("Util: GetUsbHardDisks Error: {0}", ex.Message);
       }
 
       return disks;
@@ -5682,14 +5925,14 @@ namespace MediaPortal.Util
 
     public static string GetTreePath(string filename, int depth, int step)
     {
-      string basename = Path.GetFileNameWithoutExtension(filename) ?? "";
-      string tree = "";
+      string basename = Path.GetFileNameWithoutExtension(filename) ?? string.Empty;
+      string tree = string.Empty;
       int i = basename.Length;
 
       while ((i-=step)>=0 && depth-->0)
       {
         tree += basename.Substring(i, step) + @"\";
-  }
+      }
       return tree;
     }
 
@@ -5852,7 +6095,7 @@ namespace MediaPortal.Util
         .ToArray();
     }
   }
-  
+
   public class StringLogicalComparer : IComparer, IComparer<string>
   {
     public static int Compare(string x, string y)
@@ -5887,6 +6130,16 @@ namespace MediaPortal.Util
       if (null == x) return -1;
       if (null == y) return 1;
       return CompareObjects(x, y);
+    }
+  }
+
+  public static class ThreadSafeRandom
+  {
+    [ThreadStatic] private static Random Local;
+
+    public static Random ThisThreadsRandom
+    {
+      get { return Local ?? (Local = new Random(unchecked(Environment.TickCount * 31 + Thread.CurrentThread.ManagedThreadId))); }
     }
   }
 }

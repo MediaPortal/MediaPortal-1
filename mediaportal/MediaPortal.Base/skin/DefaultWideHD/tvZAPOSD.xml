@@ -13,8 +13,41 @@
       <posY>867</posY>
       <height>198</height>
       <width>2200</width>
-      <texture>OSDBG4.png</texture>
-      <colordiffuse>dfffffff</colordiffuse>
+      <texture>white.png</texture>
+      <colordiffuse>f200061c</colordiffuse>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-90</posX>
+      <posY>867</posY>
+      <height>3</height>
+      <width>2200</width>
+      <texture>white.png</texture>
+      <colordiffuse>ff09173c</colordiffuse>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-90</posX>
+      <posY>1063</posY>
+      <height>3</height>
+      <width>2200</width>
+      <texture>white.png</texture>
+      <colordiffuse>ff09173c</colordiffuse>
+    </control>
+    <control>
+      <description>background for black channelname</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>198</posX>
+      <posY>806</posY>
+      <height>64</height>
+      <width>454</width>
+      <texture>OSDBG3.png</texture>
+      <colordiffuse>f700061c</colordiffuse>
     </control>
     <control>
       <description>background for black channelname</description>
@@ -25,7 +58,18 @@
       <height>60</height>
       <width>450</width>
       <texture>OSDBG3.png</texture>
-      <colordiffuse>dfffffff</colordiffuse>
+      <colordiffuse>ff09173c</colordiffuse>
+    </control>
+    <control>
+      <description>Time BG</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1704</posX>
+      <posY>806</posY>
+      <width>454</width>
+      <height>64</height>
+      <texture>OSDBG3.png</texture>
+      <colordiffuse>f700061c</colordiffuse>
     </control>
     <control>
       <description>Time BG</description>
@@ -36,18 +80,41 @@
       <width>450</width>
       <height>60</height>
       <texture>OSDBG3.png</texture>
-      <colordiffuse>dfffffff</colordiffuse>
+      <colordiffuse>ff09173c</colordiffuse>
     </control>
     <control>
       <description>Time Info</description>
       <type>label</type>
       <id>110</id>
       <posX>1898</posX>
-      <posY>815</posY>
+      <posY>818</posY>
       <label>#time</label>
       <align>right</align>
-      <font>Label</font>
-      <textcolor>black</textcolor>
+      <font>LabelBold</font>
+      <textcolor>white</textcolor>
+    </control>
+    <control>
+      <description>TV Logo Background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>52</posX>
+      <posY>803</posY>
+      <width>141</width>
+      <height>141</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>defaultlogo.png</texture>
+      <colordiffuse>ff00061c</colordiffuse>
+    </control>
+    <control>
+      <description>TV Logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>54</posX>
+      <posY>805</posY>
+      <width>137</width>
+      <height>137</height>
+      <texture>defaultlogo.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
     </control>
     <control>
       <description>TV Logo</description>
@@ -58,7 +125,6 @@
       <width>137</width>
       <height>137</height>
       <texture>#TV.View.thumb</texture>
-      <centered>yes</centered>
       <keepaspectratio>yes</keepaspectratio>
     </control>
     <control>
@@ -66,12 +132,26 @@
       <type>label</type>
       <id>35</id>
       <posX>227</posX>
-      <posY>815</posY>
+      <posY>818</posY>
       <width>440</width>
       <label>-</label>
       <align>left</align>
-      <font>Label</font>
-      <textcolor>black</textcolor>
+      <font>LabelBold</font>
+      <textcolor>white</textcolor>
+      <visible>!control.isvisible(39)</visible>
+    </control>
+    <control>
+      <description>Current channelname black</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>265</posX>
+      <posY>818</posY>
+      <width>440</width>
+      <label>#TV.View.channel</label>
+      <align>left</align>
+      <font>LabelBold</font>
+      <textcolor>white</textcolor>
+      <visible>control.isvisible(39)</visible>
     </control>
     <control>
       <type>image</type>
@@ -100,132 +180,178 @@
       <visible>yes</visible>
     </control>
     <control>
-      <description>Start Time Info</description>
+      <description>End of progressbar</description>
       <type>label</type>
-      <id>101</id>
-      <posX>227</posX>
-      <posY>880</posY>
-      <label>#TV.View.start</label>
+      <id>1</id>
+      <posX>1707</posX>
+      <posY>931</posY>
+      <label>|</label>
       <align>left</align>
-      <font>Menutitle</font>
-      <textcolor>dodgerblue</textcolor>
+      <font>font11</font>
+      <textcolor>lightskyblue</textcolor>
     </control>
     <control>
-      <description>On tv NOW</description>
-      <id>36</id>
-      <type>textbox</type>
-      <posX>353</posX>
-      <posY>880</posY>
-      <width>978</width>
-      <height>42</height>
-      <label>#TV.View.title</label>
-      <font>Menutitle</font>
-      <textcolor>dodgerblue</textcolor>
-    </control>
-    <control>
-      <description>End Time Info</description>
+      <description>Current Remaining</description>
       <type>label</type>
-      <id>102</id>
-      <posX>227</posX>
-      <posY>965</posY>
-      <label>#TV.View.Stop</label>
+      <id>1</id>
+      <posX>1725</posX>
+      <posY>937</posY>
+      <width>1107</width>
+      <label>#TV.View.remaining</label>
       <align>left</align>
-      <textcolor>ivory</textcolor>
-      <font>Label</font>
-      <shadowAngle>0</shadowAngle>
-      <shadowDistance>0</shadowDistance>
-      <shadowColor />
+      <font>font10</font>
+      <textcolor>lightskyblue</textcolor>
     </control>
     <control>
-      <description>On tv NEXT</description>
-      <id>37</id>
-      <type>textbox</type>
-      <posX>353</posX>
-      <posY>963</posY>
-      <height>42</height>
-      <width>978</width>
+      <description>Start Time and now Title</description>
+      <type>group</type>
+      <layout>StackLayout(5, Horizontal, true)</layout>
+      <posX>233</posX>
+      <posY>891</posY>
       <align>left</align>
-      <font>Label</font>
-      <textcolor>ivory</textcolor>
-      <shadowAngle>0</shadowAngle>
-      <shadowDistance>0</shadowDistance>
-      <shadowColor />
+      <width>1500</width>
+      <height>42</height>
+      <control>
+        <description>Start Time Info</description>
+        <type>label</type>
+        <id>101</id>
+        <label></label>
+        <width>100</width>
+        <maxWidth>260</maxWidth>
+        <align>left</align>
+        <font>LabelBold</font>
+        <textcolor>lightskyblue</textcolor>
+      </control>
+      <control>
+        <description>On tv NOW</description>
+        <id>36</id>
+        <type>label</type>
+        <width>1000</width>
+        <maxWidth>1350</maxWidth>
+        <label></label>
+        <font>LabelBold</font>
+        <textcolor>lightskyblue</textcolor>
+      </control>
+    </control>
+    <control>
+      <description>End Time and next Title</description>
+      <type>group</type>
+      <layout>StackLayout(5, Horizontal, true)</layout>
+      <posX>233</posX>
+      <posY>968</posY>
+      <align>left</align>
+      <width>1500</width>
+      <height>42</height>
+      <control>
+        <description>End Time Info</description>
+        <type>label</type>
+        <id>102</id>
+        <width>100</width>
+        <maxWidth>260</maxWidth>
+        <label> #scroll.wrap </label>
+        <align>left</align>
+        <textcolor>lightgray</textcolor>
+        <font>Label</font>
+      </control>
+      <control>
+        <description>On tv NEXT</description>
+        <id>37</id>
+        <type>label</type>
+        <width>1000</width>
+        <maxWidth>1350</maxWidth>
+        <label></label>
+        <align>left</align>
+        <font>Label</font>
+        <textcolor>lightgray</textcolor>
+      </control>
     </control>
     <control>
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>592</posX>
+      <posX>203</posX>
       <posY>810</posY>
       <width>58</width>
       <height>56</height>
       <texture>tv_is_recording.png</texture>
     </control>
     <control>
-      <description>background</description>
+      <description>Zap to channel no</description>
+      <type>label</type>
+      <id>38</id>
+      <posX>30</posX>
+      <posY>1</posY>
+      <label>-</label>
+      <font>font36</font>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>7</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightskyblue</textcolor>
+      <visible>no</visible>
+    </control>
+    <!-- ************************************************************************************************** -->
+    <!-- *****************************         RECORDING INFO LATESTMEDIA       *************************** -->
+    <!-- ************************************************************************************************** -->
+    <control>
+      <description>background for recording info</description>
       <type>image</type>
       <id>1</id>
-      <posX>-450</posX>
-      <posY>13</posY>
-      <height>110</height>
-      <width>670</width>
-      <texture>OSDBG3.png</texture>
-      <colordiffuse>bb000000</colordiffuse>
-      <!--visible>yes</visible-->
-  </control>
-  <control>
-    <description>Zap to channel no</description>
-    <type>label</type>
-    <id>38</id>
-    <posX>23</posX>
-    <posY>1</posY>
-    <label>-</label>
-    <font>font36</font>
-    <textcolor>lightskyblue</textcolor>
-    <visible>no</visible>
-    <!--animation effect="zoom" start="100,100" end="160,160" time="0">visible</animation-->
-</control>
-<!-- ***************************************************************************************************** -->
-<!-- *****************************         RECORDING INFO LATESTMEDIA       ****************************** -->
-<!-- ***************************************************************************************************** -->
-<control>
-  <description>Current recording count</description>
-  <type>fadelabel</type>
-  <id>0</id>
-  <posX>225</posX>
-  <posY>1040</posY>
-  <width>50</width>
-  <label>#latestMediaHandler.tvrecordings.active.count</label>
-  <align>center</align>
-  <font>font10</font>
-  <textcolor>ivory</textcolor>
-  <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-  <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
-</control>
-<control>
-  <description>rec logo</description>
-  <type>image</type>
-  <id>0</id>
-  <posX>223</posX>
-  <posY>1012</posY>
-  <width>54</width>
-  <height>55</height>
-  <texture>tb_recordNF_red.png</texture>
-  <animation effect="zoom" start="100,100" end="110,110" time="500" condition="true" pulse="true">conditional</animation>
-  <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
-</control>
-<control>
-  <description>Current channel</description>
-  <type>fadelabel</type>
-  <id>0</id>
-  <posX>280</posX>
-  <posY>1025</posY>
-  <width>1400</width>
-  <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
-  <align>left</align>
-  <font>font9</font>
-  <textcolor>ivory</textcolor>
-  <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
-</control>
-</controls>
+      <posX>223</posX>
+      <posY>1019</posY>
+      <width>654</width>
+      <height>41</height>
+      <texture>osdbg6.png</texture>
+      <colordiffuse>f700061c</colordiffuse>
+      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+    </control>
+    <control>
+      <description>background for recording info</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>225</posX>
+      <posY>1021</posY>
+      <width>650</width>
+      <height>37</height>
+      <texture>osdbg6.png</texture>
+      <colordiffuse>ff09173c</colordiffuse>
+      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+    </control>
+    <control>
+      <description>Current recording count</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>225</posX>
+      <posY>1020</posY>
+      <width>50</width>
+      <label>#latestMediaHandler.tvrecordings.active.count</label>
+      <align>center</align>
+      <font>font10</font>
+      <textcolor>ivory</textcolor>
+      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+    </control>
+    <control>
+      <description>rec logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>223</posX>
+      <posY>1012</posY>
+      <width>54</width>
+      <height>55</height>
+      <texture>tb_recordNF_red.png</texture>
+      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+    </control>
+    <control>
+      <description>Current channel</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>280</posX>
+      <posY>1025</posY>
+      <width>540</width>
+      <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
+      <align>left</align>
+      <font>font9</font>
+      <textcolor>ivory</textcolor>
+      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+    </control>
+  </controls>
 </window>

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -30,9 +30,18 @@ namespace MediaPortal.DeployTool.Sections
     {
       InitializeComponent();
       type = DialogType.TvServerSettings;
-      textBoxDir.Text =
-        installationPath =
-        Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server";
+      if (Utils.Is64bit())
+      {
+        textBoxDir.Text =
+          installationPath =
+          Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + "\\Team MediaPortal\\MediaPortal TV Server (x64)";
+      }
+      else
+      {
+        textBoxDir.Text =
+          installationPath =
+          Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server";
+      }
       UpdateUI();
     }
 

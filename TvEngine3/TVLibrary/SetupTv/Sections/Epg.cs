@@ -20,6 +20,8 @@
 
 using System;
 using System.Collections.Specialized;
+using System.Collections.Generic;
+using TvLibrary.Interfaces;
 using TvDatabase;
 using System.IO;
 using TvLibrary;
@@ -29,6 +31,7 @@ namespace SetupTv.Sections
   public partial class Epg : SectionSettings
   {
     private string crcSettingsFile = DebugSettings.SettingPath("DisableCRCCheck");
+    private readonly Dictionary<string, CardType> cardTypes = new Dictionary<string, CardType>();
 
     public Epg()
       : this("DVB EPG") {}
@@ -47,6 +50,33 @@ namespace SetupTv.Sections
       checkBoxAlwaysFillHoles.Checked = (layer.GetSetting("generalEPGAlwaysFillHoles", "no").Value == "yes");
       checkBoxAlwaysUpdate.Checked = (layer.GetSetting("generalEPGAlwaysReplace", "no").Value == "yes");
       checkboxSameTransponder.Checked = (layer.GetSetting("generalGrapOnlyForSameTransponder", "no").Value == "yes");
+
+      checkBoxUseAllAvailableTuners.Checked = (layer.GetSetting("UseAllAvailableTunersForEPG", "no").Value == "yes");
+      IList<Card> cards = Card.ListAllEnabled();
+      string cardType = "";
+      int nbAvailableCards = 0;
+      foreach (Card card in cards)
+      {
+        cardTypes[card.DevicePath] = TvControl.RemoteControl.Instance.Type(card.IdCard);
+        if (cardTypes.ContainsKey(card.DevicePath))
+        {
+          cardType = cardTypes[card.DevicePath].ToString();
+        }
+        // Don't take Analog, nor RadioWebStream nor DvbIP
+        if (cardType == "Atsc" || cardType == "DvbC" || cardType == "DvbS" || cardType == "DvbT")
+        {
+          nbAvailableCards++;
+        }
+      }
+      // At least 2 cards otherwise, AllAvailableTunersForEPG is useless 
+      if (nbAvailableCards < 2 )
+      {
+        checkBoxUseAllAvailableTuners.Visible = false;
+      }
+      else
+      {
+        checkBoxUseAllAvailableTuners.Visible = true;
+      }
 
       checkBoxEnableEPGWhileIdle.Checked = (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes");
       checkBoxEnableCRCCheck.Checked = !DebugSettings.DisableCRCCheck;
@@ -75,6 +105,10 @@ namespace SetupTv.Sections
 
       s = layer.GetSetting("generalGrapOnlyForSameTransponder", "no");
       s.Value = checkboxSameTransponder.Checked ? "yes" : "no";
+      s.Persist();
+
+      s = layer.GetSetting("UseAllAvailableTunersForEPG", "no");
+      s.Value = checkBoxUseAllAvailableTuners.Checked ? "yes" : "no";
       s.Persist();
 
       DebugSettings.DisableCRCCheck = !checkBoxEnableCRCCheck.Checked;

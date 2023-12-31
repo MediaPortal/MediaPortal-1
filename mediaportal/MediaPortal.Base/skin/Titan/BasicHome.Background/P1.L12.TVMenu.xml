@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+    <control Style="HomeBasicFanart">
+	  <description>TV Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>[control.hasfocus(4) | control.hasfocus(1000) | control.hasfocus(1001) | control.hasfocus(1002) | control.hasfocus(1003) | control.hasfocus(1004)]</visible>
+      <texture>hover_my tv.png</texture>
+    </control> 
+
+</controls>
+</window>

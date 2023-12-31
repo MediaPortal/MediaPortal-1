@@ -46,7 +46,6 @@ namespace MediaPortal.Configuration.Sections
       this.labelHomepage = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelMePo = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBoxAbout = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.labelVersion3 = new System.Windows.Forms.Label();
       this.labelVersion2 = new System.Windows.Forms.Label();
       this.labelVersion1 = new System.Windows.Forms.Label();
       this.paypalPictureBox = new System.Windows.Forms.PictureBox();
@@ -58,8 +57,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxInfo
       // 
-      this.groupBoxInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxInfo.Controls.Add(this.labelInfo2);
       this.groupBoxInfo.Controls.Add(this.labelInfo1);
       this.groupBoxInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -71,30 +70,30 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelInfo2
       // 
-      this.labelInfo2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelInfo2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.labelInfo2.Location = new System.Drawing.Point(16, 56);
       this.labelInfo2.Name = "labelInfo2";
       this.labelInfo2.Size = new System.Drawing.Size(440, 30);
       this.labelInfo2.TabIndex = 1;
       this.labelInfo2.Text = "It allows you to listen to your favorite music and radio, watch your videos and D" +
-          "VDs, view, schedule and record live TV and much more!";
+    "VDs, view, schedule and record live TV and much more!";
       // 
       // labelInfo1
       // 
-      this.labelInfo1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelInfo1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.labelInfo1.Location = new System.Drawing.Point(16, 24);
       this.labelInfo1.Name = "labelInfo1";
       this.labelInfo1.Size = new System.Drawing.Size(440, 32);
       this.labelInfo1.TabIndex = 0;
       this.labelInfo1.Text = "MediaPortal is an open source project, hosted at SourceForge, that will turn your" +
-          " home computer into a fully fledged multi media center (HTPC).";
+    " home computer into a fully fledged multi media center (HTPC).";
       // 
       // groupBoxContact
       // 
-      this.groupBoxContact.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxContact.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxContact.Controls.Add(this.linkLabelSourceforge);
       this.groupBoxContact.Controls.Add(this.labelSourceForge);
       this.groupBoxContact.Controls.Add(this.linkLabelOnlineDocumentation);
@@ -118,10 +117,10 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabelSourceforge.AutoSize = true;
       this.linkLabelSourceforge.Location = new System.Drawing.Point(18, 160);
       this.linkLabelSourceforge.Name = "linkLabelSourceforge";
-      this.linkLabelSourceforge.Size = new System.Drawing.Size(213, 13);
+      this.linkLabelSourceforge.Size = new System.Drawing.Size(223, 13);
       this.linkLabelSourceforge.TabIndex = 7;
       this.linkLabelSourceforge.TabStop = true;
-      this.linkLabelSourceforge.Text = "http://sourceforge.net/projects/mediaportal";
+      this.linkLabelSourceforge.Text = "https://sourceforge.net/projects/mediaportal/";
       this.linkLabelSourceforge.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel4_LinkClicked);
       // 
       // labelSourceForge
@@ -138,10 +137,10 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabelOnlineDocumentation.AutoSize = true;
       this.linkLabelOnlineDocumentation.Location = new System.Drawing.Point(18, 120);
       this.linkLabelOnlineDocumentation.Name = "linkLabelOnlineDocumentation";
-      this.linkLabelOnlineDocumentation.Size = new System.Drawing.Size(162, 13);
+      this.linkLabelOnlineDocumentation.Size = new System.Drawing.Size(201, 13);
       this.linkLabelOnlineDocumentation.TabIndex = 5;
       this.linkLabelOnlineDocumentation.TabStop = true;
-      this.linkLabelOnlineDocumentation.Text = "http://wiki.team-mediaportal.com";
+      this.linkLabelOnlineDocumentation.Text = "https://www.team-mediaportal.com/wiki/";
       this.linkLabelOnlineDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel3_LinkClicked);
       // 
       // labelOnlineDocumentation
@@ -176,10 +175,10 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabelForums.AutoSize = true;
       this.linkLabelForums.Location = new System.Drawing.Point(18, 80);
       this.linkLabelForums.Name = "linkLabelForums";
-      this.linkLabelForums.Size = new System.Drawing.Size(170, 13);
+      this.linkLabelForums.Size = new System.Drawing.Size(175, 13);
       this.linkLabelForums.TabIndex = 3;
       this.linkLabelForums.TabStop = true;
-      this.linkLabelForums.Text = "http://forum.team-mediaportal.com";
+      this.linkLabelForums.Text = "https://forum.team-mediaportal.com";
       this.linkLabelForums.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
       // 
       // labelForums
@@ -196,10 +195,10 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabelHomepage.AutoSize = true;
       this.linkLabelHomepage.Location = new System.Drawing.Point(18, 40);
       this.linkLabelHomepage.Name = "linkLabelHomepage";
-      this.linkLabelHomepage.Size = new System.Drawing.Size(168, 13);
+      this.linkLabelHomepage.Size = new System.Drawing.Size(173, 13);
       this.linkLabelHomepage.TabIndex = 1;
       this.linkLabelHomepage.TabStop = true;
-      this.linkLabelHomepage.Text = "http://www.team-mediaportal.com";
+      this.linkLabelHomepage.Text = "https://www.team-mediaportal.com";
       this.linkLabelHomepage.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
       // 
       // labelHomepage
@@ -221,9 +220,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBoxAbout
       // 
-      this.mpGroupBoxAbout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBoxAbout.Controls.Add(this.labelVersion3);
+      this.mpGroupBoxAbout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBoxAbout.Controls.Add(this.labelVersion2);
       this.mpGroupBoxAbout.Controls.Add(this.labelVersion1);
       this.mpGroupBoxAbout.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -234,22 +232,13 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBoxAbout.TabStop = false;
       this.mpGroupBoxAbout.Text = "About";
       // 
-      // labelVersion3
-      // 
-      this.labelVersion3.AutoSize = true;
-      this.labelVersion3.ForeColor = System.Drawing.Color.Red;
-      this.labelVersion3.Location = new System.Drawing.Point(122, 20);
-      this.labelVersion3.Name = "labelVersion3";
-      this.labelVersion3.Size = new System.Drawing.Size(125, 13);
-      this.labelVersion3.TabIndex = 2;
-      this.labelVersion3.Text = "(Snapshot-Build is for testing only!!!)";
-      // 
       // labelVersion2
       // 
       this.labelVersion2.AutoSize = true;
+      this.labelVersion2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.labelVersion2.Location = new System.Drawing.Point(59, 20);
       this.labelVersion2.Name = "labelVersion2";
-      this.labelVersion2.Size = new System.Drawing.Size(64, 13);
+      this.labelVersion2.Size = new System.Drawing.Size(75, 13);
       this.labelVersion2.TabIndex = 1;
       this.labelVersion2.Text = "1.0.3.23400";
       // 
@@ -266,7 +255,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.paypalPictureBox.Cursor = System.Windows.Forms.Cursors.Hand;
       this.paypalPictureBox.Image = global::MediaPortal.Configuration.Properties.Resources.logo_PayPal;
-      this.paypalPictureBox.Location = new System.Drawing.Point(133, 315);
+      this.paypalPictureBox.Location = new System.Drawing.Point(64, 359);
       this.paypalPictureBox.Name = "paypalPictureBox";
       this.paypalPictureBox.Size = new System.Drawing.Size(72, 29);
       this.paypalPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -312,7 +301,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelInfo2;
     private MediaPortal.UserInterface.Controls.MPLabel labelMePo;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxAbout;
-    private System.Windows.Forms.Label labelVersion3;
     private System.Windows.Forms.Label labelVersion2;
     private System.Windows.Forms.Label labelVersion1;
     private System.Windows.Forms.PictureBox paypalPictureBox;

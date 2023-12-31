@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -50,6 +50,12 @@ namespace MpeMaker
     public MainForm()
     {
       Init();
+
+      if (IntPtr.Size == 8)
+      {
+        this.Text += " | x64";
+      }
+
       OpenNewFileSelector();
     }
 
@@ -71,7 +77,7 @@ namespace MpeMaker
 
       if (arguments.Build)
       {
-        Console.WriteLine("MpeMaker version: {0}", Application.ProductVersion);
+        Console.WriteLine("MPE Maker version: {0}{1}", Application.ProductVersion, (IntPtr.Size == 8) ? " | x64" : string.Empty);
         Console.WriteLine("Build started at {0}", DateTime.Now.ToLongTimeString());
         Console.WriteLine("Building \"{0}\"", arguments.ProjectFile);
         if (string.IsNullOrEmpty(Package.GeneralInfo.Location))
@@ -387,7 +393,7 @@ namespace MpeMaker
 
     private void SetTitle()
     {
-      Text = "MpeMaker - " + ProjectFileName;
+      Text = "MPE Maker" + ((IntPtr.Size == 8) ? " | x64" : string.Empty) + " - " + ProjectFileName;
 
       openDirToolStripButton.Enabled = Directory.Exists(ProjectDirectory);
     }

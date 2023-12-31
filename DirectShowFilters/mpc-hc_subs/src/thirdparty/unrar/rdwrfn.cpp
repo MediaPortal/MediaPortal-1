@@ -2,6 +2,11 @@
 
 ComprDataIO::ComprDataIO()
 {
+#ifndef RAR_NOCRYPT
+  Crypt=new CryptData;
+  Decrypt=new CryptData;
+#endif
+
   Init();
 }
 
@@ -11,26 +16,38 @@ void ComprDataIO::Init()
   UnpackFromMemory=false;
   UnpackToMemory=false;
   UnpPackedSize=0;
+  UnpPackedLeft=0;
   ShowProgress=true;
   TestMode=false;
   SkipUnpCRC=false;
+  NoFileHeader=false;
   PackVolume=false;
   UnpVolume=false;
   NextVolumeMissing=false;
   SrcFile=NULL;
   DestFile=NULL;
+  UnpWrAddr=NULL;
   UnpWrSize=0;
   Command=NULL;
-  Encryption=0;
-  Decryption=0;
-  TotalPackRead=0;
+  Encryption=false;
+  Decryption=false;
   CurPackRead=CurPackWrite=CurUnpRead=CurUnpWrite=0;
-  PackFileCRC=UnpFileCRC=PackedCRC=0xffffffff;
   LastPercent=-1;
   SubHead=NULL;
   SubHeadPos=NULL;
   CurrentCommand=0;
-  ProcessedArcSize=TotalArcSize=0;
+  ProcessedArcSize=0;
+  LastArcSize=0;
+  TotalArcSize=0;
+}
+
+
+ComprDataIO::~ComprDataIO()
+{
+#ifndef RAR_NOCRYPT
+  delete Crypt;
+  delete Decrypt;
+#endif
 }
 
 
@@ -38,46 +55,81 @@ void ComprDataIO::Init()
 
 int ComprDataIO::UnpRead(byte *Addr,size_t Count)
 {
-  int RetCode=0,TotalRead=0;
+#ifndef RAR_NOCRYPT
+  // In case of encryption we need to align read size to encryption 
+  // block size. We can do it by simple masking, because unpack read code
+  // always reads more than CRYPT_BLOCK_SIZE, so we do not risk to make it 0.
+  if (Decryption)
+    Count &= ~CRYPT_BLOCK_MASK;
+#endif
+  
+  int ReadSize=0,TotalRead=0;
   byte *ReadAddr;
   ReadAddr=Addr;
   while (Count > 0)
   {
     Archive *SrcArc=(Archive *)SrcFile;
 
-    size_t ReadSize=((int64)Count>UnpPackedSize) ? (size_t)UnpPackedSize:Count;
     if (UnpackFromMemory)
     {
       memcpy(Addr,UnpackFromMemoryAddr,UnpackFromMemorySize);
-      RetCode=(int)UnpackFromMemorySize;
+      ReadSize=(int)UnpackFromMemorySize;
       UnpackFromMemorySize=0;
     }
     else
     {
-      if (!SrcFile->IsOpened())
-        return(-1);
-      RetCode=SrcFile->Read(ReadAddr,ReadSize);
-      FileHeader *hd=SubHead!=NULL ? SubHead:&SrcArc->NewLhd;
-      if (hd->Flags & LHD_SPLIT_AFTER)
-        PackedCRC=CRC(PackedCRC,ReadAddr,RetCode);
+      size_t SizeToRead=((int64)Count>UnpPackedLeft) ? (size_t)UnpPackedLeft:Count;
+      if (SizeToRead > 0)
+      {
+        if (UnpVolume && Decryption && (int64)Count>UnpPackedLeft)
+        {
+          // We need aligned blocks for decryption and we want "Keep broken
+          // files" to work efficiently with missing encrypted volumes.
+          // So for last data block in volume we adjust the size to read to
+          // next equal or smaller block producing aligned total block size.
+          // So we'll ask for next volume only when processing few unaligned
+          // bytes left in the end, when most of data is already extracted.
+          size_t NewTotalRead = TotalRead + SizeToRead;
+          size_t Adjust = NewTotalRead - (NewTotalRead  & ~CRYPT_BLOCK_MASK);
+          size_t NewSizeToRead = SizeToRead - Adjust;
+          if ((int)NewSizeToRead > 0)
+            SizeToRead = NewSizeToRead;
+        }
+
+        if (!SrcFile->IsOpened())
+          return -1;
+        ReadSize=SrcFile->Read(ReadAddr,SizeToRead);
+        FileHeader *hd=SubHead!=NULL ? SubHead:&SrcArc->FileHead;
+        if (!NoFileHeader && hd->SplitAfter)
+          PackedDataHash.Update(ReadAddr,ReadSize);
+      }
     }
-    CurUnpRead+=RetCode;
-    TotalRead+=RetCode;
+    CurUnpRead+=ReadSize;
+    TotalRead+=ReadSize;
 #ifndef NOVOLUME
     // These variable are not used in NOVOLUME mode, so it is better
     // to exclude commands below to avoid compiler warnings.
-    ReadAddr+=RetCode;
-    Count-=RetCode;
+    ReadAddr+=ReadSize;
+    Count-=ReadSize;
 #endif
-    UnpPackedSize-=RetCode;
-    if (UnpPackedSize == 0 && UnpVolume)
+    UnpPackedLeft-=ReadSize;
+
+    // Do not ask for next volume if we read something from current volume.
+    // If next volume is missing, we need to process all data from current
+    // volume before aborting. It helps to recover all possible data
+    // in "Keep broken files" mode. But if we process encrypted data,
+    // we ask for next volume also if we have non-aligned encryption block.
+    // Since we adjust data size for decryption earlier above,
+    // it does not hurt "Keep broken files" mode efficiency.
+    if (UnpVolume && UnpPackedLeft == 0 && 
+        (ReadSize==0 || Decryption && (TotalRead & CRYPT_BLOCK_MASK) != 0) )
     {
 #ifndef NOVOLUME
       if (!MergeArchive(*SrcArc,this,true,CurrentCommand))
 #endif
       {
         NextVolumeMissing=true;
-        return(-1);
+        return -1;
       }
     }
     else
@@ -85,38 +137,19 @@ int ComprDataIO::UnpRead(byte *Addr,size_t Count)
   }
   Archive *SrcArc=(Archive *)SrcFile;
   if (SrcArc!=NULL)
-    ShowUnpRead(SrcArc->CurBlockPos+CurUnpRead,UnpArcSize);
-  if (RetCode!=-1)
+    ShowUnpRead(SrcArc->NextBlockPos-UnpPackedSize+CurUnpRead,TotalArcSize);
+  if (ReadSize!=-1)
   {
-    RetCode=TotalRead;
+    ReadSize=TotalRead;
 #ifndef RAR_NOCRYPT
     if (Decryption)
-#ifndef SFX_MODULE
-      if (Decryption<20)
-        Decrypt.Crypt(Addr,RetCode,(Decryption==15) ? NEW_CRYPT : OLD_DECODE);
-      else
-        if (Decryption==20)
-          for (int I=0;I<RetCode;I+=16)
-            Decrypt.DecryptBlock20(&Addr[I]);
-        else
-#endif
-        {
-          int CryptSize=(RetCode & 0xf)==0 ? RetCode:((RetCode & ~0xf)+16);
-          Decrypt.DecryptBlock(Addr,CryptSize);
-        }
+      Decrypt->DecryptBlock(Addr,ReadSize);
 #endif
   }
   Wait();
-  return(RetCode);
+  return ReadSize;
 }
 
-
-#if defined(RARDLL) && defined(_MSC_VER) && !defined(_WIN_64)
-// Disable the run time stack check for unrar.dll, so we can manipulate
-// with ProcessDataProc call type below. Run time check would intercept
-// a wrong ESP before we restore it.
-#pragma runtime_checks( "s", off )
-#endif
 
 void ComprDataIO::UnpWrite(byte *Addr,size_t Count)
 {
@@ -130,28 +163,7 @@ void ComprDataIO::UnpWrite(byte *Addr,size_t Count)
       ErrHandler.Exit(RARX_USERBREAK);
     if (Cmd->ProcessDataProc!=NULL)
     {
-      // Here we preserve ESP value. It is necessary for those developers,
-      // who still define ProcessDataProc callback as "C" type function,
-      // even though in year 2001 we announced in unrar.dll whatsnew.txt
-      // that it will be PASCAL type (for compatibility with Visual Basic).
-#if defined(_MSC_VER)
-#ifndef _WIN_64
-      __asm mov ebx,esp
-#endif
-#elif defined(_WIN_ALL) && defined(__BORLANDC__)
-      _EBX=_ESP;
-#endif
       int RetCode=Cmd->ProcessDataProc(Addr,(int)Count);
-
-      // Restore ESP after ProcessDataProc with wrongly defined calling
-      // convention broken it.
-#if defined(_MSC_VER)
-#ifndef _WIN_64
-      __asm mov esp,ebx
-#endif
-#elif defined(_WIN_ALL) && defined(__BORLANDC__)
-      _ESP=_EBX;
-#endif
       if (RetCode==0)
         ErrHandler.Exit(RARX_USERBREAK);
     }
@@ -174,20 +186,10 @@ void ComprDataIO::UnpWrite(byte *Addr,size_t Count)
       DestFile->Write(Addr,Count);
   CurUnpWrite+=Count;
   if (!SkipUnpCRC)
-#ifndef SFX_MODULE
-    if (((Archive *)SrcFile)->OldFormat)
-      UnpFileCRC=OldCRC((ushort)UnpFileCRC,Addr,Count);
-    else
-#endif
-      UnpFileCRC=CRC(UnpFileCRC,Addr,Count);
+    UnpHash.Update(Addr,Count);
   ShowUnpWrite();
   Wait();
 }
-
-#if defined(RARDLL) && defined(_MSC_VER) && !defined(_WIN_64)
-// Restore the run time stack check for unrar.dll.
-#pragma runtime_checks( "s", restore )
-#endif
 
 
 
@@ -198,12 +200,8 @@ void ComprDataIO::ShowUnpRead(int64 ArcPos,int64 ArcSize)
 {
   if (ShowProgress && SrcFile!=NULL)
   {
-    if (TotalArcSize!=0)
-    {
-      // important when processing several archives or multivolume archive
-      ArcSize=TotalArcSize;
-      ArcPos+=ProcessedArcSize;
-    }
+    // Important when processing several archives or multivolume archive.
+    ArcPos+=ProcessedArcSize;
 
     Archive *SrcArc=(Archive *)SrcFile;
     RAROptions *Cmd=SrcArc->GetRAROptions();
@@ -211,7 +209,7 @@ void ComprDataIO::ShowUnpRead(int64 ArcPos,int64 ArcSize)
     int CurPercent=ToPercent(ArcPos,ArcSize);
     if (!Cmd->DisablePercentage && CurPercent!=LastPercent)
     {
-      mprintf("\b\b\b\b%3d%%",CurPercent);
+      uiExtractProgress(CurUnpWrite,SrcArc->FileHead.UnpSize,ArcPos,ArcSize);
       LastPercent=CurPercent;
     }
   }
@@ -221,6 +219,8 @@ void ComprDataIO::ShowUnpRead(int64 ArcPos,int64 ArcSize)
 void ComprDataIO::ShowUnpWrite()
 {
 }
+
+
 
 
 
@@ -246,30 +246,24 @@ void ComprDataIO::GetUnpackedData(byte **Data,size_t *Size)
 }
 
 
-void ComprDataIO::SetEncryption(int Method,SecPassword *Password,const byte *Salt,bool Encrypt,bool HandsOffHash)
+void ComprDataIO::SetEncryption(bool Encrypt,CRYPT_METHOD Method,
+     SecPassword *Password,const byte *Salt,const byte *InitV,
+     uint Lg2Cnt,byte *HashKey,byte *PswCheck)
 {
+#ifndef RAR_NOCRYPT
   if (Encrypt)
-  {
-    Encryption=Password->IsSet() ? Method:0;
-#ifndef RAR_NOCRYPT
-    Crypt.SetCryptKeys(Password,Salt,Encrypt,false,HandsOffHash);
-#endif
-  }
+    Encryption=Crypt->SetCryptKeys(true,Method,Password,Salt,InitV,Lg2Cnt,HashKey,PswCheck);
   else
-  {
-    Decryption=Password->IsSet() ? Method:0;
-#ifndef RAR_NOCRYPT
-    Decrypt.SetCryptKeys(Password,Salt,Encrypt,Method<29,HandsOffHash);
+    Decryption=Decrypt->SetCryptKeys(false,Method,Password,Salt,InitV,Lg2Cnt,HashKey,PswCheck);
 #endif
-  }
 }
 
 
 #if !defined(SFX_MODULE) && !defined(RAR_NOCRYPT)
 void ComprDataIO::SetAV15Encryption()
 {
-  Decryption=15;
-  Decrypt.SetAV15Encryption();
+  Decryption=true;
+  Decrypt->SetAV15Encryption();
 }
 #endif
 
@@ -277,8 +271,8 @@ void ComprDataIO::SetAV15Encryption()
 #if !defined(SFX_MODULE) && !defined(RAR_NOCRYPT)
 void ComprDataIO::SetCmt13Encryption()
 {
-  Decryption=13;
-  Decrypt.SetCmt13Encryption();
+  Decryption=true;
+  Decrypt->SetCmt13Encryption();
 }
 #endif
 
@@ -293,3 +287,36 @@ void ComprDataIO::SetUnpackToMemory(byte *Addr,uint Size)
 }
 
 
+// Extraction progress is based on the position in archive and we adjust 
+// the total archives size here, so trailing blocks do not prevent progress
+// reaching 100% at the end of extraction. Alternatively we could print "100%"
+// after completing the entire archive extraction, but then we would need
+// to take into account possible messages like the checksum error after
+// last file percent progress.
+void ComprDataIO::AdjustTotalArcSize(Archive *Arc)
+{
+  // If we know a position of QO or RR blocks, use them to adjust the total
+  // packed size to beginning of these blocks. Earlier we already calculated
+  // the total size based on entire archive sizes. We also set LastArcSize
+  // to start of first trailing block, to add it later to ProcessedArcSize.
+  int64 ArcLength=Arc->IsSeekable() ? Arc->FileLength() : 0;
+  if (Arc->MainHead.QOpenOffset!=0) // QO is always preceding RR record.
+    LastArcSize=Arc->MainHead.QOpenOffset;
+  else
+    if (Arc->MainHead.RROffset!=0)
+      LastArcSize=Arc->MainHead.RROffset;
+    else
+    {
+      // If neither QO nor RR are found, exclude the approximate size of
+      // end of archive block.
+      // We select EndBlock to be larger than typical 8 bytes HEAD_ENDARC,
+      // but to not exceed the smallest 22 bytes HEAD_FILE with 1 byte file
+      // name, so we do not have two files with 100% at the end of archive.
+      const uint EndBlock=23;
+
+      if (ArcLength>EndBlock)
+        LastArcSize=ArcLength-EndBlock;
+    }
+
+  TotalArcSize-=ArcLength-LastArcSize;
+}

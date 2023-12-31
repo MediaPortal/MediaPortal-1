@@ -70,11 +70,11 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public static unsafe int FontEngineAddTextureSync(int hasCode, bool useAlphaBlend, void* fontTexture)
+    public static unsafe int FontEngineAddTextureSync(Int64 hashCode, bool useAlphaBlend, void* fontTexture)
     {
       lock (_lock)
       {
-        return FontEngineAddTexture(hasCode, useAlphaBlend, fontTexture);
+        return FontEngineAddTexture(hashCode, useAlphaBlend, fontTexture);
       }
     }
 
@@ -118,7 +118,7 @@ namespace MediaPortal.GUI.Library
     public static extern unsafe void FontEngineSetTexture(void* texture);
 
     [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
+    private static extern unsafe int FontEngineAddTexture(Int64 hashCode, bool useAlphaBlend, void* fontTexture);
 
     [DllImport("fontEngine.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineRemoveTexture(int textureNo);

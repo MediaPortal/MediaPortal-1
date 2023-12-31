@@ -4,6 +4,8 @@ rem build init
 set project=MediaPortal
 call BuildInit.bat %1
 
+if [%2]==[] (set ARCH=x86) ELSE (set ARCH=%2)
+
 rem build
 echo.
 echo Writing GIT revision assemblies...
@@ -12,12 +14,11 @@ rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%MediaPortal%" >> %log%
 
 echo.
 echo Building Libbluray Java...
-call %ant_home%\bin\ant -f %LibblurayJAR% -Dsrc_awt=:java-j2se
+call .\Build_BD_Java.bat
 
 echo.
 echo Building native components...
-call VS_Rebuild_Release_DirectShowFilters.bat
-call VS_Rebuild_Debug_DirectShowFilters.bat
+call VS_Rebuild_Debug_DirectShowFilters.bat %ARCH%
 
 echo.
 echo Building MediaPortal...
@@ -29,7 +30,15 @@ set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logf
 
 call "MSBUILD_Rebuild_Release_MediaPortal.bat" Release
 
-"%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%MediaPortal%\MediaPortal.sln" >> %log%
+"%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=%ARCH% "%MediaPortal%\MediaPortal.sln" >> %log%
+
+BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
+
+set xml=Build_Report_%BUILD_TYPE%_MPx86Proxy.xml
+set html=Build_Report_%BUILD_TYPE%_MPx86Proxy.html
+set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
+
+"%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%GIT_ROOT%\Tools\MPx86Proxy\MPx86Proxy.sln" >> %log%
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
 echo.
@@ -50,7 +59,7 @@ call MSBUILD_MP_LargeAddressAware.bat %BUILD_TYPE%
 
 echo.
 echo Building Installer...
-"%progpath%\NSIS\makensis.exe" /DBUILD_TYPE=%BUILD_TYPE% /DVER_BUILD=%version% "%MediaPortal%\Setup\setup.nsi" >> %log%
+"%progpath%\NSIS\makensis.exe" /DBUILD_TYPE=%BUILD_TYPE% /DVER_BUILD=%version% /DArchitecture=%ARCH% "%MediaPortal%\Setup\setup.nsi" >> %log%
 
 @ECHO OFF
 

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       InitializeComponent();
       type = DialogType.Upgrade;
-      labelSectionHeader.Text = "";
+      labelSectionHeader.Text = string.Empty;
       bFresh.Image = Images.Choose_button_on;
       rbFreshChecked = true;
       rbReinstallChecked = false;
@@ -66,10 +66,11 @@ namespace MediaPortal.DeployTool.Sections
       int major = 0;
       int minor = 0;
       int revision = 0;
-      RegistryKey key =
-        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
+
       string MpBuild = "0";
       string MpDisplayVer = string.Empty;
+
+      RegistryKey key = Utils.GetUninstallKey("MediaPortal" + (Utils.Is64bit() ? " (x64)" : string.Empty));
       if (key != null)
       {
         MpBuild = key.GetValue("VersionBuild").ToString();
@@ -77,7 +78,13 @@ namespace MediaPortal.DeployTool.Sections
         minor = (int)key.GetValue("VersionMinor", 0);
         revision = (int)key.GetValue("VersionRevision", 0);
         MpDisplayVer = key.GetValue("DisplayVersion").ToString().Replace(" for TESTING ONLY", string.Empty);
+        string InstallPath = key.GetValue("InstallPath").ToString();
         key.Close();
+
+        if (!string.IsNullOrEmpty(InstallPath))
+        {
+          InstallationProperties.Instance.Set("MPDir", InstallPath);
+        }
       }
       Version MpVer = new Version(major, minor, revision);
 
@@ -85,10 +92,11 @@ namespace MediaPortal.DeployTool.Sections
       major = 0;
       minor = 0;
       revision = 0;
-      key =
-        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
+
       string Tv3Build = "0";
       string Tv3DisplayVer = string.Empty;
+
+      key = Utils.GetUninstallKey("MediaPortal TV Server" + (Utils.Is64bit() ? " (x64)" : string.Empty));
       if (key != null)
       {
         Tv3Build = key.GetValue("VersionBuild").ToString();
@@ -96,8 +104,15 @@ namespace MediaPortal.DeployTool.Sections
         minor = (int)key.GetValue("VersionMinor", 0);
         revision = (int)key.GetValue("VersionRevision", 0);
         Tv3DisplayVer = key.GetValue("DisplayVersion").ToString().Replace(" for TESTING ONLY", string.Empty);
+        string InstallPath = key.GetValue("InstallPath").ToString();
         key.Close();
+
+        if (!string.IsNullOrEmpty(InstallPath))
+        {
+          InstallationProperties.Instance.Set("TVServerDir", InstallPath);
+        }
       }
+
       Version Tv3Ver = new Version(major, minor, revision);
 
       rbUpdate.Enabled = false;
@@ -233,8 +248,8 @@ namespace MediaPortal.DeployTool.Sections
       freshForce = false;
       InstallationProperties.Instance.Set("UpdateMode", "yes");
 
-      CheckResult resultTvServer = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
-      CheckResult resultTvClient = Utils.CheckNSISUninstallString("Mediaportal Tv Server", "MementoSection_SecClient");
+      CheckResult resultTvServer = Utils.CheckNSISUninstallString("MediaPortal TV Server" + (Utils.Is64bit() ? " (x64)" : string.Empty), "MementoSection_SecServer");
+      CheckResult resultTvClient = Utils.CheckNSISUninstallString("Mediaportal TV Server" + (Utils.Is64bit() ? " (x64)" : string.Empty), "MementoSection_SecClient");
 
       bool TvServer = resultTvServer.state != CheckState.NOT_INSTALLED;
       bool TvClient = resultTvClient.state != CheckState.NOT_INSTALLED;
@@ -257,8 +272,8 @@ namespace MediaPortal.DeployTool.Sections
       freshForce = false;
       InstallationProperties.Instance.Set("UpdateMode", "yes");
 
-      CheckResult resultTvServer = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
-      CheckResult resultTvClient = Utils.CheckNSISUninstallString("Mediaportal Tv Server", "MementoSection_SecClient");
+      CheckResult resultTvServer = Utils.CheckNSISUninstallString("MediaPortal TV Server" + (Utils.Is64bit() ? " (x64)" : string.Empty), "MementoSection_SecServer");
+      CheckResult resultTvClient = Utils.CheckNSISUninstallString("Mediaportal TV Server" + (Utils.Is64bit() ? " (x64)" : string.Empty), "MementoSection_SecClient");
 
       bool TvServer = resultTvServer.state != CheckState.NOT_INSTALLED;
       bool TvClient = resultTvClient.state != CheckState.NOT_INSTALLED;

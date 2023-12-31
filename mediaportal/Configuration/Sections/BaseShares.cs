@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -23,9 +23,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
+
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
 #pragma warning disable 108
@@ -52,6 +54,7 @@ namespace MediaPortal.Configuration.Sections
       public bool CreateThumbs = true;
       public bool EachFolderIsMovie = false;
       public bool EnableWakeOnLan = false;
+      public string HostDetectMethod = "Default";
       public bool DonotFolderJpgIfPin = true;
       
       public bool HasPinCode
@@ -71,21 +74,22 @@ namespace MediaPortal.Configuration.Sections
     protected const int MaximumShares = 128;
 
     private MPGroupBox groupBox1;
-    private ColumnHeader columnHeader1;
-    private ColumnHeader columnHeader2;
     private MPButton deleteButton;
     private MPButton editButton;
     private MPButton addButton;
     private MPListView sharesListView;
-    private ColumnHeader columnHeader3;
     private MPCheckBox checkBoxRemember;
     private MPCheckBox checkBoxAddOpticalDiskDrives;
     private MPCheckBox checkBoxSwitchRemovableDrive;
-    private ColumnHeader columnHeader4;
     private IContainer components = null;
     private MPButton mpButtonWOL;
+    private ColumnHeader columnHeader1;
+    private ColumnHeader columnHeader2;
+    private ColumnHeader columnHeader3;
+    private ColumnHeader columnHeader4;
     private ColumnHeader columnHeader5;
     private ColumnHeader columnHeader6;
+    private ColumnHeader columnHeader7;
 
     private string selectedSection = string.Empty;
 
@@ -145,6 +149,7 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -268,7 +273,8 @@ namespace MediaPortal.Configuration.Sections
             this.columnHeader2,
             this.columnHeader4,
             this.columnHeader5,
-            this.columnHeader6});
+            this.columnHeader6,
+            this.columnHeader7});
       this.sharesListView.FullRowSelect = true;
       this.sharesListView.Location = new System.Drawing.Point(16, 24);
       this.sharesListView.Name = "sharesListView";
@@ -287,12 +293,12 @@ namespace MediaPortal.Configuration.Sections
       // columnHeader3
       // 
       this.columnHeader3.Text = "Pin";
-      this.columnHeader3.Width = 57;
+      this.columnHeader3.Width = 30;
       // 
       // columnHeader2
       // 
       this.columnHeader2.Text = "Folder";
-      this.columnHeader2.Width = 210;
+      this.columnHeader2.Width = 160;
       // 
       // columnHeader4
       // 
@@ -306,6 +312,12 @@ namespace MediaPortal.Configuration.Sections
       // columnHeader6
       // 
       this.columnHeader6.Text = "WOL";
+      this.columnHeader6.Width = 40;
+      // 
+      // columnHeader7
+      // 
+      this.columnHeader7.Text = "Host Detect Method";
+      this.columnHeader7.Width = 100;
       // 
       // BaseShares
       // 
@@ -360,6 +372,7 @@ namespace MediaPortal.Configuration.Sections
         shareData.RemoteFolder = editShare.RemoteFolder;
         shareData.DefaultLayout = ProperLayoutFromDefault(editShare.View);
         shareData.EnableWakeOnLan = editShare.EnableWakeOnLan;
+        shareData.HostDetectMethod = editShare.HostDetectMethod;
         shareData.DonotFolderJpgIfPin = editShare.DonotFolderJpgIfPin;
 
         //CreateThumbs
@@ -391,12 +404,13 @@ namespace MediaPortal.Configuration.Sections
                              shareData.Folder,
                              shareData.CreateThumbs ? "Yes" : "No", 
                              shareData.ActiveConnection ? "Yes" : "No",
-                             shareData.EnableWakeOnLan ? "Yes" : "No"
+                             shareData.EnableWakeOnLan ? "Yes" : "No",
+                             shareData.HostDetectMethod
                            });
 
       if (shareData.IsRemote)
       {
-        listItem.SubItems[2].Text = String.Format("ftp://{0}:{1}{2}", shareData.Server, shareData.Port,
+        listItem.SubItems[2].Text = string.Format("ftp://{0}:{1}{2}", shareData.Server, shareData.Port,
                                                   shareData.RemoteFolder);
       }
       listItem.Tag = shareData;
@@ -457,13 +471,14 @@ namespace MediaPortal.Configuration.Sections
           editShare.RemoteFolder = shareData.RemoteFolder;
           editShare.View = ProperDefaultFromLayout(shareData.DefaultLayout);
           editShare.EnableWakeOnLan = shareData.EnableWakeOnLan;
+          editShare.HostDetectMethod = shareData.HostDetectMethod;
           editShare.DonotFolderJpgIfPin = shareData.DonotFolderJpgIfPin;
 
           // CreateThumbs
           int drivetype = 0;
           if (!shareData.EnableWakeOnLan)
           {
-            if (UNCTools.UNCFileFolderExists(shareData.Folder))
+            if (UNCTools.UNCFileFolderExists(shareData.Folder, shareData.HostDetectMethod))
             {
               drivetype = Util.Utils.getDriveType(shareData.Folder);
             }
@@ -511,6 +526,7 @@ namespace MediaPortal.Configuration.Sections
             shareData.RemoteFolder = editShare.RemoteFolder;
             shareData.DefaultLayout = ProperLayoutFromDefault(editShare.View);
             shareData.EnableWakeOnLan = editShare.EnableWakeOnLan;
+            shareData.HostDetectMethod = editShare.HostDetectMethod;
             shareData.DonotFolderJpgIfPin = editShare.DonotFolderJpgIfPin;
 
             //CreateThumbs
@@ -534,6 +550,7 @@ namespace MediaPortal.Configuration.Sections
             selectedItem.SubItems[2].Text = shareData.Folder;
             selectedItem.SubItems[3].Text = shareData.CreateThumbs ? "Yes" : "No";
             selectedItem.SubItems[5].Text = shareData.EnableWakeOnLan ? "Yes" : "No";
+            selectedItem.SubItems[6].Text = shareData.HostDetectMethod;
 
             if (!Util.Utils.IsNetwork(shareData.Folder))
             {
@@ -562,7 +579,7 @@ namespace MediaPortal.Configuration.Sections
 
             if (shareData.IsRemote)
             {
-              selectedItem.SubItems[2].Text = String.Format("ftp://{0}:{1}{2}", shareData.Server, shareData.Port,
+              selectedItem.SubItems[2].Text = string.Format("ftp://{0}:{1}{2}", shareData.Server, shareData.Port,
                                                             shareData.RemoteFolder);
             }
           }
@@ -664,7 +681,7 @@ namespace MediaPortal.Configuration.Sections
           if (driveName.Length == 0)
           {
             string driveLetter = drive.Substring(0, 1).ToUpperInvariant();
-            driveName = String.Format("{0} {1}:", defaultName, driveLetter);
+            driveName = string.Format("{0} {1}:", defaultName, driveLetter);
           }
 
           //
@@ -688,19 +705,19 @@ namespace MediaPortal.Configuration.Sections
             switch (driveType)
             {
               case DriveType.Removable:
-                name = String.Format("({0}:) Removable", drive.Substring(0, 1).ToUpperInvariant());
+                name = string.Format("({0}:) Removable", drive.Substring(0, 1).ToUpperInvariant());
                 break;
               case DriveType.Fixed:
-                name = String.Format("({0}:) Fixed", drive.Substring(0, 1).ToUpperInvariant());
+                name = string.Format("({0}:) Fixed", drive.Substring(0, 1).ToUpperInvariant());
                 break;
               case DriveType.RemoteDisk:
-                name = String.Format("({0}:) Remote", drive.Substring(0, 1).ToUpperInvariant());
+                name = string.Format("({0}:) Remote", drive.Substring(0, 1).ToUpperInvariant());
                 break;
               case DriveType.DVD: // or cd
-                name = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpperInvariant());
+                name = string.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpperInvariant());
                 break;
               case DriveType.RamDisk:
-                name = String.Format("({0}:) Ram", drive.Substring(0, 1).ToUpperInvariant());
+                name = string.Format("({0}:) Ram", drive.Substring(0, 1).ToUpperInvariant());
                 break;
             }
             if (driveType == DriveType.Fixed || driveType == DriveType.RemoteDisk)
@@ -762,19 +779,21 @@ namespace MediaPortal.Configuration.Sections
 
         for (int index = 0; index < MaximumShares; index++)
         {
-          string shareName = String.Format("sharename{0}", index);
-          string sharePath = String.Format("sharepath{0}", index);
-          string sharePin = String.Format("pincode{0}", index);
+          string shareName = string.Format("sharename{0}", index);
+          string sharePath = string.Format("sharepath{0}", index);
+          string sharePin = string.Format("pincode{0}", index);
 
-          string shareType = String.Format("sharetype{0}", index);
-          string shareServer = String.Format("shareserver{0}", index);
-          string shareLogin = String.Format("sharelogin{0}", index);
-          string sharePwd = String.Format("sharepassword{0}", index);
-          string sharePort = String.Format("shareport{0}", index);
-          string shareRemotePath = String.Format("shareremotepath{0}", index);
-          string shareViewPath = String.Format("shareview{0}", index);
-          string sharewakeonlan = String.Format("sharewakeonlan{0}", index);
-          string sharedonotfolderjpgifpin = String.Format("sharedonotfolderjpgifpin{0}", index);
+          string shareType = string.Format("sharetype{0}", index);
+          string shareServer = string.Format("shareserver{0}", index);
+          string shareLogin = string.Format("sharelogin{0}", index);
+          string sharePwd = string.Format("sharepassword{0}", index);
+          string sharePort = string.Format("shareport{0}", index);
+          string shareRemotePath = string.Format("shareremotepath{0}", index);
+          string shareViewPath = string.Format("shareview{0}", index);
+          string sharewakeonlan = string.Format("sharewakeonlan{0}", index);
+          string hostdetectmethod = string.Format("hostdetectmethod{0}", index);
+
+          string sharedonotfolderjpgifpin = string.Format("sharedonotfolderjpgifpin{0}", index);
           
           string shareNameData = xmlreader.GetValueAsString(section, shareName, "");
           string sharePathData = xmlreader.GetValueAsString(section, sharePath, "");
@@ -796,17 +815,16 @@ namespace MediaPortal.Configuration.Sections
           string sharePwdData = Util.Utils.DecryptPassword(xmlreader.GetValueAsString(section, sharePwd, ""));
           int sharePortData = xmlreader.GetValueAsInt(section, sharePort, 21);
           string shareRemotePathData = xmlreader.GetValueAsString(section, shareRemotePath, "/");
-          int shareLayout = xmlreader.GetValueAsInt(section, shareViewPath,
-                                                    (int)MediaPortal.GUI.Library.GUIFacadeControl.Layout.List);
-
+          int shareLayout = xmlreader.GetValueAsInt(section, shareViewPath, (int)MediaPortal.GUI.Library.GUIFacadeControl.Layout.List);
           bool shareWakeOnLan = xmlreader.GetValueAsBool(section, sharewakeonlan, false);
+          string hostDetectMethod = xmlreader.GetValueAsString(section, hostdetectmethod, "Default");
           bool sharedonotFolderJpgIfPin = xmlreader.GetValueAsBool(section, sharedonotfolderjpgifpin, true);
           
           // For Music Shares, we can indicate, if we want to scan them every time
           bool shareScanData = false;
           if (section == "music" || section == "movies")
           {
-            string shareScan = String.Format("sharescan{0}", index);
+            string shareScan = string.Format("sharescan{0}", index);
             shareScanData = xmlreader.GetValueAsBool(section, shareScan, true);
           }
           // For Movies Shares, we can indicate, if we want to create thumbs
@@ -815,9 +833,9 @@ namespace MediaPortal.Configuration.Sections
 
           if (section == "movies")
           {
-            string thumbsCreate = String.Format("videothumbscreate{0}", index);
+            string thumbsCreate = string.Format("videothumbscreate{0}", index);
             thumbs = xmlreader.GetValueAsBool(section, thumbsCreate, true);
-            string eachFolderIsMovie = String.Format("eachfolderismovie{0}", index);
+            string eachFolderIsMovie = string.Format("eachfolderismovie{0}", index);
             folderIsMovie = xmlreader.GetValueAsBool(section, eachFolderIsMovie, false);
           }
 
@@ -832,6 +850,7 @@ namespace MediaPortal.Configuration.Sections
             newShare.RemoteFolder = shareRemotePathData;
             newShare.DefaultLayout = (Layout)shareLayout;
             newShare.EnableWakeOnLan = shareWakeOnLan;
+            newShare.HostDetectMethod = hostDetectMethod;
             newShare.DonotFolderJpgIfPin = sharedonotFolderJpgIfPin;
             
             if (section == "music" || section == "movies")
@@ -854,11 +873,13 @@ namespace MediaPortal.Configuration.Sections
         if (section == "movies")
         {
           sharesListView.Columns[2].Width = 210;
+          sharesListView.Columns[3].Width = 60;
           if (!sharesListView.Columns.Contains(columnHeader4))
                sharesListView.Columns.Add(columnHeader4);
           if (!sharesListView.Columns.Contains(columnHeader6))
             sharesListView.Columns.Add(columnHeader6);
-          sharesListView.Columns[3].Width = 60;
+          if (!sharesListView.Columns.Contains(columnHeader7))
+            sharesListView.Columns.Add(columnHeader7);
         }
         else
         {
@@ -882,18 +903,19 @@ namespace MediaPortal.Configuration.Sections
 
         for (int index = 0; index < MaximumShares; index++)
         {
-          string shareName = String.Format("sharename{0}", index);
-          string sharePath = String.Format("sharepath{0}", index);
-          string sharePin = String.Format("pincode{0}", index);
-          string shareType = String.Format("sharetype{0}", index);
-          string shareServer = String.Format("shareserver{0}", index);
-          string shareLogin = String.Format("sharelogin{0}", index);
-          string sharePwd = String.Format("sharepassword{0}", index);
-          string sharePort = String.Format("shareport{0}", index);
-          string shareRemotePath = String.Format("shareremotepath{0}", index);
-          string shareViewPath = String.Format("shareview{0}", index);
-          string sharewakeonlan = String.Format("sharewakeonlan{0}", index);
-          string sharedonotfolderjpgifpin = String.Format("sharedonotfolderjpgifpin{0}", index);
+          string shareName = string.Format("sharename{0}", index);
+          string sharePath = string.Format("sharepath{0}", index);
+          string sharePin = string.Format("pincode{0}", index);
+          string shareType = string.Format("sharetype{0}", index);
+          string shareServer = string.Format("shareserver{0}", index);
+          string shareLogin = string.Format("sharelogin{0}", index);
+          string sharePwd = string.Format("sharepassword{0}", index);
+          string sharePort = string.Format("shareport{0}", index);
+          string shareRemotePath = string.Format("shareremotepath{0}", index);
+          string shareViewPath = string.Format("shareview{0}", index);
+          string sharewakeonlan = string.Format("sharewakeonlan{0}", index);
+          string hostdetectmethod = string.Format("hostdetectmethod{0}", index);
+          string sharedonotfolderjpgifpin = string.Format("sharedonotfolderjpgifpin{0}", index);
           
           xmlwriter.RemoveEntry(section, shareName);
           xmlwriter.RemoveEntry(section, sharePath);
@@ -906,20 +928,21 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.RemoveEntry(section, shareRemotePath);
           xmlwriter.RemoveEntry(section, shareViewPath);
           xmlwriter.RemoveEntry(section, sharewakeonlan);
+          xmlwriter.RemoveEntry(section, hostdetectmethod);
           xmlwriter.RemoveEntry(section, sharedonotfolderjpgifpin);
           
           if (section == "music" || section == "movies")
           {
-            string shareScan = String.Format("sharescan{0}", index);
+            string shareScan = string.Format("sharescan{0}", index);
             xmlwriter.RemoveEntry(section, shareScan);
           }
 
           if (section == "movies")
           {
-            string thumbs = String.Format("videothumbscreate{0}", index);
+            string thumbs = string.Format("videothumbscreate{0}", index);
             xmlwriter.RemoveEntry(section, thumbs);
 
-            string movieFolder = String.Format("eachfolderismovie{0}", index);
+            string movieFolder = string.Format("eachfolderismovie{0}", index);
             xmlwriter.RemoveEntry(section, movieFolder);
           }
           
@@ -938,6 +961,7 @@ namespace MediaPortal.Configuration.Sections
           bool thumbsCreate = true;
           bool folderIsMovie = false;
           bool shareWakeOnLan = false;
+          string hostDetectMethod = "Default";
           bool sharedonotFolderJpgIfPin = true;
 
           if (CurrentShares != null && CurrentShares.Count > index)
@@ -961,6 +985,7 @@ namespace MediaPortal.Configuration.Sections
               thumbsCreate = shareData.CreateThumbs;
               folderIsMovie = shareData.EachFolderIsMovie;
               shareWakeOnLan = shareData.EnableWakeOnLan;
+              hostDetectMethod = shareData.HostDetectMethod;
               sharedonotFolderJpgIfPin = shareData.DonotFolderJpgIfPin;
 
               if (CurrentShares[index] == DefaultShare)
@@ -979,20 +1004,24 @@ namespace MediaPortal.Configuration.Sections
               xmlwriter.SetValue(section, shareRemotePath, shareRemotePathData);
               xmlwriter.SetValue(section, shareViewPath, shareLayout);
               xmlwriter.SetValueAsBool(section, sharewakeonlan, shareWakeOnLan);
+              if (!string.IsNullOrEmpty(hostdetectmethod) || hostdetectmethod != "Default")
+              {
+                xmlwriter.SetValue(section, hostdetectmethod, hostDetectMethod);
+              }
               xmlwriter.SetValueAsBool(section, sharedonotfolderjpgifpin, sharedonotFolderJpgIfPin);
 
               if (section == "music" || section == "movies")
               {
-                string shareScan = String.Format("sharescan{0}", index);
+                string shareScan = string.Format("sharescan{0}", index);
                 xmlwriter.SetValueAsBool(section, shareScan, shareScanData);
               }
               //ThumbsCreate
               if (section == "movies")
               {
-                string thumbs = String.Format("videothumbscreate{0}", index);
+                string thumbs = string.Format("videothumbscreate{0}", index);
                 xmlwriter.SetValueAsBool(section, thumbs, thumbsCreate);
 
-                string folderMovie = String.Format("eachfolderismovie{0}", index);
+                string folderMovie = string.Format("eachfolderismovie{0}", index);
                 xmlwriter.SetValueAsBool(section, folderMovie, folderIsMovie);
               }
             }

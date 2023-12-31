@@ -21,7 +21,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using Microsoft.DirectX;
+using SharpDX;
 
 namespace MediaPortal.Drawing
 {

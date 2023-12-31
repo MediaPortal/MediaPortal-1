@@ -1,6 +1,6 @@
 /*
  * (C) 2003-2006 Gabest
- * (C) 2006-2013 see Authors.txt
+ * (C) 2006-2017 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -20,109 +20,21 @@
  */
 
 #include "stdafx.h"
+#include <algorithm>
 #include <Vfw.h>
 #include "winddk/devioctl.h"
 #include "winddk/ntddcdrm.h"
 #include "DSUtil.h"
 #include "Mpeg2Def.h"
-#include "vd.h"
-#include "moreuuids.h"
 #include <emmintrin.h>
-#include <math.h>
-#include <InitGuid.h>
-#include <d3d9types.h>
+#include <d3d9.h>
+#include "NullRenderers.h"
+#include "mvrInterfaces.h"
+
+#include "moreuuids.h"
 #include <dxva.h>
 #include <dxva2api.h>
-
-void DumpStreamConfig(TCHAR* fn, IAMStreamConfig* pAMVSCCap)
-{
-    CString s;
-    CStdioFile f;
-    if (!f.Open(fn, CFile::modeCreate | CFile::modeWrite | CFile::typeText)) {
-        return;
-    }
-
-    int cnt = 0, size = 0;
-    if (FAILED(pAMVSCCap->GetNumberOfCapabilities(&cnt, &size))) {
-        return;
-    }
-
-    s.Format(_T("cnt %d, size %d\n"), cnt, size);
-    f.WriteString(s);
-
-    if (size == sizeof(VIDEO_STREAM_CONFIG_CAPS)) {
-        for (int i = 0; i < cnt; i++) {
-            AM_MEDIA_TYPE* pmt = NULL;
-
-            VIDEO_STREAM_CONFIG_CAPS caps;
-            memset(&caps, 0, sizeof(caps));
-
-            s.Format(_T("%d\n"), i);
-            f.WriteString(s);
-
-            if (FAILED(pAMVSCCap->GetStreamCaps(i, &pmt, (BYTE*)&caps))) {
-                continue;
-            }
-
-            {
-                s = _T("VIDEO_STREAM_CONFIG_CAPS\n");
-                s.AppendFormat(_T("\tVideoStandard 0x%08x\n"), caps.VideoStandard);
-                s.AppendFormat(_T("\tInputSize %dx%d\n"), caps.InputSize);
-                s.AppendFormat(_T("\tCroppingSize %dx%d - %dx%d\n"), caps.MinCroppingSize, caps.MaxCroppingSize);
-                s.AppendFormat(_T("\tCropGranularity %d, %d\n"), caps.CropGranularityX, caps.CropGranularityY);
-                s.AppendFormat(_T("\tCropAlign %d, %d\n"), caps.CropAlignX, caps.CropAlignY);
-                s.AppendFormat(_T("\tOutputSize %dx%d - %dx%d\n"), caps.MinOutputSize, caps.MaxOutputSize);
-                s.AppendFormat(_T("\tOutputGranularity %d, %d\n"), caps.OutputGranularityX, caps.OutputGranularityY);
-                s.AppendFormat(_T("\tStretchTaps %d, %d\n"), caps.StretchTapsX, caps.StretchTapsY);
-                s.AppendFormat(_T("\tShrinkTaps %d, %d\n"), caps.ShrinkTapsX, caps.ShrinkTapsY);
-                s.AppendFormat(_T("\tFrameInterval %I64d, %I64d (%.4f, %.4f)\n"),
-                               caps.MinFrameInterval, caps.MaxFrameInterval,
-                               10000000.0f / caps.MinFrameInterval, 10000000.0f / caps.MaxFrameInterval);
-                s.AppendFormat(_T("\tBitsPerSecond %d - %d\n"), caps.MinBitsPerSecond, caps.MaxBitsPerSecond);
-                f.WriteString(s);
-            }
-
-            BITMAPINFOHEADER* pbh;
-            if (pmt->formattype == FORMAT_VideoInfo) {
-                VIDEOINFOHEADER* vih = (VIDEOINFOHEADER*)pmt->pbFormat;
-                pbh = &vih->bmiHeader;
-
-                s = _T("FORMAT_VideoInfo\n");
-                s.AppendFormat(_T("\tAvgTimePerFrame %I64d, %.4f\n"), vih->AvgTimePerFrame, 10000000.0f / vih->AvgTimePerFrame);
-                s.AppendFormat(_T("\trcSource %d,%d,%d,%d\n"), vih->rcSource);
-                s.AppendFormat(_T("\trcTarget %d,%d,%d,%d\n"), vih->rcTarget);
-                f.WriteString(s);
-            } else if (pmt->formattype == FORMAT_VideoInfo2) {
-                VIDEOINFOHEADER2* vih = (VIDEOINFOHEADER2*)pmt->pbFormat;
-                pbh = &vih->bmiHeader;
-
-                s  = _T("FORMAT_VideoInfo2\n");
-                s.AppendFormat(_T("\tAvgTimePerFrame %I64d, %.4f\n"), vih->AvgTimePerFrame, 10000000.0f / vih->AvgTimePerFrame);
-                s.AppendFormat(_T("\trcSource %d,%d,%d,%d\n"), vih->rcSource);
-                s.AppendFormat(_T("\trcTarget %d,%d,%d,%d\n"), vih->rcTarget);
-                s.AppendFormat(_T("\tdwInterlaceFlags 0x%x\n"), vih->dwInterlaceFlags);
-                s.AppendFormat(_T("\tdwPictAspectRatio %d:%d\n"), vih->dwPictAspectRatioX, vih->dwPictAspectRatioY);
-                f.WriteString(s);
-            } else {
-                DeleteMediaType(pmt);
-                continue;
-            }
-
-            s = _T("BITMAPINFOHEADER\n");
-            s.AppendFormat(_T("\tbiCompression %x\n"), pbh->biCompression);
-            s.AppendFormat(_T("\tbiWidth %d\n"), pbh->biWidth);
-            s.AppendFormat(_T("\tbiHeight %d\n"), pbh->biHeight);
-            s.AppendFormat(_T("\tbiBitCount %d\n"), pbh->biBitCount);
-            s.AppendFormat(_T("\tbiPlanes %d\n"), pbh->biPlanes);
-            s.AppendFormat(_T("\tbiSizeImage %d\n"), pbh->biSizeImage);
-            f.WriteString(s);
-
-            DeleteMediaType(pmt);
-        }
-    } else if (size == sizeof(AUDIO_STREAM_CONFIG_CAPS)) {
-        // TODO
-    }
-}
+#include <locale.h>
 
 int CountPins(IBaseFilter* pBF, int& nIn, int& nOut, int& nInC, int& nOutC)
 {
@@ -213,13 +125,8 @@ bool IsVideoRenderer(IBaseFilter* pBF)
     memcpy(&clsid, &GUID_NULL, sizeof(clsid));
     pBF->GetClassID(&clsid);
 
-    return (clsid == CLSID_VideoRenderer || clsid == CLSID_VideoRendererDefault);
+    return (clsid == CLSID_VideoRenderer || clsid == CLSID_VideoRendererDefault || clsid == CLSID_VideoMixingRenderer9 || clsid == CLSID_EnhancedVideoRenderer || clsid == CLSID_madVR || clsid == CLSID_DXR || clsid == CLSID_MPCVR);
 }
-
-DEFINE_GUID(CLSID_ReClock,
-            0x9dc15360, 0x914c, 0x46b8, 0xb9, 0xdf, 0xbf, 0xe6, 0x7f, 0xd3, 0x6c, 0x6a);
-
-DEFINE_GUID(DXVA_Intel_VC1_ClearVideo_2, 0xE07EC519, 0xE651, 0x4CD6, 0xAC, 0x84, 0x13, 0x70, 0xCC, 0xEE, 0xC8, 0x51);
 
 bool IsAudioWaveRenderer(IBaseFilter* pBF)
 {
@@ -245,8 +152,18 @@ bool IsAudioWaveRenderer(IBaseFilter* pBF)
     memcpy(&clsid, &GUID_NULL, sizeof(clsid));
     pBF->GetClassID(&clsid);
 
-    return (clsid == CLSID_DSoundRender || clsid == CLSID_AudioRender || clsid == CLSID_ReClock
-            || clsid == __uuidof(CNullAudioRenderer) || clsid == __uuidof(CNullUAudioRenderer));
+    return clsid == CLSID_DSoundRender ||
+           clsid == CLSID_AudioRender ||
+           clsid == CLSID_SANEAR_INTERNAL ||
+           clsid == CLSID_SANEAR ||
+           clsid == CLSID_ReClock ||
+           clsid == CLSID_MPCBEAudioRenderer ||
+           clsid == GUIDFromCString(L"{EC9ED6FC-7B03-4cb6-8C01-4EABE109F26B}") || // MediaPortal Audio Renderer
+           clsid == GUIDFromCString(L"{50063380-2B2F-4855-9A1E-40FCA344C7AC}") || // Surodev ASIO Renderer
+           clsid == GUIDFromCString(L"{8DE31E85-10FC-4088-8861-E0EC8E70744A}") || // MultiChannel ASIO Renderer
+           clsid == GUIDFromCString(L"{205F9417-8EEF-40B4-91CF-C7C6A96936EF}") || // MBSE MultiChannel ASIO Renderer
+           clsid == __uuidof(CNullAudioRenderer) ||
+           clsid == __uuidof(CNullUAudioRenderer);
 }
 
 IBaseFilter* GetUpStreamFilter(IBaseFilter* pBF, IPin* pInputPin)
@@ -272,48 +189,42 @@ IPin* GetUpStreamPin(IBaseFilter* pBF, IPin* pInputPin)
     }
     EndEnumPins;
 
-    return NULL;
+    return nullptr;
 }
 
 IPin* GetFirstPin(IBaseFilter* pBF, PIN_DIRECTION dir)
 {
-    if (!pBF) {
-        return NULL;
-    }
-
-    BeginEnumPins(pBF, pEP, pPin) {
-        PIN_DIRECTION dir2;
-        pPin->QueryDirection(&dir2);
-        if (dir == dir2) {
-            IPin* pRet = pPin.Detach();
-            pRet->Release();
-            return pRet;
+    if (pBF) {
+        BeginEnumPins(pBF, pEP, pPin) {
+            PIN_DIRECTION dir2;
+            if (SUCCEEDED(pPin->QueryDirection(&dir2)) && dir == dir2) {
+                IPin* pRet = pPin.Detach();
+                pRet->Release();
+                return pRet;
+            }
         }
+        EndEnumPins;
     }
-    EndEnumPins;
 
-    return NULL;
+    return nullptr;
 }
 
 IPin* GetFirstDisconnectedPin(IBaseFilter* pBF, PIN_DIRECTION dir)
 {
-    if (!pBF) {
-        return NULL;
-    }
-
-    BeginEnumPins(pBF, pEP, pPin) {
-        PIN_DIRECTION dir2;
-        pPin->QueryDirection(&dir2);
-        CComPtr<IPin> pPinTo;
-        if (dir == dir2 && (S_OK != pPin->ConnectedTo(&pPinTo))) {
-            IPin* pRet = pPin.Detach();
-            pRet->Release();
-            return pRet;
+    if (pBF) {
+        BeginEnumPins(pBF, pEP, pPin) {
+            PIN_DIRECTION dir2;
+            CComPtr<IPin> pPinTo;
+            if (SUCCEEDED(pPin->QueryDirection(&dir2)) && dir == dir2 && (S_OK != pPin->ConnectedTo(&pPinTo))) {
+                IPin* pRet = pPin.Detach();
+                pRet->Release();
+                return pRet;
+            }
         }
+        EndEnumPins;
     }
-    EndEnumPins;
 
-    return NULL;
+    return nullptr;
 }
 
 IBaseFilter* FindFilter(LPCWSTR clsid, IFilterGraph* pFG)
@@ -333,7 +244,7 @@ IBaseFilter* FindFilter(const CLSID& clsid, IFilterGraph* pFG)
     }
     EndEnumFilters;
 
-    return NULL;
+    return nullptr;
 }
 
 IPin* FindPin(IBaseFilter* pBF, PIN_DIRECTION direction, const AM_MEDIA_TYPE* pRequestedMT)
@@ -354,7 +265,7 @@ IPin* FindPin(IBaseFilter* pBF, PIN_DIRECTION direction, const AM_MEDIA_TYPE* pR
         }
     }
     EndEnumPins;
-    return NULL;
+    return nullptr;
 }
 
 CStringW GetFilterName(IBaseFilter* pBF)
@@ -362,31 +273,9 @@ CStringW GetFilterName(IBaseFilter* pBF)
     CStringW name = _T("");
 
     if (pBF) {
-        CLSID clsid = GetCLSID(pBF);
-        // system source filters
-        if (clsid == CLSID_AsyncReader) {
-            name = _T("File Source (Async.)");
-        } else if (clsid == CLSID_URLReader) {
-            name = _T("File Source (URL)");
-        } else if (clsid == CLSID_WMAsfReader) {
-            name = _T("WM ASF Reader");
-        } else if (clsid == CLSID_StreamBufferSource) {
-            name = _T("StreamBufferSource");
-            // third-party actual filters
-        } else if (clsid == GUIDFromCString(_T("{D8980E15-E1F6-4916-A10F-D7EB4E9E10B8}"))) {
-            name = _T("AV Source");
-        } else if (clsid == GUIDFromCString(_T("{B98D13E7-55DB-4385-A33D-09FD1BA26338}"))) {
-            name = _T("LAV Splitter Source");
-        } else if (clsid == GUIDFromCString(_T("{55DA30FC-F16B-49FC-BAA5-AE59FC65F82D}"))) {
-            name = _T("Haali Media Source");
-        } else if (clsid == GUIDFromCString(_T("{D042079E-8E02-418B-AE2F-F12E26704FCA}"))) {
-            name = _T("APE DirectShow Filter");
-            // other
-        } else {
-            CFilterInfo fi;
-            if (SUCCEEDED(pBF->QueryFilterInfo(&fi))) {
-                name = fi.achName;
-            }
+        CFilterInfo fi;
+        if (SUCCEEDED(pBF->QueryFilterInfo(&fi))) {
+            name = fi.achName;
         }
     }
 
@@ -407,9 +296,9 @@ CStringW GetPinName(IPin* pPin)
 IFilterGraph* GetGraphFromFilter(IBaseFilter* pBF)
 {
     if (!pBF) {
-        return NULL;
+        return nullptr;
     }
-    IFilterGraph* pGraph = NULL;
+    IFilterGraph* pGraph = nullptr;
     CFilterInfo fi;
     if (pBF && SUCCEEDED(pBF->QueryFilterInfo(&fi))) {
         pGraph = fi.pGraph;
@@ -420,9 +309,9 @@ IFilterGraph* GetGraphFromFilter(IBaseFilter* pBF)
 IBaseFilter* GetFilterFromPin(IPin* pPin)
 {
     if (!pPin) {
-        return NULL;
+        return nullptr;
     }
-    IBaseFilter* pBF = NULL;
+    IBaseFilter* pBF = nullptr;
     CPinInfo pi;
     if (pPin && SUCCEEDED(pPin->QueryPinInfo(&pi))) {
         pBF = pi.pFilter;
@@ -457,17 +346,17 @@ IPin* AppendFilter(IPin* pPin, CString DisplayName, IGraphBuilder* pGB)
         }
 
         CComPtr<IBaseFilter> pBF;
-        if (FAILED(pMoniker->BindToObject(pBindCtx, 0, IID_IBaseFilter, (void**)&pBF)) || !pBF) {
+        if (FAILED(pMoniker->BindToObject(pBindCtx, 0, IID_PPV_ARGS(&pBF))) || !pBF) {
             break;
         }
 
         CComPtr<IPropertyBag> pPB;
-        if (FAILED(pMoniker->BindToStorage(pBindCtx, 0, IID_IPropertyBag, (void**)&pPB))) {
+        if (FAILED(pMoniker->BindToStorage(pBindCtx, 0, IID_PPV_ARGS(&pPB)))) {
             break;
         }
 
         CComVariant var;
-        if (FAILED(pPB->Read(CComBSTR(_T("FriendlyName")), &var, NULL))) {
+        if (FAILED(pPB->Read(_T("FriendlyName"), &var, nullptr))) {
             break;
         }
 
@@ -492,9 +381,8 @@ IPin* AppendFilter(IPin* pPin, CString DisplayName, IGraphBuilder* pGB)
             break;
         }
 
-        HRESULT hr;
-        if (FAILED(hr = pGB->ConnectDirect(pPin, pPinTo, NULL))) {
-            hr = pGB->Connect(pPin, pPinTo);
+        if (FAILED(pGB->ConnectDirect(pPin, pPinTo, nullptr))) {
+            pGB->Connect(pPin, pPinTo);
             pGB->RemoveFilter(pBF);
             break;
         }
@@ -552,17 +440,17 @@ IPin* InsertFilter(IPin* pPin, CString DisplayName, IGraphBuilder* pGB)
         }
 
         CComPtr<IBaseFilter> pBF;
-        if (FAILED(pMoniker->BindToObject(pBindCtx, 0, IID_IBaseFilter, (void**)&pBF)) || !pBF) {
+        if (FAILED(pMoniker->BindToObject(pBindCtx, 0, IID_PPV_ARGS(&pBF))) || !pBF) {
             break;
         }
 
         CComPtr<IPropertyBag> pPB;
-        if (FAILED(pMoniker->BindToStorage(pBindCtx, 0, IID_IPropertyBag, (void**)&pPB))) {
+        if (FAILED(pMoniker->BindToStorage(pBindCtx, 0, IID_PPV_ARGS(&pPB)))) {
             break;
         }
 
         CComVariant var;
-        if (FAILED(pPB->Read(CComBSTR(_T("FriendlyName")), &var, NULL))) {
+        if (FAILED(pPB->Read(_T("FriendlyName"), &var, nullptr))) {
             break;
         }
 
@@ -578,27 +466,26 @@ IPin* InsertFilter(IPin* pPin, CString DisplayName, IGraphBuilder* pGB)
 
         if (FAILED(pGB->Disconnect(pFrom)) || FAILED(pGB->Disconnect(pTo))) {
             pGB->RemoveFilter(pBF);
-            pGB->ConnectDirect(pFrom, pTo, NULL);
+            pGB->ConnectDirect(pFrom, pTo, nullptr);
             break;
         }
 
-        HRESULT hr;
-        if (FAILED(hr = pGB->ConnectDirect(pFrom, pFromTo, NULL))) {
+        if (FAILED(pGB->ConnectDirect(pFrom, pFromTo, nullptr))) {
             pGB->RemoveFilter(pBF);
-            pGB->ConnectDirect(pFrom, pTo, NULL);
+            pGB->ConnectDirect(pFrom, pTo, nullptr);
             break;
         }
 
         CComPtr<IPin> pToFrom = GetFirstPin(pBF, PINDIR_OUTPUT);
         if (!pToFrom) {
             pGB->RemoveFilter(pBF);
-            pGB->ConnectDirect(pFrom, pTo, NULL);
+            pGB->ConnectDirect(pFrom, pTo, nullptr);
             break;
         }
 
-        if (FAILED(pGB->ConnectDirect(pToFrom, pTo, NULL))) {
+        if (FAILED(pGB->ConnectDirect(pToFrom, pTo, nullptr))) {
             pGB->RemoveFilter(pBF);
-            pGB->ConnectDirect(pFrom, pTo, NULL);
+            pGB->ConnectDirect(pFrom, pTo, nullptr);
             break;
         }
 
@@ -681,7 +568,7 @@ void ShowPPage(CString DisplayName, HWND hParentWnd)
     }
 
     CComPtr<IBaseFilter> pBF;
-    if (FAILED(pMoniker->BindToObject(pBindCtx, 0, IID_IBaseFilter, (void**)&pBF)) || !pBF) {
+    if (FAILED(pMoniker->BindToObject(pBindCtx, 0, IID_PPV_ARGS(&pBF))) || !pBF) {
         return;
     }
 
@@ -708,15 +595,15 @@ void ShowPPage(IUnknown* pUnk, HWND hParentWnd)
     }
 
     CAUUID caGUID;
-    caGUID.pElems = NULL;
+    caGUID.pElems = nullptr;
     if (SUCCEEDED(pSPP->GetPages(&caGUID))) {
-        IUnknown* lpUnk = NULL;
+        IUnknown* lpUnk = nullptr;
         pSPP.QueryInterface(&lpUnk);
         MyOleCreatePropertyFrame(
             hParentWnd, 0, 0, CStringW(str),
             1, (IUnknown**)&lpUnk,
             caGUID.cElems, caGUID.pElems,
-            0, 0, NULL);
+            0, 0, nullptr);
         lpUnk->Release();
 
         if (caGUID.pElems) {
@@ -739,6 +626,15 @@ CLSID GetCLSID(IPin* pPin)
     return GetCLSID(GetFilterFromPin(pPin));
 }
 
+CString CLSIDToString(CLSID& clsid)
+{
+    CComHeapPtr<OLECHAR> pStr;
+    if (S_OK == StringFromCLSID(clsid, &pStr) && pStr) {
+        return CString(pStr);
+    }
+    return CString();
+}
+
 bool IsCLSIDRegistered(LPCTSTR clsid)
 {
     CString rootkey1(_T("CLSID\\"));
@@ -752,13 +648,42 @@ bool IsCLSIDRegistered(const CLSID& clsid)
 {
     bool fRet = false;
 
-    LPOLESTR pStr = NULL;
+    CComHeapPtr<OLECHAR> pStr;
     if (S_OK == StringFromCLSID(clsid, &pStr) && pStr) {
         fRet = IsCLSIDRegistered(CString(pStr));
-        CoTaskMemFree(pStr);
     }
 
     return fRet;
+}
+
+CString GetFilterPath(LPCTSTR clsid)
+{
+    CString rootkey1(_T("CLSID\\"));
+    CString rootkey2(_T("CLSID\\{083863F1-70DE-11d0-BD40-00A0C911CE86}\\Instance\\"));
+
+    CRegKey key;
+    CString path;
+
+    if (ERROR_SUCCESS == key.Open(HKEY_CLASSES_ROOT, rootkey1 + clsid + _T("\\InprocServer32"), KEY_READ)
+            || ERROR_SUCCESS == key.Open(HKEY_CLASSES_ROOT, rootkey2 + clsid + _T("\\InprocServer32"), KEY_READ)) {
+        ULONG nCount = MAX_PATH;
+        key.QueryStringValue(nullptr, path.GetBuffer(nCount), &nCount);
+        path.ReleaseBuffer(nCount);
+    }
+
+    return path;
+}
+
+CString GetFilterPath(const CLSID& clsid)
+{
+    CString path;
+
+    CComHeapPtr<OLECHAR> pStr;
+    if (S_OK == StringFromCLSID(clsid, &pStr) && pStr) {
+        path = GetFilterPath(CString(pStr));
+    }
+
+    return path;
 }
 
 void CStringToBin(CString str, CAtlArray<BYTE>& data)
@@ -798,9 +723,10 @@ void CStringToBin(CString str, CAtlArray<BYTE>& data)
 CString BinToCString(const BYTE* ptr, size_t len)
 {
     CString ret;
-    TCHAR high, low;
 
     while (len-- > 0) {
+        TCHAR high, low;
+
         high = (*ptr >> 4) >= 10 ? (*ptr >> 4) - 10 + _T('A') : (*ptr >> 4) + _T('0');
         low = (*ptr & 0xf) >= 10 ? (*ptr & 0xf) - 10 + _T('A') : (*ptr & 0xf) + _T('0');
 
@@ -812,8 +738,9 @@ CString BinToCString(const BYTE* ptr, size_t len)
     return ret;
 }
 
-static void FindFiles(CString fn, CAtlList<CString>& files)
+void FindFiles(CString fn, CAtlList<CString>& files)
 {
+    ExtendMaxPathLengthIfNeeded(fn, MAX_PATH);
     CString path = fn;
     path.Replace('/', '\\');
     path = path.Left(path.ReverseFind('\\') + 1);
@@ -829,70 +756,100 @@ static void FindFiles(CString fn, CAtlList<CString>& files)
     }
 }
 
-cdrom_t GetCDROMType(TCHAR drive, CAtlList<CString>& files)
+OpticalDiskType_t GetOpticalDiskType(TCHAR drive, CAtlList<CString>& files)
 {
     files.RemoveAll();
 
     CString path;
     path.Format(_T("%c:"), drive);
 
-    if (GetDriveType(path + _T("\\")) == DRIVE_CDROM) {
-        // CDROM_VideoCD
-        FindFiles(path + _T("\\mpegav\\avseq??.dat"), files);
-        FindFiles(path + _T("\\mpegav\\avseq??.mpg"), files);
-        FindFiles(path + _T("\\mpeg2\\avseq??.dat"), files);
-        FindFiles(path + _T("\\mpeg2\\avseq??.mpg"), files);
-        FindFiles(path + _T("\\mpegav\\music??.dat"), files);
-        FindFiles(path + _T("\\mpegav\\music??.mpg"), files);
-        FindFiles(path + _T("\\mpeg2\\music??.dat"), files);
-        FindFiles(path + _T("\\mpeg2\\music??.mpg"), files);
-        if (files.GetCount() > 0) {
-            return CDROM_VideoCD;
-        }
-
-        // CDROM_DVDVideo
-        FindFiles(path + _T("\\VIDEO_TS\\video_ts.ifo"), files);
-        if (files.GetCount() > 0) {
-            return CDROM_DVDVideo;
-        }
-
-        // CDROM_Audio
-        HANDLE hDrive = CreateFile(CString(_T("\\\\.\\")) + path, GENERIC_READ, FILE_SHARE_READ, NULL,
-                                   OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, (HANDLE)NULL);
-        if (hDrive != INVALID_HANDLE_VALUE) {
-            DWORD BytesReturned;
-            CDROM_TOC TOC;
-            if (DeviceIoControl(hDrive, IOCTL_CDROM_READ_TOC, NULL, 0, &TOC, sizeof(TOC), &BytesReturned, 0)) {
-                for (ptrdiff_t i = TOC.FirstTrack; i <= TOC.LastTrack; i++) {
-                    // MMC-3 Draft Revision 10g: Table 222 - Q Sub-channel control field
-                    TOC.TrackData[i - 1].Control &= 5;
-                    if (TOC.TrackData[i - 1].Control == 0 || TOC.TrackData[i - 1].Control == 1) {
-                        CString fn;
-                        fn.Format(_T("%s\\track%02d.cda"), path, i);
-                        files.AddTail(fn);
-                    }
-                }
-            }
-
-            CloseHandle(hDrive);
-        }
-        if (files.GetCount() > 0) {
-            return CDROM_Audio;
-        }
-
-        // it is a cdrom but nothing special
-        return CDROM_Unknown;
+    if (GetDriveType(path + _T("\\")) != DRIVE_CDROM) {
+        return OpticalDisk_NotFound;
     }
 
-    return CDROM_NotFound;
+    // Check if it contains a disc
+    HANDLE hDevice = CreateFile(CString(_T("\\\\.\\")) + path, FILE_READ_ATTRIBUTES,
+        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+    if (hDevice == INVALID_HANDLE_VALUE) {
+        return OpticalDisk_NotFound;
+    }
+    DWORD cbBytesReturned;
+    BOOL bSuccess = DeviceIoControl(hDevice, IOCTL_STORAGE_CHECK_VERIFY2,
+        NULL, 0, NULL, 0, &cbBytesReturned, (LPOVERLAPPED)NULL);
+    if (!bSuccess) {
+        return OpticalDisk_NotFound;
+    }
+
+    // CDROM_DVDVideo
+    FindFiles(path + _T("\\VIDEO_TS\\video_ts.ifo"), files);
+    if (!files.IsEmpty()) {
+        return OpticalDisk_DVDVideo;
+    }
+
+    // CDROM_BD
+    FindFiles(path + _T("\\BDMV\\index.bdmv"), files);
+    if (!files.IsEmpty()) {
+        return OpticalDisk_BD;
+    }
+
+    // CDROM_VideoCD
+    FindFiles(path + _T("\\mpegav\\avseq??.dat"), files);
+    FindFiles(path + _T("\\mpegav\\avseq??.mpg"), files);
+    FindFiles(path + _T("\\mpeg2\\avseq??.dat"), files);
+    FindFiles(path + _T("\\mpeg2\\avseq??.mpg"), files);
+    FindFiles(path + _T("\\mpegav\\music??.dat"), files);
+    FindFiles(path + _T("\\mpegav\\music??.mpg"), files);
+    FindFiles(path + _T("\\mpeg2\\music??.dat"), files);
+    FindFiles(path + _T("\\mpeg2\\music??.mpg"), files);
+    if (!files.IsEmpty()) {
+        return OpticalDisk_VideoCD;
+    }
+
+    // CDROM_Audio
+    HANDLE hDrive = CreateFile(CString(_T("\\\\.\\")) + path, GENERIC_READ, FILE_SHARE_READ, nullptr,
+                                OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, (HANDLE)nullptr);
+    if (hDrive != INVALID_HANDLE_VALUE) {
+        DWORD BytesReturned;
+        CDROM_TOC TOC;
+        if (DeviceIoControl(hDrive, IOCTL_CDROM_READ_TOC, nullptr, 0, &TOC, sizeof(TOC), &BytesReturned, 0)) {
+            ASSERT(TOC.FirstTrack >= 1u && TOC.LastTrack <= _countof(TOC.TrackData));
+            TOC.FirstTrack = std::max(TOC.FirstTrack, UCHAR(1));
+            TOC.LastTrack = std::min(TOC.LastTrack, UCHAR(_countof(TOC.TrackData)));
+            for (ptrdiff_t i = TOC.FirstTrack; i <= TOC.LastTrack; i++) {
+                // MMC-3 Draft Revision 10g: Table 222 - Q Sub-channel control field
+                auto& trackData = TOC.TrackData[i - 1];
+                trackData.Control &= 5;
+                if (trackData.Control == 0 || trackData.Control == 1) {
+                    CString fn;
+                    fn.Format(_T("%s\\track%02Id.cda"), path.GetString(), i);
+                    files.AddTail(fn);
+                }
+            }
+        }
+
+        CloseHandle(hDrive);
+    }
+    if (!files.IsEmpty()) {
+        return OpticalDisk_Audio;
+    }
+
+    // it is a cdrom but nothing special
+    return OpticalDisk_Unknown;
 }
 
 CString GetDriveLabel(TCHAR drive)
 {
-    CString label;
-
     CString path;
     path.Format(_T("%c:\\"), drive);
+
+    return GetDriveLabel(CPath(path));
+}
+
+CString GetDriveLabel(CPath path)
+{
+    CString label;
+    path.StripToRoot();
+
     TCHAR VolumeNameBuffer[MAX_PATH], FileSystemNameBuffer[MAX_PATH];
     DWORD VolumeSerialNumber, MaximumComponentLength, FileSystemFlags;
     if (GetVolumeInformation(path,
@@ -902,6 +859,28 @@ CString GetDriveLabel(TCHAR drive)
     }
 
     return label;
+}
+
+bool IsDriveVirtual(CString drive)
+{
+    HKEY hkey;
+    DWORD type = REG_BINARY;
+    TCHAR data[1024] = { 0 };
+    DWORD size = sizeof(data) - 2;
+
+    drive=(drive+_T(":")).Left(2);
+    CString subkey = _T("\\DosDevices\\") + drive;
+
+    RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("SYSTEM\\MountedDevices"), 0, KEY_READ, &hkey);
+    if (hkey == INVALID_HANDLE_VALUE) return 0;
+    RegQueryValueEx(hkey, subkey, 0, &type, (BYTE*)data, &size);
+
+    RegCloseKey(hkey);
+    CString sig(data);
+    sig.MakeUpper();
+    return sig.Find(_T("VEN_MSFT&PROD_VIRTUAL_DVD-ROM")) >= 0
+        || sig.Find(_T("VEN_DISCSOFT&")) >= 0
+        || sig.Find(_T("VEN_ELBY&PROD_CLONEDRIVE")) >= 0;
 }
 
 bool GetKeyFrames(CString fn, CUIntArray& kfs)
@@ -915,7 +894,7 @@ bool GetKeyFrames(CString fn, CUIntArray& kfs)
         PAVIFILE pfile;
         if (AVIFileOpen(&pfile, fn, OF_SHARE_DENY_WRITE, 0L) == 0) {
             AVIFILEINFO afi;
-            memset(&afi, 0, sizeof(afi));
+            ZeroMemory(&afi, sizeof(afi));
             AVIFileInfo(pfile, &afi, sizeof(AVIFILEINFO));
 
             CComPtr<IAVIStream> pavi;
@@ -931,13 +910,13 @@ bool GetKeyFrames(CString fn, CUIntArray& kfs)
                 } else {
                     for (LONG kf = 0; ; kf++) {
                         kf = pavi->FindSample(kf, FIND_KEY | FIND_NEXT);
-                        if (kf < 0 || kfs.GetCount() > 0 && kfs[kfs.GetCount() - 1] >= (UINT)kf) {
+                        if (kf < 0 || !kfs.IsEmpty() && kfs[kfs.GetCount() - 1] >= (UINT)kf) {
                             break;
                         }
                         kfs.Add(kf);
                     }
 
-                    if (kfs.GetCount() > 0 && kfs[kfs.GetCount() - 1] < si.dwLength - 1) {
+                    if (!kfs.IsEmpty() && kfs[kfs.GetCount() - 1] < si.dwLength - 1) {
                         kfs.Add(si.dwLength - 1);
                     }
                 }
@@ -949,10 +928,10 @@ bool GetKeyFrames(CString fn, CUIntArray& kfs)
         AVIFileExit();
     }
 
-    return (kfs.GetCount() > 0);
+    return !kfs.IsEmpty();
 }
 
-DVD_HMSF_TIMECODE RT2HMSF(REFERENCE_TIME rt, double fps) // use to remember the current position
+DVD_HMSF_TIMECODE RT2HMSF(REFERENCE_TIME rt, double fps /*= 0.0*/) // use to remember the current position
 {
     DVD_HMSF_TIMECODE hmsf = {
         (BYTE)((rt / 10000000 / 60 / 60)),
@@ -964,9 +943,9 @@ DVD_HMSF_TIMECODE RT2HMSF(REFERENCE_TIME rt, double fps) // use to remember the 
     return hmsf;
 }
 
-DVD_HMSF_TIMECODE RT2HMS_r(REFERENCE_TIME rt) // use only for information (for display on the screen)
+DVD_HMSF_TIMECODE RT2HMS(REFERENCE_TIME rt) // used only for information (for display on the screen)
 {
-    rt = (rt + 5000000) / 10000000;
+    rt = rt / 10000000;
     DVD_HMSF_TIMECODE hmsf = {
         (BYTE)(rt / 3600),
         (BYTE)(rt / 60 % 60),
@@ -977,52 +956,25 @@ DVD_HMSF_TIMECODE RT2HMS_r(REFERENCE_TIME rt) // use only for information (for d
     return hmsf;
 }
 
-REFERENCE_TIME HMSF2RT(DVD_HMSF_TIMECODE hmsf, double fps)
+DVD_HMSF_TIMECODE RT2HMS_r(REFERENCE_TIME rt) // used only for information (for display on the screen)
 {
-    if (fps == 0) {
+    // round to nearest second
+    return RT2HMS(rt + 5000000);
+}
+
+REFERENCE_TIME HMSF2RT(DVD_HMSF_TIMECODE hmsf, double fps /*= -1.0*/)
+{
+    if (fps <= 0.0) {
         hmsf.bFrames = 0;
-        fps = 1;
+        fps = 1.0;
     }
     return (REFERENCE_TIME)((((REFERENCE_TIME)hmsf.bHours * 60 + hmsf.bMinutes) * 60 + hmsf.bSeconds) * 1000 + 1.0 * hmsf.bFrames * 1000 / fps) * 10000;
 }
 
 void memsetd(void* dst, unsigned int c, size_t nbytes)
 {
-#ifndef _WIN64
-    if (!(g_cpuid.m_flags & g_cpuid.sse2)) {
-        __asm {
-            mov eax, c
-            mov ecx, nbytes
-            shr ecx, 2
-            mov edi, dst
-            cld
-            rep stosd
-        }
-        return;
-    }
-#endif
     size_t n = nbytes / 4;
-    size_t o = n - (n % 4);
-
-    __m128i val = _mm_set1_epi32((int)c);
-    if (((uintptr_t)dst & 0x0F) == 0) { // 16-byte aligned
-        for (size_t i = 0; i < o; i += 4) {
-            _mm_store_si128((__m128i*) & (((DWORD*)dst)[i]), val);
-        }
-    } else {
-        for (size_t i = 0; i < o; i += 4) {
-            _mm_storeu_si128((__m128i*) & (((DWORD*)dst)[i]), val);
-        }
-    }
-
-    switch (n - o) {
-        case 3:
-                ((DWORD*)dst)[o + 2] = c;
-        case 2:
-                ((DWORD*)dst)[o + 1] = c;
-        case 1:
-                ((DWORD*)dst)[o + 0] = c;
-    }
+    __stosd((unsigned long*)dst, c, n);
 }
 
 void memsetw(void* dst, unsigned short c, size_t nbytes)
@@ -1039,7 +991,7 @@ void memsetw(void* dst, unsigned short c, size_t nbytes)
 bool ExtractBIH(const AM_MEDIA_TYPE* pmt, BITMAPINFOHEADER* bih)
 {
     if (pmt && bih) {
-        memset(bih, 0, sizeof(*bih));
+        ZeroMemory(bih, sizeof(*bih));
 
         if (pmt->formattype == FORMAT_VideoInfo) {
             VIDEOINFOHEADER* vih = (VIDEOINFOHEADER*)pmt->pbFormat;
@@ -1086,7 +1038,7 @@ bool ExtractAvgTimePerFrame(const AM_MEDIA_TYPE* pmt, REFERENCE_TIME& rtAvgTimeP
 
 bool ExtractBIH(IMediaSample* pMS, BITMAPINFOHEADER* bih)
 {
-    AM_MEDIA_TYPE* pmt = NULL;
+    AM_MEDIA_TYPE* pmt = nullptr;
     if (SUCCEEDED(pMS->GetMediaType(&pmt)) && pmt) {
         bool fRet = ExtractBIH(pmt, bih);
         DeleteMediaType(pmt);
@@ -1117,7 +1069,7 @@ bool ExtractDim(const AM_MEDIA_TYPE* pmt, int& w, int& h, int& arx, int& ary)
     }
 
     if (!arx || !ary) {
-        BYTE* ptr = NULL;
+        BYTE* ptr = nullptr;
         DWORD len = 0;
 
         if (pmt->formattype == FORMAT_MPEGVideo) {
@@ -1146,7 +1098,7 @@ bool ExtractDim(const AM_MEDIA_TYPE* pmt, int& w, int& h, int& arx, int& ary)
                 struct {
                     int x, y;
                 } ar[] = {{w, h}, {4, 3}, {16, 9}, {221, 100}, {w, h}};
-                int i = min(max(ptr[7] >> 4, 1), 5) - 1;
+                int i = std::min(std::max(ptr[7] >> 4, 1), 5) - 1;
                 arx = ar[i].x;
                 ary = ar[i].y;
             }
@@ -1171,83 +1123,13 @@ bool ExtractDim(const AM_MEDIA_TYPE* pmt, int& w, int& h, int& arx, int& ary)
     return true;
 }
 
-bool MakeMPEG2MediaType(CMediaType& mt, BYTE* seqhdr, DWORD len, int w, int h)
-{
-    if (len < 4 || *(DWORD*)seqhdr != 0xb3010000) {
-        mt = CMediaType();
-
-        mt.majortype = MEDIATYPE_Video;
-        mt.subtype = MEDIASUBTYPE_MPEG2_VIDEO;
-        mt.formattype = FORMAT_MPEG2Video;
-
-        MPEG2VIDEOINFO* vih = (MPEG2VIDEOINFO*)mt.AllocFormatBuffer(FIELD_OFFSET(MPEG2VIDEOINFO, dwSequenceHeader));
-        memset(mt.Format(), 0, mt.FormatLength());
-        vih->hdr.bmiHeader.biSize = sizeof(vih->hdr.bmiHeader);
-        vih->hdr.bmiHeader.biWidth = w;
-        vih->hdr.bmiHeader.biHeight = h;
-
-        vih->cbSequenceHeader = 0;
-
-        return true;
-    }
-
-    BYTE* seqhdr_ext = NULL;
-
-    BYTE* seqhdr_end = seqhdr + 7;
-
-    while (seqhdr_end < (seqhdr + len - 6)) {
-        if (*(DWORD*)seqhdr_end == 0xb5010000) {
-            seqhdr_ext = seqhdr_end;
-            seqhdr_end += 10;
-            len = (DWORD)(seqhdr_end - seqhdr);
-            break;
-        }
-        seqhdr_end++;
-    }
-
-    mt = CMediaType();
-
-    mt.majortype = MEDIATYPE_Video;
-    mt.subtype = MEDIASUBTYPE_MPEG2_VIDEO;
-    mt.formattype = FORMAT_MPEG2Video;
-
-    MPEG2VIDEOINFO* vih = (MPEG2VIDEOINFO*)mt.AllocFormatBuffer(FIELD_OFFSET(MPEG2VIDEOINFO, dwSequenceHeader) + len);
-    memset(mt.Format(), 0, mt.FormatLength());
-    vih->hdr.bmiHeader.biSize = sizeof(vih->hdr.bmiHeader);
-    vih->hdr.bmiHeader.biWidth = w;
-    vih->hdr.bmiHeader.biHeight = h;
-
-    BYTE* pSequenceHeader = (BYTE*)vih->dwSequenceHeader;
-    memcpy(pSequenceHeader, seqhdr, len);
-    vih->cbSequenceHeader = len;
-
-    static char profile[8] = {
-        0, AM_MPEG2Profile_High, AM_MPEG2Profile_SpatiallyScalable, AM_MPEG2Profile_SNRScalable,
-        AM_MPEG2Profile_Main, AM_MPEG2Profile_Simple, 0, 0
-    };
-
-    static char level[16] = {
-        0, 0, 0, 0,
-        AM_MPEG2Level_High, 0, AM_MPEG2Level_High1440, 0,
-        AM_MPEG2Level_Main, 0, AM_MPEG2Level_Low, 0,
-        0, 0, 0, 0
-    };
-
-    if (seqhdr_ext && (seqhdr_ext[4] & 0xf0) == 0x10) {
-        vih->dwProfile = profile[seqhdr_ext[4] & 0x07];
-        vih->dwLevel = level[seqhdr_ext[5] >> 4];
-    }
-
-    return true;
-}
-
 bool CreateFilter(CStringW DisplayName, IBaseFilter** ppBF, CStringW& FriendlyName)
 {
     if (!ppBF) {
         return false;
     }
 
-    *ppBF = NULL;
+    *ppBF = nullptr;
     FriendlyName.Empty();
 
     CComPtr<IBindCtx> pBindCtx;
@@ -1259,14 +1141,14 @@ bool CreateFilter(CStringW DisplayName, IBaseFilter** ppBF, CStringW& FriendlyNa
         return false;
     }
 
-    if (FAILED(pMoniker->BindToObject(pBindCtx, 0, IID_IBaseFilter, (void**)ppBF)) || !*ppBF) {
+    if (FAILED(pMoniker->BindToObject(pBindCtx, 0, IID_PPV_ARGS(ppBF))) || !*ppBF) {
         return false;
     }
 
     CComPtr<IPropertyBag> pPB;
     CComVariant var;
-    if (SUCCEEDED(pMoniker->BindToStorage(pBindCtx, 0, IID_IPropertyBag, (void**)&pPB))
-            && SUCCEEDED(pPB->Read(CComBSTR(_T("FriendlyName")), &var, NULL))) {
+    if (SUCCEEDED(pMoniker->BindToStorage(pBindCtx, 0, IID_PPV_ARGS(&pPB)))
+            && SUCCEEDED(pPB->Read(_T("FriendlyName"), &var, nullptr))) {
         FriendlyName = var.bstrVal;
     }
 
@@ -1290,17 +1172,17 @@ IBaseFilter* AppendFilter(IPin* pPin, IMoniker* pMoniker, IGraphBuilder* pGB)
         CreateBindCtx(0, &pBindCtx);
 
         CComPtr<IPropertyBag> pPB;
-        if (FAILED(pMoniker->BindToStorage(pBindCtx, 0, IID_IPropertyBag, (void**)&pPB))) {
+        if (FAILED(pMoniker->BindToStorage(pBindCtx, 0, IID_PPV_ARGS(&pPB)))) {
             break;
         }
 
         CComVariant var;
-        if (FAILED(pPB->Read(CComBSTR(_T("FriendlyName")), &var, NULL))) {
+        if (FAILED(pPB->Read(_T("FriendlyName"), &var, nullptr))) {
             break;
         }
 
         CComPtr<IBaseFilter> pBF;
-        if (FAILED(pMoniker->BindToObject(pBindCtx, 0, IID_IBaseFilter, (void**)&pBF)) || !pBF) {
+        if (FAILED(pMoniker->BindToObject(pBindCtx, 0, IID_PPV_ARGS(&pBF))) || !pBF) {
             break;
         }
 
@@ -1308,13 +1190,13 @@ IBaseFilter* AppendFilter(IPin* pPin, IMoniker* pMoniker, IGraphBuilder* pGB)
             break;
         }
 
-        BeginEnumPins(pBF, pEP, pPinTo) {
+        BeginEnumPins(pBF, pEP, pPinTo2) {
             PIN_DIRECTION dir2;
-            if (FAILED(pPinTo->QueryDirection(&dir2)) || dir2 != PINDIR_INPUT) {
+            if (FAILED(pPinTo2->QueryDirection(&dir2)) || dir2 != PINDIR_INPUT) {
                 continue;
             }
 
-            if (SUCCEEDED(pGB->ConnectDirect(pPin, pPinTo, NULL))) {
+            if (SUCCEEDED(pGB->ConnectDirect(pPin, pPinTo2, nullptr))) {
                 return pBF;
             }
         }
@@ -1323,55 +1205,61 @@ IBaseFilter* AppendFilter(IPin* pPin, IMoniker* pMoniker, IGraphBuilder* pGB)
         pGB->RemoveFilter(pBF);
     } while (false);
 
-    return NULL;
+    return nullptr;
 }
 
-CStringW GetFriendlyName(CStringW DisplayName)
+CStringW GetFriendlyName(CStringW displayName)
 {
-    CStringW FriendlyName;
+    CStringW friendlyName;
 
     CComPtr<IBindCtx> pBindCtx;
     CreateBindCtx(0, &pBindCtx);
 
     CComPtr<IMoniker> pMoniker;
     ULONG chEaten;
-    if (S_OK != MkParseDisplayName(pBindCtx, CComBSTR(DisplayName), &chEaten, &pMoniker)) {
-        return false;
+    if (S_OK == MkParseDisplayName(pBindCtx, CComBSTR(displayName), &chEaten, &pMoniker)) {
+        CComPtr<IPropertyBag> pPB;
+        CComVariant var;
+        if (SUCCEEDED(pMoniker->BindToStorage(pBindCtx, 0, IID_PPV_ARGS(&pPB)))
+                && SUCCEEDED(pPB->Read(_T("FriendlyName"), &var, nullptr))) {
+            friendlyName = var.bstrVal;
+        }
     }
 
-    CComPtr<IPropertyBag> pPB;
-    CComVariant var;
-    if (SUCCEEDED(pMoniker->BindToStorage(pBindCtx, 0, IID_IPropertyBag, (void**)&pPB))
-            && SUCCEEDED(pPB->Read(CComBSTR(_T("FriendlyName")), &var, NULL))) {
-        FriendlyName = var.bstrVal;
-    }
-
-    return FriendlyName;
+    return friendlyName;
 }
 
-typedef struct {
+typedef HRESULT(__stdcall* fDllCanUnloadNow)(void);
+
+struct ExternalObject {
     CString path;
     HINSTANCE hInst;
     CLSID clsid;
-} ExternalObject;
+    fDllCanUnloadNow fpDllCanUnloadNow;
+    bool bUnloadOnNextCheck;
+};
 
-static CAtlList<ExternalObject> s_extobjs;
+static CAtlList<ExternalObject> s_extObjs;
+static CCritSec s_csExtObjs;
 
 HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv)
 {
     CheckPointer(ppv, E_POINTER);
 
+    CAutoLock lock(&s_csExtObjs);
+
     CString fullpath = MakeFullPath(path);
 
-    HINSTANCE hInst = NULL;
+    HINSTANCE hInst = nullptr;
     bool fFound = false;
 
-    POSITION pos = s_extobjs.GetHeadPosition();
+    POSITION pos = s_extObjs.GetHeadPosition();
     while (pos) {
-        ExternalObject& eo = s_extobjs.GetNext(pos);
+        ExternalObject& eo = s_extObjs.GetNext(pos);
         if (!eo.path.CompareNoCase(fullpath)) {
             hInst = eo.hInst;
             fFound = true;
+            eo.bUnloadOnNextCheck = false;
             break;
         }
     }
@@ -1379,7 +1267,7 @@ HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv)
     HRESULT hr = E_FAIL;
 
     if (!hInst) {
-        hInst = CoLoadLibrary(CComBSTR(fullpath), TRUE);
+        hInst = LoadLibraryEx(fullpath, nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);
     }
     if (hInst) {
         typedef HRESULT(__stdcall * PDllGetClassObject)(REFCLSID rclsid, REFIID riid, LPVOID * ppv);
@@ -1387,14 +1275,14 @@ HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv)
 
         if (p && FAILED(hr = p(clsid, iid, ppv))) {
             CComPtr<IClassFactory> pCF;
-            if (SUCCEEDED(hr = p(clsid, __uuidof(IClassFactory), (void**)&pCF))) {
-                hr = pCF->CreateInstance(NULL, iid, ppv);
+            if (SUCCEEDED(hr = p(clsid, IID_PPV_ARGS(&pCF)))) {
+                hr = pCF->CreateInstance(nullptr, iid, ppv);
             }
         }
     }
 
     if (FAILED(hr) && hInst && !fFound) {
-        CoFreeLibrary(hInst);
+        FreeLibrary(hInst);
         return hr;
     }
 
@@ -1403,7 +1291,9 @@ HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv)
         eo.path = fullpath;
         eo.hInst = hInst;
         eo.clsid = clsid;
-        s_extobjs.AddTail(eo);
+        eo.fpDllCanUnloadNow = (fDllCanUnloadNow)GetProcAddress(hInst, "DllCanUnloadNow");
+        eo.bUnloadOnNextCheck = false;
+        s_extObjs.AddTail(eo);
     }
 
     return hr;
@@ -1411,35 +1301,99 @@ HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv)
 
 HRESULT LoadExternalFilter(LPCTSTR path, REFCLSID clsid, IBaseFilter** ppBF)
 {
-    return LoadExternalObject(path, clsid, __uuidof(IBaseFilter), (void**)ppBF);
+    return LoadExternalObject(path, clsid, IID_PPV_ARGS(ppBF));
 }
 
 HRESULT LoadExternalPropertyPage(IPersist* pP, REFCLSID clsid, IPropertyPage** ppPP)
 {
+    CAutoLock lock(&s_csExtObjs);
+
     CLSID clsid2 = GUID_NULL;
     if (FAILED(pP->GetClassID(&clsid2))) {
         return E_FAIL;
     }
 
-    POSITION pos = s_extobjs.GetHeadPosition();
+    POSITION pos = s_extObjs.GetHeadPosition();
     while (pos) {
-        ExternalObject& eo = s_extobjs.GetNext(pos);
+        ExternalObject& eo = s_extObjs.GetNext(pos);
         if (eo.clsid == clsid2) {
-            return LoadExternalObject(eo.path, clsid, __uuidof(IPropertyPage), (void**)ppPP);
+            return LoadExternalObject(eo.path, clsid, IID_PPV_ARGS(ppPP));
         }
     }
 
     return E_FAIL;
 }
 
-void UnloadExternalObjects()
+bool UnloadUnusedExternalObjects()
 {
-    POSITION pos = s_extobjs.GetHeadPosition();
+    CAutoLock lock(&s_csExtObjs);
+
+    POSITION pos = s_extObjs.GetHeadPosition(), currentPos;
     while (pos) {
-        ExternalObject& eo = s_extobjs.GetNext(pos);
-        CoFreeLibrary(eo.hInst);
+        currentPos = pos;
+        ExternalObject& eo = s_extObjs.GetNext(pos);
+
+        if (eo.fpDllCanUnloadNow && eo.fpDllCanUnloadNow() == S_OK) {
+            // Before actually unloading it, we require that the library reports
+            // that it can be unloaded safely twice in a row with a 60s delay
+            // between the two checks.
+            if (eo.bUnloadOnNextCheck) {
+                FreeLibrary(eo.hInst);
+                s_extObjs.RemoveAt(currentPos);
+            } else {
+                eo.bUnloadOnNextCheck = true;
+            }
+        } else {
+            eo.bUnloadOnNextCheck = false;
+        }
     }
-    s_extobjs.RemoveAll();
+
+    return s_extObjs.IsEmpty();
+}
+
+void ExtendMaxPathLengthIfNeeded(CString& path, int max_length /*= MAX_PATH*/, bool no_url /*= false */)
+{
+    if (path.GetLength() >= max_length) {
+        if (no_url || path.Find(_T("://")) < 0) { // not URL
+            if (path.Left(2) != _T("\\\\")) { // not UNC
+                if (path.Left(4) != _T("\\\\?\\")) { // not already have long path prefix
+                    path = _T("\\\\?\\") + path;
+                }
+            }
+        }
+    }
+}
+
+bool ContainsWildcard(CString& path)
+{
+    int p = path.Find('*');
+    if (p >= 0) {
+        return true;
+    }
+    p = path.Find('?');
+    if (p >= 0) {
+        if (p == 2 && path.Left(4) == _T("\\\\?\\")) {
+            CString tmp = CString(path);
+            tmp.Delete(0, 3);
+            return tmp.Find('?') > 0;
+        }
+        return true;
+    }
+    return false;
+}
+
+void ShortenLongPath(CString& path)
+{
+    if (path.GetLength() > MAX_PATH && path.Find(_T("\\\\?\\")) < 0) {
+        CString longpath = _T("\\\\?\\") + path;
+        TCHAR* buffer = DEBUG_NEW TCHAR[MAX_PATH];
+        long length = GetShortPathName(longpath, buffer, MAX_PATH);
+        if (length > 0 && length < MAX_PATH) {
+            path = buffer;
+            path.Replace(_T("\\\\?\\"), _T(""));
+            delete[] buffer;
+        }
+    }
 }
 
 CString MakeFullPath(LPCTSTR path)
@@ -1447,14 +1401,22 @@ CString MakeFullPath(LPCTSTR path)
     CString full(path);
     full.Replace('/', '\\');
 
-    CString fn;
-    fn.ReleaseBuffer(GetModuleFileName(AfxGetInstanceHandle(), fn.GetBuffer(MAX_PATH), MAX_PATH));
-    CPath p(fn);
+    if (full.GetLength() > MAX_PATH) {
+        return full;
+    }
 
-    if (full.GetLength() >= 2 && full[0] == '\\' && full[1] != '\\') {
-        p.StripToRoot();
-        full = CString(p) + full.Mid(1);
+    if (full.GetLength() >= 2 && full[0] == '\\') {
+        if (full[1] != '\\') {
+            CString fn;
+            fn.ReleaseBuffer(GetModuleFileName(AfxGetInstanceHandle(), fn.GetBuffer(MAX_PATH), MAX_PATH));
+            CPath p(fn);
+            p.StripToRoot();
+            full = CString(p) + full.Mid(1);
+        }
     } else if (full.Find(_T(":\\")) < 0) {
+        CString fn;
+        fn.ReleaseBuffer(GetModuleFileName(AfxGetInstanceHandle(), fn.GetBuffer(MAX_PATH), MAX_PATH));
+        CPath p(fn);
         p.RemoveFileSpec();
         p.AddBackslash();
         full = CString(p) + full;
@@ -1465,12 +1427,32 @@ CString MakeFullPath(LPCTSTR path)
     return CString(c);
 }
 
-//
+inline bool _IsFourCC(const GUID& guid)
+{
+    // XXXXXXXX-0000-0010-8000-00AA00389B71
+    return (guid.Data2 == 0x0000) && (guid.Data3 == 0x0010) &&
+        (((DWORD*)guid.Data4)[0] == 0xAA000080) &&
+        (((DWORD*)guid.Data4)[1] == 0x719b3800);
+}
+
+bool GetMediaTypeFourCC(const GUID& guid, CString& fourCC)
+{
+    if (_IsFourCC(guid) && (guid.Data1 >= 0x10000)) {
+        fourCC.Format(_T("%c%c%c%c"),
+            (TCHAR)(guid.Data1 >> 0 ) & 0xFF, (TCHAR)(guid.Data1 >> 8 ) & 0xFF,
+            (TCHAR)(guid.Data1 >> 16) & 0xFF, (TCHAR)(guid.Data1 >> 24) & 0xFF);
+        fourCC.MakeUpper();
+        return true;
+    }
+
+    fourCC = _T("UNKN");
+    return false;
+}
 
 CString GetMediaTypeName(const GUID& guid)
 {
     CString ret = guid == GUID_NULL
-                  ? _T("Any type")
+                  ? CString(_T("Any type"))
                   : CString(GuidNames[guid]);
 
     if (ret == _T("FOURCC GUID")) {
@@ -1483,8 +1465,8 @@ CString GetMediaTypeName(const GUID& guid)
         ret = str;
     } else if (ret == _T("Unknown GUID Name")) {
         WCHAR null[128] = {0}, buff[128];
-        StringFromGUID2(GUID_NULL, null, 127);
-        ret = CString(CStringW(StringFromGUID2(guid, buff, 127) ? buff : null));
+        StringFromGUID2(GUID_NULL, null, _countof(null) - 1);
+        ret = CString(CStringW(StringFromGUID2(guid, buff, _countof(buff) - 1) ? buff : null));
     }
 
     return ret;
@@ -1508,15 +1490,15 @@ HRESULT GUIDFromCString(CString str, GUID& guid)
 CString CStringFromGUID(const GUID& guid)
 {
     WCHAR null[128] = {0}, buff[128];
-    StringFromGUID2(GUID_NULL, null, 127);
-    return CString(StringFromGUID2(guid, buff, 127) > 0 ? buff : null);
+    StringFromGUID2(GUID_NULL, null, _countof(null) - 1);
+    return CString(StringFromGUID2(guid, buff, _countof(buff) - 1) > 0 ? buff : null);
 }
 
 CStringW UTF8To16(LPCSTR utf8)
 {
     CStringW str;
-    int n = MultiByteToWideChar(CP_UTF8, 0, utf8, -1, NULL, 0) - 1;
-    if (n < 0) {
+    int n = MultiByteToWideChar(CP_UTF8, 0, utf8, -1, nullptr, 0) - 1;
+    if (n <= 0) {
         return str;
     }
     str.ReleaseBuffer(MultiByteToWideChar(CP_UTF8, 0, utf8, -1, str.GetBuffer(n), n + 1) - 1);
@@ -1526,18 +1508,18 @@ CStringW UTF8To16(LPCSTR utf8)
 CStringA UTF16To8(LPCWSTR utf16)
 {
     CStringA str;
-    int n = WideCharToMultiByte(CP_UTF8, 0, utf16, -1, NULL, 0, NULL, NULL) - 1;
+    int n = WideCharToMultiByte(CP_UTF8, 0, utf16, -1, nullptr, 0, nullptr, nullptr) - 1;
     if (n < 0) {
         return str;
     }
-    str.ReleaseBuffer(WideCharToMultiByte(CP_UTF8, 0, utf16, -1, str.GetBuffer(n), n + 1, NULL, NULL) - 1);
+    str.ReleaseBuffer(WideCharToMultiByte(CP_UTF8, 0, utf16, -1, str.GetBuffer(n), n + 1, nullptr, nullptr) - 1);
     return str;
 }
 
 CStringW UTF8ToStringW(const char* S)
 {
     CStringW str;
-    if (S == NULL) {
+    if (S == nullptr) {
         return str;
     }
 
@@ -1589,732 +1571,15 @@ CStringW UTF8ToStringW(const char* S)
 CStringW LocalToStringW(const char* S)
 {
     CStringW str;
-    if (S == NULL) {
+    if (S == nullptr) {
         return str;
     }
 
-    int Size = MultiByteToWideChar(CP_ACP, 0, S, -1, NULL, 0);
+    int Size = MultiByteToWideChar(CP_ACP, 0, S, -1, nullptr, 0);
     if (Size != 0) {
         str.ReleaseBuffer(MultiByteToWideChar(CP_ACP, 0, S, -1, str.GetBuffer(Size), Size + 1) - 1);
     }
     return str;
-}
-
-static struct {
-    LPCSTR name, iso6392, iso6391;
-    LCID lcid;
-} s_isolangs[] = {  // TODO : fill LCID !!!
-    {"Abkhazian", "abk", "ab"},
-    {"Achinese", "ace", ""},
-    {"Acoli", "ach", ""},
-    {"Adangme", "ada", ""},
-    {"Afar", "aar", "aa"},
-    {"Afrihili", "afh", ""},
-    {"Afrikaans", "afr", "af",                  MAKELCID(MAKELANGID(LANG_AFRIKAANS, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Afro-Asiatic (Other)", "afa", ""},
-    {"Akan", "aka", "ak"},
-    {"Akkadian", "akk", ""},
-    {"Albanian", "alb", "sq"},
-    {"Albanian", "sqi", "sq",                   MAKELCID(MAKELANGID(LANG_ALBANIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Aleut", "ale", ""},
-    {"Algonquian languages", "alg", ""},
-    {"Altaic (Other)", "tut", ""},
-    {"Amharic", "amh", "am"},
-    {"Apache languages", "apa", ""},
-    {"Arabic", "ara", "ar",                     MAKELCID(MAKELANGID(LANG_ARABIC, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Aragonese", "arg", "an"},
-    {"Aramaic", "arc", ""},
-    {"Arapaho", "arp", ""},
-    {"Araucanian", "arn", ""},
-    {"Arawak", "arw", ""},
-    {"Armenian", "arm", "hy",                   MAKELCID(MAKELANGID(LANG_ARMENIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Armenian", "hye", "hy",                   MAKELCID(MAKELANGID(LANG_ARMENIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Artificial (Other)", "art", ""},
-    {"Assamese", "asm", "as",                   MAKELCID(MAKELANGID(LANG_ASSAMESE, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Asturian; Bable", "ast", ""},
-    {"Athapascan languages", "ath", ""},
-    {"Australian languages", "aus", ""},
-    {"Austronesian (Other)", "map", ""},
-    {"Avaric", "ava", "av"},
-    {"Avestan", "ave", "ae"},
-    {"Awadhi", "awa", ""},
-    {"Aymara", "aym", "ay"},
-    {"Azerbaijani", "aze", "az",                MAKELCID(MAKELANGID(LANG_AZERI, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Bable; Asturian", "ast", ""},
-    {"Balinese", "ban", ""},
-    {"Baltic (Other)", "bat", ""},
-    {"Baluchi", "bal", ""},
-    {"Bambara", "bam", "bm"},
-    {"Bamileke languages", "bai", ""},
-    {"Banda", "bad", ""},
-    {"Bantu (Other)", "bnt", ""},
-    {"Basa", "bas", ""},
-    {"Bashkir", "bak", "ba",                    MAKELCID(MAKELANGID(LANG_BASHKIR, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Basque", "baq", "eu",                     MAKELCID(MAKELANGID(LANG_BASQUE, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Basque", "eus", "eu",                     MAKELCID(MAKELANGID(LANG_BASQUE, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Batak (Indonesia)", "btk", ""},
-    {"Beja", "bej", ""},
-    {"Belarusian", "bel", "be",                 MAKELCID(MAKELANGID(LANG_BELARUSIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Bemba", "bem", ""},
-    {"Bengali", "ben", "bn",                    MAKELCID(MAKELANGID(LANG_BENGALI, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Berber (Other)", "ber", ""},
-    {"Bhojpuri", "bho", ""},
-    {"Bihari", "bih", "bh"},
-    {"Bikol", "bik", ""},
-    {"Bini", "bin", ""},
-    {"Bislama", "bis", "bi"},
-    {"Bokmål, Norwegian; Norwegian Bokmål", "nob", "nb"},
-    {"Bosnian", "bos", "bs"},
-    {"Braj", "bra", ""},
-    {"Breton", "bre", "br",                     MAKELCID(MAKELANGID(LANG_BRETON, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Buginese", "bug", ""},
-    {"Bulgarian", "bul", "bg",                  MAKELCID(MAKELANGID(LANG_BULGARIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Buriat", "bua", ""},
-    {"Burmese", "bur", "my"},
-    {"Burmese", "mya", "my"},
-    {"Caddo", "cad", ""},
-    {"Carib", "car", ""},
-    {"Spanish; Castilian", "spa", "es",         MAKELCID(MAKELANGID(LANG_SPANISH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Catalan", "cat", "ca",                    MAKELCID(MAKELANGID(LANG_CATALAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Caucasian (Other)", "cau", ""},
-    {"Cebuano", "ceb", ""},
-    {"Celtic (Other)", "cel", ""},
-    {"Central American Indian (Other)", "cai", ""},
-    {"Chagatai", "chg", ""},
-    {"Chamic languages", "cmc", ""},
-    {"Chamorro", "cha", "ch"},
-    {"Chechen", "che", "ce"},
-    {"Cherokee", "chr", ""},
-    {"Chewa; Chichewa; Nyanja", "nya", "ny"},
-    {"Cheyenne", "chy", ""},
-    {"Chibcha", "chb", ""},
-    {"Chichewa; Chewa; Nyanja", "nya", "ny"},
-    {"Chinese", "chi", "zh",                    MAKELCID(MAKELANGID(LANG_CHINESE, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Chinese", "zho", "zh"},
-    {"Chinook jargon", "chn", ""},
-    {"Chipewyan", "chp", ""},
-    {"Choctaw", "cho", ""},
-    {"Chuang; Zhuang", "zha", "za"},
-    {"Church Slavic; Old Church Slavonic", "chu", "cu"},
-    {"Old Church Slavonic; Old Slavonic; ", "chu", "cu"},
-    {"Church Slavonic; Old Bulgarian; Church Slavic;", "chu", "cu"},
-    {"Old Slavonic; Church Slavonic; Old Bulgarian;", "chu", "cu"},
-    {"Church Slavic; Old Church Slavonic", "chu", "cu"},
-    {"Chuukese", "chk", ""},
-    {"Chuvash", "chv", "cv"},
-    {"Coptic", "cop", ""},
-    {"Cornish", "cor", "kw"},
-    {"Corsican", "cos", "co",                   MAKELCID(MAKELANGID(LANG_CORSICAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Cree", "cre", "cr"},
-    {"Creek", "mus", ""},
-    {"Creoles and pidgins (Other)", "crp", ""},
-    {"Creoles and pidgins,", "cpe", ""},
-    //   {"English-based (Other)", "", ""},
-    {"Creoles and pidgins,", "cpf", ""},
-    //   {"French-based (Other)", "", ""},
-    {"Creoles and pidgins,", "cpp", ""},
-    //   {"Portuguese-based (Other)", "", ""},
-    {"Croatian", "scr", "hr",                   MAKELCID(MAKELANGID(LANG_CROATIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Croatian", "hrv", "hr",                   MAKELCID(MAKELANGID(LANG_CROATIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Cushitic (Other)", "cus", ""},
-    {"Czech", "cze", "cs",                      MAKELCID(MAKELANGID(LANG_CZECH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Czech", "ces", "cs",                      MAKELCID(MAKELANGID(LANG_CZECH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Dakota", "dak", ""},
-    {"Danish", "dan", "da",                     MAKELCID(MAKELANGID(LANG_DANISH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Dargwa", "dar", ""},
-    {"Dayak", "day", ""},
-    {"Delaware", "del", ""},
-    {"Dinka", "din", ""},
-    {"Divehi", "div", "dv",                     MAKELCID(MAKELANGID(LANG_DIVEHI, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Dogri", "doi", ""},
-    {"Dogrib", "dgr", ""},
-    {"Dravidian (Other)", "dra", ""},
-    {"Duala", "dua", ""},
-    {"Dutch; Flemish", "dut", "nl",             MAKELCID(MAKELANGID(LANG_DUTCH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Dutch; Flemish", "nld", "nl",             MAKELCID(MAKELANGID(LANG_DUTCH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Dutch, Middle (ca. 1050-1350)", "dum", ""},
-    {"Dyula", "dyu", ""},
-    {"Dzongkha", "dzo", "dz"},
-    {"Efik", "efi", ""},
-    {"Egyptian (Ancient)", "egy", ""},
-    {"Ekajuk", "eka", ""},
-    {"Elamite", "elx", ""},
-    {"English", "eng", "en",                    MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"English, Middle (1100-1500)", "enm", ""},
-    {"English, Old (ca.450-1100)", "ang", ""},
-    {"Esperanto", "epo", "eo"},
-    {"Estonian", "est", "et",                   MAKELCID(MAKELANGID(LANG_ESTONIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Ewe", "ewe", "ee"},
-    {"Ewondo", "ewo", ""},
-    {"Fang", "fan", ""},
-    {"Fanti", "fat", ""},
-    {"Faroese", "fao", "fo",                    MAKELCID(MAKELANGID(LANG_FAEROESE, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Fijian", "fij", "fj"},
-    {"Finnish", "fin", "fi",                    MAKELCID(MAKELANGID(LANG_FINNISH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Finno-Ugrian (Other)", "fiu", ""},
-    {"Flemish; Dutch", "dut", "nl"},
-    {"Flemish; Dutch", "nld", "nl"},
-    {"Fon", "fon", ""},
-    {"French", "fre", "fr",                     MAKELCID(MAKELANGID(LANG_FRENCH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"French", "fra*", "fr",                    MAKELCID(MAKELANGID(LANG_FRENCH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"French", "fra", "fr",                     MAKELCID(MAKELANGID(LANG_FRENCH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"French, Middle (ca.1400-1600)", "frm", ""},
-    {"French, Old (842-ca.1400)", "fro", ""},
-    {"Frisian", "fry", "fy",                    MAKELCID(MAKELANGID(LANG_FRISIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Friulian", "fur", ""},
-    {"Fulah", "ful", "ff"},
-    {"Ga", "gaa", ""},
-    {"Gaelic; Scottish Gaelic", "gla", "gd",    MAKELCID(MAKELANGID(LANG_GALICIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Gallegan", "glg", "gl"},
-    {"Ganda", "lug", "lg"},
-    {"Gayo", "gay", ""},
-    {"Gbaya", "gba", ""},
-    {"Geez", "gez", ""},
-    {"Georgian", "geo", "ka",                   MAKELCID(MAKELANGID(LANG_GEORGIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Georgian", "kat", "ka",                   MAKELCID(MAKELANGID(LANG_GEORGIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"German", "ger", "de",                     MAKELCID(MAKELANGID(LANG_GERMAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"German", "deu", "de",                     MAKELCID(MAKELANGID(LANG_GERMAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"German, Low; Saxon, Low; Low German; Low Saxon", "nds", ""},
-    {"German, Middle High (ca.1050-1500)", "gmh", ""},
-    {"German, Old High (ca.750-1050)", "goh", ""},
-    {"Germanic (Other)", "gem", ""},
-    {"Gikuyu; Kikuyu", "kik", "ki"},
-    {"Gilbertese", "gil", ""},
-    {"Gondi", "gon", ""},
-    {"Gorontalo", "gor", ""},
-    {"Gothic", "got", ""},
-    {"Grebo", "grb", ""},
-    {"Greek, Ancient (to 1453)", "grc", "",     MAKELCID(MAKELANGID(LANG_GREEK, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Greek, Modern (1453-)", "gre", "el",      MAKELCID(MAKELANGID(LANG_GREEK, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Greek, Modern (1453-)", "ell", "el",      MAKELCID(MAKELANGID(LANG_GREEK, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Greenlandic; Kalaallisut", "kal", "kl",   MAKELCID(MAKELANGID(LANG_GREENLANDIC, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Guarani", "grn", "gn"},
-    {"Gujarati", "guj", "gu",                   MAKELCID(MAKELANGID(LANG_GUJARATI, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Gwich’in", "gwi", ""},
-    {"Haida", "hai", ""},
-    {"Hausa", "hau", "ha",                      MAKELCID(MAKELANGID(LANG_HAUSA, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Hawaiian", "haw", ""},
-    {"Hebrew", "heb", "he",                     MAKELCID(MAKELANGID(LANG_HEBREW, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Herero", "her", "hz"},
-    {"Hiligaynon", "hil", ""},
-    {"Himachali", "him", ""},
-    {"Hindi", "hin", "hi",                      MAKELCID(MAKELANGID(LANG_HINDI, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Hiri Motu", "hmo", "ho"},
-    {"Hittite", "hit", ""},
-    {"Hmong", "hmn", ""},
-    {"Hungarian", "hun", "hu",                  MAKELCID(MAKELANGID(LANG_HUNGARIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Hupa", "hup", ""},
-    {"Iban", "iba", ""},
-    {"Icelandic", "ice", "is",                  MAKELCID(MAKELANGID(LANG_ICELANDIC, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Icelandic", "isl", "is",                  MAKELCID(MAKELANGID(LANG_ICELANDIC, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Ido", "ido", "io"},
-    {"Igbo", "ibo", "ig",                       MAKELCID(MAKELANGID(LANG_IGBO, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Ijo", "ijo", ""},
-    {"Iloko", "ilo", ""},
-    {"Inari Sami", "smn", ""},
-    {"Indic (Other)", "inc", ""},
-    {"Indo-European (Other)", "ine", ""},
-    {"Indonesian", "ind", "id",                 MAKELCID(MAKELANGID(LANG_INDONESIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Ingush", "inh", ""},
-    {"Interlingua (International", "ina", "ia"},
-    //   {"Auxiliary Language Association)", "", ""},
-    {"Interlingue", "ile", "ie"},
-    {"Inuktitut", "iku", "iu",                  MAKELCID(MAKELANGID(LANG_INUKTITUT, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Inupiaq", "ipk", "ik"},
-    {"Iranian (Other)", "ira", ""},
-    {"Irish", "gle", "ga",                      MAKELCID(MAKELANGID(LANG_IRISH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Irish, Middle (900-1200)", "mga", "",     MAKELCID(MAKELANGID(LANG_IRISH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Irish, Old (to 900)", "sga", "",          MAKELCID(MAKELANGID(LANG_IRISH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Iroquoian languages", "iro", ""},
-    {"Italian", "ita", "it",                    MAKELCID(MAKELANGID(LANG_ITALIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Japanese", "jpn", "ja",                   MAKELCID(MAKELANGID(LANG_JAPANESE, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Javanese", "jav", "jv"},
-    {"Judeo-Arabic", "jrb", ""},
-    {"Judeo-Persian", "jpr", ""},
-    {"Kabardian", "kbd", ""},
-    {"Kabyle", "kab", ""},
-    {"Kachin", "kac", ""},
-    {"Kalaallisut; Greenlandic", "kal", "kl"},
-    {"Kamba", "kam", ""},
-    {"Kannada", "kan", "kn",                    MAKELCID(MAKELANGID(LANG_KANNADA, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Kanuri", "kau", "kr"},
-    {"Kara-Kalpak", "kaa", ""},
-    {"Karen", "kar", ""},
-    {"Kashmiri", "kas", "ks",                   MAKELCID(MAKELANGID(LANG_KASHMIRI, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Kawi", "kaw", ""},
-    {"Kazakh", "kaz", "kk",                     MAKELCID(MAKELANGID(LANG_KAZAK, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Khasi", "kha", ""},
-    {"Khmer", "khm", "km",                      MAKELCID(MAKELANGID(LANG_KHMER, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Khoisan (Other)", "khi", ""},
-    {"Khotanese", "kho", ""},
-    {"Kikuyu; Gikuyu", "kik", "ki"},
-    {"Kimbundu", "kmb", ""},
-    {"Kinyarwanda", "kin", "rw",                MAKELCID(MAKELANGID(LANG_KINYARWANDA, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Kirghiz", "kir", "ky"},
-    {"Komi", "kom", "kv"},
-    {"Kongo", "kon", "kg"},
-    {"Konkani", "kok", "",                      MAKELCID(MAKELANGID(LANG_KONKANI, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Korean", "kor", "ko",                     MAKELCID(MAKELANGID(LANG_KOREAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Kosraean", "kos", ""},
-    {"Kpelle", "kpe", ""},
-    {"Kru", "kro", ""},
-    {"Kuanyama; Kwanyama", "kua", "kj"},
-    {"Kumyk", "kum", ""},
-    {"Kurdish", "kur", "ku"},
-    {"Kurukh", "kru", ""},
-    {"Kutenai", "kut", ""},
-    {"Kwanyama, Kuanyama", "kua", "kj"},
-    {"Ladino", "lad", ""},
-    {"Lahnda", "lah", ""},
-    {"Lamba", "lam", ""},
-    {"Lao", "lao", "lo",                        MAKELCID(MAKELANGID(LANG_LAO, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Latin", "lat", "la"},
-    {"Latvian", "lav", "lv",                    MAKELCID(MAKELANGID(LANG_LATVIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Letzeburgesch; Luxembourgish", "ltz", "lb"},
-    {"Lezghian", "lez", ""},
-    {"Limburgan; Limburger; Limburgish", "lim", "li"},
-    {"Limburger; Limburgan; Limburgish;", "lim", "li"},
-    {"Limburgish; Limburger; Limburgan", "lim", "li"},
-    {"Lingala", "lin", "ln"},
-    {"Lithuanian", "lit", "lt",                 MAKELCID(MAKELANGID(LANG_LITHUANIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Low German; Low Saxon; German, Low; Saxon, Low", "nds", ""},
-    {"Low Saxon; Low German; Saxon, Low; German, Low", "nds", ""},
-    {"Lozi", "loz", ""},
-    {"Luba-Katanga", "lub", "lu"},
-    {"Luba-Lulua", "lua", ""},
-    {"Luiseno", "lui", ""},
-    {"Lule Sami", "smj", ""},
-    {"Lunda", "lun", ""},
-    {"Luo (Kenya and Tanzania)", "luo", ""},
-    {"Lushai", "lus", ""},
-    {"Luxembourgish; Letzeburgesch", "ltz", "lb",   MAKELCID(MAKELANGID(LANG_LUXEMBOURGISH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Macedonian", "mac", "mk",                 MAKELCID(MAKELANGID(LANG_MACEDONIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Macedonian", "mkd", "mk",                 MAKELCID(MAKELANGID(LANG_MACEDONIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Madurese", "mad", ""},
-    {"Magahi", "mag", ""},
-    {"Maithili", "mai", ""},
-    {"Makasar", "mak", ""},
-    {"Malagasy", "mlg", "mg"},
-    {"Malay", "may", "ms",                      MAKELCID(MAKELANGID(LANG_MALAY, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Malay", "msa", "ms",                      MAKELCID(MAKELANGID(LANG_MALAY, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Malayalam", "mal", "ml",                  MAKELCID(MAKELANGID(LANG_MALAYALAM, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Maltese", "mlt", "mt",                    MAKELCID(MAKELANGID(LANG_MALTESE, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Manchu", "mnc", ""},
-    {"Mandar", "mdr", ""},
-    {"Mandingo", "man", ""},
-    {"Manipuri", "mni", "",                     MAKELCID(MAKELANGID(LANG_MANIPURI, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Manobo languages", "mno", ""},
-    {"Manx", "glv", "gv"},
-    {"Maori", "mao", "mi",                      MAKELCID(MAKELANGID(LANG_MAORI, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Maori", "mri", "mi",                      MAKELCID(MAKELANGID(LANG_MAORI, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Marathi", "mar", "mr",                    MAKELCID(MAKELANGID(LANG_MARATHI, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Mari", "chm", ""},
-    {"Marshallese", "mah", "mh"},
-    {"Marwari", "mwr", ""},
-    {"Masai", "mas", ""},
-    {"Mayan languages", "myn", ""},
-    {"Mende", "men", ""},
-    {"Micmac", "mic", ""},
-    {"Minangkabau", "min", ""},
-    {"Miscellaneous languages", "mis", ""},
-    {"Mohawk", "moh", "",                       MAKELCID(MAKELANGID(LANG_MOHAWK, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Moldavian", "mol", "mo"},
-    {"Mon-Khmer (Other)", "mkh", ""},
-    {"Mongo", "lol", ""},
-    {"Mongolian", "mon", "mn",                  MAKELCID(MAKELANGID(LANG_MONGOLIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Mossi", "mos", ""},
-    {"Multiple languages", "mul", ""},
-    {"Munda languages", "mun", ""},
-    {"Nahuatl", "nah", ""},
-    {"Nauru", "nau", "na"},
-    {"Navaho, Navajo", "nav", "nv"},
-    {"Navajo; Navaho", "nav", "nv"},
-    {"Ndebele, North", "nde", "nd"},
-    {"Ndebele, South", "nbl", "nr"},
-    {"Ndonga", "ndo", "ng"},
-    {"Neapolitan", "nap", ""},
-    {"Nepali", "nep", "ne",                     MAKELCID(MAKELANGID(LANG_NEPALI, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Newari", "new", ""},
-    {"Nias", "nia", ""},
-    {"Niger-Kordofanian (Other)", "nic", ""},
-    {"Nilo-Saharan (Other)", "ssa", ""},
-    {"Niuean", "niu", ""},
-    {"Norse, Old", "non", ""},
-    {"North American Indian (Other)", "nai", ""},
-    {"Northern Sami", "sme", "se"},
-    {"North Ndebele", "nde", "nd"},
-    {"Norwegian", "nor", "no",                  MAKELCID(MAKELANGID(LANG_NORWEGIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Norwegian Bokmål; Bokmål, Norwegian", "nob", "nb",  MAKELCID(MAKELANGID(LANG_NORWEGIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Norwegian Nynorsk; Nynorsk, Norwegian", "nno", "nn",  MAKELCID(MAKELANGID(LANG_NORWEGIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Nubian languages", "nub", ""},
-    {"Nyamwezi", "nym", ""},
-    {"Nyanja; Chichewa; Chewa", "nya", "ny"},
-    {"Nyankole", "nyn", ""},
-    {"Nynorsk, Norwegian; Norwegian Nynorsk", "nno", "nn"},
-    {"Nyoro", "nyo", ""},
-    {"Nzima", "nzi", ""},
-    {"Occitan (post 1500},; Provençal", "oci", "oc",       MAKELCID(MAKELANGID(LANG_OCCITAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Ojibwa", "oji", "oj"},
-    {"Old Bulgarian; Old Slavonic; Church Slavonic;", "chu", "cu"},
-    {"Oriya", "ori", "or"},
-    {"Oromo", "orm", "om"},
-    {"Osage", "osa", ""},
-    {"Ossetian; Ossetic", "oss", "os"},
-    {"Ossetic; Ossetian", "oss", "os"},
-    {"Otomian languages", "oto", ""},
-    {"Pahlavi", "pal", ""},
-    {"Palauan", "pau", ""},
-    {"Pali", "pli", "pi"},
-    {"Pampanga", "pam", ""},
-    {"Pangasinan", "pag", ""},
-    {"Panjabi", "pan", "pa"},
-    {"Papiamento", "pap", ""},
-    {"Papuan (Other)", "paa", ""},
-    {"Persian", "per", "fa",                MAKELCID(MAKELANGID(LANG_PERSIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Persian", "fas", "fa",                MAKELCID(MAKELANGID(LANG_PERSIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Persian, Old (ca.600-400 B.C.)", "peo", ""},
-    {"Philippine (Other)", "phi", ""},
-    {"Phoenician", "phn", ""},
-    {"Pohnpeian", "pon", ""},
-    {"Polish", "pol", "pl",                 MAKELCID(MAKELANGID(LANG_POLISH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Portuguese", "por", "pt",             MAKELCID(MAKELANGID(LANG_PORTUGUESE, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Prakrit languages", "pra", ""},
-    {"Provençal; Occitan (post 1500)", "oci", "oc"},
-    {"Provençal, Old (to 1500)", "pro", ""},
-    {"Pushto", "pus", "ps"},
-    {"Quechua", "que", "qu",                MAKELCID(MAKELANGID(LANG_QUECHUA, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Raeto-Romance", "roh", "rm"},
-    {"Rajasthani", "raj", ""},
-    {"Rapanui", "rap", ""},
-    {"Rarotongan", "rar", ""},
-    {"Reserved for local use", "qaa-qtz", ""},
-    {"Romance (Other)", "roa", ""},
-    {"Romanian", "rum", "ro",               MAKELCID(MAKELANGID(LANG_ROMANIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Romanian", "ron", "ro",               MAKELCID(MAKELANGID(LANG_ROMANIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Romany", "rom", ""},
-    {"Rundi", "run", "rn"},
-    {"Russian", "rus", "ru",                MAKELCID(MAKELANGID(LANG_RUSSIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Salishan languages", "sal", ""},
-    {"Samaritan Aramaic", "sam", ""},
-    {"Sami languages (Other)", "smi", ""},
-    {"Samoan", "smo", "sm"},
-    {"Sandawe", "sad", ""},
-    {"Sango", "sag", "sg"},
-    {"Sanskrit", "san", "sa",               MAKELCID(MAKELANGID(LANG_SANSKRIT, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Santali", "sat", ""},
-    {"Sardinian", "srd", "sc"},
-    {"Sasak", "sas", ""},
-    {"Saxon, Low; German, Low; Low Saxon; Low German", "nds", ""},
-    {"Scots", "sco", ""},
-    {"Scottish Gaelic; Gaelic", "gla", "gd"},
-    {"Selkup", "sel", ""},
-    {"Semitic (Other)", "sem", ""},
-    {"Serbian", "scc", "sr",                MAKELCID(MAKELANGID(LANG_SERBIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Serbian", "srp", "sr",                MAKELCID(MAKELANGID(LANG_SERBIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Serer", "srr", ""},
-    {"Shan", "shn", ""},
-    {"Shona", "sna", "sn"},
-    {"Sichuan Yi", "iii", "ii"},
-    {"Sidamo", "sid", ""},
-    {"Sign languages", "sgn", ""},
-    {"Siksika", "bla", ""},
-    {"Sindhi", "snd", "sd",                 MAKELCID(MAKELANGID(LANG_SINDHI, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Sinhalese", "sin", "si",              MAKELCID(MAKELANGID(LANG_SINHALESE, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Sino-Tibetan (Other)", "sit", ""},
-    {"Siouan languages", "sio", ""},
-    {"Skolt Sami", "sms", ""},
-    {"Slave (Athapascan)", "den", ""},
-    {"Slavic (Other)", "sla", ""},
-    {"Slovak", "slo", "sk",                 MAKELCID(MAKELANGID(LANG_SLOVAK, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Slovak", "slk", "sk",                 MAKELCID(MAKELANGID(LANG_SLOVAK, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Slovenian", "slv", "sl",              MAKELCID(MAKELANGID(LANG_SLOVENIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Sogdian", "sog", ""},
-    {"Somali", "som", "so"},
-    {"Songhai", "son", ""},
-    {"Soninke", "snk", ""},
-    {"Sorbian languages", "wen", ""},
-    {"Sotho, Northern", "nso", "",          MAKELCID(MAKELANGID(LANG_SOTHO, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Sotho, Southern", "sot", "st",        MAKELCID(MAKELANGID(LANG_SOTHO, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"South American Indian (Other)", "sai", ""},
-    {"Southern Sami", "sma", ""},
-    {"South Ndebele", "nbl", "nr"},
-    {"Spanish; Castilian", "spa", "es",     MAKELCID(MAKELANGID(LANG_SPANISH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Sukuma", "suk", ""},
-    {"Sumerian", "sux", ""},
-    {"Sundanese", "sun", "su"},
-    {"Susu", "sus", ""},
-    {"Swahili", "swa", "sw",                MAKELCID(MAKELANGID(LANG_SWAHILI, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Swati", "ssw", "ss"},
-    {"Swedish", "swe", "sv",                MAKELCID(MAKELANGID(LANG_SWEDISH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Syriac", "syr", "",                   MAKELCID(MAKELANGID(LANG_SYRIAC, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Tagalog", "tgl", "tl"},
-    {"Tahitian", "tah", "ty"},
-    {"Tai (Other)", "tai", ""},
-    {"Tajik", "tgk", "tg",                  MAKELCID(MAKELANGID(LANG_TAJIK, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Tamashek", "tmh", ""},
-    {"Tamil", "tam", "ta",                  MAKELCID(MAKELANGID(LANG_TAMIL, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Tatar", "tat", "tt",                  MAKELCID(MAKELANGID(LANG_TATAR, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Telugu", "tel", "te",                 MAKELCID(MAKELANGID(LANG_TELUGU, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Tereno", "ter", ""},
-    {"Tetum", "tet", ""},
-    {"Thai", "tha", "th",                   MAKELCID(MAKELANGID(LANG_THAI, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Tibetan", "tib", "bo",                MAKELCID(MAKELANGID(LANG_TIBETAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Tibetan", "bod", "bo",                MAKELCID(MAKELANGID(LANG_TIBETAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Tigre", "tig", ""},
-    {"Tigrinya", "tir", "ti",               MAKELCID(MAKELANGID(LANG_TIGRIGNA, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Timne", "tem", ""},
-    {"Tiv", "tiv", ""},
-    {"Tlingit", "tli", ""},
-    {"Tok Pisin", "tpi", ""},
-    {"Tokelau", "tkl", ""},
-    {"Tonga (Nyasa)", "tog", ""},
-    {"Tonga (Tonga Islands)", "ton", "to"},
-    {"Tsimshian", "tsi", ""},
-    {"Tsonga", "tso", "ts"},
-    {"Tswana", "tsn", "tn",                 MAKELCID(MAKELANGID(LANG_TSWANA, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Tumbuka", "tum", ""},
-    {"Tupi languages", "tup", ""},
-    {"Turkish", "tur", "tr",                MAKELCID(MAKELANGID(LANG_TURKISH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Turkish, Ottoman (1500-1928)", "ota", "", MAKELCID(MAKELANGID(LANG_TURKISH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Turkmen", "tuk", "tk",                MAKELCID(MAKELANGID(LANG_TURKMEN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Tuvalu", "tvl", ""},
-    {"Tuvinian", "tyv", ""},
-    {"Twi", "twi", "tw"},
-    {"Ugaritic", "uga", ""},
-    {"Uighur", "uig", "ug",                 MAKELCID(MAKELANGID(LANG_UIGHUR, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Ukrainian", "ukr", "uk",              MAKELCID(MAKELANGID(LANG_UKRAINIAN, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Umbundu", "umb", ""},
-    {"Undetermined", "und", ""},
-    {"Urdu", "urd", "ur",                   MAKELCID(MAKELANGID(LANG_URDU, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Uzbek", "uzb", "uz",                  MAKELCID(MAKELANGID(LANG_UZBEK, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Vai", "vai", ""},
-    {"Venda", "ven", "ve"},
-    {"Vietnamese", "vie", "vi",             MAKELCID(MAKELANGID(LANG_VIETNAMESE, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Volapuk", "vol", "vo"},
-    {"Votic", "vot", ""},
-    {"Wakashan languages", "wak", ""},
-    {"Walamo", "wal", ""},
-    {"Walloon", "wln", "wa"},
-    {"Waray", "war", ""},
-    {"Washo", "was", ""},
-    {"Welsh", "wel", "cy",                  MAKELCID(MAKELANGID(LANG_WELSH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Welsh", "cym", "cy",                  MAKELCID(MAKELANGID(LANG_WELSH, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Wolof", "wol", "wo",                  MAKELCID(MAKELANGID(LANG_WOLOF, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Xhosa", "xho", "xh",                  MAKELCID(MAKELANGID(LANG_XHOSA, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Yakut", "sah", "",                    MAKELCID(MAKELANGID(LANG_YAKUT, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Yao", "yao", ""},
-    {"Yapese", "yap", ""},
-    {"Yiddish", "yid", "yi"},
-    {"Yoruba", "yor", "yo",                 MAKELCID(MAKELANGID(LANG_YORUBA, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Yupik languages", "ypk", ""},
-    {"Zande", "znd", ""},
-    {"Zapotec", "zap", ""},
-    {"Zenaga", "zen", ""},
-    {"Zhuang; Chuang", "zha", "za"},
-    {"Zulu", "zul", "zu",                   MAKELCID(MAKELANGID(LANG_ZULU, SUBLANG_DEFAULT), SORT_DEFAULT)},
-    {"Zuni", "zun", ""},
-    {"Classical Newari", "nwc", ""},
-    {"Klingon", "tlh", ""},
-    {"Blin", "byn", ""},
-    {"Lojban", "jbo", ""},
-    {"Lower Sorbian", "dsb", ""},
-    {"Upper Sorbian", "hsb", ""},
-    {"Kashubian", "csb", ""},
-    {"Crimean Turkish", "crh", ""},
-    {"Erzya", "myv", ""},
-    {"Moksha", "mdf", ""},
-    {"Karachay-Balkar", "krc", ""},
-    {"Adyghe", "ady", ""},
-    {"Udmurt", "udm", ""},
-    {"Dargwa", "dar", ""},
-    {"Ingush", "inh", ""},
-    {"Nogai", "nog", ""},
-    {"Haitian", "hat", "ht"},
-    {"Kalmyk", "xal", ""},
-    {"", "", ""},
-    {"No subtitles", "---", "", (LCID)LCID_NOSUBTITLES},
-};
-
-CString ISO6391ToLanguage(LPCSTR code)
-{
-    CHAR tmp[2 + 1];
-    strncpy_s(tmp, code, 2);
-    tmp[2] = 0;
-    _strlwr_s(tmp);
-    for (ptrdiff_t i = 0, j = _countof(s_isolangs); i < j; i++)
-        if (!strcmp(s_isolangs[i].iso6391, tmp)) {
-            CString ret = CString(CStringA(s_isolangs[i].name));
-            int k = ret.Find(';');
-            if (k > 0) {
-                ret = ret.Left(k);
-            }
-            return ret;
-        }
-    return _T("");
-}
-
-CString ISO6392ToLanguage(LPCSTR code)
-{
-    CHAR tmp[3 + 1];
-    strncpy_s(tmp, code, 3);
-    tmp[3] = 0;
-    _strlwr_s(tmp);
-    for (ptrdiff_t i = 0, j = _countof(s_isolangs); i < j; i++) {
-        if (!strcmp(s_isolangs[i].iso6392, tmp)) {
-            CString ret = CString(CStringA(s_isolangs[i].name));
-            int k = ret.Find(';');
-            if (k > 0) {
-                ret = ret.Left(k);
-            }
-            return ret;
-        }
-    }
-    return CString(code);
-}
-
-LCID ISO6391ToLcid(LPCSTR code)
-{
-    CHAR tmp[3 + 1];
-    strncpy_s(tmp, code, 3);
-    tmp[3] = 0;
-    _strlwr_s(tmp);
-    for (ptrdiff_t i = 0, j = _countof(s_isolangs); i < j; i++) {
-        if (!strcmp(s_isolangs[i].iso6391, code)) {
-            return s_isolangs[i].lcid;
-        }
-    }
-    return 0;
-}
-
-LCID ISO6392ToLcid(LPCSTR code)
-{
-    CHAR tmp[3 + 1];
-    strncpy_s(tmp, code, 3);
-    tmp[3] = 0;
-    _strlwr_s(tmp);
-    for (ptrdiff_t i = 0, j = _countof(s_isolangs); i < j; i++) {
-        if (!strcmp(s_isolangs[i].iso6392, tmp)) {
-            return s_isolangs[i].lcid;
-        }
-    }
-    return 0;
-}
-
-CString ISO6391To6392(LPCSTR code)
-{
-    CHAR tmp[2 + 1];
-    strncpy_s(tmp, code, 2);
-    tmp[2] = 0;
-    _strlwr_s(tmp);
-    for (ptrdiff_t i = 0, j = _countof(s_isolangs); i < j; i++)
-        if (!strcmp(s_isolangs[i].iso6391, tmp)) {
-            return CString(CStringA(s_isolangs[i].iso6392));
-        }
-    return _T("");
-}
-
-CString ISO6392To6391(LPCSTR code)
-{
-    CHAR tmp[3 + 1];
-    strncpy_s(tmp, code, 3);
-    tmp[3] = 0;
-    _strlwr_s(tmp);
-    for (ptrdiff_t i = 0, j = _countof(s_isolangs); i < j; i++)
-        if (!strcmp(s_isolangs[i].iso6392, tmp)) {
-            return CString(CStringA(s_isolangs[i].iso6391));
-        }
-    return _T("");
-}
-
-CString LanguageToISO6392(LPCTSTR lang)
-{
-    CString str = lang;
-    str.MakeLower();
-    for (ptrdiff_t i = 0, j = _countof(s_isolangs); i < j; i++) {
-        CAtlList<CString> sl;
-        Explode(CString(s_isolangs[i].name), sl, ';');
-        POSITION pos = sl.GetHeadPosition();
-        while (pos) {
-            if (!str.CompareNoCase(sl.GetNext(pos))) {
-                return CString(s_isolangs[i].iso6392);
-            }
-        }
-    }
-    return _T("");
-}
-
-int MakeAACInitData(BYTE* pData, int profile, int freq, int channels)
-{
-    int srate_idx;
-
-    if (92017 <= freq) {
-        srate_idx = 0;
-    } else if (75132 <= freq) {
-        srate_idx = 1;
-    } else if (55426 <= freq) {
-        srate_idx = 2;
-    } else if (46009 <= freq) {
-        srate_idx = 3;
-    } else if (37566 <= freq) {
-        srate_idx = 4;
-    } else if (27713 <= freq) {
-        srate_idx = 5;
-    } else if (23004 <= freq) {
-        srate_idx = 6;
-    } else if (18783 <= freq) {
-        srate_idx = 7;
-    } else if (13856 <= freq) {
-        srate_idx = 8;
-    } else if (11502 <= freq) {
-        srate_idx = 9;
-    } else if (9391 <= freq) {
-        srate_idx = 10;
-    } else {
-        srate_idx = 11;
-    }
-
-    pData[0] = ((abs(profile) + 1) << 3) | ((srate_idx & 0xe) >> 1);
-    pData[1] = ((srate_idx & 0x1) << 7) | (channels << 3);
-
-    int ret = 2;
-
-    if (profile < 0) {
-        freq *= 2;
-
-        if (92017 <= freq) {
-            srate_idx = 0;
-        } else if (75132 <= freq) {
-            srate_idx = 1;
-        } else if (55426 <= freq) {
-            srate_idx = 2;
-        } else if (46009 <= freq) {
-            srate_idx = 3;
-        } else if (37566 <= freq) {
-            srate_idx = 4;
-        } else if (27713 <= freq) {
-            srate_idx = 5;
-        } else if (23004 <= freq) {
-            srate_idx = 6;
-        } else if (18783 <= freq) {
-            srate_idx = 7;
-        } else if (13856 <= freq) {
-            srate_idx = 8;
-        } else if (11502 <= freq) {
-            srate_idx = 9;
-        } else if (9391 <= freq) {
-            srate_idx = 10;
-        } else {
-            srate_idx = 11;
-        }
-
-        pData[2] = 0x2B7 >> 3;
-        pData[3] = (BYTE)((0x2B7 << 5) | 5);
-        pData[4] = (1 << 7) | (srate_idx << 3);
-
-        ret = 5;
-    }
-
-    return ret;
 }
 
 BOOL CFileGetStatus(LPCTSTR lpszFileName, CFileStatus& status)
@@ -2410,7 +1675,7 @@ void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, const CAtlLi
     POSITION pos = chkbytes.GetHeadPosition();
     for (ptrdiff_t i = 0; pos; i++) {
         CString idx;
-        idx.Format(_T("%d"), i);
+        idx.Format(_T("%Id"), i);
         SetRegKeyValue(_T("Media Type\\") + majortype, subtype, idx, chkbytes.GetNext(pos));
     }
 
@@ -2431,10 +1696,10 @@ void UnRegisterSourceFilter(const GUID& subtype)
     DeleteRegKey(_T("Media Type\\") + CStringFromGUID(MEDIATYPE_Stream), CStringFromGUID(subtype));
 }
 
-typedef struct {
-    const GUID*   Guid;
-    const LPCTSTR Description;
-} DXVA2_DECODER;
+struct DXVA2_DECODER {
+    const GUID* Guid;
+    LPCTSTR Description;
+};
 
 static const DXVA2_DECODER DXVA2Decoder[] = {
     {&GUID_NULL,                        _T("Unknown")},
@@ -2442,7 +1707,7 @@ static const DXVA2_DECODER DXVA2Decoder[] = {
     {&DXVA_Intel_H264_ClearVideo,       _T("H.264 bitstream decoder, ClearVideo(tm)")},  // Intel ClearVideo H264 bitstream decoder
     {&DXVA_Intel_VC1_ClearVideo,        _T("VC-1 bitstream decoder, ClearVideo(tm)")},   // Intel ClearVideo VC-1 bitstream decoder
     {&DXVA_Intel_VC1_ClearVideo_2,      _T("VC-1 bitstream decoder 2, ClearVideo(tm)")}, // Intel ClearVideo VC-1 bitstream decoder 2
-    {&DXVA_MPEG4_ASP,                   _T("MPEG-4 ASP bitstream decoder")},             // Nvidia MPEG-4 ASP bitstream decoder
+    {&DXVA_MPEG4_ASP,                   _T("MPEG-4 ASP bitstream decoder")},             // NVIDIA MPEG-4 ASP bitstream decoder
     {&DXVA_ModeNone,                    _T("Mode none")},
     {&DXVA_ModeH261_A,                  _T("H.261 A, post processing")},
     {&DXVA_ModeH261_B,                  _T("H.261 B, deblocking")},
@@ -2511,39 +1776,13 @@ LPCTSTR GetDXVAMode(const GUID* guidDecoder)
     return DXVA2Decoder[nPos].Description;
 }
 
-void DumpBuffer(BYTE* pBuffer, int nSize)
-{
-    CString strMsg;
-    int nPos = 0;
-    strMsg.AppendFormat(L"Size : %d\n", nSize);
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 32; j++) {
-            nPos = i * 32 + j;
-            if (nPos >= nSize) {
-                break;
-            }
-            strMsg.AppendFormat(L"%02x ", pBuffer[nPos]);
-        }
-        if (nPos >= nSize) {
-            break;
-        }
-        strMsg.Append(L"\n");
-    }
-
-    if (nSize > 32 * 3) {
-        strMsg.Append(L".../...\n");
-        for (int j = 32; j > 0; j--) {
-            strMsg.AppendFormat(L"%02x ", pBuffer[nSize - j]);
-        }
-    }
-    strMsg.AppendFormat(L"\n");
-
-    TRACE(strMsg);
-}
-
 // hour, minute, second, millisec
 CString ReftimeToString(const REFERENCE_TIME& rtVal)
 {
+    if (rtVal == _I64_MIN) {
+        return _T("INVALID TIME");
+    }
+
     CString strTemp;
     LONGLONG llTotalMs = ConvertToMilliseconds(rtVal);
     int lHour     = (int)(llTotalMs / (1000 * 60 * 60));
@@ -2572,9 +1811,9 @@ CString DVDtimeToString(const DVD_HMSF_TIMECODE& rtVal, bool bAlwaysShowHours)
 {
     CString strTemp;
     if (rtVal.bHours > 0 || bAlwaysShowHours) {
-        strTemp.Format(_T("%02d:%02d:%02d"), rtVal.bHours, rtVal.bMinutes, rtVal.bSeconds);
+        strTemp.Format(_T("%02u:%02u:%02u"), rtVal.bHours, rtVal.bMinutes, rtVal.bSeconds);
     } else {
-        strTemp.Format(_T("%02d:%02d"), rtVal.bMinutes, rtVal.bSeconds);
+        strTemp.Format(_T("%02u:%02u"), rtVal.bMinutes, rtVal.bSeconds);
     }
     return strTemp;
 }
@@ -2588,151 +1827,70 @@ REFERENCE_TIME StringToReftime(LPCTSTR strVal)
     int lMillisec = 0;
 
     if (_stscanf_s(strVal, _T("%02d:%02d:%02d,%03d"), &lHour, &lMinute, &lSecond, &lMillisec) == 4) {
-        rt = ((((lHour * 24) + lMinute) * 60 + lSecond) * MILLISECONDS + lMillisec) * (UNITS / MILLISECONDS);
+        rt = ((((lHour * 60) + lMinute) * 60 + lSecond) * MILLISECONDS + lMillisec) * (UNITS / MILLISECONDS);
     }
 
     return rt;
-}
-
-const double Rec601_Kr = 0.299;
-const double Rec601_Kb = 0.114;
-const double Rec601_Kg = 0.587;
-
-COLORREF YCrCbToRGB_Rec601(BYTE Y, BYTE Cr, BYTE Cb)
-{
-
-    double rp = Y + 2 * (Cr - 128) * (1.0 - Rec601_Kr);
-    double gp = Y - 2 * (Cb - 128) * (1.0 - Rec601_Kb) * Rec601_Kb / Rec601_Kg - 2 * (Cr - 128) * (1.0 - Rec601_Kr) * Rec601_Kr / Rec601_Kg;
-    double bp = Y + 2 * (Cb - 128) * (1.0 - Rec601_Kb);
-
-    return RGB(fabs(rp), fabs(gp), fabs(bp));
-}
-
-DWORD YCrCbToRGB_Rec601(BYTE A, BYTE Y, BYTE Cr, BYTE Cb)
-{
-
-    double rp = Y + 2 * (Cr - 128) * (1.0 - Rec601_Kr);
-    double gp = Y - 2 * (Cb - 128) * (1.0 - Rec601_Kb) * Rec601_Kb / Rec601_Kg - 2 * (Cr - 128) * (1.0 - Rec601_Kr) * Rec601_Kr / Rec601_Kg;
-    double bp = Y + 2 * (Cb - 128) * (1.0 - Rec601_Kb);
-
-    return D3DCOLOR_ARGB(A, (BYTE)fabs(rp), (BYTE)fabs(gp), (BYTE)fabs(bp));
-}
-
-
-const double Rec709_Kr = 0.2125;
-const double Rec709_Kb = 0.0721;
-const double Rec709_Kg = 0.7154;
-
-COLORREF YCrCbToRGB_Rec709(BYTE Y, BYTE Cr, BYTE Cb)
-{
-
-    double rp = Y + 2 * (Cr - 128) * (1.0 - Rec709_Kr);
-    double gp = Y - 2 * (Cb - 128) * (1.0 - Rec709_Kb) * Rec709_Kb / Rec709_Kg - 2 * (Cr - 128) * (1.0 - Rec709_Kr) * Rec709_Kr / Rec709_Kg;
-    double bp = Y + 2 * (Cb - 128) * (1.0 - Rec709_Kb);
-
-    return RGB(fabs(rp), fabs(gp), fabs(bp));
-}
-
-DWORD YCrCbToRGB_Rec709(BYTE A, BYTE Y, BYTE Cr, BYTE Cb)
-{
-
-    double rp = Y + 2 * (Cr - 128) * (1.0 - Rec709_Kr);
-    double gp = Y - 2 * (Cb - 128) * (1.0 - Rec709_Kb) * Rec709_Kb / Rec709_Kg - 2 * (Cr - 128) * (1.0 - Rec709_Kr) * Rec709_Kr / Rec709_Kg;
-    double bp = Y + 2 * (Cb - 128) * (1.0 - Rec709_Kb);
-
-    return D3DCOLOR_ARGB(A, (BYTE)fabs(rp), (BYTE)fabs(gp), (BYTE)fabs(bp));
-}
-
-void TraceFilterInfo(IBaseFilter* pBF)
-{
-    FILTER_INFO Info;
-    if (SUCCEEDED(pBF->QueryFilterInfo(&Info))) {
-        TRACE(_T(" === Filter info : %s\n"), Info.achName);
-        BeginEnumPins(pBF, pEnum, pPin) {
-            TracePinInfo(pPin);
-        }
-
-        EndEnumPins;
-        Info.pGraph->Release();
-    }
-}
-
-void TracePinInfo(IPin* pPin)
-{
-    PIN_INFO      PinInfo;
-    FILTER_INFO   ConnectedFilterInfo;
-    PIN_INFO      ConnectedInfo;
-    CComPtr<IPin> pConnected;
-
-    memset(&ConnectedInfo, 0, sizeof(ConnectedInfo));
-    memset(&ConnectedFilterInfo, 0, sizeof(ConnectedFilterInfo));
-    if (SUCCEEDED(pPin->ConnectedTo(&pConnected))) {
-        pConnected->QueryPinInfo(&ConnectedInfo);
-        ConnectedInfo.pFilter->QueryFilterInfo(&ConnectedFilterInfo);
-        ConnectedInfo.pFilter->Release();
-        ConnectedFilterInfo.pGraph->Release();
-    }
-    pPin->QueryPinInfo(&PinInfo);
-    TRACE(_T("      %s (%s) -> %s (Filter %s)\n"),
-          PinInfo.achName,
-          PinInfo.dir == PINDIR_OUTPUT ? _T("Out") : _T("In"),
-          ConnectedInfo.achName,
-          ConnectedFilterInfo.achName);
-    PinInfo.pFilter->Release();
 }
 
 const wchar_t* StreamTypeToName(PES_STREAM_TYPE _Type)
 {
     switch (_Type) {
         case VIDEO_STREAM_MPEG1:
-                return L"MPEG-1";
+            return L"MPEG-1";
         case VIDEO_STREAM_MPEG2:
-                return L"MPEG-2";
+            return L"MPEG-2";
         case AUDIO_STREAM_MPEG1:
-                return L"MPEG-1";
+            return L"MPEG-1";
         case AUDIO_STREAM_MPEG2:
-                return L"MPEG-2";
+            return L"MPEG-2";
         case VIDEO_STREAM_H264:
-                return L"H264";
+            return L"H264";
+        case VIDEO_STREAM_HEVC:
+            return L"HEVC";
         case AUDIO_STREAM_LPCM:
-                return L"LPCM";
+            return L"LPCM";
         case AUDIO_STREAM_AC3:
-                return L"Dolby Digital";
+            return L"Dolby Digital";
         case AUDIO_STREAM_DTS:
-                return L"DTS";
+            return L"DTS";
         case AUDIO_STREAM_AC3_TRUE_HD:
-                return L"Dolby TrueHD";
+            return L"Dolby TrueHD";
         case AUDIO_STREAM_AC3_PLUS:
-                return L"Dolby Digital Plus";
+            return L"Dolby Digital Plus";
         case AUDIO_STREAM_DTS_HD:
-                return L"DTS-HD High Resolution Audio";
+            return L"DTS-HD High Resolution Audio";
         case AUDIO_STREAM_DTS_HD_MASTER_AUDIO:
-                return L"DTS-HD Master Audio";
+            return L"DTS-HD Master Audio";
         case PRESENTATION_GRAPHICS_STREAM:
-                return L"Presentation Graphics Stream";
+            return L"Presentation Graphics Stream";
         case INTERACTIVE_GRAPHICS_STREAM:
-                return L"Interactive Graphics Stream";
+            return L"Interactive Graphics Stream";
         case SUBTITLE_STREAM:
-                return L"Subtitle";
+            return L"Subtitle";
         case SECONDARY_AUDIO_AC3_PLUS:
-                return L"Secondary Dolby Digital Plus";
+            return L"Secondary Dolby Digital Plus";
         case SECONDARY_AUDIO_DTS_HD:
-                return L"Secondary DTS-HD High Resolution Audio";
+            return L"Secondary DTS-HD High Resolution Audio";
         case VIDEO_STREAM_VC1:
-                return L"VC-1";
+            return L"VC-1";
     }
-    return NULL;
+    return nullptr;
 }
 
 //
 // Usage: SetThreadName (-1, "MainThread");
+// Code from http://msdn.microsoft.com/en-us/library/xcb2z8hs%28v=vs.110%29.aspx
 //
+
+#pragma pack(push,8)
 typedef struct tagTHREADNAME_INFO {
     DWORD  dwType;      // must be 0x1000
     LPCSTR szName;      // pointer to name (in user addr space)
     DWORD  dwThreadID;  // thread ID (-1 caller thread)
     DWORD  dwFlags;     // reserved for future use, must be zero
 } THREADNAME_INFO;
+#pragma pack(pop)
 
 void SetThreadName(DWORD dwThreadID, LPCSTR szThreadName)
 {
@@ -2743,212 +1901,100 @@ void SetThreadName(DWORD dwThreadID, LPCSTR szThreadName)
     info.dwFlags    = 0;
 
     __try {
-        RaiseException(0x406D1388, 0, sizeof(info) / sizeof(DWORD), (ULONG_PTR*)&info);
-    } __except (EXCEPTION_CONTINUE_EXECUTION) {
+        RaiseException(0x406D1388, 0, sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR*)&info);
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
     }
 }
 
-void HexDump(CString fileName, BYTE* buf, int size)
+void CorrectComboBoxHeaderWidth(CWnd* pComboBox)
 {
-    if (size <= 0) {
+    if (!pComboBox) {
         return;
     }
 
-    CString dump_str;
-    dump_str.Format(_T("Dump size = %d\n"), size);
-    int len, i, j, c;
-
-    for (i = 0; i < size; i += 16) {
-        len = size - i;
-        if (len > 16) {
-            len = 16;
-        }
-        dump_str.AppendFormat(_T("%08x "), i);
-        for (j = 0; j < 16; j++) {
-            if (j < len) {
-                dump_str.AppendFormat(_T(" %02x"), buf[i + j]);
-            } else {
-                dump_str.Append(_T("   "));
-            }
-        }
-        dump_str.Append(_T(" "));
-        for (j = 0; j < len; j++) {
-            c = buf[i + j];
-            if (c < ' ' || c > '~') {
-                c = '.';
-            }
-            dump_str.AppendFormat(_T("%c"), c);
-        }
-        dump_str.Append(_T("\n"));
-    }
-    dump_str.Append(_T("\n"));
-
-    if (!fileName.IsEmpty()) {
-        CStdioFile file;
-        if (file.Open(fileName, CFile::modeCreate | CFile::modeWrite)) {
-            file.WriteString(dump_str);
-            file.Close();
-        }
-    } else {
-        TRACE(dump_str);
-    }
-}
-
-void CorrectComboListWidth(CComboBox& m_pComboBox)
-{
-    // Find the longest string in the combo box.
-    if (m_pComboBox.GetCount() <= 0) {
-        return;
-    }
-
-    CString    str;
-    CSize      sz;
-    int        dx = 0;
-    TEXTMETRIC tm;
-    CDC*       pDC = m_pComboBox.GetDC();
-    CFont*     pFont = m_pComboBox.GetFont();
-
-    // Select the listbox font, save the old font
+    CDC*   pDC = pComboBox->GetDC();
+    CFont* pFont = pComboBox->GetFont();
     CFont* pOldFont = pDC->SelectObject(pFont);
-    // Get the text metrics for avg char width
+
+    CString str;
+    pComboBox->GetWindowText(str);
+    CSize szText = pDC->GetTextExtent(str);
+
+    TEXTMETRIC tm;
     pDC->GetTextMetrics(&tm);
-
-    for (int i = 0; i < m_pComboBox.GetCount(); i++) {
-        m_pComboBox.GetLBText(i, str);
-        sz = pDC->GetTextExtent(str);
-
-        // Add the avg width to prevent clipping
-        sz.cx += tm.tmAveCharWidth;
-
-        if (sz.cx > dx) {
-            dx = sz.cx;
-        }
-    }
-    // Select the old font back into the DC
     pDC->SelectObject(pOldFont);
-    m_pComboBox.ReleaseDC(pDC);
+    pComboBox->ReleaseDC(pDC);
 
-    // Get the scrollbar width if it exists
-    int min_visible = m_pComboBox.GetMinVisible();
-    int scroll_width = (m_pComboBox.GetCount() > min_visible) ?
-                       ::GetSystemMetrics(SM_CXVSCROLL) : 0;
+    CRect r;
+    pComboBox->GetWindowRect(r);
+    pComboBox->GetOwner()->ScreenToClient(r);
 
-    // Adjust the width for the vertical scroll bar and the left and right border.
-    dx += scroll_width + 2 *::GetSystemMetrics(SM_CXEDGE);
-
-    // Set the width of the list box so that every item is completely visible.
-    m_pComboBox.SetDroppedWidth(dx);
+    r.right = r.left + ::GetSystemMetrics(SM_CXMENUCHECK) + ::GetSystemMetrics(SM_CXEDGE) + szText.cx + tm.tmAveCharWidth;
+    pComboBox->MoveWindow(r);
 }
 
-unsigned int lav_xiphlacing(unsigned char* s, unsigned int v)
-{
-    unsigned int n = 0;
+CString NormalizeUnicodeStrForSearch(CString srcStr, LANGID langid) {
+    if (srcStr.IsEmpty()) return srcStr;
+    wchar_t* src;
 
-    while (v >= 0xff) {
-        *s++ = 0xff;
-        v -= 0xff;
-        n++;
+    _locale_t locale;
+    LCID lcid = MAKELCID(MAKELANGID(langid, SUBLANG_DEFAULT), SORT_DEFAULT);
+    wchar_t localeName[32];
+    if (0 == LCIDToLocaleName(lcid, localeName, 32, LOCALE_ALLOW_NEUTRAL_NAMES)) { //try to lowercase by locale, but if not, do a regular MakeLower()
+        srcStr.MakeLower();
+        src = srcStr.GetBuffer();
+    } else {
+        src = srcStr.GetBuffer();
+        locale = _wcreate_locale(LC_ALL, localeName);
+        _wcslwr_s_l(src, wcslen(src) + 1, locale);
     }
-    *s = v;
-    n++;
-    return n;
+
+    int dstLen = int(wcslen(src) * 4);
+    wchar_t* dest = DEBUG_NEW wchar_t[dstLen];
+
+    int cchActual = NormalizeString(NormalizationKD, src, -1, dest, dstLen);
+    if (cchActual <= 0) dest[0] = 0;
+    WORD* rgType = DEBUG_NEW WORD[dstLen];
+    GetStringTypeW(CT_CTYPE3, dest, -1, rgType);
+    PWSTR pszWrite = dest;
+    for (int i = 0; dest[i]; i++) {
+        if (!(rgType[i] & C3_NONSPACING)) {
+            *pszWrite++ = dest[i];
+        }
+    }
+    *pszWrite = 0;
+    delete[] rgType;
+
+    CString ret = dest;
+    delete[] dest;
+    return ret;
 }
 
-void getExtraData(const BYTE* format, const GUID* formattype, const size_t formatlen, BYTE* extra, unsigned int* extralen)
-{
-    // code from LAV ...
-    const BYTE* extraposition = NULL;
-    size_t extralength = 0;
-    if (*formattype == FORMAT_WaveFormatEx) {
-        //WAVEFORMATEX *wfex = (WAVEFORMATEX *)format;
-        extraposition = format + sizeof(WAVEFORMATEX);
-        // Protected against over-reads
-        extralength = formatlen - sizeof(WAVEFORMATEX);
-    } else if (*formattype == FORMAT_VorbisFormat2) {
-        VORBISFORMAT2* vf2 = (VORBISFORMAT2*)format;
-        unsigned offset = 1;
-        if (extra) {
-            *extra = 2;
-            offset += lav_xiphlacing(extra + offset, vf2->HeaderSize[0]);
-            offset += lav_xiphlacing(extra + offset, vf2->HeaderSize[1]);
-            extra += offset;
-        } else {
-            offset += vf2->HeaderSize[0] / 255 + 1;
-            offset += vf2->HeaderSize[1] / 255 + 1;
-        }
-        extralength = vf2->HeaderSize[0] + vf2->HeaderSize[1] + vf2->HeaderSize[2];
-        extralength = min(extralength, formatlen - sizeof(VORBISFORMAT2));
-
-        if (extra && extralength) {
-            memcpy(extra, format + sizeof(VORBISFORMAT2), extralength);
-        }
-        if (extralen) {
-            *extralen = (unsigned int)extralength + offset;
-        }
-
-        return;
-    } else if (*formattype == FORMAT_VideoInfo) {
-        extraposition = format + sizeof(VIDEOINFOHEADER);
-        extralength = formatlen - sizeof(VIDEOINFOHEADER);
-    } else if (*formattype == FORMAT_VideoInfo2) {
-        extraposition = format + sizeof(VIDEOINFOHEADER2);
-        extralength = formatlen - sizeof(VIDEOINFOHEADER2);
-    } else if (*formattype == FORMAT_MPEGVideo) {
-        MPEG1VIDEOINFO* mp1vi = (MPEG1VIDEOINFO*)format;
-        extraposition = (BYTE*)mp1vi->bSequenceHeader;
-        extralength = min(mp1vi->cbSequenceHeader, formatlen - FIELD_OFFSET(MPEG1VIDEOINFO, bSequenceHeader[0]));
-    } else if (*formattype == FORMAT_MPEG2Video) {
-        MPEG2VIDEOINFO* mp2vi = (MPEG2VIDEOINFO*)format;
-        extraposition = (BYTE*)mp2vi->dwSequenceHeader;
-        extralength = min(mp2vi->cbSequenceHeader, formatlen - FIELD_OFFSET(MPEG2VIDEOINFO, dwSequenceHeader[0]));
-    }
-
-    if (extra && extralength) {
-        memcpy(extra, extraposition, extralength);
-    }
-    if (extralen) {
-        *extralen = (unsigned int)extralength;
+inline const LONGLONG GetPerfCounter() {
+    auto GetPerfFrequency = [] {
+        LARGE_INTEGER freq;
+        QueryPerformanceFrequency(&freq);
+        return freq.QuadPart;
+    };
+    static const LONGLONG llPerfFrequency = GetPerfFrequency();
+    if (llPerfFrequency) {
+        LARGE_INTEGER llPerfCounter;
+        QueryPerformanceCounter(&llPerfCounter);
+        return llMulDiv(llPerfCounter.QuadPart, 10000000LL, llPerfFrequency, 0);
+    } else {
+        // ms to 100ns units
+        return timeGetTime() * 10000;
     }
 }
 
-void audioFormatTypeHandler(const BYTE* format, const GUID* formattype,
-                            DWORD* pnSamples, WORD* pnChannels,
-                            WORD* pnBitsPerSample, WORD* pnBlockAlign,
-                            DWORD* pnBytesPerSec)
+bool FindStringInList(const CAtlList<CString>& list, CString& value)
 {
-    DWORD nSamples       = 0;
-    WORD  nChannels      = 0;
-    WORD  nBitsPerSample = 0;
-    WORD  nBlockAlign    = 0;
-    DWORD nBytesPerSec   = 0;
-
-    if (*formattype == FORMAT_WaveFormatEx) {
-        WAVEFORMATEX* wfex = (WAVEFORMATEX*)format;
-        nSamples       = wfex->nSamplesPerSec;
-        nChannels      = wfex->nChannels;
-        nBitsPerSample = wfex->wBitsPerSample;
-        nBlockAlign    = wfex->nBlockAlign;
-        nBytesPerSec   = wfex->nAvgBytesPerSec;
-    } else if (*formattype == FORMAT_VorbisFormat2) {
-        VORBISFORMAT2* vf2 = (VORBISFORMAT2*)format;
-        nSamples       = vf2->SamplesPerSec;
-        nChannels      = (WORD)vf2->Channels;
-        nBitsPerSample = (WORD)vf2->BitsPerSample;
+    bool found = false;
+    POSITION pos = list.GetHeadPosition();
+    while (pos && !found) {
+        if (list.GetNext(pos).CompareNoCase(value) == 0) {
+            found = true;
+        }
     }
-
-    if (pnSamples) {
-        *pnSamples = nSamples;
-    }
-    if (pnChannels) {
-        *pnChannels = nChannels;
-    }
-    if (pnBitsPerSample) {
-        *pnBitsPerSample = nBitsPerSample;
-    }
-    if (pnBlockAlign) {
-        *pnBlockAlign = nBlockAlign;
-    }
-    if (pnBytesPerSec) {
-        *pnBytesPerSec = nBytesPerSec;
-    }
+    return found;
 }

@@ -254,7 +254,7 @@
     <value>インストール</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;なにもしない&gt;</value>
+    <value>なにもしない</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>旧バージョンアンインストール -&gt; ダウンロード -&gt; インストール</value>

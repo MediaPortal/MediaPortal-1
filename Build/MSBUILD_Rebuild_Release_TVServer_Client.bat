@@ -4,6 +4,9 @@ rem build init
 set project=TVServer_Client
 call BuildInit.bat %1
 
+REM if [%2]==[] (set ARCH=x86) ELSE (set ARCH=%2)
+set ARCH=x86
+
 rem build
 echo.
 echo Writing GIT revision assemblies...
@@ -16,7 +19,7 @@ set xml=Build_Report_%BUILD_TYPE%_TvLibrary.xml
 set html=Build_Report_%BUILD_TYPE%_TvLibrary.html
 set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
 
-"%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%TVLibrary%\TvLibrary.sln" >> %log%
+"%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=%ARCH% "%TVLibrary%\TvLibrary.sln" >> %log%
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
 echo.
@@ -25,7 +28,7 @@ set xml=Build_Report_%BUILD_TYPE%_TvPlugin.xml
 set html=Build_Report_%BUILD_TYPE%_TvPlugin.html
 set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
 
-"%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBUILD.exe" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%TVLibrary%\TvPlugin\TvPlugin.sln" >> %log%
+"%MSBUILD_PATH%" %logger% /target:Rebuild /property:Configuration=%BUILD_TYPE% "%TVLibrary%\TvPlugin\TvPlugin.sln" >> %log%
 BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
 echo.
@@ -42,4 +45,4 @@ DEL version.txt >> %log%
 
 echo.
 echo Building Installer...
-"%progpath%\NSIS\makensis.exe" /DBUILD_TYPE=%BUILD_TYPE% /DVER_BUILD=%version% "%TVLibrary%\Setup\setup.nsi" >> %log%
+"%progpath%\NSIS\makensis.exe" /DBUILD_TYPE=%BUILD_TYPE% /DVER_BUILD=%version% /DArchitecture=%ARCH% "%TVLibrary%\Setup\setup.nsi" >> %log%

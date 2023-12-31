@@ -83,7 +83,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
                     _ProductID);
         }
 
-        Guid HidGuid = Guid.Empty;
+        Guid HidGuid;
         _MyDeviceDetected = false;
 
         // Values for the SECURITY_ATTRIBUTES structure:
@@ -98,11 +98,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
                   Accepts: 'A System.Guid object for storing the GUID.
                   */
 
-        HidApiDeclarations.HidD_GetHidGuid(ref HidGuid);
-        if (Settings.Instance.ExtensiveLogging)
-        {
-          Log.Debug("MiniDisplay.VFD_Control: " + Debugging.ResultOfAPICall("GetHidGuid"));
-        }
+        HidApiDeclarations.HidD_GetHidGuid(out HidGuid);
+        //The method doesn't produce HRESULT. Do not report error code.
+        //if (Settings.Instance.ExtensiveLogging)
+        //{
+        //  Log.Debug("MiniDisplay.VFD_Control: " + Debugging.ResultOfAPICall("GetHidGuid"));
+        //}
 
         // Display the GUID.
         string GUIDString = HidGuid.ToString();

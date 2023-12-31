@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -424,6 +424,10 @@ namespace TvPlugin
         {
           dlg.AddLocalizedString(830); //Reset watched status
         }
+        else
+        {
+          dlg.AddLocalizedString(1260); //Set watched status
+        }
         if (!rec.Title.Equals("manual", StringComparison.CurrentCultureIgnoreCase))
         {
           dlg.AddLocalizedString(200072); //Upcoming episodes      
@@ -461,6 +465,12 @@ namespace TvPlugin
         case 830: // Reset watched status
           _iSelectedItem = GetSelectedItemNo();
           ResetWatchedStatus(rec);
+          LoadDirectory();
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
+          break;
+        case 1260: // Set watched status
+          _iSelectedItem = GetSelectedItemNo();
+          SetWatchedStatus(rec);
           LoadDirectory();
           GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
           break;
@@ -1603,6 +1613,8 @@ namespace TvPlugin
         {
           return 1;
         }
+
+        /* MP1-4996: This code forces folders to the start of the list -- CyberSimian
         if (item1.IsFolder && !item2.IsFolder)
         {
           return -1;
@@ -1611,6 +1623,7 @@ namespace TvPlugin
         {
           return 1;
         }
+        */
 
         int iComp = 0;
         TimeSpan ts;
@@ -1946,6 +1959,11 @@ namespace TvPlugin
       aRecording.Persist();
     }
 
+    private void SetWatchedStatus(Recording aRecording)
+    {
+      aRecording.TimesWatched++;
+      aRecording.Persist();
+    }
     #endregion
   }
 }

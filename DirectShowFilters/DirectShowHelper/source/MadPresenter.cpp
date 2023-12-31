@@ -735,7 +735,7 @@ HRESULT MPMadPresenter::Shutdown()
 
       if (m_pCallback)
       {
-        m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(nullptr));
+        m_pCallback->SetSubtitleDevice(nullptr);
         Log("MPMadPresenter::Shutdown() reset subtitle device");
         m_pCallback->RestoreDeviceSurface(m_pSurfaceDevice);
         Log("MPMadPresenter::Shutdown() RestoreDeviceSurface");
@@ -793,7 +793,7 @@ void MPMadPresenter::DeInitMadvrWindow()
   if (m_hWnd)
   {
     // remove ourself as user data to ensure we're not called anymore
-    SetWindowLongPtr(m_hWnd, GWL_USERDATA, 0);
+    SetWindowLongPtr(m_hWnd, GWLP_USERDATA, 0);
 
     // destroy the hidden window
     DestroyWindow(m_hWnd);
@@ -852,7 +852,7 @@ bool MPMadPresenter::InitMadvrWindow(HWND &hWnd)
   }
 
   if (hWnd)
-    SetWindowLongPtr(hWnd, GWL_USERDATA, NPT_POINTER_TO_LONG(this));
+    SetWindowLongPtr(hWnd, GWLP_USERDATA, NPT_POINTER_TO_LONG(this));
 
   return true;
 }
@@ -935,6 +935,17 @@ HRESULT MPMadPresenter::Stopping()
 
     // Enable DisplayModeChanger is set by using DRR when player goes /leaves fullscreen (if we use profiles)
     EnableOriginalDisplayMode(true);
+
+    if (m_pMad)
+    {
+      // Let's madVR restore original display mode (when adjust refresh it's handled by madVR)
+      if (Com::SmartQIPtr<IMadVRCommand> pMadVrCmd = m_pMad)
+      {
+        pMadVrCmd->SendCommand("restoreDisplayModeNow");
+        pMadVrCmd.Release();
+        Log("MPMadPresenter::Stopping() restoreDisplayModeNow");
+      }
+    }
 
     if (m_pORCB)
     {
@@ -1119,7 +1130,7 @@ HRESULT MPMadPresenter::Stopping()
 
     if (m_pCallback)
     {
-      m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(nullptr));
+      m_pCallback->SetSubtitleDevice(nullptr);
       Log("MPMadPresenter::SetDeviceOsd() reset C# subtitle device");
     }
 
@@ -1351,7 +1362,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
     // For ambilight system but only working for D3D9
     if (SUCCEEDED(hr = m_pMadD3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &SurfaceMadVr)))
     {
-      if (SUCCEEDED(hr = m_pCallback->RenderFrame(m_dwWidth, m_dwHeight, m_dwWidth, m_dwHeight, reinterpret_cast<LONG>(SurfaceMadVr))))
+      if (SUCCEEDED(hr = m_pCallback->RenderFrame(m_dwWidth, m_dwHeight, m_dwWidth, m_dwHeight, SurfaceMadVr)))
       {
         SurfaceMadVr->Release();
       }
@@ -1423,7 +1434,7 @@ void MPMadPresenter::RenderToTexture(IDirect3DTexture9* pTexture)
   IDirect3DSurface9* pSurface = nullptr; // This will be released by C# side
   if (SUCCEEDED(hr = pTexture->GetSurfaceLevel(0, &pSurface)))
   {
-    if (SUCCEEDED(hr = m_pCallback->SetRenderTarget(reinterpret_cast<LONG>(pSurface))))
+    if (SUCCEEDED(hr = m_pCallback->SetRenderTarget(pSurface)))
     {
       // TODO is it needed ?
       hr = m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DXCOLOR(0, 0, 0, 0), 1.0f, 0);
@@ -1748,7 +1759,7 @@ HRESULT MPMadPresenter::SetDeviceSub(IDirect3DDevice9* pD3DDev)
 
     if (m_pCallback)
     {
-      m_pCallback->SetSubtitleDevice(reinterpret_cast<LONG>(pD3DDev));
+      m_pCallback->SetSubtitleDevice(pD3DDev);
       Log("MPMadPresenter::SetDeviceSub() send subtitle device to C# 0x:%x", pD3DDev);
       return S_OK;
     }

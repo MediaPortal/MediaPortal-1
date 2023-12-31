@@ -251,7 +251,7 @@ Računalo postaje posvećeni TV-Server i poslužuje ostala računala u LAN mrež
     <value>Instalirano</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;nema potrebe&gt;</value>
+    <value>Nema potrebe</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
     <value>Deinstalacija prijašnjeg-&gt;preuzimanje-&gt;instalacija</value>

@@ -18,8 +18,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using MediaPortal.GUI.Library;
 using Action = MediaPortal.GUI.Library.Action;
 
@@ -121,6 +119,11 @@ namespace MediaPortal.Dialogs
       set { _keyboard.IsSearchKeyboard = value; }
     }
 
+    public bool IsNumeric
+    {
+      set { _keyboard.IsNumeric = value; }
+    }
+
     public bool ShiftTurnedOn
     {
       get { return _keyboard._shiftTurnedOn; }
@@ -155,7 +158,7 @@ namespace MediaPortal.Dialogs
       InitializeBackground();
       _keyboard.ResetLabelAsInitialText();
 
-      if (!_keyboard._useSearchLayout && !_keyboard._password)
+      if (!_keyboard.IsSearchKeyboard && !_keyboard.Password && !_keyboard.IsNumeric)
       {
         using (MediaPortal.Profile.MPSettings xmlreader = new MediaPortal.Profile.MPSettings())
         {
@@ -172,7 +175,7 @@ namespace MediaPortal.Dialogs
 
     public void PageDestroy()
     {
-      if (!_keyboard._useSearchLayout && !_keyboard._password)
+      if (!_keyboard.IsSearchKeyboard && !_keyboard.Password && !_keyboard.IsNumeric)
       {
         using (MediaPortal.Profile.MPSettings xmlwriter = new Profile.MPSettings())
         {
@@ -230,20 +233,20 @@ namespace MediaPortal.Dialogs
 
     public static bool GetKeyboard(ref string strLine, int windowId)
     {
-        VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
-        if (null == keyboard)
-        {
-          return false;
-        }
-        keyboard.Reset();
-        keyboard.Text = strLine;
-        keyboard.DoModal(windowId);
-        if (keyboard.IsConfirmed)
-        {
-          strLine = keyboard.Text;
-          return true;
-        }
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard)
+      {
         return false;
+      }
+      keyboard.Reset();
+      keyboard.Text = strLine;
+      keyboard.DoModal(windowId);
+      if (keyboard.IsConfirmed)
+      {
+        strLine = keyboard.Text;
+        return true;
+      }
+      return false;
     }
 
     #region IRenderLayer
@@ -265,11 +268,16 @@ namespace MediaPortal.Dialogs
   {
     public StandardKeyboard() : base()
     {
+      GetID = (int)Window.WINDOW_VIRTUAL_KEYBOARD;
+    }
+
+    public override bool Init()
+    {
       if (Load(GUIGraphicsContext.GetThemedSkinFile(@"\stdKeyboard.xml")))
       {
-        GetID = (int)Window.WINDOW_VIRTUAL_KEYBOARD;
         _keyboard.InitializeInstance();
       }
+      return base.Init();
     }
   }
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -57,21 +57,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     private static void FixTcpPort()
     {
-      RegistryKey keySql = null;
-      keySql = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
-      if (keySql == null)
-      {
-        try
-        {
-          keySql = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL", false,
-              Utils.eRegWow64Options.KEY_WOW64_32KEY);
-        }
-        catch
-        {
-          // Parent key not open, exception found at opening (probably related to
-          // security permissions requested)
-        }
-      }
+      RegistryKey keySql = Utils.LMOpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
       if (keySql == null)
       {
         return;
@@ -79,27 +65,12 @@ namespace MediaPortal.DeployTool.InstallationChecks
       string instanceSQL = (string)keySql.GetValue(GetIstanceName());
       keySql.Close();
 
-      keySql =
-        Registry.LocalMachine.OpenSubKey(
-          "SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll",
-          true);
-      if (keySql == null)
-      {
-        try
-        {
-          keySql = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll", true,
-              Utils.eRegWow64Options.KEY_WOW64_32KEY);
-        }
-        catch
-        {
-          // Parent key not open, exception found at opening (probably related to
-          // security permissions requested)
-        }
-      }
+      keySql = Utils.LMOpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll", true);
       if (keySql == null)
       {
         return;
       }
+
       keySql.SetValue("TcpPort", "1433");
       keySql.SetValue("TcpDynamicPorts", string.Empty);
       keySql.Close();
@@ -135,6 +106,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public string GetDisplayName()
     {
       return "MS SQL Express 2005";
+    }
+
+    public string GetIconName()
+    {
+      return "MSSQL";
     }
 
     private static string GetIstanceName()
@@ -200,40 +176,28 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public CheckResult CheckStatus()
     {
-      RegistryKey key = null;
       CheckResult result;
       result.needsDownload = true;
-      FileInfo msSqlFile = new FileInfo(_fileName);
 
+      FileInfo msSqlFile = new FileInfo(_fileName);
       if (msSqlFile.Exists && msSqlFile.Length != 0)
+      {
         result.needsDownload = false;
+      }
 
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      key =
-        Registry.LocalMachine.OpenSubKey(
-          "SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
-      if (key == null)
-      {
-        try
-        {
-          key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion", false,
-              Utils.eRegWow64Options.KEY_WOW64_32KEY);
-        }
-        catch
-        {
-          // Parent key not open, exception found at opening (probably related to
-          // security permissions requested)
-        }
-      }
 
+      RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
       using (key)
       {
         if (key == null)
+        {
           result.state = CheckState.NOT_INSTALLED;
+        }
         else
         {
           string version = (string)key.GetValue("CurrentVersion");

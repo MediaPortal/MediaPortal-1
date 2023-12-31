@@ -44,7 +44,8 @@
       // lbl_version
       // 
       this.lbl_version.Dock = System.Windows.Forms.DockStyle.Right;
-      this.lbl_version.ForeColor = System.Drawing.Color.Black;
+      this.lbl_version.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.lbl_version.ForeColor = System.Drawing.Color.White;
       this.lbl_version.Location = new System.Drawing.Point(50, 0);
       this.lbl_version.MaximumSize = new System.Drawing.Size(100, 0);
       this.lbl_version.MinimumSize = new System.Drawing.Size(100, 0);
@@ -60,7 +61,7 @@
       this.lbl_name.AutoEllipsis = true;
       this.lbl_name.AutoSize = true;
       this.lbl_name.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.lbl_name.ForeColor = System.Drawing.SystemColors.ControlText;
+      this.lbl_name.ForeColor = System.Drawing.Color.White;
       this.lbl_name.Location = new System.Drawing.Point(0, 2);
       this.lbl_name.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
       this.lbl_name.Name = "lbl_name";
@@ -116,7 +117,7 @@
       this.lblAuthors.AutoEllipsis = true;
       this.lblAuthors.AutoSize = true;
       this.lblAuthors.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.lblAuthors.ForeColor = System.Drawing.Color.DimGray;
+      this.lblAuthors.ForeColor = System.Drawing.Color.White;
       this.lblAuthors.Location = new System.Drawing.Point(99, 2);
       this.lblAuthors.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
       this.lblAuthors.Name = "lblAuthors";
@@ -124,7 +125,7 @@
       this.lblAuthors.Size = new System.Drawing.Size(42, 16);
       this.lblAuthors.TabIndex = 44;
       this.lblAuthors.Text = "authors";
-      this.lblAuthors.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+      this.lblAuthors.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       this.lblAuthors.Click += new System.EventHandler(this.ExtensionControlCollapsed_Click);
       // 
       // flowLayoutPanel1
@@ -145,6 +146,7 @@
       this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
       this.AutoSize = true;
+      this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(84)))), ((int)(((byte)(140)))), ((int)(((byte)(184)))));
       this.Controls.Add(this.flowLayoutPanel1);
       this.Controls.Add(this.panel1);
       this.MinimumSize = new System.Drawing.Size(0, 22);

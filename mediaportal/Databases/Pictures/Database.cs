@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2020 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,8 +18,11 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+
 using MediaPortal.Database;
+using MediaPortal.GUI.Pictures;
 
 namespace MediaPortal.Picture.Database
 {
@@ -51,9 +54,34 @@ namespace MediaPortal.Picture.Database
       return _database.AddPicture(strPicture, iRotation);
     }
 
+    public static int UpdatePicture(string strPicture, int iRotation)
+    {
+      return _database.UpdatePicture(strPicture, iRotation);
+    }
+
     public static void DeletePicture(string strPicture)
     {
       _database.DeletePicture(strPicture);
+    }
+
+    public static string GetDateTaken(string strPicture)
+    {
+      return _database.GetDateTaken(strPicture);
+    }
+
+    public static DateTime GetDateTimeTaken(string strPicture)
+    {
+      return _database.GetDateTimeTaken(strPicture);
+    }
+
+    public static ExifMetadata.Metadata GetExifFromDB(string strPicture)
+    {
+      return _database.GetExifFromDB(strPicture);
+    }
+
+    public static ExifMetadata.Metadata GetExifFromFile(string strPicture)
+    {
+      return _database.GetExifFromFile(strPicture);
     }
 
     public static int GetRotation(string strPicture)
@@ -66,14 +94,44 @@ namespace MediaPortal.Picture.Database
       _database.SetRotation(strPicture, iRotation);
     }
 
-    //public static DateTime GetDateTaken(string strPicture)
-    //{
-    //  return _database.GetDateTaken(strPicture);
-    //}
-
     public static int EXIFOrientationToRotation(int orientation)
     {
       return _database.EXIFOrientationToRotation(orientation);
+    }
+
+    public static List<string> ListKeywords()
+    {
+      return _database.ListKeywords();
+    }
+
+    public static List<string> ListPicsByKeyword(string Keyword)
+    {
+      return _database.ListPicsByKeyword(Keyword);
+    }
+
+    public static int CountPicsByKeyword(string Keyword)
+    {
+      return _database.CountPicsByKeyword(Keyword);
+    }
+
+    public static List<string> ListPicsByKeywordSearch(string Keyword)
+    {
+      return _database.ListPicsByKeywordSearch(Keyword);
+    }
+
+    public static int CountPicsByKeywordSearch(string Keyword)
+    {
+      return _database.CountPicsByKeywordSearch(Keyword);
+    }
+
+    public static List<string> ListPicsBySearch(string query)
+    {
+      return _database.ListPicsBySearch(query);
+    }
+
+    public static int CountPicsBySearch(string query)
+    {
+      return _database.CountPicsBySearch(query);
     }
 
     public static int ListYears(ref List<string> Years)
@@ -101,6 +159,46 @@ namespace MediaPortal.Picture.Database
       return _database.CountPicsByDate(Date);
     }
 
+    public static List<string> ListValueByMetadata(string Name)
+    {
+      return _database.ListValueByMetadata(Name);
+    }
+
+    public static int CountPicsByMetadata(string Name)
+    {
+      return _database.CountPicsByMetadata(Name);
+    }
+
+    public static List<string> ListPicsByMetadata(string Name, string Value)
+    {
+      return _database.ListPicsByMetadata(Name, Value);
+    }
+
+    public static int CountPicsByMetadataValue(string Name, string Value)
+    {
+      return _database.CountPicsByMetadataValue(Name, Value);
+    }
+
+    public static List<PictureData> GetPicturesByFilter(string aSQL, string aFilter)
+    {
+      return _database.GetPicturesByFilter(aSQL, aFilter);
+    }
+
+    public static List<PictureData> GetPicturesByFilter(string aSQL, string aFilter, bool fullInfo)
+    {
+      return _database.GetPicturesByFilter(aSQL, aFilter, fullInfo);
+    }
+
+    public static int GetCountByFilter(string aSQL, string aFilter)
+    {
+      return _database.GetCountByFilter(aSQL, aFilter);
+    }
+
+    public static int Count()
+    {
+      return _database.Count();
+    }
+
     public static bool DbHealth
     {
       get
@@ -117,8 +215,25 @@ namespace MediaPortal.Picture.Database
         {
           return _database.DatabaseName;
         }
-        return "";
+        return string.Empty;
       }
+    }
+
+    public static bool FilterPrivate
+    {
+      get
+      {
+        return _database.FilterPrivate;
+      }
+      set
+      {
+        _database.FilterPrivate = value;
+      }
+    }
+
+    public static void Optimize()
+    {
+      _database.Optimize();
     }
   }
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -122,13 +122,9 @@ namespace MediaPortal.DeployTool.Sections
       dbmsType = 3;
     }
 
-    private void lbMSSQL_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+    private void lbMSSQL_Click(object sender, EventArgs e)
     {
-      try
-      {
-        Process.Start("http://www.team-mediaportal.com/manual/TV-Server/install-SQL-Server-2008");
-      }
-      catch (Exception) {}
+      Utils.OpenURL("https://www.team-mediaportal.com/wiki/display/MediaPortal1/SQL+Server+2008");
     }
   }
 }

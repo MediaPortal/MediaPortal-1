@@ -20,13 +20,13 @@
   </DVBTTuning>
   <!-- COM4 -->
   <DVBTTuning>
-    <Frequency>714000</Frequency><!-- C51 -->
+    <Frequency>570000</Frequency><!-- C33 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <!-- COM5 -->
   <DVBTTuning>
-    <Frequency>722000</Frequency><!-- C52 -->
+    <Frequency>594000</Frequency><!-- C36 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
@@ -38,7 +38,7 @@
   </DVBTTuning>
   <!-- LOC1 -->
   <DVBTTuning>
-    <Frequency>706000</Frequency><!-- C50 -->
+    <Frequency>658000</Frequency><!-- C44 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>

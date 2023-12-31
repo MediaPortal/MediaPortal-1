@@ -1,15 +1,135 @@
 ﻿#EXTM3U
-#EXTINF:0,QVC Beauty
-http://stream.arqiva.tv/qvc-beau
-#EXTINF:0,QVC Extra
-http://stream.arqiva.tv/qvc-extra
-#EXTINF:0,QVC Plus
-http://stream.arqiva.tv/qvc-plus
-#EXTINF:0,QVC Style
-http://stream.arqiva.tv/qvc-style
-#EXTINF:0,Racing TV
-http://stream.arqiva.tv/racinguk
-#EXTINF:0,RT Documentary
-http://stream.arqiva.tv/rt-doc
-#EXTINF:0,Sonlife
-http://stream.arqiva.tv/sbntvuk
+#EXTINF:0,3ABN
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-3abn-3-abn-hsslive-25f-SD
+#EXTINF:0,3ABN Dare to Dream Network
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-3abn-dare-to-dream-hsslive-25f-SD
+#EXTINF:0,3ABN Francais Network
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-3abn-3-abn-french-hsslive-25f-SD
+#EXTINF:0,3ABN Kids Network
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-3abn-3-abn-kids-hsslive-25f-SD
+#EXTINF:0,3ABN Latino Network
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-3abn-3-abn-latino-hsslive-25f-SD
+#EXTINF:0,3ABN Praise Him Music Network
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-3abn-praise-him-hsslive-25f-SD
+#EXTINF:0,3ABN Proclaim Network
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-3abn-3-abn-proclaim-hsslive-25f-SD
+#EXTINF:0,3ABN Russia
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-3abn-3-abn-russia-hsslive-25f-SD
+#EXTINF:0,African Movie Channel
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=AMC_SD
+#EXTINF:0,African Movie Channel HD
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=AMC_HD
+#EXTINF:0,Africanews
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=AfricanewsLDAI_SD
+#EXTINF:0,Alaraby TV
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-news-alaraby-hsslive-25f-SD
+#EXTINF:0,Arise News
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-news-arise-tv-hsslive-25f-16x9-SD
+#EXTINF:0,British Muslim TV
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-international-britishmuslimtv-hsslive-25f-16x9-SD
+#EXTINF:0,Channel 7
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-entertainment-gntv-hsslive-25f-16x9-SD
+#EXTINF:0,Channel Fight
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=FightLDAI_SD
+#EXTINF:0,Channel Fight HD
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=FightLDAI_HD
+#EXTINF:0,Clubland TV
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=ClublandLDAI_SD
+#EXTINF:0,Country Music Entertainment
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=CMELDAI_SD
+#EXTINF:0,Country Music Entertainment HD
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=CMELDAI_HD
+#EXTINF:0,Daystar
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-christian-daystartv-hsslive-25f-16x9-SD
+#EXTINF:0,Dunamis TV
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-religion-dunamistv-SD
+#EXTINF:0,Edgy TV
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-entertainment-edgytv-hsslive-25f-16x9-SD
+#EXTINF:0,Euronews
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=EuronewsEngLDAI_SD
+#EXTINF:0,Euronews Russian
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=EuronewsRusLDAI_SD
+#EXTINF:0,Extreme+
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=ExtremePlusLDAI_SD
+#EXTINF:0,Extreme+ HD
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=ExtremePlusLDAI_HD
+#EXTINF:0,Faith World TV
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-christian-faithtv-SD
+#EXTINF:0,Fashion TV
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=FashionLDAI_SD
+#EXTINF:0,Fashion TV HD
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=FashionLDAI_HD
+#EXTINF:0,Firstlight
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-religion-firstlight-SD
+#EXTINF:0,France 24 (en Francais)
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=France24LDAI_SD
+#EXTINF:0,France 24 (en Francais)
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-news-france24-hsslive-25f-4x3-SD
+#EXTINF:0,France 24 HD (en Francais)
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=France24LDAI_HD
+#EXTINF:0,Good News TV
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-religion-goodnewstv-SD
+#EXTINF:0,Hellenic TV
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=Hellenic_SD
+#EXTINF:0,Iran International
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-international-iranintl-SD
+#EXTINF:0,Islam Channel
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-international-islamchannel-hsslive-25f-4x3-SD
+#EXTINF:0,Law & Crime
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=LawCrimeLDAI_SD
+#EXTINF:0,Law & Crime HD
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=LawCrimeLDAI_HD
+#EXTINF:0,Live 360
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-entertainment-live360-hsslive-25f-SD
+#EXTINF:0,Newsmax TV
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-news-newsmaxtv-SD
+#EXTINF:0,NOW 70s
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=Now70sLDAI_SD
+#EXTINF:0,NOW 90s
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=Now90sLDAI_SD
+#EXTINF:0,NTAI
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-entertainment-ntai-hsslive-25f-4x3-SD
+#EXTINF:0,NTD
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=NTD_SD
+#EXTINF:0,NTD HD
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=NTD_HD
+#EXTINF:0,Propeller TV
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-entertainment-propellertv-hsslive-25f-16x9-SD
+#EXTINF:0,Revelation TV
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-christianworld-revelationtv-hsslive-25f-16x9-SD
+#EXTINF:0,Sharjah TV
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-international-sharjahtv-hsslive-25f-SD
+#EXTINF:0,Sikh Channel
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-international-sikh-channel-hsslive-25f-16x9-SD
+#EXTINF:0,Snow TV
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=SnowLDAI_SD
+#EXTINF:0,Snow TV HD
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=SnowLDAI_HD
+#EXTINF:0,SportyStuff TV
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-sports-sportystufftv-SD
+#EXTINF:0,Spotlight TV
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-entertainment-spotlighttv-hsslive-25f-SD
+#EXTINF:0,Stingray Naturescape
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=NaturescapeLDAI_SD
+#EXTINF:0,Stingray Naturescape HD
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=NaturescapeLDAI_HD
+#EXTINF:0,Stingray Qello
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=QelloLDAI_SD
+#EXTINF:0,Stingray Qello HD
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=QelloLDAI_HD
+#EXTINF:0,Supreme Master TV
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-entertainment-suprememastertv-hsslive-25f-16x9-SD
+#EXTINF:0,Syria TV
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-news-syriatv-hsslive-25f-SD
+#EXTINF:0,Trace Hits
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=TraceUrbanLDAI_SD
+#EXTINF:0,Trace Vault
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=TraceVaultLDAI_SD
+#EXTINF:0,TV Warehouse
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=TVWarehouse_SD
+#EXTINF:0,TV Warehouse HD
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=TVWarehouse_HD
+#EXTINF:0,Vox Africa
+http://cbxedge.synapsetv.com/picker/tsstreamer/?f=VoxAfrica_SD
+#EXTINF:0,Yanga!
+http://entertainment.pdhls-prx1.visionip.tv/live/visiontvuk-entertainment-yanga-hsslive-25f-SD

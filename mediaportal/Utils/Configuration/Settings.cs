@@ -52,6 +52,11 @@ namespace MediaPortal.Profile
           {
             _configPathName = Config.GetFile(Config.Dir.Config, _configPathName);
           }
+
+          if (AlternateConfig)
+          {
+            _instance = null;
+          }
         }
         else
         {
@@ -133,14 +138,18 @@ namespace MediaPortal.Profile
       _isCached = isCached;
 
       if (_isCached)
+      {
         XMLCache.TryGetValue(_xmlFileName, out _xmlDoc);
+      }
 
       if (_xmlDoc == null)
       {
         _xmlDoc = new CacheSettingsProvider(new XmlSettingsProvider(fileName));
 
         if (_isCached)
+        {
           XMLCache.Add(_xmlFileName, _xmlDoc);
+        }
       }
     }
 

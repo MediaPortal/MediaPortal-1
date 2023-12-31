@@ -45,6 +45,7 @@ namespace TvThumbnails
       average = 2,
       higher = 3,
       highest = 4,
+      uhd = 5,
     }
 
     public enum LargeThumbSize
@@ -52,6 +53,7 @@ namespace TvThumbnails
       small = 400,
       average = 500,
       large = 600,
+      uhd = 1000,
     }
 
     public enum ThumbSize
@@ -59,6 +61,7 @@ namespace TvThumbnails
       small = 100,
       average = 120,
       large = 140,
+      uhd = 200,
     }
 
     private static bool _enableThumbCreation;
@@ -127,6 +130,11 @@ namespace TvThumbnails
             Quality = ThumbQuality.highest;
             SetEncoderParams(97);
             Log.Info("Thumbs.LoadSettings: using highest quality thumbnail mode");
+            break;
+          case 5:
+            Quality = ThumbQuality.uhd;
+            SetEncoderParams(100);
+            Log.Info("Thumbs.LoadSettings: using UHD quality thumbnail mode");
             break;
         }
       }
@@ -202,6 +210,8 @@ namespace TvThumbnails
             return true;
           case ThumbQuality.highest:
             return false;
+          case ThumbQuality.uhd:
+            return false;
           default:
             return true;
         }
@@ -223,6 +233,8 @@ namespace TvThumbnails
           case ThumbQuality.higher:
             return false;
           case ThumbQuality.highest:
+            return false;
+          case ThumbQuality.uhd:
             return false;
           default:
             return true;
@@ -369,6 +381,14 @@ namespace TvThumbnails
           _currentSmoothingMode = SmoothingMode.HighQuality;
           _currentThumbSize = ThumbSize.large;
           _currentLargeThumbSize = LargeThumbSize.large;
+          break;
+
+        case ThumbQuality.uhd:
+          _currentCompositingQuality = CompositingQuality.HighQuality;
+          _currentInterpolationMode = InterpolationMode.HighQualityBicubic;
+          _currentSmoothingMode = SmoothingMode.HighQuality;
+          _currentThumbSize = ThumbSize.uhd;
+          _currentLargeThumbSize = LargeThumbSize.uhd;
           break;
 
         default:

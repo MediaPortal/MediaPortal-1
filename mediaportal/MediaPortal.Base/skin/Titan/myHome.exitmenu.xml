@@ -4,7 +4,7 @@
     <control>
       <description>DEFAULT BACKGROUND DIMMED</description>
       <type>image</type>
-      <id>0</id>
+      <id>9875789</id>
       <posX>0</posX>
       <posY>0</posY>
       <width>1920</width>
@@ -16,11 +16,61 @@
 	  <visible>[control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14)]</visible>
     </control>
 
+    <!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::HOVER MENU BACKGROUND:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-->	
+
+    <control Style="HomeBasicFanart">
+      <description>Hover background</description>
+      <type>image</type>
+      <id>0</id>
+      <texture>hover_shutdown.png</texture>
+      <visible>[control.hasfocus(13)|string.equals(#selecteditem,#(string.format('{0} {1}',#selectedindex,L(1030))))]+control.isvisible(9875789)</visible>
+    </control>
+
+    <control Style="HomeBasicFanart">
+      <description>Hover background</description>
+      <type>image</type>
+      <id>0</id>
+      <texture>hover_exit.png</texture>
+      <visible>[control.hasfocus(14)|string.equals(#selecteditem,#(string.format('{0} {1}',#selectedindex,L(1057))))]+control.isvisible(9875789)</visible>
+    </control>
+
+    <control Style="HomeBasicFanart">
+      <description>Hover background</description>
+      <type>image</type>
+      <id>0</id>
+      <texture>hover_restart.png</texture>
+      <visible>[control.hasfocus(12)|string.equals(#selecteditem,#(string.format('{0} {1}',#selectedindex,L(1058))))]+control.isvisible(9875789)</visible>
+    </control>
+
+    <control Style="HomeBasicFanart">
+      <description>Hover background</description>
+      <type>image</type>
+      <id>0</id>
+      <texture>hover_suspend.png</texture>
+      <visible>string.equals(#selecteditem,#(string.format('{0} {1}',#selectedindex,L(1032))))+control.isvisible(9875789)</visible>
+    </control>
+
+    <control Style="HomeBasicFanart">
+      <description>Hover background</description>
+      <type>image</type>
+      <id>0</id>
+      <texture>hover_hibernate.png</texture>
+      <visible>string.equals(#selecteditem,#(string.format('{0} {1}',#selectedindex,L(1049))))+control.isvisible(9875789)</visible>
+    </control>
+
+    <control Style="HomeBasicFanart">
+      <description>Hover background</description>
+      <type>image</type>
+      <id>0</id>
+      <texture>hover_reboot.png</texture>
+      <visible>string.equals(#selecteditem,#(string.format('{0} {1}',#selectedindex,L(1031))))+control.isvisible(9875789)</visible>
+    </control>
+
     <control>
       <type>group</type>
       <description>exit menu</description>
       <dimColor>0xffffffff</dimColor>
-      <visible>[control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14)]</visible>		
+      <visible>control.isvisible(9875789)</visible>		
       <animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="300" delay="0">Visible</animation>
       <animation effect="fade" time="450" delay="0">Visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -99,11 +149,11 @@
   
     <control>
     	<description>Shutdown label</description>
-    	<type>label</type>
+    	<type>fadelabel</type>
     	<id>0</id>
     	<posX>132</posX>
     	<posY>575</posY>
-      <width>420</width>
+      <width>600</width>
       <font>TitanLight20</font>
     	<label>1030</label>
       <visible>Control.HasFocus(13) + Control.IsVisible(13)</visible>
@@ -114,11 +164,11 @@
     
     <control>
     	<description>Restart label</description>
-    	<type>label</type>
+    	<type>fadelabel</type>
     	<id>0</id>
     	<posX>132</posX>
     	<posY>575</posY>
-      <width>420</width>
+      <width>600</width>
       <font>TitanLight20</font>
     	<label>1031</label>
       <visible>Control.HasFocus(14) + Control.IsVisible(14)</visible>
@@ -129,11 +179,11 @@
     
     <control>
     	<description>Exit label</description>
-    	<type>label</type>
+    	<type>fadelabel</type>
     	<id>0</id>
     	<posX>132</posX>
     	<posY>575</posY>
-      <width>420</width>
+      <width>600</width>
       <font>TitanLight20</font>
     	<label>4517</label>
       <visible>Control.HasFocus(12) + Control.IsVisible(12)</visible>

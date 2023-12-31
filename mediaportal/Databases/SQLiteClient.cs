@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2021 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2021 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -49,13 +49,16 @@ namespace SQLite.NET
     internal static extern IntPtr sqlite3_errmsg16(IntPtr sqlite_handle);
 
     [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
+    internal static extern SqliteError sqlite3_extended_errcode(IntPtr sqlite_handle);
+
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_changes(IntPtr handle);
 
     [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_last_insert_rowid(IntPtr sqlite_handle);
 
     [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
-    internal static extern SqliteError sqlite3_prepare16(IntPtr sqlite_handle,
+    internal static extern SqliteError sqlite3_prepare16_v2(IntPtr sqlite_handle,
                                                          [MarshalAs(UnmanagedType.LPWStr)] string zSql, int zSqllen,
                                                          out IntPtr pVm, out IntPtr pzTail);
 
@@ -179,7 +182,69 @@ namespace SQLite.NET
       /// <value>sqlite_step() has another row ready</value>
       ROW = 100,
       /// <value>sqlite_step() has finished executing</value>
-      DONE = 101
+      DONE = 101,
+      /// Extended Result Code https://www.sqlite.org/rescode.html#extrc
+      /// <value>sqlite3_extended_errcode()</value>
+      ABORT_ROLLBACK = 516,
+      BUSY_RECOVERY = 261,
+      BUSY_SNAPSHOT = 517,
+      CANTOPEN_CONVPATH = 1038,
+      CANTOPEN_DIRTYWAL = 1294,
+      CANTOPEN_FULLPATH = 782,
+      CANTOPEN_ISDIR = 526,
+      CANTOPEN_NOTEMPDIR = 270,
+      CONSTRAINT_CHECK = 275,
+      CONSTRAINT_COMMITHOOK = 531,
+      CONSTRAINT_FOREIGNKEY = 787,
+      CONSTRAINT_FUNCTION = 1043,
+      CONSTRAINT_NOTNULL = 1299,
+      CONSTRAINT_PRIMARYKEY = 1555,
+      CONSTRAINT_ROWID = 2579,
+      CONSTRAINT_TRIGGER = 1811,
+      CONSTRAINT_UNIQUE = 2067,
+      CONSTRAINT_VTAB = 2323,
+      CORRUPT_SEQUENCE = 523,
+      CORRUPT_VTAB = 267,
+      ERROR_MISSING_COLLSEQ = 257,
+      ERROR_RETRY = 513,
+      ERROR_SNAPSHOT = 769,
+      IOERR_ACCESS = 3338,
+      IOERR_BLOCKED = 2826,
+      IOERR_CHECKRESERVEDLOCK = 3594,
+      IOERR_CLOSE = 4106,
+      IOERR_CONVPATH = 6666,
+      IOERR_DELETE = 2570,
+      IOERR_DELETE_NOENT = 5898,
+      IOERR_DIR_CLOSE = 4362,
+      IOERR_DIR_FSYNC = 1290,
+      IOERR_FSTAT = 1802,
+      IOERR_FSYNC = 1034,
+      IOERR_GETTEMPPATH = 6410,
+      IOERR_LOCK = 3850,
+      IOERR_MMAP = 6154,
+      IOERR_NOMEM = 3082,
+      IOERR_RDLOCK = 2314,
+      IOERR_READ = 266,
+      IOERR_SEEK = 5642,
+      IOERR_SHMLOCK = 5130,
+      IOERR_SHMMAP = 5386,
+      IOERR_SHMOPEN = 4618,
+      IOERR_SHMSIZE = 4874,
+      IOERR_SHORT_READ = 522,
+      IOERR_TRUNCATE = 1546,
+      IOERR_UNLOCK = 2058,
+      IOERR_WRITE = 778,
+      LOCKED_SHAREDCACHE = 262,
+      LOCKED_VTAB = 518,
+      NOTICE_RECOVER_ROLLBACK = 539,
+      NOTICE_RECOVER_WAL = 283,
+      OK_LOAD_PERMANENTLY = 256,
+      READONLY_CANTINIT = 1288,
+      READONLY_CANTLOCK = 520,
+      READONLY_DBMOVED = 1032,
+      READONLY_DIRECTORY = 1544,
+      READONLY_RECOVERY = 264,
+      READONLY_ROLLBACK = 776
     }
 
     #endregion
@@ -317,13 +382,15 @@ namespace SQLite.NET
 
     private void ThrowError(string statement, string sqlQuery, SqliteError err)
     {
+      SqliteError errExtended = sqlite3_extended_errcode(dbHandle);
       string errorMsg = Marshal.PtrToStringUni(sqlite3_errmsg16(dbHandle));
-      Log.Error("SQLiteClient: {0} cmd:{1} err:{2} detailed:{3} query:{4}",
-                databaseName, statement, err.ToString(), errorMsg, sqlQuery);
+      Log.Error("SQLiteClient: {0} cmd:{1} err:{2}/{3} detailed:{4} query:{5}",
+                databaseName, statement, err.ToString(), errExtended.ToString(), errorMsg, sqlQuery);
 
       throw new SQLiteException(
-        String.Format("SQLiteClient: {0} cmd:{1} err:{2} detailed:{3} query:{4}", databaseName, statement,
+        String.Format("SQLiteClient: {0} cmd:{1} err:{2}/{3} detailed:{4} query:{5}", databaseName, statement,
                       err.ToString(),
+                      errExtended.ToString(),
                       errorMsg, sqlQuery), err);
     }
 
@@ -333,14 +400,9 @@ namespace SQLite.NET
       //lock (typeof (SQLiteClient)) // Trigger slow entering plugin (i.e myvideos in title mode)
       {
         //Log.Info("dbs:{0} sql:{1}", databaseName,query);
-        if (query == null)
+        if (string.IsNullOrEmpty(query))
         {
-          Log.Error("SQLiteClient: query==null");
-          return set1;
-        }
-        if (query.Length == 0)
-        {
-          Log.Error("SQLiteClient: query==''");
+          Log.Error("SQLiteClient: query == null or empty");
           return set1;
         }
         IntPtr errMsg;
@@ -353,7 +415,7 @@ namespace SQLite.NET
         {
           IntPtr pVm;
           IntPtr pzTail;
-          err = sqlite3_prepare16(dbHandle, query, query.Length * 2, out pVm, out pzTail);
+          err = sqlite3_prepare16_v2(dbHandle, query, query.Length * 2, out pVm, out pzTail);
           if (err == SqliteError.OK)
           {
             ReadpVm(query, set1, ref pVm);
@@ -377,16 +439,18 @@ namespace SQLite.NET
 
     internal void ReadpVm(string query, SQLiteResultSet set1, ref IntPtr pVm)
     {
-      int pN;
+      int pN = 0;
       SqliteError res = SqliteError.ERROR;
 
       if (pVm == IntPtr.Zero)
       {
         ThrowError("SQLiteClient: pvm=null", query, res);
       }
+
       DateTime now = DateTime.Now;
       TimeSpan ts = now - DateTime.Now;
-      while (true && ts.TotalSeconds > -15)
+      int timeout = -60; // MP1-5061: Increase to -60 Was: -15
+      while (true && ts.TotalSeconds > timeout)
       {
         for (int i = 0; i <= busyRetries; i++)
         {
@@ -405,7 +469,7 @@ namespace SQLite.NET
           }
         }
 
-        pN = sqlite3_column_count(pVm);
+        // pN = sqlite3_column_count(pVm);
         /*
         if (res == SqliteError.ERROR)
         {
@@ -439,10 +503,10 @@ namespace SQLite.NET
           else
           {
             IntPtr pzTail;
-            err = sqlite3_prepare16(dbHandle, query, query.Length * 2, out pVm, out pzTail);
+            err = sqlite3_prepare16_v2(dbHandle, query, query.Length * 2, out pVm, out pzTail);
 
             res = sqlite3_step(pVm);
-            pN = sqlite3_column_count(pVm);
+            // pN = sqlite3_column_count(pVm);
 
             if (pVm == IntPtr.Zero)
             {
@@ -454,6 +518,12 @@ namespace SQLite.NET
         // We have some data; lets read it
         if (set1.ColumnNames.Count == 0)
         {
+          pN = sqlite3_column_count(pVm);
+          if (pVm == IntPtr.Zero)
+          {
+            ThrowError("sqlite3_column_count:pvm=null", query, res);
+          }
+
           for (int i = 0; i < pN; i++)
           {
             string colName;
@@ -482,6 +552,11 @@ namespace SQLite.NET
         set1.Rows.Add(row);
 
         ts = now - DateTime.Now;
+      }
+
+      if (ts.TotalSeconds <= timeout)
+      {
+        Log.Warn("SQLiteClient: ReadpVm ({0} <= {1}) Exceeded sampling time, may not have received all the data.", ts.TotalSeconds, timeout);
       }
 
       if (res == SqliteError.BUSY || res == SqliteError.ERROR)

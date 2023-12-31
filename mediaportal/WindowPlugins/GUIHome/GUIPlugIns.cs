@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 
 using System;
 using System.Collections;
-using MediaPortal.Configuration;
+
 using MediaPortal.GUI.Library;
 
 #endregion
@@ -51,15 +51,39 @@ namespace MediaPortal.GUI.Home
       return (Load(GUIGraphicsContext.GetThemedSkinFile(@"\myHomePlugIns.xml")));
     }
 
+    protected override void OnWindowLoaded()
+    {
+      string layout = GUIPropertyManager.GetProperty("#home.myhomeplugins.layout");
+      try
+      {
+        _layout = (GUIFacadeControl.Layout)Enum.Parse(typeof(GUIFacadeControl.Layout), layout);
+      }
+      catch
+      {
+        _layout = GUIFacadeControl.Layout.List;
+      }
+
+      base.OnWindowLoaded();
+    }
+
     protected override void LoadButtonNames()
     {
       if (menuMain == null)
       {
         return;
       }
-      menuMain.ButtonInfos.Clear();
-      ArrayList plugins = PluginManager.SetupForms;
 
+      if (menuMain is GUIMenuControl)
+      {
+        (menuMain as GUIMenuControl).ButtonInfos.Clear();
+      }
+
+      if (menuMain is GUIFacadeControl)
+      {
+        (menuMain as GUIFacadeControl).Clear();
+      }
+
+      ArrayList plugins = PluginManager.SetupForms;
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         foreach (ISetupForm setup in plugins)
@@ -69,6 +93,7 @@ namespace MediaPortal.GUI.Home
           string nonFocusTexture;
           string hover;
           string nonFocusHover;
+
           if (setup.GetHome(out plugInText, out focusTexture, out nonFocusTexture, out hover))
           {
             if (setup.PluginName().Equals("Home"))
@@ -78,7 +103,7 @@ namespace MediaPortal.GUI.Home
             IShowPlugin showPlugin = setup as IShowPlugin;
 
             string showInPlugIns = xmlreader.GetValue("myplugins", setup.PluginName());
-            if ((showInPlugIns == null) || (showInPlugIns.Length < 1))
+            if (string.IsNullOrEmpty(showInPlugIns))
             {
               if ((showPlugin != null) && (showPlugin.ShowDefaultHome() == true))
               {
@@ -93,15 +118,15 @@ namespace MediaPortal.GUI.Home
               }
             }
 
-            if ((focusTexture == null) || (focusTexture.Length < 1))
+            if (string.IsNullOrEmpty(focusTexture))
             {
               focusTexture = setup.PluginName();
             }
-            if ((nonFocusTexture == null) || (nonFocusTexture.Length < 1))
+            if (string.IsNullOrEmpty(nonFocusTexture))
             {
               nonFocusTexture = setup.PluginName();
             }
-            if ((hover == null) || (hover.Length < 1))
+            if (string.IsNullOrEmpty(hover))
             {
               hover = setup.PluginName();
             }
@@ -109,14 +134,67 @@ namespace MediaPortal.GUI.Home
             nonFocusTexture = GetNonFocusTextureFileName(nonFocusTexture);
             nonFocusHover = GetNonFocusHoverFileName(hover);
             hover = GetHoverFileName(hover);
-            int index = xmlreader.GetValueAsInt("pluginSorting", "my Plugins", Int32.MaxValue);
-            menuMain.ButtonInfos.Add(new MenuButtonInfo(plugInText, setup.GetWindowId(), focusTexture, nonFocusTexture,
-                                                        hover, nonFocusHover, index));
+            int index = xmlreader.GetValueAsInt("pluginSorting", setup.PluginName(), Int32.MaxValue);
+
+            if (menuMain is GUIMenuControl)
+            {
+              (menuMain as GUIMenuControl).ButtonInfos.Add(new MenuButtonInfo(plugInText, setup.GetWindowId(), 
+                                                          focusTexture, nonFocusTexture,
+                                                          hover, nonFocusHover, index));
+            }
+
+            if (menuMain is GUIFacadeControl)
+            {
+              string icon = GetIconTextureFileName(setup.PluginName());
+              string iconBig = GetIconBigTextureFileName(setup.PluginName());
+              string thumb = GetThumbTextureFileName(setup.PluginName());
+
+              GUIListItem listItem = new GUIListItem(plugInText)
+              {
+                Path = index.ToString(),
+                ItemId = setup.GetWindowId(),
+                Label2 = setup.Author(),
+                IsFolder = false,
+                IconImage = string.IsNullOrEmpty(icon) ? focusTexture : icon,
+                IconImageBig = string.IsNullOrEmpty(iconBig) ? hover : iconBig,
+                ThumbnailImage = string.IsNullOrEmpty(thumb) ? hover : thumb,
+                DVDLabel = hover,
+                AlbumInfoTag = setup
+              };
+              listItem.OnItemSelected += OnItemSelected;
+              (menuMain as GUIFacadeControl).Add(listItem);
+            }
           }
         }
       }
     }
 
     #endregion
+
+    private void OnItemSelected(GUIListItem item, GUIControl parent)
+    {
+      GUIPropertyManager.SetProperty("#pluginid", string.Empty);
+      GUIPropertyManager.SetProperty("#pluginname", string.Empty);
+      GUIPropertyManager.SetProperty("#pluginauthor", string.Empty);
+      GUIPropertyManager.SetProperty("#plugindescription", string.Empty);
+      GUIPropertyManager.SetProperty("#pluginhover", string.Empty);
+
+      GUIPropertyManager.SetProperty("#pluginid", item.ItemId.ToString());
+      GUIPropertyManager.SetProperty("#pluginhover", item.DVDLabel);
+
+      if (item.AlbumInfoTag != null)
+      {
+        GUIPropertyManager.SetProperty("#pluginname", (item.AlbumInfoTag as ISetupForm).PluginName());
+        GUIPropertyManager.SetProperty("#pluginauthor", (item.AlbumInfoTag as ISetupForm).Author());
+        GUIPropertyManager.SetProperty("#plugindescription", (item.AlbumInfoTag as ISetupForm).Description());
+      }
+
+      GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
+      if (filmstrip != null)
+      {
+        filmstrip.InfoImageFileName = item.ThumbnailImage;
+      }
+    }
+
   }
 }

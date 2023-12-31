@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,9 +24,11 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Media.Animation;
-using Microsoft.DirectX.Direct3D;
+
 using MediaPortal.ExtensionMethods;
 using MediaPortal.Profile;
+
+using UnidecodeSharpFork;
 
 namespace MediaPortal.GUI.Library
 {
@@ -115,6 +117,7 @@ namespace MediaPortal.GUI.Library
 
     [XMLSkinElement("textXOff")] protected int _textXOff = 0;
     [XMLSkinElement("textYOff")] protected int _textYOff = 0;
+    [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
 
     [XMLSkinElement("zoomXPixels")] protected int _zoomXPixels = 0;
     [XMLSkinElement("zoomYPixels")] protected int _zoomYPixels = 0;
@@ -459,6 +462,7 @@ namespace MediaPortal.GUI.Library
                                                      ref _heightThumbBig);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _bigItemWidth, ref _bigItemHeight);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _itemWidth, ref _itemHeight);
+      GUIGraphicsContext.ScalePosToScreenResolution(ref _zoomXPixels, ref _zoomYPixels);
 
       GUIGraphicsContext.ScaleRectToScreenResolution(ref _watchedImagePosXLow, ref _watchedImagePosYLow,
                                                      ref _watchedImageWidthLow,  ref _watchedImageHeightLow);
@@ -781,7 +785,14 @@ namespace MediaPortal.GUI.Library
         }
         if (fTextPosY >= _positionY && _renderFocusText)
         {
-          _listLabels[iButton].XPosition = dwPosX + _textXOff;
+          if (_textAlignment == Alignment.ALIGN_RIGHT)
+          {
+            _listLabels[iButton].XPosition = dwPosX + _textureWidth - _textXOff;
+          }
+          else
+          {
+            _listLabels[iButton].XPosition = dwPosX + _textXOff;
+          }
           _listLabels[iButton].YPosition = (int)Math.Truncate(fTextPosY + _textYOff + _zoomYPixels);
           _listLabels[iButton].Width = _textureWidth;
           _listLabels[iButton].Height = _textureHeight;
@@ -822,7 +833,14 @@ namespace MediaPortal.GUI.Library
         }
         if (fTextPosY >= _positionY && _renderUnfocusText)
         {
-          _listLabels[iButton].XPosition = dwPosX + _textXOff;
+          if (_textAlignment == Alignment.ALIGN_RIGHT)
+          {
+            _listLabels[iButton].XPosition = dwPosX + _textureWidth - _textXOff;
+          }
+          else
+          {
+            _listLabels[iButton].XPosition = dwPosX + _textXOff;
+          }
           _listLabels[iButton].YPosition = (int)Math.Truncate(fTextPosY + _textYOff);
           _listLabels[iButton].Width = _textureWidth;
           _listLabels[iButton].Height = _textureHeight;
@@ -1472,7 +1490,9 @@ namespace MediaPortal.GUI.Library
             {
               // Check key
               if (((action.m_key.KeyChar >= '0') && (action.m_key.KeyChar <= '9')) ||
-                  action.m_key.KeyChar == '*' || action.m_key.KeyChar == '(' || action.m_key.KeyChar == '#' ||
+                  action.m_key.KeyChar == '*' ||
+                  action.m_key.KeyChar == '(' ||
+                  action.m_key.KeyChar == '#' ||
                   action.m_key.KeyChar == '§')
               {
                 Press((char)action.m_key.KeyChar);
@@ -1913,7 +1933,7 @@ namespace MediaPortal.GUI.Library
         }
 
         GUIListItem pItem = _listItems[iItem];
-        if (pItem.Label.ToUpperInvariant().StartsWith(SearchKey.ToUpperInvariant()) == true)
+        if (pItem.Label.ToUpperInvariant().Unidecode().StartsWith(SearchKey.ToUpperInvariant()) == true)
         {
           bItemFound = true;
           break;
@@ -2302,6 +2322,7 @@ namespace MediaPortal.GUI.Library
                                                     _textureHeight, _imageFolderNameFocus, _imageFolderName,
                                                     _shadowAngle, _shadowDistance, _shadowColor);
         btn.ParentControl = this;
+        btn.TextAlignment = _textAlignment;
         btn.SetFocusedTextureMask(_textureMask);
         btn.SetNonFocusedTextureMask(_textureMask);
         btn.SetHoverTextureMask(_textureMask);
@@ -2310,7 +2331,7 @@ namespace MediaPortal.GUI.Library
         _listButtons.Add(btn);
 
         GUIFadeLabel fadelabel = new GUIFadeLabel(_parentControlId, _controlId, _positionX, _positionY, _textureWidth,
-                                                  _textureHeight, _fontName, _textColor, Alignment.ALIGN_LEFT,
+                                                  _textureHeight, _fontName, _textColor, _textAlignment,
                                                   VAlignment.ALIGN_TOP, _shadowAngle, _shadowDistance, _shadowColor,
                                                   " | ");
         fadelabel.DimColor = DimColor;

@@ -406,8 +406,9 @@ namespace MediaPortal.LastFM
             s.Write(postArray, 0, postArray.Length);
             s.Close();
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            GUI.Library.Log.Error("LastFMLibrary (GetXml): " + ex.Message);
             return null;
           }
         }
@@ -426,6 +427,7 @@ namespace MediaPortal.LastFM
           }
           else
           {
+            GUI.Library.Log.Error("LastFMLibrary (GetXml2): " + ex.Message);
             return null;
           }
         }
@@ -441,8 +443,9 @@ namespace MediaPortal.LastFM
               xDoc = XDocument.Parse(resp);
             }
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            GUI.Library.Log.Error("LastFMLibrary (GetXml3): " + ex.Message);
             return null;
           }
         }

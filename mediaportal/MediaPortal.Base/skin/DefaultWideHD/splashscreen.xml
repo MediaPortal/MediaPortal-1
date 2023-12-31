@@ -12,13 +12,43 @@
       <description>splashscreen text</description>
       <type>label</type>
       <id>2</id>
-      <posX>0</posX>
-      <posY>500</posY>
-      <width>1920</width>
-      <height>40</height>
-      <textsize>25</textsize>
+      <posX>764</posX>
+      <posY>230</posY>
+      <width>1000</width>
+      <height>50</height>
+      <fontname>Noto Sans</fontname>
+      <fontstyle>Regular</fontstyle>
+      <textsize>18</textsize>
       <textcolor>#00bfff</textcolor>
-      <align>TopCenter</align>
+      <align>Topleft</align>
+    </control>
+    <control>
+      <description>splashscreen version text</description>
+      <type>label</type>
+      <id>3</id>
+      <posX>0</posX>
+      <posY>920</posY>
+      <width>1920</width>
+      <height>50</height>
+      <fontname>Noto Sans</fontname>
+      <fontstyle>Regular</fontstyle>
+      <textsize>20</textsize>
+      <textcolor>#00bfff</textcolor>
+      <align>BottomCenter</align>
+    </control>
+    <control>
+      <description>splashscreen edition text</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>0</posX>
+      <posY>970</posY>
+      <width>1920</width>
+      <height>50</height>
+      <fontname>Noto Sans</fontname>
+      <fontstyle>Regular</fontstyle>
+      <textsize>20</textsize>
+      <textcolor>#00bfff</textcolor>
+      <align>BottomCenter</align>
     </control>
   </controls>
 </window>

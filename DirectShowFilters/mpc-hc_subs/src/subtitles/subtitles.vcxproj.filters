@@ -1,19 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{414959ee-2956-46f1-8df6-21a5493babae}</UniqueIdentifier>
+      <UniqueIdentifier>{11712c7b-74ef-4965-a813-5290f06e30a4}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{3d545055-c20d-47ab-b0c8-af1149dc83e4}</UniqueIdentifier>
+      <UniqueIdentifier>{405fa87b-b576-4329-99eb-f6c49c3a84be}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BaseSub.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CCDecoder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -23,19 +20,10 @@
     <ClCompile Include="DVBSub.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GFN.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HdmvSub.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Rasterizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RealTextParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderedHdmvSubtitle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RTS.cpp">
@@ -65,11 +53,35 @@
     <ClCompile Include="VobSubImage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RenderingCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StdioFile64.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RLECodedSubtitle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PGSSub.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SubtitleHelpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ellipse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorConvTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SSASub.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenTypeLangTags.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseSub.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CCDecoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -79,19 +91,10 @@
     <ClInclude Include="DVBSub.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GFN.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HdmvSub.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Rasterizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RealTextParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderedHdmvSubtitle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RTS.h">
@@ -122,6 +125,39 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VobSubImage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Utf8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderingCache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdioFile64.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RLECodedSubtitle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PGSSub.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SubtitleHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ellipse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorConvTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SSASub.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenTypeLangTags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SubRendererSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

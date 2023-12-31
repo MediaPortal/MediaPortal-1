@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>  
+
+  <!-- Latest Media Handler -->
+  <control>
+    <description>MPEIUPDATE:fb03aa80-a2e3-4d77-a84d-4c0ae17eb49c</description>
+    <id>0</id>
+    <type>image</type>
+    <posX>1810</posX>
+    <posY>0</posY>
+    <valign>top</valign>
+    <texture>hiddentab_lmh_update.png</texture>
+    <visible>string.equals(#mpei.fb03aa80_a2e3_4d77_a84d_4c0ae17eb49c.haveupdate,true)</visible>
+    <animation effect="slide" start="110,0" time="250" delay="400">WindowOpen</animation>
+    <animation effect="slide" start="0,0" end="110,0" time="250" delay="100">WindowClose</animation>
+    <animation effect="slide" start="110,0" time="250">VisibleChange</animation>
+    <animation effect="fade" time="1000" delay="2500" start= "100" end= "50" condition="True">conditional</animation>
+  </control>
+
+  <!-- Fanart Handler -->
+  <control>
+    <description>MPEIUPDATE:814a6918-0183-4323-a3b4-c00fac11b4f6</description>
+    <id>0</id>
+    <type>image</type>
+    <posX>1810</posX>
+    <posY>0</posY>
+    <valign>top</valign>
+    <texture>hiddentab_fh_update.png</texture>
+    <visible>string.equals(#mpei.814a6918_0183_4323_a3b4_c00fac11b4f6.haveupdate,true)</visible>
+    <animation effect="slide" start="110,0" time="250" delay="400">WindowOpen</animation>
+    <animation effect="slide" start="0,0" end="110,0" time="250" delay="100">WindowClose</animation>
+    <animation effect="slide" start="110,0" time="250">VisibleChange</animation>
+    <animation effect="fade" time="1000" delay="2500" start= "100" end= "50" condition="True">conditional</animation>
+  </control>
+
+</controls>
+</window>

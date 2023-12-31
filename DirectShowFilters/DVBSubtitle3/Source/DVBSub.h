@@ -21,7 +21,7 @@
 
 #pragma once
 
-#define ULONG_PTR DWORD
+//#define ULONG_PTR DWORD
 #include <windows.h>
 #include <xprtdefs.h>
 #include <streams.h>

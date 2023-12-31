@@ -20,6 +20,7 @@
           <onleft>2</onleft>
           <onright>2</onright>
           <scrollOffset>2</scrollOffset>
+          <scrollbarXOff>5</scrollbarXOff>
           <unfocusedAlpha>160</unfocusedAlpha>
         </control>
         <control>

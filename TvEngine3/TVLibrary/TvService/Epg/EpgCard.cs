@@ -385,12 +385,12 @@ namespace TvService
         Log.Error("Epg: invalid user");
         return false;
       }
-      //remove following check to enable multi-card epg grabbing (still beta)
-      if (_tvController.AllCardsIdle == false)
-      {
-        Log.Epg("Epg: card:{0} cards are not idle", Card.IdCard);
-        return false;
-      }
+      // 5111: remove following check to enable multi-card epg grabbing (Parallel EPG)
+      // if (_tvController.AllCardsIdle == false)
+      // {
+      //   Log.Epg("Epg: card:{0} cards are not idle", Card.IdCard);
+      //   return false;
+      // }
 
       TvResult result = TvResult.UnknownError;
       //handle ATSC

@@ -5,6 +5,9 @@
  *  Contents: memory allocation routines                                    *
  ****************************************************************************/
 
+static const uint UNIT_SIZE=Max(sizeof(RARPPM_CONTEXT),sizeof(RARPPM_MEM_BLK));
+static const uint FIXED_UNIT_SIZE=12;
+
 SubAllocator::SubAllocator()
 {
   Clean();
@@ -41,11 +44,11 @@ inline uint SubAllocator::U2B(int NU)
 
 
 
-// Calculate RAR_MEM_BLK+Items address. Real RAR_MEM_BLK size must be
-// equal to UNIT_SIZE, so we cannot just add Items to RAR_MEM_BLK address.
-inline RAR_MEM_BLK* SubAllocator::MBPtr(RAR_MEM_BLK *BasePtr,int Items)
+// Calculate RARPPM_MEM_BLK+Items address. Real RARPPM_MEM_BLK size must be
+// equal to UNIT_SIZE, so we cannot just add Items to RARPPM_MEM_BLK address.
+inline RARPPM_MEM_BLK* SubAllocator::MBPtr(RARPPM_MEM_BLK *BasePtr,int Items)
 {
-  return((RAR_MEM_BLK*)( ((byte *)(BasePtr))+U2B(Items) ));
+  return((RARPPM_MEM_BLK*)( ((byte *)(BasePtr))+U2B(Items) ));
 }
 
 
@@ -63,8 +66,6 @@ inline void SubAllocator::SplitBlock(void* pv,int OldIndx,int NewIndx)
 }
 
 
-
-
 void SubAllocator::StopSubAllocator()
 {
   if ( SubAllocatorSize ) 
@@ -79,7 +80,7 @@ bool SubAllocator::StartSubAllocator(int SASize)
 {
   uint t=SASize << 20;
   if (SubAllocatorSize == t)
-    return TRUE;
+    return true;
   StopSubAllocator();
 
   // Original algorithm expects FIXED_UNIT_SIZE, but actual structure size
@@ -90,7 +91,7 @@ bool SubAllocator::StartSubAllocator(int SASize)
   if ((HeapStart=(byte *)malloc(AllocSize)) == NULL)
   {
     ErrHandler.MemoryError();
-    return FALSE;
+    return false;
   }
 
   // HeapEnd did not present in original algorithm. We added it to control
@@ -98,7 +99,7 @@ bool SubAllocator::StartSubAllocator(int SASize)
   HeapEnd=HeapStart+AllocSize-UNIT_SIZE;
 
   SubAllocatorSize=t;
-  return TRUE;
+  return true;
 }
 
 
@@ -109,7 +110,7 @@ void SubAllocator::InitSubAllocator()
   pText=HeapStart;
 
   // Original algorithm operates with 12 byte FIXED_UNIT_SIZE, but actual
-  // size of RAR_MEM_BLK and PPM_CONTEXT structures can exceed this value
+  // size of RARPPM_MEM_BLK and RARPPM_CONTEXT structures can exceed this value
   // because of alignment and larger pointer fields size.
   // So we define UNIT_SIZE for this larger size and adjust memory
   // pointers accordingly.
@@ -166,14 +167,14 @@ void SubAllocator::InitSubAllocator()
 
 inline void SubAllocator::GlueFreeBlocks()
 {
-  RAR_MEM_BLK s0, * p, * p1;
+  RARPPM_MEM_BLK s0, * p, * p1;
   int i, k, sz;
   if (LoUnit != HiUnit)
     *LoUnit=0;
   for (i=0, s0.next=s0.prev=&s0;i < N_INDEXES;i++)
     while ( FreeList[i].next )
     {
-      p=(RAR_MEM_BLK*)RemoveNode(i);
+      p=(RARPPM_MEM_BLK*)RemoveNode(i);
       p->insertAt(&s0);
       p->Stamp=0xFFFF;
       p->NU=Indx2Units[i];
@@ -214,13 +215,13 @@ void* SubAllocator::AllocUnitsRare(int indx)
       GlueCount--;
       i=U2B(Indx2Units[indx]);
       int j=FIXED_UNIT_SIZE*Indx2Units[indx];
-      if (FakeUnitsStart-pText > j)
+      if (FakeUnitsStart - pText > j)
       {
-        FakeUnitsStart-=j;
+        FakeUnitsStart -= j;
         UnitsStart -= i;
-        return(UnitsStart);
+        return UnitsStart;
       }
-      return(NULL);
+      return NULL;
     }
   } while ( !FreeList[i].next );
   void* RetVal=RemoveNode(i);

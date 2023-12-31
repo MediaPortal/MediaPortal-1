@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+	 <!--            :: TVSERIES ::            -->
+		
+    <control Style="HomeBasicFanart">
+	  <description>TVSeries Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(7) + control.isvisible(91919297)</visible>
+      <texture>#fanarthandler.tvseries.backdrop1.any</texture>
+    </control> 
+		
+    <control Style="HomeBasicFanart">
+	  <description>TVSeries Selected Fanart</description>
+      <type>image</type>
+      <id>0</id>
+      <visible>control.hasfocus(7) + control.isvisible(91919298)</visible>
+      <texture>#fanarthandler.tvseries.backdrop2.any</texture>
+    </control> 
+
+</controls>
+</window>

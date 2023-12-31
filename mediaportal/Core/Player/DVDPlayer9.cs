@@ -526,7 +526,7 @@ namespace MediaPortal.Player
         Point pt;
         foreach (Message m in _mouseMsg)
         {
-          long lParam = m.LParam.ToInt32();
+          long lParam = m.LParam.ToInt64();
           double x = (double)(lParam & 0xffff);
           double y = (double)(lParam >> 16);
           double arx, ary;

@@ -68,6 +68,7 @@
       this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
       this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
       this.mainMenu.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
       this.splitContainer1.Panel1.SuspendLayout();
       this.splitContainer1.SuspendLayout();
       this.toolStrip1.SuspendLayout();
@@ -337,12 +338,13 @@
       this.Controls.Add(this.mainMenu);
       this.MinimumSize = new System.Drawing.Size(903, 507);
       this.Name = "MainForm";
-      this.Text = "MpeMaker";
+      this.Text = "MPE Maker";
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
       this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
       this.mainMenu.ResumeLayout(false);
       this.mainMenu.PerformLayout();
       this.splitContainer1.Panel1.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
       this.splitContainer1.ResumeLayout(false);
       this.toolStrip1.ResumeLayout(false);
       this.toolStrip1.PerformLayout();

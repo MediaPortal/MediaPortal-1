@@ -16,6 +16,19 @@
 		<textsize>26</textsize>
 		<textcolor>#ffffff</textcolor>
 	</control>
-
+	<control>
+		<description>version text</description>
+		<type>label</type>
+		<id>3</id>
+		<textsize>10</textsize>
+		<textcolor>#ffffff</textcolor>
+	</control>
+	<control>
+		<description>edition text</description>
+		<type>label</type>
+		<id>4</id>
+		<textsize>10</textsize>
+		<textcolor>#ffffff</textcolor>
+	</control>
 </controls>
 </window>

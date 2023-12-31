@@ -28,9 +28,11 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+      this.components = new System.ComponentModel.Container();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(XmlTvSetup));
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabSettings = new System.Windows.Forms.TabPage();
       this.panel1 = new System.Windows.Forms.Panel();
@@ -39,6 +41,7 @@ namespace SetupTv.Sections
       this.label23 = new System.Windows.Forms.Label();
       this.buttonManualImport = new System.Windows.Forms.Button();
       this.cbImportLST = new System.Windows.Forms.CheckBox();
+      this.cbNoTextMod = new System.Windows.Forms.CheckBox();
       this.cbImportXML = new System.Windows.Forms.CheckBox();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.labelStatus = new System.Windows.Forms.Label();
@@ -83,6 +86,7 @@ namespace SetupTv.Sections
       this.ShowInGuide = new System.Windows.Forms.DataGridViewCheckBoxColumn();
       this.tabRemote = new System.Windows.Forms.TabPage();
       this.panel3 = new System.Windows.Forms.Panel();
+      this.cbRenameFileInZip = new System.Windows.Forms.CheckBox();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
       this.lblTransferStatus = new System.Windows.Forms.Label();
       this.lblLastTransferAt = new System.Windows.Forms.Label();
@@ -109,7 +113,7 @@ namespace SetupTv.Sections
       this.label6 = new System.Windows.Forms.Label();
       this.saveFileExport = new System.Windows.Forms.SaveFileDialog();
       this.folderBrowserDialogTVGuide = new System.Windows.Forms.FolderBrowserDialog();
-      this.cbNoTextMod = new System.Windows.Forms.CheckBox();
+      this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.tabControl1.SuspendLayout();
       this.tabSettings.SuspendLayout();
       this.panel1.SuspendLayout();
@@ -131,9 +135,10 @@ namespace SetupTv.Sections
       this.tabControl1.Controls.Add(this.tabRemote);
       this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
+      this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(483, 450);
+      this.tabControl1.Size = new System.Drawing.Size(724, 692);
       this.tabControl1.TabIndex = 0;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
@@ -141,10 +146,11 @@ namespace SetupTv.Sections
       // 
       this.tabSettings.BackColor = System.Drawing.Color.Transparent;
       this.tabSettings.Controls.Add(this.panel1);
-      this.tabSettings.Location = new System.Drawing.Point(4, 22);
+      this.tabSettings.Location = new System.Drawing.Point(4, 29);
+      this.tabSettings.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.tabSettings.Name = "tabSettings";
-      this.tabSettings.Padding = new System.Windows.Forms.Padding(3);
-      this.tabSettings.Size = new System.Drawing.Size(475, 424);
+      this.tabSettings.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.tabSettings.Size = new System.Drawing.Size(716, 659);
       this.tabSettings.TabIndex = 0;
       this.tabSettings.Text = "General";
       this.tabSettings.UseVisualStyleBackColor = true;
@@ -171,17 +177,19 @@ namespace SetupTv.Sections
       this.panel1.Controls.Add(this.buttonBrowse);
       this.panel1.Controls.Add(this.label18);
       this.panel1.Controls.Add(this.textBoxFolder);
-      this.panel1.Location = new System.Drawing.Point(3, 3);
+      this.panel1.Location = new System.Drawing.Point(4, 5);
+      this.panel1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(472, 418);
+      this.panel1.Size = new System.Drawing.Size(902, 643);
       this.panel1.TabIndex = 0;
       this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(161, 243);
+      this.label1.Location = new System.Drawing.Point(242, 374);
+      this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(274, 32);
+      this.label1.Size = new System.Drawing.Size(411, 49);
       this.label1.TabIndex = 35;
       this.label1.Text = "Note: Could take quite some time to execute depending on how many days forward yo" +
     "u grab.";
@@ -189,9 +197,10 @@ namespace SetupTv.Sections
       // checkBoxDeleteBeforeImport
       // 
       this.checkBoxDeleteBeforeImport.AutoSize = true;
-      this.checkBoxDeleteBeforeImport.Location = new System.Drawing.Point(195, 98);
+      this.checkBoxDeleteBeforeImport.Location = new System.Drawing.Point(292, 151);
+      this.checkBoxDeleteBeforeImport.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.checkBoxDeleteBeforeImport.Name = "checkBoxDeleteBeforeImport";
-      this.checkBoxDeleteBeforeImport.Size = new System.Drawing.Size(268, 17);
+      this.checkBoxDeleteBeforeImport.Size = new System.Drawing.Size(403, 24);
       this.checkBoxDeleteBeforeImport.TabIndex = 34;
       this.checkBoxDeleteBeforeImport.Text = "Delete old programs before import (Recommended!)";
       this.checkBoxDeleteBeforeImport.UseVisualStyleBackColor = true;
@@ -199,17 +208,19 @@ namespace SetupTv.Sections
       // label23
       // 
       this.label23.AutoSize = true;
-      this.label23.Location = new System.Drawing.Point(6, 243);
+      this.label23.Location = new System.Drawing.Point(9, 374);
+      this.label23.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label23.Name = "label23";
-      this.label23.Size = new System.Drawing.Size(68, 13);
+      this.label23.Size = new System.Drawing.Size(102, 20);
       this.label23.TabIndex = 33;
       this.label23.Text = "Force import:";
       // 
       // buttonManualImport
       // 
-      this.buttonManualImport.Location = new System.Drawing.Point(80, 239);
+      this.buttonManualImport.Location = new System.Drawing.Point(120, 368);
+      this.buttonManualImport.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.buttonManualImport.Name = "buttonManualImport";
-      this.buttonManualImport.Size = new System.Drawing.Size(75, 20);
+      this.buttonManualImport.Size = new System.Drawing.Size(112, 31);
       this.buttonManualImport.TabIndex = 25;
       this.buttonManualImport.Text = "Import";
       this.buttonManualImport.UseVisualStyleBackColor = true;
@@ -218,19 +229,33 @@ namespace SetupTv.Sections
       // cbImportLST
       // 
       this.cbImportLST.AutoSize = true;
-      this.cbImportLST.Location = new System.Drawing.Point(9, 121);
+      this.cbImportLST.Location = new System.Drawing.Point(14, 186);
+      this.cbImportLST.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.cbImportLST.Name = "cbImportLST";
-      this.cbImportLST.Size = new System.Drawing.Size(161, 17);
+      this.cbImportLST.Size = new System.Drawing.Size(237, 24);
       this.cbImportLST.TabIndex = 32;
       this.cbImportLST.Text = "Import files in new tvguide.lst";
+      this.toolTip1.SetToolTip(this.cbImportLST, "Disabled by default. If enabled,  .lst file is mandatory in tvguide folder");
       this.cbImportLST.UseVisualStyleBackColor = true;
+      // 
+      // cbNoTextMod
+      // 
+      this.cbNoTextMod.AutoSize = true;
+      this.cbNoTextMod.Location = new System.Drawing.Point(292, 186);
+      this.cbNoTextMod.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.cbNoTextMod.Name = "cbNoTextMod";
+      this.cbNoTextMod.Size = new System.Drawing.Size(182, 24);
+      this.cbNoTextMod.TabIndex = 31;
+      this.cbNoTextMod.Text = "No text modifications";
+      this.cbNoTextMod.UseVisualStyleBackColor = true;
       // 
       // cbImportXML
       // 
       this.cbImportXML.AutoSize = true;
-      this.cbImportXML.Location = new System.Drawing.Point(9, 98);
+      this.cbImportXML.Location = new System.Drawing.Point(14, 151);
+      this.cbImportXML.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.cbImportXML.Name = "cbImportXML";
-      this.cbImportXML.Size = new System.Drawing.Size(134, 17);
+      this.cbImportXML.Size = new System.Drawing.Size(196, 24);
       this.cbImportXML.TabIndex = 31;
       this.cbImportXML.Text = "Import new tvguide.xml";
       this.cbImportXML.UseVisualStyleBackColor = true;
@@ -245,9 +270,11 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.label10);
       this.groupBox1.Controls.Add(this.label11);
       this.groupBox1.Controls.Add(this.label12);
-      this.groupBox1.Location = new System.Drawing.Point(9, 278);
+      this.groupBox1.Location = new System.Drawing.Point(14, 428);
+      this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(426, 112);
+      this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.groupBox1.Size = new System.Drawing.Size(639, 172);
       this.groupBox1.TabIndex = 30;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Import status report:";
@@ -255,68 +282,76 @@ namespace SetupTv.Sections
       // labelStatus
       // 
       this.labelStatus.AutoSize = true;
-      this.labelStatus.Location = new System.Drawing.Point(163, 97);
+      this.labelStatus.Location = new System.Drawing.Point(244, 149);
+      this.labelStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.labelStatus.Name = "labelStatus";
-      this.labelStatus.Size = new System.Drawing.Size(0, 13);
+      this.labelStatus.Size = new System.Drawing.Size(0, 20);
       this.labelStatus.TabIndex = 24;
       // 
       // labelPrograms
       // 
       this.labelPrograms.AutoSize = true;
-      this.labelPrograms.Location = new System.Drawing.Point(163, 75);
+      this.labelPrograms.Location = new System.Drawing.Point(244, 115);
+      this.labelPrograms.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.labelPrograms.Name = "labelPrograms";
-      this.labelPrograms.Size = new System.Drawing.Size(0, 13);
+      this.labelPrograms.Size = new System.Drawing.Size(0, 20);
       this.labelPrograms.TabIndex = 23;
       // 
       // labelChannels
       // 
       this.labelChannels.AutoSize = true;
-      this.labelChannels.Location = new System.Drawing.Point(163, 52);
+      this.labelChannels.Location = new System.Drawing.Point(244, 80);
+      this.labelChannels.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.labelChannels.Name = "labelChannels";
-      this.labelChannels.Size = new System.Drawing.Size(0, 13);
+      this.labelChannels.Size = new System.Drawing.Size(0, 20);
       this.labelChannels.TabIndex = 22;
       // 
       // labelLastImport
       // 
       this.labelLastImport.AutoSize = true;
-      this.labelLastImport.Location = new System.Drawing.Point(163, 28);
+      this.labelLastImport.Location = new System.Drawing.Point(244, 43);
+      this.labelLastImport.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.labelLastImport.Name = "labelLastImport";
-      this.labelLastImport.Size = new System.Drawing.Size(0, 13);
+      this.labelLastImport.Size = new System.Drawing.Size(0, 20);
       this.labelLastImport.TabIndex = 21;
       // 
       // label5
       // 
       this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(17, 89);
+      this.label5.Location = new System.Drawing.Point(26, 137);
+      this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(70, 13);
+      this.label5.Size = new System.Drawing.Size(107, 20);
       this.label5.TabIndex = 20;
       this.label5.Text = "Import status:";
       // 
       // label10
       // 
       this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(17, 67);
+      this.label10.Location = new System.Drawing.Point(26, 103);
+      this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(123, 13);
+      this.label10.Size = new System.Drawing.Size(185, 20);
       this.label10.TabIndex = 19;
       this.label10.Text = "Total programs imported:";
       // 
       // label11
       // 
       this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(17, 44);
+      this.label11.Location = new System.Drawing.Point(26, 68);
+      this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label11.Name = "label11";
-      this.label11.Size = new System.Drawing.Size(123, 13);
+      this.label11.Size = new System.Drawing.Size(182, 20);
       this.label11.TabIndex = 18;
       this.label11.Text = "Total channels imported:";
       // 
       // label12
       // 
       this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(17, 20);
+      this.label12.Location = new System.Drawing.Point(26, 31);
+      this.label12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label12.Name = "label12";
-      this.label12.Size = new System.Drawing.Size(91, 13);
+      this.label12.Size = new System.Drawing.Size(137, 20);
       this.label12.TabIndex = 17;
       this.label12.Text = "Last import run at:";
       // 
@@ -324,77 +359,86 @@ namespace SetupTv.Sections
       // 
       this.label13.AutoSize = true;
       this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label13.Location = new System.Drawing.Point(6, 35);
+      this.label13.Location = new System.Drawing.Point(9, 54);
+      this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label13.Name = "label13";
-      this.label13.Size = new System.Drawing.Size(371, 13);
+      this.label13.Size = new System.Drawing.Size(550, 20);
       this.label13.TabIndex = 29;
       this.label13.Text = "Please note that this folder should also include the xmltv.dtd file";
       // 
       // label14
       // 
       this.label14.AutoSize = true;
-      this.label14.Location = new System.Drawing.Point(6, 220);
+      this.label14.Location = new System.Drawing.Point(9, 338);
+      this.label14.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label14.Name = "label14";
-      this.label14.Size = new System.Drawing.Size(280, 13);
+      this.label14.Size = new System.Drawing.Size(414, 20);
       this.label14.TabIndex = 28;
       this.label14.Text = "When it detects a new file, it will be imported automatically";
       // 
       // label15
       // 
       this.label15.AutoSize = true;
-      this.label15.Location = new System.Drawing.Point(6, 207);
+      this.label15.Location = new System.Drawing.Point(9, 318);
+      this.label15.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label15.Name = "label15";
-      this.label15.Size = new System.Drawing.Size(357, 13);
+      this.label15.Size = new System.Drawing.Size(517, 20);
       this.label15.TabIndex = 27;
       this.label15.Text = "The server will check every minute if there is a new tvguide.xml/tvguide.lst";
       // 
       // textBoxMinutes
       // 
-      this.textBoxMinutes.Location = new System.Drawing.Point(210, 184);
+      this.textBoxMinutes.Location = new System.Drawing.Point(315, 283);
+      this.textBoxMinutes.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.textBoxMinutes.Name = "textBoxMinutes";
-      this.textBoxMinutes.Size = new System.Drawing.Size(50, 20);
+      this.textBoxMinutes.Size = new System.Drawing.Size(73, 26);
       this.textBoxMinutes.TabIndex = 26;
       // 
       // textBoxHours
       // 
-      this.textBoxHours.Location = new System.Drawing.Point(76, 184);
+      this.textBoxHours.Location = new System.Drawing.Point(114, 283);
+      this.textBoxHours.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.textBoxHours.Name = "textBoxHours";
-      this.textBoxHours.Size = new System.Drawing.Size(50, 20);
+      this.textBoxHours.Size = new System.Drawing.Size(73, 26);
       this.textBoxHours.TabIndex = 25;
       // 
       // label16
       // 
       this.label16.AutoSize = true;
-      this.label16.Location = new System.Drawing.Point(157, 187);
+      this.label16.Location = new System.Drawing.Point(236, 288);
+      this.label16.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label16.Name = "label16";
-      this.label16.Size = new System.Drawing.Size(47, 13);
+      this.label16.Size = new System.Drawing.Size(69, 20);
       this.label16.TabIndex = 24;
       this.label16.Text = "Minutes:";
       // 
       // label17
       // 
       this.label17.AutoSize = true;
-      this.label17.Location = new System.Drawing.Point(32, 187);
+      this.label17.Location = new System.Drawing.Point(48, 288);
+      this.label17.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label17.Name = "label17";
-      this.label17.Size = new System.Drawing.Size(38, 13);
+      this.label17.Size = new System.Drawing.Size(56, 20);
       this.label17.TabIndex = 23;
       this.label17.Text = "Hours:";
       // 
       // checkBox1
       // 
       this.checkBox1.AutoSize = true;
-      this.checkBox1.Location = new System.Drawing.Point(9, 158);
+      this.checkBox1.Location = new System.Drawing.Point(14, 243);
+      this.checkBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.checkBox1.Name = "checkBox1";
-      this.checkBox1.Size = new System.Drawing.Size(265, 17);
+      this.checkBox1.Size = new System.Drawing.Size(391, 24);
       this.checkBox1.TabIndex = 22;
       this.checkBox1.Text = "Apply time compensation when loading tvguide.xml";
       this.checkBox1.UseVisualStyleBackColor = true;
       // 
       // buttonBrowse
       // 
-      this.buttonBrowse.Location = new System.Drawing.Point(345, 51);
+      this.buttonBrowse.Location = new System.Drawing.Point(518, 78);
+      this.buttonBrowse.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.buttonBrowse.Name = "buttonBrowse";
-      this.buttonBrowse.Size = new System.Drawing.Size(23, 23);
+      this.buttonBrowse.Size = new System.Drawing.Size(34, 35);
       this.buttonBrowse.TabIndex = 21;
       this.buttonBrowse.Text = "...";
       this.buttonBrowse.UseVisualStyleBackColor = true;
@@ -403,26 +447,29 @@ namespace SetupTv.Sections
       // label18
       // 
       this.label18.AutoSize = true;
-      this.label18.Location = new System.Drawing.Point(6, 18);
+      this.label18.Location = new System.Drawing.Point(9, 28);
+      this.label18.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label18.Name = "label18";
-      this.label18.Size = new System.Drawing.Size(200, 13);
+      this.label18.Size = new System.Drawing.Size(298, 20);
       this.label18.TabIndex = 20;
       this.label18.Text = "Folder where the tvguide.xml file is stored";
       // 
       // textBoxFolder
       // 
-      this.textBoxFolder.Location = new System.Drawing.Point(9, 54);
+      this.textBoxFolder.Location = new System.Drawing.Point(14, 83);
+      this.textBoxFolder.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.textBoxFolder.Name = "textBoxFolder";
-      this.textBoxFolder.Size = new System.Drawing.Size(330, 20);
+      this.textBoxFolder.Size = new System.Drawing.Size(493, 26);
       this.textBoxFolder.TabIndex = 19;
       // 
       // tabMappings
       // 
       this.tabMappings.Controls.Add(this.panel2);
-      this.tabMappings.Location = new System.Drawing.Point(4, 22);
+      this.tabMappings.Location = new System.Drawing.Point(4, 29);
+      this.tabMappings.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.tabMappings.Name = "tabMappings";
-      this.tabMappings.Padding = new System.Windows.Forms.Padding(3);
-      this.tabMappings.Size = new System.Drawing.Size(475, 424);
+      this.tabMappings.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.tabMappings.Size = new System.Drawing.Size(716, 659);
       this.tabMappings.TabIndex = 1;
       this.tabMappings.Text = "Mappings";
       this.tabMappings.UseVisualStyleBackColor = true;
@@ -435,9 +482,10 @@ namespace SetupTv.Sections
       this.panel2.Controls.Add(this.groupBox2);
       this.panel2.Controls.Add(this.dataGridChannelMappings);
       this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.panel2.Location = new System.Drawing.Point(3, 3);
+      this.panel2.Location = new System.Drawing.Point(4, 5);
+      this.panel2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.panel2.Name = "panel2";
-      this.panel2.Size = new System.Drawing.Size(469, 418);
+      this.panel2.Size = new System.Drawing.Size(708, 649);
       this.panel2.TabIndex = 0;
       // 
       // groupBox2
@@ -455,18 +503,21 @@ namespace SetupTv.Sections
       this.groupBox2.Controls.Add(this.label19);
       this.groupBox2.Controls.Add(this.buttonSave);
       this.groupBox2.Controls.Add(this.buttonRefresh);
-      this.groupBox2.Location = new System.Drawing.Point(6, 3);
+      this.groupBox2.Location = new System.Drawing.Point(13, 5);
+      this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(454, 85);
+      this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.groupBox2.Size = new System.Drawing.Size(681, 131);
       this.groupBox2.TabIndex = 5;
       this.groupBox2.TabStop = false;
       // 
       // checkBoxLoadRadio
       // 
       this.checkBoxLoadRadio.AutoSize = true;
-      this.checkBoxLoadRadio.Location = new System.Drawing.Point(117, 32);
+      this.checkBoxLoadRadio.Location = new System.Drawing.Point(176, 49);
+      this.checkBoxLoadRadio.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.checkBoxLoadRadio.Name = "checkBoxLoadRadio";
-      this.checkBoxLoadRadio.Size = new System.Drawing.Size(122, 17);
+      this.checkBoxLoadRadio.Size = new System.Drawing.Size(178, 24);
       this.checkBoxLoadRadio.TabIndex = 14;
       this.checkBoxLoadRadio.Text = "Load radio channels";
       this.checkBoxLoadRadio.UseVisualStyleBackColor = true;
@@ -474,25 +525,28 @@ namespace SetupTv.Sections
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(18, 58);
+      this.label2.Location = new System.Drawing.Point(27, 89);
+      this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(39, 13);
+      this.label2.Size = new System.Drawing.Size(58, 20);
       this.label2.TabIndex = 13;
       this.label2.Text = "Group:";
       // 
       // comboBoxGroup
       // 
       this.comboBoxGroup.FormattingEnabled = true;
-      this.comboBoxGroup.Location = new System.Drawing.Point(63, 55);
+      this.comboBoxGroup.Location = new System.Drawing.Point(94, 85);
+      this.comboBoxGroup.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.comboBoxGroup.Name = "comboBoxGroup";
-      this.comboBoxGroup.Size = new System.Drawing.Size(141, 21);
+      this.comboBoxGroup.Size = new System.Drawing.Size(210, 28);
       this.comboBoxGroup.TabIndex = 12;
       // 
       // buttonExport
       // 
-      this.buttonExport.Location = new System.Drawing.Point(300, 14);
+      this.buttonExport.Location = new System.Drawing.Point(450, 22);
+      this.buttonExport.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.buttonExport.Name = "buttonExport";
-      this.buttonExport.Size = new System.Drawing.Size(58, 23);
+      this.buttonExport.Size = new System.Drawing.Size(87, 35);
       this.buttonExport.TabIndex = 11;
       this.buttonExport.Text = "Export";
       this.buttonExport.UseVisualStyleBackColor = true;
@@ -501,9 +555,10 @@ namespace SetupTv.Sections
       // checkBoxPartialMatch
       // 
       this.checkBoxPartialMatch.AutoSize = true;
-      this.checkBoxPartialMatch.Location = new System.Drawing.Point(117, 14);
+      this.checkBoxPartialMatch.Location = new System.Drawing.Point(176, 22);
+      this.checkBoxPartialMatch.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.checkBoxPartialMatch.Name = "checkBoxPartialMatch";
-      this.checkBoxPartialMatch.Size = new System.Drawing.Size(87, 17);
+      this.checkBoxPartialMatch.Size = new System.Drawing.Size(127, 24);
       this.checkBoxPartialMatch.TabIndex = 9;
       this.checkBoxPartialMatch.Text = "Partial match";
       this.checkBoxPartialMatch.UseVisualStyleBackColor = true;
@@ -511,49 +566,55 @@ namespace SetupTv.Sections
       // textBoxAction
       // 
       this.textBoxAction.BackColor = System.Drawing.SystemColors.Control;
-      this.textBoxAction.Location = new System.Drawing.Point(334, 40);
+      this.textBoxAction.Location = new System.Drawing.Point(501, 62);
+      this.textBoxAction.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.textBoxAction.Name = "textBoxAction";
-      this.textBoxAction.Size = new System.Drawing.Size(105, 20);
+      this.textBoxAction.Size = new System.Drawing.Size(156, 26);
       this.textBoxAction.TabIndex = 8;
       // 
       // label22
       // 
       this.label22.AutoSize = true;
-      this.label22.Location = new System.Drawing.Point(277, 63);
+      this.label22.Location = new System.Drawing.Point(416, 97);
+      this.label22.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label22.Name = "label22";
-      this.label22.Size = new System.Drawing.Size(51, 13);
+      this.label22.Size = new System.Drawing.Size(76, 20);
       this.label22.TabIndex = 7;
       this.label22.Text = "Progress:";
       // 
       // label21
       // 
       this.label21.AutoSize = true;
-      this.label21.Location = new System.Drawing.Point(279, 43);
+      this.label21.Location = new System.Drawing.Point(418, 66);
+      this.label21.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label21.Name = "label21";
-      this.label21.Size = new System.Drawing.Size(40, 13);
+      this.label21.Size = new System.Drawing.Size(58, 20);
       this.label21.TabIndex = 6;
       this.label21.Text = "Action:";
       // 
       // progressBar1
       // 
-      this.progressBar1.Location = new System.Drawing.Point(334, 66);
+      this.progressBar1.Location = new System.Drawing.Point(501, 102);
+      this.progressBar1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(106, 10);
+      this.progressBar1.Size = new System.Drawing.Size(159, 15);
       this.progressBar1.TabIndex = 5;
       // 
       // label19
       // 
       this.label19.AutoSize = true;
-      this.label19.Location = new System.Drawing.Point(13, 11);
+      this.label19.Location = new System.Drawing.Point(20, 17);
+      this.label19.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label19.Name = "label19";
-      this.label19.Size = new System.Drawing.Size(0, 13);
+      this.label19.Size = new System.Drawing.Size(0, 20);
       this.label19.TabIndex = 1;
       // 
       // buttonSave
       // 
-      this.buttonSave.Location = new System.Drawing.Point(379, 14);
+      this.buttonSave.Location = new System.Drawing.Point(568, 22);
+      this.buttonSave.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.buttonSave.Name = "buttonSave";
-      this.buttonSave.Size = new System.Drawing.Size(60, 23);
+      this.buttonSave.Size = new System.Drawing.Size(90, 35);
       this.buttonSave.TabIndex = 4;
       this.buttonSave.Text = "Save";
       this.buttonSave.UseVisualStyleBackColor = true;
@@ -561,9 +622,10 @@ namespace SetupTv.Sections
       // 
       // buttonRefresh
       // 
-      this.buttonRefresh.Location = new System.Drawing.Point(19, 14);
+      this.buttonRefresh.Location = new System.Drawing.Point(28, 22);
+      this.buttonRefresh.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.buttonRefresh.Name = "buttonRefresh";
-      this.buttonRefresh.Size = new System.Drawing.Size(87, 23);
+      this.buttonRefresh.Size = new System.Drawing.Size(130, 35);
       this.buttonRefresh.TabIndex = 3;
       this.buttonRefresh.Text = "Load/Refresh";
       this.buttonRefresh.UseVisualStyleBackColor = true;
@@ -577,6 +639,7 @@ namespace SetupTv.Sections
       this.dataGridChannelMappings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.dataGridChannelMappings.ColumnHeadersHeight = 34;
       this.dataGridChannelMappings.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
       this.dataGridChannelMappings.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Id,
@@ -584,33 +647,37 @@ namespace SetupTv.Sections
             this.guideChannel,
             this.matchType,
             this.ShowInGuide});
-      this.dataGridChannelMappings.Location = new System.Drawing.Point(6, 94);
+      this.dataGridChannelMappings.Location = new System.Drawing.Point(9, 145);
+      this.dataGridChannelMappings.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.dataGridChannelMappings.MultiSelect = false;
       this.dataGridChannelMappings.Name = "dataGridChannelMappings";
-      dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridChannelMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-      this.dataGridChannelMappings.Size = new System.Drawing.Size(454, 317);
+      dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.dataGridChannelMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+      this.dataGridChannelMappings.RowHeadersWidth = 62;
+      this.dataGridChannelMappings.Size = new System.Drawing.Size(685, 494);
       this.dataGridChannelMappings.TabIndex = 2;
       // 
       // Id
       // 
       this.Id.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
       this.Id.HeaderText = "Id";
+      this.Id.MinimumWidth = 8;
       this.Id.Name = "Id";
-      this.Id.Width = 41;
+      this.Id.Width = 59;
       // 
       // tuningChannel
       // 
       this.tuningChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
-      this.tuningChannel.DefaultCellStyle = dataGridViewCellStyle1;
+      dataGridViewCellStyle4.BackColor = System.Drawing.Color.White;
+      this.tuningChannel.DefaultCellStyle = dataGridViewCellStyle4;
       this.tuningChannel.HeaderText = "Tuning Channel";
+      this.tuningChannel.MinimumWidth = 8;
       this.tuningChannel.Name = "tuningChannel";
       this.tuningChannel.ReadOnly = true;
       this.tuningChannel.Resizable = System.Windows.Forms.DataGridViewTriState.True;
@@ -618,10 +685,11 @@ namespace SetupTv.Sections
       // guideChannel
       // 
       this.guideChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
-      this.guideChannel.DefaultCellStyle = dataGridViewCellStyle2;
+      dataGridViewCellStyle5.BackColor = System.Drawing.Color.White;
+      this.guideChannel.DefaultCellStyle = dataGridViewCellStyle5;
       this.guideChannel.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
       this.guideChannel.HeaderText = "Guide channel";
+      this.guideChannel.MinimumWidth = 8;
       this.guideChannel.Name = "guideChannel";
       this.guideChannel.Resizable = System.Windows.Forms.DataGridViewTriState.True;
       this.guideChannel.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
@@ -630,28 +698,31 @@ namespace SetupTv.Sections
       // 
       this.matchType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
       this.matchType.HeaderText = "*";
+      this.matchType.MinimumWidth = 8;
       this.matchType.Name = "matchType";
       this.matchType.ReadOnly = true;
       this.matchType.ToolTipText = "Type of match. White = already mapped, Green = exact, Yellow = partial, Red = non" +
     "e";
-      this.matchType.Width = 36;
+      this.matchType.Width = 51;
       // 
       // ShowInGuide
       // 
       this.ShowInGuide.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
       this.ShowInGuide.HeaderText = "Visible in Guide";
+      this.ShowInGuide.MinimumWidth = 8;
       this.ShowInGuide.Name = "ShowInGuide";
       this.ShowInGuide.ReadOnly = true;
       this.ShowInGuide.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-      this.ShowInGuide.Width = 104;
+      this.ShowInGuide.Width = 154;
       // 
       // tabRemote
       // 
       this.tabRemote.Controls.Add(this.panel3);
-      this.tabRemote.Location = new System.Drawing.Point(4, 22);
+      this.tabRemote.Location = new System.Drawing.Point(4, 29);
+      this.tabRemote.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.tabRemote.Name = "tabRemote";
-      this.tabRemote.Padding = new System.Windows.Forms.Padding(3);
-      this.tabRemote.Size = new System.Drawing.Size(475, 424);
+      this.tabRemote.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.tabRemote.Size = new System.Drawing.Size(716, 659);
       this.tabRemote.TabIndex = 2;
       this.tabRemote.Text = "Remote";
       this.tabRemote.UseVisualStyleBackColor = true;
@@ -660,6 +731,7 @@ namespace SetupTv.Sections
       // 
       this.panel3.AutoSize = true;
       this.panel3.BackColor = System.Drawing.Color.Transparent;
+      this.panel3.Controls.Add(this.cbRenameFileInZip);
       this.panel3.Controls.Add(this.groupBox4);
       this.panel3.Controls.Add(this.groupBox3);
       this.panel3.Controls.Add(this.label3);
@@ -667,10 +739,24 @@ namespace SetupTv.Sections
       this.panel3.Controls.Add(this.btnGetNow);
       this.panel3.Controls.Add(this.label37);
       this.panel3.Controls.Add(this.txtRemoteURL);
-      this.panel3.Location = new System.Drawing.Point(3, 3);
+      this.panel3.Location = new System.Drawing.Point(4, 5);
+      this.panel3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.panel3.Name = "panel3";
-      this.panel3.Size = new System.Drawing.Size(469, 418);
+      this.panel3.Size = new System.Drawing.Size(843, 643);
       this.panel3.TabIndex = 23;
+      // 
+      // cbRenameFileInZip
+      // 
+      this.cbRenameFileInZip.AutoSize = true;
+      this.cbRenameFileInZip.Location = new System.Drawing.Point(27, 180);
+      this.cbRenameFileInZip.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.cbRenameFileInZip.Name = "cbRenameFileInZip";
+      this.cbRenameFileInZip.Size = new System.Drawing.Size(471, 24);
+      this.cbRenameFileInZip.TabIndex = 35;
+      this.cbRenameFileInZip.Text = "Rename xml file present in ZIP during extracting to tvguide.xml";
+      this.toolTip1.SetToolTip(this.cbRenameFileInZip, resources.GetString("cbRenameFileInZip.ToolTip"));
+      this.cbRenameFileInZip.UseVisualStyleBackColor = true;
+      this.cbRenameFileInZip.CheckedChanged += new System.EventHandler(this.cbRenameFileInZip_CheckedChanged);
       // 
       // groupBox4
       // 
@@ -678,9 +764,11 @@ namespace SetupTv.Sections
       this.groupBox4.Controls.Add(this.lblLastTransferAt);
       this.groupBox4.Controls.Add(this.label33);
       this.groupBox4.Controls.Add(this.label36);
-      this.groupBox4.Location = new System.Drawing.Point(9, 248);
+      this.groupBox4.Location = new System.Drawing.Point(14, 438);
+      this.groupBox4.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(426, 92);
+      this.groupBox4.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.groupBox4.Size = new System.Drawing.Size(639, 142);
       this.groupBox4.TabIndex = 34;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "transfer status report:";
@@ -688,34 +776,38 @@ namespace SetupTv.Sections
       // lblTransferStatus
       // 
       this.lblTransferStatus.AutoSize = true;
-      this.lblTransferStatus.Location = new System.Drawing.Point(163, 52);
+      this.lblTransferStatus.Location = new System.Drawing.Point(244, 80);
+      this.lblTransferStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblTransferStatus.Name = "lblTransferStatus";
-      this.lblTransferStatus.Size = new System.Drawing.Size(0, 13);
+      this.lblTransferStatus.Size = new System.Drawing.Size(0, 20);
       this.lblTransferStatus.TabIndex = 22;
       // 
       // lblLastTransferAt
       // 
       this.lblLastTransferAt.AutoSize = true;
-      this.lblLastTransferAt.Location = new System.Drawing.Point(163, 28);
+      this.lblLastTransferAt.Location = new System.Drawing.Point(244, 43);
+      this.lblLastTransferAt.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblLastTransferAt.Name = "lblLastTransferAt";
-      this.lblLastTransferAt.Size = new System.Drawing.Size(0, 13);
+      this.lblLastTransferAt.Size = new System.Drawing.Size(0, 20);
       this.lblLastTransferAt.TabIndex = 21;
       // 
       // label33
       // 
       this.label33.AutoSize = true;
-      this.label33.Location = new System.Drawing.Point(17, 52);
+      this.label33.Location = new System.Drawing.Point(26, 80);
+      this.label33.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label33.Name = "label33";
-      this.label33.Size = new System.Drawing.Size(80, 13);
+      this.label33.Size = new System.Drawing.Size(120, 20);
       this.label33.TabIndex = 20;
       this.label33.Text = "Transfer status:";
       // 
       // label36
       // 
       this.label36.AutoSize = true;
-      this.label36.Location = new System.Drawing.Point(17, 28);
+      this.label36.Location = new System.Drawing.Point(26, 43);
+      this.label36.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label36.Name = "label36";
-      this.label36.Size = new System.Drawing.Size(80, 13);
+      this.label36.Size = new System.Drawing.Size(121, 20);
       this.label36.TabIndex = 17;
       this.label36.Text = "Last transfer at:";
       // 
@@ -730,9 +822,11 @@ namespace SetupTv.Sections
       this.groupBox3.Controls.Add(this.label24);
       this.groupBox3.Controls.Add(this.label25);
       this.groupBox3.Controls.Add(this.label26);
-      this.groupBox3.Location = new System.Drawing.Point(9, 116);
+      this.groupBox3.Location = new System.Drawing.Point(14, 234);
+      this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(426, 126);
+      this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.groupBox3.Size = new System.Drawing.Size(639, 194);
       this.groupBox3.TabIndex = 33;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Schedule:";
@@ -742,9 +836,10 @@ namespace SetupTv.Sections
       this.radioDownloadOnWakeUp.AutoSize = true;
       this.radioDownloadOnWakeUp.Enabled = false;
       this.radioDownloadOnWakeUp.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioDownloadOnWakeUp.Location = new System.Drawing.Point(20, 83);
+      this.radioDownloadOnWakeUp.Location = new System.Drawing.Point(30, 128);
+      this.radioDownloadOnWakeUp.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.radioDownloadOnWakeUp.Name = "radioDownloadOnWakeUp";
-      this.radioDownloadOnWakeUp.Size = new System.Drawing.Size(358, 17);
+      this.radioDownloadOnWakeUp.Size = new System.Drawing.Size(525, 24);
       this.radioDownloadOnWakeUp.TabIndex = 39;
       this.radioDownloadOnWakeUp.Text = "Force download when tvservice starts/resumes (but only once per day)";
       this.radioDownloadOnWakeUp.UseVisualStyleBackColor = true;
@@ -755,9 +850,10 @@ namespace SetupTv.Sections
       this.radioDownloadOnSchedule.Checked = true;
       this.radioDownloadOnSchedule.Enabled = false;
       this.radioDownloadOnSchedule.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioDownloadOnSchedule.Location = new System.Drawing.Point(20, 64);
+      this.radioDownloadOnSchedule.Location = new System.Drawing.Point(30, 98);
+      this.radioDownloadOnSchedule.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.radioDownloadOnSchedule.Name = "radioDownloadOnSchedule";
-      this.radioDownloadOnSchedule.Size = new System.Drawing.Size(112, 17);
+      this.radioDownloadOnSchedule.Size = new System.Drawing.Size(164, 24);
       this.radioDownloadOnSchedule.TabIndex = 38;
       this.radioDownloadOnSchedule.TabStop = true;
       this.radioDownloadOnSchedule.Text = "Scheduled at time:";
@@ -766,9 +862,10 @@ namespace SetupTv.Sections
       // chkScheduler
       // 
       this.chkScheduler.AutoSize = true;
-      this.chkScheduler.Location = new System.Drawing.Point(9, 19);
+      this.chkScheduler.Location = new System.Drawing.Point(14, 29);
+      this.chkScheduler.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.chkScheduler.Name = "chkScheduler";
-      this.chkScheduler.Size = new System.Drawing.Size(65, 17);
+      this.chkScheduler.Size = new System.Drawing.Size(94, 24);
       this.chkScheduler.TabIndex = 36;
       this.chkScheduler.Text = "Enabled";
       this.chkScheduler.UseVisualStyleBackColor = true;
@@ -777,9 +874,10 @@ namespace SetupTv.Sections
       // label27
       // 
       this.label27.AutoSize = true;
-      this.label27.Location = new System.Drawing.Point(17, 38);
+      this.label27.Location = new System.Drawing.Point(26, 58);
+      this.label27.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label27.Name = "label27";
-      this.label27.Size = new System.Drawing.Size(399, 13);
+      this.label27.Size = new System.Drawing.Size(589, 20);
       this.label27.TabIndex = 35;
       this.label27.Text = "The scheduler will download the remote tvguide.xml once a day at the time defined" +
     ".";
@@ -787,50 +885,56 @@ namespace SetupTv.Sections
       // dateTimePickerScheduler
       // 
       this.dateTimePickerScheduler.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-      this.dateTimePickerScheduler.Location = new System.Drawing.Point(157, 60);
+      this.dateTimePickerScheduler.Location = new System.Drawing.Point(236, 92);
+      this.dateTimePickerScheduler.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.dateTimePickerScheduler.Name = "dateTimePickerScheduler";
       this.dateTimePickerScheduler.ShowUpDown = true;
-      this.dateTimePickerScheduler.Size = new System.Drawing.Size(77, 20);
+      this.dateTimePickerScheduler.Size = new System.Drawing.Size(114, 26);
       this.dateTimePickerScheduler.TabIndex = 34;
       // 
       // label20
       // 
       this.label20.AutoSize = true;
-      this.label20.Location = new System.Drawing.Point(163, 97);
+      this.label20.Location = new System.Drawing.Point(244, 149);
+      this.label20.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label20.Name = "label20";
-      this.label20.Size = new System.Drawing.Size(0, 13);
+      this.label20.Size = new System.Drawing.Size(0, 20);
       this.label20.TabIndex = 24;
       // 
       // label24
       // 
       this.label24.AutoSize = true;
-      this.label24.Location = new System.Drawing.Point(163, 75);
+      this.label24.Location = new System.Drawing.Point(244, 115);
+      this.label24.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label24.Name = "label24";
-      this.label24.Size = new System.Drawing.Size(0, 13);
+      this.label24.Size = new System.Drawing.Size(0, 20);
       this.label24.TabIndex = 23;
       // 
       // label25
       // 
       this.label25.AutoSize = true;
-      this.label25.Location = new System.Drawing.Point(163, 52);
+      this.label25.Location = new System.Drawing.Point(244, 80);
+      this.label25.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label25.Name = "label25";
-      this.label25.Size = new System.Drawing.Size(0, 13);
+      this.label25.Size = new System.Drawing.Size(0, 20);
       this.label25.TabIndex = 22;
       // 
       // label26
       // 
       this.label26.AutoSize = true;
-      this.label26.Location = new System.Drawing.Point(163, 28);
+      this.label26.Location = new System.Drawing.Point(244, 43);
+      this.label26.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label26.Name = "label26";
-      this.label26.Size = new System.Drawing.Size(0, 13);
+      this.label26.Size = new System.Drawing.Size(0, 20);
       this.label26.TabIndex = 21;
       // 
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(6, 88);
+      this.label3.Location = new System.Drawing.Point(9, 135);
+      this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(374, 13);
+      this.label3.Size = new System.Drawing.Size(553, 20);
       this.label3.TabIndex = 30;
       this.label3.Text = "The retrieved file will be copied to the local folder specified in the \'Settings\'" +
     " tab";
@@ -839,17 +943,19 @@ namespace SetupTv.Sections
       // 
       this.label32.AutoSize = true;
       this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label32.Location = new System.Drawing.Point(6, 35);
+      this.label32.Location = new System.Drawing.Point(9, 54);
+      this.label32.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label32.Name = "label32";
-      this.label32.Size = new System.Drawing.Size(186, 13);
+      this.label32.Size = new System.Drawing.Size(269, 20);
       this.label32.TabIndex = 29;
       this.label32.Text = "Specify a valid FTP/HTTP URL";
       // 
       // btnGetNow
       // 
-      this.btnGetNow.Location = new System.Drawing.Point(345, 51);
+      this.btnGetNow.Location = new System.Drawing.Point(518, 78);
+      this.btnGetNow.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.btnGetNow.Name = "btnGetNow";
-      this.btnGetNow.Size = new System.Drawing.Size(62, 23);
+      this.btnGetNow.Size = new System.Drawing.Size(93, 35);
       this.btnGetNow.TabIndex = 21;
       this.btnGetNow.Text = "Get Now!";
       this.btnGetNow.UseVisualStyleBackColor = true;
@@ -858,17 +964,19 @@ namespace SetupTv.Sections
       // label37
       // 
       this.label37.AutoSize = true;
-      this.label37.Location = new System.Drawing.Point(6, 18);
+      this.label37.Location = new System.Drawing.Point(9, 28);
+      this.label37.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label37.Name = "label37";
-      this.label37.Size = new System.Drawing.Size(237, 13);
+      this.label37.Size = new System.Drawing.Size(354, 20);
       this.label37.TabIndex = 20;
       this.label37.Text = "Remote folder where the tvguide.xml file is stored";
       // 
       // txtRemoteURL
       // 
-      this.txtRemoteURL.Location = new System.Drawing.Point(55, 54);
+      this.txtRemoteURL.Location = new System.Drawing.Point(82, 83);
+      this.txtRemoteURL.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.txtRemoteURL.Name = "txtRemoteURL";
-      this.txtRemoteURL.Size = new System.Drawing.Size(284, 20);
+      this.txtRemoteURL.Size = new System.Drawing.Size(424, 26);
       this.txtRemoteURL.TabIndex = 19;
       this.txtRemoteURL.Text = "http://www.mysite.com/TVguide.xml";
       // 
@@ -913,23 +1021,14 @@ namespace SetupTv.Sections
       this.saveFileExport.Title = "Export the mapped guidechannels";
       this.saveFileExport.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileExport_FileOk);
       // 
-      // cbNoTextMod
-      // 
-      this.cbNoTextMod.AutoSize = true;
-      this.cbNoTextMod.Location = new System.Drawing.Point(195, 121);
-      this.cbNoTextMod.Name = "cbNoTextMod";
-      this.cbNoTextMod.Size = new System.Drawing.Size(124, 17);
-      this.cbNoTextMod.TabIndex = 31;
-      this.cbNoTextMod.Text = "No text modifications";
-      this.cbNoTextMod.UseVisualStyleBackColor = true;
-      // 
       // XmlTvSetup
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
+      this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.Name = "XmlTvSetup";
-      this.Size = new System.Drawing.Size(483, 450);
+      this.Size = new System.Drawing.Size(724, 692);
       this.Load += new System.EventHandler(this.XmlSetup_Load);
       this.tabControl1.ResumeLayout(false);
       this.tabSettings.ResumeLayout(false);
@@ -1037,7 +1136,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPRadioButton radioDownloadOnWakeUp;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioDownloadOnSchedule;
     private System.Windows.Forms.CheckBox cbNoTextMod;
-
-
+    private System.Windows.Forms.CheckBox cbRenameFileInZip;
+    private System.Windows.Forms.ToolTip toolTip1;
   }
 }

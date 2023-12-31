@@ -142,7 +142,7 @@ namespace MediaPortal.GUI.Video
           for (int i = 0; i < results.Rows.Count; i++)
           {
             IMDBMovie movie = new IMDBMovie();
-            movie.Year = (int)Math.Floor(0.5d + Double.Parse(DatabaseUtility.Get(results, i, "iYear")));
+            movie.Year = DatabaseUtility.GetAsInt(results, i, "iYear");
             movies.Add(movie);
           }
           return movies;

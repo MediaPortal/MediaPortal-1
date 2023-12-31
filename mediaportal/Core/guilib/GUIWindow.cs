@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2019 Team MediaPortal
+#region Copyright (C) 2005-2020 Team MediaPortal
 
-// Copyright (C) 2005-2019 Team MediaPortal
+// Copyright (C) 2005-2029 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,7 +21,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -29,6 +28,7 @@ using System.Threading;
 using System.Windows.Media.Animation;
 using System.Windows.Serialization;
 using System.Xml;
+
 using MediaPortal.Player;
 using MediaPortal.ExtensionMethods;
 
@@ -187,6 +187,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_TV_TUNING_DETAILS = 3012, // gemx 
       WINDOW_PSCLIENTPLUGIN_UNATTENDED = 6666, // dero
       WINDOW_WIKIPEDIA = 4711,
+      WINDOW_PICTURE_EXIF = 5000, // ajs - Full EXIF View window
       WINDOW_TELETEXT = 7700,
       WINDOW_FULLSCREEN_TELETEXT = 7701,
       WINDOW_DIALOG_TEXT = 7900,
@@ -575,6 +576,11 @@ namespace MediaPortal.GUI.Library
       {
         // Load the XML file
         XmlDocument doc = new XmlDocument();
+        if (!File.Exists(_windowXmlFileName)) 
+        {
+          isSkinXMLLoading = false;
+          return false;
+        }
         doc.Load(_windowXmlFileName);
         if (doc.DocumentElement == null)
         {
