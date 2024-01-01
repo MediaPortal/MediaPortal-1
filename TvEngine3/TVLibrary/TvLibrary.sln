@@ -28,11 +28,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerScheduler", "PowerScheduler", "{75FBB2E5-F82F-46C5-9128-667FAABA569A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ComSkipLauncher", "ComSkipLauncher", "{18BCE29C-F37B-437E-AA12-4B040DAAAB7D}"
-	ProjectSection(SolutionItems) = preProject
-		Plugins\AVMTuner\TvMovieSetup.cs = Plugins\AVMTuner\TvMovieSetup.cs
-		Plugins\AVMTuner\TvMovieSetup.Designer.cs = Plugins\AVMTuner\TvMovieSetup.Designer.cs
-		Plugins\AVMTuner\TvMovieSetup.resx = Plugins\AVMTuner\TvMovieSetup.resx
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PersonalTVGuide", "PersonalTVGuide", "{64432931-62EA-45F2-9D6C-A18231193A33}"
 EndProject
