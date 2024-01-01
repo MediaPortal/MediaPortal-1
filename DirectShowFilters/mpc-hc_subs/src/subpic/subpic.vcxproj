@@ -23,6 +23,7 @@
     <RootNamespace>SubPic</RootNamespace>
     <Keyword>MFCProj</Keyword>
     <ProjectName>SubPic</ProjectName>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="..\platform.props" />

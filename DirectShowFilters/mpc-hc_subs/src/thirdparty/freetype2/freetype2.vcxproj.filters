@@ -135,17 +135,11 @@
     <ClCompile Include="freetype2\src\winfonts\winfnt.c">
       <Filter>Source Files\FT_MODULES</Filter>
     </ClCompile>
-    <ClCompile Include="freetype2\src\base\ftobjs.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="freetype2\src\sdf\sdf.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="freetype2\src\sfnt\ttsvg.c">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="freetype2\src\svg\ftsvg.c">
-      <Filter>Source Files\FT_MODULES</Filter>
     </ClCompile>
     <ClCompile Include="freetype2\src\svg\svg.c">
       <Filter>Source Files\FT_MODULES</Filter>
