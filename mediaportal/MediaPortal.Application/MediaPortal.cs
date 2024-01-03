@@ -3250,6 +3250,9 @@ public class MediaPortalApp : D3D, IRender
   // Register shell notifications to wndproc
     Notifications.RegisterChangeNotify(this.Handle, ShellNotifications.CSIDL.CSIDL_DESKTOP, true);
 
+    //Register MediaInfo service
+    GlobalServiceProvider.Add<IMediaInfoService>(new MediaPortal.MediaInfoService.Database.MediaInfoService());
+
     // Initializing input devices...
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(63));
     Log.Info("Main: Initializing Input Devices");
