@@ -65,6 +65,8 @@ namespace TvDatabase
     [TableColumn("CAM", NotNull = true)] private bool caModule;
     [TableColumn("NetProvider", NotNull = true)] private int NetProvider;
 
+    [TableColumn("symbolRateMultiplier", NotNull = true)] private int _SymbolRateMultiplier;
+
     #endregion
 
     #region Constructors
@@ -380,6 +382,19 @@ namespace TvDatabase
       {
         isChanged |= NetProvider != value;
         NetProvider = value;
+      }
+    }
+
+    public int SymbolRateMultiplier
+    {
+      get { return this._SymbolRateMultiplier; }
+      set
+      {
+        if (value < 0)
+          value = 0;
+
+        this.isChanged |= this._SymbolRateMultiplier != value;
+        this._SymbolRateMultiplier = value;
       }
     }
 

@@ -130,6 +130,12 @@ namespace TvDatabase
       //
       Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true, 0, "", 0,
                               0, false, true, false, (int)TvDatabase.DbNetworkProvider.Generic);
+
+      //Set symbolrate multiplier for some cards
+      if (name.StartsWith("Hauppauge WinTV-soloHD DVBC", StringComparison.CurrentCultureIgnoreCase)
+         || name.StartsWith("Hauppauge WinTV-dualHD DVBC Tuner", StringComparison.CurrentCultureIgnoreCase))
+        card.SymbolRateMultiplier = 1000;
+
       newCard.Persist();
       return newCard;
     }

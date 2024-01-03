@@ -66,6 +66,17 @@ namespace SetupTv.Sections
         checkBoxAllowEpgGrab.Enabled = true;
       }
 
+      if (_cardType == "DvbC")
+      {
+        this.checkBoxSrMultiply.Enabled = true;
+        this.checkBoxSrMultiply.Checked = this._card.SymbolRateMultiplier > 0;
+      }
+      else
+      {
+        this.checkBoxSrMultiply.Enabled = false;
+        this.checkBoxSrMultiply.Checked = false;
+      }
+
       IList<CardGroupMap> GrpList = _card.ReferringCardGroupMap();
       if (GrpList.Count != 0)
       {
@@ -133,6 +144,11 @@ namespace SetupTv.Sections
     private void checkBoxCAMenabled_CheckedChanged(object sender, EventArgs e)
     {
       setCAMLimitVisibility();
+    }
+
+    private void checkBoxSrMultiply_CheckedChanged(object sender, EventArgs e)
+    {
+      this._card.SymbolRateMultiplier = this.checkBoxSrMultiply.Checked ? 1000 : 0;
     }
   }
 }
