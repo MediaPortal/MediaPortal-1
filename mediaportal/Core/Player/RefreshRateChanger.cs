@@ -1022,6 +1022,20 @@ namespace MediaPortal.Player
           {
             fps = tvFPS[0];
           }
+
+          Log.Info("RefreshRateChanger.AdaptRefreshRate: Scantype on file {0} is {1}", strFile, g_Player.MediaInfo.ScanType);
+
+          if (g_Player.MediaInfo.IsInterlaced)
+          {
+            Log.Info("RefreshRateChanger.AdaptRefreshRate: Interlacing detected on file {0}. Fps is {1}", strFile, fps);
+
+            if (fps == 25.00)
+              fps = 50.00;
+            else if (fps == 29.97)
+              fps = 59.97;
+            else if (fps == 30.00)
+              fps = 60.00;
+          }
         }
         else
         {

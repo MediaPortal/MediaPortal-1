@@ -43,7 +43,7 @@ jobs:
         git submodule update --init --recursive
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
         languages: csharp
 
@@ -54,4 +54,4 @@ jobs:
       shell: cmd
       
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
