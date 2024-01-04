@@ -7,8 +7,20 @@ on:
       - master
     # Ignore all Tags / Release
     tags-ignore:
-      - '**'   
+      - '**'
+
   workflow_call:
+    inputs:
+      retention-logs:
+        description: "Retention Period for Log files. Default is 1"
+        default: 3
+        required: false
+        type: number
+      retention-build:
+        description: "Retention Period for Setup files. Default is 90"
+        default: 90
+        required: false
+        type: number
 
 jobs:
   build:
@@ -62,7 +74,7 @@ jobs:
         name: Build result file ${{ matrix.architecture }}
         path: |
           ${{ github.workspace }}\Build\BuildFullInstaller.log
-        retention-days: 3
+        retention-days: ${{ inputs.retention-logs }}
 
     - name: Upload Artifact / Mediaportal setup file
       uses: actions/upload-artifact@v4
@@ -71,4 +83,5 @@ jobs:
         name: Mediaportal setup file ${{ matrix.architecture }}
         path: |
           ${{ github.workspace }}\Release\MediaPortalSetup_*.exe
+        retention-days: ${{ inputs.retention-build }}
         if-no-files-found: error
