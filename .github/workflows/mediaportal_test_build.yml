@@ -7,7 +7,8 @@ on:
       - 'MP1.**_Test**'
     # Ignore all Tags / Release
     tags-ignore:
-      - '**'   
+      - '**'
+
   workflow_call:
     inputs:
       retention-logs:
