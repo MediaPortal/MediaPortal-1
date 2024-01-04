@@ -74,7 +74,7 @@ jobs:
         name: Build result file ${{ matrix.architecture }}
         path: |
           ${{ github.workspace }}\Build\BuildFullInstaller.log
-        retention-days: ${{ inputs.retention-logs }}
+        retention-days: ${{ inputs.retention-logs || 3 }}
 
     - name: Upload Artifact / Mediaportal setup file
       uses: actions/upload-artifact@v4
@@ -83,5 +83,5 @@ jobs:
         name: Mediaportal setup file ${{ matrix.architecture }}
         path: |
           ${{ github.workspace }}\Release\MediaPortalSetup_*.exe
-        retention-days: ${{ inputs.retention-build }}
+        retention-days: ${{ inputs.retention-build || 90 }}
         if-no-files-found: error
