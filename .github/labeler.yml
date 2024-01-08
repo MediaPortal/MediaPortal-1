@@ -1,0 +1,8 @@
+critical:
+    - '(critical|urgent)'
+enhancement:
+    - 'enhancement'
+TV:
+    - '(TV|TVE)'
+MPE:
+    - 'MPE'
