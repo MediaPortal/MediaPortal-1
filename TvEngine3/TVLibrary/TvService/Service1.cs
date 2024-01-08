@@ -463,6 +463,7 @@ namespace TvService
       public int time;
       public int pt_x;
       public int pt_y;
+      public int lPrivate;
     }
 
     [DllImport("user32.dll", CharSet = CharSet.Ansi, ExactSpelling = true)]

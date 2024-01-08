@@ -434,7 +434,9 @@ namespace TvLibrary.Implementations.DVB
     public void CloseCI()
     {
       Log.Log.Debug("KNC: Disable CI");
-      KNCBDA_CI_Disable(m_iDeviceIndex);
+
+      if (m_bIsKNC)
+        KNCBDA_CI_Disable(m_iDeviceIndex);
     }
 
     /// <summary>
