@@ -155,7 +155,7 @@ namespace MediaPortal.MediaInfoService.Database
         Log.Debug("[MediaInfoDatabaseSqlLite][Get] File fullpath: '{0}'", strMediaFullPath);
 
         if (string.IsNullOrWhiteSpace(strMediaFullPath) || !File.Exists(strMediaFullPath))
-          return mi;
+          goto exit;
 
         bool bUseDb;
         VideoFormatEnum videoType = getVideoType(strMediaFullPath);
@@ -195,14 +195,14 @@ namespace MediaPortal.MediaInfoService.Database
         }
 
         if (!bUseDb)
-          return mi;
+          goto exit;
 
         bool bLocked = false;
         Monitor.Enter(typeof(MediaInfoDatabaseSqlLite), ref bLocked);
         try
         {
           if (this._db == null)
-            return mi;
+            goto exit;
 
           Monitor.Exit(typeof(MediaInfoDatabaseSqlLite));
           bLocked = false;
@@ -246,13 +246,13 @@ namespace MediaPortal.MediaInfoService.Database
                   DateTime.Now.ToUniversalTime().Ticks, DatabaseUtility.GetAsInt(result, 0, "id"));
                 this._db.Execute(strSQL);
 
-                return mi;
+                goto exit;
               }
               catch (Exception ex)
               {
                 Log.Error("[MediaInfoDatabaseSqlLite][Get] Exception:{0} stack:{1}", ex.Message, ex.StackTrace);
                 mi = null;
-                return mi;
+                goto exit;
               }
             }
 
@@ -460,7 +460,7 @@ namespace MediaPortal.MediaInfoService.Database
                 #endregion
 
                 Log.Debug("[MediaInfoDatabaseSqlLite][Get] Database record created for the file: '{0}'", strMediaFullPath);
-                return mi;
+                goto exit;
               }
               catch (Exception ex)
               {
@@ -474,7 +474,7 @@ namespace MediaPortal.MediaInfoService.Database
             else
               Log.Error("[MediaInfoDatabaseSqlLite][Get] Failed to retrieve MediaInfo for the file: '{0}'", strMediaFullPath);
 
-            return mi;
+            goto exit;
           }
           else
             Log.Error("[MediaInfoDatabaseSqlLite][Get] Failed to retrieve serial number for the file: '{0}'", strMediaFullPath);
@@ -496,6 +496,7 @@ namespace MediaPortal.MediaInfoService.Database
           mi = new MediaInfoWrapper(strMediaFullPath, logger);
       }
 
+exit:
       return mi;
     }
 
