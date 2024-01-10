@@ -80,7 +80,8 @@ namespace MpeInstaller.Controls
       this.isInstalled = isInstalled;
       this.meetsAllDependencies = !package.CheckDependency(true);
 
-      if (isInstalled) UpdatePackage = MpeCore.MpeInstaller.KnownExtensions.GetUpdate(package);
+      if (isInstalled)
+        UpdatePackage = MpeCore.MpeInstaller.KnownExtensions.GetUpdate(package, ApplicationSettings.Instance.PlatformCompatibilityCheck);
 
       extensionControlCollapsed.Initialize(
         package.GeneralInfo.Name, 

@@ -83,7 +83,7 @@ namespace MpeInstaller
         else if (args.UninstallPackage)
         {
           if (string.IsNullOrEmpty(args.PackageID)) return;
-          PackageClass pc = MpeCore.MpeInstaller.InstalledExtensions.Get(args.PackageID);
+          PackageClass pc = MpeCore.MpeInstaller.InstalledExtensions.Get(args.PackageID, false);
           if (pc == null) return;
 
           UnInstall dlg = new UnInstall();
@@ -124,8 +124,8 @@ namespace MpeInstaller
           case CommandEnum.Install:
             {
               PackageClass packageClass = MpeCore.MpeInstaller.KnownExtensions.Get(item.TargetId,
-                                                                                   item.TargetVersion.
-                                                                                     ToString());
+                                                                                   item.TargetVersion.ToString(),
+                                                                                    ApplicationSettings.Instance.PlatformCompatibilityCheck);
               if (packageClass == null)
                 continue;
               splashScreen.SetInfo("Installing " + packageClass.GeneralInfo.Name);
@@ -135,7 +135,7 @@ namespace MpeInstaller
             break;
           case CommandEnum.Uninstall:
             {
-              PackageClass packageClass = MpeCore.MpeInstaller.InstalledExtensions.Get(item.TargetId);
+              PackageClass packageClass = MpeCore.MpeInstaller.InstalledExtensions.Get(item.TargetId, false);
               if (packageClass == null)
                 continue;
               splashScreen.SetInfo("UnInstalling " + packageClass.GeneralInfo.Name);
@@ -229,6 +229,11 @@ namespace MpeInstaller
         catch { }
         return;
       }
+
+      //Check for platform compatibility
+      if (!pak.CheckPlatformCompatibility())
+        return;
+
       if (!pak.CheckDependency(false))
       {
         if (MessageBox.Show("Dependency check error! Install aborted!\nWould you like to view more details?", pak.GeneralInfo.Name,
@@ -263,7 +268,7 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
           MessageBoxIcon.Exclamation) != DialogResult.Yes)
         return;
       this.Hide();
-      packageClass = MpeCore.MpeInstaller.InstalledExtensions.Get(packageClass.GeneralInfo.Id);
+      packageClass = MpeCore.MpeInstaller.InstalledExtensions.Get(packageClass.GeneralInfo.Id, false);
       if (packageClass != null)
       {
         if (pak.GeneralInfo.Params[ParamNamesConst.FORCE_TO_UNINSTALL_ON_UPDATE].GetValueAsBool())
@@ -370,7 +375,7 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
       var updatelist = new Dictionary<PackageClass, PackageClass>();
       foreach (PackageClass packageClass in MpeCore.MpeInstaller.InstalledExtensions.Items)
       {
-        PackageClass update = MpeCore.MpeInstaller.KnownExtensions.GetUpdate(packageClass);
+        PackageClass update = MpeCore.MpeInstaller.KnownExtensions.GetUpdate(packageClass, ApplicationSettings.Instance.PlatformCompatibilityCheck);
         if (update == null)
           continue;
         updatelist.Add(packageClass, update);
@@ -575,7 +580,7 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
 
       if (pak.CheckDependency(false))
       {
-        PackageClass installedPak = MpeCore.MpeInstaller.InstalledExtensions.Get(pak.GeneralInfo.Id);
+        PackageClass installedPak = MpeCore.MpeInstaller.InstalledExtensions.Get(pak.GeneralInfo.Id, false);
         if (installedPak != null)
         {
           if (pak.GeneralInfo.Params[ParamNamesConst.FORCE_TO_UNINSTALL_ON_UPDATE].GetValueAsBool())

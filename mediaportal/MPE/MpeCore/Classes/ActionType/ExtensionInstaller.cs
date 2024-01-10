@@ -79,7 +79,7 @@ namespace MpeCore.Classes.ActionType
       }
 
       // check if there is already an installed version with a higher version than the embedded
-      PackageClass installedPak = MpeInstaller.InstalledExtensions.Get(embeddedPackage != null ? embeddedPackage.GeneralInfo.Id : actionItem.Params[Const_Guid].Value);
+      PackageClass installedPak = MpeInstaller.InstalledExtensions.Get(embeddedPackage != null ? embeddedPackage.GeneralInfo.Id : actionItem.Params[Const_Guid].Value, false);
       if (installedPak != null && embeddedPackage != null && installedPak.GeneralInfo.Version.CompareTo(embeddedPackage.GeneralInfo.Version) >= 0)
       {
           return SectionResponseEnum.Ok;
@@ -92,14 +92,14 @@ namespace MpeCore.Classes.ActionType
       {
         // we don't want incompatible versions
         MpeInstaller.KnownExtensions.HideByDependencies();
-        PackageClass knownPackage = MpeInstaller.KnownExtensions.Get(actionItem.Params[Const_Guid].Value);
+        PackageClass knownPackage = MpeInstaller.KnownExtensions.Get(actionItem.Params[Const_Guid].Value, ApplicationSettings.Instance.PlatformCompatibilityCheck);
         if (knownPackage == null && (DateTime.Now - ApplicationSettings.Instance.LastUpdate).TotalHours > 12)
         {
           // package unknown and last download of update info was over 12 hours ago -> update the list first
           ExtensionUpdateDownloader.UpdateList(false, false, null, null);
           // search for the package again - we don't want incompatible versions
           MpeInstaller.KnownExtensions.HideByDependencies();
-          knownPackage = MpeInstaller.KnownExtensions.Get(actionItem.Params[Const_Guid].Value);
+          knownPackage = MpeInstaller.KnownExtensions.Get(actionItem.Params[Const_Guid].Value, ApplicationSettings.Instance.PlatformCompatibilityCheck);
         }
         if (knownPackage != null)
         {
@@ -160,7 +160,7 @@ namespace MpeCore.Classes.ActionType
       if (!string.IsNullOrEmpty(actionItem.Params[Const_Loc].Value) && !File.Exists(actionItem.Params[Const_Loc].Value))
         return new ValidationResponse()
           { Valid = false, Message = "File not found " + actionItem.Params[Const_Loc].Value};
-      if (!string.IsNullOrEmpty(actionItem.Params[Const_Guid].Value) && MpeInstaller.KnownExtensions.Get(actionItem.Params[Const_Guid].Value) == null)
+      if (!string.IsNullOrEmpty(actionItem.Params[Const_Guid].Value) && MpeInstaller.KnownExtensions.Get(actionItem.Params[Const_Guid].Value, ApplicationSettings.Instance.PlatformCompatibilityCheck) == null)
         return new ValidationResponse() 
           { Valid = false, Message = "Extension with Id " + actionItem.Params[Const_Loc].Value + " unknown" };
       if (!string.IsNullOrEmpty(actionItem.ConditionGroup) && packageClass.Groups[actionItem.ConditionGroup] == null)

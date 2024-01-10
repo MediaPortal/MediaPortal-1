@@ -176,14 +176,14 @@ namespace MpeInstaller.Controls
 
     private void PopulateInstallBtn()
     {
-      ExtensionCollection collection = MpeCore.MpeInstaller.KnownExtensions.GetList(Package.GeneralInfo.Id);
+      ExtensionCollection collection = MpeCore.MpeInstaller.KnownExtensions.GetList(Package.GeneralInfo.Id, ApplicationSettings.Instance.PlatformCompatibilityCheck);
       collection.Add(Package);
-      foreach (PackageClass item in collection.GetList(Package.GeneralInfo.Id).Items)
+      foreach (PackageClass item in collection.GetList(Package.GeneralInfo.Id, ApplicationSettings.Instance.PlatformCompatibilityCheck).Items)
       {
         ToolStripMenuItem testToolStripMenuItem = new ToolStripMenuItem();
         testToolStripMenuItem.Text = string.Format("Version - {0} [{1}]", item.GeneralInfo.Version,
                                                    item.GeneralInfo.DevelopmentStatus);
-        PackageClass pak = MpeCore.MpeInstaller.InstalledExtensions.Get(Package.GeneralInfo.Id);
+        PackageClass pak = MpeCore.MpeInstaller.InstalledExtensions.Get(Package.GeneralInfo.Id, false);
         if (pak != null && item.GeneralInfo.Version.CompareTo(pak.GeneralInfo.Version) == 0)
         {
           testToolStripMenuItem.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold,
