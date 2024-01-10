@@ -295,12 +295,15 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
       pak.StartInstallWizard();
       RefreshListControls();
       pak.ZipProvider.Dispose();
-      try
+      if (packageClass != null)
       {
-        if (newPackageLoacation != packageClass.GeneralInfo.Location)
-          File.Delete(newPackageLoacation);
+        try
+        {
+          if (newPackageLoacation != packageClass.GeneralInfo.Location)
+            File.Delete(newPackageLoacation);
+        }
+        catch { }
       }
-      catch { }
       this.Show();
     }
 
