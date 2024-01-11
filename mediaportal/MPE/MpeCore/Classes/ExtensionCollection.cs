@@ -43,9 +43,9 @@ namespace MpeCore.Classes
     /// Gets the unique list of extensions with highest version
     /// </summary>
     /// <returns></returns>
-    public ExtensionCollection GetUniqueList()
+    public ExtensionCollection GetUniqueList(bool bPlatformCompatibleOnly)
     {
-      return GetUniqueList(null, false);
+      return GetUniqueList(null, bPlatformCompatibleOnly);
     }
 
     /// <summary>
