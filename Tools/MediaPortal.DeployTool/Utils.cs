@@ -395,21 +395,21 @@ namespace MediaPortal.DeployTool
       CheckUninstallString(clsid, true);
     }
 
-    public static RegistryKey GetUninstallKey(string clsid, bool bIncludeWow6432 = true)
+    public static RegistryKey GetUninstallKey(string clsid, bool writable, bool bIncludeWow6432)
     {
-      return LMOpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid, bIncludeWow6432: bIncludeWow6432);
+      return LMOpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid, writable, bIncludeWow6432);
     }
 
     public static string CheckUninstallString(string clsid, string section, bool bIncludeWow6432 = true)
     {
-      RegistryKey key = GetUninstallKey(clsid, bIncludeWow6432);
+      RegistryKey key = GetUninstallKey(clsid, false, bIncludeWow6432);
       if (key != null)
       {
-        string strSection = key.GetValue(section).ToString();
-        if (!string.IsNullOrEmpty(strSection))
+        object value = key.GetValue(section, string.Empty);
+        if (value is string && !string.IsNullOrEmpty((string)value))
         {
           key.Close();
-          return strSection;
+          return (string)value;
         }
         key.Close();
       }
@@ -429,11 +429,17 @@ namespace MediaPortal.DeployTool
 
       if (delete)
       {
-        RegistryKey key = GetUninstallKey(clsid, bIncludeWow6432);
-        if (key != null)
+        // SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\
+        RegistryKey keyUninstall = GetUninstallKey(null, true, bIncludeWow6432);
+        if (keyUninstall != null)
         {
-          key.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid);
-          key.Close();
+          RegistryKey keyCLSID = keyUninstall.OpenSubKey(clsid);
+          if (keyCLSID != null)
+          {
+            keyUninstall.DeleteSubKeyTree(clsid);
+            keyCLSID.Close();
+          }
+          keyUninstall.Close();
         }
       }
       return null;
@@ -446,7 +452,7 @@ namespace MediaPortal.DeployTool
         state = CheckState.NOT_INSTALLED
       };
 
-      RegistryKey key = GetUninstallKey(RegistryPath, false);
+      RegistryKey key = GetUninstallKey(RegistryPath, false, false);
       if (key != null)
       {
         int _IsInstalled = (int)key.GetValue(MementoSection, 0);
