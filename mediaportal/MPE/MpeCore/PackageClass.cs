@@ -733,8 +733,9 @@ namespace MpeCore
           Reset();
           return true;
         }
-        catch
+        catch (Exception e)
         {
+          MessageBox.Show("Exception " + e.Message);
           return false;
         }
       }

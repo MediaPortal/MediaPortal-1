@@ -102,6 +102,12 @@ namespace MpeCore.Classes
       Assembly pluginAssembly = null;
       try
       {
+        var pluginDllLocation = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "plugins", "Windows");
+        AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(delegate (object sender, ResolveEventArgs args)
+        {
+          var dllName = Path.Combine(pluginDllLocation, args.Name.Substring(0, args.Name.IndexOf(",")) + ".dll");
+          return Assembly.LoadFrom(dllName);
+        });
         pluginAssembly = Assembly.LoadFrom(pluginFile);
       }
       catch (BadImageFormatException)
@@ -141,14 +147,15 @@ namespace MpeCore.Classes
             {
               return true;
             }
-            if(type.IsClass && type.IsSubclassOf(typeof(GUIWindow)))
+            if (type.IsClass && type.IsSubclassOf(typeof(GUIWindow)))
             {
               return true;
             }
           }
         }
-        catch (Exception)
+        catch (Exception e)
         {
+          MessageBox.Show("Exception " + e.Message);
           return false;
         }
       }
