@@ -132,9 +132,9 @@ namespace TvDatabase
                               0, false, true, false, (int)TvDatabase.DbNetworkProvider.Generic);
 
       //Set symbolrate multiplier for some cards
-      if (name.StartsWith("Hauppauge WinTV-soloHD DVBC", StringComparison.CurrentCultureIgnoreCase)
-         || name.StartsWith("Hauppauge WinTV-dualHD DVBC Tuner", StringComparison.CurrentCultureIgnoreCase))
-        card.SymbolRateMultiplier = 1000;
+      if (name != null && (name.StartsWith("Hauppauge WinTV-soloHD DVBC", StringComparison.CurrentCultureIgnoreCase)
+         || name.StartsWith("Hauppauge WinTV-dualHD DVBC Tuner", StringComparison.CurrentCultureIgnoreCase)))
+        newCard.SymbolRateMultiplier = 1000;
 
       newCard.Persist();
       return newCard;
