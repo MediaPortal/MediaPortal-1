@@ -364,6 +364,10 @@ namespace MediaPortal.Player
         #endregion
 
         AnalyseStreams();
+
+        //Refresh changer (try to get video fps from decoder if needed)
+        RefreshRateChanger.AdaptRefreshRateFromVideoDecoder(strFile);
+                
         SelectSubtitles();
         SelectAudioLanguage();
         OnInitialized();
