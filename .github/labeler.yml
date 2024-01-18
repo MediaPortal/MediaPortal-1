@@ -1,12 +1,12 @@
 critical:
-    - '(critical|urgent)'
+    - '(Critical|critical|Urgent|urgent)'
 enhancement:
-    - 'enhancement'
+    - '(Enhancement|enhancement)'
 Engine:
-    - 'core'
+    - '(Core|core)'
 TV:
     - '(TV|TVE)'
 Tuning:
-    - 'tuning'
+    - '(Tuning|tuning)'
 MPE:
     - 'MPE'
