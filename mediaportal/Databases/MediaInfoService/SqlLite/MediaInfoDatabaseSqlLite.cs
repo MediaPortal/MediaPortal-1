@@ -38,6 +38,9 @@ namespace MediaPortal.MediaInfoService.Database
       AudioCD,
     }
 
+    //List of MediaInfo unsupported extesnsions
+    private static readonly string[] _ExtensionExcudeList = new string[] { ".wtv" };
+
     private static readonly Dictionary<string, string[]> _TagMappings = new Dictionary<string, string[]>()
         {
             { "Title", new string[] {"General_Title" } },
@@ -156,6 +159,18 @@ namespace MediaPortal.MediaInfoService.Database
 
         if (string.IsNullOrWhiteSpace(strMediaFullPath) || !File.Exists(strMediaFullPath))
           goto exit;
+
+        //Check fot unsupported extension
+        string strExt = Path.GetExtension(strMediaFullPath);
+        for (int i = 0; i < _ExtensionExcudeList.Length; i++)
+        {
+          if (_ExtensionExcudeList[i].Equals(strExt, StringComparison.OrdinalIgnoreCase))
+          {
+            Log.Debug("[MediaInfoDatabaseSqlLite][Get] Unsupported extension: '{0}'", strExt);
+            mi = new MediaInfoWrapper(string.Empty); //dummy mediainfo
+            goto exit;
+          }
+        }
 
         bool bUseDb;
         VideoFormatEnum videoType = getVideoType(strMediaFullPath);
