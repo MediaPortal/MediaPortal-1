@@ -955,6 +955,30 @@ namespace MediaPortal.DeployTool
       }
     }
 
+    /// <summary>
+    /// Set higher TLS security for NET 4.0 applications by using 'SchUseStrongCrypto' registry key
+    /// </summary>
+    public static void SetHigherNetFramework4TlsSecurity()
+    {
+      //https://learn.microsoft.com/en-us/dotnet/framework/network-programming/tls
+      //Setting registry keys affects all applications on the system.
+      //A value of 1 causes your app to use strong cryptography.
+      //The strong cryptography uses more secure network protocols (TLS 1.2 and TLS 1.1) and blocks protocols that aren't secure.
+      //This registry setting affects only client (outgoing) connections in your application.
+
+      const string PATH = @"SOFTWARE\Microsoft\.NETFramework\v4.0.30319";
+      const string KEY_VALUE_NAME = "SchUseStrongCrypto";
+
+      RegistryKey key = Registry.LocalMachine.OpenSubKey(PATH, true);
+      if (key == null)
+        key = Registry.LocalMachine.CreateSubKey(PATH);
+
+      if ((int)key.GetValue(KEY_VALUE_NAME, 0) == 0)
+        key.SetValue(KEY_VALUE_NAME, 1);
+
+      key.Close();
+    }
+
     #endregion
   }
 }
