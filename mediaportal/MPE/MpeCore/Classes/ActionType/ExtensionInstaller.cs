@@ -160,9 +160,9 @@ namespace MpeCore.Classes.ActionType
       if (!string.IsNullOrEmpty(actionItem.Params[Const_Loc].Value) && !File.Exists(actionItem.Params[Const_Loc].Value))
         return new ValidationResponse()
           { Valid = false, Message = "File not found " + actionItem.Params[Const_Loc].Value};
-      if (!string.IsNullOrEmpty(actionItem.Params[Const_Guid].Value) && MpeInstaller.KnownExtensions.Get(actionItem.Params[Const_Guid].Value, ApplicationSettings.Instance.PlatformCompatibilityCheck) == null)
+      if (!string.IsNullOrEmpty(actionItem.Params[Const_Guid].Value) && MpeInstaller.KnownExtensions.Get(actionItem.Params[Const_Guid].Value, false) == null)
         return new ValidationResponse() 
-          { Valid = false, Message = "Extension with Id " + actionItem.Params[Const_Loc].Value + " unknown" };
+          { Valid = false, Message = "Extension with Id " + actionItem.Params[Const_Guid].Value + " unknown" };
       if (!string.IsNullOrEmpty(actionItem.ConditionGroup) && packageClass.Groups[actionItem.ConditionGroup] == null)
         return new ValidationResponse()
           { Valid = false,  Message = actionItem.Name + " condition group not found " + actionItem.ConditionGroup };

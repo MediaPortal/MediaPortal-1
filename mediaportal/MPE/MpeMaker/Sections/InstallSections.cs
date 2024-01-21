@@ -56,6 +56,9 @@ namespace MpeMaker.Sections
         mnu_action_add.DropDownItems.Add(testToolStripMenuItem);
         cmb_sectiontype.Items.Add(actionProvider.Value.DisplayName);
       }
+
+      this.cmb_execution_condition.Items.AddRange(Enum.GetNames(typeof(ActionConditionEnum)));
+      
     }
 
     private void testToolStripMenuItem_Click(object sender, EventArgs e)
@@ -168,6 +171,8 @@ namespace MpeMaker.Sections
           list_actions.Items.Add(acton);
         }
 
+        this.cmb_execution_condition.SelectedIndex = (int)param.Condition;
+
         SelectedSection = param;
       }
     }
@@ -180,6 +185,7 @@ namespace MpeMaker.Sections
       SelectedSection.PanelName = cmb_sectiontype.Text;
       SelectedSection.ConditionGroup = cmb_grupvisibility.Text;
       SelectedSection.WizardButtonsEnum = (WizardButtonsEnum)cmb_buttons.SelectedIndex;
+      SelectedSection.Condition = (ActionConditionEnum)this.cmb_execution_condition.SelectedIndex;
     }
 
     private void btn_params_Click(object sender, EventArgs e)
@@ -244,7 +250,12 @@ namespace MpeMaker.Sections
       if (list_actions.SelectedItems.Count < 1)
         return;
       ActionEdit dlg = new ActionEdit(Package, (ActionItem)list_actions.SelectedItem);
-      dlg.ShowDialog();
+      if (dlg.ShowDialog() == DialogResult.OK)
+      {
+        //Force to refresh listbox (<ActionItem.Name> can by changed)
+        list_actions.DrawMode = DrawMode.OwnerDrawFixed;
+        list_actions.DrawMode = DrawMode.Normal;
+      }
     }
 
     private void mnu_action_del_Click(object sender, EventArgs e)

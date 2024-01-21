@@ -51,6 +51,7 @@ namespace MpeMaker.Sections
         mnu_add.DropDownItems.Add(testToolStripMenuItem);
         cmb_type.Items.Add(versionProvider.Value.DisplayName);
       }
+      this.cmb_execution_condition.Items.AddRange(Enum.GetNames(typeof(ActionConditionEnum)));
     }
 
     private void testToolStripMenuItem_Click(object sender, EventArgs e)
@@ -93,6 +94,10 @@ namespace MpeMaker.Sections
 
       if (MpeInstaller.VersionProviders.ContainsKey(cmb_type.Text))
         lbl_ver.Text = MpeInstaller.VersionProviders[cmb_type.Text].Version(txt_id.Text).ToString();
+
+      SelectedItem.Condition = (ActionConditionEnum)this.cmb_execution_condition.SelectedIndex;
+
+      this.refreshListBox();
     }
 
     private void UpdateControlStates()
@@ -123,6 +128,19 @@ namespace MpeMaker.Sections
       throw new NotImplementedException();
     }
 
+    public void RefreshControl()
+    {
+      this.list_versions_SelectedIndexChanged(null, null);
+      this.refreshListBox();
+    }
+
+    private void refreshListBox()
+    {
+      //Redraw the listbox
+      this.list_versions.DrawMode = DrawMode.OwnerDrawFixed;
+      this.list_versions.DrawMode = DrawMode.Normal;
+    }
+
     private void list_versions_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (list_versions.SelectedItems.Count < 1)
@@ -150,6 +168,9 @@ namespace MpeMaker.Sections
       SelectedItem = item;
       if (MpeInstaller.VersionProviders.ContainsKey(cmb_type.Text))
         lbl_ver.Text = MpeInstaller.VersionProviders[cmb_type.Text].Version(txt_id.Text).ToString();
+
+      this.cmb_execution_condition.SelectedIndex = (int)SelectedItem.Condition;
+      this.cmb_execution_condition.Enabled = SelectedItem.Type == "Extension";
     }
 
     private void BrowseInstalledExtensionIdsClick(object sender, EventArgs e)
