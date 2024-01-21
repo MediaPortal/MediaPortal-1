@@ -38,6 +38,7 @@ namespace MpeCore.Classes
       WarnOnly = true;
       Message = string.Empty;
       Name = string.Empty;
+      Condition = ActionConditionEnum.None;
     }
 
     public DependencyItem(string type)
@@ -47,6 +48,7 @@ namespace MpeCore.Classes
       WarnOnly = true;
       Message = string.Empty;
       Name = string.Empty;
+      Condition = ActionConditionEnum.None;
     }
 
     public string Type { get; set; }
@@ -137,6 +139,8 @@ namespace MpeCore.Classes
       }
       set { _name = value; }
     }
+
+    public ActionConditionEnum Condition { get; set; }
 
     public override string ToString()
     {

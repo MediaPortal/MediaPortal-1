@@ -36,6 +36,8 @@ namespace MpeCore.Classes.SectionPanel
           continue;
         if (!string.IsNullOrEmpty(list.ConditionGroup) && !packageClass.Groups[list.ConditionGroup].Checked)
           continue;
+        if (!Util.IsConditionSatisfied(list.Condition))
+          continue;
         responseEnum = MpeInstaller.ActionProviders[list.ActionType].Execute(packageClass, list);
         if (responseEnum != SectionResponseEnum.Ok)
         {

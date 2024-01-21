@@ -278,5 +278,20 @@ namespace MpeCore.Classes
         }
       }
     }
+
+    public static bool IsConditionSatisfied(ActionConditionEnum cond)
+    {
+      switch (cond)
+      {
+        case ActionConditionEnum.PlatformTarget_x86:
+          return IntPtr.Size == 4;
+
+        case ActionConditionEnum.PlatformTarget_x64:
+          return IntPtr.Size == 8;
+
+        default:
+          return true;
+      }
+    }
   }
 }

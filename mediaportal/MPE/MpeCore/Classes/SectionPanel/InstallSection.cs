@@ -120,6 +120,8 @@ namespace MpeCore.Classes.SectionPanel
             continue;
           if (!string.IsNullOrEmpty(actionItem.ConditionGroup) && !Package.Groups[actionItem.ConditionGroup].Checked)
             continue;
+          if (!Util.IsConditionSatisfied(actionItem.Condition))
+            continue;
 
           // use a new instance of the action, 
           // because if we chain MPE installations, 

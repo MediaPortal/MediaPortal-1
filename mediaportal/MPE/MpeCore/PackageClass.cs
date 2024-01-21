@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
@@ -136,7 +137,8 @@ namespace MpeCore
     /// Start copy the package file based on group settings
     /// 
     /// </summary>
-    public void Install()
+    /// <param name="strGroupCondition">Optional name of the group to be processed.</param>
+    public void Install(string strGroupCondition = null)
     {
       if (UnInstallInfo == null)
       {
@@ -146,7 +148,7 @@ namespace MpeCore
         UnInstallInfo.SetInfo(this);
       foreach (GroupItem groupItem in Groups.Items)
       {
-        if (groupItem.Checked)
+        if (groupItem.Checked && (string.IsNullOrWhiteSpace(strGroupCondition) || strGroupCondition.Equals(groupItem.Name)))
         {
           foreach (FileItem fileItem in groupItem.Files.Items)
           {
@@ -201,6 +203,9 @@ namespace MpeCore
       bool hasSkinDependency = false;
       foreach (DependencyItem item in Dependencies.Items)
       {
+        if (!Util.IsConditionSatisfied(item.Condition))
+          continue;
+
         if (!hasMPDependency && item.Type == MPDependency.DisplayName)
         {
           hasMPDependency = true;
@@ -312,6 +317,51 @@ namespace MpeCore
     private static string ByteArrayToString(Encoding encoding, byte[] byteArray)
     {
       return encoding.GetString(byteArray);
+    }
+
+    /// <summary>
+    /// Verify MediaPortal dependency based on needs
+    /// </summary>
+    public void VerifyMPDependency()
+    {
+      DependencyItem dep;
+      if (this.CheckMPDependency(out dep))
+      {
+        //Fix old MP versioning; 1.1.6.27644 is considered as unset
+        Version vOld = new Version(1, 1, 6, 27644);
+
+        if (!dep.MinVersion.IsAnyVersion && dep.MinVersion.CompareTo(vOld) <= 0)
+          dep.MinVersion = new VersionInfo();
+
+        if (!dep.MinVersion.IsAnyVersion && dep.MaxVersion.CompareTo(vOld) <= 0)
+          dep.MaxVersion = new VersionInfo();
+      }
+      else
+      {
+        //Create MP dependancy with both max and min as *.*.*.*
+        Classes.VersionProvider.MediaPortalVersion mpVersion = new Classes.VersionProvider.MediaPortalVersion();
+        dep = CreateStrictDependency(mpVersion);
+        dep.MinVersion = new VersionInfo();
+        dep.MaxVersion = new VersionInfo();
+        this.Dependencies.Add(dep);
+      }
+
+      //Conditional execution requires MP 1.33 and higher
+      if (this.Dependencies.Items.Any(d => d.Condition != ActionConditionEnum.None) ||
+        this.Sections.Items.Any(s => s.Condition != ActionConditionEnum.None
+          || s.Actions.Items.Any(a => a.Condition != ActionConditionEnum.None)))
+      {
+        VersionInfo vMin = new VersionInfo(new Version(1, 33, 0, 0));
+        if (dep.MinVersion.IsAnyVersion || dep.MinVersion < vMin)
+          dep.MinVersion = vMin;
+      }
+
+      //Make sure the max is always >= min
+      if (dep.MaxVersion < dep.MinVersion)
+        dep.MaxVersion = new VersionInfo();
+
+      //Refresh the dependency message
+      dep.Message = null;
     }
 
     /// <summary>

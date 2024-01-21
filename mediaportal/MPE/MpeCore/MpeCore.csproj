@@ -96,6 +96,7 @@
     <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="ActionConditionEnum.cs" />
     <Compile Include="Classes\ActionExecuteLocationEnum.cs" />
     <Compile Include="Classes\ActionItem.cs" />
     <Compile Include="Classes\ActionItemCollection.cs" />

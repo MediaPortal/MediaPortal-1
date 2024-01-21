@@ -312,6 +312,11 @@ namespace MpeMaker
 
       packageClass.CreateMPDependency();
 
+      //Set MP dependency as *.*.*.*
+      DependencyItem depMP = packageClass.Dependencies.Items.Find(d => d.Type == "MediaPortal");
+      depMP.MinVersion = new VersionInfo();
+      depMP.MaxVersion = new VersionInfo();
+
       return packageClass;
     }
 
@@ -364,21 +369,7 @@ namespace MpeMaker
       Package.GenerateRelativePath(Path.GetDirectoryName(filename));
       Package.GenerateUniqueFileList();
       Package.SetPluginsDependencies();
-      if (Package.CheckMPDependency(out DependencyItem depMP))
-      {
-        //Fix old MP versioning
-        Version vOld = new Version(1, 1, 6, 27644);
-
-        if (depMP.MinVersion.CompareTo(vOld) <= 0)
-          depMP.MinVersion = new VersionInfo();
-
-        if (depMP.MaxVersion.CompareTo(vOld) <= 0)
-          depMP.MaxVersion = new VersionInfo();
-      }
-      else
-      {
-        Package.CreateMPDependency();
-      }
+      Package.VerifyMPDependency();
 
       if (Package.ProvidesSkin(out FileItem skinFile) && !Package.CheckSkinDependency(out DependencyItem dep))
       {
@@ -389,6 +380,10 @@ namespace MpeMaker
       Package.ProjectSettings.ProjectFilename = filename;
       Package.GenerateAbsolutePath(Path.GetDirectoryName(filename));
       SetTitle();
+
+      //If the selected section is requirement, update the control (MP version might changed)
+      if (this.treeView1.SelectedNode != null && this.treeView1.SelectedNode.Name == "Node5") //requirement section
+        ((RequirementsSection)this._panels["Node5"]).RefreshControl();
     }
 
     #endregion

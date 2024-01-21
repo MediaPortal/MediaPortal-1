@@ -115,13 +115,16 @@ namespace MpeCore.Classes
     public static VersionInfo Parse(string s)
     {
       VersionInfo ver = new VersionInfo();
-      string[] vers = s.Split('.');
-      if (vers.Length > 3)
+      if (s != null)
       {
-        ver.Major = vers[0];
-        ver.Minor = vers[1];
-        ver.Build = vers[2];
-        ver.Revision = vers[3];
+        string[] vers = s.Split('.');
+        if (vers.Length > 3)
+        {
+          ver.Major = vers[0];
+          ver.Minor = vers[1];
+          ver.Build = vers[2];
+          ver.Revision = vers[3];
+        }
       }
       return ver;
     }
