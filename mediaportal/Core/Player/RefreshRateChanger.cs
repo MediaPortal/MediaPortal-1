@@ -1025,7 +1025,7 @@ namespace MediaPortal.Player
 
           Log.Info("RefreshRateChanger.AdaptRefreshRate: Scantype on file {0} is {1}", strFile, g_Player.MediaInfo.ScanType);
 
-          if (g_Player.MediaInfo.IsInterlaced)
+          if (g_Player.MediaInfo.IsInterlaced || g_Player.MediaInfo.ScanType.Equals("mbaff", StringComparison.OrdinalIgnoreCase))
           {
             Log.Info("RefreshRateChanger.AdaptRefreshRate: Interlacing detected on file {0}. Fps is {1}", strFile, fps);
 
