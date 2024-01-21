@@ -1492,7 +1492,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
             if (SUCCEEDED(rtspRequestResult))
             {
               // send data
-              unsigned int receivedData = 0;
+              size_t receivedData = 0;
               unsigned int requestLength = strlen(requestA);
 
               rtspRequestResult = HRESULT_FROM_CURL_CODE(curl_easy_perform(this->curl));

@@ -415,7 +415,7 @@ HRESULT CCurlInstance::SetString(CURL *curl, CURLoption option, const wchar_t *s
 
 HRESULT CCurlInstance::SendData(const unsigned char *data, unsigned int length, unsigned int timeout)
 {
-  unsigned int receivedData = 0;
+  size_t receivedData = 0;
   HRESULT result = HRESULT_FROM_CURL_CODE(curl_easy_send(this->curl, data, length, &receivedData));
 
   CHECK_CONDITION_EXECUTE_RESULT(result == HRESULT_FROM_CURL_CODE(CURLE_AGAIN), this->Select(false, true, timeout), result);
@@ -431,7 +431,7 @@ HRESULT CCurlInstance::ReadData(unsigned char *data, unsigned int length)
 
   if (SUCCEEDED(result))
   {
-    unsigned int receivedData = 0;
+    size_t receivedData = 0;
     result = HRESULT_FROM_CURL_CODE(curl_easy_recv(this->curl, data, length, &receivedData));
 
     CHECK_CONDITION_EXECUTE(result == HRESULT_FROM_CURL_CODE(CURLE_AGAIN), result = S_OK);
