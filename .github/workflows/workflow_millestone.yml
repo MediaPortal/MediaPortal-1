@@ -1,12 +1,24 @@
-name: "Workflow / Milestone"
+name: "Workflow / Millestone"
 
 on:
   pull_request:
-    types: [closed]
+    types: 
+      - opened
+      - closed
 
 jobs:
-  add:
+  add_on_open:
+    name: Add Millestone on Open
+    if: github.event.action == 'opened'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: benelan/milestone-action@v2
+
+  add_on_close:
+    name: Add Millestone on Close / Merge
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: benelan/milestone-action@v2
+        with:
+          overwrite: true # remove this line to keep existing milestone
