@@ -1,4 +1,4 @@
-name: "Workflow / Millestone"
+name: "Workflow / Milestone"
 
 on:
   pull_request:
@@ -8,14 +8,14 @@ on:
 
 jobs:
   add_on_open:
-    name: Add Millestone on Open
+    name: Add Milestone on Open
     if: github.event.action == 'opened'
     runs-on: ubuntu-latest
     steps:
       - uses: benelan/milestone-action@v2
 
   add_on_close:
-    name: Add Millestone on Close / Merge
+    name: Add Milestone on Close / Merge
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
