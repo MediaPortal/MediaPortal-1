@@ -3259,9 +3259,6 @@ public class MediaPortalApp : D3D, IRender
   // Register shell notifications to wndproc
     Notifications.RegisterChangeNotify(this.Handle, ShellNotifications.CSIDL.CSIDL_DESKTOP, true);
 
-    //Register MediaInfo service
-    GlobalServiceProvider.Add<IMediaInfoService>(new MediaPortal.MediaInfoService.Database.MediaInfoService());
-
     // Initializing input devices...
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(63));
     Log.Info("Main: Initializing Input Devices");
@@ -3740,7 +3737,10 @@ public class MediaPortalApp : D3D, IRender
     GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
     GUIFontManager.InitializeDeviceObjects();
 
-
+    //Services
+    //Register MediaInfo service
+    if (GlobalServiceProvider.Get<IMediaInfoService>() == null)
+      GlobalServiceProvider.Add<IMediaInfoService>(new MediaPortal.MediaInfoService.Database.MediaInfoService());
 
     // Loading window plugins
     Log.Info("Startup: Loading and Starting Window Plugins");
