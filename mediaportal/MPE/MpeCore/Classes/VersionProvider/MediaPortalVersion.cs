@@ -46,10 +46,11 @@ namespace MpeCore.Classes.VersionProvider
       {
         VersionInfo version = new VersionInfo
         {
-          Build = ((int)key.GetValue("VersionBuild", 0)).ToString(),
           Major = ((int)key.GetValue("VersionMajor", 0)).ToString(),
           Minor = ((int)key.GetValue("VersionMinor", 0)).ToString(),
-          Revision = ((int)key.GetValue("VersionRevision", 0)).ToString(),
+          //NSIS has swapped revision with build; :((((
+          Revision = ((int)key.GetValue("VersionBuild", 0)).ToString(),
+          Build = ((int)key.GetValue("VersionRevision", 0)).ToString(),
         };
         key.Close();
         return version;
