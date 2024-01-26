@@ -2431,6 +2431,9 @@
     <String id="300229">Réduire en icône lorsque MP n'est plus au premier plan</String>
     <String id="300230">Arrêter la lecture lors d'une modification du rendu audio</String>
     <String id="300231">Réduction du taux de rafraichissement lorsque MP n'est plus au premier plan</String>
+    <String id="300233">Réglages OSD</String>
+    <String id="300234">Voir OSD</String>
+    <String id="300235">Cache OSD Auto</String>
     <String id="300232">Mettre à jour les fichiers uniquement après {0}</String>
     <String id="350001">Appuyez sur Info/F9 pour les réglages rapides...</String>
     <String id="350002">Films</String>
