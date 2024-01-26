@@ -110,16 +110,26 @@
           <type>button</type>
           <onright>50</onright>
           <label>#MPEI.Translation.DownloadUpdates.Label</label>
+          <ondown>10</ondown>
+        </control>
+        <control>
+          <id>10</id>
+          <description>Show Only Stable</description>
+          <type>checkbutton</type>
+          <onright>50</onright>
+          <onup>9</onup>
+          <label>#MPEI.Translation.ShowOnlyStable.Label</label>
+          <ondown>11</ondown>
+        </control>
+        <control>
+          <id>11</id>
+          <description>Show Only Compatible</description>
+          <type>checkbutton</type>
+          <onright>50</onright>
+          <onup>10</onup>
+          <label>#MPEI.Translation.ShowOnlyCompatible.Label</label>
           <ondown>2</ondown>
         </control>
-        <!--<control>
-          <id>90</id>
-          <description>MPEIUPDATE:a6afa4d6-4fd8-4607-8878-5911db044fd7</description>
-          <type>button</type>
-          <onright>50</onright>
-          <visible>string.equals(#mpei.a6afa4d6_4fd8_4607_8878_5911db044fd7.haveupdate,true)</visible>
-          <label>#MPEI.Translation.UpdateAvailable.Label</label>
-        </control>-->
       </control>
     </control>
     <control>
