@@ -2195,7 +2195,7 @@ public class Script
       <Major>2</Major>
       <Minor>2</Minor>
       <Build>29</Build>
-      <Revision>8601</Revision>
+      <Revision>8792</Revision>
     </Version>
     <ExtensionDescription>The MediaPortal IPTV filter and url source splitter is a directshow source filter that enables direct playback for many protocols and filetypes used in online video sources in the internet.
 Supported protocols:
@@ -2566,7 +2566,7 @@ Supported protocols:
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>MPUrlSourceSplitter.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{3e86bd57-c169-42e0-963e-649da4e6e233}-MPUrlSourceSplitter.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{03e33d48-cecd-45f6-948a-dd020ff5739f}-MPUrlSourceSplitter.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
