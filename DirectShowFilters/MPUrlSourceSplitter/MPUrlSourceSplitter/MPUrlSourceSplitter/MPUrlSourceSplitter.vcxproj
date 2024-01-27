@@ -122,7 +122,7 @@
     <OutDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</IntDir>
     <TargetExt>.ax</TargetExt>
-    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
+    <PreBuildEventUseInBuild>true</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetExt>.ax</TargetExt>
