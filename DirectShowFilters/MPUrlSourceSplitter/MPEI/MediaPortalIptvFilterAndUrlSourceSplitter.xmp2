@@ -185,161 +185,161 @@
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\avcodec-mpurlsourcesplitter-58.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{32ab2229-7a91-42ae-b48e-0b6d68b56277}-avcodec-mpurlsourcesplitter-58.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{529dfdb4-1d97-4c1c-961c-1613531d1425}-avcodec-mpurlsourcesplitter-58.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-58.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\avformat-mpurlsourcesplitter-58.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{7f4575db-93f0-4c8d-8ba1-889567b3fc3f}-avformat-mpurlsourcesplitter-58.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{b0aa6b21-4814-4205-8068-bb446f88b1fd}-avformat-mpurlsourcesplitter-58.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-58.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\avresample-mpurlsourcesplitter-4.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{cb867e23-d631-432d-a1eb-2327590776e3}-avresample-mpurlsourcesplitter-4.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{d3b175f5-cfe5-4fe8-93ec-3310a7768459}-avresample-mpurlsourcesplitter-4.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avresample-mpurlsourcesplitter-4.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\avutil-mpurlsourcesplitter-56.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{58add760-64a5-4a1e-afee-346097e6a2da}-avutil-mpurlsourcesplitter-56.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{4f753b9a-d7eb-495d-b17e-a2fbe81cb664}-avutil-mpurlsourcesplitter-56.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avutil-mpurlsourcesplitter-56.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter.ax</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c86e43b2-c9eb-4c97-a9e0-b60cdd64ccf8}-MPUrlSourceSplitter.ax</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{c177fb94-daeb-41d9-89f3-14736cfdef8e}-MPUrlSourceSplitter.ax</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter.ax</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_libcurl.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{af823fa2-8197-48ac-987b-bbe83230b3fd}-MPUrlSourceSplitter_libcurl.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{412fbe51-3c5e-4f0a-8490-7ab6a1e6d89a}-MPUrlSourceSplitter_libcurl.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_libcurl.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Parser_Default.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{41a79612-ae51-4f4a-a1b7-0aa9e9ce0f69}-MPUrlSourceSplitter_Parser_Default.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{082976e4-5ecb-42c6-b23d-208451f5113a}-MPUrlSourceSplitter_Parser_Default.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_Default.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Parser_F4M.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{df8f665f-b8ac-4749-b65a-bb384016303b}-MPUrlSourceSplitter_Parser_F4M.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{aba0d70c-2f20-4b7b-9e36-986ccf179e76}-MPUrlSourceSplitter_Parser_F4M.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_F4M.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Parser_M3U8.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{dca715f2-ddcd-428b-8a0f-ac2bd7171a73}-MPUrlSourceSplitter_Parser_M3U8.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{e8f9c668-e916-4bb8-bf6f-7a3150cd1b9c}-MPUrlSourceSplitter_Parser_M3U8.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_M3U8.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Parser_MPEG2TS.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{9965a9ed-fd31-444c-bd7a-a59d2e7e24c8}-MPUrlSourceSplitter_Parser_MPEG2TS.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{705a1b14-1a05-4005-9015-d6cc4e65f068}-MPUrlSourceSplitter_Parser_MPEG2TS.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MPEG2TS.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Parser_MSHS.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{58e73b0f-a512-449a-8e66-eb956cf52b0b}-MPUrlSourceSplitter_Parser_MSHS.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{530f6541-6560-41a7-926f-52f6122c25dc}-MPUrlSourceSplitter_Parser_MSHS.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MSHS.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Afhs.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{b5ad2547-6774-4890-824f-2a1e5f5ccbbc}-MPUrlSourceSplitter_Protocol_Afhs.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{2eb8a260-d7cb-4d40-919b-04e6bd6697f2}-MPUrlSourceSplitter_Protocol_Afhs.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{fe480a86-5f0e-4a26-b4ed-2c4b9619548a}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{4d8a4bb0-b07d-4376-b739-8ea825619376}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{f41fa654-a14d-40c5-9835-fcd7b2379374}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{0f9f990a-412a-4867-abd3-382e5b2a84ac}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Http.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{9401bfc9-7d87-4d45-990d-e35f57968567}-MPUrlSourceSplitter_Protocol_Http.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{16362fe0-d028-46d4-8e99-25bdf1cbd822}-MPUrlSourceSplitter_Protocol_Http.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Http.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_M3U8.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{58594901-32fc-45ba-b8e7-56c4000bd086}-MPUrlSourceSplitter_Protocol_M3U8.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{5973506a-68a7-4d55-83cc-20bf3d090b42}-MPUrlSourceSplitter_Protocol_M3U8.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Mshs.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{f454063a-bf0b-42a6-9436-bc565ab52cf3}-MPUrlSourceSplitter_Protocol_Mshs.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{f0c8ba0a-6872-4c88-ac9b-738715501d82}-MPUrlSourceSplitter_Protocol_Mshs.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mshs.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Rtmp.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c4aaee71-b406-45d5-ab0d-cb1fef1d9f2a}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{b06c88ec-ad3e-4d30-ae46-416a87d3b899}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Rtsp.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{110094b7-8880-4155-94ac-b843cd1b4484}-MPUrlSourceSplitter_Protocol_Rtsp.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{4d016b06-5488-46b4-92ee-fbd24a82a9a5}-MPUrlSourceSplitter_Protocol_Rtsp.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtsp.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Udp.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c65a44a7-e514-4dc1-83ec-a830589d511e}-MPUrlSourceSplitter_Protocol_Udp.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{e37579b2-37af-492e-a54e-dba56e61012a}-MPUrlSourceSplitter_Protocol_Udp.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Udp.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\..\TvEngine3\TVLibrary\Plugins\MediaPortalIptvFilterAndUrlSourceSplitter\bin\Release\MediaPortalIptvFilterAndUrlSourceSplitter.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{920c604c-5f30-43bb-a62a-4fb18af72b77}-MediaPortalIptvFilterAndUrlSourceSplitter.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{5ed6ab40-b0b1-4b64-ab03-bf4e67ce2c45}-MediaPortalIptvFilterAndUrlSourceSplitter.dll</ZipFileName>
               <DestinationFilename>%TvServerPlugins%\MediaPortalIptvFilterAndUrlSourceSplitter.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_M3U8_Decryption_Aes128.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{6b50ab02-b299-427b-b2f2-b26d0940cd0d}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_Aes128.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{f95432c2-2118-4c6a-9144-9c009c7eeed2}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_Aes128.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8_Decryption_Aes128.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{a2fba008-360c-4d1d-921d-d1f120694a4a}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{6428211e-5c78-4286-82b5-c8a3fed4a408}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</DestinationFilename>
             </FileItem>
           </Items>
@@ -515,158 +515,158 @@
         <Description>MediaPortal (x64)</Description>
         <Files>
           <Items>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\avcodec-mpurlsourcesplitter-58.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{2bf7262e-bf5e-46cd-aaf5-314ccc760226}-avcodec-mpurlsourcesplitter-58.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{9ea40e04-4244-4355-ac4a-739fd0702219}-avcodec-mpurlsourcesplitter-58.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-58.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\avformat-mpurlsourcesplitter-58.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{3b26bd3e-4244-423c-bf1e-f91429cd4c52}-avformat-mpurlsourcesplitter-58.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{26df8954-193c-4e38-8a97-7bc410882412}-avformat-mpurlsourcesplitter-58.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-58.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\avresample-mpurlsourcesplitter-4.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{faf27fe3-e08d-488a-bfaa-4d4ca0c242f2}-avresample-mpurlsourcesplitter-4.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{d447f85f-4c6f-432f-a86c-7bb206b552dc}-avresample-mpurlsourcesplitter-4.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\avresample-mpurlsourcesplitter-4.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\avutil-mpurlsourcesplitter-56.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{7a3191b8-c546-4f70-9cc6-1521d48ac7ce}-avutil-mpurlsourcesplitter-56.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{236581a3-44d4-45ea-8a39-78364390d93a}-avutil-mpurlsourcesplitter-56.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\avutil-mpurlsourcesplitter-56.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter.ax</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{d67f6df4-0399-4531-a5ad-051c95c277c7}-MPUrlSourceSplitter.ax</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{d0b6fd23-99da-4d94-b330-6412725fe747}-MPUrlSourceSplitter.ax</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter.ax</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_libcurl.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{2e085461-c604-4743-a5e2-42f8bf8940cf}-MPUrlSourceSplitter_libcurl.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{8e768964-58f8-444a-ab15-50cd2d0b3d20}-MPUrlSourceSplitter_libcurl.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_libcurl.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Parser_Default.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{dfabc56e-d275-40dc-a20c-cdee0fd6fde6}-MPUrlSourceSplitter_Parser_Default.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{e2f125f5-41b1-47b4-9438-2033193b1ec9}-MPUrlSourceSplitter_Parser_Default.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_Default.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Parser_F4M.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{d38fca6c-134f-4976-8a34-57ba052665e9}-MPUrlSourceSplitter_Parser_F4M.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{514c0c05-ece8-439e-947f-213d883bab8f}-MPUrlSourceSplitter_Parser_F4M.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_F4M.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Parser_M3U8.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{79def024-2607-429a-b161-39d08d645488}-MPUrlSourceSplitter_Parser_M3U8.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{71be5168-829c-4701-9c4f-8bda74214dc1}-MPUrlSourceSplitter_Parser_M3U8.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_M3U8.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Parser_MPEG2TS.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{aee3a7a0-520a-4390-82f1-f608b3c5122a}-MPUrlSourceSplitter_Parser_MPEG2TS.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{ff1a1764-a275-4bb5-afd0-7696e7fc2183}-MPUrlSourceSplitter_Parser_MPEG2TS.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MPEG2TS.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Parser_MSHS.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{981b8816-5a1f-4977-895c-3d0c2d30d358}-MPUrlSourceSplitter_Parser_MSHS.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{6425ffe9-2b04-431a-a824-46cf32dfb5d3}-MPUrlSourceSplitter_Parser_MSHS.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MSHS.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Afhs.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{90aea961-d987-4306-9a9a-6ea7235947cf}-MPUrlSourceSplitter_Protocol_Afhs.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{b361d597-351b-4d44-8456-06110347992f}-MPUrlSourceSplitter_Protocol_Afhs.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{dc0654a6-8716-438b-aa9c-3e6db8b93ce8}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{8826c34f-0946-4356-b7e7-c0e72309b838}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{49d8fe56-893c-4368-a4dd-555117a384fb}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{ea0031ee-9d49-43ce-a356-b75240718d72}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Http.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{eb464680-3495-4625-a64f-a1bfa0a2cf7b}-MPUrlSourceSplitter_Protocol_Http.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{45287c52-d6df-4e63-b9ce-8b28612218f9}-MPUrlSourceSplitter_Protocol_Http.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Http.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_M3U8.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{13b584e9-eb30-42bf-81ff-96eab1310fe4}-MPUrlSourceSplitter_Protocol_M3U8.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{8039ac86-e088-4235-b6ea-6e5b0a38f4da}-MPUrlSourceSplitter_Protocol_M3U8.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Mshs.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{ac7456e1-8bc7-4b34-a796-85a9c59e6ebf}-MPUrlSourceSplitter_Protocol_Mshs.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{9bf8421d-ca87-4326-88af-1ed5688f3415}-MPUrlSourceSplitter_Protocol_Mshs.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mshs.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Rtmp.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{f0b9a662-4464-40e1-8c7e-35aa31e0481b}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{da7597b3-b4c8-4077-b0db-c6cb7bd0a7bb}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Rtsp.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{815a59f2-0e59-4ff8-9721-bfbea35e3fd7}-MPUrlSourceSplitter_Protocol_Rtsp.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{ff6cfc78-3039-46fa-a5e4-4348f1b31aea}-MPUrlSourceSplitter_Protocol_Rtsp.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtsp.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Udp.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{bd77678b-58b7-4337-83ad-7981d19aa882}-MPUrlSourceSplitter_Protocol_Udp.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{1517219e-c2e8-4470-bec2-0c270bfc66c4}-MPUrlSourceSplitter_Protocol_Udp.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Udp.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_M3U8_Decryption_Aes128.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{e171df1f-4f22-4a67-bc76-1d0a4794aa3c}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_Aes128.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{52af4078-ca4a-4054-96c5-2bb0b5f1ce47}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_Aes128.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8_Decryption_Aes128.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{cdf881f9-6105-494f-8abe-f5e95e9b8418}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</ZipFileName>
+              <ZipFileName>Installer{CopyFile}\{1fb26cbd-276e-42f5-8138-fe3048a1bf31}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</DestinationFilename>
             </FileItem>
           </Items>
@@ -2412,154 +2412,154 @@ Supported protocols:
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\avcodec-mpurlsourcesplitter-58.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{32ab2229-7a91-42ae-b48e-0b6d68b56277}-avcodec-mpurlsourcesplitter-58.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{529dfdb4-1d97-4c1c-961c-1613531d1425}-avcodec-mpurlsourcesplitter-58.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-58.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\avformat-mpurlsourcesplitter-58.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{7f4575db-93f0-4c8d-8ba1-889567b3fc3f}-avformat-mpurlsourcesplitter-58.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{b0aa6b21-4814-4205-8068-bb446f88b1fd}-avformat-mpurlsourcesplitter-58.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-58.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\avresample-mpurlsourcesplitter-4.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{cb867e23-d631-432d-a1eb-2327590776e3}-avresample-mpurlsourcesplitter-4.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{d3b175f5-cfe5-4fe8-93ec-3310a7768459}-avresample-mpurlsourcesplitter-4.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avresample-mpurlsourcesplitter-4.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\avutil-mpurlsourcesplitter-56.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{58add760-64a5-4a1e-afee-346097e6a2da}-avutil-mpurlsourcesplitter-56.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{4f753b9a-d7eb-495d-b17e-a2fbe81cb664}-avutil-mpurlsourcesplitter-56.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avutil-mpurlsourcesplitter-56.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter.ax</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c86e43b2-c9eb-4c97-a9e0-b60cdd64ccf8}-MPUrlSourceSplitter.ax</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{c177fb94-daeb-41d9-89f3-14736cfdef8e}-MPUrlSourceSplitter.ax</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter.ax</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_libcurl.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{af823fa2-8197-48ac-987b-bbe83230b3fd}-MPUrlSourceSplitter_libcurl.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{412fbe51-3c5e-4f0a-8490-7ab6a1e6d89a}-MPUrlSourceSplitter_libcurl.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_libcurl.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Parser_Default.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{41a79612-ae51-4f4a-a1b7-0aa9e9ce0f69}-MPUrlSourceSplitter_Parser_Default.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{082976e4-5ecb-42c6-b23d-208451f5113a}-MPUrlSourceSplitter_Parser_Default.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_Default.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Parser_F4M.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{df8f665f-b8ac-4749-b65a-bb384016303b}-MPUrlSourceSplitter_Parser_F4M.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{aba0d70c-2f20-4b7b-9e36-986ccf179e76}-MPUrlSourceSplitter_Parser_F4M.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_F4M.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Parser_M3U8.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{dca715f2-ddcd-428b-8a0f-ac2bd7171a73}-MPUrlSourceSplitter_Parser_M3U8.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{e8f9c668-e916-4bb8-bf6f-7a3150cd1b9c}-MPUrlSourceSplitter_Parser_M3U8.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_M3U8.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Parser_MPEG2TS.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9965a9ed-fd31-444c-bd7a-a59d2e7e24c8}-MPUrlSourceSplitter_Parser_MPEG2TS.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{705a1b14-1a05-4005-9015-d6cc4e65f068}-MPUrlSourceSplitter_Parser_MPEG2TS.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MPEG2TS.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Parser_MSHS.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{58e73b0f-a512-449a-8e66-eb956cf52b0b}-MPUrlSourceSplitter_Parser_MSHS.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{530f6541-6560-41a7-926f-52f6122c25dc}-MPUrlSourceSplitter_Parser_MSHS.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MSHS.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Afhs.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{b5ad2547-6774-4890-824f-2a1e5f5ccbbc}-MPUrlSourceSplitter_Protocol_Afhs.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{2eb8a260-d7cb-4d40-919b-04e6bd6697f2}-MPUrlSourceSplitter_Protocol_Afhs.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{fe480a86-5f0e-4a26-b4ed-2c4b9619548a}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{4d8a4bb0-b07d-4376-b739-8ea825619376}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{f41fa654-a14d-40c5-9835-fcd7b2379374}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{0f9f990a-412a-4867-abd3-382e5b2a84ac}-MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Http.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9401bfc9-7d87-4d45-990d-e35f57968567}-MPUrlSourceSplitter_Protocol_Http.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{16362fe0-d028-46d4-8e99-25bdf1cbd822}-MPUrlSourceSplitter_Protocol_Http.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Http.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_M3U8.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{58594901-32fc-45ba-b8e7-56c4000bd086}-MPUrlSourceSplitter_Protocol_M3U8.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{5973506a-68a7-4d55-83cc-20bf3d090b42}-MPUrlSourceSplitter_Protocol_M3U8.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Mshs.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{f454063a-bf0b-42a6-9436-bc565ab52cf3}-MPUrlSourceSplitter_Protocol_Mshs.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{f0c8ba0a-6872-4c88-ac9b-738715501d82}-MPUrlSourceSplitter_Protocol_Mshs.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mshs.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Rtmp.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c4aaee71-b406-45d5-ab0d-cb1fef1d9f2a}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{b06c88ec-ad3e-4d30-ae46-416a87d3b899}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Rtsp.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{110094b7-8880-4155-94ac-b843cd1b4484}-MPUrlSourceSplitter_Protocol_Rtsp.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{4d016b06-5488-46b4-92ee-fbd24a82a9a5}-MPUrlSourceSplitter_Protocol_Rtsp.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtsp.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_Udp.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c65a44a7-e514-4dc1-83ec-a830589d511e}-MPUrlSourceSplitter_Protocol_Udp.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{e37579b2-37af-492e-a54e-dba56e61012a}-MPUrlSourceSplitter_Protocol_Udp.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Udp.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_M3U8_Decryption_Aes128.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{6b50ab02-b299-427b-b2f2-b26d0940cd0d}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_Aes128.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{f95432c2-2118-4c6a-9144-9c009c7eeed2}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_Aes128.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8_Decryption_Aes128.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{a2fba008-360c-4d1d-921d-d1f120694a4a}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{6428211e-5c78-4286-82b5-c8a3fed4a408}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
