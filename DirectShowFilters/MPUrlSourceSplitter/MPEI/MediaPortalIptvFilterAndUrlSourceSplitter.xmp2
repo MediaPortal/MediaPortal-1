@@ -177,7 +177,7 @@
       <GroupItem Name="TvServer (x64)">
         <ParentGroup />
         <DisplayName>TvServer (x64)</DisplayName>
-        <DefaulChecked>true</DefaulChecked>
+        <DefaulChecked>false</DefaulChecked>
         <Description>TvServer (x64)</Description>
         <Files>
           <Items>
@@ -511,7 +511,7 @@
       </GroupItem>
       <GroupItem Name="MediaPortal (x64)">
         <DisplayName>MediaPortal (x64)</DisplayName>
-        <DefaulChecked>true</DefaulChecked>
+        <DefaulChecked>false</DefaulChecked>
         <Description>MediaPortal (x64)</Description>
         <Files>
           <Items>
@@ -2210,7 +2210,7 @@ Supported protocols:
     <VersionDescription>- Added 64bits installation</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=327&amp;cf_id=24</OnlineLocation>
-    <ReleaseDate>2024-01-27T20:21:47</ReleaseDate>
+    <ReleaseDate>2024-01-28T20:21:47</ReleaseDate>
     <Tags>codec</Tags>
     <Location>.\MediaPortalUrlSourceSplitter[Version].mpe1</Location>
     <Params>
