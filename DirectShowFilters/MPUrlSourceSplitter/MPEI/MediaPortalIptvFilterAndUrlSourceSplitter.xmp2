@@ -171,6 +171,20 @@
               <ZipFileName>Installer{CopyFile}\{a2fba008-360c-4d1d-921d-d1f120694a4a}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\libeay32.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ac9e01f8-63e6-4e85-92af-3ecddaa5469f}-libeay32.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\libeay32.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\ssleay32.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{8d13d651-0688-4c4e-9ded-848fc300fac3}-ssleay32.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\ssleay32.dll</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -342,6 +356,20 @@
               <ZipFileName>Installer{CopyFile}\{6428211e-5c78-4286-82b5-c8a3fed4a408}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</ZipFileName>
               <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_x64\libeay32.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{a4c708f6-2386-448f-8f00-a93880ec5428}-libeay32.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\libeay32.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_x64\ssleay32.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{fac282b6-b0c4-4862-89b2-44ba3bd0d75a}-ssleay32.dll</ZipFileName>
+              <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\ssleay32.dll</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -506,6 +534,20 @@
               <ZipFileName>Installer{CopyFile}\{cdf881f9-6105-494f-8abe-f5e95e9b8418}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\libeay32.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{4f778e1e-bc38-43f1-82ca-25f7fcd8c218}-libeay32.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\libeay32.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_Win32\ssleay32.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{cb82a07b-fe31-47b7-bda5-0ffc5d0f45da}-ssleay32.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\ssleay32.dll</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -668,6 +710,20 @@
               <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{1fb26cbd-276e-42f5-8138-fe3048a1bf31}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_x64\libeay32.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e0f8b9f0-3759-4855-8f69-ab431e546dec}-libeay32.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\libeay32.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\bin_x64\ssleay32.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{312bc8c2-7563-4ca0-8f52-66281ea2fc5b}-ssleay32.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\ssleay32.dll</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2411,6 +2467,20 @@ Supported protocols:
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\bin_Win32\libeay32.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ac9e01f8-63e6-4e85-92af-3ecddaa5469f}-libeay32.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\libeay32.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\bin_Win32\ssleay32.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{8d13d651-0688-4c4e-9ded-848fc300fac3}-ssleay32.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\ssleay32.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\bin_x64\avcodec-mpurlsourcesplitter-58.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{529dfdb4-1d97-4c1c-961c-1613531d1425}-avcodec-mpurlsourcesplitter-58.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-58.dll</DestinationFilename>
@@ -2561,6 +2631,20 @@ Supported protocols:
         <LocalFileName>..\..\bin_x64\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{6428211e-5c78-4286-82b5-c8a3fed4a408}-MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</ZipFileName>
         <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\bin_x64\libeay32.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{a4c708f6-2386-448f-8f00-a93880ec5428}-libeay32.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\libeay32.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\bin_x64\ssleay32.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{fac282b6-b0c4-4862-89b2-44ba3bd0d75a}-ssleay32.dll</ZipFileName>
+        <DestinationFilename>%TvServerBase%\MPUrlSourceSplitter\ssleay32.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
