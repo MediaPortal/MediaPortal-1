@@ -105,7 +105,11 @@ namespace MediaPortal.Util
 
       string rootPath = ResolveToRootUNC(path);
 
-      if (path.StartsWith(rootPath))
+      if (string.IsNullOrWhiteSpace(rootPath))
+      {
+        return string.Empty;
+      }
+      else if (path.StartsWith(rootPath))
       {
         return path; // Local drive, no resolving occurred
       }
@@ -142,19 +146,28 @@ namespace MediaPortal.Util
       string driveletter = GetDriveLetter(path);
 
       // Query WMI if the drive letter is a network drive, and if so the UNC path for it
-      using (System.Management.ManagementObject mo = new ManagementObject())
+      using (ManagementClass devs = new ManagementClass(@"Win32_LogicalDisk"))
       {
-        mo.Path = new ManagementPath(string.Format("Win32_LogicalDisk='{0}'", driveletter));
-
-        DriveType driveType = (DriveType)((uint)mo["DriveType"]);
-        string networkRoot = Convert.ToString(mo["ProviderName"]);
-
-        if (driveType == DriveType.Network)
+        foreach (ManagementObject mo in devs.GetInstances())
         {
-          return networkRoot;
+          PropertyData propDevId = mo.Properties["DeviceID"];
+
+          if (((string)propDevId.Value).Equals(driveletter, StringComparison.OrdinalIgnoreCase))
+          {
+            DriveType driveType = (DriveType)((uint)mo["DriveType"]);
+
+            if (driveType == DriveType.Network)
+              return Convert.ToString(mo["ProviderName"]);
+            else if (driveType == DriveType.CDRom && mo["volumename"] == null && mo["volumeserialnumber"] == null)
+              return string.Empty; //cdrom is not loaded
+            else
+              return driveletter + Path.DirectorySeparatorChar;
+          }
         }
-        return driveletter + Path.DirectorySeparatorChar;
       }
+
+      //Not found
+      return string.Empty;
     }
 
     /// <summary>
@@ -332,7 +345,10 @@ namespace MediaPortal.Util
       string hostdetectmethod = (string.IsNullOrEmpty(hostDetectMethod) || hostDetectMethod == "Default") ? HostDetectMethod : hostDetectMethod;
 
       // Resolve given path to UNC
-      var strUNCPath = ResolveToUNC(strFile);
+      string strUNCPath = ResolveToUNC(strFile);
+      if (string.IsNullOrWhiteSpace(strUNCPath))
+        return string.Empty;
+
       // Get Host name
       var uri = new Uri(strUNCPath);
 
