@@ -28,9 +28,12 @@
 #include "StreamParser.h"
 #include <initguid.h>
 #include <bluray.h>
+#include "HEVC\Hevc.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
+
+using namespace HEVC;
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -66,6 +69,20 @@ bool StreamParser::Parse(byte* tsPacket, int serviceType)
 			basicVideoInfo.streamType=1; //MPEG2
 			basicVideoInfo.isValid=true;
 			parsed=true;
+		}
+	}
+	else if (serviceType == BLURAY_STREAM_TYPE_VIDEO_HEVC)
+	{
+		hevchdr hevc;
+		if (hdrParser.Read(hevc, framesize, &pmt))
+		{
+			basicVideoInfo.width = hevc.width;
+			basicVideoInfo.height = hevc.height;
+			basicVideoInfo.fps = 1000 / (hevc.AvgTimePerFrame / 10000);
+			basicVideoInfo.isInterlaced = 0;
+			basicVideoInfo.streamType = 4; // HEVC
+			basicVideoInfo.isValid = true;
+			parsed = true;
 		}
 	}
 	else if (serviceType == BLURAY_STREAM_TYPE_VIDEO_H264)

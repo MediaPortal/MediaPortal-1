@@ -142,7 +142,7 @@ namespace MediaPortal.DeployTool
       // 
       // splitContainer2.Panel2
       // 
-      this.splitContainer2.Panel2.BackColor = System.Drawing.Color.WhiteSmoke;
+      this.splitContainer2.Panel2.BackColor = System.Drawing.Color.Transparent;
       this.splitContainer2.Panel2.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_bottom;
       this.splitContainer2.Panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
       this.splitContainer2.Panel2.Controls.Add(this.labelHeading);

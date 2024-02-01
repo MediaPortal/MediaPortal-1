@@ -283,8 +283,9 @@ void StatsRenderer::DrawStats()
       CLOCKDATA clockData;
       m_pPresenter->m_pAVSyncClock->GetClockData(&clockData);
 
-      strText.Format(_T("HW vs system: %.7fx HW vs. sys: %+.3f ms resampling adj.: %.7f Drift: %+.3f ms"), 
-        clockData.driftMultiplier, clockData.driftHWvsSystem, clockData.resamplingAdjustment, clockData.currentDrift);
+      strText.Format(_T("HW vs system: %.7fx HW vs. sys: %+.3f ms resampling adj.: %.7f Drift: %+.3f ms Mode: %s"), 
+        clockData.driftMultiplier, clockData.driftHWvsSystem, clockData.resamplingAdjustment, clockData.currentDrift, 
+          clockData.maintainSoundPitch ? _T("TEMPO") : _T("RATE"));
       DrawText(rc, strText);
       OffsetRect(&rc, 0, TextHeight);
     }

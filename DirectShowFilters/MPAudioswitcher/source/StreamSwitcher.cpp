@@ -283,6 +283,7 @@ CStreamSwitcherInputPin::CStreamSwitcherInputPin(CStreamSwitcherFilter* pFilter,
 	, m_bSampleSkipped(FALSE)
 	, m_bQualityChanged(FALSE)
 	, m_bUsingOwnAllocator(FALSE)
+	, m_bSampleSetMedia(FALSE)
 	, m_evBlock(TRUE)
 	, m_fCanBlock(false)
 	, m_hNotifyEvent(NULL)
@@ -760,6 +761,8 @@ STDMETHODIMP CStreamSwitcherInputPin::Receive(IMediaSample* pSample)
 		((CStreamSwitcherFilter*)m_pFilter)->OnNewOutputMediaType(m_mt, mtOut);
 		pOutSample->SetMediaType(&mtOut);
 	}
+	else if (m_bSampleSetMedia)
+		pOutSample->SetMediaType(&mtOut);
 
 	// Transform
 
@@ -770,7 +773,22 @@ STDMETHODIMP CStreamSwitcherInputPin::Receive(IMediaSample* pSample)
     if(S_OK == hr)
 	{
 		hr = pOut->Deliver(pOutSample);
-        m_bSampleSkipped = FALSE;
+		if (FAILED(hr))
+		{
+			//sample was not delivered (usually becouse of flushing)
+			if (fTypeChanged)
+			{
+				//next sample must carry the mediatype and AM_SAMPLE_TYPECHANGED flag set
+				m_bSampleSetMedia = TRUE;
+			}
+
+			m_bSampleSkipped = TRUE;
+		}
+		else
+		{
+			m_bSampleSetMedia = FALSE;
+			m_bSampleSkipped = FALSE;
+		}
 /*
 		if(FAILED(hr))
 		{
@@ -900,17 +918,31 @@ HRESULT CStreamSwitcherOutputPin::DecideBufferSize(IMemAllocator* pAllocator, AL
 
 // virtual
 
-[uuid("AEFA5024-215A-4FC7-97A4-1043C86FD0B8")]
-class MatrixMixer {};
+DEFINE_GUID(CLSID_MatrixMixer,
+	0xAEFA5024, 0x215A, 0x4FC7, 0x97, 0xA4, 0x10, 0x43, 0xC8, 0x6F, 0xD0, 0xB8);
+
+DEFINE_GUID(CLSID_MPAudioRenderer,
+	0xEC9ED6FC, 0x7B03, 0x4CB6, 0x8C, 0x01, 0x4E, 0xAB, 0xE1, 0x09, 0xF2, 0x6B);
 
 HRESULT CStreamSwitcherOutputPin::CheckConnect(IPin* pPin)
 {
 	CComPtr<IBaseFilter> pBF = GetFilterFromPin(pPin);
+	CLSID clsid;
+	bool bAccept = false;
+		
+	if (pBF)
+	{
+		bAccept = IsAudioWaveRenderer(pBF);
+		if (!bAccept)
+		{
+			clsid = GUID_NULL;
+			pBF->GetClassID(&clsid);
+			bAccept = clsid == CLSID_MPAudioRenderer || clsid == CLSID_MatrixMixer;
+		}
+	}
 
 	return 
-		IsAudioWaveRenderer(pBF) || GetCLSID(pBF) == __uuidof(MatrixMixer)
-		? __super::CheckConnect(pPin) 
-		: E_FAIL;
+		bAccept ? __super::CheckConnect(pPin) : E_FAIL;
 
 //	return CComQIPtr<IPinConnection>(pPin) ? CBaseOutputPin::CheckConnect(pPin) : E_NOINTERFACE;
 //	return CBaseOutputPin::CheckConnect(pPin);

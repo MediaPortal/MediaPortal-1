@@ -1201,6 +1201,12 @@ namespace MediaPortal.MusicPlayer.BASS
         // Some Winamp dsps might raise an exception when closing
         BassWaDsp.BASS_WADSP_Free();
       }
+      catch (DllNotFoundException ex)
+      {
+        //64bit version of bass_wadsp.dll is not available; skip error logigng
+        if (!(IntPtr.Size > 4 && ex.Message.IndexOf("bass_wadsp", StringComparison.OrdinalIgnoreCase) >= 0))
+          Log.Error("BassAudioEngine: DisposeAndCleanUp {0}", ex.Message);
+      }
       catch (Exception ex)
       {
         Log.Error("BassAudioEngine: DisposeAndCleanUp {0}", ex.Message);

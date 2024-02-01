@@ -92,8 +92,8 @@ namespace MediaPortal.Configuration
       if (!DirectXCheck.IsInstalled())
       {
         string strLine = "Please install a newer DirectX 9.0c redist!\r\n";
-        strLine = strLine + "MediaPortal cannot run without DirectX 9.0c redist (August 2008)\r\n";
-        strLine = strLine + "http://install.team-mediaportal.com/DirectX";
+        strLine = strLine + "MediaPortal cannot run without DirectX 9.0c redist (June 2010)\r\n";
+        strLine = strLine + "https://install.team-mediaportal.com/DirectX";
         MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
@@ -272,7 +272,16 @@ namespace MediaPortal.Configuration
       try
       {
         // .NET 4.0: Use TLS v1.2. Many download sources no longer support the older and now insecure TLS v1.0/1.1 and SSL v3.
-        ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00;
+        try
+        {
+          //TLS 1.2 and 1.3
+          ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00 | (SecurityProtocolType)0x3000;
+        }
+        catch (NotSupportedException)
+        {
+          //TLS 1.2 only
+          ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00;
+        }
         AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
         Application.EnableVisualStyles();
         Application.DoEvents();

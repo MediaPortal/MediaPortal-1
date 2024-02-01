@@ -312,6 +312,11 @@ namespace MpeMaker
 
       packageClass.CreateMPDependency();
 
+      //Set MP dependency as *.*.*.*
+      DependencyItem depMP = packageClass.Dependencies.Items.Find(d => d.Type == "MediaPortal");
+      depMP.MinVersion = new VersionInfo();
+      depMP.MaxVersion = new VersionInfo();
+
       return packageClass;
     }
 
@@ -364,21 +369,9 @@ namespace MpeMaker
       Package.GenerateRelativePath(Path.GetDirectoryName(filename));
       Package.GenerateUniqueFileList();
       Package.SetPluginsDependencies();
-      DependencyItem MPDep;
-      if (Package.CheckMPDependency(out MPDep))
-      {
-        if (MPDep.MinVersion.CompareTo(MpeCore.Classes.VersionProvider.MediaPortalVersion.MinimumMPVersionRequired) < 0)
-        {
-          MPDep.MinVersion = MpeCore.Classes.VersionProvider.MediaPortalVersion.MinimumMPVersionRequired;
-        }
-      }
-      else
-      {
-        Package.CreateMPDependency();
-      }
-      FileItem skinFile;
-      DependencyItem dep;
-      if (Package.ProvidesSkin(out skinFile) && !Package.CheckSkinDependency(out dep))
+      Package.VerifyMPDependency();
+
+      if (Package.ProvidesSkin(out FileItem skinFile) && !Package.CheckSkinDependency(out DependencyItem dep))
       {
         Package.CreateSkinDependency(skinFile);
       }
@@ -387,6 +380,10 @@ namespace MpeMaker
       Package.ProjectSettings.ProjectFilename = filename;
       Package.GenerateAbsolutePath(Path.GetDirectoryName(filename));
       SetTitle();
+
+      //If the selected section is requirement, update the control (MP version might changed)
+      if (this.treeView1.SelectedNode != null && this.treeView1.SelectedNode.Name == "Node5") //requirement section
+        ((RequirementsSection)this._panels["Node5"]).RefreshControl();
     }
 
     #endregion
@@ -409,6 +406,11 @@ namespace MpeMaker
         {
           case MpeStartupResult.NewFile:
             Package = GetNewProject();
+
+            //Set initial platform compatibility to AnyCPU
+            if (this.Package != null)
+              this.Package.GeneralInfo.PlatformCompatibility = PlatformCompatibilityEnum.AnyCPU;
+
             break;
 
           case MpeStartupResult.OpenFile:

@@ -43,17 +43,18 @@ namespace MpeCore.Classes
     /// Gets the unique list of extensions with highest version
     /// </summary>
     /// <returns></returns>
-    public ExtensionCollection GetUniqueList()
+    public ExtensionCollection GetUniqueList(bool bPlatformCompatibleOnly)
     {
-      return GetUniqueList(null);
+      return GetUniqueList(null, bPlatformCompatibleOnly);
     }
 
     /// <summary>
     /// Gets the unique list of extensions with highest version
     /// </summary>
     /// <param name="exlude">Exlude these extensions</param>
+    /// <param name="bPlatformCompatibleOnly">Check for platform compatibility</param>
     /// <returns></returns>
-    public ExtensionCollection GetUniqueList(ExtensionCollection exlude)
+    public ExtensionCollection GetUniqueList(ExtensionCollection exlude, bool bPlatformCompatibleOnly)
     {
       HashSet<string> exludedIds = new HashSet<string>();
       if (exlude != null) exlude.Items.ForEach(p => exludedIds.Add(p.GeneralInfo.Id));
@@ -61,6 +62,9 @@ namespace MpeCore.Classes
       
       foreach (PackageClass item in Items)
       {
+        if (bPlatformCompatibleOnly && !item.IsPlatformCompatible)
+          continue;
+
         if (item.IsHiden || exludedIds.Contains(item.GeneralInfo.Id))
           continue;
 
@@ -163,7 +167,7 @@ namespace MpeCore.Classes
 
     public PackageClass Get(PackageClass pak)
     {
-      return Get(pak.GeneralInfo.Id, pak.GeneralInfo.Version.ToString());
+      return Get(pak.GeneralInfo.Id, pak.GeneralInfo.Version.ToString(), false);
     }
 
     /// <summary>
@@ -171,8 +175,9 @@ namespace MpeCore.Classes
     /// </summary>
     /// <param name="id">The package GUID.</param>
     /// <param name="version">The version.</param>
+    /// <param name="bPlatformCompatibleOnly">Check for platform compatibility</param>
     /// <returns>If found a package with specified Version and GUID return the package else NULL</returns>
-    public PackageClass Get(string id, string version)
+    public PackageClass Get(string id, string version, bool bPlatformCompatibleOnly)
     {
       foreach (PackageClass item in Items)
       {
@@ -186,14 +191,19 @@ namespace MpeCore.Classes
     /// Gets the hightes version number package with specified id.
     /// </summary>
     /// <param name="id">The package GUID.</param>
+    /// <param name="bPlatformCompatibleOnly">Check for platform compatibility</param>
     /// <returns>If found a package with specified GUID return the package else NULL</returns>
-    public PackageClass Get(string id)
+    public PackageClass Get(string id, bool bPlatformCompatibleOnly)
     {
       PackageClass ret = null;
       foreach (PackageClass item in Items)
       {
+        if (bPlatformCompatibleOnly && !item.IsPlatformCompatible)
+          continue;
+
         if (item.IsHiden)
           continue;
+
         if (item.GeneralInfo.Id == id)
         {
           if (ret == null)
@@ -214,12 +224,16 @@ namespace MpeCore.Classes
     /// Gets a list of extensions with same ids
     /// </summary>
     /// <param name="id">The id.</param>
+    /// <param name="bPlatformCompatibleOnly">Check for platform compatibility</param> 
     /// <returns></returns>
-    public ExtensionCollection GetList(string id)
+    public ExtensionCollection GetList(string id, bool bPlatformCompatibleOnly)
     {
       ExtensionCollection resp = new ExtensionCollection();
       foreach (PackageClass item in Items)
       {
+        if (bPlatformCompatibleOnly && !item.IsPlatformCompatible)
+          continue;
+
         if (item.IsHiden)
           continue;
         if (item.GeneralInfo.Id == id)
@@ -246,12 +260,13 @@ namespace MpeCore.Classes
     /// Gets the latest version of a package. If not found or no new version return Null
     /// </summary>
     /// <param name="pak">The package</param>
+    /// <param name="bPlatformCompatibleOnly">Check for platform compatibility</param> 
     /// <returns></returns>
-    public PackageClass GetUpdate(PackageClass pak)
+    public PackageClass GetUpdate(PackageClass pak, bool bPlatformCompatibleOnly)
     {
       if (IgnoredUpdates.Contains(pak.GeneralInfo.Id))
         return null;
-      PackageClass ret = Get(pak.GeneralInfo.Id);
+      PackageClass ret = Get(pak.GeneralInfo.Id, bPlatformCompatibleOnly);
       if (ret == null)
         return null;
       if (ret.GeneralInfo.Version.CompareTo(pak.GeneralInfo.Version) > 0)

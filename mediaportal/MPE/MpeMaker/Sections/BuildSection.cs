@@ -96,6 +96,8 @@ namespace MpeMaker.Sections
 
     private void GenPak(bool run)
     {
+      Package.VerifyMPDependency();
+
       list_error.Items.Clear();
       list_message.Items.Clear();
       string fileName = txt_outfile.Text;

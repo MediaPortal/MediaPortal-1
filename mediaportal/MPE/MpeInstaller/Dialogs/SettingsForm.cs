@@ -42,5 +42,17 @@ namespace MpeInstaller.Dialogs
       chk_updateExtension.Enabled = chk_update.Checked;
       if (!chk_updateExtension.Enabled) chk_updateExtension.Checked = false;
     }
+
+    private void chk_PlatformCompatibility_CheckedChanged(object sender, EventArgs e)
+    {
+      if (!chk_PlatformCompatibility.Checked)
+      {
+        if (MessageBox.Show("Disable platform compatibility check will allow to install not compatible extensions. ","Warning",
+          MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
+        {
+          chk_PlatformCompatibility.Checked = true;
+        }
+      }
+    }
   }
 }

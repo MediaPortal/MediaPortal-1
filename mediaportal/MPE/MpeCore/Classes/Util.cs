@@ -100,6 +100,15 @@ namespace MpeCore.Classes
         return false;
       }
       Assembly pluginAssembly = null;
+      var pluginDllLocation = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "plugins", "Windows");
+      ResolveEventHandler handler = new ResolveEventHandler(delegate (object sender, ResolveEventArgs args)
+      {
+        int idx = args.Name.IndexOf(',');
+        string pluginFullPath = Path.Combine(pluginDllLocation, (idx > 0 ? args.Name.Substring(0, idx) : args.Name) + ".dll");
+        return Assembly.LoadFrom(pluginFullPath);
+      });
+
+      AppDomain.CurrentDomain.AssemblyResolve += handler;
       try
       {
         pluginAssembly = Assembly.LoadFrom(pluginFile);
@@ -113,44 +122,52 @@ namespace MpeCore.Classes
         MessageBox.Show(string.Format("Error adding plugin depdendency for {0}.\nException message: {1}", pluginFile, ex.Message));
         return false;
       }
-      if (pluginAssembly != null)
+      try
       {
-        try
+        if (pluginAssembly != null)
         {
-          Type[] exportedTypes = pluginAssembly.GetExportedTypes();
-
-          foreach (Type type in exportedTypes)
+          try
           {
-            if (type.IsAbstract)
+            Type[] exportedTypes = pluginAssembly.GetExportedTypes();
+
+            foreach (Type type in exportedTypes)
             {
-              continue;
-            }
-            if (type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null)
-            {
-              return true;
-            }
-            if (type.GetInterface("MediaPortal.GUI.Library.IPlugin") != null)
-            {
-              return true;
-            }
-            if (type.GetInterface("MediaPortal.GUI.Library.IWakeable") != null)
-            {
-              return true;
-            }
-            if (type.GetInterface("TvEngine.ITvServerPlugin") != null)
-            {
-              return true;
-            }
-            if(type.IsClass && type.IsSubclassOf(typeof(GUIWindow)))
-            {
-              return true;
+              if (type.IsAbstract)
+              {
+                continue;
+              }
+              if (type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null)
+              {
+                return true;
+              }
+              if (type.GetInterface("MediaPortal.GUI.Library.IPlugin") != null)
+              {
+                return true;
+              }
+              if (type.GetInterface("MediaPortal.GUI.Library.IWakeable") != null)
+              {
+                return true;
+              }
+              if (type.GetInterface("TvEngine.ITvServerPlugin") != null)
+              {
+                return true;
+              }
+              if (type.IsClass && type.IsSubclassOf(typeof(GUIWindow)))
+              {
+                return true;
+              }
             }
           }
+          catch (Exception e)
+          {
+            MessageBox.Show("Exception " + e.Message);
+            return false;
+          }
         }
-        catch (Exception)
-        {
-          return false;
-        }
+      }
+      finally
+      {
+        AppDomain.CurrentDomain.AssemblyResolve -= handler;
       }
       return false;
     }
@@ -276,6 +293,21 @@ namespace MpeCore.Classes
             catch (Exception) { }
           }
         }
+      }
+    }
+
+    public static bool IsConditionSatisfied(ActionConditionEnum cond)
+    {
+      switch (cond)
+      {
+        case ActionConditionEnum.PlatformTarget_x86:
+          return IntPtr.Size == 4;
+
+        case ActionConditionEnum.PlatformTarget_x64:
+          return IntPtr.Size == 8;
+
+        default:
+          return true;
       }
     }
   }

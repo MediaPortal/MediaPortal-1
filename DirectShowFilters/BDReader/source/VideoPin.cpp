@@ -105,6 +105,7 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bDoFakeSeek(false),
   m_bResetToLibSeek(false),
   m_H264decoder(GUID_NULL),
+  m_HEVCdecoder(GUID_NULL),
   m_VC1decoder(GUID_NULL),
   m_MPEG2decoder(GUID_NULL),
   m_VC1Override(GUID_NULL),
@@ -212,6 +213,12 @@ void CVideoPin::SetVideoDecoder(int format, GUID* decoder)
     LogDebug("vid: SetVideoDecoder for MPEG2");
     LogMediaType(&tmp);
   }
+  else if (format == BLURAY_STREAM_TYPE_VIDEO_HEVC)
+  {
+      m_HEVCdecoder = tmp.subtype = *decoder;
+      LogDebug("vid: SetVideoDecoder for HEVC");
+      LogMediaType(&tmp);
+  }
   else
   {
     LogDebug("vid: SetVideoDecoder - trying to set a decoder for invalid format %d", format);
@@ -237,6 +244,8 @@ bool CVideoPin::CheckVideoFormat(GUID* pFormat, CLSID* pDecoder)
     decoder = &m_H264decoder;
   else if (IsEqualGUID(*pFormat, VC1_SubType))
     decoder = &m_VC1decoder;
+  else if (IsEqualGUID(*pFormat, HEVC_SubType))
+    decoder = &m_HEVCdecoder;
   else if (IsEqualGUID(*pFormat, MEDIASUBTYPE_MPEG2_VIDEO))
     decoder = &m_MPEG2decoder;
   else
@@ -740,6 +749,22 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             pSample->SetActualDataLength(buffer->GetDataSize());
             pSample->GetPointer(&pSampleBuffer);
             memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
+
+            //Switch to AnnexB for HEVC
+            if (m_demux.GetVideoServiceType() == BLURAY_STREAM_TYPE_VIDEO_HEVC)
+            {
+                int i = buffer->GetDataSize();
+                while (i > 0)
+                {
+                    //size of nalu
+                    int iSize = (*pSampleBuffer << 24) | (*(pSampleBuffer + 1) << 16) | (*(pSampleBuffer + 2) << 8) | (*(pSampleBuffer + 3));
+
+                    *(DWORD*)pSampleBuffer = 0x01000000; //four byte start code
+
+                    i -= iSize + 4;
+                    pSampleBuffer += iSize + 4;
+                }
+            }
 
             m_nSampleCounter++;
 

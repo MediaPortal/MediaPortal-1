@@ -32,7 +32,7 @@ namespace MpeCore.Classes
 {
   public static class ExtensionUpdateDownloader
   {
-    public const string UpdateIndexUrl = "http://install.team-mediaportal.com/MPEI/extensions.txt";
+    public const string UpdateIndexUrl = "https://install.team-mediaportal.com/MPEI/extensions.txt";
 
     static string tempUpdateIndex;
 

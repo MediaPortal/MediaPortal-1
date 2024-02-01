@@ -39,6 +39,7 @@ public:
 
   void SetBias(double pBias);
   void SetAdjustment(double pAdjustment);
+  void SetCurrentPhaseDifference(DOUBLE dDiff, DOUBLE dDiffAvg);
   void SetAudioDelay(INT64 pAudioDelay);
   void SetEVRDelay(double pDelay);
 
@@ -52,6 +53,8 @@ public:
   void AddSample(INT64 rtOriginalStart, INT64 rtAdjustedStart, INT64 rtOriginalEnd, INT64 rtAdjustedEnd);
   double SuggestedAudioMultiplier(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime, double bias, double adjustment);
   double GetBias();
+
+  bool GetMaintainSoundPitch();
 
 private:
 

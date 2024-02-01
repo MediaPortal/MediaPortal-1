@@ -1128,13 +1128,12 @@ namespace MediaPortal.Video.Database
         MediaInfoWrapper mInfo = null;
         if (!string.IsNullOrEmpty(g_Player.currentMediaInfoFilePlaying) && (g_Player.currentMediaInfoFilePlaying == strFilenameAndPath))
         {
-          mInfo = g_Player._mediaInfo;
+          mInfo = g_Player.MediaInfo;
         }
         else
         {
           g_Player.currentMediaInfoFilePlaying = strFilenameAndPath;
-          var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
-          mInfo = g_Player._mediaInfo = new MediaInfoWrapper(strFilenameAndPath, logger);
+          mInfo = g_Player.MediaInfo = GlobalServiceProvider.Get<IMediaInfoService>().Get(strFilenameAndPath);
         }
 
         mInfo.WriteInfo();

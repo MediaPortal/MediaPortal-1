@@ -94,7 +94,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             else if (NeedTextUpdate)
             {
                 //Not show EQ then display our lines
-                SoundGraphDisplay.IDW_SetVfdText(TextTopLine, TextBottomLine);
+                SoundGraphDisplay.SetVfdText(TextTopLine, TextBottomLine);
                 NeedTextUpdate = false;
             }
 
@@ -105,7 +105,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         void SetAndRollEqData()
         {
             //SL: The following demonstrates how to pass EqData to our C++ DLL
-            SoundGraphDisplay.IDW_SetVfdEqData(iEqData);
+            SoundGraphDisplay.SetVfdEqData(iEqData);
             //Move our data for our next pass
             for (int i = 0; i < 15; i++)
             {

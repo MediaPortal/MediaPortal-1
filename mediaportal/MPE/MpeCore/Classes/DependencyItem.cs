@@ -26,48 +26,109 @@ namespace MpeCore.Classes
 {
   public class DependencyItem
   {
+    private string _name;
+    private string _message;
+    private VersionInfo _MinVersion = new VersionInfo();
+    private VersionInfo _MaxVersion = new VersionInfo();
+
     public DependencyItem()
     {
       Type = string.Empty;
       Id = string.Empty;
-      MinVersion = new VersionInfo();
-      MaxVersion = new VersionInfo();
       WarnOnly = true;
       Message = string.Empty;
       Name = string.Empty;
+      Condition = ActionConditionEnum.None;
     }
 
     public DependencyItem(string type)
     {
       Type = type;
       Id = string.Empty;
-      MinVersion = new VersionInfo();
-      MaxVersion = new VersionInfo();
       WarnOnly = true;
       Message = string.Empty;
       Name = string.Empty;
+      Condition = ActionConditionEnum.None;
     }
 
     public string Type { get; set; }
+
     public string Id { get; set; }
-    public VersionInfo MinVersion { get; set; }
-    public VersionInfo MaxVersion { get; set; }
+
+    public VersionInfo MinVersion
+    {
+      get
+      {
+        return this._MinVersion;
+      }
+      set
+      {
+        //Check old MP versioning
+        if (this.Type != "MediaPortal" || value.Major != "1" || value.Minor != "1" || value.Build != "6" || value.Revision != "27644")
+        {
+          this._MinVersion = value;
+          this._message = null; //force to reload the message
+        }
+      }
+    }
+
+    public VersionInfo MaxVersion
+    {
+      get
+      {
+        return this._MaxVersion;
+      }
+      set
+      {
+        //Check old MP versioning
+        if (this.Type != "MediaPortal" || value.Major != "1" || value.Minor != "1" || value.Build != "6" || value.Revision != "27644")
+        {
+          this._MaxVersion = value;
+          this._message = null; //force to reload the message
+        }
+      }
+    }
+    
     public bool WarnOnly { get; set; }
-
-    private string _message;
-
+    
     public string Message
     {
       get
       {
-        if (!string.IsNullOrEmpty(_message)
-          ) return _message;
-        return string.Format("requires {0} version {1} to {2}.", Name, MinVersion, MaxVersion);
+        if (this._message == null)
+        {
+          if (!this.MinVersion.IsAnyVersion && this.MaxVersion.IsAnyVersion)
+          {
+            this._message = string.Format("Requires {0} {1} or higher!",
+              this.Name,
+              this.MinVersion);
+          }
+          else if (this.MinVersion.IsAnyVersion && !this.MaxVersion.IsAnyVersion)
+          {
+            this._message = string.Format("Requires {0} {1} or lower!",
+              this.Name,
+              this.MaxVersion);
+          }
+          else if (!this.MinVersion.IsAnyVersion && !this.MaxVersion.IsAnyVersion)
+          {
+            if (this.MinVersion.ToString().Equals(this.MaxVersion.ToString()))
+              this._message = string.Format("Requires {0} {1}!",
+              this.Name,
+              this.MinVersion);
+            else
+              this._message = string.Format("Requires {0} from {1} to {2}!",
+                this.Name,
+                this.MinVersion,
+                this.MaxVersion);
+          }
+          else
+            this._message = string.Empty;
+        }
+
+        return this._message;
       }
       set { _message = value; }
     }
-
-    private string _name;
 
     public string Name
     {
@@ -79,10 +140,15 @@ namespace MpeCore.Classes
       set { _name = value; }
     }
 
+    public ActionConditionEnum Condition { get; set; }
+
     public override string ToString()
     {
-      return string.Format("{0}{1}({2})-({3})", Type,
-                           "", MinVersion, MaxVersion);
+      return string.Format("{0}{1} ({2})-({3})",
+        Type,
+        string.Empty,
+        MinVersion,
+        MaxVersion);
     }
   }
 }

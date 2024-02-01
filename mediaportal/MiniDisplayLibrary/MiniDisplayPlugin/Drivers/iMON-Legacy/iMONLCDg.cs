@@ -738,7 +738,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               string curBrand = _BrandTable[i, 0];
               string curApp = _BrandTable[i, 1];
               Log.Info("iMONLCDg.Setup(): checking registry for " + curBrand + " entries");
-              RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software" + curBrand + "\\" + curApp, false);
+              RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software"+ "\\" + curBrand + "\\" + curApp, false);
               if (key != null)
               {
                 num3 = (int)key.GetValue("LastVFD", 0);

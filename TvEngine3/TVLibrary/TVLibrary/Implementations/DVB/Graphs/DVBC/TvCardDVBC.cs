@@ -288,7 +288,26 @@ namespace TvLibrary.Implementations.DVB
         dvbcLocator.put_OuterFEC(FECMethod.MethodNotSet);
         dvbcLocator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
         dvbcLocator.put_Modulation(dvbcChannel.ModulationType);
-        dvbcLocator.put_SymbolRate(dvbcChannel.SymbolRate);
+
+        //SymbolRate multiplier
+        int iSr = dvbcChannel.SymbolRate;
+        if (iSr > 0 && iSr < 1000000)
+        {
+          System.Collections.Generic.IList<Card> cards = Card.ListAll();
+          for (int i = 0; i < cards.Count; i++)
+          {
+            Card card = cards[i];
+            if (card.DevicePath.Equals(this._device.DevicePath))
+            {
+              if (card.SymbolRateMultiplier > 0)
+                iSr *= 1000;
+
+              break;
+            }
+          }
+        }
+        dvbcLocator.put_SymbolRate(iSr);
+
         IDVBTuneRequest tuneRequest = (IDVBTuneRequest)_tuneRequest;
         tuneRequest.put_ONID(dvbcChannel.NetworkId);
         tuneRequest.put_SID(dvbcChannel.ServiceId);

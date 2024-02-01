@@ -71,9 +71,10 @@ namespace TvService
       string filename,
       [MarshalAs(UnmanagedType.U4)] FileAccess fileaccess,
       [MarshalAs(UnmanagedType.U4)] FileShare fileshare,
-      int securityattributes,
+      IntPtr securityAttributes,
       [MarshalAs(UnmanagedType.U4)] FileMode creationdisposition,
-      int flags, IntPtr template);
+      [MarshalAs(UnmanagedType.U4)] FileAttributes flagsAndAttributes,
+      IntPtr templateFile);
 
 
     [DllImport("kernel32.dll", SetLastError = true)]
@@ -398,8 +399,8 @@ namespace TvService
 
       try
       {
-        IntPtr fHandle = CreateFile(strDrive, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite, 0,
-                                    System.IO.FileMode.Open, 0x80, IntPtr.Zero);
+        IntPtr fHandle = CreateFile(strDrive, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite, IntPtr.Zero,
+                                    System.IO.FileMode.Open, FileAttributes.Normal, IntPtr.Zero);
         if (fHandle.ToInt64() != -1) //INVALID_HANDLE_VALUE)
         {
           uint Result;

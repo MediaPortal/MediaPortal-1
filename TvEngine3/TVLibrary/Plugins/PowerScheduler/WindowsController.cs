@@ -311,7 +311,7 @@ namespace TvEngine.PowerScheduler
     /// <returns>If the function succeeds, the return value is the number of TCHARs stored in the output buffer, excluding the terminating null character.<br></br><br>If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
     [DllImport("user32.dll", EntryPoint = "FormatMessageA", CharSet = CharSet.Ansi)]
     private static extern int FormatMessage(int dwFlags, IntPtr lpSource, int dwMessageId, int dwLanguageId,
-                                            StringBuilder lpBuffer, int nSize, int Arguments);
+                                            StringBuilder lpBuffer, int nSize, IntPtr Arguments);
 
     /// <summary>
     /// Exits windows (and tries to enable any required access rights, if necesarry).
@@ -392,7 +392,7 @@ namespace TvEngine.PowerScheduler
       try
       {
         StringBuilder buffer = new StringBuilder(255);
-        FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, IntPtr.Zero, number, 0, buffer, buffer.Capacity, 0);
+        FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, IntPtr.Zero, number, 0, buffer, buffer.Capacity, IntPtr.Zero);
         return buffer.ToString();
       }
       catch (Exception)

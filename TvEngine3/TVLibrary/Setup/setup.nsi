@@ -70,18 +70,17 @@
 #---------------------------------------------------------------------------
 # DEFINES
 #---------------------------------------------------------------------------
-!define PRODUCT_NAME          "MediaPortal TV Server / Client"
+!if "${Architecture}" == "x64"
+  !define PRODUCT_NAME        "MediaPortal TV Server / Client (x64)"
+!else
+  !define PRODUCT_NAME        "MediaPortal TV Server / Client"
+!endif
 !define PRODUCT_PUBLISHER     "Team MediaPortal"
 !define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
 
+!define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+!define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
 
-!if "${Architecture}" == "x64"
-  !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
-  !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server (x64)"
-!else
-  !define MP_REG_UNINSTALL      "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
-  !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
-!endif
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal TV Server"
@@ -235,7 +234,7 @@ XPStyle on
 RequestExecutionLevel admin
 ShowInstDetails show
 VIProductVersion "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName       "MediaPortal TV Server"
+VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName       "${PRODUCT_NAME}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductVersion    "${VERSION_DISP}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
@@ -577,10 +576,17 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; MediaInfo
   SetOutPath "$INSTDIR"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\MediaInfo.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcrypto-3.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcurl.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libssl-3.dll"
+  !if "${Architecture}" == "x64"
+    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\MediaInfo.dll"
+    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libcrypto-3-x64.dll"
+    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libcurl.dll"
+    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libssl-3-x64.dll"
+  !else
+    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\MediaInfo.dll"
+    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcrypto-3.dll"
+    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcurl.dll"
+    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libssl-3.dll"
+  !endif
   File "${git_ROOT}\Packages\MediaInfo.Wrapper.21.9.3\lib\net40\MediaInfo.Wrapper.dll"
   File "${git_ROOT}\Packages\System.ValueTuple.4.5.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll"
 
@@ -590,7 +596,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ${Else}
     File "${git_ROOT}\Packages\FFmpeg.Win32.Static.4.1.1.1\ffmpeg\ffmpeg.exe"
   ${EndIf}
-  File "${git_TVServer}\TvThumbnails\bin\x86\${BUILD_TYPE}\TvThumbnails.dll"
+  File "${git_TVServer}\TvThumbnails\bin\${BUILD_TYPE}\TvThumbnails.dll"
 
   ; protocol implementations for MPIPTVSource.ax
   File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_FILE.dll"
@@ -617,9 +623,15 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
   #---------------------------------------------------------------------------
   ${LOG_TEXT} "INFO" "filter registration..."
+  
+  !if "${Architecture}" == "x64"
+    !define LIBRARY_X64
+  !else
+  !endif
+  
   ; filters for digital tv
   ${IfNot} ${MP023IsInstalled}
-  ${AndIfNot} ${MPIsInstalledx86}
+  ${AndIfNot} ${MPIsInstalled}
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax" "$INSTDIR\TsReader.ax" "$INSTDIR"
     !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\Core-CC-Parser\CCCP\${BUILD_TYPE}\cccp.ax" "$INSTDIR\cccp.ax" "$INSTDIR"
   ${EndIf}
@@ -658,7 +670,15 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     ;!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
     CreateDirectory "${STARTMENU_GROUP}"
-    CreateShortCut "${STARTMENU_GROUP}\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe"  "" "$INSTDIR\SetupTV.exe"  0 "" "" "TV-Server Configuration"
+    !if "${Architecture}" == "x64"
+        CreateShortCut "${STARTMENU_GROUP}\TV-Server Configuration (x64).lnk" "$INSTDIR\SetupTV.exe"  "" "$INSTDIR\SetupTV.exe"  0 "" "" "TV-Server Configuration (x64)"
+        
+        ; Delete shortcuts with old x64 naming
+        Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
+    !else
+        CreateShortCut "${STARTMENU_GROUP}\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe"  "" "$INSTDIR\SetupTV.exe"  0 "" "" "TV-Server Configuration"
+    !endif    
+        
     CreateDirectory "${COMMON_APPDATA}\log"
     CreateShortCut "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"     "${COMMON_APPDATA}\log" "" "${COMMON_APPDATA}\log" 0 "" "" "TV-Server Log-Files"
 
@@ -670,10 +690,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ;${EndIf}
 ${MementoSectionEnd}
 !macro Remove_${SecServer}
-
-  ; Currently the x86 version only is suppoertd
-  ${If} "${Architecture}" == "x86"
-
 
   ${LOG_TEXT} "INFO" "Uninstalling MediaPortal TV Server..."
 
@@ -710,7 +726,7 @@ ${MementoSectionEnd}
   ${LOG_TEXT} "INFO" "Unreg and remove filters..."
   ; filters for digital tv
   ${IfNot} ${MP023IsInstalled}
-  ${AndIfNot} ${MPIsInstalledx86}
+  ${AndIfNot} ${MPIsInstalled}
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\TsReader.ax"
     !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$INSTDIR\cccp.ax"
     ; Delete TV filter to be able to be registered with an updated version
@@ -819,7 +835,11 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\MPIPTV_UDP.dll"  
 
   ; remove Start Menu shortcuts
-  Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
+  !if "${Architecture}" == "x64"
+    Delete "${STARTMENU_GROUP}\TV-Server Configuration (x64).lnk"
+  !else 
+    Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
+  !endif
   Delete "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"
 
   Delete "${STARTMENU_GROUP}\Quick Setup Guide.url"
@@ -831,8 +851,6 @@ ${MementoSectionEnd}
   ${IfNot} ${MPIsInstalled}
     !insertmacro Remove_SecMpeInstaller
     !insertmacro Remove_SecWatchdog
-  ${EndIf}
-  
   ${EndIf}
   
 !macroend
@@ -887,7 +905,7 @@ ${MementoSectionEnd}
   ${If} ${TVClientIsInstalled}
     ${LOG_TEXT} "INFO" "TV Client plugin is installed"
 
-    ${If} $MPdir.Base = ""
+    ${If} $MPdir.Base == ""
       ${LOG_TEXT} "ERROR" "MediaPortal Directory not found, TVClient plugin uninstallation will fail!!"
     ${Else}
       ${LOG_TEXT} "INFO" "Removing TV Client plugin in: $MPdir.Base"
@@ -980,7 +998,14 @@ Section -Post
     ;!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
     CreateDirectory "${STARTMENU_GROUP}"
-    CreateShortCut "${STARTMENU_GROUP}\uninstall TV-Server.lnk" "$INSTDIR\uninstall-tve3.exe"
+    !if "${Architecture}" == "x64"
+        CreateShortCut "${STARTMENU_GROUP}\Uninstall TV-Server (x64).lnk" "$INSTDIR\uninstall-tve3.exe" "" "$INSTDIR\uninstall-tve3.exe"  0 "" "" "Uninstall TV-Server (x64)"
+        
+        ; Delete shortcuts with old x64 naming
+        Delete "${STARTMENU_GROUP}\Uninstall TV-Server.lnk"
+    !else
+        CreateShortCut "${STARTMENU_GROUP}\Uninstall TV-Server.lnk" "$INSTDIR\uninstall-tve3.exe" "" "$INSTDIR\uninstall-tve3.exe"  0 "" "" "Uninstall TV-Server"
+    !endif
     WriteINIStr "${STARTMENU_GROUP}\Help.url"      "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/"
     WriteINIStr "${STARTMENU_GROUP}\web site.url"  "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
     ;!insertmacro MUI_STARTMENU_WRITE_END
@@ -1037,7 +1062,11 @@ Section Uninstall
 
   ; remove Start Menu shortcuts
   ; $StartMenuGroup (default): "Team MediaPortal\TV Server"
-  Delete "${STARTMENU_GROUP}\uninstall TV-Server.lnk"
+  !if "${Architecture}" == "x64"
+    Delete "${STARTMENU_GROUP}\Uninstall TV-Server (x64).lnk"
+  !else
+    Delete "${STARTMENU_GROUP}\Uninstall TV-Server.lnk"
+  !endif
   Delete "${STARTMENU_GROUP}\Help.url"
   Delete "${STARTMENU_GROUP}\web site.url"
   RMDir "${STARTMENU_GROUP}"
@@ -1122,6 +1151,12 @@ FunctionEnd
 Function .onInit
   ${LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION .onInit"
+  
+  !if "${Architecture}" == "x64"
+    SetRegView 64
+  !else 
+    SetRegView 32
+  !endif
 
   !insertmacro MediaPortalNetFrameworkCheck
   !insertmacro MediaPortalNet4FrameworkCheck
@@ -1245,6 +1280,11 @@ Function un.onInit
   ${un.LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION un.onInit"
 
+  !if "${Architecture}" == "x64"
+    SetRegView 64
+  !else 
+    SetRegView 32
+  !endif
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........

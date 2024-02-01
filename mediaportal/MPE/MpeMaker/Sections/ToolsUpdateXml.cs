@@ -108,6 +108,7 @@ namespace MpeMaker.Sections
     /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     private void btn_gen_Click(object sender, EventArgs e)
     {
+      Package.VerifyMPDependency();
       Package.WriteUpdateXml(textBox1.Text);
     }
 

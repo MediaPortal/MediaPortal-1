@@ -33,7 +33,7 @@ namespace MpeCore.Classes.VersionProvider
 
     public override VersionInfo Version(string id)
     {
-      PackageClass pak = MpeInstaller.InstalledExtensions.Get(id);
+      PackageClass pak = MpeInstaller.InstalledExtensions.Get(id, false);
       if (pak != null)
         return pak.GeneralInfo.Version;
       return new VersionInfo();

@@ -54,6 +54,13 @@ namespace MpeCore.Classes
             continue;
           }
         }
+
+        if (!Util.IsConditionSatisfied(currentItem.Condition))
+        {
+          pos++;
+          continue;
+        }
+
         Response = MpeInstaller.SectionPanels[currentItem.PanelName].Execute(Package,
                                                                              currentItem);
         switch (Response)

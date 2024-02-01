@@ -17,6 +17,8 @@ namespace MPx86Proxy
 {
   public class ConnectionHandler
   {
+    private const int _BUFFER_SIZE = 1024 * 16;
+
     [DllImport("msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
     public static extern IntPtr memcpy(IntPtr dest, IntPtr src, UIntPtr count);
 
@@ -24,10 +26,10 @@ namespace MPx86Proxy
 
     class Client
     {
-      public byte[] Buffer = new byte[256];
+      public byte[] Buffer = new byte[_BUFFER_SIZE];
       public Socket Socket;
       public StringBuilder Sb = new StringBuilder(256);
-      public byte[] Response = new byte[256];
+      public byte[] Response = new byte[_BUFFER_SIZE];
 
       public List<object> Args = new List<object>();
       public volatile int Received = 0;
@@ -53,7 +55,7 @@ namespace MPx86Proxy
 
     private Client _ClientRequest = null;
 
-    private byte[] _BufferEvent = new byte[256];
+    private byte[] _BufferEvent = new byte[_BUFFER_SIZE];
 
     private object _Padlock = new object();
     private volatile bool _Abort = false;
@@ -370,6 +372,19 @@ namespace MPx86Proxy
 
                     switch (cmd)
                     {
+                      case CommandEnum.ImonDisplayWrapper:
+                        int iRespLng;
+                        Drivers.iMONDisplayWrapper.ImonDisplayWrapperCommandEnum cmdSub = (Drivers.iMONDisplayWrapper.ImonDisplayWrapperCommandEnum)data[iIdx++];
+                        iResult = Drivers.iMONDisplayWrapper.HandleRequest(cmdSub, data, iIdx, iSize - 6, out iRespLng);
+
+                        if (iRespLng > 0)
+                        {
+                          Buffer.BlockCopy(data, 6, this._ClientRequest.Response, 4, iRespLng);
+                          iResultLength = 4 + iRespLng;
+                        }
+
+                        goto resp;
+
                       case CommandEnum.ImonInit:
                         if (iLength == 13)
                           iResult = Drivers.iMONDisplay.iMONDisplay_Init(BitConverter.ToInt32(data, iIdx), BitConverter.ToInt32(data, iIdx + 4)) ? 1 : 0;

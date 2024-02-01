@@ -32,6 +32,10 @@ namespace WatchDogService
         String[] cmdline = { path };
         InstallContext ctx = new InstallContext("", cmdline);
         ti.Context = ctx;
+
+        //Try to uninstall first
+        try { ti.Uninstall(null); } catch { };
+
         ti.Install(new Hashtable());
         return;
       }

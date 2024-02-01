@@ -102,7 +102,16 @@ namespace SetupTv
     public static void Main(string[] arguments)
     {
       // .NET 4.0: Use TLS v1.2. Many download sources no longer support the older and now insecure TLS v1.0/1.1 and SSL v3.
-      ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00;
+      try
+      {
+        //TLS 1.2 and 1.3
+        ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00 | (SecurityProtocolType)0x3000;
+      }
+      catch (NotSupportedException)
+      {
+        //TLS 1.2 only
+        ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xc00;
+      }
       // Init Common logger -> this will enable TVPlugin to write in the Mediaportal.log file
       var loggerName = Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
       var dataPath = Log.GetPathName();
@@ -171,12 +180,13 @@ namespace SetupTv
 
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
+      string strArch = System.IntPtr.Size == 8 ? "x64" : "x86";
       try
       {
-        Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
+        Log.Info("---- SetupTv " + strArch + " v" + versionInfo.FileVersion  + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
       } catch (Exception)
       {
-        Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
+        Log.Info("---- SetupTv " + strArch + " v" + versionInfo.FileVersion + " is starting up on Windows 10 Pro for Workstations (???)");
       }
       //Log.Info(OSInfo.OSInfo.GetLastInstalledWindowsUpdateTimestampAsString());
       Log.Info("Windows Media Player: [{0}]", OSInfo.OSInfo.GetWMPVersion());

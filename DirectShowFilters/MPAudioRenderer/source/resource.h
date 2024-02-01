@@ -17,6 +17,7 @@
 #define IDC_SAMPLERATE                  1011
 #define IDC_RESAMPLING_QUALITY          1012
 #define IDC_BITDEPTH                    1013
+#define IDC_MAINTAIN_PITCH              1014
 #define IDC_AUDIO_DELAY                 1017
 #define IDC_LOG_SAMPLE_TIMES            1018
 #define IDC_OUTPUT_BUFFER               1019
@@ -25,7 +26,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        104
+#define _APS_NEXT_RESOURCE_VALUE        105
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1019
 #define _APS_NEXT_SYMED_VALUE           101

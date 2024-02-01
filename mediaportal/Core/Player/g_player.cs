@@ -68,7 +68,7 @@ namespace MediaPortal.Player
 
     #region variables
 
-    public static MediaInfoWrapper _mediaInfo = null;
+    private static MediaInfoWrapper _mediaInfo = null;
     private static int _currentStep = 0;
     private static int _currentStepIndex = -1;
     private static DateTime _seekTimer = DateTime.MinValue;
@@ -1546,15 +1546,15 @@ namespace MediaPortal.Player
         {
           if (currentMediaInfoFilePlaying != strFile)
           {
-            var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
-            _mediaInfo = new MediaInfoWrapper(strFile, logger);
+            IMediaInfoService mi = GlobalServiceProvider.Get<IMediaInfoService>();
+            _mediaInfo = mi.Get(strFile);
             int nattempts = 0;
             while (_mediaInfo.HasVideo && _mediaInfo.Framerate == 0 && nattempts<5)
             {
               nattempts++;
               Log.Info("Mediainfo is empty for {0}, trying again for the {1} time", strFile,nattempts);
               Thread.Sleep(500);
-              _mediaInfo = new MediaInfoWrapper(strFile, logger);
+              _mediaInfo = mi.Get(strFile);
             }
 
             _mediaInfo.WriteInfo();
@@ -3569,6 +3569,7 @@ namespace MediaPortal.Player
     public static MediaInfoWrapper MediaInfo
     {
       get { return _mediaInfo; }
+      set { _mediaInfo = value; }
     }
 
     /// <summary>
@@ -3950,8 +3951,7 @@ namespace MediaPortal.Player
         bool playingRemoteUrl = Util.Utils.IsRemoteUrl(FileName);
         if (_mediaInfo == null && !playingRemoteUrl)
         {
-          var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
-          _mediaInfo = new MediaInfoWrapper(FileName, logger);
+          _mediaInfo = GlobalServiceProvider.Get<IMediaInfoService>().Get(FileName);
           _mediaInfo.WriteInfo();
         }
 

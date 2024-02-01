@@ -49,6 +49,7 @@ namespace MpeCore.Classes
       Params = new SectionParamCollection();
       ConditionGroup = string.Empty;
       ExecuteLocation = ActionExecuteLocationEnum.AfterPanelShow;
+      Condition = ActionConditionEnum.None;
     }
 
     [XmlAttribute]
@@ -61,6 +62,9 @@ namespace MpeCore.Classes
 
     [XmlAttribute]
     public string ConditionGroup { get; set; }
+
+    [XmlAttribute]
+    public ActionConditionEnum Condition { get; set; }
 
     public ActionExecuteLocationEnum ExecuteLocation { get; set; }
 

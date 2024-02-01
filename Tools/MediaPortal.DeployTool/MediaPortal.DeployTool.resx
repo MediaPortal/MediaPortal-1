@@ -555,4 +555,8 @@ Please proceed with it before continuing with MediaPortal installation.</value>
   <data name="SkinChoice_OtherSkins" xml:space="preserve">
     <value>Browse other skins</value>
   </data>
+  <data name="TvServerWarning_labelHeading" xml:space="preserve">
+    <value>TV-Server x64 is not compatible with some TV cards.
+	If you are using one of the following devices, please install 32bit version of the TV-Server.</value>
+  </data>
 </root>

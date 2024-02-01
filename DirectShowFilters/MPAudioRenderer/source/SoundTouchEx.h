@@ -47,23 +47,19 @@ public:
   virtual int getBuffer(BYTE *pOutBuffer, int maxSamples);
 
   bool SetInputFormat(int frameSize, int bytesPerSample);
-  void SetInputChannels(int leftOffset, int rightOffset = 0);
   bool SetOutputFormat(int frameSize, int bytesPerSample);
-  void SetOutputChannels(int leftOffset, int rightOffset = 0);
-  bool SetupFormats();
+  bool SetChannels(uint numChannels);
 
   uint numChannels()  { return channels; };
 
-protected:
-  typedef void (CSoundTouchEx::*DeInterleaveFunc)(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
-  typedef void (CSoundTouchEx::*InterleaveFunc)(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count);
+  void deInterleave(const void* inBuffer, soundtouch::SAMPLETYPE* outBuffer, uint count);
+  void interleave(const soundtouch::SAMPLETYPE* inBuffer, void* outBuffer, uint count);
 
+protected:
+  
   // Input buffer layout
   int m_nInFrameSize;       // Bytes in a frame. A frame contains a sample for each channel
   int m_nInBytesPerSample;  // Bytes in a sample. Can be 1 to 4. This is the "container" size
-  int m_nInLeftOffset;      // The offset in bytes from the start of a frame of the channel sample to map to the Left channel
-  int m_nInRightOffset;     // The offset in bytes from the start of a frame of the channel sample to map to the Right channel
-  DeInterleaveFunc m_pfnDeInterleave;
 
   // Input queue
   std::vector<CComPtr<IMediaSample>> m_InSampleQueue;
@@ -72,9 +68,8 @@ protected:
   // Output buffer layout
   int m_nOutFrameSize;      // Bytes in a frame. A frame contains a sample for each channel
   int m_nOutBytesPerSample; // Bytes in a sample. Can be 1 to 4. This is the "container" size
-  int m_nOutLeftOffset;     // The offset in bytes from the start of a frame of the channel sample to map to the Left channel
-  int m_nOutRightOffset;    // The offset in bytes from the start of a frame of the channel sample to map to the Right channel
-  InterleaveFunc m_pfnInterleave;
+
+  size_t m_nSampleSize; //size of one sample; ie. soundtouch::SAMPLETYPE * channels
 
   // Output queue
   std::vector<CComPtr<IMediaSample>> m_OutSampleQueue;
@@ -82,12 +77,6 @@ protected:
 
   // Temporary input buffer
   static const uint BATCH_LEN = 0x4000;
-  soundtouch::SAMPLETYPE m_tempBuffer[2*BATCH_LEN];
-
-  // internal functions to separate/merge streams out of sample buffers
-  virtual void StereoDeInterleave(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
-  virtual void StereoInterleave(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count);
-  virtual void MonoDeInterleave(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
-  virtual void MonoInterleave(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count);
+  soundtouch::SAMPLETYPE* m_tempBuffer;
 };
 

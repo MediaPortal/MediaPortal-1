@@ -55,11 +55,25 @@ namespace MpeMaker.Sections
         btn_params.Enabled = false;
       lbl_description.Text = MpeInstaller.ActionProviders[item.ActionType].Description;
       cmb_execute.SelectedIndex = (int)item.ExecuteLocation;
+
+      this.cmb_execution_condition.Items.AddRange(Enum.GetNames(typeof(ActionConditionEnum)));
+      this.cmb_execution_condition.SelectedIndex = (int)item.Condition;
+
+      this.textBoxName.Text = item.Name;
+
       _loading = false;
     }
 
     private void btn_ok_Click(object sender, EventArgs e)
     {
+      if (string.IsNullOrWhiteSpace(this.textBoxName.Text))
+      {
+        MessageBox.Show("Invalid name.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
+      else
+        this._actionItem.Name = this.textBoxName.Text;
+
       DialogResult = DialogResult.OK;
       this.Close();
     }
@@ -76,6 +90,14 @@ namespace MpeMaker.Sections
         return;
       _actionItem.ConditionGroup = cmb_group.Text;
       _actionItem.ExecuteLocation = (ActionExecuteLocationEnum)cmb_execute.SelectedIndex;
+    }
+
+    private void cmb_execution_condition_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (this._loading)
+        return;
+
+      this._actionItem.Condition = (ActionConditionEnum)this.cmb_execution_condition.SelectedIndex;
     }
 
     private void button1_Click(object sender, EventArgs e)

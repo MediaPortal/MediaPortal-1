@@ -160,7 +160,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private static bool _S_iMONVFD_SetText(string firstLine, string secondLine)
     {
       if (IntPtr.Size == 8)
-        return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute("iMONDisplay", "_S_iMONVFD_SetText",
+        return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute("iMONDisplay", "iMONDisplay_SetText",
           firstLine == null ? string.Empty : firstLine,
           secondLine == null ? string.Empty : secondLine
           ) == 1;
@@ -628,7 +628,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (IntPtr.Size == 8)
           return MiniDisplayPlugin.Drivers.MPx86ProxyHandler.Instance.Execute(
-          MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonRCGetPacket, ref buffer, iSize) == 1;
+          MiniDisplayPlugin.Drivers.MPx86ProxyHandler.CommandEnum.ImonRCGetPacket, buffer, iSize) == 1;
 
         var flag = (bool)_iMONDLL.InvokeMember("iMONRC_GetPacket",
                                 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,

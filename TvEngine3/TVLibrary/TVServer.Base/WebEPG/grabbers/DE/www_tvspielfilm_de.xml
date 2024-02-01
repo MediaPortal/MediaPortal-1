@@ -210,25 +210,17 @@
 	<Listing type="Html">
 		<Site url="https://m.tvspielfilm.de/tv-programm/sendungen/[ID].html?date=[YYYY]-[MM]-[DD]" external="false" encoding="utf-8"/>
 		<Html>
-			<Template name="default" start="">
+			<Template name="default" start="livetv-block">
 				<SectionTemplate tags="LS">
 					<TemplateText>
 					<![CDATA[
 							<li>
-							<source>
-							<source>
 							<span class="t"><#START> - <#END> | </span>
 							<span class="c"></span></div>
 							<div class="">
-							<strong class="tv-tip-heading"><#TITLE></strong>
-							</div>
-							<div class="genre">
+							<strong class="tv-tip-heading"><span class="title"><#TITLE></span></strong>
 							<span class="genre-time">| <#GENRE></span>
 							<span class="listing-icon rating-0"></span>
-							</div>
-							</div>
-							</a>
-							</div>
 							<span class="progress-bar"></span>
 							</li>
 					]]>

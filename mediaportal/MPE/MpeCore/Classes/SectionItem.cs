@@ -34,6 +34,7 @@ namespace MpeCore.Classes
       ConditionGroup = string.Empty;
       Actions = new ActionItemCollection();
       WizardButtonsEnum = Classes.WizardButtonsEnum.BackNextCancel;
+      Condition = ActionConditionEnum.None;
     }
 
     //public SectionItem(SectionItem obj)
@@ -59,6 +60,9 @@ namespace MpeCore.Classes
 
     [XmlAttribute]
     public string ConditionGroup { get; set; }
+
+    [XmlAttribute]
+    public ActionConditionEnum Condition { get; set; }
 
     public WizardButtonsEnum WizardButtonsEnum { get; set; }
 
