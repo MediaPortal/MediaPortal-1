@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PackageClass xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<PackageClass xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Version>2.0</Version>
   <Groups>
     <Items>
@@ -768,7 +768,7 @@
   </Groups>
   <Sections>
     <Items>
-      <SectionItem Guid="9aab8722-4524-470a-bd59-b51cb92acef4" Name="Welcome Screen" ConditionGroup="">
+      <SectionItem Guid="9aab8722-4524-470a-bd59-b51cb92acef4" Name="Welcome Screen" ConditionGroup="" Condition="None">
         <Params>
           <Items>
             <SectionParam Name="Header text">
@@ -797,7 +797,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
         </Params>
         <Actions>
           <Items>
-            <ActionItem Name="Script" ActionType="Script" ConditionGroup="">
+            <ActionItem Name="Script" ActionType="Script" ConditionGroup="" Condition="None">
               <Params>
                 <Items>
                   <SectionParam Name="Script">
@@ -941,7 +941,7 @@ public class Script
         <PanelName>Welcome Screen</PanelName>
         <WizardButtonsEnum>NextCancel</WizardButtonsEnum>
       </SectionItem>
-      <SectionItem Guid="9dde0996-8b62-4463-a66e-50bd7e38b4aa" Name="Welcome Screen" ConditionGroup="MPUrlSourceSplitterConflict">
+      <SectionItem Guid="9dde0996-8b62-4463-a66e-50bd7e38b4aa" Name="Welcome Screen" ConditionGroup="MPUrlSourceSplitterConflict" Condition="None">
         <Params>
           <Items>
             <SectionParam Name="Header text">
@@ -975,7 +975,7 @@ Click Next to uninstall previous version of MediaPortal Url Source Splitter or C
         <PanelName>Welcome Screen</PanelName>
         <WizardButtonsEnum>NextCancel</WizardButtonsEnum>
       </SectionItem>
-      <SectionItem Guid="3ae1ae9b-7a3b-4c63-9e2b-ecf4c9e99ee6" Name="Welcome Screen" ConditionGroup="MSVCPP2013">
+      <SectionItem Guid="3ae1ae9b-7a3b-4c63-9e2b-ecf4c9e99ee6" Name="Welcome Screen" ConditionGroup="MSVCPP2013" Condition="None">
         <Params>
           <Items>
             <SectionParam Name="Header text">
@@ -1009,7 +1009,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <PanelName>Welcome Screen</PanelName>
         <WizardButtonsEnum>BackNextCancel</WizardButtonsEnum>
       </SectionItem>
-      <SectionItem Guid="6445c464-28f3-4cb4-b705-c0f72ec32793" Name="Install Section" ConditionGroup="Never">
+      <SectionItem Guid="6445c464-28f3-4cb4-b705-c0f72ec32793" Name="Install Section" ConditionGroup="Never" Condition="None">
         <Params>
           <Items>
             <SectionParam Name="Header Title">
@@ -1031,7 +1031,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
         </Params>
         <Actions>
           <Items>
-            <ActionItem Name="Script" ActionType="Script" ConditionGroup="">
+            <ActionItem Name="Script" ActionType="Script" ConditionGroup="" Condition="None">
               <Params>
                 <Items>
                   <SectionParam Name="Script">
@@ -1424,13 +1424,13 @@ public class Script
               </Params>
               <ExecuteLocation>BeforPanelShow</ExecuteLocation>
             </ActionItem>
-            <ActionItem Name="InstallFiles" ActionType="InstallFiles" ConditionGroup="">
+            <ActionItem Name="InstallFiles" ActionType="InstallFiles" ConditionGroup="" Condition="None">
               <Params>
                 <Items />
               </Params>
               <ExecuteLocation>AfterPanelShow</ExecuteLocation>
             </ActionItem>
-            <ActionItem Name="Script" ActionType="Script" ConditionGroup="">
+            <ActionItem Name="Script" ActionType="Script" ConditionGroup="" Condition="None">
               <Params>
                 <Items>
                   <SectionParam Name="Script">
@@ -2180,7 +2180,7 @@ public class Script
         <PanelName>Install Section</PanelName>
         <WizardButtonsEnum>BackNextCancel</WizardButtonsEnum>
       </SectionItem>
-      <SectionItem Guid="5d16b55e-ca80-48da-8168-c9d3bd9f32bf" Name="Setup Complete" ConditionGroup="">
+      <SectionItem Guid="5d16b55e-ca80-48da-8168-c9d3bd9f32bf" Name="Setup Complete" ConditionGroup="" Condition="None">
         <Params>
           <Items>
             <SectionParam Name="Header text">
@@ -2220,20 +2220,21 @@ public class Script
         <Type>MediaPortal</Type>
         <Id />
         <MinVersion>
-          <Major>1</Major>
-          <Minor>1</Minor>
-          <Build>6</Build>
-          <Revision>27644</Revision>
+          <Major>*</Major>
+          <Minor>*</Minor>
+          <Build>*</Build>
+          <Revision>*</Revision>
         </MinVersion>
         <MaxVersion>
-          <Major>1</Major>
-          <Minor>1</Minor>
-          <Build>6</Build>
-          <Revision>27644</Revision>
+          <Major>*</Major>
+          <Minor>*</Minor>
+          <Build>*</Build>
+          <Revision>*</Revision>
         </MaxVersion>
         <WarnOnly>false</WarnOnly>
-        <Message>requires MediaPortal version 1.1.6.27644 to 1.1.6.27644.</Message>
+        <Message />
         <Name>MediaPortal</Name>
+        <Condition>None</Condition>
       </DependencyItem>
     </Items>
   </Dependencies>
@@ -2268,6 +2269,7 @@ Supported protocols:
     <OnlineLocation>https://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=327&amp;cf_id=24</OnlineLocation>
     <ReleaseDate>2024-01-28T20:21:47</ReleaseDate>
     <Tags>codec</Tags>
+    <PlatformCompatibility>AnyCPU</PlatformCompatibility>
     <Location>.\MediaPortalUrlSourceSplitter[Version].mpe1</Location>
     <Params>
       <Items>
