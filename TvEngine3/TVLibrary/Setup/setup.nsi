@@ -1332,7 +1332,7 @@ Function un.onUninstSuccess
   ${If} ${RebootFlag}
     ${LOG_TEXT} "INFO" "!!! Some files were not able to uninstall. To finish uninstallation completly a REBOOT is needed."
     FileOpen $0 $INSTDIR\rebootflag w
-    Delete $INSTDIR\rebootflag ; this will not be deleted until the reboot because it is currently opened
+    Delete /REBOOTOK $INSTDIR\rebootflag ; this will not be deleted until the reboot because it is currently opened
     RmDir $INSTDIR
     FileClose $0
   ${EndIf}
