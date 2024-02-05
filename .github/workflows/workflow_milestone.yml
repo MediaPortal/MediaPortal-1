@@ -12,13 +12,13 @@ jobs:
     if: github.event.action == 'opened'
     runs-on: ubuntu-latest
     steps:
-      - uses: benelan/milestone-action@v2
+      - uses: benelan/milestone-action@v3
 
   add_on_close:
     name: Add Milestone on Close / Merge
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - uses: benelan/milestone-action@v2
+      - uses: benelan/milestone-action@v3
         with:
           overwrite: true # remove this line to keep existing milestone
