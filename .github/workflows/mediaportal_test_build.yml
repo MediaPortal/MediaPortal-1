@@ -24,6 +24,7 @@ on:
 
 jobs:
   build:
+    name: Mediaportal Build
     uses: ./.github/workflows/mediaportal.yml
     with:
       retention-logs: ${{ inputs.retention-logs || 3 }}
