@@ -1,6 +1,7 @@
 ﻿#GUID;VERSION;COMPATIBILITY;DESCRIPTION
 b7738156-b6ec-4f0f-b1a8-b5010349d8b1;0.78.0.0;AnyCPU;LAV Filters
 e14cf436-6e19-4b40-b65f-3bbc934ae521;1.11.0.2;AnyCPU;SchedulesDirect Plugin
+e14cf436-6e19-4b40-b65f-3bbc934ae521;1.11.0.3;AnyCPU;SchedulesDirect Plugin
 814a6918-0183-4323-a3b4-c00fac11b4f6;4.0.3.339;AnyCPU;Fanart Handler
 2855d0cd-e4b6-406b-80c5-a0736ed741f2;1.0.0.85;AnyCPU;Studios for Mediaportal
 06cff56e-f5eb-4413-bd54-9471d1a2bd16;1.0.0.23;AnyCPU;Genres for Mediaportal
