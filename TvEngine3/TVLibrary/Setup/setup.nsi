@@ -638,8 +638,12 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsWriter\bin\${BUILD_TYPE}\TsWriter.ax" "$INSTDIR\TsWriter.ax" "$INSTDIR"
   ; filters for analog tv
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPWriter\bin\${BUILD_TYPE}\mpFileWriter.ax" "$INSTDIR\mpFileWriter.ax" "$INSTDIR"
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\PDMpgMux.ax" "$INSTDIR\PDMpgMux.ax" "$INSTDIR"
-
+  !if "${Architecture}" == "x64"
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\x64\PDMpgMux.ax" "$INSTDIR\PDMpgMux.ax" "$INSTDIR"
+  !else
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\PDMpgMux.ax" "$INSTDIR\PDMpgMux.ax" "$INSTDIR"
+  !endif
+ 
   ${If} ${FileExists} "$INSTDIR\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"
     ${LOG_TEXT} "INFO" "MPUrlSourceSplitter detected, skipping registration of MPIPTVSource.ax"
     ; reregister because previous uninstall probably unregisterd the MPIPTVSource.ax
