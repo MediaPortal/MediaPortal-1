@@ -146,28 +146,31 @@ namespace MediaPortal.Util
       string driveletter = GetDriveLetter(path);
 
       // Query WMI if the drive letter is a network drive, and if so the UNC path for it
-      using (ManagementClass devs = new ManagementClass(@"Win32_LogicalDisk"))
+      try
       {
-        foreach (ManagementObject mo in devs.GetInstances())
+        using (ManagementObject mo = new ManagementObject())
         {
-          PropertyData propDevId = mo.Properties["DeviceID"];
+          //Call the WMI with path argument to avoid waking-up other network drives
+          mo.Path = new ManagementPath(string.Format("Win32_LogicalDisk='{0}'", driveletter));
 
-          if (((string)propDevId.Value).Equals(driveletter, StringComparison.OrdinalIgnoreCase))
-          {
-            DriveType driveType = (DriveType)((uint)mo["DriveType"]);
+          DriveType driveType = (DriveType)((uint)mo["DriveType"]);
+          string networkRoot = Convert.ToString(mo["ProviderName"]);
 
-            if (driveType == DriveType.Network)
-              return Convert.ToString(mo["ProviderName"]);
-            else if (driveType == DriveType.CDRom && mo["volumename"] == null && mo["volumeserialnumber"] == null)
-              return string.Empty; //cdrom is not loaded
-            else
-              return driveletter + Path.DirectorySeparatorChar;
-          }
+          if (driveType == DriveType.Network)
+            return networkRoot;
+          else if (driveType == DriveType.CDRom && mo["volumename"] == null && mo["volumeserialnumber"] == null)
+            return string.Empty; //cdrom is not loaded
+          else
+            return driveletter + Path.DirectorySeparatorChar;
         }
       }
-
-      //Not found
-      return string.Empty;
+      catch (ManagementException ex)
+      {
+        if (ex.ErrorCode == ManagementStatus.NotFound)
+          return string.Empty;
+        else
+          throw ex;
+      }
     }
 
     /// <summary>
@@ -265,6 +268,9 @@ namespace MediaPortal.Util
 
       try
       {
+        Log.Debug("UNCTools: UNCFileFolderExists: strFile:{0}, hostDetectMethod:{1} StackTrack:\r\n{2}",
+          strFile, hostDetectMethod, new StackTrace());
+
         //Check if the host of the file/folder is online
         strUNCPath = UNCFileFolderOnline(strFile, hostDetectMethod);
         if (string.IsNullOrEmpty(strUNCPath))
