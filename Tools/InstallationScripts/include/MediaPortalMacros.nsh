@@ -556,6 +556,9 @@
 !if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client"
   !insertmacro NSISuninstall "${MP_REG_UNINSTALL}"
 !endif
+!if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client (x64)"
+  !insertmacro NSISuninstall "${MP_REG_UNINSTALL}"
+!endif
 
 SetShellVarContext all
 # Delete new MediaPortal ( >= 0.2.3 RC3 ) and TVengine 3 directories
@@ -837,10 +840,12 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
 !macro MediaPortalVCRedistCheck
   ${LOG_TEXT} "INFO" ".: Microsoft Visual C++ Redistributable Check :."
 
+!if "${Architecture}" == "x86"
   ; check if VC Redist 2008 SP1 is installed
   ${IfNot} ${VCRedist2008IsInstalled}
     !insertmacro ShowMissingComponent "     - Microsoft Visual C++ 2008 Service Pack 1 Redistributable Package ATL Security Update"
   ${EndIf}
+!endif
 
   ${LOG_TEXT} "INFO" "============================"
 !macroend
@@ -916,6 +921,17 @@ ${EndIf}
 !endif
 
 !if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client"
+  ${IfNot} ${TVServerIsInstalled}
+  ${AndIfNot} ${TVClientIsInstalled}
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_GIT_NOMP)" IDNO +2
+    ExecShell open "${WEB_DOWNLOAD_MIN_MP_VERSION}"
+    Abort
+  ${Else}
+
+    !insertmacro TVSERVER_GET_VERSION $R0
+!endif
+
+!if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client (x64)"
   ${IfNot} ${TVServerIsInstalled}
   ${AndIfNot} ${TVClientIsInstalled}
     MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_GIT_NOMP)" IDNO +2
