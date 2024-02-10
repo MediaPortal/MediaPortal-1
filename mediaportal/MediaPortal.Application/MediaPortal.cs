@@ -3740,7 +3740,14 @@ public class MediaPortalApp : D3D, IRender
     //Services
     //Register MediaInfo service
     if (GlobalServiceProvider.Get<IMediaInfoService>() == null)
-      GlobalServiceProvider.Add<IMediaInfoService>(new MediaPortal.MediaInfoService.Database.MediaInfoService());
+        GlobalServiceProvider.Add<IMediaInfoService>(new MediaPortal.MediaInfoService.Database.MediaInfoService());
+
+    //Register MediaInfo service
+    if (GlobalServiceProvider.Get<INotifyMessageService>() == null)
+      GlobalServiceProvider.Add<INotifyMessageService>(new MediaPortal.NotifyMessageService.Database.NotifyMessageService());
+
+    //Load screen calibration prior loading window plugins
+    GUIGraphicsContext.Load();
 
     // Loading window plugins
     Log.Info("Startup: Loading and Starting Window Plugins");
@@ -3755,7 +3762,6 @@ public class MediaPortalApp : D3D, IRender
     // Initialize window manager
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(71));
     Log.Info("Startup: Initialize Window Manager...");
-    GUIGraphicsContext.Load();
     GUIWindowManager.Initialize();
 
     using (Settings xmlreader = new MPSettings())
