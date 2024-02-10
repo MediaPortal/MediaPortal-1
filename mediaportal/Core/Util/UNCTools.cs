@@ -268,9 +268,6 @@ namespace MediaPortal.Util
 
       try
       {
-        Log.Debug("UNCTools: UNCFileFolderExists: strFile:{0}, hostDetectMethod:{1} StackTrack:\r\n{2}",
-          strFile, hostDetectMethod, new StackTrace());
-
         //Check if the host of the file/folder is online
         strUNCPath = UNCFileFolderOnline(strFile, hostDetectMethod);
         if (string.IsNullOrEmpty(strUNCPath))
