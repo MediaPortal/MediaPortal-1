@@ -376,20 +376,20 @@ namespace MediaPortal.Mixer
           Log.Debug("Mixer: AudioEndpointVolume_OnVolumeNotification early return,, IsMixerLocked():{0}, data null:{1}", IsMixerLocked(), (data?.MasterVolume == null));
           return;
         }
-          
+
         using (MixerLock(lockTimeout))
-        { 
+        {
           bool wasMuted = _isMuted;
           int lastVolume = _volume;
           bool waveChange = false;
-                  
+
           bool isMutedMaster = _audioDefaultDevice.Muted;
           int volumeMaster = (int)Math.Round(_audioDefaultDevice.MasterVolume * VolumeMaximum);
           if (_useWave)
           {
             bool isMutedWave = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
             int volumeWave = (int)GetValue(_componentType, MixerControlType.Volume);
-            
+
             if ((isMutedWave != _isMutedWave) || (volumeWave != _volumeWave))
             {
               _isMutedWave = isMutedWave;
@@ -397,7 +397,7 @@ namespace MediaPortal.Mixer
               waveChange = true;
             }
           }
-                    
+
           if (waveChange)
           {
             _isMuted = _isMutedWave;
@@ -408,24 +408,22 @@ namespace MediaPortal.Mixer
             _isMuted = isMutedMaster;
             _volume = volumeMaster;
           }
-  
-          if (wasMuted != _isMuted || lastVolume != _volume)
+
+          bool bWaveMuteChange = _useWave && isMutedMaster != _isMuted && OSInfo.OSInfo.Win8OrLater();
+          if (wasMuted != _isMuted || lastVolume != _volume || bWaveMuteChange)
           {
-            Log.Debug("Mixer: AudioEndpointVolume change, new muted = {0}, new volume = {1}, old muted = {2}, old volume = {3}, waveChange = {4}", _isMuted, _volume, wasMuted, lastVolume, waveChange);
-          }
-    
-          if (ControlChanged != null && (wasMuted != _isMuted || 
-                                         lastVolume != _volume || 
-                                         (_useWave && OSInfo.OSInfo.Win8OrLater() && (isMutedMaster != _isMuted)) ))
-          {
-            ControlChanged(null, null);
-            if (_useWave && OSInfo.OSInfo.Win8OrLater() && (isMutedMaster != _isMuted))
-            {
+            Log.Debug("Mixer: AudioEndpointVolume change, new muted = {0}, new volume = {1}, old muted = {2}, old volume = {3}, waveChange = {4}, isMutedMaster = {5}",
+              _isMuted, _volume, wasMuted, lastVolume, waveChange, isMutedMaster);
+
+            if (bWaveMuteChange)
               SetValue(_mixerControlDetailsMute, isMutedMaster);
-            }
+
+            if (ControlChanged != null)
+              ControlChanged(this, null);
+
+            if (VolumeHandler.Instance != null)
+              VolumeHandler.Instance.mixer_UpdateVolume();
           }
-          
-          if (VolumeHandler.Instance != null) VolumeHandler.Instance.mixer_UpdateVolume();
         }
       }
       catch (Exception ex)
