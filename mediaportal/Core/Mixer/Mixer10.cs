@@ -596,12 +596,11 @@ namespace MediaPortal.Mixer
           //Update volume slider
           if (iAudioEndpointVolume != null)
           {
-            int iCurrentVolume = (int)Math.Ceiling(iAudioEndpointVolume.MasterVolumeLevelScalar * 100f);
-
             // Force a couple of settings for Windows 10
             if (OSInfo.OSInfo.Win10OrLater() && VolumeHandler.Instance.VolumeStyle() == 5)
             {
-              _volume = ConvertVolumeToStepsEvent(iCurrentVolume);
+              var volumePercentage = (int)Math.Ceiling(iAudioEndpointVolume.MasterVolumeLevelScalar * 100f);
+              _volume = ConvertVolumeToStepsEvent(volumePercentage);
             }
             else
             {
@@ -609,18 +608,14 @@ namespace MediaPortal.Mixer
               _volume = (int)Math.Round(aEvent.MasterVolume * VolumeMaximum);
             }
 
-            //Change detection
-            if (_isMuted != aEvent.IsMuted || _lastVolume != iCurrentVolume)
-            {
-              // Store current values
-              _isMuted = aEvent.IsMuted;
-              _lastVolume = iCurrentVolume;
+            _isMuted = aEvent.IsMuted;
 
-              if (VolumeHandler.Instance != null)
-                VolumeHandler.Instance.mixer_UpdateVolume();
-            }
+            // Store current volume value
+            _lastVolume = (int)Math.Ceiling(iAudioEndpointVolume.MasterVolumeLevelScalar * 100f);
           }
         }
+
+        if (VolumeHandler.Instance != null) VolumeHandler.Instance.mixer_UpdateVolume();
       }
     }
 
