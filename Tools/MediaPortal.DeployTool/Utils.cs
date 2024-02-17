@@ -926,7 +926,7 @@ namespace MediaPortal.DeployTool
         {
           //Existing old registry path
 
-          RegistryKey key = Registry.LocalMachine.OpenSubKey(strPath);
+          RegistryKey key = Registry.LocalMachine.OpenSubKey(strPath, true);
 
           if (key == null)
           {
