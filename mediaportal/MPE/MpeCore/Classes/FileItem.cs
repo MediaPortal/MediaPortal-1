@@ -151,6 +151,12 @@ namespace MpeCore.Classes
     [XmlIgnore]
     public string TempFileLocation { get; set; }
 
+    /// <summary>
+    /// Gets or sets installation condition.
+    /// </summary>
+    [XmlAttribute]
+    public ActionConditionEnum Condition { get; set; }
+
     #region Overrides
 
     public override string ToString()

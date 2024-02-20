@@ -152,6 +152,10 @@ namespace MpeCore
         {
           foreach (FileItem fileItem in groupItem.Files.Items)
           {
+            //Check if we can proceed with the file installation
+            if (!Util.IsConditionSatisfied(fileItem.Condition))
+              continue;
+
             MpeInstaller.InstallerTypeProviders[fileItem.InstallType].Install(this, fileItem);
             if (FileInstalled != null)
               FileInstalled(this, new InstallEventArgs(groupItem, fileItem));
@@ -346,12 +350,13 @@ namespace MpeCore
         this.Dependencies.Add(dep);
       }
 
-      //Conditional execution requires MP 1.33 and higher
+      //Conditional execution requires MP 1.32.100 and higher
       if (this.Dependencies.Items.Any(d => d.Condition != ActionConditionEnum.None) ||
+        this.Groups.Items.Any(g => g.Files.Items.Any(f => f.Condition != ActionConditionEnum.None)) ||
         this.Sections.Items.Any(s => s.Condition != ActionConditionEnum.None
           || s.Actions.Items.Any(a => a.Condition != ActionConditionEnum.None)))
       {
-        VersionInfo vMin = new VersionInfo(new Version(1, 33, 0, 0));
+        VersionInfo vMin = new VersionInfo(new Version(1, 32, 100, 0));
         if (dep.MinVersion.IsAnyVersion || dep.MinVersion < vMin)
           dep.MinVersion = vMin;
       }
