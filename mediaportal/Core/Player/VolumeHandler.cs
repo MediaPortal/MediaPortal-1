@@ -202,16 +202,10 @@ namespace MediaPortal.Player
     /// </summary>
     public static void CreateInstance()
     {
-      if (OSInfo.OSInfo.Win10OrLater())
-      {
-        _instance = Create();
-      }
-      else
+      lock (typeof(VolumeHandler))
       {
         if (_instance == null)
-        {
           _instance = Create();
-        }
       }
     }
 
