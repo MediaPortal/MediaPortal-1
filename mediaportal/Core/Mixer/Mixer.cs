@@ -232,11 +232,24 @@ namespace MediaPortal.Mixer
     
               _mixerControlDetailsVolume = GetControl(_componentType, MixerControlType.Volume);
               _mixerControlDetailsMute = GetControl(_componentType, MixerControlType.Mute);
-    
-              _isMuted = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
-              _volume = (int)GetValue(_componentType, MixerControlType.Volume);
-              _isMutedWave = _isMuted;
-              _volumeWave = _volume;
+
+              if (_audioDefaultDevice != null)
+              {
+                //Take the initialization value from the Master; it is more appropriate
+                _isMuted = _audioDefaultDevice.Muted;
+                _volume = (int)Math.Round(_audioDefaultDevice.MasterVolume * VolumeMaximum);
+
+                _isMutedWave = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
+                _volumeWave = (int)GetValue(_componentType, MixerControlType.Volume);
+              }
+              else
+              {
+                _isMuted = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
+                _volume = (int)GetValue(_componentType, MixerControlType.Volume);
+
+                _isMutedWave = _isMuted;
+                _volumeWave = _volume;
+              }
             }
           }
         }
