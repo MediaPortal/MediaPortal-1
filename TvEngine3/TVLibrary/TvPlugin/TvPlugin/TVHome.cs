@@ -1052,10 +1052,10 @@ namespace TvPlugin
           IList<Card> cards = TvDatabase.Card.ListAll();
           success = true;
         }
-        catch (Exception)
+        catch (Exception e)
         {
           success = false;
-          Log.Debug("TVHome: waiting for gentle.net DB connection {0} msec", timer.ElapsedMilliseconds);
+          Log.Debug("TVHome: waiting for gentle.net DB connection {0} msec\nException: {1}", timer.ElapsedMilliseconds, e.Message);
           Thread.Sleep(100);
         }
       }
