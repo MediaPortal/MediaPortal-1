@@ -851,7 +851,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.33 Springtime";
+      return "1.33 Springtime / 20th Anniversary";
     }
 
     /// <summary>
