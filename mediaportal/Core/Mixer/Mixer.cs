@@ -232,11 +232,24 @@ namespace MediaPortal.Mixer
     
               _mixerControlDetailsVolume = GetControl(_componentType, MixerControlType.Volume);
               _mixerControlDetailsMute = GetControl(_componentType, MixerControlType.Mute);
-    
-              _isMuted = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
-              _volume = (int)GetValue(_componentType, MixerControlType.Volume);
-              _isMutedWave = _isMuted;
-              _volumeWave = _volume;
+
+              if (_audioDefaultDevice != null)
+              {
+                //Take the initialization value from the Master; it is more appropriate
+                _isMuted = _audioDefaultDevice.Muted;
+                _volume = (int)Math.Round(_audioDefaultDevice.MasterVolume * VolumeMaximum);
+
+                _isMutedWave = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
+                _volumeWave = (int)GetValue(_componentType, MixerControlType.Volume);
+              }
+              else
+              {
+                _isMuted = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
+                _volume = (int)GetValue(_componentType, MixerControlType.Volume);
+
+                _isMutedWave = _isMuted;
+                _volumeWave = _volume;
+              }
             }
           }
         }
@@ -356,14 +369,23 @@ namespace MediaPortal.Mixer
 
     private void OnControlChanged(object sender, MixerEventArgs e)
     {
-      bool wasMuted = _isMuted;
-      int lastVolume = _volume;
-      _isMuted = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
-      _volume = (int)GetValue(_componentType, MixerControlType.Volume);
+      //Mode == Wave || OS < Vista
 
-      if (ControlChanged != null && (wasMuted != _isMuted || lastVolume != _volume))
+      bool wasMuted = _isMutedWave;
+      int lastVolume = _volumeWave;
+      _isMutedWave = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
+      _volumeWave = (int)GetValue(_componentType, MixerControlType.Volume);
+
+      if (wasMuted != _isMutedWave || lastVolume != _volumeWave)
       {
-        ControlChanged(sender, e);
+        Log.Debug("Mixer: OnControlChanged(), new muted = {0}, new volume = {1}, old muted = {2}, old volume = {3}",
+              _isMutedWave, _volumeWave, wasMuted, lastVolume);
+
+        _isMuted = _isMutedWave;
+        _volume = _volumeWave;
+
+        if (ControlChanged != null)
+          ControlChanged(sender, e);
       }
     }
 
