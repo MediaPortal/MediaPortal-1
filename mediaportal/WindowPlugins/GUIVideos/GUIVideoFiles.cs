@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -2037,6 +2037,10 @@ namespace MediaPortal.GUI.Video
       {
         filename = _playlistPlayer.GetNext();
       }
+      else if (iMovieIndex == -2)
+      {
+        filename = _playlistPlayer.GetPrevious();
+      }
       else
       {
         filename = _playlistPlayer.Get(iMovieIndex);
@@ -2062,7 +2066,7 @@ namespace MediaPortal.GUI.Video
           // Change also playlist filename
           int index = iMovieIndex;
 
-          if (iMovieIndex == -1)
+          if (iMovieIndex == -1 || iMovieIndex == -2)
             index = 0;
 
           _playlistPlayer.GetPlaylist(_playlistPlayer.CurrentPlaylistType)[index].FileName = filename;
@@ -2170,6 +2174,10 @@ namespace MediaPortal.GUI.Video
       if (iMovieIndex == -1)
       {
         _playlistPlayer.PlayNext();
+      }
+      else if (iMovieIndex == -1)
+      {
+        _playlistPlayer.PlayPrevious();
       }
       else
       {

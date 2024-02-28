@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -149,7 +149,7 @@ namespace MediaPortal.GUI.Video
               PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
               if (playList != null && playList.Count > 0)
               {
-                playlistPlayer.Play(0);
+                GUIVideoFiles.PlayMovieFromPlayList(true, 0, true);
                 UpdateButtonStates();
               }
             }
@@ -231,7 +231,7 @@ namespace MediaPortal.GUI.Video
         }
         playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
         playlistPlayer.Reset();
-        playlistPlayer.Play(facadeLayout.SelectedListItemIndex);
+        GUIVideoFiles.PlayMovieFromPlayList(true, facadeLayout.SelectedListItemIndex, true);
         UpdateButtonStates();
       }
       else if (control == btnNext)
@@ -242,7 +242,7 @@ namespace MediaPortal.GUI.Video
       else if (control == btnPrevious)
       {
         playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
-        playlistPlayer.PlayPrevious();
+        GUIVideoFiles.PlayMovieFromPlayList(true, -2, true);
       }
       else if ((btnRepeatPlaylist != null) && (control == btnRepeatPlaylist))
       {
@@ -607,7 +607,7 @@ namespace MediaPortal.GUI.Video
       }
       playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
       playlistPlayer.Reset();
-      playlistPlayer.Play(itemIndex);
+      GUIVideoFiles.PlayMovieFromPlayList(true, itemIndex, true);
     }
 
     protected override void OnQueueItem(int itemIndex)
