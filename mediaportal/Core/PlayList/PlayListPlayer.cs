@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -476,6 +476,55 @@ namespace MediaPortal.Playlists
         {
           PlayNext();
         }
+      }
+    }
+
+    public PlayListItem GetPreviousItem()
+    {
+      if (_currentPlayList == PlayListType.PLAYLIST_NONE)
+      {
+        return null;
+      }
+
+      PlayList playlist = GetPlaylist(_currentPlayList);
+      if (playlist.Count <= 0)
+      {
+        return null;
+      }
+
+      int iSong = _currentItem;
+      iSong--;
+
+      if (iSong < 0)
+      {
+        //	Is first element of video stacking playlist?
+        if (_currentPlayList == PlayListType.PLAYLIST_VIDEO_TEMP)
+        {
+          return null;
+        }
+
+        if (!_repeatPlayList)
+        {
+          return null;
+        }
+
+        iSong = playlist.Count - 1;
+      }
+
+      PlayListItem item = playlist[iSong];
+      return item;
+    }
+
+    public string GetPrevious()
+    {
+      PlayListItem resultingItem = GetPreviousItem();
+      if (resultingItem != null)
+      {
+        return resultingItem.FileName;
+      }
+      else
+      {
+        return string.Empty;
       }
     }
 
