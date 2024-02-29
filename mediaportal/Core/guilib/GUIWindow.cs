@@ -184,7 +184,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_VIDEO_OVERLAY_TOP = 3008,
       WINDOW_MINI_GUIDE = 3009,
       WINDOW_TV_CROP_SETTINGS = 3011,
-      WINDOW_TV_TUNING_DETAILS = 3012, // gemx 
+      WINDOW_TV_TUNING_DETAILS = 3012, // gemx
       WINDOW_PSCLIENTPLUGIN_UNATTENDED = 6666, // dero
       WINDOW_WIKIPEDIA = 4711,
       WINDOW_PICTURE_EXIF = 5000, // ajs - Full EXIF View window
@@ -233,7 +233,9 @@ namespace MediaPortal.GUI.Library
     protected int _isOverlayAllowedCondition = 0;
     protected int _isOverlayAllowedOriginalCondition = GUIInfoManager.SYSTEM_ALWAYS_TRUE;
     private Object instance;
+    [Obsolete("Use _loadParameterObject instead.")]
     protected string _loadParameter = null;
+    protected object _loadParameterObject = null;
     private bool _skipAnimation = false;
     private static bool _loadSkinResult = false;
     protected internal static bool _loadSkinDone = false;
@@ -1965,6 +1967,8 @@ namespace MediaPortal.GUI.Library
               Log.Debug("Window: {0} init", ToString());
 
               _hasRendered = false;
+
+              _loadParameterObject = message.Object;
 
               if (message.Object is string)
               {
