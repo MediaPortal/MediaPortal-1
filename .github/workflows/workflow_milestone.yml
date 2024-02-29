@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: benelan/milestone-action@v3
+        with:
+          single: true
 
   add_on_close:
     name: Add Milestone on Close / Merge
@@ -21,4 +23,5 @@ jobs:
     steps:
       - uses: benelan/milestone-action@v3
         with:
-          overwrite: true # remove this line to keep existing milestone
+          overwrite: true
+          single: true

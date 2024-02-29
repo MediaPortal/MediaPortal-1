@@ -109,7 +109,9 @@ namespace MediaPortal.Player
 
                 _showVolumeOSD = true;
 
-                VolumeOSD = new HideVolumeOSD.HideVolumeOSDLib(IsMuted);
+                if (VolumeOSD == null)
+                  VolumeOSD = new HideVolumeOSD.HideVolumeOSDLib(IsMuted);
+
                 VolumeOSD.HideOSD();
 
                 _showVolumeOSD = tempShowVolumeOSD;
@@ -174,7 +176,9 @@ namespace MediaPortal.Player
 
               _showVolumeOSD = true;
 
-              VolumeOSD = new HideVolumeOSD.HideVolumeOSDLib(IsMuted);
+              if (VolumeOSD == null)
+                VolumeOSD = new HideVolumeOSD.HideVolumeOSDLib(IsMuted);
+
               VolumeOSD.HideOSD();
 
               _showVolumeOSD = tempShowVolumeOSD;
@@ -202,16 +206,10 @@ namespace MediaPortal.Player
     /// </summary>
     public static void CreateInstance()
     {
-      if (OSInfo.OSInfo.Win10OrLater())
-      {
-        _instance = Create();
-      }
-      else
+      lock (typeof(VolumeHandler))
       {
         if (_instance == null)
-        {
           _instance = Create();
-        }
       }
     }
 
@@ -374,6 +372,11 @@ namespace MediaPortal.Player
         _instance._mixer.SafeDispose();
         _instance._mixer = null;
       }
+
+      //Restore native Windows Volume OSD
+      if (VolumeOSD != null)
+        VolumeOSD.ShowOSD();
+
       _instance = null;
       GUIGraphicsContext.VolumeHandler = null;
     }

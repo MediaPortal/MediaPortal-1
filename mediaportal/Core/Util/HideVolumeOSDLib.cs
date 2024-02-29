@@ -82,11 +82,27 @@ namespace HideVolumeOSD
 
       int pairCount = 0;
 
-      while ((hwndHost = FindWindowEx(IntPtr.Zero, hwndHost, "NativeHWNDHost", "")) != IntPtr.Zero)
+      string strClass, strClassInner, strNameInner;
+
+      if (Environment.OSVersion.Version.Build >= 22000)
+      {
+        //Windows 11
+        strClass = "XamlExplorerHostIslandWindow";
+        strClassInner = "Windows.UI.Composition.DesktopWindowContentBridge";
+        strNameInner = "DesktopWindowXamlSource";
+      }
+      else
+      {
+        strClass = "NativeHWNDHost";
+        strClassInner = "DirectUIHWND";
+        strNameInner = string.Empty;
+      }
+
+      while ((hwndHost = FindWindowEx(IntPtr.Zero, hwndHost, strClass, "")) != IntPtr.Zero)
       {
         // if this window has a child with class 'DirectUIHWND' it should be the volume OSD
 
-        if (FindWindowEx(hwndHost, IntPtr.Zero, "DirectUIHWND", "") != IntPtr.Zero)
+        if (FindWindowEx(hwndHost, IntPtr.Zero, strClassInner, strNameInner) != IntPtr.Zero)
         {
           if (pairCount == 0)
           {

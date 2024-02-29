@@ -59,6 +59,9 @@ namespace MpeMaker.Sections
       imageList.Images.Add(ImageKeyFile, Properties.Resources.text_x_generic_template);
       imageList.Images.Add(ImageKeyError, Properties.Resources.dialog_error);
       imageList.Images.Add(ImageKeyGroup, Properties.Resources.video_display);
+
+      //Init Action condition ComboBox
+      this.cmb_execution_condition.Items.AddRange(Enum.GetNames(typeof(ActionConditionEnum)));
     }
 
     #endregion
@@ -269,6 +272,7 @@ namespace MpeMaker.Sections
         cmb_overwrite.SelectedIndex = (int)file.UpdateOption;
         txt_source.Text = file.LocalFileName;
         txt_param1.Text = file.Param1;
+        cmb_execution_condition.SelectedIndex = (int)file.Condition;
       }
 
       SelectedGroup = group;
@@ -287,6 +291,7 @@ namespace MpeMaker.Sections
         resp.UpdateOption = groupItem.Files.Items[0].UpdateOption;
         resp.InstallType = groupItem.Files.Items[0].InstallType;
         resp.Param1 = groupItem.Files.Items[0].Param1;
+        resp.Condition = groupItem.Files.Items[0].Condition;
 
         foreach (FileItem item in groupItem.Files.Items)
         {
@@ -299,6 +304,8 @@ namespace MpeMaker.Sections
             resp.InstallType = "CopyFile";
           if (resp.Param1 != item.Param1)
             resp.Param1 = string.Empty;
+          if (resp.Condition != item.Condition)
+            resp.Condition = ActionConditionEnum.None;
         }
       }
       return resp;
@@ -364,6 +371,7 @@ namespace MpeMaker.Sections
         SelectedItem.UpdateOption = (UpdateOptionEnum)cmb_overwrite.SelectedIndex;
         SelectedItem.Param1 = txt_param1.Text;
         SelectedItem.Modified = true;
+        SelectedItem.Condition = (ActionConditionEnum)this.cmb_execution_condition.SelectedIndex;
         if (SelectedNode != null && SelectedNode.Tag as FileItem != null)
         {
           SelectedNode.Text = txt_installpath.Text;
@@ -471,6 +479,8 @@ namespace MpeMaker.Sections
         fileItem.Param1 = string.IsNullOrEmpty(SelectedItem.Param1)
                             ? fileItem.Param1
                             : SelectedItem.Param1;
+
+        fileItem.Condition = SelectedItem.Condition;
       }
       
       // now refresh tree nodes so the user can directly see his change

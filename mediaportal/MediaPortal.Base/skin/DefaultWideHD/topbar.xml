@@ -43,11 +43,10 @@
         <id>26</id>
         <width>58</width>
         <height>56</height>
-        <textureFocus>tb_home.png</textureFocus>
-        <textureNoFocus>tb_homeNF.png</textureNoFocus>
-        <hyperlink>35</hyperlink>
+        <textureFocus>tb_browserhome.png</textureFocus>
+        <textureNoFocus>tb_browserhomeNF.png</textureNoFocus>
         <label>-</label>
-        <action>10</action>
+        <action>115</action>
         <onleft>121</onleft>
         <onright>101</onright>
         <onup>26</onup>

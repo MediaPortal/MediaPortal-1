@@ -3,23 +3,37 @@
   <id>3004</id>
   <defaultcontrol>2</defaultcontrol>
   <controls>
-    <control>
+  <control>
       <id>501</id>
       <type>image</type>
       <posX>5</posX>
       <posY>14</posY>
-      <width>381</width>
+      <width>411</width>
       <height>80</height>
-      <texture>volumelevel.png</texture>
+      <texture>#(switch(
+        lt(cint(#volume.percent),33),'volumelevel.png',
+        gt(cint(#volume.percent),33),'volumelevel2.png',
+        gt(cint(#volume.percent),65),'volumelevel3.png',
+        gt(1,1),''))</texture>
       <visible>control.isVisible(503)+!control.isVisible(502)</visible>
+    </control>
+    <control>
+      <id>66</id>
+      <type>image</type>
+      <posX>5</posX>
+      <posY>14</posY>
+      <width>411</width>
+      <height>80</height>
+      <texture>#(iif(gt(cint(#volume.percent),65),'volumelevel3.png',' '))</texture>
+      <visible>!string.equals(#volume.mute,true)</visible>
     </control>
     <control>
       <id>502</id>
       <type>image</type>
-      <posX>7</posX>
-      <posY>7</posY>
-      <width>70</width>
-      <height>70</height>
+      <posX>20</posX>
+      <posY>9</posY>
+      <width>50</width>
+      <height>50</height>
       <texture>volume.states.mute.png</texture>
       <animation effect="fade" start="0" end="100" time="2000" condition="true" pulse="true">conditional</animation>
     </control>
@@ -34,5 +48,34 @@
       <width>270</width>
       <texture>volume.states.png</texture>
     </control>
+    <control>
+      <id>1</id>
+      <type>label</type>
+      <posX>390</posX>
+      <posY>38</posY>
+      <width>150</width>
+      <align>right</align>
+      <font>font10</font>
+      <label>#(iif(gt(cint(#volume.percent),0),'#volume.percent',' '))</label>
+      <visible>!string.equals(#volume.mute,true)</visible>
+    </control>
+    
+    
+    <!--control>
+      <id>1</id>
+      <type>label</type>
+      <posX>390</posX>
+      <posY>238</posY>
+      <width>150</width>
+      <align>right</align>
+      <font>font10</font>
+      <label>#volume.mute</label>
+      
+    </control-->
+    
+    
+    
+    
+    
   </controls>
 </window>

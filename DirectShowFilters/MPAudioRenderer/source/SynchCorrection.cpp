@@ -254,7 +254,9 @@ double SynchCorrection::GetRequiredAdjustment(REFERENCE_TIME rtAHwTime, REFERENC
 	bool bQuality;
 	double dHwTime, dHwTimeDelta, dPhaseDiff, dDiffP, dDiff, dGain;
 
-	if (!m_pSettings->GetMaintainSoundPitch())
+	bQuality = bias > 1.0 - QUALITY_BIAS_LIMIT && bias < 1.0 + QUALITY_BIAS_LIMIT;
+
+	if (bQuality && !m_pSettings->GetMaintainSoundPitch())
 	{
 		// RATE mode: sound pitch is not maintained
 		// To avoid large change in speed(sound pitch), we use simple PI regulator to keep the target speed almost constant
@@ -437,9 +439,10 @@ double SynchCorrection::GetRequiredAdjustment(REFERENCE_TIME rtAHwTime, REFERENC
 	}
 	else
 	{
+		m_bMaintainSoundPitch = true; //use TEMPO to keep sound pitch
+
 		ret = bias * adjustment;
 		dTotalAudioDrift = CalculateDrift(rtAHwTime, rtRCTime - m_rtStart) + m_dAudioDelay + m_dEVRAudioDelay;
-		bQuality = bias > 1.0 - QUALITY_BIAS_LIMIT && bias < 1.0 + QUALITY_BIAS_LIMIT;
 
 		if (bQuality)
 		{

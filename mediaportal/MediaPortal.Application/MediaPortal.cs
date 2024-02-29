@@ -3396,6 +3396,9 @@ public class MediaPortalApp : D3D, IRender
     GUIGraphicsContext.VolumeHandler = VolumeHandler.Instance;
     #pragma warning restore 168
 
+    //set volume handler properties
+    GUIGraphicsContext.VolumeHandler?.UpdateVolumeProperties();
+
     // register for device change notifications
     RegisterForDeviceNotifications();
 
@@ -3408,7 +3411,7 @@ public class MediaPortalApp : D3D, IRender
       {
         Log.Warn("Main: Could not register for power settings notification GUID_SESSION_DISPLAY_STATUS");
         // initialize volume handler and set volume handler properties
-        GUIGraphicsContext.VolumeHandler?.UpdateVolumeProperties();
+        //GUIGraphicsContext.VolumeHandler?.UpdateVolumeProperties();
       }
 
       _userPresenceHandle = RegisterPowerSettingNotification(Handle, ref GUID_SESSION_USER_PRESENCE, DEVICE_NOTIFY_WINDOW_HANDLE);
@@ -3742,6 +3745,9 @@ public class MediaPortalApp : D3D, IRender
     if (GlobalServiceProvider.Get<IMediaInfoService>() == null)
       GlobalServiceProvider.Add<IMediaInfoService>(new MediaPortal.MediaInfoService.Database.MediaInfoService());
 
+    //Load screen calibration prior loading window plugins
+    GUIGraphicsContext.Load();
+
     // Loading window plugins
     Log.Info("Startup: Loading and Starting Window Plugins");
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(70));
@@ -3755,7 +3761,6 @@ public class MediaPortalApp : D3D, IRender
     // Initialize window manager
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(71));
     Log.Info("Startup: Initialize Window Manager...");
-    GUIGraphicsContext.Load();
     GUIWindowManager.Initialize();
 
     using (Settings xmlreader = new MPSettings())
