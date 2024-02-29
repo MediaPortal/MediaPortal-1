@@ -29,6 +29,7 @@ namespace MediaPortal.Utils.Web
     private string _getQuery = string.Empty;
     private string _postQuery = string.Empty;
     private string _cookies = string.Empty;
+    private string _headers = string.Empty;
     private string _scheme = string.Empty;
     private bool _externalBrowser = false;
     private string _encoding = string.Empty;
@@ -125,6 +126,13 @@ namespace MediaPortal.Utils.Web
       set { _cookies = value; }
     }
 
+    [XmlAttribute("headers")]
+    public string Headers
+    {
+      get { return _headers; }
+      set { _headers = value; }
+    }
+
     [XmlAttribute("encoding")]
     public string Encoding
     {
@@ -138,6 +146,9 @@ namespace MediaPortal.Utils.Web
       get { return _delay; }
       set { _delay = value; }
     }
+
+    public DateTime ModifiedSince
+    { get; set; } = DateTime.MinValue;
 
     public Uri Uri
     {
