@@ -13,7 +13,7 @@ CSubresync::~CSubresync(void)
 {
 }
 
-void CSubresync::AddShift(REFERENCE_TIME time, int val)
+void CSubresync::AddShift(REFERENCE_TIME time, REFERENCE_TIME val)
 {
 	m_delayTime.Add(time);
 	m_delayVal.Add(val);
@@ -69,20 +69,20 @@ void CSubresync::SetSubtitle(ISubStream* pSubStream, double fps)
 }
 
 
-int CSubresync::FindNearestSub(__int64 rtPos)
+int CSubresync::FindNearestSub(REFERENCE_TIME rtPos)
 {
 	if (m_sts.GetCount() == 0) return -1;
 
-	long	lCurTime = (long) (rtPos / 10000) -1;
+	REFERENCE_TIME rtCurTime = rtPos - 10000;
 
-	if (lCurTime < m_sts[0].start) 
+	if (rtCurTime < m_sts[0].start)
 	{
 		return 0;
 	}
 
 	for(int i = 1, j = m_sts.GetCount(); i < j; i++)
 	{
-		if ((lCurTime >= m_sts[i-1].start) && (lCurTime < m_sts[i].start))
+		if ((rtCurTime >= m_sts[i-1].start) && (rtCurTime < m_sts[i].start))
 		{
 			return i-1;
 		}
@@ -92,15 +92,15 @@ int CSubresync::FindNearestSub(__int64 rtPos)
 }
 
 
-void CSubresync::ShiftSubtitle(int nItem, long lValue)
+void CSubresync::ShiftSubtitle(int nItem, REFERENCE_TIME rtValue)
 {
-	while (nItem > 0 && (m_sts[nItem-1].end > m_sts[nItem].start + lValue))
+	while (nItem > 0 && (m_sts[nItem-1].end > m_sts[nItem].start + rtValue))
 		--nItem;
 
 	for (size_t i = nItem; i<m_sts.GetCount(); i++)
 	{
-		m_sts[i].start += lValue;
-		m_sts[i].end   += lValue;
+		m_sts[i].start += rtValue;
+		m_sts[i].end   += rtValue;
 	}
 }
 
