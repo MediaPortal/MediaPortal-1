@@ -38,6 +38,25 @@ namespace MediaPortal.MediaInfoService.Database
       AudioCD,
     }
 
+    private class MediaInfoTask
+    {
+      public string Key { get; private set; }
+      public MediaInfoWrapper MediaInfo { get; private set; } = null;
+      public int Clients = 0;
+      public bool IsCompleted { get; private set; } = false;
+
+      public MediaInfoTask(string strKey)
+      {
+        this.Key = strKey;
+      }
+
+      public void SetComplete(MediaInfoWrapper mi)
+      {
+        this.MediaInfo = mi;
+        this.IsCompleted = true;
+      }
+    }
+
     //List of MediaInfo unsupported extesnsions
     private static readonly string[] _ExtensionExcudeList = new string[] { ".wtv" };
 
@@ -122,6 +141,7 @@ namespace MediaPortal.MediaInfoService.Database
     private SQLiteClient _db;
     private bool _dbHealth = false;
     private DateTime _MaintenanceLast = DateTime.MinValue;
+    private Dictionary<string, MediaInfoTask> _FilesInProgress = new Dictionary<string, MediaInfoTask>();
 
 
     public bool EnabledCachingForBluray { get; set; }
@@ -213,13 +233,14 @@ namespace MediaPortal.MediaInfoService.Database
           goto exit;
 
         bool bLocked = false;
-        Monitor.Enter(typeof(MediaInfoDatabaseSqlLite), ref bLocked);
+        Type tLock = typeof(MediaInfoDatabaseSqlLite);
+        Monitor.Enter(tLock, ref bLocked);
         try
         {
           if (this._db == null)
             goto exit;
 
-          Monitor.Exit(typeof(MediaInfoDatabaseSqlLite));
+          Monitor.Exit(tLock);
           bLocked = false;
 
           this.doMaintenance();
@@ -241,7 +262,7 @@ namespace MediaPortal.MediaInfoService.Database
             strSQL = string.Format("SELECT * FROM files WHERE fullPath='{0}' AND serial='{1}' AND type='{2}'",
                   sanitySqlValue(strKeyFile), strSerial, videoType);
 
-            Monitor.Enter(typeof(MediaInfoDatabaseSqlLite), ref bLocked);
+            Monitor.Enter(tLock, ref bLocked);
 
             result = this._db.Execute(strSQL);
             if (result != null && result.Rows.Count > 0)
@@ -271,223 +292,263 @@ namespace MediaPortal.MediaInfoService.Database
               }
             }
 
-            Monitor.Exit(typeof(MediaInfoDatabaseSqlLite));
+            //Doesn't exist yet
+
+            #region Check if there is the same ongoing mediainfo process
+            string strKey = string.Format("{0}:{1}:{2}", strKeyFile, strSerial, videoType);
+            if (this._FilesInProgress.TryGetValue(strKey, out MediaInfoTask mip))
+            {
+              //Already processing; wait for the result
+              Log.Debug("[MediaInfoDatabaseSqlLite][Get] Already processing. Wait: '{0}'", strKey);
+              mip.Clients++;
+              while (!mip.IsCompleted)
+                Monitor.Wait(tLock);
+
+              //if we are the last client, then remove the task from the list
+              if (--mip.Clients == 0)
+                this._FilesInProgress.Remove(strKey);
+
+              //Take the result and exit
+              mi = mip.MediaInfo;
+              goto exit;
+            }
+            else
+            {
+              //Add new process to the list
+              mip = new MediaInfoTask(strKey);
+              this._FilesInProgress.Add(strKey, mip);
+            }
+            #endregion
+
+            Monitor.Exit(tLock);
             bLocked = false;
 
             //Create mediainfo
-            mi = new MediaInfoWrapper(strMediaFullPath, logger);
-            if (mi.Success)
+            try
             {
-              int iIdFile = -1;
-              int iStreamPack;
-              List<MediaStream> list;
-              CultureInfo ciEn = CultureInfo.GetCultureInfo("en-US");
-              Monitor.Enter(typeof(MediaInfoDatabaseSqlLite), ref bLocked);
-              try
+              mi = new MediaInfoWrapper(strMediaFullPath, logger);
+              if (mi.Success)
               {
-                #region Store MediaInfo into the database
-                long lDate = DateTime.Now.ToUniversalTime().Ticks;
-                strSQL = String.Format("INSERT INTO files (id, created, accessLast, fullPath, type, serial, size, format, formatVersion, isStreamable, writingApplication, writingLibrary, attachments, profile, codec, scanType, aspectRatio, duration)" +
-                    " VALUES(null, {0},{1},'{2}','{3}','{4}',{5},'{6}','{7}',{8},'{9}','{10}','{11}','{12}','{13}','{14}','{15}',{16})",
-                   lDate,
-                   lDate,
-                   sanitySqlValue(strKeyFile),
-                   videoType,
-                   strSerial,
-                   mi.Size,
-                   mi.Format,
-                   mi.FormatVersion,
-                   mi.IsStreamable ? 1 : 0,
-                   sanitySqlValue(mi.WritingApplication),
-                   sanitySqlValue(mi.WritingLibrary),
-                   sanitySqlValue(mi.Attachments),
-                   mi.Profile,
-                   mi.Codec,
-                   mi.ScanType,
-                   mi.AspectRatio,
-                   mi.Duration
-                   );
-                result = this._db.Execute(strSQL);
-                iIdFile = this._db.LastInsertID();
-
-                #region VideoStreams
-                list = mi.VideoStreams.Cast<MediaStream>().ToList();
-                for (int i = 0; i < mi.VideoStreams.Count; i++)
+                int iIdFile = -1;
+                int iStreamPack;
+                List<MediaStream> list;
+                CultureInfo ciEn = CultureInfo.GetCultureInfo("en-US");
+                Monitor.Enter(tLock, ref bLocked);
+                try
                 {
-                  VideoStream s = mi.VideoStreams[i];
-                  iStreamPack = getEqualStreamCount(list, i);
-                  strSQL = String.Format("INSERT INTO videoStreams (id, idFile, streamId, streamName, streamPosition, streamNumber, streamPack, language, lcid, flagDefault, flagForced, streamSize, frameRate, frameRateMode, width, height, bitRate, aspectRatio, interlaced, stereoMode, format, codec, codecName, codecProfile, videoStandard, colorSpace, transferCharacteristics, chromaSubSampling, bitDepth, duration, hdr)" +
-                      " VALUES(null, {0},{1},'{2}',{3},{4},{5},'{6}',{7},{8},{9},{10},'{11}','{12}',{13},{14},'{15}','{16}',{17},'{18}','{19}','{20}','{21}','{22}','{23}','{24}','{25}','{26}',{27},{28},'{29}')",
-                      iIdFile,
-                      s.Id,
-                      sanitySqlValue(s.Name),
-                      s.StreamPosition,
-                      s.StreamNumber,
-                      iStreamPack,
-                      s.Language,
-                      s.Lcid,
-                      s.Default ? 1 : 0,
-                      s.Forced ? 1 : 0,
-                      s.StreamSize,
-                      s.FrameRate.ToString(ciEn),
-                      s.FrameRateMode,
-                      s.Width,
-                      s.Height,
-                      s.Bitrate,
-                      s.AspectRatio,
-                      s.Interlaced ? 1 : 0,
-                      s.Stereoscopic,
-                      s.Format,
-                      s.Codec,
-                      s.CodecName,
-                      s.CodecProfile,
-                      s.Standard,
-                      s.ColorSpace,
-                      s.TransferCharacteristics,
-                      s.SubSampling,
-                      s.BitDepth,
-                      s.Duration.Ticks,
-                      s.Hdr
-                      );
-                  this._db.Execute(strSQL);
-                  int iIdStream = this._db.LastInsertID();
-                  i += iStreamPack;
-                  this.insertTags(s.Tags, iIdFile, "videoStreams", iIdStream);
-                }
-                #endregion
+                  #region Store MediaInfo into the database
+                  long lDate = DateTime.Now.ToUniversalTime().Ticks;
+                  strSQL = String.Format("INSERT INTO files (id, created, accessLast, fullPath, type, serial, size, format, formatVersion, isStreamable, writingApplication, writingLibrary, attachments, profile, codec, scanType, aspectRatio, duration)" +
+                      " VALUES(null, {0},{1},'{2}','{3}','{4}',{5},'{6}','{7}',{8},'{9}','{10}','{11}','{12}','{13}','{14}','{15}',{16})",
+                     lDate,
+                     lDate,
+                     sanitySqlValue(strKeyFile),
+                     videoType,
+                     strSerial,
+                     mi.Size,
+                     mi.Format,
+                     mi.FormatVersion,
+                     mi.IsStreamable ? 1 : 0,
+                     sanitySqlValue(mi.WritingApplication),
+                     sanitySqlValue(mi.WritingLibrary),
+                     sanitySqlValue(mi.Attachments),
+                     mi.Profile,
+                     mi.Codec,
+                     mi.ScanType,
+                     mi.AspectRatio,
+                     mi.Duration
+                     );
+                  result = this._db.Execute(strSQL);
+                  iIdFile = this._db.LastInsertID();
 
-                #region AudioStreams
-                list = mi.AudioStreams.Cast<MediaStream>().ToList();
-                for (int i = 0; i < mi.AudioStreams.Count; i++)
-                {
-                  AudioStream s = mi.AudioStreams[i];
-                  iStreamPack = getEqualStreamCount(list, i);
-                  strSQL = String.Format("INSERT INTO audioStreams (id, idFile, streamId, streamName, streamPosition, streamNumber, streamPack, language, lcid, flagDefault, flagForced, streamSize, format, bitRate, bitDepth, bitRateMode, codec, codecName, codecDescription, duration, channel, samplingRate)" +
-                      " VALUES(null, {0},{1},'{2}',{3},{4},{5},'{6}',{7},{8},{9},{10},'{11}','{12}',{13},'{14}','{15}','{16}','{17}',{18},{19},'{20}')",
-                      iIdFile,
-                      s.Id,
-                      sanitySqlValue(s.Name),
-                      s.StreamPosition,
-                      s.StreamNumber,
-                      iStreamPack,
-                      s.Language,
-                      s.Lcid,
-                      s.Default ? 1 : 0,
-                      s.Forced ? 1 : 0,
-                      s.StreamSize,
-                      s.Format,
-                      s.Bitrate.ToString(ciEn),
-                      s.BitDepth,
-                      s.BitrateMode,
-                      s.Codec,
-                      s.CodecName,
-                      sanitySqlValue(s.CodecDescription),
-                      s.Duration.Ticks,
-                      s.Channel,
-                      s.SamplingRate.ToString(ciEn)
-                      );
-                  this._db.Execute(strSQL);
-                  int iIdStream = this._db.LastInsertID();
-                  i += iStreamPack;
-                  this.insertTags(s.Tags, iIdFile, "audioStreams", iIdStream);
-                }
-                #endregion
-
-                #region Subtitles
-                list = mi.Subtitles.Cast<MediaStream>().ToList();
-                for (int i = 0; i < mi.Subtitles.Count; i++)
-                {
-                  SubtitleStream s = mi.Subtitles[i];
-                  iStreamPack = getEqualStreamCount(list, i);
-                  strSQL = String.Format("INSERT INTO subtitleStreams (id, idFile, streamId, streamName, streamPosition, streamNumber, streamPack, language, lcid, flagDefault, flagForced, streamSize, format, codec)" +
-                      " VALUES(null, {0},{1},'{2}',{3},{4},{5},'{6}',{7},{8},{9},{10},'{11}','{12}')",
-                      iIdFile,
-                      s.Id,
-                      sanitySqlValue(s.Name),
-                      s.StreamPosition,
-                      s.StreamNumber,
-                      iStreamPack,
-                      s.Language,
-                      s.Lcid,
-                      s.Default ? 1 : 0,
-                      s.Forced ? 1 : 0,
-                      s.StreamSize,
-                      s.Format,
-                      s.Codec
-                      );
-                  this._db.Execute(strSQL);
-                  i += iStreamPack;
-                }
-                #endregion
-
-                #region Chapters
-                list = mi.Chapters.Cast<MediaStream>().ToList();
-                for (int i = 0; i < mi.Chapters.Count; i++)
-                {
-                  ChapterStream s = mi.Chapters[i];
-                  iStreamPack = getEqualStreamCount(list, i);
-                  strSQL = String.Format("INSERT INTO chapterStreams (id, idFile, streamId, streamName, streamPosition, streamNumber, streamPack, offset, description)" +
-                      " VALUES(null, {0},{1},'{2}',{3},{4},{5},'{6}','{7}')",
-                      iIdFile,
-                      s.Id,
-                      sanitySqlValue(s.Name),
-                      s.StreamPosition,
-                      s.StreamNumber,
-                      iStreamPack,
-                      s.Offset.ToString(ciEn),
-                      sanitySqlValue(s.Description)
-                      );
-                  this._db.Execute(strSQL);
-                  i += iStreamPack;
-                }
-                #endregion
-
-                #region MenuStreams
-                for (int i = 0; i < mi.MenuStreams.Count; i++)
-                {
-                  MenuStream s = mi.MenuStreams[i];
-                  strSQL = String.Format("INSERT INTO menuStreams (id, idFile, streamId, streamName, streamPosition, streamNumber, streamPack, duration)" +
-                      " VALUES(null, {0},{1},'{2}',{3},{4},{5},{6})",
-                      iIdFile,
-                      s.Id,
-                      sanitySqlValue(s.Name),
-                      s.StreamPosition,
-                      s.StreamNumber,
-                      0,
-                      s.Duration.Ticks
-                      );
-                  this._db.Execute(strSQL);
-                  int iIdMenu = this._db.LastInsertID();
-
-                  foreach (Chapter ch in s.Chapters)
+                  #region VideoStreams
+                  list = mi.VideoStreams.Cast<MediaStream>().ToList();
+                  for (int i = 0; i < mi.VideoStreams.Count; i++)
                   {
-                    strSQL = String.Format("INSERT INTO chapters (id, idFile, idStream, position, name) VALUES(null, {0},{1},{2},'{3}')",
+                    VideoStream s = mi.VideoStreams[i];
+                    iStreamPack = getEqualStreamCount(list, i);
+                    strSQL = String.Format("INSERT INTO videoStreams (id, idFile, streamId, streamName, streamPosition, streamNumber, streamPack, language, lcid, flagDefault, flagForced, streamSize, frameRate, frameRateMode, width, height, bitRate, aspectRatio, interlaced, stereoMode, format, codec, codecName, codecProfile, videoStandard, colorSpace, transferCharacteristics, chromaSubSampling, bitDepth, duration, hdr)" +
+                        " VALUES(null, {0},{1},'{2}',{3},{4},{5},'{6}',{7},{8},{9},{10},'{11}','{12}',{13},{14},'{15}','{16}',{17},'{18}','{19}','{20}','{21}','{22}','{23}','{24}','{25}','{26}',{27},{28},'{29}')",
                         iIdFile,
-                        iIdMenu,
-                        ch.Position.Ticks,
-                        sanitySqlValue(ch.Name)
+                        s.Id,
+                        sanitySqlValue(s.Name),
+                        s.StreamPosition,
+                        s.StreamNumber,
+                        iStreamPack,
+                        s.Language,
+                        s.Lcid,
+                        s.Default ? 1 : 0,
+                        s.Forced ? 1 : 0,
+                        s.StreamSize,
+                        s.FrameRate.ToString(ciEn),
+                        s.FrameRateMode,
+                        s.Width,
+                        s.Height,
+                        s.Bitrate,
+                        s.AspectRatio,
+                        s.Interlaced ? 1 : 0,
+                        s.Stereoscopic,
+                        s.Format,
+                        s.Codec,
+                        s.CodecName,
+                        s.CodecProfile,
+                        s.Standard,
+                        s.ColorSpace,
+                        s.TransferCharacteristics,
+                        s.SubSampling,
+                        s.BitDepth,
+                        s.Duration.Ticks,
+                        s.Hdr
                         );
                     this._db.Execute(strSQL);
+                    int iIdStream = this._db.LastInsertID();
+                    i += iStreamPack;
+                    this.insertTags(s.Tags, iIdFile, "videoStreams", iIdStream);
                   }
+                  #endregion
+
+                  #region AudioStreams
+                  list = mi.AudioStreams.Cast<MediaStream>().ToList();
+                  for (int i = 0; i < mi.AudioStreams.Count; i++)
+                  {
+                    AudioStream s = mi.AudioStreams[i];
+                    iStreamPack = getEqualStreamCount(list, i);
+                    strSQL = String.Format("INSERT INTO audioStreams (id, idFile, streamId, streamName, streamPosition, streamNumber, streamPack, language, lcid, flagDefault, flagForced, streamSize, format, bitRate, bitDepth, bitRateMode, codec, codecName, codecDescription, duration, channel, samplingRate)" +
+                        " VALUES(null, {0},{1},'{2}',{3},{4},{5},'{6}',{7},{8},{9},{10},'{11}','{12}',{13},'{14}','{15}','{16}','{17}',{18},{19},'{20}')",
+                        iIdFile,
+                        s.Id,
+                        sanitySqlValue(s.Name),
+                        s.StreamPosition,
+                        s.StreamNumber,
+                        iStreamPack,
+                        s.Language,
+                        s.Lcid,
+                        s.Default ? 1 : 0,
+                        s.Forced ? 1 : 0,
+                        s.StreamSize,
+                        s.Format,
+                        s.Bitrate.ToString(ciEn),
+                        s.BitDepth,
+                        s.BitrateMode,
+                        s.Codec,
+                        s.CodecName,
+                        sanitySqlValue(s.CodecDescription),
+                        s.Duration.Ticks,
+                        s.Channel,
+                        s.SamplingRate.ToString(ciEn)
+                        );
+                    this._db.Execute(strSQL);
+                    int iIdStream = this._db.LastInsertID();
+                    i += iStreamPack;
+                    this.insertTags(s.Tags, iIdFile, "audioStreams", iIdStream);
+                  }
+                  #endregion
+
+                  #region Subtitles
+                  list = mi.Subtitles.Cast<MediaStream>().ToList();
+                  for (int i = 0; i < mi.Subtitles.Count; i++)
+                  {
+                    SubtitleStream s = mi.Subtitles[i];
+                    iStreamPack = getEqualStreamCount(list, i);
+                    strSQL = String.Format("INSERT INTO subtitleStreams (id, idFile, streamId, streamName, streamPosition, streamNumber, streamPack, language, lcid, flagDefault, flagForced, streamSize, format, codec)" +
+                        " VALUES(null, {0},{1},'{2}',{3},{4},{5},'{6}',{7},{8},{9},{10},'{11}','{12}')",
+                        iIdFile,
+                        s.Id,
+                        sanitySqlValue(s.Name),
+                        s.StreamPosition,
+                        s.StreamNumber,
+                        iStreamPack,
+                        s.Language,
+                        s.Lcid,
+                        s.Default ? 1 : 0,
+                        s.Forced ? 1 : 0,
+                        s.StreamSize,
+                        s.Format,
+                        s.Codec
+                        );
+                    this._db.Execute(strSQL);
+                    i += iStreamPack;
+                  }
+                  #endregion
+
+                  #region Chapters
+                  list = mi.Chapters.Cast<MediaStream>().ToList();
+                  for (int i = 0; i < mi.Chapters.Count; i++)
+                  {
+                    ChapterStream s = mi.Chapters[i];
+                    iStreamPack = getEqualStreamCount(list, i);
+                    strSQL = String.Format("INSERT INTO chapterStreams (id, idFile, streamId, streamName, streamPosition, streamNumber, streamPack, offset, description)" +
+                        " VALUES(null, {0},{1},'{2}',{3},{4},{5},'{6}','{7}')",
+                        iIdFile,
+                        s.Id,
+                        sanitySqlValue(s.Name),
+                        s.StreamPosition,
+                        s.StreamNumber,
+                        iStreamPack,
+                        s.Offset.ToString(ciEn),
+                        sanitySqlValue(s.Description)
+                        );
+                    this._db.Execute(strSQL);
+                    i += iStreamPack;
+                  }
+                  #endregion
+
+                  #region MenuStreams
+                  for (int i = 0; i < mi.MenuStreams.Count; i++)
+                  {
+                    MenuStream s = mi.MenuStreams[i];
+                    strSQL = String.Format("INSERT INTO menuStreams (id, idFile, streamId, streamName, streamPosition, streamNumber, streamPack, duration)" +
+                        " VALUES(null, {0},{1},'{2}',{3},{4},{5},{6})",
+                        iIdFile,
+                        s.Id,
+                        sanitySqlValue(s.Name),
+                        s.StreamPosition,
+                        s.StreamNumber,
+                        0,
+                        s.Duration.Ticks
+                        );
+                    this._db.Execute(strSQL);
+                    int iIdMenu = this._db.LastInsertID();
+
+                    foreach (Chapter ch in s.Chapters)
+                    {
+                      strSQL = String.Format("INSERT INTO chapters (id, idFile, idStream, position, name) VALUES(null, {0},{1},{2},'{3}')",
+                          iIdFile,
+                          iIdMenu,
+                          ch.Position.Ticks,
+                          sanitySqlValue(ch.Name)
+                          );
+                      this._db.Execute(strSQL);
+                    }
+                  }
+                  #endregion
+
+                  #endregion
+
+                  Log.Debug("[MediaInfoDatabaseSqlLite][Get] Database record created for the file: '{0}'", strMediaFullPath);
+                  goto exit;
                 }
-                #endregion
+                catch (Exception ex)
+                {
+                  Log.Error("[MediaInfoDatabaseSqlLite][Get] Exception:{0} stack:{1}", ex.Message, ex.StackTrace);
+                }
 
-                #endregion
-
-                Log.Debug("[MediaInfoDatabaseSqlLite][Get] Database record created for the file: '{0}'", strMediaFullPath);
-                goto exit;
+                //Something went wrong. Delete the record from the DB
+                if (iIdFile >= 0)
+                  this.deleteRecord(iIdFile);
               }
-              catch (Exception ex)
-              {
-                Log.Error("[MediaInfoDatabaseSqlLite][Get] Exception:{0} stack:{1}", ex.Message, ex.StackTrace);
-              }
-
-              //Something went wrong. Delete the record from the DB
-              if (iIdFile >= 0)
-                this.deleteRecord(iIdFile);
+              else
+                Log.Error("[MediaInfoDatabaseSqlLite][Get] Failed to retrieve MediaInfo for the file: '{0}'", strMediaFullPath);
             }
-            else
-              Log.Error("[MediaInfoDatabaseSqlLite][Get] Failed to retrieve MediaInfo for the file: '{0}'", strMediaFullPath);
+            finally
+            {
+              if (!bLocked)
+                Monitor.Enter(tLock, ref bLocked);
+
+              //Task is complete; assign the result and wake up all clients waiting for this result
+              mip.SetComplete(mi);
+              Monitor.PulseAll(tLock);
+            }
 
             goto exit;
           }
@@ -501,7 +562,7 @@ namespace MediaPortal.MediaInfoService.Database
         finally
         {
           if (bLocked)
-            Monitor.Exit(typeof(MediaInfoDatabaseSqlLite));
+            Monitor.Exit(tLock);
         }
       }
       finally
