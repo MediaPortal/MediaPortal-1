@@ -121,7 +121,7 @@ namespace HideVolumeOSD
 
       if (hwndRet == IntPtr.Zero)
       {
-        Log.Error("HideVolumeOSD: OSD window not found!");
+        Log.Debug("HideVolumeOSD: FindOSDWindow() OSD window not found!");
       }
 
       return hwndRet;
@@ -132,10 +132,15 @@ namespace HideVolumeOSD
 			ShowWindow(hWndInject, 6); // SW_MINIMIZE
 		}
 
-	  public void ShowOSD()
-	  {
-	    ShowWindow(hWndInject, 9); // SW_RESTORE
-	    // show window on the screen 
-	  }
-	}
+    public void ShowOSD()
+    {
+      ShowWindow(hWndInject, 9); // SW_RESTORE
+      // show window on the screen
+
+      //Make sure, the Volume OSD is properly restored by invoking the presentation
+      keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
+      System.Threading.Thread.Sleep(200);
+      keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
+    }
+  }
 }
