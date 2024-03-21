@@ -20,7 +20,17 @@
       <id>1</id>
       <posX>45</posX>
       <posY>15</posY>
-      <label>#(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
+      <label>#(iif(and(neq(L(102012), #currentmodule), neq(L(100748), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <label>#header.label</label>
       <font>Label</font>
       <align>left</align>
       <textcolor>ff6FAFE1</textcolor>
@@ -31,11 +41,23 @@
       <id>1</id>
       <posX>45</posX>
       <posY>52</posY>
-      <label>#selectedindex/#itemcount #(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
+      <label>#selectedindex/#itemcount #(iif(and(neq(L(102012), #currentmodule), neq(L(100748), #currentmodule),  neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
       <align>left</align>
       <textcolor>ff6FAFE1</textcolor>
       <font>Label</font>
-      <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
+      <visible>string.equals(#selectedindex)+string.equals(#itemcount)+!string.equals(#currentmodule,#(L(100748)))</visible>
+    </control>
+    <control>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>52</posY>
+      <label>#selectedindex/#itemcount #(L(1041))</label>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+      <font>Label</font>
+      <visible>string.equals(#selectedindex)+string.equals(#itemcount)+string.equals(#currentmodule,#(L(100748)))</visible>
     </control>
     <control>
       <description>Total duration Label</description>
