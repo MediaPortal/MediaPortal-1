@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -105,8 +105,11 @@ namespace MpeCore.Classes.ZipProvider
 
       string temfile = Path.GetTempFileName();
       pak.Save(temfile);
-      if (!Directory.Exists(Path.GetDirectoryName(filename)))
-        Directory.CreateDirectory(Path.GetDirectoryName(filename));
+
+      string dir = Path.GetDirectoryName(filename);
+      if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+        Directory.CreateDirectory(dir);
+
       using (ZipFile zip = new ZipFile())
       {
         zip.AddFile(temfile).FileName = "MediaPortalExtension.xml";
