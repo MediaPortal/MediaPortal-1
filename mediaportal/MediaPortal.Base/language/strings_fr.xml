@@ -98,7 +98,7 @@
     <String id="132">Albums</String>
     <String id="133">Artistes</String>
     <String id="134">Répertoires</String>
-    <String id="135">Genres</String>
+    <String id="135">Genre</String>
     <String id="136">Playlist</String>
     <String id="137">Rechercher</String>
     <String id="138">INFORMATIONS SYSTEME</String>
@@ -1723,7 +1723,7 @@
     <String id="9998">Minutes : </String>
     <String id="9999">Heures : </String>
     <String id="10100">Mines cachées</String>
-    <String id="10101">Temps de jeu</String>
+    <String id="10101">Horaires du prog.</String>
     <String id="10102">Meilleur temps</String>
     <String id="10103" prefix="Mon ">Démineur</String>
     <String id="10104">Mini EPG</String>
