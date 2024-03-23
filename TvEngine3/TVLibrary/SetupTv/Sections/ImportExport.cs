@@ -121,6 +121,7 @@ namespace SetupTv.Sections
           AddAttribute(nodeCard, "CAM", card.CAM);
           AddAttribute(nodeCard, "netProvider", card.netProvider);
           AddAttribute(nodeCard, "StopGraph", card.StopGraph);
+          AddAttribute(nodeCard, "symbolRateMultiplier", card.SymbolRateMultiplier);
           nodeCards.AppendChild(nodeCard);
         }
         nodeServer.AppendChild(nodeCards);
@@ -397,6 +398,10 @@ namespace SetupTv.Sections
               if (nodeCard.Attributes["CAM"] != null)
               {
                 card.CAM = (nodeCard.Attributes["CAM"].Value == "True");
+              }
+              if (nodeCard.Attributes["symbolRateMultiplier"] != null)
+              {
+                card.SymbolRateMultiplier = Int32.Parse(nodeCard.Attributes["symbolRateMultiplier"].Value);
               }
             }
             else

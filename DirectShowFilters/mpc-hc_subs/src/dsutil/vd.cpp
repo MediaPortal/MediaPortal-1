@@ -27,54 +27,16 @@
 #include "vd_asm.h"
 #include <intrin.h>
 
-#include "vd2/system/cpuaccel.h"
 #include "vd2/system/memory.h"
-//#include "vd2/system/vdstl.h"
+#include "vd2/system/vdstl.h"
 
-//#include "vd2/Kasumi/pixmap.h"
-//#include "vd2/Kasumi/pixmaputils.h"
-//#include "vd2/Kasumi/pixmapops.h"
+#include "vd2/Kasumi/pixmap.h"
+#include "vd2/Kasumi/pixmaputils.h"
+#include "vd2/Kasumi/pixmapops.h"
+#include "vd2/Kasumi/resample.h"
 
 #pragma warning(disable : 4799) // no emms... blahblahblah
 
-void VDCPUTest() {
-    SYSTEM_INFO si;
-
-    long lEnableFlags = CPUCheckForExtensions();
-
-    GetSystemInfo(&si);
-
-    if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_INTEL)
-        if (si.wProcessorLevel < 4)
-            lEnableFlags &= ~CPUF_SUPPORTS_FPU;     // Not strictly true, but very slow anyway
-
-    // Enable FPU support...
-
-    CPUEnableExtensions(lEnableFlags);
-
-    VDFastMemcpyAutodetect();
-}
-
-CCpuID g_cpuid;
-
-CCpuID::CCpuID()
-{
-    VDCPUTest();
-
-    long lEnableFlags = CPUGetEnabledExtensions();
-
-    int flags = 0;
-    flags |= !!(lEnableFlags & CPUF_SUPPORTS_MMX)           ? mmx       : 0;            // STD MMX
-    flags |= !!(lEnableFlags & CPUF_SUPPORTS_INTEGER_SSE)   ? ssemmx    : 0;            // SSE MMX
-    flags |= !!(lEnableFlags & CPUF_SUPPORTS_SSE)           ? ssefpu    : 0;            // STD SSE
-    flags |= !!(lEnableFlags & CPUF_SUPPORTS_SSE2)          ? sse2      : 0;            // SSE2
-    flags |= !!(lEnableFlags & CPUF_SUPPORTS_3DNOW)         ? _3dnow    : 0;            // 3DNow
-
-    // result
-    m_flags = (flag_t)flags;
-}
-
-/*
 bool BitBltFromI420ToI420(int w, int h, BYTE* dsty, BYTE* dstu, BYTE* dstv, int dstpitch, BYTE* srcy, BYTE* srcu, BYTE* srcv, int srcpitch)
 {
     VDPixmap srcbm = {0};
@@ -171,9 +133,7 @@ bool BitBltFromI420ToYUY2(int w, int h, BYTE* dst, int dstpitch, BYTE* srcy, BYT
     if (srcpitch == 0) srcpitch = w;
 
 #ifndef _WIN64
-    if ((g_cpuid.m_flags & CCpuID::sse2)
-        && !((DWORD_PTR)srcy&15) && !((DWORD_PTR)srcu&15) && !((DWORD_PTR)srcv&15) && !(srcpitch&31)
-        && !((DWORD_PTR)dst&15) && !(dstpitch&15))
+    if (!((DWORD_PTR)srcy&15) && !((DWORD_PTR)srcu&15) && !((DWORD_PTR)srcv&15) && !(srcpitch&31) && !((DWORD_PTR)dst&15) && !(dstpitch&15))
     {
         if (w<=0 || h<=0 || (w&1) || (h&1))
             return false;
@@ -263,6 +223,62 @@ bool BitBltFromRGBToRGB(int w, int h, BYTE* dst, int dstpitch, int dbpp, BYTE* s
     return VDPixmapBlt(dstpxm, srcbm);
 }
 
+bool BitBltFromRGBToRGBStretch(int dstw, int dsth, BYTE* dst, int dstpitch, int dbpp, int srcw, int srch, BYTE* src, int srcpitch, int sbpp)
+{
+    VDPixmap srcbm = {
+        src + srcpitch * (srch - 1),
+        nullptr,
+        srcw,
+        srch,
+        -srcpitch
+    };
+
+    switch (sbpp) {
+    case 8:
+        srcbm.format = nsVDPixmap::kPixFormat_Pal8;
+        break;
+    case 16:
+        srcbm.format = nsVDPixmap::kPixFormat_RGB565;
+        break;
+    case 24:
+        srcbm.format = nsVDPixmap::kPixFormat_RGB888;
+        break;
+    case 32:
+        srcbm.format = nsVDPixmap::kPixFormat_XRGB8888;
+        break;
+    default:
+        VDASSERT(false);
+    }
+
+    VDPixmap dstpxm = {
+        dst + dstpitch * (dsth - 1),
+        nullptr,
+        dstw,
+        dsth,
+        -dstpitch
+    };
+
+    switch (dbpp) {
+    case 8:
+        dstpxm.format = nsVDPixmap::kPixFormat_Pal8;
+        break;
+    case 16:
+        dstpxm.format = nsVDPixmap::kPixFormat_RGB565;
+        break;
+    case 24:
+        dstpxm.format = nsVDPixmap::kPixFormat_RGB888;
+        break;
+    case 32:
+        dstpxm.format = nsVDPixmap::kPixFormat_XRGB8888;
+        break;
+    default:
+        VDASSERT(false);
+    }
+
+    return VDPixmapResample(dstpxm, srcbm, IVDPixmapResampler::kFilterCubic);
+}
+
+
 bool BitBltFromYUY2ToRGB(int w, int h, BYTE* dst, int dstpitch, int dbpp, BYTE* src, int srcpitch)
 {
     if (srcpitch == 0) srcpitch = w;
@@ -331,15 +347,13 @@ bool BitBltFromI420ToYUY2Interlaced(int w, int h, BYTE* dst, int dstpitch, BYTE*
     void (*yuvtoyuy2row_avg)(BYTE* dst, BYTE* srcy, BYTE* srcu, BYTE* srcv, DWORD width, DWORD pitchuv) = NULL;
 
 #ifndef _WIN64
-    if ((g_cpuid.m_flags & CCpuID::sse2)
-        && !((DWORD_PTR)srcy&15) && !((DWORD_PTR)srcu&15) && !((DWORD_PTR)srcv&15) && !(srcpitch&31)
-        && !((DWORD_PTR)dst&15) && !(dstpitch&15))
+    if (!((DWORD_PTR)srcy&15) && !((DWORD_PTR)srcu&15) && !((DWORD_PTR)srcv&15) && !(srcpitch&31) && !((DWORD_PTR)dst&15) && !(dstpitch&15))
     {
         yv12_yuy2_sse2_interlaced(srcy, srcu, srcv, srcpitch/2, w/2, h, dst, dstpitch);
         return true;
     }
 
-    if ((g_cpuid.m_flags & CCpuID::mmx) && !(w&7))
+    if (!(w&7))
     {
         yuvtoyuy2row = yuvtoyuy2row_MMX;
         yuvtoyuy2row_avg = yuvtoyuy2row_avg_MMX;
@@ -371,10 +385,8 @@ bool BitBltFromI420ToYUY2Interlaced(int w, int h, BYTE* dst, int dstpitch, BYTE*
     yuvtoyuy2row(dst + dstpitch, srcy + srcpitch, srcu, srcv, w);
 
 #ifndef _WIN64
-    if (g_cpuid.m_flags & CCpuID::mmx)
-        __asm emms
+    __asm emms
 #endif
 
     return true;
 }
-*/

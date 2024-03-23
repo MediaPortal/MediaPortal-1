@@ -323,6 +323,9 @@ namespace TvLibrary.Hardware
     /// </summary>
     public void CheckAndOpen()
     {
+      if (IntPtr.Size == 8)
+        return; //not supported on x64
+
       Int32 numberDevices = FindDevices();
 
       // no devices found

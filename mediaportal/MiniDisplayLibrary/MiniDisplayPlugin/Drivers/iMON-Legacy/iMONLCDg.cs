@@ -738,7 +738,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               string curBrand = _BrandTable[i, 0];
               string curApp = _BrandTable[i, 1];
               Log.Info("iMONLCDg.Setup(): checking registry for " + curBrand + " entries");
-              RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software" + curBrand + "\\" + curApp, false);
+              RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software"+ "\\" + curBrand + "\\" + curApp, false);
               if (key != null)
               {
                 num3 = (int)key.GetValue("LastVFD", 0);
@@ -911,7 +911,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     public override string Description
     {
-      get { return "SoundGraph iMON USB VFD/LCD Plugin >= 8.12.1202"; }
+      get { return "SoundGraph iMON USB VFD/LCD Plugin >= 7.77.1022"; }
     }
 
     public override string ErrorMessage
@@ -2257,6 +2257,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             Log.Info("iMONLCDg.FindImonVFDdll(): Selected SoundGraph DLL.");
           }
           strResult = strPathDll;
+        }
+        else
+        {
+          strPathDll = strPathSoundgraph + @"\sg_vfd.dll";
+          if (File.Exists(strPathDll))
+          {
+            if (_DoDebug)
+            {
+              Log.Info("iMONLCDg.FindImonVFDdll(): Selected SoundGraph DLL.");
+            }
+            strResult = strPathDll;
+          }
         }
       }
       else

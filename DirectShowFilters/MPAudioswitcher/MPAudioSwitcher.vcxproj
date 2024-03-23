@@ -195,10 +195,11 @@
       <ProgramDataBaseFileName>.\bin\Release/</ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <RegisterOutput>false</RegisterOutput>
-      <AdditionalDependencies>strmbase.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>strmbase.lib;Vfw32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>.\bin\Release/MPAudioSwitcher.ax</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release;$(DXSDK_DIR)lib\$(PlatformTarget);</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>.\source\AudioSwitcher.def</ModuleDefinitionFile>
@@ -219,10 +220,11 @@
       <ProgramDataBaseFileName>.\bin\Release/</ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <RegisterOutput>false</RegisterOutput>
-      <AdditionalDependencies>strmbase.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>strmbase.lib;Vfw32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>.\bin\Release/MPAudioSwitcher.ax</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release;$(DXSDK_DIR)lib\$(PlatformTarget);</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>.\source\AudioSwitcher.def</ModuleDefinitionFile>
@@ -260,6 +262,7 @@
     <None Include="source\AudioSwitcher.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\resource.h" />
     <ClInclude Include="source\Audio.h" />
     <ClInclude Include="source\AudioSwitcher.h" />
     <ClInclude Include="source\FilterApp.h" />
@@ -275,6 +278,9 @@
     <ProjectReference Include="..\mpc-hc_subs\src\thirdparty\VirtualDub\system\system.vcxproj">
       <Project>{c2082189-3ecb-4079-91fa-89d3c8a305c0}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="source\MPAudioSwitcher.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

@@ -1,4 +1,4 @@
-// Copyright (C) 2005-2016 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -338,6 +338,11 @@ namespace OSInfo
       Windows10,
 
       ///<summary>
+      /// Windows 11
+      ///</summary>
+      Windows11,
+
+      ///<summary>
       /// Windows 2003 Server
       ///</summary>
       Windows2003,
@@ -375,7 +380,12 @@ namespace OSInfo
       ///<summary>
       /// Windows 2019 Server
       ///</summary>
-      Windows2019
+      Windows2019,
+
+      ///<summary>
+      /// Windows 2022 Server
+      ///</summary>
+      Windows2022
     }
 
     /// <summary>
@@ -601,7 +611,22 @@ namespace OSInfo
               switch (OSMinorVersion)
               {
                 case 0:
-                  osName = OSProductType == NTProductType.NT_WORKSTATION ? "Windows 10" : "Windows 2016";
+                  if (OSProductType == NTProductType.NT_WORKSTATION)
+                  {
+                    if (OSBuildVersion < 22000)
+                      osName = "Windows 10";
+                    else
+                      osName = "Windows 11";
+                  }
+                  else
+                  {
+                    if (OSBuildVersion < 17677)
+                      osName = "Windows 2016";
+                    else if (OSBuildVersion < 20348)
+                      osName = "Windows 2019";
+                    else
+                      osName = "Windows 2022";
+                  }
                   break;
               }
               break;
@@ -610,8 +635,7 @@ namespace OSInfo
           break;
         }
       }
-      if (
-        !IsOSAsReported(OSMajorVersion, OSMinorVersion, OSBuildVersion, (byte) OSProductType, (short) OSServicePackMajor))
+      if (!IsOSAsReported(OSMajorVersion, OSMinorVersion, OSBuildVersion, (byte) OSProductType, (short) OSServicePackMajor))
         osName = "Compatibilty Mode: " + osName;
 
       return osName;
@@ -641,7 +665,22 @@ namespace OSInfo
         case 63:
           return OSProductType == NTProductType.NT_WORKSTATION ? OSList.Windows81 : OSList.Windows2012R2;
         case 10:
-          return OSProductType == NTProductType.NT_WORKSTATION ? OSList.Windows10 : OSList.Windows2016;
+          if (OSProductType == NTProductType.NT_WORKSTATION)
+          {
+            if (OSBuildVersion < 22000)
+              return OSList.Windows10;
+            else
+              return OSList.Windows11;
+          }
+          else
+          {
+            if (OSBuildVersion < 17677)
+              return OSList.Windows2016;
+            else if (OSBuildVersion < 20348)
+              return OSList.Windows2019;
+            else
+              return OSList.Windows2022;
+          }
       }
       return OSList.Windows2000andPrevious;
     }
@@ -655,8 +694,8 @@ namespace OSInfo
       string servicePack = GetOSServicePack();
       if (!string.IsNullOrEmpty(servicePack))
         servicePack = " (" + servicePack + ")";
-      return string.Format("{0} {1}{2} {3} [{4}]", GetOSNameString(), GetOSProductType(), servicePack,
-        GetOSx64orx32String(), OSVersion);
+      return string.Format("{0} {1}{2} {3} [{4}]", 
+                           GetOSNameString(), GetOSProductType(), servicePack, GetOSx64orx32String(), OSVersion);
     }
 
     /// <summary>
@@ -705,7 +744,7 @@ namespace OSInfo
       }
       if (VerifyOSMinRequirement(10, 0, 10240, 0))
       {
-        // Windows 10/Windows Server 2016/Windows Server 2019
+        // Windows 10/Windows 11/Windows Server 2016/Windows Server 2019/Windows Server 2022
         return OsSupport.FullySupported;
       }
       return OsSupport.Blocked;

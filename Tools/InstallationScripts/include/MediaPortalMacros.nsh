@@ -18,8 +18,8 @@
 */
 #endregion
 
-!if "${NSIS_VERSION}" != "v3.08"
-  !error "$\r$\n$\r$\nUnsupported NSIS version: ${NSIS_VERSION}. Please use NSIS v3.08, http://nsis.sourceforge.net$\r$\n$\r$\n"
+!if "${NSIS_VERSION}" != "v3.09"
+  !error "$\r$\n$\r$\nUnsupported NSIS version: ${NSIS_VERSION}. Please use NSIS v3.09, http://nsis.sourceforge.net$\r$\n$\r$\n"
 !endif
 
 !ifndef ___COMMON_MP_MACROS__NSH___
@@ -65,18 +65,10 @@
 !endif
 
 !ifndef MP_REG_UNINSTALL
-    !if "${Architecture}" == "x64"
-        !define MP_REG_UNINSTALL  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
-    !else
-        !define MP_REG_UNINSTALL  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
-    !endif
+    !define MP_REG_UNINSTALL  "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
 !endif
 !ifndef TV3_REG_UNINSTALL
-    !if "${Architecture}" == "x64"
-        !define TV3_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server (x64)"
-    !else
-        !define TV3_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
-    !endif
+    !define TV3_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
 !endif
 
 ; modify your registry and uncomment the following line to test if the git version check is working
@@ -179,7 +171,7 @@
 
 # old installations < 0.2.3.0 RC 3
 !macro _MP022IsInstalled _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{87819CFA-1786-484D-B0DE-10B5FBF2625D}" "UninstallString"
@@ -188,7 +180,7 @@
 !define MP022IsInstalled `"" MP022IsInstalled ""`
 
 !macro _MP023RC3IsInstalled _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal 0.2.3.0 RC3" "UninstallString"
@@ -197,7 +189,7 @@
 !define MP023RC3IsInstalled `"" MP023RC3IsInstalled ""`
 
 !macro _MP023IsInstalled _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal 0.2.3.0" "UninstallString"
@@ -208,7 +200,7 @@
 ;======================================   OLD TVServer/TVClient INSTALLATION TESTs
 
 !macro _MSI_TVServerIsInstalled _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{4B738773-EE07-413D-AFB7-BB0AB04A5488}" "UninstallString"
@@ -217,7 +209,7 @@
 !define MSI_TVServerIsInstalled `"" MSI_TVServerIsInstalled ""`
 
 !macro _MSI_TVClientIsInstalled _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{F7444E89-5BC0-497E-9650-E50539860DE0}" "UninstallString"
@@ -235,15 +227,20 @@
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal" "UninstallString"
+  
+  !if "${Architecture}" == "x64"
+    SetRegView 64
+  !endif
+  
   IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
 !macroend
 !define MPIsInstalledx86 `"" MPIsInstalledx86 ""`
 
 !macro _MPIsInstalledx64 _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
-  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)" "UninstallString"
+  ReadRegStr $_LOGICLIB_TEMP HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal" "UninstallString"
   IfFileExists $_LOGICLIB_TEMP `${_t}` `${_f}`
 !macroend
 !define MPIsInstalledx64 `"" MPIsInstalledx64 ""`
@@ -251,7 +248,7 @@
 ;======================================   Mediaportal / TV Server / TV Client
 
 !macro _MPIsInstalled _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "${MP_REG_UNINSTALL}" "UninstallString"
@@ -260,7 +257,7 @@
 !define MPIsInstalled `"" MPIsInstalled ""`
 
 !macro _TVServerIsInstalled _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "${TV3_REG_UNINSTALL}" "UninstallString"
@@ -272,7 +269,7 @@
 !define TVServerIsInstalled `"" TVServerIsInstalled ""`
 
 !macro _TVClientIsInstalled _a _b _t _f
-  SetRegView 32
+  ;SetRegView 32
   !insertmacro _LOGICLIB_TEMP
 
   ReadRegStr $_LOGICLIB_TEMP HKLM "${TV3_REG_UNINSTALL}" "UninstallString"
@@ -286,37 +283,55 @@
 ;======================================   3rd PARTY APPLICATION TESTs
 
 !macro _VCRedist2008IsInstalled _a _b _t _f
-  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{9BE518E6-ECC6-35A9-88E4-87755C07200F}" "DisplayName"
-  StrCmp $0 "" +2 0
-  Goto `${_t}`
+  !if "${Architecture}" == "x64"
+      ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{5FCE6D76-F5DC-37AB-B2B8-22AB8CEDB1D4}" "DisplayName"
+      StrCmp $0 "" +2 0
+      Goto `${_t}`
+      
+      IfFileExists "$WINDIR\WinSxS\Manifests\amd64_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.30729.6161_none_0a1fd3a3a768b895.manifest" 0 +4
+      IfFileExists "$WINDIR\WinSxS\Manifests\amd64_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.6161_none_08e61857a83bc251.manifest" 0 +3
+      IfFileExists "$WINDIR\WinSxS\Manifests\amd64_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.6161_none_044aad0bab1eb146.manifest" 0 +2
+      Goto `${_t}`
 
-  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{1F1C2DFC-2D24-3E06-BCB8-725134ADF989}" "DisplayName"
-  StrCmp $0 "" +2 0
-  Goto `${_t}`
+      IfFileExists "$WINDIR\WinSxS\Manifests\amd64_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.30729.4148_none_0a1d2fcba76b3f00.manifest" 0 +4
+      IfFileExists "$WINDIR\WinSxS\Manifests\amd64_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.4148_none_08e3747fa83e48bc.manifest" 0 +3
+      IfFileExists "$WINDIR\WinSxS\Manifests\amd64_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.4148_none_04480933ab2137b1.manifest" 0 +2
+      Goto `${_t}`
+  
+      Goto `${_f}`  
+  !else
+      ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{9BE518E6-ECC6-35A9-88E4-87755C07200F}" "DisplayName"
+      StrCmp $0 "" +2 0
+      Goto `${_t}`
 
-  IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.30729.6161_none_51cd0a7abbe4e19b.manifest" 0 +4
-  IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.6161_none_50934f2ebcb7eb57.manifest" 0 +3
-  IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.6161_none_4bf7e3e2bf9ada4c.manifest" 0 +2
-  Goto `${_t}`
+      ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{1F1C2DFC-2D24-3E06-BCB8-725134ADF989}" "DisplayName"
+      StrCmp $0 "" +2 0
+      Goto `${_t}`
 
-  IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.30729.4148_none_51ca66a2bbe76806.manifest" 0 +4
-  IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.4148_none_5090ab56bcba71c2.manifest" 0 +3
-  IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.4148_none_4bf5400abf9d60b7.manifest" 0 +2
-  Goto `${_t}`
+      IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.30729.6161_none_51cd0a7abbe4e19b.manifest" 0 +4
+      IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.6161_none_50934f2ebcb7eb57.manifest" 0 +3
+      IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.6161_none_4bf7e3e2bf9ada4c.manifest" 0 +2
+      Goto `${_t}`
 
-  IfFileExists "$WINDIR\WinSxS\Manifests\x86_Microsoft.VC90.ATL_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_353599c2.manifest" 0 +4
-  IfFileExists "$WINDIR\WinSxS\Manifests\x86_Microsoft.VC90.CRT_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_d495ac4e.manifest" 0 +3
-  IfFileExists "$WINDIR\WinSxS\Manifests\x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53.manifest" 0 +2
-  Goto `${_t}`
+      IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.30729.4148_none_51ca66a2bbe76806.manifest" 0 +4
+      IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.4148_none_5090ab56bcba71c2.manifest" 0 +3
+      IfFileExists "$WINDIR\WinSxS\Manifests\x86_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.4148_none_4bf5400abf9d60b7.manifest" 0 +2
+      Goto `${_t}`
 
-  Goto `${_f}`
+      IfFileExists "$WINDIR\WinSxS\Manifests\x86_Microsoft.VC90.ATL_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_353599c2.manifest" 0 +4
+      IfFileExists "$WINDIR\WinSxS\Manifests\x86_Microsoft.VC90.CRT_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_d495ac4e.manifest" 0 +3
+      IfFileExists "$WINDIR\WinSxS\Manifests\x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53.manifest" 0 +2
+      Goto `${_t}`
+      
+      Goto `${_f}`
+  !endif
 !macroend
 !define VCRedist2008IsInstalled `"" VCRedist2008IsInstalled ""`
 
 #**********************************************************************************************************#
 # Get MP infos
 !macro MP_GET_INSTALL_DIR _var
-  SetRegView 32
+  ;SetRegView 32
   ;${LOG_TEXT} "DEBUG" "MACRO:MP_GET_INSTALL_DIR"
 
   ${If} ${MP023IsInstalled}
@@ -337,7 +352,7 @@
 !macroend
 
 !macro TVSERVER_GET_INSTALL_DIR _var
-  SetRegView 32
+  ;SetRegView 32
   ;${LOG_TEXT} "DEBUG" "MACRO:TVSERVER_GET_INSTALL_DIR"
 
   ${If} ${TVServerIsInstalled}
@@ -352,7 +367,7 @@
 !macroend
 
 !macro MP_GET_VERSION _var
-  SetRegView 32
+  ;SetRegView 32
   ${LOG_TEXT} "DEBUG" "MACRO:MP_GET_VERSION"
 
   ${If} ${MPIsInstalled}
@@ -368,7 +383,7 @@
 !macroend
 
 !macro TVSERVER_GET_VERSION _var
-  SetRegView 32
+  ;SetRegView 32
   ${LOG_TEXT} "DEBUG" "MACRO:TVSERVER_GET_VERSION"
 
   ${If} ${TVServerIsInstalled}
@@ -539,6 +554,9 @@
   !insertmacro NSISuninstall "${TV3_REG_UNINSTALL}"
 !endif
 !if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client"
+  !insertmacro NSISuninstall "${MP_REG_UNINSTALL}"
+!endif
+!if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client (x64)"
   !insertmacro NSISuninstall "${MP_REG_UNINSTALL}"
 !endif
 
@@ -822,10 +840,12 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
 !macro MediaPortalVCRedistCheck
   ${LOG_TEXT} "INFO" ".: Microsoft Visual C++ Redistributable Check :."
 
+!if "${Architecture}" == "x86"
   ; check if VC Redist 2008 SP1 is installed
   ${IfNot} ${VCRedist2008IsInstalled}
     !insertmacro ShowMissingComponent "     - Microsoft Visual C++ 2008 Service Pack 1 Redistributable Package ATL Security Update"
   ${EndIf}
+!endif
 
   ${LOG_TEXT} "INFO" "============================"
 !macroend
@@ -911,6 +931,17 @@ ${EndIf}
     !insertmacro TVSERVER_GET_VERSION $R0
 !endif
 
+!if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client (x64)"
+  ${IfNot} ${TVServerIsInstalled}
+  ${AndIfNot} ${TVClientIsInstalled}
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_GIT_NOMP)" IDNO +2
+    ExecShell open "${WEB_DOWNLOAD_MIN_MP_VERSION}"
+    Abort
+  ${Else}
+
+    !insertmacro TVSERVER_GET_VERSION $R0
+!endif
+
     ${VersionCompare} $R0 ${MIN_INSTALLED_MP_VERSION} $R0
     ${If} $R0 == 0
       ; installed version is EQUAL to min
@@ -933,6 +964,12 @@ ${EndIf}
 
 
 !if "${PRODUCT_NAME}" == "MediaPortal"
+    !define _macro_cond_MP_
+!else if "${PRODUCT_NAME}" == "MediaPortal (x64)"
+    !define _macro_cond_MP_
+!endif
+
+!ifdef _macro_cond_MP_
 
 !macro DoPreInstallChecks
 
@@ -975,50 +1012,15 @@ ${EndIf}
 
 !endif
 
-!if "${PRODUCT_NAME}" == "MediaPortal (x64)"
 
-!macro DoPreInstallChecks
-
-!ifdef GIT_BUILD
-  ; check if correct MP version ist installed, which is required for this git snapshot
-  !insertmacro MinimumVersionForGITCheck
-!endif
-
-  ; OS and other common initialization checks are done in the following NSIS header file
-  !insertmacro MediaPortalOperatingSystemCheck
-  !insertmacro MediaPortalAdminCheck
-  !insertmacro MediaPortalVCRedistCheck
-  !insertmacro MediaPortalNetFrameworkCheck
-
-  ; check if old mp 0.2.2 is installed
-  ${If} ${MP022IsInstalled}
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP022)"
-    Abort
-  ${EndIf}
-
-  ; check if old mp 0.2.3 RC3 is installed
-  ${If} ${MP023RC3IsInstalled}
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP023RC3)"
-    Abort
-  ${EndIf}
-
-  ; check if old mp 0.2.3 is installed.
-  ${If} ${MP023IsInstalled}
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_MP023)"
-    Abort
-  ${EndIf}
-
-  ; check if reboot is required
-  ${If} ${FileExists} "$MPdir.Base\rebootflag"
-    MessageBox MB_OK|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_REBOOT_REQUIRED)"
-    Abort
-  ${EndIf}
-
-!macroend
-
-!endif
 
 !if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client"
+    !define _macro_cond_TV_
+!else if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client (x64)"
+    !define _macro_cond_TV_
+!endif    
+
+!ifdef _macro_cond_TV_
 
 !macro DoPreInstallChecks
 

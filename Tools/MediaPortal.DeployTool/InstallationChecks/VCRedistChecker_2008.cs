@@ -135,6 +135,81 @@ namespace MediaPortal.DeployTool.InstallationChecks
           result.state = CheckState.INSTALLED;
           return result;
         }
+
+        // MS Visual C++ 2008 SP1 + ATL Update (9.0.30729.4148) x86
+        keySection = Utils.CheckUninstallString("{1F1C2DFC-2D24-3E06-BCB8-725134ADF989}", "DisplayName");
+        if (!string.IsNullOrEmpty(keySection))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
+      }
+
+      string ManifestDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\winsxs\\Manifests\\";
+      if (Utils.Is64bit())
+      {
+        // Manifests for Windows10/Windows11
+        // MS Visual C++ 2008 SP1 + MFC Security Update (9.0.30729.9635)
+        const string ManifestCRT_Win10 = "amd64_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.9635_none_08e2c157a83ed5da.manifest";
+        if (File.Exists(ManifestDir + ManifestCRT_Win10))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
+      }
+      else
+      {
+        // Manifests for Windows10/Windows11
+        // MS Visual C++ 2008 SP1 + MFC Security Update (9.0.30729.9635)
+        const string ManifestCRT_Win10 = "x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.9635_none_508ff82ebcbafee0.manifest";
+        // Manifests for Windows7/Windows10
+        // MS Visual C++ 2008 SP1 + MFC Security Update (9.0.30729.6161)
+        const string ManifestCRT_Win7 = "x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.6161_none_50934f2ebcb7eb57.manifest";
+        const string ManifestMFC_Win7 = "x86_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.6161_none_4bf7e3e2bf9ada4c.manifest";
+        const string ManifestATL_Win7 = "x86_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.30729.6161_none_51cd0a7abbe4e19b.manifest";
+        // Manifests from MS11-025
+        const string ManifestCRT_7_10 = "x86_Microsoft.VC90.CRT_1fc8b3b9a1e18e3b_9.0.30729.6161_x-ww_31a54e43.manifest";
+        const string ManifestMFC_7_10 = "x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.6161_x-ww_028bc148.manifest";
+        const string ManifestATL_7_10 = "x86_Microsoft.VC90.ATL_1fc8b3b9a1e18e3b_9.0.30729.6161_x-ww_92453bb7.manifest";
+        // Manifests for Vista/2008
+        // MS Visual C++ 2008 SP1 + ATL Update (9.0.30729.4148)
+        const string ManifestCRT_Vista = "x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.4148_none_5090ab56bcba71c2.manifest";
+        const string ManifestMFC_Vista = "x86_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.4148_none_4bf5400abf9d60b7.manifest";
+        const string ManifestATL_Vista = "x86_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.30729.4148_none_51ca66a2bbe76806.manifest";
+        // MS Visual C++ 2008 SP1 + ATL Update (9.0.30729.4148)
+        const string ManifestCRT_XP = "x86_Microsoft.VC90.CRT_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_d495ac4e.manifest";
+        const string ManifestMFC_XP = "x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53.manifest";
+        const string ManifestATL_XP = "x86_Microsoft.VC90.ATL_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_353599c2.manifest";
+
+        if (File.Exists(ManifestDir + ManifestCRT_Win10))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
+        else if (File.Exists(ManifestDir + ManifestCRT_Win7) && File.Exists(ManifestDir + ManifestMFC_Win7) && File.Exists(ManifestDir + ManifestATL_Win7))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
+        else if (File.Exists(ManifestDir + ManifestCRT_7_10) && File.Exists(ManifestDir + ManifestMFC_7_10) && File.Exists(ManifestDir + ManifestATL_7_10))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
+        else if (File.Exists(ManifestDir + ManifestCRT_Vista) && File.Exists(ManifestDir + ManifestMFC_Vista) && File.Exists(ManifestDir + ManifestATL_Vista))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
+        else if (File.Exists(ManifestDir + ManifestCRT_XP) && File.Exists(ManifestDir + ManifestMFC_XP) && File.Exists(ManifestDir + ManifestATL_XP))
+        {
+          result.state = CheckState.INSTALLED;
+          return result;
+        }
+        else
+        {
+          result.state = CheckState.NOT_INSTALLED;
+        }
       }
 
       string InstallDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\system32\\";

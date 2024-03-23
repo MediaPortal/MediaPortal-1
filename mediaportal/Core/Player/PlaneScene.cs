@@ -74,6 +74,7 @@ namespace MediaPortal.Player
     private VMR9Util _vmr9Util = null;
     private VertexBuffer[] _vertexBuffers;
     private IntPtr _textureAddress;
+    private LockFlags _vertexBufferLock;
 
     private CropSettings _cropSettings;
     private bool updateCrop = false; // indicates that _cropSettings has been updated
@@ -135,13 +136,25 @@ namespace MediaPortal.Player
       _textureAddress = IntPtr.Zero;
       _vmr9Util = util;
 
+      Usage usage;
+      if (OSInfo.OSInfo.VistaOrLater())
+      {
+        this._vertexBufferLock = LockFlags.Discard;
+        usage = Usage.Dynamic | Usage.WriteOnly;
+      }
+      else
+      {
+        this._vertexBufferLock = LockFlags.None;
+        usage = Usage.None;
+      }
+
       // Number of vertex buffers must be same as numer of segments in non-linear stretch
       _vertexBuffers = new VertexBuffer[nlsSourcePartitioning.Length];
       for (int i = 0; i < _vertexBuffers.Length; i++)
       {
         _vertexBuffers[i] = new VertexBuffer(GUIGraphicsContext.DX9Device,
                       CustomVertex.TransformedColoredTextured.StrideSize * 4,
-                      Usage.None,
+                      usage,
                       CustomVertex.TransformedColoredTextured.Format,
                       GUIGraphicsContext.GetTexturePoolType());
       }
@@ -1831,7 +1844,9 @@ namespace MediaPortal.Player
                 SubEngine.GetInstance().Render(_subsRect, _destinationRect, 0);
               }
 
-              GUIGraphicsContext.DX9Device.Present();
+              //Present
+              this.PresentScene(isRepaint);
+
               backbuffer.Dispose();
 
               auto3DSurface.Dispose();
@@ -1875,7 +1890,8 @@ namespace MediaPortal.Player
                 GUIGraphicsContext.DX9Device.EndScene();
               }
 
-              GUIGraphicsContext.DX9Device.Present();
+              //Present
+              this.PresentScene(isRepaint);
             }
           }
           else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide ||
@@ -1950,7 +1966,9 @@ namespace MediaPortal.Player
               SubEngine.GetInstance().Render(_subsRect, _destinationRect, 0);
             }
 
-            GUIGraphicsContext.DX9Device.Present();
+            //Present
+            this.PresentScene(isRepaint);
+
             backbuffer.Dispose();
 
             auto3DSurface.Dispose();
@@ -1990,12 +2008,20 @@ namespace MediaPortal.Player
       }
     }
 
+    private void PresentScene(bool bIsRepaint)
+    {
+      if (GUIGraphicsContext.PresentationParameters.SwapEffect == SwapEffect.FlipEx)
+        ((DeviceEx)GUIGraphicsContext.DX9Device).PresentEx(Present.ForceImmediate);
+      else
+        GUIGraphicsContext.DX9Device.Present();
+    }
+
     private void DrawTextureSegment(VertexBuffer vertexBuffer, float srcX, float srcY, float srcWidth, float srcHeight,
                                     float dstX, float dstY, float dstWidth, float dstHeight, long lColorDiffuse)
     {
       unsafe
       {
-        CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)vertexBuffer.LockToPointer(0, 0, LockFlags.None);
+        CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)vertexBuffer.LockToPointer(0, 0, this._vertexBufferLock);
 
         float fVideoWidth = (float)GUIGraphicsContext.VideoSize.Width;
         float fVideoHeight = (float)GUIGraphicsContext.VideoSize.Height;

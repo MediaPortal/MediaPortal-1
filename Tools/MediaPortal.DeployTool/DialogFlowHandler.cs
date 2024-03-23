@@ -39,6 +39,7 @@ namespace MediaPortal.DeployTool
     DBMSSettings,
     MPSettings,
     TvServerSettings,
+    TvServerWarning,
     Installation,
     Finished,
     MysqlUpgrade
@@ -139,6 +140,9 @@ namespace MediaPortal.DeployTool
             break;
           case DialogType.TvServerSettings:
             dlg = new TvServerSettingsDlg();
+            break;
+          case DialogType.TvServerWarning:
+            dlg = new TvServerWarningDlg();
             break;
           case DialogType.Installation:
             dlg = new InstallDlg();

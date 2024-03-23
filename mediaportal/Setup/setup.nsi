@@ -83,11 +83,8 @@
 !define PRODUCT_PUBLISHER     "Team MediaPortal"
 !define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
 
-!if "${Architecture}" == "x64"
-  !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal (x64)"
-!else
-  !define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
-!endif
+!define REG_UNINSTALL         "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal"
+
 !define MEMENTO_REGISTRY_ROOT HKLM
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal"
@@ -293,6 +290,9 @@ ShowUninstDetails show
   
   ; MovieThumbnailer
   ${KillProcess} "mtn.exe"
+  
+  ; MPx86Proxy
+  ${KillProcess} "MPx86Proxy.exe"
 !macroend
 
 !macro RenameInstallDirectory
@@ -1098,8 +1098,17 @@ Section "-MediaPortal Extension Manager" SecMpeInstaller
     CreateShortCut "$DESKTOP\MediaPortal Extension Manager.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0  ""  ""  "MediaPortal Extension Manager"
   ${EndIf}
   CreateDirectory "${STARTMENU_GROUP}"
-  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
-  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"   "$MPdir.Base\MpeMaker.exe"      ""  "$MPdir.Base\MpeMaker.exe"      0 "" "" "MediaPortal Extension Maker"
+  !if "${Architecture}" == "x64"
+    CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Manager (x64).lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager (x64"
+    CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker (x64.lnk"   "$MPdir.Base\MpeMaker.exe"      ""  "$MPdir.Base\MpeMaker.exe"      0 "" "" "MediaPortal Extension Maker (x64"
+    
+    ; Delete shortcuts with old x64 naming
+    Delete "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk"
+    Delete "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"
+  !else
+    CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager"
+    CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"   "$MPdir.Base\MpeMaker.exe"      ""  "$MPdir.Base\MpeMaker.exe"      0 "" "" "MediaPortal Extension Maker"
+  !endif
 
   ; associate file extensions
   ${If} ${AtLeastWinVista}
@@ -1136,9 +1145,14 @@ SectionEnd
   ; remove startmenu shortcuts
   Delete "$DESKTOP\MediaPortal Extension Installer.lnk"
   Delete "$DESKTOP\MediaPortal Extension Manager.lnk"
+  !if "${Architecture}" == "x64"
+      Delete "${STARTMENU_GROUP}\MediaPortal Extension Manager (x64).lnk"
+      Delete "${STARTMENU_GROUP}\MediaPortal Extension Maker (x64).lnk"
+  !else
+      Delete "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk"
+      Delete "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"
+  !endif
   Delete "${STARTMENU_GROUP}\MediaPortal Extension Installer.lnk"
-  Delete "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk"
-  Delete "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"
 
   ; unassociate file extensions
   ${If} ${AtLeastWinVista}
@@ -1229,7 +1243,7 @@ Section -Post
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal (x64)"
     CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration (x64)"
     CreateShortCut "$DESKTOP\MediaPortal WatchDog.lnk"      "$MPdir.Base\WatchDog.exe"         "" "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog (x64)"
-    CreateShortCut "$DESKTOP\MediaPortal x86Proxy.lnk"      "$MPdir.Base\MPx86Proxy.exe"       "-h" "$MPdir.Base\MPx86Proxy.exe"  0 "" "" "MediaPortal x86 Proxy"
+    ; CreateShortCut "$DESKTOP\MediaPortal x86Proxy.lnk"      "$MPdir.Base\MPx86Proxy.exe"       "-h" "$MPdir.Base\MPx86Proxy.exe"  0 "" "" "MediaPortal x86 Proxy"
     !else
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
     CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
@@ -1251,16 +1265,22 @@ Section -Post
       ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
       CreateDirectory "${STARTMENU_GROUP}"
       !if "${Architecture}" == "x64"
-      CreateShortCut "${STARTMENU_GROUP}\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal (x64)"
-      CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration (x64)"
-      CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"                   "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog (x64)"
-      CreateShortCut "${STARTMENU_GROUP}\MediaPortal x86Proxy.lnk"                   "$MPdir.Base\MPx86Proxy.exe"    "-h"    "$MPdir.Base\MPx86Proxy.exe"    0 "" "" "MediaPortal x86 Proxy"
-      CreateShortCut "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
+          CreateShortCut "${STARTMENU_GROUP}\MediaPortal (x64).lnk"                      "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal (x64)"
+          CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration (x64).lnk"        "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration (x64)"
+          CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog (x64).lnk"             "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog (x64)"
+          CreateShortCut "${STARTMENU_GROUP}\MediaPortal x86Proxy.lnk"                   "$MPdir.Base\MPx86Proxy.exe"    "-h"    "$MPdir.Base\MPx86Proxy.exe"    0 "" "" "MediaPortal x86 Proxy"
+          CreateShortCut "${STARTMENU_GROUP}\Uninstall MediaPortal (x64).lnk"            "$MPdir.Base\uninstall-mp.exe"  ""      "$MPdir.Base\uninstall-mp.exe"  0 "" "" "Uninstall MediaPortal (x64)"
+          
+          ; Delete shortcuts with old x64 naming
+          Delete "${STARTMENU_GROUP}\MediaPortal.lnk"
+          Delete "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"
+          Delete "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"
+          Delete "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"
       !else
-      CreateShortCut "${STARTMENU_GROUP}\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
-      CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
-      CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"                   "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
-      CreateShortCut "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
+          CreateShortCut "${STARTMENU_GROUP}\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
+          CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
+          CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"                   "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
+          CreateShortCut "${STARTMENU_GROUP}\Uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"  ""      "$MPdir.Base\uninstall-mp.exe"  0 "" "" "Uninstall MediaPortal"
       !endif
       CreateShortCut "${STARTMENU_GROUP}\User Files.lnk"                             "$MPdir.Config"                 ""      "$MPdir.Config"                 0 "" "" "Browse you config files, databases, thumbs, logs, ..."
 
@@ -1317,18 +1337,25 @@ Section Uninstall
 
   ; remove Start Menu shortcuts
   ; $StartMenuGroup (default): "Team MediaPortal\MediaPortal"
-  Delete "${STARTMENU_GROUP}\MediaPortal.lnk"
-  Delete "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"
-  Delete "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"
-  Delete "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"
+  
   !if "${Architecture}" == "x64"
+    Delete "${STARTMENU_GROUP}\MediaPortal (x64).lnk"
+    Delete "${STARTMENU_GROUP}\MediaPortal Configuration (x64).lnk"
+    Delete "${STARTMENU_GROUP}\MediaPortal WatchDog (x64).lnk"
+    Delete "${STARTMENU_GROUP}\Uninstall MediaPortal (x64).lnk"
     Delete "${STARTMENU_GROUP}\MediaPortal x86Proxy.lnk"
   !else
+    Delete "${STARTMENU_GROUP}\MediaPortal.lnk"
+    Delete "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"
+    Delete "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"
+    Delete "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"
+    Delete "${STARTMENU_GROUP}\Uninstall MediaPortal.lnk"
   !endif
+  Delete "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Log-Files.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal TestTool.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"
-  Delete "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"
+  
   Delete "${STARTMENU_GROUP}\User Files.lnk"
 
   Delete "${STARTMENU_GROUP}\Quick Setup Guide.url"
@@ -1345,10 +1372,10 @@ Section Uninstall
   Delete "$DESKTOP\MediaPortal.lnk"
   Delete "$DESKTOP\MediaPortal Configuration.lnk"
   Delete "$DESKTOP\MediaPortal WatchDog.lnk"
-  !if "${Architecture}" == "x64"
-    Delete "$DESKTOP\MediaPortal x86Proxy.lnk"
-  !else
-  !endif
+  ; !if "${Architecture}" == "x64"
+  ;  Delete "$DESKTOP\MediaPortal x86Proxy.lnk"
+  ; !else
+  ; !endif
 
   ; remove Titan Editor shortcut
   Delete "$DESKTOP\TitanEditor.lnk"
@@ -1428,6 +1455,12 @@ Function .onInit
   ${LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION .onInit"
 
+  !if "${Architecture}" == "x64"
+    SetRegView 64
+  !else 
+    SetRegView 32
+  !endif
+
   !insertmacro MediaPortalNetFrameworkCheck
   !insertmacro MediaPortalNet4FrameworkCheck
 
@@ -1500,6 +1533,11 @@ Function un.onInit
   ${un.LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION un.onInit"
 
+  !if "${Architecture}" == "x64"
+    SetRegView 64
+  !else 
+    SetRegView 32
+  !endif
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........
@@ -1535,7 +1573,7 @@ Function un.onUninstSuccess
   ${If} ${RebootFlag}
     ${LOG_TEXT} "INFO" "!!! Some files were not able to uninstall. To finish uninstallation completly a REBOOT is needed."
     FileOpen $0 "$MPdir.Base\rebootflag" w
-    Delete "$MPdir.Base\rebootflag" ; this will not be deleted until the reboot because it is currently opened
+    Delete /REBOOTOK "$MPdir.Base\rebootflag" ; this will not be deleted until the reboot because it is currently opened
     RMDir "$MPdir.Base"
     FileClose $0
   ${EndIf}

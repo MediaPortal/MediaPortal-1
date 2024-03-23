@@ -311,6 +311,7 @@ xcopy "$(TargetDir)dshowhelper.pdb" "$(SolutionDir)..\mediaportal\MediaPortal.Ap
     <ClInclude Include="source\mvrInterfaces.h" />
     <ClInclude Include="source\MyQueue.h" />
     <ClInclude Include="source\OuterEVR.h" />
+    <ClInclude Include="source\resource.h" />
     <ClInclude Include="source\Scheduler.h" />
     <ClInclude Include="source\StatsRenderer.h" />
     <ClInclude Include="source\StdAfx.h" />

@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
@@ -70,8 +71,8 @@ namespace MpeCore
     public FileItemCollection UniqueFileList { get; set; }
     public ProjectSettings ProjectSettings { get; set; }
     public bool IsSkin { get; set; }
-
-    [XmlIgnore]
+    
+   [XmlIgnore]
     public ExtensionCollection Parent { get; set; }
 
     [XmlIgnore]
@@ -85,6 +86,23 @@ namespace MpeCore
 
     [XmlIgnore]
     public bool IsHiden { get; set; }
+
+    [XmlIgnore]
+    public bool IsPlatformCompatible
+    {
+      get
+      {
+        if (this.GeneralInfo == null)
+          return false;
+
+        if (IntPtr.Size == 8)
+          return this.GeneralInfo.PlatformCompatibility == PlatformCompatibilityEnum.AnyCPU ||
+            this.GeneralInfo.PlatformCompatibility == PlatformCompatibilityEnum.x64;
+        else
+          return this.GeneralInfo.PlatformCompatibility == PlatformCompatibilityEnum.AnyCPU ||
+              this.GeneralInfo.PlatformCompatibility == PlatformCompatibilityEnum.x86;
+      }
+    }
 
     /// <summary>
     /// Gets the location folder were stored the backup and the uninstall informations. Ended with \
@@ -119,7 +137,8 @@ namespace MpeCore
     /// Start copy the package file based on group settings
     /// 
     /// </summary>
-    public void Install()
+    /// <param name="strGroupCondition">Optional name of the group to be processed.</param>
+    public void Install(string strGroupCondition = null)
     {
       if (UnInstallInfo == null)
       {
@@ -129,10 +148,14 @@ namespace MpeCore
         UnInstallInfo.SetInfo(this);
       foreach (GroupItem groupItem in Groups.Items)
       {
-        if (groupItem.Checked)
+        if (groupItem.Checked && (string.IsNullOrWhiteSpace(strGroupCondition) || strGroupCondition.Equals(groupItem.Name)))
         {
           foreach (FileItem fileItem in groupItem.Files.Items)
           {
+            //Check if we can proceed with the file installation
+            if (!Util.IsConditionSatisfied(fileItem.Condition))
+              continue;
+
             MpeInstaller.InstallerTypeProviders[fileItem.InstallType].Install(this, fileItem);
             if (FileInstalled != null)
               FileInstalled(this, new InstallEventArgs(groupItem, fileItem));
@@ -184,6 +207,9 @@ namespace MpeCore
       bool hasSkinDependency = false;
       foreach (DependencyItem item in Dependencies.Items)
       {
+        if (!Util.IsConditionSatisfied(item.Condition))
+          continue;
+
         if (!hasMPDependency && item.Type == MPDependency.DisplayName)
         {
           hasMPDependency = true;
@@ -295,6 +321,52 @@ namespace MpeCore
     private static string ByteArrayToString(Encoding encoding, byte[] byteArray)
     {
       return encoding.GetString(byteArray);
+    }
+
+    /// <summary>
+    /// Verify MediaPortal dependency based on needs
+    /// </summary>
+    public void VerifyMPDependency()
+    {
+      DependencyItem dep;
+      if (this.CheckMPDependency(out dep))
+      {
+        //Fix old MP versioning; 1.1.6.27644 is considered as unset
+        Version vOld = new Version(1, 1, 6, 27644);
+
+        if (!dep.MinVersion.IsAnyVersion && dep.MinVersion.CompareTo(vOld) <= 0)
+          dep.MinVersion = new VersionInfo();
+
+        if (!dep.MinVersion.IsAnyVersion && dep.MaxVersion.CompareTo(vOld) <= 0)
+          dep.MaxVersion = new VersionInfo();
+      }
+      else
+      {
+        //Create MP dependancy with both max and min as *.*.*.*
+        Classes.VersionProvider.MediaPortalVersion mpVersion = new Classes.VersionProvider.MediaPortalVersion();
+        dep = CreateStrictDependency(mpVersion);
+        dep.MinVersion = new VersionInfo();
+        dep.MaxVersion = new VersionInfo();
+        this.Dependencies.Add(dep);
+      }
+
+      //Conditional execution requires MP 1.32.100 and higher
+      if (this.Dependencies.Items.Any(d => d.Condition != ActionConditionEnum.None) ||
+        this.Groups.Items.Any(g => g.Files.Items.Any(f => f.Condition != ActionConditionEnum.None)) ||
+        this.Sections.Items.Any(s => s.Condition != ActionConditionEnum.None
+          || s.Actions.Items.Any(a => a.Condition != ActionConditionEnum.None)))
+      {
+        VersionInfo vMin = new VersionInfo(new Version(1, 32, 100, 0));
+        if (dep.MinVersion.IsAnyVersion || dep.MinVersion < vMin)
+          dep.MinVersion = vMin;
+      }
+
+      //Make sure the max is always >= min
+      if (dep.MaxVersion < dep.MinVersion)
+        dep.MaxVersion = new VersionInfo();
+
+      //Refresh the dependency message
+      dep.Message = null;
     }
 
     /// <summary>
@@ -716,8 +788,9 @@ namespace MpeCore
           Reset();
           return true;
         }
-        catch
+        catch (Exception e)
         {
+          MessageBox.Show("Exception " + e.Message);
           return false;
         }
       }
@@ -881,6 +954,26 @@ namespace MpeCore
         return pak1.GeneralInfo.Version.CompareTo(pak2.GeneralInfo.Version);
       }
       return pak1.GeneralInfo.Name.ToUpperInvariant().CompareTo(pak2.GeneralInfo.Name.ToUpperInvariant());
+    }
+
+    public bool CheckPlatformCompatibility()
+    {
+      if (!this.IsPlatformCompatible)
+      {
+        if (ApplicationSettings.Instance.PlatformCompatibilityCheck)
+        {
+          MessageBox.Show("Package '" + this.GeneralInfo.Name + "' is not platform compatible!");
+          return false;
+        }
+        else
+        {
+          if (MessageBox.Show("Package '" + this.GeneralInfo.Name + "' is not platform compatible!\r\nInstall anyway?", "Warning",
+            MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
+            return false;
+        }
+      }
+
+      return true;
     }
 
     public override string ToString()

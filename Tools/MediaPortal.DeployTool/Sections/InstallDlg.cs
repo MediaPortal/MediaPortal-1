@@ -204,7 +204,7 @@ namespace MediaPortal.DeployTool.Sections
       }
       AddPackageToListView(new VcRedistChecker2015());
       AddPackageToListView(new WindowsMediaPlayerChecker());
-      switch (InstallationProperties.Instance["InstallType"])
+switch (InstallationProperties.Instance["InstallType"])
       {
         case "singleseat":
           AddPackageToListView(new MediaPortalChecker());
@@ -216,7 +216,12 @@ namespace MediaPortal.DeployTool.Sections
           {
             AddPackageToListView(new MySQLChecker());
           }
+
+#if NO_TV_SERVER
+#else
           AddPackageToListView(new TvServerChecker());
+#endif
+
           AddPackageToListView(new TvPluginChecker());
           break;
 
@@ -229,7 +234,12 @@ namespace MediaPortal.DeployTool.Sections
           {
             AddPackageToListView(new MySQLChecker());
           }
+
+#if NO_TV_SERVER
+#else
           AddPackageToListView(new TvServerChecker());
+#endif
+
           break;
 
         case "client":
@@ -243,9 +253,15 @@ namespace MediaPortal.DeployTool.Sections
 
         case "download_only":
           AddPackageToListView(new MediaPortalChecker());
-          AddPackageToListView(new MSSQLExpressChecker());
+          // framug: MS SQL is no longer supported
+          // AddPackageToListView(new MSSQLExpressChecker());
           AddPackageToListView(new MySQLChecker());
+
+#if NO_TV_SERVER
+#else
           AddPackageToListView(new TvServerChecker());
+#endif
+
           AddPackageToListView(new TvPluginChecker());
           break;
       }

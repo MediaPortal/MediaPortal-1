@@ -118,73 +118,68 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return result;
       }
 
+      #region Check by uninstall guids
+      string[] guids;
       if (Utils.Is64bit())
       {
-        string keySection = Utils.CheckUninstallString(x64GUID, "DisplayName");
-        if (!string.IsNullOrEmpty(keySection))
-        {
-          result.state = CheckState.INSTALLED;
-          return result;
-        }
-
-        // Visual C++ 2015-2019 Redistributable x64 (14.24.28127.4)
-        keySection = Utils.CheckUninstallString("{282975d8-55fe-4991-bbbb-06a72581ce58}", "DisplayName");
-        if (!string.IsNullOrEmpty(keySection))
-        {
-          result.state = CheckState.INSTALLED;
-          return result;
-        }
-        // Visual C++ 2015-2022 Redistributable x64 (14.36.32532.0)
-        keySection = Utils.CheckUninstallString("{8bdfe669-9705-4184-9368-db9ce581e0e7}", "DisplayName");
-        if (!string.IsNullOrEmpty(keySection))
-        {
-          result.state = CheckState.INSTALLED;
-          return result;
-        }
+        guids = new string[]
+          {
+            //"{282975d8-55fe-4991-bbbb-06a72581ce58}", // Visual C++ 2015-2019 Redistributable x64 (14.24.28127.4)
+            "{8bdfe669-9705-4184-9368-db9ce581e0e7}", // Visual C++ 2015-2022 Redistributable x64 (14.36.32532.0)
+            "{1CA7421F-A225-4A9C-B320-A36981A2B789}", // Visual C++ 2015-2022 Redistributable x64 (14.38.33130.0)
+          };
       }
       else
       {
-        string keySection = Utils.CheckUninstallString(x86GUID, "DisplayName");
-        if (!string.IsNullOrEmpty(keySection))
-        {
-          result.state = CheckState.INSTALLED;
-          return result;
-        }
+        guids = new string[]
+          {
+            //"{e31cb1a4-76b5-46a5-a084-3fa419e82201}", // Visual C++ 2015-2019 Redistributable x86 (14.24.28127.4)
+            "{410c0ee1-00bb-41b6-9772-e12c2828b02f}", // Visual C++ 2015-2022 Redistributable x86 (14.36.32532.0)
+            "{DF1B52DF-C88E-4DDF-956B-6E7A03327F46}", // Visual C++ 2015-2022 Redistributable x64 (14.38.33130.0)
+          };
 
-        // Visual C++ 2015-2019 Redistributable x86 (14.24.28127.4)
-        keySection = Utils.CheckUninstallString("{e31cb1a4-76b5-46a5-a084-3fa419e82201}", "DisplayName");
-        if (!string.IsNullOrEmpty(keySection))
-        {
-          result.state = CheckState.INSTALLED;
-          return result;
-        }
-        // Visual C++ 2015-2022 Redistributable x86 (14.36.32532.0)
-        keySection = Utils.CheckUninstallString("{410c0ee1-00bb-41b6-9772-e12c2828b02f}", "DisplayName");
+      }
+
+      for (int i = 0; i < guids.Length; i++)
+      {
+        string keySection = Utils.CheckUninstallString(guids[i], "DisplayName");
         if (!string.IsNullOrEmpty(keySection))
         {
           result.state = CheckState.INSTALLED;
           return result;
         }
       }
+      #endregion
 
+      #region Check by system files
       string InstallDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\system32\\";
-      string[] dll = new string[5];
-      //CRT
-      dll[0] = "msvcp140.dll";
-      //MFC
-      dll[1] = "mfc140.dll";
-      dll[2] = "mfc140u.dll";
-      dll[3] = "mfcm140.dll";
-      dll[4] = "mfcm140u.dll";
+      string[] dll = new string[]
+        {
+          //CRT
+          "msvcp140.dll",
+          //MFC
+          "mfc140.dll",
+          "mfc140u.dll",
+          "mfcm140.dll",
+          "mfcm140u.dll",
+          //RUNTIME
+          "vcruntime140.dll",
+          "vcruntime140_1.dll"  //x64 only
+        };
 
       for (int i = 0; i < dll.Length; i++)
       {
+        //Skip x64 only files
+        if (i + 1 == dll.Length && !Utils.Is64bit())
+          break;
+
         if (!File.Exists(InstallDir + dll[i]))
         {
           result.state = CheckState.NOT_INSTALLED;
           return result;
         }
       }
+      #endregion
 
       result.state = CheckState.INSTALLED;
       return result;

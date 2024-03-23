@@ -67,6 +67,19 @@ void SynchCorrection::Reset(bool soft)
     m_bQualityCorrectionOn = false;
     m_rtAHwStartSet = false;
     m_rtAHwStart = 0;
+    m_dHwTimeLast = 0.0;
+    m_dAudioDriftOffsetI = 0.0;
+    m_dCurrentAdjustment = 1.0;
+    m_dCurrentAdjustmentAvg = 1.0;
+    m_dPhaseDiff = 0.0;
+    m_dPhaseDiffAvg = 0.0;
+    m_dPhaseBiasOffsetP = 0.0;
+	m_dPhaseBiasOffsetI = 0.0;
+    m_bMaintainSoundPitch = false;
+
+	m_dAudioDriftAvg = 0.0;
+	m_dAudioDriftLast = 0.0;
+	m_iAudioDriftChangeCnt = 0;
 
     {
       CAutoLock dLock(&m_csDeltaLock);
@@ -85,6 +98,8 @@ void SynchCorrection::Reset(double dBias)
   Log("SynchCorrection::Reset with bias");
   //Reset();
   m_Bias = dBias;
+  m_dPhaseBiasOffsetP = 0.0;
+  m_dPhaseBiasOffsetI = 0.0;
 }
 
 void SynchCorrection::Reset(double dBias, REFERENCE_TIME tStart)
@@ -105,6 +120,32 @@ double SynchCorrection::SuggestedAudioMultiplier(REFERENCE_TIME rtAHwTime, REFER
 double SynchCorrection::GetCurrentDrift(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime)
 {
   return TotalAudioDrift(rtAHwTime, rtRCTime);
+}
+
+/// <summary>
+/// Callback from EVR reporting current NST(next sample time) offset deviance
+/// </summary>
+/// <param name="dDiff">Current value</param>
+/// <param name="dDiffAvg">Average value</param>
+void SynchCorrection::SetCurrentPhaseDifference(double dDiff, double dDiffAvg)
+{
+	double dGain;
+	if (!m_pSettings->GetMaintainSoundPitch() && m_pSettings->GetEnableSyncAdjustment())
+	{
+		CAutoLock lock(&m_csAdjustmentLock);
+
+		//Nonlinear gain
+		dGain = fabs(dDiffAvg) * 0.05 + 0.005;
+		if (dGain < 0.01)
+			dGain = 0.01;
+		else if(dGain > 0.03)
+			dGain = 0.03;
+
+		m_dPhaseDiff = dDiff;
+		m_dPhaseDiffAvg = round(dDiffAvg * 1000.0) / 1000.0; //round to 3 decimal places
+		m_dPhaseBiasOffsetP = m_dPhaseDiffAvg * dGain; //0.01;  //Calculate bias offset for vsync adjustement (P component)
+		//Log("SetCurrentPhaseDifference: %10.8f %10.8f", dDiffAvg, m_dPhaseDiffAvg);
+	}
 }
 
 // used for the adjustment - it also corrects bias
@@ -149,12 +190,15 @@ void SynchCorrection::SetBias(double bias)
   Reset(true);
   CAutoLock lock(&m_csBiasLock);
   m_Bias = bias;
+  m_dPhaseBiasOffsetP = 0.0;
+  m_dPhaseBiasOffsetI = 0.0;
 }
 
 double SynchCorrection::GetBias()
 {
-  CAutoLock lock(&m_csBiasLock);
-  return m_Bias;
+    CAutoLock lock(&m_csBiasLock);
+
+    return m_Bias - m_dPhaseBiasOffsetP - m_dPhaseBiasOffsetI;
 }
 
 void SynchCorrection::SetAudioDelay(INT64 delay)
@@ -197,74 +241,272 @@ double SynchCorrection::TotalAudioDrift(REFERENCE_TIME rtAHwTime, REFERENCE_TIME
   return CalculateDrift(rtAHwTime, rtRCTime - m_rtStart) + m_dAudioDelay + m_dEVRAudioDelay;
 }
 
+bool SynchCorrection::GetMaintainSoundPitch()
+{
+    return m_pSettings->GetMaintainSoundPitch() || m_bMaintainSoundPitch;
+}
+
 // get the adjustment required to match the hardware clocks
 double SynchCorrection::GetRequiredAdjustment(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime, double bias, double adjustment)
 {
-  double ret = bias* adjustment;
-  double totalAudioDrift = CalculateDrift(rtAHwTime, rtRCTime - m_rtStart) + m_dAudioDelay +m_dEVRAudioDelay;
-  bool bQuality = bias > 1.0 - QUALITY_BIAS_LIMIT &&  bias < 1.0 + QUALITY_BIAS_LIMIT;
+	double ret;
+	double dTotalAudioDrift;
+	bool bQuality;
+	double dHwTime, dHwTimeDelta, dPhaseDiff, dDiffP, dDiff, dGain;
 
-  if (bQuality)
-  {
-    ret = 1.0; // 1 to 1 playback unless proved otherwise
-    if (m_bQualityCorrectionOn) // we are correcting drift
-    {
-      if (((m_iQualityDir == DIRUP) && (totalAudioDrift > QUALITY_CORRECTION_LIMIT)) ||
-         ((m_iQualityDir == DIRDOWN) && (totalAudioDrift < QUALITY_CORRECTION_LIMIT * -1.0)))
-      {
-        //we've corrected enough
-        m_bQualityCorrectionOn = false;
-        m_iQualityDir = 0;
-      }
-      if (m_iQualityDir == DIRUP) //behind so stretch
-        ret = QUALITY_CORRECTION_MULTIPLIER;
-      else if (m_iQualityDir == DIRDOWN) // in front so slow
-        ret = 1.0 / QUALITY_CORRECTION_MULTIPLIER;
-    }
-    else // not correcting now so check for breach
-    {
-      if (totalAudioDrift > QUALITY_DRIFT_LIMIT)
-      {
-        m_bQualityCorrectionOn = true;
-        m_iQualityDir = DIRDOWN;
-      }
-      else if (totalAudioDrift < QUALITY_DRIFT_LIMIT * -1.0)
-      {
-        m_bQualityCorrectionOn = true;
-        m_iQualityDir = DIRUP;
-      }
-    }
-  }
-  else if (totalAudioDrift > ALLOWED_DRIFT && (!bQuality || bias < 1.0))
-  { // we've stretched too much shift down for a while
-    double msDrift = totalAudioDrift / 10000.0;
-    double quickCorrection = 1.0;
+	bQuality = bias > 1.0 - QUALITY_BIAS_LIMIT && bias < 1.0 + QUALITY_BIAS_LIMIT;
 
-    if (msDrift > 10.0)
-      quickCorrection = log(msDrift);
-    else
-      quickCorrection = msDrift / 10.0;
-   
-    if (quickCorrection > 5.0) quickCorrection = 5.0;
-      ret = ret * (1.0 / (1 + (CORRECTION_RATE-1) * quickCorrection));
-  }
-  else if (totalAudioDrift < ALLOWED_DRIFT * -1.0 && (!bQuality || bias > 1.0))
-  { // haven't streched enough
-    double msDrift = totalAudioDrift / -10000.0;
-    double quickCorrection = 1.0;
+	if (bQuality && !m_pSettings->GetMaintainSoundPitch())
+	{
+		// RATE mode: sound pitch is not maintained
+		// To avoid large change in speed(sound pitch), we use simple PI regulator to keep the target speed almost constant
 
-    if (msDrift > 10.0)
-      quickCorrection = log(msDrift);
-    else
-      quickCorrection = msDrift / 10.0;
- 
-    if (quickCorrection > 5.0)
-      quickCorrection = 5.0;
- 
-    ret = ret * (1+(CORRECTION_RATE-1)*quickCorrection);
-  }
+		ret = 1.0;
 
-  return ret;
+		//Calculate deltaT
+		dHwTime = rtAHwTime / 10000000.0;
+		dHwTimeDelta = dHwTime - m_dHwTimeLast; //deltaT
+		if (dHwTimeDelta <= 0.002)
+			return m_dCurrentAdjustment;
+
+		//Get current audio drift
+		dTotalAudioDrift = CalculateDrift(rtAHwTime, rtRCTime - m_rtStart) + m_dAudioDelay + m_dEVRAudioDelay;
+
+		//Remove spurious change in audio drift
+		if (fabs(m_dAudioDriftLast - dTotalAudioDrift) > 150.0)
+		{
+			if (m_iAudioDriftChangeCnt == 0)
+			{
+				//New change
+				m_dAudioDriftNew = dTotalAudioDrift;
+				dTotalAudioDrift = m_dAudioDriftLast;
+				m_iAudioDriftChangeCnt++;
+			}
+			else if (m_iAudioDriftChangeCnt > 0)
+			{
+				//Accept change
+				m_iAudioDriftChangeCnt = 0;
+				m_dAudioDriftLast = dTotalAudioDrift;
+			}
+		}
+		else
+		{
+			if (m_iAudioDriftChangeCnt > 0 && m_pSettings->GetLogDebug())
+				Log("SynchCorrection::GetRequiredAdjustment: Removed spurious AudioDrift change: current:%3.2f removed:%3.2f",
+					dTotalAudioDrift, m_dAudioDriftNew);
+
+			m_dAudioDriftLast = dTotalAudioDrift;
+			m_iAudioDriftChangeCnt = 0;
+		}
+			
+		//Filter: audio drift
+		dDiff = dTotalAudioDrift - m_dAudioDriftAvg;
+		dGain = fabs(dDiff) * 20 + 0.05;
+		
+		if (dGain < 0.25)
+			dGain = 0.25;
+		else if (dGain > 1.00)
+			dGain = 1.00;
+
+		dTotalAudioDrift = m_dAudioDriftAvg + (dDiff * dGain);
+		m_dAudioDriftAvg = dTotalAudioDrift;
+		
+
+		//Log("SynchCorrection::GetRequiredAdjustment: drift:%10.8f rtAHwTime:%10.8f rtRCTime:%10.8f m_rtStart:%10.8f, bias:%10.8f adj:%10.8f",
+		//	dTotalAudioDrift / 10000.0, rtAHwTime / 10000.0, rtRCTime / 10000.0, m_rtStart / 10000.0, bias, m_dCurrentAdjustment);
+
+		//Fast correction
+		if (m_iQualityDir != 0) //fast correction active
+		{
+			if (((m_iQualityDir == DIRUP) && (dTotalAudioDrift > QUALITY_CORRECTION_LIMIT)) ||
+				((m_iQualityDir == DIRDOWN) && (dTotalAudioDrift < QUALITY_CORRECTION_LIMIT * -1.0)))
+			{
+				m_iQualityDir = 0;
+			}
+		}
+		else
+		{
+			//check if we need fast correction
+
+			if (dTotalAudioDrift > QUALITY_DRIFT_LIMIT)
+				m_iQualityDir = DIRDOWN;
+			else if (dTotalAudioDrift < QUALITY_DRIFT_LIMIT * -1.0)
+				m_iQualityDir = DIRUP;
+		}
+
+		if (m_iQualityDir != 0)
+		{
+			//Fast correction active
+
+			if (m_iQualityDir == DIRUP) //behind so stretch
+				ret = QUALITY_CORRECTION_MULTIPLIER;
+			else if (m_iQualityDir == DIRDOWN) // in front so slow
+				ret = 1.0 / QUALITY_CORRECTION_MULTIPLIER;
+
+			//Reset in case of fast correction
+			m_bMaintainSoundPitch = true; //use TEMPO to keep sound pitch
+			m_dAudioDriftOffsetI = 0.0;
+			m_dCurrentAdjustment = ret;
+			m_dHwTimeLast = dHwTime;
+		}
+		else
+		{
+			//I component
+			if (dHwTimeDelta < 1.0)
+			{
+				if (dHwTimeDelta >= 0.100)
+				{
+					//We calculate the I component in period of 100ms: add 0.001% speed change per 1ms drift
+					m_dAudioDriftOffsetI += dTotalAudioDrift / 10000.0 * 0.0001 * dHwTimeDelta;
+					m_dHwTimeLast = dHwTime;
+
+					//if (m_pSettings->GetLogDebug())
+					//	Log("SynchCorrection::GetRequiredAdjustment: AudioDriftOffset:%10.8f HwTime:%10.8f", m_dAudioDriftOffsetI, dHwTime);
+
+					//Calculate bias offset for vsync adjustement (I component)
+					if (m_pSettings->GetEnableSyncAdjustment())
+					{
+						{
+							CAutoLock lock(&m_csAdjustmentLock);
+							dPhaseDiff = m_dPhaseDiffAvg;
+						}
+						{
+							CAutoLock lock(&m_csBiasLock);
+							m_dPhaseBiasOffsetI += dPhaseDiff * 0.001 * dHwTimeDelta;
+						}
+					}
+				}
+			}
+			else //deltaT is too big; reset
+			{
+				if (m_pSettings->GetLogDebug())
+					Log("SynchCorrection::GetRequiredAdjustment: HwTimeLast:%10.8f HwTime:%10.8f", m_dHwTimeLast, dHwTime);
+
+				//reset
+				m_dHwTimeLast = dHwTime;
+
+				if (dTotalAudioDrift >= QUALITY_CORRECTION_LIMIT)
+				{
+					m_dAudioDriftOffsetI = 0.0;
+					m_dCurrentAdjustment = 1.0;
+					m_dCurrentAdjustmentAvg = 1.0;
+				}
+			}
+
+			//Output: I component
+			ret -= m_dAudioDriftOffsetI;
+
+			//Output: P component: 0.5% speed change per 6ms audio drift
+			dDiffP = dTotalAudioDrift / QUALITY_CORRECTION_LIMIT * 0.005;
+			ret -= dDiffP;
+
+			//Fast correction disable: we take P componnent as reference
+			if (m_bMaintainSoundPitch)
+			{
+				if (fabs(dDiffP) < 0.005) //diff is back below 0.5%
+					m_bMaintainSoundPitch = false;
+			}
+
+			//Output: Limit to max. 2% speed change
+			if (ret >= 1.02)
+				ret = 1.02;
+			else if (ret <= 0.98)
+				ret = 0.98;
+
+			//Output: Filter
+			dDiff = ret - m_dCurrentAdjustmentAvg;
+			dGain = fabs(dDiff) * 5000;
+
+			if (dGain < 0.25)
+				dGain = 0.25;
+			else if (dGain > 1.00)
+				dGain = 1.00;
+
+			ret = m_dCurrentAdjustmentAvg + (dDiff * dGain);
+			m_dCurrentAdjustmentAvg = ret;
+
+
+			//Output: Dead zone
+			if (fabs(ret - m_dCurrentAdjustment) > 0.0000005)
+				m_dCurrentAdjustment = ret;
+			else
+				ret = m_dCurrentAdjustment;
+		}
+
+		if (m_pSettings->GetLogDebug())
+			Log("SynchCorrection::GetRequiredAdjustment: drift:%10.8f bias:%10.8f adj:%10.8f adjAvg:%10.8f  adjOffsI:%10.8f biasOffsP:%10.8f biasOffsI:%10.8f",
+			dTotalAudioDrift / 10000.0, bias, ret, m_dCurrentAdjustmentAvg, m_dAudioDriftOffsetI, m_dPhaseBiasOffsetP, m_dPhaseBiasOffsetI);
+	}
+	else
+	{
+		m_bMaintainSoundPitch = true; //use TEMPO to keep sound pitch
+
+		ret = bias * adjustment;
+		dTotalAudioDrift = CalculateDrift(rtAHwTime, rtRCTime - m_rtStart) + m_dAudioDelay + m_dEVRAudioDelay;
+
+		if (bQuality)
+		{
+			ret = 1.0; // 1 to 1 playback unless proved otherwise
+			if (m_bQualityCorrectionOn) // we are correcting drift
+			{
+				if (((m_iQualityDir == DIRUP) && (dTotalAudioDrift > QUALITY_CORRECTION_LIMIT)) ||
+					((m_iQualityDir == DIRDOWN) && (dTotalAudioDrift < QUALITY_CORRECTION_LIMIT * -1.0)))
+				{
+					//we've corrected enough
+					m_bQualityCorrectionOn = false;
+					m_iQualityDir = 0;
+				}
+				if (m_iQualityDir == DIRUP) //behind so stretch
+					ret = QUALITY_CORRECTION_MULTIPLIER;
+				else if (m_iQualityDir == DIRDOWN) // in front so slow
+					ret = 1.0 / QUALITY_CORRECTION_MULTIPLIER;
+			}
+			else // not correcting now so check for breach
+			{
+				if (dTotalAudioDrift > QUALITY_DRIFT_LIMIT)
+				{
+					m_bQualityCorrectionOn = true;
+					m_iQualityDir = DIRDOWN;
+				}
+				else if (dTotalAudioDrift < QUALITY_DRIFT_LIMIT * -1.0)
+				{
+					m_bQualityCorrectionOn = true;
+					m_iQualityDir = DIRUP;
+				}
+
+			}
+		}
+		else if (dTotalAudioDrift > ALLOWED_DRIFT && (!bQuality || bias < 1.0))
+		{ // we've stretched too much shift down for a while
+			double msDrift = dTotalAudioDrift / 10000.0;
+			double quickCorrection = 1.0;
+
+			if (msDrift > 10.0)
+				quickCorrection = log(msDrift);
+			else
+				quickCorrection = msDrift / 10.0;
+
+			if (quickCorrection > 5.0) quickCorrection = 5.0;
+			ret = ret * (1.0 / (1 + (CORRECTION_RATE - 1) * quickCorrection));
+		}
+		else if (dTotalAudioDrift < ALLOWED_DRIFT * -1.0 && (!bQuality || bias > 1.0))
+		{ // haven't streched enough
+			double msDrift = dTotalAudioDrift / -10000.0;
+			double quickCorrection = 1.0;
+
+			if (msDrift > 10.0)
+				quickCorrection = log(msDrift);
+			else
+				quickCorrection = msDrift / 10.0;
+
+			if (quickCorrection > 5.0)
+				quickCorrection = 5.0;
+
+			ret = ret * (1 + (CORRECTION_RATE - 1) * quickCorrection);
+		}
+	}
+
+	return ret;
 }
 
 void SynchCorrection::AddSample(INT64 rtOriginalStart, INT64 rtAdjustedStart, INT64 rtOriginalEnd, INT64 rtAdjustedEnd)

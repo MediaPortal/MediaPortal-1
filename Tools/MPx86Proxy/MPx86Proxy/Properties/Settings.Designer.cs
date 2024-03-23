@@ -34,5 +34,17 @@ namespace MPx86Proxy.Properties {
                 this["RC_Enabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ExtensiveLogging {
+            get {
+                return ((bool)(this["ExtensiveLogging"]));
+            }
+            set {
+                this["ExtensiveLogging"] = value;
+            }
+        }
     }
 }

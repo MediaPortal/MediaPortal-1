@@ -1,0 +1,27 @@
+name: "Workflow / Milestone"
+
+on:
+  pull_request:
+    types: 
+      - opened
+      - closed
+
+jobs:
+  add_on_open:
+    name: Add Milestone on Open
+    if: github.event.action == 'opened'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: benelan/milestone-action@v3
+        with:
+          single: true
+
+  add_on_close:
+    name: Add Milestone on Close / Merge
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: benelan/milestone-action@v3
+        with:
+          overwrite: true
+          single: true

@@ -1938,7 +1938,7 @@ namespace TvLibrary.Implementations.DVB
                                                 out int pchEaten, out IMoniker ppmk);
 #endif
 
-    [DllImport("olepro32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+    [DllImport("oleaut32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
     public static extern int OleCreatePropertyFrame(
       [In] IntPtr hwndOwner,
       [In] int x,

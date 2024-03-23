@@ -82,15 +82,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
                 if (isPlaying && iSettings.PreferFirstLinePlayback)
                 {
-                    SoundGraphDisplay.IDW_SetLcdText(TextTopLine);
+                    SoundGraphDisplay.SetLcdText(TextTopLine);
                 }
                 else if (!isPlaying && iSettings.PreferFirstLineGeneral)
                 {
-                    SoundGraphDisplay.IDW_SetLcdText(TextTopLine);
+                    SoundGraphDisplay.SetLcdText(TextTopLine);
                 }
                 else
                 {
-                    SoundGraphDisplay.IDW_SetLcdText(TextBottomLine);
+                    SoundGraphDisplay.SetLcdText(TextBottomLine);
                 }
 
                 NeedTextUpdate = false;
@@ -138,7 +138,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             if (_currentEtcIcons != newEtcIcons)
             {
                 Log.Info("(IDisplay) ImonLcd.SetEtcIcons(): new settings found, call API");
-                SoundGraphDisplay.IDW_SetLcdEtcIcon((byte)newEtcIcons);
+                SoundGraphDisplay.SetLcdEtcIcon((byte)newEtcIcons);
                 _currentEtcIcons = newEtcIcons;
             }
             SoundGraphDisplay.LogDebug("(IDisplay) ImonLcd.SetEtcIcons() completed");
@@ -182,7 +182,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             if (newAspectRatioIcons != _currentAspectRatioIcons)
             {
                 SoundGraphDisplay.LogDebug("(IDisplay) ImonLcd.SetAspectRatio(): new settings found, call API");
-                SoundGraphDisplay.IDW_SetLcdAspectRatioIcon(newAspectRatioIcons);
+                SoundGraphDisplay.SetLcdAspectRatioIcon(newAspectRatioIcons);
                 _currentAspectRatioIcons = newAspectRatioIcons;
             }
             SoundGraphDisplay.LogDebug("(IDisplay) ImonLcd.SetAspectRatio() completed");
@@ -260,7 +260,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             if (newSpeakers != _currentSpeakers || newSpeakerRR != _currentSpeakerRR)
             {
                 SoundGraphDisplay.LogDebug("(IDisplay) ImonLcd.SetSpeakerConfig(): new settings found, call API");
-                SoundGraphDisplay.IDW_SetLcdSpeakerIcon(newSpeakers, newSpeakerRR);
+                SoundGraphDisplay.SetLcdSpeakerIcon(newSpeakers, newSpeakerRR);
                 _currentSpeakers = newSpeakers;
                 _currentSpeakerRR = newSpeakerRR;
             }
@@ -364,14 +364,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             if (newVideoCodecs != _currentVideoCodecs)
             {
                 SoundGraphDisplay.LogDebug("(IDisplay) ImonLcd.SetCodecs(): new video settings found, call API");
-                SoundGraphDisplay.IDW_SetLcdVideoCodecIcon(newVideoCodecs);
+                SoundGraphDisplay.SetLcdVideoCodecIcon(newVideoCodecs);
                 _currentVideoCodecs = newVideoCodecs;
             }
 
             if (newAudioCodecs != _currentAudioCodecs)
             {
                 SoundGraphDisplay.LogDebug("(IDisplay) ImonLcd.SetCodecs(): new audio settings found, call API");
-                SoundGraphDisplay.IDW_SetLcdAudioCodecIcon(newAudioCodecs);
+                SoundGraphDisplay.SetLcdAudioCodecIcon(newAudioCodecs);
                 _currentAudioCodecs = newAudioCodecs;
             }
             SoundGraphDisplay.LogDebug("(IDisplay) ImonLcd.SetCodecs() completed");
@@ -405,7 +405,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             if (newMediaCurrentPosition != _currentMediaCurrentPosition)
             {
                 SoundGraphDisplay.LogDebug("(IDisplay) ImonLcd.SetMediaProgress(): new settings found, call API");
-                SoundGraphDisplay.IDW_SetLcdProgress(newMediaCurrentPosition, MediaTotalTime);
+                SoundGraphDisplay.SetLcdProgress(newMediaCurrentPosition, MediaTotalTime);
                 _currentMediaCurrentPosition = newMediaCurrentPosition;
             }
             SoundGraphDisplay.LogDebug("(IDisplay) ImonLcd.SetMediaProgress() completed");
@@ -457,7 +457,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             if (_currentMediaTypes != newMediaTypes)
             {
                 SoundGraphDisplay.LogDebug("(IDisplay) ImonLcd.SetMediaTypeIcons(): new settings found, call API");
-                SoundGraphDisplay.IDW_SetLcdMediaTypeIcon((byte)newMediaTypes);
+                SoundGraphDisplay.SetLcdMediaTypeIcon((byte)newMediaTypes);
                 _currentMediaTypes = newMediaTypes;
             }
             SoundGraphDisplay.LogDebug("(IDisplay) ImonLcd.SetMediaTypeIcons() completed");

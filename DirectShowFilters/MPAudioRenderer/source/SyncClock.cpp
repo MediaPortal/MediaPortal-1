@@ -26,7 +26,7 @@
 #include "alloctracing.h"
 
 CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT* phr, CMPAudioRenderer* pRenderer, AudioRendererSettings* pSettings, Logger* pLogger)
-  : CBaseReferenceClock(NAME("SyncClock"), pUnk, phr),
+    : CBaseReferenceClock(NAME("SyncClock"), pUnk, phr),
   m_SynchCorrection(pSettings, pLogger),
   m_pCurrentRefClock(0),
   m_pPrevRefClock(0),
@@ -68,6 +68,11 @@ void CSyncClock::SetAdjustment(double pAdjustment)
 {
   m_SynchCorrection.SetAdjustment(pAdjustment);
   m_dAdjustment = pAdjustment;
+}
+
+void CSyncClock::SetCurrentPhaseDifference(double dDiff, double dDiffAvg)
+{
+  m_SynchCorrection.SetCurrentPhaseDifference(dDiff, dDiffAvg);
 }
 
 void CSyncClock::SetAudioDelay(INT64 pAudioDelay)
@@ -119,6 +124,7 @@ void CSyncClock::GetClockData(CLOCKDATA* pClockData)
   pClockData->driftHWvsSystem = (double)(llDurationHW - llDurationSystem) / 10000.0;
   pClockData->currentDrift = m_dCurrentDrift;
   pClockData->resamplingAdjustment = m_dSuggestedAudioMultiplier;;
+  pClockData->maintainSoundPitch = GetMaintainSoundPitch();
 }
 
 void CSyncClock::UpdateClockData(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime)
@@ -135,6 +141,11 @@ double CSyncClock::SuggestedAudioMultiplier(REFERENCE_TIME rtAHwTime, REFERENCE_
   m_dSuggestedAudioMultiplier = dSuggestedAudioMultiplier;
 
   return dSuggestedAudioMultiplier;
+}
+
+bool CSyncClock::GetMaintainSoundPitch()
+{
+    return m_SynchCorrection.GetMaintainSoundPitch();
 }
 
 double CSyncClock::GetBias()

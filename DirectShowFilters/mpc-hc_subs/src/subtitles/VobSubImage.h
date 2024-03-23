@@ -1,6 +1,6 @@
 /*
  * (C) 2003-2006 Gabest
- * (C) 2006-2012 see Authors.txt
+ * (C) 2006-2014 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -23,7 +23,7 @@
 
 #include <atlcoll.h>
 
-typedef struct {
+struct COutline {
     CAtlArray<CPoint> pa;
     CAtlArray<int> da;
     void RemoveAll() {
@@ -34,7 +34,7 @@ typedef struct {
         pa.Add(p);
         da.Add(d);
     }
-} COutline;
+};
 
 class CVobSubImage
 {
@@ -45,53 +45,52 @@ private:
     RGBQUAD* lpTemp1;
     RGBQUAD* lpTemp2;
 
-    WORD nOffset[2], nPlane;
-    bool fCustomPal;
-    char fAligned; // we are also using this for calculations, that's why it is char instead of bool...
+    size_t nOffset[2], nPlane;
+    bool bCustomPal;
+    bool bAligned;
     int tridx;
     RGBQUAD* orgpal /*[16]*/, * cuspal /*[4]*/;
 
     bool Alloc(int w, int h);
     void Free();
 
-    BYTE GetNibble(BYTE* lpData);
-    void DrawPixels(CPoint p, int length, int colorid);
+    BYTE GetNibble(const BYTE* lpData);
+    void DrawPixels(CPoint p, int length, size_t colorId);
     void TrimSubImage();
 
 public:
-    int iLang, iIdx;
-    bool fForced;
+    size_t nLang, nIdx;
+    bool bForced, bAnimated;
+    int tCurrent;
     __int64 start, delay;
     CRect rect;
-    typedef struct {
+    struct SubPal {
         BYTE pal: 4, tr: 4;
-    } SubPal;
+    };
     SubPal pal[4];
     RGBQUAD* lpPixels;
 
     CVobSubImage();
     virtual ~CVobSubImage();
 
-    void Invalidate() { iLang = iIdx = -1; }
+    void Invalidate() { nLang = nIdx = SIZE_T_ERROR; }
 
-    void GetPacketInfo(BYTE* lpData, int packetsize, int datasize);
-    bool Decode(BYTE* lpData, int packetsize, int datasize,
-                bool fCustomPal,
+    void GetPacketInfo(const BYTE* lpData, size_t packetSize, size_t dataSize, int t = INT_MAX);
+    bool Decode(BYTE* lpData, size_t packetSize, size_t dataSize, int t,
+                bool bCustomPal,
                 int tridx,
                 RGBQUAD* orgpal /*[16]*/, RGBQUAD* cuspal /*[4]*/,
-                bool fTrim);
-
-    /////////
+                bool bTrim);
 
 private:
     CAutoPtrList<COutline>* GetOutlineList(CPoint& topleft);
-    int  GrabSegment(int start, COutline& o, COutline& ret);
-    void SplitOutline(COutline& o, COutline& o1, COutline& o2);
+    int  GrabSegment(int start, const COutline& o, COutline& ret);
+    void SplitOutline(const COutline& o, COutline& o1, COutline& o2);
     void AddSegment(COutline& o, CAtlArray<BYTE>& pathTypes, CAtlArray<CPoint>& pathPoints);
 
 public:
-    bool Polygonize(CAtlArray<BYTE>& pathTypes, CAtlArray<CPoint>& pathPoints, bool fSmooth, int scale);
-    bool Polygonize(CStringW& assstr, bool fSmooth = true, int scale = 3);
+    bool Polygonize(CAtlArray<BYTE>& pathTypes, CAtlArray<CPoint>& pathPoints, bool bSmooth, int scale);
+    bool Polygonize(CStringW& assstr, bool bSmooth = true, int scale = 3);
 
     void Scale2x();
 };

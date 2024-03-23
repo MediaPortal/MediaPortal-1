@@ -140,12 +140,14 @@ private:
   REFERENCE_TIME m_rtLastOuputEnd;
 
   static const uint SAMPLE_LEN = 0x40000;
-  std::vector<CSoundTouchEx *> *m_Streams;
+  CSoundTouchEx *m_Stream;
   WAVEFORMATEXTENSIBLE *m_pWaveFormat;
   double m_fCurrentTempo;
   double m_fCurrentAdjustment;
   double m_fNewTempo;
   double m_fNewAdjustment;
+
+  bool m_bCurrentMaintainSoundPitch;
 
   mutable CCritSec m_csStreamLock;  // allow const methods to use the lock
 

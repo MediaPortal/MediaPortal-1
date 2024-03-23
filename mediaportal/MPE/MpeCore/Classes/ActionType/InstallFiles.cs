@@ -55,7 +55,7 @@ namespace MpeCore.Classes.ActionType
     public SectionResponseEnum Execute(PackageClass packageClass, ActionItem actionItem)
     {
       packageClass.FileInstalled += packageClass_FileInstalled;
-      packageClass.Install();
+      packageClass.Install(actionItem.ConditionGroup);
       packageClass.FileInstalled -= packageClass_FileInstalled;
       return SectionResponseEnum.Ok;
     }

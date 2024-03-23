@@ -1,5 +1,5 @@
 /*
- * (C) 2012 see Authors.txt
+ * (C) 2013-2018 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -20,26 +20,52 @@
 
 #pragma once
 
-#include <Windows.h>
+#include "VersionHelpersInternal.h"
 
-class SysVersion
+static bool IsWindows64()
 {
-    SysVersion() {};
-    ~SysVersion() {};
+#ifdef _WIN64
+	return true;
+#endif
 
-    static OSVERSIONINFOEX InitFullVersion();
+	typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS)(HANDLE, PBOOL);
+	LPFN_ISWOW64PROCESS fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandleW(L"kernel32"), "IsWow64Process");
+	BOOL bIsWow64 = FALSE;
+	if (fnIsWow64Process) {
+		fnIsWow64Process(GetCurrentProcess(), &bIsWow64);
+	}
 
-    static const OSVERSIONINFOEX fullVersion;
-    static const DWORD version;
+	return !!bIsWow64;
+}
 
-public:
-    static OSVERSIONINFOEX GetFullVersion() { return fullVersion; }
-    static DWORD GetVersion() { return version; }
-
-    static bool IsXPOrLater() { return (version >= 0x0501); }
-    static bool IsVista() { return (version == 0x0600); }
-    static bool IsVistaOrLater() { return (version >= 0x0600); }
-    static bool Is7() { return (version == 0x0601); }
-    static bool Is7OrLater() { return (version >= 0x0601); }
-    static bool Is8() { return (version == 0x0602); }
-};
+namespace SysVersion
+{
+	inline const bool IsWin7orLater() {
+		const static bool bIsWin7orLater = IsWindows7OrGreater();
+		return bIsWin7orLater;
+	}
+	inline const bool IsWin8orLater() {
+		const static bool bIsWin8orLater = IsWindows8OrGreater();
+		return bIsWin8orLater;
+	}
+	inline const bool IsWin81orLater() {
+		const static bool bIsWin81orLater = IsWindows8Point1OrGreater();
+		return bIsWin81orLater;
+	}
+	inline const bool IsWin10orLater() {
+		const static bool bIsWin10orLater = IsWindows10OrGreater();
+		return bIsWin10orLater;
+	}
+	inline const bool IsWin10RS4orLater() {
+		const static bool bIsWin10RS4orLater = IsWindowsVersionOrGreaterBuild(HIBYTE(_WIN32_WINNT_WINTHRESHOLD), LOBYTE(_WIN32_WINNT_WINTHRESHOLD), 17134);
+		return bIsWin10RS4orLater;
+	}
+    inline const bool IsWin11orLater() {
+        const static bool bIsWin11orLater = IsWindows11OrGreater();
+        return bIsWin11orLater;
+    }
+    inline const bool IsW64() {
+		const static bool bIsW64 = IsWindows64();
+		return bIsW64;
+	}
+}

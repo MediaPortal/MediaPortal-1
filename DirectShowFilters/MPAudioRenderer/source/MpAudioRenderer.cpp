@@ -310,7 +310,19 @@ STDMETHODIMP CMPAudioRenderer::GetState(DWORD dwMSecs, FILTER_STATE* State)
   if (m_State == State_Paused && (m_pRenderer->BufferredDataDuration() <= (m_pSettings->GetOutputBuffer() * 10000)) &&
     (GetCurrentTimestamp() - m_lastSampleArrivalTime < SAMPLE_RECEIVE_TIMEOUT)) 
   {
-    NotifyEvent(EC_STARVATION, 0, 0);
+    /*
+      EC_STARVATION
+      A filter is not receiving enough data.
+      The event is not sent to the application.
+      If the filter graph is running, the filter graph manager pauses the graph and waits for the pause to complete. Then it runs the graph again.
+      The filter sending the event should not complete its transition to paused until it has enough data to resume.
+      If the filter graph is not running, the filter graph manager ignores this event.
+    */
+
+    // We should not report this event while in paused state: it sometimes causes graph to pause/resume again right after the resume is complete,
+    // and it leads to issues in WASAPI renderer (early sample check) 
+    //NotifyEvent(EC_STARVATION, 0, 0);
+
     *State = State_Paused;
 
     return VFW_S_STATE_INTERMEDIATE;
@@ -781,11 +793,24 @@ HRESULT CMPAudioRenderer::EndFlush()
 
 // IAVSyncClock interface implementation
 
+HRESULT CMPAudioRenderer::SetCurrentPhaseDifference(DOUBLE dDiff, DOUBLE dDiffAvg)
+{
+    CAutoLock cs(&m_csAudioRenderer);
+
+    if (m_pSettings->GetUseTimeStretching() && m_pSettings->GetEnableSyncAdjustment() && !m_pSettings->GetMaintainSoundPitch())
+    {
+        m_pClock->SetCurrentPhaseDifference(dDiff, dDiffAvg);
+        return S_OK;
+    }
+    else
+        return S_FALSE;
+}
+
 HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
 {
   CAutoLock cs(&m_csAudioRenderer);
 
-  if (m_pSettings->GetUseTimeStretching() && m_pSettings->GetEnableSyncAdjustment())
+  if (m_pSettings->GetUseTimeStretching() && m_pSettings->GetEnableSyncAdjustment() && m_pSettings->GetMaintainSoundPitch())
   {
     m_dAdjustment = pAdjustment;
     m_pClock->SetAdjustment(m_dAdjustment);

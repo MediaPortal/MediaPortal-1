@@ -36,6 +36,21 @@ namespace MpeCore.Classes.PathProvider
       RegistryKey key =
         Registry.LocalMachine.OpenSubKey(
           "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
+
+      if (key == null && IntPtr.Size == 8)
+      {
+        //running x64 process
+
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server (x64)");
+
+        //verify x64 server installation
+        if (key == null || (int)key.GetValue("MementoSection_SecServer", 0) == 0)
+        {
+          //x64 version not installed; try x86 vsrsion
+          key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
+        }
+      }
+
       if (key != null)
       {
         var path = (string)key.GetValue("InstallPath", "");

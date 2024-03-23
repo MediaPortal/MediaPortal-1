@@ -35,11 +35,15 @@
 #include <wmcodecdsp.h>
 #include <ks.h>
 #include <ksmedia.h>
+#include "HEVC\Hevc.h"
+#include "HEVC\HevcNalDecode.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
 extern void LogDebug(const char *fmt, ...) ;
+
+#define LOG_HEVC_FHP //LogDebug
 
 #define countof(array) (sizeof(array)/sizeof(array[0]))
 #define DNew new
@@ -47,6 +51,14 @@ extern void LogDebug(const char *fmt, ...) ;
 #define MAX_SPS 256			// Max size for a SPS packet
 
 #define TRUEHD_SYNC_WORD    0xf8726f
+
+//AVC Chroma format IDC definitions
+#define YUV400  0     
+#define YUV420  1     
+#define YUV422  2     
+#define YUV444  3  
+
+using namespace HEVC;
 
 // LR C LFE LRs LRvh LRc LRrs Cs Ts LRsd LRw Cvh LFE2
 static const UINT8 thd_chancount[13] = {2, 1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 1, 1};
@@ -1665,6 +1677,187 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 	return true;
 }
 
+bool CFrameHeaderParser::Read(hevchdr& h, int len, CMediaType* pmt)
+{
+	if ((len <= 6) || (len > 65534)) 
+		return(false); //Sanity check
+
+	memset(&h, 0, sizeof(h));
+	h.progressive = true;
+	h.AvgTimePerFrame = 370000;  //27 Hz
+
+	while (GetRemaining() > 4 && (h.spslen == 0 || h.ppslen == 0 || h.vpslen == 0))
+	{
+		const int nal_len = BitRead(32);
+		const INT64 nal_pos = GetPos();
+		const INT64 next_nal = nal_pos + nal_len;
+
+		NALUnitType nal_type = HevcNalDecode::processNALUnit(GetBufferPos(), nal_len, h);
+
+		if (nal_type == NAL_FAIL) //NAL decoding error
+		{
+			return(false);
+		}
+		else if (nal_type == NAL_SPS)
+		{
+			LOG_HEVC_FHP("SPS found");
+			//Copy SPS to buffer
+			h.sps = (BYTE*)malloc(nal_len);
+			if (h.sps == NULL) 
+			{
+				//malloc error...
+				h.spslen = 0; 
+				return(false); 
+			} 
+			ByteRead(h.sps, nal_len);
+			h.spslen = nal_len;
+		}
+		else if (nal_type == NAL_PPS)
+		{
+			LOG_HEVC_FHP("PPS found");
+			//Copy PPS to new buffer
+			h.pps = (BYTE*)malloc(nal_len);
+			if (h.pps == NULL) 
+			{
+				//malloc error...
+				h.ppslen = 0;
+				return(false);
+			} 
+			ByteRead(h.pps, nal_len);
+			h.ppslen = nal_len;
+		}
+		else if (nal_type == NAL_VPS)
+		{
+			LOG_HEVC_FHP("VPS found");
+			//Copy VPS to new buffer
+			h.vps = (BYTE*)malloc(nal_len);
+			if (h.vps == NULL) 
+			{
+				//malloc error...
+				h.vpslen = 0; 
+				return(false); 
+			}
+			ByteRead(h.vps, nal_len);
+			h.vpslen = nal_len;
+		}
+
+		Seek(next_nal);
+	}
+
+	if (!h.spslen || !h.ppslen || !h.vpslen || h.height < 100 || h.width < 100 || h.AvgTimePerFrame < 1000)
+		return(false);
+
+	if (!pmt)
+		return(true);
+
+	{
+
+		int extra = h.spslen + 4 + h.ppslen + 4 + h.vpslen + 4;
+		pmt->SetType(&MEDIATYPE_Video);
+		//pmt->SetSubtype(&MEDIASUBTYPE_H264);
+		pmt->SetSubtype(&HEVC_SubType);
+		pmt->formattype = FORMAT_MPEG2_VIDEO;
+		pmt->bTemporalCompression = true;
+
+		int len = FIELD_OFFSET(MPEG2VIDEOINFO, dwSequenceHeader) + extra;
+		MPEG2VIDEOINFO* vi = (MPEG2VIDEOINFO*)pmt->AllocFormatBuffer(len);
+		memset(vi, 0, len);
+		vi->hdr.AvgTimePerFrame = h.AvgTimePerFrame;
+
+		/*
+	h.ar=h.width/h.height;
+		struct {DWORD x, y;} ar[] = {{h.width,h.height},{4,3},{16,9},{221,100},{h.width,h.height}};
+		int i = min(max(h.ar, 1), 5)-1;
+	*/
+		struct { DWORD x, y; } ar[] = { {1,1},{1,1},{12,11},{10,11},{16,11},{40,33},{24,11},{20,11},{32,11},{80,33},{18,11},{15,11},{64,33},{160,99},{1,1},{1,1} };
+		if (h.ar == 255)
+		{
+			// make sure that both are 0 or none
+			if (h.arx == 0 || h.ary == 0)
+				h.arx = h.ary = 0;
+			// h.arx and h.ary now contain sample aspect ratio
+		}
+		else if (h.ar < 1 || h.ar > 13)
+		{
+			// aspect ratio unspecified or reserved
+			h.ar = 0;
+			h.arx = h.ary = 0;
+		}
+		else
+		{
+			// use preset aspect ratio
+			h.arx = ar[h.ar].x;
+			h.ary = ar[h.ar].y;
+		}
+
+		h.arx *= h.width;
+		h.ary *= h.height;
+
+		DWORD a = h.arx, b = h.ary;
+		while (a) { DWORD tmp = a; a = b % tmp; b = tmp; }
+		if (b) h.arx /= b, h.ary /= b;
+		vi->hdr.dwPictAspectRatioX = h.arx;
+		vi->hdr.dwPictAspectRatioY = h.ary;
+		vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
+		vi->hdr.bmiHeader.biWidth = h.width;
+		vi->hdr.bmiHeader.biHeight = h.height;
+		vi->hdr.rcSource.right = h.width;
+		vi->hdr.rcSource.bottom = h.height;
+		vi->hdr.rcTarget.right = h.width;
+		vi->hdr.rcTarget.bottom = h.height;
+		vi->hdr.bmiHeader.biCompression = 'CVEH';
+		vi->hdr.bmiHeader.biPlanes = 1;
+
+
+		switch (h.chromaFormat)
+		{
+		case YUV420:
+			vi->hdr.bmiHeader.biBitCount = h.lumaDepth + (h.chromaDepth / 2);
+			break;
+		case YUV422:
+			vi->hdr.bmiHeader.biBitCount = h.lumaDepth + h.chromaDepth;
+			break;
+		case YUV444:
+			vi->hdr.bmiHeader.biBitCount = h.lumaDepth + (2 * h.chromaDepth);
+			break;
+		case YUV400: //Monochrome
+			vi->hdr.bmiHeader.biBitCount = h.lumaDepth;
+			break;
+		default:
+			vi->hdr.bmiHeader.biBitCount = h.lumaDepth + (h.chromaDepth / 2);
+		}
+
+		vi->hdr.bmiHeader.biClrUsed = 0;
+		vi->hdr.bmiHeader.biSizeImage = DIBSIZE(vi->hdr.bmiHeader);
+		vi->dwProfile = h.profile;
+		vi->dwFlags = 0;
+		vi->dwLevel = h.level;
+		vi->cbSequenceHeader = extra;
+		vi->dwStartTimeCode = 0;
+		BYTE* p = (BYTE*)&vi->dwSequenceHeader[0];
+		*p++ = 0;
+		*p++ = 0;
+		*p++ = 0;
+		*p++ = 1;
+		memcpy(p, h.sps, (size_t)h.spslen);
+		p += h.spslen;
+		*p++ = 0;
+		*p++ = 0;
+		*p++ = 0;
+		*p++ = 1;
+		memcpy(p, h.pps, (size_t)h.ppslen);
+		p += h.ppslen;
+		*p++ = 0;
+		*p++ = 0;
+		*p++ = 0;
+		*p++ = 1;
+		memcpy(p, h.vps, (size_t)h.vpslen);
+
+		pmt->SetFormat((BYTE*)vi, len);
+	}
+
+	return true;
+}
 
 bool CFrameHeaderParser::Read(vc1hdr& h, int len, CMediaType* pmt)
 {
@@ -1994,10 +2187,10 @@ bool CFrameHeaderParser::Read(bdlpcmhdr& h, int len, CMediaType* pmt)
 
   wfe.Samples.wSamplesPerBlock = 0;
   wfe.Samples.wValidBitsPerSample = bitspersample[h.bitpersample];
-  wfe.SubFormat = MEDIASUBTYPE_PCM;
+  wfe.SubFormat = MEDIASUBTYPE_BD_LPCM_AUDIO; //MEDIASUBTYPE_PCM;
 
 	pmt->majortype	= MEDIATYPE_Audio;
-	pmt->subtype	= MEDIASUBTYPE_PCM;
+	pmt->subtype	= MEDIASUBTYPE_BD_LPCM_AUDIO; //MEDIASUBTYPE_PCM;
 	pmt->formattype = FORMAT_WaveFormatEx;
 	pmt->SetFormat((BYTE*)&wfe, sizeof(wfe));
 
@@ -2042,4 +2235,3 @@ void CFrameHeaderParser::DumpAvcHeader(avchdr h)
 */
 	LogDebug("=================================");
 }
-

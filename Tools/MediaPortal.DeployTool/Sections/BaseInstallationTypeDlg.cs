@@ -50,9 +50,15 @@ namespace MediaPortal.DeployTool.Sections
 
     public override DeployDialog GetNextDialog()
     {
+      InstallationProperties.Instance["OneClickInstallation"] = rbOneClickChecked ? "1" : "0";
+
       if (rbOneClickChecked)
       {
+#if NO_TV_SERVER
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.ExtensionChoice);
+#else
+        return DialogFlowHandler.Instance.GetDialogInstance(Utils.Is64bit() ? DialogType.TvServerWarning : DialogType.ExtensionChoice);
+#endif
       }
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.CUSTOM_INSTALLATION_TYPE);
     }
@@ -68,7 +74,11 @@ namespace MediaPortal.DeployTool.Sections
       {
         InstallationProperties.Instance.Set("InstallTypeHeader",
                                             Localizer.GetBestTranslation("BaseInstallation_rbOneClick"));
+#if NO_TV_SERVER
+        InstallationProperties.Instance.Set("InstallType", "client");
+#else
         InstallationProperties.Instance.Set("InstallType", "singleseat");
+#endif
         InstallationProperties.Instance.Set("ConfigureTVServerFirewall", "1");
         InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "1");
         InstallationProperties.Instance.Set("ConfigureDBMSFirewall", "1");
@@ -81,7 +91,7 @@ namespace MediaPortal.DeployTool.Sections
       }
     }
 
-    #endregion
+#endregion
 
     private void rbOneClick_Click(object sender, EventArgs e)
     {

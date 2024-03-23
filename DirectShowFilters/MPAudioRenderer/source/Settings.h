@@ -55,6 +55,9 @@ interface IMPARSettings : public IUnknown
   virtual bool GetUseTimeStretching() = 0;
   virtual void SetUseTimeStretching(bool setting) = 0;
 
+  virtual bool GetMaintainSoundPitch() = 0;
+  virtual void SetMaintainSoundPitch(bool setting) = 0;
+
   virtual bool GetExpandMonoToStereo() = 0;
   virtual void SetExpandMonoToStereo(bool setting) = 0;
 
@@ -124,6 +127,9 @@ public:
   bool GetUseTimeStretching();
   void SetUseTimeStretching(bool setting);
 
+  bool GetMaintainSoundPitch();
+  void SetMaintainSoundPitch(bool setting);
+  
   bool GetExpandMonoToStereo();
   void SetExpandMonoToStereo(bool setting);
 
@@ -229,6 +235,7 @@ private:
   bool m_bUseWASAPI;
   bool m_bWASAPIUseEventMode;
   bool m_bUseTimeStretching;
+  bool m_bMaintainSoundPitch;
   bool m_bExpandMonoToStereo;
   int  m_lAC3Encoding;
   

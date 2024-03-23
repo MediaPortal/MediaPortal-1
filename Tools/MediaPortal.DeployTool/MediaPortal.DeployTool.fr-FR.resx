@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WatchTV_labelSectionHeader" xml:space="preserve">
     <value>Allez-vous regarder la TV avec MediaPortal ?</value>
@@ -365,7 +365,7 @@ Ce PC sera utilisé comme TV-Server dédié et distribuera la TV aux autres PC d
     <value>Séléctionnez le répértoire d'installation du TV-Server</value>
   </data>
   <data name="Welcome_labelHeading1" xml:space="preserve">
-    <value>Merci d'avoir choisi MediaPortal.... Le MediaCenter OpenSource GRATUIT!</value>
+    <value>Merci d'avoir choisi MediaPortal.... Le MediaCenter OpenSource GRATUIT !</value>
   </data>
   <data name="Welcome_labelHeading2" xml:space="preserve">
     <value>Cette application vous guidera tout au long du processus d'installation</value>
@@ -374,7 +374,7 @@ Ce PC sera utilisé comme TV-Server dédié et distribuera la TV aux autres PC d
     <value>Veuillez séléctionner votre langue avant de continuer</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
-    <value>MediaPortal est completement GRATUIT - vous n'avez pas à l'acheter!</value>
+    <value>MediaPortal est completement GRATUIT - vous n'avez pas à l'acheter !</value>
   </data>
   <data name="Install_actionConfigure" xml:space="preserve">
     <value>Configurer</value>
@@ -450,7 +450,7 @@ Si un fichier de configuration corrompu est trouvé, il sera supprimé.</value>
   </data>
   <data name="OS_Beta" xml:space="preserve">
     <value>Une version Beta de SP est détecté. Votre système n'est pas supporté...
-Continuer à vos risques et périls!</value>
+Continuer à vos risques et périls !</value>
   </data>
   <data name="Finished_labelHeading3_download" xml:space="preserve">
     <value>Cette application va maintenant se fermer et ouvrir le dossier "MediaPortal Installation".
@@ -472,7 +472,7 @@ Transférer se dossier dans votre HTPC. Commencer l'installation, en éxecutant 
     <value>Aucune connection internet trouvé ! Pour poursuivre l'installation une connection active est requise.</value>
   </data>
   <data name="DiskSpace_Error" xml:space="preserve">
-    <value>Il n'y a pas suffisamment d'espace disque sur le lecteur spécifié! Pour l'installation de MediaPortal vous avez besoin d'au moins {0} Mo d'espace libre sur le disque.</value>
+    <value>Il n'y a pas suffisamment d'espace disque sur le lecteur spécifié ! Pour l'installation de MediaPortal vous avez besoin d'au moins {0} Mo d'espace libre sur le disque.</value>
   </data>
   <data name="Upgrade_labelSectionHeader" xml:space="preserve">
     <value>MediaPortal {0} detecté.</value>
@@ -513,5 +513,41 @@ Merci de procéder au redémarrage avant de poursuivre l'installation de MediaPo
   </data>
   <data name="Reinstall" xml:space="preserve">
     <value>Réinstaller l'installation actuelle vers {0}</value>
+  </data>
+  <data name="DeployXmlDelete_Failed" xml:space="preserve">
+    <value>Impossible de supprimer deploy.xml\nVoulez-vous continuer ?\nLes paramêtres pourraient ne pas être mis à jour correctement</value>
+  </data>
+  <data name="ExtensionChoice_MoreInfo" xml:space="preserve">
+    <value>Plus d'nfo</value>
+  </data>
+  <data name="ExtensionChoice_OtherExtensions" xml:space="preserve">
+    <value>Parcourir les autres extensions</value>
+  </data>
+  <data name="ExtensionChoice_Titan" xml:space="preserve">
+    <value>Installer l'extension qui ajoute le support pour les plugins tiers dan le skin Titan</value>
+  </data>
+  <data name="ExtensionChoice_Title" xml:space="preserve">
+    <value>Extensions recommandées</value>
+  </data>
+  <data name="MySQLChoice_Information" xml:space="preserve">
+    <value>Vérifiez la valeur ci dessus si vous voulez mettre à jour votre actuel MySQL 5.1 vers 5.6 (l'ancienne db ne sera pas perdue)</value>
+  </data>
+  <data name="MySQLChoice_MoreInfo" xml:space="preserve">
+    <value>Plus d'infos</value>
+  </data>
+  <data name="MySQLChoice_Title" xml:space="preserve">
+    <value>MySQL mise à jour 5.1 vers 5.6</value>
+  </data>
+  <data name="SkinChoice_ExtendedDescription" xml:space="preserve">
+    <value>* Externe - Les skins externes sont installés seulement si vous les choisissez mais, vous pouvez les installer ultérieurement.</value>
+  </data>
+  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
+    <value>Utiliser le skin existant (Cela sera coché pour vérifier la compatibilité)</value>
+  </data>
+  <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
+    <value>Choisissez un skin</value>
+  </data>
+  <data name="SkinChoice_OtherSkins" xml:space="preserve">
+    <value>Parcourir d'autres skins</value>
   </data>
 </root>

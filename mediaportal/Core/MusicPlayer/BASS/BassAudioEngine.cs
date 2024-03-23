@@ -1201,6 +1201,12 @@ namespace MediaPortal.MusicPlayer.BASS
         // Some Winamp dsps might raise an exception when closing
         BassWaDsp.BASS_WADSP_Free();
       }
+      catch (DllNotFoundException ex)
+      {
+        //64bit version of bass_wadsp.dll is not available; skip error logigng
+        if (!(IntPtr.Size > 4 && ex.Message.IndexOf("bass_wadsp", StringComparison.OrdinalIgnoreCase) >= 0))
+          Log.Error("BassAudioEngine: DisposeAndCleanUp {0}", ex.Message);
+      }
       catch (Exception ex)
       {
         Log.Error("BassAudioEngine: DisposeAndCleanUp {0}", ex.Message);
@@ -2425,7 +2431,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
     public int GetChannelData(int handle, float[] buffer, int lenght)
     {
-      lock (_syncRoot)
+      //this lock causes to block a gPlayer's "Stop" command after end of playlist if minidisplay renders EQ
+      //lock (_syncRoot)
       {
         // Return the GetChannelData
         return Bass.BASS_ChannelGetData(handle, buffer, lenght);

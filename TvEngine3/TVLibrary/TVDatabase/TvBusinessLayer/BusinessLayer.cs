@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -130,6 +130,12 @@ namespace TvDatabase
       //
       Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true, 0, "", 0,
                               0, false, true, false, (int)TvDatabase.DbNetworkProvider.Generic);
+
+      //Set symbolrate multiplier for some cards
+      if (name != null && (name.StartsWith("Hauppauge WinTV-soloHD DVBC", StringComparison.CurrentCultureIgnoreCase)
+         || name.StartsWith("Hauppauge WinTV-dualHD DVBC Tuner", StringComparison.CurrentCultureIgnoreCase)))
+        newCard.SymbolRateMultiplier = 1000;
+
       newCard.Persist();
       return newCard;
     }
@@ -3393,7 +3399,7 @@ namespace TvDatabase
     /// </summary>
     public void SetLogLevel()
     {
-      var logLevel = (LogLevel)int.Parse(GetSetting("loglevel", "5").Value); // debug is "5", info is "4"
+      var logLevel = (LogLevel)int.Parse(GetSetting("loglevel", "4").Value); // debug is "5", info is "4"
       Log.SetLogLevel(logLevel);
     }
   }

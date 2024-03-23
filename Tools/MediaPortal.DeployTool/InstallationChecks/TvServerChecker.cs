@@ -100,7 +100,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return true;
       }
 
-      string keyUninstall = Utils.CheckUninstallString("MediaPortal TV Server" + (Utils.Is64bit() ? " (x64)" : string.Empty), true);
+      string keyUninstall = Utils.CheckUninstallString("MediaPortal TV Server", true, false);
       if (keyUninstall != null && File.Exists(keyUninstall))
       {
         Utils.UninstallNSIS(keyUninstall);
@@ -114,7 +114,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       result.needsDownload = true;
       FileInfo tvServerFile = new FileInfo(_fileName);
 
-      result = Utils.CheckNSISUninstallString("MediaPortal TV Server" + (Utils.Is64bit() ? " (x64)" : string.Empty), "MementoSection_SecServer");
+      result = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
 
       if (tvServerFile.Exists && tvServerFile.Length != 0)
       {
@@ -128,13 +128,16 @@ namespace MediaPortal.DeployTool.InstallationChecks
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
-        return result;
       }
-
-      CheckResult already = Utils.CheckNSISUninstallString("MediaPortal TV Server" + (Utils.Is64bit() ? string.Empty : " (x64)"), "MementoSection_SecServer");
-      if (already.state != CheckState.NOT_INSTALLED)
+      else if (result.state != CheckState.VERSION_MISMATCH)
       {
-        result.state = CheckState.INSTALLED;
+        //If the TvServer uninstall is not going to be executed, then check if the client is installed. If yes, then force to uninstall TvSever first.
+        //Otherwise the client will unistall the new TvServer installation.
+        CheckResult resultClient = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecClient");
+        if (resultClient.state == CheckState.VERSION_MISMATCH)
+        {
+          result.state = CheckState.VERSION_MISMATCH;
+        }
       }
 
       return result;

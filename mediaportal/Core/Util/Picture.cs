@@ -348,14 +348,22 @@ namespace MediaPortal.Util
       VertexBuffer m_vbBuffer = null;
       try
       {
-        //m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
-        //                              4, GUIGraphicsContext.DX9Device,
-        //                              0, CustomVertex.TransformedColoredTextured.Format,
-        //                              GUIGraphicsContext.GetTexturePoolType());
+        Usage usage;
+        LockFlags lockFlags;
+        if (OSInfo.OSInfo.VistaOrLater())
+        {
+          lockFlags = LockFlags.Discard;
+          usage = Usage.Dynamic | Usage.WriteOnly;
+        }
+        else
+        {
+          lockFlags = LockFlags.None;
+          usage = Usage.None;
+        }
 
         m_vbBuffer = new VertexBuffer(GUIGraphicsContext.DX9Device,
                                       CustomVertex.TransformedColoredTextured.StrideSize * 4,
-                                      Usage.None,
+                                      usage,
                                       CustomVertex.TransformedColoredTextured.Format,
                                       GUIGraphicsContext.GetTexturePoolType());
 
@@ -403,7 +411,7 @@ namespace MediaPortal.Util
 
         unsafe
         {
-          CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)m_vbBuffer.LockToPointer(0, 0, LockFlags.None);
+          CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)m_vbBuffer.LockToPointer(0, 0, lockFlags);
           // Lock the buffer (which will return our structs)
           verts[0].X = x - 0.5f;
           verts[0].Y = y + nh - 0.5f;
@@ -510,14 +518,22 @@ namespace MediaPortal.Util
       VertexBuffer m_vbBuffer = null;
       try
       {
-        //m_vbBuffer = new VertexBuffer(typeof (CustomVertex.TransformedColoredTextured),
-        //                              4, GUIGraphicsContext.DX9Device,
-        //                              0, CustomVertex.TransformedColoredTextured.Format,
-        //                              GUIGraphicsContext.GetTexturePoolType());
+        Usage usage;
+        LockFlags lockFlags;
+        if (OSInfo.OSInfo.VistaOrLater())
+        {
+          lockFlags = LockFlags.Discard;
+          usage = Usage.Dynamic | Usage.WriteOnly;
+        }
+        else
+        {
+          lockFlags = LockFlags.None;
+          usage = Usage.None;
+        }
 
         m_vbBuffer = new VertexBuffer(GUIGraphicsContext.DX9Device,
                               CustomVertex.TransformedColoredTextured.StrideSize * 4,
-                              Usage.None,
+                              usage,
                               CustomVertex.TransformedColoredTextured.Format,
                               GUIGraphicsContext.GetTexturePoolType());
 
@@ -565,7 +581,7 @@ namespace MediaPortal.Util
 
         unsafe
         {
-          CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)m_vbBuffer.LockToPointer(0, 0, LockFlags.None);
+          CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)m_vbBuffer.LockToPointer(0, 0, lockFlags);
 
           // Lock the buffer (which will return our structs)
           verts[0].X = x - 0.5f;
@@ -672,14 +688,22 @@ namespace MediaPortal.Util
       VertexBuffer m_vbBuffer = null;
       try
       {
-        //m_vbBuffer = new VertexBuffer(typeof (CustomVertex.TransformedColoredTextured),
-        //                              4, GUIGraphicsContext.DX9Device,
-        //                              0, CustomVertex.TransformedColoredTextured.Format,
-        //                              GUIGraphicsContext.GetTexturePoolType());
+        Usage usage;
+        LockFlags lockFlags;
+        if (OSInfo.OSInfo.VistaOrLater())
+        {
+          lockFlags = LockFlags.Discard;
+          usage = Usage.Dynamic | Usage.WriteOnly;
+        }
+        else
+        {
+          lockFlags = LockFlags.None;
+          usage = Usage.None;
+        }
 
         m_vbBuffer = new VertexBuffer(GUIGraphicsContext.DX9Device,
                               CustomVertex.TransformedColoredTextured.StrideSize * 4,
-                              Usage.None,
+                              usage,
                               CustomVertex.TransformedColoredTextured.Format,
                               GUIGraphicsContext.GetTexturePoolType());
 
@@ -726,7 +750,7 @@ namespace MediaPortal.Util
 
         unsafe
         {
-          CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)m_vbBuffer.LockToPointer(0, 0, LockFlags.None);
+          CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)m_vbBuffer.LockToPointer(0, 0, lockFlags);
 
           // Lock the buffer (which will return our structs)
           verts[0].X = x - 0.5f;

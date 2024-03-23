@@ -194,6 +194,10 @@ namespace MediaPortal.Configuration
       GUILocalizeStrings.Load(strLanguage);
       // Register Bass.Net
       BassRegistration.BassRegistration.Register();
+
+      //Register MediaInfo service
+      MediaPortal.Services.GlobalServiceProvider.Add<MediaPortal.Services.IMediaInfoService>(new MediaPortal.MediaInfoService.Database.MediaInfoService());
+
       Log.Info("add project section");
       if (splashScreen != null)
       {
@@ -213,6 +217,7 @@ namespace MediaPortal.Configuration
       AddTabRemote();
       AddTabFilters();
       AddTabPlugins();
+      AddTabMediaInfo();
       AddTabThirdPartyChecks();
 
       // reset the last used state
@@ -625,6 +630,17 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(gui, new GuiOSD(), true));
       Log.Info("  add gui skip steps section");
       AddSection(new ConfigPage(gui, new GuiSkipSteps(), true));
+    }
+
+    private void AddTabMediaInfo()
+    {
+      Log.Info("add MediaInfo section");
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Adding MediaInfo section...");
+      }
+      SectionSettings mediainfo = new MediaInfo();
+      AddSection(new ConfigPage(null, mediainfo, false));
     }
 
     private void AddTabThirdPartyChecks()

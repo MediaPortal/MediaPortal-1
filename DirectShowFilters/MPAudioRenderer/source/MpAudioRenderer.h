@@ -107,6 +107,7 @@ public:
   ULONG STDMETHODCALLTYPE GetMiscFlags();
 
   // === IAVSyncClock
+  STDMETHOD(SetCurrentPhaseDifference)(DOUBLE dDiff, DOUBLE dDiffAvg);
   STDMETHOD(AdjustClock)(DOUBLE adjustment);
   STDMETHOD(SetBias)(DOUBLE bias);
   STDMETHOD(GetBias)(DOUBLE* bias);

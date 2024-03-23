@@ -22,7 +22,7 @@ namespace MPx86Proxy.Logging
         static Log()
         {
             LogLevel = LogLevelEnum.Debug;
-            LogFile = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\MPx86Proxy.log";
+            LogFile = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +  @"\Team MediaPortal\MediaPortal\log\MPx86Proxy.log";
             _Fs = new FileStream(LogFile, FileMode.Create, FileAccess.Write);
             _Wr = new StreamWriter(_Fs);
         }
@@ -30,64 +30,64 @@ namespace MPx86Proxy.Logging
         public static void Error(string strMessage)
         {
             if (LogLevel <= LogLevelEnum.Error)
-                append(strMessage);
+                append("Error", strMessage);
         }
         public static void Error(string strMessage, params object[] args)
         {
             if (LogLevel <= LogLevelEnum.Error)
-                append(string.Format(strMessage, args));
+                append("Error", string.Format(strMessage, args));
         }
 
         public static void Warning(string strMessage)
         {
             if (LogLevel <= LogLevelEnum.Warning)
-                append(strMessage);
+                append("Warning", strMessage);
         }
         public static void Warning(string strMessage, params object[] args)
         {
             if (LogLevel <= LogLevelEnum.Warning)
-                append(string.Format(strMessage, args));
+                append("Warning", string.Format(strMessage, args));
         }
 
         public static void Info(string strMessage)
         {
             if (LogLevel <= LogLevelEnum.Info)
-                append(strMessage);
+                append("Info", strMessage);
         }
         public static void Info(string strMessage, params object[] args)
         {
             if (LogLevel <= LogLevelEnum.Info)
-                append(string.Format(strMessage, args));
+                append("Info", string.Format(strMessage, args));
         }
 
         public static void Debug(string strMessage)
         {
             if (LogLevel <= LogLevelEnum.Debug)
-                append(strMessage);
+                append("Debug", strMessage);
         }
         public static void Debug(string strMessage, params object[] args)
         {
             if (LogLevel <= LogLevelEnum.Debug)
-                append(string.Format(strMessage, args));
+                append("Debug", string.Format(strMessage, args));
         }
 
         public static void Trace(string strMessage)
         {
             if (LogLevel <= LogLevelEnum.Trace)
-                append(strMessage);
+                append("Trace", strMessage);
         }
         public static void Trace(string strMessage, params object[] args)
         {
             if (LogLevel <= LogLevelEnum.Trace)
-                append(string.Format(strMessage, args));
+                append("Trace", string.Format(strMessage, args));
         }
 
-        private static void append(string strMessage)
+        private static void append(string strLevel, string strMessage)
         {
             lock (_Wr)
             {
                 _Wr.Write(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss.fff ", _CiEn));
-                _Wr.WriteLine("{0,7} {1}", LogLevel, strMessage);
+                _Wr.WriteLine("{0,7} {1}", strLevel, strMessage);
                 _Wr.Flush();
             }
         }

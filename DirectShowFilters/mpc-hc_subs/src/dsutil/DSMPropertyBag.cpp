@@ -1,6 +1,6 @@
 /*
  * (C) 2003-2006 Gabest
- * (C) 2006-2012 see Authors.txt
+ * (C) 2006-2014, 2017 see Authors.txt
  *
  * This file is part of MPC-HC.
  *
@@ -161,8 +161,8 @@ CCritSec CDSMResource::m_csResources;
 CAtlMap<uintptr_t, CDSMResource*> CDSMResource::m_resources;
 
 CDSMResource::CDSMResource()
-    : mime(_T("application/octet-stream"))
-    , tag(0)
+    : tag(0)
+    , mime(_T("application/octet-stream"))
 {
     CAutoLock cAutoLock(&m_csResources);
     m_resources.SetAt(reinterpret_cast<uintptr_t>(this), this);
@@ -254,7 +254,7 @@ STDMETHODIMP IDSMResourceBagImpl::ResGet(DWORD iIndex, BSTR* ppName, BSTR* ppDes
     return S_OK;
 }
 
-STDMETHODIMP IDSMResourceBagImpl::ResSet(DWORD iIndex, LPCWSTR pName, LPCWSTR pDesc, LPCWSTR pMime, BYTE* pData, DWORD len, DWORD_PTR tag)
+STDMETHODIMP IDSMResourceBagImpl::ResSet(DWORD iIndex, LPCWSTR pName, LPCWSTR pDesc, LPCWSTR pMime, const BYTE* pData, DWORD len, DWORD_PTR tag)
 {
     if (iIndex >= m_resources.GetCount()) {
         return E_INVALIDARG;
@@ -301,10 +301,11 @@ STDMETHODIMP IDSMResourceBagImpl::ResRemoveAt(DWORD iIndex)
 STDMETHODIMP IDSMResourceBagImpl::ResRemoveAll(DWORD_PTR tag)
 {
     if (tag) {
-        for (ptrdiff_t i = m_resources.GetCount() - 1; i >= 0; i--)
+        for (ptrdiff_t i = m_resources.GetCount() - 1; i >= 0; i--) {
             if (m_resources[i].tag == tag) {
                 m_resources.RemoveAt(i);
             }
+        }
     } else {
         m_resources.RemoveAll();
     }
@@ -340,20 +341,6 @@ CDSMChapter& CDSMChapter::operator = (const CDSMChapter& c)
 }
 
 int CDSMChapter::counter = 0;
-
-int CDSMChapter::Compare(const void* a, const void* b)
-{
-    const CDSMChapter* ca = static_cast<const CDSMChapter*>(a);
-    const CDSMChapter* cb = static_cast<const CDSMChapter*>(b);
-
-    if (ca->rt > cb->rt) {
-        return 1;
-    } else if (ca->rt < cb->rt) {
-        return -1;
-    }
-
-    return ca->order - cb->order;
-}
 
 //
 // IDSMChapterBagImpl
@@ -435,17 +422,95 @@ STDMETHODIMP IDSMChapterBagImpl::ChapRemoveAll()
 STDMETHODIMP_(long) IDSMChapterBagImpl::ChapLookup(REFERENCE_TIME* prt, BSTR* ppName)
 {
     CheckPointer(prt, -1);
+    if (m_chapters.IsEmpty()) {
+        return -1;
+    }
 
-    ChapSort();
+    size_t result = 0;
 
-    size_t i = range_bsearch(m_chapters, *prt);
-    if (i != MAXSIZE_T) {
-        *prt = m_chapters[i].rt;
-        if (ppName) {
-            *ppName = m_chapters[i].name.AllocSysString();
+    if (m_fSorted) {
+        result = range_bsearch(m_chapters, *prt);
+    }
+    else {
+        // assume first entry is best, find better match
+        for (size_t i = 1; i < m_chapters.GetCount(); ++i) {
+            if (*prt >= m_chapters[i].rt && m_chapters[i].rt >= m_chapters[result].rt) {
+                result = i;
+            }
+        }
+        // validate first if it was best
+        if (result == 0 && *prt < m_chapters[result].rt) {
+            return -1;
         }
     }
-    return (long)i;
+
+    if (result != MAXSIZE_T) {
+        *prt = m_chapters[result].rt;
+        if (ppName) {
+            *ppName = m_chapters[result].name.AllocSysString();
+        }
+    }
+
+    return (long)result;
+}
+
+STDMETHODIMP_(long) IDSMChapterBagImpl::ChapLookupPrevious(REFERENCE_TIME* prt, BSTR* ppName)
+{
+    CheckPointer(prt, -1);
+
+    size_t chapcount = m_chapters.GetCount();
+    if (chapcount < 1 || *prt < 0) {
+        return -1;
+    }
+
+    size_t result = 0;
+    if (*prt < m_chapters[0].rt) {
+        return -1;
+    } else {
+        for (size_t i = 1; i < chapcount; ++i) {
+            if (*prt > m_chapters[i].rt) {
+                result = i;
+            } else {
+                break;
+            }
+        }
+    }
+
+    *prt = m_chapters[result].rt;
+    if (ppName) {
+        *ppName = m_chapters[result].name.AllocSysString();
+    }
+
+    return (long)result;
+}
+
+STDMETHODIMP_(long) IDSMChapterBagImpl::ChapLookupNext(REFERENCE_TIME* prt, BSTR* ppName)
+{
+    CheckPointer(prt, -1);
+
+    size_t chapcount = m_chapters.GetCount();
+    if (chapcount < 1) {
+        return -1;
+    }
+
+    size_t result = 0;
+    if (*prt >= m_chapters[chapcount-1].rt) {
+        return -1;
+    } else {
+        for (size_t i = 0; i < chapcount; ++i) {
+            if (*prt < m_chapters[i].rt) {
+                result = i;
+                break;
+            }
+        }
+    }
+
+    *prt = m_chapters[result].rt;
+    if (ppName) {
+        *ppName = m_chapters[result].name.AllocSysString();
+    }
+
+    return (long)result;
 }
 
 STDMETHODIMP IDSMChapterBagImpl::ChapSort()
@@ -453,7 +518,7 @@ STDMETHODIMP IDSMChapterBagImpl::ChapSort()
     if (m_fSorted) {
         return S_FALSE;
     }
-    qsort(m_chapters.GetData(), m_chapters.GetCount(), sizeof(CDSMChapter), CDSMChapter::Compare);
+    std::sort(m_chapters.GetData(), m_chapters.GetData() + m_chapters.GetCount());
     m_fSorted = true;
     return S_OK;
 }
@@ -463,7 +528,7 @@ STDMETHODIMP IDSMChapterBagImpl::ChapSort()
 //
 
 CDSMChapterBag::CDSMChapterBag(LPUNKNOWN pUnk, HRESULT* phr)
-    : CUnknown(_T("CDSMChapterBag"), NULL)
+    : CUnknown(_T("CDSMChapterBag"), nullptr)
 {
 }
 

@@ -465,7 +465,7 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
 
     return MPAR_S_DROP_SAMPLE;
   }
-  else if ((m_nSampleNum == 0 && *pDueTime > rtHWTime) || resync)
+  else if ((m_nSampleNum == 0 && *pDueTime > rtHWTime) || (m_nSampleNum <= 20 && (*pDueTime - rtHWTime) > 150000) || resync)
   {
     m_nSampleNum++;
 
@@ -580,6 +580,8 @@ void CWASAPIRenderFilter::UpdateAudioClock()
       Log("UpdateAudioClock: prevPos: %6.3f > ullHwClock: %6.3f diff: %6.3f QPC diff: %6.3f m_llPosError: %6.3f correction: %6.3f", 
         m_ullPrevPos / 10000000.0, ullHwClock / 10000000.0, (m_ullPrevPos - ullHwClock) / 10000000.0, (qpc - m_ullPrevQpc) / 10000000.0, 
         m_llPosError / 10000000.0, correction / 10000000.0);
+
+      m_nSampleNum = 0;
     }
 
     m_ullPrevPos = ullHwClock;
@@ -841,6 +843,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
               {
                 sampleProcessed = false;
                 writeSilence = 0;
+                m_nSampleNum = 0;
                 m_state = StateRunning;
                 if (!m_pCurrentSample)
                 {

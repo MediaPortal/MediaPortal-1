@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -339,12 +339,15 @@ namespace MediaPortal.DeployTool
       return result;
     }
 
-    public static RegistryKey LMOpenSubKey(string keyPath, bool writable = false)
+    public static RegistryKey LMOpenSubKey(string keyPath, bool writable = false, bool bIncludeWow6432 = true)
     {
       RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath, writable);
 
       if (key == null)
       {
+        if (!bIncludeWow6432)
+          return null;
+
         try
         {
           key = OpenSubKey(Registry.LocalMachine, keyPath, writable, eRegWow64Options.KEY_WOW64_32KEY);
@@ -392,30 +395,30 @@ namespace MediaPortal.DeployTool
       CheckUninstallString(clsid, true);
     }
 
-    public static RegistryKey GetUninstallKey(string clsid)
+    public static RegistryKey GetUninstallKey(string clsid, bool writable, bool bIncludeWow6432)
     {
-      return LMOpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid);
+      return LMOpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid, writable, bIncludeWow6432);
     }
 
-    public static string CheckUninstallString(string clsid, string section)
+    public static string CheckUninstallString(string clsid, string section, bool bIncludeWow6432 = true)
     {
-      RegistryKey key = GetUninstallKey(clsid);
+      RegistryKey key = GetUninstallKey(clsid, false, bIncludeWow6432);
       if (key != null)
       {
-        string strSection = key.GetValue(section).ToString();
-        if (!string.IsNullOrEmpty(strSection))
+        object value = key.GetValue(section, string.Empty);
+        if (value is string && !string.IsNullOrEmpty((string)value))
         {
           key.Close();
-          return strSection;
+          return (string)value;
         }
         key.Close();
       }
       return null;
     }
 
-    public static string CheckUninstallString(string clsid, bool delete)
+    public static string CheckUninstallString(string clsid, bool delete, bool bIncludeWow6432 = true)
     {
-      string strUninstall = CheckUninstallString(clsid, "UninstallString");
+      string strUninstall = CheckUninstallString(clsid, "UninstallString", bIncludeWow6432);
       if (!string.IsNullOrEmpty(strUninstall))
       {
         if (File.Exists(strUninstall))
@@ -426,11 +429,17 @@ namespace MediaPortal.DeployTool
 
       if (delete)
       {
-        RegistryKey key = GetUninstallKey(clsid);
-        if (key != null)
+        // SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\
+        RegistryKey keyUninstall = GetUninstallKey(null, true, bIncludeWow6432);
+        if (keyUninstall != null)
         {
-          key.DeleteSubKeyTree("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid);
-          key.Close();
+          RegistryKey keyCLSID = keyUninstall.OpenSubKey(clsid);
+          if (keyCLSID != null)
+          {
+            keyUninstall.DeleteSubKeyTree(clsid);
+            keyCLSID.Close();
+          }
+          keyUninstall.Close();
         }
       }
       return null;
@@ -443,7 +452,7 @@ namespace MediaPortal.DeployTool
         state = CheckState.NOT_INSTALLED
       };
 
-      RegistryKey key = GetUninstallKey(RegistryPath);
+      RegistryKey key = GetUninstallKey(RegistryPath, false, false);
       if (key != null)
       {
         int _IsInstalled = (int)key.GetValue(MementoSection, 0);
@@ -665,7 +674,7 @@ namespace MediaPortal.DeployTool
       [Out] out bool lpSystemInfo
       );
 
-    public static bool Check64bit()
+    public static bool IsWow64Process()
     {
       //IsWow64Process is not supported under Windows2000
       if (!OSInfo.OSInfo.XpOrLater())
@@ -686,6 +695,11 @@ namespace MediaPortal.DeployTool
     public static bool Is64bit()
     {
       return (IntPtr.Size == 8);
+    }
+
+    public static bool Is64bitOS
+    {
+      get { return Environment.Is64BitOperatingSystem; }
     }
 
     #endregion
@@ -765,8 +779,8 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 31;
-          revision = 000;
+          minor = 32;
+          revision = 100;
           break;
       }
       Version ver = new Version(major, minor, revision);
@@ -786,8 +800,8 @@ namespace MediaPortal.DeployTool
     public static Version GetCurrentPackageVersion()
     {
       int major = 1;
-      int minor = 31;
-      int revision = 100;
+      int minor = 33;
+      int revision = 000;
 
       Version ver = new Version(major, minor, revision);
       return ver;
@@ -804,7 +818,7 @@ namespace MediaPortal.DeployTool
 
     public static string PathFromRegistry(string regkey)
     {
-      RegistryKey key = LMOpenSubKey(regkey);
+      RegistryKey key = LMOpenSubKey(regkey, bIncludeWow6432: false);
 
       string Tv3Path = null;
       if (key != null)
@@ -818,7 +832,7 @@ namespace MediaPortal.DeployTool
 
     public static Version VersionFromRegistry(string regkey)
     {
-      RegistryKey key = LMOpenSubKey(regkey);
+      RegistryKey key = LMOpenSubKey(regkey, bIncludeWow6432: false);
 
       int major = 0;
       int minor = 0;
@@ -837,7 +851,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.32 Pre Release";
+      return "1.33 Springtime / 20th Anniversary";
     }
 
     /// <summary>
@@ -883,6 +897,86 @@ namespace MediaPortal.DeployTool
       }
 
       deployXml.Save(deployXmlLocation);
+    }
+
+    /// <summary>
+    /// Fixes MediaPortal 1.32 uninstall registry path
+    /// </summary>
+    public static void FixMediaPortal64RegistryPath()
+    {
+      if (Is64bit())
+      {
+        FixMediaPortal64RegistryPath("MediaPortal");
+        FixMediaPortal64RegistryPath("MediaPortal TV Server");
+      }
+    }
+
+    public static void FixMediaPortal64RegistryPath(string strName)
+    {
+      if (Is64bit())
+      {
+        string strNameOld = strName + " (x64)";
+        const string PATH_UNINSTALL = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
+        const string PATH_UNINSTALL_WOW6432 = @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall";
+        string strPath = PATH_UNINSTALL + @"\" + strName;
+        string strPathOld = PATH_UNINSTALL_WOW6432 + @"\" + strNameOld;
+
+        RegistryKey keyOld = Registry.LocalMachine.OpenSubKey(strPathOld);
+        if (keyOld != null)
+        {
+          //Existing old registry path
+
+          RegistryKey key = Registry.LocalMachine.OpenSubKey(strPath, true);
+
+          if (key == null)
+          {
+            //Create new registry path
+            using (RegistryKey localKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default))
+            {
+              key = localKey.CreateSubKey(strPath);
+            }
+          }
+
+          //Copy all values from the old key to the new key
+          foreach (string strValueName in keyOld.GetValueNames())
+          {
+            key.SetValue(strValueName, keyOld.GetValue(strValueName), keyOld.GetValueKind(strValueName));
+          }
+
+          //Delete old key
+          using (RegistryKey k = Registry.LocalMachine.OpenSubKey(PATH_UNINSTALL_WOW6432, true))
+          {
+            k.DeleteSubKeyTree(strNameOld);
+          }
+
+          key.Dispose();
+          keyOld.Dispose();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Set higher TLS security for NET 4.0 applications by using 'SchUseStrongCrypto' registry key
+    /// </summary>
+    public static void SetHigherNetFramework4TlsSecurity()
+    {
+      //https://learn.microsoft.com/en-us/dotnet/framework/network-programming/tls
+      //Setting registry keys affects all applications on the system.
+      //A value of 1 causes your app to use strong cryptography.
+      //The strong cryptography uses more secure network protocols (TLS 1.2 and TLS 1.1) and blocks protocols that aren't secure.
+      //This registry setting affects only client (outgoing) connections in your application.
+
+      const string PATH = @"SOFTWARE\Microsoft\.NETFramework\v4.0.30319";
+      const string KEY_VALUE_NAME = "SchUseStrongCrypto";
+
+      RegistryKey key = Registry.LocalMachine.OpenSubKey(PATH, true);
+      if (key == null)
+        key = Registry.LocalMachine.CreateSubKey(PATH);
+
+      if ((int)key.GetValue(KEY_VALUE_NAME, 0) == 0)
+        key.SetValue(KEY_VALUE_NAME, 1);
+
+      key.Close();
     }
 
     #endregion

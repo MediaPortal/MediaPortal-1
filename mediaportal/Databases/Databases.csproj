@@ -211,6 +211,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
+      <Project>{ce009bfa-5ef6-4153-b2a1-2fa79698a9ae}</Project>
+      <Name>DirectShowLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Name>Core</Name>
       <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
@@ -238,6 +242,9 @@
     </Reference>
     <Reference Include="MetadataExtractor, Version=2.8.0.0, Culture=neutral, PublicKeyToken=b66b5ccaf776c301, processorArchitecture=MSIL">
       <HintPath>..\..\Packages\MetadataExtractor.2.8.0\lib\net35\MetadataExtractor.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\Newtonsoft.Json.13.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -283,6 +290,9 @@
     </Compile>
     <Compile Include="Folders\IFolderSettings.cs" />
     <Compile Include="Folders\ADO\FolderSettingAdo.cs" />
+    <Compile Include="MediaInfoService\MediaInfoService.cs" />
+    <Compile Include="MediaInfoService\MediaInfoWrapperEx.cs" />
+    <Compile Include="MediaInfoService\SqlLite\MediaInfoDatabaseSqlLite.cs" />
     <Compile Include="Music\InternetLookups\AllMusicAlbumMatch.cs" />
     <Compile Include="Music\InternetLookups\AllMusicArtistMatch.cs" />
     <Compile Include="Music\MusicDatabaseSettings.cs" />
@@ -359,6 +369,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets" Condition="Exists('..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets')" />

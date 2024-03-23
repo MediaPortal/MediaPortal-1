@@ -73,6 +73,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private DateTime SettingsLastModTime;
     private object ThreadMutex = new object();
 
+    private static readonly string[] _x64DriverIncompatibilityList = new string[]
+    {
+      "ba66.dll", "belc.dll", "bt62005.dll", "eep_serial.dll", "fanomatic.dll" ,"futabavfd.dll", "hd44780.dll", "hd44780_4x40.dll", "hd61830.dll", "HP12542R.dll",
+      "irtrans.dll", "ks0108_128x64.dll", "LCD2USB.dll", "lcdh_g15.dll" , "lintec1601.dll", "lph7508.dll", "m50530_24x8.dll", "m50530s.dll", "MT-12232A.dll",
+      "nju6426.dll", "noritake_gu_128x32_311.dll", "noritake_gu3900.dll", "noritake_gu7000.dll", "noritake_tseries.dll", "pcd8544.dll", "PCF8548.dll", "pertelian_x2040.dll",
+      "Samsung_VFD.dll", "sed133x.dll", "sed133x_usb_lui.dll", "sed1520.dll", "sed1530.dll", "slx2016.dll", "t6963c.dll"
+    };
+
     public LCDHypeWrapper(string dllFile)
     {
       try
@@ -1212,6 +1220,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     public override bool SupportsText
     {
       get { return this.info.SupportTxtLCD; }
+    }
+
+    public static bool IsDriverX64Compatible(string strFileFullPath)
+    {
+      if (IntPtr.Size > 4)
+      {
+        //Check for x64 incompatibility
+        string strFileName = Path.GetFileName(strFileFullPath);
+        for (int i = 0; i < _x64DriverIncompatibilityList.Length; i++)
+        {
+          if (_x64DriverIncompatibilityList[i].Equals(strFileName, StringComparison.OrdinalIgnoreCase))
+            return false; //in the list
+        }
+      }
+
+      return true;
     }
 
     [Serializable]

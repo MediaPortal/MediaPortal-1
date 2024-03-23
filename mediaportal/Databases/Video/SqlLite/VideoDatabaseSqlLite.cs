@@ -802,7 +802,7 @@ namespace MediaPortal.Video.Database
 
       string[] sub_exts = {
                             ".utf", ".utf8", ".utf-8", ".sub", ".srt", ".smi", ".rt", ".txt", ".ssa", ".aqt", ".jss",
-                            ".ass", ".idx", ".ifo"
+                            ".ass", ".idx", ".ifo", ".webvtt", ".vtt"
                           };
 
       // check if movie has subtitles
@@ -1128,13 +1128,12 @@ namespace MediaPortal.Video.Database
         MediaInfoWrapper mInfo = null;
         if (!string.IsNullOrEmpty(g_Player.currentMediaInfoFilePlaying) && (g_Player.currentMediaInfoFilePlaying == strFilenameAndPath))
         {
-          mInfo = g_Player._mediaInfo;
+          mInfo = g_Player.MediaInfo;
         }
         else
         {
           g_Player.currentMediaInfoFilePlaying = strFilenameAndPath;
-          var logger = GlobalServiceProvider.Get<MediaInfo.ILogger>();
-          mInfo = g_Player._mediaInfo = new MediaInfoWrapper(strFilenameAndPath, logger);
+          mInfo = g_Player.MediaInfo = GlobalServiceProvider.Get<IMediaInfoService>().Get(strFilenameAndPath);
         }
 
         mInfo.WriteInfo();

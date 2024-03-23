@@ -7,8 +7,20 @@ on:
       - master
     # Ignore all Tags / Release
     tags-ignore:
-      - '**'   
+      - '**'
+
   workflow_call:
+    inputs:
+      retention-logs:
+        description: "Retention Period for Log files. Default is 1"
+        default: 3
+        required: false
+        type: number
+      retention-build:
+        description: "Retention Period for Setup files. Default is 90"
+        default: 90
+        required: false
+        type: number
 
 jobs:
   build:
@@ -22,7 +34,7 @@ jobs:
     
     steps:
     - name: Setup Visual Studio 2019
-      uses: microsoft/setup-msbuild@v1.3
+      uses: microsoft/setup-msbuild@v2
       with:
         vs-version: 16.11
 
@@ -32,7 +44,7 @@ jobs:
       shell: cmd
 
     - name: Setup Java JDK
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: 8
         architecture: x86
@@ -40,10 +52,10 @@ jobs:
 
     - name: Setup NSIS
       run: |
-        choco install --yes nsis --version=3.08
+        choco install --yes nsis --version=3.09 --force
 
     - name: Git Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Git Submodule Update
       run: |
@@ -56,19 +68,20 @@ jobs:
       shell: cmd
 
     - name: Upload Artifact / Build result file
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ always() }}
       with:
         name: Build result file ${{ matrix.architecture }}
         path: |
           ${{ github.workspace }}\Build\BuildFullInstaller.log
-        retention-days: 3
+        retention-days: ${{ inputs.retention-logs || 3 }}
 
     - name: Upload Artifact / Mediaportal setup file
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ success() }}
       with:
         name: Mediaportal setup file ${{ matrix.architecture }}
         path: |
           ${{ github.workspace }}\Release\MediaPortalSetup_*.exe
+        retention-days: ${{ inputs.retention-build || 90 }}
         if-no-files-found: error

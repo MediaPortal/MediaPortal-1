@@ -1022,6 +1022,21 @@ namespace MediaPortal.Player
           {
             fps = tvFPS[0];
           }
+
+          Log.Info("RefreshRateChanger.AdaptRefreshRate: Scantype on file {0} is {1}", strFile, g_Player.MediaInfo.ScanType);
+
+          if (g_Player.MediaInfo.IsInterlaced ||
+            (g_Player.MediaInfo.ScanType != null && g_Player.MediaInfo.ScanType.Equals("mbaff", StringComparison.OrdinalIgnoreCase)))
+          {
+            Log.Info("RefreshRateChanger.AdaptRefreshRate: Interlacing detected on file {0}. Fps is {1}", strFile, fps);
+
+            if (fps == 25.00)
+              fps = 50.00;
+            else if (fps == 29.97)
+              fps = 59.97;
+            else if (fps == 30.00)
+              fps = 60.00;
+          }
         }
         else
         {
@@ -1030,6 +1045,9 @@ namespace MediaPortal.Player
 
           Log.Error("RefreshRateChanger.AdaptRefreshRate: g_Player.MediaInfo was null. file: {0} st: {1}", strFile,
                     sf.GetMethod().Name);
+
+          _workerFps = 0;
+
           return;
         }
       }
@@ -1051,6 +1069,78 @@ namespace MediaPortal.Player
       }
 
       SetRefreshRateBasedOnFPS(fps, strFile, type);
+    }
+
+    public static void AdaptRefreshRateFromVideoDecoder(string strFile)
+    {
+      if (_workerFps == 0 && g_Player.Player is VideoPlayerVMR9)
+      {
+        Log.Info("[AdaptRefreshRateFromVideoDecoder] Try detect fps from Video Decoder Pin");
+
+        try
+        {
+          double dFps = Math.Round(VMR9Util.g_vmr9.GetEVRVideoFPS(3), 2);
+
+          if (dFps <= 0)
+          {
+            DirectShowLib.IBaseFilter filter = ((VideoPlayerVMR9)g_Player.Player).filterCodec.VideoCodec;
+            if (filter != null)
+            {
+              Log.Debug("[AdaptRefreshRateFromVideoDecoder] Video Decoder found.");
+
+              DirectShowLib.IPin pin;
+              int iResult = filter.FindPin("In", out pin);
+              if (iResult == 0)
+              {
+                Log.Debug("[AdaptRefreshRateFromVideoDecoder] Input Pin of Video Decoder retrieved.");
+                DirectShowLib.AMMediaType mediatype = new DirectShowLib.AMMediaType();
+                iResult = pin.ConnectionMediaType(mediatype);
+
+                if (iResult == 0)
+                {
+                  Log.Debug("[AdaptRefreshRateFromVideoDecoder] AMMediaType: " + mediatype.formatType.ToString());
+
+                  DirectShowLib.VideoInfoHeader videoHeader = new DirectShowLib.VideoInfoHeader();
+                  Marshal.PtrToStructure(mediatype.formatPtr, videoHeader);
+
+                  if (videoHeader != null)
+                  {
+                    Log.Debug("[AdaptRefreshRateFromVideoDecoder] AvgTimePerFrame from VideoInfoHeader: " + videoHeader.AvgTimePerFrame);
+
+                    dFps = Math.Round(10000000F / videoHeader.AvgTimePerFrame, 2);
+
+                    if (dFps == 23.98)
+                      dFps = 23.976;
+
+                    Log.Info("[AdaptRefreshRateFromVideoDecoder] Detected FPS from Video Decoder: " + dFps);
+                  }
+                }
+                else
+                  Log.Debug("[AdaptRefreshRateFromVideoDecoder] Unable to get AMMediaType.");
+
+                DShowNET.Helper.DirectShowUtil.ReleaseComObject(pin);
+              }
+
+              //DShowNET.Helper.DirectShowUtil.ReleaseComObject(filter);
+            }
+          }
+          else
+          {
+            if (dFps == 23.98)
+              dFps = 23.976;
+
+            Log.Info("[AdaptRefreshRateFromVideoDecoder] Detected FPS from EVR: " + dFps);
+          }
+
+          if (dFps > 0)
+            SetRefreshRateBasedOnFPS(dFps, strFile, MediaType.Video);
+        }
+        catch (Exception ex)
+        {
+          Log.Warn("[AdaptRefreshRateFromVideoDecoder] Exception when getting refresh rate from Video Decoder: " + ex.ToString());
+        }
+      }
+
     }
 
     #endregion

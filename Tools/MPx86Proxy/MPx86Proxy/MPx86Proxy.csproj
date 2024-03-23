@@ -94,6 +94,7 @@
     </Compile>
     <Compile Include="Drivers\iMONApi.cs" />
     <Compile Include="Drivers\iMONDisplay.cs" />
+    <Compile Include="Drivers\iMONDisplayWrapper.cs" />
     <Compile Include="Forms\AboutBox.cs">
       <SubType>Form</SubType>
     </Compile>

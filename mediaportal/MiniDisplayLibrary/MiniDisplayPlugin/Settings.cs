@@ -344,7 +344,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         foreach (FileInfo info2 in info.GetFiles("*.dll"))
         {
           LogInfo("MiniDisplay.Settings.LoadDrivers(): Loading LCDHype Driver {0}...", new object[] {info2.FullName});
-          list.Add(new LCDHypeWrapper(info2.FullName));
+          if (LCDHypeWrapper.IsDriverX64Compatible(info2.FullName))
+            list.Add(new LCDHypeWrapper(info2.FullName));
+          else
+            LogInfo("MiniDisplay.Settings.LoadDrivers(): LCDHype Driver {0} excluded - not x64 compatible", new object[] { info2.FullName });
         }
       }
       this.m_Drivers = list;
