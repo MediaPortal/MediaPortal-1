@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 /*
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1060,6 +1060,7 @@ Section "-MediaPortal Extension Manager" SecMpeInstaller
   File "${git_MP}\MPE\MpeCore\bin\${BUILD_TYPE}\MpeCore.dll"
   File "${git_MP}\MPE\MpeInstaller\bin\${BUILD_TYPE}\MpeInstaller.exe"
   File "${git_MP}\MPE\MpeMaker\bin\${BUILD_TYPE}\MpeMaker.exe"
+  File "${git_MP}\MPE\MPEUpdater\bin\${BUILD_TYPE}\MPEUpdater.exe"
 
   ; remove shortcuts on upgrade (MP1-4540 / MP1-4544)
   Delete "$DESKTOP\MediaPortal Extension Installer.lnk"
