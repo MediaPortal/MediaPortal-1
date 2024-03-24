@@ -22,7 +22,7 @@
 #define __MP_URL_SOURCE_SPLITTER_PROTOCOL_FILE_DEFINED
 
 #include "Logger.h"
-#include "IProtocolPlugin.h"
+#include "ProtocolPlugin.h"
 #include "LinearBuffer.h"
 
 #include <stdio.h>
@@ -31,24 +31,26 @@
 
 #define PROTOCOL_NAME                                             L"FILE"
 
+#define PROTOCOL_STORE_FILE_NAME_PART                                         L"mpurlsourcesplitter_protocol_file"
+
 #define TOTAL_SUPPORTED_PROTOCOLS                                 1
 wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"FILE" };
 
-class CMPUrlSourceSplitter_Protocol_File : public IProtocolPlugin
+class CMPUrlSourceSplitter_Protocol_File : public CProtocolPlugin
 {
 public:
   // constructor
   // create instance of CMPUrlSourceSplitter_Protocol_File class
-  CMPUrlSourceSplitter_Protocol_File(CLogger *logger, CParameterCollection *configuration);
+  CMPUrlSourceSplitter_Protocol_File(HRESULT* result, CLogger *logger, CParameterCollection *configuration);
 
   // destructor
   ~CMPUrlSourceSplitter_Protocol_File(void);
 
   // IProtocol interface
 
-  // test if connection is opened
-  // @return : true if connected, false otherwise
-  bool IsConnected(void);
+  // gets connection state
+  // @return : one of protocol connection state values
+  ProtocolConnectionState GetConnectionState(void);
 
   // parse given url to internal variables for specified protocol
   // errors should be logged to log file
@@ -61,17 +63,27 @@ public:
   // the method can't block call (method is called within thread which can be terminated anytime)
   // @param receiveData : received data
   // @return: S_OK if successful, error code otherwise
-  HRESULT ReceiveData(CReceiveData *receiveData);
+  HRESULT ReceiveData(CStreamPackage* streamPackage);
 
   // gets current connection parameters (can be different as supplied connection parameters)
   // @return : current connection parameters or NULL if error
-  CParameterCollection *GetConnectionParameters(void);
+  HRESULT GetConnectionParameters(CParameterCollection* parameters);
 
   // ISimpleProtocol interface
 
-  // get timeout (in ms) for receiving data
-  // @return : timeout (in ms) for receiving data
-  unsigned int GetReceiveDataTimeout(void);
+  // gets timeout (in ms) for opening connection
+  // @return : timeout (in ms) for opening connection
+  unsigned int GetOpenConnectionTimeout(void);
+
+  // gets sleep time (in ms) for opening connection
+  // some protocols may need some sleep before loading (e.g. multicast UDP protocol needs some time between unsubscribing and subscribing in multicast groups)
+  // @return : sleep time (in ms) for opening connection
+  unsigned int GetOpenConnectionSleepTime(void);
+
+  // gets total timeout (in ms) for re-opening connection (opening connection after lost connection)
+  // re-open connection total timeout should be much more greater (e.g. 3 - 5 times) in order to allow more opening requests
+  // @return : total timeout (in ms) for re-opening connection
+  unsigned int GetTotalReopenConnectionTimeout(void);
 
   // starts receiving data from specified url and configuration parameters
   // @param parameters : the url and parameters used for connection
@@ -87,22 +99,17 @@ public:
   // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_INVALIDARG if stream ID is unknown, E_UNEXPECTED if unexpected error
   HRESULT QueryStreamProgress(CStreamProgress *streamProgress);
   
-  // retrieves available lenght of stream
-  // @param available : reference to instance of class that receives the available length of stream, in bytes
-  // @return : S_OK if successful, other error codes if error
-  HRESULT QueryStreamAvailableLength(CStreamAvailableLength *availableLength);
-
   // clear current session
-  // @return : S_OK if successfull
-  HRESULT ClearSession(void);
+  void ClearSession(void);
 
   // gets duration of stream in ms
   // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown
   int64_t GetDuration(void);
 
-  // reports actual stream time to protocol
-  // @param streamTime : the actual stream time in ms to report to protocol
-  void ReportStreamTime(uint64_t streamTime);
+  // gets information about streams
+  // receiving data is disabled until protocol reports valid stream count (at least one)
+  // @return : S_OK if successful, E_STREAM_COUNT_UNKNOWN if stream count is unknown, error code otherwise
+  HRESULT GetStreamInformation(CStreamInformationCollection* streams);
 
   // ISeeking interface
 
@@ -113,7 +120,7 @@ public:
   // request protocol implementation to receive data from specified time (in ms)
   // @param time : the requested time (zero is start of stream)
   // @return : time (in ms) where seek finished or lower than zero if error
-  int64_t SeekToTime(int64_t time);
+  int64_t SeekToTime(unsigned int streamId, int64_t time);
 
   // sets if protocol implementation have to supress sending data to filter
   // @param supressData : true if protocol have to supress sending data to filter, false otherwise
@@ -134,18 +141,14 @@ public:
   // initialize plugin implementation with configuration parameters
   // @param configuration : the reference to additional configuration parameters (created by plugin's hoster class)
   // @return : S_OK if successfull
-  HRESULT Initialize(PluginConfiguration *configuration);
+  HRESULT Initialize(CPluginConfiguration *configuration);
 
 protected:
-  CLogger *logger;
 
   // holds file path
   wchar_t *filePath;
   // holds file
   FILE *fileStream;
-
-  // holds various parameters supplied by caller
-  CParameterCollection *configurationParameters;
 
   // holds receive data timeout
   unsigned int receiveDataTimeout;
@@ -162,11 +165,16 @@ protected:
   // mutex for locking access to file, buffer, ...
   HANDLE lockMutex;
 
-  // specifies if whole stream is downloaded
-  bool wholeStreamDownloaded;
-
   // specifies if filter requested supressing data
   bool supressData;
+
+  // get module name for Initialize() method
+  // @return : module name
+  virtual const wchar_t* GetModuleName(void);
+
+  // gets store file name part
+  // @return : store file name part or NULL if error
+  const wchar_t* GetStoreFileNamePart(void);
 };
 
 #endif

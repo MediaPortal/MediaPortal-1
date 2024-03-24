@@ -31,6 +31,7 @@
 #include "VersionInfo.h"
 #include "MPUrlSourceSplitter_Protocol_File_Parameters.h"
 #include "Parameters.h"
+#include "ProtocolPluginConfiguration.h"
 
 #pragma warning(pop)
 
@@ -41,38 +42,23 @@
 #define PROTOCOL_IMPLEMENTATION_NAME                                    L"MPUrlSourceSplitter_Protocol_File"
 #endif
 
-PIPlugin CreatePluginInstance(CLogger *logger, CParameterCollection *configuration)
+CPlugin *CreatePlugin(HRESULT* result, CLogger* logger, CParameterCollection* configuration)
 {
-  return new CMPUrlSourceSplitter_Protocol_File(logger, configuration);
+  return new CMPUrlSourceSplitter_Protocol_File(result, logger, configuration);
 }
 
-void DestroyPluginInstance(PIPlugin pProtocol)
-{
-  if (pProtocol != NULL)
+void DestroyPlugin(CPlugin *plugin)
+{ 
+  if (plugin != NULL)
   {
-    CMPUrlSourceSplitter_Protocol_File *pClass = (CMPUrlSourceSplitter_Protocol_File *)pProtocol;
+    CMPUrlSourceSplitter_Protocol_File *pClass = (CMPUrlSourceSplitter_Protocol_File *)plugin;
     delete pClass;
   }
 }
 
-CMPUrlSourceSplitter_Protocol_File::CMPUrlSourceSplitter_Protocol_File(CLogger *logger, CParameterCollection *configuration)
+CMPUrlSourceSplitter_Protocol_File::CMPUrlSourceSplitter_Protocol_File(HRESULT* result, CLogger *logger, CParameterCollection *configuration)
+  : CProtocolPlugin(result, logger, configuration)
 {
-  this->configurationParameters = new CParameterCollection();
-  if (configuration != NULL)
-  {
-    this->configurationParameters->Append(configuration);
-  }
-
-  this->logger = new CLogger(logger);
-  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, this);
-
-  wchar_t *version = GetVersionInfo(COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_FILE, DATE_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_FILE);
-  if (version != NULL)
-  {
-    this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, version);
-  }
-  FREE_MEM(version);
-
   this->filePath = NULL;
   this->fileStream = NULL;
 
@@ -80,23 +66,28 @@ CMPUrlSourceSplitter_Protocol_File::CMPUrlSourceSplitter_Protocol_File(CLogger *
   this->fileLength = 0;
   this->setLength = false;
   this->streamTime = 0;
-  this->lockMutex = CreateMutex(NULL, FALSE, NULL);
-  this->wholeStreamDownloaded = false;
+  this->lockMutex = NULL;
   this->supressData = false;
 
-  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+  if ((result != NULL) && (SUCCEEDED(*result)))
+  {
+    this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, this);
+
+    wchar_t* version = GetVersionInfo(COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_FILE, DATE_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_FILE);
+    if (version != NULL)
+    {
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, version);
+    }
+    FREE_MEM(version);
+
+    this->lockMutex = CreateMutex(NULL, FALSE, NULL);
+    this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+  }
 }
 
 CMPUrlSourceSplitter_Protocol_File::~CMPUrlSourceSplitter_Protocol_File()
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
-
-  if (this->IsConnected())
-  {
-    this->StopReceivingData();
-  }
-
-  FREE_MEM_CLASS(this->configurationParameters);
 
   if (this->lockMutex != NULL)
   {
@@ -104,17 +95,17 @@ CMPUrlSourceSplitter_Protocol_File::~CMPUrlSourceSplitter_Protocol_File()
     this->lockMutex = NULL;
   }
 
-  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
-
-  delete this->logger;
-  this->logger = NULL;
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->logger, this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME));
 }
 
 // IProtocol interface
 
-bool CMPUrlSourceSplitter_Protocol_File::IsConnected(void)
+ProtocolConnectionState CMPUrlSourceSplitter_Protocol_File::GetConnectionState(void)
 {
-  return ((this->fileStream != NULL) || (this->wholeStreamDownloaded));
+  if (this->fileStream != NULL)
+    return Opened;
+  else
+    return None;
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_File::ParseUrl(const CParameterCollection *parameters)
@@ -127,17 +118,16 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::ParseUrl(const CParameterCollection 
 
   if (SUCCEEDED(result))
   {
-    this->configurationParameters->Clear();
-    ALLOC_MEM_DEFINE_SET(protocolConfiguration, ProtocolPluginConfiguration, 1, 0);
-    if (protocolConfiguration != NULL)
-    {
-      protocolConfiguration->configuration = (CParameterCollection *)parameters;
-    }
-    this->Initialize(protocolConfiguration);
-    FREE_MEM(protocolConfiguration);
+    this->configuration->Clear();
+
+    CProtocolPluginConfiguration* protocolConfiguration = new CProtocolPluginConfiguration(&result, (CParameterCollection*)parameters);
+    CHECK_POINTER_HRESULT(result, protocolConfiguration, result, E_OUTOFMEMORY);
+
+    CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->Initialize(protocolConfiguration));
+    FREE_MEM_CLASS(protocolConfiguration);
   }
 
-  const wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL);
+  const wchar_t *url = this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL);
   if (SUCCEEDED(result))
   {
     result = (url == NULL) ? E_OUTOFMEMORY : S_OK;
@@ -288,92 +278,103 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::ParseUrl(const CParameterCollection 
 
 // this method implementation can block call for very long time
 // reading from file is not implemented as asynchronous
-HRESULT CMPUrlSourceSplitter_Protocol_File::ReceiveData(CReceiveData *receiveData)
+HRESULT CMPUrlSourceSplitter_Protocol_File::ReceiveData(CStreamPackage* streamPackage)
 {
-  CLockMutex lock(this->lockMutex, INFINITE);
-
-  /*
-
-  this should never happen, because supression of data can occure only when seeking by time
-
-  */
-
-  // file has always one stream
-  if ((!this->supressData) && (receiveData->SetStreamCount(1)))
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, streamPackage);
+  if (SUCCEEDED(result))
   {
-    if (this->IsConnected())
+    LOCK_MUTEX(this->lockMutex, INFINITE);
+
+    /*
+
+    this should never happen, because supression of data can occure only when seeking by time
+
+    */
+
+    // file has always one stream
+    if (!this->supressData)
     {
-      if (!this->wholeStreamDownloaded)
+      if (this->GetConnectionState() == Opened)
       {
-        if (!this->setLength)
+        if (!this->IsWholeStreamDownloaded())
         {
-          receiveData->GetStreams()->GetItem(0)->GetTotalLength()->SetTotalLength(this->fileLength, false);
-          this->setLength = true;
-        }
-
-        if (!feof(this->fileStream))
-        {
-          unsigned int bytesToRead = DEFAULT_BUFFER_SIZE; // 32 kB
-
-          ALLOC_MEM_DEFINE_SET(receiveBuffer, unsigned char, bytesToRead, 0);    
-          unsigned int bytesRead = fread_s(receiveBuffer, bytesToRead, sizeof(char), bytesToRead, this->fileStream);
-          if (bytesRead != 0)
+          if (!this->setLength)
           {
-            // create media packet
-            // set values of media packet
-            CMediaPacket *mediaPacket = new CMediaPacket();
-            mediaPacket->GetBuffer()->InitializeBuffer(bytesRead);
-            mediaPacket->GetBuffer()->AddToBuffer(receiveBuffer, bytesRead);
-
-            mediaPacket->SetStart(this->streamTime);
-            mediaPacket->SetEnd(this->streamTime + bytesRead - 1);
-
-            if (!receiveData->GetStreams()->GetItem(0)->GetMediaPacketCollection()->Add(mediaPacket))
-            {
-              FREE_MEM_CLASS(mediaPacket);
-            }
-
-            this->streamTime += bytesRead;
+            receiveData->GetStreams()->GetItem(0)->GetTotalLength()->SetTotalLength(this->fileLength, false);
+            this->setLength = true;
           }
-          FREE_MEM(receiveBuffer);
-        }
-        else
-        {
-          this->wholeStreamDownloaded = true;
 
-          // notify filter the we reached end of stream
-          int64_t streamTime = this->streamTime;
-          this->streamTime = this->fileLength;
+          if (!feof(this->fileStream))
+          {
+            unsigned int bytesToRead = DEFAULT_BUFFER_SIZE; // 32 kB
 
-          receiveData->GetStreams()->GetItem(0)->GetEndOfStreamReached()->SetStreamPosition(max(0, streamTime - 1));
+            ALLOC_MEM_DEFINE_SET(receiveBuffer, unsigned char, bytesToRead, 0);
+            unsigned int bytesRead = fread_s(receiveBuffer, bytesToRead, sizeof(char), bytesToRead, this->fileStream);
+            if (bytesRead != 0)
+            {
+              // create media packet
+              // set values of media packet
+              CMediaPacket* mediaPacket = new CMediaPacket();
+              mediaPacket->GetBuffer()->InitializeBuffer(bytesRead);
+              mediaPacket->GetBuffer()->AddToBuffer(receiveBuffer, bytesRead);
+
+              mediaPacket->SetStart(this->streamTime);
+              mediaPacket->SetEnd(this->streamTime + bytesRead - 1);
+
+              if (!receiveData->GetStreams()->GetItem(0)->GetMediaPacketCollection()->Add(mediaPacket))
+              {
+                FREE_MEM_CLASS(mediaPacket);
+              }
+              
+              this->streamTime += bytesRead;
+            }
+            FREE_MEM(receiveBuffer);
+          }
+          else
+          {
+            this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
+
+            // notify filter the we reached end of stream
+            int64_t streamTime = this->streamTime;
+            this->streamTime = this->fileLength;
+
+            receiveData->GetStreams()->GetItem(0)->GetEndOfStreamReached()->SetStreamPosition(max(0, streamTime - 1));
+          }
         }
       }
     }
+    UNLOCK_MUTEX(this->lockMutex)
   }
 
   return S_OK;
 }
 
-CParameterCollection *CMPUrlSourceSplitter_Protocol_File::GetConnectionParameters(void)
+HRESULT CMPUrlSourceSplitter_Protocol_File::GetConnectionParameters(CParameterCollection* parameters)
 {
-  CParameterCollection *result = new CParameterCollection();
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, parameters);
 
-  if (result != NULL)
-  {
-    if (!result->Append(this->configurationParameters))
-    {
-      FREE_MEM_CLASS(result);
-    }
-  }
-  
+  CHECK_CONDITION_HRESULT(result, parameters->Append(this->configuration), result, E_OUTOFMEMORY);
+
   return result;
 }
 
 // ISimpleProtocol interface
 
-unsigned int CMPUrlSourceSplitter_Protocol_File::GetReceiveDataTimeout(void)
+unsigned int CMPUrlSourceSplitter_Protocol_File::GetOpenConnectionTimeout(void)
 {
   return this->receiveDataTimeout;
+}
+
+unsigned int CMPUrlSourceSplitter_Protocol_File::GetOpenConnectionSleepTime(void)
+{
+  return 0;
+}
+
+unsigned int CMPUrlSourceSplitter_Protocol_File::GetTotalReopenConnectionTimeout(void)
+{
+  return 0;
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_File::StartReceivingData(CParameterCollection *parameters)
@@ -383,7 +384,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::StartReceivingData(CParameterCollect
 
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME);
 
-  this->wholeStreamDownloaded = false;
+  this->flags &= ~(PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED);
 
   if ((result == S_OK) && (this->fileStream == NULL))
   {
@@ -424,7 +425,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::StartReceivingData(CParameterCollect
 HRESULT CMPUrlSourceSplitter_Protocol_File::StopReceivingData(void)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
-  CLockMutex lock(this->lockMutex, INFINITE);
+  LOCK_MUTEX(this->lockMutex, INFINITE);
 
   // close connection and set that whole stream downloaded
   if (this->fileStream != NULL)
@@ -435,9 +436,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::StopReceivingData(void)
 
   FREE_MEM(this->filePath);
 
-  this->wholeStreamDownloaded = true;
+  this->flags |= PROTOCOL_PLUGIN_FLAG_WHOLE_STREAM_DOWNLOADED | PROTOCOL_PLUGIN_FLAG_END_OF_STREAM_REACHED;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
+  UNLOCK_MUTEX(this->lockMutex);
   return S_OK;
 }
 
@@ -456,25 +458,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::QueryStreamProgress(CStreamProgress 
   return result;
 }
   
-HRESULT CMPUrlSourceSplitter_Protocol_File::QueryStreamAvailableLength(CStreamAvailableLength *availableLength)
-{
-  HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, availableLength);
-  CHECK_CONDITION_HRESULT(result, availableLength->GetStreamId() == 0, result, E_INVALIDARG);
-
-  if (SUCCEEDED(result))
-  {
-    availableLength->SetAvailableLength(this->fileLength);
-  }
-
-  return result;
-}
-
-HRESULT CMPUrlSourceSplitter_Protocol_File::ClearSession(void)
+void CMPUrlSourceSplitter_Protocol_File::ClearSession(void)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
 
-  if (this->IsConnected())
+  if (this->GetConnectionState() == Opened)
   {
     this->StopReceivingData();
   }
@@ -482,11 +470,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::ClearSession(void)
   this->fileLength = 0;
   this->setLength = false;
   this->streamTime = 0;
-  this->wholeStreamDownloaded = false;
-  this->configurationParameters->Clear();
+  this->configuration->Clear();
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
-  return S_OK;
 }
 
 int64_t CMPUrlSourceSplitter_Protocol_File::GetDuration(void)
@@ -494,8 +480,26 @@ int64_t CMPUrlSourceSplitter_Protocol_File::GetDuration(void)
   return DURATION_UNSPECIFIED;
 }
 
-void CMPUrlSourceSplitter_Protocol_File::ReportStreamTime(uint64_t streamTime)
+HRESULT CMPUrlSourceSplitter_Protocol_File::GetStreamInformation(CStreamInformationCollection* streams)
 {
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, streams);
+
+  if (SUCCEEDED(result))
+  {
+    CStreamInformation* streamInfo = new CStreamInformation(&result);
+    CHECK_POINTER_HRESULT(result, streamInfo, result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(result))
+    {
+      streamInfo->SetContainer(true);
+    }
+
+    CHECK_CONDITION_HRESULT(result, streams->Add(streamInfo), result, E_OUTOFMEMORY);
+    CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(streamInfo));
+  }
+
+  return result;
 }
 
 // ISeeking interface
@@ -505,7 +509,7 @@ unsigned int CMPUrlSourceSplitter_Protocol_File::GetSeekingCapabilities(void)
   return SEEKING_METHOD_POSITION;
 }
 
-int64_t CMPUrlSourceSplitter_Protocol_File::SeekToTime(int64_t time)
+int64_t CMPUrlSourceSplitter_Protocol_File::SeekToTime(unsigned int streamId, int64_t time)
 {
   this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME);
   this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu, to time: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, time);
@@ -533,31 +537,36 @@ GUID CMPUrlSourceSplitter_Protocol_File::GetInstanceId(void)
   return this->logger->GetLoggerInstanceId();
 }
 
-HRESULT CMPUrlSourceSplitter_Protocol_File::Initialize(PluginConfiguration *configuration)
+HRESULT CMPUrlSourceSplitter_Protocol_File::Initialize(CPluginConfiguration *configuration)
 {
-  if (configuration == NULL)
-  {
-    return E_POINTER;
-  }
+  HRESULT result = __super::Initialize(configuration);
 
-  ProtocolPluginConfiguration *protocolConfiguration = (ProtocolPluginConfiguration *)configuration;
-  this->logger->SetParameters(protocolConfiguration->configuration);
+  CPluginConfiguration *protocolConfiguration = (CProtocolPluginConfiguration *)configuration;
+  CHECK_POINTER_HRESULT(result, protocolConfiguration, result, E_INVALIDARG);
+  CHECK_POINTER_HRESULT(result, this->lockMutex, result, E_NOT_VALID_STATE);
+
+  this->logger->SetParameters(protocolConfiguration->GetConfiguration());
 
   if (this->lockMutex == NULL)
   {
     return E_FAIL;
   }
 
-  this->configurationParameters->Clear();
-  if (protocolConfiguration->configuration != NULL)
-  {
-    this->configurationParameters->Append(protocolConfiguration->configuration);
-  }
-  this->configurationParameters->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
+  this->configuration->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
 
-  this->receiveDataTimeout = this->configurationParameters->GetValueLong(PARAMETER_NAME_FILE_RECEIVE_DATA_TIMEOUT, true, FILE_RECEIVE_DATA_TIMEOUT_DEFAULT);
+  this->receiveDataTimeout = this->configuration->GetValueLong(PARAMETER_NAME_FILE_RECEIVE_DATA_TIMEOUT, true, FILE_RECEIVE_DATA_TIMEOUT_DEFAULT);
 
   this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? FILE_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
 
   return S_OK;
+}
+
+const wchar_t* CMPUrlSourceSplitter_Protocol_File::GetModuleName(void)
+{
+  return PROTOCOL_IMPLEMENTATION_NAME;
+}
+
+const wchar_t* CMPUrlSourceSplitter_Protocol_File::GetStoreFileNamePart(void)
+{
+  return PROTOCOL_STORE_FILE_NAME_PART;
 }
