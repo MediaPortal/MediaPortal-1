@@ -142,6 +142,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatchDogService.Interface", "..\Common-MP-TVE3\WatchDogService.Interface\WatchDogService.Interface.csproj", "{837CE7EA-60D4-4217-8D38-A8B5E6E1DB22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPEUpdater", "MPE\MPEUpdater\MPEUpdater.csproj", "{23B79768-F683-401E-B19A-11B743F01FCC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1212,6 +1214,30 @@ Global
 		{837CE7EA-60D4-4217-8D38-A8B5E6E1DB22}.UseCaptureDefintionsRelease|x64.Build.0 = Release|x64
 		{837CE7EA-60D4-4217-8D38-A8B5E6E1DB22}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86
 		{837CE7EA-60D4-4217-8D38-A8B5E6E1DB22}.UseCaptureDefintionsRelease|x86.Build.0 = Release|x86
+		{23B79768-F683-401E-B19A-11B743F01FCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23B79768-F683-401E-B19A-11B743F01FCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23B79768-F683-401E-B19A-11B743F01FCC}.Debug|x64.ActiveCfg = Debug|x64
+		{23B79768-F683-401E-B19A-11B743F01FCC}.Debug|x64.Build.0 = Debug|x64
+		{23B79768-F683-401E-B19A-11B743F01FCC}.Debug|x86.ActiveCfg = Debug|x86
+		{23B79768-F683-401E-B19A-11B743F01FCC}.Debug|x86.Build.0 = Debug|x86
+		{23B79768-F683-401E-B19A-11B743F01FCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23B79768-F683-401E-B19A-11B743F01FCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23B79768-F683-401E-B19A-11B743F01FCC}.Release|x64.ActiveCfg = Release|x64
+		{23B79768-F683-401E-B19A-11B743F01FCC}.Release|x64.Build.0 = Release|x64
+		{23B79768-F683-401E-B19A-11B743F01FCC}.Release|x86.ActiveCfg = Release|x86
+		{23B79768-F683-401E-B19A-11B743F01FCC}.Release|x86.Build.0 = Release|x86
+		{23B79768-F683-401E-B19A-11B743F01FCC}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = Debug|Any CPU
+		{23B79768-F683-401E-B19A-11B743F01FCC}.UseCaptureCardDefinitions|Any CPU.Build.0 = Debug|Any CPU
+		{23B79768-F683-401E-B19A-11B743F01FCC}.UseCaptureCardDefinitions|x64.ActiveCfg = Debug|Any CPU
+		{23B79768-F683-401E-B19A-11B743F01FCC}.UseCaptureCardDefinitions|x64.Build.0 = Debug|Any CPU
+		{23B79768-F683-401E-B19A-11B743F01FCC}.UseCaptureCardDefinitions|x86.ActiveCfg = Debug|Any CPU
+		{23B79768-F683-401E-B19A-11B743F01FCC}.UseCaptureCardDefinitions|x86.Build.0 = Debug|Any CPU
+		{23B79768-F683-401E-B19A-11B743F01FCC}.UseCaptureDefintionsRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{23B79768-F683-401E-B19A-11B743F01FCC}.UseCaptureDefintionsRelease|Any CPU.Build.0 = Release|Any CPU
+		{23B79768-F683-401E-B19A-11B743F01FCC}.UseCaptureDefintionsRelease|x64.ActiveCfg = Release|Any CPU
+		{23B79768-F683-401E-B19A-11B743F01FCC}.UseCaptureDefintionsRelease|x64.Build.0 = Release|Any CPU
+		{23B79768-F683-401E-B19A-11B743F01FCC}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|Any CPU
+		{23B79768-F683-401E-B19A-11B743F01FCC}.UseCaptureDefintionsRelease|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1248,6 +1274,7 @@ Global
 		{03FEC69F-6D10-46FB-A0CA-4D266E4A21E2} = {40801059-099F-44C5-9802-3A926EF0FE87}
 		{06741964-B339-4FCF-B6E5-E0D32A434DA2} = {D214B2BD-4CA7-45CD-9EC5-CF7CC244C03A}
 		{C430B2F0-CD3A-4BD5-B6C2-1DE2BDC68C86} = {06741964-B339-4FCF-B6E5-E0D32A434DA2}
+		{23B79768-F683-401E-B19A-11B743F01FCC} = {7E1AA929-F9B8-42E6-A6AD-6759CE43521F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E93BA3D6-C1CC-458C-8F51-4E4B1D8856CB}
