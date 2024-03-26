@@ -941,7 +941,6 @@ namespace MediaPortal.Player
           // g_Player.IsTV is not enough because false if .ts false played by TV-Series plugin
           // That why IsTSfile is created
 
-          // if (UseEVRMadVRForTV && g_Player.IsTimeShifting)
           bool IsTSfile = g_Player.currentFileName.EndsWith(".ts");
           if (UseEVRMadVRForTV && (g_Player.IsTimeShifting || IsTSfile))
           //end FMU
