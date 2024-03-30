@@ -1788,7 +1788,7 @@ namespace MediaPortal.Player
         }
         else // GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR
         {
-          if (!(g_Player.Player is DVDPlayer9) && !(g_Player.Player is DVDPlayer))
+          if (videoWinMadVr != null && !(g_Player.Player is DVDPlayer9) && !(g_Player.Player is DVDPlayer))
           {
             var xposition = GUIGraphicsContext.form.Location.X;
             var yposition = GUIGraphicsContext.form.Location.Y;
