@@ -30,6 +30,8 @@ namespace HideVolumeOSD
 {
   public class HideVolumeOSDLib
   {
+    private const int KEYEVENTF_KEYUP = 2;
+
     [DllImport("user32.dll")]
     static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
 
@@ -52,12 +54,26 @@ namespace HideVolumeOSD
         if (IsMuted)
         {
           keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
+          System.Threading.Thread.Sleep(50);
+          keybd_event((byte)Keys.VolumeMute, 0, KEYEVENTF_KEYUP, 0);
+
+          System.Threading.Thread.Sleep(200);
+
           keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
+          System.Threading.Thread.Sleep(50);
+          keybd_event((byte)Keys.VolumeMute, 0, KEYEVENTF_KEYUP, 0);
         }
         else
         {
           keybd_event((byte)Keys.VolumeUp, 0, 0, 0);
+          System.Threading.Thread.Sleep(50);
+          keybd_event((byte)Keys.VolumeUp, 0, KEYEVENTF_KEYUP, 0);
+
+          System.Threading.Thread.Sleep(200);
+
           keybd_event((byte)Keys.VolumeDown, 0, 0, 0);
+          System.Threading.Thread.Sleep(50);
+          keybd_event((byte)Keys.VolumeDown, 0, KEYEVENTF_KEYUP, 0);
         }
 
         System.Threading.Thread.Sleep(500);
@@ -121,7 +137,7 @@ namespace HideVolumeOSD
 
       if (hwndRet == IntPtr.Zero)
       {
-        Log.Error("HideVolumeOSD: OSD window not found!");
+        Log.Debug("HideVolumeOSD: FindOSDWindow() OSD window not found!");
       }
 
       return hwndRet;
@@ -135,7 +151,18 @@ namespace HideVolumeOSD
     public void ShowOSD()
     {
       ShowWindow(hWndInject, 9); // SW_RESTORE
-                                 // show window on the screen 
+                                 // show window on the screen
+
+      //Make sure, the Volume OSD is properly restored by invoking the presentation
+      keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
+      System.Threading.Thread.Sleep(50);
+      keybd_event((byte)Keys.VolumeMute, 0, KEYEVENTF_KEYUP, 0);
+
+      System.Threading.Thread.Sleep(200);
+
+      keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
+      System.Threading.Thread.Sleep(50);
+      keybd_event((byte)Keys.VolumeMute, 0, KEYEVENTF_KEYUP, 0);
     }
   }
 }
