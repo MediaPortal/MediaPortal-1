@@ -28,53 +28,53 @@ using MediaPortal.GUI.Library;
 
 namespace HideVolumeOSD
 {
-	public class HideVolumeOSDLib
-	{
-		[DllImport("user32.dll")]
-		static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
+  public class HideVolumeOSDLib
+  {
+    [DllImport("user32.dll")]
+    static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
 
-		[DllImport("user32.dll", SetLastError = true)]
-		static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
+    [DllImport("user32.dll", SetLastError = true)]
+    static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
 
-		[DllImport("user32.dll", SetLastError = true)]
-		static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    [DllImport("user32.dll", SetLastError = true)]
+    static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-		IntPtr hWndInject = IntPtr.Zero;
+    IntPtr hWndInject = IntPtr.Zero;
 
     public HideVolumeOSDLib(bool IsMuted)
-		{
+    {
       hWndInject = FindOSDWindow();
 
-			int count = 0;
+      int count = 0;
 
-			while (hWndInject == IntPtr.Zero && count < 10)
-			{
-				if (IsMuted)
-				{
-					keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
-					keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
-				}
-				else
-				{
-					keybd_event((byte)Keys.VolumeUp, 0, 0, 0);
-					keybd_event((byte)Keys.VolumeDown, 0, 0, 0);
-				}
+      while (hWndInject == IntPtr.Zero && count < 10)
+      {
+        if (IsMuted)
+        {
+          keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
+          keybd_event((byte)Keys.VolumeMute, 0, 0, 0);
+        }
+        else
+        {
+          keybd_event((byte)Keys.VolumeUp, 0, 0, 0);
+          keybd_event((byte)Keys.VolumeDown, 0, 0, 0);
+        }
 
-				System.Threading.Thread.Sleep(500);
+        System.Threading.Thread.Sleep(500);
 
-				hWndInject = FindOSDWindow();
+        hWndInject = FindOSDWindow();
 
-				count++;
-			}
-      
+        count++;
+      }
+
       if (hWndInject == IntPtr.Zero)
       {
         Log.Error("HideVolumeOSD: VolumeOSD not found.");
       }
-		}
+    }
 
-		private IntPtr FindOSDWindow()
-		{
+    private IntPtr FindOSDWindow()
+    {
       IntPtr hwndRet = IntPtr.Zero;
       IntPtr hwndHost = IntPtr.Zero;
 
@@ -125,17 +125,17 @@ namespace HideVolumeOSD
       }
 
       return hwndRet;
-		}
+    }
 
-		public void HideOSD()
-		{
-			ShowWindow(hWndInject, 6); // SW_MINIMIZE
-		}
+    public void HideOSD()
+    {
+      ShowWindow(hWndInject, 6); // SW_MINIMIZE
+    }
 
-	  public void ShowOSD()
-	  {
-	    ShowWindow(hWndInject, 9); // SW_RESTORE
-	    // show window on the screen 
-	  }
-	}
+    public void ShowOSD()
+    {
+      ShowWindow(hWndInject, 9); // SW_RESTORE
+                                 // show window on the screen 
+    }
+  }
 }
