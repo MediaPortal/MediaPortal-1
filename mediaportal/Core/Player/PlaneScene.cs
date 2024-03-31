@@ -125,6 +125,10 @@ namespace MediaPortal.Player
     private bool UiVisible { get; set; }
     protected internal Thread WorkerThread = null;
 
+    private readonly System.Diagnostics.Stopwatch _PixelShaderClock = new System.Diagnostics.Stopwatch();
+    private long _PixelShaderCounter = 0;
+    private Texture[] _PixelShaderTexturesTemp = null;
+
     #endregion
 
     #region ctor
@@ -324,6 +328,15 @@ namespace MediaPortal.Player
         }
         GUIGraphicsContext.ForcedRefreshRate3D = false;
       }
+
+      if (this._PixelShaderTexturesTemp != null)
+      {
+        this._PixelShaderTexturesTemp[0].Dispose();
+        this._PixelShaderTexturesTemp[1].Dispose();
+        this._PixelShaderTexturesTemp = null;
+      }
+
+      this._PixelShaderClock.Stop();
     }
 
     /// <summary>
@@ -367,12 +380,36 @@ namespace MediaPortal.Player
           _subEngineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
           _posRelativeToFrame = xmlreader.GetValueAsBool("subtitles", "subPosRelative", false);
           _useRestoreMadvr1080P = xmlreader.GetValueAsBool("general", "useRestoreMadvr1080p", false);
+
+          #region Pixel Shaders
+          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+          {
+            string strProfile = PixelShaderCollection.SHADER_PROFILE_DEFAULT;
+
+            //Profile: based on video width
+            if (g_Player.MediaInfo != null && g_Player.MediaInfo.Width > 0)
+            {
+              if (g_Player.MediaInfo.Width > 1920)
+                strProfile = "UHD";
+              else if (g_Player.MediaInfo.Width >= 1440)
+                strProfile = "HD";
+              else
+                strProfile = "SD";
+            }
+
+            GUIGraphicsContext.VideoPixelShaders.Load(xmlreader.GetValueAsString("general", "VideoPixelShader" + strProfile, null), strProfile);
+          }
+          else
+            GUIGraphicsContext.VideoPixelShaders.Clear(); //not supported with MadVR
+          #endregion
         }
         catch (Exception ex)
         {
           Log.Error("PlaceScene: Init: {0}", ex.Message);
         }
       }
+
+      this._PixelShaderClock.Start();
     }
 
     /// <summary>
@@ -2078,7 +2115,153 @@ namespace MediaPortal.Player
         vertexBuffer.Unlock();
 
         GUIGraphicsContext.DX9Device.SetStreamSource(0, vertexBuffer, 0, CustomVertex.TransformedColoredTextured.StrideSize);
-        GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+                
+
+        if (GUIGraphicsContext.VideoPixelShaders.Count > 0)
+        {
+          //Disable alphatest; otherwise the shaders won't work
+          DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_ALPHATESTENABLE, 0);
+
+          //Pixel shader constants
+          float[] fConstData = new float[] {
+                    dstWidth, dstHeight, (float)this._PixelShaderCounter++, (float)this._PixelShaderClock.Elapsed.TotalSeconds,
+                    1.0f / dstWidth, 1.0f / dstHeight, 0, 0};
+         
+          GUIGraphicsContext.DX9Device.SetPixelShaderConstant(0, fConstData);
+
+          if (GUIGraphicsContext.VideoPixelShaders.Count > 1)
+          {
+            //Multiple Pixel Shaders
+
+            Surface target = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+            PresentParameters prms = GUIGraphicsContext.PresentationParameters;
+
+            if (this._PixelShaderTexturesTemp == null)
+            {
+              //Create temporary textures
+
+              this._PixelShaderTexturesTemp = new Texture[2];
+
+              this._PixelShaderTexturesTemp[0] = new Texture(
+                GUIGraphicsContext.DX9Device,
+                prms.BackBufferWidth,
+                prms.BackBufferHeight,
+                0,
+                Usage.RenderTarget,
+                prms.BackBufferFormat,
+                Pool.Default);
+
+              this._PixelShaderTexturesTemp[1] = new Texture(
+                GUIGraphicsContext.DX9Device,
+                prms.BackBufferWidth,
+                prms.BackBufferHeight,
+                0,
+                Usage.RenderTarget,
+                prms.BackBufferFormat,
+                Pool.Default);
+            }
+
+            bool bOdd = false;
+
+            Surface s;
+            Surface s0 = this._PixelShaderTexturesTemp[0].GetSurfaceLevel(0);
+            Surface s1 = this._PixelShaderTexturesTemp[1].GetSurfaceLevel(0);
+
+            for (int i = 0; i < GUIGraphicsContext.VideoPixelShaders.Count; i++)
+            {
+              //PixelShader
+              GUIGraphicsContext.DX9Device.PixelShader = GUIGraphicsContext.VideoPixelShaders[i].Value;
+
+              //Target surface
+              if (i + 1 == GUIGraphicsContext.VideoPixelShaders.Count) //last pixel shader
+                s = target;
+              else
+                s = bOdd ? s1 : s0;
+              
+              GUIGraphicsContext.DX9Device.SetRenderTarget(0, s);
+
+              //Clear temporary surface
+              if (i + 1 < GUIGraphicsContext.VideoPixelShaders.Count)
+                GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, RawColorsBGRA.Black, 1.0f, 0);
+
+              //Source texture
+              if (i == 0)
+                GUIGraphicsContext.DX9Device.SetTexture(0, (Texture)_textureAddress); //video frame
+              else
+                GUIGraphicsContext.DX9Device.SetTexture(0, this._PixelShaderTexturesTemp[bOdd ? 0 : 1]); //temp texture
+
+              if (i == 1)
+              {
+                //After first render we need to update texture VU coordinates based on backbuffer size
+
+                verts = (CustomVertex.TransformedColoredTextured*)vertexBuffer.LockToPointer(0, 0, this._vertexBufferLock);
+
+                verts[0].X = dstX;// - 0.5f;
+                verts[0].Y = dstY + dstHeight;// - 0.5f;
+                verts[0].Z = 0.0f;
+                verts[0].Rhw = 1.0f;
+                verts[0].Color = (int)lColorDiffuse;
+                verts[0].Tu = dstX / prms.BackBufferWidth;
+                verts[0].Tv = (dstY + dstHeight) / prms.BackBufferHeight;
+
+                verts[1].X = dstX;// - 0.5f;
+                verts[1].Y = dstY;// - 0.5f;
+                verts[1].Z = 0.0f;
+                verts[1].Rhw = 1.0f;
+                verts[1].Color = (int)lColorDiffuse;
+                verts[1].Tu = dstX / prms.BackBufferWidth;
+                verts[1].Tv = dstY / prms.BackBufferHeight;
+
+                verts[2].X = dstX + dstWidth;// - 0.5f;
+                verts[2].Y = dstY + dstHeight;// - 0.5f;
+                verts[2].Z = 0.0f;
+                verts[2].Rhw = 1.0f;
+                verts[2].Color = (int)lColorDiffuse;
+                verts[2].Tu = (dstX + dstWidth) / prms.BackBufferWidth;
+                verts[2].Tv = (dstY + dstHeight) / prms.BackBufferHeight;
+
+                verts[3].X = dstX + dstWidth;// - 0.5f;
+                verts[3].Y = dstY;// - 0.5f;
+                verts[3].Z = 0.0f;
+                verts[3].Rhw = 1.0f;
+                verts[3].Color = (int)lColorDiffuse;
+                verts[3].Tu = (dstX + dstWidth) / prms.BackBufferWidth;
+                verts[3].Tv = dstY / prms.BackBufferHeight;
+
+                for (int iV = 0; iV < 4; iV++)
+                {
+                  verts[iV].X -= 0.5f;
+                  verts[iV].Y -= 0.5f;
+                }
+
+                vertexBuffer.Unlock();
+              }
+
+              //Draw
+              GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+
+              GUIGraphicsContext.DX9Device.SetTexture(0, null);
+
+              //Swap temp textures
+              bOdd = !bOdd;
+            }
+
+            s0.Dispose();
+            s1.Dispose();
+            target.Dispose();
+          }
+          else
+          {
+            //Single Pixel Shader
+            GUIGraphicsContext.DX9Device.PixelShader = GUIGraphicsContext.VideoPixelShaders[0].Value;
+            GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+          }
+
+          //Remove Pixel Shader
+          GUIGraphicsContext.DX9Device.PixelShader = null;
+        }
+        else
+          GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
       }
     }
 
