@@ -1331,6 +1331,9 @@ namespace MediaPortal.GUI.Video
         dlg.AddLocalizedString(1064); // Bookmarks
       }
 
+      if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        dlg.AddLocalizedString(200096); // Pixel Shaders
+
       _IsDialogVisible = true;
       dlg.DoModal(GetID);
       _IsDialogVisible = false;
@@ -1396,7 +1399,90 @@ namespace MediaPortal.GUI.Video
         case 200091:
           ShowChapterStreamsMenu();
           break;
+
+        case 200096:
+          ShowPixelShaderMenu();
+          break;
       }
+    }
+
+    private void ShowPixelShaderMenu()
+    {
+      if (dlg == null)
+      {
+        dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+      }
+      if (dlg == null)
+      {
+        return;
+      }
+      dlg.Reset();
+      dlg.SetHeading(GUILocalizeStrings.Get(200096) + " [" + GUIGraphicsContext.VideoPixelShaders.Profile + ']'); // Pixel Shaders [{profile}]
+
+      dlg.AddLocalizedString(300063); // Add
+
+      GUIGraphicsContext.VideoPixelShaders.ForEach(ps => dlg.Add(GUILocalizeStrings.Get(300064) + ": " + ps.Key)); // Remove: 
+
+      // show dialog and wait for result
+      _IsDialogVisible = true;
+      dlg.DoModal(GetID);
+      _IsDialogVisible = false;
+
+      if (dlg.SelectedId == -1)
+        return;
+
+      if (dlg.SelectedLabel == 0)
+      {
+        string strName = this.ShowPixelShaderFileMenu();
+        if (strName != null)
+          GUIGraphicsContext.VideoPixelShaders.Add(strName);
+        else
+          return;
+      }
+      else
+        GUIGraphicsContext.VideoPixelShaders.RemoveAt(dlg.SelectedLabel - 1);
+
+      using (Profile.Settings xmlWritter = new Profile.MPSettings())
+      {
+        xmlWritter.SetValue("general", "VideoPixelShader" + GUIGraphicsContext.VideoPixelShaders.Profile, GUIGraphicsContext.VideoPixelShaders.GetNames());
+      }
+    }
+
+    private string ShowPixelShaderFileMenu()
+    {
+      if (dlg == null)
+      {
+        dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+      }
+      if (dlg == null)
+      {
+        return null;
+      }
+      dlg.Reset();
+      dlg.SetHeading(200097); // Select Pixel Shader
+
+      if (Directory.Exists(PixelShaderCollection.SHADER_FOLDER_NAME))
+      {
+        DirectoryInfo di = new DirectoryInfo(PixelShaderCollection.SHADER_FOLDER_NAME);
+        FileInfo[] files =  di.GetFiles("*" + PixelShaderCollection.SHADER_EXTENSION);
+        
+        for (int i = 0; i < files.Length; i++)
+        {
+          string strName = files[i].Name.Substring(0, files[i].Name.Length - PixelShaderCollection.SHADER_EXTENSION.Length);
+
+          dlg.Add(strName);
+        }
+      }
+
+      // show dialog and wait for result
+      _IsDialogVisible = true;
+      dlg.DoModal(GetID);
+      _IsDialogVisible = false;
+
+      if (dlg.SelectedId == -1)
+        return null;
+
+      return dlg.SelectedLabelText;
     }
 
     private void ShowChapterStreamsMenu()
