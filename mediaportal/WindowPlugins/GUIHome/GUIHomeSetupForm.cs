@@ -61,6 +61,14 @@ namespace MediaPortal.GUI.Home
         {
           cboxFormat.Items.Add("<Day> <Month> <DD>");
         }
+        if (!text.Equals("<DDD> <DD> <MMM>"))
+        {
+          cboxFormat.Items.Add("<DDD> <DD> <MMM>");
+        }
+        if (!text.Equals("<DDD> <DD> <Month>"))
+        {
+          cboxFormat.Items.Add("<DDD> <DD> <Month>");
+        }
         cboxFormat.Text = text;
       }
     }
