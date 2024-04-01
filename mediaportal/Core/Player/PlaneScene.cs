@@ -380,28 +380,6 @@ namespace MediaPortal.Player
           _subEngineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
           _posRelativeToFrame = xmlreader.GetValueAsBool("subtitles", "subPosRelative", false);
           _useRestoreMadvr1080P = xmlreader.GetValueAsBool("general", "useRestoreMadvr1080p", false);
-
-          #region Pixel Shaders
-          if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
-          {
-            string strProfile = PixelShaderCollection.SHADER_PROFILE_DEFAULT;
-
-            //Profile: based on video width
-            if (g_Player.MediaInfo != null && g_Player.MediaInfo.Width > 0)
-            {
-              if (g_Player.MediaInfo.Width > 1920)
-                strProfile = "UHD";
-              else if (g_Player.MediaInfo.Width >= 1440)
-                strProfile = "HD";
-              else
-                strProfile = "SD";
-            }
-
-            GUIGraphicsContext.VideoPixelShaders.Load(xmlreader.GetValueAsString("general", "VideoPixelShader" + strProfile, null), strProfile);
-          }
-          else
-            GUIGraphicsContext.VideoPixelShaders.Clear(); //not supported with MadVR
-          #endregion
         }
         catch (Exception ex)
         {
@@ -409,7 +387,29 @@ namespace MediaPortal.Player
         }
       }
 
+      #region Pixel Shaders
+      if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+      {
+        string strProfile = PixelShaderCollection.SHADER_PROFILE_DEFAULT;
+
+        //Profile: based on video width
+        if (g_Player.MediaInfo != null && g_Player.MediaInfo.Width > 0)
+        {
+          if (g_Player.MediaInfo.Width > 1920)
+            strProfile = "UHD";
+          else if (g_Player.MediaInfo.Width >= 1440)
+            strProfile = "HD";
+          else
+            strProfile = "SD";
+        }
+
+        GUIGraphicsContext.VideoPixelShaders.Load(strProfile);
+      }
+      else
+        GUIGraphicsContext.VideoPixelShaders.Clear(); //not supported with MadVR
+
       this._PixelShaderClock.Start();
+      #endregion
     }
 
     /// <summary>

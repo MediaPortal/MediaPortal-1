@@ -148,6 +148,18 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Load Pixel Shaders
     /// </summary>
+    /// <param name="strProfile">Profile name.</param>
+    public void Load(string strProfile)
+    {
+      using (Profile.Settings xmlReader = new Profile.MPSettings())
+      {
+        this.Load(xmlReader.GetValueAsString("general", "VideoPixelShader" + strProfile, null), strProfile);
+      }
+    }
+
+    /// <summary>
+    /// Load Pixel Shaders
+    /// </summary>
     /// <param name="strNames">Shader filenames separated by '|' (without extension).</param>
     /// <param name="strProfile">Profile name.</param>
     public void Load(string strNames, string strProfile)
