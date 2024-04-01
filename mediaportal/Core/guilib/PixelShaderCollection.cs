@@ -24,6 +24,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using SharpDX.Direct3D9;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.Library
 {
@@ -199,6 +200,41 @@ namespace MediaPortal.GUI.Library
         action(this._PixelShaders[i]);
     }
 
+    /// <summary>
+    /// Show Pixel Shader dialog menu
+    /// </summary>
+    public void ShowPixelShaderMenu()
+    {
+      IDialogbox dlg = (IDialogbox)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      dlg.Reset();
+      dlg.SetHeading(GUILocalizeStrings.Get(200096) + " [" + this._Profile + ']'); // Pixel Shaders [{profile}]
+
+      dlg.AddLocalizedString(300063); // Add
+
+      this.ForEach(ps => dlg.Add(GUILocalizeStrings.Get(300064) + ": " + ps.Key)); // Remove:
+
+      dlg.DoModal(GUIWindowManager.ActiveWindow);
+
+      if (dlg.SelectedId == -1)
+        return;
+
+      if (dlg.SelectedLabel == 0)
+      {
+        string strName = this.showPixelShaderFileMenu(dlg);
+        if (strName != null)
+          this.Add(strName);
+        else
+          return;
+      }
+      else
+        this.RemoveAt(dlg.SelectedLabel - 1);
+
+      using (Profile.Settings xmlWritter = new Profile.MPSettings())
+      {
+        xmlWritter.SetValue("general", "VideoPixelShader" + this._Profile, this.GetNames());
+      }
+    }
+    
     #endregion
 
     #region Private methods
@@ -237,6 +273,33 @@ namespace MediaPortal.GUI.Library
       }
 
       return null;
+    }
+
+    private string showPixelShaderFileMenu(IDialogbox dlg)
+    {
+      dlg.Reset();
+      dlg.SetHeading(200097); // Select Pixel Shader
+
+      if (Directory.Exists(SHADER_FOLDER_NAME))
+      {
+        DirectoryInfo di = new DirectoryInfo(SHADER_FOLDER_NAME);
+        FileInfo[] files = di.GetFiles("*" + SHADER_EXTENSION);
+
+        for (int i = 0; i < files.Length; i++)
+        {
+          string strName = files[i].Name.Substring(0, files[i].Name.Length - SHADER_EXTENSION.Length);
+
+          dlg.Add(strName);
+        }
+      }
+
+      // show dialog and wait for result
+      dlg.DoModal(GUIWindowManager.ActiveWindow);
+
+      if (dlg.SelectedId == -1)
+        return null;
+
+      return dlg.SelectedLabelText;
     }
 
     #endregion
