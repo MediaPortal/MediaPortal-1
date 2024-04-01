@@ -1361,6 +1361,9 @@ namespace TvPlugin
 
       dlg.AddLocalizedString(11000); // Crop settings
 
+      if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        dlg.AddLocalizedString(200096); // Pixel Shaders
+
       if (!g_Player.IsTVRecording)
       {
         dlg.AddLocalizedString(100748); // Program Information
@@ -1505,6 +1508,12 @@ namespace TvPlugin
 
         case 200073:
           ShowPostProcessingMenu();
+          break;
+
+        case 200096:
+          _isDialogVisible = true;
+          GUIGraphicsContext.VideoPixelShaders.ShowPixelShaderMenu();
+          _isDialogVisible = false;
           break;
       }
     }
