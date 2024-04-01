@@ -159,8 +159,6 @@ CMPAudioRenderer::~CMPAudioRenderer()
   if (m_pVolumeHandler)
     m_pVolumeHandler->Release();
 
-  delete m_pClock;
-
   if (m_pReferenceClock)
   {
     SetSyncSource(NULL);
@@ -177,9 +175,7 @@ CMPAudioRenderer::~CMPAudioRenderer()
     if (FAILED(hr))
       Log("Pipeline DisconnectAll failed with: (0x%08x)", hr);
   }
-
-  SAFE_RELEASE(m_pSettings);
-
+    
   delete m_pWASAPIRenderer;
   delete m_pAC3Encoder;
   delete m_pInBitDepthAdapter;
@@ -188,6 +184,9 @@ CMPAudioRenderer::~CMPAudioRenderer()
   delete m_pSampleRateConverter;
   delete m_pChannelMixer;
   delete m_pSampleCopier;
+  delete m_pClock;
+
+  SAFE_RELEASE(m_pSettings);
 
   Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
   if (m_pLogger)
