@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Player
 {
@@ -36,34 +37,39 @@ namespace MediaPortal.Player
         string text = reader.GetValueAsString("volume", "table",
                                               "0, 4095, 8191, 1638, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535");
 
-        if (text == string.Empty)
+        if (!string.IsNullOrWhiteSpace(text))
         {
-          return;
-        }
+          ArrayList array = new ArrayList();
 
-        ArrayList array = new ArrayList();
-
-        try
-        {
-          foreach (string volume in text.Split(new char[] {',', ';'}))
+          try
           {
-            if (volume == string.Empty)
+            foreach (string volume in text.Split(new char[] {',', ';'}))
             {
-              continue;
+              if (volume == string.Empty)
+              {
+                continue;
+              }
+
+              array.Add(Math.Max(this.Minimum, Math.Min(this.Maximum, int.Parse(volume))));
             }
 
-            array.Add(Math.Max(this.Minimum, Math.Min(this.Maximum, int.Parse(volume))));
+            array.Sort();
+
+            this.Init((int[])array.ToArray(typeof(int)));
+
+            Log.Debug("VolumeHandlerCustom: ctor() table loaded: {0}", text);
+
+            return;
           }
-
-          array.Sort();
-
-          this.Table = (int[])array.ToArray(typeof (int));
-        }
-        catch
-        {
-          // heh, its undocumented remember, no fancy logging going on here
+          catch (Exception ex)
+          {
+            Log.Error("VolumeHandlerCustom: ctor() {0}", ex.Message);
+          }
         }
       }
+
+      //Default
+      this.Init(LoadFromRegistry());
     }
 
     #endregion Constructors
