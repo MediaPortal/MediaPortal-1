@@ -164,6 +164,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="strProfile">Profile name.</param>
     public void Load(string strNames, string strProfile)
     {
+      Log.Debug("PixelShaderCollection: Load() Names:'{0}' Profile:'{1}'", strNames, strProfile);
+
       this.Clear();
 
       this._Profile = !string.IsNullOrWhiteSpace(strProfile) ? strProfile : SHADER_PROFILE_DEFAULT;
