@@ -151,6 +151,9 @@ namespace MediaPortal.GUI.Library
     /// <param name="strProfile">Profile name.</param>
     public void Load(string strProfile)
     {
+      if (string.IsNullOrWhiteSpace(strProfile))
+        strProfile = SHADER_PROFILE_DEFAULT;
+
       using (Profile.Settings xmlReader = new Profile.MPSettings())
       {
         this.Load(xmlReader.GetValueAsString("general", "VideoPixelShader" + strProfile, null), strProfile);
