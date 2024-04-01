@@ -155,6 +155,7 @@ namespace MediaPortal.GUI.Video
 
           if ((idMovieImg >= 0) && (idFileImg >= 0))
           {
+            g_Player.SetResumeBDTitleState = VideoDatabase.GetTitleBDId(idFileImg, out resumeData);
             timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFileImg, out resumeData, g_Player.SetResumeBDTitleState);
 
             if (timeMovieStopped > 0)
@@ -185,7 +186,11 @@ namespace MediaPortal.GUI.Video
             g_Player.Stop();
           }
 
-          g_Player.PlayBD(drive + @"\BDMV\index.bdmv");
+          if (timeMovieStopped > 0)
+            g_Player.Play(drive + @"\BDMV\index.bdmv", g_Player.MediaType.Video, g_Player.SetResumeBDTitleState, true);
+          else
+            g_Player.PlayBD(drive + @"\BDMV\index.bdmv");
+
           g_Player.ShowFullScreenWindow();
 
           ///*

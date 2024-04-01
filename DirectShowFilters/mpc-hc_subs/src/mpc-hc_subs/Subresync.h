@@ -7,13 +7,13 @@ public:
 	CSubresync(void);
 	~CSubresync(void);
 	
-	void AddShift(REFERENCE_TIME time, int val);
+	void AddShift(REFERENCE_TIME time, REFERENCE_TIME val);
 	void RemoveAll();
 	bool IsModified() { return !m_delayTime.IsEmpty(); };
 	bool SaveToDisk(ISubStream* pSubStream, double fps, const CString & movieName);
 private:
 	CAtlArray<REFERENCE_TIME> m_delayTime;
-	CAtlArray<int> m_delayVal; 
+	CAtlArray<REFERENCE_TIME> m_delayVal;
 
 	enum {NONE = 0, VOBSUB, TEXTSUB};
 	int m_mode;
@@ -21,7 +21,7 @@ private:
 	CSimpleTextSubtitle m_sts;
 
 	void SetSubtitle(ISubStream* pSubStream, double fps);
-	int FindNearestSub(__int64 rtPos);
-	void ShiftSubtitle(int nItem, long lValue);
+	int FindNearestSub(REFERENCE_TIME rtPos);
+	void ShiftSubtitle(int nItem, REFERENCE_TIME rtValue);
 
 };

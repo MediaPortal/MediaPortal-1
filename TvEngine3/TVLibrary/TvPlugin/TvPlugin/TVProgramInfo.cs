@@ -256,14 +256,17 @@ namespace TvPlugin
       }
       if (control == lstUpcomingEpsiodes)
       {
-        GUIListItem item = lstUpcomingEpsiodes.SelectedListItem;
-        if ((item != null) && (item.MusicTag != null))
+        if (actionType == MediaPortal.GUI.Library.Action.ActionType.ACTION_SELECT_ITEM)
         {
-          OnRecordProgram(item.MusicTag as Program);
-        }
-        else
-        {
-          Log.Warn("TVProgrammInfo.OnClicked: item {0} was NULL!", lstUpcomingEpsiodes.SelectedItem.ToString());
+          GUIListItem item = lstUpcomingEpsiodes.SelectedListItem;
+          if ((item != null) && (item.MusicTag != null))
+          {
+            OnRecordProgram(item.MusicTag as Program);
+          }
+          else
+          {
+            Log.Warn("TVProgrammInfo.OnClicked: item {0} was NULL!", lstUpcomingEpsiodes.SelectedItem.ToString());
+          }
         }
       }
 

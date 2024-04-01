@@ -544,7 +544,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\TVDatabase\references\MySql.Data.dll"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLite.dll"
-  File "${git_TVServer}\TVDatabase\references\System.Data.SQLite.DLL"
+  File /oname=System.Data.SQLite.dll "${git_TVServer}\TVDatabase\references\System.Data.SQLite_${Architecture}.dll"
   File "${git_TVServer}\TVDatabase\references\log4net.dll"
   File "${git_TVServer}\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
@@ -884,7 +884,7 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${git_TVServer}\TVDatabase\references\MySql.Data.dll"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLite.dll"
-  File "${git_TVServer}\TVDatabase\references\System.Data.SQLite.DLL"
+  File /oname=System.Data.SQLite.dll "${git_TVServer}\TVDatabase\references\System.Data.SQLite_${Architecture}.dll"
   File "${git_TVServer}\TVDatabase\references\log4net.dll"
   File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
 

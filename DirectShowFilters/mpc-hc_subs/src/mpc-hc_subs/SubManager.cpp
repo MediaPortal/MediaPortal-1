@@ -855,8 +855,9 @@ int CSubManager::GetDelay()
 
 void CSubManager::SetDelay(int delay_ms)
 {
-	m_subresync.AddShift(m_rtNow + m_delay, delay_ms - GetDelay());
-	m_delay = delay_ms * 10000;
+	REFERENCE_TIME rtDelay = delay_ms * 10000;
+	m_subresync.AddShift(m_rtNow + m_delay, rtDelay - m_delay);
+	m_delay = rtDelay;
 }
 
 void CSubManager::SaveToDisk()
