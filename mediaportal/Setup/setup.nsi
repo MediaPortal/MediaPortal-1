@@ -525,6 +525,8 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\Profiles\*"
   SetOutPath "$MPdir.Base\Wizards"
   File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\Wizards\*"
+  SetOutPath "$MPdir.Base\Shaders"
+  File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\Shaders\*"
 
   # special MP directories
   SetOutPath "$MPdir.Language"
@@ -1032,7 +1034,9 @@ SectionEnd
   Delete "$MPdir.Base\log4net.dll"
   Delete "$MPdir.Base\TsReader.ax"
   Delete "$MPdir.Base\cccp.ax"
-  
+  ; Shaders
+  RMDir /r "$MPdir.Base\Shaders"
+    
 !macroend
 
 Section "-Powerscheduler Client plugin" SecPowerScheduler

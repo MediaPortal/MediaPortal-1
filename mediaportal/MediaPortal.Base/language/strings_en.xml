@@ -2206,6 +2206,8 @@
     <String id="200093">Disc mount time out reached!</String>
     <String id="200094">Keep trying for further 60 seconds?</String>
     <String id="200095">Video Stream</String>
+    <String id="200096">Pixel Shaders</String>
+    <String id="200097">Select Pixel Shader</String>
     <String id="300000">Use pixel ratio correction</String>
     <String id="300001">Correction mode</String>
     <String id="300002">Display mode</String>

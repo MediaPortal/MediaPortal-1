@@ -445,6 +445,7 @@
     <Compile Include="guilib\IDialogbox2.cs" />
     <Compile Include="guilib\IStandardKeyboard.cs" />
     <Compile Include="guilib\GUIThemeManager.cs" />
+    <Compile Include="guilib\PixelShaderCollection.cs" />
     <Compile Include="guilib\RepeatBehavior.cs" />
     <Compile Include="guilib\TextureFrame.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
