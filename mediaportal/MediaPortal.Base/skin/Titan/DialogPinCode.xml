@@ -27,7 +27,7 @@
             <posY>811</posY>
             <width>53</width>
             <height>41</height>
-            <texture>starblue_rating.png</texture>
+            <texture>starblack_rating.png</texture>
     		<animation effect="fade" time="250">WindowOpen</animation>
     		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
     		<animation effect="fade" time="0">WindowClose</animation>
@@ -41,7 +41,7 @@
             <posY>811</posY>
             <width>53</width>
             <height>41</height>
-            <texture>starwhite_rating.png</texture>
+            <texture>starblue_rating.png</texture>
     		<animation effect="fade" time="250">WindowOpen</animation>
     		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
     		<animation effect="fade" time="0">WindowClose</animation>
@@ -55,7 +55,7 @@
             <posY>811</posY>
             <width>53</width>
             <height>41</height>
-            <texture>starblue_rating.png</texture>
+            <texture>starblack_rating.png</texture>
     		<animation effect="fade" time="250">WindowOpen</animation>
     		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
     		<animation effect="fade" time="0">WindowClose</animation>
@@ -69,7 +69,7 @@
             <posY>811</posY>
             <width>53</width>
             <height>41</height>
-            <texture>starwhite_rating.png</texture>
+            <texture>starblue_rating.png</texture>
     		<animation effect="fade" time="250">WindowOpen</animation>
     		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
     		<animation effect="fade" time="0">WindowClose</animation>
@@ -83,7 +83,7 @@
             <posY>811</posY>
             <width>53</width>
             <height>41</height>
-            <texture>starblue_rating.png</texture>
+            <texture>starblack_rating.png</texture>
     		<animation effect="fade" time="250">WindowOpen</animation>
     		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
     		<animation effect="fade" time="0">WindowClose</animation>
@@ -97,7 +97,7 @@
             <posY>811</posY>
             <width>53</width>
             <height>41</height>
-            <texture>starwhite_rating.png</texture>
+            <texture>starblue_rating.png</texture>
     		<animation effect="fade" time="250">WindowOpen</animation>
     		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
     		<animation effect="fade" time="0">WindowClose</animation>
@@ -111,7 +111,7 @@
             <posY>811</posY>
             <width>53</width>
             <height>41</height>
-            <texture>starblue_rating.png</texture>
+            <texture>starblack_rating.png</texture>
     		<animation effect="fade" time="250">WindowOpen</animation>
     		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
     		<animation effect="fade" time="0">WindowClose</animation>
@@ -125,7 +125,7 @@
             <posY>811</posY>
             <width>53</width>
             <height>41</height>
-            <texture>starwhite_rating.png</texture>
+            <texture>starblue_rating.png</texture>
     		<animation effect="fade" time="250">WindowOpen</animation>
     		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
     		<animation effect="fade" time="0">WindowClose</animation>
