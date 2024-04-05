@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 /*
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -541,6 +541,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\TVDatabase\references\Gentle.Common.DLL"
   File "${git_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.dll"
+  File "${git_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.Interceptor.dll"
   File "${git_TVServer}\TVDatabase\references\MySql.Data.dll"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLite.dll"
@@ -792,6 +793,7 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\Gentle.Common.DLL"
   Delete "$INSTDIR\Gentle.Framework.DLL"
   Delete "$INSTDIR\Gentle.Provider.MySQL.dll"
+  Delete "$INSTDIR\Gentle.Provider.MySQL.Interceptor.dll"
   Delete "$INSTDIR\MySql.Data.dll"
   Delete "$INSTDIR\Gentle.Provider.SQLServer.dll"
   Delete "$INSTDIR\Gentle.Provider.SQLite.dll"
@@ -881,6 +883,7 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${git_TVServer}\TVDatabase\references\Gentle.Common.DLL"
   File "${git_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.dll"
+  File "${git_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.Interceptor.dll"
   File "${git_TVServer}\TVDatabase\references\MySql.Data.dll"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLite.dll"
@@ -939,6 +942,7 @@ ${MementoSectionEnd}
   Delete "$MPdir.Base\Gentle.Common.DLL"
   Delete "$MPdir.Base\Gentle.Framework.DLL"
   Delete "$MPdir.Base\Gentle.Provider.MySQL.dll"
+  Delete "$MPdir.Base\Gentle.Provider.MySQL.Interceptor.dll"
   Delete "$MPdir.Base\MySql.Data.dll"
   Delete "$MPdir.Base\Gentle.Provider.SQLServer.dll"
   Delete "$MPdir.Base\Gentle.Provider.SQLite.dll"

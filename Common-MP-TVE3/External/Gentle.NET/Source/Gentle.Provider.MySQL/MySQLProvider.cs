@@ -14,6 +14,7 @@ using System;
 using System.Data;
 using Gentle.Common;
 using Gentle.Framework;
+using Gentle.Provider.MySQL.Interceptor;
 using MySql.Data.MySqlClient;
 
 namespace Gentle.Provider.MySQL
@@ -83,6 +84,7 @@ namespace Gentle.Provider.MySQL
 			try
 			{
 				IDbConnection dbc = new MySqlConnection( ConnectionString );
+				Utf8mb3.Enable();
 				dbc.Open();
 				Check.VerifyEquals( dbc.State, ConnectionState.Open, Error.NoNewConnection );
 				return dbc;
