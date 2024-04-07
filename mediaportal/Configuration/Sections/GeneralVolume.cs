@@ -78,8 +78,8 @@ namespace MediaPortal.Configuration.Sections
       {
         string isSettingExist = reader.GetValueAsString("volume", "handler", "");
         int volumeStyle = reader.GetValueAsInt("volume", "handler", 1);
-        bool isDigital = reader.GetValueAsBool("volume", "digital", false);
-        mpCBHideWinOSD.Checked = reader.GetValueAsBool("volume", "hideWindowsOSD", true);
+        bool isDigital = reader.GetValueAsBool("volume", "digital", true);
+        mpCBHideWinOSD.Checked = reader.GetValueAsBool("volume", "hideWindowsOSD", false);
 
         _useClassicHandler.Checked = volumeStyle == 0;
         _useWindowsHandler.Checked = volumeStyle == 1;

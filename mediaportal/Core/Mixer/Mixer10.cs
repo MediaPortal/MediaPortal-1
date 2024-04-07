@@ -114,19 +114,10 @@ namespace MediaPortal.Mixer
     public void CreateDevice(EventHandler<DefaultDeviceChangedEventArgs> aDefaultDeviceChangedHandler,
                         EventHandler<AudioEndpointVolumeCallbackEventArgs> aVolumeChangedHandler)
     {
-      Log.Debug("Mixer10: CreateDevice()");
-
       try
       {
         //Create device and register default device change notification
         _mMdeviceEnumerator = new MMDeviceEnumerator();
-        if (iMultiMediaNotificationClient != null)
-        {
-          Log.Debug("Mixer10: CreateDevice() dispose old MMNotificationClient");
-          iMultiMediaNotificationClient.DefaultDeviceChanged -= iDefaultDeviceChangedHandler;
-          iMultiMediaNotificationClient.Dispose();
-          iMultiMediaNotificationClient = null;
-        }
         iMultiMediaNotificationClient = new MMNotificationClient(_mMdeviceEnumerator);
         iMultiMediaNotificationClient.DefaultDeviceChanged += iDefaultDeviceChangedHandler = aDefaultDeviceChangedHandler;
         var mMdeviceList = _mMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active);
@@ -138,12 +129,6 @@ namespace MediaPortal.Mixer
 
           //Register to get volume modifications
           if (_mMdevice != null) iAudioEndpointVolume = AudioEndpointVolume.FromDevice(_mMdevice);
-          if (iAudioEndpointVolumeMixerCallback != null)
-          {
-            Log.Debug("Mixer10: CreateDevice() dispose old AudioEndpointVolumeCallback");
-            iAudioEndpointVolumeMixerCallback.NotifyRecived -= iVolumeChangedHandler;
-            iAudioEndpointVolumeMixerCallback = null;
-          }
           iAudioEndpointVolumeMixerCallback = new CSCore.CoreAudioAPI.AudioEndpointVolumeCallback();
           iAudioEndpointVolumeMixerCallback.NotifyRecived += iVolumeChangedHandler = aVolumeChangedHandler;
           iAudioEndpointVolume?.RegisterControlChangeNotify(iAudioEndpointVolumeMixerCallback);
