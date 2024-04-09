@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -206,7 +206,7 @@ namespace SetupTv
 
         case ProviderType.MySql:
           if (database == "") database = "mysql";
-          return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};",
+          return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};commandinterceptors=Gentle.Provider.MySQL.Interceptor.Interceptor,Gentle.Provider.MySQL.Interceptor;",
                                server, userid, password, database, timeout);
       }
       return "";
@@ -873,6 +873,12 @@ namespace SetupTv
           tbServiceDependency.Enabled = true;
           tbServiceDependency.BackColor = tbServerHostName.BackColor;
           tbServiceDependency.Text = @"MySQL5";
+          string dependency = ServiceHelper.ReadDependency();
+          if (!string.IsNullOrEmpty(dependency))
+          {
+            Log.Info("SetupDatabaseForm: Read dependency for TvService - {0}", dependency);
+            tbServiceDependency.Text = dependency;
+          }
         }
       }
     }
@@ -889,6 +895,12 @@ namespace SetupTv
           tbServiceDependency.Enabled = true;
           tbServiceDependency.BackColor = tbServerHostName.BackColor;
           tbServiceDependency.Text = @"SQLBrowser";
+          string dependency = ServiceHelper.ReadDependency();
+          if (!string.IsNullOrEmpty(dependency))
+          {
+            Log.Info("SetupDatabaseForm: Read dependency for TvService - {0}", dependency);
+            tbServiceDependency.Text = dependency;
+          }
         }
       }
     }
