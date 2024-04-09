@@ -64,3 +64,4 @@ bdfea2a7-2206-4fae-8165-02342031848c;0.2.8.0;AnyCPU;MyDailyComics
 bd702cf2-87b2-48ea-9bd6-d1ee41d255df;0.4.1.0;AnyCPU;Earth TV
 4624d03e-812a-43c4-bca3-aee1b03ab0b5;0.2.0.0;AnyCPU;Videoload (German only)
 9eec24ba-b581-42fd-8e3b-b0ac1e677574;1.7.0.0;AnyCPU;Swedish TV and Radio logos
+5071effa-c93f-4d7f-88dd-7d72e89c0d6f;1.0.0.4;AnyCPU;MPPhotoSlideshow
