@@ -203,7 +203,10 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Microsoft SQL-Server 2005</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
-    <value>MySQL 5</value>
+    <value>MySQL 8</value>
+  </data>
+  <data name="DBMSType_rbMariaDB" xml:space="preserve">
+    <value>MariaDB 10</value>
   </data>
   <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
     <value>Es ist bereits ein SQL Server vorhanden und dieser soll verwendet werden.</value>

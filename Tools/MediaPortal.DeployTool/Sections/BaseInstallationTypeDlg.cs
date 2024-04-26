@@ -84,10 +84,10 @@ namespace MediaPortal.DeployTool.Sections
         InstallationProperties.Instance.Set("ConfigureDBMSFirewall", "1");
         InstallationProperties.Instance.Set("DBMSPassword", "MediaPortal");
         // Default DBMS
-        InstallationProperties.Instance.Set("DBMSType", "mysql");
+        InstallationProperties.Instance.Set("DBMSType", "MariaDB");
         InstallationProperties.Instance.Set("DBMSDir",
                                             InstallationProperties.Instance["ProgramFiles"] +
-                                            "\\MySQL\\MySQL Server 8.3");
+                                            "\\MariaDB\\MariaDB 10.0");
       }
     }
 

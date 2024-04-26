@@ -74,14 +74,14 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // lblMySQLText
       // 
-      this.lblMySQLText.AutoSize = true;
       this.lblMySQLText.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.lblMySQLText.ForeColor = System.Drawing.Color.White;
       this.lblMySQLText.Location = new System.Drawing.Point(12, 16);
       this.lblMySQLText.Name = "lblMySQLText";
-      this.lblMySQLText.Size = new System.Drawing.Size(562, 13);
+      this.lblMySQLText.Size = new System.Drawing.Size(562, 30);
       this.lblMySQLText.TabIndex = 10;
-      this.lblMySQLText.Text = "Check above value if you want to upgrade your current MySQL 5.1, 5.6, 5.7 to 8.3 (old db will not be lost)";
+      this.lblMySQLText.Text = "Check above value if you want to upgrade your current MySQL 5.1, 5.6, 5.7 to 8.3 " +
+    "(old db will not be lost)";
       // 
       // grpMySQL
       // 
@@ -114,7 +114,7 @@ namespace MediaPortal.DeployTool.Sections
       this.lblRecommended.ForeColor = System.Drawing.Color.White;
       this.lblRecommended.Location = new System.Drawing.Point(330, 47);
       this.lblRecommended.Name = "lblRecommended";
-      this.lblRecommended.Size = new System.Drawing.Size(195, 16);
+      this.lblRecommended.Size = new System.Drawing.Size(259, 16);
       this.lblRecommended.TabIndex = 14;
       this.lblRecommended.Text = "MySQL Upgrade 5.1, 5.6, 5.7 to 8.3";
       // 

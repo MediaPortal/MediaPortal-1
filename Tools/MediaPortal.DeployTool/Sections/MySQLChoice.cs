@@ -54,7 +54,6 @@ namespace MediaPortal.DeployTool.Sections
       // Direct to upgrade
       if (InstallationProperties.Instance.Get("InstallType") != "tvserver_master")
       {  // install includes MP so check skin choice
-
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.SkinChoice);
       }
       // tv server only install so no need for skin choice
@@ -81,7 +80,7 @@ namespace MediaPortal.DeployTool.Sections
           InstallationProperties.Instance.Set("ConfigureDBMSFirewall", "1");
           InstallationProperties.Instance.Set("DBMSPassword", "MediaPortal");
           // Default DBMS
-          InstallationProperties.Instance.Set("DBMSType", "mysql");
+          InstallationProperties.Instance.Set("DBMSType", "MySQL");
           InstallationProperties.Instance.Set("DBMSDir",
             InstallationProperties.Instance["ProgramFiles"] +
             "\\MySQL\\MySQL Server 8.3");

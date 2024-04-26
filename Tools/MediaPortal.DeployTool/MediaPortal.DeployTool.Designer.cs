@@ -316,11 +316,20 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MySQL 5.
+        ///   Looks up a localized string similar to MySQL.
         /// </summary>
         internal static string DBMSType_rbMySQL {
             get {
                 return ResourceManager.GetString("DBMSType_rbMySQL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MariaDB.
+        /// </summary>
+        internal static string DBMSType_rbMariaDB {
+            get {
+                return ResourceManager.GetString("DBMSType_rbMariaDB", resourceCulture);
             }
         }
         

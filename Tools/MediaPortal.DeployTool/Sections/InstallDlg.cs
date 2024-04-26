@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -208,13 +208,17 @@ switch (InstallationProperties.Instance["InstallType"])
       {
         case "singleseat":
           AddPackageToListView(new MediaPortalChecker());
-          if (InstallationProperties.Instance["DBMSType"] == "msSQL2005")
+          if (InstallationProperties.Instance["DBMSType"] == "MSSQL")
           {
             AddPackageToListView(new MSSQLExpressChecker());
           }
-          if (InstallationProperties.Instance["DBMSType"] == "mysql")
+          if (InstallationProperties.Instance["DBMSType"] == "MySQL")
           {
             AddPackageToListView(new MySQLChecker());
+          }
+          if (InstallationProperties.Instance["DBMSType"] == "MariaDB")
+          {
+            AddPackageToListView(new MariaDBChecker());
           }
 
 #if NO_TV_SERVER
@@ -226,13 +230,17 @@ switch (InstallationProperties.Instance["InstallType"])
           break;
 
         case "tvserver_master":
-          if (InstallationProperties.Instance["DBMSType"] == "msSQL2005")
+          if (InstallationProperties.Instance["DBMSType"] == "MSSQL")
           {
             AddPackageToListView(new MSSQLExpressChecker());
           }
-          if (InstallationProperties.Instance["DBMSType"] == "mysql")
+          if (InstallationProperties.Instance["DBMSType"] == "MySQL")
           {
             AddPackageToListView(new MySQLChecker());
+          }
+          if (InstallationProperties.Instance["DBMSType"] == "MariaDB")
+          {
+            AddPackageToListView(new MariaDBChecker());
           }
 
 #if NO_TV_SERVER

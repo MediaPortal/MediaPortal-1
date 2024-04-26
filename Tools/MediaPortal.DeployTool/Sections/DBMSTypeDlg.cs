@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -33,8 +33,8 @@ namespace MediaPortal.DeployTool.Sections
       InitializeComponent();
       type = DialogType.DBMSType;
 
-      bMySQL.Image = Images.Choose_button_on;
-      dbmsType = 2;
+      bExists.Image = Images.Choose_button_on;
+      dbmsType = 4;
       UpdateUI();
     }
 
@@ -45,6 +45,7 @@ namespace MediaPortal.DeployTool.Sections
       labelHeading.Text = Localizer.GetBestTranslation("DBMSType_labelHeading");
       rbMSSQL.Text = Localizer.GetBestTranslation("DBMSType_rbMSSQL");
       rbMySQL.Text = Localizer.GetBestTranslation("DBMSType_rbMySQL");
+      rbMariaDB.Text = Localizer.GetBestTranslation("DBMSType_rbMariaDB");
       rbDBAlreadyInstalled.Text = Localizer.GetBestTranslation("DBMSType_rbDBAlreadyInstalled");
 
       //MSSQL2005 is not supported on Windows 7 and later
@@ -64,7 +65,7 @@ namespace MediaPortal.DeployTool.Sections
 
     public override DeployDialog GetNextDialog()
     {
-      if (dbmsType == 3)
+      if (dbmsType == 4)
       {
         if (InstallationProperties.Instance["InstallType"] == "singleseat")
         {
@@ -85,12 +86,15 @@ namespace MediaPortal.DeployTool.Sections
       switch (dbmsType)
       {
         case 1:
-          InstallationProperties.Instance.Set("DBMSType", "msSQL2005");
+          InstallationProperties.Instance.Set("DBMSType", "MSSQL");
           break;
         case 2:
-          InstallationProperties.Instance.Set("DBMSType", "mysql");
+          InstallationProperties.Instance.Set("DBMSType", "MySQL");
           break;
         case 3:
+          InstallationProperties.Instance.Set("DBMSType", "MariaDB");
+          break;
+        case 4:
           InstallationProperties.Instance.Set("DBMSType", "DBAlreadyInstalled");
           break;
       }
@@ -102,6 +106,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       bMS.Image = Images.Choose_button_on;
       bMySQL.Image = Images.Choose_button_off;
+      bMariaDB.Image = Images.Choose_button_off;
       bExists.Image = Images.Choose_button_off;
       dbmsType = 1;
     }
@@ -110,16 +115,27 @@ namespace MediaPortal.DeployTool.Sections
     {
       bMS.Image = Images.Choose_button_off;
       bMySQL.Image = Images.Choose_button_on;
+      bMariaDB.Image = Images.Choose_button_off;
       bExists.Image = Images.Choose_button_off;
       dbmsType = 2;
+    }
+
+    private void bMariaDB_Click(object sender, EventArgs e)
+    {
+      bMS.Image = Images.Choose_button_off;
+      bMySQL.Image = Images.Choose_button_off;
+      bMariaDB.Image = Images.Choose_button_on;
+      bExists.Image = Images.Choose_button_off;
+      dbmsType = 3;
     }
 
     private void bExists_Click(object sender, EventArgs e)
     {
       bMS.Image = Images.Choose_button_off;
       bMySQL.Image = Images.Choose_button_off;
+      bMariaDB.Image = Images.Choose_button_off;
       bExists.Image = Images.Choose_button_on;
-      dbmsType = 3;
+      dbmsType = 4;
     }
 
     private void lbMSSQL_Click(object sender, EventArgs e)

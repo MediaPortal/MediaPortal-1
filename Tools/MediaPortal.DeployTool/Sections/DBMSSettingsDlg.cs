@@ -29,8 +29,10 @@ namespace MediaPortal.DeployTool.Sections
     {
       InitializeComponent();
       type = DialogType.DBMSSettings;
-      if (InstallationProperties.Instance["DBMSType"] == "msSQL2005")
+      if (InstallationProperties.Instance["DBMSType"] == "MSSQL")
         textBoxDir.Text = installationPath = InstallationProperties.Instance["ProgramFiles"] + "\\Microsoft SQL Server";
+      if (InstallationProperties.Instance["DBMSType"] == "MariaDB")
+        textBoxDir.Text = installationPath = InstallationProperties.Instance["ProgramFiles"] + "\\MariaDB\\MariaDB 10.0";
       else
         textBoxDir.Text = installationPath = InstallationProperties.Instance["ProgramFiles"] + "\\MySQL\\MySQL Server 8.3";
       UpdateUI();
