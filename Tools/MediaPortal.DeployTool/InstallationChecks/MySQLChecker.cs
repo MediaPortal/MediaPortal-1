@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -33,14 +33,16 @@ namespace MediaPortal.DeployTool.InstallationChecks
     [DllImport("kernel32")]
     private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
 
-    private static readonly string _arch = Utils.Is64bitOS ? "64" : "32";
-    private static readonly string prg = "MySQL56" + _arch;
+    private static readonly string prg = "MySQL83";
     private static readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
 
     private readonly string _dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
-                                       "\\MySQL\\MySQL Server 5.6";
+                                       "\\MySQL\\MySQL Server 8.3";
 
     private static bool MySQL51 = false;
+    private static bool MySQL56 = false;
+    private static bool MySQL57 = false;
+
     private static string strMySQL = "";
     private static string strMySQLData = "";
 
@@ -76,7 +78,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public string GetDisplayName()
     {
-      return "MySQL 5.6";
+      return "MySQL 8.3";
     }
 
     public string GetIconName()
@@ -97,6 +99,38 @@ namespace MediaPortal.DeployTool.InstallationChecks
       {
         strMySQL = key.GetValue("Location").ToString();
         if (Utils.CheckTargetDir(strMySQL) && strMySQL.Contains("MySQL Server 5.1"))
+        {
+          strMySQLData = key.GetValue("DataLocation").ToString();
+          key.Close();
+          return true;
+        }
+      }
+      return false;
+    }
+
+    private bool IsMySQL56Installed()
+    {
+      RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.6");
+      if (key != null)
+      {
+        strMySQL = key.GetValue("Location").ToString();
+        if (Utils.CheckTargetDir(strMySQL) && strMySQL.Contains("MySQL Server 5.6"))
+        {
+          strMySQLData = key.GetValue("DataLocation").ToString();
+          key.Close();
+          return true;
+        }
+      }
+      return false;
+    }
+
+    private bool IsMySQL57Installed()
+    {
+      RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.7");
+      if (key != null)
+      {
+        strMySQL = key.GetValue("Location").ToString();
+        if (Utils.CheckTargetDir(strMySQL) && strMySQL.Contains("MySQL Server 5.7"))
         {
           strMySQLData = key.GetValue("DataLocation").ToString();
           key.Close();
@@ -226,6 +260,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public bool Install()
     {
       MySQL51 = IsMySQL51Installed();
+      MySQL56 = IsMySQL56Installed();
+      MySQL57 = IsMySQL57Installed();
+
       bool IsBackupDB = false;
       if (MySQL51)
       {
@@ -233,6 +270,18 @@ namespace MediaPortal.DeployTool.InstallationChecks
         IsBackupDB = BackupDB();
         Utils.UninstallMSI("{561AB451-B967-475C-80E0-3B6679C38B52}");
         Utils.UninstallMSI("{291D8FE1-ED05-4934-80CE-A5F6B7A8718D}");
+      }
+      if (MySQL56)
+      {
+        // Backup MySQL 5.6 Database and uninstall current MySQL 5.6
+        IsBackupDB = BackupDB();
+        Utils.UninstallMSI("{56DA0CB5-ABD2-4318-BEAB-62FDBC9B12CC}");
+      }
+      if (MySQL57)
+      {
+        // Backup MySQL 5.7 Database and uninstall current MySQL 5.7
+        IsBackupDB = BackupDB();
+        Utils.UninstallMSI("{F59F931A-0282-45D0-97CD-33F8B43AE3C2}");
       }
 
       if (!IsBackupDB)
@@ -329,7 +378,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       try
       {
         // Try restore DB here first
-        if (MySQL51)
+        if (MySQL51 || MySQL56 || MySQL57)
         {
           RestoreDB();
           ForceUpdateDB();
@@ -386,7 +435,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return false;
       }
 
-      if (MySQL51)
+      if (MySQL51 || MySQL56 || MySQL57)
       {
         RestoreDB();
         ForceUpdateDB();
@@ -396,7 +445,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool UnInstall()
     {
-      Utils.UninstallMSI("{56DA0CB5-ABD2-4318-BEAB-62FDBC9B12CC}");
+      Utils.UninstallMSI("{D1DA7A5D-E358-40A5-8DB0-94B563487A74}");
       return true;
     }
 
@@ -425,7 +474,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return result;
       }
 
-      RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.6");
+      RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 8.3");
       if (key == null)
       {
         result.state = CheckState.NOT_INSTALLED;
@@ -454,6 +503,62 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
 
       RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
+      if (key == null)
+      {
+        result.state = CheckState.NOT_INSTALLED;
+      }
+      else
+      {
+        key.Close();
+        result.state = CheckState.INSTALLED;
+      }
+      return result;
+    }
+
+    public static CheckResult CheckStatusMySQL56()
+    {
+      CheckResult result;
+      result.needsDownload = true;
+      FileInfo mySqlFile = new FileInfo(_fileName);
+
+      if (mySqlFile.Exists && mySqlFile.Length != 0)
+        result.needsDownload = false;
+
+      if (InstallationProperties.Instance["InstallType"] == "download_only")
+      {
+        result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
+        return result;
+      }
+
+      RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.6");
+      if (key == null)
+      {
+        result.state = CheckState.NOT_INSTALLED;
+      }
+      else
+      {
+        key.Close();
+        result.state = CheckState.INSTALLED;
+      }
+      return result;
+    }
+
+    public static CheckResult CheckStatusMySQL57()
+    {
+      CheckResult result;
+      result.needsDownload = true;
+      FileInfo mySqlFile = new FileInfo(_fileName);
+
+      if (mySqlFile.Exists && mySqlFile.Length != 0)
+        result.needsDownload = false;
+
+      if (InstallationProperties.Instance["InstallType"] == "download_only")
+      {
+        result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
+        return result;
+      }
+
+      RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.7");
       if (key == null)
       {
         result.state = CheckState.NOT_INSTALLED;

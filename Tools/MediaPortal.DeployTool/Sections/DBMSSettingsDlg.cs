@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -32,8 +32,7 @@ namespace MediaPortal.DeployTool.Sections
       if (InstallationProperties.Instance["DBMSType"] == "msSQL2005")
         textBoxDir.Text = installationPath = InstallationProperties.Instance["ProgramFiles"] + "\\Microsoft SQL Server";
       else
-        textBoxDir.Text =
-          installationPath = InstallationProperties.Instance["ProgramFiles"] + "\\MySQL\\MySQL Server 5.6";
+        textBoxDir.Text = installationPath = InstallationProperties.Instance["ProgramFiles"] + "\\MySQL\\MySQL Server 8.3";
       UpdateUI();
     }
 

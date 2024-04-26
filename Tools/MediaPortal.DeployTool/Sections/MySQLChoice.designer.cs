@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2023 Team MediaPortal
+﻿#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -81,8 +81,7 @@ namespace MediaPortal.DeployTool.Sections
       this.lblMySQLText.Name = "lblMySQLText";
       this.lblMySQLText.Size = new System.Drawing.Size(562, 13);
       this.lblMySQLText.TabIndex = 10;
-      this.lblMySQLText.Text = "Check above value if you want to upgrade your current MySQL 5.1 to 5.6 (old db wi" +
-    "ll not be lost)";
+      this.lblMySQLText.Text = "Check above value if you want to upgrade your current MySQL 5.1, 5.6, 5.7 to 8.3 (old db will not be lost)";
       // 
       // grpMySQL
       // 
@@ -117,7 +116,7 @@ namespace MediaPortal.DeployTool.Sections
       this.lblRecommended.Name = "lblRecommended";
       this.lblRecommended.Size = new System.Drawing.Size(195, 16);
       this.lblRecommended.TabIndex = 14;
-      this.lblRecommended.Text = "MySQL Upgrade 5.1 to 5.6";
+      this.lblRecommended.Text = "MySQL Upgrade 5.1, 5.6, 5.7 to 8.3";
       // 
       // pictureBox1
       // 

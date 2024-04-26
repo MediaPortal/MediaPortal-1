@@ -1081,7 +1081,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Check above value if you want to upgrade your current MySQL 5.1 to 5.6 (old db will not be lost).
+        ///   Looks up a localized string similar to Check above value if you want to upgrade your current MySQL 5.1, 5.6, 5.7 to 8.3 (old db will not be lost).
         /// </summary>
         internal static string MySQLChoice_Information {
             get {
@@ -1099,7 +1099,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MySQL Upgrade 5.1 to 5.6.
+        ///   Looks up a localized string similar to MySQL Upgrade 5.1, 5.6, 5.7 to 8.3
         /// </summary>
         internal static string MySQLChoice_Title {
             get {
