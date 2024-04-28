@@ -120,6 +120,7 @@
       <DependentUpon>Images.resx</DependentUpon>
     </Compile>
     <Compile Include="InstallationChecks\AresSkinExtensionInstall.cs" />
+    <Compile Include="InstallationChecks\DotNetFrameworkChecker.cs" />
     <Compile Include="InstallationChecks\LAVFilterMPEInstall.cs" />
     <Compile Include="InstallationChecks\MariaDBChecker.cs" />
     <Compile Include="InstallationChecks\MPEInstall.cs" />
@@ -745,6 +746,7 @@
     <None Include="Resources\DefaultWide HD.PNG" />
     <None Include="Resources\Application\LAVFilters.png" />
     <None Include="Resources\Application\DirectX9C.png" />
+    <None Include="Resources\Application\DotNetFramework.png" />
     <None Include="Resources\Application\MediaPortal.png" />
     <None Include="Resources\Application\MSSQL.png" />
     <None Include="Resources\Application\MySQL.png" />

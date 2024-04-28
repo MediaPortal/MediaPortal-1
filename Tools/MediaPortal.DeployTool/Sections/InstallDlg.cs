@@ -114,7 +114,7 @@ namespace MediaPortal.DeployTool.Sections
 
     #endregion
 
-    private void AddPackageToListView(IInstallationPackage package)
+    private void AddPackageToListView(IInstallationPackage package, bool skipIfInstalled = false)
     {
       ApplicationCtrl item = new ApplicationCtrl
       {
@@ -122,7 +122,13 @@ namespace MediaPortal.DeployTool.Sections
         IconName = package.GetIconName(),
         Tag = package
       };
+
       CheckResult result = package.CheckStatus();
+      if (skipIfInstalled && (result.state == CheckState.INSTALLED || result.state == CheckState.REMOVED))
+      {
+        return;
+      }
+
       item.StatusName = result.state.ToString();
       switch (result.state)
       {
@@ -190,8 +196,9 @@ namespace MediaPortal.DeployTool.Sections
       flpApplication.Controls.Clear();
       if (!Utils.Is64bit() && InstallationProperties.Instance["InstallType"] != "download_only")
       {
-        AddPackageToListView(new OldPackageChecker());
+        AddPackageToListView(new OldPackageChecker(), true);
       }
+      AddPackageToListView(new DotNetFrameworkChecker(), true);
       AddPackageToListView(new DirectX9Checker());
       if (!Utils.Is64bit())
       {
