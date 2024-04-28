@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -84,10 +84,10 @@ namespace MediaPortal.DeployTool.Sections
         InstallationProperties.Instance.Set("ConfigureDBMSFirewall", "1");
         InstallationProperties.Instance.Set("DBMSPassword", "MediaPortal");
         // Default DBMS
-        InstallationProperties.Instance.Set("DBMSType", "mysql");
+        InstallationProperties.Instance.Set("DBMSType", "MariaDB");
         InstallationProperties.Instance.Set("DBMSDir",
                                             InstallationProperties.Instance["ProgramFiles"] +
-                                            "\\MySQL\\MySQL Server 5.6");
+                                            "\\MariaDB\\MariaDB 10.0");
       }
     }
 

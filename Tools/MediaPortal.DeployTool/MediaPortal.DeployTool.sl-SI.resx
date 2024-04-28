@@ -203,7 +203,10 @@ Računalnik bo potem deloval kot namenski TV strežnik in bo posredoval TV signa
     <value>Microsoft SQL Server 2005 Express</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
-    <value>MySQL 5</value>
+    <value>MySQL 8</value>
+  </data>
+  <data name="DBMSType_rbMariaDB" xml:space="preserve">
+    <value>MariaDB 10</value>
   </data>
   <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
     <value>Podatkovni strežnik za podatke TV strežnika je že nameščen na računalniku</value>

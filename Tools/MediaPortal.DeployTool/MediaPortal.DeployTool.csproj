@@ -121,6 +121,7 @@
     </Compile>
     <Compile Include="InstallationChecks\AresSkinExtensionInstall.cs" />
     <Compile Include="InstallationChecks\LAVFilterMPEInstall.cs" />
+    <Compile Include="InstallationChecks\MariaDBChecker.cs" />
     <Compile Include="InstallationChecks\MPEInstall.cs" />
     <Compile Include="InstallationChecks\DiskSpaceChecker.cs" />
     <Compile Include="InstallationChecks\InternetChecker.cs" />
