@@ -30,22 +30,69 @@ namespace MediaPortal.GUI.Library
 {
   public class PixelShaderCollection
   {
+    #region Types
+    private class ShaderProfile
+    {
+      public string Name { get; private set; }
+      public string Shaders;
+      public bool IsCustom { get; private set; }
+
+      public ShaderProfile(string strName, string strShaders)
+      {
+        this.Name = strName;
+        this.Shaders = strShaders;
+        this.IsCustom = !_ProhibitedProfileNames.Any(p => p.Equals(strName, StringComparison.CurrentCultureIgnoreCase));
+      }
+    }
+    #endregion
+
     #region Constants
     public const string SHADER_EXTENSION = ".hlsl";
     public const string SHADER_FOLDER_NAME = "Shaders";
     public const string SHADER_PROFILE_DEFAULT = "Default";
+
+    private const string _SETTINGS_SECTION = "general";
+    private const string _SETTINGS_ENTRY = "VideoPixelShader";
+    private const string _SETTINGS_ENTRY_NAME_SUFFIX = "Name";
     #endregion
 
     #region Private fields
     private readonly Device _Device;
     private readonly List<KeyValuePair<string, PixelShader>> _PixelShaders = new List<KeyValuePair<string, PixelShader>>();
-    private string _Profile = SHADER_PROFILE_DEFAULT;
+    private ShaderProfile _Profile;
+    private List<ShaderProfile> _Profiles = null;
+    private static readonly string[] _ProhibitedProfileNames = new string[] { "default", "sd", "hd", "uhd" };
     #endregion
 
     #region ctor
     public PixelShaderCollection(Device device)
     {
       this._Device = device;
+
+      this._Profiles = new List<ShaderProfile>();
+      using (Profile.Settings set = new Profile.MPSettings())
+      {
+        //Explicit profiles
+        this._Profiles.Add(new ShaderProfile(SHADER_PROFILE_DEFAULT, set.GetValueAsString(_SETTINGS_SECTION, _SETTINGS_ENTRY + SHADER_PROFILE_DEFAULT, string.Empty)));
+        this._Profiles.Add(new ShaderProfile("SD", set.GetValueAsString(_SETTINGS_SECTION, _SETTINGS_ENTRY + "SD", string.Empty)));
+        this._Profiles.Add(new ShaderProfile("HD", set.GetValueAsString(_SETTINGS_SECTION, _SETTINGS_ENTRY + "HD", string.Empty)));
+        this._Profiles.Add(new ShaderProfile("UHD", set.GetValueAsString(_SETTINGS_SECTION, _SETTINGS_ENTRY + "UHD", string.Empty)));
+
+        //Custom profiles
+        int iIdx = 0;
+        string strName;
+        while (true)
+        {
+          strName = set.GetValueAsString(_SETTINGS_SECTION, _SETTINGS_ENTRY + iIdx + _SETTINGS_ENTRY_NAME_SUFFIX, null);
+          if (string.IsNullOrWhiteSpace(strName))
+            break;
+
+          this._Profiles.Add(new ShaderProfile(strName, set.GetValueAsString(_SETTINGS_SECTION, _SETTINGS_ENTRY + iIdx, string.Empty)));
+          iIdx++;
+        }
+      }
+
+      this._Profile = this._Profiles[0];
     }
     #endregion
 
@@ -83,7 +130,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string Profile
     {
-      get => this._Profile;
+      get => this._Profile.Name;
     }
 
     #endregion
@@ -154,31 +201,11 @@ namespace MediaPortal.GUI.Library
       if (string.IsNullOrWhiteSpace(strProfile))
         strProfile = SHADER_PROFILE_DEFAULT;
 
-      using (Profile.Settings xmlReader = new Profile.MPSettings())
-      {
-        this.Load(xmlReader.GetValueAsString("general", "VideoPixelShader" + strProfile, null), strProfile);
-      }
-    }
+      ShaderProfile profile = this._Profiles.Find(p => p.Name.Equals(strProfile, StringComparison.CurrentCultureIgnoreCase));
+      if (string.IsNullOrWhiteSpace(profile.Name))
+        profile = this._Profiles[0];
 
-    /// <summary>
-    /// Load Pixel Shaders
-    /// </summary>
-    /// <param name="strNames">Shader filenames separated by '|' (without extension).</param>
-    /// <param name="strProfile">Profile name.</param>
-    public void Load(string strNames, string strProfile)
-    {
-      Log.Debug("PixelShaderCollection: Load() Names:'{0}' Profile:'{1}'", strNames, strProfile);
-
-      this.Clear();
-
-      this._Profile = !string.IsNullOrWhiteSpace(strProfile) ? strProfile : SHADER_PROFILE_DEFAULT;
-
-      if (strNames != null)
-      {
-        string[] names = strNames.Split('|');
-        for (int i = 0; i < names.Length; i++)
-          this.Add(names[i]);
-      }
+      this.load(profile);
     }
 
     /// <summary>
@@ -213,7 +240,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="action">The System.Action delegate to perform on each shader of the shader list.</param>
     public void ForEach(Action<KeyValuePair<string, PixelShader>> action)
     {
-      for (int i = 0; i< this._PixelShaders.Count; i++)
+      for (int i = 0; i < this._PixelShaders.Count; i++)
         action(this._PixelShaders[i]);
     }
 
@@ -223,35 +250,97 @@ namespace MediaPortal.GUI.Library
     public void ShowPixelShaderMenu()
     {
       IDialogbox dlg = (IDialogbox)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      dlg.Reset();
-      dlg.SetHeading(GUILocalizeStrings.Get(200096) + " [" + this._Profile + ']'); // Pixel Shaders [{profile}]
-
-      dlg.AddLocalizedString(300063); // Add
-
-      this.ForEach(ps => dlg.Add(GUILocalizeStrings.Get(300064) + ": " + ps.Key)); // Remove:
-
-      dlg.DoModal(GUIWindowManager.ActiveWindow);
-
-      if (dlg.SelectedId == -1)
-        return;
-
-      if (dlg.SelectedLabel == 0)
+      while (true)
       {
-        string strName = this.showPixelShaderFileMenu(dlg);
-        if (strName != null)
-          this.Add(strName);
-        else
-          return;
-      }
-      else
-        this.RemoveAt(dlg.SelectedLabel - 1);
+        dlg.Reset();
+        dlg.SetHeading(GUILocalizeStrings.Get(200096) + " [" + this._Profile.Name + ']'); // Pixel Shaders [{profile}]
 
-      using (Profile.Settings xmlWritter = new Profile.MPSettings())
-      {
-        xmlWritter.SetValue("general", "VideoPixelShader" + this._Profile, this.GetNames());
+        dlg.AddLocalizedString(200098); //Create new profile
+        dlg.AddLocalizedString(200099); //Edit current profile
+
+        int iOffset = 2;
+
+        if (this._Profile.IsCustom)
+        {
+          dlg.AddLocalizedString(200100); //Remove current profile
+          iOffset++;
+        }
+
+        this._Profiles.ForEach(p => dlg.Add(GUILocalizeStrings.Get(424) + ": " + p.Name)); //Select: 
+
+        // show dialog and wait for result
+        dlg.DoModal(GUIWindowManager.ActiveWindow);
+
+        if (dlg.SelectedId == -1)
+          return; //exit
+
+        if (dlg.SelectedId == 200098) //Create new profile
+        {
+          IDialogboxKeyboard keyBoard = (IDialogboxKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+
+          if (keyBoard == null)
+            return;
+
+          keyBoard.Reset();
+          keyBoard.Text = string.Empty;
+          keyBoard.DoModal(GUIWindowManager.ActiveWindow);
+
+          if (!keyBoard.IsConfirmed)
+            continue;
+
+          string strNewProfile = keyBoard.Text.Trim();
+          if (string.IsNullOrWhiteSpace(strNewProfile) || _Profiles.Exists(p => p.Name.Equals(strNewProfile, StringComparison.CurrentCultureIgnoreCase)))
+            continue;
+
+          //New profile
+          this._Profiles.Add(new ShaderProfile(strNewProfile, string.Empty));
+        }
+        else if (dlg.SelectedId == 200099) //Edit current profile
+        {
+          this.editPixelShaderMenu(dlg);
+        }
+        else if (dlg.SelectedId == 200100) //Remove current profile
+        {
+          this._Profiles.Remove(this._Profile);
+          this.load(this._Profiles[0]); //load default profile
+        }
+        else //Select:
+        {
+          this.load(this._Profiles[dlg.SelectedLabel - iOffset]);
+          continue;
+        }
+
+        #region Save profiles to the MP settings
+        using (Profile.Settings set = new Profile.MPSettings())
+        {
+          int i = 0;
+          this._Profiles.ForEach(profile =>
+          {
+            if (profile.IsCustom)
+            {
+              set.SetValue(_SETTINGS_SECTION, _SETTINGS_ENTRY + i + _SETTINGS_ENTRY_NAME_SUFFIX, profile.Name);
+              set.SetValue(_SETTINGS_SECTION, _SETTINGS_ENTRY + i++, profile.Shaders);
+            }
+            else
+              set.SetValue(_SETTINGS_SECTION, _SETTINGS_ENTRY + profile.Name, profile.Shaders);
+          });
+
+          //Clear others
+          while (true)
+          {
+            string strEntry = _SETTINGS_ENTRY + i + _SETTINGS_ENTRY_NAME_SUFFIX;
+
+            if (string.IsNullOrWhiteSpace(set.GetValueAsString(_SETTINGS_SECTION, strEntry, null)))
+              break;
+
+            set.RemoveEntry(_SETTINGS_SECTION, strEntry);
+            set.RemoveEntry(_SETTINGS_SECTION, _SETTINGS_ENTRY + i++);
+          }
+        }
+        #endregion
       }
     }
-    
+
     #endregion
 
     #region Private methods
@@ -290,6 +379,54 @@ namespace MediaPortal.GUI.Library
       }
 
       return null;
+    }
+
+    private void load(ShaderProfile profile)
+    {
+      this.Clear();
+
+      this._Profile = profile;
+
+      if (profile.Shaders != null)
+      {
+        string[] names = profile.Shaders.Split('|');
+        for (int i = 0; i < names.Length; i++)
+          this.Add(names[i]);
+      }
+    }
+
+
+    private void editPixelShaderMenu(IDialogbox dlg)
+    {
+      while (true)
+      {
+        dlg.Reset();
+        dlg.SetHeading(GUILocalizeStrings.Get(200096) + " [" + this._Profile.Name + ']'); // Pixel Shaders [{profile}]
+
+        dlg.AddLocalizedString(300063); // Add
+
+        this.ForEach(ps => dlg.Add(GUILocalizeStrings.Get(300064) + ": " + ps.Key)); // Remove:
+
+        // show dialog and wait for result
+        dlg.DoModal(GUIWindowManager.ActiveWindow);
+
+        if (dlg.SelectedId == -1)
+          return;
+
+        if (dlg.SelectedLabel == 0)
+        {
+          string strName = this.showPixelShaderFileMenu(dlg);
+          if (strName != null)
+            this.Add(strName);
+          else
+            return;
+        }
+        else
+          this.RemoveAt(dlg.SelectedLabel - 1);
+
+        //Update current profile
+        this._Profile.Shaders = this.GetNames();
+      }
     }
 
     private string showPixelShaderFileMenu(IDialogbox dlg)
