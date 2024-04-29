@@ -88,6 +88,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
           setup.WaitForExit();
           // Return codes:
           //  0               = success, no reboot required
+          //  1638	          = success, another version of this product is already installed.
           //  3010            = success, reboot required
           //  any other value = failure
 
@@ -96,7 +97,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
             Utils.NotifyReboot(GetDisplayName());
           }
 
-          if (setup.ExitCode == 0)
+          if (setup.ExitCode == 0 || setup.ExitCode == 1638)
           {
             result = result || true;
           }
@@ -159,9 +160,30 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
       catch (Exception)
       {
-        MessageBox.Show("Failed to check the .Net Framework 4.0 installation status", "Error", 
+        MessageBox.Show("Failed to check the .Net Framework 4 installation status", "Error", 
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
+      }
+      if (!dotNet40)
+      {
+        try
+        {
+          RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4.0");
+          using (key)
+          {
+            if (key != null)
+            {
+              key.Close();
+              dotNet40 = true;
+            }
+          }
+        }
+        catch (Exception)
+        {
+          MessageBox.Show("Failed to check the .Net Framework 4.0 installation status", "Error", 
+                          MessageBoxButtons.OK,
+                          MessageBoxIcon.Error);
+        }
       }
 
       if (dotNet35 && dotNet40)
