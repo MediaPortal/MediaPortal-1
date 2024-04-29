@@ -20,6 +20,8 @@
 
 using System;
 
+using MediaPortal.DeployTool.InstallationChecks;
+
 namespace MediaPortal.DeployTool.Sections
 {
   public partial class BaseInstallationTypeDlg : DeployDialog
@@ -84,10 +86,23 @@ namespace MediaPortal.DeployTool.Sections
         InstallationProperties.Instance.Set("ConfigureDBMSFirewall", "1");
         InstallationProperties.Instance.Set("DBMSPassword", "MediaPortal");
         // Default DBMS
-        InstallationProperties.Instance.Set("DBMSType", "MariaDB");
-        InstallationProperties.Instance.Set("DBMSDir",
-                                            InstallationProperties.Instance["ProgramFiles"] +
-                                            "\\MariaDB\\MariaDB 10.0");
+        IInstallationPackage packageMSSQL = new MSSQLExpressChecker();
+        CheckResult resultMSSQL = packageMSSQL.CheckStatus();
+        IInstallationPackage packageMySQL = new MySQLChecker();
+        CheckResult resultMySQL = packageMySQL.CheckStatus();
+        IInstallationPackage packageMariaDB = new MariaDBChecker();
+        CheckResult resultMariaDB = packageMariaDB.CheckStatus();
+        if (resultMSSQL.state == CheckState.INSTALLED || resultMSSQL.state == CheckState.VERSION_MISMATCH ||
+            resultMySQL.state == CheckState.INSTALLED || resultMySQL.state == CheckState.VERSION_MISMATCH ||
+            resultMariaDB.state == CheckState.INSTALLED || resultMariaDB.state == CheckState.VERSION_MISMATCH)
+        {
+          InstallationProperties.Instance.Set("DBMSType", "DBAlreadyInstalled");
+        }
+        else
+        {
+          InstallationProperties.Instance.Set("DBMSType", "MariaDB");
+          InstallationProperties.Instance.Set("DBMSDir", InstallationProperties.Instance["ProgramFiles"] + "\\MariaDB\\MariaDB 10.0");
+        }
       }
     }
 
