@@ -58,7 +58,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       // .Net 3.5
       if (!dotNet35)
       {
-        Process setup = Process.Start("DISM.EXE", "/Online /Enable-Feature /FeatureName:NetFx3 /All /AcceptEula /NoRestart");
+        Process setup = Process.Start("DISM.EXE", "/Online /Enable-Feature /FeatureName:NetFx3 /All /Quiet /NoRestart");
         if (setup != null)
         {
           setup.WaitForExit();
