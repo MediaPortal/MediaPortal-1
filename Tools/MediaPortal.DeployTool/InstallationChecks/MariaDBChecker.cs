@@ -279,7 +279,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
         if (exitCode != 0)
         {
-          MessageBox.Show("MariaDB - set password error: " + mysqladmin.ExitCode);
+          MessageBox.Show("MariaDB - set password error: " + exitCode);
           return false;
         }
       }
@@ -294,7 +294,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe", cmdLine);
       if (exitCode != 0)
       {
-        MessageBox.Show("MariaDB - set privileges error: " + mysql.ExitCode);
+        MessageBox.Show("MariaDB - set privileges error: " + exitCode);
         return false;
       }
 

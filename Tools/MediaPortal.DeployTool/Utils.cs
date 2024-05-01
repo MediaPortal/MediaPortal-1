@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Resources;
 using System.Globalization;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Diagnostics;
@@ -1021,14 +1022,19 @@ namespace MediaPortal.DeployTool
       return -1;
     }
 
-    public static async Task<int> RunCommandAsync(string command, string arguments)
+    public static Task<int> RunCommandAsync(string command, string arguments)
     {
-      return await Task.Run(() => RunCommand(command, arguments)); 
+      return Task<int>.Factory.StartNew(() =>
+             {
+               return RunCommand(command, arguments);
+             });
     }
 
     public static int RunCommandWait(string command, string arguments)
     {
-      return await RunCommandAsync(command, arguments);
+      Task<int> run = RunCommandAsync(command, arguments);
+      run.Wait();
+      return run.Result;
     }
 
     #endregion
