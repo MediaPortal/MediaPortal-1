@@ -45,31 +45,28 @@ namespace MediaPortal.DeployTool.InstallationChecks
     private void PrepareMyIni(string iniFile)
     {
       WritePrivateProfileString("client", "port", "3306", iniFile);
+
       WritePrivateProfileString("mysql", "default-character-set", "utf8", iniFile);
+
       WritePrivateProfileString("mysqld", "port", "3306", iniFile);
-      WritePrivateProfileString("mysqld", "basedir",
-                                "\"" + InstallationProperties.Instance["DBMSDir"].Replace('\\', '/') + "/\"", iniFile);
-      WritePrivateProfileString("mysqld", "datadir", "\"" + _dataDir.Replace('\\', '/') + "/Data\"", iniFile);
+      WritePrivateProfileString("mysqld", "basedir", "\"" + InstallationProperties.Instance["DBMSDir"].Replace('\\', '/') + "\"", iniFile);
+      WritePrivateProfileString("mysqld", "datadir", "\"" + _dataDir.Replace('\\', '/') + "\"", iniFile);
       WritePrivateProfileString("mysqld", "default-storage-engine", "INNODB", iniFile);
-      WritePrivateProfileString("mysqld", "sql-mode",
-                                "\"STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\"", iniFile);
+      WritePrivateProfileString("mysqld", "sql-mode","\"STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\"", iniFile);
       WritePrivateProfileString("mysqld", "max_connections", "100", iniFile);
       WritePrivateProfileString("mysqld", "query_cache_size", "32M", iniFile);
       WritePrivateProfileString("mysqld", "tmp_table_size", "18M", iniFile);
       WritePrivateProfileString("mysqld", "thread_cache_size", "4", iniFile);
-      WritePrivateProfileString("mysqld", "thread_concurrency", "4", iniFile);
       WritePrivateProfileString("mysqld", "myisam_max_sort_file_size", "100M", iniFile);
       WritePrivateProfileString("mysqld", "myisam_sort_buffer_size", "64M", iniFile);
       WritePrivateProfileString("mysqld", "key_buffer_size", "16M", iniFile);
       WritePrivateProfileString("mysqld", "read_buffer_size", "2M", iniFile);
       WritePrivateProfileString("mysqld", "read_rnd_buffer_size", "16M", iniFile);
       WritePrivateProfileString("mysqld", "sort_buffer_size", "2M", iniFile);
-      WritePrivateProfileString("mysqld", "innodb_additional_mem_pool_size", "2M", iniFile);
       WritePrivateProfileString("mysqld", "innodb_flush_log_at_trx_commit", "1", iniFile);
       WritePrivateProfileString("mysqld", "innodb_log_buffer_size", "1M", iniFile);
       WritePrivateProfileString("mysqld", "innodb_buffer_pool_size", "96M", iniFile);
       WritePrivateProfileString("mysqld", "innodb_log_file_size", "50M", iniFile);
-      WritePrivateProfileString("mysqld", "innodb_thread_concurrency", "8", iniFile);
     }
 
     public string GetDisplayName()
@@ -233,6 +230,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       string inifile = InstallationProperties.Instance["DBMSDir"] + "\\my.ini";
       PrepareMyIni(inifile);
+
       const string ServiceName = "MariaDB";
       string cmdExe = Environment.SystemDirectory + "\\sc.exe";
       string cmdParam = "create " + ServiceName + " start= auto DisplayName= " + ServiceName + " binPath= \"" +
@@ -267,11 +265,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
       ctrl.WaitForStatus(ServiceControllerStatus.Running);
       // Service is running, but on slow machines still take some time to answer network queries
       System.Threading.Thread.Sleep(5000);
+
       //
       // mysqladmin.exe is used to set MariaDB password
       //
       cmdLine = "-u root password " + InstallationProperties.Instance["DBMSPassword"];
-
       exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
       if (exitCode != 0)
       {
