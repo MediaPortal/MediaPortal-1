@@ -987,7 +987,7 @@ namespace MediaPortal.DeployTool
 
     public static int RunCommand(string command, string arguments)
     {
-      if (!string.IsNullOrEmpty(command))
+      if (string.IsNullOrEmpty(command))
       {
         return -1;
       }
