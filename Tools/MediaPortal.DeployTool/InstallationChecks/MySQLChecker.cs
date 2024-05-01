@@ -164,20 +164,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
         // Service is running, but on slow machines still take some time to answer network queries
         System.Threading.Thread.Sleep(5000);
 
-        string strMySqlDump = null;
-        strMySqlDump = "\"" + strMySQL + "bin\\mysqldump.exe" + "\"";
+        string strMySQLDump = null;
+        strMySQLDump = "\"" + strMySQL + "bin\\mysqldump.exe" + "\"";
         string cmdLine = "-uroot -p" + InstallationProperties.Instance["DBMSPassword"] +
                          " --all-databases --flush-logs";
         cmdLine += " -r " + "\"" + Path.GetTempPath() + "all_databases.sql" + "\"";
-        Process setup = Process.Start(strMySqlDump, cmdLine);
-        try
-        {
-          if (setup != null)
-          {
-            setup.WaitForExit();
-          }
-        }
-        catch
+        int exitCode = Utils.RunCommandWait(strMySQLDump, cmdLine);
+        if (exitCode == -1)
         {
           return false;
         }
@@ -201,35 +194,27 @@ namespace MediaPortal.DeployTool.InstallationChecks
         a.WriteLine("@echo off");
         a.WriteLine(cmdExe + " " + cmdParam);
         a.Close();
-        Process svcInstaller = Process.Start(ff);
+        exitCode = Utils.RunCommandWait(ff, string.Empty);
 #else
-        Process svcInstaller = Process.Start(cmdExe, cmdParam);
+        exitCode = Utils.RunCommandWait(cmdExe, cmdParam);
 #endif
-        if (svcInstaller != null)
+        if (exitCode != -1)
         {
-          svcInstaller.WaitForExit();
+          return true;
         }
-        return true;
       }
       return false;
     }
 
     public bool RestoreDB()
     {
-      string strMySql = InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe";
+      string strMySQL = InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe";
       string cmdLine = "--host=localhost --user=root --port=3306 --default-character-set=utf8 -p";
       cmdLine += InstallationProperties.Instance["DBMSPassword"];
       cmdLine += " --comments ";
       cmdLine += "-e " + "\"" + "source " + Path.GetTempPath() + "all_databases.sql" + "\"";
-      Process setup = Process.Start(strMySql, cmdLine);
-      try
-      {
-        if (setup != null)
-        {
-          setup.WaitForExit();
-        }
-      }
-      catch
+      int exitCode = Utils.RunCommandWait(strMySQL, cmdLine);
+      if (exitCode == -1)
       {
         return false;
       }
@@ -238,19 +223,12 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool ForceUpdateDB()
     {
-      string strMySql = InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql_upgrade.exe";
+      string strMySQL = InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql_upgrade.exe";
       string cmdLine = "--host=localhost --user=root -p";
       cmdLine += InstallationProperties.Instance["DBMSPassword"];
       cmdLine += " --force";
-      Process setup = Process.Start(strMySql, cmdLine);
-      try
-      {
-        if (setup != null)
-        {
-          setup.WaitForExit();
-        }
-      }
-      catch
+      int exitCode = Utils.RunCommandWait(strMySQL, cmdLine);
+      if (exitCode == -1)
       {
         return false;
       }
@@ -302,20 +280,14 @@ namespace MediaPortal.DeployTool.InstallationChecks
       string cmdLine = "/i \"" + _fileName + "\"";
       cmdLine += " INSTALLDIR=\"" + InstallationProperties.Instance["DBMSDir"] + "\"";
       cmdLine += " DATADIR=\"" + _dataDir + "\"";
-      cmdLine += " /qn";
+      cmdLine += " ALLOWREMOTEROOTACCESS=true /qn";
       cmdLine += " /L* \"" + Path.GetTempPath() + "\\mysqlinst.log\"";
-      Process setup = Process.Start("msiexec.exe", cmdLine);
-      try
-      {
-        if (setup != null)
-        {
-          setup.WaitForExit();
-        }
-      }
-      catch
+      int exitCode = Utils.RunCommandWait("msiexec.exe", cmdLine);
+      if (exitCode == -1)
       {
         return false;
       }
+
       StreamReader sr = new StreamReader(Path.GetTempPath() + "\\mysqlinst.log");
       bool installOk = false;
       while (!sr.EndOfStream)
@@ -333,6 +305,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       {
         return false;
       }
+
       string inifile = InstallationProperties.Instance["DBMSDir"] + "\\my.ini";
       PrepareMyIni(inifile);
       const string ServiceName = "MySQL";
@@ -341,19 +314,18 @@ namespace MediaPortal.DeployTool.InstallationChecks
                         InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld.exe --defaults-file=\\\"" + inifile +
                         "\\\" " + ServiceName + "\"";
 #if DEBUG
-      string ff = "c:\\mysql-srv.bat";
+      string ff = "c:\\MySQL-srv.bat";
       StreamWriter a = new StreamWriter(ff);
       a.WriteLine("@echo off");
       a.WriteLine(cmdExe + " " + cmdParam);
       a.Close();
-      Process svcInstaller = Process.Start(ff);
+      exitCode = Utils.RunCommandWait(ff, string.Empty);
 #else
-      Process svcInstaller = Process.Start(cmdExe, cmdParam);
+      exitCode = Utils.RunCommandWait(cmdExe, cmdParam);
 #endif
-
-      if (svcInstaller != null)
+      if (exitCode == -1)
       {
-        svcInstaller.WaitForExit();
+        return false;
       }
 
       ServiceController ctrl = new ServiceController(ServiceName);
@@ -375,63 +347,29 @@ namespace MediaPortal.DeployTool.InstallationChecks
       //
       cmdLine = "-u root password " + InstallationProperties.Instance["DBMSPassword"];
 
-      try
+      exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
+      if (exitCode != 0)
       {
-        // Try restore DB here first
-        if (MySQL51 || MySQL56 || MySQL57)
+        cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] + " password " + InstallationProperties.Instance["DBMSPassword"];
+        exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
+        if (exitCode != 0)
         {
-          RestoreDB();
-          ForceUpdateDB();
+          MessageBox.Show("MySQL - set password error: " + exitCode);
+          return false;
         }
-
-        Process mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
-        if (mysqladmin != null)
-        {
-          mysqladmin.WaitForExit();
-          if (mysqladmin.ExitCode != 0)
-          {
-            cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] + " password " + InstallationProperties.Instance["DBMSPassword"];
-            mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
-            if (mysqladmin != null)
-            {
-              mysqladmin.WaitForExit();
-              if (mysqladmin.ExitCode != 0)
-              {
-                MessageBox.Show("MySQL - set password error: " + mysqladmin.ExitCode);
-                return false;
-              }
-            }
-          }
-        }
-      }
-      catch (Exception)
-      {
-        MessageBox.Show("MySQL - set password exception");
-        return false;
       }
       System.Threading.Thread.Sleep(2000);
+
       //
       // mysql.exe is used to grant root access from all machines
       //
       cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] +
                 " --execute=\"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '" +
                 InstallationProperties.Instance["DBMSPassword"] + "' WITH GRANT OPTION\" mysql";
-      Process mysql = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe", cmdLine);
-      try
+      exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe", cmdLine);
+      if (exitCode != 0)
       {
-        if (mysql != null)
-        {
-          mysql.WaitForExit();
-          if (mysql.ExitCode != 0)
-          {
-            MessageBox.Show("MySQL - set privileges error: " + mysql.ExitCode);
-            return false;
-          }
-        }
-      }
-      catch (Exception)
-      {
-        MessageBox.Show("MySQL - set privileges exception");
+        MessageBox.Show("MySQL - set privileges error: " + exitCode);
         return false;
       }
 

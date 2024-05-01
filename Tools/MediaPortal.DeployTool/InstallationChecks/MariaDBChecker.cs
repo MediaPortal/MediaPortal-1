@@ -45,31 +45,28 @@ namespace MediaPortal.DeployTool.InstallationChecks
     private void PrepareMyIni(string iniFile)
     {
       WritePrivateProfileString("client", "port", "3306", iniFile);
+
       WritePrivateProfileString("mysql", "default-character-set", "utf8", iniFile);
+
       WritePrivateProfileString("mysqld", "port", "3306", iniFile);
-      WritePrivateProfileString("mysqld", "basedir",
-                                "\"" + InstallationProperties.Instance["DBMSDir"].Replace('\\', '/') + "/\"", iniFile);
-      WritePrivateProfileString("mysqld", "datadir", "\"" + _dataDir.Replace('\\', '/') + "/Data\"", iniFile);
+      WritePrivateProfileString("mysqld", "basedir", "\"" + InstallationProperties.Instance["DBMSDir"].Replace('\\', '/') + "\"", iniFile);
+      WritePrivateProfileString("mysqld", "datadir", "\"" + _dataDir.Replace('\\', '/') + "\"", iniFile);
       WritePrivateProfileString("mysqld", "default-storage-engine", "INNODB", iniFile);
-      WritePrivateProfileString("mysqld", "sql-mode",
-                                "\"STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\"", iniFile);
+      WritePrivateProfileString("mysqld", "sql-mode","\"STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\"", iniFile);
       WritePrivateProfileString("mysqld", "max_connections", "100", iniFile);
       WritePrivateProfileString("mysqld", "query_cache_size", "32M", iniFile);
       WritePrivateProfileString("mysqld", "tmp_table_size", "18M", iniFile);
       WritePrivateProfileString("mysqld", "thread_cache_size", "4", iniFile);
-      WritePrivateProfileString("mysqld", "thread_concurrency", "4", iniFile);
       WritePrivateProfileString("mysqld", "myisam_max_sort_file_size", "100M", iniFile);
       WritePrivateProfileString("mysqld", "myisam_sort_buffer_size", "64M", iniFile);
       WritePrivateProfileString("mysqld", "key_buffer_size", "16M", iniFile);
       WritePrivateProfileString("mysqld", "read_buffer_size", "2M", iniFile);
       WritePrivateProfileString("mysqld", "read_rnd_buffer_size", "16M", iniFile);
       WritePrivateProfileString("mysqld", "sort_buffer_size", "2M", iniFile);
-      WritePrivateProfileString("mysqld", "innodb_additional_mem_pool_size", "2M", iniFile);
       WritePrivateProfileString("mysqld", "innodb_flush_log_at_trx_commit", "1", iniFile);
       WritePrivateProfileString("mysqld", "innodb_log_buffer_size", "1M", iniFile);
       WritePrivateProfileString("mysqld", "innodb_buffer_pool_size", "96M", iniFile);
       WritePrivateProfileString("mysqld", "innodb_log_file_size", "50M", iniFile);
-      WritePrivateProfileString("mysqld", "innodb_thread_concurrency", "8", iniFile);
     }
 
     public string GetDisplayName()
@@ -117,15 +114,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
         string cmdLine = "-uroot -p" + InstallationProperties.Instance["DBMSPassword"] +
                          " --all-databases --flush-logs";
         cmdLine += " -r " + "\"" + Path.GetTempPath() + "all_databases.sql" + "\"";
-        Process setup = Process.Start(strMariaDBDump, cmdLine);
-        try
-        {
-          if (setup != null)
-          {
-            setup.WaitForExit();
-          }
-        }
-        catch
+        int exitCode = Utils.RunCommandWait(strMariaDBDump, cmdLine);
+        if (exitCode == -1)
         {
           return false;
         }
@@ -149,15 +139,14 @@ namespace MediaPortal.DeployTool.InstallationChecks
         a.WriteLine("@echo off");
         a.WriteLine(cmdExe + " " + cmdParam);
         a.Close();
-        Process svcInstaller = Process.Start(ff);
+        exitCode = Utils.RunCommandWait(ff, string.Empty);
 #else
-        Process svcInstaller = Process.Start(cmdExe, cmdParam);
+        exitCode = Utils.RunCommandWait(cmdExe, cmdParam);
 #endif
-        if (svcInstaller != null)
+        if (exitCode != -1)
         {
-          svcInstaller.WaitForExit();
+          return true;
         }
-        return true;
       }
       return false;
     }
@@ -169,15 +158,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
       cmdLine += InstallationProperties.Instance["DBMSPassword"];
       cmdLine += " --comments ";
       cmdLine += "-e " + "\"" + "source " + Path.GetTempPath() + "all_databases.sql" + "\"";
-      Process setup = Process.Start(strMariaDB, cmdLine);
-      try
-      {
-        if (setup != null)
-        {
-          setup.WaitForExit();
-        }
-      }
-      catch
+      int exitCode = Utils.RunCommandWait(strMariaDB, cmdLine);
+      if (exitCode == -1)
       {
         return false;
       }
@@ -190,15 +172,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
       string cmdLine = "--host=localhost --user=root -p";
       cmdLine += InstallationProperties.Instance["DBMSPassword"];
       cmdLine += " --force";
-      Process setup = Process.Start(strMariaDB, cmdLine);
-      try
-      {
-        if (setup != null)
-        {
-          setup.WaitForExit();
-        }
-      }
-      catch
+      int exitCode = Utils.RunCommandWait(strMariaDB, cmdLine);
+      if (exitCode == -1)
       {
         return false;
       }
@@ -227,20 +202,14 @@ namespace MediaPortal.DeployTool.InstallationChecks
       string cmdLine = "/i \"" + _fileName + "\"";
       cmdLine += " INSTALLDIR=\"" + InstallationProperties.Instance["DBMSDir"] + "\"";
       cmdLine += " DATADIR=\"" + _dataDir + "\"";
-      cmdLine += " /qn";
+      cmdLine += " ALLOWREMOTEROOTACCESS=true /qn";
       cmdLine += " /L* \"" + Path.GetTempPath() + "\\mysqlinst.log\"";
-      Process setup = Process.Start("msiexec.exe", cmdLine);
-      try
-      {
-        if (setup != null)
-        {
-          setup.WaitForExit();
-        }
-      }
-      catch
+      int exitCode = Utils.RunCommandWait("msiexec.exe", cmdLine);
+      if (exitCode == -1)
       {
         return false;
       }
+
       StreamReader sr = new StreamReader(Path.GetTempPath() + "\\mysqlinst.log");
       bool installOk = false;
       while (!sr.EndOfStream)
@@ -258,8 +227,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
       {
         return false;
       }
+
       string inifile = InstallationProperties.Instance["DBMSDir"] + "\\my.ini";
       PrepareMyIni(inifile);
+
       const string ServiceName = "MariaDB";
       string cmdExe = Environment.SystemDirectory + "\\sc.exe";
       string cmdParam = "create " + ServiceName + " start= auto DisplayName= " + ServiceName + " binPath= \"" +
@@ -271,14 +242,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
       a.WriteLine("@echo off");
       a.WriteLine(cmdExe + " " + cmdParam);
       a.Close();
-      Process svcInstaller = Process.Start(ff);
+      exitCode = Utils.RunCommandWait(ff, string.Empty);
 #else
-      Process svcInstaller = Process.Start(cmdExe, cmdParam);
+      exitCode = Utils.RunCommandWait(cmdExe, cmdParam);
 #endif
-
-      if (svcInstaller != null)
+      if (exitCode == -1)
       {
-        svcInstaller.WaitForExit();
+        return false;
       }
 
       ServiceController ctrl = new ServiceController(ServiceName);
@@ -295,61 +265,34 @@ namespace MediaPortal.DeployTool.InstallationChecks
       ctrl.WaitForStatus(ServiceControllerStatus.Running);
       // Service is running, but on slow machines still take some time to answer network queries
       System.Threading.Thread.Sleep(5000);
+
       //
       // mysqladmin.exe is used to set MariaDB password
       //
       cmdLine = "-u root password " + InstallationProperties.Instance["DBMSPassword"];
-
-      try
+      exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
+      if (exitCode != 0)
       {
-        Process mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
-        if (mysqladmin != null)
+        cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] + " password " + InstallationProperties.Instance["DBMSPassword"];
+        exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
+        if (exitCode != 0)
         {
-          mysqladmin.WaitForExit();
-          if (mysqladmin.ExitCode != 0)
-          {
-            cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] + " password " + InstallationProperties.Instance["DBMSPassword"];
-            mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
-            if (mysqladmin != null)
-            {
-              mysqladmin.WaitForExit();
-              if (mysqladmin.ExitCode != 0)
-              {
-                MessageBox.Show("MariaDB - set password error: " + mysqladmin.ExitCode);
-                return false;
-              }
-            }
-          }
+          MessageBox.Show("MariaDB - set password error: " + exitCode);
+          return false;
         }
       }
-      catch (Exception)
-      {
-        MessageBox.Show("MariaDB - set password exception");
-        return false;
-      }
       System.Threading.Thread.Sleep(2000);
+
       //
       // mysql.exe is used to grant root access from all machines
       //
       cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] +
                 " --execute=\"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '" +
                 InstallationProperties.Instance["DBMSPassword"] + "' WITH GRANT OPTION\" mysql";
-      Process mysql = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe", cmdLine);
-      try
+      exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe", cmdLine);
+      if (exitCode != 0)
       {
-        if (mysql != null)
-        {
-          mysql.WaitForExit();
-          if (mysql.ExitCode != 0)
-          {
-            MessageBox.Show("MariaDB - set privileges error: " + mysql.ExitCode);
-            return false;
-          }
-        }
-      }
-      catch (Exception)
-      {
-        MessageBox.Show("MariaDB - set privileges exception");
+        MessageBox.Show("MariaDB - set privileges error: " + exitCode);
         return false;
       }
 

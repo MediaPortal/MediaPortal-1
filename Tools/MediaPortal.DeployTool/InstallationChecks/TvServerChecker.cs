@@ -74,21 +74,15 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       // NSIS installer doesn't want " in parameters (chefkoch)
       // Remember that /D must be the last one       (chefkoch)
-      Process setup = Process.Start(_fileName,
-                                    String.Format("/S /noClient /DeployMode --DeployMode {0} {1} {2} /D={3}", sqlparam, pwdparam,
-                                                  UpdateMode, targetDir));
-
-      if (setup != null)
+      int exitCode = Utils.RunCommandWait(_fileName, String.Format("/S /noClient /DeployMode --DeployMode {0} {1} {2} /D={3}", 
+                                                                   sqlparam, pwdparam, UpdateMode, targetDir));
+      if (exitCode == 0)
       {
-        setup.WaitForExit();
-        if (setup.ExitCode == 0)
+        if (File.Exists(targetDir + "\\reboot"))
         {
-          if (File.Exists(targetDir + "\\reboot"))
-          {
-            Utils.NotifyReboot(GetDisplayName());
-          }
-          return true;
+          Utils.NotifyReboot(GetDisplayName());
         }
+        return true;
       }
       return false;
     }

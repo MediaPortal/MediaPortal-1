@@ -58,50 +58,34 @@ namespace MediaPortal.DeployTool.InstallationChecks
       // .Net 3.5
       if (!dotNet35)
       {
-        Process setup = Process.Start("DISM.EXE", "/Online /Enable-Feature /FeatureName:NetFx3 /All /Quiet /NoRestart");
-        if (setup != null)
+        int exitCode = Utils.RunCommandWait("DISM.EXE", "/Online /Enable-Feature /FeatureName:NetFx3 /All /Quiet /NoRestart");
+        // Return codes:
+        // 0               = success, no reboot required
+        // 3010            = success, reboot required
+        // any other value = failure
+
+        if (exitCode == 3010 || File.Exists("c:\\deploy_force_reboot"))
         {
-          setup.WaitForExit();
-          // Return codes:
-          //  0               = success, no reboot required
-          //  3010            = success, reboot required
-          //  any other value = failure
-
-          if (setup.ExitCode == 3010 || File.Exists("c:\\deploy_force_reboot"))
-          {
-            Utils.NotifyReboot(GetDisplayName());
-          }
-
-          if (setup.ExitCode == 0)
-          {
-            result = result || true;
-          }
+          Utils.NotifyReboot(GetDisplayName());
         }
+        result = result || (exitCode == 0);
       }
 
       // .Net 4.0
       if (!dotNet40)
       {
-        Process setup = Process.Start(_fileName, "/q /norestart");
-        if (setup != null)
+        int exitCode = Utils.RunCommandWait(_fileName, "/q /norestart");
+        // Return codes:
+        // 0               = success, no reboot required
+        // 1638            = success, another version of this product is already installed.
+        // 3010            = success, reboot required
+        // any other value = failure
+
+        if (exitCode == 3010 || File.Exists("c:\\deploy_force_reboot"))
         {
-          setup.WaitForExit();
-          // Return codes:
-          //  0               = success, no reboot required
-          //  1638	          = success, another version of this product is already installed.
-          //  3010            = success, reboot required
-          //  any other value = failure
-
-          if (setup.ExitCode == 3010 || File.Exists("c:\\deploy_force_reboot"))
-          {
-            Utils.NotifyReboot(GetDisplayName());
-          }
-
-          if (setup.ExitCode == 0 || setup.ExitCode == 1638)
-          {
-            result = result || true;
-          }
+          Utils.NotifyReboot(GetDisplayName());
         }
+        result = result || (exitCode == 0 || exitCode == 1638);
       }
       return result;
     }
