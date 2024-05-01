@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2023 Team MediaPortal
+﻿#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -62,15 +62,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
         string mpeExePath = Path.Combine(InstallationProperties.Instance["MPDir"], "MpeInstaller.exe");
         if (File.Exists(mpeExePath))
         {
-          Process setup = Process.Start(mpeExePath, String.Format(@"/S ""{0}""", FileName));
-          if (setup != null)
-          {
-            setup.WaitForExit();
-            if (setup.ExitCode == 0)
-            {
-              return true;
-            }
-          }
+          int exitCode = Utils.RunCommandWait(mpeExePath, String.Format(@"/S ""{0}""", FileName));
+          return exitCode == 0;
         }
       }
       return false;
@@ -81,15 +74,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
       string mpeExePath = Path.Combine(InstallationProperties.Instance["MPDir"], "MpeInstaller.exe");
       if (File.Exists(mpeExePath))
       {
-        Process setup = Process.Start(mpeExePath, String.Format(@"/Uninstall={0}", MpeId));
-        if (setup != null)
-        {
-          setup.WaitForExit();
-          if (setup.ExitCode == 0)
-          {
-            return true;
-          }
-        }
+        int exitCode = Utils.RunCommandWait(mpeExePath, String.Format(@"/Uninstall={0}", MpeId));
+        return exitCode == 0;
       }
       return false;
     }

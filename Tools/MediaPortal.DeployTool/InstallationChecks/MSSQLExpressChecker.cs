@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -128,43 +128,29 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       string tmpPath = Path.GetTempPath() + "\\SQLEXPRESS";
       //Extract all files
-      Process extract = Process.Start(_fileName, "/X:\"" + tmpPath + "\" /Q");
-      try
-      {
-        if (extract != null)
-        {
-          extract.WaitForExit();
-        }
-      }
-      catch
+      int exitCode = Utils.RunCommandWait(_fileName, "/X:\"" + tmpPath + "\" /Q");
+      if (exitCode == -1)
       {
         return false;
       }
+
       //Prepare the unattended ini file
       PrepareTemplateINI(tmpPath + "\\template.ini");
 
-      try
+      exitCode = Utils.RunCommandWait(tmpPath + "\\setup.exe", "/wait /settings \"" + tmpPath + "\\template.ini\" /qn");
+      if (exitCode == 0)
       {
-        //run the setup
-        Process setup = Process.Start(tmpPath + "\\setup.exe", "/wait /settings \"" + tmpPath + "\\template.ini\" /qn");
-        if (setup != null)
+        try
         {
-          setup.WaitForExit();
-          if (setup.ExitCode == 0)
-          {
-            Directory.Delete(tmpPath, true);
-            StartStopService(false);
-            FixTcpPort();
-            StartStopService(true);
-            return true;
-          }
-          return false;
+          Directory.Delete(tmpPath, true);
+          StartStopService(false);
+          FixTcpPort();
+          StartStopService(true);
+          return true;
         }
+        catch {}
       }
-      catch
-      {
-        return false;
-      }
+
       return false;
     }
 

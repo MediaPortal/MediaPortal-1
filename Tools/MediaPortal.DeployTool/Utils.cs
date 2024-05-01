@@ -28,6 +28,7 @@ using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
 using MediaPortal.DeployTool.Sections;
@@ -977,6 +978,57 @@ namespace MediaPortal.DeployTool
         key.SetValue(KEY_VALUE_NAME, 1);
 
       key.Close();
+    }
+
+    #endregion
+
+    #region Process Start Helper
+
+    public static int RunCommand(string command, string arguments)
+    {
+      if (!string.IsNullOrEmpty(command))
+      {
+        return -1;
+      }
+
+      ProcessStartInfo startInfo = new ProcessStartInfo
+      {
+        FileName = command,
+        UseShellExecute = false,
+        CreateNoWindow = true,
+        RedirectStandardOutput = true,
+        RedirectStandardError = true,
+        WindowStyle = ProcessWindowStyle.Hidden,
+        StandardOutputEncoding = Encoding.Unicode
+      };
+
+      if (!string.IsNullOrEmpty(arguments))
+      {
+        startInfo.Arguments = arguments;
+      }
+
+      Process process = Process.Start(startInfo);
+      try
+      {
+        if (process != null)
+        {
+          process.WaitForExit();
+          return process.ExitCode;
+        }
+      }
+      catch { }
+
+      return -1;
+    }
+
+    public static async Task<int> RunCommandAsync(string command, string arguments)
+    {
+      return await Task.Run(() => RunCommand(command, arguments)); 
+    }
+
+    public static int RunCommandWait(string command, string arguments)
+    {
+      return await RunCommandAsync(command, arguments);
     }
 
     #endregion

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -59,20 +59,15 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       //NSIS installer doesn't want " in parameters (chefkoch)
       //Remember that /D must be the last one         (chefkoch)
-      Process setup = Process.Start(_fileName, String.Format("/S /noServer /DeployMode --DeployMode {0}", UpdateMode));
-
-      if (setup != null)
+      int exitCode = Utils.RunCommandWait(_fileName, String.Format("/S /noServer /DeployMode --DeployMode {0}", UpdateMode));
+      if (exitCode == 0)
       {
-        setup.WaitForExit();
-        if (setup.ExitCode == 0)
+        string targetDir = InstallationProperties.Instance["MPDir"];
+        if (File.Exists(targetDir + "\\reboot"))
         {
-          string targetDir = InstallationProperties.Instance["MPDir"];
-          if (File.Exists(targetDir + "\\reboot"))
-          {
-            Utils.NotifyReboot(GetDisplayName());
-          }
-          return true;
+          Utils.NotifyReboot(GetDisplayName());
         }
+        return true;
       }
       return false;
     }

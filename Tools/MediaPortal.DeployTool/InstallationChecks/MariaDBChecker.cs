@@ -117,15 +117,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
         string cmdLine = "-uroot -p" + InstallationProperties.Instance["DBMSPassword"] +
                          " --all-databases --flush-logs";
         cmdLine += " -r " + "\"" + Path.GetTempPath() + "all_databases.sql" + "\"";
-        Process setup = Process.Start(strMariaDBDump, cmdLine);
-        try
-        {
-          if (setup != null)
-          {
-            setup.WaitForExit();
-          }
-        }
-        catch
+        int exitCode = Utils.RunCommandWait(strMariaDBDump, cmdLine);
+        if (exitCode == -1)
         {
           return false;
         }
@@ -149,15 +142,14 @@ namespace MediaPortal.DeployTool.InstallationChecks
         a.WriteLine("@echo off");
         a.WriteLine(cmdExe + " " + cmdParam);
         a.Close();
-        Process svcInstaller = Process.Start(ff);
+        exitCode = Utils.RunCommandWait(ff, string.Empty);
 #else
-        Process svcInstaller = Process.Start(cmdExe, cmdParam);
+        exitCode = Utils.RunCommandWait(cmdExe, cmdParam);
 #endif
-        if (svcInstaller != null)
+        if (exitCode != -1)
         {
-          svcInstaller.WaitForExit();
+          return true;
         }
-        return true;
       }
       return false;
     }
@@ -169,15 +161,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
       cmdLine += InstallationProperties.Instance["DBMSPassword"];
       cmdLine += " --comments ";
       cmdLine += "-e " + "\"" + "source " + Path.GetTempPath() + "all_databases.sql" + "\"";
-      Process setup = Process.Start(strMariaDB, cmdLine);
-      try
-      {
-        if (setup != null)
-        {
-          setup.WaitForExit();
-        }
-      }
-      catch
+      int exitCode = Utils.RunCommandWait(strMariaDB, cmdLine);
+      if (exitCode == -1)
       {
         return false;
       }
@@ -190,15 +175,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
       string cmdLine = "--host=localhost --user=root -p";
       cmdLine += InstallationProperties.Instance["DBMSPassword"];
       cmdLine += " --force";
-      Process setup = Process.Start(strMariaDB, cmdLine);
-      try
-      {
-        if (setup != null)
-        {
-          setup.WaitForExit();
-        }
-      }
-      catch
+      int exitCode = Utils.RunCommandWait(strMariaDB, cmdLine);
+      if (exitCode == -1)
       {
         return false;
       }
@@ -227,20 +205,14 @@ namespace MediaPortal.DeployTool.InstallationChecks
       string cmdLine = "/i \"" + _fileName + "\"";
       cmdLine += " INSTALLDIR=\"" + InstallationProperties.Instance["DBMSDir"] + "\"";
       cmdLine += " DATADIR=\"" + _dataDir + "\"";
-      cmdLine += " /qn";
+      cmdLine += " ALLOWREMOTEROOTACCESS=true /qn";
       cmdLine += " /L* \"" + Path.GetTempPath() + "\\mysqlinst.log\"";
-      Process setup = Process.Start("msiexec.exe", cmdLine);
-      try
-      {
-        if (setup != null)
-        {
-          setup.WaitForExit();
-        }
-      }
-      catch
+      int exitCode = Utils.RunCommandWait("msiexec.exe", cmdLine);
+      if (exitCode == -1)
       {
         return false;
       }
+
       StreamReader sr = new StreamReader(Path.GetTempPath() + "\\mysqlinst.log");
       bool installOk = false;
       while (!sr.EndOfStream)
@@ -258,6 +230,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       {
         return false;
       }
+
       string inifile = InstallationProperties.Instance["DBMSDir"] + "\\my.ini";
       PrepareMyIni(inifile);
       const string ServiceName = "MariaDB";
@@ -271,14 +244,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
       a.WriteLine("@echo off");
       a.WriteLine(cmdExe + " " + cmdParam);
       a.Close();
-      Process svcInstaller = Process.Start(ff);
+      exitCode = Utils.RunCommandWait(ff, string.Empty);
 #else
-      Process svcInstaller = Process.Start(cmdExe, cmdParam);
+      exitCode = Utils.RunCommandWait(cmdExe, cmdParam);
 #endif
-
-      if (svcInstaller != null)
+      if (exitCode == -1)
       {
-        svcInstaller.WaitForExit();
+        return false;
       }
 
       ServiceController ctrl = new ServiceController(ServiceName);
@@ -300,56 +272,29 @@ namespace MediaPortal.DeployTool.InstallationChecks
       //
       cmdLine = "-u root password " + InstallationProperties.Instance["DBMSPassword"];
 
-      try
+      exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
+      if (exitCode != 0)
       {
-        Process mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
-        if (mysqladmin != null)
+        cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] + " password " + InstallationProperties.Instance["DBMSPassword"];
+        exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
+        if (exitCode != 0)
         {
-          mysqladmin.WaitForExit();
-          if (mysqladmin.ExitCode != 0)
-          {
-            cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] + " password " + InstallationProperties.Instance["DBMSPassword"];
-            mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
-            if (mysqladmin != null)
-            {
-              mysqladmin.WaitForExit();
-              if (mysqladmin.ExitCode != 0)
-              {
-                MessageBox.Show("MariaDB - set password error: " + mysqladmin.ExitCode);
-                return false;
-              }
-            }
-          }
+          MessageBox.Show("MariaDB - set password error: " + mysqladmin.ExitCode);
+          return false;
         }
       }
-      catch (Exception)
-      {
-        MessageBox.Show("MariaDB - set password exception");
-        return false;
-      }
       System.Threading.Thread.Sleep(2000);
+
       //
       // mysql.exe is used to grant root access from all machines
       //
       cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] +
                 " --execute=\"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '" +
                 InstallationProperties.Instance["DBMSPassword"] + "' WITH GRANT OPTION\" mysql";
-      Process mysql = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe", cmdLine);
-      try
+      exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe", cmdLine);
+      if (exitCode != 0)
       {
-        if (mysql != null)
-        {
-          mysql.WaitForExit();
-          if (mysql.ExitCode != 0)
-          {
-            MessageBox.Show("MariaDB - set privileges error: " + mysql.ExitCode);
-            return false;
-          }
-        }
-      }
-      catch (Exception)
-      {
-        MessageBox.Show("MariaDB - set privileges exception");
+        MessageBox.Show("MariaDB - set privileges error: " + mysql.ExitCode);
         return false;
       }
 
