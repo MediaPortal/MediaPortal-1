@@ -46,7 +46,7 @@
  		<posY>600</posY>
      	<width>300</width>
  		<height>300</height>
-		<texture>..\..\..\Thumbs\CDArt\Movies\#Play.Current.IMDBNumber.png</texture>
+		<texture>#fanarthandler.movie.cd.selected</texture>
  		<keepaspectratio>yes</keepaspectratio>
  		<centered>yes</centered>
    		<align>center</align>
@@ -181,7 +181,7 @@
  		<posY>600</posY>
      	<width>250</width>
  		<height>140</height>
- 		<texture>#TVSeries.Play.ClearArt</texture>
+ 		<texture>#fanarthandler.tvseries.clearart.selected</texture>
  		<keepaspectratio>yes</keepaspectratio>
  		<centered>yes</centered>
    		<align>center</align>
@@ -201,7 +201,7 @@
  		<posY>600</posY>
      	<width>250</width>
  		<height>140</height>
- 		<texture>#TVSeries.Play.ClearLogo</texture>
+ 		<texture>#fanarthandler.tvseries.clearlogo.selected</texture>
  		<keepaspectratio>yes</keepaspectratio>
  		<centered>yes</centered>
    		<align>center</align>
@@ -221,7 +221,7 @@
  		<posY>600</posY>
      	<width>250</width>
  		<height>140</height>
-		<texture>..\..\..\Thumbs\ClearArt\Movies\#Play.Current.IMDBNumber.png</texture>
+		<texture>#fanarthandler.movie.clearart.selected</texture>
  		<keepaspectratio>yes</keepaspectratio>
  		<centered>yes</centered>
    		<align>center</align>
@@ -241,7 +241,7 @@
  		<posY>600</posY>
      	<width>250</width>
  		<height>140</height>
-		<texture>..\..\..\Thumbs\ClearLogo\Movies\#Play.Current.IMDBNumber.png</texture>
+		<texture>#fanarthandler.movie.clearlogo.selected</texture>
  		<keepaspectratio>yes</keepaspectratio>
  		<centered>yes</centered>
    		<align>center</align>

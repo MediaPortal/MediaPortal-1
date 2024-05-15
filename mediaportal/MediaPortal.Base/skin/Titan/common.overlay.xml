@@ -42,7 +42,7 @@
 	    <posY>70</posY>
 	    <width>200</width>
 	    <height>200</height>
-		<texture>..\..\..\Thumbs\CDArt\Movies\#Play.Current.IMDBNumber.png</texture>
+		<texture>#fanarthandler.movie.cd.selected</texture>
  		<keepaspectratio>yes</keepaspectratio>
  		<centered>yes</centered>
    		<align>center</align>
