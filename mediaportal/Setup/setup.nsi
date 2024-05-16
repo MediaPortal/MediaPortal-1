@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 /*
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -525,6 +525,8 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\Profiles\*"
   SetOutPath "$MPdir.Base\Wizards"
   File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\Wizards\*"
+  SetOutPath "$MPdir.Base\Shaders"
+  File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\Shaders\*"
 
   # special MP directories
   SetOutPath "$MPdir.Language"
@@ -1032,7 +1034,9 @@ SectionEnd
   Delete "$MPdir.Base\log4net.dll"
   Delete "$MPdir.Base\TsReader.ax"
   Delete "$MPdir.Base\cccp.ax"
-  
+  ; Shaders
+  RMDir /r "$MPdir.Base\Shaders"
+    
 !macroend
 
 Section "-Powerscheduler Client plugin" SecPowerScheduler
@@ -1060,6 +1064,7 @@ Section "-MediaPortal Extension Manager" SecMpeInstaller
   File "${git_MP}\MPE\MpeCore\bin\${BUILD_TYPE}\MpeCore.dll"
   File "${git_MP}\MPE\MpeInstaller\bin\${BUILD_TYPE}\MpeInstaller.exe"
   File "${git_MP}\MPE\MpeMaker\bin\${BUILD_TYPE}\MpeMaker.exe"
+  File "${git_MP}\MPE\MPEUpdater\bin\${BUILD_TYPE}\MPEUpdater.exe"
 
   ; remove shortcuts on upgrade (MP1-4540 / MP1-4544)
   Delete "$DESKTOP\MediaPortal Extension Installer.lnk"
@@ -1073,7 +1078,7 @@ Section "-MediaPortal Extension Manager" SecMpeInstaller
   CreateDirectory "${STARTMENU_GROUP}"
   !if "${Architecture}" == "x64"
     CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Manager (x64).lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Manager (x64"
-    CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker (x64.lnk"   "$MPdir.Base\MpeMaker.exe"      ""  "$MPdir.Base\MpeMaker.exe"      0 "" "" "MediaPortal Extension Maker (x64"
+    CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker (x64).lnk"   "$MPdir.Base\MpeMaker.exe"      ""  "$MPdir.Base\MpeMaker.exe"      0 "" "" "MediaPortal Extension Maker (x64"
     
     ; Delete shortcuts with old x64 naming
     Delete "${STARTMENU_GROUP}\MediaPortal Extension Manager.lnk"
@@ -1086,12 +1091,12 @@ Section "-MediaPortal Extension Manager" SecMpeInstaller
   ; associate file extensions
   ${If} ${AtLeastWinVista}
     !if "${Architecture}" == "x64"
-      !insertmacro APP_ASSOCIATE "mpe1"  "MPE.Installer.x64" "MediaPortal extension" "$MPdir.Base\MpeInstaller.exe,0" "Open with MPE Installer (x64)" "$MPdir.Base\MpeInstaller.exe $\"%1$\""
-      !insertmacro APP_ASSOCIATE_ADDNAME "MPE.Installer.x64" "MPE Installer (x64)"   "Team MediaPortal"
+      !insertmacro APP_ASSOCIATE "mpe1"  "MPE.Installer.x64" "MediaPortal Extension (x64)" "$MPdir.Base\MpeInstaller.exe,0" "Open with MPE Installer (x64)" "$MPdir.Base\MpeInstaller.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDNAME "MPE.Installer.x64" "MPE Installer (x64)"         "Team MediaPortal"
 
-      !insertmacro APP_ASSOCIATE "xmp2"  "MPE.Maker.x64" "MediaPortal extension project" "$MPdir.Base\MpeMaker.exe,0" "Open with MPE Maker (x64)"         "$MPdir.Base\MpeMaker.exe $\"%1$\""
-      !insertmacro APP_ASSOCIATE_ADDVERB "MPE.Maker.x64" "edit"                          "Edit with MPE Maker (x64)"  "$MPdir.Base\MpeMaker.exe $\"%1$\""
-      !insertmacro APP_ASSOCIATE_ADDNAME "MPE.Maker.x64" "MPE Maker (x64)"               "Team MediaPortal"
+      !insertmacro APP_ASSOCIATE "xmp2"  "MPE.Maker.x64" "MediaPortal Extension project (x64)" "$MPdir.Base\MpeMaker.exe,0" "Open with MPE Maker (x64)"         "$MPdir.Base\MpeMaker.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDVERB "MPE.Maker.x64" "edit"                                "Edit with MPE Maker (x64)"  "$MPdir.Base\MpeMaker.exe $\"%1$\""
+      !insertmacro APP_ASSOCIATE_ADDNAME "MPE.Maker.x64" "MPE Maker (x64)"                     "Team MediaPortal"
     !else
       !insertmacro APP_ASSOCIATE "mpe1" "MPE.Installer"  "MediaPortal extension" "$MPdir.Base\MpeInstaller.exe,0" "Open with MPE Installer" "$MPdir.Base\MpeInstaller.exe $\"%1$\""
       !insertmacro APP_ASSOCIATE_ADDNAME "MPE.Installer" "MPE Installer"         "Team MediaPortal"

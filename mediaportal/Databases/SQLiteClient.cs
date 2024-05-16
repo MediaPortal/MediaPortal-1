@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2021 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2021 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -257,7 +257,7 @@ namespace SQLite.NET
       if (pName != IntPtr.Zero)
       {
         libVersion = Marshal.PtrToStringAnsi(pName);
-        Log.Info("using sqlite {0}", libVersion);
+        Log.Info("SQLiteClient: Using SQLite {0}", libVersion);
       }
     }
 
@@ -274,7 +274,7 @@ namespace SQLite.NET
       }
       catch (Exception ex)
       {
-        Log.Error("SqliteClient:WaitForFile: {0}", ex.Message);
+        Log.Error("SQLiteClient: WaitForFile: {0}", ex.Message);
         validFile = false;
       }
 
@@ -286,7 +286,7 @@ namespace SQLite.NET
         {
           System.Threading.Thread.Sleep(250);
           currentWaitCount++;
-          Log.Info("SQLLiteClient: waiting for remote database file {0} for {1} msec", fileName, currentWaitCount * 240);
+          Log.Info("SQLiteClient: Waiting for remote database file {0} for {1} msec", fileName, currentWaitCount * 240);
         }
       }
       else
@@ -312,7 +312,7 @@ namespace SQLite.NET
       bool isRemotePath = PathIsNetworkPath(dbName);
       if (isRemotePath)
       {
-        Log.Info("SQLLiteClient: database is remote {0}", this.DBName);
+        Log.Info("SQLiteClient: Database is remote {0}", this.DBName);
         WaitForFile(dbName);
       }
 
@@ -375,7 +375,6 @@ namespace SQLite.NET
         finally
         {
           dbHandle = IntPtr.Zero;
-          databaseName = string.Empty;
         }
       }
     }
@@ -397,12 +396,18 @@ namespace SQLite.NET
     public SQLiteResultSet Execute(string query)
     {
       SQLiteResultSet set1 = new SQLiteResultSet();
+      if (dbHandle == IntPtr.Zero)
+      {
+        Log.Debug("SQLiteClient: Database {0} is not open for query: {1}", databaseName, query);
+        return set1;
+      }
+
       //lock (typeof (SQLiteClient)) // Trigger slow entering plugin (i.e myvideos in title mode)
       {
         //Log.Info("dbs:{0} sql:{1}", databaseName,query);
         if (string.IsNullOrEmpty(query))
         {
-          Log.Error("SQLiteClient: query == null or empty");
+          Log.Error("SQLiteClient: Query == null or Empty");
           return set1;
         }
         IntPtr errMsg;
@@ -430,7 +435,7 @@ namespace SQLite.NET
         finally {}
         if (err != SqliteError.OK)
         {
-          Log.Error("SQLiteClient: query returned {0} {1}", err.ToString(), query);
+          Log.Error("SQLiteClient: Query returned {0} {1}", err.ToString(), query);
           ThrowError("sqlite3_finalize", query, err);
         }
       }
@@ -444,7 +449,7 @@ namespace SQLite.NET
 
       if (pVm == IntPtr.Zero)
       {
-        ThrowError("SQLiteClient: pvm=null", query, res);
+        ThrowError("SQLiteClient: pVm=null", query, res);
       }
 
       DateTime now = DateTime.Now;
@@ -463,7 +468,7 @@ namespace SQLite.NET
           {
             if (i > 0)
             {
-              Log.Debug("SqlClient: database was busy (Available after " + (i + 1) + " retries)");
+              Log.Debug("SQLiteClient: Database was busy (Available after " + (i + 1) + " retries)");
             }
             break;
           }
@@ -497,7 +502,7 @@ namespace SQLite.NET
 
           if (err != SqliteError.OK)
           {
-            throw new SQLiteException(string.Format("Failed to re-open database, SQLite said: {0} {1}", DBName,
+            throw new SQLiteException(string.Format("SQLiteClient: Failed to re-open database, SQLite said: {0} {1}", DBName,
                                                     err.ToString()));
           }
           else
@@ -530,7 +535,7 @@ namespace SQLite.NET
             IntPtr pName = sqlite3_column_name16(pVm, i);
             if (pName == IntPtr.Zero)
             {
-              ThrowError(String.Format("SqlClient:sqlite3_column_name16() returned null {0}/{1}", i, pN), query, res);
+              ThrowError(String.Format("SQLiteClient: sqlite3_column_name16() returned null {0}/{1}", i, pN), query, res);
             }
             colName = Marshal.PtrToStringUni(pName);
             set1.columnNames.Add(colName);

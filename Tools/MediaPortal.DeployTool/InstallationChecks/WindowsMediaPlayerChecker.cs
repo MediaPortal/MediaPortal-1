@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -52,26 +52,17 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Install()
     {
-      Process setup = Process.Start(_fileName, "/q");
-      if (setup != null)
+      int exitCode = Utils.RunCommandWait(_fileName, "/q");
+      // Return codes:
+      // 0               = success, no reboot required
+      // 3010            = success, reboot required
+      // any other value = failure
+
+      if (exitCode == 3010 || File.Exists("c:\\deploy_force_reboot"))
       {
-        setup.WaitForExit();
-        // Return codes:
-        //  0               = success, no reboot required
-        //  3010            = success, reboot required
-        //  any other value = failure
-
-        if (setup.ExitCode == 3010 || File.Exists("c:\\deploy_force_reboot"))
-        {
-          Utils.NotifyReboot(GetDisplayName());
-        }
-
-        if (setup.ExitCode == 0)
-        {
-          return true;
-        }
+        Utils.NotifyReboot(GetDisplayName());
       }
-      return false;
+      return exitCode == 0;
     }
 
     public bool UnInstall()

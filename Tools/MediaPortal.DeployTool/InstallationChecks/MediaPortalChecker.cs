@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -133,44 +133,45 @@ namespace MediaPortal.DeployTool.InstallationChecks
       // NSIS installer need to know if it's a fresh install or an update (chefkoch)
       string updateMode = InstallationProperties.Instance["UpdateMode"] == "yes" ? "/UpdateMode" : string.Empty;
 
-      Process setup;
+      string arguments = string.Empty;
       if (UpgradeDlg.reInstallForce)
       {
-        setup = Process.Start(_fileName, String.Format("/S"));
+        arguments = "/S";
       }
       else if (UpgradeDlg.freshForce)
       {
         // NSIS installer doesn't want " in parameters (chefkoch)
         // Remember that /D must be the last one         (chefkoch)
-        setup = Process.Start(_fileName, String.Format("/S /DeployMode --DeployMode {0} /D={1}", updateMode, targetDir));
+        arguments = String.Format("/S /DeployMode --DeployMode {0} /D={1}", updateMode, targetDir);
       }
       else
       {
-        setup = Process.Start(_fileName, String.Format("/S"));
+        arguments = "/S";
+      }
+      int exitCode = Utils.RunCommandWait(_fileName, arguments);
+      if (exitCode == -1)
+      {
+        return false;
       }
 
-      if (setup != null)
+      if (exitCode == 0)
       {
-        setup.WaitForExit();
-        if (setup.ExitCode == 0)
+        if (File.Exists(targetDir + "\\reboot"))
         {
-          if (File.Exists(targetDir + "\\reboot"))
-          {
-            Utils.NotifyReboot(GetDisplayName());
-          }
-
-          // Installer backups existing folder so need to write deploy.xml after installation 
-          // else it will get backed up
-          if (InstallationProperties.Instance["UpdateMode"] != "yes")
-          {
-            if (chosenSkin != "[Existing]")
-            {
-              Utils.SetDeployXml("skin", "name", chosenSkin);
-            }
-          }
-
-          return true;
+          Utils.NotifyReboot(GetDisplayName());
         }
+
+        // Installer backups existing folder so need to write deploy.xml after installation 
+        // else it will get backed up
+        if (InstallationProperties.Instance["UpdateMode"] != "yes")
+        {
+          if (chosenSkin != "[Existing]")
+          {
+            Utils.SetDeployXml("skin", "name", chosenSkin);
+          }
+        }
+
+        return true;
       }
       return false;
     }

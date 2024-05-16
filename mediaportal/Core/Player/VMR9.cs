@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -934,7 +934,16 @@ namespace MediaPortal.Player
         // Check if need to set EVR for LiveTV when using madVR
         if (UseMadVideoRenderer)
         {
-          if (UseEVRMadVRForTV && g_Player.IsTimeShifting)
+          // start FMU
+          // For use EVR instead of MadVR not only in TV Live but also when playing recorded files 
+          // it fixes the bad recorded name in VideoOSD of MyTV
+          // g_Player.IsTimeShifting is not enough because false if recorded file is played
+          // g_Player.IsTV is not enough because false if .ts false played by TV-Series plugin
+          // That why IsTSfile is created
+
+          bool IsTSfile = g_Player.currentFileName.EndsWith(".ts");
+          if (UseEVRMadVRForTV && (g_Player.IsTimeShifting || IsTSfile))
+          //end FMU
           {
             GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.EVR;
             // Keep current RenderTarget to trying to restore D3D GUI from madVR but release it if already init previously
@@ -1788,7 +1797,7 @@ namespace MediaPortal.Player
         }
         else // GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.madVR
         {
-          if (!(g_Player.Player is DVDPlayer9) && !(g_Player.Player is DVDPlayer))
+          if (videoWinMadVr != null && !(g_Player.Player is DVDPlayer9) && !(g_Player.Player is DVDPlayer))
           {
             var xposition = GUIGraphicsContext.form.Location.X;
             var yposition = GUIGraphicsContext.form.Location.Y;

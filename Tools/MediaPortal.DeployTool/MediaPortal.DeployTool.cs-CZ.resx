@@ -203,7 +203,10 @@ Počítač pak bude sloužit jako vyhrazený TV server a bude poskytovat televiz
     <value>Microsoft SQL Server Express 2005</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
-    <value>MySQL 5</value>
+    <value>MySQL 8</value>
+  </data>
+  <data name="DBMSType_rbMariaDB" xml:space="preserve">
+    <value>MariaDB 10</value>
   </data>
   <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
     <value>SQL server je již nainstalován a bude použit pro TV server</value>

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -55,35 +55,21 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public bool Install()
     {
       // Extract package
-      Process setup = Process.Start(_fileName, "/q /t:\"" + Path.GetTempPath() + "\\directx9c\"");
-      if (setup != null)
-      {
-        setup.WaitForExit();
-      }
+      Utils.RunCommandWait(_fileName, "/q /t:\"" + Path.GetTempPath() + "\\directx9c\"");
 
       // Install package
       string exe = Path.GetTempPath() + "\\directx9c\\DXSetup.exe";
+      int exitCode = Utils.RunCommandWait(exe, "/silent");
+      // Return codes:
+      // 0               = success, no reboot required
+      // 3010            = success, reboot required
+      // any other value = failure
 
-      setup = Process.Start(exe, "/silent");
-      if (setup != null)
+      if (exitCode == 3010 || File.Exists("c:\\deploy_force_reboot"))
       {
-        setup.WaitForExit();
-        // Return codes:
-        //  0               = success, no reboot required
-        //  3010            = success, reboot required
-        //  any other value = failure
-
-        if (setup.ExitCode == 3010 || File.Exists("c:\\deploy_force_reboot"))
-        {
-          Utils.NotifyReboot(GetDisplayName());
-        }
-
-        if (setup.ExitCode == 0)
-        {
-          return true;
-        }
+        Utils.NotifyReboot(GetDisplayName());
       }
-      return false;
+      return exitCode == 0;
     }
 
     public bool UnInstall()

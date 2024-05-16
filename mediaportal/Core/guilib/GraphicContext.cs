@@ -112,6 +112,16 @@ namespace MediaPortal.GUI.Library
 
     public static SwapChain SwapChain = null; // pointer to current device swapchain
 
+    public static PixelShaderCollection VideoPixelShaders
+    {
+      get
+      {
+        if (_VideoPixelShaders == null)
+          _VideoPixelShaders = new PixelShaderCollection(DX9Device);
+        return _VideoPixelShaders;
+      }
+    }private static PixelShaderCollection _VideoPixelShaders = null;
+
     // ReSharper disable InconsistentNaming
     public static Graphics graphics = null; // GDI+ Graphics object
     public static Form form = null; // Current GDI form
@@ -259,6 +269,14 @@ namespace MediaPortal.GUI.Library
         SwapChain = new SwapChain9Ex(((DeviceEx)device).GetSwapChain(0).NativePointer);
       else
         SwapChain = device.GetSwapChain(0);
+
+      if (_VideoPixelShaders != null)
+      {
+        _VideoPixelShaders.Clear();
+        _VideoPixelShaders = null;
+      }
+
+      _VideoPixelShaders = new PixelShaderCollection(device);
     }
 
     /// <summary>
@@ -546,7 +564,7 @@ namespace MediaPortal.GUI.Library
         var intPixelRatio = (int)pixelRatio;
         xmlWriter.SetValue("screen", "pixelratio", intPixelRatio.ToString(CultureInfo.InvariantCulture));
         xmlWriter.SetValue("screen", "subtitles", _subtitles.ToString(CultureInfo.InvariantCulture));
-
+       
         Log.Debug("GraphicContext: Settings saved to {0}", strFileName);
       }
     }
@@ -2434,6 +2452,12 @@ namespace MediaPortal.GUI.Library
       if (_d3d != null)
         _d3d.Dispose();
       _d3d = null;
+
+      if (_VideoPixelShaders != null)
+      {
+        _VideoPixelShaders.Clear();
+        _VideoPixelShaders = null;
+      }
     }
 
   }

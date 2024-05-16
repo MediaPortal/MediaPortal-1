@@ -48,9 +48,18 @@ namespace MediaPortal.Player
 
     #region Constructors
 
-    public VolumeHandler() : this(LoadFromRegistry()) { }
+    protected VolumeHandler() { }
 
     public VolumeHandler(int[] volumeTable)
+    {
+      this.Init(volumeTable);
+    }
+
+    #endregion Constructors
+
+    #region Methods
+
+    protected void Init(int[] volumeTable)
     {
       if (OSInfo.OSInfo.Win10OrLater())
       {
@@ -98,7 +107,7 @@ namespace MediaPortal.Player
             }
             catch (Exception ex)
             {
-              Log.Error("VolumeHandler: Mixer exception during init {0}", ex);
+              Log.Error("VolumeHandler: Init() Mixer exception during init {0}", ex);
             }
 
             if (OSInfo.OSInfo.Win8OrLater() && hideWindowsOSD)
@@ -165,7 +174,7 @@ namespace MediaPortal.Player
           }
           catch (Exception ex)
           {
-            Log.Error("VolumeHandler: Mixer exception when init {0}", ex);
+            Log.Error("VolumeHandler: Init() Mixer exception when init {0}", ex);
           }
 
           if (OSInfo.OSInfo.Win8OrLater() && hideWindowsOSD)
@@ -243,7 +252,7 @@ namespace MediaPortal.Player
                     {0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535});
                 // windows default from registry
                 case 1:
-                  return new VolumeHandler();
+                  return new VolumeHandler(LoadFromRegistry());
                 // logarithmic
                 case 2:
                   return new VolumeHandler(new[]
@@ -296,7 +305,7 @@ namespace MediaPortal.Player
                   {0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535});
               // windows default from registry
               case 1:
-                return new VolumeHandler();
+                return new VolumeHandler(LoadFromRegistry());
               // logarithmic
               case 2:
                 return new VolumeHandler(new[]
@@ -393,7 +402,7 @@ namespace MediaPortal.Player
       }
     }
 
-    private static int[] LoadFromRegistry()
+    protected static int[] LoadFromRegistry()
     {
       using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Multimedia\Audio\VolumeControl"))
       {

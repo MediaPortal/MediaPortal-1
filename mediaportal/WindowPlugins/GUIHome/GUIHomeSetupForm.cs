@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -60,6 +60,14 @@ namespace MediaPortal.GUI.Home
         if (!text.Equals("<Day> <Month> <DD>"))
         {
           cboxFormat.Items.Add("<Day> <Month> <DD>");
+        }
+        if (!text.Equals("<DDD> <DD> <MMM>"))
+        {
+          cboxFormat.Items.Add("<DDD> <DD> <MMM>");
+        }
+        if (!text.Equals("<DDD> <DD> <Month>"))
+        {
+          cboxFormat.Items.Add("<DDD> <DD> <Month>");
         }
         cboxFormat.Text = text;
       }
@@ -186,6 +194,7 @@ namespace MediaPortal.GUI.Home
           day = "Sunday";
           break;
       }
+      string ddd = day.Substring(0, 3);
 
       string month;
       switch (cur.Month)
@@ -227,12 +236,15 @@ namespace MediaPortal.GUI.Home
           month = "December";
           break;
       }
+      string mmm = month.Substring(0, 3);
 
       dateString = Util.Utils.ReplaceTag(dateString, "<Day>", day, "unknown");
       dateString = Util.Utils.ReplaceTag(dateString, "<DD>", cur.Day.ToString(), "unknown");
+      dateString = Util.Utils.ReplaceTag(dateString, "<DDD>", ddd, "unknown");
 
       dateString = Util.Utils.ReplaceTag(dateString, "<Month>", month, "unknown");
       dateString = Util.Utils.ReplaceTag(dateString, "<MM>", cur.Month.ToString(), "unknown");
+      dateString = Util.Utils.ReplaceTag(dateString, "<MMM>", mmm, "unknown");
 
       dateString = Util.Utils.ReplaceTag(dateString, "<Year>", cur.Year.ToString(), "unknown");
       dateString = Util.Utils.ReplaceTag(dateString, "<YY>", (cur.Year - 2000).ToString("00"), "unknown");

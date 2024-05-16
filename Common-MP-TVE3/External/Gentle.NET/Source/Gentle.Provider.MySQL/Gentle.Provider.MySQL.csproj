@@ -74,6 +74,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Gentle.Provider.MySQL.Interceptor\Gentle.Provider.MySQL.Interceptor.csproj">
+      <Project>{d8d01edd-fe20-4f51-9ce1-b5c50244d6ca}</Project>
+      <Name>Gentle.Provider.MySQL.Interceptor</Name>
+    </ProjectReference>
     <Reference Include="MySql.Data, Version=6.6.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>

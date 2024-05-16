@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -67,28 +67,22 @@ namespace MediaPortal.DeployTool.InstallationChecks
         }
         else
         {
-          sqlparam = dbtype == "msSQL2005" ? "--DeploySql:sqlserver" : "--DeploySql:mysql"; 
+          sqlparam = dbtype == "MSSQL" ? "--DeploySql:sqlserver" : "--DeploySql:mysql"; 
         }
         pwdparam = "--DeployPwd:" + InstallationProperties.Instance["DBMSPassword"];
       }
 
-      //NSIS installer doesn't want " in parameters (chefkoch)
-      //Remember that /D must be the last one         (chefkoch)
-      Process setup = Process.Start(_fileName,
-                                    String.Format("/S /noClient /DeployMode --DeployMode {0} {1} {2} /D={3}", sqlparam, pwdparam,
-                                                  UpdateMode, targetDir));
-
-      if (setup != null)
+      // NSIS installer doesn't want " in parameters (chefkoch)
+      // Remember that /D must be the last one       (chefkoch)
+      int exitCode = Utils.RunCommandWait(_fileName, String.Format("/S /noClient /DeployMode --DeployMode {0} {1} {2} /D={3}", 
+                                                                   sqlparam, pwdparam, UpdateMode, targetDir));
+      if (exitCode == 0)
       {
-        setup.WaitForExit();
-        if (setup.ExitCode == 0)
+        if (File.Exists(targetDir + "\\reboot"))
         {
-          if (File.Exists(targetDir + "\\reboot"))
-          {
-            Utils.NotifyReboot(GetDisplayName());
-          }
-          return true;
+          Utils.NotifyReboot(GetDisplayName());
         }
+        return true;
       }
       return false;
     }

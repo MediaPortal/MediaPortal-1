@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -29,8 +29,10 @@ namespace MediaPortal.DeployTool.Sections
     public static bool rbFreshChecked;
     private bool rbReinstallChecked;
     private bool rbUpdateChecked;
-    public static bool MySQL56 = false;
     public static bool MySQL51= false;
+    public static bool MySQL56 = false;
+    public static bool MySQL57 = false;
+    public static bool MySQL83 = false;
     public static bool reInstallForce = false;
     public static bool freshForce = true; // Set to true by default (needed for fresh installation)
 
@@ -45,10 +47,14 @@ namespace MediaPortal.DeployTool.Sections
       rbUpdateChecked = false;
       // Check if MySQL need to be upgraded
       IInstallationPackage package = new MySQLChecker();
-      CheckResult resultMySQL56 = package.CheckStatus();
+      CheckResult resultMySQL83 = package.CheckStatus();
       CheckResult resultMySQL51 = MySQLChecker.CheckStatusMySQL51();
+      CheckResult resultMySQL56 = MySQLChecker.CheckStatusMySQL56();
+      CheckResult resultMySQL57 = MySQLChecker.CheckStatusMySQL57();
       MySQL51 = resultMySQL51.state == CheckState.NOT_INSTALLED;
       MySQL56 = resultMySQL56.state == CheckState.NOT_INSTALLED;
+      MySQL57 = resultMySQL57.state == CheckState.NOT_INSTALLED;
+      MySQL83 = resultMySQL83.state == CheckState.NOT_INSTALLED;
       UpdateUI();
     }
 
@@ -199,7 +205,8 @@ namespace MediaPortal.DeployTool.Sections
 
     public override DeployDialog GetNextDialog()
     {
-      if (MySQL56 && !MySQL51 && rbUpdate.Enabled && rbUpdateChecked &&
+      if (MySQL83 && !MySQL51 && !MySQL56 && !MySQL57 && 
+          rbUpdate.Enabled && rbUpdateChecked &&
           (InstallationProperties.Instance["InstallType"] == "tvserver_master" ||
            InstallationProperties.Instance["InstallType"] == "singleseat"))
       {
