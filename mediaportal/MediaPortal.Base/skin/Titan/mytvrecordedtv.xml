@@ -6,6 +6,7 @@
 <define>#header.label:604</define>
 <controls>
 
+    <import>common.default.background.xml</import> 
 	<import>common.window.recordings.xml</import>
 
     <control>
@@ -118,7 +119,7 @@
 			<posX>99</posX>
 			<posY>580</posY>
 			<width>780</width>
-			<height>345</height>
+			<height>405</height>
       <lineSpacing>0.85</lineSpacing>
 			<label>#TV.RecordedTV.Description</label>
 			<visible>facadeview.list</visible>
@@ -219,9 +220,9 @@
   </control>
     
 		
-	<control Style="textBox">
-	  <type>textboxscrollup</type>
-	  <description>Description1</description>
+  <control Style="textBox">
+		<type>textboxscrollup</type>
+		<description>Description1</description>
 		<id>0</id>
 		<posX>1040</posX>
 		<posY>584</posY>
@@ -232,60 +233,51 @@
 		<visible>facadeview.smallicons|facadeview.largeicons</visible>
     <animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+	
+	<control>
+		<description>BG for watched count/watched percent</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>785</posX>
+		<posY>450</posY>
+		<width>114</width>
+		<height>114</height>
+		<texture>watched_count_bg.png</texture>
+		<visible>facadeview.list+!string.equals(#watchedcount,)+control.hasthumb(500)</visible>
 	</control>
-
-	<!--            :: DRIVESPACE ::            -->
 	
-      <control>
-        <description>Drivespace</description>
-        <type>label</type>
-        <textcolor>FF00b7ff</textcolor>
-        <textalign>left</textalign>
-        <id>37483</id>
-        <posX>695</posX>
-        <posY>945</posY>
-        <width>200</width>
-        <height>30</height>
-        <font>TitanLight10</font>
-        <label>#DriveFreeSpace.AvailableSpace.Data.Drives</label>
-        <visible>[facadeview.smallicons | facadeview.largeicons | facadeview.list] + Control.IsVisible(50) + plugin.isenabled(DriveFreeSpace)</visible>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
-      </control>
-
-      <control>
-      	<description>Progress background</description>
-      	<type>image</type>
-      	<id>1</id>
-      	<posX>99</posX>
-      	<posY>950</posY>
-      	<width>580</width>
-      	<height>18</height>
-      	<texture>osd_progress_bg.png</texture>
-		<visible>[facadeview.smallicons | facadeview.largeicons | facadeview.list] + Control.IsVisible(50) + plugin.isenabled(DriveFreeSpace)</visible>
-      	<animation effect="fade" time="250">WindowOpen</animation>
-      	<animation effect="fade" time="250">WindowClose</animation>
-      </control>
-
-      <control>
-		<description>Progress Bar</description>
-		<type>progress</type>
-		<id>20</id>
-		<posX>89</posX>
-		<posY>952</posY>
-		<width>594</width>
-		<height>15</height>
-		<label>#DriveFreeSpace.AvailableSpace.Data.Total</label>
-		<lefttexture>osd_progress_left.png</lefttexture>
-      	<midtexture>osd_progress_mid.png</midtexture>
-      	<righttexture>osd_progress_right.png</righttexture>
-		<visible>[facadeview.smallicons | facadeview.largeicons | facadeview.list] + Control.IsVisible(50) + plugin.isenabled(DriveFreeSpace)</visible>
-		<animation effect="fade" time="250">WindowOpen</animation>
-      	<animation effect="fade" time="250">WindowClose</animation>
-      </control>
+	<control>
+		<description>Video Watched Count Label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>782</posX>
+		<posY>448</posY>
+		<width>114</width>
+		<height>114</height>
+		<label>#watchedcount</label>
+		<font>Label</font>
+		<align>center</align>
+		<font>fontB16</font>
+		<textcolor>FFF</textcolor>
+		<visible>facadeview.list+!string.equals(#watchedcount,)+control.hasthumb(500)</visible>
+	</control>
 	
-	<import>mytvrecordedtv.hiddenmenu.xml</import>
+	<control>
+		<description>Watched Logo</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>785</posX>
+		<posY>450</posY>
+		<width>114</width>
+		<height>114</height>
+		<texture>watched_percentage_#(string.format('{0:000}',mul(math.round(div(cint(#watchedpercent),5)),5))).png</texture>
+		<keepaspectratio>yes</keepaspectratio>
+		<visible>facadeview.list+!string.equals(#watchedcount,)+control.hasthumb(500)</visible>
+	</control>
+	
+			<import>mytvrecordedtv.hiddenmenu.xml</import>
 	<import>common.facade.recordings.xml</import>
-    <import>common.overlay.xml</import>
+  <import>common.overlay.xml</import>
 </controls>
 </window>
