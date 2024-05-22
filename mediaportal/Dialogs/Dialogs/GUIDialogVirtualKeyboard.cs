@@ -23,7 +23,7 @@ using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Dialogs
 {
-  public abstract class VirtualKeyboard : GUIWindow, IRenderLayer
+  public abstract class VirtualKeyboard : GUIWindow, IRenderLayer, IDialogboxKeyboard
   {
     [SkinControl(1)] protected GUIKeyboard _keyboard = null;
     [SkinControl(2)] protected GUIImage _background = null;
