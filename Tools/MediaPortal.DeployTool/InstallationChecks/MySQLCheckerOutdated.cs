@@ -110,7 +110,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       if (!string.IsNullOrEmpty(strMySQL) && !string.IsNullOrEmpty(strMySQLData))
       {
-        const string ServiceName = "MySQL";
+        const string ServiceName = "MySQL5";
         ServiceController ctrl = new ServiceController(ServiceName);
         // Check if MySQL is running and try to start it if not
         if (!ctrl.Status.Equals(ServiceControllerStatus.Running))
@@ -238,7 +238,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       if (!IsBackupDB)
       {
         // Try to stop actual MySQL Service
-        const string OldServiceName = "MySQL";
+        const string OldServiceName = "MySQL5";
         ServiceController ctrlMySQL = new ServiceController(OldServiceName);
         try
         {
@@ -286,7 +286,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
       string inifile = InstallationProperties.Instance["DBMSDir"] + "\\my.ini";
       PrepareMyIni(inifile);
-      const string ServiceName = "MySQL";
+      const string ServiceName = "MySQL5";
       string cmdExe = Environment.SystemDirectory + "\\sc.exe";
       string cmdParam = "create " + ServiceName + " start= auto DisplayName= " + ServiceName + " binPath= \"" +
                         InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld.exe --defaults-file=\\\"" + inifile +

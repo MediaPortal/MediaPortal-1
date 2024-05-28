@@ -872,7 +872,14 @@ namespace SetupTv
           tbServerHostName.Text = Dns.GetHostName();
           tbServiceDependency.Enabled = true;
           tbServiceDependency.BackColor = tbServerHostName.BackColor;
-          tbServiceDependency.Text = @"MySQL5";
+          if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
+          {
+            tbServiceDependency.Text = @"MySQL";
+          }
+          else
+          {
+            tbServiceDependency.Text = @"MySQL5";
+          }
           string dependency = ServiceHelper.ReadDependency();
           if (!string.IsNullOrEmpty(dependency))
           {
