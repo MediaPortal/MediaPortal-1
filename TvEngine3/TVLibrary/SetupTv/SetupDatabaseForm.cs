@@ -792,6 +792,17 @@ namespace SetupTv
       // first try the quick method and assume the user is right or using defaults
       string ConfiguredServiceName = tbServiceDependency.Text;
       string DBSearchPattern = @"MySQL";
+
+      // MS SQL
+      if (rbSQLServer.Checked)
+      {
+        DBSearchPattern = @"SQLBrowser";
+      }
+      else if ( !(OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS) )
+      {
+        DBSearchPattern = @"MySQL5";
+      }
+
       Color clAllOkay = Color.GreenYellow;
 
       if (ServiceHelper.IsInstalled(ConfiguredServiceName))
@@ -801,10 +812,6 @@ namespace SetupTv
       }
       else
       {
-        // MSSQL
-        if (rbSQLServer.Checked)
-          DBSearchPattern = @"SQLBrowser";
-
         if (ServiceHelper.GetDBServiceName(ref DBSearchPattern))
         {
           tbServiceDependency.Text = DBSearchPattern;
@@ -812,8 +819,18 @@ namespace SetupTv
         }
         else
         {
-          Log.Info("SetupDatabaseForm: DB service name not recognized - using defaults");
-          tbServiceDependency.BackColor = Color.Red;
+          // Maria DB
+          DBSearchPattern = @"MariaDB";
+          if (ServiceHelper.GetDBServiceName(ref DBSearchPattern))
+          {
+            tbServiceDependency.Text = DBSearchPattern;
+            tbServiceDependency.BackColor = clAllOkay;
+          }
+          else
+          {
+            Log.Info("SetupDatabaseForm: DB service name not recognized - using defaults [{0}]", DBSearchPattern);
+            tbServiceDependency.BackColor = Color.Red;
+          }
         }
       }
 
