@@ -161,6 +161,7 @@
     <Compile Include="InstallationChecks\OldPackagesChecker.cs" />
     <Compile Include="InstallationChecks\WindowsFirewallChecker.cs" />
     <Compile Include="InstallationChecks\MySQLChecker.cs" />
+    <Compile Include="InstallationChecks\MySQLCheckerOutdated.cs" />
     <Compile Include="InstallationChecks\MSSQLExpressChecker.cs" />
     <Compile Include="InstallationChecks\TvPluginChecker.cs" />
     <Compile Include="InstallationChecks\TvServerChecker.cs" />

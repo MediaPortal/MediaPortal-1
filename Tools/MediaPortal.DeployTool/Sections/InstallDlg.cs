@@ -221,7 +221,14 @@ switch (InstallationProperties.Instance["InstallType"])
           }
           if (InstallationProperties.Instance["DBMSType"] == "MySQL")
           {
-            AddPackageToListView(new MySQLChecker());
+            if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
+            {
+              AddPackageToListView(new MySQLChecker());
+            }
+            else
+            {
+              AddPackageToListView(new MySQLCheckerOutdated());
+            }
           }
           if (InstallationProperties.Instance["DBMSType"] == "MariaDB")
           {
@@ -243,7 +250,14 @@ switch (InstallationProperties.Instance["InstallType"])
           }
           if (InstallationProperties.Instance["DBMSType"] == "MySQL")
           {
-            AddPackageToListView(new MySQLChecker());
+            if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
+            {
+              AddPackageToListView(new MySQLChecker());
+            }
+            else
+            {
+              AddPackageToListView(new MySQLCheckerOutdated());
+            }
           }
           if (InstallationProperties.Instance["DBMSType"] == "MariaDB")
           {
@@ -270,7 +284,14 @@ switch (InstallationProperties.Instance["InstallType"])
           AddPackageToListView(new MediaPortalChecker());
           // framug: MS SQL is no longer supported
           // AddPackageToListView(new MSSQLExpressChecker());
-          AddPackageToListView(new MySQLChecker());
+          if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
+          {
+            AddPackageToListView(new MySQLChecker());
+          }
+          else
+          {
+            AddPackageToListView(new MySQLCheckerOutdated());
+          }
 
 #if NO_TV_SERVER
 #else

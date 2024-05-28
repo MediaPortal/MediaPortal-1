@@ -205,6 +205,9 @@ The PC will then act as a dedicated TV-Server and provide other PC's in your LAN
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 8</value>
   </data>
+  <data name="DBMSType_rbMySQLOutdated" xml:space="preserve">
+    <value>MySQL 5.6</value>
+  </data>
   <data name="DBMSType_rbMariaDB" xml:space="preserve">
     <value>MariaDB 10</value>
   </data>
