@@ -19,10 +19,11 @@
 
 SET net_write_timeout=99999;
 SET net_read_timeout=99999;
-
+#
 --
 -- Delete schema TvLibrary
 --
+
 DROP DATABASE IF EXISTS %TvLibrary%;
 
 --
@@ -30,6 +31,11 @@ DROP DATABASE IF EXISTS %TvLibrary%;
 --
 
 CREATE DATABASE IF NOT EXISTS %TvLibrary%;
+#
+--
+-- Switch to TVLibrary schema
+--
+
 USE %TvLibrary%;
 #
 --
