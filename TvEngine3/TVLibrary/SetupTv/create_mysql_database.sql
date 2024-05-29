@@ -14,20 +14,19 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO,ANSI_QUOTES' */;
 
 --
--- Set Timeoiut parameters
+-- Monkey patch
 --
 
-SET net_write_timeout=99999;
-SET net_read_timeout=99999;
+CREATE DATABASE IF NOT EXISTS %TvLibrary%;
 #
 --
--- Delete schema TvLibrary
+-- Delete schema TVLibrary
 --
 
 DROP DATABASE IF EXISTS %TvLibrary%;
-
+#
 --
--- Create schema TvLibrary
+-- Create schema TVLibrary
 --
 
 CREATE DATABASE IF NOT EXISTS %TvLibrary%;
