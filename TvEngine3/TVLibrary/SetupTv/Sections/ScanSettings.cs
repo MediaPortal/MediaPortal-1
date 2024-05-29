@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -234,9 +234,8 @@ namespace SetupTv.Sections
 
       if (_needInformUser)
       {
-        if (
-          MessageBox.Show(this, "The log level will be changed after you restart the TVService manually","Information about log level change",
-                          MessageBoxButtons.OK, MessageBoxIcon.Exclamation) == DialogResult.OK) ;
+        MessageBox.Show(this, "The log level will be changed after you restart the TVService manually", "Information about log level change",
+                              MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
     }
 
