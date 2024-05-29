@@ -29,6 +29,7 @@ using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -284,10 +285,10 @@ namespace SetupTv
         switch (provider)
         {
           case ProviderType.MySql:
-            stream = assm.GetManifestResourceStream("SetupTv." + prefix + "_mysql_database.sql");
+            stream = assm.GetManifestResourceStream("SetupTv.SQL." + prefix + "_mysql_database.sql");
             break;
           case ProviderType.SqlServer:
-            stream = assm.GetManifestResourceStream("SetupTv." + prefix + "_sqlserver_database.sql");
+            stream = assm.GetManifestResourceStream("SetupTv.SQL." + prefix + "_sqlserver_database.sql");
             break;
         }
 
@@ -300,6 +301,11 @@ namespace SetupTv
           {
             sql = reader.ReadToEnd();
           }
+        }
+        else
+        {
+          Log.Write("SetupTv.SQL." + prefix + "_mysql_database.sql - Not Found.");
+          return false;
         }
 
         switch (provider)
@@ -335,6 +341,8 @@ namespace SetupTv
                         Log.Write("  Exec SQL: {0}", SqlStmt);
                         cmd.CommandTimeout = 60;    // extra long 60 second timeout needed for long-running upgrade statements
                         cmd.ExecuteNonQuery();
+
+                        Thread.Sleep(0);
                       }
                     }
                     catch (MySqlException ex)
@@ -784,7 +792,7 @@ namespace SetupTv
       //Stream stream = null;
       for (int version = currentSchemaVersion + 1; version < 100; version++)
       {
-        if (ResourceExists(names, "SetupTv." + version + "_upgrade_sqlserver_database.sql"))
+        if (ResourceExists(names, "SetupTv.SQL." + version + "_upgrade_sqlserver_database.sql"))
         {
           if (ExecuteSQLScript(version + "_upgrade"))
             Log.Info("- database upgraded to schema version " + version);

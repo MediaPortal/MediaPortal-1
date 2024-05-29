@@ -217,7 +217,7 @@ namespace SetupTv
             dlg.SaveGentleConfig();
           }
         }
-        else if (String.IsNullOrEmpty(DeploySql) || String.IsNullOrEmpty(DeployPwd))
+        else if (string.IsNullOrEmpty(DeploySql) || string.IsNullOrEmpty(DeployPwd))
         {
           dlg.LoadConnectionDetailsFromConfig(true);
         }
@@ -266,6 +266,7 @@ namespace SetupTv
         if (dlg.ShowDialog() != DialogResult.OK || startupMode != StartupMode.DeployMode)
           return; // close the application without restart here.
       }
+
       dlg.CheckServiceName();
       if (startupMode == StartupMode.DeployMode)
       {
