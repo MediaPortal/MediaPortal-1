@@ -204,7 +204,14 @@ namespace SetupTv
           {
             database = "mysql";
           }
-          return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};commandinterceptors=Gentle.Provider.MySQL.Interceptor.Interceptor,Gentle.Provider.MySQL.Interceptor;",
+          if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
+          {
+            Log.Write("MariaDB / MySQL: Use the new connection string.");
+            return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};commandinterceptors=Gentle.Provider.MySQL.Interceptor.Interceptor,Gentle.Provider.MySQL.Interceptor;",
+                                 server, userid, password, database, timeout);
+          }
+          Log.Write("MySQL: Use the old connection string.");
+          return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};",
                                server, userid, password, database, timeout);
 
         // MS SQL
