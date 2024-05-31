@@ -330,7 +330,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return result;
       }
 
-      RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\MariaDB 10.0 (x64)");
+      RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\MariaDB 10.11 (x64)");
       if (key == null)
       {
         result.state = CheckState.NOT_INSTALLED;
