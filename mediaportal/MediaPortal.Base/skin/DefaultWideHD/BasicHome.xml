@@ -35,7 +35,7 @@
   <include condition="#(eq(#hedit.mode,'Horizontal Text only'))">BasicHomeInfoRecentlyAddedText.xml</include>
   <import>BasicHomeEditorDefines.xml</import>
   
-  <control>
+  <!--control>
       <description>Date Time</description>
       <type>label</type>
       <id>0</id>
@@ -46,7 +46,69 @@
       <font>Label</font>
       <textcolor>ff6FAFE1</textcolor>
       <visible>!skin.hastheme(Xmas)</visible>
+    </control-->
+  
+  <control>
+      <description>Date Time Weather</description>
+      <type>group</type>
+      <layout>StackLayout(5, Horizontal, true)</layout>
+      <posX>45</posX>
+      <posY>15</posY>
+      <align>left</align>
+      <width>1000</width>
+      <height>58</height>
+      <visible>!skin.hastheme(Xmas)</visible>
+  <control>
+        <type>fadelabel</type>
+        <description>Date Time Weather Label</description>
+        <id>0</id>
+        <label>#time #scroll.wrap #date #scroll.wrap #WorldWeather.Location: #WorldWeather.TodayCondition</label>
+        <width>50</width>
+        <maxWidth>1000</maxWidth>
+        <textcolor>ff6FAFE1</textcolor>
+        <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+        <align>left</align>
+        <font>Label</font>
+        
+      </control>
+      <control>
+        <type>image</type>
+        <description>Weather Icon</description>
+        <id>0</id>
+        <texture>#WorldWeather.TodayIconImage</texture>
+        <width>55</width>
+        <height>35</height>
+        <align>left</align>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Temperature Label</description>
+        <id>0</id>
+        <label> #WorldWeather.TodayTemperature  </label>
+        <width>50</width>
+        <maxWidth>100</maxWidth>
+        <textcolor>ff6FAFE1</textcolor>
+        <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+        <align>left</align>
+        <font>Label</font>
+      </control>
+      <control>
+        <type>image</type>
+        <description>Weather Icon</description>
+        <id>0</id>
+        <texture>ukraine.gif</texture>
+        <width>55</width>
+        <height>35</height>
+        <align>left</align>
+        
+      </control>
     </control>
+  
+  
   <control>
       <description>Date Time</description>
       <type>label</type>

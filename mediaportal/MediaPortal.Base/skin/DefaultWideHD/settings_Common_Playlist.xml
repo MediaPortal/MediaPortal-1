@@ -174,7 +174,7 @@
       <label>#videosPlaylist</label>
       <width>750</width>
       <visible>control.isvisible(8)</visible>
-      <font>Label</font>
+      <font>font11</font>
     </control>
     <control>
       <description>Repeat/loop playlist</description>
@@ -203,7 +203,7 @@
   	<posX>1050</posX>
 		<posY>332</posY>
     <label>#musicPlaylist</label>
-    <font>Label</font>
+    <font>font11</font>
     <visible>control.isvisible(2)</visible>
     <width>750</width>
   </control>
