@@ -100,8 +100,16 @@ namespace MediaPortal.DeployTool.Sections
         }
         else
         {
-          InstallationProperties.Instance.Set("DBMSType", "MariaDB");
-          InstallationProperties.Instance.Set("DBMSDir", InstallationProperties.Instance["ProgramFiles"] + "\\MariaDB\\MariaDB 10.0");
+          if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
+          {
+            InstallationProperties.Instance.Set("DBMSType", "MariaDB");
+            InstallationProperties.Instance.Set("DBMSDir", InstallationProperties.Instance["ProgramFiles"] + "\\MariaDB\\MariaDB 10.0");
+          }
+          else
+          {
+            InstallationProperties.Instance.Set("DBMSType", "MySQL");
+            InstallationProperties.Instance.Set("DBMSDir", InstallationProperties.Instance["ProgramFiles"] + "\\MySQL\\MySQL Server 5.6");
+          }
         }
       }
     }

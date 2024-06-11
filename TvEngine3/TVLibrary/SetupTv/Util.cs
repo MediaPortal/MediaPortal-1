@@ -749,6 +749,11 @@ namespace SetupTv
       return ReplaceTag(line, tag, value, string.Empty);
     }
 
+    public static bool Is64bitOS
+    {
+      get { return Environment.Is64BitOperatingSystem; }
+    }
+
     public static ulong GetDiskSpace(string drive)
     {
       if (drive.StartsWith(@"\"))
