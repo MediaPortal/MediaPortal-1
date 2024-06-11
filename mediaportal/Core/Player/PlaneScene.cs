@@ -128,6 +128,7 @@ namespace MediaPortal.Player
     private readonly System.Diagnostics.Stopwatch _PixelShaderClock = new System.Diagnostics.Stopwatch();
     private long _PixelShaderCounter = 0;
     private Texture[] _PixelShaderTexturesTemp = null;
+    private bool _PixelShaderInitialized = false;
 
     #endregion
 
@@ -392,24 +393,36 @@ namespace MediaPortal.Player
       {
         string strProfile = PixelShaderCollection.SHADER_PROFILE_DEFAULT;
 
-        //Profile: based on video width
+        //Profile: based on video size; if MediaInfo is not available(online video), then load the profile during the rendering process later
         if (g_Player.MediaInfo != null && g_Player.MediaInfo.Width > 0)
-        {
-          if (g_Player.MediaInfo.Width > 1920)
-            strProfile = "UHD";
-          else if (g_Player.MediaInfo.Width >= 1440)
-            strProfile = "HD";
-          else
-            strProfile = "SD";
-        }
+          strProfile = SelectPixelShaderProfile(g_Player.MediaInfo.Width, g_Player.MediaInfo.Height);
 
         GUIGraphicsContext.VideoPixelShaders.Load(strProfile);
       }
       else
+      {
         GUIGraphicsContext.VideoPixelShaders.Clear(); //not supported with MadVR
+        this._PixelShaderInitialized = true;
+      }
 
       this._PixelShaderClock.Start();
       #endregion
+    }
+
+    private string SelectPixelShaderProfile(int iVideoWidth, int iVideoHeight)
+    {
+      string strProfile;
+
+      if (iVideoWidth > 1920 || iVideoHeight > 1080)
+        strProfile = "UHD";
+      else if (iVideoWidth >= 1440 || iVideoHeight >= 720)
+        strProfile = "HD";
+      else
+        strProfile = "SD";
+
+      this._PixelShaderInitialized = true;
+
+      return strProfile;
     }
 
     /// <summary>
@@ -2056,6 +2069,13 @@ namespace MediaPortal.Player
     private void DrawTextureSegment(VertexBuffer vertexBuffer, float srcX, float srcY, float srcWidth, float srcHeight,
                                     float dstX, float dstY, float dstWidth, float dstHeight, long lColorDiffuse)
     {
+      if (!this._PixelShaderInitialized)
+      {
+        //Pixel shaders not initialized yet; MediaInfo was not available upon initialization
+        GUIGraphicsContext.VideoPixelShaders.Load(this.SelectPixelShaderProfile((int)srcWidth, (int)srcHeight));
+        this._PixelShaderInitialized = true;
+      }
+
       unsafe
       {
         CustomVertex.TransformedColoredTextured* verts = (CustomVertex.TransformedColoredTextured*)vertexBuffer.LockToPointer(0, 0, this._vertexBufferLock);
@@ -2115,7 +2135,6 @@ namespace MediaPortal.Player
         vertexBuffer.Unlock();
 
         GUIGraphicsContext.DX9Device.SetStreamSource(0, vertexBuffer, 0, CustomVertex.TransformedColoredTextured.StrideSize);
-                
 
         if (GUIGraphicsContext.VideoPixelShaders.Count > 0)
         {
