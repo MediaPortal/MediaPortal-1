@@ -2208,9 +2208,6 @@
     <String id="200095">Video Stream</String>
     <String id="200096">Pixel Shaders</String>
     <String id="200097">Select Pixel Shader</String>
-    <String id="200098">Create new profile</String>
-    <String id="200099">Edit current profile</String>
-    <String id="200100">Remove current profile</String>
     <String id="300000">Use pixel ratio correction</String>
     <String id="300001">Correction mode</String>
     <String id="300002">Display mode</String>
@@ -2442,6 +2439,12 @@
 	<String id="300233">OSD Settings</String>
 	<String id="300234">Show OSD</String>
 	<String id="300235">Auto Hide OSD</String>
+    <String id="300236">Renderer</String>
+    <String id="300237">VMR9</String>
+    <String id="300238">EVR</String>
+    <String id="300239">MadVR</String>
+    <String id="300240">A video file is playing</String>
+    <String id="300241">Do you want to stop video playback?</String>
 	<String id="350001">Press Info/F9 for quick settings...</String>
 	<String id="350002">Movies</String>
 	<String id="350003">PlayDisc</String>
