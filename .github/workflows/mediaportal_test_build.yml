@@ -8,6 +8,7 @@ on:
     # Ignore all Tags / Release
     tags-ignore:
       - '**'
+  workflow_dispatch:
 
   workflow_call:
     inputs:
