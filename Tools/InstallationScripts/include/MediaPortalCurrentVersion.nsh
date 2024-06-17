@@ -31,8 +31,8 @@
 
 
 !define VER_MAJOR       1
-!define VER_MINOR       33
-!define VER_REVISION    100
+!define VER_MINOR       34
+!define VER_REVISION    000
 
 #**********************************************************************************************************#
 
