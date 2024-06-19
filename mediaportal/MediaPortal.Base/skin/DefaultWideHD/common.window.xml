@@ -25,7 +25,7 @@
       <align>left</align>
       <textcolor>ff6FAFE1</textcolor>
     </control>
-    <control>
+    <!--control>
       <type>label</type>
       <id>1</id>
       <posX>45</posX>
@@ -34,7 +34,7 @@
       <font>Label</font>
       <align>left</align>
       <textcolor>ff6FAFE1</textcolor>
-    </control>
+    </control-->
     <control>
       <description>Number of Files Label</description>
       <type>label</type>

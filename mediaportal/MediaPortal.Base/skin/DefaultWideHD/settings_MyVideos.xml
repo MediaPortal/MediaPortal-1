@@ -176,6 +176,15 @@
         <label>1196</label>
         <width>525</width>
       </control>
+      
+      <control>
+        <description>Others</description>
+        <type>button</type>
+        <id>43</id>
+        <label>101023</label>
+        <width>575</width>
+      </control>
+      
       <control>
         <description>Play all</description>
         <type>button</type>
@@ -183,6 +192,15 @@
         <label>300192</label>
         <width>525</width>
       </control>
+      <!-- start fmu -->
+      <control>
+        <description>Renderer</description>
+        <type>button</type>
+        <id>36</id>
+        <label>300236</label>
+        <width>575</width>
+      </control>
+      <!-- end fmu -->
       <control>
         <description>Share folders</description>
         <type>button</type>

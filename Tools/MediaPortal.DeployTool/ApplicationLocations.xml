@@ -34,6 +34,26 @@
     <TYPE>Manual</TYPE>
   </WindowsMediaPlayer>
 
+  <!-- Section used by 1.33.100+ installer -->
+
+  <MySQL83>
+    <URL>https://install.team-mediaportal.com/MySql_8_3</URL>
+    <FILE>mysql-8.3.0-winx64.msi</FILE>
+    <TYPE>Automatic</TYPE>
+  </MySQL83>
+
+  <MariaDB10>
+    <URL>https://install.team-mediaportal.com/MariaDB_10</URL>
+    <FILE>mariadb-10.11.8-winx64.msi</FILE>
+    <TYPE>Automatic</TYPE>
+  </MariaDB10>
+
+  <DotNetFramework>
+    <URL>https://install.team-mediaportal.com/DotNetFramework</URL>
+    <FILE>dotNetFx40_Full_x86_x64.exe</FILE>
+    <TYPE>Automatic</TYPE>
+  </DotNetFramework>
+
   <!-- Section used by 1.31.100+ installer -->
 
   <VCRedist2013>
@@ -42,8 +62,6 @@
     <TYPE>Automatic</TYPE>
     <X64 />
   </VCRedist2013>
-
-  <!-- VCRedistr 2015-2022 -->
 
   <VCRedist2015>
     <URL>https://install.team-mediaportal.com/VcRedist2015</URL>

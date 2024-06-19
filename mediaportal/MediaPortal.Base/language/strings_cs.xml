@@ -2131,6 +2131,11 @@
     <String id="200093">Časový limit připojení disku vypršel!</String>
     <String id="200094">Zkoušet připojit po dobu dalších 60 sekund?</String>
     <String id="200095">Datový tok videa</String>
+    <String id="200096">Pixel Shadery</String>
+    <String id="200097">Zvolit Pixel Shader</String>
+    <String id="200098">Vytvořit nový profil</String>
+    <String id="200099">Editovat aktualní profil</String>
+    <String id="200100">Odstranit aktuální profil</String>
     <String id="300000">Použít korekci poměru pixelů</String>
     <String id="300001">Režim oprav</String>
     <String id="300002">Mód zobrazení</String>

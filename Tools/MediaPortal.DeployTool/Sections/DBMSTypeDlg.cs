@@ -61,6 +61,15 @@ namespace MediaPortal.DeployTool.Sections
         lbMSSQL.Enabled = true;
         lbMSSQL.Text = Localizer.GetBestTranslation("DBMSType_lbMSSQL_disabled");
       }
+      if ( !(OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS) )
+      {
+        bMariaDB.Enabled = false;
+        rbMariaDB.Click -= bMariaDB_Click;
+        rbMariaDB.Cursor = DefaultCursor;
+        rbMariaDB.ForeColor = Color.DimGray;
+
+        rbMySQL.Text = Localizer.GetBestTranslation("DBMSType_rbMySQLOutdated");
+      }
     }
 
     public override DeployDialog GetNextDialog()
