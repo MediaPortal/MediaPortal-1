@@ -651,6 +651,9 @@ namespace MediaPortal.Player
       newExtCmd = "";
       newRRDescription = "";
 
+      //Round fps down to 3 decimal places
+      fps = Math.Round(fps, 3);
+
       foreach (RefreshRateSetting setting in _refreshRateSettings)
       {
         foreach (double fpsSetting in setting.Fps)
