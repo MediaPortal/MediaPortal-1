@@ -651,6 +651,9 @@ namespace MediaPortal.Player
       newExtCmd = "";
       newRRDescription = "";
 
+      //Round fps down to 3 decimal places
+      fps = Math.Round(fps, 3);
+
       foreach (RefreshRateSetting setting in _refreshRateSettings)
       {
         foreach (double fpsSetting in setting.Fps)
@@ -1089,30 +1092,65 @@ namespace MediaPortal.Player
               Log.Debug("[AdaptRefreshRateFromVideoDecoder] Video Decoder found.");
 
               DirectShowLib.IPin pin;
-              int iResult = filter.FindPin("In", out pin);
+              int iResult = filter.FindPin("Out", out pin);
               if (iResult == 0)
               {
-                Log.Debug("[AdaptRefreshRateFromVideoDecoder] Input Pin of Video Decoder retrieved.");
+                Log.Debug("[AdaptRefreshRateFromVideoDecoder] Output Pin of Video Decoder retrieved.");
                 DirectShowLib.AMMediaType mediatype = new DirectShowLib.AMMediaType();
                 iResult = pin.ConnectionMediaType(mediatype);
 
                 if (iResult == 0)
                 {
-                  Log.Debug("[AdaptRefreshRateFromVideoDecoder] AMMediaType: " + mediatype.formatType.ToString());
+                  bool bInterlaced = false;
+                  string strGUID = mediatype.formatType.ToString();
+                  Log.Debug("[AdaptRefreshRateFromVideoDecoder] AMMediaType: " + strGUID);
 
-                  DirectShowLib.VideoInfoHeader videoHeader = new DirectShowLib.VideoInfoHeader();
-                  Marshal.PtrToStructure(mediatype.formatPtr, videoHeader);
-
-                  if (videoHeader != null)
+                  if (strGUID.Equals("F72A76A0-EB0A-11D0-ACE4-0000C0CC16BA", StringComparison.OrdinalIgnoreCase) //VIDEOINFOHEADER2
+                      || strGUID.Equals("E06D80E3-DB46-11CF-B4D1-00805F6CBBEA", StringComparison.OrdinalIgnoreCase)) //WMFORMAT_MPEG2Video
                   {
-                    Log.Debug("[AdaptRefreshRateFromVideoDecoder] AvgTimePerFrame from VideoInfoHeader: " + videoHeader.AvgTimePerFrame);
+                    DirectShowLib.VideoInfoHeader2 videoHeader = new DirectShowLib.VideoInfoHeader2();
+                    Marshal.PtrToStructure(mediatype.formatPtr, videoHeader);
+                    if (videoHeader != null)
+                    {
+                      bInterlaced = (videoHeader.InterlaceFlags & DirectShowLib.AMInterlace.IsInterlaced) == DirectShowLib.AMInterlace.IsInterlaced;
+                      dFps = Math.Round(10000000F / videoHeader.AvgTimePerFrame, 2);
+                      Log.Debug("[AdaptRefreshRateFromVideoDecoder] AvgTimePerFrame from VideoInfoHeader2: {0}, Interlaced: {1}",
+                          videoHeader.AvgTimePerFrame, bInterlaced);
+                    }
+                  }
+                  else
+                  {
+                    DirectShowLib.VideoInfoHeader videoHeader = new DirectShowLib.VideoInfoHeader();
+                    Marshal.PtrToStructure(mediatype.formatPtr, videoHeader);
 
-                    dFps = Math.Round(10000000F / videoHeader.AvgTimePerFrame, 2);
+                    if (videoHeader != null)
+                    {
+                      Log.Debug("[AdaptRefreshRateFromVideoDecoder] AvgTimePerFrame from VideoInfoHeader: " + videoHeader.AvgTimePerFrame);
+                      dFps = Math.Round(10000000F / videoHeader.AvgTimePerFrame, 2);
+                    }
+                  }
 
-                    if (dFps == 23.98)
-                      dFps = 23.976;
+                  if (dFps == 23.98)
+                    dFps = 23.976;
 
-                    Log.Info("[AdaptRefreshRateFromVideoDecoder] Detected FPS from Video Decoder: " + dFps);
+                  Log.Info("[AdaptRefreshRateFromVideoDecoder] Detected FPS from Video Decoder: " + dFps);
+
+                  if (bInterlaced)
+                  {
+                    switch (dFps)
+                    {
+                      case 25:
+                        dFps = 50.0;
+                        break;
+
+                      case 29.97:
+                        dFps = 59.97;
+                        break;
+
+                      case 30:
+                        dFps = 60.0;
+                        break;
+                    }
                   }
                 }
                 else
