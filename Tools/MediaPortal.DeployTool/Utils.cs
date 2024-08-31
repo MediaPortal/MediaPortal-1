@@ -781,8 +781,8 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 33;
-          revision = 100;
+          minor = 34;
+          revision = 000;
           break;
       }
       Version ver = new Version(major, minor, revision);
@@ -803,7 +803,7 @@ namespace MediaPortal.DeployTool
     {
       int major = 1;
       int minor = 34;
-      int revision = 000;
+      int revision = 100;
 
       Version ver = new Version(major, minor, revision);
       return ver;
@@ -853,7 +853,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.34 Dune";
+      return "1.34 Pre Release";
     }
 
     /// <summary>
