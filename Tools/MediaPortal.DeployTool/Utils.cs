@@ -853,7 +853,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.34 Pre Release";
+      return "1.35 Pre Release";
     }
 
     /// <summary>
