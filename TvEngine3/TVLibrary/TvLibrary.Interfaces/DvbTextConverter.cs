@@ -126,9 +126,9 @@ namespace TvLibrary.Interfaces
       string result;
       if (encoding == 20269)
         result = ISOTextDecoder.from_ISO_6937_EU(text);
-      else if (encoding == 20600)
+      else if (encoding == 28600)
         result = ISOTextDecoder.from_ISO_8859_10(text);
-      else if (encoding == 20604)
+      else if (encoding == 28604)
         result = ISOTextDecoder.from_ISO_8859_14(text);
       else
         result = System.Text.Encoding.GetEncoding(encoding).GetString(text);

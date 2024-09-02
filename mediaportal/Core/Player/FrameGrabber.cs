@@ -62,7 +62,7 @@ namespace MediaPortal
     }
 
     // MP1-4248 :  Start* Line Code for Ambilight System Capture (Atmolight)
-    public delegate void NewFrameHandler(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, Surface pSurface, FrameSource FrameSource);
+    public delegate void NewFrameHandler(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, IntPtr pSurface, FrameSource FrameSource);
 
     public event NewFrameHandler OnNewFrame;
     // MP1-4248 : End* Ambilight Capture
@@ -315,7 +315,7 @@ namespace MediaPortal
       {
         unsafe
         {
-          OnFrame((Int16)surface.Description.Width, (Int16)surface.Description.Height, 0, 0, surface, FrameSource.GUI);
+          OnFrame((Int16)surface.Description.Width, (Int16)surface.Description.Height, 0, 0, (IntPtr)surface, FrameSource.GUI);
         }
       }
     }
@@ -328,7 +328,7 @@ namespace MediaPortal
     /// <param name="arWidth"></param>
     /// <param name="arHeight"></param>
     /// <param name="pTargetmadVrDib"></param>
-    public void OnFrame(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, IntPtr pTargetmadVrDib, FrameSource FrameSource)
+    public void OnFrameMadVrDib(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, IntPtr pTargetmadVrDib, FrameSource FrameSource)
     {
       FrameGrabberD3D9Enable = false;
       //Dont pass GUI frames to GetCurrentImage() -> VideoModeSwitcher is using it
@@ -408,7 +408,7 @@ namespace MediaPortal
     /// <param name="arWidth"></param>
     /// <param name="arHeight"></param>
     /// <param name="pSurface"></param>
-    public void OnFrame(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, Surface pSurface, FrameSource FrameSource)
+    public void OnFrame(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, IntPtr pSurface, FrameSource FrameSource)
     {
       FrameGrabberD3D9Enable = true;
       // MP1-4248 :Start* Line Code for Ambilight System Capture (Atmolight)
@@ -471,7 +471,7 @@ namespace MediaPortal
           // Log.Debug("Calling VideoSurfaceToRGBSurface");
           if (rgbSurface != null)
           {
-            VideoSurfaceToRGBSurface((IntPtr)pSurface, (IntPtr)rgbSurface);
+            VideoSurfaceToRGBSurface(pSurface, (IntPtr)rgbSurface);
           }
           lock (grabNotifier)
           {

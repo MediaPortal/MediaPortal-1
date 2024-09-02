@@ -786,7 +786,7 @@ namespace MediaPortal.Player
           lock (GUIGraphicsContext.RenderModeSwitch)
           {
             if (grabber != null)
-              grabber.OnFrame((short)client.Width, (short)client.Height, (short)client.Width, (short)client.Height, surfaceMadVr,
+              grabber.OnFrame((short)client.Width, (short)client.Height, (short)client.Width, (short)client.Height, (IntPtr)surfaceMadVr,
                 FrameGrabber.FrameSource.Video);
           }
         }

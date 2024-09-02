@@ -44,7 +44,7 @@
       <align>left</align>
       <width>1800</width>
       <height>58</height>
-      <visible>!skin.hastheme(Xmas)</visible>
+      <visible>!skin.hastheme(Xmas)+[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]</visible>
   <control>
         <type>fadelabel</type>
         <description>Date Time Weather Label</description>
@@ -93,7 +93,7 @@
       <align>left</align>
       <width>1800</width>
       <height>58</height>
-      <visible>skin.hastheme(Xmas)</visible>
+      <visible>skin.hastheme(Xmas)+[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]</visible>
   <control>
         <type>fadelabel</type>
         <description>Date Time Weather Label</description>
@@ -103,8 +103,8 @@
         <maxWidth>1600</maxWidth>
         <textcolor>gold</textcolor>
         <shadowAngle>10</shadowAngle>
-      <shadowDistance>2</shadowDistance>
-      <shadowColor>ff000000</shadowColor>
+        <shadowDistance>2</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
         <align>left</align>
         <font>Label</font>
       </control>
@@ -131,6 +131,40 @@
         <align>left</align>
         <font>Label</font>
       </control>
+    </control>
+    <control>
+      <description>Date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <width>1800</width>
+      <height>58</height>
+      <label>#time #scroll.wrap #date</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>ff6FAFE1</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <visible>!skin.hastheme(Xmas)+!plugin.isenabled(World Weather)+!plugin.isenabled(World Weather Lite)</visible>
+    </control>
+    <control>
+      <description>Date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>15</posY>
+      <width>1800</width>
+      <height>58</height>
+      <label>#time #scroll.wrap #date</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>gold</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <visible>skin.hastheme(Xmas)+!plugin.isenabled(World Weather)+!plugin.isenabled(World Weather Lite)</visible>
     </control>
   
     <!-- ******************************************************************************************* -->
