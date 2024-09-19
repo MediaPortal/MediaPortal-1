@@ -10,15 +10,15 @@ jobs:
   build:
     name: Mediaportal Build
     uses: ./.github/workflows/mediaportal.yml
-  
+
   release:
     name: Release Mediaportal
     needs: build
     permissions:
       contents: write
-    
+
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Download x86 Artifacts
         uses: actions/download-artifact@v4
