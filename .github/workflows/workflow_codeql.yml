@@ -14,44 +14,44 @@ jobs:
       security-events: write
 
     steps:
-    - name: Setup Visual Studio 2019
-      uses: microsoft/setup-msbuild@v2
-      with:
-        vs-version: 16.11
+      - name: Setup Visual Studio 2019
+        uses: microsoft/setup-msbuild@v2
+        with:
+          vs-version: 16.11
 
-    - name: Link to Visual Studio 2019 Community
-      run: |
-        mklink /J "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community" "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise"
-      shell: cmd
+      - name: Link to Visual Studio 2019 Community
+        run: |
+          mklink /J "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community" "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise"
+        shell: cmd
 
-    - name: Setup Java JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: 8
-        architecture: x86
-        distribution: temurin
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          architecture: x86
+          distribution: temurin
 
-    - name: Setup NSIS
-      run: |
-        choco install --yes nsis --version=3.09 --force
+      - name: Setup NSIS
+        run: |
+          choco install --yes nsis --version=3.09 --force
     
-    - name: Git Checkout
-      uses: actions/checkout@v4
+      - name: Git Checkout
+        uses: actions/checkout@v4
 
-    - name: Git Submodule Update
-      run: |
-        git submodule update --init --recursive
+      - name: Git Submodule Update
+        run: |
+          git submodule update --init --recursive
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: csharp
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
 
-    - name: Build
-      run: |
-        BuildFullinstaller.cmd
-      working-directory: ${{ github.workspace }}\Build
-      shell: cmd
+      - name: Build
+        run: |
+          BuildFullinstaller.cmd
+        working-directory: ${{ github.workspace }}\Build
+        shell: cmd
       
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
