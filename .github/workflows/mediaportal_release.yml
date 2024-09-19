@@ -53,7 +53,7 @@ jobs:
     needs: [build, release]
     permissions:
       security-events: write
-  
+
   ci-status:
     name: Status
     runs-on: ubuntu-latest
