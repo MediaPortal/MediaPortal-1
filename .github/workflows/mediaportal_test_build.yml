@@ -3,7 +3,7 @@ name: Mediaportal / Test Build
 on:
   push:
     # On Push to Pre Release / Final Test branch
-    branches: 
+    branches:
       - 'MP1.**_Test**'
     # Ignore all Tags / Release
     tags-ignore:

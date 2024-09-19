@@ -2,7 +2,7 @@ name: "Workflow / Milestone"
 
 on:
   pull_request_target:
-    types: 
+    types:
       - opened
       - closed
 
