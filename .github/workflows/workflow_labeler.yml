@@ -3,7 +3,7 @@ name: "Workflow / Pull Request Labeler"
 on:
   pull_request_target:
     types: [opened, edited]
-    
+
 jobs:
   labeler:
     name: Add labels to Pull Request
