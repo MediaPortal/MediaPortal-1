@@ -3,13 +3,13 @@ name: Workflow / Size and Stability labels
 on:
   pull_request_target:
     types: [opened, synchronize]
-#  push:
-#    branches: [master]
+  # push:
+  #   branches: [master]
 
 jobs:
   add-labels:
     name: Add labels
-    
+
     runs-on: ubuntu-latest
     
     permissions:
