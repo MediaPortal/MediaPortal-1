@@ -34,7 +34,7 @@ jobs:
       - name: Setup NSIS
         run: |
           choco install --yes nsis --version=3.09 --force
-    
+
       - name: Git Checkout
         uses: actions/checkout@v4
 
@@ -52,6 +52,6 @@ jobs:
           BuildFullinstaller.cmd
         working-directory: ${{ github.workspace }}\Build
         shell: cmd
-      
+
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
