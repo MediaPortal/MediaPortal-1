@@ -3,7 +3,7 @@ name: Mediaportal
 on:
   push:
     # On Push to Master branch
-    branches: 
+    branches:
       - master
     # Ignore all Tags / Release
     tags-ignore:
@@ -26,12 +26,12 @@ jobs:
   build:
     strategy:
       matrix:
-        architecture: [x86, x64]  
+        architecture: [x86, x64]
 
     name: Build Mediaportal
 
     runs-on: windows-2019
-    
+
     steps:
     - name: Setup Visual Studio 2019
       uses: microsoft/setup-msbuild@v2
