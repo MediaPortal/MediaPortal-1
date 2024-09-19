@@ -1,7 +1,7 @@
 # CI setup for FreeType.
 
 stages:
- - build
+  - build
 
 # FIXME: Use --werror once warnings are fixed.
 variables:
@@ -74,10 +74,8 @@ variables:
         meson compile --verbose -C build
         $env:MESON_WINDOWS_TESTS"
 
-
 # Format of job names:
 # <OS> <Build-Tool> <Build-Params> <Architecture>
-
 
 # Windows jobs.
 
@@ -191,7 +189,6 @@ linux cmake libs:
                    -D FT_REQUIRE_ZLIB=TRUE
 
     cmake --build build --target install
-
 
 # MacOS jobs.
 
