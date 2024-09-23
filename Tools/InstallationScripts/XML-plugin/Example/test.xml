@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!-- world -->
+<root>
 <a>
     <a>AAA
         <a>
@@ -17,3 +18,4 @@
 <a>
     <d attr1="value1" attr2="value2" attr3="value3" attr4="value4">HHH</d>
 </a>
+</root>
