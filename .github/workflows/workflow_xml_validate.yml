@@ -18,7 +18,7 @@ jobs:
       - name: ⤵️ Check out configuration from GitHub
         uses: actions/checkout@v4
       - name: 🚀 Run XML Validate
-        uses: kehoe/validate-configs-action@v4
+        uses: kehoecj/validate-configs-action@v4
         with:
           exclude-dirs: "MediaPortal.Tests"
           exclude-file-types: "yaml,yml"
