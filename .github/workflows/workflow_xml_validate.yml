@@ -1,0 +1,25 @@
+name: Workflow / XML validate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**.xml"
+      - "**.xml"
+  pull_request:
+    paths:
+      - "**.xml"
+      - "**.xml"
+  workflow_dispatch:
+
+jobs:
+  yamllint:
+    name: 🧹 XML Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⤵️ Check out configuration from GitHub
+        uses: actions/checkout@v4
+      - name: 🚀 Run XML Validate
+        uses: action-pack/valid-xml@v1
+        with:
+          file-endings: ".xml"
