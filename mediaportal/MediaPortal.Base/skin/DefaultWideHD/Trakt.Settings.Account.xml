@@ -2,7 +2,7 @@
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
-  <id>87272</id>
+  <id>87279</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <define>#currentmodule:#Trakt.Translation.AccountSetup.Label</define>

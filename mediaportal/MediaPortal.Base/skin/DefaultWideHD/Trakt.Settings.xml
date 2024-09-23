@@ -39,7 +39,7 @@
         <onup>17</onup>
         <width>559</width>
         <label>#Trakt.Translation.AccountSetup.Label</label>
-        <hyperlink>87272</hyperlink>
+        <hyperlink>87279</hyperlink>
         <onleft>#defaultcontrol.onleft</onleft>
       </control>
       <control>
