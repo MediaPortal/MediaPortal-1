@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>87279</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#currentmodule:#Trakt.Translation.AccountSetup.Label</define>
+  <define>#selecteditem:#highlightedbutton</define>
+  <define>#defaultcontrol:2</define>
+  <define>#defaultcontrol.onleft:9997</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Trakt.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <import>Trakt.Common.Fanart.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <import>Trakt.Common.xml</import>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <posX>655</posX>
+      <posY>321</posY>
+      <layout>StackLayout(7, Vertical, true)</layout>
+      <control>
+        <type>button</type>
+        <description>Create New Account</description>
+        <id>2</id>
+        <label />
+        <width>800</width>
+        <onleft>#defaultcontrol.onleft</onleft>
+      </control>
+    </control>
+	<control>
+      <type>textbox</type>
+      <description>Scan QR or enter in URL</description>
+      <id>0</id>
+      <posX>675</posX>
+      <posY>395</posY>
+      <width>975</width>
+	  <height>200</height>
+      <label>#Trakt.Settings.Account.ScanQRCode</label>
+      <font>RSS</font>
+      <visible>string.equals(#Trakt.Settings.Account.Authorise,true)</visible>
+    </control>
+	<control>
+      <description>QR URL Image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>675</posX>
+      <posY>475</posY>
+      <width>330</width>
+      <height>330</height>
+      <texture>QRActivateUrl.png</texture>
+	  <visible>string.equals(#Trakt.Settings.Account.Authorise,true)</visible>
+    </control>
+	<control>
+      <type>label</type>
+      <description>User Code</description>
+      <id>0</id>
+      <posX>675</posX>
+      <posY>820</posY>
+      <width>892</width>
+      <label>#Trakt.Settings.Account.UserCode</label>
+      <font>font20</font>
+	  <textcolor>00b7ff</textcolor>
+      <visible>string.equals(#Trakt.Settings.Account.Authorise,true)</visible>
+    </control>
+	<control>
+      <type>textbox</type>
+      <description>Application Wait</description>
+      <id>0</id>
+      <posX>675</posX>
+      <posY>890</posY>
+      <width>975</width>
+	  <height>200</height>
+      <label>#Trakt.Translation.ApplicationAuthWait.Label</label>
+      <font>RSS</font>
+      <visible>string.equals(#Trakt.Settings.Account.Authorise,true)</visible>
+    </control>
+  </controls>
+</window>
