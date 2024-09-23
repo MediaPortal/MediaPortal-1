@@ -65,7 +65,7 @@
           </TemplateText>
         </SectionTemplate>
       </Template>
-      <Template name="Details" start="&lt;div vlass=&quote;text-content&quote;&gt;" end="&lt;hr&gt;">
+      <Template name="Details" start="&lt;div vlass=&quot;text-content&quot;&gt;" end="&lt;hr&gt;">
         <SectionTemplate tags="DP">
           <TemplateText>
             &lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;p&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;
