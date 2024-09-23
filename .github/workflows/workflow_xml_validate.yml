@@ -20,5 +20,5 @@ jobs:
       - name: 🚀 Run XML Validate
         uses: kehoecj/validate-configs-action@v4
         with:
-          exclude-dirs: "MediaPortal.Tests,Gentle.NET/Documentation/Help"
+          exclude-dirs: "MediaPortal.Tests"
           exclude-file-types: "yaml,yml"
