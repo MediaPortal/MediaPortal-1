@@ -5,10 +5,8 @@ on:
     branches: [main]
     paths:
       - "**.xml"
-      - "**.xml"
   pull_request:
     paths:
-      - "**.xml"
       - "**.xml"
   workflow_dispatch:
 
