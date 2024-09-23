@@ -22,4 +22,3 @@ jobs:
         with:
           exclude-dirs: "MediaPortal.Tests"
           exclude-file-types: "yaml,yml"
-          groupby: "pass-fail"
