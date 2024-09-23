@@ -87,7 +87,7 @@
   <Listing type="Html">
     <Site url="http://www.linternaute.com/television/programme-tv/cgi/recherche/recherche.php?f_date=[DD]-[MM]-[YYYY]&amp;f_id_tranche_horaire=0&amp;f_id_format=&amp;f_id_chaine=[ID]&amp;submit.x=6&amp;submit.y=11" external="false" encoding="" />
     <Html>
-      <Template name="default" start="Derniers avis" end="&nbsp;&nbsp;&nbsp;CHERCHER UN">
+      <Template name="default" start="Derniers avis" end="nbsp;CHERCHER UN">
         <SectionTemplate tags="TSA">
           <TemplateText>
 &lt;tr&gt;
