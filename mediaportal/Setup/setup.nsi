@@ -673,9 +673,9 @@ Section "MediaPortal core files (required)" SecCore
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
   !if "${Architecture}" == "x64"
-  File "${git_ROOT}\Packages\Sqlite.3.41.2.5\sqlite\x64\sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.46.1\sqlite\x64\sqlite.dll"
   !else
-  File "${git_ROOT}\Packages\Sqlite.3.41.2.5\sqlite\x86\sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.46.1\sqlite\x86\sqlite.dll"
   !endif
   ; NuGet binaries EXIF
   SetOutPath "$MPdir.Base\"
