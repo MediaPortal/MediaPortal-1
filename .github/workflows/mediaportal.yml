@@ -73,7 +73,7 @@ jobs:
         with:
           name: Build result file ${{ matrix.architecture }}
           path: |
-            ${{ github.workspace }}\Build\BuildFullInstaller.log
+            ${{ github.workspace }}\Build\*.log
           retention-days: ${{ inputs.retention-logs || 3 }}
 
       - name: Upload Artifact / Mediaportal setup file
