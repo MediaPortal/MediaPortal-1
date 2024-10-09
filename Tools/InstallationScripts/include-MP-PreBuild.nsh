@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 /*
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -110,7 +110,7 @@
 ; Build MP installer
 !ifdef BUILD_Installer
 ;!system '${git_ROOT}\Build\MSBUILD_MP_LargeAddressAware.bat Release' = 0
-!system '"${NSISDIR}\makensis.exe" /DBUILD_TYPE=Release /DArchitecture=${Architecture} "${git_MP}\Setup\setup.nsi"' = 0
+!system '"${NSISDIR}\makensis.exe" /V3 /DBUILD_TYPE=Release /DArchitecture=${Architecture} "${git_MP}\Setup\setup.nsi" > ${git_ROOT}\Build\BuildMediaportal.log' = 0
 !endif
 
 ; Build TV server
@@ -139,5 +139,5 @@
 
 ; Build TV installer
 !ifdef BUILD_Installer
-!system '"${NSISDIR}\makensis.exe" /DBUILD_TYPE=Release /DArchitecture=${Architecture} "${git_TVServer}\Setup\setup.nsi"' = 0
+!system '"${NSISDIR}\makensis.exe" /V3 /DBUILD_TYPE=Release /DArchitecture=${Architecture} "${git_TVServer}\Setup\setup.nsi" > ${git_ROOT}\Build\BuildTVServer.log' = 0
 !endif
