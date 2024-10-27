@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Globalization;
 using System.Drawing;
 using System.IO;
@@ -2101,173 +2102,183 @@ namespace MediaPortal.Player
         graphBuilder.EnumFilters(out enumFilters);
         if (enumFilters != null)
         {
-          enumFilters.Reset();
-          while (enumFilters.Next(1, foundfilter, out fetched) == 0)
+          string[] sourceFilters = null;
+          while (true)
           {
-            if (foundfilter[0] != null && fetched == 1)
+            enumFilters.Reset();
+            while (enumFilters.Next(1, foundfilter, out fetched) == 0)
             {
-              if (chapters == null)
+              if (foundfilter[0] != null && fetched == 1)
               {
-                IAMExtendedSeeking pEs = foundfilter[0] as IAMExtendedSeeking;
-                if (pEs != null)
+                if (chapters == null)
                 {
-                  int markerCount = 0;
-                  if (pEs.get_MarkerCount(out markerCount) == 0 && markerCount > 0)
+                  IAMExtendedSeeking pEs = foundfilter[0] as IAMExtendedSeeking;
+                  if (pEs != null)
                   {
-                    chapters = new double[markerCount];
-                    chaptersname = new string[markerCount];
-                    for (int i = 1; i <= markerCount; i++)
+                    int markerCount = 0;
+                    if (pEs.get_MarkerCount(out markerCount) == 0 && markerCount > 0)
                     {
-                      double markerTime = 0;
-                      pEs.GetMarkerTime(i, out markerTime);
-                      chapters[i - 1] = markerTime;
-                      //fill up chapter names
-                      string name = null;
-                      pEs.GetMarkerName(i, out name);
-                      chaptersname[i - 1] = name;
+                      chapters = new double[markerCount];
+                      chaptersname = new string[markerCount];
+                      for (int i = 1; i <= markerCount; i++)
+                      {
+                        double markerTime = 0;
+                        pEs.GetMarkerTime(i, out markerTime);
+                        chapters[i - 1] = markerTime;
+                        //fill up chapter names
+                        string name = null;
+                        pEs.GetMarkerName(i, out name);
+                        chaptersname[i - 1] = name;
+                      }
                     }
                   }
                 }
-              }
-              IAMStreamSelect pStrm = foundfilter[0] as IAMStreamSelect;
-              if (pStrm != null)
-              {
-                FilterInfo foundfilterinfos = new FilterInfo();
-                foundfilter[0].QueryFilterInfo(out foundfilterinfos);
-                filter = foundfilterinfos.achName;
-                int cStreams = 0;
-                pStrm.Count(out cStreams);
-                if (cStreams < 2)
+                IAMStreamSelect pStrm = foundfilter[0] as IAMStreamSelect;
+                if (pStrm != null)
                 {
-                  continue;
-                }
-                //GET STREAMS
-                for (int istream = 0; istream < cStreams; istream++)
-                {
-                  AMMediaType sType;
-                  AMStreamSelectInfoFlags sFlag;
-                  int sPDWGroup, sPLCid;
-                  string sName;
-                  object pppunk, ppobject;
-                  //STREAM INFO
-                  pStrm.Info(istream, out sType, out sFlag, out sPLCid,
-                             out sPDWGroup, out sName, out pppunk, out ppobject);
-                  FilterStreamInfos FSInfos = new FilterStreamInfos();
-                  FSInfos.Current = false;
-                  FSInfos.Filter = filter;
-                  FSInfos.Name = sName;
-                  FSInfos.LCID = sPLCid;
-                  FSInfos.Id = istream;
-                  FSInfos.Type = StreamType.Unknown;
-                  FSInfos.sFlag = sFlag;
-                  //Avoid listing ffdshow video filter's plugins amongst subtitle and audio streams and editions.
-                  if ((FSInfos.Filter == "ffdshow DXVA Video Decoder" || FSInfos.Filter == "ffdshow Video Decoder" ||
-                       FSInfos.Filter == "ffdshow raw video filter") &&
-                      ((sPDWGroup == 1) || (sPDWGroup == 2) || (sPDWGroup == 18) || (sPDWGroup == 4)))
+                  FilterInfo foundfilterinfos = new FilterInfo();
+                  foundfilter[0].QueryFilterInfo(out foundfilterinfos);
+                  filter = foundfilterinfos.achName;
+                  int cStreams = 0;
+                  pStrm.Count(out cStreams);
+                  if (cStreams < 2 && (sourceFilters == null || cStreams != 1 || !sourceFilters.Any(f => filter.StartsWith(f))))
                   {
+                    continue;
+                  }
+                  //GET STREAMS
+                  for (int istream = 0; istream < cStreams; istream++)
+                  {
+                    AMMediaType sType;
+                    AMStreamSelectInfoFlags sFlag;
+                    int sPDWGroup, sPLCid;
+                    string sName;
+                    object pppunk, ppobject;
+                    //STREAM INFO
+                    pStrm.Info(istream, out sType, out sFlag, out sPLCid,
+                               out sPDWGroup, out sName, out pppunk, out ppobject);
+                    FilterStreamInfos FSInfos = new FilterStreamInfos();
+                    FSInfos.Current = false;
+                    FSInfos.Filter = filter;
+                    FSInfos.Name = sName;
+                    FSInfos.LCID = sPLCid;
+                    FSInfos.Id = istream;
                     FSInfos.Type = StreamType.Unknown;
-                  }
-                  //VIDEO
-                  else if (sPDWGroup == 0)
-                  {
-                    FSInfos.Type = StreamType.Video;
-                  }
-                  //AUDIO
-                  else if (sPDWGroup == 1)
-                  {
-                    FSInfos.Type = StreamType.Audio;
-                  }
-                  //SUBTITLE
-                  else if (sPDWGroup == 2 && sName.LastIndexOf("off", StringComparison.Ordinal) == -1 && sName.LastIndexOf("Hide ", StringComparison.Ordinal) == -1 &&
-                           sName.LastIndexOf("No ", StringComparison.Ordinal) == -1 && sName.LastIndexOf("Miscellaneous ", StringComparison.Ordinal) == -1)
-                  {
-                    FSInfos.Type = StreamType.Subtitle;
-                  }
-                  //NO SUBTITILE TAG
-                  else if ((sPDWGroup == 2 && (sName.LastIndexOf("off", StringComparison.Ordinal) != -1 || sName.LastIndexOf("No ", StringComparison.Ordinal) != -1)) ||
-                           (sPDWGroup == 6590033 && sName.LastIndexOf("Hide ", StringComparison.Ordinal) != -1))
-                  {
-                    FSInfos.Type = StreamType.Subtitle_hidden;
-                  }
-                  //DirectVobSub SHOW SUBTITLE TAG
-                  else if (sPDWGroup == 6590033 && sName.LastIndexOf("Show ", StringComparison.Ordinal) != -1)
-                  {
-                    FSInfos.Type = StreamType.Subtitle_shown;
-                  }
-                  //EDITION
-                  else if (sPDWGroup == 18)
-                  {
-                    FSInfos.Type = StreamType.Edition;
-                  }
-                  else if (sPDWGroup == 4) //Subtitle file
-                  {
-                    FSInfos.Type = StreamType.Subtitle_file;
-                  }
-                  else if (sPDWGroup == 10) //Postprocessing filter
-                  {
-                    FSInfos.Type = StreamType.PostProcessing;
-                  }
-                  Log.Debug("VideoPlayer: FoundStreams: Type={0}; Name={1}, Filter={2}, Id={3}, PDWGroup={4}, LCID={5}",
-                            FSInfos.Type.ToString(), FSInfos.Name, FSInfos.Filter, FSInfos.Id.ToString(),
-                            sPDWGroup.ToString(), sPLCid.ToString());
+                    FSInfos.sFlag = sFlag;
+                    //Avoid listing ffdshow video filter's plugins amongst subtitle and audio streams and editions.
+                    if ((FSInfos.Filter == "ffdshow DXVA Video Decoder" || FSInfos.Filter == "ffdshow Video Decoder" ||
+                         FSInfos.Filter == "ffdshow raw video filter") &&
+                        ((sPDWGroup == 1) || (sPDWGroup == 2) || (sPDWGroup == 18) || (sPDWGroup == 4)))
+                    {
+                      FSInfos.Type = StreamType.Unknown;
+                    }
+                    //VIDEO
+                    else if (sPDWGroup == 0)
+                    {
+                      FSInfos.Type = StreamType.Video;
+                    }
+                    //AUDIO
+                    else if (sPDWGroup == 1)
+                    {
+                      FSInfos.Type = StreamType.Audio;
+                    }
+                    //SUBTITLE
+                    else if (sPDWGroup == 2 && sName.LastIndexOf("off", StringComparison.Ordinal) == -1 && sName.LastIndexOf("Hide ", StringComparison.Ordinal) == -1 &&
+                             sName.LastIndexOf("No ", StringComparison.Ordinal) == -1 && sName.LastIndexOf("Miscellaneous ", StringComparison.Ordinal) == -1)
+                    {
+                      FSInfos.Type = StreamType.Subtitle;
+                    }
+                    //NO SUBTITILE TAG
+                    else if ((sPDWGroup == 2 && (sName.LastIndexOf("off", StringComparison.Ordinal) != -1 || sName.LastIndexOf("No ", StringComparison.Ordinal) != -1)) ||
+                             (sPDWGroup == 6590033 && sName.LastIndexOf("Hide ", StringComparison.Ordinal) != -1))
+                    {
+                      FSInfos.Type = StreamType.Subtitle_hidden;
+                    }
+                    //DirectVobSub SHOW SUBTITLE TAG
+                    else if (sPDWGroup == 6590033 && sName.LastIndexOf("Show ", StringComparison.Ordinal) != -1)
+                    {
+                      FSInfos.Type = StreamType.Subtitle_shown;
+                    }
+                    //EDITION
+                    else if (sPDWGroup == 18)
+                    {
+                      FSInfos.Type = StreamType.Edition;
+                    }
+                    else if (sPDWGroup == 4) //Subtitle file
+                    {
+                      FSInfos.Type = StreamType.Subtitle_file;
+                    }
+                    else if (sPDWGroup == 10) //Postprocessing filter
+                    {
+                      FSInfos.Type = StreamType.PostProcessing;
+                    }
+                    Log.Debug("VideoPlayer: FoundStreams: Type={0}; Name={1}, Filter={2}, Id={3}, PDWGroup={4}, LCID={5}",
+                              FSInfos.Type.ToString(), FSInfos.Name, FSInfos.Filter, FSInfos.Id.ToString(),
+                              sPDWGroup.ToString(), sPLCid.ToString());
 
-                  switch (FSInfos.Type)
-                  {
-                    case StreamType.Unknown:
-                    case StreamType.Subtitle:
-                    case StreamType.Subtitle_file:
-                    case StreamType.Subtitle_hidden:
-                    case StreamType.Subtitle_shown:
-                      if (streamLAVSelection &&
-                          (FSInfos.Filter.ToLowerInvariant().Contains("LAV Splitter".ToLowerInvariant()) ||
-                           FSInfos.Filter.ToUpperInvariant().Contains(@"\BDMV\INDEX.BDMV")))
-                      {
-                        if (FSInfos.sFlag == AMStreamSelectInfoFlags.Enabled ||
-                            FSInfos.sFlag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))
+                    switch (FSInfos.Type)
+                    {
+                      case StreamType.Unknown:
+                      case StreamType.Subtitle:
+                      case StreamType.Subtitle_file:
+                      case StreamType.Subtitle_hidden:
+                      case StreamType.Subtitle_shown:
+                        if (streamLAVSelection &&
+                            (FSInfos.Filter.ToLowerInvariant().Contains("LAV Splitter".ToLowerInvariant()) ||
+                             FSInfos.Filter.ToUpperInvariant().Contains(@"\BDMV\INDEX.BDMV")))
                         {
-                          FSInfos.Current = true;
-                          pStrm.Enable(FSInfos.Id, 0);
-                          pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
+                          if (FSInfos.sFlag == AMStreamSelectInfoFlags.Enabled ||
+                              FSInfos.sFlag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))
+                          {
+                            FSInfos.Current = true;
+                            pStrm.Enable(FSInfos.Id, 0);
+                            pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
+                          }
+                          goto default;
+                        }
+                        break;
+                      case StreamType.Video:
+                      case StreamType.Audio:
+                      case StreamType.Edition:
+                      case StreamType.PostProcessing:
+                        if (FSInfos.Type == StreamType.Audio && FSInfos.Filter == MEDIAPORTAL_AUDIOSWITCHER_FILTER && FSInfos.Name == "Audio " && !AutoRenderingCheck && GetInterface)
+                        {
+                          FStreams.AddStreamInfosEx(FSInfos);
+                          break;
+                        }
+                        if (streamLAVSelection)
+                        {
+                          if (FSInfos.sFlag == AMStreamSelectInfoFlags.Enabled || FSInfos.sFlag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))
+                          {
+                            FSInfos.Current = true;
+                            pStrm.Enable(FSInfos.Id, 0);
+                            pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
+                          }
+                        }
+                        else
+                        {
+                          if (FStreams.GetStreamCount(FSInfos.Type) == 0)
+                          {
+                            FSInfos.Current = true;
+                            pStrm.Enable(FSInfos.Id, 0);
+                            pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
+                          }
                         }
                         goto default;
-                      }
-                      break;
-                    case StreamType.Video:
-                    case StreamType.Audio:
-                    case StreamType.Edition:
-                    case StreamType.PostProcessing:
-                      if (FSInfos.Type == StreamType.Audio && FSInfos.Filter == MEDIAPORTAL_AUDIOSWITCHER_FILTER && FSInfos.Name == "Audio " && !AutoRenderingCheck && GetInterface)
-                      {
-                        FStreams.AddStreamInfosEx(FSInfos);
+                      default:
+                        FStreams.AddStreamInfos(FSInfos);
                         break;
-                      }
-                      if (streamLAVSelection)
-                      {
-                        if (FSInfos.sFlag == AMStreamSelectInfoFlags.Enabled || FSInfos.sFlag == (AMStreamSelectInfoFlags.Enabled | AMStreamSelectInfoFlags.Exclusive))
-                        {
-                          FSInfos.Current = true;
-                          pStrm.Enable(FSInfos.Id, 0);
-                          pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
-                        }
-                      }
-                      else
-                      {
-                        if (FStreams.GetStreamCount(FSInfos.Type) == 0)
-                        {
-                          FSInfos.Current = true;
-                          pStrm.Enable(FSInfos.Id, 0);
-                          pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
-                        }
-                      } 
-                      goto default;
-                    default:
-                      FStreams.AddStreamInfos(FSInfos);
-                      break;
+                    }
                   }
                 }
+                DirectShowUtil.ReleaseComObject(foundfilter[0]);
               }
-              DirectShowUtil.ReleaseComObject(foundfilter[0]);
             }
+
+            if (FStreams.GetStreamCount(StreamType.Video) > 0 || FStreams.GetStreamCount(StreamType.Audio) > 0 || sourceFilters != null)
+              break;
+
+            //Try another pass where the filter is source type and has only one stream (individual video/audio sources)
+            sourceFilters = (string[])FilterHelper.GetFilterSource().ToArray(typeof(string));
           }
           DirectShowUtil.ReleaseComObject(enumFilters);
         }
