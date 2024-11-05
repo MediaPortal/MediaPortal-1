@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 /*
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,8 +18,8 @@
 */
 #endregion
 
-!if "${NSIS_VERSION}" != "v3.09"
-  !error "$\r$\n$\r$\nUnsupported NSIS version: ${NSIS_VERSION}. Please use NSIS v3.09, http://nsis.sourceforge.net$\r$\n$\r$\n"
+!if "${NSIS_VERSION}" != "v3.10"
+  !error "$\r$\n$\r$\nUnsupported NSIS version: ${NSIS_VERSION}. Please use NSIS v3.10, http://nsis.sourceforge.net$\r$\n$\r$\n"
 !endif
 
 !ifndef ___COMMON_MP_MACROS__NSH___
