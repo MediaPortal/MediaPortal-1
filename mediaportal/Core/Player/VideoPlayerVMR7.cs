@@ -1850,13 +1850,21 @@ namespace MediaPortal.Player
 
         string strVideNoExt = Path.GetFileNameWithoutExtension(this.m_strCurrentFile);
         string strSubNoExt = Path.GetFileNameWithoutExtension(match.Groups["file"].Value);
-        if (strSubNoExt.Length > strVideNoExt.Length)
-          streamName = strSubNoExt.Substring(strVideNoExt.Length + 1);
-        else
-          streamName = string.Empty;
+        if (strSubNoExt.StartsWith(strVideNoExt, StringComparison.CurrentCultureIgnoreCase))
+        {
+          if (strSubNoExt.Length > strVideNoExt.Length)
+            streamName = strSubNoExt.Substring(strVideNoExt.Length + 1);
+          else
+            streamName = string.Empty;
 
-        if (string.IsNullOrWhiteSpace(streamName))
-          streamName = strVideNoExt;
+          if (string.IsNullOrWhiteSpace(streamName))
+            streamName = strVideNoExt;
+        }
+        else
+        {
+          //difference between m_strCurrentFile and ISubEngine.LoadSubtitles call
+          streamName = strSubNoExt;
+        }
 
         langName = streamName;
         streamNameUND = streamName;
@@ -1947,10 +1955,18 @@ namespace MediaPortal.Player
       {
         string strVideNoExt = Path.GetFileNameWithoutExtension(this.m_strCurrentFile);
         string strSubNoExt = Path.GetFileNameWithoutExtension(match.Groups["file"].Value);
-        if (strSubNoExt.Length > strVideNoExt.Length)
-          streamName = strSubNoExt.Substring(strVideNoExt.Length + 1);
+        if (strSubNoExt.StartsWith(strVideNoExt, StringComparison.CurrentCultureIgnoreCase))
+        {
+          if (strSubNoExt.Length > strVideNoExt.Length)
+            streamName = strSubNoExt.Substring(strVideNoExt.Length + 1);
+          else
+            streamName = string.Empty;
+        }
         else
-          streamName = string.Empty;
+        {
+          //difference between m_strCurrentFile and ISubEngine.LoadSubtitles call
+          streamName = strSubNoExt;
+        }
 
         streamNameFalse = streamName;
         langName = streamName;
