@@ -52,7 +52,7 @@ jobs:
 
       - name: Setup NSIS
         run: |
-          choco install --yes nsis --version=3.09 --force
+          choco install --yes nsis --version=3.10 --force
 
       - name: Git Checkout
         uses: actions/checkout@v4
