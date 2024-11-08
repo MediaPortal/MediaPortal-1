@@ -1826,47 +1826,48 @@ namespace MediaPortal.Player
       string streamName = SubEngine.GetInstance().GetLanguage(iStream);
       string langName = SubEngine.GetInstance().GetLanguage(iStream);
       string streamNameUND = SubEngine.GetInstance().GetSubtitleName(iStream);
+      string strSubtitleFileName = SubEngine.GetInstance().FileName; //filename used to load subtitle engine
 
       if (streamName == null)
       {
         return Strings.Unknown;
       }
 
-      //MPC-HC 2.0.0
-      //"[Local] 4-3 bar test.English-Forced.srt\tEnglish"
-      Regex regexMPCHC = new Regex(@"^\[([^\]]+)\]\s(?<file>[^\t]+)(\t(?<lng>.+))?");
-      Match match = regexMPCHC.Match(streamName);
-      if (match.Success)
+      if (!string.IsNullOrWhiteSpace(strSubtitleFileName))
       {
-        //  Group grLng = match.Groups["lng"];
-        //  if (grLng.Success)
-        //    return grLng.Value;
-        //
-        //  string strVideNoExt = Path.GetFileNameWithoutExtension(this.m_strCurrentFile);
-        //  string strSubNoExt = Path.GetFileNameWithoutExtension(match.Groups["file"].Value);
-        //  if (strVideNoExt.Equals(strSubNoExt, StringComparison.CurrentCultureIgnoreCase))
-        //    return "Undetermined";
-
-        string strVideNoExt = Path.GetFileNameWithoutExtension(this.m_strCurrentFile);
-        string strSubNoExt = Path.GetFileNameWithoutExtension(match.Groups["file"].Value);
-        if (strSubNoExt.StartsWith(strVideNoExt, StringComparison.CurrentCultureIgnoreCase))
+        //MPC-HC 2.0.0
+        //"[Local] 4-3 bar test.English-Forced.srt\tEnglish"
+        Regex regexMPCHC = new Regex(@"^\[([^\]]+)\]\s(?<file>[^\t]+)(\t(?<lng>.+))?");
+        Match match = regexMPCHC.Match(streamName);
+        if (match.Success)
         {
-          if (strSubNoExt.Length > strVideNoExt.Length)
-            streamName = strSubNoExt.Substring(strVideNoExt.Length + 1);
+          Group grLng = match.Groups["lng"];
+          if (grLng.Success)
+            return grLng.Value; //language parsed by MPC-HC
+
+          string strVideNoExt = Path.GetFileNameWithoutExtension(strSubtitleFileName);
+          string strSubNoExt = Path.GetFileNameWithoutExtension(match.Groups["file"].Value);
+          if (strVideNoExt.Equals(strSubNoExt, StringComparison.CurrentCultureIgnoreCase))
+            return "Undetermined"; //no subtitle suffix
+          else if (strSubNoExt.StartsWith(strVideNoExt, StringComparison.CurrentCultureIgnoreCase))
+          {
+            if (strSubNoExt.Length > strVideNoExt.Length)
+              streamName = strSubNoExt.Substring(strVideNoExt.Length + 1); //Subtitle filename has a suffix
+            else
+              streamName = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(streamName))
+              streamName = strVideNoExt;
+          }
           else
-            streamName = string.Empty;
+          {
+            //difference between m_strCurrentFile and ISubEngine.LoadSubtitles call
+            streamName = strSubNoExt;
+          }
 
-          if (string.IsNullOrWhiteSpace(streamName))
-            streamName = strVideNoExt;
+          langName = streamName;
+          streamNameUND = streamName;
         }
-        else
-        {
-          //difference between m_strCurrentFile and ISubEngine.LoadSubtitles call
-          streamName = strSubNoExt;
-        }
-
-        langName = streamName;
-        streamNameUND = streamName;
       }
 
       // remove prefix, which is added by Haali Media Splitter
@@ -1941,34 +1942,53 @@ namespace MediaPortal.Player
       string streamName = SubEngine.GetInstance().GetSubtitleName(iStream);
       string streamNameFalse = SubEngine.GetInstance().GetSubtitleName(iStream);
       string langName = SubEngine.GetInstance().GetLanguage(iStream);
+      string strSubtitleFileName = SubEngine.GetInstance().FileName; //filename used to load subtitle engine
+
       if (streamName == null)
       {
         return Strings.Unknown;
       }
 
-      //MPC-HC 2.0.0
-      //"[Local] 4-3 bar test.English-Forced.srt\tEnglish"
-      Regex regexMPCHC = new Regex(@"^\[([^\]]+)\]\s(?<file>[^\t]+)(\t(?<lng>.+))?");
-      Match match = regexMPCHC.Match(streamName);
-      if (match.Success)
+      if (!string.IsNullOrWhiteSpace(strSubtitleFileName))
       {
-        string strVideNoExt = Path.GetFileNameWithoutExtension(this.m_strCurrentFile);
-        string strSubNoExt = Path.GetFileNameWithoutExtension(match.Groups["file"].Value);
-        if (strSubNoExt.StartsWith(strVideNoExt, StringComparison.CurrentCultureIgnoreCase))
+        //MPC-HC 2.0.0
+        //"[Local] 4-3 bar test.English-Forced.srt\tEnglish"
+        Regex regexMPCHC = new Regex(@"^\[([^\]]+)\]\s(?<file>[^\t]+)(\t(?<lng>.+))?");
+        Match match = regexMPCHC.Match(streamName);
+        if (match.Success)
         {
-          if (strSubNoExt.Length > strVideNoExt.Length)
-            streamName = strSubNoExt.Substring(strVideNoExt.Length + 1);
-          else
-            streamName = string.Empty;
-        }
-        else
-        {
-          //difference between m_strCurrentFile and ISubEngine.LoadSubtitles call
-          streamName = strSubNoExt;
-        }
+          string strVideNoExt = Path.GetFileNameWithoutExtension(strSubtitleFileName);
+          string strSubNoExt = Path.GetFileNameWithoutExtension(match.Groups["file"].Value);
+          if (strSubNoExt.StartsWith(strVideNoExt, StringComparison.CurrentCultureIgnoreCase))
+          {
+            if (strSubNoExt.Length > strVideNoExt.Length)
+            {
+              //Subtitle filename has a suffix
+              Group grLng = match.Groups["lng"];
+              if (grLng.Success)
+              {
+                //Try to extract additional suffix following the language
+                match = Regex.Match(strSubNoExt.Substring(strVideNoExt.Length), @"[-\._](?<lng>[A-Za-z]+)[-\._\[]+(?<suffix>.+?)\]?\z");
+                if (match.Success)
+                  return match.Groups["suffix"].Value;
+                else
+                  return string.Empty; //no additional suffix - just language
+              }
 
-        streamNameFalse = streamName;
-        langName = streamName;
+              //Unknown subtitle filename suffix
+              return strSubNoExt.Substring(strVideNoExt.Length + 1);
+            }
+            else
+              return string.Empty;
+          }
+          else
+          {
+            //difference between m_strCurrentFile and ISubEngine.LoadSubtitles call
+            streamName = strSubNoExt;
+            streamNameFalse = streamName;
+            langName = streamName;
+          }
+        }
       }
 
       // remove prefix, which is added by Haali Media Splitter

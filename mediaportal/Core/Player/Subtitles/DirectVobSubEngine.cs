@@ -43,6 +43,7 @@ namespace MediaPortal.Player.Subtitles
     private List<string> SubtitleNames = new List<string>();
     private int extCount;
     private int current;
+    private string _SubtitleFilename = null;
 
     #region ISubEngine Members
 
@@ -50,6 +51,8 @@ namespace MediaPortal.Player.Subtitles
 
     public bool LoadSubtitles(IGraphBuilder graphBuilder, string filename)
     {
+      this._SubtitleFilename = filename;
+
       FreeSubtitles();
       LoadSettings();
 
@@ -382,6 +385,8 @@ namespace MediaPortal.Player.Subtitles
         vobSub?.put_VobSubSettings(fBuffer, !this.autoShow, fPolygonize);
       }
     }
+
+    public string FileName { get => this._SubtitleFilename; }
 
     #endregion
   }
