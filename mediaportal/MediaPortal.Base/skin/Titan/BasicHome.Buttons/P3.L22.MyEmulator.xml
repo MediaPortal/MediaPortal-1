@@ -2,7 +2,7 @@
 <window>
 <controls> 
 
-   	<control Style="HomeButtonPictureDummy">
+   	<control Style="HomeButtonPicture">
  	    <description>BasicHome MyEmulator NoFocus</description>
  	    <type>image</type>
  	    <id>0</id>
@@ -13,7 +13,7 @@
  		<visible>control.IsVisible(10301)</visible>  
  	</control>
 
-  	<control Style="HomeButtonMenuDummy">
+  	<control Style="HomeButtonMenu">
     	<description>BasicHome MyEmulator</description>
       	<type>button</type>
       	<id>550</id>
