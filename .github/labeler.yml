@@ -17,6 +17,4 @@ MPE:
   - 'MPE'
 
 Skin:
-  - 'Titan'
-  - 'DWHD'
-  - 'skin'
+  - '(Titan|DWHD|skin)'
