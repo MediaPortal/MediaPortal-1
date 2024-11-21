@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using System.Runtime.InteropServices;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
@@ -35,7 +36,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
     public const uint FILE_SHARE_READ = 0x00000001;
     public const uint FILE_SHARE_WRITE = 0x00000002;
     public const uint FILE_FLAG_OVERLAPPED = 0x40000000;
-    public const int INVALID_HANDLE_VALUE = -1;
+    public static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
     public const short OPEN_EXISTING = 3;
     public const int WAIT_TIMEOUT = 0x102;
     public const short WAIT_OBJECT_0 = 0;
@@ -48,56 +49,60 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
     // API functions, listed alphabetically
     // ******************************************************************************
 
-    [DllImport("kernel32.dll")]
-    public static extern int CancelIo(int hFile);
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern int CancelIo(IntPtr hFile);
 
-    [DllImport("kernel32.dll")]
-    public static extern int CloseHandle(int hObject);
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern int CloseHandle(IntPtr hObject);
 
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-    public static extern int CreateEvent(ref SECURITY_ATTRIBUTES SecurityAttributes, int bManualReset, int bInitialState,
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern IntPtr CreateEvent(ref SECURITY_ATTRIBUTES SecurityAttributes, int bManualReset, int bInitialState,
                                          string lpName);
 
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-    public static extern int
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern IntPtr
       CreateFile(string lpFileName, uint dwDesiredAccess, uint dwShareMode, ref SECURITY_ATTRIBUTES lpSecurityAttributes,
-                 int dwCreationDisposition, uint dwFlagsAndAttributes, int hTemplateFile);
+                 int dwCreationDisposition, uint dwFlagsAndAttributes, IntPtr hTemplateFile);
 
-    [DllImport("kernel32.dll")]
-    public static extern int ReadFile(int hFile, ref byte lpBuffer, int nNumberOfBytesToRead,
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern int ReadFile(IntPtr hFile, ref byte lpBuffer, int nNumberOfBytesToRead,
                                       ref int lpNumberOfBytesRead, ref OVERLAPPED lpOverlapped);
 
-    [DllImport("kernel32.dll")]
-    public static extern int WaitForSingleObject(int hHandle, int dwMilliseconds);
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern int WaitForSingleObject(IntPtr hHandle, int dwMilliseconds);
 
-    [DllImport("kernel32.dll")]
-    public static extern int WriteFile(int hFile, ref byte lpBuffer, int nNumberOfBytesToWrite,
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern int WriteFile(IntPtr hFile, ref byte lpBuffer, int nNumberOfBytesToWrite,
                                        ref int lpNumberOfBytesWritten, int lpOverlapped);
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Explicit, Size = 20)]
     public struct OVERLAPPED
     {
-      #region Fields
+      [FieldOffset(0)]
+      public uint Internal;
 
-      public int Internal;
-      public int InternalHigh;
-      public int Offset;
-      public int OffsetHigh;
-      public int hEvent;
+      [FieldOffset(4)]
+      public uint InternalHigh;
 
-      #endregion
+      [FieldOffset(8)]
+      public uint Offset;
+
+      [FieldOffset(12)]
+      public uint OffsetHigh;
+
+      [FieldOffset(8)]
+      public IntPtr Pointer;
+
+      [FieldOffset(16)]
+      public IntPtr hEvent;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct SECURITY_ATTRIBUTES
     {
-      #region Fields
-
       public int nLength;
-      public int lpSecurityDescriptor;
+      public IntPtr lpSecurityDescriptor;
       public int bInheritHandle;
-
-      #endregion
     }
   }
 }
