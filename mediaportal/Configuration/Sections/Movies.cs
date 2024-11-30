@@ -152,7 +152,7 @@ namespace MediaPortal.Configuration.Sections
 
         repeatPlaylistCheckBox.Checked = xmlreader.GetValueAsBool("movies", "repeat", true);
         comboBoxPlayAll.SelectedIndex = xmlreader.GetValueAsInt("movies", "playallinfolder", 3);
-
+        MadVrInUse = xmlreader.GetValueAsBool("general", "useMadVideoRenderer", false);
         subEnginesCombo.SelectedItem = xmlreader.GetValueAsString("subtitles", "engine", "MPC-HC");
         subPaths.Text = xmlreader.GetValueAsString("subtitles", "paths", @".\,.\Subtitles\");
         checkBoxShowWatched.Checked = xmlreader.GetValueAsBool("movies", "markwatched", true);
@@ -163,7 +163,7 @@ namespace MediaPortal.Configuration.Sections
         playedPercentageTB.Value = playedPercentageTrackBar.Value;
 
         comSkipCheckBox.Checked = xmlreader.GetValueAsBool("comskip", "automaticskip", false);
-        MadVrInUse = xmlreader.GetValueAsBool("general", "useMadVideoRenderer", false);
+        
         string selection = (string)subEnginesCombo.SelectedItem;
         if ((!MadVrInUse && selection.Equals("XySubFilter") && !SubtitleComboMessageDone))
         {
