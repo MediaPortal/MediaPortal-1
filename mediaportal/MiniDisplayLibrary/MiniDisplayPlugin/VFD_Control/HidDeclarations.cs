@@ -46,37 +46,37 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
     // ******************************************************************************
 
     [DllImport("hid.dll", SetLastError = true)]
-    public static extern bool HidD_FlushQueue(int HidDeviceObject);
+    public static extern bool HidD_FlushQueue(IntPtr HidDeviceObject);
 
     [DllImport("hid.dll", SetLastError = true)]
-    public static extern bool HidD_FreePreparsedData(ref IntPtr PreparsedData);
+    public static extern bool HidD_FreePreparsedData(IntPtr PreparsedData);
 
     [DllImport("hid.dll", SetLastError = true)]
-    public static extern int HidD_GetAttributes(int HidDeviceObject, ref HIDD_ATTRIBUTES Attributes);
+    public static extern int HidD_GetAttributes(IntPtr HidDeviceObject, ref HIDD_ATTRIBUTES Attributes);
 
     [DllImport("hid.dll", SetLastError = true)]
-    public static extern bool HidD_GetFeature(int HidDeviceObject, ref byte lpReportBuffer, int ReportBufferLength);
+    public static extern bool HidD_GetFeature(IntPtr HidDeviceObject, ref byte lpReportBuffer, int ReportBufferLength);
 
     [DllImport("hid.dll", SetLastError = true)]
-    public static extern bool HidD_GetInputReport(int HidDeviceObject, ref byte lpReportBuffer, int ReportBufferLength);
+    public static extern bool HidD_GetInputReport(IntPtr HidDeviceObject, ref byte lpReportBuffer, int ReportBufferLength);
 
     [DllImport("hid.dll", SetLastError = true)]
     public static extern void HidD_GetHidGuid(out Guid HidGuid);
 
     [DllImport("hid.dll", SetLastError = true)]
-    public static extern bool HidD_GetNumInputBuffers(int HidDeviceObject, ref int NumberBuffers);
+    public static extern bool HidD_GetNumInputBuffers(IntPtr HidDeviceObject, ref int NumberBuffers);
 
     [DllImport("hid.dll", SetLastError = true)]
-    public static extern bool HidD_GetPreparsedData(int HidDeviceObject, ref IntPtr PreparsedData);
+    public static extern bool HidD_GetPreparsedData(IntPtr HidDeviceObject, ref IntPtr PreparsedData);
 
     [DllImport("hid.dll", SetLastError = true)]
-    public static extern bool HidD_SetFeature(int HidDeviceObject, ref byte lpReportBuffer, int ReportBufferLength);
+    public static extern bool HidD_SetFeature(IntPtr HidDeviceObject, ref byte lpReportBuffer, int ReportBufferLength);
 
     [DllImport("hid.dll", SetLastError = true)]
-    public static extern bool HidD_SetNumInputBuffers(int HidDeviceObject, int NumberBuffers);
+    public static extern bool HidD_SetNumInputBuffers(IntPtr HidDeviceObject, int NumberBuffers);
 
     [DllImport("hid.dll", SetLastError = true)]
-    public static extern bool HidD_SetOutputReport(int HidDeviceObject, ref byte lpReportBuffer, int ReportBufferLength);
+    public static extern bool HidD_SetOutputReport(IntPtr HidDeviceObject, ref byte lpReportBuffer, int ReportBufferLength);
 
     [DllImport("hid.dll", SetLastError = true)]
     public static extern int HidP_GetCaps(IntPtr PreparsedData, ref HIDP_CAPS Capabilities);
@@ -125,47 +125,92 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
 
 
     [StructLayout(LayoutKind.Sequential)]
+    public struct HidP_Range
+    {
+      public short UsageMin;
+      public short UsageMax;
+      public short StringMin;
+      public short StringMax;
+      public short DesignatorMin;
+      public short DesignatorMax;
+      public short DataIndexMin;
+      public short DataIndexMax;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct HidP_NotRange
+    {
+      public short Usage;
+      public short Reserved1;
+      public short StringIndex;
+      public short Reserved2;
+      public short DesignatorIndex;
+      public short Reserved3;
+      public short DataIndex;
+      public short Reserved4;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
     public struct HidP_Value_Caps
     {
-      #region Fields
-
+      [FieldOffset(0)]
       public ushort UsagePage;
+      [FieldOffset(2)]
       public byte ReportID;
-      public int IsAlias;
+      [FieldOffset(3), MarshalAs(UnmanagedType.U1)]
+      public bool IsAlias;
+      [FieldOffset(4)]
       public ushort BitField;
+      [FieldOffset(6)]
       public ushort LinkCollection;
+      [FieldOffset(8)]
       public ushort LinkUsage;
+      [FieldOffset(10)]
       public ushort LinkUsagePage;
-      public int IsRange; // If IsRange is false, UsageMin is the Usage and UsageMax is unused.
-      public int IsStringRange; // If IsStringRange is false, StringMin is the string index and StringMax is unused.
-
-      public int IsDesignatorRange;
-      // If IsDesignatorRange is false, DesignatorMin is the designator index and DesignatorMax is unused.
-
-      public int IsAbsolute;
-      public int HasNull;
+      [FieldOffset(12), MarshalAs(UnmanagedType.U1)]
+      public bool IsRange; // If IsRange is false, UsageMin is the Usage and UsageMax is unused.
+      [FieldOffset(13), MarshalAs(UnmanagedType.U1)]
+      public bool IsStringRange; // If IsStringRange is false, StringMin is the string index and StringMax is unused.
+      [FieldOffset(14), MarshalAs(UnmanagedType.U1)]
+      public bool IsDesignatorRange; // If IsDesignatorRange is false, DesignatorMin is the designator index and DesignatorMax is unused.
+      [FieldOffset(15), MarshalAs(UnmanagedType.U1)]
+      public bool IsAbsolute;
+      [FieldOffset(16), MarshalAs(UnmanagedType.U1)]
+      public bool HasNull;
+      [FieldOffset(17)]
       public byte Reserved;
-      public ushort BitSize;
-      public ushort ReportCount;
-      public ushort Reserved2;
-      public ushort Reserved3;
-      public ushort Reserved4;
-      public ushort Reserved5;
-      public ushort Reserved6;
+      [FieldOffset(18)]
+      public short BitSize;
+      [FieldOffset(20)]
+      public short ReportCount;
+      [FieldOffset(22)]
+      public ushort Reserved2a;
+      [FieldOffset(24)]
+      public ushort Reserved2b;
+      [FieldOffset(26)]
+      public ushort Reserved2c;
+      [FieldOffset(28)]
+      public ushort Reserved2d;
+      [FieldOffset(30)]
+      public ushort Reserved2e;
+      [FieldOffset(32)]
+      public int UnitsExp;
+      [FieldOffset(36)]
+      public int Units;
+      [FieldOffset(40)]
       public int LogicalMin;
+      [FieldOffset(44)]
       public int LogicalMax;
+      [FieldOffset(48)]
       public int PhysicalMin;
+      [FieldOffset(52)]
       public int PhysicalMax;
-      public ushort UsageMin;
-      public ushort UsageMax;
-      public ushort StringMin;
-      public ushort StringMax;
-      public ushort DesignatorMin;
-      public ushort DesignatorMax;
-      public ushort DataIndexMin;
-      public ushort DataIndexMax;
 
-      #endregion
+      [FieldOffset(56)]
+      public HidP_Range Range;
+      [FieldOffset(56)]
+      public HidP_NotRange NotRange;
+
     }
   }
 }
