@@ -2095,8 +2095,17 @@
     <String id="106666">Attente de mise en veille</String>
     <String id="107700" prefix="Mon ">TV/Télétexte</String>
     <String id="107701" prefix="Mon ">TV/Télétexte</String>
-    <String id="107776" prefix="Mon">Tetris</String>
+    <String id="107776" prefix="Mon ">Tetris</String>
     <String id="107777" prefix="Mon ">Sudoku</String>
+	<String id="107778" prefix="Mon ">Echecs</String>
+    <String id="107779" prefix="Mon ">ClickMania</String>
+	<String id="107780" prefix="Mon ">Puissance 4</String>
+	<String id="107781" prefix="Mon ">Petits chevaux</String>
+	<String id="107782" prefix="Mon ">Hexxagon</String>
+	<String id="107783" prefix="Mon ">Mastermind</String>
+	<String id="107784" prefix="Mes ">Tubes</String>
+	<String id="107785" prefix="Mon ">Pipes</String>
+	<String id="107786" prefix="Mon ">Yahtzee</String>
     <String id="107890" prefix="Ma ">Last.fm radio</String>
     <String id="107900">Boite de dialogue</String>
     <String id="108888">Menu Musique</String>

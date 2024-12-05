@@ -2,7 +2,7 @@
 <window>
 <controls> 
 
-   	<control Style="HomeButtonPictureDummy">
+   	<control Style="HomeButtonPicture">
  	    <description>BasicHome MyEmulator NoFocus</description>
  	    <type>image</type>
  	    <id>0</id>
@@ -10,10 +10,10 @@
        	<posY>#L22top</posY>
         <texture>basichome_button_myemulator.png</texture>
        	<animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(550)">conditional</animation>
- 		<visible>control.IsVisible(10301)</visible>  
+ 		<visible>control.IsVisible(10301)+!Control.IsVisible(30093)</visible>  
  	</control>
 
-  	<control Style="HomeButtonMenuDummy">
+  	<control Style="HomeButtonMenu">
     	<description>BasicHome MyEmulator</description>
       	<type>button</type>
       	<id>550</id>
@@ -26,7 +26,7 @@
 		<onleft>350</onleft>
       	<onup>450</onup>
 		<ondown>312</ondown>  
-  	    <visible allowhiddenfocus="true">![control.isvisible(90309)|control.hasfocus(99999)]+Control.IsVisible(10301)</visible>
+  	    <visible allowhiddenfocus="true">![control.isvisible(90309)|control.hasfocus(99999)|Control.IsVisible(30093)]+Control.IsVisible(10301)</visible>
 	</control>
 </controls>
 </window>

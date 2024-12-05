@@ -73,6 +73,8 @@ namespace MediaPortal.Player.Subtitles
     void DelayMinus(int subtitleDelay);
 
     bool AutoShow { get; set; }
+
+    string FileName { get; }
   }
 
   public class SubEngine
@@ -123,12 +125,15 @@ namespace MediaPortal.Player.Subtitles
 
     public class DummyEngine : ISubEngine
     {
+      private string _SubtitleFilename = null;
+
       #region ISubEngine Members
 
       public void SetDevice(IntPtr device) {}
 
       public bool LoadSubtitles(IGraphBuilder graphBuilder, string filename)
       {
+        this._SubtitleFilename = filename;
         DirectVobSubUtil.RemoveFromGraph(graphBuilder);
         return false;
       }
@@ -206,6 +211,8 @@ namespace MediaPortal.Player.Subtitles
         get { return false; }
         set { }
       }
+
+      public string FileName { get => this._SubtitleFilename; }
 
       #endregion
     }

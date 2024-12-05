@@ -2099,6 +2099,15 @@
     <String id="107701" prefix="My ">TV/Teletext</String>
     <String id="107776" prefix="My ">Tetris</String>
     <String id="107777" prefix="My ">Sudoku</String>
+	<String id="107778" prefix="My ">Chess</String>
+    <String id="107779" prefix="My ">ClickMania</String>
+	<String id="107780" prefix="My ">Connect 4</String>
+	<String id="107781" prefix="My ">Frustration</String>
+	<String id="107782" prefix="My ">Hexxagon</String>
+	<String id="107783" prefix="My ">Mastermind</String>
+	<String id="107784" prefix="My ">Minesweeper</String>
+	<String id="107785" prefix="My ">Pipes</String>
+	<String id="107786" prefix="My ">Yahtzee</String>
     <String id="107890" prefix="My ">Last.fm radio</String>
     <String id="107900">Dialog Text</String>
     <String id="108888">Music menu</String>

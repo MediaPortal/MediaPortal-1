@@ -151,9 +151,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
           // no more devices are available.
 
           // The cbSize element of the MyDeviceInterfaceData structure must be set to
-          // the structure's size in bytes. The size is 28 bytes.
-          MyDeviceInterfaceData.cbSize = 28;
-          //Marshal.SizeOf(MyDeviceInterfaceData);
+          // the structure's size in bytes.
+          MyDeviceInterfaceData.cbSize = Marshal.SizeOf(MyDeviceInterfaceData);
 
           // ***
           // API function:
@@ -184,7 +183,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
 
           if (Result == 0)
           {
-            LastDevice = true;
+            int iLastError = Marshal.GetLastWin32Error();
+            if (iLastError == DeviceManagementApiDeclarations.ERROR_NO_MORE_ITEMS)
+              LastDevice = true;
+            else
+              throw new System.ComponentModel.Win32Exception(iLastError);
           }
           else
           {
@@ -234,7 +237,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
             IntPtr DetailDataBuffer = Marshal.AllocHGlobal(BufferSize);
 
             // Store cbSize in the first 4 bytes of the array
-            Marshal.WriteInt32(DetailDataBuffer, 4 + Marshal.SystemDefaultCharSize);
+            Marshal.WriteInt32(DetailDataBuffer, IntPtr.Size == 4 ? 4 + Marshal.SystemDefaultCharSize : 8);
             Debug.WriteLine("cbsize = " + MyDeviceInterfaceDetailData.cbSize);
 
             // Call SetupDiGetDeviceInterfaceDetail again.

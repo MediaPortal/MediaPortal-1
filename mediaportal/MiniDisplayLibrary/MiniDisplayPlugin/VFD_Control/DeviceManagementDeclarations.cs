@@ -46,6 +46,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
     public const short DIGCF_PRESENT = 0x00000002;
     public const short DIGCF_DEVICEINTERFACE = 0x00000010;
 
+    public const int ERROR_NO_MORE_ITEMS = 259;
+
     // ******************************************************************************
     // Structures and classes for API calls, listed alphabetically
     // ******************************************************************************
@@ -59,31 +61,31 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
     // API functions, listed alphabetically
     // ******************************************************************************
 
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     public static extern IntPtr RegisterDeviceNotification(IntPtr hRecipient, IntPtr NotificationFilter, int Flags);
 
-    [DllImport("setupapi.dll")]
+    [DllImport("setupapi.dll", SetLastError = true)]
     public static extern int SetupDiCreateDeviceInfoList(ref Guid ClassGuid, int hwndParent);
 
-    [DllImport("setupapi.dll")]
+    [DllImport("setupapi.dll", SetLastError = true)]
     public static extern int SetupDiDestroyDeviceInfoList(IntPtr DeviceInfoSet);
 
-    [DllImport("setupapi.dll")]
+    [DllImport("setupapi.dll", SetLastError = true)]
     public static extern int SetupDiEnumDeviceInterfaces(IntPtr DeviceInfoSet, int DeviceInfoData,
                                                          ref Guid InterfaceClassGuid, int MemberIndex,
                                                          ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData);
 
-    [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
+    [DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
     public static extern IntPtr SetupDiGetClassDevs(ref Guid ClassGuid, string Enumerator, int hwndParent, int Flags);
 
-    [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
+    [DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
     public static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr DeviceInfoSet,
                                                               ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData,
                                                               IntPtr DeviceInterfaceDetailData,
                                                               int DeviceInterfaceDetailDataSize, ref int RequiredSize,
                                                               IntPtr DeviceInfoData);
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", SetLastError = true)]
     public static extern bool UnregisterDeviceNotification(IntPtr Handle);
 
     [StructLayout(LayoutKind.Sequential)]
@@ -110,10 +112,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
       public int dbcc_devicetype;
       public int dbcc_reserved;
 
-      [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U1, SizeConst = 16)] public byte[]
-        dbcc_classguid;
+      [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U1, SizeConst = 16)]
+      public byte[] dbcc_classguid;
 
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 255)] public char[] dbcc_name;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 255)]
+      public char[] dbcc_name;
 
       #endregion
     }
@@ -126,9 +129,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
       public int dbch_size;
       public int dbch_devicetype;
       public int dbch_reserved;
-      public int dbch_handle;
-      public int dbch_hdevnotify;
-
+      public IntPtr dbch_handle;
+      public IntPtr dbch_hdevnotify;
+      public Guid dbch_eventguid;
+      public int dbch_nameoffset;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1, ArraySubType = UnmanagedType.I1)]
+      public byte[] dbch_data;
       #endregion
     }
 
@@ -152,7 +158,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
       public int cbSize;
       public Guid InterfaceClassGuid;
       public int Flags;
-      public int Reserved;
+      public IntPtr Reserved;
 
       #endregion
     }
@@ -176,7 +182,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
       public int cbSize;
       public Guid ClassGuid;
       public int DevInst;
-      public int Reserved;
+      public IntPtr Reserved;
 
       #endregion
     }

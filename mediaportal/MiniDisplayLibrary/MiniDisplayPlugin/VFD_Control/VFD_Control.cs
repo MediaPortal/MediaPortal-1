@@ -51,7 +51,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
 
     #region Fields
 
-    private int _HIDHandle;
+    private IntPtr _HIDHandle;
     private bool _MyDeviceDetected;
     private int _Volume = -1;
     private readonly bool[] FICIconStatus = new bool[50];
@@ -87,7 +87,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
         _MyDeviceDetected = false;
 
         // Values for the SECURITY_ATTRIBUTES structure:
-        Security.lpSecurityDescriptor = 0;
+        Security.lpSecurityDescriptor = IntPtr.Zero;
         Security.bInheritHandle = Convert.ToInt32(true);
         Security.nLength = Marshal.SizeOf(Security);
 
@@ -144,7 +144,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
                FileIOApiDeclarations.GENERIC_READ | FileIOApiDeclarations.GENERIC_WRITE,
                FileIOApiDeclarations.FILE_SHARE_READ | FileIOApiDeclarations.FILE_SHARE_WRITE,
                ref Security,
-               FileIOApiDeclarations.OPEN_EXISTING, 0, 0);
+               FileIOApiDeclarations.OPEN_EXISTING, 0, IntPtr.Zero);
 
             if (Settings.Instance.ExtensiveLogging)
             {
@@ -616,7 +616,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       try
       {
         // Close open handles to the device.
-        if (_HIDHandle != 0)
+        if (_HIDHandle != IntPtr.Zero)
         {
           FileIOApiDeclarations.CloseHandle(_HIDHandle);
           if (Settings.Instance.ExtensiveLogging)

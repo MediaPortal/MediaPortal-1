@@ -38,6 +38,7 @@ namespace MediaPortal.Player.Subtitles
     private FFDShowAPI ffdshowAPI;
     private bool hasPostProcessing = false;
     protected int audiodelayInterval;
+    private string _SubtitleFilename = null;
 
     public static void DisableFFDShowSubtitles(IGraphBuilder graphBuilder)
     {
@@ -161,6 +162,8 @@ namespace MediaPortal.Player.Subtitles
 
     public bool LoadSubtitles(IGraphBuilder graphBuilder, string filename)
     {
+      this._SubtitleFilename = filename;
+
       LoadSettings();
 
       //remove DirectVobSub
@@ -347,6 +350,8 @@ namespace MediaPortal.Player.Subtitles
       get { return autoShow; }
       set { autoShow = value; }
     }
+
+    public string FileName { get => this._SubtitleFilename; }
 
     #endregion
 
