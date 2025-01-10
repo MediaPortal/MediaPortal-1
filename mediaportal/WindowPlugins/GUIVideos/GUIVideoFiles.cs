@@ -1382,6 +1382,7 @@ namespace MediaPortal.GUI.Video
                   dlg.AddLocalizedString(926); //Queue
                   dlg.AddLocalizedString(102); //Scan 
                   dlg.AddLocalizedString(1280); // Scan using nfo files
+                  dlg.AddLocalizedString(830); //Reset watched status
                 }
                 // DVD folder
                 else if (item.IsBdDvdFolder)
@@ -1684,7 +1685,15 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 830: // Reset watched status
-          SetMovieWatchStatus(item.Path, item.IsFolder, false);
+          if (item.IsFolder && !item.IsBdDvdFolder)
+          {
+            //reset all items in this folder
+            ResetWatchedForAllMoviesInFolder(item.Path);
+          }
+          else
+          {
+            SetMovieWatchStatus(item.Path, item.IsFolder, false);
+          }
           int selectedIndex = facadeLayout.SelectedListItemIndex;
           LoadDirectory(_currentFolder, false);
           UpdateButtonStates();
@@ -4829,7 +4838,13 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
-    
+
+    private void ResetWatchedForAllMoviesInFolder(string folderName)
+    {
+      if (OnResetFolderSettings())
+        VideoDatabase.ResetWatchedForAllMoviesInFolder(folderName);
+    }
+
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
       GUIPropertyManager.SetProperty("#groupmovielist", string.Empty);

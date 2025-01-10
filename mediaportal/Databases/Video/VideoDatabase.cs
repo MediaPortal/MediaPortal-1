@@ -573,6 +573,11 @@ namespace MediaPortal.Video.Database
       return _database.GetMovieWatchedStatus(iMovieId, out percent, out timesWatched);
     }
 
+    public static void ResetWatchedForAllMoviesInFolder(string folderName)
+    {
+      _database.ResetWatchedForAllMoviesInFolder(folderName);
+    }
+
     #endregion
 
     #region User Rating

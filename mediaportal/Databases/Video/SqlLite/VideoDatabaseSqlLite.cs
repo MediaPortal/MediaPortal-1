@@ -4045,6 +4045,24 @@ namespace MediaPortal.Video.Database
       return false;
     }
 
+    public void ResetWatchedForAllMoviesInFolder(string folderName)
+    {
+      try
+      {
+        string sql = String.Format("UPDATE movie SET watched = 0 WHERE movie.idPath IN (SELECT idPath FROM path WHERE strPath='{0}' OR strPath LIKE '{0}\\%')", folderName);
+        m_db.Execute(sql);
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
     #endregion
 
     #region User Rating

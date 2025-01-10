@@ -143,6 +143,8 @@ namespace MediaPortal.Video.Database
     void MovieWatchedCountIncrease(int idMovie);
     void SetMovieWatchedCount(int movieId, int watchedCount);
     bool GetMovieWatchedStatus(int iFileId, out int percent, out int timesWatched);
+    void ResetWatchedForAllMoviesInFolder(string folderName);
+
     void DeleteMovie(string strFilenameAndPath);
     
     // User Rating
