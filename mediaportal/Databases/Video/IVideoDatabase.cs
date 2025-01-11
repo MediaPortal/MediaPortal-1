@@ -27,7 +27,7 @@ namespace MediaPortal.Video.Database
   public interface IVideoDatabase
   {
     void Dispose();
-    
+
     // Files & Path
     int AddFile(int lMovieId, int lPathId, string strFileName);
     int GetFile(string strFilenameAndPath, out int lPathId, out int lMovieId, bool bExact);
@@ -38,7 +38,7 @@ namespace MediaPortal.Video.Database
     void RemoveFilesForMovie(int lMovieId);
     int GetFileId(string strFilenameAndPath);
     void GetFilesForMovie(int lMovieId, ref ArrayList movies);
-    
+
     // Genre
     int AddGenre(string strGenre1);
     void GetGenres(ArrayList genres);
@@ -48,7 +48,7 @@ namespace MediaPortal.Video.Database
     void RemoveGenresForMovie(int lMovieId);
     string GetGenresForMovie(int lMovieId);
     void GetMovieGenres(int lMovieId, ArrayList movieGenres);
-    
+
     // Movie Collection
     int AddCollection(string strCollection1);
     int GetCollectionId(string movieCollection);
@@ -65,7 +65,7 @@ namespace MediaPortal.Video.Database
     void GetMovieCollections(int lMovieId, ArrayList movieCollections);
     bool GetMovieCollectionWatchedStatus(string collection, out int percent);
     bool GetMovieCollectionWatchedStatus(int collection, out int percent);
-    
+
     // User groups
     int AddUserGroup(string userGroup);
     void AddUserGroupDescription(string userGroup, string description);
@@ -87,7 +87,7 @@ namespace MediaPortal.Video.Database
     bool GetUserGroupWatchedStatus(int group, out int percent);
     void UpdateUserGroupWithRule(int ID);
     void UpdateUserGroupWithRule(int ID, string suffix);
-    
+
     // Actors
     int AddActor(string strActorImdbId, string strActorName);
     void GetActors(ArrayList actors);
@@ -99,18 +99,18 @@ namespace MediaPortal.Video.Database
     void DeleteActorFromMovie(int movieId, int actorId);
     void DeleteActor(string actorImdbId);
     void RemoveActorsForMovie(int lMovieId);
-    
+
     // Actor info
     void SetActorInfo(int idActor, IMDBActor actor);
     void AddActorInfoMovie(int idActor, IMDBActor.IMDBActorMovie movie);
     IMDBActor GetActorInfo(int idActor);
     string GetActorImdbId(int idActor);
-    
+
     // Bookmarks
     void ClearBookMarksOfMovie(string strFilenameAndPath);
     void AddBookMarkToMovie(string strFilenameAndPath, float fTime);
     void GetBookMarksForMovie(string strFilenameAndPath, ref ArrayList bookmarks);
-    
+
     // Movie info
     void SetMovieInfo(string strFilenameAndPath, ref IMDBMovie details);
     void SetMovieInfoById(int lMovieId, ref IMDBMovie details);
@@ -126,7 +126,7 @@ namespace MediaPortal.Video.Database
     void SetMovieTitleById(int lMovieId, string lmovieTitle, out bool error, out string errorMessage);
     void SetMovieSortTitleById(int lMovieId, string lmovieTitle);
     void SetMovieSortTitleById(int lMovieId, string lmovieTitle, out bool error, out string errorMessage);
-    
+
     // Stop time & duration
     void DeleteMovieStopTime(int iFileId);
     int GetMovieStopTime(int iFileId);
@@ -137,14 +137,16 @@ namespace MediaPortal.Video.Database
     int GetMovieDuration(int iMovieId);
     void SetVideoDuration(int iFileId, int duration);
     void SetMovieDuration(int iMovieId, int duration);
-    
+
     // Watched status
     void SetMovieWatchedStatus(int iFileId, bool watched, int percent);
     void MovieWatchedCountIncrease(int idMovie);
     void SetMovieWatchedCount(int movieId, int watchedCount);
     bool GetMovieWatchedStatus(int iFileId, out int percent, out int timesWatched);
+    void ResetWatchedForAllMoviesInFolder(string folderName);
+
     void DeleteMovie(string strFilenameAndPath);
-    
+
     // User Rating
     void SetUserRatingForMovie(int lMovieId, int lUserRating);
     int GetUserRatingForMovie(int lMovieId);
@@ -157,10 +159,10 @@ namespace MediaPortal.Video.Database
     int GetTitleBDId(int iFileId, out byte[] resumeData);
     bool HasSubtitle(string strFilenameAndPath);
     void SetThumbURL(int lMovieId, string thumbURL);
-    
+
     // Fanart
     void SetFanartURL(int lMovieId, string fanartURL);
-    
+
     // Movies by filters
     void GetYears(ArrayList years);
     void GetMoviesByGenre(string strGenre1, ref ArrayList movies);
@@ -205,7 +207,7 @@ namespace MediaPortal.Video.Database
     void SetDVDLabel(int lMovieId, string strDVDLabel1);
     void UpdateCDLabel(IMDBMovie movieDetails, string CDlabel);
     string GetDVDLabel(string strFile);
-    
+
     // Blacklisted thumbs
     bool IsVideoThumbBlacklisted(string path);
     int VideoThumbBlacklist(string path, DateTime expiresOn);
@@ -216,10 +218,10 @@ namespace MediaPortal.Video.Database
     // Search
     void SearchMoviesByView(string dbField, string dbValue, out ArrayList movies);
     void SearchActorsByView(string dbActor, out ArrayList movies, bool director);
-    
+
     // Other
     SQLiteResultSet GetResults(string sql);
-    void ExecuteSQL (string sql, out bool error, out string errorMessage);
+    void ExecuteSQL(string sql, out bool error, out string errorMessage);
     ArrayList ExecuteRuleSQL(string sql, string fieldName, out bool error, out string errorMessage);
     string DatabaseName { get; }
     void GetVideoFilesMediaInfo(string strFilenameAndPath, ref VideoFilesMediaInfo mediaInfo, bool refresh);
@@ -233,6 +235,6 @@ namespace MediaPortal.Video.Database
     void FlushTransactionsToDisk();
     void RevertFlushTransactionsToDisk();
     bool DbHealth { get; }
-    string DefaultVideoViewFields {get; }
+    string DefaultVideoViewFields { get; }
   }
 }
