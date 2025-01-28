@@ -8,7 +8,7 @@
       <posX>238</posX>
       <posY>112</posY>
       <width>1658</width>
-      <height>646</height>
+      <height>700</height>
       <colordiffuse>ffffffff</colordiffuse>
       <texture>-</texture>
     </control>
@@ -72,7 +72,7 @@
       <posX>18</posX>
       <posY>205</posY>
       <width>56</width>
-      <height>537</height>
+      <height>600</height>
       <texture>white.png</texture>
       <colordiffuse>994682b4</colordiffuse>
       <visible>!control.isvisible(8)</visible>
@@ -84,7 +84,7 @@
       <posX>19</posX>
       <posY>206</posY>
       <width>54</width>
-      <height>535</height>
+      <height>598</height>
       <texture>tvguide_singlechannel_left.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>!control.isvisible(8)</visible>
@@ -94,8 +94,8 @@
       <type>button</type>
       <id>1</id>
       <posX>73</posX>
-      <posY>687</posY>
-      <width>535</width>
+      <posY>750</posY>
+      <width>598</width>
       <height>54</height>
       <textureFocus></textureFocus>
       <textureNoFocus></textureNoFocus>
@@ -105,12 +105,12 @@
       <textYOff>7</textYOff>
       <font>Label</font>
       <textcolor>ffffffff</textcolor>
+      <disabledcolor>ffffffff</disabledcolor>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
       <shadowColor>ff000000</shadowColor>
-      <disabledcolor>ffffffff</disabledcolor>
       <textcolorNoFocus>ffffffff</textcolorNoFocus>
-      <animation effect="rotate" end="90" center="72,740" time="0">visible</animation>
+      <animation effect="rotate" end="90" center="72,803" time="0">visible</animation>
       <visible>!control.isvisible(8)</visible>
     </control>
     <!-- *********************************************************************************** -->
@@ -188,7 +188,7 @@
       <posX>84</posX>
       <posY>205</posY>
       <width>316</width>
-      <height>45</height>
+      <height>40</height>
     </control>
     <control>
       <description>Channel image template</description>
@@ -196,8 +196,8 @@
       <id>7</id>
       <posX>2</posX>
       <posY>0</posY>
-      <width>43</width>
-      <height>43</height>
+      <width>38</width>
+      <height>38</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <zoom>no</zoom>
@@ -208,10 +208,10 @@
       <type>label</type>
       <id>18</id>
       <posX>63</posX>
-      <posY>3</posY>
+      <posY>1</posY>
       <width>334</width>
-      <height>28</height>
-      <font>font11</font>
+      <height>23</height>
+      <font>CSG</font>
       <textcolor>ffffffff</textcolor>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
@@ -222,10 +222,10 @@
       <type>label</type>
       <id>24</id>
       <posX>11</posX>
-      <posY>3</posY>
+      <posY>0</posY>
       <visible>no</visible>
       <label>-</label>
-      <font>font11</font>
+      <font>CSG</font>
       <textcolor>ffffffff</textcolor>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
@@ -238,12 +238,12 @@
       <id>26</id>
       <label>-</label>
       <posX>11</posX>
-      <posY>3</posY>
-      <font>font11</font>
+      <posY>0</posY>
+      <font>CSG</font>
+      <textcolor>ffffffff</textcolor>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
       <shadowColor>ff000000</shadowColor>
-      <textcolor>ffffffff</textcolor>
     </control>
     <control>
       <description>vertical timeline</description>
@@ -263,8 +263,8 @@
       <type>image</type>
       <id>0</id>
       <posX>55</posX>
-      <posY>822</posY>
-      <height>253</height>
+      <posY>876</posY>
+      <height>195</height>
       <width>1857</width>
       <texture>latestmediabg.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
@@ -274,7 +274,7 @@
       <type>image</type>
       <id>1</id>
       <posX>205</posX>
-      <posY>779</posY>
+      <posY>829</posY>
       <width>1691</width>
       <height>60</height>
       <texture>osdbg5.png</texture>
@@ -285,7 +285,7 @@
       <type>image</type>
       <id>1</id>
       <posX>207</posX>
-      <posY>781</posY>
+      <posY>831</posY>
       <width>1687</width>
       <height>56</height>
       <texture>osdbg5.png</texture>
@@ -295,7 +295,7 @@
       <type>image</type>
       <id>1</id>
       <posX>98</posX>
-      <posY>781</posY>
+      <posY>831</posY>
       <width>95</width>
       <height>95</height>
       <texture>tvlogoback.png</texture>
@@ -306,11 +306,11 @@
       <type>image</type>
       <id>1</id>
       <posX>100</posX>
-      <posY>783</posY>
+      <posY>833</posY>
       <width>91</width>
       <height>91</height>
       <texture>#TV.Guide.thumb</texture>
-      <keepaspectratio>yes</keepaspectratio>
+      <keepaspectratio>no</keepaspectratio>
       <centered>yes</centered>
       <visible>yes</visible>
     </control>
@@ -319,7 +319,7 @@
       <type>fadelabel</type>
       <id>13</id>
       <posX>228</posX>
-      <posY>789</posY>
+      <posY>839</posY>
       <width>1658</width>
       <height>42</height>
       <label>#(iif(eq(#TV.Guide.Time,''),' ','#TV.Guide.Time #scroll.wrap #TV.Guide.Title (#TV.Guide.Duration) #scroll.wrap #TV.Guide.Genre'))</label>
@@ -345,7 +345,7 @@
       <type>label</type>
       <id>27</id>
       <posX>2228</posX>
-      <posY>842</posY>
+      <posY>912</posY>
       <label>#(iif(eq(#TV.Guide.Genre,''),' ','#scroll.wrap #TV.Guide.Genre #scroll.wrap '))</label>
       <align>left</align>
       <font>font10</font>
@@ -356,9 +356,9 @@
       <type>textboxscrollup</type>
       <id>0</id>
       <posX>228</posX>
-      <posY>850</posY>
+      <posY>900</posY>
       <width>1365</width>
-      <height>190</height>
+      <height>140</height>
       <label>#TV.Guide.Description</label>
       <font>CSG</font>
       <textcolor>lightgray</textcolor>
@@ -370,9 +370,9 @@
       <type>textboxscrollup</type>
       <id>0</id>
       <posX>228</posX>
-      <posY>850</posY>
+      <posY>900</posY>
       <width>1648</width>
-      <height>190</height>
+      <height>140</height>
       <label>#TV.Guide.Description</label>
       <font>CSG</font>
       <textcolor>lightgray</textcolor>
@@ -384,7 +384,7 @@
       <type>image</type>
       <id>98</id>
       <posX>1620</posX>
-      <posY>870</posY>
+      <posY>895</posY>
       <width>267</width>
       <height>154</height>
       <visible>player.hasvideo</visible>
@@ -395,7 +395,7 @@
       <type>videowindow</type>
       <id>99</id>
       <posX>1625</posX>
-      <posY>875</posY>
+      <posY>900</posY>
       <width>257</width>
       <height>144</height>
       <action>18</action>
@@ -406,8 +406,8 @@
       <description>record pin</description>
       <type>image</type>
       <id>31</id>
-      <posX>1785</posX>
-      <posY>766</posY>
+      <posX>1850</posX>
+      <posY>161</posY>
       <texture>tvguide_record_button.png</texture>
       <visible>no</visible>
     </control>
@@ -421,7 +421,7 @@
       <posX>18</posX>
       <posY>205</posY>
       <width>56</width>
-      <height>537</height>
+      <height>600</height>
       <texture>white.png</texture>
       <colordiffuse>994682b4</colordiffuse>
       <visible>control.isvisible(100)</visible>
@@ -433,7 +433,7 @@
       <posX>19</posX>
       <posY>206</posY>
       <width>54</width>
-      <height>535</height>
+      <height>598</height>
       <textureFocusedLeft overlay="tvguide_channelgroup_overlay.png">white.png</textureFocusedLeft>
       <textureNonFocusedLeft overlay="tvguide_channelgroup_overlay.png">whitepng</textureNonFocusedLeft>
       <textureFocusedMid overlay="tvguide_channelgroup_overlay.png">white.png</textureFocusedMid>
@@ -453,8 +453,8 @@
       <type>button</type>
       <id>1</id>
       <posX>73</posX>
-      <posY>687</posY>
-      <width>535</width>
+      <posY>750</posY>
+      <width>598</width>
       <height>54</height>
       <textureFocus></textureFocus>
       <textureNoFocus></textureNoFocus>
@@ -464,12 +464,12 @@
       <textYOff>7</textYOff>
       <font>Label</font>
       <textcolor>ffffffff</textcolor>
-      <disabledcolor>ffffffff</disabledcolor>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
       <shadowColor>ff000000</shadowColor>
+      <disabledcolor>ffffffff</disabledcolor>
       <textcolorNoFocus>ffffffff</textcolorNoFocus>
-      <animation effect="rotate" end="90" center="72,740" time="0">windowopen</animation>
+      <animation effect="rotate" end="90" center="72,803" time="0">windowopen</animation>
       <visible>control.isvisible(100)</visible>
     </control>
   </controls>

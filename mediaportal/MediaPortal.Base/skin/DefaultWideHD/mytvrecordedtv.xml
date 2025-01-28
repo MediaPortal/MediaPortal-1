@@ -14,6 +14,15 @@
       <width>1920</width>
       <height>1080</height>
     </control>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH TVrecordings.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
@@ -33,25 +42,8 @@
       <posY>270</posY>
       <width>367</width>
       <height>207</height>
-      <texture mask="Picturethumbmask.png">#selectedthumb</texture>
+      <texture mask="musicfanart_mask.png">#selectedthumb</texture>
       <visible>[facadeview.list|facadeview.album]</visible>
-    </control>
-    <control>
-      <type>image</type>
-      <id>0</id>
-      <posX>1485</posX>
-      <posY>270</posY>
-      <width>367</width>
-      <height>207</height>
-      <texture>Picturethumbframe.png</texture>
-      <visible>[facadeview.list|facadeview.album]+Control.HasThumb(500)</visible>
-    </control>
-    <control>
-      <type>image</type>
-      <id>0</id>
-      <posX>1485</posX>
-      <posY>270</posY>
-      <texture>-</texture>
     </control>
     <control>
       <type>actiongroup</type>
@@ -176,7 +168,7 @@
       <posX>240</posX>
       <posY>660</posY>
       <width>1590</width>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#TV.RecordedTV.Channel  |  #TV.RecordedTV.Time  |  #TV.RecordedTV.Genre</label>
       <font>font12</font>
       <visible>control.hasthumb(500)</visible>
@@ -191,7 +183,7 @@
       <label>#TV.RecordedTV.Title</label>
       <align>left</align>
       <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>control.hasthumb(500)</visible>
     </control>
     <control>
@@ -203,7 +195,7 @@
       <width>1020</width>
       <label>#TV.RecordedTV.Genre</label>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#TV.RecordedTV.Genre,-)+control.hasthumb(500)</visible>
     </control>
     <control>
@@ -221,55 +213,17 @@
     </control>
     <import>common.facade.recordings.xml</import>
     <control>
-      <description>BG for watched count/watched percent</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>1492</posX>
-      <posY>517</posY>
-      <width>97</width>
-      <height>90</height>
-      <texture>watched_BG.png</texture>
-      <visible>facadeview.list+!string.equals(#watchedcount,)+control.hasthumb(500)</visible>
-    </control>
-    <control>
       <description>Video Watched Count Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>1590</posX>
-      <posY>547</posY>
-      <width>200</width>
-      <height>75</height>
-      <label>#watchedcountx #(L(527))</label>
-      <font>font9</font>
+      <posX>1520</posX>
+      <posY>590</posY>
+      <width>400</width>
+      <label>#watchedcountx #(L(527)) #scroll.wrap #(L(143))#watchedpercent%</label>
+      <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <visible>facadeview.list+!string.equals(#watchedcount,)+control.hasthumb(500)</visible>
-    </control>
-    <control>
-      <description>Watched Percent Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>1500</posX>
-      <posY>526</posY>
-      <align>center</align>
-      <width>75</width>
-      <height>75</height>
-      <textcolor>ff6FAFE1</textcolor>
-      <font>font9</font>
-      <label>#watchedpercent%</label>
-      <visible>facadeview.list+control.hasthumb(500)</visible>
-    </control>
-    <control>
-      <description>Watched Logo</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1500</posX>
-      <posY>525</posY>
-      <width>80</width>
-      <height>80</height>
-      <texture>watched_#(string.format('{0:000}',mul(math.round(div(cint(#watchedpercent),5)),5))).png</texture>
-      <keepaspectratio>yes</keepaspectratio>
-      <visible>facadeview.list+!string.equals(#watchedcount,)+control.hasthumb(500)</visible>
+      <textcolor>ff00bfff</textcolor>
+      <visible>facadeview.list+!string.equals(#watchedcount, -1)</visible>
     </control>
     <control>
       <description>No recordings available</description>
@@ -278,7 +232,7 @@
       <posX>0</posX>
       <posY>500</posY>
       <width>1920</width>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>769</label>
       <font>font20</font>
       <align>center</align>

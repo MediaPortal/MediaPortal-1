@@ -149,51 +149,51 @@ Window Module IDs
   <define property="true" evaluateNow="true">#onx.ste.1:</define>
   <define property="true" evaluateNow="true">#onx.ico.1:onx.icon.google.png</define>
 
-  <define property="true" evaluateNow="true">#onx.btn.2:1|OnlineVideos|4755</define>
-  <define property="true" evaluateNow="true">#onx.prm.2.1:#(#onx.onvid)</define>
-  <define property="true" evaluateNow="true">#onx.prm.2.2:</define>
-  <define property="true" evaluateNow="true">#onx.ste.2:</define>
+  <define property="true" evaluateNow="true">#onx.btn.2:1|BrowseTheWeb|54537689</define>
+  <define property="true" evaluateNow="true">#onx.prm.2.1:https://duckduckgo.com</define>
+  <define property="true" evaluateNow="true">#onx.prm.2.2:/?q=&#92;</define>
+  <define property="true" evaluateNow="true">#onx.ste.2:www.youtube.com</define>
   <define property="true" evaluateNow="true">#onx.ico.2:onx.icon.youtube.png</define>
 
   <define property="true" evaluateNow="true">#onx.btn.3:1|BrowseTheWeb|54537689</define>
-  <define property="true" evaluateNow="true">#onx.prm.3.1:#(#onx.google)</define>
-  <define property="true" evaluateNow="true">#onx.prm.3.2:#(#onx.site)</define>
+  <define property="true" evaluateNow="true">#onx.prm.3.1:https://duckduckgo.com</define>
+  <define property="true" evaluateNow="true">#onx.prm.3.2:/?q=&#92;</define>
   <define property="true" evaluateNow="true">#onx.ste.3:#(#onx.wiki)</define>
   <define property="true" evaluateNow="true">#onx.ico.3:onx.icon.wiki.png</define>
 
   <define property="true" evaluateNow="true">#onx.btn.4:1|BrowseTheWeb|54537689</define>
-  <define property="true" evaluateNow="true">#onx.prm.4.1:#(#onx.google)</define>
-  <define property="true" evaluateNow="true">#onx.prm.4.2:#(#onx.site)</define>
-  <define property="true" evaluateNow="true">#onx.ste.4:https://last.fm</define>
+  <define property="true" evaluateNow="true">#onx.prm.4.1:https://duckduckgo.com</define>
+  <define property="true" evaluateNow="true">#onx.prm.4.2:/?q=&#92;</define>
+  <define property="true" evaluateNow="true">#onx.ste.4:www.last.fm</define>
   <define property="true" evaluateNow="true">#onx.ico.4:onx.icon.lastfm.png</define>
 
   <define property="true" evaluateNow="true">#onx.btn.5:1|BrowseTheWeb|54537689</define>
-  <define property="true" evaluateNow="true">#onx.prm.5.1:#(#onx.google)</define>
-  <define property="true" evaluateNow="true">#onx.prm.5.2:#(#onx.site)</define>
-  <define property="true" evaluateNow="true">#onx.ste.5:https://themoviedb.org</define>
+  <define property="true" evaluateNow="true">#onx.prm.5.1:https://duckduckgo.com</define>
+  <define property="true" evaluateNow="true">#onx.prm.5.2:/?q=&#92;</define>
+  <define property="true" evaluateNow="true">#onx.ste.5:www.themoviedb.org</define>
   <define property="true" evaluateNow="true">#onx.ico.5:onx.icon.tmdb.png</define>
 
   <define property="true" evaluateNow="true">#onx.btn.6:1|BrowseTheWeb|54537689</define>
-  <define property="true" evaluateNow="true">#onx.prm.6.1:#(#onx.google)</define>
-  <define property="true" evaluateNow="true">#onx.prm.6.2:#(#onx.site)</define>
-  <define property="true" evaluateNow="true">#onx.ste.6:https://discogs.com</define>
+  <define property="true" evaluateNow="true">#onx.prm.6.1:https://duckduckgo.com</define>
+  <define property="true" evaluateNow="true">#onx.prm.6.2:/?q=&#92;</define>
+  <define property="true" evaluateNow="true">#onx.ste.6:www.discogs.com</define>
   <define property="true" evaluateNow="true">#onx.ico.6:onx.icon.discogs.png</define>
 
   <define property="true" evaluateNow="true">#onx.btn.7:1|BrowseTheWeb|54537689</define>
-  <define property="true" evaluateNow="true">#onx.prm.7.1:#(#onx.google)</define>
-  <define property="true" evaluateNow="true">#onx.prm.7.2:#(#onx.site)</define>
+  <define property="true" evaluateNow="true">#onx.prm.7.1:https://duckduckgo.com</define>
+  <define property="true" evaluateNow="true">#onx.prm.7.2:/?q=&#92;</define>
   <define property="true" evaluateNow="true">#onx.ste.7:www.imdb.com</define>
   <define property="true" evaluateNow="true">#onx.ico.7:onx.icon.imdb.png</define>
 
   <define property="true" evaluateNow="true">#onx.btn.8:1|BrowseTheWeb|54537689</define>
-  <define property="true" evaluateNow="true">#onx.prm.8.1:#(#onx.google)</define>
-  <define property="true" evaluateNow="true">#onx.prm.8.2:#(#onx.site)</define>
-  <define property="true" evaluateNow="true">#onx.ste.8:https://thetvdb.com</define>
+  <define property="true" evaluateNow="true">#onx.prm.8.1:https://duckduckgo.com</define>
+  <define property="true" evaluateNow="true">#onx.prm.8.2:/?q=&#92;</define>
+  <define property="true" evaluateNow="true">#onx.ste.8:www.thetvdb.com</define>
   <define property="true" evaluateNow="true">#onx.ico.8:onx.icon.tvdb.png</define>
 
   <define property="true" evaluateNow="true">#onx.btn.9:1|BrowseTheWeb|54537689</define>
-  <define property="true" evaluateNow="true">#onx.prm.9.1:#(#onx.google)</define>
-  <define property="true" evaluateNow="true">#onx.prm.9.2:#(#onx.site)</define>
+  <define property="true" evaluateNow="true">#onx.prm.9.1:https://duckduckgo.com</define>
+  <define property="true" evaluateNow="true">#onx.prm.9.2:/?q=&#92;</define>
   <define property="true" evaluateNow="true">#onx.ste.9:www.metacritic.com</define>
   <define property="true" evaluateNow="true">#onx.ico.9:onx.icon.metacritic.png</define>
 
@@ -246,20 +246,20 @@ Window Module IDs
   <define property="true" evaluateNow="true">#onx.ico.17:onx.icon.cinemasearch.png</define>
 
   <define property="true" evaluateNow="true">#onx.btn.18:1|BrowseTheWeb|54537689</define>
-  <define property="true" evaluateNow="true">#onx.prm.18.1:#(#onx.google)</define>
-  <define property="true" evaluateNow="true">#onx.prm.18.2:#(#onx.search)</define>
+  <define property="true" evaluateNow="true">#onx.prm.18.1:https://duckduckgo.com</define>
+  <define property="true" evaluateNow="true">#onx.prm.18.2:/?q=&#92;</define>
   <define property="true" evaluateNow="true">#onx.ste.18:weather</define>
   <define property="true" evaluateNow="true">#onx.ico.18:onx.icon.weather.png</define>
   
   <define property="true" evaluateNow="true">#onx.btn.19:1|BrowseTheWeb|54537689</define>
-  <define property="true" evaluateNow="true">#onx.prm.19.1:#(#onx.google)</define>
-  <define property="true" evaluateNow="true">#onx.prm.19.2:#(#onx.news)</define>
-  <define property="true" evaluateNow="true">#onx.ste.19:</define>
+  <define property="true" evaluateNow="true">#onx.prm.19.1:https://duckduckgo.com</define>
+  <define property="true" evaluateNow="true">#onx.prm.19.2:/?q=&#92;</define>
+  <define property="true" evaluateNow="true">#onx.ste.19:news</define>
   <define property="true" evaluateNow="true">#onx.ico.19:onx.icon.news.png</define>
 
   <define property="true" evaluateNow="true">#onx.btn.20:1|BrowseTheWeb|54537689</define>
-  <define property="true" evaluateNow="true">#onx.prm.20.1:#(#onx.google)</define>
-  <define property="true" evaluateNow="true">#onx.prm.20.2:#(#onx.site)</define>
+  <define property="true" evaluateNow="true">#onx.prm.20.1:https://duckduckgo.com</define>
+  <define property="true" evaluateNow="true">#onx.prm.20.2:/?q=&#92;</define>
   <define property="true" evaluateNow="true">#onx.ste.20:www.timeanddate.com calendar OR</define>
   <define property="true" evaluateNow="true">#onx.ico.20:onx.icon.time.png</define>
 

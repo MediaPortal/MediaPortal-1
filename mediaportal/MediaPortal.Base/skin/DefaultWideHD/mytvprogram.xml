@@ -149,7 +149,11 @@
       <description>upcoming episodes listcontrol</description>
       <type>listcontrol</type>
       <id>10</id>
+      <posX>525</posX>
       <height>450</height>
+      <textXOff2>1260</textXOff2>
+      <PinIconXOff>1280</PinIconXOff>
+      <PinIconYOff>13</PinIconYOff>
     </control>
     <control>
       <description>Seperator</description>
@@ -180,7 +184,7 @@
       <posX>240</posX>
       <posY>660</posY>
       <width>450</width>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <font>font12</font>
     </control>
     <control>
@@ -192,7 +196,7 @@
       <width>450</width>
       <align>left</align>
       <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Current program genre</description>
@@ -203,7 +207,7 @@
       <width>750</width>
       <align>left</align>
       <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Program Title</description>
@@ -214,7 +218,7 @@
       <width>1590</width>
       <align>left</align>
       <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Description1</description>

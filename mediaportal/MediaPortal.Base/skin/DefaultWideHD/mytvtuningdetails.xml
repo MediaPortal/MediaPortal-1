@@ -47,7 +47,7 @@
       <posY>273</posY>
       <label>Channel Name:</label>
       <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Channel name</description>
@@ -66,7 +66,7 @@
       <posY>309</posY>
       <label>Provider:</label>
       <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Provider name</description>
@@ -84,7 +84,7 @@
       <posX>159</posX>
       <posY>345</posY>
       <width>1066</width>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>RTSP URL:</label>
       <font>font12</font>
     </control>
@@ -105,7 +105,7 @@
       <posY>433</posY>
       <label>Signal Level: #TV.TuningDetails.SignalLevel</label>
       <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Signal level 0</description>
@@ -184,7 +184,7 @@
       <posY>490</posY>
       <label>Signal Quality:  #TV.TuningDetails.SignalQuality</label>
       <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Progress background</description>
@@ -234,7 +234,7 @@
         <description>Band</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>Band:</label>
         <font>font12</font>
       </control>
@@ -242,7 +242,7 @@
         <description>Band width</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>Bandwidth:</label>
         <font>font12</font>
       </control>
@@ -250,7 +250,7 @@
         <description>Channel type</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>Channel Type:</label>
         <font>font12</font>
       </control>
@@ -258,7 +258,7 @@
         <description>Country id</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>Country ID:</label>
         <font>font12</font>
       </control>
@@ -266,7 +266,7 @@
         <description>Free to air</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>Free to Air:</label>
         <font>font12</font>
       </control>
@@ -274,7 +274,7 @@
         <description>Frequency</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>Frequency:</label>
         <font>font12</font>
       </control>
@@ -282,7 +282,7 @@
         <description>InnerFecRate</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>Inner FEC Rate:</label>
         <font>font12</font>
       </control>
@@ -290,7 +290,7 @@
         <description>Modulation</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>Modulation:</label>
         <font>font12</font>
       </control>
@@ -298,7 +298,7 @@
         <description>NetworkId</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>Network ID:</label>
         <font>font12</font>
       </control>
@@ -306,7 +306,7 @@
 		    <description>RawResolution</description>
 		    <type>label</type>
 		    <id>21</id>
-		    <textcolor>ff6FAFE1</textcolor>
+		    <textcolor>ff00bfff</textcolor>
 		    <label>Video Resolution:</label>
         <font>font12</font>
 	     </control>
@@ -398,7 +398,7 @@
         <description>PcrPid</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>PCR PID:</label>
         <font>font12</font>
       </control>
@@ -406,7 +406,7 @@
         <description>PmtPid</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>PMT PID:</label>
         <font>font12</font>
       </control>
@@ -414,7 +414,7 @@
         <description>AudioPid</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>Audio PID:</label>
         <font>font12</font>
       </control>
@@ -422,7 +422,7 @@
         <description>VideoPid</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>Video PID:</label>
         <font>font12</font>
       </control>
@@ -430,7 +430,7 @@
         <description>Polarisation</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>Polarisation:</label>
         <font>font12</font>
       </control>
@@ -438,7 +438,7 @@
         <description>Service id</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>Service ID:</label>
         <font>font12</font>
       </control>
@@ -446,7 +446,7 @@
         <description>Symbol rate</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>Symbol Rate:</label>
         <font>font12</font>
       </control>
@@ -454,7 +454,7 @@
         <description>TransportId</description>
         <type>label</type>
         <id>0</id>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>Transport ID:</label>
         <font>font12</font>
       </control>
@@ -464,13 +464,13 @@
         <id>0</id>
         <label>CI Menu supported:</label>
         <font>font12</font>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
 		    <description>TS BitRate</description>
 		    <type>label</type>
 		    <id>21</id>
-		    <textcolor>ff6FAFE1</textcolor>
+		    <textcolor>ff00bfff</textcolor>
 		    <label>Stream BitRate:</label>
         <font>font12</font>
 	     </control>
@@ -550,7 +550,7 @@
 		    <id>5</id>
 		    <label>#Play.Current.TSBitRate Mbit/s</label>
         <font>font12</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
 	    </control>
     </control>
   </controls>

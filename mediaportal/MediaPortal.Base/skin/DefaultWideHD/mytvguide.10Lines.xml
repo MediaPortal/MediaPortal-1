@@ -72,7 +72,7 @@
       <posX>18</posX>
       <posY>205</posY>
       <width>56</width>
-      <height>537</height>
+      <height>526</height>
       <texture>white.png</texture>
       <colordiffuse>994682b4</colordiffuse>
       <visible>!control.isvisible(8)</visible>
@@ -84,7 +84,7 @@
       <posX>19</posX>
       <posY>206</posY>
       <width>54</width>
-      <height>535</height>
+      <height>524</height>
       <texture>tvguide_singlechannel_left.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>!control.isvisible(8)</visible>
@@ -94,8 +94,8 @@
       <type>button</type>
       <id>1</id>
       <posX>73</posX>
-      <posY>687</posY>
-      <width>535</width>
+      <posY>676</posY>
+      <width>524</width>
       <height>54</height>
       <textureFocus></textureFocus>
       <textureNoFocus></textureNoFocus>
@@ -110,7 +110,7 @@
       <shadowColor>ff000000</shadowColor>
       <disabledcolor>ffffffff</disabledcolor>
       <textcolorNoFocus>ffffffff</textcolorNoFocus>
-      <animation effect="rotate" end="90" center="72,740" time="0">visible</animation>
+      <animation effect="rotate" end="90" center="72,729" time="0">visible</animation>
       <visible>!control.isvisible(8)</visible>
     </control>
     <!-- *********************************************************************************** -->
@@ -188,7 +188,7 @@
       <posX>84</posX>
       <posY>205</posY>
       <width>316</width>
-      <height>45</height>
+      <height>53</height>
     </control>
     <control>
       <description>Channel image template</description>
@@ -196,8 +196,8 @@
       <id>7</id>
       <posX>2</posX>
       <posY>0</posY>
-      <width>43</width>
-      <height>43</height>
+      <width>51</width>
+      <height>51</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <zoom>no</zoom>
@@ -208,7 +208,7 @@
       <type>label</type>
       <id>18</id>
       <posX>63</posX>
-      <posY>3</posY>
+      <posY>8</posY>
       <width>334</width>
       <height>28</height>
       <font>font11</font>
@@ -221,8 +221,8 @@
       <description>template for program title dark area</description>
       <type>label</type>
       <id>24</id>
-      <posX>11</posX>
-      <posY>3</posY>
+      <posX>12</posX>
+      <posY>6</posY>
       <visible>no</visible>
       <label>-</label>
       <font>font11</font>
@@ -237,13 +237,13 @@
       <visible>no</visible>
       <id>26</id>
       <label>-</label>
-      <posX>11</posX>
-      <posY>3</posY>
+      <posX>12</posX>
+      <posY>6</posY>
       <font>font11</font>
+      <textcolor>ffffffff</textcolor>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
       <shadowColor>ff000000</shadowColor>
-      <textcolor>ffffffff</textcolor>
     </control>
     <control>
       <description>vertical timeline</description>
@@ -362,6 +362,9 @@
       <label>#TV.Guide.Description</label>
       <font>CSG</font>
       <textcolor>lightgray</textcolor>
+        <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
       <scrollStartDelaySec>12</scrollStartDelaySec>
       <visible>player.hasvideo</visible>
     </control>
@@ -376,6 +379,9 @@
       <label>#TV.Guide.Description</label>
       <font>CSG</font>
       <textcolor>lightgray</textcolor>
+        <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
       <scrollStartDelaySec>12</scrollStartDelaySec>
       <visible>!player.hasvideo</visible>
     </control>
@@ -421,7 +427,7 @@
       <posX>18</posX>
       <posY>205</posY>
       <width>56</width>
-      <height>537</height>
+      <height>526</height>
       <texture>white.png</texture>
       <colordiffuse>994682b4</colordiffuse>
       <visible>control.isvisible(100)</visible>
@@ -433,7 +439,7 @@
       <posX>19</posX>
       <posY>206</posY>
       <width>54</width>
-      <height>535</height>
+      <height>524</height>
       <textureFocusedLeft overlay="tvguide_channelgroup_overlay.png">white.png</textureFocusedLeft>
       <textureNonFocusedLeft overlay="tvguide_channelgroup_overlay.png">whitepng</textureNonFocusedLeft>
       <textureFocusedMid overlay="tvguide_channelgroup_overlay.png">white.png</textureFocusedMid>
@@ -453,8 +459,8 @@
       <type>button</type>
       <id>1</id>
       <posX>73</posX>
-      <posY>687</posY>
-      <width>535</width>
+      <posY>676</posY>
+      <width>524</width>
       <height>54</height>
       <textureFocus></textureFocus>
       <textureNoFocus></textureNoFocus>
@@ -464,12 +470,12 @@
       <textYOff>7</textYOff>
       <font>Label</font>
       <textcolor>ffffffff</textcolor>
-      <disabledcolor>ffffffff</disabledcolor>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
       <shadowColor>ff000000</shadowColor>
+      <disabledcolor>ffffffff</disabledcolor>
       <textcolorNoFocus>ffffffff</textcolorNoFocus>
-      <animation effect="rotate" end="90" center="72,740" time="0">windowopen</animation>
+      <animation effect="rotate" end="90" center="72,729" time="0">windowopen</animation>
       <visible>control.isvisible(100)</visible>
     </control>
   </controls>

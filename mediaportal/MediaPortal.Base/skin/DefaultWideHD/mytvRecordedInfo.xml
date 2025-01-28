@@ -5,6 +5,7 @@
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#useSelectedFanart:Yes</define>
+  <define>#header.label:</define>
   <controls>
     <control>
       <description>BG</description>
@@ -12,6 +13,15 @@
       <id>1</id>
       <width>1920</width>
       <height>1080</height>
+    </control>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH TVrecordings.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>common.video.fanart.xml</import>
     <import>common.window.xml</import>
@@ -25,6 +35,23 @@
       <width>1920</width>
       <height>1080</height>
       <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>#currentmodule #scroll.wrap #TV.RecordedTV.Title</label>
+      <width>1802</width>
+      <align>left</align>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible></visible>
     </control>
     <control>
       <type>button</type>
@@ -47,7 +74,7 @@
       <label>#TV.RecordedTV.Title</label>
       <font>font14</font>
       <align>center</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Current program time</description>
@@ -59,7 +86,7 @@
       <label>#TV.RecordedTV.Time</label>
       <font>font12</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>genre</description>
@@ -70,7 +97,7 @@
       <label>#TV.RecordedTV.Genre</label>
       <font>font10</font>
       <align>right</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Description1</description>
@@ -79,11 +106,10 @@
       <posX>120</posX>
       <posY>435</posY>
       <width>1650</width>
-      <height>457</height>
+      <height>440</height>
       <font>font11</font>
       <label>#TV.RecordedTV.Description</label>
-      <seperator>⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅	⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅	⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅</seperator>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
   </controls>
 </window>

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-  <!--  Pog and catavolt: onX [Online Xtra]   onX menu insert for DialogMenu.xml    -->
+  <!--   and catavolt: onX [Online Xtra]   onX menu insert for DialogMenu.xml    -->
   <!-- user defined positions/sizes -->
   <define property="true" evaluateNow="true">#onx.menu.posx:653</define>
-  <define property="true" evaluateNow="true">#onx.menu.posy:240</define>
+  <define property="true" evaluateNow="true">#onx.menu.posy:300</define>
   <define property="true" evaluateNow="true">#onx.menu.button.width:125</define>
   <define property="true" evaluateNow="true">#onx.menu.button.height:125</define>
   <define property="true" evaluateNow="true">#onx.menu.space.width:100</define>
   <define property="true" evaluateNow="true">#onx.menu.space.height:50</define>
   <define property="true" evaluateNow="true">#onx.menu.mouse.margin:10</define>
   <define property="true" evaluateNow="true">#onx.menu.tagx:903</define>
-  <define property="true" evaluateNow="true">#onx.menu.tagy:770</define>
-  <define property="true" evaluateNow="true">#onx.menu.tagw:85</define>
-  <define property="true" evaluateNow="true">#onx.menu.tagh:45</define>
+  <define property="true" evaluateNow="true">#onx.menu.tagy:795</define>
+  <define property="true" evaluateNow="true">#onx.menu.tagw:96</define>
+  <define property="true" evaluateNow="true">#onx.menu.tagh:48</define>
   <!-- dummy mouse fix: set to pos/size of dialog list control -->
   <define property="true" evaluateNow="true">#onx.menu.mouse.posx:491</define>
-  <define property="true" evaluateNow="true">#onx.menu.mouse.posy:302</define>
+  <define property="true" evaluateNow="true">#onx.menu.mouse.posy:262</define>
   <define property="true" evaluateNow="true">#onx.menu.mouse.width:870</define>
   <define property="true" evaluateNow="true">#onx.menu.mouse.height:590</define>
   <!-- internal calc positions/sizes -->
@@ -42,20 +42,14 @@
       <buttonY>#onx.menu.tagy</buttonY>
       <buttonwidth>#onx.menu.tagw</buttonwidth>
       <buttonheight>#onx.menu.tagh</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hover>-</hover>
       <control>
         <type>group</type>
         <description>group element</description>
         <!-- user defined open/close animations to match skin dialog menu -->
-        <animation effect="fade" time="250">WindowOpen</animation>
-        <animation effect="fade" time="0">WindowClose</animation>
-        <animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
         <!-- main -->
-        <animation effect="slide" end="0,-3000" time="0">WindowOpen</animation>
-        <animation effect="slide" end="0,-3000" time="0">WindowClose</animation>
-        <animation effect="slide" end="0,3000" time="0">focus</animation>
-        <animation effect="slide" end="0,3000" time="0">unfocus</animation>
-        <animation effect="fade" time="300" reversible="false">unfocus</animation>
-        <dimColor>ffffffff</dimColor>
         <control>
           <description>Mouse Fix Dummy Button</description>
           <type>button</type>
@@ -64,9 +58,9 @@
           <posY>#onx.menu.mouse.posy</posY>
           <width>#onx.menu.mouse.width</width>
           <height>#onx.menu.mouse.height</height>
-          <textureFocus></textureFocus>
-          <textureNoFocus></textureNoFocus>
-          <hover></hover>
+          <textureFocus>-</textureFocus>
+          <textureNoFocus>-</textureNoFocus>
+          <hover>-</hover>
           <visible>string.equals(#onx.visible)</visible>
         </control>
         <control>

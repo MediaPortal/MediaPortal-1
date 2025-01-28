@@ -85,7 +85,7 @@
       <width>420</width>
       <label>-</label>
       <font>Label</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>no</visible>
     </control>
     <control>
@@ -155,7 +155,7 @@
       <label>-</label>
       <align>left</align>
       <font>font16</font>
-      <textcolor>lightskyblue</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>control.isVisible(111)</visible>
     </control>
     <control>
@@ -167,7 +167,7 @@
       <label>-</label>
       <align>left</align>
       <font>Label</font>
-      <textcolor>lightskyblue</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>control.isVisible(111)</visible>
     </control>
     <control>
@@ -181,7 +181,7 @@
       <align>left</align>
       <label>#TV.View.start - #TV.View.stop  #TV.View.title</label>
       <font>LabelBold</font>
-      <textcolor>lightskyblue</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>control.isVisible(111)</visible>
     </control>
     <control>
@@ -304,7 +304,7 @@
       <label>#(L(19011)): #TV.View.unwatched</label>
       <align>right</align>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>player.paused+!window.isosdvisible+string.contains(#TV.View.unwatched,:)</visible>
     </control>
     <control>
@@ -369,7 +369,7 @@
     <label>#latestMediaHandler.tvrecordings.active.count</label>
     <align>center</align>
     <font>font10</font>
-    <textcolor>ivory</textcolor>
+    <textcolor>lightgray</textcolor>
     <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+control.isVisible(111)+player.paused</visible>
   </control>
     <control>
@@ -382,7 +382,7 @@
       <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
       <align>left</align>
       <font>font9</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>plugin.isenabled(Latest Media Handler)+control.isVisible(111)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
      <control>
@@ -395,7 +395,7 @@
       <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
       <align>left</align>
       <font>font9</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <shadowAngle>45</shadowAngle>
     <shadowDistance>3</shadowDistance>
     <shadowColor>ff000000</shadowColor>
@@ -425,7 +425,7 @@
       <label>-</label>
       <align>left</align>
       <font>Label</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>yes</visible>
     </control>
     <control>
@@ -438,7 +438,7 @@
       <label>-</label>
       <align>left</align>
       <font>Label</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>yes</visible>
     </control>
     <control>
@@ -451,7 +451,7 @@
       <label>-</label>
       <align>left</align>
       <font>Label</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>yes</visible>
     </control>
     <control>
@@ -464,7 +464,7 @@
       <label>-</label>
       <align>left</align>
       <font>Label</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>yes</visible>
     </control>
   </controls>

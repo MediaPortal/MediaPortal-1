@@ -55,7 +55,7 @@
       <width>390</width>
       <height>270</height>
       <centered>yes</centered>
-      <texture mask="Picturethumbmask.png">#selectedthumb</texture>
+      <texture mask="musicfanart_mask.png">#selectedthumb</texture>
       <keepaspectratio>yes</keepaspectratio>
     </control>
     <control>

@@ -36,7 +36,7 @@
       <posY>97</posY>
       <width>2025</width>
       <height>90</height>
-      <texture>general_overlay_selecteditem.png</texture>
+      <texture>-</texture>
       <colordiffuse>bbffffff</colordiffuse>
     </control>
     <control>
@@ -57,7 +57,7 @@
       <label>#header.label</label>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Overlay text right</description>
@@ -67,7 +67,7 @@
       <posY>234</posY>
       <width>825</width>
       <height>699</height>
-      <texture mask="picturethumbmask.png">black.png</texture>
+      <texture mask="musicfanart_mask.png">black.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
     </control>
     <control>
@@ -80,7 +80,7 @@
       <label>#MySports.PlayerDetails.Name</label>
       <font>font14</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Thumb</description>
@@ -105,7 +105,7 @@
       <label>Gender:</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Gender value</description>
@@ -116,7 +116,7 @@
       <width>270</width>
       <label>#MySports.PlayerDetails.Gender</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>country label</description>
@@ -129,7 +129,7 @@
       <label>Country:</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>country value</description>
@@ -140,7 +140,7 @@
       <width>270</width>
       <label>#MySports.PlayerDetails.Country</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>born label</description>
@@ -153,7 +153,7 @@
       <label>Born:</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Born value</description>
@@ -164,7 +164,7 @@
       <width>270</width>
       <label>#MySports.PlayerDetails.Born</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>height label</description>
@@ -177,7 +177,7 @@
       <label>Height:</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Height value</description>
@@ -188,7 +188,7 @@
       <width>270</width>
       <label>#MySports.PlayerDetails.Height</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Weight label</description>
@@ -201,7 +201,7 @@
       <label>Weight:</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Weight value</description>
@@ -212,7 +212,7 @@
       <width>270</width>
       <label>#MySports.PlayerDetails.Weight</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Description</description>
@@ -223,7 +223,7 @@
       <width>795</width>
       <height>220</height>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <textalign>left</textalign>
       <scrollStartDelaySec>10</scrollStartDelaySec>
     </control>
