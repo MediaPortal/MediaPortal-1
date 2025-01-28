@@ -3,10 +3,25 @@
 <!-- Dutch (nl) -->
 <strings>
   <string Field="WorldNewsTicker">Activeren WorldNews ticker</string>
+  <string Field="AnalogClockOSD">Analoge klok in OSDs</string>
   <string Field="MusicNowPlayingFanart">Fanart voor actuele titels in BasicHome</string>
   <string Field="MusicFanart">Toevallige muziek fanart in BasicHome</string>
   <string Field="VideoFanart">Toevallige video fanart in BasicHome</string>
   <string Field="TVGuideRows">Aantal lijnen in de TV-gids</string>
+  <string Field="TVSeriesRows">Lijnen in TVSeries Wide Banners</string>
+  <string Field="DescriptionTopbar">Beschrijving van topbar knoppen:</string>
+  <string Field="BackPrevious">Terug naar vorige venster</string>
+  <string Field="BackBasicHome">Naar BasicHome &lt;-&gt; ClassicHome</string>
+  <string Field="LiveTV">LiveTV/video op de achtergrond</string>
+  <string Field="PlayControls">Audio/video afspelen controles</string>
+  <string Field="SkinInfo">Dit scherm</string>
+  <string Field="CloseExit">Sluit/Exit MP</string>
+  <string Field="ShutdownOptions">Opties voor uitschakeling</string>
+  <string Field="InfoButton">In lijst: Druk op rechts (afstandsbediening/toetsenbord) of hover met de muis toont uitgebreide informatie</string>
+  <string Field="SupportedPlugins">Ondersteund plugins (in alfabetische volgorde):</string>
+  <string Field="PluginsMP">... en natuurlijk alle standaard plugins van MediaPortal 1.7.x en nieuwere versies</string>
+  <string Field="MPVersion">DefaultWideHD is ontworpen voor MP 1.7.x en nieuwere versies.</string>
+  <string Field="Enjoy">Geniet van MediaPortal met DefaultWideHD!</string>
   <string Field="Background">Achtergrond</string>
   <string Field="Games">Spele</string>
   <string Field="NewEpisodes">Recent toegevoegde afleveringen</string>
@@ -17,6 +32,48 @@
   <string Field="LastPlayed">Laatst gespeelde muziek</string>
   <string Field="NewPictures">Recent toegevoegde foto's</string>
   <string Field="NowRecording">Actieve opnames</string>
+  <string Field="FullView">Informatie altijd zichtbaar</string>
+  <string Field="ShowDVDArt">DVD kunst</string>
+  <string Field="NoClock">Deactiveren Klok en Plugin Iconen</string>
   <string Field="Timer">#(L(603))</string>
+  <string Field="Update">PureVisionHD 1080 12.3 beschikbaar!</string>
   <string Field="tvstreaminfo">TV OSD kanaal info altijd zichtbaar</string>
+  <string Field="CategoryBackgrounds">Plugin BGs BasicHome</string>
+  <string Field="Fullscreen">Volledig scherm</string>
+  <string Field="tv2">Ik hou je in de gaten!</string>
+  <string Field="tv8">Doel!!!</string>
+  <string Field="tv9">Ik ben het zat!</string>
+  <string Field="tv10">Splash!</string>
+  <string Field="tv">Geen GIF</string>
+  <string Field="KeyboardShortcuts">Sneltoetsen</string>
+  <string Field="AudioOptions">Volume hoger/lager</string>
+  <string Field="CategoryBG">Plugin Poster BasicHome</string>
+  
+  <!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for Logo Manager **********************-->
+  <!-- ***************************************************************************************-->
+  <string Field="Package">Verzenderpakket</string>
+  <string Field="Group">Kanaalgroep</string>
+  <string Field="GrabNow">Genereren</string>
+  <string Field="CancelGrab">Annuleer genereren</string>
+  <string Field="Multiple">Multiple</string>
+  <string Field="SelectPackage">Selecteer afzenderpakket</string>
+  <string Field="SelectChannelGroup">Selecteer kanaalgroep</string>
+  <string Field="SelectLayerDesign">Selecteer ontwerp</string>
+  <!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for Tetris ****************************-->
+  <!-- ***************************************************************************************-->
+  <string Field="ShowHighscore">Animatie bij record</string>
+  <string Field="PulsingSidelines">Pulserende zijlijnen</string>
+  <string Field="TetrisHelpText">Tetris is een bekend computerpuzzelspel dat populair is geworden door de Game Boy.&#xA;Het doel van de puzzel is om tetrominostukjes (blokken) of vormen te manipuleren door ze allemaal zijwaarts te bewegen en 90 graden te draaien, met als doel een horizontale lijn van blokken zonder gaten te maken. &#xA;Als zo'n lijn is gemaakt, verdwijnt hij en valt elk blok boven de verwijderde lijn naar beneden.&#xA;Na elke tien verwijderde lijnen bereikt het spel een nieuw level. &#xA;Naarmate het spel vordert, vallen de tetromino's sneller met elk level, en het spel eindigt als de stapel tetromino's de bovenkant van het bord bereikt en er geen nieuwe tetromino's meer bij kunnen komen.&#xA;Het spel kan ook eindigen als de speler erin slaagt om level 15 te bereiken.&#xA;
+Spelen
+- Om te spelen - pijl naar rechts om naar de speelplaats te gaan, druk dan op Enter
+- Blokken horizontaal verplaatsen - pijl naar links of rechts
+- Blokken draaien - pijl omhoog
+- Snel laten vallen - pijl omlaag
+- Direct neerzetten - Enter
+- Pauzeer of ga verder met het spel - Terug afstandsbediening knop, of Esc&#xA;&#xA;Het volgende blok wordt weergegeven als een hint in de pijl grafiek rechtsboven in het speelveld.&#xA;Het level nummer wordt daar ook weergegeven in de corresponderende level kleur.&#xA;&#xA;Smirnuff (auteur), catavolt en High_Five wensen je veel plezier met Tetris ;)</string>
+<string Field="About">Wat is Tetris?</string>
+  <string Field="HighFive">Delen van de afbeeldingen en animaties zijn geleverd door High_Five :)</string>
+  <string Field=“Highscore”>*** Gefeliciteerd!  *** Je hebt een nieuwe highscore behaald!</string>
 </strings>
