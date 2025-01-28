@@ -3,8 +3,8 @@
   <id>7982</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
-  <define>#header.label:DefaultWide HD</define>
-  <define>#header.hover:catavolt.png</define>
+  <define>#header.label:DefaultWideHD</define><!-->&#8596;<-->
+  <define>#header.hover:</define>
   <controls>
     <control>
       <description>BG</description>
@@ -12,282 +12,469 @@
       <id>1</id>
       <width>1920</width>
       <height>1080</height>
-      <texture>blue.png</texture>
+      <texture>BH Standard.jpg</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>string.equals(#skin.background,Standard)</visible>
+    </control>
+    <import>common.time.xml</import>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>20</posX>
+      <posY>140</posY>
+      <width>1850</width>
+      <height>890</height>
+      <texture>listbg2.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>#header.label</label>
+      <width>1802</width>
+      <align>left</align>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
-    <import>common.window.xml</import>
-    <import>common.time.xml</import>
     <control>
       <type>button</type>
       <description>Back</description>
       <id>2</id>
       <posX>773</posX>
-      <posY>942</posY>
+      <posY>922</posY>
       <action>10</action>
       <label>712</label>
+      <textureNoFocus>buttonfocus.png</textureNoFocus>
       <textalign>center</textalign>
       <textYOff>2</textYOff>
-    </control>
-    <control>
-      <description>General Overlay</description>
-      <id>0</id>
-      <type>image</type>
-      <posX>0</posX>
-      <posY>45</posY>
-      <width>1920</width>
-      <height>1080</height>
-      <texture>general_overlay.png</texture>
-    </control>
-    <control>
-      <description>Header</description>
-      <type>fadelabel</type>
-      <posX>45</posX>
-      <posY>15</posY>
-      <width>1525</width>
-      <font>Label</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <label>DefaultWide HD 1.5 by catavolt</label>
+      <onright>8</onright>
+      <onleft>8</onleft>
+      <ondown>8</ondown>
+      <onup>8</onup>
+      <visible allowhiddenfocus="true">control.isvisble(8)</visible>
     </control>
     <control>
       <description>desc txt</description>
       <type>label</type>
       <id>1</id>
-      <posX>70</posX>
-      <posY>210</posY>
+      <posX>85</posX>
+      <posY>180</posY>
       <label>#SkinTranslation.Translations.DescriptionTopbar.Label</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>fff5deb3</textcolor>
       <font>Label</font>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>ScreenBack button</description>
       <type>image</type>
       <id>0</id>
-      <posX>181</posX>
-      <posY>267</posY>
+      <posX>141</posX>
+      <posY>237</posY>
       <width>58</width>
       <height>58</height>
-      <texture>tb_back.png</texture>
+      <texture>tb_back3.png</texture>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>button description</description>
       <type>label</type>
       <id>1</id>
-      <posX>251</posX>
-      <posY>274</posY>
-      <textcolor>ivory</textcolor>
+      <posX>211</posX>
+      <posY>248</posY>
+      <textcolor>lightgray</textcolor>
       <label>#SkinTranslation.Translations.BackPrevious.Label</label>
+      <font>RSS</font>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>Home button</description>
       <type>image</type>
       <id>1</id>
-      <posX>773</posX>
-      <posY>267</posY>
+      <posX>713</posX>
+      <posY>237</posY>
       <width>58</width>
       <height>58</height>
-      <texture>tb_home.png</texture>
+      <texture>tb_browserhome3.png</texture>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>button description</description>
       <type>label</type>
       <id>1</id>
-      <posX>843</posX>
-      <posY>274</posY>
-      <textcolor>ivory</textcolor>
+      <posX>783</posX>
+      <posY>248</posY>
+      <textcolor>lightgray</textcolor>
       <label>#SkinTranslation.Translations.BackBasicHome.Label</label>
+      <font>RSS</font>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>Home button</description>
       <type>image</type>
       <id>1</id>
       <posX>1294</posX>
-      <posY>267</posY>
+      <posY>237</posY>
       <width>58</width>
       <height>58</height>
-      <texture>tb_full_screen.png</texture>
+      <texture>tb_full_screen3.png</texture>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>button description</description>
       <type>label</type>
       <id>1</id>
       <posX>1365</posX>
-      <posY>274</posY>
-      <textcolor>ivory</textcolor>
+      <posY>248</posY>
+      <textcolor>lightgray</textcolor>
       <label>#SkinTranslation.Translations.LiveTV.Label</label>
+      <font>RSS</font>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>skipback button</description>
       <type>image</type>
       <id>1</id>
-      <posX>181</posX>
-      <posY>337</posY>
+      <posX>141</posX>
+      <posY>307</posY>
       <width>58</width>
       <height>58</height>
-      <texture>tb_skipback.png</texture>
+      <texture>tb_skipback3.png</texture>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>rewind button</description>
       <type>image</type>
       <id>1</id>
-      <posX>251</posX>
-      <posY>337</posY>
+      <posX>211</posX>
+      <posY>307</posY>
       <width>58</width>
       <height>58</height>
-      <texture>tb_rew.png</texture>
+      <texture>tb_rew3.png</texture>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>play button</description>
       <type>image</type>
       <id>1</id>
-      <posX>321</posX>
-      <posY>337</posY>
+      <posX>281</posX>
+      <posY>307</posY>
       <width>58</width>
       <height>58</height>
-      <texture>tb_play.png</texture>
+      <texture>tb_play3.png</texture>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>stop button</description>
       <type>image</type>
       <id>1</id>
-      <posX>391</posX>
-      <posY>337</posY>
+      <posX>351</posX>
+      <posY>307</posY>
       <width>58</width>
       <height>58</height>
-      <texture>tb_stop.png</texture>
+      <texture>tb_stop3.png</texture>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>fast forward button</description>
       <type>image</type>
       <id>1</id>
-      <posX>462</posX>
-      <posY>337</posY>
+      <posX>422</posX>
+      <posY>307</posY>
       <width>58</width>
       <height>58</height>
-      <texture>tb_fastforward.png</texture>
+      <texture>tb_fastforward3.png</texture>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>next button</description>
       <type>image</type>
       <id>1</id>
-      <posX>532</posX>
-      <posY>337</posY>
+      <posX>492</posX>
+      <posY>307</posY>
       <width>58</width>
       <height>58</height>
-      <texture>tb_skipforward.png</texture>
+      <texture>tb_skipforward3.png</texture>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>desc value line 3</description>
       <type>label</type>
       <id>1</id>
-      <posX>603</posX>
-      <posY>344</posY>
-      <textcolor>ivory</textcolor>
+      <posX>563</posX>
+      <posY>318</posY>
+      <textcolor>lightgray</textcolor>
       <label>#SkinTranslation.Translations.PlayControls.Label</label>
+      <font>RSS</font>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>Info button</description>
       <type>image</type>
       <id>0</id>
       <posX>1294</posX>
-      <posY>337</posY>
+      <posY>307</posY>
       <width>58</width>
       <height>58</height>
-      <texture>tb_info.png</texture>
+      <texture>tb_info3.png</texture>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>button description</description>
       <type>label</type>
       <id>1</id>
       <posX>1365</posX>
-      <posY>344</posY>
-      <textcolor>ivory</textcolor>
+      <posY>318</posY>
+      <textcolor>lightgray</textcolor>
       <label>#SkinTranslation.Translations.SkinInfo.Label</label>
+      <font>RSS</font>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
+    </control>
+    <control>
+      <description>Volume up</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>141</posX>
+      <posY>377</posY>
+      <width>58</width>
+      <height>58</height>
+      <texture>tb_volumeup3.png</texture>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
+    </control>
+    <control>
+      <description>volume down</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>211</posX>
+      <posY>377</posY>
+      <width>58</width>
+      <height>58</height>
+      <texture>tb_volumedown3.png</texture>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
+    </control>
+   <control>
+      <description>button description</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>281</posX>
+      <posY>388</posY>
+      <textcolor>lightgray</textcolor>
+      <label>#SkinTranslation.Translations.AudioOptions.Label</label>
+      <font>RSS</font>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>Close MP</description>
       <type>image</type>
       <id>1</id>
-      <posX>181</posX>
-      <posY>407</posY>
+      <posX>713</posX>
+      <posY>377</posY>
       <width>58</width>
       <height>58</height>
-      <texture>tb_exit.png</texture>
+      <texture>tb_exit3.png</texture>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>button description</description>
       <type>label</type>
       <id>1</id>
-      <posX>251</posX>
-      <posY>414</posY>
-      <textcolor>ivory</textcolor>
+      <posX>783</posX>
+      <posY>388</posY>
+      <textcolor>lightgray</textcolor>
       <label>#SkinTranslation.Translations.CloseExit.Label</label>
+      <font>RSS</font>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>Shutdown PC button</description>
       <type>image</type>
       <id>1</id>
-      <posX>773</posX>
-      <posY>407</posY>
+      <posX>1294</posX>
+      <posY>377</posY>
       <width>58</width>
       <height>58</height>
-      <texture>tb_shutdown.png</texture>
+      <texture>tb_shutdown3.png</texture>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>button description</description>
       <type>label</type>
       <id>1</id>
-      <posX>843</posX>
-      <posY>414</posY>
-      <textcolor>ivory</textcolor>
+      <posX>1365</posX>
+      <posY>388</posY>
+      <textcolor>lightgray</textcolor>
       <label>#SkinTranslation.Translations.ShutdownOptions.Label</label>
+      <font>RSS</font>
+      <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
-    <!--control>
-    <description>HTPC InfoC button</description>
-    <type>image</type>
-    <id>1</id>
-    <posX>1194</posX>
-    <posY>407</posY>
-    <width>58</width>
-    <height>58</height>
-    <texture>tb_pcinfo.png</texture>
-  </control>
-  <control>
-    <description>button description</description>
-    <type>label</type>
-    <id>1</id>
-    <posX>1265</posX>
-    <posY>414</posY>
-    <textcolor>ivory</textcolor>
-    <label>HTPC Info</label>
-  </control-->
-  <!--control>
+    <control>
     <description>Info Button</description>
     <type>image</type>
     <id>1</id>
-    <posX>181</posX>
-    <posY>476</posY>
+    <posX>141</posX>
+    <posY>447</posY>
     <width>58</width>
     <height>58</height>
-    <texture>Infoimage.png</texture>
+    <texture>tb_extend3.png</texture>
+    <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
   </control>
   <control>
     <description>button description</description>
     <type>label</type>
     <id>1</id>
-    <posX>251</posX>
-    <posY>480</posY>
-    <textcolor>ivory</textcolor>
+    <posX>211</posX>
+    <posY>458</posY>
+    <textcolor>lightgray</textcolor>
     <label>#SkinTranslation.Translations.InfoButton.Label</label>
-  </control-->
+    <font>RSS</font>
+    <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
+  </control>
+  <!-- ******************************************************************************************* -->
+  <!-- ********************************   KEYBOARD SHORTCUTS   *********************************** -->
+  <!-- ******************************************************************************************* -->
+  <control>
+          <description>Keyboard Shortcuts</description>
+          <id>8</id>
+          <posX>753</posX>
+          <posY>85</posY>
+          <type>checkbutton</type>
+          <label>#SkinTranslation.Translations.KeyboardShortcuts.Label</label>
+          <selected>#(skin.hassetting('#skin.keyboard.shortcuts'))</selected>
+          <onclick>#(skin.togglesetting('#skin.keyboard.shortcuts')) </onclick>            
+          <onright>2</onright>
+          <onleft>2</onleft>
+          <ondown>2</ondown>
+          <height>60</height>
+          <width>430</width>
+          <markWidth>50</markWidth>
+          <markHeight>50</markHeight>
+          <textXOff>25</textXOff>
+          <textYOff>5</textYOff>
+          <font>font10</font>
+          <textureNoFocus>buttonfocus.png</textureNoFocus>
+          <disabledcolor>ffffffff</disabledcolor>
+          <textcolorNoFocus>aaffffff</textcolorNoFocus>
+        </control>
+        <control>
+      <description>desc txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>85</posX>
+      <posY>180</posY>
+      <label>#SkinTranslation.Translations.KeyboardShortcuts.Label:</label>
+      <textcolor>fff5deb3</textcolor>
+      <font>Label</font>
+      <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
+    </control>
+    <control>
+      <description>Keyboard Shortcuts left</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>135</posX>
+      <posY>200</posY>
+      <width>1120</width>
+      <height>700</height>
+      <label>
+      Escape:   &#x291F; Previous window
+      Cursor Keys:   &#x2237; Select item
+      Home:   &#x21a5; Select first item
+      End:   &#x21a7; Select last item
+      PageUp:   &#x21a9; Previous item page
+      PageDown:   &#x21aa; Next item page
+      U:   &#x2934; Parent folder
+      Enter:   &#x2713; Perform action
+     </label>
+      <textcolor>deepskyblue</textcolor>
+      <font>font10</font>
+      <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
+    </control>
+    <control>
+      <description>Keyboard Shortcuts middle</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>690</posX>
+      <posY>200</posY>
+      <width>1120</width>
+      <height>700</height>
+      <label> 
+      P:   &#9654; Start playing
+      B:   &#9632; Stop playing
+      Space:   &#x23f8; Pause/Resume playing
+      F7:   &#x21e4; Play previous
+      F8:   &#x21e5; Play next
+      F5:   &#171; Rewind
+      F6:   &#187; FastForward
+      R:   &#x25cf; Record current TV
+      
+    </label>
+      <textcolor>deepskyblue</textcolor>
+      <font>font10</font>
+      <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
+    </control>
+    <control>
+      <description>Keyboard Shortcuts right</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>1250</posX>
+      <posY>200</posY>
+      <width>1120</width>
+      <height>700</height>
+      <label> 
+      &#x271A; :   Volume up
+      &#10134; :   Volume down
+      M:   &#x22A0; Mute
+      F3:   &#x24d8; Show info of selected item
+      F9:   &#x2261; Show context menu
+      Y:   &#x268F; Show OSD
+      H:   &#x21c4; Switch Classic/Basic Home
+      X:   &#x21c4; Switch GUI/Fullscreen (TV/Video)
+      F11:   &#x229E; Screenshot of current screen
+      </label>
+      <textcolor>deepskyblue</textcolor>
+      <font>font10</font>
+      <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
+    </control>
+    
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>630</posX>
+      <posY>215</posY>
+      <height>300</height>
+      <width>1</width>
+      <texture>verticalbar.png</texture>
+      <colordiffuse>aaffffff</colordiffuse>
+      <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1190</posX>
+      <posY>215</posY>
+      <height>330</height>
+      <width>1</width>
+      <texture>verticalbar.png</texture>
+      <colordiffuse>aaffffff</colordiffuse>
+      <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
+    </control>
+  
+  
   <control>
     <description>plug txt</description>
     <type>label</type>
     <id>1</id>
-    <posX>70</posX>
-    <posY>583</posY>
+    <posX>85</posX>
+    <posY>553</posY>
     <label>#SkinTranslation.Translations.SupportedPlugins.Label</label>
-    <textcolor>ff6FAFE1</textcolor>
+    <textcolor>fff5deb3</textcolor>
     <font>Label</font>
   </control>
   <control>
@@ -295,10 +482,10 @@
     <type>fadelabel</type>
     <id>1</id>
     <posX>112</posX>
-    <posY>632</posY>
+    <posY>612</posY>
     <width>1686</width>
-    <label>APOD :: ARGUS TV :: Bing Image :: Browse The Web :: Burner :: Clickfinder PG :: Daily Comics :: DriveFreeSpace :: Earth TV :: Emulators 2 :: Explorer :: Extensions (MPEI GUI) :: Fanart Handler :: File Explorer :: Films :: Fritz!Box Manager :: Games Pack for MP (Chess, Connect 4, Frustration, Hexxagon, Mastermind, Minesweeper, Pipes, Simon Says, Sudoku, Tetris, Yahtzee) :: Global Search :: Google Calendar :: HTPC-Info :: IMDb+ :: Info Service :: Intelligent Frame Correction :: Latest Media Handler :: Last.FM :: Lyrics :: LogoManager :: MailTip :: Media Slayer :: MediaTip :: Moving Pictures :: MP Photo Slideshow :: MP Steam :: MP-TVSeries :: mpNZB :: MusicInfoHandler :: mvCentral :: OnlineVideos :: Power Control :: Rockstar :: RSS :: ScoreCenter :: Shoutcast :: Showtimes :: Skin Info :: Skype for MP :: Sleep Control :: Stocks + Indices :: Subcentral :: Trailers :: Trakt :: TuneIn :: TV WishList :: Webbrowser :: Webradio :: Wikipedia :: Windows Update Control :: World Clock :: Worldmap :: World News :: World Weather :: World Places :: World Weather Lite :: YouTube.FM :: yrWeather </label>
-    <textcolor>ivory</textcolor>
+    <label>APOD #scroll.wrap ARGUS TV #scroll.wrap Bing Image #scroll.wrap Browse The Web #scroll.wrap Burner #scroll.wrap Clickfinder PG #scroll.wrap Daily Comics #scroll.wrap DriveFreeSpace #scroll.wrap Earth TV #scroll.wrap Emulators 2 #scroll.wrap Explorer #scroll.wrap Extensions (MPEI GUI) #scroll.wrap Fanart Handler #scroll.wrap File Explorer #scroll.wrap Films #scroll.wrap Fritz!Box Manager #scroll.wrap Games Pack for MP (Chess, Connect 4, Frustration, Hexxagon, Mastermind, Minesweeper, Pipes, Simon Says, Sudoku, Tetris, Yahtzee) #scroll.wrap Global Search #scroll.wrap Google Calendar #scroll.wrap HTPC-Info #scroll.wrap IMDb+ #scroll.wrap Info Service #scroll.wrap Intelligent Frame Correction #scroll.wrap Latest Media Handler #scroll.wrap Last.FM #scroll.wrap Lyrics #scroll.wrap LogoManager #scroll.wrap MailTip #scroll.wrap Media Slayer #scroll.wrap MediaTip #scroll.wrap Moving Pictures #scroll.wrap MP Photo Slideshow #scroll.wrap MP-TVSeries #scroll.wrap mpNZB #scroll.wrap MusicInfoHandler #scroll.wrap mvCentral #scroll.wrap OnlineVideos #scroll.wrap Power Control #scroll.wrap Rockstar #scroll.wrap RSS #scroll.wrap ScoreCenter #scroll.wrap ShortCut'er with Skin Navigator #scroll.wrap Shoutcast #scroll.wrap Showtimes #scroll.wrap Skin Info #scroll.wrap SkyGo DE #scroll.wrap Skype for MP #scroll.wrap Sleep Control #scroll.wrap Sports #scroll.wrap Spectrum Analyzer #scroll.wrap Steam for MP #scroll.wrap Stocks + Indices #scroll.wrap StreamRadio #scroll.wrap Subcentral #scroll.wrap Trailers #scroll.wrap Trakt #scroll.wrap TuneIn #scroll.wrap TV WishList #scroll.wrap Webbrowser #scroll.wrap Webradio #scroll.wrap Wikipedia #scroll.wrap Windows Update Control #scroll.wrap World Clock #scroll.wrap Worldmap #scroll.wrap World News #scroll.wrap World Places #scroll.wrap World Weather #scroll.wrap World Weather Lite #scroll.wrap YouTube.FM #scroll.wrap yrWeather </label>
+    <textcolor>ff2087fd</textcolor>
     <font>Menutitle</font>
   </control>
   <control>
@@ -309,7 +496,7 @@
     <posY>720</posY>
     <width>1920</width>
     <align>center</align>
-    <textcolor>ff6FAFE1</textcolor>
+    <textcolor>fff5deb3</textcolor>
     <label>#SkinTranslation.Translations.PluginsMP.Label</label>
   </control>
   <control>
@@ -317,23 +504,42 @@
     <type>label</type>
     <id>1</id>
     <posX>0</posX>
-    <posY>790</posY>
+    <posY>780</posY>
     <width>1920</width>
     <align>center</align>
-    <textcolor>ff6FAFE1</textcolor>
+    <textcolor>fff5deb3</textcolor>
     <label>#SkinTranslation.Translations.MPVersion.Label</label>
   </control>
+  
   <control>
-    <description>Endtext</description>
-    <type>label</type>
-    <id>1</id>
-    <posX>0</posX>
-    <posY>860</posY>
-    <width>1920</width>
-    <textcolor>ff6FAFE1</textcolor>
-    <label>#SkinTranslation.Translations.Enjoy.Label</label>
-    <font>Menutitle</font>
-    <align>center</align>
-  </control>
+      <description>Enjoy</description>
+      <type>group</type>
+      <layout>StackLayout(25, Horizontal, true)</layout>
+      <posX>0</posX>
+      <posY>820</posY>
+      <width>1920</width>
+      <align>center</align>
+      <height>90</height>
+      <control>
+        <type>fadelabel</type>
+        <description>Enjoy Label</description>
+        <id>0</id>
+        <label>#SkinTranslation.Translations.Enjoy.Label</label>
+        <width>500</width>
+        <maxWidth>1750</maxWidth>
+        <textcolor>fff5deb3</textcolor>
+        <font>Menutitle</font>
+      </control>
+      <control>
+        <type>image</type>
+        <description>catavolt Icon</description>
+        <id>0</id>
+        <texture>catavolt.jpg</texture>
+        <width>100</width>
+        <height>65</height>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      </control>
+   
 </controls>
 </window>

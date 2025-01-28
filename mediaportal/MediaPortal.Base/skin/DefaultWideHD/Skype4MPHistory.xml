@@ -38,7 +38,7 @@
       <label>Skype  #Skype.History.ListName</label>
       <font>font12</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <type>actiongroup</type>

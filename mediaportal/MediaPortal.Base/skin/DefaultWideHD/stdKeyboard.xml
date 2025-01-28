@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>1002</id>
   <defaultcontrol>1</defaultcontrol>
@@ -11,71 +10,92 @@
       <width>1920</width>
       <height>1080</height>
       <texture>white.png</texture>
-      <colordiffuse>50005eef</colordiffuse>
+        <colordiffuse>aa0c3066</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
     </control>
     <control>
       <type>image</type>
-      <id>0</id>
-      <posX>586</posX>
-      <posY>297</posY>
-      <width>892</width>
-      <height>462</height>
-      <texture mask="picturethumbmask.png">black.png</texture>
+      <id>2</id>
+      <posX>560</posX>
+      <posY>230</posY>
+      <width>990</width>
+      <height>540</height>
+      <texture>listbgmenu.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
+	 <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>610</posX> 
+      <posY>344</posY> 
+      <width>886</width> 
+      <height>363</height> 
+      <texture>black.png</texture> 
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <!--control>
+      <type>image</type>
+      <id>2</id>
+      <posX>562</posX>
+      <posY>232</posY>
+      <width>986</width>
+      <height>536</height>
+      <texture>listbg.png</texture>
+      <colordiffuse>ff000000</colordiffuse>
+    </control-->
     <!-- DEFAULT KEYBOARD -->
     <control>
       <description>standard keyboard</description>
       <type>standardKeyboard</type>
       <id>1</id>
-      <keyboardPosX>600</keyboardPosX>
-      <keyboardPosY>375</keyboardPosY>
-      <keyWidth>66</keyWidth>
-      <keyHeight>66</keyHeight>
+      <keyboardPosX>610</keyboardPosX>
+      <keyboardPosY>351</keyboardPosY>
+      <keyWidth>70</keyWidth>
+      <keyHeight>70</keyHeight>
       <keyHSpacing>0</keyHSpacing>
-      <keyVSpacing>2</keyVSpacing>
-      <modeKeySpacing>4</modeKeySpacing>
-      <modeKeyWidth>165</modeKeyWidth>
-      <searchModeKeyWidth>195</searchModeKeyWidth>
-      <label />
-      <labelAlign>center</labelAlign>
-      <labelOffX>0</labelOffX>
-      <labelOffY>2</labelOffY>
-      <labelFont>font10</labelFont>
-      <labelColor>lightgray</labelColor>
+      <keyVSpacing>0</keyVSpacing>
+      <modeKeySpacing>0</modeKeySpacing>
+      <modeKeyWidth>180</modeKeyWidth>
+      <searchModeKeyWidth>182</searchModeKeyWidth>
+      <label></label>
+      <labelAlign>left</labelAlign>
+      <labelOffX>20</labelOffX>
+      <labelOffY>2</labelOffY> 
+      <labelFont>font11</labelFont>
+      <labelColor>90ffffff</labelColor>
       <labelShadowAngle>0</labelShadowAngle>
       <labelShadowDistance>0</labelShadowDistance>
-      <labelShadowColor>FF000000</labelShadowColor>
-      <labelBoxPosX>0</labelBoxPosX>
-      <labelBoxPosY>0</labelBoxPosY>
-      <labelBoxWidth>300</labelBoxWidth>
-      <labelBoxHeight>45</labelBoxHeight>
+      <labelShadowColor>00ffffff</labelShadowColor>
+      <labelBoxPosX>633</labelBoxPosX>
+      <labelBoxPosY>252</labelBoxPosY>
+      <labelBoxWidth>281</labelBoxWidth>
+      <labelBoxHeight>42</labelBoxHeight>
       <labelBoxTexture>-</labelBoxTexture>
-      <showLabelAsInitialText>yes</showLabelAsInitialText>
-      <inputTextBoxPosX>604</inputTextBoxPosX>
-      <inputTextBoxPosY>319</inputTextBoxPosY>
-      <inputTextBoxWidth>-1</inputTextBoxWidth>
-      <inputTextBoxHeight>52</inputTextBoxHeight>
+      <showLabelAsInitialText>no</showLabelAsInitialText>
+      <inputTextBoxPosX>610</inputTextBoxPosX> 
+      <inputTextBoxPosY>268</inputTextBoxPosY>  
+      <inputTextBoxWidth>890</inputTextBoxWidth>
+      <inputTextBoxHeight>56</inputTextBoxHeight>
       <inputTextAlign>left</inputTextAlign>
-      <inputTextOffX>27</inputTextOffX>
-      <inputTextOffY>3</inputTextOffY>
-      <inputTextFont>font11</inputTextFont>
+      <inputTextOffX>22</inputTextOffX>
+      <inputTextOffY>5</inputTextOffY> 
+      <inputTextFont>LabelBold</inputTextFont>
       <inputTextBoxTexture>keyboard.png</inputTextBoxTexture>
-      <inputTextColor>FF000000</inputTextColor>
+      <inputTextColor>ff000000</inputTextColor>
       <inputTextShadowAngle>0</inputTextShadowAngle>
       <inputTextShadowDistance>0</inputTextShadowDistance>
       <inputTextShadowColor>FF000000</inputTextShadowColor>
-      <charKeyFont>font11</charKeyFont>
-      <namedKeyFont>font10</namedKeyFont>
+      <charKeyFont>Label</charKeyFont>
+      <namedKeyFont>RSS</namedKeyFont>
       <keyTextShadowAngle>0</keyTextShadowAngle>
       <keyTextShadowDistance>0</keyTextShadowDistance>
       <keyTextShadowColor>FF000000</keyTextShadowColor>
       <keyTextureFocus>key.png</keyTextureFocus>
       <keyTextureNoFocus>keyNF.png</keyTextureNoFocus>
       <keyHighlightColor>ffffffff</keyHighlightColor>
-      <keyPressedColor>ff808080</keyPressedColor>
+      <keyPressedColor>ffffffff</keyPressedColor>
       <keyDisabledColor>FFFFFFFF</keyDisabledColor>
-      <keyFontColor>FFffffff</keyFontColor>
+      <keyFontColor>ff87cefa</keyFontColor>
       <keySelFontColor>FFffffff</keySelFontColor>
       <keyDisabledFontColor>FF808080</keyDisabledFontColor>
     </control>
