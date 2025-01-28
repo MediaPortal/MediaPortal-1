@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <allowoverlay>yes</allowoverlay>
   <controls>
+    <control>
+      <description>rectangle image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>160</posX>
+      <posY>250</posY>
+      <width>1650</width>
+      <height>580</height>
+      <texture>listbg3.png</texture>
+      <colordiffuse>aaffffff</colordiffuse>
+      <visible>string.equals(#WorldWeather.ConditionView,Graphic)</visible>
+    </control>
     <control>
       <description>Chart Background Image left</description>
       <type>image</type>
@@ -11,8 +22,8 @@
       <posY>830</posY>
       <width>540</width>
       <height>195</height>
-      <texture>filmstripBG.png</texture>
-      <colordiffuse>99ffffff</colordiffuse>
+      <texture>listbg3.png</texture>
+      <colordiffuse>aaffffff</colordiffuse>
       <visible>!string.equals(#WorldWeather.ForecastDayTemperatureChart,)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
     </control>
     <control>
@@ -23,8 +34,8 @@
       <posY>830</posY>
       <width>540</width>
       <height>195</height>
-      <texture>filmstripBG.png</texture>
-      <colordiffuse>99ffffff</colordiffuse>
+      <texture>listbg3.png</texture>
+      <colordiffuse>aaffffff</colordiffuse>
       <visible>!string.equals(#WorldWeather.ForecastDayTemperatureChart,)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
     </control>
     <control>
@@ -67,7 +78,7 @@
         <width>84</width>
         <align>center</align>
         <label>#WorldWeather.ForecastHour0StartTime</label>
-        <font>font12</font>
+        <font>RSS</font>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour0StartDay, )</visible>
       </control>
       <control>
@@ -77,7 +88,7 @@
         <width>84</width>
         <align>center</align>
         <label>#WorldWeather.ForecastHour1StartTime</label>
-        <font>font12</font>
+        <font>RSS</font>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour1StartDay, )</visible>
       </control>
       <control>
@@ -87,7 +98,7 @@
         <width>84</width>
         <align>center</align>
         <label>#WorldWeather.ForecastHour2StartTime</label>
-        <font>font12</font>
+        <font>RSS</font>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour2StartDay, )</visible>
       </control>
       <control>
@@ -97,7 +108,7 @@
         <width>84</width>
         <align>center</align>
         <label>#WorldWeather.ForecastHour3StartTime</label>
-        <font>font12</font>
+        <font>RSS</font>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour3StartDay, )</visible>
       </control>
       <control>
@@ -107,7 +118,7 @@
         <width>84</width>
         <align>center</align>
         <label>#WorldWeather.ForecastHour4StartTime</label>
-        <font>font12</font>
+        <font>RSS</font>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour4StartDay, )</visible>
       </control>
       <control>
@@ -117,7 +128,7 @@
         <width>84</width>
         <align>center</align>
         <label>#WorldWeather.ForecastHour5StartTime</label>
-        <font>font12</font>
+        <font>RSS</font>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour5StartDay, )</visible>
       </control>
       <control>
@@ -127,7 +138,7 @@
         <width>84</width>
         <align>center</align>
         <label>#WorldWeather.ForecastHour6StartTime</label>
-        <font>font12</font>
+        <font>RSS</font>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour6StartDay, )</visible>
       </control>
       <control>
@@ -137,7 +148,7 @@
         <width>84</width>
         <align>center</align>
         <label>#WorldWeather.ForecastHour7StartTime</label>
-        <font>font12</font>
+        <font>RSS</font>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour7StartDay, )</visible>
       </control>
       <control>
@@ -147,7 +158,7 @@
         <width>84</width>
         <align>center</align>
         <label>#WorldWeather.ForecastHour8StartTime</label>
-        <font>font12</font>
+        <font>RSS</font>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour8StartDay, )</visible>
       </control>
       <control>
@@ -157,7 +168,7 @@
         <width>84</width>
         <align>center</align>
         <label>#WorldWeather.ForecastHour9StartTime</label>
-        <font>font12</font>
+        <font>RSS</font>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour9StartDay, )</visible>
       </control>
       <control>
@@ -167,7 +178,7 @@
         <width>84</width>
         <align>center</align>
         <label>#WorldWeather.ForecastHour10StartTime</label>
-        <font>font12</font>
+        <font>RSS</font>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour10StartDay, )</visible>
       </control>
       <control>
@@ -177,7 +188,7 @@
         <width>84</width>
         <align>center</align>
         <label>#WorldWeather.ForecastHour11StartTime</label>
-        <font>font12</font>
+        <font>RSS</font>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour11StartDay, )</visible>
       </control>
     </control>
@@ -195,7 +206,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TranslationCondition</label>
-        <font>font12</font>
+        <font>RSS</font>
         <height>70</height>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
       </control>
@@ -204,7 +215,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TranslationWind</label>
-        <font>font12</font>
+        <font>RSS</font>
         <height>70</height>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
       </control>
@@ -213,7 +224,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TranslationTemperature</label>
-        <font>font12</font>
+        <font>RSS</font>
         <height>70</height>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
       </control>
@@ -222,7 +233,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TranslationPressure</label>
-        <font>font12</font>
+        <font>RSS</font>
         <height>70</height>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
       </control>
@@ -231,7 +242,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TranslationHumidity</label>
-        <font>font12</font>
+        <font>RSS</font>
         <height>70</height>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
       </control>
@@ -240,7 +251,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TranslationPrecipitation</label>
-        <font>font12</font>
+        <font>RSS</font>
         <height>70</height>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
       </control>
@@ -249,7 +260,7 @@
         <type>label</type>
         <id>0</id>
         <label>#WorldWeather.TranslationCloudCoverage</label>
-        <font>font12</font>
+        <font>RSS</font>
         <height>70</height>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
       </control>
@@ -1049,7 +1060,7 @@
         <id>0</id>
         <width>84</width>
         <align>center</align>
-        <font>font12</font>
+        <font>RSS</font>
         <label>#WorldWeather.ForecastHour0CloudCoverage</label>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour0StartDay, )</visible>
       </control>
@@ -1059,7 +1070,7 @@
         <id>0</id>
         <width>84</width>
         <align>center</align>
-        <font>font12</font>
+        <font>RSS</font>
         <label>#WorldWeather.ForecastHour1CloudCoverage</label>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour1StartDay, )</visible>
       </control>
@@ -1069,7 +1080,7 @@
         <id>0</id>
         <width>84</width>
         <align>center</align>
-        <font>font12</font>
+        <font>RSS</font>
         <label>#WorldWeather.ForecastHour2CloudCoverage</label>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour2StartDay, )</visible>
       </control>
@@ -1079,7 +1090,7 @@
         <id>0</id>
         <width>84</width>
         <align>center</align>
-        <font>font12</font>
+        <font>RSS</font>
         <label>#WorldWeather.ForecastHour3CloudCoverage</label>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour3StartDay, )</visible>
       </control>
@@ -1089,7 +1100,7 @@
         <id>0</id>
         <width>84</width>
         <align>center</align>
-        <font>font12</font>
+        <font>RSS</font>
         <label>#WorldWeather.ForecastHour4CloudCoverage</label>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour4StartDay, )</visible>
       </control>
@@ -1099,7 +1110,7 @@
         <id>0</id>
         <width>84</width>
         <align>center</align>
-        <font>font12</font>
+        <font>RSS</font>
         <label>#WorldWeather.ForecastHour5CloudCoverage</label>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour5StartDay, )</visible>
       </control>
@@ -1109,7 +1120,7 @@
         <id>0</id>
         <width>84</width>
         <align>center</align>
-        <font>font12</font>
+        <font>RSS</font>
         <label>#WorldWeather.ForecastHour6CloudCoverage</label>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour6StartDay, )</visible>
       </control>
@@ -1119,7 +1130,7 @@
         <id>0</id>
         <width>84</width>
         <align>center</align>
-        <font>font12</font>
+        <font>RSS</font>
         <label>#WorldWeather.ForecastHour7CloudCoverage</label>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour7StartDay, )</visible>
       </control>
@@ -1129,7 +1140,7 @@
         <id>0</id>
         <width>84</width>
         <align>center</align>
-        <font>font12</font>
+        <font>RSS</font>
         <label>#WorldWeather.ForecastHour8CloudCoverage</label>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour8StartDay, )</visible>
       </control>
@@ -1139,7 +1150,7 @@
         <id>0</id>
         <width>84</width>
         <align>center</align>
-        <font>font12</font>
+        <font>RSS</font>
         <label>#WorldWeather.ForecastHour9CloudCoverage</label>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour9StartDay, )</visible>
       </control>
@@ -1149,7 +1160,7 @@
         <id>0</id>
         <width>84</width>
         <align>center</align>
-        <font>font12</font>
+        <font>RSS</font>
         <label>#WorldWeather.ForecastHour10CloudCoverage</label>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour10StartDay, )</visible>
       </control>
@@ -1159,7 +1170,7 @@
         <id>0</id>
         <width>84</width>
         <align>center</align>
-        <font>font12</font>
+        <font>RSS</font>
         <label>#WorldWeather.ForecastHour11CloudCoverage</label>
         <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour11StartDay, )</visible>
       </control>
@@ -1173,8 +1184,8 @@
       <posY>323</posY>
       <width>1546</width>
       <height>1</height>
-      <texture>horizontal_bar.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible></control>
     <control>
       <description>divider horizontal</description>
@@ -1184,8 +1195,8 @@
       <posY>393</posY>
       <width>1546</width>
       <height>1</height>
-      <texture>horizontal_bar.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible></control>
     <control>
       <description>divider horizontal</description>
@@ -1195,8 +1206,8 @@
       <posY>464</posY>
       <width>1546</width>
       <height>1</height>
-      <texture>horizontal_bar.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible></control>
     <control>
       <description>divider horizontal</description>
@@ -1206,8 +1217,8 @@
       <posY>534</posY>
       <width>1546</width>
       <height>1</height>
-      <texture>horizontal_bar.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible></control>
     <control>
       <description>divider horizontal</description>
@@ -1217,8 +1228,8 @@
       <posY>604</posY>
       <width>1546</width>
       <height>1</height>
-      <texture>horizontal_bar.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible></control>
     <control>
       <description>divider horizontal</description>
@@ -1228,8 +1239,8 @@
       <posY>675</posY>
       <width>1546</width>
       <height>1</height>
-      <texture>horizontal_bar.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible></control>
     <control>
       <description>divider horizontal</description>
@@ -1239,8 +1250,8 @@
       <posY>745</posY>
       <width>1546</width>
       <height>1</height>
-      <texture>horizontal_bar.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
     </control>
   </controls>
