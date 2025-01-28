@@ -41,7 +41,7 @@
       <posY>15</posY>
       <width>1299</width>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#Trakt.Translation.MovieCredits.Label</label>
       <align>left</align>
     </control>
@@ -53,7 +53,7 @@
       <label>#Trakt.Person.CreditType: #Trakt.Person.Name | #Trakt.Items</label>
       <font>font11</font>
       <align>right</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font10</font>
     </control>
     <import>Trakt.Common.Facade.xml</import>

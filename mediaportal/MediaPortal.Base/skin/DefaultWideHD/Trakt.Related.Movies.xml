@@ -38,7 +38,7 @@
       <posY>15</posY>
       <width>1299</width>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#Trakt.Translation.RelatedMovies.Label | #Trakt.Related.Movie</label>
       <align>left</align>
     </control>

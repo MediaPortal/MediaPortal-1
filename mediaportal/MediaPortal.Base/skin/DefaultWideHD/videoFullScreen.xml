@@ -9,16 +9,16 @@
       <description>background image</description>
       <type>image</type>
       <id>111</id>
-      <posX>-90</posX>
+      <posX>0</posX>
       <posY>937</posY>
       <height>128</height>
-      <width>2200</width>
-      <texture>white.png</texture>
+      <width>1920</width>
+      <texture>white3.png</texture>
       <colordiffuse>f200061c</colordiffuse>
       <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
     </control>
     <control>
-      <description>background</description>
+      <description>background upper line</description>
       <type>image</type>
       <id>1</id>
       <posX>-90</posX>
@@ -30,7 +30,7 @@
       <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
     </control>
     <control>
-      <description>background</description>
+      <description>background lower line</description>
       <type>image</type>
       <id>1</id>
       <posX>-90</posX>
@@ -267,7 +267,7 @@
       <label>#latestMediaHandler.tvrecordings.active.count</label>
       <align>center</align>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+player.paused+control.isVisible(111)</visible>
     </control>
     <control>
@@ -291,7 +291,7 @@
       <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
       <align>left</align>
       <font>font9</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+player.paused+control.isVisible(111)</visible>
     </control>
   </controls>

@@ -43,7 +43,7 @@
       <posY>217</posY>
       <label />
       <font>font16</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#Trakt.Settings.Account.Dialog.Visible,true)</visible>
     </control>
     <control>
@@ -54,7 +54,7 @@
       <posY>315</posY>
       <label>#Trakt.Translation.Username.Label</label>
       <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#Trakt.Settings.Account.Dialog.Visible,true)</visible>
     </control>
     <control>
@@ -88,7 +88,7 @@
       <posY>412</posY>
       <label>#Trakt.Translation.Password.Label</label>
       <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#Trakt.Settings.Account.Dialog.Visible,true)</visible>
     </control>
     <control>
@@ -123,7 +123,7 @@
       <posY>510</posY>
       <label>#Trakt.Translation.Email.Label</label>
       <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#Trakt.Settings.Account.Dialog.Visible,true)+string.equals(#Trakt.Settings.Account.Dialog.NewUser,true)</visible>
     </control>
     <control>

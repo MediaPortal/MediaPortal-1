@@ -5,15 +5,40 @@
   <defaultcontrol>2</defaultcontrol>
   <controls>
     <control>
-      <description>video area</description>
+      <description>music area</description>
       <type>image</type>
       <id>0</id>
       <posX>-20</posX>
       <posY>975</posY>
       <width>2025</width>
       <height>90</height>
-      <texture>general_overlay_selecteditem.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <texture>black.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+      <visible>Player.HasVideo</visible>
+    </control>
+    
+    <control>
+      <description>music area</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-30</posX>
+      <posY>975</posY>
+      <width>2040</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>dodgerblue</colordiffuse>
+      <visible>Player.HasVideo</visible>
+    </control>
+    <control>
+      <description>music area</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-30</posX>
+      <posY>1065</posY>
+      <width>2040</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>dodgerblue</colordiffuse>
       <visible>Player.HasVideo</visible>
     </control>
     <control>
@@ -31,7 +56,7 @@
     <control>
       <description>video preview window</description>
       <type>videowindow</type>
-      <id>1</id>
+      <id>0</id>
       <posX>879</posX>
       <posY>975</posY>
       <width>160</width>
@@ -41,56 +66,159 @@
       <textureFocus>tv_green_border.png</textureFocus>
     </control>
     <control>
-      <description>scrolling info label Video</description>
-      <type>fadelabel</type>
-      <id>5</id>
-      <posX>847</posX>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>0</posX>
       <posY>982</posY>
-      <width>825</width>
+      <width>855</width>
       <align>right</align>
-      <font>font11</font>
-      <textcolor>ivory</textcolor>
-      <label>#Play.Current.Title</label>
-      <wrapString> :.:  </wrapString>
+      <height>38</height>
+      <visible>!string.contains(#Play.Current.File,tsbuffer)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(268)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Play.Current.Title</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
     </control>
+      
     <control>
-      <description>scrolling info label Video</description>
-      <type>fadelabel</type>
-      <id>5</id>
-      <posX>847</posX>
+      <description>Track - Genre</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>0</posX>
       <posY>1018</posY>
-      <width>825</width>
+      <width>855</width>
       <align>right</align>
-      <font>font11</font>
-      <textcolor>ivory</textcolor>
-      <label>#Play.Current.Genre</label>
-      <wrapString> :.:  </wrapString>
-    </control>
+      <height>38</height>
+      <visible>!string.contains(#Play.Current.File,tsbuffer)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(135)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Play.Current.Genre</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>  
+    
     <control>
-      <description>scrolling info label Video</description>
-      <type>fadelabel</type>
-      <id>0</id>
+      <description>Track - Year</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>1072</posX>
       <posY>982</posY>
-      <width>825</width>
+      <width>855</width>
       <align>left</align>
-      <font>font11</font>
-      <textcolor>ivory</textcolor>
-      <label>#Play.Current.Year</label>
-      <wrapString> :.:  </wrapString>
+      <height>38</height>
+      <visible>!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#Play.Current.Year,)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(201))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Play.Current.Year</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
     </control>
+    
     <control>
-      <description>scrolling info label Video</description>
-      <type>fadelabel</type>
-      <id>0</id>
+      <description>Track - Director</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>1072</posX>
       <posY>1018</posY>
-      <width>825</width>
+      <width>855</width>
       <align>left</align>
-      <font>font11</font>
-      <textcolor>ivory</textcolor>
-      <label>#Play.Current.Director</label>
-      <wrapString> :.:  </wrapString>
+      <height>38</height>
+      <visible>!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#Play.Current.Director,)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(199))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Play.Current.Director</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
     </control>
     <!--     *******************************************************************************************  -->
     <!--     ******************    !!!  THESE CONTROLS ARE FOR COMPATIBILITY ONLY  !!!  ****************  -->

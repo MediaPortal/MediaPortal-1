@@ -2,7 +2,7 @@
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
-    <control>
+    <!--control>
       <description>Overlay text right</description>
       <id>0</id>
       <type>image</type>
@@ -10,10 +10,10 @@
       <posY>234</posY>
       <width>823</width>
       <height>699</height>
-      <texture mask="picturethumbmask.png">black.png</texture>
+      <texture mask="musicfanart_mask.png">black.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
       <visible>facadeview.list</visible>
-    </control>
+    </control-->
     <control>
       <description>Episode LCD image</description>
       <type>image</type>
@@ -47,7 +47,7 @@
       <label>#Trakt.Translation.Rating.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Episode.Ratings.Votes,)</visible>
     </control>
     <control>
@@ -70,7 +70,7 @@
       <width>399</width>
       <label>#Trakt.Episode.Ratings.Percentage% (#Trakt.Episode.Ratings.Votes #Trakt.Translation.Votes.Label)</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Episode.Ratings.Votes,)</visible>
     </control>
     <control>
@@ -82,7 +82,7 @@
       <label>#Trakt.Translation.Genre.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Show.Genres,)</visible>
     </control>
     <control>
@@ -94,7 +94,7 @@
       <label>#Trakt.Show.Genres</label>
       <font>font12</font>
       <width>420</width>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Show.Genres,)</visible>
     </control>
     <control>
@@ -106,7 +106,7 @@
       <label>#Trakt.Translation.AirTime.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Show.AirDay,)</visible>
     </control>
     <control>
@@ -118,7 +118,7 @@
       <width>420</width>
       <label>#Trakt.Show.AirDay #Trakt.Show.AirTime</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Show.AirDay,)+string.equals(#Trakt.Episode.FirstAiredLocalizedDayOfWeek,)</visible>
     </control>
     <control>
@@ -130,7 +130,7 @@
       <width>420</width>
       <label>#Trakt.Episode.FirstAiredLocalizedDayOfWeek #Trakt.Show.AirTimeLocalized</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Episode.FirstAiredLocalizedDayOfWeek,)</visible>
     </control>
     <control>
@@ -142,7 +142,7 @@
       <label>#Trakt.Translation.Network.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Show.Network,)</visible>
     </control>
     <control>
@@ -154,7 +154,7 @@
       <width>420</width>
       <label>#Trakt.Show.Network</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Show.Network,)</visible>
     </control>
     <control>
@@ -165,7 +165,7 @@
       <posY>544</posY>
       <label>#(string.rtrim(L(1276),':'))</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Show.Country,)</visible>
     </control>
     <control>
@@ -176,7 +176,7 @@
       <posY>573</posY>
       <label>#Trakt.Show.Country</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Show.Country,)</visible>
     </control>
     <control>
@@ -188,7 +188,7 @@
       <label>#Trakt.Translation.Runtime.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Show.Runtime,)</visible>
     </control>
     <control>
@@ -201,7 +201,7 @@
       <label>#Trakt.Show.Runtime mins</label>
       <font>font12</font>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Show.Runtime,)</visible>
     </control>
     <control>
@@ -226,7 +226,7 @@
       <height>157</height>
       <label>#Trakt.Episode.Overview</label>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list</visible>
     </control>
     <control>

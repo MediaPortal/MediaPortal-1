@@ -8,16 +8,16 @@
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>-90</posX>
+      <posX>0</posX>
       <posY>787</posY>
-      <height>268</height>
-      <width>2200</width>
-      <texture>white.png</texture>
-      <colordiffuse>ff00061c</colordiffuse>
+      <height>279</height>
+      <width>1920</width>
+      <texture>white3.png</texture>
+      <colordiffuse>f200061c</colordiffuse>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
-      <description>background</description>
+      <description>background upper line</description>
       <type>image</type>
       <id>1</id>
       <posX>-90</posX>
@@ -29,11 +29,11 @@
       <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
     </control>
     <control>
-      <description>background</description>
+      <description>background lower line</description>
       <type>image</type>
       <id>1</id>
       <posX>-90</posX>
-      <posY>1052</posY>
+      <posY>1063</posY>
       <height>3</height>
       <width>2200</width>
       <texture>white.png</texture>
@@ -156,11 +156,10 @@
       <posY>726</posY>
       <width>161</width>
       <height>243</height>
-      <texture mask="dvdcase_mask.png">#Play.Current.Thumb</texture>
-      <keepaspectratio>yes</keepaspectratio>
+      <texture>dvdcase_mask.png</texture>
+      <keepaspectratio>no</keepaspectratio>
       <colordiffuse>ff00061c</colordiffuse>
-      <animation effect="fade" time="100" reversible="true">visible</animation>
-      <visible>!control.hasfocus(1237)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
+      <visible>!control.hasfocus(1237)+control.hastumb(203)</visible>
     </control>
     <control>
       <description>Movie thumb</description>
@@ -171,9 +170,8 @@
       <width>157</width>
       <height>239</height>
       <texture mask="dvdcase_mask.png">#Play.Current.Thumb</texture>
-      <keepaspectratio>yes</keepaspectratio>
-      <animation effect="fade" time="100" reversible="true">visible</animation>
-      <visible>!control.hasfocus(1237)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>End Time Info</description>
@@ -207,7 +205,7 @@
       <posY>735</posY>
       <width>1230</width>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>LabelBold</font>
       <label>#Play.Current.Title (#duration)</label>
       <visible>!control.hasfocus(1237)</visible>
@@ -219,16 +217,16 @@
       <description>background</description>
       <type>image</type>
       <id>1236</id>
-      <posX>-90</posX>
+      <posX>0</posX>
       <posY>613</posY>
-      <height>442</height>
-      <width>2200</width>
-      <texture>white.png</texture>
-      <colordiffuse>ff00061c</colordiffuse>
+      <height>453</height>
+      <width>1920</width>
+      <texture>white3.png</texture>
+      <colordiffuse>f200061c</colordiffuse>
       <visible>control.hasfocus(1237)</visible>
     </control>
     <control>
-      <description>background</description>
+      <description>background upper line</description>
       <type>image</type>
       <id>1</id>
       <posX>-90</posX>
@@ -240,11 +238,11 @@
       <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
     </control>
     <control>
-      <description>background</description>
+      <description>background lower line</description>
       <type>image</type>
       <id>1</id>
       <posX>-90</posX>
-      <posY>1052</posY>
+      <posY>1063</posY>
       <height>3</height>
       <width>2200</width>
       <texture>white.png</texture>
@@ -346,7 +344,7 @@
       <height>57</height>
       <width>1230</width>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>LabelBold</font>
       <label>#Play.Current.Title (#duration)</label>
       <visible>control.hasfocus(1237)</visible>
@@ -374,11 +372,10 @@
       <posY>552</posY>
       <width>161</width>
       <height>243</height>
-      <texture mask="dvdcase_mask.png">#Play.Current.Thumb</texture>
-      <keepaspectratio>yes</keepaspectratio>
+      <texture>dvdcase_mask.png</texture>
+      <keepaspectratio>no</keepaspectratio>
       <colordiffuse>ff00061c</colordiffuse>
-      <animation effect="fade" time="100" reversible="true">visible</animation>
-      <visible>control.hasfocus(1237)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
+      <visible>control.hasfocus(1237)+control.hasthumb(104)</visible>
     </control>
     <control>
       <description>Movie thumb</description>
@@ -389,9 +386,8 @@
       <width>157</width>
       <height>239</height>
       <texture mask="dvdcase_mask.png">#Play.Current.Thumb</texture>
-      <keepaspectratio>yes</keepaspectratio>
-      <animation effect="fade" time="100" reversible="true">visible</animation>
-      <visible>control.hasfocus(1237)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>control.hasfocus(1237)</visible>
     </control>
     <import>common.logos.xml</import>
     <import>common.osd.buttons.xml</import>
@@ -411,7 +407,7 @@
       <type>tvprogress</type>
       <id>205</id>
       <posX>413</posX>
-      <posY>831</posY>
+      <posY>830</posY>
       <width>1240</width>
       <height>23</height>
       <toptexture>osd_progress_right.png</toptexture>
@@ -439,12 +435,12 @@
       <description>End of progressbar</description>
       <type>label</type>
       <id>1</id>
-      <posX>1653</posX>
+      <posX>1647</posX>
       <posY>821</posY>
       <label>|</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>lightskyblue</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <!-- ***************************************************************************************************** -->
@@ -484,7 +480,7 @@
       <label>#latestMediaHandler.tvrecordings.active.count</label>
       <align>center</align>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
     <control>
@@ -508,7 +504,7 @@
       <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
       <align>left</align>
       <font>font9</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
     <!-- ******************************************************************************************* -->
@@ -615,7 +611,7 @@
         <align>left</align>
         <font>font10</font>
         <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
         <visible>!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
       </control>
       <control>
@@ -629,7 +625,7 @@
         <label>#latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel) #scroll.wrap #latestMediaHandler.tvrecordings.active2.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active2.startTime</label>
         <align>left</align>
         <font>font10</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
         <visible>!string.equals(#latestMediaHandler.tvrecordings.active2.title,)</visible>
       </control>
       <control>
@@ -643,7 +639,7 @@
         <label>#latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel) #scroll.wrap #latestMediaHandler.tvrecordings.active3.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active3.startTime</label>
         <align>left</align>
         <font>font10</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
         <visible>!string.equals(#latestMediaHandler.tvrecordings.active3.title,)</visible>
       </control>
       <control>
@@ -657,7 +653,7 @@
         <label>#latestMediaHandler.tvrecordings.active4.title (#latestMediaHandler.tvrecordings.active4.channel) #scroll.wrap #latestMediaHandler.tvrecordings.active4.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active4.startTime</label>
         <align>left</align>
         <font>font10</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
         <visible>!string.equals(#latestMediaHandler.tvrecordings.active4.title,)</visible>
       </control>
     </control>

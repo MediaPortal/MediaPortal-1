@@ -188,7 +188,7 @@
       <label>|</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>lightskyblue</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Current Remaining</description>
@@ -200,7 +200,7 @@
       <label>#TV.View.remaining</label>
       <align>left</align>
       <font>font10</font>
-      <textcolor>lightskyblue</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Start Time and now Title</description>
@@ -220,7 +220,7 @@
         <maxWidth>260</maxWidth>
         <align>left</align>
         <font>LabelBold</font>
-        <textcolor>lightskyblue</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <description>On tv NOW</description>
@@ -230,7 +230,7 @@
         <maxWidth>1350</maxWidth>
         <label></label>
         <font>LabelBold</font>
-        <textcolor>lightskyblue</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
     </control>
     <control>
@@ -286,7 +286,7 @@
       <shadowAngle>45</shadowAngle>
       <shadowDistance>7</shadowDistance>
       <shadowColor>ff000000</shadowColor>
-      <textcolor>lightskyblue</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>no</visible>
     </control>
     <!-- ************************************************************************************************** -->
@@ -326,7 +326,7 @@
       <label>#latestMediaHandler.tvrecordings.active.count</label>
       <align>center</align>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
     <control>
@@ -350,7 +350,7 @@
       <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
       <align>left</align>
       <font>font9</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
   </controls>

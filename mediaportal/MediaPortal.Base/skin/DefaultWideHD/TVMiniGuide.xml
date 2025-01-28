@@ -18,9 +18,9 @@
       <type>image</type>
       <id>1</id>
       <posX>10</posX>
-      <posY>40</posY>
-      <width>1900</width>
-      <height>1030</height>
+      <posY>30</posY>
+      <width>1910</width>
+      <height>1040</height>
       <texture>listbg2.png</texture>
       <colordiffuse>bbffffff</colordiffuse>
       <visible>window.isvisible(602)|window.isvisible(2005)</visible>
@@ -29,9 +29,9 @@
       <type>image</type>
       <id>1</id>
       <posX>10</posX>
-      <posY>40</posY>
-      <width>1900</width>
-      <height>1030</height>
+      <posY>30</posY>
+      <width>1910</width>
+      <height>1040</height>
       <texture>listbg2.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
@@ -70,7 +70,7 @@
       <font3>Label</font3>
       <textcolor>ffffffff</textcolor>
       <textcolor2>ffffffff</textcolor2>
-      <textcolor3>ff87cefa</textcolor3>
+      <textcolor3>ff00bfff</textcolor3>
       <remoteColor>ff00ff00</remoteColor>
       <remoteColor2>ff00ff00</remoteColor2>
       <remoteColor3>ff00ff00</remoteColor3>
@@ -131,7 +131,7 @@
       <font3>Label</font3>
       <textcolor>ffffffff</textcolor>
       <textcolor2>ffffffff</textcolor2>
-      <textcolor3>ff87cefa</textcolor3>
+      <textcolor3>ff00bfff</textcolor3>
       <remoteColor>ff00ff00</remoteColor>
       <remoteColor2>ff00ff00</remoteColor2>
       <remoteColor3>ff00ff00</remoteColor3>
@@ -197,7 +197,7 @@
       <posY>65</posY>
       <width>50</width>
       <height>50</height>
-      <textureFocus>tb_exit.png</textureFocus>
+      <textureFocus>tb_exit3.png</textureFocus>
       <textureNoFocus>tb_exitNF.png</textureNoFocus>
       <onleft>36</onleft>
       <onright>34</onright>

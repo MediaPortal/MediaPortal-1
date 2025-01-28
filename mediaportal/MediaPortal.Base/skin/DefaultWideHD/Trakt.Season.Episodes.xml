@@ -48,7 +48,7 @@
       <posY>15</posY>
       <width>1299</width>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#Trakt.Show.Title | #(iif(eq(#Trakt.Episode.Season,'0'),'#Trakt.Translation.Specials.Label','#Trakt.Translation.Season.Label #Trakt.Episode.Season'))</label>
       <align>left</align>
     </control>

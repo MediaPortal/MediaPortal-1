@@ -3,7 +3,7 @@
 <window>
   <controls>
     <!-- Movies List Layout -->
-    <control>
+    <!--control>
       <description>Overlay text right</description>
       <id>0</id>
       <type>image</type>
@@ -11,10 +11,10 @@
       <posY>234</posY>
       <width>823</width>
       <height>699</height>
-      <texture mask="picturethumbmask.png">black.png</texture>
+      <texture mask="musicfanart_mask.png">black.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
       <visible>facadeview.list</visible>
-    </control>
+    </control-->
     <control>
       <description>Movie Poster</description>
       <id>500</id>
@@ -48,7 +48,7 @@
       <label>#Trakt.Translation.Rating.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Movie.Ratings.Votes,)</visible>
     </control>
     <control>
@@ -71,7 +71,7 @@
       <width>399</width>
       <label>#Trakt.Movie.Ratings.Percentage% (#Trakt.Movie.Ratings.Votes #Trakt.Translation.Votes.Label)</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Movie.Ratings.Votes,)</visible>
     </control>
     <control>
@@ -83,7 +83,7 @@
       <label>#Trakt.Translation.Genre.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Movie.Genres,)</visible>
     </control>
     <control>
@@ -95,7 +95,7 @@
       <label>#Trakt.Movie.Genres</label>
       <font>font12</font>
       <width>420</width>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Movie.Genres,)</visible>
     </control>
     <control>
@@ -107,7 +107,7 @@
       <label>#Trakt.Translation.Released.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Movie.Released,)</visible>
     </control>
     <control>
@@ -119,7 +119,7 @@
       <width>420</width>
       <label>#Trakt.Movie.Released</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Movie.Released,)</visible>
     </control>
     <control>
@@ -131,7 +131,7 @@
       <label>#Trakt.Translation.Year.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Movie.Year,)</visible>
     </control>
     <control>
@@ -143,7 +143,7 @@
       <width>420</width>
       <label>#Trakt.Movie.Year</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Movie.Year,)</visible>
     </control>
     <control>
@@ -154,7 +154,7 @@
       <posY>544</posY>
       <label>#Trakt.Translation.Certification.Label</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Movie.Certification,)</visible>
     </control>
     <control>
@@ -165,7 +165,7 @@
       <posY>573</posY>
       <label>#Trakt.Movie.Certification</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Movie.Certification,)</visible>
     </control>
     <control>
@@ -177,7 +177,7 @@
       <label>#Trakt.Translation.Runtime.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Movie.Runtime,)</visible>
     </control>
     <control>
@@ -190,7 +190,7 @@
       <label>#Trakt.Movie.Runtime mins</label>
       <font>font12</font>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Movie.Runtime,)</visible>
     </control>
     <control>
@@ -215,7 +215,7 @@
       <height>157</height>
       <label>#Trakt.Movie.Overview</label>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list</visible>
     </control>
     <control>
