@@ -35,7 +35,7 @@
       <label>MailTip  #MailTip.MailboxDescription</label>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Mail Provider Image</description>
@@ -120,7 +120,7 @@
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
       <shadowColor>ff202020</shadowColor>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <colordiffuse>ffffffff</colordiffuse>
       <label>#MailTip.TranslationAction</label>
       <visible>![control.isvisible(12)|control.isvisible(13)]+string.equals(#MailTip.MailSender, )</visible>
@@ -138,7 +138,7 @@
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
       <shadowColor>ff202020</shadowColor>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <colordiffuse>ffffffff</colordiffuse>
       <label>#MailTip.TranslationAction #MailTip.ReceiveProgress...</label>
       <visible>string.equals(#MailTip.Action,Receive)+string.equals(#MailTip.MailSender, )</visible>
@@ -183,7 +183,7 @@
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
       <shadowColor>ff202020</shadowColor>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <colordiffuse>ffffffff</colordiffuse>
       <label>#MailTip.MailSender, #MailTip.MailDate #MailTip.MailTime, #MailTip.TranslationPriority: #MailTip.MailPriority (#MailTip.MailSize)</label>
       <visible>!string.equals(#MailTip.MailSender, )</visible>
@@ -196,7 +196,7 @@
       <posY>52</posY>
       <align>right</align>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
       <shadowColor>ff202020</shadowColor>

@@ -4,7 +4,7 @@
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <autohidetopbar>yes</autohidetopbar>
-  <!--<define>#header.label:#SkinTranslation.Translations.Games.Label #scroll.wrap Minesweeper</define>-->
+  <define>#header.label:#SkinTranslation.Translations.Games.Label #scroll.wrap Minesweeper</define>
   <define>#header.hover:hover_my_minesweeper.png</define>
   <define>#itemcount:</define>
   <controls>
@@ -32,7 +32,7 @@
         <posY>205</posY>
         <height>600</height>
         <width>420</width>
-        <texture>Minesweeper\Button_BG_Minesweeper.png</texture>
+        <texture>backslide_settings.png</texture>
         <colordiffuse>ffffffff</colordiffuse>
       </control>
       <control>
@@ -127,41 +127,6 @@
         <align>Left</align>
         <textcolor>fff5deb3</textcolor>
       </control>
-	  
-	  <control>
-        <description>underwater image</description>
-        <type>image</type>
-        <id>1</id>
-        <posX>1</posX> 
-        <posY>0</posY> 
-        <width>1920</width>
-        <height>1080</height>
-        <texture>Minesweeper\ocean_easy.png</texture>
-        <visible>string.contains(#minesweeper_bombs,10)</visible>		
-      </control>
-	   <control>
-        <description>underwater image</description>
-        <type>image</type>
-        <id>1</id>
-        <posX>2</posX> 
-        <posY>0</posY> 
-        <width>1914</width>
-        <height>1080</height>
-        <texture>Minesweeper\ocean_medium.png</texture>
-        <visible>string.contains(#minesweeper_bombs,40)</visible>		
-      </control>
-	   <control>
-        <description>underwater image</description>
-        <type>image</type>
-        <id>1</id>
-        <posX>6</posX> 
-        <posY>4</posY> 
-        <width>1912</width>
-        <height>1074</height>
-        <texture>Minesweeper\ocean_difficult.png</texture>
-        <visible>string.contains(#minesweeper_bombs,100)</visible>		
-      </control>
-	  
       <control>
         <description>500</description>
         <type>button</type>
@@ -5493,7 +5458,7 @@
       <id>0</id>
       <posX>45</posX>
       <posY>54</posY>
-      <label>#SkinTranslation.Translations.Games.Label #scroll.wrap #(L(107784))</label>
+      <label>#header.label</label>
       <width>1802</width>
       <align>left</align>
       <font>Label</font>

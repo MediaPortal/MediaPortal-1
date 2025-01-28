@@ -10,9 +10,10 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>blue.png</texture>
+      <texture>BH extensions.jpg</texture>
       <width>1920</width>
       <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
@@ -30,7 +31,7 @@
       <description>Action Buttons</description>
       <type>group</type>
       <posX>75</posX>
-      <posY>181</posY>
+      <posY>260</posY>
       <layout>StackLayout(0, Vertical, true)</layout>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>
@@ -117,86 +118,88 @@
     </control>
     <control>
       <type>image</type>
-      <posX>1455</posX>
-      <posY>300</posY>
-      <width>391</width>
-      <height>331</height>
+      <posX>1600</posX>
+      <posY>260</posY>
+      <width>250</width>
+      <height>250</height>
       <keepaspectratio>yes</keepaspectratio>
       <texture>#MPE.Selected.Icon</texture>
-      <font>font11</font>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>
     </control>
     <control>
       <type>label</type>
-      <posX>510</posX>
+      <posX>610</posX>
       <posY>261</posY>
       <width>373</width>
       <label>#MPEI.Translation.Version.Label</label>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ff00aaff</textcolor>
       <font>font11</font>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>
     </control>
     <control>
       <type>fadelabel</type>
-      <posX>892</posX>
+      <posX>830</posX>
       <posY>261</posY>
       <width>639</width>
       <label>v#MPE.Selected.Version</label>
       <font>font11</font>
+      <textcolor>lightgray</textcolor>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>
     </control>
     <control>
       <type>label</type>
-      <posX>510</posX>
+      <posX>610</posX>
       <posY>306</posY>
       <width>373</width>
       <label>#MPEI.Translation.Author.Label</label>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ff00aaff</textcolor>
       <font>font11</font>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>
     </control>
     <control>
       <type>fadelabel</type>
-      <posX>892</posX>
+      <posX>830</posX>
       <posY>306</posY>
       <width>570</width>
       <label>#MPE.Selected.Author</label>
       <font>font11</font>
+      <textcolor>lightgray</textcolor>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>
     </control>
     <control>
       <type>label</type>
-      <posX>510</posX>
+      <posX>610</posX>
       <posY>351</posY>
       <width>372</width>
       <label>#MPEI.Translation.ReleaseDate.Label</label>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ff00aaff</textcolor>
       <font>font11</font>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>
     </control>
     <control>
       <type>fadelabel</type>
-      <posX>892</posX>
+      <posX>830</posX>
       <posY>351</posY>
       <width>642</width>
       <font>font11</font>
+      <textcolor>lightgray</textcolor>
       <label>#MPE.Selected.ReleaseDate</label>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>
     </control>
     <control>
       <type>label</type>
-      <posX>510</posX>
+      <posX>610</posX>
       <posY>396</posY>
       <width>372</width>
       <label>#MPEI.Translation.Status.Label</label>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ff00aaff</textcolor>
       <font>font11</font>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>
@@ -204,7 +207,7 @@
     </control>
     <control>
       <type>fadelabel</type>
-      <posX>892</posX>
+      <posX>800</posX>
       <posY>396</posY>
       <width>642</width>
       <font>font11</font>
@@ -215,11 +218,11 @@
     </control>
     <control>
       <type>label</type>
-      <posX>510</posX>
+      <posX>610</posX>
       <posY>441</posY>
       <width>372</width>
       <label>#MPEI.Translation.Downloads.Label</label>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ff00aaff</textcolor>
       <font>font11</font>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>
@@ -227,7 +230,7 @@
     </control>
     <control>
       <type>fadelabel</type>
-      <posX>892</posX>
+      <posX>800</posX>
       <posY>441</posY>
       <width>642</width>
       <font>font11</font>
@@ -239,7 +242,7 @@
     </control>
     <control>
       <type>fadelabel</type>
-      <posX>892</posX>
+      <posX>800</posX>
       <posY>441</posY>
       <width>642</width>
       <font>font11</font>
@@ -251,11 +254,11 @@
     </control>
     <control>
       <type>label</type>
-      <posX>510</posX>
+      <posX>610</posX>
       <posY>486</posY>
       <width>372</width>
       <label>#MPEI.Translation.Compatibility.Label</label>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ff00aaff</textcolor>
       <font>font11</font>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>
@@ -263,7 +266,7 @@
     </control>
     <control>
       <type>fadelabel</type>
-      <posX>892</posX>
+      <posX>800</posX>
       <posY>486</posY>
       <width>642</width>
       <font>font11</font>
@@ -274,11 +277,11 @@
     </control>
     <control>
       <type>label</type>
-      <posX>510</posX>
+      <posX>610</posX>
       <posY>531</posY>
       <width>372</width>
       <label>#MPEI.Translation.Rating.Label</label>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ff00aaff</textcolor>
       <font>font11</font>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>
@@ -288,7 +291,7 @@
       <type>imagelist</type>
       <description>-</description>
       <id>0</id>
-      <posX>892</posX>
+      <posX>800</posX>
       <posY>534</posY>
       <width>195</width>
       <height>36</height>
@@ -318,11 +321,12 @@
     </control>
     <control>
       <type>textboxscrollup</type>
-      <posX>504</posX>
-      <posY>490</posY>
-      <width>1366</width>
-      <height>270</height>
-      <font>font11</font>
+      <posX>610</posX>
+      <posY>450</posY>
+      <width>920</width>
+      <height>430</height>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
       <label>#MPE.Selected.Description</label>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>
@@ -330,11 +334,12 @@
     </control>
     <control>
       <type>textboxscrollup</type>
-      <posX>504</posX>
-      <posY>630</posY>
-      <width>1366</width>
-      <height>270</height>
+      <posX>610</posX>
+      <posY>450</posY>
+      <width>920</width>
+      <height>370</height>
       <font>font11</font>
+      <textcolor>lightgray</textcolor>
       <label>#MPE.Selected.Description</label>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>

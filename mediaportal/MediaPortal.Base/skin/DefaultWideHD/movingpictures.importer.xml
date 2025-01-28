@@ -42,7 +42,18 @@
       <animation effect="fade" time="150">visible</animation>
       <animation effect="fade" time="150">hidden</animation>
     </control>
-    <import>common.window.xml</import>
+    <control>
+      <description>Title background image all screens except all games</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>379</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
     <control>
       <description>General Overlay</description>
@@ -114,37 +125,37 @@
       <description>status label</description>
       <type>label</type>
       <id>0</id>
-      <posX>0</posX>
-      <posY>210</posY>
+      <posX>45</posX>
+      <posY>94</posY>
       <width>1920</width>
-      <align>center</align>
+      <align>left</align>
       <label>#MovingPictures.Importer.Status</label>
-      <textcolor>aaffffff</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font11</font>
     </control>
     <control>
       <type>label</type>
       <id>1</id>
       <posX>45</posX>
-      <posY>15</posY>
+      <posY>54</posY>
       <label>#MovingPictures.Translation.Importer.Label</label>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>all files label</description>
       <type>label</type>
       <id>0</id>
       <label>#MovingPictures.Translation.AllFiles.Label</label>
-      <align>left</align>
-      <posX>45</posX>
-      <posY>52</posY>
-      <textcolor>ivory</textcolor>
-      <font>font10</font>
+      <posX>1869</posX>
+      <posY>16</posY>
+      <align>right</align>
+      <textcolor>lightgray</textcolor>
+      <font>font11</font>
       <visible>string.equals(#MovingPictures.Importer.ListMode.Flag,ALL)</visible>
     </control>
-    <control>
+    <!--control>
       <description>pending files label</description>
       <type>label</type>
       <id>0</id>
@@ -152,11 +163,11 @@
       <align>left</align>
       <posX>45</posX>
       <posY>52</posY>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font10</font>
       <visible>string.equals(#MovingPictures.Importer.ListMode.Flag,PENDING)</visible>
-    </control>
-    <control>
+    </control-->
+    <!--control>
       <description>completed files label</description>
       <type>label</type>
       <id>0</id>
@@ -164,10 +175,10 @@
       <align>left</align>
       <posX>45</posX>
       <posY>52</posY>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font10</font>
       <visible>string.equals(#MovingPictures.Importer.ListMode.Flag,COMPLETED)</visible>
-    </control>
+    </control-->
     <control>
       <type>actiongroup</type>
       <description>action menu</description>

@@ -17,7 +17,7 @@
         <font>font12</font>
         <height>40</height>
         <height>40</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <type>label</type>
@@ -25,7 +25,7 @@
         <label>#(L(169))</label>
         <font>font12</font>
         <height>40</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <type>label</type>
@@ -33,7 +33,7 @@
         <label>#(L(6004)):</label>
         <font>font12</font>
         <height>40</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <type>label</type>
@@ -41,7 +41,7 @@
         <label>#(L(300010)):</label>
         <font>font12</font>
         <height>40</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <type>label</type>
@@ -49,7 +49,7 @@
         <label>#(L(6001)):</label>
         <font>font12</font>
         <height>40</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <type>label</type>
@@ -57,7 +57,7 @@
         <label>#(L(292))-#(L(627))</label>
         <font>font12</font>
         <height>40</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <type>label</type>
@@ -65,7 +65,7 @@
         <label>#(L(172))</label>
         <font>font12</font>
         <height>40</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <type>label</type>
@@ -73,7 +73,7 @@
         <label>#(L(1230))</label>
         <font>font12</font>
         <height>40</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <type>label</type>
@@ -81,7 +81,7 @@
         <label>#(L(864)):</label>
         <font>font12</font>
         <height>40</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <type>label</type>
@@ -89,7 +89,7 @@
         <label>Keywords:</label>
         <font>font12</font>
         <height>40</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <type>label</type>
@@ -97,7 +97,7 @@
         <label>#(L(1278))</label>
         <font>font12</font>
         <height>40</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <type>label</type>
@@ -105,7 +105,7 @@
         <label>Scraper-Info:</label>
         <font>font12</font>
         <height>40</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <type>label</type>
@@ -113,7 +113,7 @@
         <label>#(L(363))-URL:</label>
         <font>font12</font>
         <height>40</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
     </control>
     <control>
@@ -131,7 +131,7 @@
         <label>#MovingPictures.LocalMedia.videocodec</label>
         <font>font12</font>
         <width>480</width>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <type>fadelabel</type>
@@ -139,7 +139,7 @@
         <label>#MovingPictures.LocalMedia.videoresolution     (#MovingPictures.LocalMedia.videowidth × #MovingPictures.LocalMedia.videoheight)</label>
         <font>font12</font>
         <width>480</width>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <type>fadelabel</type>
@@ -147,7 +147,7 @@
         <label>#MovingPictures.LocalMedia.videoaspectratio</label>
         <font>font12</font>
         <width>480</width>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <type>fadelabel</type>
@@ -155,7 +155,7 @@
         <label>#MovingPictures.LocalMedia.videoframerate fps</label>
         <font>font12</font>
         <width>480</width>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <type>fadelabel</type>
@@ -163,7 +163,7 @@
         <label>#MovingPictures.LocalMedia.audiocodec</label>
         <font>font12</font>
         <width>480</width>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <type>fadelabel</type>
@@ -171,7 +171,7 @@
         <label>#MovingPictures.LocalMedia.audiochannels</label>
         <font>font12</font>
         <width>480</width>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <type>fadelabel</type>
@@ -179,7 +179,7 @@
         <label>#MovingPictures.SelectedMovie.release_date.localized.long</label>
         <font>font12</font>
         <width>480</width>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <type>fadelabel</type>
@@ -187,7 +187,7 @@
         <label>#MovingPictures.SelectedMovie.date_added.localized.long</label>
         <font>font12</font>
         <width>480</width>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <type>fadelabel</type>
@@ -195,7 +195,7 @@
         <label>#MovingPictures.LocalMedia.videoformat</label>
         <font>font12</font>
         <width>480</width>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <type>fadelabel</type>
@@ -203,7 +203,7 @@
         <label>#MovingPictures.SelectedMovie.plotkeywords</label>
         <font>font12</font>
         <width>480</width>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <type>fadelabel</type>
@@ -211,7 +211,7 @@
         <label>#MovingPictures.UserMovieSettings.watched</label>
         <font>font12</font>
         <width>480</width>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <!-- Source/Path -->
       <control>
@@ -220,11 +220,11 @@
         <width>570</width>
         <font>font12</font>
         <width>480</width>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
         <label>#MovingPictures.SelectedMovie.details_url (#MovingPictures.SelectedMovie.primary_source)</label>
         <font>font12</font>
         <width>480</width>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <type>fadelabel</type>
@@ -233,7 +233,7 @@
         <label>#MovingPictures.LocalMedia.fullpath</label>
         <font>font12</font>
         <width>480</width>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
     </control>
     <control>

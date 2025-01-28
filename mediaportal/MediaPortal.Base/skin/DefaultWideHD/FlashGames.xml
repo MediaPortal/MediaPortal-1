@@ -3,7 +3,7 @@
   <id>8796</id>
   <defaultcontrol>50</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <define>#header.label:FlashGames</define>
+  <define>#header.label:#SkinTranslation.Translations.Games.Label #scroll.wrap FlashGames</define>
   <define>#header.hover:hover_Flash Games.png</define>
   <define>#selecteditem:</define>
   <controls>
@@ -16,16 +16,27 @@
       <texture>gamebg.jpg</texture>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
+    <control>
+      <description>Title background image all screens except all games</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>379</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
     <import>common.time.xml</import>
     <control>
       <type>label</type>
       <id>1</id>
       <posX>45</posX>
-      <posY>15</posY>
+      <posY>54</posY>
       <label>#header.label</label>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Overlay </description>
@@ -35,8 +46,8 @@
       <posY>190</posY>
       <width>1200</width>
       <height>700</height>
-      <texture mask="picturecase_mask.png">black.png</texture>
-      <colordiffuse>90ffffff</colordiffuse>
+      <texture>menubg.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>control.isvisible(50)</visible>
     </control>
     <control>
@@ -44,11 +55,11 @@
       <type>image</type>
       <id>1</id>
       <posX>50</posX>
-      <posY>205</posY>
-      <height>290</height>
-      <width>420</width>
-      <texture mask="picturecase_mask.png">black.png</texture>
-      <colordiffuse>50ffffff</colordiffuse>
+        <posY>185</posY>
+        <height>730</height>
+        <width>420</width>
+      <texture>backslide_settings.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
       <animation effect="fade" time="500">WindowClose</animation>
