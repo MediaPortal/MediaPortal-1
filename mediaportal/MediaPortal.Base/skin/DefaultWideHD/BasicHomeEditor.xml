@@ -10,21 +10,31 @@
         <type>image</type>
         <id>1</id>
         <posX>790</posX>
-        <posY>105</posY>
-        <height>75</height>
-        <width>420</width>
-        <texture>tvseries_listbanner_mask.png</texture>
-        <colordiffuse>eeffffff</colordiffuse>
-        <animation effect="fade" start="0" end="100" time="500">WindowOpen</animation>
-        <animation effect="fade" start="100" end="0" time="500">WindowClose</animation>
+        <posY>146</posY>
+        <height>74</height>
+        <width>419</width>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>dd164665</colordiffuse>
       </control>
       <control>
+        <description>background</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>792</posX>
+        <posY>148</posY>
+        <height>70</height>
+        <width>415</width>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>ff00061c</colordiffuse>
+      </control>
+      <control Style="SettingsButton">
         <description>BasicHome Editor</description>
         <type>checkbutton</type>
         <id>10000</id>
-        <posX>800</posX>
-        <posY>115</posY>
-        <width>400</width>
+        <posX>793</posX>
+        <posY>148</posY>
+        <height>70</height>
+        <width>415</width>
         <label>BasicHome Editor</label>
         <selected>#(skin.hassetting('#skin.basichome.editor'))</selected>
         <onclick>#(skin.togglesetting('#skin.basichome.editor'))</onclick>
@@ -33,31 +43,28 @@
         <onleft>10000</onleft>
         <onright>10000</onright>
         <ondown>#(iif(eq(#skin.basichome.editor,'True'),'770101','10'))</ondown>
-        <animation effect="fade" start="0" end="100" time="500">WindowOpen</animation>
-        <animation effect="fade" start="100" end="0" time="500">WindowClose</animation>
       </control>
       <control>
         <description>group element</description>
         <type>group</type>
-        <animation effect="fade" start="0" end="100" time="300" condition="skin.hassetting(#skin.basichome.editor)" reversible="true">conditional</animation>
         <visible>skin.hassetting(#skin.basichome.editor)</visible>
         <control>
         <description>background</description>
         <type>image</type>
         <id>0</id>
         <posX>98</posX>
-        <posY>225</posY>
+        <posY>239</posY>
         <width>1780</width>
-        <height>707</height>
-        <texture>backslide2.png</texture>
+        <height>687</height>
+        <texture>BasichomeEditor_BG.png</texture> 
       </control>
         <control>
           <description>divider</description>
           <type>image</type>
           <id>0</id>
           <posX>702</posX>
-          <posY>260</posY>
-          <height>650</height>
+          <posY>310</posY> 260
+          <height>600</height> 650
           <width>1</width>
           <texture>slider_vertical.png</texture>
           <colordiffuse>darkgray</colordiffuse>
@@ -67,8 +74,8 @@
           <type>image</type>
           <id>0</id>
           <posX>1202</posX>
-          <posY>260</posY>
-          <height>650</height>
+          <posY>310</posY> 
+          <height>600</height>
           <width>1</width>
           <texture>slider_vertical.png</texture>
           <colordiffuse>darkgray</colordiffuse>

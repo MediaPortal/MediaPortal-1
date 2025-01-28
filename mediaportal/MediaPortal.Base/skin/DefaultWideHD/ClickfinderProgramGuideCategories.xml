@@ -52,7 +52,7 @@
       <width>925</width>
       <font>font11</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#SettingLastUpdate</label>
     </control>
     <!-- CategorieList & Controls-->
@@ -64,7 +64,7 @@
       <posY>182</posY>
       <label>#CategorieView</label>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <type>listcontrol</type>
@@ -120,7 +120,7 @@
       <posY>182</posY>
       <label>#ClickfinderPG.Translation.NextLabel</label>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Filterby label</description>
@@ -131,7 +131,7 @@
       <label>#CategorieGroup</label>
       <font>Label</font>
       <align>right</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <type>listcontrol</type>

@@ -21,7 +21,7 @@
           <textcolor>ffffffff</textcolor>
           <textcolor2>ffffffff</textcolor2>
           <textcolorNoFocus>ffffffff</textcolorNoFocus>
-          <textureFocus>#(iif(eq(#watchedcount,'0'),'button_focus_notwatched.png','button_focus.png'))</textureFocus>
+          <textureFocus>#(iif(eq(#watchedcount,'0'),'listfocus_notwatched.png','listfocus.png'))</textureFocus>
         <textXOff3>2215</textXOff3>
         </control>
         <control>
@@ -44,6 +44,7 @@
           <PinIconWidth>35</PinIconWidth>
           <PinIconHeight>25</PinIconHeight>
           <textureHeight>90</textureHeight>
+          <textureFocus>#(iif(eq(#watchedcount,'0'),'listfocus_notwatched.png','listfocus.png'))</textureFocus>
           <itemWidth>82</itemWidth>
           <itemHeight>82</itemHeight>
           <IconXOff>15</IconXOff>
@@ -102,7 +103,7 @@
           <renderFocusText>no</renderFocusText>
           <renderUnfocusText>no</renderUnfocusText>
           <showFrame>true</showFrame>
-          <textureMask>Picturethumbmask.png</textureMask>
+          <textureMask>musicfanart_mask.png</textureMask>
           <frameNoFocus>Picturethumbframe.png</frameNoFocus>
           <frameFocus>Picturethumbframe.png</frameFocus>
           <imageFolder>-</imageFolder>

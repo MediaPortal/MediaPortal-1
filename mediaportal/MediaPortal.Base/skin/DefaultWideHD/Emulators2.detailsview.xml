@@ -131,7 +131,7 @@
       <posY>705</posY>
       <width>780</width>
       <height>187</height>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font11</font>
       <label>#Emulators2.CurrentItem.description</label>
       <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
@@ -146,7 +146,7 @@
       <label>#Emulators2.Label.developer</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
     </control>
     <control>
@@ -158,7 +158,7 @@
       <posY>328</posY>
       <width>465</width>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
       <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
@@ -173,7 +173,7 @@
       <posY>376</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -186,7 +186,7 @@
       <posY>405</posY>
       <width>465</width>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -199,7 +199,7 @@
       <posY>453</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -212,7 +212,7 @@
       <posY>481</posY>
       <font>font12</font>
       <width>465</width>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -225,7 +225,7 @@
       <posY>529</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -238,7 +238,7 @@
       <posY>558</posY>
       <width>225</width>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -251,7 +251,7 @@
       <posY>529</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -264,7 +264,7 @@
       <posY>558</posY>
       <width>232</width>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -277,7 +277,7 @@
       <posY>606</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+!control.hasfocus(7)+!control.hasfocus(8)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -320,7 +320,7 @@
       <label>300058</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
     </control>
     <control>
@@ -332,7 +332,7 @@
       <posY>298</posY>
       <width>780</width>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
       <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
@@ -347,7 +347,7 @@
       <posY>346</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -360,7 +360,7 @@
       <posY>375</posY>
       <width>780</width>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -385,7 +385,7 @@
       <posY>435</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -398,7 +398,7 @@
       <posY>463</posY>
       <font>font12</font>
       <width>780</width>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -411,7 +411,7 @@
       <posY>511</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -424,7 +424,7 @@
       <posY>540</posY>
       <width>780</width>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -437,7 +437,7 @@
       <posY>588</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -474,7 +474,7 @@
       <posY>676</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -499,7 +499,7 @@
       <posY>676</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -524,7 +524,7 @@
       <posY>753</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -549,7 +549,7 @@
       <posY>753</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
@@ -574,7 +574,7 @@
       <posY>829</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+control.hasfocus(7)</visible>
       <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>

@@ -19,7 +19,6 @@
       <colordiffuse>90ffffff</colordiffuse>
       <visible>string.equals(#skin.background,Standard)</visible>
     </control>
-    <import>BasicHomeBackgrounds.xml</import>
     <control>
       <id>1</id>
       <description>Background FanArt Image</description>
@@ -42,7 +41,7 @@
       <width>925</width>
       <font>font11</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#SettingLastUpdate</label>
     </control>
     <control>
@@ -76,7 +75,7 @@
       <posY>182</posY>
       <label>#EpisodePreviewLabel</label>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <!-- SeriesList & Controls-->
     <control>
@@ -268,7 +267,7 @@
       <width>480</width>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#EpisodesPreviewLabel1</label>
       <wrapString> ~ </wrapString>
       <visible></visible>
@@ -282,7 +281,7 @@
       <width>480</width>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#EpisodesPreviewLabel2</label>
       <wrapString> ~ </wrapString>
       <visible></visible>
@@ -296,7 +295,7 @@
       <width>480</width>
       <align>left</align>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#EpisodesPreviewLabel3</label>
       <wrapString> ~ </wrapString>
       <visible></visible>

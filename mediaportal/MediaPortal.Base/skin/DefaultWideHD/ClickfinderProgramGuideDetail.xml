@@ -40,7 +40,7 @@
       <width>925</width>
       <font>font11</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#SettingLastUpdate</label>
     </control>
     <control>
@@ -112,7 +112,7 @@
       <label>#ClickfinderPG.Translation.TimeLabel</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Detail time</description>
@@ -123,7 +123,7 @@
       <width>320</width>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#DetailTime</label>
       <wrapString>~</wrapString>
     </control>
@@ -137,7 +137,7 @@
       <label>#ClickfinderPG.Translation.DurationLabel</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Detail Duration</description>
@@ -148,7 +148,7 @@
       <width>168</width>
       <align>right</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#DetailDuration</label>
       <wrapString>~</wrapString>
     </control>
@@ -162,7 +162,7 @@
       <label>#ClickfinderPG.Translation.ChannelLabel</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>ListItem Kanal</description>
@@ -173,7 +173,7 @@
       <width>421</width>
       <align>right</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#DetailChannel</label>
       <wrapString>~</wrapString>
     </control>
@@ -200,7 +200,7 @@
       <width>1180</width>
       <align>left</align>
       <font>Menutitle</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#DetailTitle</label>
       <wrapString>~</wrapString>
     </control>
@@ -213,7 +213,7 @@
       <width>1180</width>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#DetailorgTitle</label>
       <wrapString>~</wrapString>
     </control>
@@ -238,7 +238,7 @@
       <label>#ClickfinderPG.Translation.GenreLabel</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>ListItem Genre</description>
@@ -250,7 +250,7 @@
       <label>#DetailGenre</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <wrapString>~</wrapString>
     </control>
     <control>
@@ -263,7 +263,7 @@
       <label>#ClickfinderPG.Translation.YearLabel</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Detail Year/Countryr</description>
@@ -275,7 +275,7 @@
       <label>#DetailCountry #DetailYear</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <wrapString>~</wrapString>
     </control>
     <control>
@@ -288,7 +288,7 @@
       <label>#ClickfinderPG.Translation.RegieLabel</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Detail Regie</description>
@@ -300,7 +300,7 @@
       <label>#DetailRegie</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <wrapString>~</wrapString>
     </control>
     <control>
@@ -313,7 +313,7 @@
       <label>#ClickfinderPG.Translation.ActorsLabel</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Detail Actors</description>
@@ -325,7 +325,7 @@
       <label>#DetailActors</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <wrapString>~</wrapString>
     </control>
     <control>
@@ -338,7 +338,7 @@
       <label>#ClickfinderPG.Translation.Critic</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Detail Kurzkritik</description>
@@ -350,7 +350,7 @@
       <label>#DetailKritik</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <wrapString>~</wrapString>
     </control>
     <control>
@@ -363,7 +363,7 @@
       <height>216</height>
       <label>#DetailDescription</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Separator</description>
@@ -386,7 +386,7 @@
       <label>#ClickfinderPG.Translation.FunLabel</label>
       <font>font10</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>FunStars</description>
@@ -418,7 +418,7 @@
       <label>#ClickfinderPG.Translation.ActionLabel</label>
       <font>font10</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>ActionStars</description>
@@ -450,7 +450,7 @@
       <label>#ClickfinderPG.Translation.EmotionsLabel</label>
       <font>font10</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>GefühlStars</description>
@@ -482,7 +482,7 @@
       <label>#ClickfinderPG.Translation.EroticLabel</label>
       <font>font10</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>ErotikStars</description>
@@ -514,7 +514,7 @@
       <label>#ClickfinderPG.Translation.SuspenseLabel</label>
       <font>font10</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>SpannungStars</description>
@@ -546,7 +546,7 @@
       <label>#ClickfinderPG.Translation.LevelLabel</label>
       <font>font10</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>AnspruchStars</description>
@@ -578,7 +578,7 @@
       <label>Abstimmung</label>
       <font>font10</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Detail RatingStars</description>

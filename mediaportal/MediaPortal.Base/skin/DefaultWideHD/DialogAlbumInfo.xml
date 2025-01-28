@@ -3,7 +3,7 @@
 <window>
   <id>2001</id>
   <defaultcontrol>5</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <define>#selecteditem:</define>
   <define>#useSelectedFanart:Yes</define>
   <controls>
@@ -13,6 +13,7 @@
       <id>0</id>
       <width>1920</width>
       <height>1080</height>
+      <texture>BH Music.jpg</texture>
     </control>
     <import>common.music.fanart.xml</import>
     <import>common.window.xml</import>
@@ -27,18 +28,7 @@
       <height>1080</height>
       <texture>general_overlay.png</texture>
     </control>
-    <control>
-      <description>Overlay artist info</description>
-      <id>0</id>
-      <type>image</type>
-      <posX>397</posX>
-      <posY>234</posY>
-      <width>1080</width>
-      <height>697</height>
-      <texture mask="cdthumbmask.png">black.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
-    </control>
-    <control Style="NoShadow">
+    <!--control Style="NoShadow">
       <description>Album value</description>
       <type>fadelabel</type>
       <id>0</id>
@@ -48,8 +38,8 @@
       <align>center</align>
       <label>#AlbumInfo.Title</label>
       <font>Menutitle</font>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
+      <textcolor>ff00bfff</textcolor>
+    </control-->
     <control Style="NoShadow">
       <description>Artist</description>
       <type>label</type>
@@ -57,9 +47,9 @@
       <posX>427</posX>
       <posY>270</posY>
       <label>171</label>
-      <font>font13</font>
+      <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Date of Release</description>
@@ -68,9 +58,9 @@
       <posX>427</posX>
       <posY>307</posY>
       <label>201</label>
-      <font>font13</font>
+      <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Rating</description>
@@ -79,9 +69,9 @@
       <posX>427</posX>
       <posY>345</posY>
       <label>204</label>
-      <font>font13</font>
+      <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Genre</description>
@@ -90,9 +80,9 @@
       <posX>427</posX>
       <posY>382</posY>
       <label>174</label>
-      <font>font13</font>
+      <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Tones</description>
@@ -101,9 +91,9 @@
       <posX>427</posX>
       <posY>420</posY>
       <label>175</label>
-      <font>font13</font>
+      <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Styles</description>
@@ -112,9 +102,9 @@
       <posX>427</posX>
       <posY>457</posY>
       <label>176</label>
-      <font>font13</font>
+      <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Artist value</description>
@@ -123,8 +113,8 @@
       <posX>727</posX>
       <posY>270</posY>
       <label>#AlbumInfo.Artist</label>
-      <font>font13</font>
-      <textcolor>ivory</textcolor>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Date of Release value</description>
@@ -133,8 +123,8 @@
       <posX>727</posX>
       <posY>307</posY>
       <label>#AlbumInfo.Year</label>
-      <font>font13</font>
-      <textcolor>ivory</textcolor>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Rating value</description>
@@ -143,8 +133,8 @@
       <posX>727</posX>
       <posY>345</posY>
       <label>#AlbumInfo.Rating</label>
-      <font>font13</font>
-      <textcolor>ivory</textcolor>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Genre value</description>
@@ -153,8 +143,8 @@
       <posX>727</posX>
       <posY>382</posY>
       <label>#AlbumInfo.Genre</label>
-      <font>font13</font>
-      <textcolor>ivory</textcolor>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Tones value</description>
@@ -164,8 +154,8 @@
       <posY>420</posY>
       <width>720</width>
       <label>#AlbumInfo.Tones</label>
-      <font>font13</font>
-      <textcolor>ivory</textcolor>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Styles value</description>
@@ -175,8 +165,8 @@
       <posY>457</posY>
       <width>720</width>
       <label>#AlbumInfo.Styles</label>
-      <font>font13</font>
-      <textcolor>ivory</textcolor>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>
     </control>
     <control Style="NoShadow">
       <description>textarea</description>
@@ -190,7 +180,7 @@
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
-      <font>font12</font>
+      <font>font10</font>
       <spinPosX>1320</spinPosX>
       <spinPosY>885</spinPosY>
     </control>
@@ -216,7 +206,7 @@
       <height>360</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <texture mask="picturethumbmask.png">#AlbumInfo.Thumb</texture>
+      <texture mask="musicfanart_mask.png">#AlbumInfo.Thumb</texture>
       <zoom>yes</zoom>
       <colorkey>FFFFFFFF</colorkey>
     </control>
@@ -242,7 +232,7 @@
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
-      <font>font13</font>
+      <font>font10</font>
       <spinPosX>1320</spinPosX>
       <spinPosY>885</spinPosY>
       <label>#AlbumInfo.Review</label>
@@ -260,7 +250,7 @@
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
-      <font>font13</font>
+      <font>font10</font>
       <spinPosX>1320</spinPosX>
       <spinPosY>885</spinPosY>
       <label>#AlbumInfo.Tracks</label>
@@ -289,7 +279,7 @@
       <posY>330</posY>
       <width>300</width>
       <label>184</label>
-      <font>font13</font>
+      <font>Label</font>
       <onleft>4</onleft>
       <onright>4</onright>
       <onup>5</onup>

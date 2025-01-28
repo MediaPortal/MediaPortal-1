@@ -179,7 +179,7 @@
       <description>label Menu</description>
       <type>label</type>
       <id>1</id>
-      <posX>815</posX> 820
+      <posX>820</posX>
       <posY>1030</posY>
       <label>924</label>
       <font>font10</font>
@@ -191,7 +191,7 @@
       <description>label Subtitles</description>
       <type>label</type>
       <id>1</id>
-      <posX>875</posX> 880
+      <posX>880</posX>
       <posY>1030</posY>
       <label>287</label>
       <font>font10</font>
@@ -215,7 +215,7 @@
       <description>label Video Menu</description>
       <type>label</type>
       <id>1</id>
-      <posX>998</posX> 1000
+      <posX>1000</posX>
       <posY>1030</posY>
       <label>291</label>
       <font>font10</font>
@@ -227,7 +227,7 @@
       <description>label Audio Menu</description>
       <type>label</type>
       <id>1</id>
-      <posX>1055</posX> 1060
+      <posX>1060</posX>
       <posY>1030</posY>
       <label>292</label>
       <font>font10</font>
@@ -336,14 +336,12 @@
       <description>Sub Titles List Control</description>
       <type>listcontrol</type>
       <id>802</id>
-      <posX>1180</posX>
-      <width>448</width>
-      <posY>880</posY> 863
-      <width>448</width>
-      <height>180</height> 180
-      <textureHeight>40</textureHeight>
+      <posX>1150</posX>
+      <posY>875</posY>
+      <width>330</width>
+      <height>220</height>
+      <textureHeight>35</textureHeight>
       <textXOff>-40</textXOff>
-      <textYOff>1</textYOff>
       <font>font10</font>
       <onleft>802</onleft>
       <onright>802</onright>
@@ -366,9 +364,9 @@
       <posX>1130</posX>
       <posY>875</posY>
       <height>170</height>
-      <width>1</width>
-      <texture>verticalbar2.png</texture> verticalbar.png
-      <visible>control.isvisible(802)|control.isvisible(501)</visible>
+      <width>2</width>
+      <texture>verticalbar.png</texture>
+      <visible>control.isvisible(802)</visible>
     </control>
     <control>
       <description>A/v Delay label</description>
@@ -402,15 +400,12 @@
       <description>Audio Stream List Control</description>
       <type>listcontrol</type>
       <id>501</id>
-      <posX>1180</posX>
+      <posX>1273</posX>
       <width>448</width>
-      <posY>880</posY> 863
+      <posY>863</posY>
       <width>448</width>
-      <height>180</height> 180
-      <textureHeight>40</textureHeight>
-      <textXOff>-40</textXOff>
-      <textYOff>1</textYOff>
-      <font>font10</font>
+      <height>180</height>
+      <textureHeight>49</textureHeight>
       <onleft>500</onleft>
       <onright>500</onright>
       <onup>501</onup>
