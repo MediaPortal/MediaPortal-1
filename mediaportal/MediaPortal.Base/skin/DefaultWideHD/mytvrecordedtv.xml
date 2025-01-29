@@ -36,13 +36,28 @@
       <texture>general_overlay.png</texture>
     </control>
     <control>
-      <id>500</id>
+      <description>Recordings LCD image</description>
       <type>image</type>
-      <posX>1485</posX>
-      <posY>270</posY>
-      <width>367</width>
-      <height>207</height>
-      <texture mask="musicfanart_mask.png">#selectedthumb</texture>
+      <id>0</id>
+      <posX>1432</posX>
+      <posY>259</posY>
+      <width>436</width>
+      <height>254</height>
+      <keepaspectratio>no</keepaspectratio>
+      <texture>LCD.png</texture>
+      <visible>[facadeview.list|facadeview.album]</visible>
+    </control>
+    <control>
+      <description>Recording image</description>
+      <type>image</type>
+      <id>500</id>
+      <posX>1440</posX>
+      <posY>267</posY>
+      <width>420</width>
+      <height>236</height>
+      <keepaspectratio>no</keepaspectratio>
+      <zoom>yes</zoom>
+      <texture>#selectedthumb</texture>
       <visible>[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
