@@ -94,14 +94,14 @@
           <dimColor>90ffffff</dimColor>
           <id>50</id>
           <posX>120</posX>
-          <posY>255</posY>
+          <posY>280</posY>
           <width>1800</width>
-          <height>450</height>
+          <height>650</height>
           <scrollOffset>1</scrollOffset>
           <onleft>2</onleft>
-          <onright>2</onright>
+          <onright>50</onright>
           <itemWidth>210</itemWidth>
-          <itemHeight>127</itemHeight>
+          <itemHeight>150</itemHeight>
           <textureWidth>186</textureWidth>
           <textureHeight>105</textureHeight>
           <thumbWidth>186</thumbWidth>
@@ -109,7 +109,7 @@
           <thumbPosX>0</thumbPosX>
           <thumbPosY>0</thumbPosY>
           <itemWidthBig>337</itemWidthBig>
-          <itemHeightBig>195</itemHeightBig>
+          <itemHeightBig>215</itemHeightBig>
           <thumbWidthBig>300</thumbWidthBig>
           <thumbHeightBig>169</thumbHeightBig>
           <textureWidthBig>300</textureWidthBig>
