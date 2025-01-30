@@ -5,6 +5,7 @@
   <defaultcontrol>50</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#watchedpercent:cint(#watchedpercent)</define>
+  <define property="true" evaluateNow="true">#recordings:#(L(604))</define>
   <controls>
     <control>
       <description>BG</description>
@@ -59,6 +60,36 @@
       <zoom>yes</zoom>
       <texture>#selectedthumb</texture>
       <visible>[facadeview.list|facadeview.album]</visible>
+    </control>
+    <control>
+      <description>Itemcount CurrentModule</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1869</posX>
+      <posY>16</posY>
+      <label>#(switch(
+      and(eq(#currentmodule,L(102012)),eq(#itemcount,'')),
+        '',
+      eq(#currentmodule,L(102012)),
+        string.formatcount(
+          #itemcount,'{0} #recordings|{0} #recordings|{0} #recordings'),
+      and(eq(#selectedindex,''),eq(#itemcount,'')),
+        '',
+      and(eq(#selectedindex,'0'),eq(#itemcount,'')),
+        '',
+      or(eq(#selectedindex,''),eq(#selectedindex,'0')),
+        string.formatcount(
+          #itemcount,'{0} #recordings|{0} #recordings|{0} #recordings'),
+      or(eq(#itemcount,''),eq(#itemcount,'0')),
+        'Item #selectedindex',
+      eq(1,1),
+        '#selectedindex/#itemcount #recordings'))</label>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance></shadowDistance>
+      <shadowColor></shadowColor>
     </control>
     <control>
       <type>actiongroup</type>
