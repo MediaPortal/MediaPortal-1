@@ -192,7 +192,7 @@
       <height>1</height>
       <texture>hbar1white.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
-      <visible>control.hasthumb(500)</visible>
+      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
       <type>image</type>
@@ -204,7 +204,7 @@
       <centered>yes</centered>
       <zoom>no</zoom>
       <texture>#TV.RecordedTV.thumb</texture>
-      <visible>control.hasthumb(500)</visible>
+      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
       <description>channel</description>
@@ -216,7 +216,7 @@
       <textcolor>ff00bfff</textcolor>
       <label>#TV.RecordedTV.Channel  |  #TV.RecordedTV.Time  |  #TV.RecordedTV.Genre</label>
       <font>font12</font>
-      <visible>control.hasthumb(500)</visible>
+      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
       <description>Program Title</description>
@@ -229,7 +229,7 @@
       <align>left</align>
       <font>font14</font>
       <textcolor>lightgray</textcolor>
-      <visible>control.hasthumb(500)</visible>
+      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
       <description>Current program Genre</description>
@@ -241,7 +241,7 @@
       <label>#TV.RecordedTV.Genre</label>
       <font>font10</font>
       <textcolor>ff00bfff</textcolor>
-      <visible>!string.equals(#TV.RecordedTV.Genre,-)+control.hasthumb(500)</visible>
+      <visible>!string.equals(#TV.RecordedTV.Genre,-)+control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
       <description>Description1</description>
@@ -254,7 +254,7 @@
       <label>#TV.RecordedTV.Description</label>
       <font>font10</font>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>control.hasthumb(500)</visible>
+      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <import>common.facade.recordings.xml</import>
     <control>
@@ -268,7 +268,7 @@
       <font>font10</font>
       <align>left</align>
       <textcolor>ff00bfff</textcolor>
-      <visible>[facadeview.list|facadeview.album]+!string.equals(#watchedcount, -1)</visible>
+      <visible>[facadeview.list|facadeview.album]+!string.equals(#watchedcount, -1)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
       <description>No recordings available</description>
