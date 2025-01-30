@@ -125,10 +125,10 @@
       <colordiffuse>90ffffff</colordiffuse>
     </control>
     <!-- VIEWS -->
+    <import>movingpictures.facade.xml</import>
+    <import>movingpictures.details.xml</import>
     <import>movingpictures.hiddenmenu.xml</import>
     <import>movingpictures.listview.xml</import>
-    <import>movingpictures.details.xml</import>
-    <import>movingpictures.facade.xml</import>
     <import>movingpictures.mediainfo.xml</import>
     <!-- Top Bar Controls -->
     <control>
@@ -140,8 +140,8 @@
     <align>right</align>
     <font>font11</font>
     <label>#MovingPictures.CurrentNode.name: #MovingPictures.general.filteredmoviecount #MovingPictures.Translation.Movies.Label</label>
-    <textcolor>fff5deb3</textcolor>
-    <visible>[Control.IsVisible(50)|Control.IsVisible(51)]+!Control.IsVisible(17)+!control.isvisible(51)</visible>
+    <textcolor>lightgray</textcolor>
+    <visible>[Control.IsVisible(50)|Control.IsVisible(51)]+!Control.IsVisible(17)</visible>
   </control>
     <control>
       <description>Parental Controls Lock Indicator</description>
