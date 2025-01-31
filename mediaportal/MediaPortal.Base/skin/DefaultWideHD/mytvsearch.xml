@@ -149,11 +149,11 @@
       <type>fadelabel</type>
       <id>13</id>
       <posX>240</posX>
-      <posY>660</posY>
+      <posY>657</posY>
       <width>1590</width>
       <label>#selecteditem - #TV.Search.Channel</label>
-      <font>font14</font>
-      <textcolor>lightgray</textcolor>
+      <font>LabelBold</font>
+      <textcolor>ff00bfff</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
@@ -165,7 +165,7 @@
       <width>1590</width>
       <label>#TV.Search.Time</label>
       <font>font11</font>
-      <textcolor>ff00bfff</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
@@ -173,10 +173,10 @@
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>240</posX>
-      <posY>757</posY>
+      <posY>762</posY>
       <width>1590</width>
-      <height>157</height>
-      <font>font11</font>
+      <height>145</height>
+      <font>font10</font>
       <label>#TV.Search.Description</label>
       <textcolor>lightgray</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>

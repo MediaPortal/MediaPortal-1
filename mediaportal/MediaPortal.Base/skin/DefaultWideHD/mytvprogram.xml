@@ -182,54 +182,54 @@
       <id>16</id>
       <type>fadelabel</type>
       <posX>240</posX>
-      <posY>660</posY>
+      <posY>705</posY>
       <width>450</width>
-      <textcolor>ff00bfff</textcolor>
-      <font>font12</font>
+      <textcolor>lightgray</textcolor>
+      <font>font11</font>
     </control>
     <control>
       <description>Current program time</description>
       <id>14</id>
       <type>label</type>
       <posX>690</posX>
-      <posY>660</posY>
+      <posY>705</posY>
       <width>450</width>
       <align>left</align>
-      <font>font12</font>
-      <textcolor>ff00bfff</textcolor>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Current program genre</description>
       <type>label</type>
       <id>17</id>
       <posX>1140</posX>
-      <posY>660</posY>
+      <posY>705</posY>
       <width>750</width>
       <align>left</align>
-      <font>font12</font>
-      <textcolor>ff00bfff</textcolor>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Program Title</description>
       <id>13</id>
       <type>fadelabel</type>
       <posX>240</posX>
-      <posY>697</posY>
+      <posY>657</posY>
       <width>1590</width>
       <align>left</align>
-      <font>font14</font>
-      <textcolor>lightgray</textcolor>
+      <font>LabelBold</font>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>240</posX>
-      <posY>757</posY>
+      <posY>762</posY>
       <width>1590</width>
-      <height>157</height>
+      <height>145</height>
       <label>#TV.Scheduled.Description</label>
-      <font>font11</font>
+      <font>font10</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
   </controls>

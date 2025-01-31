@@ -211,11 +211,11 @@
       <id>0</id>
       <type>fadelabel</type>
       <posX>240</posX>
-      <posY>660</posY>
+      <posY>705</posY>
       <width>1590</width>
-      <textcolor>ff00bfff</textcolor>
-      <label>#TV.RecordedTV.Channel  |  #TV.RecordedTV.Time  |  #TV.RecordedTV.Genre</label>
-      <font>font12</font>
+      <textcolor>Lightgray</textcolor>
+      <label>#TV.RecordedTV.Channel #scroll.wrap #TV.RecordedTV.Time #scroll.wrap #TV.RecordedTV.Genre</label>
+      <font>font11</font>
       <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
@@ -223,12 +223,12 @@
       <id>14</id>
       <type>fadelabel</type>
       <posX>240</posX>
-      <posY>697</posY>
+      <posY>657</posY>
       <width>1590</width>
       <label>#TV.RecordedTV.Title</label>
       <align>left</align>
-      <font>font14</font>
-      <textcolor>lightgray</textcolor>
+      <font>LabelBold</font>
+      <textcolor>ff00bfff</textcolor>
       <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
@@ -248,9 +248,9 @@
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>240</posX>
-      <posY>747</posY>
+      <posY>762</posY>
       <width>1590</width>
-      <height>137</height>
+      <height>145</height>
       <label>#TV.RecordedTV.Description</label>
       <font>font10</font>
       <textcolor>FFFFFFFF</textcolor>

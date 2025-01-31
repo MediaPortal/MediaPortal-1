@@ -159,23 +159,23 @@
       <id>0</id>
       <type>fadelabel</type>
       <posX>240</posX>
-      <posY>660</posY>
+      <posY>705</posY>
       <width>1590</width>
-      <textcolor>ff00bfff</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#TV.Scheduled.Channel #scroll.wrap #TV.Scheduled.Time #scroll.wrap #TV.Scheduled.Genre</label>
-      <font>font12</font>
+      <font>font11</font>
     </control>
     <control>
       <description>Program Title</description>
       <id>14</id>
       <type>fadelabel</type>
       <posX>240</posX>
-      <posY>697</posY>
+      <posY>657</posY>
       <width>1590</width>
       <label>#TV.Scheduled.Title</label>
       <align>left</align>
-      <font>font14</font>
-      <textcolor>lightgray</textcolor>
+      <font>LabelBold</font>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Current program Genre</description>
@@ -194,11 +194,11 @@
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>240</posX>
-      <posY>757</posY>
+      <posY>762</posY>
       <width>1590</width>
-      <height>157</height>
+      <height>145</height>
       <label>#TV.Scheduled.Description</label>
-      <font>font11</font>
+      <font>font10</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
   </controls>
