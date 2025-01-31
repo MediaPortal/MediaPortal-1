@@ -59,8 +59,8 @@
           <downloadColor>ff666666</downloadColor>
           <downloadColor2>ff80ff80</downloadColor2>
           <dimColor>ffffffff</dimColor>
-          <onleft>4</onleft>
-          <onright>4</onright>
+          <onleft>2</onleft>
+          <onright>50</onright>
         </control>
         <control>
           <visible>control.isvisible(50)</visible>
