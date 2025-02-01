@@ -177,7 +177,72 @@
       <zoom>no</zoom>
       <texture>#selectedthumb</texture>
     </control>
+    
+    
     <control>
+    <description>Current program data</description>
+    <type>group</type>
+    <layout>StackLayout(7, Horizontal, true)</layout>
+    <posX>240</posX>
+    <posY>705</posY>
+    <width>1600</width>
+    <align>left</align>
+    <control>
+      <type>fadelabel</type>
+      <description>channel</description>
+      <id>16</id>
+      <width>10</width>
+      <maxWidth>450</maxWidth>
+      <textcolor>lightgray</textcolor>
+      <align>left</align>
+      <font>font11</font>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dot</description>
+      <id>0</id>
+      <width>10</width>
+      <maxWidth>20</maxWidth>
+      <label> #scroll.wrap </label>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Current program time</description>
+      <id>14</id>
+      <width>10</width>
+      <maxWidth>450</maxWidth>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dot</description>
+      <id>0</id>
+      <width>10</width>
+      <maxWidth>20</maxWidth>
+      <label> #scroll.wrap </label>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Current program genre</description>
+      <id>17</id>
+      <width>10</width>
+      <maxWidth>750</maxWidth>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+    </control>
+    </control>
+    
+    
+    <!--control>
       <description>channel</description>
       <id>16</id>
       <type>fadelabel</type>
@@ -208,7 +273,7 @@
       <align>left</align>
       <font>font11</font>
       <textcolor>lightgray</textcolor>
-    </control>
+    </control-->
     <control>
       <description>Program Title</description>
       <id>13</id>
@@ -230,7 +295,7 @@
       <height>145</height>
       <label>#TV.Scheduled.Description</label>
       <font>font10</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
   </controls>
 </window>
