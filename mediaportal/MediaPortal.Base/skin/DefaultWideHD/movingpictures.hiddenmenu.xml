@@ -3,6 +3,16 @@
 <!--            :: HIDDEN MENU ::            -->
 <window>
   <controls>
+  <control>
+      <type>image</type>
+      <id>1</id>
+	  <posX>0</posX>
+      <posY>70</posY>
+      <width>140</width>
+      <height>984</height>
+      <texture>Action_nofocus.png</texture>
+	  <visible>control.hasfocus(50)+!control.hasfocus(51)</visible>
+    </control>
     <control>
       <type>actiongroup</type>
       <description>action menu</description>
@@ -13,7 +23,7 @@
       <buttonwidth>159</buttonwidth>
       <buttonheight>1080</buttonheight>
       <textureFocus>-</textureFocus>
-      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <textureNoFocus>-</textureNoFocus>
       <dimColor>00ffffff</dimColor>
       <control>
         <type>image</type>
