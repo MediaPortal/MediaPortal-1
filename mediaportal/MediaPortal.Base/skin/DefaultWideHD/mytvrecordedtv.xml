@@ -46,16 +46,17 @@
       <height>254</height>
       <keepaspectratio>no</keepaspectratio>
       <texture>LCD.png</texture>
+	  <colordiffuse>ffffffff</colordiffuse>
       <visible>[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
       <description>Recording image</description>
       <type>image</type>
       <id>500</id>
-      <posX>1440</posX>
-      <posY>267</posY>
-      <width>420</width>
-      <height>236</height>
+      <posX>1443</posX> 1440
+      <posY>270</posY> 267
+      <width>414</width> 420
+      <height>232</height> 236
       <keepaspectratio>no</keepaspectratio>
       <zoom>yes</zoom>
       <texture>#selectedthumb</texture>

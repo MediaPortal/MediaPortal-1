@@ -3,7 +3,7 @@
 <window>
   <id>1</id>
   <defaultcontrol>8</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
+  <allowoverlay>no</allowoverlay>
   <define>#header.label:#(L(605))  #TV.View.channel</define>
   <controls>
     <control>
