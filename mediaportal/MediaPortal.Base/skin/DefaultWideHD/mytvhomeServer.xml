@@ -215,20 +215,20 @@
       <description>LCD image</description>
       <type>image</type>
       <id>0</id>
-      <posX>600</posX>
-      <posY>120</posY>
-      <width>720</width>
-      <height>418</height>
-      <texture>LCD_TV.png</texture> 
+      <posX>599</posX>
+      <posY>118</posY>
+      <width>718</width>
+      <height>422</height>
+      <texture>LCD.png</texture>
     </control>
     <control>
       <description>video window</description>
       <type>videowindow</type>
       <id>99</id>
-      <posX>634</posX> 
-      <posY>157</posY>
-      <width>650</width>
-      <height>345</height>
+      <posX>616</posX>
+      <posY>136</posY>
+      <width>687</width>
+      <height>386</height>
       <onleft>8</onleft>
       <onright>9</onright>
       <action>18</action>
@@ -238,10 +238,10 @@
       <description>TV Off image</description>
       <type>image</type>
       <id>0</id>
-      <posX>634</posX> 633
-      <posY>157</posY>
-      <width>650</width> 651
-      <height>345</height> 346
+      <posX>616</posX>
+      <posY>136</posY>
+      <width>687</width>
+      <height>386</height>
       <texture>tv-off.gif</texture>
       <visible>!player.hasvideo</visible>
       <colordiffuse>90ffffff</colordiffuse>
