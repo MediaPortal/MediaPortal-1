@@ -77,5 +77,5 @@ Come giocare
 - Mettere in pausa o continuare il gioco - tasto indietro del telecomando o Esc&#xA;&#xA;Il blocco successivo viene visualizzato come suggerimento nella grafica della freccia in alto a destra del campo di gioco.&#xA;Anche il numero del livello viene visualizzato nel colore corrispondente.&#xA;&#xA;&#xA;Smirnuff (autore), catavolt e High_Five vi augurano buon divertimento con Tetris ;)</string>
 <string Field="About">Che cos'è Tetris?</string>
 <string Field="HighFive">Parti della grafica e delle animazioni fornite da High_Five :)</string>
-<string Field=“Highscore”>*** Congratulazioni!  *** Hai raggiunto un nuovo record!</string>
+<string Field="Highscore">*** Congratulazioni!  *** Hai raggiunto un nuovo record!</string>
 </strings>

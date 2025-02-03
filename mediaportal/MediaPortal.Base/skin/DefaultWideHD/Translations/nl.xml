@@ -75,5 +75,5 @@ Spelen
 - Pauzeer of ga verder met het spel - Terug afstandsbediening knop, of Esc&#xA;&#xA;Het volgende blok wordt weergegeven als een hint in de pijl grafiek rechtsboven in het speelveld.&#xA;Het level nummer wordt daar ook weergegeven in de corresponderende level kleur.&#xA;&#xA;Smirnuff (auteur), catavolt en High_Five wensen je veel plezier met Tetris ;)</string>
 <string Field="About">Wat is Tetris?</string>
   <string Field="HighFive">Delen van de afbeeldingen en animaties zijn geleverd door High_Five :)</string>
-  <string Field=“Highscore”>*** Gefeliciteerd!  *** Je hebt een nieuwe highscore behaald!</string>
+  <string Field="Highscore">*** Gefeliciteerd!  *** Je hebt een nieuwe highscore behaald!</string>
 </strings>

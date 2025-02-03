@@ -78,5 +78,5 @@ Cómo jugar
 - Pausa o continúa el juego - botón Atrás del mando a distancia, o Esc&#xA;&#xA;El siguiente bloque se muestra como pista en el gráfico de flecha de la parte superior derecha del campo de juego.&#xA;El número de nivel también se muestra allí en el color del nivel correspondiente.&#xA;&#xA;Smirnuff (autor), catavolt y High_Five te desean mucha diversión con el Tetris ;)</string>
 <string Field="About">¿Qué es Tetris?</string>
   <string Field="HighFive">Parte de los gráficos y animaciones son obra de High_Five :)</string>
-  <string Field="Highscore>*** ¡Enhorabuena!  *** ¡Has conseguido un nuevo récord!</string>
+  <string Field="Highscore">*** ¡Enhorabuena!  *** ¡Has conseguido un nuevo récord!</string>
 </strings>
