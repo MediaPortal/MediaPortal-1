@@ -145,7 +145,7 @@
         <width>600</width><textureFocus>setting_button_medium.png</textureFocus>
         <label>9145</label>
         <onleft>99910</onleft>
-        <onup>127</onupt>
+        <onup>127</onup>
       </control>
       <control>
         <description>Disable Repeat</description>
