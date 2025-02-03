@@ -40,10 +40,10 @@
       <description>Recordings LCD image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1432</posX>
-      <posY>259</posY>
-      <width>436</width>
-      <height>254</height>
+      <posX>1427</posX>
+      <posY>257</posY>
+      <width>445</width>
+      <height>259</height>
       <keepaspectratio>no</keepaspectratio>
       <texture>LCD.png</texture>
 	  <colordiffuse>ffffffff</colordiffuse>
