@@ -71,7 +71,7 @@
       <posY>157</posY>
       <width>45</width>
       <height>45</height>
-      <textureFocus>tb_exit3.png</textureFocus>
+      <textureFocus>tb_exit_dialogue.png</textureFocus>
       <textureNoFocus>tb_exitNF.png</textureNoFocus>
       <label>-</label>
       <onleft>3</onleft>
@@ -91,8 +91,9 @@
       <posY>225</posY>
       <width>1020</width>
       <height>630</height>
-      <onleft>22103</onleft>
-      <onright>22101</onright>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <onup>2</onup>
       <textureFocus>listfocus_menu.png</textureFocus>
       <textXOff>20</textXOff>
       <scrollbarXOff>10</scrollbarXOff>

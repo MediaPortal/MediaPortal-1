@@ -23,7 +23,18 @@
       <height>1080</height>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
-    <import>common.window.xml</import>
+    <control>
+      <description>Title background image all screens except all games</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>379</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
     <control>
       <description>General Overlay</description>
@@ -40,11 +51,11 @@
       <type>label</type>
       <id>0</id>
       <posX>45</posX>
-      <posY>15</posY>
+      <posY>54</posY>
       <width>1299</width>
       <font>Label</font>
-      <textcolor>ff00bfff</textcolor>
-      <label>#Trakt.Credit.Type: #Trakt.Show.Title</label>
+      <textcolor>lightgray</textcolor>
+      <label>Trakt #scroll.wrap #Trakt.Credit.Type: #Trakt.Show.Title</label>
       <align>left</align>
     </control>
     <import>Trakt.Common.Facade.xml</import>

@@ -81,7 +81,7 @@
       <textYOff>12</textYOff>
       <width>45</width>
       <height>45</height>
-      <textureFocus>tb_exit3.png</textureFocus>
+      <textureFocus>tb_exit_dialogue.png</textureFocus>
       <textureNoFocus>tb_exitNF.png</textureNoFocus>
       <label>-</label>
       <onleft>13</onleft>
@@ -151,35 +151,35 @@
       <id>100</id>
       <posX>732</posX>
       <posY>555</posY>
-      <texture>stargood.png</texture>
+      <texture>star.png</texture>
     </control>
     <control>
       <type>image</type>
       <id>101</id>
       <posX>840</posX>
       <posY>555</posY>
-      <texture>stargood.png</texture>
+      <texture>star.png</texture>
     </control>
     <control>
       <type>image</type>
       <id>102</id>
       <posX>946</posX>
       <posY>555</posY>
-      <texture>stargood.png</texture>
+      <texture>star.png</texture>
     </control>
     <control>
       <type>image</type>
       <id>103</id>
       <posX>1053</posX>
       <posY>555</posY>
-      <texture>stargood.png</texture>
+      <texture>star.png</texture>
     </control>
     <control>
       <type>image</type>
       <id>104</id>
       <posX>1159</posX>
       <posY>555</posY>
-      <texture>stargood.png</texture>
+      <texture>star.png</texture>
     </control>
   </controls>
 </window>

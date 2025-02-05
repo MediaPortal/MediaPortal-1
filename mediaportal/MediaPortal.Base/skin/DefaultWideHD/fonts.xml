@@ -30,6 +30,14 @@
   <end>1536</end>
 </font>
 <font>
+  <name>font11bold</name>
+  <filename>Open Sans Light</filename>
+  <height>11</height>
+  <start>0</start>
+  <end>1536</end>
+  <bold>yes</bold>
+</font>
+<font>
   <name>CSG</name>
   <filename>Open Sans Light</filename>
   <height>11</height>
