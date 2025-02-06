@@ -57,8 +57,8 @@
       <id>1</id>
       <width>34</width>
       <height>30</height>
-      <posX>1093</posX>
-      <posY>312</posY>
+      <posX>1098</posX>
+      <posY>317</posY>
       <texture>#Trakt.Movie.Ratings.Icon.png</texture>
       <visible>facadeview.list+!string.equals(#Trakt.Movie.Ratings.Votes,)</visible>
     </control>

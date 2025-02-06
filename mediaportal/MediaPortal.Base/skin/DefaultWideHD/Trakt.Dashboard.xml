@@ -42,9 +42,9 @@
           <onright>98301</onright>
           <textXOff>50</textXOff>
           <PinIconXOff>55</PinIconXOff>
-          <PinIconYOff>3</PinIconYOff>
-          <PinIconWidth>40</PinIconWidth>
-          <PinIconHeight>40</PinIconHeight>
+          <PinIconYOff>4</PinIconYOff>
+          <PinIconWidth>45</PinIconWidth>
+          <PinIconHeight>45</PinIconHeight>
           <spinPosX>3626</spinPosX>
           <spinPosY>984</spinPosY>
           <scrollbarHeight>400</scrollbarHeight>

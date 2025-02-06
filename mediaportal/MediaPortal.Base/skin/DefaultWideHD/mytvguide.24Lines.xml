@@ -317,7 +317,7 @@
       <height>80</height>
       <label>#TV.Guide.Title</label>
       <font>font10</font>
-      <textcolor>fff5deb3</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <animation effect="fade" start="0" end="100" delay="4000" time="300">visible</animation>
     </control>
     <control>
@@ -330,7 +330,7 @@
       <label>#TV.Guide.Genre</label>
       <align>left</align>
       <font>font9</font>
-      <textcolor>dodgerblue</textcolor>
+      <textcolor>lightgray</textcolor>
       <animation effect="fade" start="0" end="100" delay="4000" time="300">visible</animation>
     </control>
     <control>

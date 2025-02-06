@@ -46,7 +46,7 @@
       <description>buttons</description>
       <type>group</type>
       <posX>525</posX>
-      <posY>321</posY>
+      <posY>270</posY>
       <layout>StackLayout(7, Vertical, true)</layout>
       <control>
         <type>button</type>
@@ -62,9 +62,9 @@
       <description>Scan QR or enter in URL</description>
       <id>0</id>
       <posX>525</posX>
-      <posY>395</posY>
+      <posY>370</posY>
       <width>975</width>
-	  <height>200</height>
+	    <height>200</height>
       <label>#Trakt.Settings.Account.ScanQRCode</label>
       <font>RSS</font>
       <visible>string.equals(#Trakt.Settings.Account.Authorise,true)</visible>
@@ -84,8 +84,8 @@
       <type>label</type>
       <description>User Code</description>
       <id>0</id>
-      <posX>525</posX>
-      <posY>820</posY>
+      <posX>725</posX>
+      <posY>720</posY>
       <width>892</width>
       <label>#Trakt.Settings.Account.UserCode</label>
       <font>font20</font>
@@ -97,7 +97,7 @@
       <description>Application Wait</description>
       <id>0</id>
       <posX>525</posX>
-      <posY>890</posY>
+      <posY>800</posY>
       <width>975</width>
 	  <height>200</height>
       <label>#Trakt.Translation.ApplicationAuthWait.Label</label>
