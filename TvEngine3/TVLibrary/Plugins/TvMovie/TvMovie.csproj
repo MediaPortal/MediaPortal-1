@@ -98,6 +98,7 @@
     <Compile Include="TvMovie.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TvMovieDatabase.cs" />
+    <Compile Include="TvMovieDatabaseConnection.cs" />
     <Compile Include="TvMovieSetup.cs">
       <SubType>UserControl</SubType>
     </Compile>

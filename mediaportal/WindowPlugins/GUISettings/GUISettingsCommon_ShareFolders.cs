@@ -54,6 +54,10 @@ namespace MediaPortal.GUI.Settings
     private bool _folderCreateThumbs = true; // Future use
     private bool _folderEachFolderIsMovie = false; // Future use
 
+    private bool _folderEnableWakeOnLan = false;
+    private string _folderHostDetectMethod = "Default";
+    private bool _folderDonotFolderJpgIfPin = true;
+
     private string _folderDefaultLayout = "List";
     private int _folderDefaultLayoutIndex = 0; // Currrent selected folder layout
     private string _section = string.Empty;
@@ -283,6 +287,9 @@ namespace MediaPortal.GUI.Settings
         FolderInfo(_shareFolderListItem).CreateThumbs = _folderCreateThumbs;
         FolderInfo(_shareFolderListItem).EachFolderIsMovie = _folderEachFolderIsMovie;
         FolderInfo(_shareFolderListItem).PinCode = _folderPin;
+        FolderInfo(_shareFolderListItem).EnableWakeOnLan = _folderEnableWakeOnLan;
+        FolderInfo(_shareFolderListItem).HostDetectMethod = _folderHostDetectMethod;
+        FolderInfo(_shareFolderListItem).DonotFolderJpgIfPin = _folderDonotFolderJpgIfPin;
         // Almost forgot this, needed for proper sort :)
         _shareFolderListItem.Label = _folderName;
         _shareFolderListItem.OnItemSelected += OnItemSelected;
@@ -329,6 +336,9 @@ namespace MediaPortal.GUI.Settings
         FolderInfo(_shareFolderListItem).CreateThumbs = _folderCreateThumbs;
         FolderInfo(_shareFolderListItem).EachFolderIsMovie = _folderEachFolderIsMovie;
         FolderInfo(_shareFolderListItem).DefaultLayout = SettingsSharesHelper.ProperLayoutFromDefault(_folderDefaultLayoutIndex);
+        FolderInfo(_shareFolderListItem).EnableWakeOnLan = _folderEnableWakeOnLan;
+        FolderInfo(_shareFolderListItem).HostDetectMethod = _folderHostDetectMethod;
+        FolderInfo(_shareFolderListItem).DonotFolderJpgIfPin = _folderDonotFolderJpgIfPin;
         // Add changes to a listitem
         videosShareListcontrol.SelectedListItem.AlbumInfoTag = _shareFolderListItem.AlbumInfoTag;
         videosShareListcontrol.SelectedListItem.Label = _folderName;
@@ -373,8 +383,10 @@ namespace MediaPortal.GUI.Settings
       _folderEachFolderIsMovie = FolderInfo(_shareFolderListItem).EachFolderIsMovie;
       _folderDefaultLayout = FolderInfo(_shareFolderListItem).DefaultLayout.ToString();
       _folderDefaultLayoutIndex = SettingsSharesHelper.ProperDefaultFromLayout(FolderInfo(_shareFolderListItem).DefaultLayout);
-
-    }
+      _folderEnableWakeOnLan = FolderInfo(_shareFolderListItem).EnableWakeOnLan;
+      _folderHostDetectMethod = FolderInfo(_shareFolderListItem).HostDetectMethod;
+      _folderDonotFolderJpgIfPin = FolderInfo(_shareFolderListItem).DonotFolderJpgIfPin;
+  }
 
     // Skin properties update
     private void SetProperties()
@@ -772,6 +784,13 @@ namespace MediaPortal.GUI.Settings
       //dlg.AddLocalizedString(1374); // layout
       dlg.AddLocalizedString(300059);// Pin
 
+      dlg.AddLocalizedString(300242);// Do not display folder jpg if PIN set
+      if (IsUncNetwork(_folderPath))
+      {
+        dlg.AddLocalizedString(1990); // Wake up server
+        dlg.AddLocalizedString(300243); // Host detected method
+      }
+
       if (_selectedOption != -1)
         dlg.SelectedLabel = _selectedOption;
 
@@ -795,7 +814,7 @@ namespace MediaPortal.GUI.Settings
           OnAddPath();
           break;
         case 109:
-          OnThumb();
+          OnMenuBool(ref _folderCreateThumbs);
           break;
         case 300221:
           OnMovieFolder();
@@ -805,6 +824,18 @@ namespace MediaPortal.GUI.Settings
         //  break;
         case 300059:
           OnAddPin();
+          break;
+
+        case 300242:
+          OnMenuBool(ref _folderDonotFolderJpgIfPin);
+          break;
+
+        case 1990:
+          OnMenuBool(ref _folderEnableWakeOnLan);
+          break;
+
+        case 300243:
+          OnHostDetecedMethod();
           break;
       }
     }
@@ -983,50 +1014,6 @@ namespace MediaPortal.GUI.Settings
       return false;
     }
 
-    private void OnThumb()
-    {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
-
-      if (dlg == null)
-      {
-        OnAddEditFolder();
-        return;
-      }
-
-      dlg.Reset();
-      dlg.SetHeading(GUILocalizeStrings.Get(496)); //Menu
-      int selected = 0;
-      
-      if (!_folderCreateThumbs)
-      {
-        selected = 1;
-      }
-
-      dlg.Add(GUILocalizeStrings.Get(200031)); //Yes
-      dlg.Add(GUILocalizeStrings.Get(200032)); // No
-
-      dlg.SelectedLabel = selected;
-
-      dlg.DoModal(GetID);
-
-      if (dlg.SelectedLabel < 0)
-      {
-        OnAddEditFolder();
-        return;
-      }
-
-      if (dlg.SelectedLabel == 0)
-      {
-        _folderCreateThumbs = true;
-      }
-      else
-      {
-        _folderCreateThumbs = false;
-      }
-      
-      OnAddEditFolder();
-    }
-
     private void OnMovieFolder()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -1066,6 +1053,100 @@ namespace MediaPortal.GUI.Settings
       else
       {
         _folderEachFolderIsMovie = false;
+      }
+
+      OnAddEditFolder();
+    }
+
+    private void OnHostDetecedMethod()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+
+      if (dlg == null)
+      {
+        OnAddEditFolder();
+        return;
+      }
+
+      dlg.Reset();
+      dlg.SetHeading(GUILocalizeStrings.Get(496)); //Menu
+      
+      dlg.Add("Default");
+      dlg.Add("Ping");
+      dlg.Add("Samba");
+      dlg.Add("NetUse");
+
+      switch(_folderHostDetectMethod)
+      {
+        case "Default":
+          dlg.SelectedLabel = 0;
+          break;
+
+        case "Ping":
+          dlg.SelectedLabel = 1;
+          break;
+
+        case "Samba":
+          dlg.SelectedLabel = 2;
+          break;
+
+        case "NetUse":
+          dlg.SelectedLabel = 3;
+          break;
+      }
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedLabel < 0)
+      {
+        OnAddEditFolder();
+        return;
+      }
+
+      _folderHostDetectMethod = dlg.SelectedLabelText;
+
+      OnAddEditFolder();
+    }
+
+    private void OnMenuBool(ref bool bValue)
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+
+      if (dlg == null)
+      {
+        OnAddEditFolder();
+        return;
+      }
+
+      dlg.Reset();
+      dlg.SetHeading(GUILocalizeStrings.Get(496)); //Menu
+      int selected = 0;
+
+      if (!bValue)
+      {
+        selected = 1;
+      }
+
+      dlg.Add(GUILocalizeStrings.Get(200031)); //Yes
+      dlg.Add(GUILocalizeStrings.Get(200032)); // No
+
+      dlg.SelectedLabel = selected;
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedLabel < 0)
+      {
+        OnAddEditFolder();
+        return;
+      }
+
+      if (dlg.SelectedLabel == 0)
+      {
+        bValue = true;
+      }
+      else
+      {
+        bValue = false;
       }
 
       OnAddEditFolder();
@@ -1118,6 +1199,18 @@ namespace MediaPortal.GUI.Settings
       {
         videosShareListcontrol.Add(item);
       }
+    }
+
+    private static bool IsUncNetwork(string strPath)
+    {
+      string strDetectedFolderName = string.Empty;
+      if (!Util.Utils.IsUNCNetwork(strPath))
+      {
+        // Check if letter drive is a network drive
+        strDetectedFolderName = Util.Utils.FindUNCPaths(strPath);
+      }
+
+      return Util.Utils.IsUNCNetwork(strDetectedFolderName) || Util.Utils.IsUNCNetwork(strPath);
     }
   }
 }

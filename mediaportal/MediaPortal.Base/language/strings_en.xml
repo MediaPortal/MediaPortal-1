@@ -2454,6 +2454,8 @@
     <String id="300239">MadVR</String>
     <String id="300240">A video file is playing</String>
     <String id="300241">Do you want to stop video playback?</String>
+    <String id="300242">Do not display folder jpg if PIN is set</String>
+    <String id="300243">Host detected method</String>
 	<String id="350001">Press Info/F9 for quick settings...</String>
 	<String id="350002">Movies</String>
 	<String id="350003">PlayDisc</String>
