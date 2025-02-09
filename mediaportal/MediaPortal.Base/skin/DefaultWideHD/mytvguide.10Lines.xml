@@ -201,7 +201,7 @@
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <zoom>no</zoom>
-      <texture>defaultVideoBig.png</texture>
+      <texture>defaultlogo.png</texture>
     </control>
     <control>
       <description>channel Label template</description>
