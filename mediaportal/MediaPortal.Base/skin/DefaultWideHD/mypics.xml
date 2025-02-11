@@ -169,9 +169,9 @@
       <id>500</id>
       <type>image</type>
       <posX>1410</posX>
-      <posY>300</posY>
-      <width>450</width>
-      <height>550</height>
+      <posY>260</posY>
+      <width>500</width>
+      <height>650</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <texture>#(iif(eq(#selecteditem,'..'),'','#selectedthumb'))</texture>

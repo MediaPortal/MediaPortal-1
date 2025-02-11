@@ -202,7 +202,7 @@
       <keepaspectratio>no</keepaspectratio>
       <centered>yes</centered>
       <zoom>no</zoom>
-      <texture>defaultlogo.png</texture>
+      <texture>defaultTVlogo.png</texture>
     </control>
     <control>
       <description>channel Label template</description>
