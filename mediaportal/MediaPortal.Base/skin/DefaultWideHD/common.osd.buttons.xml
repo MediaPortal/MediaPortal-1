@@ -140,7 +140,7 @@
         <onup>223</onup>
         <ondown>223</ondown>
         <animation effect="zoom" start="100,100" end="115,115" time="0">focus</animation>
-        <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+        <visible>!control.isvisible(500)+!control.isvisible(801)+plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
       </control>
       <control>
         <description>Clickfinder ProgramGuide Details</description>
@@ -159,7 +159,7 @@
         <onup>222</onup>
         <ondown>222</ondown>
         <animation effect="zoom" start="100,100" end="115,115" time="0">focus</animation>
-        <visible>plugin.isenabled(Clickfinder ProgramGuide)+string.contains(#Play.Current.File,tsbuffer)</visible>
+        <visible>!control.isvisible(500)+!control.isvisible(801)+plugin.isenabled(Clickfinder ProgramGuide)+string.contains(#Play.Current.File,tsbuffer)</visible>
       </control>
     </control>
     <!-- ************************* Labels shown when hovering menu buttons **************************** -->
@@ -336,10 +336,9 @@
       <description>Sub Titles List Control</description>
       <type>listcontrol</type>
       <id>802</id>
-      <posX>1180</posX>
-      <width>448</width>
+      <posX>1150</posX>
       <posY>880</posY> 863
-      <width>448</width>
+      <width>360</width>
       <height>180</height> 180
       <textureHeight>40</textureHeight>
       <textXOff>-40</textXOff>

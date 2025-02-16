@@ -475,13 +475,13 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>1093</posX>
-      <posY>965</posY>
+      <posY>986</posY>
       <width>50</width>
       <label>#latestMediaHandler.tvrecordings.active.count</label>
       <align>center</align>
-      <font>font10</font>
+      <font>font11bold</font>
       <textcolor>lightgray</textcolor>
-      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+      <visible>!control.isvisible(500)+!control.isvisible(801)+plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
     <control>
       <description>rec logo</description>

@@ -13,7 +13,7 @@
       <posY>867</posY>
       <height>198</height>
       <width>2200</width>
-      <texture>white.png</texture>
+      <texture>white3.png</texture>
       <colordiffuse>f200061c</colordiffuse>
     </control>
     <control>
@@ -102,10 +102,10 @@
       <width>141</width>
       <height>141</height>
       <keepaspectratio>yes</keepaspectratio>
-      <texture>defaultlogo.png</texture>
+      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'','BG_TVlogo.png'))</texture>
       <colordiffuse>ff00061c</colordiffuse>
-    </control>
-    <control>
+	</control> 
+    <!--<control>
       <description>TV Logo</description>
       <type>image</type>
       <id>1</id>
@@ -115,16 +115,16 @@
       <height>137</height>
       <texture>defaultlogo.png</texture>
       <keepaspectratio>yes</keepaspectratio>
-    </control>
+    </control>-->
     <control>
       <description>TV Logo</description>
       <type>image</type>
-      <id>10</id>
+      <id>0</id>
       <posX>54</posX>
       <posY>805</posY>
       <width>137</width>
       <height>137</height>
-      <texture>#TV.View.thumb</texture>
+      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'defaulttvlogo.png','#TV.View.thumb'))</texture>
       <keepaspectratio>yes</keepaspectratio>
     </control>
     <control>
@@ -167,9 +167,9 @@
       <description>progress bar</description>
       <type>progress</type>
       <id>20</id>
-      <posX>228</posX>
-      <posY>940</posY>
-      <width>1480</width>
+      <posX>227</posX>
+      <posY>941</posY>
+      <width>1481</width>
       <offset>0</offset>
       <height>23</height>
       <innerheight>24</innerheight>
@@ -183,7 +183,7 @@
       <description>End of progressbar</description>
       <type>label</type>
       <id>1</id>
-      <posX>1707</posX>
+      <posX>1702</posX>
       <posY>931</posY>
       <label>|</label>
       <align>left</align>
@@ -321,11 +321,11 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>225</posX>
-      <posY>1020</posY>
+      <posY>1042</posY> 
       <width>50</width>
       <label>#latestMediaHandler.tvrecordings.active.count</label>
       <align>center</align>
-      <font>font10</font>
+      <font>font9</font>
       <textcolor>lightgray</textcolor>
       <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
@@ -334,7 +334,7 @@
       <type>image</type>
       <id>1</id>
       <posX>223</posX>
-      <posY>1012</posY>
+      <posY>1013</posY>
       <width>54</width>
       <height>55</height>
       <texture>tb_recordNF_red.png</texture>

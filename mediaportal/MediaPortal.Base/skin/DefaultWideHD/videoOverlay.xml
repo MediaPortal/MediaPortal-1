@@ -56,7 +56,7 @@
     <control>
       <description>video preview window</description>
       <type>videowindow</type>
-      <id>0</id>
+      <id>99</id>
       <posX>879</posX>
       <posY>975</posY>
       <width>160</width>
@@ -220,6 +220,90 @@
         <shadowColor>ff000000</shadowColor>
       </control>
     </control>
+    
+    
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>0</posX>
+      <posY>982</posY>
+      <width>855</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>string.contains(#Play.Current.File,tsbuffer)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#TV.View.channel: </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#TV.View.title</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+      
+    <control>
+      <description>Track - Genre</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>0</posX>
+      <posY>1018</posY>
+      <width>855</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>string.contains(#Play.Current.File,tsbuffer)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(135)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#TV.View.genre</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    
+    
+    
+    
+    
     <!--     *******************************************************************************************  -->
     <!--     ******************    !!!  THESE CONTROLS ARE FOR COMPATIBILITY ONLY  !!!  ****************  -->
     <!--     *******************************************************************************************  -->

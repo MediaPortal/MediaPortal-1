@@ -147,6 +147,18 @@
       <visible>control.isVisible(111)</visible>
     </control>
     <control>
+      <description>End of progressbar</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1703</posX>
+      <posY>973</posY>
+      <label>|</label>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>control.isVisible(111)</visible>
+    </control>
+    <control>
       <description>Start Time Info</description>
       <type>label</type>
       <id>106</id>

@@ -175,6 +175,18 @@
       <labelmarkerends>#chapters</labelmarkerends>
       <visible>control.isVisible(111)</visible>
     </control>
+    <control>
+      <description>End of progressbar</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1495</posX>
+      <posY>967</posY>
+      <label>|</label>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>control.isVisible(111)</visible>
+    </control>
     <!-- Start Play -->
     <control>
       <description>Series ClearArt</description>
@@ -257,7 +269,7 @@
       <colordiffuse>ff09173c</colordiffuse>
       <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+player.paused+control.isVisible(111)</visible>
     </control>
-    <control>
+    <!--control>
       <description>Current recording count</description>
       <type>fadelabel</type>
       <id>1</id>
@@ -269,7 +281,7 @@
       <font>font10</font>
       <textcolor>lightgray</textcolor>
       <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+player.paused+control.isVisible(111)</visible>
-    </control>
+    </control-->
     <control>
       <description>rec logo</description>
       <type>image</type>

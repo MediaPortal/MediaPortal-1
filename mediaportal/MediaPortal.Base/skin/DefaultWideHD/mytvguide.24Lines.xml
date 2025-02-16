@@ -306,8 +306,8 @@
       <font>font10</font>
       <textcolor>lightgray</textcolor>
       <animation effect="fade" start="0" end="100" delay="4000" time="300">visible</animation>
-    </control>
-    <control>
+	</control>
+	<control>
       <description>Current program title</description>
       <type>fadelabel</type>
       <id>13</id>
@@ -319,7 +319,7 @@
       <font>font10</font>
       <textcolor>ff00bfff</textcolor>
       <animation effect="fade" start="0" end="100" delay="4000" time="300">visible</animation>
-    </control>
+	  </control>
     <control>
       <description>Current program genre</description>
       <type>label</type>
@@ -400,7 +400,9 @@
       <type>image</type>
       <id>31</id>
       <posX>1850</posX>
-      <posY>161</posY>
+      <posY>141</posY>
+	  <width>40</width> 
+      <height>38</height> 
       <texture>tvguide_record_button.png</texture>
       <visible>no</visible>
     </control>

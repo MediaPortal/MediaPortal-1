@@ -169,6 +169,7 @@
         <label>1300</label>
         <onup>13</onup>
         <ondown>77</ondown>
+        <onleft>99</onleft>
         <visible>plugin.isenabled(MP-TV Series)</visible>
       </control>
       <control>
@@ -179,6 +180,7 @@
         <label>3</label>
         <onup>76</onup>
         <ondown>8</ondown>
+        <onleft>99</onleft>
       </control>
     </control>
     <control>
@@ -863,7 +865,15 @@
       </control>
     </control>
     
-    
+    <control>
+      <description>record pin</description>
+      <type>image</type>
+      <id>24</id>
+      <posX>2622</posX>
+      <posY>915</posY>
+      <texture>tvguide_record_button.png</texture>
+      <visible>no</visible>
+    </control>
     
     
     

@@ -270,32 +270,10 @@
       <texture>BG_TVguide_small.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
-    <!--<control>
-      <description>background for title bar</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>205</posX>
-      <posY>849</posY>
-      <width>1691</width>
-      <height>60</height>
-      <texture>osdbg5.png</texture>
-      <colordiffuse>dd164665</colordiffuse>
-    </control>
-    <control>
-      <description>background for title bar</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>207</posX>
-      <posY>851</posY>
-      <width>1687</width>
-      <height>56</height>
-      <texture>osdbg5.png</texture>
-      <colordiffuse>ff00061c</colordiffuse>
-    </control>-->
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>98</posX>
+      <posX>82</posX>
       <posY>863</posY>
       <width>95</width>
       <height>95</height>
@@ -306,7 +284,7 @@
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>100</posX>
+      <posX>84</posX>
       <posY>865</posY>
       <width>91</width>
       <height>91</height>
@@ -315,21 +293,49 @@
       <centered>yes</centered>
       <visible>yes</visible>
     </control>
+	  <control>
+      <description>rec logo before channelname</description>
+      <type>image</type>
+      <id>31</id>
+      <posX>107</posX> 
+      <posY>973</posY> 
+      <width>45</width>
+      <height>45</height> 
+      <texture>rec.png</texture> 
+	    <visible>no</visible>
+    </control>	
     <control>
       <description>Current program title</description>
       <type>fadelabel</type>
-      <id>13</id>
-      <posX>228</posX>
+      <id>1</id>
+      <posX>212</posX>
       <posY>856</posY>
-      <width>1658</width>
+      <width>1650</width>
       <height>42</height>
       <label>#(iif(eq(#TV.Guide.Time,''),' ','#TV.Guide.Time #scroll.wrap #TV.Guide.Title (#TV.Guide.Duration) #scroll.wrap #TV.Guide.Genre'))</label>
       <font>LabelBold</font>
       <textcolor>ff00bfff</textcolor>
-        <shadowAngle>10</shadowAngle>
+      <shadowAngle>10</shadowAngle>
       <shadowDistance>2</shadowDistance>
       <shadowColor>ff000000</shadowColor>
-    </control>
+	    <visible>!player.hasvideo</visible>
+	 </control>
+	 <control>
+      <description>Current program title</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>212</posX>
+      <posY>856</posY>
+      <width>1370</width>
+      <height>42</height>
+      <label>#(iif(eq(#TV.Guide.Time,''),' ','#TV.Guide.Time #scroll.wrap #TV.Guide.Title (#TV.Guide.Duration) #scroll.wrap #TV.Guide.Genre'))</label>
+      <font>LabelBold</font>
+      <textcolor>ff00bfff</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+	    <visible>player.hasvideo</visible>
+	 </control>
     <control>
       <description>Current program time</description>
       <type>label</type>
@@ -356,9 +362,9 @@
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>0</id>
-      <posX>228</posX>
+      <posX>212</posX>
       <posY>904</posY>
-      <width>1365</width>
+      <width>1380</width>
       <height>146</height>
       <label>#TV.Guide.Description</label>
       <font>font10</font>
@@ -373,9 +379,9 @@
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>0</id>
-      <posX>228</posX>
+      <posX>212</posX>
       <posY>904</posY>
-      <width>1648</width>
+      <width>1664</width>
       <height>146</height>
       <label>#TV.Guide.Description</label>
       <font>font10</font>

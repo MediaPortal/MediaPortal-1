@@ -44,6 +44,22 @@
       <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>94</posY>
+      <label>by catavolt and High_Five</label>
+      <width>1802</width>
+      <align>left</align>
+      <font>font10</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
       <type>button</type>
       <description>Back</description>
       <id>2</id>

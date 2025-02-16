@@ -229,7 +229,7 @@
       <description>End of progressbar</description>
       <type>label</type>
       <id>1</id>
-      <posX>1407</posX>
+      <posX>1401</posX>
       <posY>838</posY>
       <label>|</label>
       <align>left</align>
@@ -616,13 +616,13 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>1093</posX>
-      <posY>965</posY>
+      <posY>985</posY>
       <width>50</width>
       <label>#latestMediaHandler.tvrecordings.active.count</label>
       <align>center</align>
-      <font>font10</font>
+      <font>font11bold</font>
       <textcolor>lightgray</textcolor>
-      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+      <visible>!control.isvisible(500)+!control.isvisible(801)+plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
     <control>
       <description>background for recording info</description>

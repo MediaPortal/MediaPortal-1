@@ -269,32 +269,10 @@
       <texture>BG_TVguide_big.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
-    <!--<control>
-      <description>background for title bar</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>205</posX>
-      <posY>779</posY>
-      <width>1681</width>
-      <height>60</height>
-      <texture>osdbg5.png</texture>
-      <colordiffuse>ff164665</colordiffuse>
-    </control>
-    <control>
-      <description>background for title bar</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>207</posX>
-      <posY>781</posY>
-      <width>1677</width>
-      <height>56</height>
-      <texture>osdbg5.png</texture>
-      <colordiffuse>ff00061c</colordiffuse>
-    </control>-->
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>98</posX>
+      <posX>82</posX>
       <posY>804</posY> 
       <width>95</width>
       <height>95</height>
@@ -305,8 +283,8 @@
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>100</posX>
-      <posY>806</posY>  783
+      <posX>84</posX>
+      <posY>806</posY> 
       <width>91</width>
       <height>91</height>
       <texture>#TV.Guide.thumb</texture>
@@ -314,13 +292,24 @@
       <centered>yes</centered>
       <visible>yes</visible>
     </control>
+	<control>
+      <description>rec logo before channelname</description>
+      <type>image</type>
+      <id>31</id>
+      <posX>107</posX> 
+      <posY>910</posY> 
+      <width>45</width>
+      <height>45</height> 
+      <texture>rec.png</texture> 
+	    <visible>no</visible>
+    </control>
     <control>
       <description>Current program title</description>
       <type>fadelabel</type>
       <id>13</id>
-      <posX>228</posX>
+      <posX>212</posX> 228
       <posY>797</posY>
-      <width>1658</width>
+      <width>1650</width>
       <height>42</height>
       <label>#(iif(eq(#TV.Guide.Time,''),' ','#TV.Guide.Time #scroll.wrap #TV.Guide.Title (#TV.Guide.Duration) #scroll.wrap #TV.Guide.Genre'))</label>
       <font>LabelBold</font>
@@ -328,6 +317,23 @@
         <shadowAngle>10</shadowAngle>
       <shadowDistance>2</shadowDistance>
       <shadowColor>ff000000</shadowColor>
+	  <visible>!player.hasvideo</visible>
+	 </control>
+	 <control>
+      <description>Current program title</description>
+      <type>fadelabel</type>
+      <id>13</id>
+      <posX>212</posX> 
+      <posY>797</posY>
+      <width>1570</width>
+      <height>42</height>
+      <label>#(iif(eq(#TV.Guide.Time,''),' ','#TV.Guide.Time #scroll.wrap #TV.Guide.Title (#TV.Guide.Duration) #scroll.wrap #TV.Guide.Genre'))</label>
+      <font>LabelBold</font>
+      <textcolor>ff00bfff</textcolor>
+        <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+	  <visible>player.hasvideo</visible>
     </control>
     <control>
       <description>Current program time</description>
@@ -355,9 +361,9 @@
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>0</id>
-      <posX>228</posX>
+      <posX>212</posX>
       <posY>850</posY>
-      <width>1365</width>
+      <width>1380</width>
       <height>190</height>
       <label>#TV.Guide.Description</label>
       <font>CSG</font>
@@ -372,9 +378,9 @@
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>0</id>
-      <posX>228</posX>
+      <posX>212</posX>
       <posY>850</posY>
-      <width>1648</width>
+      <width>1664</width>
       <height>190</height>
       <label>#TV.Guide.Description</label>
       <font>CSG</font>
@@ -390,7 +396,7 @@
       <type>image</type>
       <id>98</id>
       <posX>1610</posX>
-      <posY>840</posY> 870
+      <posY>840</posY> 
       <width>267</width>
       <height>154</height>
       <visible>player.hasvideo</visible>
@@ -401,7 +407,7 @@
       <type>videowindow</type>
       <id>99</id>
       <posX>1615</posX>
-      <posY>845</posY> 875
+      <posY>845</posY> 
       <width>257</width>
       <height>144</height>
       <action>18</action>
