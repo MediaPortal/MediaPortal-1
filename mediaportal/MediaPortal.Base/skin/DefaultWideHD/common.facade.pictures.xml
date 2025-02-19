@@ -58,7 +58,7 @@
           <renderFocusText>no</renderFocusText>
           <renderUnfocusText>no</renderUnfocusText>
           <showFrame>true</showFrame>
-          <textureMask>Picturethumbmask.png</textureMask>
+          <textureMask>musicfanart_mask.png</textureMask>
           <frameNoFocus>Picturethumbframe.png</frameNoFocus>
           <frameFocus>Picturethumbframe.png</frameFocus>
           <imageFolder>-</imageFolder>
@@ -93,8 +93,8 @@
           <imageFolderFocus>Picturethumbframe.png</imageFolderFocus>
           <frame>Picturethumbframe.png</frame>
           <frameFocus>Picturethumbframe.png</frameFocus>
-          <textureMask>Picturethumbmask.png</textureMask>
-          <thumbs mask="Picturethumbmask.png">
+          <textureMask>musicfanart_mask.png</textureMask>
+          <thumbs mask="musicfanart_mask.png">
           </thumbs>
           <background>emtpy.png</background>
           <InfoImage>
@@ -173,7 +173,7 @@
           <scrollbarRight>mouse_right_vertical.png</scrollbarRight>
           <scrollbarYOff>555</scrollbarYOff>
           <showScrollbar>yes</showScrollbar>
-          <cards mask="picturethumbmask.png">black.png</cards>
+          <cards mask="musicfanart_mask.png">black.png</cards>
           <subitems>
             <subitem><![CDATA[                                <controls>
               <control>
@@ -183,7 +183,7 @@
                 <posY>0</posY>
                 <width>450</width>
                 <height>300</height>
-                <texture mask="picturethumbmask.png">blue.png</texture>
+                <texture mask="musicfanart_mask.png">blue.png</texture>
               </control>
               <!--control>
               <description>Info Header</description>
@@ -194,7 +194,7 @@
               <label>Details</label>
               <font>Label</font>
               <align>center</align>
-              <textcolor>ivory</textcolor>
+              <textcolor>lightgray</textcolor>
               <shadowAngle>0</shadowAngle>
               <shadowDistance>0</shadowDistance>
             </control-->
@@ -207,7 +207,7 @@
               <label>#selecteditem</label>
               <font>font12</font>
               <align>center</align>
-              <textcolor>ivory</textcolor>
+              <textcolor>lightgray</textcolor>
               <shadowAngle>0</shadowAngle>
               <shadowDistance>0</shadowDistance>
             </control>
@@ -220,7 +220,7 @@
               <label>#selecteditem2</label>
               <font>font12</font>
               <align>center</align>
-              <textcolor>ivory</textcolor>
+              <textcolor>lightgray</textcolor>
               <shadowAngle>0</shadowAngle>
               <shadowDistance>0</shadowDistance>
             </control>

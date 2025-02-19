@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -39,6 +39,11 @@ namespace MediaPortal.Configuration.Sections
     private bool _hideAllChannelsGroup = false;
     private bool _rememberLastGroup = true;
     private string _rootGroup = "(none)";
+    private MPGroupBox groupBox3;
+    private MPCheckBox byIndexCheckBox;
+    private MPCheckBox showChannelNumberCheckBox;
+    private MPNumericUpDown channelNumberMaxLengthNumUpDn;
+    private MPLabel lblChanNumMaxLen;
     private bool _autoTurnOnRadio = false;
 
     #endregion
@@ -68,6 +73,11 @@ namespace MediaPortal.Configuration.Sections
         _rememberLastGroup = xmlreader.GetValueAsBool("myradio", "rememberlastgroup", true);
         _rootGroup = xmlreader.GetValueAsString("myradio", "rootgroup", "(none)");
         _autoTurnOnRadio = xmlreader.GetValueAsBool("myradio", "autoturnonradio", false);
+        byIndexCheckBox.Checked = xmlreader.GetValueAsBool("myradio", "byindex", true);
+        showChannelNumberCheckBox.Checked = xmlreader.GetValueAsBool("myradio", "showchannelnumber", false);
+
+        int channelNumberMaxLen = xmlreader.GetValueAsInt("myradio", "channelnumbermaxlength", 3);
+        channelNumberMaxLengthNumUpDn.Value = channelNumberMaxLen;
       }
 
       cbTurnOnRadio.Checked = _autoTurnOnRadio;
@@ -83,12 +93,15 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (Settings xmlreader = new MPSettings())
+      using (Settings xmlwriter = new MPSettings())
       {
-        xmlreader.SetValueAsBool("myradio", "hideAllChannelsGroup", _hideAllChannelsGroup);
-        xmlreader.SetValueAsBool("myradio", "rememberlastgroup", _rememberLastGroup);
-        xmlreader.SetValue("myradio", "rootgroup", _rootGroup);
-        xmlreader.SetValueAsBool("myradio", "autoturnonradio", _autoTurnOnRadio);
+        xmlwriter.SetValueAsBool("myradio", "hideAllChannelsGroup", _hideAllChannelsGroup);
+        xmlwriter.SetValueAsBool("myradio", "rememberlastgroup", _rememberLastGroup);
+        xmlwriter.SetValue("myradio", "rootgroup", _rootGroup);
+        xmlwriter.SetValueAsBool("myradio", "autoturnonradio", _autoTurnOnRadio);
+        xmlwriter.SetValueAsBool("myradio", "byindex", byIndexCheckBox.Checked);
+        xmlwriter.SetValueAsBool("myradio", "showchannelnumber", showChannelNumberCheckBox.Checked);
+        xmlwriter.SetValue("myradio", "channelnumbermaxlength", channelNumberMaxLengthNumUpDn.Value);
       }
     }
 
@@ -110,117 +123,198 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.groupBoxRadioScreen = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.cbTurnOnRadio = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBoxChannelGroups = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.cbRememberLastGroup = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.comboBoxGroups = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbHideAllChannelsGroup = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBoxRadioScreen.SuspendLayout();
-      this.groupBoxChannelGroups.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // groupBoxRadioScreen
-      // 
-      this.groupBoxRadioScreen.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxRadioScreen.Controls.Add(this.cbTurnOnRadio);
-      this.groupBoxRadioScreen.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxRadioScreen.Location = new System.Drawing.Point(6, 126);
-      this.groupBoxRadioScreen.Name = "groupBoxRadioScreen";
-      this.groupBoxRadioScreen.Size = new System.Drawing.Size(462, 46);
-      this.groupBoxRadioScreen.TabIndex = 12;
-      this.groupBoxRadioScreen.TabStop = false;
-      this.groupBoxRadioScreen.Text = "When entering the Radio screen:";
-      // 
-      // cbTurnOnRadio
-      // 
-      this.cbTurnOnRadio.AutoSize = true;
-      this.cbTurnOnRadio.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbTurnOnRadio.Location = new System.Drawing.Point(13, 19);
-      this.cbTurnOnRadio.Name = "cbTurnOnRadio";
-      this.cbTurnOnRadio.Size = new System.Drawing.Size(92, 17);
-      this.cbTurnOnRadio.TabIndex = 0;
-      this.cbTurnOnRadio.Text = "Turn on Radio";
-      this.cbTurnOnRadio.UseVisualStyleBackColor = true;
-      this.cbTurnOnRadio.CheckedChanged += new System.EventHandler(this.cbTurnOnRadio_CheckedChanged);
-      // 
-      // groupBoxChannelGroups
-      // 
-      this.groupBoxChannelGroups.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxChannelGroups.Controls.Add(this.cbRememberLastGroup);
-      this.groupBoxChannelGroups.Controls.Add(this.comboBoxGroups);
-      this.groupBoxChannelGroups.Controls.Add(this.label1);
-      this.groupBoxChannelGroups.Controls.Add(this.cbHideAllChannelsGroup);
-      this.groupBoxChannelGroups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxChannelGroups.Location = new System.Drawing.Point(6, 0);
-      this.groupBoxChannelGroups.Name = "groupBoxChannelGroups";
-      this.groupBoxChannelGroups.Size = new System.Drawing.Size(462, 120);
-      this.groupBoxChannelGroups.TabIndex = 11;
-      this.groupBoxChannelGroups.TabStop = false;
-      this.groupBoxChannelGroups.Text = "Channel groups";
-      // 
-      // cbRememberLastGroup
-      // 
-      this.cbRememberLastGroup.AutoSize = true;
-      this.cbRememberLastGroup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbRememberLastGroup.Location = new System.Drawing.Point(13, 42);
-      this.cbRememberLastGroup.Name = "cbRememberLastGroup";
-      this.cbRememberLastGroup.Size = new System.Drawing.Size(124, 17);
-      this.cbRememberLastGroup.TabIndex = 1;
-      this.cbRememberLastGroup.Text = "Remember last group";
-      this.cbRememberLastGroup.UseVisualStyleBackColor = true;
-      this.cbRememberLastGroup.CheckedChanged += new System.EventHandler(this.cbRememberLastGroup_CheckedChanged);
-      // 
-      // comboBoxGroups
-      // 
-      this.comboBoxGroups.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxGroups.BorderColor = System.Drawing.Color.Empty;
-      this.comboBoxGroups.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxGroups.FormattingEnabled = true;
-      this.comboBoxGroups.Location = new System.Drawing.Point(13, 83);
-      this.comboBoxGroups.Name = "comboBoxGroups";
-      this.comboBoxGroups.Size = new System.Drawing.Size(431, 21);
-      this.comboBoxGroups.TabIndex = 2;
-      this.comboBoxGroups.DropDown += new System.EventHandler(this.comboBoxGroups_DropDown);
-      this.comboBoxGroups.SelectedIndexChanged += new System.EventHandler(this.comboBoxGroups_SelectedIndexChanged);
-      // 
-      // label1
-      // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(10, 67);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(140, 13);
-      this.label1.TabIndex = 3;
-      this.label1.Text = "Group to show in root menu:";
-      // 
-      // cbHideAllChannelsGroup
-      // 
-      this.cbHideAllChannelsGroup.AutoSize = true;
-      this.cbHideAllChannelsGroup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbHideAllChannelsGroup.Location = new System.Drawing.Point(13, 19);
-      this.cbHideAllChannelsGroup.Name = "cbHideAllChannelsGroup";
-      this.cbHideAllChannelsGroup.Size = new System.Drawing.Size(164, 17);
-      this.cbHideAllChannelsGroup.TabIndex = 0;
-      this.cbHideAllChannelsGroup.Text = "Hide the \"All channels group\"";
-      this.cbHideAllChannelsGroup.UseVisualStyleBackColor = true;
-      this.cbHideAllChannelsGroup.Click += new System.EventHandler(this.cbHideAllChannelsGroup_Click);
-      // 
-      // Radio
-      // 
-      this.Controls.Add(this.groupBoxRadioScreen);
-      this.Controls.Add(this.groupBoxChannelGroups);
-      this.Name = "Radio";
-      this.Size = new System.Drawing.Size(472, 408);
-      this.groupBoxRadioScreen.ResumeLayout(false);
-      this.groupBoxRadioScreen.PerformLayout();
-      this.groupBoxChannelGroups.ResumeLayout(false);
-      this.groupBoxChannelGroups.PerformLayout();
-      this.ResumeLayout(false);
+            this.groupBoxRadioScreen = new MediaPortal.UserInterface.Controls.MPGroupBox();
+            this.cbTurnOnRadio = new MediaPortal.UserInterface.Controls.MPCheckBox();
+            this.groupBoxChannelGroups = new MediaPortal.UserInterface.Controls.MPGroupBox();
+            this.cbRememberLastGroup = new MediaPortal.UserInterface.Controls.MPCheckBox();
+            this.comboBoxGroups = new MediaPortal.UserInterface.Controls.MPComboBox();
+            this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.cbHideAllChannelsGroup = new MediaPortal.UserInterface.Controls.MPCheckBox();
+            this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+            this.byIndexCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+            this.showChannelNumberCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+            this.channelNumberMaxLengthNumUpDn = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
+            this.lblChanNumMaxLen = new MediaPortal.UserInterface.Controls.MPLabel();
+            this.groupBoxRadioScreen.SuspendLayout();
+            this.groupBoxChannelGroups.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.channelNumberMaxLengthNumUpDn)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // groupBoxRadioScreen
+            // 
+            this.groupBoxRadioScreen.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxRadioScreen.Controls.Add(this.cbTurnOnRadio);
+            this.groupBoxRadioScreen.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.groupBoxRadioScreen.Location = new System.Drawing.Point(6, 126);
+            this.groupBoxRadioScreen.Name = "groupBoxRadioScreen";
+            this.groupBoxRadioScreen.Size = new System.Drawing.Size(462, 46);
+            this.groupBoxRadioScreen.TabIndex = 12;
+            this.groupBoxRadioScreen.TabStop = false;
+            this.groupBoxRadioScreen.Text = "When entering the Radio screen:";
+            // 
+            // cbTurnOnRadio
+            // 
+            this.cbTurnOnRadio.AutoSize = true;
+            this.cbTurnOnRadio.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cbTurnOnRadio.Location = new System.Drawing.Point(13, 19);
+            this.cbTurnOnRadio.Name = "cbTurnOnRadio";
+            this.cbTurnOnRadio.Size = new System.Drawing.Size(131, 24);
+            this.cbTurnOnRadio.TabIndex = 0;
+            this.cbTurnOnRadio.Text = "Turn on Radio";
+            this.cbTurnOnRadio.UseVisualStyleBackColor = true;
+            this.cbTurnOnRadio.CheckedChanged += new System.EventHandler(this.cbTurnOnRadio_CheckedChanged);
+            // 
+            // groupBoxChannelGroups
+            // 
+            this.groupBoxChannelGroups.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxChannelGroups.Controls.Add(this.cbRememberLastGroup);
+            this.groupBoxChannelGroups.Controls.Add(this.comboBoxGroups);
+            this.groupBoxChannelGroups.Controls.Add(this.label1);
+            this.groupBoxChannelGroups.Controls.Add(this.cbHideAllChannelsGroup);
+            this.groupBoxChannelGroups.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.groupBoxChannelGroups.Location = new System.Drawing.Point(6, 0);
+            this.groupBoxChannelGroups.Name = "groupBoxChannelGroups";
+            this.groupBoxChannelGroups.Size = new System.Drawing.Size(462, 120);
+            this.groupBoxChannelGroups.TabIndex = 11;
+            this.groupBoxChannelGroups.TabStop = false;
+            this.groupBoxChannelGroups.Text = "Channel groups";
+            // 
+            // cbRememberLastGroup
+            // 
+            this.cbRememberLastGroup.AutoSize = true;
+            this.cbRememberLastGroup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cbRememberLastGroup.Location = new System.Drawing.Point(13, 42);
+            this.cbRememberLastGroup.Name = "cbRememberLastGroup";
+            this.cbRememberLastGroup.Size = new System.Drawing.Size(184, 24);
+            this.cbRememberLastGroup.TabIndex = 1;
+            this.cbRememberLastGroup.Text = "Remember last group";
+            this.cbRememberLastGroup.UseVisualStyleBackColor = true;
+            this.cbRememberLastGroup.CheckedChanged += new System.EventHandler(this.cbRememberLastGroup_CheckedChanged);
+            // 
+            // comboBoxGroups
+            // 
+            this.comboBoxGroups.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxGroups.BorderColor = System.Drawing.Color.Empty;
+            this.comboBoxGroups.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxGroups.FormattingEnabled = true;
+            this.comboBoxGroups.Location = new System.Drawing.Point(13, 83);
+            this.comboBoxGroups.Name = "comboBoxGroups";
+            this.comboBoxGroups.Size = new System.Drawing.Size(431, 28);
+            this.comboBoxGroups.TabIndex = 2;
+            this.comboBoxGroups.DropDown += new System.EventHandler(this.comboBoxGroups_DropDown);
+            this.comboBoxGroups.SelectedIndexChanged += new System.EventHandler(this.comboBoxGroups_SelectedIndexChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(10, 67);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(209, 20);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Group to show in root menu:";
+            // 
+            // cbHideAllChannelsGroup
+            // 
+            this.cbHideAllChannelsGroup.AutoSize = true;
+            this.cbHideAllChannelsGroup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cbHideAllChannelsGroup.Location = new System.Drawing.Point(13, 19);
+            this.cbHideAllChannelsGroup.Name = "cbHideAllChannelsGroup";
+            this.cbHideAllChannelsGroup.Size = new System.Drawing.Size(237, 24);
+            this.cbHideAllChannelsGroup.TabIndex = 0;
+            this.cbHideAllChannelsGroup.Text = "Hide the \"All channels group\"";
+            this.cbHideAllChannelsGroup.UseVisualStyleBackColor = true;
+            this.cbHideAllChannelsGroup.Click += new System.EventHandler(this.cbHideAllChannelsGroup_Click);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.byIndexCheckBox);
+            this.groupBox3.Controls.Add(this.showChannelNumberCheckBox);
+            this.groupBox3.Controls.Add(this.channelNumberMaxLengthNumUpDn);
+            this.groupBox3.Controls.Add(this.lblChanNumMaxLen);
+            this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.groupBox3.Location = new System.Drawing.Point(6, 178);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(462, 109);
+            this.groupBox3.TabIndex = 18;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Channel numbers";
+            // 
+            // byIndexCheckBox
+            // 
+            this.byIndexCheckBox.AutoSize = true;
+            this.byIndexCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.byIndexCheckBox.Location = new System.Drawing.Point(17, 20);
+            this.byIndexCheckBox.Name = "byIndexCheckBox";
+            this.byIndexCheckBox.Size = new System.Drawing.Size(266, 24);
+            this.byIndexCheckBox.TabIndex = 0;
+            this.byIndexCheckBox.Text = "Select channel by index (non-US)";
+            this.byIndexCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // showChannelNumberCheckBox
+            // 
+            this.showChannelNumberCheckBox.AutoSize = true;
+            this.showChannelNumberCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.showChannelNumberCheckBox.Location = new System.Drawing.Point(17, 40);
+            this.showChannelNumberCheckBox.Name = "showChannelNumberCheckBox";
+            this.showChannelNumberCheckBox.Size = new System.Drawing.Size(197, 24);
+            this.showChannelNumberCheckBox.TabIndex = 1;
+            this.showChannelNumberCheckBox.Text = "Show channel numbers";
+            this.showChannelNumberCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // channelNumberMaxLengthNumUpDn
+            // 
+            this.channelNumberMaxLengthNumUpDn.AutoSize = true;
+            this.channelNumberMaxLengthNumUpDn.Location = new System.Drawing.Point(178, 60);
+            this.channelNumberMaxLengthNumUpDn.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.channelNumberMaxLengthNumUpDn.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.channelNumberMaxLengthNumUpDn.Name = "channelNumberMaxLengthNumUpDn";
+            this.channelNumberMaxLengthNumUpDn.Size = new System.Drawing.Size(42, 26);
+            this.channelNumberMaxLengthNumUpDn.TabIndex = 2;
+            this.channelNumberMaxLengthNumUpDn.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            // 
+            // lblChanNumMaxLen
+            // 
+            this.lblChanNumMaxLen.AutoSize = true;
+            this.lblChanNumMaxLen.Location = new System.Drawing.Point(31, 62);
+            this.lblChanNumMaxLen.Name = "lblChanNumMaxLen";
+            this.lblChanNumMaxLen.Size = new System.Drawing.Size(211, 20);
+            this.lblChanNumMaxLen.TabIndex = 2;
+            this.lblChanNumMaxLen.Text = "Channel number max. length";
+            // 
+            // Radio
+            // 
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.groupBoxRadioScreen);
+            this.Controls.Add(this.groupBoxChannelGroups);
+            this.Name = "Radio";
+            this.Size = new System.Drawing.Size(472, 408);
+            this.groupBoxRadioScreen.ResumeLayout(false);
+            this.groupBoxRadioScreen.PerformLayout();
+            this.groupBoxChannelGroups.ResumeLayout(false);
+            this.groupBoxChannelGroups.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.channelNumberMaxLengthNumUpDn)).EndInit();
+            this.ResumeLayout(false);
 
     }
 

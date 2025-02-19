@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>1</id>
@@ -201,7 +201,7 @@
       <label>#TV.View.start - #TV.View.stop  #TV.View.title</label>
       <font>font13</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Description1</description>
@@ -213,7 +213,7 @@
       <height>232</height>
       <label>#TV.View.description</label>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>record pin</description>

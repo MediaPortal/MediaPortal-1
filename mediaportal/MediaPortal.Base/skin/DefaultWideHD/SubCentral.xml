@@ -2,7 +2,7 @@
 <!--version="1.0" encoding="utf-8"-->
 <window>
   <id>84623</id>
-  <defaultcontrol>912</defaultcontrol>
+  <defaultcontrol>50</defaultcontrol> 
   <allowoverlay>control.isvisible(1337)</allowoverlay>
   <!-- no! -->
   <define>#header.label:#SubCentral.Header.Label</define>
@@ -40,6 +40,7 @@
       <width>1920</width>
       <height>1080</height>
       <texture>BH Subcentral.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
     </control>
     <control>
       <description>Backdrop</description>
@@ -51,8 +52,32 @@
       <height>1080</height>
       <texture>#SubCentral.Search.Media.FanArt</texture>
     </control>
-    <import>common.window.xml</import>
+    <control>
+      <description>Title background image all screens except all games</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>379</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
+    <control>
+      <description>Current View</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <width>1299</width>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>
+      <label>Subcentral #scroll.wrap #SubCentral.Translation.Movie.Label #scroll.wrap #SubCentral.Search.Media.Title</label>
+      <align>left</align>
+    </control>
+    
     <control>
       <description>General Overlay</description>
       <id>0</id>
@@ -63,10 +88,31 @@
       <height>1080</height>
       <texture>general_overlay.png</texture>
     </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
     <import>SubCentral.Main.xml</import>
     <import>SubCentral.Search.xml</import>
     <import>SubCentral.ModifySearch.xml</import>
     <!-- TODO MS-->
+	<control>
+      <type>image</type>
+      <id>1</id>
+	  <posX>0</posX>
+      <posY>70</posY>
+      <width>140</width>
+      <height>984</height>
+      <texture>Action_nofocus.png</texture>
+	  <visible>control.hasfocus(50)</visible>
+    </control>
     <control>
       <type>actiongroup</type>
       <description>action menu</description>
@@ -77,12 +123,12 @@
       <buttonwidth>140</buttonwidth>
       <buttonheight>984</buttonheight>
       <textureFocus>-</textureFocus>
-      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <textureNoFocus></textureNoFocus> 
       <width>168</width>
       <height>798</height>
       <dimColor>00ffffff</dimColor>
-      <visible>!control.isvisible(216)</visible>
-      <control>
+    
+     <control>
       <type>image</type>
       <id>1</id>
       <width>1920</width>
@@ -90,16 +136,17 @@
       <texture>white.png</texture>
       <colordiffuse>50005eef</colordiffuse>
     </control>
+	
       <control>
         <type>image</type>
-        <posX>0</posX>
-        <posY>203</posY>
+        <posX>20</posX>
+        <posY>193</posY>
         <width>450</width>
         <height>358</height>
-        <texture>am-background.png</texture>
+        <texture>am-background_subcentral.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>
-        <visible>!control.hasfocus(50)+!control.hasfocus(912)</visible>
-        <animation effect="slide" time="100" start="-300,0" reversible="false">visible</animation>
+        <visible>!control.hasfocus(50)</visible>
+        <animation effect="slide" time="100" start="-300,0" reversible="false">visible</animation>		
         <animation effect="slide" time="100" end="-300,0" reversible="false">hidden</animation>
       </control>
       <control>
@@ -110,58 +157,60 @@
         <posX>49</posX>
         <posY>217</posY>
         <layout>StackLayout</layout>
-        <visible>!control.hasfocus(50)+!control.hasfocus(912)</visible>
+        <visible>!control.hasfocus(50)</visible>
         <control Style="NoShadow">
           <description>Cancel Button</description>
           <type>button</type>
           <id>202</id>
-          <label>Cancel</label>
+          <label>#SubCentral.Back.Label</label>
           <onup>201</onup>
           <ondown>203</ondown>
-          <onleft>202</onleft>
-          <onright>912</onright>
+          <onleft>50</onleft>
+          <onright>50</onright>
         </control>
         <control Style="NoShadow">
           <description>Languages Button</description>
           <type>button</type>
           <id>203</id>
-          <label>Languages</label>
+          <label>#SubCentral.Languages.Label</label>
           <onup>202</onup>
           <ondown>204</ondown>
-          <onleft>203</onleft>
-          <onright>912</onright>
+          <onleft>50</onleft>
+          <onright>50</onright>
         </control>
         <control Style="NoShadow">
           <description>Modify Search Button</description>
           <type>button</type>
           <id>204</id>
-          <label>Modify search</label>
+          <label>#SubCentral.ModifySearch.Label</label>
           <onup>203</onup>
           <ondown>206</ondown>
-          <onleft>204</onleft>
-          <onright>912</onright>
+          <onleft>50</onleft>
+          <onright>50</onright>
         </control>
         <control Style="NoShadow">
           <description>Delete Subtitles Button</description>
           <type>button</type>
           <id>206</id>
-          <label>Delete subtitles</label>
+          <label>#SubCentral.DeleteSubtitles.Label</label>
           <onup>204</onup>
           <ondown>205</ondown>
-          <onleft>206</onleft>
-          <onright>912</onright>
+          <onleft>50</onleft>
+          <onright>50</onright>
         </control>
         <control Style="NoShadow">
           <description>Sort</description>
           <type>sortbutton</type>
           <id>205</id>
-          <label>Sort</label>
-          <onup>206</onup>
+		  <offsetSortButtonX>345</offsetSortButtonX>
+          <label>#SubCentral.Sort.Label</label>
+		  <onup>206</onup>
           <ondown>202</ondown>
-          <onleft>205</onleft>
-          <onright>912</onright>
+          <onleft>50</onleft>
+          <onright>50</onright>
         </control>
       </control>
-    </control>
+	 </control>
+	
   </controls>
 </window>

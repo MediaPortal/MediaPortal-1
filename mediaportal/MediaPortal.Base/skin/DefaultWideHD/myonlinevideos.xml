@@ -113,7 +113,7 @@
       <height>270</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <texture mask="Picturethumbmask.png">#selectedthumb</texture>
+      <texture mask="musicfanart_mask.png">#selectedthumb</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>!Control.IsVisible(51)</visible>
     </control>
@@ -125,7 +125,7 @@
       <posY>270</posY>
       <width>390</width>
       <height>270</height>
-      <texture mask="Picturethumbmask.png">Picturethumbframe.png</texture>
+      <texture mask="musicfanart_mask.png">Picturethumbframe.png</texture>
       <visible>!Control.IsVisible(51)</visible>
     </control>
     <control>
@@ -197,7 +197,7 @@
       <label>#OnlineVideos.buffered</label>
       <label1>-</label1>
       <label2>-</label2>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#OnlineVideos.IsBuffering, true) + !player.hasmedia+!control.isVisible(51)</visible>
     </control>
     <control>
@@ -241,7 +241,7 @@
       <label>#OnlineVideos.buffered</label>
       <label1>-</label1>
       <label2>-</label2>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#OnlineVideos.IsBuffering, true) + !player.hasmedia+control.isVisible(51)</visible>
     </control>
     <control>

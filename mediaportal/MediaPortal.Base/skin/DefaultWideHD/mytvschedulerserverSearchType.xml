@@ -3,7 +3,8 @@
 <window>
   <id>746</id>
   <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:</define>
   <controls>
     <control>
       <description>BG</description>
@@ -12,6 +13,15 @@
       <texture>blue.png</texture>
       <width>1920</width>
       <height>1080</height>
+    </control>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH TVtimer.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
@@ -24,6 +34,23 @@
       <width>1920</width>
       <height>1080</height>
       <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>#currentmodule #scroll.wrap #highlightedbutton</label>
+      <width>1802</width>
+      <align>left</align>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible></visible>
     </control>
     <control>
       <type>group</type>

@@ -36,7 +36,7 @@
       <width>525</width>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>mpNZB</label>
     </control>
     <control>

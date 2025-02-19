@@ -1,52 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
+
 <window>
   <id>1019</id>
   <defaultcontrol>10</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
     <import>common.time.xml</import>
     <control>
-      <description>buttons</description>
-      <type>group</type>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
-      <control>
-        <description>background</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>620</posX>
-        <posY>225</posY>
-        <width>1280</width>
-        <height>707</height>
-        <texture>backslide2.png</texture>
-      </control>
-      <control>
-        <description>Background</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>98</posX>
-        <posY>220</posY>
-        <width>480</width>
-        <height>710</height>
-        <texture>backslide.png</texture>
-      </control>
-      <control>
-        <type>label</type>
-        <id>1</id>
-        <posX>230</posX>
-        <posY>260</posY>
-        <width>480</width>
-        <label>924</label>
-        <textcolor>white</textcolor>
-        <font>Label</font>
-      </control>
-      <control>
         <description>buttons</description>
         <type>group</type>
-        <posX>118</posX>
+        <posX>92</posX>
         <posY>305</posY>
         <dimColor>ffffffff</dimColor>
         <layout>StackLayout(0, Vertical, true)</layout>
@@ -55,8 +20,9 @@
           <type>button</type>
           <id>9991</id>
           <label>128</label>
+          <width>410</width>
           <onup>17</onup>
-          <onright>2</onright>
+          <onright>10</onright>
           <hyperlink>1016</hyperlink>
         </control>
         <control>
@@ -64,6 +30,7 @@
           <type>button</type>
           <id>9992</id>
           <label>101021</label>
+          <width>410</width>
           <hyperlink>1021</hyperlink>
           <onup>9991</onup>
           <onright>2</onright>
@@ -73,6 +40,7 @@
           <type>button</type>
           <id>9993</id>
           <label>6023</label>
+          <width>410</width>
           <hyperlink>9</hyperlink>
           <onup>9992</onup>
           <onright>2</onright>
@@ -82,6 +50,7 @@
           <type>button</type>
           <id>9994</id>
           <label>605</label>
+          <width>410</width>
           <hyperlink>700</hyperlink>
           <onup>9993</onup>
           <onright>2</onright>
@@ -91,6 +60,7 @@
           <type>button</type>
           <id>9995</id>
           <label>1</label>
+          <width>410</width>
           <hyperlink>12</hyperlink>
           <onup>9994</onup>
           <onright>2</onright>
@@ -100,6 +70,7 @@
           <type>button</type>
           <id>9996</id>
           <label>3</label>
+          <width>410</width>
           <hyperlink>703</hyperlink>
           <onup>9995</onup>
           <onright>2</onright>
@@ -109,6 +80,7 @@
           <type>button</type>
           <id>9997</id>
           <label>1027</label>
+          <width>410</width>
           <hyperlink>704</hyperlink>
           <onup>9996</onup>
           <onright>2</onright>
@@ -118,6 +90,7 @@
           <type>button</type>
           <id>9998</id>
           <label>300217</label>
+          <width>410</width>
           <hyperlink>1024</hyperlink>
           <onup>9997</onup>
           <onright>2</onright>
@@ -127,6 +100,7 @@
           <type>button</type>
           <id>9999</id>
           <label>2</label>
+          <width>410</width>
           <hyperlink>14</hyperlink>
           <ondown>99910</ondown>
           <onup>9998</onup>
@@ -137,22 +111,13 @@
           <type>button</type>
           <id>99910</id>
           <label>9100</label>
+          <width>410</width>
           <hyperlink>9000</hyperlink>
           <ondown>9991</ondown>
           <onup>9999</onup>
           <onright>2</onright>
           <visible>plugin.isenabled(MiniDisplay)</visible>
         </control>
-      </control>
-      <control>
-        <type>label</type>
-        <id>1</id>
-        <posX>700</posX>
-        <posY>260</posY>
-        <width>1000</width>
-        <label>#currentmodule</label>
-        <textcolor>white</textcolor>
-        <font>Label</font>
       </control>
       <control>
         <description>buttons</description>
@@ -165,61 +130,69 @@
         <description>MP fullscreen</description>
         <type>checkbutton</type>
         <id>10</id>
-        <onup>123</onup>
+        <onup>126</onup>
+        <onleft>9991</onleft>
         <label>300105</label>
-        <width>900</width>
+        <width>930</width><textureFocus>setting_button_long.png</textureFocus>
       </control>
       <control>
         <description>Splashscreen</description>
         <type>checkbutton</type>
         <id>11</id>
         <label>300106</label>
-        <width>900</width>
+        <onleft>9991</onleft>
+        <width>930</width><textureFocus>setting_button_long.png</textureFocus>
       </control>
       <control>
         <description>On top</description>
         <type>checkbutton</type>
         <id>12</id>
         <label>300107</label>
-        <width>900</width>
+        <onleft>9991</onleft>
+        <width>930</width><textureFocus>setting_button_long.png</textureFocus>
       </control>
       <control>
         <description>Hide taskbar</description>
         <type>checkbutton</type>
         <id>13</id>
         <label>300108</label>
-        <width>900</width>
+        <onleft>9991</onleft>
+        <width>930</width><textureFocus>setting_button_long.png</textureFocus>
       </control>
       <control>
         <description>Autostart on WinUp</description>
         <type>checkbutton</type>
         <id>14</id>
         <label>300109</label>
-        <width>900</width>
+        <onleft>9991</onleft>
+        <width>930</width><textureFocus>setting_button_long.png</textureFocus>
       </control>
       <control>
         <description>Minimize to tray Startup</description>
         <type>checkbutton</type>
         <id>15</id>
         <label>300110</label>
-        <width>900</width>
+        <onleft>9991</onleft>
+        <width>930</width><textureFocus>setting_button_long.png</textureFocus>
       </control>
       <control>
         <description>Minimize to tray GUI exit</description>
         <type>checkbutton</type>
         <id>16</id>
         <label>300111</label>
-        <width>900</width>
+        <onleft>9991</onleft>
+        <width>930</width><textureFocus>setting_button_long.png</textureFocus>
       </control>
       <control>
         <description>Minimize to tray on focus loss</description>
         <type>checkbutton</type>
         <id>17</id>
         <label>300229</label>
-        <width>900</width>
+        <onleft>9991</onleft>
+        <width>930</width><textureFocus>setting_button_long.png</textureFocus>
         <ondown>10</ondown>
       </control>
     </control>
-    </control>
+    
   </controls>
 </window>

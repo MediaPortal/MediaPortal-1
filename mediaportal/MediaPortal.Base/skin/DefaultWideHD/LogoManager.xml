@@ -24,20 +24,9 @@
       <posX>0</posX>
       <posY>0</posY>
       <width>1920</width>
-      <height>405</height>
+      <height>375</height>
       <texture>overlay_top.png</texture>
       <colordiffuse>ccffffff</colordiffuse>
-    </control>
-    <control>
-      <description>background selecteditem</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>-20</posX>
-      <posY>97</posY>
-      <width>2025</width>
-      <height>90</height>
-      <texture>general_overlay_selecteditem.png</texture>
-      <colordiffuse>bbffffff</colordiffuse>
     </control>
     <control>
       <description>General Overlay</description>
@@ -50,124 +39,162 @@
       <texture>general_overlay.png</texture>
     </control>
     <control>
-      <description>Country</description>
-      <id>0</id>
-      <type>label</type>
-      <label>LogoManager | Country: #LogoManager.Country | #LogoManager.percentChannels | #LogoManager.percentGroups</label>
-      <posX>45</posX>
-      <posY>48</posY>
-      <font>font11</font>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <posX>49</posX>
+      <posY>270</posY>
+      <width>670</width>
+      <animation effect="slide" time="170" start="-500,0" delay="100">windowopen</animation>
+      <control>
+        <description>Pack</description>
+        <type>button</type>
+        <id>260</id>
+        <label>#SkinTranslation.Translations.Package.Label: #LogoManager.Package</label>
+        <width>440</width>
+        <onright>270</onright>
+        <onleft>260</onleft>
+        <onup>17</onup>
+        <ondown>300</ondown>
+      </control>
+      <control>
+        <description>Channel Group</description>
+        <type>button</type>
+        <id>300</id>
+        <label>#SkinTranslation.Translations.Group.Label: #(iif(eq(#LogoManager.Group,'Multiple'),'#SkinTranslation.Translations.Multiple.Label','#LogoManager.Group'))</label> 
+        <!--#LogoManager.Group-->
+        <width>440</width>
+        <onright>270</onright>
+        <onleft>300</onleft>
+        <onup>260</onup>
+        <ondown>280</ondown>
+      </control>
+      <control>
+        <description>Design</description>
+        <type>button</type>
+        <id>280</id>
+        <label>Design: #LogoManager.Design</label>
+        <width>440</width>
+        <onright>270</onright>
+        <onleft>280</onleft>
+        <onup>300</onup>
+        <ondown>290</ondown>
+      </control>
+      <control>
+        <description>Grab</description>
+        <type>button</type>
+        <id>290</id>   
+        <label>#(iif(eq(#LogoManager.State,'Grab now'),'#SkinTranslation.Translations.GrabNow.Label','#SkinTranslation.Translations.CancelGrab.Label'))</label>
+        <!--label>#LogoManager.State</label-->
+        <width>440</width>
+        <onright>270</onright>
+        <onleft>290</onleft>
+        <onup>280</onup>
+        <ondown>260</ondown>
+      </control>
     </control>
     <control>
-    <description>Channel Progress Bar</description>
-    <type>progress</type>
-    <id>310</id>
-      <posX>774</posX>
-      <posY>180</posY>
-      <width>677</width>
-      <height>15</height>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>785</posX>
+      <posY>110</posY>
+      <width>840</width>
+      <height>27</height>
+      <texture>osd_progress_background.png</texture>
+      <visible>!string.equals(#LogoManager.percentChannels,)</visible>
+    </control>
+    <control>
+      <description>Channel Progress Bar</description>
+      <type>progress</type>
+      <id>310</id>
+      <posX>773</posX>
+      <posY>113</posY>
+      <width>840</width>
+      <height>23</height>
       <label>wtf</label>
-      <texturebg>osd_progress_background.png</texturebg>
+      <texturebg></texturebg>
       <lefttexture>osd_progress_left.png</lefttexture>
       <midtexture>osd_progress_mid.png</midtexture>
       <righttexture>osd_progress_right.png</righttexture>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>785</posX>
+      <posY>149</posY>
+      <width>840</width>
+      <height>27</height>
+      <texture>osd_progress_background.png</texture>
+      <visible>!string.equals(#LogoManager.percentGroups,)</visible>
     </control>
     <control>
       <description>Group Progress Bar</description>
       <type>progress</type>
       <id>320</id>
       <posX>774</posX>
-      <posY>210</posY>
-      <width>677</width>
-      <height>15</height>
+      <posY>150</posY>
+      <width>840</width>
+      <height>23</height>
       <label>asap</label>
-      <texturebg>osd_progress_background.png</texturebg>
+      <texturebg></texturebg>
       <lefttexture>osd_progress_left.png</lefttexture>
       <midtexture>osd_progress_mid.png</midtexture>
       <righttexture>osd_progress_right.png</righttexture>
     </control>
     <control>
+      <description>Progress Label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>750</posX>
+      <posY>107</posY>
+      <width>1265</width>
+      <align>right</align>
+      <font>font10</font>
+      <label>#LogoManager.percentChannels</label>
+      <textcolor>fff5deb3</textcolor>
+    </control>
+    <control>
+      <description>Progress Label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>750</posX>
+      <posY>147</posY>
+      <width>1265</width>
+      <align>right</align>
+      <font>font10</font>
+      <label>#LogoManager.percentGroups</label>
+      <textcolor>fff5deb3</textcolor>
+    </control>
+    <control>
       <description>Channels List</description>
       <type>listcontrol</type>
       <id>270</id>
-      <posX>430</posX>
-      <posY>375</posY>
-      <width>1100</width>
-      <height>600</height>
-      <textureHeight>70</textureHeight>
-      <textYOff>10</textYOff>
+      <posX>570</posX>
+      <posY>260</posY>
+      <width>1000</width>
+      <height>740</height>
+      <textureHeight>50</textureHeight>
+      <textYOff>2</textYOff>
       <textXOff>25</textXOff>
       <textXOff2>1500</textXOff2>
       <textXOff3>25</textXOff3>
       <PinIconXOff>15</PinIconXOff>
-      <PinIconYOff>4</PinIconYOff>
-      <PinIconHeight>60</PinIconHeight>
-      <PinIconWidth>60</PinIconWidth>
+      <PinIconYOff>10</PinIconYOff>
+      <PinIconHeight>40</PinIconHeight>
+      <PinIconWidth>40</PinIconWidth>
       <IconXOff>1020</IconXOff>
-      <itemHeight>60</itemHeight>
-      <itemWidth>60</itemWidth>
+      <itemHeight>40</itemHeight>
+      <itemWidth>40</itemWidth>
       <scrollbarHeight>400</scrollbarHeight>
       <scrollbarbg>bar_vert.png</scrollbarbg>
       <scrollbartop>mouse_left_horizontal.png</scrollbartop>
       <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
-      <scrollbarXOff>25</scrollbarXOff>
+      <scrollbarXOff>105</scrollbarXOff>
       <scrollbarYOff>0</scrollbarYOff>
       <showScrollbar>yes</showScrollbar>
       <scrollbarwidth>20</scrollbarwidth>
-      <onright>290</onright>
-      <onleft>260</onleft>
-    </control>
-    <control>
-      <description>Pack</description>
-      <posX>75</posX>
-      <posY>270</posY>
-      <width>420</width>
-      <type>button</type>
-      <id>260</id>
-      <label>Package: #LogoManager.Package</label>
-      <onright>300</onright>
-      <onleft>290</onleft>
-      <onup>270</onup>
-      <ondown>270</ondown>
-    </control>
-    <control>
-      <description>Channel Group</description>
-      <posX>525</posX>
-      <posY>270</posY>
-      <width>420</width>
-      <type>button</type>
-      <id>300</id>
-      <label>Channel Group: #LogoManager.Group</label>
-      <onright>280</onright>
-      <onleft>260</onleft>
-      <onup>270</onup>
-      <ondown>270</ondown>
-    </control>
-    <control>
-      <description>Design</description>
-      <posX>975</posX>
-      <posY>270</posY>
-      <width>420</width>
-      <type>button</type>
-      <id>280</id>
-      <label>Design: #LogoManager.Design</label>
-      <onright>290</onright>
-      <onleft>300</onleft>
-      <onup>270</onup>
-      <ondown>270</ondown>
-    </control>
-    <control>
-      <description>Grab</description>
-      <posX>1425</posX>
-      <posY>270</posY>
-      <width>420</width>
-      <type>button</type>
-      <id>290</id>
-      <label>#LogoManager.State</label>
-      <onright>260</onright>
-      <onleft>280</onleft>
-      <onup>270</onup>
-      <ondown>270</ondown>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>

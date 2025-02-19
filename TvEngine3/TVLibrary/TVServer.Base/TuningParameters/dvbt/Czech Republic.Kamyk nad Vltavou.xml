@@ -18,4 +18,10 @@
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
+  <!-- Regionální Síť 16 -->
+  <DVBTTuning>
+    <Frequency>674000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>125</Offset>
+  </DVBTTuning>
 </ArrayOfDVBTTuning>

@@ -37,7 +37,7 @@
       <width>525</width>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>Windows Update Control</label>
     </control>
     <control>
@@ -126,7 +126,7 @@
       <align>left</align>
       <font>font12</font>
       <label>#UpdateControl.Action</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!skin.hassetting(#skin.noclock)</visible>
     </control>
     <control>
@@ -139,7 +139,7 @@
       <align>left</align>
       <font>font12</font>
       <label>#UpdateControl.Action</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>skin.hassetting(#skin.noclock)</visible>
     </control>
     <!-- *** Update list *** -->
@@ -177,7 +177,7 @@
       <align>left</align>
       <font>font11</font>
       <label>#UpdateControl.UpdateDate  (#UpdateControl.UpdateSeverity  ~ #UpdateControl.UpdateSize)  #UpdateControl.UpdateDescription</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
   </controls>
 </window>

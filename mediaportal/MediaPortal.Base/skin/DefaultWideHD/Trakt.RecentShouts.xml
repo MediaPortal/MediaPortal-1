@@ -17,7 +17,7 @@
       <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>Trakt.Common.Fanart.xml</import>
-    <import>common.window.xml</import>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
     <control>
       <description>General Overlay</description>
@@ -34,13 +34,25 @@
       <type>label</type>
       <id>0</id>
       <posX>45</posX>
+      <posY>54</posY>
+      <width>1299</width>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>  
+      <label>Trakt #scroll.wrap #Trakt.Translation.RecentShouts.Label #scroll.wrap #(iif(eq(#Trakt.User.FullName,''),'#Trakt.User.Username','#Trakt.User.FullName')) #scroll.wrap #selecteditem</label>
+      <align>left</align>
+    </control>
+    <!--control>
+      <description>Current View</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
       <posY>15</posY>
       <width>1299</width>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#Trakt.Translation.RecentShouts.Label | #(iif(eq(#Trakt.User.FullName,''),'#Trakt.User.Username','#Trakt.User.FullName'))</label>
       <align>left</align>
-    </control>
+    </control-->
     <control>
       <description>group element</description>
       <type>group</type>
@@ -143,12 +155,12 @@
     <control>
       <description>Join Date | Location</description>
       <id>0</id>
-      <label>#(iif(eq(#Trakt.User.FullName,''),'#Trakt.User.Username','#Trakt.User.FullName')) | #Trakt.User.Location</label>
+      <label>#(iif(eq(#Trakt.User.FullName,''),'#Trakt.User.Username','#Trakt.User.FullName')) #scroll.wrap #Trakt.User.Location</label>
       <type>label</type>
       <posX>375</posX>
       <posY>742</posY>
       <width>1339</width>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <font>font13</font>
       <visible>!string.equals(#Trakt.User.JoinDate,)</visible>
     </control>
@@ -160,7 +172,7 @@
       <posY>787</posY>
       <width>1339</width>
       <height>105</height>
-      <font>font14</font>
+      <font>font10</font>
       <label>#Trakt.Shout.Text</label>
       <scrollStartDelaySec>12</scrollStartDelaySec>
       <seperator>-----------------------------------------------------------------------------</seperator>

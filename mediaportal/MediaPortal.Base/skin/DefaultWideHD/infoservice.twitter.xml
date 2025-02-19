@@ -52,7 +52,7 @@
       <align>left</align>
       <font>font14</font>
       <label>#infoservice.twitter.selected.username</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <type>actiongroup</type>
@@ -159,7 +159,7 @@
         <height>270</height>
         <label>-</label>
         <font>font20</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <description>Feed Item Logo</description>

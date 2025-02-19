@@ -12,6 +12,12 @@
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
+  <!-- Regionální Síť 8 -->
+  <DVBTTuning>
+    <Frequency>530000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>125</Offset>
+  </DVBTTuning>
   <!-- Vysílací Síť 23 -->
   <DVBTTuning>
     <Frequency>554000</Frequency>
@@ -27,6 +33,12 @@
   <!-- Vysílací Síť 24 -->
   <DVBTTuning>
     <Frequency>650000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>125</Offset>
+  </DVBTTuning>
+  <!-- Regionální Síť 11 -->
+  <DVBTTuning>
+    <Frequency>682000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>

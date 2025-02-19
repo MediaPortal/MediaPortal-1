@@ -1429,6 +1429,8 @@ namespace MediaPortal.GUI.Pictures
       {
         g_Player.Stop();
       }
+
+      this._slideCache.Clear();
     }
 
     #endregion

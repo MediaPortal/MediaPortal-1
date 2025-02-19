@@ -29,7 +29,7 @@
       <posY>367</posY>
       <width>843</width>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <font>Menutitle</font>
     </control>
     <control>
@@ -40,7 +40,7 @@
       <posY>2397</posY>
       <width>843</width>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#TestLabel</label>
       <font>font12</font>
     </control>

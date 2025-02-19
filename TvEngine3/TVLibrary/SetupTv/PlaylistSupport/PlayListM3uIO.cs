@@ -22,6 +22,7 @@ using System;
 using System.IO;
 using SetupTv;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace MediaPortal.Playlists
 {
@@ -102,15 +103,11 @@ namespace MediaPortal.Playlists
     private static bool ExtractM3uInfo(string trimmedLine, ref string songName, ref int lDuration)
     {
       //bool successfull;
-      int iColon = trimmedLine.IndexOf(":");
-      int iComma = trimmedLine.IndexOf(",");
-      if (iColon >= 0 && iComma >= 0 && iComma > iColon)
+      var match = Regex.Match(trimmedLine, @"#EXTINF:(?<duration>-?\d+)(?<attributes>.*),(?<title>.+)");
+      if (match.Success)
       {
-        iColon++;
-        string duration = trimmedLine.Substring(iColon, iComma - iColon);
-        iComma++;
-        songName = trimmedLine.Substring(iComma);
-        lDuration = Int32.Parse(duration);
+        lDuration = Int32.Parse(match.Groups["duration"].Value);
+        songName = match.Groups["title"].Value.Trim();
         return true;
       }
       return false;

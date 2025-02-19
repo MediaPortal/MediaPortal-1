@@ -61,7 +61,7 @@
 		<height>36</height>
 		<keepaspectratio>yes</keepaspectratio>
 		<zoom>no</zoom>
-		<texture>defaultTVBig.png</texture>
+		<texture>defaultTVlogo.png</texture>
 	</control>
 	
     <!-- Timeheader background must be dedfined before Timeheader label template -->
@@ -150,7 +150,7 @@
 		<centered>yes</centered>
 		<zoom>no</zoom>
 		<keepaspectratio>yes</keepaspectratio>
-		<texture>defaultTVBig.png</texture>
+		<texture>defaultTVlogo.png</texture>
   </control>
 	
   <control>

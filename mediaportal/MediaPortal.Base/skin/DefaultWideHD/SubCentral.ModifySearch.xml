@@ -9,7 +9,7 @@
     <id>216</id>
     <label>#SubCentral.Translation.Movie.Label</label>
     <posX>84</posX>
-    <posY>217</posY>
+    <posY>270</posY>
     <onleft>216</onleft>
     <onright>222</onright>
     <onup>217</onup>
@@ -20,7 +20,7 @@
     <type>image</type>
     <id>0</id>
     <posX>407</posX>
-    <posY>234</posY>
+    <posY>280</posY>
     <width>33</width>
     <height>33</height>
     <texture>check-box.png</texture>
@@ -32,7 +32,7 @@
     <id>217</id>
     <label>#SubCentral.Translation.TVShow.Label</label>
     <posX>84</posX>
-    <posY>281</posY>
+    <posY>350</posY>
     <onleft>217</onleft>
     <onright>226</onright>
     <onup>216</onup>
@@ -43,7 +43,7 @@
     <type>image</type>
     <id>0</id>
     <posX>407</posX>
-    <posY>298</posY>
+    <posY>360</posY>
     <width>33</width>
     <height>33</height>
     <texture>check-box.png</texture>
@@ -53,8 +53,8 @@
     <type>image</type>
     <id>0</id>
     <posX>84</posX>
-    <posY>350</posY>
-    <width>379</width>
+    <posY>390</posY>
+    <width>390</width>
     <height>63</height>
     <texture>buttonnofocus.png</texture>
     <visible>!Control.hasFocus(226)+String.Equals(#SubCentral.ModifySearch.SearchType.Type,TVSHOW)</visible>
@@ -63,8 +63,8 @@
     <type>image</type>
     <id>0</id>
     <posX>84</posX>
-    <posY>350</posY>
-    <width>379</width>
+    <posY>430</posY>
+    <width>390</width>
     <height>63</height>
     <texture>button_focus.png</texture>
     <visible>Control.hasFocus(226)+String.Equals(#SubCentral.ModifySearch.SearchType.Type,TVSHOW)</visible>
@@ -75,8 +75,10 @@
     <id>226</id>
     <label>#SubCentral.Translation.AbsoluteNumbering.Label</label>
     <posX>94</posX>
-    <posY>360</posY>
-    <onup>217</onup>
+    <posY>438</posY> 440
+	<MarkWidth>42</MarkWidth>
+    <MarkHeight>42</MarkHeight>
+	<onup>217</onup>
     <ondown>222</ondown>
     <onleft>217</onleft>
     <onright>222</onright>
@@ -88,8 +90,8 @@
     <posX>530</posX>
     <posY>260</posY>
     <label>#SubCentral.Translation.Title.Label:</label>
-    <font>font12</font>
-    <textcolor>ff6FAFE1</textcolor>
+    <font>LabelBold</font>
+    <textcolor>ff00bfff</textcolor>
     <visible>Control.IsVisible(103)+Control.IsVisible(222)</visible>
   </control>
   <control>
@@ -105,14 +107,15 @@
     <ondown>223</ondown>
     <textXOff>28</textXOff>
     <textYOff>8</textYOff>
-    <font>font15</font>
+    <font>LabelBold</font>
     <textalign>left</textalign>
-    <height>70</height>
+    <height>50</height>
     <width>1082</width>
-    <textureFocus>keyboard.png</textureFocus>
+    <textureFocus>white.png</textureFocus>
     <textureNoFocus>listnofocus.png</textureNoFocus>
+    <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
-    <colordiffuse>90ffffff</colordiffuse>
+    <colordiffuse>ff6FAFE1</colordiffuse>
     <visible>Control.IsVisible(103)</visible>
   </control>
   <control>
@@ -121,8 +124,8 @@
     <posX>530</posX>
     <posY>330</posY>
     <label>#SubCentral.Translation.Year.Label:</label>
-    <font>font12</font>
-    <textcolor>ff6FAFE1</textcolor>
+    <font>LabelBold</font>
+    <textcolor>ff00bfff</textcolor>
     <visible>Control.IsVisible(103)+Control.IsVisible(223)</visible>
   </control>
   <control>
@@ -138,14 +141,15 @@
     <ondown>221</ondown>
     <textXOff>28</textXOff>
     <textYOff>8</textYOff>
-    <font>font15</font>
+    <font>LabelBold</font>
     <textalign>left</textalign>
-    <height>70</height>
+    <height>50</height>
     <width>1082</width>
-    <textureFocus>keyboard.png</textureFocus>
+    <textureFocus>white.png</textureFocus>
     <textureNoFocus>listnofocus.png</textureNoFocus>
+    <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
-    <colordiffuse>90ffffff</colordiffuse>
+    <colordiffuse>ff6FAFE1</colordiffuse>
     <visible>Control.IsVisible(103)+String.Equals(#SubCentral.ModifySearch.SearchType.Type,MOVIE)</visible>
   </control>
   <control>
@@ -154,8 +158,8 @@
     <posX>530</posX>
     <posY>400</posY>
     <label>#SubCentral.Translation.IMDbID.Label:</label>
-    <font>font12</font>
-    <textcolor>ff6FAFE1</textcolor>
+    <font>LabelBold</font>
+    <textcolor>ff00bfff</textcolor>
     <visible>Control.IsVisible(103)+Control.IsVisible(221)</visible>
   </control>
   <control>
@@ -171,14 +175,15 @@
     <ondown>224</ondown>
     <textXOff>28</textXOff>
     <textYOff>8</textYOff>
-    <font>font15</font>
+    <font>LabelBold</font>
     <textalign>left</textalign>
-    <height>70</height>
+    <height>50</height>
     <width>1082</width>
-    <textureFocus>keyboard.png</textureFocus>
+    <textureFocus>white.png</textureFocus>
+    <textcolor>ff000000</textcolor>
     <textureNoFocus>listnofocus.png</textureNoFocus>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
-    <colordiffuse>90ffffff</colordiffuse>
+    <colordiffuse>ff6FAFE1</colordiffuse>
     <visible>Control.IsVisible(103)+String.Equals(#SubCentral.ModifySearch.SearchType.Type,MOVIE)</visible>
   </control>
   <control>
@@ -187,8 +192,8 @@
     <posX>530</posX>
     <posY>330</posY>
     <label>#SubCentral.Translation.Season.Label:</label>
-    <font>font12</font>
-    <textcolor>ff6FAFE1</textcolor>
+    <font>LabelBold</font>
+    <textcolor>ff00bfff</textcolor>
     <visible>Control.IsVisible(103)+Control.IsVisible(224)</visible>
   </control>
   <control>
@@ -204,14 +209,15 @@
     <ondown>225</ondown>
     <textXOff>28</textXOff>
     <textYOff>8</textYOff>
-    <font>font15</font>
+    <font>LabelBold</font>
     <textalign>left</textalign>
-    <height>70</height>
+    <height>50</height>
     <width>1082</width>
-    <textureFocus>keyboard.png</textureFocus>
+    <textureFocus>white.png</textureFocus>
     <textureNoFocus>listnofocus.png</textureNoFocus>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
-    <colordiffuse>90ffffff</colordiffuse>
+    <textcolor>ff000000</textcolor>
+    <colordiffuse>ff6FAFE1</colordiffuse>
     <visible>Control.IsVisible(103)+String.Equals(#SubCentral.ModifySearch.SearchType.Type,TVSHOW)</visible>
   </control>
   <control>
@@ -220,8 +226,8 @@
     <posX>530</posX>
     <posY>400</posY>
     <label>#SubCentral.Translation.Episode.Label:</label>
-    <textcolor>ff6FAFE1</textcolor>
-    <font>font12</font>
+    <textcolor>ff00bfff</textcolor>
+    <font>LabelBold</font>
     <visible>Control.IsVisible(103)+Control.IsVisible(225)</visible>
   </control>
   <control>
@@ -237,14 +243,15 @@
     <ondown>214</ondown>
     <textXOff>28</textXOff>
     <textYOff>8</textYOff>
-    <font>font15</font>
+    <font>LabelBold</font>
     <textalign>left</textalign>
-    <height>70</height>
+    <height>50</height>
     <width>1082</width>
-    <textureFocus>keyboard.png</textureFocus>
+    <textureFocus>white.png</textureFocus>
     <textureNoFocus>listnofocus.png</textureNoFocus>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
-    <colordiffuse>90ffffff</colordiffuse>
+    <textcolor>ff000000</textcolor>
+    <colordiffuse>ff6FAFE1</colordiffuse>
     <visible>Control.IsVisible(103)+String.Equals(#SubCentral.ModifySearch.SearchType.Type,TVSHOW)</visible>
   </control>
   <control>
@@ -253,8 +260,8 @@
     <posX>530</posX>
     <posY>530</posY>
     <label>#SubCentral.Translation.MediaFiles.Label:</label>
-    <font>font12</font>
-    <textcolor>ff6FAFE1</textcolor>
+    <font>LabelBold</font>
+    <textcolor>ff00bfff</textcolor>
     <visible>Control.IsVisible(103)</visible>
   </control>
   <control>
@@ -262,8 +269,8 @@
     <type>button</type>
     <id>214</id>
     <label>Clear files</label>
-    <posX>1328</posX>
-    <posY>575</posY>
+    <posX>1328</posX> 1328
+    <posY>490</posY> 575
     <width>351</width>
     <height>56</height>
     <onleft>225</onleft>
@@ -272,7 +279,7 @@
     <ondown>211</ondown>
     <textXOff>0</textXOff>
     <textYOff>0</textYOff>
-    <font>font15</font>
+    <font>LabelBold</font>
     <textalign>center</textalign>
     <visible>Control.IsVisible(103)</visible>
   </control>
@@ -281,11 +288,11 @@
     <type>textboxscrollup</type>
     <id>0</id>
     <posX>530</posX>
-    <posY>570</posY>
+    <posY>570</posY> 570  787
     <width>1272</width>
-    <height>217</height>
+    <height>217</height> 
     <textcolor>90ffffff</textcolor>
-    <font>font12</font>
+    <font>LabelBold</font>
     <label>#SubCentral.ManualSearch.Files.AllNames</label>
     <visible>Control.IsVisible(103)</visible>
   </control>
@@ -295,21 +302,21 @@
     <layout>StackLayout(20, Horizontal, true)</layout>
     <visible>Control.IsVisible(103)</visible>
     <posX>600</posX>
-    <posY>800</posY>
+    <posY>850</posY>  800
     <control>
       <description>OK/Search Button</description>
       <type>button</type>
       <id>211</id>
       <label>OK/Search</label>
       <width>351</width>
-      <height>70</height>
+      <height>50</height>
       <onleft>213</onleft>
       <onright>212</onright>
       <onup>214</onup>
       <ondown>211</ondown>
       <textXOff>0</textXOff>
       <textYOff>0</textYOff>
-      <font>font15</font>
+      <font>LabelBold</font>
       <textalign>center</textalign>
     </control>
     <control>
@@ -318,14 +325,14 @@
       <id>212</id>
       <label>Cancel</label>
       <width>351</width>
-      <height>70</height>
+      <height>50</height>
       <onleft>211</onleft>
       <onright>213</onright>
       <onup>214</onup>
       <ondown>212</ondown>
       <textXOff>0</textXOff>
       <textYOff>0</textYOff>
-      <font>font15</font>
+      <font>LabelBold</font>
       <textalign>center</textalign>
     </control>
     <control>
@@ -334,14 +341,14 @@
       <id>213</id>
       <label>Revert</label>
       <width>351</width>
-      <height>70</height>
+      <height>50</height>
       <onleft>212</onleft>
       <onright>211</onright>
       <onup>214</onup>
       <ondown>213</ondown>
       <textXOff>0</textXOff>
       <textYOff>0</textYOff>
-      <font>font15</font>
+      <font>LabelBold</font>
       <textalign>center</textalign>
     </control>
   </control>

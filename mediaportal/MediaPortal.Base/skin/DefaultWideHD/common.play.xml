@@ -26,7 +26,7 @@
       <label>-</label>
       <font>font14</font>
       <align>center</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>no</visible>
     </control>
     <control>
@@ -39,7 +39,7 @@
       <label>-</label>
       <font>font14</font>
       <align>center</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>no</visible>
     </control>
     <control>
@@ -52,20 +52,33 @@
       <label>-</label>
       <font>font14</font>
       <align>center</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>no</visible>
     </control>
     <!-- **************************** PAUSE, REWIND ETC. FOR NORMAL VIDEO OSD ********************************** -->
-    <control>
+    <!--control>
       <description>Pause image</description>
       <type>image</type>
       <id>0</id>
       <posX>920</posX>
       <posY>1015</posY>
       <visible>player.paused</visible>
-      <texture>video-pause.png</texture>
+      <texture>pause_white_transparent.png</texture>
       <colorkey>0</colorkey>
       <colordiffuse>ivory</colordiffuse>
+    </control-->
+    <control>
+      <description>Pause on transparent white background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>910</posX>
+      <posY>490</posY>
+      <width>100</width>
+      <height>100</height>
+      <texture>pause_white_transparent.png</texture>
+      <colordiffuse>eeffffff</colordiffuse>
+      <visible>player.paused</visible>
+      <animation effect="zoom" start="100,100" end="115,115" time="1500" condition="true" pulse="true">conditional</animation>
     </control>
     <control>
       <description>2x image</description>

@@ -64,10 +64,10 @@ namespace SetupTv.Sections
       String tuningFolder = String.Format(@"{0}\TuningParameters\dvbip", PathManager.GetDataPath);
       if (Directory.Exists(tuningFolder))
       {
-        string[] files = Directory.GetFiles(tuningFolder, "*.m3u");
+        string[] files = Directory.GetFiles(tuningFolder, "*.m3u*");
         foreach (string f in files)
         {
-          mpComboBoxService.Items.Add(Path.GetFileNameWithoutExtension(f));
+          mpComboBoxService.Items.Add(Path.GetFileName(f));
         }
       }
       mpComboBoxService.SelectedIndex = 0;
@@ -169,10 +169,10 @@ namespace SetupTv.Sections
         else
         {
           IPlayListIO playlistIO =
-            PlayListFactory.CreateIO(String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", PathManager.GetDataPath,
+            PlayListFactory.CreateIO(String.Format(@"{0}\TuningParameters\dvbip\{1}", PathManager.GetDataPath,
                                                    mpComboBoxService.SelectedItem));
           playlistIO.Load(playlist,
-                          String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", PathManager.GetDataPath,
+                          String.Format(@"{0}\TuningParameters\dvbip\{1}", PathManager.GetDataPath,
                                         mpComboBoxService.SelectedItem));
         }
         if (playlist.Count == 0) return;
