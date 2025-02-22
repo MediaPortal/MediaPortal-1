@@ -2,7 +2,7 @@
 <window>
   <id>7982</id>
   <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
+  <allowoverlay>no</allowoverlay>
   <define>#header.label:DefaultWideHD</define><!-->&#8596;<-->
   <define>#header.hover:</define>
   <controls>
@@ -355,9 +355,31 @@
   <!-- ********************************   KEYBOARD SHORTCUTS   *********************************** -->
   <!-- ******************************************************************************************* -->
   <control>
+        <description>background</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>751</posX>
+        <posY>83</posY>
+        <height>64</height>
+        <width>434</width>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>dd164665</colordiffuse>
+      </control>
+      <control>
+        <description>background</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>753</posX>
+        <posY>85</posY>
+        <height>60</height>
+        <width>430</width>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>ff00061c</colordiffuse>
+      </control>
+  <control>
           <description>Keyboard Shortcuts</description>
           <id>8</id>
-          <posX>753</posX>
+          <posX>755</posX>
           <posY>85</posY>
           <type>checkbutton</type>
           <label>#SkinTranslation.Translations.KeyboardShortcuts.Label</label>
@@ -373,7 +395,7 @@
           <textXOff>25</textXOff>
           <textYOff>5</textYOff>
           <font>font10</font>
-          <textureNoFocus>buttonfocus.png</textureNoFocus>
+          <textureNoFocus>-</textureNoFocus>
           <disabledcolor>ffffffff</disabledcolor>
           <textcolorNoFocus>aaffffff</textcolorNoFocus>
         </control>

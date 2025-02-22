@@ -12,6 +12,7 @@
       <id>10</id>
       <posX>1012</posX>
       <posY>680</posY> 
+	  <textalign>center</textalign>
       <width>279</width>
       <height>70</height>
       <textureFocus>dialogue_button.png</textureFocus>
@@ -28,6 +29,7 @@
       <id>11</id>
       <posX>612</posX>
       <posY>680</posY>
+	  <textalign>center</textalign>
       <width>279</width>
       <height>70</height>
       <textureFocus>dialogue_button.png</textureFocus>
