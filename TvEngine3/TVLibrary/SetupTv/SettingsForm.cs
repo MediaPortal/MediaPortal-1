@@ -282,7 +282,7 @@ namespace SetupTv
                 cardName = String.Format("{0} {1}", cardId, cardName);
                 InfoPage RadioWebStreamInfo = new InfoPage(cardName);
                 RadioWebStreamInfo.InfoText =
-                  "The RadioWebStream card does not have any options.\n\n\nYou can add your favourite radio webstreams under:\n\n --> 'Radio Channels', 'Add', 'Web-Stream' or by importing a playlist.";
+                  "The RadioWebStream card does not have any options.\n\nNote that this card doesn't support recording or previewing\n\nYou can add your favourite radio webstreams under:\n\n --> 'Radio Channels', 'Add', 'Web-Stream' or by importing a playlist.";
                 AddChildSection(cardPage, RadioWebStreamInfo, 1);
                 break;
               case CardType.Unknown:

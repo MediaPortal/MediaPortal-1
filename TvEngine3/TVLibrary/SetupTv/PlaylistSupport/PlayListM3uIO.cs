@@ -57,7 +57,7 @@ namespace MediaPortal.Playlists
 
           string trimmedLine = line.Trim();
 
-          if (trimmedLine != M3U_START_MARKER)
+          if (!trimmedLine.StartsWith(M3U_START_MARKER))
           {
             string fileName = trimmedLine;
             if (!AddItem("", 0, fileName))
@@ -154,7 +154,7 @@ namespace MediaPortal.Playlists
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
   }
 }
