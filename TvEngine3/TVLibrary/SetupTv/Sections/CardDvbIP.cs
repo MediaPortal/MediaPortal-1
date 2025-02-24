@@ -20,12 +20,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Net;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.Playlists;
@@ -44,10 +41,10 @@ namespace SetupTv.Sections
     private bool _stopScanning = false;
 
     public CardDvbIP()
-      : this("DvbIP") {}
+      : this("DvbIP") { }
 
     public CardDvbIP(string name)
-      : base(name) {}
+      : base(name) { }
 
     public CardDvbIP(string name, int cardNumber)
       : base(name)
@@ -107,7 +104,7 @@ namespace SetupTv.Sections
       setting.Persist();
     }
 
-    private void CardDvbIP_Load(object sender, EventArgs e) {}
+    private void CardDvbIP_Load(object sender, EventArgs e) { }
 
     private string getUrlFromM3u8(string mainUrl)
     {
