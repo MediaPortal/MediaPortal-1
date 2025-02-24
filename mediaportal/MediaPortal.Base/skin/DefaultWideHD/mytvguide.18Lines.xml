@@ -180,6 +180,33 @@
       <visible>!control.isvisible(33)</visible>
     </control>
     <!-- ********************************************************************************** -->
+    <!-- ************************** Switch channels in EPG ******************************** -->
+    <!-- ********************************************************************************** -->
+    <control>
+      <description>Background for channel change</description>
+      <type>image</type>
+      <posX>310</posX>
+      <posY>105</posY>
+      <width>70</width>
+      <height>40</height>
+      <texture>white.png</texture>
+      <keepaspectratio>no</keepaspectratio>
+      <colordiffuse>ff20314d</colordiffuse>
+      <visible>Control.IsVisible(34)</visible>
+    </control>
+    <control>
+      <description>Keyed channel number</description>
+      <type>label</type>
+      <id>34</id>
+      <posX>310</posX>
+      <posY>96</posY>
+      <width>60</width>
+      <height>60</height>
+      <align>center</align>
+      <font>LabelBold</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <!-- ********************************************************************************** -->
     <!-- ************************** The Programme Table *********************************** -->
     <!-- ********************************************************************************** -->
     <control>
