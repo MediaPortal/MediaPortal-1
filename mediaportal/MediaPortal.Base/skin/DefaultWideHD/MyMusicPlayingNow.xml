@@ -188,11 +188,11 @@
     <description>Track - Title</description>
     <type>group</type>
     <layout>StackLayout(7, Horizontal, true)</layout>
-    <posX>541</posX>
-    <posY>107</posY>
+    <posX>45</posX>
+    <posY>94</posY>
     <width>1342</width>
     <align>left</align>
-    <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+!skin.hassetting(#skin.noclock)+Player.hasaudio+!string.equals(#duration)</visible>
+    <visible>Player.hasaudio+!string.equals(#duration)+!string.equals(#RadioTime.Play.Station,)</visible>
     <control>
       <type>fadelabel</type>
       <description>Track</description>
@@ -220,11 +220,11 @@
     <description>Track - Title</description>
     <type>group</type>
     <layout>StackLayout(7, Horizontal, true)</layout>
-    <posX>251</posX>
-    <posY>107</posY>
+    <posX>45</posX>
+    <posY>94</posY>
     <width>1620</width>
     <align>left</align>
-    <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+skin.hassetting(#skin.noclock)+Player.hasaudio+!string.equals(#duration)</visible>
+    <visible>Player.hasaudio+!string.equals(#duration)+string.equals(#RadioTime.Play.Station,)</visible>
     <control>
       <type>fadelabel</type>
       <description>Track</description>
@@ -240,7 +240,7 @@
       <type>fadelabel</type>
       <description>Title</description>
       <id>0</id>
-      <label>#RadioTime.Play.Station #scroll.wrap #RadioTime.Play.Location</label>
+      <label>#Play.Current.Album</label>
       <width>10</width>
       <maxWidth>1450</maxWidth>
       <align>left</align>

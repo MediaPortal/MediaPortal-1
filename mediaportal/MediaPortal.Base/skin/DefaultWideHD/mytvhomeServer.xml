@@ -760,7 +760,7 @@
           <type>fadelabel</type>
           <description>TuneIn Station</description>
           <id>0</id>
-          <label>#RadioTime.Play.Station #RadioTime.Play.Location</label>
+          <label>#(iif(eq(#RadioTime.Play.Station,''),'#Play.Current.Album','#RadioTime.Play.Station #RadioTime.Play.Location'))</label>
           <width>900</width>
           <maxWidth>1030</maxWidth>
           <align>left</align>
