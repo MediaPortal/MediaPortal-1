@@ -185,6 +185,18 @@
     <control>
       <description>Background for channel change</description>
       <type>image</type>
+      <posX>309</posX>
+      <posY>104</posY>
+      <width>72</width>
+      <height>42</height>
+      <texture>white.png</texture>
+      <keepaspectratio>no</keepaspectratio>
+      <colordiffuse>994682b4</colordiffuse>
+      <visible>Control.IsVisible(34)</visible>
+    </control>
+    <control>
+      <description>Background for channel change</description>
+      <type>image</type>
       <posX>310</posX>
       <posY>105</posY>
       <width>70</width>
