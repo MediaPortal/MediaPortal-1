@@ -184,9 +184,9 @@
     <control>
       <description>Background for channel change</description>
       <type>image</type>
-      <posX>309</posX>
+      <posX>270</posX>
       <posY>104</posY>
-      <width>72</width>
+      <width>111</width>
       <height>42</height>
       <texture>white.png</texture>
       <keepaspectratio>no</keepaspectratio>
@@ -196,13 +196,25 @@
     <control>
       <description>Background for channel change</description>
       <type>image</type>
-      <posX>310</posX>
+      <posX>271</posX>
       <posY>105</posY>
-      <width>70</width>
+      <width>109</width>
       <height>40</height>
       <texture>white.png</texture>
       <keepaspectratio>no</keepaspectratio>
       <colordiffuse>ff20314d</colordiffuse>
+      <visible>Control.IsVisible(34)</visible>
+    </control>
+    <control>
+      <description>Background for channel change</description>
+      <type>image</type>
+      <posX>277</posX>
+      <posY>107</posY>
+      <width>30</width>
+      <height>36</height>
+      <texture>numberblock.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>Control.IsVisible(34)</visible>
     </control>
     <control>
