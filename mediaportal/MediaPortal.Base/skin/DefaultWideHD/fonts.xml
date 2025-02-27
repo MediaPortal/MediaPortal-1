@@ -152,7 +152,7 @@
   <name>font36</name>
   <filename>Open Sans Light</filename>
   <height>24</height>
-  <bold>no</bold>
+  <bold>yes</bold>
   <start>0</start>
   <end>1536</end>
 </font>

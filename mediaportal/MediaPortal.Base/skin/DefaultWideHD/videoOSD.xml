@@ -159,7 +159,7 @@
       <texture>dvdcase_mask.png</texture>
       <keepaspectratio>no</keepaspectratio>
       <colordiffuse>ff00061c</colordiffuse>
-      <visible>!control.hasfocus(1237)+control.hastumb(203)</visible>
+      <visible>!control.hasfocus(1237)+control.hasthumb(203)</visible>
     </control>
     <control>
       <description>Movie thumb</description>

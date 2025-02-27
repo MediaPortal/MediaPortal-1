@@ -296,7 +296,7 @@
       <height>90</height>
       <align>right</align>
       <keepaspectratio>yes</keepaspectratio>
-      <texture>#TV.View.thumb</texture>
+      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'defaultlogo.png','#TV.View.thumb'))</texture>
       <visible>!player.hasaudio+[!Player.HasVideo|string.contains(#Play.Current.File,tsbuffer)]</visible>
     </control>
     <control>

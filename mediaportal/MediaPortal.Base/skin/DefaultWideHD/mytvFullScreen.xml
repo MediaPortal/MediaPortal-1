@@ -200,12 +200,12 @@
       <description>TV Logo Background</description>
       <type>image</type>
       <id>1</id>
-      <posX>52</posX>
-      <posY>843</posY>
-      <width>141</width>
-      <height>141</height>
-      <texture>#TV.View.thumb</texture>
-      <colordiffuse>f700061c</colordiffuse>
+      <posX>53</posX>
+      <posY>844</posY>
+      <width>139</width>
+      <height>139</height>
+      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'tvlogoback.png','tvlogoback.png'))</texture>
+      <colordiffuse>ff09173c</colordiffuse>
       <visible>control.isVisible(111)</visible>
     </control>
     <control>
@@ -216,7 +216,7 @@
       <posY>845</posY>
       <width>137</width>
       <height>137</height>
-      <texture>#TV.View.thumb</texture>
+      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'defaultlogo.png','#TV.View.thumb'))</texture>
       <centered>yes</centered>
       <keepaspectratio>yes</keepaspectratio>
       <visible>control.isVisible(111)</visible>

@@ -97,25 +97,14 @@
       <description>TV Logo Background</description>
       <type>image</type>
       <id>0</id>
-      <posX>52</posX>
-      <posY>803</posY>
-      <width>141</width>
-      <height>141</height>
+      <posX>53</posX>
+      <posY>804</posY>
+      <width>139</width>
+      <height>139</height>
       <keepaspectratio>yes</keepaspectratio>
-      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'','BG_TVlogo.png'))</texture>
-      <colordiffuse>ff00061c</colordiffuse>
+      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'tvlogoback.png','tvlogoback.png'))</texture>
+      <colordiffuse>ff09173c</colordiffuse>
 	</control> 
-    <!--<control>
-      <description>TV Logo</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>54</posX>
-      <posY>805</posY>
-      <width>137</width>
-      <height>137</height>
-      <texture>defaultlogo.png</texture>
-      <keepaspectratio>yes</keepaspectratio>
-    </control>-->
     <control>
       <description>TV Logo</description>
       <type>image</type>
@@ -276,15 +265,27 @@
       <texture>tv_is_recording.png</texture>
     </control>
     <control>
+      <description>Zap channel Background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>20</posX>
+      <posY>10</posY>
+      <width>160</width>
+      <height>90</height>
+      <texture>tvlogoback.png</texture>
+      <colordiffuse>ff09173c</colordiffuse>
+      <visible>yes</visible>
+    </control>
+    <control>
       <description>Zap to channel no</description>
       <type>label</type>
       <id>38</id>
-      <posX>30</posX>
-      <posY>1</posY>
+      <posX>45</posX>
+      <posY>10</posY>
       <label>-</label>
       <font>font36</font>
       <shadowAngle>45</shadowAngle>
-      <shadowDistance>7</shadowDistance>
+      <shadowDistance>3</shadowDistance>
       <shadowColor>ff000000</shadowColor>
       <textcolor>ff00bfff</textcolor>
       <visible>no</visible>
