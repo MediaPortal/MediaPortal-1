@@ -51,7 +51,7 @@
       <width>925</width>
       <font>font11</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#SettingLastUpdate</label>
     </control>
     <control>
@@ -378,7 +378,7 @@
       <posY>182</posY>
       <label>#ClickfinderPG.Translation.HighlightsListTitle</label>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <type>listcontrol</type>
@@ -473,7 +473,7 @@
       <posY>154</posY>
       <label>#CurrentDate</label>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <id>1</id>

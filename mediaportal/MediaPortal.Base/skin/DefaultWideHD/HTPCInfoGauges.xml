@@ -11,7 +11,7 @@
       <type>group</type>
       <description>group element</description>
       <visible>Control.IsVisible(52)</visible>
-      <control>
+      <!--control>
         <type>image</type>
         <posX>513</posX>
         <posY>210</posY>
@@ -19,7 +19,7 @@
         <height>814</height>
         <texture mask="picturecase_mask.png">black.png</texture>
         <colordiffuse>bbffffff</colordiffuse>
-      </control>
+      </control-->
       <control>
         <description>Processor Gauge</description>
         <type>image</type>
@@ -42,7 +42,7 @@
         <label>#HTPCInfo.TranslationProcessor</label>
         <align>left</align>
         <font>font14</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <!-- *** Processor Usage *** -->
       <control>
@@ -55,7 +55,7 @@
         <label>#HTPCInfo.TranslationProcessorUsage</label>
         <align>right</align>
         <font>font11</font>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <description>Processor Usage</description>
@@ -67,7 +67,7 @@
         <label>#HTPCInfo.ProcessorUsage%</label>
         <align>left</align>
         <font>font11</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <!-- *** Label Processor Core Count *** -->
       <control>
@@ -80,7 +80,7 @@
         <label>#HTPCInfo.TranslationProcessorCore</label>
         <align>right</align>
         <font>font11</font>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <description>Processor Core Count</description>
@@ -92,7 +92,7 @@
         <label>#HTPCInfo.ProcessorCoresx</label>
         <align>left</align>
         <font>font11</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <!-- *** Label Processor Name *** -->
       <control>
@@ -105,7 +105,7 @@
         <label>#HTPCInfo.TranslationProcessorType</label>
         <align>right</align>
         <font>font11</font>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <description>Processor Core Count</description>
@@ -117,7 +117,7 @@
         <label>#HTPCInfo.ProcessorName</label>
         <align>left</align>
         <font>font11</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <!-- *** Memory Gauge *** -->
       <control>
@@ -142,7 +142,7 @@
         <label>#HTPCInfo.TranslationMemory</label>
         <align>left</align>
         <font>font14</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <!-- *** Memory Usage *** -->
       <control>
@@ -155,7 +155,7 @@
         <label>#HTPCInfo.TranslationMemoryUsage</label>
         <align>right</align>
         <font>font11</font>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <description>Memory Usage</description>
@@ -167,7 +167,7 @@
         <label>#HTPCInfo.MemoryPercentUsed% (#HTPCInfo.MemoryAvailable #HTPCInfo.TranslationFree)</label>
         <align>left</align>
         <font>font11</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <!-- *** Label Processor Name *** -->
       <control>
@@ -180,7 +180,7 @@
         <label>#HTPCInfo.TranslationMemoryPagefileUsage</label>
         <align>right</align>
         <font>font11</font>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <description>Pagefile Usage</description>
@@ -192,7 +192,7 @@
         <label>#HTPCInfo.PagefileUsed%</label>
         <align>left</align>
         <font>font11</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <!-- *** Label Processor Core Count *** -->
       <control>
@@ -205,7 +205,7 @@
         <label>#HTPCInfo.TranslationMemorySize</label>
         <align>right</align>
         <font>font11</font>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <description>Memory Size</description>
@@ -217,7 +217,7 @@
         <label>#HTPCInfo.MemoryPhysical</label>
         <align>left</align>
         <font>font11</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <!-- *** Drive1 Gauge *** -->
       <control>
@@ -278,7 +278,7 @@
         <label>#HTPCInfo.TranslationDrive</label>
         <align>left</align>
         <font>font14</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <!-- *** Drive C Usage *** -->
       <control>
@@ -290,7 +290,7 @@
         <label>#HTPCInfo.Drive1Name: #HTPCInfo.Drive1Size - #HTPCInfo.Drive1FreeSpace #HTPCInfo.TranslationFree (#HTPCInfo.Drive1PercentUsedSpace% #HTPCInfo.TranslationUsed)</label>
         <align>left</align>
         <font>font11</font>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <!-- *** Drive D Usage *** -->
       <control>
@@ -302,7 +302,7 @@
         <label>#HTPCInfo.Drive2Name: #HTPCInfo.Drive2Size - #HTPCInfo.Drive2FreeSpace #HTPCInfo.TranslationFree (#HTPCInfo.Drive2PercentUsedSpace% #HTPCInfo.TranslationUsed)</label>
         <align>left</align>
         <font>font11</font>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <!-- *** Drive E Usage *** -->
       <control>
@@ -314,7 +314,7 @@
         <label>#HTPCInfo.Drive3Name: #HTPCInfo.Drive3Size - #HTPCInfo.Drive3FreeSpace #HTPCInfo.TranslationFree (#HTPCInfo.Drive3PercentUsedSpace% #HTPCInfo.TranslationUsed)</label>
         <align>left</align>
         <font>font11</font>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <!-- *** Drive F Usage *** -->
       <control>
@@ -326,7 +326,7 @@
         <label>#HTPCInfo.Drive4Name: #HTPCInfo.Drive4Size - #HTPCInfo.Drive4FreeSpace #HTPCInfo.TranslationFree (#HTPCInfo.Drive4PercentUsedSpace% #HTPCInfo.TranslationUsed)</label>
         <align>left</align>
         <font>font11</font>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
     </control>
     <!-- ******************************************* Section Progressbar **************************************** -->
@@ -377,7 +377,7 @@
       <posY>238</posY>
       <label>#HTPCInfo.TranslationProcessor</label>
       <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>Control.IsVisible(53)</visible>
     </control>
     <control>
@@ -387,7 +387,7 @@
       <posX>568</posX>
       <posY>280</posY>
       <label>#HTPCInfo.TranslationProcessorUsage</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>Control.IsVisible(53)</visible>
       <font>font11</font>
     </control>
@@ -398,7 +398,7 @@
       <posX>877</posX>
       <posY>280</posY>
       <label>#HTPCInfo.ProcessorUsage%</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>Control.IsVisible(53)</visible>
       <font>font11</font>
     </control>
@@ -409,7 +409,7 @@
       <posX>568</posX>
       <posY>315</posY>
       <label>#HTPCInfo.TranslationProcessorCore</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>Control.IsVisible(53)</visible>
       <font>font11</font>
     </control>
@@ -420,7 +420,7 @@
       <posX>877</posX>
       <posY>315</posY>
       <label>#HTPCInfo.ProcessorCoresx</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>Control.IsVisible(53)</visible>
       <font>font11</font>
     </control>
@@ -431,7 +431,7 @@
       <posX>568</posX>
       <posY>351</posY>
       <label>#HTPCInfo.TranslationProcessorType</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>Control.IsVisible(53)</visible>
       <font>font11</font>
     </control>
@@ -442,7 +442,7 @@
       <posX>877</posX>
       <posY>351</posY>
       <label>#HTPCInfo.ProcessorManufacturer</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>Control.IsVisible(53)</visible>
       <font>font11</font>
     </control>
@@ -453,7 +453,7 @@
       <posX>568</posX>
       <posY>385</posY>
       <label>Temperature</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>Control.IsVisible(53)</visible>
       <font>font11</font>
     </control>
@@ -464,7 +464,7 @@
       <posX>877</posX>
       <posY>385</posY>
       <label>#HTPCInfo.SensorTemperatureCPUPackage</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>Control.IsVisible(53)</visible>
       <font>font11</font>
     </control>
@@ -475,7 +475,7 @@
       <posX>568</posX>
       <posY>420</posY>
       <label>Voltage</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>Control.IsVisible(53)</visible>
       <font>font11</font>
     </control>
@@ -486,7 +486,7 @@
       <posX>877</posX>
       <posY>420</posY>
       <label>#HTPCInfo.SensorVoltageVCC3V</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>Control.IsVisible(53)</visible>
       <font>font11</font>
     </control>
@@ -497,7 +497,7 @@
       <posX>568</posX>
       <posY>456</posY>
       <label>Fanspeed</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>Control.IsVisible(53)</visible>
       <font>font11</font>
     </control>
@@ -508,7 +508,7 @@
       <posX>877</posX>
       <posY>456</posY>
       <label>#HTPCInfo.SensorFanCPU</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>Control.IsVisible(53)</visible>
       <font>font11</font>
     </control>
@@ -538,7 +538,7 @@
       <midtexture>osd_progress_mid.png</midtexture>
       <righttexture>osd_progress_right.png</righttexture>
       <label>#HTPCInfo.MemoryPercentUsed</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>Control.IsVisible(53)</visible>
     </control>
     <control>
@@ -549,7 +549,7 @@
       <posY>576</posY>
       <label>#HTPCInfo.TranslationMemory</label>
       <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>Control.IsVisible(53)</visible>
     </control>
     <control>
@@ -559,7 +559,7 @@
       <posX>568</posX>
       <posY>618</posY>
       <label>#HTPCInfo.TranslationMemoryUsage</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <font>font11</font>
       <visible>Control.IsVisible(53)</visible>
     </control>
@@ -570,7 +570,7 @@
       <posX>877</posX>
       <posY>618</posY>
       <label>#HTPCInfo.MemoryPercentUsed% (#HTPCInfo.MemoryAvailable #HTPCInfo.TranslationFree)</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font11</font>
       <visible>Control.IsVisible(53)</visible>
     </control>
@@ -581,7 +581,7 @@
       <posX>568</posX>
       <posY>652</posY>
       <label>#HTPCInfo.TranslationMemoryPagefileUsage</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <font>font11</font>
       <visible>Control.IsVisible(53)</visible>
     </control>
@@ -592,7 +592,7 @@
       <posX>877</posX>
       <posY>652</posY>
       <label>#HTPCInfo.PagefileUsed%</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font11</font>
       <visible>Control.IsVisible(53)</visible>
     </control>
@@ -603,7 +603,7 @@
       <posX>568</posX>
       <posY>688</posY>
       <label>#HTPCInfo.TranslationMemorySize</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <font>font11</font>
       <visible>Control.IsVisible(53)</visible>
     </control>
@@ -614,7 +614,7 @@
       <posX>877</posX>
       <posY>688</posY>
       <label>#HTPCInfo.MemoryPhysical</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font11</font>
       <visible>Control.IsVisible(53)</visible>
     </control>
@@ -628,7 +628,7 @@
       <posY>238</posY>
       <font>font14</font>
       <label>#HTPCInfo.TranslationDriveDevice</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>Control.IsVisible(53)</visible>
     </control>
     <!-- *** Drive C Usage *** -->
@@ -666,7 +666,7 @@
       <posX>1264</posX>
       <posY>301</posY>
       <label>#HTPCInfo.Drive1Name #HTPCInfo.Drive1Size</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <font>font11</font>
       <visible>Control.IsVisible(53)</visible>
     </control>
@@ -677,7 +677,7 @@
       <posX>1264</posX>
       <posY>336</posY>
       <label>#HTPCInfo.Drive1PercentUsedSpace% #HTPCInfo.TranslationUsed (#HTPCInfo.Drive1FreeSpace #HTPCInfo.TranslationFree)</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font11</font>
       <visible>Control.IsVisible(53)</visible>
     </control>
@@ -716,7 +716,7 @@
       <posX>1264</posX>
       <posY>471</posY>
       <label>#HTPCInfo.Drive2Name #HTPCInfo.Drive2Size</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <font>font11</font>
       <visible>Control.IsVisible(53)</visible>
     </control>
@@ -727,7 +727,7 @@
       <posX>1264</posX>
       <posY>505</posY>
       <label>#HTPCInfo.Drive2PercentUsedSpace% #HTPCInfo.TranslationUsed (#HTPCInfo.Drive2FreeSpace #HTPCInfo.TranslationFree)</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font11</font>
       <visible>Control.IsVisible(53)</visible>
     </control>
@@ -766,7 +766,7 @@
       <posX>1264</posX>
       <posY>639</posY>
       <label>#HTPCInfo.Drive3Name #HTPCInfo.Drive3Size</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <font>font11</font>
       <visible>Control.IsVisible(53)</visible>
     </control>
@@ -777,7 +777,7 @@
       <posX>1264</posX>
       <posY>675</posY>
       <label>#HTPCInfo.Drive3PercentUsedSpace% #HTPCInfo.TranslationUsed (#HTPCInfo.Drive3FreeSpace #HTPCInfo.TranslationFree)</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font11</font>
       <visible>Control.IsVisible(53)</visible>
     </control>
@@ -816,7 +816,7 @@
       <posX>1264</posX>
       <posY>807</posY>
       <label>#HTPCInfo.Drive4Name #HTPCInfo.Drive4Size</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <font>font11</font>
       <visible>Control.IsVisible(53)</visible>
     </control>
@@ -827,7 +827,7 @@
       <posX>1264</posX>
       <posY>843</posY>
       <label>#HTPCInfo.Drive4PercentUsedSpace% #HTPCInfo.TranslationUsed (#HTPCInfo.Drive4FreeSpace #HTPCInfo.TranslationFree)</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font11</font>
       <visible>Control.IsVisible(53)</visible>
     </control>

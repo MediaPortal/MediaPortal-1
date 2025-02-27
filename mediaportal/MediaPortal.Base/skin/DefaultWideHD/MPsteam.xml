@@ -15,7 +15,7 @@
       <texture>BH Steam.jpg</texture>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
-    <import>common.window.xml</import>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
     <control>
       <description>General Overlay</description>
@@ -28,16 +28,26 @@
       <texture>general_overlay.png</texture>
     </control>
     <control>
-      <description>Selected item Label</description>
-      <type>fadelabel</type>
-      <id>1</id>
+      <description>Title background image all screens except all games</description>
+      <type>image</type>
+      <id>0</id>
       <posX>0</posX>
-      <posY>142</posY>
+      <posY>0</posY>
       <width>1920</width>
-      <label>Steam</label>
-      <font>font14</font>
-      <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <height>379</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+    <import>common.time.xml</import>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>MP Steam</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>lightgray</textcolor>
     </control>
     <!-- *** Buttons *** -->
     <control>

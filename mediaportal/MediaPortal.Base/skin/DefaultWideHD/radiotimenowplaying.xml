@@ -5,7 +5,7 @@
   <defaultcontrol>155</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <define>#header.hover:hover_radiotime.png</define>
-  <define>#header.label:RadioTime    #RadioTime.Play.Station</define>
+  <define>#header.label:</define>
   <define>#usePlayFanart:Yes</define>
   <controls>
     <control>
@@ -14,247 +14,216 @@
       <id>0</id>
       <width>1920</width>
       <height>1080</height>
-      <texture>BH Webradio.jpg</texture>
-      <colordiffuse>90ffffff</colordiffuse>
-    </control>
-    <import>common.window.xml</import>
-    <import>common.time.xml</import>
-    <control>
-      <description>General Overlay</description>
-      <id>0</id>
-      <type>image</type>
-      <posX>0</posX>
-      <posY>45</posY>
-      <width>1920</width>
-      <height>1080</height>
-      <texture>general_overlay.png</texture>
-    </control>
-    <control>
-      <type>label</type>
-      <id>1</id>
-      <posX>45</posX>
-      <posY>15</posY>
-      <label>#header.label</label>
-      <font>Label</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control>
-      <description>station logo</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>900</posX>
-      <posY>405</posY>
-      <width>450</width>
-      <height>300</height>
-      <texture>picturethumbmask.png</texture>
-      <colordiffuse>90ffffff</colordiffuse>
-    </control>
-    <control>
-      <id>112</id>
-      <description>album art image</description>
-      <type>image</type>
-      <posX>900</posX>
-      <posY>405</posY>
-      <width>450</width>
-      <height>300</height>
-      <texture>#RadioTime.Play.Image</texture>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-    </control>
-    <control>
-      <description>station logo</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>900</posX>
-      <posY>405</posY>
-      <width>450</width>
-      <height>300</height>
-      <texture>picturethumbframe.png</texture>
+      <texture>DefaultFanart.gif</texture>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
+    
+    <import>myLyrics.common.play.fanart.xml</import>
+    <!--import>common.window.xml</import-->
     <control>
-      <id>0</id>
-      <description>Title label</description>
-      <type>fadelabel</type>
-      <posX>2890</posX>
-      <posY>453</posY>
-      <width>657</width>
-      <height>42</height>
-      <font>font12</font>
-      <label>#RadioTime.Play.Language</label>
-    </control>
-    <control>
-      <id>0</id>
-      <description>Artist label</description>
-      <type>fadelabel</type>
-      <posX>2889</posX>
-      <posY>283</posY>
-      <width>657</width>
-      <height>39</height>
-      <font>font12</font>
-      <label>#RadioTime.Play.Description</label>
-    </control>
-    <control>
-      <id>0</id>
-      <description>Artist label</description>
-      <type>fadelabel</type>
-      <posX>2886</posX>
-      <posY>225</posY>
-      <width>657</width>
-      <height>39</height>
-      <font>font12</font>
-      <label>#RadioTime.Play.Station</label>
-    </control>
-    <control>
-      <id>0</id>
-      <description>track label</description>
-      <type>fadelabel</type>
-      <posX>2889</posX>
-      <posY>394</posY>
-      <width>657</width>
-      <height>39</height>
-      <font>font12</font>
-      <label>#RadioTime.Play.Slogan</label>
-    </control>
-    <control>
-      <id>0</id>
-      <description>track label</description>
-      <type>fadelabel</type>
-      <posX>819</posX>
-      <posY>270</posY>
-      <width>975</width>
-      <font>font14</font>
-      <textcolor>ff6FAFE1</textcolor>
-      <label>#RadioTime.Play.Slogan</label>
-    </control>
-    <control>
-      <id>0</id>
-      <description>track label</description>
-      <type>fadelabel</type>
-      <posX>819</posX>
-      <posY>312</posY>
-      <width>975</width>
-      <font>font14</font>
-      <textcolor>ff6FAFE1</textcolor>
-      <label>#RadioTime.Play.Location</label>
-    </control>
-    <control>
-      <id>0</id>
-      <description>Progress background</description>
+      <description>Title background image all screens except all games</description>
       <type>image</type>
-      <visible>player.hasmedia</visible>
-      <posX>933</posX>
-      <posY>754</posY>
-      <width>351</width>
-      <height>27</height>
-      <texture>osd_progress_background.png</texture>
-    </control>
-    <control>
-      <type>progress</type>
       <id>0</id>
-      <posX>933</posX>
-      <posY>754</posY>
-      <width>351</width>
-      <offset>0</offset>
-      <height>27</height>
-      <innerheight>30</innerheight>
-      <lefttexture>-</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>-</righttexture>
-      <label>#percentage</label>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>379</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
     </control>
+    <import>common.time.xml</import>
+    
     <control>
-      <id>0</id>
-      <description>track progress label</description>
-      <type>label</type>
-      <visible>player.hasmedia</visible>
-      <posX>919</posX>
-      <posY>744</posY>
-      <font>font14</font>
-      <textcolor>ff6FAFE1</textcolor>
-      <align>right</align>
-      <label>#currentplaytime</label>
-    </control>
-    <control>
-      <id>0</id>
-      <description>track duration label</description>
-      <type>label</type>
-      <visible>player.hasmedia</visible>
-      <posX>1299</posX>
-      <posY>744</posY>
-      <font>font14</font>
-      <textcolor>ff6FAFE1</textcolor>
-      <align>left</align>
-      <label>#duration</label>
-    </control>
-    <control>
-      <id>29</id>
-      <description>Genres</description>
-      <type>label</type>
-      <posX>84</posX>
-      <posY>270</posY>
-      <font>font12</font>
-      <label>#RadioTime.Translation.Genres.Label</label>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control>
-      <id>166</id>
-      <description>list genres</description>
-      <type>listcontrol</type>
-      <onright>155</onright>
-      <ondown>195</ondown>
-      <posX>84</posX>
-      <posY>327</posY>
-      <width>490</width>
-      <height>280</height>
-      <textXOff>-20</textXOff>
-      <onright>53</onright>
-      <onleft>53</onleft>
-    </control>
-    <control>
-      <id>28</id>
-      <description>similar stations</description>
-      <type>label</type>
-      <posX>84</posX>
-      <posY>537</posY>
-      <font>font12</font>
-      <label>#RadioTime.Translation.SimilarStations.Label</label>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control>
-      <id>155</id>
-      <description>list similar</description>
-      <type>listcontrol</type>
-      <onleft>166</onleft>
-      <onup>166</onup>
-      <posX>84</posX>
-      <posY>594</posY>
-      <width>490</width>
-      <height>350</height>
-      <textXOff>-20</textXOff>
-      <onright>53</onright>
-      <onleft>53</onleft>
-    </control>
-    <control>
+      <description>default fadelabel</description>
       <type>fadelabel</type>
-      <posX>745</posX>
-      <posY>48</posY>
-      <width>999</width>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <width>1475</width>
+      <align>left</align>
+      <font>Label</font>
+      <label>#(iif(eq(#RadioTime.Play.Station,''),'TuneIn','TuneIn #scroll.wrap #RadioTime.Play.Station #scroll.wrap #RadioTime.Play.Location'))</label>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
     </control>
     <control>
-      <description>Show Lyrics</description>
+      <description>default fadelabel</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>94</posY>
+      <width>1475</width>
+      <align>left</align>
+      <font>Label</font>
+      <label>#Play.Current.Title #scroll.wrap #Play.Current.Artist</label>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+    </control>
+    <!-- ******************************************************************************************* -->
+    <!-- **************************      HIDDEN MENU              ********************************** -->
+    <!-- ******************************************************************************************* -->
+    <control>
+      <description>Dummy Button for Action Menu</description>
       <type>button</type>
-      <posX>60</posX>
-      <posY>870</posY>
-      <id>53</id>
-      <label>Lyrics</label>
-      <visible>plugin.isenabled(My Lyrics)</visible>
-      <hyperlink>90478</hyperlink>
-      <onup>155</onup>
-      <ondown>166</ondown>
-      <onright>53</onright>
-      <onleft>53</onleft>
+      <id>333</id>
+      <posX>0</posX>
+      <posY>70</posY>
+      <width>140</width>
+      <height>984</height>
+      <label>-</label>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <ondown>333</ondown>
+      <onup>17</onup>
+      <onright>333</onright>
+      <onleft>166</onleft>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>166</defaultcontrol>
+      <onexit>333</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>70</buttonY>
+      <buttonwidth>140</buttonwidth>
+      <buttonheight>984</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>168</width>
+      <height>798</height>
+      <dimColor>00ffffff</dimColor>
+      <allowoverlay>false</allowoverlay>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <visible>!control.hasfocus(333)</visible>
+        <animation effect="slide" time="100" start="-335,0" reversible="true">visiblechange</animation>
+        <control>
+          <description>Overlay</description>
+          <id>0</id>
+          <type>image</type>
+          <posX>0</posX>
+          <posY>170</posY>
+          <width>460</width>
+          <height>740</height>
+          <texture>backslide.png</texture>
+          <colordiffuse>ddffffff</colordiffuse>
+        </control>
+        <control>
+          <id>29</id>
+          <description>Genres</description>
+          <type>label</type>
+          <posX>34</posX>
+          <posY>210</posY>
+          <font>Label</font>
+          <label>#RadioTime.Translation.Genres.Label</label>
+          <textcolor>fff5deb3</textcolor>
+        </control>
+        <control>
+          <id>166</id>
+          <description>list genres</description>
+          <type>listcontrol</type>
+          <ondown>155</ondown>
+          <onup>53</onup>
+          <onleft>333</onleft>
+          <onright>333</onright>
+          <onright>333</onright>
+          <posX>34</posX>
+          <posY>267</posY>
+          <width>350</width>
+          <height>270</height>
+          <textXOff>-40</textXOff>
+          <font>font11</font>
+          <scrollbarHeight>400</scrollbarHeight>
+          <scrollbarbg>bar_vert.png</scrollbarbg>
+          <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+          <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+          <scrollbarXOff>15</scrollbarXOff>
+          <scrollbarYOff>0</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <scrollbarwidth>20</scrollbarwidth>
+        </control>
+        <control>
+          <id>28</id>
+          <description>similar stations</description>
+          <type>label</type>
+          <posX>34</posX>
+          <posY>498</posY>
+          <font>Label</font>
+          <label>#RadioTime.Translation.SimilarStations.Label</label>
+          <textcolor>fff5deb3</textcolor>
+        </control>
+        <control>
+          <id>155</id>
+          <description>list similar</description>
+          <type>listcontrol</type>
+          <onup>166</onup>
+          <ondown>53</ondown>
+          <onleft>333</onleft>
+          <onright>333</onright>
+          <posX>34</posX>
+          <posY>554</posY>
+          <width>350</width>
+          <height>270</height>
+          <textXOff>-40</textXOff>
+          <font>font11</font>
+          <scrollbarHeight>400</scrollbarHeight>
+          <scrollbarbg>bar_vert.png</scrollbarbg>
+          <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+          <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+          <scrollbarXOff>15</scrollbarXOff>
+          <scrollbarYOff>0</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <scrollbarwidth>20</scrollbarwidth>
+        </control>
+        <control>
+          <description>Show Lyrics</description>
+          <type>button</type>
+          <id>53</id>
+          <posX>25</posX>
+          <posY>800</posY>
+          <width>350</width>
+          <label>Lyrics</label>
+          <visible>plugin.isenabled(My Lyrics)</visible>
+          <hyperlink>90478</hyperlink>
+          <onup>155</onup>
+          <ondown>166</ondown>
+          <onleft>333</onleft>
+          <onright>333</onright>
+        </control>
+      </control>
+    </control>
+    <!-- *************************************************************************************************** -->
+    <!-- ************************************** Here are the VU Meters ************************************* -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <description>Equalizer</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>20</posX>
+      <posY>920</posY>
+      <width>1880</width>
+      <height>150</height>
+      <texture>#VUSpectrum</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>#spectrumanalyzer.vumeter.available</visible>
+    </control>
+    <control>
+      <description>ClearArt image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1500</posX>
+      <posY>750</posY>
+      <width>400</width>
+      <height>155</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#fanarthandler.music.artistclearart.play</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>Player.HasAudio+Player.playing+!Player.paused</visible>
     </control>
   </controls>
 </window>

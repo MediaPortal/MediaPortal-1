@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
+
 <window>
   <id>36453968</id>
   <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
-  <define>#header.label:Chess</define>
+  <allowoverlay>yes</allowoverlay>
+  <!--<define>#header.label:#SkinTranslation.Translations.Games.Label #scroll.wrap Chess</define>-->
   <define>#header.hover:hover_my_chess.png</define>
   <define>#selecteditem:</define>
   <controls>
+  <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     <control>
       <description>background image</description>
       <type>image</type>
@@ -15,19 +22,10 @@
       <width>1920</width>
       <height>1080</height>
       <texture>gamebg.jpg</texture>
+      
       <colordiffuse>ffffffff</colordiffuse>
     </control>
-    <control>
-      <type>label</type>
-      <id>1</id>
-      <posX>45</posX>
-      <posY>15</posY>
-      <label>#header.label</label>
-      <font>Label</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <import>common.time.xml</import>
+    
     <control>
       <description>text label</description>
       <type>label</type>
@@ -45,12 +43,8 @@
       <posY>205</posY>
       <height>500</height>
       <width>420</width>
-      <texture>am-background.png</texture>
-      <colordiffuse>50ffffff</colordiffuse>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <texture>backslide_settings.png</texture>
+      <colordiffuse>bbffffff</colordiffuse>
     </control>
     <control>
       <type>group</type>
@@ -58,10 +52,6 @@
       <layout>StackLayout(0, vertical, true)</layout>
       <posX>70</posX>
       <posY>225</posY>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
       <control>
         <description>Start</description>
         <type>button</type>
@@ -105,12 +95,8 @@
       <control>
         <type>group</type>
         <description>group element</description>
-        <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
         <id>1234</id>
-        <posX>84</posX>
+        <posX>70</posX> 
         <posY>478</posY>
         <layout>GridLayout(3,0,0,0)</layout>
         <control>
@@ -122,10 +108,11 @@
           <onup>16</onup>
           <ondown>8</ondown>
           <label>‹‹</label>
-          <height>63</height>
+          <height>56</height>
           <width>112</width>
+		  <textureFocus>Button_tiny.png</textureFocus>
           <textalign>center</textalign>
-          <font>font14</font>
+          <font>Menutitle</font>
           <textXOff>0</textXOff>
           <textYOff>0</textYOff>
           <wrapString />
@@ -135,10 +122,10 @@
           <id>1</id>
           <label>-</label>
           <height>63</height>
-          <width>133</width>
+          <width>138</width> 
           <textureFocus>-</textureFocus>
           <textureNoFocus>-</textureNoFocus>
-        </control>
+		  </control>
         <control>
           <type>button</type>
           <description>last</description>
@@ -147,11 +134,12 @@
           <onright>500</onright>
           <onup>16</onup>
           <ondown>8</ondown>
-          <height>63</height>
+          <height>56</height>
           <width>112</width>
+		  <textureFocus>Button_tiny.png</textureFocus>
           <label>››</label>
-          <font>font14</font>
-          <textXOff>0</textXOff>
+          <font>Menutitle</font>
+          <textXOff>0</textXOff> 35
           <textYOff>0</textYOff>
           <textalign>center</textalign>
           <wrapString />
@@ -177,7 +165,7 @@
       <posX>210</posX>
       <posY>485</posY>
       <label>#level</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Scoreboard background</description>
@@ -189,11 +177,7 @@
       <width>350</width>
       <texture mask="cdcase_mask.png">black.png</texture>
         <colordiffuse>40ffffff</colordiffuse>
-        <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
-    </control>
+      </control>
     <control>
       <description>text label</description>
       <type>label</type>
@@ -201,11 +185,7 @@
       <posX>1433</posX>
       <posY>435</posY>
       <label>#m1</label>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
-    </control>
+     </control>
     <control>
       <description>text label</description>
       <type>label</type>
@@ -213,10 +193,6 @@
       <posX>1433</posX>
       <posY>478</posY>
       <label>#m2</label>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <description>text label</description>
@@ -225,10 +201,6 @@
       <posX>1433</posX>
       <posY>520</posY>
       <label>#m3</label>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <description>text label</description>
@@ -237,11 +209,7 @@
       <posX>1433</posX>
       <posY>562</posY>
       <label>#m4</label>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
-    </control>
+     </control>
     <control>
       <description>Scoreboard background</description>
       <type>image</type>
@@ -252,11 +220,7 @@
       <width>350</width>
       <texture mask="cdcase_mask.png">black.png</texture>
         <colordiffuse>40ffffff</colordiffuse>
-        <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
-    </control>
+     </control>
     <control>
       <description>text label</description>
       <type>label</type>
@@ -264,11 +228,7 @@
       <posX>1426</posX>
       <posY>675</posY>
       <label>#Player</label>
-      <textcolor>ivory</textcolor>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>time label</description>
@@ -277,11 +237,7 @@
       <posX>1426</posX>
       <posY>717</posY>
       <label>#chess_time</label>
-      <textcolor>ivory</textcolor>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>time label</description>
@@ -290,11 +246,7 @@
       <posX>1426</posX>
       <posY>759</posY>
       <label>#chess_move</label>
-      <textcolor>ivory</textcolor>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <type>image</type>
@@ -304,10 +256,6 @@
       <height>56</height>
       <width>126</width>
       <texture>#engine</texture>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <description>background</description>
@@ -318,10 +266,35 @@
       <width>773</width>
       <height>773</height>
       <texture>#board</texture>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>#SkinTranslation.Translations.Games.Label #scroll.wrap #(L(107778))</label>
+      <width>1802</width>
+      <align>left</align>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Title background image all screens except all games</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>120</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+    <import>common.time.xml</import>
   </controls>
 </window>

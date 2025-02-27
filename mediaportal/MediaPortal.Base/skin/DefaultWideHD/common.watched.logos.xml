@@ -2,7 +2,7 @@
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
-    <control>
+    <!--control>
       <description>BG for watched count/watched percent</description>
       <type>image</type>
       <id>1</id>
@@ -12,22 +12,21 @@
       <height>90</height>
       <texture>watched_BG.png</texture>
       <visible>facadeview.list+!string.equals(#watchedcount, -1)</visible>
-    </control>
+    </control-->
     <control>
       <description>Video Watched Count Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>1494</posX>
-      <posY>607</posY>
-      <width>200</width>
-      <height>75</height>
-      <label>#watchedcountx #(L(527))</label>
+      <posX>1555</posX>
+      <posY>649</posY>
+      <width>400</width>
+      <label>#watchedcountx #(L(527)) #scroll.wrap #(L(143))#watchedpercent%</label>
       <font>font9</font>
       <align>right</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#watchedcount, -1)</visible>
     </control>
-    <control>
+    <!--control>
       <description>Watched Percent Label</description>
       <type>label</type>
       <id>1</id>
@@ -36,7 +35,7 @@
       <align>center</align>
       <width>75</width>
       <height>75</height>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <font>font9</font>
       <label>#watchedpercent%</label>
       <visible>facadeview.list</visible>
@@ -52,6 +51,6 @@
       <texture>watched_#(string.format('{0:000}',mul(math.round(div(cint(#watchedpercent),5)),5))).png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>facadeview.list+!string.equals(#watchedcount, -1)</visible>
-    </control>
+    </control-->
   </controls>
 </window>

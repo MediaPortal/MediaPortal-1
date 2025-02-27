@@ -3,7 +3,7 @@
 <window>
   <controls>
     <!-- People List Layout -->
-    <control>
+    <!--control>
       <description>Overlay text right</description>
       <id>0</id>
       <type>image</type>
@@ -11,10 +11,10 @@
       <posY>234</posY>
       <width>823</width>
       <height>699</height>
-      <texture mask="picturethumbmask.png">black.png</texture>
+      <texture mask="musicfanart_mask.png">black.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
       <visible>facadeview.list</visible>
-    </control>
+    </control-->
     <control>
       <description>Headshot</description>
       <id>0</id>
@@ -48,7 +48,7 @@
       <label>#Trakt.Translation.Name.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Person.Name,)</visible>
     </control>
     <control>
@@ -60,7 +60,7 @@
       <label>#Trakt.Person.Name</label>
       <font>font12</font>
       <width>420</width>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Person.Name,)</visible>
     </control>
     <control>
@@ -72,7 +72,7 @@
       <label>#Trakt.Translation.Born.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Person.Birthplace,)</visible>
     </control>
     <control>
@@ -84,7 +84,7 @@
       <width>420</width>
       <label>#Trakt.Person.Birthplace</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Person.Birthplace,)</visible>
     </control>
     <control>
@@ -96,7 +96,7 @@
       <label>#Trakt.Translation.Birthday.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Person.Birthday,)</visible>
     </control>
     <control>
@@ -108,7 +108,7 @@
       <width>420</width>
       <label>#Trakt.Person.Birthday</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.Person.Birthday,)</visible>
     </control>
     <control>
@@ -133,7 +133,7 @@
       <height>157</height>
       <label>#Trakt.Person.Biography</label>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list</visible>
     </control>
     <control>

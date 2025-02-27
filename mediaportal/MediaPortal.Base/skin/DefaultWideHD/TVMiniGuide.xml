@@ -18,10 +18,10 @@
       <type>image</type>
       <id>1</id>
       <posX>10</posX>
-      <posY>40</posY>
+      <posY>30</posY>
       <width>1900</width>
-      <height>1030</height>
-      <texture>listbg2.png</texture>
+      <height>1040</height>
+      <texture>listbg3.png</texture>
       <colordiffuse>bbffffff</colordiffuse>
       <visible>window.isvisible(602)|window.isvisible(2005)</visible>
     </control>
@@ -29,10 +29,10 @@
       <type>image</type>
       <id>1</id>
       <posX>10</posX>
-      <posY>40</posY>
+      <posY>30</posY>
       <width>1900</width>
-      <height>1030</height>
-      <texture>listbg2.png</texture>
+      <height>1040</height>
+      <texture>listbg3.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
     </control>
@@ -42,35 +42,35 @@
       <id>35</id>
       <posX>63</posX>
       <posY>114</posY>
-      <height>981</height>
+      <height>1000</height>
       <width>1746</width>
-      <textXOff>240</textXOff>
-      <textYOff>40</textYOff>
+      <textureHeight>66</textureHeight>
+      <itemWidth>61</itemWidth>
+      <itemHeight>61</itemHeight>
+      <textXOff>250</textXOff>
+      <textYOff>28</textYOff>
       <textXOff2>1745</textXOff2>
-      <textYOff2>40</textYOff2>
-      <textXOff3>322</textXOff3>
-      <textYOff3>1</textYOff3>
-      <IconXOff>9</IconXOff>
-      <IconYOff>7</IconYOff>
-      <PinIconXOff>93</PinIconXOff>
-      <PinIconYOff>18</PinIconYOff>
-      <PinIconWidth>50</PinIconWidth>
-      <PinIconHeight>50</PinIconHeight>
-      <spinPosX>3945</spinPosX>
-      <spinPosY>1005</spinPosY>
-      <itemWidth>73</itemWidth>
-      <itemHeight>73</itemHeight>
-      <textureFocus>listfocus.png</textureFocus>
-      <textureNoFocus>listnofocus.png</textureNoFocus>
-      <spaceBetweenItems>0</spaceBetweenItems>
-      <textureHeight>84</textureHeight>
-      <keepaspectratio>no</keepaspectratio>
+      <textYOff2>28</textYOff2>
+      <textXOff3>320</textXOff3>
+      <textYOff3>-2</textYOff3>
       <font>font10</font>
       <font2>font10</font2>
-      <font3>Label</font3>
+      <font3>font11bold</font3>
+      <IconXOff>14</IconXOff>
+      <IconYOff>3</IconYOff>
+      <PinIconXOff>83</PinIconXOff>
+      <PinIconYOff>5</PinIconYOff>
+      <PinIconWidth>60</PinIconWidth>
+      <PinIconHeight>60</PinIconHeight>
+      <spaceBetweenItems>1</spaceBetweenItems>
+      <spinPosX>3945</spinPosX>
+      <spinPosY>1005</spinPosY>
+      <textureFocus>listfocus.png</textureFocus>
+      <textureNoFocus>listnofocus.png</textureNoFocus>
+      <keepaspectratio>no</keepaspectratio>
       <textcolor>ffffffff</textcolor>
       <textcolor2>ffffffff</textcolor2>
-      <textcolor3>ff87cefa</textcolor3>
+      <textcolor3>ff00bfff</textcolor3>
       <remoteColor>ff00ff00</remoteColor>
       <remoteColor2>ff00ff00</remoteColor2>
       <remoteColor3>ff00ff00</remoteColor3>
@@ -92,8 +92,8 @@
       <righttexture>miniguide_progress_bar.png</righttexture>
       <ProgressBarWidth>150</ProgressBarWidth>
       <ProgressBarHeight>80</ProgressBarHeight>
-      <ProgressBarXOffset>150</ProgressBarXOffset>
-      <ProgressBarYOffset>0</ProgressBarYOffset>
+      <ProgressBarXOffset>140</ProgressBarXOffset>
+      <ProgressBarYOffset>-7</ProgressBarYOffset>
       <unfocusedAlpha applyToAll="true">200</unfocusedAlpha>
       <dimColor>ffffffff</dimColor>
     </control>
@@ -103,35 +103,35 @@
       <id>37</id>
       <posX>63</posX>
       <posY>114</posY>
-      <height>981</height>
+      <height>1000</height>
       <width>1746</width>
-      <textXOff>240</textXOff>
-      <textYOff>40</textYOff>
+      <textureHeight>66</textureHeight>
+      <itemWidth>61</itemWidth>
+      <itemHeight>61</itemHeight>
+      <textXOff>250</textXOff>
+      <textYOff>28</textYOff>
       <textXOff2>1745</textXOff2>
-      <textYOff2>40</textYOff2>
-      <textXOff3>322</textXOff3>
-      <textYOff3>1</textYOff3>
-      <IconXOff>9</IconXOff>
-      <IconYOff>7</IconYOff>
-      <PinIconXOff>93</PinIconXOff>
-      <PinIconYOff>18</PinIconYOff>
-      <PinIconWidth>50</PinIconWidth>
-      <PinIconHeight>50</PinIconHeight>
-      <spinPosX>3945</spinPosX>
-      <spinPosY>1005</spinPosY>
-      <itemWidth>73</itemWidth>
-      <itemHeight>73</itemHeight>
-      <textureFocus>listfocus.png</textureFocus>
-      <textureNoFocus>listnofocus.png</textureNoFocus>
-      <spaceBetweenItems>0</spaceBetweenItems>
-      <textureHeight>84</textureHeight>
-      <keepaspectratio>no</keepaspectratio>
+      <textYOff2>28</textYOff2>
+      <textXOff3>320</textXOff3>
+      <textYOff3>-2</textYOff3>
       <font>font10</font>
       <font2>font10</font2>
-      <font3>Label</font3>
+      <font3>font11bold</font3>
+      <IconXOff>14</IconXOff>
+      <IconYOff>3</IconYOff>
+      <PinIconXOff>83</PinIconXOff>
+      <PinIconYOff>5</PinIconYOff>
+      <PinIconWidth>60</PinIconWidth>
+      <PinIconHeight>60</PinIconHeight>
+      <spaceBetweenItems>1</spaceBetweenItems>
+      <spinPosX>3945</spinPosX>
+      <spinPosY>1005</spinPosY>
+      <textureFocus>listfocus.png</textureFocus>
+      <textureNoFocus>listnofocus.png</textureNoFocus>
+      <keepaspectratio>no</keepaspectratio>
       <textcolor>ffffffff</textcolor>
       <textcolor2>ffffffff</textcolor2>
-      <textcolor3>ff87cefa</textcolor3>
+      <textcolor3>ff00bfff</textcolor3>
       <remoteColor>ff00ff00</remoteColor>
       <remoteColor2>ff00ff00</remoteColor2>
       <remoteColor3>ff00ff00</remoteColor3>
@@ -153,8 +153,8 @@
       <righttexture>miniguide_progress_bar.png</righttexture>
       <ProgressBarWidth>150</ProgressBarWidth>
       <ProgressBarHeight>80</ProgressBarHeight>
-      <ProgressBarXOffset>150</ProgressBarXOffset>
-      <ProgressBarYOffset>0</ProgressBarYOffset>
+      <ProgressBarXOffset>140</ProgressBarXOffset>
+      <ProgressBarYOffset>-7</ProgressBarYOffset>
       <unfocusedAlpha applyToAll="true">200</unfocusedAlpha>
       <dimColor>ffffffff</dimColor>
     </control>
@@ -163,7 +163,7 @@
       <type>spincontrol</type>
       <id>36</id>
       <posX>800</posX>
-      <posY>67</posY>
+      <posY>57</posY> 
       <showrange>no</showrange>
       <orientation>horizontal</orientation>
       <align>left</align>
@@ -183,7 +183,7 @@
       <type>label</type>
       <id>110</id>
       <posX>77</posX>
-      <posY>64</posY>
+      <posY>54</posY> 
       <label>#time</label>
       <align>left</align>
       <font>Label</font>
@@ -193,11 +193,11 @@
       <description>exit button</description>
       <type>button</type>
       <id>34</id>
-      <posX>1820</posX>
-      <posY>65</posY>
-      <width>50</width>
-      <height>50</height>
-      <textureFocus>tb_exit.png</textureFocus>
+      <posX>1825</posX> 
+      <posY>50</posY> 
+      <width>45</width>
+      <height>45</height>
+      <textureFocus>tb_exit_dialogue.png</textureFocus>
       <textureNoFocus>tb_exitNF.png</textureNoFocus>
       <onleft>36</onleft>
       <onright>34</onright>

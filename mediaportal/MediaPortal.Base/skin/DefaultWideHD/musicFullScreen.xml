@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <!-- 
 Note:
@@ -21,7 +21,7 @@ the visualization window itself.  See MyMusicFullScreenVisualization.xml visuali
       <label>-</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>no</visible>
     </control>
   </controls>

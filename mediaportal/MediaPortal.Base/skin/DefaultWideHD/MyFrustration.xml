@@ -1,59 +1,74 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>32647500</id>
   <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
-  <define>#header.label:Frustration   #frust_Player   #frust_Try</define>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:#SkinTranslation.Translations.Games.Label #scroll.wrap Frustration</define>
   <define>#header.hover:hover_my frustration.png</define>
   <define>#itemcount:</define>
   <controls>
     <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <width>1920</width>
-      <height>1080</height>
-      <texture>gamebg.jpg</texture>
-      <colordiffuse>ffffffff</colordiffuse>
-    </control>
-    <control>
-      <type>label</type>
-      <id>1</id>
-      <posX>45</posX>
-      <posY>15</posY>
-      <label>#header.label</label>
-      <font>Label</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <import>common.time.xml</import>
-    <control>
-      <description>Button background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>50</posX>
-      <posY>205</posY>
-      <height>540</height>
-      <width>420</width>
-      <texture>am-background.png</texture>
-      <colordiffuse>50ffffff</colordiffuse>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
-    </control>
+        <description>background image</description>
+        <type>image</type>
+        <id>1</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>gamebg.jpg</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>
     <control>
       <type>group</type>
       <description>group element</description>
-      <layout>StackLayout(0, vertical, true)</layout>
-      <posX>70</posX>
-      <posY>225</posY>
       <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <control>
+        <description>#frust_Player #frust_Try</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>372</posX>
+        <posY>108</posY>
+        <label>#frust_Player&#xA;#frust_Try</label>
+        <font>Label</font>
+        <textcolor>fff5deb3</textcolor>
+        <shadowAngle>10</shadowAngle>
+        <shadowDistance>2</shadowDistance>
+        <shadowColor>ff000000</shadowColor>v
+        <visible>!skin.hassetting(#skin.noclock)</visible>
+      </control>
+      <control>
+        <description>#frust_Player #frust_Try</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>80</posX>
+        <posY>108</posY>
+        <label>#frust_Player&#xA;#frust_Try</label>
+        <font>Label</font>
+        <textcolor>fff5deb3</textcolor>
+        <shadowAngle>10</shadowAngle>
+        <shadowDistance>2</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+        <visible>skin.hassetting(#skin.noclock)</visible>
+      </control>
+      <control>
+        <description>Button background</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>50</posX>
+        <posY>210</posY>
+        <height>515</height>
+        <width>420</width>
+        <texture>backslide_settings.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(0, vertical, true)</layout>
+        <posX>70</posX>
+        <posY>225</posY>
+        <control>
         <description>Start</description>
         <type>button</type>
         <id>2</id>
@@ -138,30 +153,33 @@
       <description>BackGround Game</description>
       <type>image</type>
       <id>0</id>
+      <posX>675</posX>
+      <posY>135</posY>
+      <width>925</width>
+      <height>925</height>
+      <texture>Frustration/Back.jpg</texture>
+      <colordiffuse>70000000</colordiffuse>
+    </control>
+    <control>
+      <description>BackGround Game</description>
+      <type>image</type>
+      <id>0</id>
       <posX>660</posX>
-      <posY>100</posY>
+      <posY>120</posY>
       <width>925</width>
       <height>925</height>
       <texture>Frustration/Back.jpg</texture>
       <colordiffuse>f0ffffff</colordiffuse>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <type>group</type>
       <description>group element</description>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
       <control>
         <description>500</description>
         <type>button</type>
         <id>500</id>
         <posX>1166</posX>
-        <posY>140</posY>
+        <posY>160</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F500</textureFocus>
@@ -172,7 +190,7 @@
         <type>button</type>
         <id>501</id>
         <posX>1166</posX>
-        <posY>217</posY>
+        <posY>237</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F501</textureFocus>
@@ -183,7 +201,7 @@
         <type>button</type>
         <id>502</id>
         <posX>1166</posX>
-        <posY>295</posY>
+        <posY>315</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F502</textureFocus>
@@ -194,7 +212,7 @@
         <type>button</type>
         <id>503</id>
         <posX>1166</posX>
-        <posY>372</posY>
+        <posY>392</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F503</textureFocus>
@@ -205,7 +223,7 @@
         <type>button</type>
         <id>504</id>
         <posX>1166</posX>
-        <posY>450</posY>
+        <posY>470</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F504</textureFocus>
@@ -216,7 +234,7 @@
         <type>button</type>
         <id>505</id>
         <posX>1243</posX>
-        <posY>450</posY>
+        <posY>470</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F505</textureFocus>
@@ -227,7 +245,7 @@
         <type>button</type>
         <id>506</id>
         <posX>1321</posX>
-        <posY>450</posY>
+        <posY>470</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F506</textureFocus>
@@ -238,7 +256,7 @@
         <type>button</type>
         <id>507</id>
         <posX>1398</posX>
-        <posY>450</posY>
+        <posY>470</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F507</textureFocus>
@@ -249,7 +267,7 @@
         <type>button</type>
         <id>508</id>
         <posX>1475</posX>
-        <posY>450</posY>
+        <posY>470</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F508</textureFocus>
@@ -260,7 +278,7 @@
         <type>button</type>
         <id>509</id>
         <posX>1475</posX>
-        <posY>527</posY>
+        <posY>547</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F509</textureFocus>
@@ -271,7 +289,7 @@
         <type>button</type>
         <id>510</id>
         <posX>1475</posX>
-        <posY>604</posY>
+        <posY>624</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F510</textureFocus>
@@ -282,7 +300,7 @@
         <type>button</type>
         <id>511</id>
         <posX>1398</posX>
-        <posY>604</posY>
+        <posY>624</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F511</textureFocus>
@@ -293,7 +311,7 @@
         <type>button</type>
         <id>512</id>
         <posX>1321</posX>
-        <posY>604</posY>
+        <posY>624</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F512</textureFocus>
@@ -304,7 +322,7 @@
         <type>button</type>
         <id>513</id>
         <posX>1243</posX>
-        <posY>604</posY>
+        <posY>624</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F513</textureFocus>
@@ -315,7 +333,7 @@
         <type>button</type>
         <id>514</id>
         <posX>1166</posX>
-        <posY>604</posY>
+        <posY>624</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F514</textureFocus>
@@ -326,7 +344,7 @@
         <type>button</type>
         <id>515</id>
         <posX>1166</posX>
-        <posY>682</posY>
+        <posY>702</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F515</textureFocus>
@@ -337,7 +355,7 @@
         <type>button</type>
         <id>516</id>
         <posX>1166</posX>
-        <posY>759</posY>
+        <posY>779</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F516</textureFocus>
@@ -348,7 +366,7 @@
         <type>button</type>
         <id>517</id>
         <posX>1166</posX>
-        <posY>836</posY>
+        <posY>856</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F517</textureFocus>
@@ -359,7 +377,7 @@
         <type>button</type>
         <id>518</id>
         <posX>1166</posX>
-        <posY>914</posY>
+        <posY>934</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F518</textureFocus>
@@ -370,7 +388,7 @@
         <type>button</type>
         <id>519</id>
         <posX>1089</posX>
-        <posY>914</posY>
+        <posY>934</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F519</textureFocus>
@@ -381,7 +399,7 @@
         <type>button</type>
         <id>520</id>
         <posX>1012</posX>
-        <posY>914</posY>
+        <posY>934</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F520</textureFocus>
@@ -392,7 +410,7 @@
         <type>button</type>
         <id>521</id>
         <posX>1012</posX>
-        <posY>836</posY>
+        <posY>856</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F521</textureFocus>
@@ -403,7 +421,7 @@
         <type>button</type>
         <id>522</id>
         <posX>1012</posX>
-        <posY>759</posY>
+        <posY>779</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F522</textureFocus>
@@ -414,7 +432,7 @@
         <type>button</type>
         <id>523</id>
         <posX>1012</posX>
-        <posY>682</posY>
+        <posY>702</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F523</textureFocus>
@@ -425,7 +443,7 @@
         <type>button</type>
         <id>524</id>
         <posX>1012</posX>
-        <posY>604</posY>
+        <posY>624</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F524</textureFocus>
@@ -436,7 +454,7 @@
         <type>button</type>
         <id>525</id>
         <posX>934</posX>
-        <posY>604</posY>
+        <posY>624</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F525</textureFocus>
@@ -447,7 +465,7 @@
         <type>button</type>
         <id>526</id>
         <posX>857</posX>
-        <posY>604</posY>
+        <posY>624</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F526</textureFocus>
@@ -458,7 +476,7 @@
         <type>button</type>
         <id>527</id>
         <posX>780</posX>
-        <posY>604</posY>
+        <posY>624</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F527</textureFocus>
@@ -469,7 +487,7 @@
         <type>button</type>
         <id>528</id>
         <posX>702</posX>
-        <posY>604</posY>
+        <posY>624</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F528</textureFocus>
@@ -480,7 +498,7 @@
         <type>button</type>
         <id>529</id>
         <posX>702</posX>
-        <posY>527</posY>
+        <posY>547</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F529</textureFocus>
@@ -491,7 +509,7 @@
         <type>button</type>
         <id>530</id>
         <posX>702</posX>
-        <posY>450</posY>
+        <posY>470</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F530</textureFocus>
@@ -502,7 +520,7 @@
         <type>button</type>
         <id>531</id>
         <posX>780</posX>
-        <posY>450</posY>
+        <posY>470</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F531</textureFocus>
@@ -513,7 +531,7 @@
         <type>button</type>
         <id>532</id>
         <posX>857</posX>
-        <posY>450</posY>
+        <posY>470</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F532</textureFocus>
@@ -524,7 +542,7 @@
         <type>button</type>
         <id>533</id>
         <posX>934</posX>
-        <posY>450</posY>
+        <posY>470</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F533</textureFocus>
@@ -535,7 +553,7 @@
         <type>button</type>
         <id>534</id>
         <posX>1012</posX>
-        <posY>450</posY>
+        <posY>470</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F534</textureFocus>
@@ -546,7 +564,7 @@
         <type>button</type>
         <id>535</id>
         <posX>1012</posX>
-        <posY>372</posY>
+        <posY>392</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F535</textureFocus>
@@ -557,7 +575,7 @@
         <type>button</type>
         <id>536</id>
         <posX>1012</posX>
-        <posY>295</posY>
+        <posY>315</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F536</textureFocus>
@@ -568,7 +586,7 @@
         <type>button</type>
         <id>537</id>
         <posX>1012</posX>
-        <posY>217</posY>
+        <posY>237</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F537</textureFocus>
@@ -579,7 +597,7 @@
         <type>button</type>
         <id>538</id>
         <posX>1012</posX>
-        <posY>140</posY>
+        <posY>160</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F538</textureFocus>
@@ -590,7 +608,7 @@
         <type>button</type>
         <id>539</id>
         <posX>1089</posX>
-        <posY>140</posY>
+        <posY>160</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F539</textureFocus>
@@ -601,7 +619,7 @@
         <type>button</type>
         <id>600</id>
         <posX>1089</posX>
-        <posY>217</posY>
+        <posY>237</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F600</textureFocus>
@@ -612,7 +630,7 @@
         <type>button</type>
         <id>601</id>
         <posX>1089</posX>
-        <posY>295</posY>
+        <posY>315</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F601</textureFocus>
@@ -623,7 +641,7 @@
         <type>button</type>
         <id>602</id>
         <posX>1089</posX>
-        <posY>372</posY>
+        <posY>392</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F602</textureFocus>
@@ -634,7 +652,7 @@
         <type>button</type>
         <id>603</id>
         <posX>1089</posX>
-        <posY>450</posY>
+        <posY>470</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F603</textureFocus>
@@ -645,7 +663,7 @@
         <type>button</type>
         <id>610</id>
         <posX>1398</posX>
-        <posY>527</posY>
+        <posY>547</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F610</textureFocus>
@@ -656,7 +674,7 @@
         <type>button</type>
         <id>611</id>
         <posX>1321</posX>
-        <posY>527</posY>
+        <posY>547</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F611</textureFocus>
@@ -667,7 +685,7 @@
         <type>button</type>
         <id>612</id>
         <posX>1243</posX>
-        <posY>527</posY>
+        <posY>547</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F612</textureFocus>
@@ -678,7 +696,7 @@
         <type>button</type>
         <id>613</id>
         <posX>1166</posX>
-        <posY>527</posY>
+        <posY>547</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F613</textureFocus>
@@ -689,7 +707,7 @@
         <type>button</type>
         <id>620</id>
         <posX>1089</posX>
-        <posY>836</posY>
+        <posY>856</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F620</textureFocus>
@@ -700,7 +718,7 @@
         <type>button</type>
         <id>621</id>
         <posX>1089</posX>
-        <posY>759</posY>
+        <posY>779</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F621</textureFocus>
@@ -711,7 +729,7 @@
         <type>button</type>
         <id>622</id>
         <posX>1089</posX>
-        <posY>682</posY>
+        <posY>702</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F622</textureFocus>
@@ -722,7 +740,7 @@
         <type>button</type>
         <id>623</id>
         <posX>1089</posX>
-        <posY>604</posY>
+        <posY>624</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F623</textureFocus>
@@ -733,7 +751,7 @@
         <type>button</type>
         <id>630</id>
         <posX>780</posX>
-        <posY>527</posY>
+        <posY>547</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F630</textureFocus>
@@ -744,7 +762,7 @@
         <type>button</type>
         <id>631</id>
         <posX>857</posX>
-        <posY>527</posY>
+        <posY>547</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F631</textureFocus>
@@ -755,7 +773,7 @@
         <type>button</type>
         <id>632</id>
         <posX>934</posX>
-        <posY>527</posY>
+        <posY>547</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F632</textureFocus>
@@ -766,7 +784,7 @@
         <type>button</type>
         <id>633</id>
         <posX>1012</posX>
-        <posY>527</posY>
+        <posY>547</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F633</textureFocus>
@@ -777,7 +795,7 @@
         <type>button</type>
         <id>700</id>
         <posX>1398</posX>
-        <posY>140</posY>
+        <posY>160</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F700</textureFocus>
@@ -788,7 +806,7 @@
         <type>button</type>
         <id>701</id>
         <posX>1475</posX>
-        <posY>140</posY>
+        <posY>160</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F701</textureFocus>
@@ -799,7 +817,7 @@
         <type>button</type>
         <id>702</id>
         <posX>1398</posX>
-        <posY>217</posY>
+        <posY>237</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F702</textureFocus>
@@ -810,7 +828,7 @@
         <type>button</type>
         <id>703</id>
         <posX>1475</posX>
-        <posY>217</posY>
+        <posY>237</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F703</textureFocus>
@@ -821,7 +839,7 @@
         <type>button</type>
         <id>710</id>
         <posX>1398</posX>
-        <posY>836</posY>
+        <posY>856</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F710</textureFocus>
@@ -832,7 +850,7 @@
         <type>button</type>
         <id>711</id>
         <posX>1475</posX>
-        <posY>836</posY>
+        <posY>856</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F711</textureFocus>
@@ -843,7 +861,7 @@
         <type>button</type>
         <id>712</id>
         <posX>1398</posX>
-        <posY>914</posY>
+        <posY>934</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F712</textureFocus>
@@ -854,7 +872,7 @@
         <type>button</type>
         <id>713</id>
         <posX>1475</posX>
-        <posY>914</posY>
+        <posY>934</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F713</textureFocus>
@@ -865,7 +883,7 @@
         <type>button</type>
         <id>720</id>
         <posX>702</posX>
-        <posY>836</posY>
+        <posY>856</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F720</textureFocus>
@@ -876,7 +894,7 @@
         <type>button</type>
         <id>721</id>
         <posX>780</posX>
-        <posY>836</posY>
+        <posY>856</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F721</textureFocus>
@@ -887,7 +905,7 @@
         <type>button</type>
         <id>722</id>
         <posX>702</posX>
-        <posY>914</posY>
+        <posY>934</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F722</textureFocus>
@@ -898,7 +916,7 @@
         <type>button</type>
         <id>723</id>
         <posX>780</posX>
-        <posY>914</posY>
+        <posY>934</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F723</textureFocus>
@@ -909,7 +927,7 @@
         <type>button</type>
         <id>730</id>
         <posX>702</posX>
-        <posY>140</posY>
+        <posY>160</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F730</textureFocus>
@@ -920,7 +938,7 @@
         <type>button</type>
         <id>731</id>
         <posX>780</posX>
-        <posY>140</posY>
+        <posY>160</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F731</textureFocus>
@@ -931,7 +949,7 @@
         <type>button</type>
         <id>732</id>
         <posX>702</posX>
-        <posY>217</posY>
+        <posY>237</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F732</textureFocus>
@@ -942,23 +960,63 @@
         <type>button</type>
         <id>733</id>
         <posX>780</posX>
-        <posY>217</posY>
+        <posY>237</posY>
         <width>70</width>
         <height>70</height>
         <textureFocus>#F733</textureFocus>
         <textureNoFocus>#NF733</textureNoFocus>
       </control>
       <control>
+          <description>dice 01</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>496</posX>
+          <posY>603</posY>
+          <width>132</width>
+          <height>35</height>
+          <texture>Yahtzee\diceshadow.png</texture>
+          <colordiffuse>bbffffff</colordiffuse>
+        </control>
+      <control>
         <description>800</description>
         <type>button</type>
         <id>800</id>
-        <posX>534</posX>
-        <posY>225</posY>
-        <width>98</width>
-        <height>98</height>
+        <posX>500</posX>
+        <posY>495</posY>
+        <width>120</width>
+        <height>120</height>
         <textureFocus>#F800</textureFocus>
         <textureNoFocus>#NF800</textureNoFocus>
       </control>
     </control>
-  </controls>
+  </control>
+  <control>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>#header.label</label>
+      <width>1802</width>
+      <align>left</align>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Title background image all screens except all games</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>120</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+  <import>common.time.xml</import>
+</controls>
 </window>

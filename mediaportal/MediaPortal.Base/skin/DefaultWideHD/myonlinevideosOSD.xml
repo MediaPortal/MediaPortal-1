@@ -201,7 +201,7 @@
       <label>|</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>lightskyblue</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
@@ -239,7 +239,7 @@
       <posY>735</posY>
       <width>1230</width>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>LabelBold</font>
       <label>#Play.Current.Title</label>
       <visible>!control.hasfocus(1237)</visible>
@@ -399,7 +399,7 @@
       <height>57</height>
       <width>1230</width>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>LabelBold</font>
       <label>#Play.Current.Title</label>
       <visible>control.hasfocus(1237)</visible>
@@ -549,7 +549,7 @@
     <label>#latestMediaHandler.tvrecordings.active.count</label>
     <align>center</align>
     <font>font10</font>
-    <textcolor>ivory</textcolor>
+    <textcolor>lightgray</textcolor>
     <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
   </control>
   <control>
@@ -574,7 +574,7 @@
     <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
     <align>left</align>
     <font>font9</font>
-    <textcolor>ivory</textcolor>
+    <textcolor>lightgray</textcolor>
     <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
   </control>
   <!-- ******************************************************************************************* -->
@@ -681,7 +681,7 @@
       <align>left</align>
       <font>font10</font>
       <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
     <control>
@@ -695,7 +695,7 @@
       <label>#latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel) #scroll.wrap #latestMediaHandler.tvrecordings.active2.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active2.startTime</label>
       <align>left</align>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#latestMediaHandler.tvrecordings.active2.title,)</visible>
     </control>
     <control>
@@ -709,7 +709,7 @@
       <label>#latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel) #scroll.wrap #latestMediaHandler.tvrecordings.active3.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active3.startTime</label>
       <align>left</align>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#latestMediaHandler.tvrecordings.active3.title,)</visible>
     </control>
     <control>
@@ -723,7 +723,7 @@
       <label>#latestMediaHandler.tvrecordings.active4.title (#latestMediaHandler.tvrecordings.active4.channel) #scroll.wrap #latestMediaHandler.tvrecordings.active4.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active4.startTime</label>
       <align>left</align>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#latestMediaHandler.tvrecordings.active4.title,)</visible>
     </control>
   </control>

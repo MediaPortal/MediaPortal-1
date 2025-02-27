@@ -21,7 +21,7 @@
       <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>Trakt.Common.Fanart.xml</import>
-    <import>common.window.xml</import>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
     <control>
       <description>General Overlay</description>
@@ -38,11 +38,11 @@
       <type>label</type>
       <id>0</id>
       <posX>45</posX>
-      <posY>15</posY>
+      <posY>54</posY>
       <width>1299</width>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
-      <label>#Trakt.Translation.MovieCredits.Label</label>
+      <textcolor>lightgray</textcolor>
+      <label>Trakt #scroll.wrap #Trakt.Translation.MovieCredits.Label</label>
       <align>left</align>
     </control>
     <control>
@@ -53,7 +53,7 @@
       <label>#Trakt.Person.CreditType: #Trakt.Person.Name | #Trakt.Items</label>
       <font>font11</font>
       <align>right</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font10</font>
     </control>
     <import>Trakt.Common.Facade.xml</import>

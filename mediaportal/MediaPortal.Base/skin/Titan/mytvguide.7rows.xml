@@ -56,7 +56,7 @@
 		<height>48</height>
 		<keepaspectratio>yes</keepaspectratio>
 		<zoom>no</zoom>
-		<texture>defaultTVBig.png</texture>
+		<texture>defaultTVlogo.png</texture>
 	</control>
   <!-- Timeheader background must be dedfined before Timeheader label template -->
   <!-- b/c Timeheader is on the background and will be rendered first -->
@@ -138,7 +138,7 @@
 		<centered>yes</centered>
 		<zoom>no</zoom>
 		<keepaspectratio>yes</keepaspectratio>
-		<texture>defaultTVBig.png</texture>
+		<texture>defaultTVlogo.png</texture>
   </control>
   <control>
 		<description>channel Label template</description>

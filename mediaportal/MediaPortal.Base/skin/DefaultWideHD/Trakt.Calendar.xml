@@ -18,7 +18,7 @@
       <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>Trakt.Common.Fanart.xml</import>
-    <import>common.window.xml</import>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
     <control>
       <description>General Overlay</description>
@@ -35,11 +35,11 @@
       <type>label</type>
       <id>0</id>
       <posX>45</posX>
-      <posY>15</posY>
+      <posY>54</posY>
       <width>1299</width>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
-      <label>#Trakt.Translation.Calendar.Label | #Trakt.CurrentView</label>
+      <textcolor>lightgray</textcolor>
+      <label>Trakt #scroll.wrap #Trakt.Translation.Calendar.Label #scroll.wrap #Trakt.CurrentView</label>
       <align>left</align>
     </control>
     <control>
@@ -164,7 +164,7 @@
         </control>
       </control>
     </control>
-    <control>
+    <!--control>
       <description>Overlay text right</description>
       <id>0</id>
       <type>image</type>
@@ -172,9 +172,9 @@
       <posY>234</posY>
       <width>823</width>
       <height>699</height>
-      <texture mask="picturethumbmask.png">black.png</texture>
+      <texture mask="musicfanart_mask.png">black.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
-    </control>
+    </control-->
     <import>Trakt.Common.Properties.Episodes.xml</import>
   </controls>
 </window>

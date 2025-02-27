@@ -44,7 +44,7 @@
           <id>1</id>
           <label>9000</label>
           <font>RSS</font>
-          <textcolor>lightskyblue</textcolor>
+          <textcolor>ff00bfff</textcolor>
         </control>
         <control>
           <description>Resolution txt</description>
@@ -52,7 +52,7 @@
           <id>1</id>
           <label>9001</label>
           <font>RSS</font>
-          <textcolor>lightskyblue</textcolor>
+          <textcolor>ff00bfff</textcolor>
         </control>
         <control>
           <description>Flash txt</description>
@@ -60,7 +60,7 @@
           <id>1</id>
           <label>9002</label>
           <font>RSS</font>
-          <textcolor>lightskyblue</textcolor>
+          <textcolor>ff00bfff</textcolor>
         </control>
         <control>
           <description>Metering mode txt</description>
@@ -68,7 +68,7 @@
           <id>1</id>
           <label>9003</label>
           <font>RSS</font>
-          <textcolor>lightskyblue</textcolor>
+          <textcolor>ff00bfff</textcolor>
         </control>
         <control>
           <description>Exposure Compensation txt</description>
@@ -76,7 +76,7 @@
           <id>1</id>
           <label>9004</label>
           <font>RSS</font>
-          <textcolor>lightskyblue</textcolor>
+          <textcolor>ff00bfff</textcolor>
         </control>
         <control>
           <description>Shutterspeed txt</description>
@@ -84,7 +84,7 @@
           <id>1</id>
           <label>9005</label>
           <font>RSS</font>
-          <textcolor>lightskyblue</textcolor>
+          <textcolor>ff00bfff</textcolor>
         </control>
         <control>
           <description>Date Taken txt</description>
@@ -92,7 +92,7 @@
           <id>1</id>
           <label>9006</label>
           <font>RSS</font>
-          <textcolor>lightskyblue</textcolor>
+          <textcolor>ff00bfff</textcolor>
         </control>
         <control>
           <description>Fstop txt</description>
@@ -100,7 +100,7 @@
           <id>1</id>
           <label>9007</label>
           <font>RSS</font>
-          <textcolor>lightskyblue</textcolor>
+          <textcolor>ff00bfff</textcolor>
         </control>
         <control>
           <description>Exposure Time txt</description>
@@ -108,7 +108,7 @@
           <id>1</id>
           <label>9008</label>
           <font>RSS</font>
-          <textcolor>lightskyblue</textcolor>
+          <textcolor>ff00bfff</textcolor>
         </control>
         <control>
           <description>Camera Model txt</description>
@@ -116,7 +116,7 @@
           <id>1</id>
           <label>9009</label>
           <font>RSS</font>
-          <textcolor>lightskyblue</textcolor>
+          <textcolor>ff00bfff</textcolor>
         </control>
         <control>
           <description>Equipment make txt</description>
@@ -124,7 +124,7 @@
           <id>1</id>
           <label>9010</label>
           <font>RSS</font>
-          <textcolor>lightskyblue</textcolor>
+          <textcolor>ff00bfff</textcolor>
         </control>
         <control>
           <description>View Comment txt</description>
@@ -132,7 +132,7 @@
           <id>1</id>
           <label>9011</label>
           <font>RSS</font>
-          <textcolor>lightskyblue</textcolor>
+          <textcolor>ff00bfff</textcolor>
         </control>
       </control>
       <control>
@@ -149,7 +149,7 @@
           <height>41</height>
           <label>-</label>
           <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
         </control>
         <control>
           <description>Resolutions value</description>
@@ -159,7 +159,7 @@
           <height>41</height>
           <label>-</label>
           <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
         </control>
         <control>
           <description>Flash value</description>
@@ -169,7 +169,7 @@
           <height>41</height>
           <label>-</label>
           <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
         </control>
         <control>
           <description>Metering Mode value</description>
@@ -179,7 +179,7 @@
           <height>41</height>
           <label>-</label>
           <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
         </control>
         <control>
           <description>Exposure Compensation value</description>
@@ -189,7 +189,7 @@
           <height>41</height>
           <label>-</label>
           <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
         </control>
         <control>
           <description>Shutter Speed value</description>
@@ -199,7 +199,7 @@
           <height>41</height>
           <label>-</label>
           <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
         </control>
         <control>
           <description>Date Taken value</description>
@@ -209,7 +209,7 @@
           <height>41</height>
           <label>-</label>
           <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
         </control>
         <control>
           <description>Fstop value</description>
@@ -219,7 +219,7 @@
           <height>41</height>
           <label>-</label>
           <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
         </control>
         <control>
           <description>Exposure Time value</description>
@@ -229,7 +229,7 @@
           <height>44</height>
           <label>-</label>
           <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
         </control>
         <control>
           <description>Camera Model value</description>
@@ -239,7 +239,7 @@
           <height>42</height>
           <label>-</label>
           <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
         </control>
         <control>
           <description>Equipment Make value</description>
@@ -249,7 +249,7 @@
           <height>42</height>
           <label>-</label>
           <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
         </control>
         <control>
           <description>View Comments value</description>
@@ -259,7 +259,7 @@
           <height>41</height>
           <label>-</label>
           <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
         </control>
       </control>
       <!-- **************************  Separator lines   ***************************-->

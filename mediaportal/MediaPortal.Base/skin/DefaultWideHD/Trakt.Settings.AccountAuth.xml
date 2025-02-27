@@ -18,21 +18,42 @@
       <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>Trakt.Common.Fanart.xml</import>
-    <import>common.window.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
     <import>common.time.xml</import>
     <import>Trakt.Common.xml</import>
     <control>
+      <description>Current View</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <width>1299</width>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>  
+      <label>Trakt #scroll.wrap #Trakt.Translation.Settings.Label #scroll.wrap #Trakt.Translation.AccountSetup.Label</label>
+      <align>left</align>
+    </control>
+    <control>
       <description>buttons</description>
       <type>group</type>
-      <posX>655</posX>
-      <posY>321</posY>
+      <posX>525</posX>
+      <posY>270</posY>
       <layout>StackLayout(7, Vertical, true)</layout>
       <control>
         <type>button</type>
         <description>Create New Account</description>
         <id>2</id>
         <label />
-        <width>800</width>
+        <width>800</width><textureFocus>setting_button_long.png</textureFocus>
         <onleft>#defaultcontrol.onleft</onleft>
       </control>
     </control>
@@ -40,10 +61,10 @@
       <type>textbox</type>
       <description>Scan QR or enter in URL</description>
       <id>0</id>
-      <posX>675</posX>
-      <posY>395</posY>
+      <posX>525</posX>
+      <posY>370</posY>
       <width>975</width>
-	  <height>200</height>
+	    <height>200</height>
       <label>#Trakt.Settings.Account.ScanQRCode</label>
       <font>RSS</font>
       <visible>string.equals(#Trakt.Settings.Account.Authorise,true)</visible>
@@ -52,7 +73,7 @@
       <description>QR URL Image</description>
       <type>image</type>
       <id>1</id>
-      <posX>675</posX>
+      <posX>525</posX>
       <posY>475</posY>
       <width>330</width>
       <height>330</height>
@@ -63,8 +84,8 @@
       <type>label</type>
       <description>User Code</description>
       <id>0</id>
-      <posX>675</posX>
-      <posY>820</posY>
+      <posX>725</posX>
+      <posY>720</posY>
       <width>892</width>
       <label>#Trakt.Settings.Account.UserCode</label>
       <font>font20</font>
@@ -75,8 +96,8 @@
       <type>textbox</type>
       <description>Application Wait</description>
       <id>0</id>
-      <posX>675</posX>
-      <posY>890</posY>
+      <posX>525</posX>
+      <posY>800</posY>
       <width>975</width>
 	  <height>200</height>
       <label>#Trakt.Translation.ApplicationAuthWait.Label</label>

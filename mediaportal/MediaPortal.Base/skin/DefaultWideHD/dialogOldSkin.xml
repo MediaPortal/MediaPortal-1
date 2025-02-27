@@ -20,7 +20,7 @@
       <label>1900</label>
       <font>font16</font>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <id>0</id>

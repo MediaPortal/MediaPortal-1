@@ -21,7 +21,7 @@
       <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>Trakt.Common.Fanart.xml</import>
-    <import>common.window.xml</import>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
     <control>
       <description>General Overlay</description>
@@ -38,13 +38,25 @@
       <type>label</type>
       <id>0</id>
       <posX>45</posX>
+      <posY>54</posY>
+      <width>1299</width>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>  
+      <label>Trakt #scroll.wrap #Trakt.Translation.TrendingShows.Label #scroll.wrap #selecteditem</label>
+      <align>left</align>
+    </control>
+    <!--control>
+      <description>Current View</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
       <posY>15</posY>
       <width>1299</width>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#Trakt.Translation.TrendingShows.Label</label>
       <align>left</align>
-    </control>
+    </control-->
     <control>
       <type>label</type>
       <id>1</id>
@@ -53,7 +65,7 @@
       <label>#Trakt.Trending.PeopleCount #Trakt.Translation.People.Label | #Trakt.Items</label>
       <font>font11</font>
       <align>right</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font10</font>
       <visible>!string.equals(#Trakt.Trending.PeopleCount,)</visible>
     </control>

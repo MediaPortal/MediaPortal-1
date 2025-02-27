@@ -169,12 +169,23 @@
       <description>Overlay to darken FanArt in Music</description>
       <id>0</id>
       <type>image</type>
-      <posX>170</posX>
-      <posY>250</posY>
-      <width>830</width>
-      <height>747</height>
-      <texture>listbg.png</texture>
-      <colordiffuse>ddffffff</colordiffuse>
+      <posX>180</posX>
+      <posY>260</posY>
+      <width>600</width>
+      <height>724</height>
+      <texture>weatherbg_right.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>overlay image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1079</posX>
+      <posY>264</posY>
+      <width>654</width>
+      <height>450</height>
+      <texture>picturecase.png</texture>
       <visible>facadeview.list</visible>
     </control>
     <control>
@@ -188,17 +199,7 @@
       <texture mask="picturecase_mask.png">#selectedthumb</texture>
       <visible>facadeview.list</visible>
     </control>
-    <control>
-      <description>overlay image</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>1080</posX>
-      <posY>265</posY>
-      <width>652</width>
-      <height>448</height>
-      <texture>picturecase.png</texture>
-      <visible>facadeview.list</visible>
-    </control>
+    
     <control>
       <description>Plugin Description Background</description>
       <type>image</type>
@@ -208,7 +209,7 @@
       <width>652</width>
       <height>240</height>
       <texture>latestmediabg.png</texture>
-      <colordiffuse>ddffffff</colordiffuse>
+      <colordiffuse>ffffffff</colordiffuse>
       <keepaspectratio>no</keepaspectratio>
       <visible>facadeview.list</visible>
     </control>
@@ -255,7 +256,7 @@
           <posX>205</posX>
           <posY>288</posY>
           <height>731</height>
-          <width>694</width>
+          <width>550</width>
           <textureHeight>65</textureHeight>
           <font>Menutitle</font>
           <font2>font10</font2>
@@ -484,7 +485,7 @@
                 <label>#plugindescription</label>
                 <font>font9</font>
                 <!--align>center</align-->
-                <textcolor>lightskyblue</textcolor>
+                <textcolor>ff00bfff</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>

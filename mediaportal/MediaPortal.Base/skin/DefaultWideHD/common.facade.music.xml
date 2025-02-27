@@ -82,7 +82,7 @@
           <showFrame>true</showFrame>
           <imageFolder>-</imageFolder>
           <imageFolderFocus>-</imageFolderFocus>
-          <textureMask>Picturethumbmask.png</textureMask>
+          <textureMask>musicfanart_mask.png</textureMask>
           <frameNoFocus>Picturethumbframe.png</frameNoFocus>
           <frameFocus>Picturethumbframe.png</frameFocus>
           <keepaspectratio>no</keepaspectratio>
@@ -116,8 +116,8 @@
           <imageFolderFocus>Picturethumbframe.png</imageFolderFocus>
           <frame>Picturethumbframe.png</frame>
           <frameFocus>Picturethumbframe.png</frameFocus>
-          <textureMask>Picturethumbmask.png</textureMask>
-          <thumbs mask="Picturethumbmask.png">
+          <textureMask>musicfanart_mask.png</textureMask>
+          <thumbs mask="musicfanart_mask.png">
           </thumbs>
           <background>emtpy.png</background>
           <InfoImage>
@@ -203,7 +203,7 @@
           <scrollbarRight>mouse_right_vertical.png</scrollbarRight>
           <scrollbarYOff>570</scrollbarYOff>
           <showScrollbar>yes</showScrollbar>
-          <cards mask="Picturethumbmask.png">Picturethumbmask.png</cards>
+          <cards mask="musicfanart_mask.png">musicfanart_mask.png</cards>
           <subitems>
             <subitem><![CDATA[                 <controls>
               <control>
@@ -213,7 +213,7 @@
                 <posY>0</posY>
                 <width>360</width>
                 <height>360</height>
-                <texture mask="Picturethumbmask.png">blue.png</texture>
+                <texture mask="musicfanart_mask.png">blue.png</texture>
               </control>
               <control>
                 <description>Music Details</description>
@@ -223,7 +223,7 @@
                 <width>320</width>
                 <label>102001</label>
                 <font>font10</font>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -236,7 +236,7 @@
                 <label>#(L(171)) #music.albumArtist</label>
                 <font>font10</font>
                 <align>left</align>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -249,7 +249,7 @@
                 <label>#(L(170)) #music.album</label>
                 <font>font10</font>
                 <align>left</align>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -262,7 +262,7 @@
                 <label>#(L(179)): #music.title</label>
                 <font>font10</font>
                 <align>left</align>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -275,7 +275,7 @@
                 <label>#(L(178)) # #music.track</label>
                 <font>font10</font>
                 <align>left</align>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -288,7 +288,7 @@
                 <label>#(L(437)) #music.duration</label>
                 <font>font10</font>
                 <align>left</align>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -301,7 +301,7 @@
                 <label>Filetype: #music.filetype</label>
                 <font>font10</font>
                 <align>left</align>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -314,7 +314,7 @@
                 <label>Codec: #music.codec</label>
                 <font>font10</font>
                 <align>left</align>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -327,7 +327,7 @@
                 <label>Bitrate: #music.bitrate</label>
                 <font>font10</font>
                 <align>left</align>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -340,7 +340,7 @@
                 <label>BPM: #music.bpm</label>
                 <font>font10</font>
                 <align>left</align>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -353,7 +353,7 @@
                 <label>#(L(627)) #music.channels</label>
                 <font>font10</font>
                 <align>left</align>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -366,7 +366,7 @@
                 <label>Samplerate: #music.samplerate</label>
                 <font>font10</font>
                 <align>left</align>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -379,7 +379,7 @@
                 <label>Date added: #music.dateadded</label>
                 <font>font10</font>
                 <align>left</align>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -392,7 +392,7 @@
                 <label>Last played: #music.datelastplayed</label>
                 <font>font10</font>
                 <align>left</align>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>

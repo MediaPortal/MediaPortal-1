@@ -10,42 +10,52 @@
       <control>
         <type>image</type>
         <id>0</id>
-        <posX>10</posX>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>1920</width>
+        <height>94</height>
+        <texture>osdbg5.png</texture>
+        <colordiffuse>ff00446d</colordiffuse>
+      </control>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>2</posX>
         <posY>2</posY>
-        <width>1900</width>
-        <height>100</height>
-        <texture>osd-bar.png</texture>
-        <colordiffuse>ffffffff</colordiffuse>
+        <width>1916</width>
+        <height>90</height>
+        <texture>osdbg5.png</texture>
+        <colordiffuse>ff00061c</colordiffuse>
       </control>
       <control>
         <type>image</type>
         <id>0</id>
         <posX>20</posX>
-        <posY>8</posY>
+        <posY>15</posY>
         <width>63</width>
         <height>63</height>
-        <texture>tb_extend.png</texture>
+        <texture>tb_extend3.png</texture>
         <colordiffuse>ffffffff</colordiffuse>
       </control>
       <control>
         <description>Heading text label</description>
         <type>label</type>
         <id>3</id>
-        <posX>195</posX>
-        <posY>5</posY>
+        <posX>122</posX>
+        <posY>7</posY>
         <label>181</label>
-        <font>font12</font>
-        <textcolor>ff6FAFE1</textcolor>
+        <font>LabelBold</font>
+        <textcolor>dodgerblue</textcolor>
       </control>
       <control>
         <description>OK button</description>
         <type>button</type>
         <id>4</id>
-        <posX>1850</posX>
-        <posY>8</posY>
+        <posX>1868</posX>
+        <posY>13</posY>
         <width>35</width>
         <height>35</height>
-        <textureFocus>tb_exit.png</textureFocus>
+        <textureFocus>tb_exit_dialogue.png</textureFocus>
         <textureNoFocus>tb_exitNF.png</textureNoFocus>
         <label>-</label>
         <onleft>4</onleft>
@@ -53,14 +63,26 @@
         <onup>4</onup>
         <ondown>4</ondown>
       </control>
+      <!--control>
+        <description>standard logo</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>105</posX>
+        <posY>20</posY>
+        <width>63</width>
+        <height>63</height>
+        <texture>MediaPortal_Icon.png</texture>
+       <keepaspectratio>yes</keepaspectratio>
+       <visible>!control.hasthumb(5)</visible>
+      </control-->
       <control>
         <description>logo</description>
         <type>image</type>
         <id>5</id>
-        <posX>105</posX>
-        <posY>8</posY>
-        <width>75</width>
-        <height>75</height>
+        <posX>3105</posX>
+        <posY>20</posY>
+        <width>63</width>
+        <height>63</height>
         <texture>#thumb</texture>
        <keepaspectratio>yes</keepaspectratio>
       </control>
@@ -68,9 +90,9 @@
         <description>textarea</description>
         <type>textbox</type>
         <id>6</id>
-        <posX>195</posX>
-        <posY>36</posY>
-        <width>1850</width>
+        <posX>122</posX>
+        <posY>43</posY>
+        <width>1770</width>
         <height>70</height>
         <spinPosX>2546</spinPosX>
         <spinPosY>961</spinPosY>
@@ -79,7 +101,7 @@
         <onup>4</onup>
         <ondown>4</ondown>
         <label>-</label>
-        <font>font12</font>
+        <font>font11</font>
       </control>
     </control>
   </controls>

@@ -116,6 +116,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatchDogService.Interface",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatchDogService", "WatchDogService\WatchDogService.csproj", "{97ABF4ED-7BE0-4697-9040-24803871793E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvMovieDbReader", "Plugins\TvMovie\TvMovieDbReader\TvMovieDbReader.csproj", "{808346F5-45CF-4074-8FF1-4F6D4534B94A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -336,6 +338,13 @@ Global
 		{97ABF4ED-7BE0-4697-9040-24803871793E}.Release|x64.Build.0 = Release|x64
 		{97ABF4ED-7BE0-4697-9040-24803871793E}.Release|x86.ActiveCfg = Release|Any CPU
 		{97ABF4ED-7BE0-4697-9040-24803871793E}.Release|x86.Build.0 = Release|Any CPU
+		{808346F5-45CF-4074-8FF1-4F6D4534B94A}.Debug|x64.ActiveCfg = Debug|x86
+		{808346F5-45CF-4074-8FF1-4F6D4534B94A}.Debug|x86.ActiveCfg = Debug|x86
+		{808346F5-45CF-4074-8FF1-4F6D4534B94A}.Debug|x86.Build.0 = Debug|x86
+		{808346F5-45CF-4074-8FF1-4F6D4534B94A}.Release|x64.ActiveCfg = Release|x86
+		{808346F5-45CF-4074-8FF1-4F6D4534B94A}.Release|x64.Build.0 = Release|x86
+		{808346F5-45CF-4074-8FF1-4F6D4534B94A}.Release|x86.ActiveCfg = Release|x86
+		{808346F5-45CF-4074-8FF1-4F6D4534B94A}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -376,6 +385,7 @@ Global
 		{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227} = {B35ED5DF-1FC5-4884-93C6-EF6B5A8025E1}
 		{837CE7EA-60D4-4217-8D38-A8B5E6E1DB22} = {3CB62CF4-6C9B-4821-BAB1-F0314EBFA5F6}
 		{97ABF4ED-7BE0-4697-9040-24803871793E} = {3CB62CF4-6C9B-4821-BAB1-F0314EBFA5F6}
+		{808346F5-45CF-4074-8FF1-4F6D4534B94A} = {45F25E07-83BB-41F4-BD31-6EBD96994BC1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {56DB5B55-CEF4-475A-A97C-5E50A87C7006}

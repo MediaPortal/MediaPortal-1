@@ -1,181 +1,907 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-  <id>19000</id>
-  <defaultcontrol>10</defaultcontrol>
+  <id>7776</id>
+  <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <define>#header.label:Tetris</define>
+  <!--<define>#header.label:#SkinTranslation.Translations.Games.Label #scroll.wrap Tetris</define>-->
   <define>#header.hover:hover_tetris.png</define>
   <controls>
     <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>0</id>
-      <width>1920</width>
-      <height>1080</height>
-      <texture>gamebg.jpg</texture>
-      <colordiffuse>ffffffff</colordiffuse>
-    </control>
-    <control>
-      <description>Button background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>50</posX>
-      <posY>205</posY>
-      <height>380</height>
-      <width>420</width>
-      <texture>am-background.png</texture>
-      <colordiffuse>50ffffff</colordiffuse>
-    </control>
-    <control>
-      <type>group</type>
-      <description>group element</description>
-      <layout>StackLayout(0, vertical, true)</layout>
-      <posX>70</posX>
-      <posY>225</posY>
-      <control>
-        <description>New Game</description>
-        <type>button</type>
-        <id>2</id>
-        <label>19002</label>
-        <onleft>2</onleft>
-        <onright>10</onright>
-        <onup>17</onup>
-        <ondown>4</ondown>
-      </control>
-      <control>
-        <description>Sounds</description>
-        <type>checkbutton</type>
-        <id>4</id>
-        <label>19004</label>
-        <onleft>4</onleft>
-        <onright>10</onright>
-        <onup>2</onup>
-        <ondown>2</ondown>
-      </control>
-    </control>
-    <control>
-      <type>group</type>
-      <control>
-        <description>Score: label</description>
-        <type>label</type>
+        <description>background image</description>
+        <type>image</type>
         <id>0</id>
-        <posX>84</posX>
-        <posY>371</posY>
-        <label>19005</label>
-        <textcolor>ivory</textcolor>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>gamebg.jpg</texture>
+        <colordiffuse>ffffffff</colordiffuse>
       </control>
-      <control>
-        <description>Score</description>
-        <type>label</type>
-        <id>0</id>
-        <posX>219</posX>
-        <posY>371</posY>
-        <width>227</width>
-        <align>left</align>
-        <label>#tetris_score</label>
-        <textcolor>ivory</textcolor>
-      </control>
-      <control>
-        <description>Level: label</description>
-        <type>label</type>
-        <id>0</id>
-        <posX>84</posX>
-        <posY>419</posY>
-        <label>19006</label>
-        <textcolor>ivory</textcolor>
-      </control>
-      <control>
-        <description>Level</description>
-        <type>label</type>
-        <id>0</id>
-        <posX>219</posX>
-        <posY>419</posY>
-        <width>227</width>
-        <align>left</align>
-        <label>#tetris_level</label>
-        <textcolor>ivory</textcolor>
-      </control>
-      <control>
-        <description>Lines: label</description>
-        <type>label</type>
-        <id>0</id>
-        <posX>84</posX>
-        <posY>467</posY>
-        <label>19007</label>
-        <textcolor>ivory</textcolor>
-      </control>
-      <control>
-        <description>Lines</description>
-        <type>label</type>
-        <id>0</id>
-        <posX>219</posX>
-        <posY>467</posY>
-        <width>227</width>
-        <align>left</align>
-        <label>#tetris_lines</label>
-        <textcolor>ivory</textcolor>
-      </control>
-      <control>
-        <description>Highscore: label</description>
-        <type>label</type>
-        <id>0</id>
-        <posX>84</posX>
-        <posY>515</posY>
-        <label>19008</label>
-        <textcolor>ivory</textcolor>
-      </control>
-      <control>
-        <description>Highscore</description>
-        <type>label</type>
-        <id>0</id>
-        <posX>271</posX>
-        <posY>515</posY>
-        <width>227</width>
-        <align>left</align>
-        <label>#tetris_highscore</label>
-        <textcolor>ivory</textcolor>
-      </control>
-    </control>
-    <control>
+	  <control>
       <type>group</type>
       <description>group element</description>
       <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
+      <!--  ******************************************************  -->
+      <!--  ************** TETRIS LOGO ANIMATION *****************  -->
+      <!--  ******************************************************  -->
       <control>
-        <description>Tetris control</description>
-        <type>tetris</type>
-        <id>10</id>
-        <posX>800</posX>
-        <posY>180</posY>
-        <width>500</width>
-        <height>843</height>
-        <font>font16</font>
-        <textcolor>ffffffff</textcolor>
-        <onleft>2</onleft>
-        <onright>10</onright>
-        <onup>10</onup>
-        <ondown>10</ondown>
+        <description>Tetris Logo</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1415</posX>
+        <posY>515</posY>
+        <width>351</width>
+        <height>243</height>
+        <texture>Tetris\tetris-logo-shadow.png</texture>
         <colordiffuse>ffffffff</colordiffuse>
-        <texture>tetris\background.png</texture>
-        <texturefocus>tetris\background_focus.png</texturefocus>
-        <textureLeft>tetris\guide.png</textureLeft>
-        <textureRight>tetris\guide.png</textureRight>
-        <nextblockx>1350</nextblockx>
-        <nextblocky>210</nextblocky>
+        <keepaspectratio>no</keepaspectratio>
+        <animation effect="zoom" start="1,1" end="100,100" time="1000" center="1600,200" delay="2000" condition="true">conditional</animation>
+        <animation effect="slide" time="12000" start="100,-400" end="100,200" delay="5000" condition="true">conditional</animation>
+        <animation effect="slide" delay="14700" time="300" start="0,0" end="-200,0" condition="true">conditional</animation>
+        <animation effect="rotate" delay="7000" start="-0" end="-90" time="300" condition="true">conditional</animation>
+        <animation effect="rotate" delay="8000" start="-90" end="-180" time="300" condition="true">conditional</animation>
+        <animation effect="rotate" delay="9000" start="-180" end="-270" time="300" condition="true">conditional</animation>
+        <animation effect="rotate" delay="10000" start="-270" end="-360" time="300" condition="true">conditional</animation>
+        <animation effect="rotate" delay="11000" start="-0" end="-90" time="300" condition="true">conditional</animation>
+        <animation effect="rotate" delay="12000" start="-90" end="-180" time="300" condition="true">conditional</animation>
+        <animation effect="rotate" delay="13000" start="-180" end="-270" time="300" condition="true">conditional</animation>
+        <animation effect="rotate" delay="14000" start="-270" end="-360" time="300" condition="true">conditional</animation>
+        
+        <shouldCache>true</shouldCache>
+      </control>
+      <control>
+        <description>Tetris Block Right</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1543</posX>
+        <posY>835</posY>
+        <width>134</width>
+        <height>134</height>
+        <texture>Tetris\block_gray_framed-shadow.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <keepaspectratio>yes</keepaspectratio>
+        <animation effect="slide" delay="11800" time="3200" start="0,300" end="0,0" condition="true">conditional</animation>
+        <shouldCache>true</shouldCache>
+        
+      </control>
+      <control>
+        <description>Tetris Block Left</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1298</posX>
+        <posY>835</posY>
+        <width>134</width>
+        <height>134</height>
+        <texture>Tetris\block_yellow_framed-shadow.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <keepaspectratio>yes</keepaspectratio>
+        <animation effect="slide" delay="11800" time="3200" start="0,300" end="0,0" condition="true">conditional</animation>
+        <animation effect="fade" delay="16000" time="1000" start="100" end="0" condition="true">conditional</animation>
+        <shouldCache>true</shouldCache>
+        
+      </control>
+      <control>
+        <description>Tetris Block Left without right shadow</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1298</posX>
+        <posY>835</posY>
+        <width>134</width>
+        <height>134</height>
+        <texture>Tetris\block_yellow_framed-shadow2.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <keepaspectratio>yes</keepaspectratio>
+        <animation effect="slide" delay="11800" time="3200" start="0,300" end="0,0" condition="true">conditional</animation>
+        
+        <shouldCache>true</shouldCache>
+      </control>
+      <control>
+        <description>Tetris Logo</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1400</posX>
+        <posY>500</posY>
+        <width>351</width>
+        <height>243</height>
+        <texture>Tetris\tetris-logo.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <keepaspectratio>no</keepaspectratio>
+        <animation effect="zoom" start="1,1" end="100,100" time="1000" center="1600,200" delay="2000" condition="true">conditional</animation>
+        <animation effect="slide" time="12000" start="100,-400" end="100,200" delay="5000" condition="true">conditional</animation>
+        <animation effect="slide" delay="14700" time="300" start="0,0" end="-200,0" condition="true">conditional</animation>
+        <animation effect="rotate" delay="7000" start="-0" end="-90" time="300" condition="true">conditional</animation>
+        <animation effect="rotate" delay="8000" start="-90" end="-180" time="300" condition="true">conditional</animation>
+        <animation effect="rotate" delay="9000" start="-180" end="-270" time="300" condition="true">conditional</animation>
+        <animation effect="rotate" delay="10000" start="-270" end="-360" time="300" condition="true">conditional</animation>
+        <animation effect="rotate" delay="11000" start="-0" end="-90" time="300" condition="true">conditional</animation>
+        <animation effect="rotate" delay="12000" start="-90" end="-180" time="300" condition="true">conditional</animation>
+        <animation effect="rotate" delay="13000" start="-180" end="-270" time="300" condition="true">conditional</animation>
+        <animation effect="rotate" delay="14000" start="-270" end="-360" time="300" condition="true">conditional</animation>
+        
+        <shouldCache>true</shouldCache>
+      </control>
+      <!--  **********************************************  -->
+      <!--  ************** THX HIGH_FIVE *****************  -->
+      <!--  **********************************************  -->
+      <control>
+        <description>THX High_Five</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>0</posX>
+        <posY>1030</posY>
+        <width>1920</width>
+        <align>center</align>
+        <label>#SkinTranslation.Translations.HighFive.Label</label>
+        <font>font10</font>
+        <textcolor>lightgreen</textcolor>
+      </control>
+      <!--  ********************************************  -->
+      <!--  ************** ACTION MENU *****************  -->
+      <!--  ********************************************  -->
+      <control>
+        <description>Button background</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>50</posX>
+        <posY>155</posY>
+        <height>535</height>
+        <width>420</width>
+        <texture>backslide_settings.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>70</posX>
+        <posY>170</posY>
+        <control>
+          <description>New Game</description>
+          <type>button</type>
+          <id>2</id>
+          <label>19002</label>
+          <onleft>2</onleft>
+          <onright>10</onright>
+          <onup>17</onup>
+          <ondown>4</ondown>
+          
+        </control>
+        <control>
+          <description>Sounds</description>
+          <type>checkbutton</type>
+          <id>4</id>
+          <label>19004</label>
+          <onleft>4</onleft>
+          <onright>10</onright>
+          <onup>2</onup>
+          <ondown>575</ondown>
+          
+        </control>
+        <control>
+          <description>Show Highscore by coloured info, ticker and image</description>
+          <type>checkbutton</type>
+          <id>575</id>
+          <label>#SkinTranslation.Translations.ShowHighscore.Label</label>
+          <selected>#(skin.hassetting('#Tetris.show.highscore'))</selected>
+          <onclick>#(skin.togglesetting('#Tetris.show.highscore'))</onclick>
+          <onleft>575</onleft>
+          <onright>10</onright>
+          <onup>4</onup>
+          <ondown>576</ondown>
+          
+        </control>
+        <control>
+          <description>Pulsing sidelines on</description>
+          <type>checkbutton</type>
+          <id>576</id>
+          <label>#SkinTranslation.Translations.PulsingSidelines.Label</label>
+          <selected>#(skin.hassetting('#Pulsing.sidelines.on'))</selected>
+          <onclick>#(skin.togglesetting('#Pulsing.sidelines.on'))</onclick>
+          <onleft>575</onleft>
+          <onright>10</onright>
+          <onup>575</onup>
+          <ondown>577</ondown>
+          
+        </control>
+        <control>
+          <description>About the game</description>
+          <type>checkbutton</type>
+          <id>577</id>
+          <posX>70</posX>
+          <posY>402</posY>
+          <label>#SkinTranslation.Translations.About.Label</label>
+          <selected>#(skin.hassetting('#skin.tetrisabout'))</selected>
+          <onclick>#(skin.togglesetting('#skin.tetrisabout'))</onclick>
+          <onleft>577</onleft>
+          <onright>10</onright>
+          <onup>576</onup>
+          <ondown>2</ondown>
+          <animation effect="zoom" start="100,100" end="105,105" time="700" condition="skin.hassetting(#skin.tetrisabout)" pulse="true">conditional</animation>
+        </control>
+      </control>
+      
+      <!--  ********************************************************  -->
+      <!--  ************** SCORES AND LEVEL LABELS *****************  -->
+      <!--  ********************************************************  -->
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>70</posX>50
+        <posY>470</posY>
+        <width>380</width>420
+        <height>1</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>aaffffff</colordiffuse>
+        
+      </control>
+      <control>
+        <description>Score</description>
+        <type>group</type>
+        <layout>StackLayout(30, Horizontal, true)</layout>
+        <posX>90</posX>
+        <posY>490</posY>
+        <align>left</align>
+        <width>1210</width>
+        
+        <control>
+          <type>fadelabel</type>
+          <description>Score label</description>
+          <id>0</id>
+          <label>#(L(19005)):</label>
+          <width>70</width>
+          <maxWidth>1030</maxWidth>
+          <align>left</align>
+          <textcolor>white</textcolor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Score Value</description>
+          <id>0</id>
+          <label>#tetris_score</label>
+          <width>900</width>
+          <maxWidth>1030</maxWidth>
+          <align>left</align>
+          <textcolor>ff008bf0</textcolor>
+        </control>
+      </control>
+      <control>
+        <description>Level</description>
+        <type>group</type>
+        <layout>StackLayout(30, Horizontal, true)</layout>
+        <posX>90</posX>
+        <posY>535</posY>
+        <align>left</align>
+        <width>1210</width>
+        
+        <control>
+          <type>fadelabel</type>
+          <description>Level label</description>
+          <id>0</id>
+          <label>#(L(19006)):</label>
+          <width>70</width>
+          <maxWidth>1030</maxWidth>
+          <align>left</align>
+          <textcolor>white</textcolor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Level Value</description>
+          <id>0</id>
+          <label>#tetris_level</label>
+          <width>900</width>
+          <maxWidth>1030</maxWidth>
+          <align>left</align>
+          <textcolor>ff008bf0</textcolor>
+        </control>
+      </control>
+      <control>
+        <description>Lines</description>
+        <type>group</type>
+        <layout>StackLayout(30, Horizontal, true)</layout>
+        <posX>90</posX>
+        <posY>580</posY>
+        <align>left</align>
+        <width>1210</width>
+        
+        <control>
+          <type>fadelabel</type>
+          <description>Lines label</description>
+          <id>0</id>
+          <label>#(L(19007)):</label>
+          <width>70</width>
+          <maxWidth>1030</maxWidth>
+          <align>left</align>
+          <textcolor>white</textcolor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Lines Value</description>
+          <id>0</id>
+          <label>#tetris_lines</label>
+          <width>900</width>
+          <maxWidth>1030</maxWidth>
+          <align>left</align>
+          <textcolor>ff008bf0</textcolor>
+        </control>
+      </control>
+      <control>
+        <description>Highscore</description>
+        <type>group</type>
+        <layout>StackLayout(30, Horizontal, true)</layout>
+        <posX>90</posX>
+        <posY>625</posY>
+        <align>left</align>
+        <width>1210</width>
+        
+        <control>
+          <type>fadelabel</type>
+          <description>Highscore label</description>
+          <id>0</id>
+          <label>#(L(19008)):</label>
+          <width>70</width>
+          <maxWidth>1030</maxWidth>
+          <align>left</align>
+          <textcolor>white</textcolor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Highscore Value</description>
+          <id>0</id>
+          <label>*#tetris_highscore*</label>
+          <width>900</width>
+          <maxWidth>1030</maxWidth>
+          <align>left</align>
+          <textcolor>gold</textcolor>
+          <font>LabelBold</font>
+        </control>
+      </control>
+      <!--  ************************************************************************  -->
+      <!--  ************** NEXT BRICKS AND ACTUAL LEVEL BACKGROUND *****************  -->
+      <!--  ************************************************************************  -->
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        
+        <control>
+          <description>Next brick background Level 0</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1250</posX>
+          <posY>125</posY>
+          <width>200</width>
+          <height>200</height>
+          <texture>Tetris\Next_brick_background_0c.png</texture>
+          <animation effect="fade" time="500">visible</animation>
+          <visible>string.equals(#tetris_score, 0)</visible>
+        </control>
+        <control>
+          <description>Next brick background Level 1</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1250</posX>
+          <posY>125</posY>
+          <width>200</width>
+          <height>200</height>
+          <texture>Tetris\Next_brick_background_1c.png</texture>
+          <animation effect="fade" time="500">visible</animation>
+          <visible>string.equals(#tetris_level, 1)</visible>
+        </control>
+        <control>
+          <description>Next brick background Level 2</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1250</posX>
+          <posY>125</posY>
+          <width>200</width>
+          <height>200</height>
+          <texture>Tetris\Next_brick_background_2c.png</texture>
+          <animation effect="fade" time="500">visible</animation>
+          <visible>string.equals(#tetris_level, 2)</visible>
+        </control>
+        <control>
+          <description>Next brick background Level 3</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1250</posX>
+          <posY>125</posY>
+          <width>200</width>
+          <height>200</height>
+          <texture>Tetris\Next_brick_background_3c.png</texture>
+          <animation effect="fade" time="500">visible</animation>
+          <visible>string.equals(#tetris_level, 3)</visible>
+        </control>
+        <control>
+          <description>Next brick background Level 4</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1250</posX>
+          <posY>125</posY>
+          <width>200</width>
+          <height>200</height>
+          <texture>Tetris\Next_brick_background_4c.png</texture>
+          <animation effect="fade" time="500">visible</animation>
+          <visible>string.equals(#tetris_level, 4)</visible>
+        </control>
+        <control>
+          <description>Next brick background Level 5</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1250</posX>
+          <posY>125</posY>
+          <width>200</width>
+          <height>200</height>
+          <texture>Tetris\Next_brick_background_5c.png</texture>
+          <animation effect="fade" time="500">visible</animation>
+          <visible>string.equals(#tetris_level, 5)</visible>
+        </control>
+        <control>
+          <description>Next brick background Level 6</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1250</posX>
+          <posY>125</posY>
+          <width>200</width>
+          <height>200</height>
+          <texture>Tetris\Next_brick_background_6c.png</texture>
+          <animation effect="fade" time="500">visible</animation>
+          <visible>string.equals(#tetris_level, 6)</visible>
+        </control>
+        <control>
+          <description>Next brick background Level 7</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1250</posX>
+          <posY>125</posY>
+          <width>200</width>
+          <height>200</height>
+          <texture>Tetris\Next_brick_background_7c.png</texture>
+          <animation effect="fade" time="500">visible</animation>
+          <visible>string.equals(#tetris_level, 7)</visible>
+        </control>
+        <control>
+          <description>Next brick background Level 7</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1250</posX>
+          <posY>125</posY>
+          <width>200</width>
+          <height>200</height>
+          <texture>Tetris\Next_brick_background_7c_yellow.png</texture>
+          <animation effect="fade" start="0" end="100" time="2500" pulse="true" condition="true">conditional</animation>
+          <visible>string.equals(#tetris_level, 7)</visible>
+        </control>
+        <control>
+          <description>Next brick background Level 8</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1250</posX>
+          <posY>125</posY>
+          <width>200</width>
+          <height>200</height>
+          <texture>Tetris\Next_brick_background_8c.png</texture>
+          <animation effect="fade" time="500">visible</animation>
+          <visible>string.equals(#tetris_level, 8)</visible>
+        </control>
+        <control>
+          <description>Next brick background Level 8</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1250</posX>
+          <posY>125</posY>
+          <width>200</width>
+          <height>200</height>
+          <texture>Tetris\Next_brick_background_8c_orange.png</texture>
+          <animation effect="fade" start="0" end="100" time="1500" pulse="true" condition="true">conditional</animation>
+          <visible>string.equals(#tetris_level, 8)</visible>
+        </control>
+        <control>
+          <description>Next brick background Level 9 and higher</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1250</posX>
+          <posY>125</posY>
+          <width>200</width>
+          <height>200</height>
+          <texture>Tetris\Next_brick_background_9c.png</texture>
+          <animation effect="fade" time="500">visible</animation>
+          <visible>!string.equals(#tetris_score, 0)+!string.equals(#tetris_level, 1)+!string.equals(#tetris_level, 2)+!string.equals(#tetris_level, 3)+!string.equals(#tetris_level, 4)+!string.equals(#tetris_level, 5)+!string.equals(#tetris_level, 6)+!string.equals(#tetris_level, 7)+!string.equals(#tetris_level, 8)</visible>
+        </control>
+        <control>
+          <description>Next brick background Level 9 and higher</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1250</posX>
+          <posY>125</posY>
+          <width>200</width>
+          <height>200</height>
+          <texture>Tetris\Next_brick_background_9c_red.png</texture>
+          <animation effect="fade" start="0" end="100" time="1000" pulse="true" condition="true">conditional</animation>
+          <visible>!string.equals(#tetris_score, 0)+!string.equals(#tetris_level, 1)+!string.equals(#tetris_level, 2)+!string.equals(#tetris_level, 3)+!string.equals(#tetris_level, 4)+!string.equals(#tetris_level, 5)+!string.equals(#tetris_level, 6)+!string.equals(#tetris_level, 7)+!string.equals(#tetris_level, 8)</visible>
+        </control>
+        <!--  **************************************************************  -->
+        <!--  ************** THE TETRIS PLAYGROUND CONTROL *****************  -->
+        <!--  ************************************************************************  -->
+        <control>
+          <description>Rainbow Frame</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>690</posX>
+          <posY>140</posY>
+          <width>520</width>
+          <height>863</height>
+          <keepaspectratio>no</keepaspectratio>
+          <texture>Tetris\RainbowFrame.gif</texture>
+          <animation effect="fade" start="100" end="0" time="1000" delay="10000" condition="!string.equals(#tetris_lines, 0)+string.equals(#tetris_score,#tetris_highscore)">conditional</animation>
+          <visible>!string.equals(#tetris_lines, 0)+string.equals(#tetris_score,#tetris_highscore)+string.equals(#Tetris.show.highscore,true)</visible>
+          <shouldCache>true</shouldCache>
+        </control>
+        <control>
+          <description>Tetris control</description>
+          <type>tetris</type>
+          <id>10</id>
+          <posX>700</posX>
+          <posY>150</posY>
+          <width>500</width>
+          <height>843</height>
+          <font>Label</font>
+          <textcolor>dodgerblue</textcolor>
+          <onleft>2</onleft>
+          <onright>10</onright>
+          <onup>10</onup>
+          <ondown>10</ondown>
+          <colordiffuse>ffffffff</colordiffuse>
+          <texture>Tetris\background.png</texture>
+          <texturefocus>#(iif(and(eq(#tetris_highscore,#tetris_score),neq(#tetris_lines,'0')),'Tetris\background_Highscore.png','Tetris\background_focus.png'))</texturefocus>
+          <textureLeft>Tetris\guide.png</textureLeft>
+          <textureRight>Tetris\guide.png</textureRight>
+          <nextblockx>1351</nextblockx>
+          <nextblocky>195</nextblocky>
+          <visible>!skin.hassetting(#skin.tetrisabout)</visible>
+        </control>
+        <!--  **********************************************  -->
+        <!--  ************** THE SIDELINES *****************  -->
+        <!--  **********************************************  -->
+        <control>
+          <description>grey line 0 left</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>758</posX>
+          <posY>185</posY>
+          <width>3</width>
+          <height>770</height>
+          <texture>Tetris\guide_level00.png</texture>
+          <visible>[string.equals(#tetris_level, 1)|string.equals(#tetris_level, 2)|string.equals(#tetris_level, 3)|string.equals(#tetris_level, 4)|string.equals(#tetris_level, 5)|string.equals(#tetris_level, 6)|string.equals(#tetris_level, 7)|string.equals(#tetris_level, 8)|string.equals(#tetris_level, 8)|string.equals(#tetris_level, 8)|string.equals(#tetris_level, 9)|string.equals(#tetris_level, 10)|string.equals(#tetris_level, 11)|string.equals(#tetris_level, 12)]+!skin.hassetting(#skin.tetrisabout)</visible>
+          <animation effect="fade" time="500">visible</animation>
+        </control>
+        <control>
+          <description>grey line 0 right</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1142</posX>
+          <posY>185</posY>
+          <width>3</width>
+          <height>770</height>
+          <texture>Tetris\guide_level00.png</texture>
+          <visible>[string.equals(#tetris_level, 1)|string.equals(#tetris_level, 2)|string.equals(#tetris_level, 3)|string.equals(#tetris_level, 4)|string.equals(#tetris_level, 5)|string.equals(#tetris_level, 6)|string.equals(#tetris_level, 7)|string.equals(#tetris_level, 8)|string.equals(#tetris_level, 8)|string.equals(#tetris_level, 8)|string.equals(#tetris_level, 9)|string.equals(#tetris_level, 10)|string.equals(#tetris_level, 11)|string.equals(#tetris_level, 12)]+!skin.hassetting(#skin.tetrisabout)</visible>
+          <animation effect="fade" time="500">visible</animation>
+        </control>
+        <!--  ***************************************************************  -->
+        <!--  ************** THE PULSING COLOURED SIDELINES *****************  -->
+        <!--  ***************************************************************  -->
+    <control>
+      <type>image</type>
+      <description>coloured lines left</description>
+      <id>1</id>
+      <posX>758</posX>
+      <posY>184</posY>
+      <width>3</width>
+      <height>771</height>
+      <texture>#(switch(
+        eq(#tetris_level,'1'),'Tetris\guide_level01.png',
+        eq(#tetris_level,'2'),'Tetris\guide_level02.png',
+        eq(#tetris_level,'3'),'Tetris\guide_level03.png',
+        eq(#tetris_level,'4'),'Tetris\guide_level04.png',
+        eq(#tetris_level,'5'),'Tetris\guide_level05.png',
+        eq(#tetris_level,'6'),'Tetris\guide_level06.png',
+        eq(#tetris_level,'7'),'Tetris\guide_level07.png',
+        eq(#tetris_level,'8'),'Tetris\guide_level08.png',
+        eq(1,1),''))</texture>
+        <animation effect="fade" time="1500" pulse="true" condition="true">conditional</animation>
+        <visible>skin.hassetting(#Pulsing.sidelines.on)+!skin.hassetting(#skin.tetrisabout)</visible>
+      <shouldCache>true</shouldCache>
+    </control>
+    
+    <control>
+      <type>image</type>
+      <description>coloured lines right</description>
+      <id>1</id>
+      <posX>1142</posX>
+      <posY>184</posY>
+      <width>3</width>
+      <height>771</height>
+      <texture>#(switch(
+        eq(#tetris_level,'1'),'Tetris\guide_level01.png',
+        eq(#tetris_level,'2'),'Tetris\guide_level02.png',
+        eq(#tetris_level,'3'),'Tetris\guide_level03.png',
+        eq(#tetris_level,'4'),'Tetris\guide_level04.png',
+        eq(#tetris_level,'5'),'Tetris\guide_level05.png',
+        eq(#tetris_level,'6'),'Tetris\guide_level06.png',
+        eq(#tetris_level,'7'),'Tetris\guide_level07.png',
+        eq(#tetris_level,'8'),'Tetris\guide_level08.png',
+        eq(1,1),''))</texture>
+        <animation effect="fade" time="1500" pulse="true" condition="true">conditional</animation>
+        <visible>skin.hassetting(#Pulsing.sidelines.on)+!skin.hassetting(#skin.tetrisabout)</visible>
+      <shouldCache>true</shouldCache>
+    </control>
+    
+    <control>
+          <description>coloured line 9 and higher left</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>758</posX>
+          <posY>184</posY>
+          <width>3</width>
+          <height>771</height>
+          <texture>Tetris\guide_levelgold.png</texture>
+          <animation effect="fade" time="1500" pulse="true" condition="true">conditional</animation>
+          <animation effect="fade" time="500">visible</animation>
+          <visible>!string.equals(#tetris_score, 0)+!string.equals(#tetris_level, 1)+!string.equals(#tetris_level, 2)+!string.equals(#tetris_level, 3)+!string.equals(#tetris_level, 4)+!string.equals(#tetris_level, 5)+!string.equals(#tetris_level, 6)+!string.equals(#tetris_level, 7)+!string.equals(#tetris_level, 8)+skin.hassetting(#Pulsing.sidelines.on)+!skin.hassetting(#skin.tetrisabout)</visible>
+        </control>
+        
+        <control>
+          <description>coloured line 9 and higher right</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1142</posX>
+          <posY>184</posY>
+          <width>3</width>
+          <height>771</height>
+          <texture>Tetris\guide_levelgold.png</texture>
+          <animation effect="fade" time="1500" pulse="true" condition="true">conditional</animation>
+          <animation effect="fade" time="500">hidden</animation>
+          <visible>!string.equals(#tetris_score, 0)+!string.equals(#tetris_level, 1)+!string.equals(#tetris_level, 2)+!string.equals(#tetris_level, 3)+!string.equals(#tetris_level, 4)+!string.equals(#tetris_level, 5)+!string.equals(#tetris_level, 6)+!string.equals(#tetris_level, 7)+!string.equals(#tetris_level, 8)+skin.hassetting(#Pulsing.sidelines.on)+!skin.hassetting(#skin.tetrisabout)</visible>
+        </control>
+        
+        <!--  *****************************************************************  -->
+        <!--  ************** THE PERMANENT COLOURED SIDELINES *****************  -->
+        <!--  *****************************************************************  -->
+      <control>
+      <type>image</type>
+      <description>coloured lines left</description>
+      <id>1</id>
+      <posX>758</posX>
+      <posY>184</posY>
+      <width>3</width>
+      <height>771</height>
+      <texture>#(switch(
+        eq(#tetris_level,'1'),'Tetris\guide_level01.png',
+        eq(#tetris_level,'2'),'Tetris\guide_level02.png',
+        eq(#tetris_level,'3'),'Tetris\guide_level03.png',
+        eq(#tetris_level,'4'),'Tetris\guide_level04.png',
+        eq(#tetris_level,'5'),'Tetris\guide_level05.png',
+        eq(#tetris_level,'6'),'Tetris\guide_level06.png',
+        eq(#tetris_level,'7'),'Tetris\guide_level07.png',
+        eq(#tetris_level,'8'),'Tetris\guide_level08.png',
+        eq(1,1),''))</texture>
+        <animation effect="fade" time="1500" condition="true">conditional</animation>
+        <visible>!skin.hassetting(#Pulsing.sidelines.on)+!skin.hassetting(#skin.tetrisabout)</visible>
+      <shouldCache>true</shouldCache>
+    </control>
+    
+    <control>
+      <type>image</type>
+      <description>coloured lines right</description>
+      <id>1</id>
+      <posX>1142</posX>
+      <posY>184</posY>
+      <width>3</width>
+      <height>771</height>
+      <texture>#(switch(
+        eq(#tetris_level,'1'),'Tetris\guide_level01.png',
+        eq(#tetris_level,'2'),'Tetris\guide_level02.png',
+        eq(#tetris_level,'3'),'Tetris\guide_level03.png',
+        eq(#tetris_level,'4'),'Tetris\guide_level04.png',
+        eq(#tetris_level,'5'),'Tetris\guide_level05.png',
+        eq(#tetris_level,'6'),'Tetris\guide_level06.png',
+        eq(#tetris_level,'7'),'Tetris\guide_level07.png',
+        eq(#tetris_level,'8'),'Tetris\guide_level08.png',
+        eq(1,1),''))</texture>
+        <animation effect="fade" time="1500" condition="true">conditional</animation>
+        <visible>!skin.hassetting(#Pulsing.sidelines.on)+!skin.hassetting(#skin.tetrisabout)</visible>
+      <shouldCache>true</shouldCache>
+    </control>
+    
+    <control>
+          <description>coloured line 9 and higher left</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>758</posX>
+          <posY>184</posY>
+          <width>3</width>
+          <height>771</height>
+          <texture>Tetris\guide_levelgold.png</texture>
+          <animation effect="fade" time="1500" condition="true">conditional</animation>
+          <animation effect="fade" time="500">visible</animation>
+          <visible>!string.equals(#tetris_score, 0)+!string.equals(#tetris_level, 1)+!string.equals(#tetris_level, 2)+!string.equals(#tetris_level, 3)+!string.equals(#tetris_level, 4)+!string.equals(#tetris_level, 5)+!string.equals(#tetris_level, 6)+!string.equals(#tetris_level, 7)+!string.equals(#tetris_level, 8)+!skin.hassetting(#Pulsing.sidelines.on)+!skin.hassetting(#skin.tetrisabout)</visible>
+        </control>
+        
+        <control>
+          <description>coloured line 9 and higher right</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1142</posX>
+          <posY>184</posY>
+          <width>3</width>
+          <height>771</height>
+          <texture>Tetris\guide_levelgold.png</texture>
+          <animation effect="fade" time="1500" condition="true">conditional</animation>
+          <animation effect="fade" time="500">visible</animation>
+          <visible>!string.equals(#tetris_score, 0)+!string.equals(#tetris_level, 1)+!string.equals(#tetris_level, 2)+!string.equals(#tetris_level, 3)+!string.equals(#tetris_level, 4)+!string.equals(#tetris_level, 5)+!string.equals(#tetris_level, 6)+!string.equals(#tetris_level, 7)+!string.equals(#tetris_level, 8)+!skin.hassetting(#Pulsing.sidelines.on)+!skin.hassetting(#skin.tetrisabout)</visible>
+        </control>
+    
+        <!--  ****************************************************  -->
+        <!--  ************** THE HIGHSCORE IMAGE *****************  -->
+        <!--  ****************************************************  -->
+        <control>
+          <description>Tetris Highscore Image</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1290</posX>
+          <posY>330</posY>
+          <width>400</width>
+          <height>400</height>
+          <texture>Tetris\Highscore_image.png</texture>
+          <colordiffuse>ffffffff</colordiffuse>
+          <keepaspectratio>yes</keepaspectratio>
+          <animation effect="slide" start="2800,0" end="0,0" time="1000" condition="!string.equals(#tetris_lines, 0)+string.equals(#tetris_score,#tetris_highscore)">conditional</animation>
+          <animation effect="slide" start="0,0" end="2800,0" time="1000" delay="10000" condition="!string.equals(#tetris_lines, 0)+string.equals(#tetris_score,#tetris_highscore)">conditional</animation>
+          <animation effect="zoom" start="100,100" end="105,105" time="700" condition="true" pulse="true">conditional</animation>
+          <visible>!string.equals(#tetris_lines, 0)+string.equals(#tetris_score,#tetris_highscore)+skin.hassetting(#Tetris.show.highscore)</visible>
+        </control>
+        <!--  ******************************************************  -->
+        <!--  ************** THE HIGHSCORE TICKER *****************  -->
+        <!--  ******************************************************  -->
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <visible>!string.equals(#tetris_lines, 0)+string.equals(#tetris_score,#tetris_highscore)+skin.hassetting(#Tetris.show.highscore)</visible>
+          <animation effect="zoom" start="1,1" end="100,100" time="500" center="955,140" condition="!string.equals(#tetris_lines, 0)+string.equals(#tetris_score,#tetris_highscore)">conditional</animation>
+          <animation effect="fade" start="100" end="0" time="500" delay="10000" condition="!string.equals(#tetris_lines, 0)+string.equals(#tetris_score,#tetris_highscore)">conditional</animation>
+        <control Style="NoShadow">
+          <description>Highscore ticker</description>
+          <type>fadelabel</type>
+          <id>1</id>
+          <posX>715</posX>
+          <posY>97</posY>
+          <width>480</width>
+          <align>left</align>
+          <font>LabelBold</font>
+          <textcolor>gold</textcolor>
+          <scrollStartDelaySec>0</scrollStartDelaySec>
+          <wrapString>  ***  </wrapString>
+          <label>#SkinTranslation.Translations.Highscore.Label</label>
+        </control>
+        <control>
+          <description>Ticker Image left</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>635</posX>
+          <posY>59</posY>
+          <width>170</width>
+          <height>100</height>
+          <keepaspectratio>yes</keepaspectratio>
+          <texture>Tetris\champagner.gif</texture>
+          <shouldCache>true</shouldCache>
+        </control>
+        <control>
+          <description>Ticker Image right</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1165</posX>
+          <posY>59</posY>
+          <width>170</width>
+          <height>100</height>
+          <keepaspectratio>yes</keepaspectratio>
+          <texture>Tetris\champagner2.gif</texture>
+          <shouldCache>true</shouldCache>
+        </control>
       </control>
     </control>
+  </control>
+  <!--  ********************************************  -->
+  <!--  **************** HELP TEXT *****************  -->
+  <!--  ********************************************  -->
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+    <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="zoom" start="1,1" end="100,100" time="400" center="1000,450" reversible="true">visiblechange</animation>
+    <visible>skin.hassetting(#skin.tetrisabout)</visible>
     <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>529</posX>
+      <posY>130</posY>
+      <width>1048</width>
+      <height>770</height>
+      <texture>BG_textarea_tetris.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Heading text label</description>
       <type>label</type>
       <id>1</id>
-      <posX>45</posX>
-      <posY>15</posY>
-      <label>#header.label</label>
-      <font>Label</font>
+      <posX>585</posX>
+      <posY>155</posY>
+      <width>843</width>
+      <label>#SkinTranslation.Translations.About.Label</label>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <!--<textcolor>FFFFFFFF</textcolor>
+      <font>font12</font>-->
+	   <textcolor>lightgray</textcolor>
+      <font>Label</font>
     </control>
-    <import>common.time.xml</import>
-  </controls>
+    <control>
+      <type>textboxscrollup</type>
+      <description>Help Text</description>
+      <id>1</id>
+      <posX>585</posX>
+      <posY>210</posY>
+      <width>940</width>
+      <height>650</height>
+      <label>#SkinTranslation.Translations.TetrisHelpText.Label</label>
+      <font>font10</font>
+      <!--<textcolor>lightgray</textcolor>-->
+	  <textcolor>lightgray</textcolor>
+    </control>
+    <control>
+      <description>Exit button</description>
+      <type>button</type>
+      <id>578</id>
+      <posX>1509</posX>
+      <posY>157</posY>
+      <width>35</width>
+      <height>35</height>
+      <textureFocus>exitbuttonround.png</textureFocus>
+      <textureNoFocus>exitbuttonround.png</textureNoFocus>
+      <label>-</label>
+      <onleft>577</onleft>
+      <onright>578</onright>
+      <onup>577</onup>
+      <ondown>577</ondown>
+      <onclick>#(skin.togglesetting('#skin.tetrisabout'))</onclick>
+    </control>
+  </control>
+  <control>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>#SkinTranslation.Translations.Games.Label #scroll.wrap #(L(107776))</label>
+      <width>1802</width>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Title background image all screens except all games</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>120</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+  <import>common.time.xml</import>
+</controls>
 </window>

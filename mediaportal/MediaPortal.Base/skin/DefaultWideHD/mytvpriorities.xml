@@ -161,7 +161,7 @@
       <label>#TV.Scheduled.Time</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Description1</description>
@@ -184,7 +184,7 @@
       <label>#TV.Scheduled.Genre</label>
       <align>right</align>
       <font>font13</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
   </controls>
 </window>

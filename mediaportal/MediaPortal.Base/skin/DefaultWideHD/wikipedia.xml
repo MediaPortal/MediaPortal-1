@@ -9,9 +9,10 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>blue.png</texture>
+      <texture>wikipedia.jpg</texture>
       <width>1920</width>
       <height>1080</height>
+      <colordiffuse>60ffffff</colordiffuse>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
@@ -67,7 +68,7 @@
         <label>2515</label>
       </control>
     </control>
-    <control>
+    <!--control>
       <description>Article title/searchterm</description>
       <type>label</type>
       <id>4</id>
@@ -78,9 +79,9 @@
       <font>Menutitle</font>
       <align>center</align>
       <width>1920</width>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control>
+      <textcolor>ff00bfff</textcolor>
+    </control-->
+    <!--control>
       <description>Image description</description>
       <type>label</type>
       <id>5</id>
@@ -91,8 +92,8 @@
       <font>Menutitle</font>
       <align>center</align>
       <width>1920</width>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
+      <textcolor>ff00bfff</textcolor>
+    </control-->
     <control style="NoShadow">
       <description>Here is the article text displayed</description>
       <type>textbox</type>
@@ -102,11 +103,12 @@
       <visible>no</visible>
       <width>1200</width>
       <height>675</height>
+      <font>font10</font>
       <spinWidth>43</spinWidth>
       <spinHeight>43</spinHeight>
       <spinPosX>1680</spinPosX>
       <spinPosY>885</spinPosY>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Article Image</description>
