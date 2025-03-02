@@ -5,6 +5,7 @@
   <allowoverlay>no</allowoverlay>
   <define>#header.label:</define>
   <define>#header.hover:hover_Clickfinder ProgramGuide.png</define>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>																			
   <controls>
     <control>
       <id>1</id>
@@ -14,78 +15,85 @@
       <posY>0</posY>
       <width>1920</width>
       <height>1080</height>
-      <texture>BH TV.jpg</texture>
-      <colordiffuse>90ffffff</colordiffuse>
+      <texture>BH TV.jpg</texture>   
+	  <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
-    <control>
+	
+	<control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>	  
+	
+	<control>
       <description>BG listcontrol left</description>
       <type>image</type>
       <id>0</id>
-      <posX>70</posX>
-      <posY>205</posY>
-      <width>885</width>
-      <height>858</height>
-      <texture>listbg2.png</texture>
-      <colordiffuse>ddffffff</colordiffuse>
+      <posX>81</posX>
+      <posY>239</posY>
+      <width>861</width>
+      <height>689</height>
+      <texture>Clickfinderbg.png</texture>
+      <colordiffuse>73ffffff</colordiffuse>
     </control>
-    <control>
+    
+	<control>
       <description>BG listcontrol right</description>
       <type>image</type>
       <id>0</id>
-      <posX>955</posX>
-      <posY>205</posY>
-      <width>885</width>
-      <height>858</height>
-      <texture>listbg2.png</texture>
-      <colordiffuse>ddffffff</colordiffuse>
+      <posX>967</posX>
+      <posY>239</posY>
+      <width>861</width>
+      <height>689</height>
+      <texture>Clickfinderbg.png</texture>
+      <colordiffuse>73ffffff</colordiffuse>
     </control>
-    <!-- Tv Movie++ Last UpdateLabel-->
-    <control>
-      <description>TvMovie++ LastUpdate</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>45</posX>
-      <posY>55</posY>
-      <width>925</width>
-      <font>font11</font>
-      <align>left</align>
-      <textcolor>ff00bfff</textcolor>
-      <label>#SettingLastUpdate</label>
-    </control>
-    <!-- LeftList & Controls-->
+    
+    <!-- Left PreviewList & Controls-->
+	
     <control>
       <description>label</description>
       <type>label</type>
       <id>1</id>
-      <posX>105</posX>
-      <posY>182</posY>
-      <label>#ItemsLeftListLabel (#ItemsRightListLabel)</label>
-      <font>Label</font>
-      <textcolor>ff00bfff</textcolor>
+      <posX>110</posX>
+      <posY>185</posY>
+	  <width>800</width>
+      <label>#ItemsLeftListLabel</label>
+	  <font>Label</font>
+      <textcolor>ff7ad4ed</textcolor>
     </control>
-    <control>
+     <control>
       <type>listcontrol</type>
       <id>10</id>
-      <onleft>2</onleft>
+	  <onleft>2</onleft>
       <onright>30</onright>
+	  <ondown>1235</ondown>
       <onup>1235</onup>
-      <posX>95</posX>
-      <posY>230</posY>
-      <width>829</width>
-      <height>894</height>
-      <spinPosX>801</spinPosX>
-      <spinPosY>1026</spinPosY>
-      <spinAlign>Right</spinAlign>
-      <spinCanFocus>yes</spinCanFocus>
-      <textureUp>scroll-up.png</textureUp>
-      <textureDown>scroll-down.png</textureDown>
-      <textureUpFocus>scroll-up-focus.png</textureUpFocus>
-      <textureDownFocus>scroll-down-focus.png</textureDownFocus>
+	  <posX>100</posX>
+      <posY>255</posY>
+	  <width>825</width>
+      <height>840</height>
+      <spinPosX>100</spinPosX>
+      <spinPosY>939</spinPosY>
+	  <spinWidth>40</spinWidth>
+      <spinHeight>40</spinHeight>
+	  <spinAlign>Left</spinAlign>
+	  <spinColor>ffd3d3d3</spinColor>
+      <spinCanFocus>no</spinCanFocus>
+      <textureUp></textureUp>
+      <textureDown></textureDown>
+      <textureUpFocus></textureUpFocus>
+      <textureDownFocus></textureDownFocus>
       <textureFocus>listfocus.png</textureFocus>
-      <textureNoFocus>listnofocus.png</textureNoFocus>
-      <textureHeight>130</textureHeight>
+      <textureNoFocus></textureNoFocus>
+      <textureHeight>110</textureHeight>
       <PinIconXOff>800</PinIconXOff>
       <PinIconYOff>4</PinIconYOff>
       <PinIconWidth>30</PinIconWidth>
@@ -93,38 +101,44 @@
       <IconXOff>5</IconXOff>
       <IconYOff>5</IconYOff>
       <textXOff>42</textXOff>
-      <textYOff>-2</textYOff>
-      <font>font11</font>
+      <textYOff>-5</textYOff>
+      <font>font11bold</font>
       <textcolorNoFocus>ffffffff</textcolorNoFocus>
-      <textcolor>ffffffff</textcolor>
-      <textXOff2>829</textXOff2>
-      <textYOff2>64</textYOff2>
+      <textcolor>ff00bfff</textcolor>
+      <textXOff2>815</textXOff2> 
+      <textYOff2>24</textYOff2> 
       <font2>font11</font2>
       <textcolor2>ffffffff</textcolor2>
-      <textXOff3>182</textXOff3>
-      <textYOff3>47</textYOff3>
-      <font3>font9</font3>
+      <textXOff3>167</textXOff3> 
+      <textYOff3>33</textYOff3> 
+      <font3>font9</font3> 
       <textcolor3>ffffffff</textcolor3>
-      <itemWidth>115</itemWidth>
-      <itemHeight>115</itemHeight>
+      <itemWidth>90</itemWidth>
+      <itemHeight>90</itemHeight>
       <scrollOffset>2</scrollOffset>
-      <scrollbarXOff>0</scrollbarXOff>
+      <scrollbarXOff>10</scrollbarXOff>
       <scrollbarwidth>15</scrollbarwidth>
       <wrapString> ~ </wrapString>
       <unfocusedAlpha applyToAll="true">130</unfocusedAlpha>
-    </control>
+	  <textpadding>135</textpadding>
+	  <textpadding3>225</textpadding3>
+	  <scrollStartDelaySec>5</scrollStartDelaySec>							 
+	</control>
+	
+	<!-- Left Preview ListImages 1 - 6 --> 
+	
     <control>
       <type>group</type>
       <description>group element</description>
-      <layout>StackLayout(19, Vertical, true)</layout>
-      <posX>109</posX>
-      <posY>239</posY>
+      <layout>StackLayout(10, Vertical, true)</layout>
+      <posX>120</posX>
+      <posY>261</posY>
       <control>
         <description>ItemsListImage 1</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+        <width>100</width>
+        <height>100</height>
         <texture>#ItemsListImage1</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
@@ -135,8 +149,8 @@
         <description>ItemsListImage 2</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+        <width>100</width>
+        <height>100</height>
         <texture>#ItemsListImage2</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
@@ -147,8 +161,8 @@
         <description>ItemsListImage 3</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+        <width>100</width>
+        <height>100</height>
         <texture>#ItemsListImage3</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
@@ -159,8 +173,8 @@
         <description>ItemsListImage 4</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+        <width>100</width>
+        <height>100</height>
         <texture>#ItemsListImage4</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
@@ -171,8 +185,8 @@
         <description>ItemsListImage 5</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+        <width>100</width>
+        <height>100</height>
         <texture>#ItemsListImage5</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
@@ -183,32 +197,35 @@
         <description>ItemsListImage 6</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+        <width>100</width>
+        <height>100</height>
         <texture>#ItemsListImage6</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
         <keepaspectratio>yes</keepaspectratio>
         <visible>control.isvisible(10)</visible>
       </control>
-    </control>
+	  </control>
+    
+	<!-- Left Preview RatingStars 1 - 6 --> 
+	
     <control>
-      <type>group</type>
-      <description>group element</description>
-      <layout>StackLayout(118, Vertical, true)</layout>
-      <posX>269</posX>
-      <posY>262</posY>
+       <type>group</type>
+       <description>group element</description>
+       <layout>StackLayout(96, Vertical, true)</layout>
+       <posX>805</posX>
+       <posY>346</posY>
       <control>
         <description>ItemsListRatingStar Image 1</description>
         <type>imagelist</type>
         <id>1</id>
         <width>168</width>
-        <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <height>14</height> 
+        <textureWidth>12</textureWidth> 
+        <textureHeight>12</textureHeight> 
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -222,11 +239,11 @@
         <id>1</id>
         <width>168</width>
         <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <textureWidth>12</textureWidth>
+        <textureHeight>12</textureHeight>
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -240,11 +257,11 @@
         <id>1</id>
         <width>168</width>
         <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <textureWidth>12</textureWidth>
+        <textureHeight>12</textureHeight>
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -258,11 +275,11 @@
         <id>1</id>
         <width>168</width>
         <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <textureWidth>12</textureWidth>
+        <textureHeight>12</textureHeight>
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -276,11 +293,11 @@
         <id>1</id>
         <width>168</width>
         <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <textureWidth>12</textureWidth>
+        <textureHeight>12</textureHeight>
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -292,13 +309,13 @@
         <description>ItemsListRatingStar Image 6</description>
         <type>imagelist</type>
         <id>1</id>
-        <width>168</width>
+       <width>168</width>
         <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <textureWidth>12</textureWidth>
+        <textureHeight>12</textureHeight>
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -306,19 +323,22 @@
         <percentage>#ItemsListRatingStar6</percentage>
         <visible>!string.starts(#ItemsListRatingStar6,0)+control.isvisible(10)</visible>
       </control>
-    </control>
-    <control>
-      <type>group</type>
-      <description>group element</description>
-      <layout>StackLayout(65, Vertical, true)</layout>
-      <posX>87</posX>
-      <posY>298</posY>
+      </control>
+	  
+	   <!-- Left Preview TvMovieStars 1 - 6 -->
+	   
+     <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(65, Vertical, true)</layout>
+        <posX>102</posX>
+        <posY>325</posY>
       <control>
         <description>ItemsListTvMovieStar1</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+        <width>45</width>
+        <height>45</height>
         <texture>#ItemsListTvMovieStar1</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
@@ -328,8 +348,8 @@
         <description>ItemsListTvMovieStar2</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+        <width>45</width>
+        <height>45</height>
         <texture>#ItemsListTvMovieStar2</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
@@ -339,8 +359,8 @@
         <description>ItemsListTvMovieStar3</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+        <width>45</width>
+        <height>45</height>
         <texture>#ItemsListTvMovieStar3</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
@@ -350,8 +370,8 @@
         <description>ItemsListTvMovieStar4</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+        <width>45</width>
+        <height>45</height>
         <texture>#ItemsListTvMovieStar4</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
@@ -361,8 +381,8 @@
         <description>ItemsListTvMovieStar5</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+        <width>45</width>
+        <height>45</height>
         <texture>#ItemsListTvMovieStar5</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
@@ -372,83 +392,119 @@
         <description>ItemsListTvMovieStar6</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+        <width>45</width>
+        <height>45</height>
         <texture>#ItemsListTvMovieStar6</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
         <visible>control.isvisible(10)</visible>
       </control>
-    </control>
-    <!-- rightList & Controls-->
-    <control>
-      <description>Filter label</description>
+	  </control>
+    
+	
+    <!-- Right PreviewList & Controls-->
+	
+	<control>
+	  <description>label</description>
       <type>label</type>
       <id>1</id>
-      <posX>983</posX>
-      <posY>182</posY>
-      <label>#ItemsGroup</label>
+      <posX>995</posX>
+      <posY>185</posY>
+	  <width>500</width>
+      <label>#ItemsRightListLabel</label> 
       <font>Label</font>
-      <textcolor>ff00bfff</textcolor>
-    </control>
+      <textcolor>ff7ad4ed</textcolor>
+	  </control>
     <control>
+	  <description>Filterby label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1800</posX>
+      <posY>185</posY>
+	  <width>200</width>
+      <label>#ItemsGroup</label>   
+      <font>Label</font>
+	  <align>right</align>		  
+      <textcolor>ff7ad4ed</textcolor>
+	  </control>
+	<control>
+      <description>TvMovie++ LastUpdate</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1800</posX>
+      <posY>937</posY>
+      <label>#SettingLastUpdate</label>
+      <font>font12</font>
+      <align>right</align>
+      <textcolor>lightgray</textcolor>
+    </control>
+      <control>
       <type>listcontrol</type>
       <id>30</id>
       <onleft>10</onleft>
-      <onright>30</onright>
-      <onup>1235</onup>
-      <posX>983</posX>
-      <posY>230</posY>
-      <width>829</width>
-      <height>894</height>
-      <spinPosX>3064</spinPosX>
-      <spinPosY>942</spinPosY>
+      <onright>10</onright>
+      <posX>985</posX>
+      <posY>255</posY>
+      <width>825</width>
+      <height>840</height>
+      <spinPosX>3000</spinPosX>
+      <spinPosY>896</spinPosY>
+	  <spinWidth>40</spinWidth>
+      <spinHeight>40</spinHeight>
+	  <spinAlign>Left</spinAlign>
+	  <spinColor>ffd3d3d3</spinColor>
       <textureUp>scroll-up.png</textureUp>
       <textureDown>scroll-down.png</textureDown>
       <textureUpFocus>scroll-up-focus.png</textureUpFocus>
       <textureDownFocus>scroll-down-focus.png</textureDownFocus>
-      <textureFocus>listfocus.png</textureFocus>
-      <textureNoFocus>listnofocus.png</textureNoFocus>
-      <textureHeight>130</textureHeight>
+	  <textureFocus>listfocus.png</textureFocus>
+      <textureNoFocus></textureNoFocus> 
+	  <textureHeight>110</textureHeight>
       <PinIconXOff>800</PinIconXOff>
       <PinIconYOff>4</PinIconYOff>
       <PinIconWidth>30</PinIconWidth>
       <PinIconHeight>25</PinIconHeight>
-      <IconXOff>5</IconXOff>
+      <IconXOff>20</IconXOff>
       <IconYOff>5</IconYOff>
-      <textXOff>42</textXOff>
-      <textYOff>-2</textYOff>
-      <font>font11</font>
+      <textXOff>42</textXOff> 57
+      <textYOff>-5</textYOff> -2
+      <font>font11bold</font>
       <textcolorNoFocus>ffffffff</textcolorNoFocus>
-      <textcolor>ffffffff</textcolor>
-      <textXOff2>829</textXOff2>
-      <textYOff2>64</textYOff2>
+      <textcolor>ff00bfff</textcolor>
+      <textXOff2>815</textXOff2> 829
+      <textYOff2>24</textYOff2> Time 54
       <font2>font11</font2>
       <textcolor2>ffffffff</textcolor2>
-      <textXOff3>182</textXOff3>
-      <textYOff3>47</textYOff3>
-      <font3>font9</font3>
+      <textXOff3>167</textXOff3> 167
+      <textYOff3>33</textYOff3> Text 37
+      <font3>font9</font3> font9
       <textcolor3>ffffffff</textcolor3>
-      <itemWidth>115</itemWidth>
-      <itemHeight>115</itemHeight>
+      <itemWidth>90</itemWidth>
+      <itemHeight>90</itemHeight>
       <scrollOffset>2</scrollOffset>
-      <scrollbarXOff>0</scrollbarXOff>
+      <scrollbarXOff>10</scrollbarXOff>
       <scrollbarwidth>15</scrollbarwidth>
       <wrapString> ~ </wrapString>
       <unfocusedAlpha applyToAll="true">130</unfocusedAlpha>
+	  <textpadding>135</textpadding>
+	  <textpadding3>225</textpadding3> 135
+	  <scrollStartDelaySec>5</scrollStartDelaySec>
     </control>
-    <control>
-      <type>group</type>
-      <description>group element</description>
-      <layout>StackLayout(19, Vertical, true)</layout>
-      <posX>997</posX>
-      <posY>239</posY>
+   
+     <!-- Right Preview ListImages 1 - 6 --> 
+	 
+     <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(10, Vertical, true)</layout>
+        <posX>1005</posX>
+        <posY>261</posY>
       <control>
         <description>ItemsListImage 7</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+        <width>100</width>
+        <height>100</height>
         <texture>#ItemsListImage7</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
@@ -459,8 +515,8 @@
         <description>ItemsListImage 8</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+        <width>100</width>
+        <height>100</height>
         <texture>#ItemsListImage8</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
@@ -471,8 +527,8 @@
         <description>ItemsListImage 9</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+        <width>100</width>
+        <height>100</height>
         <texture>#ItemsListImage9</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
@@ -483,8 +539,8 @@
         <description>ItemsListImage 10</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+        <width>100</width>
+        <height>100</height>
         <texture>#ItemsListImage10</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
@@ -495,8 +551,8 @@
         <description>ItemsListImage 11</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+        <width>100</width>
+        <height>100</height>
         <texture>#ItemsListImage11</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
@@ -507,32 +563,35 @@
         <description>ItemsListImage 12</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+        <width>100</width>
+        <height>100</height>
         <texture>#ItemsListImage12</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
         <keepaspectratio>yes</keepaspectratio>
         <visible>control.isvisible(30)</visible>
       </control>
-    </control>
-    <control>
-      <type>group</type>
-      <description>group element</description>
-      <layout>StackLayout(118, Vertical, true)</layout>
-      <posX>1159</posX>
-      <posY>262</posY>
+	  </control>
+	  
+	  <!-- Right Preview RatingStars 1 - 6 --> 
+   
+       <control>
+       <type>group</type>
+       <description>group element</description>
+       <layout>StackLayout(96, Vertical, true)</layout>
+       <posX>1690</posX>
+       <posY>346</posY>
       <control>
         <description>ItemsListRatingStar Image 7</description>
         <type>imagelist</type>
         <id>1</id>
         <width>168</width>
-        <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <height>14</height> 
+        <textureWidth>12</textureWidth> 
+        <textureHeight>12</textureHeight> 
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -545,12 +604,12 @@
         <type>imagelist</type>
         <id>1</id>
         <width>168</width>
-        <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <height>14</height> 
+        <textureWidth>12</textureWidth> 
+        <textureHeight>12</textureHeight> 
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -563,12 +622,12 @@
         <type>imagelist</type>
         <id>1</id>
         <width>168</width>
-        <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <height>14</height> 
+        <textureWidth>12</textureWidth> 
+        <textureHeight>12</textureHeight> 
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -581,12 +640,12 @@
         <type>imagelist</type>
         <id>1</id>
         <width>168</width>
-        <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <height>14</height> 
+        <textureWidth>12</textureWidth> 
+        <textureHeight>12</textureHeight> 
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -599,12 +658,12 @@
         <type>imagelist</type>
         <id>1</id>
         <width>168</width>
-        <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <height>14</height> 
+        <textureWidth>12</textureWidth> 
+        <textureHeight>12</textureHeight> 
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -617,12 +676,12 @@
         <type>imagelist</type>
         <id>1</id>
         <width>168</width>
-        <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <height>14</height> 
+        <textureWidth>12</textureWidth> 
+        <textureHeight>12</textureHeight> 
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -630,20 +689,22 @@
         <percentage>#ItemsListRatingStar12</percentage>
         <visible>!string.starts(#ItemsListRatingStar12,0)+control.isvisible(30)</visible>
       </control>
-    </control>
-    <!-- Categorie Preview 1 - 6 -->
-    <control>
-      <type>group</type>
-      <description>group element</description>
-      <layout>StackLayout(65, Vertical, true)</layout>
-      <posX>972</posX>
-      <posY>298</posY>
+	  </control>
+   
+     <!-- Right Preview TvMovieStars 1 - 6 -->
+	 
+       <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(65, Vertical, true)</layout>
+        <posX>987</posX>
+        <posY>325</posY>
       <control>
         <description>ItemsListTvMovieStar7</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+        <width>45</width>
+        <height>45</height>
         <texture>#ItemsListTvMovieStar7</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
@@ -653,8 +714,8 @@
         <description>ItemsListTvMovieStar8</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+        <width>45</width>
+        <height>45</height>
         <texture>#ItemsListTvMovieStar8</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
@@ -664,8 +725,8 @@
         <description>ItemsListTvMovieStar9</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+        <width>45</width>
+        <height>45</height>
         <texture>#ItemsListTvMovieStar9</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
@@ -675,8 +736,8 @@
         <description>ItemsListTvMovieStar10</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+        <width>45</width>
+        <height>45</height>
         <texture>#ItemsListTvMovieStar10</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
@@ -686,8 +747,8 @@
         <description>ItemsListTvMovieStar11</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+        <width>45</width>
+        <height>45</height>
         <texture>#ItemsListTvMovieStar11</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
@@ -697,30 +758,33 @@
         <description>ItemsListTvMovieStar12</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+        <width>45</width>
+        <height>45</height>
         <texture>#ItemsListTvMovieStar12</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
         <visible>control.isvisible(30)</visible>
       </control>
-    </control>
+	  </control>
+    
     <!-- ActionGroup -->
+	
     <import>ClickfinderProgramGuide.HiddenMenu.xml</import>
-    <control>
+   
+   <control>
       <description>Vorherige Seite</description>
       <type>button</type>
       <id>1234</id>
-      <posX>1588</posX>
-      <posY>147</posY>
+      <posX>830</posX>
+      <posY>971</posY> 
       <width>42</width>
       <height>42</height>
       <label />
       <textureNoFocus>scroll-left.png</textureNoFocus>
       <textureFocus>scroll-left-focus.png</textureFocus>
       <action>15</action>
-      <onup>17</onup>
-      <ondown>10</ondown>
+      <onup>10</onup>
+	  <ondown>1234</ondown>
       <onright>1235</onright>
       <onleft>1234</onleft>
     </control>
@@ -728,16 +792,16 @@
       <description>Naechste Seite</description>
       <type>button</type>
       <id>1235</id>
-      <posX>1780</posX>
-      <posY>147</posY>
+      <posX>858</posX>
+      <posY>971</posY> 
       <width>42</width>
       <height>42</height>
       <label />
       <textureNoFocus>scroll-right.png</textureNoFocus>
       <textureFocus>scroll-right-focus.png</textureFocus>
       <action>14</action>
-      <onup>17</onup>
-      <ondown>10</ondown>
+      <onup>10</onup>
+      <ondown>1235</ondown>
       <onright>1235</onright>
       <onleft>1234</onleft>
     </control>
@@ -745,53 +809,55 @@
       <description>label</description>
       <type>label</type>
       <id>1</id>
-      <posX>1644</posX>
-      <posY>154</posY>
+      <posX>907</posX>
+      <posY>973</posY> 153 
       <label>#CurrentPageLabel</label>
-      <font>font10</font>
-      <textcolor>ff00bfff</textcolor>
+      <font>font11bold</font>
+      <textcolor>ff00bfff</textcolor>  
     </control>
     <control>
       <id>1</id>
       <description>Time Progressbar Background Image</description>
       <type>image</type>
-      <posX>2595</posX>
-      <posY>189</posY>
-      <width>203</width>
-      <height>22</height>
+      <posX>820</posX>
+      <posY>1022</posY>
+      <width>250</width>
+      <height>30</height>
       <texture>osd_progress_background.png</texture>
+      <colordiffuse>75acff</colordiffuse>	
     </control>
     <control>
       <id>11</id>
       <description>Time Progressbar</description>
       <type>progress</type>
-      <posX>2578</posX>
-      <posY>192</posY>
-      <width>237</width>
-      <height>20</height>
-      <onlymidtexture>yes</onlymidtexture>
-      <innerheight>20</innerheight>
-      <visible></visible>
+      <posX>800</posX>
+      <posY>1023</posY>
+      <width>420</width>
+      <height>28</height>
+	  <midtexture>progress_mid_clickfinder.png</midtexture>
+      <innerheight>26</innerheight>
+	  <visible></visible>
+    </control>
+	<control>
+      <id>8</id>
+      <type>animation</type>
+      <posX>1343</posX> 
+      <posY>533</posY> 
+      <width>98</width>
+      <height>98</height>
+      <textures>common.waiting.1.png;common.waiting.2.png;common.waiting.3.png;common.waiting.4.png;common.waiting.5.png; common.waiting.6.png;common.waiting.7.png;common.waiting.8.png</textures>
+      <Duration>0:0:01.5</Duration>
     </control>
     <control>
       <id>9</id>
       <type>animation</type>
-      <posX>407</posX>
-      <posY>483</posY>
+      <posX>467</posX> 
+      <posY>533</posY> 
       <width>98</width>
       <height>98</height>
       <textures>common.waiting.1.png;common.waiting.2.png;common.waiting.3.png;common.waiting.4.png;common.waiting.5.png; common.waiting.6.png;common.waiting.7.png;common.waiting.8.png</textures>
       <Duration>0:0:01.5</Duration>
     </control>
-    <control>
-      <id>8</id>
-      <type>animation</type>
-      <posX>1293</posX>
-      <posY>483</posY>
-      <width>98</width>
-      <height>98</height>
-      <textures>common.waiting.1.png;common.waiting.2.png;common.waiting.3.png;common.waiting.4.png;common.waiting.5.png; common.waiting.6.png;common.waiting.7.png;common.waiting.8.png</textures>
-      <Duration>0:0:01.5</Duration>
-    </control>
+    
   </controls>
 </window>

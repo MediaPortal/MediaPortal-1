@@ -1,48 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <window>
   <controls>
+   <control>
+      <type>image</type>
+      <id>1</id>
+	  <posX>0</posX>
+      <posY>70</posY>
+      <width>140</width>
+      <height>984</height>
+      <texture>Action_nofocus.png</texture>
+	  <visible>control.hasfocus(10)|control.hasfocus(30)|control.hasfocus(8)|control.hasfocus(1234)|control.hasfocus(1235)|control.hasfocus(548)</visible>
+    </control>
     <control>
-      <type>actiongroup</type>
-      <description>action menu</description>
-      <defaultcontrol>2</defaultcontrol>
-      <onexit>50</onexit>
-      <buttonX>0</buttonX>
-      <buttonY>70</buttonY>
-      <buttonwidth>140</buttonwidth>
-      <buttonheight>984</buttonheight>
-      <textureFocus>-</textureFocus>
-      <textureNoFocus>Action_nofocus.png</textureNoFocus>
-      <width>168</width>
-      <height>798</height>
-      <dimColor>00ffffff</dimColor>
-      <control>
         <type>image</type>
         <id>1</id>
         <width>1920</width>
         <height>1080</height>
         <texture>white.png</texture>
         <colordiffuse>50005eef</colordiffuse>
-      </control>
+		<animation effect="fade" time="100">visible</animation>
+		<visible>control.hasfocus(2)|control.hasfocus(3)|control.hasfocus(4)|control.hasfocus(5)|control.hasfocus(6)|control.hasfocus(7)|control.hasfocus(50)|control.hasfocus(51)|control.hasfocus(52)|control.hasfocus(200)|control.hasfocus(99000)</visible>	
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>10</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>0</buttonY>
+      <buttonwidth>159</buttonwidth>
+      <buttonheight>1080</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus></textureNoFocus>
+      <animation effect="slide" time="200" start="-600,0" end="0,0" delay="100" condition="control.hasfocus(2)|control.hasfocus(3)|control.hasfocus(4)|control.hasfocus(5)|control.hasfocus(6)|control.hasfocus(7)|control.hasfocus(50)|control.hasfocus(51)|control.hasfocus(52)|control.hasfocus(200)|control.hasfocus(99000)">conditional</animation>
+      <dimColor>00ffffff</dimColor>
+      
       <control>
         <type>image</type>
-        <posX>-10</posX>
-      <posY>171</posY>
-      <width>490</width>
-      <height>855</height>
-      <texture>backslide.png</texture>
+        <posX>39</posX>
+        <posY>117</posY>
+        <width>480</width>
+        <height>886</height>
+        <texture>backslide.png</texture>
         <colordiffuse>ffffffff</colordiffuse>
-        <animation effect="slide" time="70" start="-335,0" reversible="true">visiblechange</animation>
-        <visible>!control.hasfocus(10)|!control.hasfocus(30)</visible>
-      </control>
+        </control>
       <control>
+	    <description>group element</description>
         <type>group</type>
-        <description>group element</description>
-        <animation effect="slide" time="70" start="-335,0" reversible="true">visiblechange</animation>
-        <visible>!control.hasfocus(10)|!control.hasfocus(30)</visible>
-        <layout>StackLayout(0, Vertical, true)</layout>
-        <posX>49</posX>
-        <posY>217</posY>
-        <visible>!control.hasfocus(10)|!control.hasfocus(30)</visible>
+         <layout>StackLayout(0, Vertical, true)</layout>
+		
+		<visible>!control.hasfocus(10)|!control.hasfocus(30)</visible>																					  
+        <posX>75</posX>
+        <posY>181</posY>
+       
         <control>
           <description>Now</description>
           <type>button</type>
@@ -105,6 +115,7 @@
           <onup>6</onup>
           <ondown>200</ondown>
           <onright>10</onright>
+		 
         </control>
         <control>
           <description>EpisodesPreview</description>
@@ -115,6 +126,7 @@
           <onup>7</onup>
           <ondown>50</ondown>
           <onright>10</onright>
+		  
           <visible>plugin.isenabled(MP-TV Series)</visible>
         </control>
         <control>
@@ -131,9 +143,9 @@
           <description>divider horizontal</description>
           <type>image</type>
           <id>0</id>
-          <posX>49</posX>
+          <posX>160</posX>
           <posY>717</posY>
-          <width>360</width>
+          <width>380</width>
           <height>1</height>
           <texture>horizontal_bar.png</texture>
           <colordiffuse>40ffffff</colordiffuse>
@@ -158,7 +170,7 @@
           <ondown>51</ondown>
           <onleft>10</onleft>
           <onright>10</onright>
-          <onleft>30</onleft>
+          
         </control>
         <control>
           <description>Scheduler</description>
@@ -167,9 +179,21 @@
           <label>603</label>
           <hyperlink>601</hyperlink>
           <onup>50</onup>
+          <ondown>52</ondown>
+          <onright>10</onright>
+          
+        </control>
+		 <control>
+          <description>TvWishList</description>
+          <type>button</type>
+          <id>52</id>
+          <hyperlink>70943675</hyperlink>
+          <label>TvWishList</label>
+          <onup>51</onup>
           <ondown>99000</ondown>
           <onright>10</onright>
-          <onleft>30</onleft>
+		   
+          <visible>plugin.isenabled(TvWishListMP)</visible>
         </control>
         <control>
           <description>MPEIUPDATE:304bc464_97b0_49e5_a6b7_fc9a1b95fa5d</description>
@@ -179,7 +203,7 @@
           <onup>51</onup>
           <ondown>2</ondown>
           <onright>10</onright>
-          <onleft>30</onleft>
+          <onleft>10</onleft>
           <visible>string.equals(#mpei.304bc464_97b0_49e5_a6b7_fc9a1b95fa5d.haveupdate, true)</visible>
         </control>
       </control>
