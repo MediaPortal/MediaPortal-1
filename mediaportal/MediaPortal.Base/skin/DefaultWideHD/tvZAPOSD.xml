@@ -264,18 +264,18 @@
       <height>56</height>
       <texture>tv_is_recording.png</texture>
     </control>
-    <control>
+    <!--control>
       <description>Zap channel Background</description>
       <type>image</type>
       <id>1</id>
-      <posX>20</posX>
-      <posY>10</posY>
-      <width>160</width>
-      <height>90</height>
+      <posX>35</posX>
+      <posY>5</posY>
+      <width>92</width>
+      <height>92</height>
       <texture>tvlogoback.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-      <visible>yes</visible>
-    </control>
+      <colordiffuse>ff1f3e70</colordiffuse>
+      <visible>string.contains(1234567890)</visible>
+    </control-->
     <control>
       <description>Zap to channel no</description>
       <type>label</type>

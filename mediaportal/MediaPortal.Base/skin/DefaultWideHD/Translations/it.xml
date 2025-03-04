@@ -20,7 +20,7 @@
   <string Field="ShutdownOptions">Opzioni di spegnimento</string>
   <string Field="InfoButton">Nelle liste: Premere "destra" (remoto/tastiera) o con il passaggio del mouse mostra le informazioni estese</string>
   <string Field="SupportedPlugins">Plugins supportati (in ordine alfabetico):</string>
-  <string Field="PluginsMP">... e, naturalmente, tutti i plugin standard di MediaPortal 1.7.x e più versioni recenti</string>
+  <string Field="PluginsMP">... e naturalmente tutti i plugin standard di questa versione di MediaPortal</string>
   <string Field="MPVersion">DefaultWideHD è progettato per MP 1.7.x e più versioni recenti.</string>
   <string Field="Enjoy">Godetevi MediaPortal con DefaultWideHD!</string>
   <string Field="Background">Sfondo</string>
@@ -37,7 +37,7 @@
   <string Field="ShowDVDArt">Mostra DVD arte</string>
   <string Field="NoClock">Disattivare Orologio e Plugin Icons</string>
   <string Field="Timer">#(L(603))</string>
-  <string Field="Update">PureVisionHD 1080 12.3 disponibile!</string>
+  <string Field="Update">DefaultWideHD 12.3 disponibile!</string>
   <string Field="tvstreaminfo">TV OSD informazioni sul canale sempre visibile</string>
   <string Field="CategoryBackgrounds">Plugin BGs BasicHome</string>
   <string Field="Fullscreen">Schermo intero</string>

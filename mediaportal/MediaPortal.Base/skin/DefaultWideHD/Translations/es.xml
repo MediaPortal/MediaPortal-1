@@ -19,9 +19,9 @@
   <string Field="ShutdownOptions">Opciones de apagado</string>
   <string Field="InfoButton">En las vistas de lista: Al pulsar a la derecha (remoto/teclado) o al pasar el ratón por encima se muestra información ampliada</string>
   <string Field="SupportedPlugins">Contenedores soportados (en orden alfabético):</string>
-  <string Field="PluginsMP">... y por supuesto todos los plugins estándar de MediaPortal 1.7.x o versiones más recientes</string>
-  <string Field="MPVersion">PureVisionHD 1080 10.4 está diseñado para MP 1.7.x o versiones más recientes.</string>
-  <string Field="Enjoy">¡Disfruta de MediaPortal con PureVisionHD 1080 10.4!</string>
+  <string Field="PluginsMP">... y por supuesto todos los plugins estándar de esta versión de MediaPortal</string>
+  <string Field="MPVersion">DefaultWideHD está diseñado para MP 1.7.x o versiones más recientes.</string>
+  <string Field="Enjoy">¡Disfruta de MediaPortal con DefaultWideHD!</string>
   <string Field="Background">Fondo</string>
   <string Field="Games">Juegos</string>
   <string Field="NewEpisodes">Episodios añadidos recientemente</string>

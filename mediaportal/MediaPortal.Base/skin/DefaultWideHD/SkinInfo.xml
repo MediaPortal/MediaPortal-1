@@ -2,7 +2,7 @@
 <window>
   <id>7982</id>
   <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <define>#header.label:DefaultWideHD</define><!-->&#8596;<-->
   <define>#header.hover:</define>
   <controls>
@@ -17,15 +17,36 @@
       <visible>string.equals(#skin.background,Standard)</visible>
     </control>
     <import>common.time.xml</import>
-    <control>
+    <!--control>
       <type>image</type>
       <id>1</id>
-      <posX>20</posX>
-      <posY>140</posY>
-      <width>1850</width>
+      <posX>50</posX>
+      <posY>150</posY> 
+      <width>1820</width>
       <height>890</height>
-      <texture>listbg2.png</texture>
+      <texture>skininfo.bg.png</texture>  
       <colordiffuse>ddffffff</colordiffuse>
+    </control-->
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1145</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1145</height>
+      <texture>general_overlay.png</texture>
+      <colordiffuse>80ffffff</colordiffuse>
     </control>
     <control>
       <type>fadelabel</type>
@@ -63,25 +84,61 @@
       <type>button</type>
       <description>Back</description>
       <id>2</id>
-      <posX>773</posX>
-      <posY>922</posY>
+      <posX>510</posX>
+      <posY>840</posY>
+	    <width>410</width>
+      <height>80</height>
       <action>10</action>
       <label>712</label>
-      <textureNoFocus>buttonfocus.png</textureNoFocus>
+      <textureFocus>framed_button.png</textureFocus> 
+      <textureNoFocus>unframed_button.png</textureNoFocus>                        
       <textalign>center</textalign>
       <textYOff>2</textYOff>
+	    <textcolorNoFocus>ffffffff</textcolorNoFocus>
       <onright>8</onright>
       <onleft>8</onleft>
-      <ondown>8</ondown>
-      <onup>8</onup>
-      <visible allowhiddenfocus="true">control.isvisble(8)</visible>
+      <ondown>2</ondown>
+      <onup>123</onup>
+      <visible allowhiddenfocus="true">control.isvisible(8)</visible>
     </control>
+    
+    
+    
+    <control>
+          <description>Keyboard Shortcuts</description>
+          <id>8</id>
+          <posX>1000</posX>
+          <posY>840</posY> 
+          <type>checkbutton</type>
+          <label>#SkinTranslation.Translations.KeyboardShortcuts.Label</label>
+          <selected>#(skin.hassetting('#skin.keyboard.shortcuts'))</selected>
+          <onclick>#(skin.togglesetting('#skin.keyboard.shortcuts')) </onclick>   
+          <textureFocus>framed_button_standalone.png</textureFocus> 
+          <textureNoFocus>unframed_button_standalone.png</textureNoFocus>   
+          <onright>2</onright>
+          <onleft>2</onleft>
+          <ondown>8</ondown>
+          <onup>123</onup>
+          <height>80</height>
+          <width>430</width>
+		      <markYOff>15</markYOff> 
+          <markWidth>40</markWidth> 
+          <markHeight>40</markHeight> 
+          <textXOff>25</textXOff>
+          <textYOff>5</textYOff>
+          <font>font11</font>
+          <disabledcolor>ffffffff</disabledcolor>
+          <textcolorNoFocus>ffffffff</textcolorNoFocus>
+		  </control>
+    
+    
+    
     <control>
       <description>desc txt</description>
       <type>label</type>
       <id>1</id>
       <posX>85</posX>
-      <posY>180</posY>
+      <posY>220</posY>
       <label>#SkinTranslation.Translations.DescriptionTopbar.Label</label>
       <textcolor>fff5deb3</textcolor>
       <font>Label</font>
@@ -92,7 +149,7 @@
       <type>image</type>
       <id>0</id>
       <posX>141</posX>
-      <posY>237</posY>
+      <posY>277</posY>
       <width>58</width>
       <height>58</height>
       <texture>tb_back3.png</texture>
@@ -103,7 +160,7 @@
       <type>label</type>
       <id>1</id>
       <posX>211</posX>
-      <posY>248</posY>
+      <posY>288</posY>
       <textcolor>lightgray</textcolor>
       <label>#SkinTranslation.Translations.BackPrevious.Label</label>
       <font>RSS</font>
@@ -114,7 +171,7 @@
       <type>image</type>
       <id>1</id>
       <posX>713</posX>
-      <posY>237</posY>
+      <posY>277</posY>
       <width>58</width>
       <height>58</height>
       <texture>tb_browserhome3.png</texture>
@@ -125,7 +182,7 @@
       <type>label</type>
       <id>1</id>
       <posX>783</posX>
-      <posY>248</posY>
+      <posY>288</posY>
       <textcolor>lightgray</textcolor>
       <label>#SkinTranslation.Translations.BackBasicHome.Label</label>
       <font>RSS</font>
@@ -136,7 +193,7 @@
       <type>image</type>
       <id>1</id>
       <posX>1294</posX>
-      <posY>237</posY>
+      <posY>277</posY>
       <width>58</width>
       <height>58</height>
       <texture>tb_full_screen3.png</texture>
@@ -147,7 +204,7 @@
       <type>label</type>
       <id>1</id>
       <posX>1365</posX>
-      <posY>248</posY>
+      <posY>288</posY>
       <textcolor>lightgray</textcolor>
       <label>#SkinTranslation.Translations.LiveTV.Label</label>
       <font>RSS</font>
@@ -158,7 +215,7 @@
       <type>image</type>
       <id>1</id>
       <posX>141</posX>
-      <posY>307</posY>
+      <posY>347</posY>
       <width>58</width>
       <height>58</height>
       <texture>tb_skipback3.png</texture>
@@ -169,7 +226,7 @@
       <type>image</type>
       <id>1</id>
       <posX>211</posX>
-      <posY>307</posY>
+      <posY>347</posY>
       <width>58</width>
       <height>58</height>
       <texture>tb_rew3.png</texture>
@@ -180,7 +237,7 @@
       <type>image</type>
       <id>1</id>
       <posX>281</posX>
-      <posY>307</posY>
+      <posY>347</posY>
       <width>58</width>
       <height>58</height>
       <texture>tb_play3.png</texture>
@@ -191,7 +248,7 @@
       <type>image</type>
       <id>1</id>
       <posX>351</posX>
-      <posY>307</posY>
+      <posY>347</posY>
       <width>58</width>
       <height>58</height>
       <texture>tb_stop3.png</texture>
@@ -202,7 +259,7 @@
       <type>image</type>
       <id>1</id>
       <posX>422</posX>
-      <posY>307</posY>
+      <posY>347</posY>
       <width>58</width>
       <height>58</height>
       <texture>tb_fastforward3.png</texture>
@@ -213,7 +270,7 @@
       <type>image</type>
       <id>1</id>
       <posX>492</posX>
-      <posY>307</posY>
+      <posY>347</posY>
       <width>58</width>
       <height>58</height>
       <texture>tb_skipforward3.png</texture>
@@ -224,7 +281,7 @@
       <type>label</type>
       <id>1</id>
       <posX>563</posX>
-      <posY>318</posY>
+      <posY>358</posY>
       <textcolor>lightgray</textcolor>
       <label>#SkinTranslation.Translations.PlayControls.Label</label>
       <font>RSS</font>
@@ -235,7 +292,7 @@
       <type>image</type>
       <id>0</id>
       <posX>1294</posX>
-      <posY>307</posY>
+      <posY>347</posY>
       <width>58</width>
       <height>58</height>
       <texture>tb_info3.png</texture>
@@ -246,7 +303,7 @@
       <type>label</type>
       <id>1</id>
       <posX>1365</posX>
-      <posY>318</posY>
+      <posY>358</posY>
       <textcolor>lightgray</textcolor>
       <label>#SkinTranslation.Translations.SkinInfo.Label</label>
       <font>RSS</font>
@@ -257,7 +314,7 @@
       <type>image</type>
       <id>1</id>
       <posX>141</posX>
-      <posY>377</posY>
+      <posY>417</posY>
       <width>58</width>
       <height>58</height>
       <texture>tb_volumeup3.png</texture>
@@ -268,7 +325,7 @@
       <type>image</type>
       <id>1</id>
       <posX>211</posX>
-      <posY>377</posY>
+      <posY>417</posY>
       <width>58</width>
       <height>58</height>
       <texture>tb_volumedown3.png</texture>
@@ -279,7 +336,7 @@
       <type>label</type>
       <id>1</id>
       <posX>281</posX>
-      <posY>388</posY>
+      <posY>428</posY>
       <textcolor>lightgray</textcolor>
       <label>#SkinTranslation.Translations.AudioOptions.Label</label>
       <font>RSS</font>
@@ -290,7 +347,7 @@
       <type>image</type>
       <id>1</id>
       <posX>713</posX>
-      <posY>377</posY>
+      <posY>417</posY>
       <width>58</width>
       <height>58</height>
       <texture>tb_exit3.png</texture>
@@ -301,7 +358,7 @@
       <type>label</type>
       <id>1</id>
       <posX>783</posX>
-      <posY>388</posY>
+      <posY>428</posY>
       <textcolor>lightgray</textcolor>
       <label>#SkinTranslation.Translations.CloseExit.Label</label>
       <font>RSS</font>
@@ -312,7 +369,7 @@
       <type>image</type>
       <id>1</id>
       <posX>1294</posX>
-      <posY>377</posY>
+      <posY>417</posY>
       <width>58</width>
       <height>58</height>
       <texture>tb_shutdown3.png</texture>
@@ -323,7 +380,7 @@
       <type>label</type>
       <id>1</id>
       <posX>1365</posX>
-      <posY>388</posY>
+      <posY>428</posY>
       <textcolor>lightgray</textcolor>
       <label>#SkinTranslation.Translations.ShutdownOptions.Label</label>
       <font>RSS</font>
@@ -334,7 +391,7 @@
     <type>image</type>
     <id>1</id>
     <posX>141</posX>
-    <posY>447</posY>
+    <posY>487</posY>
     <width>58</width>
     <height>58</height>
     <texture>tb_extend3.png</texture>
@@ -345,7 +402,7 @@
     <type>label</type>
     <id>1</id>
     <posX>211</posX>
-    <posY>458</posY>
+    <posY>498</posY>
     <textcolor>lightgray</textcolor>
     <label>#SkinTranslation.Translations.InfoButton.Label</label>
     <font>RSS</font>
@@ -354,57 +411,16 @@
   <!-- ******************************************************************************************* -->
   <!-- ********************************   KEYBOARD SHORTCUTS   *********************************** -->
   <!-- ******************************************************************************************* -->
-  <control>
-        <description>background</description>
-        <type>image</type>
-        <id>1</id>
-        <posX>751</posX>
-        <posY>83</posY>
-        <height>64</height>
-        <width>434</width>
-        <texture>osdbg3.png</texture>
-        <colordiffuse>dd164665</colordiffuse>
-      </control>
-      <control>
-        <description>background</description>
-        <type>image</type>
-        <id>1</id>
-        <posX>753</posX>
-        <posY>85</posY>
-        <height>60</height>
-        <width>430</width>
-        <texture>osdbg3.png</texture>
-        <colordiffuse>ff00061c</colordiffuse>
-      </control>
-  <control>
-          <description>Keyboard Shortcuts</description>
-          <id>8</id>
-          <posX>755</posX>
-          <posY>85</posY>
-          <type>checkbutton</type>
-          <label>#SkinTranslation.Translations.KeyboardShortcuts.Label</label>
-          <selected>#(skin.hassetting('#skin.keyboard.shortcuts'))</selected>
-          <onclick>#(skin.togglesetting('#skin.keyboard.shortcuts')) </onclick>            
-          <onright>2</onright>
-          <onleft>2</onleft>
-          <ondown>2</ondown>
-          <height>60</height>
-          <width>430</width>
-          <markWidth>50</markWidth>
-          <markHeight>50</markHeight>
-          <textXOff>25</textXOff>
-          <textYOff>5</textYOff>
-          <font>font10</font>
-          <textureNoFocus>-</textureNoFocus>
-          <disabledcolor>ffffffff</disabledcolor>
-          <textcolorNoFocus>aaffffff</textcolorNoFocus>
-        </control>
+ 
+	   
+  
+		
         <control>
       <description>desc txt</description>
       <type>label</type>
       <id>1</id>
       <posX>85</posX>
-      <posY>180</posY>
+      <posY>220</posY>
       <label>#SkinTranslation.Translations.KeyboardShortcuts.Label:</label>
       <textcolor>fff5deb3</textcolor>
       <font>Label</font>
@@ -415,7 +431,7 @@
       <type>textboxscrollup</type>
       <id>1</id>
       <posX>135</posX>
-      <posY>200</posY>
+      <posY>240</posY>
       <width>1120</width>
       <height>700</height>
       <label>
@@ -437,7 +453,7 @@
       <type>textboxscrollup</type>
       <id>1</id>
       <posX>690</posX>
-      <posY>200</posY>
+      <posY>240</posY>
       <width>1120</width>
       <height>700</height>
       <label> 
@@ -460,7 +476,7 @@
       <type>textboxscrollup</type>
       <id>1</id>
       <posX>1250</posX>
-      <posY>200</posY>
+      <posY>240</posY>
       <width>1120</width>
       <height>700</height>
       <label> 
@@ -484,7 +500,7 @@
       <type>image</type>
       <id>1</id>
       <posX>630</posX>
-      <posY>215</posY>
+      <posY>255</posY>
       <height>300</height>
       <width>1</width>
       <texture>verticalbar.png</texture>
@@ -496,7 +512,7 @@
       <type>image</type>
       <id>1</id>
       <posX>1190</posX>
-      <posY>215</posY>
+      <posY>255</posY>
       <height>330</height>
       <width>1</width>
       <texture>verticalbar.png</texture>
@@ -510,7 +526,7 @@
     <type>label</type>
     <id>1</id>
     <posX>85</posX>
-    <posY>553</posY>
+    <posY>583</posY>
     <label>#SkinTranslation.Translations.SupportedPlugins.Label</label>
     <textcolor>fff5deb3</textcolor>
     <font>Label</font>
@@ -520,10 +536,10 @@
     <type>fadelabel</type>
     <id>1</id>
     <posX>112</posX>
-    <posY>612</posY>
+    <posY>632</posY>
     <width>1686</width>
     <label>APOD #scroll.wrap ARGUS TV #scroll.wrap Bing Image #scroll.wrap Browse The Web #scroll.wrap Burner #scroll.wrap Clickfinder PG #scroll.wrap Daily Comics #scroll.wrap DriveFreeSpace #scroll.wrap Earth TV #scroll.wrap Emulators 2 #scroll.wrap Explorer #scroll.wrap Extensions (MPEI GUI) #scroll.wrap Fanart Handler #scroll.wrap File Explorer #scroll.wrap Films #scroll.wrap Fritz!Box Manager #scroll.wrap Games Pack for MP (Chess, Connect 4, Frustration, Hexxagon, Mastermind, Minesweeper, Pipes, Simon Says, Sudoku, Tetris, Yahtzee) #scroll.wrap Global Search #scroll.wrap Google Calendar #scroll.wrap HTPC-Info #scroll.wrap IMDb+ #scroll.wrap Info Service #scroll.wrap Intelligent Frame Correction #scroll.wrap Latest Media Handler #scroll.wrap Last.FM #scroll.wrap Lyrics #scroll.wrap LogoManager #scroll.wrap MailTip #scroll.wrap Media Slayer #scroll.wrap MediaTip #scroll.wrap Moving Pictures #scroll.wrap MP Photo Slideshow #scroll.wrap MP-TVSeries #scroll.wrap mpNZB #scroll.wrap MusicInfoHandler #scroll.wrap mvCentral #scroll.wrap OnlineVideos #scroll.wrap Power Control #scroll.wrap Rockstar #scroll.wrap RSS #scroll.wrap ScoreCenter #scroll.wrap ShortCut'er with Skin Navigator #scroll.wrap Shoutcast #scroll.wrap Showtimes #scroll.wrap Skin Info #scroll.wrap SkyGo DE #scroll.wrap Skype for MP #scroll.wrap Sleep Control #scroll.wrap Sports #scroll.wrap Spectrum Analyzer #scroll.wrap Steam for MP #scroll.wrap Stocks + Indices #scroll.wrap StreamRadio #scroll.wrap Subcentral #scroll.wrap Trailers #scroll.wrap Trakt #scroll.wrap TuneIn #scroll.wrap TV WishList #scroll.wrap Webbrowser #scroll.wrap Webradio #scroll.wrap Wikipedia #scroll.wrap Windows Update Control #scroll.wrap World Clock #scroll.wrap Worldmap #scroll.wrap World News #scroll.wrap World Places #scroll.wrap World Weather #scroll.wrap World Weather Lite #scroll.wrap YouTube.FM #scroll.wrap yrWeather </label>
-    <textcolor>ff2087fd</textcolor>
+    <textcolor>ff00bfff</textcolor>
     <font>Menutitle</font>
   </control>
   <control>
@@ -537,47 +553,23 @@
     <textcolor>fff5deb3</textcolor>
     <label>#SkinTranslation.Translations.PluginsMP.Label</label>
   </control>
-  <control>
-    <description>desc value line 3</description>
-    <type>label</type>
-    <id>1</id>
-    <posX>0</posX>
-    <posY>780</posY>
-    <width>1920</width>
-    <align>center</align>
-    <textcolor>fff5deb3</textcolor>
-    <label>#SkinTranslation.Translations.MPVersion.Label</label>
-  </control>
+  
   
   <control>
       <description>Enjoy</description>
-      <type>group</type>
-      <layout>StackLayout(25, Horizontal, true)</layout>
+      <id>0</id>
       <posX>0</posX>
-      <posY>820</posY>
+      <posY>785</posY>
       <width>1920</width>
       <align>center</align>
-      <height>90</height>
-      <control>
-        <type>fadelabel</type>
-        <description>Enjoy Label</description>
-        <id>0</id>
+      <type>fadelabel</type>
+        
         <label>#SkinTranslation.Translations.Enjoy.Label</label>
-        <width>500</width>
-        <maxWidth>1750</maxWidth>
         <textcolor>fff5deb3</textcolor>
         <font>Menutitle</font>
       </control>
-      <control>
-        <type>image</type>
-        <description>catavolt Icon</description>
-        <id>0</id>
-        <texture>catavolt.jpg</texture>
-        <width>100</width>
-        <height>65</height>
-        <keepaspectratio>yes</keepaspectratio>
-      </control>
-      </control>
+      
+      
    
 </controls>
 </window>

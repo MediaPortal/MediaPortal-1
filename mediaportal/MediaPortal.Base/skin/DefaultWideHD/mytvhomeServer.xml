@@ -287,6 +287,17 @@
       <colordiffuse>60ffffff</colordiffuse>
     </control>
     <control>
+      <description>Zap channel Background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>119</posX>
+      <posY>664</posY>
+      <width>92</width>
+      <height>92</height>
+      <texture>tvlogoback.png</texture>
+      <colordiffuse>ff1f3e70</colordiffuse>
+    </control>
+    <control>
       <description>Playing Channel</description>
       <type>image</type>
       <id>1</id>
