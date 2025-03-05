@@ -20,7 +20,7 @@
   <string Field="ShutdownOptions">Opzioni di spegnimento</string>
   <string Field="InfoButton">Nelle liste: Premere "destra" (remoto/tastiera) o con il passaggio del mouse mostra le informazioni estese</string>
   <string Field="SupportedPlugins">Plugins supportati (in ordine alfabetico):</string>
-  <string Field="PluginsMP">... e naturalmente tutti i plugin standard di questa versione di MediaPortal</string>
+  <string Field="PluginsMP">... e naturalmente tutti i plugin standard di questa versione di MediaPortal.</string>
   <string Field="MPVersion">DefaultWideHD è progettato per MP 1.7.x e più versioni recenti.</string>
   <string Field="Enjoy">Godetevi MediaPortal con DefaultWideHD!</string>
   <string Field="Background">Sfondo</string>

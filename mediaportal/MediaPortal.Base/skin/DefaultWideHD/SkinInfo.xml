@@ -113,8 +113,8 @@
           <label>#SkinTranslation.Translations.KeyboardShortcuts.Label</label>
           <selected>#(skin.hassetting('#skin.keyboard.shortcuts'))</selected>
           <onclick>#(skin.togglesetting('#skin.keyboard.shortcuts')) </onclick>   
-          <textureFocus>framed_button_standalone.png</textureFocus> 
-          <textureNoFocus>unframed_button_standalone.png</textureNoFocus>   
+          <textureFocus>framed_button.png</textureFocus>   
+          <textureNoFocus>unframed_button.png</textureNoFocus>  
           <onright>2</onright>
           <onleft>2</onleft>
           <ondown>8</ondown>
@@ -430,19 +430,19 @@
       <description>Keyboard Shortcuts left</description>
       <type>textboxscrollup</type>
       <id>1</id>
-      <posX>135</posX>
+      <posX>135</posX> 
       <posY>240</posY>
       <width>1120</width>
       <height>700</height>
       <label>
-      Escape:   &#x291F; Previous window
-      Cursor Keys:   &#x2237; Select item
-      Home:   &#x21a5; Select first item
-      End:   &#x21a7; Select last item
-      PageUp:   &#x21a9; Previous item page
-      PageDown:   &#x21aa; Next item page
-      U:   &#x2934; Parent folder
-      Enter:   &#x2713; Perform action
+      Escape:           &#x291F;  Previous window
+      Cursor Keys:    &#x2237;  Select item
+      Home:              &#x21a5;   Select first item
+      End:                 &#x21a7;   Select last item
+      PageUp:          &#x21a9;  Previous item page
+      PageDown:     &#x21aa;  Next item page
+      U:                    &#x2934;   Parent folder
+      Enter:             &#x2713;  Perform action
      </label>
       <textcolor>deepskyblue</textcolor>
       <font>font10</font>
@@ -450,23 +450,22 @@
     </control>
     <control>
       <description>Keyboard Shortcuts middle</description>
-      <type>textboxscrollup</type>
+      <type>textbox</type>
       <id>1</id>
-      <posX>690</posX>
+      <posX>660</posX>
       <posY>240</posY>
-      <width>1120</width>
-      <height>700</height>
-      <label> 
-      P:   &#9654; Start playing
-      B:   &#9632; Stop playing
-      Space:   &#x23f8; Pause/Resume playing
-      F7:   &#x21e4; Play previous
-      F8:   &#x21e5; Play next
-      F5:   &#171; Rewind
-      F6:   &#187; FastForward
-      R:   &#x25cf; Record current TV
-      
-    </label>
+      <width>1120</width> 
+      <height>700</height> 
+      <label>
+	      P:            &#9654;  Start playing
+      B:            &#9632;  Stop playing
+      Space:   &#x23f8;  Pause/Resume playing
+      F7:          &#x21e4;  Play previous
+      F8:          &#x21e5;  Play next
+      F5:          &#171;  Rewind
+      F6:          &#187;  FastForward
+      R:           &#x25cf;  Record current TV
+      </label>
       <textcolor>deepskyblue</textcolor>
       <font>font10</font>
       <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
@@ -480,15 +479,15 @@
       <width>1120</width>
       <height>700</height>
       <label> 
-      &#x271A; :   Volume up
-      &#10134; :   Volume down
-      M:   &#x22A0; Mute
-      F3:   &#x24d8; Show info of selected item
-      F9:   &#x2261; Show context menu
-      Y:   &#x268F; Show OSD
-      H:   &#x21c4; Switch Classic/Basic Home
-      X:   &#x21c4; Switch GUI/Fullscreen (TV/Video)
-      F11:   &#x229E; Screenshot of current screen
+      &#x271A; :         Volume up
+      &#10134; :         Volume down
+      M:       &#x22A0;  Mute
+      F3:    &#x24d8;  Show info of selected item
+      F9:      &#x2261;  Show context menu
+      Y:       &#x268F;  Show OSD
+      H:       &#x21c4;  Switch Classic/Basic Home
+      X:       &#x21c4;  Switch GUI/Fullscreen (TV/Video)
+      F11:    &#x229E;  Screenshot of current screen
       </label>
       <textcolor>deepskyblue</textcolor>
       <font>font10</font>
@@ -499,7 +498,7 @@
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>630</posX>
+      <posX>610</posX> 630
       <posY>255</posY>
       <height>300</height>
       <width>1</width>
@@ -511,7 +510,7 @@
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>1190</posX>
+      <posX>1180</posX>1190
       <posY>255</posY>
       <height>330</height>
       <width>1</width>

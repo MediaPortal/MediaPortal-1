@@ -18,8 +18,8 @@
   <string Field="CloseExit">Close/Exit MP</string>
   <string Field="ShutdownOptions">Shutdown Options</string>
   <string Field="InfoButton">In list views: Pressing right (remote/keyboard) or hover with mouse shows extended information</string>
-  <string Field="SupportedPlugins">Supported Plugins (in alphabetical order):</string>
-  <string Field="PluginsMP">... and of course all standard plugins of this MediaPortal version</string>
+  <string Field="SupportedPlugins">Supported plugins (in alphabetical order):</string>
+  <string Field="PluginsMP">... and of course all standard plugins of this MediaPortal version.</string>
   <string Field="MPVersion">DefaultWideHD is designed for MP 1.7.x or newer versions.</string>
   <string Field="Enjoy">Enjoy MediaPortal with DefaultWideHD!</string>
   <string Field="Background">Background</string>

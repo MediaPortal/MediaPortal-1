@@ -19,23 +19,22 @@
           <id>50</id>
         </control>
         <control>
-          <description>listcontrol</description>
+          <description>Text List (Groups/Series/Season/Episode Views)</description>
           <type>listcontrol</type>
           <id>50</id>
           <width>825</width>
+          <textXOff>-25</textXOff>
+          <textYOff>3</textYOff>
           <textXOff2>825</textXOff2>
           <textYOff2>3</textYOff2>
-          <textXOff3>3817</textXOff3>
-          <textYOff3>12</textYOff3>
-          <textalign3>right</textalign3>
-          <font3>font9</font3>
-          <scrollOffset>2</scrollOffset>
-          <spinCanFocus>no</spinCanFocus>
-          <itemWidth>30</itemWidth>
-          <itemHeight>30</itemHeight>
-          <IconXOff>780</IconXOff>
-          <IconYOff>9</IconYOff>
-          <textXOff2>747</textXOff2>
+          <textXOff3>3674</textXOff3>
+          <textYOff3>3</textYOff3>
+          <spaceBetweenItems>0</spaceBetweenItems>
+          <textureFocus>#(iif(eq(#TVSeries.Episode.Watched,'0'),'listfocus_notwatched.png','listfocus.png'))</textureFocus>
+          <itemWidth>35</itemWidth>
+          <itemHeight>35</itemHeight>
+          <IconXOff>850</IconXOff>
+          <IconYOff>5</IconYOff>
           <shadedColor>20ffffff</shadedColor>
           <selectedColor3>FF00CC00</selectedColor3>
           <selectedColor2>FF00CC00</selectedColor2>
@@ -52,8 +51,26 @@
           <downloadColor>ffffffff</downloadColor>
           <downloadColor2>ffffffff</downloadColor2>
           <dimColor>ffffffff</dimColor>
-          <textureFocus>#(iif(eq(#TVSeries.Episode.Watched,'0'),'listfocus_notwatched.png','listfocus.png'))</textureFocus>
-          <onright>2</onright>
+          <onleft>2</onleft>
+          <!-- Spin Controls -->
+          <spinCanFocus>no</spinCanFocus>
+          <spinWidth>42</spinWidth>
+          <spinHeight>42</spinHeight>
+          <spinPosX>4568</spinPosX>
+          <spinPosY>2390</spinPosY>
+          <scrollOffset>5</scrollOffset>
+          <scrollbarHeight>400</scrollbarHeight>
+          <scrollbarbg>bar_vert.png</scrollbarbg>
+          <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+          <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+          <scrollbarXOff>80</scrollbarXOff>
+          <scrollbarYOff>0</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <scrollbarwidth>20</scrollbarwidth>
+          <keepaspectratio>yes</keepaspectratio>
+          <unfocusedAlpha applyToAll="true">190</unfocusedAlpha>
+          <visible allowhiddenfocus="true">!control.hasfocus(99)</visible>
+          <animation effect="zoom" start="1,1" end="100,100" time="300" center="1300,500" reversible="true">visiblechange</animation>
         </control>
         <control>
           <description>Thumbnail Panel</description>

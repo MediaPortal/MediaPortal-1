@@ -42,10 +42,10 @@
       <font3>font10</font3>
       <scrollOffset>2</scrollOffset>
       <textXOff3>1050</textXOff3>
-      <PinIconXOff>18</PinIconXOff>
+      <PinIconXOff>3</PinIconXOff>
       <PinIconYOff>12</PinIconYOff>
-      <IconXOff>75</IconXOff>
-      <textXOff>90</textXOff>
+      <IconXOff>10</IconXOff>
+      <textXOff>20</textXOff>
       <onleft>508</onleft>
     </control>
     <control>
@@ -76,7 +76,7 @@
       <width>180</width>
       <font>font10</font>
       <label>#OnlineVideos.Translation.Creator.Label</label>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>control.hastext(501)</visible>
     </control>
     <control>
@@ -88,7 +88,7 @@
       <width>270</width>
       <font>font10</font>
       <label>#OnlineVideos.owner</label>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Description</description>
@@ -100,7 +100,7 @@
       <colordiffuse>ffffffff</colordiffuse>
       <font>font10</font>
       <label>#OnlineVideos.desc</label>
-      <textcolor>White</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Number of Items Label</description>
@@ -110,7 +110,7 @@
       <posY>52</posY>
       <label>#selectedindex/#itemcount #itemtype</label>
       <align>right</align>
-      <textcolor>White</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font10</font>
     </control>
     <!-- *** HIDDEN MENU *** -->
@@ -155,7 +155,7 @@
         <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
         <posX>75</posX>
         <posY>181</posY>
-        <layout>StackLayout</layout>
+        <layout>StackLayout(0, Vertical, true)</layout>
         <visible>!Control.HasFocus(50)</visible>
         <control>
           <type>selectbutton</type>
@@ -164,9 +164,6 @@
           <onright>50</onright>
           <onup>17</onup>
           <label>#OnlineVideos.Translation.Filter.Label: #OnlineVideos.Translation.State.Label</label>
-          <font>font11</font>
-          <height>55</height>
-          <textYOff>4</textYOff>
           <visible>!Control.HasFocus(50)</visible>
         </control>
         <control>
@@ -176,9 +173,6 @@
           <onright>50</onright>
           <onup>503</onup>
           <label>#OnlineVideos.Translation.Filter.Label: #OnlineVideos.Translation.Creator.Label</label>
-          <font>font11</font>
-          <height>55</height>
-          <textYOff>4</textYOff>
           <visible>!Control.HasFocus(50)</visible>
         </control>
         <control>
@@ -188,9 +182,6 @@
           <onright>50</onright>
           <onup>506</onup>
           <label>#OnlineVideos.Translation.Filter.Label: #OnlineVideos.Translation.Language.Label</label>
-          <font>font11</font>
-          <height>55</height>
-          <textYOff>4</textYOff>
           <visible>!Control.HasFocus(50)</visible>
         </control>
         <control>
@@ -201,9 +192,6 @@
           <onup>507</onup>
           <ondown>508</ondown>
           <label>#OnlineVideos.Translation.SortOptions.Label</label>
-          <font>font11</font>
-          <height>55</height>
-          <textYOff>4</textYOff>
           <visible>!Control.HasFocus(50)</visible>
         </control>
         <control>
@@ -214,9 +202,6 @@
           <onup>504</onup>
           <ondown>50</ondown>
           <label>#OnlineVideos.Translation.AutomaticUpdate.Label</label>
-          <font>font11</font>
-          <height>55</height>
-          <textYOff>4</textYOff>
           <visible allowhiddenfocus="true">!Control.HasFocus(50)</visible>
         </control>
       </control>

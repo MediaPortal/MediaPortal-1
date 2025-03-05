@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8"-->
 <window>
-  <controls>
+			 
+									
+<controls>
     <control>
-      <type>actiongroup</type>
+	 <type>actiongroup</type>
       <description>action menu</description>
       <defaultcontrol>2</defaultcontrol>
       <onexit>50</onexit>
@@ -25,33 +27,32 @@
       <control>
         <type>image</type>
         <posX>39</posX>
-        <posY>37</posY>
-        <width>550</width>
-        <height>975</height>
+        <posY>117</posY>
+        <width>480</width>
+        <height>886</height>
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>
         <visible>!Control.HasFocus(50)</visible>
         <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
         <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
       </control>
-      <control>
+	  
+	  <control>
         <description>group element</description>
         <type>group</type>
         <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
         <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
         <visible>!Control.HasFocus(50)</visible>
-        <control>
-          <description>button group</description>
-          <type>group</type>
-          <posX>75</posX>
-          <posY>105</posY>
-          <width>465</width>
-          <layout>StackLayout</layout>
-          <layout>StackLayout(0, Vertical, true)</layout>
-          <visible>!Control.HasFocus(50)</visible>
-          <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
-          <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
-          <control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <posX>75</posX>
+        <posY>181</posY>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <visible>!Control.HasFocus(50)</visible>
+		<control>
           <description>Change View</description>
           <type>button</type>
           <id>2</id>
@@ -178,6 +179,7 @@
           <visible>string.equals(#mpei.5e2777c3_966c_407f_b5a9_e51205b70b3e.haveupdate,true)+control.isvisible(1237)</visible>
         </control>
         </control>
+		
         <control>
           <id>0</id>
           <description>Last Online Update Label</description>
@@ -185,7 +187,7 @@
           <type>label</type>
           <font>font10</font>
           <posX>106</posX>
-          <posY>922</posY>
+          <posY>912</posY>
           <textcolor>ffffffff</textcolor>
         </control>
         <control>
@@ -195,9 +197,10 @@
           <type>label</type>
           <font>font10</font>
           <posX>106</posX>
-          <posY>960</posY>
+          <posY>950</posY>
         </control>
+		</control>
       </control>
-    </control>
+    
   </controls>
 </window>

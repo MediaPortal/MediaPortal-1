@@ -18,8 +18,8 @@
   <string Field="CloseExit">Fermer/Quitter MP</string>
   <string Field="ShutdownOptions">Options d'arrêt</string>
   <string Field="InfoButton">Dans les listes: Appuyez sur «droite» (distance/clavier) ou avec la souris affiche des informations étendues</string>
-  <string Field="SupportedPlugins">Plugins pris en charge (par ordre alphabétique):</string>
-  <string Field="PluginsMP">... et bien sûr tous les plugins standard de cette version de MediaPortal</string>
+  <string Field="SupportedPlugins">Plugins pris en charge (par ordre alphabétique) :</string>
+  <string Field="PluginsMP">... et bien sûr tous les plugins standard de cette version de MediaPortal .</string>
   <string Field="MPVersion">DefaultWideHD est conçu pour MP 1.7.x et versions récente.</string>
   <string Field="Enjoy">Profitez de MediaPortal avec DefaultWideHD!</string>
   <string Field="Background">Fond</string>

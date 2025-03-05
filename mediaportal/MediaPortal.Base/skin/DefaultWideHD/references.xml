@@ -241,7 +241,7 @@
     <height>60</height>
     <label>457</label>
     <textXOff>39</textXOff>
-    <textYOff>9</textYOff>
+    <textYOff>7</textYOff>
     <textXOff2>25</textXOff2>
     <textYOff2>9</textYOff2>
     <textalign>left</textalign>
@@ -256,11 +256,10 @@
     <font>Label</font>
     <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
-    <disabledcolor>90ffffff</disabledcolor>
+    <disabledcolor>ffffffff</disabledcolor>
     <textcolorNoFocus>ff00bfff</textcolorNoFocus>
-    <dimColor>90ffffff</dimColor>
-    <disabledcolor>90ffffff</disabledcolor>
-    <scrollStartDelaySec>5</scrollStartDelaySec>
+    <dimColor>ffffffff</dimColor>
+    <scrollStartDelaySec>20</scrollStartDelaySec>
     <scrollWrapString>  |  </scrollWrapString>
   </control>
   <control>

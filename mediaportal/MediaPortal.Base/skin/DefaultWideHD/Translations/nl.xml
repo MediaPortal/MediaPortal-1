@@ -19,7 +19,7 @@
   <string Field="ShutdownOptions">Opties voor uitschakeling</string>
   <string Field="InfoButton">In lijst: Druk op rechts (afstandsbediening/toetsenbord) of hover met de muis toont uitgebreide informatie</string>
   <string Field="SupportedPlugins">Ondersteund plugins (in alfabetische volgorde):</string>
-  <string Field="PluginsMP">... en natuurlijk alle standaard plugins van deze MediaPortal-versie</string>
+  <string Field="PluginsMP">... en natuurlijk alle standaard plugins van deze MediaPortal-versie.</string>
   <string Field="MPVersion">DefaultWideHD is ontworpen voor MP 1.7.x en nieuwere versies.</string>
   <string Field="Enjoy">Geniet van MediaPortal met DefaultWideHD!</string>
   <string Field="Background">Achtergrond</string>

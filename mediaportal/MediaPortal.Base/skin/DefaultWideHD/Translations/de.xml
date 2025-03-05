@@ -19,7 +19,7 @@
   <string Field="ShutdownOptions">Optionen zum Abschalten</string>
   <string Field="InfoButton">In Listen: "Rechts" auf FB/Tastatur oder Markieren mit Maus zeigt erweiterte Informationen</string>
   <string Field="SupportedPlugins">Unterstützte Erweiterungen (in alphabetischer Reihenfolge):</string>
-  <string Field="PluginsMP">... und natürlich alle Standard-Erweiterungen dieser MediaPortal-Version</string>
+  <string Field="PluginsMP">... und natürlich alle Standard-Erweiterungen dieser MediaPortal-Version.</string>
   <string Field="MPVersion">DefaultWideHD wurde für MP 1.7.x (oder höher) entwickelt.</string>
   <string Field="Enjoy">Viel Spaß mit MediaPortal und DefaultWideHD!</string>
   <string Field="Background">Hintergrund</string>
