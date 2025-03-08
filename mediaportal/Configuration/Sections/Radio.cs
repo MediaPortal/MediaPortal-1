@@ -75,9 +75,7 @@ namespace MediaPortal.Configuration.Sections
         _autoTurnOnRadio = xmlreader.GetValueAsBool("myradio", "autoturnonradio", false);
         byIndexCheckBox.Checked = xmlreader.GetValueAsBool("myradio", "byindex", true);
         showChannelNumberCheckBox.Checked = xmlreader.GetValueAsBool("myradio", "showchannelnumber", false);
-
-        int channelNumberMaxLen = xmlreader.GetValueAsInt("myradio", "channelnumbermaxlength", 3);
-        channelNumberMaxLengthNumUpDn.Value = channelNumberMaxLen;
+        channelNumberMaxLengthNumUpDn.Value = xmlreader.GetValueAsInt("myradio", "channelnumbermaxlength", 3);
       }
 
       cbTurnOnRadio.Checked = _autoTurnOnRadio;
@@ -143,14 +141,13 @@ namespace MediaPortal.Configuration.Sections
             // 
             // groupBoxRadioScreen
             // 
-            this.groupBoxRadioScreen.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBoxRadioScreen.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxRadioScreen.Controls.Add(this.cbTurnOnRadio);
             this.groupBoxRadioScreen.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.groupBoxRadioScreen.Location = new System.Drawing.Point(6, 126);
+            this.groupBoxRadioScreen.Location = new System.Drawing.Point(245, 126);
             this.groupBoxRadioScreen.Name = "groupBoxRadioScreen";
-            this.groupBoxRadioScreen.Size = new System.Drawing.Size(462, 46);
+            this.groupBoxRadioScreen.Size = new System.Drawing.Size(223, 94);
             this.groupBoxRadioScreen.TabIndex = 12;
             this.groupBoxRadioScreen.TabStop = false;
             this.groupBoxRadioScreen.Text = "When entering the Radio screen:";
@@ -161,7 +158,7 @@ namespace MediaPortal.Configuration.Sections
             this.cbTurnOnRadio.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.cbTurnOnRadio.Location = new System.Drawing.Point(13, 19);
             this.cbTurnOnRadio.Name = "cbTurnOnRadio";
-            this.cbTurnOnRadio.Size = new System.Drawing.Size(131, 24);
+            this.cbTurnOnRadio.Size = new System.Drawing.Size(92, 17);
             this.cbTurnOnRadio.TabIndex = 0;
             this.cbTurnOnRadio.Text = "Turn on Radio";
             this.cbTurnOnRadio.UseVisualStyleBackColor = true;
@@ -189,7 +186,7 @@ namespace MediaPortal.Configuration.Sections
             this.cbRememberLastGroup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.cbRememberLastGroup.Location = new System.Drawing.Point(13, 42);
             this.cbRememberLastGroup.Name = "cbRememberLastGroup";
-            this.cbRememberLastGroup.Size = new System.Drawing.Size(184, 24);
+            this.cbRememberLastGroup.Size = new System.Drawing.Size(124, 17);
             this.cbRememberLastGroup.TabIndex = 1;
             this.cbRememberLastGroup.Text = "Remember last group";
             this.cbRememberLastGroup.UseVisualStyleBackColor = true;
@@ -204,7 +201,7 @@ namespace MediaPortal.Configuration.Sections
             this.comboBoxGroups.FormattingEnabled = true;
             this.comboBoxGroups.Location = new System.Drawing.Point(13, 83);
             this.comboBoxGroups.Name = "comboBoxGroups";
-            this.comboBoxGroups.Size = new System.Drawing.Size(431, 28);
+            this.comboBoxGroups.Size = new System.Drawing.Size(431, 21);
             this.comboBoxGroups.TabIndex = 2;
             this.comboBoxGroups.DropDown += new System.EventHandler(this.comboBoxGroups_DropDown);
             this.comboBoxGroups.SelectedIndexChanged += new System.EventHandler(this.comboBoxGroups_SelectedIndexChanged);
@@ -214,7 +211,7 @@ namespace MediaPortal.Configuration.Sections
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(10, 67);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(209, 20);
+            this.label1.Size = new System.Drawing.Size(140, 13);
             this.label1.TabIndex = 3;
             this.label1.Text = "Group to show in root menu:";
             // 
@@ -224,7 +221,7 @@ namespace MediaPortal.Configuration.Sections
             this.cbHideAllChannelsGroup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.cbHideAllChannelsGroup.Location = new System.Drawing.Point(13, 19);
             this.cbHideAllChannelsGroup.Name = "cbHideAllChannelsGroup";
-            this.cbHideAllChannelsGroup.Size = new System.Drawing.Size(237, 24);
+            this.cbHideAllChannelsGroup.Size = new System.Drawing.Size(164, 17);
             this.cbHideAllChannelsGroup.TabIndex = 0;
             this.cbHideAllChannelsGroup.Text = "Hide the \"All channels group\"";
             this.cbHideAllChannelsGroup.UseVisualStyleBackColor = true;
@@ -232,16 +229,14 @@ namespace MediaPortal.Configuration.Sections
             // 
             // groupBox3
             // 
-            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox3.Controls.Add(this.byIndexCheckBox);
             this.groupBox3.Controls.Add(this.showChannelNumberCheckBox);
             this.groupBox3.Controls.Add(this.channelNumberMaxLengthNumUpDn);
             this.groupBox3.Controls.Add(this.lblChanNumMaxLen);
             this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.groupBox3.Location = new System.Drawing.Point(6, 178);
+            this.groupBox3.Location = new System.Drawing.Point(6, 126);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(462, 109);
+            this.groupBox3.Size = new System.Drawing.Size(233, 94);
             this.groupBox3.TabIndex = 18;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Channel numbers";
@@ -252,7 +247,7 @@ namespace MediaPortal.Configuration.Sections
             this.byIndexCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.byIndexCheckBox.Location = new System.Drawing.Point(17, 20);
             this.byIndexCheckBox.Name = "byIndexCheckBox";
-            this.byIndexCheckBox.Size = new System.Drawing.Size(266, 24);
+            this.byIndexCheckBox.Size = new System.Drawing.Size(182, 17);
             this.byIndexCheckBox.TabIndex = 0;
             this.byIndexCheckBox.Text = "Select channel by index (non-US)";
             this.byIndexCheckBox.UseVisualStyleBackColor = true;
@@ -263,7 +258,7 @@ namespace MediaPortal.Configuration.Sections
             this.showChannelNumberCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.showChannelNumberCheckBox.Location = new System.Drawing.Point(17, 40);
             this.showChannelNumberCheckBox.Name = "showChannelNumberCheckBox";
-            this.showChannelNumberCheckBox.Size = new System.Drawing.Size(197, 24);
+            this.showChannelNumberCheckBox.Size = new System.Drawing.Size(135, 17);
             this.showChannelNumberCheckBox.TabIndex = 1;
             this.showChannelNumberCheckBox.Text = "Show channel numbers";
             this.showChannelNumberCheckBox.UseVisualStyleBackColor = true;
@@ -283,7 +278,7 @@ namespace MediaPortal.Configuration.Sections
             0,
             0});
             this.channelNumberMaxLengthNumUpDn.Name = "channelNumberMaxLengthNumUpDn";
-            this.channelNumberMaxLengthNumUpDn.Size = new System.Drawing.Size(42, 26);
+            this.channelNumberMaxLengthNumUpDn.Size = new System.Drawing.Size(42, 20);
             this.channelNumberMaxLengthNumUpDn.TabIndex = 2;
             this.channelNumberMaxLengthNumUpDn.Value = new decimal(new int[] {
             3,
@@ -296,7 +291,7 @@ namespace MediaPortal.Configuration.Sections
             this.lblChanNumMaxLen.AutoSize = true;
             this.lblChanNumMaxLen.Location = new System.Drawing.Point(31, 62);
             this.lblChanNumMaxLen.Name = "lblChanNumMaxLen";
-            this.lblChanNumMaxLen.Size = new System.Drawing.Size(211, 20);
+            this.lblChanNumMaxLen.Size = new System.Drawing.Size(141, 13);
             this.lblChanNumMaxLen.TabIndex = 2;
             this.lblChanNumMaxLen.Text = "Channel number max. length";
             // 
