@@ -202,6 +202,16 @@
     <Compile Include="Services\IVideoThumbBlacklist.cs" />
     <Compile Include="Services\Level.cs" />
     <Compile Include="Services\LogType.cs" />
+    <Compile Include="Services\Notifier\INotifyMessage.cs" />
+    <Compile Include="Services\Notifier\INotifyMessageService.cs" />
+    <Compile Include="Services\Notifier\NotifyMessageClassEnum.cs" />
+    <Compile Include="Services\Notifier\NotifyMessageDialogModeEnum.cs" />
+    <Compile Include="Services\Notifier\NotifyMessageLevelEnum.cs" />
+    <Compile Include="Services\Notifier\NotifyMessageResult.cs" />
+    <Compile Include="Services\Notifier\NotifyMessageServiceEventArgs.cs" />
+    <Compile Include="Services\Notifier\NotifyMessageServiceEventHandler.cs" />
+    <Compile Include="Services\Notifier\NotifyMessageServiceEventTypeEnum.cs" />
+    <Compile Include="Services\Notifier\NotifyMessageStatusEnum.cs" />
     <Compile Include="Services\ServiceCreatorCallback.cs" />
     <Compile Include="Services\ServiceProvider.cs" />
     <Compile Include="Threading\Interfaces\IThreadPool.cs" />

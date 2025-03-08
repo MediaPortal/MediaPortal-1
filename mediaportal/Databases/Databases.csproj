@@ -336,6 +336,9 @@
     <Compile Include="Music\Song.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="NotifyMessageService\NotifyMessage.cs" />
+    <Compile Include="NotifyMessageService\NotifyMessageService.cs" />
+    <Compile Include="NotifyMessageService\SqLite\NotifyMessageServiceSqLite.cs" />
     <Compile Include="Pictures\ADO\PictureDatabaseADO.cs" />
     <Compile Include="Pictures\Database.cs">
       <SubType>Code</SubType>
