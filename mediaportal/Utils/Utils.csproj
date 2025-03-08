@@ -217,6 +217,10 @@
     <Compile Include="Web\html\HtmlString.cs" />
     <Compile Include="Web\html\MatchTag.cs" />
     <Compile Include="Web\http\AsyncGetRequest.cs" />
+    <Compile Include="ServiceImplementations\HttpCachingService.cs" />
+    <Compile Include="Services\Http\HttpCachingEventHandler.cs" />
+    <Compile Include="Services\Http\HttpCachingEventArgs.cs" />
+    <Compile Include="Services\Http\IHttpCachingService.cs" />
     <Compile Include="Web\http\IHttpStatistics.cs" />
     <Compile Include="Web\http\HTTPRequest.cs" />
     <Compile Include="Web\http\HTTPAuth.cs" />

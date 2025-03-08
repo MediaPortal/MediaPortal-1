@@ -50,6 +50,8 @@ namespace MediaPortal.Services
       _instance.Add<ILog>(new ServiceCreatorCallback<ILog>(LogServiceRequested));
       _instance.Add<IThreadPool>(
         new ServiceCreatorCallback<IThreadPool>(ThreadPoolServiceRequested));
+      _instance.Add<IHttpCachingService>(
+        new ServiceCreatorCallback<IHttpCachingService>(HttpCachingServiceRequested));
     }
 
     #endregion
@@ -143,6 +145,12 @@ namespace MediaPortal.Services
       return pool;
     }
 
+    private static IHttpCachingService HttpCachingServiceRequested(ServiceProvider services)
+    {
+      HttpCachingSevice service = new HttpCachingSevice(Path.Combine(Configuration.Config.GetFolder(Configuration.Config.Dir.Config), @".cache\http\"));
+      services.Add<IHttpCachingService>(service);
+      return service;
+    }
     #endregion
   }
 }
