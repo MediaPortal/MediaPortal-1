@@ -199,8 +199,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
         }
       }
 
+      string strDBMSDir = InstallationProperties.Instance["DBMSDir"];
+      string strPassword = InstallationProperties.Instance["DBMSPassword"];
+
       string cmdLine = "/i \"" + _fileName + "\"";
-      cmdLine += " INSTALLDIR=\"" + InstallationProperties.Instance["DBMSDir"] + "\"";
+      cmdLine += " INSTALLDIR=\"" + strDBMSDir + "\"";
       cmdLine += " DATADIR=\"" + _dataDir + "\"";
       cmdLine += " ALLOWREMOTEROOTACCESS=true /qn";
       cmdLine += " /L* \"" + Path.GetTempPath() + "\\mysqlinst.log\"";
@@ -228,13 +231,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return false;
       }
 
-      string inifile = InstallationProperties.Instance["DBMSDir"] + "\\my.ini";
+      string inifile = strDBMSDir + "\\my.ini";
       PrepareMyIni(inifile);
 
       const string ServiceName = "MariaDB";
       string cmdExe = Environment.SystemDirectory + "\\sc.exe";
       string cmdParam = "create " + ServiceName + " start= auto DisplayName= " + ServiceName + " binPath= \"" +
-                        InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld.exe --defaults-file=\\\"" + inifile +
+                        strDBMSDir + "\\bin\\mysqld.exe --defaults-file=\\\"" + inifile +
                         "\\\" " + ServiceName + "\"";
 #if DEBUG
       string ff = "c:\\MariaDB-srv.bat";
@@ -269,12 +272,12 @@ namespace MediaPortal.DeployTool.InstallationChecks
       //
       // mysqladmin.exe is used to set MariaDB password
       //
-      cmdLine = "-u root password " + InstallationProperties.Instance["DBMSPassword"];
-      exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
+      cmdLine = "-u root password " + strPassword;
+      exitCode = Utils.RunCommandWait(strDBMSDir + "\\bin\\mysqladmin.exe", cmdLine);
       if (exitCode != 0)
       {
-        cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] + " password " + InstallationProperties.Instance["DBMSPassword"];
-        exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
+        cmdLine = "-u root --password=" + strPassword + " password " + strPassword;
+        exitCode = Utils.RunCommandWait(strDBMSDir + "\\bin\\mysqladmin.exe", cmdLine);
         if (exitCode != 0)
         {
           MessageBox.Show("MariaDB - set password error: " + exitCode);
@@ -286,15 +289,25 @@ namespace MediaPortal.DeployTool.InstallationChecks
       //
       // mysql.exe is used to grant root access from all machines
       //
-      cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] +
+      string strMysqlExe = strDBMSDir + "\\bin\\mysql.exe";
+      cmdLine = "-u root --password=" + strPassword +
                 " --execute=\"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '" +
-                InstallationProperties.Instance["DBMSPassword"] + "' WITH GRANT OPTION\" mysql";
-      exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe", cmdLine);
+                strPassword + "' WITH GRANT OPTION\" mysql";
+      exitCode = Utils.RunCommandWait(strMysqlExe, cmdLine);
       if (exitCode != 0)
       {
         MessageBox.Show("MariaDB - set privileges error: " + exitCode);
         return false;
       }
+
+      //Set password to other root users
+      cmdLine = "-u root --password=" + strPassword +
+                " --execute=\"" +
+                "SET PASSWORD FOR 'root'@'127.0.0.1' = PASSWORD('" + strPassword + "');" +
+                "SET PASSWORD FOR 'root'@'" + System.Net.Dns.GetHostName() + "' = PASSWORD('" + strPassword + "');" +
+                "SET PASSWORD FOR 'root'@'::1' = PASSWORD('" + strPassword + "');" +
+                "FLUSH PRIVILEGES;\" mysql";
+      Utils.RunCommandWait(strMysqlExe, cmdLine);
 
       return true;
     }
