@@ -147,6 +147,8 @@ namespace MediaPortal.GUI.Library
     private System.Drawing.Rectangle m_destRect;
     private string _cachedTextureFileName = string.Empty;
     private string _cachedTextureFileNameFinal = string.Empty;
+    private bool _cachedTextureDisposed = true;
+    private bool _blendableTextureDisposed = true;
     private object _Padlock = new object();
 
     //using for debugging leaks;
@@ -191,6 +193,7 @@ namespace MediaPortal.GUI.Library
     private int _memoryImageWidth = 0;
     private int _memoryImageHeight = 0;
     private Texture _memoryImageTexture;
+    private int _memoryImageTextureId;
 
     private Image _memoryImage = null;
 
@@ -716,6 +719,9 @@ namespace MediaPortal.GUI.Library
         _debugCachedTextureFileName = _textureFileNameTag;
         _debugCaller = string.Empty; //  System.Environment.StackTrace.ToString();
         */
+
+        _memoryImageTextureId = -1;
+
         try
         {
           if (GUIGraphicsContext.DX9Device == null)
@@ -781,6 +787,7 @@ namespace MediaPortal.GUI.Library
                                          out _blendabletexUmax, out _blendabletexVmax, out _blendableTexWidth, out _blendableTexHeight,
                                          out _blendableTexture, out _packedBlendableTextureNo))
           {
+            this._blendableTextureDisposed = false;
             _reCalculate = true;
           }
 
@@ -810,22 +817,24 @@ namespace MediaPortal.GUI.Library
             {
               var bitmap = new Bitmap(_memoryImageWidth, _memoryImageHeight, PixelFormat.Format32bppArgb);
               Image memoryImage = bitmap;
-              frameCount = GUITextureManager.LoadFromMemoryEx(memoryImage, fileName, m_dwColorKey, out _memoryImageTexture);
+              frameCount = GUITextureManager.LoadFromMemoryEx(memoryImage, fileName, m_dwColorKey, out _memoryImageTexture, out _memoryImageTextureId);
             }
             else
             {
-              frameCount = GUITextureManager.LoadFromMemoryEx(_memoryImage, fileName, m_dwColorKey, out _memoryImageTexture);
+              frameCount = GUITextureManager.LoadFromMemoryEx(_memoryImage, fileName, m_dwColorKey, out _memoryImageTexture, out _memoryImageTextureId);
             }
           }
           else
           {
-            frameCount = GUITextureManager.Load(fileName, m_dwColorKey, _iRotation, m_iRenderWidth, _textureHeight, _shouldCache);
+            frameCount = GUITextureManager.Load(fileName, m_dwColorKey, _iRotation, m_iRenderWidth, _textureHeight, _shouldCache, out _memoryImageTextureId);
           }
 
           if (frameCount == 0)
           {
             return; // unable to load texture
           }
+
+          this._cachedTextureDisposed = false;
 
           // get each frame of the texture
           int iStartCopy = 0;
@@ -1029,7 +1038,19 @@ namespace MediaPortal.GUI.Library
             if (frame != null)
             {
               frame.Disposed -= new EventHandler(OnListTexturesDisposedEvent);
-              ReleaseTexture(frame.ImageName);
+
+              
+
+              if (frame.ImageName == this._cachedTextureFileNameFinal)
+              {
+                ReleaseTexture(frame.ImageName, _memoryImageTextureId);
+                this._cachedTextureDisposed = true;
+              }
+              else
+              {
+                ReleaseTexture(frame.ImageName, -1);
+              }
+                
             }
           }
         }
@@ -1037,13 +1058,15 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    private void ReleaseTexture(string file)
+    private void ReleaseTexture(string file, int iId)
     {
       if (!string.IsNullOrEmpty(file))
       {
         if (GUITextureManager.IsTemporary(file))
         {
-          GUITextureManager.ReleaseTexture(file);
+          //Dispose the texture if not in use anywhere else only
+          //Otherwise we could fall into endless allocating-disposing loop of the same file (if used in another GUIImage)
+          GUITextureManager.ReleaseTexture(file, false, iId);
         }
       }
     }
@@ -1067,8 +1090,15 @@ namespace MediaPortal.GUI.Library
 
       lock (this._Padlock)
       {
-        ReleaseTexture(_cachedTextureFileNameFinal);
-        ReleaseTexture(_blendableFileName);
+        if (!this._cachedTextureDisposed)
+          ReleaseTexture(_cachedTextureFileNameFinal, _memoryImageTextureId);
+
+        if (!this._blendableTextureDisposed)
+          ReleaseTexture(_blendableFileName, -1);
+
+        this._cachedTextureDisposed = true;
+        this._blendableTextureDisposed = true;
+
         _cachedTextureFileName = string.Empty;
         _cachedTextureFileNameFinal = string.Empty;
       }
@@ -1698,7 +1728,10 @@ namespace MediaPortal.GUI.Library
               if (GUITextureManager.GetPackedTexture(_blendableFileName, out _blendabletexUoff, out _blendabletexVoff,
                                                       out _blendabletexUmax, out _blendabletexVmax, out _blendableTexWidth,
                                                       out _blendableTexHeight, out _blendableTexture,
-                                                      out _packedBlendableTextureNo)) { }
+                                                      out _packedBlendableTextureNo))
+              {
+                this._blendableTextureDisposed = false;
+              }
             }
             if (_packedBlendableTextureNo >= 0)
             {
@@ -1896,7 +1929,10 @@ namespace MediaPortal.GUI.Library
                 if (GUITextureManager.GetPackedTexture(_blendableFileName, out _blendabletexUoff, out _blendabletexVoff,
                                                         out _blendabletexUmax, out _blendabletexVmax, out _blendableTexWidth,
                                                         out _blendableTexHeight, out _blendableTexture,
-                                                        out _packedBlendableTextureNo)) { }
+                                                        out _packedBlendableTextureNo))
+                {
+                  this._blendableTextureDisposed = false;
+                }
               }
               if (_packedBlendableTextureNo >= 0)
               {
