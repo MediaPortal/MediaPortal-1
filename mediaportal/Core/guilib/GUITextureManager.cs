@@ -697,7 +697,49 @@ namespace MediaPortal.GUI.Library
 
         ImageInformation info2;
 
-        texture = Texture.FromFile(GUIGraphicsContext.DX9Device,
+        using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+        {
+          //Check for WebP
+          if (fs.Length >= 16)
+          {
+            byte[] header = new byte[16];
+            fs.Read(header, 0, 16);
+            fs.Position = 0;
+            if (System.Text.Encoding.ASCII.GetString(header, 8, 7).Equals("WEBPVP8"))
+            {
+              Log.Debug("TextureManager: LoadGraphic - WebP detected");
+              byte[] data = new byte[fs.Length];
+              fs.Read(data, 0, data.Length);
+              using (Bitmap bmp = Imaging.WebP.Decode(data))
+              {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                  bmp.Save(ms, ImageFormat.Bmp);
+                  ms.Position = 0;
+                  texture = Texture.FromStream(GUIGraphicsContext.DX9Device,
+                                           ms,
+                                           0, //size
+                                           0, 0, //width/height
+                                           1, //mipslevels
+                                           Usage.None, //Usage.Dynamic,
+                                           Format.A8R8G8B8,
+                                           GUIGraphicsContext.GetTexturePoolType(),
+                                           Filter.None,
+                                           Filter.None,
+                                           (int)lColorKey,
+                                           out info2);
+
+                }
+              }
+              width = info2.Width;
+              height = info2.Height;
+            }
+          }
+        }
+
+        if (texture == null)
+        {
+          texture = Texture.FromFile(GUIGraphicsContext.DX9Device,
                                          fileName,
                                          0, 0, //width/height
                                          1, //mipslevels
@@ -708,8 +750,9 @@ namespace MediaPortal.GUI.Library
                                          Filter.None,
                                          (int)lColorKey,
                                          out info2);
-        width = info2.Width;
-        height = info2.Height;
+          width = info2.Width;
+          height = info2.Height;
+        }
       }
       catch (InvalidDataException e1) // weird : should have been FileNotFoundException when file is missing ??
       {
@@ -797,7 +840,29 @@ namespace MediaPortal.GUI.Library
       {
         using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
         {
-          using (Image theImage = Image.FromStream(fs, true, false))
+          Image theImage = null;
+
+          //Check for WebP
+          if (fs.Length >= 16)
+          {
+            byte[] header = new byte[16];
+            fs.Read(header, 0, 16);
+            fs.Position = 0;
+            if (System.Text.Encoding.ASCII.GetString(header, 8, 7).Equals("WEBPVP8"))
+            {
+              Log.Debug("TextureManager: LoadGraphic - WebP detected");
+              byte[] data = new byte[fs.Length];
+              fs.Read(data, 0, data.Length);
+              theImage = Imaging.WebP.Decode(data);
+              if (theImage == null)
+                throw new Exception("Failed to load WebP image.");
+            }
+          }
+
+          if (theImage == null)
+            theImage = Image.FromStream(fs, true, false);
+
+          using (theImage)
           {
             if (theImage == null)
             {

@@ -812,6 +812,9 @@ Section "MediaPortal core files (required)" SecCore
      !endif
   !endif
   
+  ; LibWebP
+  File /oname=libwebp.dll "${git_MP}\MediaPortal.Base\3rd_party\libwebp_${Architecture}.dll"
+
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
@@ -1034,6 +1037,8 @@ SectionEnd
   Delete "$MPdir.Base\log4net.dll"
   Delete "$MPdir.Base\TsReader.ax"
   Delete "$MPdir.Base\cccp.ax"
+  ; LibWebP
+  Delete "$MPdir.Base\libwebp.dll"
   ; Shaders
   RMDir /r "$MPdir.Base\Shaders"
     
