@@ -55,6 +55,7 @@ namespace MediaPortal.Player
       RadioRecording,
       Music,
       Recording,
+      Online,
       Unknown
     };
 
@@ -1520,6 +1521,36 @@ namespace MediaPortal.Player
           return false;
         }
 
+      //Check if any plugin is able to handle the link
+      plugincheck:
+        foreach (GUIWindow plugin in PluginManager.GUIPlugins)
+        {
+          if (plugin is IPlayerService)
+          {
+            switch (((IPlayerService)plugin).GetPlaybackLink(strFile, out object result))
+            {
+              case PlayerServiceResultEnum.UrlLink:
+                if (!(result is string) || string.IsNullOrWhiteSpace((string)result))
+                {
+                  Log.Error("g_Player.Play() Link '{0}' handled by plugin ID {1} but returned invalid new link.", strFile, plugin.GetID);
+                  return false;
+                }
+
+                Log.Debug("g_Player.Play() Link '{0}' handled by plugin ID {1}. New link: '{2}'", strFile, plugin.GetID, result);
+                strFile = (string)result;
+                goto plugincheck;
+
+              case PlayerServiceResultEnum.PluginPlayback:
+                Log.Debug("g_Player.Play() Plugin {1} is able to handle link '{0}'. Redirecting...", strFile, plugin.GetID);
+                GUIWindowManager.ActivateWindow(plugin.GetID, result);
+                return true;
+
+              case PlayerServiceResultEnum.Error:
+                Log.Error("g_Player.Play() Plugin ID {1} can handle the link '{0}' but error has occured.", strFile, plugin.GetID);
+                return false;
+            }
+          }
+        }
         g_Player.SetResumeBDTitleState = title;
         bool UseEVRMadVRForTV = false;
         bool _NoBDMenu = false;
