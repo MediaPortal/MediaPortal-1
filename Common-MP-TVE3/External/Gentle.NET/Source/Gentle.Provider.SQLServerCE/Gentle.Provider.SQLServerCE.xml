@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gentle.Provider.SQLServerCE</name>
+    </assembly>
+    <members>
+        <member name="T:Gentle.Provider.SQLServerCE.NamespaceDoc">
+            <summary>
+            The <see cref="N:Gentle.Provider.SQLServerCE"/> namespace contains the provider 
+            files for supporting the MS SQL Server CE database backend.
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.SQLServerCE.SQLServerCEFactory">
+            <summary>
+            This class is an implementation of the <see cref="T:Gentle.Framework.GentleSqlFactory"/> class for the 
+            Microsoft SQL Server CE RDBMS.
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.SQLServerCE.SQLServerCEFactory.ReservedWords">
+            <summary>
+            Container class to test for existence of reserved words.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEFactory.ReservedWords.#ctor">
+            <summary>
+            Create a new <see cref="T:Gentle.Provider.SQLServerCE.SQLServerCEFactory.ReservedWords"/> instance and fill
+            internal <see cref="T:System.Collections.Hashtable"/> with reserved words for fast
+            retrieval.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEFactory.ReservedWords.IsReservedWord(System.String)">
+             <summary>
+             Determine if the specified token is a reserved word in the current
+             implementation. Works case insensitive.
+             </summary>
+             <param name="Token">The token that should be checked.</param>
+             <returns><see langword="true"/> if the specified token is a reseved
+             word, <see langword="false"/> if not.</returns>
+             <example>
+             The following call returns <see langword="false"/>:
+             <code>IsReservedWord("FIRSTNAME");</code>
+             The following call returns <see langword="true"/>:
+             <code>IsReservedWord("VARCHAR");</code>
+            </example>
+        </member>
+        <member name="F:Gentle.Provider.SQLServerCE.SQLServerCEFactory.ReservedWords.reservedWordsHashtable">
+            <summary>
+            <see cref="T:System.Collections.Hashtable"/> containing all reserved words for fast lookup.
+            </summary>
+        </member>
+        <member name="F:Gentle.Provider.SQLServerCE.SQLServerCEFactory.reservedWords">
+            <summary>
+            Static singleton instance for access to reserved words collection.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEFactory.GetDbType(System.Type)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEFactory.GetDbType(System.String,System.Boolean)">
+            <summary>
+            This method converts the given string (as extracted from the database system tables) 
+            to the corresponding type enumeration value. 
+            </summary>
+            <param name="dbType">The name of the type with the database engine used.</param>
+            <param name="isUnsigned">A boolean value indicating whether the type is unsigned. This
+            is not supported by most engines and/or data providers and is thus fairly useless at
+            this point.</param>
+            <returns>The value of the corresponding database type enumeration. The enum is converted
+            to its numeric (long) representation because each provider uses its own enum (and they
+            are not compatible with the generic DbType defined in System.Data).</returns>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEFactory.GetParameterPrefix">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEFactory.GetParameterSuffix">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEFactory.GetQuoteCharacter">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEFactory.GetIdentitySelect(System.String,Gentle.Framework.ObjectMap)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="P:Gentle.Provider.SQLServerCE.SQLServerCEFactory.Capabilities">
+            <summary>
+            Obtain an enum describing the supported database capabilities.  
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details.
+            Access/CE does not support Batch Command Processing, please refer to
+            http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpguide/html/cpconRetrievingIdentityOrAutonumberValues.asp
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEFactory.AddParameter(System.Data.IDbCommand,System.String,System.Int64)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEFactory.IsReservedWord(System.String)">
+            <summary>
+            Determine is a word is reserved and needs special quoting.
+            </summary>
+            <param name="word">The word that should be checked for.</param>
+            <returns><see langword="true"/> if the word is reserved.</returns>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEFactory.QuoteReservedWord(System.String)">
+            <summary>
+            Obtain a quoted version of the reserved word to allow the reserved word to be 
+            used in queries anyway. If a reserved word cannot be quoted this method should
+            raise an error informing the user that they need to pick a different name.
+            </summary>
+            <param name="word">The word that should be quoted to avoid errors.</param>
+            <returns>The given reserved word or field quoted to avoid errors.</returns>
+        </member>
+        <member name="T:Gentle.Provider.SQLServerCE.SQLServerCEProvider">
+            <summary>
+            This class is an implementation of the IGentleProvider and IPersistenceEngine 
+            interfaces for the Microsoft SQL Server CE RDBMS.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEProvider.#ctor(System.String)">
+            <summary>
+            Construct a new IGentleProvider instance for the MS SQL Server CE RDBMS.
+            </summary>
+            <param name="connectionString">The connection string to use for 
+            connecting to the database engine.</param>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEProvider.GetSqlFactory">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEProvider.GetAnalyzer">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEProvider.GetRenderer">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEProvider.GetCommand">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IPersistenceEngine"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServerCE.SQLServerCEProvider.GetConnection">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IPersistenceEngine"/> interface it implements for details. 
+            </summary>
+        </member>
+    </members>
+</doc>
