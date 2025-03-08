@@ -52,6 +52,8 @@ namespace MediaPortal.Services
         new ServiceCreatorCallback<IThreadPool>(ThreadPoolServiceRequested));
       _instance.Add<IHttpCachingService>(
         new ServiceCreatorCallback<IHttpCachingService>(HttpCachingServiceRequested));
+      _instance.Add<IImageLoadService>(
+        new ServiceCreatorCallback<IImageLoadService>(ImageLoadServiceRequested));
     }
 
     #endregion
@@ -151,6 +153,14 @@ namespace MediaPortal.Services
       services.Add<IHttpCachingService>(service);
       return service;
     }
+
+    private static IImageLoadService ImageLoadServiceRequested(ServiceProvider services)
+    {
+      ImageLoadService service = new ImageLoadService(Screen.PrimaryScreen.Bounds.Size);
+      services.Add<IImageLoadService>(service);
+      return service;
+    }
+
     #endregion
   }
 }

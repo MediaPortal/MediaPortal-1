@@ -132,6 +132,9 @@
     <Reference Include="MediaInfo.Wrapper, Version=21.9.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Packages\MediaInfo.Wrapper.21.9.3\lib\net40\MediaInfo.Wrapper.dll</HintPath>
     </Reference>
+    <Reference Include="MetadataExtractor, Version=2.8.0.0, Culture=neutral, PublicKeyToken=b66b5ccaf776c301, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\MetadataExtractor.2.8.0\lib\net35\MetadataExtractor.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -184,11 +187,15 @@
     <Compile Include="Localisation\StringsFile\StringLocalised.cs" />
     <Compile Include="Localisation\StringsFile\StringSection.cs" />
     <Compile Include="Localisation\StringsFile\StringFile.cs" />
+    <Compile Include="ServiceImplementations\ImageLoadService.cs" />
     <Compile Include="ServiceImplementations\Log.cs" />
     <Compile Include="ServiceImplementations\Log4NetWrapper.cs" />
     <Compile Include="ServiceImplementations\LogImpl.cs" />
     <Compile Include="Services\GlobalServiceProvider.cs" />
     <Compile Include="Services\ILog.cs" />
+    <Compile Include="Services\Imaging\IImageLoadService.cs" />
+    <Compile Include="Services\Imaging\ImageLoadEventArgs.cs" />
+    <Compile Include="Services\Imaging\ImageLoadEventHandler.cs" />
     <Compile Include="Services\IMediaInfoService.cs" />
     <Compile Include="Services\ISelectBDHandler.cs" />
     <Compile Include="Services\ISelectDVDHandler.cs" />
