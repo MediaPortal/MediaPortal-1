@@ -121,10 +121,16 @@ namespace SetupTv.Sections
             string line = reader.ReadLine();
             if (!line.StartsWith("#EXTM3U", StringComparison.InvariantCultureIgnoreCase))
               return mainUrl;
+            bool prevLineIsStreamInf = false;
 
             while ((line = reader.ReadLine()) != null)
             {
-              if (line != string.Empty && !line.StartsWith("#"))
+              if (line.StartsWith("#"))
+              {
+                prevLineIsStreamInf = line.StartsWith("#EXT-X-STREAM-INF");
+              }
+              else
+              if (line != string.Empty && prevLineIsStreamInf)
               {
                 int p = line.IndexOf('#');
                 if (p >= 0)
