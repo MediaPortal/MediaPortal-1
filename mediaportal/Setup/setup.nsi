@@ -638,6 +638,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\WindowPlugins\GUIDVD\bin\${BUILD_TYPE}\GUIDVD.dll"
   File "${git_MP}\WindowPlugins\GUIHome\bin\${BUILD_TYPE}\GUIHome.dll"
   File "${git_MP}\WindowPlugins\GUIMusic\bin\${BUILD_TYPE}\GUIMusic.dll"
+  File "${git_MP}\WindowPlugins\GUINotifier\bin\${BUILD_TYPE}\GUINotifier.dll"
   File "${git_MP}\WindowPlugins\GUISudoku\bin\${BUILD_TYPE}\GUISudoku.dll"
   File "${git_MP}\WindowPlugins\GUIPictures\bin\${BUILD_TYPE}\GUIPictures.dll"
   File "${git_MP}\WindowPlugins\GUIRSSFeed\bin\${BUILD_TYPE}\GUIRSSFeed.dll"
@@ -812,6 +813,9 @@ Section "MediaPortal core files (required)" SecCore
      !endif
   !endif
   
+  ; LibWebP
+  File /oname=libwebp.dll "${git_MP}\MediaPortal.Base\3rd_party\libwebp_${Architecture}.dll"
+
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
@@ -1013,6 +1017,7 @@ SectionEnd
   Delete "$MPdir.Plugins\Windows\GUIDVD.dll"
   Delete "$MPdir.Plugins\Windows\GUIHome.dll"
   Delete "$MPdir.Plugins\Windows\GUIMusic.dll"
+  Delete "$MPdir.Plugins\Windows\GUINotifier.dll"
   Delete "$MPdir.Plugins\Windows\GUISudoku.dll"
   Delete "$MPdir.Plugins\Windows\GUIPictures.dll"
   Delete "$MPdir.Plugins\Windows\GUIRSSFeed.dll"
@@ -1034,6 +1039,8 @@ SectionEnd
   Delete "$MPdir.Base\log4net.dll"
   Delete "$MPdir.Base\TsReader.ax"
   Delete "$MPdir.Base\cccp.ax"
+  ; LibWebP
+  Delete "$MPdir.Base\libwebp.dll"
   ; Shaders
   RMDir /r "$MPdir.Base\Shaders"
     
