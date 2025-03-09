@@ -960,6 +960,7 @@ namespace TvService
           // Init the TvController and start remoting
           _controller = new TVController();
           _controller.Init();
+          RemoteControl.InstanceLocal = _controller;
           StartRemoting();
 
           // Start the plugins
