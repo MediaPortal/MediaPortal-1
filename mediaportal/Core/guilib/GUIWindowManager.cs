@@ -817,6 +817,29 @@ namespace MediaPortal.GUI.Library
       ActivateWindow(windowId, replaceWindow, false, loadParameter, false, -1);
     }
 
+    /// <summary>
+    /// This function will show/present/activate the window specified
+    /// and pass a parameter to the window.
+    /// </summary>
+    /// <param name="windowId">window id of the window to activate</param>
+    /// <param name="loadParameter">a parameter object to pass to the new window</param>
+    public static void ActivateWindow(int windowId, object loadParameter)
+    {
+      ActivateWindow(windowId, false, false, loadParameter, false, -1);
+    }
+
+    /// <summary>
+    /// This function will show/present/activate the window specified
+    /// and pass a parameter to the window.
+    /// </summary>
+    /// <param name="windowId">window id of the window to activate</param>
+    /// <param name="loadParameter">a parameter object to pass to the new window</param>
+    /// <param name="bReplaceWindow">replace current window</param>  
+    public static void ActivateWindow(int windowId, object loadParameter, bool replaceWindow)
+    {
+      ActivateWindow(windowId, replaceWindow, false, loadParameter, false, -1);
+    }
+
     private static void RemoveDoubleHistory(int newWindow)
     {
       List<int> search = new List<int>();
@@ -861,7 +884,7 @@ namespace MediaPortal.GUI.Library
       ActivateWindow(newWindowId, replaceWindow, skipHistory, loadParameter, false, -1);
     }
 
-    private static void ActivateWindow(int newWindowId, bool replaceWindow, bool skipHistory, String loadParameter, bool skipAnimation, int focusControlId)
+    private static void ActivateWindow(int newWindowId, bool replaceWindow, bool skipHistory, object loadParameter, bool skipAnimation, int focusControlId)
     {
       _isSwitchingToNewWindow = true;
       try
@@ -973,10 +996,10 @@ namespace MediaPortal.GUI.Library
             OnActivateWindow(_activeWindowId);
           }
 
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _activeWindowId, 0, 0, _previousActiveWindowId,
-                                 (skipAnimation ? 1 : 0), loadParameter);
-            msg.Param3 = focusControlId;
-            newWindow.OnMessage(msg);
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _activeWindowId, 0, 0, _previousActiveWindowId,
+                               (skipAnimation ? 1 : 0), loadParameter);
+          msg.Param3 = focusControlId;
+          newWindow.OnMessage(msg);
         }
         else
         {
@@ -1351,13 +1374,13 @@ namespace MediaPortal.GUI.Library
     {
       /*
       // if there's a dialog, then render that
-			if (null!=_routedWindow)
-			{
+      if (null!=_routedWindow)
+      {
         _routedWindow.Render(timePassed);
         // and call postrender
         PostRender(timePassed);
-				return;
-			}*/
+        return;
+      }*/
 
       // else render the current active window
 
