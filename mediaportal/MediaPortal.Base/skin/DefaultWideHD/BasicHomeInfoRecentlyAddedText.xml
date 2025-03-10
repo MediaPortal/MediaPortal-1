@@ -1612,6 +1612,19 @@
             
           </control>
           <control>
+            <description>Updates label</description>
+            <type>label</type>
+            <id>0</id>
+            <posX>124</posX>
+            <posY>610</posY>
+            <width>1030</width>
+            <label>#(L(200052)):</label>
+            <textcolor>ff3399ff</textcolor>
+            <font>font11</font>
+            <align>left</align>
+            
+          </control>
+          <control>
             <description>Drive Free Space BG</description>
             <type>image</type>
             <id>0</id>

@@ -263,7 +263,7 @@
       <description>label ClickFinder</description>
       <type>label</type>
       <id>1</id>
-      <posX>1180</posX>
+      <posX>1120</posX> 
       <posY>1030</posY>
       <label>Clickfinder</label>
       <font>font10</font>
@@ -338,7 +338,7 @@
       <id>802</id>
       <posX>1150</posX>
       <posY>880</posY> 863
-      <width>360</width>
+      <width>340</width> 360
       <height>180</height> 180
       <textureHeight>40</textureHeight>
       <textXOff>-40</textXOff>

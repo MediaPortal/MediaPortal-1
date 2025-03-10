@@ -8,67 +8,70 @@
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>-90</posX>
-      <posY>787</posY>
-      <height>268</height>
-      <width>2200</width>
-      <texture>white.png</texture>
-      <colordiffuse>ff00061c</colordiffuse>
+      <posX>-100</posX>
+      <posY>718</posY>716
+      <height>345</height>
+      <width>2020</width>
+      <texture>Video_Tab_OSD_small.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
-      <description>background</description>
+      <description>Movie thumb</description>
       <type>image</type>
-      <id>1</id>
-      <posX>-90</posX>
-      <posY>787</posY>
-      <height>3</height>
-      <width>2200</width>
-      <texture>white.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>-90</posX>
-      <posY>1052</posY>
-      <height>3</height>
-      <width>2200</width>
-      <texture>white.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>background for black channelname</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>228</posX>
+      <id>202</id>
+      <posX>49</posX>
       <posY>726</posY>
-      <height>64</height>
-      <width>1284</width>
-      <texture>OSDBG7.png</texture>
+      <width>161</width> 157
+      <height>243</height> 243
+	  <keepaspectratio>yes</keepaspectratio>
+      <texture mask="picturecase_mask.png">#Play.Current.Thumb</texture>
       <colordiffuse>ff00061c</colordiffuse>
+      <visible>!control.hasfocus(1237)+control.hasthumb(203)</visible>
+    </control>
+    <control>
+      <description>Movie thumb</description>
+      <type>image</type>
+      <id>203</id>
+      <posX>51</posX>
+      <posY>728</posY>
+      <width>157</width>
+      <height>239</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture mask="picturecase_mask.png">#Play.Current.Thumb</texture>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
-      <description>background for black channelname</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>230</posX>
-      <posY>728</posY>
-      <height>60</height>
-      <width>1280</width>
-      <texture>OSDBG7.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
+      <description>Movie Name</description>
+      <id>36</id>
+      <type>fadelabel</type>
+      <posX>268</posX>
+      <posY>733</posY>
+      <width>1200</width>
+      <align>left</align>
+      <textcolor>lightgray</textcolor>
+      <font>LabelBold</font>
+      <label>#Play.Current.Title (#duration)</label>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
+    <control>
+      <description>Time Info</description>
+      <type>label</type>
+      <id>110</id>
+      <posX>1700</posX>
+      <posY>757</posY>
+      <width>180</width>
+      <label>#time</label>
+      <align>center</align>
+      <font>LabelBold</font>
+      <textcolor>white</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>TVSeries ClearArt</description>
       <type>image</type>
       <id>1009</id>
-      <posX>1522</posX>
+      <posX>1512</posX>
       <posY>691</posY>
       <width>172</width>
       <height>187</height>
@@ -77,22 +80,10 @@
       <visible>!control.hasfocus(1237)+[!control.hasthumb(1011)|!control.hasthumb(1012)]</visible>
     </control>
     <control>
-      <description>TVSeries ClearArt</description>
-      <type>image</type>
-      <id>1010</id>
-      <posX>1522</posX>
-      <posY>518</posY>
-      <width>172</width>
-      <height>187</height>
-      <keepaspectratio>yes</keepaspectratio>
-      <texture>#TVSeries.Play.ClearArt</texture>
-      <visible>control.hasfocus(1237)+[!control.hasthumb(1011)|!control.hasthumb(1012)]</visible>
-    </control>
-    <control>
       <description>Movies ClearArt (MyVideo)</description>
       <type>image</type>
       <id>1011</id>
-      <posX>1522</posX>
+      <posX>1512</posX>
       <posY>691</posY>
       <width>172</width>
       <height>187</height>
@@ -101,57 +92,21 @@
       <visible>!control.hasfocus(1237)+!string.equals(#Play.Current.IMDBNumber,)+[!control.hasthumb(1009)|!control.hasthumb(1010)]</visible>
     </control>
     <control>
-      <description>Movies ClearArt (MyVideo)</description>
-      <type>image</type>
-      <id>1012</id>
-      <posX>1522</posX>
-      <posY>518</posY>
-      <width>172</width>
-      <height>187</height>
-      <keepaspectratio>yes</keepaspectratio>
-      <texture>..\..\..\Thumbs\ClearArt\Movies\#Play.Current.IMDBNumber.png</texture>
-      <visible>control.hasfocus(1237)+!string.equals(#Play.Current.IMDBNumber,)+[!control.hasthumb(1009)|!control.hasthumb(1010)]</visible>
-    </control>
-    <control>
-      <description>Time BG</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>1704</posX>
-      <posY>726</posY>
-      <width>454</width>
-      <height>64</height>
-      <texture>OSDBG3.png</texture>
-      <colordiffuse>ff00061c</colordiffuse>
-      <visible>control.isvisible(110)</visible>
-    </control>
-    <control>
-      <description>Time BG</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>1706</posX>
-      <posY>728</posY>
-      <width>450</width>
-      <height>60</height>
-      <texture>OSDBG3.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-      <visible>control.isvisible(110)</visible>
-    </control>
-    <control>
-      <description>Time Info</description>
+      <description>Start Time Info</description>
       <type>label</type>
-      <id>110</id>
-      <posX>1898</posX>
-      <posY>738</posY>
-      <label>#time</label>
+      <id>0</id>
+      <posX>387</posX>
+      <posY>818</posY>
+      <label>#currentplaytime</label>
       <align>right</align>
       <font>LabelBold</font>
-      <textcolor>white</textcolor>
+      <textcolor>ffffffff</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>background</description>
       <type>image</type>
-      <id>1</id>
+      <id>105</id>
       <posX>413</posX>
       <posY>827</posY>
       <width>1242</width>
@@ -164,8 +119,8 @@
       <type>tvprogress</type>
       <id>1</id>
       <posX>413</posX>
-      <posY>831</posY>
-      <width>1240</width>
+      <posY>830</posY> 831
+      <width>1243</width> 1240
       <height>23</height>
       <toptexture>osd_progress_right.png</toptexture>
       <TextureOffsetY>24</TextureOffsetY>
@@ -196,7 +151,7 @@
       <description>End of progressbar</description>
       <type>label</type>
       <id>1</id>
-      <posX>1651</posX>
+      <posX>1647</posX>
       <posY>821</posY>
       <label>|</label>
       <align>left</align>
@@ -205,66 +160,14 @@
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
-      <description>Movie thumb</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>49</posX>
-      <posY>726</posY>
-      <width>161</width>
-      <height>243</height>
-      <texture mask="dvdcase_mask.png">#Play.Current.Thumb</texture>
-      <keepaspectratio>yes</keepaspectratio>
-      <colordiffuse>ff00061c</colordiffuse>
-      <animation effect="fade" time="100" reversible="true">visible</animation>
-      <visible>!control.hasfocus(1237)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
-    </control>
-    <control>
-      <description>Movie thumb</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>51</posX>
-      <posY>728</posY>
-      <width>157</width>
-      <height>239</height>
-      <texture mask="dvdcase_mask.png">#Play.Current.Thumb</texture>
-      <keepaspectratio>yes</keepaspectratio>
-      <animation effect="fade" time="100" reversible="true">visible</animation>
-      <visible>!control.hasfocus(1237)+![control.isvisible(400)|control.isvisible(800)|control.isvisible(550)|control.isvisible(700)|control.isvisible(600)]</visible>
-    </control>
-    <control>
-      <description>Movie Name</description>
-      <id>36</id>
-      <type>fadelabel</type>
-      <posX>258</posX>
-      <posY>735</posY>
-      <width>1230</width>
-      <align>left</align>
-      <textcolor>lightgray</textcolor>
-      <font>LabelBold</font>
-      <label>#Play.Current.Title</label>
-      <visible>!control.hasfocus(1237)</visible>
-    </control>
-    <control>
       <description>End Time Info</description>
       <type>label</type>
       <id>101</id>
       <posX>1687</posX>
-      <posY>813</posY>
+      <posY>818</posY>
       <label>#currentremaining</label>
       <align>left</align>
-      <font>Menutitle</font>
-      <textcolor>ffffffff</textcolor>
-      <visible>!control.hasfocus(1237)</visible>
-    </control>
-    <control>
-      <description>Start Time Info</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>387</posX>
-      <posY>813</posY>
-      <label>#currentplaytime</label>
-      <align>right</align>
-      <font>Menutitle</font>
+      <font>LabelBold</font>
       <textcolor>ffffffff</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
@@ -275,98 +178,41 @@
       <description>background</description>
       <type>image</type>
       <id>1236</id>
-      <posX>-90</posX>
-      <posY>613</posY>
-      <height>442</height>
-      <width>2200</width>
-      <texture>white.png</texture>
-      <colordiffuse>ff00061c</colordiffuse>
-      <visible>control.hasfocus(1237)</visible>
-    </control>
-    <control>
-      <description>background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>-90</posX>
-      <posY>613</posY>
-      <height>3</height>
-      <width>2200</width>
-      <texture>white.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
+      <posX>-100</posX>
+      <posY>547</posY>613
+      <height>513</height>
+      <width>2020</width>
+      <texture>Video_Tab_OSD_big.png</texture>
       <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
     </control>
     <control>
-      <description>background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>-90</posX>
-      <posY>1052</posY>
-      <height>3</height>
-      <width>2200</width>
-      <texture>white.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>Time BG</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>1704</posX>
-      <posY>552</posY>
-      <width>454</width>
-      <height>64</height>
-      <texture>OSDBG3.png</texture>
-      <colordiffuse>ff00061c</colordiffuse>
-      <visible>control.hasfocus(1237)</visible>
-    </control>
-    <control>
-      <description>Time BG</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>1706</posX>
-      <posY>554</posY>
-      <width>450</width>
-      <height>60</height>
-      <texture>OSDBG3.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
+      <description>Movie Name</description>
+      <id>36</id>
+      <type>fadelabel</type>
+      <posX>268</posX>
+      <posY>560</posY>
+      <height>57</height>
+      <width>1200</width>
+      <align>left</align>
+      <textcolor>lightgray</textcolor>
+      <font>LabelBold</font>
+      <label>#Play.Current.Title (#duration)</label>
       <visible>control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>Time Info</description>
       <type>label</type>
       <id>110</id>
-      <posX>1898</posX>
-      <posY>565</posY>
+      <posX>1700</posX>1898
+      <posY>584</posY>
+      <width>180</width>
       <label>#time</label>
-      <align>right</align>
+      <align>center</align>
       <font>LabelBold</font>
       <textcolor>white</textcolor>
       <visible>control.hasfocus(1237)</visible>
     </control>
-    <control>
-      <description>background</description>
-      <type>image</type>
-      <id>1236</id>
-      <posX>228</posX>
-      <posY>552</posY>
-      <height>64</height>
-      <width>1284</width>
-      <texture>osdbg7.png</texture>
-      <colordiffuse>ef00061c</colordiffuse>
-      <visible>control.hasfocus(1237)</visible>
-    </control>
-    <control>
-      <description>background</description>
-      <type>image</type>
-      <id>1236</id>
-      <posX>230</posX>
-      <posY>554</posY>
-      <height>60</height>
-      <width>1282</width>
-      <texture>osdbg7.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-      <visible>control.hasfocus(1237)</visible>
-    </control>
+    
     <control>
       <type>image</type>
       <id>1</id>
@@ -390,27 +236,14 @@
       <texture mask="picturecase_mask.png">#Play.Current.Thumb</texture>
       <visible>control.hasfocus(1237)</visible>
     </control>
+    
     <control>
-      <description>Movie Name</description>
-      <id>1</id>
-      <type>fadelabel</type>
-      <posX>258</posX>
-      <posY>563</posY>
-      <height>57</height>
-      <width>1230</width>
-      <align>left</align>
-      <textcolor>lightgray</textcolor>
-      <font>LabelBold</font>
-      <label>#Play.Current.Title</label>
-      <visible>control.hasfocus(1237)</visible>
-    </control>
-    <control Style="NoShadow">
       <description>Plot</description>
       <type>textboxscrollup</type>
       <id>1</id>
-      <posX>255</posX>
-      <posY>625</posY>
-      <height>230</height>
+      <posX>268</posX>
+      <posY>630</posY>
+      <height>280</height> 220
       <width>1600</width>
       <align>left</align>
       <label>#Play.Current.Plot</label>
@@ -418,13 +251,13 @@
       <textcolor>lightgray</textcolor>
       <scrollStartDelaySec>6</scrollStartDelaySec>
       <visible>control.hasfocus(1237)</visible>
-    </control>
+    </control>  
     <control>
       <description>divider horizontal</description>
       <type>image</type>
       <id>1</id>
       <posX>75</posX>
-      <posY>942</posY>
+      <posY>937</posY> 942
       <width>1790</width>
       <height>1</height>
       <texture>horizontalbar.png</texture>
@@ -434,7 +267,7 @@
     <import>common.osd.buttons.xml</import>
     <!--import>tvOSD.mediainfo.xml</import-->
   <!-- **************************** PAUSE, REWIND ETC.********************************** -->
-  <control>
+  <!--<control>
     <description>Pause image</description>
     <type>image</type>
     <id>16</id>
@@ -445,13 +278,13 @@
     <visible>player.paused</visible>
     <texture>video-pause.png</texture>
     <animation effect="zoom" start="100,100" end="115,115" time="500" condition="true" pulse="true">conditional</animation>
-  </control>
+  </control>-->
   <control>
     <description>2x image</description>
     <type>image</type>
     <id>17</id>
-    <posX>790</posX>
-    <posY>428</posY>
+    <posX>970</posX>
+    <posY>870</posY>
     <visible>player.forwarding2x</visible>
     <texture>video+2x.png</texture>
   </control>
@@ -459,8 +292,8 @@
     <description>4x image</description>
     <type>image</type>
     <id>18</id>
-    <posX>790</posX>
-    <posY>428</posY>
+    <posX>970</posX>
+    <posY>870</posY>
     <visible>player.forwarding4x</visible>
     <texture>video+4x.png</texture>
   </control>
@@ -468,8 +301,8 @@
     <description>8x image</description>
     <type>image</type>
     <id>19</id>
-    <posX>790</posX>
-    <posY>428</posY>
+    <posX>970</posX>
+    <posY>870</posY>
     <visible>player.forwarding8x</visible>
     <texture>video+8x.png</texture>
   </control>
@@ -477,8 +310,8 @@
     <description>16x image</description>
     <type>image</type>
     <id>20</id>
-    <posX>790</posX>
-    <posY>428</posY>
+    <posX>970</posX>
+    <posY>870</posY>
     <visible>player.forwarding16x</visible>
     <texture>video+16x.png</texture>
   </control>
@@ -486,8 +319,8 @@
     <description>32x image</description>
     <type>image</type>
     <id>21</id>
-    <posX>790</posX>
-    <posY>428</posY>
+    <posX>970</posX>
+    <posY>870</posY>
     <visible>player.forwarding32x</visible>
     <texture>video+32x.png</texture>
   </control>
@@ -495,8 +328,8 @@
     <description>- 2x image</description>
     <type>image</type>
     <id>23</id>
-    <posX>790</posX>
-    <posY>428</posY>
+    <posX>970</posX>
+    <posY>870</posY>
     <visible>player.rewinding2x</visible>
     <texture>video-2x.png</texture>
   </control>
@@ -504,8 +337,8 @@
     <description>- 4x image</description>
     <type>image</type>
     <id>24</id>
-    <posX>790</posX>
-    <posY>428</posY>
+    <posX>970</posX>
+    <posY>870</posY>
     <visible>player.rewinding4x</visible>
     <texture>video-4x.png</texture>
   </control>
@@ -513,8 +346,8 @@
     <description>- 8x image</description>
     <type>image</type>
     <id>25</id>
-    <posX>790</posX>
-    <posY>428</posY>
+    <posX>970</posX>
+    <posY>870</posY>
     <visible>player.rewinding8x</visible>
     <texture>video-8x.png</texture>
   </control>
@@ -522,8 +355,8 @@
     <description>- 16x image</description>
     <type>image</type>
     <id>26</id>
-    <posX>790</posX>
-    <posY>428</posY>
+    <posX>970</posX>
+    <posY>870</posY>
     <visible>player.rewinding16x</visible>
     <texture>video-16x.png</texture>
   </control>
@@ -531,8 +364,8 @@
     <description>- 32x image</description>
     <type>image</type>
     <id>27</id>
-    <posX>790</posX>
-    <posY>428</posY>
+    <posX>970</posX>
+    <posY>870</posY>
     <visible>player.rewinding32x</visible>
     <texture>video-32x.png</texture>
   </control>
@@ -543,8 +376,8 @@
     <description>Current recording count</description>
     <type>fadelabel</type>
     <id>1</id>
-    <posX>1093</posX>
-    <posY>965</posY>
+    <posX>1093</posX> 
+    <posY>985</posY>
     <width>50</width>
     <label>#latestMediaHandler.tvrecordings.active.count</label>
     <align>center</align>
@@ -568,8 +401,8 @@
     <description>Current channel</description>
     <type>fadelabel</type>
     <id>1</id>
-    <posX>200</posX>
-    <posY>1015</posY>
+    <posX>200</posX> 
+    <posY>1015</posY> 
     <width>600</width>
     <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
     <align>left</align>

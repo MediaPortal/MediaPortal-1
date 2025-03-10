@@ -9,87 +9,22 @@
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>-90</posX>
-      <posY>867</posY>
-      <height>198</height>
-      <width>2200</width>
-      <texture>white3.png</texture>
-      <colordiffuse>f200061c</colordiffuse>
-    </control>
-    <control>
-      <description>background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>-90</posX>
-      <posY>867</posY>
-      <height>3</height>
-      <width>2200</width>
-      <texture>white.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-    </control>
-    <control>
-      <description>background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>-90</posX>
-      <posY>1063</posY>
-      <height>3</height>
-      <width>2200</width>
-      <texture>white.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-    </control>
-    <control>
-      <description>background for black channelname</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>198</posX>
-      <posY>806</posY>
-      <height>64</height>
-      <width>454</width>
-      <texture>OSDBG3.png</texture>
-      <colordiffuse>f700061c</colordiffuse>
-    </control>
-    <control>
-      <description>background for black channelname</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>200</posX>
-      <posY>808</posY>
-      <height>60</height>
-      <width>450</width>
-      <texture>OSDBG3.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-    </control>
-    <control>
-      <description>Time BG</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1704</posX>
-      <posY>806</posY>
-      <width>454</width>
-      <height>64</height>
-      <texture>OSDBG3.png</texture>
-      <colordiffuse>f700061c</colordiffuse>
-    </control>
-    <control>
-      <description>Time BG</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1706</posX>
-      <posY>808</posY>
-      <width>450</width>
-      <height>60</height>
-      <texture>OSDBG3.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
+      <posX>-100</posX>
+      <posY>799</posY>
+      <height>271</height>
+      <width>2020</width>
+      <texture>TV_Tab_ZAP_OSD.png</texture>
+      <colordiffuse>f2ffffff</colordiffuse>
     </control>
     <control>
       <description>Time Info</description>
       <type>label</type>
       <id>110</id>
-      <posX>1898</posX>
-      <posY>818</posY>
+      <posX>1700</posX>
+      <posY>837</posY>
+      <width>180</width>
       <label>#time</label>
-      <align>right</align>
+      <align>center</align>
       <font>LabelBold</font>
       <textcolor>white</textcolor>
     </control>
@@ -104,7 +39,7 @@
       <keepaspectratio>yes</keepaspectratio>
       <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'tvlogoback.png','tvlogoback.png'))</texture>
       <colordiffuse>ff09173c</colordiffuse>
-	</control> 
+    </control>
     <control>
       <description>TV Logo</description>
       <type>image</type>
@@ -121,7 +56,7 @@
       <type>label</type>
       <id>35</id>
       <posX>227</posX>
-      <posY>818</posY>
+      <posY>813</posY>
       <width>440</width>
       <label>-</label>
       <align>left</align>
@@ -134,7 +69,7 @@
       <type>label</type>
       <id>1</id>
       <posX>265</posX>
-      <posY>818</posY>
+      <posY>813</posY>
       <width>440</width>
       <label>#TV.View.channel</label>
       <align>left</align>
@@ -156,7 +91,7 @@
       <description>progress bar</description>
       <type>progress</type>
       <id>20</id>
-      <posX>227</posX>
+      <posX>226</posX>
       <posY>941</posY>
       <width>1481</width>
       <offset>0</offset>
@@ -237,7 +172,7 @@
         <id>102</id>
         <width>100</width>
         <maxWidth>260</maxWidth>
-        <label> #scroll.wrap </label>
+        <label>#scroll.wrap</label>
         <align>left</align>
         <textcolor>lightgray</textcolor>
         <font>Label</font>
@@ -258,24 +193,12 @@
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>203</posX>
-      <posY>810</posY>
-      <width>58</width>
-      <height>56</height>
+      <posX>216</posX>
+      <posY>815</posY>
+      <width>45</width>
+      <height>45</height>
       <texture>tv_is_recording.png</texture>
     </control>
-    <!--control>
-      <description>Zap channel Background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>35</posX>
-      <posY>5</posY>
-      <width>92</width>
-      <height>92</height>
-      <texture>tvlogoback.png</texture>
-      <colordiffuse>ff1f3e70</colordiffuse>
-      <visible>string.contains(1234567890)</visible>
-    </control-->
     <control>
       <description>Zap to channel no</description>
       <type>label</type>
@@ -322,7 +245,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>225</posX>
-      <posY>1042</posY> 
+      <posY>1042</posY>
       <width>50</width>
       <label>#latestMediaHandler.tvrecordings.active.count</label>
       <align>center</align>

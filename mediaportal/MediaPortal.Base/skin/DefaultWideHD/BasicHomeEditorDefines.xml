@@ -271,7 +271,7 @@
   <define property="true" evaluateNow="true">#TV3.hyperlink:603</define>
   <define property="true" evaluateNow="true">#TV3.parameter:</define>
   <define property="true" evaluateNow="true">#TV3.hover:hover_mediaslayer.png</define>
-  <define property="true" evaluateNow="true">#TV3.background:BH tvrecordings.jpg</define>
+  <define property="true" evaluateNow="true">#TV3.background:BH_TVrecordings.jpg</define>
   <define property="true" evaluateNow="true">#TV3.iconfocus:tb_TV.png</define>
   <define property="true" evaluateNow="true">#TV3.iconnofocus:tb_TVNF.png</define>
   <define property="true" evaluateNow="true">#TV3:#(string.format('{0}',#TV3.name))</define>
