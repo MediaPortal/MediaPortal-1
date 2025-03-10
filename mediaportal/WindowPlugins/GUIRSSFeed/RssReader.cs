@@ -318,7 +318,10 @@ namespace Rss
                     break;
                   case "image":
                     image = new RssImage();
-                    channel.Image = image;
+                    if ((string)xmlNodeStack.Peek() == "item")
+                      item.Image = image;
+                    else
+                      channel.Image = image;
                     break;
                   case "textinput":
                     textInput = new RssTextInput();
