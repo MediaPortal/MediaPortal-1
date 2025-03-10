@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gentle.Provider.SQLServer</name>
+    </assembly>
+    <members>
+        <member name="T:Gentle.Provider.SQLServer.NamespaceDoc">
+            <summary>
+            The <see cref="N:Gentle.Provider.SQLServer"/> namespace contains the provider files for
+            supporting the MS SQL Server 7.0 and 2000 database backends.
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.SQLServer.SQL92Analyzer">
+            <summary>
+            This class is a caching database analyzer. When first created it will build a cache of
+            all found tables and populate an TableMap with as much information as is available.
+            This class has been tested only with MS SQL Server. While SQL92 is a standard it is 
+            likely that the contents returned by other databases (supporting the information_schema
+            views) will return different values. Whenever a difference is encountered the appropriate
+            methods for parsing the data should be added to the SqlFactory and descendants, keeping
+            this class as generic as possible.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQL92Analyzer.Analyze(System.String)">
+            <summary>
+            Please refer to the <see cref="T:Gentle.Framework.GentleAnalyzer"/> class and the <see cref="T:Gentle.Framework.IDatabaseAnalyzer"/> 
+            interface it implements a description of this method.
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.SQLServer.SQLServerAnalyzer">
+            <summary>
+            Placeholder class for when Sql92Analyzer is modified or when data needs custom parsing.
+            The current implementation merely reuses the Sql92Analyzer class.
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.SQLServer.SQLServerFactory">
+            <summary>
+            This class is an implementation of the <see cref="T:Gentle.Framework.GentleSqlFactory"/> class for the 
+            Microsoft SQL Server RDBMS.
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.SQLServer.SQLServerFactory.ReservedWords">
+            <summary>
+            Container class to test for existence of reserved words.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerFactory.ReservedWords.#ctor">
+            <summary>
+            Create a new <see cref="T:Gentle.Provider.SQLServer.SQLServerFactory.ReservedWords"/> instance and fill
+            internal <see cref="T:System.Collections.Hashtable"/> with reserved words for fast
+            retrieval.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerFactory.ReservedWords.IsReservedWord(System.String)">
+             <summary>
+             Determine if the specified token is a reserved word in the current
+             implementation. Works case insensitive.
+             </summary>
+             <param name="Token">The token that should be checked.</param>
+             <returns><see langword="true"/> if the specified token is a reseved
+             word, <see langword="false"/> if not.</returns>
+             <example>
+             The following call returns <see langword="false"/>:
+             <code>IsReservedWord("FIRSTNAME");</code>
+             The following call returns <see langword="true"/>:
+             <code>IsReservedWord("VARCHAR");</code>
+            </example>
+        </member>
+        <member name="F:Gentle.Provider.SQLServer.SQLServerFactory.ReservedWords.reservedWordsHashtable">
+            <summary>
+            <see cref="T:System.Collections.Hashtable"/> containing all reserved words for fast lookup.
+            </summary>
+        </member>
+        <member name="F:Gentle.Provider.SQLServer.SQLServerFactory.reservedWords">
+            <summary>
+            Static singleton instance for access to reserved words collection.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerFactory.GetDbType(System.Type)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerFactory.GetDbType(System.String,System.Boolean)">
+            <summary>
+            This method converts the given string (as extracted from the database system tables) 
+            to the corresponding type enumeration value. 
+            </summary>
+            <param name="dbType">The name of the type with the database engine used.</param>
+            <param name="isUnsigned">A boolean value indicating whether the type is unsigned. This
+            is not supported by most engines and/or data providers and is thus fairly useless at
+            this point.</param>
+            <returns>The value of the corresponding database type enumeration. The enum is converted
+            to its numeric (long) representation because each provider uses its own enum (and they
+            are not compatible with the generic DbType defined in System.Data).</returns>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerFactory.GetSystemType(System.Int64)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerFactory.GetParameterPrefix">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerFactory.GetQuoteCharacter">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerFactory.GetIdentitySelect(System.String,Gentle.Framework.ObjectMap)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerFactory.AddParameter(System.Data.IDbCommand,System.String,System.Int64)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerFactory.IsReservedWord(System.String)">
+            <summary>
+            Determine is a word is reserved and needs special quoting.
+            </summary>
+            <param name="word">The word that should be checked for.</param>
+            <returns><see langword="true"/> if the word is reserved.</returns>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerFactory.QuoteReservedWord(System.String)">
+            <summary>
+            Obtain a quoted version of the reserved word to allow the reserved word to be 
+            used in queries anyway. If a reserved word cannot be quoted this method should
+            raise an error informing the user that they need to pick a different name.
+            </summary>
+            <param name="word">The word that should be quoted to avoid errors.</param>
+            <returns>The given reserved word or field quoted to avoid errors.</returns>
+        </member>
+        <member name="T:Gentle.Provider.SQLServer.SQLServerProvider">
+            <summary>
+            This class is an implementation of the IGentleProvider and IPersistenceEngine 
+            interfaces for the Microsoft SQL Server RDBMS.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerProvider.#ctor(System.String)">
+            <summary>
+            Construct a new IGentleProvider instance for the MS SQL Server rdbms.
+            </summary>
+            <param name="connectionString">The connection string to use for 
+            connecting to the database engine.</param>
+        </member>
+        <member name="P:Gentle.Provider.SQLServer.SQLServerProvider.ProviderInformation">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerProvider.GetSqlFactory">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerProvider.GetAnalyzer">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerProvider.GetRenderer">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerProvider.GetCommand">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IPersistenceEngine"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLServer.SQLServerProvider.GetConnection">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IPersistenceEngine"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.SQLServer.SQLServerProviderInformation">
+            <summary>
+            The class encapsulates information about the underlying database provider,
+            as well as the logic to extract it.
+            </summary>
+        </member>
+        <member name="P:Gentle.Provider.SQLServer.SQLServerProviderInformation.Name">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.IProviderInformation"/>
+            for details.
+            </summary>
+        </member>
+        <member name="P:Gentle.Provider.SQLServer.SQLServerProviderInformation.Version">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.IProviderInformation"/>
+            for details.
+            </summary>
+        </member>
+    </members>
+</doc>

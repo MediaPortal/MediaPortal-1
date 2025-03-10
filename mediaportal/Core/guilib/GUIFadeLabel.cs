@@ -67,6 +67,13 @@ namespace MediaPortal.GUI.Library
     private GUILabelControl _labelControl;
     private GUIFont _font;
 
+    private System.Text.StringBuilder _SbScrollText = new System.Text.StringBuilder(128);
+    private string _ScrollText = null;
+    private string _TextLast = null;
+    private string _TextOrig = null;
+    private float _TextWidth = 0;
+    private float _CharWidthCurrent = -1;
+
     public GUIFadeLabel(int dwParentID) : base(dwParentID) {}
 
     /// <summary>
@@ -234,6 +241,7 @@ namespace MediaPortal.GUI.Library
         {
           _currentLabelIndex = 0;
           _scrollPosition    = 0;
+          _TextLast = null;
           _scrollPosititionX = 0;
           _scrollOffset      = 0;
           _currentFrame      = 0;
@@ -372,6 +380,7 @@ namespace MediaPortal.GUI.Library
         {
           _currentLabelIndex = 0;
           _scrollPosition    = 0;
+          _SbScrollText.Clear();
           _scrollPosititionX = 0;
           _scrollOffset      = 0;
           _currentFrame      = 0;
@@ -383,6 +392,7 @@ namespace MediaPortal.GUI.Library
         {
           _currentLabelIndex++;
           _scrollPosition    = 0;
+          _SbScrollText.Clear();
           _scrollPosititionX = 0;
           _scrollOffset      = 0;
           _currentFrame      = 0;
@@ -420,6 +430,7 @@ namespace MediaPortal.GUI.Library
           _listLabels.DisposeAndClearList();
           _currentLabelIndex = 0;
           _scrollPosition = 0;
+          _TextLast = null;
           _scrollPosititionX = 0;
           _scrollOffset = 0.0f;
           _fadeIn = _allowFadeIn;
@@ -438,6 +449,7 @@ namespace MediaPortal.GUI.Library
           _listLabels.DisposeAndClearList();
           _currentLabelIndex = 0;
           _scrollPosition = 0;
+          _TextLast = null;
           _scrollPosititionX = 0;
           _scrollOffset = 0.0f;
           _fadeIn = _allowFadeIn;
@@ -480,22 +492,30 @@ namespace MediaPortal.GUI.Library
         text += _wrapString;
       }
 
-      // get the text dimensions.
-      float textWidth  = 0;
-      float textHeight = 0;
-      _font.GetTextExtent(text, ref textWidth, ref textHeight);
-
-      // scroll
-      string originalText = text;
-      do
+      if (_TextLast == null || _TextLast != text)
       {
-        _font.GetTextExtent(originalText, ref textWidth, ref textHeight);
-        originalText += (!string.IsNullOrEmpty(_labelTail) ? _labelTail : " ");
-      } while (textWidth > 0 && textWidth < maxRenderWidth);
+        _CharWidthCurrent = -1;
+        _TextLast = text;
+        _SbScrollText.Clear();
+
+        // get the text dimensions.
+        float textHeight = 0;
+        _font.GetTextExtent(text, ref _TextWidth, ref textHeight);
+
+        // scroll
+        _TextOrig = text;
+
+        string strTail = !string.IsNullOrEmpty(_labelTail) ? _labelTail : " ";
+        do
+        {
+          _font.GetTextExtent(_TextOrig, ref _TextWidth, ref textHeight);
+          _TextOrig += strTail;
+        } while (_TextWidth > 0 && _TextWidth < maxRenderWidth);
+      }
 
       if (_timeElapsed > _scrollStartDelay)
       {
-        string scrollText = string.Empty;
+        //_SbScrollText.Clear();
 
         if (_allowScrolling)
         {
@@ -512,43 +532,51 @@ namespace MediaPortal.GUI.Library
           }
         }
 
-        float fWidth = 0;
-        float fHeight = 0;
-        string tempText = _scrollPosition >= originalText.Length ? (!string.IsNullOrEmpty(_labelTail) ? _labelTail : " ") : originalText.Substring(_scrollPosition, 1);
-        _font.GetTextExtent(tempText, ref fWidth, ref fHeight);
+        bool bWrapAround = WrapAround();
+        float fWidth = _CharWidthCurrent;
+        if (fWidth < 0)
+        {
+          float fHeight = 0;
+          string tempText = _scrollPosition >= _TextOrig.Length ? (!string.IsNullOrEmpty(_labelTail) ? _labelTail : " ") : _TextOrig.Substring(_scrollPosition, 1);
+          _font.GetTextExtent(tempText, ref fWidth, ref fHeight);
+          _CharWidthCurrent = fWidth;
+        }
 
         if (_scrollPosititionX - _scrollOffset >= fWidth)
         {
+          _SbScrollText.Clear();
+          _CharWidthCurrent = -1;
           _scrollPosition++;
           if (_scrollPosition > text.Length)
           {
             _scrollPosition = 0;
             result = true;
-            if (!WrapAround())
-            {
+            if (!bWrapAround)
                return result;
-            }
           }
           _scrollOffset += fWidth;
         }
 
-        int wrapPosition = 0;
-        for (int i = 0; i < originalText.Length; i++)
+        if (_SbScrollText.Length == 0 && _TextOrig.Length > 0)
         {
-          if (_scrollPosition + i < originalText.Length)
+          int wrapPosition = 0;
+          char cTail = !string.IsNullOrEmpty(_labelTail) && _labelTail.Length == 1 ? _labelTail[0] : ' ';
+          for (int i = 0; i < _TextOrig.Length; i++)
           {
-            scrollText += originalText[i + _scrollPosition];
+            if (_scrollPosition + i < _TextOrig.Length)
+              _SbScrollText.Append(_TextOrig[i + _scrollPosition]);
+            else
+              _SbScrollText.Append(bWrapAround ? _TextOrig[wrapPosition++] : cTail);
           }
-          else
-          {
-            scrollText += WrapAround() ? originalText[wrapPosition++] : (!string.IsNullOrEmpty(_labelTail) && _labelTail.Length == 1 ? _labelTail[0] : ' ');
-          }
+
+         _ScrollText = _SbScrollText.Append(' ').ToString();
         }
 
         _labelControl.TextAlignment = Alignment.ALIGN_LEFT;
         _labelControl.TextVAlignment = _textVAlignment;
         _labelControl.TrimText = false;
-        _labelControl.Label = scrollText + " "; // Fade end of text in GUILabel...
+        _labelControl.Label = _ScrollText; // Fade end of text in GUILabel...
+
         if (_maxWidth > 0)
         {
           _labelControl.MinWidth = MinWidth;
@@ -566,7 +594,7 @@ namespace MediaPortal.GUI.Library
         switch (_textAlignment)
         {
           case Alignment.ALIGN_RIGHT:
-            xoff = textWidth >= maxRenderWidth ? -1 * maxRenderWidth : 0;
+            xoff = _TextWidth >= maxRenderWidth ? -1 * maxRenderWidth : 0;
             xclipoff = xoff;
             xpos = positionX + xoff - _scrollPosititionX + _scrollOffset;
             _labelControl.SetPosition((int)xpos, (int)positionY);
@@ -575,8 +603,8 @@ namespace MediaPortal.GUI.Library
           case Alignment.ALIGN_CENTER:
             _labelControl.TextVAlignment = VAlignment.ALIGN_TOP;
             xpos = positionX - _scrollPosititionX + _scrollOffset;
-            xoff = System.Math.Max(0 ,(maxRenderWidth - textWidth) / 2);
-            double yoff = (Height - textHeight) / 2;
+            xoff = System.Math.Max(0 ,(maxRenderWidth - _TextWidth) / 2);
+            double yoff = (Height - _TextWidth) / 2;
             _labelControl.SetPosition((int)(xpos + xoff), (int)(positionY + yoff));
             break;
 
@@ -601,7 +629,7 @@ namespace MediaPortal.GUI.Library
         _labelControl.TextAlignment = _textAlignment;
         _labelControl.TextVAlignment = _textVAlignment;
         _labelControl.TrimText = true;
-        _labelControl.Label = originalText;
+        _labelControl.Label = _TextOrig;
 
         if (_maxWidth > 0)
         {
@@ -696,6 +724,7 @@ namespace MediaPortal.GUI.Library
       _listLabels.DisposeAndClearList();
       _currentFrame = 0;
       _scrollPosition = 0;
+      _TextLast = null;
       _scrollPosititionX = 0;
       _scrollOffset = 0.0f;
       _timeElapsed = 0.0f;

@@ -30,60 +30,61 @@
       <texture>general_overlay.png</texture>
     </control>
     <control>
-      <description>Image Overlay Top</description>
-      <id>0</id>
+      <description>Title background image all screens except all games</description>
       <type>image</type>
-      <posx>0</posx>
-      <posy>0</posy>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
       <width>1920</width>
-      <height>1080</height>
-      <texture>backgroundtop.png</texture>
-      <colordiffuse>ccffffff</colordiffuse>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <height>379</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
     </control>
     <control>
       <type>fadelabel</type>
       <description>mvCentral Title</description>
       <id>0</id>
-      <posX>90</posX>
-      <posY>40</posY>
+      <posX>45</posX>
+      <posY>54</posY>
       <width>1200</width>
-      <font>Menutitle</font>
+      <font>Label</font>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
-      <shadowColor>#shadow.dark</shadowColor>
+      <shadowColor>black</shadowColor>
       <align>left</align>
       <visible>yes</visible>
-      <label>mvCentral - SmartDJ</label>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <label>mvCentral #scroll.wrap SmartDJ</label>
+      
     </control>
     <control>
       <type>fadelabel</type>
       <description>SmartDJ Mode</description>
       <id>0</id>
-      <posX>90</posX>
-      <posY>97</posY>
+      <posX>45</posX>
+      <posY>94</posY>
       <width>900</width>
-      <font>font12</font>
+      <font>Label</font>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
-      <shadowColor>#shadow.dark</shadowColor>
+      <shadowColor>black</shadowColor>
       <align>left</align>
       <visible>yes</visible>
       <label>#mvCentral.SmartDJ.Mode</label>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
+      
     </control>
     <control>
       <type>label</type>
       <description>Artists in Playlist</description>
       <id>37</id>
       <posX>1866</posX>
-      <posY>90</posY>
+      <posY>45</posY>
       <width>1050</width>
       <font>font10</font>
       <label />
       <align>right</align>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>black</shadowColor>
     </control>
     <!-- ***************************************** -->
     <!--               Hidden Menu                 -->
@@ -243,7 +244,7 @@
         <id>30</id>
         <posX>90</posX>
         <posY>300</posY>
-        <width>930</width>
+        <width>930</width><textureFocus>setting_button_long.png</textureFocus>
         <onleft>20</onleft>
         <onright>50</onright>
         <onup>20</onup>
@@ -256,7 +257,7 @@
         <id>31</id>
         <posX>90</posX>
         <posY>360</posY>
-        <width>930</width>
+        <width>930</width><textureFocus>setting_button_long.png</textureFocus>
         <onleft>20</onleft>
         <onright>50</onright>
         <onup>30</onup>
@@ -269,7 +270,7 @@
         <id>32</id>
         <posX>90</posX>
         <posY>420</posY>
-        <width>930</width>
+        <width>930</width><textureFocus>setting_button_long.png</textureFocus>
         <onleft>20</onleft>
         <onright>50</onright>
         <onup>31</onup>
@@ -282,7 +283,7 @@
         <id>33</id>
         <posX>90</posX>
         <posY>480</posY>
-        <width>930</width>
+        <width>930</width><textureFocus>setting_button_long.png</textureFocus>
         <onleft>20</onleft>
         <onright>50</onright>
         <onup>32</onup>
@@ -295,7 +296,7 @@
         <id>34</id>
         <posX>90</posX>
         <posY>540</posY>
-        <width>930</width>
+        <width>930</width><textureFocus>setting_button_long.png</textureFocus>
         <onleft>20</onleft>
         <onright>50</onright>
         <onup>33</onup>
@@ -308,7 +309,7 @@
         <id>35</id>
         <posX>90</posX>
         <posY>600</posY>
-        <width>930</width>
+        <width>930</width><textureFocus>setting_button_long.png</textureFocus>
         <onleft>20</onleft>
         <onright>50</onright>
         <onup>34</onup>

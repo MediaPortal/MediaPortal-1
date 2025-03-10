@@ -1,38 +1,43 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+
 <window>
   <id>10</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <define>#header.label:6023</define>
+  <define>#header.hover:hover_settings.png</define>
+  <define>#itemcount:</define>
   <controls>
-    <import>common.settings.xml</import>
-    <import>common.time.xml</import>
     <control>
-      <description>calibration image</description>
       <type>image</type>
+      <description>BG</description>
       <id>1</id>
       <width>1920</width>
       <height>1080</height>
-      <texture>settingsUICalibration.png</texture>
+      <texture>testbild.jpg</texture>
+      <colordiffuse>90ffffff</colordiffuse>
     </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>rectangle image</description>
       <type>image</type>
       <id>1</id>
-      <posX>630</posX>
-      <posY>475</posY>
-      <texture>list_sub_focus.png</texture>
+      <posX>584</posX>
+      <posY>366</posY>
+      <width>742</width>
+      <height>250</height>
+      <texture>settingsbg.png</texture>
     </control>
     <control>
       <description>coordinates label</description>
       <type>label</type>
       <id>2</id>
-      <posX>825</posX>
-      <posY>522</posY>
+      <posX>843</posX>
+      <posY>471</posY>
       <label>5</label>
-      <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <font>RSS</font>
+      <textcolor>dodgerblue</textcolor>
     </control>
   </controls>
 </window>

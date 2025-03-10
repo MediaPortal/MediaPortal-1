@@ -38,7 +38,7 @@
       <label>Skype        #Skype4MP.User.Name - #Skype4MP.User.Status</label>
       <font>font12</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <id>1</id>
@@ -60,7 +60,7 @@
       <align>left</align>
       <font>font10</font>
       <label>#Skype4MP.User.MoodText</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <!-- *** FACADE *** -->
     <control>
@@ -263,7 +263,7 @@
       <label>#Skype.ContactInfos.Name</label>
       <font>font12</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Contact Mood Text</description>
@@ -275,7 +275,7 @@
       <label>#Skype4MP.ContactInfos.MoodText</label>
       <font>font11</font>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <type>group</type>
@@ -290,7 +290,7 @@
         <label>686</label>
         <font>font11</font>
         <height>34</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <description>Country Label</description>
@@ -301,7 +301,7 @@
         </label>
         <font>font11</font>
         <height>34</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <description>City Label</description>
@@ -310,7 +310,7 @@
         <label>#(L(1028)):</label>
         <font>font11</font>
         <height>34</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <description>Province Label</description>
@@ -319,7 +319,7 @@
         <label>Province:</label>
         <font>font11</font>
         <height>34</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <description>Gender Label</description>
@@ -328,7 +328,7 @@
         <label>Gender:</label>
         <font>font11</font>
         <height>34</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <description>Homepage Label</description>
@@ -337,7 +337,7 @@
         <label>Homepage:</label>
         <font>font11</font>
         <height>34</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <description>Status Label</description>
@@ -346,7 +346,7 @@
         <label>#(L(126)):</label>
         <font>font11</font>
         <height>34</height>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
     </control>
     <control>
@@ -362,7 +362,7 @@
         <label>#Skype.ContactInfos.Birthdate</label>
         <font>font11</font>
         <height>34</height>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <description>Country</description>
@@ -371,7 +371,7 @@
         <label>#Skype.ContactInfos.Country</label>
         <font>font11</font>
         <height>34</height>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <description>City</description>
@@ -380,7 +380,7 @@
         <label>#Skype.ContactInfos.City</label>
         <font>font11</font>
         <height>34</height>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <description>Province</description>
@@ -389,7 +389,7 @@
         <label>#Skype.ContactInfos.Province</label>
         <font>font11</font>
         <height>34</height>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
         <width>702</width>
       </control>
       <control>
@@ -399,7 +399,7 @@
         <label>#Skype.ContactInfos.Sex</label>
         <font>font11</font>
         <height>34</height>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <description>homepage</description>
@@ -408,7 +408,7 @@
         <label>#Skype.ContactInfos.HomePage</label>
         <font>font11</font>
         <height>34</height>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <description>Status</description>
@@ -418,7 +418,7 @@
         <font>font11</font>
         <height>34</height>
         <width>379</width>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
     </control>
     <control>

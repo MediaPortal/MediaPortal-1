@@ -18,17 +18,28 @@
       <texture>BH Worldmap.jpg</texture>
       <colordiffuse>60ffffff</colordiffuse>
     </control>
-    <import>common.window.xml</import>
+    <control>
+      <description>Title background image all screens except all games</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>379</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
     <control>
       <type>label</type>
       <id>1</id>
       <posX>45</posX>
-      <posY>15</posY>
+      <posY>54</posY>
       <label>World Clock</label>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <!-- *** Main Clock *** -->
     <control>
@@ -375,7 +386,7 @@
       <align>center</align>
       <label>#WorldClock.AdditionalClock1Location</label>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#WorldClock.AdditionalClock1Enabled,true)</visible>
     </control>
     <control>
@@ -387,7 +398,7 @@
       <align>center</align>
       <label>#WorldClock.AdditionalClock1Date</label>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#WorldClock.AdditionalClock1Enabled,true)</visible>
     </control>
     <control>
@@ -541,7 +552,7 @@
       <align>center</align>
       <label>#WorldClock.AdditionalClock2Location</label>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#WorldClock.AdditionalClock2Enabled,true)</visible>
     </control>
     <control>
@@ -553,7 +564,7 @@
       <align>center</align>
       <label>#WorldClock.AdditionalClock2Date</label>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#WorldClock.AdditionalClock2Enabled,true)</visible>
     </control>
     <control>
@@ -707,7 +718,7 @@
       <align>center</align>
       <label>#WorldClock.AdditionalClock3Location</label>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#WorldClock.AdditionalClock3Enabled,true)</visible>
     </control>
     <control>
@@ -719,7 +730,7 @@
       <align>center</align>
       <label>#WorldClock.AdditionalClock3Date</label>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#WorldClock.AdditionalClock3Enabled,true)</visible>
     </control>
     <control>
@@ -873,7 +884,7 @@
       <align>center</align>
       <label>#WorldClock.AdditionalClock4Location</label>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#WorldClock.AdditionalClock4Enabled,true)</visible>
     </control>
     <control>
@@ -885,7 +896,7 @@
       <align>center</align>
       <label>#WorldClock.AdditionalClock4Date</label>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#WorldClock.AdditionalClock4Enabled,true)</visible>
     </control>
     <control>
@@ -1039,7 +1050,7 @@
       <align>center</align>
       <label>#WorldClock.AdditionalClock5Location</label>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#WorldClock.AdditionalClock5Enabled,true)</visible>
     </control>
     <control>
@@ -1051,7 +1062,7 @@
       <align>center</align>
       <label>#WorldClock.AdditionalClock5Date</label>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#WorldClock.AdditionalClock5Enabled,true)</visible>
     </control>
     <control>

@@ -21,15 +21,36 @@
       <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>Trakt.Common.Fanart.xml</import>
-    <import>common.window.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
     <import>common.time.xml</import>
     <import>Trakt.Common.xml</import>
+    <control>
+      <description>Current View</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <width>1299</width>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>  
+      <label>Trakt #scroll.wrap #Trakt.Translation.Settings.Label</label>
+      <align>left</align>
+    </control>
     <control>
       <type>group</type>
       <description>group element</description>
       <posX>525</posX>
-      <posY>241</posY>
-      <width>559</width>
+      <posY>300</posY>
+      <width>560</width><textureFocus>setting_button_medium.png</textureFocus>
       <height>568</height>
       <layout>StackLayout(Vertical)</layout>
       <control>
@@ -37,7 +58,7 @@
         <description>Account Setup</description>
         <id>2</id>
         <onup>17</onup>
-        <width>559</width>
+        <width>560</width><textureFocus>setting_button_medium.png</textureFocus>
         <label>#Trakt.Translation.AccountSetup.Label</label>
         <hyperlink>87279</hyperlink>
         <onleft>#defaultcontrol.onleft</onleft>
@@ -46,7 +67,7 @@
         <type>button</type>
         <description>Plugin Setup</description>
         <id>3</id>
-        <width>559</width>
+        <width>560</width><textureFocus>setting_button_medium.png</textureFocus>
         <label>#Trakt.Translation.Plugins.Label</label>
         <hyperlink>87273</hyperlink>
         <onleft>#defaultcontrol.onleft</onleft>
@@ -55,7 +76,7 @@
         <type>button</type>
         <description>General Settings</description>
         <id>4</id>
-        <width>559</width>
+        <width>560</width><textureFocus>setting_button_medium.png</textureFocus>
         <label>#Trakt.Translation.General.Label</label>
         <hyperlink>87274</hyperlink>
         <onleft>#defaultcontrol.onleft</onleft>
@@ -65,7 +86,7 @@
         <type>button</type>
         <description>MPEICONFIGURE:a9c3845a_8718_4712_85cc_26f56520bb9a</description>
         <id>1000</id>
-        <width>559</width>
+        <width>560</width><textureFocus>setting_button_medium.png</textureFocus>
         <label>#Trakt.Translation.AdvancedSettings.Label</label>
         <onleft>#defaultcontrol.onleft</onleft>
         <ondown>2</ondown>

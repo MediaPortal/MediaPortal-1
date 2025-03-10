@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>49850</id>
@@ -28,7 +28,7 @@
       <label>752</label>
       <font>font16</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#selecteditem,)</visible>
     </control>
     <control>
@@ -169,7 +169,7 @@
         <posX>240</posX>
         <posY>660</posY>
         <width>1590</width>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <label>#TV.Search.Channel  |  #TV.Search.Time  |  #TV.Search.Genre</label>
         <font>font12</font>
       </control>
@@ -183,7 +183,7 @@
         <label>#TV.Search.Title</label>
         <align>left</align>
         <font>font14</font>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <description>Current program Genre</description>
@@ -194,7 +194,7 @@
         <width>1020</width>
         <label>#TV.Search.Genre</label>
         <font>font10</font>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
         <visible>!string.equals(#TV.Search.Genre,-)</visible>
       </control>
       <control>

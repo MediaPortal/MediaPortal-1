@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
@@ -51,7 +51,7 @@
       <label>#currentplaytime</label>
       <align>right</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>player.HasVideo</visible>
     </control>
     <control>
@@ -62,7 +62,7 @@
       <posY>1015</posY>
       <width>420</width>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#Play.Current.Title</label>
       <wrapString> :.:  </wrapString>
       <visible>player.HasVideo</visible>

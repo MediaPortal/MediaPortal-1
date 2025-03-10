@@ -67,7 +67,7 @@
       <posY>675</posY>
       <label>4519</label>
       <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <type>fadelabel</type>

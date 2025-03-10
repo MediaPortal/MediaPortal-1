@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gentle.Provider.Sybase</name>
+    </assembly>
+    <members>
+        <member name="T:Gentle.Provider.Sybase.NamespaceDoc">
+            <summary>
+            The <see cref="N:Gentle.Provider.Sybase"/> namespace contains the provider files for
+            supporting the Sybase ASE database backend.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Sybase.SybaseAnalyzer.Analyze(System.String)">
+            <summary>
+            Please refer to the <see cref="T:Gentle.Framework.GentleAnalyzer"/> class and the <see cref="T:Gentle.Framework.IDatabaseAnalyzer"/> 
+            interface it implements a description of this method.
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.Sybase.SybaseFactory">
+            <summary>
+            This class is an implementation of the <see cref="T:Gentle.Framework.GentleSqlFactory"/> class for the 
+            Sybase Asa Database.
+            </summary>
+        </member>
+        <member name="F:Gentle.Provider.Sybase.SybaseFactory.reservedWords">
+            <summary>
+            This is the list of reserved words in Sybase SQL Anywhere. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Sybase.SybaseFactory.GetDbType(System.Type)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Sybase.SybaseFactory.GetDbType(System.String,System.Boolean)">
+            <summary>
+            This method converts the given string (as extracted from the database system tables) 
+            to the corresponding type enumeration value. 
+            </summary>
+            <param name="dbType">The name of the type with the database engine used.</param>
+            <param name="isUnsigned">A boolean value indicating whether the type is unsigned. This
+            is not supported by most engines and/or data providers and is thus fairly useless at
+            this point.</param>
+            <returns>The value of the corresponding database type enumeration. The enum is converted
+            to its numeric (long) representation because each provider uses its own enum (and they
+            are not compatible with the generic DbType defined in System.Data).</returns>
+        </member>
+        <member name="M:Gentle.Provider.Sybase.SybaseFactory.GetParameterPrefix">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Sybase.SybaseFactory.GetQuoteCharacter">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Sybase.SybaseFactory.GetIdentitySelect(System.String,Gentle.Framework.ObjectMap)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="P:Gentle.Provider.Sybase.SybaseFactory.SupportsBatchCommandProcessing">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details.
+            Sybase ASA Data Provider does not support BatchCommandProcessing
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Sybase.SybaseFactory.AddParameter(System.Data.IDbCommand,System.String,System.Int64)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Sybase.SybaseFactory.IsReservedWord(System.String)">
+            <summary>
+            Determine is a word is reserved and needs special quoting.
+            </summary>
+            <returns>True if the word is reserved</returns>
+        </member>
+        <member name="T:Gentle.Provider.Sybase.SybaseProvider">
+            <summary>
+            This class is an implementation of the GentleProvider class for Sybase.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Sybase.SybaseProvider.#ctor(System.String)">
+            <summary>
+            Construct a new IGentleProvider instance for Sybase.
+            </summary>
+            <param name="connectionString">The connection string to use for 
+            connecting to the database engine.</param>
+        </member>
+        <member name="M:Gentle.Provider.Sybase.SybaseProvider.GetSqlFactory">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Sybase.SybaseProvider.GetAnalyzer">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Sybase.SybaseProvider.GetRenderer">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Sybase.SybaseProvider.GetCommand">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IPersistenceEngine"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Sybase.SybaseProvider.GetConnection">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IPersistenceEngine"/> interface it implements for details. 
+            </summary>
+        </member>
+    </members>
+</doc>

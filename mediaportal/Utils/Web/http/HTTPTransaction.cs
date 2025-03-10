@@ -91,6 +91,11 @@ namespace MediaPortal.Utils.Web
       return Transaction(request);
     }
 
+    public bool HTTPGet(HTTPRequest request, string strFilePath)
+    {
+      return Transaction(request, strFilePath);
+    }
+
     /// <summary>
     /// Sets the agent used for HTTP requests.
     /// </summary>
@@ -119,6 +124,16 @@ namespace MediaPortal.Utils.Web
       set { _cookies = value; }
     }
 
+    public HttpStatusCode StatusCode
+    {
+      get { return this._response != null ? _response.StatusCode : 0; }
+    }
+
+    public WebHeaderCollection ResponseHeaders
+    {
+      get { return this._response != null ? _response.Headers : null; }
+    }
+
     /// <summary>
     /// Gets the data transfered from the web site.
     /// </summary>
@@ -137,7 +152,7 @@ namespace MediaPortal.Utils.Web
     /// </summary>
     /// <param name="pageRequest">The page request.</param>
     /// <returns>bool - Success/fail</returns>
-    private bool Transaction(HTTPRequest pageRequest)
+    private bool Transaction(HTTPRequest pageRequest, string strFullPath = null)
     {
       ArrayList Blocks = new ArrayList();
       byte[] Block;
@@ -154,6 +169,9 @@ namespace MediaPortal.Utils.Web
       Uri pageUri = pageRequest.Uri;
       try
       {
+        if (!string.IsNullOrWhiteSpace(strFullPath) && !Directory.Exists(Path.GetDirectoryName(strFullPath)))
+          return false; //destination directory doesn't exist
+
         // Make the Webrequest
         // Create the request header
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(pageUri);
@@ -180,6 +198,20 @@ namespace MediaPortal.Utils.Web
             }
           }
         }
+
+        if (pageRequest.Headers != string.Empty)
+        {
+          string[] headersArray = pageRequest.Headers.Split(new Char[] { ';' });
+          foreach (string header in headersArray)
+          {
+            string[] headersParts = header.Split(new Char[] { '=' });
+            if (headersParts.Length >= 2 && !string.IsNullOrWhiteSpace(headersParts[0]))
+              request.Headers[headersParts[0]] = headersParts[1];
+          }
+        }
+
+        if (pageRequest.ModifiedSince > DateTime.MinValue && File.Exists(strFullPath))
+          request.IfModifiedSince = pageRequest.ModifiedSince;
 
         if (pageRequest.PostQuery == string.Empty)
         {
@@ -224,8 +256,14 @@ namespace MediaPortal.Utils.Web
 
         _response = (HttpWebResponse)request.GetResponse();
 
+        //Check for not modified
+        if (_response.StatusCode == HttpStatusCode.NotModified)
+        {
+          totalSize = 0;
+          goto close;
+        }
         // Check for redirection
-        if ((_response.StatusCode == HttpStatusCode.Found) ||
+        else if ((_response.StatusCode == HttpStatusCode.Found) ||
             (_response.StatusCode == HttpStatusCode.Redirect) ||
             (_response.StatusCode == HttpStatusCode.Moved) ||
             (_response.StatusCode == HttpStatusCode.MovedPermanently))
@@ -242,6 +280,7 @@ namespace MediaPortal.Utils.Web
           redirect.UserAgent = _agent;
           redirect.AllowAutoRedirect = false;
           redirect.Referer = _response.ResponseUri.ToString();
+          redirect.Headers.Add(request.Headers);
 
           redirect.CookieContainer = new CookieContainer();
           if (_response.Headers["Set-Cookie"] != null)
@@ -271,25 +310,45 @@ namespace MediaPortal.Utils.Web
         Block = new byte[blockSize];
         totalSize = 0;
 
-        while ((size = ReceiveStream.Read(Block, 0, blockSize)) > 0)
+        if (!string.IsNullOrWhiteSpace(strFullPath))
         {
-          readBlock = new byte[size];
-          Array.Copy(Block, readBlock, size);
-          Blocks.Add(readBlock);
-          totalSize += size;
+          //Save to file
+          using (FileStream fs = new FileStream(strFullPath, FileMode.Create))
+          {
+            while ((size = ReceiveStream.Read(Block, 0, blockSize)) > 0)
+            {
+              fs.Write(Block, 0, size);
+              totalSize += size;
+            }
+          }
+        }
+        else
+        {
+          while ((size = ReceiveStream.Read(Block, 0, blockSize)) > 0)
+          {
+            readBlock = new byte[size];
+            Array.Copy(Block, readBlock, size);
+            Blocks.Add(readBlock);
+            totalSize += size;
+          }
         }
 
         ReceiveStream.Close();
+
+close:
         _response.Close();
 
-        int pos = 0;
-        _data = new byte[totalSize];
-
-        for (int i = 0; i < Blocks.Count; i++)
+        if (Blocks.Count > 0)
         {
-          Block = (byte[])Blocks[i];
-          Block.CopyTo(_data, pos);
-          pos += Block.Length;
+          int pos = 0;
+          _data = new byte[totalSize];
+
+          for (int i = 0; i < Blocks.Count; i++)
+          {
+            Block = (byte[])Blocks[i];
+            Block.CopyTo(_data, pos);
+            pos += Block.Length;
+          }
         }
       }
       catch (WebException ex)
@@ -303,7 +362,7 @@ namespace MediaPortal.Utils.Web
       {
         DateTime endTime = DateTime.Now;
         TimeSpan duration = endTime - startTime;
-        _stats.Add(pageUri.Host, 1, _data.Length, duration);
+        _stats.Add(pageUri.Host, 1, totalSize, duration);
       }
 
       return true;

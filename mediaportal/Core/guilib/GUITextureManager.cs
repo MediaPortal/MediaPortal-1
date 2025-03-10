@@ -229,6 +229,11 @@ namespace MediaPortal.GUI.Library
 
     public static int Load(string fileNameOrg, long lColorKey, int iRotation, int iMaxWidth, int iMaxHeight, bool persistent)
     {
+      return Load(fileNameOrg, lColorKey, iRotation, iMaxWidth, iMaxHeight, persistent, out _);
+    }
+    public static int Load(string fileNameOrg, long lColorKey, int iRotation, int iMaxWidth, int iMaxHeight, bool persistent, out int iId)
+    {
+      iId = -1;
       string fileName = GetFileName(fileNameOrg);
       string cacheKey = fileName.ToLowerInvariant();
       if (String.IsNullOrEmpty(fileName))
@@ -239,6 +244,8 @@ namespace MediaPortal.GUI.Library
       CachedTexture cached;
       if (_cacheTextures.TryGetValue(cacheKey, out cached))
       {
+        System.Threading.Interlocked.Increment(ref cached.InstanceCounter);
+        iId = cached.ID;
         return cached.Frames;
       }
 
@@ -265,7 +272,7 @@ namespace MediaPortal.GUI.Library
           if (theImage != null)
           {
             CachedTexture newCache = new CachedTexture();
-
+            iId = newCache.ID;
             newCache.Name = fileName;
             FrameDimension oDimension = new FrameDimension(theImage.FrameDimensionsList[0]);
             newCache.Frames = theImage.GetFrameCount(oDimension);
@@ -371,6 +378,7 @@ namespace MediaPortal.GUI.Library
             newCache.Height = height;
             newCache.Texture = new TextureFrame(fileName, dxtexture, 0);
             newCache.Disposed += new EventHandler(cachedTexture_Disposed);
+            iId = newCache.ID;
 
             if (persistent && !_persistentTextures.ContainsKey(cacheKey))
             {
@@ -403,6 +411,7 @@ namespace MediaPortal.GUI.Library
       CachedTexture cached;
       if (_cacheTextures.TryGetValue(cacheKey, out cached))
       {
+        System.Threading.Interlocked.Increment(ref cached.InstanceCounter);
         return cached.Frames;
       }
 
@@ -477,6 +486,11 @@ namespace MediaPortal.GUI.Library
 
     public static int LoadFromMemoryEx(Image memoryImage, string name, long lColorKey, out Texture texture)
     {
+      return LoadFromMemoryEx(memoryImage, name, lColorKey, out texture, out _);
+    }
+    public static int LoadFromMemoryEx(Image memoryImage, string name, long lColorKey, out Texture texture, out int iId)
+    {
+      iId = -1;
       bool bDebugLog = !name.StartsWith("[NoLog:");
       if (bDebugLog)
       {
@@ -489,6 +503,8 @@ namespace MediaPortal.GUI.Library
       CachedTexture cached;
       if (_cacheTextures.TryGetValue(cacheKey, out cached))
       {
+        System.Threading.Interlocked.Increment(ref cached.InstanceCounter);
+        iId = cached.ID;
         return cached.Frames;
       }
 
@@ -502,6 +518,8 @@ namespace MediaPortal.GUI.Library
 
         newCache.Name = cacheName;
         newCache.Frames = 1;
+
+        iId = newCache.ID;
 
         //load gif into texture
         using (MemoryStream stream = new MemoryStream())
@@ -559,7 +577,10 @@ namespace MediaPortal.GUI.Library
 
       CachedTexture cached;
       if (_cacheTextures.TryGetValue(strCacheKey, out cached))
+      {
+        System.Threading.Interlocked.Increment(ref cached.InstanceCounter);
         return cached.Frames;
+      }
 
       if (memoryImages == null || durations == null || memoryImages.Length == 0 || durations.Length != memoryImages.Length)
         return 0;
@@ -697,7 +718,49 @@ namespace MediaPortal.GUI.Library
 
         ImageInformation info2;
 
-        texture = Texture.FromFile(GUIGraphicsContext.DX9Device,
+        using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+        {
+          //Check for WebP
+          if (fs.Length >= 16)
+          {
+            byte[] header = new byte[16];
+            fs.Read(header, 0, 16);
+            fs.Position = 0;
+            if (System.Text.Encoding.ASCII.GetString(header, 8, 7).Equals("WEBPVP8"))
+            {
+              Log.Debug("TextureManager: LoadGraphic - WebP detected");
+              byte[] data = new byte[fs.Length];
+              fs.Read(data, 0, data.Length);
+              using (Bitmap bmp = Imaging.WebP.Decode(data))
+              {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                  bmp.Save(ms, ImageFormat.Bmp);
+                  ms.Position = 0;
+                  texture = Texture.FromStream(GUIGraphicsContext.DX9Device,
+                                           ms,
+                                           0, //size
+                                           0, 0, //width/height
+                                           1, //mipslevels
+                                           Usage.None, //Usage.Dynamic,
+                                           Format.A8R8G8B8,
+                                           GUIGraphicsContext.GetTexturePoolType(),
+                                           Filter.None,
+                                           Filter.None,
+                                           (int)lColorKey,
+                                           out info2);
+
+                }
+              }
+              width = info2.Width;
+              height = info2.Height;
+            }
+          }
+        }
+
+        if (texture == null)
+        {
+          texture = Texture.FromFile(GUIGraphicsContext.DX9Device,
                                          fileName,
                                          0, 0, //width/height
                                          1, //mipslevels
@@ -708,8 +771,9 @@ namespace MediaPortal.GUI.Library
                                          Filter.None,
                                          (int)lColorKey,
                                          out info2);
-        width = info2.Width;
-        height = info2.Height;
+          width = info2.Width;
+          height = info2.Height;
+        }
       }
       catch (InvalidDataException e1) // weird : should have been FileNotFoundException when file is missing ??
       {
@@ -797,7 +861,29 @@ namespace MediaPortal.GUI.Library
       {
         using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
         {
-          using (Image theImage = Image.FromStream(fs, true, false))
+          Image theImage = null;
+
+          //Check for WebP
+          if (fs.Length >= 16)
+          {
+            byte[] header = new byte[16];
+            fs.Read(header, 0, 16);
+            fs.Position = 0;
+            if (System.Text.Encoding.ASCII.GetString(header, 8, 7).Equals("WEBPVP8"))
+            {
+              Log.Debug("TextureManager: LoadGraphic - WebP detected");
+              byte[] data = new byte[fs.Length];
+              fs.Read(data, 0, data.Length);
+              theImage = Imaging.WebP.Decode(data);
+              if (theImage == null)
+                throw new Exception("Failed to load WebP image.");
+            }
+          }
+
+          if (theImage == null)
+            theImage = Image.FromStream(fs, true, false);
+
+          using (theImage)
           {
             if (theImage == null)
             {
@@ -874,6 +960,14 @@ namespace MediaPortal.GUI.Library
 
     public static void ReleaseTexture(string fileName)
     {
+      ReleaseTexture(fileName, true, -1);
+    }
+    public static void ReleaseTexture(string fileName, bool bForce)
+    {
+      ReleaseTexture(fileName, bForce, -1);
+    }
+    public static void ReleaseTexture(string fileName, bool bForce, int iId)
+    {
       lock (GUIGraphicsContext.RenderLock)
       {
         if (string.IsNullOrEmpty(fileName))
@@ -881,25 +975,34 @@ namespace MediaPortal.GUI.Library
           return;
         }
 
+        string cacheKey = fileName.ToLowerInvariant();
+
         //dont dispose radio/tv logo's since they are used by the overlay windows
-        if (fileName.ToLowerInvariant().IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos")) >= 0)
+        if (cacheKey.IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos")) >= 0)
         {
           return;
         }
-        if (fileName.ToLowerInvariant().IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, "radio")) >= 0)
+        if (cacheKey.IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, "radio")) >= 0)
         {
           return;
         }
 
-        CachedTexture oldImage;
-        string cacheKey = fileName.ToLowerInvariant();
-        if (_cacheTextures.TryGetValue(cacheKey, out oldImage))
+        if (_cacheTextures.TryGetValue(cacheKey, out CachedTexture oldImage))
         {
           try
           {
-            // Log.Debug("TextureManager: Dispose:{0} Frames:{1} Total:{2} Mem left:{3}", oldImage.Name, oldImage.Frames, _cacheTextures.Count, ((uint)GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576));
-            CachedTexture removedItem;
-            _cacheTextures.TryRemove(cacheKey, out removedItem);
+            if (iId >= 0 && iId != oldImage.ID)
+              return; //attempt to release old image
+
+            if (!bForce && System.Threading.Interlocked.Decrement(ref oldImage.InstanceCounter) != 0)
+              return; // image is still in use
+
+            Log.Debug("TextureManager: Dispose:{0} Frames:{1} Total:{2} Mem left:{3}, Counter:{4}, Force:{5}, ID:{6}, IDreq:{7}",
+              oldImage.Name, oldImage.Frames, _cacheTextures.Count,
+              GUIGraphicsContext.DX9Device?.IsDisposed ?? true ? -1 : (GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576),
+              oldImage.InstanceCounter, bForce, oldImage.ID, iId);
+
+            _cacheTextures.TryRemove(cacheKey, out _);
             oldImage.SafeDispose();
           }
           catch (Exception ex)

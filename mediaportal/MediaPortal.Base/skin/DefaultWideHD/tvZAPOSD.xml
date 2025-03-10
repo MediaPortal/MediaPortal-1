@@ -13,7 +13,7 @@
       <posY>867</posY>
       <height>198</height>
       <width>2200</width>
-      <texture>white.png</texture>
+      <texture>white3.png</texture>
       <colordiffuse>f200061c</colordiffuse>
     </control>
     <control>
@@ -97,34 +97,23 @@
       <description>TV Logo Background</description>
       <type>image</type>
       <id>0</id>
-      <posX>52</posX>
-      <posY>803</posY>
-      <width>141</width>
-      <height>141</height>
+      <posX>53</posX>
+      <posY>804</posY>
+      <width>139</width>
+      <height>139</height>
       <keepaspectratio>yes</keepaspectratio>
-      <texture>defaultlogo.png</texture>
-      <colordiffuse>ff00061c</colordiffuse>
-    </control>
+      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'tvlogoback.png','tvlogoback.png'))</texture>
+      <colordiffuse>ff09173c</colordiffuse>
+	</control> 
     <control>
       <description>TV Logo</description>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <posX>54</posX>
       <posY>805</posY>
       <width>137</width>
       <height>137</height>
-      <texture>defaultlogo.png</texture>
-      <keepaspectratio>yes</keepaspectratio>
-    </control>
-    <control>
-      <description>TV Logo</description>
-      <type>image</type>
-      <id>10</id>
-      <posX>54</posX>
-      <posY>805</posY>
-      <width>137</width>
-      <height>137</height>
-      <texture>#TV.View.thumb</texture>
+      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'defaulttvlogo.png','#TV.View.thumb'))</texture>
       <keepaspectratio>yes</keepaspectratio>
     </control>
     <control>
@@ -167,9 +156,9 @@
       <description>progress bar</description>
       <type>progress</type>
       <id>20</id>
-      <posX>228</posX>
-      <posY>940</posY>
-      <width>1480</width>
+      <posX>227</posX>
+      <posY>941</posY>
+      <width>1481</width>
       <offset>0</offset>
       <height>23</height>
       <innerheight>24</innerheight>
@@ -183,12 +172,12 @@
       <description>End of progressbar</description>
       <type>label</type>
       <id>1</id>
-      <posX>1707</posX>
+      <posX>1702</posX>
       <posY>931</posY>
       <label>|</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>lightskyblue</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Current Remaining</description>
@@ -200,7 +189,7 @@
       <label>#TV.View.remaining</label>
       <align>left</align>
       <font>font10</font>
-      <textcolor>lightskyblue</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Start Time and now Title</description>
@@ -220,7 +209,7 @@
         <maxWidth>260</maxWidth>
         <align>left</align>
         <font>LabelBold</font>
-        <textcolor>lightskyblue</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <description>On tv NOW</description>
@@ -230,7 +219,7 @@
         <maxWidth>1350</maxWidth>
         <label></label>
         <font>LabelBold</font>
-        <textcolor>lightskyblue</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
     </control>
     <control>
@@ -275,18 +264,30 @@
       <height>56</height>
       <texture>tv_is_recording.png</texture>
     </control>
+    <!--control>
+      <description>Zap channel Background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>35</posX>
+      <posY>5</posY>
+      <width>92</width>
+      <height>92</height>
+      <texture>tvlogoback.png</texture>
+      <colordiffuse>ff1f3e70</colordiffuse>
+      <visible>string.contains(1234567890)</visible>
+    </control-->
     <control>
       <description>Zap to channel no</description>
       <type>label</type>
       <id>38</id>
-      <posX>30</posX>
-      <posY>1</posY>
+      <posX>45</posX>
+      <posY>10</posY>
       <label>-</label>
       <font>font36</font>
       <shadowAngle>45</shadowAngle>
-      <shadowDistance>7</shadowDistance>
+      <shadowDistance>3</shadowDistance>
       <shadowColor>ff000000</shadowColor>
-      <textcolor>lightskyblue</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>no</visible>
     </control>
     <!-- ************************************************************************************************** -->
@@ -321,12 +322,12 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>225</posX>
-      <posY>1020</posY>
+      <posY>1042</posY> 
       <width>50</width>
       <label>#latestMediaHandler.tvrecordings.active.count</label>
       <align>center</align>
-      <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <font>font9</font>
+      <textcolor>lightgray</textcolor>
       <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
     <control>
@@ -334,7 +335,7 @@
       <type>image</type>
       <id>1</id>
       <posX>223</posX>
-      <posY>1012</posY>
+      <posY>1013</posY>
       <width>54</width>
       <height>55</height>
       <texture>tb_recordNF_red.png</texture>
@@ -350,7 +351,7 @@
       <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
       <align>left</align>
       <font>font9</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
   </controls>

@@ -1170,7 +1170,7 @@ namespace TvPlugin
         strLogo = Utils.GetCoverArt(Thumbs.TVChannel, "default");
         if (string.IsNullOrEmpty(strLogo))
         {
-          strLogo = "defaultVideoBig.png";
+          strLogo = "defaultTVlogo.png";
         }
       }
       return strLogo;

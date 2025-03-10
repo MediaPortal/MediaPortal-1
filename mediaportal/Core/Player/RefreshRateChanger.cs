@@ -1220,6 +1220,11 @@ namespace MediaPortal.Player
       get { return _refreshrateChangeCurrentRR; }
     }
 
+    public static double RefreshRateChangeWorkerFps
+    {
+      get { return _workerFps; }
+    }
+
     #endregion
   }
 }

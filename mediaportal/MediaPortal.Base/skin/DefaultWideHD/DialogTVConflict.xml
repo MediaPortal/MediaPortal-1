@@ -32,7 +32,7 @@
       <width>973</width>
       <label>181</label>
       <textcolor>red</textcolor>
-      <font>font16</font>
+      <font>MenuHeader</font>
     </control>
     <control>
       <description>options listcontrol</description>
@@ -82,7 +82,7 @@
         <description>Skip new Recording</description>
         <type>button</type>
         <id>11</id>
-        <width>778</width>
+        <width>780</width><textureFocus>setting_button_long.png</textureFocus>
         <label>1110</label>
         <onup>3</onup>
         <ondown>12</ondown>
@@ -91,9 +91,9 @@
         <description>Skip conflicting Recording</description>
         <type>button</type>
         <id>12</id>
-        <width>778</width>
+        <width>780</width><textureFocus>setting_button_long.png</textureFocus>
         <label>1111</label>
-        <width>778</width>
+        <width>780</width><textureFocus>setting_button_long.png</textureFocus>
         <onup>11</onup>
         <ondown>13</ondown>
       </control>
@@ -102,7 +102,7 @@
         <type>button</type>
         <id>13</id>
         <label>1112</label>
-        <width>778</width>
+        <width>780</width><textureFocus>setting_button_long.png</textureFocus>
         <onup>12</onup>
         <ondown>14</ondown>
       </control>
@@ -110,7 +110,7 @@
         <description>Skip conflicting Episode</description>
         <type>button</type>
         <id>14</id>
-        <width>778</width>
+        <width>780</width><textureFocus>setting_button_long.png</textureFocus>
         <label>1113</label>
         <onup>13</onup>
         <ondown>3</ondown>

@@ -39,11 +39,7 @@ namespace GUIRSSFeed
     private MPButton buttonEdit;
     private MPButton buttonDelete;
     private MPButton button3;
-    private MPCheckBox checkAutoRefresh;
-    private MPLabel labelRefresh;
-    private MPTextBox textRefreshInterval;
     private MPGroupBox mpGroupBox1;
-    private MPGroupBox mpGroupBox2;
     private DetailsForm form;
 
     public SetupForm()
@@ -100,13 +96,13 @@ namespace GUIRSSFeed
       int iItem = listBox.SelectedIndices[0];
       int ID = 0;
       //find the index of the item in question
-      string tempText;
+      string strTempText;
       for (int i = 0; i < 100; i++)
       {
         using (Settings xmlreader = new MPSettings())
         {
-          tempText = xmlreader.GetValueAsString("rss", "siteName" + i, "");
-          if (tempText == (string)listBox.Items[iItem])
+          strTempText = xmlreader.GetValueAsString("rss", "siteName" + i, string.Empty);
+          if (strTempText == (string)listBox.Items[iItem])
           {
             ID = i;
             break;
@@ -133,43 +129,44 @@ namespace GUIRSSFeed
         return;
       }
       int iItem = listBox.SelectedIndices[0];
-      int ID = 0;
+      int iID = 0;
       //find the index of the item in question
-      string tempText;
+      string strTempText;
       for (int i = 0; i < 100; i++)
       {
         using (Settings xmlreader = new MPSettings())
         {
-          tempText = xmlreader.GetValueAsString("rss", "siteName" + i, "");
-          if (tempText == (string)listBox.Items[iItem])
+          strTempText = xmlreader.GetValueAsString("rss", "siteName" + i, string.Empty);
+          if (strTempText == (string)listBox.Items[iItem])
           {
-            ID = i;
+            iID = i;
             break;
           }
         }
       }
-
-      string strNameTag = String.Format("siteName{0}", ID);
-      string strURLTag = String.Format("siteURL{0}", ID);
-      string strDescriptionTag = String.Format("siteDescription{0}", ID);
-      string strEncodingTag = String.Format("siteEncoding{0}", ID);
+      
       using (Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("rss", strNameTag, "");
-        xmlwriter.SetValue("rss", strURLTag, "");
-        xmlwriter.SetValue("rss", strDescriptionTag, "");
-        xmlwriter.SetValue("rss", strEncodingTag, "windows-1252");
+        xmlwriter.SetValue("rss", "siteName" + iID, string.Empty);
+        xmlwriter.SetValue("rss", "siteURL" + iID, string.Empty);
+        xmlwriter.SetValue("rss", "siteDescription" + iID, string.Empty);
+        xmlwriter.SetValue("rss", "siteEncoding" + iID, "windows-1252");
+        xmlwriter.SetValue("rss", "siteImage" + iID, string.Empty);
+        xmlwriter.SetValue("rss", "siteRefreshPeriod" + iID, string.Empty);
+        xmlwriter.SetValue("rss", "siteAutoRefresh" + iID, string.Empty);
+        xmlwriter.SetValue("rss", "siteRefreshTime" + iID, string.Empty);
+        xmlwriter.SetValue("rss", "sitePublishTime" + iID, string.Empty);
       }
 
       listBox.Items.Clear();
       PopulateFields();
 
-      if (GUIWindowManager.ActiveWindow == (int)MediaPortal.GUI.RSS.GUIRSSFeed.WINDOW_RSS)
+      if (GUIWindowManager.ActiveWindow == MediaPortal.GUI.RSS.GUIRSSFeed.WINDOW_RSS)
       {
         Console.WriteLine("RSS active window, need to somehow refresh");
         MediaPortal.GUI.RSS.GUIRSSFeed rss =
-          (MediaPortal.GUI.RSS.GUIRSSFeed)GUIWindowManager.GetWindow((int)MediaPortal.GUI.RSS.GUIRSSFeed.WINDOW_RSS);
-        rss.refreshFeeds();
+          (MediaPortal.GUI.RSS.GUIRSSFeed)GUIWindowManager.GetWindow(MediaPortal.GUI.RSS.GUIRSSFeed.WINDOW_RSS);
+        rss.RefreshFeeds();
       }
     }
 
@@ -193,43 +190,24 @@ namespace GUIRSSFeed
       {
         for (int i = 0; i < 100; i++)
         {
-          string strNameTag = String.Format("siteName{0}", i);
-          string strURLTag = String.Format("siteURL{0}", i);
-          string strEncodingTag = String.Format("siteEncoding{0}", i);
+          string strNameTag = string.Format("siteName{0}", i);
+          string strURLTag = string.Format("siteURL{0}", i);
+          //string strEncodingTag = String.Format("siteEncoding{0}", i);
 
-          string strName = xmlreader.GetValueAsString("rss", strNameTag, "");
-          string strURL = xmlreader.GetValueAsString("rss", strURLTag, "");
-          string strEncoding = xmlreader.GetValueAsString("rss", strEncodingTag, "windows-1252");
+          string strName = xmlreader.GetValueAsString("rss", strNameTag, string.Empty);
+          string strURL = xmlreader.GetValueAsString("rss", strURLTag, string.Empty);
+          //string strEncoding = xmlreader.GetValueAsString("rss", strEncodingTag, "windows-1252");
 
           if (strName.Length > 0 && strURL.Length > 0)
           {
             this.listBox.Items.Add(strName);
           }
         }
-
-        // general settings
-        textRefreshInterval.Text = xmlreader.GetValueAsString("rss", "iRefreshTime", "15");
-        checkAutoRefresh.Checked = false;
-        if (xmlreader.GetValueAsInt("rss", "bAutoRefresh", 0) != 0)
-        {
-          checkAutoRefresh.Checked = true;
-        }
       }
     }
 
     private void button3_Click(object sender, EventArgs e)
     {
-      using (Settings xmlwriter = new MPSettings())
-      {
-        xmlwriter.SetValue("rss", "iRefreshTime", textRefreshInterval.Text);
-
-        int iAutoRefresh = 0;
-        if (checkAutoRefresh.Checked)
-        {
-          iAutoRefresh = 1;
-        }
-        xmlwriter.SetValue("rss", "bAutoRefresh", iAutoRefresh.ToString());
-      }
       this.Close();
     }
 
@@ -271,8 +249,8 @@ namespace GUIRSSFeed
                         out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(9); // My News
-      strButtonImage = "";
-      strButtonImageFocus = "";
+      strButtonImage = string.Empty;
+      strButtonImageFocus = string.Empty;
       strPictureImage = @"hover_my news.png"; //the big image seen when hovering over My Radio
       return true;
     }
@@ -329,155 +307,103 @@ namespace GUIRSSFeed
     /// </summary>
     private void InitializeComponent()
     {
-      this.buttonDelete = new MPButton();
-      this.buttonEdit = new MPButton();
-      this.listBox = new ListBox();
-      this.buttonAdd = new MPButton();
-      this.button3 = new MPButton();
-      this.checkAutoRefresh = new MPCheckBox();
-      this.labelRefresh = new MPLabel();
-      this.textRefreshInterval = new MPTextBox();
-      this.mpGroupBox1 = new MPGroupBox();
-      this.mpGroupBox2 = new MPGroupBox();
-      this.mpGroupBox1.SuspendLayout();
-      this.mpGroupBox2.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // buttonDelete
-      // 
-      this.buttonDelete.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
-      this.buttonDelete.Location = new Point(368, 185);
-      this.buttonDelete.Name = "buttonDelete";
-      this.buttonDelete.Size = new Size(88, 23);
-      this.buttonDelete.TabIndex = 3;
-      this.buttonDelete.Text = "Delete Site";
-      this.buttonDelete.UseVisualStyleBackColor = true;
-      this.buttonDelete.Click += new EventHandler(this.deleteSite);
-      // 
-      // buttonEdit
-      // 
-      this.buttonEdit.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
-      this.buttonEdit.Location = new Point(274, 185);
-      this.buttonEdit.Name = "buttonEdit";
-      this.buttonEdit.Size = new Size(88, 23);
-      this.buttonEdit.TabIndex = 2;
-      this.buttonEdit.Text = "Edit Site";
-      this.buttonEdit.UseVisualStyleBackColor = true;
-      this.buttonEdit.Click += new EventHandler(this.editSite);
-      // 
-      // listBox
-      // 
-      this.listBox.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                              | AnchorStyles.Left)
-                                             | AnchorStyles.Right)));
-      this.listBox.Location = new Point(6, 19);
-      this.listBox.Name = "listBox";
-      this.listBox.Size = new Size(450, 147);
-      this.listBox.TabIndex = 5;
-      // 
-      // buttonAdd
-      // 
-      this.buttonAdd.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
-      this.buttonAdd.Location = new Point(180, 185);
-      this.buttonAdd.Name = "buttonAdd";
-      this.buttonAdd.Size = new Size(88, 23);
-      this.buttonAdd.TabIndex = 1;
-      this.buttonAdd.Text = "Add Site";
-      this.buttonAdd.UseVisualStyleBackColor = true;
-      this.buttonAdd.Click += new EventHandler(this.addSite);
-      // 
-      // button3
-      // 
-      this.button3.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
-      this.button3.DialogResult = DialogResult.Cancel;
-      this.button3.Location = new Point(402, 279);
-      this.button3.Name = "button3";
-      this.button3.Size = new Size(72, 22);
-      this.button3.TabIndex = 12;
-      this.button3.Text = "&Done";
-      this.button3.UseVisualStyleBackColor = true;
-      this.button3.Click += new EventHandler(this.button3_Click);
-      // 
-      // checkAutoRefresh
-      // 
-      this.checkAutoRefresh.AutoSize = true;
-      this.checkAutoRefresh.FlatStyle = FlatStyle.Popup;
-      this.checkAutoRefresh.Location = new Point(6, 19);
-      this.checkAutoRefresh.Name = "checkAutoRefresh";
-      this.checkAutoRefresh.Size = new Size(122, 17);
-      this.checkAutoRefresh.TabIndex = 4;
-      this.checkAutoRefresh.Text = "Auto refresh enabled";
-      this.checkAutoRefresh.UseVisualStyleBackColor = true;
-      // 
-      // labelRefresh
-      // 
-      this.labelRefresh.AutoSize = true;
-      this.labelRefresh.Location = new Point(21, 43);
-      this.labelRefresh.Name = "labelRefresh";
-      this.labelRefresh.Size = new Size(109, 13);
-      this.labelRefresh.TabIndex = 13;
-      this.labelRefresh.Text = "Refresh interval (min):";
-      this.labelRefresh.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // textRefreshInterval
-      // 
-      this.textRefreshInterval.BorderColor = Color.Empty;
-      this.textRefreshInterval.Location = new Point(142, 40);
-      this.textRefreshInterval.Name = "textRefreshInterval";
-      this.textRefreshInterval.Size = new Size(53, 20);
-      this.textRefreshInterval.TabIndex = 14;
-      this.textRefreshInterval.Text = "15";
-      this.textRefreshInterval.TextAlign = HorizontalAlignment.Center;
-      // 
-      // mpGroupBox1
-      // 
-      this.mpGroupBox1.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                  | AnchorStyles.Left)
-                                                 | AnchorStyles.Right)));
-      this.mpGroupBox1.Controls.Add(this.listBox);
-      this.mpGroupBox1.Controls.Add(this.buttonAdd);
-      this.mpGroupBox1.Controls.Add(this.buttonEdit);
-      this.mpGroupBox1.Controls.Add(this.buttonDelete);
-      this.mpGroupBox1.FlatStyle = FlatStyle.Popup;
-      this.mpGroupBox1.Location = new Point(12, 11);
-      this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new Size(462, 213);
-      this.mpGroupBox1.TabIndex = 15;
-      this.mpGroupBox1.TabStop = false;
-      this.mpGroupBox1.Text = "Add news sites here and edit their options";
-      // 
-      // mpGroupBox2
-      // 
-      this.mpGroupBox2.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Left)));
-      this.mpGroupBox2.Controls.Add(this.labelRefresh);
-      this.mpGroupBox2.Controls.Add(this.checkAutoRefresh);
-      this.mpGroupBox2.Controls.Add(this.textRefreshInterval);
-      this.mpGroupBox2.FlatStyle = FlatStyle.Popup;
-      this.mpGroupBox2.Location = new Point(12, 230);
-      this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new Size(215, 71);
-      this.mpGroupBox2.TabIndex = 16;
-      this.mpGroupBox2.TabStop = false;
-      this.mpGroupBox2.Text = "Auto refresh settings";
-      // 
-      // SetupForm
-      // 
-      this.AcceptButton = this.button3;
-      this.AutoScaleDimensions = new SizeF(6F, 13F);
-      this.CancelButton = this.button3;
-      this.ClientSize = new Size(486, 313);
-      this.Controls.Add(this.mpGroupBox2);
-      this.Controls.Add(this.mpGroupBox1);
-      this.Controls.Add(this.button3);
-      this.FormBorderStyle = FormBorderStyle.FixedDialog;
-      this.Name = "SetupForm";
-      this.StartPosition = FormStartPosition.CenterParent;
-      this.Text = "RSS News - Setup";
-      this.Load += new EventHandler(this.SetupForm_Load);
-      this.mpGroupBox1.ResumeLayout(false);
-      this.mpGroupBox2.ResumeLayout(false);
-      this.mpGroupBox2.PerformLayout();
-      this.ResumeLayout(false);
+            this.buttonDelete = new MediaPortal.UserInterface.Controls.MPButton();
+            this.buttonEdit = new MediaPortal.UserInterface.Controls.MPButton();
+            this.listBox = new System.Windows.Forms.ListBox();
+            this.buttonAdd = new MediaPortal.UserInterface.Controls.MPButton();
+            this.button3 = new MediaPortal.UserInterface.Controls.MPButton();
+            this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+            this.mpGroupBox1.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // buttonDelete
+            // 
+            this.buttonDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonDelete.Location = new System.Drawing.Point(368, 185);
+            this.buttonDelete.Name = "buttonDelete";
+            this.buttonDelete.Size = new System.Drawing.Size(88, 23);
+            this.buttonDelete.TabIndex = 3;
+            this.buttonDelete.Text = "Delete Site";
+            this.buttonDelete.UseVisualStyleBackColor = true;
+            this.buttonDelete.Click += new System.EventHandler(this.deleteSite);
+            // 
+            // buttonEdit
+            // 
+            this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonEdit.Location = new System.Drawing.Point(274, 185);
+            this.buttonEdit.Name = "buttonEdit";
+            this.buttonEdit.Size = new System.Drawing.Size(88, 23);
+            this.buttonEdit.TabIndex = 2;
+            this.buttonEdit.Text = "Edit Site";
+            this.buttonEdit.UseVisualStyleBackColor = true;
+            this.buttonEdit.Click += new System.EventHandler(this.editSite);
+            // 
+            // listBox
+            // 
+            this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBox.Location = new System.Drawing.Point(6, 19);
+            this.listBox.Name = "listBox";
+            this.listBox.Size = new System.Drawing.Size(450, 147);
+            this.listBox.TabIndex = 5;
+            // 
+            // buttonAdd
+            // 
+            this.buttonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAdd.Location = new System.Drawing.Point(180, 185);
+            this.buttonAdd.Name = "buttonAdd";
+            this.buttonAdd.Size = new System.Drawing.Size(88, 23);
+            this.buttonAdd.TabIndex = 1;
+            this.buttonAdd.Text = "Add Site";
+            this.buttonAdd.UseVisualStyleBackColor = true;
+            this.buttonAdd.Click += new System.EventHandler(this.addSite);
+            // 
+            // button3
+            // 
+            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button3.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.button3.Location = new System.Drawing.Point(402, 279);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(72, 22);
+            this.button3.TabIndex = 12;
+            this.button3.Text = "&Done";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // mpGroupBox1
+            // 
+            this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.mpGroupBox1.Controls.Add(this.listBox);
+            this.mpGroupBox1.Controls.Add(this.buttonAdd);
+            this.mpGroupBox1.Controls.Add(this.buttonEdit);
+            this.mpGroupBox1.Controls.Add(this.buttonDelete);
+            this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.mpGroupBox1.Location = new System.Drawing.Point(12, 11);
+            this.mpGroupBox1.Name = "mpGroupBox1";
+            this.mpGroupBox1.Size = new System.Drawing.Size(462, 213);
+            this.mpGroupBox1.TabIndex = 15;
+            this.mpGroupBox1.TabStop = false;
+            this.mpGroupBox1.Text = "Add news sites here and edit their options";
+            // 
+            // SetupForm
+            // 
+            this.AcceptButton = this.button3;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.CancelButton = this.button3;
+            this.ClientSize = new System.Drawing.Size(486, 313);
+            this.Controls.Add(this.mpGroupBox1);
+            this.Controls.Add(this.button3);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Name = "SetupForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "RSS News - Setup";
+            this.Load += new System.EventHandler(this.SetupForm_Load);
+            this.mpGroupBox1.ResumeLayout(false);
+            this.ResumeLayout(false);
+
     }
 
     #endregion

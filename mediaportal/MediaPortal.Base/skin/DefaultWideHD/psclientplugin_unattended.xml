@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>6666</id>
@@ -17,7 +17,7 @@
       <id>2</id>
       <label>40002</label>
       <font>font13</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <posX>213</posX>
@@ -26,7 +26,7 @@
       <id>2</id>
       <label>40003</label>
       <font>font13</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
   </controls>
 </window>

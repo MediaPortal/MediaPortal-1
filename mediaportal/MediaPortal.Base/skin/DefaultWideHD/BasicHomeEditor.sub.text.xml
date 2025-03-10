@@ -7,18 +7,18 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
 
 -->
 
-  <define property="true" evaluateNow="true">#image.posx:805</define>
-  <define property="true" evaluateNow="true">#image.posy:875</define>
-  <define property="true" evaluateNow="true">#image.width:280</define>
-  <define property="true" evaluateNow="true">#image.height:70</define>
-  <define property="true" evaluateNow="true">#label.posx:814</define>
-  <define property="true" evaluateNow="true">#label.posy:915</define>
-  <define property="true" evaluateNow="true">#label.width:270</define>
+  <define property="true" evaluateNow="true">#image.posx:830</define>
+  <define property="true" evaluateNow="true">#image.posy:894</define>
+  <define property="true" evaluateNow="true">#image.width:260</define>
+  <define property="true" evaluateNow="true">#image.height:47</define>
+  <define property="true" evaluateNow="true">#label.posx:833</define>
+  <define property="true" evaluateNow="true">#label.posy:918</define>
+  <define property="true" evaluateNow="true">#label.width:254</define>
   
-  <define>#label.font:Label</define>
+  <define>#label.font:font11</define>
 
-  <define property="true" evaluateNow="true">#scroll.delay:3</define>
-  <define property="true" evaluateNow="true">#scroll.wrap: · </define>
+  <define property="true" evaluateNow="true">#scroll.delay:100</define>
+  <define property="true" evaluateNow="true">#scroll.wrap:·</define>
 
   <controls>
 
@@ -109,6 +109,36 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
       </onfocus>
       <visible allowhiddenfocus="true">string.contains(#hedit.inuse,sub)</visible>
     </control>
+    
+    <control>
+      <description>Move backward and return to key control</description>
+      <type>button</type>
+      <id>820211</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>-</label>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <onfocus>
+        #(skin.setstring('#hedit.sub.return',820101))
+        #(skin.setfocus(cint(#currentmoduleid),cint(#hedit.sub.backward)))
+      </onfocus>
+    </control>
+
+    <control>
+      <description>Move forward and return to key control</description>
+      <type>button</type>
+      <id>820212</id>
+      <posX>-999</posX>
+      <posY>-999</posY>
+      <label>-</label>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <onfocus>
+        #(skin.setstring('#hedit.sub.return',820101))
+        #(skin.setfocus(cint(#currentmoduleid),cint(#hedit.sub.forward)))
+      </onfocus>
+    </control>
 
     <control>
       <description>Mouse control - Click Center</description>
@@ -181,64 +211,27 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
       <visible>string.contains(#hedit.inuse,sub)</visible>
     </control>
 
-    <control>
-      <description>Move backward and return to key control</description>
-      <type>button</type>
-      <id>820211</id>
-      <posX>-999</posX>
-      <posY>-999</posY>
-      <label>-</label>
-      <textureFocus>-</textureFocus>
-      <textureNoFocus>-</textureNoFocus>
-      <onfocus>
-        #(skin.setstring('#hedit.sub.return',820101))
-        #(skin.setfocus(cint(#currentmoduleid),cint(#hedit.sub.backward)))
-      </onfocus>
-    </control>
-
-    <control>
-      <description>Move forward and return to key control</description>
-      <type>button</type>
-      <id>820212</id>
-      <posX>-999</posX>
-      <posY>-999</posY>
-      <label>-</label>
-      <textureFocus>-</textureFocus>
-      <textureNoFocus>-</textureNoFocus>
-      <onfocus>
-        #(skin.setstring('#hedit.sub.return',820101))
-        #(skin.setfocus(cint(#currentmoduleid),cint(#hedit.sub.forward)))
-      </onfocus>
-    </control>
+    
 
 <!-- Render button images and labels -->
 
     <control>
       <type>group</type>
       <dimColor>FFFFFFFF</dimColor>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="slide" start="0,45" end="0,0" time="200" acceleration="-0.6" reversible="true" condition="string.contains(#hedit.inuse,sub)+!control.hasfocus(810101)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="35" reversible="true" condition="string.contains(#hedit.inuse,sub)+!control.hasfocus(810101)">conditional</animation>
       <animation effect="fade" time="250">WindowClose</animation>
-      <animation effect="fade" time="250" reversible="false">hidden</animation>
-      <animation effect="fade" start="0" end="100" time="400" reversible="false">visible</animation>
+      <animation effect="rotatex" start="0" end="40" center="945,0" time="250" acceleration="-1" condition="!control.hasfocus(820201)+!control.hasfocus(820101)" reversible="false">conditional</animation>
       <visible>string.contains(#hedit.inuse,sub)</visible>
       
-      <control>
-        <type>image</type>
-        <posX>0</posX>
-        <posY>886</posY>
-        <width>1920</width>
-        <height>57</height>
-        <texture>menubar_text.png</texture>
-        
-      </control>
-
       <control>
         <type>image</type>
         <posX>#image.posx</posX>
         <posY>#image.posy</posY>
         <width>#image.width</width>
         <height>#image.height</height>
-        <texture>#(string.format('{0}',#hedit.sub.use.1))</texture>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>ff07091e</colordiffuse>
         <animation effect="slide" start="-822,0" end="-822,0" time="0" condition="true">conditional</animation>
         <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
         <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
@@ -252,7 +245,8 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <width>#label.width</width>
         <align>center</align>
         <font>#label.font</font>
-        <wrapString>#scroll.wrap</wrapString>
+        <textcolor>lightgray</textcolor>
+        <wrapString> #scroll.wrap </wrapString>
         <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
         <label>#(string.format('{0}.name',#hedit.sub.use.1))</label>
         <animation effect="slide" start="-822,0" end="-822,0" time="0" condition="true">conditional</animation>
@@ -268,7 +262,8 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <posY>#image.posy</posY>
         <width>#image.width</width>
         <height>#image.height</height>
-        <texture>#(string.format('{0}',#hedit.sub.use.2))</texture>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>ff07091e</colordiffuse>
         <animation effect="slide" start="-548,0" end="-548,0" time="0" condition="true">conditional</animation>
         <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
         <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
@@ -282,7 +277,8 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <width>#label.width</width>
         <align>center</align>
         <font>#label.font</font>
-        <wrapString>#scroll.wrap</wrapString>
+        <textcolor>lightgray</textcolor>
+        <wrapString> #scroll.wrap </wrapString>
         <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
         <label>#(string.format('{0}.name',#hedit.sub.use.2))</label>
         <animation effect="slide" start="-548,0" end="-548,0" time="0" condition="true">conditional</animation>
@@ -298,7 +294,8 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <posY>#image.posy</posY>
         <width>#image.width</width>
         <height>#image.height</height>
-        <texture>#(string.format('{0}',#hedit.sub.use.3))</texture>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>ff07091e</colordiffuse>
         <animation effect="slide" start="-274,0" end="-274,0" time="0" condition="true">conditional</animation>
         <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
         <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
@@ -312,7 +309,8 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <width>#label.width</width>
         <align>center</align>
         <font>#label.font</font>
-        <wrapString>#scroll.wrap</wrapString>
+        <textcolor>lightgray</textcolor>
+        <wrapString> #scroll.wrap </wrapString>
         <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
         <label>#(string.format('{0}.name',#hedit.sub.use.3))</label>
         <animation effect="slide" start="-274,0" end="-274,0" time="0" condition="true">conditional</animation>
@@ -321,36 +319,23 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <animation effect="slide" start="274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
         <animation effect="slide" start="274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
       </control>
-
+      
       <control>
         <type>image</type>
         <posX>#image.posx</posX>
         <posY>#image.posy</posY>
         <width>#image.width</width>
         <height>#image.height</height>
-        <texture>#(string.format('{0}',#hedit.sub.use.4))</texture>
-        <animation effect="slide" start="0,0" end="0,0" time="0" condition="true">conditional</animation>
-        <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
-        <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
-        <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
-        <animation effect="slide" start="274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
-      </control>
-      <control>
-        <type>fadelabel</type>
-        <posX>#label.posx</posX>
-        <posY>#label.posy</posY>
-        <width>#label.width</width>
-        <align>center</align>
-        <font>#label.font</font>
-        <wrapString>#scroll.wrap</wrapString>
-        <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
-        <label>#(string.format('{0}.name',#hedit.sub.use.4))</label>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>ff07091e</colordiffuse>
         <animation effect="slide" start="0,0" end="0,0" time="0" condition="true">conditional</animation>
         <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
         <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
         <animation effect="slide" start="274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
         <animation effect="slide" start="274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
       </control>
+      
+      
 
       <control>
         <type>image</type>
@@ -358,7 +343,8 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <posY>#image.posy</posY>
         <width>#image.width</width>
         <height>#image.height</height>
-        <texture>#(string.format('{0}',#hedit.sub.use.5))</texture>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>ff07091e</colordiffuse>
         <animation effect="slide" start="274,0" end="274,0" time="0" condition="true">conditional</animation>
         <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
         <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
@@ -372,7 +358,8 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <width>#label.width</width>
         <align>center</align>
         <font>#label.font</font>
-        <wrapString>#scroll.wrap</wrapString>
+        <textcolor>lightgray</textcolor>
+        <wrapString> #scroll.wrap </wrapString>
         <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
         <label>#(string.format('{0}.name',#hedit.sub.use.5))</label>
         <animation effect="slide" start="274,0" end="274,0" time="0" condition="true">conditional</animation>
@@ -388,7 +375,8 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <posY>#image.posy</posY>
         <width>#image.width</width>
         <height>#image.height</height>
-        <texture>#(string.format('{0}',#hedit.sub.use.6))</texture>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>ff07091e</colordiffuse>
         <animation effect="slide" start="548,0" end="548,0" time="0" condition="true">conditional</animation>
         <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
         <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
@@ -402,7 +390,8 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <width>#label.width</width>
         <align>center</align>
         <font>#label.font</font>
-        <wrapString>#scroll.wrap</wrapString>
+        <textcolor>lightgray</textcolor>
+        <wrapString> #scroll.wrap </wrapString>
         <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
         <label>#(string.format('{0}.name',#hedit.sub.use.6))</label>
         <animation effect="slide" start="548,0" end="548,0" time="0" condition="true">conditional</animation>
@@ -418,7 +407,8 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <posY>#image.posy</posY>
         <width>#image.width</width>
         <height>#image.height</height>
-        <texture>#(string.format('{0}',#hedit.sub.use.7))</texture>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>ff07091e</colordiffuse>
         <animation effect="slide" start="822,0" end="822,0" time="0" condition="true">conditional</animation>
         <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
         <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
@@ -431,8 +421,9 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <posY>#label.posy</posY>
         <width>#label.width</width>
         <font>#label.font</font>
+        <textcolor>lightgray</textcolor>
         <align>center</align>
-        <wrapString>#scroll.wrap</wrapString>
+        <wrapString> #scroll.wrap </wrapString>
         <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
         <label>#(string.format('{0}.name',#hedit.sub.use.7))</label>
         <animation effect="slide" start="822,0" end="822,0" time="0" condition="true">conditional</animation>
@@ -441,25 +432,76 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <animation effect="slide" start="274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
         <animation effect="slide" start="274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
       </control>
+      
+      <control>
+        <type>fadelabel</type>
+        <posX>#label.posx</posX>
+        <posY>#label.posy</posY>
+        <width>#label.width</width>
+        <align>center</align>
+        <font>font12</font>
+        <textcolor>ffffffff</textcolor>
+        <wrapString> #scroll.wrap </wrapString>
+        <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
+        <label>#(string.format('{0}.name',#hedit.sub.use.4))</label>
+        <animation effect="slide" start="0,0" end="0,0" time="0" condition="true">conditional</animation>
+        <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b0)">conditional</animation>
+        <animation effect="slide" start="-274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,b1)">conditional</animation>
+        <animation effect="slide" start="274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f0)">conditional</animation>
+        <animation effect="slide" start="274,0" end="0,0" time="250" acceleration="-0.5" reversible="false" condition="string.contains(#hedit.sub.calc.nav,f1)">conditional</animation>
+        <!--animation effect="zoom" start="100,100" end="120,120" time="100" condition="true">conditional</animation-->
+      </control>
+      <control>
+        <type>image</type>
+        <posX>828</posX>
+        <posY>892</posY>
+        <width>264</width>
+        <height>52</height>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>ff07091e</colordiffuse>
+        <animation effect="fade" start="0" end="100" time="250" delay="150" reversible="false" condition="string.contains(#hedit.sub.calc.nav,0)">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="250" delay="150" reversible="false" condition="string.contains(#hedit.sub.calc.nav,1)">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="250" delay="150" reversible="false">visible</animation>
+        <animation effect="zoom" start="100,100" end="120,120" time="100" condition="true">conditional</animation>
+        <!--animation effect="fade" time="0">hidden</animation>
+        <animation effect="fade" time="0">WindowClose</animation-->
+      </control>
+      <control>
+        <type>image</type>
+        <posX>#image.posx</posX>
+        <posY>#image.posy</posY>
+        <width>#image.width</width>
+        <height>#image.height</height>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>ff0142a8</colordiffuse>
+        <animation effect="fade" start="0" end="100" time="250" delay="100" reversible="false" condition="string.contains(#hedit.sub.calc.nav,0)">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="250" delay="100" reversible="false" condition="string.contains(#hedit.sub.calc.nav,1)">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="250" delay="100" reversible="false">visible</animation>
+        <animation effect="zoom" start="100,100" end="120,120" time="100" condition="true">conditional</animation>
+        <!--animation effect="fade" time="0">hidden</animation>
+        <animation effect="fade" time="0">WindowClose</animation-->
+      </control>
+      <control>
+      <description>Indicator</description>
+      <type>image</type>
+      <posX>935</posX>
+      <posY>832</posY>
+      <width>50</width>
+      <height>50</height>
+      <texture>play.png</texture>
+      <animation effect="fade" start="0" end="100" time="250" delay="250" reversible="false" condition="string.contains(#hedit.sub.calc.nav,0)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="250" reversible="false" condition="string.contains(#hedit.sub.calc.nav,1)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="250" reversible="false">visible</animation>
+      <animation effect="fade" time="0" reversible="false">hidden</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="0">WindowClose</animation>
+      <visible>string.contains(#hedit.inuse,sub)+[string.contains(#highlightedbutton,TVSERIES)|string.contains(#highlightedbutton,VIDEO1)|string.contains(#highlightedbutton,VIDEO2)|string.contains(#highlightedbutton,MOVPIC)|string.contains(#highlightedbutton,TV3)|string.contains(#highlightedbutton,AUDIO1)|string.contains(#highlightedbutton,VIDEO4)|string.contains(#highlightedbutton,PICTURE)|string.contains(#highlightedbutton,TRAKT)|string.contains(#highlightedbutton,AUDIO6)]</visible>
+    </control>
     </control>
    
 <!-- Render indicator for Latest Media++++++++++-->
 
-    <control>
-      <description>Indicator</description>
-      <type>image</type>
-      <posX>925</posX>
-      <posY>827</posY>
-      <width>50</width>
-      <height>50</height>
-      <texture>play.png</texture>
-      <animation effect="fade" start="0" end="100" time="800" delay="500" reversible="false" condition="string.contains(#hedit.sub.calc.nav,0)">conditional</animation>
-      <animation effect="fade" start="0" end="100" time="800" delay="500" reversible="false" condition="string.contains(#hedit.sub.calc.nav,1)">conditional</animation>
-      <animation effect="fade" start="0" end="100" time="800" delay="500" reversible="false">visible</animation>
-      <animation effect="fade" time="0" reversible="false">hidden</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="0">WindowClose</animation>
-      <visible>string.contains(#hedit.inuse,sub)+[string.contains(#highlightedbutton,TVSERIES)|string.contains(#highlightedbutton,VIDEO1)|string.contains(#highlightedbutton,VIDEO2)|string.contains(#highlightedbutton,MOVPIC)|string.contains(#highlightedbutton,TV3)|string.contains(#highlightedbutton,AUDIO1)|string.contains(#highlightedbutton,VIDEO4)|string.contains(#highlightedbutton,MUSIC)|string.contains(#highlightedbutton,TRAKT)|string.contains(#highlightedbutton,PICTURE)|string.contains(#highlightedbutton,AUDIO6)]</visible>
-    </control>
+
+    
   </controls>
 </window>

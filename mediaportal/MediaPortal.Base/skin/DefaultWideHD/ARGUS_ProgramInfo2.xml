@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>748</id>
@@ -176,7 +176,7 @@
       <posX>600</posX>
       <posY>660</posY>
       <width>450</width>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <font>font12</font>
     </control>
     <control>
@@ -188,7 +188,7 @@
       <width>450</width>
       <align>left</align>
       <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Current program genre</description>
@@ -199,7 +199,7 @@
       <width>750</width>
       <align>left</align>
       <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Program Title</description>
@@ -210,7 +210,7 @@
       <width>1590</width>
       <align>left</align>
       <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Description1</description>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>49856</id>
@@ -57,7 +57,7 @@
       <posY>270</posY>
       <width>525</width>
       <height>375</height>
-      <texture mask="picturethumbmask.png">blue.png</texture>
+      <texture mask="musicfanart_mask.png">blue.png</texture>
       <colordiffuse>eeffffff</colordiffuse>
     </control>
     <control>
@@ -128,7 +128,7 @@
       <posY>270</posY>
       <width>525</width>
       <height>750</height>
-      <texture mask="picturethumbmask.png">blue.png</texture>
+      <texture mask="musicfanart_mask.png">blue.png</texture>
       <colordiffuse>eeffffff</colordiffuse>
     </control>
     <control>
@@ -200,7 +200,7 @@
       <posY>270</posY>
       <width>525</width>
       <height>750</height>
-      <texture mask="picturethumbmask.png">blue.png</texture>
+      <texture mask="musicfanart_mask.png">blue.png</texture>
       <colordiffuse>eeffffff</colordiffuse>
     </control>
     <control>

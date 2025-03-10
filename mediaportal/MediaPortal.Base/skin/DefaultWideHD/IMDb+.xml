@@ -36,7 +36,7 @@
       <width>525</width>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>IMDB+</label>
     </control>
     <control>
@@ -224,7 +224,7 @@
       <posX>386</posX>
       <posY>105</posY>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#IMDb.Movie.Refresh.Active,true)</visible>
     </control>
     <control>

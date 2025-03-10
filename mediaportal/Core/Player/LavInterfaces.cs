@@ -902,5 +902,24 @@ InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         [PreserveSig]
         int GetMaxQueueSize();
     }
-    #endregion
+
+    [ComVisible(true), ComImport, SuppressUnmanagedCodeSecurity, Guid("46070104-1318-4A82-8822-E99AB7CD15C1"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface ILAVBufferInfo
+    {
+      // Number of Buffers
+      [PreserveSig]
+      uint GetCount();
+
+      // Get Info about Buffer "i" (0-based index up to count)
+      // samples: number of frames in the buffer
+      // size: total size in bytes of the buffer
+      [PreserveSig]
+      uint GetStatus(uint i, out uint samples, out uint size);
+
+      // Get priority of the demuxing thread
+      [PreserveSig]
+      uint GetPriority();
+    }
+
+  #endregion
 }

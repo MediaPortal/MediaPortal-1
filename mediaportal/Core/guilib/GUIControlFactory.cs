@@ -985,6 +985,8 @@ namespace MediaPortal.GUI.Library
           return typeof (GUIStandardKeyboard);
         case ("coverflow"):
           return typeof (GUICoverFlow);
+        case ("notifier"):
+          return typeof(GUINotifierControl);
         default:
           Type t = (Type)m_hashCustomControls[xmlTypeName];
 

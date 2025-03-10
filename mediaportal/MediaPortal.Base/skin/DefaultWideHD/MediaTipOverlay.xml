@@ -34,7 +34,7 @@
       <posX>774</posX>
       <posY>780</posY>
       <font>font16</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#MediaTip.Headline</label>
     </control>
     <!-- *** MediaTip Headline Image *** -->

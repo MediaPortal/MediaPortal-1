@@ -216,7 +216,8 @@ namespace MediaPortal.GUI.Library
       ACTION_NEXT_EDITION = 134, // Switch to next edition
       ACTION_NEXT_VIDEO = 135, // Switch to next video stream
       ACTION_PLAY_INTEL_AUDIO_SOUND = 136, // Workaround to play a sound when HDMI is disconnected
-      ACTION_SHOW_STAT = 1984
+      ACTION_SHOW_STAT = 1984,
+      ACTION_SHOW_NEWS = 3013, //Show Notifier Window
     } ;
 
     #endregion

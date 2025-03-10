@@ -3,11 +3,12 @@
 <window>
   <id>54537688</id>
   <defaultcontrol>50</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
-  <disabletopbar>yes</disabletopbar>
+  <allowoverlay>no</allowoverlay>
+  <disabletopbar>no</disabletopbar>
   <controls>
-    <import>common.time.xml</import>
     <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    
     <control>
       <type>actiongroup</type>
       <description>action menu</description>

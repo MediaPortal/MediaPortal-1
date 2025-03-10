@@ -14,7 +14,7 @@
       <height>1080</height>
       <colordiffuse>90ffffff</colordiffuse>
     </control>
-    <import>common.window.xml</import>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
     <control>
       <description>General Overlay</description>
@@ -31,11 +31,11 @@
       <type>label</type>
       <id>0</id>
       <posX>45</posX>
-      <posY>15</posY>
+      <posY>54</posY>
       <width>1299</width>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
-      <label>#Trakt.Translation.UserProfile.Label</label>
+      <textcolor>lightgray</textcolor>
+      <label>Trakt #scroll.wrap #Trakt.Translation.UserProfile.Label</label>
       <align>left</align>
     </control>
     <control>
@@ -142,7 +142,7 @@
         </control>
       </control>
     </control>
-    <control>
+    <!--control>
       <description>Overlay text right</description>
       <id>0</id>
       <type>image</type>
@@ -150,9 +150,9 @@
       <posY>234</posY>
       <width>823</width>
       <height>699</height>
-      <texture mask="picturethumbmask.png">black.png</texture>
+      <texture mask="musicfanart_mask.png">black.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
-    </control>
+    </control-->
     <!-- Friend Info -->
     <control>
       <description>LCD image</description>
@@ -187,7 +187,7 @@
       <label>#Trakt.Translation.FullName.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#Trakt.User.FullName,)</visible>
     </control>
     <control>
@@ -199,7 +199,7 @@
       <width>399</width>
       <label>#Trakt.User.FullName</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.User.FullName,)</visible>
     </control>
     <control>
@@ -211,7 +211,7 @@
       <label>#Trakt.Translation.JoinDate.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#Trakt.User.JoinDate,)</visible>
     </control>
     <control>
@@ -223,7 +223,7 @@
       <label>#Trakt.User.JoinDate</label>
       <font>font12</font>
       <width>420</width>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.User.JoinDate,)</visible>
     </control>
     <control>
@@ -235,7 +235,7 @@
       <label>#Trakt.Translation.Location.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#Trakt.User.Location,)</visible>
     </control>
     <control>
@@ -247,7 +247,7 @@
       <width>420</width>
       <label>#Trakt.User.Location</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.User.Location,)</visible>
     </control>
     <control>
@@ -259,7 +259,7 @@
       <label>#Trakt.Translation.Age.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#Trakt.User.Age,)</visible>
     </control>
     <control>
@@ -271,7 +271,7 @@
       <width>405</width>
       <label>#Trakt.User.Age</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.User.Age,)</visible>
     </control>
     <control>
@@ -283,7 +283,7 @@
       <label>#Trakt.Translation.Friends.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Friends,)</visible>
     </control>
     <control>
@@ -295,7 +295,7 @@
       <width>420</width>
       <label>#Trakt.Statistics.Friends</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Friends,)</visible>
     </control>
     <control>
@@ -306,7 +306,7 @@
       <posY>529</posY>
       <label>Vip</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#Trakt.User.Age,)</visible>
     </control>
     <control>
@@ -317,7 +317,7 @@
       <posY>558</posY>
       <label>#(iif(eq(#Trakt.User.VIP,'true'),'#Trakt.Translation.Yes.Label','#Trakt.Translation.No.Label'))</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.User.VIP,)</visible>
     </control>
     <control>
@@ -329,7 +329,7 @@
       <label>#Trakt.Translation.Protected.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#Trakt.User.Protected,)</visible>
     </control>
     <control>
@@ -342,7 +342,7 @@
       <label>#(iif(eq(#Trakt.User.Protected,'true'),'#Trakt.Translation.Yes.Label','#Trakt.Translation.No.Label'))</label>
       <font>font12</font>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.User.Protected,)</visible>
     </control>
     <control>
@@ -355,7 +355,7 @@
       <width>225</width>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Episodes.WatchedUnique,)</visible>
     </control>
     <control>
@@ -389,7 +389,7 @@
       <posY>655</posY>
       <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Episodes.WatchedUnique)))</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Episodes.WatchedUnique,)</visible>
     </control>
     <control>
@@ -411,7 +411,7 @@
       <posY>655</posY>
       <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Episodes.Collection)))</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Episodes.Collection,)</visible>
     </control>
     <control>
@@ -433,7 +433,7 @@
       <posY>655</posY>
       <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Episodes.Shouts)))</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Episodes.Shouts,)</visible>
     </control>
     <control>
@@ -455,7 +455,7 @@
       <posY>655</posY>
       <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Episodes.Loved)))</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Episodes.Loved,)</visible>
     </control>
     <control>
@@ -468,7 +468,7 @@
       <width>225</width>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Shows.Watched,)</visible>
     </control>
     <control>
@@ -502,7 +502,7 @@
       <posY>753</posY>
       <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Shows.Watched)))</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Shows.Watched,)</visible>
     </control>
     <control>
@@ -524,7 +524,7 @@
       <posY>753</posY>
       <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Shows.Collection)))</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Shows.Collection,)</visible>
     </control>
     <control>
@@ -546,7 +546,7 @@
       <posY>753</posY>
       <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Shows.Shouts)))</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Shows.Shouts,)</visible>
     </control>
     <control>
@@ -568,7 +568,7 @@
       <posY>753</posY>
       <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Shows.Loved)))</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Shows.Loved,)</visible>
     </control>
     <control>
@@ -581,7 +581,7 @@
       <width>225</width>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Movies.Watched,)</visible>
     </control>
     <control>
@@ -615,7 +615,7 @@
       <posY>850</posY>
       <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Movies.Watched)))</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Movies.Watched,)</visible>
     </control>
     <control>
@@ -637,7 +637,7 @@
       <posY>850</posY>
       <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Movies.Collection)))</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Movies.Collection,)</visible>
     </control>
     <control>
@@ -659,7 +659,7 @@
       <posY>850</posY>
       <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Movies.Shouts)))</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Movies.Shouts,)</visible>
     </control>
     <control>
@@ -681,7 +681,7 @@
       <posY>850</posY>
       <label>#(string.format('{0:#,0}', cint(#Trakt.Statistics.Movies.Loved)))</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.Statistics.Movies.Loved,)</visible>
     </control>
   </controls>

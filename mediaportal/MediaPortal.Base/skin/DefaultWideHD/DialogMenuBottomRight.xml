@@ -20,63 +20,66 @@
       <control>
         <type>image</type>
         <id>0</id>
-        <posX>279</posX>
-        <width>1455</width>
-        <height>517</height>
-        <posY>289</posY>
-        <texture>dialog_schedule_rec.png</texture>
+        <posX>420</posX>
+        <posY>349</posY>
+        <width>1077</width>
+        <height>500</height>
+        <texture>dialog_background</texture>
         <colordiffuse>ffffffff</colordiffuse>
         <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
       </control>
       <control>
         <type>image</type>
         <id>0</id>
-        <posX>279</posX>
-        <width>1455</width>
-        <height>517</height>
-        <posY>289</posY>
-        <texture>dialog_schedule_rec.png</texture>
-        <colordiffuse>bbffffff</colordiffuse>
+        <posX>420</posX>
+        <posY>349</posY>
+        <width>1077</width>
+        <height>500</height>
+        <texture>dialog_background.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
       </control>
       <control>
         <description>Heading text label</description>
         <type>label</type>
         <id>4</id>
-        <posX>399</posX>
-        <posY>355</posY>
+        <posX>514</posX>
+        <posY>418</posY>
+        <width>786</width>
         <label>181</label>
-        <font>font14</font>
-        <textcolor>FFFFFFFF</textcolor>
+        <font>MenuHeader</font>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <description>Label text</description>
         <type>label</type>
         <id>5</id>
-        <posX>576</posX>
-        <posY>624</posY>
+        <posX>559</posX>
+        <posY>480</posY>
+        <width>786</width>
         <label>-</label>
         <font>font12</font>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <description>Label text</description>
         <type>label</type>
         <id>6</id>
-        <posX>576</posX>
-        <posY>654</posY>
+        <posX>559</posX>
+        <posY>480</posY>
+        <width>786</width>
         <label>-</label>
         <font>font12</font>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <description>Exit button</description>
         <type>button</type>
         <id>2</id>
-        <posX>1545</posX>
-        <posY>348</posY>
-        <width>75</width>
-        <height>75</height>
-        <textureFocus>tb_exit.png</textureFocus>
+        <posX>1382</posX>
+        <posY>416</posY>
+        <width>35</width>
+        <height>35</height>
+        <textureFocus>tb_exit_dialogue.png</textureFocus>
         <textureNoFocus>tb_exitNF.png</textureNoFocus>
         <label>-</label>
         <onleft>3</onleft>
@@ -88,9 +91,9 @@
         <description>options listcontrol</description>
         <type>listcontrol</type>
         <id>3</id>
-        <posX>399</posX>
+        <posX>570</posX>
         <posY>487</posY>
-        <width>1200</width>
+        <width>700</width>
         <height>487</height>
         <onleft>2</onleft>
         <onright>2</onright>
@@ -100,9 +103,10 @@
         <spinPosY>933</spinPosY>
         <spinWidth>42</spinWidth>
         <spinHeight>30</spinHeight>
-        <textureHeight>64</textureHeight>
-        <font>font14</font>
+        <textureHeight>49</textureHeight>
+        <font>font12</font>
         <textYOff>4</textYOff>
+        <textXOff>-30</textXOff>
       </control>
     </control>
   </controls>

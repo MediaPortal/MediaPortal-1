@@ -3,7 +3,7 @@
 <window>
   <id>2011</id>
   <defaultcontrol>5</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <define>#selecteditem:</define>
   <define>#useSelectedFanart:Yes</define>
   <controls>
@@ -28,18 +28,7 @@
       <height>1080</height>
       <texture>general_overlay.png</texture>
     </control>
-    <control>
-      <description>Overlay album info</description>
-      <id>0</id>
-      <type>image</type>
-      <posX>397</posX>
-      <posY>234</posY>
-      <width>1080</width>
-      <height>697</height>
-      <texture mask="cdthumbmask.png">black.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
-    </control>
-    <control Style="NoShadow">
+    <!--control Style="NoShadow">
       <description>Artist value</description>
       <type>fadelabel</type>
       <id>0</id>
@@ -49,8 +38,8 @@
       <align>center</align>
       <label>#ArtistInfo.Artist</label>
       <font>Menutitle</font>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
+      <textcolor>ff00bfff</textcolor>
+    </control-->
     <control Style="NoShadow">
       <description>Born</description>
       <type>label</type>
@@ -58,9 +47,9 @@
       <posX>427</posX>
       <posY>270</posY>
       <label>686</label>
-      <font>font13</font>
+      <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Years Active</description>
@@ -69,9 +58,9 @@
       <posX>427</posX>
       <posY>307</posY>
       <label>687</label>
-      <font>font13</font>
+      <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Genres</description>
@@ -80,9 +69,9 @@
       <posX>427</posX>
       <posY>345</posY>
       <label>135</label>
-      <font>font13</font>
+      <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Tones</description>
@@ -91,9 +80,9 @@
       <posX>427</posX>
       <posY>382</posY>
       <label>175</label>
-      <font>font13</font>
+      <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Styles</description>
@@ -102,9 +91,9 @@
       <posX>427</posX>
       <posY>420</posY>
       <label>176</label>
-      <font>font13</font>
+      <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Instruments</description>
@@ -113,9 +102,9 @@
       <posX>427</posX>
       <posY>457</posY>
       <label>688</label>
-      <font>font13</font>
+      <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Born value</description>
@@ -124,9 +113,9 @@
       <posX>727</posX>
       <posY>270</posY>
       <label>#ArtistInfo.Born</label>
-      <font>font13</font>
+      <font>Label</font>
       <width>720</width>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Years Active value</description>
@@ -135,9 +124,9 @@
       <posX>727</posX>
       <posY>307</posY>
       <label>#ArtistInfo.YearsActive</label>
-      <font>font13</font>
+      <font>Label</font>
       <width>720</width>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Genres value</description>
@@ -147,8 +136,8 @@
       <posY>345</posY>
       <label>#ArtistInfo.Genres</label>
       <width>720</width>
-      <font>font13</font>
-      <textcolor>ivory</textcolor>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Tones value</description>
@@ -158,8 +147,8 @@
       <posY>382</posY>
       <width>720</width>
       <label>#ArtistInfo.Tones</label>
-      <font>font13</font>
-      <textcolor>ivory</textcolor>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Styles value</description>
@@ -169,8 +158,8 @@
       <posY>420</posY>
       <width>720</width>
       <label>#ArtistInfo.Styles</label>
-      <font>font13</font>
-      <textcolor>ivory</textcolor>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Instruments value</description>
@@ -180,8 +169,8 @@
       <posY>457</posY>
       <label>#ArtistInfo.Instruments</label>
       <width>720</width>
-      <font>font13</font>
-      <textcolor>ivory</textcolor>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <id>0</id>
@@ -205,7 +194,7 @@
       <height>360</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <texture mask="picturethumbmask.png">#ArtistInfo.Thumb</texture>
+      <texture mask="musicfanart_mask.png">#ArtistInfo.Thumb</texture>
       <zoom>yes</zoom>
       <colorkey>FFFFFFFF</colorkey>
     </control>
@@ -230,7 +219,7 @@
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
-      <font>font13</font>
+      <font>font10</font>
       <spinPosX>1320</spinPosX>
       <spinPosY>885</spinPosY>
       <label>#ArtistInfo.Bio</label>
@@ -248,7 +237,7 @@
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
-      <font>font13</font>
+      <font>font10</font>
       <spinPosX>1320</spinPosX>
       <spinPosY>885</spinPosY>
       <label>#ArtistInfo.Albums</label>
@@ -276,7 +265,7 @@
       <posY>330</posY>
       <width>300</width>
       <label>184</label>
-      <font>font13</font>
+      <font>Label</font>
       <onleft>4</onleft>
       <onright>4</onright>
       <onup>5</onup>

@@ -70,7 +70,7 @@
       <align>left</align>
       <font>Menutitle</font>
       <label>#st_theater</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>control.hastext(46)</visible>
     </control>
     <control>
@@ -82,7 +82,7 @@
       <width>1920</width>
       <align>center</align>
       <label>#st_extra</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.hastext(46)</visible>
     </control>
     <!-- ******************************************************************************************* -->
@@ -204,7 +204,7 @@
       <height>112</height>
       <label>#showtimes_nextupdate</label>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(24)</visible>
     </control>
   </control>
@@ -310,7 +310,7 @@
       <font>Label</font>
       <posX>1084</posX>
       <posY>240</posY>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Runtime value</description>
@@ -320,7 +320,7 @@
       <font>font12</font>
       <posX>1358</posX>
       <posY>239</posY>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>divider horizontal</description>
@@ -341,7 +341,7 @@
       <font>Label</font>
       <posX>1084</posX>
       <posY>284</posY>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Year value</description>
@@ -351,7 +351,7 @@
       <font>font12</font>
       <posX>1358</posX>
       <posY>281</posY>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>divider horizontal</description>
@@ -372,7 +372,7 @@
       <font>Label</font>
       <posX>1084</posX>
       <posY>326</posY>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Director value</description>
@@ -383,7 +383,7 @@
       <font>font12</font>
       <posX>1358</posX>
       <posY>323</posY>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>divider horizontal</description>
@@ -404,7 +404,7 @@
       <font>Label</font>
       <posX>1084</posX>
       <posY>368</posY>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Votes value</description>
@@ -414,7 +414,7 @@
       <font>font12</font>
       <posX>1358</posX>
       <posY>365</posY>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>divider horizontal</description>
@@ -435,7 +435,7 @@
       <font>Label</font>
       <posX>1084</posX>
       <posY>410</posY>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>MPAA value</description>
@@ -446,7 +446,7 @@
       <font>font12</font>
       <posX>1358</posX>
       <posY>407</posY>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>divider horizontal</description>
@@ -467,7 +467,7 @@
       <font>Label</font>
       <posX>1084</posX>
       <posY>454</posY>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Cast value</description>
@@ -479,7 +479,7 @@
       <height>95</height>
       <label>#st_starring</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>divider horizontal</description>
@@ -500,7 +500,7 @@
       <font>Label</font>
       <posX>1084</posX>
       <posY>611</posY>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Plot value</description>
@@ -512,7 +512,7 @@
       <height>195</height>
       <label>#st_plot</label>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
   </control>
   <control>
@@ -524,7 +524,7 @@
     <posX>1084</posX>
     <posY>875</posY>
     <font>font11</font>
-    <textcolor>ff6FAFE1</textcolor>
+    <textcolor>ff00bfff</textcolor>
     <visible>[facadeview.list|control.isvisible(24)]+control.hastext(46)</visible>
   </control>
   <!-- ******************************************************************************************* -->

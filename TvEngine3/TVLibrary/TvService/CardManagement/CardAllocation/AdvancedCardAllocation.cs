@@ -259,6 +259,11 @@ namespace TvService
 
         foreach (IChannel tuningDetail in tuningDetails)
         {
+          if (tuningDetail == null)
+          {
+            Log.Error("GetAvailableCardsForChannel:   channel #{0} tuningdetails = null", number);
+            continue;
+          }
           cardsUnAvailable.Clear();
           number++;
           if (LogEnabled)

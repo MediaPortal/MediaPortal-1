@@ -7,9 +7,9 @@
       <posX>534</posX>
       <posY>253</posY>
       <width>1194</width>
-      <height>703</height>
+      <height>680</height>
       <label>#SubCentral.About</label>
-      <font>font11</font>
+      <font>font10</font>
       <onup>912</onup>
       <ondown>912</ondown>
       <onleft>202</onleft>
@@ -17,7 +17,7 @@
       <spinWidth>42</spinWidth>
       <spinHeight>42</spinHeight>
       <spinPosX>1075</spinPosX>
-      <spinPosY>907</spinPosY>
+      <spinPosY>890</spinPosY>
       <spinAlign>left</spinAlign>
       <spinCanFocus>yes</spinCanFocus>
       <visible>Control.IsVisible(101)</visible>
