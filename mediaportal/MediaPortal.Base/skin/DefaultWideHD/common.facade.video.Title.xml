@@ -16,7 +16,7 @@
           <description>listcontrol</description>
           <type>listcontrol</type>
           <id>50</id>
-          <width>825</width>
+          <width>875</width>
           <shadedColor>20ffffff</shadedColor>
           <selectedColor3>FF00CC00</selectedColor3>
           <selectedColor2>FF00CC00</selectedColor2>
@@ -33,8 +33,8 @@
           <downloadColor>ff666666</downloadColor>
           <downloadColor2>ff80ff80</downloadColor2>
           <dimColor>90ffffff</dimColor>
-          <textXOff2>825</textXOff2>
-          <textYOff2>3</textYOff2>
+          <textXOff2>875</textXOff2>
+          <textYOff2>1</textYOff2>
           <textXOff3>3817</textXOff3>
           <textYOff3>12</textYOff3>
           <textalign3>right</textalign3>
@@ -44,7 +44,7 @@
           <unfocusedAlpha>160</unfocusedAlpha>
           <folderPrefix />
           <folderSuffix />
-          <textureFocus>#(iif(eq(#watchedcount,'0'),'button_focus_notwatched.png','button_focus.png'))</textureFocus>
+          <textureFocus>#(iif(eq(#watchedcount,'0'),'listfocus_notwatched.png','listfocus.png'))</textureFocus>
           <texturebg>osd_progress_background.png</texturebg>
           <lefttexture>green.png</lefttexture>
           <midtexture>green.png</midtexture>
@@ -265,7 +265,7 @@
                 <width>230</width>
                 <label>#title</label>
                 <font>font11</font>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, true)</visible>
@@ -280,7 +280,7 @@
                 <label>#groupmovielist</label>
                 <font>font9</font>
                 <lineSpacing>2</lineSpacing>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, True)</visible>
@@ -293,7 +293,7 @@
                 <width>230</width>
                 <label>#title</label>
                 <font>font11</font>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, False)</visible>
@@ -308,7 +308,7 @@
                 <textureWidth>17</textureWidth>
                 <textureHeight>17</textureHeight>
                 <subitems>
-                  <subitem>greystar.png</subitem>
+                  <subitem>starbad.png</subitem>
                   <subitem>star.png</subitem>
                 </subitems>
                 <orientation>horizontal</orientation>
@@ -325,7 +325,7 @@
                 <width>365</width>
                 <label>#genre</label>
                 <font>font9</font>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, False)</visible>
@@ -338,7 +338,7 @@
                 <width>365</width>
                 <label>#year  /  #runtime</label>
                 <font>font9</font>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, False)</visible>
@@ -351,7 +351,7 @@
                 <width>365</width>
                 <label>#(L(199)) #director</label>
                 <font>font9</font>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, False)</visible>
@@ -364,7 +364,7 @@
                 <width>365</width>
                 <label>#(L(173)) #mpaarating</label>
                 <font>font9</font>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, False)</visible>
@@ -379,7 +379,7 @@
                 <label>#plot</label>
                 <font>font9</font>
                 <lineSpacing>2.5</lineSpacing>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, False)</visible>
@@ -391,8 +391,8 @@
           <description>playlist listcontrol</description>
           <type>playlistcontrol</type>
           <id>50</id>
-          <posX>903</posX>
-          <posY>300</posY>
+          <posX>80</posX>
+          <posY>260</posY>
           <width>963</width>
           <height>750</height>
           <upBtnXOffset>765</upBtnXOffset>

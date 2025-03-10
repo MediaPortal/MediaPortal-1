@@ -126,7 +126,7 @@
       <height>1080</height>
       <colordiffuse>ffffffff</colordiffuse>
       <texture>#fanarthandler.music.backdrop1.play</texture>
-      <visible>control.isvisible(91919295)+control.isvisible(91919294)</visible>
+      <visible>control.isvisible(91919295)+control.isvisible(91919294)+skin.hassetting(#skin.music.fanart.nowplaying.basichome)</visible>
       <animation effect="fade" time="300">visible</animation>
       <animation effect="fade" time="300">hidden</animation>
     </control>
@@ -140,7 +140,7 @@
       <height>1080</height>
       <colordiffuse>ffffffff</colordiffuse>
       <texture>#fanarthandler.music.backdrop2.play</texture>
-      <visible>control.isvisible(91919296)+control.isvisible(91919294)</visible>
+      <visible>control.isvisible(91919296)+control.isvisible(91919294)+skin.hassetting(#skin.music.fanart.nowplaying.basichome)</visible>
       <animation effect="fade" time="300">visible</animation>
       <animation effect="fade" time="300">hidden</animation>
     </control>
@@ -152,9 +152,10 @@
     <posX>0</posX>
     <posY>0</posY>
     <width>1920</width>
-    <height>379</height>
+    <height>180</height>
     <texture>overlay_top.png</texture>
-    <colordiffuse>ffffffff</colordiffuse>
+    <colordiffuse>eeffffff</colordiffuse>
+    <visible>skin.hassetting(#skin.music.fanart.nowplaying.basichome)|skin.hassetting(#skin.video.fanart.basichome)|skin.hassetting(#skin.music.fanart.basichome)</visible>
   </control>
   <!-- *************************************************************************************************** -->
     <!-- ************************************** Here is the ClearArt *************************************** -->
@@ -169,6 +170,7 @@
       <height>155</height>
       <texture>#fanarthandler.music.artistclearart.play</texture>
       <colordiffuse>ffffffff</colordiffuse>
+      <visible>skin.hassetting(#skin.music.fanart.nowplaying.basichome)</visible>
     </control>
   </controls>
 </window>

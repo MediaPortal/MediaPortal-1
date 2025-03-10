@@ -11,8 +11,18 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
+      <texture>blue.png</texture>
       <width>1920</width>
       <height>1080</height>
+    </control>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH TVsearch.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
@@ -35,7 +45,7 @@
       <label>#itemcount</label>
       <align>right</align>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>no</visible>
     </control>
     <control>
@@ -139,11 +149,11 @@
       <type>fadelabel</type>
       <id>13</id>
       <posX>240</posX>
-      <posY>660</posY>
+      <posY>657</posY>
       <width>1590</width>
       <label>#selecteditem - #TV.Search.Channel</label>
-      <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <font>LabelBold</font>
+      <textcolor>ff00bfff</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
@@ -155,7 +165,7 @@
       <width>1590</width>
       <label>#TV.Search.Time</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
@@ -163,12 +173,12 @@
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>240</posX>
-      <posY>757</posY>
+      <posY>762</posY>
       <width>1590</width>
-      <height>157</height>
-      <font>font11</font>
+      <height>145</height>
+      <font>font10</font>
       <label>#TV.Search.Description</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
@@ -180,7 +190,7 @@
       <width>1113</width>
       <label>#TV.Search.Genre</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
@@ -192,7 +202,7 @@
       <label>#TV.Search.Channel</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
   </controls>
 </window>

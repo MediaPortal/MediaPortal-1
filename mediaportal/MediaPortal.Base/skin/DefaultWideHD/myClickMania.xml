@@ -2,12 +2,13 @@
 <window>
   <id>5555</id>
   <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
-  <define>#header.label:ClickMania</define>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:#SkinTranslation.Translations.Games.Label #scroll.wrap Diamond Crush</define>
   <define>#header.hover:hover_clickmania.png</define>
   <define>#selecteditem:</define>
-  <controls>
-    <control>
+  <!--define property="true" evaluateNow="true">#cm_score:#(skin.setstring(cint(#cm_score),"0"))</define-->
+<controls>
+  <control>
       <description>background image</description>
       <type>image</type>
       <id>1</id>
@@ -16,31 +17,23 @@
       <texture>gamebg.jpg</texture>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
-    <control>
-      <type>label</type>
-      <id>1</id>
-      <posX>45</posX>
-      <posY>15</posY>
-      <label>#header.label</label>
-      <font>Label</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <import>common.time.xml</import>
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+    <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+    <animation effect="fade" time="500">WindowClose</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
     <control>
       <description>Button background</description>
       <type>image</type>
       <id>1</id>
       <posX>50</posX>
       <posY>205</posY>
-      <height>290</height>
-      <width>420</width>
-      <texture>am-background.png</texture>
-      <colordiffuse>50ffffff</colordiffuse>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <height>570</height>
+      <width>450</width>
+      <texture>backslide_settings.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
       <type>group</type>
@@ -48,10 +41,6 @@
       <layout>StackLayout(0, vertical, true)</layout>
       <posX>70</posX>
       <posY>225</posY>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
       <control>
         <description>New Game</description>
         <type>button</type>
@@ -61,6 +50,7 @@
         <onright>10</onright>
         <onup>17</onup>
         <ondown>8</ondown>
+        <visible allowhiddenfocus="true">yes</visible>
       </control>
       <control>
         <type>button</type>
@@ -100,58 +90,16 @@
       <posY>505</posY>
       <width>532</width>
       <height>300</height>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
       <control>
+        <description>divider horizontal</description>
         <type>image</type>
-        <description>-</description>
-        <id>1</id>
-        <posX>50</posX>
+        <id>0</id>
+        <posX>65</posX>
         <posY>505</posY>
-        <width>450</width>
-        <height>300</height>
-        <texture mask="cdcase_mask.png">black.png</texture>
-        <colordiffuse>40ffffff</colordiffuse>
-      </control>
-      <control>
-        <type>label</type>
-        <description>Score: label</description>
-        <id>201</id>
-        <posX>100</posX>
-        <posY>640</posY>
-        <label>19005</label>
-        <font>font14</font>
-      </control>
-      <control>
-        <type>label</type>
-        <description>Score</description>
-        <id>202</id>
-        <posX>350</posX>
-        <posY>640</posY>
-        <label>#cm_score</label>
-        <font>font14</font>
-        <align>right</align>
-      </control>
-      <control>
-        <type>label</type>
-        <description>Highscore: label</description>
-        <id>203</id>
-        <posX>100</posX>
-        <posY>730</posY>
-        <label>19008</label>
-        <font>font14</font>
-      </control>
-      <control>
-        <type>label</type>
-        <description>Highscore</description>
-        <id>204</id>
-        <posX>350</posX>
-        <posY>730</posY>
-        <label>#cm_highscore</label>
-        <font>font14</font>
-        <align>right</align>
+        <width>420</width>
+        <height>1</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>aaffffff</colordiffuse>
       </control>
       <control>
         <type>label</type>
@@ -161,21 +109,73 @@
         <posY>520</posY>
         <label>#cm_time</label>
         <font>font36</font>
-        <textcolor>70ffffff</textcolor>
+        <textcolor>dodgerblue</textcolor>
+      </control>
+    </control>
+    <control>
+      <description>Score</description>
+      <type>group</type>
+      <layout>StackLayout(40, Horizontal, true)</layout>
+      <posX>94</posX>
+      <posY>650</posY>
+      <align>left</align>
+      <width>1210</width>
+      <control>
+        <type>fadelabel</type>
+        <description>Score label</description>
+        <id>0</id>
+        <label>#(L(19005)):</label>
+        <width>70</width>
+        <maxWidth>1030</maxWidth>
+        <align>left</align>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Score Value</description>
+        <id>0</id>
+        <label>#cm_score</label>
+        <width>900</width>
+        <maxWidth>1030</maxWidth>
+        <align>left</align>
+        <textcolor>ff00bfff</textcolor>
+      </control>
+    </control>
+    <control>
+      <description>Level</description>
+      <type>group</type>
+      <layout>StackLayout(40, Horizontal, true)</layout>
+      <posX>94</posX>
+      <posY>700</posY>
+      <align>left</align>
+      <width>1210</width>
+      <control>
+        <type>fadelabel</type>
+        <description>Level label</description>
+        <id>0</id>
+        <label>#(L(19008)):</label>
+        <width>70</width>
+        <maxWidth>1030</maxWidth>
+        <align>left</align>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Level Value</description>
+        <id>0</id>
+        <label>*#cm_highscore*</label>
+        <width>900</width>
+        <maxWidth>1030</maxWidth>
+        <align>left</align>
+        <textcolor>gold</textcolor>
       </control>
     </control>
     <control>
       <type>group</type>
       <description>group element</description>
       <id>0</id>
-      <posX>768</posX>
+      <posX>668</posX>
       <posY>150</posY>
       <width>1068</width>
       <height>870</height>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
       <mpe>
         <layout>Grid</layout>
         <spring>no</spring>
@@ -191,7 +191,7 @@
         <type>clickmania</type>
         <description>ClickMania control</description>
         <id>10</id>
-        <posX>778</posX>
+        <posX>678</posX>
         <posY>165</posY>
         <width>600</width>
         <height>840</height>
@@ -212,10 +212,146 @@
       <type>label</type>
       <description>Score</description>
       <id>28</id>
-      <posX>970</posX>
+      <posX>2970</posX>
       <posY>250</posY>
       <label>#cm_status</label>
-      <font>font14</font>
+      <font>Menutitle</font>
     </control>
-  </controls>
+    <control>
+      <description>image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>870</posX>
+      <posY>250</posY>
+      <width>205</width>
+      <height>155</height>
+      <texture>clickmania\game_over.png</texture>
+      <animation effect="slide" time="400" end="0,-500">WindowClose</animation>
+      <animation effect="zoom" start="1,1" end="100,100" time="300" center="1070,325" reversible="true">visiblechange</animation>
+      <visible>string.equals(#cm_status,Game Over)</visible>
+    </control>
+    <!--  ******************************************************  -->
+    <!--  **************   THE HIGHSCORE CHEST  ****************  -->
+    <!--  ******************************************************  -->
+    <control>
+        <type>group</type>
+        <description>group element</description>
+        <animation effect="slide" start="2800,0" end="0,0" time="1000" condition="string.equals(#cm_score,#cm_highscore)+string.equals(#cm_status,Game Over)">conditional</animation>
+        <animation effect="slide" start="0,0" end="2800,0" time="1000" delay="20000" condition="string.equals(#cm_score,#cm_highscore)+string.equals(#cm_status,Game Over)">conditional</animation>
+        <visible>string.equals(#cm_score,#cm_highscore)+string.equals(#cm_status,Game Over)+!control.hasfocus(2)+!control.hasfocus(4)+!control.hasfocus(6)+!control.hasfocus(8)</visible>
+    <control >
+      <description>Chest</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1320</posX>
+      <posY>400</posY>
+      <height>560</height>
+      <width>560</width>
+      <texture mask="picturecase_mask.png">clickmania\chest.gif</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Chest BG</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1320</posX>
+      <posY>395</posY>
+      <height>320</height>
+      <width>560</width>
+      <texture>PictureCasefocus.png</texture>
+      <keepaspectratio>no</keepaspectratio>
+      <colordiffuse>dd164665</colordiffuse>
+    </control>
+    <control>
+      <description>Chest BG</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1350</posX>
+      <posY>420</posY>
+      <height>318</height>
+      <width>558</width>
+      <texture>PictureCase_shadow.png</texture>
+      <keepaspectratio>no</keepaspectratio>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    </control>
+    <!--  ******************************************************  -->
+    <!--  ************** THE HIGHSCORE TICKER *****************  -->
+    <!--  ******************************************************  -->
+    <control>
+        <type>group</type>
+        <description>group element</description>
+        <animation effect="slide" start="0,-800" end="0,0" time="1000" condition="string.equals(#cm_score,#cm_highscore)+string.equals(#cm_status,Game Over)">conditional</animation>
+        <animation effect="fade" start="100" end="0" time="500" delay="20000" condition="string.equals(#cm_score,#cm_highscore)+string.equals(#cm_status,Game Over)">conditional</animation>
+        <visible>string.equals(#cm_score,#cm_highscore)+string.equals(#cm_status,Game Over)+string.equals(#cm_status,Game Over)+!control.hasfocus(2)+!control.hasfocus(4)+!control.hasfocus(6)+!control.hasfocus(8)</visible>
+      <control Style="NoShadow">
+          <description>Highscore ticker</description>
+          <type>fadelabel</type>
+          <id>1</id>
+          <posX>1410</posX>
+          <posY>400</posY>
+          <width>410</width>
+          <align>left</align>
+          <font>Label</font>
+          <textcolor>gold</textcolor>
+          <scrollStartDelaySec>0</scrollStartDelaySec>
+          <wrapString>***</wrapString>
+          <label>* Highscore #cm_highscore #(L(19005))!!! *</label>
+        </control>
+        <control>
+          <description>Ticker Image left</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1330</posX>
+          <posY>250</posY>
+          <width>270</width>
+          <height>200</height>
+          <keepaspectratio>yes</keepaspectratio>
+          <texture>Clickmania\champagnerleft.gif</texture>
+          <shouldCache>true</shouldCache>
+        </control>
+        <control>
+          <description>Ticker Image right</description>
+          <type>image</type>
+          <id>1</id>
+          <posX>1670</posX>
+          <posY>250</posY>
+          <width>270</width>
+          <height>200</height>
+          <keepaspectratio>yes</keepaspectratio>
+          <texture>Clickmania\champagnerright.gif</texture>
+          <shouldCache>true</shouldCache>
+        </control>
+    </control>
+  </control>
+  <control>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>#header.label</label>
+      <width>1802</width>
+      <align>left</align>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Title background image all screens except all games</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>120</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+  <import>common.time.xml</import>
+</controls>
 </window>

@@ -27,7 +27,7 @@
       <label>#ScoreCenter.Title</label>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>General Overlay</description>
@@ -92,7 +92,7 @@
       <label>#ScoreCenter.Results</label>
       <font>font14</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Scores</description>
@@ -296,7 +296,7 @@
       <width>1348</width>
       <height>730</height>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Next Button</description>
@@ -318,7 +318,7 @@
       <posY>87</posY>
       <width>1920</width>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <align>center</align>
       <label>#ScoreCenter.Live</label>
     </control>
@@ -364,7 +364,7 @@
       <font>font12</font>
       <align>LEFT</align>
       <label>#ScoreCenter.Round</label>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
   </controls>
 </window>

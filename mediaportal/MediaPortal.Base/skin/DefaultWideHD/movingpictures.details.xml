@@ -121,7 +121,7 @@
       <type>image</type>
       <posX>1020</posX>
       <posY>330</posY>
-      <width>40</width>
+      <width>30</width>
       <height>375</height>
       <keepaspectratio>yes</keepaspectratio>
       <texture>#fanarthandler.movie.genres.selected.verticalall</texture>
@@ -133,7 +133,7 @@
     <control>
       <id>0</id>
       <type>label</type>
-      <label>#MovingPictures.SelectedMovie.score.localized / 10 (#MovingPictures.SelectedMovie.popularity.localized #MovingPictures.Translation.Votes.Label)</label>
+      <label>#MovingPictures.SelectedMovie.score.localized/10 (#MovingPictures.SelectedMovie.popularity.localized #MovingPictures.Translation.Votes.Label)</label>
       <posX>1380</posX>
       <posY>240</posY>
       <width>450</width>
@@ -180,7 +180,7 @@
       <label>#(iif(eq(#MovingPictures.SelectedMovie.genres.count,'1'),'#MovingPictures.Translation.Genre.Label','#MovingPictures.Translation.Genres.Label'))</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+!control.isvisible(51)</visible>
     </control>
     <control>
@@ -192,7 +192,7 @@
       <posY>309</posY>
       <width>780</width>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
       <visible>!control.isvisible(50)+!control.isvisible(51)</visible>
@@ -217,8 +217,8 @@
       <posY>705</posY>
       <width>780</width>
       <height>157</height>
-      <textcolor>ivory</textcolor>
-      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+      <font>font10</font>
       <label>#MovingPictures.SelectedMovie.summary</label>
       <visible>!control.isvisible(50)+!control.isvisible(51)</visible>
     </control>
@@ -243,7 +243,7 @@
       <posY>346</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+!control.isvisible(51)</visible>
     </control>
     <control>
@@ -255,7 +255,7 @@
       <posY>375</posY>
       <width>780</width>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!control.isvisible(50)+!control.isvisible(51)</visible>
     </control>
     <control>
@@ -267,7 +267,7 @@
       <posY>346</posY>
       <width>1260</width>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+!control.isvisible(51)</visible>
     </control>
     <control>
@@ -291,7 +291,7 @@
       <posY>417</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+!control.isvisible(51)</visible>
     </control>
     <control>
@@ -303,7 +303,7 @@
       <posY>445</posY>
       <font>font12</font>
       <width>780</width>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!control.isvisible(50)+!control.isvisible(51)</visible>
     </control>
     <control>
@@ -315,7 +315,7 @@
       <posY>478</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+!control.isvisible(51)</visible>
     </control>
     <control>
@@ -327,7 +327,7 @@
       <posY>507</posY>
       <width>780</width>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!control.isvisible(50)+!control.isvisible(51)</visible>
     </control>
     <control>
@@ -338,7 +338,7 @@
       <posY>550</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(50)+!control.isvisible(51)</visible>
     </control>
     <control>

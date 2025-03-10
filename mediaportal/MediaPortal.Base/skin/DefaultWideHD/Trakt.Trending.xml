@@ -20,7 +20,7 @@
       <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>Trakt.Common.Fanart.xml</import>
-    <import>common.window.xml</import>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
     <import>Trakt.Common.xml</import>
     <control>

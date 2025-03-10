@@ -1,116 +1,118 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
+<define>#header.label:#(iif(eq(#selecteditem,'..'),'#currentmodule','#currentmodule #scroll.wrap #selecteditem'))</define>
   <controls>
     <control>
-      <description>background top overlay</description>
+      <description>Title background image all screens except all games</description>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <posX>0</posX>
       <posY>0</posY>
       <width>1920</width>
-      <height>140</height>
+      <height>379</height>
       <texture>overlay_top.png</texture>
-      <colordiffuse>99ffffff</colordiffuse>
-    </control>
-    <!--     *******************************************************************************************  -->
-    <!--     **************************    Current Module/Number of Files   ****************************  -->
-    <!--     *******************************************************************************************  -->
-    <control>
-      <type>label</type>
-      <id>1</id>
-      <posX>45</posX>
-      <posY>15</posY>
-      <label>#(iif(and(neq(L(102012), #currentmodule), neq(L(100748), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
-      <font>Label</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <!--control>
-      <type>label</type>
-      <id>1</id>
-      <posX>45</posX>
-      <posY>15</posY>
-      <label>#header.label</label>
-      <font>Label</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-    </control-->
-    <control>
-      <description>Number of Files Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>45</posX>
-      <posY>52</posY>
-      <label>#selectedindex/#itemcount #(iif(and(neq(L(102012), #currentmodule), neq(L(100748), #currentmodule),  neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <font>Label</font>
-      <visible>string.equals(#selectedindex)+string.equals(#itemcount)+!string.equals(#currentmodule,#(L(100748)))</visible>
+      <colordiffuse>ddffffff</colordiffuse>
+      <visible>!window.isvisible(7776)+!window.isvisible(22031969)+!window.isvisible(5555)+!window.isvisible(36453968)+!window.isvisible(32647500)+!window.isvisible(1234711)+!window.isvisible(32327501)+!window.isvisible(426144)+!window.isvisible(7777)+!window.isvisible(426144)+!window.isvisible(567834)+!window.isvisible(22031924)</visible>
     </control>
     <control>
-      <description>Number of Files Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>45</posX>
-      <posY>52</posY>
-      <label>#selectedindex/#itemcount #(L(1041))</label>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <font>Label</font>
-      <visible>string.equals(#selectedindex)+string.equals(#itemcount)+string.equals(#currentmodule,#(L(100748)))</visible>
-    </control>
-    <control>
-      <description>Total duration Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>1866</posX>
-      <posY>52</posY>
-      <label>#(L(180)):   #totalduration</label>
-      <align>right</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <font>Label</font>
-      <visible>string.equals(#totalduration)+[window.isvisible(500)|window.isvisible(501)|window.isvisible(504)]</visible>
-    </control>
-    <!--     *******************************************************************************************  -->
-    <!--     *******************************    SELECTED ITEM      *************************************  -->
-    <!--     *******************************************************************************************  -->
-    <control>
-      <description>background selecteditem</description>
+      <description>Title background image all games</description>
       <type>image</type>
       <id>0</id>
-      <posX>-20</posX>
-      <posY>97</posY>
-      <width>2025</width>
-      <height>90</height>
-      <texture>general_overlay_selecteditem.png</texture>
-      <colordiffuse>bbffffff</colordiffuse>
-      <visible>!window.isvisible(0)+!window.isvisible(34)+!window.isvisible(510)+!window.isvisible(7978)</visible>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>180</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>eeffffff</colordiffuse>
+      <visible>window.isvisible(7776)|window.isvisible(22031969)|window.isvisible(5555)|window.isvisible(36453968)|window.isvisible(32647500)|window.isvisible(1234711)|window.isvisible(32327501)|window.isvisible(426144)|window.isvisible(7777)|window.isvisible(567834)|window.isvisible(22031924)</visible>
     </control>
     <control>
-      <description>Selected item Label</description>
       <type>fadelabel</type>
-      <id>1</id>
-      <posX>0</posX>
-      <posY>142</posY>
-      <width>1920</width>
-      <label>#selecteditem</label>
-      <font>Menutitle</font>
-      <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <visible>!window.isvisible(6)+!window.isvisible(25)+!window.isvisible(0)+!window.isvisible(34)+!window.isvisible(801)</visible>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>#header.label</label>
+      <width>1802</width>
+      <align>left</align>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>!window.isvisible(7776)+!window.isvisible(7982)+!window.isvisible(7977)+!window.isvisible(2003)+!window.isvisible(614)</visible>
     </control>
     <control>
-      <description>Selected item Label</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>0</posX>
-      <posY>142</posY>
-      <width>1920</width>
-      <label>#MPE.View.Name | #selecteditem</label>
-      <font>Menutitle</font>
-      <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <visible>window.isvisible(801)</visible>
+      <description>Itemcount CurrentModule</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1869</posX>
+      <posY>16</posY>
+      <label>#selectedindex/#itemcount #currentmodule</label>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <visible>!string.equals(#Trakt.Items)+string.equals(#selectedindex)+string.equals(#itemcount)+[!window.isvisible(603)+!window.isvisible(601)+!window.isvisible(604)+!window.isvisible(607)+!window.isvisible(608)+!window.isvisible(500)+!window.isvisible(501)+!window.isvisible(504)+!window.isvisible(9811)+!window.isvisible(25)+!window.isvisible(6)]</visible>
     </control>
-  </controls>
+    <!-- Itemcount (Music Screens) -->
+    <control>
+      <description>Itemcount Itemtype</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1869</posX>
+      <posY>16</posY>
+      <label>#selectedindex/#itemcount #currentmodule #totalduration</label>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <visible>string.equals(#selectedindex)+string.equals(#itemcount)+[window.isvisible(500)|window.isvisible(501)|window.isvisible(504)]</visible>
+    </control>
+    <control>
+      <description>Itemcount Trakt</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1869</posX>
+      <posY>16</posY>
+      <label>#selectedindex/#Trakt.Items</label>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <visible>string.equals(#Trakt.Items)+plugin.isenabled(Trakt)+[window.isvisible(87268)|window.isvisible(87259)|window.isvisible(87270)|window.isvisible(87263)|window.isvisible(87262)|window.isvisible(87266)|window.isvisible(87265)|window.isvisible(87269)|window.isvisible(87270)|window.isvisible(87275)|window.isvisible(87260)]</visible>
+    </control>
+    <!--control>
+      <description>hover frame</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>83</posX>
+      <posY>27</posY>
+      <width>142</width>
+      <height>99</height>
+      <texture mask="picturecase_mask.png">white.png</texture>
+      <colordiffuse>dd164665</colordiffuse>
+      <animation effect="zoom" start="10,10" end="100,100" time="200">WindowOpen</animation>
+      <visible>!skin.hassetting(#skin.noclock)+!window.isvisible(0)+!window.isvisible(34)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <description>image</description>
+      <id>0</id>
+      <posX>84</posX>
+      <posY>28</posY>
+      <width>140</width>
+      <height>97</height>
+      <texture mask="picturecase_mask.png">#header.hover</texture>
+      <animation effect="zoom" start="10,10" end="100,100" time="200">WindowOpen</animation>
+      <visible>!skin.hassetting(#skin.noclock)+!window.isvisible(0)+!window.isvisible(34)</visible>
+    </control-->
+   </controls>
 </window>

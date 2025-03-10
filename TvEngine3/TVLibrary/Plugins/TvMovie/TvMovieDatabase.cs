@@ -249,107 +249,16 @@ namespace TvEngine
     {
       LoadMemberSettings();
 
-      string dataProviderString =
-        "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0};Mode=Share Deny None;Jet OLEDB:Engine Type=5;Jet OLEDB:Database Locking Mode=1;";
-      if (TvMovie.DatabasePath != String.Empty)
-        dataProviderString = string.Format(dataProviderString, TvMovie.DatabasePath);
-      else
-        return false;
-
-      try
+      using (TvMovieDatabaseConnection conn = new TvMovieDatabaseConnection())
       {
-        _databaseConnection = new OleDbConnection(dataProviderString);
-      }
-      catch (Exception connex)
-      {
-        Log.Info("TVMovie: Exception creating OleDbConnection: {0}", connex.Message);
-        return false;
-      }
-
-      string sqlSelect =
-        "SELECT * FROM Sender WHERE (Favorit = true) AND (GueltigBis >=Now()) ORDER BY Bezeichnung ASC;";
-
-      DataSet tvMovieTable = new DataSet("Sender");
-      try
-      {
-        _databaseConnection.Open();
-        using (OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection))
+        if (conn.Open(TvMovie.DatabasePath))
         {
-          using (OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand))
-          {
-            try
-            {
-              databaseAdapter.FillSchema(tvMovieTable, SchemaType.Source, "Sender");
-              databaseAdapter.Fill(tvMovieTable);
-            }
-            catch (Exception dsex)
-            {
-              Log.Info("TVMovie: Exception filling Sender DataSet - {0}\n{1}", dsex.Message, dsex.StackTrace);
-              return false;
-            }
-          }
+          _tvmEpgChannels = conn.GetChannels();
+          if (_tvmEpgChannels == null)
+            return false;
         }
-      }
-      catch (System.Data.OleDb.OleDbException ex)
-      {
-        Log.Info("TVMovie: Error accessing TV Movie Clickfinder database while reading stations: {0}", ex.Message);
-        Log.Info("TVMovie: Exception: {0}", ex.StackTrace);
-        _canceled = true;
-        return false;
-      }
-      catch (Exception ex2)
-      {
-        Log.Info("TVMovie: Exception: {0}, {1}", ex2.Message, ex2.StackTrace);
-        _canceled = true;
-        return false;
-      }
-      finally
-      {
-        _databaseConnection.Close();
-      }
-
-      try
-      {
-        _tvmEpgChannels = new List<TVMChannel>();
-        foreach (DataRow sender in tvMovieTable.Tables["Table"].Rows)
-        {
-          string senderId = sender["ID"].ToString();
-          string senderKennung = sender["SenderKennung"].ToString();
-          string senderBez = sender["Bezeichnung"].ToString();
-          // these are non-vital for now.
-          string senderUrl = String.Empty;
-          string senderSort = "-1";
-          string senderZeichen = @"tvmovie_senderlogoplatzhalter.gif";
-          // Somehow TV Movie's db does not necessarily contain these columns...
-          try
-          {
-            senderUrl = sender["Webseite"].ToString();
-          }
-          catch (Exception) {}
-          try
-          {
-            senderSort = sender["SortNrTVMovie"].ToString();
-          }
-          catch (Exception) {}
-          try
-          {
-            senderZeichen = sender["Zeichen"].ToString();
-          }
-          catch (Exception) {}
-
-          TVMChannel current = new TVMChannel(senderId,
-                                              senderKennung,
-                                              senderBez,
-                                              senderUrl,
-                                              senderSort,
-                                              senderZeichen
-            );
-          _tvmEpgChannels.Add(current);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Info("TVMovie: Exception: {0}, {1}", ex.Message, ex.StackTrace);
+        else
+          return false;
       }
 
       _channelList = GetChannels();
@@ -427,79 +336,105 @@ namespace TvEngine
       // get all tv channels from MP DB via gentle.net
       IList<Channel> allChannels = Channel.ListAll();
 
-      foreach (TVMChannel station in _tvmEpgChannels)
+      using (TvMovieDatabaseConnection conn = new TvMovieDatabaseConnection())
       {
-        if (_canceled)
-          return;
-
-        Log.Info("TVMovie: Searching time share mappings for station: {0}", station.TvmEpgDescription);
-        // get all tv movie channels
-        List<Mapping> channelNames = new List<Mapping>();
-
-        foreach (Mapping mapping in mappingList)
-          if (mapping.TvmEpgChannel == station.TvmEpgChannel)
-            channelNames.Add(mapping);
-
-        if (channelNames.Count > 0)
+        if (conn.Open(TvMovie.DatabasePath))
         {
-          try
+          foreach (TVMChannel station in _tvmEpgChannels)
           {
-            string display = String.Empty;
-            foreach (Mapping channelName in channelNames)
-              display += string.Format("{0}  /  ", channelName.Channel);
+            if (_canceled)
+              return;
 
-            display = display.Substring(0, display.Length - 5);
-            if (OnStationsChanged != null)
-              OnStationsChanged(counter, maximum, display);
-            counter++;
+            Log.Info("TVMovie: Searching time share mappings for station: {0}", station.TvmEpgDescription);
+            // get all tv movie channels
+            List<Mapping> channelNames = new List<Mapping>();
 
-            Log.Info("TVMovie: Importing {3} time frame(s) for MP channel [{0}/{1}] - {2}", Convert.ToString(counter),
-                     Convert.ToString(maximum), display, Convert.ToString(channelNames.Count));
+            foreach (Mapping mapping in mappingList)
+              if (mapping.TvmEpgChannel == station.TvmEpgChannel)
+                channelNames.Add(mapping);
 
-            _tvmEpgProgs.Clear();
+            if (channelNames.Count > 0)
+            {
+              try
+              {
+                string display = String.Empty;
+                foreach (Mapping channelName in channelNames)
+                  display += string.Format("{0}  /  ", channelName.Channel);
 
-            _programsCounter += ImportStation(station.TvmEpgChannel, channelNames, allChannels);
+                display = display.Substring(0, display.Length - 5);
+                if (OnStationsChanged != null)
+                  OnStationsChanged(counter, maximum, display);
+                counter++;
 
-            ThreadPriority importPrio = _slowImport ? ThreadPriority.BelowNormal : ThreadPriority.AboveNormal;
-            if (_slowImport)
-              Thread.Sleep(32);
+                Log.Info("TVMovie: Importing {3} time frame(s) for MP channel [{0}/{1}] - {2}", Convert.ToString(counter),
+                         Convert.ToString(maximum), display, Convert.ToString(channelNames.Count));
 
-            // make a copy of this list because Insert it done in syncronized threads - therefore the object reference would cause multiple/missing entries
-            List<Program> InsertCopy = new List<Program>(_tvmEpgProgs);
-            int debugCount = TvBLayer.InsertPrograms(InsertCopy, DeleteBeforeImportOption.OverlappingPrograms,
-                                                     importPrio);
-            Log.Info("TVMovie: Inserted {0} programs", debugCount);
+                _tvmEpgProgs.Clear();
+
+
+                List<string[]> result = conn.GetChannelData(station.TvmEpgChannel);
+                if (result == null)
+                  return;
+
+                int iCnt = 0;
+
+                result.ForEach(data =>
+                {
+                  ImportSingleChannelData(channelNames, allChannels, iCnt,
+                                    data[0], data[1], data[2], data[3], data[4], data[5],
+                                    data[6], data[7], data[8], data[9], data[10],
+                                    data[11], data[12], data[13],
+                                    data[14], data[15], data[16],
+                                    data[17], data[18], data[19], data[20],
+                                    data[21], data[22], data[23], data[24]);
+                  iCnt++;
+                  }
+                );
+
+                _programsCounter += iCnt;
+
+                ThreadPriority importPrio = _slowImport ? ThreadPriority.BelowNormal : ThreadPriority.AboveNormal;
+                if (_slowImport)
+                  Thread.Sleep(32);
+
+                // make a copy of this list because Insert it done in syncronized threads - therefore the object reference would cause multiple/missing entries
+                List<Program> InsertCopy = new List<Program>(_tvmEpgProgs);
+                int debugCount = TvBLayer.InsertPrograms(InsertCopy, DeleteBeforeImportOption.OverlappingPrograms,
+                                                         importPrio);
+                Log.Info("TVMovie: Inserted {0} programs", debugCount);
+              }
+              catch (Exception ex)
+              {
+                Log.Info("TVMovie: Error inserting programs - {0}", ex.StackTrace);
+              }
+            }
           }
-          catch (Exception ex)
+
+          Log.Debug("TVMovie: Waiting for database to be updated...");
+          TvBLayer.WaitForInsertPrograms();
+          Log.Debug("TVMovie: Database update finished.");
+
+
+          if (OnStationsChanged != null)
+            OnStationsChanged(maximum, maximum, "Import done");
+
+          if (!_canceled)
           {
-            Log.Info("TVMovie: Error inserting programs - {0}", ex.StackTrace);
+            try
+            {
+              setting = TvBLayer.GetSetting("TvMovieLastUpdate");
+              setting.Value = DateTime.Now.ToString();
+              setting.Persist();
+
+              TimeSpan ImportDuration = (DateTime.Now - ImportStartTime);
+              Log.Debug("TVMovie: Imported {0} database entries for {1} stations in {2} seconds", _programsCounter, counter,
+                        Convert.ToString(ImportDuration.TotalSeconds));
+            }
+            catch (Exception)
+            {
+              Log.Info("TVMovie: Error updating the database with last import date");
+            }
           }
-        }
-      }
-
-      Log.Debug("TVMovie: Waiting for database to be updated...");
-      TvBLayer.WaitForInsertPrograms();
-      Log.Debug("TVMovie: Database update finished.");
-
-
-      if (OnStationsChanged != null)
-        OnStationsChanged(maximum, maximum, "Import done");
-
-      if (!_canceled)
-      {
-        try
-        {
-          setting = TvBLayer.GetSetting("TvMovieLastUpdate");
-          setting.Value = DateTime.Now.ToString();
-          setting.Persist();
-
-          TimeSpan ImportDuration = (DateTime.Now - ImportStartTime);
-          Log.Debug("TVMovie: Imported {0} database entries for {1} stations in {2} seconds", _programsCounter, counter,
-                    Convert.ToString(ImportDuration.TotalSeconds));
-        }
-        catch (Exception)
-        {
-          Log.Info("TVMovie: Error updating the database with last import date");
         }
       }
       GC.Collect();
@@ -520,84 +455,6 @@ namespace TvEngine
       _showLive = TvBLayer.GetSetting("TvMovieShowLive", "true").Value == "true";
       _showRepeat = TvBLayer.GetSetting("TvMovieShowRepeating", "false").Value == "true";
       _xmlFile = String.Format(@"{0}\TVMovieMapping.xml", PathManager.GetDataPath);
-    }
-
-    private int ImportStation(string stationName, List<Mapping> channelNames, IList<Channel> allChannels)
-    {
-      int counter = 0;
-      string sqlSelect = String.Empty;
-      StringBuilder sqlb = new StringBuilder();
-
-      // UNUSED: F16zu9 , live , untertitel , Dauer , Wiederholung
-      //sqlb.Append("SELECT * "); // need for saver schema filling
-      sqlb.Append(
-        "SELECT TVDaten.SenderKennung, TVDaten.Beginn, TVDaten.Ende, TVDaten.Sendung, TVDaten.Genre, TVDaten.Kurzkritik, TVDaten.KurzBeschreibung, TVDaten.Beschreibung");
-      sqlb.Append(
-        ", TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton");
-      sqlb.Append(", TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Originaltitel, TVDaten.Regie, TVDaten.Darsteller");
-      sqlb.Append(", TVDaten.Interessant, TVDaten.Bewertungen");
-      sqlb.Append(", TVDaten.live, TVDaten.Dauer, TVDaten.Herstellungsland,TVDaten.Wiederholung");
-      sqlb.Append(
-        " FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ((TVDaten.Ende)>= #{1}#)) ORDER BY TVDaten.Beginn;");
-
-      DateTime importTime = DateTime.Now.Subtract(TimeSpan.FromHours(4));
-      sqlSelect = string.Format(sqlb.ToString(), stationName, importTime.ToString("yyyy-MM-dd HH:mm:ss"));
-      //("dd-MM-yyyy HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture));
-      OleDbTransaction databaseTransaction = null;
-      using (OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection))
-      {
-        try
-        {
-          _databaseConnection.Open();
-          // The main app might change epg details while importing
-          databaseTransaction = _databaseConnection.BeginTransaction(IsolationLevel.ReadCommitted);
-          databaseCommand.Transaction = databaseTransaction;
-          using (OleDbDataReader reader = databaseCommand.ExecuteReader(CommandBehavior.SequentialAccess))
-          {
-            while (reader.Read())
-            {
-              ImportSingleChannelData(channelNames, allChannels, counter,
-                                      reader[0].ToString(), reader[1].ToString(), reader[2].ToString(),
-                                      reader[3].ToString(), reader[4].ToString(), reader[5].ToString(),
-                                      reader[6].ToString(), reader[7].ToString(),
-                                      reader[8].ToString(), reader[9].ToString(), reader[10].ToString(),
-                                      reader[11].ToString(), reader[12].ToString(), reader[13].ToString(),
-                                      reader[14].ToString(), reader[15].ToString(), reader[16].ToString(),
-                                      reader[17].ToString(), reader[18].ToString(), reader[19].ToString(),
-                                      reader[20].ToString(),
-                                      reader[21].ToString(), reader[22].ToString(), reader[23].ToString(),
-                                      reader[24].ToString()
-                );
-              counter++;
-            }
-            databaseTransaction.Commit();
-            reader.Close();
-          }
-        }
-        catch (OleDbException ex)
-        {
-          databaseTransaction.Rollback();
-          Log.Info("TVMovie: Error accessing TV Movie Clickfinder database - import of current station canceled");
-          Log.Error("TVMovie: Exception: {0}", ex);
-          return 0;
-        }
-        catch (Exception ex1)
-        {
-          try
-          {
-            databaseTransaction.Rollback();
-          }
-          catch (Exception) {}
-          Log.Info("TVMovie: Exception: {0}", ex1);
-          return 0;
-        }
-        finally
-        {
-          _databaseConnection.Close();
-        }
-      }
-
-      return counter;
     }
 
     // sqlb.Append(", TVDaten.live, TVDaten.Dauer, TVDaten.Herstellungsland,TVDaten.Wiederholung");

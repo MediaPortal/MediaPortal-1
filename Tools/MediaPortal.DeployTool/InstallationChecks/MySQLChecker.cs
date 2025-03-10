@@ -56,23 +56,23 @@ namespace MediaPortal.DeployTool.InstallationChecks
       WritePrivateProfileString("mysqld", "datadir", "\"" + _dataDir.Replace('\\', '/') + "/Data\"", iniFile);
       WritePrivateProfileString("mysqld", "default-storage-engine", "INNODB", iniFile);
       WritePrivateProfileString("mysqld", "sql-mode",
-                                "\"STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\"", iniFile);
+                                "\"STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION\"", iniFile);
       WritePrivateProfileString("mysqld", "max_connections", "100", iniFile);
-      WritePrivateProfileString("mysqld", "query_cache_size", "32M", iniFile);
+      //WritePrivateProfileString("mysqld", "query_cache_size", "32M", iniFile);
       WritePrivateProfileString("mysqld", "tmp_table_size", "18M", iniFile);
       WritePrivateProfileString("mysqld", "thread_cache_size", "4", iniFile);
-      WritePrivateProfileString("mysqld", "thread_concurrency", "4", iniFile);
+      //WritePrivateProfileString("mysqld", "thread_concurrency", "4", iniFile);
       WritePrivateProfileString("mysqld", "myisam_max_sort_file_size", "100M", iniFile);
       WritePrivateProfileString("mysqld", "myisam_sort_buffer_size", "64M", iniFile);
       WritePrivateProfileString("mysqld", "key_buffer_size", "16M", iniFile);
       WritePrivateProfileString("mysqld", "read_buffer_size", "2M", iniFile);
       WritePrivateProfileString("mysqld", "read_rnd_buffer_size", "16M", iniFile);
       WritePrivateProfileString("mysqld", "sort_buffer_size", "2M", iniFile);
-      WritePrivateProfileString("mysqld", "innodb_additional_mem_pool_size", "2M", iniFile);
+      //WritePrivateProfileString("mysqld", "innodb_additional_mem_pool_size", "2M", iniFile);
       WritePrivateProfileString("mysqld", "innodb_flush_log_at_trx_commit", "1", iniFile);
       WritePrivateProfileString("mysqld", "innodb_log_buffer_size", "1M", iniFile);
       WritePrivateProfileString("mysqld", "innodb_buffer_pool_size", "96M", iniFile);
-      WritePrivateProfileString("mysqld", "innodb_log_file_size", "50M", iniFile);
+      WritePrivateProfileString("mysqld", "innodb_redo_log_capacity", "50M", iniFile);
       WritePrivateProfileString("mysqld", "innodb_thread_concurrency", "8", iniFile);
     }
 
@@ -308,6 +308,20 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       string inifile = InstallationProperties.Instance["DBMSDir"] + "\\my.ini";
       PrepareMyIni(inifile);
+
+      //Create data directory if needed
+      if (!Directory.Exists(_dataDir))
+        Directory.CreateDirectory(_dataDir);
+
+      //Initialize the data folder
+      cmdLine = "--defaults-file=\"" + inifile + "\" --initialize-insecure";
+      exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld.exe", cmdLine);
+      if (exitCode != 0)
+      {
+        MessageBox.Show("MySQL - failed to initialize db: " + exitCode);
+        return false;
+      }
+
       const string ServiceName = "MySQL";
       string cmdExe = Environment.SystemDirectory + "\\sc.exe";
       string cmdParam = "create " + ServiceName + " start= auto DisplayName= " + ServiceName + " binPath= \"" +
@@ -332,14 +346,14 @@ namespace MediaPortal.DeployTool.InstallationChecks
       try
       {
         ctrl.Start();
+        ctrl.WaitForStatus(ServiceControllerStatus.Running);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        MessageBox.Show("MySQL - start service exception");
+        MessageBox.Show("MySQL - start service exception: " + ex.Message);
         return false;
       }
 
-      ctrl.WaitForStatus(ServiceControllerStatus.Running);
       // Service is running, but on slow machines still take some time to answer network queries
       System.Threading.Thread.Sleep(5000);
       //
@@ -363,13 +377,14 @@ namespace MediaPortal.DeployTool.InstallationChecks
       //
       // mysql.exe is used to grant root access from all machines
       //
+      //cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] + " --execute=\"UPDATE mysql.user SET host='%' WHERE user='root';\" mysql";
       cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] +
-                " --execute=\"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '" +
-                InstallationProperties.Instance["DBMSPassword"] + "' WITH GRANT OPTION\" mysql";
+              " --execute=\"CREATE USER 'root'@'%' IDENTIFIED BY '" +
+              InstallationProperties.Instance["DBMSPassword"] + "';GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;FLUSH PRIVILEGES;\" mysql";
       exitCode = Utils.RunCommandWait(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe", cmdLine);
       if (exitCode != 0)
       {
-        MessageBox.Show("MySQL - set privileges error: " + exitCode);
+        MessageBox.Show("MySQL - set root access error: " + exitCode);
         return false;
       }
 

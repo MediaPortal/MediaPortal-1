@@ -5,6 +5,7 @@
   <defaultcontrol>50</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#watchedpercent:cint(#watchedpercent)</define>
+  <define property="true" evaluateNow="true">#recordings:#(L(604))</define>
   <controls>
     <control>
       <description>BG</description>
@@ -13,6 +14,15 @@
       <texture>blue.png</texture>
       <width>1920</width>
       <height>1080</height>
+    </control>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH TVrecordings.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
@@ -27,31 +37,60 @@
       <texture>general_overlay.png</texture>
     </control>
     <control>
-      <id>500</id>
+      <description>Recordings LCD image</description>
       <type>image</type>
-      <posX>1485</posX>
-      <posY>270</posY>
-      <width>367</width>
-      <height>207</height>
-      <texture mask="Picturethumbmask.png">#selectedthumb</texture>
+      <id>0</id>
+      <posX>1427</posX>
+      <posY>257</posY>
+      <width>445</width>
+      <height>259</height>
+      <keepaspectratio>no</keepaspectratio>
+      <texture>LCD.png</texture>
+	  <colordiffuse>ffffffff</colordiffuse>
       <visible>[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
+      <description>Recording image</description>
       <type>image</type>
-      <id>0</id>
-      <posX>1485</posX>
-      <posY>270</posY>
-      <width>367</width>
-      <height>207</height>
-      <texture>Picturethumbframe.png</texture>
-      <visible>[facadeview.list|facadeview.album]+Control.HasThumb(500)</visible>
+      <id>500</id>
+      <posX>1442</posX> 1440
+      <posY>270</posY> 267
+      <width>416</width> 420
+      <height>232</height> 236
+      <keepaspectratio>no</keepaspectratio>
+      <zoom>yes</zoom>
+      <texture>#selectedthumb</texture>
+      <visible>[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
-      <type>image</type>
+      <description>Itemcount CurrentModule</description>
+      <type>label</type>
       <id>0</id>
-      <posX>1485</posX>
-      <posY>270</posY>
-      <texture>-</texture>
+      <posX>1869</posX>
+      <posY>16</posY>
+      <label>#(switch(
+      and(eq(#currentmodule,L(102012)),eq(#itemcount,'')),
+        '',
+      eq(#currentmodule,L(102012)),
+        string.formatcount(
+          #itemcount,'{0} #recordings|{0} #recordings|{0} #recordings'),
+      and(eq(#selectedindex,''),eq(#itemcount,'')),
+        '',
+      and(eq(#selectedindex,'0'),eq(#itemcount,'')),
+        '',
+      or(eq(#selectedindex,''),eq(#selectedindex,'0')),
+        string.formatcount(
+          #itemcount,'{0} #recordings|{0} #recordings|{0} #recordings'),
+      or(eq(#itemcount,''),eq(#itemcount,'0')),
+        'Item #selectedindex',
+      eq(1,1),
+        '#selectedindex/#itemcount #recordings'))</label>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>0</shadowAngle>
+      <shadowDistance></shadowDistance>
+      <shadowColor></shadowColor>
     </control>
     <control>
       <type>actiongroup</type>
@@ -59,13 +98,11 @@
       <defaultcontrol>2</defaultcontrol>
       <onexit>0</onexit>
       <buttonX>0</buttonX>
-      <buttonY>-60</buttonY>
+      <buttonY>0</buttonY>
       <buttonwidth>159</buttonwidth>
       <buttonheight>1080</buttonheight>
       <textureFocus>-</textureFocus>
       <textureNoFocus>Action_nofocus.png</textureNoFocus>
-      <width>412</width>
-      <height>1080</height>
       <dimColor>00ffffff</dimColor>
       <control>
         <type>image</type>
@@ -74,6 +111,7 @@
         <height>1080</height>
         <texture>white.png</texture>
         <colordiffuse>50005eef</colordiffuse>
+		<visible>!Control.HasFocus(50)</visible>
       </control>
       <control>
         <type>image</type>
@@ -155,7 +193,7 @@
       <height>1</height>
       <texture>hbar1white.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
-      <visible>control.hasthumb(500)</visible>
+      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
       <type>image</type>
@@ -167,32 +205,32 @@
       <centered>yes</centered>
       <zoom>no</zoom>
       <texture>#TV.RecordedTV.thumb</texture>
-      <visible>control.hasthumb(500)</visible>
+      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
       <description>channel</description>
       <id>0</id>
       <type>fadelabel</type>
       <posX>240</posX>
-      <posY>660</posY>
+      <posY>705</posY>
       <width>1590</width>
-      <textcolor>ff6FAFE1</textcolor>
-      <label>#TV.RecordedTV.Channel  |  #TV.RecordedTV.Time  |  #TV.RecordedTV.Genre</label>
-      <font>font12</font>
-      <visible>control.hasthumb(500)</visible>
+      <textcolor>Lightgray</textcolor>
+      <label>#TV.RecordedTV.Channel #scroll.wrap #TV.RecordedTV.Time #scroll.wrap #TV.RecordedTV.Genre</label>
+      <font>font11</font>
+      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
       <description>Program Title</description>
       <id>14</id>
       <type>fadelabel</type>
       <posX>240</posX>
-      <posY>697</posY>
+      <posY>657</posY>
       <width>1590</width>
       <label>#TV.RecordedTV.Title</label>
       <align>left</align>
-      <font>font14</font>
-      <textcolor>ivory</textcolor>
-      <visible>control.hasthumb(500)</visible>
+      <font>LabelBold</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
       <description>Current program Genre</description>
@@ -203,73 +241,35 @@
       <width>1020</width>
       <label>#TV.RecordedTV.Genre</label>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
-      <visible>!string.equals(#TV.RecordedTV.Genre,-)+control.hasthumb(500)</visible>
+      <textcolor>ff00bfff</textcolor>
+      <visible>!string.equals(#TV.RecordedTV.Genre,-)+control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>240</posX>
-      <posY>747</posY>
+      <posY>762</posY>
       <width>1590</width>
-      <height>137</height>
+      <height>145</height>
       <label>#TV.RecordedTV.Description</label>
       <font>font10</font>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>control.hasthumb(500)</visible>
+      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <import>common.facade.recordings.xml</import>
-    <control>
-      <description>BG for watched count/watched percent</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>1492</posX>
-      <posY>517</posY>
-      <width>97</width>
-      <height>90</height>
-      <texture>watched_BG.png</texture>
-      <visible>facadeview.list+!string.equals(#watchedcount,)+control.hasthumb(500)</visible>
-    </control>
     <control>
       <description>Video Watched Count Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>1590</posX>
-      <posY>547</posY>
-      <width>200</width>
-      <height>75</height>
-      <label>#watchedcountx #(L(527))</label>
-      <font>font9</font>
+      <posX>1520</posX>
+      <posY>590</posY>
+      <width>400</width>
+      <label>#watchedcountx #(L(527)) #scroll.wrap #(L(143))#watchedpercent%</label>
+      <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <visible>facadeview.list+!string.equals(#watchedcount,)+control.hasthumb(500)</visible>
-    </control>
-    <control>
-      <description>Watched Percent Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>1500</posX>
-      <posY>526</posY>
-      <align>center</align>
-      <width>75</width>
-      <height>75</height>
-      <textcolor>ff6FAFE1</textcolor>
-      <font>font9</font>
-      <label>#watchedpercent%</label>
-      <visible>facadeview.list+control.hasthumb(500)</visible>
-    </control>
-    <control>
-      <description>Watched Logo</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1500</posX>
-      <posY>525</posY>
-      <width>80</width>
-      <height>80</height>
-      <texture>watched_#(string.format('{0:000}',mul(math.round(div(cint(#watchedpercent),5)),5))).png</texture>
-      <keepaspectratio>yes</keepaspectratio>
-      <visible>facadeview.list+!string.equals(#watchedcount,)+control.hasthumb(500)</visible>
+      <textcolor>ff00bfff</textcolor>
+      <visible>[facadeview.list|facadeview.album]+!string.equals(#watchedcount, -1)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
       <description>No recordings available</description>
@@ -278,11 +278,11 @@
       <posX>0</posX>
       <posY>500</posY>
       <width>1920</width>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>769</label>
       <font>font20</font>
       <align>center</align>
-      <visible>!control.hasthumb(500)</visible>
+      <visible>string.equals(#TV.RecordedTV.Channel,'')+[facadeview.list|facadeview.album|facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
   </controls>
 </window>

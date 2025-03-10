@@ -36,7 +36,7 @@
       <posY>97</posY>
       <width>2025</width>
       <height>90</height>
-      <texture>general_overlay_selecteditem.png</texture>
+      <texture>-</texture>
       <colordiffuse>bbffffff</colordiffuse>
     </control>
     <control>
@@ -57,7 +57,7 @@
       <label>#header.label</label>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <type>actiongroup</type>
@@ -152,7 +152,7 @@
       <showFrame>true</showFrame>
       <imageFolder>-</imageFolder>
       <imageFolderFocus>-</imageFolderFocus>
-      <textureMask>Picturethumbmask.png</textureMask>
+      <textureMask>musicfanart_mask.png</textureMask>
       <frameNoFocus>Picturethumbframe.png</frameNoFocus>
       <frameFocus>Picturethumbframe.png</frameFocus>
       <keepaspectratio>yes</keepaspectratio>

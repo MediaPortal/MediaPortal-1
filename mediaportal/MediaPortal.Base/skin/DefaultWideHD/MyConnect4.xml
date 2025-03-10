@@ -2,619 +2,941 @@
 <window>
   <id>22031969</id>
   <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <autohidetopbar>yes</autohidetopbar>
-  <define>#header.label:Connect 4   #Round   #Player</define>
+  <define>#header.label:#SkinTranslation.Translations.Games.Label #scroll.wrap Connect 4</define>
   <define>#header.hover:hover_my connect4.png</define>
   <define>#itemcount:</define>
   <controls>
     <control>
-      <description>background image</description>
-      <type>image</type>
-      <id>1</id>
-      <width>1920</width>
-      <height>1080</height>
-      <texture>gamebg.jpg</texture>
-      <colordiffuse>ffffffff</colordiffuse>
-    </control>
-    <control>
-      <type>label</type>
-      <id>1</id>
-      <posX>45</posX>
-      <posY>15</posY>
-      <label>#header.label</label>
-      <font>Label</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <import>common.time.xml</import>
-    <control>
-      <description>Button background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>50</posX>
-      <posY>205</posY>
-      <height>360</height>
-      <width>420</width>
-      <texture>am-background.png</texture>
-      <colordiffuse>50ffffff</colordiffuse>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
-    </control>
+        <description>background image</description>
+        <type>image</type>
+        <id>1</id>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>gamebg.jpg</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>
     <control>
       <type>group</type>
       <description>group element</description>
-      <layout>StackLayout(0, vertical, true)</layout>
-      <posX>70</posX>
-      <posY>225</posY>
       <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
+      <!--  **********************************************  -->
+      <!--  ************** THX HIGH_FIVE *****************  -->
+      <!--  **********************************************  -->
       <control>
-        <description>Start</description>
+        <description>THX High_Five</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>720</posX>
+        <posY>1010</posY>
+        <width>1920</width>
+        <label>#SkinTranslation.Translations.HighFive.Label</label>
+        <font>font10</font>
+        <textcolor>lightgreen</textcolor>
+      </control>
+      <!--  ********************************************  -->
+      <!--  ************** ACTION MENU *****************  -->
+      <!--  ********************************************  -->
+      <control>
+        <description>Button background</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>50</posX>
+        <posY>208</posY>
+        <width>450</width>
+        <height>358</height>
+        <texture>am-background_subcentral.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(0, vertical, true)</layout>
+        <posX>80</posX>
+        <posY>235</posY>
+        <control>
+          <description>Start</description>
+          <type>button</type>
+          <id>2</id>
+          <onleft>2</onleft>
+          <onright>301</onright>
+          <onup>17</onup>
+          <ondown>3</ondown>
+        </control>
+        <control>
+          <description>Mode</description>
+          <type>button</type>
+          <id>3</id>
+          <onleft>3</onleft>
+          <onright>301</onright>
+          <onup>2</onup>
+          <ondown>4</ondown>
+        </control>
+        <control>
+          <description>Level</description>
+          <type>button</type>
+          <id>4</id>
+          <onleft>4</onleft>
+          <onright>301</onright>
+          <onup>3</onup>
+          <ondown>5</ondown>
+        </control>
+        <control>
+          <description>Sounds</description>
+          <type>checkbutton</type>
+          <id>5</id>
+          <onleft>5</onleft>
+          <onright>301</onright>
+          <onup>4</onup>
+          <ondown>6</ondown>
+        </control>
+        <control>
+          <description>What is this?</description>
+          <type>button</type>
+          <id>6</id>
+          <onleft>6</onleft>
+          <onright>301</onright>
+          <onup>5</onup>
+          <ondown>2</ondown>
+        </control>
+      </control>
+      <!--  ********************************************  -->
+      <!--  **************** LABELS ********************  -->
+      <!--  ********************************************  -->
+      <control>
+        <description>text label</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>372</posX>
+        <posY>107</posY>
+        <label>#Round #scroll.wrap #Player</label>
+        <textcolor>lightgray</textcolor>
+        <font>LabelBold</font>
+        <visible>!skin.hassetting(#skin.noclock)</visible>
+      </control>
+      <control>
+        <description>text label</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>80</posX>
+        <posY>107</posY>
+        <label>#Round #scroll.wrap #Player</label>
+        <textcolor>fff5deb3</textcolor>
+        <shadowAngle>10</shadowAngle>
+        <shadowDistance>2</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+        <font>LabelBold</font>
+        <visible>skin.hassetting(#skin.noclock)</visible>
+      </control>
+      <control>
+        <description>text label</description>
+        <type>label</type>
+        <id>18</id>
+        <posX>780</posX>
+        <posY>130</posY>
+        <label>#Status</label>
+        <textcolor>gold</textcolor>
+        <font>Menutitle</font>
+        <animation effect="zoom" start="100,100" end="105,105" time="500" center="1020,150" condition="true" pulse="true">conditional</animation>
+      </control>
+      <!--  ********************************************  -->
+      <!--  ************** THE HAND ********************  -->
+      <!--  ********************************************  -->
+      <control>
+        <description>Pointer 01</description>
         <type>button</type>
-        <id>2</id>
+        <id>301</id>
+        <posX>615</posX>
+        <posY>75</posY>
+        <width>126</width>
+        <height>126</height>
         <onleft>2</onleft>
-        <onright>301</onright>
-        <onup>17</onup>
-        <ondown>3</ondown>
+        <onright>302</onright>
+        <onup>301</onup>
+        <ondown>301</ondown>
+        <textureFocus>#(iif(string.contains(#Player,'1'),'Connect4\MyConn4Cur.png','Connect4\MyConn4Cur2.png'))</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <wrapString />
+        <visible>string.contains(#Status, )</visible>
       </control>
       <control>
-        <description>Mode</description>
+        <description>Pointer 02</description>
         <type>button</type>
-        <id>3</id>
-        <onleft>3</onleft>
-        <onright>301</onright>
-        <onup>2</onup>
-        <ondown>4</ondown>
+        <id>302</id>
+        <posX>742</posX>
+        <posY>75</posY>
+        <width>126</width>
+        <height>126</height>
+        <onleft>301</onleft>
+        <onright>303</onright>
+        <onup>302</onup>
+        <ondown>302</ondown>
+        <textureFocus>#(iif(string.contains(#Player,'1'),'Connect4\MyConn4Cur.png','Connect4\MyConn4Cur2.png'))</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <wrapString />
+        <visible>string.contains(#Status, )</visible>
       </control>
       <control>
-        <description>Level</description>
+        <description>Pointer 03</description>
         <type>button</type>
-        <id>4</id>
-        <onleft>4</onleft>
-        <onright>301</onright>
-        <onup>3</onup>
-        <ondown>5</ondown>
+        <id>303</id>
+        <posX>867</posX>
+        <posY>75</posY>
+        <width>126</width>
+        <height>126</height>
+        <onleft>302</onleft>
+        <onright>304</onright>
+        <onup>303</onup>
+        <ondown>303</ondown>
+        <textureFocus>#(iif(string.contains(#Player,'1'),'Connect4\MyConn4Cur.png','Connect4\MyConn4Cur2.png'))</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <wrapString />
+        <visible>string.contains(#Status, )</visible>
       </control>
       <control>
-        <description>Sounds</description>
-        <type>checkbutton</type>
-        <id>5</id>
-        <onleft>5</onleft>
-        <onright>301</onright>
-        <onup>4</onup>
-        <ondown>6</ondown>
-      </control>
-      <control>
-        <description>What is this?</description>
+        <description>Pointer 04</description>
         <type>button</type>
-        <id>6</id>
-        <onleft>6</onleft>
+        <id>304</id>
+        <posX>994</posX>
+        <posY>75</posY>
+        <width>126</width>
+        <height>126</height>
+        <onleft>303</onleft>
+        <onright>305</onright>
+        <onup>304</onup>
+        <ondown>304</ondown>
+        <textureFocus>#(iif(string.contains(#Player,'1'),'Connect4\MyConn4Cur.png','Connect4\MyConn4Cur2.png'))</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <wrapString />
+        <visible>string.contains(#Status, )</visible>
+      </control>
+      <control>
+        <description>Pointer 05</description>
+        <type>button</type>
+        <id>305</id>
+        <posX>1121</posX>
+        <posY>75</posY>
+        <width>126</width>
+        <height>126</height>
+        <onleft>304</onleft>
+        <onright>306</onright>
+        <onup>305</onup>
+        <ondown>305</ondown>
+        <textureFocus>#(iif(string.contains(#Player,'1'),'Connect4\MyConn4Cur.png','Connect4\MyConn4Cur2.png'))</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <wrapString />
+        <visible>string.contains(#Status, )</visible>
+      </control>
+      <control>
+        <description>Pointer 06</description>
+        <type>button</type>
+        <id>306</id>
+        <posX>1248</posX>
+        <posY>75</posY>
+        <width>126</width>
+        <height>126</height>
+        <onleft>305</onleft>
+        <onright>307</onright>
+        <onup>306</onup>
+        <ondown>306</ondown>
+        <textureFocus>#(iif(string.contains(#Player,'1'),'Connect4\MyConn4Cur.png','Connect4\MyConn4Cur2.png'))</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <wrapString />
+        <visible>string.contains(#Status, )</visible>
+      </control>
+      <control>
+        <description>Pointer 07</description>
+        <type>button</type>
+        <id>307</id>
+        <posX>1372</posX>
+        <posY>75</posY>
+        <width>126</width>
+        <height>126</height>
+        <onleft>306</onleft>
         <onright>301</onright>
-        <onup>5</onup>
-        <ondown>2</ondown>
+        <onup>307</onup>
+        <ondown>307</ondown>
+        <textureFocus>#(iif(string.contains(#Player,'1'),'Connect4\MyConn4Cur.png','Connect4\MyConn4Cur2.png'))</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <wrapString />
+        <visible>string.contains(#Status, )</visible>
+      </control>
+      <!--  ********************************************  -->
+      <!--  ************** THE CHIPS *******************  -->
+      <!--  ********************************************  -->
+      <control>
+        <type>image</type>
+        <id>101</id>
+        <posX>595</posX>
+        <posY>206</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_1_1</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>102</id>
+        <posX>721</posX>
+        <posY>206</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_1_2</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>103</id>
+        <posX>848</posX>
+        <posY>206</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_1_3</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>104</id>
+        <posX>974</posX>
+        <posY>206</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_1_4</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>105</id>
+        <posX>1101</posX>
+        <posY>206</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_1_5</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>106</id>
+        <posX>1227</posX>
+        <posY>206</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_1_6</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>107</id>
+        <posX>1354</posX>
+        <posY>206</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_1_7</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>111</id>
+        <posX>595</posX>
+        <posY>333</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_2_1</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>112</id>
+        <posX>721</posX>
+        <posY>333</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_2_2</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>113</id>
+        <posX>848</posX>
+        <posY>333</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_2_3</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>114</id>
+        <posX>974</posX>
+        <posY>333</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_2_4</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>115</id>
+        <posX>1101</posX>
+        <posY>333</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_2_5</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>116</id>
+        <posX>1227</posX>
+        <posY>333</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_2_6</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>117</id>
+        <posX>1354</posX>
+        <posY>333</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_2_7</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>121</id>
+        <posX>595</posX>
+        <posY>460</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_3_1</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>122</id>
+        <posX>721</posX>
+        <posY>460</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_3_2</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>123</id>
+        <posX>848</posX>
+        <posY>460</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_3_3</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>124</id>
+        <posX>974</posX>
+        <posY>460</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_3_4</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>125</id>
+        <posX>1101</posX>
+        <posY>460</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_3_5</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>126</id>
+        <posX>1227</posX>
+        <posY>460</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_3_6</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>127</id>
+        <posX>1354</posX>
+        <posY>460</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_3_7</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>131</id>
+        <posX>595</posX>
+        <posY>586</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_4_1</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>132</id>
+        <posX>721</posX>
+        <posY>586</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_4_2</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>133</id>
+        <posX>848</posX>
+        <posY>586</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_4_3</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>134</id>
+        <posX>974</posX>
+        <posY>586</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_4_4</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>135</id>
+        <posX>1101</posX>
+        <posY>586</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_4_5</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>136</id>
+        <posX>1227</posX>
+        <posY>586</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_4_6</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>137</id>
+        <posX>1354</posX>
+        <posY>586</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_4_7</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>141</id>
+        <posX>595</posX>
+        <posY>713</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_5_1</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>142</id>
+        <posX>721</posX>
+        <posY>713</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_5_2</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>143</id>
+        <posX>848</posX>
+        <posY>713</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_5_3</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>144</id>
+        <posX>974</posX>
+        <posY>713</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_5_4</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>145</id>
+        <posX>1101</posX>
+        <posY>713</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_5_5</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>146</id>
+        <posX>1227</posX>
+        <posY>713</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_5_6</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>147</id>
+        <posX>1354</posX>
+        <posY>713</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_5_7</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>151</id>
+        <posX>595</posX>
+        <posY>839</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_6_1</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>152</id>
+        <posX>721</posX>
+        <posY>839</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_6_2</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>153</id>
+        <posX>848</posX>
+        <posY>839</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_6_3</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>154</id>
+        <posX>974</posX>
+        <posY>839</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_6_4</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>155</id>
+        <posX>1101</posX>
+        <posY>839</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_6_5</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>156</id>
+        <posX>1227</posX>
+        <posY>839</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_6_6</texture>
+      </control>
+      <control>
+        <type>image</type>
+        <id>157</id>
+        <posX>1354</posX>
+        <posY>839</posY>
+        <width>126</width>
+        <height>126</height>
+        <texture>Connect4\#Con_6_7</texture>
+      </control>
+      <!--  ********************************************************  -->
+      <!--  ************** THE PLAYING ANIMATION *******************  -->
+      <!--  ********************************************************  -->
+      <control>
+        <description>Thinking man</description>
+        <type>image</type>
+        <id>15</id>
+        <posX>1670</posX>
+        <posY>550</posY>
+        <width>400</width>
+        <height>350</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Connect4\denker.png</texture>
+      </control>
+      <control>
+        <description>catavolt Playing</description>
+        <type>image</type>
+        <id>15</id>
+        <posX>1560</posX>
+        <posY>456</posY>
+        <width>101</width>
+        <height>277</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Connect4\fragezeichen1.png</texture>
+        <colordiffuse>aa000000</colordiffuse>
+        <animation effect="zoom" start="100,100" end="120,120" time="500" condition="true" pulse="true">conditional</animation>
+        <animation effect="Fade" time="500" start="100" end="0" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+      </control>
+      <control>
+        <description>catavolt Playing</description>
+        <type>image</type>
+        <id>15</id>
+        <posX>1680</posX>
+        <posY>410</posY>
+        <width>91</width>
+        <height>274</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Connect4\fragezeichen2.png</texture>
+        <colordiffuse>aa000000</colordiffuse>
+        <animation effect="zoom" start="100,100" end="115,115" time="600" condition="true" pulse="true">conditional</animation>
+        <animation effect="Fade" time="500" start="100" end="0" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+      </control>
+      <control>
+        <description>catavolt Playing</description>
+        <type>image</type>
+        <id>15</id>
+        <posX>1790</posX>
+        <posY>446</posY>
+        <width>90</width>
+        <height>273</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Connect4\fragezeichen3.png</texture>
+        <colordiffuse>aa000000</colordiffuse>
+        <animation effect="zoom" start="100,100" end="118,118" time="450" condition="true" pulse="true">conditional</animation>
+        <animation effect="Fade" time="500" start="100" end="0" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+      </control>
+      <control>
+        <description>catavolt Playing</description>
+        <type>image</type>
+        <id>15</id>
+        <posX>1550</posX>
+        <posY>446</posY>
+        <width>101</width>
+        <height>277</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Connect4\fragezeichen1.png</texture>
+        <animation effect="zoom" start="100,100" end="120,120" time="500" condition="true" pulse="true">conditional</animation>
+        <animation effect="Fade" time="500" start="100" end="0" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+      </control>
+      <control>
+        <description>catavolt Playing</description>
+        <type>image</type>
+        <id>15</id>
+        <posX>1670</posX>
+        <posY>400</posY>
+        <width>91</width>
+        <height>274</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Connect4\fragezeichen2.png</texture>
+        <animation effect="zoom" start="100,100" end="115,115" time="600" condition="true" pulse="true">conditional</animation>
+        <animation effect="Fade" time="500" start="100" end="0" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+      </control>
+      <control>
+        <description>catavolt Playing</description>
+        <type>image</type>
+        <id>15</id>
+        <posX>1780</posX>
+        <posY>436</posY>
+        <width>90</width>
+        <height>273</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Connect4\fragezeichen3.png</texture>
+        <animation effect="zoom" start="100,100" end="118,118" time="450" condition="true" pulse="true">conditional</animation>
+        <animation effect="Fade" time="500" start="100" end="0" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+      </control>
+      <!--  ********************************************************  -->
+      <!--  ************** THE WINNING ANIMATION *******************  -->
+      <!--  ********************************************************  -->
+      <control>
+        <description>catavolt winning</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1570</posX>
+        <posY>451</posY>
+        <width>101</width>
+        <height>277</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Connect4\Ausrufezeichen1.png</texture>
+        <colordiffuse>aa000000</colordiffuse>
+        <animation effect="fade" end="100" time="0" delay="100" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+        <animation effect="zoom" start="100,100" end="120,120" time="500" condition="true" pulse="true">conditional</animation>
+        <visible>!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)</visible>
+      </control>
+      <control>
+        <description>catavolt winning</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1680</posX>
+        <posY>410</posY>
+        <width>91</width>
+        <height>274</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Connect4\Ausrufezeichen2.png</texture>
+        <colordiffuse>aa000000</colordiffuse>
+        <animation effect="fade" end="100" time="0" delay="100" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+        <animation effect="zoom" start="100,100" end="115,115" time="600" condition="true" pulse="true">conditional</animation>
+        <visible>!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)</visible>
+      </control>
+      <control>
+        <description>catavolt winning</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1790</posX>
+        <posY>446</posY>
+        <width>90</width>
+        <height>273</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Connect4\Ausrufezeichen3.png</texture>
+        <colordiffuse>aa000000</colordiffuse>
+        <animation effect="fade" end="100" time="0" delay="100" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+        <animation effect="zoom" start="100,100" end="118,118" time="450" condition="true" pulse="true">conditional</animation>
+        <visible>!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)</visible>
+      </control>
+      <control>
+        <description>catavolt winning</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1560</posX>
+        <posY>441</posY>
+        <width>101</width>
+        <height>277</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Connect4\Ausrufezeichen1.png</texture>
+        <animation effect="fade" end="100" time="0" delay="100" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+        <animation effect="zoom" start="100,100" end="120,120" time="500" condition="true" pulse="true">conditional</animation>
+        <visible>!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)</visible>
+      </control>
+      <control>
+        <description>catavolt winning</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1670</posX>
+        <posY>400</posY>
+        <width>91</width>
+        <height>274</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Connect4\Ausrufezeichen2.png</texture>
+        <animation effect="fade" end="100" time="0" delay="100" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+        <animation effect="zoom" start="100,100" end="115,115" time="600" condition="true" pulse="true">conditional</animation>
+        <visible>!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)</visible>
+      </control>
+      <control>
+        <description>catavolt winning</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1780</posX>
+        <posY>436</posY>
+        <width>90</width>
+        <height>273</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Connect4\Ausrufezeichen3.png</texture>
+        <animation effect="fade" end="100" time="0" delay="100" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+        <animation effect="zoom" start="100,100" end="118,118" time="450" condition="true" pulse="true">conditional</animation>
+        <visible>!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)</visible>
+      </control>
+      <control>
+        <id>1</id>
+        <description>Strahlen</description>
+        <type>image</type>
+        <posX>70</posX>
+        <posY>605</posY>
+        <width>400</width>
+        <height>400</height>
+        <texture>Connect4\strahlen.png</texture>
+        <colordiffuse>aa000000</colordiffuse>
+        <animation effect="zoom" time="1000" start="1,1" end="100,100" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+        <animation effect="zoom" start="100,100" end="90,90" time="1000" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)" pulse="true">conditional</animation>
+        <animation effect="rotate" start="-0" end="-360" time="20000" loop="true" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+        <animation effect="Fade" time="1000">WindowClose</animation>
+        <visible>!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)</visible>
+      </control>
+      <control>
+        <id>1</id>
+        <description>Strahlen</description>
+        <type>image</type>
+        <posX>60</posX>
+        <posY>595</posY>
+        <width>400</width>
+        <height>400</height>
+        <texture>Connect4\strahlen.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <animation effect="zoom" time="1000" start="1,1" end="100,100" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+        <animation effect="zoom" start="100,100" end="90,90" time="1000" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)" pulse="true">conditional</animation>
+        <animation effect="rotate" start="-0" end="-360" time="20000" loop="true" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+        <animation effect="Fade" time="1000">WindowClose</animation>
+        <visible>!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)</visible>
+      </control>
+      <control>
+        <id>1</id>
+        <description>Trophy</description>
+        <type>image</type>
+        <posX>140</posX>
+        <posY>705</posY>
+        <width>240</width>
+        <height>240</height>
+        <texture>Connect4\Trophy.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <animation effect="zoom" time="1000" start="1,1" end="100,100" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+        <animation effect="Fade" time="100">WindowClose</animation>
+        <visible>!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)</visible>
+      </control>
+      <control>
+        <id>1</id>
+        <description>Golden gameboard</description>
+        <type>image</type>
+        <posX>225</posX>
+        <posY>743</posY>
+        <width>70</width>
+        <height>70</height>
+        <texture>Connect4\Gameboard_golden.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <animation effect="zoom" time="1000" start="1,1" end="100,100" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+        <animation effect="rotate" start="-0" end="-360" time="10000" loop="true" condition="!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)">conditional</animation>
+        <animation effect="Fade" time="100">WindowClose</animation>
+        <visible>skin.hassetting(#Connect4.show.WinAnimation)+!string.contains(#Status, )+!string.contains(#Status, nobody)+!string.contains(#Status, keiner)+!string.contains(#Status, Computer)</visible>
       </control>
     </control>
+    <!--  ********************************************************  -->
+    <!--  ******************** THE BOARD *************************  -->
+    <!--  ********************************************************  -->
     <control>
       <description>BackGround Game</description>
       <type>image</type>
       <id>15</id>
-      <posX>576</posX>
-      <posX>787</posX>
-      <posY>407</posY>
+      <posX>587</posX>
       <posY>196</posY>
       <width>913</width>
       <height>787</height>
-      <texture>MyConnBack.png</texture>
+      <texture>Connect4\MyConnBack.png</texture>
       <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
-      <description>text label</description>
-      <type>label</type>
-      <id>18</id>
-      <posX>372</posX>
-      <posY>105</posY>
-      <label>#Status</label>
-      <textcolor>lightgreen</textcolor>
-      <font>font14</font>
-      <animation effect="zoom" start="100,100" end="105,105" time="500" condition="true" pulse="true">conditional</animation>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>#header.label</label>
+      <width>1802</width>
+      <align>left</align>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
-      <description>Pointer 01</description>
-      <type>button</type>
-      <id>301</id>
-      <posX>801</posX>
-      <posY>75</posY>
-      <width>126</width>
-      <height>126</height>
-      <onleft>2</onleft>
-      <onright>302</onright>
-      <onup>301</onup>
-      <ondown>301</ondown>
-      <textureFocus>MyConn4Cur.png</textureFocus>
-      <textureNoFocus>-</textureNoFocus>
-      <wrapString />
-    </control>
-    <control>
-      <description>Pointer 02</description>
-      <type>button</type>
-      <id>302</id>
-      <posX>927</posX>
-      <posY>75</posY>
-      <width>126</width>
-      <height>126</height>
-      <onleft>301</onleft>
-      <onright>303</onright>
-      <onup>302</onup>
-      <ondown>302</ondown>
-      <textureFocus>MyConn4Cur.png</textureFocus>
-      <textureNoFocus>-</textureNoFocus>
-      <wrapString />
-    </control>
-    <control>
-      <description>Pointer 03</description>
-      <type>button</type>
-      <id>303</id>
-      <posX>1054</posX>
-      <posY>75</posY>
-      <width>126</width>
-      <height>126</height>
-      <onleft>302</onleft>
-      <onright>304</onright>
-      <onup>303</onup>
-      <ondown>303</ondown>
-      <textureFocus>MyConn4Cur.png</textureFocus>
-      <textureNoFocus>-</textureNoFocus>
-      <wrapString />
-    </control>
-    <control>
-      <description>Pointer 04</description>
-      <type>button</type>
-      <id>304</id>
-      <posX>1180</posX>
-      <posY>75</posY>
-      <width>126</width>
-      <height>126</height>
-      <onleft>303</onleft>
-      <onright>305</onright>
-      <onup>304</onup>
-      <ondown>304</ondown>
-      <textureFocus>MyConn4Cur.png</textureFocus>
-      <textureNoFocus>-</textureNoFocus>
-      <wrapString />
-    </control>
-    <control>
-      <description>Pointer 05</description>
-      <type>button</type>
-      <id>305</id>
-      <posX>1307</posX>
-      <posY>75</posY>
-      <width>126</width>
-      <height>126</height>
-      <onleft>304</onleft>
-      <onright>306</onright>
-      <onup>305</onup>
-      <ondown>305</ondown>
-      <textureFocus>MyConn4Cur.png</textureFocus>
-      <textureNoFocus>-</textureNoFocus>
-      <wrapString />
-    </control>
-    <control>
-      <description>Pointer 06</description>
-      <type>button</type>
-      <id>306</id>
-      <posX>1433</posX>
-      <posY>75</posY>
-      <width>126</width>
-      <height>126</height>
-      <onleft>305</onleft>
-      <onright>307</onright>
-      <onup>306</onup>
-      <ondown>306</ondown>
-      <textureFocus>MyConn4Cur.png</textureFocus>
-      <textureNoFocus>-</textureNoFocus>
-      <wrapString />
-    </control>
-    <control>
-      <description>Pointer 07</description>
-      <type>button</type>
-      <id>307</id>
-      <posX>1560</posX>
-      <posY>75</posY>
-      <width>126</width>
-      <height>126</height>
-      <onleft>306</onleft>
-      <onright>301</onright>
-      <onup>307</onup>
-      <ondown>307</ondown>
-      <textureFocus>MyConn4Cur.png</textureFocus>
-      <textureNoFocus>-</textureNoFocus>
-      <wrapString />
-    </control>
-    <control>
+      <description>Title background image all screens except all games</description>
       <type>image</type>
-      <id>101</id>
-      <posX>801</posX>
-      <posY>210</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_1_1</texture>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>120</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
     </control>
-    <control>
-      <type>image</type>
-      <id>102</id>
-      <posX>927</posX>
-      <posY>210</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_1_2</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>103</id>
-      <posX>1054</posX>
-      <posY>210</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_1_3</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>104</id>
-      <posX>1180</posX>
-      <posY>210</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_1_4</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>105</id>
-      <posX>1307</posX>
-      <posY>210</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_1_5</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>106</id>
-      <posX>1433</posX>
-      <posY>210</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_1_6</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>107</id>
-      <posX>1560</posX>
-      <posY>210</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_1_7</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>111</id>
-      <posX>801</posX>
-      <posY>337</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_2_1</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>112</id>
-      <posX>927</posX>
-      <posY>337</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_2_2</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>113</id>
-      <posX>1054</posX>
-      <posY>337</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_2_3</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>114</id>
-      <posX>1180</posX>
-      <posY>337</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_2_4</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>115</id>
-      <posX>1307</posX>
-      <posY>337</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_2_5</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>116</id>
-      <posX>1433</posX>
-      <posY>337</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_2_6</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>117</id>
-      <posX>1560</posX>
-      <posY>337</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_2_7</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>121</id>
-      <posX>801</posX>
-      <posY>464</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_3_1</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>122</id>
-      <posX>927</posX>
-      <posY>464</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_3_2</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>123</id>
-      <posX>1054</posX>
-      <posY>464</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_3_3</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>124</id>
-      <posX>1180</posX>
-      <posY>464</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_3_4</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>125</id>
-      <posX>1307</posX>
-      <posY>464</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_3_5</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>126</id>
-      <posX>1433</posX>
-      <posY>464</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_3_6</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>127</id>
-      <posX>1560</posX>
-      <posY>464</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_3_7</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>131</id>
-      <posX>801</posX>
-      <posY>590</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_4_1</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>132</id>
-      <posX>927</posX>
-      <posY>590</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_4_2</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>133</id>
-      <posX>1054</posX>
-      <posY>590</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_4_3</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>134</id>
-      <posX>1180</posX>
-      <posY>590</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_4_4</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>135</id>
-      <posX>1307</posX>
-      <posY>590</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_4_5</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>136</id>
-      <posX>1433</posX>
-      <posY>590</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_4_6</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>137</id>
-      <posX>1560</posX>
-      <posY>590</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_4_7</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>141</id>
-      <posX>801</posX>
-      <posY>717</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_5_1</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>142</id>
-      <posX>927</posX>
-      <posY>717</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_5_2</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>143</id>
-      <posX>1054</posX>
-      <posY>717</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_5_3</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>144</id>
-      <posX>1180</posX>
-      <posY>717</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_5_4</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>145</id>
-      <posX>1307</posX>
-      <posY>717</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_5_5</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>146</id>
-      <posX>1433</posX>
-      <posY>717</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_5_6</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>147</id>
-      <posX>1560</posX>
-      <posY>717</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_5_7</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>151</id>
-      <posX>801</posX>
-      <posY>843</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_6_1</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>152</id>
-      <posX>927</posX>
-      <posY>843</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_6_2</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>153</id>
-      <posX>1054</posX>
-      <posY>843</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_6_3</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>154</id>
-      <posX>1180</posX>
-      <posY>843</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_6_4</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>155</id>
-      <posX>1307</posX>
-      <posY>843</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_6_5</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>156</id>
-      <posX>1433</posX>
-      <posY>843</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_6_6</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <id>157</id>
-      <posX>1560</posX>
-      <posY>843</posY>
-      <width>126</width>
-      <height>126</height>
-      <texture>#Con_6_7</texture>
-    </control>
+    <import>common.time.xml</import>
   </controls>
 </window>

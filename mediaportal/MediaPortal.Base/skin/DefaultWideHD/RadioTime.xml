@@ -5,7 +5,7 @@
   <defaultcontrol>11</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#header.hover:</define>
-  <define>#header.label:RadioTime    #RadioTime.Play.Station</define>
+  <!--define>#header.label:TuneIn #RadioTime.Play.Station</define-->
   <controls>
     <control>
       <type>image</type>
@@ -13,10 +13,10 @@
       <id>0</id>
       <width>1920</width>
       <height>1080</height>
-      <texture>BH Webradio.jpg</texture>
+      <texture>BH Webradio2.jpg</texture>
       <colordiffuse>90ffffff</colordiffuse>
     </control>
-    <import>common.window.xml</import>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
     <control>
       <description>General Overlay</description>
@@ -32,11 +32,31 @@
       <type>label</type>
       <id>1</id>
       <posX>45</posX>
-      <posY>15</posY>
-      <label>#header.label</label>
-      <font>Label</font>
+      <posY>54</posY>
+      <label>TuneIn #scroll.wrap #selecteditem #RadioTime.Play.Station</label>
+      <width>1802</width>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>default fadelabel</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>94</posY>
+      <width>1475</width>
+      <align>left</align>
+      <font>Label</font>
+      <label>#Play.Current.Title #scroll.wrap #Play.Current.Artist</label>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
     </control>
     <control>
       <description>group element</description>
@@ -134,7 +154,7 @@
       <posY>270</posY>
       <width>313</width>
       <height>238</height>
-      <texture>picturethumbmask.png</texture>
+      <texture>musicfanart_mask.png</texture>
       <colordiffuse>90ffffff</colordiffuse>
       <visible>facadeview.list</visible>
     </control>
@@ -234,7 +254,7 @@
           <type>listcontrol</type>
           <id>50</id>
           <posX>490</posX>
-          <posY>270</posY>
+          <posY>250</posY>
           <width>900</width>
           <scrollOffset>2</scrollOffset>
           <onleft>11</onleft>
@@ -274,7 +294,7 @@
           <showFrame>true</showFrame>
           <imageFolder>-</imageFolder>
           <imageFolderFocus>-</imageFolderFocus>
-          <textureMask>Picturethumbmask.png</textureMask>
+          <textureMask>musicfanart_mask.png</textureMask>
           <frameNoFocus>Picturethumbframe.png</frameNoFocus>
           <frameFocus>Picturethumbframe.png</frameFocus>
           <keepaspectratio>no</keepaspectratio>

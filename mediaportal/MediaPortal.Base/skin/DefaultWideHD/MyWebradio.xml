@@ -37,7 +37,7 @@
       <posY>97</posY>
       <width>2025</width>
       <height>90</height>
-      <texture>general_overlay_selecteditem.png</texture>
+      <texture>-</texture>
       <colordiffuse>bbffffff</colordiffuse>
       <visible>!window.isvisible(0)+!window.isvisible(34)</visible>
     </control>
@@ -49,7 +49,7 @@
       <label>#stream.sort</label>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Number of Files Label</description>
@@ -59,7 +59,7 @@
       <posY>52</posY>
       <label>#selectedindex/#itemcount #(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font10</font>
       <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
     </control>
@@ -73,7 +73,7 @@
       <label>#active.Station</label>
       <font>Menutitle</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>Player.HasAudio+!Player.HasVideo+string.equals(#Play.Current.Lastfm.CurrentStream,)+!window.isvisible(1)+!window.isvisible(614)+!window.isvisible(2003)+!window.isvisible(0)+!window.isvisible(34)</visible>
     </control>
     <control>
@@ -86,7 +86,7 @@
       <label>#selecteditem</label>
       <font>Menutitle</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!window.isvisible(6)+!window.isvisible(25)+!window.isvisible(0)+!window.isvisible(34)</visible>
     </control>
     <!--     *******************************************************************************************  -->
@@ -283,7 +283,7 @@
       <textureWidth>25</textureWidth>
       <textureHeight>25</textureHeight>
       <subitems>
-        <subitem>greystar.png</subitem>
+        <subitem>starbad.png</subitem>
         <subitem>star.png</subitem>
       </subitems>
       <orientation>horizontal</orientation>
@@ -300,7 +300,7 @@
       <label>#stream.playcount</label>
       <font>font11</font>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <!-- Genre -->
     <control>
@@ -312,7 +312,7 @@
       <label>135</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Genre value</description>
@@ -323,7 +323,7 @@
       <width>330</width>
       <label>#stream.genre</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <!-- Bitrate -->
     <control>
@@ -335,7 +335,7 @@
       <label>670</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Country value</description>
@@ -346,7 +346,7 @@
       <label>#stream.bitrate</label>
       <font>font12</font>
       <width>330</width>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <!-- Country -->
     <control>
@@ -358,7 +358,7 @@
       <label>200026</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Country value</description>
@@ -369,7 +369,7 @@
       <width>330</width>
       <label>#stream.country</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <!-- City -->
     <control>
@@ -380,7 +380,7 @@
       <posY>559</posY>
       <label>1028</label>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>control.hastext(555)</visible>
     </control>
     <control>
@@ -392,7 +392,7 @@
       <width>330</width>
       <label>#stream.city</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <!-- Description -->
     <control>
@@ -416,7 +416,7 @@
       <height>157</height>
       <label>#stream.description</label>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Separator Line</description>

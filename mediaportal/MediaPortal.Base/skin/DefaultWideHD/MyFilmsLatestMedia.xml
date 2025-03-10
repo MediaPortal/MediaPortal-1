@@ -33,7 +33,7 @@
         <label>#(L(4558)):</label>
         <align>left</align>
         <font>font12</font>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>ff00bfff</textcolor>
       </control>
       <control>
         <description>MyFilms Latest Title 1</description>
@@ -46,7 +46,7 @@
         <align>left</align>
         <font>font11</font>
         <visible>string.equals(#latestMediaHandler.myfilms.latest1.title)</visible>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <description>MyFilms Latest Title 2</description>
@@ -59,7 +59,7 @@
         <align>left</align>
         <font>font11</font>
         <visible>string.equals(#latestMediaHandler.myfilms.latest2.title)</visible>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <description>MyFilms Latest Title 3</description>
@@ -72,7 +72,7 @@
         <align>left</align>
         <font>font11</font>
         <visible>string.equals(#latestMediaHandler.myfilms.latest3.title)</visible>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <description>Missing Cover1</description>
@@ -109,7 +109,7 @@
         <texture>Videothumbframe.png</texture>
         <align>left</align>
         <visible>string.equals(#latestMediaHandler.myfilms.latest1.title)</visible>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <description>Missing Cover2</description>
@@ -144,7 +144,7 @@
         <texture>Videothumbframe.png</texture>
         <align>left</align>
         <visible>string.equals(#latestMediaHandler.myfilms.latest2.title)</visible>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
       <control>
         <description>Missing Cover3</description>
@@ -181,7 +181,7 @@
         <texture>Videothumbframe.png</texture>
         <align>left</align>
         <visible>string.equals(#latestMediaHandler.myfilms.latest3.title)</visible>
-        <textcolor>ivory</textcolor>
+        <textcolor>lightgray</textcolor>
       </control>
     </control>
   </controls>

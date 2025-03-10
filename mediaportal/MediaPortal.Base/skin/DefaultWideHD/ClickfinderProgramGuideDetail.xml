@@ -28,41 +28,58 @@
       <texture>#DetailFanArt</texture>
       <colordiffuse>aaffffff</colordiffuse>
     </control>
-    <import>common.window.xml</import>
-    <import>common.time.xml</import>
-    <!-- Tv Movie++ Last UpdateLabel-->
     <control>
-      <description>TvMovie++ LastUpdate</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>45</posX>
-      <posY>55</posY>
-      <width>925</width>
-      <font>font11</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <label>#SettingLastUpdate</label>
+      <description>Title background image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>379</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
     </control>
+	
+    <import>common.time.xml</import>
+	
+    <control>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>#currentmodule #scroll.wrap #DetailTitle</label>
+      <width>1802</width>
+      <align>left</align>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>	
     <control>
       <id>1</id>
       <description>Overlay Image</description>
       <type>image</type>
-      <posX>95</posX>
-      <posY>150</posY>
-      <width>1750</width>
-      <height>650</height>
-      <texture>filmstripbg.png</texture>
-      <colordiffuse>ddffffff</colordiffuse>
+      <posX>81</posX>
+      <posY>239</posY>
+      <width>1747</width>
+      <height>560</height> 
+      <texture>Clickfinder_details_duo_final.bg.png</texture>  
+      <colordiffuse>ccffffff</colordiffuse> 
     </control>
+	
     <!-- ******************************************************************************************* -->
     <!-- ************************** LINKE SEITE DER DETAIL-ANZEIGE ********************************* -->
     <!-- ******************************************************************************************* -->
-    <control>
+   
+   <control>
       <description>Detail Image</description>
       <type>image</type>
       <id>1</id>
-      <posX>154</posX>
-      <posY>196</posY>
+      <posX>129</posX> 
+      <posY>266</posY> 
       <width>303</width>
       <height>225</height>
       <texture mask="picturecase_mask.png">#DetailImage</texture>
@@ -74,7 +91,7 @@
       <type>image</type>
       <id>37</id>
       <posX>126</posX>
-      <posY>385</posY>
+      <posY>425</posY> 
       <width>67</width>
       <height>67</height>
       <texture></texture>
@@ -85,122 +102,204 @@
       <description>Detail RecordingState</description>
       <type>image</type>
       <id>37</id>
-      <posX>190</posX>
-      <posY>395</posY>
-      <width>67</width>
+      <posX>372</posX>
+      <posY>430</posY> 
+      <width>57</width>
       <height>55</height>
       <centered>no</centered>
       <texture>#DetailRecordingState</texture>
     </control>
+   
     <control>
-      <description>Detail Channel Logo</description>
-      <type>image</type>
-      <id>37</id>
-      <posX>330</posX>
-      <posY>560</posY>
-      <width>120</width>
-      <height>120</height>
-      <texture>#DetailChannelLogo</texture>
-    </control>
-    <control>
-      <description>Label Zeit</description>
+      <description>Label Genre</description>
       <type>label</type>
       <id>1</id>
-      <posX>3140</posX>
-      <posY>450</posY>
+      <posX>119</posX>
+      <posY>517</posY>
       <width>98</width>
-      <label>#ClickfinderPG.Translation.TimeLabel</label>
+      <label>#ClickfinderPG.Translation.GenreLabel</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
-      <description>Detail time</description>
+      <description>Detail Genre</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>140</posX>
-      <posY>450</posY>
-      <width>320</width>
+      <posX>438</posX>
+      <posY>517</posY>
+      <width>220</width>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+      <label>#DetailGenre</label>
+      <wrapString>~</wrapString>
+    </control>
+	 <control>
+      <description>Label Jahr</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>119</posX>
+      <posY>553</posY> 
+      <width>98</width>
+      <label>#ClickfinderPG.Translation.YearLabel</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
-      <label>#DetailTime</label>
+      <textcolor>ff00bfff</textcolor>
+    </control>
+    <control>
+      <description>Detail Jahr</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>446</posX>
+      <posY>553</posY>
+      <width>220</width>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+      <label>#DetailYear</label>
+      <wrapString>~</wrapString>
+    </control>
+	 <control>
+      <description>Label Land</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>119</posX>
+      <posY>589</posY> 
+      <width>98</width>
+      <label>Land:</label>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+    </control>
+    <control>
+      <description>Detail Land</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>438</posX>
+      <posY>589</posY>
+      <width>220</width>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+      <label>#DetailCountry</label>
       <wrapString>~</wrapString>
     </control>
     <control>
       <description>Label Dauer</description>
       <type>label</type>
       <id>1</id>
-      <posX>140</posX>
-      <posY>483</posY>
+      <posX>119</posX> 
+      <posY>625</posY> 
       <width>98</width>
       <label>#ClickfinderPG.Translation.DurationLabel</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
-      <description>Detail Duration</description>
+      <description>Detail Dauer</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>449</posX>
-      <posY>483</posY>
-      <width>168</width>
+      <posX>438</posX> 
+      <posY>625</posY>
+      <width>220</width>
       <align>right</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#DetailDuration</label>
       <wrapString>~</wrapString>
     </control>
-    <control>
+	 <control>
       <description>Label Kanal</description>
       <type>label</type>
       <id>1</id>
-      <posX>140</posX>
-      <posY>517</posY>
+      <posX>119</posX>
+      <posY>661</posY> 
       <width>98</width>
       <label>#ClickfinderPG.Translation.ChannelLabel</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
-      <description>ListItem Kanal</description>
+      <description>Detail Kanal</description>
       <type>fadelabel</type>
       <id>33</id>
-      <posX>449</posX>
-      <posY>517</posY>
-      <width>421</width>
+      <posX>438</posX>
+      <posY>661</posY>
+      <width>225</width>
       <align>right</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#DetailChannel</label>
       <wrapString>~</wrapString>
     </control>
+	 <control>
+      <description>Label Zeit</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>119</posX>
+      <posY>697</posY>
+      <width>98</width>
+      <label>#ClickfinderPG.Translation.TimeLabel</label>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+    </control>
+    <control>
+      <description>Detail Zeit</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>438</posX>
+      <posY>697</posY>
+      <width>220</width>
+      <align>right</align>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+      <label>#DetailTime</label>
+      <wrapString>~</wrapString>
+    </control>
+	
+	<!-- Tv Movie++ Last UpdateLabel-->
+   <!-- <control>
+      <description>TvMovie++ LastUpdate</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>119</posX>
+      <posY>769</posY>
+      <width>925</width>
+      <font>font11</font>
+      <align>left</align>
+      <textcolor>lightgray</textcolor>
+      <label>#SettingLastUpdate</label>
+    </control>-->
+   
     <!-- ******************************************************************************************* -->
     <!-- ************************** RECHTE SEITE DER DETAIL-ANZEIGE ******************************** -->
     <!-- ******************************************************************************************* -->
-    <control>
+    
+	<control>
       <description>Separator Image</description>
       <type>image</type>
       <id>1</id>
-      <posX>473</posX>
-      <posY>182</posY>
+      <posX>461</posX> 461
+      <posY>245</posY> 276
       <width>1</width>
-      <height>573</height>
+      <height>548</height> 488
       <texture>slider_vertical.png</texture>
-      <colordiffuse>80ffffff</colordiffuse>
+      <colordiffuse>80363636</colordiffuse>  
     </control>
     <control>
       <description>Detail Titel</description>
       <type>fadelabel</type>
       <id>1</id>
       <posX>491</posX>
-      <posY>189</posY>
-      <width>1180</width>
+      <posY>249</posY> 189
+      <width>1140</width>
       <align>left</align>
       <font>Menutitle</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#DetailTitle</label>
       <wrapString>~</wrapString>
     </control>
@@ -209,75 +308,26 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>494</posX>
-      <posY>239</posY>
-      <width>1180</width>
+      <posY>304</posY> 239
+      <width>1140</width>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#DetailorgTitle</label>
       <wrapString>~</wrapString>
     </control>
-    <control>
-      <description>Detail FSK Logo</description>
+  
+	 <control>
+      <description>Detail Channel Logo</description>
       <type>image</type>
-      <id>37</id>
-      <posX>1660</posX>
-      <posY>182</posY>
-      <width>168</width>
-      <height>84</height>
-      <centered>no</centered>
-      <texture>#DetailFSK</texture>
+      <id>1</id> 37
+      <posX>1690</posX>
+      <posY>265</posY> 560
+      <width>100</width>
+      <height>100</height>
+      <texture>#DetailChannelLogo</texture>
     </control>
-    <control>
-      <description>Label Genre</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>491</posX>
-      <posY>281</posY>
-      <width>180</width>
-      <label>#ClickfinderPG.Translation.GenreLabel</label>
-      <align>left</align>
-      <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control>
-      <description>ListItem Genre</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>690</posX>
-      <posY>281</posY>
-      <width>1096</width>
-      <label>#DetailGenre</label>
-      <align>left</align>
-      <font>font11</font>
-      <textcolor>ivory</textcolor>
-      <wrapString>~</wrapString>
-    </control>
-    <control>
-      <description>Label Jahr/Country</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>491</posX>
-      <posY>315</posY>
-      <width>180</width>
-      <label>#ClickfinderPG.Translation.YearLabel</label>
-      <align>left</align>
-      <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control>
-      <description>Detail Year/Countryr</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>690</posX>
-      <posY>315</posY>
-      <width>1096</width>
-      <label>#DetailCountry #DetailYear</label>
-      <align>left</align>
-      <font>font11</font>
-      <textcolor>ivory</textcolor>
-      <wrapString>~</wrapString>
-    </control>
+   
     <control>
       <description>Label Regie</description>
       <type>label</type>
@@ -288,7 +338,7 @@
       <label>#ClickfinderPG.Translation.RegieLabel</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Detail Regie</description>
@@ -296,11 +346,11 @@
       <id>1</id>
       <posX>690</posX>
       <posY>348</posY>
-      <width>1096</width>
+      <width>940</width>
       <label>#DetailRegie</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <wrapString>~</wrapString>
     </control>
     <control>
@@ -313,23 +363,23 @@
       <label>#ClickfinderPG.Translation.ActorsLabel</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
-      <description>Detail Actors</description>
+      <description>Detail Schauspieler</description>
       <type>fadelabel</type>
       <id>1</id>
       <posX>690</posX>
       <posY>382</posY>
-      <width>1096</width>
+      <width>1085</width>
       <label>#DetailActors</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <wrapString>~</wrapString>
     </control>
     <control>
-      <description>Label KurzKritik</description>
+      <description>Label Kurzkritik</description>
       <type>label</type>
       <id>1</id>
       <posX>491</posX>
@@ -338,7 +388,7 @@
       <label>#ClickfinderPG.Translation.Critic</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Detail Kurzkritik</description>
@@ -346,15 +396,15 @@
       <id>42</id>
       <posX>690</posX>
       <posY>416</posY>
-      <width>955</width>
+      <width>1085</width>
       <label>#DetailKritik</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <wrapString>~</wrapString>
     </control>
     <control>
-      <description>Detail Describtion</description>
+      <description>Detail Beschreibung</description>
       <type>textboxscrollup</type>
       <id>32</id>
       <posX>491</posX>
@@ -363,7 +413,7 @@
       <height>216</height>
       <label>#DetailDescription</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Separator</description>
@@ -371,36 +421,84 @@
       <id>0</id>
       <posX>491</posX>
       <posY>701</posY>
-      <width>1293</width>
+      <width>1297</width>
       <height>1</height>
       <texture>horizontal_bar.png</texture>
       <colordiffuse>80ffffff</colordiffuse>
     </control>
+	 <control>
+      <description>Separator</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>491</posX>
+      <posY>780</posY>
+      <width>1297</width>
+      <height>1</height>
+      <texture>horizontal_bar.png</texture>
+      <colordiffuse>80ffffff</colordiffuse>
+    </control>
+	 <control>
+      <description>Detail FSK-Logo</description>
+      <type>image</type>
+      <id>37</id>
+      <posX>470</posX>
+      <posY>710</posY>
+      <width>120</width>
+      <height>120</height>
+      <colorkey>0</colorkey>
+      <filtered>yes</filtered>
+      <centered>no</centered>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#DetailFSK</texture>
+	  <visible>!string.equals(#DetailTitle,)</visible>
+    </control>
+	 <control>
+      <description>Audio Logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>585</posX>
+      <posY>722</posY>
+      <width>84</width>
+      <height>84</height>
+      <texture>#DetailAudioImage</texture>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
     <control>
-      <description>Fun</description>
+      <description>HD/SD Logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>688</posX>
+      <posY>722</posY>
+      <width>84</width>
+      <height>84</height>
+      <texture>#DetailProgramFormat</texture>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+    <control>
+      <description>Spaß</description>
       <type>label</type>
       <id>1</id>
-      <posX>520</posX>
+      <posX>763</posX>
       <posY>730</posY>
       <width>140</width>
       <label>#ClickfinderPG.Translation.FunLabel</label>
       <font>font10</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
-      <description>FunStars</description>
+      <description>SpaßStars</description>
       <type>imagelist</type>
       <id>1</id>
-      <posX>567</posX>
+      <posX>807</posX>
       <posY>752</posY>
       <width>140</width>
       <height>14</height>
       <textureWidth>16</textureWidth>
       <textureHeight>16</textureHeight>
       <subitems>
-        <subitem>starbad.png</subitem>
-        <subitem>star.png</subitem>
+        <subitem>starbad_small.png</subitem>
+        <subitem>star_small.png</subitem>
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
@@ -412,27 +510,27 @@
       <description>Action</description>
       <type>label</type>
       <id>1</id>
-      <posX>660</posX>
+      <posX>905</posX>
       <posY>730</posY>
       <width>140</width>
       <label>#ClickfinderPG.Translation.ActionLabel</label>
       <font>font10</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>ActionStars</description>
       <type>imagelist</type>
       <id>1</id>
-      <posX>708</posX>
+      <posX>948</posX>
       <posY>752</posY>
       <width>140</width>
       <height>14</height>
       <textureWidth>16</textureWidth>
       <textureHeight>16</textureHeight>
       <subitems>
-        <subitem>starbad.png</subitem>
-        <subitem>star.png</subitem>
+        <subitem>starbad_small.png</subitem>
+        <subitem>star_small.png</subitem>
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
@@ -444,27 +542,27 @@
       <description>Gefühl</description>
       <type>label</type>
       <id>1</id>
-      <posX>801</posX>
+      <posX>1045</posX>
       <posY>730</posY>
       <width>140</width>
       <label>#ClickfinderPG.Translation.EmotionsLabel</label>
       <font>font10</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>GefühlStars</description>
       <type>imagelist</type>
       <id>1</id>
-      <posX>848</posX>
+      <posX>1088</posX>
       <posY>752</posY>
       <width>140</width>
       <height>14</height>
       <textureWidth>16</textureWidth>
       <textureHeight>16</textureHeight>
       <subitems>
-        <subitem>starbad.png</subitem>
-        <subitem>star.png</subitem>
+        <subitem>starbad_small.png</subitem>
+        <subitem>star_small.png</subitem>
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
@@ -476,27 +574,27 @@
       <description>Erotik</description>
       <type>label</type>
       <id>1</id>
-      <posX>941</posX>
+      <posX>1181</posX>
       <posY>730</posY>
       <width>140</width>
       <label>#ClickfinderPG.Translation.EroticLabel</label>
       <font>font10</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>ErotikStars</description>
       <type>imagelist</type>
       <id>1</id>
-      <posX>989</posX>
+      <posX>1229</posX>
       <posY>752</posY>
       <width>140</width>
       <height>14</height>
       <textureWidth>16</textureWidth>
       <textureHeight>16</textureHeight>
       <subitems>
-        <subitem>starbad.png</subitem>
-        <subitem>star.png</subitem>
+        <subitem>starbad_small.png</subitem>
+        <subitem>star_small.png</subitem>
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
@@ -508,27 +606,27 @@
       <description>Spannung</description>
       <type>label</type>
       <id>1</id>
-      <posX>1082</posX>
+      <posX>1322</posX>
       <posY>730</posY>
       <width>140</width>
       <label>#ClickfinderPG.Translation.SuspenseLabel</label>
       <font>font10</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>SpannungStars</description>
       <type>imagelist</type>
       <id>1</id>
-      <posX>1130</posX>
+      <posX>1370</posX>
       <posY>752</posY>
       <width>140</width>
       <height>14</height>
       <textureWidth>16</textureWidth>
       <textureHeight>16</textureHeight>
       <subitems>
-        <subitem>starbad.png</subitem>
-        <subitem>star.png</subitem>
+        <subitem>starbad_small.png</subitem>
+        <subitem>star_small.png</subitem>
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
@@ -540,27 +638,27 @@
       <description>Anspruch</description>
       <type>label</type>
       <id>1</id>
-      <posX>1222</posX>
+      <posX>1472</posX>
       <posY>730</posY>
       <width>140</width>
       <label>#ClickfinderPG.Translation.LevelLabel</label>
       <font>font10</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>AnspruchStars</description>
       <type>imagelist</type>
       <id>1</id>
-      <posX>1270</posX>
+      <posX>1520</posX>
       <posY>752</posY>
       <width>140</width>
       <height>14</height>
       <textureWidth>16</textureWidth>
       <textureHeight>16</textureHeight>
       <subitems>
-        <subitem>starbad.png</subitem>
-        <subitem>star.png</subitem>
+        <subitem>starbad_small.png</subitem>
+        <subitem>star_small.png</subitem>
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
@@ -569,30 +667,30 @@
       <visible>!string.starts(#DetailRatingLevel,0)</visible>
     </control>
     <control>
-      <description>Nutzerwertung</description>
+      <description>Wertung</description>
       <type>label</type>
       <id>1</id>
-      <posX>1398</posX>
+      <posX>1634</posX> 
       <posY>730</posY>
       <width>140</width>
       <label>Abstimmung</label>
       <font>font10</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
-      <description>Detail RatingStars</description>
+      <description>WertungStars</description>
       <type>imagelist</type>
       <id>44</id>
-      <posX>1383</posX>
+      <posX>1623</posX>
       <posY>752</posY>
       <width>168</width>
       <height>56</height>
       <textureWidth>16</textureWidth>
       <textureHeight>16</textureHeight>
       <subitems>
-        <subitem>starbad.png</subitem>
-        <subitem>star.png</subitem>
+        <subitem>starbad_small.png</subitem>
+        <subitem>star_small.png</subitem>
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
@@ -600,29 +698,9 @@
       <percentage>#DetailRatingStar</percentage>
       <visible>!string.starts(#DetailRatingStar,0)</visible>
     </control>
-    <control>
-      <description>Program Audio Image</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>1602</posX>
-      <posY>722</posY>
-      <width>84</width>
-      <height>84</height>
-      <texture>#DetailAudioImage</texture>
-      <keepaspectratio>yes</keepaspectratio>
-    </control>
-    <control>
-      <description>Program HD/SD Image</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>1700</posX>
-      <posY>722</posY>
-      <width>84</width>
-      <height>84</height>
-      <texture>#DetailProgramFormat</texture>
-      <keepaspectratio>yes</keepaspectratio>
-    </control>
+   
     <import>ClickfinderProgramGuide.HiddenMenu.xml</import>
+	
     <control>
       <description>Cover Flow view</description>
       <type>coverflow</type>
@@ -634,39 +712,39 @@
       <onleft>2</onleft>
       <onright>2</onright>
       <posX>100</posX>
-      <posY>835</posY>
-      <width>1720</width>
-      <height>210</height>
+      <posY>860</posY>
+      <width>1720</width> 
+      <height>140</height>
       <selectedCard>0</selectedCard>
-      <cardWidth>250</cardWidth>
-      <cardHeight>170</cardHeight>
+      <cardWidth>207</cardWidth>
+      <cardHeight>140</cardHeight>
       <angle>65</angle>
       <sideShift>150</sideShift>
-      <sideGap>50</sideGap>
-      <sideDepth>50</sideDepth>
+      <sideGap>120</sideGap>
+      <sideDepth>110</sideDepth>
       <offsetY>0</offsetY>
-      <selectedOffsetY>20</selectedOffsetY>
+      <selectedOffsetY>0</selectedOffsetY>
       <speed>8</speed>
       <backgroundColor>000000FF</backgroundColor>
-      <backgroundHeight>140</backgroundHeight>
-      <backgroundWidth>1920</backgroundWidth>
+      <backgroundHeight>120</backgroundHeight>
+      <backgroundWidth>1920</backgroundWidth> 
       <backgroundX>0</backgroundX>
-      <backgroundY>920</backgroundY>
+      <backgroundY>940</backgroundY>
       <backgroundDiffuse>60000000</backgroundDiffuse>
       <background>roof.png</background>
       <showBackground>yes</showBackground>
       <showFrame>yes</showFrame>
       <frame>PictureCase.png</frame>
       <frameFocus>PictureCase.png</frameFocus>
-      <frameWidth>250</frameWidth>
-      <frameHeight>170</frameHeight>
+      <frameWidth>207</frameWidth>
+      <frameHeight>140</frameHeight>
       <spinSpeed>8</spinSpeed>
       <folderPrefix />
       <folderSuffix />
       <font1>font13</font1>
       <font2>font10</font2>
-      <label1 />
-      <label2 />
+      <label1>#title</label1>
+      <label2>#genre</label2>
       <keepaspectratio>no</keepaspectratio>
       <textColor>FFFFFFFF</textColor>
       <remoteColor>FFFF0000</remoteColor>
@@ -674,41 +752,43 @@
       <downloadColor>FF00FF00</downloadColor>
       <selectedColor>FFFFFFFF</selectedColor>
       <shadowDistance>1</shadowDistance>
-      <label1YOff>380</label1YOff>
-      <label2YOff>390</label2YOff>
+      <label1 />
+      <label2 />
       <pageSize>100</pageSize>
       <scrollbarBackground>bar_hor.png</scrollbarBackground>
       <scrollbarLeft>mouse_left_vertical.png</scrollbarLeft>
       <scrollbarRight>mouse_right_vertical.png</scrollbarRight>
-      <scrollbarYOff>210</scrollbarYOff>
+      <scrollbarYOff>170</scrollbarYOff> 160
       <showScrollbar>yes</showScrollbar>
-      <cards mask="picturecase_mask.png">beige.png</cards>
+      <cards flipY="true" diffuse="Thumb_Mask.png" mask="picturecase_mask.png">beige.png</cards> 
       <subitems />
     </control>
+	
     <!--  bottom CoverFlow  Labels-->
-    <!--control>
-      <description>TvMovie++ LastUpdate</description>
+	
+    <control>
+      <description>DetailCoverflowLabel</description>
       <type>label</type>
       <id>1</id>
-      <posX>1850</posX>
-      <posY>102</posY>
-      <width>1560</width>
-      <textcolor>ffffff</textcolor>
-      <label>#DetailCoverflowLabel | #DetailCoverflowLabel2</label>
-      <font>Label</font>
+      <posX>530</posX>
+      <posY>1015</posY> 
+      <width>560</width>
+      <textcolor>ff3a88ff</textcolor>
+      <label>#DetailCoverflowLabel </label>
+      <font>font11bold</font>
       <align>right</align>
     </control>
     <control>
-      <description>TvMovie++ LastUpdate</description>
+      <description>DetailCoverflowLabel 2</description>
       <type>label</type>
       <id>1</id>
-      <posX>1300</posX>
-      <posY>1055</posY>
+      <posX>1400</posX>
+      <posY>1015</posY> 
       <width>560</width>
-      <textcolor>ffffff</textcolor>
+      <textcolor>ff3a88ff</textcolor>
       <label>#DetailCoverflowLabel2</label>
-      <font>Label</font>
-      <align>center</align>
-    </control-->
+      <font>font11bold</font>
+      <align>left</align>
+    </control>
   </controls>
 </window>

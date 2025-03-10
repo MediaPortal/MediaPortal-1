@@ -37,7 +37,33 @@
 		item1 = <text3> (left aligned)
 		item3 = <text2> (right aligned, useful for numbers)
 		Y-Offset needs to be the same if you want text to cutoff and avoid overlap of another item
-	-->		
+	-->	
+  <layouts>
+		<group List="true" SmallIcons="false"/>
+		<series ListPosters="true" ListBanners="true" Filmstrip="true" WideBanners="true" Coverflow="true" />
+    <season List="true" Filmstrip="true" Coverflow="true" />
+    <episode List="true"/>
+	</layouts>
+	
+	<views import="true" AppendlmageToList="true">
+		<group layout="List"></group>
+		<series layout="ListPosters">			
+			<item1>SMALLSPACE</item1>
+			<item2><![CDATA[<Series.Pretty_Name>]]></item2>			
+			<item3>SeriesUnWatched</item3>
+		</series>
+		<season layout="List">	
+			<item1>SMALLSPACE</item1>
+			<item2><![CDATA[Season <Season.SeasonIndex>]]></item2>		
+			<item3>SeasonUnWatched</item3>
+		</season>
+		<episode>	
+			<item1>SMALLSPACE</item1>
+			<item2><![CDATA[<Episode.EpisodeIndex>: <Episode.LocalEpisodeName>]]></item2>			
+			<item3><![CDATA[<Episode.FirstAired>]]></item3>
+		</episode>
+	</views>
+  	
 	<!-- Position of 'NEW' stamp in thumb views -->
 	<thumbstamp>
 		<widebanners>
@@ -80,37 +106,18 @@
     <!-- You can define multiple properties -->
   </videoplayimages>
 	
-	<layouts>
-		<group List="true" SmallIcons="true"/>
-		<series ListPosters="true" ListBanners="true" Filmstrip="true" WideBanners="true" Coverflow="true" />
-    <season List="true" Filmstrip="true" Coverflow="true" />
-    <episode List="true"/>
-	</layouts>
 	
-	<views import="true" AppendlmageToList="true">
-		<group layout="List"></group>
-		<series layout="ListPosters">			
-			<item1>SMALLSPACE</item1>
-			<item2><![CDATA[<Series.Pretty_Name>]]></item2>			
-			<item3>SeriesUnWatched</item3>
-		</series>
-		<season layout="List">	
-			<item1>SMALLSPACE</item1>
-			<item2><![CDATA[Season <Season.SeasonIndex>]]></item2>		
-			<item3>SeasonUnWatched</item3>
-		</season>
-		<episode>	
-			<item1>SMALLSPACE</item1>
-			<item2><![CDATA[<Episode.EpisodeIndex>: <Episode.LocalEpisodeName>]]></item2>			
-			<item3><![CDATA[<Episode.FirstAired>]]></item3>
-		</episode>
-	</views>
 	<formatting import="true">
 		<![CDATA[<Enabled>1<Format><Episode.InfoPanelLine2Key><FormatAs>Trans(Aired)
 <Enabled>1<Format><Episode.InfoPanelLine2Value><FormatAs><Episode.FirstAired>
 <Enabled>1<Format><Episode.InfoPanelLine3Key><FormatAs>Trans(Rating)
-<Enabled>1<Format><Episode.Rating><FormatAs>Eval(Round(<Episode.Rating>))
-<Enabled>1<Format><Series.Rating><FormatAs>Eval(Round(<Series.Rating>))
+<Enabled>1<Format><Episode.Rating><FormatAs>Eval(Round(<Episode.Rating>*10)/10)
+<Enabled>1<Format><Episode.DataPanelLine30Value><FormatAs>Eval(Round(<Episode.Rating>*10)/10)
+<Enabled>1<Format><Episode.DataPanelLine31Value><FormatAs>Eval(Round(<Episode.Rating>*10)/10) / 10
+<Enabled>1<Format><Series.Rating><FormatAs>Eval(Round(<Series.Rating>*10)/10)
+<Enabled>1<Format><Series.DataPanelLine40Value><FormatAs>Eval(Round(<Series.Rating>*10)/10)
+<Enabled>1<Format><Series.DataPanelLine41Value><FormatAs>Eval(Round(<Series.Rating>*10)/10) / 10
+<Enabled>1<Format><Season.CommunityRating><FormatAs>Eval(Round(<Season.Rating>*10)/10)
 <Enabled>1<Format><Episode.InfoPanelLine32Value><FormatAs> (Trans(Rated): <Episode.myRating>)
 <Enabled>1<Format><Episode.InfoPanelLine4Key><FormatAs>Trans(Director)
 <Enabled>1<Format><Episode.InfoPanelLine4Value><FormatAs><Episode.Director>
@@ -134,6 +141,20 @@
 <Enabled>1<Format><Series.InfoPanelLine5Value><FormatAs><Series.Network>
 <Enabled>1<Format><Series.InfoPanelLine6Value><FormatAs>Eval(<Series.EpisodeCount>-<Series.EpisodesUnWatched>) Trans(Watched)
 <Enabled>1<Format><Episode.InfoPanelLine8Value><FormatAs>(Eval(FormatThousands(<Episode.RatingCount>)) Trans(Votes))
+<Enabled>1<Format>2channels <FormatAs>2.0 
+<Enabled>1<Format>6channels <FormatAs>5.1 
+<Enabled>1<Format>V_MPEG4/ISO/AVC<FormatAs>H264
+<Enabled>1<Format>V_MPEGH/ISO/HEVC<FormatAs>H265
+<Enabled>1<Format>MPA1L3<FormatAs>MP3
+<Enabled>1<Format>MPA2L3<FormatAs>MP3
+<Enabled>1<Format>V_MPEG2<FormatAs>MPEG2
+<Enabled>1<Format>MPEG-2V<FormatAs>MPEG2
+<Enabled>1<Format>DIV3<FormatAs>DIVX
+<Enabled>1<Format>DX50<FormatAs>DIVX
+<Enabled>1<Format>A_FLAC<FormatAs>FLAC
+<Enabled>1<Format>A_AAC/MPEG4/LC/SBR<FormatAs>AAC
+<Enabled>1<Format>A_AAC<FormatAs>AAC
+<Enabled>1<Format>A_AC3<FormatAs>AC3
 <Enabled>1<Format><Series.InfoPanelLine9Value><FormatAs>(Eval(FormatThousands(<Series.RatingCount>)) Trans(Votes))
 <Enabled>1<Format><Series.InfoPanelLine7Value><FormatAs><Series.EpisodesUnWatched> Trans(Unwatched)
 <Enabled>1<Format><Series.RatingPath><FormatAs>TVSeries\starEval(10*Round(<Series.Rating>*2)/2).png
@@ -142,17 +163,18 @@
 <Enabled>1<Format>SMALLSPACE<FormatAs> ]]>
 	</formatting>
 	<logos import="true">
-  <![CDATA[thumbs\Skin FanArt\Media\Logos\Studios\<Series.Network>.png;-;;-;=;-;;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
+  <![CDATA[skin\DefaultWideHD\Media\Logos\Studios\<Series.Network>.png;-;;-;=;-;;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
   skin\DefaultWideHD\Media\Logos\<Series.ContentRating>.png;-;;-;=;-;;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;
   skin\DefaultWideHD\Media\Logos\resolution\480.png;-;<Episode.videoWidth>;-;<;-;960;-;AND;-;;-;=;-;;-;<Restrict:Episode>
 skin\DefaultWideHD\Media\Logos\resolution\540.png;-;<Episode.videoWidth>;-;=;-;960;-;AND;-;<Episode.videoHeight>;-;<=;-;600;-;AND;-;;-;=;-;;-;<Restrict:Episode>
 skin\DefaultWideHD\Media\Logos\resolution\720p.png;-;<Episode.videoWidth>;-;=;-;1280;-;OR;-;<Episode.videoHeight>;-;=;-;720;-;AND;-;;-;=;-;;-;<Restrict:Episode>
 skin\DefaultWideHD\Media\Logos\resolution\1080p.png;-;<Episode.videoWidth>;-;=;-;1920;-;OR;-;<Episode.videoHeight>;-;=;-;1080;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\DefaultWideHD\Media\Logos\video\h264.png;-;<Episode.VideoFormat>;-;=;-;AVC;-;OR;-;<Episode.VideoCodec>;-;=;-;h264;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\DefaultWideHD\Media\Logos\video\h264.png;-;<Episode.VideoFormat>;-;=;-;AVC;-;OR;-;<Episode.VideoCodec>;-;=;-;H264;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\DefaultWideHD\Media\Logos\video\h265.png;-;<Episode.VideoFormat>;-;=;-;HEVC;-;OR;-;<Episode.VideoCodec>;-;=;-;H265;-;AND;-;;-;=;-;;-;<Restrict:Episode>
 skin\DefaultWideHD\Media\Logos\video\mpeg2.png;-;<Episode.VideoFormat>;-;=;-;MPEG Video;-;AND;-;<Episode.VideoFormatProfile>;-;contains;-;Main;-;AND;-;;-;=;-;;-;<Restrict:Episode>
 skin\DefaultWideHD\Media\Logos\video\divx.png;-;<Episode.VideoCodec>;-;contains;-;DIVX;-;OR;-;<Episode.VideoCodec>;-;contains;-;DX50;-;OR;-;<Episode.VideoCodec>;-;contains;-;DIV3;-;<Restrict:Episode>
-skin\DefaultWideHD\Media\Logos\video\xvid.png;-;<Episode.VideoCodec>;-;contains;-;XVID;-;OR;-;<Episode.VideoCodec>;-;contains;-;XVID;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\DefaultWideHD\Media\Logos\video\mp4.png;-;<Episode.VideoFormat>;-;contains;-;MP4;-;OR;-;<Episode.VideoCodec>;-;contains;-;MP4V;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\DefaultWideHD\Media\Logos\video\xvid.png;-;<Episode.VideoCodec>;-;contains;-;XVID;-;OR;-;<Episode.VideoCodec>;-;contains;-;MPG4;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\DefaultWideHD\Media\Logos\video\vc-1.png;-;<Episode.VideoFormat>;-;contains;-;VC-1;-;OR;-;<Episode.VideoCodec>;-;contains;-;VC1;-;AND;-;;-;=;-;;-;<Restrict:Episode>
 skin\DefaultWideHD\Media\Logos\video\wmv.png;-;<Episode.VideoCodec>;-;contains;-;WMV;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;<Restrict:Episode>
 skin\DefaultWideHD\Media\Logos\video\vp6f.png;-;<Episode.VideoFormat>;-;=;-;VP6;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;<Restrict:Episode>
 skin\DefaultWideHD\Media\Logos\video\real.png;-;<Episode.VideoCodec>;-;contains;-;REAL;-;AND;-;;-;=;-;;-;AND;-;;-;=;-;;-;<Restrict:Episode>
@@ -172,7 +194,7 @@ skin\DefaultWideHD\Media\Logos\audio\5.1.png;-;<Episode.AudioChannels>;-;=;-;6;-
 skin\DefaultWideHD\Media\Logos\audio\8.png;-;<Episode.AudioChannels>;-;=;-;8;-;AND;-;;-;=;-;;-;<Restrict:Episode>
 skin\DefaultWideHD\Media\Logos\audio\RA.png;-;<Episode.AudioFormat>;-;contains;-;REAL;-;AND;-;;-;=;-;;-;<Restrict:Episode>
 skin\DefaultWideHD\Media\Logos\aspectratio\widescreen.png;-;<Episode.VideoAspectRatio>;-;<;-;1.9;-;AND;-;<Episode.VideoAspectRatio>;-;>=;-;1.5;-;AND;-;;-;=;-;;-;<Restrict:Episode>
-skin\DefaultWideHD\Media\Logos\aspectratio\\fullscreen.png;-;<Episode.VideoAspectRatio>;-;<;-;1.5;-;AND;-;<Episode.VideoAspectRatio>;-;>;-;1.2;-;AND;-;;-;=;-;;-;<Restrict:Episode>
+skin\DefaultWideHD\Media\Logos\aspectratio\fullscreen.png;-;<Episode.VideoAspectRatio>;-;<;-;1.5;-;AND;-;<Episode.VideoAspectRatio>;-;>;-;1.2;-;AND;-;;-;=;-;;-;<Restrict:Episode>
 skin\DefaultWideHD\Media\Logos\subtitles.png;-;<Episode.AvailableSubtitles>;-;=;-;1;-;OR;-;<Episode.EpisodeFilename>;-;contains;-;subbed.;-;AND;-;;-;=;-;;-;
 skin\DefaultWideHD\Media\Logos\nosubtitles.png;-;<Episode.AvailableSubtitles>;-;=;-;0;-;AND;-;;-;=;-;;-;
 ]]></logos>

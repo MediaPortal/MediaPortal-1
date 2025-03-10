@@ -105,9 +105,15 @@ internal class SlideCache
       {
         return PrevSlide;
       }
-      if (CurrentSlide != null && CurrentSlide.FilePath == slideFilePath)
+      if (CurrentSlide != null)
       {
-        return CurrentSlide;
+        if (CurrentSlide.FilePath == slideFilePath)
+          return CurrentSlide;
+        else
+        {
+          CurrentSlide.Dispose();
+          CurrentSlide = null;
+        }
       }
       // slide is not in cache, so get it now
       CurrentSlide = new SlidePicture(slideFilePath, false);
@@ -132,6 +138,7 @@ internal class SlideCache
       // shift slides and determine _neededSlideRelativeIndex
       if (NextSlide != null && NextSlide.FilePath == currPath)
       {
+        PrevSlide?.Dispose();
         PrevSlide = CurrentSlide;
         CurrentSlide = NextSlide;
         _neededSlideFilePath = nextPath;
@@ -139,6 +146,7 @@ internal class SlideCache
       }
       else if (PrevSlide != null && PrevSlide.FilePath == currPath)
       {
+        NextSlide?.Dispose();
         NextSlide = CurrentSlide;
         CurrentSlide = PrevSlide;
         _neededSlideFilePath = prevPath;
@@ -207,6 +215,7 @@ internal class SlideCache
         SlidePicture slide = _slides[i];
         if (slide != null && slide.FilePath == slideFilePath)
         {
+          slide.Dispose();
           _slides[i] = null;
         }
       }
@@ -215,5 +224,22 @@ internal class SlideCache
     // Note that we could pre-fetch the invalidated slide, but if the new version
     // of the slide is going to be requested immediately (as with DoRotate) then
     // pre-fetching won't help.
+  }
+
+  public void Clear()
+  {
+    Log.Debug("[SlideCache] Clear()");
+    lock (_slidesLock)
+    {
+      for (int i = 0; i < this._slides.Length; i++)
+      {
+        SlidePicture slide = this._slides[i];
+        if (slide != null)
+        {
+          slide.Dispose();
+          this._slides[i] = null;
+        }
+      }
+    }
   }
 }

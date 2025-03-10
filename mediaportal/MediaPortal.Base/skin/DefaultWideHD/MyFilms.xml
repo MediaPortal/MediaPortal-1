@@ -148,10 +148,10 @@
       <posY>0</posY>
       <width>1920</width>
       <height>1080</height>
-      <texture>general_overlay_selecteditem.png</texture>
+      <texture>-</texture>
       <colordiffuse>90ffffff</colordiffuse>
     </control>
-    <control>
+    <!--control>
       <description>Overlay text right</description>
       <id>0</id>
       <type>image</type>
@@ -159,10 +159,10 @@
       <posY>234</posY>
       <width>825</width>
       <height>699</height>
-      <texture mask="picturethumbmask.png">black.png</texture>
+      <texture mask="musicfanart_mask.png">black.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
       <visible>facadeview.list</visible>
-    </control>
+    </control-->
     <!-- HIDDEN SIDE MENU -->
     <control>
       <type>actiongroup</type>
@@ -293,29 +293,6 @@
       </control>
     </control>
     <!--  FILM INFO (List Layout)  -->
-    <control>
-      <description>background selecteditem</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>-20</posX>
-      <posY>97</posY>
-      <width>2025</width>
-      <height>90</height>
-      <texture>general_overlay_selecteditem.png</texture>
-      <colordiffuse>bbffffff</colordiffuse>
-    </control>
-    <control>
-      <description>Selected item (e.g. Movie Title Person name, etc)</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>0</posX>
-      <posY>142</posY>
-      <width>1920</width>
-      <label>#selecteditem</label>
-      <font>Menutitle</font>
-      <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
     <!-- Ratings -->
     <control>
       <type>imagelist</type>
@@ -346,7 +323,7 @@
       <width>300</width>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#myfilms.db.rating.value/10</label>
       <visible>string.equals(#myfilms.db.rating.value)+!control.isvisible(34)+!Control.isvisible(40)+[facadeview.list|facadeview.album]+!string.equals(#myfilms.user.mastertitle.groupcount)</visible>
     </control>
@@ -359,7 +336,7 @@
       <label>#myfilms.user.rating.label:</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#myfilms.user.rating.value)+[control.isvisible(36)|control.isvisible(39)]+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -371,7 +348,7 @@
       <width>300</width>
       <align>left</align>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#(iif(neq(#myfilms.user.rating.value,''),'#myfilms.user.rating.value/10',''))</label>
       <visible>string.equals(#myfilms.user.rating.value)+[control.isvisible(36)|control.isvisible(39)]+[facadeview.list|facadeview.album]</visible>
     </control>
@@ -385,7 +362,7 @@
       <label>201</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(38)+string.equals(#myfilms.db.length.value)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -397,7 +374,7 @@
       <width>450</width>
       <label>#myfilms.db.year.value</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!control.isvisible(38)+string.equals(#myfilms.db.length.value)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -409,7 +386,7 @@
       <posY>280</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(38)+string.equals(#myfilms.db.length.value)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -421,7 +398,7 @@
       <posY>310</posY>
       <width>450</width>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!Control.isvisible(38)+string.equals(#myfilms.db.length.value)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -432,7 +409,7 @@
       <posY>349</posY>
       <label>#myfilms.user.item1.label:</label>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(38)+string.equals(#myfilms.user.item1.value)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -443,7 +420,7 @@
       <posY>382</posY>
       <width>450</width>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#myfilms.user.item1.value</label>
       <visible>!control.isvisible(38)+string.equals(#myfilms.user.item1.value)+[facadeview.list|facadeview.album]</visible>
     </control>
@@ -455,7 +432,7 @@
       <posY>417</posY>
       <label>#myfilms.user.item2.label:</label>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(38)+string.equals(#myfilms.user.item2.value)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -467,7 +444,7 @@
       <width>450</width>
       <label>#myfilms.user.item2.value</label>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!control.isvisible(38)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -479,7 +456,7 @@
       <width>195</width>
       <label>#myfilms.user.item3.label:</label>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(38)+string.equals(#myfilms.user.item3.value)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -491,7 +468,7 @@
       <width>450</width>
       <label>#myfilms.user.item3.value</label>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!control.isvisible(38)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -503,7 +480,7 @@
       <width>195</width>
       <label>#myfilms.user.item4.label:</label>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(38)+string.equals(#myfilms.user.item4.value)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -515,7 +492,7 @@
       <width>450</width>
       <label>#myfilms.user.item4.value</label>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!control.isvisible(38)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -527,7 +504,7 @@
       <width>195</width>
       <label>#myfilms.user.item5.label:</label>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.isvisible(38)+string.equals(#myfilms.user.item5.value)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -539,7 +516,7 @@
       <width>450</width>
       <label>#myfilms.user.item5.value</label>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!control.isvisible(38)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -562,8 +539,8 @@
       <posY>705</posY>
       <width>780</width>
       <height>150</height>
-      <textcolor>ivory</textcolor>
-      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+      <font>font10</font>
       <lineSpacing>.9</lineSpacing>
       <label>#(iif(neq(#myfilms.db.tagline.value,''),'#myfilms.db.tagline.value ',''))#myfilms.db.description.value</label>
       <visible>!control.isvisible(38)+[facadeview.list|facadeview.album]</visible>
@@ -658,7 +635,7 @@
       <posY>300</posY>
       <width>60</width>
       <height>60</height>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font10</font>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>2</shadowDistance>
@@ -677,7 +654,7 @@
       <align>left</align>
       <font>font12</font>
       <width>450</width>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#myfilms.moviecontext.value</label>
       <visible>Control.isvisible(38)+[facadeview.list|facadeview.album]</visible>
     </control>
@@ -690,7 +667,7 @@
       <width>450</width>
       <label>#myfilms.person.dateofbirth.label:</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>Control.isvisible(38)+string.equals(#myfilms.person.dateofbirth.value)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -702,7 +679,7 @@
       <width>450</width>
       <font>font12</font>
       <label>#myfilms.person.dateofbirth.value</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>Control.isvisible(38)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -713,7 +690,7 @@
       <posY>346</posY>
       <width>450</width>
       <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#myfilms.person.placeofbirth.label:</label>
       <visible>Control.isvisible(38)+string.equals(#myfilms.person.placeofbirth.value)+[facadeview.list|facadeview.album]</visible>
     </control>
@@ -725,7 +702,7 @@
       <posY>375</posY>
       <font>font12</font>
       <width>450</width>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#myfilms.person.placeofbirth.value</label>
       <visible>Control.isvisible(38)+[facadeview.list|facadeview.album]</visible>
     </control>
@@ -737,7 +714,7 @@
       <posY>705</posY>
       <width>780</width>
       <height>157</height>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font11</font>
       <label>#myfilms.person.biography.value</label>
       <visible>Control.isvisible(38)+[facadeview.list|facadeview.album]</visible>
@@ -754,7 +731,7 @@
       <label>#(L(1091))</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#myfilms.user.source.isonline)+!control.isvisible(34)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
@@ -824,7 +801,7 @@
       <label>#(L(5906))</label>
       <font>font10</font>
       <align>right</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#myfilms.user.sourcetrailer.isonline)+!control.isvisible(34)+[facadeview.list|facadeview.album]</visible>
     </control>
     <control>

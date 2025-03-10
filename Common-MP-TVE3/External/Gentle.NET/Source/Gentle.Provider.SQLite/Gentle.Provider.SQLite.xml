@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gentle.Provider.SQLite</name>
+    </assembly>
+    <members>
+        <member name="T:Gentle.Provider.SQLite.SQLiteAnalyzer">
+            <summary>
+            This class is an implementation of the <see cref="T:Gentle.Framework.GentleSqlFactory"/> class for the SQLite RDBMS.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLite.SQLiteAnalyzer.Analyze(System.String)">
+            <summary>
+            Please refer to the <see cref="T:Gentle.Framework.GentleAnalyzer"/> class and the <see cref="T:Gentle.Framework.IDatabaseAnalyzer"/> 
+            interface it implements a description of this method.
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.SQLite.NamespaceDoc">
+            <summary>
+            The <see cref="N:Gentle.Provider.SQLite"/> namespace contains the provider files for
+            supporting the SQLite database backend.
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.SQLite.SQLiteFactory">
+            <summary>
+            This class is an implementation of the <see cref="T:Gentle.Framework.GentleSqlFactory"/> class for the SQLite RDBMS.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLite.SQLiteFactory.GetDbType(System.Type)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLite.SQLiteFactory.GetDbType(System.String,System.Boolean)">
+            <summary>
+            This method converts the given string (as extracted from the database system tables) 
+            to the corresponding type enumeration value. 
+            </summary>
+            <param name="dbType">The name of the type with the database engine used.</param>
+            <param name="isUnsigned">A boolean value indicating whether the type is unsigned. This
+            is not supported by most engines and/or data providers and is thus fairly useless at
+            this point.</param>
+            <returns>The value of the corresponding database type enumeration. The enum is converted
+            to its numeric (long) representation because each provider uses its own enum (and they
+            are not compatible with the generic DbType defined in System.Data).</returns>
+        </member>
+        <member name="M:Gentle.Provider.SQLite.SQLiteFactory.GetIdentitySelect(System.String,Gentle.Framework.ObjectMap)">
+            <summary>
+            This method assumes that the tableName and identityColumn parameters are passed
+            in the correct case. 
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details on the
+            purpose of this method. 
+            </summary>
+            <param name="sql">The sql string to which we should append</param>
+            <param name="om">An <see cref="T:Gentle.Framework.ObjectMap"/> instance of the object for which to retrieve the identity select</param>
+            <returns>The modified sql string which also retrieves the identity value</returns>
+        </member>
+        <member name="M:Gentle.Provider.SQLite.SQLiteFactory.GetParameterPrefix">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLite.SQLiteFactory.GetParameterCollectionKey(System.String)">
+            <summary>
+            Obtain the name to use for name-based indexing into the IDbCommand.Parameters
+            collections. Most databases omit the parameter prefix, whereas some require it
+            to be present (e.g. SQLite).
+            </summary>
+            <param name="paramName">The parameter name without quoting or prefix/suffix.</param>
+            <returns>The name to use when accessing the IDbCommand.Parameters hashtable.</returns>
+        </member>
+        <member name="M:Gentle.Provider.SQLite.SQLiteFactory.GetQuoteCharacter">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLite.SQLiteFactory.AddParameter(System.Data.IDbCommand,System.String,System.Int64)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.SQLite.SQLiteProvider">
+            <summary>
+            This class is an implementation of the IGentleProvider and IPersistenceEngine 
+            interfaces for the SQLite database.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLite.SQLiteProvider.#ctor(System.String)">
+            <summary>
+            Construct a new IGentleProvider instance for SQLite.
+            </summary>
+            <param name="connectionString">The connection string to use for 
+            connecting to the database engine.</param>
+        </member>
+        <member name="M:Gentle.Provider.SQLite.SQLiteProvider.GetSqlFactory">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLite.SQLiteProvider.GetAnalyzer">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLite.SQLiteProvider.GetRenderer">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLite.SQLiteProvider.GetCommand">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IPersistenceEngine"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.SQLite.SQLiteProvider.GetConnection">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IPersistenceEngine"/> interface it implements for details. 
+            </summary>
+        </member>
+    </members>
+</doc>

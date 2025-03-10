@@ -35,7 +35,7 @@
       <width>525</width>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>MediaTip</label>
     </control>
     <import>common.window.xml</import>
@@ -129,7 +129,7 @@
       <posY>217</posY>
       <label>Directory</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Music Directory Name/Size Value</description>
@@ -148,7 +148,7 @@
       <posY>246</posY>
       <label>Songs</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Music Song Count Value</description>
@@ -167,7 +167,7 @@
       <posY>274</posY>
       <label>Album Artists</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Music Album Artist Value</description>
@@ -186,7 +186,7 @@
       <posY>302</posY>
       <label>Artists</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Music Artist Value</description>
@@ -437,7 +437,7 @@
       <posY>604</posY>
       <label>Directory</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Video Directory Name/Size Value</description>
@@ -456,7 +456,7 @@
       <posY>632</posY>
       <label>Videos</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Video Count Value</description>
@@ -559,7 +559,7 @@
       <posY>773</posY>
       <label>Directory</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Picture Directory Name/Size Value</description>
@@ -598,7 +598,7 @@
       <posY>871</posY>
       <label>Directory</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Additional Directory Name/Size Value</description>

@@ -6,28 +6,29 @@
   <autohidetopbar>yes</autohidetopbar>
   <controls>
     <control>
-      <description>Topbar BG</description>
+      <description>background for title bar</description>
       <type>image</type>
-      <id>0</id>
-      <posX>534</posX>
+      <id>1</id>
+      <posX>515</posX>
       <posY>0</posY>
-      <width>872</width>
-      <height>72</height>
-      <texture>OSDBG2.png</texture>
+      <width>907</width>
+      <height>78</height>
+      <texture>topbar.png</texture>
     </control>
     <control>
       <description>group element</description>
       <type>group</type>
-      <posX>559</posX>
-      <posY>8</posY>
+      <posX>530</posX>
+      <posY>11</posY>
       <layout>StackLayout(5, Horizontal, true)</layout>
+      <colordiffuse>ddffffff</colordiffuse>
       <control>
         <description>ScreenBack button</description>
         <type>button</type>
         <id>121</id>
         <width>58</width>
         <height>56</height>
-        <textureFocus>tb_back.png</textureFocus>
+        <textureFocus>tb_back3.png</textureFocus>
         <textureNoFocus>tb_backNF.png</textureNoFocus>
         <label>-</label>
         <action>10</action>
@@ -43,10 +44,10 @@
         <id>26</id>
         <width>58</width>
         <height>56</height>
-        <textureFocus>tb_browserhome.png</textureFocus>
+        <textureFocus>tb_browserhome3.png</textureFocus>
         <textureNoFocus>tb_browserhomeNF.png</textureNoFocus>
-        <label>-</label>
         <action>115</action>
+        <label>-</label>
         <onleft>121</onleft>
         <onright>101</onright>
         <onup>26</onup>
@@ -59,7 +60,7 @@
         <id>101</id>
         <width>58</width>
         <height>56</height>
-        <textureFocus>tb_full_screen.png</textureFocus>
+        <textureFocus>tb_full_screen3.png</textureFocus>
         <textureNoFocus>tb_full_screenNF.png</textureNoFocus>
         <label>-</label>
         <action>101</action>
@@ -75,7 +76,7 @@
         <id>1102</id>
         <width>58</width>
         <height>56</height>
-        <textureFocus>tb_volumedown.png</textureFocus>
+        <textureFocus>tb_volumedown3.png</textureFocus>
         <textureNoFocus>tb_volumedownNF.png</textureNoFocus>
         <action>102</action>
         <label>-</label>
@@ -91,7 +92,7 @@
         <id>1103</id>
         <width>58</width>
         <height>56</height>
-        <textureFocus>tb_volumeup.png</textureFocus>
+        <textureFocus>tb_volumeup3.png</textureFocus>
         <textureNoFocus>tb_volumeupNF.png</textureNoFocus>
         <action>103</action>
         <label>-</label>
@@ -107,7 +108,7 @@
         <id>22</id>
         <width>58</width>
         <height>56</height>
-        <textureFocus>tb_skipback.png</textureFocus>
+        <textureFocus>tb_skipback3.png</textureFocus>
         <textureNoFocus>tb_skipbackNF.png</textureNoFocus>
         <action>15</action>
         <label>-</label>
@@ -123,9 +124,9 @@
         <id>23</id>
         <width>58</width>
         <height>56</height>
-        <textureFocus>tb_rew.png</textureFocus>
+        <textureFocus>tb_rew3.png</textureFocus>
         <textureNoFocus>tb_rewNF.png</textureNoFocus>
-        <action>78</action>
+        <action>17</action>
         <label>-</label>
         <onleft>22</onleft>
         <onright>24</onright>
@@ -139,7 +140,7 @@
         <id>24</id>
         <width>58</width>
         <height>56</height>
-        <textureFocus>tb_play.png</textureFocus>
+        <textureFocus>tb_play3.png</textureFocus>
         <textureNoFocus>tb_playNF.png</textureNoFocus>
         <action>12</action>
         <label>-</label>
@@ -155,7 +156,7 @@
         <id>27</id>
         <width>58</width>
         <height>56</height>
-        <textureFocus>tb_stop.png</textureFocus>
+        <textureFocus>tb_stop3.png</textureFocus>
         <textureNoFocus>tb_stopNF.png</textureNoFocus>
         <action>13</action>
         <label>-</label>
@@ -171,9 +172,9 @@
         <id>28</id>
         <width>58</width>
         <height>56</height>
-        <textureFocus>tb_fastforward.png</textureFocus>
+        <textureFocus>tb_fastforward3.png</textureFocus>
         <textureNoFocus>tb_fastforwardNF.png</textureNoFocus>
-        <action>77</action>
+        <action>16</action>
         <label>-</label>
         <onleft>27</onleft>
         <onright>29</onright>
@@ -187,7 +188,7 @@
         <id>29</id>
         <width>58</width>
         <height>56</height>
-        <textureFocus>tb_skipforward.png</textureFocus>
+        <textureFocus>tb_skipforward3.png</textureFocus>
         <textureNoFocus>tb_skipforwardNF.png</textureNoFocus>
         <action>14</action>
         <label>-</label>
@@ -198,12 +199,28 @@
         <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
       </control>
       <control>
+        <description>info button</description>
+        <type>button</type>
+        <id>30</id>
+        <width>58</width>
+        <height>56</height>
+        <textureFocus>tb_info3.png</textureFocus>
+        <textureNoFocus>tb_infoNF.png</textureNoFocus>
+        <hyperlink>7982</hyperlink>
+        <label>-</label>
+        <onleft>29</onleft>
+        <onright>31</onright>
+        <onup>29</onup>
+        <ondown>2</ondown>
+        <animation effect="zoom" start="100,100" end="110,110" time="0">focus</animation>
+      </control>
+      <control>
         <description>Exit button</description>
         <type>button</type>
         <id>31</id>
         <width>58</width>
         <height>56</height>
-        <textureFocus>tb_exit.png</textureFocus>
+        <textureFocus>tb_exit3.png</textureFocus>
         <textureNoFocus>tb_exitNF.png</textureNoFocus>
         <label>-</label>
         <action>97</action>
@@ -219,7 +236,7 @@
         <id>32</id>
         <width>58</width>
         <height>56</height>
-        <textureFocus>tb_shutdown.png</textureFocus>
+        <textureFocus>tb_shutdown3.png</textureFocus>
         <textureNoFocus>tb_shutdownNF.png</textureNoFocus>
         <action>99</action>
         <label>-</label>

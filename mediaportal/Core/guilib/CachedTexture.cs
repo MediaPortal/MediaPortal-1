@@ -40,6 +40,16 @@ namespace MediaPortal.guilib
     private int _textureHeight = 0;           // height of the texture
     private int _frameCount = 0;              // number of frames in the animation
 
+    private static int _IdCounter = -1;
+      
+    public int InstanceCounter = 1;
+    public int ID { get; }
+
+    public CachedTexture()
+    {
+      this.ID = System.Threading.Interlocked.Increment(ref _IdCounter);
+    }
+
     /// <summary>
     /// Get/set the filename/location of the texture.
     /// </summary>

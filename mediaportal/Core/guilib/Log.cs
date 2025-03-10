@@ -89,6 +89,11 @@ namespace MediaPortal.GUI.Library
     {
       GlobalServiceProvider.Get<ILog>().SetLogLevel(logLevel);
     }
-   
+
+    public static Level GetLogLevel()
+    {
+      return GlobalServiceProvider.Get<ILog>().GetLogLevel();
+    }
+
   }
 }

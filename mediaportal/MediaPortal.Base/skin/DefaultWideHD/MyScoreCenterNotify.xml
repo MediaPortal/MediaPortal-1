@@ -42,7 +42,7 @@
       <posY>243</posY>
       <width>34</width>
       <height>34</height>
-      <textureFocus>tb_exit.png</textureFocus>
+      <textureFocus>tb_exit_dialogue.png</textureFocus>
       <textureNoFocus>tb_exitNF.png</textureNoFocus>
       <label>-</label>
       <onleft>4</onleft>

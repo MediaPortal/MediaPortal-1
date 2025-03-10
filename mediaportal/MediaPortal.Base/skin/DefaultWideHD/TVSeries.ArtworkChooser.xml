@@ -144,7 +144,7 @@
       <textureWidth>25</textureWidth>
       <textureHeight>25</textureHeight>
       <subitems>
-        <subitem>greystar.png</subitem>
+        <subitem>starbad.png</subitem>
         <subitem>star.png</subitem>
       </subitems>
       <orientation>horizontal</orientation>
@@ -163,7 +163,7 @@
       <font>font11</font>
       <label>(#TVSeries.Artwork.RatingCount #TVSeries.Translation.Votes.Label)</label>
       <wrapString />
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
   </controls>
 </window>

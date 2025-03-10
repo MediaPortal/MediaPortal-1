@@ -1,52 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
+
 <window>
   <id>1010</id>
   <defaultcontrol>3</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
-      <control>
-        <description>background</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>620</posX>
-        <posY>225</posY>
-        <width>1280</width>
-        <height>707</height>
-        <texture>backslide2.png</texture>
-      </control>
-      <control>
-        <description>Background</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>98</posX>
-        <posY>220</posY>
-        <width>480</width>
-        <height>710</height>
-        <texture>backslide.png</texture>
-      </control>
-      <control>
-        <type>label</type>
-        <id>1</id>
-        <posX>230</posX>
-        <posY>260</posY>
-        <width>480</width>
-        <label>924</label>
-        <textcolor>white</textcolor>
-        <font>Label</font>
-      </control>
       <control>
         <description>buttons</description>
         <type>group</type>
-        <posX>118</posX>
+        <posX>92</posX>
         <posY>305</posY>
         <dimColor>ffffffff</dimColor>
         <layout>StackLayout(0, Vertical, true)</layout>
@@ -55,8 +23,9 @@
           <type>button</type>
           <id>9991</id>
           <label>128</label>
+          <width>410</width>
           <onup>17</onup>
-          <onright>3</onright>
+          <onright>2</onright>
           <hyperlink>1016</hyperlink>
         </control>
         <control>
@@ -64,42 +33,47 @@
           <type>button</type>
           <id>9992</id>
           <label>101021</label>
+          <width>410</width>
           <hyperlink>1021</hyperlink>
           <onup>9991</onup>
-          <onright>3</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>Screen</description>
           <type>button</type>
           <id>9993</id>
           <label>6023</label>
+          <width>410</width>
           <hyperlink>9</hyperlink>
           <onup>9992</onup>
-          <onright>3</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>TV</description>
           <type>button</type>
           <id>9994</id>
           <label>605</label>
+          <width>410</width>
           <hyperlink>700</hyperlink>
           <onup>9993</onup>
-          <onright>3</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>My Pictures</description>
           <type>button</type>
           <id>9995</id>
           <label>1</label>
+          <width>410</width>
           <hyperlink>12</hyperlink>
           <onup>9994</onup>
-          <onright>3</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>Movies</description>
           <type>button</type>
           <id>9996</id>
           <label>3</label>
+          <width>410</width>
           <hyperlink>703</hyperlink>
           <onup>9995</onup>
           <onright>3</onright>
@@ -109,61 +83,44 @@
           <type>button</type>
           <id>9997</id>
           <label>1027</label>
+          <width>410</width>
           <hyperlink>704</hyperlink>
           <onup>9996</onup>
-          <onright>3</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>BluRay</description>
           <type>button</type>
           <id>9998</id>
           <label>300217</label>
+          <width>410</width>
           <hyperlink>1024</hyperlink>
           <onup>9997</onup>
-          <onright>3</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>My Music</description>
           <type>button</type>
           <id>9999</id>
           <label>2</label>
+          <width>410</width>
           <hyperlink>14</hyperlink>
           <ondown>99910</ondown>
           <onup>9998</onup>
-          <onright>3</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>MiniDisplay</description>
           <type>button</type>
           <id>99910</id>
           <label>9100</label>
+          <width>410</width>
           <hyperlink>9000</hyperlink>
           <ondown>9991</ondown>
           <onup>9999</onup>
-          <onright>3</onright>
+          <onright>2</onright>
           <visible>plugin.isenabled(MiniDisplay)</visible>
         </control>
-      </control>
-      <control>
-        <type>label</type>
-        <id>1</id>
-        <posX>700</posX>
-        <posY>260</posY>
-        <width>1000</width>
-        <label>#currentmodule</label>
-        <textcolor>white</textcolor>
-        <font>Label</font>
-      </control>
-      <control>
-        <description>Folder BG label</description>
-        <type>label</type>
-        <id>1</id>
-        <posX>1335</posX>
-        <posY>333</posY>
-        <width>600</width>
-        <label>300071</label>
-        <font>Label</font>
-        <textcolor>white</textcolor>
       </control>
       <control>
         <description>buttons</description>
@@ -179,9 +136,11 @@
           <label>1262</label>
           <posX>655</posX>
           <posY>386</posY>
-          <width>616</width>
+          <width>616</width><textureFocus>setting_button_medium.png</textureFocus>
           <height>50</height>
+          <textYOff>4</textYOff>
           <onright>10</onright>
+          <onleft>9996</onleft>
           <onup>16</onup>
           <ondown>15</ondown>
         </control>
@@ -192,11 +151,13 @@
           <label>300182</label>
           <posX>655</posX>
           <posY>451</posY>
-          <width>616</width>
+          <width>616</width><textureFocus>setting_button_medium.png</textureFocus>
           <height>50</height>
+          <textYOff>4</textYOff>
           <onup>3</onup>
           <ondown>2</ondown>
           <onright>10</onright>
+          <onleft>9996</onleft>
         </control>
         <control>
           <description>Default Grabber</description>
@@ -205,11 +166,13 @@
           <label>300036</label>
           <posX>655</posX>
           <posY>516</posY>
-          <width>616</width>
+          <width>616</width><textureFocus>setting_button_medium.png</textureFocus>
           <height>50</height>
+          <textYOff>4</textYOff>
           <onup>15</onup>
           <ondown>16</ondown>
           <onright>10</onright>
+          <onleft>9996</onleft>
         </control>
         <control>
           <description>Use sort title</description>
@@ -218,9 +181,10 @@
           <label>300225</label>
           <posX>655</posX>
           <posY>580</posY>
-          <width>616</width>
+          <width>616</width><textureFocus>setting_button_medium.png</textureFocus>
           <height>50</height>
-          <onleft></onleft>
+          <textYOff>4</textYOff>
+          <onleft>9996</onleft>
           <onup>2</onup>
           <ondown>14</ondown>
           <onright>10</onright>
@@ -232,58 +196,53 @@
           <label>300164</label>
           <posX>1304</posX>
           <posY>581</posY>
-          <width>488</width>
+          <width>616</width><textureFocus>setting_button_medium.png</textureFocus>
           <height>50</height>
-          <onleft>3</onleft>
-          <onright>2</onright>
+          <textYOff>4</textYOff>
+          <onleft>9996</onleft>
+          <onright>10</onright>
           <onup>16</onup>
           <ondown>5</ondown>
         </control>
       </control>
       <!--Scan Folderlist-->
       <control>
+        <description>Folder BG label</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>1335</posX>
+        <posY>310</posY>
+        <width>600</width>
+        <label>300071</label>
+        <font>Label</font>
+        <textcolor>dodgerblue</textcolor>
+      </control>
+      <control>
         <description>Scan folders listcontrol</description>
         <type>listcontrol</type>
         <id>10</id>
         <posX>1327</posX>
-        <posY>390</posY>
-        <width>330</width>
-        <height>200</height>
+        <posY>360</posY>
+        <width>470</width>
+        <height>250</height>
         <scrollOffset>2</scrollOffset>
-        <textXOff>-30</textXOff>
-        <textYOff>0</textYOff>
-        <textXOff2>1050</textXOff2>
-        <textYOff2>3</textYOff2>
-        <textXOff3>1065</textXOff3>
-        <textYOff3>6</textYOff3>
-        <PinIconWidth>35</PinIconWidth>
-        <PinIconHeight>25</PinIconHeight>
-        <PinIconXOff>1120</PinIconXOff>
-        <PinIconYOff>9</PinIconYOff>
-        <textureHeight>40</textureHeight>
+        <textXOff>-25</textXOff>
+        <textYOff>3</textYOff>
+        <textureHeight>45</textureHeight>
         <itemWidth>25</itemWidth>
         <itemHeight>0</itemHeight>
         <IconXOff>0</IconXOff>
-        <IconYOff>0</IconYOff>
+        <textXOff2>2050</textXOff2>
         <keepaspectratio>yes</keepaspectratio>
-        <font>font11</font>
-        <font2>font11</font2>
-        <font3>font11</font3>
+        <font>font10</font>
         <textcolor>ffffffff</textcolor>
-        <textcolor2>ffffffff</textcolor2>
-        <textcolor3>ffffffff</textcolor3>
-        <selectedColor>80000000</selectedColor>
-        <selectedColor2>ffffffff</selectedColor2>
-        <spinWidth>69</spinWidth>
-        <spinHeight>49</spinHeight>
-        <spinPosX>780</spinPosX>
-        <spinPosY>525</spinPosY>
+        <playedColor>FF00ff00</playedColor>
         <onup>42</onup>
         <ondown>40</ondown>
         <onleft>3</onleft>
         <onright>3</onright>
         <spaceBetweenItems>0</spaceBetweenItems>
-        <scrollbarXOff>0</scrollbarXOff>
+        <scrollbarXOff>10</scrollbarXOff>
       </control>
       <!-- Scan options -->
       <control>
@@ -294,21 +253,20 @@
         <posY>580</posY>
         <label>300194</label>
         <font>Label</font>
-        <textcolor>white</textcolor>
+        <textcolor>dodgerblue</textcolor>
       </control>
       <control>
         <description>Fanart quality</description>
         <type>spincontrol</type>
         <id>6</id>
         <posX>1080</posX>
-        <posY>640</posY>
+        <posY>635</posY>
         <font>font11</font>
         <onleft>5</onleft>
-        <onright>10</onright>
+        <onright>11</onright>
         <onup>12</onup>
         <ondown>4</ondown>
         <buddycontrolid>5</buddycontrolid>
-        <font>Label</font>
       </control>
       <control>
         <description>buttons</description>
@@ -326,7 +284,8 @@
           <posY>710</posY>
           <width>370</width>
           <height>50</height>
-          <onleft></onleft>
+          <textYOff>4</textYOff>
+          <onleft>9996</onleft>
           <onup>14</onup>
           <ondown>4</ondown>
           <onright>6</onright>
@@ -338,12 +297,13 @@
           <label>300195</label>
           <posX>655</posX>
           <posY>775</posY>
-          <width>616</width>
+          <width>616</width><textureFocus>setting_button_medium.png</textureFocus>
           <height>50</height>
-          <onleft></onleft>
+          <textYOff>4</textYOff>
+          <onleft>9996</onleft>
           <onup>5</onup>
           <ondown>7</ondown>
-          <onright>10</onright>
+          <onright>11</onright>
         </control>
         <control>
           <description>Actors Fetch size</description>
@@ -352,12 +312,13 @@
           <label>300211</label>
           <posX>655</posX>
           <posY>840</posY>
-          <width>616</width>
+          <width>616</width><textureFocus>setting_button_medium.png</textureFocus>
           <height>50</height>
-          <onleft></onleft>
+          <textYOff>4</textYOff>
+          <onleft>9996</onleft>
           <onup>4</onup>
           <ondown>8</ondown>
-          <onright>10</onright>
+          <onright>11</onright>
         </control>
         <control>
           <description>Folder name for title</description>
@@ -366,12 +327,13 @@
           <label>300198</label>
           <posX>655</posX>
           <posY>905</posY>
-          <width>616</width>
+          <width>616</width><textureFocus>setting_button_medium.png</textureFocus>
           <height>50</height>
-          <onleft></onleft>
+          <textYOff>4</textYOff>
+          <onleft>9996</onleft>
           <onup>7</onup>
           <ondown>9</ondown>
-          <onright>10</onright>
+          <onright>11</onright>
         </control>
         <control>
           <description>Prefer video filename for search</description>
@@ -380,12 +342,13 @@
           <label>300199</label>
           <posX>655</posX>
           <posY>970</posY>
-          <width>616</width>
+          <width>616</width><textureFocus>setting_button_medium.png</textureFocus>
           <height>50</height>
-          <onleft></onleft>
+          <textYOff>4</textYOff>
+          <onleft>9996</onleft>
           <onup>8</onup>
           <ondown>11</ondown>
-          <onright>10</onright>
+          <onright>11</onright>
         </control>
         <control>
           <description>Skip existing</description>
@@ -394,12 +357,13 @@
           <label>300200</label>
           <posX>1240</posX>
           <posY>775</posY>
-          <width>535</width>
+          <width>535</width><textureFocus>setting_button_medium.png</textureFocus>
           <height>50</height>
-          <onleft></onleft>
+          <textYOff>4</textYOff>
+          <onleft>5</onleft>
           <onup>9</onup>
           <ondown>12</ondown>
-          <onright>10</onright>
+          <onright>11</onright>
         </control>
         <control>
           <description>Refresh existing</description>
@@ -408,12 +372,13 @@
           <label>300201</label>
           <posX>1240</posX>
           <posY>840</posY>
-          <width>535</width>
+          <width>535</width><textureFocus>setting_button_medium.png</textureFocus>
           <height>50</height>
-          <onleft></onleft>
+          <textYOff>4</textYOff>
+          <onleft>5</onleft>
           <onup>11</onup>
           <ondown>13</ondown>
-          <onright>10</onright>
+          <onright>12</onright>
         </control>
         <control>
           <description>Strip prefixes button</description>
@@ -422,11 +387,13 @@
           <label>300202</label>
           <posX>1240</posX>
           <posY>905</posY>
-          <width>535</width>
+          <width>535</width><textureFocus>setting_button_medium.png</textureFocus>
           <height>50</height>
+          <textYOff>4</textYOff>
           <ondown>18</ondown>
           <onup>12</onup>
-          <onright>10</onright>
+          <onleft>5</onleft>
+          <onright>13</onright>
         </control>
         <control>
           <description>Use internal nfo scraper</description>
@@ -435,8 +402,9 @@
           <label>300226</label>
           <posX>1240</posX>
           <posY>970</posY>
-          <width>535</width>
+          <width>535</width><textureFocus>setting_button_medium.png</textureFocus>
           <height>50</height>
+          <textYOff>4</textYOff>
           <onleft>5</onleft>
           <onup>13</onup>
           <ondown>19</ondown>
@@ -449,8 +417,9 @@
           <label>350041</label>
           <posX>1240</posX>
           <posY>1020</posY>
-          <width>535</width>
+          <width>535</width><textureFocus>setting_button_medium.png</textureFocus>
           <height>50</height>
+          <textYOff>4</textYOff>
           <onleft>5</onleft>
           <onup>18</onup>
           <ondown>3</ondown>

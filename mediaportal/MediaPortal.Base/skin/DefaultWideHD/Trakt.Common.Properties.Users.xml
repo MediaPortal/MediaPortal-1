@@ -2,7 +2,7 @@
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
-    <control>
+    <!--control>
       <description>Overlay text right</description>
       <id>0</id>
       <type>image</type>
@@ -10,10 +10,10 @@
       <posY>234</posY>
       <width>823</width>
       <height>699</height>
-      <texture mask="picturethumbmask.png">black.png</texture>
+      <texture mask="musicfanart_mask.png">black.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
       <visible>facadeview.list</visible>
-    </control>
+    </control-->
     <!-- User Info -->
     <control>
       <description>LCD image</description>
@@ -48,7 +48,7 @@
       <label>#Trakt.Translation.FullName.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.User.FullName,)</visible>
     </control>
     <control>
@@ -60,7 +60,7 @@
       <width>399</width>
       <label>#Trakt.User.FullName</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.User.FullName,)</visible>
     </control>
     <control>
@@ -72,7 +72,7 @@
       <label>#Trakt.Translation.JoinDate.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.User.JoinDate,)</visible>
     </control>
     <control>
@@ -84,7 +84,7 @@
       <label>#Trakt.User.JoinDate</label>
       <font>font12</font>
       <width>420</width>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.User.JoinDate,)</visible>
     </control>
     <control>
@@ -96,7 +96,7 @@
       <label>#Trakt.Translation.Location.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.User.Location,)</visible>
     </control>
     <control>
@@ -108,7 +108,7 @@
       <width>420</width>
       <label>#Trakt.User.Location</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.User.Location,)</visible>
     </control>
     <control>
@@ -120,7 +120,7 @@
       <label>#Trakt.Translation.Gender.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.User.Gender,)</visible>
     </control>
     <control>
@@ -132,7 +132,7 @@
       <width>420</width>
       <label>#Trakt.User.Gender</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.User.Gender,)</visible>
     </control>
     <control>
@@ -143,7 +143,7 @@
       <posY>544</posY>
       <label>#Trakt.Translation.Age.Label</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.User.Age,)</visible>
     </control>
     <control>
@@ -154,7 +154,7 @@
       <posY>573</posY>
       <label>#Trakt.User.Age</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.User.Age,)</visible>
     </control>
     <control>
@@ -166,7 +166,7 @@
       <label>#Trakt.Translation.Protected.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.User.Protected,)</visible>
     </control>
     <control>
@@ -179,7 +179,7 @@
       <label>#Trakt.User.Protected</label>
       <font>font12</font>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.User.Protected,)</visible>
     </control>
     <control>
@@ -204,7 +204,7 @@
       <height>157</height>
       <label>#Trakt.User.About</label>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+!string.equals(#Trakt.User.About,)</visible>
     </control>
     <control>

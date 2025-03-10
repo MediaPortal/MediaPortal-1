@@ -18,16 +18,21 @@
     </control>
     <!-- ******************************************* Here are the buttons ************************ -->
     <control>
-      <type>label</type>
-      <id>1</id>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
       <posX>45</posX>
-      <posY>15</posY>
+      <posY>54</posY>
       <label>#header.label</label>
-      <font>Label</font>
+      <width>1802</width>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control><control>
       <description>Button background</description>
       <type>image</type>
       <id>1</id>
@@ -35,7 +40,7 @@
       <posY>140</posY>
       <height>850</height>
       <width>520</width>
-      <texture>am-background.png</texture>
+      <texture>backslide_settings.png</texture>
       <colordiffuse>70ffffff</colordiffuse>
       <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
@@ -355,7 +360,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <visible>control.hasfocus(14)</visible>
     </control>
-    <control>
+    <!--control>
       <description>hover frame</description>
       <type>image</type>
       <id>1</id>
@@ -368,7 +373,7 @@
       <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
-    </control>
+    </control-->
     <import>common.time.xml</import>
   </controls>
 </window>

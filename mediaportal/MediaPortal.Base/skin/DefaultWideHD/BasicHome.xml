@@ -15,11 +15,49 @@
     <posY>0</posY>
     <width>1920</width>
     <height>1080</height>
-    <texture>background2.jpg</texture>
+    <texture>BH Standard.jpg</texture>
   </control>
+   <control Style="BasicHomeBackdrop">
+    <type>image</type>
+    <id>0</id>
+    <texture>#(string.format('{0}.background',#hedit.main.use.4))</texture>
+    <visible>!string.equals(#hedit.mode,Carousel)+string.equals(#hedit.inuse,main)+skin.hassetting(#skin.category BG)</visible>
+    <shouldCache>true</shouldCache>
+  </control>
+  <control Style="BasicHomeBackdrop">
+    <type>image</type>
+    <id>0</id>
+    <texture>#(string.format('{0}.background',#hedit.sub.use.4))</texture>
+    <visible>!string.equals(#hedit.mode,Carousel)+string.equals(#hedit.inuse,sub)+skin.hassetting(#skin.category BG)</visible>
+    <shouldCache>true</shouldCache>
+  </control>
+  <control>
+    <description>Background</description>
+    <type>image</type>
+    <id>1</id>
+    <posX>0</posX>
+    <posY>0</posY>
+    <width>1920</width>
+    <height>1080</height>
+    <texture>BH News.jpg</texture>
+    <colordiffuse>ffffffff</colordiffuse>
+    <visible>control.hasfocus(1111)</visible>
+  </control>
+   <control>
+      <description>Dummy image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>180</height>
+      <colordiffuse>eeffffff</colordiffuse>
+      <texture>overlay_top.png</texture>
+    </control>
     <include condition="#(eq(#hedit.mode,'Horizontal Text only'))">BasicHomeFanArt.xml</include>
+    <include condition="#(eq(#hedit.mode,'Horizontal (scroll)'))">BasicHomeFanArt.xml</include>
     <include condition="#(eq(#hedit.mode,'Horizontal Text only'))">BasicHomeWeather.xml</include>
-  
+    <include condition="#(eq(#hedit.mode,'Horizontal (scroll)'))">BasicHomeWeather.xml</include>
   <!--     *******************************************************************************************  -->
   <!--     **************************************  MENU BUTTONS  *************************************  -->
   <!--     *******************************************************************************************  -->
@@ -29,9 +67,10 @@
   <include condition="#(eq(#hedit.mode,'Carousel'))">BasicHomeEditor.sub.Carousel.xml</include>
   <include condition="#(eq(#hedit.mode,'Horizontal (scroll)'))">BasicHomeEditor.main.horz.xml</include>
   <include condition="#(eq(#hedit.mode,'Horizontal (scroll)'))">BasicHomeEditor.sub.horz.xml</include>
+  <include condition="#(eq(#hedit.mode,'Horizontal (scroll)'))">BasicHomeInfoRecentlyAddedHorizontal.xml</include>
   <include condition="#(eq(#hedit.mode,'Horizontal Text only'))">BasicHomeEditor.main.text.xml</include>
   <include condition="#(eq(#hedit.mode,'Horizontal Text only'))">BasicHomeEditor.sub.text.xml</include>
-  <include condition="#(neq(#hedit.mode,'Horizontal Text only'))">BasicHomeInfoRecentlyAdded.xml</include>
+  <include condition="#(eq(#hedit.mode,'Carousel'))">BasicHomeInfoRecentlyAdded.xml</include>
   <include condition="#(eq(#hedit.mode,'Horizontal Text only'))">BasicHomeInfoRecentlyAddedText.xml</include>
   <import>BasicHomeEditorDefines.xml</import>
   
@@ -49,15 +88,15 @@
         <type>fadelabel</type>
         <description>Date Time Weather Label</description>
         <id>0</id>
-        <label>#time - #date - #WorldWeather.Location: #WorldWeather.TodayCondition</label>
+        <label>#time #scroll.wrap #date #scroll.wrap #WorldWeather.Location: #WorldWeather.TodayCondition</label>
         <width>50</width>
         <maxWidth>1600</maxWidth>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>fff5deb3</textcolor>
         <shadowAngle>10</shadowAngle>
       <shadowDistance>2</shadowDistance>
       <shadowColor>ff000000</shadowColor>
         <align>left</align>
-        <font>Label</font>
+        <font>RSS</font>
       </control>
       <control>
         <type>image</type>
@@ -72,15 +111,15 @@
         <type>fadelabel</type>
         <description>Temperature Label</description>
         <id>0</id>
-        <label> #WorldWeather.TodayTemperature  </label>
+        <label> #WorldWeather.TodayTemperature</label>
         <width>50</width>
         <maxWidth>100</maxWidth>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>fff5deb3</textcolor>
         <shadowAngle>10</shadowAngle>
       <shadowDistance>2</shadowDistance>
       <shadowColor>ff000000</shadowColor>
         <align>left</align>
-        <font>Label</font>
+        <font>RSS</font>
       </control>
     </control>
   
@@ -98,7 +137,7 @@
         <type>fadelabel</type>
         <description>Date Time Weather Label</description>
         <id>0</id>
-        <label>#time - #date - #WorldWeather.Location: #WorldWeather.TodayCondition</label>
+        <label>#time #scroll.wrap #date #scroll.wrap #WorldWeather.Location: #WorldWeather.TodayCondition</label>
         <width>50</width>
         <maxWidth>1600</maxWidth>
         <textcolor>gold</textcolor>
@@ -106,7 +145,7 @@
         <shadowDistance>2</shadowDistance>
         <shadowColor>ff000000</shadowColor>
         <align>left</align>
-        <font>Label</font>
+        <font>RSS</font>
       </control>
       <control>
         <type>image</type>
@@ -124,12 +163,12 @@
         <label> #WorldWeather.TodayTemperature  </label>
         <width>50</width>
         <maxWidth>100</maxWidth>
-        <textcolor>ff6FAFE1</textcolor>
+        <textcolor>fff5deb3</textcolor>
         <shadowAngle>10</shadowAngle>
       <shadowDistance>2</shadowDistance>
       <shadowColor>gold</shadowColor>
         <align>left</align>
-        <font>Label</font>
+        <font>RSS</font>
       </control>
     </control>
     <control>
@@ -141,9 +180,9 @@
       <width>1800</width>
       <height>58</height>
       <label>#time #scroll.wrap #date</label>
-      <font>Label</font>
+      <font>RSS</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>fff5deb3</textcolor>
       <shadowAngle>10</shadowAngle>
       <shadowDistance>2</shadowDistance>
       <shadowColor>ff000000</shadowColor>
@@ -158,7 +197,7 @@
       <width>1800</width>
       <height>58</height>
       <label>#time #scroll.wrap #date</label>
-      <font>Label</font>
+      <font>RSS</font>
       <align>left</align>
       <textcolor>gold</textcolor>
       <shadowAngle>10</shadowAngle>
@@ -171,41 +210,94 @@
     <!-- *************************** INFOS ON BASIC HOME (NOW PLAYING AUDIO) *********************** -->
     <!-- ******************************************************************************************* -->
     <control>
-      <description>background</description>
+    <type>group</type>
+    <description>group element</description>
+    <visible>!string.contains(#highlightedbutton,WEATHER)+player.hasaudio+!player.hasvideo</visible>
+    <control>
+      <description>music area</description>
       <type>image</type>
-      <id>0</id>
-      <posX>1240</posX>
-      <posY>-6</posY>
-      <height>140</height>
-      <width>680</width>
-      <texture>osdbg2.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
-      <visible>player.hasaudio+!player.hasvideo</visible>
+      <id>1</id>
+      <posX>-100</posX>
+      <posY>82</posY>
+      <width>2200</width>
+      <height>77</height>
+      <texture>black.png</texture>
+      <colordiffuse>80ffffff</colordiffuse>
     </control>
     <control>
-      <description>music logo</description>
+      <description>divider horizontal</description>
       <type>image</type>
       <id>0</id>
-      <posX>1270</posX>
-      <posY>12</posY>
-      <width>102</width>
-      <height>101</height>
+      <posX>-20</posX>
+      <posY>82</posY>
+      <width>1995</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>90f5deb3</colordiffuse>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>159</posY>
+      <width>1995</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>90f5deb3</colordiffuse>
+    </control>
+    <control>
+      <description>music logo when no thumb</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>905</posX>
+      <posY>65</posY>
+      <width>109</width>
+      <height>109</height>
+      <centered>no</centered>
       <keepaspectratio>no</keepaspectratio>
-      <texture mask="cdcase_mask.png">missing_coverart.png</texture>
-      <visible>string.equals(#Play.Current.Thumb,)+player.hasaudio+!player.hasvideo</visible>
+      <texture mask="cdcase_mask.png">white.png</texture>
+      <colordiffuse>90f5deb3</colordiffuse>
+      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
+    </control>
+    <control>
+      <description>music logo when no thumb</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>907</posX>
+      <posY>67</posY>
+      <width>105</width>
+      <height>105</height>
+      <texture mask="cdcase_mask.png">black.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
+    </control>
+    <control>
+      <description>music logo when no thumb</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>907</posX>
+      <posY>67</posY>
+      <width>105</width>
+      <height>105</height>
+      <centered>no</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>!control.hasthumb(12345)</visible>
+      <texture mask="cdcase_mask.png">defaultArtistBig.png</texture>
+      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
     </control>
     <control>
       <description>music logo</description>
       <type>image</type>
-      <id>0</id>
-      <posX>1270</posX>
-      <posY>12</posY>
-      <width>102</width>
-      <height>101</height>
+      <id>12345</id>
+      <posX>907</posX>
+      <posY>67</posY>
+      <width>105</width>
+      <height>105</height>
       <centered>yes</centered>
-      <keepaspectratio>yes</keepaspectratio>
+      <keepaspectratio>no</keepaspectratio>
       <texture mask="cdcase_mask.png">#Play.Current.Thumb</texture>
-      <visible>player.hasaudio+!player.hasvideo</visible>
+      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
     </control>
     <control>
       <description>dummy label for changing Artist Thumb every 15 secs</description>
@@ -213,7 +305,7 @@
       <id>66900</id>
       <label />
       <animation effect="fade" delay="15000" time="0">hidden</animation>
-      <visible>!control.isvisible(66901)+player.hasaudio+!player.hasvideo</visible>
+      <visible>!control.isvisible(66901)</visible>
     </control>
     <control>
       <description>dummy label for changing Artist Thumb every 15 secs</description>
@@ -221,429 +313,684 @@
       <id>66901</id>
       <label />
       <animation effect="fade" delay="15000" time="0">hidden</animation>
-      <visible>control.isvisible(66900)+player.hasaudio+!player.hasvideo</visible>
+      <visible>control.isvisible(66900)</visible>
     </control>
     <control>
       <description>music logo</description>
       <type>image</type>
-      <id>0</id>
-      <posX>1270</posX>
-      <posY>12</posY>
-      <width>102</width>
-      <height>101</height>
-      <centered>yes</centered>
+      <id>77</id>
+      <posX>907</posX>
+      <posY>67</posY>
+      <width>105</width>
+      <height>105</height>
+      <centered>no</centered>
       <keepaspectratio>no</keepaspectratio>
       <texture mask="cdcase_mask.png">..\..\..\Thumbs\Music\Artists\#Play.Current.ArtistL.jpg</texture>
-      <visible>control.isvisible(66900)+player.hasaudio+!player.hasvideo</visible>
-      <animation effect="fade" time="2000" condition="control.isvisible(66900)" reversible="true">conditional</animation>
+      <visible>control.isvisible(66900)</visible>
+      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="[string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)]+control.isvisible(66900)" reversible="false">conditional</animation>
+      <animation effect="fade" time="1000" reversible="true">visiblechange</animation>
     </control>
     <control>
-      <description>CD Cover</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1270</posX>
-      <posY>12</posY>
-      <width>102</width>
-      <height>101</height>
-      <keepaspectratio>no</keepaspectratio>
-      <centered>yes</centered>
-      <texture>cdcase.png</texture>
-      <visible>player.hasaudio+!player.hasvideo</visible>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>0</posX>
+      <posY>89</posY>
+      <width>885</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>Player.HasMedia</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(268)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Play.Current.Title</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
     </control>
     <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>0</posX>
+      <posY>120</posY>
+      <width>885</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>Player.HasMedia</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(171))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Play.Current.Artist</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1042</posX>
+      <posY>89</posY>
+      <width>885</width>
+      <align>left</align>
+      <height>38</height>
+      <visible>string.equals(#duration)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(170))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Play.Current.Album</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1042</posX>
+      <posY>89</posY>
+      <width>885</width>
+      <align>left</align>
+      <height>38</height>
+      <visible>!string.equals(#duration)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(602)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#(iif(eq(#RadioTime.Play.Station,''),'#Play.Current.Album','#RadioTime.Play.Station #RadioTime.Play.Location'))</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    <control>
+      <description>Title Track Duration</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1042</posX>
+      <posY>120</posY>
+      <align>left</align>
+      <width>885</width>
+      <height>38</height>
+      <visible>string.equals(#duration)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Titlenumber Label</description>
+        <id>0</id>
+        <label>#(L(435))</label>
+        <width>10</width>
+        <maxWidth>290</maxWidth>
+        <align>left</align>
+        <textcolor>ff00aaff</textcolor>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Titlenumber</description>
+        <id>0</id>
+        <label>#Play.Current.Track</label>
+        <width>10</width>
+        <maxWidth>1250</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Year Label</description>
+        <id>0</id>
+        <label>#scroll.wrap #(L(436))</label>
+        <width>10</width>
+        <maxWidth>290</maxWidth>
+        <align>left</align>
+        <textcolor>ff00aaff</textcolor>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+        <visible>Player.HasMedia</visible>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Year</description>
+        <id>0</id>
+        <label>#(iif(eq(#Play.Current.Year,''),'n/a ','#Play.Current.Year'))</label>
+        <width>10</width>
+        <maxWidth>1250</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Playtime Label</description>
+        <id>0</id>
+        <label> </label>
+        <width>10</width>
+        <maxWidth>350</maxWidth>
+        <align>left</align>
+        <textcolor>ff00aaff</textcolor>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+        <visible>Player.HasMedia</visible>
+      </control>
+      </control>
+      <control>
       <type>image</type>
       <id>0</id>
-      <posX>1484</posX>
-      <posY>98</posY>
-      <width>283</width>
-      <height>16</height>
+      <posX>1450</posX>
+      <posY>129</posY>
+      <width>113</width>
+      <height>23</height>
       <texture>horizontal_bar2.png</texture>
-      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
+      <visible>string.equals(#duration)</visible>
     </control>
     <control>
       <description>Progress Bar</description>
       <type>progress</type>
       <id>0</id>
-      <posX>1472</posX>
-      <posY>98</posY>
-      <width>292</width>
-      <height>16</height>
+      <posX>1438</posX>
+      <posY>129</posY>
+      <width>141</width>
+      <height>23</height>
       <label>#percentage</label>
       <texturebg>-</texturebg>
       <onlymidtexture>no</onlymidtexture>
-      <midwidth>281</midwidth>
-      <midheight>16</midheight>
+      <midwidth>286</midwidth>
+      <midheight>23</midheight>
       <midoffsetX>0</midoffsetX>
       <midoffsetY>0</midoffsetY>
       <lefttexture>osd_progress_mid_tv2.png</lefttexture>
       <midtexture>osd_progress_mid_tv2.png</midtexture>
       <righttexture>osd_progress_right2.png</righttexture>
-      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
+      <visible>string.equals(#duration)</visible>
     </control>
     <control>
       <description>play time label</description>
       <type>label</type>
       <id>0</id>
-      <posX>1474</posX>
-      <posY>88</posY>
+      <posX>1439</posX>
+      <posY>121</posY>
       <label>#currentplaytime</label>
       <font>font10</font>
       <align>right</align>
-      <textcolor>ivory</textcolor>
-      <visible>player.hasaudio+!player.hasvideo</visible>
+      <textcolor>fff5deb3</textcolor>
+      <visible>string.equals(#duration)</visible>
     </control>
     <control>
       <type>label</type>
       <description>track duration label</description>
       <id>0</id>
-      <posX>1778</posX>
-      <posY>88</posY>
+      <posX>1573</posX>
+      <posY>121</posY>
       <label>#currentremaining</label>
       <align>left</align>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
-      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
+      <textcolor>fff5deb3</textcolor>
+      <visible>string.equals(#duration)</visible>
     </control>
     <control>
-      <description>scrolling info label</description>
-      <type>fadelabel</type>
-      <id>0</id>
-      <width>500</width>
-      <posX>1398</posX>
-      <posY>12</posY>
-      <font>font12</font>
-      <label>#Play.Current.Title  ~  #Play.Current.Artist</label>
-      <textcolor>ivory</textcolor>
-      <visible>player.hasaudio+!player.hasvideo</visible>
-    </control>
-    <control>
-      <description>scrolling info label</description>
-      <type>fadelabel</type>
-      <id>0</id>
-      <width>500</width>
-      <posX>1398</posX>
-      <posY>48</posY>
-      <font>font12</font>
-      <label>#Play.Current.Album  ~  # #Play.Current.Track</label>
-      <textcolor>ivory</textcolor>
-      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
-    </control>
-    <control>
-      <description>scrolling info label</description>
-      <type>fadelabel</type>
-      <id>0</id>
-      <width>500</width>
-      <posX>1398</posX>
-      <posY>48</posY>
-      <font>font12</font>
-      <label>#(L(34043)) #Play.Current.Album</label>
-      <textcolor>ivory</textcolor>
-      <visible>Player.HasAudio+!Player.HasVideo+!string.equals(#duration)</visible>
-    </control>
-    <!-- ******************************************************************************************* -->
-    <!-- *************************** INFOS ON BASIC HOME (NOW PLAYING VIDEO) *********************** -->
-    <!-- ******************************************************************************************* -->
-    <control>
-      <description>background</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1070</posX>
-      <posY>-6</posY>
-      <height>145</height>
-      <width>855</width>
-      <texture>osdbg2.png</texture>
-      <visible>player.hasvideo</visible>
-      <colordiffuse>ffffffff</colordiffuse>
-    </control>
-    <control>
-      <description>play time label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>1474</posX>
-      <posY>88</posY>
-      <label>#currentplaytime</label>
-      <font>font10</font>
-      <align>right</align>
-      <textcolor>ivory</textcolor>
-      <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
-    </control>
-    <control>
-      <type>label</type>
-      <description>track duration label</description>
-      <id>0</id>
-      <posX>1778</posX>
-      <posY>88</posY>
-      <label>#duration</label>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1042</posX>
+      <posY>120</posY>
+      <width>885</width>
       <align>left</align>
-      <font>font10</font>
-      <textcolor>ivory</textcolor>
-      <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
+      <height>38</height>
+      <visible>!string.equals(#duration)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(34020))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#currentplaytime #(L(1656))</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
     </control>
-    <control>
-      <description>scrolling info label</description>
-      <type>fadelabel</type>
-      <id>0</id>
-      <width>500</width>
-      <posX>1398</posX>
-      <posY>12</posY>
-      <font>font12</font>
-      <label>#Play.Current.Title  ~  #Play.Current.Director</label>
-      <textcolor>ivory</textcolor>
-      
-      <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
-    </control>
-    <control>
-      <description>scrolling info label</description>
-      <type>fadelabel</type>
-      <id>0</id>
-      <width>500</width>
-      <posX>1398</posX>
-      <posY>48</posY>
-      <font>font12</font>
-      <label>#Play.Current.Year  ~  #Play.Current.Genre</label>
-      <textcolor>ivory</textcolor>
-      
-      <visible>player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
-    </control>
-    <control>
-      <description>scrolling info label</description>
-      <type>fadelabel</type>
-      <id>0</id>
-      <width>500</width>
-      <posX>1398</posX>
-      <posY>12</posY>
-      <font>font12</font>
-      <label>#TV.View.title</label>
-      <textcolor>ivory</textcolor>
-      
-      <visible>player.hasvideo+string.contains(#Play.Current.File,tsbuffer)</visible>
-    </control>
-    <control>
-      <description>scrolling info label</description>
-      <type>fadelabel</type>
-      <id>0</id>
-      <width>500</width>
-      <posX>1398</posX>
-      <posY>48</posY>
-      <font>font12</font>
-      <label>#TV.View.channel    #TV.View.start - #TV.View.stop</label>
-      <textcolor>ivory</textcolor>
-      
-      <visible>player.hasvideo+string.contains(#Play.Current.File,tsbuffer)</visible>
-    </control>
-    <control>
-      <description>scrolling info label</description>
-      <type>fadelabel</type>
-      <id>0</id>
-      <width>500</width>
-      <posX>1398</posX>
-      <posY>84</posY>
-      <font>font12</font>
-      <label>#TV.View.genre</label>
-      <textcolor>ivory</textcolor>
-      
-      <visible>player.hasvideo+string.contains(#Play.Current.File,tsbuffer)</visible>
-    </control>
-    <control>
-      <type>image</type>
-      <id>0</id>
-      <posX>1484</posX>
-      <posY>98</posY>
-      <width>283</width>
-      <height>16</height>
-      <texture>horizontal_bar2.png</texture>
-      <visible>!control.isvisible(777)+player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
-    </control>
-    <control>
-      <description>Progress Bar</description>
-      <type>progress</type>
-      <id>0</id>
-      <posX>1472</posX>
-      <posY>98</posY>
-      <width>293</width>
-      <height>16</height>
-      <label>#percentage</label>
-      <texturebg>-</texturebg>
-      <onlymidtexture>no</onlymidtexture>
-      <midwidth>281</midwidth>
-      <midheight>16</midheight>
-      <midoffsetX>0</midoffsetX>
-      <midoffsetY>0</midoffsetY>
-      <lefttexture>osd_progress_mid_tv2.png</lefttexture>
-      <midtexture>osd_progress_mid_tv2.png</midtexture>
-      <righttexture>osd_progress_right2.png</righttexture>
-      <visible>!control.isvisible(777)+player.hasvideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
-    </control>
-    <control>
-      <description>TV logo</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1283</posX>
-      <posY>25</posY>
-      <width>73</width>
-      <height>73</height>
-      <keepaspectratio>no</keepaspectratio>
-      <centered>yes</centered>
-      <texture>#TV.View.thumb</texture>
-      <visible>player.hasvideo+string.contains(#Play.Current.File,tsbuffer)</visible>
-    </control>
-    <control>
-      <description>DVD logo</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1283</posX>
-      <posY>14</posY>
-      <width>73</width>
-      <height>102</height>
-      <keepaspectratio>no</keepaspectratio>
-      <centered>yes</centered>
-      <texture mask="dvdcase_mask.png">#Play.Current.Thumb</texture>
-      <visible>player.hasvideo</visible>
-    </control>
-    <control>
-      <description>DVD Cover</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1283</posX>
-      <posY>14</posY>
-      <width>73</width>
-      <height>102</height>
-      <keepaspectratio>no</keepaspectratio>
-      <centered>yes</centered>
-      <texture>DVDCase.png</texture>
-      <visible>player.hasvideo+!string.equals(#Play.Current.Thumb,)</visible>
-    </control>
-    <control>
-      <description>LCD</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1100</posX>
-      <posY>16</posY>
-      <width>168</width>
-      <height>98</height>
-      <keepaspectratio>no</keepaspectratio>
-      <centered>yes</centered>
-      <texture>LCD.png</texture>
-      <visible>player.hasvideo</visible>
-    </control>
-    <control>
-      <description>video preview window</description>
-      <type>videowindow</type>
-      <id>99</id>
-      <posX>1104</posX>
-      <posY>20</posY>
-      <width>160</width>
-      <height>90</height>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <action>18</action>
-      <textureFocus>tv_green_border.png</textureFocus>
-      <visible>player.hasvideo</visible>
-    </control>
+  </control>
     <!--     *******************************************************************************************  -->
-    <!--     *************************   RSS-FEED ON BASIC HOME   **************************************  -->
+    <!--     *******************************    NOW PLAYING VIDEO  *************************************  -->
     <!--     *******************************************************************************************  -->
     <control>
-      <description>RSS Feed Background</description>
+      <type>group</type>
+      <description>group element</description>
+      <visible>Player.HasVideo</visible>
+      <control>
+      <description>music area</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
-      <posY>1023</posY>
-      <width>1920</width>
-      <height>49</height>
-      <texture>menubar_text.png</texture>
-      <visible>[plugin.isenabled(InfoService)|plugin.isenabled(World News)]+[string.equals(#infoservice.feed.enabled, true)|skin.hassetting(#skin.worldnewsticker)]</visible>
-    </control>
-    <control>
-      <description>Feed items</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>130</posX>
-      <posY>1026</posY>
-      <width>1780</width>
-      <align>left</align>
-      <font>font12</font>
-      <textcolor>ivory</textcolor>
-      <label>#infoservice.feed.titles</label>
-      <wrapString> :-: </wrapString>
-      <shadowAngle>0</shadowAngle>
-      <shadowDistance>0</shadowDistance>
-      <shadowColor />
-      <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)+!skin.hassetting(#skin.worldnewsticker)</visible>
-    </control>
-    <control>
-      <description>Feed items</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>130</posX>
-      <posY>1026</posY>
-      <width>1780</width>
-      <align>left</align>
-      <font>font12</font>
-      <textcolor>ivory</textcolor>
-      <label>#WorldNews.NewsTicker</label>
-      <wrapString> :-: </wrapString>
-      <shadowAngle>0</shadowAngle>
-      <shadowDistance>0</shadowDistance>
-      <shadowColor />
-      <visible>plugin.isenabled(World News)+skin.hassetting(#skin.worldnewsticker)</visible>
-    </control>
-    <control>
-      <description>RSS Image</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>10</posX>
-      <posY>1027</posY>
-      <width>100</width>
-      <height>41</height>
-      <texture>#infoservice.feed.img</texture>
-      <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)+!skin.hassetting(#skin.worldnewsticker)</visible>
-    </control>
-    <control>
-      <description>RSS Image</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>10</posX>
-      <posY>1027</posY>
-      <width>100</width>
-      <height>41</height>
-      <texture>#WorldNews.NewsImage</texture>
-      <visible>plugin.isenabled(World News)+skin.hassetting(#skin.worldnewsticker)</visible>
-    </control>
-    <control>
-      <description>RSS Image Button Background</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>10</posX>
-      <posY>1027</posY>
-      <width>100</width>
-      <height>41</height>
+      <posX>-100</posX>
+      <posY>82</posY>
+      <width>2200</width>
+      <height>77</height>
       <texture>black.png</texture>
-      <visible>control.hasFocus(1111)</visible>
+      <colordiffuse>80ffffff</colordiffuse>
     </control>
-    <control Style="NoShadow">
-      <description>RSS Image Button</description>
-      <type>button</type>
-      <id>1111</id>
-      <posX>10</posX>
-      <posY>1027</posY>
-      <width>100</width>
-      <height>41</height>
-      <label>RSS</label>
-      <textcolor>white</textcolor>
-      <textcolorNoFocus></textcolorNoFocus>
-      <font>font12</font>
-      <onleft>1111</onleft>
-      <onright>1111</onright>
-      <onup>810101</onup>
-      <ondown>1111</ondown>
-      <textXOff>14</textXOff>
-      <textYOff>3</textYOff>
-      <hyperlink>#(iif(eq(#skin.worldnewsticker,'True'),'7979','16001'))</hyperlink>
-      <textureFocus>button_focus.png</textureFocus>
-      <textureNoFocus />
-      <visible>[plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)]|[plugin.isenabled(World News)+skin.hassetting(#skin.worldnewsticker)]</visible>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>82</posY>
+      <width>1995</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>90f5deb3</colordiffuse>
     </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>159</posY>
+      <width>1995</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>90f5deb3</colordiffuse>
+    </control>
+    <control>
+        <description>NowPlaying Background TV/Video</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>871</posX>
+        <posY>63</posY>
+        <width>175</width>
+        <height>105</height>
+        <texture>LCD.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+      </control>
+      <control>
+        <description>video preview window</description>
+        <type>videowindow</type>
+        <id>99</id>
+        <posX>879</posX>
+        <posY>71</posY>
+        <width>160</width>
+        <height>90</height>
+        <action>18</action>
+        <textureFocus>tv_green_border.png</textureFocus>
+      </control>
+      <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>0</posX>
+      <posY>89</posY>
+      <width>855</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>!string.contains(#Play.Current.File,tsbuffer)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(268)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Play.Current.Title</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+      
+    <control>
+      <description>Track - Genre</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>0</posX>
+      <posY>120</posY>
+      <width>855</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>!string.contains(#Play.Current.File,tsbuffer)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(135)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Play.Current.Genre</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>  
+    <control>
+      <description>Track - Year</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1072</posX>
+      <posY>89</posY>
+      <width>855</width>
+      <align>left</align>
+      <height>38</height>
+      <visible>!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#Play.Current.Year,)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(201))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Play.Current.Year</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    <control>
+      <description>Track - Director</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1072</posX>
+      <posY>120</posY>
+      <width>855</width>
+      <align>left</align>
+      <height>38</height>
+      <visible>!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#Play.Current.Director,)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(199))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Play.Current.Director</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>0</posX>
+      <posY>89</posY>
+      <width>855</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>string.contains(#Play.Current.File,tsbuffer)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#TV.View.channel: </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#TV.View.title</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+      
+    <control>
+      <description>Track - Genre</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>0</posX>
+      <posY>120</posY>
+      <width>855</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>string.contains(#Play.Current.File,tsbuffer)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(135)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#TV.View.genre</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    <control>
+      <description>Track - Runtime</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1072</posX>
+      <posY>89</posY>
+      <width>855</width>
+      <align>left</align>
+      <height>38</height>
+      <visible>string.contains(#Play.Current.File,tsbuffer)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(299))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#TV.View.start - #TV.Next.start</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    
+    
+    </control>
+    <import>BasicHome.rss.xml</import>
     
 </controls>
 </window>

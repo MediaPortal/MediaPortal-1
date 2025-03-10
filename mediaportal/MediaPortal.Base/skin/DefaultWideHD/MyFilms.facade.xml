@@ -18,11 +18,11 @@
           <id>50</id>
           <posX>120</posX>
           <width>825</width>
-          <textureFocus>#(iif(eq(#myfilms.user.watchedcount.value,'0'),'button_focus_notwatched.png','button_focus.png'))</textureFocus>
+          <textureFocus>#(iif(eq(#myfilms.user.watchedcount.value,'0'),'listfocus_notwatched.png','listfocus.png'))</textureFocus>
           <playedColor>ffffffff</playedColor>
           <playedColor2>ffffffff</playedColor2>
-          <textcolor>ff6FAFE1</textcolor>
-          <textcolorNoFocus>ff6FAFE1</textcolorNoFocus>
+          <textcolor>ffffffff</textcolor>
+          <textcolorNoFocus>ffdddddd</textcolorNoFocus>
           <textXOff2>825</textXOff2>
           <textYOff2>3</textYOff2>
           <textXOff3>3817</textXOff3>
@@ -49,7 +49,7 @@
           <selectedColor3>ff6FAFE1</selectedColor3>
           <playedColor>ffffffff</playedColor>
           <playedColor2>ffffffff</playedColor2>
-          <textcolor>ff6FAFE1</textcolor>
+          <textcolor>ff00bfff</textcolor>
           <textcolorNoFocus>ff6FAFE1</textcolorNoFocus>
           <textXOff>0</textXOff>
           <textYOff>9</textYOff>
@@ -251,7 +251,7 @@
                 <width>230</width>
                 <label>#myfilms.db.actors.label</label>
                 <font>font12</font>
-                <textcolor>ff6FAFE1</textcolor>
+                <textcolor>ff00bfff</textcolor>
                 <visible>!string.equals(#runtime,0)+!string.equals(#year,1900)</visible>
               </control>
               <control>
@@ -276,7 +276,7 @@
                 <width>230</width>
                 <label>#myfilms.db.description.label</label>
                 <font>font12</font>
-                <textcolor>ff6FAFE1</textcolor>
+                <textcolor>ff00bfff</textcolor>
                 <visible>!string.equals(#runtime,0)+!string.equals(#year,1900)</visible>
               </control>
               <control>
@@ -289,7 +289,7 @@
                 <label>#(iif(neq(#myfilms.db.tagline.value,''),'#myfilms.db.tagline.value ',''))#myfilms.db.description.value</label>
                 <font>font9</font>
                 <lineSpacing>2.5</lineSpacing>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <visible>!string.equals(#runtime,0)+!string.equals(#year,1900)</visible>
               </control>
             </controls>]]></subitem>

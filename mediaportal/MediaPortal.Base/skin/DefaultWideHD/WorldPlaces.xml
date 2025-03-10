@@ -157,7 +157,7 @@
       <width>525</width>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>World Places</label>
     </control>
     <control>
@@ -168,7 +168,7 @@
       <posY>52</posY>
       <label>#WorldPlaces.TranslationLongitude: #WorldPlaces.LocationItemLongitude, #WorldPlaces.TranslationLatitude: #WorldPlaces.LocationItemLatitude | #WorldPlaces.LocationItemDate - #WorldPlaces.LocationItemTime</label>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font10</font>
     </control>
 </controls>

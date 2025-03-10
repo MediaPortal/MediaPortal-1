@@ -5,7 +5,7 @@
   <defaultcontrol>101</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#header.hover:</define>
-  <define>#header.label:RadioTime    #RadioTime.Play.Station</define>
+  <define>#header.label:</define>
   <controls>
     <control>
       <type>image</type>
@@ -13,7 +13,7 @@
       <id>0</id>
       <width>1920</width>
       <height>1080</height>
-      <texture>BH Webradio.jpg</texture>
+      <texture>BH Webradio2.jpg</texture>
       <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>common.window.xml</import>
@@ -32,13 +32,104 @@
       <type>label</type>
       <id>1</id>
       <posX>45</posX>
-      <posY>15</posY>
-      <label>#header.label</label>
-      <font>Label</font>
+      <posY>54</posY>
+      <label>TuneIn #scroll.wrap #RadioTime.Translation.Folders.Label: #RadioTime.Presets.Folder.Name</label>
+      <width>1802</width>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
+      <description>default fadelabel</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>94</posY>
+      <width>1475</width>
+      <align>left</align>
+      <font>Label</font>
+      <label>#Play.Current.Title #scroll.wrap #Play.Current.Artist</label>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+    </control>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>101</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>70</buttonY>
+      <buttonwidth>140</buttonwidth>
+      <buttonheight>984</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>168</width>
+      <height>798</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+      <type>image</type>
+      <id>1</id>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>white.png</texture>
+        <colordiffuse>aa0c3066</colordiffuse>
+      <visible>!Control.HasFocus(101)+!control.HasFocus(102)+!Control.HasFocus(103)+!control.HasFocus(104)+!Control.HasFocus(105)+!control.HasFocus(106)+!Control.HasFocus(107)+!control.HasFocus(108)+!Control.HasFocus(109)+!control.HasFocus(110)</visible>
+    </control>
+      <control>
+        <type>image</type>
+        <posX>-20</posX>
+        <posY>176</posY>
+        <width>490</width>
+        <height>235</height>
+        <texture>context_background.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <animation effect="slide" time="70" start="-335,0" reversible="true">visiblechange</animation>
+        <visible>!Control.HasFocus(101)+!control.HasFocus(102)+!Control.HasFocus(103)+!control.HasFocus(104)+!Control.HasFocus(105)+!control.HasFocus(106)+!Control.HasFocus(107)+!control.HasFocus(108)+!Control.HasFocus(109)+!control.HasFocus(110)</visible>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <animation effect="slide" time="70" start="-335,0" reversible="true">visiblechange</animation>
+        <visible>!Control.HasFocus(101)+!control.HasFocus(102)+!Control.HasFocus(103)+!control.HasFocus(104)+!Control.HasFocus(105)+!control.HasFocus(106)+!Control.HasFocus(107)+!control.HasFocus(108)+!Control.HasFocus(109)+!control.HasFocus(110)</visible>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>49</posX>
+        <posY>200</posY>
+        <control>
+          <description>Now playing</description>
+          <type>button</type>
+          <id>9</id>
+          <label>#RadioTime.Translation.NowPlaying.Label</label>
+          <hyperlink>25652</hyperlink>
+          <onup>17</onup>
+          <ondown>3</ondown>
+          <onright>101</onright>
+          <ondown>3</ondown>
+        </control>
+        <control>
+          <id>3</id>
+          <type>button</type>
+          <onup>9</onup>
+          <ondown>2</ondown>
+          <onright>101</onright>
+          <label>#RadioTime.Translation.Folders.Label</label>
+        </control>
+        <control>
+          <id>2</id>
+          <type>button</type>
+          <onup>3</onup>
+          <ondown>101</ondown>
+          <onright>101</onright>
+          <label>#RadioTime.Translation.Home.Label</label>
+        </control>
+      </control>
+    </control>
+    <!--control>
       <id>3</id>
       <type>button</type>
       <onup>17</onup>
@@ -47,8 +138,10 @@
       <posX>84</posX>
       <posY>270</posY>
       <label>#RadioTime.Translation.Folders.Label</label>
-    </control>
-    <control>
+    </control-->
+    
+    
+    <!--control>
       <id>2</id>
       <type>button</type>
       <onup>3</onup>
@@ -57,7 +150,7 @@
       <posX>84</posX>
       <posY>337</posY>
       <label>#RadioTime.Translation.Home.Label</label>
-    </control>
+    </control-->
     <control>
       <id>101</id>
       <type>button</type>
@@ -195,16 +288,16 @@
       <height>207</height>
       <texture>#RadioTime.Selected.Logo</texture>
     </control>
-    <control>
+    <!--control>
       <type>fadelabel</type>
       <posX>0</posX>
       <posY>142</posY>
       <width>1920</width>
       <font>Menutitle</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#RadioTime.Translation.Folders.Label:  #RadioTime.Presets.Folder.Name</label>
-    </control>
+    </control-->
     <control>
       <id>81</id>
       <description>existent rating2</description>
