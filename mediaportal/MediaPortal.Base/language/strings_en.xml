@@ -1923,6 +1923,17 @@
     <String id="34062">Enter artist...</String>
     <String id="34063">No artist has been chosen yet</String>
 	<String id="34064">An Internet connection is required\nFor Last.FM Radio</String>
+    
+    <!-- myNotifier -->
+    <String id="35000">Read all</String>
+    <String id="35001">Delete</String>
+    <String id="35002">Delete all</String>
+    <String id="35003">Exit</String>
+    <String id="35004">Level: </String>
+    <String id="35005">Class: </String>
+    <String id="35006">Visit source</String>
+    <String id="35007">Media playback mode: </String>
+    
     <String id="40001">Waiting for Standby</String>
     <String id="40002">MediaPortal is unattended but still busy.</String>
     <String id="40003">When all current tasks are finished MediaPortal will go to standby mode.</String>
@@ -2092,6 +2103,7 @@
     <String id="103009" prefix="My ">TV/Mini EPG</String>
     <String id="103011" prefix="My ">TV/Crop settings</String>
     <String id="103012">TV tuning details</String>
+    <String id="103013" prefix="My ">Notifier</String>
     <String id="104711" prefix="My ">Wikipedia</String>
     <String id="105000">Picture - Metadata</String>
     <String id="106666">Power Scheduler Waiting</String>
