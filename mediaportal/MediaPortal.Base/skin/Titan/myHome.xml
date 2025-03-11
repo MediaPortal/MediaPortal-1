@@ -40,8 +40,12 @@
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
 
+    
+    <include condition="#(plugin.isenabled('My Notifier'))">MyHome.Main.MyNotifier.xml</include>
+    <!--
     <include condition="#(and(plugin.isenabled('World News'),not(eq(#WorldNews.NewsTicker,''))))">MyHome.Main.RSS.WorldNews.xml</include>
     <include condition="#(and(plugin.isenabled('InfoService'),eq(#infoservice.feed.enabled,'true')))">MyHome.Main.RSS.InfoServise.xml</include>
+    -->
 		
     <import>myHome.exitmenu.xml</import> 
     <import>common.time.xml</import>

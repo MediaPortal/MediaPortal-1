@@ -93,7 +93,7 @@ namespace MediaPortal.GUI.Notifier
       public object Tag;
     }
 
-    private enum MediaPlaybackModeEnum {Ask, Play, ShowPlugin };
+    private enum MediaPlaybackModeEnum {Ask, Play, VisitSource };
 
     #endregion
 
@@ -256,7 +256,7 @@ namespace MediaPortal.GUI.Notifier
 
               switch (this._MediaPlaybackMode)
               {
-                case MediaPlaybackModeEnum.ShowPlugin:
+                case MediaPlaybackModeEnum.VisitSource:
                   if (bShowPlugin)
                     goto show_plugin;
 
@@ -270,17 +270,17 @@ namespace MediaPortal.GUI.Notifier
                   {
                     IDialogbox dlg = (IDialogbox)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
                     dlg.Reset();
-                    dlg.SetHeading("Action");
+                    dlg.SetHeading(300012); //Action
 
-                    dlg.Add("Play media");
-                    dlg.Add("Show plugin");
+                    dlg.AddLocalizedString(208); //Play
+                    dlg.AddLocalizedString(35006); //Visit source
 
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
 
                     if (dlg.SelectedId == -1)
                       return; //exit
 
-                    if (dlg.SelectedId == 2 && bShowPlugin)
+                    if (dlg.SelectedId == 35006 && bShowPlugin)
                       goto show_plugin;
                   }
 
@@ -310,14 +310,14 @@ namespace MediaPortal.GUI.Notifier
         else if (control == this._GUIbuttonLevel)
         {
           this._FilterLevel = (NotifyMessageLevelEnum)Enum.Parse(typeof(NotifyMessageLevelEnum), this._GUIbuttonLevel.SelectedLabel);
-          this._GUIbuttonLevel.Label = "Level: " + this._FilterLevel.ToString();
+          this._GUIbuttonLevel.Label = GUILocalizeStrings.Get(35004) + this._FilterLevel.ToString();
           this.guiFacadeFill();
           this.guiSetButtons();
         }
         else if (control == this._GUIbuttonClass)
         {
           this._FilterClass = (NotifyMessageClassEnum)Enum.Parse(typeof(NotifyMessageClassEnum), this._GUIbuttonClass.SelectedLabel);
-          this._GUIbuttonClass.Label = "Class: " + this._FilterClass.ToString();
+          this._GUIbuttonClass.Label = GUILocalizeStrings.Get(35005) + this._FilterClass.ToString();
           this.guiFacadeFill();
           this.guiSetButtons();
         }
@@ -411,29 +411,28 @@ namespace MediaPortal.GUI.Notifier
       {
         int iId = 0;
         int iIdMediaPlaybackMode;
-        int iIdPlay = 0;
-        int iIdShowPlugin = 0;
 
         dlg.Reset();
-        dlg.SetHeading("Options");
+        dlg.SetHeading(496); //Options
 
         if (msg != null)
         {
           if (!string.IsNullOrWhiteSpace(msg.MediaLink))
           {
-            dlg.Add("Play media");
-            iIdPlay = iId++;
+            dlg.AddLocalizedString(208); //Play
+            iId++;
           }
 
           if (msg.PluginId > 0 && (msg.ActivatePluginWindow || !string.IsNullOrWhiteSpace(msg.PluginArguments)))
           {
-            dlg.Add("Show plugin");
-            iIdShowPlugin = iId++;
+            dlg.AddLocalizedString(35006); //Visit source
+            iId++;
           }
         }
 
-        dlg.Add("Media playback mode: " + this._MediaPlaybackMode.ToString());
-        iIdMediaPlaybackMode = iId++;
+        //"Media playback mode: "
+        dlg.Add(GUILocalizeStrings.Get(35007) + translatePlaybackMode(this._MediaPlaybackMode));
+        iIdMediaPlaybackMode = ++iId;
 
         dlg.DoModal(GUIWindowManager.ActiveWindow);
 
@@ -445,13 +444,13 @@ namespace MediaPortal.GUI.Notifier
           if ((int)++this._MediaPlaybackMode >= Enum.GetNames(typeof(MediaPlaybackModeEnum)).Length)
             this._MediaPlaybackMode = 0;
         }
-        else if (dlg.SelectedId == iIdPlay)
+        else if (dlg.SelectedId == 208)
         {
           //Play media
           g_Player.Play(msg.MediaLink);
           break;
         }
-        else if (dlg.SelectedId == iIdShowPlugin)
+        else if (dlg.SelectedId == 35006)
         {
           //Show plugin
           GUIWindowManager.ActivateWindow(msg.PluginId, new NotifyMessageServiceEventArgs()
@@ -759,6 +758,24 @@ namespace MediaPortal.GUI.Notifier
             return;
           }
         }
+      }
+    }
+
+    private static string translatePlaybackMode(MediaPlaybackModeEnum mode)
+    {
+      switch (mode)
+      {
+        case MediaPlaybackModeEnum.Ask:
+          return GUILocalizeStrings.Get(300008); //Ask what to do
+
+        case MediaPlaybackModeEnum.Play:
+          return GUILocalizeStrings.Get(208); //Play
+
+        case MediaPlaybackModeEnum.VisitSource:
+          return GUILocalizeStrings.Get(35006); //Visit source
+
+        default:
+          return string.Empty;
       }
     }
 

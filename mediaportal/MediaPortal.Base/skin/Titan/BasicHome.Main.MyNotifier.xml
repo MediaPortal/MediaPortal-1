@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>  
+    <control>
+        <description>notifier</description>
+        <type>notifier</type>
+        <posX>30</posX>
+        <posY>985</posY>
+        <width>1920</width>
+        <height>63</height>
+        <messageWidth>1690</messageWidth>
+        <rotationSpeed>400</rotationSpeed>
+        <messageFont>font11</messageFont>
+        <messageHeight>30</messageHeight>
+        <messageOffsetY>17</messageOffsetY>
+        <messageColorInformation>FF000000</messageColorInformation>
+        <visualStyle>VerticalFlip</visualStyle>
+        <animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+</controls>
+</window>
