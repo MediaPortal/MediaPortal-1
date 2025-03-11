@@ -45,23 +45,6 @@ multiple view modes.
 		</control>
 
 		<control>
-			<description>Version</description>
-			<type>label</type>
-			<id>0</id>
-			<posX>1910</posX>
-			<posY>1055</posY>
-			<width>0</width>
-			<label>v#GUINotifier.General.Version</label>
-			<align>right</align>
-			<font>font9</font>
-			<textcolor>30FFFFFF</textcolor>
-			<shadowAngle>45</shadowAngle>
-			<shadowDistance>4</shadowDistance>
-			<shadowColor>ff000000</shadowColor>
-			<visible>no</visible>
-		</control>
-
-		<control>
 			<id>0</id>
 			<type>image</type>
 			<posX>70</posX>
