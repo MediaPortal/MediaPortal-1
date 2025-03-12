@@ -1890,6 +1890,16 @@
 		<String id="34061">Benutzer eingeben...</String>
 		<String id="34062">Künstler eingeben...</String>
 		<String id="34063">Keinen Künstler ausgewählt</String>
+		
+		<!-- myNotifier -->
+    <String id="35000">Alle lesen</String>
+    <String id="35001">Löschen</String>
+    <String id="35002">Alle löschen</String>
+    <String id="35003">Beenden</String>
+    <String id="35004">Stufe: </String>
+    <String id="35005">Klasse: </String>
+    <String id="35006">Quelle aufrufen</String>
+		
 		<String id="40001">Standby in Kürze</String>
 		<String id="40002">MediaPortal ist unbenutzt, aber noch beschäftigt.</String>
 		<String id="40003">Wenn alle aktuellen Aufgaben erledigt wurden, geht MediaPortal in den Standby-Modus.</String>

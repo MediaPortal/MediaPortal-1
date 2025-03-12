@@ -43,7 +43,7 @@
       <posY>120</posY>
       <width>1230</width>
       <height>550</height>
-      <texture>context_background.png</texture>
+      <texture>context_background_small.png</texture> 
       <colordiffuse>bbffffff</colordiffuse>
       <visible>control.hasfocus(219)</visible>
     </control>

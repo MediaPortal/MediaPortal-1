@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file should contain the facade view and all gui
+elements that should remain on screen during all or
+multiple view modes.
+-->
+<window>
+	<id>3013</id>
+	<defaultcontrol>50</defaultcontrol>
+	<allowoverlay>no</allowoverlay>
+	<define>#header.image:notifier_logo.png</define>
+	<define>#header.label:My Notifier</define>
+
+	<!--
+	This set of defines are read by the plug-in and used to determine aspects of it's behavior. These
+	are parameters to give the skinner a tiny bit more control over the presentation.
+	-->
+	<define>#largeicons.available:true</define>
+	<define>#largeicons.backdrop.used:true</define>
+	<define>#smallicons.available:true</define>
+	<define>#smallicons.backdrop.used:true</define>
+	<define>#list.available:true</define>
+	<define>#list.backdrop.used:true</define>
+	<define>#filmstrip.available:true</define>
+	<define>#filmstrip.backdrop.used:true</define>
+	<define>#details.backdrop.used:true</define>
+	<define>#categories.backdrop.used:true</define>
+	<define>#coverflow.available:true</define>
+	<define>#coverflow.backdrop.used:true</define>
+
+
+
+	<controls>
+
+		<control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>BH Standard.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+    </control>
+    <control>
+			<id>0</id>
+			<type>image</type>
+			<description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+		</control>
+		<control>
+      <description>Title background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>120</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+    <import>common.time.xml</import>
+		<control>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>My Notifier</label>
+      <width>1802</width>
+      <align>left</align>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+		<!--control>
+			<description>Version</description>
+			<type>label</type>
+			<id>0</id>
+			<posX>1910</posX>
+			<posY>1055</posY>
+			<width>0</width>
+			<label>#GUINotifier.General.Version</label>
+			<align>right</align>
+			<font>font9</font>
+			<textcolor>30FFFFFF</textcolor>
+			<shadowAngle>45</shadowAngle>
+			<shadowDistance>4</shadowDistance>
+			<shadowColor>ff000000</shadowColor>
+			<visible>no</visible>
+		</control-->
+
+		
+		
+
+		<!--control>
+			<description>background listview</description>
+			<type>image</type>
+			<id>0</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>1920</width>
+			<height>273</height>
+			<texture>fanart_overlay_top.png</texture>
+			<visible>Control.IsVisible(50)</visible>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+		</control-->
+
+
+
+		<!-- VIEWS -->
+
+		<import>myNotifier.hiddenmenu.xml</import>
+
+		<include>myNotifier.facade.xml</include>
+
+		
+
+		
+
+
+	</controls>
+</window>

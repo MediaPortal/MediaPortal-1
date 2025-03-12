@@ -127,7 +127,7 @@
       <textXOff>14</textXOff>
       <textYOff>3</textYOff>
       <hyperlink>#(iif(eq(#skin.worldnewsticker,'True'),'7979','16001'))</hyperlink>
-      <textureFocus>buttonfocus.png</textureFocus>
+      <textureFocus>Button_tiny.png</textureFocus>
       <textureNoFocus />
       <visible>[plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)]|[plugin.isenabled(World News)+skin.hassetting(#skin.worldnewsticker)]</visible>
     </control>
