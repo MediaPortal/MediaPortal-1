@@ -339,7 +339,7 @@
       <shadowColor>ff000000</shadowColor>
       <visible>plugin.isenabled(Latest Media Handler)+control.isVisible(111)+player.paused+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
-    <import>common.play.xml</import>
+    <import>common.play.tv.xml</import>
     <!--- ********************************* PAUSE Screen ********************************************* -->
     <control>
       <description>MSGBox</description>

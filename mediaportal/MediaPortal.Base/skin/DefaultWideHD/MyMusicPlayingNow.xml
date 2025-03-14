@@ -60,14 +60,14 @@
     <layout>StackLayout(7, Horizontal, true)</layout>
     <posX>45</posX>
     <posY>54</posY>
-    <width>1210</width>
+    <width>1810</width>
     <align>left</align>
     <visible>Player.hasaudio</visible>
     <control>
       <type>fadelabel</type>
       <description>Track</description>
       <id>0</id>
-      <label>#(L(182)):</label>
+      <label>#(L(182)): </label>
       <width>10</width>
       <maxWidth>190</maxWidth>
       <textcolor>ff00bfff</textcolor>
@@ -80,7 +80,7 @@
       <id>0</id>
       <label>#Play.Current.Title #scroll.wrap</label>
       <width>10</width>
-      <maxWidth>670</maxWidth>
+      <maxWidth>1070</maxWidth>
       <align>left</align>
       <font>Label</font>
       <textcolor>ffffffff</textcolor>
@@ -102,7 +102,7 @@
       <id>0</id>
       <label>#Play.Current.Artist</label>
       <width>10</width>
-      <maxWidth>520</maxWidth>
+      <maxWidth>820</maxWidth>
       <textcolor>ffffffff</textcolor>
       <align>left</align>
       <font>Label</font>
