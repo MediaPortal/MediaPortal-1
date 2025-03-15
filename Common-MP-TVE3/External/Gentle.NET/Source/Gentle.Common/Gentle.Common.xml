@@ -1,0 +1,2596 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gentle.Common</name>
+    </assembly>
+    <members>
+        <member name="T:Gentle.Common.CacheContentType">
+            <summary>
+            Enumeration of possible content types in the cache. Every content type has
+            its own HybridDictionary in order to increase performance for sequential
+            operations (such as when invoking CacheManager.ClearByType).
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.CacheContentType.Query">
+            <summary>
+            Queries and query results.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.CacheContentType.Entity">
+            <summary>
+            Entities (and all other types).
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.CacheManager">
+            <summary>
+            Manager class uses to interface with the underlying cache.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.CacheManager.Get(System.String)">
+            <summary>
+            Retrieve an entry from the cache using the specified key.
+            </summary>
+            <param name="key">The key linked to the cache entry.</param>
+            <returns>The cached object (or null if no entry was found).</returns>
+        </member>
+        <member name="M:Gentle.Common.CacheManager.Insert(Gentle.Common.ICacheKeyProvider)">
+            <summary>
+            Insert an entry into the cache using <see cref="F:Gentle.Common.CacheStrategy.Temporary"/>.
+            </summary>
+            <param name="obj">The item to add to the cache.</param>
+        </member>
+        <member name="M:Gentle.Common.CacheManager.Insert(System.String,System.Object)">
+            <summary>
+            Insert an entry into the cache using <see cref="F:Gentle.Common.CacheStrategy.Temporary"/>.
+            </summary>
+            <param name="key">The key used to find the entry again.</param>
+            <param name="value">The item to add to the cache.</param>
+        </member>
+        <member name="M:Gentle.Common.CacheManager.Insert(System.String,System.Object,Gentle.Common.CacheStrategy)">
+            <summary>
+            Insert an entry into the cache using the specified <see cref="T:Gentle.Common.CacheStrategy"/>.
+            </summary>
+            <param name="key">The key used to find the entry again.</param>
+            <param name="value">The item to cache.</param>
+            <param name="strategy">The cache strategy to use for lifetime management. Possible
+            values are Never, Temporary or Permanent.</param>
+        </member>
+        <member name="M:Gentle.Common.CacheManager.Remove(System.String)">
+            <summary>
+            Remove an entry from the cache.
+            </summary>
+            <param name="key">The key used to find the entry to remove.</param>
+        </member>
+        <member name="M:Gentle.Common.CacheManager.Remove(System.Object[])">
+            <summary>
+            Forcefully remove one or more entries from the cache. Note that this
+            is currently a O(n^2) operation (i.e. it might be slow).
+            </summary>
+            <param name="objects">The objects to remove from the cache.</param>
+        </member>
+        <member name="M:Gentle.Common.CacheManager.Remove(System.Collections.IList)">
+            <summary>
+            Forcefully remove one or more entries from the cache. Note that this
+            is currently a O(n^2) operation (i.e. it might be slow).
+            </summary>
+            <param name="objects">The list of objects to remove from the cache.</param>
+        </member>
+        <member name="M:Gentle.Common.CacheManager.Clear(System.String)">
+            <summary>
+            Clear all entries belonging to the specified scope from the cache. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.CacheManager.Clear(System.String,Gentle.Common.CacheContentType)">
+            <summary>
+            Clear all entries belonging to the specified scope from the cache. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.CacheManager.Clear">
+            <summary>
+            Clear all entries in all scopes from the cache. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.CacheManager.Clear(System.Int32)">
+            <summary>
+            Clear all entries belonging to the specified thread from the cache. The thread
+            identity corresponds to the value of thread.GetHashCode(). Note that this method
+            only works for threads that do not have a name.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.CacheManager.ClearQueryResultsByType(System.Type)">
+            <summary>
+            Clear information on query results for select/count queries on the specified type. 
+            This method is used by Gentle to invalidate obsolete query results when objects 
+            of the given type are inserted or removed.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.CacheManager.GetCount(System.String)">
+            <summary>
+            Return the number of items currently in the cache. The cache store to use is determined from
+            the scope parameter (combined with the global UniqingScope setting). If null is passed this
+            method returns the same as the Count property (current scope).
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.CacheManager.GetCount(System.String,Gentle.Common.CacheContentType)">
+            <summary>
+            Return the number of items currently in the cache. The cache store to use is determined from
+            the scope parameter (combined with the global UniqingScope setting). If null is passed this
+            method returns the same as the Count property (current scope).
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.CacheManager.Count">
+            <summary>
+            Return the number of items currently in the cache. Only items for the current UniqingScope 
+            will be counted.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.CacheManager.UniqingScope">
+            <summary>
+            The global scope setting used to separate items in the cache.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.CacheManager.GetScopeDelimiter(System.String)">
+            <summary>
+            Get the scope delimiter used to group entries in the cache. The
+            supplied id is used instead of the normal scope delimitor (this
+            is useful if you wish to clear the cache for another thread or
+            web session than your own).
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.CacheManager.GetScopeDelimiter">
+            <summary>
+            Get the scope delimiter used to group entries in the cache. The
+            returned value is valid for this thread or web session only.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.CacheStrategy">
+            <summary>
+            This enumeration is used to apply a caching strategy to objects.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.CacheStrategy.Never">
+            <summary>
+            This value indicates that caching is disabled.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.CacheStrategy.Temporary">
+            <summary>
+            This value indicates that caching is enabled, and that cached objects may be
+            collected and released at will by the garbage collector. 
+            This is the default, but can be overridden by setting the 
+            Options/Cache/DefaultCacheStrategy key in the configuration file.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.CacheStrategy.Permanent">
+            <summary>
+            This value indicates that caching is enabled, and that cached objects may not
+            be garbage collected. The developer must manually ensure that objects are 
+            removed from the cache when they are no longer needed.
+            This strategy is applied to the default PersistenceBroker instance used by
+            the Broker class in order to ensure it is never garbage collected.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.ICacheKeyProvider">
+            <summary>
+            This interface should be implemented by all types that are cached. It allows the cache
+            to identify the key for the object which speeds up removal dramatically.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.ICacheKeyProvider.CacheKey">
+            <summary>
+            The key used to identify the item in the cache.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.CacheEntry">
+            <summary>
+            This class is used to wrap entries stored in the cache.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.CacheStore.Lock">
+            <summary>
+            The reader-writer lock to use when accessing this CacheStore instance.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.CacheStore.Count">
+            <summary>
+            Returns the number of items currently stored in the cache. Accessing this property
+            causes a check of all items in the cache to ensure collected items are not counted.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.CacheStore.Item(System.String)">
+            <summary>
+            Indexer for accessing or adding cache entries.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.CacheStore.Item(System.String,Gentle.Common.CacheStrategy)">
+            <summary>
+            Indexer for adding a cache item using the specified strategy.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.CacheStore.Insert(System.String,System.Object)">
+            <summary>
+            Insert a collectible object into the cache.
+            </summary>
+            <param name="key">The cache key used to reference the item.</param>
+            <param name="value">The object to be inserted into the cache.</param>
+        </member>
+        <member name="M:Gentle.Common.CacheStore.Insert(System.String,System.Object,Gentle.Common.CacheStrategy)">
+            <summary>
+            Insert an object into the cache using the specified cache strategy (lifetime management).
+            </summary>
+            <param name="key">The cache key used to reference the item.</param>
+            <param name="value">The object to be inserted into the cache.</param>
+            <param name="strategy">The strategy to apply for the inserted item (use Temporary for objects 
+            that are collectible and Permanent for objects you wish to keep forever).</param>
+        </member>
+        <member name="M:Gentle.Common.CacheStore.Get(System.Object)">
+            <summary>
+            Retrieves an entry from the cache using the given key. If the entry exists but has
+            been collected then this method will also remove the item from the cache by temporarily
+            upgrading the supplied lock to a writer lock.
+            </summary>
+            <param name="key">The cache key of the item to retrieve.</param>
+            <returns>The retrieved cache item or null if not found.</returns>
+        </member>
+        <member name="M:Gentle.Common.CacheStore.Remove(System.Object)">
+            <summary>
+            Removes the object associated with the given key from the cache.
+            </summary>
+            <param name="key">The cache key of the item to remove.</param>
+            <returns>The item removed from the cache or null if nothing was removed.</returns>
+        </member>
+        <member name="M:Gentle.Common.CacheStore.RemoveObject(System.Object)">
+            <summary>
+            Removes the given object from the cache.
+            </summary>
+            <param name="instance">The object to remove.</param>
+        </member>
+        <member name="M:Gentle.Common.CacheStore.Clear">
+            <summary>
+            Removes all entries from the cache.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.CacheStore.ClearCollected">
+            <summary>
+            Process all items in the cache and remove entries that refer to collected items.
+            </summary>
+            <returns>The number of live cache entries still in the cache.</returns>
+        </member>
+        <member name="M:Gentle.Common.CacheStore.ToString">
+            <summary>
+            This method returns a string with information on the cache contents (number of contained objects).
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.UniqingScope">
+            <summary>
+            This enumeration is used to select the scope within which to ensure 
+            object uniqing. This is only appliccable when object caching is enabled.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.UniqingScope.WebSession">
+            <summary>
+            This value indicates that objects are uniqued within the scope of an ASP.NET
+            web session. If no session exists Application scope is used.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.UniqingScope.Thread">
+            <summary>
+            This value indicates that objects are uniqued within a thread. This is the
+            default scope. 
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.UniqingScope.Application">
+            <summary>
+            This value indicates that objects are uniqued within an application. It is
+            up to the application developer to ensure thread safety.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.ConfigKeyPresence">
+            <summary>
+            Enumeration of configuration key requirements (mandatory or optional).
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.ConfigKeyPresence.Mandatory">
+            <summary>
+            This value is used to mark required configuration keys. An exception will
+            be thrown if the key is not found during configuration of a type or instance.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.ConfigKeyPresence.Optional">
+            <summary>
+            This value is used to mark optional configuration keys. No exception will
+            be thrown if the key is missing from the configuration file.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.ConfigurationAttribute">
+            <summary>
+            Attribute with which to decorate members that need configuring. The configuration 
+            subsystem automatically converts the value to the proper type of the target. If
+            this attribute is used on a method then the method will be called once for every
+            node matching the specified XmlNodePath (refer to <see cref="T:Gentle.Common.CallbackTarget"/> for 
+            additional information on this).
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.ConfigurationAttribute.xmlNodePath">
+            <summary>
+            The XML path to the node containing the configuration value(s).
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.ConfigurationAttribute.requiredParameters">
+            <summary>
+            The number of callback method parameters whose presence is required in order
+            for the method to be eligible for invocation. Only parameters after this 
+            number of parameters will be considered for null or default value substition.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.ConfigurationAttribute.keyPresenceRequirement">
+            <summary>
+            This denotes whether the configuration key used for a configuration target
+            is optional or mandatory. When mandatory (the default) an exception is raised 
+            if the specified key is not found in the configuration file.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.ConfigurationAttribute.#ctor(System.String)">
+            <summary>
+            Creates a new ConfigurationAttribute using the given path as the XPath
+            to the target node in the configuration tree. The node must be present or an
+            exception will be raised.
+            </summary>
+            <param name="xmlNodePath">The XPath to the node. This should always start with the
+            root node "Gentle.Framework" (this is also true when the .NET configuration file
+            is used instead of Gentle.config).</param>
+        </member>
+        <member name="M:Gentle.Common.ConfigurationAttribute.#ctor(System.String,Gentle.Common.ConfigKeyPresence)">
+            <summary>
+            Creates a new ConfigurationAttribute using the given path as the XPath
+            to the target node in the configuration tree. The node must be present or an
+            exception will be raised.
+            </summary>
+            <param name="xmlNodePath">The XPath to the node. This should always start with the
+            root node "Gentle.Framework" (this is also true when the .NET configuration file
+            is used instead of Gentle.config).</param>
+            <param name="keyPresenceRequirement">The presence requirement of the specified key.
+            Refer to <see cref="T:Gentle.Common.ConfigKeyPresence"/> for the available options.</param>
+        </member>
+        <member name="P:Gentle.Common.ConfigurationAttribute.XmlNodePath">
+            <summary>
+            The XML path to the node containing the configuration value(s).
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.ConfigurationAttribute.RequiredParameters">
+            <summary>
+            The number of callback method parameters whose presence is required in order
+            for the method to be eligible for invocation. Only parameters after this 
+            number of parameters will be considered for null or default value substition.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.ConfigurationAttribute.KeyPresenceRequirement">
+            <summary>
+            This denotes whether the configuration key used for a configuration target
+            is optional or mandatory. When mandatory (the default) an exception is raised 
+            if the specified key is not found in the configuration file.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.ConfigurationMap">
+            <summary>
+            This class maintains information on the configurable elements of a class.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.ConfigurationMap.#ctor(System.Type)">
+            <summary>
+            Construct a new ConfigurationMap for the given type. This involves reflecting 
+            on the given type to find all static and instance members carrying 
+            the <see cref="T:Gentle.Common.ConfigurationAttribute"/>.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.ConfigurationMap.Configure(System.Collections.IList,System.Object)">
+            <summary>
+            Configure all targets in the specified object using the given ElementTree 
+            as source. If a Type is passed in obj, static members will be configured.
+            If an object instance is passed in obj, instance members will be configured.
+            </summary>
+            <param name="handlers">The list of handlers providing the source values</param>
+            <param name="obj">The object to be configured</param>
+        </member>
+        <member name="T:Gentle.Common.Configurator">
+            <summary>
+            This class serves as the access point for classes wishing to interact with
+            the configuration subsystem.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Configurator.#ctor">
+            <summary>
+            Private constructor to prevent instances of static class
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Configurator.AddSectionHandler(System.String,System.String)">
+            <summary>
+            This method creates a configuration handler for the specified section
+            of the standard .NET configuration file.
+            </summary>
+            <param name="configStoreName">The name with which to associate this handler. If null is given
+            the handler will be used to configure Gentle settings, otherwise it will only be used when
+            Configure is called with a matching name.</param>
+            <param name="sectionName">The section name with which the GentleSectionHandler
+            has been declared in the .NET configuration file.</param>
+        </member>
+        <member name="M:Gentle.Common.Configurator.AddSectionHandler(System.String)">
+            <summary>
+            This method creates a configuration handler for the specified section
+            of the standard .NET configuration file.
+            </summary>
+            <param name="sectionName">The section name with which the GentleSectionHandler
+            has been declared in the .NET configuration file.</param>
+        </member>
+        <member name="M:Gentle.Common.Configurator.AddFileHandler(System.String,System.String)">
+            <summary>
+            This method creates a configuration handler for the specified file name. The
+            file name must not include path information (Gentle will search for it in specific
+            predefined locations).
+            </summary>
+            <param name="configStoreName">The name with which to associate this handler. If null is given
+            the handler will be used to configure Gentle settings, otherwise it will only be used when
+            Configure is called with a matching name.</param>
+            <param name="fileName">The name of the configuration file.</param>
+        </member>
+        <member name="M:Gentle.Common.Configurator.AddFileHandler(System.String)">
+            <summary>
+            This method creates a configuration handler for the specified file name. The
+            file name must not include path information (Gentle will search for it in specific
+            predefined locations).
+            </summary>
+            <param name="fileName">The name of the configuration file.</param>
+        </member>
+        <member name="M:Gentle.Common.Configurator.AddExternalHandler(System.String,System.Xml.XmlNode)">
+            <summary>
+            This method creates a configuration handler for the given XML fragment,
+            which (if valid) will be used as configuration source.
+            </summary>
+            <param name="configStoreName">The name with which to associate this handler. If null is given
+            the handler will be used to configure Gentle settings, otherwise it will only be used when
+            Configure is called with a matching name.</param>
+            <param name="root">The root node of the XML fragment to use as 
+            configuration source.</param>
+        </member>
+        <member name="M:Gentle.Common.Configurator.AddExternalHandler(System.Xml.XmlNode)">
+            <summary>
+            This method creates a configuration handler for the given XML fragment,
+            which (if valid) will be used as configuration source.
+            </summary>
+            <param name="root">The root node of the XML fragment to use as 
+            configuration source.</param>
+        </member>
+        <member name="M:Gentle.Common.Configurator.AddStreamHandler(System.String,System.IO.Stream)">
+            <summary>
+            This method creates a configuration handler for the specified stream.
+            </summary>
+            <param name="configStoreName">The name with which to associate this handler. If null is given
+            the handler will be used to configure Gentle settings, otherwise it will only be used when
+            Configure is called with a matching name.</param>
+            <param name="stream">The stream from which to read the configuration XML document/snippet.</param>
+        </member>
+        <member name="M:Gentle.Common.Configurator.AddStreamHandler(System.IO.Stream)">
+            <summary>
+            This method creates a configuration handler for the specified stream.
+            </summary>
+            <param name="stream">The stream from which to read the configuration XML document/snippet.</param>
+        </member>
+        <member name="M:Gentle.Common.Configurator.Configure(System.String,System.Object)">
+            <summary>
+            Configure all targets in the specified instance.
+            </summary>
+            <param name="configStoreName">The name of the handler to use as configuration source.
+            If null is given, Gentle's configuration store will be used (effectively this means
+            one of the automatically registered handlers).</param>
+            <param name="instance">The object to be configured</param>
+        </member>
+        <member name="M:Gentle.Common.Configurator.Configure(System.Object)">
+            <summary>
+            Configure all targets in the specified instance.
+            </summary>
+            <param name="instance">The object to be configured</param>
+        </member>
+        <member name="M:Gentle.Common.Configurator.Configure(System.String,System.Type)">
+            <summary>
+            Configure all targets in the specified type (static members).
+            </summary>
+            <param name="configStoreName">The name of the handler to use as configuration source.
+            If null is given, Gentle's configuration store will be used (effectively this means
+            one of the automatically registered handlers).</param>
+            <param name="type">The type to be configured</param>
+        </member>
+        <member name="M:Gentle.Common.Configurator.Configure(System.Type)">
+            <summary>
+            Configure all targets in the specified type (static members).
+            </summary>
+            <param name="type">The type to be configured</param>
+        </member>
+        <member name="M:Gentle.Common.Configurator.GetKey(System.String,System.String)">
+            <summary>
+            Direct accessor for obtaining a specific value from a configuration store.
+            </summary>
+            <param name="configStoreName">The named configuration store to use or null for Gentle's default store.</param>
+            <param name="configKeyPath">The XPath to the configuration value (element or attribute).</param>
+            <returns>The value of the given key or null if nothing was found.</returns>
+        </member>
+        <member name="M:Gentle.Common.Configurator.InitializeHandlers">
+            <summary>
+            This method creates the default configuration handlers provided 
+            by Gentle itself.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.Configurator.IsLoggingEnabled">
+            <summary>
+            Accessor to turn logging on or off. This property is updated when the configuration 
+            is being accessed.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.Configurator.HandlerCount">
+            <summary>
+            Returns the number of valid registered configuration handlers. Only the first handler
+            is used used to obtain configuration options, but if HandlerCount is 0 then Gentle
+            has not been able to find any valid configuration source.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.ConfigurationHandler">
+            <summary>
+            Abstract base class for all configuration handlers. A handler encapsulates the 
+            specifics of extracting the Gentle configuration segment from a backend store,
+            such as the file system or another configuration file.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.ConfigurationHandler.root">
+            <summary>
+            The root node of the Gentle configuration fragment.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.ConfigurationHandler.#ctor(System.Xml.XmlNode)">
+            <summary>
+            Constructor used to create a handler when an XML fragment is passed 
+            to the Configurator class.
+            </summary>
+            <param name="root">The root configuration node.</param>
+        </member>
+        <member name="P:Gentle.Common.ConfigurationHandler.IsValid">
+            <summary>
+            Determines whether this section handler has access to a valid configuration store
+            and was able to read the required information from it.
+            </summary>
+            <returns>True if this handler can be used as settings input, false otherwise.</returns>
+        </member>
+        <member name="P:Gentle.Common.ConfigurationHandler.XmlRoot">
+            <summary>
+            Obtains the root node of the configuration fragment from the handler.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.ConfigurationHandler.GetNode(System.String)">
+            <summary>
+            Obtains the requested configuration node from the tree.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.ConfigurationHandler.GetNodes(System.String)">
+            <summary>
+            Obtains the requested configuration node from the tree.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.FileHandler">
+            <summary>
+            This class is a handler for the Gentle.config file, responsible for locating and
+            loading the file (by searching a list of predefined relative paths).
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.FileHandler.APPSETTINGS_FILE">
+            <summary>
+            The key used to lookup a custom config file location in the standard .NET configuration file.
+            If this key is present the specified filename will be used before searching elsewhere.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.FileHandler.APPSETTINGS_FOLDER">
+            <summary>
+            The key used to lookup a custom config file location in the standard .NET configuration file.
+            If this key is present the specified folder will be searched before any other folder.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.FileHandler.CONFIG_FILENAME">
+            <summary>
+            Preconfigured filename that this class will look for when loading the configuration file.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.FileHandler.CONFIG_FOLDERS">
+            <summary>
+            List of folders that Gentle will search (in addition to any custom folder specified in the
+            regular .NET configuration file (usually App.config or Web.config). Folders are searched in
+            order of appearance. All paths are expanded relative to the location of the Gentle assembly.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.FileHandler.localConfigFilePath">
+            <summary>
+            The full local path and file name of the configuration file. This variable is initialized
+            once the full location and filename has been determined. Thus, it contains the local file 
+            path (and name) of the file this handler is using.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.FileHandler.#ctor">
+            <summary>
+            Constructor to use when Gentle should search for a file called Gentle.config
+            in a number of predefined locations.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.FileHandler.#ctor(System.String)">
+            <summary>
+            Constructor to use when specifying a path and filename manually.
+            </summary>
+            <param name="file">The full local path and filename to the 
+            configuration file.</param>
+        </member>
+        <member name="T:Gentle.Common.GentleSectionHandler">
+            <summary>
+            This class is a handler for the standard .NET config files (App.config or Web.config). The
+            section name to use is "gentle" and is hardcoded in the HandlerRegistry class.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.GentleSectionHandler.#ctor">
+            <summary>
+            Create a new .NET section handler for obtaining settings from App.config or Web.config.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.GentleSectionHandler.Create(System.Object,System.Object,System.Xml.XmlNode)">
+            <summary>
+            Implementaton of the .NET configuration file section handler. This is called by .NET
+            when the associated section is fetched.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.SystemSettings">
+            <summary>
+            Placeholder class for Gentle.NET global configuration settings
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.SystemSettings.Environment">
+            <summary>
+            A unique string identifying the environment the current application is running in. The
+            default value is "development". This is used to support storing multiple multiple
+            configurations for different deployment environments in the same config file.
+            The value of the environment is itself read from the config file using the path
+            "MachineName/WebPath" (when not in web mode, WebPath is part of the directory path
+            from which the application was started).
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.SystemSettings.MachineName">
+            <summary>
+            The Windows name of the current host.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.SystemSettings.WebPath">
+            <summary>
+            The web application path this application is running as. This is usually the same
+            as the name of the IIS virtual directory. When not a web application, a fragment
+            of the path to the current directory is used.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.SystemSettings.WebSessionID">
+            <summary>
+            The session id of the current web session, or an empty string if no web session
+            has been established.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.SystemSettings.ApplicationName">
+            <summary>
+            The name of the application.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.SystemSettings.ThreadIdentity">
+            <summary>
+             
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.SystemSettings.WindowsIdentity">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.SystemSettings.IsWindowsPlatform">
+            <summary>
+            True if the underlying OS is a Windows environment.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.CallbackTarget">
+            <summary>
+            This class is used for configuration elements that result in a method call. 
+            Use this target when you need to obtain a list of elements from the configuration
+            file; the callback method will be called once for every node matching the path.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.CallbackTarget.Configure(System.Object,System.Xml.XmlNode)">
+            <summary>
+            Use the supplied XmlNode to configure the target object. This configuration target 
+            performs a method callback on the target object, and uses the attributes of the XmlNode
+            as parameters. The method parameter names must match the names of the node attributes 
+            (a leading underscore will be stripped to permit using C# reserved words in the XML file). 
+            This method does not check whether the node matches the requested environment.
+            </summary>
+            <param name="target">The object to cofigure.</param>
+            <param name="node">The node containing the configuration value(s).</param>
+        </member>
+        <member name="M:Gentle.Common.CallbackTarget.Configure(System.Object,System.Xml.XmlNodeList)">
+            <summary>
+            Use the supplied XmlNodes to configure the target object. This method filters the
+            given list of nodes by environment before applying them individually. All nodes 
+            matching the current environment AND all nodes not limited by an environment
+            attribute are used for configuration.
+            </summary>
+            <param name="target">The object to cofigure.</param>
+            <param name="nodes">The list of nodes containing the configuration value(s).</param>
+        </member>
+        <member name="M:Gentle.Common.ElementTarget.IsEnvironment(System.Xml.XmlNode,System.String)">
+            <summary>
+            Method called to determine if an XmlNode carries an "environment" attribute with the
+            specified value. This is used to limits node visibility to a certain environment.
+            </summary>
+            <param name="node">The node to check.</param>
+            <param name="environment">The environment value to check for.</param>
+            <returns>True if the attribute named "environment" is found and has the value given in
+            the environment parameter, false otherwise.</returns>
+        </member>
+        <member name="M:Gentle.Common.ElementTarget.IsCommonEnvironment(System.Xml.XmlNode)">
+            <summary>
+            Method called to determine if an XmlNode carries an "environment" attribute to limits
+            its visibility to a certain environment.
+            </summary>
+            <param name="node">The node to check.</param>
+            <returns>True if no attribute named "environment" is found, false otherwise.</returns>
+        </member>
+        <member name="M:Gentle.Common.ElementTarget.Configure(System.Object,System.Xml.XmlNodeList)">
+            <summary>
+            Use the supplied XmlNodes to configure the target object. This method filters the given
+            list of nodes by environment before applying them individually.
+            </summary>
+            <param name="target">The object to cofigure.</param>
+            <param name="nodes">The list of nodes containing the configuration value(s).</param>
+        </member>
+        <member name="M:Gentle.Common.FieldTarget.Configure(System.Object,System.Xml.XmlNode)">
+            <summary>
+            Use the supplied XmlNode to configure the target object. This method does not check
+            whether the node matches the requested environment.
+            </summary>
+            <param name="target">The object to cofigure.</param>
+            <param name="node">The node containing the configuration value(s).</param>
+        </member>
+        <member name="M:Gentle.Common.PropertyTarget.Configure(System.Object,System.Xml.XmlNode)">
+            <summary>
+            Use the supplied XmlNode to configure the target object. This method does not check
+            whether the node matches the requested environment.
+            </summary>
+            <param name="target">The object to cofigure.</param>
+            <param name="node">The node containing the configuration value(s).</param>
+        </member>
+        <member name="T:Gentle.Common.LevelAttribute">
+            <summary>
+            This attribute is used to decorate the <see cref="T:Gentle.Common.Error"/> enumeration with 
+            a predefined severity level. This allows the framework to handle errors
+            differently depending on their severity (such as suppressing logging or
+            by handling them internally). This is particularly useful when moving from
+            development/testing to production, where you want a more resilient system.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.LevelAttribute.#ctor(Gentle.Common.Severity)">
+            <summary>
+            Create a new Level attribute.
+            </summary>
+            <param name="severity">The severity to associate with this LevelAttribute instance.</param>
+        </member>
+        <member name="P:Gentle.Common.LevelAttribute.Severity">
+            <summary>
+            The severity associated with this attribute.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.MessageAttribute">
+            <summary>
+            This attribute is used to decorate the <see cref="T:Gentle.Common.Error"/> enumeration with 
+            a predefined error message. The associated message will be used as format
+            string for the error message when a GentleException with this Error is throw.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.MessageAttribute.#ctor(System.String)">
+            <summary>
+            Create a new Message attribute.
+            </summary>
+            <param name="message">The message to associate with this attribute instance.</param>
+        </member>
+        <member name="P:Gentle.Common.MessageAttribute.Message">
+            <summary>
+            The message (format string) associated with this attribute.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.MessageAttribute.ArgumentCount">
+            <summary>
+            The number of format string parameters required to format a message using
+            the message associated with this attribute.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.Check">
+            <summary>
+            <p>This helper class is used throughout the framework. It provides assertion methods,
+            standardized error reporting and automatic exception creation. The exception type
+            raised is hardcoded in the static constructor.</p>
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Check.verbosity">
+            <summary>
+            This defines the minimum severity level at which exceptions will be
+            logged. All exceptions with a lower severity will not be logged.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Check.frailty">
+            <summary>
+            This defines the minimum severity level at which exceptions will be
+            re-thrown once logging is done. All exceptions with a lower severity
+            will be silently "swallowed" - use with caution!
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Check.LogCategories">
+            <summary>
+            Log topic categories enabled (default is none).
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.RegisterLogCategory(Gentle.Common.LogCategories,System.Boolean)">
+            <summary>
+            Callback method for configuration options to turn logging in the available
+            categories on or off.
+            </summary>
+            <param name="name">The name of the logging category.</param>
+            <param name="enabled">True if logging should be enabled for the 
+            specified category. Note that subsequent entries in the config
+            file may override earlier definitions.</param>
+        </member>
+        <member name="M:Gentle.Common.Check.IsLogEnabled(Gentle.Common.LogCategories)">
+            <summary>
+            Call this method to determine whether the passed category (or combination
+            of categories) is enabled.
+            </summary>
+            <param name="category">The category or categories to process.</param>
+            <returns>True if all of the specified categories are enabled.</returns>
+        </member>
+        <member name="M:Gentle.Common.Check.FailWith(Gentle.Common.Severity,Gentle.Common.Error,System.Exception,System.String)">
+            <summary>
+            Internal method performing error logging and throwing of exceptions.
+            </summary>
+            <param name="severity">The severity of the error.</param>
+            <param name="error">The error classification.</param>
+            <param name="e">The exception leading to this error (if any).</param>
+            <param name="msg">The error message for this error.</param>
+        </member>
+        <member name="M:Gentle.Common.Check.Fail(System.String,System.Object[])">
+            <summary>
+            This method formats and logs an error message, then raises a GentleException.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.Fail(System.Exception,Gentle.Common.Error,System.Object[])">
+            <summary>
+            This method formats and logs an error message, then raises a GentleException.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.Fail(Gentle.Common.Error,System.Object[])">
+            <summary>
+            This method formats and logs an error message, then raises a GentleException.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.IsTrue(System.Boolean,Gentle.Common.Error,System.Object[])">
+            <summary>
+            This method is used to perform assertions. If the assertion fails an error message
+            will be logged and a GentleException thrown.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.IsTrue(System.Boolean,System.String,System.Object[])">
+            <summary>
+            This method is used to perform assertions. If the assertion fails an error message
+            will be logged and a GentleException thrown.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.Verify(System.Boolean,Gentle.Common.Error,System.Object[])">
+            <summary>
+            This method is used to perform assertions. If the assertion fails an error message
+            will be logged and a GentleException thrown.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.Verify(System.Boolean,System.String,System.Object[])">
+            <summary>
+            This method is used to perform assertions. If the assertion fails an error message
+            will be logged and a GentleException thrown.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.VerifyEquals(System.Object,System.Object,Gentle.Common.Error,System.Object[])">
+            <summary>
+            This method is used to perform assertions. If the assertion fails an error message
+            will be logged and a GentleException thrown.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.VerifyEquals(System.Object,System.Object,System.String,System.Object[])">
+            <summary>
+            This method is used to perform assertions. If the assertion fails an error message
+            will be logged and a GentleException thrown.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.VerifyNotNull(System.Object,Gentle.Common.Error,System.Object[])">
+            <summary>
+            This method is used to perform assertions. If the assertion fails an error message
+            will be logged and a GentleException thrown.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.VerifyNotNull(System.Object,System.String,System.Object[])">
+            <summary>
+            This method is used to perform assertions. If the assertion fails an error message
+            will be logged and a GentleException thrown.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.VerifyIsNull(System.Object,Gentle.Common.Error,System.Object[])">
+            <summary>
+            This method is used to perform assertions. If the assertion fails an error message
+            will be logged and a GentleException thrown.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.VerifyIsNull(System.Object,System.String,System.Object[])">
+            <summary>
+            This method is used to perform assertions. If the assertion fails an error message
+            will be logged and a GentleException thrown.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.VerifyNull(System.Object,Gentle.Common.Error,System.Object[])">
+            <summary>
+            This method is used to perform assertions. If the assertion fails an error message
+            will be logged and a GentleException thrown.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.VerifyNull(System.Object,System.String,System.Object[])">
+            <summary>
+            This method is used to perform assertions. If the assertion fails an error message
+            will be logged and a GentleException thrown.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.IfNull(System.Object,System.Object)">
+            <summary>
+            This method is used to select the first object not being null from a list of 2 objects.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.IsCalledFrom(System.String,System.Exception)">
+            <summary>
+            Check whether the specified tracer string occurs in the stack trace of the call
+            leading to the exception. This method excludes the last three method calls from
+            the stack trace analysis, assuming that the exception was provoked by a call
+            to one of the Check.Verify or Check.Fail methods.
+            </summary>
+            <param name="tracer">The case-sensitive string to look for in the stack trace.
+            Usually this will be "Class.Method" or a similar fragment.</param>
+            <param name="e">The exception whose call stack is to be inspected.</param>
+            <returns>True if the tracer is found in the stack trace.</returns>
+        </member>
+        <member name="M:Gentle.Common.Check.IsCalledFrom(System.String,System.Exception,System.Int32)">
+            <summary>
+            Check whether the specified tracer string occurs in the stack trace of the call
+            leading to the exception.
+            </summary>
+            <param name="tracer">The case-sensitive string to look for in the stack trace.
+            Usually this will be "Class.Method" or a similar fragment.</param>
+            <param name="e">The exception whose call stack is to be inspected.</param>
+            <param name="skipFrames">Skip this number of stack frames from the search.</param>
+            <returns>True if the tracer is found in the stack trace.</returns>
+        </member>
+        <member name="M:Gentle.Common.Check.IsCalledFrom(System.String,System.Diagnostics.StackTrace)">
+            <summary>
+            Check whether the specified tracer string occurs in the given stack trace.
+            </summary>
+            <param name="tracer">The case-sensitive string to look for in the stack trace.
+            Usually this will be "Class.Method" or a similar fragment.</param>
+            <param name="stackTrace">The stack trace to be inspected.</param>
+            <returns>True if the tracer is found in the stack trace.</returns>
+        </member>
+        <member name="M:Gentle.Common.Check.GetExternalCaller(System.Exception)">
+            <summary>
+            Determine and return information on the calling class, that is, the class making
+            the initial call to the Check class. If an exception is passed, the stack trace
+            leading to that exception will be used instead.
+            </summary>
+            <returns>The class executing the current call to the Check class.</returns>
+        </member>
+        <member name="M:Gentle.Common.Check.Log(Gentle.Common.LogCategories,Gentle.Common.Severity,System.String,System.Object[])">
+            <summary>
+            Log a message.  The current logging level is used to determine
+            	if the message is appended to the configured appender
+            	or if it is ignored.
+            </summary>
+            <param name="category">The category to which this log statement belongs.</param>
+            <param name="s">The severity of the logging message.</param>
+            <param name="errorMsg">A concise description of the problem encountered.</param>
+            <param name="args">Variable values that are to be captured with the logging statement.</param>
+        </member>
+        <member name="M:Gentle.Common.Check.Log(Gentle.Common.LogCategories,Gentle.Common.Severity,System.String)">
+            <summary>
+            Log a message.  The specified <see cref="T:Gentle.Common.Severity"/> level is compared against
+            the current logging levels to determine if the message is logged or ignored.
+            </summary>
+            <param name="category">The category to which this log statement belongs.</param>
+            <param name="s">The severity level of the logging message.</param>
+            <param name="msg">The message to log.</param>
+        </member>
+        <member name="M:Gentle.Common.Check.Log(Gentle.Common.LogCategories,Gentle.Common.Severity,System.String,System.Exception)">
+            <summary>
+            Log a message.  The specified <see cref="T:Gentle.Common.Severity"/> level is compared against
+            the current logging levels to determine if the message is logged or ignored.
+            </summary>
+            <param name="category">The category to which this log statement belongs.</param>
+            <param name="s">The severity level of the logging message.</param>
+            <param name="msg">The message to log.</param>
+            <param name="e">An exception to associate with the error being logged.</param>
+        </member>
+        <member name="M:Gentle.Common.Check.LogMessage(Gentle.Common.LogCategories,Gentle.Common.Severity,System.String,System.Exception)">
+            <summary>
+            Log a message.  Actually perform the logging message to the
+            	appender specifified in the configuration file.
+            </summary>
+            <param name="category">The category to which this log statement belongs.</param>
+            <param name="s">A <see cref="T:Gentle.Common.Severity"/> level which is used to determine if 
+            the message should be logged or ignored.</param>
+            <param name="msg">A string value describing the message.</param>
+            <param name="e">An exception that has occurred.  If no exception has occurred, use <code>null</code>.</param>
+        </member>
+        <member name="M:Gentle.Common.Check.LogDebug(Gentle.Common.LogCategories,System.String,System.Object[])">
+            <summary>
+            Convenience methods for logging with a predefined severity level.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.LogInfo(Gentle.Common.LogCategories,System.String,System.Object[])">
+            <summary>
+            Convenience methods for logging with a predefined severity level.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.LogWarning(Gentle.Common.LogCategories,System.String,System.Object[])">
+            <summary>
+            Convenience methods for logging with a predefined severity level.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Check.LogError(Gentle.Common.LogCategories,System.String,System.Object[])">
+            <summary>
+            Log an error message. The error message is delegated to the log4net 
+            appender(s) in the app config file.
+            </summary>
+            <param name="category">The category to which this log statement belongs.</param>
+            <param name="errorMsg">A description of what has occurred.</param>
+            <param name="args">Variable values that were present at
+            the time the error occurred.</param>
+        </member>
+        <member name="M:Gentle.Common.Check.LogError(Gentle.Common.LogCategories,System.Exception)">
+            <summary>
+            Log an error message. Include the exception that has occurred
+            in the text of the error message.
+            </summary>
+            <param name="category">The category to which this log statement belongs.</param>
+            <param name="e">The exception to be logged.</param>
+        </member>
+        <member name="T:Gentle.Common.Error">
+            <summary>
+            <p>This enumeration lists all common error conditions, their severity and a 
+            default error message.</p>
+            <p>Unspecified errors or errors with no severity attribute are treated as critical.</p>
+            <p>At this time almost all errors have been brainlessly classified as critical pending
+            a review at some future time.</p>
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.DatabaseUnavailable">
+            <summary>
+            This error is used when no connection to the database server could be
+            established. This is usually caused by errors in the connection
+            string, but can also be due to network or database server problems.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.DeveloperError">
+            <summary>
+            This error is used when an error in the use of Gentle was detected 
+            (e.g. invalid use of or missing custom attributes). No default message
+            is provided for this error (if used via the Check class the first
+            argument will be used as format string for remaining arguments).
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.EmptyListParameter">
+            <summary>
+            This error is used when a list parameter with content (i.e. not null
+            and with at least one element) was expected.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.InvalidNullValue">
+            <summary>
+            This error is used when a DateTime has an invalid NullValue.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.InvalidProviderLibrary">
+            <summary>
+            This error is used when Gentle fails to load a provider library defined
+            in the configuration file.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.InvalidRequest">
+            <summary>
+            This error is used when Gentle detects an invalid request, such as trying to
+            execute a missing stored procedure. It is also used when a request cannot be
+            satisfied (e.g. trying to obtain an SqlStatement from SqlBuilder before all
+            required information has been set).
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.InvalidType">
+            <summary>
+            This error is used when an object is added to a TypedArrayList, and the objects
+            type does not match the type specified when the list was created.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.MissingConfigurationKey">
+            <summary>
+            This error is used when Gentle fails to find a matching node (for a required
+            setting) in the configuration store.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NoColumnForMember">
+            <summary>
+            This error is used when Gentle finds a member (field or property) carrying
+            the TableColumn attribute that references a non-existing column.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NoDefaultProvider">
+            <summary>
+            This error is used when the Broker class is used and no DefaultProvider was
+            defined in the configuration file.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NoIdentityReturned">
+            <summary>
+            This error is used when a row identity was expected but none was received. 
+            This usually only happens if the analyzer has been disabled (or is incomplete 
+            for the provider used) and the table definition is out of sync with the TableName
+            attribute definition used.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NoNewConnection">
+            <summary>
+            This error is used when no new connection to the database server could be
+            established. This is usually caused by a resource leak that drains the
+            connection pool before the GC can reclaim them, but can also be caused
+            by a variety of other problems.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NoObjectMapForTable">
+            <summary>
+            This error is used when no type is associated with a table (the available
+            databases are enumerated by the analyzer when in "Full" mode). Errors of
+            this type can safely be ignored.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NoProperty">
+            <summary>
+            This error is used when no member was found with the specified name. This usually
+            occurs due to spelling or case sensitivity errors in string parameters.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NoPropertyForNotNullColumn">
+            <summary>
+            This error is used when a column is found that does not permit null values, yet the
+            type to which it maps does not have a member mapping to this column. This error is thrown
+            by the database analyzer in order to prevent later errors when trying to insert to the
+            table. 
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NoProviders">
+            <summary>
+            This error is used when no database provider libraries were defined in the configuration.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NoSuchParameter">
+            <summary>
+            This error is used when a non-existing query parameter is referenced. This usually occurs
+            due to spelling or case sensitivity errors.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NoSuchRecord">
+            <summary>
+            This error is used when no matching database record was found. This can be
+            the result of a concurrency error or due to invalid parameter values.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NoConfigStoreFound">
+            <summary>
+            This error is used when no configuration store could be found. Gentle tries to
+            obtain its configuration from both the standard .NET configuration file (using
+            the <see cref="T:Gentle.Common.GentleSectionHandler"/> class to read the &lt;gentle&gt; section)
+            and the standalone Gentle.config file.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NoSuchView">
+            <summary>
+            This error is used when a non-existing view is referenced. This usually occurs
+            due to spelling or case sensitivity errors in parameters from client-side code.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NotImplemented">
+            <summary>
+            This error is used when the requested method has not yet been implemented. 
+            This usually occurs due to incomplete development code being accessed.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NullParameter">
+            <summary>
+            This error is used when a null parameter is passed to a method that does not
+            permit null values. This usually occurs due to errors in client-side code.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NullIdentity">
+            <summary>
+            This error is used when trying to set the identity value on a class, but the
+            class does not have an identity column.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NullProperty">
+            <summary>
+            This error is used when a member was null, but a not-null value was required.
+            This usually occurs due to errors in client-side code.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.NullWithNoNullValue">
+            <summary>
+            This error is used when a column contained a null value and the corresponding
+            member does not permit null values. This usually occurs due to a missing NullValue
+            declaration on the TableColumn attribute of the member.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.PropertyReadOnly">
+            <summary>
+            This error is used when a property is read-only, but write access was required. This can
+            usually be corrected by moving the TableColumn attribute to the underlying member, or by
+            adding a setter for the property.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.PropertyWriteOnly">
+            <summary>
+            This error is used when a property is write-only, but read access was required. This can
+            usually be corrected by moving the TableColumn attribute to the underlying member, or by
+            adding a getter for the property.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.StatementError">
+            <summary>
+            This error is used when statement execution fails. This is usually due to syntax errors
+            in the specified SQL string.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.UnknownAssembly">
+            <summary>
+            This error is used when an assembly name cannot be resolved to an Assembly instance. This 
+            may occur due to missing project references or invalid location of the required DLL. When
+            the Inheritance attribute is used it may also occur due to invalid names in the 
+            database column storing the full type name.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.UnknownProvider">
+            <summary>
+            This error is used when a provider cannot be found in the list of registered providers.
+            This usually occurs due to a missing entry (or incorrect name) in the configuration file.   
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.UnknownTable">
+            <summary>
+            This error is used when a type references a table that does not exist. This usually
+            occurs due to spelling or case sensitivity errors in the declaration of the TableName
+            attribute.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.UnexpectedRowCount">
+            <summary>
+            This error is used when the returned number of rows does not match the expected count.
+            This can be due to concurrency (record changed by another process) or parameter value 
+            errors.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.Unspecified">
+            <summary>
+            This error is used for unclassified errors of all kinds.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.UnsupportedColumnType">
+            <summary>
+            This error is used when an unsupported database type is encountered during analysis
+            of the database schema.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.UnsupportedConfigStoreUri">
+            <summary>
+            This error is used when an explicit configuration file path (location of Gentle.config)
+            was specified in the AppSettings section of the .NET configuration file, yet the path
+            specified was not valid. This can be due to errors in the URI, an illegal path, or an
+            unsupported destination (only files are supported).
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.UnsupportedDatabaseFunction">
+            <summary>
+            This error is used when an unsupported database function is called.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.UnsupportedPropertyType">
+            <summary>
+            This error is used when an unsupported member type is encountered. To correct the error
+            you must remove the TableColumn attribute, or move it to a member of a different type.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.UnsupportedType">
+            <summary>
+            This error is used when an unsupported type is passed as argument to a method that
+            required the type to be supported. This usually occurs due to a missing TableName 
+            attribute on the class declaration, but can also be remedied by having the class
+            implement the ITableName interface.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.ViewError">
+            <summary>
+            This error is used when an error occurred during generation of a custom view.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Error.Validation">
+            <summary>
+            This error is used when a business object contains an incorrect value.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.GentleException">
+            <summary>
+            The exception class thrown by classes in the Gentle.Framework namespace. Because
+            all new infomation resides in the ExceptionInfo descendant the Exception class itself
+            doesn't add anything new.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.GentleException.error">
+            <summary>
+            An enumeration value indicating the cause of the current exception.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.GentleException.#ctor(Gentle.Common.Error,System.String)">
+            <summary>
+            Constructor taking an <see cref="P:Gentle.Common.GentleException.Error"/> and a custom message to go with the error. 
+            The framework consistently uses the <see cref="P:Gentle.Common.GentleException.Error"/> enumeration to classify 
+            raised exceptions.
+            </summary>
+            <param name="error">The Error condition leading to this exception</param>
+            <param name="msg">An additional message text</param>
+        </member>
+        <member name="M:Gentle.Common.GentleException.#ctor(Gentle.Common.Error,System.String,System.Exception)">
+            <summary>
+            Constructor taking an <see cref="P:Gentle.Common.GentleException.Error"/>, a custom message to go with the error
+            and the exception leading to this error. The framework consistently uses the 
+            <see cref="P:Gentle.Common.GentleException.Error"/> enumeration to classify raised exceptions.
+            </summary>
+            <param name="error">The Error condition leading to this exception</param>
+            <param name="msg">A specific message to go with the error</param>
+            <param name="e">An existing exception instance</param>
+        </member>
+        <member name="M:Gentle.Common.GentleException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Deserialization constructor (required for serializing exceptions)
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.GentleException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            ISerializable method used by the serialization engine to save custom fields
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.GentleException.Error">
+            <summary>
+            The Error enum specifies the error class and is also used to obtain the message used.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.GentleException.Severity">
+            <summary>
+            The severity of the error leading to this exception.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.GentleException.ToString">
+            <summary>
+            Returns the current GentleException and all nested exceptions as a multiline string.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.GentleStatistics">
+            <summary>
+            Singleton used to store various statistical information (counters).
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.GentleStatistics.CacheHits">
+            <summary>
+            Return the number of successful attempts at looking up something
+            in the cache.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.GentleStatistics.CacheMisses">
+            <summary>
+            Return the number of unsuccessful attempts at looking up something
+            in the cache.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.GentleStatistics.UniqingCount">
+            <summary>
+            Return the number of successful attempts at object uniqing. This
+            number effectively represents the number of object constructions
+            skipped due to a cache hit.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.GentleStatistics.SkippedQueries">
+            <summary>
+            Return the number of successful attempts at resolving a query
+            without contacting the database.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.GentleStatistics.CacheSize">
+            <summary>
+            Return the number of items currently in the cache.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.GentleStatistics.Reset(Gentle.Common.LogCategories)">
+            <summary>
+            Reset all counters to 0.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.GentleStatistics.LogStatistics(Gentle.Common.LogCategories)">
+            <summary>
+            Emit current statistics for the specified categories.
+            </summary>
+            <param name="category">The categories to emit statistics for.</param>
+        </member>
+        <member name="T:Gentle.Common.LogCategories">
+            <summary>
+            Enumeration of logging categories used by Gentle. These can be used to 
+            selectively enable or disable logging for the specified categories.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.LogCategories.None">
+            <summary>
+            Select none of the available categories.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.LogCategories.StatementExecutionRead">
+            <summary>
+            Log execution of select statements and their parameters (before execution) and 
+            rows returned/affected (after execution).
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.LogCategories.StatementExecutionWrite">
+            <summary>
+            Log execution of insert/update/delete statements and their parameters (before execution) 
+            and rows returned/affected (after execution).
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.LogCategories.StatementExecutionOther">
+            <summary>
+            Log execution of all non-CRUD type of statements (than thand their parameters (before 
+            execution) and rows returned/affected (after execution).
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.LogCategories.StatementExecution">
+            <summary>
+            Log execution of all types of statements and their parameters (before execution) and 
+            rows returned/affected (after execution).
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.LogCategories.Cache">
+            <summary>
+            Log successful cache hits, cache lookup misses and various other 
+            cache-related performance counters.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.LogCategories.Metadata">
+            <summary>
+            Log metadata information gathered from databases, attributes or XML files.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.LogCategories.General">
+            <summary>
+            Log general information (configuration errors and uncategorized logging).
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.LogCategories.All">
+            <summary>
+            Select all available categories.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.Messages">
+            <summary>
+            Helper class for handling the formatting of error messages.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Messages.GetMsg(Gentle.Common.Error,System.Object[])">
+            <summary>
+            This method creates a formatted error message constructed using the format 
+            string associated with the given error and the list of supplied arguments.
+            The number of arguments must match that of the format string.
+            </summary>
+            <param name="error">The error for which to return an error message.</param>
+            <param name="args">The arguments (if any) to use in formatting the message.</param>
+            <returns>The formatted error message.</returns>
+        </member>
+        <member name="T:Gentle.Common.Severity">
+            <summary>
+            This enumeration lists severity levels used to classify exceptions. The levels
+            have been loosely adapted from the UNIX syslog levels.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Severity.Debug">
+            <summary>
+            This severity level is used for messages containing debug information. 
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Severity.Info">
+            <summary>
+            This severity level is used for informational messages.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Severity.Warning">
+            <summary>
+            This severity level is used for warning messages.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Severity.Error">
+            <summary>
+            This severity level is used for error messages. 
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Severity.Critical">
+            <summary>
+            This severity level is used for error messages when the cause was of a critical nature.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Severity.Unclassified">
+            <summary>
+            This severity level is used for messages whose severity has not been classified. In most
+            cases this corresponds to the Debug classification.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.NamespaceDoc">
+            <summary>
+            <p>The <see cref="N:Gentle.Common"/> namespace contains code used by but not
+            specific to Gentle.</p><p></p>
+            <p>The TypedArrayList folder contains a typed version of the .NET Framework
+            ArrayList class. The advantage against the standard <see cref="T:System.Collections.ArrayList"/>
+            is, that the <see cref="T:Gentle.Common.TypedArrayList"/> could be bound to a DataGrid control without
+            restrictions.</p>
+            <p>Although it is possible to bind a standard ArrayList to a DataGrid control you will not be
+            able to add or remove rows or to sort the data because the standard ArrayList doesn't implement
+            the needed interfaces <see cref="T:System.ComponentModel.ITypedList"/> and
+            <see cref="T:System.ComponentModel.IBindingList"/>.</p>
+            <p>To make the binding more comfortable, the namespace contains some attributes which changes
+            the default behaviour of the binding process of the DataGrid control. If you use the attributes
+            you are able to</p><br />
+            <list type="bullet">
+              <item><description>define user defined column headers with the <see cref="T:Gentle.Common.Attributes.CaptionAttribute"/></description></item>
+              <item><description>allow / disallow sorting of specific columns with the <see cref="T:Gentle.Common.Attributes.AllowSortAttribute"/></description></item>
+              <item><description>hide specific columns with the <see cref="T:Gentle.Common.Attributes.VisibleAttribute"/></description></item>
+            </list>
+            <br />
+            <p>The code is based on the article "Sammelleidenschaften" in the dot.net Magazin 02/2003 by Thomas Fenske.</p>
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.MemberAttributeInfo">
+            <summary>
+            Helper class used to store information on a member and the attributes it is decorated with.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.MemberAttributeInfo.MemberInfo">
+            <summary>
+            The member (method, field, property, etc.) with which the attributes are associated.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.MemberAttributeInfo.Attributes">
+            <summary>
+            The list of attributes found.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.MemberAttributeInfo.#ctor(System.Reflection.MemberInfo,System.Collections.IList)">
+            <summary>
+            Create a new MemberAttributeInfo instance linking a MemberInfo object to the
+            attributes it is carrying.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.MemberAttributeInfo.Item(System.Int32)">
+            <summary>
+            Obtain one of the attributes associated with the MemberInfo.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.MethodDispatcher">
+            <summary>
+            Helper class for determining the best matching method from a set of available
+            methods. The best matching method is determined from the given set of parameters
+            on the call to <see cref="M:Gentle.Common.MethodDispatcher.Invoke(System.Object,System.Collections.Hashtable)"/>.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.MethodDispatcher.#ctor(Gentle.Common.MethodInvoker)">
+            <summary>
+            Construct a new MethodDispatcher instance. Initially only a single method must be given,
+            however, to make full use of this class you may add additional candidate methods using
+            the <see cref="M:Gentle.Common.MethodDispatcher.AddInvoker(Gentle.Common.MethodInvoker)"/> method.
+            </summary>
+            <param name="invoker"></param>
+        </member>
+        <member name="M:Gentle.Common.MethodDispatcher.AddInvoker(Gentle.Common.MethodInvoker)">
+            <summary>
+            Add a method to the list of available methods for this method dispatcher.
+            </summary>
+            <param name="invoker">A MethodInvoker instance with information on the new method.</param>
+        </member>
+        <member name="M:Gentle.Common.MethodDispatcher.Invoke(System.Object,System.Collections.Hashtable)">
+            <summary>
+            Invoke the best available match (from a list of methods available) for the supplied parameters. 
+            If no method can be called using the supplied parameters, an exception is raised. Any exceptions
+            raised by the called method will be logged and then re-thrown.
+            </summary>
+            <param name="target">The object on which to invoke a method.</param>
+            <param name="parameters">A hashtable of parameter name/value pairs. All parameters given
+            must be used in the method call in order for a method to be considered.</param>
+            <returns>The return value of the invocation.</returns>
+        </member>
+        <member name="T:Gentle.Common.MethodInvokable">
+            <summary>
+            This class wraps a single invokable method call. It contains information
+            on the method to call as well as the parameters to use in the method call.
+            This intermediary class is used by the MethodDispatcher to select the best
+            match to call from a given set of available methods (and a single set of
+            parameter values).
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.MethodInvokable.MethodInvoker">
+            <summary>
+            The <see cref="F:Gentle.Common.MethodInvokable.MethodInvoker"/> wrapping the method to call.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.MethodInvokable.MatchIndicator">
+            <summary>
+            A value indicating how good a match this is (for a given set of parameters). This value 
+            is used by the <see cref="T:Gentle.Common.MethodDispatcher"/> to decide which method to invoke from a 
+            set of choices.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.MethodInvokable.ParameterValues">
+            <summary>
+            The parameter values used when invoking the method.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.MethodInvokable.#ctor(Gentle.Common.MethodInvoker,System.Int32,System.Object[])">
+            <summary>
+            Construct a new MethodInvokable instance in preparation for executing
+            the actual method call.
+            </summary>
+            <param name="invoker">The <see cref="F:Gentle.Common.MethodInvokable.MethodInvoker"/> wrapping the method to call.</param>
+            <param name="matchIndicator">A value indicating how good a match this is (for a given
+            set of parameters). This value is used by the <see cref="T:Gentle.Common.MethodDispatcher"/> to decide
+            which method to invoke from a set of choices.</param>
+            <param name="parameterValues">The parameter values used when invoking the method.</param>
+        </member>
+        <member name="M:Gentle.Common.MethodInvokable.Invoke(System.Object)">
+            <summary>
+            Perform the actual method invocation.
+            </summary>
+            <param name="target">The object to call the method on.</param>
+            <returns>The return value of the method call.</returns>
+        </member>
+        <member name="T:Gentle.Common.MethodInvoker">
+            <summary>
+            Helper class used to store information on a particular method, and the
+            ability to execute calls on it (if supplied with valid parameters).
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.MethodInvoker.#ctor(System.Reflection.MethodInfo,System.Int32)">
+            <summary>
+            Construct a new MethodInvoker instance.
+            </summary>
+            <param name="methodInfo">The <see cref="P:Gentle.Common.MethodInvoker.MethodInfo"/> for the method that this instance wraps.</param>
+            <param name="requiredParameters">The number of parameters (counting
+            from left to right) that are required to call the method. Any subsequent 
+            parameters may be substituted with a default value (if available) or null.</param>
+        </member>
+        <member name="P:Gentle.Common.MethodInvoker.MethodInfo">
+            <summary>
+            The <see cref="P:Gentle.Common.MethodInvoker.MethodInfo"/> for the method that this instance wraps.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.MethodInvoker.RequiredParameters">
+            <summary>
+            The number of parameters (counting from left to right) that are required 
+            to call the method. Any subsequent parameters may be substituted with a 
+            default value (if available) or null.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.MethodInvoker.SetDefaultValue(System.String,System.Object)">
+            <summary>
+            Store a default value for the given parameter. This value will be used if no
+            value has been supplied for the parameter, and it is not a required parameter.
+            </summary>
+            <param name="parameterName">The name (case-insensitive) of the parameter to 
+            look for.</param>
+            <param name="value">The default value to use when none is otherwise given.</param>
+        </member>
+        <member name="M:Gentle.Common.MethodInvoker.PrepareInvoke(System.Collections.Hashtable)">
+            <summary>
+            Prepare a <see cref="T:Gentle.Common.MethodInvokable"/> instance for calling the underlying method
+            using the supplied parameters. If the call cannot be made using the given parameters,
+            null is returned.
+            </summary>
+            <param name="parameters">A hashtable of parameter name/value pairs.</param>
+            <returns>A <see cref="T:Gentle.Common.MethodInvokable"/> instance prepared for execution of the
+            method call.</returns>
+        </member>
+        <member name="M:Gentle.Common.MethodInvoker.Invoke(System.Object,System.Object[])">
+            <summary>
+            Invoke the underlying method on the given target object using the supplied parameter values.
+            Any exception raised by performing the method call is logged and then exposed as-is.
+            </summary>
+            <param name="target">The object on which to invoke the method.</param>
+            <param name="parameterValues">The parameter values used to invoke the method.</param>
+            <returns>The return value of the invocation.</returns>
+        </member>
+        <member name="M:Gentle.Common.MethodInvoker.Invoke(System.Object,System.Collections.Hashtable)">
+            <summary>
+            Invoke the underlying method on the given target object using the supplied parameter values.
+            Any exception raised by performing the method call is logged and then exposed as-is.
+            </summary>
+            <param name="target">The object on which to invoke the method.</param>
+            <param name="parameters">A hashtable of parameter name/value pairs.</param>
+            <returns>The return value of the invocation.</returns>
+        </member>
+        <member name="T:Gentle.Common.Reflector">
+            <summary>
+            Helper class for performing various reflection tasks, such as gathering information
+            on members and their custom attributes.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Reflector.DefaultCriteria">
+            <summary>
+            Search criteria encompassing all public and non-public members.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Reflector.InstanceCriteria">
+            <summary>
+            Search criteria encompassing all public and non-public instance members.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Reflector.StaticCriteria">
+            <summary>
+            Search criteria encompassing all public and non-public static members, including those of parent classes.
+            </summary>
+        </member>
+        <member name="F:Gentle.Common.Reflector.AllCriteria">
+            <summary>
+            Search criteria encompassing all members, including those of parent classes.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Reflector.FindConstructors(System.Type)">
+            <summary>
+            Find and return a list of all available (non-abstract) constructors for the specified type.
+            </summary>
+            <param name="type">The type to reflect on</param>
+            <returns>A list of useable constructors</returns>
+        </member>
+        <member name="M:Gentle.Common.Reflector.FindMembers(System.Reflection.BindingFlags,System.Type,System.Boolean,System.Type[])">
+            <summary>
+            Find and return a list of members for the specified type.
+            </summary>
+            <param name="criteria">The search criteria used to restrict the members included in the search</param>
+            <param name="type">The type to reflect on</param>
+            <param name="allowDuplicates">When true, multiple instances of the same attribute type are allowed 
+            in the result. When false, only the first instance found will be included</param>
+            <param name="attributeTypes">The list of attribute types to search for.</param>
+            <returns>A list of MemberAttributeInfo objects with information on the member and 
+            the attributes with which it is decorated</returns>
+        </member>
+        <member name="M:Gentle.Common.Reflector.FindMember(System.Reflection.BindingFlags,System.String,System.Type)">
+            <summary>
+            Find a specific named member on the given type.
+            </summary>
+            <param name="criteria">The search criteria used to restrict the members included in the search</param>
+            <param name="name">The name of the member to find</param>
+            <param name="type">The type to reflect on</param>
+            <returns>A single MemberInfo instance of the first found match or null if no match was found</returns>
+        </member>
+        <member name="M:Gentle.Common.Reflector.FindAttribute(System.Enum,System.Type)">
+            <summary>
+            Find a specific attribute type on the given enumeration instance.
+            </summary>
+            <param name="instance">An enumeration value on which to search for the attribute.</param>
+            <param name="attributeType">The attribute type to search for.</param>
+            <returns>An instance of the attribute type specified if it was found on the instance.</returns>
+        </member>
+        <member name="M:Gentle.Common.Reflector.FindAttributes(System.Boolean,System.Reflection.MemberInfo,System.Type[])">
+            <summary>
+            Helper method used to find attributes associated with the specified member.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Reflector.GetValue(System.Reflection.MemberInfo,System.Object)">
+            <summary>
+            Return the value of the specified member on the given instance.
+            </summary>
+            <param name="memberInfo">The member whose value should be extracted.</param>
+            <param name="instance">The instance holding the member.</param>
+            <returns>The value of the speficied member.</returns>
+        </member>
+        <member name="M:Gentle.Common.Reflector.GetValue(System.String,System.Object)">
+            <summary>
+            Return the value of the specified member on the given instance.
+            </summary>
+            <param name="name">The name of the member whose value should be extracted. Only instance
+            fields will be considered by this method. If multiple members are found with the same 
+            name, the value of the first will be used.</param>
+            <param name="instance">The instance holding the member.</param>
+            <returns>The value of the speficied member.</returns>
+        </member>
+        <member name="M:Gentle.Common.Reflector.SetValue(System.Reflection.MemberInfo,System.Object,System.Object)">
+            <summary>
+            Update the specified member on the given instance with the supplied value.
+            </summary>
+            <param name="memberInfo">The member whose value should be updated.</param>
+            <param name="instance">The instance holding the member.</param>
+            <param name="value">The value to use in the update.</param>
+        </member>
+        <member name="T:Gentle.Common.TypeConverter">
+            <summary>
+            Helper class for converting into various types.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypeConverter.Get(System.Type,System.Xml.XmlNode)">
+            <summary>
+            Convert the supplied XmlNode into the specified target type. Only the InnerXml portion
+            of the XmlNode is used in the conversion, unless the target type is itself an XmlNode.
+            </summary>
+            <param name="targetType">The type into which to convert</param>
+            <param name="node">The source value used in the conversion operation</param>
+            <returns>The converted value</returns>
+        </member>
+        <member name="M:Gentle.Common.TypeConverter.Get(System.Type,System.String)">
+            <summary>
+            Convert the supplied string into the specified target type. 
+            </summary>
+            <param name="targetType">The type into which to convert</param>
+            <param name="value">The source value used in the conversion operation</param>
+            <returns>The converted value</returns>
+        </member>
+        <member name="M:Gentle.Common.TypeConverter.Get(System.Type,System.Object)">
+            <summary>
+            Convert the supplied object into the specified target type. 
+            </summary>
+            <param name="targetType">The type into which to convert</param>
+            <param name="obj">The source value used in the conversion operation</param>
+            <returns>The converted value</returns>
+        </member>
+        <member name="M:Gentle.Common.TypeConverter.IsNullAssignable(System.Type)">
+            <summary>
+            Check whether null can be assigned to instances of the given type.
+            </summary>
+            <param name="type">The type to check for null assignment compatibility.</param>
+            <returns>True if null can be assigned, false otherwise.</returns>
+        </member>
+        <member name="M:Gentle.Common.TypeConverter.IsFixedNumeric(System.Type)">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypeConverter.GetBoolean(System.Object)">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypeConverter.ToGuid(System.String)">
+            <summary>
+            Convert the binary string (16 bytes) into a Guid.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypeConverter.ToBinaryString(System.Guid)">
+            <summary>
+            Convert the Guid into a binary string.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypeConverter.CloneDeep(System.Object)">
+            <summary>
+            Perform a deep cloning of the supplied object instance using serialization.
+            </summary>
+            <param name="obj">The object to clone.</param>
+            <returns>A copy of the supplied instance.</returns>
+        </member>
+        <member name="T:Gentle.Common.Attributes.AllowSortAttribute">
+            <summary>
+            Controlling the Sorting capbility of a column in a DataGrid control.
+            </summary>
+            <remarks>
+            <p>This attribute is intended to uses with the <see cref="T:Gentle.Common.TypedArrayList"/>
+            class. For the objects contained in the <c>TypedArrayList</c> you can determine if a property of
+            the object may act as a sortable column in the corresponding DataGrid control.</p>
+            <p>Per default (if the attribute isn't used) sorting capability is enabled.</p>
+            </remarks>
+            <example>
+            <code>
+            public class Person
+            {
+              private string mName;
+            	
+              <b>[AllowSort(false)]</b>
+              public string Name
+              {
+                get { return mName; }
+                set { mName = value; }
+              }
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:Gentle.Common.Attributes.AllowSortAttribute.#ctor(System.Boolean)">
+            <summary>
+            Default constructor for the attribute.
+            </summary>
+            <param name="allowSort">
+            <div class="tablediv">
+            <table class="dtTABLE" cellspacing="0">
+            	<tr>
+            		<td><b>true</b></td>
+            		<td>Sorting is enabled for the corresponding <c>DataGrid</c> column</td>
+            	</tr>
+            	<tr>
+            		<td><b>false</b></td>
+            		<td>Sorting is disabled for the corresponding <c>DataGrid</c> column</td>
+            	</tr>
+            </table>
+            </div>
+            </param>
+        </member>
+        <member name="P:Gentle.Common.Attributes.AllowSortAttribute.Value">
+            <summary>
+            Returns the current value of the attribute.
+            </summary>
+            <value>
+            A boolean flag, which tells if the corresponding <c>DataGrid</c> column
+            is sortable or not.
+            </value>
+        </member>
+        <member name="T:Gentle.Common.Attributes.CaptionAttribute">
+            <summary>
+            Defining the caption of a column in a DataGrid control.
+            </summary>
+            <remarks>
+            <p>This attribute is intended to uses with the <see cref="T:Gentle.Common.TypedArrayList"/> class.
+            Per default the DataGrid control retrieve the names of all public property methods of the objects
+            which are displayed in the DataGrid control by Reflection and uses them as column headers.
+            The <c>TypedArrayList</c> use this attribute to display an alternative caption.</p> 
+            </remarks>
+            <example>
+            <code>
+            public class Person
+            {
+              private string mName;
+            	
+              <b>[Caption("Last Name")]</b>
+              public string Name
+              {
+                get { return mName; }
+                set { mName = value; }
+              }
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:Gentle.Common.Attributes.CaptionAttribute.#ctor(System.String)">
+            <summary>
+            Default constructor for the attribute.
+            </summary>
+            <param name="caption">
+            The display name of the property in the column header of a <c>DataGrid</c>.
+            </param>
+        </member>
+        <member name="P:Gentle.Common.Attributes.CaptionAttribute.Value">
+            <summary>
+            The attribute's value.
+            </summary>
+            <value>
+            The column header text for a <c>DataGrid</c>.
+            </value>
+        </member>
+        <member name="T:Gentle.Common.Attributes.VisibleAttribute">
+            <summary>
+            Controlling the visibility of a property in a DataGrid control.
+            </summary>
+            <remarks>
+            <p>This attribute is intended to uses with the <see cref="T:Gentle.Common.TypedArrayList"/>
+            class. For the objects contained in the <c>TypedArrayList</c> you can determine if the 
+            property should be visible in the DataGrid control.</p>
+            <p>Per default (if this attribute isn't present) all public properties of the objects contained
+            in the <c>TypedArrayList</c> are visible columns in the DataGrid control.</p>
+            <p>If you set the visibility of a property in your class to false, you can't access it in the
+            DataGrid control because there is no column for this property. If you want to access the property
+            in the DataGrid you have to set the ColumnWidth of the DataGrid column to zero.</p>
+            </remarks>
+            <example>
+            <code>
+            public class Person
+            {
+              private string mName;
+            	
+              <b>[Visible(false)]</b>
+              public string Name
+              {
+                get { return mName; }
+                set { mName = value; }
+              }
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:Gentle.Common.Attributes.VisibleAttribute.#ctor(System.Boolean)">
+            <summary>
+            Default constructor for the attribute.
+            </summary>
+            <param name="visible">
+            <div class="tablediv">
+            <table class="dtTABLE" cellspacing="0">
+            	<tr>
+            		<td><b>true</b></td>
+            		<td>The property is a visible column in the DataGrid control</td>
+            	</tr>
+            	<tr>
+            		<td><b>false</b></td>
+            		<td>The property will not be shown in the DataGrid control</td>
+            	</tr>
+            </table>
+            </div>
+            </param>
+        </member>
+        <member name="P:Gentle.Common.Attributes.VisibleAttribute.Value">
+            <summary>
+            The attribute's value.
+            </summary>
+            <value>The column header text for a <c>DataGrid</c>.</value>
+        </member>
+        <member name="T:Gentle.Common.RemoveEventHandler">
+            <summary>
+            The <c>RemoveEventHandler</c> handles the cancellation of edit
+            actions in a DataGrid control.
+            </summary>
+            <remarks>
+            If the user cancels the data editing of a new line in the 
+            DataGrid, the <see cref="M:System.ComponentModel.IEditableObject.CancelEdit"/> event
+            is fired and must be handled by the object which is being edited. The 
+            <see cref="T:Gentle.Common.TypedArrayList"/> must be informed to remove the
+            object from it's list. This will be done by firing a RemoveObject event in the
+            <c>CancelEdit</c> event handler.
+            </remarks>
+        </member>
+        <member name="T:Gentle.Common.IBindable">
+            <summary>
+            Interface for types which will be bound to a DataGrid using the
+            <see cref="T:Gentle.Common.TypedArrayList"/>.
+            </summary>
+            <remarks>
+            All types stored in a <see cref="T:Gentle.Common.TypedArrayList"/> which
+            will be bound to a DataGrid control should implement this interface.
+            It defines all methods and events needed to support the editing facilities
+            of the DataGrid control.
+            </remarks>
+        </member>
+        <member name="E:Gentle.Common.IBindable.RemoveObject">
+            <summary>
+            The event should be fired, if the user cancels the editing of
+            a newly created object in the DataGrid control.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.TypedArrayList">
+            <summary>
+            A strongly typed ArrayList with binding capabilities.
+            <seealso cref="T:Gentle.Common.Attributes.AllowSortAttribute"/>
+            <seealso cref="T:Gentle.Common.Attributes.CaptionAttribute"/>
+            <seealso cref="T:System.ComponentModel.ReadOnlyAttribute"/>
+            <seealso cref="T:Gentle.Common.Attributes.VisibleAttribute"/>
+            </summary>
+            <remarks>
+            <p>Implemententation of a strongly typed array list of objects with full support
+            for data binding (e.g. for use with a Datagrid control. </p>
+            <p>The <c>TypedArrayList</c> class implements the <see cref="T:System.ComponentModel.ITypedList"/>
+            and <see cref="T:System.ComponentModel.IBindingList"/> interfaces to provide databinding
+            to list controls like the DataGrid control with full support for adding and removing
+            entries and sorting the displayed list.</p>
+            <p>The property methods of the types stored in the list can be flagged with a set 
+            of attributes to control the the behaviour of the data grid.</p><br/>
+            <table class="dtTABLE" cellspacing="0" style="width: 60%">
+            	<tr>
+            		<th width="10%">Attribute name</th>
+            		<th width="90%">usage</th>
+            	</tr>
+            	<tr>
+            		<td width="10%">Caption</td>
+            		<td width="90%">Defines the caption of the column in the data grid.</td>
+            	</tr>
+            	<tr>
+            		<td width="10%">ReadOnly</td>
+            		<td width="90%">(From <see cref="N:System.ComponentModel"/>) Flags the column in the data grid as read-only.</td>
+            	</tr>
+            	<tr>
+            		<td width="10%">AllowSort</td>
+            		<td width="90%">Flags the column in the data grid as sortable.</td>
+            	</tr>
+            	<tr>
+            		<td width="20%">Visible</td>
+            		<td width="80%">Defines if the property is a visible column in the DataGrid control.</td>
+            	</tr>
+            </table><br/>
+            <p>There is one restriction for the types stored in the <c>TypedArrayList</c> if you want
+            to use the editing facilities of the DataGrid control. The types stored in the list must
+            implement the <see cref="T:Gentle.Common.IBindable"/> interface. If you don't do this, adding
+            and removing objects in the DataGrid will not work properly.</p>
+            </remarks>
+        </member>
+        <member name="F:Gentle.Common.TypedArrayList.containedType">
+            <summary>
+             The type of the objects in the list.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.#ctor(System.Type)">
+            <summary>
+            Default constructor.
+            </summary>
+            <param name="containedType">The type of the object stored in the ArrayList</param>
+        </member>
+        <member name="E:Gentle.Common.TypedArrayList.ListChanged">
+            <summary>
+            Implementation of <see cref="E:System.ComponentModel.IBindingList.ListChanged"/>
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.OnListChanged(System.ComponentModel.ListChangedEventArgs)">
+            <summary>
+            Fires the ListChanged event for all attached listeners.
+            </summary>
+            <param name="e">The <see cref="T:System.ComponentModel.ListChangedEventArgs"/> for the event.</param>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.AnalyseObjectType">
+            <summary>
+            Store a list of all property methods of the type stored in the ArrayList. 
+            </summary>
+            <remarks>
+            The list is used by the <see cref="M:System.ComponentModel.ITypedList.GetItemProperties(System.ComponentModel.PropertyDescriptor[])"/>.
+            Because using Reflection is time consuming the property methods are reflected once
+            while constructing an object of the TypedArrayList class.
+            </remarks>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.RemoveChild(System.Object,System.EventArgs)">
+            <summary>
+            Implements the RemoveObject event for the object stored in the list.
+            </summary>
+            <param name="value">The object which causes the event</param>
+            <param name="e">The event arguments</param>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.Match(System.Object,System.Object)">
+            <summary>
+            Helper method for the <see cref="M:Gentle.Common.TypedArrayList.Find(System.ComponentModel.PropertyDescriptor,System.Object)"/> method. Checks
+            if the current object meets the search crieria.
+            </summary>
+            <param name="data">The current object.</param>
+            <param name="searchValue">The searched object.</param>
+            <returns>´<b>True</b>, if the current object meets the search
+            criteria, <b>false</b> if not.</returns>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.OnClearComplete">
+            <summary>
+            See <see cref="M:System.Collections.CollectionBase.OnClearComplete"/>
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.OnInsertComplete(System.Int32,System.Object)">
+            <summary>
+            See <see cref="M:System.Collections.CollectionBase.OnInsertComplete(System.Int32,System.Object)"/>
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.OnRemoveComplete(System.Int32,System.Object)">
+            <summary>
+            See <see cref="M:System.Collections.CollectionBase.OnRemoveComplete(System.Int32,System.Object)"/>
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.OnSetComplete(System.Int32,System.Object,System.Object)">
+            <summary>
+            See <see cref="M:System.Collections.CollectionBase.OnSetComplete(System.Int32,System.Object,System.Object)"/>
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.GetItemProperties(System.ComponentModel.PropertyDescriptor[])">
+            <summary>
+            Implementation of <see cref="M:System.ComponentModel.ITypedList.GetItemProperties(System.ComponentModel.PropertyDescriptor[])"/>.
+            </summary>
+            <remarks>
+            For each property method of the type contained in the list, a <c>PropertyDescriptor</c>
+            will be created. If a property is flagged <i>not visible</i>, it will be omitted.
+            The <c>TypedArrayList</c> uses a custom implementation of the PropertyDescriptor,
+            <see cref="T:Gentle.Common.Util.CaptionPropertyDescriptor"/>, to support interpreting attributes.
+            </remarks>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.GetListName(System.ComponentModel.PropertyDescriptor[])">
+            <summary>
+            Implementation of <see cref="M:System.ComponentModel.ITypedList.GetListName(System.ComponentModel.PropertyDescriptor[])"/>.
+            </summary>
+            <returns>The name of the type of the objects in the list.</returns>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.AddIndex(System.ComponentModel.PropertyDescriptor)">
+            <summary>
+            Implementation of <see cref="M:System.ComponentModel.IBindingList.AddIndex(System.ComponentModel.PropertyDescriptor)"/>.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.TypedArrayList.AllowNew">
+            <summary>
+            Implementation of <see cref="P:System.ComponentModel.IBindingList.AllowNew"/>.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.SortBy(System.String,System.ComponentModel.ListSortDirection)">
+            <summary> 
+            Sorts a TypedArrayList with the selected property.
+            </summary> 
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)">
+            <summary>
+            Implementation of <see cref="M:System.ComponentModel.IBindingList.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)"/>.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.TypedArrayList.SortProperty">
+            <summary>
+            Implementation of <see cref="P:System.ComponentModel.IBindingList.SortProperty"/>.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.Find(System.ComponentModel.PropertyDescriptor,System.Object)">
+            <summary>
+            Implementation of <see cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)"/>.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.TypedArrayList.SupportsSorting">
+            <summary>
+            Implementation of <see cref="P:System.ComponentModel.IBindingList.SupportsSorting"/>.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.TypedArrayList.IsSorted">
+            <summary>
+            Implementation of <see cref="P:System.ComponentModel.IBindingList.IsSorted"/>.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.TypedArrayList.AllowRemove">
+            <summary>
+            Implementation of <see cref="P:System.ComponentModel.IBindingList.AllowRemove"/>.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.TypedArrayList.SupportsSearching">
+            <summary>
+            Implementation of <see cref="P:System.ComponentModel.IBindingList.SupportsSearching"/>.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.TypedArrayList.SortDirection">
+            <summary>
+            Implementation of <see cref="P:System.ComponentModel.IBindingList.SortDirection"/>.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.TypedArrayList.SupportsChangeNotification">
+            <summary>
+            Implementation of <see cref="P:System.ComponentModel.IBindingList.SupportsChangeNotification"/>.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.RemoveSort">
+            <summary>
+            Implementation of <see cref="M:System.ComponentModel.IBindingList.RemoveSort"/>.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.AddNew">
+            <summary>
+            Implementation of <see cref="M:System.ComponentModel.IBindingList.AddNew"/>.
+            </summary>
+            <remarks>
+            The implementation uses reflection to instantiate an object of the current 
+            object type. If the types contained in the list do not implement the IBindable
+            interface, adding new objects to the list will not work properly.
+            </remarks>
+        </member>
+        <member name="P:Gentle.Common.TypedArrayList.AllowEdit">
+            <summary>
+            Implementation of <see cref="P:System.ComponentModel.IBindingList.AllowEdit"/>.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.RemoveIndex(System.ComponentModel.PropertyDescriptor)">
+            <summary>
+            Implementation of <see cref="M:System.ComponentModel.IBindingList.RemoveIndex(System.ComponentModel.PropertyDescriptor)"/>.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.TypedArrayList.IsReadOnly">
+            <summary>
+            Implementation of <see cref="P:System.Collections.IList.IsReadOnly"/>.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.TypedArrayList.Item(System.Int32)">
+            <summary>
+            Implementation of <see cref="P:System.Collections.IList.Item(System.Int32)"/>.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.Insert(System.Int32,System.Object)">
+            <summary>
+            Implementation of <see cref="M:System.Collections.IList.Insert(System.Int32,System.Object)"/>.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.Remove(System.Object)">
+            <summary>
+            Implementation of <see cref="M:System.Collections.IList.Remove(System.Object)"/>.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.RemoveAt(System.Int32)">
+            <summary>
+            Implementation of <see cref="M:System.Collections.IList.RemoveAt(System.Int32)"/>.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.Contains(System.Object)">
+            <summary>
+            Implementation of <see cref="M:System.Collections.IList.Contains(System.Object)"/>.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.Clear">
+            <summary>
+            Implementation of <see cref="M:System.Collections.IList.Clear"/>.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.IndexOf(System.Object)">
+            <summary>
+            Implementation of <see cref="M:System.Collections.IList.IndexOf(System.Object)"/>.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.Add(System.Object)">
+            <summary>
+            Implementation of <see cref="M:System.Collections.IList.Add(System.Object)"/>.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.TypedArrayList.IsFixedSize">
+            <summary>
+            Implementation of <see cref="P:System.Collections.IList.IsFixedSize"/>.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.TypedArrayList.IsSynchronized">
+            <summary>
+            Implementation of <see cref="P:System.Collections.ICollection.IsSynchronized"/>.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.TypedArrayList.CopyTo(System.Array,System.Int32)">
+            <summary>
+            Implementation of <see cref="M:System.Collections.ICollection.CopyTo(System.Array,System.Int32)"/>.
+            </summary>
+        </member>
+        <member name="P:Gentle.Common.TypedArrayList.SyncRoot">
+            <summary>
+            Implementation of <see cref="P:System.Collections.ICollection.SyncRoot"/>.
+            </summary>
+        </member>
+        <member name="T:Gentle.Common.Util.CaptionPropertyDescriptor">
+            <summary>
+            A custom <see cref="T:System.ComponentModel.PropertyDescriptor"/> implementation.
+            </summary>
+            <remarks>
+            <p>The CaptionPropertyDescriptor is used in the implementation of the 
+            <see cref="T:System.ComponentModel.ITypedList"/> interface. 
+            It enhances the <see cref="T:System.ComponentModel.PropertyDescriptor"/>
+            to handle the custom attributes <c>Caption</c>, <c>ReadOnly</c> and <c>AllowSort</c>.</p>
+            </remarks>
+        </member>
+        <member name="M:Gentle.Common.Util.CaptionPropertyDescriptor.#ctor(System.String,System.Reflection.PropertyInfo)">
+            <summary>
+            Initialize a new <c>CaptionPropertyDescriptor</c> with the specified name
+            and <c>PropertyInfo</c>.
+            </summary>
+            <param name="name">The name of the property</param>
+            <param name="propertyInfo">The <c>PropertyInfo</c> for the property.</param>
+        </member>
+        <member name="P:Gentle.Common.Util.CaptionPropertyDescriptor.ComponentType">
+            <summary>
+            Gets the type of the component this property is bound to.
+            <seealso cref="P:System.ComponentModel.PropertyDescriptor.ComponentType">
+            <c>System.ComponentModel.PropertyDescriptor.ComponentType()</c>
+            </seealso>
+            </summary>
+            <value>A <see cref="T:System.Type"><c>System.Type</c></see> that represents the type of component 
+            this property is bound to. When <see cref="M:System.ComponentModel.PropertyDescriptor.GetValue(System.Object)"><c>PropertyDescriptor.GetValue</c></see>
+            or <see cref="M:System.ComponentModel.PropertyDescriptor.SetValue(System.Object,System.Object)"><c>PropertyDescriptor.SetValue</c></see>
+            are invoked, the object specified might be an instance of this type.</value>
+        </member>
+        <member name="P:Gentle.Common.Util.CaptionPropertyDescriptor.DisplayName">
+            <summary>
+            Gets the name that can be displayed in a window, such as a Properties window.
+            If the <c>Caption</c> attribute is defined for the property representing by this
+            <c>PropertyDescriptor</c>, the attribute's value is returned
+            instead of the original name.
+            <seealso cref="P:System.ComponentModel.MemberDescriptor.DisplayName">
+            <c>System.ComponentModel.PropertyDescriptor.DisplayName</c>
+            </seealso>.
+            </summary>
+            <value>The name to display for the member.</value>
+        </member>
+        <member name="P:Gentle.Common.Util.CaptionPropertyDescriptor.IsReadOnly">
+            <summary>
+            Gets a value indicating whether this property is read-only.
+            <seealso cref="P:System.ComponentModel.PropertyDescriptor.IsReadOnly">
+            <c>System.ComponentModel.PropertyDescriptor.IsReadOnly()</c>
+            </seealso>
+            </summary>
+            <returns><b>true</b>, if the <c>ReadOnly</c> is defined for the current property of the class.</returns>
+        </member>
+        <member name="P:Gentle.Common.Util.CaptionPropertyDescriptor.Name">
+            <summary>
+            Gets the name of the member.
+            <seealso cref="P:System.ComponentModel.MemberDescriptor.Name" />
+            </summary>
+            <value>The name of the member.</value>
+            <remarks>
+            <p>If the <c>Caption</c> attribute is defined for the property representing by this
+            <c>PropertyDescriptor</c>, the attribute's value is returned
+            instead of the original name.</p>
+            This property is only overridden because the <c>DataGrid</c> don't use
+            the <see cref="P:System.ComponentModel.MemberDescriptor.Name"><c>PropertyDescriptor.Name</c></see>
+            property.
+            </remarks>
+        </member>
+        <member name="P:Gentle.Common.Util.CaptionPropertyDescriptor.PropertyType">
+            <summary>
+            Gets a value indicating whether this property is read-only.
+            <seealso cref="P:System.ComponentModel.PropertyDescriptor.PropertyType" />
+            </summary>
+            <value><b>true</b> if the property is read-only; otherwise, <b>false</b>.</value>
+        </member>
+        <member name="M:Gentle.Common.Util.CaptionPropertyDescriptor.CanResetValue(System.Object)">
+            <summary>
+            Returns whether resetting an object changes its value.
+            <seealso cref="M:System.ComponentModel.PropertyDescriptor.CanResetValue(System.Object)" />
+            </summary>
+            <param name="component">The component to test for reset capability.</param>
+            <returns><b>true</b> if resetting the component changes its value; otherwise, <b>false</b>.</returns>
+        </member>
+        <member name="M:Gentle.Common.Util.CaptionPropertyDescriptor.GetValue(System.Object)">
+            <summary>
+            Gets the current value for this property on a component.
+            <seealso cref="M:System.ComponentModel.PropertyDescriptor.GetValue(System.Object)" />
+            </summary>
+            <param name="component">The component with the property for which to retrieve the value.</param>
+            <returns>The value of a property for a given component.</returns>
+        </member>
+        <member name="M:Gentle.Common.Util.CaptionPropertyDescriptor.ResetValue(System.Object)">
+            <summary>
+            Resets the value for this property of the component to the default value.
+            <seealso cref="M:System.ComponentModel.PropertyDescriptor.ResetValue(System.Object)">
+            <c>System.ComponentModel.PropertyDescriptor.ResetValue</c>
+            </seealso>
+            </summary>
+            <param name="component">The component with the property value that is to be reset to the default value.</param>
+        </member>
+        <member name="M:Gentle.Common.Util.CaptionPropertyDescriptor.SetValue(System.Object,System.Object)">
+            <summary>
+            Sets the value of the component to a different value.
+            <seealso cref="M:System.ComponentModel.PropertyDescriptor.SetValue(System.Object,System.Object)">
+            <c>System.ComponentModel.PropertyDescriptor.SetValue()</c>
+            </seealso>
+            </summary>
+            <param name="component">The component with the property value that is to be set.</param>
+            <param name="value">The new value.</param>
+        </member>
+        <member name="M:Gentle.Common.Util.CaptionPropertyDescriptor.ShouldSerializeValue(System.Object)">
+            <summary>
+            Determines a value indicating whether the value of this property needs to be persisted.
+            <seealso cref="M:System.ComponentModel.PropertyDescriptor.ShouldSerializeValue(System.Object)">
+            <c>System.ComponentModel.PropertyDescriptor.ShouldSerialzeValue</c>
+            </seealso>
+            </summary>
+            <param name="component">The component with the property to be examined for persistence.</param>
+            <returns><b>true</b> if the property should be persisted; otherwise, <b>false</b>.</returns>
+        </member>
+        <member name="P:Gentle.Common.Util.CaptionPropertyDescriptor.AllowSort">
+            <summary>
+            Returns a value that indicates if the property which is represented by the member
+            allows sorting in the <c>DataGrid</c>.
+            </summary>
+            <value><b>true</b>, if the <c>ReadOnly</c> is defined for the current property of the class.</value>
+        </member>
+        <member name="P:Gentle.Common.Util.CaptionPropertyDescriptor.OriginalDisplayName">
+            <summary>
+            Returns the original member display name.
+            <seealso cref="P:System.ComponentModel.MemberDescriptor.DisplayName">
+            <c>System.ComponentModel.PropertyDescriptor.DisplayName</c>
+            </seealso>.
+            </summary>
+            <value>The display name of the member.</value>
+        </member>
+        <member name="P:Gentle.Common.Util.CaptionPropertyDescriptor.OriginalName">
+            <summary>
+            Returns the original member name.
+            <seealso cref="P:System.ComponentModel.MemberDescriptor.Name">
+            <c>System.ComponentModel.PropertyDescriptor.Name</c>
+            </seealso>.
+            </summary>
+            <value>The name of the member.</value>
+        </member>
+        <member name="P:Gentle.Common.Util.CaptionPropertyDescriptor.OriginalDescriptor">
+            <summary>
+            The original descriptor.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.Util.CaptionPropertyDescriptor.FindOrigPropertyDescriptor(System.Reflection.PropertyInfo)">
+            <summary>
+            Retrieve the standard <c>PropertyDescriptor</c> for a property.
+            </summary>
+            <param name="propertyInfo">The property for which the <c>PropertyDescriptor</c> should be searched.</param>
+            <returns>
+            The standard <c>PropertyDescriptor</c> for the property or <b>null</b>
+            if no <c>PropertyDescriptor</c> was found.</returns>
+        </member>
+        <member name="T:Gentle.Common.Util.ObjectPropertyComparer">
+            <summary>
+            Internal class for sorting objects.
+            </summary>
+            <remarks>
+            The <c>ObjectPropertyComparer</c> acts a a comparer for the objects contained in a
+            <see cref="T:Gentle.Common.TypedArrayList"/>. It sorts the objects based on the 
+            name of the property passed in the constructor. This comparer is used internally,
+            if the TypedArrayList is bound to a DataGrid control and the user clicks on a 
+            column header to sort the data.
+            </remarks>
+        </member>
+        <member name="M:Gentle.Common.Util.ObjectPropertyComparer.#ctor(System.String)">
+            <summary>
+            Initialize a new Comparer for a given property.
+            </summary>
+            <param name="propertyName">The name of the property to compare.</param>
+        </member>
+        <member name="M:Gentle.Common.Util.ObjectPropertyComparer.Compare(System.Object,System.Object)">
+            <summary>
+            Compare two objects based on the property name passed to the constructor.
+            </summary>
+            <param name="x">The first object to compare.</param>
+            <param name="y">The second object to compare.</param>
+            <returns>
+            <div class="tablediv">
+            <table class="dtTABLE" cellspacing="0">
+            	<tr>
+            		<th width="50%">Value</th>
+            		<th width="50%">Condition</th>
+            	</tr>
+            	<tr>
+            		<td width="50%">Less than zero</td>
+            		<td width="50%"><i>a</i> is less than <i>b</i></td>
+            	</tr>
+            	<tr>
+            		<td width="50%">Zero</td>
+            		<td width="50%"><i>a</i> equals <i>b</i></td>
+            	</tr>
+            	<tr>
+            		<td width="50%">Greater than zero</td>
+            		<td width="50%"><i>a</i> is greater than <i>b</i></td>
+            	</tr>
+            </table>
+            </div>
+            </returns>
+        </member>
+        <member name="T:Gentle.Common.FileSystemUtil">
+            <summary>
+            This class is a container for useful file system commands.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.FileSystemUtil.IsValidFilePath(System.String)">
+            <summary>
+            Check whether a file exists at the specified location.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.FileSystemUtil.IsFileName(System.String)">
+            <summary>
+            Check whether the specified parameter is a file name without any path information.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.FileSystemUtil.IsFolder(System.String)">
+            <summary>
+            Check whether the specified parameter is a path name without any file information. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.FileSystemUtil.IsRelativePath(System.String)">
+            <summary>
+            Check whether the supplied path is relative or absolute.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.FileSystemUtil.CombinePathAndFileName(System.String,System.String)">
+            <summary>
+            Combine the supplied folder and file name into a single absolute local file path.
+            </summary>
+        </member>
+        <member name="M:Gentle.Common.FileSystemUtil.DetermineFileLocation(System.String,System.String[])">
+            <summary>
+            Search for the specified file in the given search locations and return the first match.
+            </summary>
+        </member>
+    </members>
+</doc>

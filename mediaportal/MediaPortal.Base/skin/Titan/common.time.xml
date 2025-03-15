@@ -149,5 +149,20 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
+    
+    <control>
+      <description>MyNotifier message icon</description>
+      <type>image</type>
+      <posX>1520</posX>
+      <posY>48</posY>
+      <width>40</width>
+      <height>40</height>
+      <texture>myNotifier/iconInfo.png</texture>
+      <visible>!string.equals(#myNotifier.Messages.Count.Unread,0)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation tween="sine" effect="zoom" start="100,100" end="130,130" time="350" condition="true" pulse="true" >conditional</animation>
+    </control>
+
   </controls>
 </window>

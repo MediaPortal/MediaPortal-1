@@ -48,7 +48,7 @@
       <label>#itemcount</label>
       <align>right</align>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>no</visible>
     </control>
     <control>
@@ -195,7 +195,7 @@
       <width>1590</width>
       <label>#Radio.Search.Title</label>
       <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
@@ -207,7 +207,7 @@
       <width>1590</width>
       <label>#Radio.Search.Time</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
@@ -220,7 +220,7 @@
       <height>157</height>
       <font>font11</font>
       <label>#Radio.Search.Description</label>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
@@ -232,7 +232,7 @@
       <width>1113</width>
       <label>#Radio.Search.Genre</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
@@ -244,7 +244,7 @@
       <label>#Radio.Search.Channel</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
   </controls>
 </window>

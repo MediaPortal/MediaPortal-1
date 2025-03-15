@@ -12,13 +12,13 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
   <define property="true" evaluateNow="true">#image.width:380</define>
   <define property="true" evaluateNow="true">#image.height:271</define>
   <define property="true" evaluateNow="true">#label.posx:804</define>
-  <define property="true" evaluateNow="true">#label.posy:928</define>
+  <define property="true" evaluateNow="true">#label.posy:930</define>
   <define property="true" evaluateNow="true">#label.width:322</define>
   <define property="true" evaluateNow="true">#focus.posy:700</define>
-  <define>#label.font:font12</define>
+  <define>#label.font:LabelBold</define>
 
-  <define property="true" evaluateNow="true">#scroll.delay:3</define>
-  <define property="true" evaluateNow="true">#scroll.wrap: · </define>
+  <define property="true" evaluateNow="true">#scroll.delay:20</define>
+  <define property="true" evaluateNow="true">#scroll.wrap:·</define>
 
   <define property="true" evaluateNow="true">#hedit.main.return.backward:810211</define>
   <define property="true" evaluateNow="true">#hedit.main.return.forward:810212</define>
@@ -191,7 +191,7 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
       <animation effect="rotatey" start="100" end="0" center="960,1500" time="800" acceleration="-0.6" reversible="false">windowopen</animation>
       <animation effect="fade" start="0" end="100" time="700" reversible="false">windowopen</animation>
       <animation effect="fade" start="100" end="0" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
-      <animation effect="rotatex" start="0" end="25" center="960,0" time="250" acceleration="-1" condition="string.contains(#hedit.inuse,sub)|control.hasfocus(1111)">conditional</animation>
+      <animation effect="rotatex" start="0" end="45" center="960,0" time="250" acceleration="-1" condition="string.contains(#hedit.inuse,sub)|control.hasfocus(1111)">conditional</animation>
       <animation effect="fade" start="100" end="60" time="250" acceleration="-1" condition="string.contains(#hedit.inuse,sub)|control.hasfocus(1111)">conditional</animation>
       
 
@@ -235,7 +235,7 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <width>#label.width</width>
         <align>center</align>
         <font>#label.font</font>
-        <wrapString>#scroll.wrap</wrapString>
+        <wrapString> #scroll.wrap </wrapString>
         <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
         <label>#(string.format('{0}.name',#hedit.main.use.1))</label>
         <animation effect="rotatey" start="48" end="48" center="960,1500" time="0" condition="true">conditional</animation>
@@ -284,7 +284,7 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <width>#label.width</width>
         <align>center</align>
         <font>#label.font</font>
-        <wrapString>#scroll.wrap</wrapString>
+        <wrapString> #scroll.wrap </wrapString>
         <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
         <label>#(string.format('{0}.name',#hedit.main.use.2))</label>
         <animation effect="rotatey" start="32" end="32" center="960,1500" time="0" condition="true">conditional</animation>
@@ -331,7 +331,7 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <width>#label.width</width>
         <align>center</align>
         <font>#label.font</font>
-        <wrapString>#scroll.wrap</wrapString>
+        <wrapString> #scroll.wrap </wrapString>
         <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
         <label>#(string.format('{0}.name',#hedit.main.use.3))</label>
         <animation effect="rotatey" start="16" end="16" center="960,1500" time="0" condition="true">conditional</animation>
@@ -354,15 +354,16 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f0)">conditional</animation>
         <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f1)">conditional</animation>
         <animation effect="zoom" start="100,100" end="200,200" time="250" acceleration="-0.6" reversible="false" condition="!string.contains(#hedit.inuse,sub)">windowclose</animation>
+        <animation effect="zoom" start="100,100" end="110,110" time="250" delay="150" reversible="false" condition="string.contains(#hedit.main.calc.count,0)|string.contains(#hedit.main.calc.nav,1)|string.contains(#hedit.main.calc.nav,0)">conditional</animation>
       </control>
       <control>
         <type>fadelabel</type>
         <posX>#label.posx</posX>
-        <posY>#label.posy</posY>
+        <posY>937</posY>
         <width>#label.width</width>
         <align>center</align>
         <font>#label.font</font>
-        <wrapString>#scroll.wrap</wrapString>
+        <wrapString> #scroll.wrap </wrapString>
         <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
         <label>#(string.format('{0}.name',#hedit.main.use.4))</label>
         <animation effect="rotatey" start="16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,b0)">conditional</animation>
@@ -370,6 +371,7 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f0)">conditional</animation>
         <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f1)">conditional</animation>
         <animation effect="zoom" start="100,100" end="200,200" center="960,750" time="250" acceleration="-0.6" reversible="false" condition="!string.contains(#hedit.inuse,sub)">windowclose</animation>
+        <animation effect="zoom" start="100,100" end="110,110" time="250" delay="150" reversible="false" condition="string.contains(#hedit.main.calc.count,0)|string.contains(#hedit.main.calc.nav,1)|string.contains(#hedit.main.calc.nav,0)">conditional</animation>
       </control>
 
       <control>
@@ -408,7 +410,7 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <width>#label.width</width>
         <align>center</align>
         <font>#label.font</font>
-        <wrapString>#scroll.wrap</wrapString>
+        <wrapString> #scroll.wrap </wrapString>
         <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
         <label>#(string.format('{0}.name',#hedit.main.use.5))</label>
         <animation effect="rotatey" start="-16" end="-16" center="960,1500" time="0" condition="true">conditional</animation>
@@ -455,7 +457,7 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <width>#label.width</width>
         <align>center</align>
         <font>#label.font</font>
-        <wrapString>#scroll.wrap</wrapString>
+        <wrapString> #scroll.wrap </wrapString>
         <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
         <label>#(string.format('{0}.name',#hedit.main.use.6))</label>
         <animation effect="rotatey" start="-32" end="-32" center="960,1500" time="0" condition="true">conditional</animation>
@@ -508,7 +510,7 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <width>#label.width</width>
         <font>#label.font</font>
         <align>center</align>
-        <wrapString>#scroll.wrap</wrapString>
+        <wrapString> #scroll.wrap </wrapString>
         <scrollStartDelaySec>#scroll.delay</scrollStartDelaySec>
         <label>#(string.format('{0}.name',#hedit.main.use.7))</label>
         <animation effect="rotatey" start="-48" end="-48" center="960,1500" time="0" condition="true">conditional</animation>
@@ -520,8 +522,6 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
         <animation effect="rotatey" start="-16" end="0" center="960,1500" time="250" acceleration="-0.6" reversible="false" condition="string.contains(#hedit.main.calc.nav,f1)">conditional</animation>
         <animation effect="rotatey" start="0" end="-60" center="960,1500" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
       </control>
-      
-      
     </control>
 
 <!-- Focus image and label overlay -->
@@ -540,6 +540,7 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
       <animation effect="fade" start="0" end="100" time="250" delay="800">WindowOpen</animation>
       <animation effect="fade" time="0">WindowClose</animation>
       <visible>!string.contains(#hedit.inuse,sub)+!control.hasfocus(1111)</visible>
+      <animation effect="zoom" start="100,100" end="110,110" time="250" delay="150" reversible="false" condition="string.contains(#hedit.main.calc.count,0)|string.contains(#hedit.main.calc.nav,1)|string.contains(#hedit.main.calc.nav,0)">conditional</animation>
     </control>
     
 
@@ -553,14 +554,15 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
       <width>36</width>
       <height>52</height>
       <texture>submenu_indicator.png</texture>
-      <animation effect="fade" start="0" end="100" time="800" delay="500" reversible="false" condition="string.contains(#hedit.main.calc.nav,0)">conditional</animation>
-      <animation effect="fade" start="0" end="100" time="800" delay="500" reversible="false" condition="string.contains(#hedit.main.calc.nav,1)">conditional</animation>
-      <animation effect="fade" start="0" end="100" time="800" delay="500" reversible="false">visible</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="200" reversible="false" condition="string.contains(#hedit.main.calc.nav,0)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="200" reversible="false" condition="string.contains(#hedit.main.calc.nav,1)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="250" delay="200" reversible="false">visible</animation>
       <animation effect="fade" time="0" reversible="false">hidden</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="450">WindowOpen</animation>
       <animation effect="fade" time="0">WindowClose</animation>
       <visible>!string.contains(#hedit.inuse,sub)+control.isvisible(920900)+!control.hasfocus(1111)</visible>
     </control>
+
 
   </controls>
 </window>

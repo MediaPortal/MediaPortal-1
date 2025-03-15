@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gentle.Provider.DB2</name>
+    </assembly>
+    <members>
+        <member name="T:Gentle.Provider.DB2.DB2Factory">
+            <summary>
+            This class is an implementation of the <see cref="T:Gentle.Framework.GentleSqlFactory"/> class for the DB2 RDBMS.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.DB2.DB2Factory.GetDbType(System.Type)">
+            <summary>
+            Obtain the integer value of the database type corresponding to the given system type.
+            The value returned must be castable to a valid type for the current persistence engine.
+            </summary>
+            <param name="type">The system type.</param>
+            <returns>The corresponding database type.</returns>
+        </member>
+        <member name="M:Gentle.Provider.DB2.DB2Factory.GetDbType(System.String,System.Boolean)">
+            <summary>
+            This method converts the given string (as extracted from the database system tables) 
+            to the corresponding type enumeration value. 
+            </summary>
+            <param name="dbType">The name of the type with the database engine used.</param>
+            <param name="isUnsigned">A boolean value indicating whether the type is unsigned. This
+            is not supported by most engines and/or data providers and is thus fairly useless at
+            this point.</param>
+            <returns>The value of the corresponding database type enumeration. The enum is converted
+            to its numeric (long) representation because each provider uses its own enum (and they
+            are not compatible with the generic DbType defined in System.Data).</returns>
+        </member>
+        <member name="M:Gentle.Provider.DB2.DB2Factory.GetIdentitySelect(System.String,Gentle.Framework.ObjectMap)">
+            <summary>
+            This method assumes that the tableName and identityColumn parameters are passed
+            in the correct case. 
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details on the
+            purpose of this method. 
+            </summary>
+            <param name="sql">The sql string to which we should append</param>
+            <param name="om">An <see cref="T:Gentle.Framework.ObjectMap"/> instance of the object for which to retrieve the identity select</param>
+            <returns>The modified sql string which also retrieves the identity value</returns>
+        </member>
+        <member name="M:Gentle.Provider.DB2.DB2Factory.GetParameterPrefix">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.DB2.DB2Factory.GetQuoteCharacter">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.DB2.DB2Factory.AddParameter(System.Data.IDbCommand,System.String,System.Int64)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.DB2.DB2Provider">
+            <summary>
+            This class is an implementation of the IPersistenceEngine interface for the DB2 RDBMS.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.DB2.DB2Provider.GetSqlFactory">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.DB2.DB2Provider.GetAnalyzer">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.DB2.DB2Provider.GetRenderer">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.DB2.DB2Provider.GetCommand">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.DB2.DB2Provider.GetConnection">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.DB2.NamespaceDoc">
+            <summary>
+            The <see cref="N:Gentle.Provider.DB2"/> namespace contains the provider files for
+            supporting the IBM DB2 database backend.
+            </summary>
+        </member>
+    </members>
+</doc>

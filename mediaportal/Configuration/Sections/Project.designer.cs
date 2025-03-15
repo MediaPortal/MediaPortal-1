@@ -34,8 +34,8 @@ namespace MediaPortal.Configuration.Sections
       this.labelInfo2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelInfo1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxContact = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.linkLabelSourceforge = new System.Windows.Forms.LinkLabel();
-      this.labelSourceForge = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.linkLabelGithub = new System.Windows.Forms.LinkLabel();
+      this.labelGithub = new MediaPortal.UserInterface.Controls.MPLabel();
       this.linkLabelOnlineDocumentation = new System.Windows.Forms.LinkLabel();
       this.labelOnlineDocumentation = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelIrcChannelData = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -87,15 +87,15 @@ namespace MediaPortal.Configuration.Sections
       this.labelInfo1.Name = "labelInfo1";
       this.labelInfo1.Size = new System.Drawing.Size(440, 32);
       this.labelInfo1.TabIndex = 0;
-      this.labelInfo1.Text = "MediaPortal is an open source project, hosted at SourceForge, that will turn your" +
+      this.labelInfo1.Text = "MediaPortal is an open source project, hosted at Github, that will turn your" +
     " home computer into a fully fledged multi media center (HTPC).";
       // 
       // groupBoxContact
       // 
       this.groupBoxContact.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxContact.Controls.Add(this.linkLabelSourceforge);
-      this.groupBoxContact.Controls.Add(this.labelSourceForge);
+      this.groupBoxContact.Controls.Add(this.linkLabelGithub);
+      this.groupBoxContact.Controls.Add(this.labelGithub);
       this.groupBoxContact.Controls.Add(this.linkLabelOnlineDocumentation);
       this.groupBoxContact.Controls.Add(this.labelOnlineDocumentation);
       this.groupBoxContact.Controls.Add(this.labelIrcChannelData);
@@ -112,25 +112,25 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxContact.TabStop = false;
       this.groupBoxContact.Text = "Contact";
       // 
-      // linkLabelSourceforge
+      // linkLabelGithub
       // 
-      this.linkLabelSourceforge.AutoSize = true;
-      this.linkLabelSourceforge.Location = new System.Drawing.Point(18, 160);
-      this.linkLabelSourceforge.Name = "linkLabelSourceforge";
-      this.linkLabelSourceforge.Size = new System.Drawing.Size(223, 13);
-      this.linkLabelSourceforge.TabIndex = 7;
-      this.linkLabelSourceforge.TabStop = true;
-      this.linkLabelSourceforge.Text = "https://sourceforge.net/projects/mediaportal/";
-      this.linkLabelSourceforge.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel4_LinkClicked);
+      this.linkLabelGithub.AutoSize = true;
+      this.linkLabelGithub.Location = new System.Drawing.Point(18, 160);
+      this.linkLabelGithub.Name = "linkLabelGithub";
+      this.linkLabelGithub.Size = new System.Drawing.Size(223, 13);
+      this.linkLabelGithub.TabIndex = 7;
+      this.linkLabelGithub.TabStop = true;
+      this.linkLabelGithub.Text = "https://github.com/MediaPortal/MediaPortal-1";
+      this.linkLabelGithub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel4_LinkClicked);
       // 
-      // labelSourceForge
+      // labelGithub
       // 
-      this.labelSourceForge.AutoSize = true;
-      this.labelSourceForge.Location = new System.Drawing.Point(10, 144);
-      this.labelSourceForge.Name = "labelSourceForge";
-      this.labelSourceForge.Size = new System.Drawing.Size(135, 13);
-      this.labelSourceForge.TabIndex = 6;
-      this.labelSourceForge.Text = "SourceForge Project Page:";
+      this.labelGithub.AutoSize = true;
+      this.labelGithub.Location = new System.Drawing.Point(10, 144);
+      this.labelGithub.Name = "labelGithub";
+      this.labelGithub.Size = new System.Drawing.Size(135, 13);
+      this.labelGithub.TabIndex = 6;
+      this.labelGithub.Text = "Github Project Page:";
       // 
       // linkLabelOnlineDocumentation
       // 
@@ -296,8 +296,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelHomepage;
     private MediaPortal.UserInterface.Controls.MPLabel labelOnlineDocumentation;
     private System.Windows.Forms.LinkLabel linkLabelOnlineDocumentation;
-    private MediaPortal.UserInterface.Controls.MPLabel labelSourceForge;
-    private System.Windows.Forms.LinkLabel linkLabelSourceforge;
+    private MediaPortal.UserInterface.Controls.MPLabel labelGithub;
+    private System.Windows.Forms.LinkLabel linkLabelGithub;
     private MediaPortal.UserInterface.Controls.MPLabel labelInfo2;
     private MediaPortal.UserInterface.Controls.MPLabel labelMePo;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxAbout;

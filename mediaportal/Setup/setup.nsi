@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2024 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 /*
-// Copyright (C) 2005-2024 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -638,6 +638,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\WindowPlugins\GUIDVD\bin\${BUILD_TYPE}\GUIDVD.dll"
   File "${git_MP}\WindowPlugins\GUIHome\bin\${BUILD_TYPE}\GUIHome.dll"
   File "${git_MP}\WindowPlugins\GUIMusic\bin\${BUILD_TYPE}\GUIMusic.dll"
+  File "${git_MP}\WindowPlugins\GUINotifier\bin\${BUILD_TYPE}\GUINotifier.dll"
   File "${git_MP}\WindowPlugins\GUISudoku\bin\${BUILD_TYPE}\GUISudoku.dll"
   File "${git_MP}\WindowPlugins\GUIPictures\bin\${BUILD_TYPE}\GUIPictures.dll"
   File "${git_MP}\WindowPlugins\GUIRSSFeed\bin\${BUILD_TYPE}\GUIRSSFeed.dll"
@@ -673,9 +674,9 @@ Section "MediaPortal core files (required)" SecCore
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
   !if "${Architecture}" == "x64"
-  File "${git_ROOT}\Packages\Sqlite.3.47.0\sqlite\x64\sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.49.1\sqlite\x64\sqlite.dll"
   !else
-  File "${git_ROOT}\Packages\Sqlite.3.47.0\sqlite\x86\sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.49.1\sqlite\x86\sqlite.dll"
   !endif
   ; NuGet binaries EXIF
   SetOutPath "$MPdir.Base\"
@@ -812,6 +813,9 @@ Section "MediaPortal core files (required)" SecCore
      !endif
   !endif
   
+  ; LibWebP
+  File /oname=libwebp.dll "${git_MP}\MediaPortal.Base\3rd_party\libwebp_${Architecture}.dll"
+
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
@@ -866,12 +870,12 @@ Section "MediaPortal core files (required)" SecCore
   Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\OpenSans-Light.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\OpenSans-Regular.ttf"
 
   ; used for Default and Titan Skin Font
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\OpenSans-Light.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\OpenSans-Regular.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
@@ -1013,6 +1017,7 @@ SectionEnd
   Delete "$MPdir.Plugins\Windows\GUIDVD.dll"
   Delete "$MPdir.Plugins\Windows\GUIHome.dll"
   Delete "$MPdir.Plugins\Windows\GUIMusic.dll"
+  Delete "$MPdir.Plugins\Windows\GUINotifier.dll"
   Delete "$MPdir.Plugins\Windows\GUISudoku.dll"
   Delete "$MPdir.Plugins\Windows\GUIPictures.dll"
   Delete "$MPdir.Plugins\Windows\GUIRSSFeed.dll"
@@ -1034,6 +1039,8 @@ SectionEnd
   Delete "$MPdir.Base\log4net.dll"
   Delete "$MPdir.Base\TsReader.ax"
   Delete "$MPdir.Base\cccp.ax"
+  ; LibWebP
+  Delete "$MPdir.Base\libwebp.dll"
   ; Shaders
   RMDir /r "$MPdir.Base\Shaders"
     

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -42,9 +42,7 @@ namespace UninstallFilelist
 
       CommandLineOptions options = argsOptions as CommandLineOptions;
 
-      if (!options.IsOption(CommandLineOptions.Option.dir)
-          || !options.IsOption(CommandLineOptions.Option.output)
-        )
+      if (!options.IsOption(CommandLineOptions.Option.dir) || !options.IsOption(CommandLineOptions.Option.output))
       {
         argsOptions.DisplayOptions();
         Environment.Exit(0);
@@ -55,10 +53,11 @@ namespace UninstallFilelist
       string ignore = string.Empty;
       if (options.IsOption(CommandLineOptions.Option.ignore))
       {
-        TextReader reader = new StreamReader(options.GetOption(CommandLineOptions.Option.ignore));
-        ignore = reader.ReadToEnd();
+        using (TextReader reader = new StreamReader(options.GetOption(CommandLineOptions.Option.ignore)))
+        {
+          ignore = reader.ReadToEnd();
+        }
       }
-
 
       FileLister lister = new FileLister(directory, ignore);
       lister.UpdateAll();
@@ -68,9 +67,11 @@ namespace UninstallFilelist
         File.Delete(output);
       }
 
-      TextWriter write = new StreamWriter(output, false, System.Text.Encoding.Default);
-      write.Write(lister.FileList);
-      write.Close();
+      using (TextWriter write = new StreamWriter(output, false, System.Text.Encoding.UTF8))
+      {
+        write.Write(lister.FileList);
+        write.Close();
+      }
     }
   }
 }

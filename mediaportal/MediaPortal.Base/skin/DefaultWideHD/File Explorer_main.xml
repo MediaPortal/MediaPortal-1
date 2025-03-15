@@ -10,9 +10,10 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>blue.png</texture>
+      <texture>BH fileexplorer.jpg</texture>
       <width>1920</width>
       <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
@@ -102,7 +103,7 @@
       <label>Test</label>
       <font>font9</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>label right</description>
@@ -113,7 +114,7 @@
       <label>Test</label>
       <font>font9</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>labeldir left</description>
@@ -125,7 +126,7 @@
       <width>702</width>
       <font>font14</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>labeldir right</description>
@@ -137,7 +138,7 @@
       <width>702</width>
       <font>font14</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
   </controls>
 </window>

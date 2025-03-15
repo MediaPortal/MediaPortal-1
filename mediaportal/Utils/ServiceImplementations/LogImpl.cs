@@ -363,6 +363,11 @@ namespace MediaPortal.ServiceImplementations
       _minLevel = logLevel;
     }
 
+    public Level GetLogLevel()
+    {
+      return _minLevel;
+    }
+
     #endregion
   }
 }

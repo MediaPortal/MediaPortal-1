@@ -214,15 +214,15 @@
 				<SectionTemplate tags="LS">
 					<TemplateText>
 					<![CDATA[
-							<li>
-							<span class="t"><#START> - <#END> | </span>
-							<span class="c"></span></div>
-							<div class="">
-							<strong class="tv-tip-heading"><span class="title"><#TITLE></span></strong>
-							<span class="genre-time">| <#GENRE></span>
-							<span class="listing-icon rating-0"></span>
-							<span class="progress-bar"></span>
-							</li>
+						<li>
+						<span class="t"><#START> - <#END> | </span>
+						<span class="c"></span>
+						<strong class="tv-tip-heading"><span class="title"><#TITLE></span></strong>
+						<span class="genre-time">| <#GENRE></span>
+						<span class="listing-icon rating-0"></span>
+						<section ></section>
+						<span class="progress-bar"></span>
+						</li>
 					]]>
 					</TemplateText>
 				</SectionTemplate>

@@ -95,13 +95,13 @@ namespace MediaPortal.Configuration.Sections
 
     private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      if (linkLabelSourceforge.Text == null)
+      if (linkLabelGithub.Text == null)
       {
         return;
       }
-      if (linkLabelSourceforge.Text.Length > 0)
+      if (linkLabelGithub.Text.Length > 0)
       {
-        ProcessStartInfo sInfo = new ProcessStartInfo(linkLabelSourceforge.Text);
+        ProcessStartInfo sInfo = new ProcessStartInfo(linkLabelGithub.Text);
         Process.Start(sInfo);
       }
     }

@@ -17,7 +17,7 @@
       <posX>420</posX>
       <posY>349</posY>
       <width>1077</width>
-      <height>435</height>
+      <height>500</height>
       <texture>dialog_background.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
@@ -28,7 +28,7 @@
       <posX>420</posX>
       <posY>349</posY>
       <width>1077</width>
-      <height>435</height>
+      <height>500</height>
       <texture>dialog_background.png</texture>
       <colordiffuse>bbffffff</colordiffuse>
       <visible>window.isvisible(602)|window.isvisible(2005)</visible>
@@ -38,11 +38,11 @@
       <type>label</type>
       <id>1</id>
       <posX>514</posX>
-      <posY>408</posY>
+      <posY>418</posY>
       <width>786</width>
       <label>0</label>
-      <font>font13</font>
-      <textcolor>ffffffff</textcolor>
+      <font>MenuHeader</font>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>dialog line 1</description>
@@ -53,10 +53,11 @@
       <width>786</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
+	  <scrollStartDelaySec>4</scrollStartDelaySec>
     </control>
     <control>
       <description>dialog line 2</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>3</id>
       <posX>559</posX>
       <posY>522</posY>
@@ -64,28 +65,31 @@
       <width>786</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
+	  <scrollStartDelaySec>4</scrollStartDelaySec>
     </control>
     <control>
       <description>dialog line 3</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>4</id>
       <posX>559</posX>
-      <posY>565</posY>
+      <posY>564</posY>
       <label>0</label>
       <width>786</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
+	  <scrollStartDelaySec>4</scrollStartDelaySec>
     </control>
     <control>
       <description>dialog line 4</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>5</id>
       <posX>559</posX>
-      <posY>622</posY>
+      <posY>606</posY>
       <label>0</label>
       <width>786</width>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
+	  <scrollStartDelaySec>4</scrollStartDelaySec>
     </control>
   </controls>
 </window>

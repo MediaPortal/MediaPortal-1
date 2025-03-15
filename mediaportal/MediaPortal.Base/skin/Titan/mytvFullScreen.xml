@@ -437,6 +437,26 @@
 			<textcolor>ivory</textcolor>
 			<visible>yes</visible>
 		</control>
+        
+        <control>
+            <description>notifier</description>
+            <id>200</id>
+            <type>notifier</type>
+            <posX>0</posX>
+            <posY>50</posY>
+            <width>1920</width>
+            <height>55</height>
+            <messageWidth>1720</messageWidth>
+            <rotationSpeed>400</rotationSpeed>
+            <backgroundTexture>myNotifier/panelmsg.png</backgroundTexture>
+            <messageFont>font11</messageFont>
+            <messageHeight>30</messageHeight>
+            <messageOffsetY>17</messageOffsetY>
+            <messageColorInformation>FF000000</messageColorInformation>
+            <visualStyle>HorizontalScroll</visualStyle>
+            <animation effect="slide" start="0,-180" time="400">Visible</animation>
+            <animation effect="slide" end="0,-180" delay="400" time="400">Hidden</animation>
+        </control>
 
 	</controls>
 </window>

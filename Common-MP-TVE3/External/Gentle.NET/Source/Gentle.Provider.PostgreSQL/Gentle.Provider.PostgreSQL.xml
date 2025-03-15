@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gentle.Provider.PostgreSQL</name>
+    </assembly>
+    <members>
+        <member name="T:Gentle.Provider.PostgreSQL.NamespaceDoc">
+            <summary>
+            The <see cref="N:Gentle.Provider.PostgreSQL"/> namespace contains the provider files for
+            supporting the PostgreSQL database backend.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.PostgreSQL.PostgreSQLAnalyzer.Analyze(System.String)">
+            <summary>
+            Please refer to the <see cref="T:Gentle.Framework.GentleAnalyzer"/> class and the <see cref="T:Gentle.Framework.IDatabaseAnalyzer"/> 
+            interface it implements a description of this method.
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.PostgreSQL.PostgreSQLFactory">
+            <summary>
+            This class is an implementation of the <see cref="T:Gentle.Framework.GentleSqlFactory"/> class for the PostgreSQL RDBMS.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.PostgreSQL.PostgreSQLFactory.GetDbType(System.Type)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.PostgreSQL.PostgreSQLFactory.GetDbType(System.String,System.Boolean)">
+            <summary>
+            This method converts the given string (as extracted from the database system tables) 
+            to the corresponding type enumeration value. 
+            </summary>
+            <param name="dbType">The name of the type with the database engine used.</param>
+            <param name="isUnsigned">A boolean value indicating whether the type is unsigned. This
+            is not supported by most engines and/or data providers and is thus fairly useless at
+            this point.</param>
+            <returns>The value of the corresponding database type enumeration. The enum is converted
+            to its numeric (long) representation because each provider uses its own enum (and they
+            are not compatible with the generic DbType defined in System.Data).</returns>
+        </member>
+        <member name="M:Gentle.Provider.PostgreSQL.PostgreSQLFactory.GetIdentitySelect(System.String,Gentle.Framework.ObjectMap)">
+            <summary>
+            This method assumes that the tableName and identityColumn parameters are passed
+            in the correct case. For PostgreSQL, it looks as if the tableName must be an exact 
+            case-sensitive match and that the identityColumn is always lowercased (at least
+            for auto-generated sequences). 
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details on the
+            purpose of this method. 
+            </summary>
+            <param name="sql">The sql string to which we should append</param>
+            <param name="om">An <see cref="T:Gentle.Framework.ObjectMap"/> instance of the object for which to retrieve the identity select</param>
+            <returns>The modified sql string which also retrieves the identity value</returns>
+        </member>
+        <member name="M:Gentle.Provider.PostgreSQL.PostgreSQLFactory.GetTableName(System.String)">
+            <summary>
+            Formats the given table name for use in queries. This may include prefixing
+            it with a schema name or suffixing it with an alias (for multi-table selects).
+            This default implementation simply returns the string given.
+            </summary>
+            <param name="tableName">The table name to format</param>
+            <returns>The formatted table name</returns>
+        </member>
+        <member name="M:Gentle.Provider.PostgreSQL.PostgreSQLFactory.GetParameterPrefix">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.PostgreSQL.PostgreSQLFactory.GetQuoteCharacter">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.PostgreSQL.PostgreSQLFactory.AddParameter(System.Data.IDbCommand,System.String,System.Int64)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details. 
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.PostgreSQL.PostgreSQLProvider">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.PostgreSQL.PostgreSQLProvider.#ctor(System.String)">
+            <summary>
+            Construct a new IPersistenceEngine instance for the PostgreSQL rdbms.
+            </summary>
+            <param name="connectionString">The connection string to use for 
+            connecting to the database engine.</param>
+        </member>
+        <member name="M:Gentle.Provider.PostgreSQL.PostgreSQLProvider.#ctor(System.String,System.String)">
+            <summary>
+            Construct a new IPersistenceEngine instance for the PostgreSQL rdbms.
+            </summary>
+            <param name="connectionString">The connection string to use for 
+            connecting to the database engine.</param>
+            <param name="schemaName">The schema name to use with this database provider instance.</param>
+        </member>
+        <member name="M:Gentle.Provider.PostgreSQL.PostgreSQLProvider.GetSqlFactory">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.PostgreSQL.PostgreSQLProvider.GetAnalyzer">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.PostgreSQL.PostgreSQLProvider.GetRenderer">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.PostgreSQL.PostgreSQLProvider.GetCommand">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IPersistenceEngine"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.PostgreSQL.PostgreSQLProvider.GetConnection">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IPersistenceEngine"/> interface it implements for details. 
+            </summary>
+        </member>
+    </members>
+</doc>

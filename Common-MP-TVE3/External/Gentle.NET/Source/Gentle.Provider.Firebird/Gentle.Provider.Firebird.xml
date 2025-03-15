@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gentle.Provider.Firebird</name>
+    </assembly>
+    <members>
+        <member name="T:Gentle.Provider.Firebird.FirebirdAnalyzer">
+            <summary>
+            This class is a caching database analyzer. When first created it will build a cache of
+            all found tables and populate an ObjectMap with as much information as is available.
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.Firebird.FirebirdFactory">
+            <summary>
+            This class is an implementation of the <see cref="T:Gentle.Framework.GentleSqlFactory"/> class for the Firebird RDBMS.
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.Firebird.FirebirdFactory.ReservedWords">
+            <summary>
+            Container	class	to test	for	existence	of reserved	words.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Firebird.FirebirdFactory.ReservedWords.#ctor">
+            <summary>
+            Create a new <see	cref="T:Gentle.Provider.Firebird.FirebirdFactory.ReservedWords"/> instance	and	fill
+            internal <see	cref="T:System.Collections.Hashtable"/> with	reserved words for fast
+            retrieval.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Firebird.FirebirdFactory.ReservedWords.IsReservedWord(System.String)">
+            	<summary>
+            	Determine	if the specified token is	a	reserved word	in the current
+            	implementation.	Works	case insensitive.
+            	</summary>
+            	<param name="Token">The	token	that should	be checked.</param>
+            	<returns><see	langword="true"/>	if the specified token is	a	reserved
+            	word,	<see langword="false"/>	if not.</returns>
+            	<example>
+            	The	following	call returns <see	langword="false"/>:
+            	<code>IsReservedWord("FIRSTNAME");</code>
+            	The	following	call returns <see	langword="true"/>:
+            	<code>IsReservedWord("VARCHAR");</code>
+            </example>
+        </member>
+        <member name="F:Gentle.Provider.Firebird.FirebirdFactory.ReservedWords.reservedWordsHashtable">
+            <summary>
+            <see cref="T:System.Collections.Hashtable"/>	containing all reserved	words	for	fast lookup.
+            </summary>
+        </member>
+        <member name="F:Gentle.Provider.Firebird.FirebirdFactory.reservedWords">
+            <summary>
+            Static singleton instance	for	access to	reserved words collection.
+            </summary>
+        </member>
+        <member name="P:Gentle.Provider.Firebird.FirebirdFactory.Capabilities">
+            <summary>
+            Obtain an enum describing the supported database capabilities. The default is
+            to support all capabilities. See <see cref="T:Gentle.Framework.Capability"/> for details on the 
+            available capabilities.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Firebird.FirebirdFactory.GetDbType(System.Type)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Firebird.FirebirdFactory.GetDbType(System.String,System.Boolean)">
+            <summary>
+            This method converts the given string (as extracted from the database system tables)
+            to the corresponding type enumeration value.
+            </summary>
+            <param name="dbType">The name of the type with the database engine used.</param>
+            <param name="isUnsigned">A boolean value indicating whether the type is unsigned. This
+            is not supported by most engines and/or data providers and is thus fairly useless at
+            this point.</param>
+            <returns>The value of the corresponding database type enumeration. The enum is converted
+            to its numeric (long) representation because each provider uses its own enum (and they
+            are not compatible with the generic DbType defined in System.Data).</returns>
+        </member>
+        <member name="M:Gentle.Provider.Firebird.FirebirdFactory.GetIdentitySelect(System.String,Gentle.Framework.ObjectMap)">
+            <summary>
+            This method assumes that the tableName and identityColumn parameters are passed
+            in the correct case. 
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details on the
+            purpose of this method.
+            </summary>
+            <param name="sql">The sql string to which we should append</param>
+            <param name="om">An <see cref="T:Gentle.Framework.ObjectMap"/> instance of the object for which to retrieve the identity select</param>
+            <returns>The modified sql string which also retrieves the identity value</returns>
+        </member>
+        <member name="M:Gentle.Provider.Firebird.FirebirdFactory.GetTableName(System.String)">
+            <summary>
+            Formats the given table name for use in queries. This may include prefixing
+            it with a schema name or suffixing it with an alias (for multi-table selects).
+            This default implementation simply returns the string given.
+            </summary>
+            <param name="tableName">The table name to format</param>
+            <returns>The formatted table name</returns>
+        </member>
+        <member name="M:Gentle.Provider.Firebird.FirebirdFactory.GetParameterPrefix">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Firebird.FirebirdFactory.GetQuoteCharacter">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Firebird.FirebirdFactory.AddParameter(System.Data.IDbCommand,System.String,System.Int64)">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleSqlFactory"/> for details.
+            </summary>
+        </member>
+        <member name="P:Gentle.Provider.Firebird.FirebirdFactory.Schema">
+            <summary>
+            The current schema name or null if no schema.
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Firebird.FirebirdFactory.IsReservedWord(System.String)">
+            <summary>
+            Determine is a word is reserved and needs special quoting.
+            </summary>
+            <param name="word">The word that should be checked for.</param>
+            <returns><see langword="true"/> if the word is reserved.</returns>
+        </member>
+        <member name="M:Gentle.Provider.Firebird.FirebirdFactory.QuoteReservedWord(System.String)">
+            <summary>
+            Obtain a quoted	version	of the reserved	word to	allow	the	reserved word	to be	
+            used in	queries	anyway.	If a reserved	word cannot	be quoted	this method	should
+            raise	an error informing the user	that they	need to	pick a different name.
+            </summary>
+            <returns>The given reserved	word or	field	quoted to	avoid	errors.</returns>
+        </member>
+        <member name="T:Gentle.Provider.Firebird.FirebirdProvider">
+            <summary>
+            This class is an implementation of the GentleProvider class for the Firebird RDBMS.
+            </summary>
+        </member>
+        <member name="P:Gentle.Provider.Firebird.FirebirdProvider.ProviderInformation">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Firebird.FirebirdProvider.GetSqlFactory">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Firebird.FirebirdProvider.GetAnalyzer">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Firebird.FirebirdProvider.GetRenderer">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Firebird.FirebirdProvider.GetCommand">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="M:Gentle.Provider.Firebird.FirebirdProvider.GetConnection">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.GentleProvider"/> and the
+            <see cref="T:Gentle.Framework.IGentleProvider"/> interface it implements for details. 
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.Firebird.FirebirdProviderInformation">
+            <summary>
+            The class encapsulates information about the underlying database provider,
+            as well as the logic to extract it.
+            </summary>
+        </member>
+        <member name="P:Gentle.Provider.Firebird.FirebirdProviderInformation.Name">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.IProviderInformation"/>
+            for details.
+            </summary>
+        </member>
+        <member name="P:Gentle.Provider.Firebird.FirebirdProviderInformation.Version">
+            <summary>
+            Please refer to the documentation of <see cref="T:Gentle.Framework.IProviderInformation"/>
+            for details.
+            </summary>
+        </member>
+        <member name="T:Gentle.Provider.Firebird.NamespaceDoc">
+            <summary>
+            The <see cref="N:Gentle.Provider.Firebird"/> namespace contains the provider files for
+            supporting the Firebird database backend. It should be useable with any InterBase
+            compatible database.
+            </summary>
+        </member>
+    </members>
+</doc>

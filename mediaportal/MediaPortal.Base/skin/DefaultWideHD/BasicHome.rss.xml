@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+   <!--     *******************************************************************************************  -->
+    <!--     *****************************  RSS FEED ON BASIC HOME  ************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>RSS Feed Background</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1995</width>
+      <height>43</height>
+      <posX>-20</posX>
+      <posY>1032</posY>
+      <texture>rss-background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>[plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)]|[plugin.isenabled(World News)+skin.hassetting(#skin.worldnewsticker)]</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>1032</posY>
+      <width>1995</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>dodgerblue</colordiffuse>
+      <visible>[plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)]|[plugin.isenabled(World News)+skin.hassetting(#skin.worldnewsticker)]</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>1075</posY>
+      <width>1995</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>dodgerblue</colordiffuse>
+      <visible>[plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)]|[plugin.isenabled(World News)+skin.hassetting(#skin.worldnewsticker)]</visible>
+    </control>
+    <control Style="NoShadow">
+      <description>Feed items</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>115</posX>
+      <posY>1034</posY>
+      <width>1785</width>
+      <align>left</align>
+      <font>RSS</font>
+      <textcolor>lightgray</textcolor>
+      <label>#infoservice.feed.titles</label>
+      <scrollStartDelaySec>10</scrollStartDelaySec>
+      <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)+!string.contains(#highlightedbutton,Internet5)+!string.contains(#highlightedbutton,Internet6)+!skin.hassetting(#skin.worldnewsticker)</visible>
+    </control>
+    <control Style="NoShadow">
+      <description>Feed items</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>115</posX>
+      <posY>1034</posY>
+      <width>1785</width>
+      <align>left</align>
+      <font>RSS</font>
+      <textcolor>lightgray</textcolor>
+      <label>#WorldNews.NewsTicker</label>
+      <scrollStartDelaySec>10</scrollStartDelaySec>
+      <visible>plugin.isenabled(World News)+skin.hassetting(#skin.worldnewsticker)+!string.contains(#highlightedbutton,Internet5)+!string.contains(#highlightedbutton,Internet6)</visible>
+    </control>
+    <control>
+      <description>RSS Image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>1033</posY>
+      <width>100</width>
+      <height>41</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <valign>middle</valign>
+      <texture>#infoservice.feed.img</texture>
+      <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)+!string.contains(#highlightedbutton,Internet5)+!string.contains(#highlightedbutton,Internet6)+!skin.hassetting(#skin.worldnewsticker)</visible>
+    </control>
+    <control>
+      <description>RSS Image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>1033</posY>
+      <width>100</width>
+      <height>41</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <valign>middle</valign>
+      <texture>#WorldNews.NewsImage</texture>
+      <visible>plugin.isenabled(World News)+skin.hassetting(#skin.worldnewsticker)+!string.contains(#highlightedbutton,Internet5)+!string.contains(#highlightedbutton,Internet6)</visible>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *****************************  RSS BUTTON ON BASIC HOME  **********************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>RSS Image Button Back</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>1033</posY>
+      <width>100</width>
+      <height>41</height>
+      <texture>black.png</texture>
+      <visible>control.hasFocus(1111)</visible>
+    </control>
+    <control Style="NoShadow">
+      <description>RSS Image Button</description>
+      <type>button</type>
+      <id>1111</id>
+      <posX>0</posX>
+      <posY>1033</posY>
+      <width>100</width>
+      <height>41</height>
+      <label>RSS</label>
+      <textcolor>white</textcolor>
+      <textcolorNoFocus></textcolorNoFocus>
+      <font>RSS</font>
+      <onleft>1111</onleft>
+      <onright>1111</onright>
+      <onup>810101</onup>
+      <ondown>1111</ondown>
+      <textXOff>14</textXOff>
+      <textYOff>3</textYOff>
+      <hyperlink>#(iif(eq(#skin.worldnewsticker,'True'),'7979','16001'))</hyperlink>
+      <textureFocus>Button_tiny.png</textureFocus>
+      <textureNoFocus />
+      <visible>[plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)]|[plugin.isenabled(World News)+skin.hassetting(#skin.worldnewsticker)]</visible>
+    </control>
+    
+    
+  </controls>
+</window>

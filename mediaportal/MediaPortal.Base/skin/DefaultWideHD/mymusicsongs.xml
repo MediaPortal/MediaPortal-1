@@ -33,13 +33,11 @@
       <defaultcontrol>2</defaultcontrol>
       <onexit>0</onexit>
       <buttonX>0</buttonX>
-      <buttonY>-60</buttonY>
+      <buttonY>0</buttonY>
       <buttonwidth>159</buttonwidth>
       <buttonheight>1080</buttonheight>
       <textureFocus>-</textureFocus>
       <textureNoFocus>Action_nofocus.png</textureNoFocus>
-      <width>412</width>
-      <height>1080</height>
       <dimColor>00ffffff</dimColor>
       <control>
         <type>image</type>
@@ -77,11 +75,21 @@
           <label />
           <onright>50</onright>
           <onup>17</onup>
-          <ondown>5</ondown>
+          <ondown>11</ondown>
           <mode>dialoglist</mode>
           <dialogTitle>792</dialogTitle>
           <valueTextInButton>yes</valueTextInButton>
           <valuePrefixText>95</valuePrefixText>
+        </control>
+        <control>
+          <description>Now playing</description>
+          <type>button</type>
+          <id>11</id>
+          <label>4540</label>
+          <hyperlink>510</hyperlink>
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>5</ondown>
         </control>
         <control>
           <description>Switch View</description>
@@ -89,7 +97,7 @@
           <id>5</id>
           <label />
           <onright>50</onright>
-          <onup>2</onup>
+          <onup>11</onup>
           <ondown>3</ondown>
           <mode>dialoglist</mode>
           <dialogTitle>499</dialogTitle>
@@ -112,16 +120,6 @@
           <label>890</label>
           <onright>50</onright>
           <onup>3</onup>
-          <ondown>11</ondown>
-        </control>
-        <control>
-          <description>Now playing</description>
-          <type>button</type>
-          <id>11</id>
-          <label>4540</label>
-          <hyperlink>510</hyperlink>
-          <onright>50</onright>
-          <onup>12</onup>
           <ondown>9</ondown>
         </control>
         <control>
@@ -131,7 +129,7 @@
           <label>4555</label>
           <action>33</action>
           <onright>50</onright>
-          <onup>11</onup>
+          <onup>12</onup>
           <ondown>10</ondown>
         </control>
         <control>

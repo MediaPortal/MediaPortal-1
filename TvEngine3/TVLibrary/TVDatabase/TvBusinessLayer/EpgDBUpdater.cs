@@ -77,6 +77,7 @@ namespace TvDatabase
     private bool _alwaysFillHoles;
     private bool _alwaysReplace;
     private TvBusinessLayer _layer;
+    private static List<int> _UpdateTokens = new List<int>();
 
     #endregion
 
@@ -124,12 +125,48 @@ namespace TvDatabase
       {
         return;
       }
-      Log.Epg("{0}: {1} lastUpdate:{2}", _grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime);
+      int iChID = dbChannel.IdChannel;
+      bool bImporting = false;
+      try
+      {
+        lock (_UpdateTokens)
+        {
+          if (_UpdateTokens.Exists(i => iChID == i))
+          {
+            //The channel is already importing now.
+            //It happends when two transponders(on different frequency) carries the same EPG data, causing simultaneously import the same programs.
+            Log.Epg("{0}: [{2}]{1} Already importing. Abort.", this._grabberName, dbChannel.DisplayName, iChID);
+            return;
+          }
 
-      // Store the data in our database
-      ImportPrograms(dbChannel, epgChannel.Programs);
-      // Raise an event with the data so that other plugins can handle the data on their own
-      _epgEvents.OnImportEpgPrograms(epgChannel);
+          if ((DateTime.Now - dbChannel.LastGrabTime).TotalSeconds < 60)
+          {
+            Log.Epg("{0}: [{2}]{1} Last import was in less then 60s. Abort.", this._grabberName, dbChannel.DisplayName, iChID);
+            return;
+          }
+
+          _UpdateTokens.Add(iChID);
+          bImporting = true;
+
+          //Proceed with the import.
+          Log.Epg("{0}: [{3}]{1} lastUpdate:{2}", this._grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime, iChID);
+
+          // Store the data in our database
+          ImportPrograms(dbChannel, epgChannel.Programs);
+          // Raise an event with the data so that other plugins can handle the data on their own
+          this._epgEvents.OnImportEpgPrograms(epgChannel);
+        }
+      }
+      finally
+      {
+        if (bImporting)
+        {
+          lock (_UpdateTokens)
+          {
+            _UpdateTokens.Remove(iChID);
+          }
+        }
+      }
     }
 
     private void ImportPrograms(Channel dbChannel, IList<EpgProgram> epgPrograms)
@@ -220,6 +257,10 @@ namespace TvDatabase
                 }
               }
             }
+          }
+          catch (Gentle.Common.GentleException ex)
+          {
+            Log.Epg("Error the existing epg entry check: {0} - {1}", ex.InnerException, ex.Message);
           }
           catch (Exception ex)
           {

@@ -26,7 +26,7 @@ using SharpDX.Direct3D9;
 
 #region SlidePicture class
 
-internal class SlidePicture
+internal class SlidePicture : IDisposable
 {
   private const int MAX_PICTURE_WIDTH = 2040;
   private const int MAX_PICTURE_HEIGHT = 2040;
@@ -101,8 +101,17 @@ internal class SlidePicture
   {
     if (_texture != null && !_texture.IsDisposed)
     {
-      _texture.Dispose();
-      _texture = null;
+      Log.Warn("[SlidePicture][dtor] Texture dispose call from dtor.");
+      this.Dispose();
+    }
+  }
+
+  public void Dispose()
+  {
+    if (this._texture != null && !this._texture.IsDisposed)
+    {
+      this._texture.Dispose();
+      this._texture = null;
     }
   }
 }

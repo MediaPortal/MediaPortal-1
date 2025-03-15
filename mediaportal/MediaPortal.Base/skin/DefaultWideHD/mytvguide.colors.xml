@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+
 <window>
   <controls>
     <control>
@@ -14,9 +14,9 @@
       <textureNonFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureNonFocusedRight>
       <!-- This icon is used for the hd program indicator -->
       <textureIcon2>tvguide_hd_program_on_now.png</textureIcon2>
-      <icon2Align>left</icon2Align>
-      <icon2VAlign>middle</icon2VAlign>
-      <icon2OffsetX>10</icon2OffsetX>
+      <icon2Align>right</icon2Align>
+      <icon2VAlign>top</icon2VAlign>
+      <icon2OffsetX>1</icon2OffsetX>
       <icon2OffsetY>1</icon2OffsetY>
       <icon2InlineLabel1>yes</icon2InlineLabel1>
     </control>
@@ -32,9 +32,9 @@
       <textureNonFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureNonFocusedRight>
       <!-- This icon is used for the hd program indicator -->
       <textureIcon2>tvguide_hd_program_not_on_now.png</textureIcon2>
-      <icon2Align>left</icon2Align>
-      <icon2VAlign>middle</icon2VAlign>
-      <icon2OffsetX>10</icon2OffsetX>
+      <icon2Align>right</icon2Align>
+      <icon2VAlign>top</icon2VAlign>
+      <icon2OffsetX>1</icon2OffsetX>
       <icon2OffsetY>1</icon2OffsetY>
       <icon2InlineLabel1>yes</icon2InlineLabel1>
       <visible>skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
@@ -50,10 +50,12 @@
       <textureFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureFocusedRight>
       <textureNonFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureNonFocusedRight>
       <!-- The textureIcon is used for the notify indicator; these attributes help position the icon -->
+      <iconWidth>6</iconWidth>
+      <iconHeight>6</iconHeight>
       <iconAlign>right</iconAlign>
       <iconVAlign>middle</iconVAlign>
       <iconOffsetX>0</iconOffsetX>
-      <iconOffsetY>3</iconOffsetY>
+      <iconOffsetY>1</iconOffsetY>
       <iconInlineLabel1>no</iconInlineLabel1>
       <visible>skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
     </control>
@@ -68,10 +70,12 @@
       <textureFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureFocusedRight>
       <textureNonFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureNonFocusedRight>
       <!-- The textureIcon is used for the record indicator; these attributes help position the icon -->
+      <iconWidth>6</iconWidth>
+      <iconHeight>6</iconHeight>
       <iconAlign>right</iconAlign>
       <iconVAlign>middle</iconVAlign>
       <iconOffsetX>0</iconOffsetX>
-      <iconOffsetY>3</iconOffsetY>
+      <iconOffsetY>2</iconOffsetY>
       <iconInlineLabel1>no</iconInlineLabel1>
       <visible>skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
     </control>
@@ -86,10 +90,12 @@
       <textureFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureFocusedRight>
       <textureNonFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureNonFocusedRight>
       <!-- The textureIcon is used for the partial record indicator; these attributes help position the icon -->
+      <iconWidth>6</iconWidth>
+      <iconHeight>6</iconHeight>
       <iconAlign>right</iconAlign>
       <iconVAlign>middle</iconVAlign>
-      <iconOffsetX>10</iconOffsetX>
-      <iconOffsetY>0</iconOffsetY>
+      <iconOffsetX>0</iconOffsetX>
+      <iconOffsetY>2</iconOffsetY>
       <iconInlineLabel1>no</iconInlineLabel1>
       <visible>skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
     </control>
@@ -97,21 +103,21 @@
       <description>Template for genre key color</description>
       <type>image</type>
       <id>110</id>
-      <posX>120</posX>
-      <posY>123</posY>
-      <width>48</width>
-      <height>27</height>
+      <posX>399</posX>
+      <posY>115</posY>
+      <width>44</width>
+      <height>25</height>
       <texture overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</texture>
+      <visible>skin.hassetting(#skin.tvguide.showgenrekey)+skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
     </control>
     <control>
       <description>Template for genre key name</description>
       <type>fadelabel</type>
       <id>111</id>
-      <posY>120</posY>
-      <width>255</width>
-      <scrollStartDelaySec>10000</scrollStartDelaySec>
-      <textcolor>FF6aa5cb</textcolor>
+      <posY>113</posY>
+      <textcolor>fff5deb3</textcolor>
       <font>font10</font>
+      <visible>skin.hassetting(#skin.tvguide.showgenrekey) + skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
     </control>
   </controls>
 </window>

@@ -48,7 +48,7 @@
       <posY>480</posY>
       <label>#myfilms.rating</label>
       <font>font18</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -117,7 +117,7 @@
       <textureWidth>33</textureWidth>
       <textureHeight>33</textureHeight>
       <subitems>
-        <subitem>greystar.png</subitem>
+        <subitem>starbad.png</subitem>
         <subitem>stargood.png</subitem>
       </subitems>
       <orientation>horizontal</orientation>

@@ -326,8 +326,11 @@
 
   <!--            :: RSS ::            -->
 
+  <include condition="#(plugin.isenabled('My Notifier'))">BasicHome.Main.MyNotifier.xml</include>
+  <!--
   <include condition="#(and(plugin.isenabled('World News'),not(eq(#WorldNews.NewsTicker,''))))">BasicHome.Main.RSS.WorldNews.xml</include>
   <include condition="#(and(plugin.isenabled('InfoService'),eq(#infoservice.feed.enabled,'true')))">BasicHome.Main.RSS.InfoServise.xml</include>
+  -->
 
   <!--            :: EXIT BUTTON ::            -->
 

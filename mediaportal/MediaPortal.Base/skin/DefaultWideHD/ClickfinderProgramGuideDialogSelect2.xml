@@ -27,10 +27,10 @@
       <id>4</id>
       <posX>491</posX>
       <posY>367</posY>
-      <width>843</width>
+      <width>833</width>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <font>Menutitle</font>
+	  <font>MenuHeader</font>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>label</description>
@@ -40,7 +40,7 @@
       <posY>2397</posY>
       <width>843</width>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#TestLabel</label>
       <font>font12</font>
     </control>
@@ -52,7 +52,7 @@
       <posY>372</posY>
       <width>35</width>
       <height>35</height>
-      <textureFocus>tb_exit.png</textureFocus>
+      <textureFocus>tb_exit_dialogue.png</textureFocus>
       <textureNoFocus>tb_exitNF.png</textureNoFocus>
       <label>-</label>
       <onleft>3</onleft>

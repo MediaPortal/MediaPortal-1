@@ -65,6 +65,7 @@ namespace Rss
     private RssGuid guid = null;
     private DateTime pubDate = RssDefault.DateTime;
     private RssSource source = null;
+    private RssImage image = null;
 
     /// <summary>Initialize a new instance of the RssItem class</summary>
     public RssItem() {}
@@ -157,6 +158,13 @@ namespace Rss
     {
       get { return pubDate; }
       set { pubDate = value; }
+    }
+
+    /// <summary>Item Image</summary>
+    public RssImage Image
+    {
+      get { return image; }
+      set { image = value; }
     }
   }
 }

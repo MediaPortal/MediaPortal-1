@@ -45,6 +45,9 @@ namespace MediaPortal.GUI.Settings
     public bool ScanShare = false;
     public bool CreateThumbs = true;
     public bool EachFolderIsMovie = false;
+    public bool EnableWakeOnLan = false;
+    public string HostDetectMethod = "Default";
+    public bool DonotFolderJpgIfPin = true;
 
     public bool HasPinCode
     {
@@ -244,6 +247,9 @@ namespace MediaPortal.GUI.Settings
           string sharePort = String.Format("shareport{0}", index);
           string shareRemotePath = String.Format("shareremotepath{0}", index);
           string shareViewPath = String.Format("shareview{0}", index);
+          string sharewakeonlan = string.Format("sharewakeonlan{0}", index);
+          string hostdetectmethod = string.Format("hostdetectmethod{0}", index);
+          string sharedonotfolderjpgifpin = string.Format("sharedonotfolderjpgifpin{0}", index);
 
           string shareNameData = xmlreader.GetValueAsString(section, shareName, "");
           string sharePathData = xmlreader.GetValueAsString(section, sharePath, "");
@@ -266,6 +272,9 @@ namespace MediaPortal.GUI.Settings
           int sharePortData = xmlreader.GetValueAsInt(section, sharePort, 21);
           string shareRemotePathData = xmlreader.GetValueAsString(section, shareRemotePath, "/");
           int shareLayout = xmlreader.GetValueAsInt(section, shareViewPath, (int)GUIFacadeControl.Layout.List);
+          bool shareWakeOnLan = xmlreader.GetValueAsBool(section, sharewakeonlan, false);
+          string hostDetectMethod = xmlreader.GetValueAsString(section, hostdetectmethod, "Default");
+          bool sharedonotFolderJpgIfPin = xmlreader.GetValueAsBool(section, sharedonotfolderjpgifpin, true);
 
           // For Music Shares, we can indicate, if we want to scan them every time
           bool shareScanData = false;
@@ -295,6 +304,9 @@ namespace MediaPortal.GUI.Settings
             newShare.Port = sharePortData;
             newShare.RemoteFolder = shareRemotePathData;
             newShare.DefaultLayout = (GUIFacadeControl.Layout)shareLayout;
+            newShare.EnableWakeOnLan = shareWakeOnLan;
+            newShare.HostDetectMethod = hostDetectMethod;
+            newShare.DonotFolderJpgIfPin = sharedonotFolderJpgIfPin;
 
             newShare.ScanShare = shareScanData;
             
@@ -329,6 +341,9 @@ namespace MediaPortal.GUI.Settings
           string sharePort = String.Format("shareport{0}", index);
           string shareRemotePath = String.Format("shareremotepath{0}", index);
           string shareViewPath = String.Format("shareview{0}", index);
+          string sharewakeonlan = string.Format("sharewakeonlan{0}", index);
+          string hostdetectmethod = string.Format("hostdetectmethod{0}", index);
+          string sharedonotfolderjpgifpin = string.Format("sharedonotfolderjpgifpin{0}", index);
 
           xmlwriter.RemoveEntry(section, shareName);
           xmlwriter.RemoveEntry(section, sharePath);
@@ -340,6 +355,9 @@ namespace MediaPortal.GUI.Settings
           xmlwriter.RemoveEntry(section, sharePort);
           xmlwriter.RemoveEntry(section, shareRemotePath);
           xmlwriter.RemoveEntry(section, shareViewPath);
+          xmlwriter.RemoveEntry(section, sharewakeonlan);
+          xmlwriter.RemoveEntry(section, hostdetectmethod);
+          xmlwriter.RemoveEntry(section, sharedonotfolderjpgifpin);
         }
       }
 
@@ -380,6 +398,9 @@ namespace MediaPortal.GUI.Settings
           string sharePort = String.Format("shareport{0}", index);
           string shareRemotePath = String.Format("shareremotepath{0}", index);
           string shareViewPath = String.Format("shareview{0}", index);
+          string sharewakeonlan = string.Format("sharewakeonlan{0}", index);
+          string hostdetectmethod = string.Format("hostdetectmethod{0}", index);
+          string sharedonotfolderjpgifpin = string.Format("sharedonotfolderjpgifpin{0}", index);
 
           xmlwriter.RemoveEntry(section, shareName);
           xmlwriter.RemoveEntry(section, sharePath);
@@ -391,6 +412,9 @@ namespace MediaPortal.GUI.Settings
           xmlwriter.RemoveEntry(section, sharePort);
           xmlwriter.RemoveEntry(section, shareRemotePath);
           xmlwriter.RemoveEntry(section, shareViewPath);
+          xmlwriter.RemoveEntry(section, sharewakeonlan);
+          xmlwriter.RemoveEntry(section, hostdetectmethod);
+          xmlwriter.RemoveEntry(section, sharedonotfolderjpgifpin);
 
           if (section == "music" || section == "movies")
           {
@@ -421,6 +445,9 @@ namespace MediaPortal.GUI.Settings
           //ThumbsCreate (default true)
           bool thumbsCreate = true;
           bool folderIsMovie = false;
+          bool shareWakeOnLan = false;
+          string hostDetectMethod = "Default";
+          bool sharedonotFolderJpgIfPin = true;
 
           if (_shareListControl != null && _shareListControl.Count > index)
           {
@@ -442,6 +469,9 @@ namespace MediaPortal.GUI.Settings
               // ThumbsCreate
               thumbsCreate = shareData.CreateThumbs;
               folderIsMovie = shareData.EachFolderIsMovie;
+              shareWakeOnLan = shareData.EnableWakeOnLan;
+              hostDetectMethod = shareData.HostDetectMethod;
+              sharedonotFolderJpgIfPin = shareData.DonotFolderJpgIfPin;
 
               if (shareNameData == _defaultShare)
               {
@@ -458,6 +488,12 @@ namespace MediaPortal.GUI.Settings
               xmlwriter.SetValue(section, sharePort, sharePortData.ToString());
               xmlwriter.SetValue(section, shareRemotePath, shareRemotePathData);
               xmlwriter.SetValue(section, shareViewPath, shareLayout);
+              xmlwriter.SetValueAsBool(section, sharewakeonlan, shareWakeOnLan);
+              if (!string.IsNullOrEmpty(hostdetectmethod) || hostdetectmethod != "Default")
+              {
+                xmlwriter.SetValue(section, hostdetectmethod, hostDetectMethod);
+              }
+              xmlwriter.SetValueAsBool(section, sharedonotfolderjpgifpin, sharedonotFolderJpgIfPin);
 
               if (section == "music" || section == "movies")
               {

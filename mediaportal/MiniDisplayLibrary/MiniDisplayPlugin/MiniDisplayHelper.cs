@@ -330,7 +330,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         }
 
         //Now see if we are recording
-        return (bool) DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer", "IsAnyCardRecording", null);
+        //return (bool) DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer", "IsAnyCardRecording", null);
+        return "true".Equals(GUIPropertyManager.GetProperty("#TV.Record.Active"), StringComparison.OrdinalIgnoreCase);
     }
 
     //This function is broken cause it simply calls IsAnyCardRecording
@@ -342,7 +343,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             return false;
         }
         //See if any card is timeshifting?
-        return (bool)DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer", "IsAnyCardRecording", null);
+        //return (bool)DynaInvoke.InvokeMethod(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll", "TvServer", "IsAnyCardRecording", null);
+        return "true".Equals(GUIPropertyManager.GetProperty("#TV.Record.Active"), StringComparison.OrdinalIgnoreCase);
     }
 
     public static bool Player_Playing()

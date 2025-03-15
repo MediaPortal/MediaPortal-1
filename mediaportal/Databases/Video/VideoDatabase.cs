@@ -170,12 +170,12 @@ namespace MediaPortal.Video.Database
       _database.RemoveGenresForMovie(lMovieId);
     }
 
-    public static string GetGenresForMovie(int lMovieId)      
+    public static string GetGenresForMovie(int lMovieId)
     {
       return _database.GetGenresForMovie(lMovieId);
     }
 
-    public static void GetMovieGenres(int lMovieId, ArrayList movieGenres)      
+    public static void GetMovieGenres(int lMovieId, ArrayList movieGenres)
     {
       _database.GetMovieGenres(lMovieId, movieGenres);
     }
@@ -189,15 +189,15 @@ namespace MediaPortal.Video.Database
     }
 
     public static int GetCollectionId(string movieCollection)
-    {  
+    {
       return _database.GetCollectionId(movieCollection);
     }
 
     public static void AddCollectionDescription(string movieCollection, string description)
     {
       _database.AddCollectionDescription(movieCollection, description);
-    }      
-    
+    }
+
     public static string GetCollectionDescriptionById(int collectionId)
     {
       return _database.GetCollectionDescriptionById(collectionId);
@@ -238,12 +238,12 @@ namespace MediaPortal.Video.Database
       _database.RemoveCollectionsForMovie(lMovieId);
     }
 
-    public static string GetCollectionsForMovie(int lMovieId)      
+    public static string GetCollectionsForMovie(int lMovieId)
     {
       return _database.GetCollectionsForMovie(lMovieId);
     }
 
-    public static void GetMovieCollections(int lMovieId, ArrayList movieCollections)      
+    public static void GetMovieCollections(int lMovieId, ArrayList movieCollections)
     {
       _database.GetMovieCollections(lMovieId, movieCollections);
     }
@@ -275,7 +275,7 @@ namespace MediaPortal.Video.Database
     {
       _database.AddUserGroupDescription(userGroup, description);
     }
-    
+
     public static void GetUserGroups(ArrayList userGroups)
     {
       _database.GetUserGroups(userGroups);
@@ -290,7 +290,7 @@ namespace MediaPortal.Video.Database
     {
       return _database.GetUserGroupDescriptionById(groupId);
     }
-    
+
     public static string GetUserGroupsForMovie(int lMovieId)
     {
       return _database.GetUserGroupsForMovie(lMovieId);
@@ -300,7 +300,7 @@ namespace MediaPortal.Video.Database
     {
       _database.GetMovieUserGroups(movieId, userGroups);
     }
-    
+
     public static void AddUserGroupToMovie(int lMovieId, int lUserGroupId)
     {
       _database.AddUserGroupToMovie(lMovieId, lUserGroupId);
@@ -400,7 +400,7 @@ namespace MediaPortal.Video.Database
       _database.DeleteActorFromMovie(movieId, actorId);
     }
 
-    public static string GetRoleByMovieAndActorId (int lMovieId, int lActorId)
+    public static string GetRoleByMovieAndActorId(int lMovieId, int lActorId)
     {
       return _database.GetRoleByMovieAndActorId(lMovieId, lActorId);
     }
@@ -571,6 +571,11 @@ namespace MediaPortal.Video.Database
     public static bool GetmovieWatchedStatus(int iMovieId, out int percent, out int timesWatched)
     {
       return _database.GetMovieWatchedStatus(iMovieId, out percent, out timesWatched);
+    }
+
+    public static void ResetWatchedForAllMoviesInFolder(string folderName)
+    {
+      _database.ResetWatchedForAllMoviesInFolder(folderName);
     }
 
     #endregion
@@ -944,7 +949,7 @@ namespace MediaPortal.Video.Database
       _database.ImportNfo(nfoFile, skipExisting, refreshdbOnly);
     }
 
-    public static bool MakeNfo (int movieId)
+    public static bool MakeNfo(int movieId)
     {
       return _database.MakeNfo(movieId);
     }
@@ -1004,7 +1009,7 @@ namespace MediaPortal.Video.Database
     {
       return _database.CheckActorImdbId(id);
     }
-    
+
     /// <summary>
     /// Returns all video files from path (for files with videoextension defined in MP)
     /// </summary>

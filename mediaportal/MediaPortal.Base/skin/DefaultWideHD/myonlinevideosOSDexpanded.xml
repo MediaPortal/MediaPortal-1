@@ -124,7 +124,7 @@
       <align>left</align>
       <label>#Play.Current.Title</label>
       <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>control.hasfocus(1237)</visible>
     </control>
     <control>
@@ -160,7 +160,7 @@
       <label>#time</label>
       <align>right</align>
       <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>control.hasfocus(1237)</visible>
     </control>
     <control>

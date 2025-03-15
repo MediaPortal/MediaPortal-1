@@ -1,52 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
+
 <window>
   <id>708</id>
   <defaultcontrol>19</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
-      <control>
-        <description>background</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>620</posX>
-        <posY>225</posY>
-        <width>1280</width>
-        <height>707</height>
-        <texture>backslide2.png</texture>
-      </control>
-      <control>
-        <description>Background</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>98</posX>
-        <posY>220</posY>
-        <width>480</width>
-        <height>710</height>
-        <texture>backslide.png</texture>
-      </control>
-      <control>
-        <type>label</type>
-        <id>1</id>
-        <posX>230</posX>
-        <posY>260</posY>
-        <width>480</width>
-        <label>924</label>
-        <textcolor>white</textcolor>
-        <font>Label</font>
-      </control>
       <control>
         <description>buttons</description>
         <type>group</type>
-        <posX>118</posX>
+        <posX>92</posX>
         <posY>305</posY>
         <dimColor>ffffffff</dimColor>
         <layout>StackLayout(0, Vertical, true)</layout>
@@ -55,8 +23,9 @@
           <type>button</type>
           <id>9991</id>
           <label>128</label>
+          <width>410</width>
           <onup>17</onup>
-          <onright>19</onright>
+          <onright>2</onright>
           <hyperlink>1016</hyperlink>
         </control>
         <control>
@@ -64,6 +33,7 @@
           <type>button</type>
           <id>9992</id>
           <label>101021</label>
+          <width>410</width>
           <hyperlink>1021</hyperlink>
           <onup>9991</onup>
           <onright>19</onright>
@@ -73,97 +43,96 @@
           <type>button</type>
           <id>9993</id>
           <label>6023</label>
+          <width>410</width>
           <hyperlink>9</hyperlink>
           <onup>9992</onup>
-          <onright>19</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>TV</description>
           <type>button</type>
           <id>9994</id>
           <label>605</label>
+          <width>410</width>
           <hyperlink>700</hyperlink>
           <onup>9993</onup>
-          <onright>19</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>My Pictures</description>
           <type>button</type>
           <id>9995</id>
           <label>1</label>
+          <width>410</width>
           <hyperlink>12</hyperlink>
           <onup>9994</onup>
-          <onright>19</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>Movies</description>
           <type>button</type>
           <id>9996</id>
           <label>3</label>
+          <width>410</width>
           <hyperlink>703</hyperlink>
           <onup>9995</onup>
-          <onright>19</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>My DVD</description>
           <type>button</type>
           <id>9997</id>
           <label>1027</label>
+          <width>410</width>
           <hyperlink>704</hyperlink>
           <onup>9996</onup>
-          <onright>19</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>BluRay</description>
           <type>button</type>
           <id>9998</id>
           <label>300217</label>
+          <width>410</width>
           <hyperlink>1024</hyperlink>
           <onup>9997</onup>
-          <onright>19</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>My Music</description>
           <type>button</type>
           <id>9999</id>
           <label>2</label>
+          <width>410</width>
           <hyperlink>14</hyperlink>
           <ondown>99910</ondown>
           <onup>9998</onup>
-          <onright>19</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>MiniDisplay</description>
           <type>button</type>
           <id>99910</id>
           <label>9100</label>
+          <width>410</width>
           <hyperlink>9000</hyperlink>
           <ondown>9991</ondown>
           <onup>9999</onup>
-          <onright>19</onright>
+          <onright>2</onright>
           <visible>plugin.isenabled(MiniDisplay)</visible>
         </control>
       </control>
       <control>
-        <type>label</type>
-        <id>1</id>
-        <posX>688</posX>
-        <posY>260</posY>
-        <width>1000</width>
-        <label>#currentmodule</label>
-        <textcolor>white</textcolor>
-        <font>Label</font>
-      </control>
-    <control>
     <description>add button</description>
     <type>button</type>
     <id>19</id>
 		<posX>655</posX>
 		<posY>305</posY>
-		<width>500</width>
+		<width>550</width><textureFocus>setting_button_medium.png</textureFocus>
 		<label>200039</label>
-    <onup>99</onup>
+    <onup>127</onup>
     <onright>2</onright>
+    <onleft>9992</onleft>
   </control>
 	  
   <control>
@@ -172,9 +141,10 @@
     <id>20</id>
 		<posX>655</posX>
 		<posY>360</posY>
-		<width>500</width>
+		<width>550</width><textureFocus>setting_button_medium.png</textureFocus>
 		<label>200040</label>
     <onright>3</onright>
+    <onleft>9992</onleft>
   </control>
 	  
 	<control>
@@ -183,10 +153,11 @@
     <id>18</id>
 		<posX>655</posX>
 		<posY>415</posY>
-		<width>500</width>
+		<width>550</width><textureFocus>setting_button_medium.png</textureFocus>
 		<label>886</label>
     <ondown>22</ondown>
-    <onright>5</onright>		
+    <onright>5</onright>
+    <onleft>9992</onleft>		
   </control>
 
 	
@@ -198,35 +169,30 @@
 		<id>1</id>
 		<posX>685</posX>
 		<posY>485</posY>
-		<width>600</width>		
+		<width>550</width>		
 		<label>300139</label>
 		<font>Label</font>
-		<textcolor>white</textcolor>
-		<animation effect="fade" time="150">WindowOpen</animation>
-		<animation effect="fade" time="150">WindowClose</animation>		
+		<textcolor>dodgerblue</textcolor>
 	</control>		
-	
-  <control>
+	<control>
 		<description>Timeout button</description>
 		<type>button</type>
 		<id>22</id>
 		<posX>655</posX>
 		<posY>545</posY>
-		<width>500</width>
+		<width>550</width><textureFocus>setting_button_medium.png</textureFocus>	
     <label>300140</label>
 		<ondown>23</ondown>
-		<onright>22</onright>						
+		<onright>22</onright>
+    <onleft>9992</onleft>						
 	</control>
-						
 	<control>
 		<type>label</type>
 		<description>timeout value label</description>
 		<id>1</id>
 		<label>#timeoutValue</label>
-		<font>Label</font>		
-		<posX>1080</posX>
-		<posY>555</posY>	
-    <align>right</align>	
+		<posX>1120</posX>
+		<posY>552</posY>			
 	</control>
 			
 	<!--skip type-->
@@ -237,10 +203,10 @@
 		<id>1</id>
 		<posX>685</posX>
 		<posY>625</posY>
-		<width>600</width>		
+		<width>550</width>		
 		<label>300141</label>
 		<font>Label</font>
-    <textcolor>white</textcolor>	
+    <textcolor>dodgerblue</textcolor>	
 	</control>	
 	
   <control>
@@ -249,10 +215,11 @@
 		<id>23</id>
 		<posX>655</posX>
 		<posY>685</posY>
-    <width>500</width>		
+    <width>550</width><textureFocus>setting_button_medium.png</textureFocus>		
 		<label>300142</label>
 		<ondown>24</ondown>
-		<onright>23</onright>					
+		<onright>23</onright>	
+    <onleft>9992</onleft>				
 	</control>
 
   <control>
@@ -261,10 +228,11 @@
 		<id>24</id>
 		<posX>655</posX>
 		<posY>740</posY>
-    <width>500</width>		
+    <width>550</width><textureFocus>setting_button_medium.png</textureFocus>		
 		<label>300143</label>
 		<ondown>25</ondown>
-		<onright>24</onright>						
+		<onright>24</onright>	
+    <onleft>9992</onleft>					
 	</control>
 
   <control>
@@ -273,21 +241,22 @@
 		<id>25</id>
 		<posX>655</posX>
 		<posY>795</posY>
-		<width>500</width>
+		<width>550</width>
+		<textureFocus>setting_button_medium.png</textureFocus>	
     <label>300144</label>
 		<ondown>19</ondown>
-		<onright>25</onright>						
+		<onright>25</onright>
+    <onleft>9992</onleft>						
 	</control>
 						
 	<control>
 		<type>label</type>
 		<description>Skip value label</description>
 		<id>1</id>
-		<posX>1080</posX>
-		<posY>805</posY>		
-		<font>Label</font>		
+		<posX>1120</posX>
+		<posY>804</posY>		
+			
 		<label>#skipValue</label>	
-		<align>right</align>
 	</control>
 
 	<!--skip-->
@@ -296,8 +265,8 @@
     <description>skip steps seconds</description>
     <type>group</type>  
 		<posX>1256</posX>
-		<posY>340</posY>
-      <layout>StackLayout(60)</layout>
+		<posY>305</posY>
+      <layout>StackLayout(40)</layout>
 	  
       <control>
         <type>label</type>
@@ -305,7 +274,8 @@
         <id>1</id>
         <label>9997</label>
 		    <font>Label</font>
-    	  <textcolor>white</textcolor>	
+		    <height>40</height>
+    	  <textcolor>dodgerblue</textcolor>	
       </control>
 	  
       <control>
@@ -358,16 +328,17 @@
       <type>group</type>     
 		
 		<posX>1456</posX>
-		<posY>340</posY>
-      <layout>StackLayout(60)</layout>
+		<posY>305</posY>
+      <layout>StackLayout(40)</layout>
 	  
     <control>
       <description>skip steps minutes</description>
       <type>label</type>
       <id>1</id>
       <label>9998</label>
+      <height>40</height>
 			<font>Label</font>
-    	<textcolor>white</textcolor>
+    	<textcolor>dodgerblue</textcolor>
     </control>
 	  
       <control>
@@ -463,8 +434,8 @@
 		<description>skip steps hours</description>
 		<type>group</type>     
 		<posX>1656</posX>
-		<posY>340</posY>
-		<layout>StackLayout(60)</layout>
+		<posY>305</posY>
+		<layout>StackLayout(40)</layout>
 	  
     <control>
       <description>skip steps hours</description>
@@ -472,7 +443,8 @@
       <id>1</id>
       <label>9999</label>
 			<font>Label</font>
-    	<textcolor>white</textcolor>
+			<height>40</height>
+    	<textcolor>dodgerblue</textcolor>
     </control>
 	  
       <control>
@@ -543,7 +515,7 @@
         <posX>-2000</posX>
         <posY>587</posY>
         <label>15,30,60,300</label>
-        <font>font12</font>
+        <font>RSS</font>
       </control>
     </control> 
     

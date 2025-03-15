@@ -6,6 +6,16 @@
       <type>group</type>
       <dimColor>FFFFFFFF</dimColor>
       <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>Trakt #scroll.wrap #Trakt.Activity.Description</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>lightgray</textcolor>
+    </control>
+      <!--control>
         <type>label</type>
         <id>0</id>
         <posX>510</posX>
@@ -13,7 +23,7 @@
         <width>1260</width>
         <font>font14</font>
         <label>#Trakt.Activity.Description</label>
-      </control>
+      </control-->
       <control>
         <description>Activity Stream</description>
         <type>facadeview</type>
@@ -32,9 +42,9 @@
           <onright>98301</onright>
           <textXOff>50</textXOff>
           <PinIconXOff>55</PinIconXOff>
-          <PinIconYOff>3</PinIconYOff>
-          <PinIconWidth>40</PinIconWidth>
-          <PinIconHeight>40</PinIconHeight>
+          <PinIconYOff>4</PinIconYOff>
+          <PinIconWidth>45</PinIconWidth>
+          <PinIconHeight>45</PinIconHeight>
           <spinPosX>3626</spinPosX>
           <spinPosY>984</spinPosY>
           <scrollbarHeight>400</scrollbarHeight>

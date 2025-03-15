@@ -113,7 +113,7 @@
       <height>270</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <texture mask="Picturethumbmask.png">#selectedthumb</texture>
+      <texture mask="musicfanart_mask.png">#selectedthumb</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>!Control.IsVisible(51)</visible>
     </control>
@@ -125,7 +125,7 @@
       <posY>270</posY>
       <width>390</width>
       <height>270</height>
-      <texture mask="Picturethumbmask.png">Picturethumbframe.png</texture>
+      <texture mask="musicfanart_mask.png">Picturethumbframe.png</texture>
       <visible>!Control.IsVisible(51)</visible>
     </control>
     <control>
@@ -197,7 +197,7 @@
       <label>#OnlineVideos.buffered</label>
       <label1>-</label1>
       <label2>-</label2>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#OnlineVideos.IsBuffering, true) + !player.hasmedia+!control.isVisible(51)</visible>
     </control>
     <control>
@@ -241,7 +241,7 @@
       <label>#OnlineVideos.buffered</label>
       <label1>-</label1>
       <label2>-</label2>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#OnlineVideos.IsBuffering, true) + !player.hasmedia+control.isVisible(51)</visible>
     </control>
     <control>
@@ -256,6 +256,7 @@
       <label>#OnlineVideos.buffered % #OnlineVideos.Translation.Buffered.Label</label>
       <visible>string.equals(#OnlineVideos.IsBuffering, true) + !player.hasmedia+control.isVisible(51)</visible>
     </control>
+	
     <!-- *** HIDDEN MENU *** -->
     <control>
       <type>actiongroup</type>
@@ -263,13 +264,12 @@
       <defaultcontrol>2</defaultcontrol>
       <onexit>50</onexit>
       <buttonX>0</buttonX>
-      <buttonY>-60</buttonY>
+      <buttonY>0</buttonY>
       <buttonwidth>159</buttonwidth>
       <buttonheight>1080</buttonheight>
       <textureFocus>-</textureFocus>
       <textureNoFocus>Action_nofocus.png</textureNoFocus>
-      <width>852</width>
-      <height>1350</height>
+     
       <dimColor>00ffffff</dimColor>
       <control>
         <type>image</type>
@@ -296,9 +296,10 @@
         <type>group</type>
         <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
         <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+		<visible>!Control.HasFocus(50)</visible>										
         <posX>75</posX>
         <posY>181</posY>
-        <layout>StackLayout</layout>
+        <layout>StackLayout(0, Vertical, true)</layout>
         <visible>!Control.HasFocus(50)</visible>
         <control>
           <description>View-As</description>
@@ -308,8 +309,8 @@
           <onright>50</onright>
           <onup>47016</onup>
           <ondown>10</ondown>
-          <font>font11</font>
-          <height>55</height>
+          
+          
         </control>
         <control>
           <type>button</type>
@@ -319,8 +320,8 @@
           <onright>50</onright>
           <onup>2</onup>
           <ondown>9</ondown>
-          <font>font11</font>
-          <height>55</height>
+          
+          
         </control>
         <control>
           <description>select category</description>
@@ -330,8 +331,8 @@
           <onright>50</onright>
           <onup>10</onup>
           <ondown>5</ondown>
-          <font>font11</font>
-          <height>55</height>
+          
+          
         </control>
         <control>
           <type>selectbutton</type>
@@ -341,8 +342,8 @@
           <onright>50</onright>
           <onup>9</onup>
           <ondown>6</ondown>
-          <font>font11</font>
-          <height>55</height>
+          
+          
         </control>
         <control>
           <type>selectbutton</type>
@@ -352,8 +353,8 @@
           <onright>50</onright>
           <onup>5</onup>
           <ondown>7</ondown>
-          <font>font11</font>
-          <height>55</height>
+         
+          
         </control>
         <control>
           <type>selectbutton</type>
@@ -363,8 +364,8 @@
           <onright>50</onright>
           <onup>6</onup>
           <ondown>8</ondown>
-          <font>font11</font>
-          <height>55</height>
+          
+          
         </control>
         <control>
           <type>button</type>
@@ -374,8 +375,8 @@
           <onright>50</onright>
           <onup>7</onup>
           <ondown>12</ondown>
-          <font>font11</font>
-          <height>55</height>
+          
+          
         </control>
         <control>
           <type>button</type>
@@ -385,8 +386,8 @@
           <onright>50</onright>
           <onup>8</onup>
           <ondown>13</ondown>
-          <font>font11</font>
-          <height>55</height>
+          
+          
         </control>
         <control>
           <type>button</type>
@@ -396,8 +397,8 @@
           <onright>50</onright>
           <onup>12</onup>
           <ondown>14</ondown>
-          <font>font11</font>
-          <height>55</height>
+          
+          
           <hyperlink>4757</hyperlink>
         </control>
         <control>
@@ -408,7 +409,6 @@
           <onup>13</onup>
           <ondown>15</ondown>
           <label>5</label>
-          <font>font11</font>
           <height>55</height>
           <visible>string.equals(#mpei.269bd257_7ce5_450a_b786_1c2834c81849.isinstalled, true)</visible>
         </control>
@@ -420,8 +420,8 @@
           <onup>14</onup>
           <ondown>2</ondown>
           <label>#MPEI.Translation.UpdateAvailable.Label</label>
-          <font>font11</font>
-          <height>55</height>
+         
+          
           <visible>string.equals(#mpei.269bd257_7ce5_450a_b786_1c2834c81849.haveupdate, true)</visible>
         </control>
       </control>

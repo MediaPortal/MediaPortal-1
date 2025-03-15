@@ -1,52 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
+
 <window>
   <id>704</id>
   <defaultcontrol>22</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
-      <control>
-        <description>background</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>620</posX>
-        <posY>225</posY>
-        <width>1280</width>
-        <height>707</height>
-        <texture>backslide2.png</texture>
-      </control>
-      <control>
-        <description>Background</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>98</posX>
-        <posY>220</posY>
-        <width>480</width>
-        <height>710</height>
-        <texture>backslide.png</texture>
-      </control>
-      <control>
-        <type>label</type>
-        <id>1</id>
-        <posX>230</posX>
-        <posY>260</posY>
-        <width>480</width>
-        <label>924</label>
-        <textcolor>white</textcolor>
-        <font>Label</font>
-      </control>
       <control>
         <description>buttons</description>
         <type>group</type>
-        <posX>118</posX>
+        <posX>92</posX>
         <posY>305</posY>
         <dimColor>ffffffff</dimColor>
         <layout>StackLayout(0, Vertical, true)</layout>
@@ -55,8 +23,9 @@
           <type>button</type>
           <id>9991</id>
           <label>128</label>
+          <width>410</width>
           <onup>17</onup>
-          <onright>22</onright>
+          <onright>2</onright>
           <hyperlink>1016</hyperlink>
         </control>
         <control>
@@ -64,51 +33,57 @@
           <type>button</type>
           <id>9992</id>
           <label>101021</label>
+          <width>410</width>
           <hyperlink>1021</hyperlink>
           <onup>9991</onup>
-          <onright>22</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>Screen</description>
           <type>button</type>
           <id>9993</id>
           <label>6023</label>
+          <width>410</width>
           <hyperlink>9</hyperlink>
           <onup>9992</onup>
-          <onright>22</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>TV</description>
           <type>button</type>
           <id>9994</id>
           <label>605</label>
+          <width>410</width>
           <hyperlink>700</hyperlink>
           <onup>9993</onup>
-          <onright>22</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>My Pictures</description>
           <type>button</type>
           <id>9995</id>
           <label>1</label>
+          <width>410</width>
           <hyperlink>12</hyperlink>
           <onup>9994</onup>
-          <onright>22</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>Movies</description>
           <type>button</type>
           <id>9996</id>
           <label>3</label>
+          <width>410</width>
           <hyperlink>703</hyperlink>
           <onup>9995</onup>
-          <onright>22</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>My DVD</description>
           <type>button</type>
           <id>9997</id>
           <label>1027</label>
+          <width>410</width>
           <hyperlink>704</hyperlink>
           <onup>9996</onup>
           <onright>22</onright>
@@ -118,41 +93,34 @@
           <type>button</type>
           <id>9998</id>
           <label>300217</label>
+          <width>410</width>
           <hyperlink>1024</hyperlink>
           <onup>9997</onup>
-          <onright>22</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>My Music</description>
           <type>button</type>
           <id>9999</id>
           <label>2</label>
+          <width>410</width>
           <hyperlink>14</hyperlink>
           <ondown>99910</ondown>
           <onup>9998</onup>
-          <onright>22</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>MiniDisplay</description>
           <type>button</type>
           <id>99910</id>
           <label>9100</label>
+          <width>410</width>
           <hyperlink>9000</hyperlink>
           <ondown>9991</ondown>
           <onup>9999</onup>
-          <onright>22</onright>
+          <onright>2</onright>
           <visible>plugin.isenabled(MiniDisplay)</visible>
         </control>
-      </control>
-      <control>
-        <type>label</type>
-        <id>1</id>
-        <posX>700</posX>
-        <posY>260</posY>
-        <width>1000</width>
-        <label>#currentmodule</label>
-        <textcolor>white</textcolor>
-        <font>Label</font>
       </control>
       <control>
         <description>buttons</description>
@@ -166,36 +134,41 @@
         <type>checkbutton</type>
         <id>22</id>
         <label>1196</label>
-        <width>525</width>
-        <onup>17</onup>
+        <width>535</width><textureFocus>setting_button_medium.png</textureFocus>
+        <onup>127</onup>
+        <onleft>9997</onleft>
       </control>
       <control>
         <description>Enable Closed Caption</description>
         <type>checkbutton</type>
         <id>31</id>
         <label>300079</label>
-        <width>525</width>
+        <width>535</width><textureFocus>setting_button_medium.png</textureFocus>
+        <onleft>9997</onleft>
       </control>
       <control>
         <description>Turn Off DXVA</description>
         <type>checkbutton</type>
         <id>23</id>
         <label>1197</label>
-        <width>525</width>
+        <width>535</width><textureFocus>setting_button_medium.png</textureFocus>
+        <onleft>9997</onleft>
       </control>
       <control>
         <description>Video</description>
         <type>button</type>
         <id>24</id>
         <label>291</label>
-        <width>525</width>
+        <width>535</width><textureFocus>setting_button_medium.png</textureFocus>
+        <onleft>9997</onleft>
       </control>
       <control>
         <description>Audio</description>
         <type>button</type>
         <id>25</id>
         <label>292</label>
-        <width>525</width>
+        <width>535</width><textureFocus>setting_button_medium.png</textureFocus>
+        <onleft>9997</onleft>
         <ondown>22</ondown>
       </control>
     </control>

@@ -87,7 +87,7 @@
       <label>#currentmodule</label>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Movie name</description>
@@ -97,7 +97,7 @@
       <posY>60</posY>
       <width>1125</width>
       <font>font14</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>#myfilms.cover.currentmoviename</label>
     </control>
     <control>
@@ -108,7 +108,7 @@
       <posY>60</posY>
       <align>right</align>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <label>#myfilms.cover.filterresolution (#selectedindex/#myfilms.cover.count)</label>
     </control>
     <control>
@@ -120,7 +120,7 @@
       <posY>150</posY>
       <width>270</width>
       <font>font10</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Current Main Cover</description>
@@ -182,7 +182,7 @@
       <posY>405</posY>
       <width>795</width>
       <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <align>right</align>
     </control>
     <control>
@@ -195,7 +195,7 @@
       <width>795</width>
       <font>font13</font>
       <align>right</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#myfilms.cover.selectedcoverresolution)</visible>
     </control>
     <!-- Facade Layouts  -->

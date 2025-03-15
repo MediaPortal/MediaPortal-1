@@ -50,6 +50,10 @@ namespace MediaPortal.Services
       _instance.Add<ILog>(new ServiceCreatorCallback<ILog>(LogServiceRequested));
       _instance.Add<IThreadPool>(
         new ServiceCreatorCallback<IThreadPool>(ThreadPoolServiceRequested));
+      _instance.Add<IHttpCachingService>(
+        new ServiceCreatorCallback<IHttpCachingService>(HttpCachingServiceRequested));
+      _instance.Add<IImageLoadService>(
+        new ServiceCreatorCallback<IImageLoadService>(ImageLoadServiceRequested));
     }
 
     #endregion
@@ -141,6 +145,20 @@ namespace MediaPortal.Services
       pool.DebugLog += new LoggerDelegate(_instance.Get<ILog>().Debug);
       services.Add<IThreadPool>(pool);
       return pool;
+    }
+
+    private static IHttpCachingService HttpCachingServiceRequested(ServiceProvider services)
+    {
+      HttpCachingSevice service = new HttpCachingSevice(Path.Combine(Configuration.Config.GetFolder(Configuration.Config.Dir.Config), @".cache\http\"));
+      services.Add<IHttpCachingService>(service);
+      return service;
+    }
+
+    private static IImageLoadService ImageLoadServiceRequested(ServiceProvider services)
+    {
+      ImageLoadService service = new ImageLoadService(Screen.PrimaryScreen.Bounds.Size);
+      services.Add<IImageLoadService>(service);
+      return service;
     }
 
     #endregion

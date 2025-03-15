@@ -18,17 +18,17 @@
       <colordiffuse>40ffffff</colordiffuse>
     </control>
     <import>common.time.xml</import>
-    <control>
+    <!--control>
       <type>label</type>
       <id>1</id>
       <posX>45</posX>
-      <posY>15</posY>
+      <posY>54</posY>
       <label>Trakt</label>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control>
+      <textcolor>lightgray</textcolor>
+    </control-->
+    <!--control>
       <type>image</type>
       <id>0</id>
       <posX>60</posX>
@@ -37,12 +37,21 @@
       <height>120</height>
       <keepaspectratio>yes</keepaspectratio>
       <texture>logos\trakt.png</texture>
-    </control>
+    </control-->
+    <control>
+        <type>image</type>
+        <posX>37</posX>
+        <posY>250</posY>
+        <width>339</width>
+        <height>540</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>ffffffff</colorDiffuse>
+      </control>
     <control>
       <type>group</type>
       <description>group element</description>
       <posX>60</posX>
-      <posY>241</posY>
+      <posY>285</posY>
       <width>420</width>
       <height>568</height>
       <layout>StackLayout(Vertical)</layout>

@@ -178,6 +178,12 @@ namespace MediaPortal.Player
           localType = (g_Player.MediaType)aMediaType;
         }
 
+        if (localType == g_Player.MediaType.Online ||
+          aFileName.StartsWith("http://") || aFileName.StartsWith("https://") || aFileName.StartsWith(OnlinePlayerUrl.URL_SCHEME))
+        {
+          return new OnlinePlayer();
+        }
+
         // Get settings only once
         using (Settings xmlreader = new MPSettings())
         {

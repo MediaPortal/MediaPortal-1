@@ -49,7 +49,7 @@
           <unfocusedAlpha>160</unfocusedAlpha>
           <folderPrefix />
           <folderSuffix />
-          <textureFocus>#(iif(eq(#watchedcount,'0'),'button_focus_notwatched.png','button_focus.png'))</textureFocus>
+          <textureFocus>#(iif(eq(#watchedcount,'0'),'listfocus_notwatched.png','listfocus.png'))</textureFocus>
           <texturebg>osd_progress_background.png</texturebg>
           <lefttexture>green.png</lefttexture>
           <midtexture>green.png</midtexture>
@@ -270,7 +270,7 @@
                 <width>230</width>
                 <label>#title</label>
                 <font>font11</font>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, true)</visible>
@@ -285,7 +285,7 @@
                 <label>#groupmovielist</label>
                 <font>font9</font>
                 <lineSpacing>2</lineSpacing>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, True)</visible>
@@ -298,7 +298,7 @@
                 <width>230</width>
                 <label>#title</label>
                 <font>font11</font>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, False)</visible>
@@ -313,7 +313,7 @@
                 <textureWidth>17</textureWidth>
                 <textureHeight>17</textureHeight>
                 <subitems>
-                  <subitem>greystar.png</subitem>
+                  <subitem>starbad.png</subitem>
                   <subitem>star.png</subitem>
                 </subitems>
                 <orientation>horizontal</orientation>
@@ -330,7 +330,7 @@
                 <width>365</width>
                 <label>#genre</label>
                 <font>font9</font>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, False)</visible>
@@ -343,7 +343,7 @@
                 <width>365</width>
                 <label>#year  /  #runtime</label>
                 <font>font9</font>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, False)</visible>
@@ -356,7 +356,7 @@
                 <width>365</width>
                 <label>#(L(199)) #director</label>
                 <font>font9</font>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, False)</visible>
@@ -369,7 +369,7 @@
                 <width>365</width>
                 <label>#(L(173)) #mpaarating</label>
                 <font>font9</font>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, False)</visible>
@@ -384,7 +384,7 @@
                 <label>#plot</label>
                 <font>font9</font>
                 <lineSpacing>2.5</lineSpacing>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, False)</visible>

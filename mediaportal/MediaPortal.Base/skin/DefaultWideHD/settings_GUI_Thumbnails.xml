@@ -1,52 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
+
 <window>
   <id>1005</id>
-  <defaultcontrol>10</defaultcontrol>
+  <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
-      <control>
-        <description>background</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>620</posX>
-        <posY>225</posY>
-        <width>1280</width>
-        <height>707</height>
-        <texture>backslide2.png</texture>
-      </control>
-      <control>
-        <description>Background</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>98</posX>
-        <posY>220</posY>
-        <width>480</width>
-        <height>710</height>
-        <texture>backslide.png</texture>
-      </control>
-      <control>
-        <type>label</type>
-        <id>1</id>
-        <posX>230</posX>
-        <posY>260</posY>
-        <width>480</width>
-        <label>924</label>
-        <textcolor>white</textcolor>
-        <font>Label</font>
-      </control>
       <control>
         <description>buttons</description>
         <type>group</type>
-        <posX>118</posX>
+        <posX>92</posX>
         <posY>305</posY>
         <dimColor>ffffffff</dimColor>
         <layout>StackLayout(0, Vertical, true)</layout>
@@ -55,8 +23,9 @@
           <type>button</type>
           <id>9991</id>
           <label>128</label>
+          <width>410</width>
           <onup>17</onup>
-          <onright>10</onright>
+          <onright>2</onright>
           <hyperlink>1016</hyperlink>
         </control>
         <control>
@@ -64,102 +33,112 @@
           <type>button</type>
           <id>9992</id>
           <label>101021</label>
+          <width>410</width>
           <hyperlink>1021</hyperlink>
           <onup>9991</onup>
-          <onright>10</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>Screen</description>
           <type>button</type>
           <id>9993</id>
           <label>6023</label>
+          <width>410</width>
           <hyperlink>9</hyperlink>
           <onup>9992</onup>
-          <onright>10</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>TV</description>
           <type>button</type>
           <id>9994</id>
           <label>605</label>
+          <width>410</width>
           <hyperlink>700</hyperlink>
           <onup>9993</onup>
-          <onright>10</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>My Pictures</description>
           <type>button</type>
           <id>9995</id>
           <label>1</label>
+          <width>410</width>
           <hyperlink>12</hyperlink>
           <onup>9994</onup>
-          <onright>10</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>Movies</description>
           <type>button</type>
           <id>9996</id>
           <label>3</label>
+          <width>410</width>
           <hyperlink>703</hyperlink>
           <onup>9995</onup>
-          <onright>10</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>My DVD</description>
           <type>button</type>
           <id>9997</id>
           <label>1027</label>
+          <width>410</width>
           <hyperlink>704</hyperlink>
           <onup>9996</onup>
-          <onright>10</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>BluRay</description>
           <type>button</type>
           <id>9998</id>
           <label>300217</label>
+          <width>410</width>
           <hyperlink>1024</hyperlink>
           <onup>9997</onup>
-          <onright>10</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>My Music</description>
           <type>button</type>
           <id>9999</id>
           <label>2</label>
+          <width>410</width>
           <hyperlink>14</hyperlink>
           <ondown>99910</ondown>
           <onup>9998</onup>
-          <onright>10</onright>
+          <onright>2</onright>
         </control>
         <control>
           <description>MiniDisplay</description>
           <type>button</type>
           <id>99910</id>
           <label>9100</label>
+          <width>410</width>
           <hyperlink>9000</hyperlink>
           <ondown>9991</ondown>
           <onup>9999</onup>
-          <onright>10</onright>
+          <onright>2</onright>
           <visible>plugin.isenabled(MiniDisplay)</visible>
         </control>
       </control>
       <control>
+        <description>Thumb quality label</description>
         <type>label</type>
         <id>1</id>
-        <posX>688</posX>
-        <posY>260</posY>
-        <width>1000</width>
-        <label>#currentmodule</label>
-        <textcolor>white</textcolor>
+        <posX>1358</posX>
+        <posY>315</posY>
+        <width>600</width>
+        <label>#(L(300145)):</label>
         <font>Label</font>
+        <textcolor>dodgerblue</textcolor>
       </control>
       <control>
         <description>Thumb quality</description>
         <type>spincontrol</type>
         <id>10</id>
-        <posX>1048</posX>
-        <posY>270</posY>
+        <posX>1388</posX>
+        <posY>360</posY>
         <onleft>10</onleft>
         <onright>10</onright>
         <onup>17</onup>
@@ -174,19 +153,19 @@
         <posY>315</posY>
         <width>600</width>
         <label>300149</label>
-        <font>font11</font>
-        <textcolor>white</textcolor>
+        <font>font10</font>
+        <textcolor>dodgerblue</textcolor>
       </control>
       <control>
         <description>Screen label</description>
         <type>label</type>
         <id>1</id>
-        <posX>1048</posX>
+        <posX>948</posX>
         <posY>315</posY>
         <width>600</width>
         <label>#thumbScreen</label>
-        <font>font11</font>
-        <textcolor>white</textcolor>
+        <font>font10</font>
+        <textcolor>deepskyblue</textcolor>
       </control>
       <control>
         <description>Resolution label</description>
@@ -196,19 +175,19 @@
         <posY>347</posY>
         <width>400</width>
         <label>169</label>
-        <font>font11</font>
-        <textcolor>white</textcolor>
+        <font>font10</font>
+        <textcolor>dodgerblue</textcolor>
       </control>
       <control>
         <description>Resolution label</description>
         <type>label</type>
         <id>1</id>
-        <posX>1048</posX>
+        <posX>948</posX>
         <posY>347</posY>
         <width>400</width>
         <label>#thumbResolution</label>
-        <font>font11</font>
-        <textcolor>white</textcolor>
+        <font>font10</font>
+        <textcolor>deepskyblue</textcolor>
       </control>
       <control>
         <description>Compositing label</description>
@@ -218,19 +197,19 @@
         <posY>379</posY>
         <width>400</width>
         <label>300146</label>
-        <font>font11</font>
-        <textcolor>white</textcolor>
+        <font>font10</font>
+        <textcolor>dodgerblue</textcolor>
       </control>
       <control>
         <description>Compositing label</description>
         <type>label</type>
         <id>1</id>
-        <posX>1048</posX>
+        <posX>948</posX>
         <posY>379</posY>
         <width>400</width>
         <label>#thumbCompositing</label>
-        <font>font11</font>
-        <textcolor>white</textcolor>
+        <font>font10</font>
+        <textcolor>deepskyblue</textcolor>
       </control>
       <control>
         <description>Interpolation label</description>
@@ -240,19 +219,19 @@
         <posY>411</posY>
         <width>400</width>
         <label>300147</label>
-        <font>font11</font>
-        <textcolor>white</textcolor>
+        <font>font10</font>
+        <textcolor>dodgerblue</textcolor>
       </control>
       <control>
         <description>Interpolation label</description>
         <type>label</type>
         <id>1</id>
-        <posX>1048</posX>
+        <posX>948</posX>
         <posY>411</posY>
         <width>400</width>
         <label>#thumbInterpolation</label>
-        <font>font11</font>
-        <textcolor>white</textcolor>
+        <font>font10</font>
+        <textcolor>deepskyblue</textcolor>
       </control>
       <control>
         <description>Smoothing label</description>
@@ -262,19 +241,19 @@
         <posY>443</posY>
         <width>400</width>
         <label>300148</label>
-        <font>font11</font>
-        <textcolor>white</textcolor>
+        <font>font10</font>
+        <textcolor>dodgerblue</textcolor>
       </control>
       <control>
         <description>Smoothing label</description>
         <type>label</type>
         <id>1</id>
-        <posX>1048</posX>
+        <posX>948</posX>
         <posY>443</posY>
         <width>400</width>
         <label>#thumbSmoothing</label>
-        <font>font11</font>
-        <textcolor>white</textcolor>
+        <font>font10</font>
+        <textcolor>deepskyblue</textcolor>
       </control>
       <!--Music-->
       <control>
@@ -286,7 +265,7 @@
         <width>200</width>
         <label>249</label>
         <font>Label</font>
-        <textcolor>white</textcolor>
+        <textcolor>dodgerblue</textcolor>
       </control>
       <control>
         <description>Create music thumb button</description>
@@ -294,7 +273,7 @@
         <id>2</id>
         <posX>655</posX>
         <posY>550</posY>
-        <width>550</width>
+        <width>550</width><textureFocus>setting_button_medium.png</textureFocus>
         <label>300150</label>
         <onleft>9992</onleft>
         <onright>4</onright>
@@ -307,7 +286,7 @@
         <id>3</id>
         <posX>655</posX>
         <posY>605</posY>
-        <width>550</width>
+        <width>550</width><textureFocus>setting_button_medium.png</textureFocus>
         <label>300151</label>
         <onup>2</onup>
         <ondown>4</ondown>
@@ -324,7 +303,7 @@
         <width>250</width>
         <label>300152</label>
         <font>Label</font>
-        <textcolor>white</textcolor>
+        <textcolor>dodgerblue</textcolor>
       </control>
       <control>
         <description>Create pictures thumbs button</description>
@@ -332,7 +311,7 @@
         <id>4</id>
         <posX>1240</posX>
         <posY>550</posY>
-        <width>550</width>
+        <width>550</width><textureFocus>setting_button_medium.png</textureFocus>
         <label>300153</label>
         <onup>3</onup>
         <ondown>5</ondown>
@@ -345,7 +324,7 @@
         <id>5</id>
         <posX>1240</posX>
         <posY>605</posY>
-        <width>550</width>
+        <width>550</width><textureFocus>setting_button_medium.png</textureFocus>
         <label>300154</label>
         <onup>4</onup>
         <ondown>6</ondown>
@@ -362,7 +341,7 @@
         <width>250</width>
         <label>300155</label>
         <font>Label</font>
-        <textcolor>white</textcolor>
+        <textcolor>dodgerblue</textcolor>
       </control>
       <control>
         <description>Create video thumbs button</description>
@@ -375,7 +354,7 @@
         <ondown>7</ondown>
         <onleft>9992</onleft>
         <onright>11</onright>
-        <width>550</width>
+        <width>550</width><textureFocus>setting_button_medium.png</textureFocus>
       </control>
       <control>
         <description>Leave a thumb button</description>
@@ -388,7 +367,7 @@
         <ondown>8</ondown>
         <onleft>9992</onleft>
         <onright>12</onright>
-        <width>550</width>
+        v<width>550</width><textureFocus>setting_button_medium.png</textureFocus>
       </control>
       <control>
         <description>Delete video thumbs button</description>
@@ -396,7 +375,7 @@
         <id>8</id>
         <posX>655</posX>
         <posY>840</posY>
-        <width>550</width>
+        <width>550</width><textureFocus>setting_button_medium.png</textureFocus>
         <label>300158</label>
         <onup>7</onup>
         <ondown>11</ondown>
@@ -413,18 +392,17 @@
         <width>400</width>
         <label>300159</label>
         <font>Label</font>
-        <textcolor>white</textcolor>
+        <textcolor>dodgerblue</textcolor>
       </control>
       <control>
         <description>Thumb columns/rows for videos</description>
         <type>label</type>
         <id>1</id>
-        <posX>1258</posX>
+        <posX>1252</posX>
         <posY>740</posY>
         <width>500</width>
         <label>450</label>
         <font>Label</font>
-        <textcolor>ff6FAFE1</textcolor>
       </control>
       <control>
         <description>Columns spincontrol</description>
@@ -441,12 +419,11 @@
         <description>Rows label</description>
         <type>label</type>
         <id>1</id>
-        <posX>1258</posX>
+        <posX>1252</posX>
         <posY>795</posY>
         <width>500</width>
         <label>300160</label>
         <font>Label</font>
-        <textcolor>ff6FAFE1</textcolor>
       </control>
       <control>
         <description>Rows spincontrol</description>

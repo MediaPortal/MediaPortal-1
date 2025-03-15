@@ -28,7 +28,7 @@
       <dimColor>50ffffff</dimColor>
     </control>
     <import>Trakt.Common.Fanart.xml</import>
-    <import>common.window.xml</import>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
     <control>
       <description>General Overlay</description>
@@ -45,11 +45,11 @@
       <type>label</type>
       <id>0</id>
       <posX>45</posX>
-      <posY>15</posY>
+      <posY>54</posY>
       <width>1299</width>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
-      <label>#Trakt.Show.Title | #(iif(eq(#Trakt.Episode.Season,'0'),'#Trakt.Translation.Specials.Label','#Trakt.Translation.Season.Label #Trakt.Episode.Season'))</label>
+      <textcolor>lightgray</textcolor>
+      <label>Trakt #scroll.wrap #Trakt.Show.Title #scroll.wrap #(iif(eq(#Trakt.Episode.Season,'0'),'#Trakt.Translation.Specials.Label','#Trakt.Translation.Season.Label #Trakt.Episode.Season'))</label>
       <align>left</align>
     </control>
     <import>Trakt.Common.Facade.Episodes.xml</import>

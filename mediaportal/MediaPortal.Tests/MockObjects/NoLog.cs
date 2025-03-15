@@ -69,5 +69,7 @@ namespace MediaPortal.Tests.MockObjects
     public void WriteFile(LogType type, Level logLevel, string format, params object[] arg) {}
 
     public void SetLogLevel(Level logLevel) {}
+
+    public Level GetLogLevel() { return Level.Information; }
   }
 }

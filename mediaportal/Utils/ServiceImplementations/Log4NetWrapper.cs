@@ -94,6 +94,11 @@ namespace MediaPortal.ServiceImplementations
       CommonLogger.Instance.LogLevel = ConvertToCommonLogLevel(logLevel);
     }
 
+    public Level GetLogLevel()
+    {
+      return ConvertToLogLevel(CommonLogger.Instance.LogLevel);
+    }
+
     public void Log(MediaInfo.LogLevel loglevel, string message, params object[] parameters)
     {
       CommonLogLevel commonLogLevel;
@@ -168,6 +173,27 @@ namespace MediaPortal.ServiceImplementations
         case Level.Information: return CommonLogLevel.Information;
         case Level.Warning: return CommonLogLevel.Warning;
         default: return CommonLogLevel.All;
+      }
+    }
+
+    private static Level ConvertToLogLevel(CommonLogLevel logLevel)
+    {
+      switch (logLevel)
+      {
+        case CommonLogLevel.Debug:
+          return Level.Debug;
+
+        case CommonLogLevel.Error:
+          return Level.Error;
+
+        case CommonLogLevel.Information:
+          return Level.Information;
+
+        case CommonLogLevel.Warning:
+          return Level.Warning;
+
+        default:
+          return Level.Debug;
       }
     }
 

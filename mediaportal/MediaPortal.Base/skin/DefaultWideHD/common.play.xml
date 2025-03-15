@@ -20,58 +20,71 @@
       <description>row 1 label</description>
       <type>label</type>
       <id>10</id>
-      <posX>0</posX>
+      <posX>0</posX> 
       <posY>1030</posY>
-      <width>1920</width>
+      <width>1640</width> 
       <label>-</label>
       <font>font14</font>
       <align>center</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>no</visible>
     </control>
     <control>
       <description>row 2 label</description>
       <type>label</type>
       <id>11</id>
-      <posX>0</posX>
+      <posX>0</posX> 
       <posY>1030</posY>
-      <width>1920</width>
+      <width>1640</width> 
       <label>-</label>
       <font>font14</font>
       <align>center</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>no</visible>
     </control>
     <control>
       <description>row 3 label</description>
       <type>fadelabel</type>
       <id>12</id>
-      <posX>0</posX>
+      <posX>0</posX> 
       <posY>1030</posY>
-      <width>1920</width>
+      <width>1640</width> 
       <label>-</label>
       <font>font14</font>
       <align>center</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>no</visible>
     </control>
     <!-- **************************** PAUSE, REWIND ETC. FOR NORMAL VIDEO OSD ********************************** -->
-    <control>
+    <!--control>
       <description>Pause image</description>
       <type>image</type>
       <id>0</id>
       <posX>920</posX>
       <posY>1015</posY>
       <visible>player.paused</visible>
-      <texture>video-pause.png</texture>
+      <texture>pause_white_transparent.png</texture>
       <colorkey>0</colorkey>
       <colordiffuse>ivory</colordiffuse>
+    </control-->
+    <control>
+      <description>Pause on transparent white background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>910</posX>
+      <posY>490</posY>
+      <width>100</width>
+      <height>100</height>
+      <texture>pause_white_transparent.png</texture>
+      <colordiffuse>eeffffff</colordiffuse>
+      <visible>player.paused</visible>
+      <animation effect="zoom" start="100,100" end="115,115" time="1500" condition="true" pulse="true">conditional</animation>
     </control>
     <control>
       <description>2x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>920</posX>
+      <posX>780</posX>
       <posY>1015</posY>
       <visible>player.forwarding2x+!control.hasfocus(1237)</visible>
       <texture>video+2x.png</texture>
@@ -82,7 +95,7 @@
       <description>4x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>920</posX>
+      <posX>780</posX>
       <posY>1015</posY>
       <visible>player.forwarding4x+!control.hasfocus(1237)</visible>
       <texture>video+4x.png</texture>
@@ -93,7 +106,7 @@
       <description>8x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>920</posX>
+      <posX>780</posX>
       <posY>1015</posY>
       <visible>player.forwarding8x+!control.hasfocus(1237)</visible>
       <texture>video+8x.png</texture>
@@ -104,7 +117,7 @@
       <description>16x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>920</posX>
+      <posX>780</posX>
       <posY>1015</posY>
       <visible>player.forwarding16x+!control.hasfocus(1237)</visible>
       <texture>video+16x.png</texture>
@@ -115,7 +128,7 @@
       <description>32x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>920</posX>
+      <posX>780</posX>
       <posY>1015</posY>
       <visible>player.forwarding32x+!control.hasfocus(1237)</visible>
       <texture>video+32x.png</texture>
@@ -126,7 +139,7 @@
       <description>- 2x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>920</posX>
+      <posX>780</posX>
       <posY>1015</posY>
       <visible>player.rewinding2x+!control.hasfocus(1237)</visible>
       <texture>video-2x.png</texture>
@@ -137,7 +150,7 @@
       <description>- 4x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>920</posX>
+      <posX>780</posX>
       <posY>1015</posY>
       <visible>player.rewinding4x+!control.hasfocus(1237)</visible>
       <texture>video-4x.png</texture>
@@ -148,7 +161,7 @@
       <description>- 8x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>920</posX>
+      <posX>780</posX>
       <posY>1015</posY>
       <visible>player.rewinding8x+!control.hasfocus(1237)</visible>
       <texture>video-8x.png</texture>
@@ -159,7 +172,7 @@
       <description>- 16x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>920</posX>
+      <posX>780</posX>
       <posY>1015</posY>
       <visible>player.rewinding16x+!control.hasfocus(1237)</visible>
       <texture>video-16x.png</texture>
@@ -170,7 +183,7 @@
       <description>- 32x image</description>
       <type>image</type>
       <id>0</id>
-      <posX>920</posX>
+      <posX>780</posX>
       <posY>1015</posY>
       <visible>player.rewinding32x+!control.hasfocus(1237)</visible>
       <texture>video-32x.png</texture>

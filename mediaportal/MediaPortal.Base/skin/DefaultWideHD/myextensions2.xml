@@ -9,9 +9,10 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>blue.png</texture>
+      <texture>BH extensions.jpg</texture>
       <width>1920</width>
       <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
@@ -138,11 +139,11 @@
       <type>textboxscrollup</type>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
       <posX>1455</posX>
-      <posY>630</posY>
+      <posY>640</posY>
       <width>420</width>
-      <height>270</height>
+      <height>260</height>
       <textcolor>ffFFFFFF</textcolor>
-      <font>font11</font>
+      <font>font10</font>
       <label>#MPE.Selected.Description</label>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>
@@ -152,7 +153,7 @@
       <description>extension image</description>
       <type>image</type>
       <posX>1455</posX>
-      <posY>300</posY>
+      <posY>260</posY>
       <width>391</width>
       <height>331</height>
       <texture>#selectedthumb</texture>

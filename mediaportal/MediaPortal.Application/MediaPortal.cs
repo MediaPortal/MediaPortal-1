@@ -3745,6 +3745,10 @@ public class MediaPortalApp : D3D, IRender
     if (GlobalServiceProvider.Get<IMediaInfoService>() == null)
       GlobalServiceProvider.Add<IMediaInfoService>(new MediaPortal.MediaInfoService.Database.MediaInfoService());
 
+    //Register NotifyMessageService service
+    if (GlobalServiceProvider.Get<INotifyMessageService>() == null)
+      GlobalServiceProvider.Add<INotifyMessageService>(new MediaPortal.NotifyMessageService.Database.NotifyMessageService());
+
     //Load screen calibration prior loading window plugins
     GUIGraphicsContext.Load();
 

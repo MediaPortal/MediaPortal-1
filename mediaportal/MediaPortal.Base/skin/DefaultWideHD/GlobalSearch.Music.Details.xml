@@ -5,6 +5,7 @@
   <defaultcontrol>11</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <define>#usePlayFanart:Yes</define>
+  <define>#header.label:</define>
   <define>#useSelectedFanart:Yes</define>
   <controls>
     <control>
@@ -32,21 +33,25 @@
     <control>
       <description>Selected item Label</description>
       <type>fadelabel</type>
-      <id>1</id>
-      <posX>0</posX>
-      <posY>142</posY>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
       <width>1920</width>
-      <label>#GlobalSearch.Music.Details.Artist - #GlobalSearch.Music.Details.Title</label>
-      <font>Menutitle</font>
-      <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <label>#currentmodule #scroll.wrap #GlobalSearch.Music.Details.Artist #scroll.wrap #GlobalSearch.Music.Details.Title</label>
+      <font>Label</font>
+      <align>left</align>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
       <type>group</type>
       <description>group element</description>
       <posX>60</posX>
       <posY>270</posY>
-      <width>570</width>
+      <width>550</width>
       <height>568</height>
       <layout>StackLayout</layout>
       <control>
@@ -55,14 +60,14 @@
         <id>11</id>
         <onleft>11</onleft>
         <onup>12</onup>
-        <width>570</width>
+        <width>550</width><textureFocus>setting_button_medium.png</textureFocus>
         <label>4552</label>
       </control>
       <control>
         <type>button</type>
         <description>Add to favorites</description>
         <id>15</id>
-        <width>570</width>
+        <width>550</width>
         <label>930</label>
         <onleft>15</onleft>
       </control>
@@ -70,7 +75,7 @@
         <type>button</type>
         <description>Add album to playlist</description>
         <id>14</id>
-        <width>570</width>
+        <width>550</width><textureFocus>setting_button_medium.png</textureFocus>
         <label>33041</label>
         <onleft>14</onleft>
       </control>
@@ -78,7 +83,7 @@
         <type>button</type>
         <description>Add to playlist</description>
         <id>13</id>
-        <width>570</width>
+        <width>550</width><textureFocus>setting_button_medium.png</textureFocus>
         <label>926</label>
         <onleft>13</onleft>
       </control>
@@ -86,7 +91,7 @@
         <type>button</type>
         <description>Play next</description>
         <id>12</id>
-        <width>570</width>
+        <width>550</width><textureFocus>setting_button_medium.png</textureFocus>
         <label>4551</label>
         <onleft>12</onleft>
         <ondown>11</ondown>

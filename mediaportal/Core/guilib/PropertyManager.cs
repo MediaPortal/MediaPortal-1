@@ -306,6 +306,14 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Current.HasSubtitles"] = string.Empty;
       _properties["#Play.Current.AspectRatio"] = string.Empty;
 
+      _properties["#Play.Current.Buffer.IsAvailable"] = string.Empty;
+      _properties["#Play.Current.Buffer.IsBuffering"] = string.Empty;
+      _properties["#Play.Current.Buffer.BufferSize"] = string.Empty;
+      _properties["#Play.Current.Buffer.BufferTime"] = string.Empty;
+      _properties["#Play.Current.Buffer.BufferLevel"] = string.Empty;
+      _properties["#Play.Current.Stream.Audio.Total"] = string.Empty;
+      _properties["#Play.Current.Stream.Audio.IsMulti"] = string.Empty;
+
       _properties["#Play.AlbumInfo.Review"] = string.Empty;
       _properties["#Play.AlbumInfo.Rating"] = string.Empty;
       _properties["#Play.AlbumInfo.Genre"] = string.Empty;
