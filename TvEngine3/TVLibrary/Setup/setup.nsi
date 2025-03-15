@@ -571,6 +571,10 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
 
+  ; Additional assemblies
+  File "${TVSERVER.BASE}\System.Threading.Tasks.Extensions.dll"
+  File "${TVSERVER.BASE}\System.Runtime.CompilerServices.Unsafe.dll"
+
   ; WatchDogService
   File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDogService.Interface.dll"
   File "${git_TVServer}\WatchDogService\bin\${BUILD_TYPE}\WatchDogService.exe"
@@ -835,6 +839,10 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\libssl-1_1.dll"
   Delete "$INSTDIR\MediaInfo.Wrapper.dll"
 
+  ; Additional assemblies
+  Delete "$INSTDIR\System.Threading.Tasks.Extensions.dll"
+  Delete "$INSTDIR\System.Runtime.CompilerServices.Unsafe.dll"
+
   ; protocol implementations for MPIPTVSource.ax
   Delete "$INSTDIR\MPIPTV_FILE.dll"
   Delete "$INSTDIR\MPIPTV_HTTP.dll"
@@ -892,6 +900,8 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File /oname=System.Data.SQLite.dll "${git_TVServer}\TVDatabase\references\System.Data.SQLite_${Architecture}.dll"
   File "${git_TVServer}\TVDatabase\references\log4net.dll"
   File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
+  File "${git_TVServer}\TVServer.Base\System.Threading.Tasks.Extensions.dll"
+  File "${git_TVServer}\TVServer.Base\System.Runtime.CompilerServices.Unsafe.dll"
 
   ;Gentle.Config
   SetOutPath "$MPdir.Config"
@@ -953,6 +963,8 @@ ${MementoSectionEnd}
   Delete "$MPdir.Base\TvBusinessLayer.dll"
   Delete "$MPdir.Base\TvControl.dll"
   Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
+  Delete "$MPdir.Base\System.Threading.Tasks.Extensions.dll"
+  Delete "$MPdir.Base\System.Runtime.CompilerServices.Unsafe.dll"
 !macroend
 
 ${MementoSectionDone}
