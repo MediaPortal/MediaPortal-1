@@ -181,7 +181,7 @@ namespace MediaPortal.GUI.Notifier
         }
 
         this._GUIbuttonLevel.SelectedItem = 0;
-        this._GUIbuttonLevel.Label = "Level: " + NotifyMessageLevelEnum.Information.ToString();
+        this._GUIbuttonLevel.Label = GUILocalizeStrings.Get(35004) + NotifyMessageLevelEnum.Information.ToString();
       }
 
       if (this._GUIbuttonClass != null)
@@ -199,7 +199,7 @@ namespace MediaPortal.GUI.Notifier
         }
 
         this._GUIbuttonClass.SelectedItem = 0;
-        this._GUIbuttonClass.Label = "Class: " + NotifyMessageClassEnum.All.ToString();
+        this._GUIbuttonClass.Label = GUILocalizeStrings.Get(35005) + NotifyMessageClassEnum.All.ToString();
       }
 
       tagsCurrentMessageClear();
