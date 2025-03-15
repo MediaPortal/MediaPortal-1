@@ -124,7 +124,7 @@ This file should contain the facade view
             <align>left</align>
             <font>font12</font>
             <textcolor>000000</textcolor>
-            <visible>control.isvisible(50)+string.equals(#myNotifier.Message.Current.Author</visible>
+            <visible>control.isvisible(50)+string.equals(#myNotifier.Message.Current.Author)</visible>
             
         </control>
         <control>
@@ -138,7 +138,7 @@ This file should contain the facade view
             <align>right</align>
             <font>font12</font>
             <textcolor>000000</textcolor>
-            <visible>control.isvisible(50)+string.equals(#myNotifier.Message.Current.Published</visible>
+            <visible>control.isvisible(50)+string.equals(#myNotifier.Message.Current.Published)</visible>
             
         </control>
     </controls>

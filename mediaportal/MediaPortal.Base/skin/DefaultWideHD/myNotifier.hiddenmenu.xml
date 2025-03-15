@@ -49,6 +49,8 @@
           <label>35000</label>
           <onup>19</onup>
           <ondown>15</ondown>
+          <onright>50</onright>
+          <onleft>50</onleft>
         </control>
         <control>
           <description>Clear</description>
@@ -57,6 +59,8 @@
           <label>35001</label>
           <onup>14</onup>
           <ondown>16</ondown>
+          <onright>50</onright>
+          <onleft>50</onleft>
         </control>
         <control>
           <description>Clear All</description>
@@ -65,6 +69,8 @@
           <label>35002</label>
           <onup>15</onup>
           <ondown>17</ondown>
+          <onright>50</onright>
+          <onleft>50</onleft>
         </control>
         <control>
           <description>Exit</description>
@@ -73,6 +79,8 @@
           <label>35003</label>
           <onup>16</onup>
           <ondown>18</ondown>
+          <onright>50</onright>
+          <onleft>50</onleft>
         </control>
         <control>
           <description>Level</description>
@@ -81,6 +89,8 @@
           <label>35004</label>
           <onup>17</onup>
           <ondown>19</ondown>
+          <onright>50</onright>
+          <onleft>50</onleft>
         </control>
         <control>
           <description>Class</description>
@@ -89,6 +99,8 @@
           <label>35005</label>
           <onup>18</onup>
           <ondown>14</ondown>
+          <onright>50</onright>
+          <onleft>50</onleft>
         </control>
       </control>
     </control>

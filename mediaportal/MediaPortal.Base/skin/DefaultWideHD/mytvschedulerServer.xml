@@ -32,7 +32,7 @@
       <id>0</id>
       <posX>45</posX>
       <posY>54</posY>
-      <label>#(iif(eq(#selecteditem,''),'#currentmodule #scroll.wrap #(L(752))','#currentmodule #scroll.wrap #selecteditem'))</label>
+      <label>#(iif(eq(#selecteditem,''),'#currentmodule','#currentmodule #scroll.wrap #selecteditem'))</label>
       <width>1802</width>
       <align>left</align>
       <font>Label</font>
@@ -52,6 +52,19 @@
       <width>1920</width>
       <height>1080</height>
       <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>No recordings available</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <posX>0</posX>
+      <posY>400</posY>
+      <width>1920</width>
+      <textcolor>ff00bfff</textcolor>
+      <label>#(iif(eq(#selecteditem,''),'#(L(752))',''))</label>
+      <font>font20</font>
+      <align>center</align>
+      <visible></visible>
     </control>
     <control>
         <description>group element</description>
