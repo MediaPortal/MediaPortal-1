@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2024 Team MediaPortal
+﻿#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2024 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ using System.Reflection;
 
 [assembly: AssemblyCompany("Team MediaPortal")]
 [assembly: AssemblyProduct("MediaPortal")]
-[assembly: AssemblyCopyright("Copyright © 2005-2024 Team MediaPortal")]
+[assembly: AssemblyCopyright("Copyright © 2005-2025 Team MediaPortal")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -50,8 +50,8 @@ using System.Reflection;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("1.36.000.0")]
-[assembly: AssemblyFileVersion("1.36.000.0")]
+[assembly: AssemblyVersion("1.36.100.0")]
+[assembly: AssemblyFileVersion("1.36.100.0")]
 
 //[assembly: AssemblyInformationalVersion("")]
 //[assembly: CompatibleVersion("1.1.8.*", "1.1.8.*")]
