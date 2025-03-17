@@ -1,38 +1,38 @@
 critical:
-  - '/(critical|urgent)/i'
+  - '/(\s|^)(critical|urgent)(\s|$)/i'
 
 enhancement:
-  - '/(feat|features|request|new|improve|create|build|enhancement)/i'
+  - '/(\s|^)(feat|features|request|new|improve|create|build|enhancement)(\s|$)/i'
 
 bug:
-  - '/(bug|fix|issue|solve|correct|defect)/i'
+  - '/(\s|^)(bug|fix|issue|solve|correct|defect)(\s|$)/i'
 
 documentation:
-  - '/(docs|document|documentation|readme)/i'
+  - '/(\s|^)(docs|document|documentation|readme)(\s|$)/i'
 
 help wanted:
-  - '/(help|need|info)/i'
+  - '/(\s|^)(help|need)(\s|$)/i'
 
 invalid:
-  - '/(invalid)/i'
+  - '/(\s|^)(invalid)(\s|$)/i'
 
 question:
-  - '/(query|\?|question|ask)/i'
+  - '/(\s|^)(query|\?|question|ask)(\s|$)/i'
 
 database:
   - '/(sql|database)/i'
 
 Engine:
-  - '/(core)/i'
+  - '/(\s|^)(core)(\s|$)/i'
 
 TV:
-  - '/(TV|TVE|radio|EPG)/i'
+  - '/(\s|^)(TV|TVE|radio|EPG)(\s|$)/i'
 
 Tuning:
-  - '/(tuning)/i'
+  - '/(\s|^)(tuning)(\s|$)/i'
 
 MPE:
-  - '/(MPE)/i'
+  - '/(\s|^)(MPE)(\s|$)/i'
 
 Skin:
-  - '/(Titan|DWHD|skin)/i'
+  - '/(\s|^)(Titan|DWHD|skins?)(\s|$)/i'
