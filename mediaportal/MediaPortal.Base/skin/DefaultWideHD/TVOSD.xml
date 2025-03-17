@@ -254,7 +254,7 @@
     <align>left</align>
     <font>LabelBold</font>
     <textcolor>white</textcolor>
-    <visible>!control.isvisible(39)+control.hasfocus(1237)|control.hasfocus(1238)</visible>
+    <visible>!control.isvisible(39)+[control.hasfocus(1237)|control.hasfocus(1238)]</visible>
   </control>
   <control>
     <description>Current channelname black</description>

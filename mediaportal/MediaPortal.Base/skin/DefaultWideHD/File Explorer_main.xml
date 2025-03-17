@@ -27,25 +27,72 @@
       <height>1080</height>
       <texture>general_overlay.png</texture>
     </control>
+    
+    <control>
+        <description>background</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>300</posX>
+        <posY>162</posY>
+        <height>66</height>
+        <width>397</width>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>dd164665</colordiffuse>
+      </control>
+      <control>
+        <description>background</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>302</posX>
+        <posY>164</posY>
+        <height>62</height>
+        <width>393</width>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>ff00061c</colordiffuse>
+      </control>
     <control>
       <description>Menu left</description>
       <type>button</type>
       <id>11</id>
-      <posX>300</posX>
-      <posY>183</posY>
+      <posX>305</posX>
+      <posY>165</posY>
       <label>Menu left</label>
+      <textalign>center</textalign>
       <onleft>3</onleft>
       <onright>2</onright>
       <onup>17</onup>
       <ondown>3</ondown>
     </control>
     <control>
+        <description>background</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1200</posX>
+        <posY>162</posY>
+        <height>66</height>
+        <width>397</width>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>dd164665</colordiffuse>
+      </control>
+      <control>
+        <description>background</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>1202</posX>
+        <posY>164</posY>
+        <height>62</height>
+        <width>393</width>
+        <texture>osdbg3.png</texture>
+        <colordiffuse>ff00061c</colordiffuse>
+      </control>
+    <control>
       <description>Menu right</description>
       <type>button</type>
       <id>2</id>
-      <posX>1200</posX>
-      <posY>183</posY>
+      <posX>1205</posX>
+      <posY>165</posY>
       <label>Menu right</label>
+      <textalign>center</textalign>
       <onleft>11</onleft>
       <onright>4</onright>
       <onup>17</onup>
@@ -66,17 +113,18 @@
       <spinPosX>2463</spinPosX>
       <spinPosY>2832</spinPosY>
       <spinCanFocus>no</spinCanFocus>
+      <scrollbarXOff>20</scrollbarXOff>
     </control>
     <control>
       <description>divider</description>
       <type>image</type>
       <id>0</id>
       <posX>945</posX>
-      <posY>240</posY>
-      <height>682</height>
-      <width>1</width>
+      <posY>250</posY>
+      <height>664</height>
+      <width>4</width>
       <texture>slider_vertical.png</texture>
-      <colordiffuse>darkgray</colordiffuse>
+      <colordiffuse>dodgerblue</colordiffuse>
     </control>
     <control>
       <description>file listcontrol</description>
@@ -93,6 +141,7 @@
       <spinPosX>2334</spinPosX>
       <spinPosY>2832</spinPosY>
       <spinCanFocus>no</spinCanFocus>
+      <scrollbarXOff>20</scrollbarXOff>
     </control>
     <control>
       <description>label left</description>

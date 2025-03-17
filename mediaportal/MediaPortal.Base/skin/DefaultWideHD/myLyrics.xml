@@ -151,86 +151,7 @@
       <colordiffuse>80ffffff</colordiffuse>
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
-    <!--control>
-      <type>fadelabel</type>
-      <description>Title Value</description>
-      <id>0</id>
-      <posX>45</posX>
-      <posY>95</posY>
-      <width>900</width>
-      <label>#Play.Current.Title</label>
-      <font>Label</font>
-      <textcolor>ff00bfff</textcolor>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>Artist Value</description>
-      <id>32</id>
-      <posX>150</posX>
-      <posY>2970</posY>
-      <width>900</width>
-      <label>#Play.Current.Artist</label>
-      <font>font14</font>
-      <textcolor>ff00bfff</textcolor>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>Year - Track value</description>
-      <id>33</id>
-      <posX>150</posX>
-      <posY>2020</posY>
-      <width>900</width>
-      <label>#Play.Current.Year - #Play.Current.Track</label>
-      <font>font13</font>
-      <textcolor>ff00bfff</textcolor>
-    </control>
-    <control>
-      <type>label</type>
-      <description>playing next label</description>
-      <id>20</id>
-      <posX>2783</posX>
-      <posY>933</posY>
-      <label>4541</label>
-      <font>font11</font>
-      <align>right</align>
-      <textcolor>ff00bfff</textcolor>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>next artist label</description>
-      <id>123</id>
-      <posX>2777</posX>
-      <posY>970</posY>
-      <width>600</width>
-      <label>#Play.Next.Artist</label>
-      <font>font14</font>
-      <align>right</align>
-      <textcolor>ff00bfff</textcolor>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>next track label</description>
-      <id>121</id>
-      <posX>2780</posX>
-      <posY>1020</posY>
-      <width>600</width>
-      <label>#Play.Next.Title</label>
-      <font>font13</font>
-      <align>right</align>
-      <textcolor>ff00bfff</textcolor>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>Album Value</description>
-      <id>26</id>
-      <posX>1395</posX>
-      <posY>192</posY>
-      <width>487</width>
-      <label>#Play.Current.Album</label>
-      <font>font13</font>
-      <align>left</align>
-      <textcolor>ff00bfff</textcolor>
-    </control-->
+    
     <!-- Album Image -->
     <control>
       <id>1</id>
@@ -264,58 +185,84 @@
       <height>495</height>
       <texture>cdthumbframe.png</texture>
     </control>
-    <!--control>
-      <description>Progress background</description>
-      <type>image</type>
-      <id>117</id>
-      <posX>1500</posX>
-      <posY>759</posY>
-      <width>277</width>
-      <height>27</height>
-      <texture>osd_progress_background_medium.png</texture>
-    </control>
-    <control>
-      <description>Progress Bar</description>
-      <type>progress</type>
-      <id>118</id>
-      <posX>1480</posX>
-      <posY>760</posY>
-      <width>307</width>
-      <height>24</height>
-      <label>#percentage</label>
-      <texturebg>-</texturebg>
-      <onlymidtexture>no</onlymidtexture>
-      <midwidth>307</midwidth>
-      <midheight>24</midheight>
-      <midoffsetX>0</midoffsetX>
-      <midoffsetY>0</midoffsetY>
-      <lefttexture>osd_progress_left.png</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
-      <righttexture>osd_progress_right.png</righttexture>
-      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
-    </control>
-    <control>
-      <type>label</type>
-      <description>track progress label</description>
-      <id>24</id>
-      <posX>1402</posX>
-      <posY>757</posY>
-      <label>#currentplaytime</label>
-      <font>font11</font>
-      <textcolor>lightgray</textcolor>
-      <align>left</align>
-    </control>
-    <control>
-      <type>label</type>
-      <description>track duration label</description>
-      <id>25</id>
-      <posX>1875</posX>
-      <posY>757</posY>
-      <label>#duration</label>
-      <font>font11</font>
-      <textcolor>lightgray</textcolor>
-      <align>right</align>
-    </control-->
+    <!-- *************************************************************************************************** -->
+  <!-- ***************************************   Progressbar and time info ******************************* -->
+  <!-- *************************************************************************************************** -->
+  <control>
+    <description>background image</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>1385</posX>
+    <posY>755</posY>
+    <width>510</width>
+    <height>60</height>
+    <texture>osdbg3.png</texture>
+    <colordiffuse>dd164665</colordiffuse>
+  </control>
+  <control>
+    <description>background image</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>1387</posX>
+    <posY>757</posY>
+    <width>506</width>
+    <height>56</height>
+    <texture>osdbg3.png</texture>
+    <colordiffuse>ff00061c</colordiffuse>
+  </control>
+  <control>
+    <type>image</type>
+    <id>117</id>
+    <posX>1513</posX>
+    <posY>775</posY>
+    <width>258</width>
+    <height>23</height>
+    <texture>horizontal_bar2.png</texture>
+  </control>
+  <control>
+    <description>progress bar</description>
+    <type>progress</type>
+    <id>118</id>
+    <posX>1495</posX>
+    <posY>774</posY>
+    <width>296</width>
+    <height>23</height>
+    <label>#percentage</label>
+    <texturebg>-</texturebg>
+    <onlymidtexture>no</onlymidtexture>
+    <midwidth>286</midwidth>
+    <midheight>23</midheight>
+    <midoffsetX>0</midoffsetX>
+    <midoffsetY>0</midoffsetY>
+    <lefttexture>osd_progress_mid_tv2.png</lefttexture>
+    <midtexture>osd_progress_mid_tv2.png</midtexture>
+    <righttexture>osd_progress_right2.png</righttexture>
+  </control>
+  <control>
+    <type>label</type>
+    <description>track progress label</description>
+    <id>119</id>
+    <posX>1501</posX>
+    <posY>763</posY>
+    <label>#currentplaytime</label>
+    <font>Label</font>
+    <align>right</align>
+    <textcolor>lightgray</textcolor>
+   </control>
+  <control>
+    <type>label</type>
+    <description>track duration label</description>
+    <id>110</id>
+    <posX>1785</posX>
+    <posY>763</posY>
+    <label>#currentremaining</label>
+    <font>Label</font>
+    <align>left</align>
+    <textcolor>lightgray</textcolor>
+  </control>
+  <!-- *************************************************************************************************** -->
+  <!-- *******************************************   The Lyrics Text   *********************************** -->
+  <!-- *************************************************************************************************** -->
     <control>
       <type>label</type>
       <description>line 0</description>
