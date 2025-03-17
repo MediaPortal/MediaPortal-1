@@ -126,12 +126,23 @@ namespace MediaPortal.ServiceImplementations
 
       public ImageLoadEventArgs CreateImageLoadEventArgumnets(WorkClient client)
       {
+        //Determine final image path based on client's request
+        string strFilepathResult = this.FilePath; //default = original
+        if (!this.ImageSize.IsEmpty)
+        {
+          if (this.FilePathThumb != null && !client.SizeThumbMax.IsEmpty && this.ImageSize.Width > client.SizeThumbMax.Width)
+            strFilepathResult = this.FilePathThumb;
+          else if (this.FilePathIcon != null && !client.SizeIconMax.IsEmpty && this.ImageSize.Width > client.SizeIconMax.Width)
+            strFilepathResult = this.FilePathIcon;
+        }
+
         return new ImageLoadEventArgs()
         {
           Url = this.Url,
           FilePath = this.FilePath,
           FilePathThumb = this.FilePathThumb,
           FilePathIcon = this.FilePathIcon,
+          FilePathResult = strFilepathResult,
           Status = this.State,
           ImageSize = this.ImageSize,
           DownloadTimeStamp = this.DownloadTimeStamp,
