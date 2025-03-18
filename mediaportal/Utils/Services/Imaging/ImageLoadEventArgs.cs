@@ -12,6 +12,7 @@ namespace MediaPortal.Services
     public string FilePath = null;
     public string FilePathThumb = null;
     public string FilePathIcon = null;
+    public string FilePathResult = null;
     public Size ImageSize = Size.Empty;
     public DateTime DownloadTimeStamp = DateTime.MinValue;
     public Threading.WorkState Status;

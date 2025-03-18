@@ -2678,7 +2678,7 @@ namespace MediaPortal.GUI.Library
         try
         {
           if (e.Status == Threading.WorkState.FINISHED && e.FilePath != null && this._cachedTextureFileName == e.Url)
-            this.AllocResources(e.FilePathThumb != null && !e.ImageSize.IsEmpty && e.ImageSize.Width > this.Width ? e.FilePathThumb : e.FilePath);
+            this.AllocResources(e.FilePathResult);
         }
         finally { System.Threading.Monitor.Exit(this._Padlock); }
       }
