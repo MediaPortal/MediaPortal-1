@@ -838,10 +838,19 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\libcurl.dll"
   Delete "$INSTDIR\libssl-1_1.dll"
   Delete "$INSTDIR\MediaInfo.Wrapper.dll"
+  
+  !if "${Architecture}" == "x64"
+    Delete "$INSTDIR\libcrypto-3-x64.dll"
+    Delete "$INSTDIR\libssl-3-x64.dll"
+  !else
+    Delete "$INSTDIR\libcrypto-3.dll"
+    Delete "$INSTDIR\libssl-3.dll"
+  !endif
 
   ; Additional assemblies
   Delete "$INSTDIR\System.Threading.Tasks.Extensions.dll"
   Delete "$INSTDIR\System.Runtime.CompilerServices.Unsafe.dll"
+  Delete "$INSTDIR\System.ValueTuple.dll"
 
   ; protocol implementations for MPIPTVSource.ax
   Delete "$INSTDIR\MPIPTV_FILE.dll"
@@ -1013,7 +1022,7 @@ Section -Post
 
   ; if TVplugin is enabled, save MP installation path to uninstall it even if mp is already uninstalled
   ${If} ${TVClientIsInstalled}
-    WriteRegDWORD HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir" "$MPdir.Base"
+    WriteRegStr HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir" "$MPdir.Base"
   ${EndIf}
 
   ;${If} $noStartMenuSC != 1
@@ -1323,18 +1332,18 @@ Function un.onInit
   #### END of check and parse cmdline parameter
 
 
-  ${IfNot} ${MP023IsInstalled}
-  ${AndIfNot} ${MPIsInstalled}
-    Sleep 1
-  ${else}
+  #${IfNot} ${MP023IsInstalled}
+  #${AndIfNot} ${MPIsInstalled}
+  #  Sleep 1
+  #${else}
     ReadRegStr $MPdir.Base HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir"
 
-    ${If} $MPdir.Base = ""
+    ${If} $MPdir.Base == ""
       !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
     ${EndIf}
 
     ${un.ReadMediaPortalDirs} $MPdir.Base
-  ${EndIf}
+  #${EndIf}
 
   !insertmacro TVSERVER_GET_INSTALL_DIR $INSTDIR
   ;!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup

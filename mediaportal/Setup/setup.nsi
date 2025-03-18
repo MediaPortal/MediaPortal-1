@@ -1043,6 +1043,85 @@ SectionEnd
   Delete "$MPdir.Base\libwebp.dll"
   ; Shaders
   RMDir /r "$MPdir.Base\Shaders"
+  
+  Delete "$MPdir.Base\LastFMLibrary.dll"
+  
+  ; libbluray
+  Delete "$MPdir.Base\bluray.dll"
+  Delete "$MPdir.Base\libbluray.jar"
+  Delete "$MPdir.Base\freetype.dll"
+  Delete "$MPdir.Base\awt\libbluray.jar"
+  RMDir "$MPdir.Base\awt"
+  
+  ; taglib-sharp
+  Delete "$MPdir.Base\TagLibSharp.dll"
+  ; SharpLibHid
+  Delete "$MPdir.Base\SharpLib.Hid.dll"
+  ; SharpLibWin32
+  Delete "$MPdir.Base\SharpLibWin32.dll"
+  ; SharpLibDisplay
+  Delete "$MPdir.Base\SharpLibDisplay.dll"
+  ; Naudio
+  Delete "$MPdir.Base\NAudio.dll" 
+  ; CSCore
+  Delete "$MPdir.Base\CSCore.dll"
+  ; SharpDX
+  Delete "$MPdir.Base\SharpDX.dll"
+  Delete "$MPdir.Base\SharpDX.Direct3D9.dll"
+  Delete "$MPdir.Base\SharpDX.DirectInput.dll"
+  Delete "$MPdir.Base\SharpDX.Mathematics.dll"
+
+  ; NuGet binaries Sqlite
+  Delete "$MPdir.Base\sqlite.dll"
+  
+  ; NuGet binaries EXIF
+  Delete "$MPdir.Base\MetadataExtractor.dll"
+  Delete "$MPdir.Base\XmpCore.dll"
+  
+  ; NuGet binaries UnidecodeSharp
+  Delete "$MPdir.Base\UnidecodeSharpFork.dll"
+  
+  ; Bass Core
+  Delete "$MPdir.Base\Bass.Net.dll"
+  Delete "$MPdir.Base\BassRegistration.dll"
+  Delete "$MPdir.Base\bass.dll"
+  Delete "$MPdir.Base\System.Management.Automation.dll"
+  ; Bass Addons
+  Delete "$MPdir.Base\bassasio.dll"
+  Delete "$MPdir.Base\bass_fx.dll"
+  Delete "$MPdir.Base\bassmix.dll"
+  Delete "$MPdir.Base\bass_vst.dll"
+  Delete "$MPdir.Base\basswasapi.dll"
+  Delete "$MPdir.Base\bassenc.dll"
+  Delete "$MPdir.Base\basscd.dll"
+  Delete "$MPdir.Base\OptimFROG.dll"
+  !if "${Architecture}" == "x64"
+  !else
+    Delete "$MPdir.Base\bass_wadsp.dll"
+  !endif
+  
+  ; NuGet binaries MediaInfo
+  Delete "$MPdir.Base\MediaInfo.dll"
+  Delete "$MPdir.Base\libcurl.dll"
+  !if "${Architecture}" == "x64"
+    Delete "$MPdir.Base\libcrypto-3-x64.dll"
+    Delete "$MPdir.Base\libssl-3-x64.dll"
+  !else
+    Delete "$MPdir.Base\libcrypto-3.dll"
+    Delete "$MPdir.Base\libssl-3.dll"
+  !endif
+  Delete "$MPdir.Base\MediaInfo.Wrapper.dll"
+  Delete "$MPdir.Base\System.ValueTuple.dll"
+  
+  ; ffmpeg
+  Delete "$MPdir.Base\MovieThumbnailer\ffmpeg.exe"
+  RMDir "$MPdir.Base\MovieThumbnailer"
+  
+  ; bass audiodecoders
+  Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass*.dll"
+  RMDir "$MPdir.Base\MusicPlayer\plugins\audio decoders"
+  RMDir "$MPdir.Base\MusicPlayer\plugins"
+  RMDir "$MPdir.Base\MusicPlayer\"
     
 !macroend
 
@@ -1126,6 +1205,7 @@ SectionEnd
   Delete "$MPdir.Base\MpeCore.dll"
   Delete "$MPdir.Base\MpeInstaller.exe"
   Delete "$MPdir.Base\MpeMaker.exe"
+  Delete "$MPdir.Base\MPEUpdater.exe"
 
   ; remove startmenu shortcuts
   Delete "$DESKTOP\MediaPortal Extension Installer.lnk"
@@ -1367,8 +1447,6 @@ Section Uninstall
 
   ; remove last files and instdir
   Delete "$MPdir.Base\uninstall-mp.exe"
-  RMDir "$MPdir.Base"
-
 
   ${If} $UnInstallMode == 1
 
@@ -1392,6 +1470,11 @@ Section Uninstall
 
   ${EndIf}
 
+
+  Delete "$MPdir.Base\MediaPortalDirs.xml"
+  RMDir "$MPdir.Plugins\Windows"
+  RMDir "$MPdir.Plugins"
+  RMDir "$MPdir.Base"
 
   ${If} $frominstall == 1
     Quit
