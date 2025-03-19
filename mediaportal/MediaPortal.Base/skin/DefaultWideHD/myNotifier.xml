@@ -10,7 +10,8 @@ multiple view modes.
 	<allowoverlay>no</allowoverlay>
 	<define>#header.image:notifier_logo.png</define>
 	<define>#header.label:My Notifier</define>
-
+  <define property="true" evaluateNow="true">#selectedplugin:#myNotifier.Message.Current.Author</define>
+  
 	<!--
 	This set of defines are read by the plug-in and used to determine aspects of it's behavior. These
 	are parameters to give the skinner a tiny bit more control over the presentation.
@@ -64,7 +65,52 @@ multiple view modes.
       <colordiffuse>ddffffff</colordiffuse>
     </control>
     <import>common.time.xml</import>
-		<control>
+		<!--control>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>Info-Center #scroll.wrap #myNotifier.Message.Current.Author</label>
+      <width>1802</width>
+      <align>left</align>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+    <type>fadelabel</type>
+    <description>e.g. Setup TV</description>
+    <id>0</id>
+    <posX>45</posX>
+    <posY>94</posY>
+    <label>#(L(200))#pluginauthor #scroll.wrap #(L(13016)): #myNotifier.Message.Current.Published</label>
+    <width>1802</width>
+    <align>left</align>
+    <font>Label</font>
+    <shadowAngle>10</shadowAngle>
+    <shadowDistance>3</shadowDistance>
+    <shadowColor>ff000000</shadowColor>
+    <textcolor>lightgray</textcolor>
+    <colordiffuse>ffffffff</colordiffuse>
+  </control>
+  <control>
+      <description>Count</description>
+      <type>label</type>
+      <label>#(L(9)): #myNotifier.Messages.Count.Read/#myNotifier.Messages.Count.Total</label>
+      <id>0</id>
+      <posX>1869</posX>
+      <posY>16</posY>
+      <align>right</align>
+      <font>RSS</font>
+      <textcolor>fff5deb3</textcolor>
+      <visible>control.isvisible(50)</visible>
+    </control-->
+		
+<control>
       <type>fadelabel</type>
       <description>e.g. Setup TV</description>
       <id>0</id>
@@ -80,43 +126,38 @@ multiple view modes.
       <textcolor>lightgray</textcolor>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
-		<!--control>
-			<description>Version</description>
-			<type>label</type>
-			<id>0</id>
-			<posX>1910</posX>
-			<posY>1055</posY>
-			<width>0</width>
-			<label>#GUINotifier.General.Version</label>
-			<align>right</align>
-			<font>font9</font>
-			<textcolor>30FFFFFF</textcolor>
-			<shadowAngle>45</shadowAngle>
-			<shadowDistance>4</shadowDistance>
-			<shadowColor>ff000000</shadowColor>
-			<visible>no</visible>
-		</control-->
+    <control>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>280</posY>
+      <label>Dieses Plugin wird derzeit nicht unterstuetzt, da noch in Beta-Phase</label>
+      <width>1920</width>
+      <align>center</align>
+      <font>Menutitle</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>red</textcolor><colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>360</posY>
+      <label>This plugin is currently not supported as it is still in beta phase</label>
+      <width>1920</width>
+      <align>center</align>
+      <font>Menutitle</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>red</textcolor><colordiffuse>ffffffff</colordiffuse>
+    </control>
 
 		
-		
-
-		<!--control>
-			<description>background listview</description>
-			<type>image</type>
-			<id>0</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>1920</width>
-			<height>273</height>
-			<texture>fanart_overlay_top.png</texture>
-			<visible>Control.IsVisible(50)</visible>
-			<animation effect="fade" time="250">WindowOpen</animation>
-			<animation effect="fade" time="250">WindowClose</animation>
-		</control-->
-
-
-
-		<!-- VIEWS -->
 
 		<import>myNotifier.hiddenmenu.xml</import>
 

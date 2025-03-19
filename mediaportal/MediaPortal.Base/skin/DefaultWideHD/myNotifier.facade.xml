@@ -1,145 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-This file should contain the facade view
--->
+<!-- This file should contain the facade view -->
 <window>
-    <controls>
-        <control>
-            <description/>
-            <type>label</type>
-            <id>0</id>
-            <posX>760</posX>
-            <posY>101</posY>
-            <width>550</width>
-            <label/>
-            <align>left</align>
-            <font>font12</font>
-            <textcolor>ffFFFFFF</textcolor>
-            <shadowAngle>45</shadowAngle>
-            <shadowDistance>4</shadowDistance>
-            <shadowColor>ff000000</shadowColor>
-            <visible>control.isvisible(50)</visible>
-        </control>
-        
-        <control>
-            <type>facadeview</type>
-            <id>50</id>
-            <control>
-                <description>listcontrol</description>
-                <type>listcontrol</type>
-                <id>50</id>
-                <onleft>14</onleft>
-                <onright>50</onright>
-                <scrollOffset>2</scrollOffset>
-                <posX>115</posX>
-                <posY>180</posY>
-                <width>1650</width>
-                <height>700</height>
-                <spinPosX>1750</spinPosX>
-                <spinPosY>830</spinPosY>
-                <textXOff>350</textXOff>
-                <textcolor2>FF00BFFF</textcolor2>
-                <textcolor3>FFFFCC80</textcolor3>
-                <textXOff2>1660</textXOff2>
-                <textXOff3>70</textXOff3>
-                <textYOff>5</textYOff>
-                <textYOff2>-5</textYOff2>
-                <textYOff3>8</textYOff3>
-                <textalign3>left</textalign3>
-                <loopDelayMs>0</loopDelayMs>
-                <IconXOff>20</IconXOff>
-                <IconYOff>5</IconYOff>
-                <itemWidth>40</itemWidth>
-                <itemHeight>40</itemHeight>
-                <textpadding>160</textpadding>
-                <textpadding3>940</textpadding3>
-                <font2>font10</font2>
-                <font3>font12</font3>
-                <dimColor>90ffffff</dimColor>
-            </control>
-        </control>
-        <control>
-            <description>Count</description>
-            <type>label</type>
-            <label>Celkem: #myNotifier.Messages.Count.Read/#myNotifier.Messages.Count.Total</label>
-            <id>0</id>
-            <posX>150</posX>
-            <posY>830</posY>
-            <align>left</align>
-            <font>font12</font>
-            <textcolor>000000</textcolor>
-            <visible>control.isvisible(50)</visible>
-            
-        </control>
-        <!--control>
-            <type>image</type>
-            <id>0</id>
-            <posX>110</posX>
-            <posY>880</posY>
-            <width>1690</width>
-            <height>190</height>
-            <colordiffuse>c0ffffff</colordiffuse>
-            <texture>myNotifier/panelDescription1.png</texture>
-            <visible>control.isvisible(50)</visible>
-            <animation effect="fade" time="250">WindowOpen</animation>
-            <animation effect="fade" time="250">WindowClose</animation>
-        </control-->
-        <control>
-            <description>Description</description>
-            <type>textboxscrollup</type>
-            <id>1</id>
-            <posX>356</posX>
-            <posY>890</posY>
-            <width>1444</width>
-            <height>110</height>
-            <textcolor>ivory</textcolor>
-            <shadowAngle>45</shadowAngle>
-            <shadowDistance>0</shadowDistance>
-            <shadowColor>ff000000</shadowColor>
-            <seperator>-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</seperator>
-            <font>font10</font>
-            <label>#myNotifier.Message.Current.Description</label>
-            <breakprefix>"   "</breakprefix>
-            <scrollspeed>2</scrollspeed>
-        </control>
-        <control>
-            <type>image</type>
-            <id>0</id>
-            <posX>130</posX>
-            <posY>890</posY>
-            <width>196</width>
-            <height>110</height>
-            <keepaspectratio>yes</keepaspectratio>
-            <centered>yes</centered>
-            <texture>#selectedthumb</texture>
-        </control>
-        <control>
-            <description>Author</description>
-            <type>fadelabel</type>
-            <label>Author: #myNotifier.Message.Current.Author</label>
-            <id>0</id>
-            <posX>150</posX>
-            <posY>1028</posY>
-            <width>1200</width>
-            <align>left</align>
-            <font>font12</font>
-            <textcolor>000000</textcolor>
-            <visible>control.isvisible(50)+string.equals(#myNotifier.Message.Current.Author)</visible>
-            
-        </control>
-        <control>
-            <description>Published</description>
-            <type>label</type>
-            <label>Published: #myNotifier.Message.Current.Published</label>
-            <id>0</id>
-            <posX>1755</posX>
-            <posY>1028</posY>
-            <width>450</width>
-            <align>right</align>
-            <font>font12</font>
-            <textcolor>000000</textcolor>
-            <visible>control.isvisible(50)+string.equals(#myNotifier.Message.Current.Published)</visible>
-            
-        </control>
-    </controls>
+  <controls>
+    <control>
+      <type>facadeview</type>
+      <id>50</id>
+      <control>
+        <description>listcontrol</description>
+        <type>listcontrol</type>
+        <id>50</id>
+        <onleft>14</onleft>
+        <onright>50</onright>
+        <scrollOffset>2</scrollOffset>
+        <posX>3115</posX>
+        <posY>240</posY>
+        <width>1650</width>
+        <height>700</height>
+        <spinPosX>3750</spinPosX>
+        <spinPosY>830</spinPosY>
+        <textXOff>250</textXOff>
+        <textcolor2>FF00BFFF</textcolor2>
+        <textcolor3>FFFFCC80</textcolor3>
+        <textXOff2>1660</textXOff2>
+        <textXOff3>60</textXOff3>
+        <textYOff>2</textYOff>
+        <textYOff2>-5</textYOff2>
+        <textYOff3>5</textYOff3>
+        <textalign3>left</textalign3>
+        <loopDelayMs>0</loopDelayMs>
+        <IconXOff>10</IconXOff>
+        <IconYOff>4</IconYOff>
+        <itemWidth>40</itemWidth>
+        <itemHeight>40</itemHeight>
+        <textpadding>160</textpadding>
+        <textpadding3>940</textpadding3>
+        <font2>font9</font2>
+        <font3>font12</font3>
+        <dimColor>90ffffff</dimColor>
+      </control>
+    </control>
+    
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>2075</posX>
+      <posY>745</posY>
+      <width>1790</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>aa87cefa</colordiffuse>
+      <animation effect="fade" start="0" end="100" time="170" reversible="true">visiblechange</animation>
+      <visible>control.isvisible(50)</visible>
+    </control>
+  <control>
+    <description>Description</description>
+    <type>textboxscrollup</type>
+    <id>1</id>
+    <posX>3200</posX>
+    <posY>760</posY>
+    <width>1444</width>
+    <height>150</height>
+    <textcolor>ff00bfff</textcolor>
+    <shadowAngle>45</shadowAngle>
+    <shadowDistance>0</shadowDistance>
+    <shadowColor>ff000000</shadowColor>
+    <font>font10</font>
+    <label>#myNotifier.Message.Current.Description</label>
+    <breakprefix>"   "</breakprefix>
+    <scrollspeed>20</scrollspeed>
+  </control>
+  <control>
+    <type>image</type>
+    <id>0</id>
+    <posX>3130</posX>
+    <posY>890</posY>
+    <width>196</width>
+    <height>110</height>
+    <keepaspectratio>yes</keepaspectratio>
+    <centered>yes</centered>
+    <texture>#selectedthumb</texture>
+  </control>
+  
+</controls>
 </window>
