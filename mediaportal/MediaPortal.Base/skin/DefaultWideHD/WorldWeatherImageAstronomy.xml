@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+	<allowoverlay>yes</allowoverlay>
+	
+	<controls>
+
+		<!-- *** Black background *** -->
+		<control>
+			<description>black background</description>
+			<type>image</type>
+			<id>0</id>
+			<posX>410</posX>
+			<posY>125</posY>
+			<width>730</width>
+			<height>460</height>
+			<keepaspectratio>no</keepaspectratio>
+			<texture>background_coverflow.png</texture>
+			<visible>string.equals(#WorldWeather.View,Astronomy)+string.equals(#WorldWeather.AstronomyView,Image)</visible>
+		</control>
+
+		<!-- *** Picture Of Day *** -->
+		<control>
+			<description>Picture of day image</description>
+			<type>image</type>
+			<id>0</id>
+			<posX>430</posX>
+			<posY>170</posY>
+			<width>695</width>
+			<height>380</height>
+			<keepaspectratio>no</keepaspectratio>
+			<texture>#WorldWeather.ImagePictureOfDay</texture>
+			<visible>string.equals(#WorldWeather.View,Astronomy)+string.equals(#WorldWeather.AstronomyView,Image)</visible>
+		</control>
+
+		<!-- *** Astronomy Background *** -->
+		<control>
+			<description>Astronomy background</description>
+			<type>image</type>
+			<id>0</id>
+			<posX>350</posX>
+			<posY>85</posY>
+			<width>850</width>
+			<height>570</height>
+			<keepaspectratio>no</keepaspectratio>
+			<texture>background_images.png</texture>
+			<visible>string.equals(#WorldWeather.View,Astronomy)+string.equals(#WorldWeather.AstronomyView,Image)</visible>
+		</control>
+
+		<!-- *** Picture of day information *** -->
+		<control>
+			<description>Picture of day information</description>
+			<type>fadelabel</type>
+			<id>0</id>
+			<posX>435</posX>
+			<posY>567</posY>
+			<width>680</width>
+			<label>#WorldWeather.ImagePictureOfDayTitle (#WorldWeather.ImagePictureOfDayDate) - #WorldWeather.ImagePictureOfDayDescription</label>
+			<font>font10bold</font>
+			<visible>string.equals(#WorldWeather.View,Astronomy)+string.equals(#WorldWeather.AstronomyView,Image)</visible>
+		</control>
+
+	</controls>
+</window>

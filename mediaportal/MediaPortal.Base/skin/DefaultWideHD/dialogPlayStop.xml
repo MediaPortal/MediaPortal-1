@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>102</id>
@@ -11,12 +11,11 @@
       <type>button</type>
       <id>10</id>
       <posX>1012</posX>
-      <posY>622</posY>
-      <textXOff>73</textXOff>
-      <textYOff>12</textYOff>
-      <width>294</width>
+      <posY>680</posY> 
+	  <textalign>center</textalign>
+      <width>279</width>
       <height>70</height>
-      <textureFocus>button_focus.png</textureFocus>
+      <textureFocus>dialogue_button.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>2553</label>
       <onleft>11</onleft>
@@ -29,18 +28,26 @@
       <type>button</type>
       <id>11</id>
       <posX>612</posX>
-      <posY>622</posY>
-      <textXOff>75</textXOff>
-      <textYOff>12</textYOff>
-      <width>294</width>
+      <posY>680</posY>
+	  <textalign>center</textalign>
+      <width>279</width>
       <height>70</height>
-      <textureFocus>button_focus.png</textureFocus>
+      <textureFocus>dialogue_button.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>2552</label>
       <onleft>10</onleft>
       <onright>10</onright>
       <onup>11</onup>
       <ondown>11</ondown>
+    </control>
+	 <control>
+      <id>0</id>
+      <type>image</type>
+      <posX>1373</posX>
+      <posY>410</posY>
+      <width>45</width>
+      <height>45</height>
+      <texture>warning-icon_small.png</texture>
     </control>
   </controls>
 </window>

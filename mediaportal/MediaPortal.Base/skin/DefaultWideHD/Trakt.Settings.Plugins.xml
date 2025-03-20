@@ -19,14 +19,35 @@
       <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>Trakt.Common.Fanart.xml</import>
-    <import>common.window.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
     <import>common.time.xml</import>
     <import>Trakt.Common.xml</import>
+    <control>
+      <description>Current View</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <width>1299</width>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>  
+      <label>Trakt #scroll.wrap #Trakt.Translation.Settings.Label #scroll.wrap #Trakt.Translation.Plugins.Label</label>
+      <align>left</align>
+    </control>
     <control>
       <type>group</type>
       <description>group element</description>
       <posX>525</posX>
-      <posY>241</posY>
+      <posY>300</posY>
       <width>465</width>
       <height>568</height>
       <layout>StackLayout</layout>
@@ -90,8 +111,8 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      <posX>1035</posX>
-      <posY>241</posY>
+      <posX>1200</posX>
+      <posY>300</posY>
       <width>465</width>
       <height>568</height>
       <layout>StackLayout</layout>

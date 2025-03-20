@@ -8,11 +8,11 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
 -->
 
   <define property="true" evaluateNow="true">#image.posx:820</define>
-  <define property="true" evaluateNow="true">#image.posy:636</define>
+  <define property="true" evaluateNow="true">#image.posy:716</define>
   <define property="true" evaluateNow="true">#image.width:265</define>
   <define property="true" evaluateNow="true">#image.height:186</define>
   <define property="true" evaluateNow="true">#label.posx:843</define>
-  <define property="true" evaluateNow="true">#label.posy:791</define>
+  <define property="true" evaluateNow="true">#label.posy:872</define>
   <define property="true" evaluateNow="true">#label.width:222</define>
   <define>#label.font:font10</define>
 
@@ -217,6 +217,7 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
       <dimColor>FFFFFFFF</dimColor>
       <animation effect="fade" time="200">WindowClose</animation>
       <animation effect="slide" start="-1500" end="0" time="800" acceleration="-0.6" reversible="false">windowopen</animation>
+      <animation effect="slide" start="0,200" end="0,0" time="300" acceleration="-1" condition="string.contains(#hedit.inuse,sub)">conditional</animation>
       <visible>string.contains(#hedit.inuse,sub)</visible>
       
 
@@ -540,10 +541,10 @@ ID format AA-B-C-DD [group/subgroup/layer/item] eg: 990105 = group 99 / subgroup
     <control>
       <description>Indicator</description>
       <type>image</type>
-      <posX>910</posX>
-      <posY>570</posY>
-      <width>70</width>
-      <height>70</height>
+      <posX>935</posX>
+      <posY>690</posY>
+      <width>30</width>
+      <height>30</height>
       <texture>play.png</texture>
       <animation effect="fade" start="0" end="100" time="250" delay="200" reversible="false" condition="string.contains(#hedit.sub.calc.nav,0)">conditional</animation>
       <animation effect="fade" start="0" end="100" time="250" delay="200" reversible="false" condition="string.contains(#hedit.sub.calc.nav,1)">conditional</animation>

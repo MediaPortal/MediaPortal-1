@@ -7,7 +7,7 @@
       <description>Cover Art</description>
       <type>image</type>
       <id>60</id>
-      <posX>1590</posX>
+      <posX>1570</posX>
       <posY>300</posY>
       <width>270</width>
       <height>375</height>
@@ -18,14 +18,14 @@
       <description>Cover Art Glass Overlay</description>
       <type>image</type>
       <id>0</id>
-      <posX>1590</posX>
+      <posX>1570</posX>
       <posY>300</posY>
       <width>270</width>
       <height>375</height>
       <texture>Videothumbframe.png</texture>
       <visible>facadeview.list+control.isvisible(50)+Control.HasThumb(60)</visible>
     </control>
-    <control>
+    <!--control>
       <description>BG for watched count/watched percent</description>
       <type>image</type>
       <id>1</id>
@@ -47,7 +47,7 @@
       <label>#MovingPictures.UserMovieSettings.watched</label>
       <font>Label</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+!control.isvisible(51)+!control.isvisible(888)</visible>
     </control>
     <control>
@@ -61,7 +61,7 @@
       <texture>watched_#(string.format('{0:000}',mul(math.round(div(cint(#MovingPictures.UserMovieSettings.Progress),5)),5))).png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>facadeview.list+!control.isvisible(51)+!control.isvisible(888)</visible>
-    </control>
+    </control-->
     <control>
       <description>Genres Label</description>
       <type>label</type>
@@ -71,7 +71,7 @@
       <label>#(iif(eq(#MovingPictures.SelectedMovie.genres.count,'1'),'#MovingPictures.Translation.Genre.Label','#MovingPictures.Translation.Genres.Label'))</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+control.isvisible(50)</visible>
     </control>
     <control>
@@ -83,7 +83,7 @@
       <posY>309</posY>
       <width>420</width>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>3</shadowDistance>
       <visible>facadeview.list+control.isvisible(50)</visible>
@@ -91,10 +91,10 @@
     <control>
       <id>0</id>
       <type>label</type>
-      <label>#MovingPictures.SelectedMovie.score.localized / 10</label>
+      <label>#MovingPictures.SelectedMovie.score.localized/10 (#MovingPictures.SelectedMovie.popularity.localized #MovingPictures.Translation.Votes.Label)</label>
       <posX>1380</posX>
       <posY>240</posY>
-      <width>300</width>
+      <width>500</width>
       <align>left</align>
       <font>font11</font>
       <textcolor>ffFFFFFF</textcolor>
@@ -142,8 +142,8 @@
       <posY>705</posY>
       <width>780</width>
       <height>157</height>
-      <textcolor>ivory</textcolor>
-      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+      <font>font10</font>
       <label>#MovingPictures.SelectedMovie.summary</label>
       <visible>facadeview.list+control.isvisible(50)</visible>
     </control>
@@ -168,7 +168,7 @@
       <posY>346</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+control.isvisible(50)</visible>
     </control>
     <control>
@@ -180,7 +180,7 @@
       <posY>375</posY>
       <width>420</width>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+control.isvisible(50)</visible>
     </control>
     <control>
@@ -192,7 +192,7 @@
       <posY>417</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+control.isvisible(50)</visible>
     </control>
     <control>
@@ -204,7 +204,7 @@
       <posY>445</posY>
       <font>font12</font>
       <width>420</width>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+control.isvisible(50)</visible>
     </control>
     <control>
@@ -216,7 +216,7 @@
       <posY>478</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+control.isvisible(50)</visible>
     </control>
     <control>
@@ -228,7 +228,7 @@
       <posY>507</posY>
       <width>420</width>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>facadeview.list+control.isvisible(50)</visible>
     </control>
     <control>
@@ -239,7 +239,7 @@
       <posY>550</posY>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>facadeview.list+control.isvisible(50)</visible>
     </control>
     <control>
@@ -259,8 +259,8 @@
       <id>0</id>
       <type>image</type>
       <posX>1860</posX>
-      <posY>300</posY>
-      <width>40</width>
+      <posY>310</posY>
+      <width>30</width>
       <height>375</height>
       <keepaspectratio>yes</keepaspectratio>
       <texture>#fanarthandler.movie.genres.selected.verticalall</texture>

@@ -79,11 +79,11 @@ namespace SetupTv.Sections
 
     private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      if (linkLabelSourceforge.Text == null)
+      if (linkLabelGithub.Text == null)
         return;
-      if (linkLabelSourceforge.Text.Length > 0)
+      if (linkLabelGithub.Text.Length > 0)
       {
-        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelSourceforge.Text);
+        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelGithub.Text);
         System.Diagnostics.Process.Start(sInfo);
       }
     }

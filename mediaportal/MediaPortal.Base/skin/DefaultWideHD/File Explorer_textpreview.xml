@@ -12,9 +12,10 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>blue.png</texture>
+      <texture>BH fileexplorer.jpg</texture>
       <width>1920</width>
       <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
@@ -36,7 +37,7 @@
       <width>1099</width>
       <height>720</height>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <spinPosX>499</spinPosX>
       <spinPosY>949</spinPosY>
     </control>

@@ -17,7 +17,7 @@
       <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>Trakt.Common.Fanart.xml</import>
-    <import>common.window.xml</import>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
     <control>
       <description>General Overlay</description>
@@ -34,11 +34,11 @@
       <type>label</type>
       <id>0</id>
       <posX>45</posX>
-      <posY>15</posY>
+      <posY>54</posY>
       <width>1299</width>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
-      <label>#Trakt.CurrentView</label>
+      <textcolor>lightgray</textcolor>
+      <label>Trakt #scroll.wrap #Trakt.CurrentView #scroll.wrap #selecteditem</label>
       <align>left</align>
     </control>
     <control>
@@ -71,7 +71,7 @@
         </control>
       </control>
     </control>
-    <control>
+    <!--control>
       <description>Overlay text right</description>
       <id>0</id>
       <type>image</type>
@@ -79,9 +79,9 @@
       <posY>234</posY>
       <width>823</width>
       <height>699</height>
-      <texture mask="picturethumbmask.png">black.png</texture>
+      <texture mask="musicfanart_mask.png">black.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
-    </control>
+    </control-->
     <!-- Friend Info -->
     <control>
       <description>LCD image</description>
@@ -116,7 +116,7 @@
       <label>#Trakt.Translation.FullName.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#Trakt.View.Level,WatchedHistory)+!string.equals(#Trakt.User.FullName,)</visible>
     </control>
     <control>
@@ -128,7 +128,7 @@
       <width>399</width>
       <label>#Trakt.User.FullName</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.View.Level,WatchedHistory)+!string.equals(#Trakt.User.FullName,)</visible>
     </control>
     <control>
@@ -140,7 +140,7 @@
       <label>#Trakt.Translation.JoinDate.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#Trakt.View.Level,WatchedHistory)+!string.equals(#Trakt.User.JoinDate,)</visible>
     </control>
     <control>
@@ -152,7 +152,7 @@
       <label>#Trakt.User.JoinDate</label>
       <font>font12</font>
       <width>420</width>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.View.Level,WatchedHistory)+!string.equals(#Trakt.User.JoinDate,)</visible>
     </control>
     <control>
@@ -164,7 +164,7 @@
       <label>#Trakt.Translation.Location.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#Trakt.View.Level,WatchedHistory)+!string.equals(#Trakt.User.Location,)</visible>
     </control>
     <control>
@@ -176,7 +176,7 @@
       <width>420</width>
       <label>#Trakt.User.Location</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.View.Level,WatchedHistory)+!string.equals(#Trakt.User.Location,)</visible>
     </control>
     <control>
@@ -188,7 +188,7 @@
       <label>#Trakt.Translation.Gender.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#Trakt.View.Level,WatchedHistory)+!string.equals(#Trakt.User.Gender,)</visible>
     </control>
     <control>
@@ -200,7 +200,7 @@
       <width>420</width>
       <label>#Trakt.User.Gender</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.View.Level,WatchedHistory)+!string.equals(#Trakt.User.Gender,)</visible>
     </control>
     <control>
@@ -211,7 +211,7 @@
       <posY>544</posY>
       <label>#Trakt.Translation.Age.Label</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#Trakt.View.Level,WatchedHistory)+!string.equals(#Trakt.User.Age,)</visible>
     </control>
     <control>
@@ -222,7 +222,7 @@
       <posY>573</posY>
       <label>#Trakt.User.Age</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.View.Level,WatchedHistory)+!string.equals(#Trakt.User.Age,)</visible>
     </control>
     <control>
@@ -234,7 +234,7 @@
       <label>#Trakt.Translation.Protected.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!string.equals(#Trakt.View.Level,WatchedHistory)+!string.equals(#Trakt.User.Protected,)</visible>
     </control>
     <control>
@@ -247,7 +247,7 @@
       <label>#Trakt.User.Protected</label>
       <font>font12</font>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.View.Level,WatchedHistory)+!string.equals(#Trakt.View.Level,WatchedHistory)+!string.equals(#Trakt.User.Protected,)</visible>
     </control>
     <control>
@@ -272,7 +272,7 @@
       <height>157</height>
       <label>#Trakt.User.About</label>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>!string.equals(#Trakt.View.Level,WatchedHistory)+!string.equals(#Trakt.User.About,)</visible>
     </control>
     <control>
@@ -321,7 +321,7 @@
       <label>#Trakt.Translation.Rating.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,episode)+!string.equals(#Trakt.Episode.Ratings.Votes,)</visible>
     </control>
     <control>
@@ -344,7 +344,7 @@
       <width>399</width>
       <label>#Trakt.Episode.Ratings.Percentage% (#Trakt.Episode.Ratings.Votes #Trakt.Translation.Votes.Label)</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,episode)+!string.equals(#Trakt.Episode.Ratings.Votes,)</visible>
     </control>
     <control>
@@ -356,7 +356,7 @@
       <label>#Trakt.Translation.Genre.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,episode)+!string.equals(#Trakt.Show.Genres,)</visible>
     </control>
     <control>
@@ -368,7 +368,7 @@
       <label>#Trakt.Show.Genres</label>
       <font>font12</font>
       <width>420</width>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,episode)+!string.equals(#Trakt.Show.Genres,)</visible>
     </control>
     <control>
@@ -380,7 +380,7 @@
       <label>#Trakt.Translation.AirTime.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,episode)+!string.equals(#Trakt.Show.AirDay,)</visible>
     </control>
     <control>
@@ -392,7 +392,7 @@
       <width>420</width>
       <label>#Trakt.Show.AirDay #Trakt.Show.AirTime</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,episode)+!string.equals(#Trakt.Show.AirDay,)</visible>
     </control>
     <control>
@@ -404,7 +404,7 @@
       <label>#Trakt.Translation.Network.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,episode)+!string.equals(#Trakt.Show.Network,)</visible>
     </control>
     <control>
@@ -416,7 +416,7 @@
       <width>420</width>
       <label>#Trakt.Show.Network</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,episode)+!string.equals(#Trakt.Show.Network,)</visible>
     </control>
     <control>
@@ -427,7 +427,7 @@
       <posY>544</posY>
       <label>#(string.rtrim(L(1276),':'))</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,episode)+!string.equals(#Trakt.Show.Country,)</visible>
     </control>
     <control>
@@ -438,7 +438,7 @@
       <posY>573</posY>
       <label>#Trakt.Show.Country</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,episode)+!string.equals(#Trakt.Show.Country,)</visible>
     </control>
     <control>
@@ -450,7 +450,7 @@
       <label>#Trakt.Translation.Runtime.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,episode)+!string.equals(#Trakt.Show.Runtime,)</visible>
     </control>
     <control>
@@ -463,7 +463,7 @@
       <label>#Trakt.Show.Runtime mins</label>
       <font>font12</font>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,episode)+!string.equals(#Trakt.Show.Runtime,)</visible>
     </control>
     <control>
@@ -488,7 +488,7 @@
       <height>157</height>
       <label>#Trakt.Episode.Overview</label>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,episode)</visible>
     </control>
     <control>
@@ -558,7 +558,7 @@
       <label>#Trakt.Translation.Rating.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,movie)+!string.equals(#Trakt.Movie.Ratings.Votes,)</visible>
     </control>
     <control>
@@ -581,7 +581,7 @@
       <width>399</width>
       <label>#Trakt.Movie.Ratings.Percentage% (#Trakt.Movie.Ratings.Votes #Trakt.Translation.Votes.Label)</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,movie)+!string.equals(#Trakt.Movie.Ratings.Votes,)</visible>
     </control>
     <control>
@@ -593,7 +593,7 @@
       <label>#Trakt.Translation.Genre.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,movie)+!string.equals(#Trakt.Movie.Genres,)</visible>
     </control>
     <control>
@@ -605,7 +605,7 @@
       <label>#Trakt.Movie.Genres</label>
       <font>font12</font>
       <width>420</width>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,movie)+!string.equals(#Trakt.Movie.Genres,)</visible>
     </control>
     <control>
@@ -617,7 +617,7 @@
       <label>#Trakt.Translation.Released.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,movie)+!string.equals(#Trakt.Movie.Released,)</visible>
     </control>
     <control>
@@ -629,7 +629,7 @@
       <width>420</width>
       <label>#Trakt.Movie.Released</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,movie)+!string.equals(#Trakt.Movie.Released,)</visible>
     </control>
     <control>
@@ -641,7 +641,7 @@
       <label>#Trakt.Translation.Year.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,movie)+!string.equals(#Trakt.Movie.Year,)</visible>
     </control>
     <control>
@@ -653,7 +653,7 @@
       <width>420</width>
       <label>#Trakt.Movie.Year</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,movie)+!string.equals(#Trakt.Movie.Year,)</visible>
     </control>
     <control>
@@ -664,7 +664,7 @@
       <posY>544</posY>
       <label>#Trakt.Translation.Certification.Label</label>
       <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,movie)+!string.equals(#Trakt.Movie.Certification,)</visible>
     </control>
     <control>
@@ -675,7 +675,7 @@
       <posY>573</posY>
       <label>#Trakt.Movie.Certification</label>
       <font>font12</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,movie)+!string.equals(#Trakt.Movie.Certification,)</visible>
     </control>
     <control>
@@ -687,7 +687,7 @@
       <label>#Trakt.Translation.Runtime.Label</label>
       <font>font10</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,movie)+!string.equals(#Trakt.Movie.Runtime,)</visible>
     </control>
     <control>
@@ -700,7 +700,7 @@
       <label>#Trakt.Movie.Runtime mins</label>
       <font>font12</font>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,movie)+!string.equals(#Trakt.Movie.Runtime,)</visible>
     </control>
     <control>
@@ -725,7 +725,7 @@
       <height>157</height>
       <label>#Trakt.Movie.Overview</label>
       <font>font11</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>string.equals(#Trakt.View.Level,WatchedHistory)+string.equals(#Trakt.Selected.Type,movie)</visible>
     </control>
     <control>

@@ -18,7 +18,7 @@
       <posX>0</posX>
       <posY>0</posY>
       <width>1920</width>
-      <height>140</height>
+      <height>180</height>
       <texture>overlay_top.png</texture>
       <colordiffuse>99ffffff</colordiffuse>
     </control>
@@ -31,16 +31,67 @@
       <width>1920</width>
       <height>1080</height>
       <texture>general_overlay.png</texture>
+      <visible>!window.isvisible(4)</visible>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>70</posX>
+      <posY>239</posY>
+      <width>448</width>
+      <height>690</height>
+      <texture>backslide_settings.png</texture>
+      <visible>!window.isvisible(4)+!skin.hassetting(#skin.basichome.editor)</visible>
+    </control>
+    <control>
+      <description>background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>620</posX>
+      <posY>239</posY>
+      <width>1280</width>
+      <height>689</height>
+      <texture>menubg_settings.png</texture>
+      <visible>!window.isvisible(4)+!skin.hassetting(#skin.basichome.editor)</visible>
+    </control>
+    <control>
+      <id>1</id>
+      <type>label</type>
+      <posX>70</posX>
+      <posY>284</posY>
+      <width>448</width>
+      <label>924</label>
+      <textcolor>lightgray</textcolor>
+      <align>center</align>
+      <font>Label</font>
+      <visible>!window.isvisible(4)+!skin.hassetting(#skin.basichome.editor)</visible>
     </control>
     <control>
       <type>label</type>
       <id>1</id>
       <posX>45</posX>
-      <posY>15</posY>
+      <posY>54</posY>
       <label>#(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
-      <font>Label</font>
+      <width>1802</width>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <type>label</type>
+      <id>1</id>
+      <posX>700</posX>
+      <posY>260</posY>
+      <width>1000</width>
+      <label>#currentmodule</label>
+      <textcolor>lightgray</textcolor>
+      <font>Label</font>
+      <visible>!window.isvisible(4)+!skin.hassetting(#skin.basichome.editor)</visible>
     </control>
   </controls>
 </window>

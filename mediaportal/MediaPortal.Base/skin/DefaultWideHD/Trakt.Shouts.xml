@@ -26,7 +26,7 @@
       <texture>#Trakt.Shout.Fanart</texture>
     </control>
     <import>Trakt.Common.Fanart.xml</import>
-    <import>common.window.xml</import>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
     <control>
       <description>General Overlay</description>
@@ -43,11 +43,11 @@
       <type>label</type>
       <id>0</id>
       <posX>45</posX>
-      <posY>15</posY>
+      <posY>54</posY>
       <width>1299</width>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
-      <label>#Trakt.Translation.Shouts.Label | #Trakt.Shout.CurrentItem</label>
+      <textcolor>lightgray</textcolor>  
+      <label>Trakt #scroll.wrap #Trakt.Translation.Shouts.Label #scroll.wrap #Trakt.Shout.CurrentItem #scroll.wrap #selecteditem</label>
       <align>left</align>
     </control>
     <control>
@@ -60,8 +60,8 @@
           <description>listcontrol</description>
           <type>listcontrol</type>
           <id>50</id>
-          <height>540</height>
-          <width>1599</width>
+          <height>730</height>
+          <width>530</width>
           <onleft>3</onleft>
           <onright>50</onright>
           <spinCanFocus>no</spinCanFocus>
@@ -98,7 +98,7 @@
         <width>559</width>
         <height>886</height>
         <texture>Backslide.png</texture>
-        <colorDiffuse>ffffffff</colorDiffuse>
+        <colorDiffuse>lightgray</colorDiffuse>
         <visible>!Control.HasFocus(50)</visible>
         <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
         <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
@@ -158,70 +158,191 @@
         </control>
       </control>
     </control>
-    <control>
-      <description>Avatar</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>157</posX>
-      <posY>750</posY>
-      <height>165</height>
-      <width>165</width>
-      <keepaspectratio>yes</keepaspectratio>
-      <zoom>yes</zoom>
-      <texture>#selectedthumb</texture>
-    </control>
-    <control>
-      <description>Join Date | Location</description>
-      <id>0</id>
-      <label>#(iif(eq(#Trakt.User.FullName,'N/A'),'#Trakt.User.Username','#Trakt.User.FullName')) #(iif(eq(#Trakt.User.Location,'N/A'),'','| #Trakt.User.Location'))</label>
-      <type>label</type>
-      <posX>375</posX>
-      <posY>742</posY>
-      <width>810</width>
-      <textcolor>ff6FAFE1</textcolor>
-      <font>font13</font>
-      <visible>!string.equals(#Trakt.User.JoinDate,)</visible>
-    </control>
+    
     <control>
       <description>Shout</description>
       <type>textboxscrollup</type>
       <id>0</id>
-      <posX>375</posX>
-      <posY>787</posY>
-      <width>1339</width>
-      <height>105</height>
-      <font>font14</font>
+      <posX>760</posX>
+      <posY>270</posY>
+      <width>550</width>
+      <height>570</height>
+      <font>font10</font>
       <label>#Trakt.Shout.Text</label>
       <scrollStartDelaySec>8</scrollStartDelaySec>
       <seperator>-----------------------------------------------------------------------------</seperator>
     </control>
+    
+    
     <control>
+      <description>Avatar</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1370</posX>
+      <posY>270</posY>
+      <height>200</height>
+      <width>200</width>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#selectedthumb</texture>
+    </control>
+    
+    <control>
+      <type>label</type>
+      <label>#Trakt.User.Username</label>
+      <id>0</id>
+      <posX>1370</posX>
+      <posY>497</posY>
+      <font>LabelBold</font>
+      <textcolor>ff00bfff</textcolor>
+    </control>
+    <control>
+      <type>textboxscrollup</type>
+      <label>#Trakt.User.FullName</label>
+      <id>0</id>
+      <posX>1370</posX>
+      <posY>539</posY>
+      <width>646</width>
+      <height>84</height>
+      <font>LabelBold</font>
+      <textcolor>ff00bfff</textcolor>
+    </control>
+    <control>
+      <description>Join Date</description>
+      <id>0</id>
+      <label>#Trakt.Translation.JoinDate.Label</label>
+      <type>label</type>
+      <posX>1370</posX>
+      <posY>590</posY>
+      <width>210</width>
+      <textcolor>ff00bfff</textcolor>
+      <font>font10</font>
+      <visible>!string.equals(#Trakt.User.JoinDate,)</visible>
+    </control>
+    <control>
+      <description>Join Date Value</description>
+      <id>12001</id>
+      <label>#Trakt.User.JoinDate</label>
+      <type>label</type>
+      <posX>1590</posX>
+      <posY>590</posY>
+      <width>562</width>
+      <textcolor>lightgray</textcolor>
+      <font>font10</font>
+    </control>
+    <control>
+      <description>Gender</description>
+      <id>0</id>
+      <label>#Trakt.Translation.Gender.Label</label>
+      <type>label</type>
+      <posX>1370</posX>
+      <posY>620</posY>
+      <width>210</width>
+      <textcolor>ff00bfff</textcolor>
+      <font>font10</font>
+      <visible>!string.equals(#Trakt.User.Gender,)</visible>
+    </control>
+    <control>
+      <description>Gender Value</description>
+      <id>12001</id>
+      <label>#Trakt.User.Gender</label>
+      <type>label</type>
+      <posX>1590</posX>
+      <posY>620</posY>
+      <width>562</width>
+      <textcolor>lightgray</textcolor>
+      <font>font10</font>
+    </control>
+    <control>
+      <description>Location</description>
+      <id>0</id>
+      <label>#Trakt.Translation.Location.Label</label>
+      <type>label</type>
+      <posX>1370</posX>
+      <posY>650</posY>
+      <width>210</width>
+      <textcolor>ff00bfff</textcolor>
+      <font>font10</font>
+      <visible>!string.equals(#Trakt.User.Location,)</visible>
+    </control>
+    <control>
+      <description>Location Value</description>
+      <id>12001</id>
+      <label>#Trakt.User.Location</label>
+      <type>label</type>
+      <posX>1590</posX>
+      <posY>650</posY>
+      <width>562</width>
+      <textcolor>lightgray</textcolor>
+      <font>font10</font>
+    </control>
+    <control>
+      <description>Protected</description>
+      <id>0</id>
+      <label>#Trakt.Translation.Protected.Label</label>
+      <type>label</type>
+      <posX>1370</posX>
+      <posY>680</posY>
+      <width>210</width>
+      <textcolor>ff00bfff</textcolor>
+      <font>font10</font>
+      <visible>!string.equals(#Trakt.User.Protected,)</visible>
+    </control>
+    <control>
+      <description>Protected Value</description>
+      <id>12001</id>
+      <label>#Trakt.User.Protected</label>
+      <type>label</type>
+      <posX>1590</posX>
+      <posY>680</posY>
+      <width>562</width>
+      <textcolor>lightgray</textcolor>
+      <font>font10</font>
+    </control>
+    <control>
+      <description>User About</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>1370</posX>
+      <posY>720</posY>
+      <width>500</width>
+      <height>170</height>
+      <font>font9</font>
+      <label>#Trakt.User.About</label>
+      <scrollStartDelaySec>20</scrollStartDelaySec>
+      <visible>!string.equals(#Trakt.User.About,)+!string.equals(#Trakt.User.About,N/A)</visible>
+    </control>
+    
+    
+    
+    
+    
+    
+    <!--control>
       <description>Likes Icon</description>
       <type>image</type>
       <id>1</id>
-      <width>52</width>
-      <height>48</height>
-      <posX>1200</posX>
-      <posY>739</posY>
+      <width>35</width>
+      <height>35</height>
+      <posX>1370</posX>
+      <posY>800</posY>
       <texture>love.png</texture>
       <visible>!string.equals(#Trakt.Shout.Likes,)</visible>
-      <animation effect="fade" time="250" delay="0">WindowClose</animation>
     </control>
     <control>
       <type>label</type>
       <label>#Trakt.Shout.Likes #Trakt.Translation.Likes.Label</label>
       <id>0</id>
-      <posX>1275</posX>
-      <posY>742</posY>
-      <width>280</width>
-      <font>font12</font>
-      <textcolor>ffffffff</textcolor>
+      <posX>1455</posX>
+      <posY>800</posY>
+      <width>380</width>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>6</shadowDistance>
       <shadowColor>#shadow.light</shadowColor>
       <visible>!string.equals(#Trakt.Shout.Likes,)</visible>
-    </control>
-    <control>
+    </control-->
+    <!--control>
       <description>Replies Icon</description>
       <type>image</type>
       <id>1</id>
@@ -240,11 +361,11 @@
       <posY>742</posY>
       <width>675</width>
       <font>font12</font>
-      <textcolor>ffffffff</textcolor>
+      <textcolor>lightgray</textcolor>
       <shadowAngle>45</shadowAngle>
       <shadowDistance>6</shadowDistance>
       <shadowColor>#shadow.light</shadowColor>
       <visible>!string.equals(#Trakt.Shout.Replies,)</visible>
-    </control>
+    </control-->
   </controls>
 </window>

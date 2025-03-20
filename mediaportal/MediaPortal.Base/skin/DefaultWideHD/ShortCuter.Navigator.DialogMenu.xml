@@ -44,7 +44,7 @@
       <width>843</width>
       <label>181</label>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <font>Menutitle</font>
     </control>
     <control>
@@ -56,7 +56,7 @@
       <width>843</width>
       <label>924</label>
       <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Exit button</description>
@@ -66,7 +66,7 @@
       <posY>244</posY>
       <width>35</width>
       <height>35</height>
-      <textureFocus>tb_exit.png</textureFocus>
+      <textureFocus>tb_exit3.png</textureFocus>
       <textureNoFocus>tb_exitNF.png</textureNoFocus>
       <label>-</label>
       <onleft>3</onleft>

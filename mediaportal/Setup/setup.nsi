@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2024 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 /*
-// Copyright (C) 2005-2024 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -638,6 +638,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\WindowPlugins\GUIDVD\bin\${BUILD_TYPE}\GUIDVD.dll"
   File "${git_MP}\WindowPlugins\GUIHome\bin\${BUILD_TYPE}\GUIHome.dll"
   File "${git_MP}\WindowPlugins\GUIMusic\bin\${BUILD_TYPE}\GUIMusic.dll"
+  File "${git_MP}\WindowPlugins\GUINotifier\bin\${BUILD_TYPE}\GUINotifier.dll"
   File "${git_MP}\WindowPlugins\GUISudoku\bin\${BUILD_TYPE}\GUISudoku.dll"
   File "${git_MP}\WindowPlugins\GUIPictures\bin\${BUILD_TYPE}\GUIPictures.dll"
   File "${git_MP}\WindowPlugins\GUIRSSFeed\bin\${BUILD_TYPE}\GUIRSSFeed.dll"
@@ -673,9 +674,9 @@ Section "MediaPortal core files (required)" SecCore
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
   !if "${Architecture}" == "x64"
-  File "${git_ROOT}\Packages\Sqlite.3.47.0\sqlite\x64\sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.49.1\sqlite\x64\sqlite.dll"
   !else
-  File "${git_ROOT}\Packages\Sqlite.3.47.0\sqlite\x86\sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.49.1\sqlite\x86\sqlite.dll"
   !endif
   ; NuGet binaries EXIF
   SetOutPath "$MPdir.Base\"
@@ -812,6 +813,9 @@ Section "MediaPortal core files (required)" SecCore
      !endif
   !endif
   
+  ; LibWebP
+  File /oname=libwebp.dll "${git_MP}\MediaPortal.Base\3rd_party\libwebp_${Architecture}.dll"
+
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
@@ -866,12 +870,12 @@ Section "MediaPortal core files (required)" SecCore
   Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
   Delete "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanMedium.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Medium.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\Lato-Light.ttf"
-  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\OpenSans-Light.ttf"
+  Delete "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\OpenSans-Regular.ttf"
 
   ; used for Default and Titan Skin Font
-  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\NotoSans-Regular.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\OpenSans-Light.ttf"
+  !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\DefaultWideHD\MPDefaultFonts\OpenSans-Regular.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanSmall.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\Titan.ttf"
   !insertmacro InstallTTFFont "${MEDIAPORTAL.BASE}\skin\Titan\Fonts\TitanLight.ttf"
@@ -1013,6 +1017,7 @@ SectionEnd
   Delete "$MPdir.Plugins\Windows\GUIDVD.dll"
   Delete "$MPdir.Plugins\Windows\GUIHome.dll"
   Delete "$MPdir.Plugins\Windows\GUIMusic.dll"
+  Delete "$MPdir.Plugins\Windows\GUINotifier.dll"
   Delete "$MPdir.Plugins\Windows\GUISudoku.dll"
   Delete "$MPdir.Plugins\Windows\GUIPictures.dll"
   Delete "$MPdir.Plugins\Windows\GUIRSSFeed.dll"
@@ -1034,8 +1039,89 @@ SectionEnd
   Delete "$MPdir.Base\log4net.dll"
   Delete "$MPdir.Base\TsReader.ax"
   Delete "$MPdir.Base\cccp.ax"
+  ; LibWebP
+  Delete "$MPdir.Base\libwebp.dll"
   ; Shaders
   RMDir /r "$MPdir.Base\Shaders"
+  
+  Delete "$MPdir.Base\LastFMLibrary.dll"
+  
+  ; libbluray
+  Delete "$MPdir.Base\bluray.dll"
+  Delete "$MPdir.Base\libbluray.jar"
+  Delete "$MPdir.Base\freetype.dll"
+  Delete "$MPdir.Base\awt\libbluray.jar"
+  RMDir "$MPdir.Base\awt"
+  
+  ; taglib-sharp
+  Delete "$MPdir.Base\TagLibSharp.dll"
+  ; SharpLibHid
+  Delete "$MPdir.Base\SharpLib.Hid.dll"
+  ; SharpLibWin32
+  Delete "$MPdir.Base\SharpLibWin32.dll"
+  ; SharpLibDisplay
+  Delete "$MPdir.Base\SharpLibDisplay.dll"
+  ; Naudio
+  Delete "$MPdir.Base\NAudio.dll" 
+  ; CSCore
+  Delete "$MPdir.Base\CSCore.dll"
+  ; SharpDX
+  Delete "$MPdir.Base\SharpDX.dll"
+  Delete "$MPdir.Base\SharpDX.Direct3D9.dll"
+  Delete "$MPdir.Base\SharpDX.DirectInput.dll"
+  Delete "$MPdir.Base\SharpDX.Mathematics.dll"
+
+  ; NuGet binaries Sqlite
+  Delete "$MPdir.Base\sqlite.dll"
+  
+  ; NuGet binaries EXIF
+  Delete "$MPdir.Base\MetadataExtractor.dll"
+  Delete "$MPdir.Base\XmpCore.dll"
+  
+  ; NuGet binaries UnidecodeSharp
+  Delete "$MPdir.Base\UnidecodeSharpFork.dll"
+  
+  ; Bass Core
+  Delete "$MPdir.Base\Bass.Net.dll"
+  Delete "$MPdir.Base\BassRegistration.dll"
+  Delete "$MPdir.Base\bass.dll"
+  Delete "$MPdir.Base\System.Management.Automation.dll"
+  ; Bass Addons
+  Delete "$MPdir.Base\bassasio.dll"
+  Delete "$MPdir.Base\bass_fx.dll"
+  Delete "$MPdir.Base\bassmix.dll"
+  Delete "$MPdir.Base\bass_vst.dll"
+  Delete "$MPdir.Base\basswasapi.dll"
+  Delete "$MPdir.Base\bassenc.dll"
+  Delete "$MPdir.Base\basscd.dll"
+  Delete "$MPdir.Base\OptimFROG.dll"
+  !if "${Architecture}" == "x64"
+  !else
+    Delete "$MPdir.Base\bass_wadsp.dll"
+  !endif
+  
+  ; NuGet binaries MediaInfo
+  Delete "$MPdir.Base\MediaInfo.dll"
+  Delete "$MPdir.Base\libcurl.dll"
+  !if "${Architecture}" == "x64"
+    Delete "$MPdir.Base\libcrypto-3-x64.dll"
+    Delete "$MPdir.Base\libssl-3-x64.dll"
+  !else
+    Delete "$MPdir.Base\libcrypto-3.dll"
+    Delete "$MPdir.Base\libssl-3.dll"
+  !endif
+  Delete "$MPdir.Base\MediaInfo.Wrapper.dll"
+  Delete "$MPdir.Base\System.ValueTuple.dll"
+  
+  ; ffmpeg
+  Delete "$MPdir.Base\MovieThumbnailer\ffmpeg.exe"
+  RMDir "$MPdir.Base\MovieThumbnailer"
+  
+  ; bass audiodecoders
+  Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass*.dll"
+  RMDir "$MPdir.Base\MusicPlayer\plugins\audio decoders"
+  RMDir "$MPdir.Base\MusicPlayer\plugins"
+  RMDir "$MPdir.Base\MusicPlayer\"
     
 !macroend
 
@@ -1119,6 +1205,7 @@ SectionEnd
   Delete "$MPdir.Base\MpeCore.dll"
   Delete "$MPdir.Base\MpeInstaller.exe"
   Delete "$MPdir.Base\MpeMaker.exe"
+  Delete "$MPdir.Base\MPEUpdater.exe"
 
   ; remove startmenu shortcuts
   Delete "$DESKTOP\MediaPortal Extension Installer.lnk"
@@ -1360,8 +1447,6 @@ Section Uninstall
 
   ; remove last files and instdir
   Delete "$MPdir.Base\uninstall-mp.exe"
-  RMDir "$MPdir.Base"
-
 
   ${If} $UnInstallMode == 1
 
@@ -1385,6 +1470,11 @@ Section Uninstall
 
   ${EndIf}
 
+
+  Delete "$MPdir.Base\MediaPortalDirs.xml"
+  RMDir "$MPdir.Plugins\Windows"
+  RMDir "$MPdir.Plugins"
+  RMDir "$MPdir.Base"
 
   ${If} $frominstall == 1
     Quit

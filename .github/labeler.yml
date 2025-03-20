@@ -1,20 +1,38 @@
 critical:
-  - '(Critical|critical|Urgent|urgent)'
+  - '/(\s|^)(critical|urgent)(\s|$)/i'
 
 enhancement:
-  - '(Enhancement|enhancement)'
+  - '/(\s|^)(feat|features|request|new|improve|create|build|enhancement)(\s|$)/i'
+
+bug:
+  - '/(\s|^)(bug|fix|issue|solve|correct|defect)(\s|$)/i'
+
+documentation:
+  - '/(\s|^)(docs|document|documentation|readme)(\s|$)/i'
+
+help wanted:
+  - '/(\s|^)(help|need)(\s|$)/i'
+
+invalid:
+  - '/(\s|^)(invalid)(\s|$)/i'
+
+question:
+  - '/(\s|^)(query|\?|question|ask)(\s|$)/i'
+
+database:
+  - '/(sql|database)/i'
 
 Engine:
-  - '(Core|core)'
+  - '/(\s|^)(core)(\s|$)/i'
 
 TV:
-  - '(TV|TVE)'
+  - '/(\s|^)(TV|TVE|radio|EPG)(\s|$)/i'
 
 Tuning:
-  - '(Tuning|tuning)'
+  - '/(\s|^)(tuning)(\s|$)/i'
 
 MPE:
-  - 'MPE'
+  - '/(\s|^)(MPE)(\s|$)/i'
 
 Skin:
-  - '(Titan|DWHD|skin)'
+  - '/(\s|^)(Titan|DWHD|skins?)(\s|$)/i'

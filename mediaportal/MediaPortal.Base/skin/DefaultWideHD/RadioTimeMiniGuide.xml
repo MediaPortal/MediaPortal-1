@@ -150,7 +150,7 @@
       <posY>100</posY>
       <label>#RadioTime.Play.Station</label>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <font>font12</font>
     </control>
     <control>
@@ -162,7 +162,7 @@
       <label>#time</label>
       <align>right</align>
       <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>exit button</description>

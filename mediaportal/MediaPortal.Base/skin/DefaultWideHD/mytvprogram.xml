@@ -12,9 +12,10 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>blue.png</texture>
+      <texture>BH TVtimer.jpg</texture>
       <width>1920</width>
       <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
@@ -149,7 +150,11 @@
       <description>upcoming episodes listcontrol</description>
       <type>listcontrol</type>
       <id>10</id>
+      <posX>525</posX>
       <height>450</height>
+      <textXOff2>1260</textXOff2>
+      <PinIconXOff>1280</PinIconXOff>
+      <PinIconYOff>13</PinIconYOff>
     </control>
     <control>
       <description>Seperator</description>
@@ -173,60 +178,125 @@
       <zoom>no</zoom>
       <texture>#selectedthumb</texture>
     </control>
+    
+    
     <control>
+    <description>Current program data</description>
+    <type>group</type>
+    <layout>StackLayout(7, Horizontal, true)</layout>
+    <posX>240</posX>
+    <posY>705</posY>
+    <width>1600</width>
+    <align>left</align>
+    <control>
+      <type>fadelabel</type>
+      <description>channel</description>
+      <id>16</id>
+      <width>10</width>
+      <maxWidth>450</maxWidth>
+      <textcolor>lightgray</textcolor>
+      <align>left</align>
+      <font>font11</font>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dot</description>
+      <id>0</id>
+      <width>10</width>
+      <maxWidth>20</maxWidth>
+      <label> #scroll.wrap </label>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Current program time</description>
+      <id>14</id>
+      <width>10</width>
+      <maxWidth>450</maxWidth>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Dot</description>
+      <id>0</id>
+      <width>10</width>
+      <maxWidth>20</maxWidth>
+      <label> #scroll.wrap </label>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Current program genre</description>
+      <id>17</id>
+      <width>10</width>
+      <maxWidth>750</maxWidth>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+    </control>
+    </control>
+    
+    
+    <!--control>
       <description>channel</description>
       <id>16</id>
       <type>fadelabel</type>
       <posX>240</posX>
-      <posY>660</posY>
+      <posY>705</posY>
       <width>450</width>
-      <textcolor>ff6FAFE1</textcolor>
-      <font>font12</font>
+      <textcolor>lightgray</textcolor>
+      <font>font11</font>
     </control>
     <control>
       <description>Current program time</description>
       <id>14</id>
       <type>label</type>
       <posX>690</posX>
-      <posY>660</posY>
+      <posY>705</posY>
       <width>450</width>
       <align>left</align>
-      <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>Current program genre</description>
       <type>label</type>
       <id>17</id>
       <posX>1140</posX>
-      <posY>660</posY>
+      <posY>705</posY>
       <width>750</width>
       <align>left</align>
-      <font>font12</font>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+    </control-->
     <control>
       <description>Program Title</description>
       <id>13</id>
       <type>fadelabel</type>
       <posX>240</posX>
-      <posY>697</posY>
+      <posY>657</posY>
       <width>1590</width>
       <align>left</align>
-      <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <font>LabelBold</font>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>240</posX>
-      <posY>757</posY>
+      <posY>762</posY>
       <width>1590</width>
-      <height>157</height>
+      <height>145</height>
       <label>#TV.Scheduled.Description</label>
-      <font>font11</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
     </control>
   </controls>
 </window>

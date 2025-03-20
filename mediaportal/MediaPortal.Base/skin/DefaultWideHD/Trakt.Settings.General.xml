@@ -19,14 +19,35 @@
       <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>Trakt.Common.Fanart.xml</import>
-    <import>common.window.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
     <import>common.time.xml</import>
     <import>Trakt.Common.xml</import>
+    <control>
+      <description>Current View</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <width>1299</width>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>  
+      <label>Trakt #scroll.wrap #Trakt.Translation.Settings.Label #scroll.wrap #Trakt.Translation.GeneralSettings.Label</label>
+      <align>left</align>
+    </control>
     <control>
       <type>group</type>
       <description>group element</description>
       <posX>525</posX>
-      <posY>241</posY>
+      <posY>270</posY>
       <width>559</width>
       <height>568</height>
       <layout>StackLayout(Vertical)</layout>
@@ -35,7 +56,7 @@
         <type>checkbutton</type>
         <id>2</id>
         <label>#Trakt.Translation.DownloadFanart.Label</label>
-        <width>800</width>
+        <width>900</width><textureFocus>setting_button_long.png</textureFocus>
         <onright>2</onright>
         <onleft>#defaultcontrol.onleft</onleft>
         <onup>20</onup>
@@ -45,7 +66,7 @@
         <type>checkbutton</type>
         <id>3</id>
         <label>#Trakt.Translation.DownloadFullSizeFanart.Label</label>
-        <width>800</width>
+        <width>900</width><textureFocus>setting_button_long.png</textureFocus>
         <onright>3</onright>
         <onleft>#defaultcontrol.onleft</onleft>
       </control>
@@ -54,7 +75,7 @@
         <type>checkbutton</type>
         <id>4</id>
         <label>#Trakt.Translation.GetFollowerRequestsOnStartup.Label</label>
-        <width>800</width>
+        <width>900</width><textureFocus>setting_button_long.png</textureFocus>
         <onright>4</onright>
         <onleft>#defaultcontrol.onleft</onleft>
       </control>
@@ -63,7 +84,7 @@
         <type>checkbutton</type>
         <id>5</id>
         <label>#Trakt.Translation.CreateMovingPicturesCategories.Label</label>
-        <width>800</width>
+        <width>900</width><textureFocus>setting_button_long.png</textureFocus>
         <onright>5</onright>
         <onleft>#defaultcontrol.onleft</onleft>
       </control>
@@ -72,7 +93,7 @@
         <type>checkbutton</type>
         <id>6</id>
         <label>#Trakt.Translation.CreateMovingPicturesFilters.Label</label>
-        <width>800</width>
+        <width>900</width><textureFocus>setting_button_long.png</textureFocus>
         <onright>6</onright>
         <onleft>#defaultcontrol.onleft</onleft>
       </control>
@@ -81,7 +102,7 @@
         <type>checkbutton</type>
         <id>9</id>
         <label>#Trakt.Translation.CreateMyFilmsCategories.Label</label>
-        <width>800</width>
+        <width>900</width><textureFocus>setting_button_long.png</textureFocus>
         <onright>9</onright>
         <onleft>#defaultcontrol.onleft</onleft>
       </control>
@@ -90,7 +111,7 @@
         <type>checkbutton</type>
         <id>7</id>
         <label>#Trakt.Translation.ShowRateDialogOnWatched.Label</label>
-        <width>800</width>
+        <width>900</width><textureFocus>setting_button_long.png</textureFocus>
         <onright>7</onright>
         <onleft>#defaultcontrol.onleft</onleft>
       </control>
@@ -99,7 +120,7 @@
         <type>checkbutton</type>
         <id>8</id>
         <label>#Trakt.Translation.SettingSyncRatingsName.Label</label>
-        <width>800</width>
+        <width>900</width><textureFocus>setting_button_long.png</textureFocus>
         <onright>8</onright>
         <onleft>#defaultcontrol.onleft</onleft>
       </control>
@@ -108,7 +129,7 @@
         <type>checkbutton</type>
         <id>10</id>
         <label>#Trakt.Translation.SettingSyncPlaybackName.Label</label>
-        <width>800</width>
+        <width>900</width><textureFocus>setting_button_long.png</textureFocus>
         <onright>10</onright>
         <onleft>#defaultcontrol.onleft</onleft>
         <ondown>20</ondown>
@@ -117,7 +138,7 @@
         <description>divider horizontal</description>
         <type>image</type>
         <id>0</id>
-        <width>800</width>
+        <width>900</width><textureFocus>setting_button_long.png</textureFocus>
         <height>10</height>
         <texture></texture>
       </control>
@@ -125,7 +146,7 @@
         <description>divider horizontal</description>
         <type>image</type>
         <id>0</id>
-        <width>800</width>
+        <width>900</width><textureFocus>setting_button_long.png</textureFocus>
         <height>1</height>
         <texture>horizontal_bar.png</texture>
         <colordiffuse>40ffffff</colordiffuse>
@@ -134,7 +155,7 @@
         <description>divider horizontal</description>
         <type>image</type>
         <id>0</id>
-        <width>800</width>
+        <width>900</width><textureFocus>setting_button_long.png</textureFocus>
         <height>10</height>
         <texture></texture>
       </control>
@@ -145,7 +166,7 @@
         <textalign>center</textalign>
         <textYOff>0</textYOff>
         <label>#Trakt.Translation.StartLibraryAndPlaybackSync.Label</label>
-        <width>800</width>
+        <width>900</width><textureFocus>setting_button_long.png</textureFocus>
         <onright>2</onright>
         <onleft>#defaultcontrol.onleft</onleft>
         <onup>10</onup>

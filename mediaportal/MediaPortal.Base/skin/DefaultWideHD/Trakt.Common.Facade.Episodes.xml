@@ -74,7 +74,7 @@
           <renderFocusText>no</renderFocusText>
           <renderUnfocusText>no</renderUnfocusText>
           <showFrame>true</showFrame>
-          <textureMask>Picturethumbmask.png</textureMask>
+          <textureMask>musicfanart_mask.png</textureMask>
           <frameNoFocus>Picturethumbframe.png</frameNoFocus>
           <frameFocus>Picturethumbframe.png</frameFocus>
           <imageFolder>-</imageFolder>
@@ -110,8 +110,8 @@
           <imageFolderFocus>Picturethumbframe.png</imageFolderFocus>
           <frame>Picturethumbframe.png</frame>
           <frameFocus>Picturethumbframe.png</frameFocus>
-          <textureMask>Picturethumbmask.png</textureMask>
-          <thumbs mask="Picturethumbmask.png">
+          <textureMask>musicfanart_mask.png</textureMask>
+          <thumbs mask="musicfanart_mask.png">
           </thumbs>
           <background>emtpy.png</background>
           <InfoImage>

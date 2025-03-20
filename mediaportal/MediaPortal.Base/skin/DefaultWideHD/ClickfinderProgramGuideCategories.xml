@@ -15,84 +15,91 @@
       <posY>0</posY>
       <width>1920</width>
       <height>1080</height>
-      <texture>BH TV.jpg</texture>
+      <texture>BH TV.jpg</texture>  
       <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
-    <control>
+	
+	<control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>45</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>general_overlay.png</texture>
+    </control>
+ 
+	<control>
       <description>BG listcontrol left</description>
       <type>image</type>
       <id>0</id>
-      <posX>70</posX>
-      <posY>205</posY>
-      <width>885</width>
-      <height>858</height>
-      <texture>listbg2.png</texture>
-      <colordiffuse>ddffffff</colordiffuse>
+      <posX>81</posX>
+      <posY>239</posY>
+      <width>861</width>
+      <height>689</height>
+      <texture>Clickfinderbg.png</texture>
+      <colordiffuse>73ffffff</colordiffuse> 
     </control>
-    <control>
+    
+	<control>
       <description>BG listcontrol right</description>
       <type>image</type>
       <id>0</id>
-      <posX>955</posX>
-      <posY>205</posY>
-      <width>885</width>
-      <height>858</height>
-      <texture>listbg2.png</texture>
-      <colordiffuse>ddffffff</colordiffuse>
+      <posX>967</posX>
+      <posY>239</posY>
+      <width>861</width>
+      <height>689</height>
+      <texture>Clickfinderbg.png</texture>
+      <colordiffuse>73ffffff</colordiffuse> 
     </control>
-    <!-- Tv Movie++ Last UpdateLabel-->
-    <control>
-      <description>TvMovie++ LastUpdate</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>45</posX>
-      <posY>55</posY>
-      <width>925</width>
-      <font>font11</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <label>#SettingLastUpdate</label>
-    </control>
+   
     <!-- CategorieList & Controls-->
-    <control>
+    
+	<control>
       <description>label</description>
       <type>label</type>
       <id>1</id>
-      <posX>105</posX>
-      <posY>182</posY>
-      <label>#CategorieView</label>
+      <posX>110</posX>
+      <posY>185</posY>
+	  <width>800</width>
+      <label>#CategorieView</label> 
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff7ad4ed</textcolor> 
     </control>
     <control>
       <type>listcontrol</type>
       <id>10</id>
       <onright>30</onright>
       <onleft>2</onleft>
-      <posX>95</posX>
-      <posY>230</posY>
-      <width>829</width>
-      <height>894</height>
-      <spinPosX>792</spinPosX>
-      <spinPosY>970</spinPosY>
-      <textureUp>scroll-up.png</textureUp>
-      <textureDown>scroll-down.png</textureDown>
-      <textureUpFocus>scroll-up-focus.png</textureUpFocus>
-      <textureDownFocus>scroll-down-focus.png</textureDownFocus>
+      <posX>100</posX> 
+      <posY>255</posY> 
+      <width>825</width> 
+      <height>740</height> 
+      <spinPosX>100</spinPosX> 
+      <spinPosY>939</spinPosY>  
+	  <spinWidth>40</spinWidth>
+      <spinHeight>40</spinHeight>
+	  <spinAlign>Left</spinAlign>
+	  <spinColor>ffd3d3d3</spinColor>
+      <textureUp></textureUp> 
+      <textureDown></textureDown> 
+      <textureUpFocus></textureUpFocus> 
+      <textureDownFocus></textureDownFocus> 
       <textureFocus>listfocus.png</textureFocus>
-      <textureNoFocus>listnofocus.png</textureNoFocus>
-      <textureHeight>130</textureHeight>
+      <textureNoFocus></textureNoFocus>
+      <textureHeight>110</textureHeight>
       <PinIconXOff>800</PinIconXOff>
       <PinIconYOff>4</PinIconYOff>
       <PinIconWidth>30</PinIconWidth>
       <PinIconHeight>25</PinIconHeight>
-      <IconXOff>5</IconXOff>
-      <IconYOff>5</IconYOff>
-      <textXOff>14</textXOff>
-      <textYOff>35</textYOff>
-      <font>Menutitle</font>
+      <IconXOff>10</IconXOff>
+      <IconYOff>1</IconYOff> 
+      <textXOff>15</textXOff>
+      <textYOff>45</textYOff>
+      <font>font13</font> 
       <textcolorNoFocus>ffffffff</textcolorNoFocus>
       <textcolor>ffffffff</textcolor>
       <textXOff2>829</textXOff2>
@@ -103,93 +110,122 @@
       <textYOff3>42</textYOff3>
       <font3>font9</font3>
       <textcolor3>ffffffff</textcolor3>
-      <itemWidth>115</itemWidth>
-      <itemHeight>115</itemHeight>
-      <scrollOffset>2</scrollOffset>
-      <scrollbarXOff>0</scrollbarXOff>
+      <itemWidth>104</itemWidth> 
+      <itemHeight>104</itemHeight>
+      <scrollOffset>3</scrollOffset>
+      <scrollbarXOff>15</scrollbarXOff>
       <scrollbarwidth>15</scrollbarwidth>
+	  <keepaspectratio>no</keepaspectratio>
+      <spinCanFocus>no</spinCanFocus>
       <wrapString> ~ </wrapString>
       <unfocusedAlpha applyToAll="true">130</unfocusedAlpha>
     </control>
+	
     <!-- PreviewList & Controls-->
+	
     <control>
       <description>label</description>
       <type>label</type>
       <id>1</id>
-      <posX>983</posX>
-      <posY>182</posY>
+      <posX>995</posX>
+      <posY>185</posY>
       <label>#ClickfinderPG.Translation.NextLabel</label>
       <font>Label</font>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff7ad4ed</textcolor> 
     </control>
     <control>
       <description>Filterby label</description>
       <type>label</type>
       <id>1</id>
-      <posX>1813</posX>
-      <posY>182</posY>
+      <posX>1800</posX>
+      <posY>185</posY>
       <label>#CategorieGroup</label>
       <font>Label</font>
       <align>right</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff7ad4ed</textcolor> 
     </control>
+	
+	 <!-- Tv Movie++ Last UpdateLabel-->
+	 
+    <control>
+      <description>TvMovie++ LastUpdate</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1800</posX>
+      <posY>937</posY>
+      <label>#SettingLastUpdate</label>
+      <font>font12</font>
+      <align>right</align>
+      <textcolor>lightgray</textcolor>
+     </control>
+	
     <control>
       <type>listcontrol</type>
       <id>30</id>
       <onleft>10</onleft>
-      <onright>30</onright>
-      <posX>983</posX>
-      <posY>230</posY>
-      <width>829</width>
-      <height>894</height>
-      <spinPosX>3064</spinPosX>
-      <spinPosY>942</spinPosY>
+      <onright>8</onright>
+      <posX>985</posX>
+      <posY>255</posY>
+      <width>825</width>
+      <height>840</height>
+      <spinPosX>3000</spinPosX>
+      <spinPosY>896</spinPosY>
+	  <spinWidth>40</spinWidth>
+      <spinHeight>40</spinHeight>
+	  <spinAlign>Left</spinAlign>
+	  <spinColor>ffd3d3d3</spinColor>
       <textureUp>scroll-up.png</textureUp>
       <textureDown>scroll-down.png</textureDown>
       <textureUpFocus>scroll-up-focus.png</textureUpFocus>
       <textureDownFocus>scroll-down-focus.png</textureDownFocus>
       <textureFocus>listfocus.png</textureFocus>
-      <textureNoFocus>listnofocus.png</textureNoFocus>
-      <textureHeight>130</textureHeight>
+      <textureNoFocus></textureNoFocus> 
+	  <textureHeight>110</textureHeight>
       <PinIconXOff>800</PinIconXOff>
       <PinIconYOff>4</PinIconYOff>
       <PinIconWidth>30</PinIconWidth>
       <PinIconHeight>25</PinIconHeight>
-      <IconXOff>5</IconXOff>
+      <IconXOff>20</IconXOff>
       <IconYOff>5</IconYOff>
       <textXOff>42</textXOff>
-      <textYOff>-2</textYOff>
-      <font>font11</font>
+      <textYOff>-5</textYOff> 
+      <font>font11bold</font>
       <textcolorNoFocus>ffffffff</textcolorNoFocus>
-      <textcolor>ffffffff</textcolor>
-      <textXOff2>829</textXOff2>
-      <textYOff2>64</textYOff2>
+      <textcolor>ff00bfff</textcolor>
+      <textXOff2>815</textXOff2> 
+      <textYOff2>24</textYOff2> 
       <font2>font11</font2>
       <textcolor2>ffffffff</textcolor2>
-      <textXOff3>182</textXOff3>
-      <textYOff3>47</textYOff3>
-      <font3>font9</font3>
+      <textXOff3>167</textXOff3> 
+      <textYOff3>33</textYOff3> 
+      <font3>font9</font3> 
       <textcolor3>ffffffff</textcolor3>
-      <itemWidth>115</itemWidth>
-      <itemHeight>115</itemHeight>
+      <itemWidth>90</itemWidth>
+      <itemHeight>90</itemHeight>
       <scrollOffset>2</scrollOffset>
-      <scrollbarXOff>0</scrollbarXOff>
+      <scrollbarXOff>10</scrollbarXOff>
       <scrollbarwidth>15</scrollbarwidth>
       <wrapString> ~ </wrapString>
       <unfocusedAlpha applyToAll="true">130</unfocusedAlpha>
+	  <textpadding>135</textpadding>
+	  <textpadding3>135</textpadding3>
+	  <scrollStartDelaySec>5</scrollStartDelaySec>
     </control>
-    <control>
+   
+	<!-- Preview ListImages 1 - 6 --> 
+	
+	  <control>
       <type>group</type>
       <description>group element</description>
-      <layout>StackLayout(19, Vertical, true)</layout>
-      <posX>997</posX>
-      <posY>239</posY>
-      <control>
+      <layout>StackLayout(10, Vertical, true)</layout>
+      <posX>1005</posX>
+      <posY>261</posY>
+	   <control>
         <description>PreviewListImage 1</description>
         <type>image</type>
-        <id>1</id>
-        <width>140</width>
-        <height>112</height>
+		<id>1</id>
+	    <width>100</width>
+        <height>100</height>
         <texture>#PreviewListImage1</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
@@ -200,8 +236,8 @@
         <description>PreviewListImage 2</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+		<width>100</width>
+        <height>100</height>
         <texture>#PreviewListImage2</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
@@ -212,8 +248,8 @@
         <description>PreviewListImage 3</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+		<width>100</width>
+        <height>100</height>
         <texture>#PreviewListImage3</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
@@ -224,8 +260,8 @@
         <description>PreviewListImage 4</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+        <width>100</width>
+        <height>100</height>
         <texture>#PreviewListImage4</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
@@ -236,8 +272,8 @@
         <description>PreviewListImage 5</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+        <width>100</width>
+        <height>100</height>
         <texture>#PreviewListImage5</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
@@ -248,32 +284,35 @@
         <description>PreviewListImage 6</description>
         <type>image</type>
         <id>1</id>
-        <width>140</width>
-        <height>112</height>
+        <width>100</width>
+        <height>100</height>
         <texture>#PreviewListImage6</texture>
         <filtered>yes</filtered>
         <centered>yes</centered>
         <keepaspectratio>yes</keepaspectratio>
         <visible>control.isvisible(30)</visible>
       </control>
-    </control>
-    <control>
-      <type>group</type>
-      <description>group element</description>
-      <layout>StackLayout(118, Vertical, true)</layout>
-      <posX>1159</posX>
-      <posY>262</posY>
-      <control>
+	  </control>
+  
+    <!-- Preview RatingStars 1 - 6 --> 
+	
+	 <control>
+       <type>group</type>
+       <description>group element</description>
+       <layout>StackLayout(96, Vertical, true)</layout>
+       <posX>1690</posX>
+       <posY>346</posY>
+       <control>
         <description>PreviewListRatingStar Image 1</description>
         <type>imagelist</type>
         <id>1</id>
-        <width>168</width>
-        <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+		<width>168</width>
+        <height>14</height> 
+        <textureWidth>12</textureWidth> 
+        <textureHeight>12</textureHeight> 
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -285,13 +324,13 @@
         <description>PreviewListRatingStar Image 2</description>
         <type>imagelist</type>
         <id>1</id>
-        <width>168</width>
+		<width>168</width>
         <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <textureWidth>12</textureWidth>
+        <textureHeight>12</textureHeight>
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -303,13 +342,13 @@
         <description>PreviewListRatingStar Image 3</description>
         <type>imagelist</type>
         <id>1</id>
-        <width>168</width>
+		<width>168</width>
         <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <textureWidth>12</textureWidth>
+        <textureHeight>12</textureHeight>
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -321,13 +360,13 @@
         <description>PreviewListRatingStar Image 4</description>
         <type>imagelist</type>
         <id>1</id>
-        <width>168</width>
+		<width>168</width>
         <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <textureWidth>12</textureWidth>
+        <textureHeight>12</textureHeight>
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -339,13 +378,13 @@
         <description>PreviewListRatingStar Image 5</description>
         <type>imagelist</type>
         <id>1</id>
-        <width>168</width>
+		<width>168</width>
         <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <textureWidth>12</textureWidth>
+        <textureHeight>12</textureHeight>
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -357,13 +396,11 @@
         <description>PreviewListRatingStar Image 6</description>
         <type>imagelist</type>
         <id>1</id>
-        <width>168</width>
-        <height>14</height>
-        <textureWidth>16</textureWidth>
-        <textureHeight>16</textureHeight>
+        <textureWidth>12</textureWidth>
+        <textureHeight>12</textureHeight>
         <subitems>
-          <subitem>starbad.png</subitem>
-          <subitem>star.png</subitem>
+          <subitem>starbad_small.png</subitem>
+          <subitem>star_small.png</subitem>
         </subitems>
         <orientation>horizontal</orientation>
         <align>left</align>
@@ -371,20 +408,22 @@
         <percentage>#PreviewListRatingStar6</percentage>
         <visible>!string.starts(#PreviewListRatingStar6,0)+control.isvisible(30)</visible>
       </control>
-    </control>
-    <!-- Categorie Preview 1 - 6 -->
-    <control>
-      <type>group</type>
-      <description>group element</description>
-      <layout>StackLayout(65, Vertical, true)</layout>
-      <posX>972</posX>
-      <posY>298</posY>
+	  </control>
+  
+    <!-- Preview TvMovieStars 1 - 6 -->
+	
+	  <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(65, Vertical, true)</layout>
+        <posX>987</posX>
+        <posY>325</posY>
       <control>
         <description>PreviewListTvMovieStar1</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+		<width>45</width>
+        <height>45</height>
         <texture>#PreviewListTvMovieStar1</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
@@ -394,8 +433,8 @@
         <description>PreviewListTvMovieStar2</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+		<width>45</width>
+        <height>45</height>
         <texture>#PreviewListTvMovieStar2</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
@@ -405,8 +444,8 @@
         <description>PreviewListTvMovieStar3</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+		<width>45</width>
+        <height>45</height>
         <texture>#PreviewListTvMovieStar3</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
@@ -416,8 +455,8 @@
         <description>PreviewListTvMovieStar4</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+        <width>45</width>
+        <height>45</height>
         <texture>#PreviewListTvMovieStar4</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
@@ -427,8 +466,9 @@
         <description>PreviewListTvMovieStar5</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+        
+        <width>45</width>
+        <height>45</height>
         <texture>#PreviewListTvMovieStar5</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
@@ -438,21 +478,25 @@
         <description>PreviewListTvMovieStar6</description>
         <type>image</type>
         <id>1</id>
-        <width>67</width>
-        <height>67</height>
+        <width>45</width>
+        <height>45</height>
         <texture>#PreviewListTvMovieStar6</texture>
         <centered>no</centered>
         <keepaspectratio>no</keepaspectratio>
         <visible>control.isvisible(30)</visible>
       </control>
-    </control>
+	  </control>
+   
     <!-- ActionGroup -->
+	
     <import>ClickfinderProgramGuide.HiddenMenu.xml</import>
+	<import>ClickfinderProgramGuide.HiddenInfo.xml</import>
+	
     <control>
       <id>9</id>
       <type>animation</type>
-      <posX>1293</posX>
-      <posY>483</posY>
+      <posX>1343</posX> 
+      <posY>533</posY> 
       <width>98</width>
       <height>98</height>
       <textures>common.waiting.1.png;common.waiting.2.png;common.waiting.3.png;common.waiting.4.png;common.waiting.5.png; common.waiting.6.png;common.waiting.7.png;common.waiting.8.png</textures>

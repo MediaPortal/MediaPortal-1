@@ -15,7 +15,7 @@
       <posY>67</posY>
       <label>#streams.count</label>
       <align>left</align>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <font>font10</font>
     </control>
     <!--    *************************************************************************************  -->

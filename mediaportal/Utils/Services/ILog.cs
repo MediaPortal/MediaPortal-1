@@ -47,5 +47,10 @@ namespace MediaPortal.Services
     /// </summary>
     /// <param name="logLevel">The loglevel.</param>
     void SetLogLevel(Level logLevel);
+
+    /// <summary>
+    /// Gets the loglevel.
+    /// </summary>
+    Level GetLogLevel();
   }
 }

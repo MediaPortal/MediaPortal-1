@@ -131,7 +131,7 @@
     <posX>0</posX>
     <posY>0</posY>
     <width>1</width>
-    <visible>!Control.IsVisible(30903)+!Control.IsVisible(40904)+!Control.IsVisble(90909)</visible>
+    <visible>string.equals(#myNotifier.Messages.Count.Unread,0)+!Control.IsVisble(90909)</visible>
   </control>
 
   <control>
