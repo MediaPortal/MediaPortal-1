@@ -232,9 +232,7 @@ namespace MediaPortal.NotifyMessageService.Database
             Log.Error("[NotifyMessageServiceSqLite][open] Excetion: {0}", ex.Message);
           }
 
-          //this._db = new SQLiteClient(Config.GetFile(Config.Dir.Database, @"NotifyMessageDatabaseV1.db3"));
-          this._db = new SQLiteClient(Directory.Exists("m:\\") ? @"m:\Team MediaPortal\MediaPortal\database\NotifyMessageDatabaseV1.db3" : Config.GetFile(Config.Dir.Database, @"NotifyMessageDatabaseV1.db3"));
-
+          this._db = new SQLiteClient(Config.GetFile(Config.Dir.Database, @"NotifyMessageDatabaseV1.db3"));
           this._dbHealth = DatabaseUtility.IntegrityCheck(this._db);
 
           DatabaseUtility.SetPragmas(this._db);
