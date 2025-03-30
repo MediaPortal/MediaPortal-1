@@ -755,7 +755,7 @@
         <align>left</align>
         <width>1210</width>
         <height>38</height>
-        <visible>!string.equals(#duration)</visible>
+        <visible>!string.equals(#duration)+plugin.isenabled(TuneIn)</visible>
         <control>
           <type>fadelabel</type>
           <description>TuneIn Stationlabel</description>
@@ -778,6 +778,40 @@
           <font>font10</font>
         </control>
       </control>
+      
+      <control>
+        <description>TuneIn</description>
+        <type>group</type>
+        <layout>StackLayout(10, Horizontal, true)</layout>
+        <posX>240</posX>
+        <posY>700</posY>
+        <align>left</align>
+        <width>1210</width>
+        <height>38</height>
+        <visible>!string.equals(#duration)+!plugin.isenabled(TuneIn)</visible>
+        <control>
+          <type>fadelabel</type>
+          <description>TuneIn Stationlabel</description>
+          <id>0</id>
+          <label>#(L(602)):</label>
+          <width>70</width>
+          <maxWidth>1030</maxWidth>
+          <align>left</align>
+          <textcolor>ff00bfff</textcolor>
+          <font>font10</font>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>TuneIn Station</description>
+          <id>0</id>
+          <label>#Play.Current.Album</label>
+          <width>900</width>
+          <maxWidth>1030</maxWidth>
+          <align>left</align>
+          <font>font10</font>
+        </control>
+      </control>
+      
       <control>
         <description>TuneIn</description>
         <type>group</type>
