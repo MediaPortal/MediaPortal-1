@@ -2,6 +2,8 @@
 <!-- Skin translation file -->
 <!-- English (US) -->
 <strings>
+  <string Field="Thumbsview">Vue en miniature</string>
+  <string Field="Thumbsview.Select">Normal</string>
   <string Field="WorldNewsTicker">Activer ticker de WorldNews</string>
   <string Field="AnalogClockOSD">Horloge analogique dans OSDs</string>
   <string Field="MusicNowPlayingFanart">Fanart de lecture en cours dans BasicHome</string>
@@ -52,7 +54,8 @@
   <string Field="Ukraine">Afficher le drapeau de l'Ukraine</string>
   <string Field="KeyboardShortcuts">Raccourcis clavier</string>
   <string Field="AudioOptions">Volume haut/bas</string>
-   <string Field="CategoryBG">Affiche plugin BasicHome</string> 
+  <string Field="CategoryBG">Affiche plugin BasicHome</string>
+  <string Field="EnlargeImage">Agrandir l'image</string>  
   <!-- ***************************************************************************************-->
   <!-- ****************************   Skin translation for Logo Manager **********************-->
   <!-- ***************************************************************************************-->

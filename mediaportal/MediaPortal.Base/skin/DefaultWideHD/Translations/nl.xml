@@ -2,6 +2,8 @@
 <!-- Skin translation file -->
 <!-- Dutch (nl) -->
 <strings>
+  <string Field="Thumbsview">Miniatuurafbeelding</string>
+  <string Field="Thumbsview.Select">Normaal</string>
   <string Field="WorldNewsTicker">Activeren WorldNews ticker</string>
   <string Field="AnalogClockOSD">Analoge klok in OSDs</string>
   <string Field="MusicNowPlayingFanart">Fanart voor actuele titels in BasicHome</string>
@@ -48,6 +50,7 @@
   <string Field="KeyboardShortcuts">Sneltoetsen</string>
   <string Field="AudioOptions">Volume hoger/lager</string>
   <string Field="CategoryBG">Plugin Poster BasicHome</string>
+  <string Field="EnlargeImage">Afbeelding vergroten</string>
   
   <!-- ***************************************************************************************-->
   <!-- ****************************   Skin translation for Logo Manager **********************-->

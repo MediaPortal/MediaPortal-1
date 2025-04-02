@@ -4,6 +4,7 @@
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <rememberLastFocusedControl>no</rememberLastFocusedControl>
+ 
   <controls>
    <import>common.settings.xml</import>
    <import>common.time.xml</import>
@@ -134,7 +135,8 @@
           <type>button</type>
           <id>2</id>
           <label>300080</label>
-          <width>580</width><textureFocus>setting_button_medium.png</textureFocus>
+          <width>580</width>
+		  <textureFocus>setting_button_medium.png</textureFocus>
           <onup>21</onup>
           <onleft>9991</onleft>
           <visible>!skin.hassetting(#skin.keyboard.shortcuts)+!skin.hassetting(#skin.drivefreespace)+!skin.hassetting(#skin.drivefreespaceHelp)</visible>
@@ -144,7 +146,8 @@
           <type>button</type>
           <id>3</id>
           <label>300081</label>
-          <width>580</width><textureFocus>setting_button_medium.png</textureFocus>
+          <width>580</width>
+		  <textureFocus>setting_button_medium.png</textureFocus>
           <visible>!skin.hassetting(#skin.keyboard.shortcuts)+!skin.hassetting(#skin.drivefreespace)+!skin.hassetting(#skin.drivefreespaceHelp)</visible>
           <onleft>9991</onleft>
         </control>
@@ -153,7 +156,8 @@
           <type>button</type>
           <id>4</id>
           <label>300082</label>
-          <width>580</width><textureFocus>setting_button_medium.png</textureFocus>
+          <width>580</width>
+		  <textureFocus>setting_button_medium.png</textureFocus>
           <visible>!skin.hassetting(#skin.keyboard.shortcuts)+!skin.hassetting(#skin.drivefreespace)+!skin.hassetting(#skin.drivefreespaceHelp)</visible>
           <onleft>9991</onleft>
         </control>
@@ -162,7 +166,8 @@
           <type>button</type>
           <id>5</id>
           <label>101007</label>
-          <width>580</width><textureFocus>setting_button_medium.png</textureFocus>
+          <width>580</width>
+		  <textureFocus>setting_button_medium.png</textureFocus>
           <visible>!skin.hassetting(#skin.keyboard.shortcuts)+!skin.hassetting(#skin.drivefreespace)+!skin.hassetting(#skin.drivefreespaceHelp)</visible>
           <onleft>9991</onleft>
         </control>
@@ -171,7 +176,8 @@
           <type>button</type>
           <id>6</id>
           <label>300083</label>
-          <width>580</width><textureFocus>setting_button_medium.png</textureFocus>
+          <width>580</width>
+		  <textureFocus>setting_button_medium.png</textureFocus>
           <visible>!skin.hassetting(#skin.keyboard.shortcuts)+!skin.hassetting(#skin.drivefreespace)+!skin.hassetting(#skin.drivefreespaceHelp)</visible>
           <onleft>9991</onleft>
         </control>
@@ -181,7 +187,8 @@
           <id>7</id>
           <label>713</label>
           <ondown>8</ondown>
-          <width>580</width><textureFocus>setting_button_medium.png</textureFocus>
+          <width>580</width>
+		  <textureFocus>setting_button_medium.png</textureFocus>
           <visible>!skin.hassetting(#skin.keyboard.shortcuts)+!skin.hassetting(#skin.drivefreespace)+!skin.hassetting(#skin.drivefreespaceHelp)</visible>
           <onleft>9991</onleft>
         </control>
@@ -195,7 +202,8 @@
           <onright>8</onright>
           <onleft>9991</onleft>
           <ondown>9</ondown>
-          <width>580</width><textureFocus>setting_button_medium.png</textureFocus>
+          <width>580</width>
+		  <textureFocus>setting_button_medium.png</textureFocus>
           <visible>!skin.hassetting(#skin.drivefreespace)+!skin.hassetting(#skin.drivefreespaceHelp)</visible>
           <onleft>9991</onleft>
         </control>
@@ -209,25 +217,44 @@
           <onright>10</onright>
           <onleft>9991</onleft>
           <ondown>2</ondown>
-          <width>580</width><textureFocus>setting_button_medium.png</textureFocus>
+          <width>580</width> 
+		  <textureFocus>setting_button_medium.png</textureFocus>
           <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
         </control>
-        </control>
+		</control>
         <control>
           <description>Drive Free Space Help</description>
           <id>10</id>
           <type>checkbutton</type>
-          <posX>1255</posX>
+          <posX>1255</posX> 
           <posY>305</posY>
           <label>#(L(19148))</label>
           <selected>#(skin.hassetting('#skin.drivefreespaceHelp'))</selected>
           <onclick>#(skin.togglesetting('#skin.drivefreespaceHelp')) </onclick>            
-          <onright>9</onright>
+          <onright>11</onright>
           <onleft>9</onleft>
-          <ondown>9</ondown>
-          <onup>9</onup>
-          <width>350</width>
-          <visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespace)</visible>
+          <ondown>10</ondown>
+          <onup>10</onup>
+          <width>280</width>
+		  <textureFocus>setting_button_short.png</textureFocus> 
+		  <visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespace)</visible>
+        </control>
+		<control>
+          <description>Drive Free Space Help - Enlarge image</description>
+          <id>11</id>
+          <type>checkbutton</type>
+          <posX>1555</posX> 
+          <posY>305</posY>
+          <label>#SkinTranslation.Translations.EnlargeImage.Label</label> 
+          <selected>#(skin.hassetting('#skin.drivefreespaceImage'))</selected>
+          <onclick>#(skin.togglesetting('#skin.drivefreespaceImage')) </onclick>        
+          <onright>11</onright>
+          <onleft>10</onleft>
+          <ondown>11</ondown>
+          <onup>11</onup>
+          <width>330</width>
+          <textureFocus>setting_button_short.png</textureFocus> 		  
+		  <visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespace)+skin.hassetting(#skin.drivefreespaceHelp)</visible>
         </control>
       </control>
       <!-- *************************************************************************************************** -->
@@ -242,50 +269,56 @@
         <width>1520</width>
         <align>left</align>
         <height>700</height>
-        <label>Here some information about DriveFreeSpace.&#xA;If installed and configured correctly, this plugin is able to display a lot of information about your attached drives.&#xA;To configure the drive(s) you want to display, open MPConfig -> Plugins and navigate to the process plugin "DriveFreeSpace".&#xA;Click on the button "Configure"&#xA;You should see a configuration window like this (without the coloured rectangles):</label>
+        <label>Here is some information about DriveFreeSpace.&#xA;If installed and configured correctly, this plugin is able to display a lot of information about your attached drives.&#xA;To configure the drive(s) you want to display, open MPConfig -> Plugins and navigate to the process plugin "DriveFreeSpace".&#xA;Click on the button "Configure" and you should see a configuration window like this (without the coloured rectangles):</label>
         <font>font9</font>
-        <textcolor>deepskyblue</textcolor>
-        <visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespaceHelp)</visible>
+        <textcolor>skyblue</textcolor>  
+		<animation effect="fade" start="100" end="0" time="700" condition="skin.hassetting(#skin.drivefreespaceImage)">conditional</animation>
+		<visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespaceHelp)</visible>
       </control>
-      <control>
+       <control>
         <type>image</type>
         <description>Drivefreespace Config window</description>
         <id>0</id>
         <posX>685</posX>
-        <posY>517</posY>
-        <texture>drivefreespaceconfig.jpg</texture>
+        <posY>507</posY> 
+        <texture>drivefreespaceconfig_example.png</texture>
         <width>250</width>
         <height>200</height>
         <align>left</align>
         <keepaspectratio>no</keepaspectratio>
-        <visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespaceHelp)</visible>
+		<colordiffuse>ffffffff</colordiffuse>
+		<animation effect="zoom" start="100,100" end="360,300" center="700,570" time="700" condition="skin.hassetting(#skin.drivefreespaceImage)">conditional</animation>
+		<animation effect="slide" start="0,0" end="45,0" time="700" condition="skin.hassetting(#skin.drivefreespaceImage)">conditional</animation>
+		<visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespaceHelp)</visible>
       </control>
     <control>
         <type>label</type>
         <description>Help Text</description>
         <id>0</id>
-        <posX>955</posX>
-        <posY>510</posY>
-        <label>Inside the red rectangle the available drives are listed.&#xA;Select the ones you want to display.&#xA;After selecting the drive(s), you now specify the information to be displayed &#xA;(blue rectangle). This is a bit tricky, the properties to select from are shown when &#xA;hovering over the field in the blue rectangle.&#xA;To get the most information (including the free space for recordings in HD), you could &#xA;use this example string: &#xA;</label>
+        <posX>965</posX> 955
+        <posY>520</posY> 510
+        <label>Inside the red rectangle the available drives are listed. Select the ones you want to display.&#xA;After selecting the drive(s), you now specify the information to be displayed &#xA;(blue rectangle). This is a bit tricky, the properties to select from are shown when &#xA;hovering over the field in the blue rectangle. To get the most information (including &#xA;the free space for recordings in HD), you could use this example string: &#xA;</label>
         <width>850</width>
         <height>200</height>
         <align>left</align>
         <font>font9</font>
-        <textcolor>deepskyblue</textcolor>
+        <textcolor>skyblue</textcolor>
+		<animation effect="fade" start="100" end="0" time="700" condition="skin.hassetting(#skin.drivefreespaceImage)">conditional</animation>
         <visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespaceHelp)</visible>
       </control>
       <control>
         <type>label</type>
         <description>Help Text</description>
         <id>0</id>
-        <posX>625</posX>
-        <posY>723</posY>
+        <posX>630</posX> 625
+        <posY>700</posY> 723
         <label>                                                            &#37;drive&#37; &#37;labelbrackets&#37; &#xA;                                                            &#37;totalspace&#37; GB total / &#37;usedspace&#37; GB used &#xA;                                                            &#37;freespace&#37; &#37;unit&#37; free (&#37;fspercent&#37;) &#xA;                                                            (for approx. &#37;rectimeleft&#37; hours HD) </label>
         <width>1520</width>
         <height>200</height>
         <align>left</align>
         <font>font9</font>
         <textcolor>lightgray</textcolor>
+		<animation effect="fade" start="100" end="0" time="700" condition="skin.hassetting(#skin.drivefreespaceImage)">conditional</animation>
         <visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespaceHelp)</visible>
       </control>
       <control>
@@ -297,11 +330,14 @@
         <label>The skin layout is for the 6 drives C, D, E, F, and G. If you need other drive names, please contact me! &#xA;catavolt</label>
         <width>1520</width>
         <height>200</height>
-        <textcolor>deepskyblue</textcolor>
+        <textcolor>skyblue</textcolor> 
         <align>left</align>
         <font>font9</font>
-        <visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespaceHelp)</visible>
+		<animation effect="fade" start="100" end="0" time="700" condition="skin.hassetting(#skin.drivefreespaceImage)">conditional</animation>
+        <visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespaceHelp)</visible> 
       </control>
+	  
+	  
     <!-- *************************************************************************************************** -->
     <!-- *************************************   Drive Free Space All Disks  ******************************* -->
     <!-- *************************************************************************************************** -->
@@ -315,17 +351,17 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>675</posX>
-      <posY>380</posY>
-      <width>400</width>
-      <height>28</height>
+      <posX>670</posX> 
+      <posY>380</posY> 
+      <width>410</width> 
+      <height>34</height> 
       <texture>#(switch(
-        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green.png',
-        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green.png',
-        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green.png',
-        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green.png',
-        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green.png',
-        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green2.png',
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green2.png',
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green2.png',
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green2.png',
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green2.png',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green2.png',
         eq(1,1),''))</texture>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
@@ -333,10 +369,10 @@
       <description>Progress Bar</description>
       <type>progress</type>
       <id>0</id>
-      <posX>665</posX>
-      <posY>381</posY>
-      <width>400</width>
-      <height>26</height>
+      <posX>661</posX> 
+      <posY>382</posY> 
+      <width>410</width> 
+      <height>30</height> 
       <label>#(switch(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.C.AvailableSpace.UsedPercentage',
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.D.AvailableSpace.UsedPercentage',
@@ -347,13 +383,13 @@
         eq(1,1),''))</label>
       <texturebg>-</texturebg>
       <onlymidtexture>no</onlymidtexture>
-      <midwidth>200</midwidth>
-      <midheight>26</midheight>
+      <midwidth>360</midwidth>
+      <midheight>0</midheight>
       <midoffsetX>0</midoffsetX>
       <midoffsetY>0</midoffsetY>
-      <lefttexture>osd_progress_left_red.png</lefttexture>
-      <midtexture>osd_progress_mid_red.png</midtexture>
-      <righttexture>osd_progress_right_red.png</righttexture>
+      <lefttexture>osd_progress_left_red2.png</lefttexture>
+      <midtexture>osd_progress_mid_red2.png</midtexture>
+      <righttexture>osd_progress_right_red2.png</righttexture>
       <visible>control.hastext(1001)</visible>
     </control>
     <control>
@@ -361,7 +397,7 @@
       <type>label</type>
       <id>0</id>
       <posX>688</posX>
-      <posY>378</posY>
+      <posY>380</posY> 
       <width>480</width>
       <label>#(switch(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.C.AvailableSpace.UsedPercentage%',
@@ -384,7 +420,7 @@
       <type>label</type>
       <id>0</id>
       <posX>1065</posX>
-      <posY>378</posY>
+      <posY>380</posY> 
       <width>480</width>
       <label>#(switch(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.C.AvailableSpace.Percentage%',
@@ -426,62 +462,62 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>1325</posX>
+      <posX>1320</posX>
       <posY>380</posY>
-      <width>400</width>
-      <height>28</height>
+      <width>410</width>
+      <height>34</height>
       <texture>#(switch(
         <!-- Drive C yes, Drive D yes -->
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         <!-- Drive C no, Drive D yes -->
         and(
         eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         <!-- Drive C yes, Drive D no -->
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         <!-- Drive C no, Drive D no -->
         and(
         eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         eq(1,1),''))</texture>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
@@ -489,10 +525,10 @@
       <description>Progress Bar D</description>
       <type>progress</type>
       <id>0</id>
-      <posX>1315</posX>
-      <posY>381</posY>
-      <width>400</width>
-      <height>26</height>
+      <posX>1311</posX>
+      <posY>382</posY>
+      <width>410</width>
+      <height>30</height>
       <label>#(switch(
         <!-- Drive C yes, Drive D yes -->
         and(
@@ -552,9 +588,9 @@
       <midheight>26</midheight>
       <midoffsetX>0</midoffsetX>
       <midoffsetY>0</midoffsetY>
-      <lefttexture>osd_progress_left_red.png</lefttexture>
-      <midtexture>osd_progress_mid_red.png</midtexture>
-      <righttexture>osd_progress_right_red.png</righttexture>
+      <lefttexture>osd_progress_left_red2.png</lefttexture>
+      <midtexture>osd_progress_mid_red2.png</midtexture>
+      <righttexture>osd_progress_right_red2.png</righttexture>
       <visible>control.hastext(1002)</visible>
     </control>
     <control>
@@ -562,7 +598,7 @@
       <type>label</type>
       <id>0</id>
       <posX>1338</posX>
-      <posY>378</posY>
+      <posY>380</posY>
       <width>480</width>
       <label>#(switch(
         <!-- Drive C yes, Drive D yes -->
@@ -629,7 +665,7 @@
       <type>label</type>
       <id>0</id>
       <posX>1715</posX>
-      <posY>378</posY>
+      <posY>380</posY>
       <width>480</width>
       <label>#(switch(
         <!-- Drive C yes, Drive D yes -->
@@ -762,52 +798,52 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>675</posX>
+      <posX>670</posX>
       <posY>560</posY>
-      <width>400</width>
-      <height>28</height>
+      <width>410</width>
+      <height>34</height>
       <texture>#(switch(
         <!-- Drive C yes, Drive D yes -->
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         <!-- Drive C no, Drive D yes -->
         and(
         eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         <!-- Drive C yes, Drive D no -->
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
@@ -818,11 +854,11 @@
         eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         eq(1,1),''))</texture>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
@@ -830,10 +866,10 @@
       <description>Progress Bar D</description>
       <type>progress</type>
       <id>0</id>
-      <posX>665</posX>
-      <posY>561</posY>
-      <width>400</width>
-      <height>26</height>
+      <posX>661</posX>
+      <posY>562</posY>
+      <width>410</width>
+      <height>30</height>
       <label>#(switch(
         <!-- Drive C yes, Drive D yes -->
         and(
@@ -898,9 +934,9 @@
       <midheight>26</midheight>
       <midoffsetX>0</midoffsetX>
       <midoffsetY>0</midoffsetY>
-      <lefttexture>osd_progress_left_red.png</lefttexture>
-      <midtexture>osd_progress_mid_red.png</midtexture>
-      <righttexture>osd_progress_right_red.png</righttexture>
+      <lefttexture>osd_progress_left_red2.png</lefttexture>
+      <midtexture>osd_progress_mid_red2.png</midtexture>
+      <righttexture>osd_progress_right_red2.png</righttexture>
       <visible>control.hastext(1003)</visible>
     </control>
     <control>
@@ -908,7 +944,7 @@
       <type>label</type>
       <id>0</id>
       <posX>688</posX>
-      <posY>558</posY>
+      <posY>560</posY>
       <width>480</width>
       <label>#(switch(
         <!-- Drive C yes, Drive D yes -->
@@ -980,7 +1016,7 @@
       <type>label</type>
       <id>0</id>
       <posX>1065</posX>
-      <posY>558</posY>
+      <posY>560</posY>
       <width>480</width>
       <label>#(switch(
         <!-- Drive C yes, Drive D yes -->
@@ -1123,49 +1159,49 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>1325</posX>
+      <posX>1320</posX>
       <posY>560</posY>
-      <width>400</width>
-      <height>28</height>
+      <width>410</width>
+      <height>34</height>
       <texture>#(switch(
         <!-- Drive C yes, Drive D yes -->
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
         eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
         eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         <!-- Drive C no, Drive D yes -->
         and(
         eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         <!-- Drive C yes, Drive D no -->
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         <!-- Drive C no, Drive D no -->
         and(
         eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
@@ -1173,7 +1209,7 @@
         neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         eq(1,1),''))</texture>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
@@ -1181,10 +1217,10 @@
       <description>Progress Bar</description>
       <type>progress</type>
       <id>0</id>
-      <posX>1315</posX>
-      <posY>561</posY>
-      <width>400</width>
-      <height>26</height>
+      <posX>1311</posX>
+      <posY>562</posY>
+      <width>410</width>
+      <height>30</height>
       <label>#(switch(
         <!-- Drive C yes, Drive D yes -->
         and(
@@ -1239,9 +1275,9 @@
       <midheight>26</midheight>
       <midoffsetX>0</midoffsetX>
       <midoffsetY>0</midoffsetY>
-      <lefttexture>osd_progress_left_red.png</lefttexture>
-      <midtexture>osd_progress_mid_red.png</midtexture>
-      <righttexture>osd_progress_right_red.png</righttexture>
+      <lefttexture>osd_progress_left_red2.png</lefttexture>
+      <midtexture>osd_progress_mid_red2.png</midtexture>
+      <righttexture>osd_progress_right_red2.png</righttexture>
       <visible>control.hastext(1004)</visible>
     </control>
     <control>
@@ -1249,7 +1285,7 @@
       <type>label</type>
       <id>0</id>
       <posX>1338</posX>
-      <posY>558</posY>
+      <posY>560</posY>
       <width>480</width>
       <label>#(switch(
         <!-- Drive C yes, Drive D yes -->
@@ -1311,7 +1347,7 @@
       <type>label</type>
       <id>0</id>
       <posX>1715</posX>
-      <posY>558</posY>
+      <posY>560</posY>
       <width>480</width>
       <label>#(switch(
         <!-- Drive C yes, Drive D yes -->
@@ -1434,10 +1470,10 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>675</posX>
+      <posX>670</posX>
       <posY>740</posY>
-      <width>400</width>
-      <height>28</height>
+      <width>410</width>
+      <height>34</height>
       <texture>#(switch(
         <!-- Drive C yes, Drive D yes -->
         and(
@@ -1445,14 +1481,14 @@
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
         eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         <!-- Drive C no, Drive D yes -->
         and(
         eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
@@ -1460,7 +1496,7 @@
         neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         <!-- Drive C yes, Drive D no -->
         and(
         neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
@@ -1468,7 +1504,7 @@
         neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         <!-- Drive C no, Drive D no -->
         eq(1,1),''))</texture>
       <colordiffuse>ffffffff</colordiffuse>
@@ -1477,10 +1513,10 @@
       <description>Progress Bar</description>
       <type>progress</type>
       <id>0</id>
-      <posX>665</posX>
-      <posY>741</posY>
-      <width>400</width>
-      <height>26</height>
+      <posX>661</posX>
+      <posY>742</posY>
+      <width>410</width>
+      <height>30</height>
       <label>#(switch(
         <!-- Drive C yes, Drive D yes -->
         and(
@@ -1520,9 +1556,9 @@
       <midheight>26</midheight>
       <midoffsetX>0</midoffsetX>
       <midoffsetY>0</midoffsetY>
-      <lefttexture>osd_progress_left_red.png</lefttexture>
-      <midtexture>osd_progress_mid_red.png</midtexture>
-      <righttexture>osd_progress_right_red.png</righttexture>
+      <lefttexture>osd_progress_left_red2.png</lefttexture>
+      <midtexture>osd_progress_mid_red2.png</midtexture>
+      <righttexture>osd_progress_right_red2.png</righttexture>
       <visible>control.hastext(1005)</visible>
     </control>
     <control>
@@ -1530,7 +1566,7 @@
       <type>label</type>
       <id>0</id>
       <posX>688</posX>
-      <posY>738</posY>
+      <posY>740</posY>
       <width>480</width>
       <label>#(switch(
         <!-- Drive C yes, Drive D yes -->
@@ -1577,7 +1613,7 @@
       <type>label</type>
       <id>0</id>
       <posX>1065</posX>
-      <posY>738</posY>
+      <posY>740</posY>
       <width>480</width>
       <label>#(switch(
         <!-- Drive C yes, Drive D yes -->
@@ -1670,10 +1706,10 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>1325</posX>
+      <posX>1320</posX>
       <posY>740</posY>
-      <width>400</width>
-      <height>28</height>
+      <width>410</width>
+      <height>34</height>
       <texture>#(switch(
         <!-- Drive C yes, Drive D yes -->
         and(
@@ -1682,7 +1718,7 @@
         neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
         neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
-        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green.png',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
         <!-- Drive C no, Drive D yes -->
         <!-- Drive C yes, Drive D no -->
         <!-- Drive C no, Drive D no -->
@@ -1693,10 +1729,10 @@
       <description>Progress Bar</description>
       <type>progress</type>
       <id>0</id>
-      <posX>1315</posX>
-      <posY>741</posY>
-      <width>400</width>
-      <height>26</height>
+      <posX>1311</posX>
+      <posY>742</posY>
+      <width>410</width>
+      <height>30</height>
       <label>#(switch(
         <!-- Drive C yes, Drive D yes -->
         and(
@@ -1716,10 +1752,10 @@
       <midheight>26</midheight>
       <midoffsetX>0</midoffsetX>
       <midoffsetY>0</midoffsetY>
-      <!--#(iif(neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0'),'osd_progress_left_red.png','osd_progress_left_black.png'))-->
-      <lefttexture>osd_progress_left_red.png</lefttexture>
-      <midtexture>osd_progress_mid_red.png</midtexture>
-      <righttexture>osd_progress_right_red.png</righttexture>
+      <!--#(iif(neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0'),'osd_progress_left_red2.png','osd_progress_left_black.png'))-->
+      <lefttexture>osd_progress_left_red2.png</lefttexture>
+      <midtexture>osd_progress_mid_red2.png</midtexture>
+      <righttexture>osd_progress_right_red2.png</righttexture>
       <visible>control.hastext(1006)</visible>
     </control>
     <control>
@@ -1727,7 +1763,7 @@
       <type>label</type>
       <id>0</id>
       <posX>1338</posX>
-      <posY>738</posY>
+      <posY>740</posY>
       <width>480</width>
       <label>#(switch(
         <!-- Drive C yes, Drive D yes -->
@@ -1754,7 +1790,7 @@
       <type>label</type>
       <id>0</id>
       <posX>1715</posX>
-      <posY>738</posY>
+      <posY>740</posY>
       <width>480</width>
       <label>#(switch(
         <!-- Drive C yes, Drive D yes -->
@@ -1810,54 +1846,54 @@
     <!-- *************************************************************************************************** -->
     <control>
       <description>Keyboard Shortcuts left</description>
-      <type>textboxscrollup</type>
+      <type>textbox</type>
       <id>1</id>
       <posX>685</posX>
       <posY>360</posY>
       <width>1120</width>
       <height>700</height>
       <label>
-      Escape:   &#x291F; Previous window
-      Cursor Keys:   &#x2237; Select item
-      Home:   &#x21a5; Select first item
-      End:   &#x21a7; Select last item
-      PageUp:   &#x21a9; Previous item page
-      PageDown:   &#x21aa; Next item page
-      U:   &#x2934; Parent folder
-      Enter:   &#x2713; Perform action
-      P:   &#9654; Start playing
-      B:   &#9632; Stop playing
-      Space:   &#x23f8; Pause/Resume playing
-      F7:   &#x21e4; Play previous
-      F8:   &#x21e5; Play next
+      Escape:           &#x291F;  Previous window
+      Cursor Keys:    &#x2237;  Select item
+      Home:              &#x21a5;   Select first item
+      End:                 &#x21a7;   Select last item
+      PageUp:          &#x21a9;  Previous item page
+      PageDown:     &#x21aa;  Next item page
+      U:                    &#x2934;   Parent folder
+      Enter:             &#x2713;  Perform action
+      P:                    &#9654;  Start playing
+      B:                    &#9632;  Stop playing
+      Space:           &#x23f8;  Pause/Resume playing
+      F7:                  &#x21e4;  Play previous
+      F8:                  &#x21e5;  Play next
       </label>
-      <textcolor>gray</textcolor>
+      <textcolor>C0C0C0</textcolor> 
       <font>font10</font>
       <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
     <control>
       <description>Keyboard Shortcuts right</description>
-      <type>textboxscrollup</type>
+      <type>textbox</type>
       <id>1</id>
       <posX>1285</posX>
       <posY>360</posY>
       <width>1120</width>
       <height>700</height>
       <label> 
-      F5:   &#171; Rewind
-      F6:   &#187; FastForward
-      R:   &#x25cf; Record current TV
-      &#x271A; :   Volume up
-      &#10134; :   Volume down
-      M:   &#x22A0; Mute
-      F3:   &#x24d8; Show info of selected item
-      F9:   &#x2261; Show context menu
-      Y:   &#x268F; Show OSD
-      H:   &#x21c4; Switch Classic/Basic Home
-      X:   &#x21c4; Switch GUI/Fullscreen (TV/Video)
-      F11:   &#x229E; Screenshot of current screen
+      F5:      &#171;  Rewind
+      F6:      &#187;  FastForward
+      R:       &#x25cf;  Record current TV
+      &#x271A; :         Volume up
+      &#10134; :         Volume down
+      M:       &#x22A0;  Mute
+      F3:    &#x24d8;  Show info of selected item
+      F9:      &#x2261;  Show context menu
+      Y:       &#x268F;  Show OSD
+      H:       &#x21c4;  Switch Classic/Basic Home
+      X:       &#x21c4;  Switch GUI/Fullscreen (TV/Video)
+      F11:    &#x229E;  Screenshot of current screen
       </label>
-      <textcolor>gray</textcolor>
+      <textcolor>C0C0C0</textcolor> 
       <font>font10</font>
       <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
@@ -1866,9 +1902,9 @@
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>1180</posX>
+      <posX>1240</posX>
       <posY>365</posY>
-      <height>500</height>
+      <height>540</height>
       <width>1</width>
       <texture>verticalbar.png</texture>
       <colordiffuse>deepskyblue</colordiffuse>

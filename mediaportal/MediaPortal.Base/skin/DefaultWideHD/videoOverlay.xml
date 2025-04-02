@@ -9,7 +9,7 @@
       <type>image</type>
       <id>0</id>
       <posX>-20</posX>
-      <posY>975</posY>
+      <posY>955</posY>
       <width>2025</width>
       <height>90</height>
       <texture>black.png</texture>
@@ -22,7 +22,7 @@
       <type>image</type>
       <id>0</id>
       <posX>-30</posX>
-      <posY>975</posY>
+      <posY>955</posY>
       <width>2040</width>
       <height>1</height>
       <texture>horizontalbar.png</texture>
@@ -34,7 +34,7 @@
       <type>image</type>
       <id>0</id>
       <posX>-30</posX>
-      <posY>1065</posY>
+      <posY>1045</posY>
       <width>2040</width>
       <height>1</height>
       <texture>horizontalbar.png</texture>
@@ -46,7 +46,7 @@
       <type>image</type>
       <id>0</id>
       <posX>871</posX>
-      <posY>967</posY>
+      <posY>947</posY>
       <width>175</width>
       <height>105</height>
       <texture>LCD.png</texture>
@@ -58,7 +58,7 @@
       <type>videowindow</type>
       <id>99</id>
       <posX>879</posX>
-      <posY>975</posY>
+      <posY>955</posY>
       <width>160</width>
       <height>90</height>
       <visible>player.HasVideo</visible>
@@ -69,9 +69,9 @@
       <description>Track - Title</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>0</posX>
-      <posY>982</posY>
-      <width>855</width>
+      <posX>10</posX>
+      <posY>965</posY>
+      <width>850</width>
       <align>right</align>
       <height>38</height>
       <visible>!string.contains(#Play.Current.File,tsbuffer)</visible>
@@ -81,7 +81,7 @@
         <id>0</id>
         <label>#(L(268)): </label>
         <width>10</width>
-        <maxWidth>200</maxWidth>
+        <maxWidth>100</maxWidth>
         <textcolor>ff00aaff</textcolor>
         <align>right</align>
         <font>font10</font>
@@ -95,7 +95,7 @@
         <id>0</id>
         <label>#Play.Current.Title</label>
         <width>10</width>
-        <maxWidth>840</maxWidth>
+        <maxWidth>800</maxWidth>
         <align>right</align>
         <font>font10</font>
         <shadowAngle>45</shadowAngle>
@@ -108,9 +108,9 @@
       <description>Track - Genre</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>0</posX>
-      <posY>1018</posY>
-      <width>855</width>
+      <posX>10</posX>
+      <posY>1001</posY>
+      <width>850</width>
       <align>right</align>
       <height>38</height>
       <visible>!string.contains(#Play.Current.File,tsbuffer)</visible>
@@ -120,7 +120,7 @@
         <id>0</id>
         <label>#(L(135)): </label>
         <width>10</width>
-        <maxWidth>200</maxWidth>
+        <maxWidth>100</maxWidth>
         <textcolor>ff00aaff</textcolor>
         <align>right</align>
         <font>font10</font>
@@ -134,7 +134,7 @@
         <id>0</id>
         <label>#Play.Current.Genre</label>
         <width>10</width>
-        <maxWidth>840</maxWidth>
+        <maxWidth>800</maxWidth>
         <align>right</align>
         <font>font10</font>
         <shadowAngle>45</shadowAngle>
@@ -148,7 +148,7 @@
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>1072</posX>
-      <posY>982</posY>
+      <posY>965</posY>
       <width>855</width>
       <align>left</align>
       <height>38</height>
@@ -187,7 +187,7 @@
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>1072</posX>
-      <posY>1018</posY>
+      <posY>1001</posY>
       <width>855</width>
       <align>left</align>
       <height>38</height>
@@ -227,7 +227,7 @@
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>0</posX>
-      <posY>982</posY>
+      <posY>962</posY>
       <width>855</width>
       <align>right</align>
       <height>38</height>
@@ -266,7 +266,7 @@
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>0</posX>
-      <posY>1018</posY>
+      <posY>998</posY>
       <width>855</width>
       <align>right</align>
       <height>38</height>
@@ -304,7 +304,7 @@
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>1072</posX>
-      <posY>982</posY>
+      <posY>962</posY>
       <width>855</width>
       <align>left</align>
       <height>38</height>

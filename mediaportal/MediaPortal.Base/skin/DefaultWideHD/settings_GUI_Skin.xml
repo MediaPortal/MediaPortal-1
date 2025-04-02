@@ -207,12 +207,11 @@
         </control>
       </control>
       
-      
       <control>
         <type>label</type>
         <id>1</id>
         <posX>700</posX>
-        <posY>690</posY>
+        <posY>620</posY>
         <width>500</width>
         <label>#(L(600)) #(L(300160))</label>
         <textcolor>white</textcolor>
@@ -223,7 +222,7 @@
         <type>menubutton</type>
         <id>33</id>
         <posX>655</posX>
-        <posY>740</posY>
+        <posY>660</posY>
         <width>550</width><textureFocus>setting_button_medium.png</textureFocus>
         <mode>dialoglist</mode>
         <dialogTitle>#(L(600)) #(L(300160))</dialogTitle>
@@ -239,20 +238,56 @@
           <subitem> 24</subitem>
         </subitems>
         <onup>32</onup>
-        <ondown>50</ondown>
+        <ondown>3570</ondown>
         <onleft>9992</onleft>
         <onright>30</onright>
       </control>
       
       
+      <control>
+        <type>label</type>
+        <id>1</id>
+        <posX>700</posX> 
+        <posY>740</posY>  
+        <width>500</width> 
+        <label>#SkinTranslation.Translations.Thumbsview.Label</label>
+        <textcolor>lightgray</textcolor>
+        <font>Label</font>
+        <visible>plugin.isenabled(Moving Pictures)</visible>
+      </control>
+	    <control>
+        <description>Thumbnail Views</description>
+        <type>menubutton</type>
+        <id>3570</id>
+        <mode>dialoglist</mode>
+		    <posX>655</posX> 
+        <posY>780</posY>  
+        <width>550</width> 
+		    <textureFocus>setting_button_medium.png</textureFocus>
+	      <dialogTitle>#SkinTranslation.Translations.Thumbsview.Label</dialogTitle>
+        <dialogTitle>Symbol-Ansichtl</dialogTitle> 
+	      <valueTextInButton>yes</valueTextInButton>
+	      <valuePrefixText>#(L(143))</valuePrefixText>
+	       <onclick>#(skin.setstring('#skin.thumbsview',#selectedlabel3570))</onclick>  
+	       <binding>#skin.thumbsview</binding>
+	       <subitems>
+	         <subitem>#SkinTranslation.Translations.Thumbsview.Select.Label</subitem>
+	         <subitem>Fanart Wall</subitem> 
+		    </subitems>
+        <onup>33</onup>
+        <ondown>50</ondown>
+        <onleft>9992</onleft>
+        <onright>30</onright>
+      </control>
       
+            
       <control>
           <description>Facade Classic Home</description>
           <type>menubutton</type>
           <id>50</id>
           <posX>655</posX>
-          <posY>810</posY>
-        <width>550</width><textureFocus>setting_button_medium.png</textureFocus>
+          <posY>850</posY>
+          <width>550</width><textureFocus>setting_button_medium.png</textureFocus>
           <mode>dialoglist</mode>
           <dialogTitle>Layout Classic Home</dialogTitle>
           <valueTextInButton>yes</valueTextInButton>
@@ -267,7 +302,7 @@
             <subitem>Filmstrip</subitem>
             <subitem>CoverFlow</subitem>
           </subitems>
-          <onup>33</onup>
+          <onup>3570</onup>
           <ondown>30</ondown>
           <onright>30</onright>
           <onleft>9992</onleft>

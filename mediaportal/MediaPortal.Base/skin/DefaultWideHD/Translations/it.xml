@@ -2,6 +2,8 @@
 <!-- Skin translation file -->
 <!-- English (US) -->
 <strings>
+  <string Field="Thumbsview">Visualizzazione miniature</string>
+  <string Field="Thumbsview.Select">Normale</string>
   <string Field="WorldNewsTicker">Attivare ticker dal WorldNews</string>
   <string Field="AnalogClockOSD">Orologio analogico in OSD</string>
   <string Field="MusicNowPlayingFanart">Sfondo musica ora di gioco in BasicHome</string>
@@ -50,7 +52,7 @@
   <string Field="KeyboardShortcuts">Scorciatoie da tastiera</string>
   <string Field="AudioOptions">Volume su/giù</string>
   <string Field="CategoryBG">Poster del plugin BasicHome</string>
-  
+  <string Field="EnlargeImage">Ingrandire l'immagine</string>
   <!-- ***************************************************************************************-->
   <!-- ****************************   Skin translation for Logo Manager **********************-->
   <!-- ***************************************************************************************-->

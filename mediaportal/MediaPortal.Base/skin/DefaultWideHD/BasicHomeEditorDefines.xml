@@ -227,7 +227,7 @@
 
   <define property="true" evaluateNow="true">#list.INTERNET:#(#list.header.left)#(L(443))#(#list.header.right),#NONE,#INTERNET1,#INTERNET2,#INTERNET3,#INTERNET4,#INTERNET5,#INTERNET6,#INTERNET7,#INTERNET8,#INTERNET9,#INTERNET10,#INTERNET11,#INTERNET12,#INTERNET13,#INTERNET14,#INTERNET15,#INTERNET16,#INTERNET17</define>
 
-  <define property="true" evaluateNow="true">#list.HOME:#(#list.header.left)#(L(974))#(#list.header.right),#NONE,#HOME1,#HOME2,#HOME3,#HOME4,#HOME5,#HOME6,#HOME7,#HOME8,#HOME9,#HOME10,#HOME11,#HOME12,#HOME13,#HOME14,#HOME15,#HOME16</define>
+  <define property="true" evaluateNow="true">#list.HOME:#(#list.header.left)#(L(974))#(#list.header.right),#NONE,#HOME1,#HOME2,#HOME3,#HOME4,#HOME5,#HOME6,#HOME7,#HOME8,#HOME9,#HOME10,#HOME11,#HOME12,#HOME13,#HOME14,#HOME15,#HOME16,#HOME30</define>
 
   <define property="true" evaluateNow="true">#list.GAME:#(#list.header.left)Games#(#list.header.right),#NONE,#GAME1,#GAME2,#GAME3,#GAME4,#GAME5,#GAME6,#GAME7,#GAME8,#GAME9,#GAME10,#GAME11,#GAME12,#GAME13,#GAME14</define>
 
@@ -1034,6 +1034,17 @@
   <define property="true" evaluateNow="true">#HOME16.iconnofocus:tb_menuNF.png</define>
   <define property="true" evaluateNow="true">#HOME16.active:#(iif(or(eq(#HOME16.plugin,''),plugin.isenabled(#HOME16.plugin)),' ',''))</define>
   <define property="true" evaluateNow="true">#HOME16:#(string.format('{0}{1}',#HOME16.name,iif(eq(#HOME16.active,' '),'',#PLUGERROR)))</define>
+  
+  <define property="true" evaluateNow="true">#HOME30.name:My Notifier</define>
+  <define property="true" evaluateNow="true">#HOME30.plugin:My Notifier</define>
+  <define property="true" evaluateNow="true">#HOME30.hyperlink:3013</define>
+  <define property="true" evaluateNow="true">#HOME30.parameter:</define>
+  <define property="true" evaluateNow="true">#HOME30.hover:hover_my notifier.png</define>
+  <define property="true" evaluateNow="true">#HOME30.background:BH Standard.jpg</define>
+  <define property="true" evaluateNow="true">#HOME30.iconfocus:tb_menu.png</define>
+  <define property="true" evaluateNow="true">#HOME30.iconnofocus:tb_menuNF.png</define>
+  <define property="true" evaluateNow="true">#HOME30.active:#(iif(or(eq(#HOME30.plugin,''),plugin.isenabled(#HOME30.plugin)),' ',''))</define>
+  <define property="true" evaluateNow="true">#HOME30:#(string.format('{0}{1}',#HOME30.name,iif(eq(#HOME30.active,' '),'',#PLUGERROR)))</define>
 
 
   <!--     *******************************************************************************************  -->

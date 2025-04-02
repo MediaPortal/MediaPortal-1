@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <description>Date Time Weather</description>
+      <type>group</type>
+      <layout>StackLayout(5, Horizontal, true)</layout>
+      <posX>45</posX>
+      <posY>16</posY>
+      <align>left</align>
+      <width>1270</width>
+      <height>58</height>
+      <visible>[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]+[[plugin.isenabled(Sleep Control)+string.equals(#SleepControl.Start, )]|!plugin.isenabled(Sleep Control)]+![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]|control.isvisible(888)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Date Time Weather Label</description>
+        <id>0</id>
+        <label>#time #scroll.wrap #date #scroll.wrap #WorldWeather.Location: #WorldWeather.TodayCondition</label>
+        <width>50</width>
+        <maxWidth>1270</maxWidth>
+        <textcolor>fff5deb3</textcolor>
+        <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+        <align>left</align>
+        <font>RSS</font>
+      </control>
+      <control>
+        <type>image</type>
+        <description>Weather Icon</description>
+        <id>0</id>
+        <texture>#WorldWeather.TodayIconImage</texture>
+        <width>55</width>
+        <height>35</height>
+        <align>left</align>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Temperature Label</description>
+        <id>0</id>
+        <label> #WorldWeather.TodayTemperature</label>
+        <width>20</width>
+        <maxWidth>1450</maxWidth>
+        <textcolor>fff5deb3</textcolor>
+        <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+        <align>left</align>
+        <font>RSS</font>
+      </control>
+      </control>
+    <control>
+      <description>Date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>16</posY>
+      <label>#time #scroll.wrap #date</label>
+      <font>RSS</font>
+      <align>left</align>
+      <textcolor>fff5deb3</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <visible>!plugin.isenabled(World Weather)+!plugin.isenabled(World Weather Lite)+[[plugin.isenabled(Sleep Control)+string.equals(#SleepControl.Start, )]|!plugin.isenabled(Sleep Control)]+![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]|control.isvisible(888)</visible>
+    </control>
+    <control>
+      <description>Sleep Start/End</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>16</posY>
+      <label>#time #scroll.wrap SleepControl #SleepControl.Method: #SleepControl.Counter  (#SleepControl.Start - #SleepControl.End)</label>
+      <align>left</align>
+      <font>RSS</font>
+      <textcolor>ffff0033</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <visible>plugin.isenabled(Sleep Control)+!string.equals(#SleepControl.Start, )+![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]</visible>
+    </control>
+  </controls>
+</window>

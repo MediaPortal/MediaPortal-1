@@ -334,9 +334,9 @@
       <description>Track - Title</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>0</posX>
+      <posX>10</posX>
       <posY>89</posY>
-      <width>885</width>
+      <width>850</width>
       <align>right</align>
       <height>38</height>
       <visible>Player.HasMedia</visible>
@@ -346,7 +346,7 @@
         <id>0</id>
         <label>#(L(268)): </label>
         <width>10</width>
-        <maxWidth>200</maxWidth>
+        <maxWidth>100</maxWidth>
         <textcolor>ff00aaff</textcolor>
         <align>right</align>
         <font>font10</font>
@@ -360,7 +360,7 @@
         <id>0</id>
         <label>#Play.Current.Title</label>
         <width>10</width>
-        <maxWidth>840</maxWidth>
+        <maxWidth>800</maxWidth>
         <align>right</align>
         <font>font10</font>
         <shadowAngle>45</shadowAngle>
@@ -372,9 +372,9 @@
       <description>Track - Title</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>0</posX>
+      <posX>10</posX>
       <posY>120</posY>
-      <width>885</width>
+      <width>850</width>
       <align>right</align>
       <height>38</height>
       <visible>Player.HasMedia</visible>
@@ -398,7 +398,7 @@
         <id>0</id>
         <label>#Play.Current.Artist</label>
         <width>10</width>
-        <maxWidth>840</maxWidth>
+        <maxWidth>800</maxWidth>
         <align>right</align>
         <font>font10</font>
         <shadowAngle>45</shadowAngle>
@@ -762,9 +762,9 @@
       <description>Track - Title</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>0</posX>
+      <posX>10</posX>
       <posY>89</posY>
-      <width>855</width>
+      <width>850</width>
       <align>right</align>
       <height>38</height>
       <visible>!string.contains(#Play.Current.File,tsbuffer)</visible>
@@ -774,7 +774,7 @@
         <id>0</id>
         <label>#(L(268)): </label>
         <width>10</width>
-        <maxWidth>200</maxWidth>
+        <maxWidth>100</maxWidth>
         <textcolor>ff00aaff</textcolor>
         <align>right</align>
         <font>font10</font>
@@ -788,7 +788,7 @@
         <id>0</id>
         <label>#Play.Current.Title</label>
         <width>10</width>
-        <maxWidth>840</maxWidth>
+        <maxWidth>800</maxWidth>
         <align>right</align>
         <font>font10</font>
         <shadowAngle>45</shadowAngle>
