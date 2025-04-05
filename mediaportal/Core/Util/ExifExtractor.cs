@@ -34,6 +34,7 @@ using MetadataExtractor.Formats.Exif;
 using MetadataExtractor.Formats.Exif.Makernotes;
 using MetadataExtractor.Formats.Iptc;
 using MetadataExtractor.Formats.Xmp;
+using MetadataExtractor.Formats.QuickTime;
 using System.Diagnostics;
 
 namespace MediaPortal.GUI.Pictures
@@ -394,6 +395,17 @@ namespace MediaPortal.GUI.Pictures
       SetGPSDataFromGeotags(iptcDirectory.GetStringArray(IptcDirectory.TagKeywords), ref MyMetadata);
     }
 
+    private void ParseqtMetadataDirectory(ref Metadata MyMetadata, QuickTimeMetadataHeaderDirectory qtMetadataDirectory)
+    {
+      SetStringStuff(ref MyMetadata.EquipmentMake, qtMetadataDirectory, QuickTimeMetadataHeaderDirectory.TagMake);
+      SetStringStuff(ref MyMetadata.CameraModel, qtMetadataDirectory, QuickTimeMetadataHeaderDirectory.TagModel);
+      SetStringStuff(ref MyMetadata.Author, qtMetadataDirectory, QuickTimeMetadataHeaderDirectory.TagAuthor);
+      SetStringStuff(ref MyMetadata.Comment, qtMetadataDirectory, QuickTimeMetadataHeaderDirectory.TagComment);
+      SetStringStuff(ref MyMetadata.Copyright, qtMetadataDirectory, QuickTimeMetadataHeaderDirectory.TagCopyright);
+      SetStringStuff(ref MyMetadata.Keywords, qtMetadataDirectory, QuickTimeMetadataHeaderDirectory.TagKeywords);
+      SetDateTimeStuff(ref MyMetadata.DatePictureTaken, qtMetadataDirectory, QuickTimeMetadataHeaderDirectory.TagCreationDate);
+    }
+
     public Metadata GetExifMetadata(string photoName)
     {
       // Create an instance of Metadata 
@@ -434,15 +446,22 @@ namespace MediaPortal.GUI.Pictures
           }
         }
 
+        var qtMetadataDirectory = directories.OfType<QuickTimeMetadataHeaderDirectory>().FirstOrDefault();
+        if (qtMetadataDirectory != null)
+        {
+          ParseqtMetadataDirectory(ref MyMetadata, qtMetadataDirectory);
+        }
+
         foreach (var directory in directories)
         {
           if (!directory.Name.Contains("Thumbnail"))
           {
             if (MyMetadata.ImageDimensions.IsEmpty)
             {
-              var wTag = directory.Tags.Where((x) => x.Name == "Image Width" || x.Name == "Exif Image Width").FirstOrDefault();
-              var hTag = directory.Tags.Where((x) => x.Name == "Image Height" || x.Name == "Exif Image Height").FirstOrDefault();
-              if (wTag != null && hTag != null)
+              var wTag = directory.Tags.Where((x) => x.Name == "Image Width" || x.Name == "Exif Image Width" || x.Name == "Width").FirstOrDefault();
+              var hTag = directory.Tags.Where((x) => x.Name == "Image Height" || x.Name == "Exif Image Height" || x.Name == "Height").FirstOrDefault();
+              Int32 w, h;
+              if (wTag != null && hTag != null && (w = directory.GetInt32(wTag.Type)) != 0 && (h = directory.GetInt32(hTag.Type)) != 0)
               {
                 MyMetadata.ImageDimensions.Width = directory.GetInt32(wTag.Type);
                 MyMetadata.ImageDimensions.Height = directory.GetInt32(hTag.Type);
