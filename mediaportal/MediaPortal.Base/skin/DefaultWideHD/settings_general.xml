@@ -295,10 +295,10 @@
         <type>label</type>
         <description>Help Text</description>
         <id>0</id>
-        <posX>965</posX> 955
-        <posY>520</posY> 510
+        <posX>965</posX> 
+        <posY>520</posY> 
         <label>Inside the red rectangle the available drives are listed. Select the ones you want to display.&#xA;After selecting the drive(s), you now specify the information to be displayed &#xA;(blue rectangle). This is a bit tricky, the properties to select from are shown when &#xA;hovering over the field in the blue rectangle. To get the most information (including &#xA;the free space for recordings in HD), you could use this example string: &#xA;</label>
-        <width>850</width>
+        <width>900</width> 
         <height>200</height>
         <align>left</align>
         <font>font9</font>
@@ -310,8 +310,8 @@
         <type>label</type>
         <description>Help Text</description>
         <id>0</id>
-        <posX>630</posX> 625
-        <posY>700</posY> 723
+        <posX>630</posX> 
+        <posY>700</posY> 
         <label>                                                            &#37;drive&#37; &#37;labelbrackets&#37; &#xA;                                                            &#37;totalspace&#37; GB total / &#37;usedspace&#37; GB used &#xA;                                                            &#37;freespace&#37; &#37;unit&#37; free (&#37;fspercent&#37;) &#xA;                                                            (for approx. &#37;rectimeleft&#37; hours HD) </label>
         <width>1520</width>
         <height>200</height>
