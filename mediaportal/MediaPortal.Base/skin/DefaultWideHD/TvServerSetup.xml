@@ -8,50 +8,59 @@
   <define>#header.hover:hover_my tv.png</define>
   <controls>
     <import>common.settings.xml</import>
+	<import>common.time.xml</import>
+   
     <control>
-      <type>group</type>
-      <layout>GridLayout(2, 6, 52, 8, 1)</layout>
-      <posX>148</posX>
-      <posY>282</posY>
-      <control>
-        <type>button</type>
-        <id>24</id>
-        <label>6029</label>
-      </control>
+        <description>buttons</description>
+        <type>group</type>
+        <posX>92</posX>
+        <posY>305</posY>
+        <dimColor>ffffffff</dimColor>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <control>
+          <description>General Main setttings</description>
+          <type>button</type>
+          <id>24</id>
+          <label>6029</label>
+          <width>410</width>
+          <onup>9991</onup>
+          <ondown>25</ondown>
+        </control>
+        <control>
+          <description>General Skin settings</description>
+          <type>button</type>
+          <id>25</id>
+          <label>8008</label>
+          <width>410</width>
+          <onup>24</onup>
+          <ondown>24</ondown>
+        </control>
     </control>
-    <control>
-      <type>group</type>
-      <layout>GridLayout(2, 6, 52, 8, 1)</layout>
-      <posX>148</posX>
-      <posY>357</posY>
-      <control>
-        <type>button</type>
-        <id>25</id>
-        <label>8008</label>
-      </control>
-    </control>
+	
     <control>
       <type>label</type>
       <description>Please specify the IP address or hostname</description>
       <id>1</id>
       <posX>693</posX>
-      <posY>180</posY>
+      <posY>315</posY> 
       <label>6026</label>
+	  <textcolor>SkyBlue</textcolor> 
     </control>
     <control>
       <type>label</type>
       <description>of the master TV-Server</description>
       <id>1</id>
       <posX>693</posX>
-      <posY>210</posY>
+      <posY>355</posY> 
       <label>6027</label>
+	  <textcolor>SkyBlue</textcolor>
     </control>
     <control>
       <type>label</type>
       <description>Current setting:</description>
       <id>1</id>
-      <posX>693</posX>
-      <posY>300</posY>
+      <posX>698</posX>
+      <posY>425</posY>
       <label>6028</label>
     </control>
     <control>
@@ -59,9 +68,10 @@
       <description>:</description>
       <id>30</id>
       <posX>693</posX>
-      <posY>337</posY>
+      <posY>472</posY>
       <font>font16</font>
       <label>-</label>
+	  <textcolor>GoldenRod</textcolor>
     </control>
   </controls>
 </window>

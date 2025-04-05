@@ -432,7 +432,7 @@
     <colordiffuse>ffffffff</colordiffuse>
     <animation effect="fade" time="500">Visible</animation>
     <animation effect="fade" time="500">WindowOpen</animation>
-    <visible>control.hasfocus(50)</visible>
+    <visible>facadeview.smallicons|facadeview.largeicons</visible>
   </control>
   <control>
     <description>Moviecount</description>
@@ -451,16 +451,16 @@
     <colordiffuse>ffffffff</colordiffuse>
     <animation effect="fade" time="500">Visible</animation>
     <animation effect="fade" time="500">WindowOpen</animation>
-    <visible>control.hasfocus(50)</visible>
+    <visible>facadeview.smallicons|facadeview.largeicons</visible>
   </control>
   <control>
     <description>Year,runtime, genre, progress below the movie title</description>
     <type>fadelabel</type>
     <label>#title (#year) #scroll.wrap #genre #scroll.wrap #runtime #scroll.wrap #watchedpercent%</label>
     <id>0</id>
-    <posX>40</posX>
+    <posX>80</posX> 
     <posY>1024</posY>
-    <width>1700</width>
+    <width>1600</width>
     <align>center</align>
     <font>Label</font>
     <shadowAngle>45</shadowAngle>
@@ -470,7 +470,7 @@
     <scrollStartDelaySec>5</scrollStartDelaySec>
     <animation effect="fade" time="500">Visible</animation>
     <animation effect="fade" time="500">WindowOpen</animation>
-    <visible>control.hasfocus(50)</visible>
+    <visible>facadeview.smallicons|facadeview.largeicons</visible>
   </control>
   </controls>
 </window>

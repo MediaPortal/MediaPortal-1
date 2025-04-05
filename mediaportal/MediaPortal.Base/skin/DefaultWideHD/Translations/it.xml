@@ -3,7 +3,7 @@
 <!-- English (US) -->
 <strings>
   <string Field="Thumbsview">Visualizzazione miniature</string>
-  <string Field="Thumbsview.Select">Normale</string>
+  <string Field="Thumbsview.Select">Normal</string>
   <string Field="WorldNewsTicker">Attivare ticker dal WorldNews</string>
   <string Field="AnalogClockOSD">Orologio analogico in OSD</string>
   <string Field="MusicNowPlayingFanart">Sfondo musica ora di gioco in BasicHome</string>

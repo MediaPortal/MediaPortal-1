@@ -377,9 +377,9 @@
     <type>fadelabel</type>
     <label>#MovingPictures.SelectedMovie.title (#MovingPictures.SelectedMovie.year) #scroll.wrap #MovingPictures.SelectedMovie.genres #scroll.wrap #MovingPictures.SelectedMovie.runtime.localized.short #scroll.wrap #MovingPictures.UserMovieSettings.Progress%</label>
     <id>0</id>
-    <posX>40</posX>
+    <posX>80</posX> 
     <posY>1024</posY>
-    <width>1700</width>
+    <width>1600</width>
     <align>center</align>
     <font>Label</font>
     <shadowAngle>45</shadowAngle>

@@ -265,8 +265,7 @@
         <width>550</width> 
 		    <textureFocus>setting_button_medium.png</textureFocus>
 	      <dialogTitle>#SkinTranslation.Translations.Thumbsview.Label</dialogTitle>
-        <dialogTitle>Symbol-Ansichtl</dialogTitle> 
-	      <valueTextInButton>yes</valueTextInButton>
+        <valueTextInButton>yes</valueTextInButton>
 	      <valuePrefixText>#(L(143))</valuePrefixText>
 	       <onclick>#(skin.setstring('#skin.thumbsview',#selectedlabel3570))</onclick>  
 	       <binding>#skin.thumbsview</binding>
