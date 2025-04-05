@@ -269,7 +269,7 @@ namespace MediaPortal.GUI.Pictures
           } // if (countVideos == itemlist.Count - 1)
         } // if (!vDir.IsRemote(path))
         benchclock.Stop();
-        Log.Debug("GUIPictures: Creation of all thumbs for dir '{0}' took {1} seconds for {2} files", 
+        Log.Debug("GUIPictures: Creation of all thumbs for dir '{0}' took {1} seconds for {2} files",
                                 _filepath, benchclock.Elapsed.TotalSeconds, itemlist.Count);
       }
 
@@ -2762,7 +2762,7 @@ namespace MediaPortal.GUI.Pictures
             break;
         }
       }
-      
+
       _picturesCount = PictureDatabase.Count();
 
       LoadDirectory(currentFolder, true);
@@ -3740,7 +3740,7 @@ namespace MediaPortal.GUI.Pictures
 
       SetPictureProperties(new ExifMetadata.Metadata());
       GUIListItem dummy;
-      while (_queueItems.TryDequeue(out dummy));
+      while (_queueItems.TryDequeue(out dummy)) ;
 
       if (_pictureFolderWatcher != null)
       {
@@ -4241,7 +4241,7 @@ namespace MediaPortal.GUI.Pictures
     #endregion
 
     #region Percent for progressbar
-    
+
     private int Percent(int Value, int Max)
     {
       return (Max > 0) ? Convert.ToInt32((Value * 100) / Max) : 0;
