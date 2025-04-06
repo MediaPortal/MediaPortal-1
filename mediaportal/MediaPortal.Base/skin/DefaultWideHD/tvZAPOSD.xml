@@ -107,8 +107,8 @@
       <description>End of progressbar</description>
       <type>label</type>
       <id>1</id>
-      <posX>1702</posX>
-      <posY>931</posY>
+      <posX>1708</posX> 
+      <posY>935</posY> 
       <label>|</label>
       <align>left</align>
       <font>font11</font>
