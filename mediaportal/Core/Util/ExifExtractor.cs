@@ -395,6 +395,11 @@ namespace MediaPortal.GUI.Pictures
       SetGPSDataFromGeotags(iptcDirectory.GetStringArray(IptcDirectory.TagKeywords), ref MyMetadata);
     }
 
+    private void ParseqtMovieHeaderDirectory(ref Metadata MyMetadata, QuickTimeMovieHeaderDirectory qtMetadataDirectory)
+    {
+      SetDateTimeStuff(ref MyMetadata.DatePictureTaken, qtMetadataDirectory, QuickTimeMovieHeaderDirectory.TagCreated);
+    }
+
     private void ParseqtMetadataDirectory(ref Metadata MyMetadata, QuickTimeMetadataHeaderDirectory qtMetadataDirectory)
     {
       SetStringStuff(ref MyMetadata.EquipmentMake, qtMetadataDirectory, QuickTimeMetadataHeaderDirectory.TagMake);
@@ -444,6 +449,12 @@ namespace MediaPortal.GUI.Pictures
           {
             SetGPSData(gpsDirectory, ref MyMetadata);
           }
+        }
+
+        var qtMovieHeaderDirectory = directories.OfType<QuickTimeMovieHeaderDirectory>().FirstOrDefault();
+        if (qtMovieHeaderDirectory != null)
+        {
+          ParseqtMovieHeaderDirectory(ref MyMetadata, qtMovieHeaderDirectory);
         }
 
         var qtMetadataDirectory = directories.OfType<QuickTimeMetadataHeaderDirectory>().FirstOrDefault();

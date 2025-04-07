@@ -930,7 +930,7 @@ namespace MediaPortal.Picture.Database
       }
 
       metaData = GetExifFromFile(strPicture);
-      if (metaData.IsEmpty())
+      if (metaData.IsEmpty() && String.IsNullOrWhiteSpace(metaData.DatePictureTaken.Value))
       {
         return false;
       }
