@@ -269,7 +269,7 @@ namespace MediaPortal.GUI.Pictures
           } // if (countVideos == itemlist.Count - 1)
         } // if (!vDir.IsRemote(path))
         benchclock.Stop();
-        Log.Debug("GUIPictures: Creation of all thumbs for dir '{0}' took {1} seconds for {2} files", 
+        Log.Debug("GUIPictures: Creation of all thumbs for dir '{0}' took {1} seconds for {2} files",
                                 _filepath, benchclock.Elapsed.TotalSeconds, itemlist.Count);
       }
 
@@ -548,7 +548,8 @@ namespace MediaPortal.GUI.Pictures
       Name = 0,
       Modified = 1,
       Created = 2,
-      Size = 3
+      Size = 3,
+      Taken = 4
     }
 
     public enum Display
@@ -782,6 +783,9 @@ namespace MediaPortal.GUI.Pictures
           break;
         case SortMethod.Size:
           textLine = GUILocalizeStrings.Get(105);
+          break;
+        case SortMethod.Taken:
+          textLine = GUILocalizeStrings.Get(9006);
           break;
       }
       GUIControl.SetControlLabel(GetID, btnSortBy.GetID, GUILocalizeStrings.Get(96) + textLine);
@@ -1247,6 +1251,19 @@ namespace MediaPortal.GUI.Pictures
           {
             long compare = (item2.FileInfo.Length - item1.FileInfo.Length);
             return compare == 0 ? 0 : compare < 0 ? -1 : 1;
+          }
+        case SortMethod.Taken:
+          item1.Label2 = item1.Updated.ToShortDateString() + " " +
+               item1.Updated.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+          item2.Label2 = item2.Updated.ToShortDateString() + " " +
+                         item2.Updated.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+          if (sortAsc)
+          {
+            return DateTime.Compare(item1.Updated, item2.Updated);
+          }
+          else
+          {
+            return DateTime.Compare(item2.Updated, item1.Updated);
           }
       }
       return 0;
@@ -2503,6 +2520,7 @@ namespace MediaPortal.GUI.Pictures
       dlg.AddLocalizedString(103); // name
       dlg.AddLocalizedString(1221); // date modified
       dlg.AddLocalizedString(1220); // date created
+      dlg.AddLocalizedString(9006); // date taken
       dlg.AddLocalizedString(105); // size
 
       // set the focus to currently used sort method
@@ -2529,6 +2547,9 @@ namespace MediaPortal.GUI.Pictures
           break;
         case 105:
           mapSettings.SortBy = (int)SortMethod.Size;
+          break;
+        case 9006:
+          mapSettings.SortBy = (int)SortMethod.Taken;
           break;
         default:
           mapSettings.SortBy = (int)SortMethod.Name;
@@ -2762,7 +2783,7 @@ namespace MediaPortal.GUI.Pictures
             break;
         }
       }
-      
+
       _picturesCount = PictureDatabase.Count();
 
       LoadDirectory(currentFolder, true);
@@ -3360,6 +3381,10 @@ namespace MediaPortal.GUI.Pictures
             case SortMethod.Size:
               item.Label2 = Util.Utils.GetSize(item.FileInfo.Length);
               break;
+            case SortMethod.Taken:
+              item.Label2 = item.Updated.ToShortDateString() + " " +
+                            item.Updated.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+              break;
           }
         }
 
@@ -3740,7 +3765,7 @@ namespace MediaPortal.GUI.Pictures
 
       SetPictureProperties(new ExifMetadata.Metadata());
       GUIListItem dummy;
-      while (_queueItems.TryDequeue(out dummy));
+      while (_queueItems.TryDequeue(out dummy)) ;
 
       if (_pictureFolderWatcher != null)
       {
@@ -3899,6 +3924,11 @@ namespace MediaPortal.GUI.Pictures
 
           item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
           item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+          DateTime taken = DateTime.MinValue;
+          if (DateTime.TryParseExact(PictureDatabase.GetDateTaken(item.Path), "yyyy-MM-dd HH:mm:ss", null, DateTimeStyles.None, out taken))
+          {
+            item.Updated = taken;
+          }
           facadeLayout.Add(item);
 
           if (item.IsFolder)
@@ -4241,7 +4271,7 @@ namespace MediaPortal.GUI.Pictures
     #endregion
 
     #region Percent for progressbar
-    
+
     private int Percent(int Value, int Max)
     {
       return (Max > 0) ? Convert.ToInt32((Value * 100) / Max) : 0;
