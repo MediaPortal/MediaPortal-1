@@ -360,15 +360,29 @@
   </control>
   <!-- Here are the infos for the next program -->
   <control>
+    <description>Next Program Info under button</description>
+    <id>0</id>
+    <type>fadelabel</type>
+    <posX>1630</posX> 
+    <posY>895</posY>
+    <height>57</height>
+    <width>260</width>
+    <align>center</align>
+    <textcolor>lightgray</textcolor>
+    <font>font9</font>
+    <label>4541</label>
+    <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+  </control>
+  <control>
     <description>Info Preview coming next button</description>
     <type>button</type>
     <id>1238</id>
-    <posX>1722</posX>
-    <posY>857</posY>
-    <width>70</width>
-    <height>70</height>
-    <textureFocus>scroll-up-focus.png</textureFocus>
-    <textureNoFocus>scroll-up.png</textureNoFocus>
+    <posX>1740</posX>
+    <posY>870</posY> 898
+    <width>38</width>
+    <height>38</height>
+    <textureFocus>tb_extend3b.png</textureFocus>
+    <textureNoFocus>tb_extend2.png</textureNoFocus>
     <label>-</label>
     <onleft>1237</onleft>
     <onright>1237</onright>
@@ -376,20 +390,7 @@
     <ondown>1237</ondown>
     <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
   </control>
-  <control>
-    <description>Next Program Info under button</description>
-    <id>0</id>
-    <type>fadelabel</type>
-    <posX>1630</posX>
-    <posY>892</posY>
-    <height>57</height>
-    <width>260</width>
-    <align>center</align>
-    <textcolor>lightgray</textcolor>
-    <font>font9</font>
-    <label>4541</label>
-    <visible>control.hasfocus(1237)</visible>
-  </control>
+  
   <control>
     <description>Next Program Info</description>
     <id>0</id>

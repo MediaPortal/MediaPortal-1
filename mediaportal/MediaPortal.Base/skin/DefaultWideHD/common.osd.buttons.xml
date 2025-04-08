@@ -292,7 +292,7 @@
       <type>label</type>
       <id>850</id>
       <posX>640</posX>
-      <posY>878</posY>
+      <posY>878</posY> 
       <label>303</label>
       <font>font11</font>
       <align>right</align>
@@ -337,9 +337,9 @@
       <type>listcontrol</type>
       <id>802</id>
       <posX>1150</posX>
-      <posY>880</posY> 863
-      <width>340</width> 360
-      <height>180</height> 180
+      <posY>880</posY> 
+      <width>340</width> 
+      <height>180</height> 
       <textureHeight>40</textureHeight>
       <textXOff>-40</textXOff>
       <textYOff>1</textYOff>
@@ -366,7 +366,7 @@
       <posY>875</posY>
       <height>170</height>
       <width>1</width>
-      <texture>verticalbar2.png</texture> verticalbar.png
+      <texture>verticalbar2.png</texture> 
       <visible>control.isvisible(802)|control.isvisible(501)</visible>
     </control>
     <control>
@@ -374,7 +374,7 @@
       <type>label</type>
       <id>550</id>
       <posX>640</posX>
-      <posY>878</posY>
+      <posY>878</posY> 
       <label>297</label>
       <textcolor>ffffffff</textcolor>
       <font>font11</font>
@@ -403,9 +403,9 @@
       <id>501</id>
       <posX>1180</posX>
       <width>448</width>
-      <posY>880</posY> 863
+      <posY>880</posY> 
       <width>448</width>
-      <height>180</height> 180
+      <height>180</height> 
       <textureHeight>40</textureHeight>
       <textXOff>-40</textXOff>
       <textYOff>1</textYOff>
@@ -421,7 +421,7 @@
       <type>label</type>
       <id>750</id>
       <posX>640</posX>
-      <posY>878</posY>
+      <posY>878</posY> 
       <label>298</label>
       <font>font11</font>
       <align>right</align>
@@ -622,7 +622,7 @@
       <type>label</type>
       <id>1</id>
       <posX>248</posX> 
-      <posY>880</posY> 
+      <posY>882</posY> 
       <label>287</label>
       <font>font11</font>
       <align>left</align>
@@ -634,7 +634,7 @@
       <type>label</type>
       <id>1</id>
       <posX>248</posX>
-      <posY>880</posY>
+      <posY>882</posY>
       <label>Video</label>
       <font>font11</font>
       <align>left</align>
@@ -646,7 +646,7 @@
       <type>label</type>
       <id>1</id>
       <posX>248</posX>
-      <posY>880</posY>
+      <posY>882</posY>
       <label>Audio</label>
       <font>font11</font>
       <align>left</align>
