@@ -518,7 +518,7 @@
         <width>760</width>
         <font>font9</font>
         <align>left</align>
-        <label>#Play.Next.Track.  #Play.Next.Title</label>
+        <label>#Play.Next.Track.  #Play.Next.Title #scroll.wrap #Play.Next.Artist</label>
         <textcolor>ffffffff</textcolor>
         <visible>string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)|string.equals(#currentplaytime,0:08)|string.equals(#currentplaytime,0:09)</visible>
       </control>
@@ -569,7 +569,7 @@
         <width>760</width>
         <font>font9</font>
         <align>left</align>
-        <label>#Play.Next.Track.  #Play.Next.Title</label>
+        <label>#Play.Next.Track.  #Play.Next.Title #scroll.wrap #Play.Next.Artist</label>
         <textcolor>ffffffff</textcolor>
         <animation effect="rotatey" time="1000" center="1300,0" start="-180" end="0" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)|string.equals(#currentplaytime,0:07)">conditional</animation>
         <animation effect="fade" delay="450" time="100" start="0" end="100" condition="string.equals(#currentplaytime,0:05)|string.equals(#currentplaytime,0:06)">conditional</animation>
@@ -622,7 +622,7 @@
         <width>760</width>
         <font>font9</font>
         <align>left</align>
-        <label>#Play.Next.Track.  #Play.Next.Title</label>
+        <label>#Play.Next.Track.  #Play.Next.Title #scroll.wrap #Play.Next.Artist</label>
         <textcolor>ffffffff</textcolor>
         <animation effect="rotatey" time="1000" center="1300,0" start="0" end="-180" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)|string.equals(#currentplaytime,0:12)">conditional</animation>
         <animation effect="fade" delay="450" time="100" start="100" end="0" condition="string.equals(#currentplaytime,0:10)|string.equals(#currentplaytime,0:11)|string.equals(#currentplaytime,0:12)">conditional</animation>

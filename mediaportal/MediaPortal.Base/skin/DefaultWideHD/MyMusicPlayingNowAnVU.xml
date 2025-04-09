@@ -592,7 +592,7 @@
       <posY>730</posY>
       <width>400</width>
       <height>119</height>
-      <texture>menuBG.png</texture>
+      <texture>AnVuBG.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>Player.HasAudio</visible>
     </control>

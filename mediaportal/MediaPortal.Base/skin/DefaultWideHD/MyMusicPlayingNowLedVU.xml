@@ -592,9 +592,9 @@
       <posY>746</posY>
       <width>400</width>
       <height>94</height>
-      <texture>menuBG.png</texture>
+      <texture>LedVuBG.png</texture> 
       <colordiffuse>ffffffff</colordiffuse>
-      <visible>Player.HasAudio+!string.equals(#spectrumanalyzer.available,true)</visible>
+      <visible>Player.HasAudio+!plugin.isenabled(Spectrum Analyzer)</visible>
     </control>
     <control>
   <description>Music Spectrum</description>
@@ -617,7 +617,7 @@
       <height>98</height>
       <texture>Animations\LedVu\vu1.png</texture>
       <shouldCache>true</shouldCache>
-      <visible>Player.HasAudio+Player.paused+!string.equals(#spectrumanalyzer.available,true)</visible>
+      <visible>Player.HasAudio+Player.paused+!plugin.isenabled(Spectrum Analyzer)</visible>
     </control>
     <control>
       <type>image</type>
@@ -629,7 +629,7 @@
       <imagepath>Animations\LedVu</imagepath>
       <texture>#VUMeterL</texture>
       <shouldCache>true</shouldCache>
-      <visible>Player.HasAudio+Player.playing+!Player.paused+!string.equals(#spectrumanalyzer.available,true)</visible>
+      <visible>Player.HasAudio+Player.playing+!Player.paused+!plugin.isenabled(Spectrum Analyzer)</visible>
     </control>
     <control>
       <type>image</type>
@@ -640,7 +640,7 @@
       <height>98</height>
       <texture>Animations\LedVu\vu1.png</texture>
       <shouldCache>true</shouldCache>
-      <visible>Player.HasAudio+Player.paused+!string.equals(#spectrumanalyzer.available,true)</visible>
+      <visible>Player.HasAudio+Player.paused+!plugin.isenabled(Spectrum Analyzer)</visible>
     </control>
     <control>
       <type>image</type>
@@ -652,7 +652,7 @@
       <imagepath>Animations\LedVu</imagepath>
       <texture>#VUMeterR</texture>
       <shouldCache>true</shouldCache>
-      <visible>Player.HasAudio+Player.playing+!Player.paused+!string.equals(#spectrumanalyzer.available,true)</visible>
+      <visible>Player.HasAudio+Player.playing+!Player.paused+!plugin.isenabled(Spectrum Analyzer)</visible>
     </control>
 <!-- *************************************************************************************************** -->
 <!-- ************************************** Here is the ClearArt *************************************** -->
@@ -667,7 +667,7 @@
   <height>155</height>
   <texture>#fanarthandler.music.artistclearart.play</texture>
   <colordiffuse>ffffffff</colordiffuse>
-  <visible>Player.HasAudio+[Player.playing|Player.paused]+string.equals(#spectrumanalyzer.available,true)</visible>
+  <visible>Player.HasAudio+[Player.playing|Player.paused]+plugin.isenabled(Spectrum Analyzer)</visible>
 </control>
 <control>
       <description>ClearArt image</description>
@@ -679,7 +679,7 @@
       <height>155</height>
       <texture>#fanarthandler.music.artistclearart.play</texture>
       <colordiffuse>ffffffff</colordiffuse>
-      <visible>Player.HasAudio+[Player.playing|Player.paused]+!string.equals(#spectrumanalyzer.available,true)</visible>
+      <visible>Player.HasAudio+[Player.playing|Player.paused]+!plugin.isenabled(Spectrum Analyzer)</visible>
     </control>
 <import>MyMusicPlayingNow.Infos.xml</import>
 </controls>
