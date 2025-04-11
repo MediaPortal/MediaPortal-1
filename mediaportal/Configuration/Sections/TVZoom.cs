@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -61,6 +61,7 @@ namespace MediaPortal.Configuration.Sections
       cbAllowStretch.Text = Util.Utils.GetAspectRatio(Geometry.Type.Stretch);
       cbAllowNonLinearStretch.Text = Util.Utils.GetAspectRatio(Geometry.Type.NonLinearStretch);
       cbAllowLetterbox.Text = Util.Utils.GetAspectRatio(Geometry.Type.LetterBox43);
+      cbAllowCinemaScope235.Text = Util.Utils.GetAspectRatio(Geometry.Type.CinemaScope235);
 
       using (Settings xmlreader = new MPSettings())
       {
@@ -71,6 +72,7 @@ namespace MediaPortal.Configuration.Sections
         cbAllowStretch.Checked = xmlreader.GetValueAsBool("mytv", "allowarstretch", true);
         cbAllowNonLinearStretch.Checked = xmlreader.GetValueAsBool("mytv", "allowarnonlinear", true);
         cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("mytv", "allowarletterbox", true);
+        cbAllowCinemaScope235.Checked = xmlreader.GetValueAsBool("mytv", "allowarcinemascope235", true);
         //
         // Set default aspect ratio
         //
@@ -101,6 +103,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("mytv", "allowarstretch", cbAllowStretch.Checked);
         xmlwriter.SetValueAsBool("mytv", "allowarnonlinear", cbAllowNonLinearStretch.Checked);
         xmlwriter.SetValueAsBool("mytv", "allowarletterbox", cbAllowLetterbox.Checked);
+        xmlwriter.SetValueAsBool("mytv", "allowarcinemascope235", cbAllowCinemaScope235.Checked);
       }
     }
   }

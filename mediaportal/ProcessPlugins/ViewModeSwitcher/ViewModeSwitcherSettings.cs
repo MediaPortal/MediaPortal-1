@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -119,6 +119,10 @@ namespace ProcessPlugins.ViewModeSwitcher
         if (xmlreader.GetValueAsBool("mytv", "allowarletterbox", true))
         {
           AvailableModes.Add(Geometry.Type.LetterBox43.ToString());
+        }
+        if (xmlreader.GetValueAsBool("mytv", "allowarcinemascope235", true))
+        {
+          AvailableModes.Add(Geometry.Type.CinemaScope235.ToString());
         }
       }
       return AvailableModes;
