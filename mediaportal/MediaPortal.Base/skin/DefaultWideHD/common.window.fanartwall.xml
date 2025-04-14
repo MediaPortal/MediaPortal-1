@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<define>#header.label:#(iif(eq(#selecteditem,'..'),'#currentmodule','#currentmodule #scroll.wrap #selecteditem'))</define>
+  <controls>
+    <control>
+      <description>Title background image all screens except all games</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>379</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+      <visible>!window.isvisible(7776)+!window.isvisible(22031969)+!window.isvisible(5555)+!window.isvisible(36453968)+!window.isvisible(32647500)+!window.isvisible(1234711)+!window.isvisible(32327501)+!window.isvisible(426144)+!window.isvisible(7777)+!window.isvisible(426144)+!window.isvisible(567834)+!window.isvisible(22031924)+![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]|control.isvisible(888)</visible>
+    </control>
+    <control>
+      <description>Title background image all games</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>180</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>eeffffff</colordiffuse>
+      <visible>window.isvisible(7776)|window.isvisible(22031969)|window.isvisible(5555)|window.isvisible(36453968)|window.isvisible(32647500)|window.isvisible(1234711)|window.isvisible(32327501)|window.isvisible(426144)|window.isvisible(7777)|window.isvisible(567834)|window.isvisible(22031924)+![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]|control.isvisible(888)</visible>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>#header.label</label>
+      <width>1802</width>
+      <align>left</align>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>!window.isvisible(7776)+!window.isvisible(7982)+!window.isvisible(7977)+!window.isvisible(2003)+!window.isvisible(614)+![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]|control.isvisible(888)</visible>
+    </control>
+    <control>
+      <description>Itemcount CurrentModule</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1869</posX>
+      <posY>16</posY>
+      <label>#selectedindex/#itemcount #currentmodule</label>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <visible>!string.equals(#Trakt.Items)+string.equals(#selectedindex)+string.equals(#itemcount)+[!window.isvisible(603)+!window.isvisible(601)+!window.isvisible(604)+!window.isvisible(607)+!window.isvisible(608)+!window.isvisible(500)+!window.isvisible(501)+!window.isvisible(504)+!window.isvisible(9811)+!window.isvisible(25)+!window.isvisible(6)]+![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]</visible>
+    </control>
+    <!-- Itemcount (Music Screens) -->
+    <control>
+      <description>Itemcount Itemtype</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1869</posX>
+      <posY>16</posY>
+      <label>#selectedindex/#itemcount #currentmodule #totalduration</label>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <visible>string.equals(#selectedindex)+string.equals(#itemcount)+[window.isvisible(500)|window.isvisible(501)|window.isvisible(504)]+![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]</visible>
+    </control>
+    <control>
+      <description>Itemcount Trakt</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1869</posX>
+      <posY>16</posY>
+      <label>#selectedindex/#Trakt.Items</label>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <visible>string.equals(#Trakt.Items)+plugin.isenabled(Trakt)+[window.isvisible(87268)|window.isvisible(87259)|window.isvisible(87270)|window.isvisible(87263)|window.isvisible(87262)|window.isvisible(87266)|window.isvisible(87265)|window.isvisible(87269)|window.isvisible(87270)|window.isvisible(87275)|window.isvisible(87260)]+![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]</visible>
+    </control>
+    
+   </controls>
+</window>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
@@ -66,6 +66,7 @@
       <colordiffuse>99ffffff</colordiffuse>
       <animation effect="fade" time="300">visible</animation>
       <animation effect="fade" time="300">hidden</animation>
+      <visible>![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]</visible>
     </control>
   </controls>
 </window>

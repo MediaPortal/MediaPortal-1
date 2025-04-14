@@ -930,7 +930,7 @@ namespace MediaPortal.Picture.Database
       }
 
       metaData = GetExifFromFile(strPicture);
-      if (metaData.IsEmpty())
+      if (metaData.IsEmpty() && String.IsNullOrWhiteSpace(metaData.DatePictureTaken.Value))
       {
         return false;
       }
@@ -1368,7 +1368,7 @@ namespace MediaPortal.Picture.Database
       lock (typeof(PictureDatabase))
       {
         string strSQL = (_filterPrivate ? "SELECT DISTINCT strKeyword FROM picturekeywords WHERE strKeyword <> 'Private' AND " +
-                                                          "idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : 
+                                                          "idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" :
                                           "SELECT DISTINCT strKeyword FROM keyword") +
                                           "ORDER BY 1";
         try
@@ -1816,7 +1816,7 @@ namespace MediaPortal.Picture.Database
       lock (typeof(PictureDatabase))
       {
         string strValue = Name.Contains("Altitude") ? Value : "'" + DatabaseUtility.RemoveInvalidChars(Value) + "'";
-        string strSQL = "SELECT strFile FROM picturedata WHERE " + Name + " = " + strValue + 
+        string strSQL = "SELECT strFile FROM picturedata WHERE " + Name + " = " + strValue +
                                 (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
                                 " ORDER BY strDateTaken";
         SQLiteResultSet result;
@@ -1850,7 +1850,7 @@ namespace MediaPortal.Picture.Database
       lock (typeof(PictureDatabase))
       {
         string strValue = Name.Contains("Altitude") ? Value : "'" + DatabaseUtility.RemoveInvalidChars(Value) + "'";
-        string strSQL = "SELECT COUNT(strFile) FROM picturedata WHERE " + Name + " = " + strValue + 
+        string strSQL = "SELECT COUNT(strFile) FROM picturedata WHERE " + Name + " = " + strValue +
                                 (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty);
         SQLiteResultSet result;
         try

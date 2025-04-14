@@ -18,8 +18,12 @@
       <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>common.video.fanart.xml</import>
-    <import>common.window.xml</import>
-    <import>common.time.xml</import>
+    <!--import>common.window.xml</import>
+    <import>common.time.xml</import-->
+    <include condition="#(eq(#skin.thumbsview,'Normal'))">common.window.xml</include>
+   <include condition="#(eq(#skin.thumbsview,'Fanart Wall'))">common.window.fanartwall.xml</include>
+   <include condition="#(eq(#skin.thumbsview,'Normal'))">common.time.xml</include>
+   <include condition="#(eq(#skin.thumbsview,'Fanart Wall'))">common.time.fanartwall.xml</include>
     <control>
       <description>Itemcount CurrentModule</description>
       <type>label</type>
@@ -33,6 +37,7 @@
       <shadowAngle>10</shadowAngle>
       <shadowDistance>2</shadowDistance>
       <shadowColor>ff000000</shadowColor>
+      <visible>![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]</visible>
     </control>
     <control>
       <description>General Overlay</description>
@@ -43,6 +48,7 @@
       <width>1920</width>
       <height>1080</height>
       <texture>general_overlay.png</texture>
+      <visible>![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]</visible>
     </control>
     <control>
       <type>actiongroup</type>
@@ -190,20 +196,8 @@
         </control>
       </control>
     </control>
-    <import>common.facade.video.title.xml</import>
-    <!-- info visible when in list view for titles -->
-    <!--control>
-      <description>Overlay text right</description>
-      <id>0</id>
-      <type>image</type>
-      <posX>1065</posX>
-      <posY>234</posY>
-      <width>925</width>
-      <height>699</height>
-      <texture>black.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
-      <visible>facadeview.list</visible>
-    </control-->
+    <include condition="#(eq(#skin.thumbsview,'Normal'))">common.facade.video.title.xml</include>
+   <include condition="#(eq(#skin.thumbsview,'Fanart Wall'))">myvideo.facade.fanartwall.xml</include>
     <control>
       <type>imagelist</type>
       <id>1</id>
@@ -703,7 +697,7 @@
       <textcolor>lightgray</textcolor>
       <visible>facadeview.list+string.equals(#hideActorinfo, False)</visible>
     </control>
-    <control>
+    <!--control>
       <description>Content locked</description>
       <type>image</type>
       <id>1</id>
@@ -714,8 +708,8 @@
       <visible>string.equals(#MyVideos.PinLocked, True)</visible>
       <texture>lock.png</texture>
       <keepaspectratio>yes</keepaspectratio>
-    </control>
-    <control>
+    </control-->
+    <!--control>
       <description>Content unlock</description>
       <type>image</type>
       <id>1</id>
@@ -726,6 +720,6 @@
       <visible>string.equals(#MyVideos.PinLocked, False)</visible>
       <texture>unlock.png</texture>
       <keepaspectratio>yes</keepaspectratio>
-    </control>
+    </control-->
   </controls>
 </window>

@@ -10,28 +10,28 @@
 </font>!-->
 <font>
   <name>font9</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>9</height>
   <start>0</start>
   <end>1536</end>
 </font>
 <font>
   <name>font10</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>10</height>
   <start>0</start>
   <end>1536</end>
 </font>
 <font>
   <name>font11</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>11</height>
   <start>0</start>
   <end>1536</end>
 </font>
 <font>
   <name>font11bold</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>11</height>
   <start>0</start>
   <end>1536</end>
@@ -39,14 +39,14 @@
 </font>
 <font>
   <name>CSG</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>11</height>
   <start>0</start>
   <end>1536</end>
 </font>
 <font>
   <name>RSS</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>12</height>
   <start>0</start>
   <end>1536</end>
@@ -54,28 +54,28 @@
 </font>
 <font>
   <name>font12</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>12</height>
   <start>0</start>
   <end>1536</end>
 </font>
 <font>
   <name>font13</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>13</height>
   <start>0</start>
   <end>1536</end>
 </font>
 <font>
   <name>font14</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>14</height>
   <start>0</start>
   <end>1536</end>
 </font>
 <font>
   <name>MenuHeader</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>13</height>
   <start>0</start>
   <end>1536</end>
@@ -83,14 +83,14 @@
 </font>
 <font>
   <name>font15</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>15</height>
   <start>0</start>
   <end>1536</end>
 </font>
 <font>
   <name>Menutitle</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>17</height>
   <bold>no</bold>
   <start>0</start>
@@ -98,7 +98,7 @@
 </font>
 <font>
   <name>Settings</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>15</height>
   <bold>no</bold>
   <start>0</start>
@@ -106,35 +106,35 @@
 </font>
 <font>
   <name>font16</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>16</height>
   <start>0</start>
   <end>1536</end>
 </font>
 <font>
   <name>font18</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>18</height>
   <start>0</start>
   <end>1536</end>
 </font>
 <font>
   <name>font20</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>20</height>
   <start>0</start>
   <end>1536</end>
 </font>
 <font>
   <name>font21</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>18</height>
   <start>0</start>
   <end>1536</end>
 </font>
 <font>
   <name>Label</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>13</height>
   <bold>no</bold>
   <start>0</start>
@@ -142,7 +142,7 @@
 </font>
 <font>
   <name>LabelBold</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>13</height>
   <bold>yes</bold>
   <start>0</start>
@@ -150,7 +150,7 @@
 </font>
 <font>
   <name>font36</name>
-  <filename>Open Sans Light</filename>
+  <filename>Morebi Rounded</filename>
   <height>24</height>
   <bold>yes</bold>
   <start>0</start>

@@ -192,7 +192,7 @@
     <posY>94</posY>
     <width>1342</width>
     <align>left</align>
-    <visible>Player.hasaudio+!string.equals(#duration)+!string.equals(#RadioTime.Play.Station,)</visible>
+    <visible>Player.hasaudio+!string.equals(#duration)+plugin.isenabled(TuneIn)</visible>
     <control>
       <type>fadelabel</type>
       <description>Track</description>
@@ -224,7 +224,7 @@
     <posY>94</posY>
     <width>1620</width>
     <align>left</align>
-    <visible>Player.hasaudio+!string.equals(#duration)+string.equals(#RadioTime.Play.Station,)</visible>
+    <visible>Player.hasaudio+!string.equals(#duration)+!plugin.isenabled(TuneIn)</visible>
     <control>
       <type>fadelabel</type>
       <description>Track</description>
@@ -592,7 +592,7 @@
       <posY>730</posY>
       <width>400</width>
       <height>119</height>
-      <texture>menuBG.png</texture>
+      <texture>AnVuBG.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>Player.HasAudio</visible>
     </control>

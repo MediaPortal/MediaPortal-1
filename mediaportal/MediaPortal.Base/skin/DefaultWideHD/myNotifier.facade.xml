@@ -12,7 +12,7 @@
         <onleft>14</onleft>
         <onright>50</onright>
         <scrollOffset>2</scrollOffset>
-        <posX>3115</posX>
+        <posX>115</posX>
         <posY>240</posY>
         <width>1650</width>
         <height>700</height>
@@ -24,7 +24,7 @@
         <textXOff2>1660</textXOff2>
         <textXOff3>60</textXOff3>
         <textYOff>2</textYOff>
-        <textYOff2>-5</textYOff2>
+        <textYOff2>0</textYOff2>
         <textYOff3>5</textYOff3>
         <textalign3>left</textalign3>
         <loopDelayMs>0</loopDelayMs>
@@ -34,7 +34,7 @@
         <itemHeight>40</itemHeight>
         <textpadding>160</textpadding>
         <textpadding3>940</textpadding3>
-        <font2>font9</font2>
+        <font2>font8</font2>
         <font3>font12</font3>
         <dimColor>90ffffff</dimColor>
       </control>
@@ -44,7 +44,7 @@
       <description>divider horizontal</description>
       <type>image</type>
       <id>0</id>
-      <posX>2075</posX>
+      <posX>75</posX>
       <posY>745</posY>
       <width>1790</width>
       <height>1</height>
@@ -57,7 +57,7 @@
     <description>Description</description>
     <type>textboxscrollup</type>
     <id>1</id>
-    <posX>3200</posX>
+    <posX>200</posX>
     <posY>760</posY>
     <width>1444</width>
     <height>150</height>

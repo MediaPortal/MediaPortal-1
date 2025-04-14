@@ -2,6 +2,8 @@
 <!-- Skin translation file -->
 <!-- English (US) -->
 <strings>
+  <string Field="Thumbsview">Thumbnail View</string>
+  <string Field="Thumbsview.Select">Normal</string>
   <string Field="WorldNewsTicker">Activate WorldNews Ticker</string>
   <string Field="AnalogClockOSD">Analog Clock in OSDs</string>
   <string Field="MusicNowPlayingFanart">Music NowPlaying Fanart in BasicHome</string>
@@ -47,7 +49,9 @@
   <string Field="tv">No GIF</string>
   <string Field="Ukraine">Show Flag of Ukraine</string>
   <string Field="KeyboardShortcuts">Keyboard Shortcuts (General)</string>
-  <string Field="AudioOptions">Volume up/down</string><string Field="CategoryBG">Plugin-Poster BasicHome</string>
+  <string Field="AudioOptions">Volume up/down</string>
+  <string Field="CategoryBG">Plugin-Poster BasicHome</string>
+  <string Field="EnlargeImage">Enlarge Image</string>
   <!-- ***************************************************************************************-->
   <!-- ****************************   Skin translation for Tetris ****************************-->
   <!-- ***************************************************************************************-->

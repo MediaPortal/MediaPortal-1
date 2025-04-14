@@ -8,7 +8,6 @@ multiple view modes.
 	<id>3013</id>
 	<defaultcontrol>50</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
-	<define>#header.image:notifier_logo.png</define>
 	<define>#header.label:My Notifier</define>
   <define property="true" evaluateNow="true">#selectedplugin:#myNotifier.Message.Current.Author</define>
   
@@ -65,7 +64,7 @@ multiple view modes.
       <colordiffuse>ddffffff</colordiffuse>
     </control>
     <import>common.time.xml</import>
-		<!--control>
+		<control>
       <type>fadelabel</type>
       <description>e.g. Setup TV</description>
       <id>0</id>
@@ -108,9 +107,9 @@ multiple view modes.
       <font>RSS</font>
       <textcolor>fff5deb3</textcolor>
       <visible>control.isvisible(50)</visible>
-    </control-->
+    </control>
 		
-<control>
+<!--control>
       <type>fadelabel</type>
       <description>e.g. Setup TV</description>
       <id>0</id>
@@ -125,8 +124,8 @@ multiple view modes.
       <shadowColor>ff000000</shadowColor>
       <textcolor>lightgray</textcolor>
       <colordiffuse>ffffffff</colordiffuse>
-    </control>
-    <control>
+    </control-->
+    <!--control>
       <type>fadelabel</type>
       <description>e.g. Setup TV</description>
       <id>0</id>
@@ -155,7 +154,7 @@ multiple view modes.
       <shadowDistance>3</shadowDistance>
       <shadowColor>ff000000</shadowColor>
       <textcolor>red</textcolor><colordiffuse>ffffffff</colordiffuse>
-    </control>
+    </control-->
 
 		
 

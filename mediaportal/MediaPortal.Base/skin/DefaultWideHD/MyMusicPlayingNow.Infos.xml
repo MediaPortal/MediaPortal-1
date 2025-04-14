@@ -135,7 +135,7 @@
       <posY>590</posY>
       <width>45</width>
       <height>45</height>
-      <texture>tb_extend3.png</texture>
+      <texture>tb_extend3b.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>control.hasFocus(9877)</visible>
       <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
@@ -187,7 +187,7 @@
       <posY>590</posY>
       <width>45</width>
       <height>45</height>
-      <texture>tb_extend3.png</texture>
+      <texture>tb_extend3b.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>control.hasFocus(9876)</visible>
       <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
@@ -239,7 +239,7 @@
       <posY>590</posY>
       <width>45</width>
       <height>45</height>
-      <texture>tb_extend3.png</texture>
+      <texture>tb_extend3b.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>control.hasFocus(9875)</visible>
       <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
@@ -708,7 +708,7 @@
         <posY>650</posY>
         <width>45</width>
         <height>45</height>
-        <texture>tb_extend3.png</texture>
+        <texture>tb_extend3b.png</texture>
         <colordiffuse>ffffffff</colordiffuse>
         <visible>control.hasFocus(9879)</visible>
         <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>

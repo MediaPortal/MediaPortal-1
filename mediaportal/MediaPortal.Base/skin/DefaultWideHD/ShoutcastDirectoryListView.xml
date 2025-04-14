@@ -31,7 +31,7 @@
       <height>1080</height>
       <texture>general_overlay.png</texture>
     </control>
-    <control>
+    <!--<control>
       <description>Header</description>
       <type>fadelabel</type>
       <posX>45</posX>
@@ -41,7 +41,7 @@
       <align>left</align>
       <textcolor>ff00bfff</textcolor>
       <label>Shoutcast</label>
-    </control>
+    </control>-->
     <control>
       <type>group</type>
       <description>group element</description>

@@ -102,8 +102,8 @@
       <description>End of progressbar</description>
       <type>label</type>
       <id>1</id>
-      <posX>1703</posX>
-      <posY>973</posY>
+      <posX>1708</posX> 
+      <posY>977</posY> 
       <label>|</label>
       <align>left</align>
       <font>font11</font>
@@ -239,7 +239,7 @@
       <type>label</type>
       <id>1</id>
       <posX>1700</posX>
-      <posY>1000</posY>
+      <posY>1005</posY> 
       <width>500</width>
       <label>#(L(19011)): #TV.View.unwatched</label>
       <align>right</align>

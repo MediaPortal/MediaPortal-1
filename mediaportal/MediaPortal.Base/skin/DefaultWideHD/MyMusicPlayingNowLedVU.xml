@@ -192,7 +192,7 @@
     <posY>94</posY>
     <width>1342</width>
     <align>left</align>
-    <visible>Player.hasaudio+!string.equals(#duration)+!string.equals(#RadioTime.Play.Station,)</visible>
+    <visible>Player.hasaudio+!string.equals(#duration)+plugin.isenabled(TuneIn)</visible>
     <control>
       <type>fadelabel</type>
       <description>Track</description>
@@ -224,7 +224,7 @@
     <posY>94</posY>
     <width>1620</width>
     <align>left</align>
-    <visible>Player.hasaudio+!string.equals(#duration)+string.equals(#RadioTime.Play.Station,)</visible>
+    <visible>Player.hasaudio+!string.equals(#duration)+!plugin.isenabled(TuneIn)</visible>
     <control>
       <type>fadelabel</type>
       <description>Track</description>
@@ -336,7 +336,7 @@
   <control>
     <description>Track - Title</description>
     <type>group</type>
-    <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+[!control.hasfocus(9875)+!control.hasfocus(9876)+!control.hasfocus(9877)]+!string.equals(#Play.Next.Title, )</visible>
+    <visible>[!control.hasfocus(9875)+!control.hasfocus(9876)+!control.hasfocus(9877)]+!string.equals(#Play.Next.Title, )</visible>
     <control>
       <type>label</type>
       <description>up next label</description>
@@ -585,30 +585,18 @@
   <!-- ************************************** Here are the VU Meters ************************************* -->
   <!-- *************************************************************************************************** -->
   <control>
-    <description>background image</description>
-    <type>image</type>
-    <id>0</id>
-    <posX>1390</posX>
-    <posY>721</posY>
-    <width>214</width>
-    <height>132</height>
-    <texture>menuBG.png</texture>
-    <colordiffuse>ccffffff</colordiffuse>
-    <visible>Player.HasAudio+!string.equals(#spectrumanalyzer.available,true)</visible>
-  </control>
-  <!--control>
-  <description>background image</description>
-  <type>image</type>
-  <id>0</id>
-  <posX>1320</posX>
-  <posY>720</posY>
-  <width>380</width>
-  <height>145</height>
-  <texture>menuBG.png</texture>
-  <colordiffuse>ccffffff</colordiffuse>
-  <visible>Player.HasAudio+string.equals(#spectrumanalyzer.available,true)</visible>
-</control-->
-<control>
+      <description>background image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1340</posX>
+      <posY>746</posY>
+      <width>400</width>
+      <height>94</height>
+      <texture>LedVuBG.png</texture> 
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>Player.HasAudio+!plugin.isenabled(Spectrum Analyzer)</visible>
+    </control>
+    <control>
   <description>Music Spectrum</description>
   <id>0</id>
   <type>image</type>
@@ -620,52 +608,52 @@
   <colordiffuse>ccffffff</colordiffuse>
   <visible>#spectrumanalyzer.vumeter.available</visible>
 </control>
-<control>
-  <type>image</type>
-  <id>0</id>
-  <posX>1400</posX>
-  <posY>700</posY>
-  <width>195</width>
-  <height>105</height>
-  <texture>Animations\LedVu\vu1.png</texture>
-  <shouldCache>true</shouldCache>
-  <visible>Player.HasAudio+Player.paused+!string.equals(#spectrumanalyzer.available,true)</visible>
-</control>
-<control>
-  <type>image</type>
-  <id>999</id>
-  <posX>1400</posX>
-  <posY>700</posY>
-  <width>195</width>
-  <height>105</height>
-  <imagepath>Animations\LedVu</imagepath>
-  <texture>#VUMeterL</texture>
-  <shouldCache>true</shouldCache>
-  <visible>Player.HasAudio+Player.playing+!Player.paused+!string.equals(#spectrumanalyzer.available,true)</visible>
-</control>
-<control>
-  <type>image</type>
-  <id>0</id>
-  <posX>1400</posX>
-  <posY>770</posY>
-  <width>195</width>
-  <height>105</height>
-  <texture>Animations\LedVu\vu1.png</texture>
-  <shouldCache>true</shouldCache>
-  <visible>Player.HasAudio+Player.paused+!string.equals(#spectrumanalyzer.available,true)</visible>
-</control>
-<control>
-  <type>image</type>
-  <id>998</id>
-  <posX>1400</posX>
-  <posY>770</posY>
-  <width>195</width>
-  <height>105</height>
-  <shouldCache>true</shouldCache>
-  <imagepath>Animations\LedVu</imagepath>
-  <texture>#VUMeterR</texture>
-  <visible>Player.HasAudio+Player.playing+!Player.paused+!string.equals(#spectrumanalyzer.available,true)</visible>
-</control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>1349</posX>
+      <posY>742</posY>
+      <width>182</width>
+      <height>98</height>
+      <texture>Animations\LedVu\vu1.png</texture>
+      <shouldCache>true</shouldCache>
+      <visible>Player.HasAudio+Player.paused+!plugin.isenabled(Spectrum Analyzer)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>999</id>
+      <posX>1349</posX>
+      <posY>742</posY>
+      <width>182</width>
+      <height>98</height>
+      <imagepath>Animations\LedVu</imagepath>
+      <texture>#VUMeterL</texture>
+      <shouldCache>true</shouldCache>
+      <visible>Player.HasAudio+Player.playing+!Player.paused+!plugin.isenabled(Spectrum Analyzer)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>1546</posX>
+      <posY>742</posY>
+      <width>182</width>
+      <height>98</height>
+      <texture>Animations\LedVu\vu1.png</texture>
+      <shouldCache>true</shouldCache>
+      <visible>Player.HasAudio+Player.paused+!plugin.isenabled(Spectrum Analyzer)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>998</id>
+      <posX>1546</posX>
+      <posY>742</posY>
+      <width>182</width>
+      <height>98</height>
+      <imagepath>Animations\LedVu</imagepath>
+      <texture>#VUMeterR</texture>
+      <shouldCache>true</shouldCache>
+      <visible>Player.HasAudio+Player.playing+!Player.paused+!plugin.isenabled(Spectrum Analyzer)</visible>
+    </control>
 <!-- *************************************************************************************************** -->
 <!-- ************************************** Here is the ClearArt *************************************** -->
 <!-- *************************************************************************************************** -->
@@ -679,8 +667,20 @@
   <height>155</height>
   <texture>#fanarthandler.music.artistclearart.play</texture>
   <colordiffuse>ffffffff</colordiffuse>
-  <visible>Player.HasAudio+Player.playing+!Player.paused</visible>
+  <visible>Player.HasAudio+[Player.playing|Player.paused]+plugin.isenabled(Spectrum Analyzer)</visible>
 </control>
+<control>
+      <description>ClearArt image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1300</posX>
+      <posY>870</posY>
+      <width>400</width>
+      <height>155</height>
+      <texture>#fanarthandler.music.artistclearart.play</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>Player.HasAudio+[Player.playing|Player.paused]+!plugin.isenabled(Spectrum Analyzer)</visible>
+    </control>
 <import>MyMusicPlayingNow.Infos.xml</import>
 </controls>
 </window>
