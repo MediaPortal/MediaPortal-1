@@ -730,7 +730,8 @@ unsigned int CCurlInstance::CurlWorker(void)
 
     if (IS_CURL_ERROR(this->downloadResponse->GetResultError()) && (this->downloadResponse->GetResultError() != HRESULT_FROM_CURL_CODE(CURLE_WRITE_ERROR)))
     {
-      this->logger->Log(LOGGER_ERROR, L"%s: %s: error while receiving data: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, this->downloadResponse->GetResultError());
+      this->logger->Log(LOGGER_ERROR, L"%s: %s: error while receiving data: 0x%08X %s", this->protocolName, METHOD_CURL_WORKER_NAME, this->downloadResponse->GetResultError(),
+        this->downloadResponse->GetResultError() == HRESULT_FROM_CURL_CODE(CURLE_OPERATION_TIMEOUTED) ? " (Timeout)" : "");
     }
   }
 
