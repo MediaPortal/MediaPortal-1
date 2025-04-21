@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <allowoverlay>yes</allowoverlay>
   <controls>
+  <control>
+      <description>rectangle image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>30</posX>
+      <posY>240</posY>
+      <width>1880</width>
+      <height>830</height>
+      <texture>listbg3.png</texture>
+      <colordiffuse>aaffffff</colordiffuse>
+      <visible>string.equals(#WorldWeather.ConditionView,Hour)</visible>
+    </control>
     <control>
       <description>chart image</description>
       <type>image</type>
       <id>0</id>
-      <posX>-40</posX>
+      <posX>20</posX>
       <posY>235</posY>
-      <width>2000</width>
+      <width>2050</width>
       <height>825</height>
       <texture>#WorldWeather.ForecastHourTemperatureChart</texture>
       <colordiffuse>ffffcc00</colordiffuse>
@@ -22,7 +33,7 @@
       <type>group</type>
       <description>group element</description>
       <layout>StackLayout(30, Horizontal, true)</layout>
-      <posX>140</posX>
+      <posX>220</posX>
       <posY>311</posY>
       <control Style="NoShadow">
         <description>hour 0 start date</description>
@@ -92,7 +103,7 @@
       <type>group</type>
       <description>group element</description>
       <layout>StackLayout(30, Horizontal, true)</layout>
-      <posX>140</posX>
+      <posX>220</posX>
       <posY>662</posY>
       <control Style="NoShadow">
         <description>hour 6 start date</description>
@@ -162,7 +173,7 @@
       <type>group</type>
       <description>group element</description>
       <layout>StackLayout(108, Horizontal, true)</layout>
-      <posX>156</posX>
+      <posX>236</posX>
       <posY>325</posY>
       <control>
         <description>hour 0 icon</description>
@@ -226,7 +237,7 @@
       <type>group</type>
       <description>group element</description>
       <layout>StackLayout(108, Horizontal, true)</layout>
-      <posX>156</posX>
+      <posX>236</posX>
       <posY>676</posY>
       <control>
         <description>hour 6 icon</description>
@@ -290,7 +301,7 @@
       <type>group</type>
       <description>group element</description>
       <layout>StackLayout(30, Horizontal, true)</layout>
-      <posX>140</posX>
+      <posX>220</posX>
       <posY>451</posY>
       <control Style="NoShadow">
         <description>hour 0 condition</description>
@@ -360,7 +371,7 @@
       <type>group</type>
       <description>group element</description>
       <layout>StackLayout(30, Horizontal, true)</layout>
-      <posX>140</posX>
+      <posX>220</posX>
       <posY>817</posY>
       <control Style="NoShadow">
         <description>hour 6 condition</description>
@@ -430,7 +441,7 @@
       <type>group</type>
       <description>group element</description>
       <layout>StackLayout(30, Horizontal, true)</layout>
-      <posX>140</posX>
+      <posX>220</posX>
       <posY>487</posY>
       <control Style="NoShadow">
         <description>hour 0 Temperature</description>
@@ -500,7 +511,7 @@
       <type>group</type>
       <description>group element</description>
       <layout>StackLayout(30, Horizontal, true)</layout>
-      <posX>140</posX>
+      <posX>220</posX>
       <posY>852</posY>
       <control Style="NoShadow">
         <description>hour 6 Temperature</description>
@@ -570,7 +581,7 @@
       <type>group</type>
       <description>group element</description>
       <layout>StackLayout(30, Horizontal, true)</layout>
-      <posX>140</posX>
+      <posX>220</posX>
       <posY>522</posY>
       <control Style="NoShadow">
         <description>hour 0 wind</description>
@@ -640,7 +651,7 @@
       <type>group</type>
       <description>group element</description>
       <layout>StackLayout(30, Horizontal, true)</layout>
-      <posX>140</posX>
+      <posX>220</posX>
       <posY>887</posY>
       <control Style="NoShadow">
         <description>hour 6 wind</description>
@@ -710,7 +721,7 @@
       <type>group</type>
       <description>group element</description>
       <layout>StackLayout(30, Horizontal, true)</layout>
-      <posX>140</posX>
+      <posX>220</posX>
       <posY>557</posY>
       <control Style="NoShadow">
         <description>hour 0 athmosphere</description>
@@ -780,7 +791,7 @@
       <type>group</type>
       <description>group element</description>
       <layout>StackLayout(30, Horizontal, true)</layout>
-      <posX>140</posX>
+      <posX>220</posX>
       <posY>922</posY>
       <control Style="NoShadow">
         <description>hour 6 athmosphere</description>
@@ -848,56 +859,56 @@
       <description>divider</description>
       <type>image</type>
       <id>0</id>
-      <posX>400</posX>
+      <posX>480</posX>
       <posY>297</posY>
       <height>646</height>
       <width>1</width>
-      <texture>slider_vertical.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
+      <texture>verticalbar.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Hour)</visible></control>
     <control>
       <description>divider</description>
       <type>image</type>
       <id>0</id>
-      <posX>674</posX>
+      <posX>754</posX>
       <posY>297</posY>
       <height>646</height>
       <width>1</width>
-      <texture>slider_vertical.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
+      <texture>verticalbar.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Hour)</visible></control>
     <control>
       <description>divider</description>
       <type>image</type>
       <id>0</id>
-      <posX>948</posX>
+      <posX>1028</posX>
       <posY>297</posY>
       <height>646</height>
       <width>1</width>
-      <texture>slider_vertical.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
+      <texture>verticalbar.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Hour)</visible></control>
     <control>
       <description>divider</description>
       <type>image</type>
       <id>0</id>
-      <posX>1222</posX>
+      <posX>1302</posX>
       <posY>297</posY>
       <height>646</height>
       <width>1</width>
-      <texture>slider_vertical.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
+      <texture>verticalbar.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Hour)</visible></control>
     <control>
       <description>divider</description>
       <type>image</type>
       <id>0</id>
-      <posX>1496</posX>
+      <posX>1576</posX>
       <posY>297</posY>
       <height>646</height>
       <width>1</width>
-      <texture>slider_vertical.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
+      <texture>verticalbar.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Hour)</visible></control>
     <control>
       <description>divider horizontal</description>
@@ -907,9 +918,8 @@
       <posY>613</posY>
       <width>1650</width>
       <height>1</height>
-      <texture>horizontal_bar.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
-      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Hour)</visible>
-    </control>
-  </controls>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Hour)</visible></control>
+      </controls>
 </window>

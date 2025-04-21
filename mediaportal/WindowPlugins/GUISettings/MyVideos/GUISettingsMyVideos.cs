@@ -30,6 +30,9 @@ using MediaPortal.GUI.Settings;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using Action = MediaPortal.GUI.Library.Action;
+// start fmu
+using MediaPortal.Player;
+// end fmu
 
 namespace WindowPlugins.GUISettings.TV
 {
@@ -43,6 +46,9 @@ namespace WindowPlugins.GUISettings.TV
     [SkinControl(31)] protected GUICheckButton btnEnableSubtitles = null;
     [SkinControl(34)] protected GUIButtonControl btnPlayall = null;
     [SkinControl(35)] protected GUIButtonControl btnExtensions = null;
+    // start fmu
+    [SkinControl(36)] protected GUIButtonControl btnRenderer = null;
+    // end fmu
     [SkinControl(40)] protected GUIButtonControl btnFolders = null;
     [SkinControl(41)] protected GUIButtonControl btnDatabase= null;
     [SkinControl(42)] protected GUIButtonControl btnPlaylist= null;
@@ -78,7 +84,11 @@ namespace WindowPlugins.GUISettings.TV
     private bool _mpCheckBoxTS;
     private bool _audioDefaultCheckBox;
     private bool _streamLAVSelectionCheckBox;
-    
+    // start fmu
+    private bool _isEVR;
+    private bool _isMadVR;
+    private int _renderer;
+    // end fmu
 
     private class CultureComparer : IComparer
     {
@@ -155,6 +165,25 @@ namespace WindowPlugins.GUISettings.TV
           btnUseAudioDefaultCheckBox.Selected = false;
           btnUseSstreamLAVSelection.Selected = false;
         }
+        // start fmu
+        _isEVR = xmlreader.GetValueAsBool("general", "useEVRenderer", false);
+        _isMadVR = xmlreader.GetValueAsBool("general", "useMadVideoRenderer", false);
+        if (_isEVR)
+        {
+          _renderer = 1;
+        }
+        else
+        {
+          if (_isMadVR)
+          {
+            _renderer = 2;
+          }
+          else
+          {
+            _renderer = 0;
+          }
+        }
+        // end fmu
       }
     }
 
@@ -192,6 +221,23 @@ namespace WindowPlugins.GUISettings.TV
 
         xmlwriter.SetValueAsBool("subtitles", "enabled", btnEnableSubtitles.Selected);
         xmlwriter.SetValue("movies", "playallinfolder", _playAll);
+        // start fmu
+        switch (_renderer)
+        {
+          case 0:
+            xmlwriter.SetValueAsBool("general", "useEVRenderer", false);
+            xmlwriter.SetValueAsBool("general", "useMadVideoRenderer", false);
+            break;
+          case 1:
+            xmlwriter.SetValueAsBool("general", "useEVRenderer", true);
+            xmlwriter.SetValueAsBool("general", "useMadVideoRenderer", false);
+            break;
+          case 2:
+            xmlwriter.SetValueAsBool("general", "useEVRenderer", false);
+            xmlwriter.SetValueAsBool("general", "useMadVideoRenderer", true);
+            break;
+        }
+        // end fmu
       }
     }
 
@@ -242,6 +288,38 @@ namespace WindowPlugins.GUISettings.TV
       {
         OnPlayAllVideos();
       }
+      // start fmu
+      if (control == btnRenderer)
+      {
+        if (g_Player.Playing && g_Player.HasVideo)
+        {
+          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
+          if (null == dlgYesNo)
+          {
+            return;
+          }
+          dlgYesNo.SetHeading(100102); // Play-Stop dialog
+          dlgYesNo.SetLine(1, 300240); // A video file is playing
+          dlgYesNo.SetLine(2, 300241); // Do you want to stop video playback?
+          dlgYesNo.SetLine(3, "");
+          dlgYesNo.DoModal(GetID);
+
+          if (!dlgYesNo.IsConfirmed)
+          {
+            return;
+          }
+          else
+          {
+            g_Player.Stop();
+            OnRenderer();
+          }
+        }
+        else
+        {
+          OnRenderer();
+        }
+      }
+      // end fmu
       if (control == btnExtensions)
       {
         OnExtensions();
@@ -1057,6 +1135,47 @@ namespace WindowPlugins.GUISettings.TV
 
       _playAll = dlg.SelectedLabel;
     }
+
+    // start fmu
+    private void OnRenderer()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+      {
+        return;
+      }
+      dlg.Reset();
+      dlg.SetHeading(300236); // Renderer
+
+      dlg.AddLocalizedString(300237); // VMR9
+      dlg.AddLocalizedString(300238); // EVR
+      dlg.AddLocalizedString(300239); // MadVR
+
+      dlg.SelectedLabel = _renderer;
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
+
+      _renderer = dlg.SelectedLabel;
+
+      switch (_renderer)
+      {
+        case 0:
+          GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.VMR9;
+          break;
+        case 1:
+          GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.EVR;
+          break;
+        case 2:
+          GUIGraphicsContext.VideoRenderer = GUIGraphicsContext.VideoRendererType.madVR;
+          break;
+      }
+    }
+    // end fmu
 
     private void OnExtensions()
     {

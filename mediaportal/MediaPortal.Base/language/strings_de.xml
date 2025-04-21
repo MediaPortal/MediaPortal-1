@@ -682,7 +682,7 @@
 		<String id="748">Niederschlag</String>
 		<String id="750">Bilder</String>
 		<String id="751">Zeige alle Lieder des aktuellen Interpreten</String>
-		<String id="752">Keine Aufnahme angegeben</String>
+		<String id="752">Keine Aufnahmen geplant</String>
 		<String id="753">Keine TV-Karte installiert</String>
 		<String id="754">Keine TV-Karte zeichnet die gewünschte Sendung auf</String>
 		<String id="755">Keine TV-Karte aktiv für Live-Fernsehen</String>
@@ -926,7 +926,7 @@
 		<String id="1038">Erweiterte Aufnahme</String>
 		<String id="1039">Nicht aufnehmen</String>
 		<String id="1040">Erinnern</String>
-		<String id="1041">Folgen / Wiederholungen dieser Sendung</String>
+		<String id="1041">Folgen/Wiederholungen dieser Sendung</String>
 		<String id="1042">Behalte bis</String>
 		<String id="1043">Bis gesehen</String>
 		<String id="1044">Solange freier Speicher verfügbar</String>
@@ -1890,6 +1890,16 @@
 		<String id="34061">Benutzer eingeben...</String>
 		<String id="34062">Künstler eingeben...</String>
 		<String id="34063">Keinen Künstler ausgewählt</String>
+		
+		<!-- myNotifier -->
+    <String id="35000">Alle lesen</String>
+    <String id="35001">Löschen</String>
+    <String id="35002">Alle löschen</String>
+    <String id="35003">Beenden</String>
+    <String id="35004">Stufe: </String>
+    <String id="35005">Klasse: </String>
+    <String id="35006">Quelle aufrufen</String>
+		
 		<String id="40001">Standby in Kürze</String>
 		<String id="40002">MediaPortal ist unbenutzt, aber noch beschäftigt.</String>
 		<String id="40003">Wenn alle aktuellen Aufgaben erledigt wurden, geht MediaPortal in den Standby-Modus.</String>
@@ -2064,6 +2074,15 @@
 		<String id="107701" prefix="Mein ">TV/Videotext</String>
 		<String id="107776" prefix="Mein ">Tetris</String>
 		<String id="107777" prefix="Mein ">Sudoku</String>
+		<String id="107778" prefix="Mein ">Schach</String>
+		<String id="107779" prefix="Mein ">ClickMania</String>
+		<String id="107780" prefix="Mein ">Vier gewinnt</String>
+		<String id="107781" prefix="Mein ">Mensch ärgere dich nicht</String>
+		<String id="107782" prefix="Mein ">Hexxagon</String>
+		<String id="107783" prefix="Mein ">Mastermind</String>
+		<String id="107784" prefix="Mein ">Minesweeper</String>
+		<String id="107785" prefix="Mein ">Pipes</String>
+		<String id="107786" prefix="Mein ">Yahtzee</String>
 		<String id="107890" prefix="Mein ">Last.fm Radio</String>
 		<String id="107900">Textdialog</String>
 		<String id="108888">Musik-Menü</String>

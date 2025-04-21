@@ -319,41 +319,44 @@ namespace TvLibrary.Implementations.DVB
     }
 
     private ITvSubChannel DoTune(int subChannelId, IChannel channel, bool ignorePMT)
-    {      
-      bool performTune = (_previousChannel == null || _previousChannel.IsDifferentTransponder(channel));
-      ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, performTune);
-      _previousChannel = channel;
-
+    {
       try
       {
-        if (ch != null)
+        bool performTune = (_previousChannel == null || _previousChannel.IsDifferentTransponder(channel));
+        ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, performTune);
+        _previousChannel = channel;
+
+        try
         {
-          try
+          if (ch != null)
           {
-            RunGraph(ch.SubChannelId);
-          }
-          catch (TvExceptionNoPMT)
-          {
-            if (!ignorePMT)
+            try
             {
-              throw;
+              RunGraph(ch.SubChannelId);
             }
+            catch (TvExceptionNoPMT)
+            {
+              if (!ignorePMT)
+              {
+                throw;
+              }
+            }
+            OnAfterTune(channel);
+            return ch;
           }
-          OnAfterTune(channel);
-          return ch;
+          else
+          {
+            throw new TvException("TvCardDvbBase.Tune: Subchannel was null");
+          }
         }
-        else
+        catch (Exception)
         {
-          throw new TvException("TvCardDvbBase.Tune: Subchannel was null");
+          if (ch != null)
+          {
+            FreeSubChannel(ch.SubChannelId);
+          }
+          throw;
         }
-      }
-      catch (Exception)
-      {
-        if (ch != null)
-        {
-          FreeSubChannel(ch.SubChannelId);
-        }
-        throw;
       }
       finally
       {
@@ -953,6 +956,7 @@ namespace TvLibrary.Implementations.DVB
       _epgGrabbing = false;
       _isScanning = false;
       FreeAllSubChannels();
+      _cancelTune = false;
       if (_mdplugs != null)
       {
         _mdplugs.FreeAllChannels();

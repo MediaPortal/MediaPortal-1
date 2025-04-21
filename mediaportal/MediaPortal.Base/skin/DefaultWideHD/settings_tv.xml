@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
+
+
 <window>
   <id>700</id>
   <defaultcontrol>30</defaultcontrol>
@@ -13,42 +13,10 @@
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
-      <control>
-        <description>background</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>620</posX>
-        <posY>225</posY>
-        <width>1280</width>
-        <height>707</height>
-        <texture>backslide2.png</texture>
-      </control>
-      <control>
-        <description>Background</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>98</posX>
-        <posY>220</posY>
-        <width>480</width>
-        <height>710</height>
-        <texture>backslide.png</texture>
-      </control>
-      <control>
-        <type>label</type>
-        <id>1</id>
-        <posX>230</posX>
-        <posY>260</posY>
-        <width>480</width>
-        <label>924</label>
-        <textcolor>white</textcolor>
-        <font>Label</font>
-      </control>
       <control>
         <description>buttons</description>
         <type>group</type>
-        <posX>118</posX>
+        <posX>92</posX>
         <posY>305</posY>
         <dimColor>ffffffff</dimColor>
         <layout>StackLayout(0, Vertical, true)</layout>
@@ -57,6 +25,7 @@
           <type>button</type>
           <id>9991</id>
           <label>128</label>
+          <width>410</width>
           <onup>17</onup>
           <onright>2</onright>
           <hyperlink>1016</hyperlink>
@@ -66,6 +35,7 @@
           <type>button</type>
           <id>9992</id>
           <label>101021</label>
+          <width>410</width>
           <hyperlink>1021</hyperlink>
           <onup>9991</onup>
           <onright>2</onright>
@@ -75,6 +45,7 @@
           <type>button</type>
           <id>9993</id>
           <label>6023</label>
+          <width>410</width>
           <hyperlink>9</hyperlink>
           <onup>9992</onup>
           <onright>2</onright>
@@ -84,15 +55,17 @@
           <type>button</type>
           <id>9994</id>
           <label>605</label>
+          <width>410</width>
           <hyperlink>700</hyperlink>
           <onup>9993</onup>
-          <onright>2</onright>
+          <onright>30</onright>
         </control>
         <control>
           <description>My Pictures</description>
           <type>button</type>
           <id>9995</id>
           <label>1</label>
+          <width>410</width>
           <hyperlink>12</hyperlink>
           <onup>9994</onup>
           <onright>2</onright>
@@ -102,6 +75,7 @@
           <type>button</type>
           <id>9996</id>
           <label>3</label>
+          <width>410</width>
           <hyperlink>703</hyperlink>
           <onup>9995</onup>
           <onright>2</onright>
@@ -111,6 +85,7 @@
           <type>button</type>
           <id>9997</id>
           <label>1027</label>
+          <width>410</width>
           <hyperlink>704</hyperlink>
           <onup>9996</onup>
           <onright>2</onright>
@@ -120,6 +95,7 @@
           <type>button</type>
           <id>9998</id>
           <label>300217</label>
+          <width>410</width>
           <hyperlink>1024</hyperlink>
           <onup>9997</onup>
           <onright>2</onright>
@@ -129,6 +105,7 @@
           <type>button</type>
           <id>9999</id>
           <label>2</label>
+          <width>410</width>
           <hyperlink>14</hyperlink>
           <ondown>99910</ondown>
           <onup>9998</onup>
@@ -139,6 +116,7 @@
           <type>button</type>
           <id>99910</id>
           <label>9100</label>
+          <width>410</width>
           <hyperlink>9000</hyperlink>
           <ondown>9991</ondown>
           <onup>9999</onup>
@@ -147,122 +125,139 @@
         </control>
       </control>
       <control>
-        <type>label</type>
-        <id>1</id>
-        <posX>700</posX>
-        <posY>260</posY>
-        <width>1000</width>
-        <label>#currentmodule</label>
-        <textcolor>white</textcolor>
-        <font>Label</font>
-      </control>
-      <control>
         <description>buttons</description>
         <type>group</type>
         <posX>655</posX>
         <posY>305</posY>
         <dimColor>ffffffff</dimColor>
-        <layout>GridLayout(2, 0, 120, 1, 1)</layout>
+        <layout>GridLayout(2, 0, 50, 1, 1)</layout>
       <control>
         <description>Automatically turn TV on</description>
         <type>button</type>
         <id>30</id>
         <label>6006</label>
-        <width>535</width>
-        <onup>21</onup>
+        <width>575</width><textureFocus>setting_button_medium.png</textureFocus><textureFocus>setting_button_medium.png</textureFocus>
+        <onup>127</onup>
+        <onleft>9994</onleft>
+        <onright>43</onright>
       </control>
       <control>
         <description>De-interlacing</description>
         <type>button</type>
         <id>27</id>
         <label>6003</label>
-        <width>535</width>
+        <width>575</width><textureFocus>setting_button_medium.png</textureFocus>
+        <onleft>9994</onleft>
+        <onright>43</onright>
       </control>
       <control>
         <description>Apect Ratio</description>
         <type>button</type>
         <id>28</id>
         <label>6004</label>
-        <width>535</width>
+        <width>575</width><textureFocus>setting_button_medium.png</textureFocus>
+        <onleft>9994</onleft>
+        <onright>43</onright>
       </control>
       <control>
         <description>Ask for stopping timeshift</description>
         <type>checkbutton</type>
         <id>29</id>
         <label>300228</label>
-        <width>535</width>
+        <width>575</width><textureFocus>setting_button_medium.png</textureFocus>
+        <onleft>9994</onleft>
+        <onright>43</onright>
       </control>
       <control>
         <description>Use button colors for TVGuide</description>
         <type>checkbutton</type>
         <id>40</id>
         <label>1246</label>
-        <width>535</width>
+        <width>575</width><textureFocus>setting_button_medium.png</textureFocus>
         <selected>#(skin.hassetting('#skin.tvguide.usecolorsforbuttons'))</selected>
         <onclick>#(skin.togglesetting('#skin.tvguide.usecolorsforbuttons'))</onclick>
+        <onleft>9994</onleft>
+        <onright>43</onright>
       </control>
       <control>
         <description>Use guide colors for genre</description>
         <type>checkbutton</type>
         <id>41</id>
         <label>1247</label>
-        <width>535</width>
+        <width>575</width><textureFocus>setting_button_medium.png</textureFocus>
         <selected>#(skin.hassetting('#skin.tvguide.usecolorsforgenre'))</selected>
         <onclick>#(skin.togglesetting('#skin.tvguide.usecolorsforgenre'))</onclick>
+        <onleft>9994</onleft>
+        <onright>43</onright>
       </control>
       <control>
         <description>Use highlight</description>
         <type>checkbutton</type>
         <id>42</id>
         <label>1248</label>
-        <width>535</width>
+        <width>575</width><textureFocus>setting_button_medium.png</textureFocus>
         <selected>#(skin.hassetting('#skin.tvguide.useborderhighlight'))</selected>
         <onclick>#(skin.togglesetting('#skin.tvguide.useborderhighlight'))</onclick>
+        <onleft>9994</onleft>
+        <onright>43</onright>
+        <ondown>43</ondown>
       </control>
+      
+      
+      
+      
+      
       <control>
         <description>Show genre color key</description>
         <type>checkbutton</type>
         <id>43</id>
         <label>1249</label>
-        <width>535</width>
+        <width>575</width><textureFocus>setting_button_medium.png</textureFocus>
         <selected>#(skin.hassetting('#skin.tvguide.showgenrekey'))</selected>
         <onclick>#(skin.togglesetting('#skin.tvguide.showgenrekey'))</onclick>
+        <onleft>30</onleft>
+        <onup>42</onup>
       </control>
       <control>
         <description>MPEG-2 Video Codecs</description>
         <type>button</type>
         <id>24</id>
         <label>6000</label>
-        <width>535</width>
+        <width>575</width><textureFocus>setting_button_medium.png</textureFocus>
+        <onleft>30</onleft>
       </control>
       <control>
         <description>H.264 Video Codecs</description>
         <type>button</type>
         <id>35</id>
         <label>6036</label>
-        <width>535</width>
+        <width>575</width><textureFocus>setting_button_medium.png</textureFocus>
+        <onleft>30</onleft>
       </control>
       <control>
         <description>Audio Codecs</description>
         <type>button</type>
         <id>25</id>
         <label>6001</label>
-        <width>535</width>
+        <width>575</width><textureFocus>setting_button_medium.png</textureFocus>
+        <onleft>30</onleft>
       </control>
       <control>
         <description>LATM AAC Audio Codecs</description>
         <type>button</type>
         <id>36</id>
         <label>6039</label>
-        <width>535</width>
+        <width>575</width><textureFocus>setting_button_medium.png</textureFocus>
+        <onleft>30</onleft>
       </control>
       <control>
         <description>Audio Renderer</description>
         <type>button</type>
         <id>33</id>
         <label>6002</label>
-        <width>535</width>
+        <width>575</width><textureFocus>setting_button_medium.png</textureFocus>
         <ondown>30</ondown>
+        <onleft>30</onleft>
       </control>
     </control>
     

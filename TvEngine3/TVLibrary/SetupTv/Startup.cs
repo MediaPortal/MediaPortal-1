@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -217,7 +217,7 @@ namespace SetupTv
             dlg.SaveGentleConfig();
           }
         }
-        else if (String.IsNullOrEmpty(DeploySql) || String.IsNullOrEmpty(DeployPwd))
+        else if (string.IsNullOrEmpty(DeploySql) || string.IsNullOrEmpty(DeployPwd))
         {
           dlg.LoadConnectionDetailsFromConfig(true);
         }
@@ -229,7 +229,14 @@ namespace SetupTv
             dlg.rbMySQL.Checked = true;
             dlg.tbUserID.Text = "root";
             dlg.tbServerHostName.Text = Dns.GetHostName();
-            dlg.tbServiceDependency.Text = @"MySQL5";
+            if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
+            {
+              dlg.tbServiceDependency.Text = @"MySQL";
+            }
+            else
+            {
+              dlg.tbServiceDependency.Text = @"MySQL5";
+            }
           }
           else
           {
@@ -259,6 +266,7 @@ namespace SetupTv
         if (dlg.ShowDialog() != DialogResult.OK || startupMode != StartupMode.DeployMode)
           return; // close the application without restart here.
       }
+
       dlg.CheckServiceName();
       if (startupMode == StartupMode.DeployMode)
       {

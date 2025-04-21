@@ -69,6 +69,8 @@ namespace TvEngine
         {
           string virtualStoreSubKey = Check64bit() ? _virtualStoreRegSubKey64b : _virtualStoreRegSubKey32b;
 
+          Log.Debug("TVMovie: Looking for registry setting {0} in {1}", valueName, virtualStoreSubKey);
+
           foreach (String userKeyName in Registry.Users.GetSubKeyNames())
           {
             using (
@@ -83,13 +85,13 @@ namespace TvEngine
       }
       catch (Exception ex)
       {
-        Log.Error("TVMovie: Registry lookup for {1} failed: {0}", valueName, ex.Message);
+        Log.Error("TVMovie: Registry lookup for {0} failed: {1}", valueName, ex.Message);
       }
 
       if (string.IsNullOrEmpty(value))
-      {
-        Log.Info("TVMovie: Registry setting {1} has no value", valueName);
-      }
+        Log.Debug("TVMovie: Registry setting {0} has no value", valueName);
+      else
+        Log.Debug("TVMovie: Registry setting {0} has value {1}", valueName, value);
 
       return value;
     }
@@ -155,6 +157,9 @@ namespace TvEngine
 
     public static bool Check64bit()
     {
+      if (IntPtr.Size > 4) //64bit process
+        return true;
+
       //IsWow64Process is not supported under Windows2000
       if (!OSInfo.OSInfo.XpOrLater())
       {

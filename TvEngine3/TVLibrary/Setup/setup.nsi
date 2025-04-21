@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 /*
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -523,6 +523,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\Plugins\PowerScheduler\bin\${BUILD_TYPE}\PowerScheduler.dll"
   File "${git_TVServer}\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\ServerBlaster.dll"
   File "${git_TVServer}\Plugins\TvMovie\bin\${BUILD_TYPE}\TvMovie.dll"
+  File "${git_TVServer}\Plugins\TvMovie\TvMovieDbReader\bin\${BUILD_TYPE}\TvMovieDbReader.exe"
   File "${git_TVServer}\Plugins\XmlTvImport\bin\${BUILD_TYPE}\XmlTvImport.dll"
   File "${git_TVServer}\Plugins\WebEPG\WebEPG\bin\${BUILD_TYPE}\WebEPG.dll"
   File "${git_TVServer}\Plugins\WebEPG\WebEPGPlugin\bin\${BUILD_TYPE}\WebEPGImport.dll"
@@ -541,10 +542,11 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\TVDatabase\references\Gentle.Common.DLL"
   File "${git_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.dll"
+  File "${git_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.Interceptor.dll"
   File "${git_TVServer}\TVDatabase\references\MySql.Data.dll"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLite.dll"
-  File "${git_TVServer}\TVDatabase\references\System.Data.SQLite.DLL"
+  File /oname=System.Data.SQLite.dll "${git_TVServer}\TVDatabase\references\System.Data.SQLite_${Architecture}.dll"
   File "${git_TVServer}\TVDatabase\references\log4net.dll"
   File "${git_TVServer}\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
@@ -568,6 +570,10 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\ttdvbacc.dll"
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
+
+  ; Additional assemblies
+  File "${TVSERVER.BASE}\System.Threading.Tasks.Extensions.dll"
+  File "${TVSERVER.BASE}\System.Runtime.CompilerServices.Unsafe.dll"
 
   ; WatchDogService
   File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDogService.Interface.dll"
@@ -771,6 +777,7 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\Plugins\PowerScheduler.dll"
   Delete "$INSTDIR\Plugins\ServerBlaster.dll"
   Delete "$INSTDIR\Plugins\TvMovie.dll"
+  Delete "$INSTDIR\Plugins\TvMovieDbReader.exe"
   Delete "$INSTDIR\Plugins\WebEPG.dll"
   Delete "$INSTDIR\Plugins\WebEPGImport.dll"
   Delete "$INSTDIR\Plugins\XmlTvImport.dll"
@@ -792,6 +799,7 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\Gentle.Common.DLL"
   Delete "$INSTDIR\Gentle.Framework.DLL"
   Delete "$INSTDIR\Gentle.Provider.MySQL.dll"
+  Delete "$INSTDIR\Gentle.Provider.MySQL.Interceptor.dll"
   Delete "$INSTDIR\MySql.Data.dll"
   Delete "$INSTDIR\Gentle.Provider.SQLServer.dll"
   Delete "$INSTDIR\Gentle.Provider.SQLite.dll"
@@ -830,6 +838,19 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\libcurl.dll"
   Delete "$INSTDIR\libssl-1_1.dll"
   Delete "$INSTDIR\MediaInfo.Wrapper.dll"
+  
+  !if "${Architecture}" == "x64"
+    Delete "$INSTDIR\libcrypto-3-x64.dll"
+    Delete "$INSTDIR\libssl-3-x64.dll"
+  !else
+    Delete "$INSTDIR\libcrypto-3.dll"
+    Delete "$INSTDIR\libssl-3.dll"
+  !endif
+
+  ; Additional assemblies
+  Delete "$INSTDIR\System.Threading.Tasks.Extensions.dll"
+  Delete "$INSTDIR\System.Runtime.CompilerServices.Unsafe.dll"
+  Delete "$INSTDIR\System.ValueTuple.dll"
 
   ; protocol implementations for MPIPTVSource.ax
   Delete "$INSTDIR\MPIPTV_FILE.dll"
@@ -881,12 +902,15 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${git_TVServer}\TVDatabase\references\Gentle.Common.DLL"
   File "${git_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.dll"
+  File "${git_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.Interceptor.dll"
   File "${git_TVServer}\TVDatabase\references\MySql.Data.dll"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
   File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLite.dll"
-  File "${git_TVServer}\TVDatabase\references\System.Data.SQLite.DLL"
+  File /oname=System.Data.SQLite.dll "${git_TVServer}\TVDatabase\references\System.Data.SQLite_${Architecture}.dll"
   File "${git_TVServer}\TVDatabase\references\log4net.dll"
   File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
+  File "${git_TVServer}\TVServer.Base\System.Threading.Tasks.Extensions.dll"
+  File "${git_TVServer}\TVServer.Base\System.Runtime.CompilerServices.Unsafe.dll"
 
   ;Gentle.Config
   SetOutPath "$MPdir.Config"
@@ -939,6 +963,7 @@ ${MementoSectionEnd}
   Delete "$MPdir.Base\Gentle.Common.DLL"
   Delete "$MPdir.Base\Gentle.Framework.DLL"
   Delete "$MPdir.Base\Gentle.Provider.MySQL.dll"
+  Delete "$MPdir.Base\Gentle.Provider.MySQL.Interceptor.dll"
   Delete "$MPdir.Base\MySql.Data.dll"
   Delete "$MPdir.Base\Gentle.Provider.SQLServer.dll"
   Delete "$MPdir.Base\Gentle.Provider.SQLite.dll"
@@ -947,6 +972,8 @@ ${MementoSectionEnd}
   Delete "$MPdir.Base\TvBusinessLayer.dll"
   Delete "$MPdir.Base\TvControl.dll"
   Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
+  Delete "$MPdir.Base\System.Threading.Tasks.Extensions.dll"
+  Delete "$MPdir.Base\System.Runtime.CompilerServices.Unsafe.dll"
 !macroend
 
 ${MementoSectionDone}
@@ -995,7 +1022,7 @@ Section -Post
 
   ; if TVplugin is enabled, save MP installation path to uninstall it even if mp is already uninstalled
   ${If} ${TVClientIsInstalled}
-    WriteRegDWORD HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir" "$MPdir.Base"
+    WriteRegStr HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir" "$MPdir.Base"
   ${EndIf}
 
   ;${If} $noStartMenuSC != 1
@@ -1305,18 +1332,18 @@ Function un.onInit
   #### END of check and parse cmdline parameter
 
 
-  ${IfNot} ${MP023IsInstalled}
-  ${AndIfNot} ${MPIsInstalled}
-    Sleep 1
-  ${else}
+  #${IfNot} ${MP023IsInstalled}
+  #${AndIfNot} ${MPIsInstalled}
+  #  Sleep 1
+  #${else}
     ReadRegStr $MPdir.Base HKLM "${REG_UNINSTALL}" "MediaPortalInstallationDir"
 
-    ${If} $MPdir.Base = ""
+    ${If} $MPdir.Base == ""
       !insertmacro MP_GET_INSTALL_DIR $MPdir.Base
     ${EndIf}
 
     ${un.ReadMediaPortalDirs} $MPdir.Base
-  ${EndIf}
+  #${EndIf}
 
   !insertmacro TVSERVER_GET_INSTALL_DIR $INSTDIR
   ;!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup

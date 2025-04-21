@@ -80,7 +80,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NO_TV_SERVER</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <WarningLevel>1</WarningLevel>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -120,7 +120,9 @@
       <DependentUpon>Images.resx</DependentUpon>
     </Compile>
     <Compile Include="InstallationChecks\AresSkinExtensionInstall.cs" />
+    <Compile Include="InstallationChecks\DotNetFrameworkChecker.cs" />
     <Compile Include="InstallationChecks\LAVFilterMPEInstall.cs" />
+    <Compile Include="InstallationChecks\MariaDBChecker.cs" />
     <Compile Include="InstallationChecks\MPEInstall.cs" />
     <Compile Include="InstallationChecks\DiskSpaceChecker.cs" />
     <Compile Include="InstallationChecks\InternetChecker.cs" />
@@ -159,6 +161,7 @@
     <Compile Include="InstallationChecks\OldPackagesChecker.cs" />
     <Compile Include="InstallationChecks\WindowsFirewallChecker.cs" />
     <Compile Include="InstallationChecks\MySQLChecker.cs" />
+    <Compile Include="InstallationChecks\MySQLCheckerOutdated.cs" />
     <Compile Include="InstallationChecks\MSSQLExpressChecker.cs" />
     <Compile Include="InstallationChecks\TvPluginChecker.cs" />
     <Compile Include="InstallationChecks\TvServerChecker.cs" />
@@ -744,6 +747,7 @@
     <None Include="Resources\DefaultWide HD.PNG" />
     <None Include="Resources\Application\LAVFilters.png" />
     <None Include="Resources\Application\DirectX9C.png" />
+    <None Include="Resources\Application\DotNetFramework.png" />
     <None Include="Resources\Application\MediaPortal.png" />
     <None Include="Resources\Application\MSSQL.png" />
     <None Include="Resources\Application\MySQL.png" />

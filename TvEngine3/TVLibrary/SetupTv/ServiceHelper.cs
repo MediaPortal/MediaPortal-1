@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -351,6 +351,37 @@ namespace SetupTv
         Log.Error("ServiceHelper: Failed to access registry {0}", ex.Message);
         return false;
       }
+    }
+
+    /// <summary>
+    /// Read dependency info for TvService.exe to registry
+    /// </summary>
+    /// <returns>Database service name if dependency was found successfully</returns>
+    public static string ReadDependency()
+    {
+      try
+      {
+        using (RegistryKey rKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\TVService", false))
+        {
+          if (rKey != null)
+          {
+            string[] values = (string[]) rKey.GetValue("DependOnService", string.Empty);
+            string result = string.Join(string.Empty, values);
+            Log.Debug("ServiceHelper: TVServer - Dependencies: {0}", string.Join("|", values));
+            if (!string.IsNullOrEmpty(result))
+            {
+              return result.Replace("Netman", string.Empty).
+                            Replace("RpcLocator", string.Empty).
+                            Trim();
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("ServiceHelper: Failed to access registry {0}", ex.Message);
+      }
+      return string.Empty;
     }
   }
 }

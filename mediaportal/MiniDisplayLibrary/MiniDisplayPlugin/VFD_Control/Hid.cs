@@ -46,7 +46,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
     /// </summary>
     /// <param name="hidHandle">a handle to a device.</param>
     /// <returns>True on success, False on failure.</returns>
-    internal static bool FlushQueue(int hidHandle)
+    internal static bool FlushQueue(IntPtr hidHandle)
     {
       bool Result = false;
 
@@ -79,7 +79,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
     /// </summary>
     /// <param name="hidHandle">a handle to a device.</param>
     /// <returns>An HIDP_CAPS structure.</returns>
-    internal HidApiDeclarations.HIDP_CAPS GetDeviceCapabilities(int hidHandle)
+    internal HidApiDeclarations.HIDP_CAPS GetDeviceCapabilities(IntPtr hidHandle)
     {
       byte[] PreparsedDataBytes = new byte[30];
       IntPtr PreparsedDataPointer = new IntPtr();
@@ -172,7 +172,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
           // Accepts: A pointer to the PreparsedData structure returned by HidD_GetPreparsedData.
           // Returns: True on success, False on failure.
           // ***
-          HidApiDeclarations.HidD_FreePreparsedData(ref PreparsedDataPointer);
+          HidApiDeclarations.HidD_FreePreparsedData(PreparsedDataPointer);
 
           if (Settings.Instance.ExtensiveLogging)
           {
@@ -218,7 +218,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       // asynchronous reads use a callback method that can access parameters passed by ByRef
       // but not Function return values.
 
-      protected abstract void ProtectedRead(int readHandle, int hidHandle, ref bool myDeviceDetected,
+      protected abstract void ProtectedRead(IntPtr readHandle, IntPtr hidHandle, ref bool myDeviceDetected,
                                             ref byte[] readBuffer, ref bool success);
 
       /// <summary>
@@ -234,7 +234,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       /// <param name="myDeviceDetected">tells whether the device is currently attached and communicating.</param>
       /// <param name="readBuffer">a byte array to hold the report ID and report data.</param>
       /// <param name="success">read success</param>
-      internal void Read(int readHandle, int hidHandle, ref bool myDeviceDetected, ref byte[] readBuffer,
+      internal void Read(IntPtr readHandle, IntPtr hidHandle, ref bool myDeviceDetected, ref byte[] readBuffer,
                          ref bool success)
       {
         try
@@ -263,7 +263,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       /// <param name="myDeviceDetected">tells whether the device is currently attached.</param>
       /// <param name="inFeatureReportBuffer">contains the requested report.</param>
       /// <param name="success">read success</param>
-      protected override void ProtectedRead(int readHandle, int hidHandle, ref bool myDeviceDetected,
+      protected override void ProtectedRead(IntPtr readHandle, IntPtr hidHandle, ref bool myDeviceDetected,
                                             ref byte[] inFeatureReportBuffer, ref bool success)
       {
         try
@@ -308,7 +308,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       /// </summary>
       /// <param name="readHandle">the handle for reading from the device.</param>
       /// <param name="hidHandle">the handle for other device communications.</param>
-      internal void CancelTransfer(int readHandle, int hidHandle)
+      internal void CancelTransfer(IntPtr readHandle, IntPtr hidHandle)
       {
         try
         {
@@ -329,7 +329,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
           // so close any open handles and
           // set myDeviceDetected=False to cause the application to
           // look for the device on the next attempt.
-          if (hidHandle != 0)
+          if (hidHandle != IntPtr.Zero)
           {
             FileIOApiDeclarations.CloseHandle(hidHandle);
             if (Settings.Instance.ExtensiveLogging)
@@ -339,7 +339,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
             }
           }
 
-          if (hidHandle != 0)
+          if (hidHandle != IntPtr.Zero)
           {
             FileIOApiDeclarations.CloseHandle(readHandle);
             if (Settings.Instance.ExtensiveLogging)
@@ -361,14 +361,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       /// </summary>
       /// <param name="hidOverlapped"></param>
       /// <param name="eventObject"></param>
-      internal void PrepareForOverlappedTransfer(ref FileIOApiDeclarations.OVERLAPPED hidOverlapped, ref int eventObject)
+      internal void PrepareForOverlappedTransfer(ref FileIOApiDeclarations.OVERLAPPED hidOverlapped, ref IntPtr eventObject)
       {
         FileIOApiDeclarations.SECURITY_ATTRIBUTES Security = new FileIOApiDeclarations.SECURITY_ATTRIBUTES();
 
         try
         {
           // Values for the SECURITY_ATTRIBUTES structure:
-          Security.lpSecurityDescriptor = 0;
+          Security.lpSecurityDescriptor = IntPtr.Zero;
           Security.bInheritHandle = Convert.ToInt32(true);
           Security.nLength = Marshal.SizeOf(Security);
 
@@ -411,10 +411,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       /// <param name="myDeviceDetected">tells whether the device is currently attached.</param>
       /// <param name="inputReportBuffer">contains the requested report.</param>
       /// <param name="success">read success</param>
-      protected override void ProtectedRead(int readHandle, int hidHandle, ref bool myDeviceDetected,
+      protected override void ProtectedRead(IntPtr readHandle, IntPtr hidHandle, ref bool myDeviceDetected,
                                             ref byte[] inputReportBuffer, ref bool success)
       {
-        int EventObject = 0;
+        IntPtr EventObject = IntPtr.Zero;
         FileIOApiDeclarations.OVERLAPPED HIDOverlapped = new FileIOApiDeclarations.OVERLAPPED();
         int NumberOfBytesRead = 0;
 
@@ -525,7 +525,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       /// <param name="myDeviceDetected">tells whether the device is currently attached.</param>
       /// <param name="inputReportBuffer">contains the requested report.</param>
       /// <param name="success">read success</param>
-      protected override void ProtectedRead(int readHandle, int hidHandle, ref bool myDeviceDetected,
+      protected override void ProtectedRead(IntPtr readHandle, IntPtr hidHandle, ref bool myDeviceDetected,
                                             ref byte[] inputReportBuffer, ref bool success)
       {
         try
@@ -562,7 +562,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
     /// </summary>
     internal abstract class HostReport
     {
-      protected abstract bool ProtectedWrite(int deviceHandle, byte[] reportBuffer);
+      protected abstract bool ProtectedWrite(IntPtr deviceHandle, byte[] reportBuffer);
 
       /// <summary>
       /// Calls the overridden ProtectedWrite routine.
@@ -575,7 +575,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       /// <param name="reportBuffer">contains the report ID and report data.</param>
       /// <param name="deviceHandle">handle to the device.</param>
       /// <returns>True on success. False on failure.</returns>
-      internal bool Write(byte[] reportBuffer, int deviceHandle)
+      internal bool Write(byte[] reportBuffer, IntPtr deviceHandle)
       {
         bool Success = false;
 
@@ -603,7 +603,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       /// <param name="hidHandle">a handle to the device.</param>
       /// <param name="outFeatureReportBuffer">contains the report ID and report to send.</param>
       /// <returns>True on success. False on failure.</returns>
-      protected override bool ProtectedWrite(int hidHandle, byte[] outFeatureReportBuffer)
+      protected override bool ProtectedWrite(IntPtr hidHandle, byte[] outFeatureReportBuffer)
       {
         bool Success = false;
 
@@ -653,7 +653,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       /// <param name="hidHandle">a handle to the device.</param>
       /// <param name="outputReportBuffer">contains the report ID and report to send.</param>
       /// <returns>True on success. False on failure.</returns>
-      protected override bool ProtectedWrite(int hidHandle, byte[] outputReportBuffer)
+      protected override bool ProtectedWrite(IntPtr hidHandle, byte[] outputReportBuffer)
       {
         int NumberOfBytesWritten = 0;
         bool Success = false;
@@ -711,7 +711,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       /// <param name="hidHandle">a handle to the device.</param>
       /// <param name="outputReportBuffer">contains the report ID and report to send.</param>
       /// <returns>True on success. False on failure.</returns>
-      protected override bool ProtectedWrite(int hidHandle, byte[] outputReportBuffer)
+      protected override bool ProtectedWrite(IntPtr hidHandle, byte[] outputReportBuffer)
       {
         bool Success = false;
 

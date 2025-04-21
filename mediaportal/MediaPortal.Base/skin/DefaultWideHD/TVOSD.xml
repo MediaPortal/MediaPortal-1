@@ -10,94 +10,23 @@
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>-90</posX>
-      <posY>787</posY>
-      <height>268</height>
-      <width>2200</width>
-      <texture>white.png</texture>
-      <colordiffuse>ff00061c</colordiffuse>
-      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>-90</posX>
-      <posY>787</posY>
-      <height>3</height>
-      <width>2200</width>
-      <texture>white.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>-90</posX>
-      <posY>1052</posY>
-      <height>3</height>
-      <width>2200</width>
-      <texture>white.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>background for black channelname</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>198</posX>
-      <posY>726</posY>
-      <height>64</height>
-      <width>454</width>
-      <texture>OSDBG3.png</texture>
-      <colordiffuse>ff00061c</colordiffuse>
-      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>background for black channelname</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>200</posX>
-      <posY>728</posY>
-      <height>60</height>
-      <width>450</width>
-      <texture>OSDBG3.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>Time BG</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1704</posX>
-      <posY>726</posY>
-      <width>454</width>
-      <height>64</height>
-      <texture>OSDBG3.png</texture>
-      <colordiffuse>ff00061c</colordiffuse>
-      <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>Time BG</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1706</posX>
-      <posY>728</posY>
-      <width>450</width>
-      <height>60</height>
-      <texture>OSDBG3.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
+      <posX>-100</posX>
+      <posY>718</posY>716
+      <height>345</height>
+      <width>2020</width>
+      <texture>TV_Tab_OSD_small.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
       <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
     </control>
     <control>
       <description>Time Info</description>
       <type>label</type>
       <id>110</id>
-      <posX>1898</posX>
-      <posY>738</posY>
+      <posX>1700</posX>1898
+      <posY>757</posY>
+      <width>180</width>
       <label>#time</label>
-      <align>right</align>
+      <align>center</align>
       <font>LabelBold</font>
       <textcolor>white</textcolor>
       <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
@@ -106,12 +35,12 @@
       <description>TV Logo Background</description>
       <type>image</type>
       <id>1</id>
-      <posX>52</posX>
-      <posY>723</posY>
-      <width>141</width>
-      <height>141</height>
-      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'defaultlogo.png','#TV.View.thumb'))</texture>
-      <colordiffuse>ff00061c</colordiffuse>
+      <posX>53</posX>
+      <posY>724</posY>
+      <width>139</width>
+      <height>139</height>
+      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'tvlogoback.png','tvlogoback.png'))</texture>
+      <colordiffuse>ff09173c</colordiffuse>
       <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
     </control>
     <control>
@@ -132,7 +61,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>227</posX>
-      <posY>738</posY>
+      <posY>733</posY>
       <width>400</width>
       <label>#TV.View.channel</label>
       <align>left</align>
@@ -145,12 +74,12 @@
       <type>label</type>
       <id>1</id>
       <posX>265</posX>
-      <posY>738</posY>
+      <posY>733</posY>
       <width>360</width>
       <label>#TV.View.channel</label>
       <align>left</align>
       <font>Label</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>control.isvisible(39)+!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
     </control>
     <control>
@@ -163,7 +92,7 @@
       <label>#(iif(eq(#TV.View.start,''),'#TV.View.title','#TV.View.start - #TV.Next.start #scroll.wrap #TV.View.title'))</label>
       <align>left</align>
       <font>LabelBold</font>
-      <textcolor>lightskyblue</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
     </control>
     <control>
@@ -176,7 +105,7 @@
       <label>#TV.View.remaining</label>
       <align>left</align>
       <font>font10</font>
-      <textcolor>lightskyblue</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
     </control>
     <control>
@@ -194,9 +123,9 @@
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
       <id>1</id>
-      <posX>228</posX>
+      <posX>227</posX>228
       <posY>849</posY>
-      <width>1180</width>
+      <width>1181</width>1180
       <height>23</height>
       <toptexture>osd_progress_right.png</toptexture>
       <TextureOffsetY>24</TextureOffsetY>
@@ -229,22 +158,22 @@
       <description>End of progressbar</description>
       <type>label</type>
       <id>1</id>
-      <posX>1407</posX>
-      <posY>838</posY>
+      <posX>1408</posX>
+      <posY>842</posY> 
       <label>|</label>
       <align>left</align>
       <font>font11</font>
-      <textcolor>lightskyblue</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
     </control>
     <control>
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>203</posX>
-      <posY>730</posY>
-      <width>58</width>
-      <height>56</height>
+      <posX>216</posX>
+      <posY>735</posY>
+      <width>45</width>
+      <height>45</height>
       <texture>tv_is_recording.png</texture>
     </control>
     <control>
@@ -281,603 +210,533 @@
       <description>background</description>
       <type>image</type>
       <id>1236</id>
-      <posX>-90</posX>
-      <posY>613</posY>
-      <height>442</height>
-      <width>2200</width>
-      <texture>white.png</texture>
-      <colordiffuse>ff00061c</colordiffuse>
-      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
-    </control>
+      <posX>-100</posX>
+      <posY>547</posY>613
+      <height>513</height>
+      <width>2020</width>
+      <texture>TV_Tab_OSD_big.png</texture>
+      <!--<colordiffuse>ff00061c</colordiffuse>-->
+    <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+  </control>
+  <control>
+    <description>TV Logo Background</description>
+    <type>image</type>
+    <id>1</id>
+    <posX>53</posX>
+    <posY>551</posY>
+    <width>139</width>
+    <height>139</height>
+    <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'tvlogoback.png','tvlogoback.png'))</texture>
+    <colordiffuse>ff09173c</colordiffuse>
+    <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+  </control>
+  <control>
+    <description>TV Logo</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>54</posX>
+    <posY>552</posY>
+    <width>137</width>
+    <height>137</height>
+    <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'defaultlogo.png','#TV.View.thumb'))</texture>
+    <centered>yes</centered>
+    <keepaspectratio>yes</keepaspectratio>
+    <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+  </control>
+  <control>
+    <description>Current channelname black</description>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>227</posX>
+    <posY>560</posY>
+    <width>400</width>
+    <label>#TV.View.channel</label>
+    <align>left</align>
+    <font>LabelBold</font>
+    <textcolor>white</textcolor>
+    <visible>!control.isvisible(39)+[control.hasfocus(1237)|control.hasfocus(1238)]</visible>
+  </control>
+  <control>
+    <description>Current channelname black</description>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>265</posX>
+    <posY>560</posY>
+    <width>360</width>
+    <label>#TV.View.channel</label>
+    <align>left</align>
+    <font>LabelBold</font>
+    <textcolor>white</textcolor>
+    <visible>control.isvisible(39)+[control.hasfocus(1237)|control.hasfocus(1238)]</visible>
+  </control>
+  <control>
+    <description>rec logo</description>
+    <type>image</type>
+    <id>139</id>
+    <posX>216</posX>
+    <posY>561</posY>
+    <width>45</width>
+    <height>45</height>
+    <texture>tv_is_recording.png</texture>
+    <visible>control.isvisible(39)+[control.hasfocus(1237)|control.hasfocus(1238)]</visible>
+  </control>
+  <control>
+    <description>Time Info</description>
+    <type>label</type>
+    <id>110</id>
+    <posX>1700</posX>1898
+    <posY>584</posY>
+    <width>180</width>
+    <label>#time</label>
+    <align>center</align>
+    <font>LabelBold</font>
+    <textcolor>white</textcolor>
+    <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+  </control>
+  <control>
+    <description>divider horizontal</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>75</posX>
+    <posY>677</posY>
+    <width>1790</width>
+    <height>1</height>
+    <texture>horizontalbar.png</texture>
+    <colordiffuse>aa87cefa</colordiffuse>
+    <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+  </control>
+  <control>
+    <description>divider horizontal</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>75</posX>
+    <posY>862</posY>
+    <width>1790</width>
+    <height>1</height>
+    <texture>horizontalbar.png</texture>
+    <colordiffuse>aa87cefa</colordiffuse>
+    <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+  </control>
+  <control>
+    <description>divider horizontal</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>75</posX>
+    <posY>937</posY>
+    <width>1790</width>
+    <height>1</height>
+    <texture>horizontalbar.png</texture>
+    <colordiffuse>aa87cefa</colordiffuse>
+    <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+  </control>
+  <control>
+    <description>Program Info</description>
+    <id>0</id>
+    <type>fadelabel</type>
+    <posX>225</posX>
+    <posY>628</posY>
+    <height>57</height>
+    <width>1600</width>
+    <align>left</align>
+    <textcolor>ff00bfff</textcolor>
+    <font>LabelBold</font>
+    <label>#(iif(eq(#TV.View.start,''),'#TV.View.title','#TV.View.start - #TV.Next.start #scroll.wrap #TV.View.title'))</label>
+    <visible>control.hasfocus(1237)</visible>
+  </control>
+  <control>
+    <description>Plot</description>
+    <type>textboxscrollup</type>
+    <id>1</id>
+    <posX>225</posX>
+    <posY>700</posY>
+    <height>140</height>
+    <width>1640</width>
+    <align>left</align>
+    <label>#TV.View.description</label>
+    <font>font10</font>
+    <textcolor>lightgray</textcolor>
+    <scrollStartDelaySec>6</scrollStartDelaySec>
+    <visible>control.hasfocus(1237)</visible>
+  </control>
+  <!-- Here are the infos for the next program -->
+  <control>
+    <description>Next Program Info under button</description>
+    <id>0</id>
+    <type>fadelabel</type>
+    <posX>1630</posX> 
+    <posY>895</posY>
+    <height>57</height>
+    <width>260</width>
+    <align>center</align>
+    <textcolor>lightgray</textcolor>
+    <font>font9</font>
+    <label>4541</label>
+    <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+  </control>
+  <control>
+    <description>Info Preview coming next button</description>
+    <type>button</type>
+    <id>1238</id>
+    <posX>1740</posX>
+    <posY>870</posY> 898
+    <width>38</width>
+    <height>38</height>
+    <textureFocus>tb_extend3b.png</textureFocus>
+    <textureNoFocus>tb_extend2.png</textureNoFocus>
+    <label>-</label>
+    <onleft>1237</onleft>
+    <onright>1237</onright>
+    <onup>1237</onup>
+    <ondown>1237</ondown>
+    <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+  </control>
+  
+  <control>
+    <description>Next Program Info</description>
+    <id>0</id>
+    <type>fadelabel</type>
+    <posX>225</posX>
+    <posY>628</posY>
+    <height>57</height>
+    <width>1600</width>
+    <align>left</align>
+    <textcolor>lightgray</textcolor>
+    <font>LabelBold</font>
+    <label>#(iif(eq(#TV.Next.start,''),'#TV.Next.title','#TV.Next.start - #TV.Next.stop #scroll.wrap #TV.Next.title'))</label>
+    <visible>control.hasfocus(1238)</visible>
+  </control>
+  <control>
+    <description>Next Plot</description>
+    <type>textboxscrollup</type>
+    <id>1</id>
+    <posX>225</posX>
+    <posY>700</posY>
+    <height>140</height>
+    <width>1640</width>
+    <align>left</align>
+    <label>#TV.Next.description</label>
+    <font>font10</font>
+    <textcolor>lightgray</textcolor>
+    <scrollStartDelaySec>6</scrollStartDelaySec>
+    <visible>control.hasfocus(1238)</visible>
+  </control>
+  <import>common.osd.buttons.xml</import>
+  <import>tvOSD.mediainfo.xml</import>
+  <import>tvOSD.mediainfo2.xml</import>
+  <control>
+    <description>Channel Button Up</description>
+    <type>button</type>
+    <id>31</id>
+    <posX>665</posX>
+    <posY>945</posY>
+    <width>50</width>
+    <height>50</height>
+    <textureFocus>scroll-up-focus.png</textureFocus>
+    <textureNoFocus>scroll-up.png</textureNoFocus>
+    <label>-</label>
+    <onleft>222</onleft>
+    <onright>1237</onright>
+    <onup>32</onup>
+    <ondown>32</ondown>
+  </control>
+  <control>
+    <description>Channel Up Label</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>655</posX>
+    <posY>967</posY>
+    <width>1200</width>
+    <label>#(L(602))</label>
+    <align>right</align>
+    <font>font11</font>
+    <textcolor>lightgray</textcolor>
+  </control>
+  <control>
+    <description>Channel Button Down</description>
+    <type>button</type>
+    <id>32</id>
+    <posX>665</posX>
+    <posY>975</posY>
+    <width>50</width>
+    <height>50</height>
+    <textureFocus>scroll-down-focus.png</textureFocus>
+    <textureNoFocus>scroll-down.png</textureNoFocus>
+    <label>-</label>
+    <onleft>222</onleft>
+    <onright>1237</onright>
+    <onup>31</onup>
+    <ondown>31</ondown>
+  </control>
+  <!-- ***************************************************************************************************** -->
+  <!-- *****************************         RECORDING INFO LATESTMEDIA       ****************************** -->
+  <!-- ***************************************************************************************************** -->
+  <control>
+    <description>Current recording count</description>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>1093</posX>
+    <posY>985</posY>
+    <width>50</width>
+    <label>#latestMediaHandler.tvrecordings.active.count</label>
+    <align>center</align>
+    <font>font11bold</font>
+    <textcolor>lightgray</textcolor>
+    <visible>!control.isvisible(500)+!control.isvisible(801)+plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+  </control>
+  <control>
+    <description>background for recording info</description>
+    <type>image</type>
+    <id>1</id>
+    <posX>53</posX>
+    <posY>1007</posY>
+    <width>604</width>
+    <height>41</height>
+    <texture>osdbg6.png</texture>
+    <colordiffuse>ff00061c</colordiffuse>
+    <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+!control.isvisible(39)|[!string.equals(#latestMediaHandler.tvrecordings.active2.title,)]</visible>
+  </control>
+  <control>
+    <description>background for recording info</description>
+    <type>image</type>
+    <id>1</id>
+    <posX>55</posX>
+    <posY>1009</posY>
+    <width>600</width>
+    <height>37</height>
+    <texture>osdbg6.png</texture>
+    <colordiffuse>ff09173c</colordiffuse>
+    <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+!control.isvisible(39)|[!string.equals(#latestMediaHandler.tvrecordings.active2.title,)]</visible>
+  </control>
+  <control>
+    <description>rec logo</description>
+    <type>image</type>
+    <id>1</id>
+    <posX>60</posX>
+    <posY>1010</posY>
+    <width>35</width>
+    <height>35</height>
+    <texture>tv_is_recording.png</texture>
+    <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+!control.isvisible(39)|[!string.equals(#latestMediaHandler.tvrecordings.active2.title,)]</visible>
+  </control>
+  <control>
+    <description>Current channel</description>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>110</posX>
+    <posY>1015</posY>
+    <width>540</width>
+    <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
+    <align>left</align>
+    <font>font9</font>
+    <textcolor>lightgray</textcolor>
+    <visible>plugin.isenabled(Latest Media Handler)+[!string.equals(#latestMediaHandler.tvrecordings.active2.title,)|!control.isvisible(39)]</visible>
+  </control>
+  <!-- ******************************************************************************************* -->
+  <!-- ************************* RECENTLY ADDED ~ ACTIVE RECORDINGS ****************************** -->
+  <!-- ******************************************************************************************* -->
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <visible>plugin.isenabled(Latest Media Handler)+control.hasfocus(223)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     <control>
-      <description>background</description>
+      <description>background for recently added files</description>
       <type>image</type>
-      <id>1</id>
-      <posX>-90</posX>
-      <posY>613</posY>
-      <height>3</height>
-      <width>2200</width>
-      <texture>white.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+      <id>7779</id>
+      <posX>490</posX>
+      <posY>490</posY>
+      <width>940</width>
+      <height>220</height>
+      <texture>latestmediabg.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+      <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
     </control>
     <control>
-      <description>background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>-90</posX>
-      <posY>1052</posY>
-      <height>3</height>
-      <width>2200</width>
-      <texture>white.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>TV Logo Background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>52</posX>
-      <posY>550</posY>
-      <width>141</width>
-      <height>141</height>
-      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'defaultlogo.png','#TV.View.thumb'))</texture>
-      <colordiffuse>ff00061c</colordiffuse>
-      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>TV Logo</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>54</posX>
-      <posY>552</posY>
-      <width>137</width>
-      <height>137</height>
-      <texture>#(iif(eq(#TV.View.thumb,'defaultVideoBig.png'),'defaultlogo.png','#TV.View.thumb'))</texture>
-      <centered>yes</centered>
-      <keepaspectratio>yes</keepaspectratio>
-      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>198</posX>
-      <posY>552</posY>
-      <height>64</height>
-      <width>454</width>
-      <texture>osdbg3.png</texture>
-      <colordiffuse>ff00061c</colordiffuse>
-      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>200</posX>
-      <posY>554</posY>
-      <height>60</height>
-      <width>450</width>
-      <texture>osdbg3.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>Current channelname black</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>227</posX>
-      <posY>563</posY>
-      <width>400</width>
-      <label>#TV.View.channel</label>
-      <align>left</align>
-      <font>LabelBold</font>
-      <textcolor>white</textcolor>
-      <visible>!control.isvisible(39)+control.hasfocus(1237)|control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>Current channelname black</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>265</posX>
-      <posY>563</posY>
-      <width>360</width>
-      <label>#TV.View.channel</label>
-      <align>left</align>
-      <font>LabelBold</font>
-      <textcolor>white</textcolor>
-      <visible>control.isvisible(39)+[control.hasfocus(1237)|control.hasfocus(1238)]</visible>
-    </control>
-    <control>
-      <description>rec logo</description>
-      <type>image</type>
-      <id>139</id>
-      <posX>203</posX>
-      <posY>556</posY>
-      <width>58</width>
-      <height>56</height>
-      <texture>tv_is_recording.png</texture>
-      <visible>control.isvisible(39)+[control.hasfocus(1237)|control.hasfocus(1238)]</visible>
-    </control>
-    <control>
-      <description>Time BG</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1704</posX>
-      <posY>552</posY>
-      <width>454</width>
-      <height>64</height>
-      <texture>OSDBG3.png</texture>
-      <colordiffuse>ff00061c</colordiffuse>
-      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>Time BG</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1706</posX>
-      <posY>554</posY>
-      <width>450</width>
-      <height>60</height>
-      <texture>OSDBG3.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>Time Info</description>
+      <description>Updates label</description>
       <type>label</type>
-      <id>110</id>
-      <posX>1898</posX>
-      <posY>563</posY>
-      <label>#time</label>
-      <align>right</align>
-      <font>LabelBold</font>
-      <textcolor>white</textcolor>
-      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>divider horizontal</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>75</posX>
-      <posY>677</posY>
-      <width>1790</width>
-      <height>1</height>
-      <texture>horizontalbar.png</texture>
-      <colordiffuse>aa87cefa</colordiffuse>
-      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>divider horizontal</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>75</posX>
-      <posY>862</posY>
-      <width>1790</width>
-      <height>1</height>
-      <texture>horizontalbar.png</texture>
-      <colordiffuse>aa87cefa</colordiffuse>
-      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>divider horizontal</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>75</posX>
-      <posY>937</posY>
-      <width>1790</width>
-      <height>1</height>
-      <texture>horizontalbar.png</texture>
-      <colordiffuse>aa87cefa</colordiffuse>
-      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>Program Info</description>
-      <id>0</id>
-      <type>fadelabel</type>
-      <posX>225</posX>
-      <posY>628</posY>
-      <height>57</height>
-      <width>1600</width>
-      <align>left</align>
-      <textcolor>lightskyblue</textcolor>
-      <font>LabelBold</font>
-      <label>#(iif(eq(#TV.View.start,''),'#TV.View.title','#TV.View.start - #TV.Next.start #scroll.wrap #TV.View.title'))</label>
-      <visible>control.hasfocus(1237)</visible>
-    </control>
-    <control>
-      <description>Plot</description>
-      <type>textboxscrollup</type>
       <id>1</id>
-      <posX>225</posX>
-      <posY>700</posY>
-      <height>140</height>
-      <width>1640</width>
-      <align>left</align>
-      <label>#TV.View.description</label>
+      <posX>520</posX>
+      <posY>510</posY>
+      <width>1030</width>
       <font>font10</font>
-      <textcolor>lightgray</textcolor>
-      <scrollStartDelaySec>6</scrollStartDelaySec>
-      <visible>control.hasfocus(1237)</visible>
-    </control>
-    <!-- Here are the infos for the next program -->
-    <control>
-      <description>Info Preview coming next button</description>
-      <type>button</type>
-      <id>1238</id>
-      <posX>1722</posX>
-      <posY>857</posY>
-      <width>70</width>
-      <height>70</height>
-      <textureFocus>scroll-up-focus.png</textureFocus>
-      <textureNoFocus>scroll-up.png</textureNoFocus>
-      <label>-</label>
-      <onleft>1237</onleft>
-      <onright>1237</onright>
-      <onup>1237</onup>
-      <ondown>1237</ondown>
-      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
-    </control>
-    <control>
-      <description>Next Program Info under button</description>
-      <id>0</id>
-      <type>fadelabel</type>
-      <posX>1630</posX>
-      <posY>892</posY>
-      <height>57</height>
-      <width>260</width>
-      <align>center</align>
-      <textcolor>ivory</textcolor>
-      <font>font9</font>
-      <label>4541</label>
-      <visible>control.hasfocus(1237)</visible>
-    </control>
-    <control>
-      <description>Next Program Info</description>
-      <id>0</id>
-      <type>fadelabel</type>
-      <posX>225</posX>
-      <posY>628</posY>
-      <height>57</height>
-      <width>1600</width>
+      <label>#(L(200052)):</label>
       <align>left</align>
-      <textcolor>ivory</textcolor>
-      <font>LabelBold</font>
-      <label>#(iif(eq(#TV.Next.start,''),'#TV.Next.title','#TV.Next.start - #TV.Next.stop #scroll.wrap #TV.Next.title'))</label>
-      <visible>control.hasfocus(1238)</visible>
+      <textcolor>royalblue</textcolor>
+      <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
     </control>
     <control>
-      <description>Next Plot</description>
-      <type>textboxscrollup</type>
-      <id>1</id>
-      <posX>225</posX>
-      <posY>700</posY>
-      <height>140</height>
-      <width>1640</width>
-      <align>left</align>
-      <label>#TV.Next.description</label>
-      <font>font10</font>
-      <textcolor>ivory</textcolor>
-      <scrollStartDelaySec>6</scrollStartDelaySec>
-      <visible>control.hasfocus(1238)</visible>
-    </control>
-    <import>common.osd.buttons.xml</import>
-    <import>tvOSD.mediainfo.xml</import>
-    <import>tvOSD.mediainfo2.xml</import>
-    <control>
-      <description>Channel Button Up</description>
-      <type>button</type>
-      <id>31</id>
-      <posX>665</posX>
-      <posY>945</posY>
-      <width>50</width>
-      <height>50</height>
-      <textureFocus>scroll-up-focus.png</textureFocus>
-      <textureNoFocus>scroll-up.png</textureNoFocus>
-      <label>-</label>
-      <onleft>222</onleft>
-      <onright>1237</onright>
-      <onup>32</onup>
-      <ondown>32</ondown>
-    </control>
-    <control>
-      <description>Channel Up Label</description>
+      <description>Updates label</description>
       <type>label</type>
       <id>1</id>
-      <posX>655</posX>
-      <posY>967</posY>
-      <width>1200</width>
-      <label>#(L(602))</label>
-      <align>right</align>
-      <font>font11</font>
-      <textcolor>ivory</textcolor>
-    </control>
-    <control>
-      <description>Channel Button Down</description>
-      <type>button</type>
-      <id>32</id>
-      <posX>665</posX>
-      <posY>975</posY>
-      <width>50</width>
-      <height>50</height>
-      <textureFocus>scroll-down-focus.png</textureFocus>
-      <textureNoFocus>scroll-down.png</textureNoFocus>
-      <label>-</label>
-      <onleft>222</onleft>
-      <onright>1237</onright>
-      <onup>31</onup>
-      <ondown>31</ondown>
-    </control>
-    <!-- ***************************************************************************************************** -->
-    <!-- *****************************         RECORDING INFO LATESTMEDIA       ****************************** -->
-    <!-- ***************************************************************************************************** -->
-    <control>
-      <description>Current recording count</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>1093</posX>
-      <posY>965</posY>
-      <width>50</width>
-      <label>#latestMediaHandler.tvrecordings.active.count</label>
-      <align>center</align>
+      <posX>521</posX>
+      <posY>510</posY>
+      <width>1030</width>
       <font>font10</font>
-      <textcolor>ivory</textcolor>
-      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
-    </control>
-    <control>
-      <description>background for recording info</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>53</posX>
-      <posY>1007</posY>
-      <width>604</width>
-      <height>41</height>
-      <texture>osdbg6.png</texture>
-      <colordiffuse>ff00061c</colordiffuse>
-      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+!control.isvisible(39)|[!string.equals(#latestMediaHandler.tvrecordings.active2.title,)]</visible>
-    </control>
-    <control>
-      <description>background for recording info</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>55</posX>
-      <posY>1009</posY>
-      <width>600</width>
-      <height>37</height>
-      <texture>osdbg6.png</texture>
-      <colordiffuse>ff09173c</colordiffuse>
-      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+!control.isvisible(39)|[!string.equals(#latestMediaHandler.tvrecordings.active2.title,)]</visible>
-    </control>
-    <control>
-      <description>rec logo</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>60</posX>
-      <posY>1010</posY>
-      <width>35</width>
-      <height>35</height>
-      <texture>tv_is_recording.png</texture>
-      <visible>plugin.isenabled(Latest Media Handler)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+!control.isvisible(39)|[!string.equals(#latestMediaHandler.tvrecordings.active2.title,)]</visible>
-    </control>
-    <control>
-      <description>Current channel</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>110</posX>
-      <posY>1015</posY>
-      <width>540</width>
-      <label>#latestMediaHandler.tvrecordings.active1.channel   #latestMediaHandler.tvrecordings.active2.channel   #latestMediaHandler.tvrecordings.active3.channel   #latestMediaHandler.tvrecordings.active4.channel</label>
+      <label>#(L(200052)):</label>
       <align>left</align>
-      <font>font9</font>
-      <textcolor>ivory</textcolor>
-      <visible>plugin.isenabled(Latest Media Handler)+[!string.equals(#latestMediaHandler.tvrecordings.active2.title,)|!control.isvisible(39)]</visible>
+      <textcolor>royalblue</textcolor>
+      <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
     </control>
-    <!-- ******************************************************************************************* -->
-    <!-- ************************* RECENTLY ADDED ~ ACTIVE RECORDINGS ****************************** -->
-    <!-- ******************************************************************************************* -->
     <control>
       <type>group</type>
       <description>group element</description>
-      <visible>plugin.isenabled(Latest Media Handler)+control.hasfocus(223)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+      <layout>StackLayout(5, Vertical, true)</layout>
+      <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+      <posX>520</posX>
+      <posY>550</posY>
       <control>
-        <description>background for recently added files</description>
+        <description>ChannelLogo1</description>
         <type>image</type>
-        <id>7779</id>
-        <posX>490</posX>
-        <posY>490</posY>
-        <width>940</width>
-        <height>220</height>
-        <texture>latestmediabg.png</texture>
-        <colordiffuse>ddffffff</colordiffuse>
-        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-      </control>
-      <control>
-        <description>Updates label</description>
-        <type>label</type>
         <id>1</id>
-        <posX>520</posX>
-        <posY>510</posY>
-        <width>1030</width>
-        <font>font10</font>
-        <label>#(L(200052)):</label>
-        <align>left</align>
-        <textcolor>royalblue</textcolor>
-        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        <width>30</width>
+        <height>30</height>
+        <texture>#latestMediaHandler.tvrecordings.active1.channelLogo</texture>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
       </control>
       <control>
-        <description>Updates label</description>
-        <type>label</type>
+        <description>ChannelLogo2</description>
+        <type>image</type>
         <id>1</id>
-        <posX>521</posX>
-        <posY>510</posY>
-        <width>1030</width>
-        <font>font10</font>
-        <label>#(L(200052)):</label>
-        <align>left</align>
-        <textcolor>royalblue</textcolor>
-        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        <width>30</width>
+        <height>30</height>
+        <texture>#latestMediaHandler.tvrecordings.active2.channelLogo</texture>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
       </control>
       <control>
-        <type>group</type>
-        <description>group element</description>
-        <layout>StackLayout(5, Vertical, true)</layout>
-        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        <posX>520</posX>
-        <posY>550</posY>
-        <control>
-          <description>ChannelLogo1</description>
-          <type>image</type>
-          <id>1</id>
-          <width>30</width>
-          <height>30</height>
-          <texture>#latestMediaHandler.tvrecordings.active1.channelLogo</texture>
-          <centered>no</centered>
-          <keepaspectratio>no</keepaspectratio>
-        </control>
-        <control>
-          <description>ChannelLogo2</description>
-          <type>image</type>
-          <id>1</id>
-          <width>30</width>
-          <height>30</height>
-          <texture>#latestMediaHandler.tvrecordings.active2.channelLogo</texture>
-          <centered>no</centered>
-          <keepaspectratio>no</keepaspectratio>
-        </control>
-        <control>
-          <description>ChannelLogo3</description>
-          <type>image</type>
-          <id>1</id>
-          <width>30</width>
-          <height>30</height>
-          <texture>#latestMediaHandler.tvrecordings.active3.channelLogo</texture>
-          <centered>no</centered>
-          <keepaspectratio>no</keepaspectratio>
-        </control>
-        <control>
-          <description>ChannelLogo4</description>
-          <type>image</type>
-          <id>1</id>
-          <width>30</width>
-          <height>30</height>
-          <texture>#latestMediaHandler.tvrecordings.active4.channelLogo</texture>
-          <centered>no</centered>
-          <keepaspectratio>no</keepaspectratio>
-        </control>
-      </control>
-      <control>
-        <description>active TVRecordings updates</description>
-        <type>fadelabel</type>
+        <description>ChannelLogo3</description>
+        <type>image</type>
         <id>1</id>
-        <posX>555</posX>
-        <posY>548</posY>
-        <width>850</width>
-        <label>#latestMediaHandler.tvrecordings.active1.title (#latestMediaHandler.tvrecordings.active1.channel) #scroll.wrap #latestMediaHandler.tvrecordings.active1.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active1.startTime</label>
-        <align>left</align>
-        <font>font10</font>
-        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        <textcolor>ivory</textcolor>
-        <visible>!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+        <width>30</width>
+        <height>30</height>
+        <texture>#latestMediaHandler.tvrecordings.active3.channelLogo</texture>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
       </control>
       <control>
-        <description>active TVRecordings updates</description>
-        <type>fadelabel</type>
+        <description>ChannelLogo4</description>
+        <type>image</type>
         <id>1</id>
-        <posX>555</posX>
-        <posY>583</posY>
-        <width>850</width>
-        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        <label>#latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel) #scroll.wrap #latestMediaHandler.tvrecordings.active2.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active2.startTime</label>
-        <align>left</align>
-        <font>font10</font>
-        <textcolor>ivory</textcolor>
-        <visible>!string.equals(#latestMediaHandler.tvrecordings.active2.title,)</visible>
-      </control>
-      <control>
-        <description>active TVRecordings updates</description>
-        <type>fadelabel</type>
-        <id>1</id>
-        <posX>555</posX>
-        <posY>618</posY>
-        <width>850</width>
-        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        <label>#latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel) #scroll.wrap #latestMediaHandler.tvrecordings.active3.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active3.startTime</label>
-        <align>left</align>
-        <font>font10</font>
-        <textcolor>ivory</textcolor>
-        <visible>!string.equals(#latestMediaHandler.tvrecordings.active3.title,)</visible>
-      </control>
-      <control>
-        <description>active TVRecordings updates</description>
-        <type>fadelabel</type>
-        <id>1</id>
-        <posX>555</posX>
-        <posY>653</posY>
-        <width>850</width>
-        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        <label>#latestMediaHandler.tvrecordings.active4.title (#latestMediaHandler.tvrecordings.active4.channel) #scroll.wrap #latestMediaHandler.tvrecordings.active4.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active4.startTime</label>
-        <align>left</align>
-        <font>font10</font>
-        <textcolor>ivory</textcolor>
-        <visible>!string.equals(#latestMediaHandler.tvrecordings.active4.title,)</visible>
+        <width>30</width>
+        <height>30</height>
+        <texture>#latestMediaHandler.tvrecordings.active4.channelLogo</texture>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
       </control>
     </control>
-    <!-- ***************************** THESE CONTROLS ARE NOT USED IN THIS OSD  ****************************** -->
-    <!-- ***************************** BUT ARE ESSENTIAL TO KEEP COMPATABILITY  ****************************** -->
-    <!-- ***************************** AND KEEP ERROR.LOG FREE OF ERRORS  ************************************ -->
     <control>
-      <description>Current Time Info</description>
-      <type>label</type>
-      <id>101</id>
-      <posX>3207</posX>
+      <description>active TVRecordings updates</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>555</posX>
+      <posY>548</posY>
+      <width>850</width>
+      <label>#latestMediaHandler.tvrecordings.active1.title (#latestMediaHandler.tvrecordings.active1.channel) #scroll.wrap #latestMediaHandler.tvrecordings.active1.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active1.startTime</label>
+      <align>left</align>
+      <font>font10</font>
+      <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+      <textcolor>lightgray</textcolor>
+      <visible>!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
     </control>
     <control>
-      <description>Channel Info</description>
-      <type>label</type>
-      <id>35</id>
-      <posX>4317</posX>
+      <description>active TVRecordings updates</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>555</posX>
+      <posY>583</posY>
+      <width>850</width>
+      <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+      <label>#latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel) #scroll.wrap #latestMediaHandler.tvrecordings.active2.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active2.startTime</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+      <visible>!string.equals(#latestMediaHandler.tvrecordings.active2.title,)</visible>
     </control>
     <control>
-      <description>Plot</description>
-      <type>textboxscrollup</type>
-      <id>38</id>
-      <posX>3208</posX>
+      <description>active TVRecordings updates</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>555</posX>
+      <posY>618</posY>
+      <width>850</width>
+      <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+      <label>#latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel) #scroll.wrap #latestMediaHandler.tvrecordings.active3.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active3.startTime</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+      <visible>!string.equals(#latestMediaHandler.tvrecordings.active3.title,)</visible>
     </control>
     <control>
-      <description>On tv NOW</description>
-      <id>36</id>
-      <type>textbox</type>
-      <posX>3328</posX>
+      <description>active TVRecordings updates</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>555</posX>
+      <posY>653</posY>
+      <width>850</width>
+      <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+      <label>#latestMediaHandler.tvrecordings.active4.title (#latestMediaHandler.tvrecordings.active4.channel) #scroll.wrap #latestMediaHandler.tvrecordings.active4.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active4.startTime</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+      <visible>!string.equals(#latestMediaHandler.tvrecordings.active4.title,)</visible>
     </control>
-    <control>
-      <description>Program Button Up</description>
-      <type>button</type>
-      <id>33</id>
-      <posX>3207</posX>
-    </control>
-    <control>
-      <description>Program Button Down</description>
-      <type>button</type>
-      <id>34</id>
-      <posX>3260</posX>
-    </control>
-    <control>
-      <description>Channel</description>
-      <id>100</id>
-      <type>label</type>
-      <posX>3177</posX>
-    </control>
-    <control>
-      <description>Channel</description>
-      <id>10</id>
-      <type>image</type>
-      <posX>3177</posX>
-    </control>
-    <control>
-      <description>On tv NEXT</description>
-      <id>37</id>
-      <type>textbox</type>
-      <posX>3227</posX>
-    </control>
-  </controls>
+  </control>
+  <!-- ***************************** THESE CONTROLS ARE NOT USED IN THIS OSD  ****************************** -->
+  <!-- ***************************** BUT ARE ESSENTIAL TO KEEP COMPATABILITY  ****************************** -->
+  <!-- ***************************** AND KEEP ERROR.LOG FREE OF ERRORS  ************************************ -->
+  <control>
+    <description>Current Time Info</description>
+    <type>label</type>
+    <id>101</id>
+    <posX>3207</posX>
+  </control>
+  <control>
+    <description>Channel Info</description>
+    <type>label</type>
+    <id>35</id>
+    <posX>4317</posX>
+  </control>
+  <control>
+    <description>Plot</description>
+    <type>textboxscrollup</type>
+    <id>38</id>
+    <posX>3208</posX>
+  </control>
+  <control>
+    <description>On tv NOW</description>
+    <id>36</id>
+    <type>textbox</type>
+    <posX>3328</posX>
+  </control>
+  <control>
+    <description>Program Button Up</description>
+    <type>button</type>
+    <id>33</id>
+    <posX>3207</posX>
+  </control>
+  <control>
+    <description>Program Button Down</description>
+    <type>button</type>
+    <id>34</id>
+    <posX>3260</posX>
+  </control>
+  <control>
+    <description>Channel</description>
+    <id>100</id>
+    <type>label</type>
+    <posX>3177</posX>
+  </control>
+  <control>
+    <description>Channel</description>
+    <id>10</id>
+    <type>image</type>
+    <posX>3177</posX>
+  </control>
+  <control>
+    <description>On tv NEXT</description>
+    <id>37</id>
+    <type>textbox</type>
+    <posX>3227</posX>
+  </control>
+</controls>
 </window>

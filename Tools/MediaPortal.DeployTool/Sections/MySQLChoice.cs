@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2023 Team MediaPortal
+﻿#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -54,7 +54,6 @@ namespace MediaPortal.DeployTool.Sections
       // Direct to upgrade
       if (InstallationProperties.Instance.Get("InstallType") != "tvserver_master")
       {  // install includes MP so check skin choice
-
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.SkinChoice);
       }
       // tv server only install so no need for skin choice
@@ -81,10 +80,10 @@ namespace MediaPortal.DeployTool.Sections
           InstallationProperties.Instance.Set("ConfigureDBMSFirewall", "1");
           InstallationProperties.Instance.Set("DBMSPassword", "MediaPortal");
           // Default DBMS
-          InstallationProperties.Instance.Set("DBMSType", "mysql");
+          InstallationProperties.Instance.Set("DBMSType", "MySQL");
           InstallationProperties.Instance.Set("DBMSDir",
             InstallationProperties.Instance["ProgramFiles"] +
-            "\\MySQL\\MySQL Server 5.6");
+            "\\MySQL\\MySQL Server 8.3");
         }
       }
     }

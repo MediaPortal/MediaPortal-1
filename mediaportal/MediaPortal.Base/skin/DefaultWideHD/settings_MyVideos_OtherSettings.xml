@@ -1,102 +1,208 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+
 <window>
   <id>1023</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
     <import>common.time.xml</import>
     <control>
-      <description>background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>480</posX>
-      <posY>180</posY>
-      <height>705</height>
-      <width>1170</width>
-      <texture>backslide2.png</texture>
-      <colordiffuse>aaffffff</colordiffuse>
-    </control>
+        <description>buttons</description>
+        <type>group</type>
+        <posX>92</posX>
+        <posY>305</posY>
+        <dimColor>ffffffff</dimColor>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <control>
+          <description>General Main setttings</description>
+          <type>button</type>
+          <id>9991</id>
+          <label>128</label>
+          <width>410</width>
+          <onup>17</onup>
+          <onright>2</onright>
+          <hyperlink>1016</hyperlink>
+        </control>
+        <control>
+          <description>General Skin settings</description>
+          <type>button</type>
+          <id>9992</id>
+          <label>101021</label>
+          <width>410</width>
+          <hyperlink>1021</hyperlink>
+          <onup>9991</onup>
+          <onright>2</onright>
+        </control>
+        <control>
+          <description>Screen</description>
+          <type>button</type>
+          <id>9993</id>
+          <label>6023</label>
+          <width>410</width>
+          <hyperlink>9</hyperlink>
+          <onup>9992</onup>
+          <onright>2</onright>
+        </control>
+        <control>
+          <description>TV</description>
+          <type>button</type>
+          <id>9994</id>
+          <label>605</label>
+          <width>410</width>
+          <hyperlink>700</hyperlink>
+          <onup>9993</onup>
+          <onright>2</onright>
+        </control>
+        <control>
+          <description>My Pictures</description>
+          <type>button</type>
+          <id>9995</id>
+          <label>1</label>
+          <width>410</width>
+          <hyperlink>12</hyperlink>
+          <onup>9994</onup>
+          <onright>2</onright>
+        </control>
+        <control>
+          <description>Movies</description>
+          <type>button</type>
+          <id>9996</id>
+          <label>3</label>
+          <width>410</width>
+          <hyperlink>703</hyperlink>
+          <onup>9995</onup>
+          <onright>2</onright>
+        </control>
+        <control>
+          <description>My DVD</description>
+          <type>button</type>
+          <id>9997</id>
+          <label>1027</label>
+          <width>410</width>
+          <hyperlink>704</hyperlink>
+          <onup>9996</onup>
+          <onright>2</onright>
+        </control>
+        <control>
+          <description>BluRay</description>
+          <type>button</type>
+          <id>9998</id>
+          <label>300217</label>
+          <width>410</width>
+          <hyperlink>1024</hyperlink>
+          <onup>9997</onup>
+          <onright>2</onright>
+        </control>
+        <control>
+          <description>My Music</description>
+          <type>button</type>
+          <id>9999</id>
+          <label>2</label>
+          <width>410</width>
+          <hyperlink>14</hyperlink>
+          <ondown>99910</ondown>
+          <onup>9998</onup>
+          <onright>2</onright>
+        </control>
+        <control>
+          <description>MiniDisplay</description>
+          <type>button</type>
+          <id>99910</id>
+          <label>9100</label>
+          <width>410</width>
+          <hyperlink>9000</hyperlink>
+          <ondown>9991</ondown>
+          <onup>9999</onup>
+          <onright>2</onright>
+          <visible>plugin.isenabled(MiniDisplay)</visible>
+        </control>
+      </control>
     <control>
-      <description>buttons</description>
-      <type>group</type>
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
-      <posX>525</posX>
-      <posY>240</posY>
-      <layout>StackLayout(0, Horizontal, True)</layout>
+        <description>buttons</description>
+        <type>group</type>
+        <posX>655</posX>
+        <posY>305</posY>
+        <dimColor>ffffffff</dimColor>
+        <layout>Stacklayout</layout>
       <control>
         <description>Mark watched files</description>
         <type>checkbutton</type>
         <id>2</id>
         <label>300204</label>
-        <width>1050</width>
-        <onup>6</onup>
+        <width>1050</width><textureFocus>setting_button_long.png</textureFocus>
+        <onup>127</onup>
         <onright>2</onright>
         <ondown>3</ondown>
+        <onleft>9996</onleft>
       </control>
       <control>
         <description>Keep folders together</description>
         <type>checkbutton</type>
         <id>3</id>
         <label>300205</label>
-        <width>1050</width>
+        <width>1050</width><textureFocus>setting_button_long.png</textureFocus>
         <onup>2</onup>
         <ondown>4</ondown>
         <onright>3</onright>
+        <onleft>9996</onleft>
       </control>
       <control>
         <description>Use comskip data</description>
         <type>checkbutton</type>
         <id>4</id>
         <label>300206</label>
-        <width>1050</width>
+        <width>1050</width><textureFocus>setting_button_long.png</textureFocus>
         <onup>3</onup>
         <ondown>5</ondown>
         <onright>4</onright>
+        <onleft>9996</onleft>
       </control>
     </control>
     <control>
       <description>Watched percentage Label</description>
       <type>label</type>
       <id>101</id>
-      <posX>525</posX>
-      <posY>450</posY>
+      <posX>675</posX>
+      <posY>500</posY>
       <label>300207</label>
+      <font>font11</font>
     </control>
     <control>
       <description>Watched percentage</description>
       <type>spincontrol</type>
       <id>5</id>
-      <posX>1455</posX>
-      <posY>457</posY>
+      <posX>1655</posX>
+      <posY>500</posY>
       <onup>4</onup>
       <ondown>6</ondown>
       <align>right</align>
       <buddycontrolid>101</buddycontrolid>
+      <font>font11</font>
     </control>
     <control>
       <description>Audio video delay</description>
       <type>label</type>
       <id>102</id>
-      <posX>525</posX>
-      <posY>510</posY>
+      <posX>675</posX>
+      <posY>560</posY>
       <label>300208</label>
+      <font>font11</font>
     </control>
     <control>
       <description>Audio video delay</description>
       <type>spincontrol</type>
       <id>6</id>
-      <posX>1455</posX>
-      <posY>517</posY>
+      <posX>1655</posX>
+      <posY>560</posY>
       <onleft>5</onleft>
       <onright>10</onright>
       <onup>5</onup>
       <ondown>2</ondown>
       <align>right</align>
       <buddycontrolid>102</buddycontrolid>
+      <font>font11</font>
     </control>
   </controls>
 </window>

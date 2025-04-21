@@ -33,12 +33,14 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowNonLinearStretch = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBoxZoomDefault = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.defaultZoomModeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.cbAllowCinemaScope235 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.gAllowedModes.SuspendLayout();
       this.mpGroupBoxZoomDefault.SuspendLayout();
       this.SuspendLayout();
       // 
       // gAllowedModes
       // 
+      this.gAllowedModes.Controls.Add(this.cbAllowCinemaScope235);
       this.gAllowedModes.Controls.Add(this.cbAllowNormal);
       this.gAllowedModes.Controls.Add(this.cbAllowZoom149);
       this.gAllowedModes.Controls.Add(this.cbAllowOriginal);
@@ -49,7 +51,7 @@ namespace MediaPortal.Configuration.Sections
       this.gAllowedModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gAllowedModes.Location = new System.Drawing.Point(6, 0);
       this.gAllowedModes.Name = "gAllowedModes";
-      this.gAllowedModes.Size = new System.Drawing.Size(186, 187);
+      this.gAllowedModes.Size = new System.Drawing.Size(186, 213);
       this.gAllowedModes.TabIndex = 2;
       this.gAllowedModes.TabStop = false;
       this.gAllowedModes.Text = "Allowed zoom modes";
@@ -144,14 +146,25 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultZoomModeComboBox
       // 
-      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultZoomModeComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(18, 22);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(226, 21);
       this.defaultZoomModeComboBox.TabIndex = 13;
+      // 
+      // cbAllowCinemaScope235
+      // 
+      this.cbAllowCinemaScope235.AutoSize = true;
+      this.cbAllowCinemaScope235.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAllowCinemaScope235.Location = new System.Drawing.Point(17, 185);
+      this.cbAllowCinemaScope235.Name = "cbAllowCinemaScope235";
+      this.cbAllowCinemaScope235.Size = new System.Drawing.Size(114, 17);
+      this.cbAllowCinemaScope235.TabIndex = 8;
+      this.cbAllowCinemaScope235.Text = "CinemaScope 2:35";
+      this.cbAllowCinemaScope235.UseVisualStyleBackColor = true;
       // 
       // TVZoom
       // 
@@ -180,5 +193,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowNonLinearStretch;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxZoomDefault;
     private MediaPortal.UserInterface.Controls.MPComboBox defaultZoomModeComboBox;
+    private UserInterface.Controls.MPCheckBox cbAllowCinemaScope235;
   }
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2024 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2024 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,9 +25,11 @@ using System.Windows.Forms;
 using System.IO;
 using System.Resources;
 using System.Globalization;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
 using MediaPortal.DeployTool.Sections;
@@ -779,7 +781,7 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 32;
+          minor = 36;
           revision = 100;
           break;
       }
@@ -800,7 +802,7 @@ namespace MediaPortal.DeployTool
     public static Version GetCurrentPackageVersion()
     {
       int major = 1;
-      int minor = 33;
+      int minor = 37;
       int revision = 000;
 
       Version ver = new Version(major, minor, revision);
@@ -851,7 +853,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.33 Springtime / 20th Anniversary";
+      return "1.37 Willow";
     }
 
     /// <summary>
@@ -977,6 +979,62 @@ namespace MediaPortal.DeployTool
         key.SetValue(KEY_VALUE_NAME, 1);
 
       key.Close();
+    }
+
+    #endregion
+
+    #region Process Start Helper
+
+    public static int RunCommand(string command, string arguments)
+    {
+      if (string.IsNullOrEmpty(command))
+      {
+        return -1;
+      }
+
+      ProcessStartInfo startInfo = new ProcessStartInfo
+      {
+        FileName = command,
+        UseShellExecute = false,
+        CreateNoWindow = true,
+        RedirectStandardOutput = true,
+        RedirectStandardError = true,
+        WindowStyle = ProcessWindowStyle.Hidden,
+        StandardOutputEncoding = Encoding.Unicode
+      };
+
+      if (!string.IsNullOrEmpty(arguments))
+      {
+        startInfo.Arguments = arguments;
+      }
+
+      Process process = Process.Start(startInfo);
+      try
+      {
+        if (process != null)
+        {
+          process.WaitForExit();
+          return process.ExitCode;
+        }
+      }
+      catch { }
+
+      return -1;
+    }
+
+    public static Task<int> RunCommandAsync(string command, string arguments)
+    {
+      return Task<int>.Factory.StartNew(() =>
+             {
+               return RunCommand(command, arguments);
+             });
+    }
+
+    public static int RunCommandWait(string command, string arguments)
+    {
+      Task<int> run = RunCommandAsync(command, arguments);
+      run.Wait();
+      return run.Result;
     }
 
     #endregion

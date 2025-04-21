@@ -31,7 +31,7 @@
       <height>1080</height>
       <texture>general_overlay.png</texture>
     </control>
-    <control>
+    <!--<control>
       <description>Header</description>
       <type>fadelabel</type>
       <posX>45</posX>
@@ -39,9 +39,9 @@
       <width>525</width>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
       <label>Shoutcast</label>
-    </control>
+    </control>-->
     <control>
       <type>group</type>
       <description>group element</description>
@@ -121,7 +121,7 @@
       <label>#meta</label>
       <font>font12</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>listeners label</description>
@@ -132,7 +132,7 @@
       <label>#listeners</label>
       <font>font12</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>track label</description>
@@ -145,7 +145,7 @@
       <label>#genre</label>
       <font>font12</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>ff00bfff</textcolor>
     </control>
     <control>
       <description>listcontrol</description>

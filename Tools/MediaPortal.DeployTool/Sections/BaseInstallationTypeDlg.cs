@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,6 +19,8 @@
 #endregion
 
 using System;
+
+using MediaPortal.DeployTool.InstallationChecks;
 
 namespace MediaPortal.DeployTool.Sections
 {
@@ -84,10 +86,31 @@ namespace MediaPortal.DeployTool.Sections
         InstallationProperties.Instance.Set("ConfigureDBMSFirewall", "1");
         InstallationProperties.Instance.Set("DBMSPassword", "MediaPortal");
         // Default DBMS
-        InstallationProperties.Instance.Set("DBMSType", "mysql");
-        InstallationProperties.Instance.Set("DBMSDir",
-                                            InstallationProperties.Instance["ProgramFiles"] +
-                                            "\\MySQL\\MySQL Server 5.6");
+        IInstallationPackage packageMSSQL = new MSSQLExpressChecker();
+        CheckResult resultMSSQL = packageMSSQL.CheckStatus();
+        IInstallationPackage packageMySQL = new MySQLChecker();
+        CheckResult resultMySQL = packageMySQL.CheckStatus();
+        IInstallationPackage packageMariaDB = new MariaDBChecker();
+        CheckResult resultMariaDB = packageMariaDB.CheckStatus();
+        if (resultMSSQL.state == CheckState.INSTALLED || resultMSSQL.state == CheckState.VERSION_MISMATCH ||
+            resultMySQL.state == CheckState.INSTALLED || resultMySQL.state == CheckState.VERSION_MISMATCH ||
+            resultMariaDB.state == CheckState.INSTALLED || resultMariaDB.state == CheckState.VERSION_MISMATCH)
+        {
+          InstallationProperties.Instance.Set("DBMSType", "DBAlreadyInstalled");
+        }
+        else
+        {
+          if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
+          {
+            InstallationProperties.Instance.Set("DBMSType", "MariaDB");
+            InstallationProperties.Instance.Set("DBMSDir", InstallationProperties.Instance["ProgramFiles"] + "\\MariaDB\\MariaDB 10.0");
+          }
+          else
+          {
+            InstallationProperties.Instance.Set("DBMSType", "MySQL");
+            InstallationProperties.Instance.Set("DBMSDir", InstallationProperties.Instance["ProgramFiles"] + "\\MySQL\\MySQL Server 5.6");
+          }
+        }
       }
     }
 

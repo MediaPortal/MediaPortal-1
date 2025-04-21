@@ -57,7 +57,7 @@
           <renderFocusText>no</renderFocusText>
           <renderUnfocusText>no</renderUnfocusText>
           <showFrame>true</showFrame>
-          <textureMask>Picturethumbmask.png</textureMask>
+          <textureMask>musicfanart_mask.png</textureMask>
           <frameNoFocus>Picturethumbframe.png</frameNoFocus>
           <frameFocus>Picturethumbframe.png</frameFocus>
           <imageFolder>-</imageFolder>

@@ -35,6 +35,8 @@ namespace MediaPortal.Player.Subtitles
 {
   public class MpcEngine : SubSettings, ISubEngine
   {
+    private string _SubtitleFilename = null;
+
     protected override void LoadAdvancedSettings(Settings xmlreader)
     {
       int subPicsBufferAhead = xmlreader.GetValueAsInt("subtitles", "subPicsBufferAhead", 3);
@@ -117,6 +119,7 @@ namespace MediaPortal.Player.Subtitles
 
     public bool LoadSubtitles(IGraphBuilder graphBuilder, string filename)
     {
+      this._SubtitleFilename = filename;
       LoadSettings();
       MpcSubtitles.SetDefaultStyle(ref this.defStyle, this.overrideASSStyle);
       if (selectionOff)
@@ -287,6 +290,8 @@ namespace MediaPortal.Player.Subtitles
         MpcSubtitles.SetShowForcedOnly(!this.autoShow);
       }
     }
+
+    public string FileName { get => this._SubtitleFilename; }
 
     #endregion
 

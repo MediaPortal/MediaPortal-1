@@ -1,23 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Skin translation file -->
-<!-- English (US) -->
+<!-- Spanish -->
 <strings>
-  <string Field="WorldNewsTicker">Activar ticker de WorldNews</string>
-  <string Field="MusicNowPlayingFanart">Fondo de música reproduciendo en BasicHome</string>
-  <string Field="MusicFanart">Fondo de música aleatorio en BasicHome</string>
-  <string Field="VideoFanart">Fondo de video aleatorio en BasicHome</string>
-  <string Field="TVGuideRows">Filas en guía de TV</string>
-  <string Field="TVSeriesRows">Filas en TVSeries Wide Banners</string>
+  <string Field="Thumbsview">Vista en miniatura</string>
+  <string Field="Thumbsview.Select">Normal</string>
+  <string Field="WorldNewsTicker">Activar WorldNews Ticker</string>
+  <string Field="AnalogClockOSD">Reloj analógico en OSDs</string>
+  <string Field="MusicNowPlayingFanart">Fanart de la música que se está reproduciendo en BasicHome</string>
+  <string Field="MusicFanart">Fanart de música aleatoria en BasicHome</string>
+  <string Field="VideoFanart">Fanart de vídeo aleatorio en BasicHome</string>
+  <string Field="TVGuideRows">Número de filas en la guía de TV</string>
+  <string Field="TVSeriesRows">Filas en el banner de TVSeries Wide</string>
+  <string Field="DescriptionTopbar">Descripción de los botones de la barra superior:</string>
+  <string Field="BackPrevious">Volver a la ventana anterior</string>
+  <string Field="BackBasicHome">A BasicHome &lt;-&gt; ClassicHome</string>
+  <string Field="LiveTV">Televisión en directo/vídeo en segundo plano</string>
+  <string Field="PlayControls">Control de reproducción de audio/vídeo</string>
+  <string Field="SkinInfo">Esta pantalla</string>
+  <string Field="CloseExit">Cerrar/salir de MP</string>
+  <string Field="ShutdownOptions">Opciones de apagado</string>
+  <string Field="InfoButton">En las vistas de lista: Al pulsar a la derecha (remoto/teclado) o al pasar el ratón por encima se muestra información ampliada</string>
+  <string Field="SupportedPlugins">Contenedores soportados (en orden alfabético):</string>
+  <string Field="PluginsMP">... y por supuesto todos los plugins estándar de esta versión de MediaPortal.</string>
+  <string Field="MPVersion">DefaultWideHD está diseñado para MP 1.7.x o versiones más recientes.</string>
+  <string Field="Enjoy">¡Disfruta de MediaPortal con DefaultWideHD!</string>
   <string Field="Background">Fondo</string>
   <string Field="Games">Juegos</string>
-  <string Field="NewEpisodes">Episodios recientemente agregado</string>
-  <string Field="NewRecordings">Grabaciones de TV recientemente agregado</string>
+  <string Field="NewEpisodes">Episodios añadidos recientemente</string>
+  <string Field="NewRecordings">Grabaciones de TV añadidas recientemente</string>
   <string Field="NewVideos">Vídeos añadidos recientemente</string>
-  <string Field="NewYouTubeVideos">Videos de Online Videos agregados recientemente</string>
-  <string Field="NewFilms">Películas recientemente agregado</string>
-  <string Field="LastPlayed">Última música reproducida</string>
-  <string Field="NewPictures">Fotos añadidos recientemente</string>
+  <string Field="NewYouTubeVideos">Vídeos en línea añadidos recientemente</string>
+  <string Field="NewFilms">Películas añadidas recientemente</string>
+  <string Field="LastPlayed">Últimas reproducciones</string>
+  <string Field="NewPictures">Fotos añadidas recientemente</string>
   <string Field="NowRecording">Grabaciones activas</string>
+  <string Field="FullView">Infos siempre visibles</string>
+  <string Field="ShowDVDArt">Mostrar DVD-Art</string>
+  <string Field="NoClock">Desactivar el reloj y los iconos de los plugins</string>
+  
   <string Field="Timer">#(L(603))</string>
-  <string Field="tvstreaminfo">TV OSD información del canal siempre visible</string>
+  <string Field="Update">¡DefaultWideHD disponible!</string>
+  <string Field="CategoryBackgrounds">Plugin BGs BasicHome</string>
+  <string Field="Fullscreen">Pantalla completa</string>
+  
+  <string Field="tvstreaminfo">Información del flujo de TV OSD siempre visible</string>
+  <string Field="tv2">¡Te estoy viendo!</string>
+  <string Field="tv8">¡Gol!!!</string>
+  <string Field="tv9">¡Estoy harto!</string>
+  <string Field="tv10">¡Splash!</string>
+  <string Field="tv">Sin GIF</string>
+  <string Field="Ukraine">Mostrar bandera de Ucrania</string>
+  <string Field="KeyboardShortcuts">Atajos de teclado</string>
+  <string Field="AudioOptions">Subir/bajar volumen</string>
+  <string Field="CategoryBG">Cartel del plugin BasicHome</string>
+  <string Field="EnlargeImage">Ampliar imagen</string>
+  <!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for Logo Manager **********************-->
+  <!-- ***************************************************************************************-->
+  <string Field="Package">Paquete del remitente</string>
+  <string Field="Group">Grupo de canales</string>
+  <string Field="GrabNow">Generar</string>
+  <string Field="CancelGrab">Cancelar generación</string>
+  <string Field="Multiple">Múltiple</string>
+  <string Field="SelectPackage">Seleccionar paquete emisor</string>
+  <string Field="SelectChannelGroup">Seleccionar grupo de canales</string>
+  <string Field="SelectLayerDesign">Seleccionar diseño</string>
+  <!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for Tetris ****************************-->
+  <!-- ***************************************************************************************-->
+  <string Field="ShowHighscore">Animación de récord</string>
+  <string Field="PulsingSidelines">Líneas laterales pulsantes</string>
+  <string Field="TetrisHelpText">Tetris es un conocido juego de puzzle para ordenador popularizado por la Game Boy.&#xA;El objetivo del puzzle es manipular piezas (bloques) o formas de tetromino moviendo cada una de ellas lateralmente y girándolas 90 grados, con el fin de crear una línea horizontal de bloques sin huecos. &#xA;Cuando se crea una línea de este tipo, desaparece y todos los bloques situados por encima de la línea eliminada caen hacia abajo.&#xA;Después de cada diez líneas eliminadas, el juego alcanza un nuevo nivel. &#xA;A medida que avanza el juego, los tetrominós caen más rápido con cada nivel, y el juego termina cuando la pila de tetrominós alcanza la parte superior del tablero y ya no pueden entrar más tetrominós nuevos.&#xA;El juego también puede terminar si el jugador consigue llegar al nivel 15.&#xA;
+Cómo jugar
+- Para jugar - flecha hacia la derecha para entrar en el patio de recreo, a continuación, pulse Enter
+- Mover bloques horizontalmente - flecha izquierda o derecha
+- Girar bloques - flecha arriba
+- Caída rápida - flecha abajo
+- Caída instantánea - Enter
+- Pausa o continúa el juego - botón Atrás del mando a distancia, o Esc&#xA;&#xA;El siguiente bloque se muestra como pista en el gráfico de flecha de la parte superior derecha del campo de juego.&#xA;El número de nivel también se muestra allí en el color del nivel correspondiente.&#xA;&#xA;Smirnuff (autor), catavolt y High_Five te desean mucha diversión con el Tetris ;)</string>
+<string Field="About">¿Qué es Tetris?</string>
+  <string Field="HighFive">Parte de los gráficos y animaciones son obra de High_Five :)</string>
+  <string Field="Highscore">*** ¡Enhorabuena!  *** ¡Has conseguido un nuevo récord!</string>
 </strings>

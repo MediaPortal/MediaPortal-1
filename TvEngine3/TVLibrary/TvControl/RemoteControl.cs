@@ -29,6 +29,7 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Serialization.Formatters;
 using System.Threading;
+using System.Linq;
 
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
@@ -69,10 +70,12 @@ namespace TvControl
     private static bool _firstFailure = true;
     private static bool _isRemotingConnected = false;
     private static IController _tvControl;
+    private static IController _tvControlLocal = null;
     private static string _hostName = System.Net.Dns.GetHostName();
     private static TcpChannel _callbackChannel = null; // callback channel
     private static bool _useIncreasedTimeoutForInitialConnection = true;
     private static int _timeout = 0;
+    private static object _Padlock = new object();
 
     #endregion
 
@@ -211,6 +214,31 @@ namespace TvControl
       }
     }
 
+    private static bool IsHostNameMatch(string strHostNameA, string strHostNameB)
+    {
+      if (strHostNameA.Equals(strHostNameB, StringComparison.OrdinalIgnoreCase))
+        return true;
+
+      IPAddress.TryParse(strHostNameA, out IPAddress ipHostA);
+      IPAddress.TryParse(strHostNameB, out IPAddress ipHostB);
+
+      if (ipHostA != null && ipHostB == null)
+      {
+        IPAddress[] ips = Dns.GetHostAddresses(strHostNameB);
+        if (ips != null && ips.Any(ip => ip.Equals(ipHostA)))
+          return true;
+      }
+
+      if (ipHostA == null && ipHostB != null)
+      {
+        IPAddress[] ips = Dns.GetHostAddresses(strHostNameA);
+        if (ips != null && ips.Any(ip => ip.Equals(ipHostB)))
+          return true;
+      }
+
+      return false;
+    }
+
     #endregion
 
     #region public properties
@@ -237,11 +265,34 @@ namespace TvControl
     /// <value>The name of the host.</value>
     public static string HostName
     {
-      get { return _hostName; }
+      get
+      {
+        lock (_Padlock)
+        {
+          return _hostName;
+        }
+      }
       set
       {
-        if (_hostName != value)
+        lock (_Padlock)
         {
+          if (string.IsNullOrWhiteSpace(value))
+          {
+            Log.Error("RemoteControl: HostName: value is empty.");
+            return;
+          }
+
+          if (value.Equals(_hostName, StringComparison.OrdinalIgnoreCase))
+            return;
+
+          if (IsHostNameMatch(value, _hostName))
+          {
+            Log.Debug("RemoteControl: HostName: No change: '{0}' == '{1}'", _hostName, value);
+            _hostName = value;
+            return;
+          }
+
+          Log.Debug("RemoteControl: HostName: Change: '{0}' --> '{1}'", _hostName, value);
           _tvControl = null;
           _hostName = value;
         }
@@ -472,79 +523,102 @@ namespace TvControl
     {
       get
       {
-        try
-        {
-          if (_tvControl != null)
-          {
-            //only query state if the caller has subcribed to the disconnect/connect events
-            if (OnRemotingDisconnected != null || OnRemotingConnected != null)
-            {
-              RefreshRemotingConnectionStatus();
-              if (!_isRemotingConnected)
-                return null;
-            }
+        //Used for internal service operation as we have one server only. There is no need to use remoting.
+        if (_tvControlLocal != null)
+          return _tvControlLocal;
 
-            return _tvControl;
-          }
-
-          // register remoting channel
-          RegisterChannel();
-
-          _tvControl =
-            (IController)
-            Activator.GetObject(typeof (IController),
-                                String.Format("tcp://{0}:{1}/TvControl", _hostName, REMOTING_PORT));
-
-          //only query state if the caller has subcribed to the disconnect/connect events
-          if (OnRemotingDisconnected != null || OnRemotingConnected != null)
-          {
-            //StartConnectionMonitorThread();
-
-            RefreshRemotingConnectionStatus();
-            if (!_isRemotingConnected)
-              return null;
-          }
-
-          return _tvControl;
-        }
-        catch (RemotingTimeoutException exrt)
+        lock (_Padlock)
         {
           try
           {
-            Log.Error("RemoteControl: Timeout getting server Instance; retrying in 5 seconds - {0}", exrt.Message);
-            // maybe the DB wasn't up yet - 2nd try...
-            Thread.Sleep(5000);
+            if (_tvControl != null)
+            {
+              //only query state if the caller has subcribed to the disconnect/connect events
+              if (OnRemotingDisconnected != null || OnRemotingConnected != null)
+              {
+                RefreshRemotingConnectionStatus();
+                if (!_isRemotingConnected)
+                  return null;
+              }
+
+              return _tvControl;
+            }
+
+            Log.Debug("RemoteControl: Instance: Creating TvControl to host: '{0}'", _hostName);
 
             // register remoting channel
             RegisterChannel();
 
             _tvControl =
               (IController)
-              Activator.GetObject(typeof (IController),
+              Activator.GetObject(typeof(IController),
                                   String.Format("tcp://{0}:{1}/TvControl", _hostName, REMOTING_PORT));
 
             //only query state if the caller has subcribed to the disconnect/connect events
             if (OnRemotingDisconnected != null || OnRemotingConnected != null)
             {
+              //StartConnectionMonitorThread();
+
               RefreshRemotingConnectionStatus();
               if (!_isRemotingConnected)
                 return null;
             }
 
+            Log.Debug("RemoteControl: Instance: Created.", _hostName);
+
+            //Log.Debug("RemoteControl: Instance: Stack:\r\n{0}", new StackTrace());
             return _tvControl;
           }
-            // didn't help - do nothing
-          catch (Exception ex)
+          catch (RemotingTimeoutException exrt)
           {
-            Log.Error("RemoteControl: Error getting server Instance - {0}", ex.Message);
-          }
-        }
-        catch (Exception exg)
-        {
-          Log.Error("RemoteControl: Error getting server Instance - {0}", exg.Message);
-        }
+            try
+            {
+              Log.Error("RemoteControl: Timeout getting server Instance; retrying in 5 seconds - {0}", exrt.Message);
+              // maybe the DB wasn't up yet - 2nd try...
+              Thread.Sleep(5000);
 
-        return null;
+              // register remoting channel
+              RegisterChannel();
+
+              _tvControl =
+                (IController)
+                Activator.GetObject(typeof(IController),
+                                    String.Format("tcp://{0}:{1}/TvControl", _hostName, REMOTING_PORT));
+
+              //only query state if the caller has subcribed to the disconnect/connect events
+              if (OnRemotingDisconnected != null || OnRemotingConnected != null)
+              {
+                RefreshRemotingConnectionStatus();
+                if (!_isRemotingConnected)
+                  return null;
+              }
+
+              return _tvControl;
+            }
+            // didn't help - do nothing
+            catch (Exception ex)
+            {
+              Log.Error("RemoteControl: Error getting server Instance - {0}", ex.Message);
+            }
+          }
+          catch (Exception exg)
+          {
+            Log.Error("RemoteControl: Error getting server Instance - {0}", exg.Message);
+          }
+
+          return null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Set local service instance of IController. Used for internal service operation as we have one server only. There is no need to use remoting.
+    /// </summary>
+    public static IController InstanceLocal
+    {
+      set
+      {
+        _tvControlLocal = value;
       }
     }
 

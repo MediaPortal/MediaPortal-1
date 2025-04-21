@@ -9,9 +9,10 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>blue.png</texture>
+      <texture>BH extensions.jpg</texture>
       <width>1920</width>
       <height>1080</height>
+      <colordiffuse>90ffffff</colordiffuse>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
@@ -82,22 +83,23 @@
     <import>common.facade.music.xml</import>
     <control>
       <type>label</type>
-      <posX>1455</posX>
-      <posY>270</posY>
+      <posX>1490</posX>
+      <posY>260</posY>
       <label>#MPEI.Translation.Description.Label</label>
-      <textcolor>ffa9d0f7</textcolor>
-      <font>font12</font>
+      <textcolor>ff00aaff</textcolor>
+      <font>Label</font>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>
       <visible>!string.equals(#MPE.Selection.Description,)</visible>
     </control>
     <control>
       <type>textboxscrollup</type>
-      <posX>1455</posX>
-      <posY>315</posY>
-      <width>420</width>
-      <height>570</height>
-      <font>font12</font>
+      <posX>1490</posX>
+      <posY>305</posY>
+      <width>400</width>
+      <height>700</height>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
       <label>#MPE.Selection.Description</label>
       <animation effect="Fade" time="250">WindowOpen</animation>
       <animation effect="Fade" time="100">WindowClose</animation>

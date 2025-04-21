@@ -61,7 +61,7 @@
       <posX>0</posX>
       <posY>0</posY>
       <width>1920</width>
-      <height>405</height>
+      <height>370</height>
       <texture>overlay_top.png</texture>
       <colordiffuse>ccffffff</colordiffuse>
     </control>
@@ -69,13 +69,13 @@
       <type>label</type>
       <id>1</id>
       <posX>45</posX>
-      <posY>15</posY>
+      <posY>54</posY>
       <label>#(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
       <font>Label</font>
       <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
-    <control>
+    <!--control>
       <description>background selecteditem</description>
       <type>image</type>
       <id>0</id>
@@ -83,10 +83,10 @@
       <posY>97</posY>
       <width>2025</width>
       <height>90</height>
-      <texture>general_overlay_selecteditem.png</texture>
+      <texture>-</texture>
       <colordiffuse>bbffffff</colordiffuse>
-    </control>
-    <control>
+    </control-->
+    <!--control>
       <description>Selected item Label</description>
       <type>fadelabel</type>
       <id>1</id>
@@ -96,8 +96,8 @@
       <label>#Emulators2.CurrentItem.title</label>
       <font>Menutitle</font>
       <align>center</align>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
+      <textcolor>ff00bfff</textcolor>
+    </control-->
     <import>common.time.xml</import>
     <control>
       <description>General Overlay</description>
@@ -118,7 +118,7 @@
       <width>1920</width>
       <height>1080</height>
       <texture>general_overlay.png</texture>
-      <colordiffuse>90ffffff</colordiffuse>
+      <colordiffuse>40ffffff</colordiffuse>
     </control>
     <import>Emulators2.facade.xml</import>
     <import>Emulators2.listview.xml</import>
@@ -128,11 +128,11 @@
       <type>label</type>
       <id>0</id>
       <posX>45</posX>
-      <posY>52</posY>
+      <posY>94</posY>
       <width>1350</width>
-      <font>font11</font>
+      <font>Label</font>
       <label>#Emulators2.currentfilter</label>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>lightgray</textcolor>
       <visible>control.isvisible(50)</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>

@@ -38,7 +38,7 @@
           <textXOff2>825</textXOff2>
           <textYOff2>3</textYOff2>
           <font3>font12</font3>
-          <textureFocus>#(iif(eq(#MovingPictures.UserMovieSettings.watched,'0'),'button_focus_notwatched.png','button_focus.png'))</textureFocus>
+          <textureFocus>#(iif(eq(#MovingPictures.UserMovieSettings.watched,'0'),'listfocus_notwatched.png','listfocus.png'))</textureFocus>
           <spinCanFocus>no</spinCanFocus>
           <!-- group headers -->
           <textXOff3>0</textXOff3>
@@ -59,8 +59,8 @@
           <downloadColor>ff666666</downloadColor>
           <downloadColor2>ff80ff80</downloadColor2>
           <dimColor>ffffffff</dimColor>
-          <onleft>4</onleft>
-          <onright>4</onright>
+          <onleft>2</onleft>
+          <onright>50</onright>
         </control>
         <control>
           <visible>control.isvisible(50)</visible>
@@ -234,7 +234,7 @@
                 <width>230</width>
                 <label>#MovingPictures.SelectedMovie.year  -  #MovingPictures.SelectedMovie.runtime.localized.short</label>
                 <font>font11</font>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -249,7 +249,7 @@
                 <textureWidth>17</textureWidth>
                 <textureHeight>17</textureHeight>
                 <subitems>
-                  <subitem>greystar.png</subitem>
+                  <subitem>starbad.png</subitem>
                   <subitem>star.png</subitem>
                 </subitems>
                 <orientation>horizontal</orientation>
@@ -267,7 +267,7 @@
                 <width>365</width>
                 <label>#MovingPictures.Translation.Director.Label</label>
                 <font>font9</font>
-                <textcolor>lightskyblue</textcolor>
+                <textcolor>ff00bfff</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -279,7 +279,7 @@
                 <width>365</width>
                 <label>#MovingPictures.SelectedMovie.extra.directors.1</label>
                 <font>font9</font>
-                <textcolor>ivory</textcolor>
+                <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
               </control>
@@ -309,9 +309,9 @@
       <id>1</id>
       <posX>187</posX>
       <posY>262</posY>
-      <width>681</width>
-      <height>682</height>
-      <texture flipY="true" diffuse="Thumb_Mask.png">Categories\Movies.png</texture>
+      <width>600</width>
+      <height>600</height>
+      <texture>Categories\Movies.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>control.isvisible(51)+!Control.HasThumb(100)</visible>
     </control>
@@ -321,9 +321,9 @@
       <id>100</id>
       <posX>187</posX>
       <posY>262</posY>
-      <width>681</width>
-      <height>682</height>
-      <texture flipY="true" diffuse="Thumb_Mask.png">Categories\#MovingPictures.SelectedNode.FileFriendlyName.png</texture>
+      <width>600</width>
+      <height>600</height>
+      <texture>Categories\#MovingPictures.SelectedNode.FileFriendlyName.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>control.isvisible(51)</visible>
     </control>

@@ -203,7 +203,10 @@ Ce PC sera utilisé comme TV-Server dédié et distribuera la TV aux autres PC d
     <value>Microsoft SQL-Server Express 2005</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
-    <value>MySQL 5</value>
+    <value>MySQL 8</value>
+  </data>
+  <data name="DBMSType_rbMariaDB" xml:space="preserve">
+    <value>MariaDB 10</value>
   </data>
   <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
     <value>Un serveur SQL est déjà présent et sera utilisé pour le TV-Server</value>

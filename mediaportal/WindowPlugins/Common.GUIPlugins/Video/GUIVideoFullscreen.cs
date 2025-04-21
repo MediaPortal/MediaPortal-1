@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2018 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1331,6 +1331,9 @@ namespace MediaPortal.GUI.Video
         dlg.AddLocalizedString(1064); // Bookmarks
       }
 
+      if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        dlg.AddLocalizedString(200096); // Pixel Shaders
+
       _IsDialogVisible = true;
       dlg.DoModal(GetID);
       _IsDialogVisible = false;
@@ -1395,6 +1398,12 @@ namespace MediaPortal.GUI.Video
 
         case 200091:
           ShowChapterStreamsMenu();
+          break;
+
+        case 200096:
+          _IsDialogVisible = true;
+          GUIGraphicsContext.VideoPixelShaders.ShowPixelShaderMenu();
+          _IsDialogVisible = false;
           break;
       }
     }

@@ -4,7 +4,8 @@
 <window>
   <id>96742</id>
   <defaultcontrol>50</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:</define>
   <!-- 	This set of defines are read by the plug-in and used to determine aspects of it's behavior. These 	are parameters to give the skinner a tiny bit more control over the presentation. 	-->
   <define>#largeicons.available:true</define>
   <!-- true if this skin implements the largeicons view -->
@@ -100,8 +101,12 @@
       <animation effect="fade" start="0" end="100" time="200">Visible</animation>
       <animation effect="fade" start="100" end="0" time="200" delay="200">Hidden</animation>
     </control>
-    <import>common.window.xml</import>
-    <import>common.time.xml</import>
+    <!--import>common.window.xml</import>
+    <import>common.time.xml</import-->
+    <include condition="#(eq(#skin.thumbsview,'Normal'))">common.window.xml</include>
+    <include condition="#(eq(#skin.thumbsview,'Fanart Wall'))">common.window.fanartwall.xml</include>
+    <include condition="#(eq(#skin.thumbsview,'Normal'))">common.time.xml</include>
+    <include condition="#(eq(#skin.thumbsview,'Fanart Wall'))">common.time.fanartwall.xml</include>
     <control>
       <description>General Overlay</description>
       <id>0</id>
@@ -111,6 +116,7 @@
       <width>1920</width>
       <height>1080</height>
       <texture>general_overlay.png</texture>
+      <visible>![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]|control.isvisible(888)</visible>
     </control>
     <control>
       <description>General Overlay</description>
@@ -122,27 +128,30 @@
       <height>1080</height>
       <texture>general_overlay.png</texture>
       <colordiffuse>90ffffff</colordiffuse>
+      <visible>![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]|control.isvisible(888)</visible>
     </control>
     <!-- VIEWS -->
+    <import>movingpictures.details.xml</import>
     <import>movingpictures.hiddenmenu.xml</import>
     <import>movingpictures.listview.xml</import>
-    <import>movingpictures.details.xml</import>
-    <import>movingpictures.facade.xml</import>
     <import>movingpictures.mediainfo.xml</import>
+    <include condition="#(eq(#skin.thumbsview,'Normal'))">movingpictures.facade.xml</include>
+    <include condition="#(eq(#skin.thumbsview,'Fanart Wall'))">movingpictures.facade.fanartwall.xml</include>
+    
     <!-- Top Bar Controls -->
     <control>
-      <description>Movie Count</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>1866</posX>
-      <posY>52</posY>
-      <label>#MovingPictures.general.itemcount</label>
-      <align>right</align>
-      <font>font11</font>
-      <textcolor>ffFFFFFF</textcolor>
-      <visible>control.isvisible(50)</visible>
-    </control>
-    <control>
+    <description>Current Category</description>
+    <type>label</type>
+    <id>0</id>
+    <posX>1869</posX>
+    <posY>16</posY>
+    <align>right</align>
+    <font>font11</font>
+    <label>#MovingPictures.CurrentNode.name: #MovingPictures.general.filteredmoviecount #MovingPictures.Translation.Movies.Label</label>
+    <textcolor>lightgray</textcolor>
+    <visible>[Control.IsVisible(50)|Control.IsVisible(51)]+!Control.IsVisible(17)+![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]</visible>
+  </control>
+    <!--control>
       <description>Parental Controls Lock Indicator</description>
       <type>image</type>
       <id>16</id>
@@ -151,43 +160,9 @@
       <width>72</width>
       <height>72</height>
       <texture>lock.png</texture>
-    </control>
-    <control>
-      <description>Current Category</description>
-      <type>label</type>
-      <id>16</id>
-      <posX>45</posX>
-      <posY>52</posY>
-      <width>1350</width>
-      <font>font11</font>
-      <label>#MovingPictures.Translation.MovieDetails.Label</label>
-      <textcolor>ffa9d0f7</textcolor>
-      <visible>!control.isvisible(50)+!control.isvisible(51)</visible>
-    </control>
-    <control>
-      <description>Current Category</description>
-      <type>label</type>
-      <id>16</id>
-      <posX>45</posX>
-      <posY>52</posY>
-      <width>1350</width>
-      <font>font11</font>
-      <label>#MovingPictures.CurrentNode.name</label>
-      <textcolor>ffa9d0f7</textcolor>
-      <visible>[control.isvisible(50)|control.isvisible(51)]+!control.isvisible(17)</visible>
-    </control>
-    <control>
-      <description>Current Category / Filter</description>
-      <type>label</type>
-      <id>16</id>
-      <posX>45</posX>
-      <posY>52</posY>
-      <width>1350</width>
-      <font>font11</font>
-      <label>#MovingPictures.CurrentNode.name / #MovingPictures.Filter.Name</label>
-      <textcolor>ffa9d0f7</textcolor>
-      <visible>[control.isvisible(50)|control.isvisible(51)]+control.isvisible(17)</visible>
-    </control>
+      <visible>![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]</visible>
+    </control-->
+    
     <!-- Dim background when movie starts -->
     <!-- This is to provide feedback to the user something is happening when there are long pauses before playback -->
     <control>

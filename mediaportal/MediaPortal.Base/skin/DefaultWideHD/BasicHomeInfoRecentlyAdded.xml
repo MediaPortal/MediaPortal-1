@@ -7,7 +7,7 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      <animation effect="fade" start="0" end="100" time="700" delay="2000" condition="window.isvisible(35)">conditional</animation>
+      <visible>window.isvisible(35)</visible>
       <!-- ******************************************************************************************* -->
       <!-- ************************* TRENDING MOVIES/SERIES TRAKT ************************************ -->
       <!-- ******************************************************************************************* -->
@@ -16,64 +16,77 @@
         <type>image</type>
         <id>61150</id>
         <posX>70</posX>
-        <posY>90</posY>
+        <posY>250</posY>
         <width>1770</width>
         <height>275</height>
-        <texture>osdbg2.png</texture>
-        <colordiffuse>ffffffff</colordiffuse>
-        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        <texture>latestmediabg.png</texture>
+        <colordiffuse>eeffffff</colordiffuse>
+        
         <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
       </control>
+      <control>
+      <description>divider</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>955</posX>
+      <posY>285</posY>
+      <height>205</height>
+      <width>1</width>
+      <texture>verticalbar.png</texture>
+      <colordiffuse>dodgerblue</colordiffuse>
+      
+      <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
+    </control>
       <control>
         <description>Trending Movies label</description>
         <type>label</type>
         <id>0</id>
         <posX>124</posX>
-        <posY>114</posY>
-        <width>1030</width>
-        <label>#Trakt.Translation.TrendingMovies.Label:</label>
-        <font>RSS</font>
-        <textcolor>ivory</textcolor>
-        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
+        <posY>270</posY>
+        <width>1130</width>
+        <label>#Trakt.Translation.TrendingMovies.Label</label>
+        <font>font10</font>
+        <textcolor>lightgray</textcolor>
+        
+        <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]+![Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
       </control>
       <control>
         <description>Trending Series label</description>
         <type>label</type>
         <id>0</id>
-        <posX>1000</posX>
-        <posY>114</posY>
-        <width>590</width>
-        <label>#Trakt.Translation.TrendingShows.Label:</label>
-        <font>RSS</font>
-        <textcolor>ivory</textcolor>
-        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
+        <posX>1020</posX>
+        <posY>270</posY>
+        <width>690</width>
+        <label>#Trakt.Translation.TrendingShows.Label</label>
+        <font>font10</font>
+        <textcolor>lightgray</textcolor>
+        
+        <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]+![Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
       </control>
       <!--            :: Movie Titles ::            -->
       <control>
         <type>fadelabel</type>
         <id>0</id>
-        <posX>430</posX>
-        <posY>114</posY>
-        <width>580</width>
-        <label>#selecteditem</label>
-        <font>RSS</font>
-        <textcolor>ivory</textcolor>
-        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        <posX>124</posX>
+        <posY>270</posY>
+        <width>800</width>
+        <label>#Trakt.Translation.TrendingMovies.Label: #selecteditem</label>
+        <font>font10</font>
+        <textcolor>lightgray</textcolor>
+        
         <visible>Control.hasfocus(98302)</visible>
       </control>
       <!--            :: Series Titles ::            -->
       <control>
         <type>fadelabel</type>
         <id>0</id>
-        <posX>1310</posX>
-        <posY>114</posY>
-        <width>580</width>
-        <label>#selecteditem</label>
-        <font>RSS</font>
-        <textcolor>ivory</textcolor>
-        <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+        <posX>1000</posX>
+        <posY>270</posY>
+        <width>800</width>
+        <label>#Trakt.Translation.TrendingShows.Label: #selecteditem</label>
+        <font>font10</font>
+        <textcolor>lightgray</textcolor>
+        
         <visible>Control.hasfocus(98301)</visible>
       </control>
       
@@ -91,9 +104,13 @@
           <onup>17</onup>
           <ondown>820101</ondown>
           <posX>124</posX>
-          <posY>162</posY>
+          <posY>322</posY>
           <width>1650</width>
           <height>170</height>
+          <onleft>98301</onleft>
+          <onright>98301</onright>
+          <onup>17</onup>
+          <ondown>820101</ondown>
           <scrollOffset>0</scrollOffset>
           <itemWidth>129</itemWidth>
           <itemHeight>167</itemHeight>
@@ -114,9 +131,9 @@
           <spinCanFocus>no</spinCanFocus>
           <spinXOff>-2000</spinXOff>
           <thumbs mask="dvdcase_mask.png"></thumbs>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="200" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
+          
+          <thumbAnimation effect="zoom" start="100,100" end="115,115" time="200" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="115,115" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
           <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
         </control>
       </control>
@@ -133,8 +150,8 @@
           <onright>98302</onright>
           <onup>17</onup>
           <ondown>820101</ondown>
-          <posX>1000</posX>
-          <posY>159</posY>
+          <posX>1020</posX>
+          <posY>322</posY>
           <width>825</width>
           <height>170</height>
           <scrollOffset>0</scrollOffset>
@@ -157,9 +174,9 @@
           <spinCanFocus>no</spinCanFocus>
           <spinXOff>-2000</spinXOff>
           <thumbs mask="dvdcase_mask.png"></thumbs>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="200" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
+          
+          <thumbAnimation effect="zoom" start="100,100" end="115,115" time="200" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="115,115" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
           <visible>plugin.isenabled(Trakt)+string.contains(#highlightedbutton,TRAKT)+window.isvisible(35)|[Control.isvisible(61150)]|[Control.hasfocus(98302)|Control.hasfocus(98301)]</visible>
         </control>
       </control>
@@ -171,12 +188,12 @@
           <type>image</type>
           <id>0</id>
           <posX>70</posX>
-          <posY>90</posY>
+          <posY>250</posY>
           <width>1770</width>
           <height>275</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(MP-TV Series)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true)+!string.equals(#latestMediaHandler.tvseries.latest1.serieName,)+[string.contains(#highlightedbutton,VIDEO2)|string.contains(#highlightedbutton,TVSERIES)|Control.hasfocus(919199940)]</visible>
         </control>
         <control>
@@ -184,12 +201,12 @@
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
-          <posY>114</posY>
+          <posY>270</posY>
           <width>1750</width>
-          <font>RSS</font>
-          <label>#latestMediaHandler.tvseries.latest.type  #latestMediaHandler.tvseries.selected.serieName  S#latestMediaHandler.tvseries.selected.seasonIndexE#latestMediaHandler.tvseries.selected.episodeIndex: #latestMediaHandler.tvseries.selected.episodeName (#latestMediaHandler.tvseries.selected.dateAdded)</label>
+          <font>font10</font>
+          <label>#latestMediaHandler.tvseries.latest.type  #latestMediaHandler.tvseries.selected.serieName #scroll.wrap S#latestMediaHandler.tvseries.selected.seasonIndexE#latestMediaHandler.tvseries.selected.episodeIndex #scroll.wrap #latestMediaHandler.tvseries.selected.episodeName (#latestMediaHandler.tvseries.selected.dateAdded)</label>
           <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(MP-TV Series)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true)+!string.equals(#latestMediaHandler.tvseries.latest1.serieName,)+[string.contains(#highlightedbutton,VIDEO2)|string.contains(#highlightedbutton,TVSERIES)|Control.hasfocus(919199940)]</visible>
         </control>
         <control>
@@ -201,7 +218,7 @@
           <type>filmstrip</type>
           <id>919199940</id>
           <posX>124</posX>
-          <posY>159</posY>
+          <posY>322</posY>
           <width>1700</width>
           <height>180</height>
           <onleft>919199940</onleft>
@@ -232,24 +249,26 @@
           <folderPrefix />
           <folderSuffix />
           <showScrollbar>no</showScrollbar>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="100,100" end="115,115" time="300" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="115,115" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
           <spinPosX>3710</spinPosX>
           <spinCanFocus>no</spinCanFocus>
+          
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(MP-TV Series)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true)+!string.equals(#latestMediaHandler.tvseries.latest1.serieName,)+[string.contains(#highlightedbutton,VIDEO2)|string.contains(#highlightedbutton,TVSERIES)|Control.hasfocus(919199940)]</visible>
         </control>
         </control>
-        <control>
+        
+        <!--control>
           <description>Plot Background</description>
           <type>image</type>
           <id>0</id>
           <posX>70</posX>
           <posY>360</posY>
           <width>1770</width>
-          <height>225</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <height>210</height>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="200">visible</animation>
           <visible>control.hasfocus(919199940)</visible>
         </control>
         <control>
@@ -259,13 +278,13 @@
           <posX>140</posX>
           <posY>390</posY>
           <width>1650</width>
-          <height>150</height>
+          <height>165</height>
           <font>font10</font>
-          <textcolor>ffffffff</textcolor>
+          <textcolor>lightgray</textcolor>
           <label>#latestMediaHandler.tvseries.selected.plot</label>
           <visible>control.hasfocus(919199940)</visible>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-        </control>
+          <animation effect="fade" delay="1000" time="200">visible</animation>
+        </control-->
       <!-- ******************************************************************************************* -->
       <!-- ************************* RECENTLY ADDED MOVINGPICTURES *********************************** -->
       <!-- ******************************************************************************************* -->
@@ -274,12 +293,12 @@
           <type>image</type>
           <id>0</id>
           <posX>160</posX>
-          <posY>90</posY>
+          <posY>250</posY>
           <width>1590</width>
           <height>275</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Moving Pictures)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true)+!string.equals(#latestMediaHandler.movingpicture.latest1.title,)+[string.contains(#highlightedbutton,MOVPIC)|Control.hasfocus(919199910)]</visible>
         </control>
         <control>
@@ -287,12 +306,12 @@
           <type>label</type>
           <id>0</id>
           <posX>214</posX>
-          <posY>114</posY>
+          <posY>270</posY>
           <width>1590</width>
-          <font>RSS</font>
-          <label>#SkinTranslation.Translations.NewFilms.Label:  #latestMediaHandler.movingpicture.selected.title  ~ #latestMediaHandler.movingpicture.selected.genre  (#latestMediaHandler.movingpicture.selected.dateAdded)</label>
+          <font>font10</font>
+          <label>#SkinTranslation.Translations.NewFilms.Label: #latestMediaHandler.movingpicture.selected.title #scroll.wrap #latestMediaHandler.movingpicture.selected.genre  (#latestMediaHandler.movingpicture.selected.dateAdded)</label>
           <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Moving Pictures)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true)+!string.equals(#latestMediaHandler.movingpicture.latest1.title,)+[string.contains(#highlightedbutton,MOVPIC)|Control.hasfocus(919199910)]</visible>
         </control>
         <control>
@@ -304,7 +323,7 @@
           <type>filmstrip</type>
           <id>919199910</id>
           <posX>214</posX>
-          <posY>159</posY>
+          <posY>322</posY>
           <width>1850</width>
           <height>140</height>
           <onleft>919199910</onleft>
@@ -334,24 +353,25 @@
           <folderPrefix />
           <folderSuffix />
           <showScrollbar>no</showScrollbar>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="100,100" end="115,115" time="300" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="115,115" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
           <spinPosX>3710</spinPosX>
           <spinCanFocus>no</spinCanFocus>
+          
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Moving Pictures)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true)+!string.equals(#latestMediaHandler.movingpicture.latest1.title,)+[string.contains(#highlightedbutton,MOVPIC)|Control.hasfocus(919199910)]</visible>
         </control>
         </control>
-        <control>
+        <!--control>
           <description>Plot Background</description>
           <type>image</type>
           <id>0</id>
           <posX>160</posX>
           <posY>360</posY>
           <width>1590</width>
-          <height>225</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <height>210</height>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="200">visible</animation>
           <visible>control.hasfocus(919199910)</visible>
         </control>
         <control>
@@ -361,13 +381,13 @@
           <posX>214</posX>
           <posY>390</posY>
           <width>1500</width>
-          <height>150</height>
+          <height>165</height>
           <font>font10</font>
-          <textcolor>ffffffff</textcolor>
+          <textcolor>lightgray</textcolor>
           <label>#latestMediaHandler.movingpicture.selected.plot</label>
           <visible>control.hasfocus(919199910)</visible>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-        </control>
+          <animation effect="fade" delay="1000" time="200">visible</animation>
+        </control-->
       <!-- ******************************************************************************************** -->
       <!-- ******************************* RECENTLY ADDED TV RECORDINGS ****************************** -->
       <!-- ******************************************************************************************* -->
@@ -376,12 +396,12 @@
           <type>image</type>
           <id>0</id>
           <posX>70</posX>
-          <posY>90</posY>
+          <posY>250</posY>
           <width>1770</width>
           <height>245</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(TV)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)+!string.equals(#latestMediaHandler.tvrecordings.latest1.title,)+[string.contains(#highlightedbutton,TV3)|Control.hasfocus(919199840)]</visible>
         </control>
         <control>
@@ -389,12 +409,12 @@
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
-          <posY>114</posY>
+          <posY>270</posY>
           <width>1750</width>
-          <font>RSS</font>
-          <label>#SkinTranslation.Translations.NewRecordings.Label:  #latestMediaHandler.tvrecordings.selected.title (#latestMediaHandler.tvrecordings.selected.dateAdded)</label>
+          <font>font10</font>
+          <label>#SkinTranslation.Translations.NewRecordings.Label: #latestMediaHandler.tvrecordings.selected.title (#latestMediaHandler.tvrecordings.selected.dateAdded)</label>
           <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(TV)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)+!string.equals(#latestMediaHandler.tvrecordings.latest1.title,)+[string.contains(#highlightedbutton,TV3)|Control.hasfocus(919199840)]</visible>
         </control>
         <control>
@@ -406,7 +426,7 @@
           <type>filmstrip</type>
           <id>919199840</id>
           <posX>134</posX>
-          <posY>165</posY>
+          <posY>322</posY>
           <width>1700</width>
           <height>140</height>
           <onleft>919199840</onleft>
@@ -436,24 +456,25 @@
           <folderPrefix />
           <folderSuffix />
           <showScrollbar>no</showScrollbar>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
+          
+          <thumbAnimation effect="zoom" start="100,100" end="115,115" time="300" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="115,115" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
           <spinPosX>3710</spinPosX>
           <spinCanFocus>no</spinCanFocus>
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(TV)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)+!string.equals(#latestMediaHandler.tvrecordings.latest1.title,)+[string.contains(#highlightedbutton,TV3)|Control.hasfocus(919199840)]</visible>
         </control>
         </control>
-        <control>
+        <!--control>
           <description>Plot Background</description>
           <type>image</type>
           <id>0</id>
           <posX>70</posX>
           <posY>330</posY>
           <width>1770</width>
-          <height>225</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <height>210</height>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="200">visible</animation>
           <visible>control.hasfocus(919199840)</visible>
         </control>
         <control>
@@ -463,13 +484,13 @@
           <posX>140</posX>
           <posY>360</posY>
           <width>1650</width>
-          <height>150</height>
+          <height>165</height>
           <font>font10</font>
-          <textcolor>ffffffff</textcolor>
+          <textcolor>lightgray</textcolor>
           <label>#latestMediaHandler.tvrecordings.selected.summary</label>
           <visible>control.hasfocus(919199840)</visible>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-        </control>
+          <animation effect="fade" delay="1000" time="200">visible</animation>
+        </control-->
       <!-- ******************************************************************************************* -->
       <!-- ************************* RECENTLY ADDED MUSIC ************************************** -->
       <!-- ******************************************************************************************* -->
@@ -478,12 +499,12 @@
           <type>image</type>
           <id>0</id>
           <posX>160</posX>
-          <posY>90</posY>
+          <posY>250</posY>
           <width>1590</width>
           <height>245</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Music)+string.equals(#latestMediaHandler.music.latest.enabled,true)+!string.equals(#latestMediaHandler.music.latest1.artist,)+[string.contains(#highlightedbutton,AUDIO1)|string.contains(#highlightedbutton,MUSIC)|Control.hasfocus(919199970)]</visible>
         </control>
         <control>
@@ -491,12 +512,12 @@
           <type>label</type>
           <id>0</id>
           <posX>214</posX>
-          <posY>114</posY>
+          <posY>270</posY>
           <width>1590</width>
-          <font>RSS</font>
-          <label>#latestMediaHandler.music.label  #latestMediaHandler.music.selected.artist ~ #latestMediaHandler.music.selected.album  (#latestMediaHandler.music.selected.dateAdded)</label>
+          <font>font10</font>
+          <label>#latestMediaHandler.music.label: #latestMediaHandler.music.selected.artist #scroll.wrap #latestMediaHandler.music.selected.album  (#latestMediaHandler.music.selected.dateAdded)</label>
           <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Music)+string.equals(#latestMediaHandler.music.latest.enabled,true)+!string.equals(#latestMediaHandler.music.latest1.artist,)+[string.contains(#highlightedbutton,AUDIO1)|string.contains(#highlightedbutton,MUSIC)|Control.hasfocus(919199970)]</visible>
         </control>
         <control>
@@ -508,7 +529,7 @@
           <type>filmstrip</type>
           <id>919199970</id>
           <posX>214</posX>
-          <posY>159</posY>
+          <posY>322</posY>
           <width>1850</width>
           <height>140</height>
           <onleft>820101</onleft>
@@ -539,24 +560,25 @@
           <folderPrefix />
           <folderSuffix />
           <showScrollbar>no</showScrollbar>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
+          
+          <thumbAnimation effect="zoom" start="100,100" end="115,115" time="300" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="115,115" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
           <spinPosX>3710</spinPosX>
           <spinCanFocus>no</spinCanFocus>
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Music)+string.equals(#latestMediaHandler.music.latest.enabled,true)+!string.equals(#latestMediaHandler.music.latest1.artist,)+[string.contains(#highlightedbutton,AUDIO1)|string.contains(#highlightedbutton,MUSIC)|Control.hasfocus(919199970)]</visible>
         </control>
         </control>
-        <control>
+        <!--control>
           <description>Plot Background</description>
           <type>image</type>
           <id>0</id>
           <posX>160</posX>
           <posY>330</posY>
           <width>1590</width>
-          <height>225</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <height>210</height>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="200">visible</animation>
           <visible>control.hasfocus(919199970)</visible>
         </control>
         <control>
@@ -566,13 +588,13 @@
           <posX>214</posX>
           <posY>360</posY>
           <width>1500</width>
-          <height>150</height>
+          <height>165</height>
           <font>font10</font>
-          <textcolor>ffffffff</textcolor>
+          <textcolor>lightgray</textcolor>
           <label>#latestMediaHandler.music.selected.artistbio</label>
           <visible>control.hasfocus(919199970)</visible>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-        </control>
+          <animation effect="fade" delay="1000" time="200">visible</animation>
+        </control-->
       <!-- ******************************************************************************************** -->
       <!-- ******************************* RECENTLY ADDED PICTURES *********************************** -->
       <!-- ******************************************************************************************* -->
@@ -581,12 +603,12 @@
           <type>image</type>
           <id>0</id>
           <posX>70</posX>
-          <posY>90</posY>
+          <posY>250</posY>
           <width>1770</width>
           <height>275</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Pictures)+string.equals(#latestMediaHandler.picture.latest.enabled,true)+!string.equals(#latestMediaHandler.picture.latest1.title,)+[string.contains(#highlightedbutton,PICTURE)|Control.hasfocus(919199710)]</visible>
         </control>
         <control>
@@ -594,12 +616,12 @@
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
-          <posY>114</posY>
+          <posY>270</posY>
           <width>1750</width>
-          <font>RSS</font>
-          <label>#SkinTranslation.Translations.NewPictures.Label:  #latestMediaHandler.picture.selected.title  (#latestMediaHandler.picture.selected.dateAdded)</label>
+          <font>font10</font>
+          <label>#SkinTranslation.Translations.NewPictures.Label: #latestMediaHandler.picture.selected.title  (#latestMediaHandler.picture.selected.dateAdded)</label>
           <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Pictures)+string.equals(#latestMediaHandler.picture.latest.enabled,true)+!string.equals(#latestMediaHandler.picture.latest1.title,)+[string.contains(#highlightedbutton,PICTURE)|Control.hasfocus(919199710)]</visible>
         </control>
         <control>
@@ -611,7 +633,7 @@
           <type>filmstrip</type>
           <id>919199710</id>
           <posX>124</posX>
-          <posY>165</posY>
+          <posY>322</posY>
           <width>1700</width>
           <height>140</height>
           <onleft>919199710</onleft>
@@ -642,8 +664,9 @@
           <folderPrefix />
           <folderSuffix />
           <showScrollbar>no</showScrollbar>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
+          
+          <thumbAnimation effect="zoom" start="100,100" end="115,115" time="300" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="115,115" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
           <spinPosX>3710</spinPosX>
           <spinCanFocus>no</spinCanFocus>
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Pictures)+string.equals(#latestMediaHandler.picture.latest.enabled,true)+!string.equals(#latestMediaHandler.picture.latest1.title,)+[string.contains(#highlightedbutton,PICTURE)|Control.hasfocus(919199710)]</visible>
@@ -657,12 +680,12 @@
           <type>image</type>
           <id>0</id>
           <posX>160</posX>
-          <posY>90</posY>
+          <posY>250</posY>
           <width>1590</width>
           <height>275</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(MyFilms)+string.equals(#latestMediaHandler.myfilms.latest.enabled,true)+!string.equals(#latestMediaHandler.myfilms.latest1.title,)+[string.contains(#highlightedbutton,VIDEO4)|Control.hasfocus(919199880)]</visible>
         </control>
         <control>
@@ -670,12 +693,12 @@
           <type>label</type>
           <id>0</id>
           <posX>214</posX>
-          <posY>114</posY>
+          <posY>270</posY>
           <width>1500</width>
-          <font>RSS</font>
-          <label>#SkinTranslation.Translations.NewFilms.Label:  #latestMediaHandler.myfilms.selected.title  ~ #latestMediaHandler.myfilms.selected.genre  (#latestMediaHandler.myfilms.selected.dateAdded)</label>
+          <font>font10</font>
+          <label>#SkinTranslation.Translations.NewFilms.Label: #latestMediaHandler.myfilms.selected.title #scroll.wrap #latestMediaHandler.myfilms.selected.genre  (#latestMediaHandler.myfilms.selected.dateAdded)</label>
           <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(MyFilms)+string.equals(#latestMediaHandler.myfilms.latest.enabled,true)+!string.equals(#latestMediaHandler.myfilms.latest1.title,)+[string.contains(#highlightedbutton,VIDEO4)|Control.hasfocus(919199880)]</visible>
         </control>
         <control>
@@ -687,7 +710,7 @@
           <type>filmstrip</type>
           <id>919199880</id>
           <posX>214</posX>
-          <posY>159</posY>
+          <posY>322</posY>
           <width>1850</width>
           <height>140</height>
           <onleft>919199880</onleft>
@@ -717,118 +740,14 @@
           <folderPrefix />
           <folderSuffix />
           <showScrollbar>no</showScrollbar>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
+          
+          <thumbAnimation effect="zoom" start="100,100" end="115,115" time="300" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="115,115" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
           <spinPosX>3710</spinPosX>
           <spinCanFocus>no</spinCanFocus>
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(MyFilms)+string.equals(#latestMediaHandler.myfilms.latest.enabled,true)+!string.equals(#latestMediaHandler.myfilms.latest1.title,)+[string.contains(#highlightedbutton,VIDEO4)|Control.hasfocus(919199880)]</visible>
         </control>
         </control>
-        
-      <!-- ******************************************************************************************* -->
-      <!-- ************************* RECENTLY ADDED ONLINE VIDEOS ********************************* -->
-      <!-- ******************************************************************************************* -->
-      <control>
-        <type>group</type>
-        <description>group element</description>
-        <visible>plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,VIDEO3)+plugin.isenabled(OnlineVideos)</visible>
-        <control>
-          <description>background for recently added files</description>
-          <type>image</type>
-          <id>0</id>
-          <posX>70</posX>
-          <posY>90</posY>
-          <width>1770</width>
-          <height>245</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
-        <control>
-          <description>Updates label</description>
-          <type>label</type>
-          <id>0</id>
-          <posX>124</posX>
-          <posY>114</posY>
-          <width>1030</width>
-          <font>RSS</font>
-          <label>#SkinTranslation.Translations.NewYouTubeVideos.Label:</label>
-          <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
-        <control>
-          <description>onlinevideos updates</description>
-          <type>label</type>
-          <id>0</id>
-          <posX>742</posX>
-          <posY>166</posY>
-          <width>1030</width>
-          <font>RSS</font>
-          <label>#OnlineVideos.LatestVideo1.Title ~ #OnlineVideos.LatestVideo1.Duration ~ #OnlineVideos.LatestVideo1.Aired (#OnlineVideos.LatestVideo1.Site)</label>
-          <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
-        <control>
-          <description>onlinevideos updates</description>
-          <type>label</type>
-          <id>0</id>
-          <posX>742</posX>
-          <posY>201</posY>
-          <width>1030</width>
-          <font>RSS</font>
-          <label>#OnlineVideos.LatestVideo2.Title ~ #OnlineVideos.LatestVideo2.Duration ~ #OnlineVideos.LatestVideo2.Aired (#OnlineVideos.LatestVideo2.Site)</label>
-          <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
-        <control>
-          <description>onlinevideos updates</description>
-          <type>label</type>
-          <id>0</id>
-          <posX>742</posX>
-          <posY>236</posY>
-          <width>1030</width>
-          <font>RSS</font>
-          <label>#OnlineVideos.LatestVideo3.Title ~ #OnlineVideos.LatestVideo3.Duration ~ #OnlineVideos.LatestVideo3.Aired (#OnlineVideos.LatestVideo3.Site)</label>
-          <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
-        <control>
-          <type>group</type>
-          <description>group element</description>
-          <layout>StackLayout(10, Horizontal, true)</layout>
-          <posX>124</posX>
-          <posY>159</posY>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <control>
-            <description>onlinevideos Updates</description>
-            <type>image</type>
-            <id>0</id>
-            <width>188</width>
-            <height>118</height>
-            <thumbVAlign>middle</thumbVAlign>
-            <keepaspectratio>yes</keepaspectratio>
-            <texture mask="picturecase_mask.png">#OnlineVideos.LatestVideo1.Thumb</texture>
-          </control>
-          <control>
-            <description>onlinevideos Updates</description>
-            <type>image</type>
-            <id>0</id>
-            <width>188</width>
-            <height>118</height>
-            <keepaspectratio>yes</keepaspectratio>
-            <texture mask="picturecase_mask.png">#OnlineVideos.LatestVideo2.Thumb</texture>
-          </control>
-          <control>
-            <description>onlinevideos Updates</description>
-            <type>image</type>
-            <id>0</id>
-            <width>188</width>
-            <height>118</height>
-            <keepaspectratio>yes</keepaspectratio>
-            <texture mask="picturecase_mask.png">#OnlineVideos.LatestVideo3.Thumb</texture>
-          </control>
-        </control>
-      </control>
       <!-- ******************************************************************************************* -->
       <!-- ******************************* RECENTLY ADDED MYVIDEOS *********************************** -->
       <!-- ******************************************************************************************* -->
@@ -837,12 +756,12 @@
           <type>image</type>
           <id>0</id>
           <posX>160</posX>
-          <posY>90</posY>
+          <posY>250</posY>
           <width>1590</width>
           <height>275</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Videos)+string.equals(#latestMediaHandler.myvideo.latest.enabled,true)+!string.equals(#latestMediaHandler.myvideo.latest1.title,)+[string.contains(#highlightedbutton,VIDEO1)|Control.hasfocus(919198710)]</visible>
         </control>
         <control>
@@ -850,12 +769,12 @@
           <type>label</type>
           <id>0</id>
           <posX>214</posX>
-          <posY>114</posY>
+          <posY>270</posY>
           <width>1500</width>
-          <font>RSS</font>
-          <label>#SkinTranslation.Translations.NewFilms.Label:  #latestMediaHandler.myvideo.selected.title  ~ #latestMediaHandler.myvideo.selected.genre  (#latestMediaHandler.myvideo.selected.dateAdded)</label>
+          <font>font10</font>
+          <label>#SkinTranslation.Translations.NewFilms.Label: #latestMediaHandler.myvideo.selected.title #scroll.wrap #latestMediaHandler.myvideo.selected.genre  (#latestMediaHandler.myvideo.selected.dateAdded)</label>
           <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Videos)+string.equals(#latestMediaHandler.myvideo.latest.enabled,true)+!string.equals(#latestMediaHandler.myvideo.latest1.title,)+[string.contains(#highlightedbutton,VIDEO1)|Control.hasfocus(919198710)]</visible>
         </control>
         <control>
@@ -867,7 +786,7 @@
           <type>filmstrip</type>
           <id>919198710</id>
           <posX>214</posX>
-          <posY>159</posY>
+          <posY>322</posY>
           <width>1850</width>
           <height>140</height>
           <onleft>919198710</onleft>
@@ -897,24 +816,25 @@
           <folderPrefix />
           <folderSuffix />
           <showScrollbar>no</showScrollbar>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
+          
+          <thumbAnimation effect="zoom" start="100,100" end="115,115" time="300" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="115,115" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
           <spinPosX>3710</spinPosX>
           <spinCanFocus>no</spinCanFocus>
           <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(Videos)+string.equals(#latestMediaHandler.myvideo.latest.enabled,true)+!string.equals(#latestMediaHandler.myvideo.latest1.title,)+[string.contains(#highlightedbutton,VIDEO1)|Control.hasfocus(919198710)]</visible>
         </control>
         </control>
-        <control>
+        <!--control>
           <description>Plot Background</description>
           <type>image</type>
           <id>0</id>
           <posX>160</posX>
           <posY>360</posY>
           <width>1590</width>
-          <height>225</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <height>210</height>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="200">visible</animation>
           <visible>control.hasfocus(919198710)</visible>
         </control>
         <control>
@@ -924,43 +844,43 @@
           <posX>214</posX>
           <posY>390</posY>
           <width>1500</width>
-          <height>150</height>
+          <height>165</height>
           <font>font10</font>
-          <textcolor>ffffffff</textcolor>
+          <textcolor>lightgray</textcolor>
           <label>#latestMediaHandler.myvideo.selected.plot</label>
           <visible>control.hasfocus(919198710)</visible>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-        </control>
+          <animation effect="fade" delay="1000" time="200">visible</animation>
+        </control-->
       <!-- ******************************************************************************************* -->
       <!-- *************************      RECENTLY ADDED CLICKFINDER ********************************* -->
       <!-- ******************************************************************************************* -->
       <control>
         <type>group</type>
         <description>group element</description>
-        <visible>plugin.isenabled(Clickfinder ProgramGuide)+[string.contains(#highlightedbutton,TV1)|string.contains(#highlightedbutton,TV6)|string.contains(#highlightedbutton,TV2)]+!string.equals(#ClickfinderPG.Movie1.Title,)+!control.isvisible(7779)+!control.isvisible(7780)</visible>
+        <visible>[plugin.isenabled(Clickfinder ProgramGuide)|plugin.isenabled(ClickfinderSimpleGuide)]+[string.contains(#highlightedbutton,TV1)|string.contains(#highlightedbutton,TV6)|string.contains(#highlightedbutton,TV9)|string.contains(#highlightedbutton,TV2)]+!string.equals(#ClickfinderPG.Movie1.Title,)+!control.isvisible(7779)+!control.isvisible(7780)</visible>
         <control>
           <description>background for recently added files</description>
           <type>image</type>
           <id>0</id>
           <posX>70</posX>
-          <posY>90</posY>
+          <posY>250</posY>
           <width>1770</width>
           <height>245</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          
         </control>
         <control>
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
-          <posY>114</posY>
+          <posY>270</posY>
           <width>1030</width>
-          <font>RSS</font>
+          <font>font10</font>
           <label>Heutige Film-Highlights:</label>
           <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
         </control>
         <control>
           <description>Clickfinder Updates</description>
@@ -969,11 +889,11 @@
           <posX>742</posX>
           <posY>166</posY>
           <width>1050</width>
-          <font>RSS</font>
-          <label>#ClickfinderPG.Movie1.Title ~ #ClickfinderPG.Movie1.Genre (#ClickfinderPG.Movie1.Channel - #ClickfinderPG.Movie1.Time)</label>
+          <font>font10</font>
+          <label>#ClickfinderPG.Movie1.Title #scroll.wrap #ClickfinderPG.Movie1.Genre (#ClickfinderPG.Movie1.Channel - #ClickfinderPG.Movie1.Time)</label>
           <align>left</align>
           <visible>!string.equals(#ClickfinderPG.Movie1.Title,)</visible>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
         </control>
         <control>
           <description>Clickfinder Updates</description>
@@ -982,11 +902,11 @@
           <posX>742</posX>
           <posY>201</posY>
           <width>1050</width>
-          <font>RSS</font>
-          <label>#ClickfinderPG.Movie2.Title ~ #ClickfinderPG.Movie2.Genre (#ClickfinderPG.Movie2.Channel - #ClickfinderPG.Movie2.Time)</label>
+          <font>font10</font>
+          <label>#ClickfinderPG.Movie2.Title #scroll.wrap #ClickfinderPG.Movie2.Genre (#ClickfinderPG.Movie2.Channel - #ClickfinderPG.Movie2.Time)</label>
           <align>left</align>
           <visible>!string.equals(#ClickfinderPG.Movie2.Title,)</visible>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
         </control>
         <control>
           <description>Clickfinder Updates</description>
@@ -995,19 +915,19 @@
           <posX>742</posX>
           <posY>236</posY>
           <width>1050</width>
-          <font>RSS</font>
-          <label>#ClickfinderPG.Movie3.Title ~ #ClickfinderPG.Movie3.Genre (#ClickfinderPG.Movie3.Channel - #ClickfinderPG.Movie3.Time)</label>
+          <font>font10</font>
+          <label>#ClickfinderPG.Movie3.Title #scroll.wrap #ClickfinderPG.Movie3.Genre (#ClickfinderPG.Movie3.Channel - #ClickfinderPG.Movie3.Time)</label>
           <align>left</align>
           <visible>!string.equals(#ClickfinderPG.Movie3.Title,)</visible>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
         </control>
         <control>
           <type>group</type>
           <description>group element</description>
           <layout>StackLayout(10, Horizontal, true)</layout>
           <posX>124</posX>
-          <posY>159</posY>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <posY>322</posY>
+          
           <control>
             <description>Clickfinder Updates</description>
             <type>image</type>
@@ -1039,7 +959,7 @@
           <layout>StackLayout(154, Horizontal, true)</layout>
           <posX>117</posX>
           <posY>250</posY>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
           <control>
             <description>MovieTvMovieStar1</description>
             <type>image</type>
@@ -1073,7 +993,7 @@
         </control>
       </control>
       <!-- ******************************************************************************************* -->
-      <!-- ************************* RECENTLY ADDED ~ SCHEDULED RECORDINGS *************************** -->
+      <!-- ************************* RECENTLY ADDED - SCHEDULED RECORDINGS *************************** -->
       <!-- ******************************************************************************************* -->
       <control>
         <type>group</type>
@@ -1084,32 +1004,33 @@
           <type>image</type>
           <id>7777</id>
           <posX>70</posX>
-          <posY>90</posY>
+          <posY>250</posY>
           <width>1770</width>
           <height>225</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          
         </control>
         <control>
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
-          <posY>114</posY>
+          <posY>270</posY>
           <width>1030</width>
-          <font>RSS</font>
+          <font>font10</font>
           <label>#(L(603)):</label>
+          <textcolor>dodgerblue</textcolor>
           <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
         </control>
         <control>
           <type>group</type>
           <description>group element</description>
           <layout>StackLayout(5, Vertical, true)</layout>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
           <posX>126</posX>
-          <posY>171</posY>
+          <posY>313</posY>
           <control>
             <description>ChannelLogo1</description>
             <type>image</type>
@@ -1140,19 +1061,29 @@
             <centered>no</centered>
             <keepaspectratio>no</keepaspectratio>
           </control>
+          <control>
+            <description>ChannelLogo4</description>
+            <type>image</type>
+            <id>0</id>
+            <width>30</width>
+            <height>30</height>
+            <texture>#latestMediaHandler.tvrecordings.scheduled4.channelLogo</texture>
+            <centered>no</centered>
+            <keepaspectratio>no</keepaspectratio>
+          </control>
         </control>
         <control>
           <description>Scheduled TVRecordings updates</description>
           <type>fadelabel</type>
           <id>0</id>
           <posX>165</posX>
-          <posY>166</posY>
-          <width>1500</width>
-          <label>#latestMediaHandler.tvrecordings.scheduled1.title (#latestMediaHandler.tvrecordings.scheduled1.channel)      #latestMediaHandler.tvrecordings.scheduled1.startDate  ~  #latestMediaHandler.tvrecordings.scheduled1.startTime-#latestMediaHandler.tvrecordings.scheduled1.endTime</label>
+          <posY>310</posY>
+          <width>1177</width>
+          <label>#latestMediaHandler.tvrecordings.scheduled1.title (#latestMediaHandler.tvrecordings.scheduled1.channel)      #latestMediaHandler.tvrecordings.scheduled1.startDate #scroll.wrap #latestMediaHandler.tvrecordings.scheduled1.startTime-#latestMediaHandler.tvrecordings.scheduled1.endTime</label>
           <align>left</align>
-          <font>RSS</font>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <textcolor>ivory</textcolor>
+          <font>font10</font>
+          
+          <textcolor>lightgray</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled1.title,)</visible>
         </control>
         <control>
@@ -1160,13 +1091,13 @@
           <type>fadelabel</type>
           <id>0</id>
           <posX>165</posX>
-          <posY>201</posY>
-          <width>1500</width>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <label>#latestMediaHandler.tvrecordings.scheduled2.title (#latestMediaHandler.tvrecordings.scheduled2.channel)      #latestMediaHandler.tvrecordings.scheduled2.startDate  ~  #latestMediaHandler.tvrecordings.scheduled2.startTime-#latestMediaHandler.tvrecordings.scheduled2.endTime</label>
+          <posY>345</posY>
+          <width>1177</width>
+          
+          <label>#latestMediaHandler.tvrecordings.scheduled2.title (#latestMediaHandler.tvrecordings.scheduled2.channel)      #latestMediaHandler.tvrecordings.scheduled2.startDate #scroll.wrap #latestMediaHandler.tvrecordings.scheduled2.startTime-#latestMediaHandler.tvrecordings.scheduled2.endTime</label>
           <align>left</align>
-          <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled2.title,)</visible>
         </control>
         <control>
@@ -1174,18 +1105,169 @@
           <type>fadelabel</type>
           <id>0</id>
           <posX>165</posX>
-          <posY>236</posY>
-          <width>1500</width>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <label>#latestMediaHandler.tvrecordings.scheduled3.title (#latestMediaHandler.tvrecordings.scheduled3.channel)      #latestMediaHandler.tvrecordings.scheduled3.startDate  ~  #latestMediaHandler.tvrecordings.scheduled3.startTime-#latestMediaHandler.tvrecordings.scheduled3.endTime</label>
+          <posY>380</posY>
+          <width>1177</width>
+          
+          <label>#latestMediaHandler.tvrecordings.scheduled3.title (#latestMediaHandler.tvrecordings.scheduled3.channel)      #latestMediaHandler.tvrecordings.scheduled3.startDate #scroll.wrap #latestMediaHandler.tvrecordings.scheduled3.startTime-#latestMediaHandler.tvrecordings.scheduled3.endTime</label>
           <align>left</align>
-          <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled3.title,)</visible>
         </control>
+        <control>
+          <description>Scheduled TVRecordings updates</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <posX>165</posX>
+          <posY>415</posY>
+          <width>1177</width>
+          
+          <label>#latestMediaHandler.tvrecordings.scheduled4.title (#latestMediaHandler.tvrecordings.scheduled4.channel)      #latestMediaHandler.tvrecordings.scheduled4.startDate #scroll.wrap #latestMediaHandler.tvrecordings.scheduled4.startTime-#latestMediaHandler.tvrecordings.scheduled4.endTime</label>
+          <align>left</align>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
+          <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled4.title,)</visible>
+        </control>        
       </control>
       <!-- ******************************************************************************************* -->
-      <!-- ***************** RECENTLY ADDED ~ SCHEDULED RECORDINGS DRIVEFREESPACE  ******************* -->
+      <!-- ************************* RECENTLY ADDED - ACTIVE RECORDINGS ****************************** -->
+      <!-- ******************************************************************************************* -->
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <visible>plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,TV2)|string.contains(#highlightedbutton,TV1)]+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+!plugin.isenabled(DriveFreeSpace)</visible>
+        <control>
+          <description>background for recently added files</description>
+          <type>image</type>
+          <id>7778</id>
+          <posX>70</posX>
+          <posY>250</posY>
+          <width>1770</width>
+          <height>225</height>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          
+        </control>
+        <control>
+          <description>Updates label</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>124</posX>
+          <posY>270</posY>
+          <width>1030</width>
+          <font>font10</font>
+          <label>#(L(200052)):</label>
+          <textcolor>dodgerblue</textcolor>
+          <align>left</align>
+          
+        </control>
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(5, Vertical, true)</layout>
+          
+          <posX>126</posX>
+          <posY>313</posY>
+          <control>
+            <description>ChannelLogo1</description>
+            <type>image</type>
+            <id>0</id>
+            <width>30</width>
+            <height>30</height>
+            <texture>#latestMediaHandler.tvrecordings.active1.channelLogo</texture>
+            <centered>no</centered>
+            <keepaspectratio>no</keepaspectratio>
+          </control>
+          <control>
+            <description>ChannelLogo2</description>
+            <type>image</type>
+            <id>0</id>
+            <width>30</width>
+            <height>30</height>
+            <texture>#latestMediaHandler.tvrecordings.active2.channelLogo</texture>
+            <centered>no</centered>
+            <keepaspectratio>no</keepaspectratio>
+          </control>
+          <control>
+            <description>ChannelLogo3</description>
+            <type>image</type>
+            <id>0</id>
+            <width>30</width>
+            <height>30</height>
+            <texture>#latestMediaHandler.tvrecordings.active3.channelLogo</texture>
+            <centered>no</centered>
+            <keepaspectratio>no</keepaspectratio>
+          </control>
+          <control>
+            <description>ChannelLogo4</description>
+            <type>image</type>
+            <id>0</id>
+            <width>30</width>
+            <height>30</height>
+            <texture>#latestMediaHandler.tvrecordings.active4.channelLogo</texture>
+            <centered>no</centered>
+            <keepaspectratio>no</keepaspectratio>
+          </control>
+        </control>
+        <control>
+          <description>active TVRecordings updates</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <posX>165</posX>
+          <posY>310</posY>
+          <width>1177</width>
+          <label>#latestMediaHandler.tvrecordings.active1.title (#latestMediaHandler.tvrecordings.active1.channel)      #latestMediaHandler.tvrecordings.active1.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active1.startTime-#latestMediaHandler.tvrecordings.active1.endTime</label>
+          <align>left</align>
+          <font>font10</font>
+          
+          <textcolor>lightgray</textcolor>
+          <visible>!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+        </control>
+        <control>
+          <description>active TVRecordings updates</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <posX>165</posX>
+          <posY>345</posY>
+          <width>1177</width>
+          
+          <label>#latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel)      #latestMediaHandler.tvrecordings.active2.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active2.startTime-#latestMediaHandler.tvrecordings.active2.endTime</label>
+          <align>left</align>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
+          <visible>!string.equals(#latestMediaHandler.tvrecordings.active2.title,)</visible>
+        </control>
+        <control>
+          <description>active TVRecordings updates</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <posX>165</posX>
+          <posY>380</posY>
+          <width>1177</width>
+          
+          <label>#latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel)      #latestMediaHandler.tvrecordings.active3.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active3.startTime-#latestMediaHandler.tvrecordings.active3.endTime</label>
+          <align>left</align>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
+          <visible>!string.equals(#latestMediaHandler.tvrecordings.active3.title,)</visible>
+        </control>
+        <control>
+          <description>active TVRecordings updates</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <posX>165</posX>
+          <posY>415</posY>
+          <width>1177</width>
+          
+          <label>#latestMediaHandler.tvrecordings.active4.title (#latestMediaHandler.tvrecordings.active4.channel)      #latestMediaHandler.tvrecordings.active4.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active4.startTime-#latestMediaHandler.tvrecordings.active4.endTime</label>
+          <align>left</align>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
+          <visible>!string.equals(#latestMediaHandler.tvrecordings.active4.title,)</visible>
+        </control>        
+      </control>
+      <!-- ******************************************************************************************* -->
+      <!-- ***************** RECENTLY ADDED - SCHEDULED RECORDINGS DRIVEFREESPACE  ******************* -->
       <!-- ******************************************************************************************* -->
       <control>
         <type>group</type>
@@ -1196,97 +1278,149 @@
           <type>image</type>
           <id>7778</id>
           <posX>70</posX>
-          <posY>90</posY>
+          <posY>250</posY>
           <width>1770</width>
-          <height>225</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <height>235</height>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          
         </control>
         <control>
-          <description>Drive Free Space BG</description>
-          <type>image</type>
-          <id>0</id>
-          <posX>1360</posX>
-          <posY>123</posY>
-          <width>1</width>
-          <height>160</height>
-          <texture>slider_vertical.png</texture>
-          <colordiffuse>90ffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
-        <control>
-          <description>Drive Free Space Label</description>
-          <type>label</type>
-          <id>0</id>
-          <posX>1387</posX>
-          <posY>128</posY>
-          <font>RSS</font>
-          <label>#(L(158)): #DriveFreeSpace.AvailableSpace.Percentage%</label>
-          <font>Label</font>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
-        <control>
-          <description>Drive Free Space</description>
-          <type>textboxscrollup</type>
-          <id>37483</id>
-          <posX>1387</posX>
-          <posY>208</posY>
-          <width>380</width>
-          <height>65</height>
-          <font>font10</font>
-          <label>#DriveFreeSpace.AvailableSpace.Data.Drives</label>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
-        <control>
-          <type>image</type>
-          <id>0</id>
-          <posX>1387</posX>
-          <posY>180</posY>
-          <width>357</width>
-          <height>19</height>
-          <texture>osd_progress_background_medium_green.png</texture>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
-        <control>
-          <description>Progress Bar</description>
-          <type>progress</type>
-          <id>0</id>
-          <posX>1377</posX>
-          <posY>181</posY>
-          <width>355</width>
-          <height>16</height>
-          <label>#DriveFreeSpace.AvailableSpace.UsedPercentage</label>
-          <texturebg>-</texturebg>
-          <onlymidtexture>no</onlymidtexture>
-          <midwidth>200</midwidth>
-          <midheight>16</midheight>
-          <midoffsetX>0</midoffsetX>
-          <midoffsetY>0</midoffsetY>
-          <lefttexture>overlay_progress_left_red.png</lefttexture>
-          <midtexture>overlay_progress_mid_red.png</midtexture>
-          <righttexture>overlay_progress_right_red.png</righttexture>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
+            <description>Drive Free Space BG</description>
+            <type>image</type>
+            <id>0</id>
+            <posX>1360</posX>
+            <posY>283</posY>
+            <width>1</width>
+            <height>180</height>
+            <texture>verticalbar.png</texture>
+            <colordiffuse>90ffffff</colordiffuse>
+            <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>
+          </control>
+          <control>
+            <description>Drive Free Space Label</description>
+            <type>label</type>
+            <id>0</id>
+            <posX>1387</posX>
+            <posY>274</posY>
+            <label>#(L(158)): #DriveFreeSpace.AvailableSpace.Percentage%</label>
+            <font>font11</font>
+            <textcolor>dodgerblue</textcolor>
+            <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>
+          </control>
+          <control>
+            <description>Drive Free Space BG</description>
+            <type>image</type>
+            <id>0</id>
+            <posX>1385</posX>
+            <posY>348</posY>
+            <width>414</width>
+            <height>109</height>
+            <texture>fileexplorer.png</texture>
+            <colordiffuse>ff164665</colordiffuse>
+          </control>
+          <control>
+            <description>Drive Free Space BG</description>
+            <type>image</type>
+            <posX>1387</posX>
+            <posY>350</posY>
+            <width>410</width>
+            <height>105</height>
+            <texture>fileexplorer.png</texture>
+            <colordiffuse>ff00061c</colordiffuse>
+          </control>
+          <control>
+            <description>Drive Free Space</description>
+            <type>textboxscrollup</type>
+            <id>37483</id>
+            <posX>1397</posX>
+            <posY>358</posY>
+            <width>410</width>
+            <height>85</height>
+            <font>font9</font>
+            <label>#DriveFreeSpace.AvailableSpace.Data.Drives</label>
+            <scrollStartDelaySec>5</scrollStartDelaySec>
+          </control>
+          <control>
+            <type>image</type>
+            <id>0</id>
+            <posX>1387</posX>
+            <posY>315</posY>
+            <width>407</width>
+            <height>28</height>
+            <texture>osd_progress_background_medium_green.png</texture>
+            <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>
+          </control>
+          <control>
+            <description>Progress Bar</description>
+            <type>progress</type>
+            <id>0</id>
+            <posX>1377</posX>
+            <posY>316</posY>
+            <width>407</width>
+            <height>26</height>
+            <label>#DriveFreeSpace.AvailableSpace.UsedPercentage</label>
+            <texturebg>-</texturebg>
+            <onlymidtexture>no</onlymidtexture>
+            <midwidth>200</midwidth>
+            <midheight>26</midheight>
+            <midoffsetX>0</midoffsetX>
+            <midoffsetY>0</midoffsetY>
+            <lefttexture>osd_progress_left_red.png</lefttexture>
+            <midtexture>osd_progress_mid_red.png</midtexture>
+            <righttexture>osd_progress_right_red.png</righttexture>
+            <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>
+          </control>
+          <control>
+            <description>DriveFreeSpace label</description>
+            <type>label</type>
+            <id>0</id>
+            <posX>1400</posX>
+            <posY>316</posY>
+            <width>480</width>
+            <label>#DriveFreeSpace.AvailableSpace.UsedPercentage%</label>
+            <align>left</align>
+            <font>font9</font>
+            <textcolor>white</textcolor>
+            <shadowAngle>45</shadowAngle>
+            <shadowDistance>2</shadowDistance>
+            <shadowColor>ff000000</shadowColor>
+          </control>
+          <control>
+            <description>DriveFreeSpace label</description>
+            <type>label</type>
+            <id>0</id>
+            <posX>1782</posX>
+            <posY>316</posY>
+            <width>480</width>
+            <label>#DriveFreeSpace.AvailableSpace.Percentage%</label>
+            <align>right</align>
+            <font>font9</font>
+            <textcolor>white</textcolor>
+            <shadowAngle>45</shadowAngle>
+            <shadowDistance>2</shadowDistance>
+            <shadowColor>ff000000</shadowColor>
+          </control>
         <control>
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
-          <posY>114</posY>
+          <posY>270</posY>
           <width>1030</width>
-          <font>RSS</font>
+          <font>font10</font>
           <label>#(L(603)):</label>
+          <textcolor>dodgerblue</textcolor>
           <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
         </control>
         <control>
           <type>group</type>
           <description>group element</description>
           <layout>StackLayout(5, Vertical, true)</layout>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
           <posX>126</posX>
-          <posY>171</posY>
+          <posY>313</posY>
           <control>
             <description>ChannelLogo1</description>
             <type>image</type>
@@ -1317,19 +1451,29 @@
             <centered>no</centered>
             <keepaspectratio>no</keepaspectratio>
           </control>
+          <control>
+            <description>ChannelLogo4</description>
+            <type>image</type>
+            <id>0</id>
+            <width>30</width>
+            <height>30</height>
+            <texture>#latestMediaHandler.tvrecordings.scheduled4.channelLogo</texture>
+            <centered>no</centered>
+            <keepaspectratio>no</keepaspectratio>
+          </control>
         </control>
         <control>
           <description>Scheduled TVRecordings updates</description>
           <type>fadelabel</type>
           <id>0</id>
           <posX>165</posX>
-          <posY>166</posY>
+          <posY>310</posY>
           <width>1177</width>
-          <label>#latestMediaHandler.tvrecordings.scheduled1.title (#latestMediaHandler.tvrecordings.scheduled1.channel)      #latestMediaHandler.tvrecordings.scheduled1.startDate  ~  #latestMediaHandler.tvrecordings.scheduled1.startTime-#latestMediaHandler.tvrecordings.scheduled1.endTime</label>
+          <label>#latestMediaHandler.tvrecordings.scheduled1.title (#latestMediaHandler.tvrecordings.scheduled1.channel)      #latestMediaHandler.tvrecordings.scheduled1.startDate #scroll.wrap #latestMediaHandler.tvrecordings.scheduled1.startTime-#latestMediaHandler.tvrecordings.scheduled1.endTime</label>
           <align>left</align>
-          <font>RSS</font>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <textcolor>ivory</textcolor>
+          <font>font10</font>
+          
+          <textcolor>lightgray</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled1.title,)</visible>
         </control>
         <control>
@@ -1337,13 +1481,13 @@
           <type>fadelabel</type>
           <id>0</id>
           <posX>165</posX>
-          <posY>201</posY>
+          <posY>345</posY>
           <width>1177</width>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <label>#latestMediaHandler.tvrecordings.scheduled2.title (#latestMediaHandler.tvrecordings.scheduled2.channel)      #latestMediaHandler.tvrecordings.scheduled2.startDate  ~  #latestMediaHandler.tvrecordings.scheduled2.startTime-#latestMediaHandler.tvrecordings.scheduled2.endTime</label>
+          
+          <label>#latestMediaHandler.tvrecordings.scheduled2.title (#latestMediaHandler.tvrecordings.scheduled2.channel)      #latestMediaHandler.tvrecordings.scheduled2.startDate #scroll.wrap #latestMediaHandler.tvrecordings.scheduled2.startTime-#latestMediaHandler.tvrecordings.scheduled2.endTime</label>
           <align>left</align>
-          <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled2.title,)</visible>
         </control>
         <control>
@@ -1351,229 +1495,69 @@
           <type>fadelabel</type>
           <id>0</id>
           <posX>165</posX>
-          <posY>236</posY>
+          <posY>380</posY>
           <width>1177</width>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <label>#latestMediaHandler.tvrecordings.scheduled3.title (#latestMediaHandler.tvrecordings.scheduled3.channel)      #latestMediaHandler.tvrecordings.scheduled3.startDate  ~  #latestMediaHandler.tvrecordings.scheduled3.startTime-#latestMediaHandler.tvrecordings.scheduled3.endTime</label>
+          
+          <label>#latestMediaHandler.tvrecordings.scheduled3.title (#latestMediaHandler.tvrecordings.scheduled3.channel)      #latestMediaHandler.tvrecordings.scheduled3.startDate #scroll.wrap #latestMediaHandler.tvrecordings.scheduled3.startTime-#latestMediaHandler.tvrecordings.scheduled3.endTime</label>
           <align>left</align>
-          <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled3.title,)</visible>
         </control>
-      </control>
-      <!-- ******************************************************************************************* -->
-      <!-- ************************* RECENTLY ADDED ~ ACTIVE RECORDINGS ****************************** -->
-      <!-- ******************************************************************************************* -->
-      <control>
-        <type>group</type>
-        <description>group element</description>
-        <visible>plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,TV2)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+!plugin.isenabled(DriveFreeSpace)</visible>
         <control>
-          <description>background for recently added files</description>
-          <type>image</type>
-          <id>7779</id>
-          <posX>70</posX>
-          <posY>90</posY>
-          <width>1770</width>
-          <height>225</height>
-          <texture>osdbg2.png</texture>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
-        <control>
-          <description>Updates label</description>
-          <type>label</type>
-          <id>0</id>
-          <posX>124</posX>
-          <posY>114</posY>
-          <width>1030</width>
-          <font>RSS</font>
-          <label>#(L(200052)):</label>
-          <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
-        <control>
-          <type>group</type>
-          <description>group element</description>
-          <layout>StackLayout(5, Vertical, true)</layout>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <posX>126</posX>
-          <posY>171</posY>
-          <control>
-            <description>ChannelLogo1</description>
-            <type>image</type>
-            <id>0</id>
-            <width>30</width>
-            <height>30</height>
-            <texture>#latestMediaHandler.tvrecordings.active1.channelLogo</texture>
-            <centered>no</centered>
-            <keepaspectratio>no</keepaspectratio>
-          </control>
-          <control>
-            <description>ChannelLogo2</description>
-            <type>image</type>
-            <id>0</id>
-            <width>30</width>
-            <height>30</height>
-            <texture>#latestMediaHandler.tvrecordings.active2.channelLogo</texture>
-            <centered>no</centered>
-            <keepaspectratio>no</keepaspectratio>
-          </control>
-          <control>
-            <description>ChannelLogo3</description>
-            <type>image</type>
-            <id>0</id>
-            <width>30</width>
-            <height>30</height>
-            <texture>#latestMediaHandler.tvrecordings.active3.channelLogo</texture>
-            <centered>no</centered>
-            <keepaspectratio>no</keepaspectratio>
-          </control>
-        </control>
-        <control>
-          <description>active TVRecordings updates</description>
+          <description>Scheduled TVRecordings updates</description>
           <type>fadelabel</type>
           <id>0</id>
           <posX>165</posX>
-          <posY>166</posY>
-          <width>1500</width>
-          <label>#latestMediaHandler.tvrecordings.active1.title (#latestMediaHandler.tvrecordings.active1.channel)      #latestMediaHandler.tvrecordings.active1.startDate  ~  #latestMediaHandler.tvrecordings.active1.startTime-#latestMediaHandler.tvrecordings.active1.endTime</label>
+          <posY>415</posY>
+          <width>1177</width>
+          
+          <label>#latestMediaHandler.tvrecordings.scheduled4.title (#latestMediaHandler.tvrecordings.scheduled4.channel)      #latestMediaHandler.tvrecordings.scheduled4.startDate #scroll.wrap #latestMediaHandler.tvrecordings.scheduled4.startTime-#latestMediaHandler.tvrecordings.scheduled4.endTime</label>
           <align>left</align>
-          <font>RSS</font>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <textcolor>ivory</textcolor>
-          <visible>!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
-        </control>
-        <control>
-          <description>active TVRecordings updates</description>
-          <type>fadelabel</type>
-          <id>0</id>
-          <posX>165</posX>
-          <posY>201</posY>
-          <width>1500</width>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <label>#latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel)      #latestMediaHandler.tvrecordings.active2.startDate  ~  #latestMediaHandler.tvrecordings.active2.startTime-#latestMediaHandler.tvrecordings.active2.endTime</label>
-          <align>left</align>
-          <font>RSS</font>
-          <textcolor>ivory</textcolor>
-          <visible>!string.equals(#latestMediaHandler.tvrecordings.active2.title,)</visible>
-        </control>
-        <control>
-          <description>active TVRecordings updates</description>
-          <type>fadelabel</type>
-          <id>0</id>
-          <posX>165</posX>
-          <posY>236</posY>
-          <width>1500</width>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <label>#latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel)      #latestMediaHandler.tvrecordings.active3.startDate  ~  #latestMediaHandler.tvrecordings.active3.startTime-#latestMediaHandler.tvrecordings.active3.endTime</label>
-          <align>left</align>
-          <font>RSS</font>
-          <textcolor>ivory</textcolor>
-          <visible>!string.equals(#latestMediaHandler.tvrecordings.active3.title,)</visible>
-        </control>
-      </control>
-      <!-- ******************************************************************************************* -->
-      <!-- ****************** RECENTLY ADDED ~ ACTIVE RECORDINGS DRIVEFREESPACE ********************** -->
-      <!-- ******************************************************************************************* -->
-      <control>
-        <type>group</type>
-        <description>group element</description>
-        <visible>plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,TV2)+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+plugin.isenabled(DriveFreeSpace)</visible>
-        <control>
-          <description>background for recently added files</description>
-          <type>image</type>
-          <id>7780</id>
-          <posX>70</posX>
-          <posY>90</posY>
-          <width>1770</width>
-          <height>225</height>
-          <texture>osdbg2.png</texture>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
-        <control>
-          <description>Drive Free Space BG</description>
-          <type>image</type>
-          <id>0</id>
-          <posX>1360</posX>
-          <posY>123</posY>
-          <width>1</width>
-          <height>160</height>
-          <texture>slider_vertical.png</texture>
-          <colordiffuse>90ffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
-        <control>
-          <description>Drive Free Space Label</description>
-          <type>label</type>
-          <id>0</id>
-          <posX>1387</posX>
-          <posY>128</posY>
-          <font>RSS</font>
-          <label>#(L(158)): #DriveFreeSpace.AvailableSpace.Percentage%</label>
-          <font>Label</font>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
-        <control>
-          <description>Drive Free Space</description>
-          <type>textboxscrollup</type>
-          <id>37483</id>
-          <posX>1387</posX>
-          <posY>208</posY>
-          <width>380</width>
-          <height>65</height>
           <font>font10</font>
-          <label>#DriveFreeSpace.AvailableSpace.Data.Drives</label>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
+          <textcolor>lightgray</textcolor>
+          <visible>!string.equals(#latestMediaHandler.tvrecordings.scheduled4.title,)</visible>
+        </control>        
+      </control>
+      <!-- ******************************************************************************************* -->
+      <!-- ************************* RECENTLY ADDED - ACTIVE RECORDINGS ****************************** -->
+      <!-- ******************************************************************************************* -->
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <visible>plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,TV2)|string.contains(#highlightedbutton,TV1)]+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+!plugin.isenabled(DriveFreeSpace)</visible>
         <control>
+          <description>background for recently added files</description>
           <type>image</type>
-          <id>0</id>
-          <posX>1387</posX>
-          <posY>180</posY>
-          <width>357</width>
-          <height>19</height>
-          <texture>osd_progress_background_medium_green.png</texture>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-        </control>
-        <control>
-          <description>Progress Bar</description>
-          <type>progress</type>
-          <id>0</id>
-          <posX>1377</posX>
-          <posY>181</posY>
-          <width>355</width>
-          <height>16</height>
-          <label>#DriveFreeSpace.AvailableSpace.UsedPercentage</label>
-          <texturebg>-</texturebg>
-          <onlymidtexture>no</onlymidtexture>
-          <midwidth>200</midwidth>
-          <midheight>16</midheight>
-          <midoffsetX>0</midoffsetX>
-          <midoffsetY>0</midoffsetY>
-          <lefttexture>overlay_progress_left_red.png</lefttexture>
-          <midtexture>overlay_progress_mid_red.png</midtexture>
-          <righttexture>overlay_progress_right_red.png</righttexture>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          <id>7778</id>
+          <posX>70</posX>
+          <posY>250</posY>
+          <width>1770</width>
+          <height>225</height>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          
         </control>
         <control>
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>124</posX>
-          <posY>114</posY>
+          <posY>270</posY>
           <width>1030</width>
-          <font>RSS</font>
+          <font>font10</font>
           <label>#(L(200052)):</label>
+          <textcolor>dodgerblue</textcolor>
           <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
         </control>
         <control>
           <type>group</type>
           <description>group element</description>
           <layout>StackLayout(5, Vertical, true)</layout>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+          
           <posX>126</posX>
-          <posY>171</posY>
+          <posY>313</posY>
           <control>
             <description>ChannelLogo1</description>
             <type>image</type>
@@ -1604,19 +1588,29 @@
             <centered>no</centered>
             <keepaspectratio>no</keepaspectratio>
           </control>
+          <control>
+            <description>ChannelLogo4</description>
+            <type>image</type>
+            <id>0</id>
+            <width>30</width>
+            <height>30</height>
+            <texture>#latestMediaHandler.tvrecordings.active4.channelLogo</texture>
+            <centered>no</centered>
+            <keepaspectratio>no</keepaspectratio>
+          </control>
         </control>
         <control>
           <description>active TVRecordings updates</description>
           <type>fadelabel</type>
           <id>0</id>
           <posX>165</posX>
-          <posY>166</posY>
-          <width>1177</width>
-          <label>#latestMediaHandler.tvrecordings.active1.title (#latestMediaHandler.tvrecordings.active1.channel)      #latestMediaHandler.tvrecordings.active1.startDate  ~  #latestMediaHandler.tvrecordings.active1.startTime-#latestMediaHandler.tvrecordings.active1.endTime</label>
+          <posY>310</posY>
+          <width>1625</width>
+          <label>#latestMediaHandler.tvrecordings.active1.title (#latestMediaHandler.tvrecordings.active1.channel)      #latestMediaHandler.tvrecordings.active1.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active1.startTime-#latestMediaHandler.tvrecordings.active1.endTime</label>
           <align>left</align>
-          <font>RSS</font>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <textcolor>ivory</textcolor>
+          <font>font10</font>
+          
+          <textcolor>lightgray</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
         </control>
         <control>
@@ -1624,13 +1618,13 @@
           <type>fadelabel</type>
           <id>0</id>
           <posX>165</posX>
-          <posY>201</posY>
-          <width>1177</width>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <label>#latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel)      #latestMediaHandler.tvrecordings.active2.startDate  ~  #latestMediaHandler.tvrecordings.active2.startTime-#latestMediaHandler.tvrecordings.active2.endTime</label>
+          <posY>345</posY>
+          <width>1625</width>
+          
+          <label>#latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel)      #latestMediaHandler.tvrecordings.active2.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active2.startTime-#latestMediaHandler.tvrecordings.active2.endTime</label>
           <align>left</align>
-          <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.active2.title,)</visible>
         </control>
         <control>
@@ -1638,15 +1632,282 @@
           <type>fadelabel</type>
           <id>0</id>
           <posX>165</posX>
-          <posY>236</posY>
-          <width>1177</width>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <label>#latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel)      #latestMediaHandler.tvrecordings.active3.startDate  ~  #latestMediaHandler.tvrecordings.active3.startTime-#latestMediaHandler.tvrecordings.active3.endTime</label>
+          <posY>380</posY>
+          <width>1625</width>
+          
+          <label>#latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel)      #latestMediaHandler.tvrecordings.active3.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active3.startTime-#latestMediaHandler.tvrecordings.active3.endTime</label>
           <align>left</align>
-          <font>RSS</font>
-          <textcolor>ivory</textcolor>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.active3.title,)</visible>
         </control>
+        <control>
+          <description>active TVRecordings updates</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <posX>165</posX>
+          <posY>415</posY>
+          <width>1625</width>
+          
+          <label>#latestMediaHandler.tvrecordings.active4.title (#latestMediaHandler.tvrecordings.active4.channel)      #latestMediaHandler.tvrecordings.active4.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active4.startTime-#latestMediaHandler.tvrecordings.active4.endTime</label>
+          <align>left</align>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
+          <visible>!string.equals(#latestMediaHandler.tvrecordings.active4.title,)</visible>
+        </control>        
+      </control>
+      <!-- ******************************************************************************************* -->
+      <!-- ****************** RECENTLY ADDED - ACTIVE RECORDINGS DRIVEFREESPACE ********************** -->
+      <!-- ******************************************************************************************* -->
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <visible>plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,TV2)|string.contains(#highlightedbutton,TV1)]+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+plugin.isenabled(DriveFreeSpace)</visible>
+        <control>
+          <description>background for recently added files</description>
+          <type>image</type>
+          <id>7778</id>
+          <posX>70</posX>
+          <posY>250</posY>
+          <width>1770</width>
+          <height>235</height>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          
+        </control>
+        <control>
+            <description>Drive Free Space BG</description>
+            <type>image</type>
+            <id>0</id>
+            <posX>1360</posX>
+            <posY>283</posY>
+            <width>1</width>
+            <height>180</height>
+            <texture>verticalbar.png</texture>
+            <colordiffuse>90ffffff</colordiffuse>
+            <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>
+          </control>
+          <control>
+            <description>Drive Free Space Label</description>
+            <type>label</type>
+            <id>0</id>
+            <posX>1387</posX>
+            <posY>274</posY>
+            <label>#(L(158)): #DriveFreeSpace.AvailableSpace.Percentage%</label>
+            <font>font11</font>
+            <textcolor>dodgerblue</textcolor>
+            <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>
+          </control>
+          <control>
+            <description>Drive Free Space BG</description>
+            <type>image</type>
+            <id>0</id>
+            <posX>1385</posX>
+            <posY>348</posY>
+            <width>414</width>
+            <height>109</height>
+            <texture>fileexplorer.png</texture>
+            <colordiffuse>ff164665</colordiffuse>
+          </control>
+          <control>
+            <description>Drive Free Space BG</description>
+            <type>image</type>
+            <posX>1387</posX>
+            <posY>350</posY>
+            <width>410</width>
+            <height>105</height>
+            <texture>fileexplorer.png</texture>
+            <colordiffuse>ff00061c</colordiffuse>
+          </control>
+          <control>
+            <description>Drive Free Space</description>
+            <type>textboxscrollup</type>
+            <id>37483</id>
+            <posX>1397</posX>
+            <posY>358</posY>
+            <width>410</width>
+            <height>85</height>
+            <font>font9</font>
+            <label>#DriveFreeSpace.AvailableSpace.Data.Drives</label>
+            <scrollStartDelaySec>5</scrollStartDelaySec>
+          </control>
+          <control>
+            <type>image</type>
+            <id>0</id>
+            <posX>1387</posX>
+            <posY>315</posY>
+            <width>407</width>
+            <height>28</height>
+            <texture>osd_progress_background_medium_green.png</texture>
+            <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>
+          </control>
+          <control>
+            <description>Progress Bar</description>
+            <type>progress</type>
+            <id>0</id>
+            <posX>1377</posX>
+            <posY>316</posY>
+            <width>407</width>
+            <height>26</height>
+            <label>#DriveFreeSpace.AvailableSpace.UsedPercentage</label>
+            <texturebg>-</texturebg>
+            <onlymidtexture>no</onlymidtexture>
+            <midwidth>200</midwidth>
+            <midheight>26</midheight>
+            <midoffsetX>0</midoffsetX>
+            <midoffsetY>0</midoffsetY>
+            <lefttexture>osd_progress_left_red.png</lefttexture>
+            <midtexture>osd_progress_mid_red.png</midtexture>
+            <righttexture>osd_progress_right_red.png</righttexture>
+            <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>
+          </control>
+          <control>
+            <description>DriveFreeSpace label</description>
+            <type>label</type>
+            <id>0</id>
+            <posX>1400</posX>
+            <posY>316</posY>
+            <width>480</width>
+            <label>#DriveFreeSpace.AvailableSpace.UsedPercentage%</label>
+            <align>left</align>
+            <font>font9</font>
+            <textcolor>white</textcolor>
+            <shadowAngle>45</shadowAngle>
+            <shadowDistance>2</shadowDistance>
+            <shadowColor>ff000000</shadowColor>
+          </control>
+          <control>
+            <description>DriveFreeSpace label</description>
+            <type>label</type>
+            <id>0</id>
+            <posX>1782</posX>
+            <posY>316</posY>
+            <width>480</width>
+            <label>#DriveFreeSpace.AvailableSpace.Percentage%</label>
+            <align>right</align>
+            <font>font9</font>
+            <textcolor>white</textcolor>
+            <shadowAngle>45</shadowAngle>
+            <shadowDistance>2</shadowDistance>
+            <shadowColor>ff000000</shadowColor>
+          </control>
+        <control>
+          <description>Updates label</description>
+          <type>label</type>
+          <id>0</id>
+          <posX>124</posX>
+          <posY>270</posY>
+          <width>1030</width>
+          <font>font10</font>
+          <label>#(L(200052)):</label>
+          <textcolor>dodgerblue</textcolor>
+          <align>left</align>
+          
+        </control>
+        <control>
+          <type>group</type>
+          <description>group element</description>
+          <layout>StackLayout(5, Vertical, true)</layout>
+          
+          <posX>126</posX>
+          <posY>313</posY>
+          <control>
+            <description>ChannelLogo1</description>
+            <type>image</type>
+            <id>0</id>
+            <width>30</width>
+            <height>30</height>
+            <texture>#latestMediaHandler.tvrecordings.active1.channelLogo</texture>
+            <centered>no</centered>
+            <keepaspectratio>no</keepaspectratio>
+          </control>
+          <control>
+            <description>ChannelLogo2</description>
+            <type>image</type>
+            <id>0</id>
+            <width>30</width>
+            <height>30</height>
+            <texture>#latestMediaHandler.tvrecordings.active2.channelLogo</texture>
+            <centered>no</centered>
+            <keepaspectratio>no</keepaspectratio>
+          </control>
+          <control>
+            <description>ChannelLogo3</description>
+            <type>image</type>
+            <id>0</id>
+            <width>30</width>
+            <height>30</height>
+            <texture>#latestMediaHandler.tvrecordings.active3.channelLogo</texture>
+            <centered>no</centered>
+            <keepaspectratio>no</keepaspectratio>
+          </control>
+          <control>
+            <description>ChannelLogo4</description>
+            <type>image</type>
+            <id>0</id>
+            <width>30</width>
+            <height>30</height>
+            <texture>#latestMediaHandler.tvrecordings.active4.channelLogo</texture>
+            <centered>no</centered>
+            <keepaspectratio>no</keepaspectratio>
+          </control>
+        </control>
+        <control>
+          <description>active TVRecordings updates</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <posX>165</posX>
+          <posY>310</posY>
+          <width>1177</width>
+          <label>#latestMediaHandler.tvrecordings.active1.title (#latestMediaHandler.tvrecordings.active1.channel)      #latestMediaHandler.tvrecordings.active1.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active1.startTime-#latestMediaHandler.tvrecordings.active1.endTime</label>
+          <align>left</align>
+          <font>font10</font>
+          
+          <textcolor>lightgray</textcolor>
+          <visible>!string.equals(#latestMediaHandler.tvrecordings.active1.title,)</visible>
+        </control>
+        <control>
+          <description>active TVRecordings updates</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <posX>165</posX>
+          <posY>345</posY>
+          <width>1177</width>
+          
+          <label>#latestMediaHandler.tvrecordings.active2.title (#latestMediaHandler.tvrecordings.active2.channel)      #latestMediaHandler.tvrecordings.active2.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active2.startTime-#latestMediaHandler.tvrecordings.active2.endTime</label>
+          <align>left</align>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
+          <visible>!string.equals(#latestMediaHandler.tvrecordings.active2.title,)</visible>
+        </control>
+        <control>
+          <description>active TVRecordings updates</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <posX>165</posX>
+          <posY>380</posY>
+          <width>1177</width>
+          
+          <label>#latestMediaHandler.tvrecordings.active3.title (#latestMediaHandler.tvrecordings.active3.channel)      #latestMediaHandler.tvrecordings.active3.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active3.startTime-#latestMediaHandler.tvrecordings.active3.endTime</label>
+          <align>left</align>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
+          <visible>!string.equals(#latestMediaHandler.tvrecordings.active3.title,)</visible>
+        </control>
+        <control>
+          <description>active TVRecordings updates</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <posX>165</posX>
+          <posY>415</posY>
+          <width>1177</width>
+          
+          <label>#latestMediaHandler.tvrecordings.active4.title (#latestMediaHandler.tvrecordings.active4.channel)      #latestMediaHandler.tvrecordings.active4.startDate #scroll.wrap #latestMediaHandler.tvrecordings.active4.startTime-#latestMediaHandler.tvrecordings.active4.endTime</label>
+          <align>left</align>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
+          <visible>!string.equals(#latestMediaHandler.tvrecordings.active4.title,)</visible>
+        </control>        
       </control>
       <!-- ******************************************************************************************* -->
       <!-- *************************** RECENTLY ADDED MVCENTRAL ************************************** -->
@@ -1656,26 +1917,26 @@
           <type>image</type>
           <id>0</id>
           <posX>160</posX>
-          <posY>90</posY>
+          <posY>250</posY>
           <width>1590</width>
           <height>245</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(mvCentral)+string.equals(#latestMediaHandler.mvcentral.latest.enabled,true)+!string.equals(#latestMediaHandler.mvcentral.latest1.artist,)+[string.contains(#highlightedbutton,AUDIO6)|Control.hasfocus(919299280)]</visible>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          
+          <visible>plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.mvcentral.latest.enabled,true)+!string.equals(#latestMediaHandler.mvcentral.latest1.artist,)+[string.contains(#highlightedbutton,AUDIO6)|Control.hasfocus(919299280)]</visible>
         </control>
         <control>
           <description>Updates label</description>
           <type>label</type>
           <id>0</id>
           <posX>214</posX>
-          <posY>114</posY>
+          <posY>270</posY>
           <width>1590</width>
-          <font>RSS</font>
-          <label>#latestMediaHandler.mvcentral.label  #latestMediaHandler.mvcentral.selected.artist ~ #latestMediaHandler.mvcentral.selected.album  (#latestMediaHandler.mvcentral.selected.dateAdded)</label>
+          <font>font10</font>
+          <label>#latestMediaHandler.mvcentral.label  #latestMediaHandler.mvcentral.selected.artist #scroll.wrap #latestMediaHandler.mvcentral.selected.album  (#latestMediaHandler.mvcentral.selected.dateAdded)</label>
           <align>left</align>
-          <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(mvCentral)+string.equals(#latestMediaHandler.mvcentral.latest.enabled,true)+!string.equals(#latestMediaHandler.mvcentral.latest1.artist,)+[string.contains(#highlightedbutton,AUDIO6)|Control.hasfocus(919299280)]</visible>
+          
+          <visible>plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.mvcentral.latest.enabled,true)+!string.equals(#latestMediaHandler.mvcentral.latest1.artist,)+[string.contains(#highlightedbutton,AUDIO6)|Control.hasfocus(919299280)]</visible>
         </control>
         <control>
         <description>composite control consisting of a list control and a thumbnail panel</description>
@@ -1686,7 +1947,7 @@
           <type>filmstrip</type>
           <id>919299280</id>
           <posX>214</posX>
-          <posY>159</posY>
+          <posY>322</posY>
           <width>1850</width>
           <height>140</height>
           <onleft>820101</onleft>
@@ -1717,24 +1978,25 @@
           <folderPrefix />
           <folderSuffix />
           <showScrollbar>no</showScrollbar>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300" tween="circle" ease="inout">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
+          
+          <thumbAnimation effect="zoom" start="100,100" end="115,115" time="300" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="115,115" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
           <spinPosX>3710</spinPosX>
           <spinCanFocus>no</spinCanFocus>
-          <visible>plugin.isenabled(Latest Media Handler)+plugin.isenabled(mvCentral)+string.equals(#latestMediaHandler.mvcentral.latest.enabled,true)+!string.equals(#latestMediaHandler.mvcentral.latest1.artist,)+[string.contains(#highlightedbutton,AUDIO6)|Control.hasfocus(919299280)]</visible>
+          <visible>plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.mvcentral.latest.enabled,true)+!string.equals(#latestMediaHandler.mvcentral.latest1.artist,)+[string.contains(#highlightedbutton,AUDIO6)|Control.hasfocus(919299280)]</visible>
         </control>
         </control>
-        <control>
+        <!--control>
           <description>Plot Background</description>
           <type>image</type>
           <id>0</id>
           <posX>160</posX>
           <posY>330</posY>
           <width>1590</width>
-          <height>225</height>
-          <texture>osdbg2.png</texture>
-          <colordiffuse>ffffffff</colordiffuse>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
+          <height>210</height>
+          <texture>latestmediabg.png</texture>
+          <colordiffuse>eeffffff</colordiffuse>
+          <animation effect="fade" delay="1000" time="200">visible</animation>
           <visible>control.hasfocus(919299280)</visible>
         </control>
         <control>
@@ -1744,29 +2006,29 @@
           <posX>214</posX>
           <posY>360</posY>
           <width>1500</width>
-          <height>150</height>
+          <height>165</height>
           <font>font10</font>
-          <textcolor>ffffffff</textcolor>
+          <textcolor>lightgray</textcolor>
           <label>#latestMediaHandler.mvcentral.selected.artistbio</label>
           <visible>control.hasfocus(919299280)</visible>
-          <animation effect="fade" delay="1000" time="500">visible</animation>
-        </control>
+          <animation effect="fade" delay="1000" time="200">visible</animation>
+        </control-->
         </control>
     <!-- END OF BIG GROUP!!! -->
     <!-- ******************************************************************************************* -->
-    <!-- ************************* RECENTLY ADDED ~ LYRICS ***************************************** -->
+    <!-- ************************* RECENTLY ADDED - LYRICS ***************************************** -->
     <!-- ******************************************************************************************* -->
     <control>
       <description>background for recently added files</description>
       <type>image</type>
       <id>0</id>
       <posX>70</posX>
-      <posY>90</posY>
+      <posY>250</posY>
       <width>1770</width>
       <height>300</height>
-      <texture>osdbg2.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
-      <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+      <texture>latestmediabg.png</texture>
+      <colordiffuse>eeffffff</colordiffuse>
+      
       <visible>plugin.isenabled(My Lyrics)+string.contains(#highlightedbutton,AUDIO8)+Player.HasAudio+!Player.HasVideo+control.hastext(1234567)</visible>
     </control>
     <control>
@@ -1774,13 +2036,13 @@
       <type>textboxscrollup</type>
       <id>1234567</id>
       <posX>124</posX>
-      <posY>125</posY>
+      <posY>285</posY>
       <width>1660</width>
       <height>230</height>
-      <font>RSS</font>
+      <font>font9</font>
       <label>#Play.Current.Lyrics</label>
       <visible>plugin.isenabled(My Lyrics)+string.contains(#highlightedbutton,AUDIO8)+Player.HasAudio+!Player.HasVideo</visible>
-      <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
+      
     </control>
     <!--     *******************************************************************************************  -->
     <!--     *****************************  WEATHER INFO ON BASIC HOME  ********************************  -->
@@ -1788,27 +2050,27 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      <visible>[plugin.isenabled(World Weather)|plugin.isenabled(World Weather Lite)]+string.contains(#highlightedbutton,WEATHER)</visible>
-      <animation effect="fade" start="0" end="100" time="500" reversible="false">visible</animation>
-      <animation effect="fade" start="0" end="100" time="700" reversible="false">windowopen</animation>
+      <visible>plugin.isenabled(World Weather)+string.contains(#highlightedbutton,WEATHER)+!string.contains(#WorldWeather.ForecastDay1Low,' ')</visible>
+      
+      <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">windowopen</animation>
       <animation effect="fade" start="100" end="0" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
       <control>
         <description>weather area</description>
         <type>image</type>
         <id>0</id>
         <posX>70</posX>
-        <posY>90</posY>
+        <posY>250</posY>
         <width>1770</width>
         <height>265</height>
-        <texture>osdbg2.png</texture>
-        <colordiffuse>ffffffff</colordiffuse>
+        <texture>latestmediabg.png</texture>
+        <colordiffuse>eeffffff</colordiffuse>
       </control>
       <control>
         <type>group</type>
         <description>group element</description>
         <layout>StackLayout(0, Horizontal, true)</layout>
         <posX>290</posX>
-        <posY>220</posY>
+        <posY>380</posY>
         <control>
           <description>Location</description>
           <type>label</type>
@@ -1851,14 +2113,14 @@
         <description>group element</description>
         <layout>StackLayout(0, Horizontal, true)</layout>
         <posX>290</posX>
-        <posY>255</posY>
+        <posY>415</posY>
         <control>
           <description>Temperature</description>
           <type>label</type>
           <id>0</id>
           <font>font10</font>
           <width>410</width>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
           <label>#WorldWeather.ForecastDay1Low | #WorldWeather.ForecastDay1High</label>
         </control>
         <control>
@@ -1867,7 +2129,7 @@
           <id>0</id>
           <font>font10</font>
           <width>410</width>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
           <label>#WorldWeather.ForecastDay2Low | #WorldWeather.ForecastDay2High</label>
         </control>
         <control>
@@ -1876,7 +2138,7 @@
           <id>0</id>
           <font>font10</font>
           <width>410</width>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
           <label>#WorldWeather.ForecastDay3Low | #WorldWeather.ForecastDay3High</label>
         </control>
         <control>
@@ -1885,7 +2147,7 @@
           <id>0</id>
           <width>410</width>
           <font>font10</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
           <label>#WorldWeather.ForecastDay4Low | #WorldWeather.ForecastDay4High</label>
         </control>
       </control>
@@ -1894,14 +2156,14 @@
         <description>group element</description>
         <layout>StackLayout(0, Horizontal, true)</layout>
         <posX>290</posX>
-        <posY>290</posY>
+        <posY>450</posY>
         <control>
           <description>Condition</description>
           <type>fadelabel</type>
           <id>0</id>
           <width>410</width>
           <font>font10</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
           <label>#WorldWeather.ForecastDay1Condition</label>
         </control>
         <control>
@@ -1910,7 +2172,7 @@
           <id>0</id>
           <width>410</width>
           <font>font10</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
           <label>#WorldWeather.ForecastDay2Condition</label>
         </control>
         <control>
@@ -1919,7 +2181,7 @@
           <id>0</id>
           <width>410</width>
           <font>font10</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
           <label>#WorldWeather.ForecastDay3Condition</label>
         </control>
         <control>
@@ -1928,7 +2190,7 @@
           <id>0</id>
           <width>410</width>
           <font>font10</font>
-          <textcolor>ivory</textcolor>
+          <textcolor>lightgray</textcolor>
           <label>#WorldWeather.ForecastDay4Condition</label>
         </control>
       </control>
@@ -1937,7 +2199,7 @@
         <description>group element</description>
         <layout>StackLayout(280, Horizontal, true)</layout>
         <posX>135</posX>
-        <posY>220</posY>
+        <posY>380</posY>
         <control>
           <description>Weather image</description>
           <type>image</type>
@@ -1976,7 +2238,7 @@
         <type>image</type>
         <id>0</id>
         <posX>135</posX>
-        <posY>113</posY>
+        <posY>273</posY>
         <width>131</width>
         <height>90</height>
         <texture>#WorldWeather.TodayIconImage</texture>
@@ -1986,7 +2248,7 @@
         <type>image</type>
         <id>0</id>
         <posX>1715</posX>
-        <posY>123</posY>
+        <posY>283</posY>
         <width>72</width>
         <height>72</height>
         <texture>#WorldWeather.LocationMoonPhaseImage</texture>
@@ -1996,21 +2258,253 @@
         <type>image</type>
         <id>0</id>
         <posX>110</posX>
-        <posY>206</posY>
+        <posY>366</posY>
         <width>1690</width>
         <height>1</height>
-        <texture>horizontal_bar.png</texture>
-        <colordiffuse>60ffffff</colordiffuse>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>99ffffff</colordiffuse>
       </control>
       <control>
         <description>weather conditions textbox</description>
         <type>textboxscrollup</type>
         <id>0</id>
         <posX>290</posX>
-        <posY>123</posY>
+        <posY>283</posY>
         <width>1400</width>
-        <height>70</height>
-        <label>#(L(143)) #WorldWeather.TodayCondition ~ #WorldWeather.TranslationPrecipitation: #WorldWeather.TodayPrecipitation  ~  #WorldWeather.TranslationVisibility: #WorldWeather.TodayVisibility  ~  #WorldWeather.TranslationWind: #WorldWeather.TodayWindDirection - #WorldWeather.TodayWindSpeed  ~  #WorldWeather.TranslationHumidity: #WorldWeather.TodayHumidity  ~  #WorldWeather.TranslationPressure: #WorldWeather.TodayPressure (#WorldWeather.TodayBarometricPressure)  ~  #WorldWeather.TranslationDewPoint: #WorldWeather.TodayDewPoint  ~  #WorldWeather.TranslationSunrise: #WorldWeather.LocationSunriseTime  ~  #WorldWeather.TranslationSunset: #WorldWeather.LocationSunsetTime  ~  #WorldWeather.TranslationMoonPhase: #WorldWeather.LocationMoonPhase</label>
+        <height>80</height>
+        <label>#(L(143)) #WorldWeather.TodayCondition #scroll.wrap #WorldWeather.TranslationPrecipitation: #WorldWeather.TodayPrecipitation #scroll.wrap #WorldWeather.TranslationVisibility: #WorldWeather.TodayVisibility #scroll.wrap #WorldWeather.TranslationWind: #WorldWeather.TodayWindDirection - #WorldWeather.TodayWindSpeed #scroll.wrap #WorldWeather.TranslationHumidity: #WorldWeather.TodayHumidity #scroll.wrap #WorldWeather.TranslationPressure: #WorldWeather.TodayPressure #scroll.wrap #WorldWeather.TranslationSunrise: #WorldWeather.LocationSunriseTime #scroll.wrap #WorldWeather.TranslationSunset: #WorldWeather.LocationSunsetTime #scroll.wrap #WorldWeather.TranslationMoonPhase: #WorldWeather.LocationMoonPhase</label>
+        <font>font10</font>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *****************************  WEATHER LITE INFO ON BASIC HOME  ***************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <visible>plugin.isenabled(World Weather LITE)+string.contains(#highlightedbutton,WEATHER)+!string.contains(#WorldWeather.ForecastDay1Low,' ')</visible>
+      
+      <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">windowopen</animation>
+      <animation effect="fade" start="100" end="0" time="250" acceleration="-0.6" reversible="false">windowclose</animation>
+      <control>
+        <description>weather area</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>70</posX>
+        <posY>250</posY>
+        <width>1770</width>
+        <height>265</height>
+        <texture>latestmediabg.png</texture>
+        <colordiffuse>eeffffff</colordiffuse>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(0, Horizontal, true)</layout>
+        <posX>290</posX>
+        <posY>380</posY>
+        <control>
+          <description>Location</description>
+          <type>label</type>
+          <id>0</id>
+          <width>410</width>
+          <font>font10</font>
+          <textcolor>gainsboro</textcolor>
+          <label>#WorldWeather.ForecastDay1Day, #WorldWeather.ForecastDay1Date</label>
+        </control>
+        <control>
+          <description>Location</description>
+          <type>label</type>
+          <id>0</id>
+          <font>font10</font>
+          <width>410</width>
+          <textcolor>gainsboro</textcolor>
+          <label>#WorldWeather.ForecastDay2Day, #WorldWeather.ForecastDay2Date</label>
+        </control>
+        <control>
+          <description>Location</description>
+          <type>label</type>
+          <id>0</id>
+          <font>font10</font>
+          <width>410</width>
+          <textcolor>gainsboro</textcolor>
+          <label>#WorldWeather.ForecastDay3Day, #WorldWeather.ForecastDay3Date</label>
+        </control>
+        <control>
+          <description>Location</description>
+          <type>label</type>
+          <id>0</id>
+          <font>font10</font>
+          <width>410</width>
+          <textcolor>gainsboro</textcolor>
+          <label>#WorldWeather.ForecastDay4Day, #WorldWeather.ForecastDay4Date</label>
+        </control>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(0, Horizontal, true)</layout>
+        <posX>290</posX>
+        <posY>415</posY>
+        <control>
+          <description>Temperature</description>
+          <type>label</type>
+          <id>0</id>
+          <font>font10</font>
+          <width>410</width>
+          <textcolor>lightgray</textcolor>
+          <label>#WorldWeather.ForecastDay1Low | #WorldWeather.ForecastDay1High</label>
+        </control>
+        <control>
+          <description>Temperature</description>
+          <type>label</type>
+          <id>0</id>
+          <font>font10</font>
+          <width>410</width>
+          <textcolor>lightgray</textcolor>
+          <label>#WorldWeather.ForecastDay2Low | #WorldWeather.ForecastDay2High</label>
+        </control>
+        <control>
+          <description>Temperature</description>
+          <type>label</type>
+          <id>0</id>
+          <font>font10</font>
+          <width>410</width>
+          <textcolor>lightgray</textcolor>
+          <label>#WorldWeather.ForecastDay3Low | #WorldWeather.ForecastDay3High</label>
+        </control>
+        <control>
+          <description>Temperature</description>
+          <type>label</type>
+          <id>0</id>
+          <width>410</width>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
+          <label>#WorldWeather.ForecastDay4Low | #WorldWeather.ForecastDay4High</label>
+        </control>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(0, Horizontal, true)</layout>
+        <posX>290</posX>
+        <posY>450</posY>
+        <control>
+          <description>Condition</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <width>410</width>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
+          <label>#WorldWeather.ForecastDay1Condition</label>
+        </control>
+        <control>
+          <description>Condition</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <width>410</width>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
+          <label>#WorldWeather.ForecastDay2Condition</label>
+        </control>
+        <control>
+          <description>Condition</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <width>410</width>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
+          <label>#WorldWeather.ForecastDay3Condition</label>
+        </control>
+        <control>
+          <description>Condition</description>
+          <type>fadelabel</type>
+          <id>0</id>
+          <width>410</width>
+          <font>font10</font>
+          <textcolor>lightgray</textcolor>
+          <label>#WorldWeather.ForecastDay4Condition</label>
+        </control>
+      </control>
+      <control>
+        <type>group</type>
+        <description>group element</description>
+        <layout>StackLayout(280, Horizontal, true)</layout>
+        <posX>135</posX>
+        <posY>380</posY>
+        <control>
+          <description>Weather image</description>
+          <type>image</type>
+          <id>0</id>
+          <width>131</width>
+          <height>90</height>
+          <texture>#WorldWeather.ForecastDay1IconImage</texture>
+        </control>
+        <control>
+          <description>Weather image</description>
+          <type>image</type>
+          <id>0</id>
+          <width>131</width>
+          <height>90</height>
+          <texture>#WorldWeather.ForecastDay2IconImage</texture>
+        </control>
+        <control>
+          <description>Weather image</description>
+          <type>image</type>
+          <id>0</id>
+          <width>131</width>
+          <height>90</height>
+          <texture>#WorldWeather.ForecastDay3IconImage</texture>
+        </control>
+        <control>
+          <description>Weather image</description>
+          <type>image</type>
+          <id>0</id>
+          <width>131</width>
+          <height>90</height>
+          <texture>#WorldWeather.ForecastDay4IconImage</texture>
+        </control>
+      </control>
+      <control>
+        <description>Weather image</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>135</posX>
+        <posY>273</posY>
+        <width>131</width>
+        <height>90</height>
+        <texture>#WorldWeather.TodayIconImage</texture>
+      </control>
+      <control>
+        <description>Weather image</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1715</posX>
+        <posY>283</posY>
+        <width>72</width>
+        <height>72</height>
+        <texture>#WorldWeather.LocationMoonPhaseImage</texture>
+      </control>
+      <control>
+        <description>divider horizontal</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>110</posX>
+        <posY>366</posY>
+        <width>1690</width>
+        <height>1</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>99ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>weather conditions textbox</description>
+        <type>textboxscrollup</type>
+        <id>0</id>
+        <posX>290</posX>
+        <posY>283</posY>
+        <width>1400</width>
+        <height>80</height>
+        <label>#(L(143)) #WorldWeather.TodayCondition #scroll.wrap #WorldWeather.TranslationPrecipitation: #WorldWeather.TodayPrecipitation #scroll.wrap #WorldWeather.TranslationVisibility: #WorldWeather.TodayVisibility #scroll.wrap #WorldWeather.TranslationWind: #WorldWeather.TodayWindDirection - #WorldWeather.TodayWindSpeed #scroll.wrap #WorldWeather.TranslationHumidity: #WorldWeather.TodayHumidity #scroll.wrap #WorldWeather.TranslationPressure: #WorldWeather.TodayPressure #scroll.wrap #WorldWeather.TranslationSunrise: #WorldWeather.LocationSunriseTime #scroll.wrap #WorldWeather.TranslationSunset: #WorldWeather.LocationSunsetTime #scroll.wrap #WorldWeather.TranslationMoonPhase: #WorldWeather.LocationMoonPhase</label>
         <font>font10</font>
       </control>
     </control>

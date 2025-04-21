@@ -3,11 +3,11 @@ name: Mediaportal / Jira
 on:
   push:
     # On Push to Master branch
-    branches: 
+    branches:
       - 'MP1-**'
     # Ignore all Tags / Release
     tags-ignore:
-      - '**'   
+      - '**'
 
   workflow_call:
     inputs:

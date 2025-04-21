@@ -1,4 +1,4 @@
-﻿//css_reference System.Core;
+//css_reference System.Core;
 
 //css_reference "core.dll";
 //css_reference "Databases.dll";
@@ -24,7 +24,7 @@ using System.Web;
 internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 {
   const string strGrabber = "TI_MDB";
-  const string strGrabberVersion = "20230430.I";
+  const string strGrabberVersion = "20241130.I";
 
   public Grabber()
   {
@@ -1099,6 +1099,8 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 
   private static string GetUserReviewIMDB(string IMDBID)
   {
+    string json = string.Empty;
+
     try
     {
       string _reviewURL = string.Format(IMDB_Review, IMDBID);
@@ -1108,60 +1110,79 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
         return string.Empty;
       }
 
-      string _reviewList = string.Empty;
-
-      _reviewPage = HttpUtility.HtmlDecode(_reviewPage);
-
-      string rx_review_line = @"<span>(?<rating>\d{1,2})<\/span><span[^>]+?>\/(?<maxrating>\d{1,2})<\/span>.+?<a href[^>]+?class=.title[^>]+?>(?<title>[^<]+?)<\/a>.+?<div[^>]+?content.>(?<review>[\s\S]+?)<\/div>";
-      ArrayList reviewList = Parse(_reviewPage, rx_review_line);
-      if (reviewList != null && reviewList.Count > 0)
+      string regex = @"type=.application\/json.>(?<json>{.+?})<";
+      json = Regex.Match(_reviewPage, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["json"].Value;
+      if (string.IsNullOrEmpty(json))
       {
-        for (int i = 0; i < reviewList.Count; i++)
-        {
-          Hashtable reviewMain = (Hashtable)reviewList[i];
-          string reviewRating = (string)reviewMain["rating"];
-          string reviewMaxRating = (string)reviewMain["maxrating"];
-          string reviewTitle = (string)reviewMain["title"];
-          string reviewText = (string)reviewMain["review"];
-          string reviewLine = string.Empty;
+        Log.Debug("{0} IMDB GetUserReview, JSON not found.", strGrabber);
+        return string.Empty;
+      }
+    }
+    catch (Exception ex)
+    {
+      Log.Error("{0} IMDB Script GetUserReview error: {1}", strGrabber, ex.Message);
+    }
 
-          if (!string.IsNullOrEmpty(reviewTitle))
+    try
+    {
+      JsonIMDBUserReview Review = JsonConvert.DeserializeObject<JsonIMDBUserReview>(json);
+      if (Review == null || Review.props == null || Review.props.pageProps == null || Review.props.pageProps.contentData == null)
+      {
+        Log.Debug("{0} IMDB GetUserReview, JSON changed!?.", strGrabber);
+        return string.Empty;
+      }
+
+      string _reviewList = string.Empty;
+      if (Review.props.pageProps.contentData.reviews != null && Review.props.pageProps.contentData.reviews.Count > 0)
+      {
+        foreach(JsonIMDBUserReviewReview item in Review.props.pageProps.contentData.reviews)
+        {
+          if (item.review != null)
           {
-            reviewTitle = reviewTitle.Trim().Replace("\n", string.Empty);
-            reviewTitle = Utils.stripHTMLtags(reviewTitle);
-            reviewTitle = Regex.Replace(reviewTitle, @"[ ]{2,}", " ").Trim();
-          }
-          if (!string.IsNullOrEmpty(reviewText))
-          {
-            reviewText = reviewText.Trim().Replace("\n", string.Empty);
-            reviewText = Utils.stripHTMLtags(reviewText);
-            reviewText = Regex.Replace(reviewText, @"[ ]{2,}", " ").Trim();
-          }
-          if (!string.IsNullOrEmpty(reviewText))
-          {
-            if (!string.IsNullOrEmpty(reviewRating))
-            {
-              reviewLine = "[" + reviewRating + (!string.IsNullOrEmpty(reviewMaxRating) ? "/" + reviewMaxRating : string.Empty) + "]";
-            }
+            string reviewRating = item.review.authorRating;
+            string reviewMaxRating = "10";
+            string reviewTitle = item.review.reviewSummary;
+            string reviewText = item.review.reviewText;
+            string reviewLine = string.Empty;
+
             if (!string.IsNullOrEmpty(reviewTitle))
             {
-              reviewLine = reviewLine + " " + reviewTitle + "\n";
+              reviewTitle = reviewTitle.Trim().Replace("\n", string.Empty);
+              reviewTitle = Utils.stripHTMLtags(reviewTitle);
+              reviewTitle = Regex.Replace(reviewTitle, @"[ ]{2,}", " ").Trim();
             }
-            reviewLine = reviewLine + reviewText;
-            _reviewList = _reviewList + reviewLine + "\n";
+            if (!string.IsNullOrEmpty(reviewText))
+            {
+              reviewText = reviewText.Trim().Replace("\n", string.Empty);
+              reviewText = Utils.stripHTMLtags(reviewText);
+              reviewText = Regex.Replace(reviewText, @"[ ]{2,}", " ").Trim();
+            }
+            if (!string.IsNullOrEmpty(reviewText))
+            {
+              if (!string.IsNullOrEmpty(reviewRating))
+              {
+                reviewLine = "[" + reviewRating + (!string.IsNullOrEmpty(reviewMaxRating) ? "/" + reviewMaxRating : string.Empty) + "]";
+              }
+              if (!string.IsNullOrEmpty(reviewTitle))
+              {
+                reviewLine = reviewLine + " " + reviewTitle + "\n";
+              }
+              reviewLine = reviewLine + reviewText;
+              _reviewList = _reviewList + reviewLine + "\n";
+            }
           }
         }
       }
 
       if (!string.IsNullOrEmpty(_reviewList))
       {
-        // Log.Debug("{0} UserReview: {1}", strGrabber, _reviewList.Replace("\n", " "));
+        //Log.Debug("{0} IMDB GetUserReview: {1}", strGrabber, _reviewList.Replace("\n", " "));
         return _reviewList;
       }
     }
     catch (Exception ex)
     {
-      Log.Error("{0} IMDB Script GetUserReview error: {1}", strGrabber, ex.Message);
+      Log.Debug("{0} IMDB GetUserReview, Exception {1}, JSON changed!?.", strGrabber, ex.Message);
     }
     return string.Empty;
   }
@@ -1919,6 +1940,16 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
     public string caption { get; set; }
   }
 
+  public class JsonIMDBEntityMetadata
+  {
+    public string id { get; set; }
+    public JsonIMDBText titleText { get; set; }
+    public JsonIMDBText originalTitleText { get; set; }
+    public JsonIMDBReleaseYear releaseYear { get; set; }
+    public JsonIMDBPlot plot { get; set; }
+    public JsonIMDBPrimaryImage primaryImage { get; set; }
+  }
+
   // Movie
   public class JsonIMDBPerson : JsonIMDBBase
   {
@@ -1984,16 +2015,6 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
     public string parentDisplayText { get; set; }
     public JsonIMDBEntityMetadata entityMetadata { get; set; }
     public JsonIMDBSection section { get; set; }
-  }
-
-  public class JsonIMDBEntityMetadata
-  {
-    public string id { get; set; }
-    public JsonIMDBText titleText { get; set; }
-    public JsonIMDBText originalTitleText { get; set; }
-    public JsonIMDBReleaseYear releaseYear { get; set; }
-    public JsonIMDBPlot plot { get; set; }
-    public JsonIMDBPrimaryImage primaryImage { get; set; }
   }
 
   public class JsonIMDBSection
@@ -2079,6 +2100,46 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
     public string text { get; set; }
     public string subText { get; set; }
     public string href { get; set; }
+  }
+
+  // User Review
+
+  public class JsonIMDBUserReview
+  {
+    public JsonIMDBUserReviewProps props { get; set; }
+  }
+
+  public class JsonIMDBUserReviewProps
+  {
+    public JsonIMDBUserReviewPageProps pageProps { get; set; }
+  }
+
+  public class JsonIMDBUserReviewPageProps
+  {
+    public JsonIMDBUserReviewContentData contentData { get; set; }
+  }
+
+  public class JsonIMDBUserReviewContentData
+  {
+    public JsonIMDBEntityMetadata entityMetadata { get; set; }
+    public List<JsonIMDBUserReviewReview> reviews { get; set; }
+  }
+
+  public class JsonIMDBUserReviewReview
+  {
+    public string titleId { get; set; }
+    public string titleText { get; set; }
+    public JsonIMDBUserReviewReviewText review { get; set; }
+    public bool isTopReview { get; set; }
+  }
+
+  public class JsonIMDBUserReviewReviewText
+  {
+    public string reviewId { get; set; }
+    public string authorRating { get; set; }
+    public string reviewSummary { get; set; }
+    public string reviewText { get; set; }
+    public bool spoiler { get; set; }
   }
 
   #endregion IMDB JSON Struct

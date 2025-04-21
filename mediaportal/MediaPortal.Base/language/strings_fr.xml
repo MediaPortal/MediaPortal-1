@@ -98,7 +98,7 @@
     <String id="132">Albums</String>
     <String id="133">Artistes</String>
     <String id="134">Répertoires</String>
-    <String id="135">Genres</String>
+    <String id="135">Genre</String>
     <String id="136">Playlist</String>
     <String id="137">Rechercher</String>
     <String id="138">INFORMATIONS SYSTEME</String>
@@ -1723,7 +1723,7 @@
     <String id="9998">Minutes : </String>
     <String id="9999">Heures : </String>
     <String id="10100">Mines cachées</String>
-    <String id="10101">Temps de jeu</String>
+    <String id="10101">Horaires du prog.</String>
     <String id="10102">Meilleur temps</String>
     <String id="10103" prefix="Mon ">Démineur</String>
     <String id="10104">Mini EPG</String>
@@ -2095,8 +2095,17 @@
     <String id="106666">Attente de mise en veille</String>
     <String id="107700" prefix="Mon ">TV/Télétexte</String>
     <String id="107701" prefix="Mon ">TV/Télétexte</String>
-    <String id="107776" prefix="Mon">Tetris</String>
+    <String id="107776" prefix="Mon ">Tetris</String>
     <String id="107777" prefix="Mon ">Sudoku</String>
+	<String id="107778" prefix="Mon ">Echecs</String>
+    <String id="107779" prefix="Mon ">ClickMania</String>
+	<String id="107780" prefix="Mon ">Puissance 4</String>
+	<String id="107781" prefix="Mon ">Petits chevaux</String>
+	<String id="107782" prefix="Mon ">Hexxagon</String>
+	<String id="107783" prefix="Mon ">Mastermind</String>
+	<String id="107784" prefix="Mes ">Tubes</String>
+	<String id="107785" prefix="Mon ">Pipes</String>
+	<String id="107786" prefix="Mon ">Yahtzee</String>
     <String id="107890" prefix="Ma ">Last.fm radio</String>
     <String id="107900">Boite de dialogue</String>
     <String id="108888">Menu Musique</String>
@@ -2431,10 +2440,16 @@
     <String id="300229">Réduire en icône lorsque MP n'est plus au premier plan</String>
     <String id="300230">Arrêter la lecture lors d'une modification du rendu audio</String>
     <String id="300231">Réduction du taux de rafraichissement lorsque MP n'est plus au premier plan</String>
+    <String id="300232">Mettre à jour les fichiers uniquement après {0}</String>
     <String id="300233">Réglages OSD</String>
     <String id="300234">Voir OSD</String>
     <String id="300235">Cache OSD Auto</String>
-    <String id="300232">Mettre à jour les fichiers uniquement après {0}</String>
+    <String id="300236">Renderer</String>
+    <String id="300237">VMR9</String>
+    <String id="300238">EVR</String>
+    <String id="300239">MadVR</String>
+    <String id="300240">Un fichier video est en cours de lecture</String>
+    <String id="300241">Voulez-vous arrêter la lecture video ?</String>
     <String id="350001">Appuyez sur Info/F9 pour les réglages rapides...</String>
     <String id="350002">Films</String>
     <String id="350003">Lecteur de Disque</String>

@@ -1093,7 +1093,7 @@
       <description>Video resolution</description>
       <type>image</type>
       <id>0</id>
-      <posX>1118</posX>
+      <posX>1123</posX>
       <posY>880</posY>
       <width>99</width>
       <height>65</height>
@@ -1138,7 +1138,7 @@
       <description>Audio channels</description>
       <type>image</type>
       <id>0</id>
-      <posX>1398</posX>
+      <posX>1410</posX>
       <posY>880</posY>
       <width>99</width>
       <height>65</height>
@@ -1153,7 +1153,7 @@
       <description>Aspect ratio</description>
       <type>image</type>
       <id>0</id>
-      <posX>1478</posX>
+      <posX>1508</posX>
       <posY>880</posY>
       <width>99</width>
       <height>65</height>

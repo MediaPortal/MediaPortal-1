@@ -137,6 +137,8 @@ namespace TvPlugin
     [SkinControl(500)] protected GUIImage imgVolumeMuteIcon;
     [SkinControl(501)] protected GUIVolumeBar imgVolumeBar;
 
+    [SkinControl(200)] protected GUINotifierControl guiNotifier;
+
     private int lastChannelWithNoSignal = -1;
     private VideoRendererStatistics.State videoState = VideoRendererStatistics.State.VideoPresent;
     private List<Geometry.Type> _allowedArModes = new List<Geometry.Type>();
@@ -269,59 +271,59 @@ namespace TvPlugin
       }
 
       SettingsLoaded = true;
-      Log.Debug("TvFullScreen.LoadSettings(),  _timeOsdOnscreen: {0}, _zapKeyTimeout: {1}, _zapTimeOutValue: {2}, _byIndex: {3}, _channelNumberMaxLength: {4}", 
+      Log.Debug("TvFullScreen.LoadSettings(),  _timeOsdOnscreen: {0}, _zapKeyTimeout: {1}, _zapTimeOutValue: {2}, _byIndex: {3}, _channelNumberMaxLength: {4}",
                 _timeOsdOnscreen, _zapKeyTimeout, _zapTimeOutValue, _byIndex, _channelNumberMaxLength);
     }
 
     #endregion
 
-		public override void ResetAllControls()
-		{
-			//reset all
+    public override void ResetAllControls()
+    {
+      //reset all
 
-			bool bOffScreen = false;
-			int iCalibrationY = GUIGraphicsContext.OSDOffset;
-			int iTop = GUIGraphicsContext.OverScanTop;
-			int iMin = 0;
+      bool bOffScreen = false;
+      int iCalibrationY = GUIGraphicsContext.OSDOffset;
+      int iTop = GUIGraphicsContext.OverScanTop;
+      int iMin = 0;
 
-			foreach (CPosition pos in _listPositions)
-			{
-				pos.control.SetPosition((int)pos.XPos, (int)pos.YPos + iCalibrationY);
-			}
-			foreach (CPosition pos in _listPositions)
-			{
-				GUIControl pControl = pos.control;
+      foreach (CPosition pos in _listPositions)
+      {
+        pos.control.SetPosition((int)pos.XPos, (int)pos.YPos + iCalibrationY);
+      }
+      foreach (CPosition pos in _listPositions)
+      {
+        GUIControl pControl = pos.control;
 
-				int dwPosY = pControl.YPosition;
-				if (pControl.IsVisible)
-				{
-					if (dwPosY < iTop)
-					{
-						int iSize = iTop - dwPosY;
-						if (iSize > iMin)
-						{
-							iMin = iSize;
-						}
-						bOffScreen = true;
-					}
-				}
-			}
-			if (bOffScreen)
-			{
-				foreach (CPosition pos in _listPositions)
-				{
-					GUIControl pControl = pos.control;
-					int dwPosX = pControl.XPosition;
-					int dwPosY = pControl.YPosition;
-					if (dwPosY < (int)100)
-					{
-						dwPosY += Math.Abs(iMin);
-						pControl.SetPosition(dwPosX, dwPosY);
-					}
-				}
-			}
-			base.ResetAllControls();
-		}
+        int dwPosY = pControl.YPosition;
+        if (pControl.IsVisible)
+        {
+          if (dwPosY < iTop)
+          {
+            int iSize = iTop - dwPosY;
+            if (iSize > iMin)
+            {
+              iMin = iSize;
+            }
+            bOffScreen = true;
+          }
+        }
+      }
+      if (bOffScreen)
+      {
+        foreach (CPosition pos in _listPositions)
+        {
+          GUIControl pControl = pos.control;
+          int dwPosX = pControl.XPosition;
+          int dwPosY = pControl.YPosition;
+          if (dwPosY < (int)100)
+          {
+            dwPosY += Math.Abs(iMin);
+            pControl.SetPosition(dwPosX, dwPosY);
+          }
+        }
+      }
+      base.ResetAllControls();
+    }
 
     public override void OnAction(Action action)
     {
@@ -759,22 +761,22 @@ namespace TvPlugin
                 VMR9Util.g_vmr9.SetRepaint();
                 VMR9Util.g_vmr9.Repaint(); // repaint vmr9
               }
-               _osdTimeoutTimer = DateTime.Now;
+              _osdTimeoutTimer = DateTime.Now;
               GUIWindowManager.IsPauseOsdVisible = true;
             }
             else
             {
-                GUIWindowManager.IsPauseOsdVisible = false;
+              GUIWindowManager.IsPauseOsdVisible = false;
             }
           }
           break;
 
         case Action.ActionType.ACTION_PLAY:
         case Action.ActionType.ACTION_MUSIC_PLAY:
-              {
-                  GUIWindowManager.IsPauseOsdVisible = false;
-                  break;
-              }
+          {
+            GUIWindowManager.IsPauseOsdVisible = false;
+            break;
+          }
 
 
         case Action.ActionType.ACTION_CONTEXT_MENU:
@@ -836,7 +838,7 @@ namespace TvPlugin
 
       base.OnAction(action);
     }
-    
+
     private bool CanStopTimeshifting()
     {
       if (!_confirmTimeshiftStop)
@@ -844,7 +846,7 @@ namespace TvPlugin
         // Can always stop timeshift when confirmation is not required
         return true;
       }
-      
+
       // Get dialog to ask the user for confirmation
       Log.Debug("TvFullScreen: user request to stop");
       GUIDialogPlayStop dlgPlayStop =
@@ -854,7 +856,7 @@ namespace TvPlugin
         // Return true to avoid dead end on missing dialog
         return true;
       }
-      
+
       dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
       dlgPlayStop.SetLine(1, GUILocalizeStrings.Get(2550));
       dlgPlayStop.SetLine(2, GUILocalizeStrings.Get(2551));
@@ -865,12 +867,12 @@ namespace TvPlugin
         Log.Debug("TvFullScreen: stop confirmed");
         return true;
       }
-      
+
       return false;
     }
 
-    private void ShowMiniEpg() 
-    {      
+    private void ShowMiniEpg()
+    {
       TVHome.Navigator.CheckChannelChange();
       TvMiniGuide miniGuide = (TvMiniGuide)GUIWindowManager.GetWindow((int)Window.WINDOW_MINI_GUIDE);
       _isDialogVisible = true;
@@ -928,7 +930,7 @@ namespace TvPlugin
           }
 
           Schedule s = Schedule.Retrieve(card.RecordingScheduleId);
-          TVUtil.DeleteRecAndSchedQuietly(s, card.IdChannel);          
+          TVUtil.DeleteRecAndSchedQuietly(s, card.IdChannel);
 
           GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
           if (dlgNotify == null)
@@ -1117,7 +1119,7 @@ namespace TvPlugin
 
       switch (message.Message)
       {
-          #region case GUI_MSG_HIDE_MESSAGE
+        #region case GUI_MSG_HIDE_MESSAGE
 
         case GUIMessage.MessageType.GUI_MSG_HIDE_MESSAGE:
           {
@@ -1125,9 +1127,9 @@ namespace TvPlugin
           }
           break;
 
-          #endregion
+        #endregion
 
-          #region case GUI_MSG_SHOW_MESSAGE
+        #region case GUI_MSG_SHOW_MESSAGE
 
         case GUIMessage.MessageType.GUI_MSG_SHOW_MESSAGE:
           {
@@ -1158,9 +1160,9 @@ namespace TvPlugin
           }
           break;
 
-          #endregion
+        #endregion
 
-          #region case GUI_MSG_WINDOW_DEINIT
+        #region case GUI_MSG_WINDOW_DEINIT
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
@@ -1203,9 +1205,9 @@ namespace TvPlugin
             return true;
           }
 
-          #endregion
+        #endregion
 
-          #region case GUI_MSG_WINDOW_INIT
+        #region case GUI_MSG_WINDOW_INIT
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
@@ -1259,16 +1261,16 @@ namespace TvPlugin
             return true;
           }
 
-          #endregion
+        #endregion
 
-          #region case GUI_MSG_SETFOCUS
+        #region case GUI_MSG_SETFOCUS
 
         case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
           goto case GUIMessage.MessageType.GUI_MSG_LOSTFOCUS;
 
-          #endregion
+        #endregion
 
-          #region case GUI_MSG_LOSTFOCUS
+        #region case GUI_MSG_LOSTFOCUS
 
         case GUIMessage.MessageType.GUI_MSG_LOSTFOCUS:
           if (_isOsdVisible)
@@ -1325,8 +1327,8 @@ namespace TvPlugin
         }
       }
 
-    /*if (TVHome.Navigator.Groups.Count > 1)
-        dlg.AddLocalizedString(971); // Group*/
+      /*if (TVHome.Navigator.Groups.Count > 1)
+          dlg.AddLocalizedString(971); // Group*/
       if (!g_Player.IsTVRecording && TVHome.Card.HasTeletext)
       {
         dlg.AddLocalizedString(1441); // Fullscreen teletext
@@ -1360,6 +1362,9 @@ namespace TvPlugin
       }
 
       dlg.AddLocalizedString(11000); // Crop settings
+
+      if (GUIGraphicsContext.VideoRenderer != GUIGraphicsContext.VideoRendererType.madVR)
+        dlg.AddLocalizedString(200096); // Pixel Shaders
 
       if (!g_Player.IsTVRecording)
       {
@@ -1505,6 +1510,12 @@ namespace TvPlugin
 
         case 200073:
           ShowPostProcessingMenu();
+          break;
+
+        case 200096:
+          _isDialogVisible = true;
+          GUIGraphicsContext.VideoPixelShaders.ShowPixelShaderMenu();
+          _isDialogVisible = false;
           break;
       }
     }
@@ -2018,7 +2029,7 @@ namespace TvPlugin
         {
           strLang = strLang.Substring(0, ipos);
         }
-          dlg.Add(strLang);
+        dlg.Add(strLang);
       }
 
       // select/focus the subtitle, which is active atm.
@@ -2189,13 +2200,13 @@ namespace TvPlugin
           g_Player.Stop();
         }
       }
-      
+
       TVHome.ShowCiMenu();
 
       if (!g_Player.Playing && !TVHome.DoingChannelChange())
       {
-          Log.Debug("Tvfullscreen:not viewing anymore");
-          GUIWindowManager.ShowPreviousWindow();
+        Log.Debug("Tvfullscreen:not viewing anymore");
+        GUIWindowManager.ShowPreviousWindow();
       }
       else
         GUIGraphicsContext.IsFullScreenVideo = true;
@@ -2441,17 +2452,17 @@ namespace TvPlugin
       }
       if (g_Player.Paused && _timeOsdOnscreen > 0)
       {
-          TimeSpan ts = DateTime.Now - _osdTimeoutTimer;
-          if (ts.TotalMilliseconds > _timeOsdOnscreen)
-          {
-              _isPauseOsdVisible = false;
-              GUIWindowManager.IsPauseOsdVisible = false;
-          }
-          else
-          {
-              _isPauseOsdVisible = true;
-              GUIWindowManager.IsPauseOsdVisible = true;
-          }
+        TimeSpan ts = DateTime.Now - _osdTimeoutTimer;
+        if (ts.TotalMilliseconds > _timeOsdOnscreen)
+        {
+          _isPauseOsdVisible = false;
+          GUIWindowManager.IsPauseOsdVisible = false;
+        }
+        else
+        {
+          _isPauseOsdVisible = true;
+          GUIWindowManager.IsPauseOsdVisible = true;
+        }
       }
 
 
@@ -2485,7 +2496,7 @@ namespace TvPlugin
         }
       }
     }
-        
+
     public override void Render(float timePassed)
     {
       if (GUIWindowManager.IsSwitchingToNewWindow)
@@ -2567,7 +2578,7 @@ namespace TvPlugin
         _zapOsdVisible = true;
         // now even if main OSD is visible it won't be rendered
 
-        if (_isOsdVisible) 
+        if (_isOsdVisible)
         {
           // hide main OSD
           msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0,
@@ -2739,7 +2750,7 @@ namespace TvPlugin
       if (chKey >= '0' && chKey <= '9') //Make sure it's only for the remote
       {
         _channelInputVisible = true;
-        
+
         _keyPressedTimer = DateTime.Now;
         _channelName += chKey;
 
@@ -2805,7 +2816,7 @@ namespace TvPlugin
         return;
       }
 
-    // Switch to the next channel group and tune to the first channel in the group
+      // Switch to the next channel group and tune to the first channel in the group
       TVHome.Navigator.ZapToNextGroup(true);
       _groupVisible = true;
       _groupTimeOutTimer = DateTime.Now;
@@ -2983,7 +2994,7 @@ namespace TvPlugin
 
     private bool CheckScreenState()
     {
-      return (_screenState != null && (_screenState.OsdVisible ||
+      bool bResult = (_screenState != null && (_screenState.OsdVisible ||
                                        _screenState.Paused ||
                                        _screenState.ContextMenuVisible ||
                                        _screenState.ShowStatusLine ||
@@ -2999,6 +3010,19 @@ namespace TvPlugin
                                        _screenState._dialogYesNoVisible ||
                                        Math.Abs(_screenState.Speed - 1) > 0 ||
                                       _screenState.SeekStep != 0));
+
+      if (!bResult && this.guiNotifier != null)
+      {
+        bResult = this.guiNotifier.IsVisible;
+
+        if (!bResult)
+        {
+          this.guiNotifier.UpdateVisibility();
+          bResult = this.guiNotifier.IsVisible || this.guiNotifier.VisibleFromSkinCondition;
+        }
+      }
+
+      return bResult;
     }
 
     public bool ShouldRenderLayer()

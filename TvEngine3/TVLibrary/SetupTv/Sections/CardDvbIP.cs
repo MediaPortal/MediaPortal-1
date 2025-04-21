@@ -20,11 +20,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
+using System.Net;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.Playlists;
@@ -43,10 +41,10 @@ namespace SetupTv.Sections
     private bool _stopScanning = false;
 
     public CardDvbIP()
-      : this("DvbIP") {}
+      : this("DvbIP") { }
 
     public CardDvbIP(string name)
-      : base(name) {}
+      : base(name) { }
 
     public CardDvbIP(string name, int cardNumber)
       : base(name)
@@ -64,10 +62,10 @@ namespace SetupTv.Sections
       String tuningFolder = String.Format(@"{0}\TuningParameters\dvbip", PathManager.GetDataPath);
       if (Directory.Exists(tuningFolder))
       {
-        string[] files = Directory.GetFiles(tuningFolder, "*.m3u");
+        string[] files = Directory.GetFiles(tuningFolder, "*.m3u*");
         foreach (string f in files)
         {
-          mpComboBoxService.Items.Add(Path.GetFileNameWithoutExtension(f));
+          mpComboBoxService.Items.Add(Path.GetFileName(f));
         }
       }
       mpComboBoxService.SelectedIndex = 0;
@@ -106,7 +104,54 @@ namespace SetupTv.Sections
       setting.Persist();
     }
 
-    private void CardDvbIP_Load(object sender, EventArgs e) {}
+    private void CardDvbIP_Load(object sender, EventArgs e) { }
+
+    private string getUrlFromM3u8(string mainUrl)
+    {
+      try
+      {
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(mainUrl);
+        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+        {
+          mainUrl = response.ResponseUri.AbsoluteUri;
+          Stream responseStream = response.GetResponseStream();
+
+          using (StreamReader reader = new StreamReader(responseStream))
+          {
+            string line = reader.ReadLine();
+            if (!line.StartsWith("#EXTM3U", StringComparison.InvariantCultureIgnoreCase))
+              return mainUrl;
+            bool prevLineIsStreamInf = false;
+
+            while ((line = reader.ReadLine()) != null)
+            {
+              if (line.StartsWith("#"))
+              {
+                prevLineIsStreamInf = line.StartsWith("#EXT-X-STREAM-INF");
+              }
+              else
+              if (line != string.Empty && prevLineIsStreamInf)
+              {
+                int p = line.IndexOf('#');
+                if (p >= 0)
+                  line = line.Substring(0, p);
+                Uri streamUrl;
+                if (!Uri.TryCreate(line, UriKind.RelativeOrAbsolute, out streamUrl) || !streamUrl.IsAbsoluteUri)
+                {
+                  streamUrl = new Uri(new Uri(mainUrl), line);
+                }
+                return streamUrl.AbsoluteUri;
+              }
+            }
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        Log.Write(String.Format("Exception while fetching result from '{0}': {1}", mainUrl, e.Message));
+      }
+      return mainUrl;
+    }
 
     private void mpButtonScanTv_Click(object sender, EventArgs e)
     {
@@ -169,10 +214,10 @@ namespace SetupTv.Sections
         else
         {
           IPlayListIO playlistIO =
-            PlayListFactory.CreateIO(String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", PathManager.GetDataPath,
+            PlayListFactory.CreateIO(String.Format(@"{0}\TuningParameters\dvbip\{1}", PathManager.GetDataPath,
                                                    mpComboBoxService.SelectedItem));
           playlistIO.Load(playlist,
-                          String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", PathManager.GetDataPath,
+                          String.Format(@"{0}\TuningParameters\dvbip\{1}", PathManager.GetDataPath,
                                         mpComboBoxService.SelectedItem));
         }
         if (playlist.Count == 0) return;
@@ -196,6 +241,8 @@ namespace SetupTv.Sections
           progressBar1.Value = (int)percent;
 
           string url = enumerator.Current.FileName.Substring(enumerator.Current.FileName.LastIndexOf('\\') + 1);
+          if (Path.GetExtension(url).Equals(".m3u8", StringComparison.InvariantCultureIgnoreCase))
+            url = getUrlFromM3u8(url);
           string name = enumerator.Current.Description;
 
           DVBIPChannel tuneChannel = new DVBIPChannel();

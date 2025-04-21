@@ -1,139 +1,89 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>1016</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
+ 
   <controls>
-    <import>common.settings.xml</import>
-    <import>common.time.xml</import>
-    <control>
+   <import>common.settings.xml</import>
+   <import>common.time.xml</import>
+   <control>
+     <description>buttons</description>
+     <type>group</type>
+     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
-      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>92</posX>
+      <posY>305</posY>
+      <dimColor>ffffffff</dimColor>
+      <layout>StackLayout(0, Vertical, true)</layout>
       <control>
-        <description>background</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>620</posX>
-        <posY>225</posY>
-        <width>1280</width>
-        <height>707</height>
-        <texture>backslide2.png</texture>
+        <description>General Main setttings</description>
+        <type>button</type>
+        <id>9991</id>
+        <label>128</label>
+        <width>410</width>
+        <onup>17</onup>
+        <onright>2</onright>
+        <hyperlink>1016</hyperlink>
       </control>
       <control>
-        <description>Background</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>98</posX>
-        <posY>220</posY>
-        <width>480</width>
-        <height>710</height>
-        <texture>backslide.png</texture>
-      </control>
-      
-      <!--control>
-        <description>background</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>620</posX>
-        <posY>258</posY>
-        <width>1260</width>
-        <height>50</height>
-        <texture>white.png</texture>
-        <colordiffuse>ff09173c</colordiffuse>
+        <description>General Skin settings</description>
+        <type>button</type>
+        <id>9992</id>
+        <label>101021</label>
+        <width>410</width>
+        <hyperlink>1021</hyperlink>
+        <onup>9991</onup>
+        <onright>2</onright>
       </control>
       <control>
-        <description>Background</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>98</posX>
-        <posY>258</posY>
-        <width>460</width>
-        <height>50</height>
-        <texture>white.png</texture>
-        <colordiffuse>ff09173c</colordiffuse>
-      </control-->
-      
-      
-      <control>
-        <type>label</type>
-        <id>1</id>
-        <posX>230</posX>
-        <posY>260</posY>
-        <width>480</width>
-        <label>924</label>
-        <textcolor>white</textcolor>
-        <font>Label</font>
+        <description>Screen</description>
+        <type>button</type>
+        <id>9993</id>
+        <label>6023</label>
+        <width>410</width>
+        <hyperlink>9</hyperlink>
+        <onup>9992</onup>
+        <onright>2</onright>
       </control>
       <control>
-        <description>buttons</description>
-        <type>group</type>
-        <posX>118</posX>
-        <posY>305</posY>
-        <dimColor>ffffffff</dimColor>
-        <layout>StackLayout(0, Vertical, true)</layout>
-        <control>
-          <description>General Main setttings</description>
-          <type>button</type>
-          <id>9991</id>
-          <label>128</label>
-          <onup>17</onup>
-          <onright>2</onright>
-          <hyperlink>1016</hyperlink>
-        </control>
-        <control>
-          <description>General Skin settings</description>
-          <type>button</type>
-          <id>9992</id>
-          <label>101021</label>
-          <hyperlink>1021</hyperlink>
-          <onup>9991</onup>
-          <onright>2</onright>
-        </control>
-        <control>
-          <description>Screen</description>
-          <type>button</type>
-          <id>9993</id>
-          <label>6023</label>
-          <hyperlink>9</hyperlink>
-          <onup>9992</onup>
-          <onright>2</onright>
-        </control>
-        <control>
-          <description>TV</description>
-          <type>button</type>
-          <id>9994</id>
-          <label>605</label>
-          <hyperlink>700</hyperlink>
-          <onup>9993</onup>
-          <onright>2</onright>
-        </control>
-        <control>
-          <description>My Pictures</description>
-          <type>button</type>
-          <id>9995</id>
-          <label>1</label>
-          <hyperlink>12</hyperlink>
-          <onup>9994</onup>
-          <onright>2</onright>
-        </control>
-        <control>
-          <description>Movies</description>
-          <type>button</type>
-          <id>9996</id>
-          <label>3</label>
-          <hyperlink>703</hyperlink>
-          <onup>9995</onup>
-          <onright>2</onright>
-        </control>
-        <control>
-          <description>My DVD</description>
-          <type>button</type>
-          <id>9997</id>
+        <description>TV</description>
+        <type>button</type>
+        <id>9994</id>
+        <label>605</label>
+        <width>410</width>
+        <hyperlink>700</hyperlink>
+        <onup>9993</onup>
+        <onright>2</onright>
+      </control>
+      <control>
+        <description>My Pictures</description>
+        <type>button</type>
+        <id>9995</id>
+        <label>1</label>
+        <width>410</width>
+        <hyperlink>12</hyperlink>
+        <onup>9994</onup>
+        <onright>2</onright>
+      </control>
+      <control>
+        <description>Movies</description>
+        <type>button</type>
+        <id>9996</id>
+        <label>3</label>
+        <width>410</width>
+        <hyperlink>703</hyperlink>
+        <onup>9995</onup>
+        <onright>2</onright>
+      </control>
+      <control>
+        <description>My DVD</description>
+        <type>button</type>
+        <id>9997</id>
           <label>1027</label>
+          <width>410</width>
           <hyperlink>704</hyperlink>
           <onup>9996</onup>
           <onright>2</onright>
@@ -143,6 +93,7 @@
           <type>button</type>
           <id>9998</id>
           <label>300217</label>
+          <width>410</width>
           <hyperlink>1024</hyperlink>
           <onup>9997</onup>
           <onright>2</onright>
@@ -152,6 +103,7 @@
           <type>button</type>
           <id>9999</id>
           <label>2</label>
+          <width>410</width>
           <hyperlink>14</hyperlink>
           <ondown>99910</ondown>
           <onup>9998</onup>
@@ -162,6 +114,7 @@
           <type>button</type>
           <id>99910</id>
           <label>9100</label>
+          <width>410</width>
           <hyperlink>9000</hyperlink>
           <ondown>9991</ondown>
           <onup>9999</onup>
@@ -169,16 +122,7 @@
           <visible>plugin.isenabled(MiniDisplay)</visible>
         </control>
       </control>
-      <control>
-        <type>label</type>
-        <id>1</id>
-        <posX>700</posX>
-        <posY>260</posY>
-        <width>1000</width>
-        <label>#currentmodule</label>
-        <textcolor>white</textcolor>
-        <font>Label</font>
-      </control>
+      
       <control>
         <description>buttons</description>
         <type>group</type>
@@ -191,41 +135,51 @@
           <type>button</type>
           <id>2</id>
           <label>300080</label>
-          <width>550</width>
+          <width>580</width>
+		  <textureFocus>setting_button_medium.png</textureFocus>
           <onup>21</onup>
-          <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
+          <onleft>9991</onleft>
+          <visible>!skin.hassetting(#skin.keyboard.shortcuts)+!skin.hassetting(#skin.drivefreespace)+!skin.hassetting(#skin.drivefreespaceHelp)</visible>
         </control>
         <control>
           <description>Startup settings</description>
           <type>button</type>
           <id>3</id>
           <label>300081</label>
-          <width>550</width>
-          <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
+          <width>580</width>
+		  <textureFocus>setting_button_medium.png</textureFocus>
+          <visible>!skin.hassetting(#skin.keyboard.shortcuts)+!skin.hassetting(#skin.drivefreespace)+!skin.hassetting(#skin.drivefreespaceHelp)</visible>
+          <onleft>9991</onleft>
         </control>
         <control>
           <description>Resume settings</description>
           <type>button</type>
           <id>4</id>
           <label>300082</label>
-          <width>550</width>
-          <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
+          <width>580</width>
+		  <textureFocus>setting_button_medium.png</textureFocus>
+          <visible>!skin.hassetting(#skin.keyboard.shortcuts)+!skin.hassetting(#skin.drivefreespace)+!skin.hassetting(#skin.drivefreespaceHelp)</visible>
+          <onleft>9991</onleft>
         </control>
         <control>
           <description>Volume settings</description>
           <type>button</type>
           <id>5</id>
           <label>101007</label>
-          <width>550</width>
-          <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
+          <width>580</width>
+		  <textureFocus>setting_button_medium.png</textureFocus>
+          <visible>!skin.hassetting(#skin.keyboard.shortcuts)+!skin.hassetting(#skin.drivefreespace)+!skin.hassetting(#skin.drivefreespaceHelp)</visible>
+          <onleft>9991</onleft>
         </control>
         <control>
           <description>RefreshRate settings</description>
           <type>button</type>
           <id>6</id>
           <label>300083</label>
-          <width>550</width>
-          <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
+          <width>580</width>
+		  <textureFocus>setting_button_medium.png</textureFocus>
+          <visible>!skin.hassetting(#skin.keyboard.shortcuts)+!skin.hassetting(#skin.drivefreespace)+!skin.hassetting(#skin.drivefreespaceHelp)</visible>
+          <onleft>9991</onleft>
         </control>
         <control>
           <description>AUtoplay</description>
@@ -233,202 +187,1727 @@
           <id>7</id>
           <label>713</label>
           <ondown>8</ondown>
-          <width>550</width>
-          <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
+          <width>580</width>
+		  <textureFocus>setting_button_medium.png</textureFocus>
+          <visible>!skin.hassetting(#skin.keyboard.shortcuts)+!skin.hassetting(#skin.drivefreespace)+!skin.hassetting(#skin.drivefreespaceHelp)</visible>
+          <onleft>9991</onleft>
         </control>
         <control>
           <description>Keyboard Shortcuts</description>
           <id>8</id>
           <type>checkbutton</type>
-          <label>Keyboard Shortcuts (General)</label>
+          <label>#SkinTranslation.Translations.KeyboardShortcuts.Label</label>
           <selected>#(skin.hassetting('#skin.keyboard.shortcuts'))</selected>
           <onclick>#(skin.togglesetting('#skin.keyboard.shortcuts')) </onclick>            
           <onright>8</onright>
-          <onleft>8</onleft>
+          <onleft>9991</onleft>
+          <ondown>9</ondown>
+          <width>580</width>
+		  <textureFocus>setting_button_medium.png</textureFocus>
+          <visible>!skin.hassetting(#skin.drivefreespace)+!skin.hassetting(#skin.drivefreespaceHelp)</visible>
+          <onleft>9991</onleft>
+        </control>
+        <control>
+          <description>Drive Free Space</description>
+          <id>9</id>
+          <type>checkbutton</type>
+          <label>DriveFreeSpace</label>
+          <selected>#(skin.hassetting('#skin.drivefreespace'))</selected>
+          <onclick>#(skin.togglesetting('#skin.drivefreespace')) </onclick>            
+          <onright>10</onright>
+          <onleft>9991</onleft>
           <ondown>2</ondown>
-          <width>550</width>
+          <width>580</width> 
+		  <textureFocus>setting_button_medium.png</textureFocus>
+          <visible>!skin.hassetting(#skin.keyboard.shortcuts)</visible>
+        </control>
+		</control>
+        <control>
+          <description>Drive Free Space Help</description>
+          <id>10</id>
+          <type>checkbutton</type>
+          <posX>1255</posX> 
+          <posY>305</posY>
+          <label>#(L(19148))</label>
+          <selected>#(skin.hassetting('#skin.drivefreespaceHelp'))</selected>
+          <onclick>#(skin.togglesetting('#skin.drivefreespaceHelp')) </onclick>            
+          <onright>11</onright>
+          <onleft>9</onleft>
+          <ondown>10</ondown>
+          <onup>10</onup>
+          <width>280</width>
+		  <textureFocus>setting_button_short.png</textureFocus> 
+		  <visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespace)</visible>
+        </control>
+		<control>
+          <description>Drive Free Space Help - Enlarge image</description>
+          <id>11</id>
+          <type>checkbutton</type>
+          <posX>1555</posX> 
+          <posY>305</posY>
+          <label>#SkinTranslation.Translations.EnlargeImage.Label</label> 
+          <selected>#(skin.hassetting('#skin.drivefreespaceImage'))</selected>
+          <onclick>#(skin.togglesetting('#skin.drivefreespaceImage')) </onclick>        
+          <onright>11</onright>
+          <onleft>10</onleft>
+          <ondown>11</ondown>
+          <onup>11</onup>
+          <width>330</width>
+          <textureFocus>setting_button_short.png</textureFocus> 		  
+		  <visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespace)+skin.hassetting(#skin.drivefreespaceHelp)</visible>
         </control>
       </control>
+      <!-- *************************************************************************************************** -->
+      <!-- ******************************** DriveFreeSpace Help Text  Help  ********************************** -->
+      <!-- *************************************************************************************************** -->
+      <control>
+        <type>label</type>
+        <description>Help Text</description>
+        <id>0</id>
+        <posX>685</posX>
+        <posY>360</posY>
+        <width>1520</width>
+        <align>left</align>
+        <height>700</height>
+        <label>Here is some information about DriveFreeSpace.&#xA;If installed and configured correctly, this plugin is able to display a lot of information about your attached drives.&#xA;To configure the drive(s) you want to display, open MPConfig -> Plugins and navigate to the process plugin "DriveFreeSpace".&#xA;Click on the button "Configure" and you should see a configuration window like this (without the coloured rectangles):</label>
+        <font>font9</font>
+        <textcolor>skyblue</textcolor>  
+		<animation effect="fade" start="100" end="0" time="700" condition="skin.hassetting(#skin.drivefreespaceImage)">conditional</animation>
+		<visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespaceHelp)</visible>
+      </control>
+       <control>
+        <type>image</type>
+        <description>Drivefreespace Config window</description>
+        <id>0</id>
+        <posX>685</posX>
+        <posY>507</posY> 
+        <texture>drivefreespaceconfig_example.png</texture>
+        <width>250</width>
+        <height>200</height>
+        <align>left</align>
+        <keepaspectratio>no</keepaspectratio>
+		<colordiffuse>ffffffff</colordiffuse>
+		<animation effect="zoom" start="100,100" end="360,300" center="700,570" time="700" condition="skin.hassetting(#skin.drivefreespaceImage)">conditional</animation>
+		<animation effect="slide" start="0,0" end="45,0" time="700" condition="skin.hassetting(#skin.drivefreespaceImage)">conditional</animation>
+		<visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespaceHelp)</visible>
+      </control>
+    <control>
+        <type>label</type>
+        <description>Help Text</description>
+        <id>0</id>
+        <posX>965</posX> 
+        <posY>520</posY> 
+        <label>Inside the red rectangle the available drives are listed. Select the ones you want to display.&#xA;After selecting the drive(s), you now specify the information to be displayed &#xA;(blue rectangle). This is a bit tricky, the properties to select from are shown when &#xA;hovering over the field in the blue rectangle. To get the most information (including &#xA;the free space for recordings in HD), you could use this example string: &#xA;</label>
+        <width>900</width> 
+        <height>200</height>
+        <align>left</align>
+        <font>font9</font>
+        <textcolor>skyblue</textcolor>
+		<animation effect="fade" start="100" end="0" time="700" condition="skin.hassetting(#skin.drivefreespaceImage)">conditional</animation>
+        <visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespaceHelp)</visible>
+      </control>
+      <control>
+        <type>label</type>
+        <description>Help Text</description>
+        <id>0</id>
+        <posX>630</posX> 
+        <posY>700</posY> 
+        <label>                                                            &#37;drive&#37; &#37;labelbrackets&#37; &#xA;                                                            &#37;totalspace&#37; GB total / &#37;usedspace&#37; GB used &#xA;                                                            &#37;freespace&#37; &#37;unit&#37; free (&#37;fspercent&#37;) &#xA;                                                            (for approx. &#37;rectimeleft&#37; hours HD) </label>
+        <width>1520</width>
+        <height>200</height>
+        <align>left</align>
+        <font>font9</font>
+        <textcolor>lightgray</textcolor>
+		<animation effect="fade" start="100" end="0" time="700" condition="skin.hassetting(#skin.drivefreespaceImage)">conditional</animation>
+        <visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespaceHelp)</visible>
+      </control>
+      <control>
+        <type>label</type>
+        <description>Help Text</description>
+        <id>0</id>
+        <posX>685</posX>
+        <posY>850</posY>
+        <label>The skin layout is for the 6 drives C, D, E, F, and G. If you need other drive names, please contact me! &#xA;catavolt</label>
+        <width>1520</width>
+        <height>200</height>
+        <textcolor>skyblue</textcolor> 
+        <align>left</align>
+        <font>font9</font>
+		<animation effect="fade" start="100" end="0" time="700" condition="skin.hassetting(#skin.drivefreespaceImage)">conditional</animation>
+        <visible>!skin.hassetting(#skin.keyboard.shortcuts)+skin.hassetting(#skin.drivefreespaceHelp)</visible> 
+      </control>
+	  
+	  
+    <!-- *************************************************************************************************** -->
+    <!-- *************************************   Drive Free Space All Disks  ******************************* -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <visible>plugin.isenabled(DriveFreeSpace)+skin.hassetting(#skin.drivefreespace)+!skin.hassetting(#skin.drivefreespaceHelp)</visible>
+    <!-- *************************************************************************************************** -->
+    <!-- *************************************   Drive Free Space Disk C  ********************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>670</posX> 
+      <posY>380</posY> 
+      <width>410</width> 
+      <height>34</height> 
+      <texture>#(switch(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green2.png',
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green2.png',
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green2.png',
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green2.png',
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green2.png',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0'),'osd_progress_background_medium_green2.png',
+        eq(1,1),''))</texture>
+      <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
-    <description>Keyboard Shortcuts left</description>
-    <type>textboxscrollup</type>
-    <id>1</id>
-    <posX>705</posX>
-    <posY>375</posY>
-    <width>1120</width>
-    <height>700</height>
-    <label>
-    Escape:   &#x291F; Previous window
-    Cursor Keys:   &#x2237; Select item
-    Home:   &#x21a5; Select first item
-    End:   &#x21a7; Select last item
-    PageUp:   &#x21a9; Previous item page
-    PageDown:   &#x21aa; Next item page
-    U:   &#x2934; Parent folder
-    Enter:   &#x2713; Perform action
-    P:   &#9654; Start playing
-    B:   &#9632; Stop playing
-    Space:   &#x23f8; Pause/Resume playing
-    F7:   &#x21e4; Play previous
-    F8:   &#x21e5; Play next
-    </label>
-    <textcolor>lightskyblue</textcolor>
-    <font>font11</font>
-    <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
-  </control>
-  <control>
-    <description>Keyboard Shortcuts right</description>
-    <type>textboxscrollup</type>
-    <id>1</id>
-    <posX>1305</posX>
-    <posY>335</posY>
-    <width>1120</width>
-    <height>700</height>
-    <label> 
-    F5:   &#171; Rewind
-    F6:   &#187; FastForward
-    R:   &#x25cf; Record current TV
-    &#10134; :   Volume -
-    &#x271A; :   Volume +
-    M:   &#x22A0; Mute
-    F3:   &#x24d8; Show info of selected item
-    F9:   &#x2261; Show context menu
-    Y:   &#x268F; Show OSD
-    H:   &#x21c4; Switch Classic/Basic Home
-    X:   &#x21c4; Switch GUI/Fullscreen (TV/Video)
-    F11:   &#x229E; Screenshot of current screen
-    </label>
-    <textcolor>lightskyblue</textcolor>
-    <font>font11</font>
-    <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
-  </control>
-  <control>
-      <type>group</type>
-      <description>group element</description>
-      <layout>StackLayout(39, Vertical, true)</layout>
-      <posX>658</posX>
-      <posY>411</posY>
-      <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1227</width>
-        <height>1</height>
-        <texture>horizontalbar.png</texture>
-        <colordiffuse>70ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1227</width>
-        <height>1</height>
-        <texture>horizontalbar.png</texture>
-        <colordiffuse>70ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1227</width>
-        <height>1</height>
-        <texture>horizontalbar.png</texture>
-        <colordiffuse>70ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1227</width>
-        <height>1</height>
-        <texture>horizontalbar.png</texture>
-        <colordiffuse>70ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1227</width>
-        <height>1</height>
-        <texture>horizontalbar.png</texture>
-        <colordiffuse>70ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1227</width>
-        <height>1</height>
-        <texture>horizontalbar.png</texture>
-        <colordiffuse>70ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1227</width>
-        <height>1</height>
-        <texture>horizontalbar.png</texture>
-        <colordiffuse>70ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1227</width>
-        <height>1</height>
-        <texture>horizontalbar.png</texture>
-        <colordiffuse>70ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1227</width>
-        <height>1</height>
-        <texture>horizontalbar.png</texture>
-        <colordiffuse>70ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1227</width>
-        <height>1</height>
-        <texture>horizontalbar.png</texture>
-        <colordiffuse>70ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1227</width>
-        <height>1</height>
-        <texture>horizontalbar.png</texture>
-        <colordiffuse>70ffffff</colordiffuse>
-      </control>
-      <control>
-        <description>divider horizontal</description>
-        <type>image</type>
-        <id>0</id>
-        <width>1227</width>
-        <height>1</height>
-        <texture>horizontalbar.png</texture>
-        <colordiffuse>70ffffff</colordiffuse>
-      </control>
+      <description>Progress Bar</description>
+      <type>progress</type>
+      <id>0</id>
+      <posX>661</posX> 
+      <posY>382</posY> 
+      <width>410</width> 
+      <height>30</height> 
+      <label>#(switch(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.C.AvailableSpace.UsedPercentage',
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.D.AvailableSpace.UsedPercentage',
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.E.AvailableSpace.UsedPercentage',
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.F.AvailableSpace.UsedPercentage',
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        eq(1,1),''))</label>
+      <texturebg>-</texturebg>
+      <onlymidtexture>no</onlymidtexture>
+      <midwidth>360</midwidth>
+      <midheight>0</midheight>
+      <midoffsetX>0</midoffsetX>
+      <midoffsetY>0</midoffsetY>
+      <lefttexture>osd_progress_left_red2.png</lefttexture>
+      <midtexture>osd_progress_mid_red2.png</midtexture>
+      <righttexture>osd_progress_right_red2.png</righttexture>
+      <visible>control.hastext(1001)</visible>
     </control>
+    <control>
+      <description>DriveFreeSpace label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>688</posX>
+      <posY>380</posY> 
+      <width>480</width>
+      <label>#(switch(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.C.AvailableSpace.UsedPercentage%',
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.D.AvailableSpace.UsedPercentage%',
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.E.AvailableSpace.UsedPercentage%',
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.F.AvailableSpace.UsedPercentage%',
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage%',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage%',
+        eq(1,1),''))</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>white</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <visible>!string.equals(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0')</visible>
+    </control>
+    <control>
+      <description>DriveFreeSpace label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1065</posX>
+      <posY>380</posY> 
+      <width>480</width>
+      <label>#(switch(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.C.AvailableSpace.Percentage%',
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.D.AvailableSpace.Percentage%',
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.E.AvailableSpace.Percentage%',
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.F.AvailableSpace.Percentage%',
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.G.AvailableSpace.Percentage%',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.H.AvailableSpace.Percentage%',
+        eq(1,1),''))</label>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>white</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+    </control>
+    <control>
+      <description>DriveFreeSpace</description>
+      <type>textboxscrollup</type>
+      <id>1001</id>
+      <posX>685</posX>
+      <posY>415</posY>
+      <width>1120</width>
+      <height>700</height> 
+      <label>#(switch(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.C.AvailableSpace.Data',
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.D.AvailableSpace.Data',
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.E.AvailableSpace.Data',
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.F.AvailableSpace.Data',
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.G.AvailableSpace.Data',
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0'),'#DriveFreeSpace.H.AvailableSpace.Data',
+        eq(1,1),''))</label>
+      <textcolor>deepskyblue</textcolor>
+      <font>font9</font>
+    </control>
+    <!-- *************************************************************************************************** -->
+    <!-- *************************************   Drive Free Space Disk D  ********************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>1320</posX>
+      <posY>380</posY>
+      <width>410</width>
+      <height>34</height>
+      <texture>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        <!-- Drive C no, Drive D no -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        eq(1,1),''))</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Progress Bar D</description>
+      <type>progress</type>
+      <id>0</id>
+      <posX>1311</posX>
+      <posY>382</posY>
+      <width>410</width>
+      <height>30</height>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.D.AvailableSpace.UsedPercentage',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.E.AvailableSpace.UsedPercentage',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.UsedPercentage',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.E.AvailableSpace.UsedPercentage',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.UsedPercentage',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        <!-- Drive C no, Drive D no -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.UsedPercentage',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        eq(1,1),''))</label>
+      <texturebg>-</texturebg>
+      <onlymidtexture>no</onlymidtexture>
+      <midwidth>200</midwidth>
+      <midheight>26</midheight>
+      <midoffsetX>0</midoffsetX>
+      <midoffsetY>0</midoffsetY>
+      <lefttexture>osd_progress_left_red2.png</lefttexture>
+      <midtexture>osd_progress_mid_red2.png</midtexture>
+      <righttexture>osd_progress_right_red2.png</righttexture>
+      <visible>control.hastext(1002)</visible>
+    </control>
+    <control>
+      <description>DriveFreeSpace Used % D</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1338</posX>
+      <posY>380</posY>
+      <width>480</width>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.D.AvailableSpace.UsedPercentage%',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.E.AvailableSpace.UsedPercentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.UsedPercentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage%',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.E.AvailableSpace.UsedPercentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.UsedPercentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage%',
+        <!-- Drive C no, Drive D no -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.UsedPercentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage%',
+        eq(1,1),''))</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>white</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+    </control>
+    <control>
+      <description>DriveFreeSpace Available % D</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1715</posX>
+      <posY>380</posY>
+      <width>480</width>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.D.AvailableSpace.Percentage%',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.E.AvailableSpace.Percentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.Percentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Percentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Percentage%',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.E.AvailableSpace.Percentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.Percentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Percentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Percentage%',
+        <!-- Drive C no, Drive D no -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.Percentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Percentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Percentage%',
+        eq(1,1),''))</label>
+      <align>left</align>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>white</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+    </control>
+    <control>
+      <description>DriveFreeSpace Data D</description>
+      <type>textboxscrollup</type>
+      <id>1002</id>
+      <posX>1335</posX>
+      <posY>415</posY>
+      <width>1120</width>
+      <height>700</height>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.D.AvailableSpace.Data',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.E.AvailableSpace.Data',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.Data',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Data',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Data',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.E.AvailableSpace.Data',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.Data',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Data',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Data',
+        <!-- Drive C no, Drive D no -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.Data',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Data',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Data',
+        eq(1,1),''))</label>
+      <textcolor>deepskyblue</textcolor>
+      <font>font9</font>
+    </control>
+    <!-- *************************************************************************************************** -->
+    <!-- *************************************   Drive Free Space Disk E  ********************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>670</posX>
+      <posY>560</posY>
+      <width>410</width>
+      <height>34</height>
+      <texture>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        <!-- Drive C no, Drive D no -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        eq(1,1),''))</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Progress Bar D</description>
+      <type>progress</type>
+      <id>0</id>
+      <posX>661</posX>
+      <posY>562</posY>
+      <width>410</width>
+      <height>30</height>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.E.AvailableSpace.UsedPercentage',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.UsedPercentage',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.UsedPercentage',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.UsedPercentage',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        <!-- Drive C no, Drive D no -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        eq(1,1),''))</label>
+      <texturebg>-</texturebg>
+      <onlymidtexture>no</onlymidtexture>
+      <midwidth>200</midwidth>
+      <midheight>26</midheight>
+      <midoffsetX>0</midoffsetX>
+      <midoffsetY>0</midoffsetY>
+      <lefttexture>osd_progress_left_red2.png</lefttexture>
+      <midtexture>osd_progress_mid_red2.png</midtexture>
+      <righttexture>osd_progress_right_red2.png</righttexture>
+      <visible>control.hastext(1003)</visible>
+    </control>
+    <control>
+      <description>DriveFreeSpace Used % D</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>688</posX>
+      <posY>560</posY>
+      <width>480</width>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.E.AvailableSpace.UsedPercentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.UsedPercentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage%',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.UsedPercentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage%',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.UsedPercentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage%',
+        <!-- Drive C no, Drive D no -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage%',
+        eq(1,1),''))</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>white</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+    </control>
+    <control>
+      <description>DriveFreeSpace Available % D</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1065</posX>
+      <posY>560</posY>
+      <width>480</width>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.E.AvailableSpace.Percentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.Percentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Percentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Percentage%',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.Percentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Percentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Percentage%',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.Percentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Percentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Percentage%',
+        <!-- Drive C no, Drive D no -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Percentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Percentage%',
+        eq(1,1),''))</label>
+      <align>left</align>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>white</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+    </control>
+    <control>
+      <description>DriveFreeSpace Data D</description>
+      <type>textboxscrollup</type>
+      <id>1003</id>
+      <posX>685</posX>
+      <posY>595</posY>
+      <width>1120</width>
+      <height>700</height>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.E.AvailableSpace.Data',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.Data',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Data',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Data',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.Data',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Data',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Data',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.Data',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Data',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Data',
+        <!-- Drive C no, Drive D no -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Data',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Data',
+        eq(1,1),''))</label>
+      <textcolor>deepskyblue</textcolor>
+      <font>font9</font>
+    </control>
+    <!-- *************************************************************************************************** -->
+    <!-- *************************************   Drive Free Space Disk F  ********************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>1320</posX>
+      <posY>560</posY>
+      <width>410</width>
+      <height>34</height>
+      <texture>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        <!-- Drive C no, Drive D no -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        eq(1,1),''))</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Progress Bar</description>
+      <type>progress</type>
+      <id>0</id>
+      <posX>1311</posX>
+      <posY>562</posY>
+      <width>410</width>
+      <height>30</height>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.UsedPercentage',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        <!-- Drive C no, Drive D no -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        eq(1,1),''))</label>
+      <texturebg>-</texturebg>
+      <onlymidtexture>no</onlymidtexture>
+      <midwidth>200</midwidth>
+      <midheight>26</midheight>
+      <midoffsetX>0</midoffsetX>
+      <midoffsetY>0</midoffsetY>
+      <lefttexture>osd_progress_left_red2.png</lefttexture>
+      <midtexture>osd_progress_mid_red2.png</midtexture>
+      <righttexture>osd_progress_right_red2.png</righttexture>
+      <visible>control.hastext(1004)</visible>
+    </control>
+    <control>
+      <description>DriveFreeSpace Used %</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1338</posX>
+      <posY>560</posY>
+      <width>480</width>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.UsedPercentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage%',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage%',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage%',
+        <!-- Drive C no, Drive D no -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage%',
+        eq(1,1),''))</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>white</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+    </control>
+    <control>
+      <description>DriveFreeSpace Available %</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1715</posX>
+      <posY>560</posY>
+      <width>480</width>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.Percentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Percentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Percentage%',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Percentage%',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Percentage%',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Percentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Percentage%',
+        <!-- Drive C no, Drive D no -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Percentage%',
+        eq(1,1),''))</label>
+        <align>left</align>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>white</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+    </control>
+    <control>
+      <description>DriveFreeSpace Data</description>
+      <type>textboxscrollup</type>
+      <id>1004</id>
+      <posX>1335</posX>
+      <posY>595</posY>
+      <width>1120</width>
+      <height>700</height>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.F.AvailableSpace.Data',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Data',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Data',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Data',
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Data',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Data',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Data',
+        <!-- Drive C no, Drive D no -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Data',
+        eq(1,1),''))</label>
+      <textcolor>deepskyblue</textcolor>
+      <font>font9</font>
+    </control>
+    <!-- *************************************************************************************************** -->
+    <!-- *************************************   Drive Free Space Disk G  ********************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>670</posX>
+      <posY>740</posY>
+      <width>410</width>
+      <height>34</height>
+      <texture>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        <!-- Drive C no, Drive D no -->
+        eq(1,1),''))</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Progress Bar</description>
+      <type>progress</type>
+      <id>0</id>
+      <posX>661</posX>
+      <posY>742</posY>
+      <width>410</width>
+      <height>30</height>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        <!-- Drive C no, Drive D no -->
+        eq(1,1),''))</label>
+      <texturebg>-</texturebg>
+      <onlymidtexture>no</onlymidtexture>
+      <midwidth>200</midwidth>
+      <midheight>26</midheight>
+      <midoffsetX>0</midoffsetX>
+      <midoffsetY>0</midoffsetY>
+      <lefttexture>osd_progress_left_red2.png</lefttexture>
+      <midtexture>osd_progress_mid_red2.png</midtexture>
+      <righttexture>osd_progress_right_red2.png</righttexture>
+      <visible>control.hastext(1005)</visible>
+    </control>
+    <control>
+      <description>DriveFreeSpace Used %</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>688</posX>
+      <posY>740</posY>
+      <width>480</width>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.UsedPercentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage%',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage%',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage%',
+        <!-- Drive C no, Drive D no -->
+        eq(1,1),''))</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>white</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+    </control>
+    <control>
+      <description>DriveFreeSpace Available %</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1065</posX>
+      <posY>740</posY>
+      <width>480</width>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Percentage%',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Percentage%',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Percentage%',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Percentage%',
+        <!-- Drive C no, Drive D no -->
+        eq(1,1),''))</label>
+      <align>left</align>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>white</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+    </control>
+    <control>
+      <description>DriveFreeSpace Data</description>
+      <type>textboxscrollup</type>
+      <id>1005</id>
+      <posX>685</posX>
+      <posY>775</posY>
+      <width>1120</width>
+      <height>700</height>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.G.AvailableSpace.Data',
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Data',
+        <!-- Drive C no, Drive D yes -->
+        and(
+        eq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Data',
+        <!-- Drive C yes, Drive D no -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        eq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Data',
+        <!-- Drive C no, Drive D no -->
+        eq(1,1),''))</label>
+      <textcolor>deepskyblue</textcolor>
+      <font>font9</font>
+    </control>
+    <!-- *************************************************************************************************** -->
+    <!-- *************************************   Drive Free Space Disk H  ********************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>1320</posX>
+      <posY>740</posY>
+      <width>410</width>
+      <height>34</height>
+      <texture>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'osd_progress_background_medium_green2.png',
+        <!-- Drive C no, Drive D yes -->
+        <!-- Drive C yes, Drive D no -->
+        <!-- Drive C no, Drive D no -->
+        eq(1,1),''))</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
+      <description>Progress Bar</description>
+      <type>progress</type>
+      <id>0</id>
+      <posX>1311</posX>
+      <posY>742</posY>
+      <width>410</width>
+      <height>30</height>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage',
+        <!-- Drive C no, Drive D yes -->
+        <!-- Drive C yes, Drive D no -->
+        <!-- Drive C no, Drive D no -->
+        eq(1,1),''))</label>
+      <texturebg>-</texturebg>
+      <onlymidtexture>no</onlymidtexture>
+      <midwidth>200</midwidth>
+      <midheight>26</midheight>
+      <midoffsetX>0</midoffsetX>
+      <midoffsetY>0</midoffsetY>
+      <!--#(iif(neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0'),'osd_progress_left_red2.png','osd_progress_left_black.png'))-->
+      <lefttexture>osd_progress_left_red2.png</lefttexture>
+      <midtexture>osd_progress_mid_red2.png</midtexture>
+      <righttexture>osd_progress_right_red2.png</righttexture>
+      <visible>control.hastext(1006)</visible>
+    </control>
+    <control>
+      <description>DriveFreeSpace Used %</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1338</posX>
+      <posY>740</posY>
+      <width>480</width>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.UsedPercentage%',
+        <!-- Drive C no, Drive D yes -->
+        <!-- Drive C yes, Drive D no -->
+        <!-- Drive C no, Drive D no -->
+        eq(1,1),''))</label>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>white</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+    </control>
+    <control>
+      <description>DriveFreeSpace Available %</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1715</posX>
+      <posY>740</posY>
+      <width>480</width>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Percentage%',
+        <!-- Drive C no, Drive D yes -->
+        <!-- Drive C yes, Drive D no -->
+        <!-- Drive C no, Drive D no -->
+        eq(1,1),''))</label>
+      <align>left</align>
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>white</textcolor>
+      <shadowAngle>45</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+    </control>
+    <control>
+      <description>DriveFreeSpace</description>
+      <type>textboxscrollup</type>
+      <id>1006</id>
+      <posX>1335</posX>
+      <posY>775</posY>
+      <width>1120</width>
+      <height>700</height>
+      <label>#(switch(
+        <!-- Drive C yes, Drive D yes -->
+        and(
+        neq(#DriveFreeSpace.C.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.D.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.E.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.F.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.G.AvailableSpace.UsedPercentage,'0'),
+        neq(#DriveFreeSpace.H.AvailableSpace.UsedPercentage,'0')),'#DriveFreeSpace.H.AvailableSpace.Data',
+        <!-- Drive C no, Drive D yes -->
+        <!-- Drive C yes, Drive D no -->
+        <!-- Drive C no, Drive D no -->
+        eq(1,1),''))</label>
+      <textcolor>deepskyblue</textcolor>
+      <font>font9</font>
+    </control>
+    <!-- *************************************************************************************************** -->
+    <!-- **********************************  End of DriveFreeSpace Group  ********************************** -->
+    <!-- *************************************************************************************************** -->
+    </control>
+    <!-- *************************************************************************************************** -->
+    <!-- *************************************     Keyboard Shortcuts     ********************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <description>Keyboard Shortcuts left</description>
+      <type>textbox</type>
+      <id>1</id>
+      <posX>685</posX>
+      <posY>360</posY>
+      <width>1120</width>
+      <height>700</height>
+      <label>
+      Escape:           &#x291F;  Previous window
+      Cursor Keys:    &#x2237;  Select item
+      Home:              &#x21a5;   Select first item
+      End:                 &#x21a7;   Select last item
+      PageUp:          &#x21a9;  Previous item page
+      PageDown:     &#x21aa;  Next item page
+      U:                    &#x2934;   Parent folder
+      Enter:             &#x2713;  Perform action
+      P:                    &#9654;  Start playing
+      B:                    &#9632;  Stop playing
+      Space:           &#x23f8;  Pause/Resume playing
+      F7:                  &#x21e4;  Play previous
+      F8:                  &#x21e5;  Play next
+      </label>
+      <textcolor>C0C0C0</textcolor> 
+      <font>font10</font>
+      <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
+    </control>
+    <control>
+      <description>Keyboard Shortcuts right</description>
+      <type>textbox</type>
+      <id>1</id>
+      <posX>1285</posX>
+      <posY>360</posY>
+      <width>1120</width>
+      <height>700</height>
+      <label> 
+      F5:      &#171;  Rewind
+      F6:      &#187;  FastForward
+      R:       &#x25cf;  Record current TV
+      &#x271A; :         Volume up
+      &#10134; :         Volume down
+      M:       &#x22A0;  Mute
+      F3:    &#x24d8;  Show info of selected item
+      F9:      &#x2261;  Show context menu
+      Y:       &#x268F;  Show OSD
+      H:       &#x21c4;  Switch Classic/Basic Home
+      X:       &#x21c4;  Switch GUI/Fullscreen (TV/Video)
+      F11:    &#x229E;  Screenshot of current screen
+      </label>
+      <textcolor>C0C0C0</textcolor> 
+      <font>font10</font>
+      <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
+    </control>
+    
     <control>
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>1280</posX>
-      <posY>355</posY>
-      <height>590</height>
+      <posX>1240</posX>
+      <posY>365</posY>
+      <height>540</height>
       <width>1</width>
       <texture>verticalbar.png</texture>
-      <colordiffuse>aaffffff</colordiffuse>
+      <colordiffuse>deepskyblue</colordiffuse>
       <visible>skin.hassetting(#skin.keyboard.shortcuts)</visible>
     </control>
   </controls>

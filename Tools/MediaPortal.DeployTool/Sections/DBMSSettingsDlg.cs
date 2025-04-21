@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -29,11 +29,25 @@ namespace MediaPortal.DeployTool.Sections
     {
       InitializeComponent();
       type = DialogType.DBMSSettings;
-      if (InstallationProperties.Instance["DBMSType"] == "msSQL2005")
+      if (InstallationProperties.Instance["DBMSType"] == "MSSQL")
+      {
         textBoxDir.Text = installationPath = InstallationProperties.Instance["ProgramFiles"] + "\\Microsoft SQL Server";
+      }
+      if (InstallationProperties.Instance["DBMSType"] == "MariaDB")
+      {
+        textBoxDir.Text = installationPath = InstallationProperties.Instance["ProgramFiles"] + "\\MariaDB\\MariaDB 10.0";
+      }
       else
-        textBoxDir.Text =
-          installationPath = InstallationProperties.Instance["ProgramFiles"] + "\\MySQL\\MySQL Server 5.6";
+      {
+        if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
+        {
+          textBoxDir.Text = installationPath = InstallationProperties.Instance["ProgramFiles"] + "\\MySQL\\MySQL Server 8.3";
+        }
+        else
+        {
+          textBoxDir.Text = installationPath = InstallationProperties.Instance["ProgramFiles"] + "\\MySQL\\MySQL Server 5.6";
+        }
+      }
       UpdateUI();
     }
 

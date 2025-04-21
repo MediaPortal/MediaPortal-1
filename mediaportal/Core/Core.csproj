@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -28,7 +28,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -56,6 +56,7 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -80,6 +81,7 @@
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureCardDefinitions|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -103,6 +105,7 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureDefintionsRelease|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -126,6 +129,7 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release %28Standalone%29|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -149,6 +153,7 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -160,6 +165,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <Optimize>false</Optimize>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -171,6 +177,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <Optimize>true</Optimize>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureCardDefinitions|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -181,6 +188,7 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureDefintionsRelease|x86' ">
     <OutputPath>bin\UseCaptureDefintionsRelease\</OutputPath>
@@ -191,6 +199,7 @@
     </DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release %28Standalone%29|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -201,6 +210,7 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -212,6 +222,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\Release\</OutputPath>
@@ -223,6 +234,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UseCaptureCardDefinitions|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -234,6 +246,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UseCaptureDefintionsRelease|x64'">
     <OutputPath>bin\x64\UseCaptureDefintionsRelease\</OutputPath>
@@ -244,6 +257,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28Standalone%29|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -255,6 +269,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AxInterop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -440,11 +455,16 @@
     <Compile Include="guilib\GUIInternalWindow.cs" />
     <Compile Include="guilib\GUIKeyboard.cs" />
     <Compile Include="guilib\GUIMenuButton.cs" />
+    <Compile Include="guilib\GUINotifierControl.cs" />
     <Compile Include="guilib\GUISpinButton.cs" />
     <Compile Include="guilib\GUIStandardKeyboard.cs" />
+    <Compile Include="guilib\IDialogboxKeyboard.cs" />
     <Compile Include="guilib\IDialogbox2.cs" />
+    <Compile Include="guilib\IPlayerService.cs" />
     <Compile Include="guilib\IStandardKeyboard.cs" />
     <Compile Include="guilib\GUIThemeManager.cs" />
+    <Compile Include="guilib\PixelShaderCollection.cs" />
+    <Compile Include="guilib\PlayerServiceResultEnum.cs" />
     <Compile Include="guilib\RepeatBehavior.cs" />
     <Compile Include="guilib\TextureFrame.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
@@ -473,6 +493,8 @@
     <Compile Include="Player\LAV\AudioPostEngine.cs" />
     <Compile Include="Player\LAV\LAVEngine.cs" />
     <Compile Include="Player\MadvrInterface.cs" />
+    <Compile Include="Player\OnlinePlayer.cs" />
+    <Compile Include="Player\OnlinePlayerUrl.cs" />
     <Compile Include="Player\PostProcessing\PostProcessingEngine.cs" />
     <Compile Include="Player\RefreshRateChanger.cs" />
     <Compile Include="guilib\Tween.cs" />
@@ -1764,11 +1786,11 @@ xcopy "$(TargetDir)core.*" "$(SolutionDir)MediaPortal.Application\bin\$(Configur
     <Error Condition="!Exists('..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets'))" />
     <Error Condition="!Exists('..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets'))" />
     <Error Condition="!Exists('..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets'))" />
-    <Error Condition="!Exists('..\..\Packages\Sqlite.3.41.2.5\build\sqlite.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\Sqlite.3.41.2.5\build\sqlite.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\Sqlite.3.49.1\build\sqlite.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\Sqlite.3.49.1\build\sqlite.targets'))" />
   </Target>
   <Import Project="..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets" Condition="Exists('..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets')" />
   <Import Project="..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets" Condition="Exists('..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets')" />
   <Import Project="..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets" Condition="Exists('..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets')" />
   <Import Project="..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets" Condition="Exists('..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets')" />
-  <Import Project="..\..\Packages\Sqlite.3.41.2.5\build\sqlite.targets" Condition="Exists('..\..\Packages\Sqlite.3.41.2.5\build\sqlite.targets')" />
+  <Import Project="..\..\Packages\Sqlite.3.49.1\build\sqlite.targets" Condition="Exists('..\..\Packages\Sqlite.3.49.1\build\sqlite.targets')" />
 </Project>

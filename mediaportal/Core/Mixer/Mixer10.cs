@@ -289,6 +289,10 @@ namespace MediaPortal.Mixer
           if (_mMdeviceEnumerator == null)
             _mMdeviceEnumerator = new MMDeviceEnumerator();
 
+          //Init Mute state
+          if (iAudioEndpointVolume != null)
+            _isMuted = iAudioEndpointVolume.IsMuted;
+
           var mMdeviceList = _mMdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active);
 
           if (mMdeviceList != null && mMdeviceList.Count > 0)

@@ -23,7 +23,7 @@
   	<description>Video resolution</description>
     <type>image</type>
     <id>0</id>
-		<posX>660</posX>
+		<posX>670</posX>
 		<posY>886</posY>
     <width>99</width>
     <height>65</height>
@@ -68,7 +68,7 @@
   	<description>Audio channels</description>
     <type>image</type>
     <id>0</id>
-		<posX>940</posX>
+		<posX>955</posX>
 		<posY>886</posY>
     <width>99</width>
     <height>65</height>
@@ -83,7 +83,7 @@
   	<description>Aspect ratio</description>
     <type>image</type>
     <id>0</id>
-		<posX>1020</posX>
+		<posX>1050</posX>
 		<posY>886</posY>
     <width>99</width>
     <height>65</height>
@@ -115,7 +115,7 @@
   	<description>Video resolution</description>
     <type>image</type>
     <id>0</id>
-    <posX>209</posX>
+    <posX>219</posX>
     <posY>880</posY>
     <width>99</width>
     <height>65</height>
@@ -160,7 +160,7 @@
   	<description>Audio channels</description>
     <type>image</type>
     <id>0</id>
-   	<posX>489</posX>
+   	<posX>504</posX>
     <posY>880</posY>
     <width>99</width>
     <height>65</height>
@@ -175,7 +175,7 @@
   	<description>Aspect ratio</description>
     <type>image</type>
     <id>0</id>
-   	<posX>569</posX>
+   	<posX>599</posX>
     <posY>880</posY>
     <width>99</width>
     <height>65</height>

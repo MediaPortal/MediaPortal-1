@@ -12,15 +12,15 @@
       <description>splashscreen text</description>
       <type>label</type>
       <id>2</id>
-      <posX>764</posX>
-      <posY>230</posY>
-      <width>1000</width>
+      <posX>0</posX>
+      <posY>760</posY>
+      <width>1920</width>
       <height>50</height>
-      <fontname>Noto Sans</fontname>
+      <fontname>Open Sans Light</fontname>
       <fontstyle>Regular</fontstyle>
-      <textsize>18</textsize>
+      <textsize>20</textsize>
       <textcolor>#00bfff</textcolor>
-      <align>Topleft</align>
+      <align>BottomCenter</align>
     </control>
     <control>
       <description>splashscreen version text</description>
@@ -30,7 +30,7 @@
       <posY>920</posY>
       <width>1920</width>
       <height>50</height>
-      <fontname>Noto Sans</fontname>
+      <fontname>Open Sans Light</fontname>
       <fontstyle>Regular</fontstyle>
       <textsize>20</textsize>
       <textcolor>#00bfff</textcolor>
@@ -44,9 +44,9 @@
       <posY>970</posY>
       <width>1920</width>
       <height>50</height>
-      <fontname>Noto Sans</fontname>
-      <fontstyle>Regular</fontstyle>
-      <textsize>20</textsize>
+      <fontname>Morebi Rounded</fontname>
+      <fontstyle>Bold</fontstyle>
+      <textsize>22</textsize>
       <textcolor>#00bfff</textcolor>
       <align>BottomCenter</align>
     </control>

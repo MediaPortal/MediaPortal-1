@@ -112,6 +112,7 @@ namespace MediaPortal.GUI.Library
     private int _savedHour;
     private ClockHandleType _clockHandle;
 
+    private bool _isCenterReleative = false;
     private bool _isReversible; // whether the animation is reversible or not
     private bool _lastCondition;
     private TransformMatrix _matrix = new TransformMatrix();
@@ -197,7 +198,22 @@ namespace MediaPortal.GUI.Library
 
     public bool Create(XmlNode node)
     {
-      string animType = node.InnerText.ToLowerInvariant();
+      XmlNode nodeAttributeCenter = node.Attributes.GetNamedItem("center");
+      if (nodeAttributeCenter == null)
+      {
+        //Try 'relative' version
+        //This mode allows to move the control around the screen without affecting its rotate animation
+        //Relative center uses _centerX as relative to control's position:
+        // {0,0} points to center of the control
+        //RotateX: adds control's "Y" to _centerX
+        //RotateY: adds control's "X" to _centerX
+        //RotateY,Zoom: adds control's "X" to _centerX and control's "Y" to _centerY
+        nodeAttributeCenter = node.Attributes.GetNamedItem("centerRelative");
+        if (nodeAttributeCenter != null)
+          _isCenterReleative = true;
+      }
+
+        string animType = node.InnerText.ToLowerInvariant();
       if (String.Compare(animType, "visible", true) == 0)
       {
         _type = AnimationType.Visible;
@@ -507,11 +523,9 @@ namespace MediaPortal.GUI.Library
         _startX *= -1;
         _endX *= -1;
 
-
-        nodeAttribute = node.Attributes.GetNamedItem("center");
-        if (nodeAttribute != null)
+        if (nodeAttributeCenter != null)
         {
-          string centerPos = nodeAttribute.Value;
+          string centerPos = nodeAttributeCenter.Value;
           GetPosition(centerPos, ref _centerX, ref _centerY);
           GUIGraphicsContext.ScaleHorizontal(ref _centerX);
           GUIGraphicsContext.ScaleVertical(ref _centerY);
@@ -551,10 +565,10 @@ namespace MediaPortal.GUI.Library
             _endY = 100;
           }
         }
-        nodeAttribute = node.Attributes.GetNamedItem("center");
-        if (nodeAttribute != null)
+
+        if (nodeAttributeCenter != null)
         {
-          string center = nodeAttribute.Value;
+          string center = nodeAttributeCenter.Value;
           GetPosition(center, ref _centerX, ref _centerY);
           GUIGraphicsContext.ScaleHorizontal(ref _centerX);
           GUIGraphicsContext.ScaleVertical(ref _centerY);
@@ -842,7 +856,19 @@ namespace MediaPortal.GUI.Library
 
     public void SetCenter(float x, float y)
     {
-      if (_effect == EffectType.Zoom || _effect == EffectType.RotateZ)
+      if (_isCenterReleative)
+      {
+        if (_effect == EffectType.RotateX)
+          _centerX += y;
+        else if (_effect == EffectType.RotateY)
+          _centerX += x;
+        else if (_effect == EffectType.Zoom || _effect == EffectType.RotateZ)
+        {
+          _centerX += x;
+          _centerY += y;
+        }
+      }
+      else if (_effect == EffectType.Zoom || _effect == EffectType.RotateZ)
       {
         if (_centerX == 0.0f)
         {
@@ -858,6 +884,11 @@ namespace MediaPortal.GUI.Library
     public bool IsReversible
     {
       get { return _isReversible; }
+    }
+
+    public bool IsCenterRelative
+    {
+      get { return _isCenterReleative; }
     }
 
     public AnimationProcess QueuedProcess
@@ -999,6 +1030,7 @@ namespace MediaPortal.GUI.Library
       effect._clockHandle = _clockHandle;
       effect._savedMinute = _savedMinute;
       effect._savedHour = _savedHour;
+      effect._isCenterReleative = _isCenterReleative;
       return effect;
     }
 

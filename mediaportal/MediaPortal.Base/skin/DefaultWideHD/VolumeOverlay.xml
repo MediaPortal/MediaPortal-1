@@ -30,10 +30,10 @@
     <control>
       <id>502</id>
       <type>image</type>
-      <posX>20</posX>
-      <posY>9</posY>
-      <width>50</width>
-      <height>50</height>
+      <posX>5</posX>
+      <posY>13</posY>
+      <width>45</width>
+      <height>45</height>
       <texture>volume.states.mute.png</texture>
       <animation effect="fade" start="0" end="100" time="2000" condition="true" pulse="true">conditional</animation>
     </control>

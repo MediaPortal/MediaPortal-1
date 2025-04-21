@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -14,7 +14,7 @@
     </Win32Resource>
     <ApplicationIcon>images\icon.mpConfig.ico</ApplicationIcon>
     <ApplicationManifest>SetupTv.exe.manifest</ApplicationManifest>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -29,6 +29,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,6 +38,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,6 +47,7 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -53,6 +56,7 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -62,6 +66,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\Release\</OutputPath>
@@ -71,6 +76,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
@@ -381,23 +387,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="39_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="39_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="41_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="41_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="43_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="43_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="44_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="44_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="45_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="45_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="46_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="46_upgrade_sqlserver_database.sql" />
     <None Include="App.config" />
-    <EmbeddedResource Include="42_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="42_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="create_mysql_database.sql" />
-    <EmbeddedResource Include="create_sqlserver_database.sql" />
     <EmbeddedResource Include="SetupTv.exe.manifest" />
     <Compile Include="SearchSHOUTcast.cs">
       <SubType>Form</SubType>
@@ -695,8 +685,6 @@
       <DependentUpon>TvSchedules.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="images\wizard-header.jpg" />
-    <EmbeddedResource Include="delete_mysql_database.sql" />
-    <EmbeddedResource Include="delete_sqlserver_database.sql" />
     <EmbeddedResource Include="SettingsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>SettingsForm.cs</DependentUpon>
@@ -705,21 +693,11 @@
       <SubType>Designer</SubType>
       <DependentUpon>SetupDatabaseForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="40_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="40_upgrade_sqlserver_database.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="60_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="60_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="61_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="61_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="62_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="62_upgrade_sqlserver_database.sql" />
     <Content Include="images\animation.SatDish.gif" />
     <Content Include="images\icon.card.gif" />
     <Content Include="images\icon.computer.gif" />
-    <EmbeddedResource Include="47_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="47_upgrade_sqlserver_database.sql" />
     <EmbeddedResource Include="Dialogs\FormAnalogTuningDetail.resx">
       <DependentUpon>FormAnalogTuningDetail.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -767,28 +745,6 @@
       <DependentUpon>ThirdPartyChecks.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="48_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="48_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="50_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="50_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="51_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="51_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="52_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="52_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="53_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="53_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="54_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="54_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="55_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="55_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="56_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="56_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="57_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="57_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="58_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="58_upgrade_sqlserver_database.sql" />
-    <EmbeddedResource Include="59_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="59_upgrade_sqlserver_database.sql" />
     <None Include="images\icon.down.png" />
     <Content Include="images\icon.mpConfig.ico" />
     <Content Include="images\icon.radio_fta.png" />
@@ -800,8 +756,6 @@
     <Content Include="images\icon.tv_fta.png" />
     <Content Include="images\icon.tv_scrambled.png" />
     <None Include="images\icon.up.png" />
-    <EmbeddedResource Include="49_upgrade_mysql_database.sql" />
-    <EmbeddedResource Include="49_upgrade_sqlserver_database.sql" />
     <Content Include="images\icon.tv_scrambled_and_fta.png" />
     <Content Include="images\icon.user.ico" />
     <Content Include="images\logo.MePo.png" />
@@ -810,6 +764,58 @@
     <Content Include="images\logo.PayPal.bmp" />
     <Content Include="images\tvguide_recordserie_button.png" />
     <Content Include="images\tvguide_record_button.png" />
+    <EmbeddedResource Include="SQL\create_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\create_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\delete_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\delete_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\39_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\39_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\40_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\40_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\41_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\41_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\42_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\42_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\43_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\43_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\44_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\44_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\45_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\45_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\46_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\46_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\47_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\47_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\48_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\48_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\49_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\49_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\50_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\50_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\51_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\51_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\52_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\52_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\53_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\53_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\54_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\54_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\55_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\55_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\56_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\56_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\57_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\57_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\58_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\58_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\59_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\59_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\60_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\60_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\61_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\61_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="SQL\62_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="SQL\62_upgrade_sqlserver_database.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

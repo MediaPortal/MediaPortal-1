@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -51,6 +51,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelHeading = new System.Windows.Forms.Label();
       this.rbMSSQL = new System.Windows.Forms.Label();
       this.rbMySQL = new System.Windows.Forms.Label();
+      this.rbMariaDB = new System.Windows.Forms.Label();
       this.rbDBAlreadyInstalled = new System.Windows.Forms.Label();
       this.bMS = new System.Windows.Forms.Button();
       this.bMySQL = new System.Windows.Forms.Button();
@@ -62,11 +63,16 @@ namespace MediaPortal.DeployTool.Sections
       this.pictureBox4 = new System.Windows.Forms.PictureBox();
       this.pictureBox5 = new System.Windows.Forms.PictureBox();
       this.lbMSSQL = new System.Windows.Forms.Label();
+      this.bMariaDB = new System.Windows.Forms.Button();
+      this.pictureBox6 = new System.Windows.Forms.PictureBox();
+      this.pictureBox7 = new System.Windows.Forms.PictureBox();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
       this.SuspendLayout();
       // 
       // labelHeading
@@ -86,7 +92,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbMSSQL.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbMSSQL.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbMSSQL.ForeColor = System.Drawing.Color.White;
-      this.rbMSSQL.Location = new System.Drawing.Point(383, 150);
+      this.rbMSSQL.Location = new System.Drawing.Point(383, 318);
       this.rbMSSQL.Name = "rbMSSQL";
       this.rbMSSQL.Size = new System.Drawing.Size(275, 13);
       this.rbMSSQL.TabIndex = 23;
@@ -99,12 +105,25 @@ namespace MediaPortal.DeployTool.Sections
       this.rbMySQL.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbMySQL.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbMySQL.ForeColor = System.Drawing.Color.White;
-      this.rbMySQL.Location = new System.Drawing.Point(383, 208);
+      this.rbMySQL.Location = new System.Drawing.Point(383, 264);
       this.rbMySQL.Name = "rbMySQL";
-      this.rbMySQL.Size = new System.Drawing.Size(121, 13);
+      this.rbMySQL.Size = new System.Drawing.Size(97, 13);
       this.rbMySQL.TabIndex = 24;
-      this.rbMySQL.Text = "MySQL Server 5.x";
+      this.rbMySQL.Text = "MySQL Server";
       this.rbMySQL.Click += new System.EventHandler(this.bMySQL_Click);
+      // 
+      // rbMariaDB
+      // 
+      this.rbMariaDB.AutoSize = true;
+      this.rbMariaDB.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.rbMariaDB.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.rbMariaDB.ForeColor = System.Drawing.Color.White;
+      this.rbMariaDB.Location = new System.Drawing.Point(383, 208);
+      this.rbMariaDB.Name = "rbMariaDB";
+      this.rbMariaDB.Size = new System.Drawing.Size(108, 13);
+      this.rbMariaDB.TabIndex = 24;
+      this.rbMariaDB.Text = "MariaDB Server";
+      this.rbMariaDB.Click += new System.EventHandler(this.bMariaDB_Click);
       // 
       // rbDBAlreadyInstalled
       // 
@@ -112,7 +131,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbDBAlreadyInstalled.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbDBAlreadyInstalled.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbDBAlreadyInstalled.ForeColor = System.Drawing.Color.White;
-      this.rbDBAlreadyInstalled.Location = new System.Drawing.Point(383, 257);
+      this.rbDBAlreadyInstalled.Location = new System.Drawing.Point(383, 146);
       this.rbDBAlreadyInstalled.Name = "rbDBAlreadyInstalled";
       this.rbDBAlreadyInstalled.Size = new System.Drawing.Size(403, 13);
       this.rbDBAlreadyInstalled.TabIndex = 25;
@@ -127,7 +146,7 @@ namespace MediaPortal.DeployTool.Sections
       this.bMS.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.bMS.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.bMS.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.bMS.Location = new System.Drawing.Point(336, 145);
+      this.bMS.Location = new System.Drawing.Point(336, 315);
       this.bMS.Name = "bMS";
       this.bMS.Size = new System.Drawing.Size(32, 23);
       this.bMS.TabIndex = 26;
@@ -142,7 +161,7 @@ namespace MediaPortal.DeployTool.Sections
       this.bMySQL.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.bMySQL.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.bMySQL.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.bMySQL.Location = new System.Drawing.Point(336, 203);
+      this.bMySQL.Location = new System.Drawing.Point(336, 259);
       this.bMySQL.Name = "bMySQL";
       this.bMySQL.Size = new System.Drawing.Size(32, 23);
       this.bMySQL.TabIndex = 27;
@@ -157,7 +176,7 @@ namespace MediaPortal.DeployTool.Sections
       this.bExists.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.bExists.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.bExists.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.bExists.Location = new System.Drawing.Point(336, 252);
+      this.bExists.Location = new System.Drawing.Point(336, 147);
       this.bExists.Name = "bExists";
       this.bExists.Size = new System.Drawing.Size(32, 23);
       this.bExists.TabIndex = 28;
@@ -167,7 +186,7 @@ namespace MediaPortal.DeployTool.Sections
       // pictureBox1
       // 
       this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.MSSQL;
-      this.pictureBox1.Location = new System.Drawing.Point(258, 136);
+      this.pictureBox1.Location = new System.Drawing.Point(258, 305);
       this.pictureBox1.Name = "pictureBox1";
       this.pictureBox1.Size = new System.Drawing.Size(50, 50);
       this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -177,7 +196,7 @@ namespace MediaPortal.DeployTool.Sections
       // pictureBox2
       // 
       this.pictureBox2.Image = global::MediaPortal.DeployTool.Images.MySQL;
-      this.pictureBox2.Location = new System.Drawing.Point(258, 192);
+      this.pictureBox2.Location = new System.Drawing.Point(258, 249);
       this.pictureBox2.Name = "pictureBox2";
       this.pictureBox2.Size = new System.Drawing.Size(50, 50);
       this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -189,16 +208,16 @@ namespace MediaPortal.DeployTool.Sections
       this.label1.AutoSize = true;
       this.label1.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.label1.ForeColor = System.Drawing.Color.White;
-      this.label1.Location = new System.Drawing.Point(382, 279);
+      this.label1.Location = new System.Drawing.Point(382, 168);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(244, 13);
       this.label1.TabIndex = 32;
-      this.label1.Text = "Support MS SQL, MySQL, MariaDB server";
+      this.label1.Text = "Support MariaDB, MySQL, MS SQL server";
       // 
       // pictureBox3
       // 
       this.pictureBox3.Image = global::MediaPortal.DeployTool.Images.MariaDB;
-      this.pictureBox3.Location = new System.Drawing.Point(258, 248);
+      this.pictureBox3.Location = new System.Drawing.Point(258, 137);
       this.pictureBox3.Name = "pictureBox3";
       this.pictureBox3.Size = new System.Drawing.Size(50, 50);
       this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -208,7 +227,7 @@ namespace MediaPortal.DeployTool.Sections
       // pictureBox4
       // 
       this.pictureBox4.Image = global::MediaPortal.DeployTool.Images.MySQL;
-      this.pictureBox4.Location = new System.Drawing.Point(202, 248);
+      this.pictureBox4.Location = new System.Drawing.Point(202, 137);
       this.pictureBox4.Name = "pictureBox4";
       this.pictureBox4.Size = new System.Drawing.Size(50, 50);
       this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -218,7 +237,7 @@ namespace MediaPortal.DeployTool.Sections
       // pictureBox5
       // 
       this.pictureBox5.Image = global::MediaPortal.DeployTool.Images.MSSQL;
-      this.pictureBox5.Location = new System.Drawing.Point(146, 248);
+      this.pictureBox5.Location = new System.Drawing.Point(146, 137);
       this.pictureBox5.Name = "pictureBox5";
       this.pictureBox5.Size = new System.Drawing.Size(50, 50);
       this.pictureBox5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -231,17 +250,54 @@ namespace MediaPortal.DeployTool.Sections
       this.lbMSSQL.Cursor = System.Windows.Forms.Cursors.Hand;
       this.lbMSSQL.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.lbMSSQL.ForeColor = System.Drawing.Color.White;
-      this.lbMSSQL.Location = new System.Drawing.Point(383, 169);
+      this.lbMSSQL.Location = new System.Drawing.Point(383, 337);
       this.lbMSSQL.Name = "lbMSSQL";
       this.lbMSSQL.Size = new System.Drawing.Size(108, 13);
       this.lbMSSQL.TabIndex = 36;
       this.lbMSSQL.Text = "Learn why here...";
       this.lbMSSQL.Click += new System.EventHandler(this.lbMSSQL_Click);
       // 
+      // bMariaDB
+      // 
+      this.bMariaDB.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.bMariaDB.FlatAppearance.BorderSize = 0;
+      this.bMariaDB.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+      this.bMariaDB.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+      this.bMariaDB.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.bMariaDB.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
+      this.bMariaDB.Location = new System.Drawing.Point(336, 203);
+      this.bMariaDB.Name = "bMariaDB";
+      this.bMariaDB.Size = new System.Drawing.Size(32, 23);
+      this.bMariaDB.TabIndex = 37;
+      this.bMariaDB.UseVisualStyleBackColor = true;
+      this.bMariaDB.Click += new System.EventHandler(this.bMariaDB_Click);
+      // 
+      // pictureBox6
+      // 
+      this.pictureBox6.Image = global::MediaPortal.DeployTool.Images.MariaDB;
+      this.pictureBox6.Location = new System.Drawing.Point(258, 193);
+      this.pictureBox6.Name = "pictureBox6";
+      this.pictureBox6.Size = new System.Drawing.Size(50, 50);
+      this.pictureBox6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+      this.pictureBox6.TabIndex = 38;
+      this.pictureBox6.TabStop = false;
+      // 
+      // pictureBox7
+      // 
+      this.pictureBox7.Image = global::MediaPortal.DeployTool.Images.Database;
+      this.pictureBox7.Location = new System.Drawing.Point(146, 193);
+      this.pictureBox7.Name = "pictureBox7";
+      this.pictureBox7.Size = new System.Drawing.Size(106, 162);
+      this.pictureBox7.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+      this.pictureBox7.TabIndex = 39;
+      this.pictureBox7.TabStop = false;
+      // 
       // DBMSTypeDlg
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
+      this.Controls.Add(this.pictureBox6);
+      this.Controls.Add(this.bMariaDB);
       this.Controls.Add(this.lbMSSQL);
       this.Controls.Add(this.pictureBox5);
       this.Controls.Add(this.pictureBox4);
@@ -253,14 +309,18 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.Add(this.bMySQL);
       this.Controls.Add(this.bMS);
       this.Controls.Add(this.rbDBAlreadyInstalled);
+      this.Controls.Add(this.rbMariaDB);
       this.Controls.Add(this.rbMySQL);
       this.Controls.Add(this.rbMSSQL);
       this.Controls.Add(this.labelHeading);
+      this.Controls.Add(this.pictureBox7);
       this.Name = "DBMSTypeDlg";
+      this.Controls.SetChildIndex(this.pictureBox7, 0);
       this.Controls.SetChildIndex(this.labelHeading, 0);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.rbMSSQL, 0);
       this.Controls.SetChildIndex(this.rbMySQL, 0);
+      this.Controls.SetChildIndex(this.rbMariaDB, 0);
       this.Controls.SetChildIndex(this.rbDBAlreadyInstalled, 0);
       this.Controls.SetChildIndex(this.bMS, 0);
       this.Controls.SetChildIndex(this.bMySQL, 0);
@@ -272,11 +332,15 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.SetChildIndex(this.pictureBox4, 0);
       this.Controls.SetChildIndex(this.pictureBox5, 0);
       this.Controls.SetChildIndex(this.lbMSSQL, 0);
+      this.Controls.SetChildIndex(this.bMariaDB, 0);
+      this.Controls.SetChildIndex(this.pictureBox6, 0);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -287,6 +351,7 @@ namespace MediaPortal.DeployTool.Sections
     private System.Windows.Forms.Label labelHeading;
     private System.Windows.Forms.Label rbMSSQL;
     private System.Windows.Forms.Label rbMySQL;
+    private System.Windows.Forms.Label rbMariaDB;
     private System.Windows.Forms.Label rbDBAlreadyInstalled;
     private System.Windows.Forms.Button bMS;
     private System.Windows.Forms.Button bMySQL;
@@ -298,5 +363,8 @@ namespace MediaPortal.DeployTool.Sections
     private System.Windows.Forms.PictureBox pictureBox4;
     private System.Windows.Forms.PictureBox pictureBox5;
     private System.Windows.Forms.Label lbMSSQL;
+    private System.Windows.Forms.Button bMariaDB;
+    private System.Windows.Forms.PictureBox pictureBox6;
+    private System.Windows.Forms.PictureBox pictureBox7;
   }
 }

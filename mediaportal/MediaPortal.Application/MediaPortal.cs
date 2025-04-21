@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -3745,6 +3745,10 @@ public class MediaPortalApp : D3D, IRender
     if (GlobalServiceProvider.Get<IMediaInfoService>() == null)
       GlobalServiceProvider.Add<IMediaInfoService>(new MediaPortal.MediaInfoService.Database.MediaInfoService());
 
+    //Register NotifyMessageService service
+    if (GlobalServiceProvider.Get<INotifyMessageService>() == null)
+      GlobalServiceProvider.Add<INotifyMessageService>(new MediaPortal.NotifyMessageService.Database.NotifyMessageService());
+
     //Load screen calibration prior loading window plugins
     GUIGraphicsContext.Load();
 
@@ -6002,8 +6006,10 @@ public class MediaPortalApp : D3D, IRender
 
       dateString = Utils.ReplaceTag(dateString, "<Day>", day, "unknown");
       dateString = Utils.ReplaceTag(dateString, "<DD>", cur.Day.ToString(CultureInfo.InvariantCulture), "unknown");
+      dateString = Utils.ReplaceTag(dateString, "<DDD>", GetShortDayOfWeek(), "unknown");
       dateString = Utils.ReplaceTag(dateString, "<Month>", month, "unknown");
       dateString = Utils.ReplaceTag(dateString, "<MM>", cur.Month.ToString(CultureInfo.InvariantCulture), "unknown");
+      dateString = Utils.ReplaceTag(dateString, "<MMM>", GetShortMonthOfYear(), "unknown");
       dateString = Utils.ReplaceTag(dateString, "<Year>", cur.Year.ToString(CultureInfo.InvariantCulture), "unknown");
       dateString = Utils.ReplaceTag(dateString, "<YY>", (cur.Year - 2000).ToString("00"), "unknown");
 

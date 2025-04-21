@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -142,7 +142,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
       {
         int port;
-        if (InstallationProperties.Instance["DBMSType"] == "msSQL2005")
+        if (InstallationProperties.Instance["DBMSType"] == "MSSQL")
         {
           // SQL2005 TCP Port
           port = 1433;
@@ -156,7 +156,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         }
         else
         {
-          // MySQL TCP Port
+          // MySQL | MariaDB TCP Port
           port = 3306;
           GloballyOpenPort("MySQL", port, NET_FW_SCOPE_.NET_FW_SCOPE_ALL, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP,
                            NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
@@ -303,7 +303,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
             INetFwOpenPort app = e2.Current as INetFwOpenPort;
             if (app != null)
             {
-              if (InstallationProperties.Instance["DBMSType"] == "msSQL2005")
+              if (InstallationProperties.Instance["DBMSType"] == "MSSQL")
               {
                 if (app.Port == 1433)
                   result.state = CheckState.CONFIGURED;

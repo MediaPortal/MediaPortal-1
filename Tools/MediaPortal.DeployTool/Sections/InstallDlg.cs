@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2024 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2024 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -114,7 +114,7 @@ namespace MediaPortal.DeployTool.Sections
 
     #endregion
 
-    private void AddPackageToListView(IInstallationPackage package)
+    private void AddPackageToListView(IInstallationPackage package, bool skipIfInstalled = false)
     {
       ApplicationCtrl item = new ApplicationCtrl
       {
@@ -122,7 +122,13 @@ namespace MediaPortal.DeployTool.Sections
         IconName = package.GetIconName(),
         Tag = package
       };
+
       CheckResult result = package.CheckStatus();
+      if (skipIfInstalled && (result.state == CheckState.INSTALLED || result.state == CheckState.REMOVED))
+      {
+        return;
+      }
+
       item.StatusName = result.state.ToString();
       switch (result.state)
       {
@@ -190,8 +196,9 @@ namespace MediaPortal.DeployTool.Sections
       flpApplication.Controls.Clear();
       if (!Utils.Is64bit() && InstallationProperties.Instance["InstallType"] != "download_only")
       {
-        AddPackageToListView(new OldPackageChecker());
+        AddPackageToListView(new OldPackageChecker(), true);
       }
+      AddPackageToListView(new DotNetFrameworkChecker(), true);
       AddPackageToListView(new DirectX9Checker());
       if (!Utils.Is64bit())
       {
@@ -208,13 +215,24 @@ switch (InstallationProperties.Instance["InstallType"])
       {
         case "singleseat":
           AddPackageToListView(new MediaPortalChecker());
-          if (InstallationProperties.Instance["DBMSType"] == "msSQL2005")
+          if (InstallationProperties.Instance["DBMSType"] == "MSSQL")
           {
             AddPackageToListView(new MSSQLExpressChecker());
           }
-          if (InstallationProperties.Instance["DBMSType"] == "mysql")
+          if (InstallationProperties.Instance["DBMSType"] == "MySQL")
           {
-            AddPackageToListView(new MySQLChecker());
+            if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
+            {
+              AddPackageToListView(new MySQLChecker());
+            }
+            else
+            {
+              AddPackageToListView(new MySQLCheckerOutdated());
+            }
+          }
+          if (InstallationProperties.Instance["DBMSType"] == "MariaDB")
+          {
+            AddPackageToListView(new MariaDBChecker());
           }
 
 #if NO_TV_SERVER
@@ -226,13 +244,24 @@ switch (InstallationProperties.Instance["InstallType"])
           break;
 
         case "tvserver_master":
-          if (InstallationProperties.Instance["DBMSType"] == "msSQL2005")
+          if (InstallationProperties.Instance["DBMSType"] == "MSSQL")
           {
             AddPackageToListView(new MSSQLExpressChecker());
           }
-          if (InstallationProperties.Instance["DBMSType"] == "mysql")
+          if (InstallationProperties.Instance["DBMSType"] == "MySQL")
           {
-            AddPackageToListView(new MySQLChecker());
+            if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
+            {
+              AddPackageToListView(new MySQLChecker());
+            }
+            else
+            {
+              AddPackageToListView(new MySQLCheckerOutdated());
+            }
+          }
+          if (InstallationProperties.Instance["DBMSType"] == "MariaDB")
+          {
+            AddPackageToListView(new MariaDBChecker());
           }
 
 #if NO_TV_SERVER
@@ -255,7 +284,14 @@ switch (InstallationProperties.Instance["InstallType"])
           AddPackageToListView(new MediaPortalChecker());
           // framug: MS SQL is no longer supported
           // AddPackageToListView(new MSSQLExpressChecker());
-          AddPackageToListView(new MySQLChecker());
+          if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
+          {
+            AddPackageToListView(new MySQLChecker());
+          }
+          else
+          {
+            AddPackageToListView(new MySQLCheckerOutdated());
+          }
 
 #if NO_TV_SERVER
 #else

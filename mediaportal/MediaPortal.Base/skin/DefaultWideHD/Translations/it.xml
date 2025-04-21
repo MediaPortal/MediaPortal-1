@@ -2,11 +2,29 @@
 <!-- Skin translation file -->
 <!-- English (US) -->
 <strings>
+  <string Field="Thumbsview">Visualizzazione miniature</string>
+  <string Field="Thumbsview.Select">Normal</string>
   <string Field="WorldNewsTicker">Attivare ticker dal WorldNews</string>
+  <string Field="AnalogClockOSD">Orologio analogico in OSD</string>
   <string Field="MusicNowPlayingFanart">Sfondo musica ora di gioco in BasicHome</string>
   <string Field="MusicFanart">Sfondo Musica casuale in Basic Home</string>
   <string Field="VideoFanart">Sfondo Video casuale in Basic Home</string>
   <string Field="TVGuideRows">Numero di righe in guida TV</string>
+  <string Field="TVSeriesRows">Righe in TVSeries Wide Banners</string>
+  <string Field="TVGuideRows">Filas en guía de TV</string>
+  <string Field="DescriptionTopbar">Descrizione dei pulsanti di barra superiore:</string>
+  <string Field="BackPrevious">Ritorna alla finestra precedente</string>
+  <string Field="BackBasicHome">Alla BasicHome &lt;-&gt; ClassicHome</string>
+  <string Field="LiveTV">LiveTV/Video in sottofondo</string>
+  <string Field="PlayControls">CONTROLi di riproduzione audio/video</string>
+  <string Field="SkinInfo">Informazioni sulla skin</string>
+  <string Field="CloseExit">Chiudi/Esci MP</string>
+  <string Field="ShutdownOptions">Opzioni di spegnimento</string>
+  <string Field="InfoButton">Nelle liste: Premere "destra" (remoto/tastiera) o con il passaggio del mouse mostra le informazioni estese</string>
+  <string Field="SupportedPlugins">Plugins supportati (in ordine alfabetico):</string>
+  <string Field="PluginsMP">... e naturalmente tutti i plugin standard di questa versione di MediaPortal.</string>
+  <string Field="MPVersion">DefaultWideHD è progettato per MP 1.7.x e più versioni recenti.</string>
+  <string Field="Enjoy">Godetevi MediaPortal con DefaultWideHD!</string>
   <string Field="Background">Sfondo</string>
   <string Field="Games">Giochi</string>
   <string Field="NewEpisodes">Episodi aggiunti di recente</string>
@@ -17,6 +35,49 @@
   <string Field="LastPlayed">Ultimo giocato</string>
   <string Field="NewPictures">Immagini aggiunte di recente</string>
   <string Field="NowRecording">Registrazioni attive</string>
+  <string Field="FullView">Informazioni sempre visibile</string>
+  <string Field="ShowDVDArt">Mostra DVD arte</string>
+  <string Field="NoClock">Disattivare Orologio e Plugin Icons</string>
   <string Field="Timer">#(L(603))</string>
+  <string Field="Update">DefaultWideHD 12.3 disponibile!</string>
   <string Field="tvstreaminfo">TV OSD informazioni sul canale sempre visibile</string>
+  <string Field="CategoryBackgrounds">Plugin BGs BasicHome</string>
+  <string Field="Fullscreen">Schermo intero</string>
+  <string Field="tv2">Ti sto guardando!</string>
+  <string Field="tv8">Gol !!!</string>
+  <string Field="tv9">Sono stufo!</string>
+  <string Field="tv10">Splash!</string>
+  <string Field="tv">No GIF</string>
+  <string Field="Ukraine">Mostra la bandiera dell'Ucraina</string>
+  <string Field="KeyboardShortcuts">Scorciatoie da tastiera</string>
+  <string Field="AudioOptions">Volume su/giù</string>
+  <string Field="CategoryBG">Poster del plugin BasicHome</string>
+  <string Field="EnlargeImage">Ingrandire l'immagine</string>
+  <!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for Logo Manager **********************-->
+  <!-- ***************************************************************************************-->
+  <string Field="Package">Pacchetto mittente</string>
+  <string Field="Group">Gruppo di canali</string>
+  <string Field="GrabNow">Generazione</string>
+  <string Field="CancelGrab">Annulla la generazione</string>
+  <string Field="Multiple">Multiplo</string>
+  <string Field="SelectPackage">Seleziona il pacchetto mittente</string>
+  <string Field="SelectChannelGroup">Seleziona il gruppo di canali</string>
+  <string Field="SelectLayerDesign">Seleziona il design</string>
+  <!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for Tetris ****************************-->
+  <!-- ***************************************************************************************-->
+  <string Field="ShowHighscore">Animazione record</string>
+  <string Field="PulsingSidelines">Linee laterali pulsanti</string>
+  <string Field="TetrisHelpText">Tetris è un noto rompicapo per computer reso popolare dal Game Boy.&#xA;Lo scopo del rompicapo è quello di manipolare i pezzi di tetromino (blocchi) o le forme spostandoli lateralmente e ruotandoli di 90 gradi, con l'obiettivo di creare una linea orizzontale di blocchi senza spazi vuoti. Quando viene creata una linea di questo tipo, essa scompare e ogni blocco sopra la linea cancellata cade giù.&#xA;Dopo ogni dieci linee cancellate, il gioco raggiunge un nuovo livello. Con l'avanzare del gioco, i tetrominoes cadono più velocemente ad ogni livello, e il gioco termina quando la pila di tetrominoes raggiunge la parte superiore del tabellone e nessun nuovo tetrominoes può entrare.&#xA;Il gioco può terminare anche se il giocatore riesce ad arrivare al livello 15.&#xA;
+Come giocare
+- Per giocare - freccia a destra per entrare nell'area di gioco, quindi premere Invio.
+- Spostare i blocchi in orizzontale - freccia sinistra o destra
+- Ruota i blocchi - freccia verso l'alto
+- Caduta rapida - freccia verso il basso
+- Caduta istantanea - Invio
+- Mettere in pausa o continuare il gioco - tasto indietro del telecomando o Esc&#xA;&#xA;Il blocco successivo viene visualizzato come suggerimento nella grafica della freccia in alto a destra del campo di gioco.&#xA;Anche il numero del livello viene visualizzato nel colore corrispondente.&#xA;&#xA;&#xA;Smirnuff (autore), catavolt e High_Five vi augurano buon divertimento con Tetris ;)</string>
+<string Field="About">Che cos'è Tetris?</string>
+<string Field="HighFive">Parti della grafica e delle animazioni fornite da High_Five :)</string>
+<string Field="Highscore">*** Congratulazioni!  *** Hai raggiunto un nuovo record!</string>
 </strings>
