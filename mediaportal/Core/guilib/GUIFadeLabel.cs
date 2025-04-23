@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2018 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
 // Copyright (C) 2005-2018 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -72,6 +72,7 @@ namespace MediaPortal.GUI.Library
     private string _TextLast = null;
     private string _TextOrig = null;
     private float _TextWidth = 0;
+    private float _TextHeight = 0;
     private float _CharWidthCurrent = -1;
 
     public GUIFadeLabel(int dwParentID) : base(dwParentID) {}
@@ -499,8 +500,7 @@ namespace MediaPortal.GUI.Library
         _SbScrollText.Clear();
 
         // get the text dimensions.
-        float textHeight = 0;
-        _font.GetTextExtent(text, ref _TextWidth, ref textHeight);
+        _font.GetTextExtent(text, ref _TextWidth, ref _TextHeight);
 
         // scroll
         _TextOrig = text;
@@ -508,7 +508,7 @@ namespace MediaPortal.GUI.Library
         string strTail = !string.IsNullOrEmpty(_labelTail) ? _labelTail : " ";
         do
         {
-          _font.GetTextExtent(_TextOrig, ref _TextWidth, ref textHeight);
+          _font.GetTextExtent(_TextOrig, ref _TextWidth, ref _TextHeight);
           _TextOrig += strTail;
         } while (_TextWidth > 0 && _TextWidth < maxRenderWidth);
       }
@@ -604,7 +604,7 @@ namespace MediaPortal.GUI.Library
             _labelControl.TextVAlignment = VAlignment.ALIGN_TOP;
             xpos = positionX - _scrollPosititionX + _scrollOffset;
             xoff = System.Math.Max(0 ,(maxRenderWidth - _TextWidth) / 2);
-            double yoff = (Height - textHeight) / 2;
+            double yoff = (Height - _TextHeight) / 2;
             _labelControl.SetPosition((int)(xpos + xoff), (int)(positionY + yoff));
             break;
 
