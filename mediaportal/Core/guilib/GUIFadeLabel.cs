@@ -604,7 +604,7 @@ namespace MediaPortal.GUI.Library
             _labelControl.TextVAlignment = VAlignment.ALIGN_TOP;
             xpos = positionX - _scrollPosititionX + _scrollOffset;
             xoff = System.Math.Max(0 ,(maxRenderWidth - _TextWidth) / 2);
-            double yoff = (Height - _TextWidth) / 2;
+            double yoff = (Height - textHeight) / 2;
             _labelControl.SetPosition((int)(xpos + xoff), (int)(positionY + yoff));
             break;
 
