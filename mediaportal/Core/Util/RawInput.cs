@@ -41,7 +41,7 @@ namespace Win32
         }
 
         //Cast our buffer
-        aRawInput = (RAWINPUT) Marshal.PtrToStructure(rawInputBuffer, typeof (RAWINPUT));
+        aRawInput = Marshal.PtrToStructure<RAWINPUT>(rawInputBuffer);
       }
       catch
       {
@@ -76,7 +76,7 @@ namespace Win32
         }
 
         //Cast our buffer
-        deviceInfo = (RID_DEVICE_INFO) Marshal.PtrToStructure(deviceInfoBuffer, typeof (RID_DEVICE_INFO));
+        deviceInfo = Marshal.PtrToStructure<RID_DEVICE_INFO>(deviceInfoBuffer);
       }
       catch
       {

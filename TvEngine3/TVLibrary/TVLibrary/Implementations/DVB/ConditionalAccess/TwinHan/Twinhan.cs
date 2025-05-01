@@ -826,7 +826,7 @@ namespace TvLibrary.Implementations.DVB
           DVB_MMI.DumpBinary(_ptrMMIBuffer, 0, bytesReturned);
           try
           {
-            MMI = (MMIInfoStruct)Marshal.PtrToStructure(_ptrMMIBuffer, typeof (MMIInfoStruct));
+            MMI = Marshal.PtrToStructure<MMIInfoStruct>(_ptrMMIBuffer);
           }
           catch (Exception e)
           {

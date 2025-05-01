@@ -873,7 +873,7 @@ namespace MediaPortal.Plugins.Process
           // Power setting change event
           case PowerManager.PBT_POWERSETTINGCHANGE:
             Log.Debug("PS: POWERSETTINGCHANGE");
-            PowerManager.POWERBROADCAST_SETTING ps = (PowerManager.POWERBROADCAST_SETTING)Marshal.PtrToStructure(msg.LParam, typeof(PowerManager.POWERBROADCAST_SETTING));
+            PowerManager.POWERBROADCAST_SETTING ps = Marshal.PtrToStructure<PowerManager.POWERBROADCAST_SETTING>(msg.LParam);
             if (ps.PowerSetting == PowerManager.GUID_SYSTEM_AWAYMODE && ps.DataLength == Marshal.SizeOf(typeof(Int32)))
             {
               if (ps.Data == 1 && !_awayMode)

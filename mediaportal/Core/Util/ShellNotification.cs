@@ -565,7 +565,7 @@ namespace MediaPortal.Util
     /// <param name="info"></param>
     public bool NotificationReceipt(IntPtr wParam, IntPtr lParam, ref NotifyInfos info)
     {
-      SHNOTIFYSTRUCT shNotify = (SHNOTIFYSTRUCT)Marshal.PtrToStructure(wParam, typeof(SHNOTIFYSTRUCT));
+      SHNOTIFYSTRUCT shNotify = Marshal.PtrToStructure<SHNOTIFYSTRUCT>(wParam);
 
       if (info.Notification == SHCNE.SHCNE_FREESPACE || info.Notification == SHCNE.SHCNE_UPDATEIMAGE)
       {

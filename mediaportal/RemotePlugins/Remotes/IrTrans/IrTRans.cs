@@ -234,7 +234,7 @@ namespace MediaPortal.InputDevices
         // Map the received data to the structure
         IntPtr ptrReceive = Marshal.AllocHGlobal(bytesReceived);
         Marshal.Copy(theSockId.receiveBuffer, 0, ptrReceive, bytesReceived);
-        NETWORKRECV netrecv = (NETWORKRECV)Marshal.PtrToStructure(ptrReceive, typeof (NETWORKRECV));
+        NETWORKRECV netrecv = Marshal.PtrToStructure<NETWORKRECV>(ptrReceive);
         if (logVerbose)
         {
           Log.Info("IRTrans: Command Start --------------------------------------------");

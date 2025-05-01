@@ -1649,7 +1649,7 @@ namespace TvLibrary.Implementations.DVB
                 return false;
             }
 
-            accessParams = (TbsAccessParams)Marshal.PtrToStructure(_generalBuffer, typeof(TbsAccessParams));
+            accessParams = Marshal.PtrToStructure<TbsAccessParams>(_generalBuffer);
             if (accessParams.DiseqcReceiveMessageLength > MaxDiseqcMessageLength)
             {
                 TvLibrary.Log.Log.Debug("Turbosight: result = failure, unexpected number of message bytes ({0}) returned", accessParams.DiseqcReceiveMessageLength);

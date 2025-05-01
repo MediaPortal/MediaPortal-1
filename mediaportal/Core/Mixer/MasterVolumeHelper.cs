@@ -733,19 +733,19 @@ namespace MediaPortal.Mixer
       //to get all data, thats why it is split up into two steps, first the static
       //data is marshalled into the data structure, then with some IntPtr math the
       //remaining floats are read from memory.
-      AUDIO_VOLUME_NOTIFICATION_DATA data = (AUDIO_VOLUME_NOTIFICATION_DATA)Marshal.PtrToStructure(NotifyData, typeof(AUDIO_VOLUME_NOTIFICATION_DATA));
+      AUDIO_VOLUME_NOTIFICATION_DATA data = Marshal.PtrToStructure<AUDIO_VOLUME_NOTIFICATION_DATA>(NotifyData);
 
       //Determine offset in structure of the first float
       IntPtr Offset = Marshal.OffsetOf(typeof(AUDIO_VOLUME_NOTIFICATION_DATA), "ChannelVolume");
       //Determine offset in memory of the first float
-      IntPtr FirstFloatPtr = (IntPtr)((long)NotifyData + (long)Offset);
+      IntPtr FirstFloatPtr = IntPtr.Add(NotifyData, Offset.ToInt32());
 
       float[] voldata = new float[data.nChannels];
 
       //Read all floats from memory.
       for (int i = 0; i < data.nChannels; i++)
       {
-        voldata[i] = (float)Marshal.PtrToStructure(FirstFloatPtr, typeof(float));
+        voldata[i] = Marshal.PtrToStructure<float>(FirstFloatPtr);
       }
 
       //Create combined structure and Fire Event in parent class.

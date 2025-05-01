@@ -834,12 +834,11 @@ namespace TvLibrary.Implementations.DVB
           RegPinMedium rpm;
 
           // Load it all
-          for (int i = 0, s = Marshal.SizeOf(typeof (RegPinMedium)); i < countRecPin; i++)
+          IntPtr current = IntPtr.Add(raw, 8);
+          for (int i = 0; i < countRecPin; i++, current = IntPtr.Add(current, Marshal.SizeOf(typeof(RegPinMedium))))
           {
-            // Get the reference
-            IntPtr addr = new IntPtr(raw.ToInt32() + 8 + s * i);
             // Reconstruct
-            rpm = (RegPinMedium)Marshal.PtrToStructure(addr, typeof (RegPinMedium));
+            rpm = Marshal.PtrToStructure<RegPinMedium>(current);
             m_deviceID = (uint)rpm.dw1;
           }
           // Report

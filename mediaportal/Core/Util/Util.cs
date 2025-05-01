@@ -5985,7 +5985,7 @@ namespace MediaPortal.Util
       {
         // Convert DIB to Bitmap
         // pTargetmadVrDib is a DIB
-        Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER) Marshal.PtrToStructure(pTargetmadVrDib, typeof (Win32API.BITMAPINFOHEADER));
+        Win32API.BITMAPINFOHEADER bmih = Marshal.PtrToStructure<Win32API.BITMAPINFOHEADER>(pTargetmadVrDib);
         IntPtr pixels = IntPtr.Add(pTargetmadVrDib, bmih.biSize);
 
         using (Bitmap b = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth*4, PixelFormat.Format32bppRgb, pixels))

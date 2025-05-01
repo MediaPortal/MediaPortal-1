@@ -960,7 +960,7 @@ namespace TvEngine.PowerScheduler.Interfaces
         UInt32 success;
 
         PowerGetActiveScheme(IntPtr.Zero, ref ptr);
-        scheme = (Guid)Marshal.PtrToStructure(ptr, typeof(Guid));
+        scheme = Marshal.PtrToStructure<Guid>(ptr);
         SystemPowerSetting ps = SystemPowerSettings[(int)settingType];
         if (AC)
           success = PowerReadACValueIndex(IntPtr.Zero, ref scheme, ref ps.subgroupGuid, ref ps.settingGuid, ref value);
@@ -988,7 +988,7 @@ namespace TvEngine.PowerScheduler.Interfaces
       {
         IntPtr ptr = IntPtr.Zero;
         PowerGetActiveScheme(IntPtr.Zero, ref ptr);
-        Guid scheme = (Guid)Marshal.PtrToStructure(ptr, typeof(Guid));
+        Guid scheme = Marshal.PtrToStructure<Guid>(ptr);
 
         SystemPowerSetting ps = SystemPowerSettings[(int)settingType];
         if (AC)

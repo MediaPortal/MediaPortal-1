@@ -286,8 +286,7 @@ namespace MediaPortal.Mixer
           }
 
           MixerNativeMethods.MixerControl mixerControl =
-            (MixerNativeMethods.MixerControl)
-              Marshal.PtrToStructure(mixerLineControls.Data, typeof(MixerNativeMethods.MixerControl));
+              Marshal.PtrToStructure<MixerNativeMethods.MixerControl>(mixerLineControls.Data);
 
           return new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId);
         }
@@ -318,8 +317,7 @@ namespace MediaPortal.Mixer
         {
           MixerNativeMethods.mixerGetLineControlsA(_handle, mixerLineControls, MixerLineControlFlags.OneByType);
           MixerNativeMethods.MixerControl mixerControl =
-            (MixerNativeMethods.MixerControl)
-              Marshal.PtrToStructure(mixerLineControls.Data, typeof(MixerNativeMethods.MixerControl));
+              Marshal.PtrToStructure<MixerNativeMethods.MixerControl>(mixerLineControls.Data);
 
           using (
             MixerNativeMethods.MixerControlDetails mixerControlDetails =

@@ -809,11 +809,11 @@ namespace TVEngine.Devices
         switch (m.WParam.ToInt32())
         {
           case DBT_DEVICEARRIVAL:
-            OnDeviceArrival((DeviceBroadcastHeader)Marshal.PtrToStructure(m.LParam, typeof (DeviceBroadcastHeader)),
+            OnDeviceArrival(Marshal.PtrToStructure<DeviceBroadcastHeader>(m.LParam),
                             m.LParam);
             break;
           case DBT_DEVICEREMOVECOMPLETE:
-            OnDeviceRemoval((DeviceBroadcastHeader)Marshal.PtrToStructure(m.LParam, typeof (DeviceBroadcastHeader)),
+            OnDeviceRemoval(Marshal.PtrToStructure<DeviceBroadcastHeader>(m.LParam),
                             m.LParam);
             break;
         }
@@ -880,8 +880,7 @@ namespace TVEngine.Devices
     {
       if (dbh.DeviceType == 0x05)
       {
-        DeviceBroadcastInterface dbi =
-          (DeviceBroadcastInterface)Marshal.PtrToStructure(ptr, typeof (DeviceBroadcastInterface));
+        DeviceBroadcastInterface dbi = Marshal.PtrToStructure<DeviceBroadcastInterface>(ptr);
 
         if (dbi.ClassGuid == _deviceClass && DeviceArrival != null) DeviceArrival();
       }
@@ -891,7 +890,7 @@ namespace TVEngine.Devices
     {
       if (header.DeviceType == 0x06)
       {
-        DeviceBroadcastHandle dbh = (DeviceBroadcastHandle)Marshal.PtrToStructure(ptr, typeof (DeviceBroadcastHandle));
+        DeviceBroadcastHandle dbh = Marshal.PtrToStructure<DeviceBroadcastHandle>(ptr);
 
         if (dbh.Handle != _deviceHandle) return;
 

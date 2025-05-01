@@ -476,7 +476,7 @@ namespace TvLibrary.Implementations.DVB
         if (hr != 0 || dwReturned != ulMenuSize)
           return false;
 
-        MenuTitle = (DD_CAM_MENU_TITLE)Marshal.PtrToStructure(pTitle, typeof (DD_CAM_MENU_TITLE));
+        MenuTitle = Marshal.PtrToStructure<DD_CAM_MENU_TITLE>(pTitle);
         return true;
       }
       finally

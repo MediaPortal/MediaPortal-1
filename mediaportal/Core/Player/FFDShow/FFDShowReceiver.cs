@@ -108,7 +108,7 @@ namespace FFDShow
         try
         {
           COPYDATASTRUCT cd = new COPYDATASTRUCT();
-          cd = (COPYDATASTRUCT)Marshal.PtrToStructure(m.LParam, typeof (COPYDATASTRUCT));
+          cd = Marshal.PtrToStructure<COPYDATASTRUCT>(m.LParam);
 
 #if UNICODE
                     string returnedData = Marshal.PtrToStringUni(cd.lpData);
