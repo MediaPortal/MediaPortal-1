@@ -66,7 +66,7 @@ namespace MediaPortal.Hooks
     {
       public KeyboardHookStruct(HookEventArgs e)
       {
-        KeyboardHookStruct khs = (KeyboardHookStruct)Marshal.PtrToStructure(e.LParam, typeof (KeyboardHookStruct));
+        KeyboardHookStruct khs = Marshal.PtrToStructure<KeyboardHookStruct>(e.LParam);
 
         virtualKey = khs.virtualKey;
         scanCode = khs.scanCode;

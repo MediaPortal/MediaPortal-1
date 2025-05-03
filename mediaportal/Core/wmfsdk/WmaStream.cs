@@ -357,7 +357,7 @@ namespace Yeti.WMFSdk
 
         Props.GetMediaType(buffer, ref Size);
 
-        mt = (WM_MEDIA_TYPE)Marshal.PtrToStructure(buffer, typeof (WM_MEDIA_TYPE));
+        mt = Marshal.PtrToStructure<WM_MEDIA_TYPE>(buffer);
 
         m_SampleSize = mt.lSampleSize;
       }
@@ -474,7 +474,7 @@ namespace Yeti.WMFSdk
 
           Props.GetMediaType(buffer, ref Size);
 
-          mt = (WM_MEDIA_TYPE)Marshal.PtrToStructure(buffer, typeof (WM_MEDIA_TYPE));
+          mt = Marshal.PtrToStructure<WM_MEDIA_TYPE>(buffer);
 
           if ((mt.majortype == MediaTypes.WMMEDIATYPE_Audio) &&
               (mt.subtype == MediaTypes.WMMEDIASUBTYPE_PCM) &&
@@ -521,7 +521,7 @@ namespace Yeti.WMFSdk
       {
         Props.GetMediaType(buffer, ref Size);
 
-        mt = (WM_MEDIA_TYPE)Marshal.PtrToStructure(buffer, typeof (WM_MEDIA_TYPE));
+        mt = Marshal.PtrToStructure<WM_MEDIA_TYPE>(buffer);
 
         if ((mt.majortype == MediaTypes.WMMEDIATYPE_Audio) &&
             (mt.subtype == MediaTypes.WMMEDIASUBTYPE_PCM) &&

@@ -128,10 +128,10 @@ namespace Win32.Utils.Cd
         lEvent = (DeviceEvent)aMessage.WParam.ToInt32();
         if (lEvent == DeviceEvent.Arrival || lEvent == DeviceEvent.RemoveComplete)
         {
-          lBroadcastHeader = (BroadcastHeader)Marshal.PtrToStructure(aMessage.LParam, typeof (BroadcastHeader));
+          lBroadcastHeader = Marshal.PtrToStructure<BroadcastHeader>(aMessage.LParam);
           if (lBroadcastHeader.Type == DeviceType.Volume)
           {
-            lVolume = (Volume)Marshal.PtrToStructure(aMessage.LParam, typeof (Volume));
+            lVolume = Marshal.PtrToStructure<Volume>(aMessage.LParam);
             if ((lVolume.Flags & (int)VolumeFlags.Media) != 0)
             {
               fMonitor.TriggerEvents(lEvent == DeviceEvent.Arrival, lVolume.Mask);
