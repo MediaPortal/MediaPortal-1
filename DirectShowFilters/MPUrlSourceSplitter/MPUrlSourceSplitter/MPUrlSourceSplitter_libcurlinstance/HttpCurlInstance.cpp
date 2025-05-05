@@ -287,7 +287,7 @@ HRESULT CHttpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
       CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: error while setting ignore content length: 0x%08X", this->protocolName, METHOD_INITIALIZE_NAME, result));
     }
 
-    if (SUCCEEDED(result))
+    if (SUCCEEDED(result) && this->httpDownloadRequest->GetStartPosition() > 0)
     {
       wchar_t *range = FormatString((this->httpDownloadRequest->GetEndPosition() <= this->httpDownloadRequest->GetStartPosition()) ? L"%llu-" : L"%llu-%llu", this->httpDownloadRequest->GetStartPosition(), this->httpDownloadRequest->GetEndPosition());
       CHECK_POINTER_HRESULT(result, range, result, E_OUTOFMEMORY);
