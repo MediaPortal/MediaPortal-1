@@ -30,7 +30,7 @@ jobs:
 
     name: Build Mediaportal
 
-    runs-on: windows-2019
+    runs-on: windows-2022
 
     steps:
       - name: Setup Visual Studio 2019
