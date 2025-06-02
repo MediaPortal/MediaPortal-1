@@ -33,7 +33,7 @@ jobs:
     runs-on: windows-2022
 
     steps:
-      - name: Setup Visual Studio 2019
+      - name: Setup Visual Studio 2022
         uses: microsoft/setup-msbuild@v2
         with:
           vs-version: 16.11
