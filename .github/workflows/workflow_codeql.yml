@@ -21,7 +21,7 @@ jobs:
 
       - name: Link to Visual Studio 2019 Community
         run: |
-          mklink /J "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community" "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise"
+          mklink /J "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community" "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise"
         shell: cmd
 
       - name: Setup Java JDK
