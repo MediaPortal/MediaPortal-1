@@ -88,10 +88,6 @@
       <ondown>3</ondown>
     </control>
     <control>
-      <description>group element</description>
-      <type>group</type>
-      <dimColor>00000000</dimColor>
-    <control>
       <description>options listcontrol</description>
       <type>listcontrol</type>
       <id>3</id>
@@ -99,25 +95,13 @@
       <posY>225</posY>
       <width>1020</width>
       <height>630</height>
-      <onleft>2</onleft>
       <onright>2</onright>
-      <onup>2</onup>
       <textureFocus>listfocus_menu.png</textureFocus>
       <textXOff>20</textXOff>
       <scrollbarXOff>10</scrollbarXOff>
       <spinPosX>4390</spinPosX>
       <spinPosY>765</spinPosY>
     </control>
-    </control>
-    <!--control>
-        <description>onX available tag</description>
-        <type>image</type>
-        <posX>#onx.menu.tagx</posX>
-        <posY>#onx.menu.tagy</posY>
-        <width>#onx.menu.tagw</width>
-        <height>#onx.menu.tagh</height>
-        <texture>onx.tag.gray.png</texture>
-        <visible>string.equals(#onx.visible)+string.equals(#onx.menutag)</visible>
-      </control-->
+    
   </controls>
 </window>

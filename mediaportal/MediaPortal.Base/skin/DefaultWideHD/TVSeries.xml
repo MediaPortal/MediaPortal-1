@@ -89,20 +89,51 @@
       <visible>Control.IsVisible(1239)</visible>
     </control>
     <control>
-      <description>Number of Files Label</description>
+      <description>Number of Files Label Series Screen</description>
       <type>label</type>
       <id>1</id>
-      <posX>1869</posX>
+      <posX>1750</posX>
       <posY>16</posY>
-      <label>#selectedindex/#itemcount</label>
+      <label>#selectedindex/#itemcount #TVSeries.Translation.Series_Plural.Label</label>
       <align>left</align>
       <textcolor>fff5deb3</textcolor>
       <shadowAngle>10</shadowAngle>
       <shadowDistance>2</shadowDistance>
       <shadowColor>ff000000</shadowColor>
       <font>font10</font>
-      <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
+      <visible>string.equals(#selectedindex)+string.equals(#itemcount)+Control.IsVisible(1237)</visible>
     </control>
+    <control>
+      <description>Number of Files Label Season Screen</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1750</posX>
+      <posY>16</posY>
+      <label>#selectedindex/#itemcount #TVSeries.Translation.Seasons.Label</label>
+      <align>left</align>
+      <textcolor>fff5deb3</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <font>font10</font>
+      <visible>string.equals(#selectedindex)+string.equals(#itemcount)+Control.IsVisible(1238)</visible>
+    </control>
+    <control>
+      <description>Number of Files Label Episode Screen</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1750</posX>
+      <posY>16</posY>
+      <label>#selectedindex/#itemcount #TVSeries.Translation.Episodes.Label</label>
+      <align>left</align>
+      <textcolor>fff5deb3</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <font>font10</font>
+      <visible>string.equals(#selectedindex)+string.equals(#itemcount)+Control.IsVisible(1239)</visible>
+    </control>
+    
     <control>
       <description>General Overlay</description>
       <id>0</id>
