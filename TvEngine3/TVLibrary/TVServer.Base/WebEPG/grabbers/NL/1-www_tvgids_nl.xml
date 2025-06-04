@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
+  <Info availableDays="5" timezone="W. Europe Standard Time" version="2.0" />
   <Channels>
     <Channel id="24kitchen" siteId="24kitchen" />
     <Channel id="3sat" siteId="3sat" />
@@ -13,12 +13,13 @@
     <Channel id="bbc2" siteId="bbc2" />
     <Channel id="bbc4" siteId="bbc4" />
     <Channel id="bbce" siteId="bbce" />
-    <Channel id="bbcfirst" siteId="bbcfirst" />
+    <Channel id="bbcnl" siteId="bbcnl" />
     <Channel id="bbcworld" siteId="bbcworld" />
     <Channel id="boomerang" siteId="boomerang" />
     <Channel id="brabant" siteId="brabant" />
     <Channel id="bvn" siteId="bvn" />
     <Channel id="canvas" siteId="canvas" />
+    <Channel id="cartoonito" siteId="Cartoonito" />
     <Channel id="cartoonnetwork" siteId="cartoonnetwork" />
     <Channel id="cbsreality" siteId="cbsreality" />
     <Channel id="cnbc" siteId="cnbc" />
@@ -32,7 +33,7 @@
     <Channel id="disneyxd" siteId="disneyxd" />
     <Channel id="drenthe" siteId="drenthe" />
     <Channel id="dusk" siteId="dusk" />
-    <Channel id="een" siteId="een" />
+    <Channel id="vrt1" siteId="vrt1" />
     <Channel id="eentertainment" siteId="eentertainment" />
     <Channel id="espn" siteId="espn" />
     <Channel id="espn2" siteId="espn2" />
@@ -46,8 +47,9 @@
     <Channel id="film1drama" siteId="film1drama" />
     <Channel id="film1family" siteId="film1family" />
     <Channel id="film1premiere" siteId="film1premiere" />
+    <Channel id="filmboxnl" siteId="filmboxnl" />
     <Channel id="flevoland" siteId="flevoland" />
-    <Channel id="fox" siteId="fox" />
+    <Channel id="starchannel" siteId="starchannel" />
     <Channel id="gelderland" siteId="gelderland" />
     <Channel id="history" siteId="history" />
     <Channel id="id" siteId="id" />
@@ -101,7 +103,7 @@
     <Channel id="rtvwest" siteId="rtvwest" />
     <Channel id="sat1" siteId="sat1" />
     <Channel id="sbs6" siteId="sbs6" />
-    <Channel id="sbs9" siteId="sbs9" />
+    <Channel id="viaplaytv" siteId="viaplaytv" />
     <Channel id="shortstv" siteId="shortstv" />
     <Channel id="stingrayclassica" siteId="stingrayclassica" />
     <Channel id="tlc" siteId="tlc" />
@@ -124,7 +126,7 @@
     <Channel id="ziggosportvoetbal" siteId="ziggosportvoetbal" />
   </Channels>
   <Listing type="Html">
-    <Site url="https://www.tvgids.nl/gids/[DAY_NAME]/[ID]" post="" external="false" encoding="UTF-8" />
+    <Site url="https://www.tvgids.nl/gids/[DAY_NAME]/[ID]" post="" external="false" encoding="UTF-8" delay="10000"/>
     <Search startOffset="0" maxlistings="0" startPage="0">
       <DayNames>
         <Day>vandaag</Day>
@@ -133,7 +135,7 @@
         <Day>[DD]-[MM]-[YYYY]</Day>
         <Day>[DD]-[MM]-[YYYY]</Day>
         <Day>[DD]-[MM]-[YYYY]</Day>
-        <Day>overmorgen</Day>
+        <Day>[DD]-[MM]-[YYYY]</Day>
       </DayNames>
     </Search>
     <Html>
