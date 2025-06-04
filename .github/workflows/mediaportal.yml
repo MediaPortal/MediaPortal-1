@@ -48,6 +48,11 @@ jobs:
           mklink /J "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community" "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
         shell: cmd
 
+      - name: Install ATL support
+        run: |
+          vs_installer.exe modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\BuildTools" --add Microsoft.VisualStudio.Component.Atl --quiet --norestart
+        shell: cmd
+
       - name: Setup Java JDK
         uses: actions/setup-java@v4
         with:
