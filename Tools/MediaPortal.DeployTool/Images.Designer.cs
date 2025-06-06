@@ -63,6 +63,16 @@ namespace MediaPortal.DeployTool {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap AresSkin {
+            get {
+                object obj = ResourceManager.GetObject("AresSkin", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Background_bottom {
             get {
                 object obj = ResourceManager.GetObject("Background_bottom", resourceCulture);
@@ -186,6 +196,16 @@ namespace MediaPortal.DeployTool {
         internal static System.Drawing.Bitmap DirectX9C {
             get {
                 object obj = ResourceManager.GetObject("DirectX9C", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap DotNetFramework {
+            get {
+                object obj = ResourceManager.GetObject("DotNetFramework", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -460,16 +480,6 @@ namespace MediaPortal.DeployTool {
             }
         }
         
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap AresSkin {
-            get {
-                object obj = ResourceManager.GetObject("AresSkin", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
