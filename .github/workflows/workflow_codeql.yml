@@ -14,11 +14,6 @@ jobs:
       security-events: write
 
     steps:
-      - name: Setup Visual Studio 2022
-        uses: microsoft/setup-msbuild@v2
-        with:
-          vs-version: 16.11
-
       - name: Folder for Visual Studio 2019 Community
         run: |
           mkdir "C:\Program Files (x86)\Microsoft Visual Studio\2019\"
