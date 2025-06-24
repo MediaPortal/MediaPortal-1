@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -99,6 +99,41 @@ namespace MediaPortal.Picture.Database
       return _database.EXIFOrientationToRotation(orientation);
     }
 
+    public static bool GetFavorite(string strPicture)
+    {
+      return _database.GetFavorite(strPicture);
+    }
+
+    public static void SetFavorite(string strPicture, bool Favorite)
+    {
+      _database.SetFavorite(strPicture, Favorite);
+    }
+
+    public static int GetRating(string strPicture)
+    {
+      return _database.GetRating(strPicture);
+    }
+
+    public static void SetRating(string strPicture, int Rating)
+    {
+      _database.SetRating(strPicture, Rating);
+    }
+
+    public static int GetViews(string strPicture)
+    {
+      return _database.GetViews(strPicture);
+    }
+
+    public static void SetViews(string strPicture, int Views)
+    {
+      _database.SetViews(strPicture, Views);
+    }
+
+    public static void AddViews(string strPicture)
+    {
+      _database.AddViews(strPicture);
+    }
+
     public static List<string> ListKeywords()
     {
       return _database.ListKeywords();
@@ -177,6 +212,21 @@ namespace MediaPortal.Picture.Database
     public static int CountPicsByMetadataValue(string Name, string Value)
     {
       return _database.CountPicsByMetadataValue(Name, Value);
+    }
+
+    public static List<string> ListFavorites()
+    {
+      return _database.ListFavorites();
+    }
+
+    public static List<string> ListPicsByFavorites(string Value)
+    {
+      return _database.ListPicsByFavorites(Value);
+    }
+
+    public static int CountPicsByFavorites(string Value)
+    {
+      return _database.CountPicsByFavorites(Value);
     }
 
     public static List<PictureData> GetPicturesByFilter(string aSQL, string aFilter)

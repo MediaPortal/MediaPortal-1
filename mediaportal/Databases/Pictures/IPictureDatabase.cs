@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -37,6 +37,13 @@ namespace MediaPortal.Picture.Database
     int GetRotation(string strPicture);
     void SetRotation(string strPicture, int iRotation);
     int EXIFOrientationToRotation(int orientation);
+    bool GetFavorite(string strPicture);
+    void SetFavorite(string strPicture, bool Favorite);
+    int GetRating(string strPicture);
+    void SetRating(string strPicture, int Rating);
+    void SetViews(string strPicture, int Views);
+    int GetViews(string strPicture);
+    void AddViews(string strPicture);
     void Dispose();
     List<string> ListKeywords();
     List<string> ListPicsByKeyword(string Keyword);
@@ -54,6 +61,9 @@ namespace MediaPortal.Picture.Database
     int CountPicsByMetadata(string Name);
     List<string> ListPicsByMetadata(string Name, string Value);
     int CountPicsByMetadataValue(string Name, string Value);
+    List<string> ListFavorites();
+    List<string> ListPicsByFavorites(string Value);
+    int CountPicsByFavorites(string Value);
     int Count();
     List<PictureData> GetPicturesByFilter(string aSQL,string aFilter);
     List<PictureData> GetPicturesByFilter(string aSQL, string aFilter, bool fullInfo);
