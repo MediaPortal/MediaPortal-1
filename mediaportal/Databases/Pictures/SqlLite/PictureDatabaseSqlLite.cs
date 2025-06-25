@@ -1614,7 +1614,6 @@ namespace MediaPortal.Picture.Database
         return resultList;
       }
 
-      int Count = 0;
       lock (typeof(PictureDatabase))
       {
         string strSQL = (_filterPrivate ? "SELECT DISTINCT strKeyword FROM picturekeywords WHERE strKeyword <> 'Private' AND " +
@@ -1626,9 +1625,9 @@ namespace MediaPortal.Picture.Database
           SQLiteResultSet result = m_db.Execute(strSQL);
           if (result != null)
           {
-            for (Count = 0; Count < result.Rows.Count; Count++)
+            for (int count = 0; count < result.Rows.Count; count++)
             {
-              resultList.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
             }
           }
         }
@@ -1648,7 +1647,6 @@ namespace MediaPortal.Picture.Database
         return resultList;
       }
 
-      int Count = 0;
       lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = '" + DatabaseUtility.RemoveInvalidChars(Keyword) + "'" +
@@ -1659,9 +1657,9 @@ namespace MediaPortal.Picture.Database
           SQLiteResultSet result = m_db.Execute(strSQL);
           if (result != null)
           {
-            for (Count = 0; Count < result.Rows.Count; Count++)
+            for (int count = 0; count < result.Rows.Count; count++)
             {
-              resultList.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
             }
           }
         }
@@ -1710,7 +1708,6 @@ namespace MediaPortal.Picture.Database
         return resultList;
       }
 
-      int Count = 0;
       lock (typeof(PictureDatabase))
       {
         string strSQL = GetSelect("strFile", Keyword);
@@ -1719,9 +1716,9 @@ namespace MediaPortal.Picture.Database
           SQLiteResultSet result = m_db.Execute(strSQL);
           if (result != null)
           {
-            for (Count = 0; Count < result.Rows.Count; Count++)
+            for (int count = 0; count < result.Rows.Count; count++)
             {
-              resultList.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
             }
           }
         }
@@ -1774,7 +1771,6 @@ namespace MediaPortal.Picture.Database
         return resultList;
       }
 
-      int Count = 0;
       lock (typeof(PictureDatabase))
       {
         try
@@ -1786,9 +1782,9 @@ namespace MediaPortal.Picture.Database
           SQLiteResultSet result = m_db.Execute(strSQL);
           if (result != null)
           {
-            for (Count = 0; Count < result.Rows.Count; Count++)
+            for (int count = 0; count < result.Rows.Count; count++)
             {
-              resultList.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
             }
           }
         }
@@ -1999,7 +1995,6 @@ namespace MediaPortal.Picture.Database
         return resultList;
       }
 
-      int Count = 0;
       lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT DISTINCT " + Name + " FROM picturedata WHERE " + Name + " IS NOT NULL" +
@@ -2011,9 +2006,9 @@ namespace MediaPortal.Picture.Database
           result = m_db.Execute(strSQL);
           if (result != null)
           {
-            for (Count = 0; Count < result.Rows.Count; Count++)
+            for (int count = 0; count < result.Rows.Count; count++)
             {
-              resultList.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
             }
           }
         }
@@ -2062,7 +2057,6 @@ namespace MediaPortal.Picture.Database
         return resultList;
       }
 
-      int Count = 0;
       lock (typeof(PictureDatabase))
       {
         string strValue = Name.Contains("Altitude") ? Value : "'" + DatabaseUtility.RemoveInvalidChars(Value) + "'";
@@ -2075,9 +2069,9 @@ namespace MediaPortal.Picture.Database
           result = m_db.Execute(strSQL);
           if (result != null)
           {
-            for (Count = 0; Count < result.Rows.Count; Count++)
+            for (int count = 0; count < result.Rows.Count; count++)
             {
-              resultList.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
             }
           }
         }
@@ -2127,7 +2121,6 @@ namespace MediaPortal.Picture.Database
         return resultList;
       }
 
-      int Count = 0;
       lock (typeof(PictureDatabase))
       {
         string strSQL = (_filterPrivate ? "SELECT DISTINCT '♥' as Rating FROM rating WHERE Favorite AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private') " +
@@ -2143,9 +2136,9 @@ namespace MediaPortal.Picture.Database
           SQLiteResultSet result = m_db.Execute(strSQL);
           if (result != null)
           {
-            for (Count = 0; Count < result.Rows.Count; Count++)
+            for (int count = 0; count < result.Rows.Count; count++)
             {
-              resultList.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
             }
           }
         }
@@ -2165,7 +2158,6 @@ namespace MediaPortal.Picture.Database
         return resultList;
       }
 
-      int Count = 0;
       lock (typeof(PictureDatabase))
       {
         string Name = Value == "♥" ? "Favorite" : "Rating";
@@ -2179,9 +2171,9 @@ namespace MediaPortal.Picture.Database
           result = m_db.Execute(strSQL);
           if (result != null)
           {
-            for (Count = 0; Count < result.Rows.Count; Count++)
+            for (int count = 0; count < result.Rows.Count; count++)
             {
-              resultList.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
             }
           }
         }
@@ -2232,7 +2224,6 @@ namespace MediaPortal.Picture.Database
         return resultList;
       }
 
-      int Count = 0;
       lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT strFile FROM picturedata WHERE Views > (SELECT AVG(Views) FROM picturedata " + // SELECT AVG(CASE WHEN Views THEN Views ELSE 0 END) FROM picturedata
@@ -2245,9 +2236,9 @@ namespace MediaPortal.Picture.Database
           result = m_db.Execute(strSQL);
           if (result != null)
           {
-            for (Count = 0; Count < result.Rows.Count; Count++)
+            for (int count = 0; count < result.Rows.Count; count++)
             {
-              resultList.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
             }
           }
         }
