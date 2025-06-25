@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Team MediaPortal")]
 [assembly: AssemblyProduct("MediaPortal")]
-[assembly: AssemblyCopyright("Copyright © 2005-2023 Team MediaPortal")]
+[assembly: AssemblyCopyright("Copyright © 2005-2025 Team MediaPortal")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
