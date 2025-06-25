@@ -1153,11 +1153,11 @@ namespace MediaPortal.GUI.Pictures
       {
         return -1;
       }
-      if (item1.Label == "♥")
+      if (item1.IsFolder && item1.Label == "♥")
       {
         return -1;
       }
-      if (item2.Label == "♥")
+      if (item2.IsFolder && item2.Label == "♥")
       {
         return -1;
       }
@@ -2725,6 +2725,11 @@ namespace MediaPortal.GUI.Pictures
       {
         GUIPropertyManager.SetProperty("#pictures.filename", Path.GetFileName(item.Path));
         GUIPropertyManager.SetProperty("#pictures.path", Path.GetDirectoryName(item.Path));
+
+        item.Rating = PictureDatabase.GetRating(item.Path);
+        GUIPropertyManager.SetProperty("#pictures.Rating", item.Rating.ToString());
+        item.UserRating = PictureDatabase.GetViews(item.Path); // Views
+        GUIPropertyManager.SetProperty("#pictures.Views", item.UserRating.ToString());
       }
       // GUIPropertyManager.SetProperty("#pictures.folder", Path.GetFileName(currentFolder));
 
@@ -2766,8 +2771,6 @@ namespace MediaPortal.GUI.Pictures
         if (!item.IsFolder)
         {
           SetItemExifData(item);
-          GUIPropertyManager.SetProperty("#pictures.Rating", item.Rating.ToString());
-          GUIPropertyManager.SetProperty("#pictures.Views", item.UserRating.ToString());
         }
         else
         {
@@ -4058,8 +4061,6 @@ namespace MediaPortal.GUI.Pictures
           {
             item.Updated = taken;
           }
-          item.Rating = PictureDatabase.GetRating(item.Path);
-          item.UserRating = PictureDatabase.GetViews(item.Path); // Views
 
           facadeLayout.Add(item);
 
@@ -4263,6 +4264,7 @@ namespace MediaPortal.GUI.Pictures
           {
             CreateAndAddFolderItem(favorite, favorite, null, true);
           }
+          CreateAndAddFolderItem(GUILocalizeStrings.Get(2172), "Most viewed", null, true);
         }
         else
         {
@@ -4273,6 +4275,10 @@ namespace MediaPortal.GUI.Pictures
           if (_searchMode)
           {
             pics = PictureDatabase.ListPicsBySearch(strNewDirectory);
+          }
+          else if (strNewDirectory == "Most viewed")
+          {
+            pics = PictureDatabase.ListPicsByMostViews();
           }
           else
           {
@@ -4510,7 +4516,14 @@ namespace MediaPortal.GUI.Pictures
       }
       if (disp == Display.Favorite)
       {
-        picsCount = PictureDatabase.CountPicsByFavorites(item.Path);
+        if (item.Path == "Most viewed")
+        {
+          picsCount = PictureDatabase.CountPicsByMostViews();
+        }
+        else
+        {
+          picsCount = PictureDatabase.CountPicsByFavorites(item.Path);
+        }
       }
 
       if (picsCount == 0)
@@ -4543,9 +4556,6 @@ namespace MediaPortal.GUI.Pictures
         item.Label2 = datetime.ToString();
       }
       // item.Label3 = datetime.ToString();
-
-      item.Rating = PictureDatabase.GetRating(file);
-      item.UserRating = PictureDatabase.GetViews(file); // Views
 
       item.AlbumInfoTag = PictureDatabase.GetExifFromDB(file);
       if (((ExifMetadata.Metadata)item.AlbumInfoTag).HDR)

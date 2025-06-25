@@ -229,6 +229,16 @@ namespace MediaPortal.Picture.Database
       return _database.CountPicsByFavorites(Value);
     }
 
+    public static List<string> ListPicsByMostViews()
+    {
+      return _database.ListPicsByMostViews();
+    }
+
+    public static int CountPicsByMostViews()
+    {
+      return _database.CountPicsByMostViews();
+    }
+
     public static List<PictureData> GetPicturesByFilter(string aSQL, string aFilter)
     {
       return _database.GetPicturesByFilter(aSQL, aFilter);

@@ -64,6 +64,8 @@ namespace MediaPortal.Picture.Database
     List<string> ListFavorites();
     List<string> ListPicsByFavorites(string Value);
     int CountPicsByFavorites(string Value);
+    List<string> ListPicsByMostViews();
+    int CountPicsByMostViews();
     int Count();
     List<PictureData> GetPicturesByFilter(string aSQL,string aFilter);
     List<PictureData> GetPicturesByFilter(string aSQL, string aFilter, bool fullInfo);

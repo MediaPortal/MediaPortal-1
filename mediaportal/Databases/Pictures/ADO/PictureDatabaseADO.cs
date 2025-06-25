@@ -449,6 +449,16 @@ namespace MediaPortal.Picture.Database
       throw (new NotImplementedException("Count Pics by Favorites not yet implemented for ADO Database"));
     }
 
+    public List<string> ListPicsByMostViews()
+    {
+      throw (new NotImplementedException("List Pics by Most Views not yet implemented for ADO Database"));
+    }
+
+    public int CountPicsByMostViews()
+    {
+      throw (new NotImplementedException("Count Pics by Most Views not yet implemented for ADO Database"));
+    }
+
     public int Count()
     {
       throw (new NotImplementedException("Count not yet implemented for ADO Database"));

@@ -90,7 +90,7 @@
       <posY>362</posY>
       <width>114</width>
       <height>114</height>
-      <texture>UserRating#(math.round(cflt(#pictures.Rating))).png</texture>
+      <texture>RatingUser#(math.round(cflt(#pictures.Rating))).png</texture>
       <visible>facadeview.list+Control.IsVisible(50)</visible>
       <animation effect="fade" time="0">Visible</animation>
       <animation effect="fade" time="0">WindowClose</animation>

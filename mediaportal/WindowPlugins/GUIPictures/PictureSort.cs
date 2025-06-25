@@ -86,11 +86,11 @@ namespace MediaPortal.GUI.Pictures
       {
         return -1;
       }
-      if (item1.Label == "♥")
+      if (item1.IsFolder && item1.Label == "♥")
       {
         return -1;
       }
-      if (item2.Label == "♥")
+      if (item2.IsFolder && item2.Label == "♥")
       {
         return -1;
       }

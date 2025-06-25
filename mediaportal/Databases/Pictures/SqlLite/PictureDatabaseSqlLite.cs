@@ -2224,6 +2224,71 @@ namespace MediaPortal.Picture.Database
       }
     }
 
+    public List<string> ListPicsByMostViews()
+    {
+      List<string> resultList = new List<string>();
+      if (m_db == null)
+      {
+        return resultList;
+      }
+
+      int Count = 0;
+      lock (typeof(PictureDatabase))
+      {
+        string strSQL = "SELECT strFile FROM picturedata WHERE Views > (SELECT AVG(Views) FROM picturedata " +
+                                (_filterPrivate ? " WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) + ") " +
+                                (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
+                                " ORDER BY strDateTaken";
+        SQLiteResultSet result;
+        try
+        {
+          result = m_db.Execute(strSQL);
+          if (result != null)
+          {
+            for (Count = 0; Count < result.Rows.Count; Count++)
+            {
+              resultList.Add(DatabaseUtility.Get(result, Count, 0));
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: Getting Pictures by Most Views err: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+        return resultList;
+      }
+    }
+
+    public int CountPicsByMostViews()
+    {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
+      int Count = 0;
+      lock (typeof(PictureDatabase))
+      {
+        string strSQL = "SELECT COUNT(strFile) FROM picturedata WHERE Views > (SELECT AVG(Views) FROM picturedata " +
+                                (_filterPrivate ? " WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) + ") " +
+                                (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty);
+        SQLiteResultSet result;
+        try
+        {
+          result = m_db.Execute(strSQL);
+          if (result != null && result.Rows.Count > 0)
+          {
+            Count = DatabaseUtility.GetAsInt(result, 0, 0);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: Getting Count by Most Views err: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+        return Count;
+      }
+    }
+
     public int Count()
     {
       if (m_db == null)
