@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -44,6 +44,7 @@ namespace MediaPortal.GUI.Pictures
       Label = 7,
       Modified = 8,
       Created = 9,
+      Views = 10,
     }
 
     protected SortMethod CurrentSortMethod;
@@ -82,6 +83,14 @@ namespace MediaPortal.GUI.Pictures
         return -1;
       }
       if (item2 == null)
+      {
+        return -1;
+      }
+      if (item1.IsFolder && item1.Label == "♥")
+      {
+        return -1;
+      }
+      if (item2.IsFolder && item2.Label == "♥")
       {
         return -1;
       }
@@ -150,6 +159,33 @@ namespace MediaPortal.GUI.Pictures
                 return -1;
               }
               if (item1.Rating < item2.Rating)
+              {
+                return 1;
+              }
+            }
+            return 0;
+          }
+
+        case SortMethod.Views:
+          {
+            if (SortAscending)
+            {
+              if (item1.UserRating > item2.UserRating)
+              {
+                return 1;
+              }
+              if (item1.UserRating < item2.UserRating)
+              {
+                return -1;
+              }
+            }
+            else
+            {
+              if (item1.UserRating > item2.UserRating)
+              {
+                return -1;
+              }
+              if (item1.UserRating < item2.UserRating)
               {
                 return 1;
               }
