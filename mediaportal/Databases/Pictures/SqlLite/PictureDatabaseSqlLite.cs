@@ -2235,7 +2235,7 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT strFile FROM picturedata WHERE Views > (SELECT AVG(Views) FROM picturedata " +
+        string strSQL = "SELECT strFile FROM picturedata WHERE Views > (SELECT AVG(Views) FROM picturedata " + // SELECT AVG(CASE WHEN Views THEN Views ELSE 0 END) FROM picturedata
                                 (_filterPrivate ? " WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) + ") " +
                                 (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
                                 " ORDER BY strDateTaken";
@@ -2269,7 +2269,7 @@ namespace MediaPortal.Picture.Database
       int Count = 0;
       lock (typeof(PictureDatabase))
       {
-        string strSQL = "SELECT COUNT(strFile) FROM picturedata WHERE Views > (SELECT AVG(Views) FROM picturedata " +
+        string strSQL = "SELECT COUNT(strFile) FROM picturedata WHERE Views > (SELECT AVG(Views) FROM picturedata " +  // SELECT AVG(CASE WHEN Views THEN Views ELSE 0 END) FROM picturedata
                                 (_filterPrivate ? " WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) + ") " +
                                 (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty);
         SQLiteResultSet result;
