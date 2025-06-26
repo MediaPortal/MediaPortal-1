@@ -184,6 +184,45 @@
       <visible>facadeview.list+control.isvisible(50)</visible>
     </control>
     <control>
+    <description>Watched Label</description>
+    <id>0</id>
+    <type>label</type>
+    <label>#(L(527))</label>
+    <posX>1305</posX>
+    <posY>346</posY>
+    <font>font10</font>
+    <align>left</align>
+    <textcolor>ff00bfff</textcolor>
+    <visible>facadeview.list+control.isvisible(50)</visible>
+  </control>
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <posX>1305</posX>
+    <posY>375</posY>
+    <layout>StackLayout(0, horizontal, true)</layout>
+    <control>
+      <description>Watched progress</description>
+      <type>label</type>
+      <id>1</id>
+      <width>100</width>
+      <label>#MovingPictures.UserMovieSettings.Progress%</label>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+      <visible>facadeview.list+control.isvisible(50)</visible>
+    </control>
+    <control>
+      <description>WatchedCount</description>
+      <type>label</type>
+      <id>1</id>
+      <width>80</width>
+      <label>#MovingPictures.UserMovieSettings.watchedx</label>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+      <visible>facadeview.list+control.isvisible(50)</visible>
+    </control>
+  </control>
+    <control>
       <description>Directors Label</description>
       <id>0</id>
       <type>label</type>

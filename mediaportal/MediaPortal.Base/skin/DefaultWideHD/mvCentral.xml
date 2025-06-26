@@ -210,7 +210,7 @@
       <height>1080</height>
       <texture>white.png</texture>
       <colordiffuse>aa0c3066</colordiffuse>
-      <visible>!Control.HasFocus(50)</visible>
+      <visible>!Control.HasFocus(50)+!topbar.focused</visible>
     </control>
     <control>
       <type>image</type>
@@ -220,14 +220,14 @@
       <height>855</height>
       <texture>backslide.png</texture>
       <colorDiffuse>fffffffff</colorDiffuse>
-      <visible>!Control.HasFocus(50)</visible>
+      <visible>!Control.HasFocus(50)+!topbar.focused</visible>
       <animation effect="slide" time="70" start="-335,0" reversible="true">visiblechange</animation>
     </control>
     <control>
       <type>group</type>
       <description>group element</description>
       <animation effect="slide" time="70" start="-335,0" reversible="true">visiblechange</animation>
-      <visible>!Control.HasFocus(50)</visible>
+      <visible>!Control.HasFocus(50)+!topbar.focused</visible>
       <layout>StackLayout(0, Vertical, true)</layout>
       <posX>29</posX>
       <posY>217</posY>
