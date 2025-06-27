@@ -292,7 +292,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       string strMysqlExe = strDBMSDir + "\\bin\\mysql.exe";
       cmdLine = "-u root --password=" + strPassword +
                 " --execute=\"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '" +
-                strPassword + "' WITH GRANT OPTION\" mysql";
+                strPassword + "' WITH GRANT OPTION;\" mysql";
       exitCode = Utils.RunCommandWait(strMysqlExe, cmdLine);
       if (exitCode != 0)
       {

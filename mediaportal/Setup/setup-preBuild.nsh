@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 /*
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@
 !define git_UninstallFilelist "${git_ROOT}\Tools\Script & Batch tools\UninstallFilelist"
 
 # At first build UninstallFilelist.exe
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release "${git_UninstallFilelist}\UninstallFilelist.sln"' = 0
+!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" /target:Rebuild /property:Configuration=Release "${git_UninstallFilelist}\UninstallFilelist.sln"' = 0
 # execute UninstallFilelist.exe, it will create the heasder file with uninstall commands
 !system '"${git_UninstallFilelist}\UninstallFilelist\bin\Release\UninstallFilelist.exe" /dir="${git_MP}\MediaPortal.Base" /ignore="${git_MP}\Setup\uninstall-ignore.txt" /output="${git_MP}\Setup\uninstall.nsh"' = 0
 
