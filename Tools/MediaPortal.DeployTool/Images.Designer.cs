@@ -543,6 +543,16 @@ namespace MediaPortal.DeployTool {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap VC2022 {
+            get {
+                object obj = ResourceManager.GetObject("VC2022", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap VERSION_MISMATCH {
             get {
                 object obj = ResourceManager.GetObject("VERSION_MISMATCH", resourceCulture);
