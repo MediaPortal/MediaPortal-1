@@ -26,6 +26,40 @@
       <height>1080</height>
       <texture>general_overlay.png</texture>
     </control>
+    <!-- ************************************* New Picture Rating/Watched Count **************** -->
+    <control>
+      <type>imagelist</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>104</posY>
+      <width>453</width>
+      <height>55</height>
+      <textureWidth>35</textureWidth>
+      <textureHeight>35</textureHeight>
+      <subitems>
+        <subitem>starbad.png</subitem>
+        <subitem>star.png</subitem>
+      </subitems>
+      <orientation>horizontal</orientation>
+      <align>left</align>
+      <imagesToDraw>10</imagesToDraw>
+      <percentage>#pictures.Rating</percentage>
+      <visible>!string.equals(#selecteditem,..)+!string.equals(#pictures.Rating, )</visible>
+    </control>
+    
+    <control>
+      <description>Text Rating/Votes Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>418</posX>
+      <posY>100</posY>
+      <label>(#(L(527)): #pictures.Viewsx)</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>lightgray</textcolor>
+      <visible>!string.equals(#selecteditem,..)+!string.equals(#pictures.Rating, )</visible>
+    </control>
+    
     <control>
       <type>actiongroup</type>
       <description>action menu</description>
