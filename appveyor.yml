@@ -44,8 +44,8 @@ on_failure:
 
 artifacts:
   - path: Release\MediaPortalSetup_*.zip
-    name: Mediaportal $(platform) Installer (Zip)
+    name: Mediaportal Installer
   - path: Build\BuildFullInstaller_*.zip
-    name: Mediaportal $(platform) Build Log
+    name: Mediaportal Build Log
 
 test: off
