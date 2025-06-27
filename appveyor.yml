@@ -1,12 +1,25 @@
 version: 1.37.Final.{build}
 image: Visual Studio 2019
+clone_depth: 1
 clone_folder: c:\project\mediaportal
+
+max_jobs: 4
+
 environment:
   JAVA_HOME: C:\Program Files (x86)\Java\jdk1.8.0
 
 configuration:
+  - Release
+
+platform:
   - x86
   - x64
+
+build:
+  parallel: true
+
+matrix:
+  fast_finish: true
 
 install:
   - cmd: >-
@@ -16,42 +29,23 @@ install:
 
       java -version
 
-for:
-  -
-    matrix:
-      only:
-        - configuration: x86
-    build_script:
-      - cmd: >-
-          cd c:\project\mediaportal\build\
-
-          BuildFullinstaller.cmd LOG x86
-
-          7z a ..\Release\MediaPortalSetup_x86_%APPVEYOR_BUILD_VERSION%.%APPVEYOR_REPO_COMMIT%.zip ..\Release\MediaPortalSetup_*.exe
-
-          7z a BuildFullInstaller_x86.zip BuildFullInstaller.log
-    on_failure:
-      - ps: Push-AppveyorArtifact BuildFullInstaller.log -FileName BuildError_x86.log
-
-  -
-    matrix:
-      only:
-        - configuration: x64
-    build_script:
+build_script:
+  - cmd: >-
       cd c:\project\mediaportal\build\
 
-      BuildFullinstaller.cmd LOG x64
+      BuildFullinstaller.cmd LOG %PLATFORM%
 
-      7z a ..\Release\MediaPortalSetup_x64_%APPVEYOR_BUILD_VERSION%.%APPVEYOR_REPO_COMMIT%.zip ..\Release\MediaPortalSetup_*.exe
+      7z a ..\Release\MediaPortalSetup_%PLATFORM%_%APPVEYOR_BUILD_VERSION%.%APPVEYOR_REPO_COMMIT%.zip ..\Release\MediaPortalSetup_*.exe
 
-      7z a BuildFullInstaller_x64.zip BuildFullInstaller.log
-    on_failure:
-      - ps: Push-AppveyorArtifact BuildFullInstaller.log -FileName BuildError_x64.log
+      7z a BuildFullInstaller_%PLATFORM%.zip BuildFullInstaller.log
+
+on_failure:
+  - ps: Push-AppveyorArtifact BuildFullInstaller.log -FileName BuildError_$Env:PLATFORM.log
 
 artifacts:
   - path: Release\MediaPortalSetup_*.zip
-    name: Mediaportal Installer (Zip)
+    name: Mediaportal $(platform) Installer (Zip)
   - path: Build\BuildFullInstaller_*.zip
-    name: Mediaportal Build Log
+    name: Mediaportal $(platform) Build Log
 
 test: off
