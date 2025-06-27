@@ -9,9 +9,6 @@ environment:
   JAVA_HOME: C:\Program Files (x86)\Java\jdk1.8.0
 
 configuration:
-  - Release
-
-platform:
   - x86
   - x64
 
@@ -33,14 +30,14 @@ build_script:
   - cmd: >-
       cd c:\project\mediaportal\build\
 
-      BuildFullinstaller.cmd LOG %PLATFORM%
+      BuildFullinstaller.cmd LOG %CONFIGURATION%
 
-      7z a ..\Release\MediaPortalSetup_%PLATFORM%_%APPVEYOR_BUILD_VERSION%.%APPVEYOR_REPO_COMMIT%.zip ..\Release\MediaPortalSetup_*.exe
+      7z a ..\Release\MediaPortalSetup_%CONFIGURATION%_%APPVEYOR_BUILD_VERSION%.%APPVEYOR_REPO_COMMIT%.zip ..\Release\MediaPortalSetup_*.exe
 
-      7z a BuildFullInstaller_%PLATFORM%.zip BuildFullInstaller.log
+      7z a BuildFullInstaller_%CONFIGURATION%.zip BuildFullInstaller.log
 
 on_failure:
-  - ps: Push-AppveyorArtifact BuildFullInstaller.log -FileName BuildError_$Env:PLATFORM.log
+  - ps: Push-AppveyorArtifact BuildFullInstaller.log -FileName BuildError_$Env:CONFIGURATION.log
 
 artifacts:
   - path: Release\MediaPortalSetup_*.zip
