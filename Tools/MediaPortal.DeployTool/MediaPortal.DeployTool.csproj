@@ -136,6 +136,7 @@
     <Compile Include="InstallationChecks\VCRedistChecker_2010.cs" />
     <Compile Include="InstallationChecks\VCRedistChecker_2013.cs" />
     <Compile Include="InstallationChecks\VCRedistChecker_2015.cs" />
+    <Compile Include="InstallationChecks\VCRedistChecker_2022.cs" />
     <Compile Include="InstallationChecks\TitanExtensionInstall.cs" />
     <Compile Include="ManualDownloadFileMissing.cs">
       <SubType>Form</SubType>
@@ -734,8 +735,9 @@
     <None Include="Resources\Status\INSTALLED.png" />
     <None Include="Resources\Status\DOWNLOADED.png" />
     <None Include="Resources\Status\CONFIGURED.png" />
-    <None Include="Resources\Application\VC2013.png" />
+    <None Include="Resources\Application\VC2022.png" />
     <None Include="Resources\Application\VC2015.png" />
+    <None Include="Resources\Application\VC2013.png" />
     <None Include="Resources\Application\VC2010.png" />
     <None Include="Resources\Application\VC2008SP1.png" />
     <None Include="Resources\preview_ares.png" />
