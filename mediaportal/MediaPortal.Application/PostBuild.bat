@@ -185,9 +185,9 @@ xcopy %1\MPE\MpeMaker\bin\%2\MpeMaker.* . /Y /D
 REM Nuget 
 xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
 if /I "%3" EQU "x64" (
-  xcopy %1\..\Packages\Sqlite.3.50.1\sqlite\x64\sqlite.dll . /Y /D
+  xcopy %1\..\Packages\Sqlite.3.50.2\sqlite\x64\sqlite.dll . /Y /D
 ) ELSE (
-  xcopy %1\..\Packages\Sqlite.3.50.1\sqlite\x86\sqlite.dll . /Y /D
+  xcopy %1\..\Packages\Sqlite.3.50.2\sqlite\x86\sqlite.dll . /Y /D
 )
 
 REM MediaInfo - 
