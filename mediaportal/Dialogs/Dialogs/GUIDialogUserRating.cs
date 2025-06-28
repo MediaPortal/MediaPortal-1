@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2025 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
 // Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -383,7 +383,7 @@ namespace MediaPortal.Dialogs
 
     private string GetRatingDescription()
     {
-      return string.Format("{0} {1}", GUILocalizeStrings.Get(173), _rating.ToString());
+      return string.Format("{0} {1}", GUILocalizeStrings.Get(204), _rating.ToString());
     }
 
   }
