@@ -142,8 +142,7 @@
       <Template name="default" start="">
         <SectionTemplate tags="DH">
           <TemplateText>
-&lt;div class="program__info"&gt;&lt;div&gt;&lt;div class="program__starttime"&gt;&lt;#START&gt;&lt;h3 class="program__title"&gt;&lt;#TITLE&gt;&lt;/h3&gt;
-&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;</TemplateText>
+&lt;div class="program__info--header"&gt;&lt;div&gt;&lt;div class="program__starttime"&gt;&lt;#START&gt;&lt;h3 class="program__title"&gt;&lt;#TITLE&gt;&lt;/h3&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;z(&gt;&lt;div&gt;&lt;/div&gt;&lt;/z)?&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;</TemplateText>
         </SectionTemplate>
       </Template>
     </Html>
