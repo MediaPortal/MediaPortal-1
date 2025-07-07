@@ -1,4 +1,4 @@
-version: 1.37.Final.{build}
+version: 1.38.Final.{build}
 image: Visual Studio 2019
 clone_depth: 1
 clone_folder: c:\project\mediaportal

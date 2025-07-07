@@ -781,7 +781,7 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 36;
+          minor = 37;
           revision = 100;
           break;
       }
@@ -802,7 +802,7 @@ namespace MediaPortal.DeployTool
     public static Version GetCurrentPackageVersion()
     {
       int major = 1;
-      int minor = 37;
+      int minor = 38;
       int revision = 000;
 
       Version ver = new Version(major, minor, revision);
@@ -853,7 +853,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.37 Willow";
+      return "1.37 Tatiana & Leo";
     }
 
     /// <summary>
