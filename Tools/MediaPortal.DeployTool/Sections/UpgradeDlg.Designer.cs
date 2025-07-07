@@ -165,7 +165,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbReinstall.Size = new System.Drawing.Size(213, 13);
       this.rbReinstall.TabIndex = 22;
       this.rbReinstall.Text = "Reinstall current installation to 1.0.1";
-      this.rbFresh.UseMnemonic = false;
+      this.rbReinstall.UseMnemonic = false;
       // 
       // pictureBox1
       // 
