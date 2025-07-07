@@ -853,7 +853,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.37 Tatiana & Leo";
+      return "1.38 Tatiana & Leo";
     }
 
     /// <summary>
