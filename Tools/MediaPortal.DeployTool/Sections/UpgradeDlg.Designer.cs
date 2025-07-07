@@ -79,6 +79,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbUpdate.TabIndex = 16;
       this.rbUpdate.Text = "Update current installation to 1.0.1";
       this.rbUpdate.Click += new System.EventHandler(this.bUpdate_Click);
+      this.rbUpdate.UseMnemonic = false;
       // 
       // rbFresh
       // 
@@ -93,6 +94,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbFresh.TabIndex = 17;
       this.rbFresh.Text = "Fresh install";
       this.rbFresh.Click += new System.EventHandler(this.bFresh_Click);
+      this.rbFresh.UseMnemonic = false;
       // 
       // bUpdate
       // 
@@ -163,6 +165,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbReinstall.Size = new System.Drawing.Size(213, 13);
       this.rbReinstall.TabIndex = 22;
       this.rbReinstall.Text = "Reinstall current installation to 1.0.1";
+      this.rbFresh.UseMnemonic = false;
       // 
       // pictureBox1
       // 
