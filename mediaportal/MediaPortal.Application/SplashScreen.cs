@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -463,6 +463,7 @@ namespace MediaPortal
         this._versionLabel.Size = new System.Drawing.Size(100, 16);
         this._versionLabel.TabIndex = 5;
         this._versionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+        this._versionLabel.UseMnemonic = false;
         // 
         // cvsLabel
         // 
@@ -478,6 +479,7 @@ namespace MediaPortal
         this._cvsLabel.Name = "_cvsLabel";
         this._cvsLabel.Size = new System.Drawing.Size(211, 16);
         this._cvsLabel.TabIndex = 5;
+        this._cvsLabel.UseMnemonic = false;
         // 
         // SplashForm
         // 
