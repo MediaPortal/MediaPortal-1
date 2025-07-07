@@ -781,7 +781,7 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 36;
+          minor = 37;
           revision = 100;
           break;
       }
