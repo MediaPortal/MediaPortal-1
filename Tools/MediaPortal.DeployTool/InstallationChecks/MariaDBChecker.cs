@@ -268,10 +268,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
       ctrl.WaitForStatus(ServiceControllerStatus.Running);
       // Service is running, but on slow machines still take some time to answer network queries
       System.Threading.Thread.Sleep(5000);
-
-      //
+      
+      //-------------------------------------------------------------------------------------------
       // mysqladmin.exe is used to set MariaDB password
-      //
       cmdLine = "-u root password " + strPassword;
       exitCode = Utils.RunCommandWait(strDBMSDir + "\\bin\\mysqladmin.exe", cmdLine);
       if (exitCode != 0)
@@ -284,32 +283,73 @@ namespace MediaPortal.DeployTool.InstallationChecks
           return false;
         }
       }
-      System.Threading.Thread.Sleep(2000);
+      System.Threading.Thread.Sleep(1000);
 
-      //
+      installOk = true;
+      //-------------------------------------------------------------------------------------------
       // mysql.exe is used to grant root access from all machines
-      //
       string strMysqlExe = strDBMSDir + "\\bin\\mysql.exe";
       cmdLine = "-u root --password=" + strPassword +
                 " --execute=\"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '" +
-                strPassword + "' WITH GRANT OPTION;\" mysql";
+                strPassword + "' WITH GRANT OPTION;" + 
+                "FLUSH PRIVILEGES;\" mysql";
       exitCode = Utils.RunCommandWait(strMysqlExe, cmdLine);
       if (exitCode != 0)
       {
-        MessageBox.Show("MariaDB - set privileges error: " + exitCode);
-        return false;
+        MessageBox.Show("MariaDB - set '%' privileges error: " + exitCode);
+        installOk = false;
       }
+      System.Threading.Thread.Sleep(1000);
 
-      //Set password to other root users
+      //-------------------------------------------------------------------------------------------
+      // mysql.exe is used to grant root access from localhost
+      cmdLine = "-u root --password=" + strPassword +
+                " --execute=\"GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '" +
+                strPassword + "' WITH GRANT OPTION;" +
+                "FLUSH PRIVILEGES;\" mysql";
+      exitCode = Utils.RunCommandWait(strMysqlExe, cmdLine);
+      if (exitCode != 0)
+      {
+        MessageBox.Show("MariaDB - set 'localhost' privileges error: " + exitCode);
+        installOk = false;
+      }
+      System.Threading.Thread.Sleep(1000);
+      
+      //-------------------------------------------------------------------------------------------
+      // Set password to other root users
       cmdLine = "-u root --password=" + strPassword +
                 " --execute=\"" +
                 "SET PASSWORD FOR 'root'@'127.0.0.1' = PASSWORD('" + strPassword + "');" +
+                "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('" + strPassword + "');" +
                 "SET PASSWORD FOR 'root'@'" + System.Net.Dns.GetHostName() + "' = PASSWORD('" + strPassword + "');" +
                 "SET PASSWORD FOR 'root'@'::1' = PASSWORD('" + strPassword + "');" +
                 "FLUSH PRIVILEGES;\" mysql";
-      Utils.RunCommandWait(strMysqlExe, cmdLine);
+      exitCode = Utils.RunCommandWait(strMysqlExe, cmdLine);
+      if (exitCode != 0)
+      {
+        MessageBox.Show("MariaDB - set root@* password error: " + exitCode);
+        installOk = false;
+      }
+      System.Threading.Thread.Sleep(1000);
 
-      return true;
+      //-------------------------------------------------------------------------------------------
+      // Create Mediaportal user and grant access to MpTvDb
+      cmdLine = "-u root --password=" + strPassword +
+                " --execute=\"" +
+                "CREATE USER 'Mediaportal'@'localhost' IDENTIFIED BY '" + strPassword + "';" +
+                "CREATE USER 'Mediaportal'@'" + System.Net.Dns.GetHostName() + "' IDENTIFIED BY '" + strPassword + "';" +
+                "GRANT ALL PRIVILEGES ON MpTvDb.* To 'Mediaportal'@'localhost';" +
+                "GRANT ALL PRIVILEGES ON MpTvDb.* To 'Mediaportal'@'" + System.Net.Dns.GetHostName() + "';" +
+                "FLUSH PRIVILEGES;\" mysql";
+      exitCode = Utils.RunCommandWait(strMysqlExe, cmdLine);
+      if (exitCode != 0)
+      {
+        MessageBox.Show("MariaDB - Create Mediaportal user error: " + exitCode);
+        installOk = false;
+      }
+      System.Threading.Thread.Sleep(1000);
+
+      return installOk;
     }
 
     public bool UnInstall()
