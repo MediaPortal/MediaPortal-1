@@ -54,6 +54,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       WritePrivateProfileString("mysqld", "default-storage-engine", "INNODB", iniFile);
       WritePrivateProfileString("mysqld", "sql-mode","\"STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\"", iniFile);
       WritePrivateProfileString("mysqld", "max_connections", "100", iniFile);
+      WritePrivateProfileString("mysqld", "max_allowed_packet", "256M", iniFile);
       WritePrivateProfileString("mysqld", "query_cache_size", "32M", iniFile);
       WritePrivateProfileString("mysqld", "tmp_table_size", "18M", iniFile);
       WritePrivateProfileString("mysqld", "thread_cache_size", "4", iniFile);
@@ -67,6 +68,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
       WritePrivateProfileString("mysqld", "innodb_log_buffer_size", "1M", iniFile);
       WritePrivateProfileString("mysqld", "innodb_buffer_pool_size", "96M", iniFile);
       WritePrivateProfileString("mysqld", "innodb_log_file_size", "50M", iniFile);
+      WritePrivateProfileString("mysqld", "net_read_timeout", "300", iniFile);
+      WritePrivateProfileString("mysqld", "net_write_timeout", "300", iniFile);
     }
 
     public string GetDisplayName()
