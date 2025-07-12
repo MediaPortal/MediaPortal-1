@@ -344,6 +344,7 @@ namespace SetupTv
               if (CommandScript != null)
               {
                 Log.Debug("SetupTv.SQL." + prefix + "_mysql_database.sql - Merging to database started.");
+                Log.Debug("*** SetupTv.SQL." + prefix + "_mysql_database.sql - CommandScript: {0}", CommandScript.Length);
                 foreach (string SingleStmt in CommandScript)
                 {
                   string SqlStmt = SingleStmt.Trim();
@@ -463,6 +464,7 @@ namespace SetupTv
         if (line.Length == 0) continue;
         sql += line;
       }
+      Log.Debug("*** SetupTv.SQL. ... _mysql_database.sql - CleanMySqlStatement: {0}", sql);
       return sql.Split('#');
     }
 
