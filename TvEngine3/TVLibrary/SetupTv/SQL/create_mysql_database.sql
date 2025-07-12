@@ -1,4 +1,4 @@
-﻿-- MySQL Administrator dump 1.4
+-- MySQL Administrator dump 1.4
 --
 -- ------------------------------------------------------
 -- Server version	5.0.51a-community-nt
