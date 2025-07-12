@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2024 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2024 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -207,7 +207,7 @@ namespace SetupTv
           if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
           {
             Log.Write("MariaDB / MySQL: Use the new connection string.");
-            return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};commandinterceptors=Gentle.Provider.MySQL.Interceptor.Interceptor,Gentle.Provider.MySQL.Interceptor;",
+            return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};commandinterceptors=Gentle.Provider.MySQL.Interceptor.Interceptor,Gentle.Provider.MySQL.Interceptor;SSLMode=Disabled;",
                                  server, userid, password, database, timeout);
           }
           Log.Write("MySQL: Use the old connection string.");
