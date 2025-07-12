@@ -1,5 +1,5 @@
 version: 1.38.Final.{build}
-image: Visual Studio 2019
+image: Visual Studio 2022
 clone_depth: 1
 clone_folder: c:\project\mediaportal
 
@@ -25,6 +25,10 @@ install:
       choco install --yes nsis --version=3.11 --force
 
       java -version
+
+      mkdir "C:\Program Files (x86)\Microsoft Visual Studio\2019\"
+
+      mklink /J "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community" "C:\Program Files\Microsoft Visual Studio\2022\Community"
 
 build_script:
   - cmd: >-
