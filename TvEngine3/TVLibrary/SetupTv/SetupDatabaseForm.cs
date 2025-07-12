@@ -206,7 +206,7 @@ namespace SetupTv
           }
           if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
           {
-            Log.Write("MariaDB / MySQL: Use the new connection string.");
+            Log.Write("MariaDB / MySQL: Use the new connection string for {0} database.", database);
             return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};commandinterceptors=Gentle.Provider.MySQL.Interceptor.Interceptor,Gentle.Provider.MySQL.Interceptor;SSLMode=Disabled;",
                                  server, userid, password, database, timeout);
           }
@@ -340,6 +340,8 @@ namespace SetupTv
             {
               connect.Open();
               if (CommandScript != null)
+              {
+                Log.Debug("SetupTv.SQL." + prefix + "_mysql_database.sql - Merging to database started.");
                 foreach (string SingleStmt in CommandScript)
                 {
                   string SqlStmt = SingleStmt.Trim();
@@ -364,13 +366,19 @@ namespace SetupTv
                       succeeded = false;
                       if (connect.State != ConnectionState.Open)
                       {
-                        Log.Write("  ********* Connection status = {0} - aborting further command execution..",
+                        Log.Write("  ********* Connection status = {0} - aborting further command execution.",
                                   connect.State.ToString());
                         break;
                       }
                     }
                   }
                 }
+                Log.Debug("SetupTv.SQL." + prefix + "_mysql_database.sql - Merging to database finished.");
+              }
+              else
+              {
+                Log.Debug("SetupTv.SQL." + prefix + "_mysql_database.sql - Empty or not found!");
+              }
             }
             break;
 
