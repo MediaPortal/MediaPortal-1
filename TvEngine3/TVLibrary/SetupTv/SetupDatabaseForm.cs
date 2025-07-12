@@ -318,6 +318,8 @@ namespace SetupTv
           Log.Write("SetupTv.SQL." + prefix + "_mysql_database.sql - Not Found.");
           return false;
         }
+        Log.Debug("*** SetupTv.SQL." + prefix + "_mysql_database.sql - SQL:");
+        Log.Debug(sql);
 
         switch (provider)
         {
@@ -345,6 +347,7 @@ namespace SetupTv
                 foreach (string SingleStmt in CommandScript)
                 {
                   string SqlStmt = SingleStmt.Trim();
+                  Log.Debug("*** SetupTv.SQL." + prefix + "_mysql_database.sql - Statement: {0}", SqlStmt);
                   if (!string.IsNullOrEmpty(SqlStmt) && !SqlStmt.StartsWith("--") && !SqlStmt.StartsWith("/*"))
                   {
                     try
