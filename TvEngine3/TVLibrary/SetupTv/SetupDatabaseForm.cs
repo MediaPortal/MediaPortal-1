@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2024 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2024 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -206,8 +206,8 @@ namespace SetupTv
           }
           if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
           {
-            Log.Write("MariaDB / MySQL: Use the new connection string.");
-            return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};commandinterceptors=Gentle.Provider.MySQL.Interceptor.Interceptor,Gentle.Provider.MySQL.Interceptor;",
+            Log.Write("MariaDB / MySQL: Use the new connection string for {0} database.", database);
+            return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};commandinterceptors=Gentle.Provider.MySQL.Interceptor.Interceptor,Gentle.Provider.MySQL.Interceptor;SSLMode=Disabled;",
                                  server, userid, password, database, timeout);
           }
           Log.Write("MySQL: Use the old connection string.");
@@ -340,6 +340,8 @@ namespace SetupTv
             {
               connect.Open();
               if (CommandScript != null)
+              {
+                Log.Debug("SetupTv.SQL." + prefix + "_mysql_database.sql - Merging to database started.");
                 foreach (string SingleStmt in CommandScript)
                 {
                   string SqlStmt = SingleStmt.Trim();
@@ -364,13 +366,19 @@ namespace SetupTv
                       succeeded = false;
                       if (connect.State != ConnectionState.Open)
                       {
-                        Log.Write("  ********* Connection status = {0} - aborting further command execution..",
+                        Log.Write("  ********* Connection status = {0} - aborting further command execution.",
                                   connect.State.ToString());
                         break;
                       }
                     }
                   }
                 }
+                Log.Debug("SetupTv.SQL." + prefix + "_mysql_database.sql - Merging to database finished.");
+              }
+              else
+              {
+                Log.Debug("SetupTv.SQL." + prefix + "_mysql_database.sql - Empty or not found!");
+              }
             }
             break;
 
@@ -438,18 +446,20 @@ namespace SetupTv
 
     private string[] CleanMySqlStatement(string sql)
     {
-      sql = sql.Replace("\r\n", "\r");
       sql = sql.Replace("\t", " ");
       sql = sql.Replace('"', '`'); // allow usage of ANSI quoted identifiers
       sql = sql.Replace(@"%TvLibrary%", schemaName);
-      string[] lines = sql.Split('\r');
+      
+      char[] separators = new char[] { '\r', '\n' };
+      string[] lines = sql.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+
       sql = "";
       for (int i = 0; i < lines.Length; ++i)
       {
         string line = lines[i].Trim();
         if (line.StartsWith("/*")) continue;
         if (line.StartsWith("--")) continue;
-        if (line.Length == 0) continue;
+        if (string.IsNullOrWhiteSpace(line)) continue;
         sql += line;
       }
       return sql.Split('#');

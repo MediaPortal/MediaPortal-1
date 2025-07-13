@@ -1,4 +1,4 @@
-﻿use %TvLibrary%
+use %TvLibrary%
 GO
 
 ALTER TABLE Program
