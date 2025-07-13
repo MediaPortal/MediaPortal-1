@@ -450,18 +450,20 @@ namespace SetupTv
 
     private string[] CleanMySqlStatement(string sql)
     {
-      sql = sql.Replace("\r\n", "\r");
       sql = sql.Replace("\t", " ");
       sql = sql.Replace('"', '`'); // allow usage of ANSI quoted identifiers
       sql = sql.Replace(@"%TvLibrary%", schemaName);
-      string[] lines = sql.Split('\r');
+      
+      char[] separators = new char[] { '\r', '\n' };
+      string[] lines = sql.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+
       sql = "";
       for (int i = 0; i < lines.Length; ++i)
       {
         string line = lines[i].Trim();
         if (line.StartsWith("/*")) continue;
         if (line.StartsWith("--")) continue;
-        if (line.Length == 0) continue;
+        if (string.IsNullOrWhiteSpace(line)) continue;
         sql += line;
       }
       Log.Debug("*** SetupTv.SQL. ... _mysql_database.sql - CleanMySqlStatement: {0}", sql);
