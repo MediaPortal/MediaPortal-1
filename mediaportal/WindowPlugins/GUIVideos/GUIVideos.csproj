@@ -235,8 +235,7 @@
       <Project>{03fec69f-6d10-46fb-a0ca-4d266e4a21e2}</Project>
       <Name>Common.GUIPlugins</Name>
     </ProjectReference>
-    <Reference Include="CSScriptLibrary, Version=1.9.0.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="CSScriptLibrary">
       <HintPath>..\..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
     </Reference>
     <Reference Include="System">
