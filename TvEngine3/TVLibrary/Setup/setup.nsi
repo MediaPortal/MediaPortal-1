@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2024 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 /*
-// Copyright (C) 2005-2024 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -308,6 +308,7 @@ ShowUninstDetails show
   File "${git_MP}\Utils\bin\${BUILD_TYPE}\Utils.dll"
   File "${git_MP}\core\bin\${BUILD_TYPE}\Core.dll"
   File "${git_MP}\MediaPortal.Base\CSScriptLibrary.dll"
+  File "${git_MP}\MediaPortal.Base\Mono.Posix.dll"
 
   ; create startmenu shortcuts
   ${If} $noDesktopSC != 1
@@ -332,6 +333,7 @@ ShowUninstDetails show
   Delete "$INSTDIR\Utils.dll"
   Delete "$INSTDIR\Core.dll"
   Delete "$INSTDIR\CSScriptLibrary.dll"
+  Delete "$INSTDIR\Mono.Posix.dll"
 
   ; remove startmenu shortcuts
   Delete "$DESKTOP\MediaPortal Extension Manager.lnk"
