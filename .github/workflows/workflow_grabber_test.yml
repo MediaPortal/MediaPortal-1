@@ -63,16 +63,11 @@ jobs:
         working-directory: ${{ github.workspace }}\TestGrabberMP1\bin\Release
         shell: cmd
 
-      - name: Show Result
-        run: |
-          type "C:\ProgramData\Team MediaPortal\MediaPortal\log\TestGrabberMP1.log"
-        shell: cmd
-
       - name: Upload Artifact / Grabbers Test Log
         if: ${{ success() }}
         uses: actions/upload-artifact@v4
         with:
           name: Mediaportal Grabbers Test Logs
           path: |
-            "C:\ProgramData\Team MediaPortal\MediaPortal\log"
+            C:\ProgramData\Team MediaPortal\MediaPortal\log
           retention-days: 10
