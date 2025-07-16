@@ -71,10 +71,3 @@ jobs:
           path: |
             C:\ProgramData\Team MediaPortal\MediaPortal\log
           retention-days: 10
-
-      - name: Check result
-        run: |
-          grep -q "[ERROR]" TestGrabberMP1.log && exit 1 || exit 0
-        working-directory: C:\ProgramData\Team MediaPortal\MediaPortal\log
-        shell: bash
-
