@@ -36,3 +36,6 @@ MPE:
 
 Skin:
   - '/(\s|^)(Titan|DWHD|skins?)(\s|$)/i'
+
+grabber:
+  - '/(\s|^)(grabbers?)(\s|$)/i'

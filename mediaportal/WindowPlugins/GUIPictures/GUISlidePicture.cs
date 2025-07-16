@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -94,6 +94,7 @@ internal class SlidePicture : IDisposable
         return;
       }
       _texture = Picture.Load(strFilePath, _rotation, iMaxWidth, iMaxHeight, true, false, true, out _width, out _height);
+      PictureDatabase.AddViews(strFilePath);
     }
   }
 

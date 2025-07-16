@@ -181,10 +181,22 @@
     <!-- ********************************************************************************** -->
     <!-- ************************** Switch channels in EPG ******************************** -->
     <!-- ********************************************************************************** -->
-    <control>
-      <description>Background for channel change</description>
+     <control>
+      <description>Numeric keypad</description>
       <type>image</type>
-      <posX>270</posX>
+      <posX>203</posX> 
+      <posY>102</posY> 
+      <width>37</width>   
+      <height>50</height> 
+      <texture>numberblock.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>Control.IsVisible(34)</visible>
+    </control>
+    <control>
+      <description>Background for channel number</description>
+      <type>image</type>
+      <posX>265</posX>
       <posY>104</posY>
       <width>111</width>
       <height>42</height>
@@ -194,9 +206,9 @@
       <visible>Control.IsVisible(34)</visible>
     </control>
     <control>
-      <description>Background for channel change</description>
+      <description>Background for channel number</description>
       <type>image</type>
-      <posX>271</posX>
+      <posX>266</posX>
       <posY>105</posY>
       <width>109</width>
       <height>40</height>
@@ -205,27 +217,15 @@
       <colordiffuse>ff20314d</colordiffuse>
       <visible>Control.IsVisible(34)</visible>
     </control>
-    <control>
-      <description>Background for channel change</description>
-      <type>image</type>
-      <posX>277</posX>
-      <posY>107</posY>
-      <width>30</width>
-      <height>36</height>
-      <texture>numberblock.png</texture>
-      <keepaspectratio>yes</keepaspectratio>
-      <colordiffuse>ffffffff</colordiffuse>
-      <visible>Control.IsVisible(34)</visible>
-    </control>
-    <control>
+	<control>
       <description>Keyed channel number</description>
       <type>label</type>
       <id>34</id>
-      <posX>310</posX>
-      <posY>96</posY>
-      <width>60</width>
-      <height>60</height>
-      <align>center</align>
+      <posX>291</posX> 
+      <posY>104</posY> 
+      <width>60</width> 
+      <height>60</height> 
+      <align>left</align>
       <font>LabelBold</font>
       <textcolor>ffffffff</textcolor>
     </control>
@@ -366,7 +366,7 @@
       <posY>179</posY>
       <width>370</width>
       <height>80</height>
-      <label>#TV.Guide.Title</label>
+      <label>#TV.Guide.CompositeTitle</label>
       <font>font10</font>
       <textcolor>ff00bfff</textcolor>
       <animation effect="fade" start="0" end="100" delay="4000" time="300">visible</animation>
@@ -481,7 +481,7 @@
       <width>54</width>
       <height>836</height>
       <textureFocusedLeft overlay="tvguide_channelgroup_overlay.png">white.png</textureFocusedLeft>
-      <textureNonFocusedLeft overlay="tvguide_channelgroup_overlay.png">whitepng</textureNonFocusedLeft>
+      <textureNonFocusedLeft overlay="tvguide_channelgroup_overlay.png">white.png</textureNonFocusedLeft>
       <textureFocusedMid overlay="tvguide_channelgroup_overlay.png">white.png</textureFocusedMid>
       <textureNonFocusedMid overlay="tvguide_channelgroup_overlay.png">white.png</textureNonFocusedMid>
       <textureFocusedRight overlay="tvguide_channelgroup_overlay.png">white.png</textureFocusedRight>

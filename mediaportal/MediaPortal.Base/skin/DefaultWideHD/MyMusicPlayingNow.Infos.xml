@@ -633,7 +633,7 @@
       <id>0</id>
       <posX>42</posX>
       <posY>991</posY>
-      <label>#(L(1215)):</label>
+      <label>#(L(2135))-#(L(2136)):</label>
       <font>font11</font>
       <textcolor>ff00bfff</textcolor>
       <visible>Control.HasFocus(9875)</visible>
@@ -647,9 +647,9 @@
       <posX>281</posX>
       <posY>991</posY>
       <width>491</width>
-      <label>#(iif(eq(#music.conductor, ''), '-', '#music.conductor'))</label>
-      <scrollStartDelaySec>2</scrollStartDelaySec>
-      
+      <label>#(L(864)): #music.filetype\r#(L(6001)): #music.codec\r#(L(670)): #Play.Current.BitRate kbit/s, #music.bitratemode, #music.samplerate Hz\r#(L(627)) #music.channels\r#(L(1209)): #music.timesplayedx\r#(L(1230)) #music.dateadded\r#(L(1231)) #music.datelastplayed</label>
+      <scrollStartDelaySec>10</scrollStartDelaySec>
+      <wrapString />
       <font>font11</font>
       <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
     </control>

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2024 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2024 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -206,8 +206,8 @@ namespace SetupTv
           }
           if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
           {
-            Log.Write("MariaDB / MySQL: Use the new connection string.");
-            return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};commandinterceptors=Gentle.Provider.MySQL.Interceptor.Interceptor,Gentle.Provider.MySQL.Interceptor;",
+            Log.Write("MariaDB / MySQL: Use the new connection string for {0} database.", database);
+            return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};commandinterceptors=Gentle.Provider.MySQL.Interceptor.Interceptor,Gentle.Provider.MySQL.Interceptor;SSLMode=Disabled;",
                                  server, userid, password, database, timeout);
           }
           Log.Write("MySQL: Use the old connection string.");
@@ -242,6 +242,7 @@ namespace SetupTv
 
         if (string.IsNullOrEmpty(tbServerHostName.Text) || string.IsNullOrEmpty(tbPassword.Text))
         {
+          Log.Info("TestConnection: tbServerHostName or password is empty");
           return false;
         }
 
@@ -267,8 +268,11 @@ namespace SetupTv
             throw (new Exception("Unsupported provider!"));
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("TestConnection: Unable to connect with {0} {1}: {2}", provider.ToString(), ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false, 15),
+         ex.ToString());
+
         return false;
       }
 
@@ -336,6 +340,8 @@ namespace SetupTv
             {
               connect.Open();
               if (CommandScript != null)
+              {
+                Log.Debug("SetupTv.SQL." + prefix + "_mysql_database.sql - Merging to database started.");
                 foreach (string SingleStmt in CommandScript)
                 {
                   string SqlStmt = SingleStmt.Trim();
@@ -360,13 +366,19 @@ namespace SetupTv
                       succeeded = false;
                       if (connect.State != ConnectionState.Open)
                       {
-                        Log.Write("  ********* Connection status = {0} - aborting further command execution..",
+                        Log.Write("  ********* Connection status = {0} - aborting further command execution.",
                                   connect.State.ToString());
                         break;
                       }
                     }
                   }
                 }
+                Log.Debug("SetupTv.SQL." + prefix + "_mysql_database.sql - Merging to database finished.");
+              }
+              else
+              {
+                Log.Debug("SetupTv.SQL." + prefix + "_mysql_database.sql - Empty or not found!");
+              }
             }
             break;
 
@@ -434,18 +446,20 @@ namespace SetupTv
 
     private string[] CleanMySqlStatement(string sql)
     {
-      sql = sql.Replace("\r\n", "\r");
       sql = sql.Replace("\t", " ");
       sql = sql.Replace('"', '`'); // allow usage of ANSI quoted identifiers
       sql = sql.Replace(@"%TvLibrary%", schemaName);
-      string[] lines = sql.Split('\r');
+      
+      char[] separators = new char[] { '\r', '\n' };
+      string[] lines = sql.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+
       sql = "";
       for (int i = 0; i < lines.Length; ++i)
       {
         string line = lines[i].Trim();
         if (line.StartsWith("/*")) continue;
         if (line.StartsWith("--")) continue;
-        if (line.Length == 0) continue;
+        if (string.IsNullOrWhiteSpace(line)) continue;
         sql += line;
       }
       return sql.Split('#');
@@ -718,27 +732,27 @@ namespace SetupTv
         {
           // MariaDB / MySQL
           case ProviderType.MySql:
-          {
-            using (MySqlConnection connect = new MySqlConnection(connectionString))
             {
-              connect.Open();
-              using (MySqlCommand cmd = connect.CreateCommand())
+              using (MySqlConnection connect = new MySqlConnection(connectionString))
               {
-                cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "select * from Version";
-                using (IDataReader reader = cmd.ExecuteReader())
+                connect.Open();
+                using (MySqlCommand cmd = connect.CreateCommand())
                 {
-                  if (reader.Read())
+                  cmd.CommandType = CommandType.Text;
+                  cmd.CommandText = "select * from Version";
+                  using (IDataReader reader = cmd.ExecuteReader())
                   {
-                    currentSchemaVersion = (int)reader["versionNumber"];
-                    reader.Close();
-                    connect.Close();
+                    if (reader.Read())
+                    {
+                      currentSchemaVersion = (int)reader["versionNumber"];
+                      reader.Close();
+                      connect.Close();
+                    }
                   }
                 }
               }
             }
-          }
-          break;
+            break;
 
           // MS SQL
           case ProviderType.SqlServer:
@@ -767,8 +781,9 @@ namespace SetupTv
         }
         return currentSchemaVersion;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("GetCurrentShemaVersion: Error {0}", ex.Message);
         return -1;
       }
       finally
@@ -860,7 +875,7 @@ namespace SetupTv
       {
         DBSearchPattern = @"SQLBrowser";
       }
-      else if ( !(OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS) )
+      else if (!(OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS))
       {
         DBSearchPattern = @"MySQL5";
       }
@@ -1006,7 +1021,10 @@ namespace SetupTv
       {
         Process.Start("http://wiki.team-mediaportal.com/TV-Engine_0.3");
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("lblDBChoice_LinkClicked: Error {0}", ex.Message);
+      }
     }
 
     private void tbPassword_KeyUp(object sender, KeyEventArgs e)

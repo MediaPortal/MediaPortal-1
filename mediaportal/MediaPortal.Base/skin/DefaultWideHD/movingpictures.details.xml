@@ -94,7 +94,7 @@
     </control>
     
     
-    <control>
+    <!--control>
         <description>Watched Count Label</description>
         <type>label</type>
         <id>1</id>
@@ -105,7 +105,7 @@
         <align>left</align>
         <textcolor>ff00bfff</textcolor>
         <visible>!control.isvisible(50)+!control.isvisible(51)</visible>
-      </control>
+      </control-->
       
     <control>
       <description>Genre images</description>

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -557,7 +557,8 @@ namespace MediaPortal.GUI.Pictures
       Files = 0,
       Date = 1,
       Keyword = 2,
-      Metadata = 3
+      Metadata = 3,
+      Favorite = 4
     }
 
     [SkinControl(6)] protected GUIButtonControl btnSlideShow = null;
@@ -725,6 +726,7 @@ namespace MediaPortal.GUI.Pictures
       btnViews.AddItem(GUILocalizeStrings.Get(636), index++);  // Date
       btnViews.AddItem(GUILocalizeStrings.Get(2167), index++); // Keyword
       btnViews.AddItem(GUILocalizeStrings.Get(2170), index++); // Metadata
+      btnViews.AddItem(GUILocalizeStrings.Get(2171), index++); // Favorites
 
       // Have the menu select the currently selected view.
       btnViews.SetSelectedItemByValue((int)disp);
@@ -828,6 +830,14 @@ namespace MediaPortal.GUI.Pictures
           if (disp != Display.Metadata)
           {
             disp = Display.Metadata;
+            LoadDirectory(string.Empty);
+          }
+          break;
+
+        case 4: // Favorites
+          if (disp != Display.Favorite)
+          {
+            disp = Display.Favorite;
             LoadDirectory(string.Empty);
           }
           break;
@@ -1140,6 +1150,14 @@ namespace MediaPortal.GUI.Pictures
         return -1;
       }
       if (item2 == null)
+      {
+        return -1;
+      }
+      if (item1.IsFolder && item1.Label == "♥")
+      {
+        return -1;
+      }
+      if (item2.IsFolder && item2.Label == "♥")
       {
         return -1;
       }
@@ -1606,6 +1624,15 @@ namespace MediaPortal.GUI.Pictures
           {
             dlg.AddLocalizedString(2169); // Go to Folder
           }
+          if ((item.AdditionalData & GUIListItemProperty.Favorite) == GUIListItemProperty.Favorite)
+          {
+            dlg.AddLocalizedString(933); // Remove from favorites
+          }
+          else
+          {
+            dlg.AddLocalizedString(930); // Add to favourites
+          }
+          dlg.AddLocalizedString(931);   // Rating
         }
         else
         {
@@ -1844,6 +1871,27 @@ namespace MediaPortal.GUI.Pictures
             _queueItemsEvent.Set();
           }
           break;
+
+        case 930: // Add to favourites
+          {
+            Log.Debug("GUIPictures: Add to Favourites {0}", item.Path);
+            PictureDatabase.SetFavorite(item.Path, true);
+            item.AdditionalData = item.AdditionalData | GUIListItemProperty.Favorite;
+          }
+          break;
+        case 933: // Remove from favorites
+          {
+            Log.Debug("GUIPictures: Remove from Favorities {0}", item.Path);
+            PictureDatabase.SetFavorite(item.Path, false);
+            item.AdditionalData = item.AdditionalData & ~GUIListItemProperty.Favorite;
+          }
+          break;
+        case 931: // Rating
+          {
+            OnSetRating(item);
+          }
+          break;
+
         case 2169: // Go to Folder
           {
             string folder = Path.GetDirectoryName(item.Path);
@@ -1857,6 +1905,29 @@ namespace MediaPortal.GUI.Pictures
             }
           }
           break;
+      }
+    }
+
+    protected void OnSetRating(GUIListItem item)
+    {
+      if (item == null)
+      {
+        return;
+      }
+
+      GUIDialogUserRating dialog = (GUIDialogUserRating)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_USER_RATING);
+      dialog.Reset();
+      dialog.DisplayStars = GUIDialogUserRating.StarDisplay.TEN_STARS;
+      dialog.Rating = PictureDatabase.GetRating(item.Path) > 0 ? PictureDatabase.GetRating(item.Path) : 5;
+      dialog.SetTitle(item.Label);
+      dialog.DoModal(GetID);
+      if (dialog.IsSubmitted)
+      {
+        if (dialog.DisplayStars == GUIDialogUserRating.StarDisplay.FIVE_STARS)
+          PictureDatabase.SetRating(item.Path, dialog.Rating * 2);
+        else
+          PictureDatabase.SetRating(item.Path, dialog.Rating);
+        Log.Debug("GUIPictures: Set Rating {0} for {0}", dialog.Rating, item.Path);
       }
     }
 
@@ -2236,6 +2307,7 @@ namespace MediaPortal.GUI.Pictures
         // Dialog items
         dlg.AddLocalizedString(2167); // Keyword
         dlg.AddLocalizedString(2170); // Metadata
+        dlg.AddLocalizedString(2171); // Favorites
 
         // Show dialog menu
         dlg.DoModal(GetID);
@@ -2250,7 +2322,10 @@ namespace MediaPortal.GUI.Pictures
           case 2167: // Keyword
             searchByKeyword = true;
             break;
-          case 2168: // Metadata
+          case 2170: // Metadata
+            searchByKeyword = false;
+            break;
+          case 2171: // Favorites
             searchByKeyword = false;
             break;
         }
@@ -2380,6 +2455,34 @@ namespace MediaPortal.GUI.Pictures
         {
           string[] metaWhere = currentFolder.Split(Path.DirectorySeparatorChar);
           List<string> pics = PictureDatabase.ListPicsByMetadata(metaWhere[0].Trim(), metaWhere[1].Trim());
+          foreach (string pic in pics)
+          {
+            SlideShow.Add(pic);
+          }
+        }
+        if (_autoShuffle)
+        {
+          SlideShow.Shuffle(false, false);
+        }
+      }
+      else if (disp == Display.Favorite)
+      {
+        if (string.IsNullOrEmpty(currentFolder))
+        {
+          string SQL = "SELECT strFile FROM picture";
+          if (PictureDatabase.FilterPrivate)
+          {
+            SQL = SQL + " WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')";
+          }
+          List<PictureData> aPictures = PictureDatabase.GetPicturesByFilter(SQL, "pictures");
+          foreach (PictureData pic in aPictures)
+          {
+            SlideShow.Add(pic.FileName);
+          }
+        }
+        else
+        {
+          List<string> pics = PictureDatabase.ListPicsByFavorites(currentFolder);
           foreach (string pic in pics)
           {
             SlideShow.Add(pic);
@@ -2615,11 +2718,18 @@ namespace MediaPortal.GUI.Pictures
       {
         GUIPropertyManager.SetProperty("#pictures.filename", string.Empty);
         GUIPropertyManager.SetProperty("#pictures.path", currentFolder);
+        GUIPropertyManager.SetProperty("#pictures.Rating", string.Empty);
+        GUIPropertyManager.SetProperty("#pictures.Views", string.Empty);
       }
       else
       {
         GUIPropertyManager.SetProperty("#pictures.filename", Path.GetFileName(item.Path));
         GUIPropertyManager.SetProperty("#pictures.path", Path.GetDirectoryName(item.Path));
+
+        item.Rating = PictureDatabase.GetRating(item.Path);
+        GUIPropertyManager.SetProperty("#pictures.Rating", item.Rating.ToString());
+        item.UserRating = PictureDatabase.GetViews(item.Path); // Views
+        GUIPropertyManager.SetProperty("#pictures.Views", item.UserRating.ToString());
       }
       // GUIPropertyManager.SetProperty("#pictures.folder", Path.GetFileName(currentFolder));
 
@@ -2645,6 +2755,13 @@ namespace MediaPortal.GUI.Pictures
           iDisp = 2170;
         }
       }
+      else if (disp == Display.Favorite)
+      {
+        if (string.IsNullOrEmpty(currentFolder) || (!_searchMode && !currentFolder.Contains(Path.DirectorySeparatorChar)))
+        {
+          iDisp = 2171;
+        }
+      }
       GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(iDisp));
 
       OnRetrieveThumbnailFiles(item);
@@ -2668,6 +2785,7 @@ namespace MediaPortal.GUI.Pictures
 
       GUIPropertyManager.SetProperty("#pictures.IsHDR", (item.AdditionalData & GUIListItemProperty.IsHDR) == GUIListItemProperty.IsHDR ? "true" : "false");
       GUIPropertyManager.SetProperty("#pictures.IsVideo", (item.AdditionalData & GUIListItemProperty.Is3D) == GUIListItemProperty.Is3D ? "true" : "false");
+      GUIPropertyManager.SetProperty("#pictures.Favorite", (item.AdditionalData & GUIListItemProperty.Favorite) == GUIListItemProperty.Favorite ? "true" : "false");
 
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
       if (filmstrip == null)
@@ -2692,6 +2810,9 @@ namespace MediaPortal.GUI.Pictures
       GUIPropertyManager.SetProperty("#pictures.folder", string.Empty);
       GUIPropertyManager.SetProperty("#pictures.IsHDR", string.Empty);
       GUIPropertyManager.SetProperty("#pictures.IsVideo", string.Empty);
+      GUIPropertyManager.SetProperty("#pictures.Favorite", string.Empty);
+      GUIPropertyManager.SetProperty("#pictures.Rating", string.Empty);
+      GUIPropertyManager.SetProperty("#pictures.Views", string.Empty);
 
       if (!PictureDatabase.DbHealth)
       {
@@ -2780,6 +2901,9 @@ namespace MediaPortal.GUI.Pictures
             break;
           case "2170": // Metadata
             SetView(3);
+            break;
+          case "2171": // Favorites
+            SetView(4);
             break;
         }
       }
@@ -3190,6 +3314,10 @@ namespace MediaPortal.GUI.Pictures
         // TODO: Thumbworker alternative on file base instead of directory
       }
       else if (disp == Display.Metadata)
+      {
+        // TODO: Thumbworker alternative on file base instead of directory
+      }
+      else if (disp == Display.Favorite)
       {
         // TODO: Thumbworker alternative on file base instead of directory
       }
@@ -3834,6 +3962,10 @@ namespace MediaPortal.GUI.Pictures
           {
             LoadMetadataView(strNewDirectory);
           }
+          else if (disp == Display.Favorite)
+          {
+            LoadFavoritesView(strNewDirectory);
+          }
 
           SelectItemByName(folderHistory.Get(disp.ToString() + ":" + currentFolder));
 
@@ -3929,6 +4061,7 @@ namespace MediaPortal.GUI.Pictures
           {
             item.Updated = taken;
           }
+
           facadeLayout.Add(item);
 
           if (item.IsFolder)
@@ -4116,6 +4249,60 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
+    private void LoadFavoritesView(string strNewDirectory)
+    {
+      try
+      {
+        CountOfNonImageItems = 0;
+        if (string.IsNullOrEmpty(strNewDirectory)) // || strNewDirectory == "..")
+        {
+          _searchMode = false;
+
+          // Keywords
+          List<string> Favorites = PictureDatabase.ListFavorites();
+          foreach (string favorite in Favorites)
+          {
+            CreateAndAddFolderItem(favorite, favorite, null, true);
+          }
+          CreateAndAddFolderItem(GUILocalizeStrings.Get(2172), "Most viewed", null, true);
+        }
+        else
+        {
+          // Pics from Favorites / Search
+          CreateAndAddFolderItem("..", string.Empty);
+
+          List<string> pics;
+          if (_searchMode)
+          {
+            pics = PictureDatabase.ListPicsBySearch(strNewDirectory);
+          }
+          else if (strNewDirectory == "Most viewed")
+          {
+            pics = PictureDatabase.ListPicsByMostViews();
+          }
+          else
+          {
+            pics = PictureDatabase.ListPicsByFavorites(strNewDirectory);
+          }
+
+          AddPictureItems(pics, "GUIPictures: There is no file for this Favorite / search: " + strNewDirectory);
+        }
+
+        if (facadeLayout.Count == 0 && !string.IsNullOrEmpty(strNewDirectory))
+        {
+          _searchMode = false;
+          // Wrong path for keyword view, go back to top level
+          currentFolder = string.Empty;
+          LoadFavoritesView(string.Empty);
+        }
+
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUIPictures: Error loading Favorites view - {0}", ex.ToString());
+      }
+    }
+
     private void AddPictureItems(List<String> pics, string errorMessage)
     {
       VirtualDirectory vDir = new VirtualDirectory();
@@ -4257,7 +4444,7 @@ namespace MediaPortal.GUI.Pictures
         if (facadeLayout.Count == 0 && !string.IsNullOrEmpty(strNewDirectory))
         {
           _searchMode = false;
-          // Wrong path for keyword view, go back to top level
+          // Wrong path for Metadata view, go back to top level
           currentFolder = string.Empty;
           LoadMetadataView(string.Empty);
         }
@@ -4327,6 +4514,18 @@ namespace MediaPortal.GUI.Pictures
           picsCount = PictureDatabase.CountPicsByMetadataValue(metaWhere[0].Trim().ToDBField(), metaWhere[1].Trim());
         }
       }
+      if (disp == Display.Favorite)
+      {
+        if (item.Path == "Most viewed")
+        {
+          picsCount = PictureDatabase.CountPicsByMostViews();
+        }
+        else
+        {
+          picsCount = PictureDatabase.CountPicsByFavorites(item.Path);
+        }
+      }
+
       if (picsCount == 0)
       {
         item.HasProgressBar = false;
@@ -4366,6 +4565,14 @@ namespace MediaPortal.GUI.Pictures
       if (Util.Utils.IsVideo(file))
       {
         item.AdditionalData = item.AdditionalData | GUIListItemProperty.Is3D; // Video file
+      }
+      if (PictureDatabase.GetFavorite(file))
+      {
+        item.AdditionalData = item.AdditionalData | GUIListItemProperty.Favorite;
+      }
+      else
+      {
+        item.AdditionalData = item.AdditionalData & ~GUIListItemProperty.Favorite;
       }
 
       if (item.FileInfo == null || string.IsNullOrEmpty(item.FileInfo.Name))

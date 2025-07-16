@@ -255,7 +255,7 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2023 ${PRODUCT_PUBLISHER}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2025 ${PRODUCT_PUBLISHER}"
 ShowUninstDetails show
 
 #---------------------------------------------------------------------------
@@ -674,9 +674,9 @@ Section "MediaPortal core files (required)" SecCore
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
   !if "${Architecture}" == "x64"
-  File "${git_ROOT}\Packages\Sqlite.3.49.1\sqlite\x64\sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.50.2\sqlite\x64\sqlite.dll"
   !else
-  File "${git_ROOT}\Packages\Sqlite.3.49.1\sqlite\x86\sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.50.2\sqlite\x86\sqlite.dll"
   !endif
   ; NuGet binaries EXIF
   SetOutPath "$MPdir.Base\"

@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <fonts>
   <!-- This file contains all the fonts used by the skin. Each font can be configured seperately and uses the         following format format:  	<font>
   <name>name of font used in the skin .xml files</name>
@@ -8,152 +9,272 @@
   <start>start character (numeric) default : 0</start>
   <end>end character (numeric) default : 255</end>
 </font>!-->
-<font>
-  <name>font9</name>
-  <filename>Morebi Rounded</filename>
-  <height>9</height>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>font10</name>
-  <filename>Morebi Rounded</filename>
-  <height>10</height>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>font11</name>
-  <filename>Morebi Rounded</filename>
-  <height>11</height>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>font11bold</name>
-  <filename>Morebi Rounded</filename>
-  <height>11</height>
-  <start>0</start>
-  <end>1536</end>
-  <bold>yes</bold>
-</font>
-<font>
-  <name>CSG</name>
-  <filename>Morebi Rounded</filename>
-  <height>11</height>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>RSS</name>
-  <filename>Morebi Rounded</filename>
-  <height>12</height>
-  <start>0</start>
-  <end>1536</end>
-  <bold>no</bold>
-</font>
-<font>
-  <name>font12</name>
-  <filename>Morebi Rounded</filename>
-  <height>12</height>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>font13</name>
-  <filename>Morebi Rounded</filename>
-  <height>13</height>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>font14</name>
-  <filename>Morebi Rounded</filename>
-  <height>14</height>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>MenuHeader</name>
-  <filename>Morebi Rounded</filename>
-  <height>13</height>
-  <start>0</start>
-  <end>1536</end>
-  <bold>yes</bold>
-</font>
-<font>
-  <name>font15</name>
-  <filename>Morebi Rounded</filename>
-  <height>15</height>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>Menutitle</name>
-  <filename>Morebi Rounded</filename>
-  <height>17</height>
-  <bold>no</bold>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>Settings</name>
-  <filename>Morebi Rounded</filename>
-  <height>15</height>
-  <bold>no</bold>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>font16</name>
-  <filename>Morebi Rounded</filename>
-  <height>16</height>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>font18</name>
-  <filename>Morebi Rounded</filename>
-  <height>18</height>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>font20</name>
-  <filename>Morebi Rounded</filename>
-  <height>20</height>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>font21</name>
-  <filename>Morebi Rounded</filename>
-  <height>18</height>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>Label</name>
-  <filename>Morebi Rounded</filename>
-  <height>13</height>
-  <bold>no</bold>
-  <start>0</start>
-  <end>1536</end>
-</font>
-<font>
-  <name>LabelBold</name>
-  <filename>Morebi Rounded</filename>
-  <height>13</height>
-  <bold>yes</bold>
-  <start>0</start>
-  <end>2281</end>
-</font>
-<font>
-  <name>font36</name>
-  <filename>Morebi Rounded</filename>
-  <height>24</height>
-  <bold>yes</bold>
-  <start>0</start>
-  <end>1536</end>
-</font>
+  <font>
+    <name>font9</name>
+    <filename>Morebi Rounded</filename>
+    <height>9</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>font10</name>
+    <filename>Morebi Rounded</filename>
+    <height>10</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>font11</name>
+    <filename>Morebi Rounded</filename>
+    <height>11</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>font11bold</name>
+    <filename>Morebi Rounded</filename>
+    <height>11</height>
+    <start>0</start>
+    <end>1536</end>
+    <bold>yes</bold>
+  </font>
+  <font>
+    <name>CSG</name>
+    <filename>Morebi Rounded</filename>
+    <height>11</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>font12</name>
+    <filename>Morebi Rounded</filename>
+    <height>12</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>RSS</name>
+    <filename>Morebi Rounded</filename>
+    <height>12</height>
+    <start>0</start>
+    <end>1536</end>
+    <bold>no</bold>
+  </font>
+  <font>
+    <name>font13</name>
+    <filename>Morebi Rounded</filename>
+    <height>13</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>HELP</name>
+    <filename>Morebi Rounded</filename>
+    <height>13</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>Label</name>
+    <filename>Morebi Rounded</filename>
+    <height>13</height>
+    <bold>no</bold>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>LabelBold</name>
+    <filename>Morebi Rounded</filename>
+    <height>13</height>
+    <bold>yes</bold>
+    <start>0</start>
+    <end>2281</end>
+  </font>
+  <font>
+    <name>MenuHeader</name>
+    <filename>Morebi Rounded</filename>
+    <height>13</height>
+    <start>0</start>
+    <end>1536</end>
+    <bold>yes</bold>
+  </font>
+  <font>
+    <name>font14</name>
+    <filename>Morebi Rounded</filename>
+    <height>14</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>font14bold</name>
+    <filename>Morebi Rounded</filename>
+    <height>14</height>
+    <start>0</start>
+    <end>1536</end>
+    <bold>yes</bold>
+  </font>
+  <font>
+    <name>CSG4OE</name>
+    <filename>Morebi Rounded</filename>
+    <height>14</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>font15</name>
+    <filename>Morebi Rounded</filename>
+    <height>15</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>RSS4OE</name>
+    <filename>Morebi Rounded</filename>
+    <height>15</height>
+    <start>0</start>
+    <end>1536</end>
+    <bold>no</bold>
+  </font>
+  <font>
+    <name>Settings</name>
+    <filename>Morebi Rounded</filename>
+    <height>15</height>
+    <bold>no</bold>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>font16</name>
+    <filename>Morebi Rounded</filename>
+    <height>16</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>font16bold</name>
+    <filename>Morebi Rounded</filename>
+    <height>16</height>
+    <start>0</start>
+    <end>1536</end>
+    <bold>yes</bold>
+  </font>
+  <font>
+    <name>MenuHeader4OE</name>
+    <filename>Morebi Rounded</filename>
+    <height>16</height>
+    <start>0</start>
+    <end>1536</end>
+    <bold>yes</bold>
+  </font>
+  <font>
+    <name>font17</name>
+    <filename>Morebi Rounded</filename>
+    <height>17</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>Menutitle</name>
+    <filename>Morebi Rounded</filename>
+    <height>17</height>
+    <bold>no</bold>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>font18</name>
+    <filename>Morebi Rounded</filename>
+    <height>18</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>Settings4OE</name>
+    <filename>Morebi Rounded</filename>
+    <height>18</height>
+    <bold>no</bold>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>Label4OE</name>
+    <filename>Morebi Rounded</filename>
+    <height>17</height>
+    <bold>no</bold>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>LabelBold4OE</name>
+    <filename>Morebi Rounded</filename>
+    <height>17</height>
+    <bold>yes</bold>
+    <start>0</start>
+    <end>2281</end>
+  </font>
+  <font>
+    <name>font19</name>
+    <filename>Morebi Rounded</filename>
+    <height>19</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>font20</name>
+    <filename>Morebi Rounded</filename>
+    <height>20</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>Menutitle4OE</name>
+    <filename>Morebi Rounded</filename>
+    <height>20</height>
+    <bold>no</bold>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>font21</name>
+    <filename>Morebi Rounded</filename>
+    <height>18</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>font22</name>
+    <filename>Morebi Rounded</filename>
+    <height>22</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>font23</name>
+    <filename>Morebi Rounded</filename>
+    <height>23</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>font24</name>
+    <filename>Morebi Rounded</filename>
+    <height>24</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>font25</name>
+    <filename>Morebi Rounded</filename>
+    <height>25</height>
+    <start>0</start>
+    <end>1536</end>
+  </font>
+  <font>
+    <name>font36</name>
+    <filename>Morebi Rounded</filename>
+    <height>27</height>
+    <bold>yes</bold>
+    <start>0</start>
+    <end>1536</end>
+  </font>
 </fonts>

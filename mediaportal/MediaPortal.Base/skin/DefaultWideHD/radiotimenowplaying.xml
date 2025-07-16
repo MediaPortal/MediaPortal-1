@@ -75,41 +75,26 @@
       <width>140</width>
       <height>984</height>
       <label>-</label>
-      <textureFocus>-</textureFocus>
-      <textureNoFocus>-</textureNoFocus>
+      <textureFocus>Action_nofocus.png</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
       <ondown>333</ondown>
       <onup>17</onup>
       <onright>333</onright>
       <onleft>166</onleft>
     </control>
     <control>
-      <type>actiongroup</type>
-      <description>action menu</description>
-      <defaultcontrol>166</defaultcontrol>
-      <onexit>333</onexit>
-      <buttonX>0</buttonX>
-      <buttonY>70</buttonY>
-      <buttonwidth>140</buttonwidth>
-      <buttonheight>984</buttonheight>
-      <textureFocus>-</textureFocus>
-      <textureNoFocus>Action_nofocus.png</textureNoFocus>
-      <width>168</width>
-      <height>798</height>
-      <dimColor>00ffffff</dimColor>
-      <allowoverlay>false</allowoverlay>
-      <control>
         <type>group</type>
         <description>group element</description>
-        <visible>!control.hasfocus(333)</visible>
+        <visible>!topbar.focused+[!control.hasfocus(333)|control.hasfocus(155)|control.hasfocus(166)]</visible>
         <animation effect="slide" time="100" start="-335,0" reversible="true">visiblechange</animation>
         <control>
           <description>Overlay</description>
-          <id>0</id>
+          <id>1</id>
           <type>image</type>
           <posX>0</posX>
           <posY>170</posY>
           <width>460</width>
-          <height>740</height>
+          <height>720</height>
           <texture>backslide.png</texture>
           <colordiffuse>ddffffff</colordiffuse>
         </control>
@@ -121,7 +106,7 @@
           <posY>210</posY>
           <font>Label</font>
           <label>#RadioTime.Translation.Genres.Label</label>
-          <textcolor>fff5deb3</textcolor>
+          <textcolor>ff00bfff</textcolor>
         </control>
         <control>
           <id>166</id>
@@ -130,8 +115,7 @@
           <ondown>155</ondown>
           <onup>53</onup>
           <onleft>333</onleft>
-          <onright>333</onright>
-          <onright>333</onright>
+          <onright>53</onright>
           <posX>34</posX>
           <posY>267</posY>
           <width>350</width>
@@ -155,16 +139,15 @@
           <posY>498</posY>
           <font>Label</font>
           <label>#RadioTime.Translation.SimilarStations.Label</label>
-          <textcolor>fff5deb3</textcolor>
+          <textcolor>ff00bfff</textcolor>
         </control>
         <control>
           <id>155</id>
           <description>list similar</description>
           <type>listcontrol</type>
           <onup>166</onup>
-          <ondown>53</ondown>
           <onleft>333</onleft>
-          <onright>333</onright>
+          <ondown>53</ondown>
           <posX>34</posX>
           <posY>554</posY>
           <width>350</width>
@@ -193,9 +176,7 @@
           <onup>155</onup>
           <ondown>166</ondown>
           <onleft>333</onleft>
-          <onright>333</onright>
         </control>
-      </control>
     </control>
     <!-- *************************************************************************************************** -->
     <!-- ************************************** Here are the VU Meters ************************************* -->

@@ -61,6 +61,7 @@ namespace MediaPortal
       this.lblVersion.TabIndex = 5;
       this.lblVersion.Text = "Version";
       this.lblVersion.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+      this.lblVersion.UseMnemonic = false;
       // 
       // lblCVS
       // 
@@ -75,6 +76,7 @@ namespace MediaPortal
       this.lblCVS.TabIndex = 6;
       this.lblCVS.Text = "CVSVersion";
       this.lblCVS.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+      this.lblCVS.UseMnemonic = false;
       // 
       // pbBackground
       // 

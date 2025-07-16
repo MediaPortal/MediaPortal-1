@@ -2,6 +2,8 @@
 <!-- Skin translation file -->
 <!-- English (US) -->
 <strings>
+  <string Field="EPGRows">Lignes dans les EPG TV/Radio</string>
+  <string Field="NumberEPGRows">Nombre de lignes</string>
   <string Field="Thumbsview">Vue en miniature</string>
   <string Field="Thumbsview.Select">Normal</string>
   <string Field="WorldNewsTicker">Activer ticker de WorldNews</string>

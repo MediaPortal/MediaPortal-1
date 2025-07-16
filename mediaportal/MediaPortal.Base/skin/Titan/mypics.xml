@@ -80,6 +80,38 @@
 		<animation effect="fade" time="0">WindowClose</animation>
     </control>
 
+    <!-- Rating -->
+
+    <control>
+      <description>Rating</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>625</posX>
+      <posY>362</posY>
+      <width>114</width>
+      <height>114</height>
+      <texture>RatingUser#(math.round(cflt(#pictures.Rating))).png</texture>
+      <visible>facadeview.list+Control.IsVisible(50)</visible>
+      <animation effect="fade" time="0">Visible</animation>
+      <animation effect="fade" time="0">WindowClose</animation>
+    </control>
+
+    <!-- Favorite -->
+
+    <control>
+      <description>Favorite</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>625</posX>
+      <posY>362</posY>
+      <width>114</width>
+      <height>114</height>
+      <texture>Favorite.png</texture>
+      <visible>facadeview.list+Control.IsVisible(50)+string.equals(#pictures.Favorite,true)</visible>
+      <animation effect="fade" time="0">Visible</animation>
+      <animation effect="fade" time="0">WindowClose</animation>
+    </control>
+
     <!-- Keywords -->
 
     <control>

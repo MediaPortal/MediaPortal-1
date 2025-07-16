@@ -1,4 +1,4 @@
-﻿use master
+use master
 
 IF EXISTS (SELECT name FROM sysdatabases WHERE name = N'%TvLibrary%')
 BEGIN

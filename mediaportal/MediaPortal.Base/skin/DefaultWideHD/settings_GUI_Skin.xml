@@ -218,8 +218,8 @@
         <posX>700</posX>
         <posY>620</posY>
         <width>500</width>
-        <label>#(L(600)) #(L(300160))</label>
-        <textcolor>white</textcolor>
+        <label>#SkinTranslation.Translations.EPGRows.Label</label>
+        <textcolor>lightgray</textcolor>
         <font>Label</font>
       </control>
       <control>
@@ -229,11 +229,11 @@
         <posX>655</posX>
         <posY>660</posY>
         <width>550</width>
-		<textureFocus>setting_button_medium.png</textureFocus>
+		    <textureFocus>setting_button_medium.png</textureFocus>
         <mode>dialoglist</mode>
-        <dialogTitle>#(L(600)) #(L(300160))</dialogTitle>
+        <dialogTitle>#SkinTranslation.Translations.EPGRows.Label</dialogTitle>
         <valueTextInButton>yes</valueTextInButton>
-        <valuePrefixText>#(L(600)) #(L(300160)):</valuePrefixText>
+        <valuePrefixText>#SkinTranslation.Translations.NumberEPGRows.Label:</valuePrefixText>
         <onclick>#(skin.setstring('#skin.tvguide.rows',#selectedlabel33))</onclick>
         <binding>#skin.tvguide.rows</binding>
         <subitems>
@@ -322,7 +322,7 @@
         <posY>615</posY>
         <width>500</width>
         <label>Fanart BasicHome</label>
-        <textcolor>white</textcolor>
+         <textcolor>lightgray</textcolor>
         <font>Label</font>
         <visible>string.equals(#hedit.mode,Horizontal Text only)|string.equals(#hedit.mode,Horizontal (scroll))</visible>
       </control>

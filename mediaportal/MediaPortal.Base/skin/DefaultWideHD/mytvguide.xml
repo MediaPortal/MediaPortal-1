@@ -25,7 +25,7 @@
     <include condition="#(eq(#skin.tvguide.rows,' 18'))">mytvguide.18lines.xml</include>
     <include condition="#(eq(#skin.tvguide.rows,' 24'))">mytvguide.24lines.xml</include>
     <include condition="#skin.tvguide.usecolorsforbuttons">mytvguide.colors.xml</include>
-    <include condition="!#skin.tvguide.usecolorsforbuttons">mytvguide.nocolors.xml</include>
+    <!--include condition="!#skin.tvguide.usecolorsforbuttons">mytvguide.nocolors.xml</include-->
     
     <control>
       <type>fadelabel</type>

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2024 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2024 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -209,7 +209,8 @@ namespace MediaPortal.DeployTool.Sections
       {
         AddPackageToListView(new VcRedistChecker2013());
       }
-      AddPackageToListView(new VcRedistChecker2015());
+      // AddPackageToListView(new VcRedistChecker2015());
+      AddPackageToListView(new VcRedistChecker2022());
       AddPackageToListView(new WindowsMediaPlayerChecker());
 switch (InstallationProperties.Instance["InstallType"])
       {

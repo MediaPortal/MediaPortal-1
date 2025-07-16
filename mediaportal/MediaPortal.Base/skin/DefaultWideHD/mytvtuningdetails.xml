@@ -48,7 +48,31 @@
       <align>left</align>
       <textcolor>lightgray</textcolor>
     </control>
-    
+    <!--control>
+      <description>LCD image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1195</posX>
+      <posY>120</posY>
+      <width>535</width>
+      <height>310</height>
+      <texture>LCD.png</texture>
+      <visible>player.hasvideo+window.isvisible(3012)</visible>
+    </control>
+    <control>
+      <description>video window</description>
+      <type>videowindow</type>
+      <id>99</id>
+      <posX>1205</posX>
+      <posY>130</posY>
+      <width>515</width>
+      <height>290</height>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+      <visible>player.hasvideo+window.isvisible(3012)</visible>
+    </control-->
     <control>
       <description>Channel</description>
       <type>label</type>
@@ -84,7 +108,7 @@
       <id>3</id>
       <posX>532</posX>
       <posY>309</posY>
-      <label>#TV.TuningDetails.Provider</label>
+      <label>#(iif(neq(#TV.TuningDetails.Provider,''),'#TV.TuningDetails.Provider','IPTV'))</label>
       <font>font12</font>
     </control>
     <control>

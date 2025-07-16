@@ -241,6 +241,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelVersion2.Size = new System.Drawing.Size(75, 13);
       this.labelVersion2.TabIndex = 1;
       this.labelVersion2.Text = "1.0.3.23400";
+      this.labelVersion2.UseMnemonic = false;
       // 
       // labelVersion1
       // 

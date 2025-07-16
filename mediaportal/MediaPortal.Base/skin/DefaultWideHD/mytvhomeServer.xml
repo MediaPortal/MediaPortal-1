@@ -59,6 +59,7 @@
         <id>8</id>
         <label>707</label>
         <textalign>center</textalign>
+		<textYOff>0</textYOff>
         <onup>17</onup>
         <ondown>7</ondown>
         <onright>99</onright>
@@ -116,6 +117,8 @@
         <onright>99</onright>
       </control>
     </control>
+	
+	
     <control>
       <type>group</type>
       <layout>StackLayout(0,Vertical,true)</layout>
@@ -216,7 +219,18 @@
       <height>387</height>
       <texture>tv-off.gif</texture>
       <colordiffuse>90ffffff</colordiffuse>
-      <visible>!player.hasvideo</visible>
+      <visible>!player.hasvideo+!player.hasaudio</visible>
+      </control>
+	  <control>
+      <description>Pause logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>120</posX> 
+      <posY>266</posY> 
+      <width>36</width> 
+      <height>36</height> 
+      <texture>pause_white_transparent_small.png</texture>
+      <visible>player.paused</visible>
     </control>
     <control>
       <description>Start Time</description>
@@ -287,7 +301,7 @@
       <colordiffuse>60ffffff</colordiffuse>
     </control>
     <control>
-      <description>Zap channel Background</description>
+      <description>TV channel Background</description>
       <type>image</type>
       <id>1</id>
       <posX>119</posX>
@@ -296,6 +310,7 @@
       <height>92</height>
       <texture>tvlogoback.png</texture>
       <colordiffuse>ff1f3e70</colordiffuse>
+      <visible>!player.hasaudio+[!Player.HasVideo|string.contains(#Play.Current.File,tsbuffer)]</visible>	  
     </control>
     <control>
       <description>Playing Channel</description>
@@ -324,7 +339,7 @@
       <visible>!player.hasaudio+[!Player.HasVideo|string.contains(#Play.Current.File,tsbuffer)]</visible>
     </control>
     <control>
-      <description>Description1</description>
+      <description>Program description</description>
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>240</posX>
@@ -396,19 +411,42 @@
       <textcolor>ffffffff</textcolor>
       <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
     </control>
-    <control>
-      <description>Movie Thumb</description>
+	<control>
+      <description>Missong Video image</description>
       <type>image</type>
       <id>1</id>
       <posX>120</posX>
       <posY>665</posY>
       <width>115</width>
       <height>167</height>
-      <texture mask="dvdcase_mask.png">#Play.Current.Thumb</texture>
-      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
+      <texture mask="dvdcase_mask.png">missing_Coverart_video.png</texture>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#Play.Current.Title,#TV.RecordedTV.Title)</visible>
     </control>
     <control>
-      <description>Current program title</description>
+      <description>Movie/Video/Series Thumb</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>120</posX>
+      <posY>665</posY>
+      <width>115</width>
+      <height>167</height>
+      <texture mask="dvdcase_mask.png">#Play.Current.Thumb</texture> 
+       <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#Play.Current.Title,#TV.RecordedTV.Title)</visible>
+    </control>
+	<control>
+      <description>Recorded TV Thumb</description> 
+      <type>image</type>
+      <id>1</id>
+      <posX>120</posX>
+      <posY>665</posY>
+      <width>204</width> 
+      <height>115</height> 
+	  <keepaspectratio>no</keepaspectratio>
+      <texture mask="videothumbmask.png">#Play.Current.Thumb</texture>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+string.contains(#Play.Current.Title,#TV.RecordedTV.Title)</visible>
+    </control>	  
+	<control>
+      <description>Current movie/video/series title</description>
       <type>fadelabel</type>
       <id>0</id>
       <posX>260</posX>
@@ -417,27 +455,36 @@
       <label>#Play.Current.Title (#duration)</label>
       <textcolor>ff00bfff</textcolor>
       <font>LabelBold</font>
-      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#Play.Current.Title,#TV.RecordedTV.Title)</visible>
+	</control>
+	<control>
+      <description>Current recorded TV title</description>
+	  <type>fadelabel</type>
+      <id>0</id>
+      <posX>349</posX>
+      <posY>660</posY>
+      <width>1439</width>
+      <label>#Play.Current.Title (#duration)</label>
+      <textcolor>ff00bfff</textcolor>
+      <font>LabelBold</font>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+string.contains(#Play.Current.Title,#TV.RecordedTV.Title)</visible>
     </control>
     <control>
-      <description>Description1</description>
+      <description>Recorded TV program description</description>
       <type>textboxscrollup</type>
       <id>1</id>
-      <posX>260</posX>
+      <posX>349</posX>
       <posY>720</posY>
       <width>1590</width>
       <height>188</height>
       <font>font10</font>
       <textcolor>lightgray</textcolor>
-      <label>#(switch(
-        neq(#Play.Current.Title,#TV.RecordedTV.Title),'#plot',
-        eq(#Play.Current.Title,#TV.RecordedTV.Title),'#TV.RecordedTV.Description',
-        eq(1,1),''))</label>
+      <label>#TV.RecordedTV.Description</label>
       <textcolor>lightgray</textcolor>
-      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#Play.Current.Title,#TVSeries.Series.Pretty_Name)+!string.contains(#Play.Current.Title,#MovingPictures.SelectedMovie.title)</visible>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+string.contains(#Play.Current.Title,#TV.RecordedTV.Title)</visible>
     </control>
     <control>
-      <description>Description1</description>
+      <description>TVSeries description</description>
       <type>textboxscrollup</type>
       <id>1</id>
       <posX>260</posX>
@@ -447,10 +494,10 @@
       <font>font10</font>
       <label>#TVSeries.Description</label>
       <textcolor>lightgray</textcolor>
-      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+string.contains(#Play.Current.Title,#TVSeries.Series.Pretty_Name)+!string.contains(#Play.Current.Title,#MovingPictures.SelectedMovie.title)</visible>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+string.contains(#Play.Current.Title,#TVSeries.Series.Pretty_Name)</visible>
     </control>
     <control>
-      <description>Description1</description>
+      <description>MyVideos/MovingPictures description</description>
       <type>textboxscrollup</type>
       <id>1</id>
       <posX>260</posX>
@@ -458,9 +505,12 @@
       <width>1590</width>
       <height>188</height>
       <font>font10</font>
-      <label>#MovingPictures.SelectedMovie.summary</label>
+      <label>#(switch(
+        neq(#Play.Current.Title,#MovingPictures.SelectedMovie.title),'#plot',
+        eq(#Play.Current.Title,#MovingPictures.SelectedMovie.title),'#MovingPictures.SelectedMovie.summary',
+        eq(1,1),''))</label>  
       <textcolor>lightgray</textcolor>
-      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+string.contains(#Play.Current.Title,#MovingPictures.SelectedMovie.title)</visible>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#Play.Current.Title,#TVSeries.Series.Pretty_Name)+!string.contains(#Play.Current.Title,#TV.RecordedTV.Title)</visible>
     </control>
     
     <!--     *******************************************************************************************  -->
@@ -497,8 +547,8 @@
         <width>1</width>
       </control>
       <control>
-        <description>DEFAULT FANART IMAGE</description>
-        <id>0</id>
+        <description>DEFAULT FANART IMAGE Music</description>
+	    <id>0</id>
         <type>image</type>
         <posX>616</posX>
       <posY>136</posY>
@@ -507,6 +557,18 @@
         <colordiffuse>ffffffff</colordiffuse>
         <texture>DefaultFanart.gif</texture>
         <visible>!control.isvisible(91919294)</visible>
+      </control>
+	   <control>
+        <description>DEFAULT FANART IMAGE TuneIn</description>
+	    <id>0</id>
+        <type>image</type>
+        <posX>616</posX>
+      <posY>136</posY>
+      <width>687</width>
+      <height>387</height>
+        <colordiffuse>ffffffff</colordiffuse>
+        <texture>DefaultFanart.gif</texture>
+        <visible>Player.HasAudio+!string.contains(#Play.Current.File,tsbuffer)+!string.equals(#duration)</visible>
       </control>
       <control>
         <description>FANART IMAGE 1</description>
@@ -558,16 +620,52 @@
         <textcolor>ff00bfff</textcolor>
       </control>
       <control>
-        <description>music logo</description>
+        <description>Music image</description>
         <type>image</type>
         <id>12345</id>
         <posX>120</posX>
-      <posY>660</posY>
-      <width>90</width>
-      <height>90</height>
+        <posY>660</posY>
+        <width>90</width>
+        <height>90</height>
         <centered>yes</centered>
         <keepaspectratio>no</keepaspectratio>
         <texture mask="cdcase_mask.png">#Play.Current.Thumb</texture>
+		<visible>Player.HasAudio+!string.contains(#Play.Current.File,tsbuffer)+string.equals(#duration)</visible>																									 
+       </control>
+	   <control>
+        <description>Music missing image</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>120</posX>
+        <posY>660</posY>
+        <width>90</width>
+        <height>90</height>
+        <texture mask="cdcase_mask.png">missing_coverart.png</texture>
+		<visible>Player.HasAudio+!string.contains(#Play.Current.File,tsbuffer)+string.equals(#duration)+!control.hasthumb(12345)</visible>																									 
+       </control>
+	    <control>
+        <description>Radio logo</description>
+        <type>image</type>
+        <id>12346</id>
+        <posX>120</posX>
+        <posY>660</posY>
+        <width>90</width>
+        <!--<height>90</height>
+        <centered>yes</centered>-->
+        <keepaspectratio>yes</keepaspectratio>
+        <texture mask="cdcase_mask.png">#Play.Current.Thumb</texture>
+		<visible>Player.HasAudio+!string.contains(#Play.Current.File,tsbuffer)+!string.equals(#duration)</visible>																									 
+       </control>
+	   <control>
+        <description>Radio missing image</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>120</posX>
+        <posY>660</posY>
+        <width>90</width>
+		<height>90</height>
+        <texture mask="cdcase_mask.png">missing_coverart_radio.png</texture>
+		<visible>Player.HasAudio+!string.contains(#Play.Current.File,tsbuffer)+!string.equals(#duration)+!control.hasthumb(12346)</visible>																									 
        </control>
       
       
@@ -582,6 +680,7 @@
       <font>font10</font>
       <align>right</align>
       <textcolor>ffffffff</textcolor>
+	  <visible>Player.HasAudio+!string.contains(#Play.Current.File,tsbuffer)</visible>																				  
     </control>
     <control>
       <description>background</description>
@@ -592,6 +691,7 @@
       <width>381</width>
       <height>25</height>
       <texture>horizontal_bar2.png</texture>
+	  <visible>Player.HasAudio+!string.contains(#Play.Current.File,tsbuffer)</visible>																				  
     </control>
     <control>
       <description>Progress Bar</description>
@@ -611,6 +711,7 @@
       <lefttexture>osd_progress_mid_tv2.png</lefttexture>
       <midtexture>osd_progress_mid_tv2.png</midtexture>
       <righttexture>osd_progress_right2.png</righttexture>
+	  <visible>Player.HasAudio+!string.contains(#Play.Current.File,tsbuffer)</visible>																				  
     </control>
     <control>
       <description>End Time</description>
@@ -623,6 +724,7 @@
       <font>font10</font>
       <align>left</align>
       <textcolor>ffffffff</textcolor>
+	  <visible>Player.HasAudio+!string.contains(#Play.Current.File,tsbuffer)</visible>																				  
     </control>
       
       
@@ -746,6 +848,7 @@
         <textcolor>ffffffff</textcolor>
         <visible>string.equals(#duration)</visible>
       </control>
+     
       <control>
         <description>TuneIn</description>
         <type>group</type>

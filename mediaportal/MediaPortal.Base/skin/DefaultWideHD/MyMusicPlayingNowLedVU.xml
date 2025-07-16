@@ -49,516 +49,760 @@
       <colordiffuse>ddffffff</colordiffuse>
     </control>
     <import>common.music.play.fanart.xml</import>
-    <!--import>common.window.xml</import-->
-  <import>common.time.xml</import>
-  <!-- *************************************************************************************************** -->
-  <!-- ***************************************   Title. Album, Artist info  ****************************** -->
-  <!-- *************************************************************************************************** -->
-  <control>
-    <description>Track - Title</description>
-    <type>group</type>
-    <layout>StackLayout(7, Horizontal, true)</layout>
-    <posX>45</posX>
-    <posY>54</posY>
-    <width>1810</width>
-    <align>left</align>
-    <visible>Player.hasaudio</visible>
-    <control>
-      <type>fadelabel</type>
-      <description>Track</description>
-      <id>0</id>
-      <label>#(L(182)): </label>
-      <width>10</width>
-      <maxWidth>190</maxWidth>
-      <textcolor>ff00bfff</textcolor>
-      <align>left</align>
-      <font>Label</font>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>Title</description>
-      <id>0</id>
-      <label>#Play.Current.Title #scroll.wrap</label>
-      <width>10</width>
-      <maxWidth>1070</maxWidth>
-      <align>left</align>
-      <font>Label</font>
-      <textcolor>ffffffff</textcolor>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>Artist label</description>
-      <id>0</id>
-      <label>#(L(171))</label>
-      <width>10</width>
-      <maxWidth>210</maxWidth>
-      <textcolor>ff00bfff</textcolor>
-      <align>left</align>
-      <font>Label</font>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>Artist</description>
-      <id>0</id>
-      <label>#Play.Current.Artist</label>
-      <width>10</width>
-      <maxWidth>820</maxWidth>
-      <textcolor>ffffffff</textcolor>
-      <align>left</align>
-      <font>Label</font>
-    </control>
-  </control>
-  <control>
-    <description>Album - Title</description>
-    <type>group</type>
-    <layout>StackLayout(7, Horizontal, true)</layout>
-    <posX>45</posX>
-    <posY>94</posY>
-    <width>1342</width>
-    <align>left</align>
-    <visible>Player.hasaudio+string.equals(#duration)</visible>
-    <control>
-      <type>fadelabel</type>
-      <description>Track</description>
-      <id>0</id>
-      <label>#(L(170))</label>
-      <width>10</width>
-      <maxWidth>190</maxWidth>
-      <textcolor>ff00bfff</textcolor>
-      <align>left</align>
-      <font>Label</font>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>Title</description>
-      <id>0</id>
-      <label>#Play.Current.Album #scroll.wrap</label>
-      <width>10</width>
-      <maxWidth>1250</maxWidth>
-      <align>left</align>
-      <font>Label</font>
-      <textcolor>ffffffff</textcolor>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>duration</description>
-      <id>0</id>
-      <label>#(L(435))</label>
-      <width>10</width>
-      <maxWidth>1190</maxWidth>
-      <textcolor>ff00bfff</textcolor>
-      <align>left</align>
-      <font>Label</font>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>duration</description>
-      <id>0</id>
-      <label>#Play.Current.Track (#Play.Current.Duration) #scroll.wrap</label>
-      <width>10</width>
-      <maxWidth>1190</maxWidth>
-      <textcolor>ffffffff</textcolor>
-      <align>left</align>
-      <font>Label</font>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>duration</description>
-      <id>0</id>
-      <label>#(L(436))</label>
-      <width>10</width>
-      <maxWidth>1190</maxWidth>
-      <textcolor>ff00bfff</textcolor>
-      <align>left</align>
-      <font>Label</font>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>duration</description>
-      <id>0</id>
-      <label>#(iif(eq(#Play.Current.Year,''),'n/a','#Play.Current.Year'))</label>
-      <width>10</width>
-      <maxWidth>1190</maxWidth>
-      <textcolor>ffffffff</textcolor>
-      <align>left</align>
-      <font>Label</font>
-    </control>
-  </control>
-  <control>
-    <description>Track - Title</description>
-    <type>group</type>
-    <layout>StackLayout(7, Horizontal, true)</layout>
-    <posX>45</posX>
-    <posY>94</posY>
-    <width>1342</width>
-    <align>left</align>
-    <visible>Player.hasaudio+!string.equals(#duration)+plugin.isenabled(TuneIn)</visible>
-    <control>
-      <type>fadelabel</type>
-      <description>Track</description>
-      <id>0</id>
-      <label>#(L(602)):</label>
-      <width>10</width>
-      <maxWidth>190</maxWidth>
-      <textcolor>ff00bfff</textcolor>
-      <align>left</align>
-      <font>Label</font>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>Title</description>
-      <id>0</id>
-      <label>#RadioTime.Play.Station #scroll.wrap #RadioTime.Play.Location</label>
-      <width>10</width>
-      <maxWidth>1250</maxWidth>
-      <align>left</align>
-      <font>Label</font>
-      <textcolor>ffffffff</textcolor>
-    </control>
-  </control>
-  <control>
-    <description>Track - Title</description>
-    <type>group</type>
-    <layout>StackLayout(7, Horizontal, true)</layout>
-    <posX>45</posX>
-    <posY>94</posY>
-    <width>1620</width>
-    <align>left</align>
-    <visible>Player.hasaudio+!string.equals(#duration)+!plugin.isenabled(TuneIn)</visible>
-    <control>
-      <type>fadelabel</type>
-      <description>Track</description>
-      <id>0</id>
-      <label>#(L(602)):</label>
-      <width>10</width>
-      <maxWidth>190</maxWidth>
-      <textcolor>ff00bfff</textcolor>
-      <align>left</align>
-      <font>Label</font>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>Title</description>
-      <id>0</id>
-      <label>#Play.Current.Album</label>
-      <width>10</width>
-      <maxWidth>1450</maxWidth>
-      <align>left</align>
-      <font>Label</font>
-      <textcolor>ffffffff</textcolor>
-    </control>
-  </control>
-  <import>MyMusicPlayingNowAnimation.xml</import>
-  <!-- *************************************************************************************************** -->
-  <!-- ***************************************   Progressbar and time info ******************************* -->
-  <!-- *************************************************************************************************** -->
-  <control>
-    <description>background image</description>
-    <type>image</type>
-    <id>0</id>
-    <posX>1280</posX>
-    <posY>655</posY>
-    <width>510</width>
-    <height>60</height>
-    <texture>osdbg3.png</texture>
-    <colordiffuse>dd164665</colordiffuse>
-    <visible>Player.HasAudio+string.equals(#duration)</visible>
-  </control>
-  <control>
-    <description>background image</description>
-    <type>image</type>
-    <id>0</id>
-    <posX>1282</posX>
-    <posY>657</posY>
-    <width>506</width>
-    <height>56</height>
-    <texture>osdbg3.png</texture>
-    <colordiffuse>ff00061c</colordiffuse>
-    <visible>Player.HasAudio+string.equals(#duration)</visible>
-  </control>
-  <control>
-    <type>image</type>
-    <id>117</id>
-    <posX>1408</posX>
-    <posY>675</posY>
-    <width>258</width>
-    <height>23</height>
-    <texture>horizontal_bar2.png</texture>
-    <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
-  </control>
-  <control>
-    <description>progress bar</description>
-    <type>progress</type>
-    <id>118</id>
-    <posX>1390</posX>
-    <posY>674</posY>
-    <width>296</width>
-    <height>23</height>
-    <label>#percentage</label>
-    <texturebg>-</texturebg>
-    <onlymidtexture>no</onlymidtexture>
-    <midwidth>286</midwidth>
-    <midheight>23</midheight>
-    <midoffsetX>0</midoffsetX>
-    <midoffsetY>0</midoffsetY>
-    <lefttexture>osd_progress_mid_tv2.png</lefttexture>
-    <midtexture>osd_progress_mid_tv2.png</midtexture>
-    <righttexture>osd_progress_right2.png</righttexture>
-    <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
-  </control>
-  <control>
-    <type>label</type>
-    <description>track progress label</description>
-    <id>119</id>
-    <posX>1396</posX>
-    <posY>663</posY>
-    <label>#currentplaytime</label>
-    <font>Label</font>
-    <align>right</align>
-    <textcolor>lightgray</textcolor>
-    <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
-  </control>
-  <control>
-    <type>label</type>
-    <description>track duration label</description>
-    <id>110</id>
-    <posX>1680</posX>
-    <posY>663</posY>
-    <label>#currentremaining</label>
-    <font>Label</font>
-    <align>left</align>
-    <textcolor>lightgray</textcolor>
-    <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
-  </control>
-  <!-- *************************************************************************************************** -->
-  <!-- ********************************************   Coming Next Info *********************************** -->
-  <!-- *************************************************************************************************** -->
-  <control>
-    <description>Track - Title</description>
-    <type>group</type>
-    <visible>[!control.hasfocus(9875)+!control.hasfocus(9876)+!control.hasfocus(9877)]+!string.equals(#Play.Next.Title, )</visible>
-    <control>
-      <type>label</type>
-      <description>up next label</description>
-      <id>20</id>
-      <posX>2895</posX>
-      <posY>864</posY>
-      <width>491</width>
-      <label>4541</label>
-      <align>left</align>
-      <font>RSS</font>
-      <textcolor>ff00bfff</textcolor>
-      <shadowAngle>45</shadowAngle>
-      <shadowDistance>4</shadowDistance>
-      <shadowColor>ff000000</shadowColor>
-    </control>
-    <control>
-      <type>label</type>
-      <description>up next label</description>
-      <id>0</id>
-      <posX>267</posX>
-      <posY>862</posY>
-      <width>491</width>
-      <label>4541</label>
-      <align>left</align>
-      <font>Label</font>
-      <textcolor>ff00bfff</textcolor>
-      <shadowAngle>45</shadowAngle>
-      <shadowDistance>4</shadowDistance>
-      <shadowColor>ff000000</shadowColor>
-    </control>
-    <control>
-      <description>music logo when no thumb</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>54</posX>
-      <posY>862</posY>
-      <width>200</width>
-      <height>200</height>
-      <keepaspectratio>no</keepaspectratio>
-      <centered>yes</centered>
-      <texture mask="cdcase_mask.png">defaultAudioBig.png</texture>
-      <visible>string.equals(#Play.Next.Thumb, )</visible>
-    </control>
-    <control>
-      <description>music logo</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>54</posX>
-      <posY>857</posY>
-      <width>200</width>
-      <height>200</height>
-      <texture mask="cdcase_mask.png">#Play.Next.Thumb</texture>
-      <visible>!string.equals(#Play.Next.Thumb, )</visible>
-    </control>
-    <control>
-      <type>image</type>
-      <description>cd case image</description>
-      <id>0</id>
-      <posX>54</posX>
-      <posY>857</posY>
-      <width>200</width>
-      <height>200</height>
-      <texture>cdcasefocus.png</texture>
-      <visible>!string.equals(#Play.Next.Thumb, )</visible>
-    </control>
+    <import>common.time.xml</import>
+    <!-- *************************************************************************************************** -->
+    <!-- ***************************************   Title, Album, Artist info  ****************************** -->
+    <!-- *************************************************************************************************** -->
     <control>
       <description>Track - Title</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>267</posX>
-      <posY>912</posY>
+      <posX>45</posX>
+      <posY>54</posY>
+      <width>1810</width>
       <align>left</align>
-      <width>1450</width>
-      <height>38</height>
+      <visible>Player.hasaudio+string.equals(#duration)</visible>
       <control>
         <type>fadelabel</type>
-        <description>Title</description>
-        <id>1</id>
-        <label>#Play.Next.Track.  #Play.Next.Title #scroll.wrap #Play.Next.Duration</label>
-        <width>10</width>
-        <maxWidth>1250</maxWidth>
-        <align>left</align>
-        <font>font11</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-      </control>
-    </control>
-    <control>
-      <type>fadelabel</type>
-      <description>Track</description>
-      <id>1</id>
-      <posX>267</posX>
-      <posY>912</posY>
-      <label>#Play.Next.Track.</label>
-      <width>100</width>
-      <textcolor>ff00bfff</textcolor>
-      <align>left</align>
-      <font>font11</font>
-      <shadowAngle>45</shadowAngle>
-      <shadowDistance>4</shadowDistance>
-      <shadowColor>ff000000</shadowColor>
-    </control>
-    <control>
-      <description>Track - Title</description>
-      <type>group</type>
-      <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>267</posX>
-      <posY>947</posY>
-      <align>left</align>
-      <width>1450</width>
-      <height>38</height>
-      <visible>!string.equals(#Play.Next.Artist, )</visible>
-      <control>
-        <type>fadelabel</type>
-        <description>Track</description>
-        <id>123</id>
-        <label>#(L(171))</label>
+        <description>Title label</description>
+        <id>0</id>
+        <label>#(L(268)):</label>
         <width>10</width>
         <maxWidth>190</maxWidth>
         <textcolor>ff00bfff</textcolor>
         <align>left</align>
-        <font>font11</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
+        <font>Label</font>
       </control>
       <control>
         <type>fadelabel</type>
-        <description>Title</description>
+        <description>Title value</description>
         <id>0</id>
-        <label>#Play.Next.Artist</label>
+        <label>#Play.Current.Title #scroll.wrap</label>
         <width>10</width>
-        <maxWidth>1250</maxWidth>
+        <maxWidth>1070</maxWidth>
         <align>left</align>
-        <font>font11</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
+        <font>Label</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Track label</description>
+        <id>0</id>
+        <label>#(L(435))</label>
+        <width>10</width>
+        <maxWidth>1190</maxWidth>
+        <textcolor>ff00bfff</textcolor>
+        <align>left</align>
+        <font>Label</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Track and duration value</description>
+        <id>0</id>
+        <label>#Play.Current.Track (#Play.Current.Duration) #scroll.wrap</label>
+        <width>10</width>
+        <maxWidth>1190</maxWidth>
+        <textcolor>ffffffff</textcolor>
+        <align>left</align>
+        <font>Label</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Artist label</description>
+        <id>0</id>
+        <label>#(L(171))</label>
+        <width>10</width>
+        <maxWidth>210</maxWidth>
+        <textcolor>ff00bfff</textcolor>
+        <align>left</align>
+        <font>Label</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Artist value</description>
+        <id>0</id>
+        <label>#Play.Current.Artist</label>
+        <width>10</width>
+        <maxWidth>820</maxWidth>
+        <textcolor>ffffffff</textcolor>
+        <align>left</align>
+        <font>Label</font>
       </control>
     </control>
+    <!-- *************************************************************************************************** -->
+    <!-- ************************************* Text with stars at top  ************************************* -->
+    <!-- *************************************************************************************************** -->
     <control>
-      <description>Track - Title</description>
+      <description>Album - Title</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>267</posX>
-      <posY>982</posY>
+      <posX>45</posX>
+      <posY>99</posY>
+      <width>1342</width>
       <align>left</align>
-      <width>1450</width>
-      <height>38</height>
-      <visible>!string.equals(#Play.Next.Artist, )</visible>
+      <visible>Player.hasaudio+string.equals(#duration)</visible>
       <control>
         <type>fadelabel</type>
-        <description>Track</description>
-        <id>121</id>
+        <description>Album label</description>
+        <id>0</id>
         <label>#(L(170))</label>
         <width>10</width>
         <maxWidth>190</maxWidth>
         <textcolor>ff00bfff</textcolor>
         <align>left</align>
-        <font>font11</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
+        <font>Label</font>
       </control>
       <control>
         <type>fadelabel</type>
-        <description>Title</description>
+        <description>Album value</description>
         <id>0</id>
-        <label>#Play.Next.Album #scroll.wrap</label>
+        <label>#Play.Current.Album #scroll.wrap</label>
         <width>10</width>
         <maxWidth>1250</maxWidth>
         <align>left</align>
-        <font>font11</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
+        <font>Label</font>
+        <textcolor>ffffffff</textcolor>
       </control>
       <control>
         <type>fadelabel</type>
-        <description>duration</description>
+        <description>Year label</description>
         <id>0</id>
         <label>#(L(436))</label>
+        <width>10</width>
+        <maxWidth>1190</maxWidth>
+        <textcolor>ff00bfff</textcolor>
+        <align>left</align>
+        <font>Label</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Year value</description>
+        <id>0</id>
+        <label>#(iif(eq(#Play.Current.Year,''),'n/a','#Play.Current.Year')) #scroll.wrap</label>
+        <width>10</width>
+        <maxWidth>1190</maxWidth>
+        <textcolor>ffffffff</textcolor>
+        <align>left</align>
+        <font>Label</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Rating label</description>
+        <id>0</id>
+        <label>#(L(204))</label>
+        <width>10</width>
+        <maxWidth>1190</maxWidth>
+        <textcolor>ff00bfff</textcolor>
+        <align>left</align>
+        <font>Label</font>
+      </control>
+      <control>
+        <description>Rating value</description>
+        <type>imagelist</type>
+        <id>1337</id>
+        <width>337</width>
+        <textureWidth>31</textureWidth>
+        <textureHeight>39</textureHeight>
+        <subitems>
+          <subitem>starbad_music.png</subitem>
+          <subitem>star_music.png</subitem>
+        </subitems>
+        <orientation>horizontal</orientation>
+        <align>left</align>
+        <valign>bottom</valign>
+        <imagesToDraw>5</imagesToDraw>
+        <percentage>#Play.Current.Rating</percentage>
+      </control>
+    </control>
+    <!-- *************************************************************************************************** -->
+    <!-- ************************************* Text when playing TuneIn  *********************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>45</posX>
+      <posY>54</posY>
+      <width>1810</width>
+      <align>left</align>
+      <visible>Player.hasaudio+!string.equals(#duration)+!string.equals(#RadioTime.Play.Location,)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Title label</description>
+        <id>0</id>
+        <label>#(L(268)):</label>
         <width>10</width>
         <maxWidth>190</maxWidth>
         <textcolor>ff00bfff</textcolor>
         <align>left</align>
-        <font>font11</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
+        <font>Label</font>
       </control>
       <control>
         <type>fadelabel</type>
-        <description>Title</description>
+        <description>Title value</description>
         <id>0</id>
-        <label>#(iif(eq(#Play.Next.Year,''),'n/a','#Play.Next.Year'))</label>
+        <label>#Play.Current.Title #scroll.wrap</label>
         <width>10</width>
-        <maxWidth>1250</maxWidth>
+        <maxWidth>1070</maxWidth>
         <align>left</align>
-        <font>font11</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
+        <font>Label</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Artist label</description>
+        <id>0</id>
+        <label>#(L(171))</label>
+        <width>10</width>
+        <maxWidth>210</maxWidth>
+        <textcolor>ff00bfff</textcolor>
+        <align>left</align>
+        <font>Label</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Artist value</description>
+        <id>0</id>
+        <label>#Play.Current.Artist</label>
+        <width>10</width>
+        <maxWidth>820</maxWidth>
+        <textcolor>ffffffff</textcolor>
+        <align>left</align>
+        <font>Label</font>
       </control>
     </control>
     <control>
       <description>Track - Title</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>267</posX>
-      <posY>1017</posY>
+      <posX>45</posX>
+      <posY>99</posY>
+      <width>1342</width>
       <align>left</align>
-      <width>1450</width>
-      <height>38</height>
+      <visible>Player.hasaudio+!string.equals(#duration)+!string.equals(#RadioTime.Play.Location,)</visible>
       <control>
         <type>fadelabel</type>
         <description>Track</description>
-        <id>125</id>
-        <label>#(L(135)):</label>
+        <id>0</id>
+        <label>#(L(602)):</label>
         <width>10</width>
         <maxWidth>190</maxWidth>
+        <textcolor>ff00bfff</textcolor>
+        <align>left</align>
+        <font>Label</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#RadioTime.Play.Station #scroll.wrap #RadioTime.Play.Location</label>
+        <width>10</width>
+        <maxWidth>1250</maxWidth>
+        <align>left</align>
+        <font>Label</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+    </control>
+    <!-- *************************************************************************************************** -->
+    <!-- ************************************* Text when playing Radio  ************************************ -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>45</posX>
+      <posY>54</posY>
+      <width>1810</width>
+      <align>left</align>
+      <visible>Player.hasaudio+!string.equals(#duration)+string.equals(#RadioTime.Play.Location,)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Title label</description>
+        <id>0</id>
+        <label>#(L(268)):</label>
+        <width>10</width>
+        <maxWidth>190</maxWidth>
+        <textcolor>ff00bfff</textcolor>
+        <align>left</align>
+        <font>Label</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title value</description>
+        <id>0</id>
+        <label>#Play.Current.Title #scroll.wrap</label>
+        <width>10</width>
+        <maxWidth>1070</maxWidth>
+        <align>left</align>
+        <font>Label</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Artist label</description>
+        <id>0</id>
+        <label>#(L(171))</label>
+        <width>10</width>
+        <maxWidth>210</maxWidth>
+        <textcolor>ff00bfff</textcolor>
+        <align>left</align>
+        <font>Label</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Artist value</description>
+        <id>0</id>
+        <label>#Play.Current.Artist</label>
+        <width>10</width>
+        <maxWidth>820</maxWidth>
+        <textcolor>ffffffff</textcolor>
+        <align>left</align>
+        <font>Label</font>
+      </control>
+    </control>
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>45</posX>
+      <posY>99</posY>
+      <width>1620</width>
+      <align>left</align>
+      <visible>Player.hasaudio+!string.equals(#duration)+string.equals(#RadioTime.Play.Location,)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(602)):</label>
+        <width>10</width>
+        <maxWidth>190</maxWidth>
+        <textcolor>ff00bfff</textcolor>
+        <align>left</align>
+        <font>Label</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Play.Current.Album</label>
+        <width>10</width>
+        <maxWidth>1450</maxWidth>
+        <align>left</align>
+        <font>Label</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+    </control>
+    <import>MyMusicPlayingNowAnimation.xml</import>
+    <!-- *************************************************************************************************** -->
+    <!-- ***************************************   Progressbar and time info ******************************* -->
+    <!-- *************************************************************************************************** -->
+    <!--<control>
+      <description>background image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1280</posX>
+      <posY>655</posY>
+      <width>510</width>
+      <height>60</height>
+      <texture>osdbg3.png</texture>
+      <colordiffuse>dd164665</colordiffuse>
+      <visible>Player.HasAudio+string.equals(#duration)</visible>
+    </control>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1282</posX>
+      <posY>657</posY>
+      <width>506</width>
+      <height>56</height>
+      <texture>osdbg3.png</texture>
+      <colordiffuse>ff00061c</colordiffuse>
+      <visible>Player.HasAudio+string.equals(#duration)</visible>
+    </control>-->
+	 <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1280</posX>
+      <posY>657</posY>
+      <width>506</width>
+      <height>120</height>
+      <texture>Music_Tab_OSD.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>Player.HasAudio+string.equals(#duration)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>117</id>
+      <posX>1403</posX> 
+      <posY>678</posY> 
+      <width>266</width> 
+      <height>23</height>
+      <texture>horizontal_bar2.png</texture>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
+    </control>
+    <control>
+      <description>progress bar</description>
+      <type>progress</type>
+      <id>118</id>
+      <posX>1390</posX> 
+      <posY>677</posY> 
+      <width>304</width>
+      <height>23</height>
+      <label>#percentage</label>
+      <texturebg>-</texturebg>
+      <onlymidtexture>no</onlymidtexture>
+      <midwidth>286</midwidth>
+      <midheight>23</midheight>
+      <midoffsetX>0</midoffsetX>
+      <midoffsetY>0</midoffsetY>
+      <lefttexture>osd_progress_mid_tv2.png</lefttexture> 
+      <midtexture>osd_progress_mid_tv2.png</midtexture> 
+      <righttexture>osd_progress_right2.png</righttexture> 
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
+    </control>
+    <control>
+      <type>label</type>
+      <description>track progress label</description>
+      <id>119</id>
+      <posX>1376</posX> 
+      <posY>668</posY> 
+      <label>#currentplaytime</label>
+      <font>Label</font>
+      <align>right</align>
+      <textcolor>lightgray</textcolor>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
+    </control>
+    <control>
+      <type>label</type>
+      <description>track duration label</description>
+      <id>110</id>
+      <posX>1690</posX> 
+      <posY>668</posY> 
+      <label>#currentremaining</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>lightgray</textcolor>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
+    </control>
+	
+	<!-- *************************************************************************************************** -->
+	<!-- *****************************   Trackinfo filetype, channels, Bitrate   *************************** -->
+	<!-- *************************************************************************************************** -->
+	  <control>
+      <type>group</type>
+      <description>Audio Logos</description>
+      <layout>StackLayout(0, Horizontal, true)</layout>
+	  <posX>1400</posX> 
+      <posY>714</posY> 
+	  <width>300</width>
+	  <animation effect="Fade" time="800">visible</animation>
+      <visible>player.hasaudio+!Player.HasVideo+string.equals(#duration)+![player.forwarding2x|player.forwarding4x|player.forwarding8x|player.forwarding16x|player.forwarding32x|player.rewinding2x|player.rewinding4x|player.rewinding8x|player.rewinding16x|player.rewinding32x|player.paused]</visible>
+      <control>
+        <description>Format Button</description>
+        <type>button</type>
+        <id>1</id>
+		<textureFocus>Logos\audio\#(iif(string.contains(#Play.Current.FileType,'mp3'),'mp3',iif(string.contains(#Play.Current.FileType,'flac'),'flac',iif(string.contains(#Play.Current.FileType,'ape'),'ape',iif(string.contains(#Play.Current.FileType,'ogg'),'ogg',#Play.Current.FileType))))).png</textureFocus>
+        <textureNoFocus>Logos\audio\#(iif(string.contains(#Play.Current.FileType,'mp3'),'mp3',iif(string.contains(#Play.Current.FileType,'flac'),'flac',iif(string.contains(#Play.Current.FileType,'ape'),'ape',iif(string.contains(#Play.Current.FileType,'ogg'),'ogg',#Play.Current.FileType))))).png</textureNoFocus>
+        <width>70</width>
+        <height>35</height>
+        <label></label>
+		<align>left</align>
+		<colordiffuse>ffd3d3d3</colordiffuse>
+      </control>
+      <control>
+        <description>Channels Button</description>
+        <type>button</type>
+        <id>1</id>
+        <textureFocus>Logos\Audio\#music.channels.png</textureFocus>
+		<textureNoFocus>Logos\Audio\#music.channels.png</textureNoFocus>
+		<width>70</width>
+        <height>35</height>
+        <label></label>
+		<align>left</align>
+		<colordiffuse>ffd3d3d3</colordiffuse>
+      </control>
+      <control>
+        <description>Bitrate Button</description>
+        <id>1</id>
+        <type>button</type>
+        <textureFocus>-</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <textcolor>ffd3d3d3</textcolor>
+		<textcolorNoFocus>ffd3d3d3</textcolorNoFocus>
+        <font>font11</font>
+		<textXOff>0</textXOff>
+        <textYOff>4</textYOff>
+		<textalign>center</textalign>
+        <label>#(iif(eq(#Play.Current.BitRate,''),'',string.format('{0} kbit/s',#Play.Current.BitRate)))</label> 
+        <width>150</width>
+        <height>35</height>
+      </control>
+	  </control>
+	  
+	<!-- *************************************************************************************************** -->
+	<!-- *****************************   PAUSE, FastForward, Rewind   ************************************** -->
+	<!-- *************************************************************************************************** -->
+	   
+      
+      <control>
+	  <id>0</id>
+        <description>2x label</description>
+        <type>label</type>
+        <posX>1390</posX>
+        <posY>736</posY>
+	    <width>300</width>
+		<font>font11</font>
+		<textcolor>ffd3d3d3</textcolor>
+		<align>center</align>
+		<label>#scroll.wrap FFW 2x #scroll.wrap</label>
+		<visible>player.forwarding2x</visible>
+		<animation effect="Fade" time="250">Visible</animation>
+      </control>
+      <control>
+	  <id>0</id>
+        <description>4x label</description>
+        <type>label</type>
+        <posX>1390</posX>
+        <posY>736</posY>
+	    <width>300</width>
+		<font>font11</font>
+		<textcolor>ffd3d3d3</textcolor>
+		<align>center</align>
+		<label>#scroll.wrap FFW 4x #scroll.wrap</label>
+		<visible>player.forwarding4x</visible>
+		<animation effect="Fade" time="250">Visible</animation>
+      </control>
+      <control>
+	  <id>0</id>
+        <description>8x label</description>
+        <type>label</type>
+        <posX>1390</posX>
+        <posY>736</posY>
+	    <width>300</width>
+		<font>font11</font>
+		<textcolor>ffd3d3d3</textcolor>
+        <align>center</align>
+        <label>#scroll.wrap FFW 8x #scroll.wrap</label>
+		<visible>player.forwarding8x</visible>
+		<animation effect="Fade" time="250">Visible</animation>
+      </control>
+      <control>
+	  <id>0</id>
+        <description>16x label</description>
+        <type>label</type>
+        <posX>1390</posX>
+        <posY>736</posY>
+	    <width>300</width>
+		<font>font11</font>
+		<textcolor>ffd3d3d3</textcolor>
+        <align>center</align>
+        <label>#scroll.wrap FFW 16x #scroll.wrap</label>
+		<visible>player.forwarding16x</visible>
+		<animation effect="Fade" time="250">Visible</animation>
+      </control>
+      <control>
+	  <id>0</id>
+        <description>32x label</description>
+        <type>label</type>
+        <posX>1390</posX>
+        <posY>736</posY>
+	    <width>300</width>
+		<font>font11</font>
+		<textcolor>ffd3d3d3</textcolor>
+        <align>center</align>
+        <label>#scroll.wrap FFW 32x #scroll.wrap</label>
+		<visible>player.forwarding32x</visible>
+		<animation effect="Fade" time="250">Visible</animation>
+      </control>
+      <control>
+	  <id>0</id>
+        <description>-2x label</description>
+        <type>label</type>
+        <posX>1390</posX>
+        <posY>736</posY>
+	    <width>300</width>
+		<font>font11</font>
+		<textcolor>ffd3d3d3</textcolor>
+        <align>center</align>
+        <label>#scroll.wrap REW 2x #scroll.wrap</label>
+		<visible>player.rewinding2x</visible>
+		<animation effect="Fade" time="250">Visible</animation>
+      </control>
+      <control>
+	  <id>0</id>
+        <description>-4x label</description>
+        <type>label</type>
+        <posX>1390</posX>
+        <posY>736</posY>
+	    <width>300</width>
+		<font>font11</font>
+		<textcolor>ffd3d3d3</textcolor>
+        <align>center</align>
+        <label>#scroll.wrap REW 4x #scroll.wrap</label>
+		<visible>player.rewinding4x</visible>
+		<animation effect="Fade" time="250">Visible</animation>
+      </control>
+      <control>
+	  <id>0</id>
+        <description>-8x label</description>
+        <type>label</type>
+        <posX>1390</posX>
+        <posY>736</posY>
+	    <width>300</width>
+		<font>font11</font>
+		<textcolor>ffd3d3d3</textcolor>
+        <align>center</align>
+        <label>#scroll.wrap REW 8x #scroll.wrap</label>
+		<visible>player.rewinding8x</visible>
+		<animation effect="Fade" time="250">Visible</animation>
+      </control>
+      <control>
+	  <id>0</id>
+        <description>-16x label</description>
+		<type>label</type>
+        <posX>1390</posX>
+        <posY>736</posY>
+	    <width>300</width>
+		<font>font11</font>
+		<textcolor>ffd3d3d3</textcolor>
+        <align>center</align>
+        <label>#scroll.wrap REW 16x #scroll.wrap</label>
+		<visible>player.rewinding16x</visible>
+		<animation effect="Fade" time="250">Visible</animation>
+      </control>
+      <control>
+	  <id>0</id>
+        <description>-32x label</description>
+        <type>label</type>
+        <posX>1390</posX>
+        <posY>736</posY>
+	    <width>300</width>
+		<font>font11</font>
+		<textcolor>ffd3d3d3</textcolor>
+        <align>center</align>
+        <label>#scroll.wrap REW 32x #scroll.wrap</label>
+		<visible>player.rewinding32x</visible>
+		<animation effect="Fade" time="250">Visible</animation>
+	  </control>
+      <control>
+	  <id>0</id>
+        <description>Pause</description>
+        <type>label</type>
+        <posX>1390</posX>
+        <posY>736</posY>
+	    <width>300</width>
+		<font>font11</font>
+		<textcolor>ffd3d3d3</textcolor>
+        <align>center</align>
+        <label>:: :: :: #(L(112)) :: :: ::</label>
+		<visible>player.paused</visible>
+		<animation effect="Fade" time="250">Visible</animation>
+      </control>											
+    <!-- *************************************************************************************************** -->
+    <!-- ********************************************   Coming Next Info *********************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <visible>[!control.hasfocus(9875)+!control.hasfocus(9876)+!control.hasfocus(9877)]+!string.equals(#Play.Next.Title, )+string.equals(#duration)</visible>
+      <control>
+        <type>label</type>
+        <description>up next label</description>
+        <id>20</id>
+        <posX>2895</posX>
+        <posY>864</posY>
+        <width>491</width>
+        <label>4541</label>
+        <align>left</align>
+        <font>RSS</font>
+        <textcolor>ff00bfff</textcolor>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>label</type>
+        <description>up next label</description>
+        <id>0</id>
+        <posX>267</posX>
+        <posY>862</posY>
+        <width>491</width>
+        <label>4541</label>
+        <align>left</align>
+        <font>Label</font>
+        <textcolor>ff00bfff</textcolor>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <description>music logo when no thumb</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>54</posX>
+        <posY>862</posY>
+        <width>200</width>
+        <height>200</height>
+        <keepaspectratio>no</keepaspectratio>
+        <centered>yes</centered>
+        <texture mask="cdcase_mask.png">defaultAudioBig.png</texture>
+        <visible>string.equals(#Play.Next.Thumb, )+string.equals(#duration)</visible>
+      </control>
+      <control>
+        <description>music logo</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>54</posX>
+        <posY>857</posY>
+        <width>200</width>
+        <height>200</height>
+        <texture mask="cdcase_mask.png">#Play.Next.Thumb</texture>
+        <visible>!string.equals(#Play.Next.Thumb, )+string.equals(#duration)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <description>cd case image</description>
+        <id>0</id>
+        <posX>54</posX>
+        <posY>857</posY>
+        <width>200</width>
+        <height>200</height>
+        <texture>cdcasefocus.png</texture>
+        <visible>!string.equals(#Play.Next.Thumb, )+string.equals(#duration)</visible>
+      </control>
+      <control>
+        <description>Track - Title</description>
+        <type>group</type>
+        <layout>StackLayout(7, Horizontal, true)</layout>
+        <posX>267</posX>
+        <posY>912</posY>
+        <align>left</align>
+        <width>1450</width>
+        <height>38</height>
+        <control>
+          <type>fadelabel</type>
+          <description>Title</description>
+          <id>1</id>
+          <label>#Play.Next.Track.  #Play.Next.Title #scroll.wrap #Play.Next.Duration</label>
+          <width>10</width>
+          <maxWidth>1250</maxWidth>
+          <align>left</align>
+          <font>font11</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>1</id>
+        <posX>267</posX>
+        <posY>912</posY>
+        <label>#Play.Next.Track.</label>
+        <width>100</width>
         <textcolor>ff00bfff</textcolor>
         <align>left</align>
         <font>font11</font>
@@ -567,52 +811,178 @@
         <shadowColor>ff000000</shadowColor>
       </control>
       <control>
-        <type>fadelabel</type>
-        <description>Title</description>
-        <id>0</id>
-        <label>#(iif(eq(#Play.Current.Genre,''),'n/a','#Play.Current.Genre'))</label>
-        <width>10</width>
-        <maxWidth>1250</maxWidth>
+        <description>Track - Title</description>
+        <type>group</type>
+        <layout>StackLayout(7, Horizontal, true)</layout>
+        <posX>267</posX>
+        <posY>947</posY>
         <align>left</align>
-        <font>font11</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
+        <width>1450</width>
+        <height>38</height>
+        <visible>!string.equals(#Play.Next.Artist, )+string.equals(#duration)</visible>
+        <control>
+          <type>fadelabel</type>
+          <description>Track</description>
+          <id>123</id>
+          <label>#(L(171))</label>
+          <width>10</width>
+          <maxWidth>190</maxWidth>
+          <textcolor>ff00bfff</textcolor>
+          <align>left</align>
+          <font>font11</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Title</description>
+          <id>0</id>
+          <label>#Play.Next.Artist</label>
+          <width>10</width>
+          <maxWidth>1250</maxWidth>
+          <align>left</align>
+          <font>font11</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+      </control>
+      <control>
+        <description>Track - Title</description>
+        <type>group</type>
+        <layout>StackLayout(7, Horizontal, true)</layout>
+        <posX>267</posX>
+        <posY>982</posY>
+        <align>left</align>
+        <width>1450</width>
+        <height>38</height>
+        <visible>!string.equals(#Play.Next.Artist, )+string.equals(#duration)</visible>
+        <control>
+          <type>fadelabel</type>
+          <description>Track</description>
+          <id>121</id>
+          <label>#(L(170))</label>
+          <width>10</width>
+          <maxWidth>190</maxWidth>
+          <textcolor>ff00bfff</textcolor>
+          <align>left</align>
+          <font>font11</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Title</description>
+          <id>0</id>
+          <label>#Play.Next.Album #scroll.wrap</label>
+          <width>10</width>
+          <maxWidth>1250</maxWidth>
+          <align>left</align>
+          <font>font11</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>duration</description>
+          <id>0</id>
+          <label>#(L(436))</label>
+          <width>10</width>
+          <maxWidth>190</maxWidth>
+          <textcolor>ff00bfff</textcolor>
+          <align>left</align>
+          <font>font11</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Title</description>
+          <id>0</id>
+          <label>#(iif(eq(#Play.Next.Year,''),'n/a','#Play.Next.Year'))</label>
+          <width>10</width>
+          <maxWidth>1250</maxWidth>
+          <align>left</align>
+          <font>font11</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+      </control>
+      <control>
+        <description>Track - Title</description>
+        <type>group</type>
+        <layout>StackLayout(7, Horizontal, true)</layout>
+        <posX>267</posX>
+        <posY>1017</posY>
+        <align>left</align>
+        <width>1450</width>
+        <height>38</height>
+        <control>
+          <type>fadelabel</type>
+          <description>Track</description>
+          <id>125</id>
+          <label>#(L(135)):</label>
+          <width>10</width>
+          <maxWidth>190</maxWidth>
+          <textcolor>ff00bfff</textcolor>
+          <align>left</align>
+          <font>font11</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Title</description>
+          <id>0</id>
+          <label>#(iif(eq(#Play.Current.Genre,''),'n/a','#Play.Current.Genre'))</label>
+          <width>10</width>
+          <maxWidth>1250</maxWidth>
+          <align>left</align>
+          <font>font11</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
       </control>
     </control>
-  </control>
-  <!-- *************************************************************************************************** -->
-  <!-- ************************************** Here are the VU Meters ************************************* -->
-  <!-- *************************************************************************************************** -->
-  <control>
+    <!-- *************************************************************************************************** -->
+    <!-- ************************************** Here are the VU Meters ************************************* -->
+    <!-- *************************************************************************************************** -->
+    <control>
       <description>background image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1340</posX>
-      <posY>746</posY>
-      <width>400</width>
+      <posX>1335</posX> 
+      <posY>806</posY>      
+	  <width>400</width>
       <height>94</height>
-      <texture>LedVuBG.png</texture> 
+      <texture>LedVuBG.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>Player.HasAudio+!plugin.isenabled(Spectrum Analyzer)</visible>
     </control>
     <control>
-  <description>Music Spectrum</description>
-  <id>0</id>
-  <type>image</type>
-  <posX>50</posX>
-  <posY>743</posY>
-  <width>1165</width>
-  <height>100</height>
-  <texture>#VUSpectrum</texture>
-  <colordiffuse>ccffffff</colordiffuse>
-  <visible>#spectrumanalyzer.vumeter.available</visible>
-</control>
+      <description>Music Spectrum</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>50</posX>
+      <posY>743</posY>
+      <width>1165</width>
+      <height>100</height>
+      <texture>#VUSpectrum</texture>
+      <colordiffuse>ccffffff</colordiffuse>
+      <visible>#spectrumanalyzer.vumeter.available</visible>
+    </control>
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>1349</posX>
-      <posY>742</posY>
+      <posX>1344</posX> 
+      <posY>802</posY> 
       <width>182</width>
       <height>98</height>
       <texture>Animations\LedVu\vu1.png</texture>
@@ -622,8 +992,8 @@
     <control>
       <type>image</type>
       <id>999</id>
-      <posX>1349</posX>
-      <posY>742</posY>
+      <posX>1344</posX> 
+      <posY>802</posY> 
       <width>182</width>
       <height>98</height>
       <imagepath>Animations\LedVu</imagepath>
@@ -634,8 +1004,8 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>1546</posX>
-      <posY>742</posY>
+      <posX>1541</posX> 
+      <posY>802</posY> 
       <width>182</width>
       <height>98</height>
       <texture>Animations\LedVu\vu1.png</texture>
@@ -645,8 +1015,8 @@
     <control>
       <type>image</type>
       <id>998</id>
-      <posX>1546</posX>
-      <posY>742</posY>
+      <posX>1541</posX> 
+      <posY>802</posY> 
       <width>182</width>
       <height>98</height>
       <imagepath>Animations\LedVu</imagepath>
@@ -654,33 +1024,33 @@
       <shouldCache>true</shouldCache>
       <visible>Player.HasAudio+Player.playing+!Player.paused+!plugin.isenabled(Spectrum Analyzer)</visible>
     </control>
-<!-- *************************************************************************************************** -->
-<!-- ************************************** Here is the ClearArt *************************************** -->
-<!-- *************************************************************************************************** -->
-<control>
-  <description>ClearArt image</description>
-  <type>image</type>
-  <id>0</id>
-  <posX>1300</posX>
-  <posY>770</posY>
-  <width>400</width>
-  <height>155</height>
-  <texture>#fanarthandler.music.artistclearart.play</texture>
-  <colordiffuse>ffffffff</colordiffuse>
-  <visible>Player.HasAudio+[Player.playing|Player.paused]+plugin.isenabled(Spectrum Analyzer)</visible>
-</control>
-<control>
+    <!-- *************************************************************************************************** -->
+    <!-- ************************************** Here is the ClearArt *************************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
       <description>ClearArt image</description>
       <type>image</type>
       <id>0</id>
       <posX>1300</posX>
-      <posY>870</posY>
+      <posY>830</posY> 
+      <width>400</width>
+      <height>155</height>
+      <texture>#fanarthandler.music.artistclearart.play</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>Player.HasAudio+[Player.playing|Player.paused]+plugin.isenabled(Spectrum Analyzer)</visible>
+    </control>
+    <control>
+      <description>ClearArt image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1300</posX>
+      <posY>920</posY> 
       <width>400</width>
       <height>155</height>
       <texture>#fanarthandler.music.artistclearart.play</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>Player.HasAudio+[Player.playing|Player.paused]+!plugin.isenabled(Spectrum Analyzer)</visible>
     </control>
-<import>MyMusicPlayingNow.Infos.xml</import>
-</controls>
+    <import>MyMusicPlayingNow.Infos.xml</import>
+  </controls>
 </window>

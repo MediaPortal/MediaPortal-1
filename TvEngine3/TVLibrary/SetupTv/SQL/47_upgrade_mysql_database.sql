@@ -1,4 +1,4 @@
-﻿USE %TvLibrary%;
+USE %TvLibrary%;
 
 ALTER TABLE "Recording" 
   ADD COLUMN "seriesNum" VARCHAR(200) NOT NULL, 
