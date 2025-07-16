@@ -1,0 +1,78 @@
+name: Workflow / Grabber Test
+
+on:
+  push:
+    # On Push to Master
+    branches:
+      - master
+    # Ignore all Tags / Release
+    tags-ignore:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Test Grabbers
+
+    runs-on: windows-2022
+
+    steps:
+      - name: Grabber Test Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: andrewjswan/mediaportal-grabber-test
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build solution
+        run: |
+          msbuild TestGrabberMP1.sln -t:rebuild -property:Configuration=Release
+        shell: cmd
+
+      - name: Prepare environment
+        run: |
+          mkdir "C:\ProgramData\Team MediaPortal\MediaPortal\Database\"
+          mkdir "C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\Videos\Collection\"
+          mkdir "C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\Skin FanArt\Scraper\Movies\"
+
+          xcopy Log4Net.config "C:\ProgramData\Team MediaPortal\MediaPortal\" /Y
+          xcopy strings_en.xml "C:\ProgramData\Team MediaPortal\MediaPortal\Language\" /Y
+          xcopy sqlite.dll ${{ github.workspace }}\TestGrabberMP1\bin\Release\ /Y
+
+          mklink /J "C:\ProgramData\Team MediaPortal\MediaPortal\scripts" "..\scripts"
+        working-directory: ${{ github.workspace }}\External
+        shell: cmd
+
+      - name: Mediaportal Checkout
+        uses: actions/checkout@v4
+        with:
+          path: mediaportal
+
+      - name: Copy Grabbers
+        run: |
+          del *.* /F /S /Q
+
+          xcopy ..\mediaportal\mediaportal\MediaPortal.Base\scripts\*.* ..\scripts /Y /S /F /H /R
+        working-directory: ${{ github.workspace }}\scripts
+        shell: cmd
+
+      - name: Run Tests
+        run: |
+          TestGrabberMP1.exe auto error
+        working-directory: ${{ github.workspace }}\TestGrabberMP1\bin\Release
+        shell: cmd
+
+      - name: Show Result
+        run: |
+          type "C:\ProgramData\Team MediaPortal\MediaPortal\log\TestGrabberMP1.log"
+        shell: cmd
+
+      - name: Upload Artifact / Grabbers Test Log
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mediaportal Grabbers Test Logs
+          path: |
+            "C:\ProgramData\Team MediaPortal\MediaPortal\log"
+          retention-days: 10
