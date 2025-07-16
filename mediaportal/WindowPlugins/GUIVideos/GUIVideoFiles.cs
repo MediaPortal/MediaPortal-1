@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2025 Team MediaPortal
+#region Copyright (C) 2005-2023 Team MediaPortal
 
-// Copyright (C) 2005-2025 Team MediaPortal
+// Copyright (C) 2005-2023 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -2911,7 +2911,7 @@ namespace MediaPortal.GUI.Video
         {
           CSScript.GlobalSettings.AddSearchDir(AppDomain.CurrentDomain.BaseDirectory);
 
-          using (AsmHelper script = new AsmHelper(CSScript.CompileFile(f.FullName), "Temp", true))
+          using (AsmHelper script = new AsmHelper(CSScript.Compile(f.FullName), "Temp", true))
           {
             script.ProbingDirs = CSScript.GlobalSettings.SearchDirs.Split(';');
             IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");

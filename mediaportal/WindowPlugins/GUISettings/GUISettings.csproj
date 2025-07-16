@@ -261,7 +261,8 @@
       <Project>{AF59C1DA-B02C-4E58-B6CA-3CF0DDD75C5D}</Project>
       <Name>GUIVideos</Name>
     </ProjectReference>
-    <Reference Include="CSScriptLibrary">
+    <Reference Include="CSScriptLibrary, Version=1.9.0.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">

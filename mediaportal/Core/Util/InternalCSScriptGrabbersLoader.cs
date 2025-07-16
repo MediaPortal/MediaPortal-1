@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2025 Team MediaPortal
+﻿#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2025 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -92,7 +92,7 @@ namespace MediaPortal.Util
           try
           {
             Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
-            _asmHelper = new AsmHelper(CSScript.LoadFile(scriptFileName, null, false));
+            _asmHelper = new AsmHelper(CSScript.Load(scriptFileName, null, false));
             MovieImagesGrabber = (IInternalMovieImagesGrabber) _asmHelper.CreateObject("MovieImagesGrabber");
           }
           catch (Exception ex)

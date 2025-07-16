@@ -242,8 +242,9 @@
     <Reference Include="BassRegistration, Version=2.4.14.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Packages\BassRegistration.2.4.14.1\lib\net40\BassRegistration.dll</HintPath>
     </Reference>
-    <Reference Include="CSScriptLibrary">
+    <Reference Include="CSScriptLibrary, Version=1.9.0.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033">
       <HintPath>..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="HtmlAgilityPack">
       <HintPath>..\..\Packages\HtmlAgilityPack.1.11.46\lib\Net40-client\HtmlAgilityPack.dll</HintPath>
