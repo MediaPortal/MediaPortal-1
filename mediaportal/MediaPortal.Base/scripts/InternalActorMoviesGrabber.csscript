@@ -3,20 +3,19 @@
 //css_reference "core.dll";
 //css_reference "Databases.dll";
 //css_reference "utils.dll";
+
 //css_reference "Newtonsoft.Json.dll";
 
 using System;
 using System.Text;
 using System.IO;
 using System.Net;
-using System.Net.Http;
 using System.Web;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -27,7 +26,7 @@ using Newtonsoft.Json;
 
 internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 {
-  const string strGrabberVersion = "20250713.I";
+  const string strGrabberVersion = "20250719.I";
 
   private string _strBody = string.Empty;
   private TMDBMovie tmdbMovie;
@@ -2748,43 +2747,6 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     IMDBPageCache = new Hashtable();
   }
 
-  private static async Task<Tuple<string, string>> DownloadWebPage(string URL)
-  {
-    try
-    {      
-      using (HttpClientHandler handler = new HttpClientHandler() { DefaultProxyCredentials = CredentialCache.DefaultCredentials })
-      {
-        // Setup the HttpClient
-        using (HttpClient httpClient = new HttpClient())
-        {
-          // Timeout
-          httpClient.Timeout = TimeSpan.FromSeconds(20);
-
-          // Set Headers
-          httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36");
-          httpClient.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
-
-          // Get the webpage asynchronously
-          HttpResponseMessage response = await httpClient.GetAsync(URL);
-
-          // If we get a 200 response, then return it
-          if (response.IsSuccessStatusCode)
-          {
-            // Get the webpage as string
-            string strBody = await response.Content.ReadAsStringAsync();
-            string absoluteUri = response.RequestMessage.RequestUri.AbsoluteUri;
-            return new Tuple<string, string>(absoluteUri, strBody);
-          }
-        }
-      }
-    }
-    catch (Exception ex)
-    {
-      Log.Error("InternalActorsScriptGrabber - DownloadWebPage: Error retrieving WebPage: {0} err:{1}", HideAPIKey(URL), ex.Message);
-    }                       
-    return new Tuple<string, string>(string.Empty, string.Empty);
-  }
-
   private string GetPage(string strUrl, string strEncode, out string absoluteUri, bool cache = false)
   {
     Log.Debug("InternalActorsScriptGrabber - GetPage: {0}", HideAPIKey(strUrl));
@@ -2806,15 +2768,45 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       }
     }
 
+    HttpWebRequest req;
     try
     {
-      Tuple<string, string> result = Task.Run(() => DownloadWebPage(strUrl)).Result;
-      absoluteUri = result.Item1;
-      strBody = result.Item2;
+      // Make the Webrequest
+      req = (HttpWebRequest)WebRequest.Create(strUrl);
+
+      // Set Headers
+      req.UserAgent  = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36";
+      req.Headers.Add("Accept-Language", "en-US,en;q=0.5");
+
+      // Proxy 
+      req.Proxy.Credentials = CredentialCache.DefaultCredentials;
+
+      // Timeout
+      req.Timeout = 20000;
+      req.ReadWriteTimeout = 20000;
+
+      // Response
+      WebResponse response = req.GetResponse();
+      Stream receiveStream = response.GetResponseStream();
+
+      // Encoding: depends on selected page
+      Encoding encode = Encoding.GetEncoding(strEncode);
+
+      // Get Page
+      using (StreamReader sr = new StreamReader(receiveStream, encode))
+      {
+        strBody = sr.ReadToEnd();
+      }
+      absoluteUri = response.ResponseUri.AbsoluteUri;
+      response.Close();
     }
     catch (Exception ex)
     {
       Log.Error("InternalActorsScriptGrabber - GetPage: Exception for WebPage: {0} err:{1}", HideAPIKey(strUrl), ex.Message);
+    }
+    finally
+    {
+      req = null;
     }
 
     strBody = strBody.Trim();

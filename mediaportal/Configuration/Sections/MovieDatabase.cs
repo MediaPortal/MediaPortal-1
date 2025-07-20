@@ -2219,6 +2219,9 @@ namespace MediaPortal.Configuration.Sections
         // Remove title prefix from "Sort title"
         checkBoxRemoveTitlePrefix.Checked = xmlreader.GetValueAsBool("moviedatabase", "removetitleprefixes", false);
 
+        // Fetch actors data when movie info updated
+        chbFetchActors.Checked = xmlreader.GetValueAsBool("moviedatabase", "fetchactors", false);
+
         // Load activated databases-Changed 
         skipCheckBox.Checked = true;
 

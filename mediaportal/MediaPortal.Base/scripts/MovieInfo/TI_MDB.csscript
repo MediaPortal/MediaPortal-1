@@ -3,6 +3,7 @@
 //css_reference "core.dll";
 //css_reference "Databases.dll";
 //css_reference "utils.dll";
+
 //css_reference "Newtonsoft.Json.dll";
 
 using MediaPortal.GUI.Library;
@@ -24,7 +25,7 @@ using System.Web;
 internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 {
   const string strGrabber = "TI_MDB";
-  const string strGrabberVersion = "20241130.I";
+  const string strGrabberVersion = "20250719.I";
 
   public Grabber()
   {
@@ -1242,60 +1243,82 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       return string.Empty;
     }
 
-    string mpaaText = string.Empty;
-
-    // MP1-4846 MPAA Text
-    string regexPattern = @"mpaa-rating[\s\S]+?MPAA<\/td[^<]+?<td>(?<CertDesc>[^<]+?)<";
-    string CertDescription = Regex.Match(page, regexPattern).Groups["CertDesc"].Value;
-    if (!string.IsNullOrEmpty(CertDescription))
+    string json = string.Empty;
+    try
     {
-      mpaaText = CertDescription.Replace("\n", " ");
-      Log.Debug("{0} MPAA Description: {1}", strGrabber, CertDescription.Replace("\n", " "));
+      string regex = @"type=.application\/json.>(?<json>{.+?})<";
+      json = Regex.Match(page, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["json"].Value;
+      if (string.IsNullOrEmpty(json))
+      {
+        Log.Debug("{0} IMDB GetMPARatingText, JSON not found.", strGrabber);
+        return string.Empty;
+      }
+    }
+    catch (Exception ex)
+    {
+      Log.Error("{0} IMDB Script GetMPARatingText error: {1}", strGrabber, ex.Message);
+      return string.Empty;
     }
 
-    // MP1-4846 MPAA Description
-    string MPAADesc = string.Empty;
-    string rx_mpaa_block = @"section.id=.advisory\-(?!spoilers)(?<block>[\s\S]+?)<\/section>";
-    string rx_mpaa_header = @"h4.class=.ipl-list-title.>(?<header>[^<]+?)<\/h4";
-    string rx_mpaa_line = @"li.class=.ipl-zebra-list[^>]+?>(?<text>[\s\S]+?)<div class=";
+    // MP1-4846
+    string mpaaText = string.Empty;
 
-    ArrayList mpaaList = Parse(page, rx_mpaa_block);
-    if (mpaaList != null && mpaaList.Count > 0)
+    try
     {
-      for (int i = 0; i < mpaaList.Count; i++)
+      JsonIMDBMPAARoot MPAA = JsonConvert.DeserializeObject<JsonIMDBMPAARoot>(json);
+      if (MPAA == null || MPAA.props == null || MPAA.props.pageProps == null)
       {
-        Hashtable mpaaMain = (Hashtable)mpaaList[i];
-        string mpaaMainBlock = (string)mpaaMain["block"];
-        if (!string.IsNullOrEmpty(mpaaMainBlock))
+        Log.Debug("{0} IMDB GetMPARatingText, JSON changed!?.", strGrabber);
+        return string.Empty;
+      }
+
+      // MP1-4846 MPAA Text
+      if (MPAA.props.pageProps.contentData != null && MPAA.props.pageProps.contentData.entityMetadata.certificate != null && MPAA.props.pageProps.contentData.entityMetadata.certificate.rating != null)
+      {
+        if (MPAA.props.pageProps.contentData.contentRatingData != null && MPAA.props.pageProps.contentData.contentRatingData.categorySummaries != null)
         {
-          string mpaaHeader = Regex.Match(mpaaMainBlock, rx_mpaa_header).Groups["header"].Value;
-          ArrayList mpaaLines = Parse(mpaaMainBlock, rx_mpaa_line);
-          if (mpaaLines != null && mpaaLines.Count > 0)
+          foreach(JsonIMDBMPAACategorySummary item in MPAA.props.pageProps.contentData.contentRatingData.categorySummaries)
           {
-            MPAADesc = MPAADesc + "* " + mpaaHeader + "\n";
-            for (int j = 0; j < mpaaLines.Count; j++)
-            {
-              Hashtable mpaaLine = (Hashtable)mpaaLines[j];
-              string mpaaLineText = (string)mpaaLine["text"];
-              if (!string.IsNullOrEmpty(mpaaLineText) && !Regex.IsMatch(mpaaLineText, @"\d+?\/\d+?"))
-              {
-                mpaaLineText = mpaaLineText.Trim().Replace("\n", string.Empty);
-                mpaaLineText = Utils.stripHTMLtags(mpaaLineText);
-                mpaaLineText = mpaaLineText.Trim();
-                MPAADesc = MPAADesc + mpaaLineText + "\n";
-              }
-            }
+            mpaaText += (!string.IsNullOrEmpty(mpaaText) ? ", " : string.Empty) + item.severitySummaryText + ": " + item.title;
+          }
+        }
+        if (!string.IsNullOrEmpty(mpaaText))
+        {
+          mpaaText = string.Format("Rated {0} for {1}.", MPAA.props.pageProps.contentData.entityMetadata.certificate.rating, mpaaText);
+        }
+        else
+        {
+          mpaaText = string.Format("Rated {0}.", MPAA.props.pageProps.contentData.entityMetadata.certificate.rating);
+        }
+      }
+      if (!string.IsNullOrEmpty(mpaaText))
+      {
+        Log.Debug("{0} MPAA Description: {1}", strGrabber, mpaaText);
+      }
+
+      // MP1-4846 MPAA Description
+      string MPAADesc = string.Empty;
+      if (MPAA.props.pageProps.contentData != null && MPAA.props.pageProps.contentData.categories != null)
+      {
+        foreach(JsonIMDBMPAACategory category in MPAA.props.pageProps.contentData.categories)
+        {
+          MPAADesc = MPAADesc + "* " + category.title + "\n";
+          foreach(JsonIMDBMPAAItem item in category.items)
+          {
+            MPAADesc = MPAADesc + HttpUtility.HtmlDecode(item.text) + "\n";
           }
         }
       }
-    }
 
-    if (!string.IsNullOrEmpty(MPAADesc))
+      if (!string.IsNullOrEmpty(MPAADesc))
+      {
+        mpaaText = mpaaText + "\n\n" + MPAADesc;
+        Log.Debug("{0} MPAA Text: {1}", strGrabber, MPAADesc.Replace("\n", " "));
+      }
+    }
+    catch (Exception ex)
     {
-      MPAADesc = HttpUtility.HtmlDecode(MPAADesc);
-      MPAADesc = Utils.stripHTMLtags(MPAADesc);
-      mpaaText = mpaaText + "\n\n" + MPAADesc;
-      Log.Debug("{0} MPAA Text: {1}", strGrabber, MPAADesc.Replace("\n", " "));
+      Log.Debug("{0} IMDB GetMPARatingText, Exception {1}, JSON changed!?.", strGrabber, ex.Message);
     }
 
     return mpaaText;
@@ -1482,22 +1505,147 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
     try
     {
       JsonIMDBTech Tech = JsonConvert.DeserializeObject<JsonIMDBTech>(json);
-      if (Tech == null || Tech.props == null || Tech.props.pageProps == null || Tech.props.pageProps.contentData == null)
+      if (Tech == null || Tech.props == null || Tech.props.pageProps == null || Tech.props.pageProps.contentData == null || Tech.props.pageProps.contentData.data == null || Tech.props.pageProps.contentData.data.title == null)
       {
         Log.Debug("{0} IMDB GetTechnical, JSON changed!?.", strGrabber);
         return string.Empty;
       }
 
       string technical = string.Empty;
-      if (Tech.props.pageProps.contentData.section != null && Tech.props.pageProps.contentData.section.items != null)
+      if (Tech.props.pageProps.contentData.data.title.technicalSpecifications != null)
       {
-        foreach(JsonIMDBItem item in Tech.props.pageProps.contentData.section.items)
+        if (Tech.props.pageProps.contentData.data.title.technicalSpecifications.aspectRatios != null)
         {
-          string caption = item.rowTitle;
+          string caption = Tech.props.pageProps.contentData.data.title.technicalSpecifications.aspectRatios.typeName;
           string text = string.Empty;
-          foreach (JsonIMDBListContent content in item.listContent)
+          foreach (JsonIMDBTechItem item in Tech.props.pageProps.contentData.data.title.technicalSpecifications.aspectRatios.items)
           {
-            text += (!string.IsNullOrEmpty(text) ? " | " : string.Empty) + content.text + (!string.IsNullOrEmpty(content.subText) ? " " + content.subText : string.Empty);
+            text += (!string.IsNullOrEmpty(text) ? " | " : string.Empty) + item.aspectRatio;
+            string attr = string.Empty;
+            foreach (JsonIMDBText attribute in item.attributes)
+            {
+              attr += (!string.IsNullOrEmpty(attr) ? ", " : string.Empty) + attribute.text;
+            }
+            text += (!string.IsNullOrEmpty(attr) ? " " + attr : string.Empty);
+          }
+          technical += "- " + caption + ": " + text + "\n";
+        }
+
+        if (Tech.props.pageProps.contentData.data.title.technicalSpecifications.cameras != null)
+        {
+          string caption = Tech.props.pageProps.contentData.data.title.technicalSpecifications.cameras.typeName;
+          string text = string.Empty;
+          foreach (JsonIMDBTechItem item in Tech.props.pageProps.contentData.data.title.technicalSpecifications.cameras.items)
+          {
+            text += (!string.IsNullOrEmpty(text) ? " | " : string.Empty) + item.camera;
+            string attr = string.Empty;
+            foreach (JsonIMDBText attribute in item.attributes)
+            {
+              attr += (!string.IsNullOrEmpty(attr) ? ", " : string.Empty) + attribute.text;
+            }
+            text += (!string.IsNullOrEmpty(attr) ? " " + attr : string.Empty);
+          }
+          technical += "- " + caption + ": " + text + "\n";
+        }
+
+        if (Tech.props.pageProps.contentData.data.title.technicalSpecifications.colorations != null)
+        {
+          string caption = Tech.props.pageProps.contentData.data.title.technicalSpecifications.colorations.typeName;
+          string text = string.Empty;
+          foreach (JsonIMDBTechItem item in Tech.props.pageProps.contentData.data.title.technicalSpecifications.colorations.items)
+          {
+            text += (!string.IsNullOrEmpty(text) ? " | " : string.Empty) + item.text;
+            string attr = string.Empty;
+            foreach (JsonIMDBText attribute in item.attributes)
+            {
+              attr += (!string.IsNullOrEmpty(attr) ? ", " : string.Empty) + attribute.text;
+            }
+            text += (!string.IsNullOrEmpty(attr) ? " " + attr : string.Empty);
+          }
+          technical += "- " + caption + ": " + text + "\n";
+        }
+
+        if (Tech.props.pageProps.contentData.data.title.technicalSpecifications.laboratories != null)
+        {
+          string caption = Tech.props.pageProps.contentData.data.title.technicalSpecifications.laboratories.typeName;
+          string text = string.Empty;
+          foreach (JsonIMDBTechItem item in Tech.props.pageProps.contentData.data.title.technicalSpecifications.laboratories.items)
+          {
+            text += (!string.IsNullOrEmpty(text) ? " | " : string.Empty) + item.laboratory;
+            string attr = string.Empty;
+            foreach (JsonIMDBText attribute in item.attributes)
+            {
+              attr += (!string.IsNullOrEmpty(attr) ? ", " : string.Empty) + attribute.text;
+            }
+            text += (!string.IsNullOrEmpty(attr) ? " " + attr : string.Empty);
+          }
+          technical += "- " + caption + ": " + text + "\n";
+        }
+
+        if (Tech.props.pageProps.contentData.data.title.technicalSpecifications.negativeFormats != null)
+        {
+          string caption = Tech.props.pageProps.contentData.data.title.technicalSpecifications.negativeFormats.typeName;
+          string text = string.Empty;
+          foreach (JsonIMDBTechItem item in Tech.props.pageProps.contentData.data.title.technicalSpecifications.negativeFormats.items)
+          {
+            text += (!string.IsNullOrEmpty(text) ? " | " : string.Empty) + item.negativeFormat;
+            string attr = string.Empty;
+            foreach (JsonIMDBText attribute in item.attributes)
+            {
+              attr += (!string.IsNullOrEmpty(attr) ? ", " : string.Empty) + attribute.text;
+            }
+            text += (!string.IsNullOrEmpty(attr) ? " " + attr : string.Empty);
+          }
+          technical += "- " + caption + ": " + text + "\n";
+        }
+
+        if (Tech.props.pageProps.contentData.data.title.technicalSpecifications.printedFormats != null)
+        {
+          string caption = Tech.props.pageProps.contentData.data.title.technicalSpecifications.printedFormats.typeName;
+          string text = string.Empty;
+          foreach (JsonIMDBTechItem item in Tech.props.pageProps.contentData.data.title.technicalSpecifications.printedFormats.items)
+          {
+            text += (!string.IsNullOrEmpty(text) ? " | " : string.Empty) + item.printedFormat;
+            string attr = string.Empty;
+            foreach (JsonIMDBText attribute in item.attributes)
+            {
+              attr += (!string.IsNullOrEmpty(attr) ? ", " : string.Empty) + attribute.text;
+            }
+            text += (!string.IsNullOrEmpty(attr) ? " " + attr : string.Empty);
+          }
+          technical += "- " + caption + ": " + text + "\n";
+        }
+
+        if (Tech.props.pageProps.contentData.data.title.technicalSpecifications.processes != null)
+        {
+          string caption = Tech.props.pageProps.contentData.data.title.technicalSpecifications.processes.typeName;
+          string text = string.Empty;
+          foreach (JsonIMDBTechItem item in Tech.props.pageProps.contentData.data.title.technicalSpecifications.processes.items)
+          {
+            text += (!string.IsNullOrEmpty(text) ? " | " : string.Empty) + item.process;
+            string attr = string.Empty;
+            foreach (JsonIMDBText attribute in item.attributes)
+            {
+              attr += (!string.IsNullOrEmpty(attr) ? ", " : string.Empty) + attribute.text;
+            }
+            text += (!string.IsNullOrEmpty(attr) ? " " + attr : string.Empty);
+          }
+          technical += "- " + caption + ": " + text + "\n";
+        }
+
+        if (Tech.props.pageProps.contentData.data.title.technicalSpecifications.soundMixes != null)
+        {
+          string caption = Tech.props.pageProps.contentData.data.title.technicalSpecifications.soundMixes.typeName;
+          string text = string.Empty;
+          foreach (JsonIMDBTechItem item in Tech.props.pageProps.contentData.data.title.technicalSpecifications.soundMixes.items)
+          {
+            text += (!string.IsNullOrEmpty(text) ? " | " : string.Empty) + item.text;
+            string attr = string.Empty;
+            foreach (JsonIMDBText attribute in item.attributes)
+            {
+              attr += (!string.IsNullOrEmpty(attr) ? ", " : string.Empty) + attribute.text;
+            }
+            text += (!string.IsNullOrEmpty(attr) ? " " + attr : string.Empty);
           }
           technical += "- " + caption + ": " + text + "\n";
         }
@@ -1612,12 +1760,11 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       oHttpWebRequest = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(srequest);
       oHttpWebRequest.Timeout = 20000;
       oHttpWebRequest.Method = System.Net.WebRequestMethods.Http.Get;
+
+      // Set Headers
+      oHttpWebRequest.UserAgent  = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36";
       if (srequest.IndexOf(".imdb.") > 0)
       {
-        string uu = "BCYmcFe4PTBQ8nEoIcCgT5AJwPk7BAOCg5XsQrvqKyvxEUpEB6KqjE0Uv_pqnPChVCCnD8vgTK3UtK7FGCdw39E2j-Fb5MWegRLgbNA2rFWeYUJbbXhRyUaxqGuuW3AZb1grBhmGMxhDJyH5ntFDj1X1Ejh_jqR6BaQUk6P16AN1EMPstTSBIqxVW08QEqMKQgsK75y8_s1Ss9tyDfZpLZzCWhO5qftGUn3_bbw_DBF6sTZDo6xK-zy88VZ8cws-D30P";
-        string id = "BCYobsJMWRwG55i2yGvVuZe7v5twryi7KSxLglDHw2wVcI1rMq0OjHVT7duPo5NNHKDDVFBTVjJM4PoMonlTB_q9NvMCs-wB78Y1hGjdgCLX0SEEC2Y6BD4E3Z6cIoMwlhTDFSprYlxMqjEsFGYwWzVp1oIUYkZQ0kgpX_MvBrEh-fU";
-        string cookieHeader = string.Format("uu={0}; id={1}", uu, id);
-        oHttpWebRequest.Headers.Add("Cookie", cookieHeader);
         oHttpWebRequest.Headers.Add("Accept-Language", "en-US,en;q=0.5");
       }
       else
@@ -1950,6 +2097,21 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
     public JsonIMDBPrimaryImage primaryImage { get; set; }
   }
 
+  public class JsonIMDBItem
+  {
+    public string id { get; set; }
+    public string rowTitle { get; set; }
+    public List<JsonIMDBListContent> listContent { get; set; }
+  }
+
+  public class JsonIMDBListContent
+  {
+    public int id { get; set; }
+    public string text { get; set; }
+    public string subText { get; set; }
+    public string href { get; set; }
+  }
+
   // Movie
   public class JsonIMDBPerson : JsonIMDBBase
   {
@@ -1995,6 +2157,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
   }
 
   // Technical Information
+
   public class JsonIMDBTech
   {
     public JsonIMDBProps props { get; set; }
@@ -2012,29 +2175,49 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 
   public class JsonIMDBContentData
   {
-    public string parentDisplayText { get; set; }
-    public JsonIMDBEntityMetadata entityMetadata { get; set; }
-    public JsonIMDBSection section { get; set; }
+    public JsonIMDBTechData data { get; set; }
   }
 
-  public class JsonIMDBSection
+  public class JsonIMDBTechData
   {
-    public List<JsonIMDBItem> items { get; set; }
+    public JsonIMDBTechTitle title { get; set; }
   }
 
-  public class JsonIMDBItem
+  public class JsonIMDBTechTitle
   {
     public string id { get; set; }
-    public string rowTitle { get; set; }
-    public List<JsonIMDBListContent> listContent { get; set; }
+    public JsonIMDBTechTechnicalSpecifications technicalSpecifications { get; set; }
   }
 
-  public class JsonIMDBListContent
+  public class JsonIMDBTechTechnicalSpecifications
   {
-    public int id { get; set; }
+    public JsonIMDBTechSpecification aspectRatios { get; set; }
+    public JsonIMDBTechSpecification cameras { get; set; }
+    public JsonIMDBTechSpecification colorations { get; set; }
+    public JsonIMDBTechSpecification laboratories { get; set; }
+    public JsonIMDBTechSpecification negativeFormats { get; set; }
+    public JsonIMDBTechSpecification printedFormats { get; set; }
+    public JsonIMDBTechSpecification processes { get; set; }
+    public JsonIMDBTechSpecification soundMixes { get; set; }
+  }
+
+  public class JsonIMDBTechSpecification
+  {
+    public List<JsonIMDBTechItem> items { get; set; }
+    [JsonProperty("__typename")]
+    public string typeName { get; set; }
+  }
+
+  public class JsonIMDBTechItem
+  {
+    public string aspectRatio { get; set; }
+    public List<JsonIMDBText> attributes { get; set; }
+    public string camera { get; set; }
     public string text { get; set; }
-    public string subText { get; set; }
-    public string href { get; set; }
+    public string laboratory { get; set; }
+    public string negativeFormat { get; set; }
+    public string printedFormat { get; set; }
+    public string process { get; set; }
   }
 
   // IMDB Awards
@@ -2140,6 +2323,72 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
     public string reviewSummary { get; set; }
     public string reviewText { get; set; }
     public bool spoiler { get; set; }
+  }
+
+  // MPAA Rating Text
+
+  public class JsonIMDBMPAARoot
+  {
+    public JsonIMDBMPAAProps props { get; set; }
+  }
+
+  public class JsonIMDBMPAAProps
+  {
+    public JsonIMDBMPAAPageProps pageProps { get; set; }
+  }
+
+  public class JsonIMDBMPAAPageProps
+  {
+    public JsonIMDBMPAAContentData contentData { get; set; }
+  }
+
+  public class JsonIMDBMPAAContentData
+  {
+    public JsonIMDBMPAAEntityMetadata entityMetadata { get; set; }
+    public List<JsonIMDBMPAACategory> categories { get; set; }
+    public JsonIMDBMPAAContentRatingData contentRatingData { get; set; }
+  }
+
+  public class JsonIMDBMPAAContentRatingData
+  {
+    public List<JsonIMDBMPAACategorySummary> categorySummaries { get; set; }
+  }
+
+  public class JsonIMDBMPAAEntityMetadata
+  {
+    public string id { get; set; }
+    public JsonIMDBMPAACertificate certificate { get; set; }
+  }
+
+  public class JsonIMDBMPAACertificate
+  {
+    public string rating { get; set; }
+  }
+
+  public class ContentRatingData
+  {
+    public List<JsonIMDBMPAACategorySummary> categorySummaries { get; set; }
+  }
+
+  public class JsonIMDBMPAACategory
+  {
+    public string id { get; set; }
+    public string title { get; set; }
+    public List<JsonIMDBMPAAItem> items { get; set; }
+  }
+
+  public class JsonIMDBMPAAItem
+  {
+    public string id { get; set; }
+    public bool isSpoiler { get; set; }
+    public string text { get; set; }
+  }
+
+  public class JsonIMDBMPAACategorySummary
+  {
+    public string id { get; set; }
+    public string title { get; set; }
+    public string severitySummaryText { get; set; }
   }
 
   #endregion IMDB JSON Struct
