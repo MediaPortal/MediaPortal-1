@@ -4,8 +4,7 @@
   <defaultcontrol>50</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#itemtext:#selectedindex / #itemcount #(L(496))</define>
-  <define>#header.label:#IMDb.Translation.ScraperOptionsTitle.Label</define>
-  <define>#header.hover:hover_imdb+.png</define>
+  <define>#header.label:#IMDb.Translation.ScraperOptionsTitle.Label</define>  
   <controls>
     <control>
       <description>BackGround</description>
@@ -16,7 +15,7 @@
       <texture>blue.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
-    <import>common.window.xml</import>
+    <!--<import>common.window.xml</import>-->
     <import>common.time.xml</import>
     <control>
       <description>General Overlay</description>
@@ -29,16 +28,20 @@
       <texture>general_overlay.png</texture>
     </control>
     <control>
-      <description>Header</description>
-      <type>fadelabel</type>
+      <type>label</type>
+      <id>1</id>
       <posX>45</posX>
-      <posY>15</posY>
-      <width>525</width>
-      <font>Label</font>
+      <posY>54</posY>
+      <label>IMDB+ #scroll.wrap #selecteditem </label>
+      <width>1802</width>
       <align>left</align>
-      <textcolor>ff00bfff</textcolor>
-      <label>IMDB+</label>
-    </control>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control> 
     <control>
       <type>facadeview</type>
       <id>50</id>
@@ -56,6 +59,8 @@
         <scrollOffset>5</scrollOffset>
         <spinPosX>3626</spinPosX>
         <spinPosY>984</spinPosY>
+        <textXOff>-25</textXOff>
+        <IconXOff>-850</IconXOff>
         <scrollbarHeight>400</scrollbarHeight>
         <scrollbarbg>bar_vert.png</scrollbarbg>
         <scrollbartop>mouse_left_horizontal.png</scrollbartop>
@@ -65,17 +70,21 @@
         <showScrollbar>yes</showScrollbar>
         <scrollbarwidth>20</scrollbarwidth>
       </control>
-    </control>
+    </control>    
     <control>
       <description>Settings Counter</description>
       <type>label</type>
       <id>1</id>
       <posX>1897</posX>
-      <posY>105</posY>
+      <posY>16</posY>
       <label>#itemtext</label>
       <font>font10</font>
-      <align>right</align>
-    </control>
+      <align>right</align> 
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor> 
+    </control>    
     <control>
       <description>List Option Description</description>
       <type>textboxscrollup</type>
@@ -95,17 +104,15 @@
       <defaultcontrol>2</defaultcontrol>
       <onexit>50</onexit>
       <buttonX>0</buttonX>
-      <buttonY>70</buttonY>
-      <buttonwidth>140</buttonwidth>
-      <buttonheight>984</buttonheight>
+      <buttonY>0</buttonY>
+      <buttonwidth>159</buttonwidth>
+      <buttonheight>1080</buttonheight>
       <textureFocus>-</textureFocus>
       <textureNoFocus>Action_nofocus.png</textureNoFocus>
-      <width>168</width>
-      <height>798</height>
-      <dimColor>00ffffff</dimColor>
+      <dimColor>00ffffff</dimColor>      
       <control>
         <type>image</type>
-        <id>1</id>
+        <id>0</id>
         <width>1920</width>
         <height>1080</height>
         <texture>white.png</texture>
@@ -113,25 +120,25 @@
       </control>
       <control>
         <type>image</type>
-        <posX>-10</posX>
-        <posY>171</posY>
-        <width>490</width>
-        <height>855</height>
+        <posX>39</posX>
+        <posY>117</posY>
+        <width>480</width>
+        <height>886</height>
         <texture>Backslide.png</texture>
         <colordiffuse>ffffffff</colordiffuse>
         <visible>!Control.HasFocus(50)</visible>
-        <animation effect="slide" time="100" start="-300,0" reversible="false">visible</animation>
-        <animation effect="slide" time="100" end="-300,0" reversible="false">hidden</animation>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
       </control>
       <control>
         <type>group</type>
         <description>group element</description>
-        <animation effect="slide" time="100" start="-300,0" reversible="false">visible</animation>
-        <animation effect="slide" time="100" end="-300,0" reversible="false">hidden</animation>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>        
+        <posX>75</posX>
+        <posY>181</posY>
+        <layout>StackLayout</layout>
         <visible>!Control.HasFocus(50)</visible>
-        <layout>StackLayout(0, Vertical, true)</layout>
-        <posX>49</posX>
-        <posY>217</posY>
         <control>
           <description>MovingPictures</description>
           <id>96742</id>

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -32,7 +32,9 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
+
 using CSScriptLibrary;
+
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
@@ -2156,6 +2158,7 @@ namespace MediaPortal.Configuration.Sections
 
         // Sort by "Sort title" db field
         chbUseSortTitle.Checked = xmlreader.GetValueAsBool("moviedatabase", "usesorttitle", false);
+
         // Use only nfo scrapper
         chbUseNfoScraperOnly.Checked = xmlreader.GetValueAsBool("moviedatabase", "useonlynfoscraper", false);
         chbDoNotUseDatabase.Checked = xmlreader.GetValueAsBool("moviedatabase", "donotusedatabase", false);
@@ -2212,6 +2215,12 @@ namespace MediaPortal.Configuration.Sections
         // Strip movie title prefix
         checkBoxStripTitlePrefix.Checked = xmlreader.GetValueAsBool("moviedatabase", "striptitleprefixes", false);
         tbTitlePrefixes.Text = xmlreader.GetValueAsString("moviedatabase", "titleprefixes", "The, Les, Die");
+
+        // Remove title prefix from "Sort title"
+        checkBoxRemoveTitlePrefix.Checked = xmlreader.GetValueAsBool("moviedatabase", "removetitleprefixes", false);
+
+        // Fetch actors data when movie info updated
+        chbFetchActors.Checked = xmlreader.GetValueAsBool("moviedatabase", "fetchactors", false);
 
         // Load activated databases-Changed 
         skipCheckBox.Checked = true;
@@ -2282,6 +2291,9 @@ namespace MediaPortal.Configuration.Sections
         // Strip movie title prefix
         xmlwriter.SetValueAsBool("moviedatabase", "striptitleprefixes", checkBoxStripTitlePrefix.Checked);
         xmlwriter.SetValue("moviedatabase", "titleprefixes", tbTitlePrefixes.Text);
+
+        // Remove title prefix from "Sort title"
+        xmlwriter.SetValueAsBool("moviedatabase", "removetitleprefixes", checkBoxRemoveTitlePrefix.Checked);
 
         // Database
         xmlwriter.SetValueAsBool("moviedatabase", "scanskipexisting", skipCheckBox.Checked);

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2029 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -172,6 +172,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_DIALOG_TVNOTIFYYESNO = 2019,
       WINDOW_DIALOG_OLD_SKIN = 2020,
       WINDOW_DIALOG_INCOMPATIBLE_PLUGINS = 2021,
+      WINDOW_DIALOG_USER_RATING = 2022,
       WINDOW_SCREENSAVER = 2900,
       WINDOW_OSD = 2901,
       WINDOW_VIDEO_OVERLAY = 3000,

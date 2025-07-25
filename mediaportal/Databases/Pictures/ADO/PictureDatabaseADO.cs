@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -319,6 +319,41 @@ namespace MediaPortal.Picture.Database
       return 0;
     }
 
+    public bool GetFavorite(string strPicture)
+    {
+      throw (new NotImplementedException("Favorites not yet implemented for ADO Database"));
+    }
+
+    public void SetFavorite(string strPicture, bool Favorite)
+    {
+      throw (new NotImplementedException("Favorites not yet implemented for ADO Database"));
+    }
+
+    public int GetRating(string strPicture)
+    {
+      throw (new NotImplementedException("Rating not yet implemented for ADO Database"));
+    }
+
+    public void SetRating(string strPicture, int Rating)
+    {
+      throw (new NotImplementedException("Rating not yet implemented for ADO Database"));
+    }
+
+    public int GetViews(string strPicture)
+    {
+      throw (new NotImplementedException("Views not yet implemented for ADO Database"));
+    }
+
+    public void SetViews(string strPicture, int Views)
+    {
+      throw (new NotImplementedException("Views not yet implemented for ADO Database"));
+    }
+
+    public void AddViews(string strPicture)
+    {
+      throw (new NotImplementedException("Views not yet implemented for ADO Database"));
+    }
+
     public List<string> ListKeywords()
     {
       throw (new NotImplementedException("List Keywords not yet implemented for ADO Database"));
@@ -397,6 +432,31 @@ namespace MediaPortal.Picture.Database
     public int CountPicsByMetadataValue(string Name, string Value)
     {
       throw (new NotImplementedException("Count Pics by Metadata Value not yet implemented for ADO Database"));
+    }
+
+    public List<string> ListFavorites()
+    {
+      throw (new NotImplementedException("List Favorite not yet implemented for ADO Database"));
+    }
+
+    public List<string> ListPicsByFavorites(string Value)
+    {
+      throw (new NotImplementedException("List Pics by Favorites not yet implemented for ADO Database"));
+    }
+
+    public int CountPicsByFavorites(string Value)
+    {
+      throw (new NotImplementedException("Count Pics by Favorites not yet implemented for ADO Database"));
+    }
+
+    public List<string> ListPicsByMostViews()
+    {
+      throw (new NotImplementedException("List Pics by Most Views not yet implemented for ADO Database"));
+    }
+
+    public int CountPicsByMostViews()
+    {
+      throw (new NotImplementedException("Count Pics by Most Views not yet implemented for ADO Database"));
     }
 
     public int Count()

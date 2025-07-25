@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2023 Team MediaPortal
+﻿#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -117,6 +117,7 @@ namespace MediaPortal.DeployTool.Sections
       this.lbApplication.Size = new System.Drawing.Size(239, 35);
       this.lbApplication.TabIndex = 4;
       this.lbApplication.Text = "Application";
+      this.lbApplication.UseMnemonic = false;
       // 
       // ApplicationCtrl
       // 

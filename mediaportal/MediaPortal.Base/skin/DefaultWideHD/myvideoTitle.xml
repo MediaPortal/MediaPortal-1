@@ -308,7 +308,7 @@
       <texture>#fanarthandler.movie.awards.selected.all</texture>
       <visible>facadeview.list</visible>
     </control>
-    <import>common.watched.logos.xml</import>
+    <!--import>common.watched.logos.xml</import-->
     <control>
       <description>Genre txt</description>
       <type>label</type>
@@ -381,6 +381,45 @@
       <textcolor>lightgray</textcolor>
       <visible>facadeview.list+ string.equals(#hideinfo, False)</visible>
     </control>
+    <control>
+    <description>Watched Label</description>
+    <id>0</id>
+    <type>label</type>
+    <label>#(L(527))</label>
+    <posX>1305</posX>
+    <posY>412</posY>
+    <font>font10</font>
+    <align>left</align>
+    <textcolor>ff00bfff</textcolor>
+    <visible>facadeview.list+!control.hasfocus(99)+![string.equals(#watchedpercent,'0')+string.equals(#watchedcount,'0')]+string.equals(#hideinfo, False)</visible>
+  </control>
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <posX>1305</posX>
+    <posY>441</posY>
+    <layout>StackLayout(0, horizontal, true)</layout>
+    <control>
+      <description>Watched progress</description>
+      <type>label</type>
+      <id>1</id>
+      <width>100</width>
+      <label>#watchedpercent%</label>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+      <visible>facadeview.list+!control.hasfocus(99)+!string.equals(#watchedpercent,'0')+string.equals(#hideinfo, False)</visible>
+    </control>
+    <control>
+      <description>WatchedCount</description>
+      <type>label</type>
+      <id>1</id>
+      <width>80</width>
+      <label>#watchedcountx</label>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+      <visible>facadeview.list+!control.hasfocus(99)+!string.equals(#watchedcount,'0')+string.equals(#hideinfo, False)</visible>
+    </control>
+  </control>
     <control>
       <description>Runtime txt</description>
       <type>label</type>

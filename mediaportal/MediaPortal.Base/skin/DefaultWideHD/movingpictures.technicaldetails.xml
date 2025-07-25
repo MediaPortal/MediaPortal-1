@@ -208,7 +208,7 @@
       <control>
         <type>fadelabel</type>
         <id>1</id>
-        <label>#MovingPictures.UserMovieSettings.watched</label>
+        <label>#MovingPictures.UserMovieSettings.watchedx     #MovingPictures.UserMovieSettings.Progress%</label>
         <font>font12</font>
         <width>480</width>
         <textcolor>lightgray</textcolor>

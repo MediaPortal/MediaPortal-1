@@ -2,6 +2,8 @@
 <!-- Skin translation file -->
 <!-- Dutch (nl) -->
 <strings>
+  <string Field="EPGRows">Lijnen in TV/Radio EPG's</string>
+  <string Field="NumberEPGRows">Aantal lijnen</string>
   <string Field="Thumbsview">Miniatuurafbeelding</string>
   <string Field="Thumbsview.Select">Normal</string>
   <string Field="WorldNewsTicker">Activeren WorldNews ticker</string>

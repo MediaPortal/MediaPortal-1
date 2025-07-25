@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -3184,7 +3184,17 @@ namespace MediaPortal.Video.Database
         else
         {
           details1.SortTitle = details1.Title;
+          using (Settings xmlreader = new MPSettings())
+          {
+            if (xmlreader.GetValueAsBool("moviedatabase", "removetitleprefixes", false))
+            {
+              string tmpTitle = details1.SortTitle;
+              Util.Utils.StripMovieNamePrefix(ref tmpTitle, false);
+              details1.SortTitle = tmpTitle;
+            }
+          }
         }
+
         // Votes
         strLine = details1.Votes;
         DatabaseUtility.RemoveInvalidChars(ref strLine);
