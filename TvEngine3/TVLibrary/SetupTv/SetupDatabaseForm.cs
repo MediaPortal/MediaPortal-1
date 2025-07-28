@@ -873,7 +873,7 @@ namespace SetupTv
       // MS SQL
       if (rbSQLServer.Checked)
       {
-        DBSearchPattern = @"SQLBrowser";
+        DBSearchPattern = @"MSSQL$SQLEXPRESS";
       }
       else if (!(OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS))
       {
@@ -1004,7 +1004,7 @@ namespace SetupTv
           tbServerHostName.Text = Dns.GetHostName() + @"\SQLEXPRESS";
           tbServiceDependency.Enabled = true;
           tbServiceDependency.BackColor = tbServerHostName.BackColor;
-          tbServiceDependency.Text = @"SQLBrowser";
+          tbServiceDependency.Text = @"MSSQL$SQLEXPRESS";
           string dependency = ServiceHelper.ReadDependency();
           if (!string.IsNullOrEmpty(dependency))
           {
