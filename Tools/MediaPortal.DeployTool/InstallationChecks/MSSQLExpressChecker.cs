@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2024 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2024 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -78,7 +78,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     private static void StartStopService(bool start)
     {
-      string[] services = {"MSSQL$" + GetIstanceName(), "SQLBrowser"};
+      string[] services = {"MSSQL$" + GetIstanceName(), "MSSQL$SQLEXPRESS", "SQLBrowser"};
       foreach (string service in services)
       {
         ServiceController ctrl = new ServiceController(service);
