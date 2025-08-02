@@ -803,7 +803,7 @@ namespace MediaPortal.DeployTool
     {
       int major = 1;
       int minor = 38;
-      int revision = 000;
+      int revision = 001;
 
       Version ver = new Version(major, minor, revision);
       return ver;
