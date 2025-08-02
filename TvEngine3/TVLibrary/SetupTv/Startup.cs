@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2024 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2024 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -244,7 +244,7 @@ namespace SetupTv
             dlg.rbSQLServer.Checked = true;
             dlg.tbUserID.Text = "sa";
             dlg.tbServerHostName.Text = Dns.GetHostName() + @"\SQLEXPRESS";
-            dlg.tbServiceDependency.Text = @"SQLBrowser";
+            dlg.tbServiceDependency.Text = @"MSSQL$SQLEXPRESS";
           }
           dlg.tbPassword.Text = DeployPwd;
           dlg.tbDatabaseName.Text = dlg.schemaNameDefault;
