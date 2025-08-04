@@ -803,7 +803,7 @@ namespace MediaPortal.DeployTool
     {
       int major = 1;
       int minor = 38;
-      int revision = 001;
+      int revision = 000;
 
       Version ver = new Version(major, minor, revision);
       return ver;
@@ -853,7 +853,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.38.1 Tatiana & Leo";
+      return "1.38 Tatiana & Leo";
     }
 
     /// <summary>

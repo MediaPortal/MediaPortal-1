@@ -32,7 +32,7 @@
 
 !define VER_MAJOR       1
 !define VER_MINOR       38
-!define VER_REVISION    001
+!define VER_REVISION    000
 
 #**********************************************************************************************************#
 
