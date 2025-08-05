@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <fonts>
   <!-- This file contains all the fonts used by the skin. Each font can be configured seperately and uses the         following format format:  	<font>
   <name>name of font used in the skin .xml files</name>
@@ -9,6 +9,14 @@
   <start>start character (numeric) default : 0</start>
   <end>end character (numeric) default : 255</end>
 </font>!-->
+  <font>
+  <name>font36</name>
+  <filename>Morebi Rounded</filename>
+  <height>37</height>
+  <bold>yes</bold>
+  <start>0</start>
+  <end>552</end>
+</font>
   <font>
     <name>font9</name>
     <filename>Morebi Rounded</filename>
@@ -270,11 +278,11 @@
     <end>1536</end>
   </font>
   <font>
-    <name>font36</name>
-    <filename>Morebi Rounded</filename>
-    <height>27</height>
-    <bold>yes</bold>
-    <start>0</start>
-    <end>1536</end>
-  </font>
+  <name>font36</name>
+  <filename>Morebi Rounded</filename>
+  <height>37</height>
+  <bold>no</bold>
+  <start>0</start>
+  <end>552</end>
+</font>
 </fonts>
