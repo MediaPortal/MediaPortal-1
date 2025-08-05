@@ -160,7 +160,7 @@ namespace MediaPortal.Devices
       IntPtr deviceHandle = CreateFile(devicePath, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open,
                                        FileFlag.Overlapped, 0);
 
-      if (deviceHandle.ToInt32() == -1)
+      if (deviceHandle == new IntPtr(-1))
         throw new Exception(string.Format("Failed to open remote ({0})", GetLastError()));
 
       _notifyWindow.RegisterDeviceRemoval(deviceHandle);
@@ -193,7 +193,7 @@ namespace MediaPortal.Devices
         // begin another asynchronous read from the device
         _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), null);
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
     private void OnSettingsChanged()
@@ -281,8 +281,8 @@ namespace MediaPortal.Devices
     {
       try
       {
-        byte[] packet1 = new byte[] {0x9F, 0x0C, 0x0F, 0xA0};
-        byte[] packet2 = new byte[] {0x9F, 0x14, 0x01};
+        byte[] packet1 = new byte[] { 0x9F, 0x0C, 0x0F, 0xA0 };
+        byte[] packet2 = new byte[] { 0x9F, 0x14, 0x01 };
 
         lock (_deviceSingleton) _deviceSingleton._packetArray = new ArrayList();
 
@@ -330,7 +330,7 @@ namespace MediaPortal.Devices
       IntPtr deviceHandle = CreateFile(devicePath, FileAccess.ReadWrite, FileShare.ReadWrite, 0, FileMode.Open,
                                        FileFlag.Overlapped, 0);
 
-      if (deviceHandle.ToInt32() == -1)
+      if (deviceHandle == new IntPtr(-1))
         throw new Exception(string.Format("Failed to open blaster ({0})", GetLastError()));
 
       _notifyWindow.RegisterDeviceRemoval(deviceHandle);
@@ -553,12 +553,12 @@ namespace MediaPortal.Devices
       IntPtr handle = SetupDiGetClassDevs(ref classGuid, 0, 0, 0x12);
       string devicePath = null;
 
-      if (handle.ToInt32() == -1)
+      if (handle == new IntPtr(-1))
       {
         throw new Exception(string.Format("Failed in call to SetupDiGetClassDevs ({0})", GetLastError()));
       }
 
-      for (int deviceIndex = 0;; deviceIndex++)
+      for (int deviceIndex = 0; ; deviceIndex++)
       {
         DeviceInfoData deviceInfoData = new DeviceInfoData();
         deviceInfoData.Size = Marshal.SizeOf(deviceInfoData);
