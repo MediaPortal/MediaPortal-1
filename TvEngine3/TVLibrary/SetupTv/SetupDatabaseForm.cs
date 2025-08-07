@@ -207,7 +207,7 @@ namespace SetupTv
           if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
           {
             Log.Write("MariaDB / MySQL: Use the new connection string for {0} database.", database);
-            return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};commandinterceptors=Gentle.Provider.MySQL.Interceptor.Interceptor,Gentle.Provider.MySQL.Interceptor;SSLMode=Disabled;",
+            return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};commandinterceptors=Gentle.Provider.MySQL.Interceptor.Interceptor,Gentle.Provider.MySQL.Interceptor;SSLMode=Disabled;AllowPublicKeyRetrieval=True",
                                  server, userid, password, database, timeout);
           }
           Log.Write("MySQL: Use the old connection string.");
@@ -873,7 +873,7 @@ namespace SetupTv
       // MS SQL
       if (rbSQLServer.Checked)
       {
-        DBSearchPattern = @"SQLBrowser";
+        DBSearchPattern = @"MSSQL$SQLEXPRESS";
       }
       else if (!(OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS))
       {
@@ -1004,7 +1004,7 @@ namespace SetupTv
           tbServerHostName.Text = Dns.GetHostName() + @"\SQLEXPRESS";
           tbServiceDependency.Enabled = true;
           tbServiceDependency.BackColor = tbServerHostName.BackColor;
-          tbServiceDependency.Text = @"SQLBrowser";
+          tbServiceDependency.Text = @"MSSQL$SQLEXPRESS";
           string dependency = ServiceHelper.ReadDependency();
           if (!string.IsNullOrEmpty(dependency))
           {

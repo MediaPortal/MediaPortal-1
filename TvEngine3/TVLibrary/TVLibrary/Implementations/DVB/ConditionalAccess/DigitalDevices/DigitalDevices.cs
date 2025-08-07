@@ -38,7 +38,7 @@ namespace TvLibrary.Implementations.DVB
 
     private Guid PINNAME_BDA_TRANSPORT = new Guid("{78216a81-cfa8-493e-9711-36a61c08bd9d}");
 
-    public static List<String> VendorNames = new List<String>() {"Digital Devices", "Mystique SaTiX-S2 Dual"};
+    public static List<String> VendorNames = new List<String>() { "Digital Devices", "Mystique SaTiX-S2 Dual" };
 
     [ComImport, SuppressUnmanagedCodeSecurity,
      Guid("28F54685-06FD-11D2-B27A-00A0C9223196"),
@@ -112,7 +112,7 @@ namespace TvLibrary.Implementations.DVB
       KSMETHOD_DD_CAM_ANSWER,
     }
 
-    private struct DD_CAM_MENU_TITLE {}
+    private struct DD_CAM_MENU_TITLE { }
 
     private struct DD_CAM_MENU_REPLY
     {
@@ -149,7 +149,7 @@ namespace TvLibrary.Implementations.DVB
       LIST_OPEN,
       ENQ_OPEN,
       CAM_ERROR = 99
-    } ;
+    };
 
     #endregion
 
@@ -250,7 +250,7 @@ namespace TvLibrary.Implementations.DVB
       KSMETHOD KsProperty = new KSMETHOD(KSPROPERTYSET_DD_COMMON_INTERFACE,
                                          (Int32)KSPROPERTY_DD_COMMON_INTERFACE.KSPROPERTY_DD_DECRYPT_PROGRAM,
                                          KSPROPERTY_TYPE_SET);
-      Int32 paramSize = Marshal.SizeOf(sizeof (Int32));
+      Int32 paramSize = Marshal.SizeOf(sizeof(Int32));
       Int32 dwReturned = 0;
       // Initialize unmanged memory to hold the struct.
       IntPtr pSid = Marshal.AllocHGlobal(paramSize);
@@ -527,7 +527,7 @@ namespace TvLibrary.Implementations.DVB
           CiMenu.Choices = new List<String>();
           for (int i = 0; i < CiMenu.NumChoices + 3; i++)
           {
-            IntPtr newPtr = new IntPtr(pCiMenu.ToInt32() + offs);
+            IntPtr newPtr = IntPtr.Add(pCiMenu, offs);
             String choice = Marshal.PtrToStringAnsi(newPtr);
             switch (i)
             {
@@ -661,7 +661,7 @@ namespace TvLibrary.Implementations.DVB
         }
         ;
       }
-      catch (ThreadAbortException) {}
+      catch (ThreadAbortException) { }
       catch (Exception ex)
       {
         Log.Log.Debug(FormatMessage("error in CiMenuHandler thread\r\n{0}"), ex.ToString());

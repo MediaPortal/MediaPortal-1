@@ -458,7 +458,7 @@ namespace MediaPortal
         this._versionLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold,
                                                          System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this._versionLabel.ForeColor = System.Drawing.Color.White;
-        this._versionLabel.Location = new System.Drawing.Point(277, 230);
+        this._versionLabel.Location = new System.Drawing.Point(277, 210);
         this._versionLabel.Name = "_versionLabel";
         this._versionLabel.Size = new System.Drawing.Size(100, 16);
         this._versionLabel.TabIndex = 5;
@@ -474,8 +474,9 @@ namespace MediaPortal
         this._cvsLabel.BackColor = System.Drawing.Color.Transparent;
         this._cvsLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold,
                                                      System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+
         this._cvsLabel.ForeColor = System.Drawing.Color.White;
-        this._cvsLabel.Location = new System.Drawing.Point(24, 230);
+        this._cvsLabel.Location = new System.Drawing.Point(24, 210);
         this._cvsLabel.Name = "_cvsLabel";
         this._cvsLabel.Size = new System.Drawing.Size(211, 16);
         this._cvsLabel.TabIndex = 5;
