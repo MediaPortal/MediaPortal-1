@@ -460,7 +460,7 @@ namespace MediaPortal
         this._versionLabel.ForeColor = System.Drawing.Color.White;
         this._versionLabel.Location = new System.Drawing.Point(277, 210);
         this._versionLabel.Name = "_versionLabel";
-        this._versionLabel.Size = new System.Drawing.Size(100, 16);
+        this._versionLabel.Size = new System.Drawing.Size(100, 32);
         this._versionLabel.TabIndex = 5;
         this._versionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
         this._versionLabel.UseMnemonic = false;
@@ -478,7 +478,7 @@ namespace MediaPortal
         this._cvsLabel.ForeColor = System.Drawing.Color.White;
         this._cvsLabel.Location = new System.Drawing.Point(24, 210);
         this._cvsLabel.Name = "_cvsLabel";
-        this._cvsLabel.Size = new System.Drawing.Size(211, 16);
+        this._cvsLabel.Size = new System.Drawing.Size(211, 32);
         this._cvsLabel.TabIndex = 5;
         this._cvsLabel.UseMnemonic = false;
         // 
@@ -508,3 +508,4 @@ namespace MediaPortal
     }
   }
 }
+
